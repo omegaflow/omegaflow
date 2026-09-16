@@ -36,6 +36,8 @@ struct Vocab {
     forbidden: Vec<String>,
     template_slang: Vec<String>,
     zero_decl: Vec<String>,
+    measure_step_markers: Vec<String>,
+    measure_step_due: Vec<String>,
     unit_tokens: Vec<String>,
     diagnostic_markers: Vec<String>,
     de_determiners: Vec<String>,
@@ -118,6 +120,8 @@ fn load_vocab() -> Vocab {
         forbidden: str_list(&json, "forbidden"),
         template_slang: str_list(&json, "template_slang"),
         zero_decl: str_list(&json, "zero_decl"),
+        measure_step_markers: str_list(&json, "measure_step_markers"),
+        measure_step_due: str_list(&json, "measure_step_due"),
         unit_tokens: str_list(&json, "unit_tokens"),
         diagnostic_markers: str_list(&json, "diagnostic_markers"),
         de_determiners: str_list(&json, "de_determiners"),
@@ -387,6 +391,7 @@ impl Gate {
             .or_else(|| self.find_learned(text))
             .or_else(|| self.check_register_numbers(text))
             .or_else(|| self.check_unbacked_claim(text))
+            .or_else(|| self.check_measure_step(text))
     }
 
     pub fn check_input(&mut self, text: &str) -> Vec<Verdict> {
@@ -398,6 +403,7 @@ impl Gate {
             self.find_learned(text),
             self.check_register_numbers(text),
             self.check_unbacked_claim(text),
+            self.check_measure_step(text),
         ]
         .into_iter()
         .flatten()
@@ -485,6 +491,40 @@ impl Gate {
             feedback: "a completion claim needs an anchor: name the path (src/…, docs/…) that backs it in the tree — a commit SHA is not a measurement".to_string(),
             quote: clip(text, 80),
         })
+    }
+
+    fn check_measure_step(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        let v = vocab();
+        for marker in &v.measure_step_markers {
+            let ml = marker.to_lowercase();
+            let mut search_from = 0;
+            while search_from < lower.len() {
+                let pos = match lower[search_from..].find(&ml) {
+                    Some(p) => p,
+                    None => break,
+                };
+                let start = search_from + pos;
+                let win_start = char_back(&lower, start, 60);
+                let mut win_end = (start + ml.len() + 120).min(lower.len());
+                while win_end < lower.len() && !lower.is_char_boundary(win_end) {
+                    win_end += 1;
+                }
+                let window = &lower[win_start..win_end];
+                let declared = v.measure_step_due.iter().any(|d| word_present(window, d));
+                if !declared {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "measure-step".to_string(),
+                        line: 0,
+                        feedback: "A = A: a step that names \"measure again\" carries no due date and no trigger — re-measuring the same state is not a measurement; name the due or the trigger".to_string(),
+                        quote: clip(text, 80),
+                    });
+                }
+                search_from = start + ml.len();
+            }
+        }
+        None
     }
 
     fn check_zero_fabrication(&self, text: &str) -> Option<Verdict> {
@@ -1616,5 +1656,19 @@ mod tests {
         let v = g.check_tool_call("edit", &args).unwrap();
         assert_eq!(v.rule, "template-slang");
         assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_measure_step_without_due_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("measure_step_fail")).unwrap();
+        assert_eq!(v.rule, "measure-step");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_measure_step_with_due_passes() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("measure_step_clean")).is_none());
     }
 }
