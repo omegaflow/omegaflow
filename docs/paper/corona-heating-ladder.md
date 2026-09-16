@@ -2,8 +2,8 @@
   title: The energy ladder of the corona: transfer entropy across eleven lines
   class: paper
   date: 2026-09-06
-  version: 10
-  sha256: 18d6802ddb42a19ba161be66931fcb8ee39fd14aa54fa970f0558bb83f1c5e7b
+  version: 11
+  sha256: fdc90b11d1c1ab07cf2e11b38684dd296811aa163411da681320a2b80d648916
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07; full 5-confounder conditioning (all bands, binned vs ksg) 2026-09-16
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -15,7 +15,7 @@
 
 ## Abstract
 
-The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven SDO/EVE lines, 584–94 Å — at 10 s cadence over 109 flares (2011), complemented by SDO/AIA imaging (24-s cells) over three years (2013–2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Unconditioned, the hot-corona chain 193→211→335→94 Å carries a reproduced directed excess at the ~96 s crossing, but stays below the family bound (0.63–0.91 × fam) — a family-bound cascade, not a Pfeil. Conditioned on the shared flare envelope (GOES X-ray and hot AIA channels, lag-aware residual null), that cascade collapses — its excess turns downward or silent under every confounder, showing the direction was the common driver's response-time structure, not channel-to-channel flow. What survives conditioning is the transition-region entry 304→131 Å: upward, bandwidth-stable (h 0.5–3.0, never flipping), and reproduced across three years and under every single- and two-confounder conditioning measured.
+The corona is heated to 1–2 MK against a 6000 K photosphere, by Alfvén-wave transport or nanoflare heating. We measure transfer entropy (TE) between adjacent rungs of the solar temperature ladder — eleven SDO/EVE lines, 584–94 Å — at 10 s cadence over 109 flares (2011), complemented by SDO/AIA imaging (24-s cells) over three years (2013–2015). The estimator reconstructs the Schreiber (2000) benchmark (asymmetry 6.75). Unconditioned, the hot-corona chain 193→211→335→94 Å carries a reproduced directed excess at the ~96 s crossing, but stays below the family bound (0.35–0.97 × fam across the nine rung-year crossings) — a family-bound cascade, not a Pfeil. Conditioned on the shared flare envelope (GOES X-ray and hot AIA channels, lag-aware residual null), that cascade collapses — its excess turns downward or silent under every confounder, showing the direction was the common driver's response-time structure, not channel-to-channel flow. What survives conditioning is the transition-region entry 304→131 Å: upward, bandwidth-stable (h 0.5–3.0, never flipping), and reproduced across three years and under every single- and two-confounder conditioning measured.
 ## 1. Introduction
 
 The coronal heating problem is the temperature inversion of the outer solar
