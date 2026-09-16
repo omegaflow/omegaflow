@@ -443,17 +443,43 @@ pub struct NexradRadialSample {
     pub kind: u32,
 }
 
-pub fn parse_nexrad_level2_bin(bytes: &[u8]) -> Option<Vec<NexradRadialSample>> {
+pub struct NexradLevel2 {
+    pub site: Option<nexrad::NexradSite>,
+    pub samples: Vec<NexradRadialSample>,
+}
+
+pub fn parse_nexrad_level2_bin(bytes: &[u8]) -> Option<NexradLevel2> {
     const REC_BYTES: usize = 44;
-    if bytes.len() < 8 || bytes[0..4] != crate::geo::MAGIC_NXR {
+    const SITE_BYTES: usize = 1 + 4 + 8 + 8 + 8;
+    const HEADER_BYTES: usize = 8 + SITE_BYTES;
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != crate::geo::MAGIC_NXR {
         return None;
     }
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    if bytes.len() != 8 + n * REC_BYTES {
+    if bytes.len() != HEADER_BYTES + n * REC_BYTES {
         return None;
     }
+    let site = match bytes[8] {
+        0 => None,
+        1 => {
+            let stid = bytes[9..13].try_into().ok()?;
+            let lat_deg = f64::from_le_bytes(bytes[13..21].try_into().ok()?);
+            let lon_deg = f64::from_le_bytes(bytes[21..29].try_into().ok()?);
+            let alt_m = f64::from_le_bytes(bytes[29..37].try_into().ok()?);
+            if !lat_deg.is_finite() || !lon_deg.is_finite() || !alt_m.is_finite() {
+                return None;
+            }
+            Some(nexrad::NexradSite {
+                stid,
+                lat_deg,
+                lon_deg,
+                alt_m,
+            })
+        }
+        _ => return None,
+    };
     let mut out = Vec::with_capacity(n);
-    let mut off = 8usize;
+    let mut off = HEADER_BYTES;
     for _ in 0..n {
         let s = bytes.get(off..off + REC_BYTES)?;
         let f64_of = |r: std::ops::Range<usize>| {
@@ -485,7 +511,7 @@ pub fn parse_nexrad_level2_bin(bytes: &[u8]) -> Option<Vec<NexradRadialSample>> 
         });
         off += REC_BYTES;
     }
-    Some(out)
+    Some(NexradLevel2 { site, samples: out })
 }
 
 pub fn nexrad_component_name(kind: u32) -> Option<&'static str> {

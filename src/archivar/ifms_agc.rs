@@ -75,7 +75,10 @@ fn config_table(text: &str) -> Vec<(String, String)> {
 }
 
 fn column_indices(comment: &str) -> Option<(usize, usize, usize)> {
-    let names: Vec<&str> = comment.trim_start_matches("//").split_whitespace().collect();
+    let names: Vec<&str> = comment
+        .trim_start_matches("//")
+        .split_whitespace()
+        .collect();
     let time = names.iter().position(|n| *n == "SampleTime")?;
     let carrier = names.iter().position(|n| *n == "CarrierLevel")?;
     let polar = names.iter().position(|n| *n == "PolarAngle")?;
@@ -104,11 +107,7 @@ fn parse_sample_time(s: &str) -> Option<f64> {
             unix += digits / 10f64.powi(f.len() as i32);
         }
     }
-    if unix.is_finite() {
-        Some(unix)
-    } else {
-        None
-    }
+    if unix.is_finite() { Some(unix) } else { None }
 }
 
 pub fn parse_ifms_agc(bytes: &[u8]) -> Option<IfmsAgcFile> {
@@ -233,9 +232,15 @@ mod tests {
     fn parses_header_and_agc_samples() {
         let file = parse_ifms_agc(RAW.as_bytes()).unwrap();
         assert_eq!(file.fields.len(), 5);
-        assert_eq!(file.fields[0], ("station_id".to_string(), "NN11".to_string()));
+        assert_eq!(
+            file.fields[0],
+            ("station_id".to_string(), "NN11".to_string())
+        );
         assert_eq!(file.config.len(), 2);
-        assert_eq!(file.config[0], ("UlmMode".to_string(), "Normal".to_string()));
+        assert_eq!(
+            file.config[0],
+            ("UlmMode".to_string(), "Normal".to_string())
+        );
         assert_eq!(file.samples.len(), 3);
         assert!((file.samples[0].unix_time - 1_418_787_255.0).abs() < 1e-6);
         assert!((file.samples[1].unix_time - file.samples[0].unix_time - 1.0).abs() < 1e-9);
@@ -245,10 +250,12 @@ mod tests {
 
     #[test]
     fn parses_committed_rsi_fixture() {
-        let bytes =
-            std::fs::read("src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW").unwrap();
+        let bytes = std::fs::read("src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW").unwrap();
         let file = parse_ifms_agc(&bytes).unwrap();
-        assert_eq!(file.fields[0], ("station_id".to_string(), "NN11".to_string()));
+        assert_eq!(
+            file.fields[0],
+            ("station_id".to_string(), "NN11".to_string())
+        );
         assert_eq!(file.samples.len(), 1994);
         assert!((file.samples[0].carrier_level_dbm + 43.6).abs() < 1e-9);
         assert!((file.samples[0].polar_angle_cycles - 0.2485).abs() < 1e-9);
