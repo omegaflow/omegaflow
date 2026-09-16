@@ -3,10 +3,6 @@
 # Das Verdikt-Register (lebt, aber geurteilt) ist phi/declined_sources.φ.
 # Re-Check 2026-09-14 (1221 URLs, Shell-Loop, 0 Tokens): 631×200 · 286×404 · 114×0 · 86×400 · 58×403/401 · 20×5xx · 7×429 · Rest 301/406/410.
 # Die 9 Auferstehungen stehen als `ausstehend kandidat` in phi/pipeline/ledger.φ.
-# Prune 2026-09-16: 6 Einträge entfernt, die nie gelebt haben — vokal-ausgedünnte
-# Hostnamen `p.ntrlst.rg`→`api.inaturalist.org`, `p.pn-mt.cm`→`api.open-meteo.com`
-# (beide Dienste leben), `lightning.gld` (keine Identität), `masie_ice.apps.nsidc.org`
-# (Unterstrich-Host, echter Host `masie_web`). Nur Tote, die wirklich gelebt haben.
 dead absent
 url ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json
 note curl: curl: (78) The file does not exist
@@ -848,6 +844,10 @@ url https://leda.univ-lyon1.fr/
 note direkter curl 000 — Server antwortet nicht; Wayback 429 (Session-Rate-Limit, nicht abschließend). Alternativen geprüft: VizieR VII/237 (LEDA-2003-Snapshot) als Spiegel, HyperLEDA-Daten fließen in GLADE+ und NED ein. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition ruht auf dem Erreichbarkeits-Befund.
 
 dead dns-unresolved
+url https://lightning.gld/v1/rates/global
+note curl: curl: (6) Could not resolve host: lightning.gld
+
+dead dns-unresolved
 url https://lightningwa.info/api/
 note curl: curl: (6) Could not resolve host: lightningwa.info Browser 2026-09-10: Host tot, Dienst-Nachfolger https://meteologix.com/au/lightning/western-australia.
 
@@ -886,6 +886,14 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://maps.openquake.org/api/v1/hazard/sa/?model=GEM_GLOBAL_2023&periods=0.2&imt=SA&poe=0.1
 note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
+
+dead dns-unresolved
+url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
+note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
 
 dead dns-unresolved
 url https://masie_web.apps.nsidc.org/pub/DATASETS/NSIDC0079MASIE-NH_r00v01/masie_4km_allyears_extent_sqkm.csv
@@ -1026,6 +1034,18 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long
 note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://p.ntrlst.rg/v1/bsrvtns
+note curl: curl: (6) Could not resolve host: p.ntrlst.rg
+
+dead dns-unresolved
+url https://p.pn-mt.cm/v1/frcst
+note curl: curl: (6) Could not resolve host: p.pn-mt.cm
+
+dead 333
+url https://p.pn-mt.cm/v1/lvtn
+note Azure liefert HTTP 333 (Proxy-Antwort, kein Datenendpoint).
 
 dead 5xx
 url https://polarwatch.noaa.gov/erddap/griddap/noaacrwdhwDaily.csv?dhw
