@@ -2,7 +2,7 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: 33fd7978705887748e16e231b4a9d9bdf9365f56ef5a8bd53cfb48f38150737d
+  sha256: 153169bd3ea00ce225d5f0518f11f9ed27922794cde7ac3d13d435655fed92d0
   status: live
   see-also: 
 -->

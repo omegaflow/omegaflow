@@ -397,7 +397,11 @@ The measured routine-agent class is closed too (8 profiles, identical
 four-command search task, 2026-09-16): flash $0.0008–0.0017 against pro/max
 $0.0041–0.0090 — 2.4–11x for an identical result; the winner is `grind-flash`
 ($0.0008). Routine search/inspection therefore dispatches a flash profile;
-pro/max stays for the named hard atoms only.
+pro/max stays for the named hard atoms only. The measured routine-extraction
+class (CI artifact → paper number, `aia-ladder` monthly `posfrac`, 2026-09-16)
+is closed too: `grind-flash` and `grind-pro` returned identical values (MIN
+0.56, MAX 0.92, 12 months); winner `grind-flash` — routine extraction is
+flash-first (`session_burn` window: flash n=10 $0.1121, pro n=4 $0.1921).
 
 
 
