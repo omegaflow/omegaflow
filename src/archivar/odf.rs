@@ -8,6 +8,11 @@ pub const PK_SUMMARY: u32 = 105;
 
 pub const ODF_TDB_OFFSET: f64 = -1577664000.0;
 
+pub const COMP_OBSERVABLE: u32 = 1;
+
+pub const PODF_COL_TDB: usize = 0;
+pub const PODF_COL_OBSERVABLE: usize = 1;
+
 #[derive(Clone, Copy, Debug)]
 pub struct OdOrbit {
     pub t_since_1950: f64,
@@ -123,6 +128,20 @@ pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
             r[k] = f64::from_le_bytes(buf);
         }
         out.push(r);
+    }
+    Some(out)
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in &rows {
+        let t = r[PODF_COL_TDB];
+        let v = r[PODF_COL_OBSERVABLE];
+        if !t.is_finite() || !v.is_finite() {
+            continue;
+        }
+        out.push((t, v, COMP_OBSERVABLE));
     }
     Some(out)
 }
