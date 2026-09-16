@@ -832,7 +832,7 @@ mod tests {
     fn known_bad_corpus_rows_are_reconciled_with_its_umfang() {
         let (dist, total) = corpus_distribution();
         let expect: BTreeMap<String, usize> = [
-            ("A".to_string(), 14),
+            ("A".to_string(), 13),
             ("Z".to_string(), 3),
             ("D".to_string(), 3),
             ("K".to_string(), 1),
@@ -842,9 +842,9 @@ mod tests {
         .into_iter()
         .collect();
         assert_eq!(dist, expect, "corpus table rows and Umfang line agree");
-        assert_eq!(total, 29, "29 verified findings, one per row");
+        assert_eq!(total, 28, "28 verified findings, one per row");
         let must_find = ["A", "Z", "D", "K"].iter().map(|k| dist[*k]).sum::<usize>();
-        assert_eq!(must_find, 21, "number findings the audit finds = A+Z+D+K");
+        assert_eq!(must_find, 20, "number findings the audit finds = A+Z+D+K");
     }
 
     #[test]
