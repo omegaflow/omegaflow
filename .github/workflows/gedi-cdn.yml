@@ -30,7 +30,7 @@ jobs:
           if ! gh release view data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources \
               --title "data.lpdaac.earthdatacloud.nasa.gov" \
-              --notes "GEDI L2A (GEDI02_A.002) lowest-mode footprints compiled to a geo oscillator record (medium em). Header 8 B: magic GED1 (4), count (u32 LE). Record stride 56 B = 7 x f64 LE: delta_time (s), lat_lowestmode (deg), lon_lowestmode (deg), elev_lowestmode (m), rh98 (m), beam_index, quality_flag."
+              --notes "GEDI L2A (GEDI02_A.002) lowest-mode footprints compiled to a geo oscillator record (medium em). Header 8 B: magic GED1 (4), count (u32 LE). Record stride 64 B = 8 x f64 LE: delta_time (s), lat_lowestmode (deg), lon_lowestmode (deg), elev_lowestmode (m), rh98 (m), beam_index, quality_flag, anchor_tdb (TDB seconds since J2000)."
           fi
       - name: Compile the GEDI L2A day and upload to CDN
         run: |

@@ -3,6 +3,8 @@ pub const SPECTRAL_VERSION: u8 = 0x01;
 pub const SPECTRAL_HEADER_BYTES: usize = 15;
 pub const SPECTRAL_RECORD_BYTES: usize = 24;
 
+pub const SPECTRAL_NO_BAND: f64 = 0.0;
+
 use crate::archivar::types::C_LIGHT;
 
 pub fn bins_from_lambda_rows(rows: &[(f64, f64, u8)]) -> Vec<(f64, f64, f64)> {

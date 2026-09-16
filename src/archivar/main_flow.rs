@@ -2083,6 +2083,7 @@ pub fn main_flow() {
                     | "dawn_odf"
                     | "voyager_odr"
                     | "galileo_odr"
+                    | "bidsleep"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
