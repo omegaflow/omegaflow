@@ -1862,9 +1862,9 @@ fn state_distance(a: &[f64], b: &[f64]) -> f64 {
 
 fn embedded_silverman(emb: &[Vec<f64>]) -> Option<f64> {
     let n = emb.len() as f64;
-    let dim = match emb.first() {
-        Some(s) => s.len(),
-        None => return None,
+    let dim = {
+        let s = emb.first()?;
+        s.len()
     };
     if n < 2.0 || dim == 0 {
         return None;
@@ -1905,9 +1905,9 @@ pub fn transfer_entropy_embedded(
     if n < 8 || tau_x == 0 || tau_y == 0 || x.iter().any(|v| !v.is_finite()) {
         return None;
     }
-    let dim = match emb_x.first() {
-        Some(s) => s.len(),
-        None => return None,
+    let dim = {
+        let s = emb_x.first()?;
+        s.len()
     };
     if dim < 2 {
         return None;
