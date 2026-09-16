@@ -76,6 +76,16 @@
     "null-echt",
     "pad"
   ],
+  "measure_step_markers": [
+    "measure again"
+  ],
+  "measure_step_due": [
+    "due",
+    "trigger",
+    "fällig",
+    "wiedervorlage",
+    "fired"
+  ],
   "unit_tokens": [
     "km/s",
     "m/s",
@@ -235,6 +245,8 @@
     "single_path_code": "let wt = git_worktree(&name);",
     "single_path_prose_b": "die Leitstelle uebergibt",
     "single_path_clean": "ein Pfad, eine Wahrheit",
-    "template_slang_code": "let mode = godmode_lines(query);"
+    "template_slang_code": "let mode = godmode_lines(query);",
+    "measure_step_fail": "the next step is to measure again",
+    "measure_step_clean": "measure again — due 2026-09-20"
   }
 }
