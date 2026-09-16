@@ -465,8 +465,8 @@ fn run() -> Result<(), String> {
         return Ok(());
     }
     if let Some(format) = arg_value(&args, "--job") {
-        let csrf = login(&jar, &user, &pass)
-            .ok_or("login void — the job stays unbuilt (0 honored)")?;
+        let csrf =
+            login(&jar, &user, &pass).ok_or("login void — the job stays unbuilt (0 honored)")?;
         let prefix = match arg_value(&args, "--prefix") {
             Some(p) => p,
             None => String::new(),
