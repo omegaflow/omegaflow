@@ -2021,6 +2021,11 @@ format ephemeris_de440
 at moon
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_neptune.bin
+format ephemeris_de440
+at neptune
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_sun.bin
 format ephemeris_de440
 at sun
@@ -4529,6 +4534,11 @@ last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square aco
 url https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.bsp
 format reference
 sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
+ttl 86400
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
+format spk
+at sun
 ttl 86400
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp
