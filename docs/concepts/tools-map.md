@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: a2aa96e5adeeb68c4e45a6c42e3b0f16bae36de9d471bc22ca850d0735b47ba9
+  sha256: 8fdc4d077d76aa55fa6834a33716345e3bbf61039bd4a1f1c64247c898b8c58b
   status: live
   see-also: AGENTS.md
 -->
@@ -136,26 +136,28 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 
 ## Agenten-Benchmark (2026-09-16, identischer Task: dieselben vier Befehle, alle 8 Profile)
 
-Werkzeug-Zeiten, identisch über alle Profile: `--root --count` 0,025–0,039 s;
-`sgrep -i` 0,042–0,063 s; `--index` 0,020–0,043 s; `--crossref` 2,08–3,12 s
-(Netz, ~50–100× die lokalen Läufe).
+Lauf 3, nach der Werkzeug-Grenze in der System Directive und den Struktur-Sperren.
+Werkzeug-Zeiten, identisch über alle Profile: `--root --count` 0,026–0,035 s;
+`sgrep -i` 0,038–0,069 s; `--index` 0,020–0,037 s; `--crossref` 0,54–3,14 s
+(Netz; bei 8 parallelen Aufrufen 2× HTTP 429 — Rate-Limit, als `pending` gemeldet).
 
 | Agent | Modell | Cost | cache_read | Dauer |
 |---|---|---|---|---|
-| grind-flash | flash | $0.0008 | 49k | 8 s |
-| explore | flash | $0.0010 | 45k | 10 s |
-| general | flash | $0.0017 | 109k | 12 s |
-| plan | flash | $0.0017 | 166k | 17 s |
-| grind-max | pro | $0.0041 | 45k | 25 s |
-| grind-pro | pro | $0.0049 | 42k | 12 s |
-| research-max | pro | $0.0072 | 68k | 48 s |
-| council | pro | $0.0090 | 72k | 58 s |
+| general | flash | $0.0008 | 51k | 6 s |
+| explore | flash | $0.0015 | 25k | 6 s |
+| plan | flash | $0.0017 | 47k | 5 s |
+| grind-flash | flash | $0.0031 | 35k | 7 s |
+| research-max | pro | $0.0115 | 53k | 27 s |
+| grind-max | pro | $0.0116 | 28k | 19 s |
+| council | pro | $0.0117 | 28k | 27 s |
+| grind-pro | pro | $0.0119 | 28k | 26 s |
 
-Pro/max kostet 2,4–11× flash bei identischem Ergebnis — flash-first bestätigt.
-`vision` (P6, kein bash) ist mit Kommando-Tools nicht benchmarkbar. Verkettete
-Befehle (`cmd; echo; cmd`) werden in den Read-Profilen verweigert (jedes Segment
-muss ein Allow-Muster treffen) — je Befehl ein eigener Aufruf, oder eine reine
-`&&`-Kette erlaubter Befehle.
+Pro/max kostet 4–15× flash bei identischem Ergebnis — flash-first bestätigt,
+Sieger flash (`general` $0.0008). **Reibung gemessen:** Lauf 2 (vor der Grenze)
+hatte 1–2 verweigerte Werkzeug-Versuche je Profil (plan/general/research-max);
+Lauf 3 (nach der Grenze im System-Directive-Text + den Sperren) hatte **0
+Versuche** in allen 8 Profilen — kein Agent probiert mehr ein verbotenes Werkzeug.
+`vision` (P6, kein bash) ist mit Kommando-Tools nicht benchmarkbar.
 
 ## Benchmark (wiederholbar)
 
