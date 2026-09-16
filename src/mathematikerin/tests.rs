@@ -962,6 +962,138 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
     assert_eq!(app.sky.report().osc_count, 2);
 }
 
+#[test]
+fn sky_tick_folds_bodies_by_name_and_stations_last() {
+    use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    use crate::machines::{MetaAnchor, NameMeta};
+    let t = 8.4e8;
+    let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let earth_props = BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 0.0,
+        dw_dt_deg_per_day: 360.0,
+        radius_m: 6371000.0,
+        flattening: Some(0.0),
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert("alpha".to_string(), orbit_body([1.0e9, 0.0, 0.0], None));
+    eph.insert(
+        "earth".to_string(),
+        orbit_body([0.0, 0.0, 1.0e9], Some(earth_props)),
+    );
+    eph.insert("zeta".to_string(), orbit_body([0.0, 1.0e9, 0.0], None));
+    let buf = Buffer {
+        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: Vec::new(),
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.latest_field = Some(Arc::new(buf));
+    for (key, lon) in [("z_station", 90.0), ("a_station", 0.0)] {
+        app.matrix.metas.insert(
+            key.to_string(),
+            NameMeta {
+                anchor: MetaAnchor::Surface {
+                    body_name: "earth".to_string(),
+                    lat: 0.0,
+                    lon,
+                    alt: 0.0,
+                },
+                force: 0,
+                kernel: 0,
+                tau: 0.0,
+            },
+        );
+    }
+    app.sky_reload();
+    app.sky.directions.clear();
+    app.sky.events.clear();
+    app.sky_tick();
+
+    assert_eq!(app.sky.oscs.len(), 5, "three bodies then two stations");
+    let first = app.sky.oscs[0].p_hat;
+    assert!(
+        first[0] > 0.999 && first[1].abs() < 1e-6 && first[2].abs() < 1e-6,
+        "alpha folds first by name: {first:?}"
+    );
+    let second = app.sky.oscs[1].p_hat;
+    assert!(second[2] > 0.999, "earth folds second by name: {second:?}");
+    let third = app.sky.oscs[2].p_hat;
+    assert!(
+        third[1] > 0.999 && third[0].abs() < 1e-6,
+        "zeta folds third by name: {third:?}"
+    );
+    for o in &app.sky.oscs[3..] {
+        assert!(
+            o.p_hat[2] > 0.99,
+            "a station rests on the earth direction and folds last: {:?}",
+            o.p_hat
+        );
+    }
+    assert_ne!(
+        app.sky.oscs[3].p_hat, app.sky.oscs[4].p_hat,
+        "the two station keys fold in key order to distinct points"
+    );
+}
+
 const SCALAR_PARITY_TOL: f64 = 1e-3;
 
 fn sg_gate_rng(rng: &mut u64) -> f64 {
