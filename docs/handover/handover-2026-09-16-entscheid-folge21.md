@@ -3,7 +3,7 @@
   session: Entscheid-Folge 21
   class: handover
   date: 2026-09-16
-  sha256: 629e68bc6db28ab021ee912c28756634516eb9c315e6ecb04875a62996cca8f4
+  sha256: adc2fd59f59ad4e8b4f80820a638a7b3c2fa79599ed82eac223c3a976ccd4ce0
   status: live
 -->
 # Handover — Entscheid-Folge 21 (2026-09-16)
@@ -41,29 +41,33 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 Forschung-Folge 31 (post, 2026-09-16) bündelt die Operator-gebundenen Quellen; hierher gefaltet.
 
-**A Credentials/Token (gegen `.secrets.local` gemessen 2026-09-16):**
-- **EDL `client_id` — fehlt.** Ein App bei `urs.earthdata.nasa.gov` (`/home` →
-  Profil → Applications → Create New Application; Redirect `https://localhost`)
-  bedient CDDIS IONEX, GIC/INTERMAGNET und GES-DISC. Danach `EARTHDATA_CLIENT_ID` /
-  `EARTHDATA_CLIENT_SECRET` in `.secrets.local`; Bau-Punkt: der leere Zweig
-  `S3CredentialRoute::OAuth => None` (`src/archivar/range.rs:283`, `:392`, `:510`;
-  Buckets `gesdisc*`, `goldsmr5`, `goldsmr2`).
-- **Fink** `https://doc.lsst.fink-broker.org/` (200) — `fink_client_register`, Zugangsdaten
-  vom Team; **ANTARES** `https://antares.noirlab.edu/` (200) — Registrierung + Stream-Request
-  → Operator.
-- **EPA AQS** API-Key `https://aqs.epa.gov/aqsweb/documents/data_api.html` (200) — Mail an
-  `aqs@epa.gov` (anon-Fallback AirData) → Operator.
-- **Schon vorhanden** (kein Operator mehr): `TNS_API_KEY`/`TNS_UA`, `OCEANNETWORKS_TOKEN`
-  (ONC), `RUBIN_USER`/`RUBIN_PASS` → nur Verdrahtung (Bau).
+**A Register-offene Registrierungen (browser-gemessen 2026-09-16):**
+- **limadou/CSES** — PI-Freigabe (`phi/pipeline/ledger.φ:26–28`): SSDC-Konto lebt,
+  CAS-Login 200; nur die Freigabe fehlte. Nachfassen **gesendet** 2026-09-16
+  (Resend id `0ebfe257-d059-45d3-9468-448c6dffd32e`) → „Warten auf Rückmeldung".
+  Damit ist **keine** register-offene Registrierung mehr offen.
 
-**B Konto/Agreement (URLs verifiziert 2026-09-16):**
-- WWLLN `https://wwlln.net/` (200) — Zugang auf der Seite/Kontakt anfragen (akademisch,
-  nicht kommerziell).
-- CTBTO vDEC `https://www.ctbto.org/resources/for-researchers-experts/vdec/request-for-data`
-  (403, Cloudflare) — Webform + Research Proposal (zero-cost contract).
-- CTAO Science Portal `https://www.ctao.org/emission-to-discovery/data-and-computing/`
-  (200) — proposal-getrieben; User-Registry direkt blockiert.
-  (Schritt: je `/consent`, dann Registrierung.)
+**Aufgelöst (browser-gemessen, kein Operator):**
+- **CDDIS IONEX**: der vorhandene `EARTHDATA_EDL_TOKEN` öffnet das Verzeichnis
+  (`https://cddis.nasa.gov/archive/gnss/products/ionex/2026/` → HTTP 200, 96 KB) —
+  der `blocked key-needed`-Eintrag ist stale.
+- **GES-DISC**: kein selbst angelegter App-Key — der OAuth-Flow nutzt GES-DISCs eigene
+  `client_id` (`e2WVk8Pw6weeLUKZYOxvTQ`); die EULA-Autorisierung ist erledigt, die
+  Credentials kamen zurück (1 h TTL). Bau implementiert den Authorization-Code-Flow
+  (`S3CredentialRoute::OAuth`, `range.rs:283`); das EDL-Konto ist `Application Creator: False`.
+- **INTERMAGNET/GIC**: registriert via HAPI (`sources.φ:1600`, `:4348–4365`) — kein `client_id`.
+
+**Nicht Operator (Register-Verdikt, gemessen 2026-09-16):**
+- `declined`: CTBTO (`declined_sources.φ:2979`, Redistribution verboten), CTA (`:177`),
+  Fink-Schema (`:3449`), **WWLLN** (`blocked_sources.φ:40–43` — UW-copyright, „nominal
+  cost": kostenpflichtig; **keine kostenpflichtigen Dienste** — Operator-Wort 2026-09-16).
+- `pending`/`parser-def` (Bau/Ernte): ANTARES (`declined_sources.φ:236` → lebt als
+  pending-Registrierung), Babamul, Voyager RSS, GHRC DAAC, drs-fits, ARPANSA, fugin, IA2,
+  IGRA-2.
+- **EPA AQS**: Bulk-Zip **keylos** (`phi/pipeline/ledger.φ:38–40`, parser-gap
+  „Arithmetic Mean") — kein API-Key nötig.
+- **Registriert** (kein Operator): TNS (`sources.φ:1269`), ONC (`sources.φ:792`), Rubin,
+  IGETS, Lasair, SSDC-Konto.
 
 **C Anfragen an Dritte (per-Akt-Consent):**
 - limadou-PI-Freigabe (Sotgiu, ASI SSDC): Account gültig, CAS-Login 200,
@@ -126,9 +130,9 @@ Forschung-Folge 31 (post, 2026-09-16) bündelt die Operator-gebundenen Quellen; 
 ## Warten auf Rückmeldung (extern gebunden)
 
 - Rubin RSP (Shaughnessy, SLAC): 2026-09-15 21:11 in die Einzelprüfung genommen,
-  Antwort offen. NSE/Haug (Keimer), CSES-Limadou (Sotgiu, ASI SSDC): Antwort
-  offen — Postfach-Zeile in `docs/zustand/external-state.md`. (Schritt: Postfach
-  bei Fälligkeit.)
+  Antwort offen. NSE/Haug (Keimer): Antwort offen. CSES-Limadou (Sotgiu, ASI SSDC):
+  Nachfassen gesendet 2026-09-16, Antwort offen — Postfach-Zeile in
+  `docs/zustand/external-state.md`. (Schritt: Postfach bei Fälligkeit.)
 
 ## Termine (Wiedervorlage)
 
