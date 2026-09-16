@@ -399,12 +399,16 @@ fn main() {
     };
     let n_pairs = LADDER.len() - 1;
     let mut real: Vec<Vec<f64>> = vec![vec![f64::NAN; 13]; n_pairs];
+    let mut real_pos: Vec<Vec<usize>> = vec![vec![0; 13]; n_pairs];
+    let mut real_tot: Vec<Vec<usize>> = vec![vec![0; 13]; n_pairs];
     let mut surr: Vec<Vec<Vec<f64>>> = vec![vec![Vec::new(); 13]; n_pairs];
     let mut fam_pool: Vec<f64> = Vec::new();
     for p in 0..n_pairs {
         for lag in 0..=12 {
-            let (d, _, _) = stack_pair(&events, p, p + 1, lag, false, 0);
+            let (d, pos, tot) = stack_pair(&events, p, p + 1, lag, false, 0);
             real[p][lag] = d;
+            real_pos[p][lag] = pos;
+            real_tot[p][lag] = tot;
             for s in 1..=N_SURR {
                 let (d_null, _, _) = stack_pair(
                     &events,
@@ -448,7 +452,22 @@ fn main() {
             thr_cells.push(format!("{:>8.2e}{}", thr, sig_t));
         }
         let peak_s = match peak {
-            Some((l, d)) => format!("peak at lag {} ({} s) = {:.2e}", l, l * 24, d),
+            Some((l, d)) => {
+                let tot = real_tot[p][l];
+                if tot == 0 {
+                    format!("peak at lag {} ({} s) = {:.2e} | positive absent", l, l * 24, d)
+                } else {
+                    format!(
+                        "peak at lag {} ({} s) = {:.2e} | positive {:.1}% ({}/{})",
+                        l,
+                        l * 24,
+                        d,
+                        real_pos[p][l] as f64 / tot as f64 * 100.0,
+                        real_pos[p][l],
+                        tot
+                    )
+                }
+            }
             None => String::new(),
         };
         let line_a = format!(
