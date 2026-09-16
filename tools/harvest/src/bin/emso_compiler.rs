@@ -7,7 +7,14 @@ const OBSEA_URL: &str = "https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_sta
 const DEFAULT_OUT: &str = "emso_obsea_seabed_ts.json";
 const TTL: u64 = 3600;
 const COLUMNS: [&str; 8] = [
-    "time", "latitude", "longitude", "depth", "TEMP", "PSAL", "PRES", "CNDC",
+    "time",
+    "latitude",
+    "longitude",
+    "depth",
+    "TEMP",
+    "PSAL",
+    "PRES",
+    "CNDC",
 ];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -95,7 +102,10 @@ fn compile_table(body: &str) -> Option<Vec<StationRow>> {
         if !(-90.0..=90.0).contains(&latitude) || !(-180.0..=180.0).contains(&longitude) {
             continue;
         }
-        out.push(StationRow { time, cells: values });
+        out.push(StationRow {
+            time,
+            cells: values,
+        });
     }
     out.sort_by(|a, b| a.time.cmp(&b.time));
     Some(out)

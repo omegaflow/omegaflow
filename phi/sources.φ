@@ -6211,6 +6211,12 @@ url https://zenodo.org/records/8098323/files/data.zip
 format reference
 ttl 86400
 
+url https://zenodo.org/records/10620251/files/multimoon-1.0.zip
+format reference
+sha256 07b26a4f01f285d1807ea46cd7b9aa8ae7d7d3b7c2dfd877bbdab5c70cb46ffc
+ttl 86400
+note MultiMoon 1.0 (eingefrorene Software zur TNBFits-Auswertung, MIT, 914800 B, md5:9bc6a3f9…) — Zenodo record 10620251; fetch-only reference, kein Feld/Medium. CDN-Tag zenodo.org.
+
 url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
 format tap
 ttl 604800
