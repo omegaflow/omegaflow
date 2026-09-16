@@ -1,7 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::voyager_odr::{
-    pack, pack_many, parse_odr, parse_packed, split_records, RECORD_BYTES,
+    pack, pack_many, parse_odr, parse_packed, shard_name, shard_ranges, split_records,
+    RECORD_BYTES, SHARD_BUDGET, SHARD_LIMIT,
 };
 use omegaflow::cdn::upload_release;
 
@@ -55,6 +56,36 @@ fn index_rows(text: &str) -> Option<Vec<(String, String, u16)>> {
         rows.push((fields[1].clone(), fields[2].clone(), year));
     }
     Some(rows)
+}
+
+fn pack_and_verify(entries: &[(Vec<u8>, String, u16)], out: &str) -> Vec<u8> {
+    let refs: Vec<(&[u8], &str, u16)> = entries
+        .iter()
+        .map(|(b, n, y)| (b.as_slice(), n.as_str(), *y))
+        .collect();
+    let bin = pack_many(&refs);
+    let Some(parsed) = parse_packed(&bin) else {
+        eprintln!("{out}: packed read void — the series stays unverified (0 honored)");
+        std::process::exit(1);
+    };
+    if parsed.files.len() != entries.len() {
+        eprintln!("{out}: entry count void — the series stays unverified (0 honored)");
+        std::process::exit(1);
+    }
+    for (f, (b, n, y)) in parsed.files.iter().zip(entries.iter()) {
+        if f.name != *n || f.year != *y || f.records.len() != b.len() / RECORD_BYTES {
+            eprintln!("{out}: {n} roundtrip void — the series stays unverified (0 honored)");
+            std::process::exit(1);
+        }
+    }
+    if let Some(parent) = std::path::Path::new(out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(out, &bin).is_err() {
+        eprintln!("write {out} returned void");
+        std::process::exit(1);
+    }
+    bin
 }
 
 fn run_index(args: &[String]) {
@@ -114,41 +145,59 @@ fn run_index(args: &[String]) {
         trailing_total += trailing;
         entries.push((bytes[..complete * RECORD_BYTES].to_vec(), name, year));
     }
-    let refs: Vec<(&[u8], &str, u16)> = entries
-        .iter()
-        .map(|(b, n, y)| (b.as_slice(), n.as_str(), *y))
-        .collect();
-    let bin = pack_many(&refs);
-    let Some(parsed) = parse_packed(&bin) else {
-        eprintln!("{out}: packed read void — the series stays unverified (0 honored)");
-        std::process::exit(1);
-    };
-    if parsed.files.len() != entries.len() {
-        eprintln!("{out}: entry count void — the series stays unverified (0 honored)");
-        std::process::exit(1);
-    }
-    for (f, (b, n, y)) in parsed.files.iter().zip(&entries) {
-        if f.name != *n || f.year != *y || f.records.len() != b.len() / RECORD_BYTES {
-            eprintln!("{out}: {n} roundtrip void — the series stays unverified (0 honored)");
+    let lengths: Vec<usize> = entries.iter().map(|(b, _, _)| b.len()).collect();
+    let ranges = shard_ranges(&lengths, SHARD_BUDGET);
+    if ranges.len() <= 1 {
+        pack_and_verify(&entries, &out);
+        let total_bytes: usize = entries.iter().map(|(b, _, _)| b.len()).sum();
+        eprintln!(
+            "{out}: {} .ODR file(s) packed ({} bytes, {} trailing byte(s) dropped), roundtrip holds",
+            entries.len(),
+            total_bytes,
+            trailing_total
+        );
+        if ci_mode && !upload_release(NETLOC, &out) {
             std::process::exit(1);
         }
+        std::process::exit(0);
     }
-    if let Some(parent) = std::path::Path::new(&out).parent() {
-        let _ = std::fs::create_dir_all(parent);
+    let mut paths: Vec<String> = Vec::new();
+    let mut names: Vec<String> = Vec::new();
+    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
+        let name = shard_name("voyager_odr", ord);
+        let path = format!("data/pds-ppi.igpp.ucla.edu/{name}");
+        let bin = pack_and_verify(&entries[lo..hi], &path);
+        if bin.len() > SHARD_LIMIT {
+            eprintln!(
+                "{path}: {}-byte shard exceeds the {SHARD_LIMIT}-byte CDN asset limit — the series stays unwritten (0 honored)",
+                bin.len()
+            );
+            std::process::exit(1);
+        }
+        eprintln!(
+            "{path}: {} .ODR file(s) packed ({} bytes), roundtrip holds",
+            hi - lo,
+            bin.len()
+        );
+        names.push(name);
+        paths.push(path);
     }
-    if std::fs::write(&out, &bin).is_err() {
-        eprintln!("write {out} returned void");
-        std::process::exit(1);
+    for name in &names {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/{name}"
+        );
+        println!("format voyager_odr");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0");
+        println!();
     }
-    let total_bytes: usize = entries.iter().map(|(b, _, _)| b.len()).sum();
-    eprintln!(
-        "{out}: {} .ODR file(s) packed ({} bytes, {} trailing byte(s) dropped), roundtrip holds",
-        entries.len(),
-        total_bytes,
-        trailing_total
-    );
-    if ci_mode && !upload_release(NETLOC, &out) {
-        std::process::exit(1);
+    if ci_mode {
+        for path in &paths {
+            if !upload_release(NETLOC, path) {
+                std::process::exit(1);
+            }
+        }
     }
     std::process::exit(0);
 }
