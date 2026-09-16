@@ -1,6 +1,6 @@
 use omegaflow::archivar::kcdc::{
-    Table, calorimeter_comp, col_of, general_comp, grande_comp, is_log10, join_key, lopes_comp,
-    parse_bin, plausible, read_table, row_time, array_comp, write_bin, MAGIC,
+    MAGIC, Table, array_comp, calorimeter_comp, col_of, general_comp, grande_comp, is_log10,
+    join_key, lopes_comp, parse_bin, plausible, read_table, row_time, write_bin,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
@@ -48,6 +48,14 @@ fn form_encode(s: &str) -> String {
         }
     }
     out
+}
+
+fn job_body(out_format: &str, data_json: &str) -> String {
+    format!(
+        "out_format={}&data={}",
+        form_encode(out_format),
+        form_encode(data_json)
+    )
 }
 
 fn jar_value(jar: &Path, name: &str) -> Option<String> {
@@ -257,16 +265,13 @@ fn zip_entry_bytes(data: &[u8], want: &str) -> Option<Vec<u8>> {
 
 fn table_text(src: &Path, name: &str, zip: Option<&[u8]>) -> Option<String> {
     match zip {
-        Some(data) => zip_entry_bytes(data, name)
-            .map(|b| String::from_utf8_lossy(&b).into_owned()),
+        Some(data) => zip_entry_bytes(data, name).map(|b| String::from_utf8_lossy(&b).into_owned()),
         None => {
             let path = src.join(name);
-            fs::read_to_string(&path)
-                .ok()
-                .map(|s| {
-                    eprintln!("kcdc: {} read ({} B)", name, s.len());
-                    s
-                })
+            fs::read_to_string(&path).ok().map(|s| {
+                eprintln!("kcdc: {} read ({} B)", name, s.len());
+                s
+            })
         }
     }
 }
@@ -298,7 +303,11 @@ fn compile_table(
                 absent += 1;
                 continue;
             };
-            let v = if is_log10(comp) { 10.0f64.powf(cell) } else { cell };
+            let v = if is_log10(comp) {
+                10.0f64.powf(cell)
+            } else {
+                cell
+            };
             if !plausible(comp, v) {
                 absent += 1;
                 continue;
@@ -310,12 +319,7 @@ fn compile_table(
     (emitted, absent, timed_out)
 }
 
-fn compile(
-    src: &Path,
-    out_path: &str,
-    lsk: &LeapSeconds,
-    ci: bool,
-) -> Result<(), String> {
+fn compile(src: &Path, out_path: &str, lsk: &LeapSeconds, ci: bool) -> Result<(), String> {
     let data = if src.is_file() {
         fs::read(src).map_err(|e| format!("{}: {e}", src.display()))?
     } else {
@@ -341,7 +345,10 @@ fn compile(
             }
         }
     }
-    eprintln!("kcdc: {} general rows with Gt in the join index", gt_index.len());
+    eprintln!(
+        "kcdc: {} general rows with Gt in the join index",
+        gt_index.len()
+    );
 
     let mut records: Vec<(f64, f64, u32)> = Vec::new();
     let component_maps: [(&str, fn(&str) -> Option<u32>); 5] = [
@@ -357,12 +364,11 @@ fn compile(
             continue;
         };
         let Some(table) = read_table(&text) else {
-            eprintln!(
-                "kcdc: {name} carries no header line — the layout stays unread (0 honored)"
-            );
+            eprintln!("kcdc: {name} carries no header line — the layout stays unread (0 honored)");
             continue;
         };
-        let (emitted, absent, timed_out) = compile_table(&table, comp_of, &gt_index, lsk, &mut records);
+        let (emitted, absent, timed_out) =
+            compile_table(&table, comp_of, &gt_index, lsk, &mut records);
         eprintln!(
             "kcdc: {name}: {} rows, {} records, {} cells absent/implausible, {} rows without time",
             table.rows.len(),
@@ -386,7 +392,9 @@ fn compile(
             String::from_utf8_lossy(&MAGIC)
         ),
         None => {
-            return Err(format!("{out_path}: roundtrip parse void — the bin stays unverified"));
+            return Err(format!(
+                "{out_path}: roundtrip parse void — the bin stays unverified"
+            ));
         }
     }
     if ci && !upload_release(NETLOC, out_path) {
@@ -401,6 +409,7 @@ fn usage() {
   --login                      session login (credentials: --user/--pass, env KCDC_USER/KCDC_PASS or .secrets.local)
   --quants <det_name>          login, then GET /datashop/quants/ (JSON to stdout)
   --descr <det_name> [--quant <name>]  login, then GET /datashop/descr/
+  --job <format> --data <file> login, build the measured job POST body (out_format + data JSON), print the exact command (no execution)
   --request <body>             login, then print the exact POST /datashop/ command (no execution)
   --submit <body>              login, then execute the POST (creates a request at KCDC — the operator's word)
   --prefix <p>                 datashop prefix for the POST (default \"\")
@@ -427,14 +436,23 @@ fn run() -> Result<(), String> {
         .ok_or("KCDC_PASS absent — env, .secrets.local marker or --pass".to_string())?;
 
     if args.iter().any(|a| a == "--login") {
-        let csrf = login(&jar, &user, &pass).ok_or("login void — the session stays unopened (0 honored)")?;
-        println!("kcdc: session in {jar_path} (csrftoken {len} B)", len = csrf.len());
+        let csrf = login(&jar, &user, &pass)
+            .ok_or("login void — the session stays unopened (0 honored)")?;
+        println!(
+            "kcdc: session in {jar_path} (csrftoken {len} B)",
+            len = csrf.len()
+        );
         return Ok(());
     }
     if let Some(det) = arg_value(&args, "--quants") {
-        let csrf = login(&jar, &user, &pass).ok_or("login void — quants stays unread (0 honored)")?;
-        println!("kcdc: session in {jar_path} (csrftoken {len} B)", len = csrf.len());
-        let body = quants(&jar, &det).ok_or("quants void — the endpoint returned nothing parseable")?;
+        let csrf =
+            login(&jar, &user, &pass).ok_or("login void — quants stays unread (0 honored)")?;
+        println!(
+            "kcdc: session in {jar_path} (csrftoken {len} B)",
+            len = csrf.len()
+        );
+        let body =
+            quants(&jar, &det).ok_or("quants void — the endpoint returned nothing parseable")?;
         print!("{body}");
         return Ok(());
     }
@@ -446,8 +464,24 @@ fn run() -> Result<(), String> {
         print!("{body}");
         return Ok(());
     }
+    if let Some(format) = arg_value(&args, "--job") {
+        let csrf = login(&jar, &user, &pass)
+            .ok_or("login void — the job stays unbuilt (0 honored)")?;
+        let prefix = match arg_value(&args, "--prefix") {
+            Some(p) => p,
+            None => String::new(),
+        };
+        let data_file = arg_value(&args, "--data")
+            .ok_or("--data <file> absent — the collected_data JSON stays unread".to_string())?;
+        let data_json = fs::read_to_string(&data_file)
+            .map_err(|e| format!("{data_file}: {e} — the collected_data JSON stays unread"))?;
+        let body = job_body(&format, data_json.trim());
+        println!("{}", post_command(&jar, &csrf, &prefix, &body));
+        return Ok(());
+    }
     if let Some(body) = arg_value(&args, "--request") {
-        let csrf = login(&jar, &user, &pass).ok_or("login void — the request stays unbuilt (0 honored)")?;
+        let csrf = login(&jar, &user, &pass)
+            .ok_or("login void — the request stays unbuilt (0 honored)")?;
         let prefix = match arg_value(&args, "--prefix") {
             Some(p) => p,
             None => String::new(),
@@ -456,7 +490,8 @@ fn run() -> Result<(), String> {
         return Ok(());
     }
     if let Some(body) = arg_value(&args, "--submit") {
-        let csrf = login(&jar, &user, &pass).ok_or("login void — the submit stays unexecuted (0 honored)")?;
+        let csrf = login(&jar, &user, &pass)
+            .ok_or("login void — the submit stays unexecuted (0 honored)")?;
         let prefix = match arg_value(&args, "--prefix") {
             Some(p) => p,
             None => String::new(),
@@ -470,8 +505,10 @@ fn run() -> Result<(), String> {
         }
     }
     if let Some(src) = arg_value(&args, "--compile") {
-        let out = arg_value(&args, "--out").ok_or("--out <file.bin> absent — the output path is never silent")?;
-        let lsk_path = arg_value(&args, "--lsk").ok_or("--lsk <naif0012.tls> absent — the TDB clock stays unread")?;
+        let out = arg_value(&args, "--out")
+            .ok_or("--out <file.bin> absent — the output path is never silent")?;
+        let lsk_path = arg_value(&args, "--lsk")
+            .ok_or("--lsk <naif0012.tls> absent — the TDB clock stays unread")?;
         let lsk_text = fs::read_to_string(&lsk_path)
             .map_err(|e| format!("{lsk_path}: {e} — the TDB clock stays unread"))?;
         let lsk = parse_lsk(&lsk_text).ok_or(format!("{lsk_path}: leap table parses void"))?;
@@ -498,6 +535,15 @@ mod tests {
         assert_eq!(form_encode("omegaflow"), "omegaflow");
         assert_eq!(form_encode("a b"), "a%20b");
         assert_eq!(form_encode("a&b=c"), "a%26b%3Dc");
+    }
+
+    #[test]
+    fn job_body_matches_the_measured_datashop_post() {
+        assert_eq!(
+            job_body("ascii", "{\"array\":{}}"),
+            "out_format=ascii&data=%7B%22array%22%3A%7B%7D%7D"
+        );
+        assert_eq!(job_body("root", "{}"), "out_format=root&data=%7B%7D");
     }
 
     #[test]
