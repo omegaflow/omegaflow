@@ -16,15 +16,38 @@ pub const FETCH_DURATION_RING: usize = 1 << 4;
 
 pub const CONNECT_BOUND_S: u64 = 1 << 5;
 
-pub(crate) fn transfer_timeout_s(ttl: u64) -> u64 {
+#[derive(Clone, Copy)]
+pub enum RetryPolicy {
+    Transient,
+    All,
+}
+
+pub fn ttl_transfer_bound(ttl: u64) -> u64 {
     ((ttl as f64) / (Φ * Φ)).ceil() as u64
 }
 
-pub fn fetch_raw(
+fn append_retry(cmd: &mut Command, retry: RetryPolicy, attempts: u64) {
+    cmd.arg("--retry")
+        .arg(attempts.to_string())
+        .arg("--retry-delay")
+        .arg("2");
+    match retry {
+        RetryPolicy::Transient => {
+            cmd.arg("--retry-connrefused");
+        }
+        RetryPolicy::All => {
+            cmd.arg("--retry-all-errors");
+        }
+    }
+}
+
+pub fn fetch_raw_with(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
     ttl: u64,
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
 ) -> Option<String> {
     if url.starts_with("s3://") {
         if body.is_some() {
@@ -34,20 +57,15 @@ pub fn fetch_raw(
             .map(|b| String::from_utf8_lossy(&b).into_owned());
     }
     let connect_t = CONNECT_BOUND_S;
-    let max_t = transfer_timeout_s(ttl);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
         .arg("-f")
         .arg("-L")
-        .arg("-g")
-        .arg("--retry")
-        .arg("3")
-        .arg("--retry-all-errors")
-        .arg("--retry-delay")
-        .arg("2")
-        .arg("-m")
-        .arg(max_t.to_string())
+        .arg("-g");
+    append_retry(&mut cmd, retry, 3);
+    cmd.arg("-m")
+        .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
         .arg(connect_t.to_string());
     if let Some(b) = body {
@@ -74,38 +92,54 @@ pub fn fetch_raw(
     }
 }
 
-pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
+pub fn fetch_raw(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<String> {
+    fetch_raw_with(
+        url,
+        body,
+        headers,
+        ttl,
+        RetryPolicy::Transient,
+        ttl_transfer_bound(ttl),
+    )
+}
+
+pub fn curl_base(retry: RetryPolicy, transfer_bound_s: u64, parallel_max: u8) -> Command {
     let connect_t = CONNECT_BOUND_S;
-    let max_t = transfer_timeout_s(ttl);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
         .arg("-f")
         .arg("-L")
-        .arg("-g")
-        .arg("--retry")
-        .arg("5")
-        .arg("--retry-all-errors")
-        .arg("--retry-delay")
-        .arg("2");
+        .arg("-g");
+    append_retry(&mut cmd, retry, 5);
     if parallel_max > 0 {
         cmd.arg("--parallel")
             .arg("--parallel-max")
             .arg(parallel_max.to_string());
     }
     cmd.arg("-m")
-        .arg(max_t.to_string())
+        .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
         .arg(connect_t.to_string());
     append_ca(&mut cmd);
     cmd
 }
 
-pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
+pub fn fetch_raw_bytes_with(
+    url: &str,
+    ttl: u64,
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
+) -> Option<Vec<u8>> {
     if url.starts_with("s3://") {
         return super::range::fetch_s3_whole(url, ttl);
     }
-    let mut cmd = curl_base(ttl, 0);
+    let mut cmd = curl_base(retry, transfer_bound_s, 0);
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
@@ -122,15 +156,21 @@ pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
-pub fn fetch_raw_bytes_headers(
+pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
+    fetch_raw_bytes_with(url, ttl, RetryPolicy::Transient, ttl_transfer_bound(ttl))
+}
+
+pub fn fetch_raw_bytes_headers_with(
     url: &str,
     headers: &[(String, String)],
     ttl: u64,
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
 ) -> Option<Vec<u8>> {
     if url.starts_with("s3://") {
         return super::range::fetch_s3_whole(url, ttl);
     }
-    let mut cmd = curl_base(ttl, 0);
+    let mut cmd = curl_base(retry, transfer_bound_s, 0);
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
@@ -148,6 +188,20 @@ pub fn fetch_raw_bytes_headers(
         );
         None
     }
+}
+
+pub fn fetch_raw_bytes_headers(
+    url: &str,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<Vec<u8>> {
+    fetch_raw_bytes_headers_with(
+        url,
+        headers,
+        ttl,
+        RetryPolicy::Transient,
+        ttl_transfer_bound(ttl),
+    )
 }
 
 pub fn fetch_raw_probe(
@@ -191,26 +245,22 @@ pub fn fetch_raw_probe(
     }
 }
 
-pub fn fetch_raw_bytes_post(
+pub fn fetch_raw_bytes_post_with(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
-    ttl: u64,
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
 ) -> Option<Vec<u8>> {
     let connect_t = CONNECT_BOUND_S;
-    let max_t = transfer_timeout_s(ttl);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
         .arg("-f")
-        .arg("-L")
-        .arg("--retry")
-        .arg("5")
-        .arg("--retry-all-errors")
-        .arg("--retry-delay")
-        .arg("2")
-        .arg("-m")
-        .arg(max_t.to_string())
+        .arg("-L");
+    append_retry(&mut cmd, retry, 5);
+    cmd.arg("-m")
+        .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
         .arg(connect_t.to_string())
         .arg("-X")
@@ -239,6 +289,21 @@ pub fn fetch_raw_bytes_post(
         );
         None
     }
+}
+
+pub fn fetch_raw_bytes_post(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<Vec<u8>> {
+    fetch_raw_bytes_post_with(
+        url,
+        body,
+        headers,
+        RetryPolicy::Transient,
+        ttl_transfer_bound(ttl),
+    )
 }
 
 pub type Origin = u32;
