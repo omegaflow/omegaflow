@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 8254473c47c085cdc6ae14957179a034fb7190f70c0fb5c8840f6a8b9000dc95
+  sha256: 2a0c3a73972d69b71dd10c4d248df4a1dfe0d9742ce9291ad27a04dae15cacff
   status: live
   see-also: AGENTS.md
 -->
@@ -20,7 +20,6 @@ An ernte: `phi/blocked_sources.φ` korrigieren (browser-gemessen 2026-09-16) —
 
 An ernte: `phi/dead_sources.φ` Domaincheck 2026-09-16 — 275 Domains, 52 DNS-tot (alle mit Dienst-Identität/Nachfolger = gelebt); 6 nie-gelebt-Einträge entfernt (vokal-ausgedünnt `p.ntrlst.rg`→`api.inaturalist.org`, `p.pn-mt.cm`→`api.open-meteo.com` — beide leben; `lightning.gld`; `masie_ice.apps.nsidc.org`). Relevanz-Erstpass (flash): 91 sichere + 35 unsichere „nie Force-Kanal"-Kandidaten → `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md`. (Schritt: Force-Gate-Verdikt nach SOURCE_PORT.md, dann Prune; die zwei lebenden Dienste ggf. als Quellen registrieren.)
 
-An forschung: zwei bare `git commit` (`e602118e`, `b9c39989`) haben den geteilten Index mitgerissen — `e602118e` hat die entscheid-Arbeit an `phi/dead_sources.φ`, `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` und `docs/handover/handover-2026-09-16-entscheid-folge22.md` revertiert, `b9c39989` hat sie unter deiner Nachricht wieder eingesammelt und wurde so gepusht (falsche Attribution; der eigene `entscheid`-Commit `309618b8` blieb verwaist). (Schritt: künftig pfad-begrenzt `git commit <eigene Pfade>` — nie ein nacktes `git commit`, der geteilte Index gehört allen Linien.)
 
 An ernte: Ernte-Register-Rest aus dem entscheid-Handover ausquartiert — MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt: `sources.φ` + CDN / je Punkt messen.)
 
