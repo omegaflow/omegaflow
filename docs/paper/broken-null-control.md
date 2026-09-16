@@ -2,7 +2,7 @@
   title: Broken null control — the phase-randomized surrogate gate
   class: paper
   date: 2026-09-12
-  sha256: c0d006d1f18fefd0af3cfead424a50758eb828db7b10d6d1dfe6a96899736ff1
+  sha256: ead4a3904118d9d43ff3e04a759fa973b82f912fd06383872bd4422cb1650670
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -128,10 +128,31 @@ cached live window 2026-09-08 → 2026-09-15, 2:1 decimation of the 60 s grid �
   false positive (1/40 = 2.5 % on the independent cells) and keeps all 8
   true couplings.
 
-Still open: **Window drift** — the naive and phase runs are not on identical
-data (the RTSW window rolls ~2 h between runs); n drifts accordingly; a
-fixed-window re-run on archived data is pending. The estimator carries a
-residual false-negative bias at n = 300 (0–3/10 true couplings found,
+**Window drift closed** (`te_null_limits_probe`, 2026-09-16): the naive
+Fisher–Yates threshold and the phase-randomized threshold are computed in one
+process on one binning — both nulls see the identical arrays and the same seed
+per pair, so no window rolls between them. Live common 60 s grid (cached
+2026-09-16, decimated 2:1 → 120 s cadence, τ = 1):
+
+| pair | n | TE | naive thr. | naive | phase thr. | phase |
+|---|---|---|---|---|---|---|
+| Dichte-RTSW → X-Ray | 909 | 3.91e-2 | 4.03e-2 | silent | 5.48e-2 | silent |
+| Dichte-RTSW → EUV-304 | 848 | 4.22e-2 | 5.23e-2 | silent | 7.26e-2 | silent |
+| Dichte-RTSW → EUV-284 | 848 | 2.82e-2 | 4.10e-2 | silent | 5.59e-2 | silent |
+| Dichte-RTSW → Bz | 918 | 1.13e-1 | 9.20e-2 | arrow | 1.61e-1 | silent |
+| Hénon X→Y (true) | 1000 | 1.51e-1 | 4.69e-2 | arrow | 5.88e-2 | arrow |
+| Hénon Y→X (reverse) | 1000 | 4.36e-2 | 3.73e-2 | arrow | 5.33e-2 | silent |
+
+On this window the phase gate holds all four control pairs silent; the naive
+gate breaks only Dichte-RTSW → Bz and is silent on the other three. The earlier
+2026-09-12 finding (all four control pairs breaking under the naive threshold)
+was measured on a different window; the fixed-window re-run does not reproduce
+the naive breach for X-Ray, EUV-304 or EUV-284, while the phase gate is silent
+on all four. The phase threshold exceeds the naive threshold on every pair of
+this run. On the coupled Hénon system the asymmetry appears in one run: both
+nulls find the true X→Y arrow, while the reverse Y→X is a naive false positive
+(TE 4.36e-2 > naive 3.73e-2) that the phase null silences. The estimator carries
+a residual false-negative bias at n = 300 (0–3/10 true couplings found,
 `te_fn_probe`) — named, and it does not drive false positives.
 
 The scientific content is a negative: the cascade was an artifact of the test,
