@@ -133,6 +133,7 @@ fn main() {
     let mut count_only = false;
     let mut case_sensitive = false;
     let mut path_match = false;
+    let mut include_glob: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -249,6 +250,12 @@ fn main() {
             "--count" => count_only = true,
             "--case" => case_sensitive = true,
             "--path" => path_match = true,
+            "--include" => {
+                i += 1;
+                if let Some(g) = args.get(i) {
+                    include_glob = Some(g.clone());
+                }
+            }
             "--help" | "-h" => {
                 usage();
                 std::process::exit(0);
@@ -303,6 +310,7 @@ fn main() {
                         binary,
                         case_sensitive,
                         count_only,
+                        include_glob.as_deref(),
                     );
                 }
             } else {
@@ -316,6 +324,7 @@ fn main() {
                     binary,
                     case_sensitive,
                     count_only,
+                    include_glob.as_deref(),
                 );
             }
         }
@@ -382,7 +391,9 @@ fn main() {
 fn usage() {
     eprintln!("archive_search — the divers' research tool (content, paths, NTFS, network modes)");
     eprintln!();
-    eprintln!("content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case]");
+    eprintln!(
+        "content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case] [--include <glob>]"
+    );
     eprintln!("  --root <dir>  search root, repeatable (default $HOME)");
     eprintln!("  --lines <n>   hit lines shown per file (default 2)");
     eprintln!("  --files <n>   files shown, ranked (default 40)");
@@ -391,24 +402,47 @@ fn usage() {
     eprintln!("  --binary      include binary files (default skipped)");
     eprintln!("  --count       print 'n files, m hits for: …' only");
     eprintln!("  --case        case-sensitive (default case-insensitive)");
+    eprintln!("  --include <glob>  only files whose name matches the glob (e.g. '*.rs')");
     eprintln!();
-    eprintln!("paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)");
+    eprintln!(
+        "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
+    );
     eprintln!("history:  archive_search --git <query>");
-    eprintln!("leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)");
-    eprintln!("forensic: archive_search --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (NTFS file table; the live repo is not NTFS)");
+    eprintln!(
+        "leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)"
+    );
+    eprintln!(
+        "forensic: archive_search --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (NTFS file table; the live repo is not NTFS)"
+    );
     eprintln!();
-    eprintln!("network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query> [--cacert <pem>]");
-    eprintln!("  --ntrs      a bare citation id resolves via the citation path, any other query searches");
+    eprintln!(
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query> [--cacert <pem>]"
+    );
+    eprintln!(
+        "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
+    );
     eprintln!("  --sniff     reports magic bytes + sha256");
     eprintln!("  --isc       key=value: start/end/minmag/minlat/maxlat/minlon/maxlon");
-    eprintln!("  --supermag  key=value: station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>   (data; logon = SUPERMAG_USER)");
+    eprintln!(
+        "  --supermag  key=value: station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>   (data; logon = SUPERMAG_USER)"
+    );
     eprintln!("              or start=<YYYYMMDDHHMM> extent=<seconds>   (station inventory)");
-    eprintln!("  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)");
-    eprintln!("  --all       the query through every keyword search mode (13 calls — the last move, never the first)");
+    eprintln!(
+        "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
+    );
+    eprintln!(
+        "  --all       the query through every keyword search mode (13 calls — the last move, never the first)"
+    );
     eprintln!();
-    eprintln!("browser:  archive_search --playwright <url|query>   (real browser render; a bare query searches)");
-    eprintln!("reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)");
-    eprintln!("serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)");
+    eprintln!(
+        "browser:  archive_search --playwright <url|query>   (real browser render; a bare query searches)"
+    );
+    eprintln!(
+        "reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)"
+    );
+    eprintln!(
+        "serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"
+    );
 }
 
 fn print_lines(lines: &[String]) {
@@ -433,6 +467,7 @@ fn collect_plain(
     skip: usize,
     include_binary: bool,
     case_sensitive: bool,
+    include: Option<&str>,
 ) -> PlainResult {
     let mut roots: Vec<String> = Vec::new();
     if roots_given.is_empty() {
@@ -463,6 +498,7 @@ fn collect_plain(
             max_mb,
             include_binary,
             case_sensitive,
+            include,
             &mut state,
         );
     }
@@ -493,6 +529,7 @@ fn run_plain(
     include_binary: bool,
     case_sensitive: bool,
     count_only: bool,
+    include: Option<&str>,
 ) {
     let result = collect_plain(
         roots_given,
@@ -503,6 +540,7 @@ fn run_plain(
         skip,
         include_binary,
         case_sensitive,
+        include,
     );
     if count_only {
         println!(
@@ -1052,6 +1090,7 @@ fn walk(
     max_mb: u64,
     include_binary: bool,
     case_sensitive: bool,
+    include: Option<&str>,
     state: &mut State,
 ) {
     let entries = match fs::read_dir(dir) {
@@ -1079,9 +1118,15 @@ fn walk(
                 max_mb,
                 include_binary,
                 case_sensitive,
+                include,
                 state,
             );
         } else {
+            if let Some(glob) = include {
+                if !glob_match(&name, glob) {
+                    continue;
+                }
+            }
             state.scanned += 1;
             if let Some((count, hits)) = search_file(
                 &path,
@@ -1148,6 +1193,24 @@ fn line_matches(line: &str, needle: &[String], case_sensitive: bool) -> bool {
     }
 }
 
+fn glob_match(name: &str, glob: &str) -> bool {
+    if !glob.contains('*') && !glob.contains('?') {
+        return name == glob;
+    }
+    match_star(name.as_bytes(), glob.as_bytes())
+}
+
+fn match_star(text: &[u8], pattern: &[u8]) -> bool {
+    if pattern.is_empty() {
+        return text.is_empty();
+    }
+    match pattern[0] {
+        b'*' => (0..=text.len()).any(|i| match_star(&text[i..], &pattern[1..])),
+        b'?' => !text.is_empty() && match_star(&text[1..], &pattern[1..]),
+        c => !text.is_empty() && text[0] == c && match_star(&text[1..], &pattern[1..]),
+    }
+}
+
 fn is_binary(bytes: &[u8]) -> bool {
     bytes[..bytes.len().min(8192)].contains(&0u8)
 }
@@ -1200,6 +1263,14 @@ mod tests {
         assert!(line_matches("an ICECUBE alert", &needle, true));
         assert!(!line_matches("an icecube alert", &needle, true));
         assert!(line_matches("an icecube alert", &needle, false));
+    }
+
+    #[test]
+    fn include_glob_matches_file_names() {
+        assert!(glob_match("foo.rs", "*.rs"));
+        assert!(!glob_match("foo.toml", "*.rs"));
+        assert!(glob_match("exact", "exact"));
+        assert!(glob_match("a.rs", "?.rs"));
     }
 
     #[test]
