@@ -83,7 +83,10 @@ fn flux_record(ecsv: &str, registry_yaml: &str) -> Option<SkymapRecord> {
     let scale = dnde_scale_to_si(&table.columns[d_idx].unit)?;
     let mut best: Option<(f64, f64)> = None;
     for row in &table.rows {
-        let (Some(e), Some(d)) = (row.get(e_idx).copied().flatten(), row.get(d_idx).copied().flatten()) else {
+        let (Some(e), Some(d)) = (
+            row.get(e_idx).copied().flatten(),
+            row.get(d_idx).copied().flatten(),
+        ) else {
             continue;
         };
         if e <= 0.0 || d <= 0.0 {
