@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: c4da99606f2bc2965cc02c7f94bbaae65788ac2eaf3aa17a0075f4445886e447
+  sha256: 0265404255b9a4d58bfa8e157f4d84eb5f537735a20278caaca01dab7ea2e2ea
   status: live
   see-also: AGENTS.md
 -->
@@ -21,7 +21,11 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 - Pfade/Dateinamen: `archive_search --index [<query>] [--path] [--kind] [--sort]`.
 - `grep`, `ls`, `cat` **in bash** sind Verstöße (gemessener Zähler 132/36/3,
   2026-09-16 — der Zähler gehört ins Handover). Das `Grep`-Tool von OpenCode ist
-  erlaubt; bash-`grep` ist es nicht.
+  erlaubt; bash-`grep` ist es nicht. Die Leitbefehle (`grep`/`ls`/`cat` am
+  Kommandoanfang) sind in `opencode.json` **strukturell verweigert**
+  (`"grep *": "deny"`); eine Pipe (`cmd | grep`) fällt weiter unter die Regel und
+  den Zähler. Gemessene Nutzung (opencode.db, alle Sessions): `grep` 130, `ls` 29,
+  `cat` 11 gegen `archive_search` 94, `sfetch` 47, `sgrep` 20 — deshalb die Sperre.
 - Das `--help` des Werkzeugs selbst ist die kanonische Schnittstelle — alle
   Aufrufe und Flags stehen dort (`sgrep --help`, `archive_search --help`,
   `git_safety`, `omega_sh help`, `smail`, `register_lookup`). Die
