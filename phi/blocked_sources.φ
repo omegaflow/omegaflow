@@ -57,8 +57,8 @@ blocked parser-def zip/fixed-width-text
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 note IGRA-2 Radiosonden (NCEI, Sensor-Welle). Messung 2026-09-16: Verzeichnis HTTP 200 (807 .txt.zip), ZIP `USM00070026-data-beg2026.txt.zip` HTTP 200 (1 852 651 B, enthält genau `USM00070026-data.txt`, 7 082 929 B), Nicht-ZIP-Route `…-beg2026.txt` HTTP 404. Messung echt (Radiosonde: PRESS 103574 Pa, GPH 14 m, TEMP −25,4 °C, RH 82,0 %; thermal/diffusion/acoustic). Parser-Gap: kein IGRA-Parser — `format csv_zip` entpackt, aber `Rows` splittet bei csv_zip per Komma, IGRA-2 ist fixed-width/whitespace; `text_to_json` braucht Header >5 Token und Datenzeile ≥ Header-Token (Header 11, Datenzeile 9). Öffnung: IGRA-fixed-width-Arm (Spalten PRESS 10-15, GPH 17-21, TEMP 23-27, RH 29-33).
 
-blocked account
+pending
 url https://kcdc.iap.kit.edu
 reg https://kcdc.iap.kit.edu/accounts/login
-note KCDC — KASCADE Cosmic-ray Data Centre (Portal HTTP 200, 20 592 B, gemessen 2026-09-16) mit drei DataShops: formularbasierte Abfrage + Selektion rekonstruierter Luftschauer-Parameter (433 M Events) — kein URL-Endpoint; Login unter `/accounts/login`, „Data Format" unter `/information/dataFormat` (anonym GET 0 B). Messung echt (em, Schauer-Cherenkov-/Scintillator-Licht); der Zugang ist kontogegatet (Registrierung) und das Event-Tabellen-Format steht erst nach einem Konto + Job fest → blocked account (kein parser-def mehr: das Format ist ungemessen, nicht unlesbar).
+note KCDC — KASCADE Cosmic-ray Data Centre (Portal HTTP 200, gemessen 2026-09-16). Das Konto `omegaflow` ist registriert, der Login funktioniert (gemessen 2026-09-16; `KCDC_USER`/`KCDC_PASS` in `.secrets.local`) — der frühere `blocked account` ist offen. Drei DataShops (KASCADE, COMBINED, MAKET-ANI; 433 M Events): formularbasierte Abfrage + Selektion rekonstruierter Luftschauer-Parameter, kein URL-Endpoint; „Data Format" unter `/information/dataFormat`. Messung echt (em, Schauer-Cherenkov-/Scintillator-Licht); das Event-Tabellen-Format steht erst nach einem Job fest → pending (Konsument/Format ungebaut, kein parser-def).
 
