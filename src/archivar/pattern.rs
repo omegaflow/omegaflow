@@ -130,17 +130,9 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                                 break;
                             }
                         }
-                        if let Some(res) = best {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
+                        bi = best?;
                     } else {
-                        if let Some(res) = match_re(pi, p, bi + 1, b, cap) {
-                            bi = res;
-                        } else {
-                            return None;
-                        }
+                        bi = match_re(pi, p, bi + 1, b, cap)?;
                     }
                 }
                 b'(' => {
@@ -166,18 +158,15 @@ pub fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         return None;
                     }
                     let save = bi;
-                    if let Some(new_bi) = match_re(0, &p[pi + 1..end], bi, b, cap) {
-                        if cap.is_none()
-                            && let Ok(s) = std::str::from_utf8(&b[save..new_bi])
-                            && let Ok(v) = s.parse::<f64>()
-                        {
-                            *cap = Some(v);
-                        }
-                        bi = new_bi;
-                        pi = end + 1;
-                    } else {
-                        return None;
+                    let new_bi = match_re(0, &p[pi + 1..end], bi, b, cap)?;
+                    if cap.is_none()
+                        && let Ok(s) = std::str::from_utf8(&b[save..new_bi])
+                        && let Ok(v) = s.parse::<f64>()
+                    {
+                        *cap = Some(v);
                     }
+                    bi = new_bi;
+                    pi = end + 1;
                 }
                 b'[' => {
                     pi += 1;
