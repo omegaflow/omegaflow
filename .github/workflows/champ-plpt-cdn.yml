@@ -20,14 +20,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view isdc-data.gfz.de --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "champ_plpt.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset champ_plpt.bin already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset champ_plpt.bin missing — compiling and manifesting"
           fi
-          echo "asset champ_plpt.bin missing — compiling and manifesting"
       - name: Ensure the isdc-data.gfz.de release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view isdc-data.gfz.de --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create isdc-data.gfz.de --repo omegaflow/sources \
@@ -35,6 +39,7 @@ jobs:
               --notes "GFZ ISDC CHAMP Level-2 PLPT Langmuir electron density compiled to a geo bin (CDN tag = netloc)"
           fi
       - name: Compile the CHAMP PLPT era and manifest to the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo build -p omegaflow-harvest --release --bin champ_plpt_compiler \
             && ./target/release/champ_plpt_compiler --start 2002-02-19 --end 2009-12-31 \

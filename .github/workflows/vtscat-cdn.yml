@@ -19,14 +19,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view github.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "vtscat_flux.sky1"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset vtscat_flux.sky1 already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset vtscat_flux.sky1 missing — compiling and manifesting"
           fi
-          echo "asset vtscat_flux.sky1 missing — compiling and manifesting"
       - name: Ensure the github.com release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view github.com --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create github.com --repo omegaflow/sources \
@@ -34,6 +38,7 @@ jobs:
               --notes "VERITAS VTSCat spectral flux maps compiled to a SKY1 skymap (kind gamma). One record per source: RA/Dec (ICRS deg), value = fiducial 1-TeV differential flux dnde (m-2 s-1 TeV-1)."
           fi
       - name: Compile the VTSCat flux map and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin vtscat_compiler -- \
             --out vtscat_flux.sky1 \
