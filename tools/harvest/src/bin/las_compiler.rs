@@ -21,6 +21,7 @@ enum CrsAxis {
     Geographic,
     WebMercator,
     Utm { zone: u16, southern: bool },
+    Nad83Utm { zone: u16 },
 }
 
 impl CrsAxis {
@@ -32,6 +33,9 @@ impl CrsAxis {
                 "WGS 84 / UTM zone {zone}{} (GRS80 series inverse)",
                 if *southern { "S" } else { "N" }
             ),
+            CrsAxis::Nad83Utm { zone } => {
+                format!("NAD83 / UTM zone {zone}N (GRS80 series inverse)")
+            }
         }
     }
 }
@@ -98,6 +102,9 @@ fn resolve_crs(crs: &LasCrs) -> Option<CrsAxis> {
         LasCrs::Epsg(code) if (32701..=32760).contains(code) => Some(CrsAxis::Utm {
             zone: code - 32700,
             southern: true,
+        }),
+        LasCrs::Epsg(code) if (26901..=26923).contains(code) => Some(CrsAxis::Nad83Utm {
+            zone: code - 26900,
         }),
         LasCrs::Wkt(wkt) => wkt_epsg(wkt).and_then(|code| resolve_crs(&LasCrs::Epsg(code))),
         _ => None,
@@ -207,6 +214,9 @@ fn crs_to_geodetic(axis: &CrsAxis, x: f64, y: f64, z: f64) -> Option<(f64, f64, 
         }
         CrsAxis::Utm { zone, southern } => {
             utm_inverse(*zone, *southern, x, y).map(|(lat, lon)| (lat, lon, z))
+        }
+        CrsAxis::Nad83Utm { zone } => {
+            utm_inverse(*zone, false, x, y).map(|(lat, lon)| (lat, lon, z))
         }
     }
 }
@@ -614,7 +624,20 @@ mod tests {
         assert!(resolve_crs(&LasCrs::Epsg(32600)).is_none());
         assert!(resolve_crs(&LasCrs::Epsg(32661)).is_none());
         assert!(resolve_crs(&LasCrs::Epsg(32700)).is_none());
-        assert!(resolve_crs(&LasCrs::Epsg(26911)).is_none());
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(26904)),
+            Some(CrsAxis::Nad83Utm { zone: 4 })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(26901)),
+            Some(CrsAxis::Nad83Utm { zone: 1 })
+        ));
+        assert!(matches!(
+            resolve_crs(&LasCrs::Epsg(26923)),
+            Some(CrsAxis::Nad83Utm { zone: 23 })
+        ));
+        assert!(resolve_crs(&LasCrs::Epsg(26900)).is_none());
+        assert!(resolve_crs(&LasCrs::Epsg(26924)).is_none());
         assert!(matches!(
             resolve_crs(&LasCrs::Wkt(
                 "PROJCRS[\"WGS 84 / Pseudo-Mercator\",ID[\"EPSG\",3857]]".to_string()
