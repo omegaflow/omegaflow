@@ -4,7 +4,8 @@ use omegaflow::archivar::{
 };
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::te::{
-    phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag, transfer_entropy_lag_h,
+    phase_randomized_surrogate, surrogate_stats, surrogate_stats_phase, transfer_entropy_lag,
+    transfer_entropy_lag_h,
 };
 use std::collections::HashMap;
 
@@ -276,6 +277,28 @@ fn seed_next(cell: &mut u64) -> u64 {
     s
 }
 
+fn null_pair_row(name: &str, x: &[f32], y: &[f32], lag: usize, seed: u64) {
+    if x.len() < 30 {
+        println!(" {name:<24} | n = {} < 30 -> no finding", x.len());
+        return;
+    }
+    let te = transfer_entropy_lag(x, y, lag);
+    let naive = surrogate_stats(x, y, lag, seed).map(|(_, _, t)| t);
+    let phase = surrogate_stats_phase(x, y, lag, seed).map(|(_, _, t)| t);
+    match (te, naive, phase) {
+        (Some(t), Some(n), Some(p)) => println!(
+            " {name:<24} | {:>5} | {:>10.4e} | {:>11.4e} | {:>6} | {:>11.4e} | {:>6}",
+            x.len(),
+            t,
+            n,
+            if t > n { "arrow" } else { "silent" },
+            p,
+            if t > p { "arrow" } else { "silent" },
+        ),
+        _ => println!(" {name:<24} | n = {:>5} | absent", x.len()),
+    }
+}
+
 fn window_report(name: &str, s: &[(f64, f64)]) {
     match (s.first(), s.last()) {
         (Some(&(a, _)), Some(&(b, _))) => println!(
@@ -527,6 +550,29 @@ fn main() {
     println!();
 
     let mut cell = 0u64;
+
+    println!("=== M0 — both nulls on the identical window (one process, one binning), same seed per pair ===");
+    println!(
+        " {:<24} | {:>5} | {:>10} | {:>11} | {:>6} | {:>11} | {:>6}",
+        "pair", "n", "TE", "naive thr", "naive", "phase thr", "phase"
+    );
+    let mut m0 = 0u64;
+    if live_grid {
+        for (name, target) in [
+            ("Dichte-RTSW -> X-Ray", 0usize),
+            ("Dichte-RTSW -> EUV-304", 1),
+            ("Dichte-RTSW -> EUV-284", 2),
+            ("Dichte-RTSW -> Bz", 3),
+        ] {
+            let (x, y) = cell_of(target, 4);
+            null_pair_row(name, &x, &y, 1, seed_next(&mut m0));
+        }
+    } else {
+        println!(" live control pairs: no common window -> no finding");
+    }
+    null_pair_row("Henon X->Y (fwd)", &yh, &xh, 1, seed_next(&mut m0));
+    null_pair_row("Henon Y->X (rev)", &xh, &yh, 1, seed_next(&mut m0));
+    println!();
 
     println!("=== M1 — KDE bandwidth sensitivity (Silverman factor on h; threshold recomputed under the same h) ===");
     if live_grid {

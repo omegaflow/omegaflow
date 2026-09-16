@@ -2,7 +2,7 @@
   title: Die positive Maske — Treiber hinzufügen statt Rauschen abziehen
   class: concept
   date: 2026-09-12
-  sha256: da870a45af903711424e6cbcac2e7c060208881b80c218992c9706701540cc12
+  sha256: 382321f6aef574a02f489861237934b45192d7726b0d9182001785f5209850f8
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -65,8 +65,12 @@ irrelevant. Keine Deutung, nur Messung. Kein Anspruch, nur der Riss.
   offen (II.KIV +5,69 s); pP-Mehrdeutigkeit bei Δ≈30°.
 - M9.1-Picker: die Streuung bleibt — der USGS-Mww-Zentroid-Nachfolger ist
   gebaut, die Verdrahtung in die Flotte offen.
-- Ephemeriden: de441-mars-Rotationsmatrizen Δ 6045,3 km (Vor-Fix);
-  de441 earth/moon/sun aus der einen Stimme gedriftet (Erdmitte 116 km,
-  Finsternis 42,5 km / −90,5 s); `body_fixed_to_icrs`-Matrixpfad dreht die
-  Erdoberfläche ~117° falsch (Finsternis-Befund 2026-09-09).
+- Ephemeriden: geschlossen (2026-09-13). Der `body_fixed_to_icrs`-Matrixpfad
+  trägt die IAU-Produktform Rz(90+α)·Rx(90−δ)·Rz(W) mit dem Pol aus Spalte 2
+  (`src/archivar/motion.rs`, Fix `0f79b1ce`; de441 mars Anker Δ 0,0 km, die
+  Vor-Fix-6045,3-km-Lesung ist zu). Erdmitte 0,0 m von de440; die 42,5 km /
+  −90,5 s / +10,1 s-Drift war ein veraltetes lokales 19-MB-Erdbin (ttl-Cache),
+  kein de441-Defekt; die 2024-Kanon-Δ 793,3 km war eine Suchfeld-Grenze
+  (longitude 90° statt 180°), jetzt 8,4 km. Gate (Punkt < 15 km, Magnitude
+  < 0,002) hält (`docs/paper/eclipse-clock-worldlines.md`).
 - Galileo-ODF: Format 1 vs 2 ungemessen (kein lokales galileo_odf.bin).

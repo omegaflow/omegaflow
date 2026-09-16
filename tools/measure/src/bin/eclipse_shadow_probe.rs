@@ -1,7 +1,8 @@
 use omegaflow::archivar::astrometry::delta_t_espenak_meeus;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk,
-    fetch_raw_bytes, light_time_worldline, orientation_angles_at, parse_ephemeris_binary,
+    body_barycenter_position, body_fixed_to_icrs_smooth, embedded_lsk, fetch_raw_bytes,
+    light_time_worldline, orientation_angles_at, parse_ephemeris_binary, BodyEphemeris,
+    LeapSeconds,
 };
 use omegaflow::cdn::CDN_BASE;
 use std::collections::HashMap;
@@ -329,7 +330,11 @@ fn magnitude_at(line: &Line, t: f64, obs: [f64; 3]) -> Option<f64> {
     let rs = angular_radius(sun_r, vlen(vsub(sun, obs))?)?;
     let rm = angular_radius(moon_r, vlen(vsub(moon, obs))?)?;
     let out = (rs + rm - theta) / (2.0 * rs);
-    if out.is_finite() { Some(out) } else { None }
+    if out.is_finite() {
+        Some(out)
+    } else {
+        None
+    }
 }
 
 fn sunlit(line: &Line, t: f64, obs: [f64; 3], geo: [f64; 3]) -> bool {
@@ -943,22 +948,32 @@ mod tests {
             .all(|a| std::path::Path::new(&format!("{eph_dir}/{netloc}/{a}")).exists())
     }
 
+    fn workspace_data_dir() -> String {
+        let crate_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let root = crate_dir
+            .parent()
+            .and_then(|p| p.parent())
+            .expect("tools/measure sits two levels under the workspace root");
+        root.join("data").to_string_lossy().into_owned()
+    }
+
     #[test]
-    fn kalibrier_gate_de440_places_the_2017_greatest_eclipse_at_the_canon_point() {
-        let spec = &LINES[1];
+    fn kalibrier_gate_de441_places_the_2017_greatest_eclipse_at_the_canon_point() {
+        let spec = &LINES[0];
+        let eph_dir = workspace_data_dir();
         if !local_bins_present(
-            "data",
+            &eph_dir,
             spec.netloc,
             &[spec.sun_asset, spec.moon_asset, spec.earth_asset],
         ) {
             println!(
-                "kalibrier gate: the de440 bins sit absent from data/ — named skip, the gate stays unrun"
+                "kalibrier gate: the de441 bins sit absent from data/ — named skip, the gate stays unrun"
             );
             return;
         }
-        let Some(line) = load_line(spec, "data") else {
+        let Some(line) = load_line(spec, &eph_dir) else {
             println!(
-                "kalibrier gate: the de440 line is not read — named skip, the gate stays unrun"
+                "kalibrier gate: the de441 line is not read — named skip, the gate stays unrun"
             );
             return;
         };
@@ -975,7 +990,7 @@ mod tests {
             return;
         };
         let Some((t_great, lat, lon, mag)) = run_line(&line, day_tdb, &lsk) else {
-            panic!("kalibrier gate: the de440 line produced no greatest eclipse");
+            panic!("kalibrier gate: the de441 line produced no greatest eclipse");
         };
         let _ = t_great;
         let canon_lat = 36.9667;
@@ -983,11 +998,11 @@ mod tests {
         let km = arc_km(lat, lon, canon_lat, canon_lon);
         assert!(
             km < 15.0,
-            "kalibrier gate: the de440 greatest-eclipse point lies {km:.1} km from the canon point"
+            "kalibrier gate: the de441 greatest-eclipse point lies {km:.1} km from the canon point"
         );
         assert!(
             (mag - 1.0306).abs() < 0.002,
-            "kalibrier gate: the de440 magnitude {mag:.5} drifts from the canon 1.0306"
+            "kalibrier gate: the de441 magnitude {mag:.5} drifts from the canon 1.0306"
         );
     }
 }

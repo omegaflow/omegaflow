@@ -5981,6 +5981,12 @@ field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
+format dawn_odf
+at earth
+ttl 604800
+field observable_hz dawn_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
 on earth 60.6 25.2 0
