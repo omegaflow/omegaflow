@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: 0265404255b9a4d58bfa8e157f4d84eb5f537735a20278caaca01dab7ea2e2ea
+  sha256: 329026f09a247be7f98b64429bcc5687801d9446831c73cd80142b8a20fd52de
   status: live
   see-also: AGENTS.md
 -->
@@ -78,8 +78,9 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
   Standardausgabe ist `pfad:zeile:text`; ohne `-i` case-sensitiv; `-l` nur
   Dateipfade, `-c` nur der Zähler. Der Dateisatz kommt aus `git ls-files`.
 - `archive_search <kws>... [--root <dir>]... [--lines n] [--files n] [--max-mb n]
-  [--skip n] [--binary] [--count] [--case]` — default case-insensitiv; `--count`
-  druckt `n files, m hits for: …`.
+  [--skip n] [--binary] [--count] [--case] [--include <glob>]` — default
+  case-insensitiv; `--count` druckt `n files, m hits for: …`; `--include '*.rs'`
+  filtert auf Dateinamen (der `grep --include`-Ersatz).
 - `archive_search --index [<query>] [--path] [--kind any|file|dir] [--sort name|size|mtime]`.
 - `archive_search --supermag "station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>"`
   (Daten) oder `"start=<YYYYMMDDHHMM> extent=<sekunden>"` (Stations-Inventory);
