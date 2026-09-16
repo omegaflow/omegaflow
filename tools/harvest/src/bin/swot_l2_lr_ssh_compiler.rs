@@ -2,10 +2,12 @@ use omegaflow::archivar::range::{
     edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
     S3_REGION,
 };
+use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
     decode_f32, decode_f64, Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object,
 };
+use omegaflow::lsk::days_from_civil;
 use omegaflow::netcdf::{nc4_group, NetcdfFile, NetcdfType, NetcdfVar};
 use std::env;
 use std::fs;
@@ -18,7 +20,7 @@ const BUCKET_PROTECTED: &str = "podaac-swot-ops-cumulus-protected";
 const PRODUCT_ROOT: &str = "SWOT_L2_LR_SSH_D/";
 const DEFAULT_OUT: &str = "data/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin";
 const MAGIC: [u8; 4] = *b"SWS1";
-const REC_FIELDS: usize = 4;
+const REC_FIELDS: usize = 5;
 const REC_BYTES: usize = REC_FIELDS * 8;
 const META_WINDOW: u64 = 1 << 25;
 const META_ESCALATION: u64 = 3 * (1 << 25);
@@ -83,6 +85,54 @@ fn amz_now() -> Option<(String, String)> {
         date_stamp.clone(),
         format!("{date_stamp}T{h:02}{mi:02}{s:02}Z"),
     ))
+}
+
+fn epoch_from_units(units: &str, lsk: &LeapSeconds) -> Option<f64> {
+    let since = units.find("since")?;
+    let rest = units[since + "since".len()..].trim();
+    let mut tokens = rest.split_whitespace();
+    let date = tokens.next()?;
+    let (ymd, time) = match date.split_once('T') {
+        Some((d, t)) => (d, Some(t.to_string())),
+        None => (date, tokens.next().map(|t| t.to_string())),
+    };
+    let year: i64 = ymd.get(0..4)?.parse().ok()?;
+    let month: i64 = ymd.get(5..7)?.parse().ok()?;
+    let day: i64 = ymd.get(8..10)?.parse().ok()?;
+    let days = days_from_civil(year, month, day)?;
+    let (hh, mm, ss) = match time.as_deref() {
+        Some(t) if t.len() >= 8 => {
+            let (hh, rest) = t.split_once(':')?;
+            let (mm, ss) = rest.split_once(':')?;
+            let ss = ss.split('.').next()?;
+            (
+                hh.parse::<i64>().ok()?,
+                mm.parse::<i64>().ok()?,
+                ss.parse::<i64>().ok()?,
+            )
+        }
+        _ => (0, 0, 0),
+    };
+    let unix = days as f64 * 86400.0 + (hh * 3600 + mm * 60 + ss) as f64;
+    lsk.unix_to_tdb(unix)
+}
+
+fn nc4_time_units(file: &Hdf5File, time_path: &str) -> Option<String> {
+    let a = file.attribute(time_path, "units")?;
+    if a.datatype.class != 3 {
+        return None;
+    }
+    Some(
+        String::from_utf8_lossy(&a.data)
+            .trim_end_matches('\0')
+            .to_string(),
+    )
+}
+
+fn classic_time_units(ncf: &NetcdfFile, time_name: &str) -> Option<String> {
+    let v = ncf.var(time_name)?;
+    let a = v.attrs.iter().find(|a| a.name == "units")?;
+    ncf.attr_text(a)
 }
 
 fn uri_encode_query(s: &str) -> String {
@@ -514,6 +564,7 @@ fn assemble(
     lons: &[f64],
     sshas: &[f64],
     ssha_fill: Option<f64>,
+    anchor_tdb: f64,
 ) -> Vec<[f64; REC_FIELDS]> {
     let n = [times.len(), lats.len(), lons.len(), sshas.len()]
         .into_iter()
@@ -533,13 +584,24 @@ fn assemble(
         {
             continue;
         }
-        out.push([t, lat, lon, ssha]);
+        out.push([t, lat, lon, ssha, anchor_tdb]);
     }
     out
 }
 
-fn extract_nc4(file: &Hdf5File, s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]> {
+fn extract_nc4(
+    file: &Hdf5File,
+    s3_url: &str,
+    creds: &S3Credentials,
+    lsk: &LeapSeconds,
+) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_path, lat_path, lon_path, time_path)) = choose_paths_nc4(file) else {
+        return Vec::new();
+    };
+    let Some(units) = nc4_time_units(file, &time_path) else {
+        return Vec::new();
+    };
+    let Some(anchor_tdb) = epoch_from_units(&units, lsk) else {
         return Vec::new();
     };
     let Some(times) = nc4_first_values(file, s3_url, creds, &time_path) else {
@@ -555,15 +617,22 @@ fn extract_nc4(file: &Hdf5File, s3_url: &str, creds: &S3Credentials) -> Vec<[f64
         return Vec::new();
     };
     let fill = nc4_fill(file, &ssha_path);
-    assemble(&times, &lats, &lons, &sshas, fill)
+    assemble(&times, &lats, &lons, &sshas, fill, anchor_tdb)
 }
 
 fn extract_classic(
     ncf: &NetcdfFile,
     s3_url: &str,
     creds: &S3Credentials,
+    lsk: &LeapSeconds,
 ) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_name, lat_name, lon_name, time_name)) = classic_set(ncf) else {
+        return Vec::new();
+    };
+    let Some(units) = classic_time_units(ncf, &time_name) else {
+        return Vec::new();
+    };
+    let Some(anchor_tdb) = epoch_from_units(&units, lsk) else {
         return Vec::new();
     };
     let Some(times) = classic_first_values(ncf, s3_url, creds, &time_name) else {
@@ -579,10 +648,14 @@ fn extract_classic(
         return Vec::new();
     };
     let fill = classic_fill(ncf, &ssha_name);
-    assemble(&times, &lats, &lons, &sshas, fill)
+    assemble(&times, &lats, &lons, &sshas, fill, anchor_tdb)
 }
 
-fn harvest_granule(s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]> {
+fn harvest_granule(
+    s3_url: &str,
+    creds: &S3Credentials,
+    lsk: &LeapSeconds,
+) -> Vec<[f64; REC_FIELDS]> {
     let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
         eprintln!(
             "{}: range read returned void — granule stays pending",
@@ -592,7 +665,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]
     };
     if w1.len() >= 3 && w1[..3] == CDF_MAGIC {
         match NetcdfFile::parse(&w1) {
-            Ok(ncf) => return extract_classic(&ncf, s3_url, creds),
+            Ok(ncf) => return extract_classic(&ncf, s3_url, creds, lsk),
             Err(note) => {
                 eprintln!(
                     "{}: classic header in {} B stayed unread ({:?}) — escalating once",
@@ -602,7 +675,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]
         }
     } else if w1.len() >= 4 && w1[..4] == HDF_MAGIC {
         match Hdf5File::parse(&w1) {
-            Ok(file) => return extract_nc4(&file, s3_url, creds),
+            Ok(file) => return extract_nc4(&file, s3_url, creds, lsk),
             Err(note) => {
                 eprintln!(
                     "{}: nc4 header window of {} B stayed unread ({:?}) — escalating once",
@@ -626,7 +699,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]
     };
     if w2.len() >= 3 && w2[..3] == CDF_MAGIC {
         match NetcdfFile::parse(&w2) {
-            Ok(ncf) => extract_classic(&ncf, s3_url, creds),
+            Ok(ncf) => extract_classic(&ncf, s3_url, creds, lsk),
             Err(n2) => {
                 eprintln!(
                     "{}: metadata beyond {} B ({:?}) — granule stays pending",
@@ -637,7 +710,7 @@ fn harvest_granule(s3_url: &str, creds: &S3Credentials) -> Vec<[f64; REC_FIELDS]
         }
     } else if w2.len() >= 4 && w2[..4] == HDF_MAGIC {
         match Hdf5File::parse(&w2) {
-            Ok(file) => extract_nc4(&file, s3_url, creds),
+            Ok(file) => extract_nc4(&file, s3_url, creds, lsk),
             Err(n2) => {
                 eprintln!(
                     "{}: metadata beyond {} B ({:?}) — granule stays pending",
@@ -833,6 +906,12 @@ fn run_harvest(args: &[String]) {
             chosen.push((found_bucket.clone(), o));
         }
     }
+    let Some(lsk) = embedded_lsk() else {
+        eprintln!(
+            "swot-l2-lr-ssh: the embedded naif0012.tls leap table is absent — no time anchor folds to the TDB clock; the harvest stays unwritten (0 honored, pending)"
+        );
+        std::process::exit(1);
+    };
     let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
     for (bucket, obj) in &chosen {
         let Some(creds) = creds_for(&token, bucket) else {
@@ -841,7 +920,7 @@ fn run_harvest(args: &[String]) {
         };
         let s3_url = format!("s3://{bucket}/{}", obj.key);
         let before = recs.len();
-        let granule = harvest_granule(&s3_url, &creds);
+        let granule = harvest_granule(&s3_url, &creds, &lsk);
         recs.extend(granule);
         eprintln!(
             "swot-l2-lr-ssh: {} → {} records ({} B granule)",
@@ -899,8 +978,8 @@ mod tests {
     #[test]
     fn pack_unpack_roundtrip() {
         let recs = vec![
-            [750_000_000.0, -30.5, 10.25, 0.42],
-            [750_000_001.0, -30.51, 10.26, -0.15],
+            [750_000_000.0, -30.5, 10.25, 0.42, -43_071.816],
+            [750_000_001.0, -30.51, 10.26, -0.15, -43_071.816],
         ];
         let bytes = pack(&recs);
         assert_eq!(bytes.len(), 8 + 2 * REC_BYTES);
@@ -915,7 +994,7 @@ mod tests {
         assert!(unpack(b"X").is_none());
         assert!(unpack(b"SWS1abc").is_none());
         assert!(unpack(b"GED1").is_none());
-        let mut short = pack(&[[1.0, 2.0, 3.0, 4.0]]);
+        let mut short = pack(&[[1.0, 2.0, 3.0, 4.0, 5.0]]);
         short.truncate(short.len() - 1);
         assert!(unpack(&short).is_none());
     }
@@ -926,9 +1005,26 @@ mod tests {
         let lats = [-30.5, -91.0, -30.7];
         let lons = [10.25, 10.25, 190.0];
         let sshas = [0.42, -21_474_836_47.0, 0.1];
-        let recs = assemble(&times, &lats, &lons, &sshas, Some(-21_474_836_47.0));
+        let recs = assemble(
+            &times,
+            &lats,
+            &lons,
+            &sshas,
+            Some(-21_474_836_47.0),
+            -43_071.816,
+        );
         assert_eq!(recs.len(), 1);
-        assert_eq!(recs[0], [750_000_000.0, -30.5, 10.25, 0.42]);
+        assert_eq!(recs[0], [750_000_000.0, -30.5, 10.25, 0.42, -43_071.816]);
+    }
+
+    #[test]
+    fn time_units_fold_to_tdb_anchor() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let anchor =
+            epoch_from_units("seconds since 2000-01-01 00:00:00 UTC", &lsk).expect("epoch folds");
+        let unix = days_from_civil(2000, 1, 1).unwrap() as f64 * 86400.0;
+        assert_eq!(anchor, lsk.unix_to_tdb(unix).expect("tdb"));
+        assert!(epoch_from_units("no since token here", &lsk).is_none());
     }
 
     #[test]

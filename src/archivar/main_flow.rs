@@ -2081,6 +2081,8 @@ pub fn main_flow() {
                     | "vex_odf"
                     | "galileo_odf"
                     | "dawn_odf"
+                    | "voyager_odr"
+                    | "galileo_odr"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
