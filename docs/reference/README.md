@@ -20,3 +20,7 @@ Seeds/Zensus unter `docs/surveys/`.
 | `42-122-keihm-wvr-fullyear.pdf` (`.txt`) | Goldstone tropospheric delay fluctuations, full-year WVR (DSS 13, Oct 93–Sep 94) — wet-delay ASD vs Δt, seasonal/day-night | Keihm 1995, TDA Prog. Rep. 42-122, pp. 1–11 |
 | `42-158-keihm-media-cal.pdf` (`.txt`) | Tropospheric delay statistics + MCS calibration performance at DSS 25 (19-month archive) — wet/dry ASD, structure functions, spectra | Keihm/Tanner/Rosenberger 2004, IPN Prog. Rep. 42-158 |
 | `42-148-mcs-part3.pdf` (`.txt`) | Media Calibration System for Cassini Radio Science, Part III — tracking-ASD requirements (1.5×10⁻¹⁵ two-way), WVR-calibrated CEI residuals | Resch et al. 2002, IPN Prog. Rep. 42-148 |
+| `moyer.2000.pdf` | Moyer formulation for observed and computed values of DSN data types (time scales, light-time solution, media/antenna corrections, observables) | Moyer, JPL Pub 00-7, PDS radiosci.documentation |
+| `dsn_redr.2021-07-31.pdf` | REDR format SIS, Voyager Jupiter radio occultation (open-loop receiver records) | Simpson 2021, PDS radiosci.documentation |
+| `redr_unpack.pdf` | Interpretation and use of binary REDR data (worked Voyager 1 example) | PDS radiosci.documentation |
+| `810-005-202E-doppler.pdf` | DSN 810-005 module 202 Rev E, Doppler Tracking — one/two/three-way Doppler, measurement errors, solar phase scintillation | DSN/JPL deepspace.jpl.nasa.gov |
