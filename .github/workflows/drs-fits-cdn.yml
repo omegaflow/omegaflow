@@ -11,12 +11,12 @@ on:
         description: LISA Pathfinder DRS FITS granule URL
         required: true
         type: string
-        default: https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/drs_20160116_155329__20160123_160115.fits
+        default: https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/drs_20160102_093513__20160103_165224.fits
       asset:
         description: output asset name on the CDN (netloc heasarc.gsfc.nasa.gov)
         required: true
         type: string
-        default: drs_20160116_155329__20160123_160115.bin
+        default: drs_20160102_093513__20160103_165224.bin
 permissions:
   contents: write
 env:
