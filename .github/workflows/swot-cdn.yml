@@ -1,0 +1,61 @@
+name: swot-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: SWOT product prefix (used when granule is blank)
+        required: true
+        type: string
+        default: "SWOT_L2_LR_SSH_D/"
+      granule:
+        description: direct granule key (blank = list under prefix)
+        required: false
+        type: string
+        default: ""
+      protected:
+        description: read the protected SWOT bucket
+        required: false
+        type: boolean
+        default: false
+      limit:
+        description: granule bound
+        required: true
+        type: string
+        default: "2"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  swot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the archive.podaac.earthdata.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view archive.podaac.earthdata.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create archive.podaac.earthdata.nasa.gov --repo omegaflow/sources \
+              --title "archive.podaac.earthdata.nasa.gov" \
+              --notes "SWOT L2 LR SSH (SWOT_L2_LR_SSH_D) sea-surface height compiled to a geo oscillator record (medium em). Header 8 B: magic SWS1 (4), count (u32 LE). Record stride 32 B = 4 x f64 LE: time (s), latitude (deg), longitude (deg), ssh_karin_2/ssha (m)."
+          fi
+      - name: Compile the SWOT L2 LR SSH granules and upload to CDN
+        run: |
+          extra=()
+          if [ "${{ inputs.protected }}" = "true" ]; then extra+=(--protected); fi
+          if [ -n "${{ inputs.granule }}" ]; then extra+=(--granule "${{ inputs.granule }}"); fi
+          cargo run -p omegaflow-harvest --release --bin swot_l2_lr_ssh_compiler -- \
+            --prefix "${{ inputs.prefix }}" "${extra[@]}" --limit "${{ inputs.limit }}" \
+            --out data/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "swot-cdn: swot_l2_lr_ssh.bin returned void" \
+                 "swot_l2_lr_ssh_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
