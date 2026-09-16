@@ -2332,9 +2332,11 @@ fn gate_fpr_cells_from(
                         continue;
                     }
                     for lag in 1..=max_lag {
-                        let true_edge = tgt == 1 && drv >= 2 && drv < 2 + d_z && lag == 1;
-                        if true_edge {
-                            tp += 1;
+                        let z_to_y = tgt == 1 && drv >= 2 && drv < 2 + d_z;
+                        if z_to_y {
+                            if lag == 1 {
+                                tp += 1;
+                            }
                             continue;
                         }
                         neg += 1;
