@@ -3,6 +3,8 @@ description: Commit & push — only the session's own work, path-scoped, measure
 ---
 
 Committe und pushe jetzt — nur deine eigene Arbeit, gemessen nicht beteuert.
+Dieser Befehl ist das Commit-Wort des Operators (das Doppel-Ask); `/consent` ist
+der session-weite Consent (Delegation) und deckt Commit/Push nicht.
 
 1. `git status --short` — trenne deine Dateien von fremden.
 2. Bei geteilten Dateien lies `git diff` und stage nur deine eigenen Hunks.
