@@ -3,7 +3,7 @@
   session: Forschung-Folge 24
   class: handover
   date: 2026-09-16
-  sha256: a65f34c7aef411fb55fa121620c66ab468702236da016aedbd1a982486dddef0
+  sha256: a5823bd078bd4cdc6af17fa58badaacc504cad9dfc0bd4042b48f6068eead12b
   status: live
 -->
 # Handover — Forschung-Folge 24 (2026-09-16)
@@ -55,11 +55,15 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## Bande-Split / Sonden-ODF
 
-- **1988-Wertdivergenz — gemessen.** Die Divergenz ist die verarbeitete Reihe
-  (`resid_e`) gegen das rohe Residuum; offen bleibt, welcher Schritt der
-  Subtraktionskette rx14 um +10,1 mHz verschiebt. Eine fremde Session bearbeitet
-  `pioneer10_paper_chain_retrace.rs` live (A1-Chain-Ablation) — nicht anfassen.
-  (Schritt: Ablation auswerten, sobald die fremde Session committet.)
+- **1988-Wertdivergenz — die Ablations-Stufe gemessen.** Die A1-Chain-Ablation
+  (`pioneer10_paper_chain_retrace.rs`, committet) fährt die rx14-1988-Zelle
+  (Station 14, strict-1.0-s, 44–58) Stufe für Stufe: resid0/resid_c/resid_d
+  halten 45,75 mHz, **resid_e springt auf 57,11 mHz (+11,36 mHz)** — der Sprung
+  entsteht in Deduction 7 (daily-curve Segment-Slope), nicht in Media/Plasma/Ramp.
+  Offen: ob die Segment-Slope-Subtraktion den Paper-Wert verfälscht oder die
+  Kette korrekt ist.
+  (Schritt: Deduction 7 gegen die Paper-Methode prüfen —
+  `docs/paper/ground-sources-20s-band.md`.)
 - **160-Hz-Amplitudenzensus** — pending.
   (Schritt: `cargo run -p omegaflow-measure --bin pioneer_link_correction_probe` in CI dispatchen.)
 - **NOCC-Reduktionsvorschrift — Dokumente geholt.** Moyer 2000 + dsn_redr-Familie +
