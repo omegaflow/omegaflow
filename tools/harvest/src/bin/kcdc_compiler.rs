@@ -1,10 +1,9 @@
 use omegaflow::archivar::kcdc::{
-    MAGIC, Table, array_comp, calorimeter_comp, col_of, general_comp, grande_comp, is_log10,
-    join_key, lopes_comp, parse_bin, plausible, read_table, row_time, write_bin,
+    MAGIC, Table, array_comp, calorimeter_comp, general_comp, grande_comp, is_log10, lopes_comp,
+    mapped_times, own_gt_times, parse_bin, parse_row_mapping, plausible, read_table, write_bin,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -281,15 +280,15 @@ fn table_text(src: &Path, name: &str, zip: Option<&[u8]>) -> Option<String> {
 fn compile_table(
     table: &Table,
     comp_of: fn(&str) -> Option<u32>,
-    gt_index: &BTreeMap<(i64, i64), f64>,
+    times: &[Option<f64>],
     lsk: &LeapSeconds,
     records: &mut Vec<(f64, f64, u32)>,
 ) -> (usize, usize, usize) {
     let mut emitted = 0usize;
     let mut absent = 0usize;
     let mut timed_out = 0usize;
-    for row in &table.rows {
-        let Some(t) = row_time(table, row, gt_index) else {
+    for (r, row) in table.rows.iter().enumerate() {
+        let Some(t) = times.get(r).copied().flatten() else {
             timed_out += 1;
             continue;
         };
@@ -333,24 +332,25 @@ fn compile(src: &Path, out_path: &str, lsk: &LeapSeconds, ci: bool) -> Result<()
         None
     };
 
-    let mut gt_index: BTreeMap<(i64, i64), f64> = BTreeMap::new();
-    if let Some(general_text) = table_text(src, "general.txt", zip) {
-        if let Some(general) = read_table(&general_text) {
-            if let Some(gt_i) = col_of(&general, "Gt") {
-                for row in &general.rows {
-                    if let (Some(key), Some(Some(t))) = (join_key(&general, row), row.get(gt_i)) {
-                        if *t > 0.0 {
-                            gt_index.insert(key, *t);
-                        }
-                    }
-                }
-            }
-        }
+    let mapping = table_text(src, "row_mapping.txt", zip).and_then(|t| parse_row_mapping(&t));
+    let general = table_text(src, "general.txt", zip).and_then(|t| read_table(&t));
+    let general_times = match &general {
+        Some(t) => own_gt_times(t),
+        None => Vec::new(),
+    };
+    let mapping_label = match &mapping {
+        Some(m) => m.tables.join("|"),
+        None => String::from("absent"),
+    };
+    match &general {
+        Some(t) => eprintln!(
+            "kcdc: general {} rows, {} timed; row_mapping {}",
+            t.rows.len(),
+            general_times.iter().filter(|t| t.is_some()).count(),
+            mapping_label,
+        ),
+        None => eprintln!("kcdc: general absent; row_mapping {mapping_label}"),
     }
-    eprintln!(
-        "kcdc: {} general rows with Gt in the join index",
-        gt_index.len()
-    );
 
     let mut records: Vec<(f64, f64, u32)> = Vec::new();
     let component_maps: [(&str, fn(&str) -> Option<u32>); 5] = [
@@ -369,8 +369,12 @@ fn compile(src: &Path, out_path: &str, lsk: &LeapSeconds, ci: bool) -> Result<()
             eprintln!("kcdc: {name} carries no header line — the layout stays unread (0 honored)");
             continue;
         };
+        let times = match &mapping {
+            Some(m) => mapped_times(m, &general_times, name),
+            None => own_gt_times(&table),
+        };
         let (emitted, absent, timed_out) =
-            compile_table(&table, comp_of, &gt_index, lsk, &mut records);
+            compile_table(&table, comp_of, &times, lsk, &mut records);
         eprintln!(
             "kcdc: {name}: {} rows, {} records, {} cells absent/implausible, {} rows without time",
             table.rows.len(),
