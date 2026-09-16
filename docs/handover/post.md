@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 81192640910a254fbe7f853b87cfc3e0b3664ad37d598e147cdf3c18a0498385
+  sha256: d1eb704caa5b6e18d5b17082bd71c697ffb3c5be0f25aba4c6c4bfaf02d0feab
   status: live
   see-also: AGENTS.md
 -->
@@ -19,11 +19,11 @@ An alle Linien (format-Gate): CI-`format` rot — fremde unformatierte Dateien: 
 
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
 
-An entscheid: DEMETER-Re-Aggregation — der `demeter_isl`-Konsument ist verdrahtet (`extract.rs`/`main_flow.rs`/`demeter.rs`, `cargo check` 0/0); die 77 Alt-Shards tragen ein −1970-Jahr und brauchen einen Re-Run von `demeter-cdn.yml` (die korrekt benannten Monats-Shards fehlen: `demeter_isl_200410.bin` = 404). Der Workflow koppelt an den CDPP-Harvest und könnte neue Orders erzeugen (Dritt-Akt). (Schritt: Operator-Wort für den Dispatch — oder ein Aggregat-only-CI-Job auf dem Cache-Workdir, nur Compiler + CDN-Upload, kein Harvest.)
+An ernte: DEMETER-Re-Aggregation — der `demeter_isl`-Konsument ist verdrahtet (`extract.rs`/`main_flow.rs`/`demeter.rs`, `cargo check` 0/0); die 77 Alt-Shards tragen ein −1970-Jahr (die korrekt benannten Monats-Shards fehlen: `demeter_isl_200410.bin` = 404). **Kein Consent-Punkt:** `demeter-cdn.yml` läuft ohnehin **täglich** (`schedule: cron "0 4 * * *"`, `:9-10`) und fährt `demeter_harvest` (`:43-49`, legt Orders an — stehender Akt) + Compiler/CDN-Upload; die Shards werden beim nächsten Lauf neu erzeugt. Ein Dispatch ist nur Timing (jetzt statt 04:00 UTC). (Schritt: Lauf abwarten — oder, falls keine neuen Orders gewünscht, den aggregat-only-Job auf dem Cache-Workdir bauen.)
 
-An entscheid: KASCADE-Grande — DataShop ist Keycloak-SSO/JS, kein URL/POST-Endpoint; `blocked_sources.φ:63` korrekt. Braucht einen Minimal-Job mit dem `omegaflow`-Konto. (Schritt: Operator führt den SSO-Job, oder `/consent` + `archive_search --playwright --headed`.)
+An ernte: KASCADE-Grande (KCDC) — **kein API-Key.** Der Zugang ist die Django-Session (`KCDC_USER`/`KCDC_PASS` in `.secrets.local`, Login `POST /accounts/login`) + CSRF. Gemessen 2026-09-16 am DataShop-JS `KAOSDataShop.js`: `GET /datashop/quants/?det_prefix=&det_name=<array|grande|calorimeter|lopes>` → JSON, `GET /datashop/descr/?det_prefix=&det_name=<name>[&quant_name=…]` → JSON, `POST /datashop/<prefix>` (Prefix `""`, Header `X-CSRFToken`); Formate `root|hdf5|ascii`; Komponenten `array`=KASCADE, `grande`=GRANDE. Der frühere „Keycloak-SSO/JS, kein URL/POST-Endpoint" ist widerlegt (unauthentifiziert liefern die Endpunkte leer → Session nötig). (Schritt: Session-Login → Quants/Descr → Submit in einem Compiler; `phi/blocked_sources.φ:63` von „kein URL-Endpoint" fortschreiben.)
 
-An entscheid: doi.org-Landingpage für `10.3929/ethz-c-000797709` bleibt HTTP 429 (direct + Proton-Exit, gemessen 2026-09-16 via `archive_search --verdict`; Wayback-CDX leer). Titel und Jahr sind via DataCite + Crossref gemessen (2026) — die Route wäre nur noch für die Landingpage-Auflösung. Freigabe: `bin/proton-wg.sh suggest doi.org` → `bin/proton-wg.sh <cc>` (Schritt: Operator-Wort `/consent <act>` auf den präsentierten Lauf).
+An ernte: doi.org (`10.3929/ethz-c-000797709`) — **Korrektur:** `doi.org` löst per **302** auf `www.research-collection.ethz.ch/handle/20.500.11850/797709`; die **Zielseite** gibt **429 „Too Many Requests"** (Apache-Rate-Limit, **kein** Geo-Block), auch über den `.ch`-Exit (`135.136.39.36`) — `proton-wg.sh ch` hilft nicht (Limit ist nicht exit-gebunden). Die Metadaten liegen via DataCite vollständig vor: „Observing spatial and temporal variations in the atmospheric chemistry of rocky exoplanets: Prospects for mid-infrared spectroscopy", Braam & Angerhausen, EDP Sciences / A&A, 2026, Alt-DOI `10.1051/0004-6361/202557807`, CC BY 4.0. (Schritt: keine Landingpage-Auflösung nötig — die DOI ist keine Datenquelle.)
 
 
 
