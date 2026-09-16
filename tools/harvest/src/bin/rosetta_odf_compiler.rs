@@ -111,7 +111,11 @@ fn files_by_bundle(bundles: &[String]) -> Vec<(String, String)> {
                         break;
                     };
                     let bundle = &bundles[bi];
-                    found.extend(files_of(bundle, sub).into_iter().map(|rel| (bundle.clone(), rel)));
+                    found.extend(
+                        files_of(bundle, sub)
+                            .into_iter()
+                            .map(|rel| (bundle.clone(), rel)),
+                    );
                 }
                 found
             }));
