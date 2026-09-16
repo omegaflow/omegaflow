@@ -49,6 +49,8 @@ jobs:
     - run: cargo test --release
     - run: cargo test --release -p omegaflow-register
     - run: cargo test --release -p omegaflow-utils
+    - run: cargo test --release -p omegaflow-harvest --bin skydirection_compiler
+    - run: cargo test --release -p omegaflow-harvest --bin kcdc_compiler
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

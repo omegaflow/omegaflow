@@ -32,6 +32,7 @@ jobs:
             phi/pipeline/demeter_urns.txt
           key: demeter-harvest-${{ runner.os }}
           restore-keys: demeter-harvest-${{ runner.os }}
+          save-always: true
 
       - uses: dtolnay/rust-toolchain@stable
 
