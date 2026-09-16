@@ -1,4 +1,6 @@
 use crate::archivar::skydirection::{SkyDirection, parse_bin};
+use crate::archivar::{BodyEphemeris, Motion, body_barycenter_position};
+use std::collections::HashMap;
 
 pub const S2_LMAX: u32 = 64;
 
@@ -60,6 +62,44 @@ impl S2Osc {
             sigma_rad: d.angular_uncertainty_rad(),
             weight: presence_weight(d, t, default_tau_s),
         }
+    }
+
+    fn from_worldline(position: [f64; 3]) -> Option<S2Osc> {
+        let n = (position[0] * position[0]
+            + position[1] * position[1]
+            + position[2] * position[2])
+            .sqrt();
+        if !(n.is_finite() && n > 0.0) {
+            return None;
+        }
+        Some(S2Osc {
+            p_hat: [position[0] / n, position[1] / n, position[2] / n],
+            sigma_rad: None,
+            weight: 1.0,
+        })
+    }
+
+    pub fn from_body(name: &str, t: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<S2Osc> {
+        let position = body_barycenter_position(name, t, eph)?;
+        S2Osc::from_worldline(position)
+    }
+
+    pub fn from_station(
+        body_name: &str,
+        lat: f64,
+        lon: f64,
+        alt: f64,
+        t: f64,
+        eph: &HashMap<String, BodyEphemeris>,
+    ) -> Option<S2Osc> {
+        let motion = Motion::Surface {
+            body_name: body_name.to_string(),
+            lat,
+            lon,
+            alt,
+        };
+        let position = motion.at(t, t, eph)?;
+        S2Osc::from_worldline(position)
     }
 }
 
@@ -392,6 +432,94 @@ mod tests {
         assert!((t - (1.0f64 / (1.5 + S2_EPS)).tanh()).abs() < 1e-12);
         let quiet = breath_target(1.0, 1.0, 1.0);
         assert!(quiet.abs() < 1e-12);
+    }
+
+    fn body_eph(
+        name: &str,
+        t0: f64,
+        t1: f64,
+        props: Option<crate::archivar::BodyProperties>,
+    ) -> HashMap<String, BodyEphemeris> {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t0, [1.0e9, 0.0, 0.0], [0.0, 0.0, 0.0]),
+            (t1, [1.0e9, 0.0, 0.0], [0.0, 0.0, 0.0]),
+        ]);
+        let eph = BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        };
+        let mut map = HashMap::new();
+        map.insert(name.to_string(), eph);
+        map
+    }
+
+    fn body_props() -> crate::archivar::BodyProperties {
+        crate::archivar::BodyProperties {
+            α0_deg: 0.0,
+            dα0_dt_deg_per_century: 0.0,
+            δ0_deg: 90.0,
+            dδ0_dt_deg_per_century: 0.0,
+            w0_deg: 0.0,
+            dw_dt_deg_per_day: 360.0,
+            radius_m: 6371000.0,
+            flattening: Some(0.0),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+            omega_g: None,
+        }
+    }
+
+    #[test]
+    fn a_covered_body_manifests_a_unit_oscillator() {
+        let t = 8.4e8;
+        let eph = body_eph("earth", t - 10.0, t + 10.0, None);
+        let o = S2Osc::from_body("earth", t, &eph).expect("a covered body carries a worldline");
+        assert!((o.weight - 1.0).abs() < 1e-12);
+        assert_eq!(o.sigma_rad, None);
+        let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        assert!((n - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn a_body_without_a_covering_granule_manifests_no_oscillator() {
+        let t = 8.4e8;
+        let eph = body_eph("earth", t + 100.0, t + 200.0, None);
+        assert!(S2Osc::from_body("earth", t, &eph).is_none());
+        let empty: HashMap<String, BodyEphemeris> = HashMap::new();
+        assert!(S2Osc::from_body("earth", t, &empty).is_none());
+    }
+
+    #[test]
+    fn a_station_manifests_a_unit_oscillator() {
+        let t = 8.4e8;
+        let eph = body_eph("earth", t - 10.0, t + 10.0, Some(body_props()));
+        let o = S2Osc::from_station("earth", 52.0, 13.0, 100.0, t, &eph)
+            .expect("a station on a covered body carries a worldline");
+        assert!((o.weight - 1.0).abs() < 1e-12);
+        assert_eq!(o.sigma_rad, None);
+        let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2]).sqrt();
+        assert!((n - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn an_absent_worldline_vector_manifests_none_not_zero() {
+        assert!(S2Osc::from_worldline([0.0, 0.0, 0.0]).is_none());
+        assert!(S2Osc::from_worldline([f64::NAN, 1.0, 0.0]).is_none());
+        assert!(S2Osc::from_worldline([f64::INFINITY, 1.0, 0.0]).is_none());
     }
 }
 
