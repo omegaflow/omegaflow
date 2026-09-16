@@ -35,7 +35,6 @@ fn null_model() -> TeNull {
         1 => TeNull::Block,
         2 => TeNull::Shift,
         3 => TeNull::Phase,
-        4 => TeNull::Residual,
         _ => TeNull::Arx,
     }
 }
@@ -526,12 +525,12 @@ fn main() {
         Some("phase") => NULL_MODEL.store(3, Ordering::Relaxed),
         Some("residual") => {
             eprintln!(
-                "residual is retired (FPR 19.51 %/ksg @ a=0.9, n=1000, CI 35092997862) — it runs only when named; the probe runs arx when --null is absent"
+                "residual is struck (FPR 19.51 %/ksg @ a=0.9, n=1000, CI 35092997862) — the path is a refusal; the probe runs arx when --null is absent"
             );
-            NULL_MODEL.store(4, Ordering::Relaxed)
+            std::process::exit(1)
         }
         Some(other) => {
-            eprintln!("--null carries {other} — the probe builds arx when --null is absent, block, shift, phase, residual (retired)");
+            eprintln!("--null carries {other} — the probe builds arx when --null is absent, block, shift, phase, residual (struck)");
             std::process::exit(1);
         }
     }
@@ -715,7 +714,6 @@ fn main() {
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
-            TeNull::Residual => "residual",
             TeNull::Block => "block",
             TeNull::Shift => "shift",
             TeNull::Phase => "phase",

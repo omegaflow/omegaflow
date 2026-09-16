@@ -275,32 +275,29 @@ fn decode_body(head: &str, body: &str) -> String {
 
 fn header_value(block: &str, name: &str) -> Option<String> {
     let mut found: Option<String> = None;
-    let mut current: Option<String> = None;
+    let mut in_target = false;
     for line in block.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() {
             break;
         }
         if line.starts_with(' ') || line.starts_with('\t') {
-            if let Some(v) = current.as_mut() {
-                v.push(' ');
-                v.push_str(trimmed);
+            if in_target {
+                if let Some(v) = found.as_mut() {
+                    v.push(' ');
+                    v.push_str(trimmed);
+                }
             }
             continue;
         }
         if let Some((k, v)) = line.split_once(':') {
-            if k.trim().to_lowercase() == name {
-                current = Some(v.trim().to_string());
+            in_target = k.trim().to_lowercase() == name;
+            if in_target {
                 found = Some(v.trim().to_string());
-            } else {
-                current = None;
             }
         } else {
-            current = None;
+            in_target = false;
         }
-    }
-    if current.is_some() {
-        found = current;
     }
     found
 }
@@ -486,6 +483,12 @@ mod tests {
     #[test]
     fn folded_content_type_boundary() {
         let raw = "Content-Type: multipart/alternative;\r\n\tboundary=\"b1=_X\"\r\n\r\n--b1=_X\r\nContent-Type: text/plain\r\n\r\nhello\r\n--b1=_X--";
+        assert_eq!(mime_plaintext(raw), "hello");
+    }
+
+    #[test]
+    fn folded_content_type_boundary_survives_following_header() {
+        let raw = "Content-Type: multipart/alternative;\r\n\tboundary=\"b1=_X\"\r\nContent-Transfer-Encoding: 7bit\r\n\r\n--b1=_X\r\nContent-Type: text/plain\r\n\r\nhello\r\n--b1=_X--";
         assert_eq!(mime_plaintext(raw), "hello");
     }
 }
