@@ -2055,6 +2055,7 @@ pub fn main_flow() {
                 archive.sources[i].format.as_str(),
                 "rpw_efield"
                     | "goes_xrs"
+                    | "intermagnet_dbdt"
                     | "omni2_serie"
                     | "mitdb"
                     | "circor"
@@ -2065,7 +2066,21 @@ pub fn main_flow() {
                     | "goes_abi"
                     | "atdf"
                     | "himawari_hsd"
+                    | "maxi"
+                    | "voyager_saturn"
                     | "cors_rinex"
+                    | "drs_fits"
+                    | "juno_odf"
+                    | "magellan_odf"
+                    | "mgs_odf"
+                    | "mro_odf"
+                    | "odyssey_odf"
+                    | "messenger_odf"
+                    | "mars_express_odf"
+                    | "rosetta_odf"
+                    | "vex_odf"
+                    | "galileo_odf"
+                    | "dawn_odf"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -2437,6 +2452,10 @@ pub fn main_flow() {
                     | "noaa_ghcn_d"
                     | "noaa_gsod"
                     | "noaa_isd"
+                    | "noaa_wod"
+                    | "cosmic_ro"
+                    | "us_crn_hourly"
+                    | "copernicus_cdm_obs"
                     | "gdp_drifter"
             ) {
                 let url = archive.sources[i].url.clone();

@@ -6338,6 +6338,9 @@ field c5 cors_rinex_c5_m inverse-square em m 604800 0.0 0.0
 field l1 cors_rinex_l1_cycle inverse-square em cycle 604800 0.0 0.0
 field l2 cors_rinex_l2_cycle inverse-square em cycle 604800 0.0 0.0
 field l5 cors_rinex_l5_cycle inverse-square em cycle 604800 0.0 0.0
+field s1 cors_rinex_s1_dbhz inverse-square em dbhz 604800 0.0 0.0
+field s2 cors_rinex_s2_dbhz inverse-square em dbhz 604800 0.0 0.0
+field s5 cors_rinex_s5_dbhz inverse-square em dbhz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 format bl_narrowband
@@ -6623,6 +6626,14 @@ field doppler_count_lp voyager_saturn_doppler_count_lp inverse-square em count 6
 field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
 field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
 field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160806_235657__20160814_114429.bin
+format drs_fits
+at earth
+ttl 604800
+field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
