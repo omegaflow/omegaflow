@@ -61,6 +61,7 @@ pub mod hdf5;
 pub mod hmi_polar;
 pub mod hrv;
 pub mod hsd;
+pub mod ifms_agc;
 pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
