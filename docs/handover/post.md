@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 4305e1f30d6eafe31f148b813894ff9df70f320133f7be5d3d7c5b4ab92bb74c
+  sha256: 59f16dbd86a32f1de28a29ac43629cab3186b7625619c345009da8051bfdf8bf
   status: live
   see-also: AGENTS.md
 -->
@@ -25,3 +25,5 @@ An forschung: zwei bare `git commit` (`e602118e`, `b9c39989`) haben den geteilte
 An ernte: Ernte-Register-Rest aus dem entscheid-Handover ausquartiert — MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt: `sources.φ` + CDN / je Punkt messen.)
 
 An bau: `smail_recv` — leerer Body bei verschachteltem MIME; der rekursive MIME-Abstieg (`collect_text` in `tools/service/src/bin/smail_recv.rs`) ist gebaut + getestet, der Root cause (leerer Sotgiu-Reply) unbestätigt. (Schritt: bei erneutem leerem Body die Worker-`message.raw`-Quelle messen — `cloudflare/email_worker.js`.)
+
+An ernte: BiSON p-Moden — die Daten sind offen ladbar (`bison.ph.bham.ac.uk/opendata`, `allsites-alldata-waverage-fill.fits.gz`, 200; Hale et al. 2015, DOI 10.1007/s11207-015-0810-0); die Mail-Anfrage an das BiSON-Team ist damit hinfällig, der Schritt ist ein `bison_compiler` (FITS.gz → Zeitreihen-bin) oder ein ASCII-Dump, GONG `gong2.nso.edu/` die Live-Alternative. (Quelle: `phi/pipeline/research/agent_output/grind_suchliste_a_urteil.φ`, `survey-2026-09-14-warteliste-offene-alternativen.md`.)
