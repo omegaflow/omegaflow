@@ -540,7 +540,9 @@ impl Gate {
                     line: 0,
                     feedback: format!(
                         "the write path \"{}\" is a {} — writing at a third party needs the operator's per-act consent (mail send, account/API-key, application or data-rights request, submission, contract, payment, foreign-account deletion); {}",
-                        marker, act, feedback("consent_act")
+                        marker,
+                        act,
+                        feedback("consent_act")
                     ),
                     quote: clip(text, 80),
                 });
