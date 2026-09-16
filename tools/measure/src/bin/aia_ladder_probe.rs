@@ -1,3 +1,4 @@
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
 
@@ -145,8 +146,33 @@ fn median_f32(v: &[f32]) -> Option<f32> {
     Some(m)
 }
 
+fn civil_from_days(days: i64) -> (i64, i64, i64) {
+    let z = days + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
 struct Event {
     lines: Vec<Vec<f32>>,
+    t_idx: usize,
+}
+
+fn event_month(ev: &Event, t0: f64, lsk: &LeapSeconds) -> Option<(i64, i64)> {
+    let tdb = t0 + ev.t_idx as f64 * DT;
+    let unix = lsk.tdb_to_unix(tdb)?;
+    if !unix.is_finite() {
+        return None;
+    }
+    let days = (unix / 86400.0).floor() as i64;
+    let (y, m, _) = civil_from_days(days);
+    Some((y, m))
 }
 
 fn stack_pair(
@@ -271,7 +297,10 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
             best = run;
         }
         if best.first().map_or(0, Vec::len) >= 100 {
-            events.push(Event { lines: best });
+            events.push(Event {
+                lines: best,
+                t_idx: peak,
+            });
         }
         i = j.max(i + REFRACTORY);
     }
@@ -280,6 +309,7 @@ fn cut_events(trig: &[Option<f32>], threshold: f32, grid: &[Vec<Option<f32>>]) -
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let lsk = omegaflow::archivar::embedded_lsk();
     let Some(path) = arg_value(&args, "--aia") else {
         eprintln!("--aia <aia_lines.bin> absent");
         return;
@@ -317,7 +347,6 @@ fn main() {
 
     let goes_dir = arg_value(&args, "--goes-dir");
     let events = if let Some(dir) = goes_dir {
-        let lsk = omegaflow::archivar::embedded_lsk();
         let mut b_flux: Vec<(f64, f64)> = Vec::new();
         let Ok(entries) = std::fs::read_dir(&dir) else {
             eprintln!("{} reads void", dir);
@@ -454,7 +483,12 @@ fn main() {
             Some((l, d)) => {
                 let tot = real_tot[p][l];
                 if tot == 0 {
-                    format!("peak at lag {} ({} s) = {:.2e} | positive absent", l, l * 24, d)
+                    format!(
+                        "peak at lag {} ({} s) = {:.2e} | positive absent",
+                        l,
+                        l * 24,
+                        d
+                    )
                 } else {
                     format!(
                         "peak at lag {} ({} s) = {:.2e} | positive {:.1}% ({}/{})",
@@ -509,6 +543,55 @@ fn main() {
         if let Ok(text) = std::fs::read_to_string(path) {
             for line in text.lines() {
                 println!("{}", line);
+            }
+        }
+    }
+    if let Some(lsk) = &lsk {
+        let hot_pair = n_pairs - 1;
+        let hot_peak: Option<(usize, f64)> = {
+            let mut peak: Option<(usize, f64)> = None;
+            for lag in 0..=12 {
+                let d = real[hot_pair][lag];
+                if d > peak.map_or(f64::NEG_INFINITY, |(_, b)| b) {
+                    peak = Some((lag, d));
+                }
+            }
+            peak
+        };
+        if let Some((lag, _)) = hot_peak {
+            let mut months: Vec<((i64, i64), Vec<Event>)> = Vec::new();
+            for ev in events {
+                let Some(key) = event_month(&ev, t0, lsk) else {
+                    continue;
+                };
+                match months.last_mut() {
+                    Some((k, evs)) if *k == key => evs.push(ev),
+                    _ => months.push((key, vec![ev])),
+                }
+            }
+            println!();
+            println!(
+                "hottest rung {}→{} monthly direction at the peak lag {} ({} s):",
+                LADDER[hot_pair].1,
+                LADDER[hot_pair + 1].1,
+                lag,
+                lag * 24
+            );
+            for ((y, m), evs) in &months {
+                let (d, pos, tot) = stack_pair(evs, hot_pair, hot_pair + 1, lag, false, 0);
+                if tot == 0 {
+                    continue;
+                }
+                println!(
+                    "{:04}-{:02} | {:>4} events | posfrac {:.2} ({}/{}) | mean D {:>+.2e}",
+                    y,
+                    m,
+                    evs.len(),
+                    pos as f64 / tot as f64,
+                    pos,
+                    tot,
+                    d
+                );
             }
         }
     }
