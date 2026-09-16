@@ -2,7 +2,7 @@
   title: Broken null control — the phase-randomized surrogate gate
   class: paper
   date: 2026-09-12
-  sha256: ead4a3904118d9d43ff3e04a759fa973b82f912fd06383872bd4422cb1650670
+  sha256: 07cdc7c230891f0e43a8cc3af3f768895aaa3972025655d437d895e54257b9f8
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -17,7 +17,11 @@ phase-randomized surrogate, which preserves the power spectrum. Under the naive
 threshold the test resolves a full causal cascade of 16 significant arrows;
 under the phase-randomized gate it collapses to 2. All four control pairs —
 solar-wind proton density against X-Ray, EUV-304, EUV-284 and Bz — break under
-the naive threshold and hold under the phase-randomized threshold. A separate
+the naive threshold and hold under the phase-randomized threshold on the
+2026-09-12 window. On the full 60-s CI grid (`te-null-limits`, run 35077126787,
+2026-09-16) the single-cell control is not clean: Dichte-RTSW → X-Ray is
+significant under both nulls (TE 2.94e-2 > phase thr 2.81e-2) — the family bound
+resolves it, `fam = 2.63e-1` with 0 of 60 cells surviving. A separate
 defect, `next_rng` divided by `u32::MAX` instead of `u32::MAX >> 1`, rotated the
 surrogate phases over a half circle and scaled every null distribution: the
 false-positive rate measured 100 % before the fix and 6.7 % after
@@ -154,6 +158,36 @@ nulls find the true X→Y arrow, while the reverse Y→X is a naive false positi
 (TE 4.36e-2 > naive 3.73e-2) that the phase null silences. The estimator carries
 a residual false-negative bias at n = 300 (0–3/10 true couplings found,
 `te_fn_probe`) — named, and it does not drive false positives.
+
+**Full 60-s grid (CI, `te-null-limits`, run 35077126787, 2026-09-16).** The four
+SWPC channels load from the cache (the earlier run's `cached_body` built
+`<name>.json.json` and read them absent; fixed). Live common 60-s grid
+`n_cells = 5767`, decimated 2:1 → 120 s. Both nulls on the identical window,
+same seed per pair, τ = 1:
+
+| pair | n | TE | naive thr. | naive | phase thr. | phase |
+|---|---|---|---|---|---|---|
+| Dichte-RTSW → X-Ray | 834 | 2.94e-2 | 1.87e-2 | arrow | 2.81e-2 | arrow |
+| Dichte-RTSW → EUV-304 | 774 | 6.37e-2 | 6.78e-2 | silent | 8.70e-2 | silent |
+| Dichte-RTSW → EUV-284 | 774 | 4.31e-2 | 4.97e-2 | silent | 5.71e-2 | silent |
+| Dichte-RTSW → Bz | 831 | 1.43e-1 | 1.25e-1 | arrow | 1.85e-1 | silent |
+| Hénon X→Y (true) | 1000 | 1.51e-1 | 4.69e-2 | arrow | 5.88e-2 | arrow |
+| Hénon Y→X (reverse) | 1000 | 4.36e-2 | 3.73e-2 | arrow | 5.33e-2 | silent |
+
+On this window the control pair Dichte-RTSW → X-Ray is significant under **both**
+nulls (TE 2.94e-2 > phase thr 2.81e-2, excess +1.3e-3) — a single-cell control
+breach, not smoothed. The family bound resolves it: over the live 20-pair matrix
+(60 cells, lags {0,1,2}) `fam = 2.63e-1` and **0 cells survive** — the
+Dichte→X-Ray cell sits inside the unprotected range. The synthetic matrix (10
+independent + 4 coupled AR(1) pairs, 56 cells) reads `fam = 2.26e-1`, kills the
+one per-cell false positive (1/40 = 2.5 % on the independent cells) and keeps all
+8 true couplings. The bandwidth sweep: the Dichte→X-Ray arrow holds only at
+Silverman factors 1.0–2.0 and dies at 0.5/0.75/3.0 (the null's tail); the true
+Hénon direction holds at every factor and the reverse stays silent. The lag
+sweep: the Dichte→X-Ray arrow sits at τ = 1 alone (excess +2.1e-4); the true
+Hénon direction holds τ ∈ {0, 1, 5} and turns silent from τ = 10; the reverse
+stays silent. The single-cell verdict is window- and bandwidth-conditional; the
+fam correction is the stable statement.
 
 The scientific content is a negative: the cascade was an artifact of the test,
 and fixing the test leaves silence where a result was expected. 0 honored — the
