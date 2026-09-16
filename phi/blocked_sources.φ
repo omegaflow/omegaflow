@@ -3,6 +3,9 @@
 # blocked account (Konto/Login), blocked parser-def <typ> (Format-Luecke, Messung echt),
 # pending (Identität nicht entschieden oder Ernte ungebaut — Register-Duty)
 # und descoped (gemessen: keine Nadel-Kreuzung frißt das Feld — nie gebaut, nicht gebraucht).
+# blocked key-needed verlangt den gemessenen 401 MIT dem vorhandenen Token (`.secrets.local`)
+# — ein 401 ohne Token ist kein Key-Gap (der IONEX-Eintrag 2026-09-16 widerlegt: mit
+# EARTHDATA_EDL_TOKEN → HTTP 200; erst messen, dann fordern).
 #
 # Die 35 pending/descoped wurden 2026-09-15 nach der neuen Grenze (SOURCE_PORT §3/§8/§11)
 # disponiert: accepted → sources.φ, declined → declined_sources.φ. Hier verbleiben nur die
@@ -53,4 +56,24 @@ note IA2 TAP (INAF/OATS) — `wgesdss.laurino2011` (157 840 Zeilen: ra/dec_/psfM
 blocked parser-def zip/fixed-width-text
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 note IGRA-2 Radiosonden (NCEI, Sensor-Welle). Messung 2026-09-16: Verzeichnis HTTP 200 (807 .txt.zip), ZIP `USM00070026-data-beg2026.txt.zip` HTTP 200 (1 852 651 B, enthält genau `USM00070026-data.txt`, 7 082 929 B), Nicht-ZIP-Route `…-beg2026.txt` HTTP 404. Messung echt (Radiosonde: PRESS 103574 Pa, GPH 14 m, TEMP −25,4 °C, RH 82,0 %; thermal/diffusion/acoustic). Parser-Gap: kein IGRA-Parser — `format csv_zip` entpackt, aber `Rows` splittet bei csv_zip per Komma, IGRA-2 ist fixed-width/whitespace; `text_to_json` braucht Header >5 Token und Datenzeile ≥ Header-Token (Header 11, Datenzeile 9). Öffnung: IGRA-fixed-width-Arm (Spalten PRESS 10-15, GPH 17-21, TEMP 23-27, RH 29-33).
+
+blocked parser-def ecsv
+url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
+note VTSCat — VERITAS-Datenkatalog (GitHub, HTTP 200, CC0, 55 MB): Spektral-Flusspunkte, Lichtkurven, Spektral-Fits je Publikation als YAML/ECSV (Jahr/Bibcode-Verzeichnisse 2008–2026) + Sky-Maps als FITS. Messung echt (em, Gamma-Fluss am Quellort ra/dec); der Archivar liest kein YAML/ECSV → parser-def ecsv. Alternative Route: HEASARC verimaster (W3Browse, heasarc.gsfc.nasa.gov/W3Browse/all/verimaster.html).
+
+blocked parser-def fits
+url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+note H.E.S.S. DL3 DR1 (Public Test Data Release 2018; Release-Seite hess-experiment.eu/releases/ HTTP 200; TAR gemessen 2026-09-16: HTTP 206/200, application/octet-stream, 45 MB). Inhalt: FITS-Event-Listen (DL3/GADF) + IRFs. Messung echt (em, Gamma-Strahlung); fits.rs liest FITS, aber die Event-Listen-Reduktion (Events → Sky-Map/Fluss) ist ungebaut → parser-def fits. Zenodo-Kopie: 10.5281/zenodo.1421099.
+
+blocked parser-def html
+url https://kcdc.iap.kit.edu
+note KCDC — KASCADE Cosmic-ray Data Centre (Nachfolger; der alte Host kcdc.ikp.kit.edu ist DNS-tot, „Could not resolve host" gemessen 2026-09-16). Portal (HTTP 200, 20 592 B) mit drei DataShops: formularbasierte Abfrage + Selektion rekonstruierter Luftschauer-Parameter (Primär-Energie, Zenit/Azimut, Schauer-Kern, Elektronen-/Myonen-Größen; 433 M Events) — kein URL-Endpoint. Messung echt (em, Schauer-Cherenkov-/Scintillator-Licht); Zugang frei, Lücke ist der Form-Zugang + das Event-Tabellen-Format → parser-def html.
+
+blocked parser-def fits
+url https://opendata.magic.pic.es
+note MAGIC Open Data Repository (PIC, HTTP 200, 6730 B) — Low-level-DL3-Daten: Event-Listen + IRFs je Projekt (/download?pid=N: MAGIC_dl3_pdr1 2024, AODR 2025, RSOph 2022, JointCrab 2019, TXS0506 2018). FITS-DL3, Messung echt (em, Cherenkov); Event-Listen-Reduktion ungebaut → parser-def fits.
+
+blocked parser-def flac
+url https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/01/nrs_01_2014-2015/audio/NRS01_20141016_154112.flac
+note NRS-Hydrophon FLAC (NOAA NODD, Bucket `noaa-passive-bioacoustic`, GCS). Messung 2026-09-16: HTTP 200, native FLAC (`audio/x-flac`) — rohe Hydrophon-Zeitreihe (acoustic, Schalldruck am Punkt), Geschwister des `nrs/products`-Spektrums. Der Archivar hat keinen FLAC-Decoder (`--sniff` magic unrecognized; kein `flac` in `tools/`) → parser-def flac. Die Serie bleibt als Spektral-Record declined; die rohe Audio-Messung ist das Feld.
 
