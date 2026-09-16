@@ -3,7 +3,7 @@
   session: Bau-Folge 60
   class: handover
   date: 2026-09-17
-  sha256: 7975263e81fc71e95727820c760ba3125c701f94d245e64fbdf4cb5c96c7e6dc
+  sha256: 1922a4633e293eb32d391653e5dba113d17ee0168230ddb10b687a3e7a850a1d
   status: live
 -->
 # Handover — Bau-Folge 60 (2026-09-17)
@@ -63,6 +63,19 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `pds-ppi.igpp.ucla.edu` (omegaflow/sources) löschen — sonst überspringt der
   Idempotenz-Gate den Lauf —, dann `gh workflow run galileo-odr-cdn.yml`,
   `gh run view <id>` — success: Punkt löschen; failure: `--log-failed`.)
+
+## TRK-2-34 — 17 Format-Codes offen (Post an bau, gefaltet 2026-09-17)
+
+- `src/archivar/odf.rs` trägt das SFDU-Framing (`read_tnf_sfdu`/`scan_tnf_sfdus`,
+  `sfdu_length` @12–19, Zeit-Tag @48–60) und dekodiert nur `format_code 0`
+  (`tnf_dt0`, DT0/Uplink-Carrier-Phase, `odf.rs:372`). Offen: die übrigen **17
+  Format-Codes** (CHDO-Layouts) + ein nativer Serien-Arm — der `tnf_compiler`
+  schreibt heute CSV (`format csv`). Konsumenten (survey-2026-09-16-sonden-flotte):
+  MAVEN (1167 TNF), DART (401 TNF), Cassini (TNF+ODF).
+  (Schritt: SIS `pds-geosciences.wustl.edu/radiosciencedocs/…/dsn_trk-2-34.2021-06-03.pdf`
+  + Referenz `github.com/NASA-PDS/PyTrk234` als Layout-Quelle, die Codes in
+  `odf.rs` enumerieren, je Code Decoder + gemessenes Fixture; jede gefundene
+  Fabrikation als Gate-Fixture + Gate-Test im selben Atom.)
 
 ## Abschluss
 
