@@ -263,6 +263,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "rows" => {
                 cur_extracts.push(Extract::Rows {
                     last_line: false,
+                    lat_key: String::new(),
+                    lon_key: String::new(),
                     fields: Vec::new(),
                     tau_key: String::new(),
                     epoch_cols: Vec::new(),
@@ -911,13 +913,17 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 );
             }
             "lat" if parts.len() >= 2 => match cur_extracts.last_mut() {
-                Some(Extract::Map { lat_key, .. }) | Some(Extract::ProfileMap { lat_key, .. }) => {
+                Some(Extract::Map { lat_key, .. })
+                | Some(Extract::ProfileMap { lat_key, .. })
+                | Some(Extract::Rows { lat_key, .. }) => {
                     *lat_key = parts[1].to_string();
                 }
                 _ => {}
             },
             "lon" if parts.len() >= 2 => match cur_extracts.last_mut() {
-                Some(Extract::Map { lon_key, .. }) | Some(Extract::ProfileMap { lon_key, .. }) => {
+                Some(Extract::Map { lon_key, .. })
+                | Some(Extract::ProfileMap { lon_key, .. })
+                | Some(Extract::Rows { lon_key, .. }) => {
                     *lon_key = parts[1].to_string();
                 }
                 _ => {}
@@ -973,6 +979,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 | Some(Extract::KeplerMap { epoch_key, .. })
                 | Some(Extract::ProfileMap { epoch_key, .. }) => {
                     *epoch_key = parts[1].to_string();
+                }
+                Some(Extract::Rows { epoch_cols, .. }) => {
+                    *epoch_cols = vec![parts[1].to_string()];
                 }
                 _ => {}
             },
@@ -1314,7 +1323,7 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     } else if let Some((d, t)) = s.split_once(' ') {
         (d, t)
     } else {
-        return None;
+        (s, "0")
     };
     let mut dp = date.split('-');
     let y: i64 = dp.next()?.parse().ok()?;
