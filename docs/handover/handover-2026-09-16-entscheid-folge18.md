@@ -3,7 +3,7 @@
   session: Entscheid-Folge XVIII
   class: handover
   date: 2026-09-16
-  sha256: bac21ae263d04aca1ab6d257092c32e5450c27ce2d4d29309d0092f10f730c9c
+  sha256: a8042764ee4b95a800183be7ce6563f87011b2dd5171584d7f80d3c9d52b7540
   status: live
 -->
 # Handover — Entscheid-Folge XVIII (2026-09-16)
@@ -75,5 +75,6 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 ## Abschluss
 
-Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
-Abschluss-Check mit Commit und Push (`/commit`).
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
+Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
+Consent (Delegation, zweiter Prompt), nie das Commit-Wort.
