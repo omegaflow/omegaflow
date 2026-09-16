@@ -3,7 +3,7 @@
   session: Entscheid-Folge XIV
   class: handover
   date: 2026-09-16
-  sha256: fa2aab226c05a3f5a5669fd2cd9cc5130a2b6668d3fba272789cf8087ec1ece3
+  sha256: 53369ef27a3d2ae990234eb4c4813cba43d354a8bbaacaf7c15a0f1c88dfb8ef
   status: live
 -->
 # Handover — Entscheid-Folge XIV (2026-09-16)
@@ -39,10 +39,14 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   `docs/auftrag/*`-Entwürfe aus je ein bis fünf Refs. Tag `v2026-09-09` → `bc113f6`.
 - Zwei getrennte GitHub-Prozesse: (a) Support-Ticket #4761801 (bestätigt
   `support@githubsupport.com`; #4761482 überholt) für cached views / SHA-Abrufbarkeit —
-  hat den GC noch nicht bewirkt; (b) **Privacy contact form** — Entwurf steht in
-  `state/mail/privacy-contact-form-request.md` (lokal, gitignored), Scope = alle zehn
-  PII-tragenden Dateien (Gremium einmütig). (Schritt: Entwurf bei
-  https://github.com/contact/privacy absenden — Operator; dann erneut messen.)
+  hat den GC noch nicht bewirkt; (b) **Data-Subject-Löschung** — das Formular
+  `github.com/contact/privacy` verlangt eine angemeldete Session (leitet auf
+  `help.github.com/request/landing`); die dokumentierte Route ist die E-Mail an
+  `privacy@github.com` (GitHub Privacy Statement, Data-Subject-Rights). Entwurf steht
+  in `state/mail/privacy-deletion-request.md` (lokal, gitignored), Scope = alle zehn
+  PII-tragenden Dateien (Gremium einmütig). (Schritt: Entwurf von
+  `<operator-adresse>` an `privacy@github.com` senden — Operator; dann erneut
+  messen.)
 - (Schritt: Postfach auf GC-/Privacy-Bestätigung prüfen; bleibt sie aus, GitHub auf
   #4761801 nachfassen — Operator.)
 
