@@ -1548,13 +1548,24 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     }
     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
-    let parsed_json = if src.format == "csv_zip" {
+    let csv_zip_text: Option<String> = if src.format == "csv_zip" {
         std::fs::read(body)
             .ok()
             .and_then(|b| unzip(&b))
             .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
-            .as_deref()
-            .and_then(csv_to_json)
+    } else {
+        None
+    };
+    let parsed_json = if src.format == "csv_zip" {
+        let rows_only = src
+            .extracts
+            .iter()
+            .all(|e| matches!(e, Extract::Rows { .. }));
+        if rows_only {
+            None
+        } else {
+            csv_zip_text.as_deref().and_then(csv_to_json)
+        }
     } else if src.format == "csv" {
         csv_to_json(body)
     } else if src.format == "free text" {
@@ -2338,6 +2349,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             }
             Extract::Rows {
                 last_line,
+                lat_key,
+                lon_key,
                 fields,
                 tau_key,
                 epoch_cols,
@@ -2345,6 +2358,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 bin_s,
                 name_prefix,
             } => {
+                let text: &str = csv_zip_text.as_deref().unwrap_or(body);
                 let position = match &src.frame {
                     Frame::Surface { lat, lon, alt, .. } => Position::Surface {
                         body_name: frame_body_name(&src.frame),
@@ -2358,11 +2372,22 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     },
                     Frame::Manifest => Position::Source,
                 };
+                let csv_mode = src.format == "csv" || src.format == "csv_zip";
+                let split_row = |line: &str| -> Vec<String> {
+                    if csv_mode {
+                        split_csv_line(line)
+                    } else {
+                        split_data_line(line)
+                            .into_iter()
+                            .map(|s| s.to_string())
+                            .collect()
+                    }
+                };
                 let resolve_col = |key: &str| -> Option<usize> {
                     if let Ok(idx) = key.parse::<usize>() {
                         return Some(idx);
                     }
-                    let lines: Vec<&str> = body
+                    let lines: Vec<&str> = text
                         .lines()
                         .filter(|l| {
                             let t = l.trim();
@@ -2374,7 +2399,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             .strip_prefix('#')
                             .map(|x| x.trim_start())
                             .unwrap_or(line.trim());
-                        split_data_line(s)
+                        split_row(s)
                             .iter()
                             .position(|c| c.eq_ignore_ascii_case(key))
                     });
@@ -2386,9 +2411,39 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             .strip_prefix('#')
                             .map(|x| x.trim_start())
                             .unwrap_or(line.trim());
-                        split_data_line(s).iter().position(|c| c.starts_with(key))
+                        split_row(s).iter().position(|c| c.starts_with(key))
                     })
                 };
+                let lat_col = if lat_key.is_empty() {
+                    None
+                } else {
+                    resolve_col(lat_key)
+                };
+                let lon_col = if lon_key.is_empty() {
+                    None
+                } else {
+                    resolve_col(lon_key)
+                };
+                if (!lat_key.is_empty() && lat_col.is_none())
+                    || (!lon_key.is_empty() && lon_col.is_none())
+                {
+                    eprintln!("rows lat/lon col unresolved in {} — rows skipped", src.url);
+                    return ExtractResult::Measurements(Vec::new());
+                }
+                if lat_col.is_some() != lon_col.is_some() {
+                    eprintln!(
+                        "rows lat/lon in {} — both keys are required, rows skipped",
+                        src.url
+                    );
+                    return ExtractResult::Measurements(Vec::new());
+                }
+                if (lat_col.is_some() || lon_col.is_some()) && *bin_s > 0 {
+                    eprintln!(
+                        "rows lat/lon with bin in {} — per-row position and bins are exclusive, rows skipped",
+                        src.url
+                    );
+                    return ExtractResult::Measurements(Vec::new());
+                }
                 let col_fcs: Vec<(usize, Option<usize>, &FieldConfig)> = fields
                     .iter()
                     .filter_map(|fc| {
@@ -2405,7 +2460,17 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 } else {
                     resolve_col(&tau_key)
                 };
-                let epoch_idxs: Option<Vec<Option<usize>>> = if epoch_cols.is_empty() {
+                let epoch_iso: Option<usize> = if epoch_cols.len() == 1 {
+                    let idx = resolve_col(&epoch_cols[0]);
+                    if idx.is_none() {
+                        eprintln!("rows epoch col unresolved in {} — rows skipped", src.url);
+                        return ExtractResult::Measurements(Vec::new());
+                    }
+                    idx
+                } else {
+                    None
+                };
+                let epoch_idxs: Option<Vec<Option<usize>>> = if epoch_cols.len() < 2 {
                     None
                 } else {
                     let resolved: Vec<Option<usize>> = epoch_cols
@@ -2428,13 +2493,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     }
                     Some(resolved)
                 };
-                let epoch_iso: Option<usize> = if epoch_cols.len() == 1 {
-                    resolve_col(&epoch_cols[0])
-                } else {
-                    None
-                };
                 let lines: Vec<&str> = if *last_line {
-                    body.lines()
+                    text.lines()
                         .rev()
                         .find(|l| {
                             let t = l.trim();
@@ -2443,15 +2503,39 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         .into_iter()
                         .collect()
                 } else {
-                    body.lines()
+                    text.lines()
                         .filter(|l| {
                             let t = l.trim();
                             !t.is_empty() && !t.starts_with('#')
                         })
                         .collect()
                 };
-                let row_vals = |line: &str| -> (Option<f64>, Vec<(usize, f64)>) {
-                    let cols = split_data_line(line.trim());
+                let position_for_row = |cols: &[String]| -> Option<Position> {
+                    let (Some(li), Some(oi)) = (lat_col, lon_col) else {
+                        return Some(position.clone());
+                    };
+                    let lat = cols
+                        .get(li)
+                        .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())?;
+                    let lon = cols
+                        .get(oi)
+                        .and_then(|s| s.trim().trim_matches('"').parse::<f64>().ok())?;
+                    if !lat.is_finite() || !lon.is_finite() {
+                        return None;
+                    }
+                    let Frame::Surface { alt, .. } = &src.frame else {
+                        return None;
+                    };
+                    Some(Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat,
+                        lon,
+                        alt: *alt,
+                    })
+                };
+                let row_vals = |line: &str| -> (Option<f64>, Vec<(usize, f64)>, Option<Position>) {
+                    let cols = split_row(line.trim());
+                    let row_pos = position_for_row(&cols);
                     let epoch: Option<f64> = match &epoch_idxs {
                         Some(idxs) => {
                             let mut n = [0i64; 5];
@@ -2488,7 +2572,12 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             }
                         }
                         None => match epoch_iso {
-                            Some(idx) => cols.get(idx).and_then(|s| parse_iso_tdb(s.trim(), lsk)),
+                            Some(idx) => cols.get(idx).and_then(|s| {
+                                let t = s.trim().trim_matches('"');
+                                parse_iso_tdb(t, lsk).or_else(|| {
+                                    t.parse::<f64>().ok().and_then(|u| lsk.unix_to_tdb(u))
+                                })
+                            }),
                             None => Some(now),
                         },
                     };
@@ -2520,7 +2609,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         }
                         vals.push((fi, val));
                     }
-                    (epoch, vals)
+                    (epoch, vals, row_pos)
                 };
                 let series_name = |fc: &FieldConfig| -> String {
                     if name_prefix.is_empty() {
@@ -2536,7 +2625,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         .map(|_| std::collections::BTreeMap::new())
                         .collect();
                     for line in lines {
-                        let (epoch, vals) = row_vals(line);
+                        let (epoch, vals, _) = row_vals(line);
                         let Some(epoch) = epoch else { continue };
                         let bin_i = (epoch / dt).floor() as i64;
                         for (fi, v) in vals {
@@ -2563,8 +2652,9 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     }
                 } else {
                     for line in lines {
-                        let (epoch, vals) = row_vals(line);
+                        let (epoch, vals, row_pos) = row_vals(line);
                         let Some(epoch) = epoch else { continue };
+                        let Some(row_pos) = row_pos else { continue };
                         let row_tau: Option<f64> =
                             match tau_col {
                                 None => None,
@@ -2590,7 +2680,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch,
-                                    position: position.clone(),
+                                    position: row_pos.clone(),
                                     name: series_name(fc),
                                     value: val,
                                 },
