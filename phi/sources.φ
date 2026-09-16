@@ -2146,7 +2146,7 @@ ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin
 format ephemeris_binary
-at sun
+at neptune_c
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
@@ -2281,7 +2281,7 @@ ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin
 format ephemeris_binary
-at sun
+at uranus_c
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
