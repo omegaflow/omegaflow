@@ -21,6 +21,8 @@ jobs:
         include:
           - year: 2013
             asset: aia2013_fullyear.bin
+          - year: 2014
+            asset: aia2014_fullyear.bin
           - year: 2015
             asset: aia2015_fullyear.bin
     steps:
