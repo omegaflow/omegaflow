@@ -1342,21 +1342,37 @@ pub fn main_flow() {
             let fmt = archive.sources[i].format.clone();
             if fmt == "finals" || fmt == "ionex" || fmt == "rinex" {
                 let src_clone = archive.sources[i].clone();
-                let Some(url) = render_source_url(
-                    &src_clone,
-                    RenderCtx {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        tdb: now,
-                        r: 0.0,
-                        eph: &archive.body_ephemerides,
-                        lsk: &lsk,
-                    },
-                    &env,
-                ) else {
-                    continue;
+                let base_ctx = RenderCtx {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    tdb: now,
+                    r: 0.0,
+                    eph: &archive.body_ephemerides,
+                    lsk: &lsk,
                 };
+                let urls: Vec<String> = if fmt == "ionex" {
+                    (1..=7)
+                        .filter_map(|back| {
+                            render_source_url(
+                                &src_clone,
+                                RenderCtx {
+                                    tdb: now - back as f64 * 86400.0,
+                                    ..base_ctx
+                                },
+                                &env,
+                            )
+                        })
+                        .collect()
+                } else {
+                    match render_source_url(&src_clone, base_ctx, &env) {
+                        Some(u) => vec![u],
+                        None => continue,
+                    }
+                };
+                if urls.is_empty() {
+                    continue;
+                }
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
@@ -1365,21 +1381,28 @@ pub fn main_flow() {
                 let now_c = now;
                 let e = env.clone();
                 thread::spawn(move || {
-                    let fetched = if fmt == "rinex" || fmt == "ionex" {
+                    let fetched: Option<(String, Vec<u8>)> = if fmt == "rinex" || fmt == "ionex" {
                         let mut headers = render_headers(&src_clone.headers, &e);
                         for (k, v) in &mut headers {
                             if k.eq_ignore_ascii_case("authorization") && !v.contains(' ') {
                                 *v = format!("Bearer {v}");
                             }
                         }
-                        fetch_raw_bytes_post(&url, None, &headers, src_ttl)
+                        let mut got = None;
+                        for u in &urls {
+                            if let Some(b) = fetch_raw_bytes_post(u, None, &headers, src_ttl) {
+                                got = Some((u.clone(), b));
+                                break;
+                            }
+                        }
+                        got
                     } else {
-                        fetch_raw_bytes(&url, src_ttl)
+                        fetch_raw_bytes(&urls[0], src_ttl).map(|b| (urls[0].clone(), b))
                     };
-                    let mut bytes = match fetched {
-                        Some(b) => b,
+                    let (used_url, mut bytes) = match fetched {
+                        Some((u, b)) => (u, b),
                         None => {
-                            eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                            eprintln!("{} {:?}: fetch void — retry in ttl/Φ·2ⁿ", fmt, urls);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1395,7 +1418,7 @@ pub fn main_flow() {
                     };
                     if (fmt == "rinex" || fmt == "ionex") && bytes.starts_with(&[0x1f, 0x8b]) {
                         let Some(gz) = gunzip(&bytes) else {
-                            eprintln!("{} {}: gzip stays unreadable — pending", fmt, url);
+                            eprintln!("{} {}: gzip stays unreadable — pending", fmt, used_url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),

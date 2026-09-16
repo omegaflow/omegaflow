@@ -1,4 +1,4 @@
-use omegaflow::archivar::dl3::{parse_events, reduce_grid, Dl3Event};
+use omegaflow::archivar::dl3::{Dl3Event, parse_events, reduce_grid};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::{gunzip, tar_members};
@@ -8,8 +8,7 @@ use omegaflow::skymap::{
 };
 use std::io::{BufWriter, Write};
 
-const HESS_TAR_URL: &str =
-    "https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar";
+const HESS_TAR_URL: &str = "https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar";
 const HESS_NETLOC: &str = "hess-experiment.eu";
 const MAGIC_NETLOC: &str = "opendata.magic.pic.es";
 
@@ -306,20 +305,22 @@ mod tests {
 
     #[test]
     fn fits_payload_reduces_to_gamma_cells() {
-        let buf = synth_events(&[
-            [10.0, 0.0, 1.2],
-            [10.0, 0.0, 0.8],
-            [190.0, -45.0, 0.5],
-        ]);
+        let buf = synth_events(&[[10.0, 0.0, 1.2], [10.0, 0.0, 0.8], [190.0, -45.0, 0.5]]);
         let events = events_from_payload(&buf).unwrap();
         assert_eq!(events.len(), 3);
         let records = records_of(&events, 36, 18);
         assert_eq!(records.len(), 2);
         assert!(records.iter().all(|r| r.kind == KIND_GAMMA));
-        let first = records.iter().find(|r| (r.value - 2.0).abs() < 1e-3).unwrap();
+        let first = records
+            .iter()
+            .find(|r| (r.value - 2.0).abs() < 1e-3)
+            .unwrap();
         assert!((first.ra_deg as f64 - 15.0).abs() < 1e-3);
         assert!((first.dec_deg as f64 - 5.0).abs() < 1e-3);
-        let second = records.iter().find(|r| (r.value - 0.5).abs() < 1e-3).unwrap();
+        let second = records
+            .iter()
+            .find(|r| (r.value - 0.5).abs() < 1e-3)
+            .unwrap();
         assert!((second.ra_deg as f64 - 195.0).abs() < 1e-3);
         assert!((second.dec_deg as f64 - -45.0).abs() < 1e-3);
     }

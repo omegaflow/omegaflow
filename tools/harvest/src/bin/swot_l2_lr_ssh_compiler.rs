@@ -1,14 +1,14 @@
 use omegaflow::archivar::range::{
-    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
-    S3_REGION,
+    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
+    sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    decode_f32, decode_f64, Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object,
+    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
-use omegaflow::netcdf::{nc4_group, NetcdfFile, NetcdfType, NetcdfVar};
+use omegaflow::netcdf::{NetcdfFile, NetcdfType, NetcdfVar, nc4_group};
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -854,7 +854,9 @@ fn run_harvest(args: &[String]) {
         let prefix = match arg_value(args, "--prefix") {
             Some(p) => p,
             None => {
-                eprintln!("usage: swot_l2_lr_ssh_compiler --prefix <p> | --granule <key> [--protected] [--limit N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] [--protected] — refused");
+                eprintln!(
+                    "usage: swot_l2_lr_ssh_compiler --prefix <p> | --granule <key> [--protected] [--limit N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] [--protected] — refused"
+                );
                 std::process::exit(2);
             }
         };
@@ -891,7 +893,9 @@ fn run_harvest(args: &[String]) {
             }
         }
         let Some((objects, truncated)) = found else {
-            eprintln!("swot-l2-lr-ssh: no granules at either SWOT bucket under {prefix} — nothing fabricated");
+            eprintln!(
+                "swot-l2-lr-ssh: no granules at either SWOT bucket under {prefix} — nothing fabricated"
+            );
             std::process::exit(1);
         };
         if truncated {
