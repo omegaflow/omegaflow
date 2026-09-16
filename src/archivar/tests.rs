@@ -280,6 +280,8 @@ fn test_convert_to_si() {
     close(convert_to_si(1.0, "sfu"), 1e-22);
     close(convert_to_si(2.0, "W/m^2/nm"), 2.0e9);
     close(convert_to_si(3.0, "microMoleQuanta/m^2/sec"), 3.0e-6);
+    close(convert_to_si(40.0, "dbhz"), 1.0e4);
+    close(convert_to_si(30.0, "dBHz"), 1.0e3);
     assert!(convert_to_si(9.0, "weird").is_none());
     assert!(convert_to_si(7.2, "M").is_none());
     assert!(convert_to_si(5.0, "mag").is_none());
@@ -346,6 +348,7 @@ fn test_allowed_units_for_force() {
     assert!(!allowed_units_for_force(6).contains(&"kt"));
     assert!(allowed_units_for_force(0).contains(&"count"));
     assert!(allowed_units_for_force(0).contains(&"rad"));
+    assert!(allowed_units_for_force(0).contains(&"dbhz"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
@@ -7908,6 +7911,118 @@ fn voyager_saturn_register_field_names_match_components() {
             "voyager_saturn_angle_b",
         ]
     );
+}
+
+#[test]
+fn drs_fits_series_dispatch_and_component_names() {
+    let rows = [[1.0e-9, -2.0e-9, 3.0e-9]];
+    let bytes = super::drs_fits::write_bin(&rows, 1.47e9);
+    let parsed = super::extract::series_parse_bin("drs_fits", &bytes)
+        .expect("drs_fits series parses");
+    assert_eq!(parsed.len(), 3);
+    assert_eq!(parsed[0].0, 1.47e9);
+    assert_eq!(parsed[0].1, 1.0e-9);
+    assert_eq!(parsed[0].2, super::drs_fits::COMP_GX);
+    assert_eq!(parsed[1].1, -2.0e-9);
+    assert_eq!(parsed[1].2, super::drs_fits::COMP_GY);
+    assert_eq!(parsed[2].1, 3.0e-9);
+    assert_eq!(parsed[2].2, super::drs_fits::COMP_GZ);
+    assert_eq!(
+        super::extract::series_component_name("drs_fits", super::drs_fits::COMP_GX),
+        Some("lpf_drs_dg_x_ms2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("drs_fits", super::drs_fits::COMP_GY),
+        Some("lpf_drs_dg_y_ms2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("drs_fits", super::drs_fits::COMP_GZ),
+        Some("lpf_drs_dg_z_ms2")
+    );
+    assert_eq!(
+        super::extract::series_component_name("drs_fits", 99),
+        None
+    );
+}
+
+#[test]
+fn drs_fits_register_field_names_match_components() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "drs_fits")
+        .expect("phi/sources.φ registers the drs_fits source");
+    let names: Vec<&str> = src
+        .extracts
+        .iter()
+        .filter_map(|e| match e {
+            Extract::Field(fc) => Some(fc.name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        names,
+        vec!["lpf_drs_dg_x_ms2", "lpf_drs_dg_y_ms2", "lpf_drs_dg_z_ms2"]
+    );
+}
+
+#[test]
+fn odf_series_dispatch_and_component_names() {
+    let rows = [[753_440_003.0, -382_738.66, 2.3e9, 43.0, 43.0, 11.0, 2.0, 77.0, 60.0]];
+    let bytes = super::odf::write_podf_bin(&rows);
+    let parsed = super::extract::series_parse_bin("mars_express_odf", &bytes)
+        .expect("mars_express_odf series parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].0, 753_440_003.0);
+    assert_eq!(parsed[0].1, -382_738.66);
+    assert_eq!(parsed[0].2, super::odf::COMP_OBSERVABLE);
+    assert_eq!(
+        super::extract::series_component_name("mars_express_odf", super::odf::COMP_OBSERVABLE),
+        Some("mars_express_odf_observable_hz")
+    );
+    assert_eq!(
+        super::extract::series_component_name("juno_odf", super::odf::COMP_OBSERVABLE),
+        Some("juno_odf_observable_hz")
+    );
+    assert_eq!(
+        super::extract::series_component_name("dawn_odf", super::odf::COMP_OBSERVABLE),
+        Some("dawn_odf_observable_hz")
+    );
+    assert_eq!(super::extract::series_component_name("mars_express_odf", 99), None);
+    assert!(super::extract::series_parse_bin("mars_express_odf", b"X").is_none());
+}
+
+#[test]
+fn odf_register_field_names_match_components() {
+    let srcs = super::load_sources();
+    for format in [
+        "juno_odf",
+        "magellan_odf",
+        "mgs_odf",
+        "mro_odf",
+        "odyssey_odf",
+        "messenger_odf",
+        "mars_express_odf",
+        "rosetta_odf",
+        "vex_odf",
+        "galileo_odf",
+        "dawn_odf",
+    ] {
+        let src = match srcs.iter().find(|s| s.format == format) {
+            Some(s) => s,
+            None => panic!("phi/sources.φ registers the {format} source"),
+        };
+        let names: Vec<&str> = src
+            .extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.name.as_str()),
+                _ => None,
+            })
+            .collect();
+        let expected = format!("{format}_observable_hz");
+        assert_eq!(names, vec![expected.as_str()], "{format} field name drift");
+    }
 }
 
 #[test]
