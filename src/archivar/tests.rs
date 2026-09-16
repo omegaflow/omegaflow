@@ -5589,6 +5589,41 @@ fn test_parse_spectral_block() {
 }
 
 #[test]
+fn test_parse_sky1_cdn_asset_block() {
+    let blocks = [
+        ("vtscat_flux", "m-2.s-1.tev-1"),
+        ("hess_dl3", "tev"),
+        ("magic_dl3", "tev"),
+    ];
+    for (name, unit) in blocks {
+        let block = format!(
+            "url https://github.com/omegaflow/sources/releases/download/tag/{name}.sky1\nformat sky1\nat sun\nttl 31536000\nfield {name} {name} inverse-square em {unit} 31536000 0.0 0.0\n"
+        );
+        let srcs = super::parse_sources(&block);
+        assert_eq!(srcs.len(), 1, "{name}: sky1 asset line must register one source");
+        assert_eq!(srcs[0].format, "sky1", "{name}: format is sky1");
+        match &srcs[0].extracts[0] {
+            super::Extract::Field(fc) => {
+                assert_eq!(fc.name, name);
+                assert_eq!(fc.unit, unit);
+                assert_eq!(fc.force as u32, 0);
+                assert_eq!(fc.kernel as u32, 0);
+                assert!((fc.tau - 31536000.0).abs() < 1e-9);
+            }
+            other => {
+                let _ = other;
+                panic!("{name}: expected Field extract")
+            }
+        }
+    }
+    let witness = "witness s2-direction\nurl https://github.com/VERITAS-Observatory/VERITAS-VTSCat\nrecord sky1\nforce em\nnote VTSCat\n";
+    assert!(
+        super::parse_sources(witness).is_empty(),
+        "a witness block alone carries no ttl/field and is not a field source"
+    );
+}
+
+#[test]
 fn test_parse_vel_unit_and_tau_key_directives() {
     let block = "url https://example.org/flow\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 0.0 0.0\n";
     let srcs = super::parse_sources(block);

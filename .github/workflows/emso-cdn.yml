@@ -1,0 +1,36 @@
+name: emso-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  emso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the erddap.emso.eu release exists on the CDN
+        run: |
+          if ! gh release view erddap.emso.eu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create erddap.emso.eu --repo omegaflow/sources \
+              --title "erddap.emso.eu" \
+              --notes "EMSO ERIC ERDDAP tabledap station time series. OBSEA seabed station TS_L1c (time, latitude, longitude, depth, TEMP, PSAL, PRES, CNDC), 30-minute means, compiled to a normalized ERDDAP table JSON."
+          fi
+      - name: Compile the EMSO OBSEA seabed station time series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin emso_compiler -- \
+            --out emso_obsea_seabed_ts.json \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "emso-cdn: emso_obsea_seabed_ts.json returned void" \
+                 "emso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

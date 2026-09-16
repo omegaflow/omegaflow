@@ -975,7 +975,7 @@ field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
 
-url https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days
+url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -986,6 +986,7 @@ field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
 field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
 field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
+note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset pending (2026-09-16 gemessen 404, emso-cdn.yml nie gelaufen).
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
 ttl 3600
@@ -1096,6 +1097,69 @@ at sun
 ttl 604800
 field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
 note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler tools/harvest/src/bin/bison_compiler.rs + .github/workflows/bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series arm wired (extract.rs series_parse_bin/series_component_name + main_flow.rs series list), field name aligned to the component name (main_flow.rs:2168).
+
+url https://github.com/omegaflow/sources/releases/download/casdc.china-vo.org/lhaaso_sky1.sky1
+format sky1
+at sun
+ttl 31536000
+field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note 1LHAASO-Gammaquellen-Katalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (2893 B, 13 + 144·20); compiler tools/harvest/src/bin/lhaaso_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
+format sky1
+at sun
+ttl 31536000
+field hawc_2hwc hawc_2hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note HAWC-2HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (813 B, 13 + 40·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_3hwc.sky1
+format sky1
+at sun
+ttl 31536000
+field hawc_3hwc hawc_3hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note HAWC-3HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (1293 B, 13 + 64·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/icecat_sky1.sky1
+format sky1
+at sun
+ttl 31536000
+field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
+note IceCat-1-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (6973 B, 13 + 348·20); compiler tools/harvest/src/bin/icecat_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
+format sky1
+at sun
+ttl 31536000
+field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
+note ANTARES-2007-2017-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (175093 B, 13 + 8754·20); compiler tools/harvest/src/bin/antares_vo_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gw250207_115645.sky1
+format sky1
+at sun
+ttl 31536000
+field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
+note GraceDB-Superevent S250207bg Skymap (witness phi/witnesses.φ record sky1, kind gravity, Wahrscheinlichkeitsmasse ∫=1.0); CDN asset measured 2026-09-16 HTTP 200 (384013 B, 13 + 19200·20); compiler tools/harvest/src/bin/gw_skymap_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
+format sky1
+at sun
+ttl 31536000
+field vtscat_flux vtscat_flux inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note VTSCat-VERITAS-Flussskymap (witness phi/witnesses.φ record sky1, kind gamma, value = dnde@1 TeV); CDN-Asset pending (2026-09-16 gemessen 404, vtscat-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/vtscat_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
+format sky1
+at sun
+ttl 31536000
+field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
+note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess.
+
+url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
+format sky1
+at sun
+ttl 31536000
+field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
+note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
 format rpw_efield
@@ -6351,7 +6415,7 @@ format rosetta_odf
 at earth
 ttl 604800
 field observable_hz rosetta_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-note rosetta_odf-Prämisse verworfen (gemessen 2026-09-16): die PSA-.RAW (…/RSI/<DATASET_ID>/DATA/LEVEL1A/CLOSED_LOOP/IFMS/{AG1,AG2,DP1,DP2}/, z. B. R32ICL1L1A_AG1_143240137_00.RAW, 1 568 745 B, sha256 894c15be6e374c53c97d4ce2ec735a5e63cae500803982b3a0b484d1cdd9d5dd, magic unrecognized) ist kein TRK-2-34: `<header>`-XML + `<body_Gain>` + 3601 Zeilen à 429 B ASCII, LBL `RECORD_TYPE = UNDEFINED`, `STANDARD_DATA_PRODUCT_ID = IFMS1`. `parse_odf` (36-Byte-Gate, 1 568 745 % 36 = 9) liest nichts. Der handover-benannte Pfad (ohne DATASET_ID) 404t; die 343 978/605 756-B-Files sind unbestätigt. Nächster Schritt: IFMS-AGC-Text-Reader (XML-Header + 429-B-Festbreite → Serie) + Prüf-Messung des handover-benannten Files.
+note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Text-Reader `src/archivar/ifms_agc.rs` parst `<header>` + `<active_table>` + `<body_Gain>` (Spalten aus der `//`-Zeile, nicht hartcodiert); `rosetta_odf_compiler.rs` darauf verdrahtet. Fixtur `src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW`, 343978 B, sha256 13eb7667a1cee6a4b9378d29753aaf9af984e245bcaf80c11321118f807fd48c, URL https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-X-RSI-1-2-3-EAR2-0061-V1.0/DATA/LEVEL1A/CLOSED_LOOP/IFMS/AG1/R32ICL1L1A_AG1_072831317_02.RAW, 1994 Zeilen. Offen: `planetary-odf-cdn.yml --ci-mode` nach Push.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 format juno_odf
