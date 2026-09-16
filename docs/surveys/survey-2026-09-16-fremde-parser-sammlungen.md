@@ -2,7 +2,7 @@
   title: Survey — fremde Parser-/Compiler-Sammlungen (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: c6fc050955979a27997c5dd4a8d15978f1e066b70ddaa76293dfbaa444767af5
+  sha256: 82d6c010522e8904c334d56362664186870b2982d46afeea8b44d467fec239d5
   status: live
   see-also: phi/sources.φ phi/declined_sources.φ phi/blocked_sources.φ phi/dead_sources.φ
 -->
@@ -26,11 +26,23 @@ GitHub-API am 2026-09-16. Kein Verdikt über Herkunft, nur die Messung.
 | **Meltano / Singer** (`meltano/meltano`) | Business-ETL | **550+** Connectoren (meltano.com) | JSON-Streams (taps/targets) | MIT | falsche Domäne |
 | **Frictionless Data** (`frictionlessdata/frictionless-py`) | tabulare Specs | Spec + Bibliothek | Data Package | MIT | unser φ-Vertrag ist stärker |
 
+> **Fußnote Einheiten & Schnittmenge.** Die Umfänge sind in **verschiedenen
+> Maßen** gezählt: astroquery/SunPy/pyvo in *Modulen/Subpaketen* (je Modul viele
+> Dienste), wir in *Live-Quellen* und *Oszillatoren*. **Gemessene Schnittmenge
+> (2026-09-16):** astroquery erreicht **199 unserer 918 Quellen** und damit
+> **147 von 1655 Oszillatoren (≈8,9 %)** — die astronomische Minderheit
+> (v. a. `ssd.jpl.nasa.gov` 141, Vizier 20, IMCCE 12, IRSA 5, ESAC 4). Das
+> Kreuz-Domänen-Ergebnis überlebt die Frage: ~91 % der Oszillatoren liegen
+> außerhalb jeder Fremd-SDK.
+
 ## Teil 2 — Domänen-Coverage (unsere Quellen, gemessen aus `phi/sources.φ`)
 
 **Umfang.** `phi/sources.φ`: **918** `url`-Zeilen (Live), **1655** `field`-Zeilen
 (Oszillatoren), **424** `at`-Zeilen (Körper-Anker), 390 `format`, 303 `epoch`,
-266 `lat`/`lon`. Registries gesamt: **918 live · 912 declined · 12 blocked ·
+266 `lat`/`lon`. Die `url`-Zeilen enthalten den **CDN**
+(`github.com/omegaflow/sources/releases/download/<host>/…`) — der **echte
+Quellhost** steht im Pfad; für die Schnittmenge wurde er aufgelöst. Registries
+gesamt: **918 live · 912 declined · 12 blocked ·
 244 dead** (~2086 katalogisierte Quellen). Tools: **197** harvest-Bins + **233**
 measure-Bins.
 
@@ -48,6 +60,12 @@ measure-Bins.
 | electric | 11 |
 | seismic-body | 7 |
 
+**Nicht mitgezählt: Kernel.** ak135, GEBCO, ETOPO1 u. a. sind **Werkzeuge/Kernel**
+(Erdmodelle, Bathymetrie), keine Oszillator-Quellen — `seismic-body` = 7 zählt nur
+Quellen, nicht die seismische Arbeit. Die Seismik-Front (Tiefenphasen, Flotte,
+Eikonal) lebt in Kerneln und Proben, nicht in dieser Zeile; sie ist kein
+Widerspruch zur Zahl.
+
 **Körper-Anker** (`at`, Auszug): sun 224, earth 111, parker_solar_probe 4,
 solar_orbiter 3, moon 3, wind 2, phobos 2, neptune 2, mars 2, deimos 2,
 voyager1/voyager2/vesta/venus je 1. Schwerpunkt: Sonne + Erde.
@@ -56,6 +74,24 @@ voyager1/voyager2/vesta/venus je 1. Schwerpunkt: Sonne + Erde.
 `BGS-INTERMAGNET-HAPI`), IVOA/VO (TAP), OAI-PMH (`oai_harvester.rs`), STAC
 (CDSE/Copernicus Data Space, Planetary Computer, PDS-STAC), OPeNDAP
 (`opendap_reader.rs`), ERDDAP (`erddap_harvester.rs`).
+
+## Methode & Grenzen
+
+- **Suchraum:** `archive_search` (brave/github) + GitHub-API, 2026-09-16 — unser
+  Werkzeug, unser Fensterausschnitt; kein vollständiger Markt-Scan.
+- **Aus Lehrbuch-Wissen ergänzt (ungemessen):** **pySPEDAS** (Heliophysik,
+  NASA-Ökosystem) fiele in die SDK-Klasse und ändert das Verdikt nicht — eine
+  Vermutung, keine Messung.
+- **Schnittmenge gemessen:** astroquery ↔ unsere Quellen, per Host-Mapping über
+  die aufgelösten Quellhosts (siehe Fußnote Teil 1) — 147/1655 Oszillatoren.
+- **Gegenprobe offen (nicht meßpflichtig):** 199/918 ≈ 21,7 % — welche
+  *astroquery*-Module das abdecken und welche unserer astronomischen Quellen
+  astroquery **nicht** erreicht, ist nicht gezählt; relevant nur, falls das Blatt
+  je als „wir sind keine astroquery-Teilmenge" zitiert wird.
+- **Einseitiger Spiegel:** gewogen wurden *unsere* Quellen gegen astroquery,
+  **nicht** astroquerys Gesamtreichweite (es erreicht Quellen, die wir bewußt
+  declined oder nie gesucht haben). „Kein Superset" trägt; die Lesart „wir decken
+  astroquerys Domäne ab" wäre stärker als die Messung.
 
 ## Verdikt
 
@@ -75,6 +111,15 @@ Modell (Kraft/Oszillator). Kein fremdes Projekt vereinigt beides.
 **Was wir nicht haben** (bewusst nicht übernommen): Per-Quelle-Query-Tiefe und
 Community (astroquery/GDAL) sowie Format-Breite (GDAL). Ein Ab-Schauen lohnt
 **nur als Muster** (Auth/Retry/Pagination je Quelle), nicht als Abhängigkeit.
+**Ehrlich dazu:** astroquery kennt die Auth-Macken einzelner Dienste tiefer als
+jedes Muster. Wo die Macken einer Quelle das Muster übersteigen, wird das Muster
+zur **privaten** Abhängigkeit, die nur dieses Haus wartet — der Unterhaltspreis
+der Unabhängigkeit: klein heute, wachsend mit jeder Sonderquelle.
+
+**Lizenz (die stillgestellte Rechnung).** Die Sammlung steht unter **PolyForm /
+CC BY-NC-SA — non-commercial**. Sie kann so nicht verkauft werden; jede
+Monetarisierung beginnt mit einer Lizenz-Entscheidung. Keine Kritik, eine offene
+Zeile.
 
 **Standards statt Sammlung:** Wo eine Quelle einen Standard anbietet
 (HAPI/VO/STAC/OAI-PMH/OPeNDAP/ERDDAP), nutzen wir ihn — das ersetzt die
