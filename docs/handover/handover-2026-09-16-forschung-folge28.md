@@ -3,7 +3,7 @@
   session: Forschung-Folge 28
   class: handover
   date: 2026-09-16
-  sha256: b890d59dcff5e66bc2052359297cb79d4e9867fd5adbc73ec28971c9a9912552
+  sha256: 40046a9bb97c48725a24a0d8e7032024726e4138eb75b4f272bd9269ef94eb38
   status: live
 -->
 # Handover — Forschung-Folge 28 (2026-09-16)
@@ -23,19 +23,15 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-## TE / Statistik — HEAD rot, TE-Bins-CI gated
+## TE / Statistik — Korona §4.6 offen
 
-- **HEAD kompiliert `corona_conditional_probe` (und weitere TE-Bins) nicht.**
-  `corona-conditional-probe` (run 35075736443) bricht mit E0061/E0432 ab:
-  `te.rs:1083` `conditional_te_stats_lagged_n` trägt die Params-Struct-Signatur,
-  der Aufruf in `corona_conditional_probe.rs:720` die alte Positionsform. Der Fix
-  liegt im **laufenden WIP der Bau-Linie** (Params-Struct-Refactor über
-  `src/` + `tools/`, staged; Arbeitsbaum grün) — die Bau-Linie räumt ihre
-  mitgeschleppten Coding-Sünden auf und committet selbst. `te_null_limits_probe`
-  und `depth_phase_fleet_probe` kompilieren bei HEAD und laufen (s. u.).
-  (Schritt: den Commit der Bau-Linie abwarten, dann
-  `gh workflow run corona-conditional-probe.yml`; §4.6/Limitations in
-  `docs/paper/corona-heating-ladder.md` füllen.)
+- **Korona-Leiter — conditional §4.6 offen.** Der Bau-WIP ist gelandet
+  (`ee4db3aa` Refactor über `src/` + `tools/`, `21edbbef` measure-step gate);
+  HEAD ist grün. `corona-conditional-probe` ist dispatcht (run 35080380117,
+  läuft).
+  (Schritt: Artefakt lesen, §4.6/Limitations in
+  `docs/paper/corona-heating-ladder.md` füllen — die Binning-Sparsität bei 5
+  Konfundern entscheidet binned vs. ksg.)
 - **Solar 211A→193A** — conditional stage-2. (Schritt:
   `corona_conditional_probe`-Lauf, `docs/paper/solar-seconds-matrix.md`.)
 - **Der Grat** — AIA-2014-per-Zelle-Schwellen. (Schritt: per-Zelle-Schwellen aus
@@ -84,7 +80,9 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   Clipper 03.12. (Schritt: `docs/paper/flyby-path-2-preregistration.md`.)
 - **Kausalpfeil Trishuli** — Abfluss-Serie öffnen → `pfeil --lag-sweep`.
   (Schritt: `docs/paper/sturzflut-tibet-pfeil.md`.)
-- **JWST disequilibrium** — O2/O3, vegetation red-edge, saisonale Kanäle.
+- **JWST disequilibrium** — O2/O3-Absenz gemessen (ADS/arXiv-Sweep 2026-09-16:
+  keine Detektion im durchsuchten Record, nur Machbarkeits-/Retrieval-Studien;
+  §6). Offen: vegetation red-edge, saisonale Kanäle.
   (Schritt: `docs/paper/jwst-disequilibrium-survey.md`.)
 
 ## Extern gebunden (kein Datum)
