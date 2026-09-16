@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: c1c6f6976f7e549edbb0a3ffaff6efa478cf9ea34361ac76b805e6ff72d4b73b
+  sha256: 6a4b61a2aa875829002a991bb2f13680220da3592e9361ffbd2add750e59e3fa
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
@@ -190,3 +190,23 @@ Das **Format** ist offen (Juno TNF, NEAR ODF); die Erd-Encounter-Rohdaten liegen
 
 **Fazit:** Die drei Absenzen halten. Nur Hinson 1997 kippt — offener Bronze-OA-Volltext
 plus der offene PDS-Datenweg; der Paywall ist für die Borduhr-Sprung-Frage irrelevant.
+
+## Nachtrag 2026-09-16 — Re-Run der leer gebliebenen Zweitlinien
+
+Die Klassen, die im Re-Run ohne offene Route blieben, wurden erneut gemessen
+(`archive_search --all`/`--leads`/`--verdict`; register_lookup gegen
+`sources.φ`/`dead_sources.φ`/`blocked_sources.φ` vor jeder Suche). Ergebnis:
+
+| Klasse | Messung 2026-09-16 | Verdikt |
+|---|---|---|
+| Messenger ODF Erd-Flyby | `pds-geosciences.wustl.edu/messenger/urn-nasa-pds-mess-rs-raw/` 200, Bundle 1.0 mit `data-odf/` Jahresordner **2007–2015, kein 2005** | request-only bestätigt (Erd-Encounter fehlt im offenen Bundle; `messenger_odf.bin` trägt Venus/Merkur) |
+| Rosetta Erd-Swingby ODF | `archives.esac.esa.int/psa/ftp/ROSETTA/` 404; `…/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/` 200, trägt `RSI/` | pending (RSI-Unterbaum auf Erd-Swingby-ODFs 2005/2007/2009 zu prüfen) |
+| Juno Gravity (`jnogrv`) | `atmos.nmsu.edu/PDS/data/jnogrv_1001/` `--verdict` 200 (2897 B) | live (Quelle des gebauten `juno_odf.bin`, sources.φ:6308) |
+| JUNO-Neutrino-Release | Erst-Physik publiziert (Nature `s41586-026-10538-z`, 59,1 d Daten, 2026-06-10); Zenodo 101 = Talks/Poster, DataCite ohne Datensatz | `not-published` bestätigt — Daten-Release absent (Wiedervorlage: IHEP-Open-Data-Policy) |
+| Hydrophon | `--leads hydrophone` 267 Dateien, 0 neue Hosts; NRS-GCS-Bucket live (Re-Run 3.1–3.5) | live, aber **ohne Compiler** (kein NRS-Eintrag in sources.φ) — Bau-Reihenfolge, kein Quellen-Verdikt |
+| TNO Sternbedeckung | `--all "stellar occultation transneptunian object astrometry"`: Zenodo `10.5281/zenodo.21185812` (Quaoar, 14 a Sternbedeckungen, cc-by-4.0, `Quaoar_paper.zip`), Zenodo `10.5281/zenodo.10620251` (TNBFits.zip), A&A 2020 `aa39054-20` (37 Occultation-Astrometrien, Lucky Star) | neue Astrometrie-Direktlinien-Kandidaten; Occultation-DB-URL (`J.Phys.Conf.Ser.` 1365, 012024) pending |
+
+Kometen (`dcom5_comets`, `cometels_flat.json`) und TNO-Gaia/DES/OSSOS sind
+in-register; Gravimeter (IGETS) und Infraschall (BGR) sind geschlagen und
+gebaut — nicht neu gefahren. Wayback/CDX und lib.rs meldeten 503/403
+(Quellen-Zustand, keine dieser Klassen inhaltlich).

@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: 0255a45b88ac716a4643687cfc71e434dd511a48c9393cf8a11e8fa9b6b0f93a
+  sha256: 510de3668190314ee6b20672fb89748c9799e0ba74f8a3fee9872ff0e130dd44
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -49,7 +49,7 @@ lokal — der Zugang existiert, es ist kein Warten.
 | Warte | gemessene Teilroute | was fehlt |
 |---|---|---|
 | Voyager Roh-Doppler | PDS-Rings `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/` — rohe **ODR** (Open-Loop, Okkultation): VG1 Jupiter, VG2 Jupiter, VG2 Uranus/PODR, anonym | closed-loop DSN-Doppler ODF/TRK-2-34/TNF — nur Cassini/Maven/DART tragen TRK-2-34-Bundles, nicht Voyager |
-| NSE/Haug | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-garching.de/record/2120` | die rohen/reduzierten TRISP-NSE-Dateien bleiben bei MPI-FKF (kein ILL/MLZ/MPG-DOI) |
+| NSE/Haug | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-garching.de/record/2120` + DTU-Orbit-Volltext-PDF `backend.orbit.dtu.dk/ws/files/9907046/plugin_1367_2630_12_10_105006.pdf` (2026-09-16 gemessen: 200, magic pdf, 1 341 734 B, sha256 f50e1ffd8783d731cf82a0be73fd57563746a778f3783525f9c6d2ec781ec6ec) | die rohen/reduzierten TRISP-NSE-Dateien bleiben bei MPI-FKF (kein ILL/MLZ/MPG-DOI); Präzedenz gemessen: Zenodo `10.5281/zenodo.18306252` (RESEDA/BaZrO₃, FRM-II, 2026) zeigt, dass FRM-II-Spin-Echo-Deposits existieren — der Haug/YBCO-Datensatz bleibt abwesend |
 
 ## Bleibt offen (keine offene Route gemessen)
 
