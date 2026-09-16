@@ -444,8 +444,7 @@ fn main() {
                 f64::NAN
             } else {
                 let m = vals.iter().sum::<f64>() / vals.len() as f64;
-                let var =
-                    vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
+                let var = vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
                 m + 2.0 * var.sqrt()
             };
             let sig_t = if d > thr { "*" } else { " " };
