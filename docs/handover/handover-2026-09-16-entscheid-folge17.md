@@ -3,7 +3,7 @@
   session: Entscheid-Folge XVII
   class: handover
   date: 2026-09-16
-  sha256: e37c4a71b29f146e4a53457191a89771b569a8b2900053e3746545167c51c3bd
+  sha256: 17803c552d588c1041473cfa8a7770effefe342d1d06c41abcdd13a8f8c2df60
   status: live
 -->
 # Handover — Entscheid-Folge XVII (2026-09-16)
@@ -55,6 +55,19 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   Name trägt beide Naturen. `osearch` bleibt descoped (Kollision mit dem
   Fremdprojekt, das `o` benennt nichts Gemessenes, o-Präfix = Trainingsdaten-Muster).
   Keine Migration, kein Alias.
+
+## Consent-Grenze (Rat, 2026-09-16)
+
+- Dritt-Akte brauchen das Wort des Operators je Akt: Mail senden (`smail --send`),
+  Konten/API-Keys anlegen, Anträge/Auskünfte (Löschung, Datenrechte, Support,
+  Nachfassen), Einreichungen an fremder Stelle (Papier, Kommentar/Issue/PR),
+  Verträge, Zahlungen, fremde Konten löschen. Autonom: alles Lokale, commit+push
+  eigene Repos, CDN-Manifestation, Netz-Lesen (auch bezahlte Read-Quotas),
+  Postfach-Lesen, `smail --dry-run`, die volle Vorbereitung bis zur Ausführung.
+- Durchsetzung: `smail` ist Default dry-run, Senden nur mit `--send` (Code +
+  Test); `opencode.json`: `smail *` ask, `smail *--dry-run*` allow. Regel in
+  AGENTS.md (Consent of the operator). (Schritt: die Adoption-Mail-Zeile ist der
+  erste Träger der Form — Vorbereitung autonom, ein Ask, ein Wort.)
 
 ## Termine (Wiedervorlage)
 
