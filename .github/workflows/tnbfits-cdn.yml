@@ -1,0 +1,102 @@
+name: tnbfits-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  tnbfits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    steps:
+      - uses: actions/checkout@v7
+      - name: Idempotence — skip if the shard manifest already rests on the CDN
+        run: |
+          if gh release view zenodo.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "tnbfits.manifest"; then
+            echo "asset tnbfits.manifest already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset tnbfits.manifest missing — streaming, folding, sharding"
+      - name: Stream the TNBFits archive from Zenodo and split into 1-GiB shards
+        run: |
+          mkdir -p tnbfits
+          streamed=0
+          for attempt in 1 2 3; do
+            rm -f tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9]
+            if curl -sSfL --max-time 5400 \
+                 https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip \
+                 | split -b 1073741824 -d -a 3 - tnbfits/Proudfoot23_TNBFits.zip.; then
+              streamed=1
+              break
+            fi
+            echo "tnbfits stream attempt $attempt returned void"
+          done
+          if [ "$streamed" != 1 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "tnbfits-cdn: Proudfoot23_TNBFits.zip stream returned void" \
+              "curl on zenodo.org did not reach Proudfoot23_TNBFits.zip (14232134885 B) after 3 attempts. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Fold whole-file hashes and verify the Zenodo md5 (the hash is the gate)
+        run: |
+          whole_sha=$(cat tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9] | sha256sum | cut -d' ' -f1)
+          whole_md5=$(cat tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9] | md5sum | cut -d' ' -f1)
+          echo "whole_sha256 $whole_sha"
+          echo "whole_md5 $whole_md5"
+          if [ "$whole_md5" != "a1aada719292a579bf0695e02e7d2afd" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "tnbfits-cdn: md5 of the fresh TNBFits stream differs" \
+              "The stream delivered md5 $whole_md5 instead of a1aada719292a579bf0695e02e7d2afd — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          printf '%s\n' "$whole_sha" > tnbfits/whole.sha256
+          printf '%s\n' "$whole_md5" > tnbfits/whole.md5
+      - name: Fold per-shard hashes and write the shard manifest
+        run: |
+          shard_size=1073741824
+          offset=0
+          shard_count=0
+          shard_lines=$(mktemp)
+          for f in tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9]; do
+            len=$(wc -c < "$f")
+            h=$(sha256sum "$f" | cut -d' ' -f1)
+            printf '%s %s %s %s\n' "$(basename "$f")" "$offset" "$len" "$h" >> "$shard_lines"
+            offset=$((offset + len))
+            shard_count=$((shard_count + 1))
+          done
+          whole_sha=$(cat tnbfits/whole.sha256)
+          whole_md5=$(cat tnbfits/whole.md5)
+          {
+            echo "# Proudfoot23_TNBFits.zip — sharded CDN mirror (tag zenodo.org)"
+            echo "# reconstruct: cat Proudfoot23_TNBFits.zip.[0-9][0-9][0-9] > Proudfoot23_TNBFits.zip"
+            echo "whole_sha256 $whole_sha"
+            echo "whole_md5 $whole_md5"
+            echo "whole_size $offset"
+            echo "shard_size $shard_size"
+            echo "shard_count $shard_count"
+            cat "$shard_lines"
+          } > tnbfits/tnbfits.manifest
+          rm -f "$shard_lines"
+          echo "manifest: $shard_count shards, $offset bytes total"
+      - name: Ensure the zenodo.org release exists on the CDN
+        run: |
+          if ! gh release view zenodo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create zenodo.org --repo omegaflow/sources \
+              --title "zenodo.org" \
+              --notes "Zenodo reference datasets mirrored for omegaflow (CDN tag = netloc)."
+          fi
+      - name: Mirror the shards and manifest to the CDN (the CI manifestator is the only writer)
+        run: |
+          for f in tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9]; do
+            gh release upload zenodo.org "$f" --clobber --repo omegaflow/sources
+          done
+          gh release upload zenodo.org tnbfits/tnbfits.manifest --clobber --repo omegaflow/sources

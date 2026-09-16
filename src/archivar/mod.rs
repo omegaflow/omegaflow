@@ -70,6 +70,7 @@ pub mod json;
 pub mod jwst;
 pub mod jwst_equilibrium;
 pub mod kbo;
+pub mod kcdc;
 pub mod kepler;
 pub mod las;
 pub mod lsk;
