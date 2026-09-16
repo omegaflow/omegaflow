@@ -391,9 +391,10 @@ gradient speaking.
 Tool boundaries — do not try a tool you may not call: `grep`, `ls`, `cat`, `rg`,
 `cd`, `python`, `python3` are denied (leading form and absolute path). Use instead:
 content search `archive_search <kws> --root <dir>` or `sgrep`; discovery `glob`;
-reading `sread <file> [--offset --limit]` or the `read` tool; directory change via
-the bash tool's `workdir` parameter. Read your exact allow-list in `opencode.json`
-before the first bash call — a denied call wastes a turn and the session's quota.
+reading `sread <file> [--offset --limit]` (a bash command, not a tool) or the
+`read` tool; directory change via the bash tool's `workdir` parameter. Read your
+exact allow-list in `opencode.json` before the first bash call — a denied call
+wastes a turn and the session's quota.
 
 ## Verification: What `cargo check` Cannot Catch
 
