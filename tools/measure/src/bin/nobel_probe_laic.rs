@@ -202,7 +202,7 @@ fn main() {
                 bins: 3,
                 seed: 0x9E37_79B9_7F4A_7C15,
                 n_surr: 100,
-                null: TeNull::Residual,
+                null: TeNull::Arx,
                 block: 0,
                 est: TeEstimator::Binned,
                 k: 4,
