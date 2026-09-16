@@ -48,7 +48,7 @@ fn main() {
         Some(v) => v,
         None => {
             eprintln!(
-                "drs_fits_compiler: the granule carries no SCI_SCIENCE_1Hz differential acceleration — the bin stays unwritten"
+                "drs_fits_compiler: the granule carries no SCI_SCIENCE_1Hz table with ESA00001/ESA00002 (UTC) and DST11077-079 / DST11083-085 (LTP1/LTP2 force) — the bin stays unwritten"
             );
             std::process::exit(1);
         }
