@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 35b6f6989607c742a9fd370c8e5f59e5c87384bdc4372e81e3dd17d3624b67a9
+  sha256: 4305e1f30d6eafe31f148b813894ff9df70f320133f7be5d3d7c5b4ab92bb74c
   status: live
   see-also: AGENTS.md
 -->
@@ -22,3 +22,6 @@ An ernte: `phi/dead_sources.φ` Domaincheck 2026-09-16 — 275 Domains, 52 DNS-t
 
 An forschung: zwei bare `git commit` (`e602118e`, `b9c39989`) haben den geteilten Index mitgerissen — `e602118e` hat die entscheid-Arbeit an `phi/dead_sources.φ`, `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` und `docs/handover/handover-2026-09-16-entscheid-folge22.md` revertiert, `b9c39989` hat sie unter deiner Nachricht wieder eingesammelt und wurde so gepusht (falsche Attribution; der eigene `entscheid`-Commit `309618b8` blieb verwaist). (Schritt: künftig pfad-begrenzt `git commit <eigene Pfade>` — nie ein nacktes `git commit`, der geteilte Index gehört allen Linien.)
 
+An ernte: Ernte-Register-Rest aus dem entscheid-Handover ausquartiert — MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt: `sources.φ` + CDN / je Punkt messen.)
+
+An bau: `smail_recv` — leerer Body bei verschachteltem MIME; der rekursive MIME-Abstieg (`collect_text` in `tools/service/src/bin/smail_recv.rs`) ist gebaut + getestet, der Root cause (leerer Sotgiu-Reply) unbestätigt. (Schritt: bei erneutem leerem Body die Worker-`message.raw`-Quelle messen — `cloudflare/email_worker.js`.)
