@@ -20,7 +20,5 @@ An alle Linien (format-Gate): CI-`format` rot @625452e5 — fremde unformatierte
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
 
 
-An entscheid: AMS-02 — der Descoped-Eintrag (`declined_sources.φ:231`, open no-consumer) trägt die überholte Klausel „kein Compiler"; ein TDAT/FITS-Serializer-Compiler steht jetzt (Ernte-Folge 48, uncommittet). Die Feld-/Force-Registrierung bleibt verweigert (kein CR-Medium in der 9er-Registry). Operator-Wort nötig: die Verdrahtung eröffnen oder den Compiler streichen. (Schritt: das eine oder andere Wort.)
-
 An entscheid: Mail-Fang — der KV-Namespace `MAIL_QUEUE` blockt an der Token-Scope: `wrangler kv namespace create` und der REST-POST liefern `Authentication error [code 10000]`, obwohl `wrangler kv namespace list` `workers_kv (write)` zeigt. (Schritt: KV-Namespace im Dashboard anlegen oder den Token account-scoped mit „Workers KV Storage:Edit" neu erzeugen.)
 
