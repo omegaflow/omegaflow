@@ -606,6 +606,12 @@ Alles andere: durch Aladin gucken. Gucken füllt keine Speisekammer — das
 Register trägt die offenen Speisekammer-Fragen (aia2014, planck, eve, omni2,
 goes15, der gebco-Stub); dieser Filter ist die Antwortregel dafür.
 
+Tor 1 ordnet die Ernte, nie das Register (Entscheid-Folge XX, 2026-09-16): ein
+gebauter Harvest wird registriert (`sources.φ` + CDN), der fehlende Konsument
+ist eine Bau-Reihenfolge, kein Quellen-Verdikt; `blocked` = Zugang, `declined`
+= Verdikt (unphysikalisch/Modell/Registry/kommerziell/superseded), `pending` =
+Ernte ungebaut — nie „kein Konsument".
+
 ### 16.1 Endpoint-Zensus (der Wieger)
 
 Der Endpoint-Zensus mißt je Endpoint: HTTP-Code (nackter GET), Antwortzeit,
