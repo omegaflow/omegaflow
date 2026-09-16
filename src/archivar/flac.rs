@@ -96,8 +96,8 @@ fn parse_streaminfo(b: &[u8]) -> Option<StreamInfo> {
     }
     let min_block_size = ((b[0] as u16) << 8) | (b[1] as u16);
     let max_block_size = ((b[2] as u16) << 8) | (b[3] as u16);
-    let sample_rate = (((b[10] as u32) << 12) | ((b[11] as u32) << 4) | ((b[12] as u32) >> 4))
-        & 0xFFFFF;
+    let sample_rate =
+        (((b[10] as u32) << 12) | ((b[11] as u32) << 4) | ((b[12] as u32) >> 4)) & 0xFFFFF;
     let channels = (((b[12] as u32) >> 1) & 0x07) + 1;
     let bits_per_sample = (((b[12] as u32) & 0x01) << 4 | ((b[13] as u32) >> 4)) + 1;
     let total_samples = (((b[13] as u64) & 0x0F) << 32)
@@ -204,11 +204,7 @@ struct SubframeHeader {
     bps: u8,
 }
 
-fn decode_subframe(
-    bits: &mut Bits,
-    header: &SubframeHeader,
-    out: &mut [i32],
-) -> Option<()> {
+fn decode_subframe(bits: &mut Bits, header: &SubframeHeader, out: &mut [i32]) -> Option<()> {
     let pad = bits.read(1)?;
     if pad != 0 {
         return None;
@@ -298,11 +294,7 @@ fn decode_subframe(
     Some(())
 }
 
-fn decode_frame(
-    bits: &mut Bits,
-    si: &StreamInfo,
-    out: &mut Vec<i32>,
-) -> Option<()> {
+fn decode_frame(bits: &mut Bits, si: &StreamInfo, out: &mut Vec<i32>) -> Option<()> {
     let _sync = bits.read(14)?;
     let _reserved = bits.read(1)?;
     let blocking = bits.read(1)?;

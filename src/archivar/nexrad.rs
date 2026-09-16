@@ -190,6 +190,7 @@ const REFRACTION_KE: f64 = 4.0 / 3.0;
 const FEET_PER_M: f64 = 0.3048;
 
 pub struct NexradSite {
+    pub stid: [u8; 4],
     pub lat_deg: f64,
     pub lon_deg: f64,
     pub alt_m: f64,
@@ -352,8 +353,9 @@ const SITES: &[(&[u8; 4], f64, f64, f64)] = &[
 ];
 
 pub fn nexrad_site(stid: &[u8; 4]) -> Option<NexradSite> {
-    let (_, lat, lon, elev_ft) = SITES.iter().find(|(code, ..)| *code == stid)?;
+    let (code, lat, lon, elev_ft) = SITES.iter().find(|(code, ..)| *code == stid)?;
     Some(NexradSite {
+        stid: **code,
         lat_deg: *lat,
         lon_deg: *lon,
         alt_m: *elev_ft * FEET_PER_M,
@@ -494,6 +496,7 @@ mod tests {
     #[test]
     fn site_anchor_resolves_ktlx_and_refuses_unknown() {
         let ktlx = nexrad_site(b"KTLX").expect("KTLX resolves");
+        assert_eq!(ktlx.stid, *b"KTLX");
         assert!((ktlx.lat_deg - 35.33306).abs() < 1e-5);
         assert!((ktlx.lon_deg - -97.2775).abs() < 1e-5);
         assert!((ktlx.alt_m - 1213.0 * 0.3048).abs() < 1e-6);
