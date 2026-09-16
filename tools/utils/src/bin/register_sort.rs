@@ -56,7 +56,7 @@ fn main() {
 
 fn usage() {
     eprintln!("usage: register_sort [path] [--write]");
-    eprintln!("  reports ttl-order violations (url + ttl), exit 0 when ttl-ascending");
+    eprintln!("  reports (ttl asc, url asc) order violations; exit 0 only when canonical");
     eprintln!("  --write re-orders blocks by (ttl asc, url asc) into the file");
 }
 
@@ -118,9 +118,9 @@ fn build_block(lines: &[String]) -> Result<Block, String> {
 
 fn report(path: &str, blocks: &[Block]) {
     let n = blocks.len();
-    let violations = ttl_violations(blocks);
-    let notes = url_notes(blocks);
-    for &p in &violations {
+    let ttl_bad = ttl_violations(blocks);
+    let url_bad = url_violations(blocks);
+    for &p in &ttl_bad {
         println!(
             "ttl-order violation: ttl {} at {} placed after ttl {}",
             blocks[p].ttl,
@@ -128,25 +128,26 @@ fn report(path: &str, blocks: &[Block]) {
             blocks[p - 1].ttl
         );
     }
-    for &p in &notes {
+    for &p in &url_bad {
         println!(
-            "url-order note within ttl {}: {}",
-            blocks[p].ttl, blocks[p].url
+            "url-order violation within ttl {}: {} placed after {}",
+            blocks[p].ttl,
+            blocks[p].url,
+            blocks[p - 1].url
         );
     }
-    if violations.is_empty() {
+    if ttl_bad.is_empty() && url_bad.is_empty() {
         println!(
-            "register {} is ttl-ascending across {} blocks ({} url-order note(s) within equal ttl)",
-            path,
-            n,
-            notes.len()
+            "register {} is canonical (ttl asc, url asc) across {} blocks",
+            path, n
         );
         std::process::exit(0);
     }
     println!(
-        "register {} holds {} ttl-order violation(s) across {} blocks",
+        "register {} holds {} ttl-order and {} url-order violation(s) across {} blocks",
         path,
-        violations.len(),
+        ttl_bad.len(),
+        url_bad.len(),
         n
     );
     std::process::exit(1);
@@ -162,7 +163,7 @@ fn ttl_violations(blocks: &[Block]) -> Vec<usize> {
     out
 }
 
-fn url_notes(blocks: &[Block]) -> Vec<usize> {
+fn url_violations(blocks: &[Block]) -> Vec<usize> {
     let mut out: Vec<usize> = Vec::new();
     let mut i = 0;
     while i < blocks.len() {
@@ -286,7 +287,7 @@ mod tests {
     }
 
     #[test]
-    fn equal_ttl_url_note_detected() {
+    fn equal_ttl_url_violation_detected() {
         let text = [
             "url https://z.example/data",
             "ttl 10",
@@ -299,8 +300,8 @@ mod tests {
         .join("\n")
             + "\n";
         let blocks = split_blocks(&text).expect("sample parses");
-        let notes = url_notes(&blocks);
-        assert_eq!(notes, vec![1]);
+        let bad = url_violations(&blocks);
+        assert_eq!(bad, vec![1]);
     }
 
     #[test]
