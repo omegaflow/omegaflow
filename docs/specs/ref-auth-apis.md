@@ -61,7 +61,7 @@ vorhanden.
 3,9 Mrd. Vorkommen), `PURPLEAIR_KEY` (verifiziert, globale PM-Sensoren),
 `TRANSIT511_KEY` (verifiziert, aber decline — Premium-Echtzeit + gzip + Registry).
 
-`archive_search --github` liest seit 2026-09-15 `GITHUB_SEARCH_TOKEN` (read-only,
+`archive_search --github` liest seit 2026-09-15 `GH_SEARCH_TOKEN` (read-only,
 fine-grained ohne Permissions) statt `OMEGAFLOW_TOKEN`; der Write-Token bleibt bei
 der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
 
