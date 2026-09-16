@@ -39,6 +39,7 @@ jobs:
           /usr/bin/time -v cargo run -p omegaflow-harvest --release --bin mpcobs_compiler -- \
             --input kernels/UnnObs.txt.gz \
             --shard mpcobs-unnobs \
+            --shard-key designation \
             --ci-mode \
             || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-shard-cdn: UnnObs shard compile returned void" \
