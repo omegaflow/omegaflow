@@ -30,7 +30,7 @@ jobs:
           if ! gh release view data.nsidc.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create data.nsidc.earthdatacloud.nasa.gov --repo omegaflow/sources \
               --title "data.nsidc.earthdatacloud.nasa.gov" \
-              --notes "ICESat-2 ATL03 (ATLAS/ATL03) geolocated photon heights compiled to a geo oscillator record (medium em). Header 8 B: magic AT31 (4), count (u32 LE). Record stride 48 B = 6 x f64 LE: delta_time (s), lat_ph (deg), lon_ph (deg), h_ph (m), quality_ph, beam_index."
+              --notes "ICESat-2 ATL03 (ATLAS/ATL03) geolocated photon heights compiled to a geo oscillator record (medium em). Header 8 B: magic AT31 (4), count (u32 LE). Record stride 56 B = 7 x f64 LE: delta_time (s), lat_ph (deg), lon_ph (deg), h_ph (m), quality_ph, beam_index, anchor_tdb (TDB seconds since J2000)."
           fi
       - name: Compile the ATL03 day and upload to CDN
         run: |
