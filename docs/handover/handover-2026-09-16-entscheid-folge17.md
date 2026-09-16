@@ -3,7 +3,7 @@
   session: Entscheid-Folge XVII
   class: handover
   date: 2026-09-16
-  sha256: 47053b7844e372245ad0bc60c5520c32e5d684af5fe016bc2f848c8f86d5254a
+  sha256: e37c4a71b29f146e4a53457191a89771b569a8b2900053e3746545167c51c3bd
   status: live
 -->
 # Handover — Entscheid-Folge XVII (2026-09-16)
@@ -47,6 +47,14 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 - Rubin RSP (Shaughnessy, SLAC), NSE/Haug (Keimer), CSES-Limadou (Sotgiu, ASI
   SSDC): Antwort offen — Postfach-Zeile in `docs/zustand/external-state.md`.
   (Schritt: Postfach bei Fälligkeit.)
+
+## Namens-Entscheid (Rat, 2026-09-16)
+
+- `archive_search` bleibt — keine zweite Taufe; das aufgezeichnete Wort bestätigt.
+  Die 16 Netz-Quellen sind selbst Archive (arXiv/ADS/NTRS/Wayback/Zenodo/…); der
+  Name trägt beide Naturen. `osearch` bleibt descoped (Kollision mit dem
+  Fremdprojekt, das `o` benennt nichts Gemessenes, o-Präfix = Trainingsdaten-Muster).
+  Keine Migration, kein Alias.
 
 ## Termine (Wiedervorlage)
 
