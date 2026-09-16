@@ -18,7 +18,12 @@ fn base62_digit(c: u8) -> Option<u32> {
 }
 
 fn designation_key(designation: &[u8]) -> u32 {
-    u32::from_be_bytes([designation[0], designation[1], designation[2], designation[3]])
+    u32::from_be_bytes([
+        designation[0],
+        designation[1],
+        designation[2],
+        designation[3],
+    ])
 }
 
 fn decode_packed_number(field: &str) -> Option<u32> {
@@ -179,12 +184,14 @@ fn stream_lines<F: FnMut(&[u8])>(input: &str, mut f: F) {
 fn compile_into<W: Write>(input: &str, out: &mut W) -> (usize, usize) {
     let mut written = 0usize;
     let mut skipped = 0usize;
-    stream_lines(input, |line_bytes| match record_line(line_bytes, ShardKey::Number) {
-        Some((_, rec)) => {
-            out.write_all(&rec).expect("write record");
-            written += 1;
+    stream_lines(input, |line_bytes| {
+        match record_line(line_bytes, ShardKey::Number) {
+            Some((_, rec)) => {
+                out.write_all(&rec).expect("write record");
+                written += 1;
+            }
+            None => skipped += 1,
         }
-        None => skipped += 1,
     });
     (written, skipped)
 }
@@ -540,7 +547,8 @@ mod tests {
 
     #[test]
     fn unnumbered_line_keys_by_designation() {
-        let line = "     I73O00A* A1873 07 30.31661 23 14 41.96 -01 41 52.7          12   V AN082767";
+        let line =
+            "     I73O00A* A1873 07 30.31661 23 14 41.96 -01 41 52.7          12   V AN082767";
         let rec = record_bytes(line).unwrap();
         assert_eq!(
             u32::from_le_bytes(rec[29..33].try_into().unwrap()),
@@ -548,13 +556,12 @@ mod tests {
         );
         assert_eq!(&rec[43..50], b"I73O00A");
         assert_eq!(
-            record_line(line.as_bytes(), ShardKey::Designation).unwrap().0,
+            record_line(line.as_bytes(), ShardKey::Designation)
+                .unwrap()
+                .0,
             0x4937334F
         );
-        assert_eq!(
-            record_line(line.as_bytes(), ShardKey::Number).unwrap().0,
-            0
-        );
+        assert_eq!(record_line(line.as_bytes(), ShardKey::Number).unwrap().0, 0);
     }
 
     #[test]
