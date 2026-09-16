@@ -776,7 +776,9 @@ pub fn conditional_te_stats_lagged(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let ys = arx_restricted_surrogate_conditional(y, &[c], max_lag, &mut rng);
+        let Some(ys) = arx_restricted_surrogate_conditional(y, &[c], max_lag, &mut rng) else {
+            continue;
+        };
         if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
             vals.push(te);
         }
@@ -867,7 +869,9 @@ pub fn conditional_te_stats_lagged_2(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let ys = arx_restricted_surrogate_2(y, c1, c2, max_lag, &mut rng);
+        let Some(ys) = arx_restricted_surrogate_2(y, c1, c2, max_lag, &mut rng) else {
+            continue;
+        };
         if let Some(te) = transfer_entropy_conditional_2(x, &ys, c1, c2, lag) {
             vals.push(te);
         }
@@ -998,9 +1002,9 @@ pub fn arx_restricted_surrogate_conditional(
     conds: &[&[f32]],
     max_lag: usize,
     rng: &mut u64,
-) -> Vec<f32> {
+) -> Option<Vec<f32>> {
     if conds.is_empty() {
-        return arx_restricted_surrogate(y, max_lag, rng);
+        return Some(arx_restricted_surrogate(y, max_lag, rng));
     }
     let n = y.len();
     match ols_fit_lagged_n(y, conds, max_lag) {
@@ -1018,14 +1022,14 @@ pub fn arx_restricted_surrogate_conditional(
                     let v = lagged_predict_n(&coeffs, &out, conds, t, max_lag)
                         + perm[t - max_lag] as f64;
                     if !v.is_finite() {
-                        return shuffle_series(y, rng);
+                        return None;
                     }
                     v as f32
                 };
             }
-            out
+            Some(out)
         }
-        None => shuffle_series(y, rng),
+        None => None,
     }
 }
 
@@ -1035,7 +1039,7 @@ pub fn arx_restricted_surrogate_2(
     c2: &[f32],
     max_lag: usize,
     rng: &mut u64,
-) -> Vec<f32> {
+) -> Option<Vec<f32>> {
     let n = y.len();
     match ols_fit_lagged_2(y, c1, c2, max_lag) {
         Some(coeffs) => {
@@ -1052,14 +1056,14 @@ pub fn arx_restricted_surrogate_2(
                     let v = lagged_predict_2(&coeffs, &out, c1, c2, t, max_lag)
                         + perm[t - max_lag] as f64;
                     if !v.is_finite() {
-                        return shuffle_series(y, rng);
+                        return None;
                     }
                     v as f32
                 };
             }
-            out
+            Some(out)
         }
-        None => shuffle_series(y, rng),
+        None => None,
     }
 }
 
@@ -1185,7 +1189,13 @@ pub fn conditional_te_surrogates_n(
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
             TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
             TeNull::XShift => y.to_vec(),
-            TeNull::Arx => arx_restricted_surrogate_conditional(y, conds, max_lag, &mut rng),
+            TeNull::Arx => {
+                let Some(s) = arx_restricted_surrogate_conditional(y, conds, max_lag, &mut rng)
+                else {
+                    continue;
+                };
+                s
+            }
         };
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(xs, &ys, conds, lag, bins),
@@ -2607,7 +2617,8 @@ mod tests {
         }
         let mut rng_a = 42u64;
         let mut rng_b = 42u64;
-        let cond_surr = arx_restricted_surrogate_conditional(&y, &[&c], max_lag, &mut rng_a);
+        let cond_surr = arx_restricted_surrogate_conditional(&y, &[&c], max_lag, &mut rng_a)
+            .expect("the conditional Arx fit resolves");
         let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b);
         assert_eq!(cond_surr.len(), n);
         assert_eq!(uncond_surr.len(), n);
@@ -2622,7 +2633,8 @@ mod tests {
             max_diff
         );
         let mut rng_c = 42u64;
-        let s2 = arx_restricted_surrogate_2(&y, &c, &c2, max_lag, &mut rng_c);
+        let s2 = arx_restricted_surrogate_2(&y, &c, &c2, max_lag, &mut rng_c)
+            .expect("the two-confounder Arx fit resolves");
         assert_eq!(s2.len(), n);
         assert!(
             s2.iter().all(|v| v.is_finite()),
@@ -3543,6 +3555,308 @@ mod tests {
                 }
             }
         }
+    }
+
+    fn gate_conditional_driver(
+        n: usize,
+        a: f32,
+        rho: f32,
+        coupling: f32,
+        rng: &mut u64,
+    ) -> (Vec<f32>, Vec<f32>, Vec<f32>) {
+        let burn = 200;
+        let rho = rho.clamp(0.0, 0.95);
+        let rho_x = (1.0 - rho * rho).sqrt();
+        let mut c = vec![0f32; burn + n];
+        let mut x = vec![0f32; burn + n];
+        let mut y = vec![0f32; burn + n];
+        for t in 1..burn + n {
+            c[t] = a * c[t - 1] + gate_gauss(rng);
+            y[t] = a * y[t - 1] + 0.5 * c[t - 1] + gate_gauss(rng);
+            x[t] = a * x[t - 1] + rho * c[t] + rho_x * gate_gauss(rng) + coupling * y[t - 1];
+        }
+        (x[burn..].to_vec(), y[burn..].to_vec(), c[burn..].to_vec())
+    }
+
+    fn gate_conditional_driver_2(
+        n: usize,
+        a: f32,
+        rho: f32,
+        coupling: f32,
+        rng: &mut u64,
+    ) -> (Vec<f32>, Vec<f32>, Vec<f32>, Vec<f32>) {
+        let burn = 200;
+        let rho = rho.clamp(0.0, 0.95);
+        let rho_x = (1.0 - rho * rho).sqrt();
+        let mut c1 = vec![0f32; burn + n];
+        let mut c2 = vec![0f32; burn + n];
+        let mut x = vec![0f32; burn + n];
+        let mut y = vec![0f32; burn + n];
+        for t in 1..burn + n {
+            c1[t] = a * c1[t - 1] + gate_gauss(rng);
+            c2[t] = a * c2[t - 1] + gate_gauss(rng);
+            y[t] = a * y[t - 1] + 0.5 * c1[t - 1] + 0.5 * c2[t - 1] + gate_gauss(rng);
+            x[t] = a * x[t - 1]
+                + rho * c1[t]
+                + rho * c2[t]
+                + rho_x * gate_gauss(rng)
+                + coupling * y[t - 1];
+        }
+        (
+            x[burn..].to_vec(),
+            y[burn..].to_vec(),
+            c1[burn..].to_vec(),
+            c2[burn..].to_vec(),
+        )
+    }
+
+    fn gate_conditional_fpr(
+        n: usize,
+        a: f32,
+        rho: f32,
+        max_lag: usize,
+        trials: usize,
+        n_surr: usize,
+        rng: &mut u64,
+    ) -> (usize, usize) {
+        let mut fp = 0usize;
+        let mut neg = 0usize;
+        for t in 0..trials {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let (x, y, c) = gate_conditional_driver(n, a, rho, 0.0, rng);
+            let Some(te) = transfer_entropy_conditional(&x, &y, &c, 1) else {
+                continue;
+            };
+            let Some((_, _, thr)) =
+                conditional_te_stats_lagged(&x, &y, &c, 1, max_lag, seed, n_surr)
+            else {
+                continue;
+            };
+            neg += 1;
+            if te > thr {
+                fp += 1;
+            }
+        }
+        (fp, neg)
+    }
+
+    #[test]
+    fn conditional_arx_fit_resolves_at_small_n() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        for n in [64usize, 128, 256] {
+            let max_lag = n / 8;
+            for a in [0.0f32, 0.5, 0.9] {
+                let c = gate_ar1(n, a as f64, &mut rng);
+                let c2 = gate_ar1(n, a as f64, &mut rng);
+                let y = gate_ar1(n, a as f64, &mut rng);
+                let conds = [c.as_slice()];
+                assert!(
+                    ols_fit_lagged_n(&y, &conds, max_lag).is_some(),
+                    "n={n} max_lag={max_lag} a={a}: the ARX fit must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
+                );
+                let s = arx_restricted_surrogate_conditional(&y, &conds, max_lag, &mut rng)
+                    .expect("the refusal is the None arm, never a silent shuffle");
+                assert_eq!(s.len(), n, "n={n}: the surrogate carries the series length");
+                assert!(
+                    s.iter().all(|v| v.is_finite()),
+                    "n={n} a={a}: the surrogate must stay finite"
+                );
+                assert!(
+                    ols_fit_lagged_2(&y, &c, &c2, max_lag).is_some(),
+                    "n={n} max_lag={max_lag} a={a}: the two-confounder ARX fit must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
+                );
+                let s2 = arx_restricted_surrogate_2(&y, &c, &c2, max_lag, &mut rng)
+                    .expect("the refusal is the None arm, never a silent shuffle");
+                assert_eq!(
+                    s2.len(),
+                    n,
+                    "n={n}: the two-confounder surrogate carries the series length"
+                );
+                assert!(
+                    s2.iter().all(|v| v.is_finite()),
+                    "n={n} a={a}: the two-confounder surrogate must stay finite"
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "conditional n=1000 FP/FN calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_conditional_arx_fpr_fn_n1000() {
+        let n = 1000usize;
+        let max_lag = 2usize;
+        let n_surr = 20usize;
+        let trials = 100usize;
+        let a_set = [0.0f32, 0.5, 0.9];
+        let rho_set = [0.0f32, 0.5, 0.9];
+        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+        let mut rows: Vec<(f32, f32, usize, usize)> = Vec::new();
+        for &rho in &rho_set {
+            for &a in &a_set {
+                let (fp, neg) = gate_conditional_fpr(n, a, rho, max_lag, trials, n_surr, &mut rng);
+                rows.push((a, rho, fp, neg));
+            }
+        }
+        let named: String = rows
+            .iter()
+            .map(|&(a, rho, fp, neg)| format!("a={a} rho={rho}: {fp}/{neg} "))
+            .collect();
+        for &(a, rho, fp, neg) in &rows {
+            assert!(
+                neg > 0,
+                "conditional FP/FN gate: cell a={a} rho={rho} unmeasured (neg=0) — never a passing zero ({named})"
+            );
+            let fpr = 100.0 * fp as f64 / neg as f64;
+            assert!(
+                fpr <= 8.0,
+                "conditional FP/FN gate: FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — the Arx null leaks the x-c cross-correlation ({named})"
+            );
+        }
+        for &rho in &rho_set {
+            let f0 = rows
+                .iter()
+                .find(|&&(a, r, _, _)| a == 0.0 && r == rho)
+                .expect("a=0 cell measured");
+            let f9 = rows
+                .iter()
+                .find(|&&(a, r, _, _)| a == 0.9 && r == rho)
+                .expect("a=0.9 cell measured");
+            let fpr0 = 100.0 * f0.2 as f64 / f0.3 as f64;
+            let fpr9 = 100.0 * f9.2 as f64 / f9.3 as f64;
+            assert!(
+                fpr9 - fpr0 <= 2.0,
+                "conditional FP/FN gate: FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+                fpr9 - fpr0
+            );
+        }
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for t in 0..30usize {
+            let seed = 0x517C_C1B7_2722_0A95u64 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let (x, y, c) = gate_conditional_driver(n, 0.5, 0.5, 0.6, &mut rng);
+            let Some(te) = transfer_entropy_conditional(&x, &y, &c, 1) else {
+                continue;
+            };
+            let Some((_, _, thr)) =
+                conditional_te_stats_lagged(&x, &y, &c, 1, max_lag, seed, n_surr)
+            else {
+                continue;
+            };
+            meas += 1;
+            if te > thr {
+                found += 1;
+            }
+        }
+        assert!(meas > 0, "conditional FP/FN gate: no FN measurement resolved");
+        assert!(
+            found as f64 / meas as f64 >= 0.5,
+            "conditional FP/FN gate: FN arm found {found}/{meas} true couplings — below 50%"
+        );
+    }
+
+    #[test]
+    #[ignore = "conditional n=1000 FP/FN calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_conditional_arx_2_fpr_n1000() {
+        let n = 1000usize;
+        let max_lag = 2usize;
+        let n_surr = 20usize;
+        let trials = 40usize;
+        let rho = 0.9f32;
+        let a_set = [0.0f32, 0.5, 0.9];
+        let mut rng = 0x6A2B_7A5B_3C1D_9E4Fu64;
+        let mut rows: Vec<(f32, usize, usize)> = Vec::new();
+        for &a in &a_set {
+            let mut fp = 0usize;
+            let mut neg = 0usize;
+            for t in 0..trials {
+                let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+                let (x, y, c1, c2) = gate_conditional_driver_2(n, a, rho, 0.0, &mut rng);
+                let Some(te) = transfer_entropy_conditional_2(&x, &y, &c1, &c2, 1) else {
+                    continue;
+                };
+                let Some((_, _, thr)) = conditional_te_stats_lagged_2(
+                    &x,
+                    &y,
+                    &c1,
+                    &c2,
+                    TeStats2Params {
+                        lag: 1,
+                        max_lag,
+                        seed,
+                        n_surr,
+                    },
+                ) else {
+                    continue;
+                };
+                neg += 1;
+                if te > thr {
+                    fp += 1;
+                }
+            }
+            rows.push((a, fp, neg));
+        }
+        let named: String = rows
+            .iter()
+            .map(|&(a, fp, neg)| format!("a={a}: {fp}/{neg} "))
+            .collect();
+        for &(a, fp, neg) in &rows {
+            assert!(
+                neg > 0,
+                "conditional FP/FN gate (2): cell a={a} unmeasured (neg=0) — never a passing zero ({named})"
+            );
+            let fpr = 100.0 * fp as f64 / neg as f64;
+            assert!(
+                fpr <= 8.0,
+                "conditional FP/FN gate (2): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — arx_restricted_surrogate_2 leaks ({named})"
+            );
+        }
+        let f0 = rows
+            .iter()
+            .find(|&&(a, _, _)| a == 0.0)
+            .expect("a=0 cell measured");
+        let f9 = rows
+            .iter()
+            .find(|&&(a, _, _)| a == 0.9)
+            .expect("a=0.9 cell measured");
+        let fpr0 = 100.0 * f0.1 as f64 / f0.2 as f64;
+        let fpr9 = 100.0 * f9.1 as f64 / f9.2 as f64;
+        assert!(
+            fpr9 - fpr0 <= 2.0,
+            "conditional FP/FN gate (2): FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+            fpr9 - fpr0
+        );
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for t in 0..30usize {
+            let seed = 0x517C_C1B7_2722_0A95u64 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let (x, y, c1, c2) = gate_conditional_driver_2(n, 0.5, 0.5, 0.6, &mut rng);
+            let Some(te) = transfer_entropy_conditional_2(&x, &y, &c1, &c2, 1) else {
+                continue;
+            };
+            let Some((_, _, thr)) = conditional_te_stats_lagged_2(
+                &x,
+                &y,
+                &c1,
+                &c2,
+                TeStats2Params {
+                    lag: 1,
+                    max_lag,
+                    seed,
+                    n_surr,
+                },
+            ) else {
+                continue;
+            };
+            meas += 1;
+            if te > thr {
+                found += 1;
+            }
+        }
+        assert!(meas > 0, "conditional FP/FN gate (2): no FN measurement resolved");
+        assert!(
+            found as f64 / meas as f64 >= 0.5,
+            "conditional FP/FN gate (2): FN arm found {found}/{meas} true couplings — below 50%"
+        );
     }
 
     fn gate_s60_f(x: f32) -> f32 {
