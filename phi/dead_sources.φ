@@ -903,6 +903,14 @@ dead 404
 url https://mempool.space/api/v1/fees/recommended`
 note HTTP 404 — Endpoint weg.
 
+dead frozen
+url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
+note AQI-Snapshot eingefroren — Re-Messung 2026-09-16: outStatistics max(DATE_TIME)=min=1699351200000 (2023-11-07T10:00:00Z), N=19, kein laufendes Update; Werttabelle Table 1 (SDE_ADMIN.aqi_t60_recent). Disposition dead (kein lebendes Geschwister).
+
+dead frozen
+url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
+note Layer 0 trägt nur Stationsgeometrie + Metadaten (STA_SERIALCODE/STATION_NAME/LOCATION/REGION/OWNER/PURPOSE), keinen AQI-Wert; die Werttabelle ist Table 1 (siehe Geschwister-Eintrag). Disposition dead mit dem eingefrorenen Snapshot.
+
 dead 404
 url https://mesonet.agron.iastate.edu/api/1/nldn.geojson
 note HTTP 404 — Endpoint weg.
