@@ -1580,6 +1580,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_arx_null_raw_series_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/mathematikerin/te.rs", &fx("arx_null_raw_series"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_bad_field_line() {
         let mut g = test_gate();
         let args =

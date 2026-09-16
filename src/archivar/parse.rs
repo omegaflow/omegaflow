@@ -366,8 +366,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::First(fc, filter));
@@ -390,8 +390,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Last(fc, filter));
@@ -410,8 +410,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: String::new(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 }));
             }
@@ -429,8 +429,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::LastRow(fc));
@@ -460,8 +460,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::ObjLast(fc));
@@ -532,8 +532,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Path(fc));
@@ -552,8 +552,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Deep(fc));
@@ -572,8 +572,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 cur_extracts.push(Extract::Regex(fc));
@@ -735,8 +735,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
@@ -795,8 +795,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
@@ -1164,8 +1164,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption: 0.0,
                     advection: 0.0,
                     unit,
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: Some((op, parts[3].to_string())),
                 };
                 let holder = match cur_extracts.last_mut() {

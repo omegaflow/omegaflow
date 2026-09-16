@@ -107,7 +107,7 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `omega_sh jwst` | 0,644 s | CDN-Watch |
 | `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst |
 | `smail --dry-run` | 0,288 s | kein Versand |
-| `register_lookup --live` | 0,054 s | 659 Zeilen — Planungs-Pass |
+| `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
