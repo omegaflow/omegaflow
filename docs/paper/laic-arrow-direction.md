@@ -3,7 +3,7 @@
   class: paper
   date: 2026-08-21
   version: 4
-  sha256: 9ccd8d4dd52d963315522fb61f7ef6ee3c67da1f354fab6fec05490842712194
+  sha256: bb33c31ef80dff98a04b9d3da740e5c6a05e60d9d8065d099867ef98e49f1a40
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md
 -->
@@ -221,19 +221,29 @@ CI workflow `laic_cdn.yml` harvests + compiles + uploads monthly.
 - Channel open items: CSES — standardized probe cadence run
   (SOURCE_PORT §13, four-stage; finding
   `phi/pipeline/research/agent_output/cses_kanal_2026-08-22.φ`): portal
-  leos.ac.cn from here 000 (host unreachable; the login-gated SPA stays pending); the
+  leos.ac.cn re-measured 2026-09-16 — stage1 direct 000, stage2 Proton 000,
+  stage3 Wayback 503/no snapshot; the Jina-reader route 422 (host
+  unreachable; the login-gated SPA stays pending). The
   Zhangheng-1 holding lives at data.earthquake.cn (96 TB, 2019–2023;
-  no registered DOI in the global handle register), procurement 离线获取
-  (application) — the registration requires a Chinese mobile number
+  no registered DOI in the global handle register), portal re-measured
+  2026-09-16 HTTP 200 (51 065 B), but the data route is offline procurement
+  离线获取 (application) — the registration requires a Chinese mobile number
   (restriction type SMS-CN; virtual number refused). The block needs
-  no live feed — the harvest is fehlt. Alternatives researched:
+  no live feed — the harvest is fehlt. Alternatives re-measured 2026-09-16:
   **DEMETER/CDPP** (ICE-E field + ISL electron density, 2004–2010 —
-  login verified, 57 760 half-orbit files; open: order flow +
-  DEMETER-.DAT parser + harvest), **CHAMP/GFZ-ISDC**
-  (electron density, ASCII daily zips, fully anonymous verified to the
-  file level — immediately harvestable, running), COSMIC/CDAAC (netCDF —
-  parser gap). TEC-GIM retro pre-2024 (codg*.Z, LZW decompressor fehlt
-  in the holding), MiniSEED waveform envelopes (decoder pending). CDDIS
+  `cdpp.irap.omp.eu` / `regards.cnes.fr` / `cdpp-archive.cnes.fr` direct 200,
+  login verified; the data files are order-gated — a product download returns
+  `online:false` → GET 500; open: order flow + DEMETER-.DAT parser + harvest),
+  **CHAMP/GFZ-ISDC** (`isdc.gfz-potsdam.de` / `isdc-data.gfz.de` direct 200;
+  `champ/ME/Level2/PLPT/2005/CH-ME-2-PLPT+2005-01-01_1.zip` 200, 297 737 B,
+  magic zip — anonymous verified to the file level, harvestable), COSMIC/CDAAC
+  (`data.cosmic.ucar.edu` direct 200; `…/ivmL2m_postProc_2022_001.tar.gz`
+  200, 14 167 499 B, netCDF inside — parser gap). TEC-GIM retro pre-2024
+  (`codg*.Z` now reachable via ESA GSSC FTP
+  `ftp://gssc.esa.int/gnss/products/ionex/2003/001/codg0010.03i.Z`, 365 785 B;
+  the LZW `uncompress_z` decoder fehlt in the holding — CDDIS holds other
+  IONEX, not `codg*`), MiniSEED waveform envelopes (IRIS FDSN dataselect
+  direct 200, 8 128 B — decoder pending). CDDIS
   lives over the EDL token from `.secrets.local` (verified) — a re-harvest
   with COD0OPSFIN (final instead of rapid) would be a quality option,
   not a new channel.
