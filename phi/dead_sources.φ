@@ -7,17 +7,12 @@
 # Hostnamen `p.ntrlst.rg`→`api.inaturalist.org`, `p.pn-mt.cm`→`api.open-meteo.com`
 # (beide Dienste leben), `lightning.gld` (keine Identität), `masie_ice.apps.nsidc.org`
 # (Unterstrich-Host, echter Host `masie_web`). Nur Tote, die wirklich gelebt haben.
+# Force-Gate-Prune 2026-09-16: 118 „nie Force-Kanal"-Einträge entfernt (91 sicher +
+# 26 unsicher-declined + open-meteo-Stale-Pfad); 9 behalten (3 Force-Kanal, 4 pending,
+# 2 bereits disponiert). Verdikt: docs/surveys/survey-2026-09-16-dead-sources-relevanz.md.
 dead absent
 url ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json
 note curl: curl: (78) The file does not exist
-
-dead 404
-url http://api.inaturalist.org/v1/docs/`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url http://api.open-notify.org/iss-pass.json
-note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url http://arvo-registry.sci.am/tap
@@ -30,10 +25,6 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url http://data.neonscience.org/api/v0/documents/NEON.DP1.10081\_20086\_20141.001.variables.20180306T000000Z.csv
 note HTTP 404 — Endpoint weg.
-
-dead 5xx
-url http://fenixservices.fao.org/faostat/api/v1/en/data/QCL?area=
-note HTTP 521 — Server antwortet nicht brauchbar.
 
 dead 404
 url http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=json&network=G
@@ -119,10 +110,6 @@ dead redirect-maintenance
 url http://jvo.nao.ac.jp/skynode/do/tap/sxds_v1
 note Subaru XDDS — JVO-Wartung.
 
-dead unreachable
-url http://localhost:5000/api/compute
-note curl: curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
-
 dead 404
 url http://maxi.riken.jp/alert/novae/json/novae_list.json
 note HTTP 404 — Endpoint weg.
@@ -135,14 +122,6 @@ dead 404
 url http://reg.bom.gov.au/fwo/IDD60901/IDD60901.95765.json
 note HTTP 404 — Endpoint weg.
 
-dead 404
-url http://sekitan.jp/plant-map/en/v2/table_en,WRI,1012406,,,,,,,,,,,,,,735.84,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,CAPACITY-FACTOR-V1
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url http://sekitan.jp/plant-map/en/v2/table_en,WRI,1056399,,,,,,,,,,,,,,722.7,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,CAPACITY-FACTOR-V1
-note HTTP 404 — Endpoint weg.
-
 dead unreachable
 url http://tap.roe.ac.uk/osa/sync
 note WFAU OSA (UKIRT/ATLAS DR1) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
@@ -151,32 +130,12 @@ dead unreachable
 url http://tap.roe.ac.uk/ssa/sync
 note WFAU SSA (SuperCOSMOS) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc (SSS/VizieR-Kandidatenpfad unverifiziert, pending). Konsument-Kandidat (Rat 2026-09-15): SuperCOSMOS-pm als zweite unabhängige pm-Linie (60-Jahre-Basis) für den Weberin-Verdict; die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
 
-dead transport
-url http://worldtimeapi.org/api/timezone/Etc/UTC`
-note curl: curl: (56) Recv failure: Die Verbindung wurde vom Kommunikationspartner zurückgesetzt Browser 2026-09-10: Host tot, Dienst-Nachfolger https://timeapi.world/.
-
 dead 404
 url http://wwlln.net/cgi-bin/output.cgi?format=json&type=stations&limit=100
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://aisstream.io/api/v1/stream/vessels?latitude=
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://ameriflux.lbl.gov/api/public/v2/sites?format=json&climate_zone=arctic,subarctic&data_product=FLUXNET2015&active=true
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.adsabs.harvard.edu/v1/
-note HTTP 404 — Endpoint weg; /v1/search/query lebt MIT Key (gemessen 2026-09-14: 200, numFound echt) — nur /v1/ und /v1/export/bibtex/ sind dead.
-
-dead 404
-url https://api.adsabs.harvard.edu/v1/export/bibtex/
-note HTTP 404 — Endpoint weg; /v1/search/query lebt MIT Key (gemessen 2026-09-14: 200, numFound echt) — nur /v1/ und /v1/export/bibtex/ sind dead.
-
-dead 404
-url https://api.adsb.lol/v2/point/
 note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
@@ -191,93 +150,21 @@ dead 404
 url https://api.bas.ac.uk/uk-pdc-catalogue/v1/items?format=json&category=environmental_monitoring&limit=500
 note HTTP 404 — Endpoint weg.
 
-dead 404
-url https://api.boldsystems.org/v3/specimen?taxon=Lepidoptera&format=json&limit=3
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.digitransit.fi/realtime/vehicle-positions/v1/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.digitransit.fi/realtime/vehicle-positions/v1/`
-note HTTP 404 — Endpoint weg.
-
 dead dns-unresolved
 url https://api.earthnetworks.com/v1/
 note curl: curl: (6) Could not resolve host: api.earthnetworks.com Browser 2026-09-10: Host tot, Dienst-Nachfolger https://developer.earthnetworks.com.
-
-dead dns-unresolved
-url https://api.ebeard.org/v2/data/obs/geo/recent?lat=
-note curl: curl: (6) Could not resolve host: api.ebeard.org Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
-
-dead 404
-url https://api.ebird.org/v2/data/obs/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.entur.io/journey-planner/v2/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.entur.io/realtime/v1/gtfs-rt/
-note HTTP 404 — Endpoint weg.
-
-dead dns-unresolved
-url https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year=
-note curl: curl: (6) Could not resolve host: api.eurobis.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.eurobis.org.
-
-dead dns-unresolved
-url https://api.farmsense.net/v1/moonphases/
-note curl: curl: (6) Could not resolve host: api.farmsense.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.farmsense.net/api/.
-
-dead dns-unresolved
-url https://api.farmsense.net/v1/moonphases/?d=
-note curl: curl: (6) Could not resolve host: api.farmsense.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.farmsense.net/api/.
 
 dead unreachable
 url https://api.fink-portal.org/api/v1/objects
 note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar. Successor host api.lsst.fink-portal.org (2026-09-06 curl-verified HTTP 200, anonymous) is registered in blocked_sources.φ as parser-def of the pending class "Richtungs-Transient ohne Distanz" — the old host stays dead, Fink itself is not absent.
 
-dead dns-unresolved
-url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
-note curl: curl: (6) Could not resolve host: api.fisheries.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fisheries.noaa.gov.
-
 dead 404
 url https://api.ifremer.fr/argoweb/float/list?days=30&format=json
 note HTTP 404 — Endpoint weg.
 
-dead timeout
-url https://api.ioda.caida.org/v2/outages/asn/...`
-note curl: curl: (28) Connection timed out after 12000 milliseconds
-
-dead dns-unresolved
-url https://api.ioda.ioda.caida.org/v2/signals/raw?from=
-note curl: curl: (6) Could not resolve host: api.ioda.ioda.caida.org
-
-dead dns-unresolved
-url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames
-note curl: curl: (6) Could not resolve host: api.marinespecies.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.marinespecies.org/rest/.
-
 dead dns-unresolved
 url https://api.mbari.org/m3/ctd?format=json&platform=MARS&limit=200&start=
 note curl: curl: (6) Could not resolve host: api.mbari.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mbari-org.github.io/oni/.
-
-dead 404
-url https://api.open-elevation.com/api/v1/lookup`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://api.open-meteo.com/v1/air-quality?...european_aqi
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://api.openaq.org/v2/
@@ -295,10 +182,6 @@ dead 404
 url https://api.p2pquake.net/v2/
 note HTTP 404 — Endpoint weg.
 
-dead 404
-url https://api.reliefweb.int/v1/
-note HTTP 410 — Endpoint weg.
-
 dead dns
 url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
 note SatNOGS-API — api-Subdomain DNS-tot; satnogs.org selbst lebt. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://db.satnogs.org/api/.
@@ -307,14 +190,6 @@ dead dns-unresolved
 url https://api.sne.space/objects?format=json
 note Open Supernova Catalog: api.sne.space löst nicht auf (konsistent über Sessions). Server down oder umgezogen. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://github.com/astrocatalogs/supernovae.
 
-dead 5xx
-url https://api.spacexdata.com/v5/
-note HTTP 525 — Server antwortet nicht brauchbar.
-
-dead 5xx
-url https://api.spacexdata.com/v5/...`
-note HTTP 525 — Server antwortet nicht brauchbar.
-
 dead dns-unresolved
 url https://api.superdarn.ca/v1/convection/map/latest
 note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10: Host tot, Dienst-Nachfolger https://superdarn.ca/.
@@ -322,10 +197,6 @@ note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10
 dead dns-unresolved
 url https://api.superdarn.ca/v1/radars/status
 note curl: curl: (6) Could not resolve host: api.superdarn.ca Browser 2026-09-10: Host tot, Dienst-Nachfolger https://superdarn.ca/.
-
-dead 404
-url https://api.usa.gov/api/v1/resources/usgs-minerals
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://api.weather.bom.gov.au/v1/forecast/
@@ -338,10 +209,6 @@ note HTTP 404 — Endpoint weg.
 dead origin-down
 url https://api.weathersa.co.za/forecast/xml/current/
 note curl 502 (GET) / 521 (Origin down, http://api.weathersa.co.za/) — 2026-09-03 Live-Probe. SAWS Südafrika aus ref-auth-apis.md §B nachgemessen. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.weathersa.co.za/.
-
-dead dns-unresolved
-url https://apidev.uis.unesco.org/sdmx/v2/data/
-note curl: curl: (6) Could not resolve host: apidev.uis.unesco.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://api.uis.unesco.org/.
 
 dead 404
 url https://archive.cefca.es/catalogues/vo/tap/jnep-pdr202107
@@ -392,23 +259,11 @@ url https://astroarchive.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SE
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://astromap.app/schemas/chart-request.schema.json
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://atmosphere.copernicus.eu/api/
 note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://aviationweather.gov/api/data
-note HTTP 404 — Endpoint weg.
-
-dead dns-unresolved
-url https://bhuvan-panchayat.nrsc.gov.in:8080/geoserver/sde/wms
-note curl: curl: (6) Could not resolve host: bhuvan-panchayat.nrsc.gov.in Browser 2026-09-10: Host tot, Dienst-Nachfolger https://bhuvanpanchayat.nrsc.gov.in/index.html.
-
-dead 404
-url https://bhuvan.nrsc.gov.in/geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities&format=json
 note HTTP 404 — Endpoint weg.
 
 dead 5xx
@@ -419,25 +274,13 @@ dead 5xx
 url https://bmkg-restapi.vercel.app/v1/weather/3273
 note HTTP 503 — Server antwortet nicht brauchbar.
 
-dead 404
-url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
-note HTTP 404 — Endpoint weg.
-
 dead unreachable
 url https://casu.ast.cam.ac.uk/casuadc/ingarch/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+target_name,ra_j2000,dec_j2000,instrument,filter,exp_time,night,snr+FROM+weave_observations+WHERE+ra_j2000+IS+NOT+NULL+ORDER+BY+night+DESC
 note curl: curl: (7) Failed to connect to casu.ast.cam.ac.uk port 443 after 78 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://camcead.ast.cam.ac.uk.
 
-dead dns-unresolved
-url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
-note curl: curl: (6) Could not resolve host: catalogue.clms.copernicus.eu Browser 2026-09-10: Host tot, Dienst-Nachfolger https://land.copernicus.eu/en/dataset-catalog.
-
 dead 404
 url https://cdms.astro.uni-koeln.de/vamdc/tap/rest/VAMDC-TAP/sync?REQUEST=doQuery&LANG=VSS2&FORMAT=application/x-xsams+xml&QUERY=SELECT+SPECIES+WHERE+MoleculeChemicalFormula%3D%27H2O%27
 note HTTP 404 — Endpoint weg.
-
-dead timeout
-url https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=json
-note curl: curl: (28) Connection timed out after 12001 milliseconds — die alte Domain celestrak.com (Zertifikat abgelaufen). Der Nachfolger celestrak.org lebt (via Proton-Exit, direkt ip-blocked, gemessen 2026-09-14). TLE-Bahnelemente bleiben decline derived-orbit-fit (declined_sources.φ Z.769).
 
 dead 404
 url https://cems.ecmwf.int/api/v1/glofas/forecast?lat=
@@ -450,10 +293,6 @@ note HTTP 404 — Endpoint weg.
 dead unreachable
 url https://chain.physics.unb.ca/api/
 note curl: curl: (7) Failed to connect to chain.physics.unb.ca port 443 after 210 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.rspl.ca/index.php/projects/chain.
-
-dead 404
-url https://climada.ethz.ch/api/
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://climate.copernicus.eu/api/v1/temperature/global-monthly?format=json
@@ -476,14 +315,6 @@ url https://dachs.neo.s2p.esa.int/tap
 note neocc.esa (NEOCC S2P-TAP) — 502 (2026-09-11 gemessen). §8: dachs.neo.s2p.esa.int antwortet 502, kein TAP-JSON; Sibling-/Root-Prüfung offen.
 
 dead 404
-url https://data.apps.fao.org/catalog/api/v1/hise/data?layer=asias_ndvi_vci_d&interp=true&x=13.4&y=52.5
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://data.apps.fao.org/catalog/api/v1/hise/data?layer=asias_ndvi_vci_d&interp=true&x=13.4&y=52.5`
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://data.caltech.edu/api/v1/records?q=tccon+methane&sort=mostrecent&
 note HTTP 404 — Endpoint weg.
 
@@ -493,14 +324,6 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://data.earlinet.org/api/services/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://data.humdata.org/api/3/action/datastore_search?resource_id=13ac0b40-5e3e-4a01-8b3b-85fe6a0b47e7&limit=2000
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://data.nasa.gov/api/views/gh4g-9sfh/rows.csv
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -564,10 +387,6 @@ url https://ebas-data.nilu.no/api/v1/station/?format=json&parameter=NOx&
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://ebolaintel.com/api/`
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://edgar.jrc.ec.europa.eu/api/v1/emissions?gas=co2&year=2020&format=json
 note HTTP 404 — Endpoint weg.
 
@@ -577,10 +396,6 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://effis.jrc.ec.europa.eu/api/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://emergency.copernicus.eu/mapping/rest/feed/atom/
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -612,40 +427,12 @@ url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json
 note curl: curl: (6) Could not resolve host: esa-sst-cci-browser.ceda.ac.uk Browser 2026-09-10: Host tot, Dienst-Nachfolger https://climate.esa.int/en/projects/sea-surface-temperature/.
 
 dead 404
-url https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.tif
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.tif`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://example.com/api/data?param=
-note HTTP 404 — Endpoint weg.
-
-dead dns-unresolved
-url https://faostat4.fao.org/api/
-note curl: curl: (6) Could not resolve host: faostat4.fao.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fao.org/faostat/en/.
-
-dead dns-unresolved
-url https://faostat4.fao.org/api/file/Capture_Quantity.zip
-note curl: curl: (6) Could not resolve host: faostat4.fao.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.fao.org/faostat/en/.
-
-dead 5xx
-url https://fenixservices.fao.org/faostat/api/v1/en/
-note HTTP 521 — Server antwortet nicht brauchbar.
-
-dead 404
 url https://fireballs.ndc.nasa.gov/api/meteors/last24h
 note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://floodobservatory.colorado.edu/Archives/GFEDfloods_annual.csv
 note HTTP 410 — Endpoint weg.
-
-dead 404
-url https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/departures
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
@@ -690,10 +477,6 @@ note curl: curl: (6) Could not resolve host: global-flood-monitor.org Browser 20
 dead 404
 url https://global-surface-water.appspot.com/api/
 note HTTP 404 — Endpoint weg.
-
-dead transport
-url https://globalland.vgt.vito.be/geoserver/ows?SERVICE=WCS&
-note curl: curl: (60) SSL: no alternative certificate subject name matches target host name 'globalland.vgt.vito.be' Browser 2026-09-10: Host tot, Dienst-Nachfolger https://cgls.vito.be/.
 
 dead 404
 url https://gloss-sealevel.org/api/stations?format=json
@@ -800,14 +583,6 @@ url https://its-live-regional.s3.amazonaws.com/v02/GRE/GRE_G0240_2021.zarr/.zmet
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DRAXIS/FOREST/GFC/api/v1/data?year=
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DRAXIS/FOREST/GFC/api/v1/data?year=2026&bbox=
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
 note HTTP 404 — Endpoint weg.
 
@@ -825,14 +600,6 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/...`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://land.copernicus.eu/api/v2/datasets?dataset=SWI10&format=json&date=
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://landsat.usgs.gov/landsat-api/v1/product?collection=landsat-c2l2&satellite=landsat-8,landsat-9&maxResults=100
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -867,14 +634,6 @@ dead 404
 url https://macrostrat.org/api/defs/units?format=json
 note HTTP 404 — Endpoint weg.
 
-dead dns-unresolved
-url https://mangrove-atlas.sei.org/api/
-note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mangrove-atlas.herokuapp.com/.
-
-dead dns-unresolved
-url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
-note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://mangrove-atlas.herokuapp.com/.
-
 dead 404
 url https://map.blitzortung.org/live.json
 note HTTP 404 — Endpoint weg.
@@ -890,10 +649,6 @@ note HTTP 404 — Endpoint weg.
 dead dns-unresolved
 url https://masie_web.apps.nsidc.org/pub/DATASETS/NSIDC0079MASIE-NH_r00v01/masie_4km_allyears_extent_sqkm.csv
 note curl: curl: (6) Could not resolve host: masie_web.apps.nsidc.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nsidc.org/data/masie.
-
-dead 404
-url https://mempool.space/api/v1/fees/recommended`
-note HTTP 404 — Endpoint weg.
 
 dead frozen
 url https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
@@ -916,16 +671,8 @@ url https://meta.icos-cp.eu/objects/latest?spec=http://meta.icos-cp.eu/resources
 note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
-url https://modisrest.ornl.gov/rst/api/v1/MOD13Q1/subset?latitud
-note curl: curl: (6) Could not resolve host: modisrest.ornl.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://modis.ornl.gov/.
-
-dead dns-unresolved
 url https://modvolc.ov.ingv.it/modvolc/feed.json
 note curl: curl: (6) Could not resolve host: modvolc.ov.ingv.it Browser 2026-09-10: Host tot, Dienst-Nachfolger https://modis-land.gsfc.nasa.gov/modvolc.html.
-
-dead 404
-url https://mrdata.usgs.gov/mrds/geo-mrds.php?format=json
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://mrms.ncep.noaa.gov/data/2D/PrecipRate/latest.json
@@ -952,18 +699,6 @@ url https://nsidc.org/api/
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://nucleus.iaea.org/ILIS/api/v1/events?format=json&limit=100&
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://nucleus.iaea.org/ILIS/api/v1/events?format=json&limit=100&status=current&category=nuclear
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://nwis.waterdata.usgs.gov/w3c/p3p.xml
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://oceandata.sci.gsfc.nasa.gov/ERDDAP/
 note HTTP 404 — Endpoint weg.
 
@@ -976,14 +711,6 @@ url https://odims.ospar.org/api/
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://odlinfo.bfs.de/daten/odl-status-de.json
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://openeo.org/documentation/1.0/developers/api/reference.html
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://openghg.org/api/
 note HTTP 404 — Endpoint weg.
 
@@ -992,36 +719,8 @@ url https://openghg.org/api/v1/data?species=CO2&network=ICOS&
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://openinfra.io/api/v1/power/plants
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://openinfra.io/api/v1/power/plants`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://openneuro.org/api/crn/datasets
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://openquantumsafe.org/api/v1/algorithms
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://openquantumsafe.org/api/v1/algorithms`
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://osdr.nasa.gov/bio/api
 note NASA OSDR ISS-Dosimetrie — 301 nach science.nasa.gov/biological-physical, /bio/api 404; Endpoint abgelöst. Welle 2026-08-19.
-
-dead 404
-url https://overpass-api.de/api/...`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://overpass.kumi.systems/api/...`
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long
@@ -1032,23 +731,7 @@ url https://polarwatch.noaa.gov/erddap/griddap/noaacrwdhwDaily.csv?dhw
 note HTTP 500 — Server antwortet nicht brauchbar.
 
 dead 404
-url https://portal.boldsystems.org/api/docs`
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://power.larc.nasa.gov/api/temporal/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://poweroutage.us/api/states.json
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://pris.iaea.org/api/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1059,28 +742,8 @@ dead 404
 url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.2026.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start=2026-08-08T00%3A00%3A00Z&time_end=2026-08-08T23%3A59%3A59Z&timeStride=1&accept=csv
 note HTTP 404 — Endpoint weg.
 
-dead dns-unresolved
-url https://quantumrandomnumbergenerator.net/api/1.0/json
-note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://qrng.anu.edu.au/.
-
-dead dns-unresolved
-url https://quantumrandomnumbergenerator.net/api/1.0/json`
-note curl: curl: (6) Could not resolve host: quantumrandomnumbergenerator.net Browser 2026-09-10: Host tot, Dienst-Nachfolger https://qrng.anu.edu.au/.
-
 dead 404
 url https://remon.jrc.ec.europa.eu/Home/Pages/DataExchange/REM-json.aspx?LonMin=-10&LonMax=30&LatMin=35&LatMax=72&DateStart=2026-08-08&DateEnd=2026-08-08&nuts=0&format=json
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://resonanceone.app/api/now`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://ris.ripe.net/v1/peers
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://ris.ripe.net/v1/peers`
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1099,14 +762,6 @@ dead unreachable
 url https://rucsoundings.noaa.gov/get_soundings.cgi`
 note curl: curl: (7) Failed to connect to rucsoundings.noaa.gov port 443 after 3314 ms: Couldn't connect to server Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.weather.gov/zse/ModelSounding.
 
-dead 404
-url https://s3.eu-central-1.wasabisys.com/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.vrt
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://s3.eu-central-1.wasabisys.com/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.vrt`
-note HTTP 404 — Endpoint weg.
-
 dead 5xx
 url https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Ice_Sheet_SLA_Antarctic_Monthly/latest/?format=json
 note HTTP 500 — Server antwortet nicht brauchbar.
@@ -1122,10 +777,6 @@ note HTTP 404 — Endpoint weg.
 dead dns-unresolved
 url https://sdc3.astronomers.skatelescope.org/api/v1/catalog?format=json&limit=1000&type=continuum&snr_min=5
 note curl: curl: (6) Could not resolve host: sdc3.astronomers.skatelescope.org Browser 2026-09-10: Host tot, Dienst-Nachfolger https://sdc3.skao.int/.
-
-dead 404
-url https://sdmx.oecd.org/public/rest/data/OECD.ENV.EPI,DSD_PLASTIC_WASTE@DF_PLASTIC_WASTE_8,1.0/all?format=csvfilewithlabels
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://seabass.gsfc.nasa.gov/api/v1/measurement/?limit=500
@@ -1159,14 +810,6 @@ dead 404
 url https://sky.esa.int/esasky/api/missions
 note HTTP 404 — Endpoint weg.
 
-dead dns-unresolved
-url https://soa.smext.faa.gov/asws/api/airport/status/ATL?format=json
-note curl: curl: (6) Could not resolve host: soa.smext.faa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.swim.faa.gov/home.
-
-dead dns-unresolved
-url https://soa.smext.faa.gov/asws/api/airport/status/EWR?format=json
-note curl: curl: (6) Could not resolve host: soa.smext.faa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.swim.faa.gov/home.
-
 dead 404
 url https://socat.info/api/v1/data?startdate=
 note HTTP 404 — Endpoint weg.
@@ -1180,40 +823,8 @@ url https://sungeo.net/api/current`
 note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
-url https://surveys.coast.noaa.gov/api/products/
-note curl: curl: (6) Could not resolve host: surveys.coast.noaa.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://nauticalcharts.noaa.gov/.
-
-dead 404
-url https://theoceancleanup.com/api/v1/data/gpgp?format=json&year=
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://theoceancleanup.com/api/v1/data/gpgp?format=json&year=2026&depth=surface&limit=500
-note HTTP 404 — Endpoint weg.
-
-dead timeout
-url https://time.nist.gov/actualtime.cgi?lzbc=siqm9b
-note curl: curl: (28) Connection timed out after 12002 milliseconds Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.time.gov/.
-
-dead 404
-url https://unosat.org/api/v1/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://unosat.org/api/v1/products/?format=json&limit=200&ordering=-created_at&
-note HTTP 404 — Endpoint weg.
-
-dead dns-unresolved
 url https://usdm.climate.gov/api/v1/statistics/StatisticsForNation
 note curl: curl: (6) Could not resolve host: usdm.climate.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://droughtmonitor.unl.edu/.
-
-dead 404
-url https://washdata.org/api/countries?format=json
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://washdata.org/api/countries?format=json&service=drinking-water&year=
-note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://wdc.bgs.ac.uk/api/
@@ -1248,27 +859,11 @@ url https://wgms.ch/downloads/wgms_hd_ts.csv
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://wikimedia.org/api/rest_v1/metrics/pageviews
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://wikimedia.org/api/rest_v1/metrics/pageviews/
-note HTTP 404 — Endpoint weg.
-
-dead dns-unresolved
-url https://world.openagritechdata.org/api/v0/product/
-note curl: curl: (6) Could not resolve host: world.openagritechdata.org Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
-
-dead 404
 url https://www.aavso.org/api/v2/alerts/?format=json&limit=100&ordering=-created
 note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://www.aavso.org/api/v2/observations/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.addgene.org/api/v1/plasmids.json?limit=1
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1284,23 +879,11 @@ url https://www.e-callisto.org/api/v1/events?format=json&start=
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://www.ebi.ac.uk/chembl/api/data/similar.json?smiles=
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://www.esa.int/api/earthobservation/biomass-cci/v1/data?year=
 note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://www.esa.int/api/earthobservation/biomass-cci/v1/data?year=2026&bbox=
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.eurobats.org/api/v1/monitoring/sites?format=json&active=true&limit=500
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year=
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1328,19 +911,7 @@ url https://www.globsnow.info/swe/tif/2026/20260808_northern_SWE.tif.json
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://www.govtrack.us/api/v2/vote...`
-note HTTP 404 — Endpoint weg.
-
-dead 404
 url https://www.hydrosheds.org/api/v1/basins?bbox=
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.invasivesnet.org/api/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.invasivesnet.org/api/v1/occurrences?format=json&limit=500&environment=marine&year_from=
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1365,18 +936,6 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://www.mirovaweb.it/api/v1/anomalies?limit=200
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.mvg.de/api/fib/v2/departure?globalId=de:09162:1&limit=10
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.n2yo.com/rest/v1/satellite/above/47/8/0/40/0/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.pangaea.de/api/
 note HTTP 404 — Endpoint weg.
 
 dead 404
@@ -1412,27 +971,7 @@ url https://www.temis.nl/airpollution/o3col/data/gome2_metopb/netcdf/o3_20260808
 note HTTP 404 — Endpoint weg.
 
 dead 404
-url https://www.trafiklab.se/api/trafikverket-reseplaneraren/
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.transnetbw.de/de/kunden/strommarkt/transparenz/transparenz-api?format=json&subject=regelnetzfrequenz
-note HTTP 404 — Endpoint weg.
-
-dead dns
-url https://www.treetalker.xyz/
-note TreeTalker-Netze (Nature 4.0) — Domain tot, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.nature4.org/treetalkercyber.
-
-dead 404
 url https://www.unavco.org/instrumentation/networks/status/nota/sitelist.json
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.who.int/api/news/diseaseoutbreaknews`
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://www.xeno-canto.org/api/2/recordings
 note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
@@ -1442,14 +981,6 @@ note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: H
 dead dns-unresolved
 url https://www2.usgs.gov/cgi-bin/get_data.cgi?rdb_format=rdb&site_no=15052500,12175500,15266300&agency_cd=USGS&output=JSON&begin_date=2000-01-01&end_date=2026-08-08
 note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.usgs.gov/.
-
-dead 404
-url https://xeno-canto.org/api/2/recordings?query=corvus+corax
-note HTTP 404 — Endpoint weg.
-
-dead 404
-url https://zenodo.org/api/records/3839861/files?access_token=&format=json
-note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
