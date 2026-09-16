@@ -530,7 +530,9 @@ fn main() {
             std::process::exit(1)
         }
         Some(other) => {
-            eprintln!("--null carries {other} — the probe builds arx when --null is absent, block, shift, phase, residual (struck)");
+            eprintln!(
+                "--null carries {other} — the probe builds arx when --null is absent, block, shift, phase, residual (struck)"
+            );
             std::process::exit(1);
         }
     }
