@@ -19,14 +19,18 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
         run: |
           if gh release view data.pmel.noaa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "d20_thermocline.csv"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset d20_thermocline.csv already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset d20_thermocline.csv missing — compiling and manifesting"
           fi
-          echo "asset d20_thermocline.csv missing — compiling and manifesting"
       - name: Harvest the d20 source from the runner (curl, pmel with a CoastWatch mirror)
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           d_end=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00Z)
           d_start=$(date -u -d '127 days ago' +%Y-%m-%dT00:00:00Z)
@@ -40,6 +44,7 @@ jobs:
           head -1 d20_thermocline_raw.csv | grep -qx 'time,longitude,latitude,station,ISO_6,QI_5006'
           echo "harvest measured: $(wc -c < d20_thermocline_raw.csv) bytes from the runner route"
       - name: Ensure the data.pmel.noaa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view data.pmel.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create data.pmel.noaa.gov --repo omegaflow/sources \
@@ -47,6 +52,7 @@ jobs:
               --notes "PMEL ERDDAP TAO/TRITON d20 isotherm-depth series compiled to CSV assets (CDN tag = netloc)"
           fi
       - name: Compile and manifest the d20 thermocline depth series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin d20_compiler -- \
             --input d20_thermocline_raw.csv \
