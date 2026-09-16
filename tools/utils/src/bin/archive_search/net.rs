@@ -117,11 +117,6 @@ fn socks_addr() -> Option<String> {
         Err(_) => "/tmp".to_string(),
     };
     let dir = std::path::Path::new(&runtime).join("proton-wg");
-    let pid = std::fs::read_to_string(dir.join("wireproxy.pid")).ok()?;
-    let pid = pid.trim();
-    if pid.is_empty() || !std::path::Path::new(&format!("/proc/{pid}")).exists() {
-        return None;
-    }
     let conf = std::fs::read_to_string(dir.join("active.conf")).ok()?;
     let addr = socks_bind(&conf)?;
     let sock: SocketAddr = addr.parse().ok()?;
