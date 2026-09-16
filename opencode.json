@@ -5,7 +5,7 @@
   ],
   "model": "deepseek/deepseek-v4-flash",
   "small_model": "deepseek/deepseek-v4-flash",
-  "default_agent": "build",
+  "default_agent": "plan",
   "agent": {
     "build": {
       "mode": "primary",
@@ -17,6 +17,7 @@
       "mode": "primary",
       "model": "deepseek/deepseek-v4-flash",
       "variant": "low",
+      "description": "Planungsmodus (read-only) — Übergabe lesen, Planungs-Pass, Auswahl vorschlagen, anhalten. Die Linien-Befehle starten hier; Ausführung via Tab auf `line` + `/consent`.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time register_lookup *": "allow", "time git_safety *": "allow", "register_lookup *": "allow", "./target/release/register_lookup *": "allow", "git_safety *": "allow", "./target/release/git_safety *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow" } }
     },
     "general": {
@@ -113,7 +114,24 @@
           "git push -f*": "deny",
           "git worktree*": "deny",
           "smail *": "ask",
-          "smail *--dry-run*": "allow"
+          "smail *--dry-run*": "allow",
+          "watch *": "deny",
+          "*--watch*": "deny",
+          "while *": "deny",
+          "until *": "deny",
+          "tail -f*": "deny",
+          "journalctl -f*": "deny",
+          "sleep *": "deny",
+          "inotifywait *": "deny",
+          "entr *": "deny",
+          "cargo *": "deny",
+          "cargo check*": "allow",
+          "gh workflow run *": "allow",
+          "gh workflow list*": "allow",
+          "gh run list*": "allow",
+          "gh run view*": "allow",
+          "gh run download*": "allow",
+          "gh run watch*": "deny"
         }
       }
     }
@@ -144,7 +162,8 @@
       "*/rg *": "deny",
       "*/python *": "deny",
       "*/python3 *": "deny",
-      "cargo *": "allow",
+      "cargo *": "deny",
+      "cargo check*": "allow",
       "git *": "allow",
       "git reset*": "deny",
       "git checkout*": "deny",
@@ -170,7 +189,22 @@
       "./bin/archive_search *": "allow",
       "bin/archive_search *": "allow",
       "./target/release/*": "allow",
-      "curl *": "allow"
+      "curl *": "allow",
+      "gh workflow run *": "allow",
+      "gh workflow list*": "allow",
+      "gh run list*": "allow",
+      "gh run view*": "allow",
+      "gh run download*": "allow",
+      "gh run watch*": "deny",
+      "watch *": "deny",
+      "*--watch*": "deny",
+      "while *": "deny",
+      "until *": "deny",
+      "tail -f*": "deny",
+      "journalctl -f*": "deny",
+      "sleep *": "deny",
+      "inotifywait *": "deny",
+      "entr *": "deny"
     }
   },
   "lsp": true,
