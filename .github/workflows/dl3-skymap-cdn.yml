@@ -1,0 +1,54 @@
+name: dl3-skymap-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      telescope:
+        description: Telescope (selects the CDN release tag and the fetch route)
+        required: false
+        default: hess
+        type: choice
+        options:
+          - hess
+          - magic
+      url:
+        description: Source URL (defaults to the H.E.S.S. DL3 DR1 TAR; MAGIC needs a per-project FITS URL)
+        required: false
+        default: https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dl3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the CDN release for the telescope exists
+        run: |
+          netloc="hess-experiment.eu"
+          [ "${{ inputs.telescope }}" = "magic" ] && netloc="opendata.magic.pic.es"
+          if ! gh release view "$netloc" --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create "$netloc" --repo omegaflow/sources \
+              --title "$netloc" \
+              --notes "DL3 event lists compiled to SKY1 gamma skymaps (kind gamma). One record per non-empty sky cell: RA/Dec (ICRS deg), value = summed gamma-ray energy (TeV)."
+          fi
+      - name: Compile the DL3 sky-map and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin dl3_skymap_compiler -- \
+            --telescope "${{ inputs.telescope }}" \
+            --url "${{ inputs.url }}" \
+            --out "${{ inputs.telescope }}_dl3.sky1" \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "dl3-skymap-cdn: ${{ inputs.telescope }}_dl3.sky1 returned void" \
+                 "DL3 compile returned void for ${{ inputs.telescope }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
