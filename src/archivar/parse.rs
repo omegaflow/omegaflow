@@ -45,7 +45,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     macro_rules! flush {
         () => {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
-                if cur_format == "kernel_text" || cur_format == "reference" || cur_frame.is_some() {
+                if cur_format == "kernel_text"
+                    || cur_format == "reference"
+                    || cur_frame.is_some()
+                    || !cur_extracts.is_empty()
+                {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
                             "source refused: flux_from_mag + abs_mag_from conflict at {}",
