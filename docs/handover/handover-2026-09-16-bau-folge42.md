@@ -3,7 +3,7 @@
   session: Bau-Folge 42
   class: handover
   date: 2026-09-16
-  sha256: d7371c7dd0ea99cab25da1f36182fe13282c7fbaca7426c17df135cee21fadd6
+  sha256: 9f35e89b8758a3e5503a2a095e47155d826f8e0ee106b85bc1857868296fc128
   status: live
 -->
 # Handover — Bau-Folge 42 (2026-09-16)
@@ -22,22 +22,6 @@ Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
 nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
-
-## Clippy gegen den 0-Kanon — 36 Funde unter `-D warnings`
-
-- Der WIP-Lande-Commit `ee4db3aa` hat `format` und `build` gegrünt (ci-check
-  `35079185066`), `clippy` bleibt rot. Gemessen (`gh run view 35080299174
-  --log-failed`): 36 clippy-Fehler unter rust 1.98 + `-D warnings` (die
-  setup-Action setzt RUSTFLAGS), lokal ist 1.96. Die Klassen: `manual_unwrap_or`
-  auf den `match { Some(v) => v, None => 0.0 }`-Formen, die das Gate erzwingt
-  (`src/archivar/fits.rs:540,566,792`, `src/mathematikerin/te.rs:1908` u. a.);
-  `chunks_exact_to_as_chunks` (`src/archivar/netcdf.rs:459`,
-  `src/archivar/tiff.rs:1562`); `manual_memcpy` (`src/archivar/las/laszip.rs:144,715,728`);
-  byte-str (`src/archivar/netcdf.rs:3`). Offen ist die Form: benannte
-  quellen-definierte Default-Konstante (FITS TZERO/BZERO = 0.0, TIFF = 1) statt
-  Literal, Option-Plumbing, oder eine Projekt-Lint-Politik — die Gate-Fixture
-  bleibt unberührt. (Schritt: `gh run view 35080299174 --log-failed`, je Fund die
-  Form wählen, `cargo clippy --all-targets -- -D warnings` lokal grün, committen.)
 
 ## TE-Gate — Fix committet; n=1000-Lauf offen
 
@@ -78,9 +62,9 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
 ## CI — Rest
 
-- `test`: der Lauf `35079185066` wurde durch `concurrency.cancel-in-progress`
-  (zweiter Push) abgebrochen, kein Testfehler; der Lauf `35080299174` trägt den
-  Test-Job. (Schritt: `gh run view 35080299174`.)
+- `clippy` ist grün (`cargo +1.98.1 clippy --all-targets -- -D warnings` lokal 0,
+  ci-check `35081527096` auf `6318eea0` grün); offen ist nur der `test`-Job
+  desselben Laufs. (Schritt: `gh run view 35081527096`.)
 - `archive_search`-Flags (`--count`/`--case`/`--path`): offen ist die
   CI-Verifikation des Release-Binärs. (Schritt: CI-Lauf.)
 
