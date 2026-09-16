@@ -919,11 +919,12 @@ fn copy_span(out: &mut Vec<u8>, off: usize, len: usize) -> Result<(), ParquetNot
     if off == 0 || off > out.len() {
         return Err(ParquetNote::Truncated { off: out.len() });
     }
-    let mut o = out.len() - off;
-    for _ in 0..len {
-        let b = *out.get(o).ok_or(ParquetNote::Truncated { off: out.len() })?;
+    let start = out.len() - off;
+    for i in 0..len {
+        let b = *out
+            .get(start + i)
+            .ok_or(ParquetNote::Truncated { off: out.len() })?;
         out.push(b);
-        o += 1;
     }
     Ok(())
 }
@@ -1053,10 +1054,7 @@ fn decode_column(
                 .dict_num_values
                 .ok_or(ParquetNote::AbsentField { id: 1 })? as usize;
             let Some(plain) = page_body(cm.codec, body) else {
-                out.push(ParquetValue::Unhandled(format!(
-                    "codec {} page",
-                    cm.codec
-                )));
+                out.push(ParquetValue::Unhandled(format!("codec {} page", cm.codec)));
                 break;
             };
             dictionary = decode_plain(&plain, type_tag, type_length, n)?;
@@ -1083,10 +1081,7 @@ fn decode_column(
             .data_encoding
             .ok_or(ParquetNote::AbsentField { id: 2 })?;
         let Some(plain) = page_body(cm.codec, body) else {
-            out.push(ParquetValue::Unhandled(format!(
-                "codec {} page",
-                cm.codec
-            )));
+            out.push(ParquetValue::Unhandled(format!("codec {} page", cm.codec)));
             break;
         };
         let values_body = skip_levels(&plain, max_rep, max_def)?;
@@ -1534,13 +1529,7 @@ pub(crate) mod testkit {
     }
 
     fn dictionary_byte_array_file_layout(codec: i32, net_layout: bool) -> Vec<u8> {
-        let wrap = |b: Vec<u8>| -> Vec<u8> {
-            if codec == 1 {
-                snappy_literal(&b)
-            } else {
-                b
-            }
-        };
+        let wrap = |b: Vec<u8>| -> Vec<u8> { if codec == 1 { snappy_literal(&b) } else { b } };
         let mut plain_dict = Vec::new();
         plain_dict.extend(2u32.to_le_bytes());
         plain_dict.extend(b"aa");

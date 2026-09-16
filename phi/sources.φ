@@ -6293,6 +6293,24 @@ dist sy_dist
 dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/mars_express_odf.bin
+format mars_express_odf
+at earth
+ttl 604800
+field observable_hz mars_express_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf.bin
+format rosetta_odf
+at earth
+ttl 604800
+field observable_hz rosetta_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
+format juno_odf
+at earth
+ttl 604800
+field observable_hz juno_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/vex_odf.bin
 format vex_odf
 at earth
@@ -6505,6 +6523,30 @@ field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/magellan_odf.bin
+format magellan_odf
+at earth
+ttl 604800
+field observable_hz magellan_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mgs_odf.bin
+format mgs_odf
+at earth
+ttl 604800
+field observable_hz mgs_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf.bin
+format mro_odf
+at earth
+ttl 604800
+field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
 format galileo_odf
 at earth
@@ -6519,6 +6561,12 @@ field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
 field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/messenger_odf.bin
+format messenger_odf
+at earth
+ttl 604800
+field observable_hz messenger_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
 format dawn_odf
