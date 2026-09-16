@@ -4609,16 +4609,16 @@ fn test_connect_timeout_is_declared_not_derived_from_ttl() {
         "connect bound is a declared power-of-two handshake budget"
     );
     assert!(
-        super::transfer_timeout_s(86400) > super::CONNECT_BOUND_S,
+        super::ttl_transfer_bound(86400) > super::CONNECT_BOUND_S,
         "the payload transfer budget stays ttl-scaled and exceeds the connect bound"
     );
     assert_eq!(
-        super::transfer_timeout_s(86400),
+        super::ttl_transfer_bound(86400),
         ((86400.0) / (super::Φ * super::Φ)).ceil() as u64,
         "transfer scales with ttl; connect does not"
     );
     assert_eq!(
-        super::transfer_timeout_s(1),
+        super::ttl_transfer_bound(1),
         ((1.0) / (super::Φ * super::Φ)).ceil() as u64,
         "a tiny ttl keeps a tiny transfer budget"
     );
