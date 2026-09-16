@@ -1,0 +1,47 @@
+name: voyager-odr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: ODR source URL
+        required: false
+        default: https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/DATA/C0XR13AA.ODR
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  voyager-odr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "voyager_odr.bin"; then
+            echo "asset voyager_odr.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset voyager_odr.bin missing — compiling and manifesting"
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "Voyager VG2-S RSS open-loop files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the Voyager ODR open-loop file to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin voyager_odr_compiler -- \
+            --url "${{ inputs.url }}" \
+            --year 1981 \
+            --out voyager_odr.bin \
+            --ci-mode
