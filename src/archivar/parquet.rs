@@ -113,6 +113,8 @@ pub struct SchemaElement {
     pub repetition_type: Option<i32>,
     pub num_children: Option<i32>,
     pub converted_type: Option<i32>,
+    pub scale: Option<i32>,
+    pub precision: Option<i32>,
 }
 
 #[derive(Clone, Debug)]
@@ -374,6 +376,8 @@ impl<'a> Compact<'a> {
         let mut repetition_type = None;
         let mut num_children = None;
         let mut converted_type = None;
+        let mut scale = None;
+        let mut precision = None;
         let mut last = 0i16;
         loop {
             let (ctype, id) = self.field(last)?;
@@ -388,6 +392,8 @@ impl<'a> Compact<'a> {
                 4 => name = Some(self.string()?),
                 5 => num_children = Some(self.i32()?),
                 6 => converted_type = Some(self.i32()?),
+                7 => scale = Some(self.i32()?),
+                8 => precision = Some(self.i32()?),
                 _ => self.skip(ctype)?,
             }
         }
@@ -398,6 +404,8 @@ impl<'a> Compact<'a> {
             repetition_type,
             num_children,
             converted_type,
+            scale,
+            precision,
         })
     }
 
@@ -596,12 +604,14 @@ pub enum ParquetValue {
     Float(f32),
     Double(f64),
     Bytes(Vec<u8>),
+    Int96([u8; 12]),
     Unhandled(String),
 }
 
 #[derive(Clone, Debug)]
 pub struct ParquetColumn {
     pub name: String,
+    pub scale: Option<i32>,
     pub values: Vec<ParquetValue>,
 }
 
@@ -813,6 +823,16 @@ fn decode_plain(
                 ])));
             }
         }
+        3 => {
+            let len = 12usize;
+            let body = slice_at(data, 0, count * len)?;
+            for i in 0..count {
+                let o = i * len;
+                let mut b = [0u8; 12];
+                b.copy_from_slice(&body[o..o + 12]);
+                out.push(ParquetValue::Int96(b));
+            }
+        }
         4 => {
             let body = slice_at(data, 0, count * 4)?;
             for i in 0..count {
@@ -895,6 +915,66 @@ fn decode_dict(
     Ok(out)
 }
 
+fn copy_span(out: &mut Vec<u8>, off: usize, len: usize) -> Result<(), ParquetNote> {
+    if off == 0 || off > out.len() {
+        return Err(ParquetNote::Truncated { off: out.len() });
+    }
+    let mut o = out.len() - off;
+    for _ in 0..len {
+        let b = *out.get(o).ok_or(ParquetNote::Truncated { off: out.len() })?;
+        out.push(b);
+        o += 1;
+    }
+    Ok(())
+}
+
+fn snappy_decode(data: &[u8]) -> Option<Vec<u8>> {
+    let (ulen, mut pos) = uvarint_at(data, 0).ok()?;
+    let mut out: Vec<u8> = Vec::with_capacity(ulen.min(1 << 20) as usize);
+    while pos < data.len() {
+        let tag = *data.get(pos)?;
+        pos += 1;
+        match tag & 0x03 {
+            0 => {
+                let mut len = (tag >> 2) as usize + 1;
+                if len > 60 {
+                    let n = len - 60;
+                    let mut extra = 0usize;
+                    for i in 0..n {
+                        extra |= (*data.get(pos + i)? as usize) << (8 * i);
+                    }
+                    pos += n;
+                    len = extra + 1;
+                }
+                out.extend_from_slice(data.get(pos..pos + len)?);
+                pos += len;
+            }
+            1 => {
+                let len = ((tag >> 2) & 0x07) as usize + 4;
+                let off = (((tag >> 5) & 0x07) as usize) << 8 | (*data.get(pos)? as usize);
+                pos += 1;
+                copy_span(&mut out, off, len).ok()?;
+            }
+            2 => {
+                let len = (tag >> 2) as usize + 1;
+                let b = data.get(pos..pos + 2)?;
+                let off = u16::from_le_bytes([b[0], b[1]]) as usize;
+                pos += 2;
+                copy_span(&mut out, off, len).ok()?;
+            }
+            3 => {
+                let len = (tag >> 2) as usize + 1;
+                let b = data.get(pos..pos + 4)?;
+                let off = u32::from_le_bytes([b[0], b[1], b[2], b[3]]) as usize;
+                pos += 4;
+                copy_span(&mut out, off, len).ok()?;
+            }
+            _ => return None,
+        }
+    }
+    (out.len() as u64 == ulen).then_some(out)
+}
+
 fn read_page_header(data: &[u8], off: usize) -> Result<(PageHeaderInfo, usize), ParquetNote> {
     if off >= data.len() {
         return Err(ParquetNote::Truncated { off });
@@ -919,12 +999,20 @@ fn skip_levels(body: &[u8], max_rep: usize, max_def: usize) -> Result<&[u8], Par
     Ok(&body[pos..])
 }
 
+fn page_body(codec: i32, raw: &[u8]) -> Option<Vec<u8>> {
+    match codec {
+        0 => Some(raw.to_vec()),
+        1 => snappy_decode(raw),
+        _ => None,
+    }
+}
+
 fn decode_column(
     cm: &ColumnMetaData,
     leaf: &SchemaElement,
     data: &[u8],
 ) -> Result<Vec<ParquetValue>, ParquetNote> {
-    if cm.codec != 0 {
+    if !matches!(cm.codec, 0 | 1) {
         return Ok(vec![ParquetValue::Unhandled(format!("codec {}", cm.codec))]);
     }
     let type_tag = leaf.type_tag.ok_or(ParquetNote::AbsentField { id: 1 })?;
@@ -946,7 +1034,13 @@ fn decode_column(
             dict_off as usize + hlen,
             hdr.compressed_page_size as usize,
         )?;
-        dictionary = decode_plain(body, type_tag, type_length, n)?;
+        let Some(plain) = page_body(cm.codec, body) else {
+            return Ok(vec![ParquetValue::Unhandled(format!(
+                "codec {} page",
+                cm.codec
+            ))]);
+        };
+        dictionary = decode_plain(&plain, type_tag, type_length, n)?;
     }
     let mut out = Vec::new();
     let mut off = cm.data_page_offset as usize;
@@ -954,6 +1048,25 @@ fn decode_column(
     while remaining > 0 {
         let (hdr, hlen) = read_page_header(data, off)?;
         let body = slice_at(data, off + hlen, hdr.compressed_page_size as usize)?;
+        if hdr.page_type == 2 {
+            let n = hdr
+                .dict_num_values
+                .ok_or(ParquetNote::AbsentField { id: 1 })? as usize;
+            let Some(plain) = page_body(cm.codec, body) else {
+                out.push(ParquetValue::Unhandled(format!(
+                    "codec {} page",
+                    cm.codec
+                )));
+                break;
+            };
+            dictionary = decode_plain(&plain, type_tag, type_length, n)?;
+            off += hlen + hdr.compressed_page_size as usize;
+            continue;
+        }
+        if hdr.page_type == 1 {
+            off += hlen + hdr.compressed_page_size as usize;
+            continue;
+        }
         if hdr.data_page_v2 {
             out.push(ParquetValue::Unhandled("data_page_v2".to_string()));
             break;
@@ -969,7 +1082,14 @@ fn decode_column(
         let enc = hdr
             .data_encoding
             .ok_or(ParquetNote::AbsentField { id: 2 })?;
-        let values_body = skip_levels(body, max_rep, max_def)?;
+        let Some(plain) = page_body(cm.codec, body) else {
+            out.push(ParquetValue::Unhandled(format!(
+                "codec {} page",
+                cm.codec
+            )));
+            break;
+        };
+        let values_body = skip_levels(&plain, max_rep, max_def)?;
         let vals = match enc {
             0 => decode_plain(values_body, type_tag, type_length, n)?,
             2 | 8 => decode_dict(values_body, &dictionary, n)?,
@@ -997,6 +1117,7 @@ pub fn parse_parquet(data: &[u8]) -> Option<Vec<ParquetColumn>> {
         .iter()
         .map(|l| ParquetColumn {
             name: l.name.clone(),
+            scale: l.scale,
             values: Vec::new(),
         })
         .collect();
@@ -1025,23 +1146,23 @@ pub fn parse_parquet(data: &[u8]) -> Option<Vec<ParquetColumn>> {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod testkit {
     use super::*;
 
-    struct Enc {
-        buf: Vec<u8>,
+    pub struct Enc {
+        pub buf: Vec<u8>,
         last: i16,
     }
 
     impl Enc {
-        fn new() -> Enc {
+        pub fn new() -> Enc {
             Enc {
                 buf: Vec::new(),
                 last: 0,
             }
         }
 
-        fn field(&mut self, id: i16, ctype: u8) {
+        pub fn field(&mut self, id: i16, ctype: u8) {
             let delta = id - self.last;
             if delta > 0 && delta <= 15 {
                 self.buf.push(((delta as u8) << 4) | ctype);
@@ -1052,23 +1173,23 @@ mod tests {
             self.last = id;
         }
 
-        fn i32(&mut self, id: i16, v: i32) {
+        pub fn i32(&mut self, id: i16, v: i32) {
             self.field(id, CT_I32);
             self.buf.extend(zigzag(v as i64));
         }
 
-        fn i64(&mut self, id: i16, v: i64) {
+        pub fn i64(&mut self, id: i16, v: i64) {
             self.field(id, CT_I64);
             self.buf.extend(zigzag(v));
         }
 
-        fn binary(&mut self, id: i16, s: &[u8]) {
+        pub fn binary(&mut self, id: i16, s: &[u8]) {
             self.field(id, CT_BINARY);
             self.buf.extend(uvarint(s.len() as u64));
             self.buf.extend(s);
         }
 
-        fn list_struct(&mut self, id: i16, items: &[Vec<u8>]) {
+        pub fn list_struct(&mut self, id: i16, items: &[Vec<u8>]) {
             self.field(id, CT_LIST);
             self.buf.push(((items.len() as u8) << 4) | CT_STRUCT);
             for it in items {
@@ -1076,12 +1197,12 @@ mod tests {
             }
         }
 
-        fn stop(&mut self) {
+        pub fn stop(&mut self) {
             self.buf.push(CT_STOP);
         }
     }
 
-    fn uvarint(mut n: u64) -> Vec<u8> {
+    pub fn uvarint(mut n: u64) -> Vec<u8> {
         let mut out = Vec::new();
         loop {
             let b = (n & 0x7f) as u8;
@@ -1095,7 +1216,7 @@ mod tests {
         out
     }
 
-    fn zigzag(n: i64) -> Vec<u8> {
+    pub fn zigzag(n: i64) -> Vec<u8> {
         uvarint(((n << 1) ^ (n >> 63)) as u64)
     }
 
@@ -1306,7 +1427,7 @@ mod tests {
         ));
     }
 
-    fn file_metadata_footer(schema: &[Vec<u8>], row_groups: &[Vec<u8>]) -> Vec<u8> {
+    pub fn file_metadata_footer(schema: &[Vec<u8>], row_groups: &[Vec<u8>]) -> Vec<u8> {
         let mut fm = Enc::new();
         fm.i32(1, 1);
         fm.list_struct(2, schema);
@@ -1317,7 +1438,7 @@ mod tests {
         fm.buf
     }
 
-    fn schema_root_bytes() -> Vec<u8> {
+    pub fn schema_root_bytes() -> Vec<u8> {
         let mut e = Enc::new();
         e.binary(4, b"schema");
         e.i32(5, 1);
@@ -1396,11 +1517,48 @@ mod tests {
         file
     }
 
+    fn snappy_literal(bytes: &[u8]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend(uvarint(bytes.len() as u64));
+        out.push(((bytes.len() - 1) << 2) as u8);
+        out.extend_from_slice(bytes);
+        out
+    }
+
     fn dictionary_byte_array_file(codec: i32) -> Vec<u8> {
+        dictionary_byte_array_file_layout(codec, false)
+    }
+
+    fn dictionary_byte_array_file_net(codec: i32) -> Vec<u8> {
+        dictionary_byte_array_file_layout(codec, true)
+    }
+
+    fn dictionary_byte_array_file_layout(codec: i32, net_layout: bool) -> Vec<u8> {
+        let wrap = |b: Vec<u8>| -> Vec<u8> {
+            if codec == 1 {
+                snappy_literal(&b)
+            } else {
+                b
+            }
+        };
+        let mut plain_dict = Vec::new();
+        plain_dict.extend(2u32.to_le_bytes());
+        plain_dict.extend(b"aa");
+        plain_dict.extend(3u32.to_le_bytes());
+        plain_dict.extend(b"bbb");
+        let dict_body = wrap(plain_dict);
+
+        let mut plain_data = vec![0x01u8];
+        for v in [0u8, 1u8, 0u8] {
+            plain_data.push(0x02u8);
+            plain_data.push(v);
+        }
+        let data_body = wrap(plain_data);
+
         let mut dh = Enc::new();
         dh.i32(1, 2);
-        dh.i32(2, 13);
-        dh.i32(3, 13);
+        dh.i32(2, dict_body.len() as i32);
+        dh.i32(3, dict_body.len() as i32);
         dh.field(7, CT_STRUCT);
         {
             let mut d = Enc::new();
@@ -1412,16 +1570,10 @@ mod tests {
         dh.stop();
         let dict_header = dh.buf;
 
-        let mut dict_body = Vec::new();
-        dict_body.extend(2u32.to_le_bytes());
-        dict_body.extend(b"aa");
-        dict_body.extend(3u32.to_le_bytes());
-        dict_body.extend(b"bbb");
-
         let mut ph = Enc::new();
         ph.i32(1, 0);
-        ph.i32(2, 16);
-        ph.i32(3, 16);
+        ph.i32(2, data_body.len() as i32);
+        ph.i32(3, data_body.len() as i32);
         ph.field(5, CT_STRUCT);
         {
             let mut d = Enc::new();
@@ -1434,12 +1586,6 @@ mod tests {
         }
         ph.stop();
         let data_header = ph.buf;
-
-        let mut data_body = vec![0x01u8];
-        for v in [0u8, 1u8, 0u8] {
-            data_body.push(0x02u8);
-            data_body.push(v);
-        }
 
         let dict_offset = 4usize;
         let data_offset = dict_offset + dict_header.len() + dict_body.len();
@@ -1465,8 +1611,12 @@ mod tests {
         cm.i64(5, 3);
         cm.i64(6, total);
         cm.i64(7, total);
-        cm.i64(9, data_offset as i64);
-        cm.i64(11, dict_offset as i64);
+        if net_layout {
+            cm.i64(9, dict_offset as i64);
+        } else {
+            cm.i64(9, data_offset as i64);
+            cm.i64(11, dict_offset as i64);
+        }
         cm.stop();
 
         let mut cc = Enc::new();
@@ -1529,13 +1679,94 @@ mod tests {
 
     #[test]
     fn parquet_names_compressed_codec_unhandled() {
+        let bytes = dictionary_byte_array_file(3);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![ParquetValue::Unhandled("codec 3".to_string())]
+        );
+    }
+
+    #[test]
+    fn parquet_reads_snappy_dictionary_byte_array_column() {
         let bytes = dictionary_byte_array_file(1);
         let cols = parse_parquet(&bytes).expect("columns");
         assert_eq!(cols.len(), 1);
         assert_eq!(cols[0].name, "col");
         assert_eq!(
             cols[0].values,
-            vec![ParquetValue::Unhandled("codec 1".to_string())]
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"aa".to_vec()),
+            ]
         );
+    }
+
+    #[test]
+    fn parquet_reads_a_dictionary_page_at_the_data_offset() {
+        let bytes = dictionary_byte_array_file_net(1);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"aa".to_vec()),
+            ]
+        );
+    }
+
+    #[test]
+    fn snappy_decode_reads_literal_blocks() {
+        let mut s = Vec::new();
+        s.extend(uvarint(5));
+        s.push((4 << 2) as u8);
+        s.extend(b"hello");
+        assert_eq!(snappy_decode(&s), Some(b"hello".to_vec()));
+    }
+
+    #[test]
+    fn snappy_decode_reads_one_byte_offset_copies() {
+        let mut s = Vec::new();
+        s.extend(uvarint(6));
+        s.push((1 << 2) as u8);
+        s.extend(b"ab");
+        s.push(0x01);
+        s.push(0x02);
+        assert_eq!(snappy_decode(&s), Some(b"ababab".to_vec()));
+    }
+
+    #[test]
+    fn snappy_decode_reads_two_byte_offset_copies() {
+        let mut s = Vec::new();
+        s.extend(uvarint(10));
+        s.push((4 << 2) as u8);
+        s.extend(b"abcde");
+        s.push(0x12);
+        s.extend(5u16.to_le_bytes());
+        assert_eq!(snappy_decode(&s), Some(b"abcdeabcde".to_vec()));
+    }
+
+    #[test]
+    fn snappy_decode_refuses_zero_offset() {
+        let mut s = Vec::new();
+        s.extend(uvarint(4));
+        s.push(0x01);
+        s.push(0x00);
+        assert_eq!(snappy_decode(&s), None);
+    }
+
+    #[test]
+    fn snappy_decode_refuses_truncated_body() {
+        let mut s = Vec::new();
+        s.extend(uvarint(5));
+        s.push((4 << 2) as u8);
+        s.extend(b"hi");
+        assert_eq!(snappy_decode(&s), None);
     }
 }

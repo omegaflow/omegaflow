@@ -34,6 +34,7 @@ pub mod dastcom;
 pub mod demeter;
 pub mod des_y6;
 pub mod double;
+pub mod eea;
 pub mod ephemeris;
 pub mod euvs;
 pub mod exclude;
