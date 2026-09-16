@@ -331,7 +331,7 @@ fn fetch_whole(url: &str, ttl: u64, headers: &[(String, String)]) -> Option<Vec<
         .arg("--retry-delay")
         .arg("2")
         .arg("-m")
-        .arg(transfer_timeout_s(ttl).to_string())
+        .arg(ttl_transfer_bound(ttl).to_string())
         .arg("--connect-timeout")
         .arg(CONNECT_BOUND_S.to_string());
     for (k, v) in headers {
