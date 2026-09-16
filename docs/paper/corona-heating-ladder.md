@@ -166,7 +166,7 @@ in the paper rather than in code.
   normalization), lays the bands on 24-s cells (the four camera-2 bands are
   phase-shifted by ~3 s; 24 s carries all bands in one cell), orders by
   formation temperature (cool → hot), recognizes flare events via the GOES-b
-  flux (b_flux > 1e-6 W/m², C1.0) or, without a goes directory, via the 304-Å
+  flux (b_flux > 5e-6 W/m², C5.0) or, without a goes directory, via the 304-Å
   full disk itself (median × factor), and measures per adjacent pair the
   directed TE over a lag sweep against the phase null; a consistently positive
   D at lag ≈ 4 cells (≈ 96 s) means energy flow UP the ladder. Alongside the
@@ -176,7 +176,7 @@ in the paper rather than in code.
 - **corona_event_probe** — The 90-day event probe, the stacked sub-minute
   multi-force TE of the corona heating: reads 2-s X-ray (gxrs: a_flux hot,
   b_flux cool) and 10-s Lyman-α (geuv-ir10s), lays each day on a 10-s grid,
-  finds flare events in the cool band (b_flux > 1e-6 W/m², C1.0), lays a ±20-min
+  finds flare events in the cool band (b_flux > 5e-6 W/m², C5.0), lays a ±20-min
   window around each event, and computes the conditional TE there in both
   directions; a consistently positive D at lag ≈ 10 cells (≈ 100 s) over many
   events is Alfvén-consistent; if D vanishes under the phase-randomized null,
@@ -293,25 +293,35 @@ directional arrow.
 ### 4.5 Three-year reproduction (AIA 2013 / 2014 / 2015)
 
 The AIA ladder is now measured over three independent years (GOES-15
-triggers, 24-s cells, the healthy imaging era). The hot-corona cascade
-193→211→335→94 Å reproduces in every year at the ~96 s crossing lag; all
-nine rung-year D values are positive:
+triggers, 24-s cells, the healthy imaging era), on the full-year corpora.
+The outer hot-corona rungs 193→211 and 335→94 reproduce at the ~96 s
+crossing lag in every year; the middle rung 211→335 peaks later, at 144 s,
+in 2014 and 2015. All nine rung-year D values at the ~96 s crossing are
+positive:
 
 | year | events | 193→211 | 211→335 | 335→94 | lag | fam | verdict |
-|---|---|---|---|---|---|---|---|
-| 2013 | 524 | +1.67e-1 | +7.71e-2 | +1.01e-1 | ~96 s | 1.71e-1 | family bound |
-| 2014 | 1019 | +1.78e-1 | +7.15e-2 | +1.24e-1 | ~96 s | 1.96e-1 | family bound |
-| 2015 | 281 | +1.21e-1 | +9.37e-2 | +1.30e-1 | ~96 s | 1.75e-1 | family bound |
+|---|---|---|---|---|---|---|---|---|
+| 2013 | 524 | +1.67e-1 | +7.71e-2 | +1.01e-1 | ~96 s | 1.7131e-1 | family bound |
+| 2014 | 1350 | +1.76e-1 | +6.71e-2 | +1.19e-1 | ~96 s | 1.9058e-1 | family bound |
+| 2015 | 613 | +1.54e-1 | +6.95e-2 | +1.25e-1 | ~96 s | 1.7789e-1 | family bound |
 
-The per-event direction of the hottest rung (335→94, 2015, 281 events) is
-76% positive, majority-positive in every month (posfrac 0.56–1.00), with
-all monthly means positive — the direction is consistent, not alternating,
-at event and month scale. The wave/alternation hypothesis (an oscillating
-direction driver) is not carried. Yet the cascade's amplitude stays below
-the full-round family bound in every year, and the hottest rung does not
-strengthen as the ensemble grows fivefold (335→94: +1.42e-1 at 194 events
-→ +1.24e-1 at 1019 events). The direction is reproduced and consistent;
-the significance is bounded.
+The 2013 run reproduces the earlier measurement exactly (524 events, fam
+1.7131e-1). 2014 and 2015 were previously reported on partial GOES corpora
+(1019 and 281 events) and now carry the full-year event counts (1350 and
+613) with the fam values above. On the full corpus the 211→335 rung's peak
+moves from ~96 s to 144 s (2014: +7.47e-2, 2015: +8.09e-2), while the outer
+rungs keep the ~96 s crossing.
+
+The per-event direction of the hottest rung (335→94, 2015) was measured as
+76% positive, majority-positive in every month (posfrac 0.56–1.00), with all
+monthly means positive — but that statistic was measured on the partial
+281-event set; a remeasurement on the full 613-event set is pending. The
+wave/alternation hypothesis (an oscillating direction driver) is not carried
+on the partial set. Yet the cascade's amplitude stays below the full-round
+family bound in every year, and the hottest rung does not strengthen as the
+ensemble grows from 194 to 1350 events (335→94: +1.42e-1 at 194 events →
++1.19e-1 at 1350 events). The direction is reproduced; the significance is
+bounded.
 
 ### 4.6 The conditional measurement — the cascade under the shared envelope
 
@@ -449,14 +459,16 @@ pattern on either instrument.
 an upward-transport Pfeil: the one EVE candidate (1032→131) survives the
 family bound only at canonical/narrow bandwidth, and the AIA hot cascade,
 though reproduced across three years, stays below its own family bound in
-every year — a growing event ensemble (194 → 524 → 1019 → 281) does not lift
+every year — a growing event ensemble (194 → 524 → 1350 → 613) does not lift
 the hottest rung over fam. The measurement therefore does *not* separate
 Alfvén waves from nanoflares at fam significance. What it *does* establish is
 the coronal direction under the bound: a cascade 193→211→335→94 Å that is
-reproduced at the ~96 s crossing in three independent years with a 76%
-consistent per-event sign — the boundary between a real but sub-significant
-directed process and an alternating/random null is measured. Separating the
-mechanism on the amplitude still needs the spatially resolved active-region
+reproduced at the ~96 s crossing in three independent years (the per-event sign
+consistency, 76% positive, was measured on the partial 2015 set; remeasurement on
+the full 613-event corpus is pending) — the boundary between a real but
+sub-significant directed process and an alternating/random null is measured.
+Separating the mechanism on the amplitude still needs the spatially resolved
+active-region
 path (the sun-as-a-star ladder caps the flare ~10×).
 
 **Instrument degradation is the honest constraint.** The full ladder is
@@ -533,13 +545,14 @@ two silences and one fragile candidate.
 ## 7. Conclusion
 
 Across three independent years (AIA 2013, 2014, 2015), the hot-corona
-cascade 193→211→335→94 Å reproduces as a directed upward pattern at the
-predicted ~96 s Alfvén crossing: all nine rung-year D values are positive,
-and the per-event direction of the hottest rung is 76% positive with every
-month majority-positive — the oscillating-direction driver is not carried at
-event or month scale. The amplitude of this cascade, however, stays below
-the full-round family bound in every year (0.63–0.91 × fam), and the hottest
-rung does not strengthen as the ensemble grows fivefold. On EVE-2011, the
+cascade 193→211→335→94 Å reproduces as a directed upward pattern: all nine
+rung-year D values are positive at the ~96 s crossing (the middle rung
+211→335 peaks at 144 s in 2014 and 2015). The per-event direction of the
+hottest rung is 76% positive, majority-positive in every month, on the
+partial 2015 281-event set; remeasurement on the full 613-event corpus is
+pending. The amplitude of this cascade, however, stays below the full-round
+family bound in every year, and the hottest rung does not strengthen as the
+ensemble grows from 194 to 1350 events. On EVE-2011, the
 single rung that clears the family bound at canonical bandwidth (1032→131 Å
 upward, D = 5.11e-1 > fam = 4.70e-1) fails the KDE-bandwidth cross-check
 (h ≥ 2.0, robust to the surrogate count); every other EVE rung is silent at
