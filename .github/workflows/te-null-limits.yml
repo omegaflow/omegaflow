@@ -1,0 +1,55 @@
+name: te-null-limits
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  te-null-limits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the SWPC live channels into the archivar cache
+        run: |
+          mkdir -p cache/services.swpc.noaa.gov
+          for attempt in 1 2 3; do
+            curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-rtsw-rtsw_wind_1m.json \
+              https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-rtsw-rtsw_mag_1m.json \
+              https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-goes-primary-xrays-7-day.json \
+              https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-goes-primary-euvs-7-day.json \
+              https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s cache/services.swpc.noaa.gov/json-rtsw-rtsw_wind_1m.json
+          test -s cache/services.swpc.noaa.gov/json-rtsw-rtsw_mag_1m.json
+          test -s cache/services.swpc.noaa.gov/json-goes-primary-xrays-7-day.json
+          test -s cache/services.swpc.noaa.gov/json-goes-primary-euvs-7-day.json
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > te-null-limits.txt
+      - name: Run the TE null-limits probe
+        run: |
+          cargo run --release -p omegaflow-measure --bin te_null_limits_probe \
+            >> te-null-limits.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: te-null-limits
+          path: te-null-limits.txt
