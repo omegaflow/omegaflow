@@ -386,6 +386,13 @@ The full matrix lives in the Kybernetische Ethik, Code Rules, and the Gradient S
 above. Read the system clock — an assumption that arrives before observation is the
 gradient speaking.
 
+Tool boundaries — do not try a tool you may not call: `grep`, `ls`, `cat`, `rg`,
+`cd`, `python`, `python3` are denied (leading form and absolute path). Use instead:
+content search `archive_search <kws> --root <dir>` or `sgrep`; discovery `glob`;
+reading `sread <file> [--offset --limit]` or the `read` tool; directory change via
+the bash tool's `workdir` parameter. Read your exact allow-list in `opencode.json`
+before the first bash call — a denied call wastes a turn and the session's quota.
+
 ## Verification: What `cargo check` Cannot Catch
 
 `cargo check` is a syntax gate, not verification. The three-layer data contract, what
