@@ -2,12 +2,12 @@
   title: Handover — Forschung-Folge 50 (2026-09-16)
   class: handover
   date: 2026-09-16
-  sha256: 3a833ac132817994f4b9892e425769838469cff9287c8b45a730017f08de3e75
+  sha256: ffe77dbe95d53f8d367e303ff9db2917acdf308a4efbb48fae7bb5b16395f7d9
   status: live
 -->
 # Handover — Forschung-Folge 50 (2026-09-16)
 
-## ODF-Bande-Split — Konsument (härtester undatiert)
+## ODF-Bande-Split — Konsument (undatiert, mechanisch — CI-blockiert)
 
 - Lauf `35139594201` (`planetary-odf-cdn`) ohne Job-Start (gemessen 2026-09-16:
   `jobs total_count = 0`, Run pending/queued, Log nicht verfügbar). (Schritt:
