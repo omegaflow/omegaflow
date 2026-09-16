@@ -1,0 +1,30 @@
+name: tonga-lamb-crosscheck
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  tonga-lamb-crosscheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the Tonga 2022 cross-medium calibration (Kwajalein ear + Kyoto + BGR)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin tonga_lamb_crosscheck_probe
+          } > tonga-lamb-crosscheck.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tonga-lamb-crosscheck
+          path: tonga-lamb-crosscheck.txt
