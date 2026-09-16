@@ -3,7 +3,7 @@
   session: Bau-Folge 59
   class: handover
   date: 2026-09-16
-  sha256: b53284cd5eae27d977e60f9d76057c0a4040491c2a4b47a75ec3b3b37b1e8181
+  sha256: 5cc3ced283d5fb8213ceea7aff0a0eff1935092efe827fdbc78ce6527545fc61
   status: live
 -->
 # Handover — Bau-Folge 59 (2026-09-16)
@@ -39,39 +39,25 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `gh run view 35129638318 --log-failed`, hält keine Blocklänge rise ≤ 2pp,
   `tools/measure/src/bin/multi_force_te_probe.rs:74` auf Arx, Block ausmustern.)
 
-## ODR — 566-B-Parser gebaut; Packing der Quelle offen
+## ODR — Packing der 566-B-Quelle offen
 
-- Der 566-B-Ast ist gebaut (im Commit): `src/archivar/galileo_odr.rs` trägt
-  `SHORT_RECORD_BYTES=566`, `SHORT_AD_REPETITIONS=100`, `OdrLayout` (Short8Bit/
-  Long8Bit/TwelveBit/Other), das gemessene Header-Fixture und 5 Tests;
-  `90320204.ODR` = 12701 × 566 B, 200 Sa/s, 8-bit (bytegenau gelesen). Galileo
-  12-bit ist `descoped by measurement` (2026-09-16): spezifiziert (RSC-11-11
-  Table 1, RESOLUTION-Bit=0), aber nie manifestiert — alle 4 PDS/PPI-Datasets
-  (GO-J/GO-JS/GO-SUN/GO-X) tragen nur 8-bit; SPDF/NSSDCA ohne ODR.
-- Offen: `90320204.ODR` wird von `galileo_odr_compiler.rs` (nur die 10 bekannten
-  2666-B-Quellen) noch nicht gepackt und ist nicht in `phi/sources.φ` registriert.
+- Offen: `90320204.ODR` (12701 × 566 B, 200 Sa/s, 8-bit) wird von
+  `galileo_odr_compiler.rs` (nur die 10 bekannten 2666-B-Quellen) noch nicht
+  gepackt und ist nicht in `phi/sources.φ` registriert.
   (Schritt: Quellen-Kuration nach `docs/SOURCE_PORT.md` — sha256, `phi/sources.φ`-
   Eintrag, CDN-Manifestation.)
 
-## las — Horizontale CRS und Geokey-Fabrikation geschlossen; MLLW-Kette offen
+## las — MLLW→Ellipsoid-Kette offen
 
-- Geschlossen (im Commit): `resolve_crs` invertiert NAD83/UTM 26901–26923
-  (GRS80, 326xx-Zentralmeridian, `tools/harvest/src/bin/las_compiler.rs`); die
-  zweite `format las`-Zeile (NOAA NOS Coastal Lidar, Oahu-Bathymetrie) ist in
-  `phi/sources.φ` registriert; der unbedingte Geokey-Fallback (projiziertes CRS
-  als geographisch aufgelöst) ist gefixt (`src/archivar/las/mod.rs`) mit
-  Gate-Fixture + Gate-Test im selben Atom. Vertikaldatum: ehrlich absent (die
-  USGS-GeoKeyDirectory trägt kein 4096–4099 → z als gelieferte Höhe), kein
-  Fabrikat.
-- Offen: **MLLW→Ellipsoid-Kette** — VDatum-Quelle registriert (`phi/sources.φ`,
-  HTTP 200, public domain, GTX-Raster gemessen), aber kein GTX-Reader und keine
-  GEOID18/EGM2008-Undulation; das Oahu-Granule (EPSG:26904, Hawaii) hat kein
-  benanntes HI-Gitter in der ZIP-Liste. (Schritt: `vdatum_regional_20250917.zip`
-  öffnen, HI-Gitter bestätigen oder dessen Absenz messen, dann GTX-Reader +
-  Geoid-Undulation bauen.)
-- Offen: **CDN-Manifestation** der LAS-Quelle (Oahu) — `gh workflow run
-  las-cdn.yml` nach dem Push dieses Atoms (der Lauf checkoutt HEAD).
-  (Schritt: nach Push `gh workflow run las-cdn.yml`.)
+- Offen: **MLLW→Ellipsoid-Kette** — VDatum-Gitter registriert (`phi/sources.φ`),
+  aber kein GTX-Reader und keine GEOID18/EGM2008-Undulation; das Oahu-Granule
+  (EPSG:26904, Hawaii) hat kein benanntes HI-Gitter in der ZIP-Liste.
+  (Schritt: `vdatum_regional_20250917.zip` öffnen, HI-Gitter bestätigen oder
+  dessen Absenz messen, dann GTX-Reader + Geoid-Undulation bauen.)
+- Offen: **CDN-Manifestation** der LAS-Quelle (Oahu) — `las-cdn.yml` Lauf
+  `35153867367` dispatched (checkoutt HEAD `548d8fc3`).
+  (Schritt: `gh run view 35153867367` — success: Punkt löschen; failure:
+  `gh run view 35153867367 --log-failed`.)
 
 ## Abschluss
 
