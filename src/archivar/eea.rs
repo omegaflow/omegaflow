@@ -18,11 +18,7 @@ pub fn fetch_eea_aq(
             None => eprintln!("eea_aq {}: parquet fetch void — retry in ttl/Φ", u),
         }
     }
-    if files.is_empty() {
-        None
-    } else {
-        Some(files)
-    }
+    if files.is_empty() { None } else { Some(files) }
 }
 
 pub fn split_parquet_urls(csv: &str) -> Option<Vec<String>> {
@@ -33,11 +29,7 @@ pub fn split_parquet_urls(csv: &str) -> Option<Vec<String>> {
         .filter(|l| l.starts_with("http://") || l.starts_with("https://"))
         .map(str::to_string)
         .collect();
-    if urls.is_empty() {
-        None
-    } else {
-        Some(urls)
-    }
+    if urls.is_empty() { None } else { Some(urls) }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -61,13 +53,7 @@ fn num_at(col: Option<&ParquetColumn>, i: usize) -> Option<f64> {
             if b.len() != 16 || !(0..=38).contains(&scale) {
                 return None;
             }
-            let mut unscaled: i128 = 0;
-            for byte in b {
-                unscaled = (unscaled << 8) | (*byte as i128);
-            }
-            if b[0] & 0x80 != 0 {
-                unscaled -= 1i128 << 128;
-            }
+            let unscaled = i128::from_be_bytes(b.as_slice().try_into().ok()?);
             Some(unscaled as f64 * 10f64.powi(-scale))
         }
         _ => None,
@@ -84,9 +70,7 @@ fn text_at(col: Option<&ParquetColumn>, i: usize) -> Option<String> {
 fn unix_of_epoch_col(col: Option<&ParquetColumn>, i: usize) -> Option<f64> {
     match col?.values.get(i)? {
         ParquetValue::Int96(b) => {
-            let nanos = u64::from_le_bytes([
-                b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-            ]) as f64;
+            let nanos = u64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]) as f64;
             let julian = u32::from_le_bytes([b[8], b[9], b[10], b[11]]) as f64;
             if !(2_400_000.0..2_600_000.0).contains(&julian) || nanos >= 8.64e13 {
                 return None;
@@ -128,8 +112,8 @@ pub fn latest_measurement(cols: &[ParquetColumn]) -> Option<EeaMeasurement> {
         let Some(value) = num_at(Some(value_col), i) else {
             continue;
         };
-        let Some(epoch_unix) = unix_of_epoch_col(start_col, i)
-            .or_else(|| unix_of_epoch_col(result_col, i))
+        let Some(epoch_unix) =
+            unix_of_epoch_col(start_col, i).or_else(|| unix_of_epoch_col(result_col, i))
         else {
             continue;
         };
@@ -147,7 +131,7 @@ pub fn latest_measurement(cols: &[ParquetColumn]) -> Option<EeaMeasurement> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::parquet::testkit::{uvarint, zigzag, Enc};
+    use crate::archivar::parquet::testkit::{Enc, uvarint, zigzag};
     use crate::archivar::parquet::{ParquetColumn, ParquetValue};
 
     const CT_I32: u8 = 5;
@@ -296,9 +280,7 @@ mod tests {
         assert!(split_parquet_urls("").is_none());
         assert!(split_parquet_urls("no urls here\n").is_none());
         assert_eq!(
-            split_parquet_urls(
-                "\u{feff}ParquetFileUrl\n\nhttps://e.de/SPO.A.parquet\nnot-a-url\n"
-            ),
+            split_parquet_urls("\u{feff}ParquetFileUrl\n\nhttps://e.de/SPO.A.parquet\nnot-a-url\n"),
             Some(vec!["https://e.de/SPO.A.parquet".to_string()])
         );
     }
