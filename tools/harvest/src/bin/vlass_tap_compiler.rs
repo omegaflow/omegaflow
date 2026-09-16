@@ -374,7 +374,8 @@ fn main() {
 mod tests {
     use super::*;
 
-    const SRC_CSV: &str = "RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source\n\
+    const SRC_CSV: &str =
+        "RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source\n\
 4.2932750569E-4,19.04440022422189,3.90431875046,0.4866574168899999,3.5087945195100003\n\
 8.989744425700002E-4,-4.04502551242393,45.73029894447001,0.53351766346,41.90222122304\n";
 
