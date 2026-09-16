@@ -24,6 +24,10 @@ fn main() {
                     glob = Some(args[i].clone());
                 }
             }
+            "-h" | "--help" => {
+                usage();
+                std::process::exit(0);
+            }
             _ => {
                 if pattern.is_none() {
                     pattern = Some(args[i].clone());
@@ -35,7 +39,7 @@ fn main() {
         i += 1;
     }
     let Some(pattern) = pattern else {
-        eprintln!("usage: sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir|file]");
+        usage();
         std::process::exit(2);
     };
     let needle = if case_insensitive {
@@ -56,6 +60,18 @@ fn main() {
     if count_only {
         println!("{}", matches);
     }
+}
+
+fn usage() {
+    eprintln!("sgrep — content search over the live tree (git ls-files, no target/, no .git)");
+    eprintln!("usage: sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir|file]");
+    eprintln!("flags:");
+    eprintln!("  -i        case-insensitive (default is case-sensitive)");
+    eprintln!("  -l        file paths only, one per file with a match");
+    eprintln!("  -c        print only the total match count");
+    eprintln!("  -g <glob> restrict to filenames matching the glob (e.g. '*.rs')");
+    eprintln!("  -h|--help this text");
+    eprintln!("output: `path:line:text` — no -n flag exists; line numbers are in the output.");
 }
 
 fn grep_root(
