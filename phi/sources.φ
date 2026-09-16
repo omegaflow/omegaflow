@@ -975,6 +975,18 @@ field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
 
+url https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 1
+lon 2
+alt 3 -m
+field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
+field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
+field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
+field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
+
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
 ttl 3600
 format csv
@@ -1378,6 +1390,13 @@ format rinex
 header Authorization {EARTHDATA_EDL_TOKEN}
 at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
+
+url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
+ttl 86400
+format ionex
+header Authorization {EARTHDATA_EDL_TOKEN}
+at earth
+field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
 
 url https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
 ttl 86400
@@ -6655,6 +6674,12 @@ ttl 604800
 field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
+format flac
+at earth
+ttl 604800
+field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
