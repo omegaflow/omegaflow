@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: 4a1a02fd623eb5bb33b19f8bb5e4e986025bee6475700104ba8ccbd9131f9b0b
+  sha256: c4da99606f2bc2965cc02c7f94bbaae65788ac2eaf3aa17a0075f4445886e447
   status: live
   see-also: AGENTS.md
 -->
@@ -22,6 +22,10 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 - `grep`, `ls`, `cat` **in bash** sind Verstöße (gemessener Zähler 132/36/3,
   2026-09-16 — der Zähler gehört ins Handover). Das `Grep`-Tool von OpenCode ist
   erlaubt; bash-`grep` ist es nicht.
+- Das `--help` des Werkzeugs selbst ist die kanonische Schnittstelle — alle
+  Aufrufe und Flags stehen dort (`sgrep --help`, `archive_search --help`,
+  `git_safety`, `omega_sh help`, `smail`, `register_lookup`). Die
+  Interfaces-Sektion unten spiegelt sie; bei Widerspruch gilt das `--help`.
 
 ## Gemessen — Inhaltssuche (Query `purpleair`, `src/`)
 
