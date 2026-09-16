@@ -17,12 +17,26 @@ pub struct SkyBandSeries {
 }
 
 #[derive(Clone)]
+pub struct SkyFluxSample {
+    pub tdb: f64,
+    pub flux_njy: f64,
+    pub flux_err_njy: Option<f64>,
+}
+
+#[derive(Clone)]
+pub struct SkyFluxSeries {
+    pub band: Option<String>,
+    pub samples: Vec<SkyFluxSample>,
+}
+
+#[derive(Clone)]
 pub struct SkyDirection {
     pub name: String,
     pub ra_deg: f64,
     pub dec_deg: f64,
     pub sigma_arcsec: Option<f64>,
     pub bands: Vec<SkyBandSeries>,
+    pub flux_bands: Vec<SkyFluxSeries>,
     pub distance: Option<f64>,
     pub redshift: Option<f64>,
 }
@@ -117,6 +131,35 @@ pub fn write_bin(directions: &[SkyDirection]) -> Option<Vec<u8>> {
                 out.extend_from_slice(&s.mag.to_le_bytes());
             }
         }
+        let flux_bands_len = u32::try_from(d.flux_bands.len()).ok()?;
+        out.extend_from_slice(&flux_bands_len.to_le_bytes());
+        for b in &d.flux_bands {
+            match &b.band {
+                Some(name) => {
+                    let len = u32::try_from(name.len()).ok()?;
+                    out.extend_from_slice(&len.to_le_bytes());
+                    out.extend_from_slice(name.as_bytes());
+                }
+                None => out.extend_from_slice(&0u32.to_le_bytes()),
+            }
+            let samples_len = u32::try_from(b.samples.len()).ok()?;
+            out.extend_from_slice(&samples_len.to_le_bytes());
+            for s in &b.samples {
+                if !s.tdb.is_finite() || !s.flux_njy.is_finite() {
+                    return None;
+                }
+                out.extend_from_slice(&s.tdb.to_le_bytes());
+                out.extend_from_slice(&s.flux_njy.to_le_bytes());
+                match s.flux_err_njy {
+                    Some(v) if v.is_finite() => {
+                        out.push(1);
+                        out.extend_from_slice(&v.to_le_bytes());
+                    }
+                    Some(_) => return None,
+                    None => out.push(0),
+                }
+            }
+        }
     }
     Some(out)
 }
@@ -191,12 +234,49 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<SkyDirection>> {
             }
             bands.push(SkyBandSeries { band, samples });
         }
+        let mut flux_bands = Vec::new();
+        if off < bytes.len() {
+            let flux_bands_len =
+                u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+            off += 4;
+            for _ in 0..flux_bands_len {
+                let band_name_len =
+                    u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+                off += 4;
+                let band = if band_name_len == 0 {
+                    None
+                } else {
+                    let b = bytes.get(off..off + band_name_len)?;
+                    off += band_name_len;
+                    Some(std::str::from_utf8(b).ok()?.to_string())
+                };
+                let samples_len =
+                    u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?) as usize;
+                off += 4;
+                let mut samples = Vec::with_capacity(samples_len);
+                for _ in 0..samples_len {
+                    let tdb = f64_at(&mut off)?;
+                    let flux_njy = f64_at(&mut off)?;
+                    if !tdb.is_finite() || !flux_njy.is_finite() {
+                        return None;
+                    }
+                    let flux_err_njy = opt_f64(&mut off)?;
+                    samples.push(SkyFluxSample {
+                        tdb,
+                        flux_njy,
+                        flux_err_njy,
+                    });
+                }
+                flux_bands.push(SkyFluxSeries { band, samples });
+            }
+        }
         directions.push(SkyDirection {
             name,
             ra_deg,
             dec_deg,
             sigma_arcsec,
             bands,
+            flux_bands,
             distance,
             redshift,
         });
@@ -225,6 +305,7 @@ mod tests {
                     mag: 19.45389747619629,
                 }],
             }],
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         }
@@ -238,6 +319,7 @@ mod tests {
             dec_deg: 90.0,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };
@@ -251,6 +333,7 @@ mod tests {
             dec_deg: 0.0,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };
@@ -264,6 +347,7 @@ mod tests {
             dec_deg: 60.0,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };
@@ -337,6 +421,7 @@ mod tests {
                     }],
                 },
             ],
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };
@@ -345,6 +430,69 @@ mod tests {
         assert_eq!(parsed[0].bands.len(), 2);
         assert_eq!(parsed[0].bands[0].samples.len(), 2);
         assert_eq!(parsed[0].bands[1].samples.len(), 1);
+    }
+
+    #[test]
+    fn bin_roundtrip_holds_a_measured_negative_flux_and_its_absent_error() {
+        let d = SkyDirection {
+            name: "fink_r".to_string(),
+            ra_deg: 148.8745712297,
+            dec_deg: 2.5208047616,
+            sigma_arcsec: None,
+            bands: Vec::new(),
+            flux_bands: vec![SkyFluxSeries {
+                band: Some("r".to_string()),
+                samples: vec![
+                    SkyFluxSample {
+                        tdb: 8.2e8,
+                        flux_njy: -12200.908,
+                        flux_err_njy: Some(1779.0398),
+                    },
+                    SkyFluxSample {
+                        tdb: 8.3e8,
+                        flux_njy: 0.0,
+                        flux_err_njy: None,
+                    },
+                ],
+            }],
+            distance: None,
+            redshift: None,
+        };
+        let bytes = write_bin(&[d]).unwrap();
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].flux_bands.len(), 1);
+        assert_eq!(parsed[0].flux_bands[0].band.as_deref(), Some("r"));
+        assert_eq!(parsed[0].flux_bands[0].samples.len(), 2);
+        assert_eq!(parsed[0].flux_bands[0].samples[0].flux_njy, -12200.908);
+        assert_eq!(
+            parsed[0].flux_bands[0].samples[0].flux_err_njy,
+            Some(1779.0398)
+        );
+        assert_eq!(parsed[0].flux_bands[0].samples[1].flux_njy, 0.0);
+        assert_eq!(parsed[0].flux_bands[0].samples[1].flux_err_njy, None);
+    }
+
+    #[test]
+    fn a_flux_absent_asset_reads_back_with_empty_flux_bands() {
+        let bytes = write_bin(&[sample_direction()]).unwrap();
+        let old = &bytes[..bytes.len() - 4];
+        let parsed = parse_bin(old).unwrap();
+        assert!(parsed[0].flux_bands.is_empty());
+        assert_eq!(parsed[0].bands.len(), 1);
+    }
+
+    #[test]
+    fn bin_refuses_non_finite_flux() {
+        let mut d = sample_direction();
+        d.flux_bands.push(SkyFluxSeries {
+            band: Some("r".to_string()),
+            samples: vec![SkyFluxSample {
+                tdb: 8.2e8,
+                flux_njy: f64::NAN,
+                flux_err_njy: None,
+            }],
+        });
+        assert!(write_bin(&[d]).is_none());
     }
 
     #[test]
@@ -410,6 +558,7 @@ mod tests {
             dec_deg: 60.0,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: Some(2.0 * PARSEC_M),
             redshift: None,
         };

@@ -454,6 +454,7 @@ mod tests {
             dec_deg: dec,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         }
@@ -589,6 +590,7 @@ mod tests {
                     mag: 19.45389747619629,
                 }],
             }],
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };

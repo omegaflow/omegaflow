@@ -313,6 +313,7 @@ mod tests {
                     .map(|(tdb, mag)| SkySample { tdb, mag })
                     .collect(),
             }],
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         }
@@ -354,6 +355,7 @@ mod tests {
             dec_deg: -10.0,
             sigma_arcsec: None,
             bands: Vec::new(),
+            flux_bands: Vec::new(),
             distance: None,
             redshift: None,
         };
