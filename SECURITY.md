@@ -8,7 +8,7 @@ responsible-use limits.
 
 - `--ads` reads `NASA_ADS_TOKEN`
 - `--brave` reads `BRAVE_API_KEY`
-- `--github` reads `GITHUB_SEARCH_TOKEN` (a read-only GitHub token; the write
+- `--github` reads `GH_SEARCH_TOKEN` (a read-only GitHub token; the write
   token `OMEGAFLOW_TOKEN` belongs to the CI publish path only)
 - Earthdata hosts retry with `EARTHDATA_EDL_TOKEN` (or `EARTHDATA_USER` /
   `EARTHDATA_PASS`)
