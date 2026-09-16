@@ -1247,9 +1247,9 @@ pub fn votable_to_json(body: &str) -> Option<JsonVal> {
     if names.is_empty() {
         return None;
     }
-    let table = match data_part.find("<TABLEDATA") {
-        Some(p) => &data_part[p..],
-        None => return None,
+    let table = {
+        let p = data_part.find("<TABLEDATA")?;
+        &data_part[p..]
     };
     let mut rows: Vec<JsonVal> = Vec::new();
     for tr in table.split("<TR").skip(1) {
