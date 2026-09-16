@@ -51,7 +51,9 @@ pub fn write_spectral_bin(epoch_tdb: f64, bins: &[(f64, f64, f64)]) -> Vec<u8> {
     out
 }
 
-pub fn parse_spectral_bin(bytes: &[u8]) -> Option<(f64, Vec<(f64, f64, f64)>)> {
+type SpectralBin = (f64, Vec<(f64, f64, f64)>);
+
+pub fn parse_spectral_bin(bytes: &[u8]) -> Option<SpectralBin> {
     if bytes.len() < SPECTRAL_HEADER_BYTES
         || bytes[0] != SPECTRAL_MAGIC[0]
         || bytes[1] != SPECTRAL_MAGIC[1]
@@ -187,7 +189,7 @@ pub fn parse_xp_spectra_bin(bytes: &[u8]) -> Option<(f64, Vec<XpStar>)> {
 }
 
 fn is_leap(year: u32) -> bool {
-    year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+    year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400))
 }
 
 fn days_in_month(year: u32, month: u32) -> Option<u32> {
@@ -200,7 +202,7 @@ fn days_in_month(year: u32, month: u32) -> Option<u32> {
 }
 
 pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
-    if year < 1970 || month < 1 || month > 12 {
+    if year < 1970 || !(1..=12).contains(&month) {
         return None;
     }
     let mut days: u64 = 0;
@@ -208,10 +210,7 @@ pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
         days += if is_leap(y) { 366 } else { 365 };
     }
     for m in 1..month {
-        let d = match days_in_month(year, m) {
-            Some(d) => d,
-            None => return None,
-        };
+        let d = days_in_month(year, m)?;
         days += d as u64;
     }
     let mid = match days_in_month(year, month) {
@@ -588,12 +587,16 @@ mod tests {
         assert_eq!(table.len(), 781);
         assert_eq!(table[0].0, 320.0);
         assert_eq!(table[table.len() - 1].0, 1100.0);
-        assert!(table
-            .iter()
-            .all(|&(l, b, r)| l.is_finite() && b.is_finite() && r.is_finite()));
-        assert!(table
-            .iter()
-            .all(|&(_, b, r)| b >= 0.0 && b < 99.0 && r >= 0.0 && r < 99.0));
+        assert!(
+            table
+                .iter()
+                .all(|&(l, b, r)| l.is_finite() && b.is_finite() && r.is_finite())
+        );
+        assert!(
+            table
+                .iter()
+                .all(|&(_, b, r)| (0.0..99.0).contains(&b) && (0.0..99.0).contains(&r))
+        );
     }
 
     #[test]
@@ -730,11 +733,7 @@ mod tests {
             return 0.0;
         }
         let b = 2.0 * H * nu.powi(3) / (C_LIGHT * C_LIGHT) * 1.0 / (x.exp() - 1.0);
-        if b.is_finite() {
-            b
-        } else {
-            0.0
-        }
+        if b.is_finite() { b } else { 0.0 }
     }
 
     fn blackbody_bins(t: f64) -> Vec<(f64, f64, f64)> {

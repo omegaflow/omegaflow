@@ -40,8 +40,8 @@ pub fn transfer_entropy(x: &[f32], y: &[f32]) -> Option<f64> {
         }
         let p3 = k3 / m as f64;
         let mut k1 = 0.0;
-        for s in 0..n {
-            k1 += gaussian(xt - x[s] as f64, hx);
+        for &xs in x.iter().take(n) {
+            k1 += gaussian(xt - xs as f64, hx);
         }
         let p1 = k1 / n as f64;
         let mut k2xy = 0.0;
@@ -120,8 +120,8 @@ pub fn transfer_entropy_lag(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
         }
         let p3 = k3 / m as f64;
         let mut k1 = 0.0;
-        for s in 0..n {
-            k1 += gaussian(xt - x[s] as f64, hx);
+        for &xs in x.iter().take(n) {
+            k1 += gaussian(xt - xs as f64, hx);
         }
         let p1 = k1 / n as f64;
         let mut k2xy = 0.0;
@@ -164,8 +164,8 @@ pub fn transfer_entropy_lag_h(x: &[f32], y: &[f32], lag: usize, factor: f64) -> 
         }
         let p3 = k3 / m as f64;
         let mut k1 = 0.0;
-        for s in 0..n {
-            k1 += gaussian(xt - x[s] as f64, hx);
+        for &xs in x.iter().take(n) {
+            k1 += gaussian(xt - xs as f64, hx);
         }
         let p1 = k1 / n as f64;
         let mut k2xy = 0.0;
@@ -949,16 +949,27 @@ fn residual_surrogate_conditional_lagged_2(
     }
 }
 
+#[derive(Clone, Copy)]
+pub struct TeStats2Params {
+    pub lag: usize,
+    pub max_lag: usize,
+    pub seed: u64,
+    pub n_surr: usize,
+}
+
 pub fn conditional_te_stats_lagged_2(
     x: &[f32],
     y: &[f32],
     c1: &[f32],
     c2: &[f32],
-    lag: usize,
-    max_lag: usize,
-    seed: u64,
-    n_surr: usize,
+    p: TeStats2Params,
 ) -> Option<(f64, f64, f64)> {
+    let TeStats2Params {
+        lag,
+        max_lag,
+        seed,
+        n_surr,
+    } = p;
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
@@ -1080,30 +1091,45 @@ pub fn block_len_from_n(n: usize) -> usize {
     (n as f64).powf(1.0 / 3.0).round() as usize
 }
 
+#[derive(Clone, Copy)]
+pub struct TeStatsParams {
+    pub lag: usize,
+    pub max_lag: usize,
+    pub bins: usize,
+    pub seed: u64,
+    pub n_surr: usize,
+    pub null: TeNull,
+}
+
 pub fn conditional_te_stats_lagged_n(
     x: &[f32],
     y: &[f32],
     conds: &[&[f32]],
-    lag: usize,
-    max_lag: usize,
-    bins: usize,
-    seed: u64,
-    n_surr: usize,
-    null: TeNull,
+    p: TeStatsParams,
 ) -> Option<(f64, f64, f64)> {
-    let vals = conditional_te_surrogates_n(
-        x,
-        y,
-        conds,
+    let TeStatsParams {
         lag,
         max_lag,
         bins,
         seed,
         n_surr,
         null,
-        0,
-        TeEstimator::Binned,
-        4,
+    } = p;
+    let vals = conditional_te_surrogates_n(
+        x,
+        y,
+        conds,
+        TeSurrogateParams {
+            lag,
+            max_lag,
+            bins,
+            seed,
+            n_surr,
+            null,
+            block: 0,
+            est: TeEstimator::Binned,
+            k: 4,
+        },
     )?;
     let n = vals.len() as f64;
     let mean = vals.iter().sum::<f64>() / n;
@@ -1112,20 +1138,36 @@ pub fn conditional_te_stats_lagged_n(
     Some((mean, sd, mean + 2.0 * sd))
 }
 
+#[derive(Clone, Copy)]
+pub struct TeSurrogateParams {
+    pub lag: usize,
+    pub max_lag: usize,
+    pub bins: usize,
+    pub seed: u64,
+    pub n_surr: usize,
+    pub null: TeNull,
+    pub block: usize,
+    pub est: TeEstimator,
+    pub k: usize,
+}
+
 pub fn conditional_te_surrogates_n(
     x: &[f32],
     y: &[f32],
     conds: &[&[f32]],
-    lag: usize,
-    max_lag: usize,
-    bins: usize,
-    seed: u64,
-    n_surr: usize,
-    null: TeNull,
-    block: usize,
-    est: TeEstimator,
-    k: usize,
+    p: TeSurrogateParams,
 ) -> Option<Vec<f64>> {
+    let TeSurrogateParams {
+        lag,
+        max_lag,
+        bins,
+        seed,
+        n_surr,
+        null,
+        block,
+        est,
+        k,
+    } = p;
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     let block_len = if block == 0 {
@@ -1171,11 +1213,7 @@ fn normal_cdf(x: f64) -> f64 {
     let poly = t
         * (0.319381530
             + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    if x >= 0.0 {
-        1.0 - d * poly
-    } else {
-        d * poly
-    }
+    if x >= 0.0 { 1.0 - d * poly } else { d * poly }
 }
 
 pub struct CausalLink {
@@ -1211,20 +1249,35 @@ fn subsets_of_size(v: &[(usize, usize)], p: usize) -> Vec<Vec<(usize, usize)>> {
     out
 }
 
-pub fn pcmci_links(
-    series: &[&[f32]],
-    max_lag: usize,
-    null_lag: usize,
-    bins: usize,
-    seed: u64,
-    n_surr: usize,
-    null: TeNull,
-    block: usize,
-    est: TeEstimator,
-    k: usize,
-    p_max: usize,
-    alpha: f64,
-) -> Option<Vec<CausalLink>> {
+#[derive(Clone, Copy)]
+pub struct PcmciParams {
+    pub max_lag: usize,
+    pub null_lag: usize,
+    pub bins: usize,
+    pub seed: u64,
+    pub n_surr: usize,
+    pub null: TeNull,
+    pub block: usize,
+    pub est: TeEstimator,
+    pub k: usize,
+    pub p_max: usize,
+    pub alpha: f64,
+}
+
+pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>> {
+    let PcmciParams {
+        max_lag,
+        null_lag,
+        bins,
+        seed,
+        n_surr,
+        null,
+        block,
+        est,
+        k,
+        p_max,
+        alpha,
+    } = p;
     let n_chan = series.len();
     if n_chan < 2 {
         return None;
@@ -1254,7 +1307,20 @@ pub fn pcmci_links(
             }
         };
         let surr = conditional_te_surrogates_n(
-            series[j], series[i], conds, lag, null_lag, bins, seed_t, n_surr, null, block, est, k,
+            series[j],
+            series[i],
+            conds,
+            TeSurrogateParams {
+                lag,
+                max_lag: null_lag,
+                bins,
+                seed: seed_t,
+                n_surr,
+                null,
+                block,
+                est,
+                k,
+            },
         )?;
         let mean = surr.iter().sum::<f64>() / surr.len() as f64;
         let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / surr.len() as f64;
@@ -1285,10 +1351,10 @@ pub fn pcmci_links(
                             ^ (j as u64).wrapping_mul(0x9E37_79B9)
                             ^ (i as u64).wrapping_mul(0x85EB_CA6B)
                             ^ (lag as u64).wrapping_mul(0xC2B2_AE3D);
-                        if let Some((te, threshold, _pv)) = test(j, i, lag, &[], seed_t) {
-                            if te > threshold {
-                                parents[j].push((i, lag));
-                            }
+                        if let Some((te, threshold, _pv)) = test(j, i, lag, &[], seed_t)
+                            && te > threshold
+                        {
+                            parents[j].push((i, lag));
                         }
                     }
                 }
@@ -1313,11 +1379,11 @@ pub fn pcmci_links(
                         ^ (lag as u64).wrapping_mul(0xC2B2_AE3D)
                         ^ (p as u64).wrapping_mul(0xD1B5_4A32)
                         ^ (ci as u64).wrapping_mul(0x4A32_D1B5);
-                    if let Some((te, threshold, _pv)) = test(j, i, lag, &conds, seed_t) {
-                        if te <= threshold {
-                            removed_here = true;
-                            break;
-                        }
+                    if let Some((te, threshold, _pv)) = test(j, i, lag, &conds, seed_t)
+                        && te <= threshold
+                    {
+                        removed_here = true;
+                        break;
                     }
                 }
                 if removed_here {
@@ -1705,8 +1771,7 @@ pub fn find_mi_lag(series: &[f64]) -> Option<usize> {
         let w = n - lag;
         let mut mn = f64::INFINITY;
         let mut mx = f64::NEG_INFINITY;
-        for i in 0..w {
-            let v = series[i];
+        for &v in series.iter().take(w) {
             if v < mn {
                 mn = v;
             }
@@ -1810,8 +1875,8 @@ fn embedded_silverman(emb: &[Vec<f64>]) -> Option<f64> {
             mean[k] += v;
         }
     }
-    for k in 0..dim {
-        mean[k] /= n;
+    for m in &mut mean {
+        *m /= n;
     }
     let mut var = 0.0;
     for state in emb.iter() {
@@ -1847,7 +1912,7 @@ pub fn transfer_entropy_embedded(
     if dim < 2 {
         return None;
     }
-    if emb_y.first().map_or(true, |s| s.len() != dim) {
+    if emb_y.first().is_none_or(|s| s.len() != dim) {
         return None;
     }
     if emb_x.iter().flatten().any(|v| !v.is_finite())
@@ -1861,10 +1926,7 @@ pub fn transfer_entropy_embedded(
         return None;
     }
     let t_low = back_x.max(back_y);
-    let t_high = match n.checked_sub(tau_x + 1) {
-        Some(v) => v,
-        None => return None,
-    };
+    let t_high = n.checked_sub(tau_x + 1)?;
     if t_low > t_high {
         return None;
     }
@@ -2270,7 +2332,7 @@ fn gate_gauss(rng: &mut u64) -> f32 {
         if s >= 1.0 || s <= 0.0 {
             continue;
         }
-        let m = (-2.0 * (s as f64).ln() / (s as f64)).sqrt() as f32;
+        let m = (-2.0 * s.ln() / s).sqrt() as f32;
         return (u1 as f32) * m;
     }
 }
@@ -2299,17 +2361,27 @@ pub struct GateCell {
     pub tp: usize,
 }
 
-fn gate_fpr_cells_from(
-    n: usize,
-    cells: &[(f32, usize, usize)],
-    null: TeNull,
-    est: TeEstimator,
-    max_lag: usize,
-    null_lag: usize,
-    bins: usize,
-    block: usize,
-    n_surr: usize,
-) -> Vec<GateCell> {
+#[derive(Clone, Copy)]
+pub struct GateParams {
+    pub null: TeNull,
+    pub est: TeEstimator,
+    pub max_lag: usize,
+    pub null_lag: usize,
+    pub bins: usize,
+    pub block: usize,
+    pub n_surr: usize,
+}
+
+fn gate_fpr_cells_from(n: usize, cells: &[(f32, usize, usize)], p: GateParams) -> Vec<GateCell> {
+    let GateParams {
+        null,
+        est,
+        max_lag,
+        null_lag,
+        bins,
+        block,
+        n_surr,
+    } = p;
     let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
     let mut out = Vec::with_capacity(cells.len());
     for &(a, d_z, trials) in cells {
@@ -2321,7 +2393,20 @@ fn gate_fpr_cells_from(
             let series = gate_common_driver(n, a, 0.0, d_z, &mut rng);
             let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
             let Some(links) = pcmci_links(
-                &refs, max_lag, null_lag, bins, seed, n_surr, null, block, est, 4, 2, 0.05,
+                &refs,
+                PcmciParams {
+                    max_lag,
+                    null_lag,
+                    bins,
+                    seed,
+                    n_surr,
+                    null,
+                    block,
+                    est,
+                    k: 4,
+                    p_max: 2,
+                    alpha: 0.05,
+                },
             ) else {
                 continue;
             };
@@ -2360,16 +2445,7 @@ fn gate_fpr_cells_from(
     out
 }
 
-pub fn gate_fpr_cells(
-    n: usize,
-    null: TeNull,
-    est: TeEstimator,
-    max_lag: usize,
-    null_lag: usize,
-    bins: usize,
-    block: usize,
-    n_surr: usize,
-) -> Vec<GateCell> {
+pub fn gate_fpr_cells(n: usize, p: GateParams) -> Vec<GateCell> {
     let cells = [
         (0.0f32, 0usize, 100usize),
         (0.5f32, 0usize, 100usize),
@@ -2378,26 +2454,17 @@ pub fn gate_fpr_cells(
         (0.5f32, 4usize, 7usize),
         (0.9f32, 4usize, 7usize),
     ];
-    gate_fpr_cells_from(n, &cells, null, est, max_lag, null_lag, bins, block, n_surr)
+    gate_fpr_cells_from(n, &cells, p)
 }
 
 #[cfg(test)]
-fn gate_fpr_coarse_cells(
-    n: usize,
-    null: TeNull,
-    est: TeEstimator,
-    max_lag: usize,
-    null_lag: usize,
-    bins: usize,
-    block: usize,
-    n_surr: usize,
-) -> Vec<GateCell> {
+fn gate_fpr_coarse_cells(n: usize, p: GateParams) -> Vec<GateCell> {
     let cells = [
         (0.0f32, 4usize, 7usize),
         (0.5f32, 4usize, 7usize),
         (0.9f32, 4usize, 7usize),
     ];
-    gate_fpr_cells_from(n, &cells, null, est, max_lag, null_lag, bins, block, n_surr)
+    gate_fpr_cells_from(n, &cells, p)
 }
 
 #[cfg(test)]
@@ -2409,8 +2476,8 @@ mod tests {
         let n = 200;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2441,8 +2508,8 @@ mod tests {
         let n = 200;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2462,8 +2529,8 @@ mod tests {
         let n = 200;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2478,8 +2545,8 @@ mod tests {
         let n = 200;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2629,8 +2696,8 @@ mod tests {
     fn fft_roundtrip_is_identity() {
         let mut re: Vec<f64> = vec![0.0; 64];
         let mut im: Vec<f64> = vec![0.0; 64];
-        for t in 0..64 {
-            re[t] = (t as f64 * 0.3).sin() + 2.0 * (t as f64 * 0.05).cos();
+        for (t, r) in re.iter_mut().enumerate() {
+            *r = (t as f64 * 0.3).sin() + 2.0 * (t as f64 * 0.05).cos();
         }
         let orig = re.clone();
         fft(&mut re, &mut im, false);
@@ -2679,8 +2746,8 @@ mod tests {
         let n = 400;
         let mut xf = vec![0f64; n];
         let mut yf = vec![0f64; n];
-        for t in 0..n {
-            yf[t] = (t as f64 * 0.5).sin();
+        for (t, y) in yf.iter_mut().enumerate() {
+            *y = (t as f64 * 0.5).sin();
         }
         for t in 0..n - 1 {
             xf[t + 1] = 0.5 * xf[t] + 0.6 * yf[t];
@@ -2777,8 +2844,8 @@ mod tests {
         let n = 512;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.5).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.5).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2803,8 +2870,8 @@ mod tests {
         let n = 512;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.5).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.5).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -2887,8 +2954,8 @@ mod tests {
         let n = 512;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.5).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.5).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -3156,7 +3223,18 @@ mod tests {
     }
 
     fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
-        let cells = gate_fpr_cells(150, null, est, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_cells(
+            150,
+            GateParams {
+                null,
+                est,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
@@ -3168,8 +3246,18 @@ mod tests {
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_phase_null_binned_n_1000() {
-        let cells =
-            gate_fpr_coarse_cells(1000, TeNull::Phase, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Phase,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
@@ -3208,13 +3296,15 @@ mod tests {
     fn gate_fpr_autocorrelation_restricted_null_binned_n_1000() {
         let cells = gate_fpr_coarse_cells(
             1000,
-            TeNull::RestrictedPermutation,
-            TeEstimator::Binned,
-            2,
-            12,
-            4,
-            0,
-            100,
+            GateParams {
+                null: TeNull::RestrictedPermutation,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
         );
         gate_fpr_autocorr_assert(&cells);
     }
@@ -3222,53 +3312,126 @@ mod tests {
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_xshift_null_binned_n_1000() {
-        let cells =
-            gate_fpr_coarse_cells(1000, TeNull::XShift, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::XShift,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_binned_n_1000() {
-        let cells =
-            gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Block,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_ksg_n_1000() {
-        let cells = gate_fpr_coarse_cells(1000, TeNull::Block, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Block,
+                est: TeEstimator::Ksg,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_phase_null_ksg_n_1000() {
-        let cells = gate_fpr_coarse_cells(1000, TeNull::Phase, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Phase,
+                est: TeEstimator::Ksg,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_shift_null_binned_n_1000() {
-        let cells =
-            gate_fpr_coarse_cells(1000, TeNull::Shift, TeEstimator::Binned, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Shift,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_shift_null_ksg_n_1000() {
-        let cells = gate_fpr_coarse_cells(1000, TeNull::Shift, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Shift,
+                est: TeEstimator::Ksg,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
     #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_residual_null_ksg_n_1000() {
-        let cells =
-            gate_fpr_coarse_cells(1000, TeNull::Residual, TeEstimator::Ksg, 2, 12, 4, 0, 100);
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::Residual,
+                est: TeEstimator::Ksg,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 100,
+            },
+        );
         gate_fpr_autocorr_assert(&cells);
     }
 
@@ -3279,13 +3442,15 @@ mod tests {
             let cells = gate_fpr_cells_from(
                 1000,
                 &[(0.0f32, 4usize, 7usize), (0.5f32, 4, 7), (0.9f32, 4, 7)],
-                TeNull::Block,
-                TeEstimator::Binned,
-                2,
-                12,
-                4,
-                block,
-                100,
+                GateParams {
+                    null: TeNull::Block,
+                    est: TeEstimator::Binned,
+                    max_lag: 2,
+                    null_lag: 12,
+                    bins: 4,
+                    block,
+                    n_surr: 100,
+                },
             );
             for c in &cells {
                 println!(
@@ -3305,13 +3470,15 @@ mod tests {
             let cells = gate_fpr_cells_from(
                 1000,
                 &[(0.0f32, 4usize, 7usize), (0.5f32, 4, 7), (0.9f32, 4, 7)],
-                null,
-                TeEstimator::Ksg,
-                2,
-                12,
-                4,
-                0,
-                100,
+                GateParams {
+                    null,
+                    est: TeEstimator::Ksg,
+                    max_lag: 2,
+                    null_lag: 12,
+                    bins: 4,
+                    block: 0,
+                    n_surr: 100,
+                },
             );
             for c in &cells {
                 println!(
@@ -3331,13 +3498,15 @@ mod tests {
             let cells = gate_fpr_cells_from(
                 1000,
                 &[(0.0f32, 4usize, 7usize), (0.5f32, 4, 7), (0.9f32, 4, 7)],
-                TeNull::Shift,
-                est,
-                2,
-                12,
-                4,
-                0,
-                100,
+                GateParams {
+                    null: TeNull::Shift,
+                    est,
+                    max_lag: 2,
+                    null_lag: 12,
+                    bins: 4,
+                    block: 0,
+                    n_surr: 100,
+                },
             );
             for c in &cells {
                 println!(
@@ -3374,13 +3543,15 @@ mod tests {
                 let cells = gate_fpr_cells_from(
                     1000,
                     &[(a, 4usize, 7usize)],
-                    TeNull::Residual,
-                    est,
-                    2,
-                    12,
-                    4,
-                    0,
-                    100,
+                    GateParams {
+                        null: TeNull::Residual,
+                        est,
+                        max_lag: 2,
+                        null_lag: 12,
+                        bins: 4,
+                        block: 0,
+                        n_surr: 100,
+                    },
                 );
                 for c in &cells {
                     println!(
@@ -3398,10 +3569,9 @@ mod tests {
         x
     }
 
-    fn gate_s60_topology(
-        n_chan: usize,
-        rng: &mut u64,
-    ) -> (Vec<f32>, Vec<(usize, usize, usize, f32)>) {
+    type PeakList = Vec<(usize, usize, usize, f32)>;
+
+    fn gate_s60_topology(n_chan: usize, rng: &mut u64) -> (Vec<f32>, PeakList) {
         let a_set = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
         let mut links: Vec<(usize, usize, usize, f32)> = Vec::new();
         let mut used: Vec<(usize, usize)> = Vec::new();
@@ -3445,8 +3615,8 @@ mod tests {
             }
         }
         let mut out = Vec::with_capacity(n_chan);
-        for j in 0..n_chan {
-            let col: Vec<f32> = x[j][burn..].to_vec();
+        for row in x.iter().take(n_chan) {
+            let col: Vec<f32> = row[burn..].to_vec();
             for &v in &col {
                 if !v.is_finite() || v.abs() > 100.0 {
                     return None;
@@ -3463,7 +3633,7 @@ mod tests {
         let mut above = 0usize;
         let mut total = 0usize;
         for r in 0..3 {
-            let mut drawn: Option<(Vec<Vec<f32>>, Vec<(usize, usize, usize, f32)>)> = None;
+            let mut drawn: Option<(Vec<Vec<f32>>, PeakList)> = None;
             for _ in 0..8 {
                 let (a, links) = gate_s60_topology(10, &mut rng);
                 if let Some(s) = gate_s60_series(10, 150, 0.287, &a, &links, &mut rng) {
@@ -3501,15 +3671,17 @@ mod tests {
                         refs[target],
                         refs[driver],
                         &true_parents,
-                        lag,
-                        2,
-                        4,
-                        seed,
-                        100,
-                        TeNull::Block,
-                        0,
-                        TeEstimator::Ksg,
-                        4,
+                        TeSurrogateParams {
+                            lag,
+                            max_lag: 2,
+                            bins: 4,
+                            seed,
+                            n_surr: 100,
+                            null: TeNull::Block,
+                            block: 0,
+                            est: TeEstimator::Ksg,
+                            k: 4,
+                        },
                     ) else {
                         continue;
                     };
@@ -3604,8 +3776,8 @@ mod tests {
     fn flare_envelope(n: usize, starts: &[usize], amp: f32, tau: f32) -> Vec<f32> {
         let mut c = vec![0f32; n];
         for &s in starts {
-            for t in s..n {
-                c[t] += amp * (-((t - s) as f32) / tau).exp();
+            for (t, ct) in c.iter_mut().enumerate().skip(s) {
+                *ct += amp * (-((t - s) as f32) / tau).exp();
             }
         }
         c
@@ -3823,9 +3995,19 @@ mod tests {
             .zip(&c2)
             .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
             .collect();
-        let (mean, sd, threshold) =
-            conditional_te_stats_lagged_2(&x, &y, &c1, &c2, 1, 1, 0x9E37_79B9_7F4A_7C15, 10)
-                .expect("stats resolve");
+        let (mean, sd, threshold) = conditional_te_stats_lagged_2(
+            &x,
+            &y,
+            &c1,
+            &c2,
+            TeStats2Params {
+                lag: 1,
+                max_lag: 1,
+                seed: 0x9E37_79B9_7F4A_7C15,
+                n_surr: 10,
+            },
+        )
+        .expect("stats resolve");
         assert!(mean.is_finite() && sd.is_finite() && threshold.is_finite());
         assert!(threshold >= mean);
     }
@@ -3835,8 +4017,8 @@ mod tests {
         let n = 200;
         let mut x = vec![0f32; n];
         let mut y = vec![0f32; n];
-        for t in 0..n {
-            y[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
@@ -3864,8 +4046,8 @@ mod tests {
         let te_indep = transfer_entropy_binned(&xi, &yi, 1, 4).unwrap();
         let mut xc = vec![0f32; n];
         let mut yc = vec![0f32; n];
-        for t in 0..n {
-            yc[t] = (t as f32 * 0.7).sin();
+        for (t, yt) in yc.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
         }
         for t in 0..n - 1 {
             xc[t + 1] = 0.5 * xc[t] + 0.6 * yc[t];
@@ -4023,12 +4205,14 @@ mod tests {
             &x,
             &y,
             &[&c1, &c2],
-            1,
-            1,
-            bins,
-            0x9E37_79B9_7F4A_7C15,
-            10,
-            TeNull::Residual,
+            TeStatsParams {
+                lag: 1,
+                max_lag: 1,
+                bins,
+                seed: 0x9E37_79B9_7F4A_7C15,
+                n_surr: 10,
+                null: TeNull::Residual,
+            },
         )
         .expect("lagged N-dim null resolves");
         assert!(
@@ -4072,12 +4256,14 @@ mod tests {
             &y,
             &x,
             &[&c1, &c2],
-            1,
-            1,
-            bins,
-            0x9E37_79B9_7F4A_7C15,
-            10,
-            TeNull::Residual,
+            TeStatsParams {
+                lag: 1,
+                max_lag: 1,
+                bins,
+                seed: 0x9E37_79B9_7F4A_7C15,
+                n_surr: 10,
+                null: TeNull::Residual,
+            },
         )
         .expect("lagged N-dim null resolves");
         assert!(
@@ -4100,8 +4286,8 @@ mod tests {
         let mut a = vec![0f32; n];
         let mut b = vec![0f32; n];
         let mut a_ind = vec![0f32; n];
-        for t in 0..n {
-            a_ind[t] = noise(&mut rng);
+        for ai in &mut a_ind {
+            *ai = noise(&mut rng);
         }
         for t in 0..n {
             a[t] = if t == 0 {
@@ -4118,17 +4304,19 @@ mod tests {
         let series: [&[f32]; 3] = [&z, &a, &b];
         let links = pcmci_links(
             &series,
-            2,
-            12,
-            4,
-            0x9E37_79B9_7F4A_7C15,
-            100,
-            TeNull::Block,
-            block_len_from_n(n),
-            TeEstimator::Ksg,
-            4,
-            2,
-            0.05,
+            PcmciParams {
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                seed: 0x9E37_79B9_7F4A_7C15,
+                n_surr: 100,
+                null: TeNull::Block,
+                block: block_len_from_n(n),
+                est: TeEstimator::Ksg,
+                k: 4,
+                p_max: 2,
+                alpha: 0.05,
+            },
         )
         .expect("pcmci resolves");
         let ab = links

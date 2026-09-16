@@ -59,11 +59,7 @@ fn unix_of(dt: &(i64, u32, u32, u32, u32, u32)) -> Option<f64> {
 
 fn nibble_signed(v: u8) -> i32 {
     let n = (v & 0x0F) as i32;
-    if n & 0x08 != 0 {
-        n - 16
-    } else {
-        n
-    }
+    if n & 0x08 != 0 { n - 16 } else { n }
 }
 
 fn int24(b0: u8, b1: u8, b2: u8) -> i32 {
@@ -83,7 +79,7 @@ fn decode_channel(
     ns0: usize,
     data: &[u8],
 ) -> Option<WinChannel> {
-    if ns0 < 1 || ns0 > WIN_NS_MAX || ss > 5 || data.len() < 4 {
+    if !(1..=WIN_NS_MAX).contains(&ns0) || ss > 5 || data.len() < 4 {
         return None;
     }
     let first = i32::from_be_bytes([data[0], data[1], data[2], data[3]]);
@@ -115,8 +111,8 @@ fn decode_channel(
             if rest.len() < need {
                 return None;
             }
-            for k in 0..need {
-                prev += rest[k] as i8 as i32;
+            for &b in &rest[..need] {
+                prev += b as i8 as i32;
                 values.push(prev);
             }
         }

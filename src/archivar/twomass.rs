@@ -17,11 +17,7 @@ pub struct PscRow {
 
 fn coord_field(v: Option<&str>) -> Option<f64> {
     let x: f64 = v?.trim().parse().ok()?;
-    if x.is_finite() {
-        Some(x)
-    } else {
-        None
-    }
+    if x.is_finite() { Some(x) } else { None }
 }
 
 fn mag_field(v: Option<&str>) -> Option<f64> {
@@ -35,11 +31,7 @@ fn mag_field(v: Option<&str>) -> Option<f64> {
 
 fn err_field(v: Option<&str>) -> Option<f64> {
     let x = mag_field(v)?;
-    if x <= 8.0 {
-        Some(x)
-    } else {
-        None
-    }
+    if x <= 8.0 { Some(x) } else { None }
 }
 
 fn band_detected(rd_flg: &[u8], band: usize) -> bool {
@@ -54,7 +46,7 @@ pub fn parse_psc_row(line: &str) -> Option<PscRow> {
     if fields.len() != PSC_FIELDS {
         return None;
     }
-    let ra = coord_field(fields.get(0).copied())?;
+    let ra = coord_field(fields.first().copied())?;
     let dec = coord_field(fields.get(1).copied())?;
     if !(0.0..360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) {
         return None;
@@ -113,7 +105,7 @@ impl Selection {
             Selection::Jmag { limit } => jmag < *limit,
             Selection::Decimation { factor } => {
                 *seen += 1;
-                *factor > 0 && *seen % *factor == 0
+                *factor > 0 && (*seen).is_multiple_of(*factor)
             }
             Selection::Declination { lo, hi } => row.dec_deg >= *lo && row.dec_deg < *hi,
         }
@@ -146,7 +138,7 @@ pub fn write_bin(records: &[[f64; 8]]) -> Vec<u8> {
 }
 
 pub fn read_bin(data: &[u8]) -> Option<Vec<[f64; 8]>> {
-    if data.len() < 8 || &data[0..4] != &MAGIC {
+    if data.len() < 8 || data[0..4] != MAGIC {
         return None;
     }
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
@@ -317,7 +309,7 @@ mod tests {
             .filter(|r| r.jmag.map(|j| j < limit).unwrap_or(false))
             .collect();
         assert_eq!(picked.len(), reference.len());
-        assert!(picked.len() >= 1);
+        assert!(!picked.is_empty());
         assert!(picked.len() < rows.len());
     }
 }

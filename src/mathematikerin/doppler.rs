@@ -32,40 +32,6 @@ pub fn parse_bin(data: &[u8]) -> Option<Vec<[f64; 6]>> {
     Some(out)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_pnav_roundtrip() {
-        let records: Vec<[f64; 9]> = vec![
-            [
-                -8.28095e8,
-                5.012066e5,
-                2.1108144e9,
-                1.98e3,
-                12.0,
-                0.0,
-                12.0,
-                12.0,
-                12.0,
-            ],
-            [0.0, 0.0, 2.1e9, 1.0e3, 13.0, 0.0, 11.0, 43.0, 13.0],
-        ];
-        let bin = write_pnav_bin(&records);
-        assert_eq!(&bin[0..4], b"PNAV");
-        let parsed = parse_pnav_bin(&bin).expect("parse void");
-        assert_eq!(parsed.len(), records.len());
-        for (a, b) in parsed.iter().zip(records.iter()) {
-            for k in 0..9 {
-                assert_eq!(a[k], b[k]);
-            }
-        }
-        assert!(parse_pnav_bin(&bin[..8]).is_none());
-        assert!(parse_pnav_bin(b"XXXX12345678").is_none());
-    }
-}
-
 pub fn write_pnav_bin(records: &[[f64; 9]]) -> Vec<u8> {
     let mut out = Vec::with_capacity(8 + records.len() * 72);
     out.extend_from_slice(b"PNAV");
@@ -98,4 +64,38 @@ pub fn parse_pnav_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
         out.push(r);
     }
     Some(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pnav_roundtrip() {
+        let records: Vec<[f64; 9]> = vec![
+            [
+                -8.28095e8,
+                5.012066e5,
+                2.1108144e9,
+                1.98e3,
+                12.0,
+                0.0,
+                12.0,
+                12.0,
+                12.0,
+            ],
+            [0.0, 0.0, 2.1e9, 1.0e3, 13.0, 0.0, 11.0, 43.0, 13.0],
+        ];
+        let bin = write_pnav_bin(&records);
+        assert_eq!(&bin[0..4], b"PNAV");
+        let parsed = parse_pnav_bin(&bin).expect("parse void");
+        assert_eq!(parsed.len(), records.len());
+        for (a, b) in parsed.iter().zip(records.iter()) {
+            for k in 0..9 {
+                assert_eq!(a[k], b[k]);
+            }
+        }
+        assert!(parse_pnav_bin(&bin[..8]).is_none());
+        assert!(parse_pnav_bin(b"XXXX12345678").is_none());
+    }
 }

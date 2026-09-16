@@ -98,7 +98,7 @@ pub enum DapNote {
     Attr { name: String },
     EndAtByte { off: usize },
     CountMismatch { var: String, want: u64, got: u32 },
-    Sequence { name: String },
+    Sequence { name: Option<String> },
 }
 
 fn be_u32(b: &[u8]) -> u32 {
@@ -251,10 +251,7 @@ impl DdsCursor {
                         }
                     }
                 }
-                let name = match self.take_word() {
-                    Some(n) => n,
-                    None => String::new(),
-                };
+                let name = self.take_word();
                 let _ = self.take_if(";");
                 Err(DapNote::Sequence { name })
             }
@@ -307,7 +304,11 @@ pub fn parse_dds(text: &str) -> Result<DapSchema, DapNote> {
     cur.expect("}")?;
     let name = match cur.take_word() {
         Some(n) => n,
-        None => String::new(),
+        None => {
+            return Err(DapNote::Keyword {
+                word: "}".to_string(),
+            });
+        }
     };
     let _ = cur.take_if(";");
     Ok(DapSchema {
@@ -711,7 +712,7 @@ fn strip_header(bytes: &[u8]) -> &[u8] {
 
 fn lookup_attrs(attrs: &DapAttrs, name: &str) -> Vec<DapAttr> {
     for (k, v) in &attrs.per_var {
-        let suffix = k.strip_suffix(name).map_or(false, |p| p.ends_with('.'));
+        let suffix = k.strip_suffix(name).is_some_and(|p| p.ends_with('.'));
         if k == name || suffix {
             return v.clone();
         }
@@ -725,7 +726,7 @@ pub fn decode(dds_text: &str, das_text: &str, dods_bytes: &[u8]) -> Result<DapFi
     let data = strip_header(dods_bytes);
     let values = decode_dods(&schema, data)?;
     let mut vars = Vec::with_capacity(schema.vars.len());
-    for (decl, value) in schema.vars.into_iter().zip(values.into_iter()) {
+    for (decl, value) in schema.vars.into_iter().zip(values) {
         let mut dim_ids = Vec::with_capacity(decl.dims.len());
         for dn in &decl.dims {
             match schema.dims.iter().position(|d| &d.name == dn) {

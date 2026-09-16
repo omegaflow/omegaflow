@@ -2,18 +2,17 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use omegaflow::archivar::{
-    body_barycenter_position, embedded_lsk, extract, fetch_raw_bytes, load_sources,
-    parse_ephemeris_binary, system_now, BodyEphemeris, ExtractResult, LeapSeconds, SourceConfig,
-    J2000_EPOCH,
+    BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
+    embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
 };
 use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::dastcom::{
-    parse_comet_record, parse_record, AsteroidRec, CometRec, COMET_RECORD_BYTES, RECORD_STRIDE,
+    AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    classify, separation_m, three_way_fold, Agreement, BodyOutcome, ThreeWayVerdict, TriadFold,
-    Weberin, WeberinFeed, BODY_COMET, BODY_NUMBER, EPM_LINE_BODIES, INPOP_LINE_BODIES,
-    PLANET_WEBERIN_TOL_M, WEBERIN_TOL_M,
+    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES,
+    PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed,
+    classify, separation_m, three_way_fold,
 };
 
 const BIN_TTL_S: u64 = 604800;
@@ -264,9 +263,9 @@ fn main() {
         match extract(src, &path, tdb, &lsk) {
             ExtractResult::WithEphemeris(_, body_eph) => {
                 if name == "sun" {
-                    sun_map.insert(name.clone(), body_eph.clone());
+                    sun_map.insert(name.clone(), (*body_eph).clone());
                 }
-                eph.insert(name.clone(), body_eph);
+                eph.insert(name.clone(), *body_eph);
                 opened += 1;
             }
             _ => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),

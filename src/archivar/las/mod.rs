@@ -392,7 +392,7 @@ pub struct CopcEntry {
 pub const COPC_ENTRY_SIZE: usize = 32;
 
 fn parse_entries(bytes: &[u8], page_off: u64, page_size: u64) -> Option<Vec<CopcEntry>> {
-    if page_size % COPC_ENTRY_SIZE as u64 != 0 {
+    if !page_size.is_multiple_of(COPC_ENTRY_SIZE as u64) {
         return None;
     }
     let start = page_off as usize;
@@ -446,7 +446,7 @@ pub struct EptSchemaField {
     pub field_type: String,
     pub size: u64,
     pub scale: f64,
-    pub offset: f64,
+    pub offset: Option<f64>,
 }
 
 #[derive(Clone, Debug)]
@@ -483,10 +483,7 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
                 let field_type = crate::json::jstr(v, "type")?;
                 let size = crate::json::jnum(v, "size")? as u64;
                 let scale = crate::json::jnum(v, "scale").unwrap_or(1.0);
-                let offset = match crate::json::jnum(v, "offset") {
-                    Some(o) => o,
-                    None => 0.0,
-                };
+                let offset = crate::json::jnum(v, "offset");
                 s.push(EptSchemaField {
                     name,
                     field_type,
@@ -510,7 +507,7 @@ pub fn ept_json(text: &str) -> Option<EptLayout> {
 }
 
 pub mod laszip;
-pub use laszip::{has_laszip_vlr, LazDecoder};
+pub use laszip::{LazDecoder, has_laszip_vlr};
 
 pub fn ept_key_decode(key: &str) -> Option<(i32, i32, i32, i32)> {
     let mut parts = key.split('-');

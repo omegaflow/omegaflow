@@ -1,8 +1,8 @@
 use crate::geo::{
-    GeoRec, COMP_DCDB_DEPTH, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX,
+    COMP_DCDB_DEPTH, COMP_GHCN_PRCP, COMP_GHCN_SNOW, COMP_GHCN_SNWD, COMP_GHCN_TMAX,
     COMP_GHCN_TMIN, COMP_GSOD_DEWP, COMP_GSOD_GUST, COMP_GSOD_PRCP, COMP_GSOD_SLP, COMP_GSOD_TEMP,
     COMP_GSOD_TMAX, COMP_GSOD_TMIN, COMP_GSOD_WDSP, COMP_ISD_DEWP, COMP_ISD_SLP, COMP_ISD_TEMP,
-    COMP_ISD_WDIR, COMP_ISD_WSPD, COMP_USCRN_TEMP,
+    COMP_ISD_WDIR, COMP_ISD_WSPD, COMP_USCRN_TEMP, GeoRec,
 };
 use crate::lsk::LeapSeconds;
 use std::collections::HashMap;
@@ -48,10 +48,7 @@ fn tdb_of(unix: f64, lsk: &LeapSeconds) -> Option<f64> {
 }
 
 pub fn tdb_window(year: i64, month: Option<i64>, lsk: &LeapSeconds) -> Option<(f64, f64)> {
-    let start_m = match month {
-        Some(m) => m,
-        None => 1,
-    };
+    let start_m = month.unwrap_or(1);
     let (end_y, end_m) = match month {
         Some(12) => (year + 1, 1),
         Some(m) => (year, m + 1),
@@ -339,22 +336,21 @@ pub fn parse_isd(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
         let Some(tdb) = tdb_of(unix, lsk) else {
             continue;
         };
-        if let Some(val) = coded(i_tmp, &f, 9000) {
-            if let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_TEMP) {
-                out.push(r);
-            }
+        if let Some(val) = coded(i_tmp, &f, 9000)
+            && let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_TEMP)
+        {
+            out.push(r);
         }
-        if let Some(val) = coded(i_dew, &f, 9000) {
-            if let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_DEWP) {
-                out.push(r);
-            }
+        if let Some(val) = coded(i_dew, &f, 9000)
+            && let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_DEWP)
+        {
+            out.push(r);
         }
-        if let Some(val) = coded(i_slp, &f, 90000) {
-            if val > 0.0 {
-                if let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_SLP) {
-                    out.push(r);
-                }
-            }
+        if let Some(val) = coded(i_slp, &f, 90000)
+            && val > 0.0
+            && let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_SLP)
+        {
+            out.push(r);
         }
         if let Some(wnd) = f.get(i_wnd) {
             let parts: Vec<&str> = wnd.split(',').collect();
@@ -371,16 +367,15 @@ pub fn parse_isd(text: &str, lsk: &LeapSeconds) -> Vec<GeoRec> {
             if let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, dir as f64, COMP_ISD_WDIR) {
                 out.push(r);
             }
-            if let Some(sp) = parts.get(3) {
-                if let Ok(code) = sp.trim().parse::<i64>() {
-                    if code.abs() < 9000 {
-                        let val = code as f64 / 10.0;
-                        if val >= 0.0 {
-                            if let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_WSPD) {
-                                out.push(r);
-                            }
-                        }
-                    }
+            if let Some(sp) = parts.get(3)
+                && let Ok(code) = sp.trim().parse::<i64>()
+                && code.abs() < 9000
+            {
+                let val = code as f64 / 10.0;
+                if val >= 0.0
+                    && let Some(r) = rec(tdb, lat, lon, elev, HOUR_S, val, COMP_ISD_WSPD)
+                {
+                    out.push(r);
                 }
             }
         }

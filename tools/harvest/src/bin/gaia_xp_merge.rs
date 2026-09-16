@@ -1,4 +1,4 @@
-use omegaflow::spectral::{parse_xp_spectra_bin, write_xp_spectra_bin, XpStar};
+use omegaflow::spectral::{XpStar, parse_xp_spectra_bin, write_xp_spectra_bin};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

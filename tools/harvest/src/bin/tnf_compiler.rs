@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::odf::{scan_tnf_sfdus, tnf_dt0, TnfDt0, TnfSfdu};
+use omegaflow::archivar::odf::{TnfDt0, TnfSfdu, scan_tnf_sfdus, tnf_dt0};
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "pds-smallbodies.astro.umd.edu";

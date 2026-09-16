@@ -548,7 +548,7 @@ impl CkFile {
             let end_addr = summary.integers[5] as u32;
 
             let payload = match data_type {
-                1 | 2 | 3 => {
+                1..=3 => {
                     match Discrete::from_segment(&daf, data_type, av_flag, start_addr, end_addr) {
                         Ok(d) => CkPayload::Discrete(d),
                         Err(_) => CkPayload::Unsupported,
@@ -623,11 +623,7 @@ pub fn switch_resolution(fk: &FkFile, switch_frame: i32) -> Option<Vec<CkFrameRe
             spk_id,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn upper_bound(n: usize, pred: impl Fn(usize) -> bool) -> usize {
@@ -733,9 +729,9 @@ mod tests {
         };
         let start_addr = DATA_START_ADDR;
         let total = match dtype {
-            1 => nprec * reclen + nprec + 0 + 1,
-            2 => nprec * reclen + nprec + nprec + 0,
-            3 => nprec * reclen + nprec + 0 + numint + 0 + 2,
+            1 => nprec * reclen + nprec + 1,
+            2 => nprec * reclen + nprec + nprec,
+            3 => nprec * reclen + nprec + numint + 2,
             _ => return Vec::new(),
         };
         let end_addr = start_addr + total as u32 - 1;
@@ -780,13 +776,13 @@ mod tests {
         let av = [0.1_f64, 0.2_f64, 0.3_f64];
         let mut off = base;
         for q in [q0, q1] {
-            for i in 0..4 {
-                buf[off..off + 8].copy_from_slice(&q[i].to_le_bytes());
+            for qv in &q {
+                buf[off..off + 8].copy_from_slice(&qv.to_le_bytes());
                 off += 8;
             }
             if av_flag == 1 {
-                for i in 0..3 {
-                    buf[off..off + 8].copy_from_slice(&av[i].to_le_bytes());
+                for avv in &av {
+                    buf[off..off + 8].copy_from_slice(&avv.to_le_bytes());
                     off += 8;
                 }
             }
@@ -835,12 +831,8 @@ mod tests {
         let state = ck.attitude(-28002, 1, 150.0).expect("attitude");
         let c = std::f64::consts::FRAC_1_SQRT_2;
         let expect = [c, -c, 0.0, c, c, 0.0, 0.0, 0.0, 1.0];
-        for i in 0..9 {
-            assert!(
-                (state.matrix[i] - expect[i]).abs() < 1e-9,
-                "matrix[{i}] was {}",
-                state.matrix[i]
-            );
+        for (i, (m, e)) in state.matrix.iter().zip(expect.iter()).enumerate() {
+            assert!((m - e).abs() < 1e-9, "matrix[{i}] was {m}");
         }
         assert!(state.angular_velocity.is_some());
     }

@@ -59,7 +59,7 @@ pub fn family_of(a_au: f64, e: f64) -> u8 {
     if within(a_au, W_5_3) {
         return FAM_5_3;
     }
-    if a_au >= 38.0 && a_au <= 50.0 && e < 0.24 {
+    if (38.0..=50.0).contains(&a_au) && e < 0.24 {
         return FAM_CLASSICAL;
     }
     if e >= 0.3 {
@@ -143,7 +143,12 @@ pub fn rec_from_row(row: &crate::json::JsonVal) -> Option<KboRec> {
     let ma = crate::json::jnum(row, "ma")?;
     let epoch = crate::json::jnum(row, "epoch")?;
     let h = crate::json::jnum(row, "H")?;
-    if !a.is_finite() || a <= 0.0 || !e.is_finite() || e < 0.0 || e >= 1.0 || !epoch.is_finite() {
+    if !a.is_finite()
+        || a <= 0.0
+        || !e.is_finite()
+        || !(0.0..1.0).contains(&e)
+        || !epoch.is_finite()
+    {
         return None;
     }
     let mut nm = [0u8; NAME_BYTES];
@@ -172,16 +177,16 @@ pub fn rec_from_row(row: &crate::json::JsonVal) -> Option<KboRec> {
 }
 
 pub fn state_at(rec: &KboRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
-    crate::kepler::elements_to_icrs_state(
-        rec.a_au,
-        rec.e,
-        rec.incl_deg,
-        rec.node_deg,
-        rec.peri_deg,
-        rec.ma_deg,
-        rec.epoch_jd,
+    crate::kepler::elements_to_icrs_state(&crate::kepler::KeplerElements {
+        a_au: rec.a_au,
+        e: rec.e,
+        incl_deg: rec.incl_deg,
+        node_deg: rec.node_deg,
+        peri_deg: rec.peri_deg,
+        ma_deg: rec.ma_deg,
+        epoch_jd: rec.epoch_jd,
         t_jd,
-    )
+    })
 }
 
 pub fn packed_epoch_to_jd(text: &str) -> Option<f64> {
@@ -270,10 +275,10 @@ mod tests {
         let bytes = write_json(&recs);
         let root = crate::json::parse_json(std::str::from_utf8(&bytes).unwrap()).unwrap();
         let JsonVal::Obj(m) = &root else {
-            panic!("expected object");
+            panic!("the JSON root is {root:?}");
         };
         let JsonVal::Arr(rows) = m.get("data").unwrap() else {
-            panic!("expected data array");
+            panic!("the data slot is {:?}", m.get("data"));
         };
         assert_eq!(rows.len(), 2);
         assert_eq!(
