@@ -190,7 +190,11 @@ ist die Frage, nicht die Quelle: `blocked` = Zugang (`key`/`account`/
 `ip-blocked`/`parser-def`), `declined` = Verdikt (unphysikalisch/Modell/
 Registry/**kommerziell**/superseded). **Der Konsument ist kein Kriterium** — die
 Presence bewegt sich frei durch den 4D-Block; „kein gebauter Konsument" ist eine
-Bau-Reihenfolge, kein Quellen-Verdikt. Work surface: `phi/pipeline/`
+Bau-Reihenfolge, kein Quellen-Verdikt. **`blocked key-needed` ist eine Messung, keine
+Vermutung:** der Eintrag verlangt den gemessenen **401 MIT dem vorhandenen Token**
+(`.secrets.local`) — ein 401 ohne Token ist kein Key-Gap (der IONEX-Eintrag
+2026-09-16 widerlegt: mit `EARTHDATA_EDL_TOKEN` → HTTP 200). Erst messen, dann fordern.
+Work surface: `phi/pipeline/`
 (`queue/master.φ` the one master file + `queue/grind_*` drafts, `stage/`
 conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
