@@ -1163,6 +1163,44 @@ fn main() {
     let n_sub10 = samplers.iter().filter(|&&s| s < 10.0).count();
     eprintln!("\ncensus counts on resid_e: n={n}, strict-1.0-s={n_1s}, sub-10-s={n_sub10}");
 
+    eprintln!("\n=== A1 chain ablation: rx14 1988 strict-1.0-s, band 44-58, stage by stage ===");
+    let stages: [(&str, &[f64]); 4] = [
+        ("resid0", &resid0),
+        ("resid_c", &resid_c),
+        ("resid_d", &resid_d),
+        ("resid_e", &resid_e),
+    ];
+    let mut prev_peak: Option<f64> = None;
+    for (name, rs) in stages {
+        let (ts, vs) = gather_set(
+            &times,
+            &stations,
+            &samplers,
+            rs,
+            &years,
+            &[14],
+            class_1s,
+            Some(1988),
+        );
+        let c = census_cell(&ts, &vs, BAND_LO, BAND_HI);
+        match (c.peak, prev_peak) {
+            (Some(p), Some(q)) => {
+                eprintln!(
+                    "  {name}: {} | Δ vs previous stage {:.3} mHz",
+                    fmt_cell(&c),
+                    (p - q) * 1e3
+                );
+            }
+            (Some(_), None) => {
+                eprintln!("  {name}: {}", fmt_cell(&c));
+            }
+            (None, _) => {
+                eprintln!("  {name}: n={} absent", c.n);
+            }
+        }
+        prev_peak = c.peak;
+    }
+
     eprintln!("\n=== M1 strict-1-s census (sampler == 1.0), band 44-58, 0.05-mHz grid ===");
     for st in [14i64, 43, 63] {
         let pf = paper_freq(st);
