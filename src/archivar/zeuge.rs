@@ -18,7 +18,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
         b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" | b"SKD1" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung))
         }
-        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" => {
+        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
         }
         b"ISCB" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Presence)),
@@ -143,6 +143,18 @@ mod tests {
         assert_eq!(
             magic_identity(*b"OCS1"),
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+        );
+    }
+
+    #[test]
+    fn eri1_is_gestalt() {
+        assert_eq!(
+            magic_identity(*b"ERI1"),
+            Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+        );
+        assert_eq!(
+            zeugen_gate(Some(*b"ERI1"), Some(ZeugeArt::Gestalt), true),
+            ZeugeVerdict::Holds(ZeugeArt::Gestalt)
         );
     }
 
