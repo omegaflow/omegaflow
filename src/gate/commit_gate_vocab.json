@@ -15,6 +15,7 @@
     ["derive(Default)", "#[derive(Default)] is a fabricated default state — the truth is the query"],
     ["_ => 0,", "\"_ => 0\" writes an unmeasured zero — the value is absent, not zero"],
     ["_ => 0.0", "\"_ => 0.0\" writes an unmeasured zero — the value is absent, not zero"],
+    ["_ => (0.0, 0.0)", "\"_ => (0.0, 0.0)\" writes a fabricated coordinate — the anchor is absent, not the Gulf of Guinea"],
     [".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"]
   ],
   "zero_fabrication": [
@@ -24,7 +25,8 @@
   "feedback": {
     "single_path": "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth",
     "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero",
-    "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)"
+    "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
+    "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -85,6 +87,29 @@
     "fällig",
     "wiedervorlage",
     "fired"
+  ],
+  "consent_acts": [
+    ["smail --send", "mail send"],
+    ["curl -x post", "http write"],
+    ["curl -x put", "http write"],
+    ["curl -x patch", "http write"],
+    ["curl -x delete", "http write"],
+    ["curl --request post", "http write"],
+    ["curl --request put", "http write"],
+    ["curl --request patch", "http write"],
+    ["curl --request delete", "http write"],
+    ["curl --data", "http write"],
+    ["curl --upload-file", "http upload"],
+    ["gh api -x post", "http write"],
+    ["gh api -x put", "http write"],
+    ["gh api -x patch", "http write"],
+    ["gh api -x delete", "http write"],
+    ["gh pr create", "submission to a foreign repository"],
+    ["gh issue create", "submission to a foreign repository"],
+    ["gh release create", "release write"],
+    ["wrangler deploy", "cloudflare write"],
+    ["wrangler kv", "cloudflare write"],
+    ["wrangler pages", "cloudflare write"]
   ],
   "unit_tokens": [
     "km/s",
@@ -247,6 +272,12 @@
     "single_path_clean": "ein Pfad, eine Wahrheit",
     "template_slang_code": "let mode = godmode_lines(query);",
     "measure_step_fail": "the next step is to measure again",
-    "measure_step_clean": "measure again — due 2026-09-20"
+    "measure_step_clean": "measure again — due 2026-09-20",
+    "consent_send": "smail --send --to role@example.org",
+    "consent_http_write": "curl -X POST https://api.example.org/v1/keys --data '{}'",
+    "consent_submission": "gh pr create --repo foreign/repo --title t",
+    "consent_dry_run": "smail --dry-run --to role@example.org",
+    "consent_get": "curl https://api.example.org/v1/series",
+    "fabrication_default_tuple": "let a = match f { Some(x) => x, _ => (0.0, 0.0) };"
   }
 }
