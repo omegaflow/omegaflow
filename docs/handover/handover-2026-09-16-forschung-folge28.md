@@ -3,7 +3,7 @@
   session: Forschung-Folge 28
   class: handover
   date: 2026-09-16
-  sha256: 2dd1883d5d8258a8e20bedf9ada6e7839cf477d7e33aa6d53e42798714af8f90
+  sha256: b890d59dcff5e66bc2052359297cb79d4e9867fd5adbc73ec28971c9a9912552
   status: live
 -->
 # Handover — Forschung-Folge 28 (2026-09-16)
@@ -29,11 +29,11 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `corona-conditional-probe` (run 35075736443) bricht mit E0061/E0432 ab:
   `te.rs:1083` `conditional_te_stats_lagged_n` trägt die Params-Struct-Signatur,
   der Aufruf in `corona_conditional_probe.rs:720` die alte Positionsform. Der Fix
-  liegt im **fremden, uncommitteten 142-Datei-WIP** (Params-Struct-Refactor über
-  `src/` + `tools/`, staged; Arbeitsbaum grün) — dieselbe Grenze, die
-  Bau-Handover 41 benennt. `te_null_limits_probe` und `depth_phase_fleet_probe`
-  kompilieren bei HEAD und laufen (s. u.).
-  (Schritt: Urheber-Linie/Operator entscheidet die WIP; danach
+  liegt im **laufenden WIP der Bau-Linie** (Params-Struct-Refactor über
+  `src/` + `tools/`, staged; Arbeitsbaum grün) — die Bau-Linie räumt ihre
+  mitgeschleppten Coding-Sünden auf und committet selbst. `te_null_limits_probe`
+  und `depth_phase_fleet_probe` kompilieren bei HEAD und laufen (s. u.).
+  (Schritt: den Commit der Bau-Linie abwarten, dann
   `gh workflow run corona-conditional-probe.yml`; §4.6/Limitations in
   `docs/paper/corona-heating-ladder.md` füllen.)
 - **Solar 211A→193A** — conditional stage-2. (Schritt:
