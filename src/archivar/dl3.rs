@@ -70,11 +70,7 @@ fn events_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<Dl3Event>> {
             energy_tev,
         });
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn reduce_grid(events: &[Dl3Event], n_lon: usize, n_lat: usize) -> Vec<SkyCell> {
