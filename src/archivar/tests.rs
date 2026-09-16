@@ -6366,7 +6366,7 @@ fn test_ci_probe_render_resolves_templates_and_secrets() {
     env.insert("FIRMS_MAP_KEY".to_string(), "ABC123".to_string());
     let url = ci_probe_render(
         "https://example.com/?lat={lat}&lon={lon}&key={FIRMS_MAP_KEY}",
-        (52.5, 13.4),
+        Some((52.5, 13.4)),
         &env,
     )
     .unwrap();
@@ -6381,10 +6381,34 @@ fn test_ci_probe_render_bbox_and_temporal() {
     let env = HashMap::new();
     let url = ci_probe_render(
             "https://example.com/?bBox={lon_min},{lat_min},{lon_max},{lat_max}&start={week_ago}&end={today}",
-            (0.0, 0.0),
+            Some((0.0, 0.0)),
             &env,
         )
         .unwrap();
+    assert!(!url.contains('{'), "unresolved marker in {}", url);
+    assert!(url.contains("start=20"), "absent week_ago in {}", url);
+    assert!(url.contains("end=20"), "absent today in {}", url);
+}
+
+#[test]
+fn test_ci_probe_render_coord_anchor_absent_is_pending() {
+    let env = HashMap::new();
+    let url = ci_probe_render("https://example.com/?lat={lat}&lon={lon}", None, &env);
+    assert!(
+        url.is_none(),
+        "absent anchor with a coordinate template is pending"
+    );
+}
+
+#[test]
+fn test_ci_probe_render_temporal_template_needs_no_anchor() {
+    let env = HashMap::new();
+    let url = ci_probe_render(
+        "https://example.com/?start={week_ago}&end={today}",
+        None,
+        &env,
+    )
+    .unwrap();
     assert!(!url.contains('{'), "unresolved marker in {}", url);
     assert!(url.contains("start=20"), "absent week_ago in {}", url);
     assert!(url.contains("end=20"), "absent today in {}", url);
