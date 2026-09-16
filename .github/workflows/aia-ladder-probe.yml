@@ -28,16 +28,31 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Download the AIA line series from the CDN
+      - name: Download the AIA line series and the GOES-15 XRS corpus from the CDN
         run: |
-          gh release download jsoc.stanford.edu --repo omegaflow/sources \
-            --pattern "${{ matrix.asset }}" --clobber
-      - name: Run the AIA temperature-ladder TE (AIA-304 trigger)
+          mkdir -p data/jsoc.stanford.edu data/ncei.noaa.gov/goes15
+          for attempt in 1 2 3; do
+            gh release download jsoc.stanford.edu --repo omegaflow/sources \
+              --pattern "${{ matrix.asset }}" --clobber --dir data/jsoc.stanford.edu \
+              && gh release download ncei.noaa.gov --repo omegaflow/sources \
+              --pattern "goes15_xrs_2s_${{ matrix.year }}.tar" --clobber \
+              && tar -xf "goes15_xrs_2s_${{ matrix.year }}.tar" -C data/ncei.noaa.gov/goes15 \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s "data/jsoc.stanford.edu/${{ matrix.asset }}"
+          test -n "$(find data/ncei.noaa.gov/goes15 -name 'xr_*.nc' | head -1)" || {
+            echo "goes15 carries no xr corpus after the retry (0 honored)"
+            exit 1
+          }
+      - name: Run the AIA temperature-ladder TE (GOES-15 trigger, per-cell thresholds)
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
             echo "YEAR ${{ matrix.year }}"
-            cargo run --release -p omegaflow-measure --bin aia_ladder_probe -- --aia "${{ matrix.asset }}"
+            cargo run --release -p omegaflow-measure --bin aia_ladder_probe -- \
+              --aia "data/jsoc.stanford.edu/${{ matrix.asset }}" --goes-dir data/ncei.noaa.gov/goes15
           } > "aia-ladder-${{ matrix.year }}.txt"
       - uses: actions/upload-artifact@v4
         if: always()
