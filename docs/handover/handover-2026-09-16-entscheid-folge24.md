@@ -3,7 +3,7 @@
   session: Entscheid-Folge 24
   class: handover
   date: 2026-09-16
-  sha256: 161fa747d76cc91c7c947ee083f6ad90fd151b5151edf7d43b8e367858f47fba
+  sha256: 087f8327e970552cc95ce8128db0e2d8ed31e81836f29e11a3a7bb9914163acf
   status: live
 -->
 # Handover — Entscheid-Folge 24 (2026-09-16)
@@ -85,9 +85,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Operator-gebundene Punkte
 
-- **20-s-Bande — Release-Tag** — Vorschlag Tag `paper/twenty-second-band-v7`
-  (lightweight, auf `8ef168af`); **kein** Branch. (Schritt: Operator-Wort → zurück
-  an forschung; dann `git tag`/`git push`.)
 - **ESP32-Modul** — physischer Träger für Puls/HRV, on hold; BOM
   `docs/specs/mantis-shrimp-bom.md`. (Schritt: Operator-Wort.)
 
