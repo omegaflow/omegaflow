@@ -645,16 +645,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 absorption: 0.0,
                                 advection: 0.0,
                                 unit: bs.unit.clone(),
-                                freq: 0.0,
-                                bin_width: 0.0,
+                                freq: crate::spectral::SPECTRAL_NO_BAND,
+                                bin_width: crate::spectral::SPECTRAL_NO_BAND,
                                 fold: None,
                             };
                             if value.is_finite() {
                                 channels.push((
                                     Channel {
                                         z: 0.0,
-                                        freq: 0.0,
-                                        bin_width: 0.0,
+                                        freq: crate::spectral::SPECTRAL_NO_BAND,
+                                        bin_width: crate::spectral::SPECTRAL_NO_BAND,
                                         epoch: now,
                                         position: pos.clone(),
                                         name: fc.name.clone(),
@@ -704,16 +704,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             absorption: 0.0,
                             advection: 0.0,
                             unit: bs.unit.clone(),
-                            freq: 0.0,
-                            bin_width: 0.0,
+                            freq: crate::spectral::SPECTRAL_NO_BAND,
+                            bin_width: crate::spectral::SPECTRAL_NO_BAND,
                             fold: None,
                         };
                         if value.is_finite() {
                             channels.push((
                                 Channel {
                                     z: 0.0,
-                                    freq: 0.0,
-                                    bin_width: 0.0,
+                                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
                                     epoch: now,
                                     position: pos.clone(),
                                     name: fc.name.clone(),

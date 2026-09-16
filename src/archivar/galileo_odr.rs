@@ -27,7 +27,7 @@ pub struct OdrHeader {
 #[derive(Clone, Debug)]
 pub struct OdrRecord {
     pub header: OdrHeader,
-    pub ad: [[u8; AD_GROUP_BYTES]; AD_REPETITIONS],
+    pub ad: Vec<[u16; AD_GROUP_BYTES]>,
 }
 
 #[derive(Clone, Debug)]
@@ -65,15 +65,55 @@ pub fn header(bytes: &[u8]) -> Option<OdrHeader> {
     })
 }
 
-pub fn record(bytes: &[u8]) -> Option<OdrRecord> {
-    if bytes.len() < RECORD_BYTES {
+pub fn record_stride(bytes: &[u8]) -> Option<usize> {
+    if bytes.len() < HEADER_BYTES {
         return None;
     }
+    let words = usize::from(be16(bytes, 4));
+    if words * 2 < HEADER_BYTES {
+        return None;
+    }
+    Some(words * 2)
+}
+
+pub fn record(bytes: &[u8]) -> Option<OdrRecord> {
     let header = header(bytes)?;
-    let mut ad = [[0u8; AD_GROUP_BYTES]; AD_REPETITIONS];
-    for (i, group) in ad.iter_mut().enumerate() {
-        let base = HEADER_BYTES + i * AD_GROUP_BYTES;
-        group.copy_from_slice(&bytes[base..base + AD_GROUP_BYTES]);
+    let stride = record_stride(bytes)?;
+    if bytes.len() < stride {
+        return None;
+    }
+    let quad_bytes = if header.eight_bit { AD_GROUP_BYTES } else { 6 };
+    let data = stride - HEADER_BYTES;
+    if data % quad_bytes != 0 {
+        return None;
+    }
+    let quads = data / quad_bytes;
+    let mut ad = Vec::with_capacity(quads);
+    for i in 0..quads {
+        let base = HEADER_BYTES + i * quad_bytes;
+        if header.eight_bit {
+            ad.push([
+                u16::from(bytes[base]),
+                u16::from(bytes[base + 1]),
+                u16::from(bytes[base + 2]),
+                u16::from(bytes[base + 3]),
+            ]);
+        } else {
+            let lsb = bytes[base];
+            let lsb2 = bytes[base + 1];
+            let msb = [
+                bytes[base + 2],
+                bytes[base + 3],
+                bytes[base + 4],
+                bytes[base + 5],
+            ];
+            ad.push([
+                (u16::from(msb[0]) << 4) | u16::from(lsb >> 4),
+                (u16::from(msb[1]) << 4) | u16::from(lsb & 0x0F),
+                (u16::from(msb[2]) << 4) | u16::from(lsb2 >> 4),
+                (u16::from(msb[3]) << 4) | u16::from(lsb2 & 0x0F),
+            ]);
+        }
     }
     Some(OdrRecord { header, ad })
 }
@@ -82,11 +122,18 @@ pub fn split_records(byte_len: usize) -> (usize, usize) {
     (byte_len / RECORD_BYTES, byte_len % RECORD_BYTES)
 }
 
+pub fn stride_split(bytes: &[u8]) -> Option<(usize, usize)> {
+    let stride = record_stride(bytes)?;
+    Some((bytes.len() / stride, bytes.len() % stride))
+}
+
 pub fn parse_odr(bytes: &[u8]) -> Option<Vec<OdrRecord>> {
-    let (n, _) = split_records(bytes.len());
-    let mut out = Vec::with_capacity(n);
-    for i in 0..n {
-        out.push(record(&bytes[i * RECORD_BYTES..(i + 1) * RECORD_BYTES])?);
+    let stride = record_stride(bytes)?;
+    let mut out = Vec::with_capacity(bytes.len() / stride);
+    let mut pos = 0;
+    while pos + stride <= bytes.len() {
+        out.push(record(&bytes[pos..pos + stride])?);
+        pos += stride;
     }
     Some(out)
 }
@@ -117,10 +164,7 @@ pub fn parse_godr_bin(bytes: &[u8]) -> Option<Vec<PackedOdrFile>> {
     let mut out = Vec::with_capacity(count);
     for i in 0..count {
         let entry = &bytes[8 + i * PACK_ENTRY_BYTES..8 + (i + 1) * PACK_ENTRY_BYTES];
-        let name_end = entry[0..32]
-            .iter()
-            .position(|b| *b == 0)
-            .unwrap_or(32);
+        let name_end = entry[0..32].iter().position(|b| *b == 0).unwrap_or(32);
         let name = String::from_utf8(entry[0..name_end].to_vec()).ok()?;
         let mut sha256 = [0u8; 32];
         sha256.copy_from_slice(&entry[32..64]);
@@ -150,7 +194,7 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         let recs = parse_odr(&f.bytes)?;
         for rec in &recs {
             let h = &rec.header;
-            if !h.eight_bit || h.sample_rate == 0 {
+            if h.sample_rate == 0 {
                 continue;
             }
             let Some(year) = year_full(h.year) else {
@@ -221,10 +265,10 @@ mod tests {
         let bytes = sample_record(1);
         let r = record(&bytes).unwrap();
         assert_eq!(r.header.record_number, 1);
-        assert_eq!(r.ad[0], [0, 0, 0, 0]);
-        assert_eq!(r.ad[1], [1, 2, 3, 4]);
-        assert_eq!(r.ad[2], [2, 4, 6, 8]);
-        assert_eq!(r.ad[AD_REPETITIONS - 1], [112, 224, 80, 192]);
+        assert_eq!(r.ad[0], [0u16, 0, 0, 0]);
+        assert_eq!(r.ad[1], [1u16, 2, 3, 4]);
+        assert_eq!(r.ad[2], [2u16, 4, 6, 8]);
+        assert_eq!(r.ad[AD_REPETITIONS - 1], [112u16, 224, 80, 192]);
         assert!(record(&[0u8; RECORD_BYTES - 1]).is_none());
     }
 
@@ -240,7 +284,7 @@ mod tests {
         assert_eq!(recs.len(), 3);
         assert_eq!(recs[0].header.record_number, 1);
         assert_eq!(recs[2].header.record_number, 3);
-        assert!(parse_odr(b"X").unwrap().is_empty());
+        assert!(parse_odr(b"X").is_none());
     }
 
     #[test]
@@ -316,8 +360,7 @@ mod tests {
             let base = 8 + i * PACK_ENTRY_BYTES;
             let name = format!("rec{i}.ODR");
             bin[base..base + name.len()].copy_from_slice(name.as_bytes());
-            bin[base + 32..base + 64]
-                .copy_from_slice(&crate::archivar::sha256::sha256_raw(r));
+            bin[base + 32..base + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(r));
             bin[base + 64..base + 68]
                 .copy_from_slice(&((r.len() / RECORD_BYTES) as u32).to_le_bytes());
             bin[base + 68..base + 70].copy_from_slice(&1250u16.to_le_bytes());
@@ -356,7 +399,9 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), AD_REPETITIONS * AD_GROUP_BYTES);
         let lsk = crate::archivar::membrane::embedded_lsk().unwrap();
-        let tdb_tag = lsk.unix_to_tdb(time_tag_unix(1996, 313, 38_010_000).unwrap()).unwrap();
+        let tdb_tag = lsk
+            .unix_to_tdb(time_tag_unix(1996, 313, 38_010_000).unwrap())
+            .unwrap();
         let dt = 1.0 / 1250.0;
         assert_eq!(series[0].0, tdb_tag - AD_TIMETAG_QUAD * dt);
         assert!((series[8].0 - tdb_tag).abs() < 1e-6);
@@ -370,12 +415,84 @@ mod tests {
         assert_eq!(series[4].1, 1.0);
     }
 
+    fn sample_record_twelve(record_number: u16) -> Vec<u8> {
+        const TWELVE_QUADS: usize = 500;
+        let mut bytes = vec![0u8; HEADER_BYTES + TWELVE_QUADS * 6];
+        bytes[0] = 0x82;
+        bytes[2..4].copy_from_slice(&record_number.to_be_bytes());
+        bytes[4..6].copy_from_slice(&1583u16.to_be_bytes());
+        bytes[8] = 77;
+        bytes[9] = 60;
+        bytes[10..12].copy_from_slice(&0xC23Au16.to_be_bytes());
+        bytes[12..16].copy_from_slice(&0x01EE6280u32.to_be_bytes());
+        bytes[158..160].copy_from_slice(&10000u16.to_be_bytes());
+        for i in 0..TWELVE_QUADS {
+            let ad = [
+                0x0ABu16 + i as u16,
+                0x0CDu16 + i as u16,
+                0x0EFu16 + i as u16,
+                0xFFFu16 - i as u16,
+            ];
+            let base = HEADER_BYTES + i * 6;
+            bytes[base] = (((ad[0] & 0xF) << 4) | (ad[1] & 0xF)) as u8;
+            bytes[base + 1] = (((ad[2] & 0xF) << 4) | (ad[3] & 0xF)) as u8;
+            bytes[base + 2] = (ad[0] >> 4) as u8;
+            bytes[base + 3] = (ad[1] >> 4) as u8;
+            bytes[base + 4] = (ad[2] >> 4) as u8;
+            bytes[base + 5] = (ad[3] >> 4) as u8;
+        }
+        bytes
+    }
+
     #[test]
-    fn parse_series_skips_twelve_bit_and_void_rate_records() {
+    fn record_decodes_twelve_bit_quads_per_sis_figure_4() {
+        let bytes = sample_record_twelve(1);
+        assert_eq!(record_stride(&bytes), Some(3166));
+        let r = record(&bytes).unwrap();
+        assert!(!r.header.eight_bit);
+        assert_eq!(r.header.record_words, 1583);
+        assert_eq!(r.header.sample_rate, 10000);
+        assert_eq!(r.ad.len(), 500);
+        assert_eq!(r.ad[0], [0x0AB, 0x0CD, 0x0EF, 0xFFF]);
+        assert_eq!(r.ad[1], [0x0AC, 0x0CE, 0x0F0, 0xFFE]);
+        assert_eq!(r.ad[499], [0x29E, 0x2C0, 0x2E2, 0xE0C]);
+        assert!(record(&bytes[..3165]).is_none());
+    }
+
+    #[test]
+    fn parse_odr_strides_twelve_bit_records() {
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&sample_record_twelve(1));
+        bytes.extend_from_slice(&sample_record_twelve(2));
+        bytes.extend_from_slice(&[0u8; 700]);
+        assert_eq!(stride_split(&bytes), Some((2, 700)));
+        let recs = parse_odr(&bytes).unwrap();
+        assert_eq!(recs.len(), 2);
+        assert_eq!(recs[0].header.record_number, 1);
+        assert_eq!(recs[1].header.record_number, 2);
+    }
+
+    #[test]
+    fn parse_series_emits_twelve_bit_quads_at_10khz() {
+        let bin = godr_pack(&[sample_record_twelve(1)]);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 500 * AD_GROUP_BYTES);
+        let dt = 1.0 / 10000.0;
+        assert!((series[4].0 - series[0].0 - dt).abs() < 1e-12);
+        assert_eq!(series[0].1, f64::from(0x0AB));
+        assert_eq!(series[0].2, COMP_AD1);
+        assert_eq!(series[1].1, f64::from(0x0CD));
+        assert_eq!(series[1].2, COMP_AD2);
+        assert_eq!(series[2].2, COMP_AD3);
+        assert_eq!(series[3].2, COMP_AD4);
+    }
+
+    #[test]
+    fn parse_series_skips_inconsistent_layout_and_void_rate_records() {
         let mut twelve = sample_record(1);
         twelve[0] = 0xC2;
         let bin = godr_pack(&[twelve]);
-        assert!(parse_series(&bin).unwrap().is_empty());
+        assert!(parse_series(&bin).is_none());
 
         let mut no_rate = sample_record(1);
         no_rate[158..160].copy_from_slice(&0u16.to_be_bytes());
