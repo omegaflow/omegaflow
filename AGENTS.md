@@ -309,6 +309,17 @@ tool):
 - **P5 write-port** (`grind-flash`/`grind-pro`/`grind-max`) — edit + full bash (global).
 - **P6 vision** (`vision`) — no edit, no bash.
 
+Structurally denied in every profile (leading form): `grep`, `ls`, `cat`, `rg`,
+`cd`, `python`, `python3`. Content search = `archive_search <kws> --root <dir>`
+or `sgrep`; discovery = `glob`; reading = `sread` or the `read` tool. `cd` is
+replaced by the bash tool's `workdir` parameter. A compound command
+(`cmd; echo; cmd`) is evaluated **per segment** — every segment must match an
+allow pattern, so chain only allowed commands with `&&`, or call them one by one
+(a stray `echo` in the chain denies the whole command). Allowed in every bash
+profile: bare `archive_search`, `sread`, and `time archive_search|sgrep|sfetch|
+sread`. Read your exact allow-list before the first call — do not try a command
+that is not on it; a denied call wastes a turn and the session's bash quota.
+
 No agent has `webfetch`/`websearch` (global deny) — web runs through
 `archive_search`. Every subagent has `task: deny` (no sub-subagents); only
 `build` spawns. Never answer "always" to a bash `ask` outside the written maps —
@@ -352,6 +363,11 @@ the escalation, not the mirror. A doubled run records the winner
 (correctness/completeness) and the burn (`session_burn` / opencode.db: `cost`,
 `tokens_input`, `tokens_cache_read`, duration) as a handover line. The measured
 PII-exposure class is closed (flash 5.3x cheaper, identical result, 2026-09-16).
+The measured routine-agent class is closed too (8 profiles, identical
+four-command search task, 2026-09-16): flash $0.0008–0.0017 against pro/max
+$0.0041–0.0090 — 2.4–11x for an identical result; the winner is `grind-flash`
+($0.0008). Routine search/inspection therefore dispatches a flash profile;
+pro/max stays for the named hard atoms only.
 
 
 
