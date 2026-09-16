@@ -133,6 +133,18 @@ fn group_list(groups: &[Vec<String>]) -> String {
     format!("[{}]", objs.join(", "))
 }
 
+fn shard_base(name: &str) -> Option<&str> {
+    let (base, ordinal) = name.rsplit_once('.')?;
+    if ordinal.is_empty() || !ordinal.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    Some(base)
+}
+
+fn is_manifest(name: &str) -> bool {
+    name.ends_with(".manifest")
+}
+
 fn main() {
     let mut root = String::from(".");
     let mut out_path = String::from("docs/specs/cdn_reconciliation.json");
@@ -294,8 +306,20 @@ fn main() {
                 }
             }
         }
+        let sharded: BTreeSet<String> = canonical
+            .iter()
+            .filter(|exp| {
+                !actual.contains(exp.as_str())
+                    && actual
+                        .iter()
+                        .any(|a| shard_base(a) == Some(exp.as_str()))
+            })
+            .cloned()
+            .collect();
+        let manifest_present = actual.iter().any(|a| is_manifest(a));
         for exp in &canonical {
-            if !actual.contains(exp) {
+            let proven = actual.contains(exp) || (sharded.contains(exp) && manifest_present);
+            if !proven {
                 let mut row = BTreeMap::new();
                 row.insert("netloc", nl.clone());
                 row.insert("expected", exp.clone());
@@ -303,7 +327,10 @@ fn main() {
             }
         }
         for act in &actual {
-            if !canonical.contains(act) {
+            let explained = canonical.contains(act)
+                || shard_base(act).is_some_and(|b| canonical.contains(b))
+                || (is_manifest(act) && !sharded.is_empty());
+            if !explained {
                 let mut row = BTreeMap::new();
                 row.insert("netloc", nl.clone());
                 row.insert("actual", act.clone());
