@@ -14,20 +14,22 @@ fn parameter(query: &str, key: &str) -> Option<String> {
     })
 }
 
-fn data_url(station: &str, start: &str, end: &str) -> String {
+fn data_url(logon: &str, station: &str, start: &str, end: &str) -> String {
     format!(
-        "{}/data-api.php?logon=omegaflow&start={}&end={}&station={}",
+        "{}/data-api.php?logon={}&start={}&end={}&station={}",
         SUPERMAG_SERVICES,
+        urlencode(logon),
         urlencode(start),
         urlencode(end),
         urlencode(station)
     )
 }
 
-fn inventory_url(start: &str, extent: &str) -> String {
+fn inventory_url(logon: &str, start: &str, extent: &str) -> String {
     format!(
-        "{}/inventory.php?logon=omegaflow&start={}&extent={}",
+        "{}/inventory.php?logon={}&start={}&extent={}",
         SUPERMAG_SERVICES,
+        urlencode(logon),
         urlencode(start),
         urlencode(extent)
     )
@@ -81,9 +83,15 @@ fn parse_supermag(body: &str) -> Vec<String> {
     if rest.starts_with("ERROR") {
         return vec![format!("pending — supermag: {}", first_line(rest))];
     }
+    if rest.is_empty() {
+        return vec!["absent — supermag: the OK body carries no rows".to_string()];
+    }
     match json::parse(rest).and_then(|v| v.as_arr().map(<[Json]>::to_vec)) {
         Some(rows) => rows.iter().filter_map(entry_line).collect(),
-        None => vec!["pending — supermag: the OK body carries no JSON array".to_string()],
+        None => vec![format!(
+            "pending — supermag: the OK body carries no JSON array ({})",
+            first_line(rest)
+        )],
     }
 }
 
@@ -121,16 +129,17 @@ fn fetch_supermag(url: &str, inventory: bool) -> Vec<String> {
     }
 }
 
-pub fn supermag_lines(query: &str, max: usize) -> Vec<String> {
+pub fn supermag_lines(query: &str, max: usize, user: Option<&str>) -> Vec<String> {
     let station = parameter(query, "station");
     let start = parameter(query, "start");
     let end = parameter(query, "end");
     let extent = parameter(query, "extent");
+    let logon = user.unwrap_or("omegaflow");
 
     let (url, inventory) = match (station.as_deref(), start.as_deref(), end.as_deref()) {
-        (Some(station), Some(start), Some(end)) => (data_url(station, start, end), false),
+        (Some(station), Some(start), Some(end)) => (data_url(logon, station, start, end), false),
         (_, Some(start), None) => match extent.as_deref() {
-            Some(extent) => (inventory_url(start, extent), true),
+            Some(extent) => (inventory_url(logon, start, extent), true),
             None => {
                 return vec![format!(
                     "pending — supermag: query names no extent for the inventory: {}",
@@ -202,6 +211,14 @@ mod tests {
     }
 
     #[test]
+    fn a_bare_ok_names_the_absence() {
+        assert_eq!(
+            parse_supermag("OK\n"),
+            vec!["absent — supermag: the OK body carries no rows".to_string()]
+        );
+    }
+
+    #[test]
     fn inventory_reads_the_station_register() {
         assert_eq!(
             parse_inventory("OK\n2\nABK\nBJN\n"),
@@ -211,7 +228,12 @@ mod tests {
 
     #[test]
     fn query_tokens_build_the_data_url() {
-        let url = data_url("abk", "2020-01-01T00:00:00", "2020-01-01T01:00:00");
+        let url = data_url(
+            "omegaflow",
+            "abk",
+            "2020-01-01T00:00:00",
+            "2020-01-01T01:00:00",
+        );
         assert!(url.contains("logon=omegaflow"));
         assert!(url.contains("station=abk"));
         assert!(url.contains("start=2020-01-01T00%3A00%3A00"));
@@ -219,10 +241,17 @@ mod tests {
 
     #[test]
     fn query_tokens_build_the_inventory_url() {
-        let url = inventory_url("2020-01-01T00:00:00", "3600");
+        let url = inventory_url("omegaflow", "2020-01-01T00:00:00", "3600");
         assert!(url.contains("logon=omegaflow"));
         assert!(url.contains("extent=3600"));
         assert!(!url.contains("station="));
+    }
+
+    #[test]
+    fn a_registered_user_replaces_the_default_logon() {
+        let url = data_url("j.t", "abk", "2020-01-01T00:00:00", "2020-01-01T01:00:00");
+        assert!(url.contains("logon=j.t"));
+        assert!(!url.contains("logon=omegaflow"));
     }
 
     #[test]
