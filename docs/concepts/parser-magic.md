@@ -1,11 +1,11 @@
 <!--
   title: Parser Magic
   class: concept
-  sha256: c626c795c20c5208a380d30612c85237894acae6cd79e0298a8869d72acac498
+  sha256: cd53be9c11e63ad5a9b70cbd553169ee7fc8c39cbe55aae2d82859cfb77b9fd6
 -->
 # Parser Magic
 
-STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1, 8, 12)
+STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing item 12)
 
 ---
 
@@ -47,7 +47,7 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 ## Missing — 4 parser gaps
 
-**1. Auto-frame from `lat_key`/`lon_key`** — a `map` source with `lat`/`lon` keys but no `on`/`at` frame drops at the `flush!()` gate (`src/archivar/parse.rs:46-89` accepts only `cur_frame.is_some()`, or `kernel_text`/`reference` format). The `Frame` enum (`src/archivar/types.rs:274`) carries Surface/Barycenter/Manifest — no data-derived variant, and a `lat_key` names no body anchor. The fix lives in `parse.rs` + `types.rs`, outside this atom's two parser files.
+**1. ~~Auto-frame from `lat_key`/`lon_key`~~** — DONE 2026-09-16 (`f8a673ee`): the `flush!()` gate (`src/archivar/parse.rs:46-96`) accepts a `map` block with `lat`/`lon` keys and no `on`/`at` frame through the branch `|| !cur_extracts.is_empty()`. The block does not invent a body anchor — it seats as `Frame::Manifest` (anchor-less), carrying `Extract::Map` (`parse.rs:220`). `Frame::Data` does not exist and is not needed. Test `test_parse_map_lat_lon_without_frame_seats_manifest_source` (`src/archivar/tests.rs:1197`).
 
 **2. ~~Improve `extent` per force type~~** — DONE: `kernel_extent` (`src/archivar/membrane.rs:277`) returns `p.radius_m` for force_type 1 (gravity) and gaussian length scales for EM — no `c·τ` extent remains on the channel path.
 
@@ -61,7 +61,7 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **7. ~~Constant `lat_key`/`lon_key` Detection~~** — DONE 2026-09-15: `key_or_constant` in `src/archivar/extract.rs` — a numeric `lat`/`lon` key string (e.g. `48.1`) resolves as a constant, any other string as a JSON path.
 
-**8. `map` as frame indicator** — the same refusal path as 1: `map` + `lat_key`/`lon_key` without a frame drops at `flush!()` (`src/archivar/parse.rs`). Lives in `parse.rs`.
+**8. ~~`map` as frame indicator~~** — DONE 2026-09-16 (`f8a673ee`): the same `flush!()` branch `|| !cur_extracts.is_empty()` (`src/archivar/parse.rs:46-96`) seats `map` + `lat_key`/`lon_key` without a frame as `Frame::Manifest`; see item 1.
 
 **9. ~~`field_in` nested support~~** — DONE 2026-08-17: `field_in` is refused+registered in the parser; the `--gold` port migrates to `field`, nested paths (dot + array index) run via jpath.
 
