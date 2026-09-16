@@ -390,7 +390,7 @@ fn bump_class(counts: &mut Vec<(String, usize)>, class: &str) {
     counts.push((class.to_string(), 1));
 }
 
-fn run_live() {
+fn run_open() {
     let archiv = collect_archiv_basenames();
     let mut docs: Vec<String> = Vec::new();
     let mut opens: Vec<String> = Vec::new();
@@ -487,7 +487,7 @@ fn run_live() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --live: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open [{}]",
+        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open [{}]",
         docs.len(),
         opens.len(),
         released.len(),
@@ -795,15 +795,15 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --live            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--live") {
-        run_live();
+    if args.iter().any(|a| a == "--open") {
+        run_open();
         return;
     }
     if args.iter().any(|a| a == "--history") {
