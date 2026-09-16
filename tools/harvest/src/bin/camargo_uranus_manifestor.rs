@@ -1,4 +1,4 @@
-use omegaflow::archivar::curl_base;
+use omegaflow::archivar::{RetryPolicy, curl_base, ttl_transfer_bound};
 use omegaflow::cdn::upload_release;
 use std::fs::{self, File};
 use std::io::Read;
@@ -40,7 +40,7 @@ fn curl_file(url: &str, path: &str) -> bool {
             return false;
         }
     };
-    let mut cmd = curl_base(FETCH_TTL_S, 0);
+    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(FETCH_TTL_S), 0);
     cmd.arg(url);
     cmd.stdout(Stdio::from(file));
     match cmd.status() {
