@@ -216,7 +216,7 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     if pending.is_empty() {
         return;
     }
-    let mut cmd = curl_base(ttl, 8);
+    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(ttl), 8);
     for (i, part, _) in &pending {
         cmd.arg("-o").arg(part).arg(&items[*i].1.url);
     }
