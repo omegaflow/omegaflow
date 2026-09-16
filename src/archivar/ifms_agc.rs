@@ -244,6 +244,18 @@ mod tests {
     }
 
     #[test]
+    fn parses_committed_rsi_fixture() {
+        let bytes =
+            std::fs::read("src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW").unwrap();
+        let file = parse_ifms_agc(&bytes).unwrap();
+        assert_eq!(file.fields[0], ("station_id".to_string(), "NN11".to_string()));
+        assert_eq!(file.samples.len(), 1994);
+        assert!((file.samples[0].carrier_level_dbm + 43.6).abs() < 1e-9);
+        assert!((file.samples[0].polar_angle_cycles - 0.2485).abs() < 1e-9);
+        assert!((file.samples[1].unix_time - file.samples[0].unix_time - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
     fn rejects_non_ifms_text() {
         assert!(parse_ifms_agc(b"").is_none());
         assert!(parse_ifms_agc(b"hello\nworld\n").is_none());
