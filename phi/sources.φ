@@ -954,7 +954,7 @@ url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
 ttl 3600
 format eea_aq_parquet
 post_body {"countries":["DE"],"cities":["Heidelberg"],"pollutants":["PM10"],"dataset":1,"source":"API","aggregationType":"hour"}
-on earth 49.4195 8.6767
+on earth 49.4195 8.6767 114.0
 field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
@@ -6344,6 +6344,7 @@ format rosetta_odf
 at earth
 ttl 604800
 field observable_hz rosetta_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+note rosetta_odf-Prämisse verworfen (gemessen 2026-09-16): die PSA-.RAW (…/RSI/<DATASET_ID>/DATA/LEVEL1A/CLOSED_LOOP/IFMS/{AG1,AG2,DP1,DP2}/, z. B. R32ICL1L1A_AG1_143240137_00.RAW, 1 568 745 B, sha256 894c15be6e374c53c97d4ce2ec735a5e63cae500803982b3a0b484d1cdd9d5dd, magic unrecognized) ist kein TRK-2-34: `<header>`-XML + `<body_Gain>` + 3601 Zeilen à 429 B ASCII, LBL `RECORD_TYPE = UNDEFINED`, `STANDARD_DATA_PRODUCT_ID = IFMS1`. `parse_odf` (36-Byte-Gate, 1 568 745 % 36 = 9) liest nichts. Der handover-benannte Pfad (ohne DATASET_ID) 404t; die 343 978/605 756-B-Files sind unbestätigt. Nächster Schritt: IFMS-AGC-Text-Reader (XML-Header + 429-B-Festbreite → Serie) + Prüf-Messung des handover-benannten Files.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 format juno_odf
