@@ -110,6 +110,34 @@ pub fn write_podf_bin(records: &[[f64; 9]]) -> Vec<u8> {
     out
 }
 
+pub const PODF_SHARD_BUDGET: usize = 1 << 30;
+pub const PODF_SHARD_LIMIT: usize = 1 << 31;
+
+pub fn podf_shard_ranges(count: usize, budget: usize) -> Vec<(usize, usize)> {
+    if count == 0 {
+        return Vec::new();
+    }
+    let mut ranges = Vec::new();
+    let mut lo = 0usize;
+    while lo < count {
+        let mut hi = lo + 1;
+        while hi < count && 8 + (hi + 1 - lo) * 72 <= budget {
+            hi += 1;
+        }
+        ranges.push((lo, hi));
+        lo = hi;
+    }
+    ranges
+}
+
+pub fn podf_shard_name(prefix: &str, t_lo: f64, t_hi: f64) -> String {
+    format!("{prefix}_t{}_{}.bin", t_lo as i64, t_hi as i64)
+}
+
+pub fn podf_shard_name_ord(prefix: &str, t_lo: f64, t_hi: f64, ord: usize) -> String {
+    format!("{prefix}_t{}_{}_{}.bin", t_lo as i64, t_hi as i64, ord)
+}
+
 pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
     if data.len() < 8 || &data[0..4] != b"PODF" {
         return None;
@@ -490,6 +518,74 @@ mod tests {
         let parsed = parse_podf_bin(&bytes).unwrap();
         assert_eq!(parsed, recs);
         assert!(parse_podf_bin(b"X").is_none());
+    }
+
+    #[test]
+    fn shard_ranges_cover_and_respect_budget() {
+        let ranges = podf_shard_ranges(5, 160);
+        assert_eq!(ranges, vec![(0, 2), (2, 4), (4, 5)]);
+        for &(lo, hi) in &ranges {
+            assert!(lo < hi);
+            assert!(8 + (hi - lo) * 72 <= 160);
+        }
+        let mut covered: Vec<usize> = Vec::new();
+        for &(lo, hi) in &ranges {
+            covered.extend(lo..hi);
+        }
+        assert_eq!(covered, (0..5).collect::<Vec<usize>>());
+    }
+
+    #[test]
+    fn shard_ranges_empty_for_zero_records() {
+        assert!(podf_shard_ranges(0, 1 << 30).is_empty());
+    }
+
+    #[test]
+    fn shard_ranges_single_oversize_record_is_one_shard() {
+        assert_eq!(podf_shard_ranges(1, 10), vec![(0, 1)]);
+    }
+
+    #[test]
+    fn shard_names_unique_for_multi_shard_partition() {
+        let names = [
+            podf_shard_name("mro_odf", 700_000_000.0, 800_000_000.0),
+            podf_shard_name("mro_odf", 800_000_000.0, 900_000_000.0),
+            podf_shard_name("mro_odf", 900_000_000.0, 1_000_000_000.0),
+        ];
+        let mut set = std::collections::BTreeSet::new();
+        for n in names {
+            assert!(set.insert(n), "duplicate shard name");
+        }
+    }
+
+    #[test]
+    fn shard_name_ordinal_disambiguates_equal_tdb_seconds() {
+        assert_eq!(
+            podf_shard_name("mro_odf", 123_456_789.2, 123_456_789.2),
+            podf_shard_name("mro_odf", 123_456_789.8, 123_456_789.8)
+        );
+        assert_ne!(
+            podf_shard_name_ord("mro_odf", 123_456_789.2, 123_456_789.2, 0),
+            podf_shard_name_ord("mro_odf", 123_456_789.8, 123_456_789.8, 1)
+        );
+    }
+
+    #[test]
+    fn shard_roundtrip_reconstructs_record_order() {
+        let mut merged: Vec<[f64; 9]> = Vec::new();
+        for i in 0..10 {
+            let t = i as f64 * 100.0;
+            merged.push([t, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]);
+        }
+        let ranges = podf_shard_ranges(merged.len(), 500);
+        assert!(ranges.len() > 1);
+        let mut reconstructed: Vec<[f64; 9]> = Vec::new();
+        for &(lo, hi) in &ranges {
+            let bin = write_podf_bin(&merged[lo..hi]);
+            let parsed = parse_podf_bin(&bin).unwrap();
+            reconstructed.extend_from_slice(&parsed);
+        }
+        assert_eq!(reconstructed, merged);
     }
 
     #[test]
