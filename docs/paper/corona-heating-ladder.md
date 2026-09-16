@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-06
   version: 9
-  sha256: b147bc804601141d6034f21f3bc519938d65b7fc298d8e77027067322bc0fdde
+  sha256: afc48e504de53a47305aae571856635b7ea9d47260b479637fc7ceaa282fad99
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -483,8 +483,9 @@ two silences and one fragile candidate.
   every flare; the flare signal is attenuated ~10× relative to a spatially
   resolved (active-region) measurement.
 - **Estimator.** The scalar KDE TE is the untouched canonical reference of
-  the system; it passes the Schreiber-2000 benchmark (§3.3). The
-  conditional (multi-force) TE — conditioning each rung on the others — is
+  the system; it passes the Schreiber-2000 benchmark (§3.3). The conditional
+  TE against one or two confounders is reported in §4.6. The full multi-force
+  case — conditioning each rung on all the other rungs simultaneously — is
   implemented in the probe family but not reported here; the ladder D is the
   pairwise directional excess.
 - **Surrogate-machine generation (conservative footnote).** The family bound
