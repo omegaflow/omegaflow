@@ -739,6 +739,10 @@ dead 404
 url https://heatflow.world/api/v1/sites?lat=47&lon=8&radius=100
 note HTTP 404 — Endpoint weg.
 
+dead unreachable
+url https://hfrnet-tds.ucsd.edu/
+note HFRnet-THREADS (UC San Diego) — Recheck 2026-09-16: hfrnet-tds.ucsd.edu direkt Timeout (30 s), Proton-Exit absent, Wayback 503; Parent hfrnet.ucsd.edu 200 mit abgelaufenem Zertifikat, statische Landing-Page ohne Redirect auf hfrnet-tds. Host auf allen drei Leiter-Stufen abwesend.
+
 dead 404
 url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=
 note HTTP 404 — Endpoint weg.

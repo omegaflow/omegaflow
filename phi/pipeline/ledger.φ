@@ -25,15 +25,7 @@ note EEA-AQ-Observations, Nachfolger des dead aqportal.discomap.eea.europa.eu. P
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; .../griddap/HFRADAR_NADR_Totals.json?EWCT%5B60000%5D%5B0%5D%5B10%5D%5B11%5D → 200, EWCT −0.337 (2024-09-19); (last) → null. Route steht; Live-Kadenz offen.
-
-ausstehend
-kandidat https://hfrnode.eu/
-note Re-Messung 2026-09-16 (grind-flash): apex hfrnode.eu DNS NXDOMAIN (auch Proxy); www.hfrnode.eu 200 HTML; Datenendpunkt erddap.hfrnode.eu/erddap/index.html 200, griddap .dds 200 (time=59620,lat=44,lon=78). Route über erddap.hfrnode.eu; Block + Dataset offen.
-
-ausstehend
-kandidat https://hfrnet-tds.ucsd.edu/
-note Re-Messung 2026-09-16 (grind-flash): Host direkt Timeout, Proton US/CH 0 (SSL_ERROR_SYSCALL), Wayback 503/429; Parent hfrnet.ucsd.edu 200 (Zertifikat abgelaufen) → 301 auf hfrnet-tds. Katalog bekannt: .../thredds/catalog.html (Wayback 2024-12-17). Host unreachable; Re-Check.
+note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; .../griddap/HFRADAR_NADR_Totals.json?EWCT%5B(last)%5D%5B0%5D%5B10%5D%5B11%5D → 200, EWCT −0.172 m/s (45.66184 N, 13.587437 E). Kadenz gemessen: letzter Zeitschritt 2026-07-30T23:30:00Z (time_coverage_end, 30-min-NRT) — 48 Tage stale, kein laufendes Update; kein sources.φ-Block (ein Block träfe einen eingefrorenen Zeitschritt). Re-Check der Kadenz.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
@@ -112,10 +104,6 @@ kandidat https://api.v2.sondehub.org/sonde/{serial}
 note Parser-gap: SondeHub (live, 200 redirect .json.gz, ~10 000 temp-Punkte); RH/P meist nicht im Amateurframe (Sensor-Welle §15.15, 2026-08-19).
 
 parser-gap
-kandidat https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
-note Parser-gap: EMODnet Physics (live, 1759 Mooring-Plattformen); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
 kandidat https://erddap.emso.eu/erddap/info/index.json
 note Parser-gap: EMSO ERDDAP (live, Index); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
 
@@ -138,12 +126,4 @@ note Parser-gap: meteo.lt (live); Port-Arbeit ausstehend (Sensor-Welle §15.15, 
 parser-gap
 kandidat https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
 note Parser-gap: GTMBA (PMEL TAO/TRITON/PIRATA/RAMA, live, täglich+stündlich JSON); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-ausstehend
-kandidat https://userquery.linea.org.br/tap
-note ivo://linea.org.br/tap — Messung 2026-09-16 (grind-flash): sync 200 VOTable (FORMAT=csv wird ignoriert); SELECT TOP 1 ra,dec FROM des_dr2.main → ra=18.963154, dec=−0.03242 (UCD pos.eq.ra/dec). Route lebt, physikalischer Positionswert gemessen; Fluss-Feld + sources.φ-Block offen.
-
-ausstehend
-kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
-note ivo://ia2.inaf.it/hosted/laurino2011/tap — Messung 2026-09-16 (grind-flash): /wgetap/sync 303→200, FORMAT=csv → echtes CSV (ra,dec,psfMag_u/g/r/i/z,photoz,extinction_*). Route lebt; Fluss-Feld + sources.φ-Block offen.
 
