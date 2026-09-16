@@ -3,7 +3,7 @@
   session: Forschung-Folge 44
   class: handover
   date: 2026-09-16
-  sha256: c79b534a4b8f5b34afe180f635215925d4fa625c1cd217ead5590c7622d5e585
+  sha256: 8abf2a0bfa67bbb35e9733ed5e7404558ce6c32e848accb2ccca286ea4e375eb
   status: live
 -->
 # Handover — Forschung-Folge 44 (2026-09-16)
@@ -35,9 +35,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Design C: kein Konsumenten-Code, jeder Shard ist seine eigene `SourceConfig`,
   das Feld verschmilzt nach (name, epoch) in den Matrix-Ringen; Invariante:
   halboffene, strikt disjunkte TDB-Bereiche). **Offen: die Shard-Namen sind
-  datenabhängig und erst nach dem CI-Lauf messbar.** (Schritt: `gh workflow run
-  planetary-odf-cdn.yml`; die Compiler drucken den `phi/sources.φ`-Block — `gh
-  run view <id> --log` lesen, die Einzel-`url`-Zeilen `odyssey_odf`/`mro_odf`
+  datenabhängig und erst nach dem CI-Lauf messbar.** (Schritt: Lauf `35138707030`
+  dispatcht 2026-09-16 — `gh run view 35138707030 --log` lesen; die Compiler
+  drucken den `phi/sources.φ`-Block, die Einzel-`url`-Zeilen `odyssey_odf`/`mro_odf`
   in `phi/sources.φ:6687-6697` durch die N gemessenen Shard-Blöcke ersetzen.)
 
 ## Paper / §4.5
@@ -66,8 +66,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 ## Positionslinien / Ephemeriden
 
 - **Sonne-Anker-Fix verifizieren** — `phi/sources.φ:2149` → `at neptune_c`,
-  `:2284` → `at uranus_c` (2026-09-16). (Schritt: nach Push `s2-weberin-probe`
-  dispatchen; die Sonne muss im sub-resolution-Verdikt erscheinen.)
+  `:2284` → `at uranus_c` (2026-09-16). (Schritt: Lauf `35138709981` dispatcht
+  2026-09-16 — `gh run view 35138709981` lesen; die Sonne muss im
+  sub-resolution-Verdikt erscheinen.)
 
 ## Paper / Präregistrierung
 
