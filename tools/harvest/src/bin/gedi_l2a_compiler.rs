@@ -1,5 +1,5 @@
 use omegaflow::archivar::range::{
-    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, Sigv4Args, S3Credentials, S3_ENDPOINT,
+    edl_s3_credentials_for, fetch_s3_range, sigv4_headers, S3Credentials, Sigv4Args, S3_ENDPOINT,
     S3_REGION,
 };
 use omegaflow::cdn::upload_release;
@@ -76,7 +76,10 @@ fn amz_now() -> Option<(String, String)> {
     let h = secs / 3600;
     let mi = (secs % 3600) / 60;
     let s = secs % 60;
-    Some((date_stamp.clone(), format!("{date_stamp}T{h:02}{mi:02}{s:02}Z")))
+    Some((
+        date_stamp.clone(),
+        format!("{date_stamp}T{h:02}{mi:02}{s:02}Z"),
+    ))
 }
 
 fn uri_encode_query(s: &str) -> String {
@@ -247,17 +250,29 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
                     1 => Some(b[0] as i8 as f64),
                     2 => {
                         let a: [u8; 2] = b.try_into().ok()?;
-                        let v = if le { i16::from_le_bytes(a) } else { i16::from_be_bytes(a) };
+                        let v = if le {
+                            i16::from_le_bytes(a)
+                        } else {
+                            i16::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     4 => {
                         let a: [u8; 4] = b.try_into().ok()?;
-                        let v = if le { i32::from_le_bytes(a) } else { i32::from_be_bytes(a) };
+                        let v = if le {
+                            i32::from_le_bytes(a)
+                        } else {
+                            i32::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     8 => {
                         let a: [u8; 8] = b.try_into().ok()?;
-                        let v = if le { i64::from_le_bytes(a) } else { i64::from_be_bytes(a) };
+                        let v = if le {
+                            i64::from_le_bytes(a)
+                        } else {
+                            i64::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     _ => None,
@@ -267,17 +282,29 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
                     1 => Some(b[0] as f64),
                     2 => {
                         let a: [u8; 2] = b.try_into().ok()?;
-                        let v = if le { u16::from_le_bytes(a) } else { u16::from_be_bytes(a) };
+                        let v = if le {
+                            u16::from_le_bytes(a)
+                        } else {
+                            u16::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     4 => {
                         let a: [u8; 4] = b.try_into().ok()?;
-                        let v = if le { u32::from_le_bytes(a) } else { u32::from_be_bytes(a) };
+                        let v = if le {
+                            u32::from_le_bytes(a)
+                        } else {
+                            u32::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     8 => {
                         let a: [u8; 8] = b.try_into().ok()?;
-                        let v = if le { u64::from_le_bytes(a) } else { u64::from_be_bytes(a) };
+                        let v = if le {
+                            u64::from_le_bytes(a)
+                        } else {
+                            u64::from_be_bytes(a)
+                        };
                         Some(v as f64)
                     }
                     _ => None,
@@ -287,12 +314,20 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
         1 => match sz {
             4 => {
                 let a: [u8; 4] = b.try_into().ok()?;
-                let v = if le { f32::from_le_bytes(a) } else { f32::from_be_bytes(a) };
+                let v = if le {
+                    f32::from_le_bytes(a)
+                } else {
+                    f32::from_be_bytes(a)
+                };
                 Some(v as f64)
             }
             8 => {
                 let a: [u8; 8] = b.try_into().ok()?;
-                Some(if le { f64::from_le_bytes(a) } else { f64::from_be_bytes(a) })
+                Some(if le {
+                    f64::from_le_bytes(a)
+                } else {
+                    f64::from_be_bytes(a)
+                })
             }
             _ => None,
         },
@@ -426,13 +461,16 @@ fn extract_from(
         let Some(dts) = first_values(file, s3_url, creds, &format!("{beam}/delta_time")) else {
             continue;
         };
-        let Some(lats) = first_values(file, s3_url, creds, &format!("{beam}/lat_lowestmode")) else {
+        let Some(lats) = first_values(file, s3_url, creds, &format!("{beam}/lat_lowestmode"))
+        else {
             continue;
         };
-        let Some(lons) = first_values(file, s3_url, creds, &format!("{beam}/lon_lowestmode")) else {
+        let Some(lons) = first_values(file, s3_url, creds, &format!("{beam}/lon_lowestmode"))
+        else {
             continue;
         };
-        let Some(elevs) = first_values(file, s3_url, creds, &format!("{beam}/elev_lowestmode")) else {
+        let Some(elevs) = first_values(file, s3_url, creds, &format!("{beam}/elev_lowestmode"))
+        else {
             continue;
         };
         let Some(quals) = first_values(file, s3_url, creds, &format!("{beam}/quality_flag")) else {
@@ -481,13 +519,12 @@ fn extract_from(
     out
 }
 
-fn harvest_granule(
-    s3_url: &str,
-    creds: &S3Credentials,
-    beams: usize,
-) -> Vec<[f64; REC_FIELDS]> {
+fn harvest_granule(s3_url: &str, creds: &S3Credentials, beams: usize) -> Vec<[f64; REC_FIELDS]> {
     let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
-        eprintln!("{}: range read returned void — granule stays pending", s3_url);
+        eprintln!(
+            "{}: range read returned void — granule stays pending",
+            s3_url
+        );
         return Vec::new();
     };
     match Hdf5File::parse(&w1) {
@@ -498,7 +535,10 @@ fn harvest_granule(
                 s3_url, META_WINDOW, note
             );
             let Some(w2) = fetch_s3_range(s3_url, 0, META_ESCALATION, Some(creds)) else {
-                eprintln!("{}: escalated range read returned void — granule stays pending", s3_url);
+                eprintln!(
+                    "{}: escalated range read returned void — granule stays pending",
+                    s3_url
+                );
                 return Vec::new();
             };
             match Hdf5File::parse(&w2) {
@@ -557,10 +597,7 @@ fn run_list(args: &[String]) {
         std::process::exit(2);
     };
     let Some(creds) = edl_s3_credentials_for(BUCKET, &token) else {
-        eprintln!(
-            "{} returned void for s3://{}/",
-            NETLOC, BUCKET
-        );
+        eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
         std::process::exit(2);
     };
     let Some((objects, truncated, common)) = list_page(BUCKET, &prefix, dirs, max_keys, &creds)
@@ -617,17 +654,16 @@ fn run_harvest(args: &[String]) {
         },
     };
     let limit = arg_usize(args, "--limit").unwrap_or(2).clamp(1, 8);
-    let beams = arg_usize(args, "--beams").unwrap_or(BEAMS.len()).clamp(1, BEAMS.len());
+    let beams = arg_usize(args, "--beams")
+        .unwrap_or(BEAMS.len())
+        .clamp(1, BEAMS.len());
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(token) = edl_token() else {
         eprintln!("EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token");
         std::process::exit(2);
     };
     let Some(creds) = edl_s3_credentials_for(BUCKET, &token) else {
-        eprintln!(
-            "{} returned void for s3://{}/",
-            NETLOC, BUCKET
-        );
+        eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
         std::process::exit(2);
     };
     let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
@@ -636,7 +672,9 @@ fn run_harvest(args: &[String]) {
         std::process::exit(1);
     };
     if truncated {
-        eprintln!("gedi-l2a: the listing at s3://{BUCKET}/{prefix} is truncated — the harvest is partial");
+        eprintln!(
+            "gedi-l2a: the listing at s3://{BUCKET}/{prefix} is truncated — the harvest is partial"
+        );
     }
     if objects.is_empty() {
         eprintln!("gedi-l2a: no granules at s3://{BUCKET}/{prefix} — nothing fabricated");
@@ -740,10 +778,7 @@ mod tests {
             .map(|(k, v)| format!("{}={}", uri_encode_query(k), uri_encode_query(v)))
             .collect::<Vec<_>>()
             .join("&");
-        assert_eq!(
-            query,
-            "list-type=2&prefix=GEDI02_A.002%2F2026.01.01%2F"
-        );
+        assert_eq!(query, "list-type=2&prefix=GEDI02_A.002%2F2026.01.01%2F");
     }
 
     #[test]
