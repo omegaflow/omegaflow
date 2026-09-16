@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: 6ecc78b6ec4789bb1d3a7e0bb645cb6d732433ac3d27cff50f1740b8f92bbd84
+  sha256: 5bb780b5f559d1f59fc17f6e1ce6cfa5a35fc427d3538ae771f7299837f5a6e0
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -276,9 +276,13 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
 6. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne: **gebaut**
    — `src/archivar/{amon,auger,skymap,s2event}.rs`, Compiler
    `icecat_compiler`, `antares_vo_compiler`, `gw_skymap_compiler`.
-7. Der CDN-Manifestations-Weg des Vlies-Assets: **partial** — das
-   `upload_asset`-Wiring und die `*-cdn.yml` stehen; das Vlies-Asset selbst
-   ist noch nicht manifestiert (`pending`).
+7. Der CDN-Manifestations-Weg des Vlies-Assets: **gebaut + manifestiert** —
+   das `upload_asset`-Wiring und `vlies-density-cdn.yml` stehen; der Lauf
+   `34064753336` (success, 2026-09-06) hat `vlies_density.vlde` (1 572 873
+   Bytes, sha256 `7bf53447…`) auf `ssd.jpl.nasa.gov` gelegt (HTTP 200,
+   gemessen 2026-09-16). Offen bleibt allein die **Konsumption**: kein
+   Archivar-Reader für `.vlde` (`format`/Reader fehlen, gemessen) —
+   `pending`, ein eigenes Atom.
 8. Der Riss-Knoten: **gebaut** — `riss_knoten_probe` (Ledger zwirn/riss/
    absent, Körper/Station/geliehen, 16 Tests), Kern `src/weberin.rs`; der
    CI-Lauf fehlte und wird in diesem Atom ergänzt (Workflow
@@ -291,9 +295,30 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    natural-class-Gate — registriert wird sein Urteil (Klasse +
    Wahrscheinlichkeit), nie der einzige Zeuge.
 
-Offen bleiben zwei Register-Pflichten, nichts vertagt: (i) Schritt 7 — die
-Manifestation des Vlies-Assets, `pending`; (ii) Schritt 8 — der CI-Lauf,
-in diesem Atom ergänzt. Zwischen den Stufen gibt es keine Wartezone. Wo eine
+### Die Rat-Messungen — Lauf `35119482268` (2026-09-16, sha `70e2030b`)
+
+Die vier Rat-Fragen sind gemessen (Probe `s2_weberin_probe`, Artefakt
+`s2-weberin-probe.txt`):
+
+1. **Sub-resolution** (α = 2·asin(R/d) gegen π/64 = 0,049087 rad): der
+   größte Körper, Jupiter, trägt α = 0,000180 rad — alle gemessenen Körper
+   sind sub-resolution; die Sonne ist `absent` (kein `radius_m`/keine
+   Position), nicht widerlegt.
+2. **Erd-Stapelung**: 460 Stationen + 1 Erd-Körper fallen innerhalb
+   θ_max = 4,243863e-5 rad = 0,0024° in die Erd-Richtung (Kernel π/64 ≈ 2,8°);
+   der Erd-Stapel trägt f_E = 0,860075 der Shell-Σω.
+3. **Coverage bei t_presence** (2026-09-17): 2 von 76 Weltlinien ohne
+   Coverage — `juno`, `wind`; nächste Grenze: `juice` endet 2026-10-19
+   (in 32,3 d).
+4. **Shell-Baseline** (ohne Direction/Events): Σω = 536 (Körper 74 +
+   Stationen 462).
+5. **Cap-Margin**: 2¹³ = 8192 gegen N = 536 → Margin 7656.
+
+Offen bleibt eine Register-Pflicht, nichts vertagt: die **Konsumption** des
+Vlies-Assets — ein Archivar-Reader für `.vlde` (`pending`, eigenes Atom); die
+Manifestation selbst ist gemessen (Schritt 7, Lauf `34064753336`), und
+Schritt 8 — der CI-Lauf (`riss-knoten.yml`, run 35117186444 success) — ist
+gelaufen. Zwischen den Stufen gibt es keine Wartezone. Wo eine
 Stufe noch nicht gebaut ist, ist ihr Wert `pending` — der Wert existiert,
 die Ernte fehlt, registriert, nicht fabriziert. `absent` bleibt nur, wo die
 Quelle den Wert nicht trägt.
