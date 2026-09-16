@@ -263,24 +263,29 @@ slow, expensive fallback, not the first move.
 - **Raw NTFS device / deleted files** (forensics): `archive_search --mft
   <device>` — needs a device path, not the live repo (which is not NTFS).
 
-### The cost ladder — targeted before `--all`
+### The cost ladder — the research cascade
 
 `--all` runs **every** source (13 network calls) — the broadest, not the
-cheapest. The escalation is two axes, never a single line:
+cheapest. The cascade, in order; the first rung that carries the answer stops
+it — and a diver that stops before `--brave` has not exhausted the tool:
 
-- **Known URL** → `archive_search --verdict <url>` — it runs the reachability
-  ladder itself: stage 1 direct → stage 2 Proton exit → stage 3 Wayback
-  snapshot. No manual `proton-wg.sh` rotation; the tool rotates on 403/429.
-  `--sniff <url>` reports magic bytes + sha256.
-- **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
-  `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
-- **Unknown source** → `--brave <query>` (keyword web search).
-- **JS-rendered page** → `--playwright <url|query>` (browser) — only when the
-  plain fetch carries no content.
-- **Source entirely unknown** → `--all <query>` — the last move, 13 calls.
+1. **Content in the live tree** → `archive_search <kw> --root <dir>` or `sgrep`.
+2. **Known URL** → `archive_search --verdict <url>` — the reachability ladder
+   itself: stage 1 direct → stage 2 Proton exit → stage 3 Wayback. No manual
+   `proton-wg.sh` rotation; the tool rotates on 403/429. Then `--sniff <url>`
+   (magic bytes + sha256), then `--playwright <url>` when the plain fetch
+   carries no content (JS-rendered).
+3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
+   `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
+4. **Unknown source** → `--brave <query>` is the **first** move (keyword web
+   search), never `--all` first; follow the hit with its own mode or `--verdict`.
+5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
+6. **Source entirely unknown** → `--all <query>` — the last move, 13 calls.
 
-First move: the targeted mode (or `--verdict` for a known URL); `--brave`,
-`--playwright`, `--all` only when that fails.
+The three measures are distinct: `--verdict` measures reachability, `--sniff`
+measures the file type, `--playwright` measures the rendered content. A stage-3
+`503`/absent on `--verdict` is not a dead end — `--brave` finds the mirror,
+`--playwright` renders the JS page.
 
 ## Local tools — the self-contained path
 
