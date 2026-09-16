@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-09
-  sha256: 3409a03e835b952aa1d411bf138a12ce058fc85f7e255a1f6ce41c525ac38193
+  sha256: ba03fde8182f35ac943931f01dde1d1155b06bd32f59099a00336dc69f0a7845
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -57,7 +57,7 @@ frühen Anker.
 
 | Zeuge | Jahr | Referenz | Methode | Wert | Fehler | Wurzel-Kette | Trennstufe | Route |
 |---|---|---|---|---|---|---|---|---|
-| Planck 2018 (best estimate) | 2020 | A&A 641, A6 · arXiv:1807.06209 | CMB/BAO · Planck | 67.36 | ±0.54 | ΛCDM → 100θ* = 1.0411±0.0003 → r_d; zitiert | keine | [c] |
+| Planck 2018 (best estimate) | 2020 | A&A 641, A6 · arXiv:1807.06209 | CMB/BAO · Planck | 67.36 | ±0.54 | ΛCDM → 100θ* = 1.041099±0.000307 → r_d = 147.091±0.265 Mpc; **gewogen** aus der Baseline-Chain base_plikHM_TTTEEE_lowl_lowE_lensing (R3.00-ZIP, IRSA, 25 225 Zeilen, sha256 52cf6793…) — reproduziert 67.3576±0.5388 / 147.0908±0.2653; die lensing-freie Chain (24 497 Z.) trägt 67.28±0.61 / 147.05±0.30 | keine | [c] |
 | Planck 2018 + BAO | 2020 | ebd. | CMB/BAO | 67.66 | ±0.42 | BAO erbt r_d aus CMB — die Planck-Ehe | keine | [c] |
 | eBOSS (Alam et al.), CMB+BAO | 2021 | PRD 103, 083533 · arXiv:2007.08991 | CMB/BAO | 67.60 | ±0.43 | geteiltes r_d mit Planck — Ehe | keine | [c] |
 | eBOSS, BAO allein | 2021 | ebd. | CMB/BAO | absent | — | BAO misst nur r_d·H₀/c (dimensionslos) | keine | [a] |
