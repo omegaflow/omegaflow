@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: d309fee043a2bd869e89d7e4d95787981a67de7a260e6689f9067f499bc9a7a1
+  sha256: d1830846cd6ddbf1998327c26693c505b89080c34c3424fe05e16d1bdea56c7c
 -->
 # sources.φ — Canonical Format Specification
 
@@ -78,9 +78,9 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `hapi <k=v>…` | ≥2 | HAPI parameters. Values manifest only when paired with a τ-carrying `field` of the same name. |
 | `hapi_fill <k=v>…` | ≥2 | HAPI fill values per parameter (nT series without a `parameters` array in the data response). Absent declaration + absent response-`parameters` → no fill gate. |
 | `ephemeris <target>` / `vectors <target>` | 2 | Refused (2026-08-17). The Horizons-text extract fabricated a range-as-gravity value; the body's gravity (GM) is provided by `format ephemeris_binary` + the body channels. |
-| `lat <key>` / `lon <key>` | 2 | Row position keys (map). Fixed unit: deg. |
+| `lat <key>` / `lon <key>` | 2 | Row position keys (map, rows). Fixed unit: deg. |
 | `alt <key> [unit]` | 2–3 | Row altitude key (map). Unit: `m` (default) \| `km` \| `ft` \| `cm` \| `mm` \| `-m` \| `-km` (negative = depth). Absent `alt` directive → surface datum 0. |
-| `epoch <key>` | 2 | Row epoch key (map, keplermap). ISO string or unix seconds. Absent → fetch time. |
+| `epoch <key>` | 2 | Row epoch key (map, keplermap, rows). ISO string (date or date-time) or unix seconds. Absent → fetch time. |
 | `vel <key> [unit]` / `trk <key>` / `vr <key>` | 2–3 | Row motion keys (map): speed, track deg, vertical rate → SurfaceFlow. `vel` unit: `m/s` (default) \| `km/h` \| `km/s` \| `mph` \| `knot` — the scale applies to `vel` and `vr`. Unknown unit → directive refused. |
 | `tau_key <key>` | 2 | Per-row τ (map/cmap/rows). Seconds per row: absent/non-numeric → the field's τ stands; > 0 → overrides the field's τ for that row; == 0 → τ-Gate closes (row manifests nothing); < 0 → no oscillator. |
 | `mag_type_key <key>` | 2 | Magnitude type per row (map/geojson). When a field's unit is `Mw`, the row's type gates the moment conversion: moment-based (`mw`/`mww`/`mwc`/`mwb`/`mwr`/`mwp`/`mwpd`/`mi`, case-insensitive) → M0 = 10^(1,5·m+9,1) exact; non-moment (`ml`/`md`/`mb`/`mh`/`ms`/`m`/`Mj`) → no exact SI from magnitude alone → the field does not fabricate a moment (manifests nothing). Absent type → the block's `Mw` declaration stands. |
