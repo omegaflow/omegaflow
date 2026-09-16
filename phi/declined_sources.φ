@@ -3616,3 +3616,7 @@ note LS DR10 (`mag_g`) — dieselbe Quelle wie der getragene sources.φ-Block `l
 decline superseded-by-integrated
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux+FROM+cirada.VLASS_Source+WHERE+total_flux+IS+NOT+NULL
 note VLASS Source (`total_flux`) — derselbe Endpunkt wie der getragene sources.φ-Block `cirada.VLASS_Source` (`FORMAT=csv`, `Total_flux_source`); die json/total_flux-Variante ist redundant (gemessen 2026-09-15: CANFAR lehnt `FORMAT=json` ab, Spalten heißen `RA_Source`/`DEC_Source`/`Total_flux_source`) → superseded (Bau-Folge 39).
+
+decline presence-catalog
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
+note EMODnet Physics Plattform-Metadaten (gemessen 2026-09-16: 1792 Mooring-Zeilen, Spalten PLATFORMCODE/call_name/latitude/longitude/lastdateobservation) — Stationsidentität + Position + Beobachtungs-Zeitstempel, kein Messwert am Punkt → Oszillator-Gate decline (Stationsliste ohne Messwert).
