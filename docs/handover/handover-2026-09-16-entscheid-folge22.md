@@ -3,7 +3,7 @@
   session: Entscheid-Folge 22
   class: handover
   date: 2026-09-16
-  sha256: 3f3af5835187f228c2bbdb628de0f8dcaa1e58235e72d505a93de15fa5d80a1d
+  sha256: e6297365d3c90a612240e2e792613f1123527b1d176e7df04f048523975fe2fa
   status: live
 -->
 # Handover — Entscheid-Folge 22 (2026-09-16)
@@ -23,55 +23,34 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 
-## GitHub-Purge der PII-Alt-Commits (härtester undatierter Punkt)
+Das Handover wird **vor allem anderen gegen den Baum gehalten**
+(`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
+eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-- Geteilter Zustand: `docs/zustand/external-state.md`. Nachmessung `pii-exposure`
-  run 35101796537 @ `8d0c9090` (2026-09-16): **45** Kombinationen, 15/15
-  Pre-Rewrite-Commits erreichbar, PII retrievable: yes — unverändert zur
-  Vormessung; die GitHub-GC hat nichts entfernt. GC-Bestätigung #4761801 offen;
-  keine `privacy@github.com`-Antwort. (Schritt: Postfach; bleibt die
-  GC-Bestätigung aus, GitHub auf #4761801 nachfassen — Operator.)
+## GitHub-PII-Purge (härtester undatierter Punkt)
 
-## Consent-Akte (Operator — per-Akt-Consent)
+- Support-Tickets `#4761482` + `#4761801` bestätigt (Mail-Ledger); GC-Antwort
+  aus. Der `privacy@github.com`-Deletion-Request
+  (`state/mail/privacy-deletion-request.md`) geht manuell aus Proton — der
+  Sendestatus ist aus dem Baum nicht messbar. (Schritt: Postfach
+  `state/mail/mail_ledger.φ`; bleibt die GC-Antwort aus, GitHub auf `#4761801`
+  nachfassen — Operator.)
 
-**C Anfragen an Dritte (per-Akt-Consent):**
-- BiSON-Team (`bison@contacts.bham.ac.uk`): Entwurf
-  `state/mail/bison-team-anfrage.md`. (Schritt: `/consent`, dann `smail … --send`.)
-- DEMETER/CDPP: Order über REGARDS; Zhangheng-1/CSES SSDC-Formular
-  `https://tools.ssdc.asi.it/UserManager/requestUser.jsp`. (Schritt: `/consent`,
-  dann Formular/Order.)
+## Consent-Akte (per-Akt, Operatorwort)
 
-**D Route-/Exit-Wort (gemessen 2026-09-16):**
-- Kein freier Proton-Exit für `.com`/`.edu`/`.org` — Host-Routen fallen auf
-  Browser-Bridge oder absent.
-- TNF (`pdssbn.astro.umd.edu/…/lunocc2012.tnf`): Host 0, Wayback 503 → Proton.
-  (Schritt: Operatorwort.)
-- Haw 1997 (`10.2514/2.3240`): Paywall → ILL/Proton. (Schritt: Operatorwort.)
-- Hinson 1997 (`10.1029/97GL01608`): 403 Cloudflare; Zahlen aus offenen
-  PDS-Daten re-derivierbar (`GO-J-RSS-1-ODF-V1.0`) → Bau. (Schritt:
-  PDS-Re-Derivation als Ernte-/Bau-Atom.)
-- HAWC: CA-Bundle-Route (`OMEGAFLOW_CA_BUNDLE`); Register/Bau, nicht Operator.
-- LIS/OTD: Route 200; Blocker ist das GHRC-Konto → E.
+- **BiSON-Team** — `state/mail/bison-team-anfrage.md` → `bison@contacts.bham.ac.uk`.
+  (Schritt: `/consent`, dann `smail … --send`.)
+- **adoption-Block** — `state/mail/adoption-mails.md` → Toth/Turyshev/Markwardt.
+  (Schritt: Adressen bestätigen + Sende-Wort.)
+- **DEMETER/CDPP** — Order über REGARDS. (Schritt: `/consent`, dann Order.)
 
-**E Konsumenten (Tor 1) — Bau-Reihenfolge, kein Operator:**
-- ERI/VLASS/CORS-Konsument, LASzip-Decoder, JVO skynode-TAP, Babamul,
-  GHRC-DAAC, WFAU VSA/WSA; Parser-Magic Gaps 1 (`Frame::Data`), 8 (`flush!()`),
-  12 (Category/Group). (Schritt: an die Bau-Linie — als Post gepostet.)
+## Warten auf Rückmeldung (extern)
 
-**A Register-offene Registrierungen:** keine.
+- Fünf Sonden-Anfragen (NSSDC Voyager/Mariner 10/Viking, Cassini, Juno) —
+  gesendet 2026-09-16, Antwort offen.
+- Rubin RSP (Shaughnessy), NSE/Haug (Keimer) — Antwort offen.
 
-## adoption — Drei-Mail-Block
-
-- Entwürfe `state/mail/adoption-mails.md`, Adressen gemessen. Operator-Entscheid
-  2026-09-16: noch nicht senden. (Schritt: Adressen bestätigen + senden — Operator.)
-
-## Ernte-Folge 42/43 — Register-/Ernte-Rest
-
-- MPC-Shard UnnObs, GHRC-DAAC, Survey §1 (26 Pendings); Register-Digest-Rest
-  (Fink/ALeRCE, TDAT/FITS, Akteure, Holdings, Orphan-Verdicts). (Schritt:
-  `sources.φ` + CDN / je Punkt messen.)
-
-## Operator-gebundene Punkte (Bau-Folge 46/47, Post 2026-09-16)
+## Operator-gebundene Punkte
 
 - **Mail-Fang** — `wrangler kv namespace create MAIL_QUEUE` → Id eintragen →
   `wrangler deploy` (Cloudflare-Konto). (Schritt: Operator-Wort.)
@@ -81,23 +60,6 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   (Schritt: Operator-Wort.)
 - **Register-Digest `--live`-Namensstimme** — `--open` oder bleibt. (Schritt:
   Operator-Wort.)
-
-## smail_recv — leerer Body bei verschachteltem MIME
-
-- Rekursiver MIME-Abstieg (`collect_text` in `tools/service/src/bin/smail_recv.rs`)
-  gebaut + Test (nested multipart/mixed → multipart/alternative); der direkte
-  Sotgiu-Reply kam mit leerem Body an. Root cause nicht bestätigt (das Roh wird
-  nicht aufbewahrt). (Schritt: bei erneutem leerem Body die Worker-`message.raw`-
-  Quelle messen — `cloudflare/email_worker.js`.)
-
-## Warten auf Rückmeldung (extern gebunden)
-
-- Rubin RSP (Shaughnessy, SLAC), NSE/Haug (Keimer) — Antworten offen.
-- Fünf Sonden-Anfragen (NSSDC CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov`,
-  JPL-NAV Asmar) — gesendet 2026-09-16 aus Proton, Antwort offen.
-- CSES-Limadou (Sotgiu) — beantwortet 2026-09-16: CSES-02-Umstellung, „wait a
-  few weeks" vor einem neuen Antrag (Wiedervorlage).
-  (Schritt: Postfach bei Fälligkeit, `state/mail/mail_ledger.φ`.)
 
 ## Termine (Wiedervorlage)
 
