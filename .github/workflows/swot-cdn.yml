@@ -45,7 +45,7 @@ jobs:
           if ! gh release view archive.podaac.earthdata.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create archive.podaac.earthdata.nasa.gov --repo omegaflow/sources \
               --title "archive.podaac.earthdata.nasa.gov" \
-              --notes "SWOT L2 LR SSH (SWOT_L2_LR_SSH_D) sea-surface height compiled to a geo oscillator record (medium em). Header 8 B: magic SWS1 (4), count (u32 LE). Record stride 32 B = 4 x f64 LE: time (s), latitude (deg), longitude (deg), ssh_karin_2/ssha (m)."
+              --notes "SWOT L2 LR SSH (SWOT_L2_LR_SSH_D) sea-surface height compiled to a geo oscillator record (medium em). Header 8 B: magic SWS1 (4), count (u32 LE). Record stride 40 B = 5 x f64 LE: time (s), latitude (deg), longitude (deg), ssh_karin_2/ssha (m), anchor_tdb (TDB seconds since J2000)."
           fi
       - name: Compile the SWOT L2 LR SSH granules and upload to CDN
         run: |
