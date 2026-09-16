@@ -195,6 +195,103 @@ pub fn tec_at(g: &TecGrid, lat: f64, lon: f64) -> Option<f64> {
     )
 }
 
+pub const MAGIC_GIM: [u8; 4] = *b"GIM1";
+
+const MAP_HEADER_BYTES: usize = 8 + 8 + 8 + 4 + 8 + 8 + 4;
+
+pub fn write_gim_bin(maps: &[TecGrid]) -> Vec<u8> {
+    let mut cells: usize = 0;
+    for g in maps {
+        cells = cells.saturating_add(g.cells.len());
+    }
+    let mut out = Vec::with_capacity(8 + maps.len() * MAP_HEADER_BYTES + cells * 8);
+    out.extend_from_slice(&MAGIC_GIM);
+    out.extend_from_slice(&(maps.len() as u32).to_le_bytes());
+    for g in maps {
+        out.extend_from_slice(&g.epoch_unix.to_le_bytes());
+        out.extend_from_slice(&g.lat_first.to_le_bytes());
+        out.extend_from_slice(&g.lat_step.to_le_bytes());
+        out.extend_from_slice(&(g.nlat as u32).to_le_bytes());
+        out.extend_from_slice(&g.lon_first.to_le_bytes());
+        out.extend_from_slice(&g.lon_step.to_le_bytes());
+        out.extend_from_slice(&(g.nlon as u32).to_le_bytes());
+        for c in &g.cells {
+            out.extend_from_slice(&c.to_le_bytes());
+        }
+    }
+    out
+}
+
+pub fn parse_gim_bin(data: &[u8]) -> Option<Vec<TecGrid>> {
+    if data.len() < 8 || data[0..4] != MAGIC_GIM {
+        return None;
+    }
+    let n = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    let f64_of = |off: usize| {
+        data.get(off..off + 8)
+            .and_then(|b| b.try_into().ok())
+            .map(f64::from_le_bytes)
+    };
+    let u32_of = |off: usize| {
+        data.get(off..off + 4)
+            .and_then(|b| b.try_into().ok())
+            .map(u32::from_le_bytes)
+    };
+    let mut off = 8usize;
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        let epoch_unix = f64_of(off)?;
+        off += 8;
+        let lat_first = f64_of(off)?;
+        off += 8;
+        let lat_step = f64_of(off)?;
+        off += 8;
+        let nlat = u32_of(off)? as usize;
+        off += 4;
+        let lon_first = f64_of(off)?;
+        off += 8;
+        let lon_step = f64_of(off)?;
+        off += 8;
+        let nlon = u32_of(off)? as usize;
+        off += 4;
+        if !epoch_unix.is_finite()
+            || !lat_first.is_finite()
+            || !lat_step.is_finite()
+            || !lon_first.is_finite()
+            || !lon_step.is_finite()
+        {
+            return None;
+        }
+        if nlat == 0 || nlon == 0 || nlat > 100_000 || nlon > 100_000 {
+            return None;
+        }
+        let cell_count = nlat.checked_mul(nlon)?;
+        let mut cells = Vec::with_capacity(cell_count);
+        for _ in 0..cell_count {
+            let c = f64_of(off)?;
+            off += 8;
+            if !c.is_finite() {
+                return None;
+            }
+            cells.push(c);
+        }
+        out.push(TecGrid {
+            epoch_unix,
+            lat_first,
+            lat_step,
+            nlat,
+            lon_first,
+            lon_step,
+            nlon,
+            cells,
+        });
+    }
+    if off != data.len() {
+        return None;
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -296,5 +393,35 @@ mod tests {
         body.push('\n');
         let grids = parse_gim(&body, -1.0);
         assert!(grids.is_empty(), "the truncated map stays uncarried");
+    }
+
+    #[test]
+    fn gim_bin_roundtrip_preserves_every_map() {
+        let grids = parse_gim(&synthetic_gim(2), -1.0);
+        assert_eq!(grids.len(), 2);
+        let bin = write_gim_bin(&grids);
+        let parsed = parse_gim_bin(&bin).unwrap();
+        assert_eq!(parsed.len(), 2);
+        for (a, b) in parsed.iter().zip(grids.iter()) {
+            assert_eq!(a.epoch_unix, b.epoch_unix);
+            assert_eq!(a.lat_first, b.lat_first);
+            assert_eq!(a.lat_step, b.lat_step);
+            assert_eq!(a.nlat, b.nlat);
+            assert_eq!(a.lon_first, b.lon_first);
+            assert_eq!(a.lon_step, b.lon_step);
+            assert_eq!(a.nlon, b.nlon);
+            assert_eq!(a.cells, b.cells);
+        }
+        let v = tec_at(&parsed[0], 0.0, 0.0).unwrap();
+        assert!((v - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn gim_bin_rejects_foreign_and_truncated_bytes() {
+        assert!(parse_gim_bin(b"X").is_none());
+        assert!(parse_gim_bin(b"GIM1abc").is_none());
+        let grids = parse_gim(&synthetic_gim(1), -1.0);
+        let bin = write_gim_bin(&grids);
+        assert!(parse_gim_bin(&bin[..bin.len() - 1]).is_none());
     }
 }
