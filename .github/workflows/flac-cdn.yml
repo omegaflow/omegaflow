@@ -1,0 +1,50 @@
+name: flac-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: NRS hydrophone FLAC source URL
+        required: false
+        default: https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/01/nrs_01_2014-2015/audio/NRS01_20141016_154112.flac
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  flac:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view storage.googleapis.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "nrs_audio_series.bin"; then
+            echo "asset nrs_audio_series.bin already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset nrs_audio_series.bin missing — compiling and manifesting"
+      - name: Ensure the storage.googleapis.com release exists on the CDN
+        run: |
+          if ! gh release view storage.googleapis.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create storage.googleapis.com --repo omegaflow/sources \
+              --title "storage.googleapis.com" \
+              --notes "NOAA NODD passive-bioacoustic NRS hydrophone FLAC packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile the NRS hydrophone FLAC series and upload to CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin flac_compiler -- \
+            --url "${{ inputs.url }}" \
+            --out nrs_audio_series.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flac-cdn: nrs_audio_series.bin returned void" \
+                 "FLAC compile returned void for the NRS hydrophone source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
