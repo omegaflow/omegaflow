@@ -204,7 +204,7 @@ fn stack_direction(
     lag: usize,
     shuffle: bool,
     rng_seed: u64,
-) -> (f64, usize, usize) {
+) -> (Option<f64>, usize, usize) {
     let mut rng = rng_seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
     let mut sum = 0.0;
     let mut pos = 0usize;
@@ -231,7 +231,11 @@ fn stack_direction(
             pos += 1;
         }
     }
-    (sum / tot.max(1) as f64, pos, tot)
+    if tot == 0 {
+        (None, pos, tot)
+    } else {
+        (Some(sum / tot as f64), pos, tot)
+    }
 }
 
 fn main() {
@@ -272,18 +276,17 @@ fn main() {
         if a_s.is_empty() || b_s.is_empty() || e_s.is_empty() {
             continue;
         }
-        let t0 = a_s
-            .first()
-            .map(|&(t, _)| t)
-            .unwrap_or(0.0)
-            .max(b_s.first().map(|&(t, _)| t).unwrap_or(0.0))
-            .max(e_s.first().map(|&(t, _)| t).unwrap_or(0.0));
-        let t1 = a_s
-            .last()
-            .map(|&(t, _)| t)
-            .unwrap_or(0.0)
-            .min(b_s.last().map(|&(t, _)| t).unwrap_or(0.0))
-            .min(e_s.last().map(|&(t, _)| t).unwrap_or(0.0));
+        let (Some(a_first), Some(b_first), Some(e_first)) =
+            (a_s.first(), b_s.first(), e_s.first())
+        else {
+            continue;
+        };
+        let (Some(a_last), Some(b_last), Some(e_last)) = (a_s.last(), b_s.last(), e_s.last())
+        else {
+            continue;
+        };
+        let t0 = a_first.0.max(b_first.0).max(e_first.0);
+        let t1 = a_last.0.min(b_last.0).min(e_last.0);
         let bins = ((t1 - t0) / DT).floor() as usize;
         let ab = bin_median(&a_s, t0, bins);
         let bb = bin_median(&b_s, t0, bins);
@@ -291,7 +294,7 @@ fn main() {
         events.extend(detect_events(&ab, &bb, &eb));
     }
     println!(
-        "{} days | {} flare events (b_flux > 1e-6 W/m², window ±20 min, 10-s cells)",
+        "{} days | {} flare events (b_flux > 5e-6 W/m², C5.0, window ±20 min, 10-s cells)",
         days.len(),
         events.len()
     );
@@ -302,28 +305,34 @@ fn main() {
     );
     for lag in 0..=LAG_MAX {
         let (d_real, pos, tot) = stack_direction(&events, lag, false, 0);
-        let mut null_max = f64::NEG_INFINITY;
+        let mut null_max: Option<f64> = None;
         for s in 1..=N_SURR {
             let (d_null, _, _) =
                 stack_direction(&events, lag, true, s as u64 * 0x9E37_79B9_7F4A_7C15);
-            if d_null > null_max {
-                null_max = d_null;
+            if let Some(dn) = d_null {
+                null_max = Some(null_max.map_or(dn, |m| m.max(dn)));
             }
         }
-        let sig = if d_real > null_max {
-            "  <-- over null"
-        } else {
-            ""
-        };
-        println!(
-            "{:>4} | {:>9.4e} | {:>7.1}% | {:>8} | {:>8.4e}{}",
-            lag,
-            d_real,
-            pos as f64 / tot.max(1) as f64 * 100.0,
-            tot,
-            null_max,
-            sig
-        );
+        match (d_real, null_max) {
+            (Some(d), Some(nm)) => {
+                let sig = if d > nm { "  <-- over null" } else { "" };
+                println!(
+                    "{:>4} | {:>9.4e} | {:>7.1}% | {:>8} | {:>8.4e}{}",
+                    lag,
+                    d,
+                    pos as f64 / tot as f64 * 100.0,
+                    tot,
+                    nm,
+                    sig
+                );
+            }
+            _ => {
+                println!(
+                    "{:>4} | {:>9} | {:>8} | {:>8} | {:>8}",
+                    lag, "absent", "absent", tot, "absent"
+                );
+            }
+        }
     }
     println!();
     println!(
