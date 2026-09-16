@@ -3,7 +3,7 @@
   session: Entscheid-Folge XIV
   class: handover
   date: 2026-09-16
-  sha256: c9d8e412dcd1a59b9c0685d6654997f81a571ee75dbc3a6a322e4c8669cad245
+  sha256: fa2aab226c05a3f5a5669fd2cd9cc5130a2b6668d3fba272789cf8087ec1ece3
   status: live
 -->
 # Handover — Entscheid-Folge XIV (2026-09-16)
@@ -29,15 +29,21 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
 
 ## GitHub-Purge der PII-Alt-Commits (härtester undatierter Punkt)
 
-- Gemessen 2026-09-16 (GitHub-REST-API; `general` und `research-max` unabhängig,
-  identisches Ergebnis): alle 15 Pre-Rewrite-Commits sind per SHA auflösbar
-  (HTTP 200). Die zwei Konto-Dateien `docs/reference/{antares,fink}-konto-2026-09-05.md`
-  liefert GitHub mit Inhalt (200) aus neun Refs — `317418d`, `0d76458f`, `88dda694`,
-  `ea696f62`, `035a9191`, `afa96459`, `d9d6e800`, `b0bebc1c`, `d2ab19b1`;
-  `docs/auftrag/auftrag-adoption-mails.md` aus `1ecb8e77`. Tag `v2026-09-09` zeigt
-  korrekt auf `bc113f6`. Der Purge-Antrag #4761801 (bestätigt
-  `support@githubsupport.com`; #4761482 überholt) hat den GC noch nicht bewirkt.
-  (Schritt: Postfach auf die GC-Bestätigung prüfen; bleibt sie aus, GitHub auf
+- Gemessen 2026-09-16 mit der Probe `pii_exposure`
+  (`cargo run -p omegaflow-register --bin pii_exposure`): alle 15 Pre-Rewrite-Commits
+  sind per SHA auflösbar; **alle zehn** PII-tragenden Dateien liefert GitHub mit Inhalt
+  aus Pre-Rewrite-Objekten — 45 (Datei, Ref)-Kombinationen. Spitzen: die zwei
+  Konto-Dateien `docs/reference/{antares,fink}-konto-2026-09-05.md` aus neun Refs
+  (`317418d, 0d76458f, 88dda694, ea696f62, 035a9191, afa96459, d9d6e800, b0bebc1c,
+  d2ab19b1`), `docs/handover/archiv/fink-konto-2026-09-05.md` aus sechs, die
+  `docs/auftrag/*`-Entwürfe aus je ein bis fünf Refs. Tag `v2026-09-09` → `bc113f6`.
+- Zwei getrennte GitHub-Prozesse: (a) Support-Ticket #4761801 (bestätigt
+  `support@githubsupport.com`; #4761482 überholt) für cached views / SHA-Abrufbarkeit —
+  hat den GC noch nicht bewirkt; (b) **Privacy contact form** — Entwurf steht in
+  `state/mail/privacy-contact-form-request.md` (lokal, gitignored), Scope = alle zehn
+  PII-tragenden Dateien (Gremium einmütig). (Schritt: Entwurf bei
+  https://github.com/contact/privacy absenden — Operator; dann erneut messen.)
+- (Schritt: Postfach auf GC-/Privacy-Bestätigung prüfen; bleibt sie aus, GitHub auf
   #4761801 nachfassen — Operator.)
 
 ## adoption — Drei-Mail-Block: Entwürfe sendfertig (lokal), Send beim Operator
@@ -67,6 +73,8 @@ Tasks, die nicht autonom hier erfolgen können, sind als Nachricht an ihre Linie
   (pro/max) $0.0729 — pro/max 5,3× teurer bei identischem Ergebnis (dieselbe
   15-SHA-Tabelle; max zusätzlich Blob-SHAs + authentifizierter Tag-Check).
   Sieger: flash — die Verifikation bleibt bei flash.
+- `pii_exposure`-Bau (`grind-flash`) $0.0054 — Routine, flash-first, kein pro/max-Lauf;
+  Gremium (Privacy-Scope) $0.0155.
 
 ## Nachricht an die Bau-Linie
 
