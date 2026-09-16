@@ -151,6 +151,12 @@ pub enum Extract {
         advection: f64,
         mag_type_key: String,
     },
+    QuakeMlEvents {
+        outputs: Vec<String>,
+        tau: f64,
+        absorption: f64,
+        advection: f64,
+    },
     Path(FieldConfig),
     Deep(FieldConfig),
     Regex(FieldConfig),

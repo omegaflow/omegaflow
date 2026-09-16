@@ -3,7 +3,7 @@
   session: Ernte-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: e3cc7dddc41e63c5718017be07f2158e54394b6a44b5bb1a26d501f5c78edb22
+  sha256: 65c52063167824a6f7b5b572f471ef2302d3e662a23a992f3081155910afb8ed
   status: live
 -->
 # Handover — Ernte-Folge 35 (2026-09-15)
@@ -114,9 +114,7 @@ stehen, `sources.φ`-Block + CDN gated nach Push + Consent.)
   IONEX-GIM jetzt `blocked_sources.φ` `blocked key-needed` (EDL client_id);
   direkter GIC — `fmi_gic.bin` registriert, Kanal `pending` in
   `concepts/der-kausalpfeil.md:95–97`. (Schritt: client_id — Operator.)
-- Akteure (Route-Research 2026-09-15): W-Phase M9 — USGS `producttype=moment-tensor`
-  200, `parse_quakeml` steht (`quakeml.rs`) ohne `format quakeml`-Arm in der
-  Membran → Arm verdrahten + Konsument. Erdmoden/Radon — keine Quelle
+- Akteure (Route-Research 2026-09-15): Erdmoden/Radon — keine Quelle
   benannt. Flotten-Scatter = Messprodukt (Inputs CMT `sources.φ:8275` +
   `fdsn_waveform`), Stationsterm +5,69 s = berechnet — Herkunft in
   `handover-2026-09-09-tiefenphasen-flotte.md` benennen.
@@ -150,6 +148,10 @@ stehen, `sources.φ`-Block + CDN gated nach Push + Consent.)
   Sieger: flash.
 - ERI1 magic identity · flash: Gestalt + Test, $0.0099 · pro: identisch, $0.0211 ·
   Sieger: flash (gleich, günstiger).
+- QuakeML/W-Phase M9 (`format quakeml`, M₀ in N·m) · flash: Arm + Tests + URL,
+  $0.1030 (bare URL 0× `scalarMoment`, `includeallmagnitudes=true` 58× — gemessen
+  bestätigt) · pro: verifizierte flash's Arm statt eigenständig zu bauen, $0.0693
+  (kein valider Arm) · Sieger: flash.
 
 ## Baum
 
