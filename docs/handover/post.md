@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-16
-  sha256: 59f16dbd86a32f1de28a29ac43629cab3186b7625619c345009da8051bfdf8bf
+  sha256: 8254473c47c085cdc6ae14957179a034fb7190f70c0fb5c8840f6a8b9000dc95
   status: live
   see-also: AGENTS.md
 -->
@@ -27,3 +27,5 @@ An ernte: Ernte-Register-Rest aus dem entscheid-Handover ausquartiert — MPC-Sh
 An bau: `smail_recv` — leerer Body bei verschachteltem MIME; der rekursive MIME-Abstieg (`collect_text` in `tools/service/src/bin/smail_recv.rs`) ist gebaut + getestet, der Root cause (leerer Sotgiu-Reply) unbestätigt. (Schritt: bei erneutem leerem Body die Worker-`message.raw`-Quelle messen — `cloudflare/email_worker.js`.)
 
 An ernte: BiSON p-Moden — die Daten sind offen ladbar (`bison.ph.bham.ac.uk/opendata`, `allsites-alldata-waverage-fill.fits.gz`, 200; Hale et al. 2015, DOI 10.1007/s11207-015-0810-0); die Mail-Anfrage an das BiSON-Team ist damit hinfällig, der Schritt ist ein `bison_compiler` (FITS.gz → Zeitreihen-bin) oder ein ASCII-Dump, GONG `gong2.nso.edu/` die Live-Alternative. (Quelle: `phi/pipeline/research/agent_output/grind_suchliste_a_urteil.φ`, `survey-2026-09-14-warteliste-offene-alternativen.md`.)
+
+An bau: aus dem entscheid-Handover ausquartiert (eigene Domäne, keine Operator-Aufgaben): **Mail-Fang** (`cloudflare/wrangler.toml:14` trägt noch `REPLACE_WITH_WRANGLER_KV_NAMESPACE_ID` → KV-Namespace anlegen, Id eintragen, `wrangler deploy`), **20-s-Bande-Papier** (`git tag` + Welt-Fassung-Branch zu `docs/paper/twenty-second-band-ground-chain.md`), **Register-Digest `--live`** (Rat-Verdikt: das Flag reibt an der Registerklasse `live` → `--open`). (Schritt: bau baut/deployt.)
