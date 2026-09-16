@@ -555,8 +555,7 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         for e in entries.iter().filter(|e| {
             e.family == "spk"
                 && (e.name.starts_with("juice_crema")
-                    || (e.name.starts_with("juice_cog")
-                        && e.name != "juice_cog_v00.bsp"))
+                    || (e.name.starts_with("juice_cog") && e.name != "juice_cog_v00.bsp"))
         }) {
             out.push(e.clone());
         }

@@ -683,3 +683,38 @@ fn main() {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fink_tai_fold_lands_on_the_documented_tdb_minus_tai_offset() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let mjd_tai = 60000.0;
+        let tdb = fink_mjd_tai_to_tdb(&lsk, mjd_tai).expect("post-1972 mjd folds to tdb");
+        let tai_j2000 = (mjd_tai - 40587.0) * 86400.0 - 946728000.0;
+        let offset = tdb - tai_j2000;
+        assert!(
+            (offset - 32.184).abs() < 1e-6,
+            "TDB − TAI must be the documented 32.184 s, was {offset}"
+        );
+    }
+
+    #[test]
+    fn fink_tai_fold_maps_a_midpoint_mjd_onto_the_j2000_domain() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let tdb = fink_mjd_tai_to_tdb(&lsk, 60000.0).expect("post-1972 mjd folds to tdb");
+        let expected = 730555232.184;
+        assert!(
+            (tdb - expected).abs() < 1e-6,
+            "MJD 60000.0 TAI maps to {expected} s on the J2000-relative TDB clock, was {tdb}"
+        );
+    }
+
+    #[test]
+    fn fink_tai_fold_refuses_an_epoch_before_the_leap_table() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        assert_eq!(fink_mjd_tai_to_tdb(&lsk, 40587.0), None);
+    }
+}
