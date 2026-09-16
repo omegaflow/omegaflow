@@ -2,7 +2,7 @@
   title: Zustand — geteilter externer Zustand
   class: zustand
   date: 2026-09-16
-  sha256: f1a5e92717d1afbfceec0bad757d0883b285c2a807fb69c6b91aabb06db19711
+  sha256: a5a9fcadb51288f7530cc423b19e59095a91691a09180045468520f8467b321e
   status: live
   see-also: AGENTS.md
 -->
@@ -19,4 +19,4 @@ Eintrag ist nicht null — er ist `pending` mit Fälligkeit, eine Registraturpfl
 |---|---|---|---|---|
 | Postfach (extern) | letzter Eingang 00:40 (Rubin-Freigabe); offen: GitHub-GC #4761801, Privacy-Antwort, Rubin-Review, NSE/Haug, CSES-Limadou | 2026-09-16 07:42 | neuer Ledger-Eingang oder 2⁶ min | `state/mail/mail_ledger.φ` (`smail_recv` + `cloudflared`) |
 | GitHub PII-Exposition | 45 (Datei, Ref)-Kombinationen aus zehn PII-tragenden Dateien, 15 Pre-Rewrite-Refs; GC offen | ce367dd0 | HEAD-Wechsel oder GitHub-GC-Antwort | `cargo run -p omegaflow-register --bin pii_exposure` |
-| CI-Status | rot @ b2e5ac7: format, clippy, test (3), esp32-firmware, te-gate #13, number_audit | b2e5ac7 | HEAD-Wechsel | `ci-check`-Lauf des gepushten SHA |
+| CI-Status | rot: test/build/clippy/format failure, gate in_progress, allwise-coverage success | c179220d | HEAD-Wechsel | Check-Runs des gepushten SHA (GH-API) |
