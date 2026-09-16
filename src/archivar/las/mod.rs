@@ -462,9 +462,9 @@ pub fn projection_crs(vlrs: &[LasVlr]) -> Option<LasCrs> {
 }
 
 fn epsg_from_geokeys(vlrs: &[LasVlr]) -> Option<u16> {
-    let vlr = vlrs.iter().find(|v| {
-        v.user_id == LASF_PROJECTION_USER_ID && v.record_id == GEO_KEY_DIRECTORY_ID
-    })?;
+    let vlr = vlrs
+        .iter()
+        .find(|v| v.user_id == LASF_PROJECTION_USER_ID && v.record_id == GEO_KEY_DIRECTORY_ID)?;
     geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY)
         .or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))
 }
