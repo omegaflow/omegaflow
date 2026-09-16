@@ -77,6 +77,45 @@
       "variant": "high",
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": { "edit": "deny", "task": "deny", "bash": "deny" }
+    },
+    "line": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-v4-flash",
+      "variant": "low",
+      "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; smail sendet weiter nur nach Operator-Wort.",
+      "permission": {
+        "edit": "allow",
+        "webfetch": "deny",
+        "websearch": "deny",
+        "bash": {
+          "*": "allow",
+          "grep *": "deny",
+          "cat *": "deny",
+          "ls *": "deny",
+          "rg *": "deny",
+          "cd *": "deny",
+          "python *": "deny",
+          "python3 *": "deny",
+          "*/grep *": "deny",
+          "*/ls *": "deny",
+          "*/cat *": "deny",
+          "*/rg *": "deny",
+          "*/python *": "deny",
+          "*/python3 *": "deny",
+          "git reset*": "deny",
+          "git checkout*": "deny",
+          "git clean*": "deny",
+          "git rebase*": "deny",
+          "git stash*": "deny",
+          "git restore*": "deny",
+          "git switch*": "deny",
+          "git push --force*": "deny",
+          "git push -f*": "deny",
+          "git worktree*": "deny",
+          "smail *": "ask",
+          "smail *--dry-run*": "allow"
+        }
+      }
     }
   },
   "permission": {
