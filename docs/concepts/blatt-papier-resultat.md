@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 438769592ef7832082ae5f7a28e581e21f13921eba68ae12ad06a8bdeb2a6fed
+  sha256: 85cc4cb6e84f4c24eddb77eb7c34bebd8b685afa2588a8560fd5cb885bbacee0
   status: live
   see-also: docs/paper/laic-arrow-direction.md
 -->
@@ -110,9 +110,10 @@ n, Schwelle        = n 1301 (Bz) / 1254 (speed), 1-min-Grid
 
 Gemessen 2026-09-15 (`bz_blatt_probe`, live, 22-h-Fenster, ABK 68,36° N):
 Bz trägt den Pfeil, Speed bleibt still; die Null-Kontrolle Density→dB/dt
-= 2.85e-1 liegt ebenfalls über ihrer Schwelle (Pfeil) — die Familien-Schwelle
-(fam = max Surrogat-TE der Runde, max-T) muss das Verdikt schließen und steht
-als CI-Lauf offen; die retro OMNI2-PCMCI-Zeile (FDR) ist CI-gebunden.
+= 2.85e-1 liegt ebenfalls über ihrer Schwelle (Pfeil) — descoped — never built, not needed: the paper v4's four channels are
+measured silent; its named open items are the future channels
+(docs/paper/laic-arrow-direction.md:140-142,183); no paper text carries an
+OMNI2-PCMCI retro line.
 
 ### Blatt 3 — Die Richtung der Lithosphäre-Atmosphäre-Ionosphäre-Kopplung
 
@@ -140,8 +141,10 @@ dagegen ist eine Messung).
 - **Surrogate:** jede Richtungsaussage gegen das phasenrandomisierte
   Null-Ensemble geprüft; die Mehrfachvergleichskorrektur läuft — Blatt 3 trägt
   FDR + common-cause (PCMCI), Blatt 2 die paarweise Surrogat-Schwelle
-  (mean+2σ); die Familien-Schwelle (fam/max-T) und die retro
-  OMNI2-PCMCI-Zeile stehen als CI-Lauf offen.
+  (mean+2σ). descoped — never built, not needed: the paper v4's four channels
+  are measured silent; its named open items are the future channels
+  (docs/paper/laic-arrow-direction.md:140-142,183); no paper text carries an
+  OMNI2-PCMCI retro line.
 - **Lag:** der Lag-Sweep ist Pflicht. Blatt 2 trug den Sweep 0–120 min
   (Lag 119 min Bz / 60 min speed), Blatt 3 1–2 h — der Sweep steht, „Lag 0
   als Default" ist geschlossen.
