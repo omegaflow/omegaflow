@@ -28,15 +28,15 @@ fn write_helper() -> Option<PathBuf> {
     Some(path)
 }
 
-pub fn run_lines(input: &str) -> Vec<String> {
+pub fn run_lines(input: &str, headed: bool) -> Vec<String> {
     if input.starts_with("http://") || input.starts_with("https://") {
-        render_lines(input)
+        render_lines(input, headed)
     } else {
         search_lines(input)
     }
 }
 
-fn render_lines(url: &str) -> Vec<String> {
+fn render_lines(url: &str, headed: bool) -> Vec<String> {
     let Some(node_modules) = playwright_node_modules() else {
         return vec![
             "pending — playwright carries no module (run `npx -y playwright --version` once)"
@@ -48,6 +48,9 @@ fn render_lines(url: &str) -> Vec<String> {
     };
     let mut cmd = Command::new("node");
     cmd.arg(&helper).arg(url).env("NODE_PATH", &node_modules);
+    if headed {
+        cmd.env("OMEGAFLOW_HEADED", "1");
+    }
     if let Some(proxy) = crate::net::socks_proxy() {
         cmd.env("OMEGAFLOW_PROXY", proxy);
     }
@@ -88,6 +91,12 @@ fn page_lines(v: &Json, input: &str) -> Vec<String> {
     ));
     if let Some(s) = status_code(v) {
         lines.push(format!("status {}", s));
+    }
+    if matches!(v.get("challenge"), Some(Json::Bool(true))) {
+        lines.push(
+            "bridge: the Cloudflare interstitial did not clear — use the browser bridge (the operator's profile) or `bin/proton-wg.sh suggest <host>` for a country exit (operator consent)"
+                .to_string(),
+        );
     }
     if let Some(d) = v.get("description").and_then(|d| d.as_str()) {
         if !d.is_empty() {
