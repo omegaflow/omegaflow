@@ -26,7 +26,7 @@ pub fn rmssd(nn_ms: &[f64]) -> Option<f64> {
     let mut sq_sum = 0.0;
     let mut n = 0usize;
     for &v in nn_ms {
-        if !(v.is_finite() && v >= NN_MIN_MS && v <= NN_MAX_MS) {
+        if !(v.is_finite() && (NN_MIN_MS..=NN_MAX_MS).contains(&v)) {
             prev = None;
             continue;
         }
@@ -119,7 +119,7 @@ mod tests {
         assert_eq!(rmssd(&[]), None);
         assert_eq!(rmssd(&[900.0]), None);
         assert_eq!(rmssd(&[900.0, 910.0]), None);
-        assert_eq!(rmssd(&[900.0, 910.0, 920.0]).is_some(), true);
+        assert!(rmssd(&[900.0, 910.0, 920.0]).is_some());
     }
 
     #[test]

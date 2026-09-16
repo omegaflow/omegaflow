@@ -3,8 +3,8 @@ use std::process::exit;
 
 use omegaflow::force::force_name_of;
 use omegaflow::te::{
-    TeNull, benjamini_hochberg, conditional_te_stats_lagged_n, hilbert_instantaneous_phase,
-    transfer_entropy_conditional_binned_n,
+    TeNull, TeStatsParams, benjamini_hochberg, conditional_te_stats_lagged_n,
+    hilbert_instantaneous_phase, transfer_entropy_conditional_binned_n,
 };
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -65,12 +65,14 @@ fn conditional_link(
         target,
         driver,
         conds,
-        lag,
-        max_lag,
-        bins,
-        seed,
-        n_surr,
-        TeNull::Block,
+        TeStatsParams {
+            lag,
+            max_lag,
+            bins,
+            seed,
+            n_surr,
+            null: TeNull::Block,
+        },
     )?;
     let p_value = if sd > 0.0 {
         1.0 - normal_cdf((te - mean) / sd)

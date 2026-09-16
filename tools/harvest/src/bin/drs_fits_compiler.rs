@@ -102,7 +102,9 @@ fn main() {
         }
     }
     if records.is_empty() {
-        eprintln!("drs_fits_compiler: no finite differential acceleration — the bin stays unwritten (0 honored)");
+        eprintln!(
+            "drs_fits_compiler: no finite differential acceleration — the bin stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     }
     let bin = write_bin(&records);

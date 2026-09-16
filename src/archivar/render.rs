@@ -1,5 +1,16 @@
 use super::*;
 
+#[derive(Clone, Copy)]
+pub struct RenderCtx<'a> {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub tdb: f64,
+    pub r: f64,
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+    pub lsk: &'a LeapSeconds,
+}
+
 pub fn ci_probe_render(
     template: &str,
     anchor: (f64, f64),
@@ -56,21 +67,17 @@ pub fn render_headers(
         .collect()
 }
 
-pub fn render_url(
-    template: &str,
-    x: f64,
-    y: f64,
-    z: f64,
-    tdb_secs: f64,
-    extent: f64,
-    body_name: &str,
-    eph: &HashMap<String, BodyEphemeris>,
-    lsk: &LeapSeconds,
-) -> Option<String> {
-    let unix = match lsk.tdb_to_unix(tdb_secs) {
-        Some(u) => u,
-        None => return None,
-    };
+pub fn render_url(template: &str, body_name: &str, ctx: RenderCtx<'_>) -> Option<String> {
+    let RenderCtx {
+        x,
+        y,
+        z,
+        tdb,
+        r,
+        eph,
+        lsk,
+    } = ctx;
+    let unix = lsk.tdb_to_unix(tdb)?;
     let secs = unix as u64;
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days);
@@ -136,8 +143,8 @@ pub fn render_url(
     let q_minute = (secs % 3600) / 60;
     let unix_now = secs.to_string();
     let unix_now_plus_3600 = (secs + 3600).to_string();
-    let jd_now = format!("{:.6}", tdb_to_jd(tdb_secs));
-    let jd_start = format!("{:.6}", tdb_to_jd(tdb_secs - 86400.0));
+    let jd_now = format!("{:.6}", tdb_to_jd(tdb));
+    let jd_start = format!("{:.6}", tdb_to_jd(tdb - 86400.0));
 
     let mut url = template
         .replace("{x}", &format!("{}", x))
@@ -177,7 +184,7 @@ pub fn render_url(
         .replace("{unix_now}", &unix_now)
         .replace("{unix_now_plus_3600}", &unix_now_plus_3600);
 
-    if let Some((lat, lon)) = icrs_to_body_surface(x, y, z, tdb_secs, body_name, eph) {
+    if let Some((lat, lon)) = icrs_to_body_surface(x, y, z, tdb, body_name, eph) {
         let radius_m = match eph.get(body_name).and_then(|e| e.props.as_ref()) {
             Some(p) => p.radius_m,
             None => 0.0,
@@ -193,7 +200,7 @@ pub fn render_url(
             let m_per_deg =
                 std::f64::consts::PI * radius_m / 180.0 * lat.to_radians().cos().max(0.0);
             if m_per_deg > 0.0 {
-                let half_deg = extent / m_per_deg;
+                let half_deg = r / m_per_deg;
                 let res = 6usize;
                 url = url
                     .replace("{lat_min}", &format!("{:.*}", res, lat - half_deg))
@@ -230,29 +237,13 @@ pub fn render_url(
 
 pub fn render_source_url(
     src: &SourceConfig,
-    x: f64,
-    y: f64,
-    z: f64,
-    tdb: f64,
-    r: f64,
-    eph: &HashMap<String, BodyEphemeris>,
+    ctx: RenderCtx<'_>,
     env: &HashMap<String, String>,
-    lsk: &LeapSeconds,
 ) -> Option<String> {
-    let mut url = match render_url(
-        &src.url,
-        x,
-        y,
-        z,
-        tdb,
-        r,
-        &frame_body_name(&src.frame),
-        eph,
-        lsk,
-    ) {
-        Some(u) => u,
-        None => return None,
-    };
+    let RenderCtx {
+        x, y, z, tdb, eph, ..
+    } = ctx;
+    let mut url = render_url(&src.url, &frame_body_name(&src.frame), ctx)?;
     if let Some(ref t) = src.target {
         url = url.replace("{target}", t);
     }
@@ -274,88 +265,66 @@ pub fn render_source_url(
             .replace("{repeat_bin}", &bin_str)
             .replace("{bin}", &bin_str);
     }
-    if url.contains("{nearest_station}") {
-        if let Some(ref st_url) = src.stations_url {
-            let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400, Some(tdb)) {
-                if let Some(j) = parse_json(&body) {
-                    let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
-                        if let JsonVal::Arr(a) = v {
-                            Some(a)
-                        } else {
-                            None
-                        }
-                    });
-                    if let Some(arr) = arr {
-                        let entries: Vec<StationEntry> = arr
-                            .iter()
-                            .filter_map(|s| {
-                                let id = match jpath_val(s, &src.stations_id)? {
-                                    JsonVal::Str(st) => st.clone(),
-                                    JsonVal::Num(n) => n.to_string(),
-                                    _ => return None,
-                                };
-                                let lat = scalar_of(jpath_val(s, &src.stations_lat)?)?;
-                                let lon = scalar_of(jpath_val(s, &src.stations_lon)?)?;
-                                Some(StationEntry { id, lat, lon })
-                            })
-                            .collect();
-                        Arc::new(entries)
+    if url.contains("{nearest_station}")
+        && let Some(ref st_url) = src.stations_url
+    {
+        let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400, Some(tdb)) {
+            if let Some(j) = parse_json(&body) {
+                let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
+                    if let JsonVal::Arr(a) = v {
+                        Some(a)
                     } else {
-                        Arc::new(Vec::new())
+                        None
                     }
+                });
+                if let Some(arr) = arr {
+                    let entries: Vec<StationEntry> = arr
+                        .iter()
+                        .filter_map(|s| {
+                            let id = match jpath_val(s, &src.stations_id)? {
+                                JsonVal::Str(st) => st.clone(),
+                                JsonVal::Num(n) => n.to_string(),
+                                _ => return None,
+                            };
+                            let lat = scalar_of(jpath_val(s, &src.stations_lat)?)?;
+                            let lon = scalar_of(jpath_val(s, &src.stations_lon)?)?;
+                            Some(StationEntry { id, lat, lon })
+                        })
+                        .collect();
+                    Arc::new(entries)
                 } else {
                     Arc::new(Vec::new())
                 }
             } else {
                 Arc::new(Vec::new())
-            };
-            if !stations.is_empty() {
-                let (lat, lon) =
-                    match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
-                        Some(ll) => ll,
-                        None => return Some(url),
-                    };
-                let mut best = 0usize;
-                let mut best_d = f64::MAX;
-                for (i, st) in stations.iter().enumerate() {
-                    let d2 = (st.lat - lat).powi(2) + (st.lon - lon).powi(2);
-                    if d2 < best_d {
-                        best_d = d2;
-                        best = i;
-                    }
-                }
-                url = url.replace("{nearest_station}", &stations[best].id);
             }
+        } else {
+            Arc::new(Vec::new())
+        };
+        if !stations.is_empty() {
+            let (lat, lon) =
+                match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
+                    Some(ll) => ll,
+                    None => return Some(url),
+                };
+            let mut best = 0usize;
+            let mut best_d = f64::MAX;
+            for (i, st) in stations.iter().enumerate() {
+                let d2 = (st.lat - lat).powi(2) + (st.lon - lon).powi(2);
+                if d2 < best_d {
+                    best_d = d2;
+                    best = i;
+                }
+            }
+            url = url.replace("{nearest_station}", &stations[best].id);
         }
     }
     Some(resolve_secret(&url, env))
 }
 
-pub fn render_source_body(
-    src: &SourceConfig,
-    x: f64,
-    y: f64,
-    z: f64,
-    tdb: f64,
-    r: f64,
-    eph: &HashMap<String, BodyEphemeris>,
-    lsk: &LeapSeconds,
-) -> Option<String> {
+pub fn render_source_body(src: &SourceConfig, ctx: RenderCtx<'_>) -> Option<String> {
     let tmpl = src.post_body.as_ref()?;
-    let mut body = match render_url(
-        tmpl,
-        x,
-        y,
-        z,
-        tdb,
-        r,
-        &frame_body_name(&src.frame),
-        eph,
-        lsk,
-    ) {
-        Some(b) => b,
-        None => return None,
-    };
+    let mut body = render_url(tmpl, &frame_body_name(&src.frame), ctx)?;
     if let Some(ref t) = src.target {
         body = body.replace("{target}", t);
     }
@@ -383,14 +352,16 @@ mod prev_mon_tests {
         };
         let url = render_url(
             "https://example.com/{month}/{prev_Mon}",
-            0.0,
-            0.0,
-            0.0,
-            8.0e8,
-            1000.0,
             "earth",
-            &std::collections::HashMap::new(),
-            &lsk,
+            RenderCtx {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                tdb: 8.0e8,
+                r: 1000.0,
+                eph: &std::collections::HashMap::new(),
+                lsk: &lsk,
+            },
         )
         .unwrap();
         let parts: Vec<&str> = url

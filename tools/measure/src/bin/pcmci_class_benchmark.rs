@@ -1,4 +1,6 @@
-use omegaflow::te::{gate_fpr_cells, pcmci_links, GateCell, TeEstimator, TeNull};
+use omegaflow::te::{
+    GateCell, GateParams, PcmciParams, TeEstimator, TeNull, gate_fpr_cells, pcmci_links,
+};
 use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
 
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -173,17 +175,19 @@ fn measure(
     let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
     let links = pcmci_links(
         &refs,
-        max_lag,
-        NULL_LAG.load(Ordering::Relaxed),
-        bins,
-        seed,
-        N_SURR.load(Ordering::Relaxed),
-        null_model(),
-        BLOCK.load(Ordering::Relaxed),
-        estimator(),
-        KNN,
-        P_MAX,
-        ALPHA,
+        PcmciParams {
+            max_lag,
+            null_lag: NULL_LAG.load(Ordering::Relaxed),
+            bins,
+            seed,
+            n_surr: N_SURR.load(Ordering::Relaxed),
+            null: null_model(),
+            block: BLOCK.load(Ordering::Relaxed),
+            est: estimator(),
+            k: KNN,
+            p_max: P_MAX,
+            alpha: ALPHA,
+        },
     )?;
     let n_chan = series.len();
     let found: Vec<bool> = true_links
@@ -450,13 +454,15 @@ fn cell_fpr(cells: &[GateCell], a: f32, d_z: usize) -> Option<f64> {
 fn gate_battery() {
     let cells = gate_fpr_cells(
         GATE_N.load(Ordering::Relaxed),
-        null_model(),
-        estimator(),
-        MAX_LAG.load(Ordering::Relaxed),
-        NULL_LAG.load(Ordering::Relaxed),
-        BINS.load(Ordering::Relaxed),
-        BLOCK.load(Ordering::Relaxed),
-        N_SURR.load(Ordering::Relaxed),
+        GateParams {
+            null: null_model(),
+            est: estimator(),
+            max_lag: MAX_LAG.load(Ordering::Relaxed),
+            null_lag: NULL_LAG.load(Ordering::Relaxed),
+            bins: BINS.load(Ordering::Relaxed),
+            block: BLOCK.load(Ordering::Relaxed),
+            n_surr: N_SURR.load(Ordering::Relaxed),
+        },
     );
     println!(
         "[gate] Zug-5 battery — common-driver FPR per a × D_Z (criterion ≤8% per cell, rise ≤2pp):"

@@ -10,7 +10,7 @@ pub struct OrbitRec {
     pub hint: std::sync::Arc<std::sync::atomic::AtomicUsize>,
 }
 
-pub fn write_bin(records: &[(f64, [f64; 3], [f64; 3])]) -> Vec<u8> {
+pub fn write_bin(records: &[OrbitSample]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * RECORD_BYTES);
     buf.extend_from_slice(&MAGIC);
     buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
@@ -32,7 +32,9 @@ fn f64_at(bytes: &[u8], off: usize) -> Option<f64> {
     ))
 }
 
-pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, [f64; 3], [f64; 3])>> {
+pub type OrbitSample = (f64, [f64; 3], [f64; 3]);
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<OrbitSample>> {
     if bytes.len() < 8 || bytes[0..4] != MAGIC {
         return None;
     }
@@ -56,7 +58,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, [f64; 3], [f64; 3])>> {
     Some(out)
 }
 
-pub fn orbit_rec(records: &[(f64, [f64; 3], [f64; 3])]) -> OrbitRec {
+pub fn orbit_rec(records: &[OrbitSample]) -> OrbitRec {
     let mut times = Vec::with_capacity(records.len());
     let mut pos = Vec::with_capacity(records.len());
     let mut vel = Vec::with_capacity(records.len());

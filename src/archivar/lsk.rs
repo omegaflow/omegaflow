@@ -63,7 +63,7 @@ fn scan_plain_value(text: &str, key: &str) -> Option<f64> {
     let eq = rest.find('=')?;
     let after_eq = &rest[eq + 1..];
     let line = after_eq.lines().next()?;
-    line.trim().split_whitespace().next()?.parse().ok()
+    line.split_whitespace().next()?.parse().ok()
 }
 
 fn scan_paren_mixed(text: &str, key: &str) -> Option<(Vec<f64>, bool)> {
@@ -79,7 +79,7 @@ fn scan_paren_mixed(text: &str, key: &str) -> Option<(Vec<f64>, bool)> {
     for tok in body[..close].split_whitespace() {
         let clean = tok.trim_end_matches(',');
         if let Some(date) = clean.strip_prefix('@') {
-            values.push(date_unix(date)? as f64);
+            values.push(date_unix(date)?);
             continue;
         }
         match clean.parse::<f64>() {

@@ -162,10 +162,10 @@ pub fn parse_atr(bytes: &[u8], sample_rate: u32) -> Option<Vec<(f64, f64)>> {
     )
 }
 
-pub fn median(vals: &mut Vec<f64>) -> f64 {
+pub fn median(vals: &mut [f64]) -> f64 {
     vals.sort_by(|a, b| a.total_cmp(b));
     let n = vals.len();
-    if n % 2 == 0 {
+    if n.is_multiple_of(2) {
         (vals[n / 2 - 1] + vals[n / 2]) * 0.5
     } else {
         vals[n / 2]

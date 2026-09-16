@@ -195,13 +195,9 @@ fn rinex_num(s: &str) -> Option<f64> {
     if t.is_empty() {
         return None;
     }
-    let e = t.replace('D', "E").replace('d', "E");
+    let e = t.replace(['D', 'd'], "E");
     let v = e.parse::<f64>().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn slice(s: &str, a: usize, b: usize) -> Option<&str> {
@@ -322,11 +318,7 @@ pub struct RinexNavGps {
 }
 
 fn two_digit_year(y: i64) -> i64 {
-    if y < 80 {
-        y + 2000
-    } else {
-        y + 1900
-    }
+    if y < 80 { y + 2000 } else { y + 1900 }
 }
 
 fn nav_epoch_unix(l0: &str) -> Option<f64> {
@@ -565,7 +557,7 @@ pub fn parse_rinex_obs(body: &str, n_obs: usize) -> Vec<RinexObsEpoch> {
             cur = lines[i];
         }
         i += 1;
-        let lines_per_sat = (n_obs + 4) / 5;
+        let lines_per_sat = n_obs.div_ceil(5);
         let mut epoch = RinexObsEpoch {
             epoch_unix,
             epoch_flag: flag,
@@ -633,10 +625,10 @@ impl CrxTextDiff {
             self.buffer.extend_from_slice(&bytes[from..]);
         }
         for (i, &byte) in bytes.iter().enumerate() {
-            if let Some(b) = self.buffer.get_mut(i) {
-                if byte != b' ' {
-                    *b = if byte == b'&' { b' ' } else { byte };
-                }
+            if let Some(b) = self.buffer.get_mut(i)
+                && byte != b' '
+            {
+                *b = if byte == b'&' { b' ' } else { byte };
             }
         }
         String::from_utf8_lossy(&self.buffer).into_owned()
@@ -765,19 +757,19 @@ impl CrxDecoder {
             if line.get(1..).is_some_and(|s| s.starts_with('&')) {
                 let order = line.get(..1).and_then(|s| s.parse::<usize>().ok());
                 let val = line.get(2..).and_then(|s| s.parse::<i64>().ok());
-                if let (Some(order), Some(val)) = (order, val) {
-                    if order <= 6 {
-                        self.clock_diff.force_init(val, order);
-                        self.clock = Some(val);
-                    }
+                if let (Some(order), Some(val)) = (order, val)
+                    && order <= 6
+                {
+                    self.clock_diff.force_init(val, order);
+                    self.clock = Some(val);
                 }
             } else if let Ok(val) = line.trim().parse::<i64>() {
                 self.clock = Some(self.clock_diff.decompress(val));
             }
-        } else if len == 1 {
-            if let Ok(val) = line.trim().parse::<i64>() {
-                self.clock = Some(self.clock_diff.decompress(val));
-            }
+        } else if len == 1
+            && let Ok(val) = line.trim().parse::<i64>()
+        {
+            self.clock = Some(self.clock_diff.decompress(val));
         }
     }
 
@@ -868,20 +860,20 @@ impl CrxDecoder {
             if amp == 1 {
                 let level = slice.get(..amp).and_then(|s| s.parse::<usize>().ok());
                 let value = slice.get(amp + 1..).and_then(|s| s.parse::<i64>().ok());
-                if let (Some(level), Some(value)) = (level, value) {
-                    if level <= 6 {
-                        self.obs_diff
-                            .insert((sat, ptr), CrxNumDiff::new(value, level));
-                        return Some(value as f64 / 1000.0);
-                    }
+                if let (Some(level), Some(value)) = (level, value)
+                    && level <= 6
+                {
+                    self.obs_diff
+                        .insert((sat, ptr), CrxNumDiff::new(value, level));
+                    return Some(value as f64 / 1000.0);
                 }
             }
             return None;
         }
-        if let Ok(value) = slice.parse::<i64>() {
-            if let Some(kernel) = self.obs_diff.get_mut(&(sat, ptr)) {
-                return Some(kernel.decompress(value) as f64 / 1000.0);
-            }
+        if let Ok(value) = slice.parse::<i64>()
+            && let Some(kernel) = self.obs_diff.get_mut(&(sat, ptr))
+        {
+            return Some(kernel.decompress(value) as f64 / 1000.0);
         }
         None
     }
@@ -896,7 +888,7 @@ impl CrxDecoder {
                 out.push('\n');
             }
         }
-        if values.len() % 5 != 0 {
+        if !values.len().is_multiple_of(5) {
             out.push('\n');
         }
     }
@@ -1319,7 +1311,7 @@ mod tests {
         assert!((n.i0 - 9.568097449780e-1).abs() < 1e-12);
     }
 
-    fn crx_epoch(
+    struct CrxEpoch<'a> {
         y: i64,
         mo: i64,
         d: i64,
@@ -1328,9 +1320,14 @@ mod tests {
         se: f64,
         flag: i64,
         n: i64,
-        sats: &str,
-    ) -> String {
-        format!("{y:>2}{mo:>3}{d:>3}{h:>3}{mi:>3}{se:>11.7}{flag:>3}{n:>3}{sats}")
+        sats: &'a str,
+    }
+
+    fn crx_epoch(p: CrxEpoch<'_>) -> String {
+        format!(
+            "{:>2}{:>3}{:>3}{:>3}{:>3}{:>11.7}{:>3}{:>3}{}",
+            p.y, p.mo, p.d, p.h, p.mi, p.se, p.flag, p.n, p.sats
+        )
     }
 
     fn crx_header() -> String {
@@ -1400,12 +1397,32 @@ mod tests {
     fn hatanaka_crx_v1_roundtrips_epochs_and_satellites() {
         let mut s = crx_header();
         s.push('&');
-        s.push_str(&crx_epoch(24, 1, 1, 0, 0, 0.0, 0, 1, "G01"));
+        s.push_str(&crx_epoch(CrxEpoch {
+            y: 24,
+            mo: 1,
+            d: 1,
+            h: 0,
+            mi: 0,
+            se: 0.0,
+            flag: 0,
+            n: 1,
+            sats: "G01",
+        }));
         s.push('\n');
         s.push('\n');
         s.push_str("1&1000000 1&2000000\n");
         s.push('&');
-        s.push_str(&crx_epoch(24, 1, 1, 0, 0, 30.0, 0, 1, "G01"));
+        s.push_str(&crx_epoch(CrxEpoch {
+            y: 24,
+            mo: 1,
+            d: 1,
+            h: 0,
+            mi: 0,
+            se: 30.0,
+            flag: 0,
+            n: 1,
+            sats: "G01",
+        }));
         s.push('\n');
         s.push('\n');
         s.push_str("1000 2000\n");
@@ -1428,11 +1445,31 @@ mod tests {
     fn hatanaka_event_epoch_passes_records_through() {
         let mut s = crx_header();
         s.push('&');
-        s.push_str(&crx_epoch(24, 1, 1, 1, 0, 0.0, 4, 1, ""));
+        s.push_str(&crx_epoch(CrxEpoch {
+            y: 24,
+            mo: 1,
+            d: 1,
+            h: 1,
+            mi: 0,
+            se: 0.0,
+            flag: 4,
+            n: 1,
+            sats: "",
+        }));
         s.push('\n');
         s.push_str("101 (COGO code)                                             COMMENT\n");
         s.push('&');
-        s.push_str(&crx_epoch(24, 1, 1, 1, 0, 0.0, 0, 1, "G01"));
+        s.push_str(&crx_epoch(CrxEpoch {
+            y: 24,
+            mo: 1,
+            d: 1,
+            h: 1,
+            mi: 0,
+            se: 0.0,
+            flag: 0,
+            n: 1,
+            sats: "G01",
+        }));
         s.push('\n');
         s.push('\n');
         s.push_str("1&1000000 1&2000000\n");

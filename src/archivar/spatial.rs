@@ -244,7 +244,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
 pub const STAR_RECORD_BYTES: usize = 44;
 
 pub fn star_stride(bytes: &[u8]) -> Option<usize> {
-    if bytes.len() > 0 && bytes.len() % STAR_RECORD_BYTES == 0 {
+    if !bytes.is_empty() && bytes.len().is_multiple_of(STAR_RECORD_BYTES) {
         Some(STAR_RECORD_BYTES)
     } else {
         None
@@ -264,7 +264,13 @@ pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
     let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
     let color = f32::from_le_bytes(b[36..40].try_into().ok()?) as f64;
     let rv = f32::from_le_bytes(b[40..44].try_into().ok()?) as f64;
-    if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !mag.is_finite() || !rv.is_finite() {
+    if !ra.is_finite()
+        || !dec.is_finite()
+        || plx <= 0.0
+        || plx.is_nan()
+        || !mag.is_finite()
+        || !rv.is_finite()
+    {
         return None;
     }
     Some(StarRec {
@@ -355,18 +361,29 @@ pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
     samples
 }
 
-pub fn query_hash(
-    hash: &SpatialHash,
-    center: [f64; 3],
-    t2: f64,
-    pad: f64,
-    delta_t_cache: f64,
-    floor: &[f64; 9],
-    softening: f64,
-    forward: [f64; 3],
-    records: &mut Vec<SampleRecord>,
-    eph: &HashMap<String, BodyEphemeris>,
-) {
+#[derive(Clone, Copy)]
+pub struct MembraneCtx<'a> {
+    pub center: [f64; 3],
+    pub t2: f64,
+    pub pad: f64,
+    pub delta_t_cache: f64,
+    pub floor: &'a [f64; 9],
+    pub softening: f64,
+    pub forward: [f64; 3],
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+}
+
+pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<SampleRecord>) {
+    let MembraneCtx {
+        center,
+        t2,
+        pad,
+        delta_t_cache,
+        floor,
+        softening,
+        forward,
+        eph,
+    } = ctx;
     for sample in &hash.unbounded {
         let age = (t2 - sample.epoch).abs();
         if age > sample.ttl * 64.0 {
@@ -406,7 +423,7 @@ pub fn query_hash(
         let d = d2.sqrt();
         let sd = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
         let transverse2 = (d2 - sd * sd).max(0.0);
-        if !(sample.ttl > 0.0) {
+        if sample.ttl <= 0.0 || sample.ttl.is_nan() {
             continue;
         }
         let retarded = if v_prop > 0.0 && d > 0.0 {
