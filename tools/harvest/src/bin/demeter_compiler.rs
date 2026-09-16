@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 pub const CDN_TAG: &str = "regards.cnes.fr";
 
 fn unix_to_ym(u: i64) -> (i32, u32) {
-    let days = u.div_euclid(86400);
+    let days = u.div_euclid(86400) + 719468;
     let era = days.div_euclid(146097);
     let doe = days.rem_euclid(146097);
     let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
@@ -37,9 +37,11 @@ fn diagnose(path: &str) -> Option<(PathBuf, Vec<demeter::DemeterBlock>)> {
         .map(|b| b.ne as f64)
         .fold(f64::NEG_INFINITY, f64::max);
     let te_mean = blocks.iter().map(|b| b.te as f64).sum::<f64>() / blocks.len() as f64;
-    let first_sec = blocks.first().map(|b| b.unix_seconds()).unwrap_or(0);
-    let last_sec = blocks.last().map(|b| b.unix_seconds()).unwrap_or(0);
-    let orbit = blocks.first().map(|b| b.orbit as u64).unwrap_or(0);
+    let first = blocks.first()?;
+    let last = blocks.last()?;
+    let first_sec = first.unix_seconds();
+    let last_sec = last.unix_seconds();
+    let orbit = first.orbit as u64;
     let roundtrip = recs.len() == blocks.len();
     let fdate = |s: i64| {
         let secs = s.rem_euclid(86400);
@@ -48,21 +50,22 @@ fn diagnose(path: &str) -> Option<(PathBuf, Vec<demeter::DemeterBlock>)> {
         let sec = secs % 60;
         format!("{h:02}:{m:02}:{sec:02}")
     };
+    let name = match Path::new(path).file_name() {
+        Some(s) => s.to_string_lossy().into_owned(),
+        None => path.to_string(),
+    };
     println!(
         "{}: {} records, {}..{} ({:?}), orbit {}, ne {:.0}..{:.0} cm-3, te {:.0} K, roundtrip {}",
         out.display(),
         recs.len(),
         fdate(first_sec),
         fdate(last_sec),
-        Path::new(path)
-            .file_name()
-            .map(|s| s.to_string_lossy().into_owned())
-            .unwrap_or_default(),
+        name,
         orbit,
         ne_min,
         ne_max,
         te_mean,
-        if roundtrip { "ok" } else { "FAIL" },
+        if roundtrip { "ok" } else { "mismatch" },
     );
     Some((out, blocks))
 }
