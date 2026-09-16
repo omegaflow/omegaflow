@@ -440,6 +440,68 @@ pub fn copc_hierarchy(bytes: &[u8], info: &CopcInfo) -> Option<Vec<CopcEntry>> {
     Some(out)
 }
 
+pub const LASF_PROJECTION_USER_ID: &str = "LASF_Projection";
+pub const GEO_KEY_DIRECTORY_ID: u16 = 34735;
+pub const WKT_CRS_ID: u16 = 2112;
+
+const GEODETIC_CRS_KEY: u16 = 2048;
+const PROJECTED_CS_TYPE_KEY: u16 = 3072;
+const USER_DEFINED: u16 = 32767;
+
+#[derive(Clone, Debug)]
+pub enum LasCrs {
+    Epsg(u16),
+    Wkt(String),
+}
+
+pub fn projection_crs(vlrs: &[LasVlr]) -> Option<LasCrs> {
+    if let Some(code) = epsg_from_geokeys(vlrs) {
+        return Some(LasCrs::Epsg(code));
+    }
+    wkt_crs(vlrs).map(LasCrs::Wkt)
+}
+
+fn epsg_from_geokeys(vlrs: &[LasVlr]) -> Option<u16> {
+    let vlr = vlrs.iter().find(|v| {
+        v.user_id == LASF_PROJECTION_USER_ID && v.record_id == GEO_KEY_DIRECTORY_ID
+    })?;
+    geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY)
+        .or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))
+}
+
+fn geokey_epsg(payload: &[u8], key_id: u16) -> Option<u16> {
+    if payload.len() < 8 {
+        return None;
+    }
+    let num_keys = le_u16(&payload[6..8]) as usize;
+    for i in 0..num_keys {
+        let off = 8 + i * 8;
+        if off + 8 > payload.len() {
+            break;
+        }
+        let id = le_u16(&payload[off..off + 2]);
+        let location = le_u16(&payload[off + 2..off + 4]);
+        let value = le_u16(&payload[off + 6..off + 8]);
+        if id == key_id && location == 0 && value != 0 && value != USER_DEFINED {
+            return Some(value);
+        }
+    }
+    None
+}
+
+fn wkt_crs(vlrs: &[LasVlr]) -> Option<String> {
+    let vlr = vlrs
+        .iter()
+        .find(|v| v.user_id == LASF_PROJECTION_USER_ID && v.record_id == WKT_CRS_ID)?;
+    let text = String::from_utf8_lossy(&vlr.payload);
+    let trimmed = text.trim_matches(|c: char| c == '\0' || c.is_whitespace());
+    if trimmed.is_empty() {
+        None
+    } else {
+        Some(trimmed.to_string())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct EptSchemaField {
     pub name: String,
@@ -712,6 +774,67 @@ mod tests {
         assert_eq!(entries[0].point_count, 50);
         assert_eq!(entries[1].x, 1);
         assert_eq!(entries[1].offset, 1300);
+    }
+
+    fn geokey_payload(keys: &[(u16, u16)]) -> Vec<u8> {
+        let mut p = Vec::with_capacity(8 + keys.len() * 8);
+        put_u16(&mut p, 0, 1);
+        put_u16(&mut p, 2, 1);
+        put_u16(&mut p, 4, 0);
+        put_u16(&mut p, 6, keys.len() as u16);
+        for (i, (id, value)) in keys.iter().enumerate() {
+            let off = 8 + i * 8;
+            put_u16(&mut p, off, *id);
+            put_u16(&mut p, off + 2, 0);
+            put_u16(&mut p, off + 4, 1);
+            put_u16(&mut p, off + 6, *value);
+        }
+        p
+    }
+
+    fn projection_vlr(record_id: u16, payload: Vec<u8>) -> LasVlr {
+        LasVlr {
+            user_id: LASF_PROJECTION_USER_ID.to_string(),
+            record_id,
+            description: String::new(),
+            payload,
+        }
+    }
+
+    #[test]
+    fn decodes_projected_crs_from_geokey_directory() {
+        let keys = [(PROJECTED_CS_TYPE_KEY, 32611), (1024, 1)];
+        let vlr = projection_vlr(GEO_KEY_DIRECTORY_ID, geokey_payload(&keys));
+        assert!(matches!(projection_crs(&[vlr]), Some(LasCrs::Epsg(32611))));
+    }
+
+    #[test]
+    fn decodes_geodetic_crs_from_geokey_directory() {
+        let keys = [(GEODETIC_CRS_KEY, 4326), (1024, 2)];
+        let vlr = projection_vlr(GEO_KEY_DIRECTORY_ID, geokey_payload(&keys));
+        assert!(matches!(projection_crs(&[vlr]), Some(LasCrs::Epsg(4326))));
+    }
+
+    #[test]
+    fn decodes_wkt_crs_from_record_2112() {
+        let wkt = "PROJCRS[\"WGS 84 / UTM zone 11N\",BASEGEOGCRS[\"WGS 84\"]]";
+        let vlr = projection_vlr(WKT_CRS_ID, wkt.as_bytes().to_vec());
+        assert!(matches!(projection_crs(&[vlr]), Some(LasCrs::Wkt(_))));
+    }
+
+    #[test]
+    fn absent_crs_is_none() {
+        assert!(projection_crs(&[]).is_none());
+        let datum_only = [(2050, 6326)];
+        let vlr = projection_vlr(GEO_KEY_DIRECTORY_ID, geokey_payload(&datum_only));
+        assert!(projection_crs(&[vlr]).is_none());
+    }
+
+    #[test]
+    fn user_defined_projected_crs_is_not_fabricated() {
+        let keys = [(PROJECTED_CS_TYPE_KEY, USER_DEFINED)];
+        let vlr = projection_vlr(GEO_KEY_DIRECTORY_ID, geokey_payload(&keys));
+        assert!(projection_crs(&[vlr]).is_none());
     }
 
     #[test]

@@ -205,6 +205,33 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedOdr> {
     Some(PackedOdr { files })
 }
 
+pub const SHARD_BUDGET: usize = 1 << 30;
+pub const SHARD_LIMIT: usize = 1 << 31;
+
+pub fn packed_size(file_count: usize, data_bytes: usize) -> usize {
+    8 + file_count * PACK_ENTRY_BYTES + data_bytes
+}
+
+pub fn shard_ranges(file_bytes: &[usize], budget: usize) -> Vec<(usize, usize)> {
+    let mut ranges = Vec::new();
+    let mut lo = 0usize;
+    while lo < file_bytes.len() {
+        let mut hi = lo + 1;
+        let mut data = file_bytes[lo];
+        while hi < file_bytes.len() && packed_size(hi + 1 - lo, data + file_bytes[hi]) <= budget {
+            data += file_bytes[hi];
+            hi += 1;
+        }
+        ranges.push((lo, hi));
+        lo = hi;
+    }
+    ranges
+}
+
+pub fn shard_name(prefix: &str, ord: usize) -> String {
+    format!("{prefix}_s{ord}.bin")
+}
+
 pub fn channel_sampling_rate_hz(code: u8) -> Option<f64> {
     match code {
         16 => Some(50_000.0),    // 10000
@@ -552,6 +579,16 @@ mod tests {
     }
 
     #[test]
+    fn parse_series_applies_decimation_gt_one_to_dt() {
+        let raw = sample_record(1, 0x9006);
+        let bin = pack(&raw, "C0XR13AA.ODR", 1981);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), DATA_SAMPLES);
+        let dt = 3.0 / 300_000.0;
+        assert!((series[1].0 - series[0].0 - dt).abs() < 1e-9);
+    }
+
+    #[test]
     fn parse_series_skips_unanchored_records() {
         let raw = sample_record(1, 0x0006);
         let bin = pack(&raw, "C0XR13AA.ODR", 1981);
@@ -678,5 +715,31 @@ mod tests {
         assert_eq!(parsed.files[1].name, "b.ODR");
         assert_eq!(parsed.files[1].year, 1982);
         assert_eq!(parsed.files[1].records.len(), 2);
+    }
+
+    #[test]
+    fn shard_ranges_group_files_by_packed_budget() {
+        assert!(shard_ranges(&[], SHARD_BUDGET).is_empty());
+
+        let single = vec![1000usize];
+        assert_eq!(shard_ranges(&single, SHARD_BUDGET), vec![(0, 1)]);
+
+        let many = vec![1000usize; 10];
+        let budget = packed_size(3, 3000);
+        assert_eq!(
+            shard_ranges(&many, budget),
+            vec![(0, 3), (3, 6), (6, 9), (9, 10)]
+        );
+
+        for &(lo, hi) in &shard_ranges(&many, budget) {
+            let data: usize = many[lo..hi].iter().sum();
+            assert!(packed_size(hi - lo, data) <= budget);
+        }
+    }
+
+    #[test]
+    fn shard_name_is_deterministic_and_prefixed() {
+        assert_eq!(shard_name("voyager_odr", 0), "voyager_odr_s0.bin");
+        assert_eq!(shard_name("voyager_odr", 13), "voyager_odr_s13.bin");
     }
 }
