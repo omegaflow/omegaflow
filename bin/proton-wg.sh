@@ -31,9 +31,14 @@ stop() {
   if [ -f "$PIDF" ]; then
     p=$(cat "$PIDF" 2>/dev/null || true)
     [ -n "$p" ] && kill "$p" 2>/dev/null || true
-    rm -f "$PIDF"
   fi
   pkill -x wireproxy 2>/dev/null || true
+  sleep 1
+  if pgrep -x wireproxy >/dev/null 2>&1; then
+    printf 'proton-wg: wireproxy still running — pid file kept\n' >&2
+  else
+    rm -f "$PIDF"
+  fi
 }
 
 exit_ip() { ALL_PROXY="socks5h://127.0.0.1:$PORT" curl -sS -m 15 https://api.ipify.org 2>/dev/null; }
