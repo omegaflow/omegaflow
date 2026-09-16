@@ -17,14 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Idempotence — skip if the shard manifest already rests on the CDN
+        id: idempotence
         run: |
           if gh release view zenodo.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "tnbfits.manifest"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset tnbfits.manifest already present — manifest skipped"
-            exit 0
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset tnbfits.manifest missing — streaming, folding, sharding"
           fi
-          echo "asset tnbfits.manifest missing — streaming, folding, sharding"
       - name: Stream the TNBFits archive from Zenodo and split into 1-GiB shards
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           mkdir -p tnbfits
           streamed=0
@@ -46,6 +50,7 @@ jobs:
             exit 1
           fi
       - name: Fold whole-file hashes and verify the Zenodo md5 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           whole_sha=$(cat tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9] | sha256sum | cut -d' ' -f1)
           whole_md5=$(cat tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9] | md5sum | cut -d' ' -f1)
@@ -61,6 +66,7 @@ jobs:
           printf '%s\n' "$whole_sha" > tnbfits/whole.sha256
           printf '%s\n' "$whole_md5" > tnbfits/whole.md5
       - name: Fold per-shard hashes and write the shard manifest
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           shard_size=1073741824
           offset=0
@@ -88,6 +94,7 @@ jobs:
           rm -f "$shard_lines"
           echo "manifest: $shard_count shards, $offset bytes total"
       - name: Ensure the zenodo.org release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view zenodo.org --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create zenodo.org --repo omegaflow/sources \
@@ -95,6 +102,7 @@ jobs:
               --notes "Zenodo reference datasets mirrored for omegaflow (CDN tag = netloc)."
           fi
       - name: Mirror the shards and manifest to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           for f in tnbfits/Proudfoot23_TNBFits.zip.[0-9][0-9][0-9]; do
             gh release upload zenodo.org "$f" --clobber --repo omegaflow/sources

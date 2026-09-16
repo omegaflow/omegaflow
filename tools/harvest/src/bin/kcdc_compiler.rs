@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 const BASE: &str = "https://kcdc.iap.kit.edu";
-const LOGIN_PATH: &str = "/accounts/login";
+const LOGIN_PATH: &str = "/accounts/login/";
 const NETLOC: &str = "kcdc.iap.kit.edu";
 const DEFAULT_JAR: &str = "tmp/kcdc_cookies.txt";
 
@@ -123,6 +123,8 @@ fn login(jar: &Path, user: &str, pass: &str) -> Option<String> {
         .arg(jar)
         .arg("-b")
         .arg(jar)
+        .arg("-H")
+        .arg(format!("Referer: {BASE}{LOGIN_PATH}"))
         .arg("-d")
         .arg(body)
         .arg(&login_url)
