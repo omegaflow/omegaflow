@@ -245,6 +245,18 @@ Fenster** (die Reihe bricht am Flutbeginn ab) — es misst die
 Monsun-Anspeisung des Flusses, **nicht** den Flut-Peak selbst (der wurde
 vom offenen Pegel nie aufgezeichnet; Telemetrie-Stopp 08-26 02:55).
 
+**Zweite co-lokale Route (`trishuli_gauge_probe`, Lauf 35083696420, 0 honored):**
+Ein unabhängiger, key-freier Pfad legt denselben DHM-Pegel 4913 (10-min) auf den
+stündlichen Open-Meteo-Archiv-Niederschlag Rasuwa (28.25/85.10). Die DHM-Seite
+kommt über den Wayback-Snapshot 20260827 (Vor-Flut-Fenster im rollenden Puffer);
+der Pegel deckt 2026-08-25T14:25 … 2026-08-26T02:55 UTC (76 Punkte, min 1.620 m /
+max 1.928 m). Die stündliche Zuordnung (Pegelwert = letzte 10-min-Lesung
+bei-oder-vor jeder Regenstunde, ≤ 60 min zurück) ergibt einen Überlapp von
+**n = 13** — unter dem n-Floor 30. Der Lauf meldet ausdrücklich **kein Befund
+(Unterbestimmung, keine Fabrikation)**. Die zweite Route bestätigt die Stille der
+ersten nicht als Null: sie benennt sie als **unterdeterminiert** — das
+Vor-Flut-Fenster der offenen Reihe ist zu kurz für die n-Floor-Bedingung.
+
 ### 3.6 Räumlicher Response — Footprint-Messung (archivar `--sentinel`, 0 honored)
 
 **CEMS Rapid Mapping EMSR927 „Flood in Nepal"** — Aktivierung

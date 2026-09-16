@@ -375,6 +375,9 @@ fn main() {
     println!(
         "D(lag) = TE(cool→hot) − TE(hot→cool), positive = flux up the ladder. * = over the full-round family bound fam."
     );
+    println!(
+        "thr = per-cell surrogate threshold (mean + 2σ of the ten surrogate D); * = D over its own per-cell threshold."
+    );
     println!();
     let out_path = arg_value(&args, "--out");
     let done_pairs: Vec<String> = match &out_path {
@@ -396,6 +399,7 @@ fn main() {
     };
     let n_pairs = LADDER.len() - 1;
     let mut real: Vec<Vec<f64>> = vec![vec![f64::NAN; 13]; n_pairs];
+    let mut surr: Vec<Vec<Vec<f64>>> = vec![vec![Vec::new(); 13]; n_pairs];
     let mut fam_pool: Vec<f64> = Vec::new();
     for p in 0..n_pairs {
         for lag in 0..=12 {
@@ -410,6 +414,7 @@ fn main() {
                     true,
                     s as u64 * 0x9E37_79B9_7F4A_7C15,
                 );
+                surr[p][lag].push(d_null);
                 fam_pool.push(d_null);
             }
         }
@@ -421,6 +426,7 @@ fn main() {
             continue;
         }
         let mut cells: Vec<String> = Vec::new();
+        let mut thr_cells: Vec<String> = Vec::new();
         let mut peak: Option<(usize, f64)> = None;
         for lag in 0..=12 {
             let d = real[p][lag];
@@ -429,6 +435,17 @@ fn main() {
             }
             let sig = if d > fam { "*" } else { " " };
             cells.push(format!("{:>8.2e}{}", d, sig));
+            let vals = &surr[p][lag];
+            let thr = if vals.is_empty() {
+                f64::NAN
+            } else {
+                let m = vals.iter().sum::<f64>() / vals.len() as f64;
+                let var =
+                    vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
+                m + 2.0 * var.sqrt()
+            };
+            let sig_t = if d > thr { "*" } else { " " };
+            thr_cells.push(format!("{:>8.2e}{}", thr, sig_t));
         }
         let peak_s = match peak {
             Some((l, d)) => format!("peak at lag {} ({} s) = {:.2e}", l, l * 24, d),
@@ -442,8 +459,20 @@ fn main() {
             "{:>12} |      {:>6} {:>6} {:>6} {:>6} {:>6} {:>6} {:>6}",
             "", cells[0], cells[2], cells[4], cells[6], cells[8], cells[10], cells[12]
         );
+        let line_c = format!(
+            "{:>12} | thr  {:>6} {:>6} {:>6} {:>6} {:>6} {:>6} {:>6}",
+            "",
+            thr_cells[0],
+            thr_cells[2],
+            thr_cells[4],
+            thr_cells[6],
+            thr_cells[8],
+            thr_cells[10],
+            thr_cells[12]
+        );
         println!("{}", line_a);
         println!("{}", line_b);
+        println!("{}", line_c);
         if let Some(path) = &out_path {
             let mut buf = String::new();
             if let Ok(existing) = std::fs::read_to_string(path) {
@@ -452,6 +481,8 @@ fn main() {
             buf.push_str(&line_a);
             buf.push('\n');
             buf.push_str(&line_b);
+            buf.push('\n');
+            buf.push_str(&line_c);
             buf.push('\n');
             let _ = std::fs::write(path, buf);
         }
