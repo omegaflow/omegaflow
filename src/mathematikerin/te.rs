@@ -936,39 +936,6 @@ fn lagged_predict_n(coeffs: &[f64], y: &[f32], conds: &[&[f32]], t: usize, max_l
     v
 }
 
-fn residual_surrogate_conditional_lagged_n(
-    y: &[f32],
-    conds: &[&[f32]],
-    max_lag: usize,
-    rng: &mut u64,
-) -> Vec<f32> {
-    let n = y.len();
-    match ols_fit_lagged_n(y, conds, max_lag) {
-        Some(coeffs) => {
-            let mut resid: Vec<f64> = (max_lag..n)
-                .map(|t| y[t] as f64 - lagged_predict_n(&coeffs, y, conds, t, max_lag))
-                .collect();
-            for i in (1..resid.len()).rev() {
-                *rng = rng
-                    .wrapping_mul(6364136223846793005)
-                    .wrapping_add(1442695040888963407);
-                let j = ((*rng >> 33) as usize) % (i + 1);
-                resid.swap(i, j);
-            }
-            let mut out = vec![0f32; n];
-            for t in 0..n {
-                out[t] = if t < max_lag {
-                    y[t]
-                } else {
-                    (lagged_predict_n(&coeffs, y, conds, t, max_lag) + resid[t - max_lag]) as f32
-                };
-            }
-            out
-        }
-        None => shuffle_series(y, rng),
-    }
-}
-
 pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Vec<f32> {
     let n = y.len();
     let p = order;
@@ -1069,7 +1036,6 @@ pub fn arx_restricted_surrogate_2(
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum TeNull {
-    Residual,
     Block,
     Shift,
     Phase,
@@ -1181,9 +1147,6 @@ pub fn conditional_te_surrogates_n(
             x
         };
         let ys = match null {
-            TeNull::Residual => {
-                residual_surrogate_conditional_lagged_n(y, conds, max_lag, &mut rng)
-            }
             TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
             TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
             TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
@@ -3311,11 +3274,6 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Ksg);
-    }
-
-    #[test]
-    fn gate_fpr_autocorrelation_residual_null_ksg_n_surr_200() {
-        gate_fpr_autocorr(TeNull::Residual, TeEstimator::Ksg);
     }
 
     #[test]
