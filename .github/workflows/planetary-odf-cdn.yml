@@ -19,6 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - { bin: juno_odf_compiler, netloc: atmos.nmsu.edu, asset: juno_odf.bin }
           - { bin: magellan_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: magellan_odf.bin }
           - { bin: mgs_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mgs_odf.bin }
           - { bin: mro_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mro_odf.bin }
