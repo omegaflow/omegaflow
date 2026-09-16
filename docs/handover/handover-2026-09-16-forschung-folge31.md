@@ -3,7 +3,7 @@
   session: Forschung-Folge 31
   class: handover
   date: 2026-09-16
-  sha256: 384cca02eef4b4692e00d90318d63b9ab3b3316c875047270d75853d9e7200d8
+  sha256: f3e948681f736c8913ebff2d2fb1fb31c47f38eb92686569f26bbd24bf2f35cc
   status: live
 -->
 # Handover — Forschung-Folge 31 (2026-09-16)
@@ -57,6 +57,34 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf`
   (35 770 168 B; PDS-Registry-API; Pfad `tnf/`, nicht `data/`; direkter Host
   blockiert, Proton-Exit für den Byte-Nachweis).
+- **Quellen-Inventur disponiert (2026-09-16, 5 `grind-flash`-Läufe über die
+  sechs Klassen der Folge-30-Inventur).** Verdikt je Eintrag:
+  - **request-only Sonden:** **offen, nicht request-only** — Juno (PDS
+    `JUNO-J-RSS-1-OCRU`/`JUGR`), New Horizons REX Pluto (`NH-P-REX-2-PLUTO-V1.0`),
+    Cassini (PDS RSS raw), LISA-PF (HEASARC DRS-FITS). **request-only bleibt:**
+    Voyager Cruise 1998–2002, Mariner 10 → Operator (JPL/DSN RSSG bzw. NSSDC).
+  - **Paywall:** **Wohlmuth 1997** — OA via Wayback (JPL TR `97-0783.pdf`,
+    701 507 B, sha256 `eebff967…`) → register; **Haw 1997** (`10.2514/2.3240`)
+    → Operator; **Hinson 1997** (`10.1029/97GL01608`) — Bronze-OA, Wiley-Bot-Shield
+    (403) → Proton-Exit mit Operator-Wort.
+  - **blocked key/account:** **Lasair** + **SuperDARN** offen-anonym → Bau-Zeile;
+    **Babamul** (Token steht) → Bau-Zeile; **EPA AQS** (key), **TNS**, **CTBTO
+    vDEC**, **ONC** → Operator; **LIS/OTD** Route blockiert → Proton-Exit.
+  - **not-published:** **Super-K** (`zenodo.org/records/8401262`), **Telescope
+    Array** (`10.5281/zenodo.8427755`), **LHAASO**
+    (`english.ihep.cas.cn/lhaaso/pdl/`), **KASCADE-Grande** (`kcdc.ikp.kit.edu`)
+    sind **offen** → register + Reader; **JUNO-Neutrino** bleibt not-published →
+    request/watch.
+  - **parser-def:** **NOAA NOS Coastal Lidar** (COPC-LAZ, S3 200) + **USGS 3DEP
+    EPT** (`ept.json` 200) offen → Bau-Zeile LASzip/COPC-Decoder.
+  - **Thread-Matrix:** **H.E.S.S.** (`hess_dl3_dr1.tar`), **MAGIC**
+    (`opendata.magic.pic.es`), **VERITAS** (`github.com/VERITAS-Observatory/
+    VERITAS-VTSCat`) offen → Reader; **HAWC** nur Wayback/Proton, **CTA** Konto →
+    Operator; **NRS-Hydrophon** FLAC (Bucket 200), **Seismic** IRIS FDSN,
+    **HF-Radar** `hfradar.ioos.us`, **BGC-Argo** Sprof NetCDF → Reader.
+  Die Register-/Port-Pflichten (sources.φ + CDN) sind an die Ernte-Linie
+  gepostet; die Reader-Bauten (LASzip, NetCDF, FITS NAXIS=0/TUNIT, FLAC,
+  tar+FITS) sind eigene Bau-Atome.
 
 ## TE / Statistik
 
