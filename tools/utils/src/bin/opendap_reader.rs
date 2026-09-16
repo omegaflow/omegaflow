@@ -1,4 +1,4 @@
-use omegaflow::opendap::{decode, parse_das, parse_dds, DapNote, DapType};
+use omegaflow::opendap::{DapNote, DapType, decode, parse_das, parse_dds};
 use std::process::Command;
 
 fn main() {
@@ -189,6 +189,9 @@ fn note_text(note: &DapNote) -> String {
         DapNote::CountMismatch { var, want, got } => {
             format!("{} declares {} values, carries {}", var, want, got)
         }
-        DapNote::Sequence { name } => format!("sequence {} unread", name),
+        DapNote::Sequence { name } => match name {
+            Some(n) => format!("sequence {} unread", n),
+            None => "sequence without a name unread".to_string(),
+        },
     }
 }

@@ -1,7 +1,7 @@
-use omegaflow::archivar::geo::{parse_bin, write_bin, GeoRec, COMP_LISOTD_FLASH_RAD, MAGIC_LISOTD};
+use omegaflow::archivar::geo::{COMP_LISOTD_FLASH_RAD, GeoRec, MAGIC_LISOTD, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
-use omegaflow::hdf4::{field_value, field_values, Hdf4, DFTAG_VH};
-use omegaflow::lsk::{days_from_civil, parse as parse_lsk, LeapSeconds};
+use omegaflow::hdf4::{DFTAG_VH, Hdf4, field_value, field_values};
+use omegaflow::lsk::{LeapSeconds, days_from_civil, parse as parse_lsk};
 use omegaflow::lzw::uncompress_z;
 use std::process::Command;
 

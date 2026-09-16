@@ -171,15 +171,16 @@ pub struct NameMeta {
     pub tau: f64,
 }
 
+type FrameBundle = (
+    crate::archivar::Frame,
+    Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
+);
+type FrameRx = mpsc::Receiver<FrameBundle>;
+
 pub struct MatrixMachine {
     pub rings: HashMap<String, Vec<(f64, f32)>>,
     pub metas: HashMap<String, NameMeta>,
-    pub rx: Option<
-        mpsc::Receiver<(
-            crate::archivar::Frame,
-            Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-        )>,
-    >,
+    pub rx: Option<FrameRx>,
     pub present: Vec<String>,
     pub results: HashMap<String, PairResult>,
     pub line: MatrixLine,
@@ -608,7 +609,7 @@ impl MatrixMachine {
             crate::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
-            if !(channel.epoch > 0.0) || !channel.epoch.is_finite() {
+            if channel.epoch <= 0.0 || !channel.epoch.is_finite() {
                 continue;
             }
             let anchor = match &channel.position {
@@ -775,24 +776,25 @@ impl MatrixMachine {
                     let ry = pb[1] - pf[1];
                     let rz = pb[2] - pf[2];
                     let r2 = rx * rx + ry * ry + rz * rz;
-                    if !(r2 > 0.0) {
+                    if r2 <= 0.0 || r2.is_nan() {
                         continue;
                     }
-                    if let Some(gm) = gm {
-                        if gm > 0.0 {
-                            series.push((t, (gm / r2) as f32));
-                        }
+                    if let Some(gm) = gm
+                        && gm > 0.0
+                    {
+                        series.push((t, (gm / r2) as f32));
                     }
                     let y_ecl = ry * ob_cos + rz * ob_sin;
                     let lon = y_ecl.atan2(rx);
                     lon_sin.push((t, lon.sin() as f32));
                     lon_cos.push((t, lon.cos() as f32));
                 }
-                if let Some(gm) = gm {
-                    if gm > 0.0 && series.len() >= MATRIX_N_GATE {
-                        present.push(format!("eph_{}", body));
-                        self.rings.insert(format!("eph_{}", body), series);
-                    }
+                if let Some(gm) = gm
+                    && gm > 0.0
+                    && series.len() >= MATRIX_N_GATE
+                {
+                    present.push(format!("eph_{}", body));
+                    self.rings.insert(format!("eph_{}", body), series);
                 }
                 if lon_sin.len() >= MATRIX_N_GATE {
                     present.push(format!("eph_{}_lon_sin", body));
@@ -902,7 +904,7 @@ impl MatrixMachine {
         if !prev.load(Ordering::SeqCst) {
             let stale = self
                 .pending_since
-                .map_or(false, |i| i.elapsed().as_secs_f64() > 30.0);
+                .is_some_and(|i| i.elapsed().as_secs_f64() > 30.0);
             if stale {
                 self.pending = None;
                 self.pending_since = None;
@@ -1028,7 +1030,7 @@ impl MatrixMachine {
             let mut best: Option<(u8, i64, usize, f64, f64, f64)> = None;
             for c in &acc.cells1 {
                 let e = c.te - c.thr;
-                if best.map_or(true, |(_, _, _, be, _, _)| e > be) {
+                if best.is_none_or(|(_, _, _, be, _, _)| e > be) {
                     best = Some((c.dir, c.shift, c.n, e, c.te, c.thr));
                 }
             }
@@ -1109,7 +1111,7 @@ impl MatrixMachine {
         }
         if self
             .last_state_save
-            .map_or(true, |i| i.elapsed().as_secs_f64() > 120.0)
+            .is_none_or(|i| i.elapsed().as_secs_f64() > 120.0)
         {
             self.last_state_save = Some(std::time::Instant::now());
             self.save_state();
@@ -1117,7 +1119,7 @@ impl MatrixMachine {
         if self.te_map.is_some() {
             self.collect();
         }
-        let moved = self.last_presence.map_or(true, |p| {
+        let moved = self.last_presence.is_none_or(|p| {
             let d2 = (p[0] - presence[0]).powi(2)
                 + (p[1] - presence[1]).powi(2)
                 + (p[2] - presence[2]).powi(2);
@@ -1131,7 +1133,7 @@ impl MatrixMachine {
         let rebuild_due = (moved || fresh)
             && self
                 .last_rebuild
-                .map_or(true, |i| i.elapsed().as_secs_f64() > 30.0);
+                .is_none_or(|i| i.elapsed().as_secs_f64() > 30.0);
         if rebuild_due {
             self.last_rebuild = Some(std::time::Instant::now());
             self.last_presence = Some(presence);
@@ -1154,7 +1156,7 @@ impl MatrixMachine {
             budget -= 1;
             let mut target: Option<(String, String)> = None;
             for (a, b) in &pairs {
-                let done = self.results.get(&pair_key(a, b)).map_or(false, |r| r.done);
+                let done = self.results.get(&pair_key(a, b)).is_some_and(|r| r.done);
                 if !done {
                     target = Some((a.clone(), b.clone()));
                     break;

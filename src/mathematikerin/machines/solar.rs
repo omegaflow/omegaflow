@@ -94,7 +94,7 @@ pub fn solar_l1_sync(
         let mut best: Option<(f64, f64)> = None;
         for &(tw, vw) in wind {
             let dt = (tw - t).abs();
-            if dt <= tolerance_s && best.map_or(true, |(b, _)| dt < b) {
+            if dt <= tolerance_s && best.is_none_or(|(b, _)| dt < b) {
                 best = Some((dt, vw));
             }
         }
@@ -123,7 +123,7 @@ pub fn solar_send_bins(
         .filter(|&&(t, _)| t.is_finite() && t > 0.0)
         .collect();
     sorted.sort_by(|a, b| a.0.total_cmp(&b.0));
-    let gate = last_sent.get(&(grid, channel)).copied().unwrap_or(0);
+    let gate = last_sent.get(&(grid, channel)).copied();
     let mut cells: Vec<SolarCell> = Vec::new();
     let mut cur_bin: i64 = i64::MIN;
     let mut sum: f64 = 0.0;
@@ -133,7 +133,11 @@ pub fn solar_send_bins(
         if bin != cur_bin {
             if cur_bin != i64::MIN && cnt > 0 {
                 let b = cur_bin as u64;
-                if b > gate {
+                let after_gate = match gate {
+                    Some(g) => b > g,
+                    None => true,
+                };
+                if after_gate {
                     cells.push(SolarCell {
                         grid,
                         channel,
@@ -151,7 +155,11 @@ pub fn solar_send_bins(
     }
     if cur_bin != i64::MIN && cnt > 0 {
         let b = cur_bin as u64;
-        if b > gate {
+        let after_gate = match gate {
+            Some(g) => b > g,
+            None => true,
+        };
+        if after_gate {
             cells.push(SolarCell {
                 grid,
                 channel,
@@ -160,7 +168,7 @@ pub fn solar_send_bins(
             });
         }
     }
-    if gate == 0 && cells.len() > SOLAR_RING_MAX {
+    if gate.is_none() && cells.len() > SOLAR_RING_MAX {
         let drop = cells.len() - SOLAR_RING_MAX;
         cells.drain(..drop);
     }
@@ -195,79 +203,79 @@ pub fn solar_harvest(
                 .map(|(t, v)| (t - SOLAR_GOES_SYNC_S, v))
                 .collect()
         };
-        if let Some(block) = solar_find_block(&sources, "noaa_goes_xray_flux_w_m2") {
-            if let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl) {
-                let raw = solar_series(block, &body, "noaa_goes_xray_flux_w_m2", lsk);
+        if let Some(block) = solar_find_block(&sources, "noaa_goes_xray_flux_w_m2")
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+        {
+            let raw = solar_series(block, &body, "noaa_goes_xray_flux_w_m2", lsk);
+            let shifted = goes_shift(raw);
+            solar_send_bins(
+                &shifted,
+                SOLAR_FAST_GRID,
+                SolarChannel::Xray,
+                &mut last_sent,
+                &tx,
+            );
+            solar_send_bins(
+                &shifted,
+                SOLAR_COARSE_GRID,
+                SolarChannel::Xray,
+                &mut last_sent,
+                &tx,
+            );
+        }
+        if let Some(block) = solar_find_block(&sources, "solar_euv_flux_304_wm2")
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+        {
+            for (field, channel) in [
+                ("solar_euv_flux_304_wm2", SolarChannel::Euv304),
+                ("solar_euv_flux_284_wm2", SolarChannel::Euv284),
+            ] {
+                let raw = solar_series(block, &body, field, lsk);
                 let shifted = goes_shift(raw);
-                solar_send_bins(
-                    &shifted,
-                    SOLAR_FAST_GRID,
-                    SolarChannel::Xray,
-                    &mut last_sent,
-                    &tx,
-                );
-                solar_send_bins(
-                    &shifted,
-                    SOLAR_COARSE_GRID,
-                    SolarChannel::Xray,
-                    &mut last_sent,
-                    &tx,
-                );
+                solar_send_bins(&shifted, SOLAR_FAST_GRID, channel, &mut last_sent, &tx);
+                solar_send_bins(&shifted, SOLAR_COARSE_GRID, channel, &mut last_sent, &tx);
             }
         }
-        if let Some(block) = solar_find_block(&sources, "solar_euv_flux_304_wm2") {
-            if let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl) {
-                for (field, channel) in [
-                    ("solar_euv_flux_304_wm2", SolarChannel::Euv304),
-                    ("solar_euv_flux_284_wm2", SolarChannel::Euv284),
-                ] {
-                    let raw = solar_series(block, &body, field, lsk);
-                    let shifted = goes_shift(raw);
-                    solar_send_bins(&shifted, SOLAR_FAST_GRID, channel, &mut last_sent, &tx);
-                    solar_send_bins(&shifted, SOLAR_COARSE_GRID, channel, &mut last_sent, &tx);
-                }
-            }
-        }
-        if let Some(block) = solar_find_block(&sources, "solar_f107_flux_sfu") {
-            if let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl) {
-                let raw = solar_series(block, &body, "solar_f107_flux_sfu", lsk);
-                let shifted = goes_shift(raw);
-                solar_send_bins(
-                    &shifted,
-                    SOLAR_COARSE_GRID,
-                    SolarChannel::F107,
-                    &mut last_sent,
-                    &tx,
-                );
-            }
+        if let Some(block) = solar_find_block(&sources, "solar_f107_flux_sfu")
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+        {
+            let raw = solar_series(block, &body, "solar_f107_flux_sfu", lsk);
+            let shifted = goes_shift(raw);
+            solar_send_bins(
+                &shifted,
+                SOLAR_COARSE_GRID,
+                SolarChannel::F107,
+                &mut last_sent,
+                &tx,
+            );
         }
         let mut wind: Vec<(f64, f64)> = Vec::new();
-        if let Some(block) = solar_find_block(&sources, "solar_wind_speed_km_s") {
-            if let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl) {
-                wind = solar_series(block, &body, "solar_wind_speed_km_s", lsk);
-                let dens = solar_series(block, &body, "solar_wind_density_cm3", lsk);
-                let synced = solar_l1_sync(&dens, &wind, 60.0);
-                solar_send_bins(
-                    &synced,
-                    SOLAR_FAST_GRID,
-                    SolarChannel::Density,
-                    &mut last_sent,
-                    &tx,
-                );
-            }
+        if let Some(block) = solar_find_block(&sources, "solar_wind_speed_km_s")
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+        {
+            wind = solar_series(block, &body, "solar_wind_speed_km_s", lsk);
+            let dens = solar_series(block, &body, "solar_wind_density_cm3", lsk);
+            let synced = solar_l1_sync(&dens, &wind, 60.0);
+            solar_send_bins(
+                &synced,
+                SOLAR_FAST_GRID,
+                SolarChannel::Density,
+                &mut last_sent,
+                &tx,
+            );
         }
-        if let Some(block) = solar_find_block(&sources, "magnetosphere_imf_bz_nt") {
-            if let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl) {
-                let bz = solar_series(block, &body, "magnetosphere_imf_bz_nt", lsk);
-                let synced = solar_l1_sync(&bz, &wind, 60.0);
-                solar_send_bins(
-                    &synced,
-                    SOLAR_FAST_GRID,
-                    SolarChannel::BzGsm,
-                    &mut last_sent,
-                    &tx,
-                );
-            }
+        if let Some(block) = solar_find_block(&sources, "magnetosphere_imf_bz_nt")
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+        {
+            let bz = solar_series(block, &body, "magnetosphere_imf_bz_nt", lsk);
+            let synced = solar_l1_sync(&bz, &wind, 60.0);
+            solar_send_bins(
+                &synced,
+                SOLAR_FAST_GRID,
+                SolarChannel::BzGsm,
+                &mut last_sent,
+                &tx,
+            );
         }
         drop(lock);
         thread::sleep(std::time::Duration::from_secs(SOLAR_FAST_GRID as u64));
@@ -424,22 +432,20 @@ impl SolarMachine {
         state: &str,
     ) {
         let line = match verdict {
-            Some(v) => format!(
-                "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
-                label,
-                n,
-                v.te,
-                v.threshold,
-                v.tau_x,
-                v.tau_y,
-                v.pe_x
-                    .map(|p| format!("{:.2}", p))
-                    .unwrap_or_else(|| "-".to_string()),
-                v.pe_y
-                    .map(|p| format!("{:.2}", p))
-                    .unwrap_or_else(|| "-".to_string()),
-                state
-            ),
+            Some(v) => {
+                let pe_x = match v.pe_x {
+                    Some(p) => format!("{:.2}", p),
+                    None => "-".to_string(),
+                };
+                let pe_y = match v.pe_y {
+                    Some(p) => format!("{:.2}", p),
+                    None => "-".to_string(),
+                };
+                format!(
+                    "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
+                    label, n, v.te, v.threshold, v.tau_x, v.tau_y, pe_x, pe_y, state
+                )
+            }
             None => format!("solar te {} n {} state {}", label, n, state),
         };
         if self.named != line {

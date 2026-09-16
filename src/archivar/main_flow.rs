@@ -52,11 +52,13 @@ impl Radiator for StderrRadiator {
     }
 }
 
+pub type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
+
 pub struct Archive {
     pub sources: Vec<SourceConfig>,
     pub body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
     pub field: Arc<Buffer>,
-    pub presence: HashMap<String, (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    pub presence: HashMap<String, PresenceSample>,
     pub jump_epoch: Option<f64>,
     pub declared_body: Option<DeclaredBody>,
     pub origins: HashMap<Origin, OriginState>,
@@ -102,15 +104,7 @@ pub fn spawn_ephemeris_bootstrap(
     }
     let anchor_uses = anchor_uses(sources);
     let anchor_order = |s: &SourceConfig| {
-        let key = match s.body.as_deref() {
-            Some(b) => b,
-            None => "",
-        };
-        let uses = match anchor_uses.get(key) {
-            Some(n) => *n,
-            None => 0,
-        };
-        std::cmp::Reverse(uses)
+        std::cmp::Reverse(s.body.as_deref().and_then(|k| anchor_uses.get(k).copied()))
     };
     let mut fresh_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
@@ -178,7 +172,7 @@ fn load_ephemeris_cache(
         let _ = fetch_tx.send(FetchResult {
             source_idx,
             channels: Vec::new(),
-            eph_update: src.body.clone().map(|b| (b, eph)),
+            eph_update: src.body.clone().map(|b| (b, *eph)),
             asteroid_samples: Vec::new(),
             star_samples: Vec::new(),
             curves: None,
@@ -391,11 +385,11 @@ pub fn main_flow() {
                         lat = v;
                         i += 1;
                     }
-                } else if args[i] == "--lon" {
-                    if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
-                        lon = v;
-                        i += 1;
-                    }
+                } else if args[i] == "--lon"
+                    && let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok())
+                {
+                    lon = v;
+                    i += 1;
                 }
                 i += 1;
             }
@@ -587,21 +581,27 @@ pub fn main_flow() {
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
-        let em = crate::mathematikerin::LoopRadiator::new(
-            time.clone(),
-            consent.clone(),
-            tone_code.clone(),
+        let em = crate::mathematikerin::LoopRadiator::new(crate::mathematikerin::LoopCtx {
+            time: time.clone(),
+            consent: consent.clone(),
+            tone_code: tone_code.clone(),
             acoustic_tx,
             seismic_tx,
-            #[cfg(feature = "browser_relay")]
-            Some(relay_kinetic_tx),
-            #[cfg(not(feature = "browser_relay"))]
-            None,
+            relay_tx: {
+                #[cfg(feature = "browser_relay")]
+                {
+                    Some(relay_kinetic_tx)
+                }
+                #[cfg(not(feature = "browser_relay"))]
+                {
+                    None
+                }
+            },
             solar_rx,
             machine_rx,
-            presence_slot.clone(),
-            diode.clone(),
-        );
+            presence: presence_slot.clone(),
+            diode: diode.clone(),
+        });
         let em_shutdown = em.shutdown_flag();
         radiators.push(Box::new(em));
         em_shutdown
@@ -723,10 +723,10 @@ pub fn main_flow() {
                     });
                 }
                 "naif0012" => {
-                    if let Some(l) = crate::lsk::parse(&text) {
-                        if let Ok(mut guard) = archive.time.lock() {
-                            *guard = Some(l);
-                        }
+                    if let Some(l) = crate::lsk::parse(&text)
+                        && let Ok(mut guard) = archive.time.lock()
+                    {
+                        *guard = Some(l);
                     }
                 }
                 _ => {}
@@ -772,16 +772,16 @@ pub fn main_flow() {
                 missing_ttl = Some(s.ttl as f64);
                 break;
             }
-            if let Some(ttl) = missing_ttl {
-                if now - last_bootstrap >= ttl / (Φ * Φ) {
-                    last_bootstrap = now;
-                    spawn_ephemeris_bootstrap(
-                        &archive.sources,
-                        &bootstrap_running,
-                        fetch_tx.clone(),
-                        archive.time.clone(),
-                    );
-                }
+            if let Some(ttl) = missing_ttl
+                && now - last_bootstrap >= ttl / (Φ * Φ)
+            {
+                last_bootstrap = now;
+                spawn_ephemeris_bootstrap(
+                    &archive.sources,
+                    &bootstrap_running,
+                    fetch_tx.clone(),
+                    archive.time.clone(),
+                );
             }
         }
         let mut fetched_samples: Vec<Sample> = Vec::new();
@@ -914,15 +914,14 @@ pub fn main_flow() {
                     if nn_buf.len() > crate::archivar::hrv::NN_WINDOW {
                         nn_buf.remove(0);
                     }
-                    if nn_buf.len() >= 3 {
-                        if let Some(r) = crate::archivar::hrv::rmssd(&nn_buf) {
-                            if let Some(tone) = vagus.feed(r) {
-                                tone_code.store(
-                                    crate::archivar::hrv::tone_code(Some(tone)),
-                                    std::sync::atomic::Ordering::SeqCst,
-                                );
-                            }
-                        }
+                    if nn_buf.len() >= 3
+                        && let Some(r) = crate::archivar::hrv::rmssd(&nn_buf)
+                        && let Some(tone) = vagus.feed(r)
+                    {
+                        tone_code.store(
+                            crate::archivar::hrv::tone_code(Some(tone)),
+                            std::sync::atomic::Ordering::SeqCst,
+                        );
                     }
                 }
             }
@@ -1039,7 +1038,7 @@ pub fn main_flow() {
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
-                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                eph_update: src_clone.body.clone().map(|b| (b, *eph)),
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
                                 curves: None,
@@ -1159,25 +1158,29 @@ pub fn main_flow() {
                 let url = match pos {
                     Some((x, y, z)) => render_source_url(
                         &src_clone,
-                        x,
-                        y,
-                        z,
-                        now,
-                        0.0,
-                        &archive.body_ephemerides,
+                        RenderCtx {
+                            x,
+                            y,
+                            z,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &archive.body_ephemerides,
+                            lsk: &lsk,
+                        },
                         &env,
-                        &lsk,
                     ),
                     None => render_source_url(
                         &src_clone,
-                        0.0,
-                        0.0,
-                        0.0,
-                        now,
-                        0.0,
-                        &archive.body_ephemerides,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &archive.body_ephemerides,
+                            lsk: &lsk,
+                        },
                         &env,
-                        &lsk,
                     ),
                 };
                 let Some(url) = url else {
@@ -2769,7 +2772,17 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 thread::spawn(move || {
                     let url = match render_source_url(
-                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                        &e,
                     ) {
                         Some(u) => u,
                         None => {
@@ -2791,7 +2804,16 @@ pub fn main_flow() {
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
                         let body = render_source_body(
-                            &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &lsk_c,
+                            &src_clone,
+                            RenderCtx {
+                                x: 0.0,
+                                y: 0.0,
+                                z: 0.0,
+                                tdb: now,
+                                r: 0.0,
+                                eph: &eph_arc,
+                                lsk: &lsk_c,
+                            },
                         )
                         .map(|b| resolve_secret(&b, &e));
                         let bytes = match fetch_raw_bytes_post(
@@ -2870,7 +2892,17 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 thread::spawn(move || {
                     let url = match render_source_url(
-                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                        &e,
                     ) {
                         Some(u) => u,
                         None => {
@@ -2962,7 +2994,17 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 thread::spawn(move || {
                     let url = match render_source_url(
-                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                        &e,
                     ) {
                         Some(u) => u,
                         None => {
@@ -3102,8 +3144,7 @@ pub fn main_flow() {
                 }
                 Frame::Manifest => continue,
             };
-            let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-                archive.presence.values().cloned().collect();
+            let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
             let anchor_body = frame_body_name(&archive.sources[i].frame);
             let body_props = archive
                 .body_ephemerides
@@ -3133,15 +3174,17 @@ pub fn main_flow() {
                         let channels = fanout_fetch(
                             &src_clone,
                             su,
-                            pos.0,
-                            pos.1,
-                            pos.2,
-                            presence_center,
-                            now,
-                            r,
-                            &eph_arc,
-                            &e,
-                            &lsk_c,
+                            FanoutCtx {
+                                x: pos.0,
+                                y: pos.1,
+                                z: pos.2,
+                                presence: presence_center,
+                                now,
+                                r,
+                                eph: &eph_arc,
+                                env: &e,
+                                lsk: &lsk_c,
+                            },
                         );
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
@@ -3169,7 +3212,17 @@ pub fn main_flow() {
                     return;
                 }
                 let url = match render_source_url(
-                    &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
+                    &src_clone,
+                    RenderCtx {
+                        x: pos.0,
+                        y: pos.1,
+                        z: pos.2,
+                        tdb: now,
+                        r,
+                        eph: &eph_arc,
+                        lsk: &lsk_c,
+                    },
+                    &e,
                 ) {
                     Some(u) => u,
                     None => {
@@ -3190,8 +3243,18 @@ pub fn main_flow() {
                         return;
                     }
                 };
-                let body =
-                    render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
+                let body = render_source_body(
+                    &src_clone,
+                    RenderCtx {
+                        x: pos.0,
+                        y: pos.1,
+                        z: pos.2,
+                        tdb: now,
+                        r,
+                        eph: &eph_arc,
+                        lsk: &lsk_c,
+                    },
+                );
                 let headers = render_headers(&src_clone.headers, &e);
                 let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl, Some(now));
                 let fetch_ok = raw.is_some();
@@ -3210,7 +3273,7 @@ pub fn main_flow() {
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
-                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                eph_update: src_clone.body.clone().map(|b| (b, *eph)),
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
                                 curves: None,
@@ -3268,33 +3331,33 @@ pub fn main_flow() {
                 }
             }
             for (name, eph) in archive.body_ephemerides.iter() {
-                if let Some(props) = &eph.props {
-                    if props.radius_m > 0.0 {
-                        let Some(body_ttl) = archive
-                            .sources
-                            .iter()
-                            .find(|s| s.body.as_deref() == Some(name.as_str()))
-                            .map(|s| s.ttl as f64)
-                        else {
-                            continue;
-                        };
-                        let frame = Frame::Barycenter {
-                            body_name: name.clone(),
-                            scale: 1.0,
-                        };
-                        for (channel, sensor) in body_channels(name, props, now) {
-                            if let Some(mut sample) = anchor(
-                                &channel,
-                                &sensor,
-                                body_ttl,
-                                Some(archive.sources.len() as u32),
-                                Some(&frame),
-                                None,
-                                &archive.body_ephemerides,
-                            ) {
-                                sample.source = SampleSource::Ephemeris;
-                                all.push(sample);
-                            }
+                if let Some(props) = &eph.props
+                    && props.radius_m > 0.0
+                {
+                    let Some(body_ttl) = archive
+                        .sources
+                        .iter()
+                        .find(|s| s.body.as_deref() == Some(name.as_str()))
+                        .map(|s| s.ttl as f64)
+                    else {
+                        continue;
+                    };
+                    let frame = Frame::Barycenter {
+                        body_name: name.clone(),
+                        scale: 1.0,
+                    };
+                    for (channel, sensor) in body_channels(name, props, now) {
+                        if let Some(mut sample) = anchor(
+                            &channel,
+                            &sensor,
+                            body_ttl,
+                            Some(archive.sources.len() as u32),
+                            Some(&frame),
+                            None,
+                            &archive.body_ephemerides,
+                        ) {
+                            sample.source = SampleSource::Ephemeris;
+                            all.push(sample);
                         }
                     }
                 }
@@ -3302,7 +3365,7 @@ pub fn main_flow() {
             all.extend(archive.asteroid_samples.iter().cloned());
             all.extend(archive.star_samples.iter().cloned());
             let (static_catalog, mut temporal): (Vec<Sample>, Vec<Sample>) =
-                all.into_iter().partition(|s| is_static(s));
+                all.into_iter().partition(is_static);
             if static_catalog.len() > MAX_SAMPLES {
                 eprintln!(
                     "static field in {} exceeds the wire budget (cap {}) — the static admission gate is a register duty, the sky is never silently trimmed",

@@ -1,5 +1,8 @@
 use super::*;
 
+type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
+type EventTuple<'a> = (f64, f64, f64, f64, Option<f64>, Option<&'a str>);
+
 static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 fn field_fixture(name: &str, tau: f64) -> FieldConfig {
@@ -538,14 +541,16 @@ fn test_render_source_url_substitutions() {
     };
     let url = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        8.0e8,
-        1000.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: 8.0e8,
+            r: 1000.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &fixture_lsk,
     );
     let url = url.unwrap();
     assert!(url.contains("Ceres"));
@@ -565,14 +570,16 @@ fn test_render_source_url_carries_observer_epoch() {
     let past_tdb = 8.0e8;
     let past = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        past_tdb,
-        1000.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: past_tdb,
+            r: 1000.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &fixture_lsk,
     )
     .unwrap();
     let past_unix = fixture_lsk.tdb_to_unix(past_tdb).unwrap() as u64;
@@ -591,14 +598,16 @@ fn test_render_source_url_carries_observer_epoch() {
     let now_tdb = fixture_lsk.system_now_tdb().unwrap();
     let present = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        now_tdb,
-        1000.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: now_tdb,
+            r: 1000.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &fixture_lsk,
     )
     .unwrap();
     let now_unix = fixture_lsk.tdb_to_unix(now_tdb).unwrap() as u64;
@@ -622,14 +631,16 @@ fn test_render_source_url_pre_2000_epoch() {
     let pre_2000_tdb = -4.0e7;
     let url = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        pre_2000_tdb,
-        0.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: pre_2000_tdb,
+            r: 0.0,
+            eph: &HashMap::new(),
+            lsk: &lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &lsk,
     )
     .unwrap();
     let unix = lsk.tdb_to_unix(pre_2000_tdb).unwrap() as u64;
@@ -656,26 +667,30 @@ fn test_temporal_urls_carry_distinct_cache_identity() {
     };
     let harvest_2005 = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        8.0e8,
-        0.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: 8.0e8,
+            r: 0.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &fixture_lsk,
     )
     .unwrap();
     let harvest_2026 = render_source_url(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        1.8e9,
-        0.0,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: 1.8e9,
+            r: 0.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
         &HashMap::new(),
-        &HashMap::new(),
-        &fixture_lsk,
     )
     .unwrap();
     assert_ne!(
@@ -801,13 +816,15 @@ fn test_post_body_rendering() {
     };
     let body = render_source_body(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        8.0e8,
-        100000.0,
-        &HashMap::new(),
-        &fixture_lsk,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: 8.0e8,
+            r: 100000.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
     );
     assert!(body.is_some());
     let b = body.unwrap();
@@ -866,13 +883,15 @@ fn test_csv_zip_post_body_resolves_secret() {
     };
     let body = render_source_body(
         &src,
-        0.0,
-        0.0,
-        0.0,
-        8.0e8,
-        0.0,
-        &HashMap::new(),
-        &fixture_lsk,
+        RenderCtx {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            tdb: 8.0e8,
+            r: 0.0,
+            eph: &HashMap::new(),
+            lsk: &fixture_lsk,
+        },
     )
     .map(|b| super::resolve_secret(&b, &env));
     assert_eq!(body.as_deref(), Some("api_key=secret123"));
@@ -1369,9 +1388,11 @@ fn test_empty_data_anomaly() {
     let _ = take_anomalies();
     check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
     let anomalies = take_anomalies();
-    assert!(anomalies
-        .iter()
-        .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
+    assert!(
+        anomalies
+            .iter()
+            .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e")
+    );
     check_empty_data(
         src,
         r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
@@ -1688,15 +1709,17 @@ fn test_star_samples_diode() {
         let mut out: Vec<SampleRecord> = Vec::new();
         query_hash(
             &buf.cache,
-            [0.0, 0.0, 0.0],
-            0.0,
-            1.0,
-            0.0,
-            &floor,
-            1.0,
-            forward,
+            MembraneCtx {
+                center: [0.0, 0.0, 0.0],
+                t2: 0.0,
+                pad: 1.0,
+                delta_t_cache: 0.0,
+                floor: &floor,
+                softening: 1.0,
+                forward,
+                eph: &eph,
+            },
             &mut out,
-            &eph,
         );
         out
     };
@@ -1766,11 +1789,13 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     assert!(amax > 0.0 && amax.is_finite());
     let mut unbound = rec;
     unbound.e = 1.5;
-    assert!(Motion::Kepler {
-        rec: Arc::new(unbound)
-    }
-    .at(0.0, 0.0, &eph)
-    .is_none());
+    assert!(
+        Motion::Kepler {
+            rec: Arc::new(unbound)
+        }
+        .at(0.0, 0.0, &eph)
+        .is_none()
+    );
 }
 
 #[test]
@@ -1831,15 +1856,17 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     let mut records: Vec<SampleRecord> = Vec::new();
     query_hash(
         &buf.cache,
-        anchor_p0,
-        0.0,
-        1.0,
-        0.0,
-        &[0.0; 9],
-        1.0,
-        [1.0, 0.0, 0.0],
+        MembraneCtx {
+            center: anchor_p0,
+            t2: 0.0,
+            pad: 1.0,
+            delta_t_cache: 0.0,
+            floor: &[0.0; 9],
+            softening: 1.0,
+            forward: [1.0, 0.0, 0.0],
+            eph: &eph,
+        },
         &mut records,
-        &eph,
     );
     assert_eq!(records.len(), 2);
     assert_eq!(records[0].3, 5.0e8);
@@ -2175,7 +2202,7 @@ fn test_build_netcdf_channels() {
         b.extend(u32b(0));
         slot
     };
-    let slots = vec![
+    let slots = [
         var(&mut b, "LATITUDE", 1, &[0], None, 6, 8),
         var(&mut b, "LONGITUDE", 1, &[0], None, 6, 8),
         var(&mut b, "JULD", 1, &[0], None, 6, 8),
@@ -2398,8 +2425,8 @@ fn test_backlog_batches_verify() {
     if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_verified.φ") {
         for l in existing.lines() {
             let t = l.trim_start();
-            if t.starts_with("url ") {
-                seen.insert(t[4..].trim().to_string());
+            if let Some(u) = t.strip_prefix("url ") {
+                seen.insert(u.trim().to_string());
             }
         }
         ok_text = existing;
@@ -2407,10 +2434,10 @@ fn test_backlog_batches_verify() {
     let mut void_text = String::new();
     if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_void_ledger.txt") {
         for l in existing.lines() {
-            if let Some(u) = l.strip_prefix("void ") {
-                if let Some(end) = u.find(' ') {
-                    seen.insert(u[..end].to_string());
-                }
+            if let Some(u) = l.strip_prefix("void ")
+                && let Some(end) = u.find(' ')
+            {
+                seen.insert(u[..end].to_string());
             }
         }
         void_text = existing;
@@ -2447,10 +2474,7 @@ fn test_backlog_batches_verify() {
                     }
                     limit -= 1;
                     let headers = super::render_headers(&s.headers, &env);
-                    let post_body = match &s.post_body {
-                        Some(pb) => Some(substitute_test_templates(pb)),
-                        None => None,
-                    };
+                    let post_body = s.post_body.as_ref().map(|pb| substitute_test_templates(pb));
                     let post = post_body.as_deref();
                     let body = match super::fetch_raw_probe(&url, post, &headers) {
                         Some(b) => b,
@@ -3372,10 +3396,7 @@ fn test_anchor_body_agnostic() {
             body_name,
             "mars",
             "body name: {}",
-            match sample.motion.anchor_body() {
-                Some(n) => n,
-                None => "absent",
-            }
+            sample.motion.anchor_body().unwrap_or("absent")
         );
     } else {
         panic!("motion is Barycenter or Linear, Surface absent");
@@ -3692,15 +3713,17 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
     let mut records: Vec<super::SampleRecord> = Vec::new();
     super::sense_membrane(
         &buf,
-        [0.0, 0.0, 0.0],
-        t + 1.0,
-        3.0e12,
-        1.0,
-        &[0.0; 9],
-        2.0e9,
-        [0.0, 0.0, 1.0],
+        super::MembraneCtx {
+            center: [0.0, 0.0, 0.0],
+            t2: t + 1.0,
+            pad: 3.0e12,
+            delta_t_cache: 1.0,
+            floor: &[0.0; 9],
+            softening: 2.0e9,
+            forward: [0.0, 0.0, 1.0],
+            eph: &HashMap::new(),
+        },
         &mut records,
-        &HashMap::new(),
     );
     assert_eq!(
         records.len(),
@@ -3738,7 +3761,7 @@ fn test_parse_ephemeris_binary_v2() {
         6356751.9,
         1.08262668e-3,
         -1.6196e-6,
-        3.9860043543609598e14,
+        3.986_004_354_360_96e14,
     ];
     for p in params {
         buf.extend_from_slice(&p.to_le_bytes());
@@ -3761,7 +3784,7 @@ fn test_parse_ephemeris_binary_v2() {
     }
     let eph = super::parse_ephemeris_binary(&buf).unwrap();
     let props = eph.props.unwrap();
-    assert_eq!(props.gm, Some(3.9860043543609598e14));
+    assert_eq!(props.gm, Some(3.986_004_354_360_96e14));
     assert_eq!(props.j2, Some(1.08262668e-3));
     assert_eq!(props.j4, Some(-1.6196e-6));
     assert_eq!(props.radii_b, Some(6378136.6));
@@ -3802,7 +3825,7 @@ fn test_parse_ephemeris_binary_v3_mask() {
         6356751.9,
         1.08262668e-3,
         -1.6196e-6,
-        3.9860043543609598e14,
+        3.986_004_354_360_96e14,
     ];
     let mask: u16 = 0xFFFF ^ (1 << 9);
     params[9] = 0.0;
@@ -3820,7 +3843,7 @@ fn test_parse_ephemeris_binary_v3_mask() {
     }
     let eph = super::parse_ephemeris_binary(&buf).unwrap();
     let props = eph.props.unwrap();
-    assert_eq!(props.gm, Some(3.9860043543609598e14));
+    assert_eq!(props.gm, Some(3.986_004_354_360_96e14));
     assert_eq!(props.j2, None);
     assert_eq!(props.j4, Some(-1.6196e-6));
     assert_eq!(props.radii_c, Some(6356751.9));
@@ -3927,7 +3950,7 @@ fn test_fetch_dispatch_gate_admits_em_source() {
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
     assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         super::presence_gate(&presences, (0.0, 0.0, 0.0), reach, 0.0, None, None),
@@ -3937,7 +3960,7 @@ fn test_fetch_dispatch_gate_admits_em_source() {
 
 #[test]
 fn test_fetch_dispatch_gate_window_range_does_not_fetch() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         !super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0, 0.0, None, None),
@@ -3966,8 +3989,7 @@ fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
     assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-        vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
+    let presences: Vec<PresenceSample> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         super::presence_gate(&presences, (10.0, 0.0, 0.0), reach, 0.0, None, None),
         "the thermal front over the sample lifetime reaches 10 m"
@@ -3980,7 +4002,7 @@ fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
 
 #[test]
 fn test_fetch_gate_rest_rejects_out_of_reach_anchor() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 0.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         !super::presence_gate(&presences, (50.0, 0.0, 0.0), 10.0, 5.0, None, None),
@@ -3990,7 +4012,7 @@ fn test_fetch_gate_rest_rejects_out_of_reach_anchor() {
 
 #[test]
 fn test_fetch_gate_thrust_anticipates_within_median_window() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         super::presence_gate(
@@ -4018,7 +4040,7 @@ fn test_fetch_gate_thrust_anticipates_within_median_window() {
 
 #[test]
 fn test_fetch_gate_thrust_without_anchor_velocity_rests() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         !super::presence_gate(&presences, (1000.0, 0.0, 0.0), 0.0, 0.0, None, Some(20.0)),
@@ -4028,7 +4050,7 @@ fn test_fetch_gate_thrust_without_anchor_velocity_rests() {
 
 #[test]
 fn test_fetch_gate_thrust_without_median_rests() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         !super::presence_gate(
@@ -4045,7 +4067,7 @@ fn test_fetch_gate_thrust_without_median_rests() {
 
 #[test]
 fn test_fetch_gate_thrust_receding_rests() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, -100.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
         !super::presence_gate(
@@ -4062,7 +4084,7 @@ fn test_fetch_gate_thrust_receding_rests() {
 
 #[test]
 fn test_fetch_gate_snap_radius_scales_with_grid_step() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 1.0e8)];
     let snap = super::Φ * 1.0e8;
     assert!(
@@ -4077,7 +4099,7 @@ fn test_fetch_gate_snap_radius_scales_with_grid_step() {
 
 #[test]
 fn test_fetch_gate_snap_radius_respects_body_radius() {
-    let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+    let presences: Vec<PresenceSample> =
         vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0, 1.0)];
     assert!(
         super::presence_gate(&presences, (6.0e6, 0.0, 0.0), 0.0, 6.0e6, None, None),
@@ -4148,7 +4170,7 @@ fn test_body_barycenter_position_at_granule_boundary() {
         let mut right = [0.0_f64; super::CHEBYSHEV_N];
         right[0] = 2.0e9;
         eph.granules.push(super::ChebyshevGranule {
-            t0_jd: t0_jd,
+            t0_jd,
             dt_jd,
             cx: left,
             cy: [0.0; super::CHEBYSHEV_N],
@@ -4695,15 +4717,17 @@ fn test_query_admits_surface_sample_within_window() {
     let mut recs = Vec::new();
     super::query_hash(
         &hash,
-        pos,
-        now,
-        8.0e6,
-        0.0,
-        &[1.0e-300_f64; 9],
-        1.0,
-        [0.0, 0.0, 0.0],
+        super::MembraneCtx {
+            center: pos,
+            t2: now,
+            pad: 8.0e6,
+            delta_t_cache: 0.0,
+            floor: &[1.0e-300_f64; 9],
+            softening: 1.0,
+            forward: [0.0, 0.0, 0.0],
+            eph: &eph_map,
+        },
         &mut recs,
-        &eph_map,
     );
     assert!(
         !recs.is_empty(),
@@ -4713,15 +4737,17 @@ fn test_query_admits_surface_sample_within_window() {
     let mut recs_ssb = Vec::new();
     super::query_hash(
         &hash,
-        [0.0, 0.0, 0.0],
-        now,
-        2.0e12,
-        0.0,
-        &[1.0e-300_f64; 9],
-        1.0,
-        [0.0, 0.0, 0.0],
+        super::MembraneCtx {
+            center: [0.0, 0.0, 0.0],
+            t2: now,
+            pad: 2.0e12,
+            delta_t_cache: 0.0,
+            floor: &[1.0e-300_f64; 9],
+            softening: 1.0,
+            forward: [0.0, 0.0, 0.0],
+            eph: &eph_map,
+        },
         &mut recs_ssb,
-        &eph_map,
     );
     assert!(
         !recs_ssb.is_empty(),
@@ -4758,9 +4784,9 @@ fn test_wind_orbit_bin_positions_when_present() {
     assert!((p[2] - records[0].1[2]).abs() < 1.0e-3);
     let mid_t = (records[0].0 + records[1].0) * 0.5;
     let mid = super::body_barycenter_position("wind", mid_t, &map).unwrap();
-    for k in 0..3 {
+    for (k, m) in mid.iter().enumerate() {
         let expected = (records[0].1[k] + records[1].1[k]) * 0.5;
-        assert!((mid[k] - expected).abs() < 1.0e-3);
+        assert!((m - expected).abs() < 1.0e-3);
     }
     assert!(
         super::body_barycenter_position("wind", records[records.len() - 1].0 + 1.0e8, &map)
@@ -4924,7 +4950,7 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
                 e
             };
             assert_eq!(epochs, sorted, "co2 epochs must ascend");
-            assert!(epochs.first().map_or(false, |e| *e < now));
+            assert!(epochs.first().is_some_and(|e| *e < now));
         }
         other => {
             let _ = other;
@@ -6732,7 +6758,7 @@ fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
         },
     ];
     let path = "/tmp/opencode/gbco_gestalt_asset_test.gbco";
-    if std::fs::write(&path, &crate::geo::write_gbco(&recs)).is_err() {
+    if std::fs::write(path, crate::geo::write_gbco(&recs)).is_err() {
         return;
     }
     let held = load_gestalt_surface_threads(path, "earth")
@@ -7301,7 +7327,7 @@ fn fits_bintable_fixture() -> Vec<u8> {
     header.extend_from_slice(&fits_card("BITPIX", "8"));
     header.extend_from_slice(&fits_card("NAXIS", "0"));
     header.extend_from_slice(&fits_card("END", ""));
-    while header.len() % 2880 != 0 {
+    while !header.len().is_multiple_of(2880) {
         header.extend_from_slice(&[b' '; 80]);
     }
     buf.extend_from_slice(&header);
@@ -7324,7 +7350,7 @@ fn fits_bintable_fixture() -> Vec<u8> {
     ext.extend_from_slice(&fits_card("TTYPE4", "'OK'"));
     ext.extend_from_slice(&fits_card("TFORM4", "L"));
     ext.extend_from_slice(&fits_card("END", ""));
-    while ext.len() % 2880 != 0 {
+    while !ext.len().is_multiple_of(2880) {
         ext.extend_from_slice(&[b' '; 80]);
     }
     buf.extend_from_slice(&ext);
@@ -7855,7 +7881,7 @@ fn gdp_drifter_geo_series_roundtrip_and_component_name() {
 
 #[test]
 fn iscb_bin_roundtrip_and_rejections() {
-    fn encode(events: &[(f64, f64, f64, f64, Option<f64>, Option<&str>)]) -> Vec<u8> {
+    fn encode(events: &[EventTuple]) -> Vec<u8> {
         let mut out = Vec::new();
         out.extend_from_slice(b"ISCB");
         out.push(1u8);

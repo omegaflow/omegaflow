@@ -1,5 +1,9 @@
 use std::sync::OnceLock;
 
+type NodeVec = Vec<(f64, f64)>;
+type NodePair = (NodeVec, NodeVec);
+type CurveGrid = Vec<(f64, NodeVec)>;
+
 const MODEL_RAW: &str = include_str!("kernels/ak135.dat");
 const R_EARTH_KM: f64 = 6371.0;
 const DR: f64 = 0.5;
@@ -19,7 +23,7 @@ struct Model {
     sgrid: Vec<f64>,
 }
 
-fn parse_nodes() -> (Vec<(f64, f64)>, Vec<(f64, f64)>) {
+fn parse_nodes() -> NodePair {
     let mut vp = Vec::new();
     let mut vs = Vec::new();
     for line in MODEL_RAW.lines() {
@@ -301,8 +305,8 @@ fn build_s_p_table(depth_km: f64) -> Vec<(f64, f64)> {
     pts
 }
 
-fn depth_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
-    static G: OnceLock<Vec<(f64, Vec<(f64, f64)>)>> = OnceLock::new();
+fn depth_grid() -> &'static CurveGrid {
+    static G: OnceLock<CurveGrid> = OnceLock::new();
     G.get_or_init(|| {
         let mut v = vec![(0.0f64, table().clone())];
         for &d in DEPTH_KM.iter() {
@@ -312,8 +316,8 @@ fn depth_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
     })
 }
 
-fn p_p_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
-    static G: OnceLock<Vec<(f64, Vec<(f64, f64)>)>> = OnceLock::new();
+fn p_p_grid() -> &'static CurveGrid {
+    static G: OnceLock<CurveGrid> = OnceLock::new();
     G.get_or_init(|| {
         let mut v = vec![(0.0f64, table().clone())];
         for &d in DEPTH_KM.iter() {
@@ -323,8 +327,8 @@ fn p_p_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
     })
 }
 
-fn s_p_grid() -> &'static Vec<(f64, Vec<(f64, f64)>)> {
-    static G: OnceLock<Vec<(f64, Vec<(f64, f64)>)>> = OnceLock::new();
+fn s_p_grid() -> &'static CurveGrid {
+    static G: OnceLock<CurveGrid> = OnceLock::new();
     G.get_or_init(|| {
         let mut v = vec![(0.0f64, table().clone())];
         for &d in DEPTH_KM.iter() {
@@ -385,44 +389,44 @@ fn interp_depth_grid(
 }
 
 pub fn p_travel(delta_deg: f64) -> Option<f64> {
-    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+    if !delta_deg.is_finite() || !(0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
         return None;
     }
     interp_delta(table(), delta_deg)
 }
 
 pub fn s_travel(delta_deg: f64) -> Option<f64> {
-    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+    if !delta_deg.is_finite() || !(0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
         return None;
     }
     interp_delta(s_table(), delta_deg)
 }
 
 pub fn p_travel_depth(delta_deg: f64, depth_km: f64) -> Option<f64> {
-    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+    if !delta_deg.is_finite() || !(0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
         return None;
     }
-    if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
+    if !depth_km.is_finite() || !(0.0..=MAX_DEPTH_KM).contains(&depth_km) {
         return None;
     }
     interp_depth_grid(depth_grid(), delta_deg, depth_km)
 }
 
 pub fn p_p_travel(delta_deg: f64, depth_km: f64) -> Option<f64> {
-    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+    if !delta_deg.is_finite() || !(0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
         return None;
     }
-    if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
+    if !depth_km.is_finite() || !(0.0..=MAX_DEPTH_KM).contains(&depth_km) {
         return None;
     }
     interp_depth_grid(p_p_grid(), delta_deg, depth_km)
 }
 
 pub fn s_p_travel(delta_deg: f64, depth_km: f64) -> Option<f64> {
-    if !delta_deg.is_finite() || delta_deg < 0.0 || delta_deg > MAX_DELTA_DEG {
+    if !delta_deg.is_finite() || !(0.0..=MAX_DELTA_DEG).contains(&delta_deg) {
         return None;
     }
-    if !depth_km.is_finite() || depth_km < 0.0 || depth_km > MAX_DEPTH_KM {
+    if !depth_km.is_finite() || !(0.0..=MAX_DEPTH_KM).contains(&depth_km) {
         return None;
     }
     interp_depth_grid(s_p_grid(), delta_deg, depth_km)

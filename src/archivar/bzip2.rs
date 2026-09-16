@@ -46,7 +46,7 @@ fn build_table(lengths: &[u8]) -> Option<DecodeTable> {
     let mut min_len = BZ_MAX_CODE_LEN as u8;
     let mut max_len = 0u8;
     for &l in lengths {
-        if l < 1 || l > 20 {
+        if !(1..=20).contains(&l) {
             return None;
         }
         if l < min_len {
@@ -211,7 +211,7 @@ fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
     }
 
     let n_groups = bits.read(3)? as usize;
-    if n_groups < 2 || n_groups > 6 {
+    if !(2..=6).contains(&n_groups) {
         return None;
     }
     let n_selectors = bits.read(15)? as usize;
@@ -220,7 +220,7 @@ fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
     }
 
     let mut selector_mtf = vec![0u8; n_selectors];
-    for i in 0..n_selectors {
+    for slot in selector_mtf.iter_mut() {
         let mut j = 0u8;
         loop {
             if bits.read(1)? == 0 {
@@ -231,12 +231,12 @@ fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
                 return None;
             }
         }
-        selector_mtf[i] = j;
+        *slot = j;
     }
 
     let mut pos = [0u8; 6];
-    for v in 0..n_groups {
-        pos[v] = v as u8;
+    for (v, p) in pos.iter_mut().enumerate().take(n_groups) {
+        *p = v as u8;
     }
     let mut selector = vec![0u8; n_selectors];
     for i in 0..n_selectors {
@@ -251,11 +251,11 @@ fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
     }
 
     let mut lengths = vec![vec![0u8; alpha_size]; n_groups];
-    for t in 0..n_groups {
+    for row in lengths.iter_mut().take(n_groups) {
         let mut curr = bits.read(5)? as i32;
-        for i in 0..alpha_size {
+        for slot in row.iter_mut() {
             loop {
-                if curr < 1 || curr > 20 {
+                if !(1..=20).contains(&curr) {
                     return None;
                 }
                 if bits.read(1)? == 0 {
@@ -267,13 +267,13 @@ fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
                     curr -= 1;
                 }
             }
-            lengths[t][i] = curr as u8;
+            *slot = curr as u8;
         }
     }
 
     let mut tabs = Vec::with_capacity(n_groups);
-    for t in 0..n_groups {
-        tabs.push(build_table(&lengths[t])?);
+    for row in lengths.iter().take(n_groups) {
+        tabs.push(build_table(row)?);
     }
 
     let eob = n_in_use + 1;
@@ -394,7 +394,7 @@ pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
             if crc != stored_block_crc {
                 return None;
             }
-            combined_crc = (combined_crc << 1) | (combined_crc >> 31);
+            combined_crc = combined_crc.rotate_left(1);
             combined_crc ^= stored_block_crc;
             out.extend_from_slice(&block);
         }
@@ -403,11 +403,7 @@ pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
             break;
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 #[cfg(test)]

@@ -194,7 +194,7 @@ pub fn field_of(table: &[Field], item: u32) -> Option<&Field> {
 }
 
 pub fn strip_markers(bytes: &[u8]) -> Option<Vec<u8>> {
-    if bytes.len() % PHYSICAL_RECORD_MARKER == 0 {
+    if bytes.len().is_multiple_of(PHYSICAL_RECORD_MARKER) {
         let nrec = bytes.len() / PHYSICAL_RECORD_MARKER;
         let mut out = Vec::with_capacity(nrec * PHYSICAL_RECORD);
         for r in 0..nrec {
@@ -202,7 +202,7 @@ pub fn strip_markers(bytes: &[u8]) -> Option<Vec<u8>> {
             out.extend_from_slice(&bytes[base..base + PHYSICAL_RECORD]);
         }
         Some(out)
-    } else if bytes.len() % PHYSICAL_RECORD == 0 {
+    } else if bytes.len().is_multiple_of(PHYSICAL_RECORD) {
         Some(bytes.to_vec())
     } else {
         None
@@ -235,10 +235,8 @@ pub fn extract(record: &[u8], fld: &Field) -> i64 {
     };
     let mut v = val as i64;
 
-    if fld.outlength == 32 || fld.outlength == 16 {
-        if v >= (1i64 << (fld.outlength - 1)) {
-            v -= 1i64 << fld.outlength;
-        }
+    if (fld.outlength == 32 || fld.outlength == 16) && v >= (1i64 << (fld.outlength - 1)) {
+        v -= 1i64 << fld.outlength;
     }
     if fld.signlength == -1 && fld.outlength > bsize && v >= (1i64 << (bsize - 1)) {
         v -= 1i64 << bsize;
@@ -291,11 +289,7 @@ pub fn tracking_record(rec: &[u8]) -> Tracking {
 }
 
 pub fn full_year(two: i64) -> i64 {
-    if two < 70 {
-        2000 + two
-    } else {
-        1900 + two
-    }
+    if two < 70 { 2000 + two } else { 1900 + two }
 }
 
 pub struct SkySample {
@@ -372,11 +366,7 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
         .map(|r| (r[0], r[1], COMP_SKYFREQ))
         .collect();
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub const S_BAND_RATIO: f64 = 96.0 * 240.0 / 221.0;
@@ -586,11 +576,7 @@ pub fn reduce_skyfreq(
     eprintln!(
         "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), dtype {dtype_hist:?}, {n_out} fsky samples (median {fmed:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median"
     );
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn write_resid_bin(records: &[[f64; 8]]) -> Vec<u8> {
@@ -752,8 +738,8 @@ mod tests {
         let mut rec = [0u8; LOGICAL_RECORD];
         let mmin = field.start / 8;
         let mmax = field.stop / 8;
-        for i in mmin..=mmax {
-            rec[i] = 0xff;
+        for b in &mut rec[mmin..=mmax] {
+            *b = 0xff;
         }
         assert_eq!(
             extract(&rec, field),

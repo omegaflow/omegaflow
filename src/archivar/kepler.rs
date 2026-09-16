@@ -21,36 +21,36 @@ pub fn solve_kepler_ecc(mean_anomaly_rad: f64, e: f64) -> f64 {
     ecc
 }
 
-pub fn elements_to_icrs(
-    a_au: f64,
-    e: f64,
-    incl_deg: f64,
-    node_deg: f64,
-    peri_deg: f64,
-    ma_deg: f64,
-    epoch_jd: f64,
-    t_jd: f64,
-) -> Option<[f64; 3]> {
-    elements_to_icrs_state(
-        a_au, e, incl_deg, node_deg, peri_deg, ma_deg, epoch_jd, t_jd,
-    )
-    .map(|(p, _)| p)
+pub struct KeplerElements {
+    pub a_au: f64,
+    pub e: f64,
+    pub incl_deg: f64,
+    pub node_deg: f64,
+    pub peri_deg: f64,
+    pub ma_deg: f64,
+    pub epoch_jd: f64,
+    pub t_jd: f64,
 }
 
-pub fn elements_to_icrs_state(
-    a_au: f64,
-    e: f64,
-    incl_deg: f64,
-    node_deg: f64,
-    peri_deg: f64,
-    ma_deg: f64,
-    epoch_jd: f64,
-    t_jd: f64,
-) -> Option<([f64; 3], [f64; 3])> {
+pub fn elements_to_icrs(el: &KeplerElements) -> Option<[f64; 3]> {
+    elements_to_icrs_state(el).map(|(p, _)| p)
+}
+
+pub fn elements_to_icrs_state(el: &KeplerElements) -> Option<([f64; 3], [f64; 3])> {
+    let KeplerElements {
+        a_au,
+        e,
+        incl_deg,
+        node_deg,
+        peri_deg,
+        ma_deg,
+        epoch_jd,
+        t_jd,
+    } = *el;
     if !a_au.is_finite() || a_au <= 0.0 {
         return None;
     }
-    if !e.is_finite() || e < 0.0 || e >= 1.0 {
+    if !e.is_finite() || !(0.0..1.0).contains(&e) {
         return None;
     }
     let a_m = a_au * AU_M;
@@ -91,10 +91,32 @@ pub fn elements_to_icrs_state(
 #[cfg(test)]
 mod tests {
     use super::{
-        elements_to_icrs, elements_to_icrs_state, solve_kepler_ecc, AU_M, GM_SUN_M3_S2, TAU,
+        AU_M, GM_SUN_M3_S2, KeplerElements, TAU, elements_to_icrs, elements_to_icrs_state,
+        solve_kepler_ecc,
     };
 
     const J2000: f64 = 2451545.0;
+
+    fn el(
+        a_au: f64,
+        e: f64,
+        incl_deg: f64,
+        node_deg: f64,
+        peri_deg: f64,
+        ma_deg: f64,
+        t_jd: f64,
+    ) -> KeplerElements {
+        KeplerElements {
+            a_au,
+            e,
+            incl_deg,
+            node_deg,
+            peri_deg,
+            ma_deg,
+            epoch_jd: J2000,
+            t_jd,
+        }
+    }
 
     fn norm(p: [f64; 3]) -> f64 {
         (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt()
@@ -102,7 +124,7 @@ mod tests {
 
     #[test]
     fn circular_orbital_speed() {
-        let (_, v) = elements_to_icrs_state(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, J2000, J2000).unwrap();
+        let (_, v) = elements_to_icrs_state(&el(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, J2000)).unwrap();
         let expect = (GM_SUN_M3_S2 / AU_M).sqrt();
         assert!((norm(v) - expect).abs() < 1e-3);
     }
@@ -111,7 +133,7 @@ mod tests {
     fn perihelion_vis_viva() {
         let a = 2.0;
         let e = 0.5;
-        let (_, v) = elements_to_icrs_state(a, e, 0.0, 0.0, 0.0, 0.0, J2000, J2000).unwrap();
+        let (_, v) = elements_to_icrs_state(&el(a, e, 0.0, 0.0, 0.0, 0.0, J2000)).unwrap();
         let expect = (GM_SUN_M3_S2 * (1.0 + e) / (a * AU_M * (1.0 - e))).sqrt();
         assert!((norm(v) - expect).abs() < 1e-3);
     }
@@ -119,8 +141,8 @@ mod tests {
     #[test]
     fn state_position_matches_position_only() {
         let (p, _) =
-            elements_to_icrs_state(1.3, 0.2, 11.0, 80.0, 73.0, 10.0, J2000, J2000 + 37.0).unwrap();
-        let q = elements_to_icrs(1.3, 0.2, 11.0, 80.0, 73.0, 10.0, J2000, J2000 + 37.0).unwrap();
+            elements_to_icrs_state(&el(1.3, 0.2, 11.0, 80.0, 73.0, 10.0, J2000 + 37.0)).unwrap();
+        let q = elements_to_icrs(&el(1.3, 0.2, 11.0, 80.0, 73.0, 10.0, J2000 + 37.0)).unwrap();
         for k in 0..3 {
             assert!((p[k] - q[k]).abs() < 1e-6);
         }
@@ -143,21 +165,21 @@ mod tests {
 
     #[test]
     fn circular_orbit_constant_radius() {
-        let r0 = elements_to_icrs(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, J2000, J2000).unwrap();
-        let r1 = elements_to_icrs(1.0, 0.0, 0.0, 0.0, 0.0, 120.0, J2000, J2000).unwrap();
+        let r0 = elements_to_icrs(&el(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, J2000)).unwrap();
+        let r1 = elements_to_icrs(&el(1.0, 0.0, 0.0, 0.0, 0.0, 120.0, J2000)).unwrap();
         assert!((norm(r0) - AU_M).abs() < 1e-6);
         assert!((norm(r1) - AU_M).abs() < 1e-6);
     }
 
     #[test]
     fn perihelion_distance() {
-        let p = elements_to_icrs(2.0, 0.5, 0.0, 0.0, 0.0, 0.0, J2000, J2000).unwrap();
+        let p = elements_to_icrs(&el(2.0, 0.5, 0.0, 0.0, 0.0, 0.0, J2000)).unwrap();
         assert!((norm(p) - AU_M).abs() < 1e-6);
     }
 
     #[test]
     fn aphelion_distance() {
-        let p = elements_to_icrs(2.0, 0.5, 0.0, 0.0, 0.0, 180.0, J2000, J2000).unwrap();
+        let p = elements_to_icrs(&el(2.0, 0.5, 0.0, 0.0, 0.0, 180.0, J2000)).unwrap();
         assert!((norm(p) - 3.0 * AU_M).abs() < 1e-6);
     }
 
@@ -165,9 +187,8 @@ mod tests {
     fn orbital_period_closed() {
         let a_au: f64 = 1.3;
         let p_days = TAU / (GM_SUN_M3_S2 / (a_au * AU_M).powi(3)).sqrt() / 86400.0;
-        let r0 = elements_to_icrs(a_au, 0.2, 11.0, 80.0, 73.0, 10.0, J2000, J2000).unwrap();
-        let r1 =
-            elements_to_icrs(a_au, 0.2, 11.0, 80.0, 73.0, 10.0, J2000, J2000 + p_days).unwrap();
+        let r0 = elements_to_icrs(&el(a_au, 0.2, 11.0, 80.0, 73.0, 10.0, J2000)).unwrap();
+        let r1 = elements_to_icrs(&el(a_au, 0.2, 11.0, 80.0, 73.0, 10.0, J2000 + p_days)).unwrap();
         for k in 0..3 {
             assert!(
                 (r0[k] - r1[k]).abs() < 10.0,

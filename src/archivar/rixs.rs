@@ -143,8 +143,7 @@ pub fn parse_rixs_mev(text: &str) -> Option<ChargeSpectrum> {
     let mut intensity = Vec::new();
     for line in text.lines() {
         let line = line.trim();
-        if line.starts_with('#') {
-            let rest = &line[1..];
+        if let Some(rest) = line.strip_prefix('#') {
             if let Some(eq) = rest.find('=') {
                 let key = rest[..eq].trim();
                 let val_part = &rest[eq + 1..];
@@ -153,21 +152,21 @@ pub fn parse_rixs_mev(text: &str) -> Option<ChargeSpectrum> {
                 };
                 match key {
                     "H" => {
-                        if let Ok(v) = val.parse::<f64>() {
-                            if v.is_finite() {
-                                momentum = v;
-                                axis = 0;
-                                found = true;
-                            }
+                        if let Ok(v) = val.parse::<f64>()
+                            && v.is_finite()
+                        {
+                            momentum = v;
+                            axis = 0;
+                            found = true;
                         }
                     }
                     "L" => {
-                        if let Ok(v) = val.parse::<f64>() {
-                            if v.is_finite() {
-                                momentum = v;
-                                axis = 1;
-                                found = true;
-                            }
+                        if let Ok(v) = val.parse::<f64>()
+                            && v.is_finite()
+                        {
+                            momentum = v;
+                            axis = 1;
+                            found = true;
                         }
                     }
                     _ => {}
@@ -216,9 +215,12 @@ pub fn charge_oscillators(spec: &ChargeSpectrum) -> Vec<SpinOscillator> {
             .collect();
         gaps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
         let mid = gaps.len() / 2;
-        gaps.get(mid).copied().unwrap_or(0.0)
+        gaps.get(mid).copied()
     } else {
-        0.0
+        None
+    };
+    let Some(spacing) = spacing else {
+        return Vec::new();
     };
     let bin_width = spacing * MEV_TO_HZ;
     spec.energy_mev
@@ -285,9 +287,12 @@ pub fn spin_oscillators(spec: &SpinSpectrum) -> Vec<SpinOscillator> {
             .collect();
         gaps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
         let mid = gaps.len() / 2;
-        gaps.get(mid).copied().unwrap_or(0.0)
+        gaps.get(mid).copied()
     } else {
-        0.0
+        None
+    };
+    let Some(spacing) = spacing else {
+        return Vec::new();
     };
     let bin_width = spacing * EV_TO_HZ;
     let mut out = Vec::new();

@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw;
-use omegaflow::archivar::geo::{parse_bin, write_bin, MAGIC_USCRN};
+use omegaflow::archivar::geo::{MAGIC_USCRN, parse_bin, write_bin};
 use omegaflow::archivar::noaa_nodd::{
     filter_window, parse_uscrn, parse_uscrn_stations, tdb_window, uscrn_wban,
 };
@@ -79,7 +79,9 @@ fn main() {
     let anchor = match anchors.get(&wban) {
         Some(a) => a,
         None => {
-            eprintln!("{station}: WBAN {wban} carries no anchor in stations.tsv — the bin stays unwritten");
+            eprintln!(
+                "{station}: WBAN {wban} carries no anchor in stations.tsv — the bin stays unwritten"
+            );
             std::process::exit(1);
         }
     };

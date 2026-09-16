@@ -6,7 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::archivar::units::{allowed_units_for_force, normalize_unit};
 use crate::force::force_id_of;
-use crate::json::{jstr, parse_json, JsonVal};
+use crate::json::{JsonVal, jstr, parse_json};
 
 pub const FORCE_NAMES: [&str; 9] = [
     "em",
@@ -987,11 +987,7 @@ fn unit_match_at(text: &str, j: usize, unit_norm: &str) -> Option<usize> {
     }
     let after = j + ub.len();
     let boundary_ok = after >= bytes.len() || !(bytes[after] as char).is_alphanumeric();
-    if boundary_ok {
-        Some(after)
-    } else {
-        None
-    }
+    if boundary_ok { Some(after) } else { None }
 }
 
 fn scan_register_values(text: &str, units: &[String], out: &mut Vec<RegisterValue>) {
@@ -1213,9 +1209,10 @@ mod tests {
     #[test]
     fn input_clean_text_yields_nothing() {
         let mut g = test_gate();
-        assert!(g
-            .check_input("the block carries the measured series, nothing else")
-            .is_empty());
+        assert!(
+            g.check_input("the block carries the measured series, nothing else")
+                .is_empty()
+        );
     }
 
     #[test]
@@ -1228,17 +1225,19 @@ mod tests {
     #[test]
     fn fn_speculation_substring_not_blocked() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("the data are unlikely to arrive, and the likelihood is low")
-            .is_none());
+        assert!(
+            g.check_text("the data are unlikely to arrive, and the likelihood is low")
+                .is_none()
+        );
     }
 
     #[test]
     fn fn_speculation_case_insensitive_quote_not_blocked() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("the register warns that \u{201C}Probably\u{201D} is a guess")
-            .is_none());
+        assert!(
+            g.check_text("the register warns that \u{201C}Probably\u{201D} is a guess")
+                .is_none()
+        );
     }
 
     #[test]
@@ -1260,9 +1259,10 @@ mod tests {
     #[test]
     fn fn_backed_claim_anchored_path_not_blocked() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("Fertig. tools/register/src/bin/register_verify.rs is on main")
-            .is_none());
+        assert!(
+            g.check_text("Fertig. tools/register/src/bin/register_verify.rs is on main")
+                .is_none()
+        );
     }
 
     #[test]
@@ -1291,9 +1291,10 @@ mod tests {
     #[test]
     fn fn_zero_with_pending() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("the residual is 0.0 — pending, the harvest is absent")
-            .is_none());
+        assert!(
+            g.check_text("the residual is 0.0 — pending, the harvest is absent")
+                .is_none()
+        );
     }
 
     #[test]
@@ -1318,20 +1319,23 @@ mod tests {
     #[test]
     fn fn_count_without_unit_is_no_measurement() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("cargo check gives 0 Fehler, 0 Warnungen")
-            .is_none());
+        assert!(
+            g.check_text("cargo check gives 0 Fehler, 0 Warnungen")
+                .is_none()
+        );
     }
 
     #[test]
     fn fn_nonzero_number_is_not_zero() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("the channel sits at 10 m, fully archived")
-            .is_none());
-        assert!(g
-            .check_text("the series reaches 100.0 s without drift")
-            .is_none());
+        assert!(
+            g.check_text("the channel sits at 10 m, fully archived")
+                .is_none()
+        );
+        assert!(
+            g.check_text("the series reaches 100.0 s without drift")
+                .is_none()
+        );
     }
 
     #[test]
@@ -1370,9 +1374,10 @@ mod tests {
     #[test]
     fn fn_clean_text_passes() {
         let mut g = test_gate();
-        assert!(g
-            .check_text("the field carries the measured series; the gate holds")
-            .is_none());
+        assert!(
+            g.check_text("the field carries the measured series; the gate holds")
+                .is_none()
+        );
     }
 
     #[test]
@@ -1540,9 +1545,10 @@ mod tests {
             value: 19.7,
             unit: "s".to_string(),
         });
-        assert!(g
-            .check_text("the measured peak of the band sits at 19.7 s")
-            .is_none());
+        assert!(
+            g.check_text("the measured peak of the band sits at 19.7 s")
+                .is_none()
+        );
     }
 
     #[test]

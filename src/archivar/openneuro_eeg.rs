@@ -229,7 +229,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<OpenNeuroEeg> {
     let total = (nbchan as u64)
         .checked_mul(pnts)?
         .checked_mul(trials as u64)?;
-    if samples_len % elem != 0 || (samples_len / elem) as u64 != total {
+    if !samples_len.is_multiple_of(elem) || (samples_len / elem) as u64 != total {
         return None;
     }
 
