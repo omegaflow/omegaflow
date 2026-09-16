@@ -1,0 +1,49 @@
+name: nh-rex-tnf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nh-rex-tnf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        run: |
+          if gh release view pds-smallbodies.astro.umd.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "nh_rex_tnf_lunocc2012.csv"; then
+            echo "asset nh_rex_tnf_lunocc2012.csv already present — manifest skipped"
+            exit 0
+          fi
+          echo "asset nh_rex_tnf_lunocc2012.csv missing — compiling and manifesting"
+      - name: Ensure the pds-smallbodies.astro.umd.edu release exists on the CDN
+        run: |
+          if ! gh release view pds-smallbodies.astro.umd.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-smallbodies.astro.umd.edu --repo omegaflow/sources \
+              --title "pds-smallbodies.astro.umd.edu" \
+              --notes "New Horizons REX Pluto-cruise TNF carrier-phase records packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      # Measured source: 35 770 168 B, md5 572a2e7629ef25e5214028dca418026b,
+      # PDS4 product urn:nasa:pds:nh_rex:plutocruise_tnf:lunocc2012::1.0,
+      # subdirectory tnf/. Local DNS for pdssbn.astro.umd.edu does not resolve —
+      # the runner is the reachability measurement.
+      - name: Compile the NH REX TNF lunar-occultation series and upload to CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin tnf_compiler -- \
+            --url "https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf" \
+            --out nh_rex_tnf_lunocc2012.csv \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "nh-rex-tnf-cdn: nh_rex_tnf_lunocc2012.csv returned void" \
+                 "TNF compile returned void for the NH REX lunocc2012.tnf source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

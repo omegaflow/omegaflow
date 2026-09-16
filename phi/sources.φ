@@ -6317,6 +6317,28 @@ at earth
 ttl 604800
 field observable_hz vex_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/nh_rex_tnf_lunocc2012.csv
+format csv
+at earth
+ttl 604800
+rows .
+epoch epoch
+field ramp_freq nh_rex_tnf_ramp_freq_hz inverse-square em Hz 604800 0.0 0.0
+field ul_phase_cycles nh_rex_tnf_uplink_phase_cycle inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
+format cors_rinex
+at earth
+ttl 604800
+field c1 cors_rinex_c1_m inverse-square em m 604800 0.0 0.0
+field p1 cors_rinex_p1_m inverse-square em m 604800 0.0 0.0
+field c2 cors_rinex_c2_m inverse-square em m 604800 0.0 0.0
+field p2 cors_rinex_p2_m inverse-square em m 604800 0.0 0.0
+field c5 cors_rinex_c5_m inverse-square em m 604800 0.0 0.0
+field l1 cors_rinex_l1_cycle inverse-square em cycle 604800 0.0 0.0
+field l2 cors_rinex_l2_cycle inverse-square em cycle 604800 0.0 0.0
+field l5 cors_rinex_l5_cycle inverse-square em cycle 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 format bl_narrowband
 on earth 38.4331409 -79.8397246 0
@@ -6561,6 +6583,12 @@ field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
 field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/messenger_odf.bin
 format messenger_odf
