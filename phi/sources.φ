@@ -950,6 +950,13 @@ at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
 field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
+url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
+ttl 3600
+format eea_aq_parquet
+post_body {"countries":["DE"],"cities":["Heidelberg"],"pollutants":["PM10"],"dataset":1,"source":"API","aggregationType":"hour"}
+on earth 49.4195 8.6767
+field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
+
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 ttl 3600
 on earth 0 0 0
@@ -1457,6 +1464,12 @@ lon 3
 epoch 0
 field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
+format swot_l2_lr_ssh
+on earth 0 0 0
+ttl 86400
+field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
@@ -2150,6 +2163,16 @@ format ephemeris_binary
 at phoebe
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pioneer10_daily.bin
+format ephemeris_binary
+at pioneer10_daily
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin
+format ephemeris_binary
+at pioneer11_daily
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
 format ephemeris_binary
 at pluto
@@ -2432,6 +2455,12 @@ url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_r
 format apdb
 at sun
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/www.ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
+format noaa_cdo_ghcnd_tmax
+ttl 86400
+on earth 0 0 0
+field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 
 url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
 ttl 86400
@@ -6329,6 +6358,18 @@ field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-squa
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square em K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
+format gedi_l2a
+on earth 0 0 0
+ttl 604800
+field gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square em m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin
+format icesat2_atl03
+on earth 0 0 0
+ttl 604800
+field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/xp_pilot_p6144.bin
 format xp_spectra
 at sun
@@ -7032,6 +7073,26 @@ format twomrs
 ttl 604800
 at sun
 field cz twomrs_cz_kms gaussian-inverse-square em km/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
+format catalog_vlass_tap_component
+ttl 604800
+at sun
+cmap .
+ra RA
+dec DEC
+field Total_flux vlass_component_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_source.bin
+format catalog_vlass_tap_source
+ttl 604800
+at sun
+cmap .
+ra RA_Source
+dec DEC_Source
+field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
 format iscb
