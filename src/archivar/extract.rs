@@ -48,6 +48,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "vex_odf" => odf::parse_series(bytes),
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
+        "voyager_odr" => voyager_odr::parse_series(bytes),
+        "galileo_odr" => galileo_odr::parse_series(bytes),
         _ => None,
     }
 }
@@ -199,6 +201,17 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "dawn_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("dawn_odf_observable_hz"),
+            _ => None,
+        },
+        "voyager_odr" => match comp {
+            voyager_odr::COMP_SAMPLE => Some("voyager_odr_sample_count"),
+            _ => None,
+        },
+        "galileo_odr" => match comp {
+            galileo_odr::COMP_AD1 => Some("galileo_odr_ad1_count"),
+            galileo_odr::COMP_AD2 => Some("galileo_odr_ad2_count"),
+            galileo_odr::COMP_AD3 => Some("galileo_odr_ad3_count"),
+            galileo_odr::COMP_AD4 => Some("galileo_odr_ad4_count"),
             _ => None,
         },
         _ => None,
