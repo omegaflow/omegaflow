@@ -1,0 +1,45 @@
+name: icesat2-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: ATL03 product day (YYYY.MM.DD; blank = 2 days ago UTC)
+        required: false
+        type: string
+        default: ""
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  icesat2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.nsidc.earthdatacloud.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view data.nsidc.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.nsidc.earthdatacloud.nasa.gov --repo omegaflow/sources \
+              --title "data.nsidc.earthdatacloud.nasa.gov" \
+              --notes "ICESat-2 ATL03 (ATLAS/ATL03) geolocated photon heights compiled to a geo oscillator record (medium em). Header 8 B: magic AT31 (4), count (u32 LE). Record stride 48 B = 6 x f64 LE: delta_time (s), lat_ph (deg), lon_ph (deg), h_ph (m), quality_ph, beam_index."
+          fi
+      - name: Compile the ATL03 day and upload to CDN
+        run: |
+          day="${{ inputs.day }}"
+          if [ -z "$day" ]; then day=$(date -u -d '2 days ago' +%Y.%m.%d); fi
+          cargo run -p omegaflow-harvest --release --bin icesat2_atl03_compiler -- \
+            --day "$day" --limit 2 --beams 6 \
+            --out data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "icesat2-cdn: icesat2_atl03.bin returned void" \
+                 "icesat2_atl03_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

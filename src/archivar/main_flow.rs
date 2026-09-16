@@ -3089,6 +3089,162 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "eea_aq_parquet" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let eph_arc = archive.body_ephemerides.clone();
+                let e = env.clone();
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                    };
+                    let url = match render_source_url(
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                        &e,
+                    ) {
+                        Some(u) => u,
+                        None => {
+                            eprintln!(
+                                "eea_aq_parquet {}: url render void — retry in ttl/Φ",
+                                src_idx
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let body = render_source_body(
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                    );
+                    let Some(body) = body else {
+                        eprintln!(
+                            "eea_aq_parquet {}: post_body absent — refused, retry in ttl/Φ",
+                            src_idx
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
+                    let mut headers = render_headers(&src_clone.headers, &e);
+                    if !headers
+                        .iter()
+                        .any(|(k, _)| k.eq_ignore_ascii_case("Content-Type"))
+                    {
+                        headers.push((
+                            "Content-Type".to_string(),
+                            crate::archivar::eea::EEA_AQ_CONTENT_TYPE.to_string(),
+                        ));
+                    }
+                    let files = match crate::archivar::eea::fetch_eea_aq(
+                        &url,
+                        body.as_str(),
+                        &headers,
+                        src_clone.ttl,
+                    ) {
+                        Some(f) => f,
+                        None => {
+                            eprintln!(
+                                "eea_aq_parquet {}: two-stage fetch void — retry in ttl/Φ·2ⁿ",
+                                src_idx
+                            );
+                            let _ = ftx.send(empty(false));
+                            return;
+                        }
+                    };
+                    let value_fields: Vec<FieldConfig> = src_clone
+                        .extracts
+                        .iter()
+                        .filter_map(|ext| match ext {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    if value_fields.is_empty() {
+                        eprintln!(
+                            "eea_aq_parquet {}: field undeclared — the block carries no field line",
+                            src_idx
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+                    for (file_url, file_bytes) in files {
+                        let Some(cols) = crate::archivar::parquet::parse_parquet(&file_bytes)
+                        else {
+                            eprintln!(
+                                "eea_aq_parquet {}: {} B carry no parquet contract",
+                                file_url,
+                                file_bytes.len()
+                            );
+                            continue;
+                        };
+                        let Some(m) = crate::archivar::eea::latest_measurement(&cols) else {
+                            eprintln!(
+                                "eea_aq_parquet {}: no measured value row — nothing manifests",
+                                file_url
+                            );
+                            continue;
+                        };
+                        let Some(epoch) = lsk_c.unix_to_tdb(m.epoch_unix) else {
+                            continue;
+                        };
+                        for fc in &value_fields {
+                            if !fc.key.eq_ignore_ascii_case("Value") {
+                                continue;
+                            }
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch,
+                                    position: Position::Source,
+                                    name: fc.name.clone(),
+                                    value: m.value,
+                                },
+                                fc.clone(),
+                            ));
+                        }
+                    }
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                    });
+                });
+                continue;
+            }
             let mut fields: Vec<FieldConfig> = Vec::new();
             for ext in &archive.sources[i].extracts {
                 fields.extend(extract_fields(ext));

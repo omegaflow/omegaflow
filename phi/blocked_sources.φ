@@ -79,18 +79,6 @@ pending
 url https://data.ghrc.earthdata.nasa.gov/
 note NASA GHRC DAAC (Global Hydrology Resource Center). Measured 2026-09-15: anonym HTTP 200 is the Egress login page; /ghrcw/data/ anonym 404; CMR provider GHRC_DAAC live (e.g. C1995564612-GHRC_DAAC, ASCII). ISS LIS already registered (sources.φ:5838, iss_lis.bin + iss_lis_compiler). Consumer for further GHRC products open → pending.
 
-pending
-url s3://lp-prod-protected/GEDI02_A.002/
-note GEDI L2A (GEDI02_A.002) lidar height metrics, HDF5, em. Measured 2026-09-15: data.lpdaac.earthdatacloud.nasa.gov/s3credentials anonym 307 → URS-OAuth, with EARTHDATA_EDL_TOKEN 200 (SigV4, us-west-2); bucket s3://lp-prod-protected anonym 403 Requester-Pays. HDF5 readable via src/archivar/hdf5.rs + S3 route src/archivar/range.rs:290. No GEDI compiler yet → pending.
-
-pending
-url s3://nsidc-cumulus-prod-public/ATLAS/ATL03/
-note ICESat-2 ATL03 geolocated photons, HDF5, em (lidar altimetry). Measured 2026-09-15: data.nsidc.earthdatacloud.nasa.gov/s3credentials anonym 307, with EARTHDATA_EDL_TOKEN 200; bucket s3://nsidc-cumulus-prod-public anonym 403. HDF5 readable via src/archivar/hdf5.rs + range.rs:290. No ATL03 compiler yet → pending.
-
-pending
-url s3://podaac-swot-ops-cumulus-public/SWOT_L2_LR_SSH_D/
-note SWOT L2 LR SSH (sea surface height), netCDF4, gravity (radar altimetry). Measured 2026-09-15: archive.podaac.earthdata.nasa.gov/s3credentials anonym 307, with EARTHDATA_EDL_TOKEN 200; bucket s3://podaac-swot-ops-cumulus-public anonym 403. netCDF4 readable via src/archivar/netcdf.rs/nc4.rs + range.rs:692. No SWOT compiler yet → pending.
-
 blocked parser-def xml
 url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
 note ARPANSA UV (Australian Radiation Protection and Nuclear Safety Agency): erythemal-weighted UV index, 17 stations, em. Measured 2026-09-15 anonymous HTTP 200, text/xml 4712 B (uvvalues.xml; <index>, <utcdatetime>). The access is open — the gap is the format: the archivar has no XML value reader (only parse_json/xmlcount), so the extract is unbuilt; per-station lat/lon absent (positions pending). Compiler + consumer open.

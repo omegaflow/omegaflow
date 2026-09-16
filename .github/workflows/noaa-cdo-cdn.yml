@@ -1,0 +1,58 @@
+name: noaa-cdo-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      stations:
+        description: station fan-out bound (GHCND stations queried)
+        required: true
+        type: string
+        default: "50"
+      limit:
+        description: per-station observation bound
+        required: true
+        type: string
+        default: "10"
+      extent:
+        description: bounding box lat_min,lon_min,lat_max,lon_max (blank = none)
+        required: false
+        type: string
+        default: ""
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noaa-cdo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the www.ncdc.noaa.gov release exists on the CDN
+        run: |
+          if ! gh release view www.ncdc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.ncdc.noaa.gov --repo omegaflow/sources \
+              --title "www.ncdc.noaa.gov" \
+              --notes "NOAA CDO GHCND TMAX observations compiled to a geo oscillator record (medium em). Header 8 B: magic NCDO (4), count (u32 LE). Record stride 32 B LE: lat_deg (f64 deg), lon_deg (f64 deg), date_unix (f64, unix epoch seconds), value_c (f64, deg C)."
+          fi
+      - name: Compile the GHCND TMAX window and upload to CDN
+        run: |
+          window_start=$(date -u -d '7 days ago' +%Y-%m-%d)
+          window_end=$(date -u -d '1 day ago' +%Y-%m-%d)
+          extra=()
+          if [ -n "${{ inputs.extent }}" ]; then extra+=(--extent "${{ inputs.extent }}"); fi
+          cargo run -p omegaflow-harvest --release --bin noaa_cdo_compiler -- \
+            --window-start "$window_start" --window-end "$window_end" \
+            --stations "${{ inputs.stations }}" --limit "${{ inputs.limit }}" \
+            "${extra[@]}" --out data/www.ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "noaa-cdo-cdn: noaa_cdo_ghcnd_tmax.bin returned void" \
+                 "noaa_cdo_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health

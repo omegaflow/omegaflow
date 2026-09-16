@@ -19,10 +19,6 @@ ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
 note ivo://src.pas/tap — dritte Messung 2026-09-16 (grind-flash): sync-QUERY 200 (2×) VOTable-Error „connection pool is closed"; COUNT(*) nicht beantwortet. TAP-Front lebt, Pool down; Re-Check.
 
-parser-gap
-kandidat https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
-note EEA-AQ-Observations, Nachfolger des dead aqportal.discomap.eea.europa.eu. POST-Vertrag gemessen 2026-09-16 (research-max, swagger/v1/swagger.json): POST ParquetFile/urls, content-type application/json, Body {"countries":["DE"],"cities":[],"pollutants":["PM10"],"dataset":1,"source":"API","aggregationType":"hour"} — dataset Pflicht (1=UTD ab 2024, 2=E1a 2013–2023, 3=Airbase 2002–2012), pollutants als Namen. Antwort text/csv, eine Parquet-URL je Zeile. Verifizierte Datei SPO.DE_DENW058_PM1_dataGroup1.parquet (200, 204710 B, Magic PAR1, Last-Modified 2026-09-16 08:20 GMT); Footer-Namen Samplingpoint/Pollutant/Unit/Value/Validity/Verification. PM10→Dateitoken PM1, PM2.5→PM2. Gap: kein Extrakt-Arm für POST→CSV-URL-Liste→per-File-Parquet (parquet.rs liest, kein Arm). Nächster Schritt: Zweitfetch-Arm + Parquet-Wert-Verifikation, dann sources.φ-Block.
-
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
 note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; EWCT −0,172 m/s, NSCT −0,087 m/s (45.66184 N, 13.587437 E), time_coverage_end 2026-07-30T23:30:00Z. Geschwister-Check (tabledap/allDatasets, datasetID=~"HFRADAR.*", 21 HFRADAR_*_Totals): frischester maxTime 2026-07-31T00:00:00Z — kein lebendes Geschwister, die ganze Familie steht seit ~2026-07-30/31. Kein sources.φ-Block. Nächster Schritt: maxTime der Familie erneut messen.
@@ -38,26 +34,6 @@ note Re-Messung 2026-09-16 (grind-flash): direkt Timeout, Proton US-Exit 200 Arc
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
 note Re-Messung 2026-09-16 (grind-flash): Layer 0 trägt nur Stationsgeometrie + Metadaten (STA_SERIALCODE/STATION_NAME/LOCATION/REGION/OWNER/PURPOSE), keinen AQI-Wert; die Werttabelle ist Table 1 (siehe Geschwister-Eintrag). Werttabelle ohne Geometrie, Service ohne Relationship → kein Einzel-URL-Block. Nächster Schritt: max(DATE_TIME) der Table 1 erneut messen.
-
-ausstehend
-kandidat https://www.ncdc.noaa.gov/cdo-web/api/v2/
-note entblockt 2026-09-15: NOAA_CDO_TOKEN öffnet (curl token-Header → HTTP 200, GHCND-Datasets). CDO = Klimadaten (temperature/precipitation, diffusion/thermal). Ernte/Compiler + Konsument offen. Anonym token-gate re-measured 2026-09-15: /api/v2/data anonym 400 "Token parameter is required", NOAA_CDO_TOKEN 200.
-
-ausstehend
-kandidat s3://lp-prod-protected/GEDI02_A.002/
-note entblockt 2026-09-15: EARTHDATA_EDL_TOKEN öffnet data.lpdaac.earthdatacloud.nasa.gov/s3credentials (HTTP 200 + accessKeyId) — die s3://-Route (SigV4 us-west-2) ist funktional. GEDI L2A Lidar-Höhenmetriken (em). Ernte/Compiler + Konsument offen.
-
-ausstehend
-kandidat s3://nsidc-cumulus-prod-public/ATLAS/ATL03/
-note entblockt 2026-09-15: EARTHDATA_EDL_TOKEN öffnet data.nsidc.earthdatacloud.nasa.gov/s3credentials (HTTP 200 + accessKeyId). ICESat-2 ATL03 geolokalisierte Photonen (em, Lidar-Altimetrie). Ernte/Compiler + Konsument offen.
-
-ausstehend
-kandidat s3://podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/
-note entblockt 2026-09-15: EARTHDATA_EDL_TOKEN öffnet archive.podaac.earthdata.nasa.gov/s3credentials (HTTP 200 + accessKeyId) — die „client_id fehlt"-Notiz war stale: podaac routet Bearer, nicht OAuth. SWOT SSH (gravity/em). Ernte/Compiler + Konsument offen.
-
-ausstehend
-kandidat s3://podaac-swot-ops-cumulus-public/SWOT_L2_LR_SSH_D/
-note entblockt 2026-09-15: EARTHDATA_EDL_TOKEN öffnet archive.podaac.earthdata.nasa.gov/s3credentials (HTTP 200 + accessKeyId). SWOT SSH (gravity/em). Ernte/Compiler + Konsument offen.
 
 parser-gap
 kandidat https://aqs.epa.gov/aqsweb/airdata/download_files.html
