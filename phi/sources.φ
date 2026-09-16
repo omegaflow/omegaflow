@@ -1565,11 +1565,13 @@ url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr
 format catalog_des_y6
 at sun
 ttl 86400
+note geschwindigkeits-unsicherheit descoped (gemessen 2026-09-16): der volle heliozentrische Zustand x,y,z,vx,vy,vz + sigma_m wird getragen — der Zustandsvektor ist das vollständige Gravitationsfeld; Geschwindigkeits-/Offdiagonal-Unsicherheit ist kein Kraftfeld.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
 format catalog_ossos
 at sun
 ttl 86400
+note gm descoped (gemessen 2026-09-16): Keplerelemente, kein GM — GM ist die Konstante der Sonne (src/archivar/kepler.rs:1).
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
 format ephemeris_epm
@@ -1957,6 +1959,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom
 format catalog_dcom5
 at sun
 ttl 86400
+note gm descoped (gemessen 2026-09-16): CometRec trägt kein GM; der Komet propagiert mit GM_SUN_M3_S2 der Sonne (src/archivar/kepler.rs:1) — GM ist die Eigenschaft des Ankers, der Komet ein Testteilchen.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
 format ephemeris_binary
@@ -2440,6 +2443,7 @@ ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
+note standort pending (gemessen 2026-09-16): der Standort ist aufgelöst (nexrad_site src/archivar/nexrad.rs:354, SITES :198), aber der 44-B-Record trägt ihn nicht; Schritt: Standort lat/lon/alt in den Record tragen oder am Standort ankern.
 
 url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
 format apdb
@@ -6761,7 +6765,7 @@ field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
 field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
 field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160806_235657__20160814_114429.bin
+url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160102_093513__20160103_165224.bin
 format drs_fits
 at earth
 ttl 604800
@@ -7300,6 +7304,7 @@ format twomrs
 ttl 604800
 at sun
 field cz twomrs_cz_kms gaussian-inverse-square em km/s 604800 0.0 0.0
+note distanz descoped (gemessen 2026-09-16): die getragene Distanz-Observable ist cz/e_cz (Rotverschiebung), nicht Distanz — Distanz leitet sich aus cz über H0 ab.
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 format catalog_vlass_tap_component
@@ -7310,6 +7315,7 @@ ra RA
 dec DEC
 field Total_flux vlass_component_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC.
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_source.bin
 format catalog_vlass_tap_source
@@ -7320,6 +7326,7 @@ ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC.
 
 url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
 format iscb
