@@ -9,6 +9,7 @@ fn main() {
     let mut subject: Option<String> = None;
     let mut body: Option<String> = None;
     let mut html: Option<String> = None;
+    let mut send_now = false;
     let mut dry_run = false;
     let mut i = 1;
     while i < args.len() {
@@ -43,6 +44,9 @@ fn main() {
                     html = Some(args[i].clone());
                 }
             }
+            "--send" => {
+                send_now = true;
+            }
             "--dry-run" => {
                 dry_run = true;
             }
@@ -52,7 +56,10 @@ fn main() {
     }
     let Some(to) = to else {
         eprintln!(
-            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--dry-run]"
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--send] [--dry-run]"
+        );
+        eprintln!(
+            "  default is dry-run (prints what would be sent); --send is the operator-consented act; --dry-run forces it"
         );
         std::process::exit(2);
     };
@@ -62,7 +69,7 @@ fn main() {
     };
     let Some(subject) = subject else {
         eprintln!(
-            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--dry-run]"
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--send] [--dry-run]"
         );
         std::process::exit(2);
     };
@@ -87,7 +94,8 @@ fn main() {
         None => None,
     };
     let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref());
-    if dry_run {
+    if !sends(send_now, dry_run) {
+        println!("dry-run — nothing sent (add --send to send)");
         println!("to: {}", to);
         println!("from: {}", from);
         println!("subject: {}", subject);
@@ -104,6 +112,10 @@ fn main() {
     };
     let resp = send(&token, &payload);
     println!("{}", resp);
+}
+
+fn sends(send_now: bool, dry_run: bool) -> bool {
+    send_now && !dry_run
 }
 
 fn secret_key(key: &str) -> Option<String> {
@@ -205,5 +217,13 @@ mod tests {
     fn payload_with_html() {
         let p = build_payload("a", "b", "c", "d", Some("<p>hi</p>"));
         assert!(p.contains("\"html\":\"<p>hi</p>\""));
+    }
+
+    #[test]
+    fn sending_needs_the_explicit_send_flag() {
+        assert!(!sends(false, false));
+        assert!(sends(true, false));
+        assert!(!sends(true, true));
+        assert!(!sends(false, true));
     }
 }
