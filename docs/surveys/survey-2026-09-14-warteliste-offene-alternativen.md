@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: 0255a45b88ac716a4643687cfc71e434dd511a48c9393cf8a11e8fa9b6b0f93a
+  sha256: 510de3668190314ee6b20672fb89748c9799e0ba74f8a3fee9872ff0e130dd44
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
