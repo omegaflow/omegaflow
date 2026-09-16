@@ -108,3 +108,7 @@ blocked parser-def fugin
 url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+fugin.cube+WHERE+flux+IS+NOT+NULL
 note JVO Nobeyama FUGIN — `fugin.cube` ist eine obscore-Cube-Tabelle (`s_ra`/`s_dec`/`access_url`), keine Punktquellen-Flussspalte (gemessen 2026-09-15: `SELECT ra` → "column t0.ra does not exist"). Der Kontinuums-Fluss steckt in den FITS-Cubes hinter `access_url`; ein Cube-Fluss-Parser fehlt → parser-def (Bau-Folge 39, TAP-Reconciliation).
 
+blocked parser-def csv
+url http://ia2-tap.oats.inaf.it:8080/wgetap
+note IA2 TAP (INAF/OATS) — `wgesdss.laurino2011` (157 840 Zeilen: ra/dec_/psfMag_u/g/r/i/z/photoz/extinction_*), anonym HTTP 200, CAS-Login frei; gemessen 2026-09-16: `/wgetap/sync` 303→200, `FORMAT=csv` liefert NUL-getrennte Felder (0x00 zwischen den Spalten, `FORMAT=tsv` ebenso), `FORMAT=json`/`votable` → VOTable. Der Archivar-Splitter kennt nur Komma/Whitespace → parser-def csv (NUL-Delimiter). Physik echt (`em`, psfMag); Öffnung: NUL-CSV-Arm.
+
