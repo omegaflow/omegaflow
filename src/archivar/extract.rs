@@ -3388,6 +3388,13 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
     }
     channels.retain(|(c, _)| c.value.is_finite());
+    if let Some((from, until)) = src.window {
+        channels.retain(|(c, _)| {
+            lsk.tdb_to_unix(c.epoch)
+                .map(|u| u >= from && u <= until)
+                .unwrap_or(false)
+        });
+    }
     ExtractResult::Measurements(channels)
 }
 
