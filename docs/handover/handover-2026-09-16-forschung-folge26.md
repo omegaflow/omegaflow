@@ -1,0 +1,109 @@
+<!--
+  title: Handover — Forschung-Folge 26 (2026-09-16)
+  session: Forschung-Folge 26
+  class: handover
+  date: 2026-09-16
+  sha256: bbe189eb62ce5ad5d52953119f29876becc562afaf1e53955ac265e6bc7142c7
+  status: live
+-->
+# Handover — Forschung-Folge 26 (2026-09-16)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
+viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
+macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen
+Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird nie
+überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
+darf schmutzig sein.
+
+Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
+Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
+nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
+„Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
+Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
+
+## TE / Statistik
+
+- **Korona-Leiter — N-Konfunder-Instrument gebaut.** `corona_conditional_probe`
+  trägt jetzt `--confound` (wiederholbar), `--confound all` (volle Multi-Force:
+  jede Rung auf alle anderen konditioniert), `--bins`, `--estimator binned|ksg`,
+  `--max-events` + Sparsitäts-Diagnose; der 0/1/2-KDE-Pfad bleibt (§4.6
+  reproduzierbar). Offen: der volle Lauf (binned + ksg) über
+  `data/jsoc.stanford.edu/aia2014_fullyear.bin` + `data/ncei.noaa.gov/goes15`;
+  die Binning-Sparsität bei 5 Konfundern (4^8 Zellen gegen ~200 Samples)
+  entscheidet binned vs. ksg.
+  (Schritt: `.github/workflows/corona-conditional-probe.yml` per
+  `gh workflow run` nach Push + Consent dispatchen, dann §4.6/Limitations in
+  `docs/paper/corona-heating-ladder.md` füllen.)
+- **Solar 211A→193A** — conditional stage-2.
+  (Schritt: `corona_conditional_probe`-Lauf, `docs/paper/solar-seconds-matrix.md`.)
+- **Der Grat** — AIA-2014-per-Zelle-Schwellen.
+  (Schritt: per-Zelle-Schwellen aus Lauf ins Blatt — `docs/blatt/blatt-der-grat.md`.)
+- **depth-phase echo — CMT-Strahlungsterm.** Die Kalibrier-Azimute sind
+  registriert (sechs Pilot-Stationen, gemessen 2026-09-16,
+  `depth_phase_azimuth_probe`); offen bleibt der volle CMT-Radiationsterm.
+  (Schritt: CMT/NDK-Fetch, per-Station-Vorzeichen gegen die Azimute —
+  `docs/paper/depth-phase-echo-fleet.md`, `cmt-ndk-fleet.yml`.)
+- **GIC causal driver** — PCMCI auf dem Minuten-Sturm-Ensemble, KDE-h,
+  Rückkanal-Härtung. (Schritt: `docs/paper/gic-causal-driver.md`.)
+- **Blatt 2/3 — Rest offen.** fam/max-T-Bound (Blatt 2), retro OMNI2-PCMCI-Zeile
+  und KDE-h/`laic_probe` 0–72-h brauchen einen lokalen laic-Harvest (CI-Skala).
+  (Schritt: `docs/concepts/blatt-papier-resultat.md`, `multi_force_te_probe`.)
+- **broken-null-control — Rest offen.** Window-Drift ist geschlossen; offen
+  bleibt das volle 60-s-Gitter (CI).
+  (Schritt: `te_null_limits_probe` 60-s-Lauf in CI — `docs/paper/broken-null-control.md`.)
+
+## Bande-Split / Sonden-ODF
+
+- **VEX VeRa — Register + Workflow gebaut.** `phi/sources.φ`-Block
+  (`atmos.nmsu.edu/vex_odf.bin`) + `.github/workflows/vex-cdn.yml`. Offen nur
+  der CDN-Dispatch. (Schritt: `gh workflow run vex-cdn.yml` nach Push + Consent.)
+- **Dawn — Compiler gebaut + registriert.** Offen nur der CDN-Dispatch.
+  (Schritt: `gh workflow run` nach Push + Consent.)
+- **Voyager-Saturn CDN-Dispatch** — Reader steht, nur der `voyager_saturn.bin`-Dispatch.
+  (Schritt: `gh workflow run` nach Push + Consent.)
+- **CDN-Dispatch** der registrierten Quellen (celestrak-eop, voyager, die 7 ODF, Dawn).
+  (Schritt: `gh workflow run` nach Push + Consent.)
+- **160-Hz-Amplitudenzensus** — pending.
+  (Schritt: `cargo run -p omegaflow-measure --bin pioneer_link_correction_probe` in CI dispatchen.)
+- **NOCC-Reduktionsvorschrift — Dokumente geholt.** Moyer 2000 + dsn_redr-Familie +
+  810-005-202E in `docs/reference/`. Offen: der Ketten-Vergleich.
+  (Schritt: Reduktionskette im retrace gegen Moyer §10/§13 prüfen —
+  `docs/paper/twenty-second-band-ground-chain.md`; berührt die fremde retrace-Session.)
+
+## Positionslinien / Ephemeriden
+
+- **Zweite unabhängige Linie je Klasse** (Planeten/Monde, Sonden-Doppler, TNO,
+  Kometen, encke, juno-Namensschuld).
+  (Schritt: `docs/surveys/survey-2026-09-07-weberin-sonnensystem-kette.md`.)
+- **CDN-Planetenbins ~116 km SSB-Offset** — neu aus vollem `de441.bsp`.
+  (Schritt: `docs/surveys/survey-geometric-ground-truth.md`.)
+- **Die Weberin — Schritt 1 gebaut.** `BodyLine::Mpc` + `weberin_mpc_spk_verdict`
+  weben MPCORB gegen die SPK-Punkte. Offen: Schritte 2–9.
+  (Schritt: Schritt 2 (Stations-Konvergenz) — `docs/concepts/die-weberin.md`.)
+
+## Paper / Präregistrierung
+
+- **Flyby Path 2** — Zellen pending, Operator-Siegel; füllen nach JUICE 28./29.09.,
+  Clipper 03.12.
+  (Schritt: `docs/paper/flyby-path-2-preregistration.md`.)
+- **Kausalpfeil Trishuli** — Abfluss-Serie öffnen → `pfeil --lag-sweep`.
+  (Schritt: `docs/paper/sturzflut-tibet-pfeil.md`.)
+- **JWST disequilibrium** — O2/O3, vegetation red-edge, saisonale Kanäle.
+  (Schritt: `docs/paper/jwst-disequilibrium-survey.md`.)
+
+## Extern gebunden (kein Datum)
+
+- NSE/Haug — Antwort von B. Keimer offen.
+- Voyager Cruise / JPL-DSN — die Anfrage hält (request-only).
+- Fünf Sonden-Anfragen (Voyager closed-loop, Mariner 10, Viking 1/2, Cassini
+  closed-loop, Juno Earth-Flyby) — Operator reicht ein
+  (`docs/auftrag/auftrag-sonden-rohdaten-anfragen.md`).
+- Toth/Turyshev/Markwardt-Mails — die Prüfliste steht; die Mails sind entblockt.
+  (Schritt: senden — in der Entscheid-Linie geführt.)
+
+## Abschluss
+
+Vor Commit/Push: das Consent-Wort des Operators (`/consent`) und der gemessene
+Abschluss-Check mit Commit und Push (`/commit`).
