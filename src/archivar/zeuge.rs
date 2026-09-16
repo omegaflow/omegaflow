@@ -25,7 +25,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
         b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" | b"MAX1"
-        | b"NXR1" | b"USC1" | b"VSAT" => Some(FeldIdentitaet::Oszillator),
+        | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" => Some(FeldIdentitaet::Oszillator),
         _ => None,
     }
 }
