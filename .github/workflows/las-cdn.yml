@@ -1,0 +1,48 @@
+name: las-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  las:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the usgs-lidar-public.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view usgs-lidar-public.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create usgs-lidar-public.s3.amazonaws.com --repo omegaflow/sources \
+              --title "usgs-lidar-public.s3.amazonaws.com" \
+              --notes "USGS 3DEP EPT lidar tile (AK_BrooksCamp_2012 0-0-0-0) compiled to ICRS point samples. CRS EPSG:3857 (WGS 84 / Pseudo-Mercator) inverted to geodetic, earth body-fixed to ICRS via the ssd.jpl.nasa.gov ephemeris. Record stride: t_tdb s (f64 LE), x/y/z ICRS m (f64 LE), intensity (u16 LE), classification (u8). Magic LAS1."
+          fi
+      - name: Fetch the USGS 3DEP EPT root tile
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/brookscamp_0-0-0-0.laz \
+            https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "las-cdn: AK_BrooksCamp_2012 0-0-0-0.laz returned void" \
+                 "curl on usgs-lidar-public.s3.amazonaws.com did not reach the EPT root tile. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
+      - name: Compiler tests
+        run: cargo test -p omegaflow-harvest --release --bin las_compiler
+      - name: Compile the ICRS point samples and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin las_compiler -- \
+            --input kernels/brookscamp_0-0-0-0.laz \
+            --out las_brooks_camp_2012.bin \
+            --ci-mode \
+            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "las-cdn: las_brooks_camp_2012.bin returned void" \
+                 "las compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health
