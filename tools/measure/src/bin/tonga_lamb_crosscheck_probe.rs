@@ -17,6 +17,11 @@ const KYOTO_DAY_MEMBER: &str = "220115.txt";
 const ZENODO_ARCHIVE_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/zenodo.org/data.zip";
 const ZENODO_ARCHIVE_LIVE: &str = "https://zenodo.org/records/8098323/files/data.zip";
+const KWAJ_STATION: &str = "1820000";
+const KWAJ_LAT: f64 = 8.731667;
+const KWAJ_LON: f64 = 167.73611;
+const COOPS_BEGIN: &str = "20220114";
+const COOPS_END: &str = "20220117";
 
 struct PressureSample {
     unix: f64,
@@ -157,6 +162,145 @@ fn kyoto_pressure_section() {
     println!();
 }
 
+fn coops_url(product: &str, extra: &str) -> String {
+    format!(
+        "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={COOPS_BEGIN}&end_date={COOPS_END}&station={KWAJ_STATION}&product={product}&units=metric&time_zone=gmt&interval=6&format=csv&application=omegaflow{extra}"
+    )
+}
+
+fn coops_unix(stamp: &str) -> Option<f64> {
+    let mut it = stamp.split_whitespace();
+    let d = it.next()?;
+    let t = it.next()?;
+    let mut dp = d.split('-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let mo: i64 = dp.next()?.parse().ok()?;
+    let da: i64 = dp.next()?.parse().ok()?;
+    let mut tp = t.split(':');
+    let h: i64 = tp.next()?.parse().ok()?;
+    let mi: i64 = tp.next()?.parse().ok()?;
+    let days = days_from_civil(y, mo, da)?;
+    Some(days as f64 * 86400.0 + h as f64 * 3600.0 + mi as f64 * 60.0)
+}
+
+fn parse_coops(text: &str) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 2 {
+            continue;
+        }
+        let Some(unix) = coops_unix(cols[0].trim()) else {
+            continue;
+        };
+        let Ok(value) = cols[1].trim().parse::<f64>() else {
+            continue;
+        };
+        out.push((unix, value));
+    }
+    out
+}
+
+fn mean_before(series: &[(f64, f64)], t: f64) -> Option<f64> {
+    let mut sum = 0.0;
+    let mut n = 0usize;
+    for (ts, v) in series {
+        if *ts < t {
+            sum += v;
+            n += 1;
+        }
+    }
+    if n == 0 {
+        None
+    } else {
+        Some(sum / n as f64)
+    }
+}
+
+fn kwajalein_ear_section() {
+    let Some(ap_bytes) = fetch_raw_bytes(&coops_url("air_pressure", ""), 86400) else {
+        println!("Kwajalein ear: air_pressure route absent — cross-check pending");
+        println!();
+        return;
+    };
+    let Some(wl_bytes) = fetch_raw_bytes(&coops_url("water_level", "&datum=MSL"), 86400) else {
+        println!("Kwajalein ear: water_level route absent — cross-check pending");
+        println!();
+        return;
+    };
+    let ap = parse_coops(&String::from_utf8_lossy(&ap_bytes));
+    let wl = parse_coops(&String::from_utf8_lossy(&wl_bytes));
+    if ap.is_empty() || wl.is_empty() {
+        println!(
+            "Kwajalein ear: one series void (pressure {} / water {} samples) — cross-check pending",
+            ap.len(),
+            wl.len()
+        );
+        println!();
+        return;
+    }
+    let d = distance_km(KWAJ_LAT, KWAJ_LON, TONGA_LAT, TONGA_LON);
+    let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
+    let Some(p_base) = mean_before(&ap, WATER_START_UNIX) else {
+        println!("Kwajalein ear: pressure carries no pre-eruption baseline — cross-check pending");
+        println!();
+        return;
+    };
+    let Some(w_base) = mean_before(&wl, WATER_START_UNIX) else {
+        println!("Kwajalein ear: water carries no pre-eruption baseline — cross-check pending");
+        println!();
+        return;
+    };
+    let p_peak = ap
+        .iter()
+        .max_by(|a, b| a.1.total_cmp(&b.1))
+        .copied();
+    let w_trough = wl
+        .iter()
+        .filter(|(ts, _)| *ts > WATER_START_UNIX)
+        .min_by(|a, b| a.1.total_cmp(&b.1))
+        .copied();
+    println!("Kwajalein ear (NOAA CO-OPS {KWAJ_STATION}, air_pressure + water_level, 6-min, GMT):");
+    println!(
+        "station: lat {KWAJ_LAT}, lon {KWAJ_LON} (pressure {} / water {} samples)",
+        ap.len(),
+        wl.len()
+    );
+    println!("great-circle distance to the source: {d:.1} km");
+    println!("predicted Lamb arrival (direct): {}", utc_str(predicted));
+    if let Some((ts, v)) = p_peak {
+        println!(
+            "pressure: baseline {p_base:.2} hPa → peak {v:.2} hPa (+{:.2}) at {}",
+            v - p_base,
+            utc_str(ts)
+        );
+    }
+    if let Some((ts, v)) = w_trough {
+        println!(
+            "water: baseline {w_base:.3} m → trough {v:.3} m ({:+.3}) at {}",
+            v - w_base,
+            utc_str(ts)
+        );
+    }
+    if let (Some((pt, pv)), Some((wt, wv))) = (p_peak, w_trough) {
+        let dp = pv - p_base;
+        let dw = w_base - wv;
+        println!("measured − predicted (pressure peak): {:.0} s", pt - predicted);
+        println!("measured air→water lag (trough − peak): {:.0} s", wt - pt);
+        if dp > 0.0 && dw > 0.0 {
+            println!(
+                "coupling (weighted at the one ear): {:.2} hPa/m  [Δp {:.2} hPa / Δh {:.3} m]",
+                dp / dw,
+                dp,
+                dw
+            );
+        } else {
+            println!("coupling: absent — a pulse sign is not physical (0 honored)");
+        }
+    }
+    println!();
+}
+
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -211,6 +355,7 @@ fn main() {
     println!("Lamb wave speed: {LAMB_SPEED_KM_S} km/s (atmospheric Lamb phase speed)");
     println!();
 
+    kwajalein_ear_section();
     kyoto_pressure_section();
 
     let Ok(bytes) = std::fs::read(&bin_path) else {
