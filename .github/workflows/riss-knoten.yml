@@ -1,0 +1,58 @@
+name: riss-knoten
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  riss-knoten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the body SPK corpus and the dastcom asteroid records from the CDN
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov
+          # pallas and juno_asteroid carry no ephemeris bin on the release
+          # (measured 2026-09-16: gh release view ssd.jpl.nasa.gov --json assets) —
+          # their SPK lines read absent in the ledger, honestly, never fabricated.
+          # The station ABK pair stays unfed: the probe carries no fetch path for
+          # the ground/swarm cache jsons, so the station line reports its honest
+          # absent — 0 honored, nothing fabricated.
+          for attempt in 1 2 3; do
+            gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern 'ephemeris_ceres.bin' --pattern 'ephemeris_vesta.bin' \
+              --pattern 'ephemeris_pluto.bin' --pattern 'ephemeris_bennu.bin' \
+              --pattern 'ephemeris_apophis.bin' --pattern 'ephemeris_eris.bin' \
+              --pattern 'ephemeris_makemake.bin' --pattern 'ephemeris_haumea.bin' \
+              --pattern 'ephemeris_sun.bin' --pattern 'dastcom_asteroids.bin' \
+              --clobber --dir data/ssd.jpl.nasa.gov \
+              && break
+            echo "riss-knoten corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/ssd.jpl.nasa.gov/ephemeris_ceres.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_sun.bin
+          test -s data/ssd.jpl.nasa.gov/dastcom_asteroids.bin
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > riss-knoten.txt
+      - name: Run the riss-knoten ledger probe at the grammar reference epoch
+        run: |
+          cargo run --release -p omegaflow-measure --bin riss_knoten_probe -- \
+            --eph-dir data/ssd.jpl.nasa.gov \
+            --dastcom data/ssd.jpl.nasa.gov/dastcom_asteroids.bin \
+            --epoch 2461544.50000 \
+            >> riss-knoten.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: riss-knoten
+          path: riss-knoten.txt
