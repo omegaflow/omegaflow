@@ -265,9 +265,8 @@ slow, expensive fallback, not the first move.
 
 ### The cost ladder — the research cascade
 
-`--all` runs **every** source (13 network calls) — the broadest, not the
-cheapest. The cascade, in order; the first rung that carries the answer stops
-it — and a diver that stops before `--brave` has not exhausted the tool:
+The tool speaks to **sixteen** sources, not three. The cascade, in order — and
+for source *discovery* the breadth is the answer, not a cost:
 
 1. **Content in the live tree** → `archive_search <kw> --root <dir>` or `sgrep`.
 2. **Known URL** → `archive_search --verdict <url>` — the reachability ladder
@@ -277,10 +276,12 @@ it — and a diver that stops before `--brave` has not exhausted the tool:
    carries no content (JS-rendered).
 3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
    `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
-4. **Unknown source** → `--brave <query>` is the **first** move (keyword web
-   search), never `--all` first; follow the hit with its own mode or `--verdict`.
+4. **Unknown source** → `--brave <query>` first (keyword web search), then
+   **`--all <query>`** — every keyword mode at once (13): arXiv, ADS, NTRS,
+   Wayback, Crossref, Wiki, GitHub, crates, librs, Brave, DataCite, Zenodo,
+   OpenAlex (plus `--isc`/`--supermag`/`--heasarc` by key=value). A diver that
+   draws only `--ads`/`--arxiv` has left eleven databases unasked.
 5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
-6. **Source entirely unknown** → `--all <query>` — the last move, 13 calls.
 
 The three measures are distinct: `--verdict` measures reachability, `--sniff`
 measures the file type, `--playwright` measures the rendered content. A stage-3
