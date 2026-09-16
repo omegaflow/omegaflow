@@ -1,0 +1,39 @@
+name: planetary-odf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  odf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { bin: magellan_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: magellan_odf.bin }
+          - { bin: mgs_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mgs_odf.bin }
+          - { bin: mro_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mro_odf.bin }
+          - { bin: odyssey_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: odyssey_odf.bin }
+          - { bin: messenger_odf_compiler, netloc: pds-ppi.igpp.ucla.edu, asset: messenger_odf.bin }
+          - { bin: mars_express_odf_compiler, netloc: archives.esac.esa.int, asset: mars_express_odf.bin }
+          - { bin: rosetta_odf_compiler, netloc: archives.esac.esa.int, asset: rosetta_odf.bin }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the ${{ matrix.asset }} ODF volume and manifest it to the CDN
+        run: |
+          if gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ matrix.asset }}"; then
+            echo "${{ matrix.asset }} already present — harvest skipped"
+            exit 0
+          fi
+          cargo run --release -p omegaflow-harvest --bin ${{ matrix.bin }} -- --ci-mode

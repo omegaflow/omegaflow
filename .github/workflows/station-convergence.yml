@@ -1,0 +1,31 @@
+name: station-convergence
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  station-convergence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > station-convergence.txt
+      - name: Run the station convergence probe live
+        run: |
+          cargo run --release -p omegaflow-measure --bin station_convergence_probe -- --live \
+            >> station-convergence.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: station-convergence
+          path: station-convergence.txt
