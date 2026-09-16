@@ -449,7 +449,10 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                             }
                         }
                     }
-                    Extract::Rows { .. } | Extract::GeojsonEvents { .. } | Extract::Hapi(_) => {
+                    Extract::Rows { .. }
+                    | Extract::GeojsonEvents { .. }
+                    | Extract::QuakeMlEvents { .. }
+                    | Extract::Hapi(_) => {
                         if json_has_content(&j) {
                             arr_has_rows = true;
                         }
