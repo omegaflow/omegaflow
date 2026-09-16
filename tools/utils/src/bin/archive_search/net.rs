@@ -1148,9 +1148,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "wiki" => wiki_lines(query, max),
         "github" => {
             let token = resolve_key(
-                env.get("GITHUB_SEARCH_TOKEN")
-                    .map(String::as_str)
-                    .unwrap_or(""),
+                env.get("GH_SEARCH_TOKEN").map(String::as_str).unwrap_or(""),
                 env,
             );
             match token {
@@ -1158,7 +1156,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 Secret::Absent(marker) => {
                     let mut lines = vec![format!(
                         "absent — {}; the github search runs anonymous",
-                        token_key("GITHUB_SEARCH_TOKEN", marker)
+                        token_key("GH_SEARCH_TOKEN", marker)
                     )];
                     lines.extend(github_lines(query, "", max));
                     lines
