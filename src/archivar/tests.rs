@@ -5600,7 +5600,11 @@ fn test_parse_sky1_cdn_asset_block() {
             "url https://github.com/omegaflow/sources/releases/download/tag/{name}.sky1\nformat sky1\nat sun\nttl 31536000\nfield {name} {name} inverse-square em {unit} 31536000 0.0 0.0\n"
         );
         let srcs = super::parse_sources(&block);
-        assert_eq!(srcs.len(), 1, "{name}: sky1 asset line must register one source");
+        assert_eq!(
+            srcs.len(),
+            1,
+            "{name}: sky1 asset line must register one source"
+        );
         assert_eq!(srcs[0].format, "sky1", "{name}: format is sky1");
         match &srcs[0].extracts[0] {
             super::Extract::Field(fc) => {
@@ -7038,6 +7042,97 @@ fn lis_otd_geo_series_roundtrip_and_component_name() {
 }
 
 #[test]
+fn trmm_lis_geo_series_roundtrip_and_component_name() {
+    let recs = vec![crate::geo::GeoRec {
+        t: -63_072_000.0,
+        lat: -3.117,
+        lon: -76.283,
+        alt: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        val: 12.5,
+        comp: crate::geo::COMP_TRMMLIS_FLASH_RAD,
+        station: 0,
+    }];
+    let magic = crate::geo::magic_of("trmm_lis").expect("the trmm_lis format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed =
+        super::extract::geo_series_parse_bin("trmm_lis", &bytes).expect("trmm_lis bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].val, 12.5);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_TRMMLIS_FLASH_RAD);
+    assert_eq!(
+        crate::geo::comp_max("trmm_lis"),
+        Some(crate::geo::COMP_TRMMLIS_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name("trmm_lis", crate::geo::COMP_TRMMLIS_FLASH_RAD),
+        Some("trmm_lis_flash_radiance_uj_sr_m2_um")
+    );
+}
+
+#[test]
+fn trmm_lis_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "trmm_lis")
+        .expect("phi/sources.φ registers the trmm_lis source");
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the trmm_lis block carries a field line");
+    };
+    assert_eq!(fc.name, "trmm_lis_flash_radiance_uj_sr_m2_um");
+    assert_eq!(fc.force, 0);
+}
+
+#[test]
+fn glm_l1b_geo_series_roundtrip_and_component_name() {
+    let recs = vec![crate::geo::GeoRec {
+        t: 669_124_869.184,
+        lat: -33.7162944650696,
+        lon: -66.4323253483825,
+        alt: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        val: 1.867_074_491_567_66e-15,
+        comp: crate::geo::COMP_GLML1B_FLASH_ENERGY,
+        station: 0,
+    }];
+    let magic = crate::geo::magic_of("glm_l1b").expect("the glm_l1b format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed =
+        super::extract::geo_series_parse_bin("glm_l1b", &bytes).expect("glm_l1b bin parses");
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].val, 1.867_074_491_567_66e-15);
+    assert_eq!(parsed[0].comp, crate::geo::COMP_GLML1B_FLASH_ENERGY);
+    assert_eq!(
+        crate::geo::comp_max("glm_l1b"),
+        Some(crate::geo::COMP_GLML1B_MAX)
+    );
+    assert_eq!(
+        super::extract::geo_series_component_name(
+            "glm_l1b",
+            crate::geo::COMP_GLML1B_FLASH_ENERGY
+        ),
+        Some("glm_l1b_flash_radiant_energy_j")
+    );
+}
+
+#[test]
+fn glm_l1b_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "glm_l1b")
+        .expect("phi/sources.φ registers the glm_l1b source");
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the glm_l1b block carries a field line");
+    };
+    assert_eq!(fc.name, "glm_l1b_flash_radiant_energy_j");
+    assert_eq!(fc.force, 0);
+}
+
+#[test]
 fn supermag_geo_series_roundtrip_and_component_name() {
     let recs = vec![
         crate::geo::GeoRec {
@@ -7974,8 +8069,8 @@ fn voyager_saturn_register_field_names_match_components() {
 fn drs_fits_series_dispatch_and_component_names() {
     let rows = [[1.0e-9, -2.0e-9, 3.0e-9]];
     let bytes = super::drs_fits::write_bin(&rows, 1.47e9);
-    let parsed = super::extract::series_parse_bin("drs_fits", &bytes)
-        .expect("drs_fits series parses");
+    let parsed =
+        super::extract::series_parse_bin("drs_fits", &bytes).expect("drs_fits series parses");
     assert_eq!(parsed.len(), 3);
     assert_eq!(parsed[0].0, 1.47e9);
     assert_eq!(parsed[0].1, 1.0e-9);
@@ -7996,10 +8091,70 @@ fn drs_fits_series_dispatch_and_component_names() {
         super::extract::series_component_name("drs_fits", super::drs_fits::COMP_GZ),
         Some("lpf_drs_dg_z_ms2")
     );
+    assert_eq!(super::extract::series_component_name("drs_fits", 99), None);
+}
+
+#[test]
+fn demeter_isl_series_dispatch_and_component_names() {
+    let mut blk = vec![0u8; super::demeter::BLOCK_BYTES];
+    blk[26..34].copy_from_slice(b"TOULOUSE");
+    blk[204..214].copy_from_slice(b"ISL SURVEY");
+    blk[8] = 0x07;
+    blk[9] = 0xd4;
+    blk[10] = 0x00;
+    blk[11] = 0x08;
+    blk[12] = 0x00;
+    blk[13] = 0x0b;
+    blk[14] = 0x00;
+    blk[15] = 0x0f;
+    blk[16] = 0x00;
+    blk[17] = 0x39;
+    blk[18] = 0x00;
+    blk[19] = 0x24;
+    blk[22] = 0x02;
+    blk[23] = 0x49;
+    blk[265..289].copy_from_slice(&[
+        0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82,
+        0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
+    ]);
+    let b = super::demeter::parse_block(&blk).unwrap();
+    let mut bin = Vec::new();
+    super::demeter::write_bin(&[b], &mut bin);
+    let parsed =
+        super::extract::series_parse_bin("demeter_isl", &bin).expect("demeter_isl series parses");
+    let t = 1092239856.0;
+    assert_eq!(parsed.len(), 6);
+    assert_eq!(parsed[0], (t, 585.0, super::demeter::COMP_ORBIT));
+    assert_eq!(parsed[1], (t, b.ne as f64, super::demeter::COMP_NE));
+    assert_eq!(parsed[2], (t, b.ni as f64, super::demeter::COMP_NI));
+    assert_eq!(parsed[3], (t, b.te as f64, super::demeter::COMP_TE));
+    assert_eq!(parsed[4], (t, b.vf as f64, super::demeter::COMP_VF));
+    assert_eq!(parsed[5], (t, b.vi0 as f64, super::demeter::COMP_VI0));
     assert_eq!(
-        super::extract::series_component_name("drs_fits", 99),
-        None
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_ORBIT),
+        Some("demeter_isl_orbit_count")
     );
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_NE),
+        Some("demeter_isl_ne_cm3")
+    );
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_NI),
+        Some("demeter_isl_ni_cm3")
+    );
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_TE),
+        Some("demeter_isl_te_k")
+    );
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_VF),
+        Some("demeter_isl_vf_v")
+    );
+    assert_eq!(
+        super::extract::series_component_name("demeter_isl", super::demeter::COMP_VI0),
+        Some("demeter_isl_vi0_ms")
+    );
+    assert_eq!(super::extract::series_component_name("demeter_isl", 99), None);
 }
 
 #[test]
@@ -8025,7 +8180,17 @@ fn drs_fits_register_field_names_match_components() {
 
 #[test]
 fn odf_series_dispatch_and_component_names() {
-    let rows = [[753_440_003.0, -382_738.66, 2.3e9, 43.0, 43.0, 11.0, 2.0, 77.0, 60.0]];
+    let rows = [[
+        753_440_003.0,
+        -382_738.66,
+        2.3e9,
+        43.0,
+        43.0,
+        11.0,
+        2.0,
+        77.0,
+        60.0,
+    ]];
     let bytes = super::odf::write_podf_bin(&rows);
     let parsed = super::extract::series_parse_bin("mars_express_odf", &bytes)
         .expect("mars_express_odf series parses");
@@ -8045,7 +8210,10 @@ fn odf_series_dispatch_and_component_names() {
         super::extract::series_component_name("dawn_odf", super::odf::COMP_OBSERVABLE),
         Some("dawn_odf_observable_hz")
     );
-    assert_eq!(super::extract::series_component_name("mars_express_odf", 99), None);
+    assert_eq!(
+        super::extract::series_component_name("mars_express_odf", 99),
+        None
+    );
     assert!(super::extract::series_parse_bin("mars_express_odf", b"X").is_none());
 }
 
@@ -8086,17 +8254,20 @@ fn odf_register_field_names_match_components() {
 fn odr_series_dispatch_and_component_names() {
     let mut raw = vec![0u8; super::voyager_odr::RECORD_BYTES];
     raw[..super::voyager_odr::HEADER_BYTES].copy_from_slice(&[
-        0x90, 0x0D, 0x00, 0x01, 0x09, 0xE0, 0x20, 0x2B, 0x00, 0x1E, 0x23, 0x80, 0x40, 0x45,
-        0x9B, 0x71, 0x54, 0x25, 0x00, 0x60, 0x00, 0xA2, 0x72, 0xFE, 0xDB, 0x08, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x8A, 0x00, 0xD0, 0x05, 0x00, 0xA2, 0x72, 0x1F, 0xFF, 0xFB, 0x6C, 0x4C,
+        0x90, 0x0D, 0x00, 0x01, 0x09, 0xE0, 0x20, 0x2B, 0x00, 0x1E, 0x23, 0x80, 0x40, 0x45, 0x9B,
+        0x71, 0x54, 0x25, 0x00, 0x60, 0x00, 0xA2, 0x72, 0xFE, 0xDB, 0x08, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x8A,
+        0x00, 0xD0, 0x05, 0x00, 0xA2, 0x72, 0x1F, 0xFF, 0xFB, 0x6C, 0x4C,
     ]);
-    for (i, b) in raw[super::voyager_odr::HEADER_BYTES..].iter_mut().enumerate() {
+    for (i, b) in raw[super::voyager_odr::HEADER_BYTES..]
+        .iter_mut()
+        .enumerate()
+    {
         *b = i as u8;
     }
     let bin = super::voyager_odr::pack(&raw, "C0XR13AA.ODR", 1981);
-    let parsed = super::extract::series_parse_bin("voyager_odr", &bin)
-        .expect("voyager_odr series parses");
+    let parsed =
+        super::extract::series_parse_bin("voyager_odr", &bin).expect("voyager_odr series parses");
     assert_eq!(parsed.len(), super::voyager_odr::DATA_SAMPLES);
     assert_eq!(parsed[0].2, super::voyager_odr::COMP_SAMPLE);
     assert_eq!(
@@ -8119,8 +8290,14 @@ fn odr_series_dispatch_and_component_names() {
         super::extract::series_component_name("galileo_odr", super::galileo_odr::COMP_AD4),
         Some("galileo_odr_ad4_count")
     );
-    assert_eq!(super::extract::series_component_name("voyager_odr", 99), None);
-    assert_eq!(super::extract::series_component_name("galileo_odr", 99), None);
+    assert_eq!(
+        super::extract::series_component_name("voyager_odr", 99),
+        None
+    );
+    assert_eq!(
+        super::extract::series_component_name("galileo_odr", 99),
+        None
+    );
     assert!(super::extract::series_parse_bin("galileo_odr", b"X").is_none());
 }
 
@@ -8250,10 +8427,23 @@ fn iscb_bin_roundtrip_and_rejections() {
 
 #[test]
 fn nexrad_level2_roundtrip_and_component_name() {
-    fn encode(recs: &[(f64, f64, f64, f64, f64, u32)]) -> Vec<u8> {
+    fn encode(
+        recs: &[(f64, f64, f64, f64, f64, u32)],
+        site: Option<([u8; 4], f64, f64, f64)>,
+    ) -> Vec<u8> {
         let mut out = Vec::new();
         out.extend_from_slice(b"NXR1");
         out.extend_from_slice(&(recs.len() as u32).to_le_bytes());
+        match site {
+            Some((stid, lat, lon, alt)) => {
+                out.push(1u8);
+                out.extend_from_slice(&stid);
+                out.extend_from_slice(&lat.to_le_bytes());
+                out.extend_from_slice(&lon.to_le_bytes());
+                out.extend_from_slice(&alt.to_le_bytes());
+            }
+            None => out.extend_from_slice(&[0u8; 29]),
+        }
         for &(t, az, el, range, value, kind) in recs {
             out.extend_from_slice(&t.to_le_bytes());
             out.extend_from_slice(&az.to_le_bytes());
@@ -8264,30 +8454,38 @@ fn nexrad_level2_roundtrip_and_component_name() {
         }
         out
     }
-    let bytes = encode(&[
-        (
-            1_704_067_204.932,
-            90.0,
-            0.5,
-            2.125,
-            -32.0,
-            crate::geo::COMP_NXR_REF,
-        ),
-        (
-            1_704_067_204.932,
-            90.5,
-            0.5,
-            2.375,
-            10.5,
-            crate::geo::COMP_NXR_VEL,
-        ),
-    ]);
+    let bytes = encode(
+        &[
+            (
+                1_704_067_204.932,
+                90.0,
+                0.5,
+                2.125,
+                -32.0,
+                crate::geo::COMP_NXR_REF,
+            ),
+            (
+                1_704_067_204.932,
+                90.5,
+                0.5,
+                2.375,
+                10.5,
+                crate::geo::COMP_NXR_VEL,
+            ),
+        ],
+        Some((*b"KTLX", 35.33306, -97.2775, 1213.0 * 0.3048)),
+    );
     let parsed = super::extract::parse_nexrad_level2_bin(&bytes).expect("nexrad level2 bin parses");
-    assert_eq!(parsed.len(), 2);
-    assert_eq!(parsed[0].value, -32.0);
-    assert_eq!(parsed[0].kind, crate::geo::COMP_NXR_REF);
-    assert_eq!(parsed[1].range_km, 2.375);
-    assert_eq!(parsed[1].az_deg, 90.5);
+    assert_eq!(parsed.samples.len(), 2);
+    let site = parsed.site.expect("the site anchor roundtrips");
+    assert_eq!(site.stid, *b"KTLX");
+    assert!((site.lat_deg - 35.33306).abs() < 1e-9);
+    assert!((site.lon_deg - -97.2775).abs() < 1e-9);
+    assert!((site.alt_m - 1213.0 * 0.3048).abs() < 1e-9);
+    assert_eq!(parsed.samples[0].value, -32.0);
+    assert_eq!(parsed.samples[0].kind, crate::geo::COMP_NXR_REF);
+    assert_eq!(parsed.samples[1].range_km, 2.375);
+    assert_eq!(parsed.samples[1].az_deg, 90.5);
     assert_eq!(
         super::extract::nexrad_component_name(crate::geo::COMP_NXR_REF),
         Some("nexrad_level2_ref_dbz")
@@ -8312,6 +8510,22 @@ fn nexrad_level2_roundtrip_and_component_name() {
     assert!(super::extract::parse_nexrad_level2_bin(b"X").is_none());
     assert!(super::extract::parse_nexrad_level2_bin(b"NXR1abc").is_none());
     assert!(super::extract::parse_nexrad_level2_bin(&bytes[..bytes.len() - 1]).is_none());
+
+    let no_site = encode(
+        &[(
+            1_704_067_204.932,
+            90.0,
+            0.5,
+            2.125,
+            -32.0,
+            crate::geo::COMP_NXR_REF,
+        )],
+        None,
+    );
+    let parsed_no_site =
+        super::extract::parse_nexrad_level2_bin(&no_site).expect("absent-site bin parses");
+    assert!(parsed_no_site.site.is_none());
+    assert_eq!(parsed_no_site.samples.len(), 1);
 }
 
 const EPA_AQS_HEADER: &str = "\"State Code\",\"County Code\",\"Site Num\",\"Parameter Code\",\"POC\",\"Latitude\",\"Longitude\",\"Datum\",\"Parameter Name\",\"Sample Duration\",\"Pollutant Standard\",\"Date Local\",\"Units of Measure\",\"Event Type\",\"Observation Count\",\"Observation Percent\",\"Arithmetic Mean\"\n";
