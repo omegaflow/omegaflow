@@ -350,6 +350,24 @@ fn test_allowed_units_for_force() {
 }
 
 #[test]
+fn test_cycle_unit_identity_and_physics_gate() {
+    assert_eq!(convert_to_si(1.0, "cycle"), Some(1.0));
+    let _gate = ANOMALY_TEST_GATE.lock();
+    ANOMALY_COLLECT.with(|c| c.set(true));
+    let _ = take_anomalies();
+    let sources = parse_sources(
+        "url https://example.org/cycle\nttl 60\nformat json\nat earth\nfield n n inverse-square em cycle 60 0 0\n",
+    );
+    assert_eq!(sources.len(), 1);
+    let anomalies = take_anomalies();
+    assert!(
+        !anomalies.iter().any(|a| a.category == "Physics Mismatch"),
+        "a field carrying unit cycle must pass the physics-mismatch gate"
+    );
+    ANOMALY_COLLECT.with(|c| c.set(false));
+}
+
+#[test]
 fn test_normalize_unit() {
     assert_eq!(normalize_unit("nT"), "nt");
     assert_eq!(normalize_unit(" M_sun "), "m_sun");
