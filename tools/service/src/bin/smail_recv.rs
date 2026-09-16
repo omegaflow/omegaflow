@@ -184,42 +184,11 @@ fn record_line(text: &str) -> Option<(String, String)> {
 }
 
 fn mime_plaintext(raw: &str) -> String {
-    let boundary = header_value(raw, "content-type").and_then(|ct| {
-        ct.split(';')
-            .map(|s| s.trim())
-            .find(|s| s.to_lowercase().starts_with("boundary="))
-            .map(|s| s["boundary=".len()..].trim_matches('"').to_string())
-    });
-    match boundary {
-        Some(b) => {
-            let mut plain = String::new();
-            let mut html = String::new();
-            for part in raw.split(&format!("--{}", b)) {
-                if let Some(pl) = text_part_of(part, "text/plain") {
-                    if !plain.is_empty() {
-                        plain.push('\n');
-                    }
-                    plain.push_str(&pl);
-                } else if let Some(ht) = text_part_of(part, "text/html") {
-                    if !html.is_empty() {
-                        html.push('\n');
-                    }
-                    html.push_str(&ht);
-                }
-            }
-            if plain.is_empty() {
-                strip_html(&html)
-            } else {
-                plain
-            }
-        }
-        None => match text_part_of(raw, "text/plain") {
-            Some(pl) => pl,
-            None => match text_part_of(raw, "text/html") {
-                Some(ht) => strip_html(&ht),
-                None => String::new(),
-            },
-        },
+    let (plain, html) = collect_text(raw);
+    if plain.is_empty() {
+        strip_html(&html)
+    } else {
+        plain
     }
 }
 
@@ -237,32 +206,71 @@ fn strip_html(s: &str) -> String {
     out
 }
 
-fn text_part_of(part: &str, mime: &str) -> Option<String> {
+fn collect_text(part: &str) -> (String, String) {
     let part = part.trim_start_matches(['\r', '\n']);
-    if let Some(sep) = part.find("\r\n\r\n") {
-        let head = &part[..sep];
-        let body = &part[sep + 4..];
-        let is_type = header_value(head, "content-type")
-            .map(|ct| ct.to_lowercase().starts_with(mime))
-            .unwrap_or(false);
-        if !is_type {
-            return None;
+    let Some((head, body)) = split_headers_body(part) else {
+        return (String::new(), String::new());
+    };
+    let content_type = match header_value(head, "content-type") {
+        Some(ct) => ct.to_lowercase(),
+        None => String::new(),
+    };
+    if content_type.starts_with("multipart/") {
+        let Some(boundary) = content_type
+            .split(';')
+            .map(|s| s.trim())
+            .find(|s| s.starts_with("boundary="))
+            .map(|s| s["boundary=".len()..].trim_matches('"').to_string())
+        else {
+            return (String::new(), String::new());
+        };
+        let mut plain = String::new();
+        let mut html = String::new();
+        for sub in body.split(&format!("--{}", boundary)) {
+            let (p, h) = collect_text(sub);
+            if !p.is_empty() {
+                if !plain.is_empty() {
+                    plain.push('\n');
+                }
+                plain.push_str(&p);
+            }
+            if !h.is_empty() {
+                if !html.is_empty() {
+                    html.push('\n');
+                }
+                html.push_str(&h);
+            }
         }
-        let is_base64 = header_value(head, "content-transfer-encoding")
-            .map(|v| v.to_lowercase().contains("base64"))
-            .unwrap_or(false);
-        if is_base64 {
-            return Some(decode_base64(body));
-        }
-        let is_quoted_printable = header_value(head, "content-transfer-encoding")
-            .map(|v| v.to_lowercase().contains("quoted-printable"))
-            .unwrap_or(false);
-        if is_quoted_printable {
-            return Some(decode_quoted_printable(body));
-        }
-        return Some(body.trim().to_string());
+        (plain, html)
+    } else if content_type.starts_with("text/html") {
+        (String::new(), decode_body(head, body))
+    } else {
+        (decode_body(head, body), String::new())
+    }
+}
+
+fn split_headers_body(part: &str) -> Option<(&str, &str)> {
+    if let Some(i) = part.find("\r\n\r\n") {
+        return Some((&part[..i], &part[i + 4..]));
+    }
+    if let Some(i) = part.find("\n\n") {
+        return Some((&part[..i], &part[i + 2..]));
     }
     None
+}
+
+fn decode_body(head: &str, body: &str) -> String {
+    let encoding = match header_value(head, "content-transfer-encoding") {
+        Some(enc) => enc.to_lowercase(),
+        None => String::new(),
+    };
+    if encoding.contains("base64") {
+        decode_base64(body)
+    } else if encoding.contains("quoted-printable") {
+        decode_quoted_printable(body)
+    } else {
+        body.trim().to_string()
+    }
 }
 
 fn header_value(block: &str, name: &str) -> Option<String> {
@@ -461,6 +469,12 @@ mod tests {
     fn plaintext_multipart_extracts_text_part() {
         let raw = "Content-Type: multipart/alternative; boundary=b1\r\n\r\n--b1\r\nContent-Type: text/plain\r\n\r\nplain body\r\n--b1\r\nContent-Type: text/html\r\n\r\n<p>hi</p>\r\n--b1--";
         assert_eq!(mime_plaintext(raw), "plain body");
+    }
+
+    #[test]
+    fn plaintext_nested_multipart_descends() {
+        let raw = "Content-Type: multipart/mixed; boundary=outer\r\n\r\n--outer\r\nContent-Type: multipart/alternative; boundary=inner\r\n\r\n--inner\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\nGr=C3=BC=C3=9F\r\n--inner\r\nContent-Type: text/html\r\n\r\n<p>Gr&uuml;&szlig;</p>\r\n--inner--\r\n--outer\r\nContent-Type: application/pgp-signature\r\n\r\nsig\r\n--outer--";
+        assert_eq!(mime_plaintext(raw), "Gr\u{fc}\u{df}");
     }
 
     #[test]
