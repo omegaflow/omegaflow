@@ -2,7 +2,7 @@
   title: Handover — Forschung-Folge 49 (2026-09-16)
   class: handover
   date: 2026-09-16
-  sha256: 600a6fbc8c47f9f08071fd8853a46dd560e1e19794c1697d3914d6930b613b77
+  sha256: da5d056d1e96d2b115b791bc7d966f7b904d6d8397ab7642e68fadb4de6953d7
   status: live
 -->
 # Handover — Forschung-Folge 49 (2026-09-16)
@@ -49,6 +49,15 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - Flyby Path 2 — datiert (JUICE 28./29.09., Clipper 03.12.), schweigt vor dem
   Datum. (Schritt: `docs/paper/flyby-path-2-preregistration.md`.)
+
+## CI / geteilter Zustand
+
+- `paper-check` rot (gemessen 2026-09-16, Lauf `35143129112`): stale sha256-Header —
+  `docs/paper/jwst-disequilibrium-survey.md` (Header 153169… vs Body 33fd79…) und
+  `docs/paper/solar-seconds-matrix.md` (Header f14341… vs Body d73fc4…). Der
+  Neptun-Paper-Lauf `35147256443` war beim Push in_progress (nicht gepollt).
+  (Schritt: die zwei Header-sha auf den gemessenen Body-sha setzen —
+  `sed '/^<!--/,/^-->/d' <f> | sha256sum` — dann `paper-check` neu lesen.)
 
 ## Abschluss
 
