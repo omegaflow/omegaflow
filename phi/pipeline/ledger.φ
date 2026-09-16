@@ -7,37 +7,29 @@
 # summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
 # blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
-verifiziert
+ausstehend
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — gewogen 2026-09-12: sync-GET http (http 200); /tap/sync QUERY → HTTP 500 (PostgreSQL-Backend down, connection refused localhost:5432) — absent bis recherchiert — Probe 2026-09-14: HTTP 200 (html 14700 B) → verifiziert
+note ivo://fai.kz/tap — Re-Messung 2026-09-16 (flash+pro übereinstimmend): sync-QUERY HTTP 500 (PostgreSQL-Backend down, localhost:5432), Root nur HTML; Schema-Discovery unmöglich. Re-Check-Pflicht, kein dead.
 
-verifiziert
+ausstehend
 kandidat http://vo.lmd.jussieu.fr/tap
-note ivo://lmd.jussieu/tap — gewogen 2026-09-12: sync-GET http (http 200); /tap/sync QUERY → VOTable-Fehler (PostgreSQL-Backend down, connection refused localhost:5432) — absent bis recherchiert — Probe 2026-09-14: HTTP 200 (html 12642 B) → verifiziert
+note ivo://lmd.jussieu/tap — Re-Messung 2026-09-16 (flash+pro übereinstimmend): Host HTTP 000 direkt, --sniff Timeout; der Ledger-200 vom 2026-09-14 war transient. Schema-Discovery offen, Re-Check.
 
-verifiziert
+ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — gewogen 2026-09-12: sync-GET http (http 200); /tap/sync QUERY → VOTable-Fehler (connection pool is closed) — absent bis recherchiert — Probe 2026-09-14: HTTP 200 (html 13342 B) → verifiziert
+note ivo://src.pas/tap — Re-Messung 2026-09-16 widersprüchlich: flash sync-QUERY „connection pool is closed", pro HTTP 200 (435 B, auferstanden). Schema-Discovery nicht gelaufen, Re-Check.
 
-verifiziert
+parser-gap
 kandidat https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
-note Toten-Re-Check 2026-09-14: EEA-AQ-Observations (POST → Parquet-URLs); die alte aqportal.discomap.eea.europa.eu/api/observations (dead 404) ist ein 301-Stub. — Probe 2026-09-14: HTTP 405 auf GET (POST-Endpoint) → verifiziert
+note EEA-AQ-Observations, Nachfolger des dead aqportal.discomap.eea.europa.eu (301-Stub). GET 405 (POST-only). Oszillator-Gate accept: PM10/PM2.5/O3/NO2/SO2/CO µg/m3 (diffusion, τ 3600 stündlich). Gap: POST-Vertrag undiscovered + kein Extrakt-Arm für POST→Klartext-URL-Liste→per-File-Parquet (parquet.rs liest, kein Arm). Nächster Schritt: POST-Body-Schema + Zweitfetch-Arm.
 
-verifiziert
-kandidat https://archives.esac.esa.int/hsa/whsa-tap-server/tap
-note Toten-Re-Check 2026-09-14: ESAC HSA TAP (dead 503 → TAP-Home, Resources jobs). ECHTE Auferstehung — in diesem Atom durch --probe. — Probe 2026-09-14: HTTP 200 (html 1816 B) → verifiziert
-
-verifiziert
+ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Weberin-Re-Run 2026-09-14: live — HF-Radar EMODnet (EU). Kandidat. — Probe 2026-09-14: HTTP 200 (json 21322 B) → verifiziert
+note Re-Messung 2026-09-16 (flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. tabledap → 404 (Grid, kein Table); Datenprobe 2024-06-15 real, letzter Zeitschritt 2026-07-30 durchweg null. Route griddap + Live-Kadenz offen.
 
-verifiziert
+ausstehend
 kandidat https://erddap.osupytheas.fr/erddap/info/HFRADAR_grid_copernicus/index.json
-note Weberin-Re-Run 2026-09-14: live — HF-Radar Ifremer-Copernicus (EU). Kandidat. — Probe 2026-09-14: HTTP 200 (json 24903 B) → verifiziert
-
-verifiziert
-kandidat https://ceotr.ocean.dal.ca/erddap/info/codar_totals_2015/index.json
-note Weberin-Re-Run 2026-09-14: live — HF-Radar Kanada. Kandidat. — Probe 2026-09-14: HTTP 200 (json 8120 B) → verifiziert
+note Re-Messung 2026-09-16 (flash): time actual_range nur 9 Tage Juni 2022, Proben durchweg null — der Datensatz trägt aktuell keine Messung. Verdikt offen (dead/decline bei bestätigt leerem Snapshot).
 
 ausstehend
 kandidat https://hfrnode.eu/
@@ -47,13 +39,13 @@ ausstehend
 kandidat https://hfrnet-tds.ucsd.edu/
 note Weberin-Re-Run 2026-09-14: pending (Timeout) — HF-Radar ThREDDS. Kandidat. — Probe 2026-09-14: direkt unbestätigt (VPN/transient)
 
-verifiziert
+ausstehend
 kandidat https://cdpp-archive.cnes.fr/
-note Warteliste 2026-09-14 (Taucher 2): CDPP-Archiv (DEMETER-Plasmen) anonym (200) — naechste offene Route fuer CSES-Limadou. Kandidat. — Probe 2026-09-14: HTTP 200 (html 3651 B, → user/cdpp/modules/1778) → verifiziert
+note Re-Messung 2026-09-16: REGARDS-OSS-Portal (Gateway regards.cnes.fr, rs-catalog/rs-dam), Redirect /user/cdpp/modules/1778 — kein Datenendpoint. DEMETER-Plasma (electric/em) wäre accept; Route/URN undiscovered.
 
-verifiziert
+ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note Warteliste 2026-09-14 Runde 2 (CSES-Limadou): ASI SSDC Portal — Registrierung noetig (keine CN-Mobilnummer), kein anonymer Pfad. Kandidat. — Probe 2026-09-14: HTTP 200 (html 60804 B) → verifiziert
+note Re-Messung 2026-09-16: SSDC-Portal, query.php = CAS-Login. SSDC_USER/SSDC_PASS in .secrets.local (kein blocked). CSES-Limadou (em/electric) accept; Daten-Route/Format undiscovered.
 
 note Warteliste 2026-09-14 Korrektur: CSES-Limadou (SSDC_USER/SSDC_PASS) und DAHITI (DAHITI_API_KEY) sind in .secrets.local gedeckt — die obigen Kandidaten limadou.ssdc.asi.it und zenodo.org/api/records/17928117 sind keine offenen Routen mehr, sondern Zugangsdaten liegen lokal. Der livefeed_gate --dahiti-Pfad liest DAHITI_API_KEY via secret_local (tools/gate/src/bin/livefeed_gate.rs:223).
 
