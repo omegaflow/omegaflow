@@ -1127,7 +1127,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
     if mode == "all" {
         return all_lines(query, env);
     }
-    match mode {
+    let lines = match mode {
         "arxiv" => arxiv_lines(query, max),
         "ads" => {
             let token = resolve_key(
@@ -1196,12 +1196,29 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
-    }
+    };
+    witnessed(mode, lines)
+}
+
+fn witnessed(mode: &str, lines: Vec<String>) -> Vec<String> {
+    lines
+        .into_iter()
+        .map(|line| format!("[{mode}] {line}"))
+        .collect()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn witnessed_tags_each_line_with_its_mode() {
+        let lines = vec!["one".to_string(), "two".to_string()];
+        assert_eq!(
+            witnessed("arxiv", lines),
+            vec!["[arxiv] one".to_string(), "[arxiv] two".to_string()]
+        );
+    }
 
     #[test]
     fn urlencode_escapes_reserved_bytes() {
