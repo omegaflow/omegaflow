@@ -29,6 +29,7 @@ impl Verdict {
 pub enum BodyLine {
     Spk,
     Dastcom,
+    Mpc,
     Inpop,
     Epm,
 }
@@ -38,6 +39,7 @@ impl BodyLine {
         match self {
             BodyLine::Spk => "spk-ephemeris",
             BodyLine::Dastcom => "dastcom-keplerian",
+            BodyLine::Mpc => "mpc-keplerian",
             BodyLine::Inpop => "inpop-ephemeris",
             BodyLine::Epm => "epm-ephemeris",
         }
@@ -152,6 +154,7 @@ pub struct BodyThread {
     pub name: String,
     pub rec: Option<AsteroidRec>,
     pub comet: Option<CometRec>,
+    pub mpc: Option<MpcorbRec>,
 }
 
 pub struct WeberinFeed {
@@ -161,11 +164,13 @@ pub struct WeberinFeed {
     pub eph_epm: Arc<HashMap<String, BodyEphemeris>>,
     pub recs: Vec<AsteroidRec>,
     pub comets: Vec<CometRec>,
+    pub mpc_recs: Vec<MpcorbRec>,
 }
 
 pub struct Weberin {
     pub threads: Vec<BodyThread>,
     pub verdicts: Vec<BodyVerdict>,
+    pub mpc_verdicts: Vec<BodyVerdict>,
     pub triads: Vec<ThreeWayVerdict>,
     pub eph: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub sun: Option<Arc<HashMap<String, BodyEphemeris>>>,
@@ -250,12 +255,19 @@ pub fn build_threads(
     body_names: &[String],
     recs: &[AsteroidRec],
     comets: &[CometRec],
+    mpc_recs: &[MpcorbRec],
 ) -> Vec<BodyThread> {
     let mut by_num: HashMap<u32, &AsteroidRec> = HashMap::new();
     for r in recs {
         by_num.entry(r.number).or_insert(r);
     }
     let by_desig = best_comet_by_desig(comets);
+    let mut mpc_by_num: HashMap<u32, MpcorbRec> = HashMap::new();
+    for r in mpc_recs {
+        if r.number != 0 {
+            mpc_by_num.entry(r.number).or_insert(*r);
+        }
+    }
     let mut threads = Vec::new();
     for name in body_names {
         let rec = body_number(name)
@@ -264,10 +276,12 @@ pub fn build_threads(
         let comet = comet_desig(name)
             .and_then(|desig| by_desig.get(desig).copied())
             .cloned();
+        let mpc = body_number(name).and_then(|num| mpc_by_num.get(&num).copied());
         threads.push(BodyThread {
             name: name.clone(),
             rec,
             comet,
+            mpc,
         });
     }
     threads.sort_by(|a, b| a.name.cmp(&b.name));
@@ -290,6 +304,7 @@ impl Weberin {
         Weberin {
             threads: Vec::new(),
             verdicts: Vec::new(),
+            mpc_verdicts: Vec::new(),
             triads: Vec::new(),
             eph: None,
             sun: None,
@@ -322,7 +337,7 @@ impl Weberin {
                 names.push(k.clone());
             }
         }
-        self.threads = build_threads(&names, &feed.recs, &feed.comets);
+        self.threads = build_threads(&names, &feed.recs, &feed.comets, &feed.mpc_recs);
         self.eph = Some(eph);
         self.sun = Some(feed.sun);
         self.eph_inpop = Some(feed.eph_inpop);
@@ -339,6 +354,7 @@ impl Weberin {
         let inpop_map = self.eph_inpop.as_ref();
         let epm_map = self.eph_epm.as_ref();
         self.verdicts.clear();
+        self.mpc_verdicts.clear();
         self.triads.clear();
         let jd = tdb / 86400.0 + J2000_EPOCH;
         for t in &self.threads {
@@ -348,6 +364,7 @@ impl Weberin {
                 (None, Some(c)) => comet_state_at(c, jd),
                 (None, None) => None,
             };
+            let mpc = t.mpc.as_ref().and_then(|r| mpcorb::state_at(r, jd));
             let inpop_woven = INPOP_LINE_BODIES.contains(&t.name.as_str());
             let inpop = if inpop_woven {
                 match inpop_map {
@@ -424,6 +441,30 @@ impl Weberin {
                 name: t.name.clone(),
                 outcome,
             });
+            if body_number(&t.name).is_some() {
+                let mpc_outcome = match (spk, mpc) {
+                    (Some(spk_p), Some((helio, _))) => {
+                        let sep_m = separation_m(spk_p, add_sun(helio, sun));
+                        match classify(sep_m, tol_kepler_m) {
+                            Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
+                            Agreement::Riss { sep_m } => BodyOutcome::Riss {
+                                sep_m,
+                                knot: [BodyLine::Spk, BodyLine::Mpc],
+                            },
+                        }
+                    }
+                    (Some(_), None) => BodyOutcome::Absent {
+                        line: BodyLine::Mpc,
+                    },
+                    (None, _) => BodyOutcome::Absent {
+                        line: BodyLine::Spk,
+                    },
+                };
+                self.mpc_verdicts.push(BodyVerdict {
+                    name: t.name.clone(),
+                    outcome: mpc_outcome,
+                });
+            }
         }
         self.woven = true;
     }
@@ -476,6 +517,23 @@ mod tests {
             sbnam: [0; 12],
             desig: *b"2P           ",
             comnam: *b"Encke                        ",
+        }
+    }
+
+    fn mpc_rec(number: u32, a_au: f64) -> MpcorbRec {
+        MpcorbRec {
+            number,
+            desig: [0; 16],
+            epoch_jd: J2000_EPOCH,
+            a_au,
+            e: 0.0,
+            incl_deg: 0.0,
+            node_deg: 0.0,
+            peri_deg: 0.0,
+            ma_deg: 0.0,
+            h_mag: 0.0,
+            g_mag: 0.0,
+            flags: 0,
         }
     }
 
@@ -552,6 +610,27 @@ mod tests {
             eph_epm: epm_map,
             recs,
             comets,
+            mpc_recs: Vec::new(),
+        });
+        w.weave(0.0, tol);
+        w
+    }
+
+    fn woven_mpc(
+        eph_pairs: &[(&str, [f64; 3])],
+        sun: [f64; 3],
+        mpc_recs: Vec<MpcorbRec>,
+        tol: f64,
+    ) -> Weberin {
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph: map_of(eph_pairs),
+            sun: map_of(&[("sun", sun)]),
+            eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
+            recs: Vec::new(),
+            comets: Vec::new(),
+            mpc_recs,
         });
         w.weave(0.0, tol);
         w
@@ -559,6 +638,13 @@ mod tests {
 
     fn outcome<'a>(w: &'a Weberin, name: &str) -> Option<&'a BodyOutcome> {
         w.verdicts
+            .iter()
+            .find(|v| v.name == name)
+            .map(|v| &v.outcome)
+    }
+
+    fn mpc_outcome<'a>(w: &'a Weberin, name: &str) -> Option<&'a BodyOutcome> {
+        w.mpc_verdicts
             .iter()
             .find(|v| v.name == name)
             .map(|v| &v.outcome)
@@ -591,6 +677,7 @@ mod tests {
             eph_epm: map_of(&[]),
             recs: vec![rec(3)],
             comets: Vec::new(),
+            mpc_recs: Vec::new(),
         });
         w.weave(0.0, WEBERIN_TOL_M);
         match outcome(&w, "juno") {
@@ -611,7 +698,7 @@ mod tests {
             .collect();
         let recs = vec![rec(1), rec(4)];
         let comets = vec![comet_encke()];
-        let threads = build_threads(&names, &recs, &comets);
+        let threads = build_threads(&names, &recs, &comets, &[]);
         assert_eq!(threads.len(), 3);
         let ceres = threads.iter().find(|t| t.name == "ceres").unwrap();
         assert!(ceres.rec.is_some());
@@ -631,7 +718,7 @@ mod tests {
             .map(|s| s.to_string())
             .collect();
         let comets = vec![comet_encke()];
-        let threads = build_threads(&names, &[], &comets);
+        let threads = build_threads(&names, &[], &comets, &[]);
         let encke = threads.iter().find(|t| t.name == "encke").unwrap();
         assert!(encke.rec.is_none());
         assert!(encke.comet.is_some());
@@ -1196,6 +1283,114 @@ mod tests {
             }
             other => panic!("the 5e5 m kepler-line separation reads {other:?}"),
         }
+    }
+
+    #[test]
+    fn mpc_line_word_names_the_mpc_keplerian_line() {
+        assert_eq!(BodyLine::Mpc.word(), "mpc-keplerian");
+    }
+
+    #[test]
+    fn build_threads_carries_the_mpc_line_by_number() {
+        let names: Vec<String> = ["ceres", "vesta", "pluto"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let threads = build_threads(&names, &[], &[], &[mpc_rec(1, 2.7), mpc_rec(134340, 39.5)]);
+        let ceres = threads.iter().find(|t| t.name == "ceres").unwrap();
+        assert!(ceres.mpc.is_some());
+        assert!((ceres.mpc.as_ref().unwrap().a_au - 2.7).abs() < 1e-12);
+        let vesta = threads.iter().find(|t| t.name == "vesta").unwrap();
+        assert!(vesta.mpc.is_none());
+        let pluto = threads.iter().find(|t| t.name == "pluto").unwrap();
+        assert!(pluto.mpc.is_some());
+        assert!((pluto.mpc.as_ref().unwrap().a_au - 39.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn mpc_weave_places_two_converging_lines() {
+        let ceres = mpc_rec(1, 2.7);
+        let jd = J2000_EPOCH;
+        let (helio, _) = mpcorb::state_at(&ceres, jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = woven_mpc(&[("ceres", [0.0; 3])], sun, vec![ceres], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Placed { sep_m }) => {
+                assert!(sep_m.is_finite(), "a measured separation stays finite");
+                assert!(*sep_m <= WEBERIN_TOL_M);
+                assert!(matches!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Placed)
+                ));
+            }
+            other => panic!("the folded mpc lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_risses_when_the_two_lines_refuse_to_converge() {
+        let ceres = mpc_rec(1, 2.7);
+        let w = woven_mpc(&[("ceres", [0.0; 3])], [0.0; 3], vec![ceres], 1.0e6);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Riss { sep_m, knot }) => {
+                assert!(sep_m.is_finite());
+                assert!(*sep_m > 1.0e6, "the refusing lines sit far apart: {sep_m}");
+                match knot {
+                    [BodyLine::Spk, BodyLine::Mpc] => {}
+                    other => panic!("the mpc riss knot reads {other:?}"),
+                }
+                assert_eq!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    None,
+                    "a riss is not a fadenpruefung verdict"
+                );
+            }
+            other => panic!("the refusing mpc lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_absent_names_the_missing_mpc_line() {
+        let w = woven_mpc(&[("ceres", [0.0; 3])], [0.0; 3], Vec::new(), WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Mpc));
+                assert!(matches!(
+                    mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
+                    Some(Verdict::Absent)
+                ));
+            }
+            other => panic!("the mpc-less line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_absent_names_the_missing_spk_line() {
+        let w = woven_mpc(&[], [0.0; 3], vec![mpc_rec(1, 2.7)], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "ceres") {
+            Some(BodyOutcome::Absent { line }) => {
+                assert!(matches!(line, BodyLine::Spk));
+            }
+            other => panic!("the spk-less mpc line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn mpc_weave_judges_only_the_small_body_number_set() {
+        let w = woven_mpc(
+            &[("moon", [0.0; 3]), ("ceres", [0.0; 3])],
+            [0.0; 3],
+            vec![mpc_rec(1, 2.7)],
+            WEBERIN_TOL_M,
+        );
+        assert!(
+            mpc_outcome(&w, "ceres").is_some(),
+            "the numbered small body carries an mpc verdict"
+        );
+        assert!(
+            mpc_outcome(&w, "moon").is_none(),
+            "a moon lies outside the mpc line domain — no mpc verdict"
+        );
     }
 }
 
