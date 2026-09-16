@@ -3,7 +3,7 @@
   session: Forschung-Folge 38
   class: handover
   date: 2026-09-16
-  sha256: 1fa590c5678d0f6e9a8b2bb9aa4f7f16d903e5672d080d1c36b79862b3812a17
+  sha256: 448ab6821b3bc02ca0ddd1677f7e9718ad168cafed29ff09f6d626062cc4cfa6
   status: live
 -->
 # Handover — Forschung-Folge 38 (2026-09-16)
@@ -98,9 +98,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Check-Runs des neuen SHA.)
 
 ## Paper / Präregistrierung
-- **20-s-Bande-Papier** — per-Papier-Release-Tag und Welt-Fassung-Branch zu
-  `docs/paper/twenty-second-band-ground-chain.md` sind absent (aus der Post
-  gefaltet 2026-09-16). (Schritt: `git tag` + Welt-Fassung-Branch anlegen.)
 - **Flyby Path 2** — Zellen pending, Operator-Siegel; füllen nach JUICE
   28./29.09., Clipper 03.12. (Schritt:
   `docs/paper/flyby-path-2-preregistration.md`.)
