@@ -50,6 +50,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "vex_odf" => odf::parse_series(bytes),
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
+        "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "flac" => flac::parse_series(bytes),
@@ -240,6 +241,18 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "dawn_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("dawn_odf_observable_hz"),
+            _ => None,
+        },
+        "cassini_tnf" => match comp {
+            odf::TNF_COMP_UL_PHASE => Some("cassini_tnf_ul_phase_cycles"),
+            _ => None,
+        },
+        "maven_tnf" => match comp {
+            odf::TNF_COMP_UL_PHASE => Some("maven_tnf_ul_phase_cycles"),
+            _ => None,
+        },
+        "dart_tnf" => match comp {
+            odf::TNF_COMP_UL_PHASE => Some("dart_tnf_ul_phase_cycles"),
             _ => None,
         },
         "voyager_odr" => match comp {

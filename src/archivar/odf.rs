@@ -9,6 +9,7 @@ pub const PK_SUMMARY: u32 = 105;
 pub const ODF_TDB_OFFSET: f64 = -1577664000.0;
 
 pub const COMP_OBSERVABLE: u32 = 1;
+pub const TNF_COMP_UL_PHASE: u32 = 1;
 
 pub const PODF_COL_TDB: usize = 0;
 pub const PODF_COL_OBSERVABLE: usize = 1;
@@ -418,6 +419,58 @@ pub fn tnf_dt0(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt0> {
     })
 }
 
+pub fn tnf_ul_phase_cycles(d: &TnfDt0) -> f64 {
+    d.ul_hi_phs_cycles as f64 * 4_294_967_296.0
+        + d.ul_lo_phs_cycles as f64
+        + d.ul_frac_phs_cycles as f64 / 4_294_967_296.0
+}
+
+pub fn tnf_rows(
+    bytes: &[u8],
+    lsk: &crate::archivar::lsk::LeapSeconds,
+) -> Option<Vec<[f64; 9]>> {
+    let frames = scan_tnf_sfdus(bytes)?;
+    let mut out = Vec::with_capacity(frames.len());
+    for f in &frames {
+        let Some(d) = tnf_dt0(f, &bytes[f.offset..]) else {
+            continue;
+        };
+        let Some(day0) = crate::archivar::lsk::days_from_civil(f.year as i64, 1, 1) else {
+            continue;
+        };
+        let unix = day0 as f64 * 86400.0 + (f.doy as f64 - 1.0) * 86400.0 + f.sec;
+        let Some(tdb) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        out.push([
+            tdb,
+            tnf_ul_phase_cycles(&d),
+            d.ramp_freq,
+            d.ul_dss_id as f64,
+            f.scft_id as f64,
+            f.format_code as f64,
+            d.ul_band as f64,
+            f.rec_seq_num as f64,
+            d.prdx_time_offset,
+        ]);
+    }
+    Some(out)
+}
+
+pub fn tnf_parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in &rows {
+        let t = r[PODF_COL_TDB];
+        let v = r[PODF_COL_OBSERVABLE];
+        if !t.is_finite() || !v.is_finite() {
+            continue;
+        }
+        out.push((t, v, TNF_COMP_UL_PHASE));
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -721,5 +774,25 @@ mod tests {
         assert_eq!(d.time_tag_corr_flag, 0);
         assert_eq!(d.type_time_corr_flag, 0);
         assert_eq!(d.fabricated_sfdu_flag, 0);
+    }
+
+    #[test]
+    fn tnf_rows_resolves_dt0_to_tdb_phase_rows() {
+        let lsk = crate::archivar::lsk::parse(
+            "DELTET/DELTA_T_A = 32.184\n\
+             DELTET/DELTA_AT = ( 10, @1972-JAN-1, 37, @2017-JAN-1 )",
+        )
+        .unwrap();
+        let bytes = unhex(NHREX_TNF_HEAD_2);
+        let rows = tnf_rows(&bytes, &lsk).unwrap();
+        assert_eq!(rows.len(), 2);
+        assert!(rows[0][0] < rows[1][0], "tdb rows follow the SFDU order");
+        let phase = 0x0042cd06u32 as f64 * 4_294_967_296.0
+            + 0x3881085au32 as f64
+            + 0x59b3cfd9u32 as f64 / 4_294_967_296.0;
+        assert_eq!(rows[0][1], phase);
+        assert_eq!(rows[0][3], 26.0, "ul_dss_id carries the DT0 field");
+        assert_eq!(rows[0][4], 98.0, "scft_id carries the SFDU field");
+        assert_eq!(rows[0][5], 0.0, "format_code 0 marks DT0");
     }
 }
