@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-15
   version: 7
-  sha256: d63bd27e5efc6d557d6645a1f182ba4c0ff3e80d1fcf5a716a5cad3791b64bad
+  sha256: 3a876f8f311c22db2aa57103526471b053e73c275e1fd7aa413e443213b0b5ec
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -12,18 +12,11 @@
 
 ## Abstract
 
-In the Pioneer-10 Doppler data (ATDF, 1987-12→1993-04, 73 249 sub-10-s samples; the strict 1-s class is 70 602) the band around 20 s (44–58-mHz census grid) carries a dense complex of coherent traces whose **dominant** frequencies are set by the receiving station: on the full subtraction chain's residual (the canonical series, §1) the 1988 dominant peaks are Goldstone 14 → 57,11 mHz, Canberra 43 → 44,40 mHz, Madrid 63 → 51,99 mHz — a common signal, whatever oscillates in space or along the common interplanetary path, would arrive at all three stations with the same residual frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not in the probe and not in the medium.
+In Pioneer-10 Doppler data (ATDF, 1987-12→1993-04, 73 249 sub-10-s samples; strict 1-s: 70 602), the ~20-s band (44–58-mHz grid) carries a dense complex of coherent traces with station-fixed **dominant** frequencies: on the canonical residual (§1), 1988 peaks: Goldstone 14 → 57,11 mHz, Canberra 43 → 44,40 mHz, Madrid 63 → 51,99 mHz; a common signal arrives with the same frequency. The band is a ground-chain fingerprint: it arises in the DSN receiving chain, not the probe nor the medium.
 
-The complex is dense, not a set of fixed lines: the 3 000-sample windows scatter across the whole band (Station 63: 24 windows, 44,05–55,50 mHz, 2,3–10,2×), and no single coherent line carries it. The per-station values of the earlier version — 45,75 / 51,55 / 47,35 mHz — are a sub-peak selection of this complex: on the canonical series they appear at measured ranks 4 (45,75), 2 (51,50, one 0,05-mHz grid step below 51,55) and 17 (47,35, outside the top-5); the earlier global peak 50,73 mHz does not reproduce (§1, §4).
+The complex is dense, not fixed lines: 3 000-sample windows scatter across the band (Station 63: 24 windows, 44,05–55,50 mHz, 2,3–10,2×); no single coherent line carries it. The earlier per-station values 45,75, 51,55, 47,35 mHz are sub-peaks: ranks 4 (45,75), 2 (51,50, one 0,05-mHz step below 51,55), 17 (47,35, outside top-5); the global peak 50,73 mHz does not reproduce (§1, §4).
 
-**Method.** Exhaustive subtraction of known effects: the band survives the
-named, measured exclusions (§3); its identity remains open — the remnant is
-an unknown instrument contaminant of the chain, not claimed physics. Since
-version 4 the subtraction chain is reconstructed in full — the plasma deduction
-from the OMNI2 N1800 series, the common-mode empty (the DSN tracks sequentially;
-the minimum inter-station gap is 110 s), the TEC deduction a dated boundary (the
-GIM maps begin 1998) — and the per-station claim is stated as the measured
-census of the canonical residual, not as a fixed-line pick.
+**Method.** Exhaustive subtraction: the band survives the measured exclusions (§3); its identity remains open: an unknown instrument contaminant, not claimed physics. The chain is reconstructed in full: plasma deduction from OMNI2 N1800, common-mode empty (minimum inter-station gap 110 s), TEC deduction a dated boundary (GIM maps begin 1998); the per-station claim is the measured census, not a fixed-line pick.
 
 
 ## 1. The measurement series
