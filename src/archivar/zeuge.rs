@@ -15,7 +15,7 @@ pub enum FeldIdentitaet {
 
 pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
     match &magic {
-        b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" | b"SKD1" => {
+        b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" | b"SKD1" | b"VLDE" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung))
         }
         b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" => {
@@ -98,7 +98,7 @@ mod tests {
 
     #[test]
     fn witness_magics_hold_s2_direction() {
-        for m in [*b"AMN1", *b"PAO1", *b"SKY1", *b"S2E1", *b"SKD1"] {
+        for m in [*b"AMN1", *b"PAO1", *b"SKY1", *b"S2E1", *b"SKD1", *b"VLDE"] {
             assert_eq!(
                 magic_identity(m),
                 Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung))
