@@ -30,13 +30,13 @@ witness s2-direction
 url https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
 record sky1
 force em
-note HAWC-2HWC-Quellenkatalog (Abeysekara et al. 2017, ApJ 843, 40; 2026-09-13 gemessen HTTP 200, 18 588 B, TLS-Kette unvollstaendig — curl -k): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_2hwc.sky1 (40 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. Eine Quelle ohne Fluss bleibt ausgelassen, nie als 0.0 fabriziert.
+note HAWC-2HWC-Quellenkatalog (Abeysekara et al. 2017, ApJ 843, 40; 2026-09-13 gemessen HTTP 200, 18 588 B; Zugriff via CA-Bundle-Route `curl --cacert` → HTTP 200, accept): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_2hwc.sky1 (40 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. Eine Quelle ohne Fluss bleibt ausgelassen, nie als 0.0 fabriziert.
 
 witness s2-direction
 url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
 record sky1
 force em
-note HAWC-3HWC-Quellenkatalog (arXiv 2007.08582; 2026-09-13 gemessen HTTP 200, 51 833 B, TLS-Kette unvollstaendig — curl -k): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_3hwc.sky1 (64 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. 3HWC J0659+147 traegt keinen flux measurements-Block (Fluss absent) — Record ausgelassen, nie als 0.0 fabriziert.
+note HAWC-3HWC-Quellenkatalog (arXiv 2007.08582; 2026-09-13 gemessen HTTP 200, 51 833 B; Zugriff via CA-Bundle-Route `curl --cacert` → HTTP 200, accept): je Quelle name/RA/Dec (ICRS, deg) + flux measurements; der Fiduzial-Fluss ist der 7-TeV-Fluss am kleinsten Radius (TeV-1 cm-2 s-1). Der Spektralindex traegt das YAML, hat aber keinen SKY1-Slot — benannt, nicht getragen. Zeugen-Art S²-Richtung (distanzlos, τ=0), kind gamma, gemessen durch em (Wasser-Cherenkov). Kompiliert als hawc_3hwc.sky1 (64 Quellen, value = Fiduzial-Fluss) via hawc_compiler (tools/harvest, SKY1, KIND_GAMMA=3), CDN-Release data.hawc-observatory.org. 3HWC J0659+147 traegt keinen flux measurements-Block (Fluss absent) — Record ausgelassen, nie als 0.0 fabriziert.
 
 witness s2-direction
 url https://dataverse.harvard.edu/api/access/datafile/7502710
