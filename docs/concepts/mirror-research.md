@@ -71,7 +71,13 @@ from which the workflow fetches (the release tag IS the domain name):
 
 ## Relevant for the domain migration
 
-These 25 sources are part of the ~2.300 CDN sources that need to be switched
-to domain releases. Their release names follow the above table —
-NOT `naturalearthdata.com` or `globalquakemodel.org` (those would be assumptions,
-no verified fetch URLs).
+These 25 sources are part of the CDN sources that need to be switched to domain
+releases. Their release names follow the above table — NOT `naturalearthdata.com`
+or `globalquakemodel.org` (those would be assumptions, no verified fetch URLs).
+
+Umfang (gemessen 2026-09-16): `phi/sources.φ` trägt 898 url-Blöcke (108
+Source-Netlocs); die frühere Zahl „~2.300" war ein Legacy-Zähler über alle
+Registries (live+dead+declined+blocked ≈ 2187) und hatte im Schema
+(`docs/specs/cdn-ziel-schema.md` §1) keinen Anker. Der schemakonforme Live-Maßstab
+ist ~898, nicht 2300. Die 412 aus `docs/specs/cdn_reconciliation.json` waren eine
+2026-09-06-Messung (damals 412 Blöcke) und sind seither veraltet.

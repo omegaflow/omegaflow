@@ -210,8 +210,8 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             val: gm,
             name: "dastcom.mass".to_string(),
             z: 0.0,
-            freq: 0.0,
-            bin_width: 0.0,
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
             color_index: 0.0,
             phase: None,
         });
@@ -233,8 +233,8 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 val: body_radius_m,
                 name: "dastcom.radius".to_string(),
                 z: 0.0,
-                freq: 0.0,
-                bin_width: 0.0,
+                freq: crate::spectral::SPECTRAL_NO_BAND,
+                bin_width: crate::spectral::SPECTRAL_NO_BAND,
                 color_index: 0.0,
                 phase: None,
             });
@@ -355,8 +355,8 @@ pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
             val: rec.flux,
             name: "dr3_stars.flux".to_string(),
             z: 0.0,
-            freq: 0.0,
-            bin_width: 0.0,
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
             color_index: rec.color_index,
             phase: None,
         });
