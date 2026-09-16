@@ -6757,7 +6757,25 @@ at earth
 ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf.bin
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t49912566_66317462.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t66317463_261261437.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t261261447_508869542.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t508869552_550631778.bin
 format odyssey_odf
 at earth
 ttl 604800
