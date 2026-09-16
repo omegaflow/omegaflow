@@ -77,6 +77,7 @@ struct State {
 struct PlainResult {
     scanned: u64,
     matched: u64,
+    hits: u64,
     lines: Vec<String>,
 }
 
@@ -129,6 +130,9 @@ fn main() {
     let mut serve_addr: Option<String> = None;
     let mut verdict_url: Option<String> = None;
     let mut playwright_input: Option<String> = None;
+    let mut count_only = false;
+    let mut case_sensitive = false;
+    let mut path_match = false;
 
     let mut i = 0;
     while i < args.len() {
@@ -242,6 +246,9 @@ fn main() {
             }
             "--binary" => binary = true,
             "--content" => content = true,
+            "--count" => count_only = true,
+            "--case" => case_sensitive = true,
+            "--path" => path_match = true,
             "--help" | "-h" => {
                 usage();
                 std::process::exit(0);
@@ -294,6 +301,8 @@ fn main() {
                         max_mb,
                         skip,
                         binary,
+                        case_sensitive,
+                        count_only,
                     );
                 }
             } else {
@@ -305,6 +314,8 @@ fn main() {
                     max_mb,
                     skip,
                     binary,
+                    case_sensitive,
+                    count_only,
                 );
             }
         }
@@ -321,7 +332,7 @@ fn main() {
             print_lines(&lines);
         }
         Mode::Index => {
-            let lines = run_index(&roots, &keywords, max_files, kind, sort);
+            let lines = run_index(&roots, &keywords, max_files, kind, sort, path_match);
             print_lines(&lines);
         }
         Mode::Serve => run_serve(serve_addr, &roots, mft_path),
@@ -370,10 +381,10 @@ fn main() {
 
 fn usage() {
     eprintln!(
-        "usage: archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary]"
+        "usage: archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case]"
     );
     eprintln!(
-        "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
+        "       archive_search --leads <keyword>... | --git <query> | --index [<query>...] [--path] | --mft <device> [<query>...] [--content] [--kind any|file|dir] [--sort name|size|mtime]   (--index matches paths, not file content)"
     );
     eprintln!(
         "       archive_search --verdict <url> | --sniff <url> | --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query> [--cacert <pem>]   (--ntrs: a bare citation id resolves via the citation path, any other query searches; --sniff reports magic bytes + sha256; --isc takes key=value: start/end/minmag/minlat/maxlat/minlon/maxlon; --supermag takes key=value: station/start/end; --heasarc takes key=value: table/rows)"
@@ -413,6 +424,7 @@ fn collect_plain(
     max_mb: u64,
     skip: usize,
     include_binary: bool,
+    case_sensitive: bool,
 ) -> PlainResult {
     let mut roots: Vec<String> = Vec::new();
     if roots_given.is_empty() {
@@ -424,7 +436,11 @@ fn collect_plain(
         roots.extend_from_slice(roots_given);
     }
 
-    let needle: Vec<String> = keywords.iter().map(|k| k.to_lowercase()).collect();
+    let needle: Vec<String> = if case_sensitive {
+        keywords.to_vec()
+    } else {
+        keywords.iter().map(|k| k.to_lowercase()).collect()
+    };
 
     let mut state = State {
         scanned: 0,
@@ -438,20 +454,23 @@ fn collect_plain(
             lines_per_file,
             max_mb,
             include_binary,
+            case_sensitive,
             &mut state,
         );
     }
     state.results.sort_by(|a, b| b.1.cmp(&a.1));
+    let mut hits: u64 = state.results.iter().map(|r| r.1 as u64).sum();
     let mut lines = Vec::new();
-    for (path, _count, hits) in state.results.iter().skip(skip).take(max_files) {
+    for (path, _count, hits_lines) in state.results.iter().skip(skip).take(max_files) {
         lines.push(path.display().to_string());
-        for line in hits {
+        for line in hits_lines {
             lines.push(format!("  {}", line));
         }
     }
     PlainResult {
         scanned: state.scanned,
         matched: state.matched,
+        hits,
         lines,
     }
 }
@@ -464,6 +483,8 @@ fn run_plain(
     max_mb: u64,
     skip: usize,
     include_binary: bool,
+    case_sensitive: bool,
+    count_only: bool,
 ) {
     let result = collect_plain(
         roots_given,
@@ -473,7 +494,17 @@ fn run_plain(
         max_mb,
         skip,
         include_binary,
+        case_sensitive,
     );
+    if count_only {
+        println!(
+            "archive_search: {} files, {} hits for: {}",
+            result.matched,
+            result.hits,
+            keywords.join(" ")
+        );
+        return;
+    }
     for line in &result.lines {
         println!("{}", line);
     }
@@ -727,6 +758,7 @@ fn run_index(
     max_files: usize,
     kind: index::Kind,
     sort: index::Sort,
+    path_match: bool,
 ) -> Vec<String> {
     let repo = match find_repo_root() {
         Some(r) => r,
@@ -736,7 +768,7 @@ fn run_index(
     let query = index::Query {
         text: keywords.join(" "),
         ci: true,
-        path: false,
+        path: path_match,
         kind,
         sort,
         limit: max_files,
@@ -975,7 +1007,7 @@ fn scan_leads_file(
         None => return,
     };
     for (idx, line) in text.lines().enumerate() {
-        if !line_matches(line, needle) {
+        if !line_matches(line, needle, false) {
             continue;
         }
         let (new_hosts, known_hosts) = split_known_hosts(line, curated);
@@ -1011,6 +1043,7 @@ fn walk(
     lines_per_file: usize,
     max_mb: u64,
     include_binary: bool,
+    case_sensitive: bool,
     state: &mut State,
 ) {
     let entries = match fs::read_dir(dir) {
@@ -1031,12 +1064,25 @@ fn walk(
             if SKIP_DIRS.contains(&name.as_str()) {
                 continue;
             }
-            walk(&path, needle, lines_per_file, max_mb, include_binary, state);
+            walk(
+                &path,
+                needle,
+                lines_per_file,
+                max_mb,
+                include_binary,
+                case_sensitive,
+                state,
+            );
         } else {
             state.scanned += 1;
-            if let Some((count, hits)) =
-                search_file(&path, needle, lines_per_file, max_mb, include_binary)
-            {
+            if let Some((count, hits)) = search_file(
+                &path,
+                needle,
+                lines_per_file,
+                max_mb,
+                include_binary,
+                case_sensitive,
+            ) {
                 state.matched += 1;
                 state.results.push((path, count, hits));
             }
@@ -1050,6 +1096,7 @@ fn search_file(
     max_lines: usize,
     max_mb: u64,
     include_binary: bool,
+    case_sensitive: bool,
 ) -> Option<(usize, Vec<String>)> {
     let Ok(meta) = fs::metadata(path) else {
         return None;
@@ -1065,7 +1112,7 @@ fn search_file(
     let mut count = 0usize;
     let mut hits: Vec<String> = Vec::new();
     for (idx, line) in text.lines().enumerate() {
-        if !line_matches(line, needle) {
+        if !line_matches(line, needle, case_sensitive) {
             continue;
         }
         count += 1;
@@ -1084,9 +1131,13 @@ fn search_file(
     }
 }
 
-fn line_matches(line: &str, needle: &[String]) -> bool {
-    let lower = line.to_lowercase();
-    needle.iter().any(|n| lower.contains(n))
+fn line_matches(line: &str, needle: &[String], case_sensitive: bool) -> bool {
+    if case_sensitive {
+        needle.iter().any(|n| line.contains(n.as_str()))
+    } else {
+        let lower = line.to_lowercase();
+        needle.iter().any(|n| lower.contains(n))
+    }
 }
 
 fn is_binary(bytes: &[u8]) -> bool {
@@ -1130,9 +1181,17 @@ mod tests {
     #[test]
     fn line_matches_is_case_insensitive_and_any_keyword() {
         let needle = vec!["icecube".to_string(), "telescope".to_string()];
-        assert!(line_matches("an ICECUBE alert", &needle));
-        assert!(line_matches("the Telescope Array", &needle));
-        assert!(!line_matches("a plain line", &needle));
+        assert!(line_matches("an ICECUBE alert", &needle, false));
+        assert!(line_matches("the Telescope Array", &needle, false));
+        assert!(!line_matches("a plain line", &needle, false));
+    }
+
+    #[test]
+    fn line_matches_honors_the_case_flag() {
+        let needle = vec!["ICECUBE".to_string()];
+        assert!(line_matches("an ICECUBE alert", &needle, true));
+        assert!(!line_matches("an icecube alert", &needle, true));
+        assert!(line_matches("an icecube alert", &needle, false));
     }
 
     #[test]
@@ -1151,7 +1210,7 @@ mod tests {
         )
         .unwrap();
         let needle = vec!["icecube".to_string()];
-        let (count, hits) = search_file(&path, &needle, 2, 100, false).unwrap();
+        let (count, hits) = search_file(&path, &needle, 2, 100, false, false).unwrap();
         assert_eq!(count, 2);
         assert_eq!(hits.len(), 2);
         assert!(hits[0].contains("ICECUBE"));
@@ -1164,8 +1223,8 @@ mod tests {
         let path = dir.join(format!("archive_search_bin_{}.dat", std::process::id()));
         fs::write(&path, [0x41, 0x00, 0x42]).unwrap();
         let needle = vec!["a".to_string()];
-        assert!(search_file(&path, &needle, 2, 100, false).is_none());
-        assert!(search_file(&path, &needle, 2, 100, true).is_some());
+        assert!(search_file(&path, &needle, 2, 100, false, false).is_none());
+        assert!(search_file(&path, &needle, 2, 100, true, false).is_some());
         let _ = fs::remove_file(&path);
     }
 
@@ -1176,7 +1235,7 @@ mod tests {
         let path = dir.join(format!("archive_search_rel_{}.txt", std::process::id()));
         fs::write(&path, &body).unwrap();
         let needle = vec!["needle".to_string()];
-        let (count, hits) = search_file(&path, &needle, 2, 100, false).unwrap();
+        let (count, hits) = search_file(&path, &needle, 2, 100, false, false).unwrap();
         assert_eq!(count, 50);
         assert_eq!(hits.len(), 2);
         let _ = fs::remove_file(&path);
@@ -1191,9 +1250,10 @@ mod tests {
         }
         let roots = vec![dir.display().to_string()];
         let keywords = vec!["needle".to_string()];
-        let all = collect_plain(&roots, &keywords, 2, 40, 100, 0, false);
+        let all = collect_plain(&roots, &keywords, 2, 40, 100, 0, false, false);
         assert_eq!(all.matched, 3);
-        let skipped = collect_plain(&roots, &keywords, 2, 40, 100, 2, false);
+        assert_eq!(all.hits, 3);
+        let skipped = collect_plain(&roots, &keywords, 2, 40, 100, 2, false, false);
         let shown = skipped
             .lines
             .iter()
