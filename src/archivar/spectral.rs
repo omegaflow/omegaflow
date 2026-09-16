@@ -213,10 +213,7 @@ pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
         let d = days_in_month(year, m)?;
         days += d as u64;
     }
-    let mid = match days_in_month(year, month) {
-        Some(d) => d as f64,
-        None => return None,
-    };
+    let mid = days_in_month(year, month)? as f64;
     Some(days as f64 * 86400.0 + mid * 43200.0)
 }
 

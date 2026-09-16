@@ -1,5 +1,7 @@
 use std::str::from_utf8;
 
+const FITS_ZERO_ABSENT: f64 = 0.0;
+
 #[derive(Debug)]
 pub struct FitsHeader {
     cards: Vec<(String, String)>,
@@ -182,10 +184,9 @@ impl FitsTable {
             }
             next_tbcol = tbcol + width;
             let tscal = header.f64(&format!("TSCAL{}", i)).unwrap_or(1.0);
-            let tzero = match header.f64(&format!("TZERO{}", i)) {
-                Some(v) => v,
-                None => 0.0,
-            };
+            let tzero = header
+                .f64(&format!("TZERO{}", i))
+                .unwrap_or(FITS_ZERO_ABSENT);
             let unit = header
                 .str_unescaped(&format!("TUNIT{}", i))
                 .map(|s| s.trim().to_string())
@@ -537,10 +538,7 @@ impl FitsImage {
                     dims: [0, 0, 0],
                     data_start: header_end,
                     bscale: header.f64("BSCALE").unwrap_or(1.0),
-                    bzero: match header.f64("BZERO") {
-                        Some(v) => v,
-                        None => 0.0,
-                    },
+                    bzero: header.f64("BZERO").unwrap_or(FITS_ZERO_ABSENT),
                     wcs: None,
                 },
                 header_end,
@@ -563,10 +561,7 @@ impl FitsImage {
         }
         let next = hdu_start + (data_start - hdu_start + data_bytes).div_ceil(2880) * 2880;
         let bscale = header.f64("BSCALE").unwrap_or(1.0);
-        let bzero = match header.f64("BZERO") {
-            Some(v) => v,
-            None => 0.0,
-        };
+        let bzero = header.f64("BZERO").unwrap_or(FITS_ZERO_ABSENT);
         let wcs = FitsWcs::from_header(&header, dims[0], dims[1]);
         Some((
             Self {
@@ -789,10 +784,7 @@ impl FitsCompressedImage {
             }
         }
         let zscale = header.f64("ZSCALE").unwrap_or(1.0);
-        let zzero = match header.f64("ZZERO") {
-            Some(v) => v,
-            None => 0.0,
-        };
+        let zzero = header.f64("ZZERO").unwrap_or(FITS_ZERO_ABSENT);
         let blank = header.int("BLANK");
         let crpix1 = header.f64("CRPIX1").unwrap_or(f64::NAN);
         let crpix2 = header.f64("CRPIX2").unwrap_or(f64::NAN);

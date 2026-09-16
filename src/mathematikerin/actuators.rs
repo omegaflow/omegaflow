@@ -150,7 +150,7 @@ pub fn force_ref_medians(field: &[f32], meta: &[f32]) -> [Option<f32>; 9] {
     let mut hist: [[u32; 256]; 9] = [[0; 256]; 9];
     let mut sum: [[f32; 256]; 9] = [[0.0; 256]; 9];
     let mut n: [u32; 9] = [0; 9];
-    for (j, f) in field.chunks_exact(12).enumerate() {
+    for (j, f) in field.as_chunks::<12>().0.iter().enumerate() {
         let ft = f[6] as i64;
         if !(0..=8).contains(&ft) {
             continue;
@@ -193,7 +193,7 @@ pub fn log2_bin_of(l: f32) -> usize {
 
 pub fn color_emission(field: &[f32], meta: &[f32]) -> [f32; 4] {
     let mut acc = [0.0f32; 4];
-    for (j, f) in field.chunks_exact(12).enumerate() {
+    for (j, f) in field.as_chunks::<12>().0.iter().enumerate() {
         let ft = f[6] as i64;
         if ft != 0 {
             continue;
