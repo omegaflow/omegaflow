@@ -1901,6 +1901,16 @@ format mpcobs
 at earth
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1228354383-1261580867.bin
+format mpcobs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1261580867-1412649780.bin
+format mpcobs
+at earth
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
 format noaa_ccor
 at sun
