@@ -1043,13 +1043,16 @@ fn scan_leads_file(
     scan: &mut LeadScan,
 ) {
     scan.scanned += 1;
+    let Ok(meta) = fs::metadata(path) else {
+        return;
+    };
+    if meta.len() > max_mb * 1024 * 1024 {
+        return;
+    }
     let bytes = match fs::read(path) {
         Ok(b) => b,
         Err(_) => return,
     };
-    if bytes.len() > max_mb as usize * 1024 * 1024 {
-        return;
-    }
     let text = match readable_text(&bytes, false) {
         Some(t) => t,
         None => return,
