@@ -25,7 +25,7 @@ note EEA-AQ-Observations, Nachfolger des dead aqportal.discomap.eea.europa.eu. P
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; .../griddap/HFRADAR_NADR_Totals.json?EWCT%5B(last)%5D%5B0%5D%5B10%5D%5B11%5D → 200, EWCT −0.172 m/s (45.66184 N, 13.587437 E). Kadenz gemessen: letzter Zeitschritt 2026-07-30T23:30:00Z (time_coverage_end, 30-min-NRT) — 48 Tage stale, kein laufendes Update; kein sources.φ-Block (ein Block träfe einen eingefrorenen Zeitschritt). Re-Check der Kadenz.
+note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; EWCT −0,172 m/s, NSCT −0,087 m/s (45.66184 N, 13.587437 E), time_coverage_end 2026-07-30T23:30:00Z. Geschwister-Check (tabledap/allDatasets, datasetID=~"HFRADAR.*", 21 HFRADAR_*_Totals): frischester maxTime 2026-07-31T00:00:00Z — kein lebendes Geschwister, die ganze Familie steht seit ~2026-07-30/31. Kein sources.φ-Block. Nächster Schritt: maxTime der Familie erneut messen.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
@@ -33,11 +33,11 @@ note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mi
 
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
-note Re-Messung 2026-09-16 (grind-flash): direkt Timeout, Proton US-Exit 200 ArcGIS-JSON. Layer = AQI-Stationen (Punktgeometrie + STATION_NAME,LOCATION,REGION,OWNER,PURPOSE); die AQI-Messwerte liegen in verknüpften Tabellen, nicht am Layer → nächster Schritt: Messwert-Tabelle/Join.
+note Re-Messung 2026-09-16 (grind-flash): direkt Timeout, Proton US-Exit 200 ArcGIS-JSON. Service-Directory: Layer 0 = Stationen, Table 1 = SDE_ADMIN.aqi_t60_recent (VALUE_O3/NO2PPM/SO2PPB/PM25/PM10_TEOM, DATE_TIME), relationships []. Join verifiziert (MON_STATIONSERIALCODE ↔ STA_SERIALCODE; serial 1: O3 0,032901 ppm, 2023-11-07T10:00:00Z). outStatistics max(DATE_TIME)=min=1699351200000, N=19 → EIN eingefrorener Snapshot, kein laufendes Update. Nächster Schritt: max(DATE_TIME) erneut messen; bleibt 2023 → dead.
 
 ausstehend
 kandidat https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
-note Re-Messung 2026-09-16 (grind-flash): direkt Timeout, Proton US-Exit 200 (`/0?f=json` + `/0/query?where=1=1&outFields=*&resultRecordCount=1&f=json`). Layer 0 trägt nur Stationsgeometrie + Metadaten, keinen AQI-Wert → nächster Schritt: Messwert-Tabelle/Join.
+note Re-Messung 2026-09-16 (grind-flash): Layer 0 trägt nur Stationsgeometrie + Metadaten (STA_SERIALCODE/STATION_NAME/LOCATION/REGION/OWNER/PURPOSE), keinen AQI-Wert; die Werttabelle ist Table 1 (siehe Geschwister-Eintrag). Werttabelle ohne Geometrie, Service ohne Relationship → kein Einzel-URL-Block. Nächster Schritt: max(DATE_TIME) der Table 1 erneut messen.
 
 ausstehend
 kandidat https://www.ncdc.noaa.gov/cdo-web/api/v2/
@@ -87,43 +87,7 @@ parser-gap
 kandidat https://gcn.nasa.gov/missions/svom
 note Parser-gap: kein Listen-Feed — GCN-v0.1-API tot (404 Remix-SPA), Circulars nur per SPA-Suche + /circulars/{id}.json ohne ra/dec (§15.9, 2026-08-19).
 
-parser-gap
-kandidat https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
-note Parser-gap: IGRA-2 Radiosonden (live, curl 200); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://weather.uwyo.edu/wsgi/sounding?datetime={YYYY-MM-DD HH:00:00}&id={wmo_id}&src=UNKNOWN&type=TEXT:CSV
-note Parser-gap: Wyoming-Radiosonden (live); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDHHmm}
-note Parser-gap: Iowa-RAOB (live); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://api.v2.sondehub.org/sonde/{serial}
-note Parser-gap: SondeHub (live, 200 redirect .json.gz, ~10 000 temp-Punkte); RH/P meist nicht im Amateurframe (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
+ausstehend
 kandidat https://erddap.emso.eu/erddap/info/index.json
-note Parser-gap: EMSO ERDDAP (live, Index); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://gliders.ioos.us/erddap/info/index.json
-note Parser-gap: IOOS-Glider ERDDAP (live, Index); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://erddap.marine.ie/erddap/info/index.json
-note Parser-gap: SmartBay Observatory (Marine Institute Irland, live, smartbay_obs_ctd_sbe16); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://aviationweather.gov/api/data/pirep?id=KJFK&distance=300&format=json&age=6
-note Parser-gap: AWC-PIREP (live); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
-note Parser-gap: meteo.lt (live); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
-
-parser-gap
-kandidat https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
-note Parser-gap: GTMBA (PMEL TAO/TRITON/PIRATA/RAMA, live, täglich+stündlich JSON); Port-Arbeit ausstehend (Sensor-Welle §15.15, 2026-08-19).
+note Re-Messung 2026-09-16 (grind-pro): Index lebt (HTTP 200, 392 KB). Index ≠ Messung — Dataset gewählt: OBSEA_moored_buoy_meteo_L1c (verankerte Meteo-Boje, AIRT/CAPH/WDIR/WSPD), Kraft accept (passiver Treiber). ABER orderByMax(time) = 2026-05-12T08:30:00Z → seit ~4 Monaten eingefroren, kein laufendes Update → kein sources.φ-Block. Nächster Schritt: ein lebendes EMSO-Dataset am Index wählen (maxTime je Dataset prüfen).
 
