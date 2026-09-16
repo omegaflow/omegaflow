@@ -718,8 +718,8 @@ fn parse_event(args: &[String]) -> Option<Event> {
             }
             "--titel-filter" | "--url" | "--rss" | "--gate" | "--verify" | "--top" | "--out"
             | "--wikidata" | "--quellen" | "--eonet" | "--news" | "--fixity" | "--dahiti"
-            | "--api-key" | "--dahiti-format" | "--dhm" | "--dhm-list" | "--sentinel"
-            | "--cog-ndwi" => {
+            | "--api-key" | "--dahiti-format" | "--dhm" | "--dhm-list" | "--dhm-page"
+            | "--sentinel" | "--cog-ndwi" => {
                 let _ = args.get(i + 1);
             }
             _ => {}
@@ -1841,8 +1841,19 @@ fn main() {
             eprintln!("--dhm <station_id> — z. B. 4913 (Bhotekoshi at Rasuwagadi)");
             return;
         };
-        let url = "https://www.dhm.gov.np/hydrology/river-watch";
-        match curl(url) {
+        let page = args
+            .iter()
+            .position(|a| a == "--dhm-page")
+            .and_then(|j| args.get(j + 1))
+            .cloned();
+        let body = match page {
+            Some(path) => std::fs::read_to_string(&path).ok(),
+            None => {
+                let url = "https://www.dhm.gov.np/hydrology/river-watch";
+                curl(url)
+            }
+        };
+        match body {
             Some(body) => match parse_dhm_stage(&body, id) {
                 Some((name, rows)) => {
                     let n = rows.len();
@@ -1869,7 +1880,7 @@ fn main() {
                 }
                 None => println!("DHM: station {id} not found in river-watch data"),
             },
-            None => println!("DHM: fetch incomplete"),
+            None => println!("DHM: page source absent — file unreadable or fetch incomplete"),
         }
         return;
     }
