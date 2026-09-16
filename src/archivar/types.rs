@@ -201,6 +201,8 @@ pub enum Extract {
     },
     Rows {
         last_line: bool,
+        lat_key: String,
+        lon_key: String,
         fields: Vec<FieldConfig>,
         tau_key: String,
         epoch_cols: Vec<String>,

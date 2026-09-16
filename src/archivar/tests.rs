@@ -3100,6 +3100,8 @@ fn test_rows_headerless_text_barycenter_frame() {
         "text",
         vec![Extract::Rows {
             last_line: true,
+            lat_key: String::new(),
+            lon_key: String::new(),
             fields: vec![fc],
             tau_key: String::new(),
             epoch_cols: vec![],
@@ -7764,4 +7766,220 @@ fn nexrad_level2_roundtrip_and_component_name() {
     assert!(super::extract::parse_nexrad_level2_bin(b"X").is_none());
     assert!(super::extract::parse_nexrad_level2_bin(b"NXR1abc").is_none());
     assert!(super::extract::parse_nexrad_level2_bin(&bytes[..bytes.len() - 1]).is_none());
+}
+
+const EPA_AQS_HEADER: &str = "\"State Code\",\"County Code\",\"Site Num\",\"Parameter Code\",\"POC\",\"Latitude\",\"Longitude\",\"Datum\",\"Parameter Name\",\"Sample Duration\",\"Pollutant Standard\",\"Date Local\",\"Units of Measure\",\"Event Type\",\"Observation Count\",\"Observation Percent\",\"Arithmetic Mean\"\n";
+
+fn epa_aqs_block() -> &'static str {
+    "url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
+ttl 86400
+format csv_zip
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+"
+}
+
+fn epa_aqs_rows() -> String {
+    let mut body = String::from(EPA_AQS_HEADER);
+    body.push_str("\"01\",\"003\",\"0010\",\"88101\",3,30.497478,-87.880258,\"NAD83\",\"PM2.5\",\"1 HOUR\",\"\",\"2025-01-01\",\"ug/m3\",\"None\",24,100.0,3.625\n");
+    body.push_str("\"01\",\"003\",\"0010\",\"88101\",3,30.497478,-87.880258,\"NAD83\",\"PM2.5\",\"1 HOUR\",\"\",\"2025-01-02\",\"ug/m3\",\"None\",24,100.0,6.791667\n");
+    body
+}
+
+fn stored_zip(csv: &str) -> Vec<u8> {
+    let mut zip = Vec::new();
+    zip.extend_from_slice(b"PK\x03\x04");
+    zip.extend_from_slice(&20u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u32.to_le_bytes());
+    zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+    zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(csv.as_bytes());
+    zip
+}
+
+#[test]
+fn test_parse_rows_lat_lon_epoch_directives() {
+    let srcs = super::parse_sources(epa_aqs_block());
+    assert_eq!(srcs.len(), 1);
+    match &srcs[0].extracts[0] {
+        Extract::Rows {
+            lat_key,
+            lon_key,
+            epoch_cols,
+            ..
+        } => {
+            assert_eq!(lat_key, "5");
+            assert_eq!(lon_key, "6");
+            assert_eq!(epoch_cols, &vec!["11".to_string()]);
+        }
+        _ => panic!("expected Rows extract"),
+    }
+}
+
+#[test]
+fn test_parse_iso_tdb_date_only_is_midnight() {
+    let lsk = fixture_lsk();
+    assert_eq!(
+        super::parse_iso_tdb("2025-01-01", &lsk),
+        super::parse_iso_tdb("2025-01-01T00:00:00Z", &lsk)
+    );
+}
+
+#[test]
+fn test_rows_per_row_lat_lon_and_date_epoch() {
+    let block = "url https://example.com/aqs.csv
+ttl 86400
+format csv
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    assert_eq!(srcs.len(), 1);
+    let body = epa_aqs_rows();
+    let lsk = fixture_lsk();
+    match extract(&srcs[0], &body, 8.0e8, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2);
+            for (c, fc) in &channels {
+                assert_eq!(fc.force, 6);
+                assert_eq!(fc.tau, 86400.0);
+                match &c.position {
+                    super::Position::Surface { lat, lon, alt, .. } => {
+                        assert!((lat - 30.497478).abs() < 1e-9);
+                        assert!((lon + 87.880258).abs() < 1e-9);
+                        assert_eq!(*alt, 0.0);
+                    }
+                    _ => panic!("expected per-row Surface position"),
+                }
+            }
+            assert!((channels[0].0.value - 3.625).abs() < 1e-12);
+            assert!((channels[1].0.value - 6.791667).abs() < 1e-12);
+            let e0 = super::parse_iso_tdb("2025-01-01", &lsk).unwrap();
+            let e1 = super::parse_iso_tdb("2025-01-02", &lsk).unwrap();
+            assert!((channels[0].0.epoch - e0).abs() < 1e-6);
+            assert!((channels[1].0.epoch - e1).abs() < 1e-6);
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
+fn test_rows_absent_lat_skips_row() {
+    let block = "url https://example.com/aqs.csv
+ttl 86400
+format csv
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    let mut body = String::from(EPA_AQS_HEADER);
+    body.push_str("\"01\",\"003\",\"0010\",\"88101\",3,,-87.880258,\"NAD83\",\"PM2.5\",\"1 HOUR\",\"\",\"2025-01-01\",\"ug/m3\",\"None\",24,100.0,3.625\n");
+    let lsk = fixture_lsk();
+    match extract(&srcs[0], &body, 8.0e8, &lsk) {
+        ExtractResult::Measurements(channels) => assert!(channels.is_empty()),
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
+fn test_rows_epoch_iso_datetime_column() {
+    let block = "url https://example.com/d20.csv
+ttl 3600
+format text
+on earth 0.0 -120.0 0
+rows .
+epoch 0
+field 4 d20_thermocline_temp_c erfc thermal C 86400.0 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    assert_eq!(srcs.len(), 1);
+    let body = "time,station,lon,lat,iso_6\n2026-05-03T12:00:00Z,0n110w,250,0,99.21654\n";
+    let lsk = fixture_lsk();
+    match extract(&srcs[0], body, 8.0e8, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert!((channels[0].0.value - 99.21654).abs() < 1e-12);
+            let expected = super::parse_iso_tdb("2026-05-03T12:00:00Z", &lsk).unwrap();
+            assert!((channels[0].0.epoch - expected).abs() < 1e-6);
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
+fn test_extract_csv_zip_rows_per_row_position() {
+    let csv = epa_aqs_rows();
+    let zip = stored_zip(&csv);
+    let path = std::env::temp_dir().join("omegaflow_test_aqs_rows.zip");
+    std::fs::write(&path, &zip).unwrap();
+    let srcs = super::parse_sources(epa_aqs_block());
+    let lsk = fixture_lsk();
+    let path_str = path.to_string_lossy().to_string();
+    let result = extract(&srcs[0], &path_str, 8.0e8, &lsk);
+    let _ = std::fs::remove_file(&path);
+    match result {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2);
+            assert!((channels[0].0.value - 3.625).abs() < 1e-12);
+            match &channels[0].0.position {
+                super::Position::Surface { lat, lon, .. } => {
+                    assert!((lat - 30.497478).abs() < 1e-9);
+                    assert!((lon + 87.880258).abs() < 1e-9);
+                }
+                _ => panic!("expected per-row Surface position"),
+            }
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
+fn test_epa_aqs_source_registered() {
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let sources = super::parse_sources(&content);
+    let src = sources
+        .iter()
+        .find(|s| {
+            s.url
+                .contains("aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip")
+        })
+        .expect("the EPA AQS daily PM2.5 source is registered");
+    assert_eq!(src.format, "csv_zip");
+    assert_eq!(src.ttl, 86400);
+    match &src.extracts[0] {
+        Extract::Rows {
+            lat_key,
+            lon_key,
+            epoch_cols,
+            fields,
+            ..
+        } => {
+            assert_eq!(lat_key, "5");
+            assert_eq!(lon_key, "6");
+            assert_eq!(epoch_cols, &vec!["11".to_string()]);
+            assert_eq!(fields.len(), 1);
+            assert_eq!(fields[0].key, "16");
+            assert_eq!(fields[0].force, 6);
+            assert_eq!(fields[0].tau, 86400.0);
+        }
+        _ => panic!("expected Rows extract"),
+    }
 }
