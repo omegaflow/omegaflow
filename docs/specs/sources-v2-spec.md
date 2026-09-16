@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: d1830846cd6ddbf1998327c26693c505b89080c34c3424fe05e16d1bdea56c7c
+  sha256: cdd87f8fb5ac799ee02d7e6731eada525eb3967b16013ed1c60dbcb74e59561a
 -->
 # sources.φ — Canonical Format Specification
 
@@ -107,6 +107,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `stations_filter <key> <value>` | 3 | Keep only station elements whose `key` equals `value` (string match). |
 | `fanout <cap>` | 2 | Two-stage fetch: fetch the stations list, sort by angular distance to the operator presence (fallback: the frame's surface point; API order for barycentric frames without presence), then fetch the block `url` per station (up to `cap` stations, 3 parallel fetches per window) with `{station}` substituted by the station id. Presence- and extent-templates (`{lat_min}` …) render from the operator presence, so the stations bbox follows the window. The extract's scalar channels are anchored at the station's lat/lon. Fetches are live (`fetch_raw`, no cache/CDN). |
 | `fanout_delay <secs>` | 2 | Sleep between fanout fetch windows — respects API rate limits (e.g. OpenAQ free tier). |
+| `window <from_unix> <until_unix>` | 3 | Temporal bound: channels whose epoch (TDB since J2000, converted to Unix seconds via the embedded leap-second table) lie outside `[from, until]` are dropped. Both values Unix seconds (f64), inclusive. `from > until` or a non-numeric token → refused (anomaly; the window stays absent, never an empty window). Absent → unbounded. |
 
 ### 1.1 URL template variables
 
