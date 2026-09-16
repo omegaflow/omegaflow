@@ -22,8 +22,8 @@ jobs:
           - { bin: juno_odf_compiler, netloc: atmos.nmsu.edu, asset: juno_odf.bin }
           - { bin: magellan_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: magellan_odf.bin }
           - { bin: mgs_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mgs_odf.bin }
-          - { bin: mro_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mro_odf.bin }
-          - { bin: odyssey_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: odyssey_odf.bin }
+          - { bin: mro_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mro_odf.bin, sharded: true, prefix: mro_odf }
+          - { bin: odyssey_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: odyssey_odf.bin, sharded: true, prefix: odyssey_odf }
           - { bin: messenger_odf_compiler, netloc: pds-ppi.igpp.ucla.edu, asset: messenger_odf.bin }
           - { bin: mars_express_odf_compiler, netloc: archives.esac.esa.int, asset: mars_express_odf.bin }
           - { bin: rosetta_odf_compiler, netloc: archives.esac.esa.int, asset: rosetta_odf.bin }
@@ -32,7 +32,13 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Harvest the ${{ matrix.asset }} ODF volume and manifest it to the CDN
         run: |
-          if gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
+          if [ "${{ matrix.sharded }}" = "true" ]; then
+            if gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^${{ matrix.prefix }}_"; then
+              echo "${{ matrix.prefix }}_* shards already present — harvest skipped"
+              exit 0
+            fi
+          elif gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ matrix.asset }}"; then
             echo "${{ matrix.asset }} already present — harvest skipped"
             exit 0
