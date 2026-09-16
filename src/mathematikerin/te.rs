@@ -1207,15 +1207,6 @@ pub fn conditional_te_surrogates_n(
     Some(vals)
 }
 
-fn normal_cdf(x: f64) -> f64 {
-    let t = 1.0 / (1.0 + 0.2316419 * x.abs());
-    let d = 0.3989422804014327 * (-x * x * 0.5).exp();
-    let poly = t
-        * (0.319381530
-            + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    if x >= 0.0 { 1.0 - d * poly } else { d * poly }
-}
-
 pub struct CausalLink {
     pub driver: usize,
     pub target: usize,
@@ -1322,17 +1313,15 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                 k,
             },
         )?;
-        let mean = surr.iter().sum::<f64>() / surr.len() as f64;
-        let var = surr.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / surr.len() as f64;
-        let sd = var.sqrt();
-        let threshold = mean + 2.0 * sd;
-        let p_value = if sd > 0.0 {
-            1.0 - normal_cdf((te - mean) / sd)
-        } else if te > mean {
-            0.0
-        } else {
-            1.0
-        };
+        let b = surr.len();
+        let rank = 1 + surr.iter().filter(|&&s| s >= te).count();
+        let p_value = rank as f64 / (b + 1) as f64;
+        let mut all = surr.clone();
+        all.push(te);
+        all.sort_by(|a, b| a.total_cmp(b));
+        let k = (alpha * (b + 1) as f64).floor() as usize;
+        let idx = all.len().saturating_sub(k + 1);
+        let threshold = all[idx];
         Some((te, threshold, p_value))
     };
 
@@ -3232,14 +3221,14 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_block_null_binned_n_surr_100() {
+    fn gate_fpr_autocorrelation_block_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Binned);
     }
 
@@ -3255,39 +3244,39 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_block_null_ksg_n_surr_100() {
+    fn gate_fpr_autocorrelation_block_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Ksg);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_shift_null_binned_n_surr_100() {
+    fn gate_fpr_autocorrelation_shift_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Binned);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_100() {
+    fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Ksg);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_residual_null_ksg_n_surr_100() {
+    fn gate_fpr_autocorrelation_residual_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Residual, TeEstimator::Ksg);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_restricted_null_binned_n_surr_100() {
+    fn gate_fpr_autocorrelation_restricted_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::RestrictedPermutation, TeEstimator::Binned);
     }
 
     #[test]
-    fn gate_fpr_autocorrelation_xshift_null_binned_n_surr_100() {
+    fn gate_fpr_autocorrelation_xshift_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::XShift, TeEstimator::Binned);
     }
 
@@ -3303,7 +3292,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3321,7 +3310,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3339,7 +3328,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3357,7 +3346,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3375,7 +3364,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3393,7 +3382,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3411,7 +3400,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);
@@ -3429,7 +3418,7 @@ mod tests {
                 null_lag: 12,
                 bins: 4,
                 block: 0,
-                n_surr: 100,
+                n_surr: 200,
             },
         );
         gate_fpr_autocorr_assert(&cells);

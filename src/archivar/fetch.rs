@@ -1148,10 +1148,10 @@ pub fn url_is_fanout(url: &str) -> bool {
     url.contains("{station}") || url.contains("{nearest_station}")
 }
 
-pub fn frame_anchor(frame: &Frame) -> (f64, f64) {
+pub fn frame_anchor(frame: &Frame) -> Option<(f64, f64)> {
     match frame {
-        Frame::Surface { lat, lon, .. } => (*lat, *lon),
-        _ => (0.0, 0.0),
+        Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
+        _ => None,
     }
 }
 
