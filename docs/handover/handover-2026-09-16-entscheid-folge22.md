@@ -3,7 +3,7 @@
   session: Entscheid-Folge 22
   class: handover
   date: 2026-09-16
-  sha256: eff8c705e1e88639d290a90f715f514af6d70d2f0c5b8c4203f41936d475239e
+  sha256: 065fc77981fc3cb1e3af684821cb6111b1b02f13e3eba8ad411ce050210d4bed
   status: live
 -->
 # Handover — Entscheid-Folge 22 (2026-09-16)
@@ -59,6 +59,10 @@ nur die Routen ohne gemessene Alternative:
 
 ## Operator-gebundene Punkte
 
+- **20-s-Bande — Release-Tag** — das Namens-Wort ist operator-gebunden (aus der
+  forschung-Linie gepostet). Vorschlag: Tag `paper/twenty-second-band-v7`
+  (lightweight, auf `8ef168af`); **kein** Branch (Praxis: eine Linie, `main`).
+  (Schritt: Operator-Wort → zurück an forschung; dann `git tag`/`git push`.)
 - **ESP32-Modul** — der physische Träger für Puls/HRV, on hold; BOM
   `docs/specs/mantis-shrimp-bom.md`. (Schritt: Operator-Wort.)
 
