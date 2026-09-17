@@ -3,7 +3,7 @@
   session: Forschung-Folge 57
   class: handover
   date: 2026-09-17
-  sha256: 076592f7af88ac54e07a051c676f5c18aba816c76227f6d0bbd38e72eab788a1
+  sha256: 6e4d3e015b5532e77b7b02c2955d0a7530f1c3bd33c530156226f77a52e14eac
   status: live
 -->
 # Handover — Forschung-Folge 57 (2026-09-17)
@@ -35,19 +35,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   (`ci_manage list`) wurden in dieser Session nicht gemessen — der Planungs-Pass
   war `register_lookup --live` + `git_safety --snapshot`. (Schritt: zu
   Session-Beginn nachholen.)
-
-## mro_odf Shard-φ-Blöcke (Run 35218760142, Job ✓)
-
-- Der Speicher-Fix ist bereits committet/gepusht (`87680961`). Run `35218760142`
-  dispatcht; der mro_odf-Job `105193469623` steht **✓ in 15 s**, der Run läuft
-  noch (rosetta offen) — der Job-Log ist erst nach Run-Ende lesbar. Die
-  Shard-φ-Blöcke sind **nicht** geschrieben.
-- **Zeilenbereich korrigiert (gemessen):** der Ganzdatei-`mro_odf`-Block steht
-  `phi/sources.φ:6712–6716`, nicht `6763–6767` (dort `voyager_odr_s0`); das
-  `odyssey_odf`-Shard-Muster liegt `6718–6740`. (Schritt: nach Run-Ende einmal
-  `gh run view --job=105193469623 --log`, den gedruckten `mro_odf_*`-Block
-  nehmen und den Ganzdatei-Block durch je einen Block je Shard ersetzen —
-  `refuse_shard_overlaps` verweigert gleichen `format`.)
 
 ## Tonga — Paper + Probe erweitert, CI-Verifikation offen
 
