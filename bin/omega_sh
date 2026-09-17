@@ -1,0 +1,30 @@
+#!/bin/sh
+# The shared shell tool the sessions run: builds only when needed, then execs
+# it. A dirty or broken working tree never blocks a call — the existing release
+# binary runs; the rebuild is a CI job, not a per-call tax.
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+bin="$root/target/release/omega_sh"
+stamp="$root/target/release/.omega_sh_build_stamp"
+needs_build=0
+if [ ! -x "$bin" ]; then
+    needs_build=1
+elif find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
+        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
+    needs_build=1
+fi
+if [ "$needs_build" = 1 ] && { [ ! -f "$stamp" ] || find "$stamp" -mmin +5 | grep -q .; }; then
+    (cd "$root" && cargo build --release -q -p omegaflow-utils --bin omega_sh 2>/dev/null) || true
+    touch "$stamp"
+fi
+if [ ! -x "$bin" ]; then
+    echo "omega_sh: no release binary and the rebuild failed (the tree does not compile) — the build belongs to CI" >&2
+    exit 2
+fi
+exec "$bin" "$@"
