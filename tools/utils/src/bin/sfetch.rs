@@ -1,21 +1,24 @@
 use std::env;
+use std::io::Write;
 use std::process::Command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut links = false;
     let mut title_only = false;
+    let mut raw_mode = false;
     let mut url: Option<String> = None;
     for a in args.iter().skip(1) {
         match a.as_str() {
             "--links" => links = true,
             "--title" => title_only = true,
+            "--raw" => raw_mode = true,
             _ if url.is_none() => url = Some(a.clone()),
             _ => {}
         }
     }
     let Some(url) = url else {
-        eprintln!("usage: sfetch [--links] [--title] <url>");
+        eprintln!("usage: sfetch [--links] [--title] [--raw] <url>");
         std::process::exit(2);
     };
     let raw = match Command::new("curl")
@@ -31,6 +34,10 @@ fn main() {
             std::process::exit(1);
         }
     };
+    if raw_mode {
+        let _ = std::io::stdout().write_all(&raw);
+        return;
+    }
     let html = String::from_utf8_lossy(&raw);
     if title_only {
         if let Some(t) = extract_title(&html) {
