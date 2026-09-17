@@ -2,7 +2,7 @@
   title: Broken null control — the phase-randomized surrogate gate
   class: paper
   date: 2026-09-12
-  sha256: 07cdc7c230891f0e43a8cc3af3f768895aaa3972025655d437d895e54257b9f8
+  sha256: 03e956611a1056f6e81a4a845b914d9b1261a49de0533ffe5acf39fc91be74b0
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -10,25 +10,23 @@
 
 ## Abstract
 
-A transfer-entropy (TE) significance test is only as sound as its null. The same
-directed coupling series is measured here under two nulls: a naive Fisher–Yates
-shuffle of the driving series, which destroys autocorrelation, and a
-phase-randomized surrogate, which preserves the power spectrum. Under the naive
-threshold the test resolves a full causal cascade of 16 significant arrows;
-under the phase-randomized gate it collapses to 2. All four control pairs —
-solar-wind proton density against X-Ray, EUV-304, EUV-284 and Bz — break under
-the naive threshold and hold under the phase-randomized threshold on the
+A transfer-entropy (TE) significance test is as sound as its null. One directed
+coupling series is measured under two nulls: a naive Fisher–Yates shuffle of the
+driving series, destroying autocorrelation, and a phase-randomized surrogate,
+preserving the power spectrum. The naive threshold resolves a full causal cascade
+of 16 significant arrows; the phase-randomized gate collapses it to 2. All four
+control pairs — solar-wind proton density against X-Ray, EUV-304, EUV-284 and
+Bz — break under the naive threshold, hold under the phase-randomized one on the
 2026-09-12 window. On the full 60-s CI grid (`te-null-limits`, run 35077126787,
 2026-09-16) the single-cell control is not clean: Dichte-RTSW → X-Ray is
-significant under both nulls (TE 2.94e-2 > phase thr 2.81e-2) — the family bound
-resolves it, `fam = 2.63e-1` with 0 of 60 cells surviving. A separate
-defect, `next_rng` divided by `u32::MAX` instead of `u32::MAX >> 1`, rotated the
-surrogate phases over a half circle and scaled every null distribution: the
-false-positive rate measured 100 % before the fix and 6.7 % after
-(`te_rng_fix_probe`). The Kalibrier-Gate in `src/mathematikerin/te.rs` holds
-false positives, false negatives, symmetry and an n-floor as tests. A null that
-is not phase-randomized over the full circle fabricates significance; the broken
-null is the named control.
+significant under both nulls (TE 2.94e-2 > phase thr 2.81e-2); the family bound
+resolves it, `fam = 2.63e-1` with 0 of 60 cells surviving. A defect, `next_rng`
+divided by `u32::MAX` instead of `u32::MAX >> 1`, rotated surrogate phases over a
+half circle and scaled every null distribution: the false-positive rate measured
+100 % before the fix and 6.7 % after (`te_rng_fix_probe`). The Kalibrier-Gate in
+`src/mathematikerin/te.rs` holds false positives, false negatives, symmetry and
+an n-floor as tests. A null not phase-randomized over the full circle fabricates
+significance; the broken null is the named control.
 
 ## The measurement
 
