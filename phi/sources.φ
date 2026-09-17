@@ -1492,6 +1492,7 @@ format swot_l2_lr_ssh
 on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
+note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird an den PODAAC-/s3credentials-Endpunkten akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen podaac-swot-ops-cumulus-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy (s3_same_region_access_bucket_limit_policy) — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen (SWOT-EULA).
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
@@ -6472,12 +6473,14 @@ format gedi_l2a
 on earth 0 0 0
 ttl 604800
 field gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square em m 604800 0.0 0.0
+note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird am LPDAAC-/s3credentials-Endpunkt akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen lp-prod-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen.
 
 url https://github.com/omegaflow/sources/releases/download/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin
 format icesat2_atl03
 on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
+note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird am NSIDC-/s3credentials-Endpunkt akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen nsidc-cumulus-prod-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen.
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
 format bgr_infrasound
@@ -7879,7 +7882,7 @@ format sky1
 at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
+note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending — dl3-skymap-cdn.yml dispatched 2026-09-17 (run 35268770926, queued; MAGIC per-project FITS URL gemessen HTTP 200, 328320 B: https://door06.pic.es:8452/magic_dl3_pdr1/data/CrabNebula/dark/single_offset/20131005_05029789_DL3_CrabNebula-W0.40+215.fits); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
 format sky1
