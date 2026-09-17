@@ -2,7 +2,7 @@ name: ionex-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -53,10 +53,10 @@ jobs:
               break
             fi
           done
-          test -n "$day" || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          test -n "$day" || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "ionex-cdn: no IONEX GIM day file in the last 7 days" \
                "CDDIS reached no IGS0OPSRAP IONEX GIM day file in the last 7 days. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-               health
+               health; exit 1; }
           echo "ionex day: ${day}"
       - name: Compile the IONEX GIM TEC series and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
@@ -65,7 +65,7 @@ jobs:
             --input kernels/ionex.INX.gz \
             --out ionex_tec_gim.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "ionex-cdn: ionex_tec_gim.bin returned void" \
                  "ionex_compiler returned void for the CDDIS IONEX source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

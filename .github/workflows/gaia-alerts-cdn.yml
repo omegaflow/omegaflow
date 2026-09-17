@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/alertsindex.html \
             https://gsaweb.ast.cam.ac.uk/alerts/alertsindex \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gaia-alerts-cdn: alertsindex returned void" \
                  "curl on gsaweb.ast.cam.ac.uk did not reach /alerts/alertsindex. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the Gaia Alerts directions and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin gaia_alerts_compiler -- \
             --input kernels/alertsindex.html \
             --out gaia_alerts.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gaia-alerts-cdn: gaia_alerts.bin returned void" \
                  "gaia_alerts compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

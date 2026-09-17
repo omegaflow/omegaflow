@@ -30,10 +30,10 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 3600 -o kernels/UnnObs.txt.gz \
             https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/UnnObs.txt.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-shard-cdn: UnnObs.txt.gz returned void" \
                  "curl on minorplanetcenter.net did not reach UnnObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the unnumbered observations into packed-number shards (measured step)
         run: |
           /usr/bin/time -v cargo run -p omegaflow-harvest --release --bin mpcobs_compiler -- \
@@ -41,7 +41,7 @@ jobs:
             --shard mpcobs-unnobs \
             --shard-key designation \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-shard-cdn: UnnObs shard compile returned void" \
                  "mpcobs shard compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

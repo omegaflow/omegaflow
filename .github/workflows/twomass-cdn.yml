@@ -40,7 +40,7 @@ jobs:
             --rows kernels/twomass_psc_rows.bin \
             --out twomass_psc.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: twomass_psc returned void" \
                  "twomass_psc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

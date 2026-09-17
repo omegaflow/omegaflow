@@ -2,7 +2,7 @@ name: noaa-ghcn-cdn
 
 concurrency:
   group: noaa-ghcn-assets
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
