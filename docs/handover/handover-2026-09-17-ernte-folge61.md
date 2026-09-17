@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: e3a8a460deb7e1bb7d6dc4b00c3ede8ca8029c758dcd1a2df1190dbfec8c4240
+  sha256: fb63d9d5bcfe29cce225881916861a9c9f8fa50dae9c1638cdaa991d5d6099b9
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -31,7 +31,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## MAVEN TNF — Zeit-Anomalie gefixt, Re-Dispatch + Registrierung offen (härtester undatiert)
 
-- Lauf `35188036501` success (Chunking): 8 Shards `maven_tnf_t…bin` auf `pds-ppi.igpp.ucla.edu` — **aber 4/8 mit unphysikalischem `tdb ≈ 4.6e11`** (der Lauf predatet `f28cbf76` DT0-Pin und lief über alle TNF-Formate). Ursache gemessen (diese Session): DT16/DT17-SFDUs (sekundärer CHDO-Typ 134 „derived") tragen den Zeitstempel bei Offset **44**, DT0/DT1 (132/133) bei **48**; `read_tnf_sfdu` las pauschal 48 → `year=16624` → `tdb≈4.6e11`. Fix `odf.rs`: `tnf_time_tag_offset` leitet den Offset aus `secondary_chdo_type` ab + DT16-Test; `cargo check --all-targets` clean. (Schritt: nach Push die 8 alten Shards löschen — `gh release delete-asset pds-ppi.igpp.ucla.edu <name> -R omegaflow/sources` — sonst überspringt die Idempotenz `^maven_tnf(\.bin|_t)` den Re-Dispatch; dann `gh workflow run maven-tnf-cdn.yml`; bei success die `sha256`-Zeilen + Blöcke `maven_tnf` für die neuen DT0-Shards ans Ende von `phi/sources.φ`.)
+- Lauf `35188036501` success (Chunking): 8 Shards `maven_tnf_t…bin` auf `pds-ppi.igpp.ucla.edu` — **aber 4/8 mit unphysikalischem `tdb ≈ 4.6e11`** (der Lauf predatet `f28cbf76` DT0-Pin und lief über alle TNF-Formate). Ursache gemessen (diese Session): DT16/DT17-SFDUs (sekundärer CHDO-Typ 134 „derived") tragen den Zeitstempel bei Offset **44**, DT0/DT1 (132/133) bei **48**; `read_tnf_sfdu` las pauschal 48 → `year=16624` → `tdb≈4.6e11`. Fix `odf.rs`: `tnf_time_tag_offset` leitet den Offset aus `secondary_chdo_type` ab + DT16-Test; `cargo check --all-targets` clean. (Schritt: `gh workflow run maven-tnf-cdn.yml -f force=true` — der neue `force`-Input umgeht die Idempotenz `^maven_tnf(\.bin|_t)`, kein Löschen der 8 alten Shards nötig; bei success die `sha256`-Zeilen + Blöcke `maven_tnf` für die neuen DT0-Shards ans Ende von `phi/sources.φ`. Die 8 alten Shards bleiben orphan → `gh release delete-asset pds-ppi.igpp.ucla.edu <name> -R omegaflow/sources` nach Messung des neuen Satzes.)
 
 ## Mariner 10 PSPA-00316 — Compiler + Parser gebaut, Dispatch + Registrierung offen
 
