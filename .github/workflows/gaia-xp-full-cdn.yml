@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 360
     strategy:
       fail-fast: false
+      max-parallel: 8
       matrix:
         chunk: ${{ fromJSON(needs.raster.outputs.chunks) }}
     steps:
