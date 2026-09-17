@@ -1,5 +1,36 @@
 use super::*;
 
+fn split_directive(line: &str) -> Vec<&str> {
+    let bytes = line.as_bytes();
+    let mut tokens = Vec::new();
+    let mut i = 0;
+    let len = bytes.len();
+    while i < len {
+        if bytes[i].is_ascii_whitespace() {
+            i += 1;
+            continue;
+        }
+        if bytes[i] == b'"' {
+            i += 1;
+            let start = i;
+            while i < len && bytes[i] != b'"' {
+                i += 1;
+            }
+            tokens.push(&line[start..i]);
+            if i < len {
+                i += 1;
+            }
+        } else {
+            let start = i;
+            while i < len && !bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            tokens.push(&line[start..i]);
+        }
+    }
+    tokens
+}
+
 pub fn load_sources() -> Vec<SourceConfig> {
     let content = match std::fs::read_to_string("phi/sources.φ") {
         Ok(c) => c,
@@ -102,7 +133,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
         if line.is_empty() || line.starts_with('#') {
             continue;
         }
-        let parts: Vec<&str> = line.split_whitespace().collect();
+        let parts: Vec<&str> = split_directive(line);
         if parts.is_empty() {
             continue;
         }
