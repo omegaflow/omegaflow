@@ -9203,3 +9203,30 @@ at earth
 ttl 604800
 field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
 note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
+
+url https://github.com/omegaflow/sources/releases/download/kcdc.iap.kit.edu/kcdc_kascade.bin
+format kcdc_kascade
+sha256 4d992ea349235fd109275038db2916a1dd5efc2eb7daf6d1e5f53f917ca8d25b
+at earth
+ttl 604800
+field kcdc_kascade_energy_ev kcdc_kascade_energy_ev inverse-square em eV 604800 0.0 0.0
+field kcdc_kascade_x_core_m kcdc_kascade_x_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_kascade_y_core_m kcdc_kascade_y_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_kascade_zenith_deg kcdc_kascade_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_kascade_azimuth_deg kcdc_kascade_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_kascade_ne_count kcdc_kascade_ne_count inverse-square em count 604800 0.0 0.0
+field kcdc_kascade_nmu_count kcdc_kascade_nmu_count inverse-square em count 604800 0.0 0.0
+field kcdc_kascade_shower_age kcdc_kascade_shower_age inverse-square em 1 604800 0.0 0.0
+field kcdc_calorimeter_nhad_count kcdc_calorimeter_nhad_count inverse-square em count 604800 0.0 0.0
+field kcdc_calorimeter_ehad_ev kcdc_calorimeter_ehad_ev inverse-square em eV 604800 0.0 0.0
+field kcdc_grande_x_core_m kcdc_grande_x_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_grande_y_core_m kcdc_grande_y_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_grande_zenith_deg kcdc_grande_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_grande_azimuth_deg kcdc_grande_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_grande_nch_count kcdc_grande_nch_count inverse-square em count 604800 0.0 0.0
+field kcdc_grande_nmu_count kcdc_grande_nmu_count inverse-square em count 604800 0.0 0.0
+field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0.0 0.0
+field kcdc_general_air_temp_c kcdc_general_air_temp_c inverse-square thermal C 604800 0.0 0.0
+field kcdc_general_air_pressure_hpa kcdc_general_air_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
+field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric V/m 604800 0.0 0.0
+note KCDC/KASCADE-Grande cosmic-ray air showers, native Serie (KCD1 bin, 20 Komponenten: KASCADE array + Grande + calorimeter + LOPES E-Feld + general weather); Arm `src/archivar/kcdc.rs` `parse_series` + `extract.rs`-Dispatch `kcdc_kascade` (comp-ID → wire name); Compiler `tools/harvest/src/bin/kcdc_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view kcdc.iap.kit.edu --repo omegaflow/sources` (19480868 B, sha256 `4d992ea3…d25b`, run 35186451939).
