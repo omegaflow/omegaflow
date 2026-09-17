@@ -30,7 +30,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin emso_compiler -- \
             --out emso_obsea_seabed_ts.json \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "emso-cdn: emso_obsea_seabed_ts.json returned void" \
                  "emso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

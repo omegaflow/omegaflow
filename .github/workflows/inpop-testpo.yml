@@ -21,16 +21,16 @@ jobs:
       - name: Fetch the INPOP19a spice kernel and the IMCCE testpo reference
         run: |
           curl -sfL -o inpop19a_spice.tar.gz https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "inpop-testpo: the inpop19a spice tar returned void" \
                  "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           tar -xzf inpop19a_spice.tar.gz
           curl -sfL -o testpo.INPOP19A_TDB https://ftp.imcce.fr/pub/ephem/planets/inpop19a/testpo.INPOP19A_TDB \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "inpop-testpo: the IMCCE testpo reference returned void" \
                  "curl on ftp.imcce.fr did not reach the testpo. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Measure the INPOP19a SPK against the IMCCE testpo reference
         run: |
           {

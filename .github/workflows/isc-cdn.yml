@@ -31,7 +31,7 @@ jobs:
             --start 2024-01-01 --end 2024-01-07 --minmag 6.0 \
             --out isc_bulletin.iscb \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "isc-cdn: isc_bulletin.iscb returned void" \
                  "isc bulletin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

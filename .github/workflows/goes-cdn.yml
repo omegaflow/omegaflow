@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/rad.nc \
             https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/2024/284/21/OR_ABI-L1b-RadC-M6C01_G19_s20242842126171_e20242842128544_c20242842128590.nc \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "goes-cdn: the ABI L1b Rad granule returned void" \
                  "curl on noaa-goes19.s3.amazonaws.com did not reach the granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the ABI radiance record and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin goes_abi_compiler -- \
             --input kernels/rad.nc \
             --out goes_abi_rad.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "goes-cdn: goes_abi_rad.bin returned void" \
                  "goes_abi compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

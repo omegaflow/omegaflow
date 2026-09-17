@@ -2,7 +2,7 @@ name: noaa-gsod-cdn
 
 concurrency:
   group: noaa-gsod-assets
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:

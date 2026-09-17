@@ -2,7 +2,7 @@ name: nh-rex-tnf-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -48,7 +48,7 @@ jobs:
             --url "https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf" \
             --out nh_rex_tnf_lunocc2012.csv \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "nh-rex-tnf-cdn: nh_rex_tnf_lunocc2012.csv returned void" \
                  "TNF compile returned void for the NH REX lunocc2012.tnf source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
