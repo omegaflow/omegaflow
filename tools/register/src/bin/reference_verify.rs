@@ -24,6 +24,65 @@ fn extract_between<'a>(s: &'a str, open: &str, close: &str) -> Option<&'a str> {
     Some(&rest[..end])
 }
 
+fn subject_class_end(b: &[u8], start: usize) -> Option<usize> {
+    let mut j = start;
+    loop {
+        let group = j;
+        while j < b.len() && (b[j] as char).is_ascii_alphabetic() {
+            j += 1;
+        }
+        if j == group {
+            return None;
+        }
+        if j < b.len() && b[j] == b'/' {
+            j += 1;
+            return if j < b.len() && (b[j] as char).is_ascii_digit() {
+                Some(j)
+            } else {
+                None
+            };
+        }
+        if j < b.len() && b[j] == b'-' {
+            j += 1;
+            continue;
+        }
+        return None;
+    }
+}
+
+fn strip_version(id: &str) -> &str {
+    let b = id.as_bytes();
+    let mut j = b.len();
+    while j > 0 && (b[j - 1] as char).is_ascii_digit() {
+        j -= 1;
+    }
+    if j > 0 && j < b.len() && (b[j - 1] == b'v' || b[j - 1] == b'V') {
+        &id[..j - 1]
+    } else {
+        id
+    }
+}
+
+fn is_arxiv_id(id: &str) -> bool {
+    let core = strip_version(id);
+    if let Some((subject, number)) = core.split_once('/') {
+        return subject
+            .split('-')
+            .all(|p| !p.is_empty() && p.chars().all(|c| c.is_ascii_alphabetic()))
+            && !number.is_empty()
+            && number.chars().all(|c| c.is_ascii_digit());
+    }
+    match core.split_once('.') {
+        Some((a, b)) => {
+            !a.is_empty()
+                && !b.is_empty()
+                && a.chars().all(|c| c.is_ascii_digit())
+                && b.chars().all(|c| c.is_ascii_digit())
+        }
+        None => false,
+    }
+}
+
 fn extract_arxiv_ids(body: &str) -> Vec<String> {
     let mut ids = Vec::new();
     let lower = body.to_lowercase();
@@ -31,20 +90,26 @@ fn extract_arxiv_ids(body: &str) -> Vec<String> {
     while let Some(rel) = lower[pos..].find("arxiv") {
         let idx = pos + rel + 5;
         let rest = &body[idx..];
-        let mut j = 0;
         let b = rest.as_bytes();
+        let mut j = 0;
 
         while j < b.len() && (b[j] == b':' || b[j] == b' ') {
             j += 1;
         }
+
         let mut id = String::new();
+        if let Some(end) = subject_class_end(b, j) {
+            id.push_str(&rest[j..end]);
+            j = end;
+        }
+
         while j < b.len() {
             let c = b[j] as char;
             if c.is_ascii_digit() || c == '.' {
                 id.push(c);
                 j += 1;
             } else if (c == 'v' || c == 'V')
-                && id.contains('.')
+                && id.chars().last().map_or(false, |p| p.is_ascii_digit())
                 && j + 1 < b.len()
                 && (b[j + 1] as char).is_ascii_digit()
             {
@@ -56,18 +121,8 @@ fn extract_arxiv_ids(body: &str) -> Vec<String> {
         }
 
         let clean = id.trim_end_matches('.').to_string();
-        if let Some(dot) = clean.find('.') {
-            if dot > 0
-                && dot + 1 < clean.len()
-                && clean[..dot].chars().all(|c| c.is_ascii_digit())
-                && clean[dot + 1..]
-                    .chars()
-                    .all(|c| c.is_ascii_digit() || c == 'v')
-            {
-                if !ids.contains(&clean) {
-                    ids.push(clean);
-                }
-            }
+        if is_arxiv_id(&clean) && !ids.contains(&clean) {
+            ids.push(clean);
         }
         pos = idx + j;
     }
@@ -268,5 +323,44 @@ fn main() {
     }
     if any_absent || any_pending {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::extract_arxiv_ids;
+
+    #[test]
+    fn new_style_id() {
+        assert_eq!(extract_arxiv_ids("arXiv:2408.11031"), vec!["2408.11031"]);
+    }
+
+    #[test]
+    fn old_style_id() {
+        assert_eq!(
+            extract_arxiv_ids("arXiv:astro-ph/0012376"),
+            vec!["astro-ph/0012376"]
+        );
+    }
+
+    #[test]
+    fn old_style_id_after_space() {
+        assert_eq!(
+            extract_arxiv_ids("arXiv gr-qc/0208046"),
+            vec!["gr-qc/0208046"]
+        );
+    }
+
+    #[test]
+    fn new_style_id_with_version() {
+        assert_eq!(
+            extract_arxiv_ids("arXiv:2409.14546v2"),
+            vec!["2409.14546v2"]
+        );
+    }
+
+    #[test]
+    fn doi_yields_no_arxiv_id() {
+        assert!(extract_arxiv_ids("10.1093/mnras/staf700").is_empty());
     }
 }
