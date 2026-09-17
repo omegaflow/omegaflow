@@ -1059,7 +1059,7 @@ field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
 field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
 field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
-note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset pending (2026-09-16 gemessen 404, emso-cdn.yml nie gelaufen).
+note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 792196294d0435af44a921e3146d2b0041144d28262a691b2cf5f3914c8e6b2c, HTTP 200; Release-Tag erddap.emso.eu, angelegt 2026-09-16T19:01:45Z).
 
 url https://github.com/omegaflow/sources/releases/download/noaa-gk2a-pds.s3.amazonaws.com/gk2a_ami_rad.bin
 format gk2a_ami
@@ -1116,6 +1116,7 @@ alt 3 -m
 field 4 ioos_glider_water_temp_c exponential-decay thermal C 360 0.0 0.0
 field 5 ioos_glider_salinity_psu gaussian-inverse-square diffusion PSU 360 0.0 0.0
 field 6 ioos_glider_conductivity_s_m inverse-square electric S/m 360 0.0 0.0
+note IOOS-Glider bass-20260907T0000-Zeitserie (gliders.ioos.us); CDN-Asset vorhanden, gemessen 2026-09-17 (erddap-tabledap-bass-20260907T0000.json-time_latitude_longitude_depth_temperature_salinity_conductivity-time_3E-max_time_-7days.json, 3339613 B, sha256 5503c6a58d32d56a2297f1332b807fe37293a0c0e16d4f0bf59a345fa00e766b, HTTP 200; Release-Tag gliders.ioos.us, angelegt 2026-09-17T19:22:46Z).
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
@@ -1337,6 +1338,7 @@ field vel_v radiosonde_vertical_velocity_ms patch-levy advective m/s 3600 0.0 0.
 field heading radiosonde_wind_direction_deg patch-levy advective deg 3600 0.0 0.0
 field pressure radiosonde_air_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
 field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+note Ballon-Telemetrie-Serie (api.v2.sondehub.org/sonde/Y3313219); CDN-Asset vorhanden, gemessen 2026-09-17 (sonde-Y3313219.json, 5548231 B, sha256 64a0097f43ccb82373037263fc2090c0e380024e7f1ebbf607e1de96d1dcdcc7, HTTP 200; Release-Tag api.v2.sondehub.org, angelegt 2026-09-17T19:24:53Z).
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 ttl 86400
