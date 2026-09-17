@@ -5,11 +5,6 @@ export default {
     const subject = (message.headers && message.headers.get("subject")) || "";
     const messageId = (message.headers && message.headers.get("message-id")) || "";
 
-    const forwardTo = env.FORWARD_TO || "";
-    if (forwardTo) {
-      await message.forward(forwardTo);
-    }
-
     let rawText = "";
     try {
       if (message.raw && typeof message.raw === "object" && typeof message.raw.getReader === "function") {
@@ -29,6 +24,13 @@ export default {
       }
     } catch (_) {
       rawText = "";
+    }
+
+    // Capture the raw stream before forwarding (Cloudflare's email-storage
+    // example reads message.raw first, then forwards).
+    const forwardTo = env.FORWARD_TO || "";
+    if (forwardTo) {
+      await message.forward(forwardTo);
     }
 
     const base = (env.WEBHOOK_URL || "").replace(/\/+$/, "");
