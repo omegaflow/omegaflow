@@ -863,11 +863,7 @@ fn run_harvest(args: &[String]) {
         let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
         let mut found: Option<(Vec<Obj>, bool)> = None;
         let mut found_bucket = String::new();
-        let order: [&str; 2] = if protected {
-            [BUCKET_PROTECTED, BUCKET_PUBLIC]
-        } else {
-            [BUCKET_PUBLIC, BUCKET_PROTECTED]
-        };
+        let order: [&str; 2] = [BUCKET_PROTECTED, BUCKET_PUBLIC];
         for bucket in order {
             let Some(creds) = creds_for(&token, bucket) else {
                 eprintln!("{} returned void for s3://{}/", NETLOC, bucket);

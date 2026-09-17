@@ -41,6 +41,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "demeter_isl" => demeter::parse_series(bytes),
         "kcdc_kascade" => kcdc::parse_series(bytes),
         "juno_odf" => odf::parse_series(bytes),
+        "juno_ocru_odf" => odf::parse_series(bytes),
         "magellan_odf" => odf::parse_series(bytes),
         "mgs_odf" => odf::parse_series(bytes),
         "mro_odf" => odf::parse_series(bytes),
@@ -215,6 +216,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "juno_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("juno_odf_observable_hz"),
+            _ => None,
+        },
+        "juno_ocru_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("juno_ocru_odf_observable_hz"),
             _ => None,
         },
         "magellan_odf" => match comp {
