@@ -13,10 +13,13 @@ pub fn port_field_synth(
     force: &str,
     key: &str,
     name: &str,
-    tau: Option<f64>,
+    ttl: u64,
 ) -> Option<String> {
     let (kernel, f) = default_kernel_for(force)?;
-    let tau = tau.filter(|t| t.is_finite() && *t > 0.0)?;
+    let tau = ttl as f64 / 10.0;
+    if tau <= 0.0 {
+        return None;
+    }
     Some(format!(
         "{} {} {} {} {} 1 {} 0.0 0.0\n",
         directive, key, name, kernel, f, tau
@@ -55,7 +58,6 @@ pub fn port_block(block: &str) -> String {
                 head.push(t.to_string());
             }
             "ttl" => {
-                head.push(t.to_string());
                 if let Ok(v) = parts[1].parse::<u64>() {
                     ttl = v;
                 }
@@ -87,7 +89,7 @@ pub fn port_block(block: &str) -> String {
                     body_target = Some(parts[1].to_string());
                 }
             }
-            "map" | "cmap" | "rows" => {
+            "map" | "cmap" | "rows" | "flatten" => {
                 let arg = parts.get(1).copied().unwrap_or(".");
                 map_line = Some(format!("{} {}", parts[0], arg));
             }
@@ -144,12 +146,13 @@ pub fn port_block(block: &str) -> String {
     } else if celestial && map_line.is_some() {
         out.push_str("at sun\n");
     } else if named_keys && map_line.is_some() {
-        out.push_str("on earth 0 0\n");
+        out.push_str("on earth 0 0 0\n");
     } else if let (Some(lat), Some(lon)) = (lat, lon) {
-        match alt {
-            Some(a) => out.push_str(&format!("on earth {} {} {}\n", lat, lon, a)),
-            None => out.push_str(&format!("on earth {} {}\n", lat, lon)),
-        }
+        let alt_val = match alt {
+            Some(a) => a,
+            None => 0.0,
+        };
+        out.push_str(&format!("on earth {} {} {}\n", lat, lon, alt_val));
     }
     if let Some(m) = &map_line {
         if celestial {
@@ -202,13 +205,13 @@ pub fn port_block(block: &str) -> String {
         }
         let s = match parts[0] {
             "field" | "field_in" if parts.len() >= 3 => {
-                port_field_synth("field", &force, parts[1], parts[2], None)
+                port_field_synth("field", &force, parts[1], parts[2], ttl)
             }
             "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                port_field_synth(parts[0], &force, parts[1], parts[2], None)
+                port_field_synth(parts[0], &force, parts[1], parts[2], ttl)
             }
             "last_row" if parts.len() >= 3 => {
-                port_field_synth("lastrow", &force, parts[1], parts[2], None)
+                port_field_synth("lastrow", &force, parts[1], parts[2], ttl)
             }
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
@@ -222,7 +225,7 @@ pub fn port_block(block: &str) -> String {
             "regex" if parts.len() >= 3 => {
                 let name = parts[parts.len() - 1];
                 let pat = parts[1..parts.len() - 1].join(" ");
-                port_field_synth("regex", &force, &pat, name, None)
+                port_field_synth("regex", &force, &pat, name, ttl)
             }
             _ => None,
         };
