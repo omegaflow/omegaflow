@@ -39,7 +39,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin gedi_l2a_compiler -- \
             --day "$day" --limit 2 --beams 8 \
             --out data/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gedi-cdn: gedi_l2a.bin returned void" \
                  "gedi_l2a_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

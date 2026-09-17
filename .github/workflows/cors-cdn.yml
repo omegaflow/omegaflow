@@ -63,7 +63,7 @@ jobs:
             --out "${{ inputs.asset }}" \
             --lsk kernels/naif0012.tls \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "cors-cdn: ${{ inputs.asset }} returned void" \
                  "cors compile returned void for $url. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

@@ -30,16 +30,16 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/CmtObs.txt.gz \
             https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/CmtObs.txt.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-cdn: CmtObs.txt.gz returned void" \
                  "curl on minorplanetcenter.net did not reach CmtObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           curl -sSfL --retry 3 --max-time 600 -o kernels/SatObs.txt.gz \
             https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/SatObs.txt.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-cdn: SatObs.txt.gz returned void" \
                  "curl on minorplanetcenter.net did not reach SatObs.txt.gz. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the MPC observation records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin mpcobs_compiler -- \
@@ -47,7 +47,7 @@ jobs:
             --input kernels/SatObs.txt.gz \
             --out mpcobs.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "mpcobs-cdn: mpcobs.bin returned void" \
                  "mpcobs compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

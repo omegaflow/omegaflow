@@ -30,10 +30,10 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/J0006+202_g_lc_1day_all.dat \
             https://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "maxi-cdn: J0006+202_g_lc_1day_all.dat returned void" \
                  "curl on maxi.riken.jp did not reach J0006+202_g_lc_1day_all.dat. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the MAXI light curve and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin maxi_compiler -- \
@@ -42,7 +42,7 @@ jobs:
             --ra 1.5814 \
             --dec 20.2029 \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "maxi-cdn: maxi_J0006+202.max1 returned void" \
                  "maxi compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

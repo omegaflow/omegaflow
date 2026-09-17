@@ -48,7 +48,7 @@ jobs:
             --url "${{ inputs.url }}" \
             --out "${{ inputs.telescope }}_dl3.sky1" \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "dl3-skymap-cdn: ${{ inputs.telescope }}_dl3.sky1 returned void" \
                  "DL3 compile returned void for ${{ inputs.telescope }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

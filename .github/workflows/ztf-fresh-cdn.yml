@@ -26,7 +26,7 @@ jobs:
             --radius 0.02 \
             --out ztf_lightcurves_fresh.bin \
             --ci-mode \
-          || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "ztf-fresh-cdn: ztf_lightcurves_fresh returned void" \
                "ztf_lightcurves_fresh harvest returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-               health
+               health; exit 1; }
