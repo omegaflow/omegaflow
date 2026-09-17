@@ -1,0 +1,28 @@
+name: vires-hapi-cdn
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: vires-hapi-cdn
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  vires-hapi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror the seven fixed HAPI windows 1:1 onto the CDN void path
+        run: |
+          cargo build -p omegaflow-harvest --release --bin cdn_mirror_compiler
+          ./target/release/cdn_mirror_compiler --ci-mode \
+            --url 'https://vires.services/hapi/data?id=CS_OPER_MAG&start=2018-10-10T00:00:00Z&stop=2018-10-10T00:59:59Z&parameters=F&format=json' \
+            --url 'https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json' \
+            --url 'https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json' \
+            --url 'https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json' \
+            --url 'https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json' \
+            --url 'https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json' \
+            --url 'https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json'
