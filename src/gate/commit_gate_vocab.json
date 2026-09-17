@@ -21,15 +21,20 @@
     ["is_finite() { color } else { 0.0 }", "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"],
     ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"],
     ["find(\"ID[\"EPSG\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
-    [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"]
+    [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"],
+    ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
     "unwrap_or(0)"
   ],
+  "unstable_pointer": [
+    "mail_ledger.φ:"
+  ],
   "feedback": {
     "single_path": "the text names a branch/strand/worktree model that does not exist — this system is one path, one line, one truth",
     "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero",
+    "unstable_pointer": "a line-number pointer into a shared register drifts — the register is rewritten by many lines; cite the subject/sender, never the line number",
     "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
     "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous"
   },
@@ -288,6 +293,9 @@
     "fabrication_absent_anchor": "let site = match stid { Some(s) => s, _ => (0.0, 0.0, 0.0) };",
     "arx_null_raw_series": "TeNull::Arx => y.to_vec(),",
     "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;",
-    "geokey_unconditional_geodetic_fallback": "geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY).or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))"
+    "geokey_unconditional_geodetic_fallback": "geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY).or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))",
+    "tnf_format_gate": "if frame.format_code != 0 { continue; }",
+    "unstable_pointer_drift": "the mailbox line cites mail_ledger.φ:59,64 as its anchor",
+    "unstable_pointer_offsite": "the register line mail_ledger.φ:59 is cited here"
   }
 }
