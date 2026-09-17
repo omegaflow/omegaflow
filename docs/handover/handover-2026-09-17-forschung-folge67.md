@@ -3,7 +3,7 @@
   session: Forschung-Folge 67
   class: handover
   date: 2026-09-17
-  sha256: 9a44e6a6311c6aac438da8f6116afd60c1ded2d4ec823352f387830c28348a1f
+  sha256: 64d43e96b446161618eaec907cbb2ededbf53a3aa3eedb0035c07310ff1086d8
   status: live
 -->
 # Handover — Forschung-Folge 67 (2026-09-17)
@@ -64,11 +64,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `extract.rs`-Dispatch `ulysses_atdf` + `main_flow.rs`; Compiler
   `tools/harvest/src/bin/ulysses_atdf_compiler.rs`; `phi/harvest.φ`-Block
   `ulysses_atdf` (`asset fehlt`, shard 1). `cargo check` core + harvest grün
-  (0 Fehler, 0 Warnungen). (Schritt: nach `/commit`+Push
-  `gh workflow run harvest.yml -f format=ulysses_atdf`, dann sha256/Größe messen
+  (0 Fehler, 0 Warnungen). (Schritt: Lauf **`35270658104`** @`d101b20a`
+  (queued 20:24Z) — bei Abschluss sha256/Größe messen
   (`gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources`), den
   `phi/harvest.φ`-Block auf `asset present` flippen + `phi/sources.φ`-Block mit
-  sha256 anhängen.)
+  sha256 anhängen; **nicht erneut dispatchen**.)
 - **X-Band-Recovery-Kette `pending`** — der Korpus trägt keinen X-Multiplier/Offset;
   die S-Band-Kette ist gebaut (DSN-Ground-Segment), X-Records werden gezählt und
   übersprungen (im Diagnostik benannt, nie ein erfundener Wert). (Schritt:
