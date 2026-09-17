@@ -14,6 +14,14 @@ pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
 note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru --repo omegaflow/sources; consumer arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); earth 2574216 B 33b9b108…, jupiter 4056232 B 38a8583c…, mars 4056232 B c001034d…, mercury 2574216 B 4db9163f…, moon 2574216 B 51338fe0…, neptune 2574216 B 74bac20d…, saturn 2574216 B 3f1f91e8…, sun 2574216 B 8107435f…, uranus 2574216 B a9794f2b…, venus 2574216 B 1a824831…
 
+asset fehlt
+format goes16_abi
+tag noaa-goes16.s3.amazonaws.com
+arm goes16_abi_compiler
+pattern ^goes16_abi\.bin$
+idempotent true
+note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel from the newest hour of the bucket archive; consumer arm src/archivar/goes_abi.rs (parse_bin via extract.rs goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs (self-fetching bucket index: ListBucket https://noaa-goes16.s3.amazonaws.com/?prefix=ABI-L1b-RadC/&delimiter=/ — archive ends at 2025/097/18, measured 2026-09-17); asset measured fehlt 2026-09-17 — gh release view noaa-goes16.s3.amazonaws.com --repo omegaflow/sources returned 'release not found'; dispatch step: gh workflow run harvest.yml -f format=goes16_abi
+
 asset present
 format maven_tnf
 tag pds-ppi.igpp.ucla.edu
@@ -48,3 +56,12 @@ pattern ^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
 note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency series; consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs dispatch ulysses_atdf; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset measured fehlt 2026-09-17 (no CI run in this atom); dispatch step: gh workflow run harvest.yml -f format=ulysses_atdf
+
+asset fehlt
+format lro_trk
+tag imbrium.mit.edu
+arm lro_trk_compiler
+pattern ^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
+shard 1
+idempotent true
+note LRO RSS raw tracking — Goddard Universal Tracking Data Format (utF), 75-byte records; format file LRO_TRK.FMT measured at http://imbrium.mit.edu/LRORS/LABEL/LRO_TRK.FMT (29 columns: fixed lead 0x0D 0x0A 0x01, router, YEAR, SIC=59, VID, SECONDS-of-year + MICROSECONDS, ANGLE_1/2 IEEE_REAL ×8.381903173e-8 deg, RTLT 48-bit in 1/256 ns, BIAS_DOPPLER 48-bit (1000×Doppler + 240 MHz), AGC, TRANSMIT_FREQUENCY in 10s of Hz, antenna/validity bits, sample rate signed 11-bit, tail 0x04 0x04 0x04); doppler formula from LRO_DESC_TRK.TXT: rate = −c(A−2.4e8)/B, A = ΔN/Δt, B = 2·ft·(240/221)·1000; consumer arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series + extract.rs dispatch lro_trk; compiler tools/harvest/src/bin/lro_trk_compiler.rs (recursive listing tree under /LRORS/DATA/TRK/); asset measured fehlt 2026-09-17 (no CI run in this atom); dispatch step: gh workflow run harvest.yml -f format=lro_trk
