@@ -35,6 +35,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             out
         }),
         "voyager_saturn" => voyager_saturn::parse_series(bytes),
+        "mariner_occlt" => mariner_occlt::parse_series(bytes),
         "cors_rinex" => cors::parse_series(bytes),
         "drs_fits" => drs_fits::parse_series(bytes),
         "demeter_isl" => demeter::parse_series(bytes),
@@ -145,6 +146,12 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             voyager_saturn::COMP_RANGE_PART2 => Some("voyager_saturn_range_part2"),
             voyager_saturn::COMP_ANGLE_A => Some("voyager_saturn_angle_a"),
             voyager_saturn::COMP_ANGLE_B => Some("voyager_saturn_angle_b"),
+            _ => None,
+        },
+        "mariner_occlt" => match comp {
+            mariner_occlt::COMP_AMP_MIN => Some("mariner10_occlt_amp_min"),
+            mariner_occlt::COMP_AMP_MAX => Some("mariner10_occlt_amp_max"),
+            mariner_occlt::COMP_AMP_MEAN => Some("mariner10_occlt_amp_mean"),
             _ => None,
         },
         "cors_rinex" => match comp {
