@@ -2,7 +2,7 @@
   title: The echo depth — pP/sP depth phases across a 16-event fleet
   class: paper
   date: 2026-09-12
-  sha256: 4bfb78060c3d5d9434beaee77ab363eb2ef3dfbb712ee8e1a4d6b0c9c2e33782
+  sha256: 29a111ab24d05c839a854059bd01cd81147bcca4f649a736fa62bf65cde1f577
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-Free-surface depth phases pP and sP lag the direct P by a time that ak135 maps to source depth. Across a 16-event fleet in the Hindu Kush box (M6.2–7.5, catalog depth 107.7–231.0 km), the per-event median depths are unbiased: mean offset +1.7 km, standard error 4.7 km, against the ±10-km match gate. The scatter is the finding: 19 km across events and 36 km across stations dominate the gate, so the fleet is a measured series, not a tight depth estimator. The field pilot us10003re5 (M7.5 Hindu Kush) reads median 250 km against catalog 231 km, +19 km, outside the gate. The positive control locates M7.8 Indonesia at 14.6 km offset with rms 1.887 s, ak135 P+S verified against TauP to < 0.15 s. The free-surface reflection R_pp is negative across the pilot band (zero crossing 53.9°) and R_sp ≈ −1. The mww/NDK source-term comparison is measured (depth-identical; polarity 5/4 vs 4/5); the full CMT radiation term is now fetched (GCMT NDK parser, 70039 centroids; the pilot's per-station pP sign gate reads 2 agree / 1 oppose / 9 pending, `cmt-ndk-fleet`, 2026-09-16) and the calibration gate is registered (six pilot azimuths, 2026-09-16). The full deep-fleet run (16 events, depth ≥ 200 km, `--max-events 16`, 2026-09-16) reads 14/16 events inverted, after-exclusion mean offset +15.7 km (sd 36.4 km, se 9.7 km) and weighted joint +1.5 km (12 events) — the deep-only selection is biased high; its pP polarity gate reads 17 agree / 13 oppose / 138 pending over 30 measured signs, so the NDK source-term sign is not carried fleet-wide. The ak135 depth-model extension above 250 km is closed (2026-09-09: inversion to 700 km).
+Free-surface depth phases pP and sP lag direct P by a time ak135 maps to depth. Across a 16-event Hindu Kush fleet (M6.2–7.5, catalog depth 107.7–231.0 km), per-event medians are unbiased: mean offset +1.7 km, se 4.7 km, within the ±10-km gate. Scatter is the finding: 19 km across events, 36 km across stations; a measured series, not a tight estimator. Pilot us10003re5 (M7.5) reads median 250 km vs catalog 231 km, +19 km, outside the gate. Positive control: M7.8 Indonesia, 14.6 km offset, rms 1.887 s; ak135 P+S verified vs TauP <0.15 s. R_pp negative across the pilot band (zero crossing 53.9°), R_sp≈−1. mww/NDK comparison measured (depth-identical; polarity 5/4 vs 4/5); CMT radiation fetched (GCMT NDK parser, 70039 centroids; pilot per-station pP sign gate 2/1/9 (agree/oppose/pending), `cmt-ndk-fleet`, 2026-09-16), calibration gate registered (six pilot azimuths, 2026-09-16). Deep-fleet run (16 events, depth≥200 km, `--max-events 16`, 2026-09-16): 14/16 inverted, after-exclusion mean +15.7 km (sd 36.4, se 9.7 km), weighted joint +1.5 km (12 events); deep-only selection biased high; pP polarity 17/13/138 (agree/oppose/pending) over 30 signs, NDK sign not carried fleet-wide. ak135 depth-model extension above 250 km closed (2026-09-09: inversion to 700 km).
 
 ## The measurement
 
