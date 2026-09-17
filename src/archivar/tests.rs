@@ -8575,6 +8575,10 @@ fn odf_series_dispatch_and_component_names() {
         Some("juno_odf_observable_hz")
     );
     assert_eq!(
+        super::extract::series_component_name("juno_ocru_odf", super::odf::COMP_OBSERVABLE),
+        Some("juno_ocru_odf_observable_hz")
+    );
+    assert_eq!(
         super::extract::series_component_name("dawn_odf", super::odf::COMP_OBSERVABLE),
         Some("dawn_odf_observable_hz")
     );
@@ -8617,6 +8621,7 @@ fn odf_register_field_names_match_components() {
     let srcs = super::load_sources();
     for format in [
         "juno_odf",
+        "juno_ocru_odf",
         "magellan_odf",
         "mgs_odf",
         "mro_odf",
