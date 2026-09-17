@@ -13,7 +13,7 @@ const DEFAULT_BIN: &str = "data/download.bgr.de/bgr_infrasound_IS52_2022.bin";
 const KYOTO_LAT: f64 = 35.02938;
 const KYOTO_LON: f64 = 135.78347;
 const JST_OFFSET_S: f64 = 32400.0;
-const KYOTO_DAY_MEMBER: &str = "220115.txt";
+const KYOTO_DAY_MEMBER: &str = "data/220115.txt";
 const ZENODO_ARCHIVE_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/zenodo.org/data.zip";
 const ZENODO_ARCHIVE_LIVE: &str = "https://zenodo.org/records/8098323/files/data.zip";
@@ -244,11 +244,7 @@ fn mean_before(series: &[(f64, f64)], t: f64) -> Option<f64> {
             n += 1;
         }
     }
-    if n == 0 {
-        None
-    } else {
-        Some(sum / n as f64)
-    }
+    if n == 0 { None } else { Some(sum / n as f64) }
 }
 
 fn kwajalein_ear_section() {
