@@ -78,3 +78,7 @@ note Kandidat 2026-09-16 (ernte): NANOGrav — North American Nanohertz Observat
 ausstehend
 kandidat https://www.skao.int/
 note Kandidat 2026-09-16 (ernte): SRCNet — SKA Regional Centre Network, SKAO-Datenverteilung. Herkunft: docs/concepts/zeugnis.md:90 („SKAO lebt als SRCNet"). Erreichbarkeit gemessen (--verdict, drei Stufen): direct HTTP 200 (106605 B), Proton-Exit HTTP 200, Wayback 503 (kein Snapshot). Der Root ist die SKAO-Site; die SRCNet-Datenroute ist damit noch nicht lokalisiert. Vor jedem sources.φ-Block: SRCNet-Datenzugang suchen (Regional-Centre-Schnittstelle) und Probe auf Feld/Oszillator (Radio-Interferometrie → em). Nächster Schritt: SRCNet-Endpoint-Recherche, dann Probe.
+
+kompiliert
+kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/
+note Ulysses SCE Jupiter-Encounter, TRK-2-25 ATDF (288-Byte-Records, 28/8064-Block) — Arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs-Dispatch ulysses_atdf; Compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; phi/harvest.φ-Block ulysses_atdf (asset fehlt). CDN-Manifestation offen: gh workflow run harvest.yml -f format=ulysses_atdf, dann sha256/Größe messen + phi/sources.φ-Block. X-Band-Recovery-Kette pending (Korpus trägt keinen X-Multiplier).
