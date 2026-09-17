@@ -7882,7 +7882,7 @@ format sky1
 at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending — dl3-skymap-cdn.yml dispatched 2026-09-17 (run 35268770926, queued; MAGIC per-project FITS URL gemessen HTTP 200, 328320 B: https://door06.pic.es:8452/magic_dl3_pdr1/data/CrabNebula/dark/single_offset/20131005_05029789_DL3_CrabNebula-W0.40+215.fits); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
+note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset present — dl3-skymap-cdn.yml run 35268770926 success 2026-09-17 (magic_dl3.sky1, 473 B, sha256 0085e395ce3c543a13b1622c665182df05ff0f53dbbc7b4db585e9c429abbaa9; MAGIC per-project FITS URL gemessen HTTP 200, 328320 B: https://door06.pic.es:8452/magic_dl3_pdr1/data/CrabNebula/dark/single_offset/20131005_05029789_DL3_CrabNebula-W0.40+215.fits); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
 format sky1
