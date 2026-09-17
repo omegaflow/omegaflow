@@ -4432,7 +4432,7 @@ field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic 
 field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
 field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
 
-url https://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
+url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
 ttl 86400
 format text
 at earth
@@ -6385,6 +6385,14 @@ at earth
 ttl 604800
 field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
 note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
+
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_ocru_odf.bin
+format juno_ocru_odf
+sha256 a37e76a4a66d504f2b9ebe0fb072fb570ce008591e7078ebb903917e3c973413
+at earth
+ttl 604800
+field observable_hz juno_ocru_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+note juno_ocru_odf (gemessen 2026-09-17): post-EFB OCRU-Bestand `jnogrv_0001` (21 `.ODF`, 2013-284…2016-137), Arm `planetary-odf-cdn.yml` (`juno_odf_compiler --volume jnogrv_0001`); CDN-Asset 329770304 B, hochgeladen 2026-09-17T12:37:35Z; PODF-Dispatch in `extract.rs`.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 format juno_odf
