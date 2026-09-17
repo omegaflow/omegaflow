@@ -198,6 +198,7 @@ fn check() {
                             | "format"
                             | "tag"
                             | "arm"
+                            | "args"
                             | "pattern"
                             | "shard"
                             | "timeout"

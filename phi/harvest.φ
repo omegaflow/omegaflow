@@ -4,7 +4,7 @@ tag gea.esac.esa.int
 arm gaia_sso_compiler
 pattern ^gaia_sso_tno\.bin$
 idempotent true
-note gaia_sso_tno.bin 99160 B sha256 7278389b… measured 2026-09-17 via gh release view gea.esac.esa.int --repo omegaflow/sources; consumer arm src/archivar/gaia_sso.rs; no dedicated gaia-sso-cdn.yml in the tree — the asset predates a named harvest workflow (created 2026-09-08T07:25Z)
+note gaia_sso_tno.bin 99160 B sha256 7278389b… measured 2026-09-17 via gh release view gea.esac.esa.int --repo omegaflow/sources; consumer arm src/archivar/gaia_sso.rs; dedicated gaia-sso-cdn.yml built 2026-09-17 (gaia_sso_compiler --ci-mode, tag gea.esac.esa.int, timeout 120) — the asset predates the named workflow (created 2026-09-08T07:25Z), the workflow is the reproducible manifestation route
 
 asset present
 format ephemeris_epm
