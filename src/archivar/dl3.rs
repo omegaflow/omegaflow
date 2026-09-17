@@ -26,8 +26,14 @@ pub fn parse_events(buf: &[u8]) -> Option<Vec<Dl3Event>> {
     let mut off = 0usize;
     while off < buf.len() {
         let (header, _) = FitsHeader::parse(buf, off)?;
-        let is_events = header.value("HDUCLAS1") == Some("'EVENTS'")
-            || header.value("EXTNAME") == Some("'EVENTS'");
+        let is_events = header
+            .str_unescaped("HDUCLAS1")
+            .map(|v| v.trim().eq_ignore_ascii_case("EVENTS"))
+            .unwrap_or(false)
+            || header
+                .str_unescaped("EXTNAME")
+                .map(|v| v.trim().eq_ignore_ascii_case("EVENTS"))
+                .unwrap_or(false);
         if header.value("XTENSION") == Some("'BINTABLE'") && is_events {
             let (table, _next) = FitsTable::parse(buf, off)?;
             return events_from_table(buf, &table);
@@ -135,8 +141,8 @@ mod tests {
         ext.extend_from_slice(&pad_card("PCOUNT", "0"));
         ext.extend_from_slice(&pad_card("GCOUNT", "1"));
         ext.extend_from_slice(&pad_card("TFIELDS", "3"));
-        ext.extend_from_slice(&pad_card("EXTNAME", "'EVENTS'"));
-        ext.extend_from_slice(&pad_card("HDUCLAS1", "'EVENTS'"));
+        ext.extend_from_slice(&pad_card("EXTNAME", "'EVENTS  '"));
+        ext.extend_from_slice(&pad_card("HDUCLAS1", "'EVENTS  '"));
         ext.extend_from_slice(&pad_card("TTYPE1", "'RA'"));
         ext.extend_from_slice(&pad_card("TFORM1", "E"));
         ext.extend_from_slice(&pad_card("TBCOL1", "1"));
