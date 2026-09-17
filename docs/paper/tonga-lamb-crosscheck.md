@@ -1,10 +1,10 @@
 <!--
-  title: Hunga Tonga 2022 — the Lamb wave measured cross-medium (two CO-OPS ears, Kyoto barometer, BGR infrasound)
+  title: Hunga Tonga 2022 — the Lamb wave measured cross-medium
   class: paper
   date: 2026-09-17
-  sha256: c5445f387e88096791169295bcdc8585bb633a4a90447c5e48f7b44ea579902a
+  sha256: 77cb47ad6899d858a68203f0467d688c51934d5415053048fc6bec436fb2d6d4
   status: live
-  see-also: docs/handover/handover-2026-09-17-forschung-folge57.md
+  see-also: docs/handover/handover-2026-09-17-forschung-folge58.md
 -->
 # Hunga Tonga 2022 — the Lamb wave measured cross-medium
 
@@ -12,28 +12,22 @@
 
 ## Abstract
 
-The 15 January 2022 eruption of Hunga Tonga-Hunga Ha'apai launched a Lamb wave
-that propagated globally. We measure its arrival at three independent sensor
-classes in one pass, in named arrival windows: the NOAA CO-OPS co-located
-air-pressure + water-level pairs (Kwajalein 1820000, 3741.5 km; Wake Island
-1890000, 4843 km; Guam Apra Harbor 1630000, 5775 km; Midway Sand Island 1619910,
-5425 km; Kahului Maui 1615680, 5045 km), the Kyoto-A 1-Hz barometer (Zenodo
-record 8098323, 8043.7 km), and the BGR IS52 infrasound array (−7.38°, 72.48°,
-11981.5 km). At two independent ears the window pressure peak and the
-coupling-window water trough are measured with the same pressure residual at
-different distance: Kwajalein +2.29 hPa at +208 s with a −0.659 m trough 8280 s
-later, Wake Island +3.43 hPa at +208 s with a −0.332 m trough 7200 s later. The
-window coupling ratio is station-local, not a constant: 3.48 hPa/m (Kwajalein),
-10.34 hPa/m (Wake), 5.86 hPa/m (Guam), 4.09 hPa/m (Midway), 9.27 hPa/m
-(Kahului) — a measured spread of 3.48–10.34 hPa/m across the five physical-sign
-stations. At Kyoto-A the pressure maximum is 1017.45 hPa at 11:38:02, 311 s after
-the predicted direct arrival. At BGR IS52 the nearest back-azimuth detection to
-the predicted direct arrival lies 1360 s later at 107.7° against the predicted
-114.4° (residual −6.7°; vapp 352 m/s → slowness 2.84 s/km). The channels are
-consistent with the direct Lamb path; the global pressure extremes fall outside
-the window and are not the coupling. The council seals the cross-medium
-mechanism at two independent ears, the Kyoto-A detection, and the BGR IS52 array
-detection; no single coupling ratio stands.
+The 15 January 2022 eruption of Hunga Tonga-Hunga Ha'apai launched a globally
+propagating Lamb wave. We measure its arrival in named windows at three
+independent sensor classes: NOAA CO-OPS co-located air-pressure + water-level
+pairs (Kwajalein, Wake Island, Guam, Midway, Kahului), the Kyoto-A 1-Hz
+barometer (Zenodo 8098323), and the BGR IS52 infrasound array. At two independent
+ears the window pressure peak and the coupling-window water trough share the same
+pressure residual at different distance: Kwajalein +2.29 hPa at +208 s with a
+−0.659 m trough 8280 s later, Wake Island +3.43 hPa at +208 s with a −0.332 m
+trough 7200 s later. The coupling ratio is station-local, not constant — measured
+3.48, 10.34, 5.86, 4.09, 9.27 hPa/m at the five physical-sign stations (Kwajalein,
+Wake, Guam, Midway, Kahului), a spread of 3.48–10.34 hPa/m. At Kyoto-A the maximum
+is 1017.45 hPa at 11:38:02, 311 s after the predicted direct arrival; at BGR IS52
+the nearest back-azimuth detection lies 1360 s later at 107.7° against 114.4°
+(residual −6.7°; vapp 352 m/s → slowness 2.84 s/km). The council seals the
+cross-medium mechanism, the Kyoto-A detection, and the BGR IS52 array detection;
+no single coupling ratio stands.
 
 ## 1. The question
 
@@ -180,6 +174,8 @@ coupling-window water rose (a rising trough is not a physical Lamb response,
 - pulse shape (named from the reported sequence): rise from 1016.3–1016.8 hPa at
   11:30:00 to the 1017.45 hPa maximum at 11:38:02 (rise ≈ 480 s), decay to
   ~1015.4 hPa by 11:49:30 (decay ≈ 690 s)
+- pulse shape (probe, measured): rise time (baseline crossing → maximum)
+  **9737 s**; width (FWHM above baseline + half-amplitude) **1104 s**
 - measured pressure minimum (later): 1013.87 hPa at 2022-01-16 02:37:14
 
 ### BGR IS52
@@ -227,16 +223,14 @@ arrival. The global-extrema method of Handover 54 stays struck.
   a sub-300 s arrival estimate is not recoverable from it. The raw waveform is
   account-blocked (vDEC) — a measured access state, not a verdict. Next step:
   none before access is granted.
-- **Kyoto pulse shape.** The shape metric that carries the Kyoto discrimination
-  (rise time, width) is named in §4; the seal sentence stands with it. *(This
-  entry falls away in the same atom the §4 shape line lands — it is a build
-  condition, not a standing pending.)*
 
 ## Data and code
 
 - Probe: `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`
-- Workflow: `.github/workflows/tonga-lamb-crosscheck.yml` (CI run 35188454719,
-  artifact `tonga-lamb-crosscheck`, SHA ce260038)
+- Workflow: `.github/workflows/tonga-lamb-crosscheck.yml` (verified CI run
+  35224779089, artifact `tonga-lamb-crosscheck`, SHA 54d1b7e5 — reproduces the
+  two-ear + Guam couplings, the Kyoto +311 s / shape metric, and the BGR
+  slowness 2.84 s/km)
 - Sources: `phi/sources.φ` (`zenodo.org` record 8098323 as `kyoto_pressure`;
   `download.bgr.de` asset `bgr_infrasound_IS52_2022.bin`)
 - The wider CO-OPS station set (Midway, Kahului, the five Hawaii stations, the
