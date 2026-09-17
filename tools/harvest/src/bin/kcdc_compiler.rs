@@ -354,29 +354,30 @@ fn compile(src: &Path, out_path: &str, lsk: &LeapSeconds, ci: bool) -> Result<()
 
     let mut records: Vec<(f64, f64, u32)> = Vec::new();
     let component_maps: [(&str, fn(&str) -> Option<u32>); 5] = [
-        ("array.txt", array_comp),
-        ("grande.txt", grande_comp),
-        ("calorimeter.txt", calorimeter_comp),
-        ("general.txt", general_comp),
-        ("lopes.txt", lopes_comp),
+        ("array", array_comp),
+        ("grande", grande_comp),
+        ("calorimeter", calorimeter_comp),
+        ("general", general_comp),
+        ("lopes", lopes_comp),
     ];
-    for (name, comp_of) in component_maps {
-        let Some(text) = table_text(src, name, zip) else {
-            eprintln!("kcdc: {name} absent — nothing to compile from it");
+    for (stem, comp_of) in component_maps {
+        let file = format!("{stem}.txt");
+        let Some(text) = table_text(src, &file, zip) else {
+            eprintln!("kcdc: {file} absent — nothing to compile from it");
             continue;
         };
         let Some(table) = read_table(&text) else {
-            eprintln!("kcdc: {name} carries no header line — the layout stays unread (0 honored)");
+            eprintln!("kcdc: {file} carries no header line — the layout stays unread (0 honored)");
             continue;
         };
         let times = match &mapping {
-            Some(m) => mapped_times(m, &general_times, name),
-            None => own_gt_times(&table),
+            Some(m) if stem != "general" => mapped_times(m, &general_times, stem),
+            _ => own_gt_times(&table),
         };
         let (emitted, absent, timed_out) =
             compile_table(&table, comp_of, &times, lsk, &mut records);
         eprintln!(
-            "kcdc: {name}: {} rows, {} records, {} cells absent/implausible, {} rows without time",
+            "kcdc: {file}: {} rows, {} records, {} cells absent/implausible, {} rows without time",
             table.rows.len(),
             emitted,
             absent,
@@ -550,6 +551,42 @@ mod tests {
             "out_format=ascii&data=%7B%22array%22%3A%7B%7D%7D"
         );
         assert_eq!(job_body("root", "{}"), "out_format=root&data=%7B%7D");
+    }
+
+    #[test]
+    fn compile_joins_component_rows_through_the_registry_stems() {
+        let dir = std::env::temp_dir().join(format!("kcdc_compile_test_{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(
+            dir.join("row_mapping.txt"),
+            "calorimeter\tgrande\tgeneral\tarray\tlopes\n-1\t-1\t0\t0\t-1\n",
+        )
+        .unwrap();
+        fs::write(
+            dir.join("general.txt"),
+            "R Ev Gt T P\n877 1001 894645350 12.5 998.0\n",
+        )
+        .unwrap();
+        fs::write(
+            dir.join("array.txt"),
+            "R Ev E Xc Ze\n877 1001 14.5 -12.5 33.1\n",
+        )
+        .unwrap();
+        let out = dir.join("series.bin");
+        let lsk = LeapSeconds {
+            delta_t_a: 0.0,
+            deltas: vec![(0.0, 0.0)],
+        };
+        let result = compile(&dir, out.to_str().unwrap(), &lsk, false);
+        assert!(result.is_ok(), "compile returned {result:?}");
+        let bytes = fs::read(&out).unwrap();
+        let parsed = parse_bin(&bytes).expect("the bin roundtrips");
+        assert!(
+            parsed.len() >= 5,
+            "general T+P and array E+Xc+Ze = 5 records, parsed {}",
+            parsed.len()
+        );
+        let _ = fs::remove_dir_all(&dir);
     }
 
     #[test]
