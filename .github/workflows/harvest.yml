@@ -31,7 +31,7 @@ env:
 jobs:
   harvest:
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ github.event.inputs.timeout || 240 }}
+    timeout-minutes: ${{ fromJSON(github.event.inputs.timeout || '240') }}
     env:
       FORMAT: ${{ github.event.inputs.format }}
     steps:
