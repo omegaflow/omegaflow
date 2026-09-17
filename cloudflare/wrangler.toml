@@ -1,17 +1,16 @@
 name = "omegaflow-email-recv"
 main = "email_worker.js"
 compatibility_date = "2026-08-25"
-account_id = ""  # CLOUDFLARE_ACCOUNT_ID (env / .secrets.local)
 
-[vars]
-FORWARD_TO = ""  # operator address (env / .secrets.local)
+# FORWARD_TO is a Cloudflare secret (operator address — PII, never tracked):
+#   wrangler secret put FORWARD_TO
 
 [observability]
 enabled = true
 
 [[kv_namespaces]]
 binding = "MAIL_QUEUE"
-id = "REPLACE_WITH_WRANGLER_KV_NAMESPACE_ID"
+id = "bd70e0bd61644f87ab587cf2f8e784c7"
 
 [triggers]
 crons = ["*/5 * * * *"]
