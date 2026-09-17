@@ -134,7 +134,13 @@
           "gh run list*": "allow",
           "gh run view*": "allow",
           "gh run download*": "allow",
-          "gh run watch*": "deny"
+          "gh run cancel*": "allow",
+          "gh run rerun*": "allow",
+          "gh run delete*": "deny",
+          "gh run watch*": "deny",
+          "bin/ci_manage *": "allow",
+          "./bin/ci_manage *": "allow",
+          "./target/release/ci_manage *": "allow"
         }
       }
     }
@@ -209,7 +215,13 @@
       "gh run list*": "allow",
       "gh run view*": "allow",
       "gh run download*": "allow",
+      "gh run cancel*": "allow",
+      "gh run rerun*": "allow",
+      "gh run delete*": "deny",
       "gh run watch*": "deny",
+      "bin/ci_manage *": "allow",
+      "./bin/ci_manage *": "allow",
+      "./target/release/ci_manage *": "allow",
       "watch *": "deny",
       "*--watch*": "deny",
       "while *": "deny",
