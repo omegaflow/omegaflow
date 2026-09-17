@@ -25,6 +25,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         }),
         "atdf" => atdf::parse_series(bytes),
         "ulysses_atdf" => atdf::parse_uly_series(bytes),
+        "lro_trk" => lro_utf::parse_series(bytes),
         "himawari_hsd" => hsd::parse_series(bytes),
         "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
             let mut out = Vec::new();
@@ -142,6 +143,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "goes_abi" => goes_abi::component_name(comp),
         "atdf" => atdf::component_name(comp),
         "ulysses_atdf" => atdf::uly_component_name(comp),
+        "lro_trk" => lro_utf::component_name(comp),
         "himawari_hsd" => hsd::component_name(comp),
         "maxi" => match comp {
             crate::maxi::BAND_2_20 => Some("maxi_2_20kev_flux_ph_s_cm2"),
