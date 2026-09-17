@@ -24,6 +24,10 @@ nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
 Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 Der Planungs-Pass nennt die offenen Punkte als nummerierte Auswahl (der erste ist
 der härteste undatierte); die Session arbeitet so viele ab wie möglich.
+Wartestellungen (`wartend`) sind kein Auswahlpunkt — sie nennen nur ihren Auslöser
+und werden nie als Handlungsschritt geführt; gibt es keinen abarbeitbaren
+undatierten Punkt, sagt die Session das. Jeder Punkt trägt seinen Status-Tag
+(`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
