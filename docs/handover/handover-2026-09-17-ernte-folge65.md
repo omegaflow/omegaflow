@@ -3,7 +3,7 @@
   session: Ernte-Folge 65
   class: handover
   date: 2026-09-17
-  sha256: d398ec876cba782f11c4b77adf16c157ea85f482ec61c232c72ea06bcb8b178a
+  sha256: e110bedaaaf09f9888f82702d260ccd3ad4f31a959964953273c12d92e567de3
   status: live
 -->
 # Handover — Ernte-Folge 65 (2026-09-17)
@@ -89,6 +89,30 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   (`87680961`) in_progress, `35190614514` (`1e4faf79`) failure (7/9 Legs `HTTP 403`),
   `35218760142` (`f070ca36`) queued. (Schritt: bei success `sha256`/`rosetta_odf` +
   `juno_ocru_odf.bin`-Block in `phi/sources.φ`.)
+
+## CDN-Register-Schuld — 20 registrierte Assets fehlen am CDN (gemessen 2026-09-17)
+
+- Gemessen gegen `omegaflow/sources` (207 Releases, 5532 Assets): von 365 registrierten
+  CDN-`url`-Zeilen (76 Netloc-Tags) fehlen 20 Assets; daneben 588 direkte Nicht-CDN-URLs
+  (115 Hosts, per Konstruktion nicht manifestiert). Kein Phantom — 15 echte
+  Nachmanifestationen, 4 überholte Registrierungen, 1 gemessen-ungebaute Kette.
+- **Nachmanifestation (15, Workflow dispatch):** `rosetta_odf` (`planetary-odf-cdn`),
+  `cosmic_ro_temp` (`cosmic-cdn`), `noe4_deimos`/`noe4_phobos` (`noe4-cdn`), `ned.json`
+  (`ned-cdn`, läuft automatisch bis alle `ned_part_*` da sind), `swot_l2_lr_ssh` (`swot-cdn`),
+  `gedi_l2a` (`gedi-cdn`), `icesat2_atl03` (`icesat2-cdn`), `hess_dl3`/`magic_dl3`
+  (`dl3-skymap-cdn`, `--telescope hess|magic`), `vlass_tap_component`/`vlass_tap_source`
+  (`vlass-tap-cdn`), `maxi_J0006+202` (`maxi-cdn`), `isc_bulletin` (`isc-cdn`),
+  `uscrn_hourly` (`uscrn-cdn`).
+- **Registrierung bereinigen (4, `phi/sources.φ`):** `xp_pilot_p6144` (Z.6474–6478, ersetzt
+  durch `ssd.jpl.nasa.gov/xp_spectra.bin` + `xp_full_*`); `ghcn_d_USW00094728_2025-03`
+  (Z.6639–6647, ersetzt durch die Volljahr-Form); `mpcobs.bin` (Z.1841–1844, ersetzt durch
+  `mpcobs-unnobs-*`); `superdarn.ca/superdarn_fitacf` (Z.7451–7455, verwaiste Doppelreg. —
+  der lebende Eintrag ist `zenodo.org/superdarn_fitacf.bin`, Z.7548).
+- **Pending (1):** `las_oahu_bathy_1999` — Granule messbar, aber kein Netloc-Workflow
+  (`las-cdn.yml` nur USGS) und der MLLW→Ellipsoid-GTX-Reader ungebaut. (Schritt: GTX-Reader
+  + noaa-nos-LAS-Workflow bauen.)
+- (Schritt: die 15 Workflows dispatchen; die 4 Zeilen bereinigen; kein Massen-Dispatch ohne
+  freie Slots.)
 
 ## CDN-Idempotenz-Gates — Nachweis über nächste Läufe
 
