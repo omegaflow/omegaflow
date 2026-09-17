@@ -32,6 +32,8 @@ Every directive starts at column 0. No indentation. One directive per line.
 `url` starts a block and resets ALL block state (frame, ttl, force, headers,
 post_body, stations, …) — nothing leaks between blocks. A block is refused
 unless it has `url` + `ttl` + a frame (`at`/`on`).
+A directive value may be wrapped in double quotes to carry whitespace (e.g.
+`field "Arithmetic Mean" …`); without quotes, values split on whitespace.
 
 ### 1.0 File-level rules (canonical form of the φ files)
 

@@ -9142,3 +9142,60 @@ fn test_epa_aqs_source_registered() {
         _ => panic!("expected Rows extract"),
     }
 }
+
+#[test]
+fn test_parse_rows_verbatim_header_key() {
+    let block = "url https://example.com/aqs.csv
+ttl 86400
+format csv
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    assert_eq!(srcs.len(), 1);
+    match &srcs[0].extracts[0] {
+        Extract::Rows { fields, .. } => {
+            assert_eq!(fields.len(), 1);
+            assert_eq!(fields[0].key, "Arithmetic Mean");
+            assert_eq!(fields[0].force, 6);
+            assert_eq!(fields[0].tau, 86400.0);
+        }
+        _ => panic!("expected Rows extract"),
+    }
+}
+
+#[test]
+fn test_rows_verbatim_header_key_extracts() {
+    let block = "url https://example.com/aqs.csv
+ttl 86400
+format csv
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    let body = epa_aqs_rows();
+    let lsk = fixture_lsk();
+    match extract(&srcs[0], &body, 8.0e8, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2);
+            assert!((channels[0].0.value - 3.625).abs() < 1e-12);
+            assert!((channels[1].0.value - 6.791667).abs() < 1e-12);
+            match &channels[0].0.position {
+                super::Position::Surface { lat, lon, .. } => {
+                    assert!((lat - 30.497478).abs() < 1e-9);
+                    assert!((lon + 87.880258).abs() < 1e-9);
+                }
+                _ => panic!("expected per-row Surface position"),
+            }
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
