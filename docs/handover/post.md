@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-17
-  sha256: 58102b343fa382fdfd2f0498620a4fa6bf3359e4d60cc787e110c3a82cdf3557
+  sha256: f9a72fe818abdc734dc8e35bf226be75f1d05af8951f0ab55a7e529031857d4c
   status: live
   see-also: AGENTS.md
 -->
