@@ -975,19 +975,6 @@ field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
-ttl 3600
-on earth 0 0 0
-map table.rows
-lat 1
-lon 2
-alt 3 -m
-field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
-field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
-field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
-field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
-note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset pending (2026-09-16 gemessen 404, emso-cdn.yml nie gelaufen).
-
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
 ttl 3600
 format csv
@@ -1060,6 +1047,19 @@ epoch 0
 gate iso_6 0.0 500.0
 field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 1
+lon 2
+alt 3 -m
+field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
+field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
+field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
+field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
+note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset pending (2026-09-16 gemessen 404, emso-cdn.yml nie gelaufen).
+
 url https://github.com/omegaflow/sources/releases/download/noaa-gk2a-pds.s3.amazonaws.com/gk2a_ami_rad.bin
 format gk2a_ami
 on earth 0 0 0
@@ -1090,77 +1090,6 @@ at sun
 ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bison_pmode.bin
-format bison_velocity
-at sun
-ttl 604800
-field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
-note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler tools/harvest/src/bin/bison_compiler.rs + .github/workflows/bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series arm wired (extract.rs series_parse_bin/series_component_name + main_flow.rs series list), field name aligned to the component name (main_flow.rs:2168).
-
-url https://github.com/omegaflow/sources/releases/download/casdc.china-vo.org/lhaaso_sky1.sky1
-format sky1
-at sun
-ttl 31536000
-field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
-note 1LHAASO-Gammaquellen-Katalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (2893 B, 13 + 144·20); compiler tools/harvest/src/bin/lhaaso_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
-format sky1
-at sun
-ttl 31536000
-field hawc_2hwc hawc_2hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
-note HAWC-2HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (813 B, 13 + 40·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_3hwc.sky1
-format sky1
-at sun
-ttl 31536000
-field hawc_3hwc hawc_3hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
-note HAWC-3HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (1293 B, 13 + 64·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/icecat_sky1.sky1
-format sky1
-at sun
-ttl 31536000
-field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
-note IceCat-1-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (6973 B, 13 + 348·20); compiler tools/harvest/src/bin/icecat_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
-format sky1
-at sun
-ttl 31536000
-field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
-note ANTARES-2007-2017-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (175093 B, 13 + 8754·20); compiler tools/harvest/src/bin/antares_vo_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gw250207_115645.sky1
-format sky1
-at sun
-ttl 31536000
-field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
-note GraceDB-Superevent S250207bg Skymap (witness phi/witnesses.φ record sky1, kind gravity, Wahrscheinlichkeitsmasse ∫=1.0); CDN asset measured 2026-09-16 HTTP 200 (384013 B, 13 + 19200·20); compiler tools/harvest/src/bin/gw_skymap_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
-format sky1
-sha256 ca6ea9aae5a1af10b31c115df44fff5b2816cc5e3b9a8bf5d849a5073adb7d23
-at sun
-ttl 31536000
-field vtscat_flux vtscat_flux inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
-note VTSCat-VERITAS-Flussskymap (witness phi/witnesses.φ record sky1, kind gamma, value = dnde@1 TeV); CDN asset measured 2026-09-16 HTTP 200 (3853 B, run 35144789674); compiler tools/harvest/src/bin/vtscat_compiler.rs.
-
-url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
-format sky1
-at sun
-ttl 31536000
-field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
-note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess.
-
-url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
-format sky1
-at sun
-ttl 31536000
-field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
 format rpw_efield
@@ -1899,17 +1828,17 @@ format aia
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs.bin
-format mpcobs
-at earth
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1228354383-1261580867.bin
 format mpcobs
 at earth
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1261580867-1412649780.bin
+format mpcobs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs.bin
 format mpcobs
 at earth
 ttl 86400
@@ -2449,28 +2378,6 @@ ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
-format las
-at earth
-ttl 604800
-note LAS point cloud (USGS 3DEP, AK_BrooksCamp_2012, EPSG:3857). CRS inverse built 2026-09-16: geographic (EPSG:4326), Web Mercator (3857), UTM 326xx/327xx (GRS80 inverse Transverse Mercator); WKT without an own EPSG-ID and the MLLW tide-datum chain stay refused (no measured geoid/tide model, no ID — pending). The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch), not resting ICRS points; the spatial promotion to a Position anchor is descoped by measurement (2026-09-16): the contract carries no v-free anchor and the LAS format carries no v, so a StateVector (v=0) would be fabrication — the series components las_x/y/z_icrs_m are the correct measurement.
-field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
-field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/noaa-nos-coastal-lidar-pds.s3.amazonaws.com/las_oahu_bathy_1999.bin
-format las
-at earth
-ttl 604800
-note LAS point cloud (NOAA NOS Coastal Lidar PDS, AWS Open Data bucket noaa-nos-coastal-lidar-pds, project 1457 1999 USACE NCMP Bathymetric Lidar: Hawaii, granule 19990301_oahu_bathy_geoclassed.copc.laz, 9553371 B, STAC license CC-BY-1.0). Measured 2026-09-16: bucket root HTTP 200 (386818 B), STAC catalog HTTP 200, granule HTTP 200; CRS EPSG:26904 (NAD83 / UTM zone 4N, GRS80) with vertical MLLW height. The COPC/LASzip decoder reads the granule (regression fixture noaa_copc_f6_variable.laz); las_compiler.rs resolve_crs inverts NAD83/UTM 26901-26923 (GRS80, the 326xx central-meridian formula, 2026-09-16), so the horizontal CRS resolves; the MLLW-to-ellipsoid chain is registered (vdatum.noaa.gov/download/data) but unbuilt (no GTX reader), so the z stays as delivered MLLW height (not ellipsoid) and the vertical chain stays pending until that build. The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch); the spatial promotion to a Position anchor is descoped by measurement as at the USGS source (no v-free anchor, LAS carries no v).
-field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
-field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
 format apdb
@@ -6248,16 +6155,11 @@ url https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__di
 format reference
 ttl 86400
 
-url https://zenodo.org/records/10794666/files/2007_10_10_Gallagher%20et%20al_DAP%202.0_ESE-RFC-004v1.2.pdf
+url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
 format reference
-sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
+sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
 ttl 86400
-
-url https://zenodo.org/records/8098323/files/data.zip
-format kyoto_pressure
-at earth
-ttl 604800
-field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
+note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd) — Zenodo record 10620251; 13,25 GiB > 2-GiB-CDN-Limit, daher 1-GiB-Shards + Manifest via .github/workflows/tnbfits-cdn.yml; sha256 aus dem tnbfits.manifest (Lauf 35148401053, 14 Shards). CDN-Tag zenodo.org.
 
 url https://zenodo.org/records/10620251/files/multimoon-1.0.zip
 format reference
@@ -6265,11 +6167,10 @@ sha256 07b26a4f01f285d1807ea46cd7b9aa8ae7d7d3b7c2dfd877bbdab5c70cb46ffc
 ttl 86400
 note MultiMoon 1.0 (eingefrorene Software zur TNBFits-Auswertung, MIT, 914800 B, md5:9bc6a3f9…) — Zenodo record 10620251; fetch-only reference, kein Feld/Medium. CDN-Tag zenodo.org.
 
-url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
+url https://zenodo.org/records/10794666/files/2007_10_10_Gallagher%20et%20al_DAP%202.0_ESE-RFC-004v1.2.pdf
 format reference
-sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
+sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
 ttl 86400
-note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd) — Zenodo record 10620251; 13,25 GiB > 2-GiB-CDN-Limit, daher 1-GiB-Shards + Manifest via .github/workflows/tnbfits-cdn.yml; sha256 aus dem tnbfits.manifest (Lauf 35148401053, 14 Shards). CDN-Tag zenodo.org.
 
 url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
 format tap
@@ -6478,6 +6379,14 @@ field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 6048
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Text-Reader `src/archivar/ifms_agc.rs` parst `<header>` + `<active_table>` + `<body_Gain>` (Spalten aus der `//`-Zeile, nicht hartcodiert); `rosetta_odf_compiler.rs` darauf verdrahtet. Fixtur `src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW`, 343978 B, sha256 13eb7667a1cee6a4b9378d29753aaf9af984e245bcaf80c11321118f807fd48c, URL https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-X-RSI-1-2-3-EAR2-0061-V1.0/DATA/LEVEL1A/CLOSED_LOOP/IFMS/AG1/R32ICL1L1A_AG1_072831317_02.RAW, 1994 Zeilen. Offen: `planetary-odf-cdn.yml --ci-mode` nach Push.
 
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
+format cassini_tnf
+sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
+at earth
+ttl 604800
+field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
+
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 format juno_odf
 at earth
@@ -6489,31 +6398,6 @@ format vex_odf
 at earth
 ttl 604800
 field observable_hz vex_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/nh_rex_tnf_lunocc2012.csv
-format csv
-at earth
-ttl 604800
-rows .
-epoch epoch
-field ramp_freq nh_rex_tnf_ramp_freq_hz inverse-square em Hz 604800 0.0 0.0
-field ul_phase_cycles nh_rex_tnf_uplink_phase_cycle inverse-square em cycle 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
-format cors_rinex
-at earth
-ttl 604800
-field c1 cors_rinex_c1_m inverse-square em m 604800 0.0 0.0
-field p1 cors_rinex_p1_m inverse-square em m 604800 0.0 0.0
-field c2 cors_rinex_c2_m inverse-square em m 604800 0.0 0.0
-field p2 cors_rinex_p2_m inverse-square em m 604800 0.0 0.0
-field c5 cors_rinex_c5_m inverse-square em m 604800 0.0 0.0
-field l1 cors_rinex_l1_cycle inverse-square em cycle 604800 0.0 0.0
-field l2 cors_rinex_l2_cycle inverse-square em cycle 604800 0.0 0.0
-field l5 cors_rinex_l5_cycle inverse-square em cycle 604800 0.0 0.0
-field s1 cors_rinex_s1_dbhz inverse-square em dbhz 604800 0.0 0.0
-field s2 cors_rinex_s2_dbhz inverse-square em dbhz 604800 0.0 0.0
-field s5 cors_rinex_s5_dbhz inverse-square em dbhz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 format bl_narrowband
@@ -6575,12 +6459,6 @@ field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-squa
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square em K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/champ_plpt.bin
-format champ_plpt
-at earth
-ttl 604800
-field champ_plpt_electron_density_cm3 champ_plpt_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 format gedi_l2a
 on earth 0 0 0
@@ -6617,6 +6495,13 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms ga
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
+format glm_l1b
+sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
+on earth 0 0 0
+ttl 604800
+field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
 format iss_lis
 on earth 0 0 0
@@ -6636,12 +6521,13 @@ on earth 0 0 0
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
-format glm_l1b
-sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
-on earth 0 0 0
+url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160102_093513__20160103_165224.bin
+format drs_fits
+at earth
 ttl 604800
-field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
+field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/hinetwww11.bosai.go.jp/hinet.bin
 format hinet
@@ -6686,6 +6572,39 @@ format lightcurve
 ttl 604800
 at sun
 
+url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/champ_plpt.bin
+format champ_plpt
+at earth
+ttl 604800
+field champ_plpt_electron_density_cm3 champ_plpt_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/kcdc.iap.kit.edu/kcdc_kascade.bin
+format kcdc_kascade
+sha256 4d992ea349235fd109275038db2916a1dd5efc2eb7daf6d1e5f53f917ca8d25b
+at earth
+ttl 604800
+field kcdc_kascade_energy_ev kcdc_kascade_energy_ev inverse-square em eV 604800 0.0 0.0
+field kcdc_kascade_x_core_m kcdc_kascade_x_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_kascade_y_core_m kcdc_kascade_y_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_kascade_zenith_deg kcdc_kascade_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_kascade_azimuth_deg kcdc_kascade_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_kascade_ne_count kcdc_kascade_ne_count inverse-square em count 604800 0.0 0.0
+field kcdc_kascade_nmu_count kcdc_kascade_nmu_count inverse-square em count 604800 0.0 0.0
+field kcdc_kascade_shower_age kcdc_kascade_shower_age inverse-square em 1 604800 0.0 0.0
+field kcdc_calorimeter_nhad_count kcdc_calorimeter_nhad_count inverse-square em count 604800 0.0 0.0
+field kcdc_calorimeter_ehad_ev kcdc_calorimeter_ehad_ev inverse-square em eV 604800 0.0 0.0
+field kcdc_grande_x_core_m kcdc_grande_x_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_grande_y_core_m kcdc_grande_y_core_m inverse-square em m 604800 0.0 0.0
+field kcdc_grande_zenith_deg kcdc_grande_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_grande_azimuth_deg kcdc_grande_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+field kcdc_grande_nch_count kcdc_grande_nch_count inverse-square em count 604800 0.0 0.0
+field kcdc_grande_nmu_count kcdc_grande_nmu_count inverse-square em count 604800 0.0 0.0
+field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0.0 0.0
+field kcdc_general_air_temp_c kcdc_general_air_temp_c inverse-square thermal C 604800 0.0 0.0
+field kcdc_general_air_pressure_hpa kcdc_general_air_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
+field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric V/m 604800 0.0 0.0
+note KCDC/KASCADE-Grande cosmic-ray air showers, native Serie (KCD1 bin, 20 Komponenten: KASCADE array + Grande + calorimeter + LOPES E-Feld + general weather); Arm `src/archivar/kcdc.rs` `parse_series` + `extract.rs`-Dispatch `kcdc_kascade` (comp-ID → wire name); Compiler `tools/harvest/src/bin/kcdc_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view kcdc.iap.kit.edu --repo omegaflow/sources` (19480868 B, sha256 `4d992ea3…d25b`, run 35186451939).
+
 url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
 format maxi
 at sun
@@ -6694,6 +6613,22 @@ field maxi_2_20kev_flux_ph_s_cm2 maxi_2_20kev_flux_ph_s_cm2 inverse-square em ph
 field maxi_2_4kev_flux_ph_s_cm2 maxi_2_4kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
 field maxi_4_10kev_flux_ph_s_cm2 maxi_4_10kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
 field maxi_10_20kev_flux_ph_s_cm2 maxi_10_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
+format cors_rinex
+at earth
+ttl 604800
+field c1 cors_rinex_c1_m inverse-square em m 604800 0.0 0.0
+field p1 cors_rinex_p1_m inverse-square em m 604800 0.0 0.0
+field c2 cors_rinex_c2_m inverse-square em m 604800 0.0 0.0
+field p2 cors_rinex_p2_m inverse-square em m 604800 0.0 0.0
+field c5 cors_rinex_c5_m inverse-square em m 604800 0.0 0.0
+field l1 cors_rinex_l1_cycle inverse-square em cycle 604800 0.0 0.0
+field l2 cors_rinex_l2_cycle inverse-square em cycle 604800 0.0 0.0
+field l5 cors_rinex_l5_cycle inverse-square em cycle 604800 0.0 0.0
+field s1 cors_rinex_s1_dbhz inverse-square em dbhz 604800 0.0 0.0
+field s2 cors_rinex_s2_dbhz inverse-square em dbhz 604800 0.0 0.0
+field s5 cors_rinex_s5_dbhz inverse-square em dbhz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-dcdb-bathymetry-pds.s3.amazonaws.com/dcdb_csb_2017-04-25.bin
 ttl 604800
@@ -6734,6 +6669,17 @@ field noaa_gsod_max_c noaa_gsod_max_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_min_c noaa_gsod_min_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_prcp_mm noaa_gsod_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-nos-coastal-lidar-pds.s3.amazonaws.com/las_oahu_bathy_1999.bin
+format las
+at earth
+ttl 604800
+note LAS point cloud (NOAA NOS Coastal Lidar PDS, AWS Open Data bucket noaa-nos-coastal-lidar-pds, project 1457 1999 USACE NCMP Bathymetric Lidar: Hawaii, granule 19990301_oahu_bathy_geoclassed.copc.laz, 9553371 B, STAC license CC-BY-1.0). Measured 2026-09-16: bucket root HTTP 200 (386818 B), STAC catalog HTTP 200, granule HTTP 200; CRS EPSG:26904 (NAD83 / UTM zone 4N, GRS80) with vertical MLLW height. The COPC/LASzip decoder reads the granule (regression fixture noaa_copc_f6_variable.laz); las_compiler.rs resolve_crs inverts NAD83/UTM 26901-26923 (GRS80, the 326xx central-meridian formula, 2026-09-16), so the horizontal CRS resolves; the MLLW-to-ellipsoid chain is registered (vdatum.noaa.gov/download/data) but unbuilt (no GTX reader), so the z stays as delivered MLLW height (not ellipsoid) and the vertical chain stays pending until that build. The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch); the spatial promotion to a Position anchor is descoped by measurement as at the USGS source (no v-free anchor, LAS carries no v).
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/noaa-oar-keo-papa-pds.s3.amazonaws.com/keo_OS_KEO_200406_M_TSVMBP_32N145E_dy.bin
 ttl 604800
 format noaa_keo_papa
@@ -6769,25 +6715,25 @@ at earth
 ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t49912566_66317462.bin
-format odyssey_odf
-at earth
-ttl 604800
-field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t66317463_261261437.bin
-format odyssey_odf
-at earth
-ttl 604800
-field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t261261447_508869542.bin
 format odyssey_odf
 at earth
 ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t49912566_66317462.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t508869552_550631778.bin
+format odyssey_odf
+at earth
+ttl 604800
+field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t66317463_261261437.bin
 format odyssey_odf
 at earth
 ttl 604800
@@ -6808,6 +6754,12 @@ field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/messenger_odf.bin
+format messenger_odf
+at earth
+ttl 604800
+field observable_hz messenger_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
 format voyager_odr
 at earth
@@ -6815,6 +6767,30 @@ ttl 604800
 field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s1.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s10.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s11.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s12.bin
+format voyager_odr
+at earth
+ttl 604800
+field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s13.bin
 format voyager_odr
 at earth
 ttl 604800
@@ -6868,35 +6844,22 @@ at earth
 ttl 604800
 field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s10.bin
-format voyager_odr
+url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/nh_rex_tnf_lunocc2012.csv
+format csv
 at earth
 ttl 604800
-field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
+rows .
+epoch epoch
+field ramp_freq nh_rex_tnf_ramp_freq_hz inverse-square em Hz 604800 0.0 0.0
+field ul_phase_cycles nh_rex_tnf_uplink_phase_cycle inverse-square em cycle 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s11.bin
-format voyager_odr
+url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/dart_tnf.bin
+format dart_tnf
+sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
 at earth
 ttl 604800
-field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s12.bin
-format voyager_odr
-at earth
-ttl 604800
-field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s13.bin
-format voyager_odr
-at earth
-ttl 604800
-field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/messenger_odf.bin
-format messenger_odf
-at earth
-ttl 604800
-field observable_hz messenger_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `dart_tnf`; Compiler `tools/harvest/src/bin/dart_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
 format dawn_odf
@@ -6926,20 +6889,6 @@ field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
 field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
 field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160102_093513__20160103_165224.bin
-format drs_fits
-at earth
-ttl 604800
-field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
-format flac
-at earth
-ttl 604800
-field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
 ttl 604800
 at sun
@@ -6948,6 +6897,13 @@ ra ra
 dec dec
 z z
 field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bison_pmode.bin
+format bison_velocity
+at sun
+ttl 604800
+field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
+note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler tools/harvest/src/bin/bison_compiler.rs + .github/workflows/bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series arm wired (extract.rs series_parse_bin/series_component_name + main_flow.rs series list), field name aligned to the component name (main_flow.rs:2168).
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bzcat5.json
 ttl 604800
@@ -7408,6 +7364,12 @@ at sun
 ttl 604800
 field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
+format flac
+at earth
+ttl 604800
+field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/superdarn.ca/superdarn_fitacf.bin
 format superdarn_fitacf
 on earth 0 0 0
@@ -7466,6 +7428,17 @@ ttl 604800
 at sun
 field cz twomrs_cz_kms gaussian-inverse-square em km/s 604800 0.0 0.0
 note distanz descoped (gemessen 2026-09-16): die getragene Distanz-Observable ist cz/e_cz (Rotverschiebung), nicht Distanz — Distanz leitet sich aus cz über H0 ab.
+
+url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
+format las
+at earth
+ttl 604800
+note LAS point cloud (USGS 3DEP, AK_BrooksCamp_2012, EPSG:3857). CRS inverse built 2026-09-16: geographic (EPSG:4326), Web Mercator (3857), UTM 326xx/327xx (GRS80 inverse Transverse Mercator); WKT without an own EPSG-ID and the MLLW tide-datum chain stay refused (no measured geoid/tide model, no ID — pending). The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch), not resting ICRS points; the spatial promotion to a Position anchor is descoped by measurement (2026-09-16): the contract carries no v-free anchor and the LAS format carries no v, so a StateVector (v=0) would be fabrication — the series components las_x/y/z_icrs_m are the correct measurement.
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 format catalog_vlass_tap_component
@@ -7670,6 +7643,12 @@ ra ra
 dec dec
 field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 
+url https://zenodo.org/records/8098323/files/data.zip
+format kyoto_pressure
+at earth
+ttl 604800
+field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
 url https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
 format tar_gz_yaml
 header Authorization {EARTHDATA_EDL_TOKEN}
@@ -7722,6 +7701,13 @@ cmap .
 ra ra
 dec dec
 field flux_g noirlab_ls_dr10_g_flux inverse-square em nMgy 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/casdc.china-vo.org/lhaaso_sky1.sky1
+format sky1
+at sun
+ttl 31536000
+field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note 1LHAASO-Gammaquellen-Katalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (2893 B, 13 + 144·20); compiler tools/harvest/src/bin/lhaaso_compiler.rs.
 
 url https://github.com/omegaflow/sources/releases/download/copernicus-dem-30m.s3.amazonaws.com/copernicus_dem_30m_N50_E010.bin
 format gl30
@@ -7781,6 +7767,35 @@ at earth
 sha256 a3fe6dc3a049ed4717bea420f59f781cd238af895d9bd5d729fd7a3cc82587fa
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
+format sky1
+at sun
+ttl 31536000
+field hawc_2hwc hawc_2hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note HAWC-2HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (813 B, 13 + 40·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_3hwc.sky1
+format sky1
+at sun
+ttl 31536000
+field hawc_3hwc hawc_3hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note HAWC-3HWC-Quellenkatalog (witness phi/witnesses.φ record sky1, kind gamma); CDN asset measured 2026-09-16 HTTP 200 (1293 B, 13 + 64·20); compiler tools/harvest/src/bin/hawc_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
+format sky1
+sha256 ca6ea9aae5a1af10b31c115df44fff5b2816cc5e3b9a8bf5d849a5073adb7d23
+at sun
+ttl 31536000
+field vtscat_flux vtscat_flux inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+note VTSCat-VERITAS-Flussskymap (witness phi/witnesses.φ record sky1, kind gamma, value = dnde@1 TeV); CDN asset measured 2026-09-16 HTTP 200 (3853 B, run 35144789674); compiler tools/harvest/src/bin/vtscat_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
+format sky1
+at sun
+ttl 31536000
+field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
+note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess.
+
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
 at earth
@@ -7792,6 +7807,34 @@ format volume
 at earth
 sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
+format sky1
+at sun
+ttl 31536000
+field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
+note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
+format sky1
+at sun
+ttl 31536000
+field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
+note ANTARES-2007-2017-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (175093 B, 13 + 8754·20); compiler tools/harvest/src/bin/antares_vo_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gw250207_115645.sky1
+format sky1
+at sun
+ttl 31536000
+field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
+note GraceDB-Superevent S250207bg Skymap (witness phi/witnesses.φ record sky1, kind gravity, Wahrscheinlichkeitsmasse ∫=1.0); CDN asset measured 2026-09-16 HTTP 200 (384013 B, 13 + 19200·20); compiler tools/harvest/src/bin/gw_skymap_compiler.rs.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/icecat_sky1.sky1
+format sky1
+at sun
+ttl 31536000
+field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
+note IceCat-1-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (6973 B, 13 + 348·20); compiler tools/harvest/src/bin/icecat_compiler.rs.
 
 url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
 format slab2_depth
@@ -9190,46 +9233,3 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/dart_tnf.bin
-format dart_tnf
-sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
-at earth
-ttl 604800
-field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `dart_tnf`; Compiler `tools/harvest/src/bin/dart_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
-
-url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
-format cassini_tnf
-sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
-at earth
-ttl 604800
-field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
-
-url https://github.com/omegaflow/sources/releases/download/kcdc.iap.kit.edu/kcdc_kascade.bin
-format kcdc_kascade
-sha256 4d992ea349235fd109275038db2916a1dd5efc2eb7daf6d1e5f53f917ca8d25b
-at earth
-ttl 604800
-field kcdc_kascade_energy_ev kcdc_kascade_energy_ev inverse-square em eV 604800 0.0 0.0
-field kcdc_kascade_x_core_m kcdc_kascade_x_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_kascade_y_core_m kcdc_kascade_y_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_kascade_zenith_deg kcdc_kascade_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_kascade_azimuth_deg kcdc_kascade_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_kascade_ne_count kcdc_kascade_ne_count inverse-square em count 604800 0.0 0.0
-field kcdc_kascade_nmu_count kcdc_kascade_nmu_count inverse-square em count 604800 0.0 0.0
-field kcdc_kascade_shower_age kcdc_kascade_shower_age inverse-square em 1 604800 0.0 0.0
-field kcdc_calorimeter_nhad_count kcdc_calorimeter_nhad_count inverse-square em count 604800 0.0 0.0
-field kcdc_calorimeter_ehad_ev kcdc_calorimeter_ehad_ev inverse-square em eV 604800 0.0 0.0
-field kcdc_grande_x_core_m kcdc_grande_x_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_grande_y_core_m kcdc_grande_y_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_grande_zenith_deg kcdc_grande_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_grande_azimuth_deg kcdc_grande_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_grande_nch_count kcdc_grande_nch_count inverse-square em count 604800 0.0 0.0
-field kcdc_grande_nmu_count kcdc_grande_nmu_count inverse-square em count 604800 0.0 0.0
-field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0.0 0.0
-field kcdc_general_air_temp_c kcdc_general_air_temp_c inverse-square thermal C 604800 0.0 0.0
-field kcdc_general_air_pressure_hpa kcdc_general_air_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
-field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric V/m 604800 0.0 0.0
-note KCDC/KASCADE-Grande cosmic-ray air showers, native Serie (KCD1 bin, 20 Komponenten: KASCADE array + Grande + calorimeter + LOPES E-Feld + general weather); Arm `src/archivar/kcdc.rs` `parse_series` + `extract.rs`-Dispatch `kcdc_kascade` (comp-ID → wire name); Compiler `tools/harvest/src/bin/kcdc_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view kcdc.iap.kit.edu --repo omegaflow/sources` (19480868 B, sha256 `4d992ea3…d25b`, run 35186451939).
