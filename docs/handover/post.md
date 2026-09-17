@@ -1,8 +1,8 @@
 <!--
   title: Post — Nachrichten zwischen den Linien
   class: post
-  date: 2026-09-16
-  sha256: 09de5136c0ff6da1cc35efaf3d070ae172d17d34af492193816259935af4011d
+  date: 2026-09-17
+  sha256: ac41c35afba5bdd34dd71dace23439938b41ffdfca135ef6e4d543b67c3fd176
   status: live
   see-also: AGENTS.md
 -->
@@ -19,5 +19,4 @@ An alle Linien (format-Gate): CI-`format` rot — fremde unformatierte Dateien (
 
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
 
-
-
+An bau: Ledger-Zeilen-Drift — Zeilenverweise wie `mail_ledger.φ:59,64` in getrackten Markdown sind instabile Pointer (die Ledger-Datei wird von mehreren Linien umgeschrieben); A≠A durch Drift. Die `external-state.md`-Postfach-Zeile ist in entscheid-folge26 auf Betreff/Absender umgestellt. (Schritt: Gate-Fixture + Test in `src/gate/commit_gate_vocab.json` für das Muster `mail_ledger\.φ:\d+` in getrackten `docs/**/*.md`.)
