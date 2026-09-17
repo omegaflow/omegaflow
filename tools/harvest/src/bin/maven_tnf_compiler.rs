@@ -5,6 +5,8 @@ use omegaflow::odf;
 const BASE: &str = "https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/";
 const COLLECTION: &str = "https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/collection_maven_rose_raw_data_l0_tnf_1.33.csv";
 const NETLOC: &str = "pds-ppi.igpp.ucla.edu";
+const PREFIX: &str = "maven_tnf";
+const DIR: &str = "data/pds-ppi.igpp.ucla.edu";
 
 fn products(text: &str) -> Vec<(String, String, String)> {
     let mut out = Vec::new();
@@ -37,6 +39,32 @@ fn products(text: &str) -> Vec<(String, String, String)> {
     out.sort();
     out.dedup();
     out
+}
+
+fn write_and_verify(records: &[[f64; 9]], out: &str) -> Vec<u8> {
+    let bin = odf::write_podf_bin(records);
+    if std::fs::write(out, &bin).is_err() {
+        eprintln!("write {out} void");
+        std::process::exit(1);
+    }
+    match odf::parse_podf_bin(&bin) {
+        Some(parsed) => {
+            let d0 = parsed[0];
+            let d1 = parsed[parsed.len() - 1];
+            eprintln!(
+                "{out}: {} TNF DT0 samples (tdb {}..{}), {} B — roundtrip parses",
+                parsed.len(),
+                d0[0],
+                d1[0],
+                bin.len()
+            );
+        }
+        None => {
+            eprintln!("{out}: roundtrip parse void — the series stays unverified");
+            std::process::exit(1);
+        }
+    }
+    bin
 }
 
 fn main() {
@@ -74,28 +102,55 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    let out = "data/pds-ppi.igpp.ucla.edu/maven_tnf.bin";
-    std::fs::create_dir_all("data/pds-ppi.igpp.ucla.edu").ok();
-    let bin = odf::write_podf_bin(&merged);
-    if std::fs::write(out, &bin).is_err() {
-        eprintln!("write {out} void");
+    std::fs::create_dir_all(DIR).ok();
+
+    let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
+    if ranges.len() == 1 {
+        let out = format!("{DIR}/{PREFIX}.bin");
+        write_and_verify(&merged, &out);
+        if ci_mode && !upload_release(NETLOC, &out) {
+            std::process::exit(1);
+        }
         return;
     }
-    match odf::parse_podf_bin(&bin) {
-        Some(parsed) => {
-            let d0 = parsed[0];
-            let d1 = parsed[parsed.len() - 1];
-            eprintln!(
-                "{out}: {} TNF DT0 samples (tdb {}..{}), {} B — roundtrip parses",
-                parsed.len(),
-                d0[0],
-                d1[0],
-                bin.len()
-            );
+
+    let mut names: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
+    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
+        let t_lo = merged[lo][0];
+        let t_hi = merged[hi - 1][0];
+        let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
+        if names.contains(&name) {
+            name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
         }
-        None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
+        names.push(name.clone());
+        let path = format!("{DIR}/{name}");
+        let bin = write_and_verify(&merged[lo..hi], &path);
+        if bin.len() > odf::PODF_SHARD_LIMIT {
+            eprintln!(
+                "{path}: {}-byte shard exceeds the {}-byte CDN asset limit — the series stays unwritten (0 honored)",
+                bin.len(),
+                odf::PODF_SHARD_LIMIT
+            );
+            std::process::exit(1);
+        }
+        paths.push(path);
     }
-    if ci_mode && !upload_release(NETLOC, out) {
-        std::process::exit(1);
+    for name in &names {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
+        );
+        println!("format {PREFIX}");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field ul_phase_cycles {PREFIX}_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0");
+        println!();
+    }
+    if ci_mode {
+        for path in &paths {
+            if !upload_release(NETLOC, path) {
+                std::process::exit(1);
+            }
+        }
     }
 }
