@@ -6,6 +6,11 @@ pub const S_BAND_REF_LO: f64 = 2197e4;
 pub const S_BAND_REF_HI: f64 = 2200e4;
 pub const FSKY_BASE_HZ: f64 = 2292e6;
 
+pub const DTYPE_ONEWAY_DOPPLER: i64 = 1;
+pub const DTYPE_TWOWAY_DOPPLER: i64 = 2;
+pub const DTYPE_THREEWAY_DOPPLER: i64 = 3;
+pub const DTYPE_RAMP: i64 = 6;
+
 pub struct Field {
     pub item: u32,
     pub start: usize,
@@ -500,7 +505,9 @@ pub fn reduce_skyfreq(
             Some((_, c)) => *c += 1,
             None => dtype_hist.push((dtype[i], 1)),
         }
-        if !(dtype[i] == 1 || dtype[i] == 2) || sampler[i] <= 0.0 {
+        if !(dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER)
+            || sampler[i] <= 0.0
+        {
             continue;
         }
         let doff = if dcnt[i + 1] < dcnt[i] {
@@ -524,7 +531,7 @@ pub fn reduce_skyfreq(
     let mut med_rejected = 0usize;
     for i in 0..n - 1 {
         if !good[i] {
-            if dtype[i] == 6 {
+            if dtype[i] == DTYPE_RAMP {
                 ramp_records += 1;
             }
             continue;
@@ -633,7 +640,9 @@ pub fn reduce_resid(
     for i in 2..nlog {
         let rec = &stripped[i * LOGICAL_RECORD..(i + 1) * LOGICAL_RECORD];
         let tr = tracking_record(rec);
-        if tr.day == 0 || !(tr.data_type == 1 || tr.data_type == 2) {
+        if tr.day == 0
+            || !(tr.data_type == DTYPE_ONEWAY_DOPPLER || tr.data_type == DTYPE_TWOWAY_DOPPLER)
+        {
             continue;
         }
         n_dop += 1;
