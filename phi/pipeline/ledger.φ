@@ -81,4 +81,12 @@ note Kandidat 2026-09-16 (ernte): SRCNet — SKA Regional Centre Network, SKAO-D
 
 kompiliert
 kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/
-note Ulysses SCE Jupiter-Encounter, TRK-2-25 ATDF (288-Byte-Records, 28/8064-Block) — Arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs-Dispatch ulysses_atdf; Compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; phi/harvest.φ-Block ulysses_atdf (asset fehlt). CDN-Manifestation offen: gh workflow run harvest.yml -f format=ulysses_atdf, dann sha256/Größe messen + phi/sources.φ-Block. X-Band-Recovery-Kette pending (Korpus trägt keinen X-Multiplier).
+note Ulysses SCE Jupiter-Encounter, TRK-2-25 ATDF (288-Byte-Records, 28/8064-Block) — Arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs-Dispatch ulysses_atdf; Compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; phi/harvest.φ-Block ulysses_atdf (asset fehlt). CDN-Manifestation offen: Lauf 35270658104 failure (Workflow-Syntax fromJSON, nicht der Arm), Fix dc9291ad löste auto-dispatch aus (harvest-dispatch 35270851153 + harvest-Läufe); bei Erfolg sha256/Größe messen + phi/sources.φ-Block. X-Band-Recovery-Kette pending (Korpus trägt keinen X-Multiplier).
+
+kompiliert
+kandidat http://imbrium.mit.edu/LRORS/DATA/TRK/
+note LRO RSS raw tracking (Goddard Universal Tracking Data Format, 75-Byte-Records) — Formatdatei LRO_TRK.FMT gemessen http://imbrium.mit.edu/LRORS/LABEL/LRO_TRK.FMT (23513 B, HTTP 200; 29 Spalten: fixed lead 0x0D 0x0A 0x01, SIC=59, VID, SECONDS-of-year + MICROSECONDS, ANGLE_1/2 IEEE_REAL ×8.381903173e-8°, RTLT 48-bit in 1/256 ns, BIAS_DOPPLER 48-bit, AGC, TRANSMIT_FREQUENCY in 10s Hz, validity/sample-rate bits, tail 0x04); Doppler-Formel aus LRO_DESC_TRK.TXT (rate = −c(A−2.4e8)/B). Arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series + extract.rs-Dispatch lro_trk; Compiler tools/harvest/src/bin/lro_odf_compiler.rs (rekursive Listing /LRORS/DATA/TRK/); phi/harvest.φ-Block lro_trk (asset fehlt). CDN-Manifestation offen: harvest-dispatch feuert beim Push (asset fehlt), dann sha256/Größe messen + phi/sources.φ-Block.
+
+kompiliert
+kandidat https://noaa-goes16.s3.amazonaws.com/
+note GOES-16 ABI L1b RadC Manifest — shared Bucket-Index src/archivar/goes_abi/s3.rs (ListBucket ?prefix=ABI-L1b-RadC/&delimiter=/, HTTP 200 ohne Auth), ein M6-Full-Disk-Granule je Kanal aus der neuesten Stunde (Archiv endet 2025/097/18, gemessen 2026-09-17); Arm src/archivar/goes_abi.rs parse_bin + extract.rs-Dispatch goes_abi; Compiler tools/harvest/src/bin/goes16_abi_compiler.rs (tag noaa-goes16.s3.amazonaws.com). phi/harvest.φ-Block goes16_abi (asset fehlt). CDN-Manifestation offen: harvest-dispatch feuert beim Push, dann sha256/Größe messen + phi/sources.φ-Block.
