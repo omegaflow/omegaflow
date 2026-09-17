@@ -55,7 +55,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin swot_l2_lr_ssh_compiler -- \
             --prefix "${{ inputs.prefix }}" "${extra[@]}" --limit "${{ inputs.limit }}" \
             --out data/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "swot-cdn: swot_l2_lr_ssh.bin returned void" \
                  "swot_l2_lr_ssh_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

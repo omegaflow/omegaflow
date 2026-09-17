@@ -40,7 +40,7 @@ jobs:
           done
           jq -s 'add' kernels/wds_c*.json > kernels/wds.json
           gh release upload ssd.jpl.nasa.gov kernels/wds.json --clobber --repo omegaflow/sources \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: wds returned void" \
                  "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

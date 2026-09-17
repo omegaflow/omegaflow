@@ -40,7 +40,7 @@ jobs:
           done
           jq -s 'add' kernels/mktypes_c*.json > kernels/mktypes.json
           gh release upload ssd.jpl.nasa.gov kernels/mktypes.json --clobber --repo omegaflow/sources \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: mktypes returned void" \
                  "mktypes chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

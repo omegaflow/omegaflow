@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/gk2a.nc \
             https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/202302/16/00/gk2a_ami_le1b_ir087_fd020ge_202302160000.nc \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gk2a-cdn: the AMI L1b granule returned void" \
                  "curl on noaa-gk2a-pds.s3.amazonaws.com did not reach the granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the AMI radiance record and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin gk2a_ami_compiler -- \
             --input kernels/gk2a.nc \
             --out gk2a_ami_rad.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gk2a-cdn: gk2a_ami_rad.bin returned void" \
                  "gk2a_ami_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

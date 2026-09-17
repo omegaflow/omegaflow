@@ -37,18 +37,18 @@ jobs:
       - name: Compile the INPOP19a bins (with body-fixed orientation) and upload
         run: |
           curl -sfL -o inpop19a_spice.tar.gz https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "inpop-epm-cdn: the inpop19a spice tar returned void" \
                  "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin inpop_compiler -- inpop19a_spice.tar.gz --ci-mode
       - name: Compile the EPM2021 bins (with body-fixed orientation) and upload
         run: |
           curl -sfL -o epm2021.bsp https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "inpop-epm-cdn: the epm2021 bsp returned void" \
                  "curl on ftp.iaaras.ru did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           echo "epm2021.bsp sha256: $(sha256sum epm2021.bsp | cut -d' ' -f1)"
           echo "epm2021.bsp bytes: $(stat -c%s epm2021.bsp)"
           cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --ci-mode
