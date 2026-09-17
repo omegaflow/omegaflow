@@ -336,7 +336,6 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         url = url.replace(&k, &v);
     }
     let url = resolve_secret(&url, params.env);
-    let url = url.replace("ZZ", "Z").replace("  ", " ");
     let headers = render_headers(&src.headers, params.env);
     let raw = if params.fetchone {
         fetch_one(&url, None, &headers, src.ttl, Some(params.now))
