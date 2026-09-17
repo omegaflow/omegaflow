@@ -2125,6 +2125,9 @@ pub fn main_flow() {
                     | "flac"
                     | "bidsleep"
                     | "bison_velocity"
+                    | "cassini_tnf"
+                    | "maven_tnf"
+                    | "dart_tnf"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
