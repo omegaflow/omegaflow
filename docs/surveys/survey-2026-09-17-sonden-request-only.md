@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: f38c019a5d4762f63268be31136afd278fb9bf2f9649434afa76cc168e5cf8db
+  sha256: 1bc3d58bbe9396377fc10eaa7cc8a446df9292286aa6ef4df82b7a70c1b20fd6
   status: live
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -34,8 +34,13 @@ kein Wert abgeleitet, keine Zahl re-deriviert.
   Reduced Venus-Daten, **nicht** die 762 Tapes.
 - **Juno — post-EFB OCRU:** `atmos.nmsu.edu/PDS/data/jnogrv_0001/` (PDS3
   `JNOGRV_0001`) — merged ODFs `2013_postefb`/`2014`/`2015`/`2016`; früheste
-  `GRV_OCRU_2013284_1527XMMMC005V01.ODF` (22 982 400 B). Der Bestand steht als
-  `juno_odf.bin`; Abgleich Ernte↔Bestand offen.
+  `GRV_OCRU_2013284_1527XMMMC005V01.ODF` (22 982 400 B). Abgleich geschlossen
+  (gemessen 2026-09-17): der OCRU-Bestand ist 21 `.ODF` (2013-284…2016-137) und
+  der eigene Ernte-Arm `--volume jnogrv_0001 --out …/juno_ocru_odf.bin`
+  (`planetary-odf-cdn.yml`); `juno_odf.bin` trägt dagegen die disjunkte
+  JUGR-Serie `jnogrv_1001` (2016-185…2017-244). Die Manifestation von
+  `juno_ocru_odf.bin` + `sources.φ`-Block liegt bei der ernte-Linie
+  (`handover-2026-09-17-ernte-folge66.md:99`).
 - **Pioneer 10 — ATDF (Kontrast, nicht eines der vier):**
   `spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/`
   — `pioneer10_doppler_tracking_SC_23.asc` (63 MB, ASCII-Kopf `ORBIT DATA DUMP`,
