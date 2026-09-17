@@ -1,9 +1,5 @@
 name: noaa-ghcn-allstations-cdn
 
-concurrency:
-  group: noaa-ghcn-assets
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
     inputs:
@@ -29,6 +25,9 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   harvest:
+    concurrency:
+      group: noaa-ghcn-assets-${{ inputs.year }}-${{ inputs.month }}-${{ matrix.shard }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 360
     strategy:
