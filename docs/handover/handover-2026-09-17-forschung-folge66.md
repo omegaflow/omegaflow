@@ -3,7 +3,7 @@
   session: Forschung-Folge 66
   class: handover
   date: 2026-09-17
-  sha256: b4f90fa10bc4f91161ee46add386c0248bf0c4371fc412f8d05684d4ab7c10e2
+  sha256: f96430a0fca3b0af1cd699e864d9b6b6f6074d4932b95e20f830f386eb774b1e
   status: live
 -->
 # Handover — Forschung-Folge 66 (2026-09-17)
@@ -51,10 +51,12 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   erweitert (resid-Dominant im fsky-Gitter und umgekehrt: `cross_rank`/`xrank_line`,
   Call-Sites CELL CENSUS + CROSS) und um die **r[2]-LS-Sektion**
   (`=== REFERENCE r[2] LS — st63 lt10 1992 (fsky-fine cells) ===`); `Field::Ref`
-  + `--field ref`. `cargo check` mit `RUSTFLAGS=-Dwarnings` grün. (Schritt:
-  commit+push → `gh workflow run pioneer-cell-census.yml` → `pioneer-cell-census.txt`
-  einmal lesen (`gh run download`), Kreuz-Rang + r[2]-Peak gegen die Zwei-Arm-Frage
-  deuten — sub-dominant vorhanden ⇔ Um-Ranken, absent ⇔ in der NOCC-Kette erzeugt.)
+  + `--field ref`. `cargo check` mit `RUSTFLAGS=-Dwarnings` grün. Dispatch nach Push
+  gemessen: `gh workflow run pioneer-cell-census.yml` → Lauf **`35266366575`**
+  (queued, 2026-09-17T19:41Z; Artefakt `pioneer-cell-census`). (Schritt: Lauf einmal
+  lesen — `ci_manage view 35266366575`, dann `gh run download 35266366575` und
+  `pioneer-cell-census.txt` —, Kreuz-Rang + r[2]-Peak gegen die Zwei-Arm-Frage
+  deuten: sub-dominant vorhanden ⇔ Um-Ranken, absent ⇔ in der NOCC-Kette erzeugt.)
 - Bei mehrdeutigem Kreuz-Rang-Befund: `research-max` (Klasse „ODP-Stufen-Zuordnung",
   Sieger registriert).
 
