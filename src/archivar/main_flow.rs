@@ -2134,6 +2134,7 @@ pub fn main_flow() {
                     | "mariner_occlt"
                     | "dart_tnf"
                     | "ulysses_atdf"
+                    | "ulysses_atdf_x"
                     | "lro_trk"
             ) {
                 let url = archive.sources[i].url.clone();
