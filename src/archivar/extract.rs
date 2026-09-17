@@ -47,7 +47,14 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "odyssey_odf" => odf::parse_series(bytes),
         "messenger_odf" => odf::parse_series(bytes),
         "mars_express_odf" => odf::parse_series(bytes),
-        "rosetta_odf" => odf::parse_series(bytes),
+        "rosetta_odf" => ifms_agc::parse_series(bytes).map(|rows| {
+            let mut out = Vec::with_capacity(rows.len() * 2);
+            for (t, level, polar) in rows {
+                out.push((t, level, ifms_agc::COMP_CARRIER_LEVEL));
+                out.push((t, polar, ifms_agc::COMP_POLAR_ANGLE));
+            }
+            out
+        }),
         "vex_odf" => odf::parse_series(bytes),
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
@@ -235,7 +242,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             _ => None,
         },
         "rosetta_odf" => match comp {
-            odf::COMP_OBSERVABLE => Some("rosetta_odf_observable_hz"),
+            ifms_agc::COMP_CARRIER_LEVEL => Some("rosetta_odf_carrier_level_dbm"),
+            ifms_agc::COMP_POLAR_ANGLE => Some("rosetta_odf_polar_angle_cycles"),
             _ => None,
         },
         "vex_odf" => match comp {
