@@ -3,7 +3,7 @@
   session: Ernte-Folge 68
   class: handover
   date: 2026-09-17
-  sha256: 52d37cac3591c16b8f8ae2500cd295464397ea986380bf84e225d47a476d6271
+  sha256: 921ce1d63f2d131d0eec242a485c0f822159e9e9d5282ca2179da56928e0fdee
   status: live
 -->
 # Handover — Ernte-Folge 68 (2026-09-17)
@@ -50,8 +50,11 @@ Löschen vor Parität).
 - **Ungelaufene Pfade, `pending`** — erster echter Beweis = absent-Assets-Atom:
   `fehlt → Dispatch → Gate-skip`; das Idempotenz-Gate selbst (`gh release view
   --repo omegaflow/sources pds-ppi.igpp.ucla.edu` + pattern-grep) ist nie
-  gelaufen; der force-Lauf; die Void-Wickelung. (Schritt: absent-Asset
-  registrieren, dann je `ci_manage view <id>` einmal.)
+  gelaufen; der force-Lauf; die Void-Wickelung. Die present-Kette läuft gerade
+  (beim Close `queued`): `harvest-dispatch` `35264838482` (vom Push `7ae68c34`)
+  und `harvest` `35264854799` (`-f format=maven_tnf`) — Status `wartend`
+  (Auslöser: Lauf-Ende). (Schritt: absent-Asset registrieren, dann je
+  `gh run view <id>` einmal.)
 - **Zweiter Zeuge prüft nur ∃ eines pattern-matchenden Assets, nicht die
   Shard-Vollständigkeit** (`shard 3`). (Schritt: Zeuge vergleicht Asset-Zahl mit
   dem `shard`-Feld — Shard-Politik Wand 2³¹ B / Budget 2³⁰ B.)
@@ -61,18 +64,23 @@ Löschen vor Parität).
 - **`timeout-minutes: 240`** am ersten echten Compile-Lauf messen und justieren.
   (Schritt: erster absent-Asset-Compile-Lauf.)
 
-## CDN-Register-Schuld — Dispatches laufen
+## CDN-Register-Schuld — Dispatches gemessen
 
-- **Fünf Dispatches nach dem Fix-Commit `5f9cd61b`** (alle Fixes committet,
-  `git status` sauber in den Compiler-Dateien): vlass-tap `35251315622`,
-  dl3-hess `35251318800`, maxi `35251322353`, gedi `35251325598`,
-  icesat2 `35251329184`. Status `wartend` (Auslöser: Lauf-Ende). (Schritt: bei
-  success neue `url`/`sha256`-Zeilen in `phi/sources.φ` — CDN-Manifestationspflicht;
-  `ci_manage view <id>` einmal, kein Poll.)
-- **`rosetta_odf` `35231817955`** (planetary-odf-cdn) `pending`, **`demeter-cdn`
-  `35228716483`** `in_progress` (updated 13:47Z) — beide nicht abgeschlossen,
-  kein Erfolg/Fehlschlag messbar. Status `wartend` (Auslöser: Lauf-Ende).
-  (Schritt bei demeter-success: 77 `demeter_isl`-`url`+`sha256`-Zeilen + Felder
+- **Drei Dispatches success** (Fix-Commit `5f9cd61b`): vlass-tap `35251315622`,
+  dl3-skymap-hess `35251318800`, maxi `35251322353`. (Schritt: neue
+  `url`/`sha256`-Zeilen in `phi/sources.φ`, soweit das Asset geändert wurde —
+  CDN-Manifestationspflicht; `grind-flash`.)
+- **gedi + icesat2 + swot: protected-Bucket-403** — gedi-cdn `35251353969`
+  (attempt 2) failure: S3-Listing `lp-prod-protected?prefix=GEDI02_A.002/GEDI02_A_2025190`
+  → `curl (22) … 403` → void; icesat2-cdn `35251356600` (attempt 2) failure:
+  `nsidc-cumulus-prod-protected?prefix=ATLAS/ATL03/007/2026/05/31/` → 403 → void;
+  swot-cdn `35251359490` failure. Der Granule-/Slash-Date-/protected-first-Fix
+  reicht nicht — die protected NASA-S3-Endpoints brauchen EDL-Token-Autorisierung.
+  (Schritt: EDL-Token für die drei protected Buckets messen — `research-max`.)
+- **`rosetta_odf` `35231817955`** (planetary-odf-cdn) `in_progress` (updated 18:08Z),
+  **`demeter-cdn` `35228716483`** `in_progress` (updated 13:47Z, über 5 h auf
+  `demeter-residential`). Status `wartend` (Auslöser: Lauf-Ende). (Schritt bei
+  demeter-success: 77 `demeter_isl`-`url`+`sha256`-Zeilen + Felder
   `demeter_isl_{orbit_count,ne_cm3,ni_cm3,te_k,vf_v,vi0_ms}`, `ttl 604800` ans
   Ende `phi/sources.φ`.)
 - **`swot_l2_lr_ssh`** — der Reorder reicht nicht; credentialisierte (SigV4)
