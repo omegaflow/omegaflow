@@ -24,7 +24,7 @@ fn latest_hour_prefix() -> Option<String> {
 }
 
 fn channel_index(name: &str) -> Option<usize> {
-    let p = name.find("_M6C")? + 4;
+    let p = name.find("-M6C")? + 4;
     let digits = name.get(p..p + 2)?;
     let n = digits.parse::<usize>().ok()?;
     if (1..=CHANNELS).contains(&n) {
