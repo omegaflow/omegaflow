@@ -39,7 +39,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin icesat2_atl03_compiler -- \
             --day "$day" --limit 2 --beams 6 \
             --out data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "icesat2-cdn: icesat2_atl03.bin returned void" \
                  "icesat2_atl03_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

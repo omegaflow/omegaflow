@@ -22,7 +22,7 @@ jobs:
             --id PANGAEA.758961 \
             --out pangaea_758961.json \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: pangaea_758961 returned void" \
                  "pangaea_758961 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

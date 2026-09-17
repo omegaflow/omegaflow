@@ -30,10 +30,10 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/brookscamp_0-0-0-0.laz \
             https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "las-cdn: AK_BrooksCamp_2012 0-0-0-0.laz returned void" \
                  "curl on usgs-lidar-public.s3.amazonaws.com did not reach the EPT root tile. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compiler tests
         run: cargo test -p omegaflow-harvest --release --bin las_compiler
       - name: Compile the ICRS point samples and upload to CDN
@@ -42,7 +42,7 @@ jobs:
             --input kernels/brookscamp_0-0-0-0.laz \
             --out las_brooks_camp_2012.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "las-cdn: las_brooks_camp_2012.bin returned void" \
                  "las compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

@@ -23,9 +23,9 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin extinction_curves_compiler -- \
             --out extinction_curves.json \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: extinction_curves returned void" \
                  "extinction_curves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           sha256sum extinction_curves.json | tee extinction_curves.json.sha256
           gh release upload ssd.jpl.nasa.gov extinction_curves.json.sha256 --repo omegaflow/sources --clobber

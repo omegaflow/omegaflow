@@ -52,7 +52,7 @@ jobs:
             --window-start "$window_start" --window-end "$window_end" \
             --stations "${{ inputs.stations }}" --limit "${{ inputs.limit }}" \
             "${extra[@]}" --out data/www.ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "noaa-cdo-cdn: noaa_cdo_ghcnd_tmax.bin returned void" \
                  "noaa_cdo_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
