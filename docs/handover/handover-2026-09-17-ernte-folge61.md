@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: e87bfa74daa771d6ec0c36c745038dcb1763dff6b9c15a628dc1161c2d258348
+  sha256: e3a8a460deb7e1bb7d6dc4b00c3ede8ca8029c758dcd1a2df1190dbfec8c4240
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -29,9 +29,9 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## MAVEN TNF — Chunking gebaut, Re-Dispatch + Registrierung offen (härtester undatiert)
+## MAVEN TNF — Zeit-Anomalie gefixt, Re-Dispatch + Registrierung offen (härtester undatiert)
 
-- Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). Fix (diese Session, `cargo check` clean): `tools/harvest/src/bin/maven_tnf_compiler.rs` schardet über `odf::podf_shard_ranges`/`odf::PODF_SHARD_BUDGET`/`odf::podf_shard_name` (Muster `mro_odf_compiler.rs:142–219`) → `maven_tnf_t<lo>_<hi>.bin`; `.github/workflows/maven-tnf-cdn.yml` idempotent auf `^maven_tnf(\.bin|_t)`. (Dispatch `35188036501` läuft auf HEAD `8a38932d`. Schritt: `gh run view 35188036501`; bei success die vom Compiler gedruckten `url`/`format maven_tnf`/`field ul_phase_cycles …`-Zeilen ans Ende von `phi/sources.φ`.)
+- Lauf `35188036501` success (Chunking): 8 Shards `maven_tnf_t…bin` auf `pds-ppi.igpp.ucla.edu` — **aber 4/8 mit unphysikalischem `tdb ≈ 4.6e11`** (der Lauf predatet `f28cbf76` DT0-Pin und lief über alle TNF-Formate). Ursache gemessen (diese Session): DT16/DT17-SFDUs (sekundärer CHDO-Typ 134 „derived") tragen den Zeitstempel bei Offset **44**, DT0/DT1 (132/133) bei **48**; `read_tnf_sfdu` las pauschal 48 → `year=16624` → `tdb≈4.6e11`. Fix `odf.rs`: `tnf_time_tag_offset` leitet den Offset aus `secondary_chdo_type` ab + DT16-Test; `cargo check --all-targets` clean. (Schritt: nach Push die 8 alten Shards löschen — `gh release delete-asset pds-ppi.igpp.ucla.edu <name> -R omegaflow/sources` — sonst überspringt die Idempotenz `^maven_tnf(\.bin|_t)` den Re-Dispatch; dann `gh workflow run maven-tnf-cdn.yml`; bei success die `sha256`-Zeilen + Blöcke `maven_tnf` für die neuen DT0-Shards ans Ende von `phi/sources.φ`.)
 
 ## Mariner 10 PSPA-00316 — Compiler + Parser gebaut, Dispatch + Registrierung offen
 
@@ -56,7 +56,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `src/archivar/{extract,ifms_agc,tests,units}.rs`, `phi/sources.φ` (Rosetta-Feldzeilen), dieses Handover — Juno/Budget/Mariner stehen in `7a979d9f`/`3e1bc249`/`c5e5c46f`.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `src/archivar/odf.rs` (TNF-Zeit-Offset), dieses Handover — Juno/Rosetta/Budget/Mariner stehen in `7a979d9f`/`d120be4c`/`3e1bc249`/`c5e5c46f`.)
 
 ## Abschluss
 
