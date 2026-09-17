@@ -1547,7 +1547,10 @@ mod tests {
     fn shard_overlap_is_refused() {
         let kept = refuse_shard_overlaps(vec![
             shard(URL_A, "odyssey_odf"),
-            shard("https://cdn.example/x/odyssey_odf_t750000000_850000000.bin", "odyssey_odf"),
+            shard(
+                "https://cdn.example/x/odyssey_odf_t750000000_850000000.bin",
+                "odyssey_odf",
+            ),
         ]);
         assert_eq!(kept.len(), 1);
         assert_eq!(kept[0].url, URL_A);
@@ -1575,7 +1578,10 @@ mod tests {
     fn shard_identical_ranges_are_refused() {
         let kept = refuse_shard_overlaps(vec![
             shard(URL_A, "odyssey_odf"),
-            shard("https://cdn.example/x/odyssey_odf_t700000000_800000000_1.bin", "odyssey_odf"),
+            shard(
+                "https://cdn.example/x/odyssey_odf_t700000000_800000000_1.bin",
+                "odyssey_odf",
+            ),
         ]);
         assert_eq!(kept.len(), 1);
     }
@@ -1593,7 +1599,10 @@ mod tests {
     fn shard_of_a_different_name_is_not_compared() {
         let kept = refuse_shard_overlaps(vec![
             shard(URL_A, "odyssey_odf"),
-            shard("https://cdn.example/x/mro_odf_t700000000_800000000.bin", "mro_odf"),
+            shard(
+                "https://cdn.example/x/mro_odf_t700000000_800000000.bin",
+                "mro_odf",
+            ),
         ]);
         assert_eq!(kept.len(), 2);
     }

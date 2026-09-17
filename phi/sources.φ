@@ -6254,8 +6254,10 @@ sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
 ttl 86400
 
 url https://zenodo.org/records/8098323/files/data.zip
-format reference
-ttl 86400
+format kyoto_pressure
+at earth
+ttl 604800
+field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
 url https://zenodo.org/records/10620251/files/multimoon-1.0.zip
 format reference

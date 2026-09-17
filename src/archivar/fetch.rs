@@ -58,11 +58,7 @@ pub fn fetch_raw_with(
     }
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-S")
-        .arg("-f")
-        .arg("-L")
-        .arg("-g");
+    cmd.arg("-s").arg("-S").arg("-f").arg("-L").arg("-g");
     append_retry(&mut cmd, retry, 3);
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
@@ -111,11 +107,7 @@ pub fn fetch_raw(
 pub fn curl_base(retry: RetryPolicy, transfer_bound_s: u64, parallel_max: u8) -> Command {
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-S")
-        .arg("-f")
-        .arg("-L")
-        .arg("-g");
+    cmd.arg("-s").arg("-S").arg("-f").arg("-L").arg("-g");
     append_retry(&mut cmd, retry, 5);
     if parallel_max > 0 {
         cmd.arg("--parallel")
@@ -254,10 +246,7 @@ pub fn fetch_raw_bytes_post_with(
 ) -> Option<Vec<u8>> {
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-S")
-        .arg("-f")
-        .arg("-L");
+    cmd.arg("-s").arg("-S").arg("-f").arg("-L");
     append_retry(&mut cmd, retry, 5);
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
