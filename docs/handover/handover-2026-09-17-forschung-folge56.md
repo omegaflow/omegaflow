@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: b809156e1d84e348978553c5d057123d324c96f97784d1e42d59179d25323ea5
+  sha256: 0065ea2e22ad20d867a24ffa9a97ecf5750073600d40b7659f7b750691874cc5
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -130,6 +130,21 @@ Weiter blockiert (echt): externe Mail (Voyager/Viking/Juno-pre-EFB/Mariner-762-T
 CSES (Freigabe ~07.10.), Lasair (404, WV 18.09.), CTBTO (404), AQS (Parser-Gap),
 Babamul/SuperDARN-Globus (Account), Tibet-Abfluss (kommerziell), JWST/Sentinel-Assets,
 h0-TAP (Reichweite), GOES-16/ERI/ONC.
+
+## Legacy-Konzepte — Rat-Erster-Atom: Silence-Map-Probe
+
+- Das Survey `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` hält die
+  verlorenen, erhaltenswerten Legacy-Konzepte fest; der Rat (2026-09-17) bestätigt den
+  Befund und nennt drei Konfude: vC-Semantik L:53 ungemessen (exp vs. tanh invertiert);
+  Schicht-Frage (Cone-Gate = Archivar, ω-Loop-Faktor = Mathematikerin/WGSL); Minkowski
+  dupliziert den Cone-Gate (Zusatzwert ungemessen).
+- **Erster Atom (Rat): Silence-Map-Probe** — `tools/measure/src/bin/silence_map_probe.rs`:
+  erwartete vs. leere Zellen unter Modellparametern, Null-Kalibrierung als Spiegel der
+  FP/FN/Symmetrie-Gates von `te.rs`. (Schritt: die Probe bauen; jede Renderer-Form vor
+  dem Befund ist gestrichen — ein gerendertes Feld der Absenz wäre Fabrikation.)
+- Top-3 zurück: Silence Map, **Certainty** (Schritt 1: vC-Definition L:53 im Legacy-Klon
+  `/tmp/opencode/of-legacy` messen), **TDA/Betti-0** (~100 Zeilen single-linkage über
+  `te.rs`-Embeddings). Minkowski als 4. (Delta-Probe mit/ohne ds²). Nostr bleibt hinten.
 
 ## Sonden request-only — Antworten offen (undatiert)
 
