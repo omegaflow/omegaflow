@@ -18,61 +18,63 @@ log() { echo "[ci_watchdog] $(date -Is) $*" >>"$LOG"; }
 seen() { grep -qx "$1" "$SEEN" 2>/dev/null; }
 mark() { echo "$1" >>"$SEEN"; }
 
-# Median duration (s) of the last <=10 completed runs of one workflow.
+# Median duration (s) of the last <=10 *successful* runs of one workflow,
+# read from the single poll table. Failures are fast and would poison the
+# floor; a run past 2x the success median is the one that does not flow.
 median_duration() {
-  local wf="$1" d
-  d=$($CI list --limit 60 2>/dev/null | awk -F'\t' -v w="$wf" '
-    $5==w && $6!="" && $6!="?" && $7!="" && $7!="?" {
+  local wf="$1"
+  printf '%s\n' "$rows" | awk -F'\t' -v w="$wf" '
+    $5==w && $3=="success" && $6!="" && $6!="?" && $7!="" && $7!="?" {
       cmd="date -d \""$6"\" +%s"; cmd|getline s; close(cmd);
       cmd="date -d \""$7"\" +%s"; cmd|getline e; close(cmd);
       if (e>s) print e-s
-    }' | head -10 | sort -n)
-  [ -n "$d" ] || return 1
-  printf '%s\n' "$d" | awk '{a[NR]=$1} END{print a[int((NR+1)/2)]}'
+    }' | head -10 | sort -n |
+  awk '{a[NR]=$1} END{if(NR>0) print a[int((NR+1)/2)]}'
 }
 
 poll_once() {
-  local now rows
+  local now
   now=$(date +%s)
   rows=$($CI list --limit 60 2>/dev/null) || { log "list void — no action"; return; }
 
-  # 1. cancel: an in_progress run past 2x its workflow's median duration.
+  # 1. cancel: an in_progress run past 2x its workflow's successful median.
+  #    No successful history -> report, never guess a floor.
   printf '%s\n' "$rows" | awk -F'\t' '$2=="in_progress"{print $1"\t"$5"\t"$6}' |
   while IFS=$'\t' read -r id wf started; do
-    [ -n "$id" ] || continue
+    [ -n "$id" ] && [ -n "$wf" ] && [ -n "$started" ] && [ "$started" != "?" ] || continue
     seen "$id" && continue
-    [ -n "$wf" ] && [ -n "$started" ] && [ "$started" != "?" ] || continue
     local s med dur
     s=$(date -d "$started" +%s 2>/dev/null) || continue
-    if ! med=$(median_duration "$wf"); then
-      log "run $id in_progress, no history for $wf — no action"
+    med=$(median_duration "$wf")
+    if [ -z "$med" ]; then
+      log "run $id in_progress ($wf), no successful history — no action"
       mark "$id"
       continue
     fi
     dur=$(( now - s ))
     if [ "$dur" -gt $(( 2 * med )) ]; then
-      log "cancel $id ($wf): ${dur}s > 2x median ${med}s"
+      log "cancel $id ($wf): ${dur}s > 2x successful median ${med}s"
       $CI cancel "$id" >>"$LOG" 2>&1
       mark "$id"
+      sleep 1
     fi
   done
 
-  # 2. cancel: a queued ghost-lock — its workflow has no in_progress run left.
-  printf '%s\n' "$rows" | awk -F'\t' '$2=="queued"{print $1"\t"$5}' |
-  while IFS=$'\t' read -r id wf; do
-    [ -n "$id" ] && [ -n "$wf" ] || continue
+  # 2. queued runs: report only. A queued follower is indistinguishable from
+  #    a runner/concurrency queue in the list API — a cancel here would kill
+  #    a correctly waiting run, so the measured state is logged, not acted on.
+  printf '%s\n' "$rows" | awk -F'\t' '$2=="queued"{print $1"\t"$5"\t"$6}' |
+  while IFS=$'\t' read -r id wf started; do
+    [ -n "$id" ] || continue
     seen "$id" && continue
-    if printf '%s\n' "$rows" | awk -F'\t' -v w="$wf" '$2=="in_progress" && $5==w{found=1} END{exit !found}'; then
-      continue
-    fi
-    log "cancel $id ($wf): queued ghost-lock, no in_progress blocker"
-    $CI cancel "$id" >>"$LOG" 2>&1
+    log "queued $id ($wf) since ${started:-?} — reported, no action"
     mark "$id"
   done
 
   # 3. rerun: a failure at attempt 1 with a measured transient cause only —
   #    never an assertion (red is the null holding not), never a cap class.
   printf '%s\n' "$rows" | awk -F'\t' '$3=="failure" && $4=="1"{print $1"\t"$5}' |
+  head -8 |
   while IFS=$'\t' read -r id wf; do
     [ -n "$id" ] || continue
     seen "$id" && continue
@@ -87,6 +89,7 @@ poll_once() {
       log "rerun $id ($wf): measured transient cause"
       $CI rerun "$id" >>"$LOG" 2>&1
       mark "$id"
+      sleep 1
     else
       log "no rerun $id ($wf): cause not measured transient"
       mark "$id"
