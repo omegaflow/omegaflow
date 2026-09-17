@@ -185,11 +185,20 @@ fn record_line(text: &str) -> Option<(String, String)> {
 
 fn mime_plaintext(raw: &str) -> String {
     let (plain, html) = collect_text(raw);
-    if plain.is_empty() {
+    let text = if plain.is_empty() {
         strip_html(&html)
     } else {
         plain
+    };
+    if !text.is_empty() {
+        return text;
     }
+    let body = raw
+        .split("\r\n\r\n")
+        .nth(1)
+        .or_else(|| raw.split("\n\n").nth(1))
+        .unwrap_or(raw);
+    strip_html(body)
 }
 
 fn strip_html(s: &str) -> String {
@@ -448,6 +457,17 @@ mod tests {
             "<id-1@x.io>"
         ));
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn plaintext_falls_back_to_headerless_body() {
+        assert_eq!(mime_plaintext("<p>hello <b>world</b></p>"), "hello world");
+    }
+
+    #[test]
+    fn plaintext_falls_back_when_multipart_boundary_absent() {
+        let raw = "Content-Type: multipart/mixed\r\n\r\nsome content";
+        assert_eq!(mime_plaintext(raw), "some content");
     }
 
     #[test]
