@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: 38731fadc417ad52ddada2919fc05e896b0ec2b078a2b7626370a1c9131636f4
+  sha256: 6a300bb2803bafaffb88e1de32af9424d808b977b967ee31c17aab12db80c28e
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -84,6 +84,48 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   nicht durch einen format-Lauf gemessen. (Schritt: mit dem ci-check-Fix läuft der
   nächste Lauf durch — `gh run view` des ci-check auf dem gepushten SHA; fremde Dateien
   gehören ihren Linien.)
+
+## Tonga-Blatt — benannte Pendings (§6)
+
+- Drei im Blatt `docs/paper/tonga-lamb-crosscheck.md` §6 benannte Grenzen, jetzt als
+  eigene Punkte (kein Run-Warten, echte Forschung):
+  - **Ein Ohr** — die Kopplung 3.48 hPa/m ist an einer Station (Kwajalein) gelesen; ein
+    zweites co-lokales Luft+Wasser-Paar fehlt. (Schritt: NOAA-CO-OPS-Stationen mit
+    `air_pressure`+`water_level` im Lamb-Fenster sondieren — `archive_search`, CO-OPS-API.)
+  - **BGR-Fensterbreite** — die direkte Detektion liegt 1360 s nach der Vorhersage; die
+    Probe nimmt die nächste Detektion, nicht eine matched-filter/Array-Slowness-Ankunft.
+    (Schritt: den BGR-Bin auf Slowness/Azimut-Solution prüfen — `tools/measure`, `geo.rs`.)
+  - **Kyoto-Baseline** — die Kyoto-Extrema sind ohne Vor-Ankunfts-Baseline gelesen; eine
+    Mehr-Tages-Baseline fehlt. (Schritt: `kyoto_pressure.bin` über mehrere Tage gegen die
+    Ankunft legen — der Compiler trägt alle Member.)
+
+## Docs-Pendings — Sichtung 2026-09-17 (jetzt machbar)
+
+Sichtung von `docs/{concepts,paper,surveys}/` gegen die Entblockungen dieser Session
+(ODF-Streaming, CDN-Concurrency, ci-check, Kyoto). Je Punkt die Fundstelle (read site)
++ nächster Schritt; die Blockade-Attribution ist die Sichtung, nicht neu gemessen.
+
+- `docs/surveys/survey-2026-09-17-sonden-request-only.md:38` — Juno: Abgleich
+  `juno_odf.bin` (post-EFB OCRU, PDS3 `JNOGRV_0001`) ↔ Bestand offen. (Schritt: die
+  zwei merged-ODF-Stände gegen die Ernte legen.)
+- `…:68–69` — Pioneer-ATDF dtype-12-Arm (`src/archivar/atdf.rs:503/636` hält nur
+  dtype 1|2; `pioneer10_doppler_tracking_SC_23.asc` trägt DTYPE 12/13) + Juno-OCRU.
+  (Schritt: dtype-12-Zweig mit gemessener Semantik bauen, dann Re-Harvest-Abgleich.)
+- `docs/concepts/positive-maske.md:76` — Galileo-ODF Format 1 vs 2 ungemessen (kein
+  lokales `galileo_odf.bin`). (Schritt: über `planetary-odf-cdn` ernten, Format messen.)
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md:57` — SuperDARN
+  FITACF: erster CI-Manifest-Lauf offen. (Schritt: SuperDARN-CDN dispatchen.)
+- `…:56` — NEXRAD Level II: Feld-System-Reader + CI-Manifest offen. (Schritt: Manifest
+  dispatchen; Reader-Stand messen.)
+- `docs/concepts/die-akteure-im-boden-und-wasser.md:68` — ETOPO1-Gitter (395 MB)
+  manifestieren. (Schritt: Manifest-Workflow dispatchen.)
+- `docs/surveys/survey-2026-09-13-weberin-quellen.md:188` — WWLLN netCDF: Compiler nur
+  Gerüst (`netcdf.rs`); Manifest offen. (Schritt: Compiler fertigstellen, dann Manifest.)
+- `docs/surveys/survey-2026-09-16-sonden-flotte.md:57–59` — Ulysses/BepiColombo/LRO:
+  kein Register-Eintrag. (Schritt: `phi/sources.φ`-Eintrag + CDN.)
+- Weiter blockiert (nicht durch die Session entblockt): `…kapitulationen…:51–55`
+  GOES/Himawari (GSICS-Kalibrierung), GDP (`.zarr`), OCS (`.tif`-LZW), WOD (SOHM) —
+  Parser/Kalibrierung; `…:65–66` LASzip-Chunk-Dekoder; `…:63–64` AQS/Babamul (Key/Account).
 
 ## Sonden request-only — Antworten offen (undatiert)
 
