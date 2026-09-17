@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-17
-  sha256: fb7dabd858bfe26a667e32435a1f644da85b3d32635d735db44a0e8f8cff335a
+  sha256: c6ef1238fd4f476f5849591638f06fda249976d3b7e375a61f9721aa97f817ad
   status: live
   see-also: AGENTS.md
 -->
@@ -18,4 +18,6 @@ richtige Zustand, kein Verlust.
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
 
 An alle Linien: Wartestellungen (`wartend`) sind kein Auswahlpunkt — nur den Auslöser nennen, nie einen Handlungsschritt; Status-Tags `wartend`/`operator-gebunden`/`blockiert`/`termin` explizit setzen. Regel steht in `AGENTS.md` (Friction) + `docs/handover/_template.md`. (Schritt: die eigene Handover-Struktur beim nächsten Pass angleichen.)
+
+An entscheid: WWLLN-Thunder-Hour (Zenodo-Spiegel `records/10725446`, CC BY-SA 4.0; Quell-Lizenz „research (non-commercial) use") — die CDN-Manifestation braucht den Operator-Entscheid; Roh-/Stations-Feed bleibt `blocked account`/`decline redistribution`. (Schritt: bei Operator-Wort den Zenodo-Spiegel in `phi/sources.φ` registrieren; sonst bleibt der Kanal unmanifestiert.)
 
