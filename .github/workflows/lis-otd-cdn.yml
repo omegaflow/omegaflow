@@ -2,7 +2,7 @@ name: lis-otd-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
             --granule https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/otdlip_1995.104_daily.tar \
             --granule https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/otdlip_1995.105_daily.tar \
             --out lis_otd.bin --lsk kernels/naif0012.tls --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "lis-otd-cdn: lis_otd.bin returned void" \
                  "lis_otd_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

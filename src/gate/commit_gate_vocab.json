@@ -25,7 +25,8 @@
     ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"],
     ["CI_REFRESH_S", "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"],
     ["runs every 5 minutes", "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"],
-    ["5-Minuten-Takt", "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"]
+    ["5-Minuten-Takt", "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"],
+    ["|| bash .github/workflows/scripts/gh_issue_once.sh", "the bare `||`-swallow files an issue and exits 0, so a void harvest shows green — the invocation must be wrapped so the step fails (`|| { …; exit 1; }`)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -298,6 +299,9 @@
     "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;",
     "geokey_unconditional_geodetic_fallback": "geokey_epsg(&vlr.payload, PROJECTED_CS_TYPE_KEY).or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))",
     "tnf_format_gate": "if frame.format_code != 0 { continue; }",
+    "or_swallow_gh_issue": "cargo run --release -- --ci-mode || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"flatten: avo_rad returned void\\\" \\\"avo_rad compile returned void\\\" health",
+    "or_wrapped_gh_issue": "cargo run --release -- --ci-mode || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"flatten: avo_rad returned void\\\" \\\"avo_rad compile returned void\\\" health; exit 1; }",
+    "standalone_gh_issue": "if: failure()\nbash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"health: verify returned void\\\" \\\"verify job returned void\\\" health",
     "unstable_pointer_drift": "the mailbox line cites mail_ledger.φ:59,64 as its anchor",
     "unstable_pointer_offsite": "the register line mail_ledger.φ:59 is cited here"
   }

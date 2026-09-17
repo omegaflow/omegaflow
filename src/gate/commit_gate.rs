@@ -1651,6 +1651,27 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_bare_or_swallow_gh_issue_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(".github/workflows/x.yml", &fx("or_swallow_gh_issue"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_wrapped_and_standalone_gh_issue_pass() {
+        let mut g = test_gate();
+        for ok in [fx("or_wrapped_gh_issue"), fx("standalone_gh_issue")] {
+            let args = tool_args(".github/workflows/x.yml", &ok);
+            assert!(
+                g.check_tool_call("edit", &args).is_none(),
+                "clean fixture: {ok}"
+            );
+        }
+    }
+
+    #[test]
     fn fp_tool_unstable_pointer_blocked() {
         let mut g = test_gate();
         let args = tool_args(

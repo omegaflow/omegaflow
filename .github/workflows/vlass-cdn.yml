@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/sources_se.fits \
             https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/files/vault/cirada/continuum/vlass_data/sources_se.fits \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-cdn: sources_se.fits returned void" \
                  "curl on the CADC vault did not reach sources_se.fits (signed-redirect void). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the VLASS source records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin vlass_compiler -- \
             --input kernels/sources_se.fits \
             --out vlass_sources_se.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-cdn: vlass_sources_se.bin returned void" \
                  "vlass compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

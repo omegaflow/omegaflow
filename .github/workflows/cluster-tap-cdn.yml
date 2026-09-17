@@ -2,7 +2,7 @@ name: cluster-tap-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -57,10 +57,10 @@ jobs:
             --out mcxc_clusters.json \
             --release-tag tapvizier.cds.unistra.fr \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: mcxc_clusters returned void" \
                  "mcxc_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile PSZ2 cluster catalog and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
@@ -72,10 +72,10 @@ jobs:
             --out psz2_clusters.json \
             --release-tag tapvizier.cds.unistra.fr \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: psz2_clusters returned void" \
                  "psz2_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile Abell (ACO northern + southern) and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
@@ -93,7 +93,7 @@ jobs:
             --out abell_south.json
           jq -s add abell_north.json abell_south.json > abell_clusters.json
           gh release upload tapvizier.cds.unistra.fr abell_clusters.json --clobber --repo omegaflow/sources \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: abell_clusters returned void" \
                  "abell_clusters compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
