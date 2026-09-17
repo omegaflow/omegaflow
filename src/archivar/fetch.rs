@@ -879,38 +879,35 @@ pub fn http_code(url: &str, headers: &[(String, String)]) -> Option<u16> {
     s.trim().parse::<u16>().ok().filter(|c| *c > 0)
 }
 
-pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
-    const CI_REFRESH_S: u64 = 300;
-    let connect_t = CONNECT_BOUND_S;
+fn cdn_last_modified(url: &str) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-I")
         .arg("-L")
         .arg("-m")
-        .arg(connect_t.to_string());
+        .arg(CONNECT_BOUND_S.to_string());
     append_ca(&mut cmd);
-    cmd.arg(cdn_url);
-    let output = match cmd.output() {
-        Ok(o) => o,
-        Err(_) => return false,
-    };
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
     if !output.status.success() {
-        return false;
+        return None;
     }
     let head = String::from_utf8_lossy(&output.stdout).to_string();
-    let lm = match extract_header(&head, "last-modified") {
-        Some(v) => v,
-        None => return false,
+    extract_header(&head, "last-modified")
+}
+
+pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
+    const CI_REFRESH_S: u64 = 300;
+    let Some(lm) = cdn_last_modified(cdn_url) else {
+        return false;
     };
-    let asset_ts = match rfc1123_to_unix(&lm) {
-        Some(t) => t,
-        None => return false,
+    let Some(asset_ts) = rfc1123_to_unix(&lm) else {
+        return false;
     };
-    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs(),
-        Err(_) => return false,
+    let Ok(now) = SystemTime::now().duration_since(UNIX_EPOCH) else {
+        return false;
     };
-    now.saturating_sub(asset_ts) < ttl.max(CI_REFRESH_S)
+    now.as_secs().saturating_sub(asset_ts) < ttl.max(CI_REFRESH_S)
 }
 
 pub fn fetch_one(
@@ -1046,57 +1043,15 @@ pub fn write_epoch_stamp(path: &str, epoch: f64) {
     }
 }
 
-fn cdn_release_asset(url: &str) -> Option<(String, String)> {
-    const MARKER: &str = "/releases/download/";
-    let pos = url.find(MARKER)?;
-    let repo = url[..pos].strip_prefix("https://github.com/")?;
-    let rest = &url[pos + MARKER.len()..];
-    let mut seg = rest.split('/');
-    let netloc = seg.next()?;
-    let asset = seg.next_back()?;
-    if repo.is_empty() || netloc.is_empty() || asset.is_empty() {
-        return None;
-    }
-    let api = format!("https://api.github.com/repos/{repo}/releases/tags/{netloc}");
-    Some((api, asset.to_string()))
-}
-
-fn cdn_asset_updated_at_from_body(body: &str, asset: &str) -> Option<String> {
-    let json = parse_json(body)?;
-    let assets = match &json {
-        JsonVal::Obj(map) => map.get("assets")?,
-        _ => return None,
-    };
-    let arr = match assets {
-        JsonVal::Arr(a) => a,
-        _ => return None,
-    };
-    for a in arr {
-        let Some(name) = jstr(a, "name") else {
-            continue;
-        };
-        if name == asset {
-            return jstr(a, "updated_at");
-        }
-    }
-    None
-}
-
-fn cdn_asset_updated_at(url: &str) -> Option<String> {
-    let (api, asset) = cdn_release_asset(url)?;
-    let body = fetch_raw_probe(&api, None, &[])?;
-    cdn_asset_updated_at_from_body(&body, &asset)
-}
-
 fn cdn_stamp_path(path: &str) -> String {
     format!("{path}.cdn")
 }
 
 pub fn write_cdn_stamp(path: &str, url: &str) {
-    let Some(updated) = cdn_asset_updated_at(url) else {
+    let Some(lm) = cdn_last_modified(url) else {
         return;
     };
-    if std::fs::write(cdn_stamp_path(path), updated).is_err() {
+    if std::fs::write(cdn_stamp_path(path), lm).is_err() {
         eprintln!("cache {}: cdn stamp write void — recheck next cycle", path);
     }
 }
@@ -1105,10 +1060,10 @@ pub fn cache_fresh_cdn(path: &str, ttl: u64, url: &str) -> bool {
     if !cache_fresh(path, ttl) {
         return false;
     }
-    if cdn_release_asset(url).is_none() {
+    if !url.contains("/releases/download/") {
         return true;
     }
-    let Some(current) = cdn_asset_updated_at(url) else {
+    let Some(current) = cdn_last_modified(url) else {
         return true;
     };
     match std::fs::read_to_string(cdn_stamp_path(path)) {
@@ -1287,40 +1242,6 @@ mod cache_root_tests {
 #[cfg(test)]
 mod cdn_cache_tests {
     use super::*;
-
-    #[test]
-    fn cdn_release_asset_parses_the_release_shape() {
-        let url = "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
-        let (api, asset) = cdn_release_asset(url).unwrap();
-        assert_eq!(
-            api,
-            "https://api.github.com/repos/omegaflow/sources/releases/tags/www.sciencebase.gov"
-        );
-        assert_eq!(asset, "slab2_depth.bin");
-        assert!(cdn_release_asset("https://example.com/plain.bin").is_none());
-        assert!(
-            cdn_release_asset("https://github.com/omegaflow/sources/releases/download/").is_none()
-        );
-    }
-
-    #[test]
-    fn cdn_asset_updated_at_reads_only_the_matching_asset() {
-        let body = r#"{"assets":[
-            {"name":"igets.bin","updated_at":"2026-09-11T10:00:00Z"},
-            {"name":"slab2_depth.bin","updated_at":"2026-09-13T04:47:00Z"}
-        ]}"#;
-        assert_eq!(
-            cdn_asset_updated_at_from_body(body, "slab2_depth.bin").as_deref(),
-            Some("2026-09-13T04:47:00Z")
-        );
-        assert_eq!(
-            cdn_asset_updated_at_from_body(body, "igets.bin").as_deref(),
-            Some("2026-09-11T10:00:00Z")
-        );
-        assert!(cdn_asset_updated_at_from_body(body, "hinet.bin").is_none());
-        assert!(cdn_asset_updated_at_from_body(r#"{"assets":[]}"#, "x.bin").is_none());
-        assert!(cdn_asset_updated_at_from_body("not json", "x.bin").is_none());
-    }
 
     #[test]
     fn cache_fresh_cdn_falls_back_to_mtime_for_non_cdn_urls() {
