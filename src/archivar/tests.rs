@@ -4643,6 +4643,146 @@ fn test_settle_fetch_resets_voids_on_ok_and_caps_on_void() {
 }
 
 #[test]
+fn test_origin_clock_roundtrip_keeps_stale_verdict() {
+    let dir = std::env::temp_dir().join(format!("omegaflow_origin_clock_{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&dir);
+    let path = dir.join("origin_clock.φ").to_string_lossy().into_owned();
+    let mut clock = std::collections::HashMap::new();
+    clock.insert("https://example.com/a".to_string(), (1.0e9, 0));
+    clock.insert("https://example.com/b".to_string(), (1.0e9 - 30.0, 3));
+    super::save_origin_clock(&path, &clock);
+    let loaded = super::load_origin_clock(&path);
+    assert_eq!(loaded.len(), 2, "both clock rows survive the roundtrip");
+    for (url, (fetched, failures)) in &loaded {
+        let (orig_fetched, orig_failures) = clock.get(url).unwrap();
+        assert_eq!(*fetched, *orig_fetched, "fetched survives the roundtrip");
+        assert_eq!(*failures, *orig_failures, "failures survives the roundtrip");
+        for now in [1.0e9 - 60.0, 1.0e9, 1.0e9 + 1.0e3, 1.0e9 + 1.0e4] {
+            assert_eq!(
+                super::stale_after(*fetched, *failures, 60, now),
+                super::stale_after(*orig_fetched, *orig_failures, 60, now),
+                "the reloaded clock yields the identical stale verdict"
+            );
+        }
+    }
+    let missing = dir.join("never_written.φ").to_string_lossy().into_owned();
+    assert!(
+        super::load_origin_clock(&missing).is_empty(),
+        "an absent clock file loads absent"
+    );
+    let foreign = dir.join("foreign_version.φ").to_string_lossy().into_owned();
+    let _ = std::fs::write(&foreign, "origin_clock 2\n1.0e9 0 https://example.com/a\n");
+    assert!(
+        super::load_origin_clock(&foreign).is_empty(),
+        "a foreign header version loads absent"
+    );
+    let _ = std::fs::remove_file(&path);
+    let _ = std::fs::remove_file(&foreign);
+    let _ = std::fs::remove_dir(&dir);
+}
+
+fn rfc1123_from_unix(secs: u64) -> String {
+    let (y, m, d) = super::civil_date(secs);
+    let tod = secs % 86400;
+    let hh = tod / 3600;
+    let mm = (tod % 3600) / 60;
+    let ss = tod % 60;
+    let wd = (secs / 86400 + 4) % 7;
+    let weekdays = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
+    format!(
+        "{}, {:02} {} {} {:02}:{:02}:{:02} GMT",
+        weekdays[wd as usize],
+        d,
+        super::month_abbr(m),
+        y,
+        hh,
+        mm,
+        ss
+    )
+}
+
+fn local_http_head(last_modified: String, connections: usize) -> (String, std::thread::JoinHandle<()>) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let handle = std::thread::spawn(move || {
+        for _ in 0..connections {
+            if let Ok((mut stream, _)) = listener.accept() {
+                let mut buf = [0u8; 4096];
+                let _ = std::io::Read::read(&mut stream, &mut buf);
+                let response = format!(
+                    "HTTP/1.1 200 OK\r\nLast-Modified: {}\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                    last_modified
+                );
+                let _ = std::io::Write::write_all(&mut stream, response.as_bytes());
+            }
+        }
+    });
+    (format!("http://127.0.0.1:{}", port), handle)
+}
+
+#[test]
+fn test_cdn_fresh_uses_ttl_alone_without_floor() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let (under_url, under) = local_http_head(rfc1123_from_unix(now - 55), 1);
+    assert!(
+        super::cdn_fresh(&under_url, 60),
+        "an asset 55 s old is fresh under ttl 60 — the ttl alone gates"
+    );
+    under.join().unwrap();
+    let (over_url, over) = local_http_head(rfc1123_from_unix(now - 61), 1);
+    assert!(
+        !super::cdn_fresh(&over_url, 60),
+        "an asset 61 s old is stale under ttl 60 — no 300 s floor"
+    );
+    over.join().unwrap();
+}
+
+#[test]
+fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
+    let dir = std::env::temp_dir().join(format!("omegaflow_cdn_stamp_{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&dir);
+    let path = dir.join("asset.json").to_string_lossy().into_owned();
+    let _ = std::fs::write(&path, "payload");
+    assert!(
+        super::cache_fresh_cdn(&path, 3600, "https://cdn.example.org/x/asset.json"),
+        "a fresh local cache with a non-release URL is fresh — no CDN stamp read"
+    );
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let lm = rfc1123_from_unix(now - 500);
+    let (server, handle) = local_http_head(lm.clone(), 1);
+    let release_url = format!("{}/releases/download/v1/asset.json", server);
+    assert!(
+        !super::cache_fresh_cdn(&path, 3600, &release_url),
+        "a release-URL cache without a cdn stamp is not fresh"
+    );
+    handle.join().unwrap();
+    let (server2, handle2) = local_http_head(lm, 2);
+    let release_url2 = format!("{}/releases/download/v1/asset.json", server2);
+    super::write_cdn_stamp(&path, &release_url2);
+    assert!(
+        super::cache_fresh_cdn(&path, 3600, &release_url2),
+        "a release-URL cache whose cdn stamp equals the current last-modified is fresh"
+    );
+    handle2.join().unwrap();
+    let (server3, handle3) = local_http_head(rfc1123_from_unix(now - 400), 1);
+    let release_url3 = format!("{}/releases/download/v1/asset.json", server3);
+    assert!(
+        !super::cache_fresh_cdn(&path, 3600, &release_url3),
+        "a release-URL cache whose cdn stamp differs from the current last-modified is stale"
+    );
+    handle3.join().unwrap();
+    let _ = std::fs::remove_file(&path);
+    let _ = std::fs::remove_file(format!("{path}.cdn"));
+    let _ = std::fs::remove_dir(&dir);
+}
+
+#[test]
 fn test_anchor_bodies_have_ephemeris_sources() {
     let content = std::fs::read_to_string("phi/sources.φ").unwrap();
     let sources = super::parse_sources(&content);
