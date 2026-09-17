@@ -4,7 +4,9 @@ use omegaflow::odf;
 
 const DATA: &str = "https://atmos.nmsu.edu/pdsd/archive/data/";
 const NETLOC: &str = "atmos.nmsu.edu";
-const VOLUME_CODES: [&str; 8] = ["sroc", "enoc", "hygr", "tocc", "tbis", "iagr", "rhgr", "gwe"];
+const VOLUME_CODES: [&str; 8] = [
+    "sroc", "enoc", "hygr", "tocc", "tbis", "iagr", "rhgr", "gwe",
+];
 
 fn listing_names(text: &str) -> Vec<String> {
     let mut out = Vec::new();
@@ -63,7 +65,10 @@ fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
         }
         if name.ends_with('/') {
             let dir = name.trim_end_matches('/').to_ascii_lowercase();
-            if matches!(dir.as_str(), "index" | "calib" | "catalog" | "document" | "errata") {
+            if matches!(
+                dir.as_str(),
+                "index" | "calib" | "catalog" | "document" | "errata"
+            ) {
                 continue;
             }
             crawl(&format!("{url}{name}"), depth + 1, files);
