@@ -11,6 +11,9 @@ pub const DTYPE_TWOWAY_DOPPLER: i64 = 2;
 pub const DTYPE_THREEWAY_DOPPLER: i64 = 3;
 pub const DTYPE_RAMP: i64 = 6;
 
+pub const ULY_BAND_S: i64 = 1;
+pub const ULY_BAND_X: i64 = 2;
+
 pub struct Field {
     pub item: u32,
     pub start: usize,
@@ -364,12 +367,31 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
     }
 }
 
+pub const COMP_ULY_SKYFREQ: u32 = 1;
+
+pub fn uly_component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_ULY_SKYFREQ => Some("ulysses_sky_frequency_hz"),
+        _ => None,
+    }
+}
+
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let rows = parse_bin(bytes)?;
     let out: Vec<(f64, f64, u32)> = rows
         .into_iter()
         .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
         .map(|r| (r[0], r[1], COMP_SKYFREQ))
+        .collect();
+    if out.is_empty() { None } else { Some(out) }
+}
+
+pub fn parse_uly_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_bin(bytes)?;
+    let out: Vec<(f64, f64, u32)> = rows
+        .into_iter()
+        .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
+        .map(|r| (r[0], r[1], COMP_ULY_SKYFREQ))
         .collect();
     if out.is_empty() { None } else { Some(out) }
 }
@@ -586,6 +608,200 @@ pub fn reduce_skyfreq(
     if out.is_empty() { None } else { Some(out) }
 }
 
+pub fn reduce_uly_skyfreq(
+    name: &str,
+    file_id: f64,
+    bytes: &[u8],
+    lsk: &crate::lsk::LeapSeconds,
+) -> Option<Vec<[f64; 14]>> {
+    let stripped = strip_markers(bytes)?;
+    let nlog = stripped.len() / LOGICAL_RECORD;
+    if nlog < 3 {
+        eprintln!("{name}: {nlog} logical records — too short");
+        return None;
+    }
+    let (sc, file_year, xpon) = header_of(&stripped);
+    let band_field = field_of(TKFORM, 10).unwrap();
+    let mut recs: Vec<(Tracking, i64)> = Vec::with_capacity(nlog - 2);
+    let mut skipped_zero = 0usize;
+    let mut n_sband = 0usize;
+    let mut n_xband = 0usize;
+    for i in 2..nlog {
+        let rec = &stripped[i * LOGICAL_RECORD..(i + 1) * LOGICAL_RECORD];
+        let tr = tracking_record(rec);
+        if tr.day == 0 {
+            skipped_zero += 1;
+            continue;
+        }
+        let band = extract(rec, band_field);
+        match band {
+            ULY_BAND_S => n_sband += 1,
+            ULY_BAND_X => n_xband += 1,
+            _ => {}
+        }
+        recs.push((tr, band));
+    }
+    if recs.len() < 2 {
+        eprintln!("{name}: {} tracking records — too short", recs.len());
+        return None;
+    }
+    let mut n = recs.len();
+    let mut t = vec![0.0f64; n];
+    let mut dcnt = vec![0.0f64; n];
+    let mut ref_hz = vec![0.0f64; n];
+    let mut bias = vec![0i64; n];
+    let mut sampler = vec![0.0f64; n];
+    let mut dtype = vec![0i64; n];
+    let mut mode = vec![0i64; n];
+    let mut station = vec![0i64; n];
+    let mut resid = vec![0.0f64; n];
+    let mut slipped = vec![0i64; n];
+    let mut strength = vec![0i64; n];
+    let mut ramp = vec![0i64; n];
+    let mut bands = vec![0i64; n];
+    let mut kept = 0usize;
+    for (tr, band) in recs.iter() {
+        let Some(tdb) = tdb_of(tr, lsk) else {
+            continue;
+        };
+        let r = tr.doppler_ref as f64 / 10.0;
+        let s = tr.sampler_time as f64 / 100.0;
+        t[kept] = tdb;
+        dcnt[kept] = tr.doppler_cnt_hp as f64 * 1e4 + tr.doppler_cnt_lp as f64 / 1e3;
+        ref_hz[kept] = r;
+        bias[kept] = tr.doppler_bias;
+        sampler[kept] = s;
+        dtype[kept] = tr.data_type;
+        mode[kept] = tr.ground_mode;
+        station[kept] = tr.station;
+        resid[kept] = tr.doppler_resid as f64 / 1000.0;
+        slipped[kept] = tr.slipped_cycle;
+        strength[kept] = tr.signal_strength;
+        ramp[kept] = tr.ramp_rate;
+        bands[kept] = *band;
+        kept += 1;
+    }
+    n = kept;
+    if n < 2 {
+        eprintln!("{name}: {n} timestamped records — too short");
+        return None;
+    }
+    t.truncate(n);
+    dcnt.truncate(n);
+    ref_hz.truncate(n);
+    bias.truncate(n);
+    sampler.truncate(n);
+    dtype.truncate(n);
+    mode.truncate(n);
+    station.truncate(n);
+    resid.truncate(n);
+    slipped.truncate(n);
+    strength.truncate(n);
+    ramp.truncate(n);
+    bands.truncate(n);
+
+    let ref_min = ref_hz.iter().copied().fold(f64::INFINITY, f64::min);
+    let ref_max = ref_hz.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    let mut fsky = vec![0.0f64; n.saturating_sub(1)];
+    let mut good = vec![false; n.saturating_sub(1)];
+    let mut dtype_hist: Vec<(i64, usize)> = Vec::new();
+    for i in 0..n - 1 {
+        let hist = dtype_hist.iter_mut().find(|(d, _)| *d == dtype[i]);
+        match hist {
+            Some((_, c)) => *c += 1,
+            None => dtype_hist.push((dtype[i], 1)),
+        }
+        if !(dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER)
+            || sampler[i] <= 0.0
+        {
+            continue;
+        }
+        let doff = if dcnt[i + 1] < dcnt[i] {
+            2f64.powi(32)
+        } else {
+            0.0
+        };
+        let drate = (dcnt[i + 1] + doff - dcnt[i]) / sampler[i];
+        let sdoppler = if bias[i] >= 0 { 1.0 } else { -1.0 };
+        fsky[i] = S_BAND_RATIO * ref_hz[i] - sdoppler * (drate - RATE_OFFSET);
+        good[i] = true;
+    }
+    let mut fsky_finite: Vec<f64> = fsky.iter().copied().filter(|x| x.is_finite()).collect();
+    let fmed = median(&mut fsky_finite);
+    let mut out: Vec<[f64; 14]> = Vec::new();
+    let mut ramp_records = 0usize;
+    let mut bias_rejected = 0usize;
+    let mut ref_rejected = 0usize;
+    let mut gap_rejected = 0usize;
+    let mut wrap_rejected = 0usize;
+    let mut med_rejected = 0usize;
+    let mut xband_rejected = 0usize;
+    let mut boundary_rejected = 0usize;
+    for i in 0..n - 1 {
+        if !good[i] {
+            if dtype[i] == DTYPE_RAMP {
+                ramp_records += 1;
+            }
+            continue;
+        }
+        if bands[i] != ULY_BAND_S {
+            xband_rejected += 1;
+            continue;
+        }
+        if bands[i + 1] != bands[i] {
+            boundary_rejected += 1;
+            continue;
+        }
+        if bias[i].abs() > 1 {
+            bias_rejected += 1;
+            continue;
+        }
+        if !(S_BAND_REF_LO..=S_BAND_REF_HI).contains(&ref_hz[i]) {
+            ref_rejected += 1;
+            continue;
+        }
+        let gap_days = (t[i + 1] - t[i]) / 86400.0;
+        if gap_days >= GAP_DAY {
+            gap_rejected += 1;
+            continue;
+        }
+        if dcnt[i + 1] <= dcnt[i] {
+            wrap_rejected += 1;
+            continue;
+        }
+        if (fsky[i] - fmed).abs() >= FSKY_MED_HALF_WIDTH {
+            med_rejected += 1;
+            continue;
+        }
+        out.push([
+            t[i],
+            fsky[i],
+            ref_hz[i],
+            sampler[i],
+            bias[i] as f64,
+            dtype[i] as f64,
+            station[i] as f64,
+            dcnt[i],
+            resid[i],
+            slipped[i] as f64,
+            strength[i] as f64,
+            ramp[i] as f64,
+            file_id,
+            mode[i] as f64,
+        ]);
+    }
+    let n_out = out.len();
+    let n_slipped = out.iter().filter(|r| r[9] != 0.0).count();
+    let mut stations: Vec<i64> = out.iter().map(|r| r[6] as i64).collect();
+    stations.sort_unstable();
+    stations.dedup();
+    dtype_hist.sort_by_key(|(d, _)| *d);
+    eprintln!(
+        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_out} S-band fsky samples (median {fmed:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {xband_rejected} X-band (recovery chain unmeasured — pending), {boundary_rejected} band boundary"
+    );
+    if out.is_empty() { None } else { Some(out) }
+}
+
 pub fn write_resid_bin(records: &[[f64; 8]]) -> Vec<u8> {
     let mut out = Vec::with_capacity(8 + records.len() * 64);
     out.extend_from_slice(b"GASR");
@@ -789,5 +1005,30 @@ mod tests {
         assert!(parse_resid_bin(&bytes[..bytes.len() - 1]).is_none());
         assert!(parse_resid_bin(b"GASR").is_none());
         assert!(parse_resid_bin(b"PASF").is_none());
+    }
+
+    #[test]
+    fn ulysses_series_roundtrip_and_component_name() {
+        let row = [
+            1.0, 2.293e9, 2.2e7, 1.0, 0.0, 1.0, 43.0, 1.0e6, 0.0, 0.0, 90.0, 0.0, 3.0, 1.0,
+        ];
+        let bytes = write_bin(&[row]);
+        let parsed = parse_uly_series(&bytes).expect("ulysses series parses");
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].2, crate::atdf::COMP_ULY_SKYFREQ);
+        assert_eq!(
+            uly_component_name(COMP_ULY_SKYFREQ),
+            Some("ulysses_sky_frequency_hz")
+        );
+        assert_eq!(uly_component_name(99), None);
+    }
+
+    #[test]
+    fn ulysses_series_skips_absent_frequency() {
+        let row = [
+            1.0, 0.0, 2.2e7, 1.0, 0.0, 1.0, 43.0, 1.0e6, 0.0, 0.0, 90.0, 0.0, 3.0, 1.0,
+        ];
+        let bytes = write_bin(&[row]);
+        assert!(parse_uly_series(&bytes).is_none());
     }
 }
