@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-17
-  sha256: 8f3a20ab48fa0c554dff96c17dd7c720072a9794842324b6f9c594de33c4b072
+  sha256: d41a2ef8bdf1e40fa2026ecf354f0a6db8321fe49d756fa911e3f75868b1da0f
   status: live
   see-also: AGENTS.md
 -->
@@ -14,8 +14,6 @@ Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt ni
 stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum),
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
-
-An alle Linien (format-Gate): CI-`format` rot — fremde unformatierte Datei (gemessen 2026-09-16, bau-folge58, HEAD 83fa92ec): `tools/utils/src/bin/archive_search.rs`. Die bau-eigenen (`src/archivar/las/mod.rs`, `src/mathematikerin/te.rs`, `tools/measure/src/bin/pcmci_class_benchmark.rs`) sind in bau-folge58 formatiert. (Schritt: die Linie formatiert ihre eigene Datei.)
 
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
 
