@@ -1,11 +1,11 @@
 <!--
   title: OMEGAFLOW — Kernel Curation & CI Automation Plan
   class: concept
-  sha256: 5790000ad8ecbc49bdbb2db161f2e75ad571c990950708372c35303878cd7ccc
+  sha256: a13c7314a519ef7da9ff1d9c1ddbc03669e8a27eeb4e87f6c3490c2cbd25dbe7
 -->
 I understand your concern absolutely. "For now but later" is the death of every architecture. We must not file this NASA list away as a "later problem".
 
-Once we have moved the system to the v6 protocol and the Trommelfell (packets 2 and 3), we need a **scalable, automated process** to integrate this flood of kernels into the CI pipeline without you having to type every block manually.
+Once we have moved the system to the v6 protocol (legacy era; the protocol is v9 today) and the Trommelfell (packets 2 and 3), we need a **scalable, automated process** to integrate this flood of kernels into the CI pipeline without you having to type every block manually.
 
 Here is the official **Master Curation & Automation Plan**. You can save this text as a Markdown file (`docs/kernel_curation_plan.md`) and hand it to the Kybernaut in the next, isolated session. It does not solve the problem by "doing it later", but by "defining the automation now".
 
@@ -45,7 +45,7 @@ None of this heavy work runs on the local XPS 13 (the browser/presence window).
 4. When the point appears where the Voyager probe is, it loads `ephemeris_voyager1.bin`.
 
 ## 4. Implementation steps (for the curation session)
-This packet gets built in a dedicated session, *after* the v6 protocol and the Trommelfell (packets 2 & 3) run stably.
+This packet gets built in a dedicated session, *after* the v6 protocol (legacy era; today v9) and the Trommelfell (packets 2 & 3) run stably. The automation this plan describes is built today (`kernel-flatten.yml`).
 
 1. **`scripts/generate_sources.py` (or Rust):** A script that scans the NASA directories and automatically generates the `sources.φ` blocks for `ephemeris_binary`.
 2. **NAIF-ID mapping table:** Completion of the `pck_id_of` and `body_name_of` maps in Rust for all Saturn/Jupiter/Uranus moons and asteroid-belt objects.
