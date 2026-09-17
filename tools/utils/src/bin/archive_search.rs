@@ -437,7 +437,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-            "browser:  archive_search --playwright <url|query> [--headed]   (real browser render; --headed passes a Cloudflare JS interstitial on a display; a bare query searches)"
+        "browser:  archive_search --playwright <url|query> [--headed]   (real browser render; --headed passes a Cloudflare JS interstitial on a display; a bare query searches)"
     );
     eprintln!(
         "reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)"
