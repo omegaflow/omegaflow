@@ -3,7 +3,7 @@
   session: Entscheid-Folge 27
   class: handover
   date: 2026-09-17
-  sha256: 7011cebf8b9d4fba592ab87e8f326ead8a6304e2098f044b2a9f07790a57a3a2
+  sha256: be395ba26dc107d8cd1d5c0cc13ae32e2a5c1f0eca31395c2087562cca64813d
   status: live
 -->
 # Handover — Entscheid-Folge 27 (2026-09-17)
@@ -29,29 +29,6 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## GitHub-PII-Purge (härtester undatierter Punkt)
-
-- **Follow-up #4761801 sendfertig** — Brief `state/mail/github-gc-followup.body.txt`
-  (18 Z., clean, dry-run grün). Exakter Send:
-  `smail --to support@githubsupport.com --from johannes.tyroller@proton.me --subject "Re: [GitHub Support] Confirmation - Request Received (#4761801)" --body state/mail/github-gc-followup.body.txt --send`
-  (Schritt: Operator-Sende-Wort.)
-- **Privacy-Löschung privacy@github.com** — Brief
-  `state/mail/privacy-deletion-request.body.txt` (34 Z., clean, dry-run grün).
-  Exakter Send:
-  `smail --to privacy@github.com --from johannes.tyroller@proton.me --subject "Data subject deletion request — repository omegaflow/omegaflow" --body state/mail/privacy-deletion-request.body.txt --send`
-  (Schritt: Operator-Sende-Wort.)
-- **Bestätigungs-Body #4761801 verloren (gemessen)** — Ledger `mail_ledger.φ:64`
-  leer; Ursache: laufender `smail_recv` gebaut 2026-09-15 10:42, Nested-MIME-Fix
-  committet 2026-09-16 15:59, Service-Start 2026-09-16 13:13 → lief nie mit dem
-  Fix. Body-Fix + CI-Bauweg committet `40992d29` (Worker raw-vor-forward,
-  mime_plaintext-Rückgriff auf den Rohbody, `service-build.yml`); Binärdatei
-  2026-09-17 aus run 35187298809 installiert, Service neu gestartet. Der
-  Bestätigungs-Body bleibt verloren — die Reply-to-Thread-Anweisung ist nicht
-  lesbar.
-- **PII-Re-Messung @ bc9d6a0b** — 45 (Datei, Ref)-Kombinationen, 15/15
-  Pre-Rewrite-Commits erreichbar, retrievable: yes (run 35185486230); Wert in
-  `docs/zustand/external-state.md`.
-
 ## Consent-Akte (per-Akt, Operatorwort)
 
 - **adoption-Block** — `state/mail/adoption-mails.md`: drei Entwürfe (Toth,
@@ -68,6 +45,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   gesendet 2026-09-16, Antwort offen.
 - **NSE/Haug** (MLZ/FRM-II Lohstroh; MPI-FKF Keimer) — Antwort offen.
 - **Rubin-Review** (Shaughnessy, high volume) — offen.
+- **GitHub GC #4761801** — Follow-up gesendet 2026-09-17 (Resend
+  `01a0aded-75a3-7548-a994-682b9ef54843`), Antwort offen.
+- **GitHub Privacy-Löschung** — gesendet 2026-09-17 (Resend
+  `01a0aded-819e-75db-aaae-2ff654b6ec15`), Antwort offen.
 - Offene Alternativen: `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md`.
 
 ## Operator-gebundene Punkte
