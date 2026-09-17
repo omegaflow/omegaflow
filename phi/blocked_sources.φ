@@ -80,5 +80,5 @@ note Juno Earth-Flyby pre-EFB merged ODF (2013-10-09, TRK-2-34/TNF). Gemessen 20
 
 blocked parser-def odf
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
-note TRK-2-34/TRK-2-18 ODF-Format-Lücke: `src/archivar/odf.rs` dekodiert nur `format_code 0` (DT0); 17 Format-Codes offen. Die TRK-2-18-Spec (Text-Sidecar `docs/reference/dsn_trk-2-18.1988-01-15.txt`) definiert ODF, Format ID 1, Data Type 12 = Two-way Doppler (Observable Hz + Time Tag). Sie gatet die offenen ODF-Bundles von Galileo/Magellan/Pathfinder/Ulysses/LRO (PDS-ATDF/ODF), nicht die Cassini/MAVEN/DART-TNF (separater `tnf_parse_series`-Arm). Referenz-Parser `NASA-PDS/PyTrk234` (`.tmp-trk234-components.txt`).
+note TRK-2-34/TRK-2-18 ODF-Format-Lücke: der TNF/TRK-2-34-Arm von `src/archivar/odf.rs` dekodiert alle 18 Format-Codes (`TNF_FORMAT_*` 0–17, `tnf_dt0…17`, `tnf_row` match 0–17; 6/18 getestet); offen bleibt der PDS3-ODF-Word-Arm mit seinen zwei Layouts. Die TRK-2-18-Spec (Text-Sidecar `docs/reference/dsn_trk-2-18.1988-01-15.txt`) definiert ODF, Format ID 1, Data Type 12 = Two-way Doppler (Observable Hz + Time Tag). Sie gatet die offenen ODF-Bundles von Galileo/Magellan/Pathfinder/Ulysses/LRO (PDS-ATDF/ODF), nicht die Cassini/MAVEN/DART-TNF (separater `tnf_parse_series`-Arm). Referenz-Parser `NASA-PDS/PyTrk234` (`.tmp-trk234-components.txt`).
 
