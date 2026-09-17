@@ -974,7 +974,7 @@ pub fn fetch_one(
             {
                 return Some(cached);
             }
-            let cdn_url = format!("{}/{}/{}.json", crate::cdn::CDN_BASE, netloc, name);
+            let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
             if cdn_fresh(&cdn_url, ttl)
                 && let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl)
             {
@@ -996,6 +996,18 @@ pub fn fetch_one(
         }
     }
     let live = fetch_raw(url, body, headers, ttl);
+    if live.is_none()
+        && !url.starts_with("https://github.com/omegaflow/sources")
+        && let Some(netloc) = extract_netloc(url)
+    {
+        let name = asset_name(url);
+        if !name.is_empty() {
+            let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
+            if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+                return Some(cdn_body);
+            }
+        }
+    }
     if let Some(ref r) = live
         && let Some(netloc) = extract_netloc(url)
     {
