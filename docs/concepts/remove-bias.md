@@ -1,7 +1,9 @@
 <!--
   title: COMPLETE EXECUTION PLAN
   class: concept
-  sha256: 00e9db0d526f69226eef4fcf032e0536f630ce09a24bbf7a964cc704fe5d1ba7
+  date: 2026-08-07
+  sha256: 65c9cceb5a53786069f77bb3e3a338d7c35eee43352ab1802d2f1b340f2e0f35
+  status: archived
 -->
 # COMPLETE EXECUTION PLAN
 
@@ -948,7 +950,7 @@ to:
 
 ---
 
-## WP4 — region_quantize + warm_cache
+## WP4 — region_quantize + warm_cache (legacy name; today `cache_fresh_at` / `cache_path_for`)
 
 **E22.** L335 `region_quantize` delete and replace with:
 ```rust
@@ -957,7 +959,7 @@ fn region_quantize(deg: f64, extent: f64, m_per_deg: f64) -> i32 {
 }
 ```
 
-**E23.** `warm_cache` Surface-Zweig:
+**E23.** `warm_cache` (legacy name; today `cache_fresh_at` / `cache_path_for`) Surface-Zweig:
 
 L3561 Pattern change from:
 ```rust
