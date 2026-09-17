@@ -27,9 +27,9 @@ ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-parser-gap
+disponiert
 kandidat https://aqs.epa.gov/aqsweb/airdata/download_files.html
-note gemessen 2026-09-15: download_files.html HTTP 200 (386197 B); daily_88101_2025.zip keylos — HEAD/Range-GET HTTP 206 (Content-Range 0-99/8647326, application/zip), GET 200 (8647326 B), PK-Zip mit daily_88101_2025.csv. CSV-Kopf: Latitude(5)/Longitude(6), Konzentrations-Spalte „Arithmetic Mean"(16) = PM2.5-Tagesmittel µg/m3. Kraft/Unit/τ bestimmt (wie openaq_pm25_ugm3): diffusion µg/m3 τ 86400. Parser-gap: der map-Feld-Key „Arithmetic Mean" trägt ein Leerzeichen — die φ-Direktive splittet auf Whitespace, die Konzentrations-Spalte ist als map-field-Key unschreibbar; rows löst den Spalten-Index 16, ankert aber alle Oszillatoren am Frame-Punkt (kein per-row lat/lon). Nächster Schritt: Parser-Arm für Leerzeichen-führende map-Field-Keys (oder map-Spaltenindex), dann den daily_88101_{year}.zip-Block in sources.φ registrieren.
+note gemessen 2026-09-17: Parser-Gap geschlossen — per-row lat/lon existiert seit Commit 2f5a83ea (src/archivar/extract.rs resolve_col), der Block ist in phi/sources.φ:1352 registriert (daily_88101_2025.zip, rows + lat 5/lon 6/epoch 11 + field 16 per Spalten-Index); die Spalte „Arithmetic Mean" löst der Spalten-Index, der verbatim-Key-Arm parse.rs split_directive macht Leerzeichen-Keys zusätzlich schreibbar. Route/Format unverändert: download_files.html HTTP 200 (386197 B); daily_88101_2025.zip keylos HEAD/Range-GET HTTP 206 (Content-Range 0-99/8647326), GET 200 (8647326 B), PK-Zip mit daily_88101_2025.csv; Kraft/Unit/τ diffusion µg/m3 τ 86400 (wie openaq_pm25_ugm3).
 
 parser-gap
 kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
