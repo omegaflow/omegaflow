@@ -36,11 +36,10 @@ fn main() {
         };
         statuses.push(format!("{}={}", asset, code));
     }
-    let ci = ci_summary();
     let Some(now) = epoch() else {
         return;
     };
-    let line = report_line(now, &statuses.join(" "), &ci);
+    let line = report_line(now, &statuses.join(" "));
     append_report(&reports_dir().join("cds_watchdog.φ"), &line);
     println!("{}", line.trim_end());
 }
@@ -52,29 +51,8 @@ fn reports_dir() -> std::path::PathBuf {
     std::path::PathBuf::from("state").join("reports")
 }
 
-fn ci_summary() -> String {
-    let out = Command::new("gh")
-        .arg("run")
-        .arg("list")
-        .arg("--limit")
-        .arg("6")
-        .arg("--json")
-        .arg("workflowName,status")
-        .arg("--jq")
-        .arg(".[] | .workflowName + \"=\" + .status")
-        .output();
-    match out {
-        Ok(o) if o.status.success() => {
-            let text = String::from_utf8_lossy(&o.stdout).to_string();
-            let runs: Vec<&str> = text.lines().take(6).collect();
-            runs.join(",")
-        }
-        _ => "ci=void".to_string(),
-    }
-}
-
-fn report_line(epoch: u64, statuses: &str, ci: &str) -> String {
-    format!("cds_watchdog | {} | {} | {}\n", epoch, statuses, ci)
+fn report_line(epoch: u64, statuses: &str) -> String {
+    format!("cds_watchdog | {} | {}\n", epoch, statuses)
 }
 
 fn epoch() -> Option<u64> {
@@ -105,22 +83,17 @@ mod tests {
 
     #[test]
     fn line_format() {
-        let line = report_line(
-            1787600000,
-            "spectra.bin=200 nvss.json=404",
-            "healthcheck=completed",
-        );
+        let line = report_line(1787600000, "spectra.bin=200 nvss.json=404");
         assert!(line.starts_with("cds_watchdog | 1787600000 | "));
-        assert!(line.contains("spectra.bin=200"));
-        assert!(line.ends_with("healthcheck=completed\n"));
+        assert!(line.ends_with("nvss.json=404\n"));
     }
 
     #[test]
     fn append_creates_file() {
         let path = "/tmp/cds_test_report.φ";
         let _ = std::fs::remove_file(path);
-        append_report(path, "cds_watchdog | 1 | a=200 | ci\n");
-        append_report(path, "cds_watchdog | 2 | a=404 | ci\n");
+        append_report(path, "cds_watchdog | 1 | a=200\n");
+        append_report(path, "cds_watchdog | 2 | a=404\n");
         let text = std::fs::read_to_string(path).unwrap();
         assert_eq!(text.lines().count(), 2);
         let _ = std::fs::remove_file(path);
