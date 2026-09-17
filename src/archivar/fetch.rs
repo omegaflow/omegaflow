@@ -667,46 +667,73 @@ pub fn month_abbr(m: u32) -> &'static str {
     ][(m - 1) as usize]
 }
 
+fn minute_iso(unix: u64) -> String {
+    let (y, m, d) = civil_date(unix);
+    let h = (unix / 3600) % 24;
+    let min = (unix / 60) % 60;
+    format!("{}-{:02}-{:02}T{:02}:{:02}:00", y, m, d, h, min)
+}
+
+fn day_of_year(y: i64, m: u32, d: u32) -> u32 {
+    let cum = [0u32, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    let base = if m > 0 { cum[(m - 1) as usize] } else { 0 };
+    base + d + if leap && m > 2 { 1 } else { 0 }
+}
+
+pub fn time_markers(unix: u64) -> Vec<(&'static str, String)> {
+    let (y, m, d) = civil_date(unix);
+    let (yy, ym, yd) = civil_date(unix.saturating_sub(86400));
+    let (tmy, tmm, tmd) = civil_date(unix.saturating_add(86400));
+    let (wy, wm, wd) = civil_date(unix.saturating_sub(7 * 86400));
+    let prev_y = civil_date(unix.saturating_sub(366 * 86400)).0;
+    let yday = day_of_year(y, m, d);
+    vec![
+        ("{today}", date_str(unix)),
+        ("{yesterday}", date_str(unix.saturating_sub(86400))),
+        ("{tomorrow}", date_str(unix.saturating_add(86400))),
+        ("{prev_year}", format!("{:04}", prev_y)),
+        ("{week_ago}", format!("{}-{:02}-{:02}", wy, wm, wd)),
+        ("{week_ago_nodashes}", format!("{}{:02}{:02}", wy, wm, wd)),
+        ("{now}", minute_iso(unix)),
+        ("{now_minus_1}", minute_iso(unix.saturating_sub(60))),
+        ("{now_minus_2}", minute_iso(unix.saturating_sub(120))),
+        ("{hour_ago}", minute_iso(unix.saturating_sub(3600))),
+        ("{year}", y.to_string()),
+        ("{year2}", format!("{:02}", y % 100)),
+        ("{month}", m.to_string()),
+        ("{prev_Mon}", month_abbr(if m == 1 { 12 } else { m - 1 }).to_string()),
+        ("{day}", d.to_string()),
+        ("{yday}", format!("{:03}", yday)),
+        ("{hour}", format!("{:02}", (unix / 3600) % 24)),
+        ("{minute}", format!("{:02}", (unix / 60) % 60)),
+        ("{unix_now}", unix.to_string()),
+        ("{unix_now_plus_3600}", (unix.saturating_add(3600)).to_string()),
+        ("{today_yyyymmdd}", format!("{}_{:02}_{:02}", y, m, d)),
+        ("{today_ymd}", format!("{}_{:02}_{:02}", y, m, d)),
+        ("{today_nodashes}", format!("{}{:02}{:02}", y, m, d)),
+        ("{yesterday_nodashes}", format!("{}{:02}{:02}", yy, ym, yd)),
+        ("{tomorrow_nodashes}", format!("{}{:02}{:02}", tmy, tmm, tmd)),
+        ("{t_start}", date_str(unix.saturating_sub(86400))),
+        ("{t_end}", date_str(unix)),
+        ("{today_plus_365}", format!("{}-{:02}-{:02}", y + 1, m, d)),
+    ]
+}
+
 pub fn live_markers() -> Vec<(String, String)> {
     let unix = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_secs(),
         Err(_) => return Vec::new(),
     };
-    let (y, m, d) = civil_date(unix);
     let jd = unix as f64 / 86400.0 + 2440587.5;
-    let prev = unix - 366 * 86400;
-    let prev_y = civil_date(prev).0;
-    vec![
-        ("{today}".into(), date_str(unix)),
-        ("{yesterday}".into(), date_str(unix - 86400)),
-        ("{tomorrow}".into(), date_str(unix + 86400)),
-        ("{prev_year}".into(), format!("{:04}", prev_y)),
-        ("{now}".into(), hour_str(unix)),
-        ("{year}".into(), format!("{:04}", y)),
-        ("{month}".into(), format!("{:02}", m)),
-        (
-            "{prev_Mon}".into(),
-            month_abbr(if m == 1 { 12 } else { m - 1 }).into(),
-        ),
-        ("{day}".into(), format!("{:02}", d)),
-        ("{lat}".into(), "29.5".into()),
-        ("{lon}".into(), "-95.0".into()),
-        ("{ra}".into(), "0.0".into()),
-        ("{dec}".into(), "0.0".into()),
-        ("{target}".into(), "Ceres".into()),
-        ("{week_ago}".into(), date_str(unix - 7 * 86400)),
-        ("{hour_ago}".into(), hour_str(unix - 3600)),
-        ("{body}".into(), "ISS".into()),
-        ("{lon_min}".into(), "-95.0".into()),
-        ("{lon_max}".into(), "-94.0".into()),
-        ("{lat_min}".into(), "29.0".into()),
-        ("{lat_max}".into(), "30.0".into()),
-        ("{grid}".into(), "29.5,-95.0|29.6,-95.0".into()),
-        ("{nearest_station}".into(), "8518750".into()),
-        ("{jd_now}".into(), format!("{:.2}", jd)),
-        ("{jd_start}".into(), format!("{:.2}", jd - 1.0)),
-        ("{jd_end}".into(), format!("{:.2}", jd)),
-    ]
+    let mut out: Vec<(String, String)> = time_markers(unix)
+        .into_iter()
+        .map(|(k, v)| (k.to_string(), v))
+        .collect();
+    out.push(("{jd_now}".into(), format!("{:.6}", jd)));
+    out.push(("{jd_start}".into(), format!("{:.6}", jd - 1.0)));
+    out.push(("{jd_end}".into(), format!("{:.6}", jd)));
+    out
 }
 
 pub fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<String> {
