@@ -11,6 +11,7 @@ LOG="${CI_WATCHDOG_LOG:-/tmp/opencode/ci_watchdog.log}"
 SEEN="${CI_WATCHDOG_SEEN:-/tmp/opencode/ci_watchdog.seen}"
 POLL_S="${CI_WATCHDOG_POLL:-3840}"
 CI="${CI_MANAGE:-./bin/ci_manage}"
+SNAP="${CI_WATCHDOG_SNAPSHOT:-/tmp/opencode/ci_status.md}"
 mkdir -p "$(dirname "$LOG")"
 touch "$SEEN"
 
@@ -35,7 +36,14 @@ median_duration() {
 poll_once() {
   local now
   now=$(date +%s)
-  rows=$($CI list --limit 60 2>/dev/null) || { log "list void — no action"; return; }
+  rows=$($CI list --limit 60 2>/dev/null) || {
+    {
+      printf '# CI status — %s\n' "$(date -Is)"
+      printf '# list void — the gh-API answered void (rate limit or unreachable); no action\n'
+    } > "$SNAP"
+    log "list void — no action"
+    return
+  }
 
   # 1. cancel: an in_progress run past 2x its workflow's successful median.
   #    No successful history -> report, never guess a floor.
@@ -95,6 +103,18 @@ poll_once() {
       mark "$id"
     fi
   done
+
+  # The snapshot is the watchdog's sensor buffer: a session reads this file at
+  # the planning pass (no API call, no polling). The tracked CI-Status line in
+  # docs/zustand/external-state.md stays the session's — one author.
+  {
+    printf '# CI status — %s (ci_watchdog poll, every %ss)\n' "$(date -Is)" "$POLL_S"
+    printf '# read by sessions at the planning pass; never written by a session\n'
+    printf '## active (in_progress/queued)\n'
+    printf '%s\n' "$rows" | awk -F'\t' '$2=="in_progress"||$2=="queued"{print $1"\t"$2"\t"$5"\t"$6}'
+    printf '## failed (attempt 1)\n'
+    printf '%s\n' "$rows" | awk -F'\t' '$3=="failure"&&$4=="1"{print $1"\t"$5"\t"$6}'
+  } > "$SNAP"
 }
 
 while true; do
