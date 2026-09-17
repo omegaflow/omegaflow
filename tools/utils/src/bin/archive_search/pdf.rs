@@ -323,6 +323,13 @@ fn decode_image(dict: &[u8], raw_full: &[u8]) -> Option<PdfImage> {
 }
 
 fn png_wrap(width: u32, height: u32, color_type: u8, raster: &[u8]) -> Vec<u8> {
+    let channels = if color_type == 0 { 1usize } else { 3usize };
+    let row = width as usize * channels;
+    let mut filtered = Vec::with_capacity(raster.len() + height as usize);
+    for scanline in raster.chunks(row) {
+        filtered.push(0);
+        filtered.extend_from_slice(scanline);
+    }
     let mut png = Vec::new();
     png.extend_from_slice(&[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
     let mut ihdr = Vec::new();
@@ -330,7 +337,7 @@ fn png_wrap(width: u32, height: u32, color_type: u8, raster: &[u8]) -> Vec<u8> {
     ihdr.extend_from_slice(&height.to_be_bytes());
     ihdr.extend_from_slice(&[8, color_type, 0, 0, 0]);
     png_chunk(&mut png, b"IHDR", &ihdr);
-    png_chunk(&mut png, b"IDAT", &zlib_stored(raster));
+    png_chunk(&mut png, b"IDAT", &zlib_stored(&filtered));
     png_chunk(&mut png, b"IEND", &[]);
     png
 }
@@ -582,7 +589,8 @@ fn extract_text(content: &[u8]) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{pdf_images, pdf_text};
+    use super::{pdf_images, pdf_text, png_wrap};
+    use omegaflow::inflate::inflate;
 
     const FLATE_HELLO: [u8; 33] = [
         0x78, 0x01, 0x01, 0x16, 0x00, 0xe9, 0xff, b'B', b'T', b' ', b'(', b'H', b'e', b'l', b'l',
@@ -685,6 +693,23 @@ mod tests {
         assert_eq!(be_u32(&png[20..24]), 1);
         assert_eq!(png[24], 8);
         assert_eq!(png[25], 0);
+    }
+
+    #[test]
+    fn png_idat_carries_one_filter_byte_per_scanline() {
+        let raster = [0x11u8, 0x22, 0x33, 0x44, 0x55, 0x66];
+        let png = png_wrap(2, 1, 2, &raster);
+        let mut idat = Vec::new();
+        let mut off = 8usize;
+        while off + 8 <= png.len() {
+            let len = be_u32(&png[off..off + 4]) as usize;
+            if &png[off + 4..off + 8] == b"IDAT" {
+                idat.extend_from_slice(&png[off + 8..off + 8 + len]);
+            }
+            off += 12 + len;
+        }
+        let filtered = inflate(&idat[2..]).expect("zlib stream");
+        assert_eq!(filtered, vec![0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66]);
     }
 
     #[test]
