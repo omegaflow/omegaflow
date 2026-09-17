@@ -6976,6 +6976,13 @@ at earth
 ttl 604800
 field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/ulysses_atdf_x.bin
+format ulysses_atdf_x
+at earth
+ttl 604800
+field sky_frequency_x_hz ulysses_sky_frequency_x_hz inverse-square em Hz 3600 0.0 0.0
+note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series, component ulysses_sky_frequency_x_hz); consumer arm src/archivar/atdf.rs parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset pending — the first CI harvest validates the X ref window + median half-width; shard URLs follow the first run (pattern ulysses_atdf_x(_t…)?\.bin)
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
 at earth

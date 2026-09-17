@@ -65,3 +65,12 @@ pattern ^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
 note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency series; consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs dispatch ulysses_atdf; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset measured fehlt 2026-09-17 (no CI run in this atom); dispatch step: gh workflow run harvest.yml -f format=ulysses_atdf
+
+asset fehlt
+format ulysses_atdf_x
+tag pds-ppi.igpp.ucla.edu
+arm ulysses_atdf_compiler
+pattern ^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
+shard 1
+idempotent true
+note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series); consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs (second shard family, same binary); X turnaround 880/221, carrier 8408.209876 MHz (channel 9); asset measured fehlt 2026-09-17 — the first CI run validates the X ref window + median half-width (derived, pending); dispatch step: gh workflow run harvest.yml -f format=ulysses_atdf_x
