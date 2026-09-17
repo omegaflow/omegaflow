@@ -3,7 +3,7 @@
   session: Entscheid-Folge 27
   class: handover
   date: 2026-09-17
-  sha256: 67eadcdd8c334580638529986dccd37a8c7dd26d231b1d35fad46ec335f10db1
+  sha256: 246a327ad64a28161deae2a830eab0b0f148da959927f8e8af864e0810013b28
   status: live
 -->
 # Handover — Entscheid-Folge 27 (2026-09-17)
@@ -35,9 +35,12 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Turyshev, Markwardt, je Quelle in der To-Zeile). **Gated (Operator-Wort
   2026-09-17):** Senden erst, wenn die Forschung (20-s-Bande) komplett durch ist.
   (Schritt: je cleanen Body extrahieren; Sende-Wort erst nach Forschungsabschluss.)
-- **Mail-Fang (KV-Namespace)** — `cloudflare/wrangler.toml:4,7,14`: `account_id`
-  leer, `FORWARD_TO` leer, `MAIL_QUEUE`-id Platzhalter. (Schritt: KV-Namespace
-  anlegen, id + `FORWARD_TO` eintragen, `wrangler deploy` — Operator/Konto.)
+## smail — Sent-Log
+
+- **Install ausstehend** — Code committet `65f9243b` (jeder `--send` schreibt
+  nach `state/mail/sent_ledger.φ`); CI-Lauf `35195888583` ist `queued`.
+  (Schritt: `gh run view 35195888583` → `gh run download 35195888583` → `smail`
+  nach `~/.local/bin/` + `target/release/` installieren.)
 
 ## Warten auf Rückmeldung (extern)
 
