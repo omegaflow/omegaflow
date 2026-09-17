@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: b919ca810109a1591c8b43d49e9eb1ddb9828465471e275252a42a33e4ee76b1
+  sha256: 06cdf8886e7a2dfa42822b3ccaa2c0d8f531f7e0635ef2979403de4d42560008
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
@@ -100,8 +100,8 @@ Zahlen stehen erst da, wenn sie gemessen sind.
   positiv (`is_finite() && > 0` → Some, sonst None).
 - **Mess-Gates** (je Blatt): n ≥ 30 je Paar (Unterbestimmtheit = keine
   Aussage, keine Fabrikation), Mehrfachvergleichskorrektur über die
-  Kanalpaare (offene Pflicht,
-  `docs/handover/handover-2026-09-09-te-atom-4.md`), Lag-Sweep statt
+  Kanalpaare (`benjamini_hochberg` in `dispersion_solar_probe.rs` +
+  `multi_force_te_probe.rs`), Lag-Sweep statt
   lag 0 (offen), KDE-Bandbreiten-Sensitivität (offen),
   Fenster-Kongruenz, Nullkontrolle (mindestens ein Kanal, der keinen
   Pfeil tragen darf, läuft mit).

@@ -2,7 +2,7 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: 3f8d2ee3488ec70099284746d3f6344cd09d790159b3db9f0da9a234363f7f42
+  sha256: 3bfb0c7a98918635421ce12a72e5bcda9ac8cb7453ac9d79b8171f065e542b65
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
@@ -46,7 +46,7 @@ auf die Erde.
    Stationen) dominiert das ±10-km-Gate — `depth_phase_fleet_probe.rs`.
    Offene Folge: die Streuung
    senken (besseres Picken / der mehrdeutige pP-Zweig bei Δ≈30°) und der
-   Quell-Strahlungsterm (CMT-Lösung, `pending`). Die feinere Inversionsklasse
+   Quell-Strahlungsterm (CMT-Lösung, `src/archivar/ndk.rs`). Die feinere Inversionsklasse
    ist gebaut (1-km-Raste, `tools/measure/src/depthphase.rs`); die pP/sP-Polarität
     ist abgeleitet (R_pp negativ im Pilotband, R_sp ≈ −1, `ak135.rs`
     `free_surface_pp`); die Tiefenmodell-Erweiterung über 250 km ist
@@ -66,7 +66,8 @@ auf die Erde.
 4. **W-Phase-M9** — entschieden, nicht gebaut.
 5. **Stromboli** — Vulkan-Lehrer.
 6. **CDN-Manifestation** des ETOPO1-Gitters (395 MB).
-7. **MiniSEED-Dopplung** — `laic_probe.rs` → `miniseed.rs` konsolidieren.
+7. **MiniSEED-Dopplung** — geschlossen: `laic_probe.rs` nutzt
+   `tools/measure/src/miniseed.rs` `decode_body`.
 8. **Erd-Eigenmoden („die Glocke")** — registrierte Frage (Rat): freie
    Eigenmoden nach Großbeben, Meßkette miniSEED/ak135/Flotten-Stationen;
    erst Frage → Messung → Paper — kein Titel ohne Messung.
@@ -77,7 +78,7 @@ auf die Erde.
 |---|---|---|
 | Seismometer (Bodenbewegung) | seismic-body/surface | Kern, steht |
 | Pegel / Tide gauge (Wasserstand) | gravity | steht (Tōhoku) |
-| DART-Boje (Tiefsee-Druck) | Wasser | offen (Ernte) |
+| DART-Boje (Tiefsee-Druck) | Wasser | registriert (`21414.dart`, `dart_tnf.bin`) |
 | Grundwasser-Brunnen (poröelastisch) | Wasser im Boden | offen (USGS) |
 | GNSS-Station (Bodenversatz) | em | RINEX steht |
 | Hydrophon (NRS) | akustisch im Wasser | gehalten |
