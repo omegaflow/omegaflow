@@ -23,6 +23,18 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
         .cloned()
 }
 
+fn parse_secret(text: &str, key: &str) -> Option<String> {
+    let mut found = None;
+    for line in text.lines() {
+        if let Some((k, v)) = line.split_once('=') {
+            if k.trim() == key && !v.trim().is_empty() {
+                found = Some(v.trim().to_string());
+            }
+        }
+    }
+    found
+}
+
 fn secret(name: &str) -> Option<String> {
     if let Ok(v) = std::env::var(name) {
         if !v.is_empty() {
@@ -30,14 +42,7 @@ fn secret(name: &str) -> Option<String> {
         }
     }
     let body = std::fs::read_to_string(".secrets.local").ok()?;
-    for line in body.lines() {
-        if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == name && !v.trim().is_empty() {
-                return Some(v.trim().to_string());
-            }
-        }
-    }
-    None
+    parse_secret(&body, name)
 }
 
 fn parse_area(text: &str) -> Option<[f64; 4]> {
