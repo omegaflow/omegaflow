@@ -110,6 +110,7 @@ enum Mode {
     Git,
     Verdict,
     Playwright,
+    PdfImage,
     Net(&'static str),
 }
 
@@ -130,6 +131,8 @@ fn main() {
     let mut serve_addr: Option<String> = None;
     let mut verdict_url: Option<String> = None;
     let mut playwright_input: Option<String> = None;
+    let mut pdf_input: Option<String> = None;
+    let mut pdf_out: Option<String> = None;
     let mut count_only = false;
     let mut case_sensitive = false;
     let mut path_match = false;
@@ -177,6 +180,19 @@ fn main() {
                     playwright_input = Some(u.clone());
                 }
                 mode = Mode::Playwright;
+            }
+            "--pdf-image" => {
+                i += 1;
+                if let Some(p) = args.get(i) {
+                    pdf_input = Some(p.clone());
+                }
+                mode = Mode::PdfImage;
+            }
+            "--out" => {
+                i += 1;
+                if let Some(d) = args.get(i) {
+                    pdf_out = Some(d.clone());
+                }
             }
             "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
@@ -378,6 +394,17 @@ fn main() {
             let lines = playwright::run_lines(&input, headed);
             print_lines(&lines);
         }
+        Mode::PdfImage => {
+            let input = match pdf_input {
+                Some(p) => p,
+                None => {
+                    eprintln!("archive_search --pdf-image: the mode carries no file or url");
+                    std::process::exit(2);
+                }
+            };
+            let lines = run_pdf_image(&input, pdf_out.as_deref());
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -443,6 +470,9 @@ fn usage() {
         "reach:    archive_search --verdict <url>   (the ladder: direct -> proton exit -> wayback)"
     );
     eprintln!(
+        "images:   archive_search --pdf-image <file|url> [--out <dir>]   (lifts embedded JPEG/PNG/JP2 from a PDF; without --out the files land in the temp dir)"
+    );
+    eprintln!(
         "serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"
     );
 }
@@ -451,6 +481,81 @@ fn print_lines(lines: &[String]) {
     for line in lines {
         println!("{}", line);
     }
+}
+
+fn run_pdf_image(input: &str, out_dir: Option<&str>) -> Vec<String> {
+    let (bytes, stem) = if input.starts_with("http://") || input.starts_with("https://") {
+        match net::get(input, &[], "60") {
+            Some(f) => (f.raw, url_stem(input)),
+            None => return vec![format!("pending — no answer for {input}")],
+        }
+    } else {
+        match fs::read(input) {
+            Ok(b) => (b, file_stem(input)),
+            Err(e) => return vec![format!("absent — {input}: {e}")],
+        }
+    };
+    let images = pdf::pdf_images(&bytes);
+    if images.is_empty() {
+        return vec![format!("pending — no embedded image in {input}")];
+    }
+    let dir = match out_dir {
+        Some(d) => PathBuf::from(d),
+        None => env::temp_dir(),
+    };
+    if let Err(e) = fs::create_dir_all(&dir) {
+        return vec![format!("absent — {}: {e}", dir.display())];
+    }
+    let mut lines = Vec::new();
+    for (k, img) in images.iter().enumerate() {
+        let ext = match img.filter.as_str() {
+            "DCTDecode" => "jpg",
+            "FlateDecode" => "png",
+            "JPXDecode" => "jp2",
+            _ => continue,
+        };
+        let path = dir.join(format!("{stem}_img{k}.{ext}"));
+        match fs::write(&path, &img.data) {
+            Ok(()) => lines.push(format!(
+                "{} {}x{} {} {}",
+                path.display(),
+                img.width,
+                img.height,
+                img.colorspace,
+                img.filter
+            )),
+            Err(e) => lines.push(format!("absent — {}: {e}", path.display())),
+        }
+    }
+    lines
+}
+
+fn file_stem(input: &str) -> String {
+    match Path::new(input).file_stem() {
+        Some(s) => sanitize_stem(&s.to_string_lossy()),
+        None => sanitize_stem(input),
+    }
+}
+
+fn url_stem(input: &str) -> String {
+    let path = match input.split(['?', '#']).next() {
+        Some(p) => p,
+        None => input,
+    };
+    let last = match path.rsplit('/').next() {
+        Some(l) => l,
+        None => path,
+    };
+    match last.split('.').next() {
+        Some(s) if !s.is_empty() => sanitize_stem(s),
+        _ => sanitize_stem(input),
+    }
+}
+
+fn sanitize_stem(s: &str) -> String {
+    s.chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '-' || c == '_' { c } else { '_' })
+        .collect()
 }
 
 fn now_unix() -> i64 {
