@@ -323,6 +323,7 @@ pub struct SourceConfig {
     pub fanout_delay: u64,
     pub sha256: Option<String>,
     pub window: Option<(f64, f64)>,
+    pub live_only: bool,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;
