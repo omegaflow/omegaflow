@@ -3,7 +3,7 @@
   session: Entscheid-Folge 27
   class: handover
   date: 2026-09-17
-  sha256: f97417aef3cb2e47d459e737471a7fb7c84a23c947fc6d8d22cdbc055bcc8b91
+  sha256: 7011cebf8b9d4fba592ab87e8f326ead8a6304e2098f044b2a9f07790a57a3a2
   status: live
 -->
 # Handover — Entscheid-Folge 27 (2026-09-17)
@@ -44,17 +44,13 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   leer; Ursache: laufender `smail_recv` gebaut 2026-09-15 10:42, Nested-MIME-Fix
   committet 2026-09-16 15:59, Service-Start 2026-09-16 13:13 → lief nie mit dem
   Fix. Body-Fix + CI-Bauweg committet `40992d29` (Worker raw-vor-forward,
-  mime_plaintext-Rückgriff auf den Rohbody, `service-build.yml`). (Schritt: Deploy, s.u.)
+  mime_plaintext-Rückgriff auf den Rohbody, `service-build.yml`); Binärdatei
+  2026-09-17 aus run 35187298809 installiert, Service neu gestartet. Der
+  Bestätigungs-Body bleibt verloren — die Reply-to-Thread-Anweisung ist nicht
+  lesbar.
 - **PII-Re-Messung @ bc9d6a0b** — 45 (Datei, Ref)-Kombinationen, 15/15
   Pre-Rewrite-Commits erreichbar, retrievable: yes (run 35185486230); Wert in
   `docs/zustand/external-state.md`.
-
-## Mail-Pipeline — Deploy des Body-Fixes
-
-- `service-build.yml` (neu, `40992d29`) dispatcht: run `35187298809`; baut
-  `omegaflow-service --release` und lädt die Binaries als Artefakt.
-  (Schritt: `gh run view 35187298809`; success → `gh run download 35187298809` →
-  `smail_recv` nach `target/release/` → `systemctl --user restart smail-recv.service`.)
 
 ## Consent-Akte (per-Akt, Operatorwort)
 
