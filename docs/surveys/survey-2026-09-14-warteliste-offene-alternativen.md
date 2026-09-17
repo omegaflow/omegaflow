@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: ddbf16bb989e9c5b1d62fddc0433d1c4d37223d8f59ab620e3f0e40c812bc8c6
+  sha256: f5ec41f028cd0affdfdc0249070897d9f33535ff562043b163223a32bb87a321
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -52,7 +52,7 @@ lokal — der Zugang existiert, es ist kein Warten.
 
 ## Bleibt offen (keine offene Route gemessen)
 
-Zwei `grind-pro`-Taucher (Runde 3) bestätigen die zwei Restoffenen mit Messung.
+Zwei `grind-pro`-Taucher (Runde 3) bestätigen die Restoffene mit Messung.
 
 | Warte | Befund (Runde 3, gemessen) | nächster Schritt |
 |---|---|---|
