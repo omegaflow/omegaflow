@@ -2,6 +2,12 @@ name: gaia-xp-full-cdn
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: re-harvest every chunk, present or not (schema change)
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: write
 env:
@@ -14,7 +20,21 @@ jobs:
       chunks: ${{ steps.gen.outputs.chunks }}
     steps:
       - id: gen
-        run: echo "chunks=[$(seq -s, 0 255)]" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "chunks=[$(seq -s, 0 255)]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          present="$(gh release view dc.g-vo.org --repo omegaflow/sources \
+            --json assets --jq '.assets[].name' 2>/dev/null \
+            | sed -n 's/^xp_full_\([0-9]\+\)\.bin$/\1/p')"
+          chunks=""
+          for c in $(seq 0 255); do
+            if ! printf '%s\n' "$present" | grep -qx "$c"; then
+              chunks="${chunks:+$chunks,}$c"
+            fi
+          done
+          echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
   harvest:
     needs: raster
     concurrency:
