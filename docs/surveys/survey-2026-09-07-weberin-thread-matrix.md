@@ -2,7 +2,7 @@
   title: Survey — Die Weberin Faden-Matrix (thread matrix)
   class: survey
   date: 2026-09-07
-  sha256: 8a20ce75981d8248c798643e23afebba809b87c70e53d5291de61701cffbf606
+  sha256: 41f89123515b1d479cefd748de7685a9898d195607d8729922113d87434a0751
   status: live
   see-also: docs/concepts/die-weberin.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -164,7 +164,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | DEMETER ionospheric e-field | in-register + built | demeter_harvest/compiler |
 | Solar Orbiter RPW e-field | in-register + built | live hapi + rpw_efield.bin |
 | Heart/physiology channel (BIDSleep HRV — register electric label) | in-register | human sensor |
-| **Geomagnetically induced currents (GIC)** | pending — no actor | leads |
+| **Geomagnetically induced currents (GIC)** | in-register + built — `fmi_gic.bin` (`sources.φ`:6907); Nachzug 2026-09-17 | leads |
 | **Lightning networks (WWLLN / ground)** | pending — only GLM bolides (em) in-register | leads |
 | **SuperDARN polar radar** | pending — no actor | leads |
 | INTERMAGNET dB/dt (induction driver for GIC) | built (2 stations) | abk/sod 1-h bins |

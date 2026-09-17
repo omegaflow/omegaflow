@@ -2,7 +2,7 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 6a4b61a2aa875829002a991bb2f13680220da3592e9361ffbd2add750e59e3fa
+  sha256: 01e00fea2f2a6cd14d5dfe3a469bf92358b5f081d931192573c8ca9c2907e63b
   status: live
   see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
@@ -84,9 +84,15 @@ maschinenlesbarer Weg nach abgeschlossener Suche.
 | 11.1 | ANTARES | `api.antares.noirlab.edu/v1/loci?page[limit]=10&page[offset]=0` | 200 (20 652 B) | live |
 | 11.2 | Fink/LSST | `api.lsst.fink-portal.org/api/v1/conesearch` | **200** (42 B) | pending → **antwortet** |
 | 11.3 | Lasair-ZTF | `lasair-ztf.lsst.ac.uk/api/query/` | 404 (Wartung) | blocked key (Token); **Wartung 14.–16.9., at-risk 17.–18.9.** — Wiedervorlage |
-| 11.4 | ALeRCE | `api.alerce.online/alerts/v1/objects/` | **200** (5 740 B, via VPN) | pending → **antwortet** |
-| 11.5 | TNS | `wis-tns.org/…/tns_public_objects.csv.zip` | 403 | blocked (UA-Gate) |
+| 11.4 | ALeRCE | `api.alerce.online/alerts/v1/objects/` | **200** (5 740 B, via VPN) | pending → **antwortet** — Nachzug 2026-09-17: in `sources.φ`:856 registriert (`format alerce`) |
+| 11.5 | TNS | `wis-tns.org/…/tns_public_objects.csv.zip` | 403 | blocked (UA-Gate) — Nachzug 2026-09-17: in `sources.φ`:1353 registriert, Key `TNS_API_KEY`/`TNS_UA` |
 | 11.6 | Gaia Alerts | `gsaweb.ast.cam.ac.uk/alerts` | 200 (7 574 B) | declined (HTML-Portal) |
+
+Nachzug 2026-09-17: HAWC 2HWC/3HWC, LHAASO 1LHAASO und ANTARES sind in
+`phi/sources.φ` registriert und kompiliert (`hawc_2hwc.sky1`:1108,
+`hawc_3hwc.sky1`:1115, `lhaaso_sky1.sky1`:1101,
+`antares_events_2007_2017.sky1`:1129). Telescope Array (Zeile 10.4) bleibt
+pending — kein Eintrag in `sources.φ`.
 
 ## Änderungen gegenüber dem Snapshot (2026-09-13 → 2026-09-14)
 
@@ -200,11 +206,11 @@ Die Klassen, die im Re-Run ohne offene Route blieben, wurden erneut gemessen
 | Klasse | Messung 2026-09-16 | Verdikt |
 |---|---|---|
 | Messenger ODF Erd-Flyby | `pds-geosciences.wustl.edu/messenger/urn-nasa-pds-mess-rs-raw/` 200, Bundle 1.0 mit `data-odf/` Jahresordner **2007–2015, kein 2005** | request-only bestätigt (Erd-Encounter fehlt im offenen Bundle; `messenger_odf.bin` trägt Venus/Merkur) |
-| Rosetta Erd-Swingby ODF | `archives.esac.esa.int/psa/ftp/ROSETTA/` 404; `…/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/` 200, trägt `RSI/` | pending (RSI-Unterbaum auf Erd-Swingby-ODFs 2005/2007/2009 zu prüfen) |
+| Rosetta Erd-Swingby ODF | `archives.esac.esa.int/psa/ftp/ROSETTA/` 404; `…/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/` 200, trägt `RSI/` | pending (RSI-Unterbaum auf Erd-Swingby-ODFs 2005/2007/2009 zu prüfen) — Nachzug 2026-09-17: `rosetta_odf.bin` in `sources.φ`:6473 registriert |
 | Juno Gravity (`jnogrv`) | `atmos.nmsu.edu/PDS/data/jnogrv_1001/` `--verdict` 200 (2897 B) | live (Quelle des gebauten `juno_odf.bin`, sources.φ:6308) |
 | JUNO-Neutrino-Release | Erst-Physik publiziert (Nature `s41586-026-10538-z`, 59,1 d Daten, 2026-06-10); Zenodo 101 = Talks/Poster, DataCite ohne Datensatz | `not-published` bestätigt — Daten-Release absent (Wiedervorlage: IHEP-Open-Data-Policy) |
 | Hydrophon | `--leads hydrophone` 267 Dateien, 0 neue Hosts; NRS-GCS-Bucket live (Re-Run 3.1–3.5) | live, aber **ohne Compiler** (kein NRS-Eintrag in sources.φ) — Bau-Reihenfolge, kein Quellen-Verdikt |
-| TNO Sternbedeckung | `--all "stellar occultation transneptunian object astrometry"`: Zenodo `10.5281/zenodo.21185812` (Quaoar, 14 a Sternbedeckungen, cc-by-4.0, `Quaoar_paper.zip`), Zenodo `10.5281/zenodo.10620251` (TNBFits.zip), A&A 2020 `aa39054-20` (37 Occultation-Astrometrien, Lucky Star) | neue Astrometrie-Direktlinien-Kandidaten; Occultation-DB-URL (`J.Phys.Conf.Ser.` 1365, 012024) pending |
+| TNO Sternbedeckung | `--all "stellar occultation transneptunian object astrometry"`: Zenodo `10.5281/zenodo.21185812` (Quaoar, 14 a Sternbedeckungen, cc-by-4.0, `Quaoar_paper.zip`), Zenodo `10.5281/zenodo.10620251` (TNBFits.zip), A&A 2020 `aa39054-20` (37 Occultation-Astrometrien, Lucky Star) | neue Astrometrie-Direktlinien-Kandidaten; Occultation-DB-URL (`J.Phys.Conf.Ser.` 1365, 012024) pending — Nachzug 2026-09-17: DES/OSSOS/Gaia-SSO-TNO in `sources.φ` registriert (`des_y6_tno.bin`:1565, `ossos_tno.bin`:1571, `gaia_sso_tno.bin`:1687) |
 
 Kometen (`dcom5_comets`, `cometels_flat.json`) und TNO-Gaia/DES/OSSOS sind
 in-register; Gravimeter (IGETS) und Infraschall (BGR) sind geschlagen und
