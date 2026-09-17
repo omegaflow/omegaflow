@@ -20,7 +20,7 @@ tag noaa-goes16.s3.amazonaws.com
 arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
-note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel from the newest hour of the bucket archive; consumer arm src/archivar/goes_abi.rs (parse_bin via extract.rs goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs (self-fetching bucket index: ListBucket https://noaa-goes16.s3.amazonaws.com/?prefix=ABI-L1b-RadC/&delimiter=/ — archive ends at 2025/097/18, measured 2026-09-17); asset measured fehlt 2026-09-17 — gh release view noaa-goes16.s3.amazonaws.com --repo omegaflow/sources returned 'release not found'; dispatch step: gh workflow run harvest.yml -f format=goes16_abi
+note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel from the newest hour of the bucket archive; consumer arm src/archivar/goes_abi.rs (parse_bin via extract.rs goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs (self-fetching bucket index: ListBucket https://noaa-goes16.s3.amazonaws.com/?prefix=ABI-L1b-RadC/&delimiter=/ — archive ends at 2025/097/18, measured 2026-09-17); asset measured fehlt 2026-09-17 — run 35277937121 returned void (issue #37): 112 keys in the newest hour, 0 M6 RadC granules selected because channel_index searched `_M6C` while the S3 keys carry `-M6C` (goes16_abi_compiler.rs:27); fixed 2026-09-17 (find(`-M6C`)); dispatch step: gh workflow run harvest.yml -f format=goes16_abi (after the fix is pushed)
 
 asset fehlt
 format lro_trk
@@ -64,13 +64,13 @@ arm ulysses_atdf_compiler
 pattern ^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency series; consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs dispatch ulysses_atdf; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset measured fehlt 2026-09-17 (no CI run in this atom); dispatch step: gh workflow run harvest.yml -f format=ulysses_atdf
+note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency series; consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs dispatch ulysses_atdf; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset measured fehlt 2026-09-17 — run 35277931000 compiled but manifested only ulysses_atdf_x.bin, the S-band family is empty (0 S-band samples across all files; e.g. 2037038A.TDF carries bands S 58583 / X 58583 with 115608 band-boundary rejects at atdf.rs:783, so every consecutive pair crosses the band boundary and the pairing in reduce_uly_skyfreq (atdf.rs:755-786) drops all S records) → pattern ^ulysses_atdf(_t…)?\.bin$ matched 0 assets (issue #38); next: pair each record with the next same-band record in reduce_uly_skyfreq (band state carried) or verify the DOWNLINK_BAND label, then re-dispatch — grind-max, needs raw-data measurement
 
-asset fehlt
+asset present
 format ulysses_atdf_x
 tag pds-ppi.igpp.ucla.edu
 arm ulysses_atdf_compiler
 pattern ^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series); consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs (second shard family, same binary); X turnaround 880/221, carrier 8408.209876 MHz (channel 9); asset measured fehlt 2026-09-17 — the first CI run validates the X ref window + median half-width (derived, pending); dispatch step: gh workflow run harvest.yml -f format=ulysses_atdf_x
+note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series); consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs (second shard family, same binary); X turnaround 880/221, carrier 8408.209876 MHz (channel 9); asset present measured 2026-09-17 via gh release view pds-ppi.igpp.ucla.edu: ulysses_atdf_x.bin 5546584 B sha256 a57af1c14563f41c09a072250565bfadd5039262790c02931ab774c8b92e66ce, manifested by harvest run 35277931000 (format ulysses_atdf — the same compiler writes the X family); the X ref window + median half-width validation (derived) remains pending
