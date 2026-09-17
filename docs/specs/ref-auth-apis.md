@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: bf8c4e90a73b9fe191dd5605a90a1328e9515f29578f3a3da643f6de0ce96dbc
+  sha256: 9a44499e901344914fa60d7fc5a630bec56c22ab3f228e7b2964b4b90a7ff92f
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -64,6 +64,17 @@ vorhanden.
 `archive_search --github` liest seit 2026-09-15 `GH_SEARCH_TOKEN` (read-only,
 fine-grained ohne Permissions) statt `OMEGAFLOW_TOKEN`; der Write-Token bleibt bei
 der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
+
+**Token-Rollen (gemessen 2026-09-17):**
+- `OMEGAFLOW_TOKEN` — der **Write**-PAT (CI-Publish, Contents-write); die Workflows
+  reichen ihn als Env-Var `GH_TOKEN` an `gh` weiter
+  (`GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}`).
+- `GH_SEARCH_TOKEN` — der **Read**-PAT (`.secrets.local`, fine-grained ohne
+  Permissions), genutzt von `archive_search --github` und `ci_manage list|view`.
+- `GH_TOKEN` — lokal (`.secrets.local` + gh-Keyring) der klassische PAT
+  (`repo, workflow`), genutzt von `gh` und `ci_manage cancel|rerun`.
+- Die Actions-Secrets `GH_TOKEN`/`GH_SEARCH_TOKEN` (von keinem Workflow genutzt)
+  wurden 2026-09-17 entfernt.
 
 Ein vorhandener Key **bedeutet kein Port-Verdikt**: einige besorgte Accounts führen
 auf Quellen, die das Register als `decline` (kein Messwert, Modell, projekt-gebunden)
