@@ -3,7 +3,7 @@
   session: Ernte-Folge 70
   class: handover
   date: 2026-09-17
-  sha256: ca554bfa7f2d10bc89f18ccf746454f1e97e207204c7fc92f778126c1130167f
+  sha256: 37ccca19320a5faa624808c5b3d28605d8d68462e490e42d5969859f08afbfb7
   status: live
 -->
 # Handover — Ernte-Folge 70 (2026-09-17)
@@ -34,17 +34,21 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Harvest-Architektur — Dispatch-Beweis rosetta_odf (härtester undatiert)
 
-Der rosetta_odf-Block (`asset fehlt`, `timeout 350`) steht; der Push `dcbba8ac`
-hat `harvest-dispatch` **`35268354408`** getriggert (gemessen `queued` am HEAD).
-Er triggert `harvest.yml -f format=rosetta_odf -f timeout=350`; das Gate liest
-`asset fehlt` → Compile bis 350 min.
+Der rosetta_odf-Block (`asset fehlt`, `timeout 350`) steht. Der Push `dcbba8ac`
+hat `harvest-dispatch` **`35268354408`** getriggert (**success**), der
+`harvest.yml -f format=rosetta_odf -f timeout=350` dispatchte. **Gemessen:** der
+harvest-Lauf `35269148125` starb im Startup (`jobs: []`, „workflow file issue") —
+der `timeout`-Input-Pfad war der Fehler (`timeout-minutes: ${{
+github.event.inputs.timeout || 240 }}` liefert bei gesetztem `timeout` einen
+String). Behoben in diesem Atom (`fromJSON(...)`, `harvest.yml:34`),
+re-dispatched.
 
-- **Dispatch-Beweis `termin`** — nach Abschluss `ci_manage view 35268354408`
-  einmal; bei success den rosetta-Block-note auf `asset present` + Run-Id/Bytes/
-  sha256 setzen (`phi/harvest.φ`). Nicht pollen.
+- **Dispatch-Beweis `termin`** — der neue rosetta-Lauf (nach dem Fix): bei success
+  den rosetta-Block-note auf `asset present` + Run-Id/Bytes/sha256 setzen
+  (`phi/harvest.φ`). Schritt: `ci_manage list`/`view` einmal nach Abschluss.
 - **Ungelaufene Pfade, `pending`** — das Idempotenz-Gate, der `force`-Lauf, der
-  `timeout`-Input-Pfad, der zweite Zeuge mit Shard-Vollständigkeit, `--check`
-  Feldeindeutigkeit + timeout-Validierung (`harvest_reg.rs`) — erst im ersten
+  zweite Zeuge mit Shard-Vollständigkeit, `--check` Feldeindeutigkeit +
+  timeout-Validierung (`harvest_reg.rs`) — erst im ersten erfolgreichen
   rosetta-Lauf gemessen.
 - **Parameterisierte Familien** — `gedi_l2a`/`icesat2_atl03`/`swot_l2_lr_ssh`
   (`--day`/`--prefix`), `dl3_skymap` (`--telescope`), `juno_ocru_odf` (`--volume`)
@@ -55,10 +59,6 @@ Er triggert `harvest.yml -f format=rosetta_odf -f timeout=350`; das Gate liest
 
 ## Quellen-Routen
 
-- **`magic_dl3` `termin`** — `dl3-skymap-cdn.yml` dispatched 2026-09-17
-  (run **`35268770926`**, `queued`; FITS-URL HTTP 200, 328320 B). Schritt: nach
-  Abschluss `ci_manage view 35268770926`; bei success `phi/sources.φ:7882`-note
-  auf present + Bytes/sha256.
 - **gedi/icesat2/swot protected-Bucket-403 `operator-gebunden`** — `research-max`
   gemessen: der EDL-Token wird an den drei `/s3credentials`-Endpunkten akzeptiert
   (HTTP 200); ein SigV4-`ListObjectsV2` gibt je Bucket **403 `AccessDenied` mit
@@ -119,7 +119,7 @@ Er triggert `harvest.yml -f format=rosetta_odf -f timeout=350`; das Gate liest
 ## Geteilter Baum — eigener Pfad-Satz
 
 - Eigener Commit-Pfad: `phi/harvest.φ`, `phi/sources.φ`,
-  `.github/workflows/ned-cdn.yml`, die 13
+  `.github/workflows/ned-cdn.yml`, `.github/workflows/harvest.yml`, die 13
   `tools/harvest/src/bin/*.rs` (`.secrets.local`-Reader),
   `docs/handover/handover-2026-09-17-ernte-folge70.md`
   (+ archiviertes `handover-2026-09-17-ernte-folge69.md`).
