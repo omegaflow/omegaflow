@@ -4,10 +4,10 @@ use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 const API: &str = "https://api.github.com";
 const REPO: &str = "omegaflow/omegaflow";
 
-fn token() -> Option<String> {
+fn token(keys: &[&str]) -> Option<String> {
     let env = load_env();
-    for key in ["GH_TOKEN", "OMEGAFLOW_TOKEN", "GITHUB_TOKEN"] {
-        match env.get(key) {
+    for key in keys {
+        match env.get(*key) {
             Some(v) if !v.is_empty() => return Some(v.clone()),
             _ => {}
         }
@@ -26,8 +26,32 @@ fn headers(tok: &str) -> Vec<(String, String)> {
     ]
 }
 
+fn read_headers() -> Option<Vec<(String, String)>> {
+    token(&[
+        "GH_SEARCH_TOKEN",
+        "GH_TOKEN",
+        "OMEGAFLOW_TOKEN",
+        "GITHUB_TOKEN",
+    ])
+    .map(|t| headers(&t))
+}
+
+fn write_headers() -> Option<Vec<(String, String)>> {
+    token(&["GH_TOKEN", "OMEGAFLOW_TOKEN", "GITHUB_TOKEN"]).map(|t| headers(&t))
+}
+
 fn call(url: &str, body: Option<&str>, h: &[(String, String)]) -> Option<String> {
     fetch_raw_with(url, body, h, 60, RetryPolicy::Transient, 30)
+}
+
+fn read_call(url: &str) -> Option<String> {
+    if let Some(h) = read_headers() {
+        if let Some(body) = call(url, None, &h) {
+            return Some(body);
+        }
+    }
+    let h = write_headers()?;
+    call(url, None, &h)
 }
 
 fn field(r: &JsonVal, key: &str) -> String {
@@ -44,9 +68,9 @@ fn num_field(r: &JsonVal, key: &str) -> String {
     }
 }
 
-fn list(limit: usize, h: &[(String, String)]) -> Option<()> {
+fn list(limit: usize) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs?per_page={limit}");
-    let body = call(&url, None, h)?;
+    let body = read_call(&url)?;
     let json = parse_json(&body)?;
     let runs = jpath_val(&json, "workflow_runs")?;
     let arr = match runs {
@@ -68,9 +92,9 @@ fn list(limit: usize, h: &[(String, String)]) -> Option<()> {
     Some(())
 }
 
-fn view(id: &str, h: &[(String, String)]) -> Option<()> {
+fn view(id: &str) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs/{id}");
-    let body = call(&url, None, h)?;
+    let body = read_call(&url)?;
     let json = parse_json(&body)?;
     println!("id: {}", num_field(&json, "id"));
     println!("name: {}", field(&json, "name"));
@@ -86,9 +110,10 @@ fn view(id: &str, h: &[(String, String)]) -> Option<()> {
     Some(())
 }
 
-fn act(id: &str, action: &str, h: &[(String, String)]) -> Option<()> {
+fn act(id: &str, action: &str) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs/{id}/{action}");
-    call(&url, Some(""), h)?;
+    let h = write_headers()?;
+    call(&url, Some(""), &h)?;
     println!("{action} requested for run {id}");
     Some(())
 }
@@ -112,11 +137,10 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let Some(tok) = token() else {
-        eprintln!("ci_manage: GH_TOKEN absent in env/.secrets.local");
+    if read_headers().is_none() && write_headers().is_none() {
+        eprintln!("ci_manage: no GH_TOKEN/GH_SEARCH_TOKEN in env/.secrets.local");
         std::process::exit(2);
-    };
-    let h = headers(&tok);
+    }
     let done = match cmd {
         "list" => {
             let mut limit = 20usize;
@@ -125,24 +149,24 @@ fn main() {
                     limit = v;
                 }
             }
-            list(limit, &h).is_some()
+            list(limit).is_some()
         }
         "view" => match args.get(1) {
-            Some(id) => view(id, &h).is_some(),
+            Some(id) => view(id).is_some(),
             None => {
                 usage();
                 false
             }
         },
         "cancel" => match args.get(1) {
-            Some(id) => act(id, "cancel", &h).is_some(),
+            Some(id) => act(id, "cancel").is_some(),
             None => {
                 usage();
                 false
             }
         },
         "rerun" => match args.get(1) {
-            Some(id) => act(id, "rerun", &h).is_some(),
+            Some(id) => act(id, "rerun").is_some(),
             None => {
                 usage();
                 false
