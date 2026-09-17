@@ -6,15 +6,14 @@ concurrency:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 4 * * *"
 
 permissions:
   contents: write
 
 jobs:
   demeter-harvest-compile-upload:
-    runs-on: ubuntu-latest
+    runs-on: demeter-residential
+    timeout-minutes: 540
     env:
       GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
       CDPP_USER: ${{ secrets.CDPP_USER }}
@@ -41,10 +40,10 @@ jobs:
           cargo build -p omegaflow-harvest --release --bin demeter_compiler
           cargo build -p omegaflow-harvest --release --bin demeter_harvest
 
-      - name: Harvest DEMETER ISL (resumable, 5h budget, CDN upload)
+      - name: Harvest DEMETER ISL (resumable, 8h budget, CDN upload)
         run: |
           target/release/demeter_harvest \
             --workdir phi/pipeline/demeter_work \
             --ledger phi/pipeline/demeter_ledger.txt \
-            --budget 14000 \
+            --budget 28800 \
             --ci-mode
