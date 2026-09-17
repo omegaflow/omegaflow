@@ -1,12 +1,12 @@
 <!--
-  title: Handover — <Titel> (Stand {date})
-  session: <Sitzungstitel — wie die Session heißt, die diese Linie fährt>
+  title: Handover — Entscheid-Folge 31 (Stand 2026-09-17)
+  session: Entscheid-Folge 31
   class: handover
-  date: {date}
-  sha256: <hex — über den Body ohne Header: sed '/^<!--/,/^-->/d' <f> | sha256sum>
+  date: 2026-09-17
+  sha256: 108111656530c9db0238bb5c578b6808f5c7990b225cbfed00148e1287c0b4c8
   status: live
 -->
-# Handover — <Titel> ({date})
+# Handover — Entscheid-Folge 31 (2026-09-17)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -56,9 +56,39 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `session_burn` — Burn je Session.
 - `gh` — nur `--log`/`--log-failed`/`workflow run`/`run download`.
 
-## <Sektion — härtester undatierter Punkt zuerst>
+## Operator-gebundene Punkte
 
-- <offener Punkt — mit nächstem Schritt> (Schritt: <Tool/Datei/URL/Anfrage>)
+- **adoption-Block** — `state/mail/adoption-mails.md`: drei Entwürfe (Toth,
+  Turyshev, Markwardt, je Quelle in der To-Zeile). **Gated (Operator-Wort
+  2026-09-17):** Senden erst, wenn die Forschung (20-s-Bande) komplett durch ist.
+  Operator-Sache — keine empfohlene Aufgabe. (Schritt: je cleanen Body
+  extrahieren; Sende-Wort erst nach Forschungsabschluss.)
+- **ESP32-Modul** — physischer Träger für Puls/HRV, on hold; BOM
+  `docs/specs/mantis-shrimp-bom.md`. (Schritt: Operator-Wort.)
+
+## Warten auf Rückmeldung (extern)
+
+- **NSE/Haug** — Thomas Keller (TRISP, MPI-FKF) antwortet 2026-09-17 09:29
+  (gemessen im Ledger): er sendet die TRISP-NSE-Daten in einigen Tagen. (Schritt:
+  Wiedervorlage ~2026-09-24 — Postfach prüfen, Datenannahme registrieren.)
+- **Fünf Sonden-Anfragen** (NSSDC Voyager/Mariner 10/Viking, Cassini, Juno) —
+  gesendet 2026-09-16, Antwort offen.
+- **Rubin-Review** (Shaughnessy, high volume) — offen.
+- **GitHub GC #4761801** — Follow-up gesendet 2026-09-17 (Resend
+  `01a0aded-75a3-7548-a994-682b9ef54843`), Antwort offen.
+- **GitHub Privacy-Löschung** — gesendet 2026-09-17 (Resend
+  `01a0aded-819e-75db-aaae-2ff654b6ec15`), Antwort offen.
+- Offene Alternativen: `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md`.
+
+## Termine (Wiedervorlage)
+
+- 2026-09-18 — Lasair.
+- 2026-09-22 — AllWISE-Coverage (`allwise_coverage.fp01`).
+- 2026-09-28 — JUICE-Flyby (Kernel 000113+); Feld-Zustand füllen.
+- 2026-09-30 — EDL-Token-Erneuerung (`EARTHDATA_EDL_TOKEN`, Konto `omegaflow.space`).
+- ~2026-10-07 — CSES-Limadou: neue Antragsprozedur nach CSES-02-Umstellung.
+- 2026-12-02 — NOIRLab Speisekammer-Frage (Gaia DR4).
+- 2026-12-03 — Europa Clipper (Fenster).
 
 ## Abschluss
 
