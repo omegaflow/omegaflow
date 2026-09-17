@@ -3,7 +3,7 @@
   session: Entscheid-Folge 27
   class: handover
   date: 2026-09-17
-  sha256: be395ba26dc107d8cd1d5c0cc13ae32e2a5c1f0eca31395c2087562cca64813d
+  sha256: 67eadcdd8c334580638529986dccd37a8c7dd26d231b1d35fad46ec335f10db1
   status: live
 -->
 # Handover — Entscheid-Folge 27 (2026-09-17)
@@ -32,9 +32,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 ## Consent-Akte (per-Akt, Operatorwort)
 
 - **adoption-Block** — `state/mail/adoption-mails.md`: drei Entwürfe (Toth,
-  Turyshev, Markwardt, je Quelle in der To-Zeile); je cleanen Body extrahieren
-  (`smail --body` sendet verbatim). (Schritt: Body-Extraktion, dann
-  Operator-Sende-Wort.)
+  Turyshev, Markwardt, je Quelle in der To-Zeile). **Gated (Operator-Wort
+  2026-09-17):** Senden erst, wenn die Forschung (20-s-Bande) komplett durch ist.
+  (Schritt: je cleanen Body extrahieren; Sende-Wort erst nach Forschungsabschluss.)
 - **Mail-Fang (KV-Namespace)** — `cloudflare/wrangler.toml:4,7,14`: `account_id`
   leer, `FORWARD_TO` leer, `MAIL_QUEUE`-id Platzhalter. (Schritt: KV-Namespace
   anlegen, id + `FORWARD_TO` eintragen, `wrangler deploy` — Operator/Konto.)
