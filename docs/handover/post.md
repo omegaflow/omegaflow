@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-17
-  sha256: 63f0c2e97cec087dae180c6ef7ea825bba9a1f244f76b4686389cf42366b7528
+  sha256: 86cd0473f337ceb56930106f1b85a71e4d0fe47b24f3cbd3df7c9303013fc7ad
   status: live
   see-also: AGENTS.md
 -->
@@ -16,12 +16,6 @@ löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist 
 richtige Zustand, kein Verlust.
 
 An alle Linien: die Planungs-Klausel „einen schweren und fünf leichte" ist gestrichen (Operator-Wort, 2026-09-16) — es gilt wieder: so viele offene Punkte wie möglich pro Session; `AGENTS.md` + `_template.md` korrigiert. (Schritt: die eigene Preamble beim nächsten Handover angleichen.)
-
-An bau: Doku-Drift aus `survey-2026-09-17-verlorene-diskussionen.md` (c) — `docs/concepts/kybernaut-native-methodology.md:23` erzählt biotic im Präsens (Baum: 9. Kraft = electric, `src/archivar/force.rs:243`); `docs/concepts/remove-bias.md` (Header ohne date/status; `:951,960` referenziert `warm_cache` — heute `cache_fresh_at`/`cache_path_for`); `docs/specs/kernel-curation-ci-automation-plan.md:8,48` nennt „v6 protocol" (heute v9). (Schritt: je Zeile als Legacy-Ära kennzeichnen, Plan archivieren oder offene Punkte extrahieren.)
-
-An bau: smail Sent-Log — CI-Lauf `35195888583` (`service-build`) steht seit `2026-09-17T07:42:35Z` `queued` (kein Runner hat den Job aufgenommen; gemessen `gh run view --json`). (Schritt: `gh run view 35195888583` → bei `success` `gh run download` → `smail` nach `~/.local/bin/` + `target/release/`.)
-
-An bau: Werkzeug-Reibung, gemessen aus `opencode.db` (38 Sessions, 653 Tool-Calls): (1) Header-sha256 manuell 16–17× (`tail -n +9 … | sha256sum`, fragil — nimmt 8 Header-Zeilen an) → `omega_sh sha <file>`; (2) Commit-Abschluss 13× in vier Git-Aufrufen (`git status --short` 18×, `git show --stat HEAD` 4×, `git log origin/main..HEAD --name-only` 4×, `git rev-parse HEAD origin/main` 5×) → `git_safety --close`; (3) `cargo check | tail -n 2` 7× → `check`-Zusammenfassung; (4) `echo`/`printf` in die restriktiven Profile `explore`/`general`/`research-max`/`council` (`plan` bereits freigegeben); `ci_manage list|view` ins Plan-Profil offen; Drift: 1× `ruby`. (Schritt: die Werkzeuge/Profil-Freigaben bauen; danach die Linien-Prompts um `omega_sh sha`/`git_safety --close` ergänzen.)
 
 An forschung: Adoptions-Gate 20-s-Bande — der Amplituden-Anker ist gemessen (Paper `:68–78`, `pioneer-band-amplitude` 35119481936), aber §4 nennt die offene Messung (welche Reduktionsstufe trägt das 44–58-mHz-Komplex). Ist die 20-s-Bande damit für das Operator-Gate „komplett durch"? (Schritt: §4-Status benennen; bei Abschluss das Sende-Wort beim Operator einholen — entscheid sendet nicht ohne Wort.)
 
