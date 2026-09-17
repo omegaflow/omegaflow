@@ -16,6 +16,8 @@ const SLOTS: usize = 1;
 const DEFAULT_BUDGET_SECS: u64 = 5 * 3600;
 const CREATE_PAUSE_SECS: u64 = 45;
 const WAF_BACKOFF_SECS: u64 = 1800;
+const TOKEN_REFRESH_SECS: u64 = 2700;
+const RETRY_PAUSE_SECS: u64 = 90;
 
 fn now() -> u64 {
     match SystemTime::now().duration_since(UNIX_EPOCH) {
@@ -59,21 +61,27 @@ fn login(user: &str, pass: &str) -> Option<String> {
     jstr(&v, "access_token")
 }
 
+struct HttpReply {
+    status: u16,
+    body: String,
+}
+
 fn fetch_http(
     url: &str,
     method: &str,
     body: Option<&str>,
     headers: &[(String, String)],
-) -> Option<String> {
+) -> Option<HttpReply> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
-        .arg("-f")
         .arg("-g")
         .arg("-m")
         .arg("45")
         .arg("--connect-timeout")
-        .arg("20");
+        .arg("20")
+        .arg("-w")
+        .arg("\n%{http_code}");
     if method != "GET" {
         cmd.arg("-X").arg(method);
     }
@@ -85,30 +93,31 @@ fn fetch_http(
     }
     cmd.arg(url);
     let output = cmd.output().ok()?;
-    if output.status.success() {
-        Some(String::from_utf8_lossy(&output.stdout).into_owned())
-    } else {
+    if !output.status.success() {
         eprintln!(
-            "http {} returned ({}): {} {}",
+            "http {} transport void ({}): {} {}",
             method,
             output.status,
             url,
             String::from_utf8_lossy(&output.stderr).trim()
         );
-        None
+        return None;
     }
+    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+    let (body, code) = stdout.rsplit_once('\n')?;
+    let status: u16 = code.trim().parse().ok()?;
+    Some(HttpReply {
+        status,
+        body: body.to_string(),
+    })
 }
 
 fn req_json(token: &str, url: &str) -> Option<JsonVal> {
-    let body = fetch_http(url, "GET", None, &auth_header(token))?;
-    parse_json(&body)
-}
-
-fn req_json_post(token: &str, url: &str, json: &str) -> Option<JsonVal> {
-    let mut headers = auth_header(token);
-    headers.push(("Content-Type".into(), "application/json".into()));
-    let body = fetch_http(url, "POST", Some(json), &headers)?;
-    parse_json(&body)
+    let reply = fetch_http(url, "GET", None, &auth_header(token))?;
+    if !(200..300).contains(&reply.status) {
+        return None;
+    }
+    parse_json(&reply.body)
 }
 
 fn scan_urns(token: &str) -> Vec<String> {
@@ -183,14 +192,17 @@ fn load_urns(token: &str) -> Vec<String> {
     urns
 }
 
-fn clear_basket(token: &str) -> bool {
+fn clear_basket(token: &str) -> Option<u16> {
     let url = format!("{ORDER}/order/basket");
-    fetch_http(&url, "DELETE", None, &auth_header(token)).is_some()
+    fetch_http(&url, "DELETE", None, &auth_header(token)).map(|r| r.status)
 }
 
 #[derive(Debug)]
 enum CreateError {
     WafBlocked,
+    Unauthorized,
+    HttpStatus(u16),
+    UnparsableOk,
     CreateFailed,
 }
 
@@ -204,13 +216,41 @@ fn create_order(token: &str, batch: &[String], label: &str) -> Result<i64, Creat
             .join(",")
     );
     let basket_url = format!("{ORDER}/order/basket/selection");
-    if !clear_basket(token) {
-        eprintln!("create {label}: basket clear void");
-        return Err(CreateError::CreateFailed);
+    match clear_basket(token) {
+        Some(s) if (200..300).contains(&s) => {}
+        Some(401) => {
+            eprintln!("create {label}: basket clear 401 — token stale");
+            return Err(CreateError::Unauthorized);
+        }
+        Some(s) => {
+            eprintln!("create {label}: basket clear status {s}");
+            return Err(CreateError::HttpStatus(s));
+        }
+        None => {
+            eprintln!("create {label}: basket clear transport void");
+            return Err(CreateError::CreateFailed);
+        }
     }
-    let Some(basket) = req_json_post(token, &basket_url, &sel) else {
-        eprintln!("create {label}: basket void ({} URNs)", batch.len());
-        return Err(CreateError::CreateFailed);
+    let mut sel_headers = auth_header(token);
+    sel_headers.push(("Content-Type".into(), "application/json".into()));
+    let sel_reply = match fetch_http(&basket_url, "POST", Some(&sel), &sel_headers) {
+        Some(r) => r,
+        None => {
+            eprintln!("create {label}: selection transport void");
+            return Err(CreateError::CreateFailed);
+        }
+    };
+    if sel_reply.status == 401 {
+        eprintln!("create {label}: selection 401 — token stale");
+        return Err(CreateError::Unauthorized);
+    }
+    if !(200..300).contains(&sel_reply.status) {
+        eprintln!("create {label}: selection status {}", sel_reply.status);
+        return Err(CreateError::HttpStatus(sel_reply.status));
+    }
+    let Some(basket) = parse_json(&sel_reply.body) else {
+        eprintln!("create {label}: selection unparsable");
+        return Err(CreateError::UnparsableOk);
     };
     let quota = jpath_val(&basket, "quota").and_then(|q| match q {
         JsonVal::Num(n) => Some(*n as i64),
@@ -226,26 +266,36 @@ fn create_order(token: &str, batch: &[String], label: &str) -> Result<i64, Creat
     let order_url = format!("{ORDER}/user/orders");
     let mut headers = auth_header(token);
     headers.push(("Content-Type".into(), "application/json".into()));
-    let raw = fetch_http(&order_url, "POST", Some(&order_body), &headers);
-    let body = match raw {
-        Some(b) => b,
+    let reply = match fetch_http(&order_url, "POST", Some(&order_body), &headers) {
+        Some(r) => r,
         None => {
-            eprintln!("create {label}: order POST void");
+            eprintln!("create {label}: order transport void");
             return Err(CreateError::CreateFailed);
         }
     };
-    let parsed = parse_json(&body);
-    let v = match parsed {
+    if reply.status == 401 {
+        eprintln!("create {label}: order 401 — token stale");
+        return Err(CreateError::Unauthorized);
+    }
+    if reply.body.contains("Request Rejected") {
+        eprintln!("create {label}: F5 ASM block (Request Rejected)");
+        return Err(CreateError::WafBlocked);
+    }
+    if !(200..300).contains(&reply.status) {
+        eprintln!("create {label}: order status {}", reply.status);
+        return Err(CreateError::HttpStatus(reply.status));
+    }
+    let v = match parse_json(&reply.body) {
         Some(v) => v,
         None => {
             if let Some(oid) = find_order_by_label(token, label) {
                 return Ok(oid);
             }
             eprintln!(
-                "create {label}: order parse void: {}",
-                body.chars().take(80).collect::<String>()
+                "create {label}: order unparsable 200: {}",
+                reply.body.chars().take(80).collect::<String>()
             );
-            return Err(CreateError::WafBlocked);
+            return Err(CreateError::UnparsableOk);
         }
     };
     let id = jpath_val(&v, "content.id")
@@ -462,7 +512,9 @@ fn run() -> std::io::Result<()> {
         Some(t) => t,
         None => {
             eprintln!("demeter_harvest: login void — the series stays unharvested (0 honored)");
-            return Ok(());
+            return Err(std::io::Error::other(
+                "login void — the series stays unharvested",
+            ));
         }
     };
     println!("harvest: token acquired ({})", token.len());
@@ -481,7 +533,7 @@ fn run() -> std::io::Result<()> {
     println!("harvest: {} URNs", urns.len());
     if urns.is_empty() {
         eprintln!("harvest: catalog void — nothing to order (0 honored)");
-        return Ok(());
+        return Err(std::io::Error::other("catalog void — nothing to order"));
     }
     let urns: Vec<String> = urns.into_iter().take(urn_limit).collect();
 
@@ -496,7 +548,7 @@ fn run() -> std::io::Result<()> {
             println!("harvest: budget {budget}s reached — stopping (resume via ledger)");
             break;
         }
-        if now().saturating_sub(last_token_refresh) >= 2700 {
+        if now().saturating_sub(last_token_refresh) >= TOKEN_REFRESH_SECS {
             if let Some(t) = login(&user, &pass) {
                 token = t;
                 last_token_refresh = now();
@@ -504,15 +556,25 @@ fn run() -> std::io::Result<()> {
             }
         }
         while slots.len() < SLOTS && idx < batches.len() {
+            if now().saturating_sub(start) >= budget {
+                break;
+            }
             let label = format!("demeter_{idx:04}");
             if done.contains(&label) {
                 idx += 1;
                 continue;
             }
+            if now().saturating_sub(last_token_refresh) >= TOKEN_REFRESH_SECS {
+                if let Some(t) = login(&user, &pass) {
+                    token = t;
+                    last_token_refresh = now();
+                    println!("harvest: token refreshed before create");
+                }
+            }
             match create_order(&token, &batches[idx], &label) {
                 Ok(oid) => {
                     slots.push((label.clone(), oid));
-                    println!("harvest: created {oid} {label} (slots {}/3)", slots.len());
+                    println!("harvest: created {oid} {label} (slots {})", slots.len());
                     std::thread::sleep(std::time::Duration::from_secs(CREATE_PAUSE_SECS));
                 }
                 Err(CreateError::WafBlocked) => {
@@ -522,9 +584,34 @@ fn run() -> std::io::Result<()> {
                     );
                     std::thread::sleep(std::time::Duration::from_secs(WAF_BACKOFF_SECS));
                 }
+                Err(CreateError::Unauthorized) => match login(&user, &pass) {
+                    Some(t) => {
+                        token = t;
+                        last_token_refresh = now();
+                        println!("harvest: token refreshed after 401");
+                        std::thread::sleep(std::time::Duration::from_secs(5));
+                        continue;
+                    }
+                    None => {
+                        eprintln!("harvest: login void after 401 — stopping");
+                        break;
+                    }
+                },
+                Err(CreateError::HttpStatus(s)) => {
+                    eprintln!("harvest: create {label} http {s} — retry in {RETRY_PAUSE_SECS}s");
+                    std::thread::sleep(std::time::Duration::from_secs(RETRY_PAUSE_SECS));
+                    break;
+                }
+                Err(CreateError::UnparsableOk) => {
+                    eprintln!(
+                        "harvest: create {label} unparsable 200 — retry in {RETRY_PAUSE_SECS}s"
+                    );
+                    std::thread::sleep(std::time::Duration::from_secs(RETRY_PAUSE_SECS));
+                    break;
+                }
                 Err(CreateError::CreateFailed) => {
-                    eprintln!("harvest: create {label} void — retry in 90s");
-                    std::thread::sleep(std::time::Duration::from_secs(90));
+                    eprintln!("harvest: create {label} void — retry in {RETRY_PAUSE_SECS}s");
+                    std::thread::sleep(std::time::Duration::from_secs(RETRY_PAUSE_SECS));
                     break;
                 }
             }
@@ -532,6 +619,13 @@ fn run() -> std::io::Result<()> {
         }
         if slots.is_empty() && idx >= batches.len() {
             break;
+        }
+        if now().saturating_sub(last_token_refresh) >= TOKEN_REFRESH_SECS {
+            if let Some(t) = login(&user, &pass) {
+                token = t;
+                last_token_refresh = now();
+                println!("harvest: token refreshed");
+            }
         }
         let mut progressed = false;
         for (label, oid) in slots.clone() {
@@ -573,6 +667,17 @@ fn run() -> std::io::Result<()> {
         done.len()
     );
 
+    if harvested_files == 0 && done.len() < batches.len() {
+        eprintln!(
+            "harvest: 0 files harvested, {}/{} orders done — the series stays unwritten",
+            done.len(),
+            batches.len()
+        );
+        return Err(std::io::Error::other(
+            "0 files harvested with the ledger incomplete",
+        ));
+    }
+
     if ci_mode {
         let compiler = match std::env::current_exe() {
             Ok(exe) => match exe.parent() {
@@ -581,14 +686,22 @@ fn run() -> std::io::Result<()> {
             },
             Err(_) => PathBuf::from("demeter_compiler"),
         };
-        let st = Command::new(&compiler)
+        let status = Command::new(&compiler)
             .arg("--aggregate")
             .arg(&workdir)
             .arg("--ci-mode")
             .status();
-        if let Ok(st) = st {
-            if !st.success() {
-                eprintln!("harvest: aggregate+upload void");
+        match status {
+            Ok(st) if st.success() => {}
+            Ok(st) => {
+                return Err(std::io::Error::other(format!(
+                    "aggregate+upload exited {st} — the series stays unmanifested"
+                )));
+            }
+            Err(e) => {
+                return Err(std::io::Error::other(format!(
+                    "aggregate+upload spawn void: {e}"
+                )));
             }
         }
     }
