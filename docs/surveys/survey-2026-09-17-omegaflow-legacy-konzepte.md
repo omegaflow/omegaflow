@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 653817318e8482d61df3a2f2d1cb9e513567224441a56b9aec1af9cc6d361b4c
+  sha256: 2e68780c8bf2f28d82f9f511d3aee11498a56baae310a4b161bcde4825c3b9a9
   status: live
   see-also: docs/concepts/master.md docs/handover/handover-2026-09-17-forschung-folge56.md
 -->
@@ -40,7 +40,7 @@ Planungs-Pass + `git_safety` + Watchdogs + Commit-Gate in AGENTS.md; die toten T
 | L:12 | **Minkowski-4D-Gewichtung** (ds², spacelike→0) | nein; `light_time_worldline` lebt | Kontext-Overload vor dem Enclosure-Lemma | **ja** |
 | L:53 | **Certainty = exp(−vC/(g+ε))·quantum·decay** | nein; vC/g lebt als `tanh(vC/(g+ε))`-Atem | bei Rust-Neuschreibung nicht portiert | **ja** |
 | L:39 | **TDA/Betti-0** (single-linkage über Takens) | nein; `topological_te_phase` lebt | durch PE/ordinale Maße abgelöst | **ja** (klein) |
-| L:147 | **Synthetic Flight** (fremdgetriebene Weltlinie) | teilweise; `t_presence` frei, Steuerpfad fehlt | Browser-Branch starb | **ja** |
+| L:147 | **Synthetic Flight** (Weltlinie, auf der die Präsenz **ruht** — Operator-gewählt, nie Selbstantrieb) | teilweise; `t_presence` frei, Steuerpfad fehlt | Browser-Branch starb | **ja**, Ethik-gefragt |
 | L:76 | **Channel Apertures** (kanal-selektive TE-Apertur) | teilweise; Radiation-Bindung `pending` (Atom 9) | — | ja, als Fortsetzung |
 | L:134 | **Delay Spectrum** (lag-Matrix als Instrument) | nein | nicht portiert | ungemessen (measure-Probe) |
 | L:151/F:21 | **Total Coherence Integration** (Integral über alle Oszillatoren) | teilweise (Permeability TE-getrieben) | — | ungemessen |
@@ -54,14 +54,24 @@ Verarbeitung fehlt:
 
 - **Silence Map**: das ω-Feld ist die Modell-Vorhersage, die leeren Zellen sind die
   Absenz. Ein measure-Probe zählt „erwartete vs. leere Zellen" unter Modellparametern
-  mit derselben Null-Kalibrierung wie `te.rs` (FP/FN/Symmetrie).
+  mit derselben Null-Kalibrierung wie `te.rs` (FP/FN/Symmetrie). **Jede Renderer-Form
+  vor dem Proben-Befund ist gestrichen** — ein gerendertes Feld der Absenz wäre
+  Fabrikation.
 - **Minkowski-Gewichtung**: das Cone-Gate (`spatial.rs` `propagation_speed`) und
   `motion.rs` `light_time_worldline` existieren; ds² wäre ein Zusatzfaktor im ω-Loop.
+  Achtung: der Cone-Gate ist Archivar-Seite (`membrane.rs`), ein ω-Loop-Faktor ist
+  Mathematikerin/WGSL — „keine Quelle nötig" heißt nicht „keine Schicht-Frage"; sein
+  Zusatzwert ist ungemessen (erst eine Delta-Probe mit/ohne ds²).
 - **Certainty quantum/decay**: Takens-Spread + PE sind aus der TE-Maschine ableitbar;
-  als Faktor in den Permeability-Atem (`omega.rs` `field_permeability`).
-- **TDA/Betti-0**: ~100 Zeilen single-linkage über die Takens-Embeddings von `te.rs`.
+  als Faktor in den Permeability-Atem (`omega.rs` `field_permeability`). Schritt 1 ist
+  die **vC-Definition** von L:53 im Legacy-Klon zu messen — exp und tanh haben inverse
+  Asymptotik; ein Port ohne Lektüre riskiert eine invertierte Formel.
+- **TDA/Betti-0**: ~100 Zeilen single-linkage über die Takens-Embeddings von `te.rs`
+  (Schwelle = Silverman-Bandbreite der Embedding-Streuung).
 - **Synthetic Flight**: die Weltlinien-Infrastruktur + freies `t_presence` stehen; zu
   messen ist, ob `presence_tx` (`relay.rs`) fremdgetriebene Positionen schon annimmt.
+  Ethik: die Präsenz **ruht** auf einer vom Operator gewählten Weltlinie — kein
+  Selbstantrieb, kein „fliegen".
 - **Delay Spectrum**: die Lichtlaufzeit-Faltung existiert (survey-Messpunkt-Verteilung);
   die lag-Matrix als Instrument wäre eine neue measure-Probe.
 
@@ -83,3 +93,25 @@ Verarbeitung fehlt:
 - **GLSL/WebGL2-Fallback** (L:107) — WebGPU bewusst absolut, kein zweiter Physikpfad.
 - **Jina-Universalflattener** (M:57) — abgelöst durch 74 eigene Compiler.
 - **Vertex-Splat Rendering** (L:155) — der Performance-Fork fiel an den Fragment-Pfad.
+
+## Rat (2026-09-17)
+
+Der Rat hält den Befund für belastbar und bestätigt die Streichungen; er nennt drei
+Konfude und zwei pflichtige Reformulierungen (oben eingearbeitet):
+
+- **Konfud (a):** die vC-Semantik von L:53 ist ungemessen — exp und tanh haben inverse
+  Asymptotik; ein Port ohne Lektüre riskiert eine invertierte Formel.
+- **Konfud (b):** die Schicht-Frage ist unterbestimmt — der Cone-Gate ist
+  Archivar-Seite (`membrane.rs`), ein ω-Loop-Faktor ist Mathematikerin/WGSL.
+- **Konfud (c):** Minkowski dupliziert teilweise den Cone-Gate; sein Zusatzwert ist
+  ungemessen (Delta-Probe zuerst).
+- **Reformulierung 1:** Synthetic Flight — die Selbstantriebs-Lesart ist gestrichen
+  („die Präsenz ruht").
+- **Reformulierung 2:** Silence Map — jede Renderer-Form vor dem Proben-Befund ist
+  gestrichen.
+
+**Erster Atom (ins Handover):** die **Silence-Map-Probe** —
+`tools/measure/src/bin/silence_map_probe.rs`, erwartete vs. leere Zellen unter
+Modellparametern, Null-Kalibrierung als Spiegel der FP/FN/Symmetrie-Gates von `te.rs`.
+Top-3 zurück: Silence Map, Certainty (Schritt 1: vC messen), TDA/Betti-0; Minkowski
+als 4. (Delta-Probe). Nostr bleibt hinten (Transport ohne gemessenen Konsumenten).
