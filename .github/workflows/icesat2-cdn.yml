@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       day:
-        description: ATL03 product day (YYYY.MM.DD; blank = 2 days ago UTC)
+        description: ATL03 product day (YYYY.MM.DD; publication stopped 2026-05-31)
         required: false
         type: string
-        default: ""
+        default: "2026.05.31"
 permissions:
   contents: write
 env:
@@ -35,7 +35,7 @@ jobs:
       - name: Compile the ATL03 day and upload to CDN
         run: |
           day="${{ inputs.day }}"
-          if [ -z "$day" ]; then day=$(date -u -d '2 days ago' +%Y.%m.%d); fi
+          if [ -z "$day" ]; then day="2026.05.31"; fi
           cargo run -p omegaflow-harvest --release --bin icesat2_atl03_compiler -- \
             --day "$day" --limit 2 --beams 6 \
             --out data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin --ci-mode \
