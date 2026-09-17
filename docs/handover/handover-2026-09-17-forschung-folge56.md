@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: 1d2d06bbded32d2c0cba0cc9d82740cf4f4d4260805b82c0db3524fce5bfa509
+  sha256: 38731fadc417ad52ddada2919fc05e896b0ec2b078a2b7626370a1c9131636f4
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -59,6 +59,13 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `cancel-in-progress: false` unverändert. Ursprung gemessen: `08cbdb74` flachte die
   im Commit-Text genannte „same-asset namespace pairs"-Form auf `${{ github.workflow }}` ab.
   (Schritt: nächster Dispatch — ein Re-Dispatch läuft nicht mehr hinter einem fremden Job.)
+- Regress gefixt (Rat, eine Wurzel): `08cbdb74` setzte auch `ci-check.yml`
+  `cancel-in-progress` von `false` (Lektion `f8cdca96`: ein Lauf muss fertig werden,
+  377 s → 22,6 s) zurück auf `true` → das Format-/clippy-Gate hungerte aus (seit
+  `bc9d6a0b` kein vollendeter Lauf). Jetzt `false`. Lesson-Lock:
+  `tools/register/src/bin/concurrency_contract.rs` (Register-Test, läuft in
+  `cargo test -p omegaflow-register` im ci-check) hält `ci-check: false` + job-level
+  für die 6 Matrix-Workflows, damit kein dritter Mass-Pass die Lektion überschreibt.
 - Offen: `cancel-in-progress: false` schützt das Shard-Set, hält aber Stale fest. Auf
   `true` erst, wenn der `sharded`-Check **Vollständigkeit** statt Prefix prüft
   (`grep -q "^mro_odf_"` übersieht ein halbes Set). (Schritt: den Prefix-Check in
@@ -74,8 +81,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `src/archivar/odf.rs:425` (bau), `tools/harvest/src/bin/{cassini,dart}_tnf_compiler.rs`,
   `tools/harvest/src/bin/las_compiler.rs`, `tools/register/src/bin/cdn_reconcile.rs:310`,
   `tools/utils/src/bin/archive_search.rs:437`. Die zwei neuen Kyoto-Dateien sind noch
-  nicht durch einen format-Lauf gemessen. (Schritt: nächster ci-check-Lauf auf dem
-  gepushten SHA; fremde Dateien gehören ihren Linien.)
+  nicht durch einen format-Lauf gemessen. (Schritt: mit dem ci-check-Fix läuft der
+  nächste Lauf durch — `gh run view` des ci-check auf dem gepushten SHA; fremde Dateien
+  gehören ihren Linien.)
 
 ## Sonden request-only — Antworten offen (undatiert)
 
@@ -88,12 +96,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - Flyby Path 2 — datiert (JUICE 28./29.09., Clipper 03.12.), schweigt vor dem
   Datum. (Schritt: vor dem 28.09. den konkreten Abruf-Schritt je Kanal in
   `docs/paper/flyby-path-2-preregistration.md` setzen.)
-
-## post.md — fremde uncommittete Arbeit (Format-Gate)
-
-- Der forschung-Teil von `post.md:18` (format-Gate) ist am Baum erledigt; die Zeile
-  bleibt stehen, weil `post.md` fremde uncommittete Arbeit trägt. (Schritt: nach dem
-  fremden `post.md`-Commit die forschung-Zeile streichen.)
 
 ## Abschluss
 
