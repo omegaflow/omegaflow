@@ -27,10 +27,6 @@ ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-disponiert
-kandidat https://aqs.epa.gov/aqsweb/airdata/download_files.html
-note gemessen 2026-09-17: Parser-Gap geschlossen — per-row lat/lon existiert seit Commit 2f5a83ea (src/archivar/extract.rs resolve_col), der Block ist in phi/sources.φ:1352 registriert (daily_88101_2025.zip, rows + lat 5/lon 6/epoch 11 + field 16 per Spalten-Index); die Spalte „Arithmetic Mean" löst der Spalten-Index, der verbatim-Key-Arm parse.rs split_directive macht Leerzeichen-Keys zusätzlich schreibbar. Route/Format unverändert: download_files.html HTTP 200 (386197 B); daily_88101_2025.zip keylos HEAD/Range-GET HTTP 206 (Content-Range 0-99/8647326), GET 200 (8647326 B), PK-Zip mit daily_88101_2025.csv; Kraft/Unit/τ diffusion µg/m3 τ 86400 (wie openaq_pm25_ugm3).
-
 parser-gap
 kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
 note Parser-gap: VOTable-JSON — IRSA liefert s_ra/s_dec nur als FIELD-Metadaten + 3,18-MB-Antwort; Probe void (§15.1, 2026-08-19).
@@ -93,40 +89,40 @@ note GOES-16 ABI L1b RadC Manifest — shared Bucket-Index src/archivar/goes_abi
 
 ausstehend
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
-note 30 Blöcke (index.φ) — Datei am Datenträger vorhanden (11586 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 30 Blöcke (index.φ) — Datei am Datenträger vorhanden (11586 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
-note 3 Blöcke (index.φ) — Datei am Datenträger vorhanden (2062 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 3 Blöcke (index.φ) — Datei am Datenträger vorhanden (2062 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
-note 16 Blöcke (index.φ) — Datei am Datenträger vorhanden (3922 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 16 Blöcke (index.φ) — Datei am Datenträger vorhanden (3922 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
-note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (391917 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (391917 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
-note 873 Blöcke (index.φ) — Datei am Datenträger vorhanden (615632 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 873 Blöcke (index.φ) — Datei am Datenträger vorhanden (615632 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
-note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (488708 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (488708 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_183l.φ
-note 19 Blöcke (index.φ) — Datei am Datenträger vorhanden (4710 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 19 Blöcke (index.φ) — Datei am Datenträger vorhanden (4710 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; 2026-09-17 fünf `force`-Direktiven gesetzt (seismic-body/thermal/thermal/em/gravity an geosphere_usgs_earthquakes_month, hydrosphere_drifters_hourly, atmosphere_metar_global, magnetosphere_solar_regions, cosmos_neo_close_approaches; lokal, gitignored) — die übrigen 13 Blöcke tragen keinen physikalischen Kanal (Review) oder brauchen kein force (last_line); --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_2k.φ
-note 176 Blöcke (index.φ) — Datei am Datenträger vorhanden (45361 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 176 Blöcke (index.φ) — Datei am Datenträger vorhanden (45361 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_7k.φ
-note 423 Blöcke (index.φ) — Datei am Datenträger vorhanden (302462 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 423 Blöcke (index.φ) — Datei am Datenträger vorhanden (302462 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
-note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
