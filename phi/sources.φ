@@ -6474,7 +6474,8 @@ url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int
 format rosetta_odf
 at earth
 ttl 604800
-field observable_hz rosetta_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Text-Reader `src/archivar/ifms_agc.rs` parst `<header>` + `<active_table>` + `<body_Gain>` (Spalten aus der `//`-Zeile, nicht hartcodiert); `rosetta_odf_compiler.rs` darauf verdrahtet. Fixtur `src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW`, 343978 B, sha256 13eb7667a1cee6a4b9378d29753aaf9af984e245bcaf80c11321118f807fd48c, URL https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-X-RSI-1-2-3-EAR2-0061-V1.0/DATA/LEVEL1A/CLOSED_LOOP/IFMS/AG1/R32ICL1L1A_AG1_072831317_02.RAW, 1994 Zeilen. Offen: `planetary-odf-cdn.yml --ci-mode` nach Push.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
