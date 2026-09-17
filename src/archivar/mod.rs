@@ -75,6 +75,7 @@ pub mod kepler;
 pub mod las;
 pub mod lsk;
 pub mod lzw;
+pub mod mariner_occlt;
 pub mod mat5;
 pub mod matfile;
 pub mod maxi;
