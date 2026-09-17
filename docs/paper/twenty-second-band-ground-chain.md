@@ -1,9 +1,9 @@
 <!--
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
-  date: 2026-09-15
-  version: 9
-  sha256: 11968aa2effd61bc00b3d5543a86d7f1ffdd22d2d74a49f6019516cf04a76fb3
+  date: 2026-09-17
+  version: 10
+  sha256: 3392c87d03f482454cf6ad32df4fd70f253d0921ea9727c24eb09c2bfa2eeda6
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -186,8 +186,24 @@ empty (GIM maps begin 1998, after the ATDF era); the solar-corona correction
 the corona range model); the time-scale and station-clock algorithms (§2, §7),
 the individual-leg troposphere correction (§10.2.1) and the antenna correction
 (§10.5) are absent from the chain. The station-fixity of the band is a measured
-property of the receive chain; which named stage of the reduction carries the
-44–58-mHz complex is the open measurement.
+property of the receive chain. The field census (run `pioneer-cell-census`,
+1 071 540 records, 3 receivers) separates the band by record field: the resid
+cells (r[8], NOCC doppler_resid) carry the paper signature — 1988 mode3-lt10
+peaks rx14 46,581 / rx43 44,119 / rx63 50,920 mHz, mode3-s1.000 46,577 / 47,732
+/ 55,959 — while the fsky cells (r[1], raw sky frequency, same cells, same n)
+carry a different station-fixed complex (1988 mode3-lt10 46,585 / 52,816 /
+45,100; mode3-s1.000 46,579 / 57,842 / 45,094). Two receivers move their
+dominant peak between the fields (rx43 +8,7, rx63 −5,8 mHz on the 1988 cell;
++10,1 / −10,9 on s1.000), rx14 does not (Δ 0,002–0,004 mHz). The 44–58-mHz
+complex of the resid series is therefore not carried upstream of the reduction
+chain; §8 (light-time) is its first named candidate, and which named stage
+carries it remains the open measurement. Measured in the same run: 218 census
+lines peak at exactly 50,000 mHz — 214 of them in the 10–30-s and 60-s sampler
+classes across all receivers and years (both fields), 0 in the resid fine
+classes (whose peaks span 44,0–58,0 and carry the station-fixed band), 4 in fsky
+fine cells (all st63-lt10-1992; the cell st63 mode1 lt10 1992, n=9 370, reads
+resid 51,360 / fsky 50,000); whether the 50,000-mHz line is a 20-s signal or a
+raster artifact is not decided by this run (the probe prints no significance).
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
