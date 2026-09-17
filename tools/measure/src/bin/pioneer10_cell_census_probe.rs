@@ -12,12 +12,42 @@ const MIN_RUN: usize = 4;
 const MIN_N: usize = 200;
 const FLAG_TOL: f64 = 0.00005;
 
+#[derive(Clone, Copy)]
+enum Field {
+    Resid,
+    Fsky,
+}
+
+impl Field {
+    fn name(self) -> &'static str {
+        match self {
+            Field::Resid => "resid",
+            Field::Fsky => "fsky",
+        }
+    }
+
+    fn present(self, r: &[f64; 14]) -> bool {
+        match self {
+            Field::Resid => r[8].is_finite(),
+            Field::Fsky => r[1].is_finite() && r[1] > 0.0,
+        }
+    }
+
+    fn value(self, r: &Rec) -> f64 {
+        match self {
+            Field::Resid => r.resid,
+            Field::Fsky => r.fsky,
+        }
+    }
+}
+
 struct Rec {
     t: f64,
     sampler: f64,
     station: i64,
     mode: i64,
     resid: f64,
+    fsky: f64,
     year: Option<i64>,
     file_id: i64,
 }
@@ -199,6 +229,15 @@ fn cell_line(st: i64, label: &str, n_raw: usize, peak: Option<(f64, usize)>) -> 
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let field = match args.iter().position(|a| a == "--field") {
+        Some(i) => match args.get(i + 1).map(String::as_str) {
+            Some("fsky") => Field::Fsky,
+            _ => Field::Resid,
+        },
+        None => Field::Resid,
+    };
+
     let pasf_bytes = match std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin") {
         Ok(b) => b,
         Err(_) => {
@@ -213,13 +252,14 @@ fn main() {
 
     let recs: Vec<Rec> = pasf
         .iter()
-        .filter(|r| r[8].is_finite())
+        .filter(|r| field.present(r))
         .map(|r| Rec {
             t: r[0],
             sampler: r[3],
             station: r[6] as i64,
             mode: r[13] as i64,
             resid: r[8],
+            fsky: r[1],
             year: year_of(r[0]),
             file_id: r[12] as i64,
         })
@@ -231,9 +271,10 @@ fn main() {
         .collect::<BTreeSet<i64>>()
         .len();
     eprintln!(
-        "PASF: {} records, {} finite-resid, {} distinct dumps",
+        "PASF: {} records, {} finite-{}, {} distinct dumps",
         pasf.len(),
         recs.len(),
+        field.name(),
         n_dumps
     );
 
@@ -252,7 +293,10 @@ fn main() {
         ("60", |s| s >= 30.0),
     ];
 
-    println!("=== CELL CENSUS (ground_mode x sampler-class) — peak in mHz over 44–58 mHz ===");
+    println!(
+        "=== CELL CENSUS (ground_mode x sampler-class) — peak in mHz over 44–58 mHz field={} ===",
+        field.name()
+    );
     for st in STATIONS {
         println!("station {st} (paper {:.3} mHz):", paper_value(st) * 1e3);
         for (mname, mpred) in modes {
@@ -261,7 +305,7 @@ fn main() {
                 let seq: Vec<(f64, f64)> = recs
                     .iter()
                     .filter(|r| r.station == st && mpred(r.mode) && cpred(r.sampler))
-                    .map(|r| (r.t, r.resid))
+                    .map(|r| (r.t, field.value(r)))
                     .collect();
                 let n_raw = seq.len();
                 let peak = peak_of_cell(seq);
@@ -301,7 +345,7 @@ fn main() {
                 .filter(|r| {
                     r.station == st && r.mode == 3 && r.sampler < 10.0 && r.year == Some(*y)
                 })
-                .map(|r| (r.t, r.resid))
+                .map(|r| (r.t, field.value(r)))
                 .collect();
             let n_raw = seq.len();
             let peak = peak_of_cell(seq);
@@ -319,7 +363,7 @@ fn main() {
             let seq: Vec<(f64, f64)> = recs
                 .iter()
                 .filter(|r| r.station == st && r.mode == 3 && r.sampler < 10.0 && r.file_id == *d)
-                .map(|r| (r.t, r.resid))
+                .map(|r| (r.t, field.value(r)))
                 .collect();
             let n_raw = seq.len();
             let yrange = seq.iter().filter_map(|(t, _)| year_of(*t)).fold(
@@ -355,7 +399,7 @@ fn main() {
                                 && cpred(r.sampler)
                                 && r.year == Some(*y)
                         })
-                        .map(|r| (r.t, r.resid))
+                        .map(|r| (r.t, field.value(r)))
                         .collect();
                     let n_raw = seq.len();
                     if n_raw < MIN_N {
