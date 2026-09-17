@@ -1,0 +1,11 @@
+[Unit]
+Description=Omegaflow CI watchdog (gh runs: cancel stuck, rerun transient, write the status snapshot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/projects/omegaflow
+ExecStart=%h/projects/omegaflow/bin/ci_watchdog.sh --once
+Environment=OMEGAFLOW_STATE=%h/.local/state/omegaflow
+Environment=CI_MANAGE=%h/projects/omegaflow/target/release/ci_manage
