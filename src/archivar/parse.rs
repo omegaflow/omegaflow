@@ -40,6 +40,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
     let mut cur_window: Option<(f64, f64)> = None;
+    let mut cur_live_only = false;
     let mut active = false;
 
     macro_rules! flush {
@@ -88,6 +89,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             fanout_delay: cur_fanout_delay,
                             sha256: cur_sha256.clone(),
                             window: cur_window,
+                            live_only: cur_live_only,
                         });
                     }
                 }
@@ -136,6 +138,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_frame = None;
                 cur_sha256 = None;
                 cur_window = None;
+                cur_live_only = false;
                 active = true;
             }
             "ttl" if parts.len() >= 2 => {
@@ -148,6 +151,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         &format!("ttl non-numeric: {}", line),
                     );
                 }
+            }
+            "live" => {
+                cur_live_only = true;
             }
             "at" if parts.len() >= 2 => {
                 let body = parts[1].to_string();
@@ -1536,6 +1542,7 @@ mod tests {
             fanout_delay: 0,
             sha256: None,
             window: None,
+            live_only: false,
         }
     }
 

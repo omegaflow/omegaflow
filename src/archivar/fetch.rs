@@ -982,7 +982,11 @@ pub fn fetch_one_with_age(
     headers: &[(String, String)],
     ttl: u64,
     now: Option<f64>,
+    live_only: bool,
 ) -> Option<(String, Option<u64>)> {
+    if live_only {
+        return fetch_raw(url, body, headers, ttl).map(|l| (l, None));
+    }
     let manifest = cdn_manifest_map();
     let asset_name = |u: &str| -> String {
         match manifest.get(u) {
@@ -1066,7 +1070,7 @@ pub fn fetch_one(
     ttl: u64,
     now: Option<f64>,
 ) -> Option<String> {
-    fetch_one_with_age(url, body, headers, ttl, now).map(|(b, _)| b)
+    fetch_one_with_age(url, body, headers, ttl, now, false).map(|(b, _)| b)
 }
 
 pub fn cache_root() -> std::path::PathBuf {
