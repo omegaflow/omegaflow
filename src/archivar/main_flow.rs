@@ -2127,6 +2127,7 @@ pub fn main_flow() {
                     | "bison_velocity"
                     | "cassini_tnf"
                     | "maven_tnf"
+                    | "mariner_occlt"
                     | "dart_tnf"
             ) {
                 let url = archive.sources[i].url.clone();
