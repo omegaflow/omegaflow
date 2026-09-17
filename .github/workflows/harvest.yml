@@ -16,6 +16,10 @@ on:
         required: false
         type: boolean
         default: false
+      timeout:
+        description: job timeout in minutes — the phi/harvest.φ block's timeout field
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -27,7 +31,7 @@ env:
 jobs:
   harvest:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: ${{ github.event.inputs.timeout || 240 }}
     env:
       FORMAT: ${{ github.event.inputs.format }}
     steps:
@@ -44,6 +48,7 @@ jobs:
           tag=$(sed -n 's/^tag //p' block.txt)
           arm=$(sed -n 's/^arm //p' block.txt)
           pattern=$(sed -n 's/^pattern //p' block.txt)
+          shard=$(sed -n 's/^shard //p' block.txt)
           idem=$(sed -n 's/^idempotent //p' block.txt)
           if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
@@ -60,6 +65,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "arm=$arm" >> "$GITHUB_OUTPUT"
           echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
+          echo "shard=$shard" >> "$GITHUB_OUTPUT"
           echo "idem=$idem" >> "$GITHUB_OUTPUT"
       - name: Idempotence gate — the CDN is the second witness
         id: gate
@@ -85,8 +91,17 @@ jobs:
       - name: Second witness — the asset stands after the compile
         if: steps.block.outputs.idem == 'true'
         run: |
-          if gh release view "${{ steps.block.outputs.tag }}" --repo omegaflow/sources \
-               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "${{ steps.block.outputs.pattern }}"; then
+          assets=$(gh release view "${{ steps.block.outputs.tag }}" --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ steps.block.outputs.pattern }}" || true)
+          shard="${{ steps.block.outputs.shard }}"
+          if [ -n "$shard" ] && [ "$assets" -ne "$shard" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT shard is incomplete on the CDN after the compile" \
+              "The $FORMAT compile completed but $assets asset(s) match the pattern, the register shard is $shard. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+          if [ "$assets" -gt 0 ]; then
             echo "asset present after the compile — the harvest stands"
           else
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
