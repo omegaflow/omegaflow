@@ -1,6 +1,7 @@
 use std::fs;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::process::Command;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -111,7 +112,53 @@ fn main() {
         }
     };
     let resp = send(&token, &payload);
+    record_sent(&from, &to, &subject, &resp, text.len());
     println!("{}", resp);
+}
+
+fn state_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+        return std::path::PathBuf::from(dir);
+    }
+    std::path::PathBuf::from("state")
+}
+
+fn extract_id(resp: &str) -> Option<String> {
+    let key = "\"id\":\"";
+    let start = resp.find(key)? + key.len();
+    let rest = &resp[start..];
+    let end = rest.find('"')?;
+    Some(rest[..end].to_string())
+}
+
+fn sent_line(ts: u64, from: &str, to: &str, subject: &str, id: Option<&str>, bytes: usize) -> String {
+    let subject_clean = subject
+        .replace('\r', "")
+        .replace('\t', " ")
+        .replace('\n', " ");
+    let id_field = match id {
+        Some(v) => v,
+        None => "",
+    };
+    format!(
+        "sent\t{}\t{}\t{}\t{}\t{}\t{}\n",
+        ts, from, to, subject_clean, id_field, bytes
+    )
+}
+
+fn record_sent(from: &str, to: &str, subject: &str, resp: &str, bytes: usize) {
+    let Ok(since) = SystemTime::now().duration_since(UNIX_EPOCH) else {
+        return;
+    };
+    let id = extract_id(resp);
+    let line = sent_line(since.as_secs(), from, to, subject, id.as_deref(), bytes);
+    let path = state_dir().join("mail/sent_ledger.φ");
+    if let Some(parent) = path.parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    if let Ok(mut f) = fs::OpenOptions::new().create(true).append(true).open(&path) {
+        let _ = f.write_all(line.as_bytes());
+    }
 }
 
 fn sends(send_now: bool, dry_run: bool) -> bool {
@@ -225,5 +272,40 @@ mod tests {
         assert!(sends(true, false));
         assert!(!sends(true, true));
         assert!(!sends(false, true));
+    }
+
+    #[test]
+    fn extract_id_reads_resend_response() {
+        assert_eq!(extract_id("{\"id\":\"abc-123\"}"), Some("abc-123".to_string()));
+        assert_eq!(extract_id("{\"statusCode\":403}"), None);
+    }
+
+    #[test]
+    fn sent_line_has_seven_fields() {
+        let l = sent_line(
+            42,
+            "code@omegaflow.space",
+            "a@b.io",
+            "hi\tthere",
+            Some("id1"),
+            7,
+        );
+        let parts: Vec<&str> = l.trim_end().split('\t').collect();
+        assert_eq!(parts.len(), 7);
+        assert_eq!(parts[0], "sent");
+        assert_eq!(parts[1], "42");
+        assert_eq!(parts[2], "code@omegaflow.space");
+        assert_eq!(parts[3], "a@b.io");
+        assert_eq!(parts[4], "hi there");
+        assert_eq!(parts[5], "id1");
+        assert_eq!(parts[6], "7");
+    }
+
+    #[test]
+    fn sent_line_without_id_keeps_the_field_absent() {
+        let l = sent_line(1, "a@x.io", "b@x.io", "s", None, 0);
+        let parts: Vec<&str> = l.trim_end().split('\t').collect();
+        assert_eq!(parts.len(), 7);
+        assert_eq!(parts[5], "");
     }
 }
