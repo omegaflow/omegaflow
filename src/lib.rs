@@ -54,6 +54,7 @@ pub use archivar::jwst_equilibrium;
 pub use archivar::kbo;
 pub use archivar::kepler;
 pub use archivar::las;
+pub use archivar::lro_utf;
 pub use archivar::lsk;
 pub use archivar::lzw;
 pub use archivar::matfile;
