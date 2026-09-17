@@ -1,7 +1,6 @@
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, fetch_raw_bytes, http_code};
 use omegaflow::cdn::upload_release;
 use omegaflow::odf;
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 const BASE: &str = "https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
@@ -93,33 +92,64 @@ fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
     rows
 }
 
-fn harvest_all(urls: &[String], lsk: &LeapSeconds) -> Vec<[f64; 9]> {
-    let next = AtomicUsize::new(0);
-    std::thread::scope(|s| {
-        let mut handles = Vec::with_capacity(WORKERS);
-        for _ in 0..WORKERS {
-            let next = &next;
-            handles.push(s.spawn(move || {
-                let mut rows: Vec<[f64; 9]> = Vec::new();
-                loop {
-                    let i = next.fetch_add(1, Ordering::SeqCst);
-                    let Some(url) = urls.get(i) else {
-                        break;
-                    };
-                    rows.extend(harvest(url, lsk));
-                }
-                rows
-            }));
+fn harvest_stream<F: FnMut(Vec<[f64; 9]>)>(urls: &[String], lsk: &LeapSeconds, mut on_rows: F) {
+    for chunk in urls.chunks(WORKERS) {
+        let mut chunk_rows: Vec<Vec<[f64; 9]>> = std::thread::scope(|s| {
+            let handles: Vec<_> = chunk
+                .iter()
+                .map(|url| s.spawn(move || harvest(url, lsk)))
+                .collect();
+            handles
+                .into_iter()
+                .map(|h| match h.join() {
+                    Ok(rows) => rows,
+                    Err(_) => {
+                        eprintln!("a harvest worker stayed unjoined");
+                        Vec::new()
+                    }
+                })
+                .collect()
+        });
+        for mut rows in chunk_rows.drain(..) {
+            rows.sort_by(|a, b| a[0].total_cmp(&b[0]));
+            on_rows(rows);
         }
-        let mut merged: Vec<[f64; 9]> = Vec::new();
-        for h in handles {
-            match h.join() {
-                Ok(mut rows) => merged.append(&mut rows),
-                Err(_) => eprintln!("a harvest worker stayed unjoined"),
-            }
+    }
+}
+
+fn flush_shard(buffer: &mut Vec<[f64; 9]>, names: &mut Vec<String>, paths: &mut Vec<String>) {
+    let t_lo = buffer[0][0];
+    let t_hi = buffer[buffer.len() - 1][0];
+    let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
+    if names.contains(&name) {
+        name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, names.len());
+    }
+    let bin = odf::write_podf_bin(buffer);
+    assert!(bin.len() <= odf::PODF_SHARD_LIMIT);
+    let parsed = match odf::parse_podf_bin(&bin) {
+        Some(p) => p,
+        None => {
+            eprintln!("{name}: roundtrip parse void — the series stays unverified");
+            std::process::exit(1);
         }
-        merged
-    })
+    };
+    let d0 = parsed[0];
+    let d1 = parsed[parsed.len() - 1];
+    eprintln!(
+        "{name}: {} orbit samples (tdb {}..{}), {} B — roundtrip parses",
+        parsed.len(),
+        d0[0],
+        d1[0],
+        bin.len()
+    );
+    let path = format!("data/pds-geosciences.wustl.edu/{name}");
+    if std::fs::write(&path, &bin).is_err() {
+        eprintln!("write {path} void");
+        std::process::exit(1);
+    }
+    names.push(name);
+    paths.push(path);
+    buffer.clear();
 }
 
 fn main() {
@@ -132,80 +162,40 @@ fn main() {
     let rels = files_of();
     eprintln!("mro-m-rss-1-magr-v1/mrors_0xxx/odf: {} files", rels.len());
     let urls: Vec<String> = rels.iter().map(|rel| format!("{BASE}{rel}")).collect();
-    let mut merged = harvest_all(&urls, &lsk);
-    if merged.is_empty() {
+    std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
+
+    let shard_records = (odf::PODF_SHARD_BUDGET - 8) / 72;
+    let mut buffer: Vec<[f64; 9]> = Vec::with_capacity(shard_records);
+    let mut names: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
+    let mut total = 0usize;
+    harvest_stream(&urls, &lsk, |rows| {
+        total += rows.len();
+        for r in rows {
+            buffer.push(r);
+            if buffer.len() >= shard_records {
+                flush_shard(&mut buffer, &mut names, &mut paths);
+            }
+        }
+    });
+    if total == 0 {
         eprintln!("no MRO ODF orbit samples — the series stays unwritten (0 honored)");
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
-    let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
-    if ranges.len() == 1 {
-        let out = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
-        let bin = odf::write_podf_bin(&merged);
-        if std::fs::write(&out, &bin).is_err() {
-            eprintln!("write {out} void");
-            return;
+    if !buffer.is_empty() {
+        flush_shard(&mut buffer, &mut names, &mut paths);
+    }
+    if names.len() == 1 {
+        let single = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
+        if std::fs::rename(&paths[0], &single).is_err() {
+            eprintln!("rename {} -> {single} void", paths[0]);
+            std::process::exit(1);
         }
-        match odf::parse_podf_bin(&bin) {
-            Some(parsed) => {
-                let d0 = parsed[0];
-                let d1 = parsed[parsed.len() - 1];
-                let mut stations: Vec<i64> = parsed.iter().map(|r| r[3] as i64).collect();
-                stations.sort_unstable();
-                stations.dedup();
-                let mut dts: Vec<i64> = parsed.iter().map(|r| r[5] as i64).collect();
-                dts.sort_unstable();
-                dts.dedup();
-                eprintln!(
-                    "{out}: {} orbit samples (tdb {}..{}), stations {stations:?}, data_type {dts:?}, {} B — roundtrip parses",
-                    parsed.len(),
-                    d0[0],
-                    d1[0],
-                    bin.len()
-                );
-            }
-            None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
-        }
-        if ci_mode && !upload_release("pds-geosciences.wustl.edu", &out) {
+        paths[0] = single;
+        if ci_mode && !upload_release("pds-geosciences.wustl.edu", &paths[0]) {
             std::process::exit(1);
         }
         return;
-    }
-    let mut names: Vec<String> = Vec::new();
-    let mut paths: Vec<String> = Vec::new();
-    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
-        let t_lo = merged[lo][0];
-        let t_hi = merged[hi - 1][0];
-        let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
-        if names.contains(&name) {
-            name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
-        }
-        names.push(name.clone());
-        let bin = odf::write_podf_bin(&merged[lo..hi]);
-        assert!(bin.len() <= odf::PODF_SHARD_LIMIT);
-        let parsed = match odf::parse_podf_bin(&bin) {
-            Some(p) => p,
-            None => {
-                eprintln!("{name}: roundtrip parse void — the series stays unverified");
-                std::process::exit(1);
-            }
-        };
-        let d0 = parsed[0];
-        let d1 = parsed[parsed.len() - 1];
-        eprintln!(
-            "{name}: {} orbit samples (tdb {}..{}), {} B — roundtrip parses",
-            parsed.len(),
-            d0[0],
-            d1[0],
-            bin.len()
-        );
-        let path = format!("data/pds-geosciences.wustl.edu/{name}");
-        if std::fs::write(&path, &bin).is_err() {
-            eprintln!("write {path} void");
-            std::process::exit(1);
-        }
-        paths.push(path);
     }
     for name in &names {
         println!(
