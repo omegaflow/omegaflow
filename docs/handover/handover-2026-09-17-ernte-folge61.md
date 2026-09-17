@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: 611eb673afbfd740e2a2f2d757038609d49789d7a1726dbbd732b25aca8dbcb0
+  sha256: f271978d773b6fbd710bc7ebd9f77c2892d83a04b683b92b763ad2b0f1e78a76
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -29,9 +29,9 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## MAVEN TNF — 2.34 GB über dem GitHub-Asset-Cap (härtester undatiert)
+## MAVEN TNF — Chunking gebaut, Re-Dispatch + Registrierung offen (härtester undatiert)
 
-- MAVEN-Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). (Schritt: Chunking wie `voyager_odr_s0..s13` oder alternater Manifest-Pfad; dann `maven_tnf`-Block in `phi/sources.φ`.)
+- Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). Fix (diese Session, `cargo check` clean): `tools/harvest/src/bin/maven_tnf_compiler.rs` schardet über `odf::podf_shard_ranges`/`odf::PODF_SHARD_BUDGET`/`odf::podf_shard_name` (Muster `mro_odf_compiler.rs:142–219`) → `maven_tnf_t<lo>_<hi>.bin`; `.github/workflows/maven-tnf-cdn.yml` idempotent auf `^maven_tnf(\.bin|_t)`. (Schritt: nach Push `gh workflow run maven-tnf-cdn.yml`; bei success die vom Compiler gedruckten `url`/`format maven_tnf`/`field ul_phase_cycles …`-Zeilen ans Ende von `phi/sources.φ`.)
 
 ## Mariner 10 PSPA-00316 — Route lebt, Compiler + Layout offen
 
@@ -55,7 +55,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad): `src/archivar/{atdf,odf}.rs`, `src/gate/{commit_gate.rs,commit_gate_vocab.json}`, `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`, `.github/workflows/tonga-lamb-crosscheck.yml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, `phi/blocked_sources.φ`. (Schritt: eigener Pfad = `phi/sources.φ` (KCDC-Block, Z. 9207–9232) + dieses Handover + `folge60` → `archiv/`.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad): `src/archivar/{atdf,odf,geo}.rs`, `src/gate/{commit_gate.rs,commit_gate_vocab.json}`, `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`, `.github/workflows/{tonga-lamb-crosscheck,kyoto-pressure-cdn}.yml`, `tools/harvest/src/bin/kyoto_pressure_compiler.rs`, `docs/handover/post.md`, `docs/zustand/external-state.md`, `phi/{blocked_sources,sources}.φ`. (Schritt: eigener Pfad = `tools/harvest/src/bin/maven_tnf_compiler.rs`, `.github/workflows/maven-tnf-cdn.yml`, dieses Handover.)
 
 ## Abschluss
 
