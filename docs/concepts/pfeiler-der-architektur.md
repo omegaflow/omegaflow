@@ -2,7 +2,7 @@
   title: Dreizehn Pfeiler — die Architektur als System
   class: concept
   date: 2026-09-01
-  sha256: e722f98c8ad16dee96c611e3b4ad8cad9448aa70a975f4f496283280944de337
+  sha256: cfdce3c0ea9ebc6c77da41551dacbb0910c3e5fa257fb8156797522adc906115
   status: live
 -->
 
@@ -154,12 +154,12 @@ ist eine dreistufige Kathedrale:
    Lügen befreiten Binaries.
 3. **Die CI als Auth-Gateway:** Die API-Keys für authentifizierte
    Open-Data-Quellen liegen in den CI Secrets. Der CI-Archivar nutzt sie,
-   lädt die Daten im 5-Minuten-Takt, transformiert sie und pusht sie auf
-   das CDN.
+   lädt die Daten im 3-Stunden-Takt (`health-check.yml`, `0 */3 * * *`),
+   transformiert sie und pusht sie auf das CDN.
 4. **Der API-Fallback (Lebenserhaltung):** Nur wenn das CDN komplett down
-   ist (oder der Daten-TTL 300 s überschreitet), fällt die Runtime auf die
-   direkte Live-API zurück, mit Template-Caches und Health-Checks gegen
-   Netzflutung.
+   ist (oder das CDN-Asset älter ist als die deklarierte TTL der Quelle),
+   fällt die Runtime auf die direkte Live-API zurück, mit Template-Caches
+   und Health-Checks gegen Netzflutung.
 
 ## 13. Der atmende Fetch-Zyklus
 
