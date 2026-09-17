@@ -1,0 +1,32 @@
+name: swpc-mirror-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '11 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: swpc-mirror-cdn
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  swpc-mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror the nine SWPC nowcast bodies 1:1 onto the CDN void path
+        run: |
+          cargo build -p omegaflow-harvest --release --bin cdn_mirror_compiler
+          ./target/release/cdn_mirror_compiler --ci-mode \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json' \
+            --url 'https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json' \
+            --url 'https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json' \
+            --url 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json'
