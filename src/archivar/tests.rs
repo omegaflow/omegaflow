@@ -4740,6 +4740,75 @@ fn test_cdn_fresh_uses_ttl_alone_without_floor() {
     over.join().unwrap();
 }
 
+fn local_http_head_get(stale_lm: String, body: &'static str) -> (String, std::thread::JoinHandle<()>) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let handle = std::thread::spawn(move || {
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        while std::time::Instant::now() < deadline {
+            match listener.accept() {
+                Ok((mut stream, _)) => {
+                    let mut buf = [0u8; 4096];
+                    let n = match std::io::Read::read(&mut stream, &mut buf) {
+                        Ok(n) => n,
+                        Err(_) => continue,
+                    };
+                    let req = String::from_utf8_lossy(&buf[..n]).to_string();
+                    let response = if req.starts_with("HEAD") {
+                        format!(
+                            "HTTP/1.1 200 OK\r\nLast-Modified: {}\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                            stale_lm
+                        )
+                    } else if req.starts_with("GET /live-void.json ") {
+                        "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+                            .to_string()
+                    } else {
+                        format!(
+                            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                            body.len(),
+                            body
+                        )
+                    };
+                    let _ = std::io::Write::write_all(&mut stream, response.as_bytes());
+                }
+                Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    std::thread::sleep(std::time::Duration::from_millis(20));
+                }
+                Err(_) => break,
+            }
+        }
+    });
+    (format!("http://127.0.0.1:{}", port), handle)
+}
+
+#[test]
+fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let (server, handle) = local_http_head_get(rfc1123_from_unix(now - 86400), "{\"real\":true}");
+    let state = "/tmp/opencode/omegaflow_fetch_fallback_state";
+    let _ = std::fs::remove_dir_all(state);
+    unsafe {
+        std::env::set_var("OMEGAFLOW_STATE", state);
+        std::env::set_var("OMEGAFLOW_CDN_BASE", &server);
+    }
+    let live = format!("{}/live-void.json", server);
+    let body = super::fetch_one(&live, None, &[], 60, Some(1.0e9));
+    unsafe {
+        std::env::remove_var("OMEGAFLOW_CDN_BASE");
+        std::env::remove_var("OMEGAFLOW_STATE");
+    }
+    handle.join().unwrap();
+    assert_eq!(
+        body.as_deref(),
+        Some("{\"real\":true}"),
+        "a real stale CDN asset is served when the live path voids — 0 honored only where the CDN is truly absent"
+    );
+}
+
 #[test]
 fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
     let dir = std::env::temp_dir().join(format!("omegaflow_cdn_stamp_{}", std::process::id()));

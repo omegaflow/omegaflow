@@ -6,6 +6,13 @@ pub const CDN_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
 
+pub fn cdn_base() -> String {
+    if let Ok(base) = std::env::var("OMEGAFLOW_CDN_BASE") {
+        return base;
+    }
+    CDN_BASE.to_string()
+}
+
 static VERIFIED_RELEASES: OnceLock<Mutex<HashSet<String>>> = OnceLock::new();
 
 fn verified_releases() -> &'static Mutex<HashSet<String>> {
