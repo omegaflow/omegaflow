@@ -3,7 +3,7 @@
   class: paper
   date: 2026-08-21
   version: 4
-  sha256: bb33c31ef80dff98a04b9d3da740e5c6a05e60d9d8065d099867ef98e49f1a40
+  sha256: 5871b6e4d27d795b728068038919562e689af9bdba3bc86190cc615d40ad6dc7
   status: live
   see-also: docs/concepts/blatt-papier-resultat.md
 -->
@@ -233,17 +233,20 @@ CI workflow `laic_cdn.yml` harvests + compiles + uploads monthly.
   **DEMETER/CDPP** (ICE-E field + ISL electron density, 2004–2010 —
   `cdpp.irap.omp.eu` / `regards.cnes.fr` / `cdpp-archive.cnes.fr` direct 200,
   login verified; the data files are order-gated — a product download returns
-  `online:false` → GET 500; open: order flow + DEMETER-.DAT parser + harvest),
+  `online:false` → GET 500; open: order flow; DEMETER-.DAT parser + harvest
+  built (`src/archivar/demeter.rs`, `tools/harvest/src/bin/demeter_compiler.rs`)),
   **CHAMP/GFZ-ISDC** (`isdc.gfz-potsdam.de` / `isdc-data.gfz.de` direct 200;
   `champ/ME/Level2/PLPT/2005/CH-ME-2-PLPT+2005-01-01_1.zip` 200, 297 737 B,
-  magic zip — anonymous verified to the file level, harvestable), COSMIC/CDAAC
+  magic zip — anonymous verified to the file level; harvested as
+  `champ_plpt.bin`), COSMIC/CDAAC
   (`data.cosmic.ucar.edu` direct 200; `…/ivmL2m_postProc_2022_001.tar.gz`
-  200, 14 167 499 B, netCDF inside — parser gap). TEC-GIM retro pre-2024
+  200, 14 167 499 B, netCDF inside — parser built (`cosmic_ro.bin`,
+  `tools/harvest/src/bin/cosmic_ro_compiler.rs`)). TEC-GIM retro pre-2024
   (`codg*.Z` now reachable via ESA GSSC FTP
   `ftp://gssc.esa.int/gnss/products/ionex/2003/001/codg0010.03i.Z`, 365 785 B;
-  the LZW `uncompress_z` decoder fehlt in the holding — CDDIS holds other
+  the LZW `uncompress_z` decoder is built (`src/archivar/lzw.rs`) — CDDIS holds other
   IONEX, not `codg*`), MiniSEED waveform envelopes (IRIS FDSN dataselect
-  direct 200, 8 128 B — decoder pending). CDDIS
+  direct 200, 8 128 B — decoder built (`tools/measure/src/miniseed.rs`)). CDDIS
   lives over the EDL token from `.secrets.local` (verified) — a re-harvest
   with COD0OPSFIN (final instead of rapid) would be a quality option,
   not a new channel.
