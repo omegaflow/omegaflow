@@ -289,6 +289,12 @@ fn main() {
             std::process::exit(1);
         }
     };
+    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+        if std::fs::create_dir_all(parent).is_err() {
+            eprintln!("vlass_tap_compiler: create parent dir of {out_path} void");
+            std::process::exit(1);
+        }
+    }
     let fetch_url = match arg_value(&args, "--url") {
         Some(v) => v,
         None => format!(

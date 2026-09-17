@@ -14,8 +14,9 @@ use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const NETLOC: &str = "data.nsidc.earthdatacloud.nasa.gov";
-const BUCKET: &str = "nsidc-cumulus-prod-public";
+const BUCKET: &str = "nsidc-cumulus-prod-protected";
 const PRODUCT_ROOT: &str = "ATLAS/ATL03/";
+const VERSION: &str = "007";
 const DEFAULT_OUT: &str = "data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin";
 const MAGIC: [u8; 4] = *b"AT31";
 const REC_FIELDS: usize = 7;
@@ -592,7 +593,7 @@ fn run_list(args: &[String]) {
 fn run_harvest(args: &[String]) {
     let out_path = arg_value(args, "--out").unwrap_or(DEFAULT_OUT.to_string());
     let prefix = match arg_value(args, "--day") {
-        Some(d) => format!("{PRODUCT_ROOT}{d}/"),
+        Some(d) => format!("{PRODUCT_ROOT}{VERSION}/{}/", d.replace('.', "/")),
         None => match arg_value(args, "--prefix") {
             Some(p) => p,
             None => {
