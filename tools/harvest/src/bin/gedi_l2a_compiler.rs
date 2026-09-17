@@ -109,6 +109,17 @@ fn granule_anchor_tdb(key: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(gedi_granule_start_unix(key)?)
 }
 
+fn gedi_day_prefix(day: &str) -> Option<String> {
+    let year: i64 = day.get(0..4)?.parse().ok()?;
+    let month: i64 = day.get(5..7)?.parse().ok()?;
+    let dom: i64 = day.get(8..10)?.parse().ok()?;
+    let doy = days_from_civil(year, month, dom)? - days_from_civil(year, 1, 1)? + 1;
+    if !(1..=366).contains(&doy) {
+        return None;
+    }
+    Some(format!("GEDI02_A_{year:04}{doy:03}"))
+}
+
 fn uri_encode_query(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     for &b in s.as_bytes() {
@@ -677,7 +688,13 @@ fn run_list(args: &[String]) {
 fn run_harvest(args: &[String]) {
     let out_path = arg_value(args, "--out").unwrap_or(DEFAULT_OUT.to_string());
     let prefix = match arg_value(args, "--day") {
-        Some(d) => format!("{PRODUCT_ROOT}{d}/"),
+        Some(d) => match gedi_day_prefix(&d) {
+            Some(p) => format!("{PRODUCT_ROOT}{p}"),
+            None => {
+                eprintln!("gedi-l2a: --day {d} carries no civil date (YYYY.MM.DD) — refused");
+                std::process::exit(2);
+            }
+        },
         None => match arg_value(args, "--prefix") {
             Some(p) => p,
             None => {
@@ -828,6 +845,19 @@ mod tests {
         let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
         assert!(granule_anchor_tdb("not-a-gedi-key", &lsk).is_none());
         assert!(granule_anchor_tdb("GEDI02_A_20X0001000000", &lsk).is_none());
+    }
+
+    #[test]
+    fn gedi_day_prefix_folds_to_granule_name_prefix() {
+        assert_eq!(
+            gedi_day_prefix("2025.07.09").as_deref(),
+            Some("GEDI02_A_2025190")
+        );
+        assert_eq!(
+            gedi_day_prefix("2020.01.01").as_deref(),
+            Some("GEDI02_A_2020001")
+        );
+        assert!(gedi_day_prefix("not-a-day").is_none());
     }
 
     #[test]
