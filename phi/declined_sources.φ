@@ -3652,3 +3652,7 @@ note LSCO S(Q,ω) (Decrausaz et al. 2025, 10.5281/zenodo.15316905, cc-by-4.0, IN
 decline derived-model
 url https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
 note GloFAS-Reanalyse (EWDS cems-glofas-historical, gemessen 2026-09-16: HTTP 200, CDS-Key) — eine Modell-Reanalyse, kein gemessener Pegel; nur die Sache selbst darf an der Stelle der Sache stehen. Der Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query am Kollabpunkt 28.271/85.515 leer = 0 honored), nicht auf der Modell-Route.
+
+decline aggregated-index
+url https://zenodo.org/records/10725446
+note WWLLN Global Lightning Climatology (WGLC), Kaplan 2024 (10.5281/zenodo.10725446, NetCDF-4, 2010–2023, 0,5°/5′, stündlich–monatlich) — abgeleitetes Gitteraggregat aus georeferenzierten Stroke-Counts (Dichte/Leistung, detektionseffizienz-korrigiert), keine Ereignis-Records; dieselbe Klasse wie der declined Thunder-Hour (aggregated-index, Council 2026-09-13). Roh-Strokes (WWLLN „AE") nicht publiziert (blocked account, UW-copyright, `decline redistribution`). Blitz-em bereits durch GLM in-register. Lizenz gemessen 2026-09-17: Zenodo-Text „CC BY-SA 4.0", Feld `license.id` = `cc-by-4.0` (Widerspruch). Operator-Entscheid 2026-09-17 (Entscheid-Folge 38): decline, keine CDN-Manifestation.
