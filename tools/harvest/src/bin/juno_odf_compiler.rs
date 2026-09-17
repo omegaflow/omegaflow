@@ -2,12 +2,19 @@ use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::cdn::upload_release;
 use omegaflow::odf;
 
-const BASE: &str = "https://atmos.nmsu.edu/PDS/data/jnogrv_1001/DATA/ODF/";
+const NETLOC: &str = "atmos.nmsu.edu";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 
-fn files_of() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(BASE, 604800) else {
-        eprintln!("odf dir listing fetch void ({BASE})");
+fn arg_value(args: &[String], key: &str) -> Option<String> {
+    args.iter()
+        .position(|a| a == key)
+        .and_then(|i| args.get(i + 1))
+        .cloned()
+}
+
+fn files_of(base: &str) -> Vec<String> {
+    let Some(bytes) = fetch_raw_bytes(base, 604800) else {
+        eprintln!("odf dir listing fetch void ({base})");
         return Vec::new();
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
@@ -32,15 +39,24 @@ fn files_of() -> Vec<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let volume = match arg_value(&args, "--volume") {
+        Some(v) => v,
+        None => "jnogrv_1001".to_string(),
+    };
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "data/atmos.nmsu.edu/juno_odf.bin".to_string(),
+    };
+    let base = format!("https://atmos.nmsu.edu/PDS/data/{volume}/DATA/ODF/");
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
     let mut merged: Vec<[f64; 9]> = Vec::new();
-    let rels = files_of();
-    eprintln!("jnogrv_1001/DATA/ODF: {} files", rels.len());
+    let rels = files_of(&base);
+    eprintln!("{volume}/DATA/ODF: {} files", rels.len());
     for rel in rels {
-        let url = format!("{BASE}{rel}");
+        let url = format!("{base}{rel}");
         let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
             eprintln!("{rel}: fetch void ({url})");
             continue;
@@ -85,10 +101,11 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    let out = "data/atmos.nmsu.edu/juno_odf.bin";
-    std::fs::create_dir_all("data/atmos.nmsu.edu").ok();
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     let bin = odf::write_podf_bin(&merged);
-    if std::fs::write(out, &bin).is_err() {
+    if std::fs::write(&out, &bin).is_err() {
         eprintln!("write {out} void");
         return;
     }
@@ -112,7 +129,7 @@ fn main() {
         }
         None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
     }
-    if ci_mode && !upload_release("atmos.nmsu.edu", out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

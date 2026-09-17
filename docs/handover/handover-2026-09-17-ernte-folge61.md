@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: be33fb449d19991fe2008d8f2b3d9138b93e0f0f27b37164dc10d0c3c1ecd87e
+  sha256: 15b5ca4ba3ae2a056ff01c4e56c7d44688aea9b0bf90d68e495d34d937e4571d
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -42,9 +42,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - Gemessen 2026-09-17 (`gh run view 35148936648`): Job `rosetta_odf` `cancelled` (4h-Job-Cap), Job `mro_odf` `failure`; kein `rosetta_odf.bin` unter `archives.esac.esa.int`, kein `mro_odf.bin` unter `pds-geosciences.wustl.edu` (`gh release view`). Block `phi/sources.φ:6471–6476` bleibt ohne `sha256`-Zeile, `Offen:`-Klausel Z. 6476 steht. (Schritt: `gh run view 35148936648 --log` für den `mro_odf`-Fehler; Re-Dispatch mit längerem/gesplittetem Budget.)
 
-## Juno post-EFB OCRU — kompatibel, Compiler-Arm offen
+## Juno post-EFB OCRU — Arm gebaut, Dispatch + Registrierung offen
 
-- Gemessen 2026-09-17: OCRU-Doppler-Records tragen `data_type` 11/12/13 (one-way/two-way/three-way) — alle im Keep-Filter `(11..=14)` (`tools/harvest/src/bin/juno_odf_compiler.rs:55`); `data_type 37` (SRA-Range) fällt bewusst heraus. `parse_odf` deckt das Format-2-36-Byte-Layout (`src/archivar/odf.rs:61–86`). Verzeichnis `atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/` trägt **21** `.ODF`+`.LBL` (nicht 26), 2013-284→2016-137, disjunkt zu `juno_odf.bin` (`jnogrv_1001`). (Schritt: `juno_odf_compiler.rs:5` von `jnogrv_1001` auf eine `jnogrv_0001`-Variante erweitern + CDN-Workflow-Arm; Registrierung `phi/sources.φ` nach success.)
+- Gemessen 2026-09-17: OCRU-Doppler-Records tragen `data_type` 11/12/13 (one-way/two-way/three-way) — alle im Keep-Filter `(11..=14)` (`tools/harvest/src/bin/juno_odf_compiler.rs:55`); `data_type 37` (SRA-Range) fällt bewusst heraus. `parse_odf` deckt das Format-2-36-Byte-Layout (`src/archivar/odf.rs:61–86`). Verzeichnis `atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/` trägt **21** `.ODF`+`.LBL` (nicht 26), 2013-284→2016-137, disjunkt zu `juno_odf.bin` (`jnogrv_1001`). Gebaut (diese Session): `juno_odf_compiler.rs` parametrisiert (`--volume`/`--out`, Default `jnogrv_1001`/`juno_odf.bin`), Matrix-Zeile `juno_ocru_odf.bin` (`--volume jnogrv_0001`) in `planetary-odf-cdn.yml`; `cargo check` clean. (Dispatch steht aus: `gh workflow run planetary-odf-cdn.yml` — GH-API-Rate-Limit 403; bei success Register-Block `juno_ocru_odf.bin` (`format juno_odf`) in `phi/sources.φ`.)
 
 ## DEMETER — Harvest 0 Dateien (Quellen-WAF)
 
@@ -56,7 +56,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `src/archivar/{mariner_occlt,mod,extract,main_flow,tests}.rs`, `tools/harvest/src/bin/mariner_occlt_compiler.rs`, `.github/workflows/mariner-occlt-cdn.yml`, dieses Handover.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `tools/harvest/src/bin/juno_odf_compiler.rs`, `.github/workflows/planetary-odf-cdn.yml`, dieses Handover — Mariner-Batch steht in `c5e5c46f`.)
 
 ## Abschluss
 
