@@ -3597,6 +3597,7 @@ pub fn main_flow() {
                     &headers,
                     src_clone.ttl,
                     Some(now),
+                    src_clone.live_only,
                 ) {
                     Some((b, age)) => (Some(b), age),
                     None => (None, None),
