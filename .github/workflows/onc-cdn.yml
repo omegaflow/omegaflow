@@ -32,27 +32,27 @@ jobs:
           curl -sSfL --retry 3 --max-time 180 \
             "https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token=${OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD" \
             -o kernels/archive.json \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "onc-cdn: archivefiles returned void" \
                  "The ONC archivefiles list did not resolve for BACNH.H1. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           FILE=$(jq -r '.files[] | select(endswith("-LPF-spect.mat"))' kernels/archive.json | head -n1)
           echo "file=$FILE"
           [ -n "$FILE" ] || { echo "no LPF-spect.mat file in the listing"; exit 1; }
           curl -sSfL --retry 3 --max-time 180 \
             "https://data.oceannetworks.ca/api/archivefile/download?filename=${FILE}&token=${OCEANNETWORKS_TOKEN}" \
             -o kernels/spect.mat \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "onc-cdn: ${FILE} returned void" \
                  "The ONC archivefile download did not resolve ${FILE}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           curl -sSfL --retry 3 --max-time 120 \
             "https://data.oceannetworks.ca/api/locations?token=${OCEANNETWORKS_TOKEN}&deviceCategoryCode=HYDROPHONE" \
             -o kernels/locations.json \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "onc-cdn: locations returned void" \
                  "The ONC locations list did not resolve. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           read -r LAT LON ALT < <(jq -r '.[] | select(.locationCode=="BACNH.H1") | "\(.lat) \(.lon) \(-.depth)"' kernels/locations.json)
           echo "position lat=$LAT lon=$LON alt=$ALT"
           [ -n "$LAT" ] || { echo "BACNH.H1 absent from the locations list"; exit 1; }
@@ -69,7 +69,7 @@ jobs:
             --lsk kernels/naif0012.tls \
             --out onc_hydrophone_psd.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "onc-cdn: onc_hydrophone_psd.bin returned void" \
                  "onc_hydrophone compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

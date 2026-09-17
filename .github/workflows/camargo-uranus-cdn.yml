@@ -37,7 +37,7 @@ jobs:
       - name: Manifest the Camargo+2015 Uranus astrometry (6 VizieR asu-tsv), ura111 and ura184_part-3 SPKs to the CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin camargo_uranus_manifestor -- --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "camargo-uranus manifestor returned void" \
                  "the manifestor did not reach the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

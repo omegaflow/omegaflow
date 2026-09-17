@@ -2,7 +2,7 @@ name: twomrs-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
           cargo run -p omegaflow-harvest --bin twomrs_compiler -- \
             --out-bin twomrs.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: twomrs returned void" \
                  "twomrs compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

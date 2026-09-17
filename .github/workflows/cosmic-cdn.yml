@@ -39,16 +39,16 @@ jobs:
               break
             fi
           done
-          test -n "$day" || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          test -n "$day" || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "cosmic-cdn: no wetPf2 tarball in the last 7 days" \
                "curl on data.cosmic.ucar.edu reached no wetPf2 tarball in the last 7 days. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-               health
+               health; exit 1; }
           echo "wetPrf day: ${day}"
       - name: Compile the temperature profile and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin cosmic_ro_compiler -- \
             --out-bin --tarball kernels/wetPf2.tar.gz --var Temp --out cosmic_ro_temp.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "cosmic-cdn: cosmic_ro_temp.bin returned void" \
                  "cosmic_ro compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

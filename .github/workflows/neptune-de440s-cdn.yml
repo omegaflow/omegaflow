@@ -32,9 +32,9 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 5400 -o kernels/de440s.bsp \
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "neptune-de440s-cdn: de440s.bsp returned void" \
                  "curl on naif.jpl.nasa.gov did not reach the SPK. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin neptune_ephemeris_compiler -- \
             kernels/de440s.bsp --ci-mode

@@ -30,16 +30,16 @@ jobs:
       - name: Compile the DE440 sun/moon/earth line and upload
         run: |
           curl -sfL -o de440.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "de44-cdn: the de440 bsp returned void" \
                  "curl on naif.jpl.nasa.gov did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin de_compiler -- de440.bsp --label de440 --ci-mode
       - name: Compile the DE442 sun/moon/earth line and upload
         run: |
           curl -sfL -o de442.bsp https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "de44-cdn: the de442 bsp returned void" \
                  "curl on ssd.jpl.nasa.gov did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin de_compiler -- de442.bsp --label de442 --ci-mode
