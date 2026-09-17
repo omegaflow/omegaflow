@@ -6615,6 +6615,7 @@ field maxi_2_20kev_flux_ph_s_cm2 maxi_2_20kev_flux_ph_s_cm2 inverse-square em ph
 field maxi_2_4kev_flux_ph_s_cm2 maxi_2_4kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
 field maxi_4_10kev_flux_ph_s_cm2 maxi_4_10kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
 field maxi_10_20kev_flux_ph_s_cm2 maxi_10_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
+note MAXI-GSC-Röntgenlichtkurve J0006+202 (MAX1-Bandserie: 2-20, 2-4, 4-10, 10-20 keV); compiler tools/harvest/src/bin/maxi_compiler.rs; CDN asset measured 2026-09-17 (run 35251322353, 286888 B).
 
 url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
 format cors_rinex
@@ -7513,7 +7514,7 @@ ra RA
 dec DEC
 field Total_flux vlass_component_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC.
+note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC. Compiler tools/harvest/src/bin/vlass_tap_compiler.rs --kind component; CDN asset measured 2026-09-17 (run 35251315622, 167344 B).
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_source.bin
 format catalog_vlass_tap_source
@@ -7524,7 +7525,7 @@ ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC.
+note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC. Compiler tools/harvest/src/bin/vlass_tap_compiler.rs --kind source; CDN asset measured 2026-09-17 (run 35251315622, 200016 B).
 
 url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
 format iscb
@@ -7859,7 +7860,7 @@ format sky1
 at sun
 ttl 31536000
 field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
-note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset pending (2026-09-16 gemessen 404, dl3-skymap-cdn.yml nie gelaufen); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess.
+note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess; CDN asset measured 2026-09-17 (run 35251318800, 168133 B).
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
