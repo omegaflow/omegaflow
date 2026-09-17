@@ -96,70 +96,6 @@ pub fn render_url(template: &str, body_name: &str, ctx: RenderCtx<'_>) -> Option
     } = ctx;
     let unix = lsk.tdb_to_unix(tdb)?;
     let secs = unix as u64;
-    let days = secs / 86400;
-    let (ty, tm, td) = days_to_ymd(days);
-    let yday = {
-        let cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-        let leap = (ty % 4 == 0 && ty % 100 != 0) || ty % 400 == 0;
-        let base = if tm > 0 { cum[(tm - 1) as usize] } else { 0 };
-        base + td + if leap && tm > 2 { 1 } else { 0 }
-    };
-    let year2 = ty % 100;
-    let today = format!("{}-{:02}-{:02}", ty, tm, td);
-    let (yy, ym, yd) = days_to_ymd(days - 1);
-    let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
-    let (tmy, tmm, tmd) = days_to_ymd(days + 1);
-    let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
-    let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
-    let today_nodashes = format!("{}{:02}{:02}", ty, tm, td);
-    let yesterday_nodashes = format!("{}{:02}{:02}", yy, ym, yd);
-    let tomorrow_nodashes = format!("{}{:02}{:02}", tmy, tmm, tmd);
-    let hour_ago = {
-        let dt = secs.saturating_sub(3600);
-        let (h_y, h_m, h_d) = days_to_ymd(dt / 86400);
-        let h_h = (dt % 86400) / 3600;
-        let h_min = (dt % 3600) / 60;
-        format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
-    };
-    let now_iso = {
-        let n_h = (secs % 86400) / 3600;
-        let n_min = (secs % 3600) / 60;
-        format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, n_h, n_min)
-    };
-    let now_minus_1 = {
-        let dt = secs.saturating_sub(60);
-        let (n1_y, n1_m, n1_d) = days_to_ymd(dt / 86400);
-        let n1_h = (dt % 86400) / 3600;
-        let n1_min = (dt % 3600) / 60;
-        format!(
-            "{}-{:02}-{:02}T{:02}:{:02}:00",
-            n1_y, n1_m, n1_d, n1_h, n1_min
-        )
-    };
-    let now_minus_2 = {
-        let dt = secs.saturating_sub(120);
-        let (n2_y, n2_m, n2_d) = days_to_ymd(dt / 86400);
-        let n2_h = (dt % 86400) / 3600;
-        let n2_min = (dt % 3600) / 60;
-        format!(
-            "{}-{:02}-{:02}T{:02}:{:02}:00",
-            n2_y, n2_m, n2_d, n2_h, n2_min
-        )
-    };
-    let week_ago = {
-        let dt = secs.saturating_sub(604800);
-        let (w_y, w_m, w_d) = days_to_ymd(dt / 86400);
-        format!("{}-{:02}-{:02}", w_y, w_m, w_d)
-    };
-    let week_ago_nodashes = {
-        let dt = secs.saturating_sub(604800);
-        let (w_y, w_m, w_d) = days_to_ymd(dt / 86400);
-        format!("{}{:02}{:02}", w_y, w_m, w_d)
-    };
-    let q_hour = (secs % 86400) / 3600;
-    let q_minute = (secs % 3600) / 60;
-    let unix_now = secs.to_string();
-    let unix_now_plus_3600 = (secs + 3600).to_string();
     let jd_now = format!("{:.6}", tdb_to_jd(tdb));
     let jd_start = format!("{:.6}", tdb_to_jd(tdb - 86400.0));
 
@@ -169,37 +105,11 @@ pub fn render_url(template: &str, body_name: &str, ctx: RenderCtx<'_>) -> Option
         .replace("{z}", &format!("{}", z))
         .replace("{jd_now}", &jd_now)
         .replace("{jd_start}", &jd_start)
-        .replace("{jd_end}", &jd_now)
-        .replace("{today}", &today)
-        .replace("{yesterday}", &yesterday)
-        .replace("{tomorrow}", &tomorrow)
-        .replace("{today_yyyymmdd}", &today_yyyymmdd)
-        .replace("{today_ymd}", &today_yyyymmdd)
-        .replace("{today_nodashes}", &today_nodashes)
-        .replace("{yesterday_nodashes}", &yesterday_nodashes)
-        .replace("{tomorrow_nodashes}", &tomorrow_nodashes)
-        .replace("{t_start}", &yesterday)
-        .replace("{t_end}", &today)
-        .replace("{now}", &now_iso)
-        .replace("{now_minus_1}", &now_minus_1)
-        .replace("{now_minus_2}", &now_minus_2)
-        .replace("{week_ago}", &week_ago)
-        .replace("{week_ago_nodashes}", &week_ago_nodashes)
-        .replace(
-            "{today_plus_365}",
-            &format!("{}-{:02}-{:02}", ty + 1, tm, td),
-        )
-        .replace("{hour_ago}", &hour_ago)
-        .replace("{year}", &ty.to_string())
-        .replace("{year2}", &format!("{:02}", year2))
-        .replace("{month}", &tm.to_string())
-        .replace("{prev_Mon}", month_abbr(if tm == 1 { 12 } else { tm - 1 }))
-        .replace("{day}", &td.to_string())
-        .replace("{yday}", &format!("{:03}", yday))
-        .replace("{hour}", &format!("{:02}", q_hour))
-        .replace("{minute}", &format!("{:02}", q_minute))
-        .replace("{unix_now}", &unix_now)
-        .replace("{unix_now_plus_3600}", &unix_now_plus_3600);
+        .replace("{jd_end}", &jd_now);
+
+    for (k, v) in time_markers(secs) {
+        url = url.replace(k, &v);
+    }
 
     if let Some((lat, lon)) = icrs_to_body_surface(x, y, z, tdb, body_name, eph) {
         let radius_m = match eph.get(body_name).and_then(|e| e.props.as_ref()) {
