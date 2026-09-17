@@ -3,7 +3,7 @@
   session: Ernte-Folge 65
   class: handover
   date: 2026-09-17
-  sha256: e110bedaaaf09f9888f82702d260ccd3ad4f31a959964953273c12d92e567de3
+  sha256: 596a7ed22731e9aeb1444ada6c7571ed1f743af1c6d4acfea0ba792043194c8a
   status: live
 -->
 # Handover — Ernte-Folge 65 (2026-09-17)
@@ -111,8 +111,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - **Pending (1):** `las_oahu_bathy_1999` — Granule messbar, aber kein Netloc-Workflow
   (`las-cdn.yml` nur USGS) und der MLLW→Ellipsoid-GTX-Reader ungebaut. (Schritt: GTX-Reader
   + noaa-nos-LAS-Workflow bauen.)
-- (Schritt: die 15 Workflows dispatchen; die 4 Zeilen bereinigen; kein Massen-Dispatch ohne
-  freie Slots.)
+- (Offen: die 15 Assets am CDN bestätigen. Am 2026-09-17 bereinigt: die 4 Zeilen; dispatcht
+  in 3 Wellen: `cosmic-cdn`, `noe4-cdn`, `swot-cdn`, `gedi-cdn`, `maxi-cdn`, `isc-cdn`,
+  `uscrn-cdn`, `vlass-tap-cdn`, `planetary-odf-cdn`, `icesat2-cdn`, `dl3-skymap-cdn`
+  (hess + magic); `ned-cdn` läuft automatisch.)
 
 ## CDN-Idempotenz-Gates — Nachweis über nächste Läufe
 
