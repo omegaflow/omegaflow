@@ -1,0 +1,21 @@
+name: tnf-format-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+jobs:
+  tnf-format-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Probe the real TNF format-code histograms
+        run: |
+          cargo run --release -p omegaflow-measure --bin tnf_format_probe -- \
+            --url "https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/2016/02/mvn_rse_l0_tnf_20160219T151033_v01_r00.dat" \
+            --url "https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/2021/dart_hga_tnf_20211228T031547_v01.dat" \
+            --url "https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf"
