@@ -1660,6 +1660,41 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_coord_default_in_markers_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/fetch.rs",
+            &fx("fabrication_marker_coord_default"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_live_markers_carry_no_coordinate_keys() {
+        let keys: Vec<String> = crate::archivar::fetch::live_markers()
+            .into_iter()
+            .map(|(k, _)| k)
+            .collect();
+        for key in [
+            "{lat}",
+            "{lon}",
+            "{lat_min}",
+            "{lat_max}",
+            "{lon_min}",
+            "{lon_max}",
+            "{grid}",
+            "{nearest_station}",
+        ] {
+            assert!(
+                !keys.contains(&key.to_string()),
+                "live_markers carries the coordinate key {key}"
+            );
+        }
+    }
+
+    #[test]
     fn fn_tool_wrapped_and_standalone_gh_issue_pass() {
         let mut g = test_gate();
         for ok in [fx("or_wrapped_gh_issue"), fx("standalone_gh_issue")] {
