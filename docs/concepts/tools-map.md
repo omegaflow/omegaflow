@@ -64,6 +64,7 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `--verdict <url>` | 24,2 s | Reichweiten-Leiter mit Fallbacks — nur für Reichweite |
 | `--playwright <url>` | 2,97 s | Browser-Render |
 | `--pdf-image <file\|url>` | — | hebt eingebettete JPEG/PNG/JP2 aus einem PDF (kein Rasterizer); `--out <dir>` sonst Temp-Verzeichnis |
+| `--pdf-text <file\|url>` | — | liest den Textlayer eines PDF (FlateDecode-Content-Streams); bild-only/scanned → `pending` |
 | `--count` / `--case` / `--path` | — | gebaut 2026-09-16; im Binär nach dem nächsten Build |
 
 **Handoff — PDF→Bild→`vision`:** `archive_search --pdf-image <pdf|url> [--out <dir>]`
@@ -71,6 +72,11 @@ hebt die eingebetteten Bilder (`DCTDecode`→`.jpg`, `FlateDecode`→`.png`,
 `JPXDecode`→`.jp2`) und druckt die Pfade; die gereichten Dateien gehen an
 `vision` (P6, liest nur, kein bash). Kein Bild gefunden → eine `pending`-Zeile,
 kein erfundenes Bild.
+
+**Handoff — PDF→Text:** `archive_search --pdf-text <pdf|url>` liest den Textlayer
+direkt (FlateDecode-Content-Streams). Trägt das PDF keinen Textlayer (gescannt/
+bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
+`vision` (OCR). Kein erfundener Text.
 
 ## Gemessen — `archive_search` Netz-Modi (Einzelaufruf, kleiner Query)
 
@@ -114,7 +120,7 @@ kein erfundenes Bild.
 | `omega_sh jwst` | 0,644 s | CDN-Watch |
 | `omega_sh sha <file>` | — | Header-sha256 über den Body ohne `<!-- … -->`-Header (docs-naming) |
 | `omega_sh check` | — | `cargo check`-Zusammenfassung (Fehler-/Warnungszahlen) |
-| `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst |
+| `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst — **HTML/Text**; für Binärdownloads (PDF/PNG) `sfetch --raw` oder `curl -o`, sonst zerstört (`from_utf8_lossy` + Tag-Strip) |
 | `smail --dry-run` | 0,288 s | kein Versand |
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
