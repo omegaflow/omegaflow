@@ -7,7 +7,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 fn usage() -> ! {
     eprintln!(
-        "usage: git_safety --snapshot            (record the working tree under refs/safety/<epoch>)\n       git_safety --list                (the safety snapshots)\n       git_safety --restore <ref> [<path>]   (write the snapshot back; whole tree without a path)\n       git_safety --prune <keep>        (keep the newest <keep> snapshots)\n       git_safety --watch <secs>        (snapshot every <secs>, silent)"
+        "usage: git_safety --snapshot            (record the working tree under refs/safety/<epoch>)\n       git_safety --list                (the safety snapshots)\n       git_safety --restore <ref> [<path>]   (write the snapshot back; whole tree without a path)\n       git_safety --prune <keep>        (keep the newest <keep> snapshots)\n       git_safety --watch <secs>        (snapshot every <secs>, silent)\n       git_safety --close [<own-path>…] (the closure check: HEAD, origin/main, the tree, the paths)"
     );
     std::process::exit(2);
 }
@@ -213,8 +213,99 @@ fn main() {
                 thread::sleep(Duration::from_secs(secs));
             }
         }
+        "--close" => {
+            let own: Vec<String> = args[1..].to_vec();
+            std::process::exit(close(&root, &own));
+        }
         _ => usage(),
     }
+}
+
+fn path_set(text: String) -> Vec<String> {
+    let mut v: Vec<String> = text
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| l.to_string())
+        .collect();
+    v.sort();
+    v.dedup();
+    v
+}
+
+fn join_paths(paths: &[String]) -> String {
+    if paths.is_empty() {
+        "none".to_string()
+    } else {
+        paths.join(", ")
+    }
+}
+
+fn close(root: &Path, own: &[String]) -> i32 {
+    let head = run_git(root, &["rev-parse", "HEAD"]).map(|s| s.trim().to_string());
+    let remote = run_git(root, &["rev-parse", "origin/main"]).map(|s| s.trim().to_string());
+    let status = run_git(root, &["status", "--porcelain"]);
+    let head_paths = run_git(root, &["show", "--name-only", "--format=", "HEAD"]).map(path_set);
+    let ahead_paths = run_git(root, &["log", "origin/main..HEAD", "--name-only"]).map(path_set);
+    let clean = status.as_deref().is_some_and(|s| s.trim().is_empty());
+    let equal = head.is_some() && head == remote;
+    let own_named = !own.is_empty();
+    let paths_known = head_paths.is_some() && ahead_paths.is_some();
+    let foreign: Vec<String> = match (&head_paths, &ahead_paths) {
+        (Some(hp), Some(ap)) if own_named => {
+            let mut f: Vec<String> = hp
+                .iter()
+                .chain(ap.iter())
+                .filter(|p| !own.iter().any(|o| o == *p))
+                .cloned()
+                .collect();
+            f.sort();
+            f.dedup();
+            f
+        }
+        _ => Vec::new(),
+    };
+    let pass = clean && equal && (!own_named || (paths_known && foreign.is_empty()));
+    println!("git_safety --close");
+    println!("  HEAD        {}", head.as_deref().unwrap_or("absent"));
+    println!("  origin/main {}", remote.as_deref().unwrap_or("absent"));
+    println!("  pushed      {}", if equal { "yes" } else { "no" });
+    println!(
+        "  tree        {}",
+        match status.as_deref() {
+            Some(s) if s.trim().is_empty() => "clean",
+            Some(_) => "dirty",
+            None => "unmeasured",
+        }
+    );
+    if let Some(s) = status.as_deref()
+        && !s.trim().is_empty()
+    {
+        for line in s.lines() {
+            println!("    {}", line);
+        }
+    }
+    println!(
+        "  HEAD paths  {}",
+        match head_paths.as_ref() {
+            Some(p) => join_paths(p),
+            None => "unmeasured".to_string(),
+        }
+    );
+    println!(
+        "  ahead paths {}",
+        match ahead_paths.as_ref() {
+            Some(p) => join_paths(p),
+            None => "unmeasured".to_string(),
+        }
+    );
+    if own_named {
+        println!("  foreign     {}", join_paths(&foreign));
+    }
+    println!(
+        "git_safety --close: {}",
+        if pass { "closed" } else { "open" }
+    );
+    if pass { 0 } else { 1 }
 }
 
 #[cfg(test)]
@@ -264,6 +355,13 @@ mod tests {
         git(&dir, &["checkout", &refname, "--", "a.txt"]);
         assert_eq!(fs::read_to_string(dir.join("a.txt")).unwrap(), "two\n");
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn path_set_sorts_and_dedupes() {
+        let set = path_set("b\na\nb\n\n".to_string());
+        assert_eq!(set, vec!["a".to_string(), "b".to_string()]);
+        assert_eq!(join_paths(&[]), "none");
     }
 
     #[test]
