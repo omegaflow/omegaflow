@@ -1,0 +1,97 @@
+name: harvest
+
+concurrency:
+  group: harvest-${{ github.event.inputs.format }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      format:
+        description: format name — the phi/harvest.φ block key
+        required: true
+        type: string
+      force:
+        description: compile even when the idempotence gate sees the asset present
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      FORMAT: ${{ github.event.inputs.format }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Read the phi/harvest.φ block for ${{ github.event.inputs.format }}
+        id: block
+        run: |
+          cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup "$FORMAT" > block.txt \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "harvest: $FORMAT has no measured block in phi/harvest.φ" \
+                 "harvest_reg --lookup $FORMAT returned void — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          tag=$(sed -n 's/^tag //p' block.txt)
+          arm=$(sed -n 's/^arm //p' block.txt)
+          pattern=$(sed -n 's/^pattern //p' block.txt)
+          idem=$(sed -n 's/^idempotent //p' block.txt)
+          if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries incomplete fields in phi/harvest.φ" \
+              "The $FORMAT block is missing tag, arm or pattern — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          if [ "$idem" != "true" ] && [ "$idem" != "false" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT carries no idempotent verdict in phi/harvest.φ" \
+              "The $FORMAT block has no true|false idempotent field — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "arm=$arm" >> "$GITHUB_OUTPUT"
+          echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
+          echo "idem=$idem" >> "$GITHUB_OUTPUT"
+      - name: Idempotence gate — the CDN is the second witness
+        id: gate
+        run: |
+          if [ "${{ steps.block.outputs.idem }}" = "true" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            if gh release view "${{ steps.block.outputs.tag }}" --repo omegaflow/sources \
+                 --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "${{ steps.block.outputs.pattern }}"; then
+              echo "present=true" >> "$GITHUB_OUTPUT"
+              echo "asset matching the pattern already present on the CDN — harvest skipped"
+              exit 0
+            fi
+          fi
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "no asset matching the pattern on the CDN — compiling"
+      - name: Compile the harvest and manifest it to the CDN
+        if: steps.gate.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin "${{ steps.block.outputs.arm }}" -- --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "harvest: $FORMAT returned void" \
+                 "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Second witness — the asset stands after the compile
+        if: steps.block.outputs.idem == 'true'
+        run: |
+          if gh release view "${{ steps.block.outputs.tag }}" --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "${{ steps.block.outputs.pattern }}"; then
+            echo "asset present after the compile — the harvest stands"
+          else
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT still has no asset on the CDN after the compile" \
+              "The $FORMAT compile completed but the idempotence pattern matched no asset on the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
