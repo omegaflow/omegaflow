@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-06
   version: 11
-  sha256: fdc90b11d1c1ab07cf2e11b38684dd296811aa163411da681320a2b80d648916
+  sha256: 7a0051ca5e402fd4f78282e9bd270583a5bf3e8fa7a3af77e4bd1a9dc11581be
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07; full 5-confounder conditioning (all bands, binned vs ksg) 2026-09-16
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
