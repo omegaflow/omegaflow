@@ -16,6 +16,7 @@ const FLAG_TOL: f64 = 0.00005;
 enum Field {
     Resid,
     Fsky,
+    Ref,
 }
 
 impl Field {
@@ -23,6 +24,7 @@ impl Field {
         match self {
             Field::Resid => "resid",
             Field::Fsky => "fsky",
+            Field::Ref => "ref",
         }
     }
 
@@ -30,6 +32,7 @@ impl Field {
         match self {
             Field::Resid => r[8].is_finite(),
             Field::Fsky => r[1].is_finite() && r[1] > 0.0,
+            Field::Ref => r[2].is_finite(),
         }
     }
 
@@ -37,6 +40,7 @@ impl Field {
         match self {
             Field::Resid => r.resid,
             Field::Fsky => r.fsky,
+            Field::Ref => r.refv,
         }
     }
 }
@@ -48,6 +52,7 @@ struct Rec {
     mode: i64,
     resid: f64,
     fsky: f64,
+    refv: f64,
     year: Option<i64>,
     file_id: i64,
 }
@@ -104,6 +109,10 @@ fn ls_fit(times: &[f64], vals: &[f64], vsum: f64, ss_tot: f64, fref: f64) -> (f6
         }
     }
     (power, None)
+}
+
+fn ls_power_at(times: &[f64], vals: &[f64], vsum: f64, ss_tot: f64, fref: f64) -> f64 {
+    ls_fit(times, vals, vsum, ss_tot, fref).0
 }
 
 fn ls_grid(times: &[f64], vals: &[f64], flo: f64, fhi: f64, step: f64) -> Vec<GridPoint> {
@@ -254,6 +263,96 @@ fn peak_of_cell(mut seq: Vec<(f64, f64)>) -> Option<CellPeak> {
     })
 }
 
+struct CrossRank {
+    resid_dom: f64,
+    fsky_at_resid: f64,
+    fsky_rank: usize,
+    fsky_n: usize,
+    fsky_dom: f64,
+    resid_at_fsky: f64,
+    resid_rank: usize,
+    resid_n: usize,
+}
+
+fn cross_rank(seq_resid: &[(f64, f64)], seq_fsky: &[(f64, f64)]) -> Option<CrossRank> {
+    if seq_resid.len() < MIN_N || seq_fsky.len() < MIN_N {
+        return None;
+    }
+    let mut sr: Vec<(f64, f64)> = seq_resid
+        .iter()
+        .copied()
+        .filter(|(t, v)| t.is_finite() && v.is_finite())
+        .collect();
+    sr.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let rt: Vec<f64> = sr.iter().map(|x| x.0).collect();
+    let rv: Vec<f64> = sr.iter().map(|x| x.1).collect();
+    let (rdt, rdv) = detrend_runs(&rt, &rv);
+    if rdt.len() < MIN_N {
+        return None;
+    }
+    let mut sf: Vec<(f64, f64)> = seq_fsky
+        .iter()
+        .copied()
+        .filter(|(t, v)| t.is_finite() && v.is_finite())
+        .collect();
+    sf.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let ft: Vec<f64> = sf.iter().map(|x| x.0).collect();
+    let fv: Vec<f64> = sf.iter().map(|x| x.1).collect();
+    let (fdt, fdv) = detrend_runs(&ft, &fv);
+    if fdt.len() < MIN_N {
+        return None;
+    }
+    let rgrid = ls_grid(&rdt, &rdv, BAND_LO, BAND_HI, STEP);
+    let fgrid = ls_grid(&fdt, &fdv, BAND_LO, BAND_HI, STEP);
+    let resid_dom = match peak_interp(&rgrid) {
+        Some(p) => p,
+        None => peak_of(&rgrid).0,
+    };
+    let fsky_dom = match peak_interp(&fgrid) {
+        Some(p) => p,
+        None => peak_of(&fgrid).0,
+    };
+    let rm = rdv.len() as f64;
+    let rsum = rdv.iter().sum::<f64>() / rm;
+    let rss: f64 = rdv.iter().map(|v| (v - rsum) * (v - rsum)).sum();
+    let fm = fdv.len() as f64;
+    let fsum = fdv.iter().sum::<f64>() / fm;
+    let fss: f64 = fdv.iter().map(|v| (v - fsum) * (v - fsum)).sum();
+    let fsky_at_resid = ls_power_at(&fdt, &fdv, fsum, fss, resid_dom);
+    let fsky_rank = 1 + fgrid.iter().filter(|g| g.1 > fsky_at_resid).count();
+    let fsky_n = fgrid.len();
+    let resid_at_fsky = ls_power_at(&rdt, &rdv, rsum, rss, fsky_dom);
+    let resid_rank = 1 + rgrid.iter().filter(|g| g.1 > resid_at_fsky).count();
+    let resid_n = rgrid.len();
+    Some(CrossRank {
+        resid_dom,
+        fsky_at_resid,
+        fsky_rank,
+        fsky_n,
+        fsky_dom,
+        resid_at_fsky,
+        resid_rank,
+        resid_n,
+    })
+}
+
+fn xrank_line(label: &str, xr: Option<CrossRank>) -> String {
+    match xr {
+        Some(c) => format!(
+            "xrank {label}: resid-dom {:.3} -> fsky rank {}/{} pow {:.3e} | fsky-dom {:.3} -> resid rank {}/{} pow {:.3e}",
+            c.resid_dom * 1e3,
+            c.fsky_rank,
+            c.fsky_n,
+            c.fsky_at_resid,
+            c.fsky_dom * 1e3,
+            c.resid_rank,
+            c.resid_n,
+            c.resid_at_fsky,
+        ),
+        None => format!("xrank {label}: —"),
+    }
+}
+
 fn fmt_peak(st: i64, peak: f64) -> String {
     let hit = (peak - paper_value(st)).abs() <= FLAG_TOL;
     if hit {
@@ -306,6 +405,7 @@ fn main() {
     let field = match args.iter().position(|a| a == "--field") {
         Some(i) => match args.get(i + 1).map(String::as_str) {
             Some("fsky") => Field::Fsky,
+            Some("ref") => Field::Ref,
             _ => Field::Resid,
         },
         None => Field::Resid,
@@ -333,6 +433,7 @@ fn main() {
             mode: r[13] as i64,
             resid: r[8],
             fsky: r[1],
+            refv: r[2],
             year: year_of(r[0]),
             file_id: r[12] as i64,
         })
@@ -383,6 +484,20 @@ fn main() {
                 let n_raw = seq.len();
                 let peak = peak_of_cell(seq);
                 println!("  {}", cell_line(st, &label, n_raw, peak));
+                let seq_resid: Vec<(f64, f64)> = recs
+                    .iter()
+                    .filter(|r| r.station == st && mpred(r.mode) && cpred(r.sampler))
+                    .map(|r| (r.t, r.resid))
+                    .collect();
+                let seq_fsky: Vec<(f64, f64)> = recs
+                    .iter()
+                    .filter(|r| r.station == st && mpred(r.mode) && cpred(r.sampler))
+                    .map(|r| (r.t, r.fsky))
+                    .collect();
+                println!(
+                    "  {}",
+                    xrank_line(&label, cross_rank(&seq_resid, &seq_fsky))
+                );
             }
         }
     }
@@ -482,8 +597,75 @@ fn main() {
                     let Some(c) = peak else { continue };
                     let label = format!("{mname} {cname} {y}");
                     println!("    {}", cell_line(st, &label, n_raw, Some(c)));
+                    let seq_resid: Vec<(f64, f64)> = recs
+                        .iter()
+                        .filter(|r| {
+                            r.station == st
+                                && mpred(r.mode)
+                                && cpred(r.sampler)
+                                && r.year == Some(*y)
+                        })
+                        .map(|r| (r.t, r.resid))
+                        .collect();
+                    let seq_fsky: Vec<(f64, f64)> = recs
+                        .iter()
+                        .filter(|r| {
+                            r.station == st
+                                && mpred(r.mode)
+                                && cpred(r.sampler)
+                                && r.year == Some(*y)
+                        })
+                        .map(|r| (r.t, r.fsky))
+                        .collect();
+                    println!(
+                        "    {}",
+                        xrank_line(&label, cross_rank(&seq_resid, &seq_fsky))
+                    );
                 }
             }
+        }
+    }
+
+    println!("\n=== REFERENCE r[2] LS — st63 lt10 1992 (fsky-fine cells) ===");
+    for (mname, mpred) in modes {
+        let seq_resid: Vec<(f64, f64)> = recs
+            .iter()
+            .filter(|r| {
+                r.station == 63
+                    && r.sampler < 10.0
+                    && r.year == Some(1992)
+                    && mpred(r.mode)
+                    && r.resid.is_finite()
+            })
+            .map(|r| (r.t, r.resid))
+            .collect();
+        let seq_fsky: Vec<(f64, f64)> = recs
+            .iter()
+            .filter(|r| {
+                r.station == 63
+                    && r.sampler < 10.0
+                    && r.year == Some(1992)
+                    && mpred(r.mode)
+                    && r.fsky.is_finite()
+                    && r.fsky > 0.0
+            })
+            .map(|r| (r.t, r.fsky))
+            .collect();
+        let seq_ref: Vec<(f64, f64)> = recs
+            .iter()
+            .filter(|r| {
+                r.station == 63
+                    && r.sampler < 10.0
+                    && r.year == Some(1992)
+                    && mpred(r.mode)
+                    && r.refv.is_finite()
+            })
+            .map(|r| (r.t, r.refv))
+            .collect();
+        for (fname, seq) in [("resid", seq_resid), ("fsky", seq_fsky), ("ref", seq_ref)] {
+            let n_raw = seq.len();
+            let peak = peak_of_cell(seq);
+            println!("    {mname} {fname} {}", cell_line(63, fname, n_raw, peak));
         }
     }
 }
