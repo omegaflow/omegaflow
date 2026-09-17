@@ -2,7 +2,7 @@ name: qbo-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin qbo_compiler -- --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "qbo-cdn: qbo_30hpa compile returned void" \
                  "qbo compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

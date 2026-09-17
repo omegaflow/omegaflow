@@ -95,6 +95,7 @@ field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 ttl 60
+live
 on earth 0 0 0
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
@@ -1100,6 +1101,7 @@ field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
+sha256 26cd615cd3a943f6629b66188646728da7aed6ac3449dc4290408c0466c5a487
 at earth
 ttl 3600
 field us_crn_hourly_temp_c us_crn_hourly_temp_c exponential-decay thermal degree_C 3600 0.0 0.0
@@ -1605,11 +1607,13 @@ ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_deimos.bin
 format ephemeris_noe4
+sha256 ec891e7e9bb7367a948515e0f1c90eccf2fcfa38787352e0dfe7a3fafec5cabb
 at deimos
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_phobos.bin
 format ephemeris_noe4
+sha256 cbf771d0cb3693e07ec213cd8d88dcf74f0043cd872d9362ee129d647e938479
 at phobos
 ttl 86400
 
@@ -6448,6 +6452,7 @@ field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.
 
 url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic_ro_temp.bin
 format cosmic_ro
+sha256 94ad682adbd08edd10a2a127a050fea2287b557a98e74a334cc222c1dcbbe98b
 at earth
 ttl 604800
 field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square em N-units 604800 0.0 0.0
@@ -7515,6 +7520,7 @@ note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_co
 
 url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
 format iscb
+sha256 a20da758359e15a4a20483b8f88d2072bc7f5edfae685e35283680329c21b334
 at earth
 ttl 604800
 
@@ -9284,3 +9290,37 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t509166701_682590741.bin
+format maven_tnf
+sha256 cbdf3ea4dccd3b687f91dea679ac44e4c8ba28ce93c072f9bcdcd0bac4db8956
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t682590742_801786860.bin
+format maven_tnf
+sha256 0806df61a32d13d065eacd94d76905f1dbde37edd05b5d5b763bb3b974457393
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t801786861_818274669.bin
+format maven_tnf
+sha256 17a69d1c5529ef6a3f89266aced9dca79865e1ced33f858d51b4e74654f44fb9
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 194661152 B).
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
+format mariner_occlt
+sha256 4aa487cb7ba2e1ac2258c9ace16dd6adc0d502352a4a6c3be9a1ea8f5e10eda0
+at earth
+ttl 604800
+field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
+field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
+field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
+note Mariner 10 Venus occultation reduced telemetry signal data (NSSDC NSSD1346), native Serie; Arm `src/archivar/mariner_occlt.rs` + `extract.rs`-Dispatch `mariner_occlt`; Compiler `tools/harvest/src/bin/mariner_occlt_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
