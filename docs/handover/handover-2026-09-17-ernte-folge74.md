@@ -3,7 +3,7 @@
   session: Ernte-Folge 74
   class: handover
   date: 2026-09-17
-  sha256: 7226a3ed0c9b098f60c1a7022096bdc3bc2963eefca2204c8725af9987e98af4
+  sha256: 559f3a7e0af447264fe99ae6067f9e5aace7d59d5d71952d75f015637d90cb67
   status: live
 -->
 # Handover — Ernte-Folge 74 (2026-09-17)
@@ -73,13 +73,15 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - **ulysses_atdf / lro_trk / goes16_abi — CDN-Manifestation** `wartend`
   (Auslöser = CI-Läufe). Fixes stehen: `src/archivar/atdf.rs` (Band-Feld Item 11
-  = DOWNLINK_BAND statt 10 = STATION, Regressionstest), `phi/harvest.φ`
-  (`lro_trk` alphabetisch vor `ulysses_atdf` — das `harvest_reg`-Gate brach den
-  Dispatch ab), drei `phi/sources.φ`-Blöcke registriert (`goes16_abi` →
-  `format goes_abi`). Nach dem Push stößt `harvest-dispatch.yml` die Läufe neu an.
-  (Schritt: `ci_manage list` → `ci_manage view <harvest-run>`; bei success
-  sha256/Größe messen, `asset present` in `phi/harvest.φ` + sha256 in
-  `phi/sources.φ` nachtragen.) · wartend
+  = DOWNLINK_BAND statt 10 = STATION, Regressionstest) — committet in `7bf17ada`
+  (forschung-Linie, die den X-Band-Arm baute); `phi/harvest.φ` (`lro_trk`
+  alphabetisch vor `ulysses_atdf` — das `harvest_reg`-Gate brach den Dispatch ab);
+  drei `phi/sources.φ`-Blöcke registriert (`goes16_abi` → `format goes_abi`).
+  Dispatched 2026-09-17: `harvest` `ulysses_atdf` `35277931000`, `lro_trk`
+  `35277933828`, `goes16_abi` `35277937121` (plus auto `harvest-dispatch`
+  `35277699933`). (Schritt: `ci_manage view <id>` einmal; bei success sha256/Größe
+  messen, `asset present` in `phi/harvest.φ` + sha256 in `phi/sources.φ`
+  nachtragen.) · wartend
 - **rosetta_odf Dispatch-Beweis** `termin` — `harvest` `35270867738` in_progress
   (head `dc9291ad`). (Schritt: `ci_manage view 35270867738` einmal nach Abschluss.) · wartend
 - **Fünf Familien-Blöcke** — `gedi_l2a`/`icesat2_atl03`/`swot_l2_lr_ssh`
