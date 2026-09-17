@@ -31,7 +31,7 @@ jobs:
             --out gdp_drifter.bin \
             --index 0 \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "gdp-cdn: gdp_drifter.bin returned void" \
                  "gdp drifter compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

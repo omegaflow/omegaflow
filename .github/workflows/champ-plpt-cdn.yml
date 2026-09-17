@@ -2,7 +2,7 @@ name: champ-plpt-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
           cargo build -p omegaflow-harvest --release --bin champ_plpt_compiler \
             && ./target/release/champ_plpt_compiler --start 2002-02-19 --end 2009-12-31 \
                  --out champ_plpt.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "champ-plpt-cdn: champ_plpt compile returned void" \
                  "champ_plpt compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

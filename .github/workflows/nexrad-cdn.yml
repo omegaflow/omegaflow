@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/KTLX20240101_000004_V06 \
             https://unidata-nexrad-level2.s3.amazonaws.com/2024/01/01/KTLX/KTLX20240101_000004_V06 \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "nexrad-cdn: KTLX20240101_000004_V06 returned void" \
                  "curl on unidata-nexrad-level2.s3.amazonaws.com did not reach the volume. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the NEXRAD radial gate samples and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin nexrad_level2_compiler -- \
             --input kernels/KTLX20240101_000004_V06 \
             --out nexrad_level2.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "nexrad-cdn: nexrad_level2.bin returned void" \
                  "nexrad compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

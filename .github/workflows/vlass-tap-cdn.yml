@@ -30,33 +30,33 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/vlass_source.csv \
             "https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source,Peak_flux_source+FROM+cirada.VLASS_Source+WHERE+Total_flux_source+IS+NOT+NULL" \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-tap-cdn: cirada.VLASS_Source returned void" \
                  "curl on the Youcat TAP did not reach the VLASS_Source CSV. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           curl -sSfL --retry 3 --max-time 600 -o kernels/vlass_component.csv \
             "https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL" \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-tap-cdn: cirada.VLASS_Component returned void" \
                  "curl on the Youcat TAP did not reach the VLASS_Component CSV. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the VLASS source records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin vlass_tap_compiler -- \
             --kind source --input kernels/vlass_source.csv \
             --out data/ws-uv.canfar.net/vlass_tap_source.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-tap-cdn: vlass_tap_source.bin returned void" \
                  "vlass_tap_compiler (source) returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the VLASS component records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin vlass_tap_compiler -- \
             --kind component --input kernels/vlass_component.csv \
             --out data/ws-uv.canfar.net/vlass_tap_component.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vlass-tap-cdn: vlass_tap_component.bin returned void" \
                  "vlass_tap_compiler (component) returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
