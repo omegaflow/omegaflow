@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: f271978d773b6fbd710bc7ebd9f77c2892d83a04b683b92b763ad2b0f1e78a76
+  sha256: 3e33d5954ffd9c03321d37ec39b733ed70836a254ef3177ad424e9aea0e35964
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -31,7 +31,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## MAVEN TNF — Chunking gebaut, Re-Dispatch + Registrierung offen (härtester undatiert)
 
-- Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). Fix (diese Session, `cargo check` clean): `tools/harvest/src/bin/maven_tnf_compiler.rs` schardet über `odf::podf_shard_ranges`/`odf::PODF_SHARD_BUDGET`/`odf::podf_shard_name` (Muster `mro_odf_compiler.rs:142–219`) → `maven_tnf_t<lo>_<hi>.bin`; `.github/workflows/maven-tnf-cdn.yml` idempotent auf `^maven_tnf(\.bin|_t)`. (Schritt: nach Push `gh workflow run maven-tnf-cdn.yml`; bei success die vom Compiler gedruckten `url`/`format maven_tnf`/`field ul_phase_cycles …`-Zeilen ans Ende von `phi/sources.φ`.)
+- Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). Fix (diese Session, `cargo check` clean): `tools/harvest/src/bin/maven_tnf_compiler.rs` schardet über `odf::podf_shard_ranges`/`odf::PODF_SHARD_BUDGET`/`odf::podf_shard_name` (Muster `mro_odf_compiler.rs:142–219`) → `maven_tnf_t<lo>_<hi>.bin`; `.github/workflows/maven-tnf-cdn.yml` idempotent auf `^maven_tnf(\.bin|_t)`. (Dispatch `35188036501` läuft auf HEAD `8a38932d`. Schritt: `gh run view 35188036501`; bei success die vom Compiler gedruckten `url`/`format maven_tnf`/`field ul_phase_cycles …`-Zeilen ans Ende von `phi/sources.φ`.)
 
 ## Mariner 10 PSPA-00316 — Route lebt, Compiler + Layout offen
 
