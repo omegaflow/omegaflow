@@ -18,10 +18,10 @@ registrierten Ort.
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). |
+| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). **Gemessen 2026-09-17: nicht im Baum** (ebenso `queue/sources_potential_*`); die Queue trägt nur `grind_*`-Drafts. Re-Derivation offen. |
 | `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
 | `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
-| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. |
+| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. Ruhend ausgelagert 2026-09-17 (Entscheid-Folge 38) nach `archive-root/pipeline-auslese-2026-09-17/stage/` — regenerierbar; ebenso `weights_*.txt`, die Probe-Ausgänge und `meteo_harvest/` (CDN `archive-api.open-meteo.com`). |
 | `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
 | `phi/pipeline/library.φ` | Die kuratierte Tag-Library (Linse). Kuratiertes Input — versioniert (force-add, obwohl `phi/pipeline/` fetch-only ist). |
 | `phi/pipeline/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
