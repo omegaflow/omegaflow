@@ -1,0 +1,28 @@
+name: gaia-sso-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gaia_sso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Gaia SSO TNO transit catalog and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gaia_sso_compiler -- \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gaia-sso-cdn: gaia_sso_tno.bin returned void" \
+                 "gaia_sso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
