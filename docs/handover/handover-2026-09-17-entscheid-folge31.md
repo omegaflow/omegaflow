@@ -3,7 +3,7 @@
   session: Entscheid-Folge 31
   class: handover
   date: 2026-09-17
-  sha256: 108111656530c9db0238bb5c578b6808f5c7990b225cbfed00148e1287c0b4c8
+  sha256: 24580ed9cc73cdbfbdb8f124ac75160ec68d757bec02f315f4050ff66b2da8c7
   status: live
 -->
 # Handover — Entscheid-Folge 31 (2026-09-17)
@@ -65,6 +65,15 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
   extrahieren; Sende-Wort erst nach Forschungsabschluss.)
 - **ESP32-Modul** — physischer Träger für Puls/HRV, on hold; BOM
   `docs/specs/mantis-shrimp-bom.md`. (Schritt: Operator-Wort.)
+- **DEMETER-Runner** (aus `post.md` gefaltet) — der Harvest ist nur von einer
+  Residential-IP möglich (F5-ASM-WAF blockt GitHub-Runner-IPs auf
+  `POST /api/v1/rs-order/user/orders`, dieselbe Anfrage von der Operator-Maschine
+  = `201`); CI `35146819646` war `success` bei `0 files on disk` (falsches Grün).
+  Route (Rat): self-hosted Runner, Label `demeter-residential`, trägt
+  `demeter-cdn.yml`; `demeter-aggregate-cdn.yml` bleibt `ubuntu-latest`. (Schritt:
+  Operator installiert den Runner — repo-gebunden, Label nur `demeter-residential`,
+  eigener Nutzer, systemd `svc.sh install`, nie in einem `pull_request`-Workflow;
+  dann `gh workflow run demeter-cdn.yml`.)
 
 ## Warten auf Rückmeldung (extern)
 

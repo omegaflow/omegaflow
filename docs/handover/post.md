@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-17
-  sha256: 82dfcf8846124459cfba2a0771eab3e0f157611a47985728f54044a97fad2c8d
+  sha256: 63f0c2e97cec087dae180c6ef7ea825bba9a1f244f76b4686389cf42366b7528
   status: live
   see-also: AGENTS.md
 -->
@@ -21,5 +21,5 @@ An bau: Doku-Drift aus `survey-2026-09-17-verlorene-diskussionen.md` (c) — `do
 
 An bau: smail Sent-Log — CI-Lauf `35195888583` (`service-build`) steht seit `2026-09-17T07:42:35Z` `queued` (kein Runner hat den Job aufgenommen; gemessen `gh run view --json`). (Schritt: `gh run view 35195888583` → bei `success` `gh run download` → `smail` nach `~/.local/bin/` + `target/release/`.)
 
-An ernte: DEMETER — die Route ist **nicht blockiert** (Key funktioniert, gemessen: Login 200, 57 760 `DMT_N1_1144`-Objekte, 42 Orders meist `DONE`); der Harvest `35146819646` scheitert am Quellen-WAF (`0 files on disk`, jede Order `WAF blocked … waiting 1800s` / `order parse void`) — neue Orders durchbrechen den WAF nicht, der Consent-Akt hat keinen Gegenstand. Der Quellen-Punkt bleibt bei ernte. (Schritt: nach erfolgreichem Aggregat die 77 `url`-Zeilen — `format demeter_isl`, `at earth`, `ttl 604800`, Felder `demeter_isl_{orbit_count,ne_cm3,ni_cm3,te_k,vf_v,vi0_ms}` — ans Ende von `phi/sources.φ`.)
+An bau: Werkzeug-Reibung, gemessen aus `opencode.db` (38 Sessions, 653 Tool-Calls): (1) Header-sha256 manuell 16–17× (`tail -n +9 … | sha256sum`, fragil — nimmt 8 Header-Zeilen an) → `omega_sh sha <file>`; (2) Commit-Abschluss 13× in vier Git-Aufrufen (`git status --short` 18×, `git show --stat HEAD` 4×, `git log origin/main..HEAD --name-only` 4×, `git rev-parse HEAD origin/main` 5×) → `git_safety --close`; (3) `cargo check | tail -n 2` 7× → `check`-Zusammenfassung; (4) `echo`/`printf` in die restriktiven Profile `explore`/`general`/`research-max`/`council` (`plan` bereits freigegeben); `ci_manage list|view` ins Plan-Profil offen; Drift: 1× `ruby`. (Schritt: die Werkzeuge/Profil-Freigaben bauen; danach die Linien-Prompts um `omega_sh sha`/`git_safety --close` ergänzen.)
 
