@@ -2,7 +2,7 @@
   title: Die positive Maske — Treiber hinzufügen statt Rauschen abziehen
   class: concept
   date: 2026-09-12
-  sha256: 382321f6aef574a02f489861237934b45192d7726b0d9182001785f5209850f8
+  sha256: c734b5653d5c33f5964be4821128af9d85c4da2cfc01bd0317be5f9f9cc8f293
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -73,4 +73,4 @@ irrelevant. Keine Deutung, nur Messung. Kein Anspruch, nur der Riss.
   kein de441-Defekt; die 2024-Kanon-Δ 793,3 km war eine Suchfeld-Grenze
   (longitude 90° statt 180°), jetzt 8,4 km. Gate (Punkt < 15 km, Magnitude
   < 0,002) hält (`docs/paper/eclipse-clock-worldlines.md`).
-- Galileo-ODF: Format 1 vs 2 ungemessen (kein lokales galileo_odf.bin).
+- Galileo-ODF: registriert (`galileo_odf.bin`, `phi/sources.φ:6796`; Compiler `tools/harvest/src/bin/galileo_odf_compiler.rs`); Format 1 vs 2 ungemessen.

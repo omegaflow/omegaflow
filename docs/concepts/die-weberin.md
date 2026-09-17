@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: 5bb780b5f559d1f59fc17f6e1ce6cfa5a35fc427d3538ae771f7299837f5a6e0
+  sha256: 35ed50064c75a3bb6d10e09eee9dfd7e7709e58320081a6ff4f86a990c61e2a3
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -49,9 +49,8 @@ Nichts hier muss erst gesammelt werden. Der Webstuhl hat sein Material:
   `distance`/`redshift`, `unit_direction()`) und der gebaute S²-Sinn
   (`s2.rs`, `S2_WGSL`, `omega.rs`).
 - **Die unabhängigen Linien:** die vier lebenden TAP-Legs (ALeRCE, SIMBAD,
-  Gaia-ARI, NED), die MPC-Bahnen
-  (`mpcorb_extended.json.gz`, offener Live-Block —
-  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`), die
+   Gaia-ARI, NED), die MPC-Bahnen
+   (`mpcorb.bin`, registriert `phi/sources.φ:2395`), die
   INPOP25c-Asteroidenmassen (gravity-Katalog-Route) und das solare ΩG.
 
 ## 2. Der Webstuhl — ICRS·TDB als das eine Blatt
@@ -280,9 +279,9 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    das `upload_asset`-Wiring und `vlies-density-cdn.yml` stehen; der Lauf
    `34064753336` (success, 2026-09-06) hat `vlies_density.vlde` (1 572 873
    Bytes, sha256 `7bf53447…`) auf `ssd.jpl.nasa.gov` gelegt (HTTP 200,
-   gemessen 2026-09-16). Offen bleibt allein die **Konsumption**: kein
-   Archivar-Reader für `.vlde` (`format`/Reader fehlen, gemessen) —
-   `pending`, ein eigenes Atom.
+   gemessen 2026-09-16). Die **Konsumption** ist gebaut: Archivar-Reader
+   `src/archivar/vlies.rs` (`MAGIC VLDE`, `parse_asset`), fetch/extract in
+   `main_flow.rs`, Dispatch in `extract.rs`.
 8. Der Riss-Knoten: **gebaut** — `riss_knoten_probe` (Ledger zwirn/riss/
    absent, Körper/Station/geliehen, 16 Tests), Kern `src/weberin.rs`; der
    CI-Lauf fehlte und wird in diesem Atom ergänzt (Workflow
@@ -314,8 +313,9 @@ Die vier Rat-Fragen sind gemessen (Probe `s2_weberin_probe`, Artefakt
    Stationen 462).
 5. **Cap-Margin**: 2¹³ = 8192 gegen N = 536 → Margin 7656.
 
-Offen bleibt eine Register-Pflicht, nichts vertagt: die **Konsumption** des
-Vlies-Assets — ein Archivar-Reader für `.vlde` (`pending`, eigenes Atom); die
+Geschlossen ist die **Konsumption** des Vlies-Assets — Archivar-Reader
+`src/archivar/vlies.rs` (`MAGIC VLDE`, `parse_asset`), fetch/extract in
+`main_flow.rs`, Dispatch in `extract.rs`; die
 Manifestation selbst ist gemessen (Schritt 7, Lauf `34064753336`), und
 Schritt 8 — der CI-Lauf (`riss-knoten.yml`, run 35117186444 success) — ist
 gelaufen. Zwischen den Stufen gibt es keine Wartezone. Wo eine

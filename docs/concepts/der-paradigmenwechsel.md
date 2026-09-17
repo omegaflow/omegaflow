@@ -1,7 +1,7 @@
 <!--
   title: Der Paradigmenwechsel — die Recherche vom 18.8.2026
   class: concept
-  sha256: 937ea78d942832d88454f73f76852c28cf2d718165d2207e78abac15b3553836
+  sha256: a832804ea9c3786a8469d223e46a8fe2c5f33609bb8a012e5ff3da4543862bb1
 -->
 # Der Paradigmenwechsel — die Recherche vom 18.8.2026
 
@@ -343,7 +343,7 @@ Die neun Medien sind die Medien des Lebens. Feldstärke gegen bekannte
 Sinnes-Schwellen (Magnetorezeption, Infraschall, Elektrorezeption)
 gerendert = die Karte dessen, was die Biosphäre fühlt — welche
 Sternereignisse ein Magnetorezeptor spüren könnte. Die ethischen
-Sensoren (Puls/HRV, ausstehend) treten als Oszillatoren ein: der
+Sensoren (Puls/HRV, `src/archivar/hrv.rs`; ω-Loop `tone_code`) treten als Oszillatoren ein: der
 Beobachter wird ein Oszillator unter Gleichen, die Kohärenz
 Herzrhythmus ↔ Feld eine Messung, keine Metapher. Und die
 Geochronologie: Baumringe, Eisbohrkerne, 14C-Reihen tragen Epochen —
