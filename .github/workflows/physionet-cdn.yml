@@ -2,6 +2,12 @@ name: physionet-cdn
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: re-harvest every chunk, present or not (schema change)
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -61,7 +67,43 @@ jobs:
             cargo run -p omegaflow-harvest --release --bin phonocardiogram_compiler -- \
               --out circor_pcg.bin --ci-mode --jobs 8
 
+  raster-bidsleep:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.gen.outputs.chunks }}
+      merge: ${{ steps.gen.outputs.merge }}
+    steps:
+      - id: gen
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.force }}" = "true" ]; then
+            chunks=""
+            for c in $(seq 0 7); do
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 36))}"
+            done
+            echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          names="$(gh release view physionet.org --repo omegaflow/sources \
+            --json assets --jq '.assets[].name')"
+          present="$(printf '%s\n' "$names" \
+            | sed -n 's/^bidsleep_mehrnacht_r\([0-9]\+\)\.bin$/\1/p')"
+          chunks=""
+          for c in $(seq 0 7); do
+            if ! printf '%s\n' "$present" | grep -qx "$c"; then
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 36))}"
+            fi
+          done
+          echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+          if printf '%s\n' "$names" | grep -qx 'bidsleep_mehrnacht.bin'; then
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+
   bidsleep:
+    needs: raster-bidsleep
     concurrency:
       group: physionet-cdn-bidsleep-${{ matrix.chunk }}
       cancel-in-progress: false
@@ -71,23 +113,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        include:
-          - chunk: 0
-            offset: 0
-          - chunk: 1
-            offset: 36
-          - chunk: 2
-            offset: 72
-          - chunk: 3
-            offset: 108
-          - chunk: 4
-            offset: 144
-          - chunk: 5
-            offset: 180
-          - chunk: 6
-            offset: 216
-          - chunk: 7
-            offset: 252
+        include: ${{ fromJSON(needs.raster-bidsleep.outputs.chunks) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -106,7 +132,8 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: bidsleep
+    needs: [raster-bidsleep, bidsleep]
+    if: ${{ !cancelled() && needs.raster-bidsleep.outputs.merge == 'true' && (needs.bidsleep.result == 'success' || needs.bidsleep.result == 'skipped') }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -122,7 +149,43 @@ jobs:
               bidsleep_mehrnacht_r4.bin bidsleep_mehrnacht_r5.bin \
               bidsleep_mehrnacht_r6.bin bidsleep_mehrnacht_r7.bin
 
+  raster-ltmm:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.gen.outputs.chunks }}
+      merge: ${{ steps.gen.outputs.merge }}
+    steps:
+      - id: gen
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.force }}" = "true" ]; then
+            chunks=""
+            for c in $(seq 0 11); do
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 12))}"
+            done
+            echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          names="$(gh release view physionet.org --repo omegaflow/sources \
+            --json assets --jq '.assets[].name')"
+          present="$(printf '%s\n' "$names" \
+            | sed -n 's/^ltmm_movement_m\([0-9]\+\)\.bin$/\1/p')"
+          chunks=""
+          for c in $(seq 0 11); do
+            if ! printf '%s\n' "$present" | grep -qx "$c"; then
+              chunks="${chunks:+$chunks,}{\"chunk\":$c,\"offset\":$((c * 12))}"
+            fi
+          done
+          echo "chunks=[$chunks]" >> "$GITHUB_OUTPUT"
+          if printf '%s\n' "$names" | grep -qx 'ltmm_movement.bin'; then
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+
   ltmm:
+    needs: raster-ltmm
     concurrency:
       group: physionet-cdn-ltmm-${{ matrix.chunk }}
       cancel-in-progress: false
@@ -132,31 +195,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        include:
-          - chunk: 0
-            offset: 0
-          - chunk: 1
-            offset: 12
-          - chunk: 2
-            offset: 24
-          - chunk: 3
-            offset: 36
-          - chunk: 4
-            offset: 48
-          - chunk: 5
-            offset: 60
-          - chunk: 6
-            offset: 72
-          - chunk: 7
-            offset: 84
-          - chunk: 8
-            offset: 96
-          - chunk: 9
-            offset: 108
-          - chunk: 10
-            offset: 120
-          - chunk: 11
-            offset: 132
+        include: ${{ fromJSON(needs.raster-ltmm.outputs.chunks) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -175,7 +214,8 @@ jobs:
       cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: ltmm
+    needs: [raster-ltmm, ltmm]
+    if: ${{ !cancelled() && needs.raster-ltmm.outputs.merge == 'true' && (needs.ltmm.result == 'success' || needs.ltmm.result == 'skipped') }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
