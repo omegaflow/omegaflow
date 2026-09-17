@@ -1,0 +1,71 @@
+name: harvest-dispatch
+
+concurrency:
+  group: harvest-dispatch
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'phi/sources.φ'
+      - 'phi/harvest.φ'
+      - 'tools/harvest/src/bin/**'
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Gate — every block in phi/harvest.φ is measured and well-formed
+        run: cargo run -q -p omegaflow-utils --bin harvest_reg -- --check
+      - name: Resolve the changed harvest formats and dispatch the missing ones
+        env:
+          GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+        run: |
+          before='${{ github.event.before }}'
+          if [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            before='${{ github.sha }}^'
+          fi
+          formats=""
+          for path in $(git diff --name-only "$before" '${{ github.sha }}' -- 'tools/harvest/src/bin/*.rs' || true); do
+            stem=$(basename "$path" .rs)
+            found=$(cargo run -q -p omegaflow-utils --bin harvest_reg -- --arm "$stem" || true)
+            if [ -z "$found" ]; then
+              echo "arm $stem changed — no harvest block names it, register duty"
+              continue
+            fi
+            formats="$formats $(printf '%s\n' "$found" | sed 's/^format //')"
+          done
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | grep '^+format ' | sed 's/^+format //' || true)"
+          formats="$formats $(git diff --unified=6 "$before" '${{ github.sha }}' -- phi/harvest.φ | grep '^[ +-]format ' | sed 's/^[ +-]format //' || true)"
+          bad=0
+          for fmt in $formats; do
+            block=$(cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup "$fmt" 2>/dev/null || true)
+            if [ -z "$block" ]; then
+              echo "format $fmt: no measured block in phi/harvest.φ — register duty, no dispatch"
+              continue
+            fi
+            asset=$(printf '%s\n' "$block" | sed -n 's/^asset //p')
+            case "$asset" in
+              fehlt)
+                echo "format $fmt: asset fehlt — dispatch harvest"
+                gh workflow run harvest.yml -f format="$fmt" --repo '${{ github.repository }}' \
+                  || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+                ;;
+              present)
+                echo "format $fmt: asset present — no dispatch"
+                ;;
+              *)
+                echo "format $fmt: block unmeasured — register duty, no dispatch"
+                ;;
+            esac
+          done
+          exit "$bad"
