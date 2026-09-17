@@ -97,6 +97,13 @@ jobs:
           assets=$(gh release view "${{ steps.block.outputs.tag }}" --repo omegaflow/sources \
                --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ steps.block.outputs.pattern }}" || true)
           shard="${{ steps.block.outputs.shard }}"
+          if [ "$assets" -eq 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT still has no asset on the CDN after the compile" \
+              "The $FORMAT compile completed but the idempotence pattern matched no asset on the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
           if [ -n "$shard" ] && [ "$assets" -ne "$shard" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
               "harvest: $FORMAT shard is incomplete on the CDN after the compile" \
@@ -104,12 +111,4 @@ jobs:
               health
             exit 1
           fi
-          if [ "$assets" -gt 0 ]; then
-            echo "asset present after the compile — the harvest stands"
-          else
-            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "harvest: $FORMAT still has no asset on the CDN after the compile" \
-              "The $FORMAT compile completed but the idempotence pattern matched no asset on the CDN. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-              health
-            exit 1
-          fi
+          echo "asset present after the compile — the harvest stands"
