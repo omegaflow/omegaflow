@@ -3,7 +3,7 @@
   session: Ernte-Folge 72
   class: handover
   date: 2026-09-17
-  sha256: 6e63c75e0a9b6a3f29784684e20ae08f7536acd5953d2fd6d999aea939089ae0
+  sha256: 69711b1776fd105b985705297c3dc8e2beef50d3385b87e20518b545556b317c
   status: live
 -->
 # Handover — Ernte-Folge 72 (2026-09-17)
@@ -68,7 +68,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `phi/harvest.φ`-Register-Zeile ergänzt (`args <cli>` dokumentiert).
 - **`docs/specs/cdn_reconciliation.json`** (2026-09-03 überholt) —
   `.github/workflows/cdn-reconcile.yml` gebaut (Muster source-census.yml:
-  `cdn_reconcile` → Commit der Tabelle); Dispatch folgt mit dem Push.
+  `cdn_reconcile` → Commit der Tabelle); dispatcht `35273461901` (2026-09-17).
 - **Register-Lücke** `sources_new_untested_*` u. a. (10 Korpora, ~4.700 Blöcke):
   im regenerierten Index gelistet, aber **in `ledger.φ` nicht als offener Posten
   registriert**. Schritt: Zustand (`ausstehend`) je Korpus in
