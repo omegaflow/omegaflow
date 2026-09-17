@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: f085985e54abaaf63b2eca7f4369e206e7108e8a957fa12c42d9ecd93e59344f
+  sha256: e8977ea6cc5423f220f12d0c98fdaca62f3a3093fe7419fb185e10aca2e7f16c
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -47,17 +47,22 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   vollständigen Kanäle sind das Blatt-Material, dann das Blatt unter
   `docs/paper/tonga-lamb-crosscheck.md` mit dem Rat-Wortlaut als Grenze schreiben.)
 
-## ODF-Bande-Split `mro_odf` (CI-blockiert)
+## ODF-Bande-Split `mro_odf` (Fix gebaut, CI-Lauf offen)
 
-- Run `35159180825` (d340a8c6) endete mit Runner-Shutdown mitten in der Ernte
-  (`##[error]The runner has received a shutdown signal`, 01:04:44) — kein φ-Block
-  gedruckt; der Ganzdatei-Block `phi/sources.φ:6763–6767` steht unverändert.
-  Re-Dispatch `planetary-odf-cdn.yml` → run `35186417213` (2026-09-17, angestoßen);
-  der `mro_odf`-Job (105089344016) endete erneut **failure** (gemessen; rosetta noch
-  in_progress, Log wartet auf Run-Abschluss). (Schritt: nach Run-Abschluss
-  `gh run view --job 105089344016 --log` — die Fehlerzeile lesen (Runner-Shutdown
-  oder Datenfehler); bei Erfolg den gedruckten `mro_odf_*`-Shard-φ-Block nehmen und
-  den Ganzdatei-Block 6763–6767 durch je einen Block je Shard ersetzen — Muster
+- Ursache gemessen (Job-Log 105089344016, run 35186417213): der Runner stirbt mit
+  `##[error]The runner has received a shutdown signal` nach 7m58s, zweimal identisch
+  (auch run 35159180825, 7m04s) — kein Daten-/Parse-Fehler. Der Compiler
+  `tools/harvest/src/bin/mro_odf_compiler.rs` hielt alle 3554 Dateien in einem
+  `merged: Vec<[f64; 9]>`: ~2.1·10⁸ rows × 72 B ≈ 15 GB resident vor dem ersten Shard
+  → OOM auf dem 16-GB-Runner.
+- Fix gebaut: `harvest_all` (globaler Merge) → `harvest_stream` (Chunks von `WORKERS`
+  Dateien, je Datei sortiert, Streaming-Callback) + `flush_shard` (bei
+  `PODF_SHARD_BUDGET` einen Shard schreiben/verifizieren/flushen); Speicher jetzt
+  ~2 GB (ein Shard-Puffer + Chunk). Ein-Shard-Fall schreibt weiter `mro_odf.bin`.
+  `cargo check -p omegaflow-harvest` clean. (Schritt: nach Push `gh workflow run
+  planetary-odf-cdn.yml`, dann `gh run view <id>` + Job-Log; bei Erfolg den
+  gedruckten `mro_odf_*`-Shard-φ-Block nehmen und den Ganzdatei-Block
+  `phi/sources.φ:6763–6767` durch je einen Block je Shard ersetzen — Muster
   odyssey_odf 6769+; `refuse_shard_overlaps` verweigert Überlappung gleichen `format`.)
 
 ## Kyoto-Zenodo — Quelle gehoben, Manifestation offen
