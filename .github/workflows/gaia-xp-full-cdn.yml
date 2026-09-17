@@ -21,12 +21,13 @@ jobs:
     steps:
       - id: gen
         run: |
+          set -euo pipefail
           if [ "${{ inputs.force }}" = "true" ]; then
             echo "chunks=[$(seq -s, 0 255)]" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           present="$(gh release view dc.g-vo.org --repo omegaflow/sources \
-            --json assets --jq '.assets[].name' 2>/dev/null \
+            --json assets --jq '.assets[].name' \
             | sed -n 's/^xp_full_\([0-9]\+\)\.bin$/\1/p')"
           chunks=""
           for c in $(seq 0 255); do
