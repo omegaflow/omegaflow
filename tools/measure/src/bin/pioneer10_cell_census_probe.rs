@@ -61,57 +61,71 @@ fn paper_value(st: i64) -> f64 {
     }
 }
 
-fn ls_grid(times: &[f64], vals: &[f64], flo: f64, fhi: f64, step: f64) -> Vec<(f64, f64)> {
-    let mut grid: Vec<(f64, f64)> = Vec::new();
-    let mut f = flo;
-    while f <= fhi {
-        grid.push((f, 0.0));
-        f += step;
+type GridPoint = (f64, f64, Option<f64>);
+
+fn ls_fit(times: &[f64], vals: &[f64], vsum: f64, ss_tot: f64, fref: f64) -> (f64, Option<f64>) {
+    let m = times.len() as f64;
+    let mut s = 0.0;
+    let mut c = 0.0;
+    for &t in times {
+        let ph = std::f64::consts::TAU * fref * t;
+        s += ph.sin();
+        c += ph.cos();
     }
-    if grid.is_empty() {
+    s /= m;
+    c /= m;
+    let mut ss = 0.0;
+    let mut cc = 0.0;
+    let mut sc = 0.0;
+    let mut sy = 0.0;
+    let mut cy = 0.0;
+    for (i, &t) in times.iter().enumerate() {
+        let ph = std::f64::consts::TAU * fref * t;
+        let ds = ph.sin() - s;
+        let dc = ph.cos() - c;
+        let dv = vals[i] - vsum;
+        ss += ds * ds;
+        cc += dc * dc;
+        sc += ds * dc;
+        sy += ds * dv;
+        cy += dc * dv;
+    }
+    let det = ss * cc - sc * sc;
+    if det.abs() <= 1e-300 {
+        return (0.0, None);
+    }
+    let a = (sy * cc - cy * sc) / det;
+    let b = (cy * ss - sy * sc) / det;
+    let power = (a * a + b * b) * m / 2.0;
+    if ss_tot > 0.0 {
+        let z = (a * sy + b * cy) / ss_tot;
+        if (0.0..=1.0).contains(&z) {
+            return (power, Some(z));
+        }
+    }
+    (power, None)
+}
+
+fn ls_grid(times: &[f64], vals: &[f64], flo: f64, fhi: f64, step: f64) -> Vec<GridPoint> {
+    let mut grid: Vec<GridPoint> = Vec::new();
+    if times.is_empty() {
         return grid;
     }
     let m = times.len() as f64;
     let vsum = vals.iter().sum::<f64>() / m;
-    for (fref, pow) in grid.iter_mut() {
-        let mut s = 0.0;
-        let mut c = 0.0;
-        for &t in times {
-            let ph = std::f64::consts::TAU * *fref * t;
-            s += ph.sin();
-            c += ph.cos();
-        }
-        s /= m;
-        c /= m;
-        let mut ss = 0.0;
-        let mut cc = 0.0;
-        let mut sc = 0.0;
-        let mut sy = 0.0;
-        let mut cy = 0.0;
-        for (i, &t) in times.iter().enumerate() {
-            let ph = std::f64::consts::TAU * *fref * t;
-            let ds = ph.sin() - s;
-            let dc = ph.cos() - c;
-            let dv = vals[i] - vsum;
-            ss += ds * ds;
-            cc += dc * dc;
-            sc += ds * dc;
-            sy += ds * dv;
-            cy += dc * dv;
-        }
-        let det = ss * cc - sc * sc;
-        if det.abs() > 1e-300 {
-            let a = (sy * cc - cy * sc) / det;
-            let b = (cy * ss - sy * sc) / det;
-            *pow = (a * a + b * b) * m / 2.0;
-        }
+    let ss_tot: f64 = vals.iter().map(|v| (v - vsum) * (v - vsum)).sum();
+    let mut f = flo;
+    while f <= fhi {
+        let (pow, norm) = ls_fit(times, vals, vsum, ss_tot, f);
+        grid.push((f, pow, norm));
+        f += step;
     }
     grid
 }
 
-fn peak_of(grid: &[(f64, f64)]) -> (f64, f64, f64) {
+fn peak_of(grid: &[GridPoint]) -> GridPoint {
     if grid.is_empty() {
-        return (f64::NAN, 0.0, f64::NAN);
+        return (f64::NAN, 0.0, None);
     }
     let mut best = grid[0];
     for g in grid {
@@ -119,10 +133,10 @@ fn peak_of(grid: &[(f64, f64)]) -> (f64, f64, f64) {
             best = *g;
         }
     }
-    (best.0, best.1, best.1)
+    best
 }
 
-fn peak_interp(grid: &[(f64, f64)]) -> Option<f64> {
+fn peak_interp(grid: &[GridPoint]) -> Option<f64> {
     let (fmax, _, _) = peak_of(grid);
     let k = grid.iter().position(|g| g.0 == fmax)?;
     if k == 0 || k + 1 >= grid.len() {
@@ -179,7 +193,28 @@ fn year_of(tdb: f64) -> Option<i64> {
     omegaflow::spectral::civil_from_days(unix_day).map(|(y, _, _)| y as i64)
 }
 
-fn peak_of_cell(mut seq: Vec<(f64, f64)>) -> Option<(f64, usize)> {
+fn median(mut xs: Vec<f64>) -> f64 {
+    xs.sort_by(f64::total_cmp);
+    let n = xs.len();
+    if n == 0 {
+        return f64::NAN;
+    }
+    if n % 2 == 1 {
+        xs[n / 2]
+    } else {
+        0.5 * (xs[n / 2 - 1] + xs[n / 2])
+    }
+}
+
+struct CellPeak {
+    peak: f64,
+    n_det: usize,
+    floor: f64,
+    ratio: Option<f64>,
+    fap: Option<f64>,
+}
+
+fn peak_of_cell(mut seq: Vec<(f64, f64)>) -> Option<CellPeak> {
     if seq.len() < MIN_N {
         return None;
     }
@@ -191,12 +226,32 @@ fn peak_of_cell(mut seq: Vec<(f64, f64)>) -> Option<(f64, usize)> {
         return None;
     }
     let grid = ls_grid(&dts, &dvs, BAND_LO, BAND_HI, STEP);
-    let (fp, _, _) = peak_of(&grid);
+    let (fp, fpow, peak_norm) = peak_of(&grid);
     let peak = match peak_interp(&grid) {
         Some(p) => p,
         None => fp,
     };
-    Some((peak, dts.len()))
+    let floor = median(grid.iter().map(|g| g.1).collect());
+    let ratio = if floor > 0.0 && fpow.is_finite() {
+        Some(fpow / floor)
+    } else {
+        None
+    };
+    let fap = peak_norm.and_then(|z| {
+        let n = dts.len();
+        if n <= 3 {
+            return None;
+        }
+        let p1 = (1.0 - z).powf((n as f64 - 3.0) / 2.0);
+        Some(1.0 - (1.0 - p1).powf(grid.len() as f64))
+    });
+    Some(CellPeak {
+        peak,
+        n_det: dts.len(),
+        floor,
+        ratio,
+        fap,
+    })
 }
 
 fn fmt_peak(st: i64, peak: f64) -> String {
@@ -212,11 +267,29 @@ fn fmt_peak(st: i64, peak: f64) -> String {
     }
 }
 
-fn cell_line(st: i64, label: &str, n_raw: usize, peak: Option<(f64, usize)>) -> String {
+fn fmt_ratio(ratio: Option<f64>) -> String {
+    match ratio {
+        Some(r) => format!("{r:.3}"),
+        None => "—".to_string(),
+    }
+}
+
+fn fmt_fap(fap: Option<f64>) -> String {
+    match fap {
+        Some(p) => format!("FAP {p:.2e}"),
+        None => "FAP —".to_string(),
+    }
+}
+
+fn cell_line(st: i64, label: &str, n_raw: usize, peak: Option<CellPeak>) -> String {
     match peak {
-        Some((p, n_det)) => format!(
-            "{label:<16} n={n_raw:<7} (detrend {n_det}) peak {:<38}",
-            fmt_peak(st, p)
+        Some(c) => format!(
+            "{label:<16} n={n_raw:<7} (detrend {}) peak {:<38} floor {:.3e} x {} {}",
+            c.n_det,
+            fmt_peak(st, c.peak),
+            c.floor,
+            fmt_ratio(c.ratio),
+            fmt_fap(c.fap),
         ),
         None => {
             if n_raw < MIN_N {
@@ -406,9 +479,9 @@ fn main() {
                         continue;
                     }
                     let peak = peak_of_cell(seq);
-                    let Some((p, n_det)) = peak else { continue };
+                    let Some(c) = peak else { continue };
                     let label = format!("{mname} {cname} {y}");
-                    println!("    {}", cell_line(st, &label, n_raw, Some((p, n_det))));
+                    println!("    {}", cell_line(st, &label, n_raw, Some(c)));
                 }
             }
         }
