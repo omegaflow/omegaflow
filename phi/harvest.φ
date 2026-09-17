@@ -1,0 +1,8 @@
+asset present
+format maven_tnf
+tag pds-ppi.igpp.ucla.edu
+arm maven_tnf_compiler
+pattern ^maven_tnf_t[0-9]+_[0-9]+(_[0-9]+)?\.bin$
+shard 3
+idempotent true
+note run 35205267703 measured 2026-09-17; 3 shard assets present (1073741768 B / 1073741768 B / 194661152 B per the phi/sources.φ maven_tnf notes); sha256 cbdf3ea4… / 0806df61… / 17a69d1c…
