@@ -66,7 +66,7 @@ fn main() {
             eprintln!("{name}: tnf scan void — {} B", bytes.len());
             continue;
         };
-        merged.extend_from_slice(&recs);
+        merged.extend(recs.into_iter().filter(|r| r[odf::TNF_ROW_FORMAT] == 0.0));
     }
     if merged.is_empty() {
         eprintln!("no dart TNF DT0 samples — the series stays unwritten (0 honored)");
