@@ -8247,6 +8247,33 @@ fn odf_series_dispatch_and_component_names() {
 }
 
 #[test]
+fn rosetta_odf_series_dispatch_and_component_names() {
+    let samples = [(1.5e9, -86.4, 0.068), (1.5e9 + 1.0, -87.2, 0.076)];
+    let bytes = super::ifms_agc::write_series(&samples);
+    let parsed = super::extract::series_parse_bin("rosetta_odf", &bytes)
+        .expect("rosetta_odf series parses");
+    assert_eq!(parsed.len(), 4);
+    assert_eq!(parsed[0].0, 1.5e9);
+    assert_eq!(parsed[0].1, -86.4);
+    assert_eq!(parsed[0].2, super::ifms_agc::COMP_CARRIER_LEVEL);
+    assert_eq!(parsed[1].1, 0.068);
+    assert_eq!(parsed[1].2, super::ifms_agc::COMP_POLAR_ANGLE);
+    assert_eq!(parsed[2].1, -87.2);
+    assert_eq!(parsed[2].2, super::ifms_agc::COMP_CARRIER_LEVEL);
+    assert_eq!(parsed[3].1, 0.076);
+    assert_eq!(parsed[3].2, super::ifms_agc::COMP_POLAR_ANGLE);
+    assert_eq!(
+        super::extract::series_component_name("rosetta_odf", super::ifms_agc::COMP_CARRIER_LEVEL),
+        Some("rosetta_odf_carrier_level_dbm")
+    );
+    assert_eq!(
+        super::extract::series_component_name("rosetta_odf", super::ifms_agc::COMP_POLAR_ANGLE),
+        Some("rosetta_odf_polar_angle_cycles")
+    );
+    assert_eq!(super::extract::series_component_name("rosetta_odf", 99), None);
+}
+
+#[test]
 fn odf_register_field_names_match_components() {
     let srcs = super::load_sources();
     for format in [
@@ -8257,7 +8284,6 @@ fn odf_register_field_names_match_components() {
         "odyssey_odf",
         "messenger_odf",
         "mars_express_odf",
-        "rosetta_odf",
         "vex_odf",
         "galileo_odf",
         "dawn_odf",
