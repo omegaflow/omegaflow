@@ -6605,6 +6605,15 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms ga
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound_IS52_2022.bin
+format bgr_infrasound
+on earth 0 0 0
+ttl 604800
+field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg gaussian-inverse-square acoustic deg 300 0.0 0.0
+field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms gaussian-inverse-square acoustic m/s 300 0.0 0.0
+field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
+field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
 format iss_lis
 on earth 0 0 0
