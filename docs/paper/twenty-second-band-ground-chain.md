@@ -2,8 +2,8 @@
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
   date: 2026-09-17
-  version: 10
-  sha256: 3392c87d03f482454cf6ad32df4fd70f253d0921ea9727c24eb09c2bfa2eeda6
+  version: 11
+  sha256: 9621399c78a17c993a9c8aba56b18722aa93862814445a0309af4f9947413b18
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -196,14 +196,40 @@ carry a different station-fixed complex (1988 mode3-lt10 46,585 / 52,816 /
 dominant peak between the fields (rx43 +8,7, rx63 −5,8 mHz on the 1988 cell;
 +10,1 / −10,9 on s1.000), rx14 does not (Δ 0,002–0,004 mHz). The 44–58-mHz
 complex of the resid series is therefore not carried upstream of the reduction
-chain; §8 (light-time) is its first named candidate, and which named stage
-carries it remains the open measurement. Measured in the same run: 218 census
-lines peak at exactly 50,000 mHz — 214 of them in the 10–30-s and 60-s sampler
-classes across all receivers and years (both fields), 0 in the resid fine
-classes (whose peaks span 44,0–58,0 and carry the station-fixed band), 4 in fsky
-fine cells (all st63-lt10-1992; the cell st63 mode1 lt10 1992, n=9 370, reads
-resid 51,360 / fsky 50,000); whether the 50,000-mHz line is a 20-s signal or a
-raster artifact is not decided by this run (the probe prints no significance).
+chain. The two fields are two stages of one chain: r[1] is the count-difference
+observable (the TRK-2-18 equation — the counter difference over the compression
+interval against the bias-chain reference, reconstructed here from the ATDF
+items; no ODP stage operates on it), while r[8] has passed the NOCC chain — the
+computed-model subtraction (light-time §8, media §10, station clock §2/§7), the
+spec-named endpoint average of the compression interval (Residual = (Rj + Ri)/2,
+TRK-2-18; transfer cos(πντ), nulling ν = (k+½)/τ — 50 mHz at τ = 10 s) and the
+1-mHz ATDF quantization (item 60). The dominant movement between the fields is
+a re-ranking within the dense station-fixed complex, not a creation; the
+stage-by-stage ablation of §1 measures the same act (rx14 45,75 → 57,11 mHz
+under the daily-curve cut, the 57,11 member at rank 6 before it). rx14's
+46,58-mHz member dominates both fields — it survives two different pipelines;
+whether rx43's 44,119 and rx63's 50,920 sit as sub-members in their fsky cells
+(one complex, re-ranked) or are absent there (created inside the NOCC chain) is
+the open measure — the probe holds both fields on the same records, and the
+cross-rank of the two dominants per cell is the decisive print. The fsky complex
+itself needs no reduction stage: it is receive-chain-borne, shaped only by the
+observable's own constructions — the first difference over the sampler interval
+(transfer 2 sin(πντ), nulls at k/τ, near-unity across the band for τ ≤ 10 s) and
+the reference staircase mix-in (×104,25), the latter measured beside the band
+(§1). §8 (light-time) remains the first named candidate for the resid complex,
+refined from carrier to re-ranker. The 50,000-mHz concentration is the sampling
+raster, not a 20-s signal: for a sampling interval Δt with Δt × 50 mHz integer
+(Δt = 20, 40, 60, 80, 100, 120 s), the grid frequency 50,000 mHz is the fold
+image of the series' near-DC content, and the fine classes (Nyquist ≥ 50 mHz)
+carry none — 218 census lines peak at exactly 50,000 mHz, 214 of them in the
+10–30-s and 60-s sampler classes across all receivers and years (both fields), 0
+in the resid fine classes (whose peaks span 44,0–58,0 and carry the
+station-fixed band), 4 in fsky fine cells (all st63-lt10-1992; the cell st63
+mode1 lt10 1992, n=9 370, reads resid 51,360 / fsky 50,000). The four fsky-fine
+cells lie outside the fold argument; the reference-path hypothesis (the item-40
+staircase, ×104,25 in r[1], on both sides of the residual difference) is the
+nearest unmeasured candidate — the decisive measurement is the LS of the
+reference field r[2] in these cells plus the per-cell floor ratio.
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
