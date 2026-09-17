@@ -9195,3 +9195,11 @@ at earth
 ttl 604800
 field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
 note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `dart_tnf`; Compiler `tools/harvest/src/bin/dart_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
+
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
+format cassini_tnf
+sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
+at earth
+ttl 604800
+field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
