@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 2656dd52e2772a23c28ea2d9cb6c34fac8c68887276a815c5fc4a28a42b5151f
+  sha256: 9617e9531135aa86547ecbcdf37c10a417c791b890372527f81554abe7a8cd30
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -71,6 +71,11 @@ der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
   (`GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}`). Seit 2026-09-17 ein **eigener**
   PAT (`omegaflow-ci-write`), getrennt vom lokalen `GH_TOKEN` (`omegaflow-write`) —
   die CI-Flotte und die lokalen Sessions haben damit getrennte 5000/h-Buckets.
+  Der CI-PAT liegt auch in `.secrets.local` (`OMEGAFLOW_TOKEN`) — sein Bucket und
+  seine Schreibrechte sind lokal messbar, ohne den Wert zu drucken:
+  `GH_TOKEN="$(sed -n 's/^OMEGAFLOW_TOKEN=//p' .secrets.local)" gh api /rate_limit`
+  bzw. `gh api /repos/omegaflow/sources --jq .permissions`. Ein CI-`403` ist damit
+  gegen den aktuellen Token prüfbar — kein Operator-Punkt.
 - `GH_SEARCH_TOKEN` — der **Read**-PAT (`.secrets.local`, fine-grained ohne
   Permissions), genutzt von `archive_search --github` und `ci_manage list|view`.
 - `GH_TOKEN` — lokal (`.secrets.local` + gh-Keyring) der klassische PAT
