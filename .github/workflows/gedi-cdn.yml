@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       day:
-        description: GEDI product day (YYYY.MM.DD; blank = 2 days ago UTC)
+        description: GEDI product day (YYYY.MM.DD; publication stopped 2025-07-09)
         required: false
         type: string
-        default: ""
+        default: "2025.07.09"
 permissions:
   contents: write
 env:
@@ -35,7 +35,7 @@ jobs:
       - name: Compile the GEDI L2A day and upload to CDN
         run: |
           day="${{ inputs.day }}"
-          if [ -z "$day" ]; then day=$(date -u -d '2 days ago' +%Y.%m.%d); fi
+          if [ -z "$day" ]; then day="2025.07.09"; fi
           cargo run -p omegaflow-harvest --release --bin gedi_l2a_compiler -- \
             --day "$day" --limit 2 --beams 8 \
             --out data/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin --ci-mode \
