@@ -29,6 +29,33 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
+## Stehender Pass (automatisch, keine Auswahl)
+
+Die fälligen Einträge aus `docs/zustand/external-state.md` werden zu
+Session-Beginn gemessen, bevor die Auswahl steht — ihr Ausgang verändert die
+Auswahl, sie sind kein Auswahlpunkt. Ergebnis direkt in dieses Handover + den
+Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--help`.
+
+- **Postfach** — `smail` + `state/mail/mail_ledger.φ` (fällig 2⁶ min).
+- **CI-Status am HEAD** — zuerst den Watchdog-Snapshot
+  `/tmp/opencode/ci_status.md` lesen (kein API-Aufruf); bei Lücke/Detail
+  `ci_manage list` / `ci_manage view <id>`. **Nie** `gh run list`/`gh run view`;
+  `gh` nur für `--log`/`--log-failed`/`workflow run`/`run download`.
+
+## Werkzeuge (gebaut — nutzt sie)
+
+- `archive_search` — Inhalt (`--root`)/Pfade (`--index`)/NTFS/16 Netz-Modi/`--playwright`/`--verdict`/`--sniff`/`--all`; ersetzt bash-`grep`, `curl`, webfetch.
+- `sgrep [-i]` — Zeilensuche über `git ls-files`.
+- `sfetch` — fetch; ersetzt `curl -s`.
+- `omega_sh` — `reports|status|search|fetch|jwst`.
+- `smail` — Mail (Resend), `--dry-run`; Inhalte nie getrackt.
+- `register_lookup` — `--live`/`--open`/`--history`.
+- `git_safety` — `--snapshot`/`--restore`/`--list`.
+- `ci_manage` — `list`/`view`/`cancel`/`rerun`; statt `gh run list`/`gh run view`.
+- `sread [--offset --limit]` — Datei lesen.
+- `session_burn` — Burn je Session.
+- `gh` — nur `--log`/`--log-failed`/`workflow run`/`run download`.
+
 ## <Sektion — härtester undatierter Punkt zuerst>
 
 - <offener Punkt — mit nächstem Schritt> (Schritt: <Tool/Datei/URL/Anfrage>)
