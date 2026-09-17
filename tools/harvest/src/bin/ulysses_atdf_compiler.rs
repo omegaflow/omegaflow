@@ -10,6 +10,7 @@ use omegaflow::spectral::civil_from_days;
 const LISTING: &str = "https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/";
 const NETLOC: &str = "pds-ppi.igpp.ucla.edu";
 const PREFIX: &str = "ulysses_atdf";
+const PREFIX_X: &str = "ulysses_atdf_x";
 const DIR: &str = "data/pds-ppi.igpp.ucla.edu";
 const ROW_BYTES: usize = 112;
 
@@ -73,6 +74,65 @@ fn write_and_verify(records: &[[f64; 14]], out: &str) -> Vec<u8> {
     bin
 }
 
+fn manifest_family(
+    prefix: &str,
+    field_key: &str,
+    component: &str,
+    records: &[[f64; 14]],
+    ci_mode: bool,
+) {
+    let budget = 8 + (odf::PODF_SHARD_BUDGET - 8) * 72 / ROW_BYTES;
+    let ranges = odf::podf_shard_ranges(records.len(), budget);
+    if ranges.len() == 1 {
+        let out = format!("{DIR}/{prefix}.bin");
+        write_and_verify(records, &out);
+        if ci_mode && !upload_release(NETLOC, &out) {
+            std::process::exit(1);
+        }
+        return;
+    }
+
+    let mut names: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
+    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
+        let t_lo = records[lo][0];
+        let t_hi = records[hi - 1][0];
+        let mut name = odf::podf_shard_name(prefix, t_lo, t_hi);
+        if names.contains(&name) {
+            name = odf::podf_shard_name_ord(prefix, t_lo, t_hi, ord);
+        }
+        names.push(name.clone());
+        let path = format!("{DIR}/{name}");
+        let bin = write_and_verify(&records[lo..hi], &path);
+        if bin.len() > odf::PODF_SHARD_LIMIT {
+            eprintln!(
+                "{path}: {}-byte shard exceeds the {}-byte CDN asset limit — the series stays unwritten (0 honored)",
+                bin.len(),
+                odf::PODF_SHARD_LIMIT
+            );
+            std::process::exit(1);
+        }
+        paths.push(path);
+    }
+    for name in &names {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
+        );
+        println!("format {prefix}");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field {field_key} {component} inverse-square em Hz 3600 0.0 0.0");
+        println!();
+    }
+    if ci_mode {
+        for path in &paths {
+            if !upload_release(NETLOC, path) {
+                std::process::exit(1);
+            }
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -98,6 +158,7 @@ fn main() {
         return;
     };
     let mut merged: Vec<[f64; 14]> = Vec::new();
+    let mut merged_x: Vec<[f64; 14]> = Vec::new();
     let mut seen: HashMap<String, String> = HashMap::new();
     for (fid, name) in files.iter().enumerate() {
         let url = format!("{LISTING}{name}");
@@ -111,65 +172,35 @@ fn main() {
             continue;
         }
         seen.insert(digest, name.clone());
-        if let Some(samples) = reduce_uly_skyfreq(name, fid as f64, &bytes, &lsk) {
-            merged.extend(samples);
+        if let Some(res) = reduce_uly_skyfreq(name, fid as f64, &bytes, &lsk) {
+            merged.extend(res.sband);
+            merged_x.extend(res.xband);
         }
     }
-    if merged.is_empty() {
+    if merged.is_empty() && merged_x.is_empty() {
         eprintln!("no fsky samples — the series stays unwritten (0 honored)");
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    merged_x.sort_by(|a, b| a[0].total_cmp(&b[0]));
     std::fs::create_dir_all(DIR).ok();
 
-    let budget = 8 + (odf::PODF_SHARD_BUDGET - 8) * 72 / ROW_BYTES;
-    let ranges = odf::podf_shard_ranges(merged.len(), budget);
-    if ranges.len() == 1 {
-        let out = format!("{DIR}/{PREFIX}.bin");
-        write_and_verify(&merged, &out);
-        if ci_mode && !upload_release(NETLOC, &out) {
-            std::process::exit(1);
-        }
-        return;
-    }
-
-    let mut names: Vec<String> = Vec::new();
-    let mut paths: Vec<String> = Vec::new();
-    for (ord, &(lo, hi)) in ranges.iter().enumerate() {
-        let t_lo = merged[lo][0];
-        let t_hi = merged[hi - 1][0];
-        let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
-        if names.contains(&name) {
-            name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
-        }
-        names.push(name.clone());
-        let path = format!("{DIR}/{name}");
-        let bin = write_and_verify(&merged[lo..hi], &path);
-        if bin.len() > odf::PODF_SHARD_LIMIT {
-            eprintln!(
-                "{path}: {}-byte shard exceeds the {}-byte CDN asset limit — the series stays unwritten (0 honored)",
-                bin.len(),
-                odf::PODF_SHARD_LIMIT
-            );
-            std::process::exit(1);
-        }
-        paths.push(path);
-    }
-    for name in &names {
-        println!(
-            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
+    if !merged.is_empty() {
+        manifest_family(
+            PREFIX,
+            "sky_frequency_hz",
+            "ulysses_sky_frequency_hz",
+            &merged,
+            ci_mode,
         );
-        println!("format {PREFIX}");
-        println!("at earth");
-        println!("ttl 604800");
-        println!("field sky_frequency_hz ulysses_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0");
-        println!();
     }
-    if ci_mode {
-        for path in &paths {
-            if !upload_release(NETLOC, path) {
-                std::process::exit(1);
-            }
-        }
+    if !merged_x.is_empty() {
+        manifest_family(
+            PREFIX_X,
+            "sky_frequency_x_hz",
+            "ulysses_sky_frequency_x_hz",
+            &merged_x,
+            ci_mode,
+        );
     }
 }

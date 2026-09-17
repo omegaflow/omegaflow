@@ -368,10 +368,12 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
 }
 
 pub const COMP_ULY_SKYFREQ: u32 = 1;
+pub const COMP_ULY_SKYFREQ_X: u32 = 2;
 
 pub fn uly_component_name(comp: u32) -> Option<&'static str> {
     match comp {
         COMP_ULY_SKYFREQ => Some("ulysses_sky_frequency_hz"),
+        COMP_ULY_SKYFREQ_X => Some("ulysses_sky_frequency_x_hz"),
         _ => None,
     }
 }
@@ -396,10 +398,26 @@ pub fn parse_uly_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     if out.is_empty() { None } else { Some(out) }
 }
 
+pub fn parse_uly_series_x(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_bin(bytes)?;
+    let out: Vec<(f64, f64, u32)> = rows
+        .into_iter()
+        .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
+        .map(|r| (r[0], r[1], COMP_ULY_SKYFREQ_X))
+        .collect();
+    if out.is_empty() { None } else { Some(out) }
+}
+
 pub const S_BAND_RATIO: f64 = 96.0 * 240.0 / 221.0;
 pub const RATE_OFFSET: f64 = 1e6;
 pub const FSKY_MED_HALF_WIDTH: f64 = 0.6e6;
 pub const GAP_DAY: f64 = 0.1;
+
+pub const X_BAND_RATIO: f64 = 96.0 * 880.0 / 221.0;
+pub const X_FSKY_BASE_HZ: f64 = 8408.209876e6;
+pub const X_BAND_REF_LO: f64 = 2197e4;
+pub const X_BAND_REF_HI: f64 = 2200e4;
+pub const X_FSKY_MED_HALF_WIDTH: f64 = FSKY_MED_HALF_WIDTH * X_BAND_RATIO / S_BAND_RATIO;
 
 fn tdb_of(tr: &Tracking, lsk: &crate::lsk::LeapSeconds) -> Option<f64> {
     if tr.day <= 0 || tr.day > 366 {
@@ -608,12 +626,17 @@ pub fn reduce_skyfreq(
     if out.is_empty() { None } else { Some(out) }
 }
 
+pub struct UlySkyFreq {
+    pub sband: Vec<[f64; 14]>,
+    pub xband: Vec<[f64; 14]>,
+}
+
 pub fn reduce_uly_skyfreq(
     name: &str,
     file_id: f64,
     bytes: &[u8],
     lsk: &crate::lsk::LeapSeconds,
-) -> Option<Vec<[f64; 14]>> {
+) -> Option<UlySkyFreq> {
     let stripped = strip_markers(bytes)?;
     let nlog = stripped.len() / LOGICAL_RECORD;
     if nlog < 3 {
@@ -621,7 +644,7 @@ pub fn reduce_uly_skyfreq(
         return None;
     }
     let (sc, file_year, xpon) = header_of(&stripped);
-    let band_field = field_of(TKFORM, 10).unwrap();
+    let band_field = field_of(TKFORM, 11).unwrap();
     let mut recs: Vec<(Tracking, i64)> = Vec::with_capacity(nlog - 2);
     let mut skipped_zero = 0usize;
     let mut n_sband = 0usize;
@@ -723,29 +746,38 @@ pub fn reduce_uly_skyfreq(
         };
         let drate = (dcnt[i + 1] + doff - dcnt[i]) / sampler[i];
         let sdoppler = if bias[i] >= 0 { 1.0 } else { -1.0 };
-        fsky[i] = S_BAND_RATIO * ref_hz[i] - sdoppler * (drate - RATE_OFFSET);
+        let ratio = if bands[i] == ULY_BAND_X { X_BAND_RATIO } else { S_BAND_RATIO };
+        fsky[i] = ratio * ref_hz[i] - sdoppler * (drate - RATE_OFFSET);
         good[i] = true;
     }
-    let mut fsky_finite: Vec<f64> = fsky.iter().copied().filter(|x| x.is_finite()).collect();
-    let fmed = median(&mut fsky_finite);
-    let mut out: Vec<[f64; 14]> = Vec::new();
+    let mut fsky_s: Vec<f64> = Vec::new();
+    let mut fsky_x: Vec<f64> = Vec::new();
+    for i in 0..n - 1 {
+        if bands[i + 1] != bands[i] || !fsky[i].is_finite() {
+            continue;
+        }
+        if bands[i] == ULY_BAND_X {
+            fsky_x.push(fsky[i]);
+        } else {
+            fsky_s.push(fsky[i]);
+        }
+    }
+    let fmed_s = median(&mut fsky_s);
+    let fmed_x = median(&mut fsky_x);
+    let mut out_s: Vec<[f64; 14]> = Vec::new();
+    let mut out_x: Vec<[f64; 14]> = Vec::new();
     let mut ramp_records = 0usize;
     let mut bias_rejected = 0usize;
     let mut ref_rejected = 0usize;
     let mut gap_rejected = 0usize;
     let mut wrap_rejected = 0usize;
     let mut med_rejected = 0usize;
-    let mut xband_rejected = 0usize;
     let mut boundary_rejected = 0usize;
     for i in 0..n - 1 {
         if !good[i] {
             if dtype[i] == DTYPE_RAMP {
                 ramp_records += 1;
             }
-            continue;
-        }
-        if bands[i] != ULY_BAND_S {
-            xband_rejected += 1;
             continue;
         }
         if bands[i + 1] != bands[i] {
@@ -756,7 +788,13 @@ pub fn reduce_uly_skyfreq(
             bias_rejected += 1;
             continue;
         }
-        if !(S_BAND_REF_LO..=S_BAND_REF_HI).contains(&ref_hz[i]) {
+        let is_x = bands[i] == ULY_BAND_X;
+        let (ref_lo, ref_hi) = if is_x {
+            (X_BAND_REF_LO, X_BAND_REF_HI)
+        } else {
+            (S_BAND_REF_LO, S_BAND_REF_HI)
+        };
+        if !(ref_lo..=ref_hi).contains(&ref_hz[i]) {
             ref_rejected += 1;
             continue;
         }
@@ -769,11 +807,16 @@ pub fn reduce_uly_skyfreq(
             wrap_rejected += 1;
             continue;
         }
-        if (fsky[i] - fmed).abs() >= FSKY_MED_HALF_WIDTH {
+        let (fmed, half_width) = if is_x {
+            (fmed_x, X_FSKY_MED_HALF_WIDTH)
+        } else {
+            (fmed_s, FSKY_MED_HALF_WIDTH)
+        };
+        if (fsky[i] - fmed).abs() >= half_width {
             med_rejected += 1;
             continue;
         }
-        out.push([
+        let row = [
             t[i],
             fsky[i],
             ref_hz[i],
@@ -788,18 +831,32 @@ pub fn reduce_uly_skyfreq(
             ramp[i] as f64,
             file_id,
             mode[i] as f64,
-        ]);
+        ];
+        if is_x {
+            out_x.push(row);
+        } else {
+            out_s.push(row);
+        }
     }
-    let n_out = out.len();
-    let n_slipped = out.iter().filter(|r| r[9] != 0.0).count();
-    let mut stations: Vec<i64> = out.iter().map(|r| r[6] as i64).collect();
+    let n_sband_out = out_s.len();
+    let n_xband_out = out_x.len();
+    let n_slipped = out_s.iter().chain(out_x.iter()).filter(|r| r[9] != 0.0).count();
+    let mut stations: Vec<i64> = out_s
+        .iter()
+        .chain(out_x.iter())
+        .map(|r| r[6] as i64)
+        .collect();
     stations.sort_unstable();
     stations.dedup();
     dtype_hist.sort_by_key(|(d, _)| *d);
     eprintln!(
-        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_out} S-band fsky samples (median {fmed:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {xband_rejected} X-band (recovery chain unmeasured — pending), {boundary_rejected} band boundary"
+        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_sband_out} S-band / {n_xband_out} X-band fsky samples (median S {fmed_s:.6e} / X {fmed_x:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {boundary_rejected} band boundary"
     );
-    if out.is_empty() { None } else { Some(out) }
+    if out_s.is_empty() && out_x.is_empty() {
+        None
+    } else {
+        Some(UlySkyFreq { sband: out_s, xband: out_x })
+    }
 }
 
 pub fn write_resid_bin(records: &[[f64; 8]]) -> Vec<u8> {
@@ -1030,5 +1087,96 @@ mod tests {
         ];
         let bytes = write_bin(&[row]);
         assert!(parse_uly_series(&bytes).is_none());
+    }
+
+    fn set_field(rec: &mut [u8], fld: &Field, value: i64) {
+        for b in fld.start..=fld.stop {
+            rec[b / 8] &= !(1u8 << (b % 8));
+        }
+        let v = value as u64;
+        let nbits = fld.stop - fld.start + 1;
+        for k in 0..nbits {
+            if (v >> k) & 1 == 1 {
+                let bit = fld.stop - k;
+                rec[bit / 8] |= 1u8 << (bit % 8);
+            }
+        }
+    }
+
+    fn set_tk(rec: &mut [u8], band: i64, second: i64, cnt_hp: i64) {
+        set_field(rec, field_of(TKFORM, 3).unwrap(), 90);
+        set_field(rec, field_of(TKFORM, 4).unwrap(), 1);
+        set_field(rec, field_of(TKFORM, 7).unwrap(), second);
+        set_field(rec, field_of(TKFORM, 11).unwrap(), band);
+        set_field(rec, field_of(TKFORM, 12).unwrap(), DTYPE_ONEWAY_DOPPLER);
+        set_field(rec, field_of(TKFORM, 20).unwrap(), 0);
+        set_field(rec, field_of(TKFORM, 30).unwrap(), 100);
+        set_field(rec, field_of(TKFORM, 31).unwrap(), cnt_hp);
+        set_field(rec, field_of(TKFORM, 40).unwrap(), 219_800_000);
+    }
+
+    fn ulysses_file(bands: &[i64]) -> Vec<u8> {
+        let mut file = vec![0u8; PHYSICAL_RECORD];
+        set_field(&mut file[0..LOGICAL_RECORD], field_of(IDFORM, 3).unwrap(), 90);
+        set_field(&mut file[0..LOGICAL_RECORD], field_of(IDFORM, 4).unwrap(), 1);
+        for (idx, &band) in bands.iter().enumerate() {
+            let lo = (2 + idx) * LOGICAL_RECORD;
+            let hi = (3 + idx) * LOGICAL_RECORD;
+            let cnt_hp = if idx % 2 == 0 { 0 } else { 100 };
+            set_tk(&mut file[lo..hi], band, idx as i64, cnt_hp);
+        }
+        file
+    }
+
+    #[test]
+    fn ulysses_x_series_roundtrip_and_component_name() {
+        let row = [
+            1.0, 8.4e9, 2.2e7, 1.0, 0.0, 1.0, 43.0, 1.0e6, 0.0, 0.0, 90.0, 0.0, 3.0, 1.0,
+        ];
+        let bytes = write_bin(&[row]);
+        let parsed = parse_uly_series_x(&bytes).expect("ulysses X series parses");
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].2, crate::atdf::COMP_ULY_SKYFREQ_X);
+        assert_eq!(
+            uly_component_name(COMP_ULY_SKYFREQ_X),
+            Some("ulysses_sky_frequency_x_hz")
+        );
+    }
+
+    #[test]
+    fn reduce_uly_skyfreq_routes_x_band_to_x_output() {
+        let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+        let file = ulysses_file(&[ULY_BAND_X, ULY_BAND_X]);
+        let res = reduce_uly_skyfreq("x_band", 1.0, &file, &lsk).expect("reduce returns samples");
+        assert!(res.sband.is_empty(), "X records must not land in the S vector");
+        assert_eq!(res.xband.len(), 1);
+        let expected = X_BAND_RATIO * 21_980_000.0;
+        assert!(
+            (res.xband[0][1] - expected).abs() < 1e-6,
+            "X fsky {} != {}",
+            res.xband[0][1],
+            expected
+        );
+    }
+
+    #[test]
+    fn reduce_uly_skyfreq_keeps_s_and_x_in_separate_vectors() {
+        let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+        let file = ulysses_file(&[ULY_BAND_S, ULY_BAND_S, ULY_BAND_X, ULY_BAND_X]);
+        let res = reduce_uly_skyfreq("mixed", 1.0, &file, &lsk).expect("reduce returns samples");
+        assert_eq!(res.sband.len(), 1);
+        assert_eq!(res.xband.len(), 1);
+        let s_expected = S_BAND_RATIO * 21_980_000.0;
+        let x_expected = X_BAND_RATIO * 21_980_000.0;
+        assert!((res.sband[0][1] - s_expected).abs() < 1e-6);
+        assert!((res.xband[0][1] - x_expected).abs() < 1e-6);
+    }
+
+    #[test]
+    fn uly_band_field_is_downlink_band_not_station() {
+        assert_eq!(field_of(TKFORM, 10).map(|f| f.name), Some("STATION"));
+        assert_eq!(field_of(TKFORM, 11).map(|f| f.name), Some("DOWNLINK_BAND"));
+        assert_eq!(ULY_BAND_S, 1);
+        assert_eq!(ULY_BAND_X, 2);
     }
 }
