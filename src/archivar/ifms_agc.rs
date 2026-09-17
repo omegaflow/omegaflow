@@ -1,6 +1,8 @@
 use super::units::ymd_to_days;
 
 pub const MAGIC: [u8; 4] = *b"IFMS";
+pub const COMP_CARRIER_LEVEL: u32 = 1;
+pub const COMP_POLAR_ANGLE: u32 = 2;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IfmsAgcFile {

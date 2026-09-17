@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: 72f6bf52b937073058b4a8f8fefd6e0d3fc378e6870b9bc31780d2694d16d3e9
+  sha256: e87bfa74daa771d6ec0c36c745038dcb1763dff6b9c15a628dc1161c2d258348
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -38,10 +38,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - NSSD1346 gemessen (diese Session): Record = 2-Byte-BE-Header `10 0a` (=4106) + 4106-Byte-Payload = 4108 B (`DD029604_F1.DAT` = 19.611.592 B = 4774×4108; Voll-Scan 9561 Records beider Dateien, 0 Verstöße); Payload[6..9] = Stunde/Minute/Sekunde **roh-binär** (nicht BCD — 0x2a in DD029605 beweist), [9] Sub-Sekunde (Einheit `pending`), [10..4105] = 4096 6-Bit-Sign-Magnitude-Samples (Bit5=Sign, Bit4=Duplikat). Gebaut: `src/archivar/mariner_occlt.rs` (Magic `MOCC`, `[f64;12]`, Komponenten `amp_min/max/mean`), `tools/harvest/src/bin/mariner_occlt_compiler.rs` (9 `.tar`), `.github/workflows/mariner-occlt-cdn.yml`, Konsument (`extract.rs`/`main_flow.rs:2130`/`mod.rs`), Dispatch-Test; `cargo check --all-targets` clean. (Dispatch steht aus: `gh workflow run mariner-occlt-cdn.yml` — beim Versuch 2026-09-17 07:16Z **GH-API-Rate-Limit 403**, kein Retry-Loop; bei success Register-Block `mariner_occlt` in `phi/sources.φ` + `…_register_field_names_match_components`-Test im selben Atom.)
 - Pending (eigene Atom-Linie): Sample-Rate/Record-Dauer (Tag-Inkremente 18…20.898, Records nicht äquidistant), Frac-Einheit (25-ms-Ticks vs. BCD-Zentisekunden), unabhängiger UTC-Anker (1974-02-05 aus `attrib`, unbestätigt).
 
-## rosetta_odf / mro_odf — Budget gehoben, Konsument-Mismatch + mro-Log offen
+## rosetta_odf / mro_odf — Budget + Rosetta-Konsument gebaut, mro-Log offen
 
-- Gemessen 2026-09-17 (`gh run view 35148936648`): `rosetta_odf` `cancelled` (4h-Cap), `mro_odf` `failure` (Runner-Shutdown); keine Assets unter `archives.esac.esa.int`/`pds-geosciences.wustl.edu`. Gebaut (diese Session): `planetary-odf-cdn.yml` Timeout je Matrix-Zeile (`${{ matrix.timeout || 240 }}`), `rosetta_odf` + `mro_odf` → 350 min. (Schritt: `gh run view 35148936648 --log` für den `mro_odf`-Runner-Shutdown — GH-API-Rate-Limit blockt; dann Re-Dispatch.)
-- **Konsument-Mismatch (gemessen):** `rosetta_odf_compiler.rs` schreibt `ifms_agc::write_series` (MAGIC `IFMS`, 3×f64), aber `extract.rs:50` dispatcht `rosetta_odf` → `odf::parse_series` (MAGIC `PODF`); `extract.rs:237` erwartet `odf::COMP_OBSERVABLE`/`rosetta_odf_observable_hz`. Das gebaute Asset wäre ungelesen (Commit `3cba457e` überschrieb den IFMS-Arm aus `77c8be18`). (Schritt: `extract.rs` auf `ifms_agc::parse_series` + Komponenten `carrier_level_dbm`/`polar_angle_cycles`, Register-Block `phi/sources.φ:6471–6476` entsprechend — blockiert durch fremde Hunks in `sources.φ`.)
+- Gemessen 2026-09-17 (`gh run view 35148936648`): `rosetta_odf` `cancelled` (4h-Cap), `mro_odf` `failure` (Runner-Shutdown); keine Assets unter `archives.esac.esa.int`/`pds-geosciences.wustl.edu`. Gebaut (diese Session): `planetary-odf-cdn.yml` Timeout je Matrix-Zeile (`${{ matrix.timeout || 240 }}`), `rosetta_odf`/`mro_odf` → 350 min; Rosetta-Konsument geradegezogen (`extract.rs` → `ifms_agc::parse_series`, Komponenten `rosetta_odf_carrier_level_dbm`/`rosetta_odf_polar_angle_cycles`, `dbm` als em-Einheit, Register-Feldzeilen `phi/sources.φ:6477–6478`, Test angepasst; `cargo check` clean). (Schritt: `gh run view 35148936648 --log` für den `mro_odf`-Runner-Shutdown — GH-API-Rate-Limit blockt; dann Re-Dispatch `planetary-odf-cdn.yml`; bei rosetta-success die `sha256`-Zeile in den Block `phi/sources.φ:6473–6476`.)
 
 ## Juno post-EFB OCRU — Arm gebaut, Dispatch + Registrierung offen
 
@@ -57,7 +56,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `tools/harvest/src/bin/juno_odf_compiler.rs`, `.github/workflows/planetary-odf-cdn.yml`, dieses Handover — Mariner-Batch steht in `c5e5c46f`.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `src/archivar/{extract,ifms_agc,tests,units}.rs`, `phi/sources.φ` (Rosetta-Feldzeilen), dieses Handover — Juno/Budget/Mariner stehen in `7a979d9f`/`3e1bc249`/`c5e5c46f`.)
 
 ## Abschluss
 
