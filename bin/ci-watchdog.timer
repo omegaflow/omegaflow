@@ -1,0 +1,9 @@
+[Unit]
+Description=ci_watchdog cycle (every 64 minutes)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=64min
+
+[Install]
+WantedBy=timers.target

@@ -4,7 +4,10 @@
 # tracked doc), cancels only what does not flow, and reruns only a measured
 # transient failure. Its state lives in its own log and seen-file; the
 # CI-Status line stays the session's (one measurement, one author).
-# Start (survives opencode crashes): setsid ./bin/ci_watchdog.sh &
+# Autostart: the systemd user timer ci-watchdog.timer runs this with --once
+# every 64 min (install: ./bin/ci_watchdog.sh --install, then
+# systemctl --user enable --now ci-watchdog.timer). A manual run is the same
+# --once; without an argument the script loops itself.
 set -u
 cd "$(dirname "$0")/.." || exit 1
 LOG="${CI_WATCHDOG_LOG:-/tmp/opencode/ci_watchdog.log}"
@@ -12,6 +15,8 @@ SEEN="${CI_WATCHDOG_SEEN:-/tmp/opencode/ci_watchdog.seen}"
 POLL_S="${CI_WATCHDOG_POLL:-3840}"
 CI="${CI_MANAGE:-./bin/ci_manage}"
 SNAP="${CI_WATCHDOG_SNAPSHOT:-/tmp/opencode/ci_status.md}"
+UNITSRC="$PWD/bin"
+UNITDIR="$HOME/.config/systemd/user"
 mkdir -p "$(dirname "$LOG")"
 touch "$SEEN"
 
@@ -117,7 +122,25 @@ poll_once() {
   } > "$SNAP"
 }
 
-while true; do
-  poll_once
-  sleep "$POLL_S"
-done
+install_unit() {
+  mkdir -p "$UNITDIR"
+  cp "$UNITSRC/ci-watchdog.service" "$UNITDIR/ci-watchdog.service"
+  cp "$UNITSRC/ci-watchdog.timer" "$UNITDIR/ci-watchdog.timer"
+  systemctl --user daemon-reload >/dev/null 2>&1 || true
+}
+
+case "${1:-}" in
+  --once)
+    poll_once
+    ;;
+  --install)
+    install_unit
+    echo "ci-watchdog units installed — enable: systemctl --user enable --now ci-watchdog.timer"
+    ;;
+  *)
+    while true; do
+      poll_once
+      sleep "$POLL_S"
+    done
+    ;;
+esac
