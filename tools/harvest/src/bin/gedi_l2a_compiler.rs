@@ -41,6 +41,18 @@ fn arg_usize(args: &[String], name: &str) -> Option<usize> {
     arg_value(args, name).and_then(|v| v.parse::<usize>().ok())
 }
 
+fn parse_secret(text: &str, key: &str) -> Option<String> {
+    let mut found = None;
+    for line in text.lines() {
+        if let Some((k, v)) = line.split_once('=') {
+            if k.trim() == key && !v.trim().is_empty() {
+                found = Some(v.trim().to_string());
+            }
+        }
+    }
+    found
+}
+
 fn edl_token() -> Option<String> {
     if let Ok(t) = env::var("EARTHDATA_EDL_TOKEN") {
         if !t.trim().is_empty() {
@@ -48,12 +60,7 @@ fn edl_token() -> Option<String> {
         }
     }
     let text = fs::read_to_string(".secrets.local").ok()?;
-    text.lines().find_map(|l| {
-        let l = l.trim();
-        l.strip_prefix("EARTHDATA_EDL_TOKEN=")
-            .filter(|v| !v.is_empty())
-            .map(|v| v.to_string())
-    })
+    parse_secret(&text, "EARTHDATA_EDL_TOKEN")
 }
 
 fn civil_from_days(z: i64) -> (i64, u32, u32) {
@@ -903,5 +910,20 @@ mod tests {
         assert!(amz.starts_with(&date_stamp));
         assert!(amz.ends_with('Z'));
         assert_eq!(amz.len(), 16);
+    }
+
+    #[test]
+    fn parse_secret_takes_the_last_duplicate_key() {
+        let text = "EARTHDATA_EDL_TOKEN=first\nEARTHDATA_EDL_TOKEN=last\n";
+        assert_eq!(
+            parse_secret(text, "EARTHDATA_EDL_TOKEN").as_deref(),
+            Some("last")
+        );
+    }
+
+    #[test]
+    fn parse_secret_rejects_commented_and_suffixed_keys() {
+        let text = "#EARTHDATA_EDL_TOKEN=commented\nEARTHDATA_EDL_TOKEN_OLD=stale\n";
+        assert_eq!(parse_secret(text, "EARTHDATA_EDL_TOKEN"), None);
     }
 }

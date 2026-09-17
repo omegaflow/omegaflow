@@ -33,9 +33,9 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Build cone compiler
         run: cargo build -p omegaflow-harvest --release --bin ned_cone_compiler
-      - name: Resumable cone harvest (grid of RA/DEC centers, few cones per run)
+      - name: Resumable cone harvest (grid of RA/DEC centers, cone shards persist across runs)
         run: |
-          set -euo pipefail
+          set -uo pipefail
           SR="${NED_SR_AM:-30}"
           SLICE="${NED_SLICE:-48}"
           MAXREC="${NED_MAXREC:-2000}"
@@ -43,15 +43,32 @@ jobs:
           RELEASE="ssd.jpl.nasa.gov"
           REPO="omegaflow/sources"
           BIN="$(pwd)/target/release/ned_cone_compiler"
-          TOTAL="$("$BIN" --count --sr-arcmin "$SR" --spacing-deg "$SPACING")"
+          if ! TOTAL="$("$BIN" --count --sr-arcmin "$SR" --spacing-deg "$SPACING")"; then
+            echo "cone grid count void — the run stays open"
+            exit 1
+          fi
           NP=$(( (TOTAL + SLICE - 1) / SLICE ))
           echo "grid total=${TOTAL} cones, slices=${NP}, slice=${SLICE} cones, sr=${SR}' spacing=${SPACING}deg maxrec=${MAXREC}"
           deadline=$(( $(date +%s) + 2600 ))
           mkdir -p raw
+
+          list_assets() {
+            gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '.assets[].name' 2>/tmp/gh_listing.err
+          }
+
+          # carried void cones from earlier runs (timed-out cones, recorded not fatal)
+          VOID_FILE="ned_void.json"
+          if gh release download "$RELEASE" --repo "$REPO" --pattern "$VOID_FILE" --dir . --clobber 2>/dev/null; then
+            VOIDS=$(jq -r '.[]?' "$VOID_FILE" 2>/dev/null | tr '\n' ' ')
+          else
+            VOIDS=""
+          fi
+          echo "void cones carried: ${VOIDS:-none}"
+
           find_slice() {
             local assets p
-            if ! assets=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
-                --jq '.assets[].name' 2>/tmp/gh_listing.err); then
+            if ! assets=$(list_assets); then
               printf 'LISTING_FAILED\n'
               return 0
             fi
@@ -66,17 +83,9 @@ jobs:
             done
             return 1
           }
-          # carried void cones from earlier runs (timed-out cones, recorded not fatal)
-          VOID_FILE="ned_void.json"
-          gh release download "$RELEASE" --repo "$REPO" --pattern "$VOID_FILE" --dir . --clobber 2>/dev/null || true
-          if [ -f "$VOID_FILE" ]; then
-            VOIDS=$(jq -r '.[]?' "$VOID_FILE" 2>/dev/null | tr '\n' ' ')
-          else
-            VOIDS=""
-          fi
-          echo "void cones carried: ${VOIDS:-none}"
 
-          # harvest undone slices, one after another, until the wall budget
+          # harvest undone slices until the wall budget; every cone is persisted as its own
+          # shard, so a mid-slice interruption resumes at the first cone without a shard
           while [ "$(date +%s)" -lt "$deadline" ]; do
             if next=$(find_slice); then
               if [ "$next" = "LISTING_FAILED" ]; then
@@ -87,29 +96,68 @@ jobs:
               echo "every slice present"
               break
             fi
-            echo "=== harvesting slice ${next} (cones $((next*SLICE))..$((next*SLICE+SLICE-1))) ==="
             start=$((next * SLICE))
             end=$(( start + SLICE ))
             [ "$end" -gt "$TOTAL" ] && end="$TOTAL"
-            ok=1
+            echo "=== harvesting slice ${next} (cones ${start}..$((end - 1))) ==="
+
+            if ! assets=$(list_assets); then
+              echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+              exit 1
+            fi
+
+            complete=1
             for i in $(seq "$start" $((end - 1))); do
+              cname=$(printf 'ned_cone_%05d.json' "$i")
+              if printf '%s\n' "$assets" | grep -qx "$cname"; then
+                continue
+              fi
               if [ "$(date +%s)" -ge "$deadline" ]; then
-                echo "wall budget reached mid-slice — slice ${next} retried next run"
-                ok=0
+                echo "wall budget reached — slice ${next} resumes at cone ${i} next run"
+                complete=0
                 break
               fi
               if ! "$BIN" --index "$i" --sr-arcmin "$SR" --maxrec "$MAXREC" \
-                  --spacing-deg "$SPACING" --lattice 1024 --out "raw/cone_${i}.json"; then
-                echo "cone ${i} void — recorded, slice ${next} continues"
-                echo '[]' > "raw/cone_${i}.json"
+                  --spacing-deg "$SPACING" --lattice 1024 --out "$cname"; then
+                echo "cone ${i} void — recorded, harvest continues"
+                echo '[]' > "$cname"
                 VOIDS=$(printf '%s %s' "$VOIDS" "$i" | tr ' ' '\n' | grep -v '^$' | sort -un | tr '\n' ' ')
               fi
+              if ! gh release upload "$RELEASE" "$cname" --clobber --repo "$REPO"; then
+                echo "upload ${cname} void — the cone shard stays open for the next run"
+                complete=0
+                break
+              fi
+              assets="${assets}"$'\n'"${cname}"
+              echo "uploaded ${cname}"
             done
-            [ "$ok" = 0 ] && break
+            [ "$complete" = 0 ] && break
+
+            # every cone shard of the slice stands — aggregate them into the slice part
             part=$(printf 'ned_part_%05d.json' "$next")
-            jq -s 'add' raw/cone_*.json > "$part"
-            rm -f raw/cone_*.json
-            gh release upload "$RELEASE" "$part" --clobber --repo "$REPO"
+            rm -f raw/ned_cone_*.json
+            agg_ok=1
+            for i in $(seq "$start" $((end - 1))); do
+              cname=$(printf 'ned_cone_%05d.json' "$i")
+              if ! gh release download "$RELEASE" --repo "$REPO" --pattern "$cname" --dir raw --clobber 2>/tmp/gh_dl.err; then
+                echo "cone shard ${cname} missing at aggregation: $(cat /tmp/gh_dl.err 2>/dev/null) — slice ${next} stays open"
+                agg_ok=0
+                break
+              fi
+            done
+            if [ "$agg_ok" = 0 ]; then
+              break
+            fi
+            if ! jq -s 'add' raw/ned_cone_*.json > "$part"; then
+              echo "aggregate ${part} void — cone shards persist, slice ${next} retried next run"
+              rm -f raw/ned_cone_*.json
+              break
+            fi
+            rm -f raw/ned_cone_*.json
+            if ! gh release upload "$RELEASE" "$part" --clobber --repo "$REPO"; then
+              echo "upload ${part} void — cone shards persist, slice ${next} retried next run"
+              break
+            fi
             echo "uploaded ${part}"
           done
 
