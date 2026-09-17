@@ -3,7 +3,7 @@
   session: Forschung-Folge 62
   class: handover
   date: 2026-09-17
-  sha256: 5408d6f29ace80bc1bfa2cef93995c8d75d5b98ddc338f9c97d03377c00a70ba
+  sha256: 9cea086eefe7495c17e8ef23173e97e9364ed6a72361de7feb04ba7b51d9b2a1
   status: live
 -->
 # Handover — Forschung-Folge 62 (2026-09-17)
@@ -43,17 +43,16 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## §4 — fsky-Census (härtester undatiert, forschung-eigen)
 
-- Offen: nach dem Push `gh workflow run pioneer-cell-census.yml` dispatchen
-  (die Datei muss auf `main` liegen; der Dispatch scheiterte am untracked
-  Workflow mit HTTP 404). Der Workflow baut
+- Dispatcht: `gh workflow run pioneer-cell-census.yml` → Lauf `35244044555`
+  (queued, 2026-09-17T16:02:02Z). Der Workflow baut
   `tools/measure/src/bin/pioneer10_cell_census_probe.rs` mit **beiden** Feldern
   (`--field resid` = `r[8]`, `--field fsky` = `r[1]` mit `r[1].is_finite() &&
-  r[1] > 0.0`) und lädt `pioneer-cell-census.txt` hoch. Den Lauf **einmal** lesen
-  (`ci_manage list` → `ci_manage view <id>` bzw. `gh run view <id> --log`) und das
+  r[1] > 0.0`) und lädt `pioneer-cell-census.txt` hoch. Offen: den Lauf **einmal**
+  lesen (`ci_manage view 35244044555` bzw. `gh run view 35244044555 --log`) und das
   Ergebnis in `docs/paper/twenty-second-band-ground-chain.md:188–190` eintragen:
   trägt fsky den 44–58-mHz-Komplex → upstream der ODP-Kette; trägt er ihn nicht →
-  **§8 light-time** ist der erste benannte Kandidat. (Schritt: nach Push
-  dispatchen, Lauf lesen.)
+  **§8 light-time** ist der erste benannte Kandidat. (Schritt: Lauf einmal lesen,
+  §4 eintragen.)
 
 ## Docs-Pendings — Sichtung 2026-09-17
 
