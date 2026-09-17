@@ -28,6 +28,7 @@ pub const MAGIC_USCRN: [u8; 4] = *b"USC1";
 pub const MAGIC_GDP: [u8; 4] = *b"GDPT";
 pub const MAGIC_CHAMP: [u8; 4] = *b"CHP1";
 pub const MAGIC_LAS: [u8; 4] = *b"LAS1";
+pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -148,6 +149,9 @@ pub const COMP_LAS_INTENSITY: u32 = 4;
 pub const COMP_LAS_CLASSIFICATION: u32 = 5;
 pub const COMP_LAS_MAX: u32 = 5;
 
+pub const COMP_KYOTO_PRESSURE: u32 = 1;
+pub const COMP_KYOTO_MAX: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -195,6 +199,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "gdp_drifter" => Some(MAGIC_GDP),
         "champ_plpt" => Some(MAGIC_CHAMP),
         "las" => Some(MAGIC_LAS),
+        "kyoto_pressure" => Some(MAGIC_KYOTO),
         _ => None,
     }
 }
@@ -228,6 +233,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "gdp_drifter" => Some(crate::gdp_drifter::COMP_SST),
         "champ_plpt" => Some(COMP_CHAMP_DENS),
         "las" => Some(COMP_LAS_MAX),
+        "kyoto_pressure" => Some(COMP_KYOTO_MAX),
         _ => None,
     }
 }
