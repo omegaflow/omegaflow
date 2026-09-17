@@ -50,6 +50,7 @@ jobs:
           pattern=$(sed -n 's/^pattern //p' block.txt)
           shard=$(sed -n 's/^shard //p' block.txt)
           idem=$(sed -n 's/^idempotent //p' block.txt)
+          args=$(sed -n 's/^args //p' block.txt)
           if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
               "harvest: $FORMAT carries incomplete fields in phi/harvest.φ" \
@@ -67,6 +68,7 @@ jobs:
           echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
           echo "shard=$shard" >> "$GITHUB_OUTPUT"
           echo "idem=$idem" >> "$GITHUB_OUTPUT"
+          echo "args=$args" >> "$GITHUB_OUTPUT"
       - name: Idempotence gate — the CDN is the second witness
         id: gate
         run: |
@@ -83,7 +85,8 @@ jobs:
       - name: Compile the harvest and manifest it to the CDN
         if: steps.gate.outputs.present == 'false'
         run: |
-          cargo run --release -p omegaflow-harvest --bin "${{ steps.block.outputs.arm }}" -- --ci-mode \
+          read -r -a argv <<< "${{ steps.block.outputs.args }}"
+          cargo run --release -p omegaflow-harvest --bin "${{ steps.block.outputs.arm }}" -- "${argv[@]}" --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "harvest: $FORMAT returned void" \
                  "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
