@@ -1,0 +1,32 @@
+name: quake-feeds-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '29 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: quake-feeds-cdn
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  quake-feeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror the nine quake catalog bodies 1:1 onto the CDN void path
+        run: |
+          cargo build -p omegaflow-harvest --release --bin cdn_mirror_compiler
+          ./target/release/cdn_mirror_compiler --ci-mode \
+            --url 'https://api.wolfx.jp/jma_eew.json' \
+            --url 'https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1' \
+            --url 'https://api.vedur.is/quakes/events' \
+            --url 'https://api.geonet.org.nz/quake?MMI=4' \
+            --url 'https://ceic.ac.cn/data/data.json' \
+            --url 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson' \
+            --url 'https://seismic-api.science.unimelb.edu.au/today-quakes' \
+            --xml-url 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true' \
+            --url 'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00'
