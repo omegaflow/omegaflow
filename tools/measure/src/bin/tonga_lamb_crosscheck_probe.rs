@@ -22,6 +22,8 @@ const KWAJ_LAT: f64 = 8.731667;
 const KWAJ_LON: f64 = 167.73611;
 const COOPS_BEGIN: &str = "20220114";
 const COOPS_END: &str = "20220117";
+const ARRIVAL_WINDOW_S: f64 = 7200.0;
+const COUPLING_WINDOW_S: f64 = 21600.0;
 
 struct PressureSample {
     unix: f64,
@@ -78,6 +80,26 @@ fn zip_member(data: &[u8], member: &str) -> Option<Vec<u8>> {
     None
 }
 
+fn zip_member_names(data: &[u8]) -> Vec<String> {
+    let mut names = Vec::new();
+    let mut i = 0usize;
+    while i + 30 <= data.len() {
+        if &data[i..i + 4] != b"PK\x03\x04" {
+            i += 1;
+            continue;
+        }
+        let name_len = u16::from_le_bytes([data[i + 26], data[i + 27]]) as usize;
+        let name_start = i + 30;
+        if name_start + name_len > data.len() {
+            break;
+        }
+        let name = String::from_utf8_lossy(&data[name_start..name_start + name_len]).into_owned();
+        names.push(name);
+        i = name_start + name_len;
+    }
+    names
+}
+
 fn parse_pressure(text: &str) -> Vec<PressureSample> {
     let mut samples = Vec::new();
     for line in text.lines() {
@@ -118,6 +140,18 @@ fn kyoto_pressure_section() {
         println!(
             "raw pressure waveform: {KYOTO_DAY_MEMBER} absent from the Zenodo archive — cross-check pending"
         );
+        let names = zip_member_names(&archive);
+        if names.is_empty() {
+            println!("Zenodo archive members: none readable (0 honored)");
+        } else {
+            let listed: Vec<String> = names.iter().take(40).cloned().collect();
+            let suffix = if names.len() > 40 {
+                format!(" … ({} members)", names.len())
+            } else {
+                String::new()
+            };
+            println!("Zenodo archive members: {}{suffix}", listed.join(", "));
+        }
         println!();
         return;
     };
@@ -251,15 +285,21 @@ fn kwajalein_ear_section() {
         println!();
         return;
     };
+    let arrival_lo = predicted - ARRIVAL_WINDOW_S;
+    let arrival_hi = predicted + ARRIVAL_WINDOW_S;
     let p_peak = ap
         .iter()
+        .filter(|(ts, _)| *ts >= arrival_lo && *ts <= arrival_hi)
         .max_by(|a, b| a.1.total_cmp(&b.1))
         .copied();
-    let w_trough = wl
-        .iter()
-        .filter(|(ts, _)| *ts > WATER_START_UNIX)
-        .min_by(|a, b| a.1.total_cmp(&b.1))
-        .copied();
+    let w_trough = p_peak.and_then(|(pt, _)| {
+        wl.iter()
+            .filter(|(ts, _)| *ts >= pt && *ts <= pt + COUPLING_WINDOW_S)
+            .min_by(|a, b| a.1.total_cmp(&b.1))
+            .copied()
+    });
+    let p_global_min = ap.iter().min_by(|a, b| a.1.total_cmp(&b.1)).copied();
+    let p_global_max = ap.iter().max_by(|a, b| a.1.total_cmp(&b.1)).copied();
     println!("Kwajalein ear (NOAA CO-OPS {KWAJ_STATION}, air_pressure + water_level, 6-min, GMT):");
     println!(
         "station: lat {KWAJ_LAT}, lon {KWAJ_LON} (pressure {} / water {} samples)",
@@ -268,28 +308,61 @@ fn kwajalein_ear_section() {
     );
     println!("great-circle distance to the source: {d:.1} km");
     println!("predicted Lamb arrival (direct): {}", utc_str(predicted));
+    println!(
+        "arrival window (named, predicted ±{ARRIVAL_WINDOW_S:.0} s): {} … {}",
+        utc_str(arrival_lo),
+        utc_str(arrival_hi)
+    );
     if let Some((ts, v)) = p_peak {
         println!(
-            "pressure: baseline {p_base:.2} hPa → peak {v:.2} hPa (+{:.2}) at {}",
+            "pressure: baseline {p_base:.2} hPa → window peak {v:.2} hPa (+{:.2}) at {}",
             v - p_base,
+            utc_str(ts)
+        );
+        println!(
+            "coupling window (named, peak +{COUPLING_WINDOW_S:.0} s): {} … {}",
+            utc_str(ts),
+            utc_str(ts + COUPLING_WINDOW_S)
+        );
+        println!(
+            "measured − predicted (pressure peak, in window): {:.0} s",
+            ts - predicted
+        );
+    } else {
+        println!("pressure: window peak absent — no sample in the named arrival window");
+    }
+    if let Some((ts, v)) = p_global_min {
+        println!(
+            "global pressure bound (not the coupling): minimum {v:.2} hPa at {}",
+            utc_str(ts)
+        );
+    }
+    if let Some((ts, v)) = p_global_max {
+        println!(
+            "global pressure bound (not the coupling): maximum {v:.2} hPa at {}",
             utc_str(ts)
         );
     }
     if let Some((ts, v)) = w_trough {
         println!(
-            "water: baseline {w_base:.3} m → trough {v:.3} m ({:+.3}) at {}",
+            "water: baseline {w_base:.3} m → coupling-window trough {v:.3} m ({:+.3}) at {}",
             v - w_base,
             utc_str(ts)
         );
+        println!(
+            "measured − predicted (water trough, in window): {:.0} s",
+            ts - predicted
+        );
+    } else if p_peak.is_some() {
+        println!("water: coupling-window trough absent — no sample after the pressure peak");
     }
     if let (Some((pt, pv)), Some((wt, wv))) = (p_peak, w_trough) {
         let dp = pv - p_base;
         let dw = w_base - wv;
-        println!("measured − predicted (pressure peak): {:.0} s", pt - predicted);
         println!("measured air→water lag (trough − peak): {:.0} s", wt - pt);
         if dp > 0.0 && dw > 0.0 {
             println!(
-                "coupling (weighted at the one ear): {:.2} hPa/m  [Δp {:.2} hPa / Δh {:.3} m]",
+                "coupling (weighted at the one ear, window extrema): {:.2} hPa/m  [Δp {:.2} hPa / Δh {:.3} m]",
                 dp / dw,
                 dp,
                 dw
