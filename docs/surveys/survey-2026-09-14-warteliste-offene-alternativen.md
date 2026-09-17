@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: ddbf16bb989e9c5b1d62fddc0433d1c4d37223d8f59ab620e3f0e40c812bc8c6
+  sha256: f5ec41f028cd0affdfdc0249070897d9f33535ff562043b163223a32bb87a321
   status: live
   see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -49,16 +49,15 @@ lokal — der Zugang existiert, es ist kein Warten.
 | Warte | gemessene Teilroute | was fehlt |
 |---|---|---|
 | Voyager Roh-Doppler | PDS-Rings `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/` — rohe **ODR** (Open-Loop, Okkultation): VG1 Jupiter, VG2 Jupiter, VG2 Uranus/PODR, anonym | closed-loop DSN-Doppler ODF/TRK-2-34/TNF — nur Cassini/Maven/DART tragen TRK-2-34-Bundles, nicht Voyager |
-| NSE/Haug | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-garching.de/record/2120` + DTU-Orbit-Volltext-PDF `backend.orbit.dtu.dk/ws/files/9907046/plugin_1367_2630_12_10_105006.pdf` (2026-09-16 gemessen: 200, magic pdf, 806 306 B, sha256 3de3c3714095feb41b148a34e75a7ac89dfe93274caa67c2df44e81730399) | die rohen/reduzierten TRISP-NSE-Dateien bleiben bei MPI-FKF (kein ILL/MLZ/MPG-DOI); Präzedenz gemessen: Zenodo `10.5281/zenodo.18306252` (RESEDA/BaZrO₃, FRM-II, 2026) zeigt, dass FRM-II-Spin-Echo-Deposits existieren — der Haug/YBCO-Datensatz bleibt abwesend |
+| NSE/Haug | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-garching.de/record/2120` + DTU-Orbit-Volltext-PDF `backend.orbit.dtu.dk/ws/files/9907046/plugin_1367_2630_12_10_105006.pdf` (2026-09-16 gemessen: 200, magic pdf, 806 306 B, sha256 3de3c3714095feb41b148a34e75a7ac89dfe93274caa67c2df44e81730399) | kein Deposit (arXiv 1008.4298 nur TeX+8 Figuren; iMPULSE `record/2120` nur Metadaten; MPG Edmond/Zenodo/Dataverse/DataCite ohne Datensatz); **Route offen (Mail 2026-09-17, `state/mail/mail_ledger.φ`): MPI-FKF/TRISP sendet die rohen/reduzierten TRISP-NSE-Dateien direkt („a few days") — auf Eingang: `nse_haug_trisp`-Quelle + Compiler + `sources.φ`**; Präzedenz gemessen: Zenodo `10.5281/zenodo.18306252` (RESEDA/BaZrO₃, FRM-II, 2026) zeigt, dass FRM-II-Spin-Echo-Deposits existieren |
 
 ## Bleibt offen (keine offene Route gemessen)
 
-Zwei `grind-pro`-Taucher (Runde 3) bestätigen die zwei Restoffenen mit Messung.
+Zwei `grind-pro`-Taucher (Runde 3) bestätigen die Restoffene mit Messung.
 
 | Warte | Befund (Runde 3, gemessen) | nächster Schritt |
 |---|---|---|
 | Voyager Roh-Doppler (closed-loop) | Voyager closed-loop wurde als ATDF/ODF aufgezeichnet, aber nie an PDS freigegeben — offen überleben die open-loop ODR-Okkultation UND die Saturn-Encounter-Daten (UNIVAC-1108-Binär, closed-loop Doppler+Range: V1 `PSPA-00049`, V2 `PSPA-00123`, SPDF 200). PDS-PPI/Voyager trägt nur PWS + RSS-Doku; NAIF nur SPICE (`spk/lsk/pck`); natives ATDF/ODF/TRK-2-34 und das Cruise-/Post-Saturn-Fenster fehlen. Einzige nicht-anonyme Ablage dafür: NSSDC `PSNO-00007` (SDDPT, "archive, not distribution") | JPL/DSN-Anfrage (Cruise) hält (request-only); UNIVAC-1108-Parser für die Saturn-TARs offen |
-| NSE/Haug (Rohdaten) | kein Deposit: arXiv `e-print/1008.4298` = nur TeX + 8 Figuren (null Datendateien); IOP-Suppdata nicht auflösbar (Radware-Bot-Manager); iMPULSE `record/2120` nur Metadaten + toter Volltext-OpenURL; MPG Edmond / Zenodo / Dataverse ohne Datensatz; DataCite ohne DOI | Keimer/MPI-FKF-Anfrage hält; Teilroute Fig 5b gemessen descoped (trägt Γ(T), nicht I(q,t)) |
 
 ## Register-Disposition
 

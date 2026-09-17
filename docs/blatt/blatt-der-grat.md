@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: 057db7fddadbc7e563e06d83e6a47d80ee41c28af823b78975541002d9196b03
+  sha256: d7b28783e0ac3d71ffebdcde4bce8b70ed3554a89b211b7cd454165f3da01a33
   status: live
   see-also: docs/auftrag/archiv/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
 -->
