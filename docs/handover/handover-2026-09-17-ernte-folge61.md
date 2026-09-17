@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: e340d32cd0e86aa3f00ee168dd1499aeaae0be68eedcb290622c4f4030db2f2c
+  sha256: 7fe718bdde1ef6c12c22c239910833dc4adb793a7ed1268c86edaf24207d6adb
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -33,9 +33,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - Lauf `35156057281` failure: Compile ok (`32529787 TNF DT0 samples`, roundtrip parses), Upload HTTP 422 — `maven_tnf.bin` = 2342144672 B > 2147483648 B (2 GiB Release-Asset-Cap); kein Asset unter `pds-ppi.igpp.ucla.edu` (`gh release view`). Fix (diese Session, `cargo check` clean): `tools/harvest/src/bin/maven_tnf_compiler.rs` schardet über `odf::podf_shard_ranges`/`odf::PODF_SHARD_BUDGET`/`odf::podf_shard_name` (Muster `mro_odf_compiler.rs:142–219`) → `maven_tnf_t<lo>_<hi>.bin`; `.github/workflows/maven-tnf-cdn.yml` idempotent auf `^maven_tnf(\.bin|_t)`. (Dispatch `35188036501` läuft auf HEAD `8a38932d`. Schritt: `gh run view 35188036501`; bei success die vom Compiler gedruckten `url`/`format maven_tnf`/`field ul_phase_cycles …`-Zeilen ans Ende von `phi/sources.φ`.)
 
-## Mariner 10 PSPA-00316 — Route lebt, Compiler + Layout offen
+## Mariner 10 PSPA-00316 — Compiler + Parser gebaut, Dispatch + Registrierung offen
 
-- Gemessen 2026-09-17: `spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/` HTTP 200, 9 `.tar` (~19,6 MB je) ustar; das kanonische `DD029604_F1.DAT` trägt bereits 2-Byte-Header-BINARY (`STREAM_TYPE BINARY`, `NSSD1346`), kein 7-Bit-Unpacker nötig. Fehlt: ein `mariner_occlt`-Compiler (Geschwister `voyager_saturn_compiler.rs`) + die NSSD1346-Record-Layout-Messung (max 4108 B ≠ voyager 8066 B). (Schritt: Grind-Draft + Layout-Messung am `.DAT`.)
+- NSSD1346 gemessen (diese Session): Record = 2-Byte-BE-Header `10 0a` (=4106) + 4106-Byte-Payload = 4108 B (`DD029604_F1.DAT` = 19.611.592 B = 4774×4108; Voll-Scan 9561 Records beider Dateien, 0 Verstöße); Payload[6..9] = Stunde/Minute/Sekunde **roh-binär** (nicht BCD — 0x2a in DD029605 beweist), [9] Sub-Sekunde (Einheit `pending`), [10..4105] = 4096 6-Bit-Sign-Magnitude-Samples (Bit5=Sign, Bit4=Duplikat). Gebaut: `src/archivar/mariner_occlt.rs` (Magic `MOCC`, `[f64;12]`, Komponenten `amp_min/max/mean`), `tools/harvest/src/bin/mariner_occlt_compiler.rs` (9 `.tar`), `.github/workflows/mariner-occlt-cdn.yml`, Konsument (`extract.rs`/`main_flow.rs:2130`/`mod.rs`), Dispatch-Test; `cargo check --all-targets` clean. (Schritt: nach Push `gh workflow run mariner-occlt-cdn.yml`; bei success Register-Block `mariner_occlt` in `phi/sources.φ` + `…_register_field_names_match_components`-Test im selben Atom.)
+- Pending (eigene Atom-Linie): Sample-Rate/Record-Dauer (Tag-Inkremente 18…20.898, Records nicht äquidistant), Frac-Einheit (25-ms-Ticks vs. BCD-Zentisekunden), unabhängiger UTC-Anker (1974-02-05 aus `attrib`, unbestätigt).
 
 ## rosetta_odf / mro_odf — Job-Caps, keine Assets
 
@@ -55,7 +56,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad): `src/archivar/{atdf,odf,geo}.rs`, `src/gate/{commit_gate.rs,commit_gate_vocab.json}`, `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`, `.github/workflows/{tonga-lamb-crosscheck,kyoto-pressure-cdn}.yml`, `tools/harvest/src/bin/kyoto_pressure_compiler.rs`, `docs/handover/post.md`, `docs/zustand/external-state.md`, `phi/{blocked_sources,sources}.φ`. (Schritt: eigener Pfad = `tools/harvest/src/bin/maven_tnf_compiler.rs`, `.github/workflows/maven-tnf-cdn.yml`, `src/archivar/main_flow.rs` (TNF-Formate `cassini_tnf`/`maven_tnf`/`dart_tnf` in der Series-Fetch-Liste `:2091–2128`), dieses Handover.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad, gemessen 2026-09-17): `.github/workflows/ci-check.yml`, `docs/handover/handover-2026-09-17-forschung-folge56.md`, `tools/register/src/bin/concurrency_contract.rs` (gestaged), `cloudflare/wrangler.toml`, `docs/handover/post.md`, `docs/zustand/external-state.md`, die gestagten Renames `handover-2026-09-16-{entscheid-folge24,forschung-folge44,forschung-folge51}` → `archiv/`. (Schritt: eigener Pfad = `src/archivar/{mariner_occlt,mod,extract,main_flow,tests}.rs`, `tools/harvest/src/bin/mariner_occlt_compiler.rs`, `.github/workflows/mariner-occlt-cdn.yml`, dieses Handover.)
 
 ## Abschluss
 
