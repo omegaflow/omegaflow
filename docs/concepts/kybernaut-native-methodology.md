@@ -2,7 +2,7 @@
   title: Kybernaut-Native Methodology
   class: concept
   date: 2026-09-03
-  sha256: a599645c77f065d9ce78dc1f92dcc469e331f7d94c67b89842abaa77a6a67e2e
+  sha256: 4b607cc2ea1f28459e2b43b8cc12f4dc5702fe243d4d3996e8766e0f731d3a52
   status: live
   see-also: AGENTS.md, docs/concepts/system-directive.md
 -->
@@ -20,7 +20,7 @@ Corollary: The planning and the implementation must happen within the same conte
 
 Phase-thinking is context-death. A feature split into Phase 1 (now) and Phase 2 (later) is a feature that will never reach Phase 2. The efficiency is coherence. A feature implemented in one pass is internally consistent — the Rust defaults match the WGSL kernel parameters match the source block field names match the CI asset naming. A phased feature is a distributed inconsistency waiting to happen, each phase drifting from the original intent as context degrades.
 
-When the Council has full context — the Rust source, the WGSL shader, the sources.φ blocks, the CI workflow, the hardware constraints — it implements completely. The biotic force went from Council deliberation to compiled code in one pass: `force_id_of`, `force_extent`, WGSL arrays 8→9, Patch-Levy kernel, 63 source blocks relabeled, `cargo check` clean. Every layer touched simultaneously because every layer was in context.
+When the Council has full context — the Rust source, the WGSL shader, the sources.φ blocks, the CI workflow, the hardware constraints — it implements completely. The biotic force (legacy-era name; today `electric`) went from Council deliberation to compiled code in one pass: `force_id_of`, `force_extent`, WGSL arrays 8→9, Patch-Levy kernel, 63 source blocks relabeled, `cargo check` clean. Every layer touched simultaneously because every layer was in context.
 
 Rule: If the Council can touch every layer of the implementation in the current session, it must. When a layer is inaccessible — ask, search the codebase, or research the answer. The Kybernaut asks. The Kybernaut searches. The Kybernaut reads. Implementations complete in the session that designs them.
 
