@@ -1838,11 +1838,6 @@ format mpcobs
 at earth
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs.bin
-format mpcobs
-at earth
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
 format noaa_ccor
 at sun
@@ -6471,12 +6466,6 @@ on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/xp_pilot_p6144.bin
-format xp_spectra
-at sun
-ttl 604800
-field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
 format bgr_infrasound
 on earth 0 0 0
@@ -6635,16 +6624,6 @@ ttl 604800
 format noaa_dcdb_bathymetry
 at earth
 field noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square acoustic m 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/noaa-ghcn-pds.s3.amazonaws.com/ghcn_d_USW00094728_2025-03.bin
-format noaa_ghcn_d
-at earth
-ttl 604800
-field noaa_ghcn_d_tmax_c noaa_ghcn_d_tmax_c exponential-decay thermal C 86400 0.0 0.0
-field noaa_ghcn_d_tmin_c noaa_ghcn_d_tmin_c exponential-decay thermal C 86400 0.0 0.0
-field noaa_ghcn_d_prcp_mm noaa_ghcn_d_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
-field noaa_ghcn_d_snow_mm noaa_ghcn_d_snow_mm gaussian-inverse-square advective mm 86400 0.0 0.0
-field noaa_ghcn_d_snwd_mm noaa_ghcn_d_snwd_mm gaussian-inverse-square advective mm 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-global-hourly-pds.s3.amazonaws.com/isd_01001099999_2025-03.bin
 format noaa_isd
@@ -7447,12 +7426,6 @@ format flac
 at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/superdarn.ca/superdarn_fitacf.bin
-format superdarn_fitacf
-on earth 0 0 0
-ttl 604800
-field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square em m/s 600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03a.bin
 format supermag_1m
