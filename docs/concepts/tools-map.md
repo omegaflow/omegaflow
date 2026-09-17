@@ -1,8 +1,8 @@
 <!--
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
-  date: 2026-09-16
-  sha256: cc2dac882b584311198770e4d10c1871c02a7ba4b96369c53d3abbdf3365fa88
+  date: 2026-09-17
+  sha256: e895153d2d6448ac5bf1d8f352912abf27db3e7e2daf6d7c88e032bcf16a430e
   status: live
   see-also: AGENTS.md
 -->
@@ -63,7 +63,14 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `--sniff <url>` | 0,16 s | magic bytes + sha256 |
 | `--verdict <url>` | 24,2 s | Reichweiten-Leiter mit Fallbacks — nur für Reichweite |
 | `--playwright <url>` | 2,97 s | Browser-Render |
+| `--pdf-image <file\|url>` | — | hebt eingebettete JPEG/PNG/JP2 aus einem PDF (kein Rasterizer); `--out <dir>` sonst Temp-Verzeichnis |
 | `--count` / `--case` / `--path` | — | gebaut 2026-09-16; im Binär nach dem nächsten Build |
+
+**Handoff — PDF→Bild→`vision`:** `archive_search --pdf-image <pdf|url> [--out <dir>]`
+hebt die eingebetteten Bilder (`DCTDecode`→`.jpg`, `FlateDecode`→`.png`,
+`JPXDecode`→`.jp2`) und druckt die Pfade; die gereichten Dateien gehen an
+`vision` (P6, liest nur, kein bash). Kein Bild gefunden → eine `pending`-Zeile,
+kein erfundenes Bild.
 
 ## Gemessen — `archive_search` Netz-Modi (Einzelaufruf, kleiner Query)
 
