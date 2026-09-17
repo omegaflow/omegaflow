@@ -13,7 +13,7 @@ permissions:
   issues: write
 concurrency:
   group: ci-check-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
 jobs:
