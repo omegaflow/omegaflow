@@ -1,0 +1,46 @@
+name: pioneer-cell-census
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pioneer-cell-census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the Pioneer-10 ATDF sky-frequency corpus from the CDN
+        run: |
+          mkdir -p data/spdf.gsfc.nasa.gov
+          for attempt in 1 2 3; do
+            gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources \
+              --pattern 'pioneer10_skyfreq.bin' --clobber --dir data/spdf.gsfc.nasa.gov \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > pioneer-cell-census.txt
+      - name: Run the cell census on the residual r[8]
+        run: |
+          cargo run --release -p omegaflow-measure --bin pioneer10_cell_census_probe \
+            -- --field resid >> pioneer-cell-census.txt 2>&1
+      - name: Run the cell census on the raw sky frequency r[1]
+        run: |
+          cargo run --release -p omegaflow-measure --bin pioneer10_cell_census_probe \
+            -- --field fsky >> pioneer-cell-census.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pioneer-cell-census
+          path: pioneer-cell-census.txt
