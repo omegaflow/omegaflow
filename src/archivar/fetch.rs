@@ -310,6 +310,10 @@ pub struct OriginState {
     pub in_flight: bool,
 }
 
+pub fn stale_after(fetched: f64, failures: u32, ttl: u64, now: f64) -> bool {
+    now - fetched >= (ttl as f64 / Φ) * (2f64).powi(failures.min(FETCH_VOID_CAP) as i32)
+}
+
 pub fn origin_stale(
     origins: &HashMap<Origin, OriginState>,
     origin: Origin,
@@ -319,12 +323,11 @@ pub fn origin_stale(
 ) -> bool {
     match origins.get(&origin) {
         Some(o) => {
-            let backoff = (ttl as f64 / Φ) * (2f64).powi(o.failures.min(FETCH_VOID_CAP) as i32);
             let jumped = match jump_epoch {
                 Some(j) => o.fetched < j,
                 None => false,
             };
-            !o.in_flight && (now - o.fetched >= backoff || jumped)
+            !o.in_flight && (stale_after(o.fetched, o.failures, ttl, now) || jumped)
         }
         None => true,
     }
@@ -365,6 +368,45 @@ pub fn record_fetch_duration(
     ring[*idx] = d;
     *idx = (*idx + 1) % FETCH_DURATION_RING;
     *len = (*len + 1).min(FETCH_DURATION_RING);
+}
+
+pub fn load_origin_clock(path: &str) -> HashMap<String, (f64, u32)> {
+    let mut clock = HashMap::new();
+    let Ok(content) = std::fs::read_to_string(path) else {
+        return clock;
+    };
+    let mut lines = content.lines();
+    match lines.next() {
+        Some("origin_clock 1") => {}
+        _ => return clock,
+    }
+    for line in lines {
+        let mut parts = line.splitn(3, ' ');
+        let Some(fetched) = parts.next().and_then(|p| p.parse::<f64>().ok()) else {
+            continue;
+        };
+        let Some(failures) = parts.next().and_then(|p| p.parse::<u32>().ok()) else {
+            continue;
+        };
+        let Some(url) = parts.next() else {
+            continue;
+        };
+        clock.insert(url.to_string(), (fetched, failures));
+    }
+    clock
+}
+
+pub fn save_origin_clock(path: &str, clock: &HashMap<String, (f64, u32)>) {
+    let mut out = String::from("origin_clock 1\n");
+    for (url, (fetched, failures)) in clock {
+        out.push_str(&format!("{fetched} {failures} {url}\n"));
+    }
+    if std::fs::write(path, out).is_err() {
+        eprintln!(
+            "origin clock {}: write void — the clock starts absent next run",
+            path
+        );
+    }
 }
 
 pub fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> Option<f64> {
@@ -896,18 +938,15 @@ fn cdn_last_modified(url: &str) -> Option<String> {
     extract_header(&head, "last-modified")
 }
 
+pub fn cdn_last_modified_age(url: &str) -> Option<u64> {
+    let lm = cdn_last_modified(url)?;
+    let asset_ts = rfc1123_to_unix(&lm)?;
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).ok()?;
+    Some(now.as_secs().saturating_sub(asset_ts))
+}
+
 pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
-    const CI_REFRESH_S: u64 = 300;
-    let Some(lm) = cdn_last_modified(cdn_url) else {
-        return false;
-    };
-    let Some(asset_ts) = rfc1123_to_unix(&lm) else {
-        return false;
-    };
-    let Ok(now) = SystemTime::now().duration_since(UNIX_EPOCH) else {
-        return false;
-    };
-    now.as_secs().saturating_sub(asset_ts) < ttl.max(CI_REFRESH_S)
+    cdn_last_modified_age(cdn_url).is_some_and(|age| age < ttl)
 }
 
 pub fn fetch_one(
