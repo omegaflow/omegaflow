@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: 15b5ca4ba3ae2a056ff01c4e56c7d44688aea9b0bf90d68e495d34d937e4571d
+  sha256: 72f6bf52b937073058b4a8f8fefd6e0d3fc378e6870b9bc31780d2694d16d3e9
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -38,9 +38,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - NSSD1346 gemessen (diese Session): Record = 2-Byte-BE-Header `10 0a` (=4106) + 4106-Byte-Payload = 4108 B (`DD029604_F1.DAT` = 19.611.592 B = 4774×4108; Voll-Scan 9561 Records beider Dateien, 0 Verstöße); Payload[6..9] = Stunde/Minute/Sekunde **roh-binär** (nicht BCD — 0x2a in DD029605 beweist), [9] Sub-Sekunde (Einheit `pending`), [10..4105] = 4096 6-Bit-Sign-Magnitude-Samples (Bit5=Sign, Bit4=Duplikat). Gebaut: `src/archivar/mariner_occlt.rs` (Magic `MOCC`, `[f64;12]`, Komponenten `amp_min/max/mean`), `tools/harvest/src/bin/mariner_occlt_compiler.rs` (9 `.tar`), `.github/workflows/mariner-occlt-cdn.yml`, Konsument (`extract.rs`/`main_flow.rs:2130`/`mod.rs`), Dispatch-Test; `cargo check --all-targets` clean. (Dispatch steht aus: `gh workflow run mariner-occlt-cdn.yml` — beim Versuch 2026-09-17 07:16Z **GH-API-Rate-Limit 403**, kein Retry-Loop; bei success Register-Block `mariner_occlt` in `phi/sources.φ` + `…_register_field_names_match_components`-Test im selben Atom.)
 - Pending (eigene Atom-Linie): Sample-Rate/Record-Dauer (Tag-Inkremente 18…20.898, Records nicht äquidistant), Frac-Einheit (25-ms-Ticks vs. BCD-Zentisekunden), unabhängiger UTC-Anker (1974-02-05 aus `attrib`, unbestätigt).
 
-## rosetta_odf / mro_odf — Job-Caps, keine Assets
+## rosetta_odf / mro_odf — Budget gehoben, Konsument-Mismatch + mro-Log offen
 
-- Gemessen 2026-09-17 (`gh run view 35148936648`): Job `rosetta_odf` `cancelled` (4h-Job-Cap), Job `mro_odf` `failure`; kein `rosetta_odf.bin` unter `archives.esac.esa.int`, kein `mro_odf.bin` unter `pds-geosciences.wustl.edu` (`gh release view`). Block `phi/sources.φ:6471–6476` bleibt ohne `sha256`-Zeile, `Offen:`-Klausel Z. 6476 steht. (Schritt: `gh run view 35148936648 --log` für den `mro_odf`-Fehler; Re-Dispatch mit längerem/gesplittetem Budget.)
+- Gemessen 2026-09-17 (`gh run view 35148936648`): `rosetta_odf` `cancelled` (4h-Cap), `mro_odf` `failure` (Runner-Shutdown); keine Assets unter `archives.esac.esa.int`/`pds-geosciences.wustl.edu`. Gebaut (diese Session): `planetary-odf-cdn.yml` Timeout je Matrix-Zeile (`${{ matrix.timeout || 240 }}`), `rosetta_odf` + `mro_odf` → 350 min. (Schritt: `gh run view 35148936648 --log` für den `mro_odf`-Runner-Shutdown — GH-API-Rate-Limit blockt; dann Re-Dispatch.)
+- **Konsument-Mismatch (gemessen):** `rosetta_odf_compiler.rs` schreibt `ifms_agc::write_series` (MAGIC `IFMS`, 3×f64), aber `extract.rs:50` dispatcht `rosetta_odf` → `odf::parse_series` (MAGIC `PODF`); `extract.rs:237` erwartet `odf::COMP_OBSERVABLE`/`rosetta_odf_observable_hz`. Das gebaute Asset wäre ungelesen (Commit `3cba457e` überschrieb den IFMS-Arm aus `77c8be18`). (Schritt: `extract.rs` auf `ifms_agc::parse_series` + Komponenten `carrier_level_dbm`/`polar_angle_cycles`, Register-Block `phi/sources.φ:6471–6476` entsprechend — blockiert durch fremde Hunks in `sources.φ`.)
 
 ## Juno post-EFB OCRU — Arm gebaut, Dispatch + Registrierung offen
 
