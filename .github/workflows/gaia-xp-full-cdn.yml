@@ -1,9 +1,5 @@
 name: gaia-xp-full-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
 permissions:
@@ -21,6 +17,9 @@ jobs:
         run: echo "chunks=[$(seq -s, 0 255)]" >> "$GITHUB_OUTPUT"
   harvest:
     needs: raster
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.chunk }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 360
     strategy:
