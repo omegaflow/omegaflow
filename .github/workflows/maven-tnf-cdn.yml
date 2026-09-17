@@ -6,6 +6,12 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even when maven_tnf assets already exist on the CDN
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: write
 env:
@@ -23,7 +29,10 @@ jobs:
         run: |
           names=$(gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
             --json assets --jq '.assets[]?.name' 2>/dev/null || true)
-          if printf '%s\n' "$names" | grep -qE '^maven_tnf(\.bin|_t)'; then
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force=true — rebuilding despite existing assets"
+          elif printf '%s\n' "$names" | grep -qE '^maven_tnf(\.bin|_t)'; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "maven_tnf asset/shards already present — harvest skipped"
           else
