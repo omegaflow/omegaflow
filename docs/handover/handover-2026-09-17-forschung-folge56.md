@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: 6a300bb2803bafaffb88e1de32af9424d808b977b967ee31c17aab12db80c28e
+  sha256: b809156e1d84e348978553c5d057123d324c96f97784d1e42d59179d25323ea5
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -99,33 +99,37 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
     Mehr-Tages-Baseline fehlt. (Schritt: `kyoto_pressure.bin` über mehrere Tage gegen die
     Ankunft legen — der Compiler trägt alle Member.)
 
-## Docs-Pendings — Sichtung 2026-09-17 (jetzt machbar)
+## Docs-Pendings — Sichtung 2026-09-17 (akribisch, gegen alle Entblockungen)
 
-Sichtung von `docs/{concepts,paper,surveys}/` gegen die Entblockungen dieser Session
-(ODF-Streaming, CDN-Concurrency, ci-check, Kyoto). Je Punkt die Fundstelle (read site)
-+ nächster Schritt; die Blockade-Attribution ist die Sichtung, nicht neu gemessen.
+Sichtung von `docs/{concepts,paper,surveys,auftrag,blatt,zustand}/` gegen den aktuellen
+Baum (3 Taucher, `archive_search`/`sgrep`, je Zeile belegt). Dominant: die Pending-Marker
+sind großenteils **veraltet** — der Blocker ist längst gebaut, das Doc nicht nachgezogen
+(Reconciliation läuft).
 
-- `docs/surveys/survey-2026-09-17-sonden-request-only.md:38` — Juno: Abgleich
-  `juno_odf.bin` (post-EFB OCRU, PDS3 `JNOGRV_0001`) ↔ Bestand offen. (Schritt: die
-  zwei merged-ODF-Stände gegen die Ernte legen.)
-- `…:68–69` — Pioneer-ATDF dtype-12-Arm (`src/archivar/atdf.rs:503/636` hält nur
-  dtype 1|2; `pioneer10_doppler_tracking_SC_23.asc` trägt DTYPE 12/13) + Juno-OCRU.
-  (Schritt: dtype-12-Zweig mit gemessener Semantik bauen, dann Re-Harvest-Abgleich.)
-- `docs/concepts/positive-maske.md:76` — Galileo-ODF Format 1 vs 2 ungemessen (kein
-  lokales `galileo_odf.bin`). (Schritt: über `planetary-odf-cdn` ernten, Format messen.)
-- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md:57` — SuperDARN
-  FITACF: erster CI-Manifest-Lauf offen. (Schritt: SuperDARN-CDN dispatchen.)
-- `…:56` — NEXRAD Level II: Feld-System-Reader + CI-Manifest offen. (Schritt: Manifest
-  dispatchen; Reader-Stand messen.)
-- `docs/concepts/die-akteure-im-boden-und-wasser.md:68` — ETOPO1-Gitter (395 MB)
-  manifestieren. (Schritt: Manifest-Workflow dispatchen.)
-- `docs/surveys/survey-2026-09-13-weberin-quellen.md:188` — WWLLN netCDF: Compiler nur
-  Gerüst (`netcdf.rs`); Manifest offen. (Schritt: Compiler fertigstellen, dann Manifest.)
-- `docs/surveys/survey-2026-09-16-sonden-flotte.md:57–59` — Ulysses/BepiColombo/LRO:
-  kein Register-Eintrag. (Schritt: `phi/sources.φ`-Eintrag + CDN.)
-- Weiter blockiert (nicht durch die Session entblockt): `…kapitulationen…:51–55`
-  GOES/Himawari (GSICS-Kalibrierung), GDP (`.zarr`), OCS (`.tif`-LZW), WOD (SOHM) —
-  Parser/Kalibrierung; `…:65–66` LASzip-Chunk-Dekoder; `…:63–64` AQS/Babamul (Key/Account).
+Jetzt echt machbar:
+- `docs/surveys/survey-2026-09-17-sonden-request-only.md:66–67` — Mariner `PSPA-00316`:
+  Compiler + `mariner-occlt-cdn.yml` gebaut, CDN-Dispatch offen. (Schritt: `gh workflow run`.)
+- `…:38` — Juno post-EFB OCRU (`JNOGRV_0001`) ↔ `juno_odf.bin` Abgleich. (Schritt: Stände legen.)
+- `…:68–69` — Pioneer-ATDF dtype-12/13 (`src/archivar/atdf.rs:508` gated nur 1|2). (Schritt:
+  dtype-12-Zweig mit gemessener Semantik.)
+- MAVEN TNF — Compiler gebaut, Asset fehlt (`maven 422 >2 GiB`). (Schritt: Shards wie `mro_odf`.)
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md:51` — GOES-16 ABI:
+  `goes_abi.rs` gebaut, kein Asset/Manifest. (Schritt: `sources.φ`-Eintrag + Workflow.)
+- `docs/surveys/survey-2026-09-13-weberin-quellen.md:188` — WWLLN: nur `netcdf.rs`-Gerüst,
+  kein Compiler/Manifest.
+- `docs/surveys/survey-2026-09-16-sonden-flotte.md:57–59` — Ulysses/BepiColombo/LRO: kein
+  `sources.φ`-Eintrag.
+
+Reconciliation (stale Marker → IST, Sub-Agenten laufen): die Blocker sind gebaut —
+`.vlde`-Reader (`vlies.rs`), mpcorb, ndk/CMT, DART, INTERMAGNET/IONEX/GIC, MiniSEED, LZW,
+CHAMP/COSMIC, DEMETER, 17 TNF-Codes (`odf.rs`), LASzip (`las/mod.rs`),
+NEXRAD/SuperDARN/COSMIC-2/CORS/WOD/US-CRN/NRS/Himawari/GDP/VLASS/GLM/TRMM (registriert),
+Cassini/DART `tnf.bin`, DRS-FITS, ALeRCE/TNS, HAWC/LHAASO/ANTARES.
+
+Weiter blockiert (echt): externe Mail (Voyager/Viking/Juno-pre-EFB/Mariner-762-Tapes),
+CSES (Freigabe ~07.10.), Lasair (404, WV 18.09.), CTBTO (404), AQS (Parser-Gap),
+Babamul/SuperDARN-Globus (Account), Tibet-Abfluss (kommerziell), JWST/Sentinel-Assets,
+h0-TAP (Reichweite), GOES-16/ERI/ONC.
 
 ## Sonden request-only — Antworten offen (undatiert)
 
