@@ -1,0 +1,26 @@
+name: service-build
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-service
+    - uses: actions/upload-artifact@v4
+      with:
+        name: omegaflow-service-linux
+        path: |
+          target/release/smail
+          target/release/smail_recv
+          target/release/mail_watchdog
+          target/release/mail_digest
+          target/release/cds_watchdog
+          target/release/job_dashboard
+          target/release/job_monitor
+          target/release/notes_notify
