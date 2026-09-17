@@ -1067,6 +1067,13 @@ on earth 0 0 0
 ttl 3600
 field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-goes16.s3.amazonaws.com/goes16_abi.bin
+format goes_abi
+on earth 0 0 0
+ttl 3600
+field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
+note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel; arm src/archivar/goes_abi.rs parse_bin (extract.rs dispatch goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs; sha256 pending (CI re-dispatch).
+
 url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes_abi_rad.bin
 format goes_abi
 on earth 0 0 0
@@ -6550,6 +6557,13 @@ at earth
 ttl 604800
 field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk.bin
+format lro_trk
+at earth
+ttl 604800
+field sky_frequency_hz lro_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
+note LRO RSS raw tracking (utF, 75-byte records) sky-frequency; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; compiler tools/harvest/src/bin/lro_trk_compiler.rs; sha256 pending (CI re-dispatch).
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 ttl 604800
 at sun
@@ -6835,6 +6849,13 @@ format messenger_odf
 at earth
 ttl 604800
 field observable_hz messenger_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/ulysses_atdf.bin
+format ulysses_atdf
+at earth
+ttl 604800
+field sky_frequency_hz ulysses_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
+note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; sha256 pending (CI re-dispatch).
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
 format voyager_odr
