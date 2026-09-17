@@ -2,7 +2,7 @@
   title: Survey — Kapitulationen & Pendings: Register-Inventur (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: b3810a6d58ffabcda9a74fa01b9c7354904cdf46904c2c21dde49cf89b82fc4a
+  sha256: d7d9c671f05cfc31a5d9b9bf718555f490db05a7e1c85bb4408fac210da9e1ca
   status: live
   see-also: phi/blocked_sources.φ phi/dead_sources.φ phi/pipeline/refusal_ledger.φ AGENTS.md
 -->
@@ -56,6 +56,15 @@ Werkzeuge: `giveup_scan` (`cargo run -p omegaflow-utils --bin giveup_scan`),
 | 25 | 149 | NEXRAD Level II | Compiler gebaut; Feld-System-Reader + CI-Manifest offen |
 | 26 | 153 | SuperDARN FITACF Direktroute | Compiler gebaut; erster CI-Manifest-Lauf offen |
 
+Nachzug 2026-09-17: Die Zeilen 3 (US-CRN, `uscrn_hourly.bin`), 4 (NRS,
+`nrs_audio_series.bin`), 6 (COSMIC-2, `cosmic_ro_temp.bin`), 16 (VLASS,
+`vlass_tap_component.bin`/`vlass_tap_source.bin`), 17 (CORS,
+`cors_1lsu_2024001.bin`), 21 (Himawari, `himawari_ahi_counts.bin`), 22
+(GDP-Drifter, `gdp_drifter.bin`), 24 (WOD, `noaa_wod_2000_drb.bin`), 25
+(NEXRAD, `nexrad_level2.bin`), 26 (SuperDARN, `superdarn_fitacf.bin`) sind
+aufgelöst — die Assets stehen in `phi/sources.φ` (gemessen 2026-09-17). Die
+Tabelle selbst gibt den Register-Stand 2026-09-14.
+
 ## 2. Gesperrt + Register-Verweise — `phi/blocked_sources.φ` (6)
 
 | Zeile | Klasse | Quelle |
@@ -64,6 +73,10 @@ Werkzeuge: `giveup_scan` (`cargo run -p omegaflow-utils --bin giveup_scan`),
 | 19 | `blocked account` | Babamul (Caltech LSST-Broker) — HTTP 401 Auth-Wall |
 | 129 | `blocked parser-def las-laz` | NOAA NOS Coastal Lidar — LASzip-Chunk-Dekoder offen |
 | 133 | `blocked parser-def las-laz` | USGS 3DEP EPT — LASzip-Chunk-Dekoder offen |
+
+Nachzug 2026-09-17: Der LASzip-Chunk-Dekoder ist gebaut (`src/archivar/las/laszip.rs`,
+`LazDecoder`/`has_laszip_vlr`, exportiert in `src/archivar/las/mod.rs:580–581`) —
+beide `blocked parser-def las-laz`-Zeilen sind aufgelöst.
 | 17, 22 | `reg` | AQS-API-Doku, Babamul-Signup |
 
 ## 3. Kapitulationen — `phi/dead_sources.φ` (1218)
