@@ -2,7 +2,7 @@
   title: The H₀ lines register — roots instead of witnesses
   class: paper
   date: 2026-09-12
-  sha256: 48d29a82f231cb5955e20f9fecd6a5ed03e6ec42d646683f44c874a12fa224f1
+  sha256: 1ec0218f62ec285e992eb5534fb2ee3333dca9b039492538ac1b056c641180ec
   status: live
   see-also: docs/blatt/blatt-h0-linien-register.md
 -->
