@@ -1,9 +1,5 @@
 name: planetary-odf-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
 permissions:
@@ -13,6 +9,9 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   odf:
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.netloc }}-${{ matrix.asset }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 240
     strategy:
