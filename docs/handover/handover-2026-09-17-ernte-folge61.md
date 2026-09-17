@@ -3,7 +3,7 @@
   session: Ernte-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: 3e33d5954ffd9c03321d37ec39b733ed70836a254ef3177ad424e9aea0e35964
+  sha256: e340d32cd0e86aa3f00ee168dd1499aeaae0be68eedcb290622c4f4030db2f2c
   status: live
 -->
 # Handover — Ernte-Folge 61 (2026-09-17)
@@ -55,7 +55,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad): `src/archivar/{atdf,odf,geo}.rs`, `src/gate/{commit_gate.rs,commit_gate_vocab.json}`, `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`, `.github/workflows/{tonga-lamb-crosscheck,kyoto-pressure-cdn}.yml`, `tools/harvest/src/bin/kyoto_pressure_compiler.rs`, `docs/handover/post.md`, `docs/zustand/external-state.md`, `phi/{blocked_sources,sources}.φ`. (Schritt: eigener Pfad = `tools/harvest/src/bin/maven_tnf_compiler.rs`, `.github/workflows/maven-tnf-cdn.yml`, dieses Handover.)
+- Fremde uncommittete Arbeit (nicht im eigenen Commit-Pfad): `src/archivar/{atdf,odf,geo}.rs`, `src/gate/{commit_gate.rs,commit_gate_vocab.json}`, `tools/measure/src/bin/tonga_lamb_crosscheck_probe.rs`, `.github/workflows/{tonga-lamb-crosscheck,kyoto-pressure-cdn}.yml`, `tools/harvest/src/bin/kyoto_pressure_compiler.rs`, `docs/handover/post.md`, `docs/zustand/external-state.md`, `phi/{blocked_sources,sources}.φ`. (Schritt: eigener Pfad = `tools/harvest/src/bin/maven_tnf_compiler.rs`, `.github/workflows/maven-tnf-cdn.yml`, `src/archivar/main_flow.rs` (TNF-Formate `cassini_tnf`/`maven_tnf`/`dart_tnf` in der Series-Fetch-Liste `:2091–2128`), dieses Handover.)
 
 ## Abschluss
 
