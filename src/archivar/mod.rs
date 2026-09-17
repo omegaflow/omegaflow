@@ -73,6 +73,7 @@ pub mod kbo;
 pub mod kcdc;
 pub mod kepler;
 pub mod las;
+pub mod lro_utf;
 pub mod lsk;
 pub mod lzw;
 pub mod mariner_occlt;
