@@ -57,6 +57,8 @@ phi/*
 !phi/witnesses.φ
 !phi/footprints.φ
 !phi/nrs_stations.φ
+# Das Harvest-Master-Register ist ein Registrierungs-Urteil — versioniert wie sources.φ.
+!phi/harvest.φ
 # Flatten-Compiler-Eingaben (Katalog) sind Registrierungs-Urteile — versioniert:
 # die kernel-flatten-Körperjob-Kette braucht sie auf dem CI-Runner
 # (TNO-Split-GM + Solar-ω). Alles andere im Katalog bleibt lokale Ernte.
