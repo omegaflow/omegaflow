@@ -14,9 +14,13 @@ jobs:
   tonga-lamb-crosscheck:
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the BGR IS52 2022 detection bin from the CDN
+        run: gh release download download.bgr.de --repo omegaflow/sources --pattern bgr_infrasound_IS52_2022.bin -D data/download.bgr.de
       - name: Run the Tonga 2022 cross-medium calibration (Kwajalein ear + Kyoto + BGR)
         run: |
           {
