@@ -3,7 +3,7 @@
   session: Forschung-Folge 56
   class: handover
   date: 2026-09-17
-  sha256: 6a64b13154781723e712d693e343fb11f09bbf3acb351d5c7cf340eac298331e
+  sha256: 1d2d06bbded32d2c0cba0cc9d82740cf4f4d4260805b82c0db3524fce5bfa509
   status: live
 -->
 # Handover — Forschung-Folge 56 (2026-09-17)
@@ -46,6 +46,24 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   gedruckten `mro_odf_*`-Shard-φ-Block nehmen und den Ganzdatei-Block
   `phi/sources.φ:6763–6767` durch je einen Block je Shard ersetzen — Muster
   odyssey_odf 6769+; `refuse_shard_overlaps` verweigert Überlappung gleichen `format`.)
+
+## CDN-Concurrency — Fix gebaut, Follow-up offen
+
+- Fix (2026-09-17, Rat): der workflow-level Concurrency-Block der 6
+  release-schreibenden Matrix-Workflows (`planetary-odf-cdn`, `gaia-xp-full-cdn`,
+  `noaa-{isd,gsod,ghcn}-allstations-cdn`, `physionet-cdn`) ist nach **job-level**
+  gezogen, Gruppe = die konkurrierende Ressource: `${{ github.workflow }}-${{ matrix.netloc }}-${{ matrix.asset }}`
+  (planetary-odf), `${{ github.workflow }}-${{ matrix.chunk }}` (gaia-xp-full),
+  `noaa-*-assets-${{ inputs.year }}-${{ inputs.month }}-${{ matrix.shard }}`
+  (allstations), `physionet-cdn-<job>[-${{ matrix.chunk }}]` (physionet).
+  `cancel-in-progress: false` unverändert. Ursprung gemessen: `08cbdb74` flachte die
+  im Commit-Text genannte „same-asset namespace pairs"-Form auf `${{ github.workflow }}` ab.
+  (Schritt: nächster Dispatch — ein Re-Dispatch läuft nicht mehr hinter einem fremden Job.)
+- Offen: `cancel-in-progress: false` schützt das Shard-Set, hält aber Stale fest. Auf
+  `true` erst, wenn der `sharded`-Check **Vollständigkeit** statt Prefix prüft
+  (`grep -q "^mro_odf_"` übersieht ein halbes Set). (Schritt: den Prefix-Check in
+  `planetary-odf-cdn.yml` auf die erwarteten Shard-Namen härten — messbar erst nach
+  einem erfolgreichen `mro_odf`-Lauf.)
 
 ## Format-Gate
 
