@@ -35,7 +35,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin uscrn_compiler -- \
             --station AK_Aleknagik_1_NNE --year 2026 --lsk kernels/naif0012.tls \
             --out uscrn_hourly.bin --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "uscrn-cdn: uscrn_hourly.bin returned void" \
                  "uscrn compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

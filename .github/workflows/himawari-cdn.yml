@@ -31,17 +31,17 @@ jobs:
           curl -sSfL --retry 3 --max-time 600 \
             -o kernels/HS_H09_20221104_1550_B01_FLDK_R10_S0310.DAT.bz2 \
             https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/2022/11/04/1550/HS_H09_20221104_1550_B01_FLDK_R10_S0310.DAT.bz2 \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "himawari-cdn: the AHI L1b segment returned void" \
                  "curl on noaa-himawari9 did not reach the HS_H09 segment. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the AHI radiance record and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin himawari_hsd_compiler -- \
             --in kernels/HS_H09_20221104_1550_B01_FLDK_R10_S0310.DAT.bz2 \
             --out himawari_ahi_counts.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "himawari-cdn: himawari_ahi_counts.bin returned void" \
                  "himawari_hsd_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

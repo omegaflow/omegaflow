@@ -54,7 +54,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin celestrak_eop_compiler -- \
             --input EOP-All.csv --emit-bin celestrak_eop.bin \
             --lsk kernels/naif0012.tls --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "celestrak-eop-cdn: celestrak_eop.bin returned void" \
                  "celestrak_eop compile returned void — the CSV fetch was ip-blocked (datacenter IP) or the parse carried no observed rows. Harvest locally via the Proton exit and re-run. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

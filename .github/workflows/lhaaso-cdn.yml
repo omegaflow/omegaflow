@@ -30,17 +30,17 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 -o kernels/table.csv \
             https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "lhaaso-cdn: table.csv returned void" \
                  "curl on casdc.china-vo.org did not reach table.csv. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the LHAASO source records and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin lhaaso_compiler -- \
             --input kernels/table.csv \
             --out lhaaso_sky1.sky1 \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "lhaaso-cdn: lhaaso_sky1.sky1 returned void" \
                  "lhaaso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

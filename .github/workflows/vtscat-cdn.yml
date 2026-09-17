@@ -2,7 +2,7 @@ name: vtscat-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
           cargo run --release -p omegaflow-harvest --bin vtscat_compiler -- \
             --out vtscat_flux.sky1 \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "vtscat-cdn: vtscat_flux.sky1 returned void" \
                  "VTSCat compile returned void for the VERITAS flux map. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

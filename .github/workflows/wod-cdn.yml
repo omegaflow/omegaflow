@@ -2,7 +2,7 @@ name: wod-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -56,10 +56,10 @@ jobs:
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           curl -sSfL --retry 3 --max-time 3600 -o kernels/wod.nc \
             https://noaa-wod-pds.s3.amazonaws.com/${{ inputs.year }}/wod_${{ inputs.instrument }}_${{ inputs.year }}.nc \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "wod-cdn: wod_${{ inputs.instrument }}_${{ inputs.year }}.nc returned void" \
                  "curl on noaa-wod-pds did not reach the ${{ inputs.year }} granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the WOD cast/level records and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
@@ -68,7 +68,7 @@ jobs:
             --out noaa_wod_${{ inputs.year }}_${{ inputs.instrument }}.bin \
             --lsk kernels/naif0012.tls \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "wod-cdn: noaa_wod_${{ inputs.year }}_${{ inputs.instrument }}.bin returned void" \
                  "wod compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

@@ -2,7 +2,7 @@ name: flac-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
@@ -49,7 +49,7 @@ jobs:
             --url "${{ inputs.url }}" \
             --out nrs_audio_series.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flac-cdn: nrs_audio_series.bin returned void" \
                  "FLAC compile returned void for the NRS hydrophone source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
