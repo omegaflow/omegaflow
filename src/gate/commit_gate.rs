@@ -30,6 +30,7 @@ struct Vocab {
     single_path: Vec<String>,
     fabrication: Vec<(String, String)>,
     zero_fabrication: Vec<String>,
+    unstable_pointer: Vec<String>,
     german_chars: Vec<char>,
     german_function_words: Vec<String>,
     speculation: Vec<String>,
@@ -115,6 +116,7 @@ fn load_vocab() -> Vocab {
         single_path: str_list(&json, "single_path"),
         fabrication: pair_list(&json, "fabrication"),
         zero_fabrication: str_list(&json, "zero_fabrication"),
+        unstable_pointer: str_list(&json, "unstable_pointer"),
         german_chars,
         german_function_words: str_list(&json, "german_function_words"),
         speculation: str_list(&json, "speculation"),
@@ -889,6 +891,19 @@ impl Gate {
             }
         }
         if !is_code {
+            if path.starts_with("docs/") && path.ends_with(".md") {
+                for marker in &vocab().unstable_pointer {
+                    if let Some(idx) = content.find(marker.as_str()) {
+                        return Some(Verdict {
+                            severity: Severity::Hard,
+                            rule: "unstable-pointer".to_string(),
+                            line: line_of(&content, idx),
+                            feedback: feedback("unstable_pointer").to_string(),
+                            quote: clip(&content, 90),
+                        });
+                    }
+                }
+            }
             if let Some(home) = classify_home(&path) {
                 if let Some(verdict) = home_drift(&content, home) {
                     return Some(verdict);
@@ -1624,6 +1639,34 @@ mod tests {
         let v = g.check_tool_call("edit", &args).unwrap();
         assert_eq!(v.rule, "fabrication");
         assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_tnf_format_gate_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/odf.rs", &fx("tnf_format_gate"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_unstable_pointer_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/zustand/external-state.md",
+            &fx("unstable_pointer_drift"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "unstable-pointer");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_unstable_pointer_only_in_docs_markdown() {
+        let mut g = test_gate();
+        let args = tool_args("phi/sources.φ", &fx("unstable_pointer_offsite"));
+        assert!(g.check_tool_call("edit", &args).is_none());
     }
 
     #[test]
