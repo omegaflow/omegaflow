@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-16
-  sha256: 06cb02fb3d067e79c04a9c582d222dff59937894ac435f76d788629071c07f53
+  sha256: cc2dac882b584311198770e4d10c1871c02a7ba4b96369c53d3abbdf3365fa88
   status: live
   see-also: AGENTS.md
 -->
@@ -105,12 +105,15 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `omega_sh search` | 0,055 s | `sgrep`-Wrapper |
 | `omega_sh fetch` | 0,122 s | `sfetch`-Wrapper |
 | `omega_sh jwst` | 0,644 s | CDN-Watch |
+| `omega_sh sha <file>` | — | Header-sha256 über den Body ohne `<!-- … -->`-Header (docs-naming) |
+| `omega_sh check` | — | `cargo check`-Zusammenfassung (Fehler-/Warnungszahlen) |
 | `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst |
 | `smail --dry-run` | 0,288 s | kein Versand |
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
+| `git_safety --close [<own-path>…]` | — | Commit-Abschluss-Check in einem Aufruf |
 | `session_burn` | — | Release-Binär fehlt noch (Baum rot) — bis dahin `cargo run -p omegaflow-register` |
 | `./bin/archive_search` (Wrapper) | 0,009 s nach Stempel | baut bei Bedarf, 5-min-Cooldown, Fallback statt Tod |
 | OpenCode-Tools (`read`/`grep`/`glob`) | ein Tool-Round-Trip, kein Prozess | Kosten sind Kontext, nicht CPU |
@@ -122,10 +125,10 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 16 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
 | `bin/archive_search` (Wrapper) | baut bei Bedarf, sonst `exec` | lokal | P1–P5 |
 | `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
-| `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst | Netz / lokal | P3 (fetch), P1 (alle) |
+| `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
 | `register_lookup` | `--live`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan | lokal | P4 |
-| `git_safety` | `--snapshot/--restore/--list/--watch` | lokal | P1/P4 |
+| `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
 | `curl` | nur wo `sfetch`/`archive_search` nichts trägt | Netz | P3 |
