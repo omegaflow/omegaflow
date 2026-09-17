@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{COMP_BGR_AZIM, MAGIC_BGR, parse_bin};
+use omegaflow::archivar::geo::{COMP_BGR_AZIM, COMP_BGR_VAPP, MAGIC_BGR, parse_bin};
 use omegaflow::archivar::{angular_distance_deg, embedded_lsk, fetch_raw_bytes};
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::days_from_civil;
@@ -14,12 +14,11 @@ const KYOTO_LAT: f64 = 35.02938;
 const KYOTO_LON: f64 = 135.78347;
 const JST_OFFSET_S: f64 = 32400.0;
 const KYOTO_DAY_MEMBER: &str = "data/220115.txt";
+const KYOTO_BASELINE_BEGIN_UNIX: f64 = 1642231971.0;
+const KYOTO_BASELINE_END_UNIX: f64 = 1642239171.0;
 const ZENODO_ARCHIVE_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/zenodo.org/data.zip";
 const ZENODO_ARCHIVE_LIVE: &str = "https://zenodo.org/records/8098323/files/data.zip";
-const KWAJ_STATION: &str = "1820000";
-const KWAJ_LAT: f64 = 8.731667;
-const KWAJ_LON: f64 = 167.73611;
 const COOPS_BEGIN: &str = "20220114";
 const COOPS_END: &str = "20220117";
 const ARRIVAL_WINDOW_S: f64 = 7200.0;
@@ -136,69 +135,136 @@ fn kyoto_pressure_section() {
         println!();
         return;
     };
-    let Some(bytes) = zip_member(&archive, KYOTO_DAY_MEMBER) else {
+    let names = zip_member_names(&archive);
+    let mut days: Vec<String> = names
+        .into_iter()
+        .filter(|n| n.len() == 15 && n.starts_with("data/2201") && n.ends_with(".txt"))
+        .collect();
+    days.sort();
+    if days.is_empty() {
         println!(
-            "raw pressure waveform: {KYOTO_DAY_MEMBER} absent from the Zenodo archive — cross-check pending"
+            "raw pressure waveform: no data/2201??.txt members readable from the Zenodo archive — cross-check pending"
         );
-        let names = zip_member_names(&archive);
-        if names.is_empty() {
-            println!("Zenodo archive members: none readable (0 honored)");
-        } else {
-            let listed: Vec<String> = names.iter().take(40).cloned().collect();
-            let suffix = if names.len() > 40 {
-                format!(" … ({} members)", names.len())
-            } else {
-                String::new()
-            };
-            println!("Zenodo archive members: {}{suffix}", listed.join(", "));
+        println!();
+        return;
+    }
+    let mut primary_samples: Vec<PressureSample> = Vec::new();
+    let mut other_sum = 0.0;
+    let mut other_count = 0usize;
+    let mut parsed_days = 0usize;
+    let mut absent: Vec<&str> = Vec::new();
+    for name in &days {
+        let Some(samples) = zip_member(&archive, name)
+            .map(|b| parse_pressure(&String::from_utf8_lossy(&b)))
+        else {
+            absent.push(name.as_str());
+            continue;
+        };
+        if samples.is_empty() {
+            absent.push(name.as_str());
+            continue;
         }
-        println!();
-        return;
-    };
-    let text = String::from_utf8_lossy(&bytes);
-    let samples = parse_pressure(&text);
-    if samples.is_empty() {
-        println!(
-            "raw pressure waveform: {KYOTO_DAY_MEMBER} carries no parseable pressure rows (0 honored)"
-        );
-        println!();
-        return;
+        parsed_days += 1;
+        if name == KYOTO_DAY_MEMBER {
+            primary_samples = samples;
+        } else {
+            for s in &samples {
+                other_sum += s.hpa;
+                other_count += 1;
+            }
+        }
+    }
+    println!(
+        "Kyoto-A 1-Hz surface pressure (Zenodo 8098323, Kazama 2023, {KYOTO_DAY_MEMBER} + other January 2022 days):"
+    );
+    println!("member-days parsed: {parsed_days}");
+    for name in &absent {
+        println!("absent member (named, not filled): {name}");
     }
     let d = distance_km(KYOTO_LAT, KYOTO_LON, TONGA_LAT, TONGA_LON);
     let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
-    let min = samples.iter().min_by(|a, b| a.hpa.total_cmp(&b.hpa));
-    let max = samples.iter().max_by(|a, b| a.hpa.total_cmp(&b.hpa));
-    println!("Kyoto-A 1-Hz surface pressure (Zenodo 8098323, Kazama 2023, {KYOTO_DAY_MEMBER}):");
-    println!(
-        "station: lat {KYOTO_LAT}, lon {KYOTO_LON} ({} samples)",
-        samples.len()
-    );
+    println!("station: lat {KYOTO_LAT}, lon {KYOTO_LON}");
     println!("great-circle distance to the source: {d:.1} km");
     println!("predicted Lamb arrival (direct): {}", utc_str(predicted));
-    if let Some(min) = min {
-        println!(
-            "measured pressure minimum: {:.2} hPa at {}",
-            min.hpa,
-            utc_str(min.unix)
-        );
+    let pooled = if other_count > 0 {
+        Some(other_sum / other_count as f64)
+    } else {
+        None
+    };
+    match pooled {
+        Some(p) => println!(
+            "pooled baseline (mean over {other_count} other-day samples): {p:.2} hPa"
+        ),
+        None => println!("pooled baseline: absent — no other-day samples (0 honored)"),
     }
-    if let Some(max) = max {
+    primary_samples.sort_by(|a, b| a.unix.total_cmp(&b.unix));
+    if primary_samples.is_empty() {
         println!(
-            "measured pressure maximum: {:.2} hPa at {}",
-            max.hpa,
-            utc_str(max.unix)
+            "{KYOTO_DAY_MEMBER}: absent — the day's window maximum and pulse shape are pending"
         );
-        println!(
-            "measured − predicted (maximum): {:.0} s",
-            max.unix - predicted
-        );
+        println!();
+        return;
+    }
+    println!("{KYOTO_DAY_MEMBER}: {} samples", primary_samples.len());
+    let local_base = mean_over(
+        &primary_samples,
+        KYOTO_BASELINE_BEGIN_UNIX,
+        KYOTO_BASELINE_END_UNIX,
+    );
+    match local_base {
+        Some(lb) => println!(
+            "local 2-h pre-arrival baseline ({} … {} UTC): {lb:.2} hPa",
+            utc_str(KYOTO_BASELINE_BEGIN_UNIX),
+            utc_str(KYOTO_BASELINE_END_UNIX)
+        ),
+        None => println!("local 2-h pre-arrival baseline: absent — no samples in the named window"),
+    }
+    let day_max = primary_samples
+        .iter()
+        .max_by(|a, b| a.hpa.total_cmp(&b.hpa));
+    match day_max {
+        Some(s) => {
+            let ts = s.unix;
+            let v = s.hpa;
+            println!("day window maximum: {v:.2} hPa at {}", utc_str(ts));
+            if let Some(p) = pooled {
+                println!("anomaly vs pooled baseline: {:.2} hPa", v - p);
+            }
+            if let Some(lb) = local_base {
+                println!("anomaly vs local 2-h pre-arrival baseline: {:.2} hPa", v - lb);
+                if let Some(peak_idx) = primary_samples.iter().position(|s| s.unix == ts) {
+                    let mut rise_idx = peak_idx;
+                    while rise_idx > 0 && primary_samples[rise_idx - 1].hpa >= lb {
+                        rise_idx -= 1;
+                    }
+                    let rise_time = ts - primary_samples[rise_idx].unix;
+                    println!("rise time (baseline crossing → maximum): {rise_time:.0} s");
+                    let half = lb + 0.5 * (v - lb);
+                    let mut left = peak_idx;
+                    while left > 0 && primary_samples[left - 1].hpa >= half {
+                        left -= 1;
+                    }
+                    let mut right = peak_idx;
+                    while right + 1 < primary_samples.len()
+                        && primary_samples[right + 1].hpa >= half
+                    {
+                        right += 1;
+                    }
+                    let fwhm = primary_samples[right].unix - primary_samples[left].unix;
+                    println!("pulse width (FWHM above baseline + half-amplitude): {fwhm:.0} s");
+                }
+            }
+        }
+        None => println!(
+            "day window maximum: absent — no samples on {KYOTO_DAY_MEMBER} (0 honored)"
+        ),
     }
     println!();
 }
 
-fn coops_url(product: &str, extra: &str) -> String {
+fn coops_url(station_id: &str, product: &str, extra: &str) -> String {
     format!(
-        "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={COOPS_BEGIN}&end_date={COOPS_END}&station={KWAJ_STATION}&product={product}&units=metric&time_zone=gmt&interval=6&format=csv&application=omegaflow{extra}"
+        "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date={COOPS_BEGIN}&end_date={COOPS_END}&station={station_id}&product={product}&units=metric&time_zone=gmt&interval=6&format=csv&application=omegaflow{extra}"
     )
 }
 
@@ -247,14 +313,28 @@ fn mean_before(series: &[(f64, f64)], t: f64) -> Option<f64> {
     if n == 0 { None } else { Some(sum / n as f64) }
 }
 
-fn kwajalein_ear_section() {
-    let Some(ap_bytes) = fetch_raw_bytes(&coops_url("air_pressure", ""), 86400) else {
-        println!("Kwajalein ear: air_pressure route absent — cross-check pending");
+fn mean_over(series: &[PressureSample], lo: f64, hi: f64) -> Option<f64> {
+    let mut sum = 0.0;
+    let mut n = 0usize;
+    for s in series {
+        if s.unix >= lo && s.unix <= hi {
+            sum += s.hpa;
+            n += 1;
+        }
+    }
+    if n == 0 { None } else { Some(sum / n as f64) }
+}
+
+fn ear_section(station_id: &str, lat: f64, lon: f64, label: &str) {
+    let Some(ap_bytes) = fetch_raw_bytes(&coops_url(station_id, "air_pressure", ""), 86400) else {
+        println!("{label} ear: air_pressure route absent — cross-check pending");
         println!();
         return;
     };
-    let Some(wl_bytes) = fetch_raw_bytes(&coops_url("water_level", "&datum=MSL"), 86400) else {
-        println!("Kwajalein ear: water_level route absent — cross-check pending");
+    let Some(wl_bytes) =
+        fetch_raw_bytes(&coops_url(station_id, "water_level", "&datum=MSL"), 86400)
+    else {
+        println!("{label} ear: water_level route absent — cross-check pending");
         println!();
         return;
     };
@@ -262,22 +342,22 @@ fn kwajalein_ear_section() {
     let wl = parse_coops(&String::from_utf8_lossy(&wl_bytes));
     if ap.is_empty() || wl.is_empty() {
         println!(
-            "Kwajalein ear: one series void (pressure {} / water {} samples) — cross-check pending",
+            "{label} ear: one series void (pressure {} / water {} samples) — cross-check pending",
             ap.len(),
             wl.len()
         );
         println!();
         return;
     }
-    let d = distance_km(KWAJ_LAT, KWAJ_LON, TONGA_LAT, TONGA_LON);
+    let d = distance_km(lat, lon, TONGA_LAT, TONGA_LON);
     let predicted = WATER_START_UNIX + d / LAMB_SPEED_KM_S;
     let Some(p_base) = mean_before(&ap, WATER_START_UNIX) else {
-        println!("Kwajalein ear: pressure carries no pre-eruption baseline — cross-check pending");
+        println!("{label} ear: pressure carries no pre-eruption baseline — cross-check pending");
         println!();
         return;
     };
     let Some(w_base) = mean_before(&wl, WATER_START_UNIX) else {
-        println!("Kwajalein ear: water carries no pre-eruption baseline — cross-check pending");
+        println!("{label} ear: water carries no pre-eruption baseline — cross-check pending");
         println!();
         return;
     };
@@ -296,9 +376,9 @@ fn kwajalein_ear_section() {
     });
     let p_global_min = ap.iter().min_by(|a, b| a.1.total_cmp(&b.1)).copied();
     let p_global_max = ap.iter().max_by(|a, b| a.1.total_cmp(&b.1)).copied();
-    println!("Kwajalein ear (NOAA CO-OPS {KWAJ_STATION}, air_pressure + water_level, 6-min, GMT):");
+    println!("{label} ear (NOAA CO-OPS {station_id}, air_pressure + water_level, 6-min, GMT):");
     println!(
-        "station: lat {KWAJ_LAT}, lon {KWAJ_LON} (pressure {} / water {} samples)",
+        "station: lat {lat}, lon {lon} (pressure {} / water {} samples)",
         ap.len(),
         wl.len()
     );
@@ -424,7 +504,9 @@ fn main() {
     println!("Lamb wave speed: {LAMB_SPEED_KM_S} km/s (atmospheric Lamb phase speed)");
     println!();
 
-    kwajalein_ear_section();
+    ear_section("1820000", 8.731667, 167.73611, "Kwajalein");
+    ear_section("1890000", 19.290556, 166.6175, "Wake Island");
+    ear_section("1630000", 13.443389, 144.65636, "Guam Apra Harbor");
     kyoto_pressure_section();
 
     let Ok(bytes) = std::fs::read(&bin_path) else {
@@ -443,6 +525,7 @@ fn main() {
         println!("cross-check pending: the bin carries no back-azimuth detections (0 honored)");
         return;
     }
+    let vapp: Vec<_> = records.iter().filter(|r| r.comp == COMP_BGR_VAPP).collect();
     let Some(lsk) = embedded_lsk() else {
         println!("cross-check pending: the embedded leap-second table parses void");
         return;
@@ -486,33 +569,48 @@ fn main() {
     println!();
     println!("nearest BGR back-azimuth detection to each predicted arrival:");
     println!(
-        "{:>14}  {:>20}  {:>9}  {:>9}  {:>9}",
-        "path", "detected UTC", "dt s", "azim deg", "resid deg"
+        "{:>14}  {:>20}  {:>9}  {:>9}  {:>9}  {:>9}  {:>9}",
+        "path", "detected UTC", "dt s", "azim deg", "resid deg", "vapp m/s", "slow s/km"
     );
     for (name, path_km, path_azim) in &paths {
         let pred_tdb = water_start_tdb + path_km / LAMB_SPEED_KM_S;
-        let mut best: Option<(f64, f64, f64)> = None;
-        for r in &azim {
+        let mut best: Option<(usize, f64)> = None;
+        for (i, r) in azim.iter().enumerate() {
             let dt = r.t - pred_tdb;
-            if best.map_or(true, |(bdt, _, _)| dt.abs() < bdt.abs()) {
-                best = Some((dt, r.val.rem_euclid(360.0), r.t));
+            if best.map_or(true, |(_, bdt)| dt.abs() < bdt.abs()) {
+                best = Some((i, dt));
             }
         }
         match best {
-            Some((dt, azi, tdb)) => {
-                let Some(unix) = lsk.tdb_to_unix(tdb) else {
+            Some((idx, dt)) => {
+                let r = &azim[idx];
+                let Some(unix) = lsk.tdb_to_unix(r.t) else {
                     continue;
                 };
+                let azi = r.val.rem_euclid(360.0);
+                let vmatch = vapp.iter().find(|v| v.t == r.t && v.station == r.station);
+                let (vstr, sstr) = match vmatch {
+                    Some(v) if v.val > 0.0 => {
+                        (format!("{:.1}", v.val), format!("{:.2}", 1000.0 / v.val))
+                    }
+                    Some(v) => (format!("{:.1}", v.val), "absent".to_string()),
+                    None => ("absent".to_string(), "absent".to_string()),
+                };
                 println!(
-                    "{:>14}  {:>20}  {:>9.0}  {:>9.1}  {:>9.1}",
+                    "{:>14}  {:>20}  {:>9.0}  {:>9.1}  {:>9.1}  {:>9}  {:>9}",
                     name,
                     utc_str(unix),
                     dt,
                     azi,
-                    wrap_deg(azi - path_azim)
+                    wrap_deg(azi - path_azim),
+                    vstr,
+                    sstr
                 );
             }
             None => println!("{name:>14}  (no detection)"),
         }
     }
+    println!(
+        "a sub-300 s matched-filter arrival is not recoverable from this PMCC detection-list product (raw waveform vDEC account-blocked)"
+    );
 }
