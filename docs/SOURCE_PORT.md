@@ -18,8 +18,8 @@ registrierten Ort.
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). **Gemessen 2026-09-17: nicht im Baum** (ebenso `queue/sources_potential_*`); die Queue trägt nur `grind_*`-Drafts. Re-Derivation offen. |
-| `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
+| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). **Gemessen 2026-09-17: am Datenträger absent** (gitignored, nie getrackt; Git-Blob `760a93b5` = 3.416 Blöcke). Träger der Inventar-Funktion ist `archive-root/pipeline-auslese-2026-09-17/stage/master_converted.φ` (5.206 v6-Blöcke) — byte-genaue Re-Derivation gemessen unnötig (13. Korpus unidentifiziert, Merge one-off). |
+| `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. **Gemessen 2026-09-17: am Datenträger vorhanden** (`_pre-cdn_9k_richest` 824 + `_params` 63 Blöcke, gitignored). |
 | `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
 | `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. Ruhend ausgelagert 2026-09-17 (Entscheid-Folge 38) nach `archive-root/pipeline-auslese-2026-09-17/stage/` — regenerierbar; ebenso `weights_*.txt`, die Probe-Ausgänge und `meteo_harvest/` (CDN `archive-api.open-meteo.com`). |
 | `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
@@ -34,6 +34,7 @@ registrierten Ort.
 | `phi/dead_sources.φ` | Dispositionen: nur `dead` (unerreichbar — Re-Check-Pflicht). |
 | `phi/declined_sources.φ` | Dispositionen: `decline` (lebt, geurteilt) + `superseded-by-integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
+| `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `args`, `pattern`, `shard`, `timeout`, `idempotent`, `note`. `args <cli>` trägt die Zusatz-Argumente des Arms — `harvest.yml` liest sie aus dem Block und reicht sie dem Arm weiter; `harvest_reg --check` whitelistet das Feld, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
 | `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
 | `docs/concepts/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
