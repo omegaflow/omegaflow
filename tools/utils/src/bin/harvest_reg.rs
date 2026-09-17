@@ -156,6 +156,18 @@ fn check() {
                 }
             }
         }
+        if let Some(timeout) = block.field("timeout") {
+            match timeout.parse::<usize>() {
+                Ok(n) if n > 0 => {}
+                _ => {
+                    eprintln!(
+                        "harvest_reg: block at line {}: timeout '{timeout}' is not a positive count",
+                        block.start
+                    );
+                    bad += 1;
+                }
+            }
+        }
         if let Some(idem) = block.field("idempotent") {
             if idem != "true" && idem != "false" {
                 eprintln!(
@@ -163,6 +175,18 @@ fn check() {
                     block.start
                 );
                 bad += 1;
+            }
+        }
+        let mut keys = HashSet::new();
+        for line in &block.lines {
+            if let Some((key, _)) = parse_field(line) {
+                if !keys.insert(key) {
+                    eprintln!(
+                        "harvest_reg: block at line {}: duplicate field '{key}'",
+                        block.start
+                    );
+                    bad += 1;
+                }
             }
         }
         for line in &block.lines {
@@ -176,6 +200,7 @@ fn check() {
                             | "arm"
                             | "pattern"
                             | "shard"
+                            | "timeout"
                             | "idempotent"
                             | "note"
                     ) => {}

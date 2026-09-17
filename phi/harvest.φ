@@ -6,3 +6,12 @@ pattern ^maven_tnf_t[0-9]+_[0-9]+(_[0-9]+)?\.bin$
 shard 3
 idempotent true
 note run 35205267703 measured 2026-09-17; 3 shard assets present (1073741768 B / 1073741768 B / 194661152 B per the phi/sources.φ maven_tnf notes); sha256 cbdf3ea4… / 0806df61… / 17a69d1c…
+
+asset fehlt
+format rosetta_odf
+tag archives.esac.esa.int
+arm rosetta_odf_compiler
+pattern ^rosetta_odf\.bin$
+idempotent true
+timeout 350
+note Rosetta RSI IFMS AGC carrier-level/polar-angle series; consumer arm src/archivar/ifms_agc.rs; compiler tools/harvest/src/bin/rosetta_odf_compiler.rs; CDN asset measured fehlt 2026-09-17 — gh release view archives.esac.esa.int --repo omegaflow/sources carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29 (run 35148936648 died at the 240 cap).
