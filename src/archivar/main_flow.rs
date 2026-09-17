@@ -2133,6 +2133,7 @@ pub fn main_flow() {
                     | "maven_tnf"
                     | "mariner_occlt"
                     | "dart_tnf"
+                    | "ulysses_atdf"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
