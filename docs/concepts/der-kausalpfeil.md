@@ -2,7 +2,7 @@
   title: Der Kausalpfeil — drei Rätsel, drei Blätter Papier
   class: concept
   date: 2026-08-21
-  sha256: 857540ec2aafab7ad806832031b56e328cff8052ddefb0f839c8d16258c8e436
+  sha256: 708561e0d49e2101c60e530e28785c6e9c9c776ed0da6e53e962748061546143
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/specs/minkowski-field-permeability.md docs/handover/archiv/handover-2026-09-09-te-atom-4.md phi/sources.φ
 -->
@@ -83,18 +83,17 @@ statement, Unterbestimmtheit, keine Fabrikation).
   thermal im selben Block, `phi/sources.φ:198–215`), Argo (`:1140–1161`),
   Drifter-SST (`:353–359`), OOI-SST (`:676`) — lebt.
 - **Bz:** RTSW mag/wind (`phi/sources.φ:102/108`; Bz, Bt, speed, density,
-  1-min, live geprüft) — lebt. INTERMAGNET: ausstehend — Queue-Draft
+  1-min, live geprüft) — lebt. INTERMAGNET: lebt — BGS-HAPI
+  (`phi/sources.φ:4476–4496`, `intermagnet_xyz_*`); Queue-Draft
   `phi/pipeline/queue/sources_potential_pre-cdn_params.φ` (HAPI, ~154
-  Observatorien), Register
-  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`.
+  Observatorien).
 - **LAIC:** Seismizität USGS/SeismicPortal/JMA/GeoNet/p2pquake
   (`phi/sources.φ:18–48, 116–122, 237–240`) — lebt. Ionosphäre: Swarm
   FAC/IRC (`:1111–1112`, electric) — lebt. CSES: descoped (kein anonymer
   Zugang; In-situ-E-Feld über DEMETER/CDPP + CHAMP). IONEX-GIM:
-  ausstehend (CDDIS-OAuth,
-  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`). GIC direkt:
-  ausstehend (kein Feed,
-  `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`).
+  registriert (`format ionex`, `phi/sources.φ:1466–1471`; Compiler
+  `tools/harvest/src/bin/ionex_compiler.rs`). GIC direkt:
+  registriert (`fmi_gic`, `phi/sources.φ:6907–6911`).
 
 ## Ethik der Messung
 
