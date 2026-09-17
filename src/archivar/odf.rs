@@ -266,6 +266,16 @@ pub const TNF_FORMAT_TONE_RANGE: u8 = 15;
 pub const TNF_FORMAT_CARRIER_OBSERVABLE: u8 = 16;
 pub const TNF_FORMAT_TOTAL_PHASE_OBSERVABLE: u8 = 17;
 
+const TNF_CHDO_UPLINK: u16 = 132;
+const TNF_CHDO_DOWNLINK: u16 = 133;
+
+fn tnf_time_tag_offset(secondary_chdo_type: u16) -> usize {
+    match secondary_chdo_type {
+        TNF_CHDO_UPLINK | TNF_CHDO_DOWNLINK => 48,
+        _ => 44,
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct TnfSfdu {
     pub offset: usize,
@@ -312,6 +322,9 @@ fn read_tnf_sfdu(bytes: &[u8], offset: usize) -> Option<TnfSfdu> {
     }
     let mut data_description_id = [0u8; 4];
     data_description_id.copy_from_slice(&bytes[8..12]);
+    let secondary_chdo_type = be16(&bytes[32..34]);
+    let time_off = tnf_time_tag_offset(secondary_chdo_type);
+    let rsn_off = time_off - 4;
     Some(TnfSfdu {
         offset,
         total_len,
@@ -325,13 +338,13 @@ fn read_tnf_sfdu(bytes: &[u8], offset: usize) -> Option<TnfSfdu> {
         mnr_data_class: bytes[29],
         mission_id: bytes[30],
         format_code: bytes[31],
-        secondary_chdo_type: be16(&bytes[32..34]),
+        secondary_chdo_type,
         secondary_chdo_length: be16(&bytes[34..36]),
         scft_id: bytes[39],
-        rec_seq_num: be32(&bytes[44..48]),
-        year: be16(&bytes[48..50]),
-        doy: be16(&bytes[50..52]),
-        sec: f64::from_be_bytes(bytes[52..60].try_into().ok()?),
+        rec_seq_num: be32(&bytes[rsn_off..rsn_off + 4]),
+        year: be16(&bytes[time_off..time_off + 2]),
+        doy: be16(&bytes[time_off + 2..time_off + 4]),
+        sec: f64::from_be_bytes(bytes[time_off + 4..time_off + 12].try_into().ok()?),
     })
 }
 
@@ -2274,15 +2287,32 @@ mod tests {
         b[off..off + 8].copy_from_slice(&v.to_be_bytes());
     }
 
+    fn tnf_secondary_chdo_type(format_code: u8) -> u16 {
+        match format_code {
+            TNF_FORMAT_UL_CARRIER_PHASE
+            | TNF_FORMAT_UL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_UL_PN_RANGING_PHASE
+            | TNF_FORMAT_RAMP => TNF_CHDO_UPLINK,
+            TNF_FORMAT_DL_CARRIER_PHASE
+            | TNF_FORMAT_DL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_DL_PN_RANGING_PHASE => TNF_CHDO_DOWNLINK,
+            TNF_FORMAT_VLBI => 135,
+            TNF_FORMAT_SMOOTHED_NOISE | TNF_FORMAT_ALLAN_DEVIATION => 136,
+            _ => 134,
+        }
+    }
+
     fn sfdu_label(b: &mut [u8], format_code: u8, year: u16, doy: u16, sec: f64) {
         let sfdu_length = (b.len() - TNF_LABEL_LEN) as u64;
         b[0..4].copy_from_slice(b"NJPL");
         b[8..12].copy_from_slice(b"C125");
         b[12..20].copy_from_slice(&sfdu_length.to_be_bytes());
         b[31] = format_code;
-        put_u16(b, 48, year);
-        put_u16(b, 50, doy);
-        put_f64(b, 52, sec);
+        let time_off = tnf_time_tag_offset(tnf_secondary_chdo_type(format_code));
+        put_u16(b, 32, tnf_secondary_chdo_type(format_code));
+        put_u16(b, time_off, year);
+        put_u16(b, time_off + 2, doy);
+        put_f64(b, time_off + 4, sec);
     }
 
     fn test_lsk() -> crate::archivar::lsk::LeapSeconds {
@@ -2359,6 +2389,31 @@ mod tests {
         assert_eq!(rows[0][TNF_ROW_FORMAT], 17.0);
         let phase = tnf_phase_cycles(0x0042cd06, 0x3881085a, 0x59b3cfd9);
         assert_eq!(rows[0][TNF_ROW_OBSERVABLE], phase);
+    }
+
+    const MAVEN_TNF_DT16_FRAME: &str = "4e4a504c324930304331323500000000000000c80001008800020004060e18100086007c313100ca0000000007e0003240f0c6b80000000054d204656e710102010101000100000000000000000034535ed1230005022302000000000000000001040001000000000000000033aa56a2000000020000000041ff7682fff00000000000000000000000000370000002ed00000000000000003f80000001000000000a00380100000000000000000000000000000000000000c2ffdaea00013f800000c1ff76fefc901abc000000000000000000000000000000000000";
+
+    #[test]
+    fn tnf_dt16_carrier_observable_time_tag_decodes_to_plausible_tdb() {
+        let lsk = test_lsk();
+        let bytes = unhex(MAVEN_TNF_DT16_FRAME);
+        let frames = scan_tnf_sfdus(&bytes).unwrap();
+        assert_eq!(frames.len(), 1);
+        let f = &frames[0];
+        assert_eq!(f.secondary_chdo_type, 134);
+        assert_eq!(f.format_code, 16);
+        assert_eq!(f.rec_seq_num, 0);
+        assert_eq!(f.year, 2016);
+        assert_eq!(f.doy, 50);
+        assert!((f.sec - 68715.5).abs() < 1e-6);
+        let rows = tnf_rows(&bytes, &lsk).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0][TNF_ROW_FORMAT], 16.0);
+        assert!(
+            (rows[0][TNF_ROW_TDB] - 509_180_757.684).abs() < 1e-6,
+            "DT16 tdb {} is not the SFDU time-tag tdb",
+            rows[0][TNF_ROW_TDB]
+        );
     }
 
     #[test]
