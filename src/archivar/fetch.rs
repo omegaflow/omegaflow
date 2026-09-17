@@ -863,6 +863,7 @@ pub struct FetchResult {
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Option<SpectralHash>,
     pub fetch_ok: bool,
+    pub sample_ttl_override: Option<f64>,
 }
 
 pub fn rfc1123_to_unix(s: &str) -> Option<u64> {
@@ -945,17 +946,43 @@ pub fn cdn_last_modified_age(url: &str) -> Option<u64> {
     Some(now.as_secs().saturating_sub(asset_ts))
 }
 
-pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
-    cdn_last_modified_age(cdn_url).is_some_and(|age| age < ttl)
+pub fn cdn_fresh_age(cdn_url: &str, ttl: u64) -> Option<u64> {
+    cdn_last_modified_age(cdn_url).filter(|age| *age < ttl)
 }
 
-pub fn fetch_one(
+pub fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
+    cdn_fresh_age(cdn_url, ttl).is_some()
+}
+
+pub fn url_has_fixed_window(template: &str) -> bool {
+    let b = template.as_bytes();
+    let mut i = 0;
+    while i + 10 <= b.len() {
+        if b[i].is_ascii_digit()
+            && b[i + 1].is_ascii_digit()
+            && b[i + 2].is_ascii_digit()
+            && b[i + 3].is_ascii_digit()
+            && b[i + 4] == b'-'
+            && b[i + 5].is_ascii_digit()
+            && b[i + 6].is_ascii_digit()
+            && b[i + 7] == b'-'
+            && b[i + 8].is_ascii_digit()
+            && b[i + 9].is_ascii_digit()
+        {
+            return true;
+        }
+        i += 1;
+    }
+    false
+}
+
+pub fn fetch_one_with_age(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
     ttl: u64,
     now: Option<f64>,
-) -> Option<String> {
+) -> Option<(String, Option<u64>)> {
     let manifest = cdn_manifest_map();
     let asset_name = |u: &str| -> String {
         match manifest.get(u) {
@@ -972,10 +999,10 @@ pub fn fetch_one(
             if now.is_some_and(|n| cache_fresh_at(&cache_path, ttl, n))
                 && let Ok(cached) = std::fs::read_to_string(&cache_path)
             {
-                return Some(cached);
+                return Some((cached, None));
             }
             let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
-            if cdn_fresh(&cdn_url, ttl)
+            if let Some(age) = cdn_fresh_age(&cdn_url, ttl)
                 && let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl)
             {
                 if let Some(parent) = std::path::Path::new(&cache_path).parent() {
@@ -991,7 +1018,7 @@ pub fn fetch_one(
                         eprintln!("cache {}: write void — refetch next cycle", cache_path)
                     }
                 }
-                return Some(cdn_body);
+                return Some((cdn_body, Some(age)));
             }
         }
     }
@@ -1004,7 +1031,7 @@ pub fn fetch_one(
         if !name.is_empty() {
             let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
             if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
-                return Some(cdn_body);
+                return Some((cdn_body, cdn_last_modified_age(&cdn_url)));
             }
         }
     }
@@ -1029,7 +1056,17 @@ pub fn fetch_one(
             }
         }
     }
-    live
+    live.map(|l| (l, None))
+}
+
+pub fn fetch_one(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+    now: Option<f64>,
+) -> Option<String> {
+    fetch_one_with_age(url, body, headers, ttl, now).map(|(b, _)| b)
 }
 
 pub fn cache_root() -> std::path::PathBuf {

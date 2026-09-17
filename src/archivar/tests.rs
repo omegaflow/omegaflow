@@ -4810,6 +4810,69 @@ fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
 }
 
 #[test]
+fn test_url_has_fixed_window_distinguishes_static_from_live() {
+    assert!(
+        super::url_has_fixed_window(
+            "https://vires.services/hapi/data?id=CS_OPER_MAG&start=2018-10-10T00:00:00Z&stop=2018-10-10T00:59:59Z&parameters=F&format=json"
+        ),
+        "a fixed start/stop window is static"
+    );
+    assert!(
+        super::url_has_fixed_window(
+            "https://archive-api.open-meteo.com/v1/archive?start_date=2026-08-18&end_date=2026-08-27&hourly=temperature_2m"
+        ),
+        "a fixed start_date/end_date archive window is static"
+    );
+    assert!(
+        !super::url_has_fixed_window(
+            "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json"
+        ),
+        "a rolling 1-day window is live"
+    );
+    assert!(
+        !super::url_has_fixed_window(
+            "https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z"
+        ),
+        "a relative placeholder window is live"
+    );
+    assert!(
+        !super::url_has_fixed_window(
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime={hour_ago}&minmagnitude=2.0"
+        ),
+        "an hour_ago placeholder is live"
+    );
+}
+
+#[test]
+fn test_fetch_one_with_age_carries_the_cdn_age_on_fallback() {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let (server, handle) = local_http_head_get(rfc1123_from_unix(now - 86400), "{\"real\":true}");
+    let state = "/tmp/opencode/omegaflow_fetch_age_state";
+    let _ = std::fs::remove_dir_all(state);
+    unsafe {
+        std::env::set_var("OMEGAFLOW_STATE", state);
+        std::env::set_var("OMEGAFLOW_CDN_BASE", &server);
+    }
+    let live = format!("{}/live-void.json", server);
+    let (body, age) = super::fetch_one_with_age(&live, None, &[], 60, Some(1.0e9)).unwrap();
+    unsafe {
+        std::env::remove_var("OMEGAFLOW_CDN_BASE");
+        std::env::remove_var("OMEGAFLOW_STATE");
+    }
+    handle.join().unwrap();
+    assert_eq!(body.as_str(), "{\"real\":true}");
+    let age = age.expect("the served CDN body carries its measured age");
+    assert!(
+        (86400..=86400 + 5).contains(&age),
+        "the served asset is one day stale (age {})",
+        age
+    );
+}
+
+#[test]
 fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
     let dir = std::env::temp_dir().join(format!("omegaflow_cdn_stamp_{}", std::process::id()));
     let _ = std::fs::create_dir_all(&dir);
