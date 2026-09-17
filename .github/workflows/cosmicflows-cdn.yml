@@ -21,7 +21,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin cosmicflows_compiler -- \
             --out cosmicflows_cf4.json \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: cosmicflows_cf4 returned void" \
                  "cosmicflows_cf4 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

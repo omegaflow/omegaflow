@@ -35,7 +35,7 @@ jobs:
             --union-bright kernels/bright_stars.json \
             --out dr3_stars.bin \
             --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: dr3_stars returned void" \
                  "dr3_stars compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }

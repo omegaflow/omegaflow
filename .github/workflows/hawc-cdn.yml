@@ -34,27 +34,27 @@ jobs:
           [ -n "$OMEGAFLOW_CA_BUNDLE" ] && caflags="--cacert $OMEGAFLOW_CA_BUNDLE"
           curl -sSfL $caflags --retry 3 --max-time 600 -o kernels/2HWC.yaml \
             https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: 2HWC.yaml returned void" \
                  "curl on data.hawc-observatory.org did not reach 2HWC.yaml. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           curl -sSfL $caflags --retry 3 --max-time 600 -o kernels/3HWC.yaml \
             https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: 3HWC.yaml returned void" \
                  "curl on data.hawc-observatory.org did not reach 3HWC.yaml. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
       - name: Compile the HAWC source catalogs and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin hawc_compiler -- \
             --input kernels/2HWC.yaml --out hawc_2hwc.sky1 --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: hawc_2hwc.sky1 returned void" \
                  "hawc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin hawc_compiler -- \
             --input kernels/3HWC.yaml --out hawc_3hwc.sky1 --ci-mode \
-            || bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "hawc-cdn: hawc_3hwc.sky1 returned void" \
                  "hawc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health
+                 health; exit 1; }
