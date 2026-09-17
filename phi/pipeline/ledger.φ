@@ -55,17 +55,17 @@ parser-gap
 kandidat https://gcn.nasa.gov/missions/svom
 note Parser-gap: kein Listen-Feed — GCN-v0.1-API tot (404 Remix-SPA), Circulars nur per SPA-Suche + /circulars/{id}.json ohne ra/dec (§15.9, 2026-08-19).
 
-ausstehend
+kompiliert
 kandidat https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.csv
-note Re-Messung 2026-09-16 (grind-pro): lebendes Dataset gefunden — OBSEA_seabed_station_TS_L1c, maxTime 2026-09-14T08:00:00Z (30-min-Mittel), Kraft accept (passiver Treiber). Das zuvor bekannte OBSEA_moored_buoy_meteo_L1c bleibt eingefroren 2026-05-12. Nächster Schritt: sources.φ-Block + CDN-Manifestation (Register-/CDN-Schritt).
+note Re-Messung 2026-09-16 (grind-pro): lebendes Dataset gefunden — OBSEA_seabed_station_TS_L1c, maxTime 2026-09-14T08:00:00Z (30-min-Mittel), Kraft accept (passiver Treiber). Das zuvor bekannte OBSEA_moored_buoy_meteo_L1c bleibt eingefroren 2026-05-12. sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 792196294d0435af44a921e3146d2b0041144d28262a691b2cf5f3914c8e6b2c, HTTP 200).
 
-ausstehend
+kompiliert
 kandidat https://api.v2.sondehub.org/sonde/Y3313219
-note Re-Check 2026-09-16 (grind-flash): ~1 Nachricht/s (1 Hz, RS41), Frame 4058→12205 in 2026-09-16 07:00–09:16; sources.φ-Block steht. Nächster Schritt: CDN-Manifestation.
+note Re-Check 2026-09-16 (grind-flash): ~1 Nachricht/s (1 Hz, RS41), Frame 4058→12205 in 2026-09-16 07:00–09:16; sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (sonde-Y3313219.json, 5548231 B, sha256 64a0097f43ccb82373037263fc2090c0e380024e7f1ebbf607e1de96d1dcdcc7, HTTP 200).
 
-ausstehend
+kompiliert
 kandidat https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.csv
-note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block steht (bass-20260907T0000.json). Nächster Schritt: CDN-Manifestation.
+note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (erddap-tabledap-bass-20260907T0000.json-…-time_3E-max_time_-7days.json, 3339613 B, sha256 5503c6a58d32d56a2297f1332b807fe37293a0c0e16d4f0bf59a345fa00e766b, HTTP 200).
 
 ausstehend
 kandidat https://exofop.ipac.caltech.edu/
@@ -90,3 +90,43 @@ note LRO RSS raw tracking (Goddard Universal Tracking Data Format, 75-Byte-Recor
 kompiliert
 kandidat https://noaa-goes16.s3.amazonaws.com/
 note GOES-16 ABI L1b RadC Manifest — shared Bucket-Index src/archivar/goes_abi/s3.rs (ListBucket ?prefix=ABI-L1b-RadC/&delimiter=/, HTTP 200 ohne Auth), ein M6-Full-Disk-Granule je Kanal aus der neuesten Stunde (Archiv endet 2025/097/18, gemessen 2026-09-17); Arm src/archivar/goes_abi.rs parse_bin + extract.rs-Dispatch goes_abi; Compiler tools/harvest/src/bin/goes16_abi_compiler.rs (tag noaa-goes16.s3.amazonaws.com). phi/harvest.φ-Block goes16_abi (asset fehlt). CDN-Manifestation offen: harvest-dispatch feuert beim Push, dann sha256/Größe messen + phi/sources.φ-Block.
+
+ausstehend
+queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
+note 30 Blöcke (index.φ) — Datei am Datenträger vorhanden (11586 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
+note 3 Blöcke (index.φ) — Datei am Datenträger vorhanden (2062 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
+note 16 Blöcke (index.φ) — Datei am Datenträger vorhanden (3922 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
+note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (391917 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
+note 873 Blöcke (index.φ) — Datei am Datenträger vorhanden (615632 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
+note 1047 Blöcke (index.φ) — Datei am Datenträger vorhanden (488708 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_183l.φ
+note 19 Blöcke (index.φ) — Datei am Datenträger vorhanden (4710 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_2k.φ
+note 176 Blöcke (index.φ) — Datei am Datenträger vorhanden (45361 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_7k.φ
+note 423 Blöcke (index.φ) — Datei am Datenträger vorhanden (302462 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
+
+ausstehend
+queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
+note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port + Sweep, dann Disposition
