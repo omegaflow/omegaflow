@@ -8063,6 +8063,35 @@ fn voyager_saturn_register_field_names_match_components() {
 }
 
 #[test]
+fn mariner_occlt_series_dispatch_and_component_names() {
+    let row = [1.0e9, 38.0, 4.0, 20.0, 25.0, 637_641_753.0, 4096.0, -14.0, 14.0, -13.9, 0.0, 0.0];
+    let bytes = super::mariner_occlt::write_mocc_bin(&[row]);
+    let parsed = super::extract::series_parse_bin("mariner_occlt", &bytes)
+        .expect("mariner_occlt series parses");
+    assert_eq!(parsed.len(), 3);
+    assert_eq!(parsed[0].0, 1.0e9);
+    assert_eq!(parsed[0].1, -14.0);
+    assert_eq!(parsed[0].2, super::mariner_occlt::COMP_AMP_MIN);
+    assert_eq!(parsed[1].1, 14.0);
+    assert_eq!(parsed[1].2, super::mariner_occlt::COMP_AMP_MAX);
+    assert_eq!(parsed[2].1, -13.9);
+    assert_eq!(parsed[2].2, super::mariner_occlt::COMP_AMP_MEAN);
+    assert_eq!(
+        super::extract::series_component_name("mariner_occlt", super::mariner_occlt::COMP_AMP_MIN),
+        Some("mariner10_occlt_amp_min")
+    );
+    assert_eq!(
+        super::extract::series_component_name("mariner_occlt", super::mariner_occlt::COMP_AMP_MAX),
+        Some("mariner10_occlt_amp_max")
+    );
+    assert_eq!(
+        super::extract::series_component_name("mariner_occlt", super::mariner_occlt::COMP_AMP_MEAN),
+        Some("mariner10_occlt_amp_mean")
+    );
+    assert_eq!(super::extract::series_component_name("mariner_occlt", 99), None);
+}
+
+#[test]
 fn drs_fits_series_dispatch_and_component_names() {
     let rows = [[1.0e-9, -2.0e-9, 3.0e-9]];
     let bytes = super::drs_fits::write_bin(&rows, 1.47e9);
