@@ -1700,6 +1700,32 @@ pub fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSecon
     }
 }
 
+fn clock_now_unix() -> Option<f64> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|d| d.as_secs_f64())
+}
+
+fn clock_stale(clock: &HashMap<String, (f64, u32)>, url: &str, ttl: u64, now: f64) -> bool {
+    match clock.get(url) {
+        Some((fetched, failures)) => stale_after(*fetched, *failures, ttl, now),
+        None => true,
+    }
+}
+
+fn clock_record(clock: &mut HashMap<String, (f64, u32)>, url: &str, ok: bool) {
+    let Some(now) = clock_now_unix() else {
+        return;
+    };
+    let prev = match clock.get(url) {
+        Some((_, f)) => *f,
+        None => 0,
+    };
+    let next = if ok { 0 } else { (prev + 1).min(FETCH_VOID_CAP) };
+    clock.insert(url.to_string(), (now, next));
+}
+
 pub fn ci_mode(dir: &str) -> i32 {
     let env = load_env();
     let sources = if dir == "phi" {
@@ -1742,6 +1768,8 @@ pub fn ci_mode(dir: &str) -> i32 {
     let mut mirrored = 0u32;
     let mut fresh = 0u32;
     let mut host_void: HashSet<String> = HashSet::new();
+    let clock_path = content_cache("origin_clock.φ");
+    let mut clock = load_origin_clock(&clock_path);
     for src in &sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
@@ -1818,6 +1846,7 @@ pub fn ci_mode(dir: &str) -> i32 {
                 &mut reachable,
                 &mut dead,
                 &mut host_void,
+                &mut clock,
             );
             probe_fanout(
                 src,
@@ -1867,9 +1896,12 @@ pub fn ci_mode(dir: &str) -> i32 {
             (Some(nl), nm) if !nm.is_empty() => Some(cache_path_for(nl, nm)),
             _ => None,
         };
-        if let Some(cp) = &cache_path
-            && cache_fresh(cp, src.ttl)
-        {
+        let now = clock_now_unix();
+        let cache_held = cache_path
+            .as_ref()
+            .is_some_and(|cp| std::path::Path::new(cp).is_file())
+            && now.is_some_and(|n| !clock_stale(&clock, &src.url, src.ttl, n));
+        if cache_held {
             fresh += 1;
             continue;
         }
@@ -1879,11 +1911,17 @@ pub fn ci_mode(dir: &str) -> i32 {
                 eprintln!("ci-mode: fetch returned void for {}", src.url);
                 report_anomaly("API Unreachable", &src.url, "fetch returned void");
                 dead += 1;
+                if cache_path.is_some() {
+                    clock_record(&mut clock, &src.url, false);
+                }
                 continue;
             }
         };
         if parse_json(&raw).is_some() {
             reachable += 1;
+            if cache_path.is_some() {
+                clock_record(&mut clock, &src.url, true);
+            }
             if let (Some(l), Some(now)) = (&lsk, now_tdb) {
                 check_empty_data(src, &raw, now, l);
             }
@@ -1910,10 +1948,13 @@ pub fn ci_mode(dir: &str) -> i32 {
             eprintln!("ci-mode: {} JSON parse void", src.url);
             report_anomaly("Malformed Data", &src.url, "JSON parse void");
             dead += 1;
+            if cache_path.is_some() {
+                clock_record(&mut clock, &src.url, false);
+            }
         }
     }
     eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} mirrored to CDN, {} fresh (local TTL), mirror={}",
+        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} mirrored to CDN, {} fresh (ttl/Φ gate), mirror={}",
         reachable, total, dead, pending, mirrored, fresh, mirror_enabled
     );
     let anomalies = take_anomalies();
@@ -1985,6 +2026,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             }
         }
     }
+    save_origin_clock(&clock_path, &clock);
     0
 }
 pub fn fanout_stations_secret_void(src: &SourceConfig, env: &HashMap<String, String>) -> bool {
@@ -2002,6 +2044,7 @@ pub fn mirror_stations(
     reachable: &mut usize,
     dead: &mut usize,
     host_void: &mut HashSet<String>,
+    clock: &mut HashMap<String, (f64, u32)>,
 ) {
     let Some(stations_url) = &src.stations_url else {
         return;
@@ -2018,7 +2061,10 @@ pub fn mirror_stations(
     }
     let name = source_name_from_url(stations_url);
     let cache_path = cache_path_for(netloc, &name);
-    if cache_fresh(&cache_path, src.ttl) {
+    let now = clock_now_unix();
+    let cache_held = std::path::Path::new(&cache_path).is_file()
+        && now.is_some_and(|n| !clock_stale(clock, stations_url, src.ttl, n));
+    if cache_held {
         return;
     }
     match fetch_raw(stations_url, None, headers, src.ttl) {
@@ -2034,15 +2080,18 @@ pub fn mirror_stations(
                 {
                     *mirrored += 1;
                 }
+                clock_record(clock, stations_url, true);
             } else {
                 eprintln!("ci-mode: stations {} JSON parse void", stations_url);
                 *dead += 1;
+                clock_record(clock, stations_url, false);
             }
         }
         None => {
             eprintln!("ci-mode: stations fetch void {}", stations_url);
             host_void.insert(netloc.to_string());
             *dead += 1;
+            clock_record(clock, stations_url, false);
         }
     }
 }
