@@ -2,7 +2,7 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: cf1062dc3e48e5576d97c11287104d09a6717534d920904efb01154f2079dcac
+  sha256: c7bc368038b83d1ef23124245addaa73d5163e266d49e3593980106fcf6c3b46
   see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
@@ -66,9 +66,9 @@ Ein ungemessener Wert ist `pending`, nie eine Zahl (0 honored).
 
 | Blatt | Rätsel | Paar | Kanäle (Stand 2026-08-21) |
 |---|---|---|---|
-| I | ENSO — treibt der Wind das Meer? | Wind ↔ SST | SST thermal (Port pending: Argovis / imos_argo_sst / ESA-CCI), Wind advective (FROST met.no lebt; TAO/ERA5 pending), SOI acoustic (pending) |
+| I | ENSO — treibt der Wind das Meer? | Wind ↔ SST | SST thermal (Argovis `argovis-api` registriert; imos_argo_sst / ESA-CCI pending), Wind advective (FROST met.no lebt; TAO/ERA5 pending), SOI acoustic (pending) |
 | II | Geomagnetischer Sturm — welcher Parameter treibt? | Bz / Speed / Dichte → Kp / INTERMAGNET | alle leben: rtsw_mag_1m (sources.φ:103), rtsw_wind_1m (:109), Kp (:124), OMNI BZ_GSM1800 (:513), BGS-INTERMAGNET-HAPI (:1067) |
-| III | LAIC (Nadel IV) — warnt die Erde den Himmel? | Lithosphäre → Ionosphäre | USGS-Katalog (Port pending), Swarm-VirES lebt (:1100), CSES pending Recherche, INTERMAGNET lebt (:1067) |
+| III | LAIC (Nadel IV) — warnt die Erde den Himmel? | Lithosphäre → Ionosphäre | USGS-Katalog lebt (`usgs_mt_mww`, :106), Swarm-VirES lebt (:1100), CSES pending Recherche, INTERMAGNET lebt (:1067) |
 
 Die Aufträge: `handover-2026-08-21-blatt-enso-kausalpfeil.md`,
 `handover-2026-08-21-blatt-bz-geomagnetisch.md`,
