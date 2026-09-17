@@ -1,5 +1,7 @@
 #[path = "archive_search/datacite.rs"]
 mod datacite;
+#[path = "archive_search/arxiv_src.rs"]
+mod arxiv_src;
 #[path = "archive_search/git.rs"]
 mod git;
 #[path = "archive_search/heasarc.rs"]
@@ -111,6 +113,8 @@ enum Mode {
     Verdict,
     Playwright,
     PdfImage,
+    PdfText,
+    ArxivSrc,
     Net(&'static str),
 }
 
@@ -133,6 +137,7 @@ fn main() {
     let mut playwright_input: Option<String> = None;
     let mut pdf_input: Option<String> = None;
     let mut pdf_out: Option<String> = None;
+    let mut arxiv_input: Option<String> = None;
     let mut count_only = false;
     let mut case_sensitive = false;
     let mut path_match = false;
@@ -187,6 +192,20 @@ fn main() {
                     pdf_input = Some(p.clone());
                 }
                 mode = Mode::PdfImage;
+            }
+            "--pdf-text" => {
+                i += 1;
+                if let Some(p) = args.get(i) {
+                    pdf_input = Some(p.clone());
+                }
+                mode = Mode::PdfText;
+            }
+            "--arxiv-src" => {
+                i += 1;
+                if let Some(p) = args.get(i) {
+                    arxiv_input = Some(p.clone());
+                }
+                mode = Mode::ArxivSrc;
             }
             "--out" => {
                 i += 1;
@@ -405,6 +424,28 @@ fn main() {
             let lines = run_pdf_image(&input, pdf_out.as_deref());
             print_lines(&lines);
         }
+        Mode::PdfText => {
+            let input = match pdf_input {
+                Some(p) => p,
+                None => {
+                    eprintln!("archive_search --pdf-text: the mode carries no file or url");
+                    std::process::exit(2);
+                }
+            };
+            let lines = run_pdf_text(&input);
+            print_lines(&lines);
+        }
+        Mode::ArxivSrc => {
+            let input = match arxiv_input {
+                Some(p) => p,
+                None => {
+                    eprintln!("archive_search --arxiv-src: the mode carries no id or url");
+                    std::process::exit(2);
+                }
+            };
+            let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -473,6 +514,12 @@ fn usage() {
         "images:   archive_search --pdf-image <file|url> [--out <dir>]   (lifts embedded JPEG/PNG/JP2 from a PDF; without --out the files land in the temp dir)"
     );
     eprintln!(
+        "text:     archive_search --pdf-text <file|url>   (extracts the PDF text layer; a scanned/image-only PDF carries none -> --pdf-image + vision)"
+    );
+    eprintln!(
+        "src:      archive_search --arxiv-src <id|url> [--out <dir>]   (fetches the arXiv e-print LaTeX source; exact math, no PDF layer)"
+    );
+    eprintln!(
         "serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"
     );
 }
@@ -528,6 +575,24 @@ fn run_pdf_image(input: &str, out_dir: Option<&str>) -> Vec<String> {
         }
     }
     lines
+}
+
+fn run_pdf_text(input: &str) -> Vec<String> {
+    let bytes = if input.starts_with("http://") || input.starts_with("https://") {
+        match net::get(input, &[], "60") {
+            Some(f) => f.raw,
+            None => return vec![format!("pending — no answer for {input}")],
+        }
+    } else {
+        match fs::read(input) {
+            Ok(b) => b,
+            Err(e) => return vec![format!("absent — {input}: {e}")],
+        }
+    };
+    match pdf::pdf_text(&bytes) {
+        Some(text) => text.lines().map(String::from).collect(),
+        None => vec![format!("pending — no text layer in {input}")],
+    }
 }
 
 fn file_stem(input: &str) -> String {
@@ -1494,5 +1559,32 @@ mod tests {
         let (new3, known3) = split_known_hosts(prose_line, &curated);
         assert!(new3.is_empty());
         assert!(known3.is_empty());
+    }
+
+    fn write_temp_pdf(name: &str, body: &[u8]) -> PathBuf {
+        let mut pdf = Vec::new();
+        pdf.extend_from_slice(b"%PDF-1.4\n1 0 obj\n<< /Length 22 >>\nstream\n");
+        pdf.extend_from_slice(body);
+        pdf.extend_from_slice(b"\nendstream\nendobj\n%%EOF\n");
+        let path = env::temp_dir().join(format!("archive_search_{name}_{}.pdf", std::process::id()));
+        fs::write(&path, &pdf).expect("write temp pdf");
+        path
+    }
+
+    #[test]
+    fn pdf_text_reads_the_text_layer() {
+        let path = write_temp_pdf("text", b"BT (Hello World) Tj ET");
+        let lines = run_pdf_text(&path.to_string_lossy());
+        assert_eq!(lines, vec!["Hello World".to_string()]);
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn pdf_text_absent_layer_stays_pending() {
+        let path = write_temp_pdf("empty", b"BT ET");
+        let lines = run_pdf_text(&path.to_string_lossy());
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("pending — no text layer in "));
+        let _ = fs::remove_file(&path);
     }
 }
