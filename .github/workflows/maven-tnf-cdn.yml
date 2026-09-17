@@ -18,11 +18,27 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile the MAVEN ROSE TNF uplink-carrier-phase series and manifest it to the CDN
+      - name: Idempotence — skip if the asset or its shards already exist on the CDN
+        id: idempotence
         run: |
-          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "maven_tnf.bin"; then
-            echo "maven_tnf.bin already present — harvest skipped"
-            exit 0
+          names=$(gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$names" | grep -qE '^maven_tnf(\.bin|_t)'; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "maven_tnf asset/shards already present — harvest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "maven_tnf asset/shards missing — compiling and manifesting"
           fi
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "MAVEN ROSE TNF uplink-carrier-phase series packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile the MAVEN ROSE TNF series (sharded under the asset cap) and manifest it to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
           cargo run --release -p omegaflow-harvest --bin maven_tnf_compiler -- --ci-mode
