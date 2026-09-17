@@ -22,7 +22,10 @@
     ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"],
     ["find(\"ID[\"EPSG\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
     [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"],
-    ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"]
+    ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"],
+    ["CI_REFRESH_S", "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"],
+    ["runs every 5 minutes", "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"],
+    ["5-Minuten-Takt", "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
