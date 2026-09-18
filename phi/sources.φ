@@ -7551,6 +7551,17 @@ ttl 604800
 field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
 note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs dart_tnf; Compiler dart_tnf_compiler.rs; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
 
+url https://github.com/omegaflow/sources/releases/download/psa.esa.int/bc_mpo_mag.bin
+format bc_mpo_mag
+origin https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024
+compiler tools/harvest/src/bin/bc_mpo_mag_compiler.rs
+at sun
+ttl 604800
+field bx_nT bc_mpo_mag_bx inverse-square em nT 604800 0.0 0.0
+field by_nT bc_mpo_mag_by inverse-square em nT 604800 0.0 0.0
+field bz_nT bc_mpo_mag_bz inverse-square em nT 604800 0.0 0.0
+note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch, pro Abruf neu erzeugt), .tab 4828824 B sha256 8d7e6007…, 30954 rows; bc-mpo-mag-cdn.yml 2026-09-18.
+
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
 format dawn_odf
 origin https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/data-odf/ + https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/data-odf/

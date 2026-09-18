@@ -1,3 +1,12 @@
+asset fehlt
+format bc_mpo_mag
+tag psa.esa.int
+arm bc_mpo_mag_compiler
+pattern ^bc_mpo_mag\.bin$
+idempotent true
+timeout 60
+note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch); .tab 4828824 B sha256 8d7e6007…; bc-mpo-mag-cdn.yml 2026-09-18.
+
 asset present
 format catalog_gaia_sso
 tag gea.esac.esa.int
@@ -89,7 +98,7 @@ idempotent true
 timeout 350
 note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; CDN asset fehlt 2026-09-17 — archives.esac.esa.int carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29.
 
-asset fehlt
+asset present
 format swot_l2_lr_ssh
 tag archive.podaac.earthdata.nasa.gov
 arm swot_l2_lr_ssh_compiler
@@ -97,7 +106,7 @@ args --cmr --day 2026.09.14 --short-name SWOT_L2_LR_SSH_UNSMOOTHED_D
 pattern ^swot_l2_lr_ssh\.bin$
 idempotent true
 timeout 120
-note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; day 2026.09.14 = newest CMR granule; timeout 120 from 893155007 B netCDF. Run 35322408617 (2026-09-18) 0 records: metadata at 892581824 B beyond the fixed window; now Hdf5File::parse_fetch; fixed 2026-09-18, re-dispatch pending.
+note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; arm swot_l2_lr_ssh_compiler; run 35323857410 (2026-09-18) 7679 records, 307168 B sha256 2e646017…875422; asset present, roundtrip parses.
 
 asset present
 format ulysses_atdf

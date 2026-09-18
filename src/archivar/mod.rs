@@ -14,6 +14,7 @@ pub mod astrometry;
 pub mod atdf;
 pub mod auger;
 pub mod bayestar;
+pub mod bc_mpo_mag;
 pub mod bidsleep;
 pub mod bison_basu;
 pub mod bison_shift;
