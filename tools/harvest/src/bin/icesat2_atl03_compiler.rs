@@ -515,8 +515,11 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
 fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = match file.dataset(path) {
         Ok(t) => t,
-        Err(_) => {
-            eprintln!("icesat2-atl03: {path} — dataset absent");
+        Err(e) => {
+            match file.root_header_diag() {
+                Some(d) => eprintln!("icesat2-atl03: {path} — dataset absent — {e:?} — root {d:?}"),
+                None => eprintln!("icesat2-atl03: {path} — dataset absent — {e:?}"),
+            }
             return None;
         }
     };
