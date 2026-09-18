@@ -22,7 +22,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; timeout 180 from 1439MB range-read. Run 35322402803 (2026-09-18) 0 records: v1 object header read truncated to header_size (24 B) -> EndAtByte off 120; fixed 2026-09-18 (16+header_size), re-dispatch pending.
+note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; timeout 180 from 1439MB range-read. Run 35323850479 (2026-09-18, post header-fix) 0 records, 0 B granule (c.size) — root upstream of the HDF5 reader; measure CMR/S3 object size + creds.
 
 asset present
 format goes16_abi
@@ -40,16 +40,19 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 180
-note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; timeout 180 from ~1200MB range-read. Run 35322405744 (2026-09-18) 0 records: same v1 object header truncation -> EndAtByte off 5096; fixed 2026-09-18 (16+header_size), re-dispatch pending.
+note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; timeout 180 from ~1200MB range-read. Run 35323854366 (2026-09-18, post header-fix) 0 records, 0 B granule (c.size) — root upstream of the reader; measure CMR/S3 size + creds.
 
 asset fehlt
 format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler
-pattern ^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
+workflow harvest-long
+args --year 2009
+pattern ^lro_trk_2009(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
+timeout 8
 idempotent true
-note LRO RSS raw tracking — utF, 75-byte records; LRO_TRK.FMT (imbrium.mit.edu); doppler rate = −c(A−2.4e8)/B; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; fehlt 2026-09-17; dispatch harvest.yml -f format=lro_trk.
+note LRO RSS raw tracking — utF, 75-byte records; one year per run, year-bound asset name lro_trk_<year>; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; dispatch harvest-long.yml -f format=lro_trk.
 
 asset present
 format maven_tnf
