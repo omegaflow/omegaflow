@@ -315,8 +315,9 @@ is the browser path for a display.
 The project's own tools live on `PATH` (via `~/.local/bin`, built from
 `tools/utils`): `sgrep` (grep), `sfetch` (fetch), `omega_sh`
 (`reports|status|search|fetch|jwst`), `smail` (mail), `ci_manage` (GitHub Actions
-runs: `list`/`view`/`cancel`/`rerun` — the CI reading, never `gh run list`/`gh run
-view`), `sread` (file with offset/limit), `register_lookup`, `git_safety`,
+runs: `list`/`view`/`log`/`cancel`/`rerun` — the CI reading, never `gh run
+list`/`gh run view`; `log <run-id> [--all]` prints the failed job logs),
+`sread` (file with offset/limit), `register_lookup`, `git_safety`,
 `session_burn`. The full map is `docs/concepts/tools-map.md`; at a conflict the
 tool's own `--help` holds. They are Rust std + curl,
 allowed to every agent — prefer them over the standard `webfetch`/`websearch`
@@ -335,11 +336,14 @@ tool):
 
 - **P1 primary** (`build`) — edit + full bash (global).
 - **P2 read-code** (`explore`, `council`) — no edit; bash = git read
-  (`status`/`log`/`diff`/`show`/`reflog`/`rev-parse`) + `sgrep`.
+  (`status`/`log`/`diff`/`show`/`reflog`/`rev-parse`/`merge-base`) + `sgrep` +
+  `ci_manage list`/`view`/`log` + the read inspectors `du`/`find`/`awk`.
 - **P3 read-research** (`general`, `research-max`) — no edit; bash =
-  `archive_search`/`curl`/`proton-wg` + the git-read set + `sgrep`/`sfetch`/`omega_sh`.
+  `archive_search`/`curl`/`proton-wg` + the git-read set + `sgrep`/`sfetch`/`omega_sh`
+  + `ci_manage list`/`view`/`log` + `du`/`find`/`awk`.
 - **P4 read-plan** (`plan`) — no edit; bash = `register_lookup` + `git_safety`
-  (the planning pass's two commands) + git-read + `sgrep`.
+  (the planning pass's two commands) + git-read + `merge-base` + `sgrep` +
+  `ci_manage list`/`view`/`log` + `du`/`find`/`awk`.
 - **P5 write-port** (`grind-flash`/`grind-pro`/`grind-max`) — edit + full bash (global).
 - **P6 vision** (`vision`) — no edit, no bash.
 
