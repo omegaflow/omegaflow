@@ -1,0 +1,202 @@
+# frame: geographic coords
+url https://api.coral.tsr.lol/stations
+on earth 0 0
+map .
+lat latitude deg
+lon longitude deg
+# bleaching_threshold = 27.9552
+# uncertain field bleaching_threshold — force/unit undetermined, review
+# avg_max_monthly_mean = 26.9552
+# uncertain field avg_max_monthly_mean — force/unit undetermined, review
+
+# frame: terrestrial vocab: temperature
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0
+# transparency = 0.0
+# uncertain field transparency — force/unit undetermined, review
+# renderer.minValue = 0.595277419
+# uncertain field renderer.minValue — force/unit undetermined, review
+# classMaxValue = 9.291853746
+# uncertain field classMaxValue — force/unit undetermined, review
+# symbol.color.0 = 182.0
+# uncertain field symbol.color.0 — force/unit undetermined, review
+# symbol.color.1 = 237.0
+# uncertain field symbol.color.1 — force/unit undetermined, review
+# symbol.color.2 = 240.0
+# uncertain field symbol.color.2 — force/unit undetermined, review
+# symbol.color.3 = 255.0
+# uncertain field symbol.color.3 — force/unit undetermined, review
+# symbol.size = 4.0
+# uncertain field symbol.size — force/unit undetermined, review
+# symbol.outline.color.0 = 0.0
+# uncertain field symbol.outline.color.0 — force/unit undetermined, review
+# symbol.outline.color.1 = 0.0
+# uncertain field symbol.outline.color.1 — force/unit undetermined, review
+# symbol.outline.color.2 = 0.0
+# uncertain field symbol.outline.color.2 — force/unit undetermined, review
+# symbol.outline.color.3 = 255.0
+# uncertain field symbol.outline.color.3 — force/unit undetermined, review
+# symbol.outline.width = 1.0
+# uncertain field symbol.outline.width — force/unit undetermined, review
+# symbol.yoffset = 0.0
+# uncertain field symbol.yoffset — force/unit undetermined, review
+# symbol.angle = 0.0
+# uncertain field symbol.angle — force/unit undetermined, review
+# symbol.xoffset = 0.0
+# uncertain field symbol.xoffset — force/unit undetermined, review
+
+# frame: geographic coords
+url https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+on earth 0 0
+map features
+lon properties.lon deg
+lat properties.lat deg
+alt geometry.coordinates.2 km
+# properties.press = 1020.5
+field properties.press properties.press 1 advective hPa 60 0.0 0.0
+# properties.apparent_t = 18.4
+# uncertain field properties.apparent_t — force/unit undetermined, review
+# properties.OBJECTID = 1.0
+# uncertain field properties.OBJECTID — force/unit undetermined, review
+# properties.rain_trace = 25.0 (str)
+field properties.rain_trace properties.rain_trace 1 acoustic mm 60 0.0 0.0
+# properties.wind_spd_kmh = 6.0
+field properties.wind_spd_kmh properties.wind_spd_kmh 1 advective m/s 60 0.0 0.0
+# properties.air_temp = 17.3
+field properties.air_temp properties.air_temp 3 thermal C 3600 0.0 0.0
+# properties.rel_hum = 96.0
+field properties.rel_hum properties.rel_hum 3 diffusion % 86400 0.0 0.0
+# properties.dewpt = 16.7
+field properties.dewpt properties.dewpt 3 thermal C 3600 0.0 0.0
+
+# frame: geographic coords
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 604
+on earth 0 0
+map features
+lon properties.longitude deg
+lat properties.latitude deg
+alt properties.depth km
+lon geometry.coordinates.0 deg
+lat geometry.coordinates.1 deg
+alt geometry.coordinates.2 km
+# properties.OBJECTID = 1.0
+# uncertain field properties.OBJECTID — force/unit undetermined, review
+# properties.salinity = 3.344747286
+field properties.salinity properties.salinity 3 diffusion PSU 86400 0.0 0.0
+# properties.avg_depth = -2.25
+field properties.avg_depth properties.avg_depth 1 seismic-body km 10 0.0 0.0
+# properties.Diff_Sal = 2.846320506
+# uncertain field properties.Diff_Sal — force/unit undetermined, review
+field properties.depth properties.depth 1 seismic-body km 10 0.0 0.0
+# properties.avg_tempt = 3.609139729
+field properties.avg_tempt properties.avg_tempt 3 thermal C 3600 0.0 0.0
+# properties.temperatur = 3.272614286
+field properties.temperatur properties.temperatur 3 thermal C 3600 0.0 0.0
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json
+ttl 10
+at earth
+hapi crosswind=crosswind
+# unit kg/m3 not in force registry — register carries m/s — review
+field crosswind crosswind gaussian-inverse-square advective kg/m3 60 0.0 0.0
+# crosswind = 999000000000000000000000000000000
+
+# frame: geographic coords
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+on earth 0 0
+map features
+lon properties.longitude deg
+lat properties.latitude deg
+alt geometry.coordinates.2 km
+# properties.huc8 = 2020007.0 (str)
+# uncertain field properties.huc8 — force/unit undetermined, review
+# properties.discharge14 = 27.4
+field properties.discharge14 properties.discharge14 1 advective m3/s 60 0.0 0.0
+# properties.discharge1 = 22.6
+field properties.discharge1 properties.discharge1 1 advective m3/s 60 0.0 0.0
+# properties.discharge30 = 33.7
+field properties.discharge30 properties.discharge30 1 advective m3/s 60 0.0 0.0
+# properties.stationId = 1365000.0 (str)
+# uncertain field properties.stationId — force/unit undetermined, review
+# properties.ObjectId = 1.0
+# uncertain field properties.ObjectId — force/unit undetermined, review
+# properties.height = 2.68
+# uncertain field properties.height — force/unit undetermined, review
+# properties.discharge7 = 25.9
+field properties.discharge7 properties.discharge7 1 advective m3/s 60 0.0 0.0
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 10
+at earth
+hapi Absolute_VTEC=Absolute_VTEC
+# uncertain field Absolute_VTEC — force/unit undetermined, review
+# Absolute_VTEC = 7.413650821702525
+
+# frame: geographic coords
+url https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+on earth 0 0
+map features
+lon geometry.coordinates.0 deg
+lat geometry.coordinates.1 deg
+alt geometry.coordinates.2 km
+# properties.HUC = 1010001.0 (str)
+# uncertain field properties.HUC — force/unit undetermined, review
+# properties.STAGE = 4.05
+# uncertain field properties.STAGE — force/unit undetermined, review
+# properties.PERCENTILE = 95.44
+# uncertain field properties.PERCENTILE — force/unit undetermined, review
+# properties.FLOW = 0.0
+# uncertain field properties.FLOW — force/unit undetermined, review
+# properties.STAID = 1010000.0 (str)
+# uncertain field properties.STAID — force/unit undetermined, review
+# properties.FLOODSTAGE = 15.0
+# uncertain field properties.FLOODSTAGE — force/unit undetermined, review
+# properties.FID = 1.0
+# uncertain field properties.FID — force/unit undetermined, review
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
+ttl 5
+at earth
+hapi Distance=Distance Absolute_Ne=Absolute_Ne
+# uncertain field Distance — force/unit undetermined, review
+# uncertain field Absolute_Ne — force/unit undetermined, review
+# Distance = 198011.56180372142
+# Absolute_Ne = 170021612319.32416
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+ttl 16
+at earth
+hapi F=F
+# uncertain field F — force/unit undetermined, review
+# F = 21553.4266725314
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=density
+field density density erfc diffusion kg/m3 3600 0.0 0.0
+# density = 0.00000000002157468629939978 — first row server fill, first finite sample shown
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+ttl 10
+at earth
+hapi density=density
+field density density erfc diffusion kg/m3 3600 0.0 0.0
+# density = 0.00000000000794292388211952
+
+# frame: route-registry: at earth
+url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+ttl 4
+at earth
+hapi F=F
+# uncertain field F — force/unit undetermined, review
+# F = 41836.79382560771 — first row server fill, first finite sample shown
+
