@@ -1,22 +1,11 @@
-# dead_sources.φ — das Register der UNERREICHBAREN Quellen (Re-Check-Pflicht).
-# Nur `dead <klasse>`: die URL antwortet nicht (404/dns/timeout/tls-reset/…).
-# Das Verdikt-Register (lebt, aber geurteilt) ist phi/declined_sources.φ.
-# Re-Check 2026-09-14 (1221 URLs, Shell-Loop, 0 Tokens): 631×200 · 286×404 · 114×0 · 86×400 · 58×403/401 · 20×5xx · 7×429 · Rest 301/406/410.
-# Die 9 Auferstehungen stehen als `ausstehend kandidat` in phi/pipeline/ledger.φ.
-# Prune 2026-09-16: 6 Einträge entfernt, die nie gelebt haben — vokal-ausgedünnte
-# Hostnamen `p.ntrlst.rg`→`api.inaturalist.org`, `p.pn-mt.cm`→`api.open-meteo.com`
-# (beide Dienste leben), `lightning.gld` (keine Identität), `masie_ice.apps.nsidc.org`
-# (Unterstrich-Host, echter Host `masie_web`). Nur Tote, die wirklich gelebt haben.
-# Force-Gate-Prune 2026-09-16: 118 „nie Force-Kanal"-Einträge entfernt (91 sicher +
-# 26 unsicher-declined + open-meteo-Stale-Pfad); 9 behalten (3 Force-Kanal, 4 pending,
-# 2 bereits disponiert). Verdikt: docs/surveys/survey-2026-09-16-dead-sources-relevanz.md.
+note Re-Check 2026-09-14: 1221 URLs gemessen; 9 Auferstehungen als ausstehend kandidat in phi/pipeline/ledger.φ. Prune 2026-09-16: 6 nie-gelebt entfernt; Force-Gate-Prune: 118 entfernt, 9 behalten (survey-2026-09-16-dead-sources-relevanz.md).
 dead absent
 url ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json
 note curl: curl: (78) The file does not exist
 
 dead unreachable
 url http://arvo-registry.sci.am/tap
-note ARVO-TAP (ivo://byu.arvo/tap) — Recheck 2026-09-10: DNS löst auf (93.187.165.59), aber http und https werden nach der Anfrage vom Peer zurückgesetzt (curl 56/35, kein HTTP-Code, kein TAP-JSON); Alternativen am Netloc (/tap/sync, /) identisch. Proton-VPN-Route (§9) als offene Eskalation, bevor der Eintrag endgültig bleibt.
+note ARVO-TAP (ivo://byu.arvo/tap) — Recheck 2026-09-10: DNS löst auf (93.187.165.59), http/https nach Anfrage vom Peer zurückgesetzt (curl 56/35, kein HTTP-Code, kein TAP-JSON); /tap/sync und / identisch. Proton-VPN-Route (§9) offen.
 
 dead 404
 url http://data.neonscience.org/api/v0/documents/NEON.DP1.10081
@@ -124,11 +113,11 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url http://tap.roe.ac.uk/osa/sync
-note WFAU OSA (UKIRT/ATLAS DR1) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
+note WFAU OSA (UKIRT/ATLAS DR1) — tap.roe.ac.uk TCP-tot (curl 000, 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror. Konsument-Kandidat: statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4).
 
 dead unreachable
 url http://tap.roe.ac.uk/ssa/sync
-note WFAU SSA (SuperCOSMOS) — tap.roe.ac.uk TCP-tot (curl 000, direct + socks5-Exit, gemessen 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror unter dem Netloc (SSS/VizieR-Kandidatenpfad unverifiziert, pending). Konsument-Kandidat (Rat 2026-09-15): SuperCOSMOS-pm als zweite unabhängige pm-Linie (60-Jahre-Basis) für den Weberin-Verdict; die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
+note WFAU SSA (SuperCOSMOS) — tap.roe.ac.uk TCP-tot (curl 000, 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror. Konsument-Kandidat: SuperCOSMOS-pm als zweite pm-Linie (60-Jahre-Basis) — Wiedervorlage 2026-12-02.
 
 dead 404
 url http://wwlln.net/cgi-bin/output.cgi?format=json&type=stations&limit=100
@@ -156,7 +145,7 @@ note curl: curl: (6) Could not resolve host: api.earthnetworks.com Browser 2026-
 
 dead unreachable
 url https://api.fink-portal.org/api/v1/objects
-note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar. Successor host api.lsst.fink-portal.org lebt (2026-09-16 gemessen HTTP 200, anonym) und steht als s2-direction-Zeuge in witnesses.φ — nicht in blocked_sources.φ; der alte Host bleibt tot, Fink selbst ist nicht absent.
+note Fink: DNS löst auf (157.136.255.32), Connect fehlt (curl 000) — vom Archivar-Netz nicht erreichbar. Successor api.lsst.fink-portal.org lebt (2026-09-16 HTTP 200, anonym), steht als s2-direction-Zeuge in witnesses.φ; Fink ist nicht absent.
 
 dead 404
 url https://api.ifremer.fr/argoweb/float/list?days=30&format=json
@@ -440,7 +429,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=gold&limit=100
-note HTTP 404 — Endpoint weg (2026-09-06 gemessen); Gold-Geschwister des Bronze-Eintrags davor. Die Alerts leben als .amon-Notices unter gcn.gsfc.nasa.gov (blocked_sources.φ, parser-def text) — kompiliert via amon_compiler (Neutrino-Zeuge, Weberin §9 Stufe 6).
+note HTTP 404 — Endpoint weg (2026-09-06 gemessen); Gold-Geschwister des Bronze-Eintrags davor. Die Alerts leben als .amon-Notices unter gcn.gsfc.nasa.gov, kompiliert via amon_compiler (Neutrino-Zeuge, Weberin §9 Stufe 6).
 
 dead 404
 url https://gcn.nasa.gov/api/v1/events?query=instrument:IceCube&order-by=-created
@@ -528,7 +517,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://hfrnet-tds.ucsd.edu/
-note HFRnet-THREADS (UC San Diego) — Recheck 2026-09-16: hfrnet-tds.ucsd.edu direkt Timeout (30 s), Proton-Exit absent, Wayback 503; Parent hfrnet.ucsd.edu 200 mit abgelaufenem Zertifikat, statische Landing-Page ohne Redirect auf hfrnet-tds. Host auf allen drei Leiter-Stufen abwesend.
+note HFRnet-THREADS (UC San Diego) — Recheck 2026-09-16: hfrnet-tds.ucsd.edu Timeout (30 s), Proton-Exit absent, Wayback 503; Parent hfrnet.ucsd.edu 200 mit abgelaufenem Zertifikat, Landing-Page ohne Redirect. Host auf allen Leiter-Stufen abwesend.
 
 dead 404
 url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=
@@ -568,7 +557,7 @@ note curl: curl: (6) Could not resolve host: iono4d.iri-ap.ru Browser 2026-09-10
 
 dead dns
 url https://ionosonde.iap-kborn.de
-note Subdomain DNS-tot (curl 000); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten des Anbieters unter anderem Pfad, unverifiziert (2026-09-03). Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.ionosonde.iap-kborn.de/.
+note Subdomain DNS-tot (curl 000); Parent www.iap-kborn.de lebt ohne ionosonde-Datenlink. Recherche-Pflicht: Ionosonden-Daten unter anderem Pfad, unverifiziert (2026-09-03). Browser 2026-09-10: Host tot, Nachfolger https://www.ionosonde.iap-kborn.de/.
 
 dead dns-unresolved
 url https://its-live-data.jpl.nasa.gov/vel_api/v1/
@@ -612,7 +601,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://leda.univ-lyon1.fr/
-note direkter curl 000 — Server antwortet nicht; Wayback 429 (Session-Rate-Limit, nicht abschließend). Alternativen geprüft: VizieR VII/237 (LEDA-2003-Snapshot) als Spiegel, HyperLEDA-Daten fließen in GLADE+ und NED ein. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition ruht auf dem Erreichbarkeits-Befund.
+note direkter curl 000 — Server antwortet nicht; Wayback 429 (Rate-Limit). Alternativen: VizieR VII/237 (LEDA-2003-Snapshot), HyperLEDA fließt in GLADE+/NED. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition pending.
 
 dead dns-unresolved
 url https://lightningwa.info/api/
@@ -984,5 +973,5 @@ note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: H
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
-note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert. Recheck 2026-09-11 (curl-gemessen, anonym): api.alerce.online/alerts/v1/objects antwortet HTTP 200 mit echten ZTF-Objekten (oid/meanra/meandec) — der Compiler-Pfad sources.φ:848 (format alerce) ist live; die fruehere 404-Stub-Messung (2026-08-15/09-06) war der uebergangsweise TAP-Umzug (tap.alerce.online 502). ztf.alerce.online bleibt DNS-tot (dieser Eintrag); der Compiler liest heute ueber api.alerce.online, nie ueber ztf.alerce.online.
+note ALeRCE: ztf.alerce.online DNS dead, ztf.alerce.cl Connect blockiert. Recheck 2026-09-11 (anonym): api.alerce.online/alerts/v1/objects HTTP 200 — Compiler-Pfad sources.φ:848 live. ztf.alerce.online bleibt DNS-tot.
 
