@@ -1,6 +1,7 @@
+use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::range::{
     S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
-    sigv4_headers,
+    s3_parts, sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
@@ -32,6 +33,8 @@ const CDF_MAGIC: [u8; 3] = *b"CDF";
 const HDF_MAGIC: [u8; 4] = [0x89, b'H', b'D', b'F'];
 const NC4_GROUPS: [&str; 3] = ["left", "right", ""];
 const SSH_NAMES: [&str; 2] = ["ssh_karin_2", "ssha"];
+const CMR_GRANULES_URL: &str = "https://cmr.earthdata.nasa.gov/search/granules.json";
+const SWOT_SHORT_NAME: &str = "SWOT_L2_LR_SSH_D";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -91,6 +94,17 @@ fn amz_now() -> Option<(String, String)> {
     Some((
         date_stamp.clone(),
         format!("{date_stamp}T{h:02}{mi:02}{s:02}Z"),
+    ))
+}
+
+fn day_temporal(day: &str) -> Option<(String, String)> {
+    let year: i64 = day.get(0..4)?.parse().ok()?;
+    let month: i64 = day.get(5..7)?.parse().ok()?;
+    let dom: i64 = day.get(8..10)?.parse().ok()?;
+    days_from_civil(year, month, dom)?;
+    Some((
+        format!("{year:04}-{month:02}-{dom:02}T00:00:00Z"),
+        format!("{year:04}-{month:02}-{dom:02}T23:59:59Z"),
     ))
 }
 
@@ -199,6 +213,95 @@ fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>)> {
     }
     let truncated = xml_text(body, "IsTruncated").as_deref() == Some("true");
     Some((objects, truncated, dirs))
+}
+
+struct CmrGranule {
+    bucket: String,
+    key: String,
+}
+
+fn cmr_fetch(url: &str) -> Option<String> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("-g")
+        .arg("--retry")
+        .arg("3")
+        .arg("--retry-all-errors")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("-m")
+        .arg(LIST_MAX_T_S.to_string())
+        .arg("--connect-timeout")
+        .arg(CONNECT_BOUND_S.to_string());
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    if !out.status.success() {
+        eprintln!(
+            "cmr returned ({}): {} {}",
+            out.status,
+            url,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        return None;
+    }
+    Some(String::from_utf8_lossy(&out.stdout).into_owned())
+}
+
+fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
+    let json = parse_json(body)?;
+    let JsonVal::Obj(mut map) = json else {
+        return None;
+    };
+    let feed = map.remove("feed")?;
+    let JsonVal::Obj(mut feed) = feed else {
+        return None;
+    };
+    let entry = feed.remove("entry")?;
+    let JsonVal::Arr(entries) = entry else {
+        return None;
+    };
+    let mut out = Vec::new();
+    for e in entries {
+        let JsonVal::Obj(mut e) = e else { continue };
+        let links = e.remove("links")?;
+        let JsonVal::Arr(links) = links else { continue };
+        let mut href = None;
+        for l in links {
+            let JsonVal::Obj(mut l) = l else { continue };
+            let rel = match l.remove("rel") {
+                Some(JsonVal::Str(s)) => s,
+                _ => continue,
+            };
+            let h = match l.remove("href") {
+                Some(JsonVal::Str(s)) => s,
+                _ => continue,
+            };
+            if rel.ends_with("/s3#") && h.ends_with(".nc") {
+                href = Some(h);
+                break;
+            }
+        }
+        let Some(href) = href else { continue };
+        let Some((bucket, key)) = s3_parts(&href) else {
+            continue;
+        };
+        out.push(CmrGranule { bucket, key });
+    }
+    Some(out)
+}
+
+fn cmr_granules(short_name: &str, temporal: &str, page_size: usize) -> Option<Vec<CmrGranule>> {
+    let query = format!(
+        "short_name={}&temporal={}&page_size={}",
+        uri_encode_query(short_name),
+        uri_encode_query(temporal),
+        page_size
+    );
+    let url = format!("{CMR_GRANULES_URL}?{query}");
+    cmr_parse(&cmr_fetch(&url)?)
 }
 
 fn list_page(
@@ -842,8 +945,57 @@ fn run_harvest(args: &[String]) {
         std::process::exit(2);
     };
     let direct_granule = arg_value(args, "--granule");
+    let cmr = args.iter().any(|a| a == "--cmr");
     let mut chosen: Vec<(String, Obj)> = Vec::new();
-    if let Some(key) = direct_granule {
+    if cmr {
+        let short_name = arg_value(args, "--short-name").unwrap_or(SWOT_SHORT_NAME.to_string());
+        let temporal = match arg_value(args, "--temporal") {
+            Some(t) => t,
+            None => match arg_value(args, "--day") {
+                Some(d) => match day_temporal(&d) {
+                    Some((s, e)) => format!("{s},{e}"),
+                    None => {
+                        eprintln!(
+                            "swot-l2-lr-ssh: --day {d} carries no civil date (YYYY.MM.DD) — refused"
+                        );
+                        std::process::exit(2);
+                    }
+                },
+                None => {
+                    eprintln!(
+                        "usage: swot_l2_lr_ssh_compiler --cmr (--temporal <start>,<end> | --day <YYYY.MM.DD>) [--short-name <n>] [--limit N] [--out <path>] [--ci-mode] — refused"
+                    );
+                    std::process::exit(2);
+                }
+            },
+        };
+        let page_size = limit.saturating_add(8).min(64);
+        let Some(granules) = cmr_granules(&short_name, &temporal, page_size) else {
+            eprintln!(
+                "swot-l2-lr-ssh: the CMR granule search returned void for {short_name} on {temporal}"
+            );
+            std::process::exit(1);
+        };
+        if granules.is_empty() {
+            eprintln!(
+                "swot-l2-lr-ssh: no CMR granules for {short_name} on {temporal} — nothing fabricated"
+            );
+            std::process::exit(1);
+        }
+        let mut granules = granules;
+        granules.sort_by(|a, b| a.key.cmp(&b.key));
+        granules.truncate(limit);
+        for g in granules {
+            chosen.push((
+                g.bucket,
+                Obj {
+                    key: g.key,
+                    size: 0,
+                    modified: String::new(),
+                },
+            ));
+        }
+    } else if let Some(key) = direct_granule {
         let bucket = if protected {
             BUCKET_PROTECTED
         } else {
@@ -1092,5 +1244,31 @@ mod tests {
         assert!(amz.starts_with(&date_stamp));
         assert!(amz.ends_with('Z'));
         assert_eq!(amz.len(), 16);
+    }
+
+    #[test]
+    fn day_temporal_spans_the_civil_day() {
+        let (start, end) = day_temporal("2026.06.30").expect("civil day");
+        assert_eq!(start, "2026-06-30T00:00:00Z");
+        assert_eq!(end, "2026-06-30T23:59:59Z");
+        assert!(day_temporal("not-a-day").is_none());
+    }
+
+    #[test]
+    fn cmr_parse_takes_the_nc_s3_key_with_bucket() {
+        let body = r#"{"feed":{"entry":[
+          {"links":[
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/s3#","href":"s3://podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_001_001_20200101T000000_20200101T000100_PIC0_01.nc"},
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/s3#","href":"s3://podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/x.log"},
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/data#","href":"https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/x.nc"}
+          ]}
+        ]}}"#;
+        let granules = cmr_parse(body).expect("feed parses");
+        assert_eq!(granules.len(), 1);
+        assert_eq!(granules[0].bucket, "podaac-swot-ops-cumulus-protected");
+        assert_eq!(
+            granules[0].key,
+            "SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_001_001_20200101T000000_20200101T000100_PIC0_01.nc"
+        );
     }
 }
