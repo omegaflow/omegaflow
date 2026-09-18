@@ -3,7 +3,7 @@
   session: Forschung-Folge 83
   class: handover
   date: 2026-09-18
-  sha256: 2a15f3a3d527709406b7cea442ef07ab6c135a13049123cfd47c3af08fb162b3
+  sha256: e230396ae5ff073d231aef89c81763945a529e514a9f041fa17df41d1b6237ec
   status: live
 -->
 # Handover — Forschung-Folge 83 (2026-09-18)
@@ -54,9 +54,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   CDN (`silence_map_probe`), Artefakt `measure-gates`. Messung:
   `sgrep -l "betti0_probe|silence_map_probe" .github` → kein Workflow führte die
   Probes zuvor.
-  (Schritt: nach `/commit`/Push `gh workflow run measure-gates.yml`, Run-ID
-  registrieren, Verdikt einmalig `ci_manage view <id>`; Artefakt `measure-gates`
-  lesen.)
+  Run `35351695849` @`52d0486d` dispatcht (2026-09-18, in_progress); Verdikt
+  ausstehend. (Schritt: einmalig `ci_manage view 35351695849`; Artefakt
+  `measure-gates` lesen.)
 - **Betti-0 Schwellenleiter — `operator-gebunden`:** Die Zweierpotenz-Leiter hat
   keinen Literatur-Rückhalt; Standard sind exakte kritische Werte (Edelsbrunner
   DOI 10.1090/mbk/069) bzw. datengetriebene ε-Wahl (DBSCAN k-distance,
