@@ -1,0 +1,57 @@
+name: ps1-raw-mirror-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  rings-skycell-0637-042:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - name: Idempotence — skip if the skycell layer already rests on the CDN
+        id: idempotence
+        run: |
+          if gh release view ps1images.stsci.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "rings.v3.skycell.0637.042.stk.g.unconv.num.fits"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset rings.v3.skycell.0637.042.stk.g.unconv.num.fits already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset rings.v3.skycell.0637.042.stk.g.unconv.num.fits missing — mirroring"
+          fi
+      - name: Fetch the PS1 rings.v3 skycell num layer and verify the sha256 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSfL --retry 3 --max-time 600 -o rings.v3.skycell.0637.042.stk.g.unconv.num.fits \
+            https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+          got=$(sha256sum rings.v3.skycell.0637.042.stk.g.unconv.num.fits | cut -d' ' -f1)
+          want=66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
+          echo "sha256 $got"
+          if [ "$got" != "$want" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "ps1-raw-mirror-cdn: sha256 of the fresh skycell layer differs" \
+              "rings.v3.skycell.0637.042.stk.g.unconv.num.fits delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Ensure the ps1images.stsci.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ps1images.stsci.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ps1images.stsci.edu --repo omegaflow/sources \
+              --title "ps1images.stsci.edu" \
+              --notes "raw PS1 rings.v3 skycell layers mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the raw skycell layer to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release upload ps1images.stsci.edu rings.v3.skycell.0637.042.stk.g.unconv.num.fits \
+            --clobber --repo omegaflow/sources
