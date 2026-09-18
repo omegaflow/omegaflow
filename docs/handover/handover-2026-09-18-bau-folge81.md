@@ -3,7 +3,7 @@
   session: Bau-Folge 81
   class: handover
   date: 2026-09-18
-  sha256: 0da3d24c9e2dbbd1a68d964c2e45ec5fb867001549f51fa9f9c3264c8f2f9fb8
+  sha256: 259382bad04f64e9e49bd401eb69998b18cbf5cf7943bbabd4a4fbf80bb729f1
   status: live
 -->
 # Handover — Bau-Folge 81 (2026-09-18)
@@ -58,10 +58,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   TAP gemessen (HTTP 200): **270 Cubes** (89×12CO, 89×13CO, 92×C18O); der reale
   FITS-Header (`FGN00000000`, 848×848×462, BITPIX −32, GLON/GLAT-SFL, VRAD,
   BUNIT K) ist parser-kompatibel (`archive_search --sniff` magic `fits`).
-  `cargo check --workspace` 0 Fehler / 0 Warnungen. (Schritt: `gh workflow run
-  fugin-cdn.yml` dispatcht, `ci_manage view <id>` **einmal** lesen; grün →
-  Manifestation geschlossen, rot → Verdikt ins Handover. Danach die restlichen
-  269 Cubes je Messung registrieren — Workflow-Inputs `url`/`asset`.) · `pending`
+  `cargo check --workspace` 0 Fehler / 0 Warnungen. Dispatcht 2026-09-18:
+  `fugin-cdn` Run `35324134852` (queued). (Schritt: `ci_manage view 35324134852`
+  **einmal** lesen; grün → Manifestation geschlossen, rot → Verdikt ins Handover.
+  Danach die restlichen 269 Cubes je Messung registrieren — Workflow-Inputs
+  `url`/`asset`.) · `pending`
 
 ## FUGIN — `blocked_sources.φ`-Eintrag fortschreiben
 
