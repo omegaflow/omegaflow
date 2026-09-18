@@ -31,7 +31,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule. Run 35323850479 (2026-09-18) 0 records: c.size hardcoded 0, fixed 2026-09-18 (CMR granule_size; HTTP 206 263454103 B); root = silent None in src/archivar/hdf5.rs read_chunk.
+note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule. Run 35338097066 cancelled 2026-09-18: compiler hung 2h in hdf5 gather_messages v1 continuation cycle (no visited-set); fixed 2026-09-18 (HashSet + MAX_CONT_BLOCKS).
 
 asset present
 format goes16_abi
@@ -49,7 +49,7 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 180
-note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule. Run 35323854366 (2026-09-18) 0 records: c.size hardcoded 0, fixed 2026-09-18 (CMR granule_size; HTTP 206 1912602624 B); root = silent None in src/archivar/hdf5.rs read_chunk.
+note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule. Run 35338099137 cancelled 2026-09-18: 427 MB granule fetched in 1h37m, then hung in hdf5 gather_messages continuation cycle; fixed 2026-09-18 (HashSet + MAX_CONT_BLOCKS).
 
 asset fehlt
 format lro_trk
@@ -59,9 +59,9 @@ workflow harvest-long
 args --year 2009
 pattern ^lro_trk_2009(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
-timeout 8
+timeout 16
 idempotent true
-note LRO RSS raw tracking — utF, 75-byte records; one year per run, year-bound asset name lro_trk_<year>; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; dispatch harvest-long.yml -f format=lro_trk.
+note LRO RSS raw tracking — utF, 75-byte records; one year per run; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; run 35339151004 cancelled 2026-09-18 by timeout 8 while productive (day 267/365 in 7.3 min); timeout raised to 16.
 
 asset present
 format maven_tnf
@@ -93,10 +93,10 @@ asset fehlt
 format rosetta_odf
 tag archives.esac.esa.int
 arm rosetta_odf_compiler
-pattern ^rosetta_odf\.bin$
+pattern ^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 idempotent true
 timeout 350
-note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; CDN asset fehlt 2026-09-17 — archives.esac.esa.int carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29.
+note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; run 35313968728 HTTP 422 — 2415275024 B > 2^31; sharding built 2026-09-18 (PODF_SHARD_BUDGET, 3 shards); timeout 350 planetary-odf-cdn.yml:29.
 
 asset present
 format swot_l2_lr_ssh
