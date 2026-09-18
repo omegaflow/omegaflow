@@ -3,7 +3,7 @@
   session: Forschung-Folge 71
   class: handover
   date: 2026-09-18
-  sha256: e11c4ca2d3a17d6c4fcde0e2f033d97fcbe6456525cf5c5fa63b66e7f60d4918
+  sha256: 1ce2959cbd5703e573053ba47d447b2c59248d19aaa1afaf15e409610a42e56d
   status: live
 -->
 # Handover — Forschung-Folge 71 (2026-09-18)
@@ -57,9 +57,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `reduce_uly_skyfreq_alternating_bands_pair_within_band`,
   `reduce_uly_skyfreq_contiguous_band_anchors_sequential_pairing` + Invariante;
   `cargo check`/`--tests` 0/0). Damit schließt der `blockiert`-Punkt
-  `ulysses_atdf S-Band leer` aus ernte-folge75. (Schritt: nach dem Push
-  `gh workflow run harvest.yml -f format=ulysses_atdf` und
-  `-f format=ulysses_atdf_x`; dann `ci_manage view <id>` einmal, sha256/Größe
+  `ulysses_atdf S-Band leer` aus ernte-folge75. Re-Dispatch 2026-09-18 angestoßen:
+  `harvest` `35296127974` (`-f format=ulysses_atdf`) + `35296130236`
+  (`-f format=ulysses_atdf_x`). (Schritt: `ci_manage view <id>` einmal, sha256/Größe
   messen, `phi/harvest.φ` S auf `asset present` + sha, X-Note auf den neuen sha,
   `phi/sources.φ` nachziehen, issue #38 schließen.)
 
