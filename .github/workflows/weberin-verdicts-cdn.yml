@@ -1,0 +1,24 @@
+name: weberin-verdicts-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  weberin-verdicts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fold the registered body lines and manifest the verdict bin to the CDN
+        run: |
+          cargo run -p omegaflow-measure --release --bin weberin_verdicts_compiler -- \
+            --out data/weberin_verdicts.bin --ci-mode

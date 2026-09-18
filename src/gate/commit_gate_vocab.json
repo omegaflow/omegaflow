@@ -27,7 +27,11 @@
     ["runs every 5 minutes", "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"],
     ["5-Minuten-Takt", "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"],
     ["|| bash .github/workflows/scripts/gh_issue_once.sh", "the bare `||`-swallow files an issue and exits 0, so a void harvest shows green — the invocation must be wrapped so the step fails (`|| { …; exit 1; }`)"],
-    ["\"{lat}\".into(), \"29.5\"", "a hardcoded coordinate default fabricates the site — coordinates belong to the anchor, never the marker table"]
+    ["\"{lat}\".into(), \"29.5\"", "a hardcoded coordinate default fabricates the site — coordinates belong to the anchor, never the marker table"],
+    ["Riss => Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss is its own state, never absent, never 0.0"],
+    ["Riss => VerdictWord::Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss carries both witness lines"],
+    ["Riss => None", "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"],
+    ["Riss => 0.0", "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -307,6 +311,9 @@
     "unstable_pointer_offsite": "the register line mail_ledger.φ:59 is cited here",
     "fabrication_marker_coord_default": "(\"{lat}\".into(), \"29.5\".into()),",
     "phi_register_note_over_256": "note disposition geprueft und gemessen, die quelle nennt den ort, der messwert nennt den wert, das datum nennt die zeit, der schritt nennt den weg, die zeile bleibt kurz und die prosa traegt die sache selbst, kein kommentar, keine meinung, nur der befund und die quelle, wer liest liest den schritt",
-    "phi_register_comment": "# anmerkung: der eintrag traegt keine quelle"
+    "phi_register_comment": "# anmerkung: der eintrag traegt keine quelle",
+    "riss_as_absent": "VerdictWord::Riss => VerdictWord::Absent,",
+    "riss_as_zero": "VerdictWord::Riss => 0.0,",
+    "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,"
   }
 }
