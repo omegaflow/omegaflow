@@ -62,6 +62,35 @@ pub fn parse_uv_xml(body: &str) -> Vec<UvReading> {
     readings
 }
 
+pub const STATION_COORD_SOURCE: &str =
+    "https://uvdata.arpansa.gov.au/api/categoriesSites";
+
+pub fn station_coords(id: &str) -> Option<(f64, f64)> {
+    const COORDS: &[(&str, f64, f64)] = &[
+        ("Adelaide", -34.95, 138.52),
+        ("Alice Springs", -23.8, 133.89),
+        ("Brisbane", -27.45, 153.03),
+        ("Canberra", -35.31, 149.2),
+        ("Casey", -66.28, 110.53),
+        ("Darwin", -12.43, 130.89),
+        ("Davis", -68.58, 77.97),
+        ("Emerald", -23.5251, 148.161346),
+        ("Gold Coast", -28.0, 153.37),
+        ("Kingston", -42.99, 147.29),
+        ("Macquarie Island", -54.5, 158.94),
+        ("Mawson", -67.6, 62.87),
+        ("Melbourne", -37.73, 145.1),
+        ("Newcastle", -32.9, 151.72),
+        ("Perth", -31.93, 115.98),
+        ("Sydney", -34.04, 151.1),
+        ("Townsville", -19.33, 146.76),
+    ];
+    COORDS
+        .iter()
+        .find(|(name, _, _)| *name == id)
+        .map(|(_, lat, lon)| (*lat, *lon))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -122,5 +151,36 @@ mod tests {
         assert_eq!(r.len(), 1);
         assert_eq!(r[0].id, "Night");
         assert_eq!(r[0].index, 0.0);
+    }
+
+    #[test]
+    fn all_seventeen_stations_carry_measured_coordinates() {
+        let ids = [
+            "Adelaide",
+            "Alice Springs",
+            "Brisbane",
+            "Canberra",
+            "Casey",
+            "Darwin",
+            "Davis",
+            "Emerald",
+            "Gold Coast",
+            "Kingston",
+            "Macquarie Island",
+            "Mawson",
+            "Melbourne",
+            "Newcastle",
+            "Perth",
+            "Sydney",
+            "Townsville",
+        ];
+        for id in ids {
+            assert!(station_coords(id).is_some(), "station {id} has no coords");
+        }
+    }
+
+    #[test]
+    fn unknown_station_has_no_coordinates() {
+        assert_eq!(station_coords("Not A Station"), None);
     }
 }

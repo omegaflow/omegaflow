@@ -21,6 +21,7 @@ jobs:
           - { bin: juno_odf_compiler, netloc: atmos.nmsu.edu, asset: juno_odf.bin }
           - { bin: juno_odf_compiler, netloc: atmos.nmsu.edu, asset: juno_ocru_odf.bin, args: "--volume jnogrv_0001 --out data/atmos.nmsu.edu/juno_ocru_odf.bin" }
           - { bin: magellan_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: magellan_odf.bin }
+          - { bin: pathfinder_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: pathfinder_odf.bin }
           - { bin: mgs_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mgs_odf.bin }
           - { bin: mro_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: mro_odf.bin, sharded: true, prefix: mro_odf, timeout: 350 }
           - { bin: odyssey_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: odyssey_odf.bin, sharded: true, prefix: odyssey_odf }
