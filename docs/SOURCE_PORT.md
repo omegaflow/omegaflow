@@ -20,7 +20,7 @@ registrierten Ort.
 |------|------------|
 | `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). **Gemessen 2026-09-17: am Datenträger absent** (gitignored, nie getrackt; Git-Blob `760a93b5` = 3.416 Blöcke). Träger der Inventar-Funktion ist `archive-root/pipeline-auslese-2026-09-17/stage/master_converted.φ` (5.206 v6-Blöcke) — byte-genaue Re-Derivation gemessen unnötig (13. Korpus unidentifiziert, Merge one-off). |
 | `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. **Gemessen 2026-09-17: am Datenträger vorhanden** (`_pre-cdn_9k_richest` 824 + `_params` 63 Blöcke, gitignored). |
-| `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
+| `phi/pipeline/queue/grind_*` | descoped mit Befund (2026-09-18: `phi/pipeline/queue/` trägt keine `.φ`) — nie gebaut, nicht gebraucht; die Disposition führt `register_lookup --open` (owner-getaggt). |
 | `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. Ruhend ausgelagert 2026-09-17 (Entscheid-Folge 38) nach `archive-root/pipeline-auslese-2026-09-17/stage/` — regenerierbar; ebenso `weights_*.txt`, die Probe-Ausgänge und `meteo_harvest/` (CDN `archive-api.open-meteo.com`). |
 | `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
 | `phi/pipeline/library.φ` | Die kuratierte Tag-Library (Linse). Kuratiertes Input — versioniert (force-add, obwohl `phi/pipeline/` fetch-only ist). |
@@ -406,8 +406,16 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
   (html/json/xml/csv), nie nackt. Sortierung: blocked (key, account,
   ip-blocked) dann parser-def, jeweils alphabetisch nach URL.
   Kaskaden-200 (Proton-Exit/Wayback) = entblockt → der Eintrag verlässt
-  blocked_sources.φ und wird queue-Grind-Draft (grind_*.φ); die Kaskade
-  ist Grind-Werkzeug, kein Archivar-Code.
+  blocked_sources.φ; sein Zielort ist `phi/sources.φ` über die bestehende
+  Port-Prozedur. Der queue-Grind-Draft-Pfad ist descoped (gemessen
+  2026-09-18: `phi/pipeline/queue/` trägt keine `.φ`) — nie gebaut, nicht
+  gebraucht: `register_lookup --open` ist die Queue — es liest die
+  Zustands-Register owner-getaggt (`blocked parser-def`/`parser-gap`/`asset
+  fehlt` → bau, `blocked account`/`blocked key` → entscheid → operator,
+  `blocked ip-blocked`/`pending`/`ausstehend`/`kompiliert` → ernte, released
+  Zustände → released), dazu `pipeline/ledger.φ` und die `probe_*`-Entwürfe
+  per-Eintrag, die Katalog-Kandidatenpools als Zählzeile; die Kaskade ist
+  Grind-Werkzeug, kein Archivar-Code.
 - Grenze declined/blocked (Operator-Wort 2026-09-15): **kommerziell →
   `decline redistribution`** (nicht blocked — der Zugang ist nicht gesperrt,
   das Verdikt ist kommerziell); **der Konsument ist kein Kriterium** — die
