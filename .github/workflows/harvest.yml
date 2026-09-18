@@ -26,6 +26,7 @@ permissions:
 
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
   RUSTFLAGS: -D warnings
 
 jobs:
