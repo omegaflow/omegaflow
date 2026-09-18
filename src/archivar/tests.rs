@@ -969,6 +969,24 @@ fn test_csv_to_json_tns_shape() {
 }
 
 #[test]
+fn test_csv_to_json_nul_separated() {
+    let csv = "catID\0cluID\0dec_\0ra\n1\010.5\0-20.0\0123.4\n2\011.5\0-21.0\0124.5\n";
+    let j = csv_to_json(csv).unwrap();
+    let arr = match j {
+        JsonVal::Arr(a) => a,
+        _ => panic!("expected array"),
+    };
+    assert_eq!(arr.len(), 2);
+    match &arr[0] {
+        JsonVal::Obj(m) => {
+            assert_eq!(scalar_of(m.get("ra").unwrap()), Some(123.4));
+            assert_eq!(scalar_of(m.get("dec_").unwrap()), Some(-20.0));
+        }
+        _ => panic!("expected object"),
+    }
+}
+
+#[test]
 fn test_celestial_map_redshift_distance() {
     let src = SourceConfig {
         ttl: 100,
