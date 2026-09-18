@@ -1,16 +1,10 @@
-# declined_sources.φ — das Register der GEURTEILTEN Quellen (lebt, aber keine Messung am Punkt).
-# `decline <klasse>`: no-physical-force, registry, model-forecast, presence-catalog, …
-# `decline superseded-by-integrated`: lebt, anderswo integriert (früher `integrated`).
-# KEINE Re-Check-Pflicht — die Erreichbarkeit ist nicht die Frage, das Verdikt ist die Frage.
-# Die erreichbaren Basis-Endpunkte hier sind lebendig per Konstruktion (583 der 631×200 des Re-Checks).
-
 decline no-physical-force
 url http://127.0.0.1:8080/schumann.json
 note Bild-Datei (superDARN-Banner), kein Messwert.
 
 decline no-physical-force
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
-note bidsleep_ihr_bpm (Herzfrequenz, Inter-Beat-Intervall, bpm) — skalarer physiologischer Ratewert aus dem EKG, kein propagierendes Feld: die Rate (1/Zeit) ist keine Feldstärke, kein nicht-menschlicher Sensor evolviert ein Organ für einen Herzraten-Skalar. Das Feld wurde aus sources.φ gestrichen (keine ehrliche Kraft); die drei Beschleunigungs-Komponenten (mx/my/mz, advective) bleiben im Block.
+note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; aus sources.φ gestrichen (keine ehrliche Kraft), mx/my/mz advective bleiben im Block.
 
 decline registry/katalog
 url http://193.87.1.40:8080/tap
@@ -222,7 +216,7 @@ note open-meteo = Modelloutput.
 
 decline catalog
 url https://alasky.u-strasbg.fr/footprints/
-note CDS-Survey-Footprint-Host (Footprint-HiPS grosser Durchmusterungen), gemessen 2026-09-06: HTTP 503 Service Unavailable fuer /footprints/ und jeden Survey-Pfad (SDSS9/2MASS/AllWISE/GALEX/ROSAT/PanSTARRS/DES/Gaia); der MOCServer-Geschwister alasky.u-strasbg.fr/MocServer/query lebt (200). Weberin §9 Stufe 5 (Survey-Footprints als eigene Assets), Recherche-Stand der Alternativen: MOCServer-Records tragen positions-abgeleitete Katalog-Coverage (CDS/P/..., z.B. CDS/II/371/des_dr2 moc_sky_fraction 0.1261, CDS/P/GALEXGR6_7/color 0.7897), nach dem Footprint-Litmus verweigert — beobachtet-nichts gegen nie-beobachtet bliebe an der Quelle (Punkt-Positionen statt Feld-/Exposure-Maske) ununterscheidbar, keine Maske; die Survey-nativen Archive (SDSS SAS data.sdss.org/sas 200, MAST/ps1images 200, IRSA data/download 200, HEASARC FTP 200, des.ncsa.illinois.edu 200, s3df.slac.stanford.edu/data/rubin 200) sind anonym erreichbar, aber an den geprueften Pfaden keine anonyme Footprint-Maske (SDSS dr18-Baum, PS1, AllWISE-Katalogteile, ROSAT-Datenbaum, Rubin sim-data sind Kataloge/Produkte ohne Coverage-Maske). Fund: keine anonyme Survey-Footprint-Maske; Recheck beim naechsten Host-Verdikt. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+note CDS-Survey-Footprint-Host, gemessen 2026-09-06: /footprints/ + Survey-Pfade HTTP 503, MOCServer-Query 200; keine anonyme Footprint-Maske (Survey-native Archive 200, nur Kataloge ohne Coverage-Maske) → decline, Recheck beim naechsten Host-Verdikt.
 
 decline catalog
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS
@@ -230,11 +224,11 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host
 
 open no-consumer
 url https://ams02.space/
-note AMS-02-Primärfluss (e-, e+, p, He, B/C, Ne/Mg/Si) als energieaufgelöstes Spektrum Φ(E) am Erd-Punkt ohne Richtung. Party-Messung 2026-09-14: der maschinenlesbare Fluss existiert — HEASARC AMS02SPEC + AMS02RATES (FITS heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/w3query.pl?tablehead=name%3Dams02spec&displaymode=FitsDisplay + TDAT /FTP/heasarc/dbase/tdat_files/heasarc_ams02spec.tdat.gz); der Reader steht (omegaflow::fits, ASCII-TABLE + BINTABLE). Die frühere Decline-Behauptung (kein maschinenlesbarer Endpoint, Papier-Abbildung only) ist widerlegt — die Quelle lebt und trägt echte Messung. Disposition statt decline: open, no consumer (Rat 2026-09-14) — kein Wesen im Haus trägt ein richtungsloses, zeitintegriertes Teilchen-Spektrum: Oszillator gesperrt (Teilchen ist Abstammung, keine Kraft; die 9er-Registry trägt kein CR/ν-Medium — die-weberin.md:104-109, SOURCE_PORT §12.6), die drei Zeugen-Arten tragen Skalare, keine Serie (S² verlangt ra/dec, Gestalt eine Fläche, Presence ein Ort-Zeit-Ereignis; serien_gate lehnt Zeugen-Records als Serien ab; particle_root lebt nur am S²-Faden). Keine der Nadeln Ⅰ–Ⅻ kreuzt einen CR-Spektral-Kanal (Ⅰ = Jeans-Kinematik, Ⅻ = CMB/Haufen/PTA/B-Moden — gemessen). Descoped mit Befund. Stand 2026-09-16 (zwei unabhängige Taucher, hart gemessen): AMS-02 ist **flux-only** — HEASARC trägt genau zwei AMS-02-Tabellen (AMS02SPEC = Spektren-Index, AMS02RATES = Raten + Instrumenten-Position ECEF), beide ohne ra/dec; CRDB (`lpsc.in2p3.fr/crdb`) trägt 24 Spalten ohne RA/DEC/GLON/GLAT (Richtungs-Größen nur für Boden-Experimente, nicht AMS-02); `ams02.space` ohne Daten-Pfad (404); der AMS-02-Dipol ist nur als obere Grenze gemessen (konsistent mit Isotropie, HEPData leer); kein Event-Release. Ohne Richtung ruht kein Faden auf S² — kein Zeuge. Der TDAT/FITS-Serializer-Compiler (`ams02.rs`, `ams02_compiler.rs`) ist gestrichen (Operator-Wort 2026-09-16); `src/archivar/tdat.rs` bleibt als generischer TDAT-Parser — sein Test-Fixture zitiert den Tabellennamen `heasarc_ams02spec` als Beispieldaten, kein AMS-02-Konsument. Die Null wird geehrt: die obere Grenze wird nicht als Signal getragen, die ECEF-Position ist der Standplatz des Detektors, kein Quell-Ort im Block.
+note AMS-02-Primärfluss (e-,e+,p,He,B/C,Ne/Mg/Si), Φ(E) am Erd-Punkt ohne Richtung; HEASARC AMS02SPEC+AMS02RATES (FITS), flux-only ohne ra/dec, CRDB ohne RA/DEC, ams02.space 404. open no-consumer; Compiler gestrichen, tdat.rs bleibt; 0 honored.
 
 decline superseded-by-integrated
 url https://antares.noirlab.edu/api/v1/
-note Korrigiert 2026-09-05: der alte decline (2026-08-17, „nur Counts/Position", „Credentials nur per Anfrage") beruhte auf dem GAVO-Mirror (Counts-only) und der Stream-Annahme. Messung 2026-09-05: die Lese-REST-API ist anonym offen; die echten Loci unter /v1/loci tragen ra/dec + attributes.properties.*_alert_magnitude (echte em-mag-Messwerte). Quelle IST physikalisch. Feld-Träger pending (richtung-only ohne Distanz) — lebt in blocked_sources.φ (parser-def json). integrated: der Mirror-Befund ist hier tot, die Quelle lebt als pending-Registrierung.
+note Korrigiert 2026-09-05: Lese-REST anonym offen; /v1/loci traegt ra/dec + alert_magnitude (em-mag). Quelle physikalisch, Feld-Träger pending (richtung-only ohne Distanz) in blocked_sources.φ (parser-def json); der alte GAVO-Mirror-Befund ist tot.
 
 decline superseded-by-integrated
 url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte=
@@ -246,7 +240,7 @@ note Free tier: stops/operators = static registries (Force Gate decline); Vehicl
 
 decline no-physical-force
 url https://api.adsabs.harvard.edu/v1/search/query
-note ADS (NASA Astrophysics Data System) — bibliographische Literatur-Metadaten (Bibcode/Titel/Autor/Abstract/Zitat/BibTeX-Export), kein physikalisches Feld; token-gated, NASA_ADS_TOKEN lebt (gemessen 2026-09-14: HTTP 200, numFound echt). Die zwei dead_sources.φ-Einträge (api.adsabs.harvard.edu/v1/ und /v1/export/bibtex/) sind Fehl-URLs (GET auf POST-only/nicht-existenten Pfaden), kein Dienst-Tot.
+note ADS (NASA Astrophysics Data System) — bibliographische Metadaten, kein physikalisches Feld; NASA_ADS_TOKEN lebt (2026-09-14: HTTP 200, numFound echt). Die zwei dead_sources.φ-Einträge sind Fehl-URLs (GET auf POST-only), kein Dienst-Tot.
 
 decline variant
 url https://api.adsb.lol/v2/point/50/10/1500
@@ -254,15 +248,15 @@ note Feste Koordinaten-Variante der live-Quelle {lat}/{lon}/250 (Probe-Befund 20
 
 decline redistribution
 url https://api.airplanes.live/v2/point/{lat}/{lon}/{radius}
-note Airplanes.live ADS-B — Cloudflare-Kontakt-Registrierung seit 2026 (vor 2024 anonym offen); kommerzieller Feed (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note Airplanes.live ADS-B — Cloudflare-Kontakt-Registrierung seit 2026; kommerzieller Feed (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline superseded-by-openaq
 url https://api.airqo.net/api/v2/devices/measurements/latest
-note AirQo (Kampala/Nairobi/Accra/Lagos, PM-Messung) lag auf OpenAQ — atmosphere_openaq_latest bereits in master.φ integriert (api.openaq.org/v2/latest?coordinates=, Z.4019); AirQo ist OpenAQ-Partner. Aktivierungsregistrierung war überflüssig. REAKTIVIERT 2026-08-20: AIRQO_KEY in .secrets.local (E6B3NPX6MBHMN6MU), live 200 application/json auf /api/v2/devices/measurements/grids/{grid_id}?token= (58 Messungen/Grid, 2026-08-20) → queue grind_jsonkanal.φ (19. Kandidat); AirQo-direkt ist die Originalquelle (Grid-Auflösung + Zeitreihen), OpenAQ-Latest bleibt der Aggregator-Kanal.
+note AirQo (Kampala/Nairobi/Accra/Lagos, PM) lag auf OpenAQ. REAKTIVIERT 2026-08-20: AIRQO_KEY, live 200 JSON /api/v2/devices/measurements/grids/{grid_id}?token= (58 Messungen/Grid) → queue grind_jsonkanal.φ; AirQo-direkt ist die Originalquelle.
 
 decline superseded-by-openaq
 url https://openaq-data-archive.s3.amazonaws.com/
-note OpenAQ S3 Bulk-Archiv (keylos, HTTP 200). Messung 2026-09-14 (curl): trägt records/csv.gz/locationid={id}/year={year}/month={month}/location-{id}-{date}.csv.gz im OpenAQ-Schema location_id,sensors_id,location,datetime,lat,lon,parameter,units,value (Probe: „1,1,JTC - Jamestown-1,…,pm25,µg/m³,104.8") — OpenAQs eigenes Archiv (csv.gz, kein parquet, kein AQS-Rohdatenbestand). Derselbe Skalar (pm25 µg/m³ diffusion) ist live integriert (sources.φ openaq_pm25_ugm3, Z.1228); ein Bulk-Compiler darauf trüge kein neues Feld → superseded-by-openaq.
+note OpenAQ S3 Bulk-Archiv (keylos, HTTP 200), 2026-09-14: records/csv.gz/.../location-{id}-{date}.csv.gz, Schema ...parameter,units,value (pm25 µg/m³, Probe 104.8). Derselbe pm25-Skalar live (sources.φ openaq_pm25_ugm3 Z.1228) → superseded-by-openaq.
 
 decline catalog
 url https://api.astrocats.space/catalog?format=json&
@@ -406,7 +400,7 @@ note Paläoökologie-Datenbank.
 
 decline no-physical-force
 url https://api.networkrail.co.uk/v1/gtfs-rt/feeds
-note Recheck 2026-08-17: kein separater API-Key — Zugang ist das Portal-Login datafeeds.networkrail.co.uk (User/Pass); STOMP auf datafeeds.networkrail.co.uk:61618 + Static Feeds via authentifiziertem HTTP GET. Verdikt 2026-08-17: Zugpositionen sind hergestellte Objekte, kein natürlicher Feldwert — kein Sensor-Organ einer nicht-menschlichen Spezies evolviert diese Messung; decline no-physical-force.
+note Recheck 2026-08-17: kein separater API-Key — Portal-Login datafeeds.networkrail.co.uk; STOMP :61618 + Static Feeds per authentifiziertem GET. Zugpositionen sind hergestellte Objekte, kein natürlicher Feldwert → decline no-physical-force.
 
 decline presence-catalog
 url https://api.obis.org/v3/
@@ -518,11 +512,11 @@ note Brauerei-Registry.
 
 decline terrain
 url https://api.opentopodata.org/v1/eudem25m?locations=
-note Recheck 2026-09-07: live HTTP 200 mit korrektem Fragment ?locations=<lat,lng> — echte Höhe (51.2,10.4 → 286,25 m). Terrain (Höhe) als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten), Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note Recheck 2026-09-07: live HTTP 200 mit ?locations=<lat,lng> — echte Höhe (51.2,10.4 → 286,25 m). Terrain als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin), Halteart Binding, nie Kraft-Feld.
 
 decline terrain
 url https://api.opentopodata.org/v1/gebco2020?locations=
-note Recheck 2026-09-07: live HTTP 200 mit korrektem Fragment ?locations=<lat,lng> — echte Tiefe (NRS01 72.49,-156.6 → −833 m). Bathymetrie als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin Zeugen-Arten), löst die NOAA-NRS-Tiefen-pending. Halteart Binding, nie Kraft-Feld.
+note Recheck 2026-09-07: live HTTP 200 mit ?locations=<lat,lng> — echte Tiefe (NRS01 72.49,-156.6 → −833 m). Bathymetrie als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin), löst NOAA-NRS-Tiefen-pending. Halteart Binding, nie Kraft-Feld.
 
 decline method
 url https://api.planet.com/data/v1/quick-search
@@ -558,7 +552,7 @@ note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (T
 
 decline redistribution
 url https://api.sofarocean.com/api/devices
-note Sofar Spotter („largest privately-owned ocean sensor network") — Spotter-Konto-Token; Daten sind Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note Sofar Spotter — Spotter-Konto-Token; Daten Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline registry
 url https://api.stackexchange.com/
@@ -574,7 +568,7 @@ note Letzter Eintrag 2020-09-13, Felder 1–5 null — Kanal gestorben.
 
 decline registry
 url https://api.thingspeak.com/channels/public.json
-note ThingSpeak öffentliche Channels (keyless, HTTP 200 JSON) — public.json ist eine Kanal-Registry (id/name/field-Labels/lat/lon) ohne Messwert-Feld; ein Einzel-Kanal (/channels/<id>/feeds.json) trägt echte IoT-Sensorwerte, aber keiner ist benannt und keiner hat einen Konsumenten. Kein Oszillator-Gate je Kanal durchlaufen (kein benannter Kanal). decline registry.
+note ThingSpeak public.json (keyless, 200 JSON) ist eine Kanal-Registry (id/name/field/lat/lon) ohne Messwert-Feld; ein Einzel-Kanal /channels/<id>/feeds.json traegt echte IoT-Werte, aber keiner ist benannt/Konsument → decline registry.
 
 decline superseded-by-integrated
 url https://api.tidesandcurrents.noaa.gov/api/prod/...`
@@ -582,7 +576,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bere
 
 decline superseded-by-integrated
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station=9414290&date=latest&time_zone=gmt&units=metric&format=json&datum=MSL
-note NOAA-datagetter live 200 application/json (2026-08-19), aber die Wasserstand-Messung ist in sources.φ integriert (datagetter mit station-Stationsliste Z.331/334, hydrosphere_tide_water_level_m) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+note NOAA-datagetter live 200 application/json (2026-08-19), aber Wasserstand in sources.φ integriert (datagetter station-Liste Z.331/334, hydrosphere_tide_water_level_m) — Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
 decline stats
 url https://api.unhcr.org/population/v1/
@@ -622,7 +616,7 @@ note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (A
 
 decline superseded-by-pris
 url https://api3.geo.admin.ch/rest/services/api/MapServer/ch.bfe.kernkraftwerke/1?f=json
-note GeoAdmin-Kernkraftwerke liefert f=json 200 application/json (2026-08-19), aber IAEA-PRIS (pris.iaea.org/api, in dead_sources.φ) ist die Primärquelle für Reaktorbetriebsdaten; Kapazitätsfaktor ist eine Betriebskennzahl, keine physikalische Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+note GeoAdmin-Kernkraftwerke f=json 200 (2026-08-19), aber IAEA-PRIS (dead_sources.φ) ist Primärquelle; Kapazitätsfaktor ist Betriebskennzahl, keine physikalische Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
 decline registry
 url https://app.birdweather.com/api/v1/stations/
@@ -738,7 +732,7 @@ note HAPI endpoint live but stopDate 2026-08-09 (recent window empty); OMNI wind
 
 decline derived
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&parameters=E1800
-note E1800 = −V×B (deterministische Funktion der advective-V- und em-B-Kanäle, Konfounder — TE≈1.0 wäre ein epistemisches Trugbild, keine eigene Messung). Aus dem OMNI-Block in sources.φ entfernt (2026-08-20); die Reihe bleibt in OMNI2 verfügbar, der electric-Kanal trägt jetzt den Solar-Orbiter-RPW-Feed (rpw_efield.bin).
+note E1800 = −V×B (deterministische Funktion der advective-V- und em-B-Kanäle, Konfounder — TE≈1.0 wäre epistemisches Trugbild). Aus dem OMNI-Block in sources.φ entfernt (2026-08-20); electric traegt jetzt Solar-Orbiter-RPW (rpw_efield.bin).
 
 decline duplicate-eop
 url https://cddis.nasa.gov/archive/products/iers/finals2000A.daily
@@ -770,7 +764,7 @@ note curl: curl: (28) Connection timed out after 12002 milliseconds Host lebt (B
 
 decline derived-orbit-fit
 url https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=JSON
-note CelesTrak TLE ISS/Tiangong — TLE-Bahnelemente = Bahnvorhersage (Orbit-Fit), keine Messung; konsistent mit DONKI/TLE (Z.389), SatNOGS-TLE (Z.1005), ivanstanojevic-TLE (Z.3170). Ephemeriden-Kanal: Horizons (sources.φ Z.854). Verschoben aus blocked_sources.φ 2026-08-19.
+note CelesTrak TLE ISS/Tiangong — Bahnelemente = Orbit-Fit, keine Messung; konsistent mit DONKI/TLE (Z.389), SatNOGS-TLE (Z.1005), ivanstanojevic-TLE (Z.3170). Ephemeriden-Kanal: Horizons (sources.φ Z.854). Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline catalog
 url https://chime-frb.ca/
@@ -806,7 +800,7 @@ note Studien-Registry.
 
 decline superseded-by-integrated
 url https://cmr.earthdata.nasa.gov/search/collections.json
-note Common Metadata Repository (CMR) = Metadaten-Register (concept-id + Titel + räumlich/zeitlich), kein Mess-Feed; 45454 Collections, data_center gemischt (ENVIDAT neben NASA-DAACs, AU_AADC, AMD_KOPRI, FEDEO, CEOS_EXTRA, MLHUB, NOAA_NCEI, USGS_LTA). Die Mess-Feeds sind direkt in sources.φ (cdaweb HAPI, firms, aeronet, cddis, ssd ephemerides).
+note CMR = Metadaten-Register (concept-id/Titel/räumlich/zeitlich), kein Mess-Feed; 45454 Collections, data_center gemischt (ENVIDAT neben NASA-DAACs). Die Mess-Feeds direkt in sources.φ (cdaweb HAPI, firms, aeronet, cddis, ssd ephemerides).
 
 decline metadata-registry
 url https://cmr.earthdata.nasa.gov/search/collections.json?page_size=1
@@ -846,7 +840,7 @@ note Waldverlust-Analysen aus Satellitenbildern (Flächen, ha) — abgeleitetes 
 
 decline no-measurement
 url https://data-gis.unep-wcmc.org/server/rest/services/Hosted/?f=json
-note UNEP-WCMC f=json liefert 200 application/json (2026-08-19), aber die Hosted-Services (u.a. „A_Modelled_Global_Distribution_of_the_Kelp_Biome") sind modellierte Verbreitungs-/Kartenprodukte, keine Sensor-Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+note UNEP-WCMC f=json 200 (2026-08-19), aber Hosted-Services (u.a. Kelp-Biome) sind modellierte Verbreitungs-/Kartenprodukte, keine Sensor-Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
 decline redistribution
 url https://data.blitzortung.org/Data/Protected/strikes.json
@@ -938,7 +932,7 @@ note grind: grind_b2find.φ
 
 decline literature
 url https://dev.elsevier.com/apikey/manage
-note Scopus/Elsevier-Publikations- und Zitationskatalog — freier non-commercial API-Key (dev.elsevier.com), Antwort = Bibliographie-Metadaten (Autoren/Abstracts/Zitationszählwerte/CiteScore), kein physikalischer Messwert am Ort-Zeit-Punkt. Kein Konsument (keine Nadel frißt Zitationszahlen). decline literature (Präzedenz: OpenAlex registry, Semantic Scholar no-physical-force).
+note Scopus/Elsevier-Katalog — freier non-commercial Key (dev.elsevier.com), Antwort = Bibliographie (Autoren/Abstracts/Zitationszählwerte/CiteScore), kein physikalischer Messwert. decline literature (Präzedenz OpenAlex registry, Semantic Scholar).
 
 decline redistribution
 url https://dev.meteostat.net/api/stations/nearby.html
@@ -962,7 +956,7 @@ note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Su
 
 decline derived-product
 url https://ds.iris.edu/spud/momenttensor
-note IRIS-SPUD-Moment-Tensor-Service (momenttensor.json Capture): HTTP 500 am 2026-09-07 (Server-Fehler); IRIS-fdsnws/event = Gone. Moment-Tensor-Messung gehoert der GCMT-Linie (globalcmt.org); die Waveform-Messung ist via service.earthscope.org (fdsn_waveform.bin) registriert. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+note IRIS-SPUD-Moment-Tensor (momenttensor.json): HTTP 500 am 2026-09-07; IRIS-fdsnws/event = Gone. Moment-Tensor gehört GCMT (globalcmt.org); Waveform via service.earthscope.org (fdsn_waveform.bin) registriert. Host lebt (Browser 2026-09-10).
 
 decline catalog
 url https://earth-search.aws.element84.com/v0/search
@@ -970,7 +964,7 @@ note STAC-Suchkatalog (Metadata-Suche).
 
 decline catalog-duplicate
 url https://earthquake.tmd.go.th/earthquake_json.php
-note TMD-Thailand-Erdbeben-Bulletin. Die earthquake_json.json/200.json-Captures stammen vom HTTP-404-Pfad (am 2026-09-07 gemessen); der lebende RSS (feed/rss_inside.xml) traegt lat/lon/magnitude nur im <title>-Freitext (Parser-Gap) und dupliziert den registrierten USGS-Epizentrum-Messwert-Typ.
+note TMD-Thailand-Erdbeben-Bulletin: earthquake_json.json/200.json vom HTTP-404-Pfad (2026-09-07); der lebende RSS feed/rss_inside.xml traegt lat/lon/magnitude nur im <title>-Freitext (Parser-Gap) und dupliziert den registrierten USGS-Epizentrum-Typ.
 
 decline catalog
 url https://earth-search.aws.element84.com/v0/search\
@@ -1198,7 +1192,7 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host
 
 decline terrain
 url https://epqs.nationalmap.gov/v1/json?x=13.41&y=52.52&units=Meters&output=json
-note DEM-Höhenabfrage — Terrain per Gate declined. Council-Verdikt 2026-09-07 (Gestalt-Litmus): echter Gestalt-Zeuge — DEM-Höhe in m ist der gemessene SI-Skalar (die Form selbst); Land-Höhen-Geschwister zu gebco/eudem25m, zweite unabhängige Land-Linie → Binding/Compiler. Halteart Binding (dust-maske-Muster), nie Kraft-Feld.
+note DEM-Höhenabfrage — Terrain per Gate declined. Council 2026-09-07: DEM-Höhe in m ist der gemessene SI-Skalar; Geschwister zu gebco/eudem25m, zweite Land-Linie → Binding/Compiler. Halteart Binding, nie Kraft-Feld.
 
 decline superseded-by-integrated
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max
@@ -1214,7 +1208,7 @@ note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340
 
 decline synthetic-product
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC
-note Force-Gate decline, title/summary measured 2026-09-07: "Argo float synthetic vertical profiles : BGC data", built by ARGO_simplified_profile — an interpolated standard-depth product, not a per-level float measurement. The measured BGC parameters live per float in the GDAC netCDF profiles indexed by argo_bio-profile_index.txt.gz (data-argo.ifremer.fr, HTTP 200, format v2.2, 410088 profiles, columns file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update); the catalog-wide netCDF harvest is a register duty. ifremer raw ArgoFloats serves no BGC values (doxy null across full-suite float 1901614, doxy>0 query 404 — measured 2026-09-07).
+note Force-Gate decline, measured 2026-09-07: ARGO_simplified_profile ist interpoliertes Standardtiefen-Produkt, keine Float-Messung. BGC je Float in GDAC netCDF (data-argo.ifremer.fr 200, 410088 profiles); ifremer raw ohne BGC (doxy null, doxy>0 404).
 
 decline superseded-by-integrated
 url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy
@@ -1254,7 +1248,7 @@ note irsa_gavo_b 2026-08-18: kein ra/dec, nur dimensionslose Eklipsen-Tiefe.
 
 decline superseded-by-integrated
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=JSON&QUERY=SELECT+hostname,pl_name,pl_masse,ra,dec+FROM+ps+WHERE+pl_name%3D%27KOI-4777.01%27
-note Exoplanet-TAP live 200 application/json (2026-08-19), aber die Exoplaneten-Messung ist in sources.φ integriert (stellarhosts Z.1630, exoplanets.json Z.1229/1240, tess_lightcurves.bin Z.1259) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+note Exoplanet-TAP live 200 JSON (2026-08-19), aber Exoplaneten-Messung in sources.φ integriert (stellarhosts Z.1630, exoplanets.json Z.1229/1240, tess_lightcurves.bin Z.1259) — Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
 
 decline presence-catalog
 url https://explore.globalmeteornetwork.org/gmn_data_store
@@ -1270,7 +1264,7 @@ note XML-Variante; dsn.json ist Accept-Kandidat (TODO).
 
 decline registry-list
 url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
-note FRIPON-Feuerkugel-Liste (liste_multiple.ajax.json Capture, HTTP 200, 20784 Events): Event-Register mit Datum/Kamera-Anzahl/Status/Stationsnamen, keine Spalte mit Position oder physikalischem Messwert am Punkt; Feuerkugel-Energien sind via ssd-api.jpl.nasa.gov fireball.api registriert.
+note FRIPON-Feuerkugel-Liste (liste_multiple.ajax.json, HTTP 200, 20784 Events): Event-Register Datum/Kamera-Anzahl/Status/Stationsnamen, keine Position/Messwert-Spalte; Feuerkugel-Energien via ssd-api.jpl.nasa.gov fireball.api registriert.
 
 decline model-forecast
 url https://flood-api.open-meteo.com/v1/flood
@@ -1406,7 +1400,7 @@ note Seekabel-Verläufe.
 
 decline derived-product
 url https://glade.elte.hu/
-note kompiliertes Cross-Match aus 6 bereits registrierten Surveys; direkte Messgrößen (B/K/W1-Magnituden) sind 2MASS/WISE-Daten, die neuen Spalten (Sternmasse, BNS-Merger-Rate) modell-abgeleitet — keine eigene direkte Messung. Statischer Download, kein API, 200 erreichbar.
+note kompiliertes Cross-Match aus 6 registrierten Surveys; direkte Größen (B/K/W1) sind 2MASS/WISE-Daten, neue Spalten (Sternmasse, BNS-Merger-Rate) modell-abgeleitet — keine eigene Messung. Statischer Download, kein API, 200.
 
 decline derived-satellite-index
 url https://glam1.gsfc.nasa.gov/api/gettbl/v4
@@ -1446,7 +1440,7 @@ note grind: grind_terrapulse_a.φ
 
 decline direction-only
 url https://hermes.lco.global/api/v0/targets/
-note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN in .secrets.local): /messages/ (362k) und /targets/ (304) → 200. Aber targets tragen nur name + right_ascension/declination (Dezimalgrad) + message-Refs — kein Feldwert (keine Signifikanz/Flux im API-Modell), keine Distanz (nichtlokalisierte Kandidaten). Position-only → §3.9 drop. Ohne erfundene Distanz/Feldwert nicht manifestierbar.
+note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN): /messages/ (362k) + /targets/ (304) → 200. Targets nur name + RA/Dec + message-Refs — kein Feldwert, keine Distanz. Position-only → §3.9 drop; ohne erfundene Distanz nicht manifestierbar.
 
 decline infrastructure
 url https://hosting.wsapi.cloud.bom.gov.au/arcgis/rest/services/flood/National_Flood_Gauge_Network/FeatureServer/0
@@ -1522,15 +1516,15 @@ note HTML-Formular-Endpoint ohne JSON; TAP-Route trägt die IRSA-Kataloge bereit
 
 decline redundant
 url https://irsa.ipac.caltech.edu/ibe/
-note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a) öffentliche Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3 Open Data (nasa-irsa-wise, ipac-irsa-ztf usw., anonymous, kein Key); (b) proprietäres ZTF via IPAC-SSO (curl --user email:passwort). Verdikt 2026-08-17 bleibt decline redundant: ZTF-Photometrie über Lasair/ALeRCE abgedeckt, übrige IRSA-Holdings (WISE/2MASS) sind Bulk-Kataloge ohne Live-Feldwert.
+note IRSA erreichbar (200). Recheck 2026-08-17: kein API-Token — (a) Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3; (b) ZTF via IPAC-SSO. Decline redundant: ZTF über Lasair/ALeRCE, WISE/2MASS ohne Live-Feldwert.
 
 decline redundant
 url https://irsa.ipac.caltech.edu/TAP/sync
-note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS). Party-Messung 2026-09-14: kein keyless JSON/CSV-Fluss; nur FITS-Pfad (SIA2 COLLECTION=spherex_qr2). 2026-09-06 (scanner route): the AllWISE cone on this TAP (nadel_gate.rs allwise_cone/allwise_witness, table allsky_4band_p3as_psd, columns ra/dec/w1mpro-w4mpro/w1sigmpro, FORMAT=csv, anonymous, curl-verified HTTP 200) stays decline redundant as a FIELD source — static photometry without distance (holdings verdict dead_sources.φ, W1/W2 redundant to the AllWISE CDN asset). The gate reads it only as identity_join crossmatch reference for the natural-class decision (W1-W2 AGN wedge, Stern et al. 2012), never as an oscillator value — the decline covers the scanner route; no silent source entry in sources.φ.
+note SPHEREx-Quick-Release (2026-08-18): TAP-Schema nur splices + ObsCore-Views (Bild-Metadaten→FITS); Spektralphotometrie FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec → Parser-pending. AllWISE-Cone redundant (ohne Distanz, identity_join).
 
 decline redundant
 url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
-note Pan-STARRS DR1 mean (MAST catalogs API), measured 2026-09-06. Probe: host alive (root HTTP 200); table route answers HTTP 200 JSON {info,data} — 125-column positional rows, names only in the info metadata list (the SpaltenAusMetadata parser-gap class, ledger.φ), NOT the keyed objects the earlier geparkt note assumed (that shape was never measured — probe was env-void). gMeanPSFMag/rMeanPSFMag/iMeanPSFMag/zMeanPSFMag/yMeanPSFMag present, unit mag; absent per band = numeric float sentinel -999.0 (measured: PSO J095955.653+700218.130 z=18.139 with the other four bands -999.0; 4740 of 41392 rows all-five absent). The {ra}/{dec}/{radius} cone returned no bytes within 40-90 s on three attempts this run — cone latency itself measured; schema proven via the full-table fetch. Force-Gate: photometry is physical (em mag) but distance-less (no plx/z/dist) — the CelestialMap distance gate drops every row, so a sources.φ field block would be still-null (forbidden). Classification decline redundant, same standing and same day as the AllWISE cone (this file, irsa TAP, scanner route): static distance-less photometry is a gate-side reference, never an oscillator source. The council verdict (fuenf-funken-anomalie-suche.md, PS1 deliberately not added) holds: broad optical color is already carried by Gaia dr3_stars BP/RP (CDN) and the distance-bearing optical by sdss_photoobj psfMag+spec-z (sources.φ). The narrow pre-baseline utility the scanner could draw is served by the nadel_gate in-gate ADQL cone pattern (allwise_cone/allwise_witness), not by a register source. Draft stays historical in grind_astro_tap_2026-08-19.φ; ledger.φ geparkt entry closed.
+note Pan-STARRS DR1 mean (MAST), 2026-09-06: 200 JSON, 125 columns (Parser-Gap SpaltenAusMetadata), g/r/i/z/yMeanPSFMag mag, absent -999.0; cone 40-90s ohne Bytes. em-mag, distanzlos → Gate verwirft; decline redundant (wie AllWISE).
 
 decline derived-crossmatch
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+splices
@@ -1602,7 +1596,7 @@ note open-meteo Marine = Modelloutput.
 
 decline no-physical-force
 url https://marinecadastre.gov/ais/api/v1/locations?bbox=
-note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS-Bestellservice derzeit pausiert (MARINECADASTRE_KEY entfernt, .secrets.local). Verdikt 2026-08-17: Schiffspositionen sind hergestellte Objekte, kein natürlicher Feldwert; decline no-physical-force.
+note Recheck 2026-08-17: kein Live-API — AIS als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS pausiert (MARINECADASTRE_KEY entfernt). Schiffspositionen hergestellt, kein natürlicher Feldwert → decline no-physical-force.
 
 decline superseded-by-integrated
 url https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/
@@ -2270,7 +2264,7 @@ note gNnAj = seismische Stations-Registry (II-Netz, z. B. AAK Ala Archa) — Sta
 
 decline no-measurement
 url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/gNnAj/FeatureServer/0/query?where=1=1&outFields=*&f=json
-note GSN Seismic Stations (ArcGIS FeatureServer, Layer 0) — 200 application/json (2026-08-19), aber nur Standort-Metadaten der Seismometer (Objekt-ID/Name/Position), keine Bebendaten — keine Messung am Punkt. Verschoben aus blocked_sources.φ 2026-08-19.
+note GSN Seismic Stations (ArcGIS FeatureServer, Layer 0) — 200 JSON (2026-08-19), nur Standort-Metadaten der Seismometer (Objekt-ID/Name/Position), keine Bebendaten. Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline infrastructure
 url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/hurricane_shelters/FeatureServer/0
@@ -2654,11 +2648,11 @@ note astronomisches Objekt-Register (Identifier+Positionen), Katalog ohne Messwe
 
 decline superseded-by-skyServerWS
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
-note Diese Route liefert HTML (Formularseite); die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch) und ist in sources.φ integriert (sdss_photoobj 2026-08-18). psfMag-Spalten liegen in photoObj; photoObj.z ist modelMag_z (z-Band-Magnitude, KEINE Rotverschiebung) — die spektroskopische z trägt nur der specObj-Join. Verschoben aus blocked_sources.φ 2026-08-19.
+note Diese Route liefert HTML; JSON-Route beim SkyServerWS-Sibling, in sources.φ integriert (sdss_photoobj 2026-08-18). photoObj.z = modelMag_z (KEINE Rotverschiebung); spektroskopische z nur im specObj-Join. Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline image-survey
 url https://skyview.gsfc.nasa.gov/current/cgi/query.pl
-note SkyView-Bild-Cutout-Dienst (VTSS H-Alpha, Mellinger, DSS2) — Bild-Survey, FITS/JPEG-Pixel-Cutouts ohne Punkt-Messwert; Force-Gate: ein Bild ist kein Skalar an einem Punkt (Oszillator-Gate decline). Gemessen 2026-09-11: query.pl 200 (170 KB Form); runquery.pl?Survey=VTSS+H-Alpha&Return=JSON 500 (Param-Form, kein Daten-JSON). Kein Compiler — Bild-Surveys tragen keine Messwert-Serie.
+note SkyView-Bild-Cutout-Dienst (VTSS H-Alpha, Mellinger, DSS2) — Bild-Survey, FITS/JPEG-Cutouts ohne Punkt-Messwert; ein Bild ist kein Skalar an einem Punkt. Gemessen 2026-09-11: query.pl 200 (170 KB Form); runquery.pl?Return=JSON 500. Kein Compiler.
 
 decline registry/katalog
 url https://solar-dachs.oca.eu/tap
@@ -2786,7 +2780,7 @@ note vizier_bulk_c 2026-08-18: Tabelle tot (TAP 400), kein tap_index-Eintrag.
 
 decline superseded-by-integrated
 url https://tapvizier.u-strasbg.fr/TAPVizieR/tap/sync
-note Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); die Browser-Historie-Diagnose war falsch. Der alte CDS-Host antwortet weiter, der kanonische Host tapvizier.cds.unistra.fr trägt die TAPVizieR-Quellen in sources.φ. Der 501-Befund und der 400-Befund sind Zeitpunkte desselben Hosts — ein Eintrag trägt beide.
+note Recheck 2026-09-10: HTTP 400 + TAP-JSON (lebt, braucht Query); Browser-Diagnose falsch. Alter CDS-Host antwortet weiter, kanonischer Host tapvizier.cds.unistra.fr traegt TAPVizieR-Quellen in sources.φ. 501 und 400 sind Zeitpunkte desselben Hosts.
 
 decline derived
 url https://terrabrasilis.dpi.inpe.br/app/api/
@@ -2818,7 +2812,7 @@ note TLE-Bahnvorhersage.
 
 decline superseded-by-woudc
 url https://toar-data.fz-juelich.de/api/v2/data/map/
-note TOAR (troposphärisches Ozon, Jülich) ist die Forschungs-Aggregation derselben WMO-Stationsdaten, die WOUDC bereits liefert — atmosphere_woudc_total_ozone in master.φ integriert (api.woudc.org/collections/totalozone, Z.10813). Registrierung nicht nötig. Verschoben aus blocked_sources.φ 2026-08-19.
+note TOAR (troposphärisches Ozon, Jülich) ist Forschungs-Aggregation derselben WMO-Stationsdaten wie WOUDC (atmosphere_woudc_total_ozone in master.φ, Z.10813). Registrierung nicht nötig. Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline station-registry
 url https://toar-data.fz-juelich.de/api/v2/stationmeta/?limit=100
@@ -2826,7 +2820,7 @@ note grind: grind_b2find.φ
 
 decline kein-latlon
 url https://transmission.bpa.gov/business/operations/gic/gic.txt
-note BPA-GIC (2026-09-13 gemessen HTTP 200, 87 799 B): Transformer-GIC an 11 benannten Umspannwerken (Eugene OR, Spokane WA, The Dalles OR, Lewiston ID, Kalispell MT, Monroe WA, Wilsonville OR, Vancouver WA, Ellensburg WA, Bothell WA, Moses Lake WA), 5-Minuten-Werte in Ampere, 4-Tage-Rollfenster. Kraft-Gate bestanden (electric A — GIC-Strom; Vorbild fmi_gic sources.φ:5904). Positionslos: die TSV trägt nur Stationsnamen, keine lat/lon — Punktmessung ohne Punkt, ein Surface-Anker wäre fabriziert; die Kombination kontinuierlich + Stationskoordinaten bleibt not-published.
+note BPA-GIC (2026-09-13: HTTP 200, 87 799 B): GIC an 11 Umspannwerken, 5-Min-Werte Ampere. Kraft-Gate bestanden (electric A, fmi_gic sources.φ:5904). Positionslos: nur Stationsnamen, keine lat/lon — Punktmessung ohne Punkt, Anker fabriziert.
 
 decline schedule
 url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
@@ -2866,7 +2860,7 @@ note EUMETSAT-WMS-Bildkacheln.
 
 decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
-note Swarm TII E-Feld (TCT02/16, EFIA/EFIB/EFIC) — keyless HAPI lebt, aber (1) experimentelles Produkt, stopDate 2025-12-04 (kein Live-Feed), (2) E-Feld ist ABGELEITET (E=-V×B aus Ionendrift + B-Feld), nicht direkt gemessen — die direkte Messung ist die Ionendrift (Vixh/Viy/Viz, m/s). Force-Gate: E-Feld abgeleitet + Feed beendet → kein lebender Oszillator. Die live-Swarm-elektrischen Felder (Langmuir-Probe, FAC, MAG) stehen bereits in sources.φ. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+note Swarm TII E-Feld (TCT02/16) — keyless HAPI, aber experimentell, stopDate 2025-12-04, E-Feld ABGELEITET (E=−V×B); direkte Messung ist Ionendrift (Vixh/Viy/Viz m/s). Abgeleitet + Feed beendet → kein Oszillator; live-Swarm-Felder in sources.φ.
 
 decline registry/katalog
 url https://vo-tap.oma.be/tap
@@ -2930,7 +2924,7 @@ note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integrier
 
 decline no-measurement-2026-09-14
 url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus
-note CADC-ARGUS — Re-Messung 2026-09-13 (Split-Routing, 9 Proton-Exits): HTTP 200 direkt — lebt; der 000/Peer-Reset war transient, kein Geo-Block. TAP liegt unter /argus/sync, in tap_index_cadc.φ schon geerntet; dead-Verdikt prüfen (lebt = re-weigh als Live-Kandidat).
+note CADC-ARGUS — Re-Messung 2026-09-13 (Split-Routing, 9 Proton-Exits): HTTP 200 direkt — lebt; 000/Peer-Reset transient, kein Geo-Block. TAP unter /argus/sync, in tap_index_cadc.φ geerntet; dead-Verdikt prüfen (lebt = re-weigh).
 
 decline metadata-registry
 url https://ws.pangaea.de/oai/provider
@@ -2942,7 +2936,7 @@ note grind: grind_terrapulse_a.φ
 
 decline aggregated-index
 url https://wwlln.net/climate/th_yr/data/WWLLN_th_YYYY.nc.zip
-note Jahres-Stunden-Gitter (Thunder-Hour-Klimatologie) — Zählwert ohne Ereignis-Records, Ereignisse not-published. Oszillator-Gate: aggregierter Index, keine Zweitlinie zu LIS/GLM (andere physikalische Dimension). Council-Urteil 2026-09-13. Endpoint lebt (HTTP 200, gemessen 2026-09-13); Liveness ändert die Identität nicht.
+note Thunder-Hour-Klimatologie — Zählwert ohne Ereignis-Records, not-published. Aggregierter Index, keine Zweitlinie zu LIS/GLM. Council 2026-09-13. Endpoint lebt (HTTP 200, 2026-09-13); Liveness ändert die Identität nicht.
 
 decline html
 url https://www.aavso.org/vsx/
@@ -2978,11 +2972,11 @@ note Kristallstruktur-Daten.
 
 decline redistribution
 url https://www.ctbto.org
-note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrierung), kein anonymer Zugang; IMS-Daten nicht frei redistribuierbar (staatliche Kontrolle) — CDN-Redistribution ausgeschlossen. Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrierung), kein anonymer Zugang; IMS-Daten nicht frei redistribuierbar (staatliche Kontrolle) — CDN-Redistribution ausgeschlossen. Verschoben aus blocked_sources.φ 2026-08-19.
 
 decline literature
 url https://www.dimensions.ai/products/free
-note Dimensions (Digital Science) — freie Metrics-API (metricssignup), Antwort = Zitations-/Altmetrics-Zählwerte (citations, field citation ratio), kein physikalischer Messwert am Ort-Zeit-Punkt. Kein Konsument. decline literature (Präzedenz: OpenAlex registry, Scopus).
+note Dimensions (Digital Science) — freie Metrics-API (metricssignup), Antwort = Zitations-/Altmetrics-Zählwerte (citations, field citation ratio), kein physikalischer Messwert. Kein Konsument. decline literature (Präzedenz OpenAlex registry, Scopus).
 
 decline redistribution
 url https://www.dxpredictor.com/api/v1/ionosonde/fof2
@@ -3054,7 +3048,7 @@ note Genexpressions-Daten.
 
 decline aggregate
 url https://www.ncei.noaa.gov/access/land-based-station-data/land-based-in-situ/climate-normals/
-note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen sind in sources.φ/masternote registriert. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen in sources.φ/masternote registriert. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
 decline no-physical-force
 url https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox=
@@ -3234,7 +3228,7 @@ note WorldPop = Modell/Populationsschätzung, kein Live-Feed (wpgp 500, /rest/da
 
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
-note MBARI LOBO-Datenroute ohne öffentlichen Zugang (403 lokal/corsproxy/Browser, 2026-08-19); die Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) fließen in CeNCOOS (data.cencoos.org, ERDDAP, 200) — der IOOS-Regionalverbund ist der Port-Kanal (→ queue grind_cencoos.φ). Die Tiefsee-/AUV-/ROV-Daten liegen in STOQS (stoqs.mbari.org, REST-API je Kampagne, 200 lokal 2026-08-19 — der frühere 000 war ein Timeout des langsamen Servers, kein Block) → queue grind_stoqs.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+note MBARI LOBO ohne öffentlichen Zugang (403, 2026-08-19); Küstenmessungen (LOBO, M1, OA1/2, Wave Glider, ISUS) in CeNCOOS (data.cencoos.org ERDDAP 200) → grind_cencoos.φ. Tiefsee/AUV/ROV in STOQS (stoqs.mbari.org REST 200) → grind_stoqs.φ.
 
 decline health-stats
 url https://xmart-api-public.who.int/FLUMART/V_FLUNET?$format=json&$top=5&$orderby=ISO_YEAR%20desc,ISO_WEEK%20desc
@@ -3242,15 +3236,15 @@ note Grippe-Surveillance-Statistik.
 
 decline analysis-dataset
 url https://zenodo.org/records/8401262
-note Super-Kamiokande — atmosphärische Neutrino-Oszillations-Analyse SK I–V (DOI 10.5281/zenodo.8401262): Analyse-Datensatz (gebinnete Ereignis-Raten/Spektren, data/MC-Ratios, Δm²/θ-Konturen) ohne Roh-Messkanal; per-Event-S²-Richtung ungemessen. Teilchen-Kanal pending (kein particle-Medium). Zenodo zum Messzeitpunkt 504 (site-weit).
+note Super-Kamiokande SK I–V (DOI 10.5281/zenodo.8401262): gebinnete Ereignis-Raten/Spektren, Δm²/θ-Konturen ohne Roh-Messkanal; per-Event-S²-Richtung ungemessen. Teilchen-Kanal pending (kein particle-Medium). Zenodo 504 zum Messzeitpunkt.
 
 decline single-event
 url https://zenodo.org/records/8427755
-note Telescope Array — Amaterasu (DOI 10.5281/zenodo.8427755): ein einzelnes UHE-CR-Ereignis, keine Serie, kein τ — kein Feld (ein Punkt ohne Reihe). Der Teilchen-Kanal ist pending (kein particle-Medium in der 9-Kräfte-Registratur); Teilchen ist Abstammung, keine zehnte Kraft. Zenodo war zum Messzeitpunkt 504 (site-weit).
+note Telescope Array — Amaterasu (DOI 10.5281/zenodo.8427755): einzelnes UHE-CR-Ereignis, keine Serie, kein τ — kein Feld. Teilchen-Kanal pending (kein particle-Medium; Teilchen ist Abstammung). Zenodo war 504 zum Messzeitpunkt.
 
 decline model
 url https://zenodo.org/records/10594301
-note GIC-Zenodo Alberta 2023 (DOI 10.5281/zenodo.10594301; DataCite gemessen HTTP 200, 10 002 B; Zenodo-API 504 zum Messzeitpunkt): die Dateien sind Mag_Data.zip / Magnetotelluric_Data.zip / Network_Data.xlsx — die GIC sind MODELLIERT (aus MT + Netzwerk), kein netCDF-Messwert, statisches Archiv (Oszillator-Gate: Modell-Ausgabe). Die geomagnetische Mag_Data.zip trägt echte em-Messung (Magnetometer, nT) als gezippter IAGA-Text — parser-def/pending falls je ein ZIP+IAGA-Reader gebaut wird. Party-Messung 2026-09-14: kiagateway (crates.io) + INTERMAGNET (intermagnet.org HTTP 200); kein dediziertes Rust-IAGA2002-Crate.
+note GIC-Zenodo Alberta 2023 (DOI 10.5281/zenodo.10594301; DataCite 200, 10 002 B; Zenodo 504): Mag_Data.zip/MT_Data.zip/Network.xlsx — GIC MODELLIERT, kein netCDF-Messwert. Mag_Data.zip em-Messung (nT) als IAGA-Text → parser-def/pending.
 
 decline registry
 url https://registry.euro-vo.org/regtap/tap
@@ -3262,7 +3256,7 @@ note VOParis-Resource-Registry (ivo://purx/tap) — rr.* + glots-Verzeichnis (32
 
 decline commercial
 url https://www.marinetraffic.com/en/ais-api-services
-note MarineTraffic AIS-API jetzt unter Kpler — kommerziell/paid, ToS erlaubt keine CDN-Redistribution. Descope 2026-09-12. Party-Messung 2026-09-14: offener AIS-Weg gemessen — NOAA MarineCadastre vessel-traffic-Archiv CC0 (hub.marinecadastre.gov/pages/vesseltraffic, historisch; Live-NAIS-Feed bleibt ausgeschlossen).
+note MarineTraffic AIS jetzt unter Kpler — kommerziell/paid, ToS keine CDN-Redistribution. Descope 2026-09-12. Offener AIS-Weg: NOAA MarineCadastre vessel-traffic (hub.marinecadastre.gov/pages/vesseltraffic; Live-NAIS bleibt ausgeschlossen).
 
 decline commercial
 url https://www.earthnetworks.com/
@@ -3278,7 +3272,7 @@ note OpenTopography — Non-Academic-Abo (OT+); Datenlizenzen je Dataset variabe
 
 decline redistribution
 url https://sws-data.sws.bom.gov.au/
-note BOM Space Weather API (Australian Bureau of Meteorology) — Copyright, keine ausdrueckliche Redistributions-Erlaubnis. Descope 2026-09-12. Party-Messung 2026-09-14: freie Key-Registrierung (sws-data.sws.bom.gov.au/register, CAPTCHA), kostenlos; Redistribution bleibt ungeklärt (decline redistribution hält).
+note BOM Space Weather API (Australian BoM) — Copyright, keine ausdrueckliche Redistributions-Erlaubnis. Descope 2026-09-12. Freie Key-Registrierung (sws-data.sws.bom.gov.au/register, CAPTCHA); Redistribution ungeklärt (decline redistribution hält).
 
 decline redistribution
 url https://nucleus.iaea.org/wiser/
@@ -3286,7 +3280,7 @@ note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026
 
 decline metadata-portal
 url https://orfeus-eu.org/submachine/
-note SubMachine/ORFEUS-Portal (HTTP 200, Beta): Web-Oberflaeche zum Erkunden/Visualisieren/Herunterladen von 3D-Tomographie-Modellen, kein direkter Grid-Download-Endpoint (gemessen 2026-09-13); die Modell-Inhalte selbst sind als format reference in sources.φ registriert (EMC-NetCDF + tom-new-Mirror) — das Portal traegt keine eigene Messwert-Route.
+note SubMachine/ORFEUS-Portal (HTTP 200, Beta): Web-Oberflaeche für 3D-Tomographie-Modelle, kein direkter Grid-Download (2026-09-13); Inhalte als format reference in sources.φ (EMC-NetCDF + tom-new-Mirror) — keine eigene Messwert-Route.
 
 
 decline presence-catalog
@@ -3323,23 +3317,23 @@ note Weberin-Re-Run 2026-09-14: ThingSpeak-Doku (die Datenroute ist api.thingspe
 
 decline superseded-by-integrated
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
-note AMS-Meteors check_data.php — Login-Wall (2026-09-15: 200 HTML „temporarily offline", kein JSON); AMS-Payload = visuelle Feuerkugel-Meldungen (citizen science), keine satellitengemessene Strahlungsenergie. Die Bolide-/Feuerkugel-Strahlungsenergie (em) ist integriert: JPL-Fireball (geosphere_fireball_radiated_energy_e10j + impact_energy_kt, sources.φ) + GLM-Bolide (glm_bolide_radiant_energy_j).
+note AMS-Meteors check_data.php — Login-Wall (2026-09-15: 200 HTML „temporarily offline", kein JSON); visuelle Feuerkugel-Meldungen (citizen science), keine Strahlungsenergie. Bolide-em integriert: JPL-Fireball + GLM-Bolide.
 
 decline redistribution
 url https://services.sentinel-hub.com/api/v1/catalog/collections
-note Sentinel-Hub-Catalog-API (2026-09-15: 503 anonym, /oauth/token 401). Sentinel Hub gehört Planet Labs (pricing → planet.com/pricing, Paid-Tiers/monitoring credits). Verdikt 2026-08-17 hält: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E); derselbe Befund wie docs.sentinel-hub.com.
+note Sentinel-Hub-Catalog-API (2026-09-15: 503 anonym, /oauth/token 401). Sentinel Hub gehört Planet Labs (Paid-Tiers/monitoring credits). Kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
 decline reference
 url http://worldtimeapi.org/api/timezone/Etc/UTC
-note UTC-Zeit/Zeitzone — Referenz-Konstante, kein propagierendes Feld: ein Nicht-Mensch evolviert kein Sinnesorgan für eine UTC-Uhr; Kraft absent. Gemessen 2026-09-15: connection reset (curl 56), Proton NL SSL_ERROR_SYSCALL, kein/leerer Wayback-Snapshot — der Decline ist das Urteil (reference), nicht die Erreichbarkeit.
+note UTC-Zeit/Zeitzone — Referenz-Konstante, kein propagierendes Feld; Kraft absent. Gemessen 2026-09-15: connection reset (curl 56), Proton NL SSL_ERROR_SYSCALL, kein/leerer Wayback-Snapshot — der Decline ist das Urteil (reference).
 
 decline no-physical-force
 url https://api.gdeltproject.org/api/v2/doc/doc
-note GDELT DOC 2.0 — globale Nachrichten-/Medien-Ereignis-Artikel (Text, Ton, Themen), kein physikalisches Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für Medien-Artikel; Kraft absent. Gemessen 2026-09-15: 429 (IP-Throttle) direkt + Proton, Host root 200, Wayback-Snapshot 2017 — der Decline ist das Urteil (no-physical-force), nicht der Rate-Limit.
+note GDELT DOC 2.0 — globale Nachrichten-/Medien-Artikel, kein physikalisches Feld; Kraft absent. Gemessen 2026-09-15: 429 (IP-Throttle) direkt + Proton, Host root 200, Wayback 2017 — der Decline ist das Urteil (no-physical-force).
 
 decline infrastructure
 url https://api.ioda.caida.org/v2/outages/asn/
-note IODA v2 Internet-Ausfälle (BGP/Reachability je ASN) — Zustand menschlicher Netz-Infrastruktur, kein physikalisches Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für BGP-Erreichbarkeit; Kraft absent. Gemessen 2026-09-15: kein HTTP über drei Routen — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
+note IODA v2 Internet-Ausfälle (BGP/Reachability je ASN) — Zustand menschlicher Netz-Infrastruktur, kein physikalisches Feld; Kraft absent. Gemessen 2026-09-15: kein HTTP über drei Routen — der Decline ist das Urteil (infrastructure).
 
 decline infrastructure
 url https://ioda.caida.org/api/v1/outages
@@ -3347,7 +3341,7 @@ note IODA v1 Internet-Ausfälle — Zustand menschlicher Netz-Infrastruktur, kei
 
 decline infrastructure
 url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
-note GRAND_Dams — globales Staudamm-Register (Position + Attribute: Staukapazität, Höhe), geographische Infrastruktur ohne Messwert-Feld: kein Nicht-Mensch evolviert ein Sinnesorgan für einen Staudamm; Kraft absent. Gemessen 2026-09-15: Timeout 20 s (Datacenter-IP-Sperre), Proton SSL_ERROR_SYSCALL — der Decline ist das Urteil (infrastructure), nicht die Erreichbarkeit.
+note GRAND_Dams — Staudamm-Register (Position + Staukapazität/Höhe), geographische Infrastruktur ohne Messwert-Feld; Kraft absent. Gemessen 2026-09-15: Timeout 20 s, Proton SSL_ERROR_SYSCALL — der Decline ist das Urteil (infrastructure).
 
 decline redundant
 url https://cda.cfa.harvard.edu/csctap
@@ -3507,7 +3501,7 @@ note IGETS-Alt-EOST-Portal; die IGETS-Gravimetrie ist via igets.bin in sources.�
 
 decline superseded-by-integrated
 url https://alerce.online/api/v1/objects
-note ALeRCE-Legacy-Route; heute HTML-SPA (ALeRCE Explorer, gemessen 2026-09-16 HTTP 200 HTML). Die API lebt unter api.alerce.online/alerts/v1/objects (format alerce in sources.φ:856, magpsf/magap). Die frühere decline-Zeile traf fälschlich die live-Route.
+note ALeRCE-Legacy-Route; heute HTML-SPA (gemessen 2026-09-16 HTTP 200 HTML). Die API lebt unter api.alerce.online/alerts/v1/objects (format alerce in sources.φ:856, magpsf/magap). Die frühere decline-Zeile traf fälschlich die live-Route.
 
 decline duplicate
 url https://globalcmt.org/
@@ -3539,7 +3533,7 @@ note NMDB-Neutron-Monitor-Zählraten (alle ~30 Stationen, minütlich) — diesel
 
 decline spectral-series
 url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC Hydrophon — Schalldruck-Spektraldichte ist eine 1921-Bin-Serie (MATLAB-v5 miCOMPRESSED), kein Skalar-Feldblock; Reduktion auf einen Wert = Band-Wahl (0-Kanon, NRS-Präzedenz). Die Form (Serie, nicht Skalar) schließt das Oszillator-Gate — der Konsument ist hier nicht der Grund. Parser (mat5.rs) existiert, das Register trägt nur Skalare.
+note ONC Hydrophon — Schalldruck-Spektraldichte ist 1921-Bin-Serie (MATLAB-v5 miCOMPRESSED), kein Skalar-Feldblock; Reduktion = Band-Wahl (0-Kanon, NRS-Präzedenz). Parser mat5.rs existiert, Register traegt nur Skalare.
 
 decline registry/katalog
 url https://archive.eso.org/tap_obs
@@ -3567,7 +3561,7 @@ note JVO-SAGA-TAP — statischer Katalog stellarer Elementhäufigkeiten (EMP-Ste
 
 decline spectral-series
 url https://storage.googleapis.com/noaa-passive-bioacoustic
-note NOAA-NODD NRS — 1195-Bin-Sound-Level-Spektrum ist eine Serie, kein Skalar; der noaa_nrs_psd-Feldblock wurde als Oszillator gestrichen (c3f33f6), das CDN-Asset bleibt Spektral-Record. Die Form (Serie) schließt das Gate. Route: das AWS-Registry (`registry.opendata.aws/noaa-nodd`) ist 404; der Bucket lebt auf GCS (`storage.googleapis.com/noaa-passive-bioacoustic`, nrs/products), der Harvester `noaa_nodd_bucket_harvester` ist GCS-nativ (`NETLOC=storage.googleapis.com`).
+note NOAA-NODD NRS — 1195-Bin-Spektrum ist Serie, kein Skalar; noaa_nrs_psd-Feldblock als Oszillator gestrichen (c3f33f6), CDN-Asset bleibt Spektral-Record. AWS-Registry 404; Bucket auf GCS (noaa-passive-bioacoustic, nrs/products), Harvester GCS-nativ.
 
 decline molecular
 url https://data.mendeley.com/datasets/75tsccprd2/1
@@ -3575,11 +3569,11 @@ note GNIP — δ18O/δ2H-Niederschlags-Isotopie ist ein geochemischer Tracer (�
 
 decline superseded-by-integrated
 url http://tap.roe.ac.uk/vsa/sync
-note WFAU VSA — VVVDR1.vvvSource HTTP 500 (Backend down); NOIRLab Astro Data Lab spiegelt vhs_dr5 → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
+note WFAU VSA — VVVDR1.vvvSource HTTP 500 (Backend down); NOIRLab Astro Data Lab spiegelt vhs_dr5 → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4).
 
 decline superseded-by-integrated
 url http://tap.roe.ac.uk/wsa/sync
-note WFAU WSA — UKIDSSDR10PLUS HTTP 500 (Backend down); NOIRLab spiegelt ukidss_dr11plus → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): die statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4, NOIRLab-Linie).
+note WFAU WSA — UKIDSSDR10PLUS HTTP 500 (Backend down); NOIRLab spiegelt ukidss_dr11plus → über NOIRLab integriert. Konsument-Kandidat (Rat 2026-09-15): statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4).
 
 decline superseded-by-integrated
 url http://jvo.nao.ac.jp/skynode/do/tap/alma
@@ -3591,7 +3585,7 @@ note JVO-Hitomi-TAP — trägt nur ivoa.obscore (ObsCore-Metadaten), keine Daten
 
 decline no-physical-force
 url https://hub.marinecadastre.gov/pages/vesseltraffic
-note NOAA MarineCadastre AIS — aktives Selbstfahrer-Objekt (Vessel-Telemetrie: lat/lon/SOG/COG/Zeit) = Kinematik eines angetriebenen Objekts (Aktuator), kein propagierendes Feld; der Sensor misst das Objekt, nicht die Kraft (NetworkRail-Präzedenz). Re-Wiegen 2026-09-15.
+note NOAA MarineCadastre AIS — aktives Selbstfahrer-Objekt (lat/lon/SOG/COG/Zeit) = Kinematik eines angetriebenen Objekts (Aktuator), kein propagierendes Feld; der Sensor misst das Objekt, nicht die Kraft (NetworkRail-Präzedenz). Re-Wiegen 2026-09-15.
 
 decline no-physical-force
 url https://api.adsb.lol/v2/point/{lat}/{lon}/250
@@ -3599,60 +3593,60 @@ note ADS-B (Luftfahrzeug) — Kinematik eines angetriebenen Objekts (Aktuator): 
 
 decline derived-orbit-fit
 url https://www.space-track.org/basicspacedata/query/class/gp
-note Space-Track GP/OMM — TLE-Bahnelemente sind ein SGP4-Orbit-Fit aus Radar-/optischer Bahnverfolgung, keine Rohmessung (Range/Range-Rate/Winkel sind nicht öffentlich); superseded-by-ephemeris (Horizons, sources.φ). Die Route lebt (SPACETRACK_USER/PASS in .secrets.local; Login + class/gp-Query HTTP 200, gemessen 2026-09-14). Konsistent mit celestrak-TLE (Z.769).
+note Space-Track GP/OMM — TLE sind SGP4-Orbit-Fit aus Radar-/optischer Bahnverfolgung, keine Rohmessung; superseded-by-ephemeris (Horizons, sources.φ). Route lebt (SPACETRACK_USER/PASS, Login + class/gp-Query 200, 2026-09-14).
 
 decline redistribution
 url pending
-note Vaisala GLD360 — global lightning location network (proprietary subscription): no public data endpoint. Verdict 2026-09-15: decline redistribution (commercial, no public route — the open lightning channel lives via the free networks, not via GLD360).
+note Vaisala GLD360 — global lightning location network (proprietary subscription), no public data endpoint. Verdict 2026-09-15: decline redistribution (commercial; open lightning via free networks, not GLD360).
 
 decline superseded-by-integrated
 url http://jvo.nao.ac.jp/skynode/do/tap/akari/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+akari_fis+WHERE+flux+IS+NOT+NULL
-note AKARI-FIS (50–180 µm) — am JVO-Knoten nicht ausgeliefert (gemessen 2026-09-15: `TAP_SCHEMA.tables` kennt kein `akari_fis`; nur `catalog.slitless_mir_psc` = MIR 9/18 µm). Das AKARI-Feld ist über den MIR-Block in sources.φ (`catalog.slitless_mir_psc`, `akari_mir_flux_jy`) getragen → FIS-Variante superseded (Bau-Folge 39, TAP-Reconciliation).
+note AKARI-FIS (50–180 µm) — JVO-Knoten liefert nicht (2026-09-15: TAP_SCHEMA.tables kennt kein akari_fis; nur catalog.slitless_mir_psc = MIR 9/18 µm). Feld über MIR-Block in sources.φ (akari_mir_flux_jy) → FIS superseded (Bau-Folge 39).
 
 decline superseded-by-integrated
 url http://jvo.nao.ac.jp/skynode/do/tap/irsf/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,irsf_jm+FROM+%22public%22.irsf_magellanic_clouds_2013+WHERE+irsf_jm+IS+NOT+NULL
-note IRSF Magellanic Clouds 2013 (`irsf_jm`) — dieselbe Quelle wie der getragene sources.φ-Block `irsf_magellanic_clouds_2008` (`irsf_j_mag`); die 2013-Variante ist redundant (gemessen 2026-09-15: Tabelle + Spalte existieren, Antwort nur VOTable, `FORMAT=json` ignoriert) → superseded (Bau-Folge 39).
+note IRSF Magellanic Clouds 2013 (irsf_jm) — dieselbe Quelle wie sources.φ-Block irsf_magellanic_clouds_2008 (irsf_j_mag); 2013-Variante redundant (2026-09-15: nur VOTable, FORMAT=json ignoriert) → superseded (Bau-Folge 39).
 
 decline superseded-by-integrated
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag_g+FROM+ls_dr10.tractor+WHERE+mag_g+IS+NOT+NULL
-note LS DR10 (`mag_g`) — dieselbe Quelle wie der getragene sources.φ-Block `ls_dr10.tractor` (`flux_g`); die mag_g-Variante ist redundant (gemessen 2026-09-15: Spalte existiert, Antwort nur VOTable, `FORMAT=json` → "unknown format: json") → superseded (Bau-Folge 39).
+note LS DR10 (mag_g) — dieselbe Quelle wie sources.φ-Block ls_dr10.tractor (flux_g); mag_g-Variante redundant (2026-09-15: Spalte existiert, Antwort nur VOTable, FORMAT=json → unknown format) → superseded (Bau-Folge 39).
 
 decline superseded-by-integrated
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux+FROM+cirada.VLASS_Source+WHERE+total_flux+IS+NOT+NULL
-note VLASS Source (`total_flux`) — derselbe Endpunkt wie der getragene sources.φ-Block `cirada.VLASS_Source` (`FORMAT=csv`, `Total_flux_source`); die json/total_flux-Variante ist redundant (gemessen 2026-09-15: CANFAR lehnt `FORMAT=json` ab, Spalten heißen `RA_Source`/`DEC_Source`/`Total_flux_source`) → superseded (Bau-Folge 39).
+note VLASS Source (total_flux) — derselbe Endpunkt wie sources.φ-Block cirada.VLASS_Source (FORMAT=csv, Total_flux_source); json-Variante redundant (2026-09-15: CANFAR lehnt FORMAT=json ab) → superseded (Bau-Folge 39).
 
 decline presence-catalog
 url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
-note EMODnet Physics Plattform-Metadaten (gemessen 2026-09-16: 1792 Mooring-Zeilen, Spalten PLATFORMCODE/call_name/latitude/longitude/lastdateobservation) — Stationsidentität + Position + Beobachtungs-Zeitstempel, kein Messwert am Punkt → Oszillator-Gate decline (Stationsliste ohne Messwert).
+note EMODnet Physics Plattform-Metadaten (2026-09-16: 1792 Mooring-Zeilen, PLATFORMCODE/call_name/latitude/longitude/lastdateobservation) — Stationsidentität + Position + Zeitstempel, kein Messwert am Punkt → Oszillator-Gate decline.
 
 decline catalog-register
 url https://english.ihep.cas.cn/lhaaso/pdl/
-note LHAASO „Data and code availability" (gemessen 2026-09-16: HTTP 200, 279 B) — statische News-/Listenseite (Stand 2021), trägt Papier-Supplements (LHAASOSED.txt, Map-pixel-list.txt, CORSIKA-Inputcards), kein Daten-Endpoint → decline. Der lhaaso_compiler (tools/harvest/src/bin/lhaaso_compiler.rs, CSV Ra/Dec/N0 → Skymap, --ci-mode casdc.china-vo.org) ist unregistriert und verwaist; der eigentliche Katalog (90 Quellen, Cao+ 2024) liegt bei VizieR J/ApJS/271/25 — Port über TAPVizieR (integriert), nicht über diese Seite.
+note LHAASO „Data and code availability" (2026-09-16: HTTP 200, 279 B) — statische News-Seite (2021), kein Daten-Endpoint → decline. lhaaso_compiler verwaist; Katalog (90 Quellen, Cao+ 2024) bei VizieR J/ApJS/271/25 → Port über TAPVizieR.
 
 decline count
 url https://zenodo.org/records/8401262
-note Super-Kamiokande Atmospheric-Neutrino-Oscillation-Datenrelease 2023 (10.5281/zenodo.8401262, 52,6 MB, CC-BY). Inhalt (via Wayback 2023-11-10): bins/ als ROOT-Dateien (Data/MC-Event-Zählwerte je Analyse-Bin) + chi2/ (χ²-Listings über den Oszillations-Parameterraum) — nackte Zählwerte und χ², kein Feld am Punkt → decline count. Zenodo-Netz-Block gemessen 2026-09-16 (HTTP 0/Timeout direkt + Proton-Exit; frühere Messung HTTP 504); Record lebt (Wayback).
+note Super-Kamiokande Neutrino-Release 2023 (10.5281/zenodo.8401262, 52,6 MB, CC-BY). bins/ ROOT (Data/MC-Zählwerte) + chi2/ (χ²) — kein Feld am Punkt → decline count. Zenodo 2026-09-16 HTTP 0/Timeout; Record lebt (Wayback).
 
 decline event-record
 url https://zenodo.org/records/8427755
-note Telescope Array — „Data of an extremely energetic cosmic ray observed by a surface detector array" (Amaterasu-Ereignis, 10.5281/zenodo.8427755, Fujii+ 2023, zitiert in Science). Einzel-Ereignis-Detektordaten eines Schauers — ein Record, kein kontinuierliches Feld am Punkt → decline. Zenodo-Netz-Block gemessen 2026-09-16 (HTTP 0/Timeout direkt + Proton-Exit; frühere Messung HTTP 504).
+note Telescope Array — Amaterasu (10.5281/zenodo.8427755, Fujii+ 2023, Science): Einzel-Ereignis-Detektordaten eines Schauers — ein Record, kein kontinuierliches Feld am Punkt → decline. Zenodo 2026-09-16 HTTP 0/Timeout direkt + Proton; Record lebt.
 
 decline paper
 url https://doi.org/10.1007/978-94-015-8790-7_41
-note Wohlmuth, Plettemeier, Edenhofer, Bird, Asmar 1997 — „Analysis of Galileo Doppler Measurements during the Solar Occultations in 1994 and 1995" (The Three Galileos, ASSL 220, S. 421–428; JPL TR 97-0783). Ein Papier, kein Roh-Datensatz — kein Feld am Punkt → decline paper. Live: Springer-Kapitel (Abstract HTTP 200, Volltext Paywall); OA via Wayback (Forschung-Folge 31: 701 507 B, sha256 eebff967…); die alte JPL-TRS-Bitstream-Route redirectet heute auf dataverse.jpl.nasa.gov (gemessen 2026-09-16, kein Dokument).
+note Wohlmuth et al. 1997 — „Galileo Doppler Measurements during the Solar Occultations 1994/1995" (ASSL 220). Papier, kein Roh-Datensatz → decline paper. Springer Abstract 200, Volltext Paywall; OA via Wayback (701 507 B, sha256 eebff967…).
 
 decline redistribution
 url https://wwlln.net/data/
-note WWLLN (World Wide Lightning Location Network) — VLF-Blitzortung, em. Gemessen 2026-09-16: wwlln.net HTTP 200, /data/ account-/agreement-gated; UW-copyright, „nominal cost" = kostenpflichtig — keine kostenpflichtigen Dienste, CDN-Redistribution ausgeschlossen. Die alte CGI-Route bleibt als dead-Eintrag in dead_sources.φ.
+note WWLLN — VLF-Blitzortung, em. 2026-09-16: wwlln.net HTTP 200, /data/ account-/agreement-gated; UW-copyright, „nominal cost" kostenpflichtig — CDN-Redistribution ausgeschlossen. Alte CGI-Route als dead-Eintrag in dead_sources.φ.
 
 decline no-physical-force
 url https://zenodo.org/api/records/15316905
-note LSCO S(Q,ω) (Decrausaz et al. 2025, 10.5281/zenodo.15316905, cc-by-4.0, IN5/ILL, λi = 3.3/5 Å, 10 Dateien aligned_lasco_up_{λi}_{T}K.sqw à ~1.4 GB, HTTP 200/206, md5 3.3_40K 15b34caa5b0c283c52b31844012856e8): Horace-sqw-v4-Binär (u32-LE-Längenpräfix + Magic „horace", Version 4, 320-B-Header — kein HDF5), 4D-Spektral-Intensität (Querschnitt pro (h,k,l,|Q|,ω)-Zelle) einer Laborprobe — kein propagierendes Feld, kein Kraft-Kanal der 9 Medien, Force-Gate-Litmus negativ (wie RIXS; die spectral_irradiance-Präzedenz ist Fluss am Ort). Der Befund bleibt die Note: Spinlücke 4 meV @ 2 K (3.3-Å-Satz), inkommensurable magnetische Anregungen. Kein Ersatz für NSE/Haug I(q,t) (YBCO/TRISP) — die Keimer-Anfrage hält.
+note LSCO S(Q,ω) (Decrausaz 2025, 10.5281/zenodo.15316905, IN5/ILL, 10 .sqw ~1.4 GB, HTTP 200/206, md5 15b34caa…): Horace-sqw-v4 (u32-LE, „horace", 320-B-Header), 4D-Intensität — kein Kraft-Kanal der 9 Medien. Spinlücke 4 meV @ 2 K.
 
 decline derived-model
 url https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
-note GloFAS-Reanalyse (EWDS cems-glofas-historical, gemessen 2026-09-16: HTTP 200, CDS-Key) — eine Modell-Reanalyse, kein gemessener Pegel; nur die Sache selbst darf an der Stelle der Sache stehen. Der Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query am Kollabpunkt 28.271/85.515 leer = 0 honored), nicht auf der Modell-Route.
+note GloFAS-Reanalyse (EWDS cems-glofas-historical, 2026-09-16: HTTP 200, CDS-Key) — Modell-Reanalyse, kein gemessener Pegel. Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query 28.271/85.515 leer = 0 honored).
 
 decline aggregated-index
 url https://zenodo.org/records/10725446
-note WWLLN Global Lightning Climatology (WGLC), Kaplan 2024 (10.5281/zenodo.10725446, NetCDF-4, 2010–2023, 0,5°/5′, stündlich–monatlich) — abgeleitetes Gitteraggregat aus georeferenzierten Stroke-Counts (Dichte/Leistung, detektionseffizienz-korrigiert), keine Ereignis-Records; dieselbe Klasse wie der declined Thunder-Hour (aggregated-index, Council 2026-09-13). Roh-Strokes (WWLLN „AE") nicht publiziert (blocked account, UW-copyright, `decline redistribution`). Blitz-em bereits durch GLM in-register. Lizenz gemessen 2026-09-17: Zenodo-Text „CC BY-SA 4.0", Feld `license.id` = `cc-by-4.0` (Widerspruch). Operator-Entscheid 2026-09-17 (Entscheid-Folge 38): decline, keine CDN-Manifestation.
+note WWLLN Lightning Climatology (WGLC), Kaplan 2024 (10.5281/zenodo.10725446, NetCDF-4, 2010–2023) — Gitteraggregat aus Stroke-Counts, keine Ereignis-Records; wie Thunder-Hour. Roh-Strokes blocked (UW-copyright); decline 2026-09-17.
