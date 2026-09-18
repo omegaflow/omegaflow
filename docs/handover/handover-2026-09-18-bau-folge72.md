@@ -3,7 +3,7 @@
   session: Bau-Folge 72
   class: handover
   date: 2026-09-18
-  sha256: 3f1cf30026f7f6282bf204cb243de10664bdb1875f6d837dd17930bf90df6940
+  sha256: f71fb268a349352fe3ed147691360b4ae54f37729aece90b90fb5787f78e16e2
   status: live
 -->
 # Handover — Bau-Folge 72 (2026-09-18)
@@ -75,6 +75,21 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   „`gh` nur für `--log`/`--log-failed`" (Widerspruch zu AGENTS) ist gestrichen —
   `gh` bleibt nur `workflow run`/`run download`.
 
+## CDN-Provenienz — `origin` + `compiler` (dieser Atom)
+
+- Jeder der **370 CDN-Spiegel-Blöcke** in `phi/sources.φ` trägt jetzt eine
+  `origin`-Zeile (Quell-URL oder `procedure: …`) und eine `compiler`-Zeile
+  (`tools/harvest/src/bin/<arm>.rs`). Der Parser ignoriert unbekannte Direktiven
+  (`parse.rs:1395`), also kein Code-Umbau — Register + Gate.
+- Gate-Test `every_cdn_source_carries_its_origin_and_compiler` (`src/archivar/parse.rs`)
+  liest `phi/sources.φ` und verlangt für jeden Block mit `/releases/download/`-URL
+  `origin` UND `compiler`. Läuft in CI (funktionaler Lauf).
+- Ableitung: 5 parallele `grind-flash`-Taucher (`sgrep`/`archive_search` Format →
+  Compiler, Ursprung im Compiler gelesen): Format-Ableitung 313 Blöcke, per-Asset
+  57 Blöcke (die `ssd.jpl.nasa.gov`-JSON-Kataloge ohne `format`).
+- **Offen:** `catalog_des_y6` — `origin pending` (nicht belegt; DES-Y6-Route nicht
+  im Compiler gefunden). · `pending`
+
 ## Offen (unverändert, kein Handlungsschritt)
 
 - **Scanned-/bild-only-PDFs → `vision`-OCR — `pending`** (kein Konsument hat es
@@ -91,6 +106,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - Eigener Commit-Pfad: `tools/utils/src/bin/ci_manage.rs`, `AGENTS.md`,
   `docs/handover/_template.md`, `docs/zustand/external-state.md` (TE-Gate-Zeile),
+  `phi/sources.φ`, `src/archivar/parse.rs` (Gate-Test),
   `docs/handover/handover-2026-09-18-bau-folge72.md` (+ archiviertes
   `handover-2026-09-18-bau-folge71.md`), `opencode.json` (nur nach Operator-Wort).
 - **Fremd (nicht anfassen):** `opencode.json` (fremder `logLevel`/`watcher`-Hunk),
