@@ -299,6 +299,15 @@ fn clone_creds(creds: &S3Credentials) -> S3Credentials {
 
 struct CmrGranule {
     url: String,
+    size: Option<u64>,
+}
+
+fn granule_size_bytes(mb: f64) -> Option<u64> {
+    if mb.is_finite() && mb > 0.0 {
+        Some((mb * 1048576.0).round() as u64)
+    } else {
+        None
+    }
 }
 
 fn cmr_fetch(url: &str) -> Option<String> {
@@ -347,6 +356,11 @@ fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
     let mut out = Vec::new();
     for e in entries {
         let JsonVal::Obj(mut e) = e else { continue };
+        let size = match e.remove("granule_size") {
+            Some(JsonVal::Str(s)) => s.parse::<f64>().ok().and_then(granule_size_bytes),
+            Some(JsonVal::Num(n)) => granule_size_bytes(n),
+            _ => None,
+        };
         let links = e.remove("links")?;
         let JsonVal::Arr(links) = links else { continue };
         let mut url = None;
@@ -366,7 +380,7 @@ fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
             }
         }
         let Some(url) = url else { continue };
-        out.push(CmrGranule { url });
+        out.push(CmrGranule { url, size });
     }
     Some(out)
 }
@@ -513,17 +527,30 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
 }
 
 fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
-    let (obj, ds, dt) = file.dataset(path).ok()?;
+    let (obj, ds, dt) = match file.dataset(path) {
+        Ok(t) => t,
+        Err(_) => {
+            eprintln!("gedi-l2a: {path} — dataset absent");
+            return None;
+        }
+    };
     if dt.class == 9 || dt.class == 3 {
+        eprintln!("gedi-l2a: {path} — datatype class {}", dt.class);
         return None;
     }
     let elem = dt.size;
     if elem == 0 {
+        eprintln!("gedi-l2a: {path} — element size zero");
         return None;
     }
     let total: u64 = ds.dims.iter().fold(1u64, |a, d| a.saturating_mul(*d));
     let rank = ds.dims.len();
-    if total == 0 || rank == 0 {
+    if total == 0 {
+        eprintln!("gedi-l2a: {path} — dims zero");
+        return None;
+    }
+    if rank == 0 {
+        eprintln!("gedi-l2a: {path} — rank zero");
         return None;
     }
     let want = total.min(REC_CAP as u64);
@@ -531,52 +558,98 @@ fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
             let coords = vec![0u64; rank];
-            let chunk = file.read_chunk(path, &coords, |off, len| fetch.range(off, len))?;
+            let chunk =
+                match file.read_chunk_diag(path, &coords, |off, len| fetch.range(off, len)) {
+                    Ok(c) => c,
+                    Err(diag) => {
+                        eprintln!("gedi-l2a: {path} — {diag:?}");
+                        return None;
+                    }
+                };
             values.extend(chunk.into_iter().take(want as usize));
         }
         Some(Hdf5Layout::Contiguous { addr, size }) => {
             let bytes_want = (want * elem as u64).min(*size);
             if bytes_want == 0 {
+                eprintln!("gedi-l2a: {path} — contiguous extent zero");
                 return None;
             }
-            let raw = fetch.range(*addr, bytes_want)?;
+            let raw = match fetch.range(*addr, bytes_want) {
+                Some(r) => r,
+                None => {
+                    eprintln!("gedi-l2a: {path} — contiguous fetch void");
+                    return None;
+                }
+            };
             for i in 0..(raw.len() / elem) {
-                values.push(decode_value(&raw, i, dt)?);
+                match decode_value(&raw, i, dt) {
+                    Some(v) => values.push(v),
+                    None => {
+                        eprintln!("gedi-l2a: {path} — numeric decode void");
+                        return None;
+                    }
+                }
             }
             apply_scale_offset(obj, &mut values);
         }
         Some(Hdf5Layout::Compact { data }) => {
             for i in 0..(data.len() / elem).min(want as usize) {
-                values.push(decode_value(data, i, dt)?);
+                match decode_value(data, i, dt) {
+                    Some(v) => values.push(v),
+                    None => {
+                        eprintln!("gedi-l2a: {path} — numeric decode void");
+                        return None;
+                    }
+                }
             }
             apply_scale_offset(obj, &mut values);
         }
-        None => return None,
+        None => {
+            eprintln!("gedi-l2a: {path} — no layout");
+            return None;
+        }
     }
     Some(values)
 }
 
 fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
-    let (obj, ds, dt) = file.dataset(path).ok()?;
+    let (obj, ds, dt) = match file.dataset(path) {
+        Ok(t) => t,
+        Err(_) => {
+            eprintln!("gedi-l2a: {path} — dataset absent");
+            return None;
+        }
+    };
     if dt.class == 9 {
+        eprintln!("gedi-l2a: {path} — datatype class 9");
         return None;
     }
     let rank = ds.dims.len();
     if rank != 2 {
+        eprintln!("gedi-l2a: {path} — rank {rank}");
         return None;
     }
     let width = ds.dims[1];
     if width != 101 {
+        eprintln!("gedi-l2a: {path} — width {width}");
         return None;
     }
     let rows = ds.dims[0].min(REC_CAP as u64) as usize;
     let elem = dt.size;
     if elem == 0 {
+        eprintln!("gedi-l2a: {path} — element size zero");
         return None;
     }
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
-            let chunk = file.read_chunk(path, &[0, 0], |off, len| fetch.range(off, len))?;
+            let chunk =
+                match file.read_chunk_diag(path, &[0, 0], |off, len| fetch.range(off, len)) {
+                    Ok(c) => c,
+                    Err(diag) => {
+                        eprintln!("gedi-l2a: {path} — {diag:?}");
+                        return None;
+                    }
+                };
             let avail = chunk.len() / 101;
             let mut out = Vec::with_capacity(avail);
             for r in 0..avail {
@@ -587,12 +660,25 @@ fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<
         Some(Hdf5Layout::Contiguous { addr, size }) => {
             let bytes_want = ((rows * 101) as u64 * elem as u64).min(*size);
             if bytes_want == 0 {
+                eprintln!("gedi-l2a: {path} — contiguous extent zero");
                 return None;
             }
-            let raw = fetch.range(*addr, bytes_want)?;
+            let raw = match fetch.range(*addr, bytes_want) {
+                Some(r) => r,
+                None => {
+                    eprintln!("gedi-l2a: {path} — contiguous fetch void");
+                    return None;
+                }
+            };
             let mut out = Vec::with_capacity(raw.len() / (elem * 101));
             for r in 0..(raw.len() / (elem * 101)) {
-                out.push(decode_value(&raw, r * 101 + 98, dt)?);
+                match decode_value(&raw, r * 101 + 98, dt) {
+                    Some(v) => out.push(v),
+                    None => {
+                        eprintln!("gedi-l2a: {path} — numeric decode void");
+                        return None;
+                    }
+                }
             }
             apply_scale_offset(obj, &mut out);
             Some(out)
@@ -600,12 +686,21 @@ fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<
         Some(Hdf5Layout::Compact { data }) => {
             let mut out = Vec::with_capacity((data.len() / (elem * 101)).min(rows));
             for r in 0..(data.len() / (elem * 101)).min(rows) {
-                out.push(decode_value(data, r * 101 + 98, dt)?);
+                match decode_value(data, r * 101 + 98, dt) {
+                    Some(v) => out.push(v),
+                    None => {
+                        eprintln!("gedi-l2a: {path} — numeric decode void");
+                        return None;
+                    }
+                }
             }
             apply_scale_offset(obj, &mut out);
             Some(out)
         }
-        None => None,
+        None => {
+            eprintln!("gedi-l2a: {path} — no layout");
+            return None;
+        }
     }
 }
 
@@ -786,7 +881,7 @@ fn run_list(args: &[String]) {
 struct Chosen {
     fetch: GranuleFetch,
     key: String,
-    size: u64,
+    size: Option<u64>,
 }
 
 fn run_harvest(args: &[String]) {
@@ -845,7 +940,7 @@ fn run_harvest(args: &[String]) {
                     token: token.clone(),
                 },
                 key: g.url,
-                size: 0,
+                size: g.size,
             });
         }
     } else {
@@ -897,7 +992,7 @@ fn run_harvest(args: &[String]) {
                     creds: clone_creds(&creds),
                 },
                 key: obj.key,
-                size: obj.size,
+                size: Some(obj.size),
             });
         }
     }
@@ -913,12 +1008,19 @@ fn run_harvest(args: &[String]) {
         let before = recs.len();
         let granule = harvest_granule(&c.fetch, &c.key, beams, anchor_tdb);
         recs.extend(granule);
-        eprintln!(
-            "gedi-l2a: {} → {} records ({} B granule)",
-            c.key,
-            recs.len() - before,
-            c.size
-        );
+        match c.size {
+            Some(size) => eprintln!(
+                "gedi-l2a: {} → {} records ({} B granule)",
+                c.key,
+                recs.len() - before,
+                size
+            ),
+            None => eprintln!(
+                "gedi-l2a: {} → {} records (size unread granule)",
+                c.key,
+                recs.len() - before
+            ),
+        }
     }
     recs.sort_by(|a, b| a[0].total_cmp(&b[0]));
     if recs.is_empty() {
@@ -1091,7 +1193,7 @@ mod tests {
     #[test]
     fn cmr_parse_takes_the_h5_data_link_and_skips_s3_and_inherited() {
         let body = r#"{"feed":{"entry":[
-          {"links":[
+          {"granule_size":"251.0","links":[
             {"rel":"http://esipfed.org/ns/fedsearch/1.1/data#","href":"https://search.earthdata.nasa.gov/search/granules?p=C1"},
             {"rel":"http://esipfed.org/ns/fedsearch/1.1/s3#","href":"s3://lp-prod-protected/GEDI02_A.002/a.h5"},
             {"rel":"http://esipfed.org/ns/fedsearch/1.1/data#","href":"https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/GEDI02_A.002/a.h5"}
@@ -1103,6 +1205,7 @@ mod tests {
             granules[0].url,
             "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/GEDI02_A.002/a.h5"
         );
+        assert_eq!(granules[0].size, Some(263_192_576));
     }
 
     #[test]
