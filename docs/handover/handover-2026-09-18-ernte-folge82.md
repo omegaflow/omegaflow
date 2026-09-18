@@ -3,7 +3,7 @@
   session: Ernte-Folge 82
   class: handover
   date: 2026-09-18
-  sha256: f723c7ddeed7551bbf6421fea45cb27bd6fe3a7f2327a64fcfd09b077012367d
+  sha256: 754e81fd0aec63f97226266b1ad494a312d675f49eee7205eca88cdb9ca03601
   status: live
 -->
 # Handover — Ernte-Folge 82 (2026-09-18)
@@ -62,12 +62,12 @@ Fehllog `ci_manage log 35323850479` / `35323854366`.)
   <YYYY>` filtert am YYYYDDD-Verzeichnis, Asset-Name jahr-gebunden
   `lro_trk_<year>[_t<lo>_<hi>].bin`. Rat-Entscheid Option B (Jahr in `args`).
   Erstes Jahr = 2009 (kleinstes YYYY im Baum, `LRO_CO/2009169`).
-- **Offen:** Run-ID des ersten `harvest-long`-Laufs (dispatcht nach dem Push; die
-  Auto-Auslösung ist `harvest-dispatch` auf den `phi/harvest.φ`-Diff).
-  (Schritt: `ci_manage list` einmalig, Run `harvest-long`/format lro_trk lesen;
-  **nie pollen**.) Bei success: `shard` im Register = gemessene Asset-Zahl; das
-  nächste Jahr als eigenes Atom binden (`args --year <n>` ändern — die
-  `phi/harvest.φ`-Änderung löst `harvest-dispatch` aus).
+- **Offen:** Verdikt des ersten `harvest-long`-Laufs `35325786893` (queued
+  2026-09-18T08:43Z, format lro_trk, args --year 2009; dispatcht nach dem Push).
+  (Schritt: `ci_manage view 35325786893` einmalig; **nie pollen**.) Bei success:
+  `shard` im Register = gemessene Asset-Zahl; das nächste Jahr als eigenes Atom
+  binden (`args --year <n>` ändern — die `phi/harvest.φ`-Änderung löst
+  `harvest-dispatch` aus).
 - Rat-Konfounder: Idempotenz-Pattern jahr-gebunden halten; `args`/`workflow`
   innerhalb 6 Zeilen von `format` (Dispatcher-`-U6`-Diff); Void-Jahre vor dem
   Binden messen (0 honored).
