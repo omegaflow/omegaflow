@@ -909,6 +909,14 @@ pub fn extract_header(s: &str, n: &str) -> Option<String> {
 }
 
 pub fn split_csv_line(line: &str) -> Vec<String> {
+    if line.contains('\0') {
+        split_delimited_line(line, '\0')
+    } else {
+        split_delimited_line(line, ',')
+    }
+}
+
+fn split_delimited_line(line: &str, delimiter: char) -> Vec<String> {
     let mut fields = Vec::new();
     let mut cur = String::new();
     let mut in_quotes = false;
@@ -927,7 +935,7 @@ pub fn split_csv_line(line: &str) -> Vec<String> {
             }
         } else if c == '"' {
             in_quotes = true;
-        } else if c == ',' {
+        } else if c == delimiter {
             fields.push(std::mem::take(&mut cur));
         } else {
             cur.push(c);
@@ -941,14 +949,14 @@ pub fn csv_to_json(text: &str) -> Option<JsonVal> {
     let mut lines = text
         .lines()
         .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'));
-    let header_line = lines.find(|l| l.contains(','))?;
+    let header_line = lines.find(|l| l.contains(',') || l.contains('\0'))?;
     let headers = split_csv_line(header_line);
     if headers.len() < 2 {
         return None;
     }
     let mut rows = Vec::new();
     for line in lines {
-        if !line.contains(',') {
+        if !line.contains(',') && !line.contains('\0') {
             continue;
         }
         let fields = split_csv_line(line);

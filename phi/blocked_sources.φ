@@ -43,9 +43,9 @@ blocked parser-def fugin
 url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+fugin.cube+WHERE+flux+IS+NOT+NULL
 note JVO Nobeyama FUGIN — fugin.cube ist eine obscore-Cube-Tabelle, keine Punktquellen-Flussspalte (2026-09-15 gemessen). Kontinuums-Fluss steckt in FITS-Cubes hinter access_url; Cube-Fluss-Parser fehlt → parser-def (Bau-Folge 39).
 
-blocked parser-def csv
+pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
-note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym HTTP 200; 2026-09-16: /wgetap/sync 303→200, FORMAT=csv liefert NUL-getrennte Felder. Archivar-Splitter kennt nur Komma/Whitespace → parser-def csv. Physik em/psfMag; Öffnung NUL-CSV-Arm.
+note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n). 2026-09-18 NUL-CSV-Arm in extract.rs (split_csv_line/csv_to_json) gebaut, Parser-Gap geschlossen. Physik em/psfMag, kein Konsument → pending.
 
 blocked parser-def zip/fixed-width-text
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
