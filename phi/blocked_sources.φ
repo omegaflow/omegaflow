@@ -23,10 +23,10 @@ url https://superdarn.ca/data-access
 reg https://superdarn.ca/piagreement
 note SuperDARN — HF-Radar-Ionosphären-Konvektion, em. 2026-09-16: superdarn.ca HTTP 200, /data-access HTTP 200; Datenroute über Globus + PI-Vereinbarung (piagreement); api.superdarn.ca DNS-tot. Zugang gegatet → blocked account.
 
-blocked account
-url https://psaftp.esac.esa.int/BepiColombo/bc_mpo_more/
-reg https://archives.esac.esa.int/psa/ftp/BepiColombo/bc_mpo_more/
-note BepiColombo MPO MORE (urn:esa:psa:bc_mpo_more). 2026-09-18: FTP-Mirror 200, kein data/; Login rc 67/530; PSA-Route psa.esa.int/psa-tap/tap (anon ADQL 200; access_url NULL für MORE; data?retrieval_type=PRODUCT → 403). Gegatet → blocked account.
+pending
+url https://psa.esa.int/psa-tap/tap/
+reg https://www.cosmos.esa.int/web/psa/contact-us
+note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/89517 proprietär), data?PRODUCT → 403, kein Konto-Gate; Freigabe-Anfrage an psahelp@cosmos.esa.int 2026-09-18. bc_mpo_mag anonym offen (5020 Zeilen seit 2024-03-12).
 
 pending
 url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
@@ -37,8 +37,8 @@ url https://data.ghrc.earthdata.nasa.gov/
 note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert — CDN-Manifestation offen.
 
 pending
-url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5+access_url,access_estsize,obs_collection+FROM+fugin.cube
-note FUGIN-Cube-Parser (fugin.rs, extract.rs fugin_cube): NAXIS=3 848x848x462 BITPIX=-32 VRAD CDELT3=650m/s BUNIT=K → moment-0 K·m/s em0. Pilot fgn00000000.sky1 CDN (fugin-cdn 35324143526 success) geschlossen; offen: 269 Cubes.
+url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+access_url,access_estsize+FROM+fugin.cube
+note FUGIN (fugin.rs): NAXIS=3 VRAD CDELT3=650m/s → moment-0 K·m/s. TAP 2026-09-18: 810 Zeilen, 270 Cubes (89/89/92 12CO/13CO/C18O, estsize>65536 KB), 540 2D-Maps descoped-mit-Messung. Pilot fgn00000000.sky1 CDN; Bulk fugin-cdn-dispatch.
 
 pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
