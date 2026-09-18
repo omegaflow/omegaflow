@@ -10185,3 +10185,10 @@ at sun
 ttl 31536000
 field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
 note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; CDN-Manifestation ausstehend).
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/weberin_verdicts.bin
+format weberin_verdicts
+compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
+at sun
+ttl 604800
+note Weberin-Verdikt-Seitenkanal: Placed/Absent/Riss je Körper, encode_weberin_verdicts; CDN-Manifestation via .github/workflows/weberin-verdicts-cdn.yml (--ci-mode), ausstehend.

@@ -578,6 +578,12 @@ pub fn main_flow() {
     let tone_code = std::sync::Arc::new(std::sync::atomic::AtomicU8::new(
         crate::archivar::hrv::TONE_ABSENT,
     ));
+    let verdicts_path = match std::env::var("OMEGAFLOW_WEBERIN_VERDICTS") {
+        Ok(path) => path,
+        Err(_) => "data/weberin_verdicts.bin".to_string(),
+    };
+    let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> =
+        std::sync::Arc::new(std::sync::RwLock::new(load_weberin_verdicts(&verdicts_path)));
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
@@ -601,6 +607,7 @@ pub fn main_flow() {
             machine_rx,
             presence: presence_slot.clone(),
             diode: diode.clone(),
+            verdicts: verdicts_shared.clone(),
         });
         let em_shutdown = em.shutdown_flag();
         radiators.push(Box::new(em));
@@ -609,12 +616,10 @@ pub fn main_flow() {
     #[cfg(feature = "browser_relay")]
     {
         if !hidden {
-            let verdicts_path = match std::env::var("OMEGAFLOW_WEBERIN_VERDICTS") {
-                Ok(path) => path,
-                Err(_) => "data/weberin_verdicts.bin".to_string(),
+            let weberin_verdicts: Arc<Vec<VerdictLine>> = match verdicts_shared.read() {
+                Ok(v) => Arc::new((*v).clone()),
+                Err(_) => Arc::new(Vec::new()),
             };
-            let weberin_verdicts: Arc<Vec<VerdictLine>> =
-                Arc::new(load_weberin_verdicts(&verdicts_path));
             let sr = crate::relay::TcpRadiator::new(
                 port,
                 body_names.clone(),

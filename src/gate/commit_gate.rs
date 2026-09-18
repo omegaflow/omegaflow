@@ -1698,6 +1698,31 @@ mod tests {
     }
 
     #[test]
+    fn fp_riss_as_absent_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("riss_as_absent"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_riss_as_zero_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("riss_as_zero"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_riss_keeps_its_word_passes() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("riss_kept"));
+        assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
     fn fp_tool_default_tuple_blocked() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("fabrication_default_tuple"));
