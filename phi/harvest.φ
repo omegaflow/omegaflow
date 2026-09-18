@@ -22,7 +22,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; timeout 180 from 1439MB range-read. Run 35323850479 (2026-09-18, post header-fix) 0 records, 0 B granule (c.size) — root upstream of the HDF5 reader; measure CMR/S3 object size + creds.
+note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule. Run 35323850479 (2026-09-18) 0 records: c.size hardcoded 0, fixed 2026-09-18 (CMR granule_size; HTTP 206 263454103 B); root = silent None in src/archivar/hdf5.rs read_chunk.
 
 asset present
 format goes16_abi
@@ -40,7 +40,7 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 180
-note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; timeout 180 from ~1200MB range-read. Run 35323854366 (2026-09-18, post header-fix) 0 records, 0 B granule (c.size) — root upstream of the reader; measure CMR/S3 size + creds.
+note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule. Run 35323854366 (2026-09-18) 0 records: c.size hardcoded 0, fixed 2026-09-18 (CMR granule_size; HTTP 206 1912602624 B); root = silent None in src/archivar/hdf5.rs read_chunk.
 
 asset fehlt
 format lro_trk
