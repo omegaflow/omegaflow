@@ -1,10 +1,12 @@
 use std::collections::BTreeMap;
 
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
+use omegaflow::cdn::upload_release;
 use omegaflow::odf;
 
 const BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER";
 const FILES: &[&str] = &["73288o74360_bj_sc23.odf", "86334o97343_sc23.odf"];
+const NETLOC: &str = "spdf.gsfc.nasa.gov";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 const SCID_P10: i64 = 23;
 
@@ -27,6 +29,8 @@ fn jd_date(tdb_s: f64) -> String {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
@@ -84,7 +88,7 @@ fn main() {
         eprintln!("write {out} void");
         return;
     }
-    match odf::parse_podf_bin(&bin) {
+    let verified = match odf::parse_podf_bin(&bin) {
         Some(parsed) => {
             let d0 = parsed[0];
             let d1 = parsed[parsed.len() - 1];
@@ -95,8 +99,20 @@ fn main() {
                 jd_date(d1[0]),
                 bin.len()
             );
+            true
         }
-        None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
+        None => {
+            eprintln!("{out}: roundtrip parse void — the series stays unverified");
+            false
+        }
+    };
+    if ci_mode {
+        if !verified {
+            std::process::exit(1);
+        }
+        if !upload_release(NETLOC, out) {
+            std::process::exit(1);
+        }
     }
 
     let mut per_year: BTreeMap<i64, usize> = BTreeMap::new();
