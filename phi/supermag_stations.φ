@@ -1,12 +1,4 @@
-# SuperMAG-Stationstabelle (CODE lat lon) — gemessen 2026-09-10
-# Quelle: magstid.php https://supermag.jhuapl.edu/lib/php/magstid.php — die einzige
-#   Koordinatenquelle (geolat/geolon), stabil (kein Datumsparameter).
-#   inventory.php (services/inventory.php?logon=...&start=...&extent=...) ist eine
-#   fensterabhaengige Aktiv-Liste ohne Koordinaten (2025-03-01: 195, 2025-06-01: 182).
-# Format: je Zeile 3 whitespace-getrennte Token CODE lat lon; #-Zeilen sind Kommentar.
-#   geolon 0..360 ist auf -180..180 normalisiert (wie im GeoRec).
-#   Codes mit Ziffer (z.B. T03) stehen in der Tabelle, tragen aber keine pack_iaga-Form
-#   (3 Grossbuchstaben) — der Loop ueberspringt sie mit benanntem Befund.
+note SuperMAG-Stationen (3 Token: CODE lat lon); gemessen 2026-09-10; Quelle magstid.php https://supermag.jhuapl.edu/lib/php/magstid.php (geolat/geolon, stabil); geolon aus magstid.php auf -180..180 normalisiert; Ziffer-Codes (T03) ohne pack_iaga-Form.
 A01 8.99 7.39
 A02 36.849998 2.93
 A03 3.87 11.52
