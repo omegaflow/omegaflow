@@ -874,6 +874,10 @@ decline computation
 url https://data.minorplanetcenter.net/comet_e.json
 note HTTP 404 — Endpoint weg. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline model-forecast
+url https://data.nanograv.org/
+note PTA-Residuum = TOA − Timing-Modell, modell-detrendet; GWB = Hellings-Downs-Detektion über ~67 Pulsare, positionslos — kein per-event gravity-Feld. Datenroute Zenodo 8423265 (.tim/.par). Messung 2026-09-18.
+
 decline static-archive
 url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.csv
 note grind: grind_terrapulse_b.φ
@@ -3165,6 +3169,10 @@ note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befun
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
 note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
+
+decline infrastructure
+url https://www.skao.int/
+note Öffentliche Fläche = OpenAPI-3.1.0-Katalog site-capabilities.srcnet.skao.int (/v1/sites, /v1/nodes), Capability-Metadaten; Datenendpoints 401/login. Kein Messwert-Strom; SKAO-Wissenschaftsdaten im Bau. Messung 2026-09-18.
 
 decline no-physical-force
 url https://www.smard.de/app/chart_data/1223/DE/index_quarterhour.json
