@@ -105,7 +105,7 @@ fn parse_streaminfo(b: &[u8]) -> Option<StreamInfo> {
         | ((b[15] as u64) << 16)
         | ((b[16] as u64) << 8)
         | (b[17] as u64);
-    if sample_rate == 0 || bits_per_sample < 4 || bits_per_sample > 32 {
+    if sample_rate == 0 || !(4..=32).contains(&bits_per_sample) {
         return None;
     }
     Some(StreamInfo {
@@ -234,8 +234,8 @@ fn decode_subframe(bits: &mut Bits, header: &SubframeHeader, out: &mut [i32]) ->
         8..=12 => {
             let order = (stype - 8) as usize;
             let mut warm: [i64; 4] = [0; 4];
-            for i in 0..order {
-                warm[i] = bits.read(bps as u32)? as i64;
+            for w in warm.iter_mut().take(order) {
+                *w = bits.read(bps as u32)? as i64;
             }
             for (i, s) in out.iter_mut().take(n).enumerate() {
                 if i < order {
@@ -322,7 +322,7 @@ fn decode_frame(bits: &mut Bits, si: &StreamInfo, out: &mut Vec<i32>) -> Option<
         0 => si.bits_per_sample,
         c => read_sample_size(c, bits)?,
     };
-    if bps < 4 || bps > 32 {
+    if !(4..=32).contains(&bps) {
         return None;
     }
 
@@ -347,12 +347,8 @@ fn decode_frame(bits: &mut Bits, si: &StreamInfo, out: &mut Vec<i32>) -> Option<
         per_channel.push(sub);
     }
 
-    for i in 0..block_size {
-        let (l, r) = if channels == 2 {
-            (per_channel[0][i], per_channel[1][i])
-        } else {
-            (per_channel[0][i], 0)
-        };
+    for (i, &l) in per_channel[0].iter().enumerate() {
+        let r = if channels == 2 { per_channel[1][i] } else { 0 };
         let (left, right) = match decorr {
             8 => (l, l - r),
             9 => (l + r, r),
@@ -487,9 +483,9 @@ mod tests {
         b[10] = (sr >> 12) as u8;
         b[11] = (sr >> 4) as u8;
         b[12] = ((sr & 0xF) as u8) << 4;
-        b[12] |= ((channels - 1) << 1) as u8;
-        b[12] |= ((bps - 1) >> 4) as u8;
-        b[13] = ((bps - 1) << 4) as u8;
+        b[12] |= (channels - 1) << 1;
+        b[12] |= (bps - 1) >> 4;
+        b[13] = (bps - 1) << 4;
         b[13] |= ((total >> 32) & 0xF) as u8;
         b[14] = (total >> 24) as u8;
         b[15] = (total >> 16) as u8;
