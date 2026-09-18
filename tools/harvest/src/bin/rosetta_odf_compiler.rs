@@ -2,6 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::http_code;
 use omegaflow::archivar::ifms_agc::{parse_ifms_agc, parse_series, write_series};
 use omegaflow::cdn::upload_release;
+use omegaflow::odf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 const BASE: &str = "https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/";
@@ -9,6 +10,8 @@ const ODF_DIR: &str = "DATA/LEVEL1A/CLOSED_LOOP/IFMS/";
 const ODF_SUBDIRS: &[&str] = &["AG1", "AG2", "DP1", "DP2"];
 const REQUEST_TTL_S: u64 = 1 << 9;
 const WORKERS: usize = 1 << 3;
+const PREFIX: &str = "rosetta_odf";
+const RECORD_BYTES: usize = 24; // 3 × f64 per IFMS AGC sample, 8-byte series header
 
 fn fetch_listing(dir: &str) -> Option<Vec<u8>> {
     match http_code(dir, &[]) {
@@ -182,6 +185,47 @@ fn harvest_all(urls: &[String]) -> Vec<(f64, f64, f64)> {
     })
 }
 
+fn flush_shard(
+    rows: &[(f64, f64, f64)],
+    names: &mut Vec<String>,
+    paths: &mut Vec<String>,
+) {
+    let t_lo = rows[0].0;
+    let t_hi = rows[rows.len() - 1].0;
+    let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
+    if names.contains(&name) {
+        name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, names.len());
+    }
+    let bin = write_series(rows);
+    assert!(bin.len() <= odf::PODF_SHARD_BUDGET);
+    let parsed = match parse_series(&bin) {
+        Some(p) => p,
+        None => {
+            eprintln!("{name}: roundtrip parse void — the series stays unverified");
+            std::process::exit(1);
+        }
+    };
+    let (d0, d1) = match (parsed.first(), parsed.last()) {
+        (Some(a), Some(b)) => (a.0, b.0),
+        _ => {
+            eprintln!("{name}: roundtrip parse empty — the series stays unverified");
+            std::process::exit(1);
+        }
+    };
+    eprintln!(
+        "{name}: {} AGC samples (unix {d0}..{d1}), {} B — roundtrip parses",
+        parsed.len(),
+        bin.len()
+    );
+    let path = format!("data/archives.esac.esa.int/{name}");
+    if std::fs::write(&path, &bin).is_err() {
+        eprintln!("write {path} void");
+        std::process::exit(1);
+    }
+    names.push(name);
+    paths.push(path);
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -202,32 +246,45 @@ fn main() {
         return;
     }
     merged.sort_by(|a, b| a.0.total_cmp(&b.0));
-    let out = "data/archives.esac.esa.int/rosetta_odf.bin";
     std::fs::create_dir_all("data/archives.esac.esa.int").ok();
-    let bin = write_series(&merged);
-    if std::fs::write(out, &bin).is_err() {
-        eprintln!("write {out} void");
+
+    let shard_records = (odf::PODF_SHARD_BUDGET - 8) / RECORD_BYTES;
+    let mut names: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
+    for chunk in merged.chunks(shard_records) {
+        flush_shard(chunk, &mut names, &mut paths);
+    }
+
+    if names.len() == 1 {
+        let single = format!("data/archives.esac.esa.int/{PREFIX}.bin");
+        if std::fs::rename(&paths[0], &single).is_err() {
+            eprintln!("rename {} -> {single} void", paths[0]);
+            std::process::exit(1);
+        }
+        paths[0] = single;
+        if ci_mode && !upload_release("archives.esac.esa.int", &paths[0]) {
+            std::process::exit(1);
+        }
         return;
     }
-    let (first, last) = match parse_series(&bin) {
-        Some(parsed) => match (parsed.first(), parsed.last()) {
-            (Some(a), Some(b)) => (a.0, b.0),
-            _ => {
-                eprintln!("{out}: roundtrip parse empty — the series stays unverified");
-                return;
+
+    for name in &names {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/{name}"
+        );
+        println!("format {PREFIX}");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field carrier_level_dbm {PREFIX}_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0");
+        println!("field polar_angle_cycles {PREFIX}_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0");
+        println!();
+    }
+
+    if ci_mode {
+        for path in &paths {
+            if !upload_release("archives.esac.esa.int", path) {
+                std::process::exit(1);
             }
-        },
-        None => {
-            eprintln!("{out}: roundtrip parse void — the series stays unverified");
-            return;
         }
-    };
-    eprintln!(
-        "{out}: {} AGC samples (unix {first}..{last}), {} B — roundtrip parses",
-        merged.len(),
-        bin.len()
-    );
-    if ci_mode && !upload_release("archives.esac.esa.int", out) {
-        std::process::exit(1);
     }
 }
