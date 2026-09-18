@@ -1503,6 +1503,12 @@ ttl 86400
 on earth 0 0 0
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
 
+url https://dataverse.harvard.edu/api/access/datafile/3424724
+format reference
+sha256 f68f14dfba45556b4a073d5ca20b99a100e7ac91c97312f11c24e27b1e32ef99
+ttl 86400
+note Bayestar2019-Staubsäulen-Referenz (LIGO/Virgo, Harvard Dataverse DOI 10.7910/DVN/2EJ9TX, CC0 1.0), datafile 3424724 — S3-Content-Range 727902836 B gemessen 2026-09-18; Raw-Mirror bayestar-cdn.yml → CDN-Tag gracedb.ligo.org.
+
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
 ttl 86400
 format csv
@@ -1520,6 +1526,12 @@ epoch 0
 field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
 
+url https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
+format reference
+sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
+ttl 86400
+note FITS Support Office Sample (WFPC2-Vier-Chip-Bild, Content-Length 699840 B gemessen 2026-09-18, Last-Modified 2004-12-13); Raw-Mirror fits-gsfc-cdn.yml → CDN-Tag fits.gsfc.nasa.gov.
+
 url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
 format swot_l2_lr_ssh
 origin https://archive.podaac.earthdata.nasa.gov
@@ -1531,7 +1543,7 @@ note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
-origin pending
+origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/catalog.dat
 compiler tools/harvest/src/bin/des_y6_compiler.rs
 at sun
 ttl 86400
@@ -4932,6 +4944,12 @@ ra ra
 dec dec
 z z
 field z ned_redshift_z gaussian-inverse-square em 1 86400 0.0 0.0
+
+url https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+format reference
+sha256 66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
+ttl 86400
+note PS1 DR2 rings.v3 skycell stack.num-Ebene (Skycell 0637.042, g-Band, Content-Length 2727360 B gemessen 2026-09-18); Raw-Mirror ps1-raw-mirror-cdn.yml → CDN-Tag ps1images.stsci.edu.
 
 url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat
 format reference
