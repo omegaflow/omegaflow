@@ -609,6 +609,12 @@ pub fn main_flow() {
     #[cfg(feature = "browser_relay")]
     {
         if !hidden {
+            let verdicts_path = match std::env::var("OMEGAFLOW_WEBERIN_VERDICTS") {
+                Ok(path) => path,
+                Err(_) => "data/weberin_verdicts.bin".to_string(),
+            };
+            let weberin_verdicts: Arc<Vec<VerdictLine>> =
+                Arc::new(load_weberin_verdicts(&verdicts_path));
             let sr = crate::relay::TcpRadiator::new(
                 port,
                 body_names.clone(),
@@ -622,6 +628,7 @@ pub fn main_flow() {
                 consent.clone(),
                 diode.clone(),
                 Arc::new(archive.sources.clone()),
+                weberin_verdicts,
             );
             radiators.push(Box::new(sr));
         }
