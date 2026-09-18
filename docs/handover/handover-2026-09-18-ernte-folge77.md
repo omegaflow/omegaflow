@@ -3,7 +3,7 @@
   session: Ernte-Folge 77
   class: handover
   date: 2026-09-18
-  sha256: 7f5a79e4235d714a1906f648b1187305dea2dfbc547395aab55a6e56dc9844d7
+  sha256: 2167fd9b9920a58d408201e6a32275669d09a3dbfd70853148a3ba07b3ac6d15
   status: live
 -->
 # Handover — Ernte-Folge 77 (2026-09-18)
@@ -56,9 +56,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `swot_l2_lr_ssh_compiler.rs`; `cargo check -p omegaflow-harvest` null Fehler/null
   Warnungen. CMR `short_name=GEDI02_A` liefert v002+v003, `--version` pinnt Default 002.
   `phi/harvest.φ` trägt die drei Blöcke (`asset fehlt`, `--cmr --day … --version …`,
-  `tag`/`pattern` aus dem Compiler-Code). (Schritt: nach Commit/Push
-  `gh workflow run harvest.yml -f format=<gedi_l2a|icesat2_atl03|swot_l2_lr_ssh>`;
-  Asset via `ci_manage view <id>` prüfen; Idempotenz greift nach dem ersten Upload.)
+  `tag`/`pattern` aus dem Compiler-Code). Dispatch 2026-09-18 nach Push (neue
+  Zwei-Job-Form): `gedi_l2a` `35316395857`, `icesat2_atl03` `35316398029`,
+  `swot_l2_lr_ssh` `35316400165` (alle queued). (Schritt: Asset via
+  `ci_manage view <id>` prüfen; Idempotenz greift nach dem ersten Upload.)
 
 ## rosetta_odf — Workflow-Fix, Lauf offen (wartend)
 
@@ -66,8 +67,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Job-Timeout den Block-`timeout` (350) liest (`needs.register.outputs.timeout`; Council
   bestätigt die Bauform: Job-Timeout wird vor dem ersten Step gewertet, nur `needs.*`
   ist zu diesem Zeitpunkt gefüllt). Dispatch `35312992622` (`-f timeout=350`) lief noch
-  auf dem deployten alten Workflow. (Schritt: nach Commit/Push Re-Dispatch auf der neuen
-  Form ohne `-f timeout`; Ergebnis via `ci_manage view`; Run-ID registrieren.)
+  auf dem deployten alten Workflow. Der Zwei-Job-Fix ist gepusht (`6295dd5e`).
+  (Schritt: Re-Dispatch `gh workflow run harvest.yml -f format=rosetta_odf` ohne
+  `-f timeout` auf der neuen Form, sobald `35312992622` durch ist; Ergebnis via
+  `ci_manage view`; Run-ID registrieren.)
 
 ## Werkzeug-Wrapper — lokaler Build entfernt
 
