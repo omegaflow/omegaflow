@@ -6,7 +6,7 @@ use omegaflow::archivar::{
     embedded_lsk, encode_weberin_verdicts, extract, fetch_raw_bytes, load_sources,
     parse_ephemeris_binary, system_now,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
+use omegaflow::cdn::{CDN_BASE, CDN_RELEASE, upload_asset};
 use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
@@ -44,7 +44,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     println!(
-        "usage: weberin_verdicts_compiler [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--epoch <jd>] [--tol <m>] [--out <path>]"
+        "usage: weberin_verdicts_compiler [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--epoch <jd>] [--tol <m>] [--out <path>] [--ci-mode]"
     );
 }
 
@@ -119,6 +119,7 @@ fn main() {
         usage();
         return;
     }
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let eph_dir = match arg_value(&args, "--eph-dir") {
         Some(d) => d,
         None => "data".to_string(),
@@ -375,4 +376,9 @@ fn main() {
         "weberin_verdicts: {} lines ({riss} riss, {absent} absent, {placed} placed) -> {out}",
         lines.len()
     );
+    if ci_mode && !upload_asset(&out) {
+        eprintln!(
+            "weberin_verdicts: {out} did not reach the CDN release {CDN_RELEASE} — the verdict bin stands local, the manifest is pending"
+        );
+    }
 }

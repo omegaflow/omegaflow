@@ -117,6 +117,7 @@ pub struct OmegaLoop {
     pub silent: bool,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
+    pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,
 
     pub device: Option<wgpu::Device>,
     pub queue: Option<wgpu::Queue>,
@@ -142,6 +143,7 @@ pub struct OmegaLoop {
     pub te_read_buf: Option<wgpu::Buffer>,
     pub te_map: Option<Arc<AtomicBool>>,
     pub te_named: String,
+    pub verdict_named: String,
     pub s2_pipe: Option<wgpu::ComputePipeline>,
     pub s2_layout: Option<wgpu::BindGroupLayout>,
     pub s2_bind: Option<wgpu::BindGroup>,
@@ -222,6 +224,7 @@ impl OmegaLoop {
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
             presence: ctx.presence,
             diode: ctx.diode,
+            verdicts: ctx.verdicts,
             device: None,
             queue: None,
             probe_pipe: None,
@@ -246,6 +249,7 @@ impl OmegaLoop {
             te_read_buf: None,
             te_map: None,
             te_named: String::new(),
+            verdict_named: String::new(),
             s2_pipe: None,
             s2_layout: None,
             s2_bind: None,
@@ -383,6 +387,40 @@ impl OmegaLoop {
         if self.te_named != word {
             eprintln!("te {}", word);
             self.te_named = word.to_string();
+        }
+    }
+
+    pub fn verdict_say(&mut self) {
+        let Ok(v) = self.verdicts.read() else {
+            return;
+        };
+        let riss = crate::archivar::riss_bodies(&v);
+        let named: String = riss
+            .iter()
+            .map(|l| {
+                let knots: Vec<&str> = l
+                    .knot
+                    .iter()
+                    .filter_map(|k| k.as_ref().map(|b| b.word()))
+                    .collect();
+                format!("riss {} ({})", l.name, knots.join(" × "))
+            })
+            .collect::<Vec<_>>()
+            .join(" · ");
+        if self.verdict_named == named {
+            return;
+        }
+        self.verdict_named = named;
+        for l in riss {
+            let knot_a = match l.knot[0] {
+                Some(b) => b.word(),
+                None => "",
+            };
+            let knot_b = match l.knot[1] {
+                Some(b) => b.word(),
+                None => "",
+            };
+            eprintln!("riss {} ({} × {})", l.name, knot_a, knot_b);
         }
     }
 
@@ -1572,6 +1610,7 @@ impl OmegaLoop {
             let tone_alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
             self.tone_scale += (tone_target - self.tone_scale) * tone_alpha;
             self.sky_tick();
+            self.verdict_say();
             let frame = self.presence_frame();
             if !self.silent {
                 let _ = self.acoustic_tx.send(frame);
@@ -1682,6 +1721,7 @@ pub struct LoopCtx {
     )>,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
+    pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,
 }
 
 pub fn run_loop(
