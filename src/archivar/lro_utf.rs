@@ -457,7 +457,7 @@ mod tests {
     fn xy_antenna_angle_wraps_past_half_turn() {
         let mut rec = rec_with(&[]);
         rec[46] = 0x01;
-        let angle_bits = (190.0 / ANGLE_SCALE_DEG) as f64;
+        let angle_bits = 190.0 / ANGLE_SCALE_DEG;
         rec[18..22].copy_from_slice(&(angle_bits as f32).to_be_bytes());
         let tr = tracking_record(&rec).unwrap();
         assert!((tr.angle1 - (-170.0)).abs() < 1e-3, "X-Y angle folds to {}", tr.angle1);
