@@ -4562,6 +4562,112 @@ fn test_quakeml_absent_scalar_moment_emits_no_m0() {
     }
 }
 
+const ARPANSA_UV_BODY: &str = r#"<?xml version="1.0" encoding="utf-8"?>
+<stations>
+  <location id="Adelaide">
+    <name>adl</name>
+    <index>1.3</index>
+    <time>4:05 PM</time>
+    <date>18/09/2026</date>
+    <fulldate>Friday, 18 September 2026</fulldate>
+    <utcdatetime>2026/09/18 06:35</utcdatetime>
+    <status>ok</status>
+  </location>
+  <location id="Alice Springs">
+    <name>asp</name>
+    <index>7.8</index>
+    <utcdatetime>2026/09/18 06:05</utcdatetime>
+    <status>ok</status>
+  </location>
+</stations>"#;
+
+#[test]
+fn test_arpansa_uv_xml_emits_station_channels() {
+    let src = source_fixture("arpansa", vec![]);
+    match super::extract(&src, ARPANSA_UV_BODY, 1.7e9, &fixture_lsk()) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 2);
+            assert_eq!(v[0].0.name, "Adelaide");
+            assert_eq!(v[0].0.value, 1.3);
+            assert_eq!(v[1].0.name, "Alice Springs");
+            assert_eq!(v[1].0.value, 7.8);
+            assert_eq!(v[0].1.force, 0);
+            assert_eq!(v[0].1.kernel, 0);
+            assert_eq!(v[0].1.unit, "UVI");
+            assert!(matches!(v[0].0.position, super::Position::Source));
+        }
+        _ => panic!("extract variant unexpected"),
+    }
+}
+
+#[test]
+fn test_extract_igra_zip_emits_level_measurements() {
+    let header = format!(
+        "#{:<11} {:<4} {:<2} {:<2} {:<2} {:<4} {:>4} {:<8} {:<8} {:>7} {:>8}",
+        "USM00070026",
+        "2026",
+        "01",
+        "01",
+        "00",
+        "2330",
+        1usize,
+        "ncdc-nws",
+        "ncdc-gts",
+        "712889",
+        "-1567833"
+    );
+    let data = format!(
+        "{:<2} {:>5} {:>6}{}{:>5}{}{:>5}{}{:>5} {:>5} {:>5} {:>5}",
+        "21", "0", "103574", "B", "14", " ", "-254", "B", "820", "22", "329", "62"
+    );
+    let text = format!("{header}\n{data}\n");
+    let mut zip = Vec::new();
+    zip.extend_from_slice(b"PK\x03\x04");
+    zip.extend_from_slice(&20u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u32.to_le_bytes());
+    zip.extend_from_slice(&(text.len() as u32).to_le_bytes());
+    zip.extend_from_slice(&(text.len() as u32).to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(&0u16.to_le_bytes());
+    zip.extend_from_slice(text.as_bytes());
+    let path = std::env::temp_dir().join("omegaflow_test_igra.zip");
+    std::fs::write(&path, &zip).unwrap();
+    let src = source_fixture("igra_zip", vec![]);
+    match super::extract(&src, &path.to_string_lossy(), 1.7e9, &fixture_lsk()) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 6);
+            let press = v
+                .iter()
+                .find(|(c, _)| c.name == "igra_air_pressure_hpa")
+                .expect("pressure channel");
+            assert_eq!(press.0.value, 1035.74);
+            assert_eq!(press.1.force, 7);
+            assert_eq!(press.1.kernel, 5);
+            assert_eq!(press.1.unit, "hPa");
+            let temp = v
+                .iter()
+                .find(|(c, _)| c.name == "igra_air_temp_c")
+                .expect("temperature channel");
+            assert_eq!(temp.0.value, -25.4);
+            assert_eq!(temp.1.force, 5);
+            assert_eq!(temp.1.kernel, 4);
+            assert_eq!(temp.1.unit, "C");
+            if let super::Position::Surface { lat, lon, alt, .. } = &press.0.position {
+                assert!((lat - 71.2889).abs() < 1e-9);
+                assert!((lon - -156.7833).abs() < 1e-9);
+                assert_eq!(*alt, 14.0);
+            } else {
+                panic!("position is not Surface");
+            }
+        }
+        _ => panic!("extract variant unexpected"),
+    }
+}
+
 #[test]
 fn test_fetch_dispatch_gate_advective_uses_field_advection() {
     let fc = FieldConfig {
