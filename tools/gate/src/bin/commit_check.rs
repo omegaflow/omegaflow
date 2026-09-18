@@ -1,11 +1,20 @@
-use omegaflow::commit_gate::{canon_diff, declared_canon, Gate, json_write};
+use omegaflow::commit_gate::{
+    canon_diff, declared_canon, prose_violation, register_classes, Gate, json_write,
+};
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
 use std::process::Command;
 
 fn main() {
     let out = Command::new("git")
-        .args(["diff", "--cached", "--name-only", "--diff-filter=ACM"])
+        .args([
+            "-c",
+            "core.quotePath=false",
+            "diff",
+            "--cached",
+            "--name-only",
+            "--diff-filter=ACM",
+        ])
         .output()
         .expect("git");
     let files = String::from_utf8_lossy(&out.stdout).to_string();
@@ -31,6 +40,27 @@ fn main() {
             };
             eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
             fail = true;
+        }
+    }
+    let staged: Vec<&str> = files.lines().map(str::trim).collect();
+    for path in register_classes()
+        .iter()
+        .filter(|p| staged.contains(&p.as_str()))
+    {
+        let out = Command::new("git")
+            .args(["diff", "--cached", "-U0", "--", path.as_str()])
+            .output()
+            .expect("git");
+        let diff = String::from_utf8_lossy(&out.stdout).to_string();
+        for line in diff.lines() {
+            let t = line.trim_end_matches('\r');
+            if !t.starts_with('+') || t.starts_with("+++") {
+                continue;
+            }
+            if let Some(kind) = prose_violation(&t[1..]) {
+                eprintln!("commit_check: phi-register-prose: {kind}: {path}");
+                fail = true;
+            }
         }
     }
     let canon_files = Command::new("git")
