@@ -110,11 +110,6 @@ pub fn parse_sexagesimal(s: &str) -> Option<f64> {
     let first_unit = t.find(['h', 'd'])?;
     let deg_part: f64 = t[..first_unit].trim().parse().ok()?;
     let unit = t.as_bytes()[first_unit];
-    let deg = if unit == b'h' {
-        deg_part * 15.0
-    } else {
-        deg_part
-    };
     let rest = &t[first_unit + 1..];
     let mut parts = rest.split('m');
     let min_field = parts.next().unwrap_or("").trim();
@@ -132,7 +127,8 @@ pub fn parse_sexagesimal(s: &str) -> Option<f64> {
     } else {
         sec_field.parse::<f64>().ok()?
     };
-    let total = deg + min / 60.0 + sec / 3600.0;
+    let total = deg_part + min / 60.0 + sec / 3600.0;
+    let total = if unit == b'h' { total * 15.0 } else { total };
     let v = sign * total;
     if v.is_finite() { Some(v) } else { None }
 }

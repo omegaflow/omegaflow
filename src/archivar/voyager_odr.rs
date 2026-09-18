@@ -574,7 +574,8 @@ mod tests {
         assert_eq!(series[0].1, 0.0);
         assert_eq!(series[0].2, COMP_SAMPLE);
         assert_eq!(series[1].1, 1.0);
-        assert!((series[1].0 - series[0].0 - 1.0 / 300_000.0).abs() < 1e-9);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[1].0 - series[0].0 - 1.0 / 300_000.0).abs() < tol);
         assert_eq!(series[DATA_SAMPLES - 1].1, (DATA_SAMPLES - 1) as f64);
     }
 
@@ -585,7 +586,8 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), DATA_SAMPLES);
         let dt = 3.0 / 300_000.0;
-        assert!((series[1].0 - series[0].0 - dt).abs() < 1e-9);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[1].0 - series[0].0 - dt).abs() < tol);
     }
 
     #[test]
@@ -615,7 +617,8 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), 2 * DATA_SAMPLES);
         let dt = 1.0 / 300_000.0;
-        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < 1e-9);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < tol);
         assert_eq!(series[DATA_SAMPLES].1, 0.0);
         assert_eq!(series[DATA_SAMPLES].2, COMP_SAMPLE);
     }
@@ -639,7 +642,8 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), 2 * DATA_SAMPLES);
         let dt = 1.0 / 300_000.0;
-        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < 1e-9);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[DATA_SAMPLES].0 - series[DATA_SAMPLES - 1].0 - dt).abs() < tol);
         assert_eq!(series[DATA_SAMPLES].1, 0.0);
     }
 

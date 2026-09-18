@@ -199,9 +199,12 @@ fn lz4_decompress(input: &[u8], output_len: usize) -> Option<Vec<u8>> {
             }
         }
         match_len += 4;
-        let src = out.len().checked_sub(offset)?;
-        let span = out.get(src..src + match_len)?.to_vec();
-        out.extend_from_slice(&span);
+        let mut src = out.len().checked_sub(offset)?;
+        for _ in 0..match_len {
+            let b = *out.get(src)?;
+            out.push(b);
+            src += 1;
+        }
     }
     if out.len() != output_len {
         return None;
