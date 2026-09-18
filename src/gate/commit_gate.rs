@@ -914,6 +914,39 @@ impl Gate {
     }
 }
 
+pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<String>) {
+    let tracked_set: HashSet<&str> = tracked.iter().map(String::as_str).collect();
+    let declared_set: HashSet<&str> = declared.iter().map(String::as_str).collect();
+    let mut tracked_not_declared: Vec<String> = tracked
+        .iter()
+        .filter(|p| !declared_set.contains(p.as_str()))
+        .cloned()
+        .collect();
+    tracked_not_declared.sort();
+    tracked_not_declared.dedup();
+    let mut declared_not_tracked: Vec<String> = declared
+        .iter()
+        .filter(|p| !tracked_set.contains(p.as_str()))
+        .cloned()
+        .collect();
+    declared_not_tracked.sort();
+    declared_not_tracked.dedup();
+    (tracked_not_declared, declared_not_tracked)
+}
+
+pub fn declared_canon() -> Vec<String> {
+    let text = match fs::read_to_string("phi/canon.φ") {
+        Ok(t) => t,
+        Err(_) => return Vec::new(),
+    };
+    text.lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .filter(|l| l.starts_with("phi/") && l.ends_with(".φ"))
+        .map(str::to_string)
+        .collect()
+}
+
 pub fn home_of(path: &str) -> Option<&'static str> {
     match classify_home(path) {
         Some(Home::German) => Some("deutsch"),
@@ -1261,6 +1294,48 @@ mod tests {
 
     fn tool_args(path: &str, content: &str) -> String {
         format!(r#"{{"filePath":"{}","newString":"{}"}}"#, path, content)
+    }
+
+    #[test]
+    fn canon_diff_both_directions() {
+        let tracked = vec![
+            "phi/a.φ".to_string(),
+            "phi/b.φ".to_string(),
+            "phi/c.φ".to_string(),
+        ];
+        let declared = vec![
+            "phi/b.φ".to_string(),
+            "phi/c.φ".to_string(),
+            "phi/d.φ".to_string(),
+        ];
+        let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
+        assert_eq!(tracked_not_declared, vec!["phi/a.φ".to_string()]);
+        assert_eq!(declared_not_tracked, vec!["phi/d.φ".to_string()]);
+    }
+
+    #[test]
+    fn canon_diff_equal_yields_empty() {
+        let tracked = vec!["phi/a.φ".to_string(), "phi/b.φ".to_string()];
+        let declared = vec!["phi/b.φ".to_string(), "phi/a.φ".to_string()];
+        let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
+        assert!(tracked_not_declared.is_empty());
+        assert!(declared_not_tracked.is_empty());
+    }
+
+    #[test]
+    fn canon_diff_sorted_without_duplicates() {
+        let tracked = vec![
+            "phi/z.φ".to_string(),
+            "phi/a.φ".to_string(),
+            "phi/a.φ".to_string(),
+        ];
+        let declared: Vec<String> = Vec::new();
+        let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
+        assert_eq!(
+            tracked_not_declared,
+            vec!["phi/a.φ".to_string(), "phi/z.φ".to_string()]
+        );
+        assert!(declared_not_tracked.is_empty());
     }
 
     #[test]
