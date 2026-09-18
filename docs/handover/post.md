@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-18
-  sha256: f173364d8aa38dc1a982d375f26530a8b980b8bc6e71880738eb4ea2c2b3cb30
+  sha256: d282e8321715f9aa58fb4f5998a54c09a38c31571ce06b60b19ae4721c2125ce
   status: live
   see-also: AGENTS.md
 -->
@@ -15,5 +15,5 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An forschung: BepiColombo MORE (`bc_mpo_more`) — PSA-Antwort `1789723653` (Mark Bentley, psa-support@cosmos.esa.int): Cruise-Daten noch nicht öffentlich, Freigabe zur Wissenschaftsphase (~April), Zwischenzugang über PI Luciano Iess. (Schritt: `state/mail/mail_ledger.φ:230`; bei Eingang authentifizierter TAP-`data`-Abruf am MORE-URN.)
+An forschung: BepiColombo MORE (`bc_mpo_more`) — PI Luciano Iess (`mail_ledger` `1789729151`): Cruise-Daten werden erst zur Wissenschaftsphase (~April) freigegeben, kein Zwischenzugang; eigene Antwort gesendet `1789737560`. (Schritt: als termin/Wiedervorlage im eigenen Handover führen; kein TAP-Abruf vorher.)
 
