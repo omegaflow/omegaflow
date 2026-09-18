@@ -1067,7 +1067,7 @@ field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
 field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
 field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
-note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c; Roh-URL …/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days), kanonische ERDDAP-Form (time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC); compiler tools/harvest/src/bin/emso_compiler.rs (hält die Roh-URL, lädt nach CDN) + .github/workflows/emso-cdn.yml; CDN-Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 792196294d0435af44a921e3146d2b0041144d28262a691b2cf5f3914c8e6b2c, HTTP 200; Release-Tag erddap.emso.eu, angelegt 2026-09-16T19:01:45Z).
+note OBSEA-seabed-Station-Zeitserie (erddap.emso.eu, OBSEA_seabed_station_TS_L1c); compiler emso_compiler.rs + emso-cdn.yml; Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 79219629…e6b2c, HTTP 200)
 
 url https://github.com/omegaflow/sources/releases/download/noaa-gk2a-pds.s3.amazonaws.com/gk2a_ami_rad.bin
 format gk2a_ami
@@ -1147,7 +1147,7 @@ alt 3 -m
 field 4 ioos_glider_water_temp_c exponential-decay thermal C 360 0.0 0.0
 field 5 ioos_glider_salinity_psu gaussian-inverse-square diffusion PSU 360 0.0 0.0
 field 6 ioos_glider_conductivity_s_m inverse-square electric S/m 360 0.0 0.0
-note IOOS-Glider bass-20260907T0000-Zeitserie (gliders.ioos.us); CDN-Asset vorhanden, gemessen 2026-09-17 (erddap-tabledap-bass-20260907T0000.json-time_latitude_longitude_depth_temperature_salinity_conductivity-time_3E-max_time_-7days.json, 3339613 B, sha256 5503c6a58d32d56a2297f1332b807fe37293a0c0e16d4f0bf59a345fa00e766b, HTTP 200; Release-Tag gliders.ioos.us, angelegt 2026-09-17T19:22:46Z).
+note IOOS-Glider bass-20260907T0000-Zeitserie (gliders.ioos.us); Asset vorhanden, gemessen 2026-09-17 (bass-20260907T0000.json, 3339613 B, sha256 5503c6a5…e766b, HTTP 200).
 
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
 ttl 3600
@@ -1369,7 +1369,7 @@ field vel_v radiosonde_vertical_velocity_ms patch-levy advective m/s 3600 0.0 0.
 field heading radiosonde_wind_direction_deg patch-levy advective deg 3600 0.0 0.0
 field pressure radiosonde_air_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
 field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
-note Ballon-Telemetrie-Serie (api.v2.sondehub.org/sonde/Y3313219); CDN-Asset vorhanden, gemessen 2026-09-17 (sonde-Y3313219.json, 5548231 B, sha256 64a0097f43ccb82373037263fc2090c0e380024e7f1ebbf607e1de96d1dcdcc7, HTTP 200; Release-Tag api.v2.sondehub.org, angelegt 2026-09-17T19:24:53Z).
+note Ballon-Telemetrie-Serie (api.v2.sondehub.org/sonde/Y3313219); Asset vorhanden, gemessen 2026-09-17 (sonde-Y3313219.json, 5548231 B, sha256 64a0097f…cdcc7, HTTP 200).
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
 ttl 86400
@@ -1483,7 +1483,7 @@ url https://data.earthscope.org/archive/seismology/products/emc/netcdf/LITHO1.0.
 format reference
 sha256 ba13dfe1b7685d7ab07aa201590568f48b79fd3109e7ba17c01dded2892c375f
 ttl 86400
-note volume descoped (gemessen 2026-09-13): LITHO1.0 ist ein geschichtetes 2D-Lithosphärenmodell — 171 lat×lon-Gitter [180,360] für Schichtgrenzen-Eigenschaften (Vp/Vs/Dichte/Q/eta je Schicht-Ober-/Unterkante) plus latitude[180]/longitude[360]. Kein rank-3-Feld; der volume.bin-Kontrakt (depth×lat×lon-Skalarfeld) trägt nur Schichtgrenzen, keine Tiefenachse — ein Tiefen-Volumen wäre Interpolation, nicht Messung. Keine volume.bin-Zeile.
+note volume descoped (gemessen 2026-09-13): LITHO1.0 ist ein 2D-Modell — 171 lat×lon-Gitter [180,360] für Schichtgrenzen, kein rank-3-Feld; der volume.bin-Kontrakt trägt keine Tiefenachse — Tiefen-Volumen wäre Interpolation, nicht Messung.
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc
 format reference
@@ -1539,7 +1539,7 @@ compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
 on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird an den PODAAC-/s3credentials-Endpunkten akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen podaac-swot-ops-cumulus-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy (s3_same_region_access_bucket_limit_policy) — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen (SWOT-EULA).
+note protected-bucket 403 gemessen 2026-09-17: EDL-Token am PODAAC-s3credentials akzeptiert (HTTP 200); ListObjectsV2 podaac-swot-ops-cumulus-protected: 403 AccessDenied, Deny s3:ListBucket — Listing geschlossen; Route: CMR-Granule → GetObject.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
@@ -1547,7 +1547,7 @@ origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/catalog.dat
 compiler tools/harvest/src/bin/des_y6_compiler.rs
 at sun
 ttl 86400
-note geschwindigkeits-unsicherheit descoped (gemessen 2026-09-16): der volle heliozentrische Zustand x,y,z,vx,vy,vz + sigma_m wird getragen — der Zustandsvektor ist das vollständige Gravitationsfeld; Geschwindigkeits-/Offdiagonal-Unsicherheit ist kein Kraftfeld.
+note geschwindigkeits-unsicherheit descoped (gemessen 2026-09-16): der heliozentrische Zustand x,y,z,vx,vy,vz + sigma_m wird getragen — der Zustandsvektor ist das Gravitationsfeld; Geschwindigkeits-/Offdiagonal-Unsicherheit ist kein Kraftfeld.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
 format catalog_ossos
@@ -6605,7 +6605,7 @@ url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
 format reference
 sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
 ttl 86400
-note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd) — Zenodo record 10620251; 13,25 GiB > 2-GiB-CDN-Limit, daher 1-GiB-Shards + Manifest via .github/workflows/tnbfits-cdn.yml; sha256 aus dem tnbfits.manifest (Lauf 35148401053, 14 Shards). CDN-Tag zenodo.org.
+note Transneptunian Binary Orbit Fits (Proudfoot23_TNBFits.zip, 14232134885 B, md5:a1aada719292a579bf0695e02e7d2afd); 13,25 GiB > 2-GiB-CDN-Limit, daher Shards + Manifest via tnbfits-cdn.yml; sha256 aus tnbfits.manifest (Lauf 35148401053, 14 Shards).
 
 url https://zenodo.org/records/10620251/files/multimoon-1.0.zip
 format reference
@@ -6827,7 +6827,7 @@ at earth
 ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
-note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Text-Reader `src/archivar/ifms_agc.rs` parst `<header>` + `<active_table>` + `<body_Gain>` (Spalten aus der `//`-Zeile, nicht hartcodiert); `rosetta_odf_compiler.rs` darauf verdrahtet. Fixtur `src/archivar/kernels/r32icl1l1a_ag1_072831317_02.RAW`, 343978 B, sha256 13eb7667a1cee6a4b9378d29753aaf9af984e245bcaf80c11321118f807fd48c, URL https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/RO-X-RSI-1-2-3-EAR2-0061-V1.0/DATA/LEVEL1A/CLOSED_LOOP/IFMS/AG1/R32ICL1L1A_AG1_072831317_02.RAW, 1994 Zeilen. Offen: `planetary-odf-cdn.yml --ci-mode` nach Push.
+note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Reader src/archivar/ifms_agc.rs; rosetta_odf_compiler.rs; Fixtur r32icl1l1a_ag1_072831317_02.RAW, 343978 B, sha256 13eb7667…fd48c, 1994 Zeilen; offen: planetary-odf-cdn.yml --ci-mode nach Push.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
 format cassini_tnf
@@ -6837,7 +6837,7 @@ sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
 at earth
 ttl 604800
 field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_parse_series` + `extract.rs`-Dispatch `cassini_tnf` (`TNF_COMP_UL_PHASE` → `cassini_tnf_ul_phase_cycles`); Compiler `tools/harvest/src/bin/cassini_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view -R omegaflow/sources atmos.nmsu.edu` (191163176 B, run 35156062244).
+note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0); Arm src/archivar/odf.rs tnf_parse_series + extract.rs cassini_tnf; Compiler tools/harvest/src/bin/cassini_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (191163176 B, run 35156062244).
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_ocru_odf.bin
 format juno_ocru_odf
@@ -6847,7 +6847,7 @@ sha256 a37e76a4a66d504f2b9ebe0fb072fb570ce008591e7078ebb903917e3c973413
 at earth
 ttl 604800
 field observable_hz juno_ocru_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-note juno_ocru_odf (gemessen 2026-09-17): post-EFB OCRU-Bestand `jnogrv_0001` (21 `.ODF`, 2013-284…2016-137), Arm `planetary-odf-cdn.yml` (`juno_odf_compiler --volume jnogrv_0001`); CDN-Asset 329770304 B, hochgeladen 2026-09-17T12:37:35Z; PODF-Dispatch in `extract.rs`.
+note juno_ocru_odf (gemessen 2026-09-17): OCRU-Bestand jnogrv_0001 (21 .ODF, 2013-284…2016-137), Arm planetary-odf-cdn.yml (juno_odf_compiler --volume jnogrv_0001); Asset 329770304 B, hochgeladen 2026-09-17T12:37:35Z; PODF-Dispatch in extract.rs.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 format juno_odf
@@ -6945,7 +6945,7 @@ compiler tools/harvest/src/bin/gedi_l2a_compiler.rs
 on earth 0 0 0
 ttl 604800
 field gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square em m 604800 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird am LPDAAC-/s3credentials-Endpunkt akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen lp-prod-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen.
+note protected-bucket 403 gemessen 2026-09-17: EDL-Token am LPDAAC-s3credentials akzeptiert (HTTP 200); ListObjectsV2 lp-prod-protected: 403 AccessDenied, Deny s3:ListBucket — Signatur korrekt, Listing geschlossen; Route: CMR-Granule → GetObject.
 
 url https://github.com/omegaflow/sources/releases/download/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin
 format icesat2_atl03
@@ -6954,7 +6954,7 @@ compiler tools/harvest/src/bin/icesat2_atl03_compiler.rs
 on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (research-max): der EDL-Token wird am NSIDC-/s3credentials-Endpunkt akzeptiert (HTTP 200); ein SigV4-ListObjectsV2 gegen nsidc-cumulus-prod-protected gibt 403 AccessDenied mit explizitem Deny auf s3:ListBucket in der identitätsbasierten NGAP-Policy — die Signatur ist korrekt, das Listing ist policy-geschlossen. Route: CMR-Granule → direktes GetObject, oder ein Operator-Datenabkommen.
+note protected-bucket 403 gemessen 2026-09-17: EDL-Token NSIDC-s3credentials akzeptiert (HTTP 200); ListObjectsV2 nsidc-cumulus-prod-protected: 403 AccessDenied, Deny s3:ListBucket — Listing geschlossen; Route: CMR-Granule → GetObject.
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
 format bgr_infrasound
@@ -7121,7 +7121,7 @@ field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0
 field kcdc_general_air_temp_c kcdc_general_air_temp_c inverse-square thermal C 604800 0.0 0.0
 field kcdc_general_air_pressure_hpa kcdc_general_air_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
 field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric V/m 604800 0.0 0.0
-note KCDC/KASCADE-Grande cosmic-ray air showers, native Serie (KCD1 bin, 20 Komponenten: KASCADE array + Grande + calorimeter + LOPES E-Feld + general weather); Arm `src/archivar/kcdc.rs` `parse_series` + `extract.rs`-Dispatch `kcdc_kascade` (comp-ID → wire name); Compiler `tools/harvest/src/bin/kcdc_compiler.rs`; CDN-Asset gemessen 2026-09-17 via `gh release view kcdc.iap.kit.edu --repo omegaflow/sources` (19480868 B, sha256 `4d992ea3…d25b`, run 35186451939).
+note KCDC/KASCADE-Grande native Serie (KCD1 bin, 20 Komponenten); Arm src/archivar/kcdc.rs parse_series + extract.rs kcdc_kascade; Compiler kcdc_compiler.rs; CDN-Asset gemessen 2026-09-17 (19480868 B, sha256 4d992ea3…d25b, run 35186451939).
 
 url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
 format maxi
@@ -7194,7 +7194,7 @@ origin procedure: fetch https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp
 compiler tools/harvest/src/bin/las_compiler.rs
 at earth
 ttl 604800
-note LAS point cloud (NOAA NOS Coastal Lidar PDS, AWS Open Data bucket noaa-nos-coastal-lidar-pds, project 1457 1999 USACE NCMP Bathymetric Lidar: Hawaii, granule 19990301_oahu_bathy_geoclassed.copc.laz, 9553371 B, STAC license CC-BY-1.0). Measured 2026-09-16: bucket root HTTP 200 (386818 B), STAC catalog HTTP 200, granule HTTP 200; CRS EPSG:26904 (NAD83 / UTM zone 4N, GRS80) with vertical MLLW height. The COPC/LASzip decoder reads the granule (regression fixture noaa_copc_f6_variable.laz); las_compiler.rs resolve_crs inverts NAD83/UTM 26901-26923 (GRS80, the 326xx central-meridian formula, 2026-09-16), so the horizontal CRS resolves; the MLLW-to-ellipsoid chain is registered (vdatum.noaa.gov/download/data) but unbuilt (no GTX reader), so the z stays as delivered MLLW height (not ellipsoid) and the vertical chain stays pending until that build. The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch); the spatial promotion to a Position anchor is descoped by measurement as at the USGS source (no v-free anchor, LAS carries no v).
+note LAS (NOAA NOS Coastal Lidar PDS, granule 19990301_oahu_bathy_geoclassed.copc.laz, 9553371 B); 2026-09-16 HTTP 200; CRS EPSG:26904 (NAD83/UTM 4N GRS80), z MLLW; MLLW→Ellipsoid unbuilt (kein GTX-Reader), pending; Position-Anker descoped.
 field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
@@ -7416,7 +7416,7 @@ compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs
 at earth
 ttl 604800
 field sky_frequency_hz ulysses_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; sha256 pending (CI re-dispatch) — the same-band pairing fix landed 2026-09-18 (reduce_uly_skyfreq pairs each record with the next same-band record), re-dispatch pending.
+note Ulysses SCE TRK-2-25 ATDF S-band sky-frequency; src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; asset present 2026-09-18: ulysses_atdf.bin 35187160 B sha256 5aeca72ed24fdbf4d48a6e70448df3fe8cfbf8ae2732ea6619ac0b0b4869be9a
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
 format voyager_odr
@@ -7549,7 +7549,7 @@ sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
 at earth
 ttl 604800
 field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `dart_tnf`; Compiler `tools/harvest/src/bin/dart_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
+note DART TRK-2-34 TNF Uplink-Trägerphase (DT0), native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs dart_tnf; Compiler dart_tnf_compiler.rs; CDN-Asset gemessen 2026-09-16 (620394632 B, run 35156059824).
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
 format dawn_odf
@@ -7591,7 +7591,7 @@ compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs
 at earth
 ttl 604800
 field sky_frequency_x_hz ulysses_sky_frequency_x_hz inverse-square em Hz 3600 0.0 0.0
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series, component ulysses_sky_frequency_x_hz); consumer arm src/archivar/atdf.rs parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset present measured 2026-09-17 (ulysses_atdf_x.bin 5546584 B sha256 a57af1c14563f41c09a072250565bfadd5039262790c02931ab774c8b92e66ce, gh release view pds-ppi.igpp.ucla.edu) — superseded 2026-09-18 by the same-band pairing fix in reduce_uly_skyfreq (the series grows); the registered sha is stale, re-dispatch pending (gh workflow run harvest.yml -f format=ulysses_atdf_x); the X ref window + median half-width validation re-runs against the new series
+note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency series; src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
@@ -7623,7 +7623,7 @@ compiler tools/harvest/src/bin/bison_compiler.rs
 at sun
 ttl 604800
 field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
-note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler tools/harvest/src/bin/bison_compiler.rs + .github/workflows/bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series arm wired (extract.rs series_parse_bin/series_component_name + main_flow.rs series list), field name aligned to the component name (main_flow.rs:2168).
+note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler bison_compiler.rs + bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series wired (extract.rs + main_flow.rs).
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bzcat5.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VII/274/bzcat5
@@ -8243,7 +8243,7 @@ origin procedure: fetch https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp
 compiler tools/harvest/src/bin/las_compiler.rs
 at earth
 ttl 604800
-note LAS point cloud (USGS 3DEP, AK_BrooksCamp_2012, EPSG:3857). CRS inverse built 2026-09-16: geographic (EPSG:4326), Web Mercator (3857), UTM 326xx/327xx (GRS80 inverse Transverse Mercator); WKT without an own EPSG-ID and the MLLW tide-datum chain stay refused (no measured geoid/tide model, no ID — pending). The x/y/z are ICRS snapshots of body-fixed points (body_fixed_to_icrs per point epoch), not resting ICRS points; the spatial promotion to a Position anchor is descoped by measurement (2026-09-16): the contract carries no v-free anchor and the LAS format carries no v, so a StateVector (v=0) would be fabrication — the series components las_x/y/z_icrs_m are the correct measurement.
+note LAS (USGS 3DEP, AK_BrooksCamp_2012, EPSG:3857). CRS inverse 2026-09-16: 4326, 3857, UTM 326xx/327xx; MLLW-Tide-Kette refused — pending. x/y/z sind ICRS-Snapshots Punkte; Position-Anker descoped (kein v); Serien las_x/y/z_icrs_m.
 field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
@@ -8261,7 +8261,7 @@ ra RA
 dec DEC
 field Total_flux vlass_component_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC. Compiler tools/harvest/src/bin/vlass_tap_compiler.rs --kind component; CDN asset measured 2026-09-17 (run 35251315622, 167344 B).
+note distanz descoped (gemessen 2026-09-16): VLASS-TAP wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — em-Richtungszeuge (S², τ=0); compiler vlass_tap_compiler.rs --kind component; CDN asset measured 2026-09-17 (run 35251315622, 167344 B).
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_source.bin
 format catalog_vlass_tap_source
@@ -8274,7 +8274,7 @@ ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-note distanz descoped (gemessen 2026-09-16): die VLASS-TAP-Abfrage (vlass_tap_compiler.rs SRC_QUERY/CMP_QUERY) wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — ein distanzloser em-Richtungszeuge (S²-Richtung, τ=0), wie HAWC. Compiler tools/harvest/src/bin/vlass_tap_compiler.rs --kind source; CDN asset measured 2026-09-17 (run 35251315622, 200016 B).
+note distanz descoped (gemessen 2026-09-16): VLASS-TAP wählt nur RA/DEC/Fluss, keine Distanz/Parallaxe — em-Richtungszeuge (S², τ=0); compiler vlass_tap_compiler.rs --kind source; CDN asset measured 2026-09-17 (run 35251315622, 200016 B).
 
 url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
 format iscb
@@ -8643,7 +8643,7 @@ format sky1
 at sun
 ttl 31536000
 field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
-note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope hess; CDN asset measured 2026-09-17 (run 35251318800, 168133 B).
+note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); compiler dl3_skymap_compiler.rs --telescope hess; CDN asset measured 2026-09-17 (run 35251318800, 168133 B).
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
@@ -8668,7 +8668,7 @@ format sky1
 at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); CDN-Asset present — dl3-skymap-cdn.yml run 35268770926 success 2026-09-17 (magic_dl3.sky1, 473 B, sha256 0085e395ce3c543a13b1622c665182df05ff0f53dbbc7b4db585e9c429abbaa9; MAGIC per-project FITS URL gemessen HTTP 200, 328320 B: https://door06.pic.es:8452/magic_dl3_pdr1/data/CrabNebula/dark/single_offset/20131005_05029789_DL3_CrabNebula-W0.40+215.fits); compiler tools/harvest/src/bin/dl3_skymap_compiler.rs --telescope magic.
+note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma); run 35268770926, 2026-09-17 (magic_dl3.sky1, 473 B, sha256 0085e395…baa9; FITS door06.pic.es HTTP 200, 328320 B); compiler dl3_skymap_compiler.rs --telescope magic.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
 origin https://vo.km3net.de/ant20_01/nu/cone/form
@@ -8716,7 +8716,7 @@ field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
 url https://vdatum.noaa.gov/download/data/
 format reference
 ttl 31536000
-note VDatum vertical-datum chain (MLLW→ellipsoid; key-free, public domain). Measured 2026-09-16: /download/data/ HTTP 200 (27722 B Apache index). ZIP list read: named regional coastal grids (AK AL CA DE FL GA LA MD ME NC NJ NY OR PRVI RI-CT TX VA WA — no HI) + geoid models (vdatum_GEOID18.zip 135M, vdatum_EGM2008.zip 779M, GEOID12A/B) + bundles (vdatum_regional_20250917.zip 848M, vdatum_all_20250917.zip 3.0G). Sniff FLsoicw01_8301.zip (75885 B, magic zip, sha256 172ee6065fe2792bec1c16e447265e2e66b00ac63cb791e0e1c577ef5a2154fe): inner tidal-datum rasters *.gtx (mllw/mlw/mhw/mhhw/mtl/dtl/tss — binary IEEE-double header, no recognized magic) + .bnd + .met (horz=NAD83, coor_system=geographic, tidal_epoch 1983-2001) + .kml. Measured 2026-09-17 by ZIP central-directory HTTP range reads (no full download): vdatum_regional_20250917.zip (889245517 B) — 844 CD entries, 56 region dirs (AK AL CA CRD DE FL GA IGLD85 LA LATX MD ME NC NJ NY OR PRVI RI-CT TX VA WA WCoffsh), zero Hawaii; vdatum_all_20250917.zip (3244167494 B) — 1912 entries, tidal set = regional set, the only hawaii names are horizontal datum-shift grids (NADCON5 *.lat/.lon/.eht, ncla/nclo), zero Hawaii tidal grids; vdatum_GEOID18.zip (141601745 B) — 37 entries, CONUS+PRVI; vdatum_EGM2008.zip (817202300 B) — 3 entries, global. Hawaii MLLW→ellipsoid: measured ABSENT — the Oahu z stays MLLW as delivered (documented in las_compiler.rs); no GTX reader built for a region with no grid (descoped by measurement).
+note VDatum chain (MLLW→ellipsoid). 2026-09-16 /download/data/ HTTP 200. 2026-09-17 ZIP range reads: regional 889245517 B, all 3244167494 B (1912 entries). Hawaii MLLW→ellipsoid ABSENT — Oahu z stays MLLW; no GTX reader (descoped).
 
 url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
 ttl 31536000
@@ -10105,7 +10105,7 @@ sha256 cbdf3ea4dccd3b687f91dea679ac44e4c8ba28ce93c072f9bcdcd0bac4db8956
 at earth
 ttl 604800
 field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t682590742_801786860.bin
 format maven_tnf
@@ -10115,7 +10115,7 @@ sha256 0806df61a32d13d065eacd94d76905f1dbde37edd05b5d5b763bb3b974457393
 at earth
 ttl 604800
 field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t801786861_818274669.bin
 format maven_tnf
@@ -10125,7 +10125,7 @@ sha256 17a69d1c5529ef6a3f89266aced9dca79865e1ced33f858d51b4e74654f44fb9
 at earth
 ttl 604800
 field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm `src/archivar/odf.rs` `tnf_rows`/`tnf_parse_series` + `extract.rs`-Dispatch `maven_tnf`; Compiler `tools/harvest/src/bin/maven_tnf_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35205267703, 194661152 B).
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 194661152 B).
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
@@ -10137,4 +10137,4 @@ ttl 604800
 field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
 field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
 field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
-note Mariner 10 Venus occultation reduced telemetry signal data (NSSDC NSSD1346), native Serie; Arm `src/archivar/mariner_occlt.rs` + `extract.rs`-Dispatch `mariner_occlt`; Compiler `tools/harvest/src/bin/mariner_occlt_compiler.rs`; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
+note Mariner 10 Venus occultation telemetry signal data (NSSDC NSSD1346), native Serie; Arm src/archivar/mariner_occlt.rs + extract.rs mariner_occlt; Compiler mariner_occlt_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
