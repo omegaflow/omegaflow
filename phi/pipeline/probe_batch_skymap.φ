@@ -1,0 +1,27 @@
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,Energy,logEnergy,Zenith,Azimuth+FROM+"J/ApJ/867/L27/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy+DESC
+ttl 86400
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+EventID,RAJ2000,DEJ2000,Energy_TeV,Topology,AngErr,MJD+FROM+"J/PhRvD/104/022002/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_TeV+DESC
+ttl 86400
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,TS,ns,gamma,phi0,E_min,E_max+FROM+"J/ApJ/907/L48/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+TS+DESC
+ttl 86400
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://dc.zah.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+eventid,ra,dec,energy,log10energy,zenith,sd_energy,gps_second+FROM+auger.main+WHERE+energy>1+ORDER+BY+energy+DESC
+ttl 86400
+format text
+rows
+ra_key ra
+dec_key dec

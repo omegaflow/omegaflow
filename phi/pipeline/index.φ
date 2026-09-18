@@ -1,0 +1,192 @@
+# index über phi/pipeline/ — alle Dateien, klassifiziert
+# Stand 2026-09-17 — Blockzahlen gemessen, regeneriert.
+# Methode Blockzahl: Zeilen, die mit `url ` beginnen (kanonische Block-URL-Linie).
+#   `sgrep -c "url "` liefert die Substring-Treffer; Kommentar-/Note-Treffer
+#   (Zeilen, die mit `#` oder Whitespace beginnen) werden über ein
+#   4-Zeichen-Präfix-Histogramm abgezogen.
+#   Beispiel: grind_host 13 Substring → 11 Blöcke (2 in Kommentar/Note).
+# Pfade relativ zu phi/.
+# Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt | index | descoped
+# index = Tür-Katalog: geerntet, ist selbst keine Quelle, bleibt als Adapter-Route zu SI-Daten (2026-08-20).
+# Katalog-Inventare tragen 0 url-Blöcke (Inventar, keine Block-Drafts) — gemessen.
+# Eine Zeile = eine Datei oder ein Korpus.
+#
+# AUSLAGERUNG 2026-09-17 (Entscheid-Folge 38): nach
+#   archive-root/pipeline-auslese-2026-09-17/ (verschoben, nicht gelöscht; Rückweg in NOTE.md):
+#   stage/ (24), meteo_harvest/ (159), weights_*.txt (38 am Datenträger), Probe-Ausgänge (7).
+#
+# ZUSAMMENFASSUNG (gemessen 2026-09-17):
+#   pipeline/master_urls.txt          10153 Zeilen
+#   pipeline/netloc.txt               502 Zeilen
+#   pipeline/netloc_per_datei.txt     108 Zeilen
+#   pipeline/review_kandidaten.txt    790 Zeilen
+#   pipeline/provider_mengen.txt      22 Zeilen
+#   pipeline/catalog/                 137 .φ-Inventare + 8 Datenverzeichnisse
+#   pipeline/queue/                   55 .φ-Queues
+#   pipeline/research/agent_output/   97 .φ-Recherche-Ausgänge
+#   pipeline/catalog/provider_links.φ jeder Provider mit Original-Link
+#   pipeline/catalog/b2find_tags.φ    b2find-Tag-Vokabular
+#   pipeline/library.φ                gewichtete Tags (Linse des source_scanner)
+
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Queue (die eine Master-Datei + Join-Paar + Drafts)
+# ------------------------------------------------------------------
+pending pipeline/queue/master.φ
+# master.φ am Datenträger ABSENT (2026-09-17) — Re-Derivation offen (13 Alt-Korpora merge).
+ausstehend 824 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
+ausstehend 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
+# richest+params = Join-Quelle der Lost-Blocks.
+
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Agent-Drafts (descoped 2026-09-18: queue/grind_*-Pfad nie gebaut, nicht nötig)
+# ------------------------------------------------------------------
+descoped 0 pipeline/queue/grind_arcgis_b01..b10.φ (10 Dateien; candidate/dataset-Format, kein url-Block)
+descoped 15 pipeline/queue/grind_arcgis_deep.φ
+descoped 0 pipeline/queue/grind_bepicolombo.φ
+descoped 1 pipeline/queue/grind_cencoos.φ
+descoped 2 pipeline/queue/grind_cma.φ
+descoped 136 pipeline/queue/grind_dataverse.φ
+descoped 3 pipeline/queue/grind_domain_coverage.φ
+descoped 2 pipeline/queue/grind_esa.φ
+descoped 0 pipeline/queue/grind_esa_full.φ
+descoped 1 pipeline/queue/grind_goes16.φ
+descoped 11 pipeline/queue/grind_host.φ
+descoped 25 pipeline/queue/grind_jsonkanal.φ
+descoped 4 pipeline/queue/grind_kaskade.φ
+descoped 1 pipeline/queue/grind_lro.φ
+descoped 26 pipeline/queue/grind_nasa.φ
+descoped 7 pipeline/queue/grind_planetary.φ
+descoped 3 pipeline/queue/grind_rechecks.φ
+descoped 3 pipeline/queue/grind_registriert.φ
+descoped 0 pipeline/queue/grind_regtap_7_disposition_2026-09-12.φ
+descoped 2 pipeline/queue/grind_sensorwave_arcgis_2026-09-16.φ
+descoped 6 pipeline/queue/grind_sensorwave_forcegate_2026-09-16.φ
+descoped 4 pipeline/queue/grind_sensorwave_radiosonde_2026-09-16.φ
+descoped 2 pipeline/queue/grind_spacetrack.φ
+descoped 1 pipeline/queue/grind_stoqs.φ
+descoped 6 pipeline/queue/grind_suchliste_a.φ
+descoped 0 pipeline/queue/grind_swarm_diss.φ
+descoped 11 pipeline/queue/grind_terrapulse_a.φ
+descoped 99 pipeline/queue/grind_terrapulse_b.φ
+descoped 1 pipeline/queue/grind_ulysses.φ
+descoped 63 pipeline/queue/grind_vires_full.φ
+descoped 9 pipeline/queue/grind_weberin_gap_routes.φ
+descoped 4 pipeline/queue/grind_weberin_skymap.φ
+descoped 4 pipeline/queue/grind_astro_tap_2026-08-19.φ
+
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Roh-Kandidaten-Korpora (neu seit 2026-08-15)
+# ------------------------------------------------------------------
+ausstehend 30 pipeline/queue/sources_astro_untested_30-astro.φ
+ausstehend 3 pipeline/queue/sources_earth_untested_stac-sentinel.φ
+ausstehend 16 pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
+ausstehend 1047 pipeline/queue/sources_new_untested_13k_230-domains.φ
+ausstehend 873 pipeline/queue/sources_new_untested_14k_new-unchecked.φ
+ausstehend 1047 pipeline/queue/sources_new_untested_15k_230-domains.φ
+ausstehend 19 pipeline/queue/sources_new_untested_183l.φ
+ausstehend 176 pipeline/queue/sources_new_untested_2k.φ
+ausstehend 423 pipeline/queue/sources_new_untested_7k.φ
+ausstehend 49 pipeline/queue/sources_new_untested_candidate-staging.φ
+
+# ------------------------------------------------------------------
+# RECHERCHE-BESTAND — Katalog-Inventare (Quellen für neue Blöcke; 0 url-Blöcke)
+# ------------------------------------------------------------------
+ausstehend 0 pipeline/catalog/tap_index.φ
+ausstehend 0 pipeline/catalog/tap_index_ari.φ
+ausstehend 0 pipeline/catalog/tap_index_exoarchive.φ
+ausstehend 0 pipeline/catalog/tap_index_gavo.φ
+ausstehend 0 pipeline/catalog/tap_index_heasarc.φ
+ausstehend 0 pipeline/catalog/tap_index_irsa.φ
+ausstehend 0 pipeline/catalog/tap_index_eso.φ
+ausstehend 0 pipeline/catalog/tap_index_cadc.φ
+ausstehend 0 pipeline/catalog/tap_index_mast.φ
+ausstehend 0 pipeline/catalog/tap_index_chandra.φ
+ausstehend 0 pipeline/catalog/erddap_bcodmo_catalog.φ
+ausstehend 0 pipeline/catalog/erddap_noaa_pmel_catalog.φ
+ausstehend 0 pipeline/catalog/dataverse_harvard.φ
+ausstehend 0 pipeline/catalog/dataverse_borealis.φ
+ausstehend 0 pipeline/catalog/oai_arxiv.φ
+ausstehend 0 pipeline/catalog/b2find_catalogs_index.φ
+ausstehend 0 pipeline/catalog/b2find_intermagnet_catalog.φ
+ausstehend 0 pipeline/catalog/grind_eogateway_index.φ
+ausstehend 8 pipeline/catalog/grind_vires_catalog.φ
+ausstehend 17 pipeline/catalog/grind_arcgis_index.φ
+ausstehend 0 pipeline/catalog/heliocloud_catalog.φ
+ausstehend 0 pipeline/catalog/terrapulse_catalog.φ
+ausstehend 0 pipeline/catalog/esa_geomagnetic_catalog.φ
+ausstehend 0 pipeline/catalog/archeology_gaps_index.φ
+ausstehend 0 pipeline/catalog/arcgis_catalog.φ
+ausstehend 0 pipeline/catalog/copernicus_catalog.φ
+ausstehend 0 pipeline/catalog/provider_links.φ
+ausstehend 0 pipeline/catalog/rpw_datacenter_catalog.φ
+# Katalog-Korpus 2026-09-17: 137 .φ-Inventare + 8 Datenverzeichnisse
+# (celestrak_eop, cosmic_wetprf, ncei_goes_xrs, ncei_ssi, noaa_gk2a, noaa_goes16, noaa_wod, twomass).
+
+# ------------------------------------------------------------------
+# ERLEDIGT — im Archiv (read-only, /home/johannes/projects/archive/phi-research/)
+# ------------------------------------------------------------------
+erledigt 284 archive/phi-research/batches/
+erledigt 242 archive/phi-research/probe_batches/
+erledigt 88 archive/phi-research/agent_output/
+erledigt 5 archive/phi-research/declined_kataloge_2026-08-20/ (nicht SI: worldbank, osm_taginfo, simbad_otypes, ncbi, openaire)
+
+# ------------------------------------------------------------------
+# AUSGELAGERT — archive-root/pipeline-auslese-2026-09-17/ (verschoben, nicht disponiert)
+# ------------------------------------------------------------------
+ausgelagert 24 archive-root/pipeline-auslese-2026-09-17/stage/ (Konvertierungs-/Sweep-Ausgänge)
+ausgelagert 159 archive-root/pipeline-auslese-2026-09-17/meteo_harvest/ (Open-Meteo-Archiv-Cache)
+ausgelagert 38 archive-root/pipeline-auslese-2026-09-17/weights_*.txt (source_scanner-Ausgänge; NOTE nennt 47)
+ausgelagert 7 archive-root/pipeline-auslese-2026-09-17/probe_* (probe_void, probe_url_void, probe_live, probe_url_candidates, probe_survivors, probe_drafts, probe_drafts_enriched)
+
+# ------------------------------------------------------------------
+# INDEX — Tür-Kataloge (keine Quelle, Adapter-Route zu SI-Daten)
+# ------------------------------------------------------------------
+index 6 pipeline/catalog/ (re3data, zenodo, dryad, dataone, inrae, icos)
+artefakt 0 pipeline/catalog/ — keine artefakt-Datei mehr im Baum (stage-Artefakte ausgelagert)
+
+# ------------------------------------------------------------------
+# REGISTER + INFRA (nicht zu portieren)
+# ------------------------------------------------------------------
+register sources.φ
+register dead_sources.φ
+register sources_index.φ
+register declined_sources.φ
+register blocked_sources.φ
+infra pipeline/ledger.φ
+infra pipeline/prompt.φ
+infra pipeline/index.φ
+infra pipeline/master_urls.txt
+infra pipeline/netloc.txt
+infra pipeline/netloc_per_datei.txt
+infra pipeline/review_kandidaten.txt
+infra pipeline/provider_mengen.txt
+infra pipeline/library.φ
+infra pipeline/catalog/b2find_tags.φ
+infra bin/source_scanner
+
+# ------------------------------------------------------------------
+# ARBEITS-BEUTE im pipeline-Root (2026-09-17)
+# Rollen: probe | weights | frame | register | listen
+# ------------------------------------------------------------------
+probe 13 pipeline/probe_wave.φ
+probe 7 pipeline/probe_hapi_proposed.φ
+probe 4 pipeline/probe_batch_skymap.φ
+frame 0 pipeline/frame_registry.φ
+frame 0 pipeline/frame_learned.φ
+register 0 pipeline/decline_lens.φ (Maschinen-Zwilling Oszillator-Gate, bucket_litmus)
+register 0 pipeline/refusal_ledger.φ
+register 0 pipeline/library_gate_delta.φ
+register 0 pipeline/catalog/MANIFEST.φ (Karte des Katalogs)
+register 0 pipeline/catalog/noaa_nodd_disposition.φ (Bucket-Litmus-Urteile)
+listen pipeline/master_urls.txt
+listen pipeline/netloc.txt
+listen pipeline/netloc_per_datei.txt
+listen pipeline/review_kandidaten.txt
+listen pipeline/provider_mengen.txt
+listen 0 pipeline/interesting_domains.φ (2 host-Zeilen, kein url-Block)
+
+# ------------------------------------------------------------------
+# RECHERCHE-AUSGÄNGE (Taucher-Berichte, keine Block-Queue)
+# ------------------------------------------------------------------
+research 0 pipeline/research/agent_prompt.φ
+research 97 pipeline/research/agent_output/ (0 url-Blöcke; Berichte)
