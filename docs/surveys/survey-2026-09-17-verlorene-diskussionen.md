@@ -2,7 +2,7 @@
   title: Survey — Verlorene/vergessene Diskussionen über beide Historien (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 4afb6884e0d4b559e36f3d2ed22fdc2c72dda916ec56bf380d0b6daf7b5308fd
+  sha256: 830d62253cb5f075b12dbc15f7feade06f137f913e97ee8fc247f93d7e3353c9
   status: live
   see-also: docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md docs/handover/post.md
 -->
@@ -77,8 +77,8 @@ diese Karte ergänzt die Diskussions-/Entscheidungs-Nähte, ohne zu duplizieren.
 | Eintrag | Wo verhandelt | Warum nie gebaut | Lebt der Anspruch? |
 |---|---|---|---|
 | **CI-Instanz des TTL/φ-CDN (5-min-Takt)** | dreifach: `pfeiler-der-architektur.md:155–158`+`174–177` (beide Repos identisch); `archivar-mathematikerin.md:22` (= Legacy AGENTS:122 wortgleich); `sources-v2-spec.md:57` | als Lücke 2026-08-19 gemessen (`legacy survey-…-landschaft.md:81–83`), nie geschlossen, wortgleich migriert; kein CI-Bau | ja — in 3 Live-Doku-Stellen + hart im Client (`fetch.rs:900`) |
-| Voyager Decimation>1 | 7× unverifiziert durchgereicht: `bau-folge49:81–82`, `51:93`, `52:112`, `53:112`, `54:93`, `55:73`, `56:50` | Schritt benannt, nie gewählt („Granulat wählen + Workflow erweitern") | ja — als Handover-Pending |
-| Earthdata-Token-Hook live | `bau-folge25:35` „live unverifiziert"; `bau-folge26:36–40`; `SECURITY.md:13–14`; `tools/utils/…/token.rs:43–44` | gebaut, nie gegen den Dienst gefahren (Musterklasse: `ernte-folge3:41`) | ja — als unverifiziert |
+| Voyager Decimation>1 | 7× unverifiziert durchgereicht: `bau-folge49:81–82`, `51:93`, `52:112`, `53:112`, `54:93`, `55:73`, `56:50` | Schritt benannt, nie gewählt („Granulat wählen + Workflow erweitern") | **geschlossen mit Beleg (2026-09-18)** — im Baum verifiziert: `src/archivar/voyager_odr.rs:256` `decimation_ratio` + Tests `:517`/`:582`, `galileo_odr.rs:171` `year_full`; Beleg `bau-folge57:77` |
+| Earthdata-Token-Hook live | `bau-folge25:35` „live unverifiziert"; `bau-folge26:36–40`; `SECURITY.md:13–14`; `tools/utils/…/token.rs:43–44` | gebaut, nie gegen den Dienst gefahren (Musterklasse: `ernte-folge3:41`) | **geschlossen mit Beleg (2026-09-18)** — gebaut UND gefahren: `token.rs:24` 401/403/307-Auslöser, `:40` `EARTHDATA_EDL_TOKEN`-Direktpfad; live 2026-09-18 `archive_search --sniff` der geschützten PODAAC-GRACE-URL → 401 ohne Token, 200 mit Token, 84 701 036 B, sha256 `8bd14764105360e06b35c0ab35312def4869d402fca8a834249fa5b92f1cfec0` |
 | gpu-feature-gate | Legacy `8b1c38b5` „als eigenes Atom registriert"; heute 0 Treffer im Baum | nie unter dem Namen gebaut; ersetzt durch „GPU is the membrane" (`archivar-mathematikerin.md:36`) | nein — als descoped mit diesem Beleg zu schließen |
 | Permeability-Radiation-Bindung | `AGENTS.md:116` „pending (the TE machine lives; the binding awaits its own atom)"; `survey-…-legacy-konzepte.md:44` (Channel Apertures) | wartet auf eigenes Atom (Atom 9 strahlt Rohfeld) | ja — pending |
 | HRV/ESP32-Puls-Bindung | `AGENTS.md:79` (RMSSD/tone-Gate steht in `src/archivar/hrv.rs`; Bindung pending) | — | ja — pending |
