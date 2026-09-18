@@ -450,6 +450,13 @@ mod tests {
         b
     }
 
+    fn ensure_parent_dir(path: &str) {
+        let parent = std::path::Path::new(path)
+            .parent()
+            .expect("the test path carries a parent directory");
+        std::fs::create_dir_all(parent).expect("the test parent directory is created");
+    }
+
     fn write_be19(path: &str, center_ra: f64, center_dec: f64, ebv_per_dm: f64) {
         let (theta, phi) = icrs_to_galactic(center_ra, center_dec);
         let ipix = ang2pix_nest(TEST_NSIDE, theta, phi).unwrap();
@@ -482,6 +489,7 @@ mod tests {
             },
         );
         bytes.extend_from_slice(&row);
+        ensure_parent_dir(path);
         std::fs::write(path, bytes).unwrap();
     }
 
@@ -547,6 +555,7 @@ mod tests {
             .collect();
         let candidate = Some((0.7, 0.30));
         let bin = build_field_bin(map_path, center_ra, center_dec, &plx, 0.004, candidate);
+        ensure_parent_dir(bin_path);
         std::fs::write(bin_path, bin).unwrap();
         let idx = build_star_index(&star_bytes(bin_path));
         assert_eq!(idx.stars.len(), 25);
@@ -600,6 +609,7 @@ mod tests {
             .collect();
         let candidate = Some((2.0, 1.6));
         let bin = build_field_bin(map_path, center_ra, center_dec, &plx, 0.004, candidate);
+        ensure_parent_dir(bin_path);
         std::fs::write(bin_path, bin).unwrap();
         let idx = build_star_index(&star_bytes(bin_path));
         assert_eq!(idx.stars.len(), 25);
