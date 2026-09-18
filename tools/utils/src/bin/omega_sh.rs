@@ -69,7 +69,11 @@ fn body_after_header(data: &[u8]) -> &[u8] {
                 &data[data.len()..]
             };
         }
-        i = if end < data.len() { end + 1 } else { data.len() };
+        i = if end < data.len() {
+            end + 1
+        } else {
+            data.len()
+        };
     }
     if open { &data[data.len()..] } else { data }
 }
@@ -99,7 +103,9 @@ fn check_counts(text: &str) -> (usize, usize) {
     let mut warnings = 0usize;
     for line in text.lines() {
         let t = line.trim_start();
-        if t.starts_with("error") && !t.contains("could not compile") && !t.contains("previous error")
+        if t.starts_with("error")
+            && !t.contains("could not compile")
+            && !t.contains("previous error")
         {
             errors += 1;
         }
@@ -346,7 +352,8 @@ mod tests {
     fn check_counts_ignore_the_summary_lines() {
         let text = "error[E0432]: unresolved import\n --> src/x.rs\nerror: could not compile `c` due to 1 previous error\n";
         assert_eq!(check_counts(text), (1, 0));
-        let text = "warning: unused import\n --> src/x.rs\nwarning: `c` (bin \"x\") generated 1 warning\n";
+        let text =
+            "warning: unused import\n --> src/x.rs\nwarning: `c` (bin \"x\") generated 1 warning\n";
         assert_eq!(check_counts(text), (0, 1));
     }
 }
