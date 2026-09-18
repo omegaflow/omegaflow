@@ -3,7 +3,7 @@
   session: Bau-Folge 83
   class: handover
   date: 2026-09-18
-  sha256: 24e3c59d94d4a7a8b75ce8c1995bbfabeabb066b32236d66d87c660d8da9d884
+  sha256: 02067b5a74b99fd8ae0b4c3348b843f3c5adb852b9f702f51f67d7f0493cbd08
   status: live
 -->
 # Handover — Bau-Folge 83 (2026-09-18)
@@ -56,9 +56,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   gemessenen Lücke; dispatch nur fehlende Assets je `gh workflow run fugin-cdn.yml`,
   `sleep 1` gegen GitHubs 80 content-generating req/min); `.github/workflows/fugin-cdn.yml`
   Concurrency per-Asset (`cancel-in-progress: false`) + `gh_issue_once`.
-- (Schritt: nach dem Push `gh workflow run fugin-cdn-dispatch.yml` **einmal**
-  dispatchen; Run-Id hier registrieren; Abschluss, wenn 270 Assets auf
-  `jvo.nao.ac.jp` liegen — `ci_manage list`/`view`, kein Poll.) · `wartend`
+- **Dispatch (2026-09-18):** `fugin-cdn-dispatch` `35328148722`; `fugin-cdn`
+  Pilot-Smoke `35328151905`. (Schritt: Abschluss, wenn 270 Assets auf
+  `jvo.nao.ac.jp` liegen — `ci_manage list`/`view`, kein Poll; grün → Punkt
+  geschlossen, rot → rote Zelle hier.) · `wartend`
 - **Descoped-mit-Messung:** die 540 2D-Intensity/RMS-Maps (NAXIS=2) — der
   moment-0-Compiler integriert die VRAD-Achse; sie bräuchten einen eigenen
   Compiler. Nie gebaut, nicht gebraucht (kein Konsument, em). · released
