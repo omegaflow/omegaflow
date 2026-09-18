@@ -351,6 +351,7 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(9).is_empty());
     assert!(allowed_units_for_force(0).contains(&"mag"));
     assert!(allowed_units_for_force(0).contains(&"jy_km/s"));
+    assert!(allowed_units_for_force(0).contains(&"k.m/s"));
     assert!(allowed_units_for_force(1).contains(&"logg"));
     assert!(allowed_units_for_force(1).contains(&"m_sun"));
     assert!(allowed_units_for_force(3).contains(&"mw"));
