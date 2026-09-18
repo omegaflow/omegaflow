@@ -134,7 +134,10 @@ fn check() {
                 formats.push(f);
             }
             None => {
-                eprintln!("harvest_reg: block at line {}: no format field", block.start);
+                eprintln!(
+                    "harvest_reg: block at line {}: no format field",
+                    block.start
+                );
                 bad += 1;
             }
         }
@@ -207,7 +210,10 @@ fn check() {
                             | "note"
                     ) => {}
                 Some((key, _)) => {
-                    eprintln!("harvest_reg: block at line {}: unknown field '{key}'", block.start);
+                    eprintln!(
+                        "harvest_reg: block at line {}: unknown field '{key}'",
+                        block.start
+                    );
                     bad += 1;
                 }
                 None => {
@@ -242,7 +248,9 @@ fn check() {
 fn usage() {
     eprintln!("usage: harvest_reg <--lookup <format> | --arm <stem> | --check>");
     eprintln!("  --lookup <format>  print the register block; exit 2 when unknown or unmeasured");
-    eprintln!("  --arm <stem>       print 'format <name>' for every block whose arm field is <stem>");
+    eprintln!(
+        "  --arm <stem>       print 'format <name>' for every block whose arm field is <stem>"
+    );
     eprintln!("  --check            gate test: unmeasured or malformed block -> exit 2");
 }
 

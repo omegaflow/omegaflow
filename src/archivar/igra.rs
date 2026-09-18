@@ -149,23 +149,26 @@ mod tests {
         )
     }
 
-    fn data_line(
-        lvltyp: &str,
-        etime: &str,
-        press: &str,
-        pflag: &str,
-        gph: &str,
-        zflag: &str,
-        temp: &str,
-        tflag: &str,
-        rh: &str,
-        dpdp: &str,
-        wdir: &str,
-        wspd: &str,
-    ) -> String {
+    struct DataLineFields {
+        lvltyp: &'static str,
+        etime: &'static str,
+        press: &'static str,
+        pflag: &'static str,
+        gph: &'static str,
+        zflag: &'static str,
+        temp: &'static str,
+        tflag: &'static str,
+        rh: &'static str,
+        dpdp: &'static str,
+        wdir: &'static str,
+        wspd: &'static str,
+    }
+
+    fn data_line(d: &DataLineFields) -> String {
         format!(
             "{:<2} {:>5} {:>6}{}{:>5}{}{:>5}{}{:>5} {:>5} {:>5} {:>5}",
-            lvltyp, etime, press, pflag, gph, zflag, temp, tflag, rh, dpdp, wdir, wspd
+            d.lvltyp, d.etime, d.press, d.pflag, d.gph, d.zflag, d.temp, d.tflag, d.rh, d.dpdp,
+            d.wdir, d.wspd
         )
     }
 
@@ -174,17 +177,50 @@ mod tests {
         body.push_str("# leading comment line\n");
         body.push_str(&sample_header(3));
         body.push('\n');
-        body.push_str(&data_line(
-            "21", "0", "103574", "B", "14", " ", "-254", "B", "820", "22", "329", "62",
-        ));
+        body.push_str(&data_line(&DataLineFields {
+            lvltyp: "21",
+            etime: "0",
+            press: "103574",
+            pflag: "B",
+            gph: "14",
+            zflag: " ",
+            temp: "-254",
+            tflag: "B",
+            rh: "820",
+            dpdp: "22",
+            wdir: "329",
+            wspd: "62",
+        }));
         body.push('\n');
-        body.push_str(&data_line(
-            "11", "10", "-9999", " ", "100", " ", "-9999", " ", "55", "-9999", "180", "20",
-        ));
+        body.push_str(&data_line(&DataLineFields {
+            lvltyp: "11",
+            etime: "10",
+            press: "-9999",
+            pflag: " ",
+            gph: "100",
+            zflag: " ",
+            temp: "-9999",
+            tflag: " ",
+            rh: "55",
+            dpdp: "-9999",
+            wdir: "180",
+            wspd: "20",
+        }));
         body.push('\n');
-        body.push_str(&data_line(
-            "31", "20", "50000", " ", "5600", " ", "5", " ", "10", "-100", "270", "100",
-        ));
+        body.push_str(&data_line(&DataLineFields {
+            lvltyp: "31",
+            etime: "20",
+            press: "50000",
+            pflag: " ",
+            gph: "5600",
+            zflag: " ",
+            temp: "5",
+            tflag: " ",
+            rh: "10",
+            dpdp: "-100",
+            wdir: "270",
+            wspd: "100",
+        }));
         body.push('\n');
         body
     }
@@ -234,13 +270,35 @@ mod tests {
         let mut body = measured_body();
         body.push_str(&sample_header(2));
         body.push('\n');
-        body.push_str(&data_line(
-            "21", "0", "101325", " ", "5", " ", "150", " ", "70", "50", "0", "30",
-        ));
+        body.push_str(&data_line(&DataLineFields {
+            lvltyp: "21",
+            etime: "0",
+            press: "101325",
+            pflag: " ",
+            gph: "5",
+            zflag: " ",
+            temp: "150",
+            tflag: " ",
+            rh: "70",
+            dpdp: "50",
+            wdir: "0",
+            wspd: "30",
+        }));
         body.push('\n');
-        body.push_str(&data_line(
-            "21", "5", "90000", " ", "900", " ", "20", " ", "60", "-100", "90", "50",
-        ));
+        body.push_str(&data_line(&DataLineFields {
+            lvltyp: "21",
+            etime: "5",
+            press: "90000",
+            pflag: " ",
+            gph: "900",
+            zflag: " ",
+            temp: "20",
+            tflag: " ",
+            rh: "60",
+            dpdp: "-100",
+            wdir: "90",
+            wspd: "50",
+        }));
         body.push('\n');
         let s = parse_igra(&body);
         assert_eq!(s.len(), 2);
