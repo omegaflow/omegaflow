@@ -1,0 +1,51 @@
+name: bc-mpo-mag-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bc-mpo-mag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view psa.esa.int --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "bc_mpo_mag.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset bc_mpo_mag.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset bc_mpo_mag.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the psa.esa.int release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view psa.esa.int --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create psa.esa.int --repo omegaflow/sources \
+              --title "psa.esa.int" \
+              --notes "ESA Planetary Science Archive (PSA) products compiled to a geo bin (CDN tag = netloc)"
+          fi
+      - name: Compile the BepiColombo MPO-MAG series and manifest to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo build -p omegaflow-harvest --release --bin bc_mpo_mag_compiler \
+            && ./target/release/bc_mpo_mag_compiler \
+                 --url "https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024" \
+                 --out bc_mpo_mag.bin --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "bc-mpo-mag-cdn: bc_mpo_mag compile returned void" \
+                 "bc_mpo_mag compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
