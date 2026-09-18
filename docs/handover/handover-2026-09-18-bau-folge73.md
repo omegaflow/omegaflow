@@ -3,7 +3,7 @@
   session: Bau-Folge 73
   class: handover
   date: 2026-09-18
-  sha256: 766789d8461c5fb5f84200ab2067a1fe16abb11dcbf94c7574894fe188b429ee
+  sha256: ead26569cb23ffd5c3e0a1869b0cc735169d32bc91f69db83df7c6dbf649175e
   status: live
 -->
 # Handover — Bau-Folge 73 (2026-09-18)
@@ -33,7 +33,7 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## Stehender Pass (gemessen 2026-09-18, HEAD 28eb8959)
+## Stehender Pass (gemessen 2026-09-18, HEAD 69c3ae96)
 
 - **Postfach** — letzter `state/mail/mail_ledger.φ`-Eingang unverändert
   (`1789689115`, 2026-09-18, Mandrill-Thread, **kein Agenten-Eingang**); keine
@@ -42,10 +42,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   in_progress @`0f65e8ec` (der Fremd-Commit `28eb8959` ist jünger), `health-check`
   `35286550387` in_progress; `release-build` `35302966400` **failure** (attempt 1);
   `pii-exposure` `35287195140` failure (exit 2 = Exposition bleibt, erwartet).
-- **HEAD** `28eb8959` == `origin/main` (Fast-Forward möglich). Eine Fremd-Session
-  hat während dieses Atoms `28eb8959` (ura117/sources.φ + raw-mirror-Workflows)
-  committet — nicht angefasst.
-- **Sicherheitsnetz** — `refs/safety/1789704459` (Session-Start).
+- **HEAD** `69c3ae96` == `origin/main` (Faltungs-/Kanon-Atom dieser Session;
+  darunter der Fremd-Commit `28eb8959` ura117/raw-mirror-Workflows — nicht
+  angefasst).
+- **Sicherheitsnetz** — `refs/safety/1789706046` (Session-Mitte).
 
 ## TE-Gate — konditionales Arx-FP/FN-Gate rot (härtester undatiert, abarbeitbar)
 
@@ -80,6 +80,27 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   den SuperMAG-Arm in `tools/harvest` bauen oder den Punkt als `descoped` messen.)
   · `pending`
 
+## Register-Prosa — Gate gebaut, Masse offen
+
+- Council 2026-09-18: `note` bleibt Direktive, gedeckelt auf **256 Zeichen** (2⁸;
+  Dispositionen Ø 68–106 darunter, Maschinen-Register Ø 361–1522 darüber); nur die
+  Erzählung fällt, Mess-Token (Code/Hash/Zeitstempel/Host) bleiben. `#`-Header raus
+  aus den Register-Klassen (`prompt.φ` AUSGABE-REGEL 1). Das Gate steht
+  (`PHI_NOTE_MAX`/`prose_violation`/`register_classes` in `src/gate/commit_gate.rs`,
+  diff-scoped in `tools/gate/src/bin/commit_check.rs`, 2 Fixtures, Tests).
+- **Atom 2 (härtester undatiert): `declined_sources.φ`** — 913 notes, Ø 106; die
+  Masse ist der Schwanz, nicht der Bestand. (Schritt: je Eintrag `note` auf den
+  Mess-Kern ≤ 256 kürzen, Klasse + URL behalten; die gestrichene Erzählung lebt in
+  git; `cargo check --tests`, Commit.) · `pending`
+- **Atom 3: `dead_sources.φ`** — 244 notes, Ø 68. · `pending`
+- **Atom 4: `sources.φ`** — 46 notes, Ø 361; Modell/Kanon, Kompression mit
+  Beweis-Kern. · `pending`
+- **Atom 5: kleine Register** — witnesses (17), footprints (5), blocked (17),
+  harvest (9) + Stations-Header (nrs 54, supermag 9) + Bindings/Reports-Header.
+  · `pending`
+- **Vertagt (pending):** strukturierte Feld-Grammatik (Kanon-Akt, Operator-Wort);
+  Pipeline-φ-Prosa (eigene Linie).
+
 ## Offen (unverändert, kein Handlungsschritt)
 
 - **`opencode.json`** — fremder uncommitteter Hunk (8 Zeilen; die Fremd-Session
@@ -90,19 +111,22 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 ## Benchmark
 
-- Council (pro/max) für das Faltungs-/Kanon-Urteil; `grind-flash` für die
-  mycelium-Faltung + die Kanon-Deklaration; `grind-max` für das Kanon-Gate
-  (Urteil+Schreiben in einem Kontext). Kein Doppellauf: die mycelium-Faltung und
-  die Deklaration sind Routine (flash-Klasse); das Gate ist ein hartes Atom
-  (`grind-max`), kein Benchmark-Paar nötig.
+- Council (pro/max) für zwei Architektur-Urteile (Faltung/Kanon; Register-Prosa);
+  `grind-flash` für die mycelium-Faltung + Kanon-Deklaration; `grind-max` für das
+  Kanon-Gate und das Register-Prosa-Gate (harte Atome, Urteil+Schreiben in einem
+  Kontext). Kein Doppellauf: Routine flash-first; die Gates sind die harten Atome.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- Eigener Commit-Pfad: `phi/canon.φ`, `phi/reports/scan_coverage.φ`,
-  `phi/reports/mycelium_campaign_cdfs.φ` (Löschung), `.gitignore`, `AGENTS.md`,
-  `src/gate/commit_gate.rs`, `tools/gate/src/bin/commit_check.rs`,
-  `docs/handover/handover-2026-09-18-bau-folge73.md` (+ archiviertes
-  `handover-2026-09-18-bau-folge72.md`).
+- Eigener Commit-Pfad (Atom 1 Faltung/Kanon, committet `69c3ae96`): `phi/canon.φ`,
+  `phi/reports/scan_coverage.φ`, `phi/reports/mycelium_campaign_cdfs.φ` (Löschung),
+  `.gitignore`, `AGENTS.md`, `src/gate/commit_gate.rs`,
+  `tools/gate/src/bin/commit_check.rs`, `docs/zustand/external-state.md`,
+  `docs/handover/handover-2026-09-18-bau-folge73.md` (+ archivierte folge72).
+- Eigener Commit-Pfad (Atom 2 Register-Prosa-Gate, offen): `AGENTS.md`,
+  `src/gate/commit_gate.rs`, `src/gate/commit_gate_vocab.json`,
+  `tools/gate/src/bin/commit_check.rs`,
+  `docs/handover/handover-2026-09-18-bau-folge73.md`.
 - **Fremd (nicht anfassen):** `opencode.json` (Rest-Hunk), die drei gestagten
   `handover-2026-09-16-*`-Renames. Nie ein nacktes `git commit`.
 
