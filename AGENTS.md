@@ -213,6 +213,8 @@ new session reads exactly that one document.
 
 The tracked `phi/*.φ` set is the canon, declared line by line in `phi/canon.φ`. A new tracked `phi/*.φ` file is an architecture act — it needs the operator/council word and a `phi/canon.φ` declaration in the same commit; the canon gate blocks silent creation.
 
+A register `note` carries the measured line only — at most 256 characters, no narration: the measurement tokens (code, hash, timestamp, host) stay, the story falls; the `note` is the measured evidence of the verdict, never documentation. `#` comments do not live in tracked registers (`prompt.φ` rule 1). The prose gate blocks new `note`-essays and register comments; the existing mass is relaxed register by register, never carried as a reason to inflate a new line.
+
 ### PII und Mail-Inhalte — nie getrackt
 
 Personenbezogene Daten (private Adresse, private E-Mail, Login-Konstrukte,
