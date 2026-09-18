@@ -3,7 +3,7 @@
   session: Bau-Folge 72
   class: handover
   date: 2026-09-18
-  sha256: f71fb268a349352fe3ed147691360b4ae54f37729aece90b90fb5787f78e16e2
+  sha256: 4259715add60c9985f7c4dc91a524f20e96b2da2a35a3e2dc8961b9c81b54c36
   status: live
 -->
 # Handover — Bau-Folge 72 (2026-09-18)
@@ -86,9 +86,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `origin` UND `compiler`. Läuft in CI (funktionaler Lauf).
 - Ableitung: 5 parallele `grind-flash`-Taucher (`sgrep`/`archive_search` Format →
   Compiler, Ursprung im Compiler gelesen): Format-Ableitung 313 Blöcke, per-Asset
-  57 Blöcke (die `ssd.jpl.nasa.gov`-JSON-Kataloge ohne `format`).
-- **Offen:** `catalog_des_y6` — `origin pending` (nicht belegt; DES-Y6-Route nicht
-  im Compiler gefunden). · `pending`
+  57 Blöcke (die `ssd.jpl.nasa.gov`-JSON-Kataloge ohne `format`). Der einzige
+  `pending`-Ursprung (`catalog_des_y6`) ist geschlossen: die git-Historie
+  (`92370bb8`) nennt CDS J/ApJS/258/41, `--sniff` verifiziert
+  `…/J/ApJS/258/41/catalog.dat` (HTTP 200, 498168 B, sha256 `45755487…`).
 
 ## Offen (unverändert, kein Handlungsschritt)
 
