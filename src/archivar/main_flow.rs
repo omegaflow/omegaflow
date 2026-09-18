@@ -2840,7 +2840,7 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            if archive.sources[i].format == "csv_zip" {
+            if archive.sources[i].format == "csv_zip" || archive.sources[i].format == "igra_zip" {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
@@ -2864,7 +2864,7 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("csv_zip {}: url render void — retry in ttl/Φ", src_idx);
+                            eprintln!("{} {}: url render void — retry in ttl/Φ", src_clone.format, src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2878,7 +2878,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let tmp_path = content_cache(&format!("omegaflow_csv_{src_idx}.zip"));
+                    let tmp_path = content_cache(&format!("omegaflow_{}_{}.zip", src_clone.format, src_idx));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
                         let body = render_source_body(
@@ -2902,7 +2902,7 @@ pub fn main_flow() {
                         ) {
                             Some(b) => b,
                             None => {
-                                eprintln!("csv_zip {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", src_clone.format, src_idx);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -2917,7 +2917,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("csv_zip {}: write void — retry in ttl/Φ", src_idx);
+                            eprintln!("{} {}: write void — retry in ttl/Φ", src_clone.format, src_idx);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2945,7 +2945,7 @@ pub fn main_flow() {
                             fetch_ok: true, sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("csv_zip {}: extract void — retry in ttl/Φ", src_idx);
+                        eprintln!("{} {}: extract void — retry in ttl/Φ", src_clone.format, src_idx);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
