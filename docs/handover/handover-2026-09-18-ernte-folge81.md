@@ -3,7 +3,7 @@
   session: Ernte-Folge 81
   class: handover
   date: 2026-09-18
-  sha256: 414f925f22a571ff35f01a89a46c0b21526f9cdf2af63df6d4a6e5146d0cfd16
+  sha256: 46363ab82f3db0a8246c5485505607e2fecb6339d9161df5f46455cb6e0d3a3b
   status: live
 -->
 # Handover — Ernte-Folge 81 (2026-09-18)
@@ -70,10 +70,10 @@ Quelle (`curl -r` + `od`):
   verifiziert von `grind-flash` (v1-Arithmetik + eigener `curl`-GEDI-Fetch:
   HTTP 206, 128 B; keine weiteren range-fetch-HDF5-Aufrufer ohne `parse_fetch`).
 
-(Schritt: commit + push, dann je Format `gh workflow run harvest.yml -f
-format=<gedi_l2a|icesat2_atl03|swot_l2_lr_ssh>`; Run-IDs registrieren; Verdikt
-einmalig lesen `ci_manage view <id>`; bei success `phi/harvest.φ` `asset
-fehlt`→`present` + `note` size/sha256. **Nie pollen.**)
+Dispatcht @`63878834`: `gedi_l2a` `35323850479`, `icesat2_atl03` `35323854366`,
+`swot_l2_lr_ssh` `35323857410` — **Verdikt ausstehend.** (Schritt: Verdikt einmalig
+lesen `ci_manage view <id>`; bei success `phi/harvest.φ` `asset fehlt`→`present` +
+`note` size/sha256. **Nie pollen.**)
 
 ## LRO utF harvest — Fix in einem Atom (härtester undatierter Punkt)
 
