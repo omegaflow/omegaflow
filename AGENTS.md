@@ -43,11 +43,12 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 
 ### The 0-Kanon
 
-Three reasons for "no value" are fundamentally different and never collapse:
+Four states of a value are fundamentally different and never collapse:
 
 - **null-echt** — the measurement IS zero (0 °C, v = 0): the value flows as 0.0.
 - **absent** — the source does not carry the value: Option/None/skip, never a fabricated 0.0.
 - **pending** — the value exists, the harvest is missing: a register duty (handover/ledger), never a data value.
+- **riss** — the value is present as contradiction: two independent lines that refuse to converge. A riss is never mapped to `absent` or `0.0` and never smoothed — a mean over the riss would be fabrication; it is carried as `VerdictWord::Riss` with both witness lines in the knot.
 
 The 0-Kanon also names the build states — an unbuilt idea is never a parking lot:
 - **pending** — unbuilt and needed: a promise, the socket stands and waits (a register duty).
