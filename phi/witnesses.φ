@@ -99,3 +99,9 @@ witness gestalt
 url https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM.tif
 record gl30
 note Copernicus GLO-30 Land-DEM (2026-09-12 HTTP 200): COG-GeoTIFF, 1 arcsec. Gestalt (Körperfläche), τ = geologische Stabilität, Raster. Socket gl30 gefällt (2026-09-14, Magic GL30). Deckt S1-Layover-Lücke; Konsument nächstes Atom.
+
+witness s2-direction
+url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
+record sky1
+force em
+note FUGIN-12CO-Moment-0 (FUGIN Region 01100+0000): NAXIS=3-VRAD-Cube zu moment-0 (K·m/s je nativem Pixel), kind generic. Negative Rauschpixel sind echte Messungen (signed), nie positiv gegated. Compiler fugin_skymap_compiler.rs.
