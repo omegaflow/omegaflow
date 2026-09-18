@@ -404,7 +404,7 @@ mod tests {
         body.extend_from_slice(&MI_INT8.to_le_bytes());
         body.extend_from_slice(&(name_len as u32).to_le_bytes());
         body.extend_from_slice(name.as_bytes());
-        body.resize(name_len, 0);
+        body.resize(body.len() + name_len - name.len(), 0);
         body.extend_from_slice(&MI_DOUBLE.to_le_bytes());
         body.extend_from_slice(&((data.len() * 8) as u32).to_le_bytes());
         for &v in data {
@@ -485,7 +485,7 @@ mod tests {
         b.extend_from_slice(&MI_INT8.to_le_bytes());
         b.extend_from_slice(&(len as u32).to_le_bytes());
         b.extend_from_slice(name.as_bytes());
-        b.resize(len, 0);
+        b.resize(b.len() + len - name.len(), 0);
         b
     }
 
@@ -544,7 +544,7 @@ mod tests {
         body.extend_from_slice(&MI_INT8.to_le_bytes());
         body.extend_from_slice(&(table_len as u32).to_le_bytes());
         body.extend_from_slice(&table);
-        body.resize(table_len, 0);
+        body.resize(body.len() + table_len - field_len, 0);
         let n_elements = dims.iter().product::<i32>() as usize;
         for i in 0..n_elements {
             for (_, values) in fields {
