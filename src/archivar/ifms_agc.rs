@@ -103,11 +103,11 @@ fn parse_sample_time(s: &str) -> Option<f64> {
     let second = time[4..6].parse::<f64>().ok()?;
     let days = ymd_to_days(year, month, day)? as f64;
     let mut unix = days * 86400.0 + hour * 3600.0 + minute * 60.0 + second;
-    if let Some(f) = frac {
-        if !f.is_empty() {
-            let digits = f.parse::<f64>().ok()?;
-            unix += digits / 10f64.powi(f.len() as i32);
-        }
+    if let Some(f) = frac
+        && !f.is_empty()
+    {
+        let digits = f.parse::<f64>().ok()?;
+        unix += digits / 10f64.powi(f.len() as i32);
     }
     if unix.is_finite() { Some(unix) } else { None }
 }
