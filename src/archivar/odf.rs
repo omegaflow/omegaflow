@@ -494,9 +494,9 @@ pub fn tnf_dt1(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt1> {
         return None;
     }
     let mut phases = [[0u32; 3]; 10];
-    for i in 0..10 {
+    for (i, p) in phases.iter_mut().enumerate() {
         let base = 174 + i * 12;
-        phases[i] = [
+        *p = [
             be32(&bytes[base..base + 4]),
             be32(&bytes[base + 4..base + 8]),
             be32(&bytes[base + 8..base + 12]),
@@ -793,9 +793,9 @@ pub fn tnf_dt4(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt4> {
     let mut template_id = [0u8; 22];
     template_id.copy_from_slice(&bytes[164..186]);
     let mut def_subcodes = [0u64; 6];
-    for i in 0..6 {
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
         let base = 198 + i * 8;
-        def_subcodes[i] = be64(&bytes[base..base + 8]);
+        *sc = be64(&bytes[base..base + 8]);
     }
     Some(TnfDt4 {
         ul_dss_id: bytes[66],
@@ -908,9 +908,9 @@ pub fn tnf_dt5(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt5> {
     let mut template_id = [0u8; 20];
     template_id.copy_from_slice(&bytes[260..280]);
     let mut def_subcodes = [0u64; 6];
-    for i in 0..6 {
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
         let base = 298 + i * 8;
-        def_subcodes[i] = be64(&bytes[base..base + 8]);
+        *sc = be64(&bytes[base..base + 8]);
     }
     Some(TnfDt5 {
         dl_dss_id: bytes[66],
@@ -1446,9 +1446,9 @@ pub fn tnf_dt14(frame: &TnfSfdu, bytes: &[u8]) -> Option<TnfDt14> {
         return None;
     }
     let mut def_subcodes = [0u64; 6];
-    for i in 0..6 {
+    for (i, sc) in def_subcodes.iter_mut().enumerate() {
         let base = 234 + i * 8;
-        def_subcodes[i] = be64(&bytes[base..base + 8]);
+        *sc = be64(&bytes[base..base + 8]);
     }
     Some(TnfDt14 {
         dl_dss_id: bytes[82],
