@@ -629,6 +629,14 @@ pub fn reduce_skyfreq(
 pub struct UlySkyFreq {
     pub sband: Vec<[f64; 14]>,
     pub xband: Vec<[f64; 14]>,
+    pub n: usize,
+    pub no_pair: usize,
+    pub no_doppler: usize,
+    pub bias_rejected: usize,
+    pub ref_rejected: usize,
+    pub gap_rejected: usize,
+    pub wrap_rejected: usize,
+    pub med_rejected: usize,
 }
 
 pub fn reduce_uly_skyfreq(
@@ -725,26 +733,43 @@ pub fn reduce_uly_skyfreq(
 
     let ref_min = ref_hz.iter().copied().fold(f64::INFINITY, f64::min);
     let ref_max = ref_hz.iter().copied().fold(f64::NEG_INFINITY, f64::max);
-    let mut fsky = vec![0.0f64; n.saturating_sub(1)];
-    let mut good = vec![false; n.saturating_sub(1)];
+    let mut next_same = vec![n; n];
+    let mut last_s = n;
+    let mut last_x = n;
+    for i in (0..n).rev() {
+        next_same[i] = match bands[i] {
+            ULY_BAND_S => last_s,
+            ULY_BAND_X => last_x,
+            _ => n,
+        };
+        match bands[i] {
+            ULY_BAND_S => last_s = i,
+            ULY_BAND_X => last_x = i,
+            _ => {}
+        }
+    }
+    let mut fsky = vec![0.0f64; n];
+    let mut good = vec![false; n];
     let mut dtype_hist: Vec<(i64, usize)> = Vec::new();
-    for i in 0..n - 1 {
+    for i in 0..n {
         let hist = dtype_hist.iter_mut().find(|(d, _)| *d == dtype[i]);
         match hist {
             Some((_, c)) => *c += 1,
             None => dtype_hist.push((dtype[i], 1)),
         }
-        if !(dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER)
-            || sampler[i] <= 0.0
-        {
+        if !(dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER) {
             continue;
         }
-        let doff = if dcnt[i + 1] < dcnt[i] {
+        let j = next_same[i];
+        if j == n || t[j] <= t[i] {
+            continue;
+        }
+        let doff = if dcnt[j] < dcnt[i] {
             2f64.powi(32)
         } else {
             0.0
         };
-        let drate = (dcnt[i + 1] + doff - dcnt[i]) / sampler[i];
+        let drate = (dcnt[j] + doff - dcnt[i]) / (t[j] - t[i]);
         let sdoppler = if bias[i] >= 0 { 1.0 } else { -1.0 };
         let ratio = if bands[i] == ULY_BAND_X { X_BAND_RATIO } else { S_BAND_RATIO };
         fsky[i] = ratio * ref_hz[i] - sdoppler * (drate - RATE_OFFSET);
@@ -752,8 +777,8 @@ pub fn reduce_uly_skyfreq(
     }
     let mut fsky_s: Vec<f64> = Vec::new();
     let mut fsky_x: Vec<f64> = Vec::new();
-    for i in 0..n - 1 {
-        if bands[i + 1] != bands[i] || !fsky[i].is_finite() {
+    for i in 0..n {
+        if !good[i] || !fsky[i].is_finite() {
             continue;
         }
         if bands[i] == ULY_BAND_X {
@@ -767,23 +792,26 @@ pub fn reduce_uly_skyfreq(
     let mut out_s: Vec<[f64; 14]> = Vec::new();
     let mut out_x: Vec<[f64; 14]> = Vec::new();
     let mut ramp_records = 0usize;
+    let mut no_pair = 0usize;
+    let mut no_doppler = 0usize;
     let mut bias_rejected = 0usize;
     let mut ref_rejected = 0usize;
     let mut gap_rejected = 0usize;
     let mut wrap_rejected = 0usize;
     let mut med_rejected = 0usize;
-    let mut boundary_rejected = 0usize;
-    for i in 0..n - 1 {
+    for i in 0..n {
         if !good[i] {
             if dtype[i] == DTYPE_RAMP {
                 ramp_records += 1;
             }
+            if dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER {
+                no_pair += 1;
+            } else {
+                no_doppler += 1;
+            }
             continue;
         }
-        if bands[i + 1] != bands[i] {
-            boundary_rejected += 1;
-            continue;
-        }
+        let j = next_same[i];
         if bias[i].abs() > 1 {
             bias_rejected += 1;
             continue;
@@ -798,12 +826,12 @@ pub fn reduce_uly_skyfreq(
             ref_rejected += 1;
             continue;
         }
-        let gap_days = (t[i + 1] - t[i]) / 86400.0;
+        let gap_days = (t[j] - t[i]) / 86400.0;
         if gap_days >= GAP_DAY {
             gap_rejected += 1;
             continue;
         }
-        if dcnt[i + 1] <= dcnt[i] {
+        if dcnt[j] <= dcnt[i] {
             wrap_rejected += 1;
             continue;
         }
@@ -850,12 +878,23 @@ pub fn reduce_uly_skyfreq(
     stations.dedup();
     dtype_hist.sort_by_key(|(d, _)| *d);
     eprintln!(
-        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_sband_out} S-band / {n_xband_out} X-band fsky samples (median S {fmed_s:.6e} / X {fmed_x:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {boundary_rejected} band boundary"
+        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_sband_out} S-band / {n_xband_out} X-band fsky samples (median S {fmed_s:.6e} / X {fmed_x:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {no_pair} unpaired"
     );
     if out_s.is_empty() && out_x.is_empty() {
         None
     } else {
-        Some(UlySkyFreq { sband: out_s, xband: out_x })
+        Some(UlySkyFreq {
+            sband: out_s,
+            xband: out_x,
+            n,
+            no_pair,
+            no_doppler,
+            bias_rejected,
+            ref_rejected,
+            gap_rejected,
+            wrap_rejected,
+            med_rejected,
+        })
     }
 }
 
@@ -1122,8 +1161,7 @@ mod tests {
         for (idx, &band) in bands.iter().enumerate() {
             let lo = (2 + idx) * LOGICAL_RECORD;
             let hi = (3 + idx) * LOGICAL_RECORD;
-            let cnt_hp = if idx % 2 == 0 { 0 } else { 100 };
-            set_tk(&mut file[lo..hi], band, idx as i64, cnt_hp);
+            set_tk(&mut file[lo..hi], band, idx as i64, idx as i64 * 100);
         }
         file
     }
@@ -1164,12 +1202,117 @@ mod tests {
         let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
         let file = ulysses_file(&[ULY_BAND_S, ULY_BAND_S, ULY_BAND_X, ULY_BAND_X]);
         let res = reduce_uly_skyfreq("mixed", 1.0, &file, &lsk).expect("reduce returns samples");
-        assert_eq!(res.sband.len(), 1);
-        assert_eq!(res.xband.len(), 1);
+        let UlySkyFreq {
+            sband: out_s,
+            xband: out_x,
+            n,
+            no_pair,
+            no_doppler,
+            bias_rejected,
+            ref_rejected,
+            gap_rejected,
+            wrap_rejected,
+            med_rejected,
+        } = res;
+        assert_eq!(out_s.len(), 1);
+        assert_eq!(out_x.len(), 1);
+        assert_eq!(no_pair, 2, "the tail record of each band stays unpaired");
+        assert_eq!(
+            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            n
+        );
         let s_expected = S_BAND_RATIO * 21_980_000.0;
         let x_expected = X_BAND_RATIO * 21_980_000.0;
-        assert!((res.sband[0][1] - s_expected).abs() < 1e-6);
-        assert!((res.xband[0][1] - x_expected).abs() < 1e-6);
+        assert!((out_s[0][1] - s_expected).abs() < 1e-6);
+        assert!((out_x[0][1] - x_expected).abs() < 1e-6);
+    }
+
+    #[test]
+    fn reduce_uly_skyfreq_alternating_bands_pair_within_band() {
+        let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+        let file = ulysses_file(&[
+            ULY_BAND_S,
+            ULY_BAND_X,
+            ULY_BAND_S,
+            ULY_BAND_X,
+            ULY_BAND_S,
+            ULY_BAND_X,
+        ]);
+        let res = reduce_uly_skyfreq("alternating", 1.0, &file, &lsk)
+            .expect("reduce returns samples for both bands");
+        let UlySkyFreq {
+            sband: out_s,
+            xband: out_x,
+            n,
+            no_pair,
+            no_doppler,
+            bias_rejected,
+            ref_rejected,
+            gap_rejected,
+            wrap_rejected,
+            med_rejected,
+        } = res;
+        assert_eq!(out_s.len(), 2, "S records pair with the next S record");
+        assert_eq!(out_x.len(), 2, "X records pair with the next X record");
+        assert_eq!(no_pair, 2, "the tail record of each band stays unpaired");
+        assert_eq!(
+            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            n
+        );
+        let s_expected = S_BAND_RATIO * 21_980_000.0;
+        let x_expected = X_BAND_RATIO * 21_980_000.0;
+        for r in &out_s {
+            assert!(
+                (r[1] - s_expected).abs() < 1e-6,
+                "S fsky {} != {}",
+                r[1],
+                s_expected
+            );
+        }
+        for r in &out_x {
+            assert!(
+                (r[1] - x_expected).abs() < 1e-6,
+                "X fsky {} != {}",
+                r[1],
+                x_expected
+            );
+        }
+    }
+
+    #[test]
+    fn reduce_uly_skyfreq_contiguous_band_anchors_sequential_pairing() {
+        let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+        let file = ulysses_file(&[ULY_BAND_X, ULY_BAND_X, ULY_BAND_X]);
+        let res =
+            reduce_uly_skyfreq("contiguous_x", 1.0, &file, &lsk).expect("reduce returns samples");
+        let UlySkyFreq {
+            sband: out_s,
+            xband: out_x,
+            n,
+            no_pair,
+            no_doppler,
+            bias_rejected,
+            ref_rejected,
+            gap_rejected,
+            wrap_rejected,
+            med_rejected,
+        } = res;
+        assert!(out_s.is_empty(), "a contiguous X block carries no S record");
+        assert_eq!(out_x.len(), 2, "each X record pairs with its successor");
+        assert_eq!(no_pair, 1, "the tail record stays unpaired");
+        assert_eq!(
+            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            n
+        );
+        let expected = X_BAND_RATIO * 21_980_000.0;
+        for r in &out_x {
+            assert!(
+                (r[1] - expected).abs() < 1e-6,
+                "X fsky {} != {}",
+                r[1],
+                expected
+            );
+        }
     }
 
     #[test]
