@@ -1539,7 +1539,7 @@ compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
 on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject gemessen: archive.swot.podaac.earthdatacloud.nasa.gov HTTP 206 mit EDL-Token, 401 ohne; Compiler hat --granule/--protected, nur CMR-Key-Beschaffung fehlt.
+note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; CMR-Key-Beschaffung --cmr gebaut, --granule/--protected bleibt.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
@@ -6945,7 +6945,7 @@ compiler tools/harvest/src/bin/gedi_l2a_compiler.rs
 on earth 0 0 0
 ttl 604800
 field gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square em m 604800 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject gemessen: data.lpdaac.earthdatacloud.nasa.gov/<key> HTTP 206 mit EDL-Token, 401 ohne; CMR→GetObject-Route trägt, Compiler-Arm fehlt (nur Listing-Modus).
+note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; Compiler-Arm --cmr (CMR→GetObject) gebaut; CMR liefert v002+v003, --version pinnt Default 002.
 
 url https://github.com/omegaflow/sources/releases/download/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin
 format icesat2_atl03
@@ -6954,7 +6954,7 @@ compiler tools/harvest/src/bin/icesat2_atl03_compiler.rs
 on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject gemessen: data.nsidc.earthdatacloud.nasa.gov/<key> HTTP 206 mit EDL-Token, 401 ohne; CMR→GetObject-Route trägt, Compiler-Arm fehlt (nur Listing-Modus).
+note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; Compiler-Arm --cmr (CMR→GetObject) gebaut, Version 007.
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
 format bgr_infrasound
