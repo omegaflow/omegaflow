@@ -130,7 +130,7 @@ pub fn to_bin_row(r: &MarinerOccltRecord, file_index: u64, record_index: u64) ->
     ]
 }
 
-const DAY_BASE_S: f64 = 1497.0 * 86400.0;
+const DAY_BASE_S: f64 = 1496.0 * 86400.0;
 
 fn row_epoch(r: &MarinerOccltRecord) -> f64 {
     DAY_BASE_S
@@ -223,7 +223,7 @@ mod tests {
 
     #[test]
     fn day_base_matches_calendar() {
-        assert_eq!(super::super::ymd_to_days(1974, 2, 5).unwrap(), 1497);
+        assert_eq!(super::super::ymd_to_days(1974, 2, 5).unwrap(), 1496);
     }
 
     #[test]
