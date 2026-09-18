@@ -1,25 +1,24 @@
-# verified 1 samples
+note verified 1 samples
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=density&format=json
 ttl 10
 at earth
 hapi density=density
 field density density erfc diffusion kg/m3 3600 0.0 0.0
-# density = 0.00000000002157468629939978 — first row server fill, first finite sample shown
+note density = 0.00000000002157468629939978 - first row server fill, first finite sample shown
 
-# verified 1 samples
+note verified 1 samples
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
 ttl 10
 at earth
 hapi density=density
 field density density erfc diffusion kg/m3 3600 0.0 0.0
-# density = 0.00000000000794292388211952
+note density = 0.00000000000794292388211952
 
-# verified 1 samples
+note verified 1 samples
 url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json
 ttl 10
 at earth
 hapi crosswind=crosswind
-# unit kg/m3 not in force registry — register carries m/s — review
 field crosswind crosswind gaussian-inverse-square advective kg/m3 60 0.0 0.0
-# crosswind = 999000000000000000000000000000000
-
+note unit kg/m3 not in force registry - register carries m/s - review
+note crosswind = 999000000000000000000000000000000
