@@ -7567,6 +7567,15 @@ on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
+format pioneer10_odf
+origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER
+compiler tools/harvest/src/bin/pioneer10_odf_compiler.rs
+at earth
+ttl 604800
+field observable_hz pioneer10_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+note pioneer10_odf: das ODF-Paar 73288o74360_bj_sc23.odf + 86334o97343_sc23.odf (Turyshev20170327_Pioneer-10/DOPPLER) → PODF-Serie (odf::parse_series); Manifestationsweg pioneer-odf-cdn.yml
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
 format atdf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
