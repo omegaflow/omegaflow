@@ -172,7 +172,7 @@ pub fn parse_gsics_txt(text: &str) -> GsicsTable {
         let Ok(channel) = cols[0].parse::<usize>() else {
             continue;
         };
-        if channel < 1 || channel > 16 {
+        if !(1..=16).contains(&channel) {
             continue;
         }
         let Some(offset) = cols[1].parse::<f64>().ok().filter(|v| v.is_finite()) else {
@@ -296,10 +296,7 @@ fn attr_int_pair_unsigned(
 }
 
 fn attr_unsigned(attrs: &[Hdf5Attribute]) -> bool {
-    (match attr_int(attrs, "_Unsigned") {
-        Some(v) => v,
-        None => 0,
-    }) != 0
+    attr_int(attrs, "_Unsigned").is_some_and(|v| v != 0)
 }
 
 fn decode_count(raw: &[u8], i: usize, dt: &Hdf5Datatype, unsigned: bool) -> Option<i64> {
@@ -342,6 +339,13 @@ fn gsics_slope_offset(file: &Hdf5File) -> Option<(f64, f64)> {
     Some((slope, offset))
 }
 
+struct Calib {
+    scale: f64,
+    offset: f64,
+}
+
+const NO_ADD_OFFSET: f64 = 0.0;
+
 fn stats_of(
     raw: &[u8],
     dt: &Hdf5Datatype,
@@ -349,8 +353,7 @@ fn stats_of(
     unsigned: bool,
     fill: Option<i64>,
     valid_range: Option<(i64, i64)>,
-    scale: f64,
-    offset: f64,
+    calib: Calib,
 ) -> (f64, f64, f64, f64, u32) {
     let mut sum = 0.0f64;
     let mut sumsq = 0.0f64;
@@ -361,17 +364,17 @@ fn stats_of(
         let Some(count) = decode_count(raw, i, dt, unsigned) else {
             continue;
         };
-        if let Some(f) = fill {
-            if count == f {
-                continue;
-            }
+        if let Some(f) = fill
+            && count == f
+        {
+            continue;
         }
-        if let Some((lo, hi)) = valid_range {
-            if count < lo || count > hi {
-                continue;
-            }
+        if let Some((lo, hi)) = valid_range
+            && (count < lo || count > hi)
+        {
+            continue;
         }
-        let rad = count as f64 * scale + offset;
+        let rad = count as f64 * calib.scale + calib.offset;
         if !rad.is_finite() {
             continue;
         }
@@ -413,14 +416,18 @@ pub fn parse_granule(bytes: &[u8], gsics: Option<&GsicsTable>) -> Result<AbiGran
     let unsigned = attr_unsigned(&rad_obj.attrs);
     let scale = attr_number(&rad_obj.attrs, "scale_factor")
         .ok_or_else(|| "Rad scale_factor absent".to_string())?;
-    let offset = match attr_number(&rad_obj.attrs, "add_offset") {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let offset = attr_number(&rad_obj.attrs, "add_offset").unwrap_or(NO_ADD_OFFSET);
     let fill = attr_int_unsigned(&rad_obj.attrs, "_FillValue", unsigned);
     let valid_range = attr_int_pair_unsigned(&rad_obj.attrs, "valid_range", unsigned);
-    let (sum, sumsq, min, max, valid) =
-        stats_of(&raw, dt, total, unsigned, fill, valid_range, scale, offset);
+    let (sum, sumsq, min, max, valid) = stats_of(
+        &raw,
+        dt,
+        total,
+        unsigned,
+        fill,
+        valid_range,
+        Calib { scale, offset },
+    );
     if valid == 0 {
         return Err(
             "Rad: no valid radiance pixel — the record stays unwritten (0 honored)".to_string(),
@@ -437,7 +444,7 @@ pub fn parse_granule(bytes: &[u8], gsics: Option<&GsicsTable>) -> Result<AbiGran
     let calib = match external.or_else(|| gsics_slope_offset(&file)) {
         Some((slope, offset)) => {
             mean = slope * mean + offset;
-            std = slope.abs() * std;
+            std *= slope.abs();
             let lo = slope * min + offset;
             let hi = slope * max + offset;
             let (lo, hi) = if lo <= hi { (lo, hi) } else { (hi, lo) };
@@ -589,8 +596,15 @@ mod tests {
         raw.extend_from_slice(&20u16.to_le_bytes());
         raw.extend_from_slice(&65535u16.to_le_bytes()); // fill
         raw.extend_from_slice(&5000u16.to_le_bytes()); // out of range
-        let (sum, _, min, max, valid) =
-            stats_of(&raw, &dt, 4, true, Some(65535), Some((0, 4095)), 1.0, 0.0);
+        let (sum, _, min, max, valid) = stats_of(
+            &raw,
+            &dt,
+            4,
+            true,
+            Some(65535),
+            Some((0, 4095)),
+            Calib { scale: 1.0, offset: 0.0 },
+        );
         assert_eq!(valid, 2);
         assert_eq!(sum, 30.0);
         assert_eq!(min, 10.0);
