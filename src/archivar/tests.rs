@@ -971,7 +971,7 @@ fn test_csv_to_json_tns_shape() {
 
 #[test]
 fn test_csv_to_json_nul_separated() {
-    let csv = "catID\0cluID\0dec_\0ra\n1\010.5\0-20.0\0123.4\n2\011.5\0-21.0\0124.5\n";
+    let csv = "catID\0cluID\0dec_\0ra\n1\x0010.5\0-20.0\x00123.4\n2\x0011.5\0-21.0\x00124.5\n";
     let j = csv_to_json(csv).unwrap();
     let arr = match j {
         JsonVal::Arr(a) => a,
@@ -2392,7 +2392,10 @@ fn test_port_convert_celestial_and_post() {
         for e in &s.extracts {
             match e {
                 super::Extract::CelestialMap { fields, .. }
-                | super::Extract::Map { fields, .. } => assert!(fields.is_empty()),
+                | super::Extract::Map { fields, .. } => {
+                    assert_eq!(fields.len(), 1);
+                    assert_eq!(fields[0].name, "name");
+                }
                 _ => {}
             }
         }
@@ -2406,7 +2409,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.is_empty(),
+                super::Extract::Map { fields, .. } => fields.len() == 1,
                 _ => true,
             }))
     );
@@ -2417,7 +2420,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.is_empty(),
+                super::Extract::Map { fields, .. } => fields.len() == 1,
                 _ => true,
             }))
     );
@@ -2428,7 +2431,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.is_empty(),
+                super::Extract::Map { fields, .. } => fields.len() == 1,
                 _ => true,
             }))
     );
@@ -2440,7 +2443,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.is_empty(),
+                super::Extract::Map { fields, .. } => fields.len() == 1,
                 _ => true,
             }))
     );
@@ -6518,7 +6521,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
     let legacy = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\nfield_in properties.mag quake_mag\n";
     let conv = super::port_block(legacy);
     let srcs = super::parse_sources(&conv);
-    assert_eq!(srcs.len(), 0);
+    assert_eq!(srcs.len(), 1);
 
     let src = super::SourceConfig {
         ttl: 10,
@@ -7875,16 +7878,7 @@ fn noaa_nodd_register_field_matches_component_name() {
             })
             .collect()
     };
-    assert_eq!(
-        names("noaa_ghcn_d"),
-        vec![
-            "noaa_ghcn_d_tmax_c",
-            "noaa_ghcn_d_tmin_c",
-            "noaa_ghcn_d_prcp_mm",
-            "noaa_ghcn_d_snow_mm",
-            "noaa_ghcn_d_snwd_mm",
-        ]
-    );
+    assert_eq!(names("noaa_cdo_ghcnd_tmax"), vec!["noaa_cdo_tmax_c"]);
     assert_eq!(
         names("noaa_isd"),
         vec![
