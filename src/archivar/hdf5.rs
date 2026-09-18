@@ -1,5 +1,5 @@
 use crate::inflate::inflate;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 const UNDEF: u64 = u64::MAX;
 
@@ -23,6 +23,8 @@ const FILTER_DEFLATE: u16 = 1;
 const FILTER_SHUFFLE: u16 = 2;
 const FILTER_FLETCHER32: u16 = 3;
 const FILTER_SCALEOFFSET: u16 = 6;
+
+const MAX_CONT_BLOCKS: usize = 1 << 12;
 
 #[derive(Clone, Debug)]
 pub enum Hdf5Note {
@@ -623,9 +625,13 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                     stack.push(target);
                 }
             }
+            let mut visited: HashSet<u64> = HashSet::new();
             while let Some((c, len)) = stack.pop() {
-                if out.len() >= total {
+                if out.len() >= total || diag.cont_blocks >= MAX_CONT_BLOCKS {
                     break;
+                }
+                if !visited.insert(c) {
+                    continue;
                 }
                 let len = len as usize;
                 let chunk = r.read(c, len as u64)?;
@@ -682,7 +688,14 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                     stack.push(target);
                 }
             }
+            let mut visited: HashSet<u64> = HashSet::new();
             while let Some((c, len)) = stack.pop() {
+                if diag.cont_blocks >= MAX_CONT_BLOCKS {
+                    break;
+                }
+                if !visited.insert(c) {
+                    continue;
+                }
                 let len = len as usize;
                 let chunk = r.read(c, len as u64)?;
                 if chunk.len() < 4 {
@@ -3710,5 +3723,55 @@ mod tests {
         assert_eq!(d.msgs_cont, 1);
         assert_eq!(d.declared, Some(2));
         assert!(d.symtab_found);
+    }
+
+    #[test]
+    fn v2_continuation_self_cycle_terminates() {
+        fn put(buf: &mut Vec<u8>, at: usize, bytes: &[u8]) {
+            if buf.len() < at + bytes.len() {
+                buf.resize(at + bytes.len(), 0);
+            }
+            buf[at..at + bytes.len()].copy_from_slice(bytes);
+        }
+        fn v2_cont(addr: u64, len: u64) -> Vec<u8> {
+            let mut m = vec![MSG_CONT, 16, 0, 0];
+            m.extend_from_slice(&addr.to_le_bytes());
+            m.extend_from_slice(&len.to_le_bytes());
+            m
+        }
+
+        const ROOT: usize = 128;
+        const CONT: usize = 256;
+        const CONT_LEN: u64 = 28;
+
+        let mut buf: Vec<u8> = vec![0u8; 512];
+        buf[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf[8] = 2;
+        buf[9] = 8;
+        buf[10] = 8;
+        buf[36..44].copy_from_slice(&(ROOT as u64).to_le_bytes());
+        let sb_ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&sb_ck.to_le_bytes());
+
+        put(&mut buf, ROOT, b"OHDR");
+        buf[ROOT + 4] = 2;
+        buf[ROOT + 5] = 0;
+        buf[ROOT + 6] = 20;
+        put(&mut buf, ROOT + 7, &v2_cont(CONT as u64, CONT_LEN));
+        let root_end = ROOT + 7 + 20;
+        let root_ck = jenkins_lookup3(&buf[ROOT..root_end]);
+        put(&mut buf, root_end, &root_ck.to_le_bytes());
+
+        put(&mut buf, CONT, b"OCHK");
+        put(&mut buf, CONT + 4, &v2_cont(CONT as u64, CONT_LEN));
+        let cont_ck = jenkins_lookup3(&buf[CONT..CONT + 24]);
+        put(&mut buf, CONT + 24, &cont_ck.to_le_bytes());
+
+        let file = Hdf5File::parse(&buf)
+            .expect("the v2 object header resolves through its self-cyclic continuation block");
+        let d = file.root_header_diag().expect("the root header diag stands");
+        assert_eq!(d.version, 2);
+        assert_eq!(d.cont_blocks, 1);
+        assert!(d.cont_blocks <= MAX_CONT_BLOCKS);
     }
 }
