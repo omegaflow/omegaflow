@@ -767,7 +767,11 @@ pub fn live_sweep(
         if s.url.starts_with("https://github.com/omegaflow/sources") {
             continue;
         }
-        if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
+        if s.fanout_cap > 0
+            || s.format == "csv_zip"
+            || s.format == "igra_zip"
+            || s.format == "kernel_text"
+        {
             continue;
         }
         if matches!(
