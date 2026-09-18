@@ -2124,6 +2124,7 @@ pub fn main_flow() {
                     | "vex_odf"
                     | "galileo_odf"
                     | "dawn_odf"
+                    | "pioneer10_odf"
                     | "voyager_odr"
                     | "galileo_odr"
                     | "flac"
