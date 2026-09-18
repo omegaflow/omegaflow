@@ -179,6 +179,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "pc/cm3",
             "ph/s/cm2",
             "erg/cm2",
+            "k.m/s",
             "crab",
             "cpm",
             "count",
