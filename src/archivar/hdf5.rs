@@ -64,6 +64,43 @@ impl std::fmt::Debug for ChunkReadDiag {
     }
 }
 
+#[derive(Clone, Copy, Default)]
+pub struct HeaderDiag {
+    pub version: u8,
+    pub msgs_initial: usize,
+    pub msgs_cont: usize,
+    pub cont_blocks: usize,
+    pub declared: Option<u16>,
+    pub symtab_found: bool,
+    pub link_info_found: bool,
+}
+
+impl std::fmt::Debug for HeaderDiag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "header v{}, {} messages in chunk0",
+            self.version, self.msgs_initial
+        )?;
+        if self.cont_blocks > 0 {
+            write!(
+                f,
+                ", {} messages in {} continuation blocks",
+                self.msgs_cont, self.cont_blocks
+            )?;
+        }
+        if let Some(n) = self.declared {
+            write!(f, ", declared {n}")?;
+        }
+        write!(
+            f,
+            ", symbol table {}, link info {}",
+            if self.symtab_found { "found" } else { "absent" },
+            if self.link_info_found { "found" } else { "absent" }
+        )
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Endian {
     Le,
@@ -170,6 +207,7 @@ pub struct Hdf5Object {
     pub attrs: Vec<Hdf5Attribute>,
     pub links: Vec<Hdf5Link>,
     pub committed_datatype: Option<u64>,
+    pub header: HeaderDiag,
 }
 
 pub struct Hdf5File<'a> {
@@ -493,10 +531,63 @@ fn v2_messages(
     Ok(out)
 }
 
+fn v1_messages(
+    buf: &[u8],
+    start: usize,
+    end: usize,
+    base: usize,
+) -> Result<Vec<RawMessage>, Hdf5Note> {
+    let mut out = Vec::new();
+    let mut p = start;
+    while p + 8 <= end.min(buf.len()) {
+        let typ = le_u16(buf, p) as u8;
+        let size = le_u16(buf, p + 2) as usize;
+        let flags = buf[p + 4];
+        p += 8;
+        if p + size > buf.len() {
+            return Err(Hdf5Note::EndAtByte { off: base + p });
+        }
+        out.push(RawMessage {
+            typ,
+            flags,
+            data: buf[p..p + size].to_vec(),
+        });
+        p += size;
+    }
+    Ok(out)
+}
+
+fn cont_target(
+    msg: &RawMessage,
+    offset_size: usize,
+    length_size: usize,
+) -> Option<(u64, u64)> {
+    if msg.typ != MSG_CONT {
+        return None;
+    }
+    let addr_len = offset_size + length_size;
+    if msg.data.len() < addr_len {
+        return None;
+    }
+    let c = match offset_size {
+        4 => le_u32(&msg.data, 0) as u64,
+        8 => le_u64(&msg.data, 0),
+        _ => return None,
+    };
+    let len = match length_size {
+        4 => le_u32(&msg.data, offset_size) as u64,
+        8 => le_u64(&msg.data, offset_size),
+        _ => return None,
+    };
+    Some((c, len))
+}
+
 fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     r: &mut Hdf5WindowReader<F>,
     addr: u64,
-) -> Result<Vec<RawMessage>, Hdf5Note> {
+    offset_size: usize,
+    length_size: usize,
+) -> Result<(Vec<RawMessage>, HeaderDiag), Hdf5Note> {
     let off = addr as usize;
     let head = r.read(addr, 64)?;
     if head.len() < 6 {
@@ -506,111 +597,131 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     }
     let has_signature = &head[..4] == b"OHDR";
     let version = if has_signature { head[4] } else { head[0] };
-    if version == 1 {
-        if has_signature {
-            return Err(Hdf5Note::ObjectHeaderVersion { v: 1 });
-        }
-        if head.len() < 12 {
-            return Err(Hdf5Note::EndAtByte {
-                off: off + head.len(),
-            });
-        }
-        let total = le_u16(&head, 2) as usize;
-        let header_size = le_u32(&head, 8) as usize;
-        let buf = r.read(addr, (16 + header_size) as u64)?;
-        let mut out = Vec::with_capacity(total);
-        let mut p = 16usize;
-        while p + 8 <= buf.len() {
-            let typ = le_u16(&buf, p) as u8;
-            let size = le_u16(&buf, p + 2) as usize;
-            let flags = buf[p + 4];
-            p += 8;
-            if p + size > buf.len() {
-                return Err(Hdf5Note::EndAtByte { off: off + p });
-            }
-            out.push(RawMessage {
-                typ,
-                flags,
-                data: buf[p..p + size].to_vec(),
-            });
-            p += size;
-            if out.len() >= total {
-                break;
-            }
-        }
-        return Ok(out);
-    }
-    if version != 2 {
-        return Err(Hdf5Note::ObjectHeaderVersion { v: version });
-    }
-    let flags = head[5];
-    let mut extra = 0usize;
-    if flags & 0x20 != 0 {
-        extra += 16;
-    }
-    if flags & 0x10 != 0 {
-        extra += 4;
-    }
-    let size_len = 1usize << (flags & 0x03);
-    let header_span = 6 + extra + size_len;
-    if head.len() < header_span {
-        return Err(Hdf5Note::EndAtByte {
-            off: off + head.len(),
-        });
-    }
-    let chunk0_off = header_span;
-    let chunk0_size = match flags & 0x03 {
-        0 => head[header_span - 1] as usize,
-        1 => le_u16(&head, header_span - 2) as usize,
-        2 => le_u32(&head, header_span - 4) as usize,
-        _ => le_u64(&head, header_span - 8) as usize,
+    let mut diag = HeaderDiag {
+        version,
+        ..HeaderDiag::default()
     };
-    let chunk0_end = chunk0_off + chunk0_size;
-    let ohdr_span = chunk0_end + 4;
-    let buf = r.read(addr, ohdr_span as u64)?;
-    if buf.len() < ohdr_span {
-        return Err(Hdf5Note::EndAtByte {
-            off: off + buf.len(),
-        });
-    }
-    check_checksum(&buf[..chunk0_end], &buf[chunk0_end..chunk0_end + 4])?;
-    let tracked = flags & 0x04 != 0;
-    let mut out = v2_messages(&buf, chunk0_off, chunk0_end, tracked, off)?;
-    let mut stack: Vec<(u64, usize)> = Vec::new();
-    let mut i = 0;
-    while i < out.len() {
-        if out[i].typ == MSG_CONT && out[i].data.len() >= 16 {
-            let c = le_u64(&out[i].data, 0);
-            let len = le_u64(&out[i].data, 8) as usize;
-            stack.push((c, len));
-        }
-        i += 1;
-    }
-    while let Some((c, len)) = stack.pop() {
-        let chunk = r.read(c, len as u64)?;
-        if chunk.len() < 4 {
-            return Err(Hdf5Note::EndAtByte {
-                off: c as usize + chunk.len(),
-            });
-        }
-        if &chunk[..4] != b"OCHK" {
-            return Err(Hdf5Note::Address { off: c as usize });
-        }
-        if chunk.len() < len {
-            return Err(Hdf5Note::EndAtByte {
-                off: c as usize + chunk.len(),
-            });
-        }
-        check_checksum(&chunk[..len - 4], &chunk[len - 4..len])?;
-        let mut sub = v2_messages(&chunk, 4, len - 4, tracked, c as usize)?;
-        for m in &sub {
-            if m.typ == MSG_CONT && m.data.len() >= 16 {
-                stack.push((le_u64(&m.data, 0), le_u64(&m.data, 8) as usize));
+    let out: Vec<RawMessage> = match version {
+        1 => {
+            if has_signature {
+                return Err(Hdf5Note::ObjectHeaderVersion { v: 1 });
             }
+            if head.len() < 12 {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + head.len(),
+                });
+            }
+            let total = le_u16(&head, 2) as usize;
+            let chunk0_size = le_u32(&head, 8) as usize;
+            diag.declared = Some(le_u16(&head, 2));
+            let buf = r.read(addr, (16 + chunk0_size) as u64)?;
+            let mut out = v1_messages(&buf, 16, 16 + chunk0_size, off)?;
+            diag.msgs_initial = out.len();
+            let mut stack: Vec<(u64, u64)> = Vec::new();
+            for m in &out {
+                if let Some(target) = cont_target(m, offset_size, length_size) {
+                    stack.push(target);
+                }
+            }
+            while let Some((c, len)) = stack.pop() {
+                if out.len() >= total {
+                    break;
+                }
+                let len = len as usize;
+                let chunk = r.read(c, len as u64)?;
+                let mut sub = v1_messages(&chunk, 0, len, c as usize)?;
+                diag.cont_blocks += 1;
+                diag.msgs_cont += sub.len();
+                for m in &sub {
+                    if let Some(target) = cont_target(m, offset_size, length_size) {
+                        stack.push(target);
+                    }
+                }
+                out.append(&mut sub);
+            }
+            out
         }
-        out.append(&mut sub);
+        2 => {
+            let flags = head[5];
+            let mut extra = 0usize;
+            if flags & 0x20 != 0 {
+                extra += 16;
+            }
+            if flags & 0x10 != 0 {
+                extra += 4;
+            }
+            let size_len = 1usize << (flags & 0x03);
+            let header_span = 6 + extra + size_len;
+            if head.len() < header_span {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + head.len(),
+                });
+            }
+            let chunk0_off = header_span;
+            let chunk0_size = match flags & 0x03 {
+                0 => head[header_span - 1] as usize,
+                1 => le_u16(&head, header_span - 2) as usize,
+                2 => le_u32(&head, header_span - 4) as usize,
+                _ => le_u64(&head, header_span - 8) as usize,
+            };
+            let chunk0_end = chunk0_off + chunk0_size;
+            let ohdr_span = chunk0_end + 4;
+            let buf = r.read(addr, ohdr_span as u64)?;
+            if buf.len() < ohdr_span {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + buf.len(),
+                });
+            }
+            check_checksum(&buf[..chunk0_end], &buf[chunk0_end..chunk0_end + 4])?;
+            let tracked = flags & 0x04 != 0;
+            let mut out = v2_messages(&buf, chunk0_off, chunk0_end, tracked, off)?;
+            diag.msgs_initial = out.len();
+            let mut stack: Vec<(u64, u64)> = Vec::new();
+            for m in &out {
+                if let Some(target) = cont_target(m, offset_size, length_size) {
+                    stack.push(target);
+                }
+            }
+            while let Some((c, len)) = stack.pop() {
+                let len = len as usize;
+                let chunk = r.read(c, len as u64)?;
+                if chunk.len() < 4 {
+                    return Err(Hdf5Note::EndAtByte {
+                        off: c as usize + chunk.len(),
+                    });
+                }
+                if &chunk[..4] != b"OCHK" {
+                    return Err(Hdf5Note::Address { off: c as usize });
+                }
+                if chunk.len() < len {
+                    return Err(Hdf5Note::EndAtByte {
+                        off: c as usize + chunk.len(),
+                    });
+                }
+                check_checksum(&chunk[..len - 4], &chunk[len - 4..len])?;
+                let mut sub = v2_messages(&chunk, 4, len - 4, tracked, c as usize)?;
+                diag.cont_blocks += 1;
+                diag.msgs_cont += sub.len();
+                for m in &sub {
+                    if let Some(target) = cont_target(m, offset_size, length_size) {
+                        stack.push(target);
+                    }
+                }
+                out.append(&mut sub);
+            }
+            out
+        }
+        v => return Err(Hdf5Note::ObjectHeaderVersion { v }),
+    };
+    for m in &out {
+        if m.typ == MSG_SYMBOL_TABLE {
+            diag.symtab_found = true;
+        }
+        if m.typ == MSG_LINK_INFO {
+            diag.link_info_found = true;
+        }
     }
-    Ok(out)
+    Ok((out, diag))
 }
 
 fn parse_dataspace(buf: &[u8], off: usize) -> Result<Hdf5Dataspace, Hdf5Note> {
@@ -2096,9 +2207,10 @@ impl<'a> Hdf5File<'a> {
             if addr == UNDEF || objects.contains_key(&addr) {
                 continue;
             }
-            let msgs = gather_messages(&mut reader, addr)?;
+            let (msgs, diag) = gather_messages(&mut reader, addr, offset_size, length_size)?;
             let mut obj = Hdf5Object {
                 addr,
+                header: diag,
                 ..Default::default()
             };
             let mut links = Vec::new();
@@ -2201,6 +2313,10 @@ impl<'a> Hdf5File<'a> {
         self.objects.get(&self.root).ok_or(Hdf5Note::Address {
             off: self.root as usize,
         })
+    }
+
+    pub fn root_header_diag(&self) -> Option<&HeaderDiag> {
+        self.objects.get(&self.root).map(|o| &o.header)
     }
 
     pub fn resolve(&self, path: &str) -> Result<&Hdf5Object, Hdf5Note> {
@@ -3473,5 +3589,126 @@ mod tests {
             root.is_group,
             "the v1 header message at offset 16 lies inside 16 + header_size"
         );
+    }
+
+    #[test]
+    fn v1_object_header_reads_symbol_table_from_continuation_block() {
+        fn put(buf: &mut Vec<u8>, at: usize, bytes: &[u8]) {
+            if buf.len() < at + bytes.len() {
+                buf.resize(at + bytes.len(), 0);
+            }
+            buf[at..at + bytes.len()].copy_from_slice(bytes);
+        }
+        fn v1_msg(typ: u16, data: Vec<u8>) -> Vec<u8> {
+            let mut m = Vec::new();
+            m.extend_from_slice(&typ.to_le_bytes());
+            m.extend_from_slice(&(data.len() as u16).to_le_bytes());
+            m.push(0);
+            m.extend_from_slice(&[0u8; 3]);
+            m.extend_from_slice(&data);
+            m
+        }
+        fn v1_header(total: u16, messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut h = Vec::new();
+            h.push(1);
+            h.push(0);
+            h.extend_from_slice(&total.to_le_bytes());
+            h.extend_from_slice(&1u32.to_le_bytes());
+            let area: usize = messages.iter().map(|m| m.len()).sum();
+            h.extend_from_slice(&(area as u32).to_le_bytes());
+            h.extend_from_slice(&[0u8; 4]);
+            for m in messages {
+                h.extend_from_slice(&m);
+            }
+            h
+        }
+        fn addr_bytes(v: u64) -> Vec<u8> {
+            v.to_le_bytes().to_vec()
+        }
+
+        const ROOT: usize = 128;
+        const CONT: usize = 256;
+        const HEAP: usize = 320;
+        const SEG: usize = 400;
+        const SNOD: usize = 480;
+        const DATASET: usize = 560;
+        const PAYLOAD: usize = 700;
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(0);
+        buf.resize(72, 0);
+        buf[13] = 8;
+        buf[14] = 8;
+        buf[64..72].copy_from_slice(&(ROOT as u64).to_le_bytes());
+
+        let cont_data = [addr_bytes(CONT as u64), addr_bytes(24)].concat();
+        put(&mut buf, ROOT, &v1_header(2, vec![v1_msg(MSG_CONT as u16, cont_data)]));
+
+        let symtab_data = [addr_bytes(SNOD as u64), addr_bytes(HEAP as u64)].concat();
+        put(&mut buf, CONT, &v1_msg(MSG_SYMBOL_TABLE as u16, symtab_data));
+
+        let mut heap = vec![b'H', b'E', b'A', b'P', 0, 0, 0, 0];
+        heap.extend_from_slice(&8u64.to_le_bytes());
+        heap.extend_from_slice(&u64::MAX.to_le_bytes());
+        heap.extend_from_slice(&(SEG as u64).to_le_bytes());
+        put(&mut buf, HEAP, &heap);
+
+        put(&mut buf, SEG, b"d\0");
+
+        let mut snod = vec![b'S', b'N', b'O', b'D', 0, 0];
+        snod.extend_from_slice(&1u16.to_le_bytes());
+        snod.extend_from_slice(&0u64.to_le_bytes());
+        snod.extend_from_slice(&(DATASET as u64).to_le_bytes());
+        snod.extend_from_slice(&0u32.to_le_bytes());
+        snod.extend_from_slice(&0u32.to_le_bytes());
+        snod.extend_from_slice(&[0u8; 16]);
+        put(&mut buf, SNOD, &snod);
+
+        let ds_data = [vec![2u8, 1, 0, 0], addr_bytes(4)].concat();
+        let dt_data = [
+            vec![0x11u8, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0x40, 0],
+            vec![0u8; 8],
+        ]
+        .concat();
+        let layout_data = [vec![3u8, 1], addr_bytes(PAYLOAD as u64), addr_bytes(32)].concat();
+        put(
+            &mut buf,
+            DATASET,
+            &v1_header(
+                3,
+                vec![
+                    v1_msg(MSG_DATASPACE as u16, ds_data),
+                    v1_msg(MSG_DATATYPE as u16, dt_data),
+                    v1_msg(MSG_LAYOUT as u16, layout_data),
+                ],
+            ),
+        );
+
+        let payload: Vec<u8> = [1.0f64, 2.0, 3.0, 4.0]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        put(&mut buf, PAYLOAD, &payload);
+        buf.resize(1024, 0);
+
+        let file = Hdf5File::parse(&buf).expect("the v0 superblock and v1 headers parse");
+        let (_, ds, dt) = file
+            .dataset("d")
+            .expect("the symbol table message in the v1 continuation block resolves");
+        assert_eq!(ds.dims, vec![4]);
+        assert_eq!(dt.class, 1);
+        assert_eq!(dt.size, 8);
+        assert_eq!(
+            file.read_f64_dataset("d").expect("the contiguous payload reads"),
+            vec![1.0, 2.0, 3.0, 4.0]
+        );
+        let d = file.root_header_diag().expect("the root header diag stands");
+        assert_eq!(d.version, 1);
+        assert_eq!(d.msgs_initial, 1);
+        assert_eq!(d.cont_blocks, 1);
+        assert_eq!(d.msgs_cont, 1);
+        assert_eq!(d.declared, Some(2));
+        assert!(d.symtab_found);
     }
 }
