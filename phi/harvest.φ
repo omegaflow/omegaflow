@@ -1,11 +1,11 @@
-asset fehlt
+asset present
 format bc_mpo_mag
 tag psa.esa.int
 arm bc_mpo_mag_compiler
 pattern ^bc_mpo_mag\.bin$
 idempotent true
 timeout 60
-note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch); .tab 4828824 B sha256 8d7e6007…; bc-mpo-mag-cdn.yml 2026-09-18.
+note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch); .tab 4828824 B sha256 8d7e6007…; CDN-Asset 1733432 B sha256 8f83ec79… gemessen 2026-09-18.
 
 asset present
 format catalog_gaia_sso
