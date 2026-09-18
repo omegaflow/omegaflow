@@ -3,7 +3,7 @@
   session: Bau-Folge 85
   class: handover
   date: 2026-09-18
-  sha256: 12ebb22d81f9da76b7b145d11af2d469c9191ef77d9a39bff7b97e33a2c4c800
+  sha256: 37f407f28d3263372f485c20a058ebd96062a1c57b33bbb524971bc75c5c951c
   status: live
 -->
 # Handover — Bau-Folge 85 (2026-09-18)
@@ -73,6 +73,22 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - **Scanned-/bild-only-PDFs → `vision`-OCR** und `--pdf-text` Type0/Identity-H
   ohne ToUnicode — kein Bau nötig. · `pending`
 
+## Post von ernte — übernommen (2026-09-18)
+
+- **`register_lookup --open` fehlt.** Der Aufruf gibt die usage-Zeile
+  (`<term> | --live | --history`) statt eines owner-getaggten Zustandsregister-
+  Digests; AGENTS.md (Planungs-Pass) nennt `--open`. Gemessen 2026-09-18:
+  `register_lookup --open` → usage (3 Zeilen). (Schritt: `--open` in
+  `tools/register` bauen — owner-Tags für `blocked_sources.φ`/`pipeline/ledger.φ`/
+  `harvest.φ`/`sources.φ`/`witnesses.φ`/`footprints.φ`/`nrs_stations.φ` — oder
+  AGENTS.md auf `--live` korrigieren.) · `pending`
+- **`deredden_baseline_probe.rs:485` panikt.** `std::fs::write(path, …).unwrap()`
+  bei fehlendem Elternverzeichnis; die Tests schreiben nach
+  `/tmp/opencode/db_probe_*.be19` (`write_be19` :453, Aufrufer :541/:594).
+  Gemessen: measure-gates `35351695849` @`52d0486d` failure (2 Tests).
+  (Schritt: `std::env::temp_dir()` nutzen oder `create_dir_all` vor dem Schreiben;
+  `measure-gates.yml` läuft bereits.) · `pending`
+
 ## Benchmark
 
 - Delegationen: Gremium (`riss`-Verdikt + Tonungs-Bindung, pro/max), `grind-flash`
@@ -90,6 +106,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `.github/workflows/weberin-verdicts-cdn.yml` (neu),
   `docs/handover/handover-2026-09-18-bau-folge85.md` (neu), Move
   `handover-2026-09-18-bau-folge84.md` → `archiv/`.
+- **Post:** die zwei `An bau`-Zeilen sind gefaltet und im Arbeitsbaum aus
+  `docs/handover/post.md` entfernt; `post.md` bleibt **uncommittet**, weil es
+  die fremde, uncommittete `An entscheid`-Zeile trägt (kein Re-Stage fremder
+  Arbeit) — die Löschung committet die nächste `post.md`-Session mit.
 - **Fremd (nicht anfassen):** `tools/measure/src/bin/silence_map_probe.rs` (fremd
   modifiziert), die `handover-2026-09-16-*`-Renames/Deletes,
   `src/mathematikerin/te.rs` (von forschung committet). Nie ein nacktes
