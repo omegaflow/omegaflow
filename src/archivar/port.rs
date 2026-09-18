@@ -148,11 +148,12 @@ pub fn port_block(block: &str) -> String {
     } else if named_keys && map_line.is_some() {
         out.push_str("on earth 0 0 0\n");
     } else if let (Some(lat), Some(lon)) = (lat, lon) {
-        let alt_val = match alt {
-            Some(a) => a,
-            None => 0.0,
-        };
-        out.push_str(&format!("on earth {} {} {}\n", lat, lon, alt_val));
+        match alt {
+            Some(a) => out.push_str(&format!("on earth {} {} {}\n", lat, lon, a)),
+            None => eprintln!(
+                "port: block refused 'on' — lat/lon without alt (declare alt); the alt-less frame is not representable"
+            ),
+        }
     }
     if let Some(m) = &map_line {
         if celestial {

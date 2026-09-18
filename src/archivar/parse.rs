@@ -1515,7 +1515,7 @@ pub fn refuse_shard_overlaps(sources: Vec<SourceConfig>) -> Vec<SourceConfig> {
         match shard_range_of(&src) {
             None => kept.push(src),
             Some((lo, hi)) => {
-                if !(lo < hi) {
+                if lo.partial_cmp(&hi) != Some(std::cmp::Ordering::Less) {
                     eprintln!(
                         "source refused: shard TDB range [{}, {}) is not half-open at {}",
                         lo, hi, src.url
@@ -1663,7 +1663,7 @@ mod tests {
         let mut origin = false;
         let mut compiler = false;
         for line in content.lines() {
-            let mut words = line.trim().split_whitespace();
+            let mut words = line.split_whitespace();
             match words.next() {
                 Some("url") => {
                     if cdn && !(origin && compiler) {
