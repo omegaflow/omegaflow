@@ -34,9 +34,17 @@ fn listing_hrefs(html: &[u8]) -> Vec<String> {
     names
 }
 
+fn year_dir_selected(name: &str, year: &str) -> bool {
+    if name.len() == 7 && name.bytes().all(|b| b.is_ascii_digit()) {
+        return name.starts_with(year);
+    }
+    true
+}
+
 fn collect_trk_files(
     seed: &str,
     depth: usize,
+    year: &str,
     out: &mut Vec<String>,
     visited: &mut HashSet<String>,
 ) {
@@ -54,12 +62,15 @@ fn collect_trk_files(
             continue;
         }
         if href.ends_with('/') && !href.starts_with("../") {
-            dirs.push(format!("{seed}{href}"));
+            let name = &href[..href.len() - 1];
+            if year_dir_selected(name, year) {
+                dirs.push(format!("{seed}{href}"));
+            }
         }
     }
     for d in dirs {
         if visited.insert(d.clone()) {
-            collect_trk_files(&d, depth - 1, out, visited);
+            collect_trk_files(&d, depth - 1, year, out, visited);
         }
     }
 }
@@ -109,10 +120,20 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let list_mode = args.iter().any(|a| a == "--list");
+    let year = args
+        .iter()
+        .position(|a| a == "--year")
+        .and_then(|i| args.get(i + 1))
+        .map(|s| s.as_str());
+    if !list_mode && year.is_none() {
+        eprintln!("usage: lro_trk_compiler --year <YYYY> [--list] [--ci-mode]");
+        std::process::exit(2);
+    }
+    let year = year.unwrap_or("");
     let mut files: Vec<String> = Vec::new();
     let mut visited: HashSet<String> = HashSet::new();
     visited.insert(LISTING.to_string());
-    collect_trk_files(LISTING, MAX_DEPTH, &mut files, &mut visited);
+    collect_trk_files(LISTING, MAX_DEPTH, year, &mut files, &mut visited);
     if files.is_empty() {
         eprintln!("{LISTING}: no .TRK files in listing tree — the series stays unwritten (0 honored)");
         return;
@@ -154,10 +175,11 @@ fn main() {
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
     std::fs::create_dir_all(DIR).ok();
 
+    let asset_prefix = format!("{PREFIX}_{year}");
     let budget = 8 + (odf::PODF_SHARD_BUDGET - 8) * 72 / ROW_BYTES;
     let ranges = odf::podf_shard_ranges(merged.len(), budget);
     if ranges.len() == 1 {
-        let out = format!("{DIR}/{PREFIX}.bin");
+        let out = format!("{DIR}/{asset_prefix}.bin");
         write_and_verify(&merged, &out);
         if ci_mode && !upload_release(NETLOC, &out) {
             std::process::exit(1);
@@ -170,9 +192,9 @@ fn main() {
     for (ord, &(lo, hi)) in ranges.iter().enumerate() {
         let t_lo = merged[lo][0];
         let t_hi = merged[hi - 1][0];
-        let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
+        let mut name = odf::podf_shard_name(&asset_prefix, t_lo, t_hi);
         if names.contains(&name) {
-            name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
+            name = odf::podf_shard_name_ord(&asset_prefix, t_lo, t_hi, ord);
         }
         names.push(name.clone());
         let path = format!("{DIR}/{name}");
@@ -203,5 +225,18 @@ fn main() {
                 std::process::exit(1);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::year_dir_selected;
+
+    #[test]
+    fn year_dir_selection() {
+        assert!(year_dir_selected("2009169", "2009"));
+        assert!(!year_dir_selected("2009169", "2012"));
+        assert!(year_dir_selected("LRO_ES_01", "2009"));
+        assert!(year_dir_selected("../", "2009"));
     }
 }
