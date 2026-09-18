@@ -1,6 +1,7 @@
+use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::range::{
-    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
-    sigv4_headers,
+    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_range,
+    fetch_s3_range, sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
@@ -28,6 +29,9 @@ const LIST_MAX_KEYS: u32 = 20;
 const LIST_MAX_T_S: u64 = 1 << 7;
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const BEAMS: [&str; 6] = ["gt1l", "gt1r", "gt2l", "gt2r", "gt3l", "gt3r"];
+const CMR_GRANULES_URL: &str = "https://cmr.earthdata.nasa.gov/search/granules.json";
+const ATL03_SHORT_NAME: &str = "ATL03";
+const ATL03_VERSION: &str = "007";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -111,6 +115,17 @@ fn atl03_granule_start_unix(key: &str) -> Option<f64> {
 
 fn granule_anchor_tdb(key: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(atl03_granule_start_unix(key)?)
+}
+
+fn day_temporal(day: &str) -> Option<(String, String)> {
+    let year: i64 = day.get(0..4)?.parse().ok()?;
+    let month: i64 = day.get(5..7)?.parse().ok()?;
+    let dom: i64 = day.get(8..10)?.parse().ok()?;
+    days_from_civil(year, month, dom)?;
+    Some((
+        format!("{year:04}-{month:02}-{dom:02}T00:00:00Z"),
+        format!("{year:04}-{month:02}-{dom:02}T23:59:59Z"),
+    ))
 }
 
 fn uri_encode_query(s: &str) -> String {
@@ -242,6 +257,124 @@ fn list_page(
     parse_page(&String::from_utf8_lossy(&out.stdout))
 }
 
+enum GranuleFetch {
+    S3 { s3_url: String, creds: S3Credentials },
+    Bearer { url: String, token: String },
+}
+
+impl GranuleFetch {
+    fn range(&self, offset: u64, len: u64) -> Option<Vec<u8>> {
+        match self {
+            GranuleFetch::S3 { s3_url, creds } => fetch_s3_range(s3_url, offset, len, Some(creds)),
+            GranuleFetch::Bearer { url, token } => fetch_range(
+                url,
+                offset,
+                len,
+                &[("Authorization".to_string(), format!("Bearer {token}"))],
+            ),
+        }
+    }
+}
+
+fn clone_creds(creds: &S3Credentials) -> S3Credentials {
+    S3Credentials {
+        access_key: creds.access_key.clone(),
+        secret_key: creds.secret_key.clone(),
+        session_token: creds.session_token.clone(),
+    }
+}
+
+struct CmrGranule {
+    url: String,
+}
+
+fn cmr_fetch(url: &str) -> Option<String> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("-g")
+        .arg("--retry")
+        .arg("3")
+        .arg("--retry-all-errors")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("-m")
+        .arg(LIST_MAX_T_S.to_string())
+        .arg("--connect-timeout")
+        .arg(CONNECT_BOUND_S.to_string());
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    if !out.status.success() {
+        eprintln!(
+            "cmr returned ({}): {} {}",
+            out.status,
+            url,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        return None;
+    }
+    Some(String::from_utf8_lossy(&out.stdout).into_owned())
+}
+
+fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
+    let json = parse_json(body)?;
+    let JsonVal::Obj(mut map) = json else {
+        return None;
+    };
+    let feed = map.remove("feed")?;
+    let JsonVal::Obj(mut feed) = feed else {
+        return None;
+    };
+    let entry = feed.remove("entry")?;
+    let JsonVal::Arr(entries) = entry else {
+        return None;
+    };
+    let mut out = Vec::new();
+    for e in entries {
+        let JsonVal::Obj(mut e) = e else { continue };
+        let links = e.remove("links")?;
+        let JsonVal::Arr(links) = links else { continue };
+        let mut url = None;
+        for l in links {
+            let JsonVal::Obj(mut l) = l else { continue };
+            let rel = match l.remove("rel") {
+                Some(JsonVal::Str(s)) => s,
+                _ => continue,
+            };
+            let href = match l.remove("href") {
+                Some(JsonVal::Str(s)) => s,
+                _ => continue,
+            };
+            if rel.ends_with("/data#") && href.ends_with(".h5") {
+                url = Some(href);
+                break;
+            }
+        }
+        let Some(url) = url else { continue };
+        out.push(CmrGranule { url });
+    }
+    Some(out)
+}
+
+fn cmr_granules(
+    short_name: &str,
+    version: &str,
+    temporal: &str,
+    page_size: usize,
+) -> Option<Vec<CmrGranule>> {
+    let query = format!(
+        "short_name={}&version={}&temporal={}&page_size={}",
+        uri_encode_query(short_name),
+        uri_encode_query(version),
+        uri_encode_query(temporal),
+        page_size
+    );
+    let url = format!("{CMR_GRANULES_URL}?{query}");
+    cmr_parse(&cmr_fetch(&url)?)
+}
+
 fn attr_number(obj: &Hdf5Object, name: &str) -> Option<f64> {
     let a = obj.attrs.iter().find(|a| a.name == name)?;
     match a.datatype.class {
@@ -366,12 +499,7 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
     }
 }
 
-fn first_values(
-    file: &Hdf5File,
-    s3_url: &str,
-    creds: &S3Credentials,
-    path: &str,
-) -> Option<Vec<f64>> {
+fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = file.dataset(path).ok()?;
     if dt.class == 9 || dt.class == 3 {
         return None;
@@ -390,9 +518,7 @@ fn first_values(
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
             let coords = vec![0u64; rank];
-            let chunk = file.read_chunk(path, &coords, |off, len| {
-                fetch_s3_range(s3_url, off, len, Some(creds))
-            })?;
+            let chunk = file.read_chunk(path, &coords, |off, len| fetch.range(off, len))?;
             values.extend(chunk.into_iter().take(want as usize));
         }
         Some(Hdf5Layout::Contiguous { addr, size }) => {
@@ -400,7 +526,7 @@ fn first_values(
             if bytes_want == 0 {
                 return None;
             }
-            let raw = fetch_s3_range(s3_url, *addr, bytes_want, Some(creds))?;
+            let raw = fetch.range(*addr, bytes_want)?;
             for i in 0..(raw.len() / elem) {
                 values.push(decode_value(&raw, i, dt)?);
             }
@@ -419,8 +545,7 @@ fn first_values(
 
 fn extract_from(
     file: &Hdf5File,
-    s3_url: &str,
-    creds: &S3Credentials,
+    fetch: &GranuleFetch,
     beams: usize,
     anchor_tdb: f64,
 ) -> Vec<[f64; REC_FIELDS]> {
@@ -431,19 +556,19 @@ fn extract_from(
             break;
         }
         let base = format!("{beam}/heights");
-        let Some(dts) = first_values(file, s3_url, creds, &format!("{base}/delta_time")) else {
+        let Some(dts) = first_values(file, fetch, &format!("{base}/delta_time")) else {
             continue;
         };
-        let Some(lats) = first_values(file, s3_url, creds, &format!("{base}/lat_ph")) else {
+        let Some(lats) = first_values(file, fetch, &format!("{base}/lat_ph")) else {
             continue;
         };
-        let Some(lons) = first_values(file, s3_url, creds, &format!("{base}/lon_ph")) else {
+        let Some(lons) = first_values(file, fetch, &format!("{base}/lon_ph")) else {
             continue;
         };
-        let Some(hs) = first_values(file, s3_url, creds, &format!("{base}/h_ph")) else {
+        let Some(hs) = first_values(file, fetch, &format!("{base}/h_ph")) else {
             continue;
         };
-        let Some(qs) = first_values(file, s3_url, creds, &format!("{base}/quality_ph")) else {
+        let Some(qs) = first_values(file, fetch, &format!("{base}/quality_ph")) else {
             continue;
         };
         let n = [dts.len(), lats.len(), lons.len(), hs.len(), qs.len()]
@@ -471,38 +596,32 @@ fn extract_from(
 }
 
 fn harvest_granule(
-    s3_url: &str,
-    creds: &S3Credentials,
+    fetch: &GranuleFetch,
+    label: &str,
     beams: usize,
     anchor_tdb: f64,
 ) -> Vec<[f64; REC_FIELDS]> {
-    let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
-        eprintln!(
-            "{}: range read returned void — granule stays pending",
-            s3_url
-        );
+    let Some(w1) = fetch.range(0, META_WINDOW) else {
+        eprintln!("{label}: range read returned void — granule stays pending");
         return Vec::new();
     };
     match Hdf5File::parse(&w1) {
-        Ok(file) => extract_from(&file, s3_url, creds, beams, anchor_tdb),
+        Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
         Err(note) => {
             eprintln!(
-                "{}: header window of {} B stayed unread ({:?}) — escalating once",
-                s3_url, META_WINDOW, note
+                "{label}: header window of {} B stayed unread ({:?}) — escalating once",
+                META_WINDOW, note
             );
-            let Some(w2) = fetch_s3_range(s3_url, 0, META_ESCALATION, Some(creds)) else {
-                eprintln!(
-                    "{}: escalated range read returned void — granule stays pending",
-                    s3_url
-                );
+            let Some(w2) = fetch.range(0, META_ESCALATION) else {
+                eprintln!("{label}: escalated range read returned void — granule stays pending");
                 return Vec::new();
             };
             match Hdf5File::parse(&w2) {
-                Ok(file) => extract_from(&file, s3_url, creds, beams, anchor_tdb),
+                Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
                 Err(n2) => {
                     eprintln!(
-                        "{}: metadata beyond {} B ({:?}) — granule stays pending",
-                        s3_url, META_ESCALATION, n2
+                        "{label}: metadata beyond {} B ({:?}) — granule stays pending",
+                        META_ESCALATION, n2
                     );
                     Vec::new()
                 }
@@ -597,31 +716,22 @@ fn run_list(args: &[String]) {
     }
 }
 
+struct Chosen {
+    fetch: GranuleFetch,
+    key: String,
+    size: u64,
+}
+
 fn run_harvest(args: &[String]) {
     let out_path = arg_value(args, "--out").unwrap_or(DEFAULT_OUT.to_string());
-    let prefix = match arg_value(args, "--day") {
-        Some(d) => format!("{PRODUCT_ROOT}{VERSION}/{}/", d.replace('.', "/")),
-        None => match arg_value(args, "--prefix") {
-            Some(p) => p,
-            None => {
-                eprintln!(
-                    "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
-                );
-                std::process::exit(2);
-            }
-        },
-    };
     let limit = arg_usize(args, "--limit").unwrap_or(2).clamp(1, 8);
     let beams = arg_usize(args, "--beams")
         .unwrap_or(BEAMS.len())
         .clamp(1, BEAMS.len());
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let cmr = args.iter().any(|a| a == "--cmr");
     let Some(token) = edl_token() else {
         eprintln!("EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token");
-        std::process::exit(2);
-    };
-    let Some(creds) = edl_s3_credentials_for(BUCKET, &token) else {
-        eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
         std::process::exit(2);
     };
     let Some(lsk) = embedded_lsk() else {
@@ -630,41 +740,111 @@ fn run_harvest(args: &[String]) {
         );
         std::process::exit(1);
     };
-    let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
-    let Some((objects, truncated, _)) = list_page(BUCKET, &prefix, false, list_keys, &creds) else {
-        eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
-        std::process::exit(1);
-    };
-    if truncated {
-        eprintln!(
-            "icesat2-atl03: the listing at s3://{BUCKET}/{prefix} is truncated — the harvest is partial"
-        );
+    let mut chosen: Vec<Chosen> = Vec::new();
+    if cmr {
+        let version = arg_value(args, "--version").unwrap_or(ATL03_VERSION.to_string());
+        let Some(day) = arg_value(args, "--day") else {
+            eprintln!(
+                "usage: icesat2_atl03_compiler --cmr --day <YYYY.MM.DD> [--version 007] [--limit N] [--beams N] [--out <path>] [--ci-mode] — refused"
+            );
+            std::process::exit(2);
+        };
+        let Some((start, end)) = day_temporal(&day) else {
+            eprintln!("icesat2-atl03: --day {day} carries no civil date (YYYY.MM.DD) — refused");
+            std::process::exit(2);
+        };
+        let page_size = limit.saturating_add(8).min(64);
+        let Some(granules) =
+            cmr_granules(ATL03_SHORT_NAME, &version, &format!("{start},{end}"), page_size)
+        else {
+            eprintln!(
+                "icesat2-atl03: the CMR granule search returned void for {ATL03_SHORT_NAME} v{version} on {day}"
+            );
+            std::process::exit(1);
+        };
+        if granules.is_empty() {
+            eprintln!(
+                "icesat2-atl03: no CMR granules for {ATL03_SHORT_NAME} v{version} on {day} — nothing fabricated"
+            );
+            std::process::exit(1);
+        }
+        let mut granules = granules;
+        granules.sort_by(|a, b| a.url.cmp(&b.url));
+        granules.truncate(limit);
+        for g in granules {
+            chosen.push(Chosen {
+                fetch: GranuleFetch::Bearer {
+                    url: g.url.clone(),
+                    token: token.clone(),
+                },
+                key: g.url,
+                size: 0,
+            });
+        }
+    } else {
+        let prefix = match arg_value(args, "--day") {
+            Some(d) => format!("{PRODUCT_ROOT}{VERSION}/{}/", d.replace('.', "/")),
+            None => match arg_value(args, "--prefix") {
+                Some(p) => p,
+                None => {
+                    eprintln!(
+                        "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --cmr --day <YYYY.MM.DD> [--version 007] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
+                    );
+                    std::process::exit(2);
+                }
+            },
+        };
+        let Some(creds) = edl_s3_credentials_for(BUCKET, &token) else {
+            eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
+            std::process::exit(2);
+        };
+        let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
+        let Some((objects, truncated, _)) = list_page(BUCKET, &prefix, false, list_keys, &creds)
+        else {
+            eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
+            std::process::exit(1);
+        };
+        if truncated {
+            eprintln!(
+                "icesat2-atl03: the listing at s3://{BUCKET}/{prefix} is truncated — the harvest is partial"
+            );
+        }
+        if objects.is_empty() {
+            eprintln!("icesat2-atl03: no granules at s3://{BUCKET}/{prefix} — nothing fabricated");
+            std::process::exit(1);
+        }
+        let mut objects = objects;
+        objects.sort_by(|a, b| a.key.cmp(&b.key));
+        objects.truncate(limit);
+        for obj in objects {
+            let s3_url = format!("s3://{BUCKET}/{}", obj.key);
+            chosen.push(Chosen {
+                fetch: GranuleFetch::S3 {
+                    s3_url,
+                    creds: clone_creds(&creds),
+                },
+                key: obj.key,
+                size: obj.size,
+            });
+        }
     }
-    if objects.is_empty() {
-        eprintln!("icesat2-atl03: no granules at s3://{BUCKET}/{prefix} — nothing fabricated");
-        std::process::exit(1);
-    }
-    let mut chosen = objects;
-    chosen.sort_by(|a, b| a.key.cmp(&b.key));
-    chosen.truncate(limit);
     let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
-    for obj in &chosen {
-        let Some(anchor_tdb) = granule_anchor_tdb(&obj.key, &lsk) else {
+    for c in &chosen {
+        let Some(anchor_tdb) = granule_anchor_tdb(&c.key, &lsk) else {
             eprintln!(
                 "icesat2-atl03: {} carries no absolute granule anchor — the granule stays pending",
-                obj.key
+                c.key
             );
             continue;
         };
-        let s3_url = format!("s3://{BUCKET}/{}", obj.key);
         let before = recs.len();
-        let granule = harvest_granule(&s3_url, &creds, beams, anchor_tdb);
+        let granule = harvest_granule(&c.fetch, &c.key, beams, anchor_tdb);
         recs.extend(granule);
         eprintln!(
             "icesat2-atl03: {} → {} records ({} B granule)",
-            obj.key,
+            c.key,
             recs.len() - before,
-            obj.size
+            c.size
         );
     }
     recs.sort_by(|a, b| a[0].total_cmp(&b[0]));
@@ -807,5 +987,31 @@ mod tests {
         assert!(amz.starts_with(&date_stamp));
         assert!(amz.ends_with('Z'));
         assert_eq!(amz.len(), 16);
+    }
+
+    #[test]
+    fn day_temporal_spans_the_civil_day() {
+        let (start, end) = day_temporal("2026.06.30").expect("civil day");
+        assert_eq!(start, "2026-06-30T00:00:00Z");
+        assert_eq!(end, "2026-06-30T23:59:59Z");
+        assert!(day_temporal("not-a-day").is_none());
+        assert!(day_temporal("2026.13.40").is_none());
+    }
+
+    #[test]
+    fn cmr_parse_takes_the_h5_data_link_and_skips_s3_and_browse() {
+        let body = r#"{"feed":{"entry":[
+          {"links":[
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/s3#","href":"s3://nsidc-cumulus-prod-protected/ATLAS/ATL03/007/2026/06/30/a.h5"},
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/browse#","href":"https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-public/x.jpg"},
+            {"rel":"http://esipfed.org/ns/fedsearch/1.1/data#","href":"https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL03/007/2026/06/30/a.h5"}
+          ]}
+        ]}}"#;
+        let granules = cmr_parse(body).expect("feed parses");
+        assert_eq!(granules.len(), 1);
+        assert_eq!(
+            granules[0].url,
+            "https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL03/007/2026/06/30/a.h5"
+        );
     }
 }
