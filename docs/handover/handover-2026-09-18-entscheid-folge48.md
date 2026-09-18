@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Entscheid-Folge 47 (Stand 2026-09-18)
-  session: Entscheid-Folge 47
+  title: Handover — Entscheid-Folge 48 (Stand 2026-09-18)
+  session: Entscheid-Folge 48
   class: handover
   date: 2026-09-18
-  sha256: 34aa49e46f51d05de4a00d8edcded2f3a97187d88ed699f1e9056ab9c79ad2d9
+  sha256: 402435b19965793ae2eb15131155697e5eabd145d5eda06668355fd36d0d2341
   status: live
 -->
-# Handover — Entscheid-Folge 47 (2026-09-18)
+# Handover — Entscheid-Folge 48 (2026-09-18)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
@@ -33,23 +33,30 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## Stehender Pass (gemessen 2026-09-18, Entscheid-Folge 47)
+## Stehender Pass (gemessen 2026-09-18, Entscheid-Folge 48)
 
-- **HEAD** `b67f5cae` == `origin/main`. Baum stark fremd bewegt (fremd
-  uncommittet, nicht angefasst): `src/archivar/*` (u. a. `fugin.rs` neu),
-  `opencode.json`, `phi/blocked_sources.φ`, drei `handover-2026-09-16-*`-Renames.
-- **CI** — `ci_manage list` 2026-09-18: `ci-check` `35318815330` pending,
-  `35318671509` cancelled; `harvest` `35317120978`/`35317118656`/`35317116366`
+- **HEAD** beim Start `65cf5341` == `origin/main`; während der Session hat die
+  Ernte-Linie auf `91741691` gepusht. Baum stark fremd bewegt (fremd uncommittet,
+  nicht angefasst): `src/archivar/{hdf5,range}.rs`, `opencode.json`,
+  `phi/bindings/*`, drei `*_compiler.rs`, drei `handover-2026-09-16-*`-Renames.
+- **CI** — `ci_manage list` 2026-09-18: `ci-check` `35321915984` pending,
+  `35321200805` in_progress; `harvest` `35317120978`/`35317118656`/`35317116366`
   failure (Ernte-Linie); `swpc-mirror-cdn` `35319011399` success. Watchdog-Snapshot
-  09:06 oben. `external-state`-CI-Zeile auf `b67f5cae` fortgeschrieben.
-- **Postfach** — kein neuer Agenten-Eingang (letzter Ledger `1789689115`,
-  2026-09-18, Publika/Rubin, kein Agenten-Reply) → zitiert, kein Re-Mess.
-- **Post** — `docs/handover/post.md` leer; keine Nachricht an die Entscheid-Linie.
+  09:06 oben.
+- **Post** — `docs/handover/post.md` trägt nur `An ernte` (LRO-utF harvest-long);
+  keine Nachricht an die Entscheid-Linie.
+- **Postfach** — kein neuer Agenten-Eingang zitiert (letzter Ledger `1789689115`,
+  2026-09-18, Publika/Rubin, kein Agenten-Reply); `smail` ist `ask`, die Messung
+  führt der `line`-Agent in Phase 2.
 - **Lasair-LSST (neu gemessen)** — `api.lasair.lsst.ac.uk` (Root + `/api/query`)
   → **502** (nginx upstream absent, 166 B) über **zwei** Exits (US
   `149.102.242.106`, SG `149.50.211.161`); Hauptseite `lasair.lsst.ac.uk/` → 200.
   Kein Geoblock/IP-Block — das API-Backend antwortet nicht; Exit-Rotation nutzlos.
-- **Digest** `register_lookup --live`: 555 offene Zeilen / 110 Docs. Die
+  Status-Seite `lasair.lsst.ac.uk/`: „scheduled maintenance … fully offline Sept
+  14–16, at-risk on Sept 17-18" (Stand 2026-09-10 14:17 UTC); meldet „Lasair
+  LSST: Up" (status code 200, 2026-09-18 07:58 UTC) — das misst das Web-Frontend,
+  nicht das API-Backend; der 502 fällt in das at-risk-Fenster.
+- **Digest** `register_lookup --live`: 553 offene Zeilen / 111 Docs. Die
   owner-getaggten Pipeline-Register fehlen noch — PATH-Binary ist der alte Build.
 
 ## Handlungsfähig — Auswahlpunkte
@@ -57,8 +64,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 **Kein session-abarbeitbarer undatierter Punkt.** Die operator-gebundenen Punkte
 liegen dem Operator vor; blockiert/wartend sind keine Auswahlpunkte.
 
-- `pending` — **Lasair-LSST**: API 502 (Backend absent), gemessen 2026-09-18 über
-  US + SG; `LASAIR_LSST_TOKEN` unverified. (Schritt: Re-Messung
+- `pending` — **Lasair-LSST**: API 502 (Backend absent) im Wartungsfenster
+  (14.–16.09. offline, 17.–18.09. at-risk; Status-Seite meldet Frontend „Up"),
+  gemessen 2026-09-18 über US + SG; `LASAIR_LSST_TOKEN` unverified. (Schritt:
+  Re-Messung nach Wartungsende
   `ALL_PROXY=socks5h://127.0.0.1:25344 curl -o /dev/null -w '%{http_code}'
   https://api.lasair.lsst.ac.uk/api/query` — Trigger in `external-state`.)
 - `wartend` — **SuperDARN**: Request 2026-09-18 gesendet (Operator, von
@@ -101,11 +110,12 @@ liegen dem Operator vor; blockiert/wartend sind keine Auswahlpunkte.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- `docs/handover/handover-2026-09-18-entscheid-folge47.md`
-- `docs/handover/archiv/handover-2026-09-18-entscheid-folge46.md` (Move)
-- `docs/zustand/external-state.md` (CI-Zeile auf `b67f5cae`; Lasair-Zeile neu)
-- Fremd uncommittet/rot (nicht angefasst): `src/archivar/*` (u. a. `fugin.rs` neu),
-  `opencode.json`, `phi/blocked_sources.φ`, die drei `handover-2026-09-16-*`-Renames.
+- `docs/handover/handover-2026-09-18-entscheid-folge48.md`
+- `docs/handover/archiv/handover-2026-09-18-entscheid-folge47.md` (Move)
+- `docs/zustand/external-state.md` (Header-sha-Korrektur; Lasair-Zeile)
+- Fremd uncommittet (nicht angefasst): `src/archivar/{hdf5,range}.rs`,
+  `opencode.json`, `phi/bindings/*`, drei `*_compiler.rs`, die drei
+  `handover-2026-09-16-*`-Renames.
 
 ## Benchmark
 
