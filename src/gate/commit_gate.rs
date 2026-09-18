@@ -947,6 +947,50 @@ pub fn declared_canon() -> Vec<String> {
         .collect()
 }
 
+pub const PHI_NOTE_MAX: usize = 256;
+
+pub fn prose_violation(line: &str) -> Option<&'static str> {
+    if line.starts_with("note ") && line.chars().count() > PHI_NOTE_MAX {
+        return Some("phi-note-length");
+    }
+    if line.starts_with('#') {
+        return Some("phi-register-comment");
+    }
+    None
+}
+
+const REGISTER_SECTIONS: [&str; 6] = [
+    "Maschinen-Register",
+    "Dispositions-Register",
+    "Harvest-Master",
+    "Bindings",
+    "Stationstabellen",
+    "Reports",
+];
+
+pub fn register_classes() -> Vec<String> {
+    let text = match fs::read_to_string("phi/canon.φ") {
+        Ok(t) => t,
+        Err(_) => return Vec::new(),
+    };
+    let mut out: Vec<String> = Vec::new();
+    let mut active = false;
+    for line in text.lines() {
+        let t = line.trim();
+        if let Some(name) = t
+            .strip_prefix("# --- ")
+            .and_then(|rest| rest.strip_suffix(" ---"))
+        {
+            active = REGISTER_SECTIONS.contains(&name);
+            continue;
+        }
+        if active && t.starts_with("phi/") && t.ends_with(".φ") {
+            out.push(t.to_string());
+        }
+    }
+    out
+}
+
 pub fn home_of(path: &str) -> Option<&'static str> {
     match classify_home(path) {
         Some(Home::German) => Some("deutsch"),
@@ -1988,5 +2032,57 @@ mod tests {
         let mut g = test_gate();
         let args = format!(r#"{{"command":"{}"}}"#, fx("consent_get"));
         assert!(g.check_tool_call("bash", &args).is_none());
+    }
+
+    #[test]
+    fn fn_prose_note_256_chars_passes() {
+        let line = format!("note {}", "x".repeat(PHI_NOTE_MAX - "note ".len()));
+        assert_eq!(line.chars().count(), PHI_NOTE_MAX);
+        assert!(prose_violation(&line).is_none());
+    }
+
+    #[test]
+    fn fp_prose_note_257_chars_blocked() {
+        let line = format!("note {}", "x".repeat(PHI_NOTE_MAX + 1 - "note ".len()));
+        assert_eq!(line.chars().count(), PHI_NOTE_MAX + 1);
+        assert_eq!(prose_violation(&line), Some("phi-note-length"));
+    }
+
+    #[test]
+    fn fp_prose_comment_line_blocked() {
+        assert_eq!(prose_violation("# comment"), Some("phi-register-comment"));
+        assert_eq!(
+            prose_violation("# --- section ---"),
+            Some("phi-register-comment")
+        );
+    }
+
+    #[test]
+    fn fn_prose_clean_line_passes() {
+        assert!(prose_violation("note prosa bleibt kurz").is_none());
+        assert!(prose_violation("url https://example.org").is_none());
+        assert!(prose_violation("").is_none());
+    }
+
+    #[test]
+    fn fp_prose_fixtures_carry_the_two_kinds() {
+        assert_eq!(
+            prose_violation(&fx("phi_register_note_over_256")),
+            Some("phi-note-length")
+        );
+        assert_eq!(
+            prose_violation(&fx("phi_register_comment")),
+            Some("phi-register-comment")
+        );
+    }
+
+    #[test]
+    fn fn_register_classes_hold_registers_not_canon() {
+        let classes = register_classes();
+        assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
+        assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
+        assert!(!classes.iter().any(|p| p.starts_with("phi/pipeline/")));
+        assert!(classes.iter().any(|p| p == "phi/bindings/dust-maske.φ"));
+        assert!(classes.iter().any(|p| p == "phi/reports/scan_coverage.φ"));
     }
 }
