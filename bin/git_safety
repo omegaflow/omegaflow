@@ -1,7 +1,7 @@
 #!/bin/sh
-# The working-tree safety net the sessions run: builds only when needed, then
-# execs it. A dirty or broken working tree never blocks a call — the existing
-# release binary runs; the rebuild is a CI job, not a per-call tax.
+# The working-tree safety net the sessions run: execs the release binary; the
+# build belongs to CI. A dirty or broken working tree never blocks a call — the
+# existing release binary runs, and a binary older than the tree still runs.
 set -u
 self="$0"
 while [ -h "$self" ]; do
@@ -11,20 +11,12 @@ while [ -h "$self" ]; do
 done
 root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
 bin="$root/target/release/git_safety"
-stamp="$root/target/release/.git_safety_build_stamp"
-needs_build=0
 if [ ! -x "$bin" ]; then
-    needs_build=1
-elif find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
-        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
-    needs_build=1
-fi
-if [ "$needs_build" = 1 ] && { [ ! -f "$stamp" ] || find "$stamp" -mmin +5 | grep -q .; }; then
-    (cd "$root" && cargo build --release -q -p omegaflow-utils --bin git_safety 2>/dev/null) || true
-    touch "$stamp"
-fi
-if [ ! -x "$bin" ]; then
-    echo "git_safety: no release binary and the rebuild failed (the tree does not compile) — the build belongs to CI" >&2
+    echo "git_safety: no release binary on PATH — the build belongs to CI" >&2
     exit 2
+fi
+if find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
+        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
+    echo "git_safety: release binary is older than the tree — running the existing binary; the rebuild belongs to CI" >&2
 fi
 exec "$bin" "$@"
