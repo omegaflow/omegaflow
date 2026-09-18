@@ -49,6 +49,20 @@ const RELEASED_MARKERS: &[&str] = &["descoped"];
 const ZUSTAND_PATH: &str = "docs/zustand/external-state.md";
 const POST_PATH: &str = "docs/handover/post.md";
 
+const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
+const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
+const SOURCES_PATH: &str = "phi/sources.\u{3c6}";
+const WITNESSES_PATH: &str = "phi/witnesses.\u{3c6}";
+const FOOTPRINTS_PATH: &str = "phi/footprints.\u{3c6}";
+const HARVEST_PATH: &str = "phi/harvest.\u{3c6}";
+const NRS_PATH: &str = "phi/nrs_stations.\u{3c6}";
+const PROBE_PATHS: &[&str] = &[
+    "phi/pipeline/probe_wave.\u{3c6}",
+    "phi/pipeline/probe_hapi_proposed.\u{3c6}",
+    "phi/pipeline/probe_batch_skymap.\u{3c6}",
+];
+const CATALOG_DIR: &str = "phi/pipeline/catalog";
+
 fn snippet(line: &str, max: usize) -> String {
     let trimmed = line.trim();
     if trimmed.chars().count() <= max {
@@ -355,6 +369,402 @@ fn scan_markers(
     }
 }
 
+fn disposition_owner(state: &str) -> Option<&'static str> {
+    let s = state.trim();
+    if s.starts_with("blocked parser-def") {
+        return Some("bau");
+    }
+    if s == "blocked account" || s == "blocked key" {
+        return Some("entscheid");
+    }
+    if s == "blocked ip-blocked" {
+        return Some("ernte");
+    }
+    if s == "pending" {
+        return Some("ernte");
+    }
+    None
+}
+
+#[derive(Debug, PartialEq)]
+enum StateClass {
+    Open(&'static str),
+    Released,
+    Ignored,
+}
+
+fn state_class(state: &str) -> Option<StateClass> {
+    match state.trim() {
+        "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen"
+        | "absent" | "review" => Some(StateClass::Open("ernte")),
+        "parser-gap" | "asset fehlt" => Some(StateClass::Open("bau")),
+        "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
+        | "refused" => Some(StateClass::Released),
+        "asset present" | "index" | "artefakt" | "register" | "infra" | "probe" | "frame"
+        | "listen" | "research" => Some(StateClass::Ignored),
+        _ => None,
+    }
+}
+
+fn emit_classified(
+    path: &str,
+    lineno: usize,
+    state: &str,
+    step: &str,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+    open_count: &mut usize,
+) {
+    match state_class(state) {
+        Some(StateClass::Open(owner)) => {
+            open_out.push(format!(
+                "DISPOSITION\t{}:{}\t[{}] {} | {}",
+                path, lineno, owner, state, step
+            ));
+            *open_count += 1;
+        }
+        Some(StateClass::Released) => {
+            released_out.push(format!(
+                "RELEASED\t{}:{}\t{} | {}",
+                path, lineno, state, step
+            ));
+        }
+        Some(StateClass::Ignored) => {}
+        None => {
+            open_out.push(format!(
+                "DISPOSITION_UNMAPPED\t{}:{}\t{} | {}",
+                path, lineno, state, step
+            ));
+        }
+    }
+}
+
+fn scan_dispositions_text(
+    text: &str,
+    path: &str,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let mut blocks: Vec<(usize, Vec<(usize, &str)>)> = Vec::new();
+    let mut current: Vec<(usize, &str)> = Vec::new();
+    let mut block_start = 1usize;
+    for (idx, line) in text.lines().enumerate() {
+        let lineno = idx + 1;
+        if line.trim().is_empty() {
+            if !current.is_empty() {
+                blocks.push((block_start, std::mem::take(&mut current)));
+            }
+        } else {
+            if current.is_empty() {
+                block_start = lineno;
+            }
+            current.push((lineno, line));
+        }
+    }
+    if !current.is_empty() {
+        blocks.push((block_start, current));
+    }
+
+    let mut n = 0;
+    for (start_line, lines) in blocks {
+        let state = lines[0].1.trim();
+        if state.is_empty() || state.starts_with("note") {
+            continue;
+        }
+        let note = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("note "))
+            .map(|(_, l)| l.trim())
+            .unwrap_or("");
+        let url = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("url "))
+            .map(|(_, l)| l.trim())
+            .unwrap_or("");
+        let step = if note.is_empty() {
+            snippet(url, 160)
+        } else {
+            snippet(note, 160)
+        };
+        if state == "descoped" {
+            released_out.push(format!("RELEASED\t{}:{}\t{} | {}", path, start_line, state, step));
+            n += 1;
+            continue;
+        }
+        match disposition_owner(state) {
+            Some(owner) => {
+                let tag = if state == "pending" && note.to_lowercase().contains("antwort offen")
+                {
+                    "wartend"
+                } else {
+                    owner
+                };
+                open_out.push(format!(
+                    "DISPOSITION\t{}:{}\t[{}] {} | {}",
+                    path, start_line, tag, state, step
+                ));
+            }
+            None => open_out.push(format!(
+                "DISPOSITION_UNMAPPED\t{}:{}\t{} | {}",
+                path, start_line, state, step
+            )),
+        }
+        n += 1;
+    }
+    n
+}
+
+fn scan_dispositions(
+    path: &Path,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    scan_dispositions_text(&text, &path.to_string_lossy(), open_out, released_out)
+}
+
+fn parse_blocks(text: &str) -> Vec<(usize, Vec<(usize, &str)>)> {
+    let mut blocks: Vec<(usize, Vec<(usize, &str)>)> = Vec::new();
+    let mut current: Vec<(usize, &str)> = Vec::new();
+    let mut block_start = 1usize;
+    for (idx, line) in text.lines().enumerate() {
+        let lineno = idx + 1;
+        if line.trim().is_empty() {
+            if !current.is_empty() {
+                blocks.push((block_start, std::mem::take(&mut current)));
+            }
+        } else {
+            if current.is_empty() {
+                block_start = lineno;
+            }
+            current.push((lineno, line));
+        }
+    }
+    if !current.is_empty() {
+        blocks.push((block_start, current));
+    }
+    blocks
+}
+
+fn scan_state_blocks_text(
+    text: &str,
+    path: &str,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let mut open = 0;
+    for (start_line, lines) in parse_blocks(text) {
+        let state = lines[0].1.trim();
+        if state.is_empty() || state.starts_with('#') || state.starts_with("note ") {
+            continue;
+        }
+        let note = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("note "))
+            .map(|(_, l)| l.trim())
+            .unwrap_or("");
+        let step = snippet(note, 120);
+        emit_classified(path, start_line, state, &step, open_out, released_out, &mut open);
+    }
+    open
+}
+
+fn scan_index_text(
+    text: &str,
+    path: &str,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let mut open = 0;
+    for (idx, line) in text.lines().enumerate() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let state = match t.split_whitespace().next() {
+            Some(s) => s,
+            None => continue,
+        };
+        let step = snippet(t, 120);
+        emit_classified(path, idx + 1, state, &step, open_out, released_out, &mut open);
+    }
+    open
+}
+
+fn scan_note_markers_text(
+    text: &str,
+    path: &str,
+    open_markers: &[&str],
+    released_markers: &[&str],
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let mut open = 0;
+    for (idx, line) in text.lines().enumerate() {
+        let t = line.trim();
+        if !t.starts_with("note ") {
+            continue;
+        }
+        let mut state: Option<&str> = None;
+        for m in released_markers {
+            if t.contains(*m) {
+                state = Some(m);
+                break;
+            }
+        }
+        if state.is_none() {
+            for m in open_markers {
+                if t.contains(*m) {
+                    state = Some(m);
+                    break;
+                }
+            }
+        }
+        if let Some(s) = state {
+            let step = snippet(t, 120);
+            emit_classified(path, idx + 1, s, &step, open_out, released_out, &mut open);
+        }
+    }
+    open
+}
+
+fn scan_probe_text(
+    text: &str,
+    path: &str,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let mut open = 0;
+    for (idx, line) in text.lines().enumerate() {
+        let t = line.trim();
+        if !t.starts_with('#') {
+            continue;
+        }
+        let body = t[1..].trim_start();
+        let state = if body.starts_with("pending ") {
+            Some("pending")
+        } else if body.ends_with("review") {
+            Some("review")
+        } else {
+            None
+        };
+        if let Some(s) = state {
+            let step = snippet(t, 120);
+            emit_classified(path, idx + 1, s, &step, open_out, released_out, &mut open);
+        }
+    }
+    open
+}
+
+fn scan_state_blocks(
+    path: &Path,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    scan_state_blocks_text(&text, &path.to_string_lossy(), open_out, released_out)
+}
+
+fn scan_index(
+    path: &Path,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    scan_index_text(&text, &path.to_string_lossy(), open_out, released_out)
+}
+
+fn scan_note_markers(
+    path: &Path,
+    open_markers: &[&str],
+    released_markers: &[&str],
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    scan_note_markers_text(
+        &text,
+        &path.to_string_lossy(),
+        open_markers,
+        released_markers,
+        open_out,
+        released_out,
+    )
+}
+
+fn scan_probe(
+    path: &Path,
+    open_out: &mut Vec<String>,
+    released_out: &mut Vec<String>,
+) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    scan_probe_text(&text, &path.to_string_lossy(), open_out, released_out)
+}
+
+fn scan_catalog_candidates(dir: &Path, out: &mut Vec<String>) -> usize {
+    let entries = match fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return 0,
+    };
+    let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+    paths.sort();
+    let mut total = 0;
+    for path in paths {
+        if !path.is_file() {
+            continue;
+        }
+        let name = file_name_string(&path);
+        if !name.ends_with("\u{3c6}") {
+            continue;
+        }
+        let text = match fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let mut n = 0usize;
+        for line in text.lines() {
+            if line.trim_start().starts_with("candidate ") {
+                n += 1;
+            }
+        }
+        if n == 0 {
+            continue;
+        }
+        out.push(format!(
+            "CANDIDATES\t{}\t{} \u{2192} ernte",
+            path.to_string_lossy(),
+            n
+        ));
+        total += n;
+    }
+    total
+}
+
+fn print_section(name: &str, open_count: usize, open_lines: &[String], released_lines: &[String]) {
+    println!("{} {} offen", name, open_count);
+    for line in open_lines {
+        println!("{}", line);
+    }
+    for line in released_lines {
+        println!("{}", line);
+    }
+}
+
 fn collect_archiv_basenames() -> BTreeMap<String, String> {
     let mut map = BTreeMap::new();
     for dir in ARCHIV_DIRS {
@@ -460,6 +870,12 @@ fn run_open() {
         &mut zustand_out,
     );
     let post = scan_post(Path::new(POST_PATH), &mut post_out);
+    let mut dispo_out: Vec<String> = Vec::new();
+    let dispo = scan_dispositions(
+        Path::new("phi/blocked_sources.\u{3c6}"),
+        &mut dispo_out,
+        &mut released,
+    );
 
     for line in &docs {
         println!("{}", line);
@@ -468,6 +884,9 @@ fn run_open() {
         println!("{}", line);
     }
     for line in &opens {
+        println!("{}", line);
+    }
+    for line in &dispo_out {
         println!("{}", line);
     }
     for line in &zustand_out {
@@ -482,12 +901,86 @@ fn run_open() {
     for line in &dups {
         println!("{}", line);
     }
+
+    let mut ledger_open: Vec<String> = Vec::new();
+    let mut ledger_released: Vec<String> = Vec::new();
+    let ledger = scan_state_blocks(Path::new(LEDGER_PATH), &mut ledger_open, &mut ledger_released);
+    print_section("LEDGER", ledger, &ledger_open, &ledger_released);
+
+    let mut index_open: Vec<String> = Vec::new();
+    let mut index_released: Vec<String> = Vec::new();
+    let index = scan_index(Path::new(INDEX_PATH), &mut index_open, &mut index_released);
+    print_section("INDEX", index, &index_open, &index_released);
+
+    let mut sources_open: Vec<String> = Vec::new();
+    let mut sources_released: Vec<String> = Vec::new();
+    let sources = scan_note_markers(
+        Path::new(SOURCES_PATH),
+        &["pending", "fehlt", "offen"],
+        &["descoped"],
+        &mut sources_open,
+        &mut sources_released,
+    );
+    print_section("SOURCES", sources, &sources_open, &sources_released);
+
+    let mut witnesses_open: Vec<String> = Vec::new();
+    let mut witnesses_released: Vec<String> = Vec::new();
+    let witnesses = scan_note_markers(
+        Path::new(WITNESSES_PATH),
+        &["pending", "absent"],
+        &["declined"],
+        &mut witnesses_open,
+        &mut witnesses_released,
+    );
+    print_section("WITNESSES", witnesses, &witnesses_open, &witnesses_released);
+
+    let mut footprints_open: Vec<String> = Vec::new();
+    let mut footprints_released: Vec<String> = Vec::new();
+    let footprints = scan_note_markers(
+        Path::new(FOOTPRINTS_PATH),
+        &["pending", "absent"],
+        &["refused"],
+        &mut footprints_open,
+        &mut footprints_released,
+    );
+    print_section("FOOTPRINTS", footprints, &footprints_open, &footprints_released);
+
+    let mut harvest_open: Vec<String> = Vec::new();
+    let mut harvest_released: Vec<String> = Vec::new();
+    let harvest = scan_state_blocks(Path::new(HARVEST_PATH), &mut harvest_open, &mut harvest_released);
+    print_section("HARVEST", harvest, &harvest_open, &harvest_released);
+
+    let mut nrs_open: Vec<String> = Vec::new();
+    let mut nrs_released: Vec<String> = Vec::new();
+    let nrs = scan_note_markers(
+        Path::new(NRS_PATH),
+        &["pending", "absent"],
+        &[],
+        &mut nrs_open,
+        &mut nrs_released,
+    );
+    print_section("NRS", nrs, &nrs_open, &nrs_released);
+
+    let mut probe_open: Vec<String> = Vec::new();
+    let mut probe_released: Vec<String> = Vec::new();
+    let mut probe = 0;
+    for p in PROBE_PATHS {
+        probe += scan_probe(Path::new(p), &mut probe_open, &mut probe_released);
+    }
+    print_section("PROBES", probe, &probe_open, &probe_released);
+
+    let mut candidates_out: Vec<String> = Vec::new();
+    let candidates = scan_catalog_candidates(Path::new(CATALOG_DIR), &mut candidates_out);
+    for line in &candidates_out {
+        println!("{}", line);
+    }
+
     let summary: Vec<String> = class_counts
         .iter()
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open [{}]",
+        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates",
         docs.len(),
         opens.len(),
         released.len(),
@@ -495,7 +988,17 @@ fn run_open() {
         unverifiable.len(),
         zustand,
         post,
-        summary.join(", ")
+        dispo,
+        summary.join(", "),
+        ledger,
+        index,
+        sources,
+        witnesses,
+        footprints,
+        harvest,
+        nrs,
+        probe,
+        candidates,
     );
 }
 
@@ -795,7 +1298,7 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -1042,5 +1545,211 @@ mod tests {
             zustand_status("2026-09-16", "new ledger entry", Some("54bb9b9a"), Some(0)),
             ZustandStatus::Pending
         ));
+    }
+
+    #[test]
+    fn disposition_owner_maps_every_known_state() {
+        assert_eq!(
+            disposition_owner("blocked parser-def drs-fits"),
+            Some("bau")
+        );
+        assert_eq!(disposition_owner("blocked parser-def odf"), Some("bau"));
+        assert_eq!(disposition_owner("blocked account"), Some("entscheid"));
+        assert_eq!(disposition_owner("blocked key"), Some("entscheid"));
+        assert_eq!(disposition_owner("blocked ip-blocked"), Some("ernte"));
+        assert_eq!(disposition_owner("pending"), Some("ernte"));
+        assert_eq!(disposition_owner("descoped"), None);
+    }
+
+    #[test]
+    fn scan_dispositions_tags_owner_and_splits_descoped() {
+        let text = "note preamble\n\npending\nurl https://a\nnote offen\n\ndescoped\nurl https://b\nnote nie gebaut\n\nblocked account\nurl https://c\nnote Konto\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 3);
+        assert_eq!(open_out.len(), 2);
+        assert_eq!(released_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:3\t[ernte] pending"));
+        assert!(open_out[1].contains("[entscheid] blocked account"));
+        assert!(released_out[0].starts_with("RELEASED\tb.\u{3c6}:7\t"));
+        assert!(released_out[0].contains("descoped"));
+    }
+
+    #[test]
+    fn scan_dispositions_flags_an_unmapped_state() {
+        let text = "blocked mystery\nurl https://x\nnote y\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(open_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION_UNMAPPED\tb.\u{3c6}:1\t"));
+    }
+
+    #[test]
+    fn scan_dispositions_marks_a_pending_request_as_waiting() {
+        let text = "pending\nurl https://x\nnote Anfrage 2026-09-16, Antwort offen.\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(open_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:1\t[wartend] pending"));
+    }
+
+    #[test]
+    fn state_class_maps_every_register_state() {
+        let table: &[(&str, Option<StateClass>)] = &[
+            ("ausstehend", Some(StateClass::Open("ernte"))),
+            ("verifiziert", Some(StateClass::Open("ernte"))),
+            ("kompiliert", Some(StateClass::Open("ernte"))),
+            ("parser-gap", Some(StateClass::Open("bau"))),
+            ("void", Some(StateClass::Released)),
+            ("disponiert", Some(StateClass::Released)),
+            ("pending", Some(StateClass::Open("ernte"))),
+            ("erledigt", Some(StateClass::Released)),
+            ("ausgelagert", Some(StateClass::Released)),
+            ("descoped", Some(StateClass::Released)),
+            ("fehlt", Some(StateClass::Open("ernte"))),
+            ("offen", Some(StateClass::Open("ernte"))),
+            ("absent", Some(StateClass::Open("ernte"))),
+            ("declined", Some(StateClass::Released)),
+            ("refused", Some(StateClass::Released)),
+            ("asset fehlt", Some(StateClass::Open("bau"))),
+            ("asset present", Some(StateClass::Ignored)),
+            ("review", Some(StateClass::Open("ernte"))),
+            ("index", Some(StateClass::Ignored)),
+            ("artefakt", Some(StateClass::Ignored)),
+            ("register", Some(StateClass::Ignored)),
+            ("infra", Some(StateClass::Ignored)),
+            ("probe", Some(StateClass::Ignored)),
+            ("frame", Some(StateClass::Ignored)),
+            ("listen", Some(StateClass::Ignored)),
+            ("research", Some(StateClass::Ignored)),
+        ];
+        for (state, expected) in table {
+            assert_eq!(
+                state_class(state),
+                *expected,
+                "state {:?} unmapped or mis-mapped",
+                state
+            );
+        }
+    }
+
+    #[test]
+    fn state_class_flags_an_unknown_state() {
+        assert_eq!(state_class("mystery"), None);
+        assert_eq!(state_class("open no-consumer"), None);
+    }
+
+    #[test]
+    fn scan_state_blocks_text_tags_owner_and_splits_released_and_unmapped() {
+        let text = "ausstehend\nkandidat https://a\nnote messung offen\n\nparser-gap\nkandidat https://b\nnote parser fehlt\n\nvoid\nkandidat https://c\nnote tot\n\nmystery\nkandidat https://d\nnote unbekannt\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_state_blocks_text(text, "l.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 2);
+        assert_eq!(open_out.len(), 3);
+        assert_eq!(released_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\tl.\u{3c6}:1\t[ernte] ausstehend"));
+        assert!(open_out[1].starts_with("DISPOSITION\tl.\u{3c6}:5\t[bau] parser-gap"));
+        assert!(open_out[2].starts_with("DISPOSITION_UNMAPPED\tl.\u{3c6}:13\tmystery"));
+        assert!(released_out[0].starts_with("RELEASED\tl.\u{3c6}:9\tvoid"));
+    }
+
+    #[test]
+    fn scan_state_blocks_harvest_tags_asset_fehlt_and_ignores_present() {
+        let text = "asset fehlt\nformat lro_trk\nnote LRO RSS raw tracking\n\nasset present\nformat gaia_sso\nnote gaia asset\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_state_blocks_text(text, "h.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 1);
+        assert_eq!(released_out.len(), 0);
+        assert!(open_out[0].starts_with("DISPOSITION\th.\u{3c6}:1\t[bau] asset fehlt"));
+    }
+
+    #[test]
+    fn scan_index_text_tags_owner_and_splits_released_and_unmapped() {
+        let text = "# header\nausstehend 10 pipeline/queue/x.φ\nerledigt 3 archive/y\nausgelagert 2 archive-root/z\nindex 1 pipeline/catalog/\nvermerkt 9 weird\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_index_text(text, "i.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 2);
+        assert_eq!(released_out.len(), 2);
+        assert!(open_out[0].starts_with("DISPOSITION\ti.\u{3c6}:2\t[ernte] ausstehend"));
+        assert!(open_out[1].starts_with("DISPOSITION_UNMAPPED\ti.\u{3c6}:6\tvermerkt"));
+        assert!(released_out[0].starts_with("RELEASED\ti.\u{3c6}:3\terledigt"));
+        assert!(released_out[1].starts_with("RELEASED\ti.\u{3c6}:4\tausgelagert"));
+    }
+
+    #[test]
+    fn scan_note_markers_text_tags_owner_and_splits_released() {
+        let text = "url https://a\nnote field descoped (gemessen): nie gebaut\n\nurl https://b\nnote sha256 pending (CI re-dispatch)\n\nurl https://c\nnote kein marker\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_note_markers_text(
+            text,
+            "s.\u{3c6}",
+            &["pending", "fehlt", "offen"],
+            &["descoped"],
+            &mut open_out,
+            &mut released_out,
+        );
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 1);
+        assert_eq!(released_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\ts.\u{3c6}:5\t[ernte] pending"));
+        assert!(released_out[0].starts_with("RELEASED\ts.\u{3c6}:2\tdescoped"));
+    }
+
+    #[test]
+    fn scan_note_markers_prefers_released_over_open() {
+        let text = "note pending; descoped\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_note_markers_text(
+            text,
+            "s.\u{3c6}",
+            &["pending"],
+            &["descoped"],
+            &mut open_out,
+            &mut released_out,
+        );
+        assert_eq!(n, 0);
+        assert_eq!(open_out.len(), 0);
+        assert_eq!(released_out.len(), 1);
+        assert!(released_out[0].contains("descoped"));
+    }
+
+    #[test]
+    fn scan_probe_text_tags_review_and_pending() {
+        let text = "# uncertain field x \u{2014} force/unit undetermined, review\n# pending crosswind unit \u{2014} register carries m/s\nfield x x 1 advective hPa 60 0.0 0.0\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_probe_text(text, "p.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 2);
+        assert_eq!(open_out.len(), 2);
+        assert_eq!(released_out.len(), 0);
+        assert!(open_out[0].starts_with("DISPOSITION\tp.\u{3c6}:1\t[ernte] review"));
+        assert!(open_out[1].starts_with("DISPOSITION\tp.\u{3c6}:2\t[ernte] pending"));
+    }
+
+    #[test]
+    fn scan_catalog_candidates_counts_leading_tokens_only() {
+        let dir = env::temp_dir().join(format!("register_lookup_catalog_{}", std::process::id()));
+        let _ = fs::create_dir_all(&dir);
+        let f1 = dir.join("cat_a.\u{3c6}");
+        fs::write(&f1, "# header\ncandidate https://a\ncandidate https://b\ndecline https://c\n").unwrap();
+        let f2 = dir.join("cat_b.\u{3c6}");
+        fs::write(&f2, "doi:10.1 | PhD candidates study\ncandidatex https://no\n").unwrap();
+        let mut out = Vec::new();
+        let n = scan_catalog_candidates(&dir, &mut out);
+        assert_eq!(n, 2);
+        assert_eq!(out.len(), 1);
+        assert!(out[0].starts_with("CANDIDATES\t"));
+        assert!(out[0].contains("cat_a.\u{3c6}\t2 \u{2192} ernte"));
+        let _ = fs::remove_dir_all(&dir);
     }
 }

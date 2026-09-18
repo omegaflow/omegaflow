@@ -222,9 +222,9 @@ decline catalog
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
-open no-consumer
+decline aggregated-index
 url https://ams02.space/
-note AMS-02-Primärfluss (e-,e+,p,He,B/C,Ne/Mg/Si), Φ(E) am Erd-Punkt ohne Richtung; HEASARC AMS02SPEC+AMS02RATES (FITS), flux-only ohne ra/dec, CRDB ohne RA/DEC, ams02.space 404. open no-consumer; Compiler gestrichen, tdat.rs bleibt; 0 honored.
+note AMS-02-Primärfluss (e-,e+,p,He,B/C,Ne/Mg/Si), Φ(E) am Erd-Punkt ohne Richtung; HEASARC AMS02SPEC+AMS02RATES (FITS), flux-only ohne ra/dec, CRDB ohne RA/DEC, ams02.space 404. Compiler gestrichen, tdat.rs bleibt; 0 honored.
 
 decline superseded-by-integrated
 url https://antares.noirlab.edu/api/v1/
