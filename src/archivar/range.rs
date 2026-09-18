@@ -72,6 +72,11 @@ pub fn fetch_range(
     }
 }
 
+pub fn fetch_bearer_range(url: &str, offset: u64, len: u64, bearer: &str) -> Option<Vec<u8>> {
+    let headers = [("Authorization".to_string(), format!("Bearer {}", bearer))];
+    fetch_range(url, offset, len, &headers)
+}
+
 fn hex_bytes(bytes: &[u8]) -> String {
     let mut out = String::with_capacity(bytes.len() * 2);
     for b in bytes {
@@ -215,6 +220,7 @@ pub fn s3_https_url(url: &str) -> Option<String> {
     ))
 }
 
+#[derive(Clone)]
 pub struct S3Credentials {
     pub access_key: String,
     pub secret_key: String,

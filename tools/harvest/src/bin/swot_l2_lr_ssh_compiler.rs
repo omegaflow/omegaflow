@@ -1,7 +1,7 @@
 use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::range::{
-    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_s3_range,
-    s3_parts, sigv4_headers,
+    S3_ENDPOINT, S3_REGION, S3Credentials, Sigv4Args, edl_s3_credentials_for, fetch_bearer_range,
+    fetch_s3_range, s3_parts, sigv4_headers,
 };
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
@@ -35,6 +35,7 @@ const NC4_GROUPS: [&str; 3] = ["left", "right", ""];
 const SSH_NAMES: [&str; 2] = ["ssh_karin_2", "ssha"];
 const CMR_GRANULES_URL: &str = "https://cmr.earthdata.nasa.gov/search/granules.json";
 const SWOT_SHORT_NAME: &str = "SWOT_L2_LR_SSH_D";
+const SWOT_HTTPS_HOST: &str = "archive.swot.podaac.earthdata.nasa.gov";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -218,6 +219,7 @@ fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>)> {
 struct CmrGranule {
     bucket: String,
     key: String,
+    data_url: Option<String>,
 }
 
 fn cmr_fetch(url: &str) -> Option<String> {
@@ -268,7 +270,8 @@ fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
         let JsonVal::Obj(mut e) = e else { continue };
         let links = e.remove("links")?;
         let JsonVal::Arr(links) = links else { continue };
-        let mut href = None;
+        let mut s3_href = None;
+        let mut data_href = None;
         for l in links {
             let JsonVal::Obj(mut l) = l else { continue };
             let rel = match l.remove("rel") {
@@ -280,15 +283,20 @@ fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
                 _ => continue,
             };
             if rel.ends_with("/s3#") && h.ends_with(".nc") {
-                href = Some(h);
-                break;
+                s3_href = Some(h);
+            } else if rel.ends_with("/data#") && h.ends_with(".nc") && h.starts_with("https://") {
+                data_href = Some(h);
             }
         }
-        let Some(href) = href else { continue };
-        let Some((bucket, key)) = s3_parts(&href) else {
+        let Some(s3_href) = s3_href else { continue };
+        let Some((bucket, key)) = s3_parts(&s3_href) else {
             continue;
         };
-        out.push(CmrGranule { bucket, key });
+        out.push(CmrGranule {
+            bucket,
+            key,
+            data_url: data_href,
+        });
     }
     Some(out)
 }
@@ -498,12 +506,7 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
     }
 }
 
-fn nc4_first_values(
-    file: &Hdf5File,
-    s3_url: &str,
-    creds: &S3Credentials,
-    path: &str,
-) -> Option<Vec<f64>> {
+fn nc4_first_values(file: &Hdf5File, g: &Granule, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = file.dataset(path).ok()?;
     if dt.class == 9 || dt.class == 3 {
         return None;
@@ -522,9 +525,7 @@ fn nc4_first_values(
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
             let coords = vec![0u64; rank];
-            let chunk = file.read_chunk(path, &coords, |off, len| {
-                fetch_s3_range(s3_url, off, len, Some(creds))
-            })?;
+            let chunk = file.read_chunk(path, &coords, |off, len| g.read_range(off, len))?;
             values.extend(chunk.into_iter().take(want as usize));
         }
         Some(Hdf5Layout::Contiguous { addr, size }) => {
@@ -532,7 +533,7 @@ fn nc4_first_values(
             if bytes_want == 0 {
                 return None;
             }
-            let raw = fetch_s3_range(s3_url, *addr, bytes_want, Some(creds))?;
+            let raw = g.read_range(*addr, bytes_want)?;
             for i in 0..(raw.len() / elem) {
                 values.push(decode_value(&raw, i, dt)?);
             }
@@ -625,12 +626,7 @@ fn classic_attr_num(ncf: &NetcdfFile, v: &NetcdfVar, name: &str) -> Option<f64> 
     ncf.attr_num(a)
 }
 
-fn classic_first_values(
-    ncf: &NetcdfFile,
-    s3_url: &str,
-    creds: &S3Credentials,
-    name: &str,
-) -> Option<Vec<f64>> {
+fn classic_first_values(ncf: &NetcdfFile, g: &Granule, name: &str) -> Option<Vec<f64>> {
     let v = ncf.var(name)?;
     let shape = ncf.var_shape(v).ok()?;
     let total: u64 = shape.iter().fold(1u64, |a, d| a.saturating_mul(*d));
@@ -643,7 +639,7 @@ fn classic_first_values(
         return None;
     }
     let bytes_want = want.saturating_mul(tsize).min(v.vsize as u64);
-    let raw = fetch_s3_range(s3_url, v.begin, bytes_want, Some(creds))?;
+    let raw = g.read_range(v.begin, bytes_want)?;
     let mut out = Vec::with_capacity((raw.len() / tsize as usize).min(want as usize));
     for i in 0..(raw.len() / tsize as usize) {
         out.push(decode_classic(&raw, i, v.nc_type)?);
@@ -699,12 +695,7 @@ fn assemble(
     out
 }
 
-fn extract_nc4(
-    file: &Hdf5File,
-    s3_url: &str,
-    creds: &S3Credentials,
-    lsk: &LeapSeconds,
-) -> Vec<[f64; REC_FIELDS]> {
+fn extract_nc4(file: &Hdf5File, g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_path, lat_path, lon_path, time_path)) = choose_paths_nc4(file) else {
         return Vec::new();
     };
@@ -714,28 +705,23 @@ fn extract_nc4(
     let Some(anchor_tdb) = epoch_from_units(&units, lsk) else {
         return Vec::new();
     };
-    let Some(times) = nc4_first_values(file, s3_url, creds, &time_path) else {
+    let Some(times) = nc4_first_values(file, g, &time_path) else {
         return Vec::new();
     };
-    let Some(lats) = nc4_first_values(file, s3_url, creds, &lat_path) else {
+    let Some(lats) = nc4_first_values(file, g, &lat_path) else {
         return Vec::new();
     };
-    let Some(lons) = nc4_first_values(file, s3_url, creds, &lon_path) else {
+    let Some(lons) = nc4_first_values(file, g, &lon_path) else {
         return Vec::new();
     };
-    let Some(sshas) = nc4_first_values(file, s3_url, creds, &ssha_path) else {
+    let Some(sshas) = nc4_first_values(file, g, &ssha_path) else {
         return Vec::new();
     };
     let fill = nc4_fill(file, &ssha_path);
     assemble(&times, &lats, &lons, &sshas, fill, anchor_tdb)
 }
 
-fn extract_classic(
-    ncf: &NetcdfFile,
-    s3_url: &str,
-    creds: &S3Credentials,
-    lsk: &LeapSeconds,
-) -> Vec<[f64; REC_FIELDS]> {
+fn extract_classic(ncf: &NetcdfFile, g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_name, lat_name, lon_name, time_name)) = classic_set(ncf) else {
         return Vec::new();
     };
@@ -745,86 +731,94 @@ fn extract_classic(
     let Some(anchor_tdb) = epoch_from_units(&units, lsk) else {
         return Vec::new();
     };
-    let Some(times) = classic_first_values(ncf, s3_url, creds, &time_name) else {
+    let Some(times) = classic_first_values(ncf, g, &time_name) else {
         return Vec::new();
     };
-    let Some(lats) = classic_first_values(ncf, s3_url, creds, &lat_name) else {
+    let Some(lats) = classic_first_values(ncf, g, &lat_name) else {
         return Vec::new();
     };
-    let Some(lons) = classic_first_values(ncf, s3_url, creds, &lon_name) else {
+    let Some(lons) = classic_first_values(ncf, g, &lon_name) else {
         return Vec::new();
     };
-    let Some(sshas) = classic_first_values(ncf, s3_url, creds, &ssha_name) else {
+    let Some(sshas) = classic_first_values(ncf, g, &ssha_name) else {
         return Vec::new();
     };
     let fill = classic_fill(ncf, &ssha_name);
     assemble(&times, &lats, &lons, &sshas, fill, anchor_tdb)
 }
 
-fn harvest_granule(
-    s3_url: &str,
-    creds: &S3Credentials,
-    lsk: &LeapSeconds,
-) -> Vec<[f64; REC_FIELDS]> {
-    let Some(w1) = fetch_s3_range(s3_url, 0, META_WINDOW, Some(creds)) else {
-        eprintln!(
-            "{}: range read returned void — granule stays pending",
-            s3_url
-        );
+struct Granule {
+    url: String,
+    bearer: Option<String>,
+    creds: Option<S3Credentials>,
+}
+
+impl Granule {
+    fn read_range(&self, offset: u64, len: u64) -> Option<Vec<u8>> {
+        match &self.bearer {
+            Some(tok) => fetch_bearer_range(&self.url, offset, len, tok),
+            None => fetch_s3_range(&self.url, offset, len, self.creds.as_ref()),
+        }
+    }
+}
+
+fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
+    let Some(w1) = g.read_range(0, META_WINDOW) else {
+        eprintln!("{}: range read returned void — granule stays pending", g.url);
         return Vec::new();
     };
     if w1.len() >= 3 && w1[..3] == CDF_MAGIC {
         match NetcdfFile::parse(&w1) {
-            Ok(ncf) => return extract_classic(&ncf, s3_url, creds, lsk),
+            Ok(ncf) => return extract_classic(&ncf, g, lsk),
             Err(note) => {
                 eprintln!(
                     "{}: classic header in {} B stayed unread ({:?}) — escalating once",
-                    s3_url, META_WINDOW, note
+                    g.url, META_WINDOW, note
                 );
             }
         }
     } else if w1.len() >= 4 && w1[..4] == HDF_MAGIC {
         match Hdf5File::parse(&w1) {
-            Ok(file) => return extract_nc4(&file, s3_url, creds, lsk),
+            Ok(file) => return extract_nc4(&file, g, lsk),
             Err(note) => {
                 eprintln!(
                     "{}: nc4 header window of {} B stayed unread ({:?}) — escalating once",
-                    s3_url, META_WINDOW, note
+                    g.url, META_WINDOW, note
                 );
             }
         }
     } else {
         eprintln!(
             "{}: magic is {:X?} — neither CDF nor HDF5 — granule stays pending",
-            s3_url, w1
+            g.url, w1
         );
         return Vec::new();
     }
-    let Some(w2) = fetch_s3_range(s3_url, 0, META_ESCALATION, Some(creds)) else {
+    let Some(w2) = g.read_range(0, META_ESCALATION) else {
         eprintln!(
             "{}: escalated range read returned void — granule stays pending",
-            s3_url
+            g.url
         );
         return Vec::new();
     };
     if w2.len() >= 3 && w2[..3] == CDF_MAGIC {
         match NetcdfFile::parse(&w2) {
-            Ok(ncf) => extract_classic(&ncf, s3_url, creds, lsk),
+            Ok(ncf) => extract_classic(&ncf, g, lsk),
             Err(n2) => {
                 eprintln!(
                     "{}: metadata beyond {} B ({:?}) — granule stays pending",
-                    s3_url, META_ESCALATION, n2
+                    g.url, META_ESCALATION, n2
                 );
                 Vec::new()
             }
         }
     } else if w2.len() >= 4 && w2[..4] == HDF_MAGIC {
         match Hdf5File::parse(&w2) {
-            Ok(file) => extract_nc4(&file, s3_url, creds, lsk),
+            Ok(file) => extract_nc4(&file, g, lsk),
             Err(n2) => {
                 eprintln!(
                     "{}: metadata beyond {} B ({:?}) — granule stays pending",
-                    s3_url, META_ESCALATION, n2
+                    g.url, META_ESCALATION, n2
                 );
                 Vec::new()
             }
@@ -832,7 +826,7 @@ fn harvest_granule(
     } else {
         eprintln!(
             "{}: magic changed across windows — granule stays pending",
-            s3_url
+            g.url
         );
         Vec::new()
     }
@@ -946,7 +940,7 @@ fn run_harvest(args: &[String]) {
     };
     let direct_granule = arg_value(args, "--granule");
     let cmr = args.iter().any(|a| a == "--cmr");
-    let mut chosen: Vec<(String, Obj)> = Vec::new();
+    let mut chosen: Vec<(Granule, String, u64)> = Vec::new();
     if cmr {
         let short_name = arg_value(args, "--short-name").unwrap_or(SWOT_SHORT_NAME.to_string());
         let temporal = match arg_value(args, "--temporal") {
@@ -986,14 +980,25 @@ fn run_harvest(args: &[String]) {
         granules.sort_by(|a, b| a.key.cmp(&b.key));
         granules.truncate(limit);
         for g in granules {
-            chosen.push((
-                g.bucket,
-                Obj {
-                    key: g.key,
-                    size: 0,
-                    modified: String::new(),
+            let reader = match g.data_url {
+                Some(url) => Granule {
+                    url,
+                    bearer: Some(token.clone()),
+                    creds: None,
                 },
-            ));
+                None => {
+                    let Some(creds) = creds_for(&token, &g.bucket) else {
+                        eprintln!("{} returned void for s3://{}/", NETLOC, g.bucket);
+                        std::process::exit(2);
+                    };
+                    Granule {
+                        url: format!("s3://{}/{}", g.bucket, g.key),
+                        bearer: None,
+                        creds: Some(creds),
+                    }
+                }
+            };
+            chosen.push((reader, g.key, 0));
         }
     } else if let Some(key) = direct_granule {
         let bucket = if protected {
@@ -1001,14 +1006,24 @@ fn run_harvest(args: &[String]) {
         } else {
             BUCKET_PUBLIC
         };
-        chosen.push((
-            bucket.to_string(),
-            Obj {
-                key,
-                size: 0,
-                modified: String::new(),
-            },
-        ));
+        let reader = if protected {
+            Granule {
+                url: format!("https://{SWOT_HTTPS_HOST}/{bucket}/{key}"),
+                bearer: Some(token.clone()),
+                creds: None,
+            }
+        } else {
+            let Some(creds) = creds_for(&token, bucket) else {
+                eprintln!("{} returned void for s3://{}/", NETLOC, bucket);
+                std::process::exit(2);
+            };
+            Granule {
+                url: format!("s3://{bucket}/{key}"),
+                bearer: None,
+                creds: Some(creds),
+            }
+        };
+        chosen.push((reader, key, 0));
     } else {
         let prefix = match arg_value(args, "--prefix") {
             Some(p) => p,
@@ -1061,8 +1076,17 @@ fn run_harvest(args: &[String]) {
         let mut objects = objects;
         objects.sort_by(|a, b| a.key.cmp(&b.key));
         objects.truncate(limit);
+        let Some(creds) = creds_for(&token, &found_bucket) else {
+            eprintln!("{} returned void for s3://{}/", NETLOC, found_bucket);
+            std::process::exit(2);
+        };
         for o in objects {
-            chosen.push((found_bucket.clone(), o));
+            let reader = Granule {
+                url: format!("s3://{found_bucket}/{}", o.key),
+                bearer: None,
+                creds: Some(creds.clone()),
+            };
+            chosen.push((reader, o.key, o.size));
         }
     }
     let Some(lsk) = embedded_lsk() else {
@@ -1072,20 +1096,15 @@ fn run_harvest(args: &[String]) {
         std::process::exit(1);
     };
     let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
-    for (bucket, obj) in &chosen {
-        let Some(creds) = creds_for(&token, bucket) else {
-            eprintln!("{} returned void for s3://{}/", NETLOC, bucket);
-            std::process::exit(2);
-        };
-        let s3_url = format!("s3://{bucket}/{}", obj.key);
+    for (g, key, size) in &chosen {
         let before = recs.len();
-        let granule = harvest_granule(&s3_url, &creds, &lsk);
+        let granule = harvest_granule(g, &lsk);
         recs.extend(granule);
         eprintln!(
             "swot-l2-lr-ssh: {} → {} records ({} B granule)",
-            obj.key,
+            key,
             recs.len() - before,
-            obj.size
+            size
         );
     }
     recs.sort_by(|a, b| a[0].total_cmp(&b[0]));
@@ -1269,6 +1288,10 @@ mod tests {
         assert_eq!(
             granules[0].key,
             "SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_001_001_20200101T000000_20200101T000100_PIC0_01.nc"
+        );
+        assert_eq!(
+            granules[0].data_url.as_deref(),
+            Some("https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/x.nc")
         );
     }
 }

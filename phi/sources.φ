@@ -1539,7 +1539,7 @@ compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
 on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; CMR-Key-Beschaffung --cmr gebaut, --granule/--protected bleibt.
+note protected-bucket S3-SigV4 GetObject/ListBucket 403 mit EDL-Creds (2026-09-18); Route über CMR-/data#-Link archive.swot.podaac.earthdata.nasa.gov + EDL-Bearer → 303 CloudFront → 206. --cmr/--granule/--protected auf Bearer.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
