@@ -33,10 +33,19 @@ jobs:
       - name: Harvest the ${{ matrix.asset }} ODF volume and manifest it to the CDN
         run: |
           if [ "${{ matrix.sharded }}" = "true" ]; then
-            if gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
-               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^${{ matrix.prefix }}_"; then
-              echo "${{ matrix.prefix }}_* shards already present — harvest skipped"
-              exit 0
+            expected=$(grep -oE "releases/download/${{ matrix.netloc }}/${{ matrix.prefix }}(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin" phi/sources.φ \
+              | xargs -r -n1 basename | sort -u)
+            if [ -z "$expected" ]; then
+              echo "no ${{ matrix.prefix }} shards registered — harvest runs (an unharvested volume is pending, not zero)"
+            else
+              present=$(gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
+                --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+              missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+              if [ -z "$missing" ]; then
+                echo "$(printf '%s\n' "$expected" | wc -l) registered ${{ matrix.prefix }} shards, all present in release — manifest complete"
+                exit 0
+              fi
+              echo "missing from release: $(printf '%s\n' "$missing" | tr '\n' ' ')"
             fi
           elif gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ matrix.asset }}"; then
