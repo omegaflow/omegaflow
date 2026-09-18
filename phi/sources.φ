@@ -10138,3 +10138,29 @@ field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
 field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
 field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 note Mariner 10 Venus occultation telemetry signal data (NSSDC NSSD1346), native Serie; Arm src/archivar/mariner_occlt.rs + extract.rs mariner_occlt; Compiler mariner_occlt_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
+
+url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
+format arpansa
+ttl 600
+on earth 0 0 0
+field uv_index uv_index inverse-square em UVI 60.0 0.0 0.0
+note ARPANSA UV, 17 Stationen (erythemal index, em); per-station lat/lon gemessen 2026-09-18 aus api/categoriesSites + api/sitesByCategory/?categoryId=9 (arpansa.rs station_coords, Position::Surface).
+
+url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+format igra_zip
+on earth 0 0 0
+ttl 86400
+field igra_air_pressure_hpa igra_air_pressure_hpa patch-levy advective hPa 8640.0 0.0 0.0
+field igra_air_temp_c igra_air_temp_c exponential-decay thermal C 8640.0 0.0 0.0
+field igra_wind_speed_ms igra_wind_speed_ms patch-levy advective m/s 8640.0 0.0 0.0
+field igra_wind_direction_deg igra_wind_direction_deg patch-levy advective deg 8640.0 0.0 0.0
+field igra_relative_humidity_pct igra_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
+field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pathfinder_odf.bin
+format pathfinder_odf
+origin https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
+compiler tools/harvest/src/bin/pathfinder_odf_compiler.rs
+at earth
+ttl 604800
+field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0

@@ -1778,6 +1778,7 @@ pub fn ci_mode(dir: &str) -> i32 {
             || src.format == "ephemeris_binary"
             || src.format == "catalog_dastcom"
             || src.format == "csv_zip"
+            || src.format == "igra_zip"
             || src.format == "kernel_text"
             || src.format == "opendap"
             || src.format == "tar_gz_yaml"

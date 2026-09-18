@@ -4668,6 +4668,124 @@ fn test_extract_igra_zip_emits_level_measurements() {
     }
 }
 
+fn fugin_cube_fixture() -> Vec<u8> {
+    let mut buf: Vec<u8> = Vec::new();
+    let mut header: Vec<u8> = Vec::new();
+    header.extend_from_slice(&fits_card("SIMPLE", "T"));
+    header.extend_from_slice(&fits_card("BITPIX", "-32"));
+    header.extend_from_slice(&fits_card("NAXIS", "3"));
+    header.extend_from_slice(&fits_card("NAXIS1", "3"));
+    header.extend_from_slice(&fits_card("NAXIS2", "3"));
+    header.extend_from_slice(&fits_card("NAXIS3", "4"));
+    header.extend_from_slice(&fits_card("CTYPE1", "'GLON-SFL'"));
+    header.extend_from_slice(&fits_card("CTYPE2", "'GLAT-SFL'"));
+    header.extend_from_slice(&fits_card("CTYPE3", "'VRAD'"));
+    header.extend_from_slice(&fits_card("CRVAL1", "20.0"));
+    header.extend_from_slice(&fits_card("CRVAL2", "0.0"));
+    header.extend_from_slice(&fits_card("CRVAL3", "-99675.0"));
+    header.extend_from_slice(&fits_card("CRPIX1", "2.0"));
+    header.extend_from_slice(&fits_card("CRPIX2", "2.0"));
+    header.extend_from_slice(&fits_card("CDELT1", "0.5"));
+    header.extend_from_slice(&fits_card("CDELT2", "0.5"));
+    header.extend_from_slice(&fits_card("CDELT3", "650.0"));
+    header.extend_from_slice(&fits_card("CUNIT3", "'m/s'"));
+    header.extend_from_slice(&fits_card("BTYPE", "'Intensity'"));
+    header.extend_from_slice(&fits_card("BUNIT", "'K'"));
+    header.extend_from_slice(&fits_card("END", ""));
+    while !header.len().is_multiple_of(2880) {
+        header.extend_from_slice(&[b' '; 80]);
+    }
+    buf.extend_from_slice(&header);
+    let (nx, ny, nz) = (3usize, 3usize, 4usize);
+    let mut data = vec![f32::NAN; nx * ny * nz];
+    let mut set = |x: usize, y: usize, z: usize, v: f32| {
+        data[z * (ny * nx) + y * nx + x] = v;
+    };
+    set(1, 1, 0, 1.0);
+    set(1, 1, 1, 2.0);
+    set(1, 1, 2, f32::NAN);
+    set(1, 1, 3, 3.0);
+    for z in 0..nz {
+        set(2, 2, z, 5.0);
+    }
+    for v in data {
+        buf.extend_from_slice(&v.to_be_bytes());
+    }
+    while buf.len() % 2880 != 0 {
+        buf.push(0);
+    }
+    buf
+}
+
+#[test]
+fn test_fugin_cube_moment0_integrates_and_maps_positions() {
+    let buf = fugin_cube_fixture();
+    let pixels = super::fugin::parse_fugin_cube(&buf).expect("3x3x4 cube parses");
+    assert_eq!(
+        pixels.len(),
+        2,
+        "all-NaN pixels stay absent, two pixels carry finite channels"
+    );
+    let center = pixels
+        .iter()
+        .find(|p| (p.moment0_k_ms - 3900.0).abs() < 1e-9)
+        .expect("center pixel: finite 1.0+2.0+3.0 over 650 m/s");
+    assert!(center.ra_deg.is_finite() && center.dec_deg.is_finite());
+    let (ra_exp, dec_exp) =
+        crate::mathematikerin::healpix::galactic_to_icrs((90.0f64).to_radians(), 20.0f64.to_radians());
+    assert!(
+        (center.ra_deg - ra_exp).abs() < 1e-9,
+        "glon=20 glat=0 maps to ICRS through the theta/phi convention"
+    );
+    assert!((center.dec_deg - dec_exp).abs() < 1e-9);
+    let corner = pixels
+        .iter()
+        .find(|p| (p.moment0_k_ms - 13000.0).abs() < 1e-9)
+        .expect("corner pixel: 4 x 5.0 over 650 m/s");
+    let (ra2, dec2) =
+        crate::mathematikerin::healpix::galactic_to_icrs((90.0f64 - 0.5).to_radians(), 20.5f64.to_radians());
+    assert!((corner.ra_deg - ra2).abs() < 1e-9);
+    assert!((corner.dec_deg - dec2).abs() < 1e-9);
+}
+
+#[test]
+fn test_extract_fugin_cube_emits_state_vector_channels() {
+    let buf = fugin_cube_fixture();
+    let path = std::env::temp_dir().join("omegaflow_test_fugin.fits");
+    std::fs::write(&path, &buf).unwrap();
+    let src = source_fixture("fugin_cube", vec![]);
+    match super::extract(&src, &path.to_string_lossy(), 1.7e9, &fixture_lsk()) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 2);
+            let center = v
+                .iter()
+                .find(|(c, _)| (c.value - 3900.0).abs() < 1e-9)
+                .expect("center channel");
+            assert_eq!(center.1.force, 0);
+            assert_eq!(center.1.kernel, 0);
+            assert_eq!(center.1.unit, "K m/s");
+            assert_eq!(center.0.name, "fugin_moment0");
+            let (ra_exp, dec_exp) = crate::mathematikerin::healpix::galactic_to_icrs(
+                (90.0f64).to_radians(),
+                20.0f64.to_radians(),
+            );
+            let ra = ra_exp.to_radians();
+            let dec = dec_exp.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let expected = [cd * ca, cd * sa, sd];
+            if let super::Position::StateVector { p, .. } = &center.0.position {
+                for i in 0..3 {
+                    assert!((p[i] - expected[i]).abs() < 1e-9);
+                }
+            } else {
+                panic!("position is not StateVector");
+            }
+        }
+        _ => panic!("extract variant unexpected"),
+    }
+}
+
 #[test]
 fn test_fetch_dispatch_gate_advective_uses_field_advection() {
     let fc = FieldConfig {
