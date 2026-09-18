@@ -1,4 +1,4 @@
-note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token. 2026-09-15: 35 pending/descoped disponiert.
+note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
 
 pending
 url https://babamul.caltech.edu/api/
@@ -23,9 +23,14 @@ url https://superdarn.ca/data-access
 reg https://superdarn.ca/piagreement
 note SuperDARN — HF-Radar-Ionosphären-Konvektion, em. 2026-09-16: superdarn.ca HTTP 200, /data-access HTTP 200; Datenroute über Globus + PI-Vereinbarung (piagreement); api.superdarn.ca DNS-tot. Zugang gegatet → blocked account.
 
+blocked account
+url https://psaftp.esac.esa.int/BepiColombo/bc_mpo_more/
+reg https://archives.esac.esa.int/psa/ftp/BepiColombo/bc_mpo_more/
+note BepiColombo MPO MORE (urn:esa:psa:bc_mpo_more). 2026-09-18: anon SFTP/Mirror 200, kein data/ (data_raw 404); Login ESA_USER/ESA_PASS rc 67/530 abgewiesen; 89517 TAP-LIDs, getProduct-Route an allen Hosts 404. Zugang gegatet → blocked account.
+
 pending
 url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
-note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (.ODR, 5056 B, 968 Paare). ODR-Asset als voyager_odr in sources.φ; Jahr aus PDS3-Label START_TIME. Offen: Reihen-Leser-Arm + sample_count-Semantik — Post an bau.
+note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (.ODR, 5056 B, 968 Paare). ODR-Asset als voyager_odr in sources.φ; Jahr aus PDS3-Label START_TIME. Offen: Reihen-Leser-Arm + sample_count-Semantik.
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
