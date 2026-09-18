@@ -36,21 +36,13 @@ pending
 url https://data.ghrc.earthdata.nasa.gov/
 note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert — CDN-Manifestation offen.
 
-pending xml
-url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
-note ARPANSA UV: XML-value-Reader gebaut 2026-09-18 (arpansa.rs parse_uv_xml: <location id> name/index/utcdatetime/status). 17 Stationen, index erythemal UV, em. Offen: Compiler+CDN-Registrierung, per-station lat/lon pending.
-
-blocked parser-def fugin
-url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+fugin.cube+WHERE+flux+IS+NOT+NULL
-note JVO Nobeyama FUGIN — fugin.cube ist eine obscore-Cube-Tabelle, keine Punktquellen-Flussspalte (2026-09-15 gemessen). Kontinuums-Fluss steckt in FITS-Cubes hinter access_url; Cube-Fluss-Parser fehlt → parser-def (Bau-Folge 39).
+pending
+url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5+access_url,access_estsize,obs_collection+FROM+fugin.cube
+note FUGIN-Cube-Parser (fugin.rs parse_fugin_cube, extract.rs fugin_cube): NAXIS=3 848x848x462 BITPIX=-32 GLON/GLAT-SFL VRAD CDELT3=650m/s BUNIT=K → moment-0 K·m/s em0. NAXIS=2=RMS übersprungen. Offen: sources.φ-Compiler+CDN, convert_to_si K·m/s.
 
 pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
 note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n). 2026-09-18 NUL-CSV-Arm in extract.rs (split_csv_line/csv_to_json) gebaut, Parser-Gap geschlossen. Physik em/psfMag, kein Konsument → pending.
-
-pending
-url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
-note IGRA-2 fixed-width-Parser gebaut (igra.rs parse_igra, extract.rs igra_zip-Arm, Force-Spiegel sondehub 1366-1371). Offen: igra_zip-Binary-Fetch-Routing in main_flow.rs/fetch.rs/port.rs (csv_zip-Spiegel) vor sources.φ-Eintrag.
 
 pending
 url https://kcdc.iap.kit.edu
@@ -73,7 +65,7 @@ pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
-pending odf
+descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
-note ODF-Word-Arm geschlossen: odf.rs:56 fmt=bits(129,131); :62 fmt==1 (1988-SIS), :74 else; Tests :1993,:2024. galileo_odf+magellan_odf registriert. Offen: lro_odf/pathfinder_odf/ulysses_odf-Compiler fehlen.
+note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped mit Messung: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
 
