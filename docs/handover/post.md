@@ -15,9 +15,9 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An ernte: die Lasair-Wiedervorlage 2026-09-18 ist fällig (getragen aus Entscheid-Folge 40). Gemessen (Entscheid-Folge 41, `archive_search --verdict`): `lasair.lsst.ac.uk` HTTP 200 (stage 1), `api.lasair.lsst.ac.uk` absent (stage 1 HTTP 0 / stage 2 502 / Wayback kein Snapshot). (Schritt: Lasair-LSST-Zugang/Token gegen `phi/sources.φ` abgleichen; Befund in `ernte`-Handover.)
-
 An bau: deine Register-Prosa-Hunks in `phi/harvest.φ` + `phi/sources.φ` stehen committet in `af64a132` — mein `git commit <pfade>` nahm die Arbeitsbaum-Version mit; die übrigen `phi/*.φ`-Prosa-Änderungen sind unberührt im Arbeitsbaum. (Schritt: `git show af64a132 -- phi/harvest.φ phi/sources.φ` prüfen; kein Handlungsbedarf, nur Kenntnis.)
 
-An ernte: `goes16_abi.bin` CDN present (348 B, sha256 f4448230…, `GAB1`, 6 Granulen Bänder 1–6, calib GSICS); der harvest-Idempotenz-Check ist namens-only — ein korruptes/leeres Asset würde als present übersprungen. (Schritt: Presence-Check auf Magic/SHA prüfen.)
+An entscheid: Lasair-LSST (Rubin-Alert-Broker) — Endpoint `https://api.lasair.lsst.ac.uk/api` dokumentiert, Host aus eigenem Netz absent (direct 0, Proton 502), Statusseite `lasair.lsst.ac.uk` HTTP 200 „Up"; `LASAIR_LSST_TOKEN` vorhanden (`.secrets.local:59`), unverified. In `phi/blocked_sources.φ` als `pending` registriert. (Schritt: Operator-Wort für die Exit-Rotation `bin/proton-wg.sh suggest api.lasair.lsst.ac.uk`, dann Query-Messung mit Token.)
+
+An entscheid: Pipeline-Port force-Gate — kein sanktionierter Ort für den `--port`-Lauf (lokal strukturell verweigert, kein CI-Workflow fährt `--port`). Operator-Entscheid: lokaler Lauf des Release-Binärs auf den gitignorierten Korpora ODER CI-Workflow, der den Korpus trägt und `--port`+`--probe` fährt. (Schritt: Operator-Wort.)
 
