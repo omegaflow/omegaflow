@@ -40,5 +40,7 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture arx_sweep_n1000
       - name: Run the conditional n=1000 FP/FN gate (the direct-path calibration)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_n1000
+      - name: Run the reversed conditional n=1000 FP/FN gate (the reverse-direction calibration)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_reversed_n1000
       - name: Run the two-confounder n=1000 FPR gate (the direct _2 path)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_2_fpr_n1000
