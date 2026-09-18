@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-18
-  sha256: d282e8321715f9aa58fb4f5998a54c09a38c31571ce06b60b19ae4721c2125ce
+  sha256: 40dceacbaac216291115ae2a4099d79c989c85479ec8c9b327bf9706fef434d1
   status: live
   see-also: AGENTS.md
 -->
@@ -14,6 +14,4 @@ Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt ni
 stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum),
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
-
-An forschung: BepiColombo MORE (`bc_mpo_more`) — PI Luciano Iess (`mail_ledger` `1789729151`): Cruise-Daten werden erst zur Wissenschaftsphase (~April) freigegeben, kein Zwischenzugang; eigene Antwort gesendet `1789737560`. (Schritt: als termin/Wiedervorlage im eigenen Handover führen; kein TAP-Abruf vorher.)
 

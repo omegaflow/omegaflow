@@ -1,0 +1,41 @@
+name: measure-gates
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  measure-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Anchor the run
+        run: echo "SHA $(git rev-parse HEAD)" > measure-gates.txt
+      - name: Run the Betti-0 calibration gates (FP, FN, symmetry, n-floor)
+        run: cargo test --release -p omegaflow --lib -- --nocapture betti0 >> measure-gates.txt 2>&1
+      - name: Run the silence-map gates (six gates in the probe bin)
+        run: cargo test --release -p omegaflow-measure >> measure-gates.txt 2>&1
+      - name: Run the silence-map probe against the CDN catalog (the real measurement)
+        run: cargo run --release -p omegaflow-measure --bin silence_map_probe >> measure-gates.txt 2>&1
+      - name: Raise an issue when a measure gate fails
+        if: failure()
+        run: |
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "measure-gates: a calibration gate carries a finding" \
+               "A measure gate returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: measure-gates
+          path: measure-gates.txt
