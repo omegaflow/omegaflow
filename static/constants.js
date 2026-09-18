@@ -1,5 +1,6 @@
 export const PROTOCOL_VERSION = 9;
 export const KINETIC_TAG = 10;
+export const VERDICT_TAG = 11;
 export const RECORD_BYTES = 208;
 export const FRAME_HEADER = 19;
 
@@ -166,4 +167,50 @@ export function parseKinetic(bytes) {
     tilt = dv.getFloat32(o, true);
   }
   return { omega, aperture, pan, tilt };
+}
+
+const VERDICT_WORDS = ["placed", "absent", "direction-only", "riss"];
+const BODY_LINES = [
+  "spk-ephemeris",
+  "dastcom-keplerian",
+  "mpc-keplerian",
+  "inpop-ephemeris",
+  "epm-ephemeris",
+];
+
+export function parseVerdicts(bytes) {
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const decoder = new TextDecoder();
+  let o = 3;
+  const count = dv.getUint32(o, true);
+  o += 4;
+  const lines = [];
+  for (let i = 0; i < count; i++) {
+    const nameLen = dv.getUint8(o);
+    o += 1;
+    const name = decoder.decode(new Uint8Array(bytes.buffer, bytes.byteOffset + o, nameLen));
+    o += nameLen;
+    const word = VERDICT_WORDS[dv.getUint8(o)] || "pending";
+    o += 1;
+    const ka = dv.getUint8(o);
+    const kb = dv.getUint8(o + 1);
+    o += 2;
+    const hasSep = dv.getUint8(o) === 1;
+    o += 1;
+    let sep = null;
+    if (hasSep) {
+      sep = dv.getFloat64(o, true);
+      o += 8;
+    }
+    const weave = dv.getFloat64(o, true);
+    o += 8;
+    lines.push({
+      name,
+      word,
+      knot: [ka === 255 ? null : BODY_LINES[ka] || null, kb === 255 ? null : BODY_LINES[kb] || null],
+      sep,
+      weave,
+    });
+  }
+  return lines;
 }
