@@ -305,6 +305,8 @@
     "standalone_gh_issue": "if: failure()\nbash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \\\"health: verify returned void\\\" \\\"verify job returned void\\\" health",
     "unstable_pointer_drift": "the mailbox line cites mail_ledger.φ:59,64 as its anchor",
     "unstable_pointer_offsite": "the register line mail_ledger.φ:59 is cited here",
-    "fabrication_marker_coord_default": "(\"{lat}\".into(), \"29.5\".into()),"
+    "fabrication_marker_coord_default": "(\"{lat}\".into(), \"29.5\".into()),",
+    "phi_register_note_over_256": "note disposition geprueft und gemessen, die quelle nennt den ort, der messwert nennt den wert, das datum nennt die zeit, der schritt nennt den weg, die zeile bleibt kurz und die prosa traegt die sache selbst, kein kommentar, keine meinung, nur der befund und die quelle, wer liest liest den schritt",
+    "phi_register_comment": "# anmerkung: der eintrag traegt keine quelle"
   }
 }
