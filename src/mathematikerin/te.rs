@@ -1981,6 +1981,122 @@ fn embedded_silverman(emb: &[Vec<f64>]) -> Option<f64> {
     Some(1.06 * var.sqrt() * n.powf(-0.2))
 }
 
+pub struct Betti0Verdict {
+    pub tau: usize,
+    pub dim: usize,
+    pub ladder: Vec<f64>,
+    pub betti0: Vec<usize>,
+    pub deaths: Vec<f64>,
+    pub persistence: f64,
+}
+
+struct UnionFind {
+    parent: Vec<usize>,
+    rank: Vec<usize>,
+    components: usize,
+}
+
+impl UnionFind {
+    fn new(n: usize) -> Self {
+        UnionFind {
+            parent: (0..n).collect(),
+            rank: vec![0; n],
+            components: n,
+        }
+    }
+
+    fn find(&mut self, mut x: usize) -> usize {
+        while self.parent[x] != x {
+            self.parent[x] = self.parent[self.parent[x]];
+            x = self.parent[x];
+        }
+        x
+    }
+
+    fn union(&mut self, a: usize, b: usize) -> bool {
+        let ra = self.find(a);
+        let rb = self.find(b);
+        if ra == rb {
+            return false;
+        }
+        if self.rank[ra] < self.rank[rb] {
+            self.parent[ra] = rb;
+        } else if self.rank[ra] > self.rank[rb] {
+            self.parent[rb] = ra;
+        } else {
+            self.parent[rb] = ra;
+            self.rank[ra] += 1;
+        }
+        self.components -= 1;
+        true
+    }
+}
+
+pub fn betti0_persistence(series: &[f64], dim: usize) -> Option<Betti0Verdict> {
+    if dim < 2 || series.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let tau = find_mi_lag(series)?;
+    let emb = embed_series(series, tau, dim);
+    if emb.len() < 16 {
+        return None;
+    }
+    let n = emb.len();
+    let mut edges: Vec<(f64, usize, usize)> = Vec::with_capacity(n * (n - 1) / 2);
+    for i in 0..n {
+        for j in (i + 1)..n {
+            let d = state_distance(&emb[i], &emb[j]);
+            if d.is_finite() {
+                edges.push((d, i, j));
+            }
+        }
+    }
+    if edges.is_empty() {
+        return None;
+    }
+    edges.sort_unstable_by(|a, b| a.0.total_cmp(&b.0));
+    let Some(d_min) = edges.iter().map(|e| e.0).find(|&d| d > 0.0) else {
+        return None;
+    };
+    let d_max = edges[edges.len() - 1].0;
+    let mut ladder = Vec::new();
+    let mut k = 0u32;
+    loop {
+        let thr = d_min * 2.0f64.powi(k as i32);
+        ladder.push(thr);
+        if thr >= d_max || k >= 63 {
+            break;
+        }
+        k += 1;
+    }
+    let mut uf = UnionFind::new(n);
+    let mut deaths = Vec::with_capacity(n - 1);
+    let mut betti0 = Vec::with_capacity(ladder.len());
+    let mut ei = 0usize;
+    for &thr in &ladder {
+        while ei < edges.len() && edges[ei].0 <= thr {
+            let (d, a, b) = edges[ei];
+            if uf.union(a, b) {
+                deaths.push(d);
+            }
+            ei += 1;
+        }
+        betti0.push(uf.components);
+    }
+    let persistence = match deaths.last() {
+        Some(&d) => d / d_max,
+        None => return None,
+    };
+    Some(Betti0Verdict {
+        tau,
+        dim,
+        ladder,
+        betti0,
+        deaths,
+        persistence,
+    })
+}
+
 pub fn transfer_entropy_embedded(
     x: &[f64],
     emb_x: &[Vec<f64>],
@@ -3276,6 +3392,107 @@ mod tests {
         assert!(
             ab.is_none() || ba.is_none(),
             "Kalibrier-Gate n-Floor: n=16 carries no verdict"
+        );
+    }
+
+    fn betti_ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f64> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for _ in 0..n {
+            x = phi * x + gate_rng(rng) * 2.0 - 1.0;
+            v.push(x);
+        }
+        v
+    }
+
+    fn betti_two_cluster(n: usize, rng: &mut u64) -> Vec<f64> {
+        let mut v = Vec::with_capacity(n);
+        let mut level = 1.0f64;
+        let mut since = 0usize;
+        for _ in 0..n {
+            if since >= 40 {
+                level = -level;
+                since = 0;
+            }
+            since += 1;
+            v.push(level + gate_rng(rng) * 0.02 - 0.01);
+        }
+        v
+    }
+
+    #[test]
+    fn betti0_fp_independent_ar1_has_no_persistent_component() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let mut meas = 0usize;
+        for _ in 0..20 {
+            let a = betti_ar1(300, 0.7, &mut rng);
+            if let Some(v) = betti0_persistence(&a, 3) {
+                meas += 1;
+                assert!(
+                    v.persistence < 0.5,
+                    "betti0-FP: persistence {} for independent AR(1) carries a persistent component",
+                    v.persistence
+                );
+            }
+        }
+        assert!(
+            meas >= 15,
+            "betti0-FP: {} of 20 measurable — the machine stays silent too often",
+            meas
+        );
+    }
+
+    #[test]
+    fn betti0_fn_structured_series_has_persistent_component() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let mut meas = 0usize;
+        for _ in 0..20 {
+            let s = betti_two_cluster(320, &mut rng);
+            if let Some(v) = betti0_persistence(&s, 2) {
+                meas += 1;
+                assert!(
+                    v.persistence > 0.5,
+                    "betti0-FN: persistence {} for the structured series misses the persistent component",
+                    v.persistence
+                );
+            }
+        }
+        assert!(
+            meas >= 15,
+            "betti0-FN: {} of 20 measurable — the machine stays silent too often",
+            meas
+        );
+    }
+
+    #[test]
+    fn betti0_symmetry_identical_series_measure_equally() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = betti_ar1(300, 0.7, &mut rng);
+        let b = a.clone();
+        let ab = betti0_persistence(&a, 3);
+        let ba = betti0_persistence(&b, 3);
+        match (ab, ba) {
+            (Some(x), Some(y)) => {
+                assert_eq!(x.ladder, y.ladder, "betti0-symmetry: ladder differs");
+                assert_eq!(x.betti0, y.betti0, "betti0-symmetry: betti0 differs");
+                assert_eq!(x.deaths, y.deaths, "betti0-symmetry: deaths differ");
+                assert_eq!(
+                    x.persistence, y.persistence,
+                    "betti0-symmetry: persistence differs"
+                );
+            }
+            (None, None) => {}
+            _ => panic!("betti0-symmetry: one direction measurable, the other not"),
+        }
+    }
+
+    #[test]
+    fn betti0_n_floor_no_verdict_below_threshold() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let a = betti_ar1(16, 0.7, &mut rng);
+        assert!(
+            betti0_persistence(&a, 3).is_none(),
+            "betti0-n-floor: n=16 carries a verdict"
         );
     }
 
