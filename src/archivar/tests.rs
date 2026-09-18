@@ -8583,6 +8583,10 @@ fn odf_series_dispatch_and_component_names() {
         Some("dawn_odf_observable_hz")
     );
     assert_eq!(
+        super::extract::series_component_name("pioneer10_odf", super::odf::COMP_OBSERVABLE),
+        Some("pioneer10_odf_observable_hz")
+    );
+    assert_eq!(
         super::extract::series_component_name("mars_express_odf", 99),
         None
     );
