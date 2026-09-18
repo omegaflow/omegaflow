@@ -15,7 +15,3 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An entscheid: Lasair-LSST (Rubin-Alert-Broker) — Endpoint `https://api.lasair.lsst.ac.uk/api` dokumentiert, Host aus eigenem Netz absent (direct 0, Proton 502), Statusseite `lasair.lsst.ac.uk` HTTP 200 „Up"; `LASAIR_LSST_TOKEN` vorhanden (`.secrets.local:59`), unverified. In `phi/blocked_sources.φ` als `pending` registriert. (Schritt: Operator-Wort für die Exit-Rotation `bin/proton-wg.sh suggest api.lasair.lsst.ac.uk`, dann Query-Messung mit Token.)
-
-An entscheid: Pipeline-Port force-Gate — kein sanktionierter Ort für den `--port`-Lauf (lokal strukturell verweigert, kein CI-Workflow fährt `--port`). Operator-Entscheid: lokaler Lauf des Release-Binärs auf den gitignorierten Korpora ODER CI-Workflow, der den Korpus trägt und `--port`+`--probe` fährt. (Schritt: Operator-Wort.)
-
