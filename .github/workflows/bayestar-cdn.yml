@@ -27,3 +27,48 @@ jobs:
               https://dataverse.harvard.edu/api/access/datafile/3424708 && \
             cargo run -p omegaflow-harvest --release --bin bayestar_compiler -- \
               --input dust/bayestar2019.fits.gz --out bayestar2019.be19 --ci-mode )
+
+  bayestar-h5-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - name: Idempotence — skip if bayestar2019.h5 already rests on the CDN
+        id: idempotence
+        run: |
+          if gh release view gracedb.ligo.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "bayestar2019.h5"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset bayestar2019.h5 already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset bayestar2019.h5 missing — mirroring"
+          fi
+      - name: Fetch bayestar2019.h5 from Harvard Dataverse and verify the sha256 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSfL --retry 3 --max-time 3000 -o bayestar2019.h5 \
+            https://dataverse.harvard.edu/api/access/datafile/3424724
+          got=$(sha256sum bayestar2019.h5 | cut -d' ' -f1)
+          want=f68f14dfba45556b4a073d5ca20b99a100e7ac91c97312f11c24e27b1e32ef99
+          echo "sha256 $got"
+          if [ "$got" != "$want" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "bayestar-cdn: sha256 of the fresh Dataverse h5 differs" \
+              "bayestar2019.h5 from datafile/3424724 delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Ensure the gracedb.ligo.org release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view gracedb.ligo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create gracedb.ligo.org --repo omegaflow/sources \
+              --title "gracedb.ligo.org" \
+              --notes "raw LIGO GraceDB reference data mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the raw h5 to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release upload gracedb.ligo.org bayestar2019.h5 \
+            --clobber --repo omegaflow/sources
