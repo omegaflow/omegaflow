@@ -9,6 +9,9 @@ fn note_text(note: &Hdf5Note) -> String {
         Hdf5Note::SuperblockVersion { v } => format!("superblock version {} unread", v),
         Hdf5Note::OffsetSize { n } => format!("offset size {} unread (4 or 8 only)", n),
         Hdf5Note::EndAtByte { off } => format!("file ends at byte {}", off),
+        Hdf5Note::AbsentAtByte { off } => {
+            format!("no bytes at address {} — the source does not carry it", off)
+        }
         Hdf5Note::Signatur { off, found } => format!(
             "signature {:02X}{:02X}{:02X}{:02X} at byte {} — not the expected block",
             found[0], found[1], found[2], found[3], off
