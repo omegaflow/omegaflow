@@ -3,7 +3,7 @@
   session: Bau-Folge 76
   class: handover
   date: 2026-09-18
-  sha256: b5b9b0c697e802b1504494e7790f799da8beed563a9ba8d1e110fb61ae51b858
+  sha256: 58063c20ed27b43b408af165c52fb8134d41c2bc9446eeea1ef9f4c92b65471a
   status: live
 -->
 # Handover — Bau-Folge 76 (2026-09-18)
@@ -33,7 +33,7 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
 eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
-## Stehender Pass (gemessen 2026-09-18, HEAD 45190022)
+## Stehender Pass (gemessen 2026-09-18, HEAD 7b67b10d)
 
 - **Postfach** — letzter `state/mail/mail_ledger.φ`-Eingang `1789689115`
   (2026-09-18, Rubin-Forum-Thread, **kein Agenten-Eingang**); `post.md` trägt nur
@@ -44,10 +44,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   @`cdb720d8` cancelled; `ci-check` `35307448019` failure @69c3ae96 (format/clippy,
   Wurzel in folge75 behoben); `pii-exposure` `35287195140` failure (exit 2 =
   Exposition bleibt, erwartet); `release-build` `35302966400` failure (veraltete
-  `ci_manage`-Kopie, folge74); sonst fremde Linien.
-- **HEAD** `45190022` == `origin/main` (FF-ready); zwischen Session-Start und jetzt
-  pushte die Forschung-Linie (`ca58d3c9`, `45190022`) — fremde Commits, eigener
-  Baum unberührt.
+  `ci_manage`-Kopie, folge74); sonst fremde Linien; **nach dem Bau-76-Commit/-Push**
+  `ci-check` `35314106560` + `te-gate` `35314110831` @`7b67b10d` dispatcht.
+- **HEAD** `7b67b10d` == `origin/main` (FF, eigener Commit); zwischen Session-Start
+  und jetzt pushte auch die Forschung-Linie (`ca58d3c9`, `45190022`) — fremde
+  Commits, eigener Baum unberührt.
 - **Sicherheitsnetz** — `refs/safety/1789711293` (Session-Start).
 
 ## TE-Gate — Restrisiken (a)(b) geschlossen, Gate-Verdikt ausstehend (härtester undatiert)
@@ -72,10 +73,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - **Restrisiko (c):** Name = Implementation — Rename
   `arx_restricted_surrogate_conditional` nach grünem Gate (fittet jetzt das volle
   Modell).
-- (Schritt: neuen `te-gate`-Lauf nach dem Bau-76-Commit einmal lesen
-  (`ci_manage view <id>`/`ci_manage log <id>`); grün → Rename (c), rot → rote Zelle
-  + FN-Arm `found/meas ≥ 0.5` beider Richtungen ist die Messung, Design verbreitern,
-  nie die Verweigerung aufweichen.) · `wartend`
+- (Schritt: `te-gate` `35314110831` @`7b67b10d` einmal lesen
+  (`ci_manage view 35314110831` / `ci_manage log 35314110831`); grün → Rename (c),
+  rot → rote Zelle + FN-Arm `found/meas ≥ 0.5` beider Richtungen ist die Messung,
+  Design verbreitern, nie die Verweigerung aufweichen.) · `wartend`
 
 ## Red main / Kanon-Gate — CI-Verifikation ausstehend
 
