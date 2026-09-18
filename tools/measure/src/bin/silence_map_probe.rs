@@ -466,6 +466,9 @@ fn main() {
             println!(
                 "confound: the catalog deficit is a property of the catalog selection function (magnitude limit, survey coverage), not of the field of bodies"
             );
+            println!(
+                "0-Kanon: the registers phi/sources.φ and phi/pipeline/ledger.φ carry no sky footprint (82 ra/dec point columns, 0 coverage/healpix/polygon fields, measured 2026-09-18) — a still cell cannot be bound to a registered source, so the cell's zero stays a property of the catalog selection function, not a pending harvest"
+            );
             if !m.deficits.is_empty() {
                 let (dmin, dmean, dmax) = summarize(&m.deficits);
                 println!(
