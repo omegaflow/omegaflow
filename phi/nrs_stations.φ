@@ -1,37 +1,4 @@
-# NRS-Stationstabelle (SITE_NAME lat lon water_depth_m auh_depth_m)
-#   Koordinaten gemessen 2026-09-07, Tiefen gemessen 2026-09-13.
-# Quelle (Koordinaten UND Tiefen): PMEL "Ocean Noise Reference Station (NRS) Network",
-#   Deployment-Tabelle,
-#   https://www.pmel.noaa.gov/acoustics/noaanps-ocean-noise-reference-station-network
-# Referenzwert: sichtbarer Dezimalwert der Netz-Tabelle (Spalten Latitude | Longitude |
-#   Water depth [m] | AUH depth [m]). Einheit beider Tiefenspalten: Meter (SI).
-# Tiefen-Definition:
-#   water_depth_m = Wassertiefe am Verankerungsort (Bathymetrie, Spalte "Water depth [m]").
-#   auh_depth_m   = Instrumenten-Tiefe der AUH = Sensor-Deployment-Tiefe
-#                   (Spalte "AUH depth [m]"). NRS01 kreuzbestaetigt: die Kalibrier-xlsx
-#                   traegt Depth_m = 500.
-# Mess-Anmerkungen:
-#   - Die PMEL-Seite fuehrt 13 Stationen NRS01-NRS13. NRS13 (Chumash Heritage NMS) steht
-#     in einer zweiten tbody-Zeile, deren data-sheets-Attribut noch die NRS12-Werte traegt
-#     (17.79/-64.65, Buck Island; Tiefen 40/40); der sichtbare Text ist NRS13 35.31 -121.59,
-#     913 / 850. Referenz ist der sichtbare Text. NRS11 traegt im Attribut -126.44, sichtbar
-#     -123.44 (siehe SHAPE-Kreuz); die Wassertiefe traegt sichtbar 550, im Attribut 534 —
-#     Referenz sichtbar 550, AUH 500.
-#   - Keine Spektren-Verankerung im Bucket fuer NRS02-10,12,13: deren Koordinaten tragen nur
-#     die Netz-Tabelle (Deployment-SHAPE pending).
-#   - Bucket noaa-passive-bioacoustic (GCS, nrs/products + nrs/audio): nur NRS01 + NRS11
-#     haben Sound-Level-Metrics-*-metadata.json mit "SHAPE": "POINT (lon lat)" (siehe Kreuz);
-#     diese metadata.json traegt KEINE Tiefe, nur SHAPE — die Netz-Tabelle ist die Tiefen-Quelle.
-#   - Genaeherte Wassertiefe (Quelltext "~"): NRS04 "~4,900" -> ~4900, NRS08 "~3,550" -> ~3550.
-#     Die Tilde ist uebernommen; auh_depth_m ist bei allen 13 exakt.
-#   - Keine Station ist bei einer Tiefe absent: alle 13 tragen beide Spalten gemessen.
-#     Kein 0.0-Pad, keine Fabrikation.
-#   - Format: Rust-parsebar — je Zeile 5 whitespace-getrennte Token
-#     SITE_NAME lat lon water_depth_m auh_depth_m; #-Zeilen sind Kommentar. Koordinaten wie
-#     gemessen (Grad, dezimal). Der bestehende Parser
-#     (noaa_nodd_bucket_harvester.rs parse_station_table) liest die ersten 3 Token und
-#     ignoriert die Tiefen-Token — die Erweiterung bricht ihn nicht. Ein fuehrendes "~" im
-#     water_depth_m-Token markiert den genaeherten Quellwert (nur NRS04, NRS08).
+note NRS-Stationen (5 Token: lat lon water_depth_m auh_depth_m); gemessen 2026-09-07/13; Quelle https://www.pmel.noaa.gov/acoustics/noaanps-ocean-noise-reference-station-network; Referenz sichtbarer Netz-Text; ~ genaeherter Quellwert (NRS04,NRS08).
 NRS01 72.44 -156.55 1000 500
 NRS02 50.25 -145.13 4250 500
 NRS03 47.77 -125.52 936 488
@@ -45,23 +12,6 @@ NRS10 -14.27 -170.72 33 33
 NRS11 37.88 -123.44 550 500
 NRS12 17.79 -64.65 40 40
 NRS13 35.31 -121.59 913 850
-#
-# Kreuz Netz-Tabelle vs Deployment-SHAPE (Konsistenz, gemessen aus
-# storage.googleapis.com/noaa-passive-bioacoustic, nrs/products/sound_level_metrics):
-#   NRS01, Deployment 2014-10..2015-09 (NRS_01_20141015-20150916_HMD_v3-metadata.json): SHAPE POINT (-156.6 72.49)
-#   NRS01, Deployment 2015-10..2017-08 (NRS_01_20151016-20170831_HMD_v3-metadata.json): SHAPE POINT (-156.5517 72.443)
-#   NRS01, Deployment 2018-08..2020-08 (NRS_01_20180820-20200824_HMD_v3-metadata.json): SHAPE POINT (-156.579 72.454)
-#   NRS01, Deployment 2020-09..2022-09 (NRS_01_20200915-20220925_HMD_v3-metadata.json): SHAPE POINT (-156.56 72.47)
-#   NRS11, Deployment 2019-10..2021-10 (NRS_11_20191023-20211004_HMD_v3-metadata.json): SHAPE POINT (-123.45 37.88)
-#   NRS01: Netz -156.55/72.44 liegt innerhalb 0.05 deg jeder der vier Verankerungen
-#     (Lon-Spanne -156.5517..-156.6, Lat 72.443..72.49); naechste Verankerung zur 2-dezimal-
-#     Rundung ist 2015-17 (-156.5517 72.443). Abweichung bis 0.05 deg — konsistent auf
-#     Netz-Rundung, Abweichung zu 2014-15 (72.49) und 2018-20/2020-22 ist benannt, keine Null.
-#   NRS11: Netz -123.44/37.88 konsistent mit Deployment-SHAPE 2019-21 (-123.45 37.88),
-#     0.01 deg Lon-Differenz. Das Attribut -126.44 der Netz-Seite ist KEIN Fehler: das
-#     Audio-Deployment NRS_11_2015-2017 traegt DEPLOY_LON -126.43500 — NRS11 lag dort vor
-#     2019 (2015-17), danach am Cordell-Bank-Ort -123.45. Station umgesetzt, beide gemessen.
-#   Alle uebrigen Deployment-Verankerungen (nrs/audio/*/metadata/*.json, Feld DEPLOY_LAT/
-#     DEPLOY_LON) bestaetigen die Netz-Werte auf 2 Dezimalen wo vorhanden; Deployments ohne
-#     Koordinate (leer/absent): NRS04 2015-16, NRS06 2016-18, NRS08 2016-18, NRS09 2016-17,
-#     NRS10 2015-16 — dort traegt nur die Netz-Tabelle die Referenz.
+note NRS13/NRS11 Netz-Seite: data-sheets-Attribut traegt Fremdwerte (NRS13 = NRS12 17.79/-64.65; NRS11 -126.44); Referenz sichtbarer Text NRS13 35.31/-121.59, NRS11 -123.44, Wassertiefe NRS11 sichtbar 550 (Attribut 534).
+note Kreuz Netz vs Deployment-SHAPE 2026-09-13: NRS01 Netz -156.55/72.44 innerhalb 0.05 deg jeder der vier Verankerungen (-156.5517..-156.6, 72.443..72.49); NRS11 Netz -123.44/37.88 = Deployment 2019-21 -123.45/37.88 (0.01 deg); Audio 2015-17 -126.435.
+note NRS02-10,12,13 ohne Spektren-Verankerung (SHAPE pending); Bucket noaa-passive-bioacoustic nrs/products traegt SHAPE nur fuer NRS01+NRS11; Deployments ohne Koordinate: NRS04,NRS06,NRS08,NRS09,NRS10.

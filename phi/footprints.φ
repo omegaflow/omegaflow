@@ -1,79 +1,37 @@
-# footprints.φ — die Survey-Footprints. Die vierte Asset-Klasse neben den drei
-# Zeugen-Arten (phi/witnesses.φ): ein Footprint ist KEIN Zeuge (gestalt = Koerperflaeche,
-# falscher Sitz) und KEIN Oszillator — er strahlt nicht, er bezeugt nicht, er deckt.
-# Record (.fp01, 4-Byte-Magic FP01): S² (HEALPix Nside 4096 nest) + Coverage-Fraktion
-# je Band, τ = Survey-Epoche (nicht geologische Stabilitaet). Archivar-Seite, konsumiert
-# als Gate (zeugnis §7: "beobachtet oder nie beobachtet" vor jeder Abfrage), nie als ω()-Feld.
-# magic_identity (src/archivar/zeuge.rs): FP01 -> FeldIdentitaet::Footprint (Geschwister der
-# drei Zeugen-Arten, keine vierte Art). Record src/archivar/footprint.rs, Band-Register
-# U/G/R/I/Z/Y/J/H/Ks/W1/W2/W3/W4. Disposition: footprint <survey>.
-# Gate-Worte (footprint_gate): Observed | NeverObserved | BandUncovered | Pending.
-# Zwei Quellen-Klassen tragen den Footprint (zeugnis §7, beide genuegen dem Gate):
-# DES fraktional (aus der Coverage-Tafel, frac_det 0..1), PS1 binaer (aus der
-# Archiv-Existenz der Skycell-Tiles, frac=1.0 fuer beobachtet).
+note footprints Record .fp01 (Magic FP01, HEALPix Nside 4096 nest) = S2 + Coverage-Fraktion je Band, tau = Survey-Epoche; Gate-Worte Observed|NeverObserved|BandUncovered|Pending; Record src/archivar/footprint.rs.
+note Band-Register U/G/R/I/Z/Y/J/H/Ks/W1/W2/W3/W4; zwei Quellen-Klassen: DES fraktional (frac_det 0..1), PS1 binaer (frac=1.0).
 
 footprint des-dr2
 url https://datalab.noirlab.edu/tap/sync
 table des_dr2.coverage
 asset des_dr2_coverage.fp01
 band g i r y z
-# Bindung (zeugnis §7: der Footprint ist das Feld jeder Tafel — bevor gefragt
-# wird, was gemessen wurde, wird gefragt, was beobachtet wurde). Die zwei
-# DES-Katalog-Tafeln, deren Zeilen-Richtung gegen diese Maske laeuft:
-tables II/357/des_dr1 des_dr2
-# Das Fussabdruck-Feld jeder Tafel ist die Zeilen-Richtung (ra/dec) im selben
-# hpix_4096-Nside-4096-nest-Raster wie des_dr2.coverage; die fp01-Maske ist
-# das Gate ueber beide Tafeln, nie ein Feld ihrer Zeilen.
-note DES-DR2 (DECam Y6A2) Survey-Coverage-Maske, NOIRLab Astro Data Lab TAP sync (anonym HTTP 200, REQUEST=doQuery LANG=ADQL FORMAT=csv, gemessen 2026-09-07). 25.239.595 Zeilen ~ 5171 deg²; frac_det_g/i/r/y/z = "fractional area of healpix pixel covered simultaneously by the X band" — Flaeche-Coverage je Band, detektions-unabhaengig (Footprint-Litmus BESTANDEN: trennt nie-beobachtet [Pixel absent] von beobachtet-leer [frac_det>0]; kein positions-abgeleiteter MOC wie das verweigerte CDS/II/371/des_dr2). Messung: NULL=0 (alle 5 Baender tragen einen expliziten Wert), explizite Nullen vorhanden (g 116.693, i 39.654, r 206.867, y 0, z 52.163) — null-echt gehalten, nie fabriziert. Duplikat-Zeilen existieren (byte-identisch), exakt entdupliziert im Compiler. Ernte: Pagination je hpix_4096-Bereich (Range-Width 2^20), OFFSET defekt, TOP unsupported (gemessen). Kompiliert via des_coverage_compiler (tools/harvest, FP01), CI-Lauf 34168223197 (7m8s success). NEU GEMESSEN (2026-09-08, Census des vollen Laufs): die Tafel traegt eine Mehrfach-Belegung — 25.239.302 Quell-Zeilen → 126.196.510 Kandidaten-Records, davon 31.562.807 exact- und 84.322.178 divergent-duplikate (gleiches (hpix, band), verschiedener frac). Pro Pixel ~12-fache Belegung mit unterschiedlichen frac-Werten ("simultaneously" = per-Epoche/Visit). GELOEST (2026-09-08): Aggregation = MAX je (pixel, band) — die Zeilen sind ueberlappende Coverage-Aussagen derselben Zelle (per-Epoche/Visit); der MAX ist die tiefste simultane Coverage, SUM/union waere Doppelzaehlung (Fabrication). Compiler-Fix collapse_max (descending sort, keep max). Re-Ernte CI-Lauf 34222237312: 10.311.965 Records, 25.239.595 Quell-Zeilen (exakt die Tafel-Summe), 0 bad-hpix/absent/invalid. Asset auf der CDN, vertrauenswuerdig.
+note DES-Bindung: die zwei Katalog-Tafeln II/357/des_dr1 und des_dr2 laufen gegen die fp01-Maske; Fussabdruck-Feld = Zeilen-Richtung ra/dec im hpix_4096-Nside-4096-nest-Raster wie des_dr2.coverage; die Maske ist das Gate, nie ein Feld ihrer Zeilen.
+note DES-DR2 (DECam Y6A2) NOIRLab TAP sync anonym 2026-09-07: 25.239.595 Zeilen ~5171 deg2; frac_det = Flaechen-Coverage je Band; NULL=0, Nullen null-echt; MAX je (pixel,band); Compiler des_coverage_compiler; 10.311.965 Records, 0 invalid; Asset CDN.
 
-# Die vier uebrigen Durchmusterungen (Weberin §9 Stufe 5, Plural): curl-gemessen 2026-09-08,
-# je Survey einzeln begutachtet (grind-pro, jede Route curl-gemessen, nicht geraten):
-# PS1 und AllWISE tragen per-Pixel-Coverage-Bilder (Quelle GEFUNDEN, Compiler pending),
-# SDSS absent (die Quelle traegt keinen per-Pixel-Flaechen-Wert, gemessen unten),
-# 2MASS Coverage gemessen 2026-09-14 (Party): XSC-Fractional-Coverage FITS (24 Quadranten) + Depth-of-Coverage-Cube je Atlas Image (max 7 / typisch 6 Samples); kein TAP, FITS-Images (irsa.ipac.caltech.edu/data/2MASS/docs/releases/allsky/doc/figures/secii6ff3.fits …).
+note Survey-Plural: PS1+AllWISE per-Pixel-Coverage gefunden; SDSS absent; 2MASS XSC-Fractional-Coverage FITS 24 Quadranten + Depth-Cube max 7/typisch 6, gemessen 2026-09-14, irsa.ipac.caltech.edu/data/2MASS/docs/releases/allsky/doc/figures/secii6ff3.fits.
 footprint ps1
 url https://ps1images.stsci.edu/rings.v3.skycell/
 asset ps1_dr2_binary.fp01
 band g r i z y
-# Binaeres Gate-Asset (Rezept A, 2026-09-09): aus der Archiv-Existenz der Skycell-Tiles
-# (ps1grid.fits-Geometrie + ps1filenames.py-Existence, ~7900 Probes) statt der vollen
-# Ebenen-Ernte. frac=1.0 fuer beobachtet (binaer, genuegt §7). Caveat: der Fehler geht
-# Richtung 'beobachtet' — der aeuszerste Suedsaum (≤1 Tile) und das ~1.6e-3 deg² Polarloch
-# koennen als beobachtet ueberzeichnet sein; Quellen dort koennten faelschlich der ehrlichen
-# Leere zugeordnet werden. Compiler tools/harvest/src/bin/ps1_binary_compiler.rs.
-# Der fraktionale Weg (stack.num -> ps1_dr2_coverage.fp01, unten) laeuft als Tiefen-Ernte
-# weiter (Autoresume, Preis ~60 TB/~100 Tage) — ein Tiefen-Asset, KEIN Gate-Asset.
-# Binaer-Asset ps1_dr2_binary.fp01 liegt auf der CDN (Lauf geschlossen, 35.906.245 B); die
-# fraktionale Ernte laeuft weiter (Operator-Wort 2026-09-09).
-note PS1 (Pan-STARRS1) — Quelle GEFUNDEN (2026-09-08, curl-gemessen, anonym): der PS1-Image-Server rings.v3.skycell traegt je Skycell je Filter (grizy) die Belichtungs-Ebenen stack.num (per-Pixel-Anzahl beitragender Exposures) und stack.exp (Exposure-Zeit s) als FITS (HTTP 206 byte-range, {projcell}/{subcell}/rings.v3.skycell.{projcell}.{subcell}.stk.{filter}.unconv.{num|exp}.fits). Detektions-unabhaengig (IPP-Warp-Coadd-Buchhaltung, kein Detektions-Schritt) — Footprint-Litmus BESTANDEN. Semantik: count (num > 0 = beobachtet), KEINE 0..1-Fraktion → Fraction = num / Nenntiefe (je Filter, live-data-Konstante). Machine-Lookup ps1filenames.py (ra/dec/filter) + fitscut.cgi. MAST CAS bleibt refused (detektions-abgeleitet). GEBAUT (2026-09-08): Re-Grid-Kernel `src/archivar/regrid.rs` (GnomonicRegrid: FITS-TAN-WCS inkl. PC-Matrix, Pixel-Ecken-Raster je Zeile, Grenz-Pixel 16×16-Subzellen-Quadratur, Flaechengewicht (1+xi^2+eta^2)^-1.5, absent traegt nie bei, real-0 traegt Praesenz mit count 0); num-Ebenen-Codierung gemessen: Exposure-Count in den niedrigen 15 Bits (Sign-Bit gesetzt), max num == NINPUTS der Ebene. Compiler `tools/harvest/src/bin/ps1_coverage_compiler.rs` (grizy, FP01, `--limit N --ra0 --dec0 --step --ci-mode`): erntet stack.num je Skycell je Filter, dekodiert, re-gridded, kompiliert ps1_dr2_coverage.fp01. Nenntiefe: dokumentierter PS1-Full-Depth-Exposure-Count nicht verifizierbar (DEEP_STACK-NINPUTS variiert je Skycell) → empirisches max num ueber die geernteten Skycells je Filter (benannte Wahl, in den Record-Kopf nicht geschrieben); im vollen CI-Lauf ist das max ueber die volle Ernte. Enumeration: RA/Dec-Raster Schritt 0.2 deg (gemessen < Skycell-Breite ~0.43 deg, Ring-Geometrie rings.v3 unbekannt → dichte Abtastung ueber ps1filenames.py). Verifiziert (2026-09-08): cargo check --workspace 0/0, Unit-Tests gruen (Integral-Erhaltung, absent-vs-zero, deterministisch, WCS-PC); Live-Lauf --limit 2 (Skycells 1360.059 + 1360.058, dec 2, ra ~150): 10 Ebenen, 389.074.034 gemessene Pixel, FP01-Roundtrip verifiziert, 9.381 Records / 1.879 HEALPix-Pixel, g bei (150,2) frac 0.898, Nenntiefe g 22 r 30 i 26 z 17 y 21. Volles DR2-Asset: pending (Ernte ~10^6 Grid-Queries + ~10^5 Skycell-Ebenen, CI-Lauf ueber --ci-mode, CDN-Manifestation).
+note PS1-Binaer-Asset (2026-09-09): Archiv-Existenz Skycell-Tiles (ps1grid + ps1filenames, ~7900 Probes), frac=1.0; Fehlerrichtung beobachtet - Suedsaum <=1 Tile + 1.6e-3 deg2 Polarloch ueberzeichnet; Compiler ps1_binary_compiler.rs; 35.906.245 B.
+note PS1-Fraktional (Quelle 2026-09-08): rings.v3.skycell stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; Regrid regrid.rs, Compiler ps1_coverage_compiler.rs; Live-Lauf 389.074.034 Pixel, g(150,2) frac 0.898; volles DR2-Asset pending.
 
 footprint sdss
 url https://skyserver.sdss.org/dr18/
 band u g r i z
-note SDSS — absent (2026-09-08, curl-gemessen, anonym): die dr18-CAS ist anonym SQL-lesbar — GET https://skyserver.sdss.org/dr18/en/tools/search/sql.aspx (200 text/html) liefert das Antiforgery-Cookie + __RequestVerificationToken, POST https://skyserver.sdss.org/dr18/SearchTools/sql (cmd, format=CSV, searchtool=SQL, Token) fuehrt beliebige SQL anonym aus (200 text/plain CSV); die fruehere GET/POST-500-Messung an sql.aspx selbst traf den Formular-Endpunkt, der Query-Endpunkt ist /dr18/SearchTools/sql. Zweite anonyme SQL-Route, tokenlos: GET https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=...&format=csv (200 text/plain CSV) — dieselbe CAS, beide Routen gemessen 2026-09-08. Volle Schema-Zaehlung (132 User-Tabellen): KEINE per-Pixel-Flaeche-Coverage-Tabelle. Spalten-Scan der ganzen CAS auf frac/coverage/healpix/area: die einzigen Treffer sind fracDeV_* (Lichtprofil-Anteile an PhotoObjAll-Detektionen, kein Flaeche-Wert), area an den Polygon-/Masken-Tabellen und exptime an Spektren-Platten. Das Imaging-Fenster liegt als Geometrie, nicht als per-Pixel-Wert: sdssPolygons (8.060.102 Polygone) + sdssImagingHalfSpaces (32.939.114 Halbraeume) = Mangle-Beschreibung der Imaging-Geometrie; die Richtungsfunktionen fFootprintEq/fInFootprintEq antworten "regiontype POLYGON if inside", leer = ausserhalb — ein 0/1-Richtungstest aus Polygonen, keine Fraktion. Field/Frame/Run tragen Feld-/Scan-Geometrie (Zentrum + Ausdehnung, Frame 2048x1489, kein Pixelinhalt), Mask die ausgeschlossenen Regionen (Sterne/Defekte, radius+area). Anonyme Nebenwege gemessen: TAP 404 (skyserver.sdss.org/tap/sync, /dr18/tap/sync, /dr18/en/tools/search/tap/sync), SIA 404 (x_sia.aspx, sdssvo/sia/sia.aspx), x_sql.aspx 404 (alter Direkt-Endpunkt weg), CasJobs jobs.asmx 200 aber kontogegatet (Token), data.sdss.org/sas/dr18 200 traegt die fpC-FITS-Frames (Feld-Geometrie, keine Flaeche-Tabelle). PhotoObjAll/PhotoPrimary sind Detektions-Kataloge (Litmus refused). Die Quelle traegt keinen per-Pixel-Flaeche-Coverage-Wert auf irgendeiner anonymen Route; die Polygon-Geometrie ist eine andere Messung (Fenster-Maske, keine per-Pixel-Fraktion) — absent, nie pending.
+note SDSS - absent (2026-09-08, anonym): dr18 CAS anonym SQL-lesbar; 132 User-Tabellen, KEINE per-Pixel-Coverage-Tabelle; Imaging-Fenster als Mangle-Geometrie (0/1); TAP/SIA 404; PhotoObjAll refused; absent, nie pending.
 
 footprint 2mass
 url https://irsa.ipac.caltech.edu/TAP/sync
 asset 2mass_binary.fp01
 band j h ks
-# Binaeres Gate-Asset (Rezept A, 2026-09-09): aus der Archiv-Existenz der Scan-Kacheln —
-# fp_scan_dat traegt 59.731 Streifen-Kacheln je mit 4 Himmels-Ecken (ra_1..4/dec_1..4) + Zentrum,
-# 0 NULL, Join zum Coadd-Atlas deckungsgleich (Litmus BESTANDEN). frac=1.0 fuer beobachtet, J/H/Ks
-# simultan (eine Maske fuer alle drei Baender). Caveat (wie PS1): der Fehler geht Richtung
-# 'beobachtet' — geblankte Sub-Regionen (coadd_frac < 1) sind nur als Kachel-Skalar verbucht und
-# werden raeumlich ueberzeichnet; die Polar-Keile (RA-Ueberlauf 277°→18°) sind Quadrat-Geometrie.
-# Compiler tools/harvest/src/bin/2mass_binary_compiler.rs (Nside 256, order 8, ~28 MB).
-# IRSA-TAP-Dialekt bindend: unqualifizierte Namen (2mass.fp_scan_dat -> BAD_REQUEST), MAXREC 60000.
-note 2MASS — Rezept A entschieden (Probe 2026-09-09, curl-gemessen): keine Coverage-Tabelle, aber fp_scan_dat/fp_coadd_dat tragen das Scan-/Atlas-Inventar; fp_scan_dat (59.731 Kacheln, 4 Himmels-Ecken, Zentrum) unterscheidet nie-beobachtet von beobachtet — Archivexistenz → binaere Maske, wie PS1. fp_coadd_dat-Ecken liegen im U-Scan-Pixel-Frame (kein Himmelswert) und bleiben ungenutzt (Fabrication vermieden). Gator-"Coverage" bleibt detektions-basiert (refused).
+note 2MASS (2026-09-09): fp_scan_dat 59.731 Kacheln (4 Ecken + Zentrum, 0 NULL), Join Coadd deckungsgleich, frac=1.0 J/H/Ks simultan; Fehlerrichtung beobachtet (geblankte Sub-Regionen coadd_frac<1 ueberzeichnet); Compiler 2mass_binary_compiler.rs.
+note 2MASS (Probe 2026-09-09): keine Coverage-Tabelle; fp_scan_dat/fp_coadd_dat tragen das Scan-/Atlas-Inventar; fp_scan_dat unterscheidet nie-beobachtet/beobachtet (Archivexistenz); fp_coadd_dat-Ecken im U-Scan-Pixel-Frame; Gator-Coverage refused.
 
 footprint allwise
 url https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd/
 asset allwise_coverage.fp01
 band w1 w2 w3 w4
-# Fraktionales Gate-Asset (Tiefe je Band, Operator-Wort 2026-09-09): count → Fraction =
-# effektive-Pixel / Nenntiefe. Aufloesung Nside 1024 (order 10, ~600 MB) — Ganzhimmel × 4 Baender
-# auf Nside 4096 waere ~9,6 GB und ueber der 2-GB-Grenze des CDN-Assets; die Tiefe (W1/W2 ~323,
-# W3/W4 flacher) bleibt erhalten. Chunked-Autoresume: --coadd-lo/--coadd-hi je Lauf, Partials
-# allwise_part_<lo>_<hi>.fp01, Combiner wise_coverage_combiner (Summe + clamp; die Nenntiefe ist
-# die surveyweite TAP-MAX(maxcov)-Konstante, identisch je Chunk). Workflow allwise-cdn.yml.
-note AllWISE — Quelle GEFUNDEN (2026-09-08, curl-gemessen, anonym HTTP 200): per-Coadd-Kachel cov-3.fits.gz unter ibe/data/wise/allwise/p3am_cdd/{coadd_id[0:2]}/{coadd_id[0:4]}/{coadd_id}/{coadd_id}-w{band}-cov-3.fits.gz (31 MB gz / 64 MB raw, 4095² float32, RA---SIN 1.375 arcsec/pix, BUNIT 'effective pixels', FILETYPE 'depth-of-coverage image'). Semantik: count (max w1 323.8 ≫ 1, KEINE Fraktion) → Fraction = effektive-Pixel / Nenntiefe. Enumeration: TAP-Tabelle wise.wise_allwise_p3am_cdd (18.240 coadd_ids, 72.960 rows, anonym; GROUP BY coadd_id, DISTINCT refused). Bulk ~2.3 TB alle 4 Baender. GEBAUT (2026-09-09): Compiler wise_coverage_compiler (SIN-Kachel-Raster → HEALPix-Re-Grid flaechengewichtet, count→fraction, --coadd-lo/--coadd-hi deterministisch ueber sortierte coadd_ids) + Combiner wise_coverage_combiner + Workflow allwise-cdn.yml (Cron, Chunk je Lauf, Combiner am Ende). Ernte-Dispatch = Operator-Wort.
+note AllWISE-Fraktional (Operator-Wort 2026-09-09): count->Fraction effektive-Pixel/Nenntiefe; Nside 1024 (order 10, ~600 MB; 4096 ~9,6 GB > 2-GB-CDN-Grenze); Chunked-Autoresume --coadd-lo/hi, Combiner wise_coverage_combiner; Workflow allwise-cdn.yml.
+note AllWISE (Quelle 2026-09-08): cov-3.fits.gz (4095px float32, BUNIT effective pixels); count max w1 323.8 -> Fraction effektive-Pixel/Nenntiefe; TAP wise.wise_allwise_p3am_cdd 18.240 coadd_ids/72.960 rows; 2026-09-09, Ernte-Dispatch Operator-Wort.
