@@ -778,7 +778,7 @@ fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
             }
         }
     } else if w1.len() >= 4 && w1[..4] == HDF_MAGIC {
-        match Hdf5File::parse(&w1) {
+        match Hdf5File::parse_fetch(&w1, |off, len| g.read_range(off, len)) {
             Ok(file) => return extract_nc4(&file, g, lsk),
             Err(note) => {
                 eprintln!(
@@ -813,7 +813,7 @@ fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
             }
         }
     } else if w2.len() >= 4 && w2[..4] == HDF_MAGIC {
-        match Hdf5File::parse(&w2) {
+        match Hdf5File::parse_fetch(&w2, |off, len| g.read_range(off, len)) {
             Ok(file) => extract_nc4(&file, g, lsk),
             Err(n2) => {
                 eprintln!(
