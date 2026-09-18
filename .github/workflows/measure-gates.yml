@@ -24,7 +24,7 @@ jobs:
       - name: Run the Betti-0 calibration gates (FP, FN, symmetry, n-floor)
         run: cargo test --release -p omegaflow --lib -- --nocapture betti0 >> measure-gates.txt 2>&1
       - name: Run the silence-map gates (six gates in the probe bin)
-        run: cargo test --release -p omegaflow-measure >> measure-gates.txt 2>&1
+        run: cargo test --release -p omegaflow-measure --bin silence_map_probe >> measure-gates.txt 2>&1
       - name: Run the silence-map probe against the CDN catalog (the real measurement)
         run: cargo run --release -p omegaflow-measure --bin silence_map_probe >> measure-gates.txt 2>&1
       - name: Raise an issue when a measure gate fails
