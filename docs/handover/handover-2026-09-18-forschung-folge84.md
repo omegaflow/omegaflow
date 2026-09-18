@@ -3,7 +3,7 @@
   session: Forschung-Folge 84
   class: handover
   date: 2026-09-18
-  sha256: 0c0c2cefc2fe307359eb56647a6b79c4bc33a33c762b45bf5bbf972f72b2d4c0
+  sha256: a762348f2e9248b7f889d9bfce04e183fa4222ac94138d81b5a0c5f7a22c4917
   status: live
 -->
 # Handover — Forschung-Folge 84 (2026-09-18)
@@ -50,9 +50,9 @@ und werden nie als Handlungsschritt geführt. Jeder Punkt trägt seinen Status-T
   `measure-gates.txt:143–149`).
 - Fix (eigene Datei): `.github/workflows/measure-gates.yml:27` auf
   `cargo test -p omegaflow-measure --bin silence_map_probe` gescoped.
-  (Schritt: nach Commit `gh workflow run measure-gates.yml`, Run-ID registrieren,
-  einmalig `ci_manage view <id>` + Artefakt `measure-gates`; erst dann stehen die
-  sechs Silence-Map-Gates + die reale CDN-Messung auf dem Prüfstand.)
+  Re-Dispatch `35353722981` @`2568285e` in_progress (2026-09-18). (Schritt:
+  einmalig `ci_manage view 35353722981` + Artefakt `measure-gates`; erst dann
+  stehen die sechs Silence-Map-Gates + die reale CDN-Messung auf dem Prüfstand.)
 - Der `deredden`-Test-Fehler ist von der bau-Linie gefaltet (`bau-folge85.md:85`;
   fremde Probe, `tools/measure/src/bin/deredden_baseline_probe.rs`).
 
