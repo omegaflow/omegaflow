@@ -27,7 +27,7 @@ jobs:
           - { bin: odyssey_odf_compiler, netloc: pds-geosciences.wustl.edu, asset: odyssey_odf.bin, sharded: true, prefix: odyssey_odf }
           - { bin: messenger_odf_compiler, netloc: pds-ppi.igpp.ucla.edu, asset: messenger_odf.bin }
           - { bin: mars_express_odf_compiler, netloc: archives.esac.esa.int, asset: mars_express_odf.bin }
-          - { bin: rosetta_odf_compiler, netloc: archives.esac.esa.int, asset: rosetta_odf.bin, timeout: 350 }
+          - { bin: rosetta_odf_compiler, netloc: archives.esac.esa.int, asset: rosetta_odf.bin, sharded: true, prefix: rosetta_odf, timeout: 350 }
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
