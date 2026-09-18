@@ -3,7 +3,7 @@
   session: Bau-Folge 75
   class: handover
   date: 2026-09-18
-  sha256: 86c2dd60764765a1406b57c8c31b7b1c89a3465712afccbb04604e815ae4b1e3
+  sha256: d73633d6086ac316481cedd65a570eda37ab3831afde6b05fa7ce8cf414d8097
   status: live
 -->
 # Handover — Bau-Folge 75 (2026-09-18)
@@ -57,8 +57,8 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   rekonstruiert mit genullten x-Koeffizienten (δ=0) und permutiert die Residuen
   des vollen Fits; die `None`-Verweigerung (Fit-Fehlschlag/Längen-Mismatch/
   nicht-finit) bleibt erhalten. Diff `src/mathematikerin/te.rs` +168/−19;
-  `cargo check --all-targets` sauber. (Schritt: `gh workflow run te-gate.yml`
-  nach dem Commit; Run-ID registrieren; rote Zelle @rho=0.5 und FN-Arm
+  `cargo check --all-targets` sauber. Dispatcht `35313041295` @`b8bb7b01`.
+  (Schritt: Run-ID registriert; rote Zelle @rho=0.5 und FN-Arm
   `found/meas ≥ 0.5` im CI-Lauf lesen.) · `pending`
 - **Rat-Einwand (registriert, kein Blocker):** der volle Fit orthogonalisiert
   die Residuen gegen x; die Nullen-Rekonstruktion stellt die x-getragene
@@ -83,9 +83,8 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - `port.rs` alt-lose Zeile: statt `unwrap_or(SURFACE_ALT_M)`
   (0-Kanon-Verletzung, Rat-Verdikt) jetzt Verweigerung `eprintln!` + keine
   `on`-Zeile, der Rest des Blocks portiert weiter — spiegelt parse.rs
-  `on without alt refused — declare alt`.
-- (Schritt: `gh workflow run ci-check.yml` nach dem Commit; Run-ID registrieren;
-  format/clippy/build/test-Jobs lesen. Named risk: der flare-Leg der
+  `on without alt refused — declare alt`. Dispatcht `35313038589` @`b8bb7b01`.
+- (Schritt: format/clippy/build/test-Jobs lesen. Named risk: der flare-Leg der
   nicht-ignorierten Tests läuft jetzt durch die Vollmodell-Null — rot dort ist
   die Verweigerung als Messung, Folge-Schritt ist das Design zu verbreitern,
   nie die Verweigerung aufzuweichen.) · `pending`
