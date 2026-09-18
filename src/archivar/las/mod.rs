@@ -832,7 +832,7 @@ mod tests {
     }
 
     fn geokey_payload(keys: &[(u16, u16)]) -> Vec<u8> {
-        let mut p = Vec::with_capacity(8 + keys.len() * 8);
+        let mut p = vec![0u8; 8 + keys.len() * 8];
         put_u16(&mut p, 0, 1);
         put_u16(&mut p, 2, 1);
         put_u16(&mut p, 4, 0);

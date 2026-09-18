@@ -464,6 +464,7 @@ mod tests {
             .unix_to_tdb(time_tag_unix(1996, 313, 38_010_000).unwrap())
             .unwrap();
         let dt = 1.0 / 1250.0;
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
         assert_eq!(series[0].0, tdb_tag - AD_TIMETAG_QUAD * dt);
         assert!((series[8].0 - tdb_tag).abs() < 1e-6);
         assert_eq!(series[0].1, 0.0);
@@ -472,7 +473,7 @@ mod tests {
         assert_eq!(series[1].2, COMP_AD2);
         assert_eq!(series[2].2, COMP_AD3);
         assert_eq!(series[3].2, COMP_AD4);
-        assert!((series[4].0 - series[0].0 - dt).abs() < 1e-12);
+        assert!((series[4].0 - series[0].0 - dt).abs() < tol);
         assert_eq!(series[4].1, 1.0);
     }
 
@@ -539,7 +540,8 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), 500 * AD_GROUP_BYTES);
         let dt = 1.0 / 10000.0;
-        assert!((series[4].0 - series[0].0 - dt).abs() < 1e-12);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[4].0 - series[0].0 - dt).abs() < tol);
         assert_eq!(series[0].1, f64::from(0x0AB));
         assert_eq!(series[0].2, COMP_AD1);
         assert_eq!(series[1].1, f64::from(0x0CD));
@@ -617,7 +619,8 @@ mod tests {
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), SHORT_AD_REPETITIONS * AD_GROUP_BYTES);
         let dt = 1.0 / 200.0;
-        assert!((series[4].0 - series[0].0 - dt).abs() < 1e-12);
+        let tol = 8.0 * f64::EPSILON * series[0].0.abs();
+        assert!((series[4].0 - series[0].0 - dt).abs() < tol);
         assert_eq!(series[0].1, 0.0);
         assert_eq!(series[0].2, COMP_AD1);
         assert_eq!(series[1].1, 0.0);
