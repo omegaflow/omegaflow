@@ -91,7 +91,7 @@ pub fn layout(bytes: &[u8]) -> Option<OdrLayout> {
     let stride = record_stride(bytes)?;
     let quad_bytes = if h.eight_bit { AD_GROUP_BYTES } else { 6 };
     let data = stride - HEADER_BYTES;
-    if data % quad_bytes != 0 {
+    if !data.is_multiple_of(quad_bytes) {
         return None;
     }
     let quads = data / quad_bytes;
@@ -114,7 +114,7 @@ pub fn record(bytes: &[u8]) -> Option<OdrRecord> {
     }
     let quad_bytes = if header.eight_bit { AD_GROUP_BYTES } else { 6 };
     let data = stride - HEADER_BYTES;
-    if data % quad_bytes != 0 {
+    if !data.is_multiple_of(quad_bytes) {
         return None;
     }
     let quads = data / quad_bytes;
