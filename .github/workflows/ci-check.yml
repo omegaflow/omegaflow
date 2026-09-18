@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'src/**'
+      - 'static/**'
       - 'phi/**'
       - 'tools/register/**'
       - 'tools/utils/**'
@@ -25,6 +26,7 @@ jobs:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo check
+    - run: cargo check --features browser_relay
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
@@ -52,6 +54,7 @@ jobs:
     - run: cargo test --release -p omegaflow-harvest --bin skydirection_compiler
     - run: cargo test --release -p omegaflow-harvest --bin kcdc_compiler
     - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+    - run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

@@ -31,6 +31,7 @@ struct WsConfig {
     consent: Arc<AtomicBool>,
     diode: Arc<RwLock<DiodeState>>,
     sources: Arc<Vec<SourceConfig>>,
+    verdicts: Arc<Vec<VerdictLine>>,
 }
 pub struct TcpRadiator {
     shutdown: Arc<AtomicBool>,
@@ -52,6 +53,7 @@ impl TcpRadiator {
         consent: Arc<AtomicBool>,
         diode: Arc<RwLock<DiodeState>>,
         sources: Arc<Vec<SourceConfig>>,
+        verdicts: Arc<Vec<VerdictLine>>,
     ) -> Self {
         let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
         let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
@@ -104,6 +106,7 @@ impl TcpRadiator {
                         consent: consent.clone(),
                         diode: diode.clone(),
                         sources: sources.clone(),
+                        verdicts: verdicts.clone(),
                     };
                     thread::spawn(move || handle_ingress(stream, cfg));
                 }
@@ -434,6 +437,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
     let mut last_field_r: Option<Arc<Buffer>> = None;
     let mut last_kinetic: Option<PresenceFrame> = None;
+    let mut sent_verdicts = false;
     let _ = stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode == 0x8 {
@@ -785,6 +789,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     },
                     &mut records,
                 );
+                if let Some(cset) = &field.curves {
+                    crate::mathematikerin::emit_curves(cset, center, t0, extent, &mut records);
+                }
                 response_epoch = t0;
             } else {
                 response_epoch = now;
@@ -863,6 +870,18 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 if let Err(e) = write_ws_binary(&mut stream, &kinetic_frame_bytes(&frame)) {
                     eprintln!(
                         "ws kinetic write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
+            }
+            if !sent_verdicts && !cfg.verdicts.is_empty() {
+                sent_verdicts = true;
+                if let Err(e) =
+                    write_ws_binary(&mut stream, &encode_weberin_verdicts(&cfg.verdicts))
+                {
+                    eprintln!(
+                        "ws verdict write returned {:?} — the browser connection ended",
                         e.kind()
                     );
                     return;
