@@ -1,8 +1,8 @@
 name: fugin-cdn
 
 concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ inputs.asset }}
+  cancel-in-progress: false
 
 on:
   workflow_dispatch:
@@ -45,4 +45,8 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin fugin_skymap_compiler -- \
             --url "${{ inputs.url }}" --out "${{ inputs.asset }}" \
-            --ci-mode
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "fugin-cdn: ${{ inputs.asset }} returned void" \
+                 "fugin_skymap_compiler returned void for ${{ inputs.url }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
