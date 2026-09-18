@@ -3,7 +3,7 @@
   session: Entscheid-Folge 47
   class: handover
   date: 2026-09-18
-  sha256: 34aa49e46f51d05de4a00d8edcded2f3a97187d88ed699f1e9056ab9c79ad2d9
+  sha256: 86b2a7a157e9b9fb592ccc6ef604765a9ff746f7eda6c072a0745497e660c3d2
   status: live
 -->
 # Handover — Entscheid-Folge 47 (2026-09-18)
@@ -49,6 +49,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   → **502** (nginx upstream absent, 166 B) über **zwei** Exits (US
   `149.102.242.106`, SG `149.50.211.161`); Hauptseite `lasair.lsst.ac.uk/` → 200.
   Kein Geoblock/IP-Block — das API-Backend antwortet nicht; Exit-Rotation nutzlos.
+  Status-Seite `lasair.lsst.ac.uk/`: „scheduled maintenance … fully offline Sept
+  14–16, at-risk on Sept 17-18" (Stand 2026-09-10 14:17 UTC); meldet „Lasair
+  LSST: Up" (status code 200, 2026-09-18 07:58 UTC) — das misst das Web-Frontend,
+  nicht das API-Backend; der 502 fällt in das at-risk-Fenster.
 - **Digest** `register_lookup --live`: 555 offene Zeilen / 110 Docs. Die
   owner-getaggten Pipeline-Register fehlen noch — PATH-Binary ist der alte Build.
 
@@ -57,8 +61,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 **Kein session-abarbeitbarer undatierter Punkt.** Die operator-gebundenen Punkte
 liegen dem Operator vor; blockiert/wartend sind keine Auswahlpunkte.
 
-- `pending` — **Lasair-LSST**: API 502 (Backend absent), gemessen 2026-09-18 über
-  US + SG; `LASAIR_LSST_TOKEN` unverified. (Schritt: Re-Messung
+- `pending` — **Lasair-LSST**: API 502 (Backend absent) im Wartungsfenster
+  (14.–16.09. offline, 17.–18.09. at-risk; Status-Seite meldet Frontend „Up"),
+  gemessen 2026-09-18 über US + SG; `LASAIR_LSST_TOKEN` unverified. (Schritt:
+  Re-Messung nach Wartungsende
   `ALL_PROXY=socks5h://127.0.0.1:25344 curl -o /dev/null -w '%{http_code}'
   https://api.lasair.lsst.ac.uk/api/query` — Trigger in `external-state`.)
 - `wartend` — **SuperDARN**: Request 2026-09-18 gesendet (Operator, von
