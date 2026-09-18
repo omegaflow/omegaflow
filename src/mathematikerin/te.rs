@@ -1059,7 +1059,7 @@ fn lagged_predict_nx_zeroed(
     v
 }
 
-pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Vec<f32> {
+pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Option<Vec<f32>> {
     let n = y.len();
     let p = order;
     match ols_fit_lagged_n(y, &[], p) {
@@ -1076,14 +1076,14 @@ pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Vec<f
                 } else {
                     let v = lagged_predict_n(&coeffs, &out, &[], t, p) + perm[t - p] as f64;
                     if !v.is_finite() {
-                        return shuffle_series(y, rng);
+                        return None;
                     }
                     v as f32
                 };
             }
-            out
+            Some(out)
         }
-        None => shuffle_series(y, rng),
+        None => None,
     }
 }
 
@@ -1095,7 +1095,7 @@ pub fn arx_restricted_surrogate_conditional(
     rng: &mut u64,
 ) -> Option<Vec<f32>> {
     if conds.is_empty() {
-        return Some(arx_restricted_surrogate(y, max_lag, rng));
+        return arx_restricted_surrogate(y, max_lag, rng);
     }
     let n = y.len();
     if x.len() != n {
@@ -2716,7 +2716,8 @@ mod tests {
             .collect();
         let cond_surr = arx_restricted_surrogate_conditional(&y, &x, &[&c], max_lag, &mut rng_a)
             .expect("the conditional Arx fit resolves");
-        let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b);
+        let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b)
+            .expect("the unconditional Arx fit resolves");
         assert_eq!(cond_surr.len(), n);
         assert_eq!(uncond_surr.len(), n);
         let max_diff = cond_surr
@@ -3702,6 +3703,27 @@ mod tests {
         )
     }
 
+    fn gate_conditional_driver_reversed(
+        n: usize,
+        a: f32,
+        rho: f32,
+        coupling: f32,
+        rng: &mut u64,
+    ) -> (Vec<f32>, Vec<f32>, Vec<f32>) {
+        let burn = 200;
+        let rho = rho.clamp(0.0, 0.95);
+        let rho_x = (1.0 - rho * rho).sqrt();
+        let mut c = vec![0f32; burn + n];
+        let mut x = vec![0f32; burn + n];
+        let mut y = vec![0f32; burn + n];
+        for t in 1..burn + n {
+            c[t] = a * c[t - 1] + gate_gauss(rng);
+            x[t] = a * x[t - 1] + 0.5 * c[t - 1] + gate_gauss(rng);
+            y[t] = a * y[t - 1] + rho * c[t] + rho_x * gate_gauss(rng) + coupling * x[t - 1];
+        }
+        (x[burn..].to_vec(), y[burn..].to_vec(), c[burn..].to_vec())
+    }
+
     fn gate_conditional_fpr(
         n: usize,
         a: f32,
@@ -3721,6 +3743,36 @@ mod tests {
             };
             let Some((_, _, thr)) =
                 conditional_te_stats_lagged(&x, &y, &c, 1, max_lag, seed, n_surr)
+            else {
+                continue;
+            };
+            neg += 1;
+            if te > thr {
+                fp += 1;
+            }
+        }
+        (fp, neg)
+    }
+
+    fn gate_conditional_fpr_reversed(
+        n: usize,
+        a: f32,
+        rho: f32,
+        max_lag: usize,
+        trials: usize,
+        n_surr: usize,
+        rng: &mut u64,
+    ) -> (usize, usize) {
+        let mut fp = 0usize;
+        let mut neg = 0usize;
+        for t in 0..trials {
+            let seed = 0x8D4F_13A7_3C0E_92B1 ^ (t as u64).wrapping_mul(0x8D4F_13A7_3C0E_92B1);
+            let (x, y, c) = gate_conditional_driver_reversed(n, a, rho, 0.0, rng);
+            let Some(te) = transfer_entropy_conditional(&y, &x, &c, 1) else {
+                continue;
+            };
+            let Some((_, _, thr)) =
+                conditional_te_stats_lagged(&y, &x, &c, 1, max_lag, seed, n_surr)
             else {
                 continue;
             };
@@ -3785,6 +3837,22 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn arx_restricted_surrogate_refuses_instead_of_shuffling() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let y = gate_ar1(32, 0.5, &mut rng);
+        assert!(
+            arx_restricted_surrogate(&y, 29, &mut rng).is_none(),
+            "an order leaving fewer than 4 fit rows is the refusal arm (None), never a silent shuffle"
+        );
+        let mut ynan = gate_ar1(64, 0.5, &mut rng);
+        ynan[9] = f32::NAN;
+        assert!(
+            arx_restricted_surrogate(&ynan, 2, &mut rng).is_none(),
+            "a NaN-carrying series is the refusal arm (None), never a silent shuffle"
+        );
     }
 
     #[test]
@@ -3861,6 +3929,84 @@ mod tests {
         assert!(
             found as f64 / meas as f64 >= 0.5,
             "conditional FP/FN gate: FN arm found {found}/{meas} true couplings — below 50%"
+        );
+    }
+
+    #[test]
+    #[ignore = "conditional n=1000 FP/FN calibration gate (reversed x→y) — heavy, runs in te-gate.yml"]
+    fn gate_conditional_arx_fpr_fn_reversed_n1000() {
+        let n = 1000usize;
+        let max_lag = 2usize;
+        let n_surr = 20usize;
+        let trials = 100usize;
+        let a_set = [0.0f32, 0.5, 0.9];
+        let rho_set = [0.0f32, 0.5, 0.9];
+        let mut rng = 0x3A71_9C2E_85B4_D60Fu64;
+        let mut rows: Vec<(f32, f32, usize, usize)> = Vec::new();
+        for &rho in &rho_set {
+            for &a in &a_set {
+                let (fp, neg) =
+                    gate_conditional_fpr_reversed(n, a, rho, max_lag, trials, n_surr, &mut rng);
+                rows.push((a, rho, fp, neg));
+            }
+        }
+        let named: String = rows
+            .iter()
+            .map(|&(a, rho, fp, neg)| format!("a={a} rho={rho}: {fp}/{neg} "))
+            .collect();
+        for &(a, rho, fp, neg) in &rows {
+            assert!(
+                neg > 0,
+                "conditional FP/FN gate (reversed): cell a={a} rho={rho} unmeasured (neg=0) — never a passing zero ({named})"
+            );
+            let fpr = 100.0 * fp as f64 / neg as f64;
+            assert!(
+                fpr <= 8.0,
+                "conditional FP/FN gate (reversed): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — the Arx null leaks the x-c cross-correlation ({named})"
+            );
+        }
+        for &rho in &rho_set {
+            let f0 = rows
+                .iter()
+                .find(|&&(a, r, _, _)| a == 0.0 && r == rho)
+                .expect("a=0 cell measured");
+            let f9 = rows
+                .iter()
+                .find(|&&(a, r, _, _)| a == 0.9 && r == rho)
+                .expect("a=0.9 cell measured");
+            let fpr0 = 100.0 * f0.2 as f64 / f0.3 as f64;
+            let fpr9 = 100.0 * f9.2 as f64 / f9.3 as f64;
+            assert!(
+                fpr9 - fpr0 <= 2.0,
+                "conditional FP/FN gate (reversed): FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+                fpr9 - fpr0
+            );
+        }
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for t in 0..30usize {
+            let seed = 0x7C35_4E91_A28B_06D4u64 ^ (t as u64).wrapping_mul(0x7C35_4E91_A28B_06D4);
+            let (x, y, c) = gate_conditional_driver_reversed(n, 0.5, 0.5, 0.6, &mut rng);
+            let Some(te) = transfer_entropy_conditional(&y, &x, &c, 1) else {
+                continue;
+            };
+            let Some((_, _, thr)) =
+                conditional_te_stats_lagged(&y, &x, &c, 1, max_lag, seed, n_surr)
+            else {
+                continue;
+            };
+            meas += 1;
+            if te > thr {
+                found += 1;
+            }
+        }
+        assert!(
+            meas > 0,
+            "conditional FP/FN gate (reversed): no FN measurement resolved"
+        );
+        assert!(
+            found as f64 / meas as f64 >= 0.5,
+            "conditional FP/FN gate (reversed): FN arm found {found}/{meas} true couplings — below 50%"
         );
     }
 
