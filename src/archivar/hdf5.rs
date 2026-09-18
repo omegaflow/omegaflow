@@ -30,6 +30,7 @@ pub enum Hdf5Note {
     SuperblockVersion { v: u8 },
     OffsetSize { n: u8 },
     EndAtByte { off: usize },
+    AbsentAtByte { off: usize },
     Signatur { off: usize, found: [u8; 4] },
     Address { off: usize },
     ObjectHeaderVersion { v: u8 },
@@ -377,7 +378,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
                 return Ok(window[start - ws..end - ws].to_vec());
             }
         }
-        let window = (self.fetch)(off, len).ok_or(Hdf5Note::EndAtByte { off: start })?;
+        let window = (self.fetch)(off, len).ok_or(Hdf5Note::AbsentAtByte { off: start })?;
         if (window.len() as u64) < len {
             return Err(Hdf5Note::EndAtByte { off: start });
         }
@@ -502,7 +503,7 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
         }
         let total = le_u16(&head, 2) as usize;
         let header_size = le_u32(&head, 8) as usize;
-        let buf = r.read(addr, header_size as u64)?;
+        let buf = r.read(addr, (16 + header_size) as u64)?;
         let mut out = Vec::with_capacity(total);
         let mut p = 16usize;
         while p + 8 <= buf.len() {
@@ -3359,6 +3360,34 @@ mod tests {
         assert!(
             fetched.iter().any(|&(off, _)| off == root_addr),
             "the fetch closure served the object header address"
+        );
+    }
+
+    #[test]
+    fn parse_fetch_reads_a_v1_object_header_beyond_base() {
+        let root_addr = 1u64 << 20;
+        let mut full = vec![0u8; (root_addr + 64) as usize];
+        full[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        full[8] = 0;
+        full[13] = 8;
+        full[14] = 8;
+        full[64..72].copy_from_slice(&root_addr.to_le_bytes());
+
+        let o = root_addr as usize;
+        full[o] = 1;
+        full[o + 2..o + 4].copy_from_slice(&1u16.to_le_bytes());
+        full[o + 8..o + 12].copy_from_slice(&8u32.to_le_bytes());
+        full[o + 16] = MSG_GROUP_INFO;
+
+        let base = &full[..512];
+        let file = Hdf5File::parse_fetch(base, |off, len| {
+            full.get(off as usize..(off + len) as usize).map(|s| s.to_vec())
+        })
+        .expect("the v1 object header is 16 bytes of prefix plus header_size");
+        let root = file.root().expect("root object gathered");
+        assert!(
+            root.is_group,
+            "the v1 header message at offset 16 lies inside 16 + header_size"
         );
     }
 }
