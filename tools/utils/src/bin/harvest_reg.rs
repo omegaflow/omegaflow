@@ -203,6 +203,7 @@ fn check() {
                             | "shard"
                             | "timeout"
                             | "idempotent"
+                            | "workflow"
                             | "note"
                     ) => {}
                 Some((key, _)) => {
