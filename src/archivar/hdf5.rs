@@ -348,6 +348,44 @@ fn parse_shared_ref(
     Ok(SharedRef { share_type, addr })
 }
 
+struct Hdf5WindowReader<'a, F> {
+    base: &'a [u8],
+    fetch: F,
+    cache: HashMap<u64, Vec<u8>>,
+}
+
+impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
+    fn new(base: &'a [u8], fetch: F) -> Hdf5WindowReader<'a, F> {
+        Hdf5WindowReader {
+            base,
+            fetch,
+            cache: HashMap::new(),
+        }
+    }
+
+    fn read(&mut self, off: u64, len: u64) -> Result<Vec<u8>, Hdf5Note> {
+        let start = off as usize;
+        let end = start
+            .checked_add(len as usize)
+            .ok_or(Hdf5Note::EndAtByte { off: start })?;
+        if end <= self.base.len() {
+            return Ok(self.base[start..end].to_vec());
+        }
+        for (&wstart, window) in &self.cache {
+            let ws = wstart as usize;
+            if start >= ws && end <= ws + window.len() {
+                return Ok(window[start - ws..end - ws].to_vec());
+            }
+        }
+        let window = (self.fetch)(off, len).ok_or(Hdf5Note::EndAtByte { off: start })?;
+        if (window.len() as u64) < len {
+            return Err(Hdf5Note::EndAtByte { off: start });
+        }
+        self.cache.insert(off, window.clone());
+        Ok(window)
+    }
+}
+
 fn parse_superblock(buf: &[u8]) -> Result<Superblock, Hdf5Note> {
     const MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
     if buf.len() < 12 {
@@ -415,6 +453,7 @@ fn v2_messages(
     start: usize,
     end: usize,
     tracked: bool,
+    base: usize,
 ) -> Result<Vec<RawMessage>, Hdf5Note> {
     let mut out = Vec::new();
     let mut p = start;
@@ -427,7 +466,7 @@ fn v2_messages(
             p += 2;
         }
         if p + size > buf.len() {
-            return Err(Hdf5Note::EndAtByte { off: p });
+            return Err(Hdf5Note::EndAtByte { off: base + p });
         }
         out.push(RawMessage {
             typ,
@@ -439,31 +478,40 @@ fn v2_messages(
     Ok(out)
 }
 
-fn gather_messages(buf: &[u8], addr: u64) -> Result<Vec<RawMessage>, Hdf5Note> {
+fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    addr: u64,
+) -> Result<Vec<RawMessage>, Hdf5Note> {
     let off = addr as usize;
-    if buf.len() < off + 6 {
-        return Err(Hdf5Note::EndAtByte { off });
+    let head = r.read(addr, 64)?;
+    if head.len() < 6 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + head.len(),
+        });
     }
-    let version = if &buf[off..off + 4] == b"OHDR" {
-        buf[off + 4]
-    } else {
-        buf[off]
-    };
-    let has_signature = &buf[off..off + 4] == b"OHDR";
+    let has_signature = &head[..4] == b"OHDR";
+    let version = if has_signature { head[4] } else { head[0] };
     if version == 1 {
         if has_signature {
             return Err(Hdf5Note::ObjectHeaderVersion { v: 1 });
         }
-        let total = le_u16(buf, off + 2) as usize;
+        if head.len() < 12 {
+            return Err(Hdf5Note::EndAtByte {
+                off: off + head.len(),
+            });
+        }
+        let total = le_u16(&head, 2) as usize;
+        let header_size = le_u32(&head, 8) as usize;
+        let buf = r.read(addr, header_size as u64)?;
         let mut out = Vec::with_capacity(total);
-        let mut p = off + 16;
+        let mut p = 16usize;
         while p + 8 <= buf.len() {
-            let typ = le_u16(buf, p) as u8;
-            let size = le_u16(buf, p + 2) as usize;
+            let typ = le_u16(&buf, p) as u8;
+            let size = le_u16(&buf, p + 2) as usize;
             let flags = buf[p + 4];
             p += 8;
             if p + size > buf.len() {
-                return Err(Hdf5Note::EndAtByte { off: p });
+                return Err(Hdf5Note::EndAtByte { off: off + p });
             }
             out.push(RawMessage {
                 typ,
@@ -480,7 +528,7 @@ fn gather_messages(buf: &[u8], addr: u64) -> Result<Vec<RawMessage>, Hdf5Note> {
     if version != 2 {
         return Err(Hdf5Note::ObjectHeaderVersion { v: version });
     }
-    let flags = buf[off + 5];
+    let flags = head[5];
     let mut extra = 0usize;
     if flags & 0x20 != 0 {
         extra += 16;
@@ -489,42 +537,60 @@ fn gather_messages(buf: &[u8], addr: u64) -> Result<Vec<RawMessage>, Hdf5Note> {
         extra += 4;
     }
     let size_len = 1usize << (flags & 0x03);
-    let chunk0_off = off + 6 + extra + size_len;
+    let header_span = 6 + extra + size_len;
+    if head.len() < header_span {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + head.len(),
+        });
+    }
+    let chunk0_off = header_span;
     let chunk0_size = match flags & 0x03 {
-        0 => buf[chunk0_off - 1] as usize,
-        1 => le_u16(buf, chunk0_off - 2) as usize,
-        2 => le_u32(buf, chunk0_off - 4) as usize,
-        _ => le_u64(buf, chunk0_off - 8) as usize,
+        0 => head[header_span - 1] as usize,
+        1 => le_u16(&head, header_span - 2) as usize,
+        2 => le_u32(&head, header_span - 4) as usize,
+        _ => le_u64(&head, header_span - 8) as usize,
     };
     let chunk0_end = chunk0_off + chunk0_size;
-    if chunk0_end + 4 > buf.len() {
-        return Err(Hdf5Note::EndAtByte { off: chunk0_end });
+    let ohdr_span = chunk0_end + 4;
+    let buf = r.read(addr, ohdr_span as u64)?;
+    if buf.len() < ohdr_span {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + buf.len(),
+        });
     }
-    check_checksum(&buf[off..chunk0_end], &buf[chunk0_end..chunk0_end + 4])?;
+    check_checksum(&buf[..chunk0_end], &buf[chunk0_end..chunk0_end + 4])?;
     let tracked = flags & 0x04 != 0;
-    let mut out = v2_messages(buf, chunk0_off, chunk0_end, tracked)?;
-    let mut stack: Vec<(usize, usize)> = Vec::new();
+    let mut out = v2_messages(&buf, chunk0_off, chunk0_end, tracked, off)?;
+    let mut stack: Vec<(u64, usize)> = Vec::new();
     let mut i = 0;
     while i < out.len() {
         if out[i].typ == MSG_CONT && out[i].data.len() >= 16 {
-            let c = le_u64(&out[i].data, 0) as usize;
+            let c = le_u64(&out[i].data, 0);
             let len = le_u64(&out[i].data, 8) as usize;
             stack.push((c, len));
         }
         i += 1;
     }
     while let Some((c, len)) = stack.pop() {
-        if c + 4 > buf.len() || &buf[c..c + 4] != b"OCHK" {
-            return Err(Hdf5Note::Address { off: c });
+        let chunk = r.read(c, len as u64)?;
+        if chunk.len() < 4 {
+            return Err(Hdf5Note::EndAtByte {
+                off: c as usize + chunk.len(),
+            });
         }
-        if c + len > buf.len() {
-            return Err(Hdf5Note::EndAtByte { off: c + len });
+        if &chunk[..4] != b"OCHK" {
+            return Err(Hdf5Note::Address { off: c as usize });
         }
-        check_checksum(&buf[c..c + len - 4], &buf[c + len - 4..c + len])?;
-        let mut sub = v2_messages(buf, c + 4, c + len - 4, tracked)?;
+        if chunk.len() < len {
+            return Err(Hdf5Note::EndAtByte {
+                off: c as usize + chunk.len(),
+            });
+        }
+        check_checksum(&chunk[..len - 4], &chunk[len - 4..len])?;
+        let mut sub = v2_messages(&chunk, 4, len - 4, tracked, c as usize)?;
         for m in &sub {
             if m.typ == MSG_CONT && m.data.len() >= 16 {
-                stack.push((le_u64(&m.data, 0) as usize, le_u64(&m.data, 8) as usize));
+                stack.push((le_u64(&m.data, 0), le_u64(&m.data, 8) as usize));
             }
         }
         out.append(&mut sub);
@@ -880,21 +946,30 @@ struct FractalHeap {
     curr_root_rows: u16,
 }
 
-fn parse_fractal_heap(buf: &[u8], addr: u64) -> Result<FractalHeap, Hdf5Note> {
+fn parse_fractal_heap<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    addr: u64,
+) -> Result<FractalHeap, Hdf5Note> {
     let off = addr as usize;
-    if buf.len() < off + 12 || &buf[off..off + 4] != b"FRHP" {
+    let buf = r.read(addr, 144)?;
+    if buf.len() < 142 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + buf.len(),
+        });
+    }
+    if &buf[..4] != b"FRHP" {
         let mut found = [0u8; 4];
-        found.copy_from_slice(buf.get(off..off + 4).unwrap_or(b"    "));
+        found.copy_from_slice(&buf[..4]);
         return Err(Hdf5Note::Heap { found, off });
     }
-    let id_len = le_u16(buf, off + 5) as usize;
-    let max_managed = le_u32(buf, off + 10);
-    let table_width = le_u16(buf, off + 110);
-    let start_block = le_u64(buf, off + 112);
-    let max_direct = le_u64(buf, off + 120);
-    let max_index = le_u16(buf, off + 128);
-    let root_block = le_u64(buf, off + 132);
-    let curr_root_rows = le_u16(buf, off + 140);
+    let id_len = le_u16(&buf, 5) as usize;
+    let max_managed = le_u32(&buf, 10);
+    let table_width = le_u16(&buf, 110);
+    let start_block = le_u64(&buf, 112);
+    let max_direct = le_u64(&buf, 120);
+    let max_index = le_u16(&buf, 128);
+    let root_block = le_u64(&buf, 132);
+    let curr_root_rows = le_u16(&buf, 140);
     let heap_off_size = (max_index as usize).div_ceil(8);
     let heap_len_size = {
         let v = max_direct.min(max_managed as u64);
@@ -923,7 +998,11 @@ fn heap_row_size(h: &FractalHeap, row: usize) -> u64 {
     }
 }
 
-fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5Note> {
+fn heap_read_id<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    h: &FractalHeap,
+    id: &[u8],
+) -> Result<Vec<u8>, Hdf5Note> {
     if id.is_empty() {
         return Err(Hdf5Note::EndAtByte { off: 0 });
     }
@@ -943,13 +1022,21 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
             }
             let mut stack = vec![(h.root_block, 0u64, h.start_block)];
             while let Some((block_addr, block_off, block_size)) = stack.pop() {
-                let a = block_addr as usize;
-                if a + 4 > buf.len() {
-                    return Err(Hdf5Note::EndAtByte { off: a });
+                let sig = r.read(block_addr, 4)?;
+                if sig.len() < 4 {
+                    return Err(Hdf5Note::EndAtByte {
+                        off: block_addr as usize + sig.len(),
+                    });
                 }
-                match &buf[a..a + 4] {
+                match &sig[..] {
                     b"FHDB" => {
-                        let raw_off = le_u64(buf, a + 13);
+                        let buf = r.read(block_addr, block_size)?;
+                        if buf.len() < 13 + h.heap_off_size {
+                            return Err(Hdf5Note::EndAtByte {
+                                off: block_addr as usize + buf.len(),
+                            });
+                        }
+                        let raw_off = le_u64(&buf, 13);
                         let dblock_off = if h.heap_off_size >= 8 {
                             raw_off
                         } else {
@@ -957,20 +1044,33 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
                         };
                         if obj_off >= dblock_off && obj_off < dblock_off + block_size {
                             let within = (obj_off - dblock_off) as usize;
-                            let data_off = a + within;
-                            return Ok(buf[data_off..data_off + obj_len as usize].to_vec());
+                            let end = within
+                                .checked_add(obj_len as usize)
+                                .filter(|e| *e <= buf.len())
+                                .ok_or(Hdf5Note::EndAtByte {
+                                    off: block_addr as usize + buf.len(),
+                                })?;
+                            return Ok(buf[within..end].to_vec());
                         }
                     }
                     b"FHIB" => {
-                        let mut p = a + 4 + 1 + 8 + h.heap_off_size;
+                        let table_len = 4
+                            + 1
+                            + 8
+                            + h.heap_off_size
+                            + 8 * h.table_width as usize * h.curr_root_rows as usize;
+                        let buf = r.read(block_addr, table_len as u64)?;
+                        if buf.len() < table_len {
+                            return Err(Hdf5Note::EndAtByte {
+                                off: block_addr as usize + buf.len(),
+                            });
+                        }
+                        let mut p = 4 + 1 + 8 + h.heap_off_size;
                         let mut child_off = block_off;
                         for row in 0..h.curr_root_rows as usize {
                             let size = heap_row_size(h, row);
                             for _ in 0..h.table_width {
-                                if p + 8 > buf.len() {
-                                    return Err(Hdf5Note::EndAtByte { off: p });
-                                }
-                                let child = le_u64(buf, p);
+                                let child = le_u64(&buf, p);
                                 p += 8;
                                 if child != UNDEF
                                     && obj_off >= child_off
@@ -985,7 +1085,10 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
                     found => {
                         let mut f = [0u8; 4];
                         f.copy_from_slice(found);
-                        return Err(Hdf5Note::Heap { found: f, off: a });
+                        return Err(Hdf5Note::Heap {
+                            found: f,
+                            off: block_addr as usize,
+                        });
                     }
                 }
             }
@@ -1016,27 +1119,33 @@ struct BtreeHeader {
     total_records: u64,
 }
 
-fn parse_btree_header(buf: &[u8], addr: u64) -> Result<(u8, BtreeHeader), Hdf5Note> {
+fn parse_btree_header<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    addr: u64,
+) -> Result<(u8, BtreeHeader), Hdf5Note> {
     let off = addr as usize;
+    let buf = r.read(addr, 38)?;
     let mut found = [0u8; 4];
-    found.copy_from_slice(buf.get(off..off + 4).unwrap_or(b"    "));
-    if buf.len() < off + 4 || &buf[off..off + 4] != b"BTHD" {
+    found.copy_from_slice(buf.get(..4).unwrap_or(b"    "));
+    if buf.len() < 4 || &buf[..4] != b"BTHD" {
         return Err(Hdf5Note::Signatur { off, found });
     }
-    if buf.len() < off + 38 {
-        return Err(Hdf5Note::EndAtByte { off: buf.len() });
+    if buf.len() < 38 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + buf.len(),
+        });
     }
-    check_checksum(&buf[off..off + 34], &buf[off + 34..off + 38])?;
-    let typ = buf[off + 5];
+    check_checksum(&buf[..34], &buf[34..38])?;
+    let typ = buf[5];
     Ok((
         typ,
         BtreeHeader {
-            node_size: le_u32(buf, off + 6) as usize,
-            record_size: le_u16(buf, off + 10) as usize,
-            depth: le_u16(buf, off + 12),
-            root_addr: le_u64(buf, off + 16),
-            root_nrec: le_u16(buf, off + 24),
-            total_records: le_u64(buf, off + 26),
+            node_size: le_u32(&buf, 6) as usize,
+            record_size: le_u16(&buf, 10) as usize,
+            depth: le_u16(&buf, 12),
+            root_addr: le_u64(&buf, 16),
+            root_nrec: le_u16(&buf, 24),
+            total_records: le_u64(&buf, 26),
         },
     ))
 }
@@ -1082,33 +1191,37 @@ fn limited_uint(data: &[u8], off: usize, size: usize) -> Option<u64> {
     }
 }
 
-fn btree_records(
-    buf: &[u8],
+fn btree_records<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
     addr: u64,
     hdr: &BtreeHeader,
     depth: u16,
     nrec: usize,
 ) -> Result<Vec<Vec<u8>>, Hdf5Note> {
     let off = addr as usize;
-    if hdr.node_size < 6 || buf.len() < off + hdr.node_size {
-        return Err(Hdf5Note::EndAtByte { off: buf.len() });
+    if hdr.node_size < 6 {
+        return Err(Hdf5Note::EndAtByte { off });
     }
-    let off = addr as usize;
-    if buf.len() < off + 6 {
-        return Err(Hdf5Note::EndAtByte { off: buf.len() });
+    let buf = r.read(addr, hdr.node_size as u64)?;
+    if buf.len() < 6 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + buf.len(),
+        });
     }
-    match &buf[off..off + 4] {
+    match &buf[..4] {
         b"BTLF" => {
             let pos = 6 + nrec * hdr.record_size;
             if pos + 4 > hdr.node_size {
                 return Err(Hdf5Note::Chunk { off });
             }
-            if buf.len() < off + pos + 4 {
-                return Err(Hdf5Note::EndAtByte { off: buf.len() });
+            if buf.len() < pos + 4 {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + buf.len(),
+                });
             }
-            check_checksum(&buf[off..off + pos], &buf[off + pos..off + pos + 4])?;
+            check_checksum(&buf[..pos], &buf[pos..pos + 4])?;
             let mut out = Vec::with_capacity(nrec);
-            let mut p = off + 6;
+            let mut p = 6usize;
             for _ in 0..nrec {
                 out.push(buf[p..p + hdr.record_size].to_vec());
                 p += hdr.record_size;
@@ -1141,13 +1254,13 @@ fn btree_records(
             for (nsz, tsz) in candidates {
                 let triplet = 8 + nsz + tsz;
                 let pos = 6 + nrec * hdr.record_size + (nrec + 1) * triplet;
-                if pos + 4 > hdr.node_size || buf.len() < off + pos + 4 {
+                if pos + 4 > hdr.node_size || buf.len() < pos + 4 {
                     continue;
                 }
-                if check_checksum(&buf[off..off + pos], &buf[off + pos..off + pos + 4]).is_err() {
+                if check_checksum(&buf[..pos], &buf[pos..pos + 4]).is_err() {
                     continue;
                 }
-                return internal_node_try(buf, off, hdr, depth, nrec, nsz, tsz);
+                return internal_node_try(&buf, r, hdr, depth, nrec, nsz, tsz);
             }
             Err(Hdf5Note::Checksum { off })
         }
@@ -1159,16 +1272,16 @@ fn btree_records(
     }
 }
 
-fn internal_node_try(
+fn internal_node_try<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     buf: &[u8],
-    off: usize,
+    r: &mut Hdf5WindowReader<F>,
     hdr: &BtreeHeader,
     depth: u16,
     nrec: usize,
     nsz: usize,
     tsz: usize,
 ) -> Result<Vec<Vec<u8>>, Hdf5Note> {
-    let mut p = off + 6;
+    let mut p = 6usize;
     let mut recs = Vec::with_capacity(nrec);
     for _ in 0..nrec {
         recs.push(buf[p..p + hdr.record_size].to_vec());
@@ -1192,14 +1305,14 @@ fn internal_node_try(
     for i in 0..nrec {
         let (child, child_nrec) = children[i];
         if child != UNDEF {
-            let mut sub = btree_records(buf, child, hdr, depth - 1, child_nrec)?;
+            let mut sub = btree_records(r, child, hdr, depth - 1, child_nrec)?;
             out.append(&mut sub);
         }
         out.push(recs[i].clone());
     }
     let (child, child_nrec) = children[nrec];
     if child != UNDEF {
-        let mut sub = btree_records(buf, child, hdr, depth - 1, child_nrec)?;
+        let mut sub = btree_records(r, child, hdr, depth - 1, child_nrec)?;
         out.append(&mut sub);
     }
     Ok(out)
@@ -1239,17 +1352,20 @@ fn link_info_of(msg: &RawMessage) -> Option<(Option<u64>, Option<u64>, Option<u6
     ))
 }
 
-fn read_links_modern(buf: &[u8], msg: &RawMessage) -> Result<Vec<Hdf5Link>, Hdf5Note> {
+fn read_links_modern<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    msg: &RawMessage,
+) -> Result<Vec<Hdf5Link>, Hdf5Note> {
     let (Some(fh), Some(name_bt), _) = link_info_of(msg).unwrap_or((None, None, None)) else {
         return Ok(Vec::new());
     };
-    let heap = parse_fractal_heap(buf, fh)?;
-    let (_, hdr) = parse_btree_header(buf, name_bt)?;
+    let heap = parse_fractal_heap(r, fh)?;
+    let (_, hdr) = parse_btree_header(r, name_bt)?;
     if hdr.root_addr == UNDEF {
         return Ok(Vec::new());
     }
     let mut out = Vec::new();
-    for rec in btree_records(buf, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
+    for rec in btree_records(r, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
         if rec.len() < 4 + heap.id_len {
             return Err(Hdf5Note::Chunk { off: 0 });
         }
@@ -1257,35 +1373,50 @@ fn read_links_modern(buf: &[u8], msg: &RawMessage) -> Result<Vec<Hdf5Link>, Hdf5
             continue;
         }
         let id = &rec[4..4 + heap.id_len];
-        let raw = heap_read_id(buf, &heap, id)?;
+        let raw = heap_read_id(r, &heap, id)?;
         let link = parse_link(&raw, 0)?;
         out.push(link);
     }
     Ok(out)
 }
 
-fn read_symtab_group(buf: &[u8], msg: &RawMessage) -> Result<Vec<Hdf5Link>, Hdf5Note> {
+fn read_symtab_group<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    msg: &RawMessage,
+) -> Result<Vec<Hdf5Link>, Hdf5Note> {
     if msg.data.len() < 16 {
         return Err(Hdf5Note::EndAtByte { off: 0 });
     }
     let btree_addr = le_u64(&msg.data, 0);
     let heap_addr = le_u64(&msg.data, 8);
-    let hoff = heap_addr as usize;
-    if hoff + 24 > buf.len() || &buf[hoff..hoff + 4] != b"HEAP" {
+    let heap = r.read(heap_addr, 32)?;
+    if heap.len() < 32 || &heap[..4] != b"HEAP" {
         let mut found = [0u8; 4];
-        found.copy_from_slice(buf.get(hoff..hoff + 4).unwrap_or(b"    "));
-        return Err(Hdf5Note::Heap { found, off: hoff });
+        found.copy_from_slice(heap.get(..4).unwrap_or(b"    "));
+        return Err(Hdf5Note::Heap {
+            found,
+            off: heap_addr as usize,
+        });
     }
-    let data_seg_addr = le_u64(buf, hoff + 24) as usize;
+    let data_seg_addr = le_u64(&heap, 24) as usize;
     let mut entries = Vec::new();
-    walk_symtab_nodes(buf, btree_addr, &mut entries)?;
+    walk_symtab_nodes(r, btree_addr, &mut entries)?;
     let mut links = Vec::new();
     for e in entries {
         let noff = data_seg_addr + e.name_offset as usize;
-        if noff >= buf.len() {
-            return Err(Hdf5Note::EndAtByte { off: noff });
-        }
-        let name = read_null_name(buf, noff);
+        let win = r.read(noff as u64, 512)?;
+        let name = if win.contains(&0) {
+            read_null_name(&win, 0)
+        } else {
+            let wide = r.read(noff as u64, 4096)?;
+            if wide.contains(&0) {
+                read_null_name(&wide, 0)
+            } else {
+                return Err(Hdf5Note::EndAtByte {
+                    off: noff + wide.len(),
+                });
+            }
+        };
         links.push(Hdf5Link {
             name,
             addr: e.obj_addr,
@@ -1300,46 +1431,75 @@ struct SymbolEntry {
     obj_addr: u64,
 }
 
-fn walk_symtab_nodes(buf: &[u8], addr: u64, out: &mut Vec<SymbolEntry>) -> Result<(), Hdf5Note> {
+fn walk_symtab_nodes<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    addr: u64,
+    out: &mut Vec<SymbolEntry>,
+) -> Result<(), Hdf5Note> {
     let off = addr as usize;
-    if off + 4 > buf.len() {
-        return Err(Hdf5Note::EndAtByte { off });
+    let sig = r.read(addr, 4)?;
+    if sig.len() < 4 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + sig.len(),
+        });
     }
-    match &buf[off..off + 4] {
+    match &sig[..] {
         b"SNOD" => {
-            let n = le_u16(buf, off + 6) as usize;
-            let mut p = off + 8;
+            let head = r.read(addr, 8)?;
+            if head.len() < 8 {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + head.len(),
+                });
+            }
+            let n = le_u16(&head, 6) as usize;
+            let span = 8usize.checked_add(40 * n).ok_or(Hdf5Note::EndAtByte { off })?;
+            let buf = r.read(addr, span as u64)?;
+            if buf.len() < span {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + buf.len(),
+                });
+            }
+            let mut p = 8usize;
             for _ in 0..n {
-                if p + 40 > buf.len() {
-                    return Err(Hdf5Note::EndAtByte { off: p });
-                }
                 out.push(SymbolEntry {
-                    name_offset: le_u64(buf, p),
-                    obj_addr: le_u64(buf, p + 8),
+                    name_offset: le_u64(&buf, p),
+                    obj_addr: le_u64(&buf, p + 8),
                 });
                 p += 40;
             }
             Ok(())
         }
         b"TREE" => {
-            let node_type = buf[off + 4];
-            let entries = le_u16(buf, off + 6) as usize;
+            let head = r.read(addr, 24)?;
+            if head.len() < 24 {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + head.len(),
+                });
+            }
+            let node_type = head[4];
+            let entries = le_u16(&head, 6) as usize;
             if node_type != 0 {
                 return Err(Hdf5Note::Btree {
                     typ: node_type,
                     off,
                 });
             }
-            let mut p = off + 24;
+            let span = 24usize
+                .checked_add(16 * entries)
+                .ok_or(Hdf5Note::EndAtByte { off })?;
+            let buf = r.read(addr, span as u64)?;
+            if buf.len() < span {
+                return Err(Hdf5Note::EndAtByte {
+                    off: off + buf.len(),
+                });
+            }
+            let mut p = 24usize;
             for _ in 0..entries {
-                if p + 16 > buf.len() {
-                    return Err(Hdf5Note::EndAtByte { off: p });
-                }
                 p += 8;
-                let child = le_u64(buf, p);
+                let child = le_u64(&buf, p);
                 p += 8;
                 if child != UNDEF {
-                    walk_symtab_nodes(buf, child, out)?;
+                    walk_symtab_nodes(r, child, out)?;
                 }
             }
             Ok(())
@@ -1408,7 +1568,10 @@ fn attr_messages(msgs: &[RawMessage]) -> Result<Vec<Hdf5Attribute>, Hdf5Note> {
     Ok(out)
 }
 
-fn dense_attrs(buf: &[u8], msgs: &[RawMessage]) -> Result<Vec<Hdf5Attribute>, Hdf5Note> {
+fn dense_attrs<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    msgs: &[RawMessage],
+) -> Result<Vec<Hdf5Attribute>, Hdf5Note> {
     let mut out = Vec::new();
     for m in msgs {
         if m.typ != MSG_AINFO || m.data.len() < 2 {
@@ -1427,12 +1590,12 @@ fn dense_attrs(buf: &[u8], msgs: &[RawMessage]) -> Result<Vec<Hdf5Attribute>, Hd
         if fh == UNDEF || name_bt == UNDEF {
             continue;
         }
-        let heap = parse_fractal_heap(buf, fh)?;
-        let (_, hdr) = parse_btree_header(buf, name_bt)?;
+        let heap = parse_fractal_heap(r, fh)?;
+        let (_, hdr) = parse_btree_header(r, name_bt)?;
         if hdr.root_addr == UNDEF {
             continue;
         }
-        for rec in btree_records(buf, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
+        for rec in btree_records(r, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
             if rec.len() < heap.id_len {
                 return Err(Hdf5Note::Chunk { off: 0 });
             }
@@ -1440,7 +1603,7 @@ fn dense_attrs(buf: &[u8], msgs: &[RawMessage]) -> Result<Vec<Hdf5Attribute>, Hd
                 continue;
             }
             let id = &rec[..heap.id_len];
-            let raw = heap_read_id(buf, &heap, id)?;
+            let raw = heap_read_id(r, &heap, id)?;
             out.push(parse_attribute(&raw)?);
         }
     }
@@ -1645,27 +1808,37 @@ struct ChunkRec {
     scaled: Vec<u64>,
 }
 
-fn v1_chunk_records(buf: &[u8], addr: u64, rank: usize) -> Result<Vec<ChunkRec>, Hdf5Note> {
+fn v1_chunk_records<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
+    addr: u64,
+    rank: usize,
+) -> Result<Vec<ChunkRec>, Hdf5Note> {
     let mut out = Vec::new();
-    walk_v1_chunk_node(buf, addr, rank, &mut out)?;
+    walk_v1_chunk_node(r, addr, rank, &mut out)?;
     Ok(out)
 }
 
-fn walk_v1_chunk_node(
-    buf: &[u8],
+fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
     addr: u64,
     rank: usize,
     out: &mut Vec<ChunkRec>,
 ) -> Result<(), Hdf5Note> {
     let off = addr as usize;
-    if buf.len() < off + 24 || &buf[off..off + 4] != b"TREE" {
+    let head = r.read(addr, 24)?;
+    if head.len() < 24 {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + head.len(),
+        });
+    }
+    if &head[..4] != b"TREE" {
         let mut found = [0u8; 4];
-        found.copy_from_slice(buf.get(off..off + 4).unwrap_or(b"    "));
+        found.copy_from_slice(&head[..4]);
         return Err(Hdf5Note::BtreeNode { found, off });
     }
-    let node_type = buf[off + 4];
-    let level = buf[off + 5];
-    let nchildren = le_u16(buf, off + 6) as usize;
+    let node_type = head[4];
+    let level = head[5];
+    let nchildren = le_u16(&head, 6) as usize;
     if node_type != 1 {
         return Err(Hdf5Note::Btree {
             typ: node_type,
@@ -1673,18 +1846,24 @@ fn walk_v1_chunk_node(
         });
     }
     let key_size = 8 + (rank + 1) * 8;
-    let mut p = off + 24;
+    let span = 24usize
+        .checked_add(nchildren.checked_mul(key_size + 8).ok_or(Hdf5Note::EndAtByte { off })?)
+        .ok_or(Hdf5Note::EndAtByte { off })?;
+    let buf = r.read(addr, span as u64)?;
+    if buf.len() < span {
+        return Err(Hdf5Note::EndAtByte {
+            off: off + buf.len(),
+        });
+    }
+    let mut p = 24usize;
     for _ in 0..nchildren {
-        if p + key_size + 8 > buf.len() {
-            return Err(Hdf5Note::EndAtByte { off: p });
-        }
-        let nbytes = le_u32(buf, p) as usize;
-        let filter_mask = le_u32(buf, p + 4);
+        let nbytes = le_u32(&buf, p) as usize;
+        let filter_mask = le_u32(&buf, p + 4);
         let mut scaled = Vec::with_capacity(rank);
         for d in 0..rank {
-            scaled.push(le_u64(buf, p + 8 + d * 8));
+            scaled.push(le_u64(&buf, p + 8 + d * 8));
         }
-        let child = le_u64(buf, p + key_size);
+        let child = le_u64(&buf, p + key_size);
         p += key_size + 8;
         if child == UNDEF {
             continue;
@@ -1697,14 +1876,14 @@ fn walk_v1_chunk_node(
                 scaled,
             });
         } else {
-            walk_v1_chunk_node(buf, child, rank, out)?;
+            walk_v1_chunk_node(r, child, rank, out)?;
         }
     }
     Ok(())
 }
 
-fn chunk_records(
-    buf: &[u8],
+fn chunk_records<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    r: &mut Hdf5WindowReader<F>,
     hdr: &BtreeHeader,
     dims: usize,
     filtered: bool,
@@ -1713,7 +1892,7 @@ fn chunk_records(
     if hdr.root_addr == UNDEF {
         return Ok(out);
     }
-    for rec in btree_records(buf, hdr.root_addr, hdr, hdr.depth, hdr.root_nrec as usize)? {
+    for rec in btree_records(r, hdr.root_addr, hdr, hdr.depth, hdr.root_nrec as usize)? {
         if rec.len() < 8 {
             return Err(Hdf5Note::Chunk { off: 0 });
         }
@@ -1885,16 +2064,24 @@ fn decode_numeric(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Result<f64, Hdf5No
 
 impl<'a> Hdf5File<'a> {
     pub fn parse(buf: &'a [u8]) -> Result<Hdf5File<'a>, Hdf5Note> {
+        Hdf5File::parse_fetch(buf, |_off: u64, _len: u64| -> Option<Vec<u8>> { None })
+    }
+
+    pub fn parse_fetch<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+        buf: &'a [u8],
+        fetch: F,
+    ) -> Result<Hdf5File<'a>, Hdf5Note> {
         let sb = parse_superblock(buf)?;
         let offset_size = sb.offset_size;
         let length_size = sb.length_size;
+        let mut reader = Hdf5WindowReader::new(buf, fetch);
         let mut objects: HashMap<u64, Hdf5Object> = HashMap::new();
         let mut stack = vec![sb.root];
         while let Some(addr) = stack.pop() {
             if addr == UNDEF || objects.contains_key(&addr) {
                 continue;
             }
-            let msgs = gather_messages(buf, addr)?;
+            let msgs = gather_messages(&mut reader, addr)?;
             let mut obj = Hdf5Object {
                 addr,
                 ..Default::default()
@@ -1941,14 +2128,14 @@ impl<'a> Hdf5File<'a> {
                     }
                     MSG_LINK_INFO => {
                         obj.is_group = true;
-                        links = read_links_modern(buf, m)?;
+                        links = read_links_modern(&mut reader, m)?;
                     }
                     MSG_LINK => {
                         compact_links.push(parse_link(&m.data, 0)?);
                     }
                     MSG_SYMBOL_TABLE => {
                         obj.is_group = true;
-                        links = read_symtab_group(buf, m)?;
+                        links = read_symtab_group(&mut reader, m)?;
                     }
                     _ => {}
                 }
@@ -1963,7 +2150,7 @@ impl<'a> Hdf5File<'a> {
                 obj.fill = data;
             }
             let mut attrs = attr_messages(&msgs)?;
-            attrs.extend(dense_attrs(buf, &msgs)?);
+            attrs.extend(dense_attrs(&mut reader, &msgs)?);
             obj.attrs = attrs;
             if links.is_empty() {
                 links = compact_links;
@@ -2086,7 +2273,7 @@ impl<'a> Hdf5File<'a> {
                 Ok(self.buf[off..end].to_vec())
             }
             Some(Hdf5Layout::Chunked {
-                btree,
+                btree: _,
                 chunk_dims,
                 elem_size: declared,
             }) => {
@@ -2098,19 +2285,11 @@ impl<'a> Hdf5File<'a> {
                     return Err(Hdf5Note::Chunk { off: 0 });
                 }
                 let filtered = !obj.filters.is_empty();
-                let (recs, v1_index) =
-                    if self.buf.get(*btree as usize..*btree as usize + 4) == Some(b"BTHD") {
-                        let (typ, hdr) = parse_btree_header(self.buf, *btree)?;
-                        if typ != 10 && typ != 11 {
-                            return Err(Hdf5Note::Btree {
-                                typ,
-                                off: *btree as usize,
-                            });
-                        }
-                        (chunk_records(self.buf, &hdr, rank, filtered)?, false)
-                    } else {
-                        (v1_chunk_records(self.buf, *btree, rank)?, true)
-                    };
+                let (recs, v1_index) = self.chunk_records_of(
+                    obj,
+                    rank,
+                    &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
+                )?;
                 let mut out = vec![0u8; count * elem_size];
                 for rec in recs {
                     let scaled: Vec<usize> = if v1_index {
@@ -2126,12 +2305,20 @@ impl<'a> Hdf5File<'a> {
                         return Err(Hdf5Note::Chunk { off: 0 });
                     }
                     let chunk_elems: usize = chunk_dims.iter().fold(1, |a, d| a * (*d as usize));
-                    let mut raw = if rec.size > 0 {
+                    let mut raw = {
                         let off = rec.addr as usize;
-                        self.buf[off..off + rec.size].to_vec()
-                    } else {
-                        let off = rec.addr as usize;
-                        self.buf[off..off + chunk_elems * elem_size].to_vec()
+                        let len = if rec.size > 0 {
+                            rec.size
+                        } else {
+                            chunk_elems * elem_size
+                        };
+                        let Some(end) = off.checked_add(len).filter(|e| *e <= self.buf.len())
+                        else {
+                            return Err(Hdf5Note::EndAtByte {
+                                off: self.buf.len(),
+                            });
+                        };
+                        self.buf[off..end].to_vec()
                     };
                     if filtered {
                         apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask)?;
@@ -2215,6 +2402,7 @@ impl<'a> Hdf5File<'a> {
         &self,
         obj: &Hdf5Object,
         rank: usize,
+        fetch: &mut impl FnMut(u64, u64) -> Option<Vec<u8>>,
     ) -> Result<(Vec<ChunkRec>, bool), Hdf5Note> {
         let btree = match obj.layout.as_ref() {
             Some(Hdf5Layout::Chunked { btree, .. }) => *btree,
@@ -2225,17 +2413,19 @@ impl<'a> Hdf5File<'a> {
             }
         };
         let filtered = !obj.filters.is_empty();
-        if self.buf.get(btree as usize..btree as usize + 4) == Some(b"BTHD") {
-            let (typ, hdr) = parse_btree_header(self.buf, btree)?;
+        let mut reader = Hdf5WindowReader::new(self.buf, fetch);
+        let sig = reader.read(btree, 4)?;
+        if sig.as_slice() == b"BTHD" {
+            let (typ, hdr) = parse_btree_header(&mut reader, btree)?;
             if typ != 10 && typ != 11 {
                 return Err(Hdf5Note::Btree {
                     typ,
                     off: btree as usize,
                 });
             }
-            Ok((chunk_records(self.buf, &hdr, rank, filtered)?, false))
+            Ok((chunk_records(&mut reader, &hdr, rank, filtered)?, false))
         } else {
-            Ok((v1_chunk_records(self.buf, btree, rank)?, true))
+            Ok((v1_chunk_records(&mut reader, btree, rank)?, true))
         }
     }
 
@@ -2249,7 +2439,13 @@ impl<'a> Hdf5File<'a> {
             Hdf5Layout::Chunked { chunk_dims, .. } => chunk_dims,
             _ => return None,
         };
-        let (recs, v1_index) = self.chunk_records_of(obj, rank).ok()?;
+        let (recs, v1_index) = self
+            .chunk_records_of(
+                obj,
+                rank,
+                &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
+            )
+            .ok()?;
         let mut out = Vec::with_capacity(recs.len());
         for rec in recs {
             let coords = match scaled_to_coords(&rec.scaled, chunk_dims, v1_index) {
@@ -2265,7 +2461,7 @@ impl<'a> Hdf5File<'a> {
         &self,
         dataset: &str,
         coords: &[u64],
-        fetch: impl Fn(u64, u64) -> Option<Vec<u8>>,
+        mut fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
     ) -> Option<Vec<f64>> {
         let (obj, ds, dt) = self.dataset(dataset).ok()?;
         if dt.class == 9 {
@@ -2289,7 +2485,7 @@ impl<'a> Hdf5File<'a> {
             }
             _ => return None,
         };
-        let (recs, v1_index) = self.chunk_records_of(obj, rank).ok()?;
+        let (recs, v1_index) = self.chunk_records_of(obj, rank, &mut fetch).ok()?;
         let rec = recs.into_iter().find(|r| {
             scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords)
         })?;
@@ -3124,5 +3320,45 @@ mod tests {
             assert!((proj.sub_longitude_deg - 128.2).abs() < 1.0);
             assert!(proj.perspective_height_m > 35_000_000.0);
         }
+    }
+
+    #[test]
+    fn parse_fetch_resolves_object_header_beyond_base() {
+        let root_addr = 1u64 << 20;
+        let mut full = vec![0u8; (root_addr + 128) as usize];
+        full[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        full[8] = 2;
+        full[9] = 8;
+        full[10] = 8;
+        full[36..44].copy_from_slice(&root_addr.to_le_bytes());
+        let sb_ck = jenkins_lookup3(&full[..44]);
+        full[44..48].copy_from_slice(&sb_ck.to_le_bytes());
+
+        let o = root_addr as usize;
+        full[o..o + 4].copy_from_slice(b"OHDR");
+        full[o + 4] = 2;
+        full[o + 5] = 0;
+        full[o + 6] = 4;
+        full[o + 7] = MSG_GROUP_INFO;
+        full[o + 8..o + 11].copy_from_slice(&[0, 0, 0]);
+        let ohdr_ck = jenkins_lookup3(&full[o..o + 11]);
+        full[o + 11..o + 15].copy_from_slice(&ohdr_ck.to_le_bytes());
+
+        let base = &full[..512];
+        let mut fetched: Vec<(u64, u64)> = Vec::new();
+        let file = Hdf5File::parse_fetch(base, |off, len| {
+            fetched.push((off, len));
+            full.get(off as usize..(off + len) as usize).map(|s| s.to_vec())
+        })
+        .expect("parse_fetch resolves the beyond-base object header via the fetch closure");
+        let root = file.root().expect("root object gathered");
+        assert!(
+            root.is_group,
+            "the fetched object header carries its group message"
+        );
+        assert!(
+            fetched.iter().any(|&(off, _)| off == root_addr),
+            "the fetch closure served the object header address"
+        );
     }
 }
