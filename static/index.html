@@ -12,46 +12,55 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
   position: fixed; left: 12px; bottom: 10px; font-size: 12px; letter-spacing: 0.05em;
   color: #6b6256; pointer-events: none; user-select: none;
 }
-#consent {
-  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-  background: rgba(0, 0, 0, 0.86); z-index: 10;
+#consent-gate {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: rgba(10, 9, 8, 0.94); border: 1px solid rgba(168, 152, 120, 0.25);
+  border-radius: 6px; padding: 14px 18px; max-width: 640px; z-index: 10;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); opacity: 0; display: none;
 }
-#consent .card {
-  border: 1px solid #2a2622; padding: 2rem 2.4rem; max-width: 30rem;
-  background: #0a0908;
+#consent-gate.show { animation: gateIn 0.25s ease forwards; }
+#consent-gate .question { font-size: 13px; line-height: 1.5; color: #c4b9a8; }
+#consent-gate .actions { display: flex; gap: 12px; margin-top: 12px; justify-content: flex-end; }
+#consent-gate button {
+  padding: 8px 22px; font: inherit; font-size: 13px; border-radius: 3px; cursor: pointer;
+  background: transparent; color: #a89878; border: 1px solid rgba(168, 152, 120, 0.3);
+  transition: all 0.2s ease;
 }
-#consent h2 { font-weight: 300; letter-spacing: 0.12em; color: #f0e8d8; margin-bottom: 1rem; font-size: 1.2rem; }
-#consent p { font-size: 0.85rem; line-height: 1.5; color: #9c9284; margin-bottom: 1.4rem; }
-#consent .row { display: flex; gap: 1rem; }
-#consent button {
-  flex: 1; padding: 0.7rem 0; background: none; border: 1px solid #3a352e;
-  color: #e8ddc8; font-family: inherit; font-size: 0.9rem; cursor: pointer; letter-spacing: 0.1em;
+#consent-gate button:hover { background: rgba(168, 152, 120, 0.12); }
+#consent-gate #consent-yes { background: rgba(168, 152, 120, 0.12); color: #e8ddc8; }
+#consent-state {
+  position: fixed; right: 12px; top: 10px; font-size: 12px; color: #6b6256;
+  cursor: pointer; user-select: none; z-index: 9;
 }
-#consent button:hover { border-color: #c4a45a; color: #f0e8d8; }
-#consent .state { font-size: 0.75rem; color: #6b6256; margin-top: 1rem; }
+#consent-state:hover { color: #c4b9a8; }
+#verdicts {
+  position: fixed; left: 12px; top: 10px; font-size: 12px; color: #a89878;
+  max-width: 60vw; pointer-events: none; user-select: none; z-index: 9;
+}
+@keyframes gateIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 </style>
 </head>
 <body>
 <canvas id="surface"></canvas>
 <div id="status"></div>
-<div id="consent">
-  <div class="card">
-    <h2>record consent</h2>
-    <p>The machine asks before it records. The browser sensors push raw oscillators into the field only after the operator answers. Silence until then.</p>
-    <div class="row">
-      <button id="consent-ja">Ja — record</button>
-      <button id="consent-nein">Nein — silent</button>
-    </div>
-    <div class="state" id="consent-state"></div>
+<div id="consent-state" title="change consent"></div>
+<div id="verdicts"></div>
+<div id="consent-gate">
+  <p class="question">Do you consent to this page accessing your device's sensors, processing the data locally, and generating sound, light, vibration, and signals?</p>
+  <div class="actions">
+    <button id="consent-no">No</button>
+    <button id="consent-yes">Yes</button>
   </div>
 </div>
 <script type="module">
-import { syncFrame, parseRecords, parseKinetic, PROTOCOL_VERSION, KINETIC_TAG } from "./constants.js";
+import { syncFrame, parseRecords, parseKinetic, parseVerdicts, PROTOCOL_VERSION, KINETIC_TAG, VERDICT_TAG } from "./constants.js";
 
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
-const consentEl = document.getElementById("consent");
+const consentEl = document.getElementById("consent-gate");
 const consentStateEl = document.getElementById("consent-state");
+const verdictsEl = document.getElementById("verdicts");
+const CONSENT_KEY = "omegaflow.consent.stationFlow";
 
 const GRID_INIT = 2147483648.0;
 
@@ -87,33 +96,77 @@ async function fetchText(path) {
   return r.text();
 }
 
-async function askConsent(word) {
-  const text = await fetchText("/consent?" + word);
-  if (text === null) {
-    return;
-  }
-  const v = text.trim() === "1";
-  state.consented = v;
-  consentStateEl.textContent = "consent: " + (v ? "1 (record)" : "0 (silent)");
-  if (v) {
-    consentEl.style.display = "none";
-  }
+let sensors = null;
+let radiator = null;
+
+function showGate() {
+  consentEl.style.display = "block";
+  consentEl.classList.remove("show");
+  void consentEl.offsetWidth;
+  consentEl.classList.add("show");
 }
 
-document.getElementById("consent-ja").addEventListener("click", () => askConsent("ja"));
-document.getElementById("consent-nein").addEventListener("click", () => askConsent("nein"));
+function hideGate() {
+  consentEl.style.display = "none";
+}
 
-async function readConsent() {
-  const text = await fetchText("/consent");
-  if (text === null) {
+function noteConsent() {
+  const n = sensors ? sensors.size() : 0;
+  const peers = radiator ? radiator.peers().length : 0;
+  consentStateEl.textContent = "consent: " + (state.consented ? "record · " + n + " sensors · " + peers + " radiators" : "silent") + " · change";
+}
+
+async function setConsent(on) {
+  state.consented = on;
+  try { localStorage.setItem(CONSENT_KEY, on ? "yes" : "no"); } catch {}
+  try { await fetchText("/consent?" + (on ? "ja" : "nein")); } catch {}
+  if (on) {
+    if (radiator) { radiator.start(); }
+    if (sensors) { sensors.start(); }
+  } else {
+    if (sensors) { sensors.stop(); }
+    if (radiator) { radiator.stop(); }
+  }
+  hideGate();
+  noteConsent();
+}
+
+document.getElementById("consent-yes").addEventListener("click", () => setConsent(true));
+document.getElementById("consent-no").addEventListener("click", () => setConsent(false));
+consentStateEl.addEventListener("click", showGate);
+
+let verdictLines = [];
+
+function applyVerdicts(lines) {
+  verdictLines = lines;
+  if (!lines.length) {
+    verdictsEl.textContent = "";
     return;
   }
-  const v = text.trim() === "1";
-  state.consented = v;
-  consentStateEl.textContent = "consent: " + (v ? "1 (record)" : "0 (silent)");
-  if (v) {
-    consentEl.style.display = "none";
+  const riss = lines.filter((l) => l.word === "riss");
+  if (riss.length) {
+    verdictsEl.textContent = riss
+      .map((l) => "riss " + l.name + " (" + l.knot.filter(Boolean).join(" × ") + ")")
+      .join(" · ");
+    return;
   }
+  const placed = lines.filter((l) => l.word === "placed").length;
+  verdictsEl.textContent = "woven: " + placed + "/" + lines.length + " body lines placed";
+}
+
+async function readConsent() {
+  let stored = null;
+  try { stored = localStorage.getItem(CONSENT_KEY); } catch {}
+  if (stored === "yes") {
+    await setConsent(true);
+    return;
+  }
+  if (stored === "no") {
+    await setConsent(false);
+    return;
+  }
+  showGate();
+  noteConsent();
 }
 
 const fieldShader = `
@@ -335,10 +388,14 @@ function connect() {
     }
     const tag = new DataView(bytes).getUint8(2);
     if (tag === KINETIC_TAG) {
-      if (serial) {
-        const k = parseKinetic(bytes);
-        serial.onFrame(k.omega, k.aperture, k.pan, k.tilt);
+      const k = parseKinetic(bytes);
+      if (radiator) {
+        radiator.onFrame(k.omega, k.aperture, k.pan, k.tilt);
       }
+      return;
+    }
+    if (tag === VERDICT_TAG) {
+      applyVerdicts(parseVerdicts(bytes));
       return;
     }
     if (tag !== PROTOCOL_VERSION) {
@@ -403,7 +460,7 @@ async function jumpBody(body) {
   }
 }
 
-window.omegaflow = { recordSample, jumpTo, jumpBody, consent: () => state.consented };
+window.omegaflow = { recordSample, jumpTo, jumpBody, consent: () => state.consented, verdicts: () => verdictLines };
 
 function resize() {
   const dpr = window.devicePixelRatio || 1;
@@ -498,12 +555,35 @@ function loop(now) {
 }
 
 let serial = null;
+let sensoriumModule = null;
+let radiatorModule = null;
 try {
   await import("./palette.js");
 } catch {}
 try {
   serial = await import("./webserial.js");
 } catch {}
+try {
+  sensoriumModule = await import("./sensorium.js");
+} catch {}
+try {
+  radiatorModule = await import("./radiator.js");
+} catch {}
+
+if (sensoriumModule) {
+  sensors = sensoriumModule.createSensorium({
+    record: recordSample,
+    consent: () => state.consented,
+    onState: noteConsent,
+  });
+}
+if (radiatorModule) {
+  radiator = radiatorModule.createRadiator({
+    consent: () => state.consented,
+    serial,
+    onState: noteConsent,
+  });
+}
 
 boot();
 requestAnimationFrame(loop);
