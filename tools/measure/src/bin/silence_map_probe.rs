@@ -213,7 +213,6 @@ fn silence_map(
     }
     let keys: Vec<CellKey> = evaluated.into_iter().collect();
     let volume = cell * cell * cell;
-    let n = points.len() as f64;
     let mut expectation: Vec<f64> = Vec::with_capacity(keys.len());
     for k in &keys {
         let c = center_of(*k, cell);
@@ -223,7 +222,7 @@ fn silence_map(
                 * gaussian(c[1] - p[1], band[1])
                 * gaussian(c[2] - p[2], band[2]);
         }
-        expectation.push(sum / n * volume);
+        expectation.push(sum * volume);
     }
     let mut still = 0usize;
     let mut absent = 0usize;
