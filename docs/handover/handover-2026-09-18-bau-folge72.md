@@ -3,7 +3,7 @@
   session: Bau-Folge 72
   class: handover
   date: 2026-09-18
-  sha256: 0e1395129fccb29e46974e403da6bb8358d41020f3dd4dfbb93dc582a1fc75f3
+  sha256: 3f1cf30026f7f6282bf204cb243de10664bdb1875f6d837dd17930bf90df6940
   status: live
 -->
 # Handover — Bau-Folge 72 (2026-09-18)
@@ -62,9 +62,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   liest die Jobs des Laufs und druckt die Logs der roten Jobs (Default) bzw. aller
   (`--all`); leerer Befund → ehrliche „no failed job"-Zeile, kein erfundenes Log.
   Drei `#[cfg(test)]`-Tests (Job-Auswahl). `cargo check -p omegaflow-utils --bins`
-  0/0. **Offen:** das Release-Binär ist noch nicht auf PATH — nach dem Push
-  `gh workflow run release-build.yml`, dann `ci_manage log <id>` gegen einen roten
-  Lauf einmal fahren (Verifikation). · `pending` (Build/Verifikation)
+  0/0. **Offen:** das Release-Binär ist noch nicht auf PATH — `release-build`
+  `35302966400` dispatched (2026-09-18, nach dem Push); danach `ci_manage log <id>`
+  gegen einen roten Lauf einmal fahren (Verifikation). · `pending` (Build/Verifikation)
 - **`opencode.json`** — die Plan-/Lese-Profile um `ci_manage log`/`--help`,
   `git merge-base`, `du`/`find`/`awk` erweitert (gemessene Verweigerungen:
   `line`/`plan` 7, `research-max` 4, `explore` 1 — Standard-Inspektoren außerhalb
