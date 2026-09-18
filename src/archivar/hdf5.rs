@@ -50,6 +50,20 @@ pub enum Hdf5Note {
     VirtualDataset,
 }
 
+pub struct ChunkReadDiag {
+    stage: &'static str,
+    note: Option<Hdf5Note>,
+}
+
+impl std::fmt::Debug for ChunkReadDiag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.note {
+            Some(n) => write!(f, "{} ({n:?})", self.stage),
+            None => write!(f, "{}", self.stage),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Endian {
     Le,
@@ -2462,47 +2476,112 @@ impl<'a> Hdf5File<'a> {
         &self,
         dataset: &str,
         coords: &[u64],
-        mut fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
     ) -> Option<Vec<f64>> {
-        let (obj, ds, dt) = self.dataset(dataset).ok()?;
+        self.read_chunk_impl(dataset, coords, fetch).ok()
+    }
+
+    pub fn read_chunk_diag(
+        &self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag> {
+        self.read_chunk_impl(dataset, coords, fetch)
+    }
+
+    fn read_chunk_impl(
+        &self,
+        dataset: &str,
+        coords: &[u64],
+        mut fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag> {
+        let (obj, ds, dt) = self.dataset(dataset).map_err(|note| ChunkReadDiag {
+            stage: "dataset absent",
+            note: Some(note),
+        })?;
         if dt.class == 9 {
-            return None;
+            return Err(ChunkReadDiag {
+                stage: "vlen dataset",
+                note: Some(Hdf5Note::VlenNotRead),
+            });
         }
         let elem_size = dt.size;
         let rank = ds.dims.len();
-        if rank == 0 || coords.len() != rank {
-            return None;
+        if rank == 0 {
+            return Err(ChunkReadDiag {
+                stage: "rank zero",
+                note: None,
+            });
         }
-        let chunk_dims = match obj.layout.as_ref()? {
-            Hdf5Layout::Chunked {
+        if coords.len() != rank {
+            return Err(ChunkReadDiag {
+                stage: "coords rank mismatch",
+                note: None,
+            });
+        }
+        let chunk_dims = match obj.layout.as_ref() {
+            Some(Hdf5Layout::Chunked {
                 chunk_dims,
                 elem_size: declared,
                 ..
-            } => {
+            }) => {
                 if *declared as usize != elem_size {
-                    return None;
+                    return Err(ChunkReadDiag {
+                        stage: "declared elem size mismatch",
+                        note: None,
+                    });
                 }
                 chunk_dims.clone()
             }
-            _ => return None,
+            _ => {
+                return Err(ChunkReadDiag {
+                    stage: "layout not chunked",
+                    note: None,
+                });
+            }
         };
-        let (recs, v1_index) = self.chunk_records_of(obj, rank, &mut fetch).ok()?;
-        let rec = recs.into_iter().find(|r| {
-            scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords)
-        })?;
+        let (recs, v1_index) = self
+            .chunk_records_of(obj, rank, &mut fetch)
+            .map_err(|note| ChunkReadDiag {
+                stage: "chunk index read",
+                note: Some(note),
+            })?;
+        let rec = recs
+            .into_iter()
+            .find(|r| {
+                scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords)
+            })
+            .ok_or(ChunkReadDiag {
+                stage: "chunk not found",
+                note: None,
+            })?;
         let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
         let stored_len = if rec.size > 0 {
             rec.size
         } else {
             chunk_elems * elem_size
         };
-        let mut raw = fetch(rec.addr, stored_len as u64)?;
+        let mut raw = fetch(rec.addr, stored_len as u64).ok_or(ChunkReadDiag {
+            stage: "chunk data fetch void",
+            note: Some(Hdf5Note::AbsentAtByte {
+                off: rec.addr as usize,
+            }),
+        })?;
         if !obj.filters.is_empty() {
-            apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).ok()?;
+            apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).map_err(|note| {
+                ChunkReadDiag {
+                    stage: "chunk filter",
+                    note: Some(note),
+                }
+            })?;
         }
         let mut actual_elems = 1usize;
         for d in 0..rank {
-            let start = coords[d].checked_mul(chunk_dims[d] as u64)?;
+            let start = coords[d].checked_mul(chunk_dims[d] as u64).ok_or(ChunkReadDiag {
+                stage: "coords overflow",
+                note: None,
+            })?;
             let avail = ds.dims[d].saturating_sub(start);
             actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
         }
@@ -2510,7 +2589,12 @@ impl<'a> Hdf5File<'a> {
         let n = raw_elems.min(actual_elems);
         let mut out = Vec::with_capacity(n);
         for i in 0..n {
-            out.push(decode_numeric(&raw, i, dt).ok()?);
+            out.push(
+                decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
+                    stage: "numeric decode",
+                    note: Some(note),
+                })?,
+            );
         }
         let scale = obj
             .attrs
@@ -2530,7 +2614,7 @@ impl<'a> Hdf5File<'a> {
                 };
             }
         }
-        Some(out)
+        Ok(out)
     }
 
     pub fn geostationary_projection(&self) -> Result<GeostationaryProjection, Hdf5Note> {
