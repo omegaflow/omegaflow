@@ -1,4 +1,4 @@
-use omegaflow::commit_gate::{Gate, json_write};
+use omegaflow::commit_gate::{canon_diff, declared_canon, Gate, json_write};
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
 use std::process::Command;
@@ -32,6 +32,32 @@ fn main() {
             eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
             fail = true;
         }
+    }
+    let canon_files = Command::new("git")
+        .args([
+            "-c",
+            "core.quotePath=false",
+            "ls-files",
+            "phi/*.φ",
+            "phi/**/*.φ",
+        ])
+        .output()
+        .expect("git");
+    let tracked: Vec<String> = String::from_utf8_lossy(&canon_files.stdout)
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .map(str::to_string)
+        .collect();
+    let declared = declared_canon();
+    let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
+    for path in tracked_not_declared {
+        eprintln!("commit_check: tracked-not-declared: {path}");
+        fail = true;
+    }
+    for path in declared_not_tracked {
+        eprintln!("commit_check: declared-not-tracked: {path}");
+        fail = true;
     }
     if fail {
         std::process::exit(1);
