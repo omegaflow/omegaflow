@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-18
-  sha256: e5b4ba035c72837f572e58048fbfc25ff6eada762c6079d81b66ca9328351f94
+  sha256: 22b4d94cdf0ca4e28affba8fd203f1634b46ef993dfe80288434d8912e653763
   status: live
   see-also: AGENTS.md
 -->
@@ -16,4 +16,5 @@ löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist 
 richtige Zustand, kein Verlust.
 
 An ernte: bc_mpo_mag PDS4-`.tab`-Compiler + `sources.φ`-Eintrag; Asset `data/psa.esa.int/mag_der_sc_ib_a001_e2k_00000_20181024.zip` (Schritt: `tools/harvest/src/bin/bc_mpo_mag_compiler.rs` nach Muster `voyager_odr_compiler.rs`, dann `sources.φ`-Eintrag + CI-Manifestation).
+An forschung: BepiColombo MORE (`bc_mpo_more`) — PSA-Antwort `1789723653` (Mark Bentley, psa-support@cosmos.esa.int): Cruise-Daten noch nicht öffentlich, Freigabe zur Wissenschaftsphase (~April), Zwischenzugang über PI Luciano Iess. (Schritt: `state/mail/mail_ledger.φ:230`; bei Eingang authentifizierter TAP-`data`-Abruf am MORE-URN.)
 
