@@ -10164,3 +10164,12 @@ compiler tools/harvest/src/bin/pathfinder_odf_compiler.rs
 at earth
 ttl 604800
 field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; CDN-Manifestation ausstehend).
