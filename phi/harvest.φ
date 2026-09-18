@@ -22,7 +22,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 180 from granule 1439MB range-read.
+note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; timeout 180 from 1439MB range-read. Run 35317116366 (2026-09-18) 0 records: HDF5 metadata 263439695 B > META_ESCALATION 100663296 B; non-CMR Listing-Arm descoped (403).
 
 asset present
 format goes16_abi
@@ -40,7 +40,7 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 180
-note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 180 from granule ~1200MB range-read.
+note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; timeout 180 from ~1200MB range-read. Run 35317118656 (2026-09-18) 0 records: fetch+32MiB header ok, first_values no datasets (locus unnamed); non-CMR Listing-Arm descoped (403).
 
 asset fehlt
 format lro_trk
@@ -94,7 +94,7 @@ args --cmr --day 2026.09.14 --short-name SWOT_L2_LR_SSH_UNSMOOTHED_D
 pattern ^swot_l2_lr_ssh\.bin$
 idempotent true
 timeout 120
-note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; day 2026.09.14 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 120 from granule ~819MB netCDF range-read.
+note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; day 2026.09.14 = newest CMR granule; timeout 120 from ~819MB netCDF. Run 35317120978 (2026-09-18) 0 records: SigV4 GetObject 403 (creds obtained); --prefix Listing descoped (403), --granule stays.
 
 asset present
 format ulysses_atdf
