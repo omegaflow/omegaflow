@@ -211,6 +211,8 @@ physical address lives here only; every
 other document refers to `archive-root`. A
 new session reads exactly that one document.
 
+The tracked `phi/*.φ` set is the canon, declared line by line in `phi/canon.φ`. A new tracked `phi/*.φ` file is an architecture act — it needs the operator/council word and a `phi/canon.φ` declaration in the same commit; the canon gate blocks silent creation.
+
 ### PII und Mail-Inhalte — nie getrackt
 
 Personenbezogene Daten (private Adresse, private E-Mail, Login-Konstrukte,

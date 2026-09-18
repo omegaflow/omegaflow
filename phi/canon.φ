@@ -1,0 +1,137 @@
+# phi/canon.φ — der verbindliche Register-Kanon (Council 2026-09-18)
+#
+# Zweck: jede getrackte phi/*.φ-Datei steht hier mit genau einer Zeile.
+# Der getrackte Satz IST der Kanon. Eine neue getrackte phi/*.φ-Datei ist
+# ein Architektur-Akt: sie braucht das Wort von Operator/Council und ihre
+# Deklaration in dieser Datei im selben Commit. Das Kanon-Gate blockt die
+# stille Anlage.
+#
+# Quelle der Wahrheit: git -c core.quotePath=false ls-files "phi/*.φ" "phi/**/*.φ"
+# Stand: 2026-09-18 — 108 getrackte φ-Dateien + diese Deklaration.
+
+# --- Kanon ---
+phi/canon.φ
+
+# --- Maschinen-Register ---
+phi/sources.φ
+phi/witnesses.φ
+phi/footprints.φ
+
+# --- Dispositions-Register ---
+phi/dead_sources.φ
+phi/declined_sources.φ
+phi/blocked_sources.φ
+
+# --- Harvest-Master ---
+phi/harvest.φ
+
+# --- Bindings ---
+phi/bindings/dust-maske.φ
+phi/bindings/bathymetrie-gebco.φ
+
+# --- Stationstabellen ---
+phi/nrs_stations.φ
+phi/supermag_stations.φ
+
+# --- Reports ---
+phi/reports/scan_coverage.φ
+phi/reports/probe_sweep_survivors.φ
+
+# --- Pipeline-Register ---
+phi/pipeline/ledger.φ
+phi/pipeline/decline_lens.φ
+phi/pipeline/library.φ
+
+# --- Katalog ---
+phi/pipeline/catalog/MANIFEST.φ
+phi/pipeline/catalog/asteroid_gm_inpop25c.φ
+phi/pipeline/catalog/asteroid_gm_sb441.φ
+phi/pipeline/catalog/copernicus_disposition.φ
+phi/pipeline/catalog/dataverse_borealis.φ
+phi/pipeline/catalog/dataverse_harvard.φ
+phi/pipeline/catalog/dryad_catalog.φ
+phi/pipeline/catalog/korpora_heim.φ
+phi/pipeline/catalog/noaa_nodd_disposition.φ
+phi/pipeline/catalog/pangaea_catalog.φ
+phi/pipeline/catalog/pangaea_catalog_full.φ
+phi/pipeline/catalog/re3data_catalog.φ
+phi/pipeline/catalog/seanoe_catalog.φ
+phi/pipeline/catalog/solar_omega_g.φ
+phi/pipeline/catalog/tap_index.φ
+phi/pipeline/catalog/tap_index_aip_gavo.φ
+phi/pipeline/catalog/tap_index_alma_ea.φ
+phi/pipeline/catalog/tap_index_alma_eu.φ
+phi/pipeline/catalog/tap_index_alma_na.φ
+phi/pipeline/catalog/tap_index_ari.φ
+phi/pipeline/catalog/tap_index_astron.φ
+phi/pipeline/catalog/tap_index_atoavo.φ
+phi/pipeline/catalog/tap_index_cadc.φ
+phi/pipeline/catalog/tap_index_casda.φ
+phi/pipeline/catalog/tap_index_cdpp.φ
+phi/pipeline/catalog/tap_index_cfa_tdc.φ
+phi/pipeline/catalog/tap_index_chandra.φ
+phi/pipeline/catalog/tap_index_chandra_csc.φ
+phi/pipeline/catalog/tap_index_chandra_csc1.φ
+phi/pipeline/catalog/tap_index_chandra_csc2.φ
+phi/pipeline/catalog/tap_index_chandra_csc21.φ
+phi/pipeline/catalog/tap_index_climso.φ
+phi/pipeline/catalog/tap_index_dachs_oca.φ
+phi/pipeline/catalog/tap_index_datacentral.φ
+phi/pipeline/catalog/tap_index_ehst.φ
+phi/pipeline/catalog/tap_index_einsteinprobe.φ
+phi/pipeline/catalog/tap_index_esaskylegacy.φ
+phi/pipeline/catalog/tap_index_eso.φ
+phi/pipeline/catalog/tap_index_exoarchive.φ
+phi/pipeline/catalog/tap_index_fu_berlin_hrsc.φ
+phi/pipeline/catalog/tap_index_gaia_aip.φ
+phi/pipeline/catalog/tap_index_gavo.φ
+phi/pipeline/catalog/tap_index_heasarc.φ
+phi/pipeline/catalog/tap_index_hreda.φ
+phi/pipeline/catalog/tap_index_ia2_projects.φ
+phi/pipeline/catalog/tap_index_iap.φ
+phi/pipeline/catalog/tap_index_idoc.φ
+phi/pipeline/catalog/tap_index_irsa.φ
+phi/pipeline/catalog/tap_index_isla.φ
+phi/pipeline/catalog/tap_index_jive.φ
+phi/pipeline/catalog/tap_index_jwst.φ
+phi/pipeline/catalog/tap_index_konkoly.φ
+phi/pipeline/catalog/tap_index_ksb_orb.φ
+phi/pipeline/catalog/tap_index_lam.φ
+phi/pipeline/catalog/tap_index_lamost_dr10.φ
+phi/pipeline/catalog/tap_index_lamost_dr11.φ
+phi/pipeline/catalog/tap_index_latmos.φ
+phi/pipeline/catalog/tap_index_leibniz_kis.φ
+phi/pipeline/catalog/tap_index_lso.φ
+phi/pipeline/catalog/tap_index_macho.φ
+phi/pipeline/catalog/tap_index_maser.φ
+phi/pipeline/catalog/tap_index_mast.φ
+phi/pipeline/catalog/tap_index_mercator.φ
+phi/pipeline/catalog/tap_index_musewide.φ
+phi/pipeline/catalog/tap_index_nancay.φ
+phi/pipeline/catalog/tap_index_osa.φ
+phi/pipeline/catalog/tap_index_padc_astrom.φ
+phi/pipeline/catalog/tap_index_padc_he.φ
+phi/pipeline/catalog/tap_index_padc_helio.φ
+phi/pipeline/catalog/tap_index_padc_planeto.φ
+phi/pipeline/catalog/tap_index_parsec.φ
+phi/pipeline/catalog/tap_index_psa.φ
+phi/pipeline/catalog/tap_index_psrdavo.φ
+phi/pipeline/catalog/tap_index_pvol.φ
+phi/pipeline/catalog/tap_index_rcsed.φ
+phi/pipeline/catalog/tap_index_skymapper.φ
+phi/pipeline/catalog/tap_index_solar_dachs.φ
+phi/pipeline/catalog/tap_index_ssa.φ
+phi/pipeline/catalog/tap_index_ssdc.φ
+phi/pipeline/catalog/tap_index_ucl.φ
+phi/pipeline/catalog/tap_index_upjs.φ
+phi/pipeline/catalog/tap_index_vespa_ae.φ
+phi/pipeline/catalog/tap_index_vespa_ia2.φ
+phi/pipeline/catalog/tap_index_vizier_obstap.φ
+phi/pipeline/catalog/tap_index_vsa.φ
+phi/pipeline/catalog/tap_index_wigglez.φ
+phi/pipeline/catalog/tap_index_wsa.φ
+phi/pipeline/catalog/tap_index_xcatdb.φ
+phi/pipeline/catalog/tap_index_xmm.φ
+phi/pipeline/catalog/tap_index_youcat.φ
+phi/pipeline/catalog/wdcc_catalog.φ
+phi/pipeline/catalog/zenodo_catalog.φ
