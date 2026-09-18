@@ -3,7 +3,7 @@
   session: Forschung-Folge 75
   class: handover
   date: 2026-09-18
-  sha256: 21324f00f6e983eb5f76cf89d76d293201c6308fac85b5b83214dde4e7375293
+  sha256: 73dc5eee8bcf0843f98fae7f2dbebbb6ae2dd9edd3065aa62a76300a3ce409f3
   status: live
 -->
 # Handover — Forschung-Folge 75 (2026-09-18)
@@ -48,7 +48,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   **pending** @`8d1264bb`. Watchdog-Snapshot: `ci-check` `35307448019`
   in_progress, `health-check` `35286550387` in_progress; `pii-exposure`
   `35287195140` failure (exit 2 = Exposition bleibt, erwartet); `xp-pilot-cdn`
-  `35305640254` failure; sonst fremde Linien.
+  `35305640254` failure; sonst fremde Linien. **Dieses Atom dispatcht:**
+  `planetary-odf-cdn` `35313968728` queued @`ca58d3c9` (verifiziert den neuen
+  Manifest-Check); `ci-check` `35313966498` pending @`ca58d3c9`.
 - **Postfach** — letzter Ledger-Eingang `1789689115` (Rubin-Forum), kein
   Agenten-Eingang (zitiert `external-state.md:20`, nicht kopiert; `external-state.md`
   ist fremd-dirty im Baum, nicht angefasst).
