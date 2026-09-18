@@ -1,3 +1,4 @@
+note descoped (gemessen 2026-09-18): kein Verbraucher — Positionen kommen live aus magstid.php (supermag_compiler.rs all_stations); --stations liest 3-Zeichen-Codes, Format-inkompatibel; Live-Liste ist die Wahrheit.
 note SuperMAG-Stationen (3 Token: CODE lat lon); gemessen 2026-09-10; Quelle magstid.php https://supermag.jhuapl.edu/lib/php/magstid.php (geolat/geolon, stabil); geolon aus magstid.php auf -180..180 normalisiert; Ziffer-Codes (T03) ohne pack_iaga-Form.
 A01 8.99 7.39
 A02 36.849998 2.93
