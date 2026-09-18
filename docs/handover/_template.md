@@ -43,8 +43,8 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - **Postfach** — `smail` + `state/mail/mail_ledger.φ` (fällig 2⁶ min).
 - **CI-Status am HEAD** — zuerst den Watchdog-Snapshot
   `/tmp/opencode/ci_status.md` lesen (kein API-Aufruf); bei Lücke/Detail
-  `ci_manage list` / `ci_manage view <id>`. **Nie** `gh run list`/`gh run view`;
-  `gh` nur für `--log`/`--log-failed`/`workflow run`/`run download`.
+  `ci_manage list` / `ci_manage view <id>`, Fehllog `ci_manage log <id>`.
+  **Nie** `gh run list`/`gh run view`; `gh` nur für `workflow run`/`run download`.
 
 ## Werkzeuge (gebaut — nutzt sie)
 
@@ -55,10 +55,10 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `smail` — Mail (Resend), `--dry-run`; Inhalte nie getrackt.
 - `register_lookup` — `--live`/`--open`/`--history`.
 - `git_safety` — `--snapshot`/`--restore`/`--list`.
-- `ci_manage` — `list`/`view`/`cancel`/`rerun`; statt `gh run list`/`gh run view`.
+- `ci_manage` — `list`/`view`/`log`/`cancel`/`rerun`; statt `gh run list`/`gh run view`.
 - `sread [--offset --limit]` — Datei lesen.
 - `session_burn` — Burn je Session.
-- `gh` — nur `--log`/`--log-failed`/`workflow run`/`run download`.
+- `gh` — nur `workflow run`/`run download`.
 
 ## <Sektion — härtester undatierter Punkt zuerst>
 
