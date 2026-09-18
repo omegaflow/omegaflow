@@ -14,6 +14,16 @@ pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
 note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
+asset fehlt
+format gedi_l2a
+tag data.lpdaac.earthdatacloud.nasa.gov
+arm gedi_l2a_compiler
+args --cmr --day 2025.07.09 --version 002
+pattern ^gedi_l2a\.bin$
+idempotent true
+timeout 180
+note GEDI02_A v002 RH98; day 2025.07.09 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 180 from granule 1439MB range-read.
+
 asset present
 format goes16_abi
 tag noaa-goes16.s3.amazonaws.com
@@ -21,6 +31,16 @@ arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
 note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
+
+asset fehlt
+format icesat2_atl03
+tag data.nsidc.earthdatacloud.nasa.gov
+arm icesat2_atl03_compiler
+args --cmr --day 2026.06.30 --version 007
+pattern ^icesat2_atl03\.bin$
+idempotent true
+timeout 180
+note ATL03 v007 photon heights; day 2026.06.30 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 180 from granule ~1200MB range-read.
 
 asset fehlt
 format lro_trk
@@ -65,6 +85,16 @@ pattern ^rosetta_odf\.bin$
 idempotent true
 timeout 350
 note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; CDN asset fehlt 2026-09-17 — archives.esac.esa.int carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29.
+
+asset fehlt
+format swot_l2_lr_ssh
+tag archive.podaac.earthdata.nasa.gov
+arm swot_l2_lr_ssh_compiler
+args --cmr --day 2026.09.14 --short-name SWOT_L2_LR_SSH_UNSMOOTHED_D
+pattern ^swot_l2_lr_ssh\.bin$
+idempotent true
+timeout 120
+note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; day 2026.09.14 = newest CMR granule; tag/pattern = NETLOC/DEFAULT_OUT; timeout 120 from granule ~819MB netCDF range-read.
 
 asset present
 format ulysses_atdf
