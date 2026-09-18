@@ -2,6 +2,7 @@ use super::*;
 use crate::weberin::BodyLine;
 
 pub const VERDICT_TAG: u8 = 11;
+pub const VERDICT_STALE_S: u64 = 604800;
 const MAGIC: [u8; 2] = [0xCF, 0x86];
 const NO_LINE: u8 = 0xFF;
 
@@ -166,6 +167,13 @@ pub fn riss_bodies(lines: &[VerdictLine]) -> Vec<&VerdictLine> {
     lines.iter().filter(|l| l.word == VerdictWord::Riss).collect()
 }
 
+pub fn is_stale(line: &VerdictLine, now_tdb: Option<f64>) -> bool {
+    match now_tdb {
+        Some(now) => now - line.weave_epoch >= VERDICT_STALE_S as f64,
+        None => false,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -238,5 +246,26 @@ mod tests {
         let riss = riss_bodies(&lines);
         assert_eq!(riss.len(), 1);
         assert_eq!(riss[0].name, "apophis");
+    }
+
+    #[test]
+    fn a_verdict_ages_into_stale_at_the_window() {
+        let line = &sample()[0];
+        let weave = line.weave_epoch;
+        assert!(!is_stale(line, Some(weave + 100.0)));
+        assert!(!is_stale(line, Some(weave + VERDICT_STALE_S as f64 - 1.0)));
+        assert!(is_stale(line, Some(weave + VERDICT_STALE_S as f64)));
+        assert!(is_stale(line, Some(weave + VERDICT_STALE_S as f64 + 1.0)));
+    }
+
+    #[test]
+    fn an_absent_now_is_not_a_fabricated_stale() {
+        assert!(!is_stale(&sample()[0], None));
+    }
+
+    #[test]
+    fn a_future_weave_is_not_stale() {
+        let line = &sample()[0];
+        assert!(!is_stale(line, Some(line.weave_epoch - 100.0)));
     }
 }
