@@ -3,7 +3,7 @@
   session: Ernte-Folge 86
   class: handover
   date: 2026-09-18
-  sha256: c9b0d34b50e67a0f6931f3dc8201772978d0b3c345ac544b073fcf0774da2ea0
+  sha256: 5a01e49481aedaaeff129fe5041854e735449ba5d5b23720dbba96244427bdaf
   status: live
 -->
 # Handover — Ernte-Folge 86 (2026-09-18)
@@ -48,28 +48,29 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 ## gedi_l2a / icesat2_atl03 — Wurzel `dataset absent` (wartend)
 
 Re-Dispatch nach dem hdf5-Continuation-Zyklus-Fix (`src/archivar/hdf5.rs`,
-Commit dieser Session; Test `v2_continuation_self_cycle_terminates`).
-- **Schritt:** `gh workflow run harvest.yml -f format=gedi_l2a` und
-  `-f format=icesat2_atl03` (der Fix liegt unter `src/archivar/`, kein
-  Dispatch-Pfad); Run-IDs registrieren; einmalig `ci_manage view <id>`; bei
+Commit dieser Session; Test `v2_continuation_self_cycle_terminates`). Dispatcht
+2026-09-18: gedi_l2a `35351460528`, icesat2_atl03 `35351464250`.
+- **Schritt (Trigger Run-Abschluss):** einmalig `ci_manage view <id>`; bei
   success `asset present` + sha256 in `phi/sources.φ`. Nie pollen.
 
 ## LRO utF harvest — Timeout zu kurz (wartend)
 
 Lauf `35339151004` durch `timeout 8` abgebrochen, der Compiler produktiv (Tag
-267/365 in 7,3 min); `phi/harvest.φ` `timeout` auf 16 erhöht.
-- **Schritt:** `gh workflow run harvest-long.yml -f format=lro_trk`; einmalig
-  `ci_manage view <id>`; bei success `shard` ins Register = gemessene Asset-Zahl.
+267/365 in 7,3 min); `phi/harvest.φ` `timeout` auf 16 erhöht, dispatcht
+`35351467845`.
+- **Schritt (Trigger Run-Abschluss):** einmalig `ci_manage view 35351467845`;
+  bei success `shard` ins Register = gemessene Asset-Zahl.
 
 ## rosetta_odf — Shard-Manifestation (wartend)
 
 Lauf `35313968728` HTTP 422 (`rosetta_odf.bin` 2415275024 B > 2³¹);
 `rosetta_odf_compiler.rs` shardet (PODF_SHARD_BUDGET, 3 Shards),
-`planetary-odf-cdn.yml:30` `sharded: true, prefix: rosetta_odf`.
-- **Schritt (Trigger Run-Abschluss):** `gh workflow run planetary-odf-cdn.yml`;
-  nach success die 3 Shard-`url`+`sha256` in `phi/sources.φ` (ersetzt die
-  Einzeldatei-`url`), `phi/harvest.φ` rosetta `asset present`; die Shard-Namen
-  stehen im Compile-stdout.
+`planetary-odf-cdn.yml:30` `sharded: true, prefix: rosetta_odf`. Dispatcht:
+`planetary-odf-cdn` `35351411938`; `harvest-dispatch` `35351394369` routet
+rosetta zusätzlich via `harvest.yml` (Upload `--clobber`, idempotent).
+- **Schritt (Trigger Run-Abschluss):** nach success die 3 Shard-`url`+`sha256`
+  in `phi/sources.φ` (ersetzt die Einzeldatei-`url`), `phi/harvest.φ` rosetta
+  `asset present`; die Shard-Namen stehen im Compile-stdout.
 
 ## HTTP-Reach-Zahl je Granule (Council, nicht blockierend)
 
