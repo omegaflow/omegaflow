@@ -394,6 +394,7 @@ impl OmegaLoop {
         let Ok(v) = self.verdicts.read() else {
             return;
         };
+        let now = system_now(&self.time);
         let riss = crate::archivar::riss_bodies(&v);
         let named: String = riss
             .iter()
@@ -403,7 +404,11 @@ impl OmegaLoop {
                     .iter()
                     .filter_map(|k| k.as_ref().map(|b| b.word()))
                     .collect();
-                format!("riss {} ({})", l.name, knots.join(" × "))
+                if crate::archivar::is_stale(l, now) {
+                    format!("stale riss {} ({})", l.name, knots.join(" × "))
+                } else {
+                    format!("riss {} ({})", l.name, knots.join(" × "))
+                }
             })
             .collect::<Vec<_>>()
             .join(" · ");
@@ -420,7 +425,11 @@ impl OmegaLoop {
                 Some(b) => b.word(),
                 None => "",
             };
-            eprintln!("riss {} ({} × {})", l.name, knot_a, knot_b);
+            if crate::archivar::is_stale(l, now) {
+                eprintln!("stale riss {} ({} × {})", l.name, knot_a, knot_b);
+            } else {
+                eprintln!("riss {} ({} × {})", l.name, knot_a, knot_b);
+            }
         }
     }
 
