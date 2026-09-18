@@ -27,17 +27,13 @@ pending
 url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
 note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (.ODR, 5056 B, 968 Paare). ODR-Asset als voyager_odr in sources.φ; Jahr aus PDS3-Label START_TIME. Offen: Reihen-Leser-Arm + sample_count-Semantik — Post an bau.
 
-blocked parser-def drs-fits
-url https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
-note LISA Pathfinder DRS-FITS (NASA HEASARC, anonym HTTP 200 + Range 206, 2026-09-14): rohe DRS-FITS (72 Dateien). Hier IST die Messung die Schwerkraft → gravity. Kein Feld trägt m/s². fits.rs: NAXIS=0 abgewiesen, TUNIT ungelesen.
-
 pending
 url https://data.ghrc.earthdata.nasa.gov/
 note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert — CDN-Manifestation offen.
 
-blocked parser-def xml
+pending xml
 url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
-note ARPANSA UV: erythemal-weighted UV index, 17 stations, em. 2026-09-15 anonym HTTP 200, text/xml 4712 B. Zugang offen — Gap ist das Format: kein XML value reader, Extract ungebaut; per-station lat/lon absent (positions pending). Compiler offen.
+note ARPANSA UV: XML-value-Reader gebaut 2026-09-18 (arpansa.rs parse_uv_xml: <location id> name/index/utcdatetime/status). 17 Stationen, index erythemal UV, em. Offen: Compiler+CDN-Registrierung, per-station lat/lon pending.
 
 blocked parser-def fugin
 url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+fugin.cube+WHERE+flux+IS+NOT+NULL
@@ -47,9 +43,9 @@ pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
 note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n). 2026-09-18 NUL-CSV-Arm in extract.rs (split_csv_line/csv_to_json) gebaut, Parser-Gap geschlossen. Physik em/psfMag, kein Konsument → pending.
 
-blocked parser-def zip/fixed-width-text
+pending
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
-note IGRA-2 Radiosonden (NCEI). 2026-09-16: Verzeichnis HTTP 200, ZIP …beg2026.txt.zip HTTP 200 (1 852 651 B), Nicht-ZIP 404. Messung echt. Parser-Gap: kein IGRA-Parser — csv_zip splittet per Komma, IGRA-2 fixed-width. Öffnung: IGRA-fixed-width-Arm.
+note IGRA-2 fixed-width-Parser gebaut (igra.rs parse_igra, extract.rs igra_zip-Arm, Force-Spiegel sondehub 1366-1371). Offen: igra_zip-Binary-Fetch-Routing in main_flow.rs/fetch.rs/port.rs (csv_zip-Spiegel) vor sources.φ-Eintrag.
 
 pending
 url https://kcdc.iap.kit.edu
@@ -72,7 +68,7 @@ pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
-blocked parser-def odf
+pending odf
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
-note TRK-2-34/TRK-2-18 ODF-Format-Lücke: src/archivar/odf.rs dekodiert alle 18 Format-Codes; offen bleibt der PDS3-ODF-Word-Arm mit zwei Layouts. TRK-2-18-Spec definiert ODF Format ID 1. Gatet Galileo/Magellan/Pathfinder/Ulysses/LRO-ODF.
+note ODF-Word-Arm geschlossen: odf.rs:56 fmt=bits(129,131); :62 fmt==1 (1988-SIS), :74 else; Tests :1993,:2024. galileo_odf+magellan_odf registriert. Offen: lro_odf/pathfinder_odf/ulysses_odf-Compiler fehlen.
 
