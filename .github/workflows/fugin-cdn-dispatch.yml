@@ -1,0 +1,70 @@
+name: fugin-cdn-dispatch
+
+concurrency:
+  group: fugin-cdn-dispatch
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      band:
+        description: optional FUGIN line filter (12CO | 13CO | C18O); empty = all bands
+        required: false
+        type: string
+        default: ""
+permissions:
+  actions: write
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - name: Fetch the FUGIN cube list from the JVO Nobeyama TAP
+        run: |
+          band='${{ inputs.band }}'
+          query="SELECT access_url,access_estsize FROM fugin.cube"
+          if [ -n "$band" ]; then
+            query="$query WHERE em_band_name='$band'"
+          fi
+          curl -sSfL --retry 3 --max-time 120 -G \
+            "http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync" \
+            --data-urlencode "REQUEST=doQuery" \
+            --data-urlencode "LANG=ADQL" \
+            --data-urlencode "QUERY=$query" \
+            -o /tmp/fugin.xml \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "fugin-cdn-dispatch: the JVO Nobeyama TAP returned void" \
+                 "curl on the fugin.cube TAP did not reach a VOTable. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          awk -F'[<>]' '/<TD>/{ if ($3 ~ /^http/) url=$3; else if ($3 ~ /^[0-9]+$/) print url"\t"$3 }' \
+            /tmp/fugin.xml > /tmp/fugin.tsv
+          total=$(wc -l < /tmp/fugin.tsv)
+          awk -F'\t' '$2 > 65536' /tmp/fugin.tsv > /tmp/fugin_cubes.tsv
+          cubes=$(wc -l < /tmp/fugin_cubes.tsv)
+          echo "TAP rows $total — cubes (access_estsize > 65536 KB, the measured gap: 2D <= 2815, cube >= 324447) $cubes"
+          echo "non-cubes (2D RMS/Intensity maps) descoped with this measurement: $((total - cubes))"
+      - name: Dispatch fugin-cdn for every cube missing on the CDN
+        run: |
+          present=$(gh release view jvo.nao.ac.jp --repo omegaflow/sources --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          dispatched=0; present_n=0; failed=0
+          while IFS=$'\t' read -r url size; do
+            [ -n "$url" ] || continue
+            asset="$(basename "$url" | tr '[:upper:]' '[:lower:]').sky1"
+            if printf '%s\n' "$present" | grep -qx "$asset"; then
+              present_n=$((present_n+1))
+              continue
+            fi
+            if gh workflow run fugin-cdn.yml --repo '${{ github.repository }}' -f url="$url" -f asset="$asset"; then
+              dispatched=$((dispatched+1))
+            else
+              echo "dispatch void $asset"
+              failed=$((failed+1))
+            fi
+            sleep 1
+          done < /tmp/fugin_cubes.tsv
+          echo "dispatched=$dispatched present=$present_n failed=$failed"
+          [ "$failed" -eq 0 ]
