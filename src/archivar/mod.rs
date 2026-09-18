@@ -9,6 +9,7 @@ pub(crate) use std::sync::{Arc, OnceLock};
 
 pub mod ak135;
 pub mod amon;
+pub mod arpansa;
 pub mod astrometry;
 pub mod atdf;
 pub mod auger;
@@ -62,6 +63,7 @@ pub mod hmi_polar;
 pub mod hrv;
 pub mod hsd;
 pub mod ifms_agc;
+pub mod igra;
 pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
