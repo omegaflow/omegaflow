@@ -110,6 +110,60 @@ fn view(id: &str) -> Option<()> {
     Some(())
 }
 
+fn jobs_of(json: &JsonVal) -> Vec<(String, String, String)> {
+    let Some(JsonVal::Arr(jobs)) = jpath_val(json, "jobs") else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for j in jobs {
+        let Some(id) = jnum(j, "id") else {
+            continue;
+        };
+        out.push((
+            format!("{}", id as i64),
+            field(j, "name"),
+            field(j, "conclusion"),
+        ));
+    }
+    out
+}
+
+fn red_jobs(jobs: &[(String, String, String)], all: bool) -> Vec<(String, String, String)> {
+    if all {
+        return jobs.to_vec();
+    }
+    jobs.iter()
+        .filter(|(_, _, conclusion)| {
+            matches!(conclusion.as_str(), "failure" | "cancelled" | "timed_out")
+        })
+        .cloned()
+        .collect()
+}
+
+fn log(id: &str, all: bool) -> Option<()> {
+    let url = format!("{API}/repos/{REPO}/actions/runs/{id}/jobs?per_page=100");
+    let body = read_call(&url)?;
+    let json = parse_json(&body)?;
+    let jobs = jobs_of(&json);
+    let chosen = red_jobs(&jobs, all);
+    if chosen.is_empty() {
+        println!(
+            "run {id}: no red job to log ({} jobs, all green) — --all prints every job",
+            jobs.len()
+        );
+        return Some(());
+    }
+    for (job_id, name, conclusion) in chosen {
+        println!("=== job {job_id} · {name} · {conclusion} ===");
+        let log_url = format!("{API}/repos/{REPO}/actions/jobs/{job_id}/logs");
+        match read_call(&log_url) {
+            Some(text) => print!("{text}"),
+            None => println!("(no log returned for job {job_id})"),
+        }
+    }
+    Some(())
+}
+
 fn act(id: &str, action: &str) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs/{id}/{action}");
     let h = write_headers()?;
@@ -123,6 +177,7 @@ fn usage() {
         "ci_manage — GitHub Actions runs (repo {REPO})\n\
          usage: ci_manage list [--limit N]   id/status/conclusion/attempt/workflow/started/updated\n\
          \x20      ci_manage view <run-id>    status/conclusion/attempt/sha/branch/times/url\n\
+         \x20      ci_manage log <run-id> [--all]  job logs (default: the red jobs)\n\
          \x20      ci_manage cancel <run-id>  request cancellation (keeps the log)\n\
          \x20      ci_manage rerun <run-id>   request a rerun (attempt +1)"
     );
@@ -158,6 +213,16 @@ fn main() {
                 false
             }
         },
+        "log" => match args.get(1) {
+            Some(id) => {
+                let all = args.iter().any(|a| a == "--all");
+                log(id, all).is_some()
+            }
+            None => {
+                usage();
+                false
+            }
+        },
         "cancel" => match args.get(1) {
             Some(id) => act(id, "cancel").is_some(),
             None => {
@@ -179,5 +244,40 @@ fn main() {
     };
     if !done {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const JOBS: &str = r#"{"total_count":3,"jobs":[
+        {"id":11,"name":"check","conclusion":"success"},
+        {"id":22,"name":"test","conclusion":"failure"},
+        {"id":33,"name":"build","conclusion":null}
+    ]}"#;
+
+    #[test]
+    fn red_jobs_selects_only_red_conclusions() {
+        let json = parse_json(JOBS).unwrap();
+        let jobs = jobs_of(&json);
+        assert_eq!(jobs.len(), 3);
+        let chosen = red_jobs(&jobs, false);
+        assert_eq!(chosen.len(), 1);
+        assert_eq!(chosen[0].0, "22");
+        assert_eq!(chosen[0].1, "test");
+    }
+
+    #[test]
+    fn red_jobs_all_returns_every_job() {
+        let json = parse_json(JOBS).unwrap();
+        let jobs = jobs_of(&json);
+        assert_eq!(red_jobs(&jobs, true).len(), 3);
+    }
+
+    #[test]
+    fn jobs_of_skips_a_job_without_id() {
+        let json = parse_json(r#"{"jobs":[{"name":"x","conclusion":"failure"}]}"#).unwrap();
+        assert!(jobs_of(&json).is_empty());
     }
 }
