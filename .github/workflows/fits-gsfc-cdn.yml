@@ -1,0 +1,57 @@
+name: fits-gsfc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  wfpc2-sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - name: Idempotence — skip if the sample already rests on the CDN
+        id: idempotence
+        run: |
+          if gh release view fits.gsfc.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "WFPC2u5780205r_c0fx.fits"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset WFPC2u5780205r_c0fx.fits already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset WFPC2u5780205r_c0fx.fits missing — mirroring"
+          fi
+      - name: Fetch the FITS Support Office WFPC2 sample and verify the sha256 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSfL --retry 3 --max-time 600 -o WFPC2u5780205r_c0fx.fits \
+            https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
+          got=$(sha256sum WFPC2u5780205r_c0fx.fits | cut -d' ' -f1)
+          want=da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
+          echo "sha256 $got"
+          if [ "$got" != "$want" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "fits-gsfc-cdn: sha256 of the fresh WFPC2 sample differs" \
+              "WFPC2u5780205r_c0fx.fits delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Ensure the fits.gsfc.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view fits.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create fits.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "fits.gsfc.nasa.gov" \
+              --notes "raw FITS Support Office sample files mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the raw sample to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release upload fits.gsfc.nasa.gov WFPC2u5780205r_c0fx.fits \
+            --clobber --repo omegaflow/sources

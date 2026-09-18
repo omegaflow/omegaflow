@@ -1,0 +1,57 @@
+name: naif-ura117-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  ura117-spk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - name: Idempotence — skip if the raw kernel already rests on the CDN
+        id: idempotence
+        run: |
+          if gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ura117.bsp"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ura117.bsp already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ura117.bsp missing — mirroring"
+          fi
+      - name: Fetch the Uranus 117 SPK from NAIF and verify the sha256 (the hash is the gate)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSfL --retry 3 --max-time 3000 -o ura117.bsp \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura117.bsp
+          got=$(sha256sum ura117.bsp | cut -d' ' -f1)
+          want=86ff648d828911fd4f201e3cf81d72c5c3d3eed4b5753b7cf6f85a1c736dc2ed
+          echo "sha256 $got"
+          if [ "$got" != "$want" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "naif-ura117-cdn: sha256 of the fresh NAIF SPK differs" \
+              "The SPK ura117.bsp delivered $got instead of $want — no upload (0 honored, the hash is the gate). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
+          fi
+      - name: Ensure the naif.jpl.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view naif.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create naif.jpl.nasa.gov --repo omegaflow/sources \
+              --title "naif.jpl.nasa.gov" \
+              --notes "raw NAIF SPICE reference kernels mirrored for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Mirror the raw kernel to the CDN (the CI manifestator is the only writer)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release upload naif.jpl.nasa.gov ura117.bsp \
+            --clobber --repo omegaflow/sources
