@@ -489,6 +489,7 @@ fn force_ref_medians_holds_reference_on_absence() {
                     expose_offset: EXPOSE_OFFSET_BASE,
                     em_color: [0.0; 4],
                 })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
             },
         )
     };
@@ -541,6 +542,7 @@ fn force_ref_snaps_on_first_sight() {
                     expose_offset: EXPOSE_OFFSET_BASE,
                     em_color: [0.0; 4],
                 })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
             },
         )
     };
@@ -577,6 +579,7 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
                     expose_offset: EXPOSE_OFFSET_BASE,
                     em_color: [0.0; 4],
                 })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
             },
         )
     };
@@ -938,6 +941,7 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
                     expose_offset: EXPOSE_OFFSET_BASE,
                     em_color: [0.0; 4],
                 })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
             },
         )
     };
@@ -1043,6 +1047,7 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
                     expose_offset: EXPOSE_OFFSET_BASE,
                     em_color: [0.0; 4],
                 })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
             },
         )
     };
