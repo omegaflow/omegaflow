@@ -3,7 +3,7 @@
   session: Ernte-Folge 80
   class: handover
   date: 2026-09-18
-  sha256: dbf3f2193c94f6add7705ed7c19c2cdc98758f5beec5c7bc09b942f31b8c6d2d
+  sha256: 8a136234504b736de8000a491706a1006843c032e0b582d47feebaae60448850
   status: live
 -->
 # Handover — Ernte-Folge 80 (2026-09-18)
@@ -84,9 +84,11 @@ Nach dem ersten Erfolg: `shard` im Register = gemessene Asset-Zahl.
   aus CMR, Bearer-Route für protected Granules; public/Listing bleiben SigV4.
   Register: `phi/sources.φ:1542`-note um die S3-vs-HTTPS-Messung ergänzt.
 - **Verdikt ausstehend:** `cargo check --all-targets` sauber (0 Fehler, 0 Warnungen);
-  `cargo test` des neuen Tests grün. Funktionale Läufe sind CI. Nach dem Push
-  `gh workflow run harvest.yml -f format=<f>` je Format, Run-IDs registrieren; bei
-  success `phi/harvest.φ` `asset fehlt`→`present` + `note` (size/sha256).
+  `cargo test` des neuen Tests grün. Dispatcht @`91741691`:
+  `gedi_l2a` `35322402803`, `icesat2_atl03` `35322405744`,
+  `swot_l2_lr_ssh` `35322408617` — Ergebnis liest die nächste Session einmalig
+  (`ci_manage view <id>`), bei success `phi/harvest.φ` `asset fehlt`→`present` +
+  `note` (size/sha256).
 
 ## rosetta_odf — Re-Dispatch (wartend)
 
