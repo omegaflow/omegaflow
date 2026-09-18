@@ -3,7 +3,7 @@
   session: Entscheid-Folge 47
   class: handover
   date: 2026-09-18
-  sha256: 9e58bd32a2d6a739321c4843901606ad6d397167a89a433e8919c1c47d05c26a
+  sha256: 34aa49e46f51d05de4a00d8edcded2f3a97187d88ed699f1e9056ab9c79ad2d9
   status: live
 -->
 # Handover — Entscheid-Folge 47 (2026-09-18)
@@ -61,10 +61,12 @@ liegen dem Operator vor; blockiert/wartend sind keine Auswahlpunkte.
   US + SG; `LASAIR_LSST_TOKEN` unverified. (Schritt: Re-Messung
   `ALL_PROXY=socks5h://127.0.0.1:25344 curl -o /dev/null -w '%{http_code}'
   https://api.lasair.lsst.ac.uk/api/query` — Trigger in `external-state`.)
-- `operator-gebunden` — **SuperDARN** (`phi/blocked_sources.φ`, `blocked account`):
-  Datenroute über Globus + PI-Vereinbarung; `superdarn.ca/piagreement` im
-  opencode-Browser geöffnet (Gruppe `entscheid`). (Schritt: Operator-Wort für
-  Registrierung/Vereinbarung.)
+- `wartend` — **SuperDARN**: Request 2026-09-18 gesendet (Operator, von
+  `johannes.tyroller@proton.me` an `superdarn@usask.ca`; Formweg durch defektes
+  reCAPTCHA — „Ungültige Domain für Websiteschlüssel" — blockiert). Globus ID
+  verifiziert, GCP 3.3.1 + Endpoint `omegaflow` laufen. (Auslöser:
+  Gruppeneinladung im Operator-Postfach → annehmen + Rules of the Road; dann
+  Transfer.)
 - `operator-gebunden` — **Pipeline-Port force-Gate**: kein sanktionierter Ort für
   den `--port`-Lauf. Weg A lokaler Release-Lauf auf den gitignorierten Korpora |
   Weg B CI-Workflow mit Korpus + `--port`/`--probe`. (Schritt: Operator-Wort A/B.)
