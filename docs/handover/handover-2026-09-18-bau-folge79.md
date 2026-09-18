@@ -3,7 +3,7 @@
   session: Bau-Folge 79
   class: handover
   date: 2026-09-18
-  sha256: 4ebd46475ea9676759d0a6e59be783877caf535810a62b11daff9b9c310a1b7d
+  sha256: a9eda5eedd6b325470cda6c703d3e822ec16a5ca5273280ebaa1fe8dc7cb3ebb
   status: live
 -->
 # Handover — Bau-Folge 79 (2026-09-18)
@@ -106,9 +106,14 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `handover-2026-09-18-{entscheid-folge46,forschung-folge78,ernte-folge79}.md`.
   Nie ein nacktes `git commit`.
 
+## CI-Dispatch
+
+- `planetary-odf-cdn.yml` `35321177747` @`1a09d8e9` (pathfinder_odf-Matrix-Zeile)
+  dispatcht; Verdikt ausstehend. (Schritt: `ci_manage view 35321177747` einmalig
+  lesen.) · `wartend`
+
 ## Abschluss
 
-Nach dem Push `planetary-odf-cdn.yml` dispatchen (Workflow geändert:
-`pathfinder_odf`-Matrix-Zeile). Vor Commit/Push: das Commit-Wort des Operators
+Vor Commit/Push: das Commit-Wort des Operators
 (`/commit`) — der gemessene Abschluss-Check läuft dann mit Commit und Push.
 `/consent` ist der session-weite Consent (Delegation), nie das Commit-Wort.
