@@ -4,7 +4,7 @@ tag gea.esac.esa.int
 arm gaia_sso_compiler
 pattern ^gaia_sso_tno\.bin$
 idempotent true
-note gaia_sso_tno.bin 99160 B sha256 7278389b… measured 2026-09-17 via gh release view gea.esac.esa.int --repo omegaflow/sources; consumer arm src/archivar/gaia_sso.rs; dedicated gaia-sso-cdn.yml built 2026-09-17 (gaia_sso_compiler --ci-mode, tag gea.esac.esa.int, timeout 120) — the asset predates the named workflow (created 2026-09-08T07:25Z), the workflow is the reproducible manifestation route
+note gaia_sso_tno.bin 99160 B sha256 7278389b… measured 2026-09-17 via gh release view gea.esac.esa.int; arm src/archivar/gaia_sso.rs; gaia-sso-cdn.yml built 2026-09-17 (gaia_sso_compiler --ci-mode, timeout 120); asset predates the workflow.
 
 asset present
 format ephemeris_epm
@@ -12,7 +12,7 @@ tag ftp.iaaras.ru
 arm epm_compiler
 pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
-note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru --repo omegaflow/sources; consumer arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); earth 2574216 B 33b9b108…, jupiter 4056232 B 38a8583c…, mars 4056232 B c001034d…, mercury 2574216 B 4db9163f…, moon 2574216 B 51338fe0…, neptune 2574216 B 74bac20d…, saturn 2574216 B 3f1f91e8…, sun 2574216 B 8107435f…, uranus 2574216 B a9794f2b…, venus 2574216 B 1a824831…
+note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
 asset fehlt
 format goes16_abi
@@ -20,7 +20,7 @@ tag noaa-goes16.s3.amazonaws.com
 arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
-note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel from the newest hour of the bucket archive; consumer arm src/archivar/goes_abi.rs (parse_bin via extract.rs goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs (self-fetching bucket index: ListBucket https://noaa-goes16.s3.amazonaws.com/?prefix=ABI-L1b-RadC/&delimiter=/ — archive ends at 2025/097/18, measured 2026-09-17); asset measured fehlt 2026-09-17 — run 35277937121 returned void (issue #37): 112 keys in the newest hour, 0 M6 RadC granules selected because channel_index searched `_M6C` while the S3 keys carry `-M6C` (goes16_abi_compiler.rs:27); fixed 2026-09-17 (find(`-M6C`)); dispatch step: gh workflow run harvest.yml -f format=goes16_abi (after the fix is pushed)
+note GOES-16 ABI L1b RadC manifest; arm src/archivar/goes_abi.rs; compiler goes16_abi_compiler.rs; asset fehlt 2026-09-17 — run 35277937121 void (issue #37): 0 M6 RadC of 112 keys, `_M6C` vs S3 `-M6C`; dispatch harvest.yml -f format=goes16_abi.
 
 asset fehlt
 format lro_trk
@@ -29,7 +29,7 @@ arm lro_trk_compiler
 pattern ^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note LRO RSS raw tracking — Goddard Universal Tracking Data Format (utF), 75-byte records; format file LRO_TRK.FMT measured at http://imbrium.mit.edu/LRORS/LABEL/LRO_TRK.FMT (29 columns: fixed lead 0x0D 0x0A 0x01, router, YEAR, SIC=59, VID, SECONDS-of-year + MICROSECONDS, ANGLE_1/2 IEEE_REAL ×8.381903173e-8 deg, RTLT 48-bit in 1/256 ns, BIAS_DOPPLER 48-bit (1000×Doppler + 240 MHz), AGC, TRANSMIT_FREQUENCY in 10s of Hz, antenna/validity bits, sample rate signed 11-bit, tail 0x04 0x04 0x04); doppler formula from LRO_DESC_TRK.TXT: rate = −c(A−2.4e8)/B, A = ΔN/Δt, B = 2·ft·(240/221)·1000; consumer arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series + extract.rs dispatch lro_trk; compiler tools/harvest/src/bin/lro_trk_compiler.rs (recursive listing tree under /LRORS/DATA/TRK/); asset measured fehlt 2026-09-17 (no CI run in this atom); dispatch step: gh workflow run harvest.yml -f format=lro_trk
+note LRO RSS raw tracking — utF, 75-byte records; LRO_TRK.FMT (imbrium.mit.edu); doppler rate = −c(A−2.4e8)/B; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; fehlt 2026-09-17; dispatch harvest.yml -f format=lro_trk.
 
 asset present
 format maven_tnf
@@ -46,7 +46,7 @@ tag openneuro.org
 arm openneuro_compiler
 pattern ^sub-[0-9]+_ses-[a-z]+_task-[a-z]+_eeg\.bin$
 idempotent true
-note 2 EEG assets present measured 2026-09-17 via gh release view openneuro.org --repo omegaflow/sources; consumer arm src/archivar/openneuro_eeg.rs; run 34765685872 (placebo-ave-cdn 2026-09-13); sub-02_ses-sham_task-rest_eeg.bin 88629831 B sha256 b2566cbf…, sub-02_ses-verum_task-rest_eeg.bin 92981937 B sha256 e1d8de64…
+note 2 EEG assets present measured 2026-09-17 via gh release view openneuro.org; arm src/archivar/openneuro_eeg.rs; run 34765685872 (placebo-ave-cdn 2026-09-13); sham 88629831 B sha256 b2566cbf…, verum 92981937 B sha256 e1d8de64…
 
 asset fehlt
 format rosetta_odf
@@ -55,16 +55,16 @@ arm rosetta_odf_compiler
 pattern ^rosetta_odf\.bin$
 idempotent true
 timeout 350
-note Rosetta RSI IFMS AGC carrier-level/polar-angle series; consumer arm src/archivar/ifms_agc.rs; compiler tools/harvest/src/bin/rosetta_odf_compiler.rs; CDN asset measured fehlt 2026-09-17 — gh release view archives.esac.esa.int --repo omegaflow/sources carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29 (run 35148936648 died at the 240 cap).
+note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; CDN asset fehlt 2026-09-17 — archives.esac.esa.int carries only mars_express_odf.bin; timeout 350 from planetary-odf-cdn.yml:29.
 
-asset fehlt
+asset present
 format ulysses_atdf
 tag pds-ppi.igpp.ucla.edu
 arm ulysses_atdf_compiler
 pattern ^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF S-band sky-frequency series; consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs dispatch ulysses_atdf; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; asset measured fehlt 2026-09-17 — run 35277931000 compiled but manifested only ulysses_atdf_x.bin, the S-band family was empty (0 S-band samples; the adjacent pairing dropped every record whose neighbour crossed the band boundary, e.g. 2037038A.TDF bands S 58583 / X 58583, 115608 band-boundary rejects) → pattern ^ulysses_atdf(_t…)?\.bin$ matched 0 assets (issue #38); the pairing fix landed 2026-09-18 — reduce_uly_skyfreq pairs each record with the next same-band record, the rate over the true elapsed time, with the no_pair/no_doppler completeness counters; re-dispatch pending: gh workflow run harvest.yml -f format=ulysses_atdf, then measure sha256/size and set present
+note Ulysses SCE TRK-2-25 ATDF S-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; asset present 2026-09-18 run 35296127974: ulysses_atdf.bin 35187160 B sha256 5aeca72ed24fdbf4d48a6e70448df3fe8cfbf8ae2732ea6619ac0b0b4869be9a
 
 asset present
 format ulysses_atdf_x
@@ -73,4 +73,4 @@ arm ulysses_atdf_compiler
 pattern ^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE Jupiter-Encounter TRK-2-25 ATDF X-band sky-frequency series (Option B — X as its own component/series); consumer arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x + extract.rs dispatch ulysses_atdf_x; compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs (second shard family, same binary); X turnaround 880/221, carrier 8408.209876 MHz (channel 9); asset present measured 2026-09-17 via gh release view pds-ppi.igpp.ucla.edu: ulysses_atdf_x.bin 5546584 B sha256 a57af1c14563f41c09a072250565bfadd5039262790c02931ab774c8b92e66ce — superseded 2026-09-18 by the same-band pairing fix (the adjacent-pair reduction drew only file 2035036A; the fixed reduction pairs every X record with its next X record over the true elapsed time, so the series grows); the registered sha is stale, re-dispatch pending: gh workflow run harvest.yml -f format=ulysses_atdf_x, then measure the new sha256/size; the X ref window + median half-width validation re-runs against the new series
+note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
