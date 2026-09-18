@@ -243,12 +243,25 @@
     "max_lines": 80,
     "max_bytes": 4096
   },
+  "logLevel": "WARN",
   "watcher": {
     "ignore": [
       "target/**",
       "*.φ",
       ".continue/**",
-      "docs/**"
+      "docs/**",
+      "data/**",
+      "cache/**",
+      "state/**",
+      "**/*.log",
+      "**/*.fits",
+      "**/*.fits.gz",
+      "**/*.h5",
+      "**/*.bsp",
+      "**/*.tif",
+      "**/*.tiff",
+      "**/*.gz",
+      "**/*.bin"
     ]
   },
   "experimental": {
