@@ -21,8 +21,7 @@ const DEFAULT_OUT: &str = "data/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 const MAGIC: [u8; 4] = *b"GED1";
 const REC_FIELDS: usize = 8;
 const REC_BYTES: usize = REC_FIELDS * 8;
-const META_WINDOW: u64 = 1 << 25;
-const META_ESCALATION: u64 = 3 * (1 << 25);
+const PREFIX_WINDOW: u64 = 1 << 9;
 const REC_CAP: usize = 1 << 13;
 const LIST_MAX_KEYS: u32 = 20;
 const LIST_MAX_T_S: u64 = 1 << 7;
@@ -685,31 +684,15 @@ fn harvest_granule(
     beams: usize,
     anchor_tdb: f64,
 ) -> Vec<[f64; REC_FIELDS]> {
-    let Some(w1) = fetch.range(0, META_WINDOW) else {
+    let Some(prefix) = fetch.range(0, PREFIX_WINDOW) else {
         eprintln!("{label}: range read returned void — granule stays pending");
         return Vec::new();
     };
-    match Hdf5File::parse(&w1) {
+    match Hdf5File::parse_fetch(&prefix, |off, len| fetch.range(off, len)) {
         Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
         Err(note) => {
-            eprintln!(
-                "{label}: header window of {} B stayed unread ({:?}) — escalating once",
-                META_WINDOW, note
-            );
-            let Some(w2) = fetch.range(0, META_ESCALATION) else {
-                eprintln!("{label}: escalated range read returned void — granule stays pending");
-                return Vec::new();
-            };
-            match Hdf5File::parse(&w2) {
-                Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
-                Err(n2) => {
-                    eprintln!(
-                        "{label}: metadata beyond {} B ({:?}) — granule stays pending",
-                        META_ESCALATION, n2
-                    );
-                    Vec::new()
-                }
-            }
+            eprintln!("{label}: metadata unread ({note:?}) — granule stays pending");
+            Vec::new()
         }
     }
 }
