@@ -1902,6 +1902,99 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "arpansa" || src.format == "uvxml" {
+        let fc = FieldConfig {
+            key: "uv_index".to_string(),
+            name: "uv_index".to_string(),
+            kernel: 0,
+            force: 0,
+            tau: src.ttl as f64 / 10.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "UVI".to_string(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for r in crate::archivar::arpansa::parse_uv_xml(body) {
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::Source,
+                    name: r.id,
+                    value: r.index,
+                },
+                fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "igra_zip" {
+        let Some(text) = std::fs::read(body)
+            .ok()
+            .and_then(|b| unzip(&b))
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+        else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let tau = src.ttl as f64 / 10.0;
+        let fcfg = |name: &str, kernel: u8, force: u8, unit: &str| FieldConfig {
+            key: name.to_string(),
+            name: name.to_string(),
+            kernel,
+            force,
+            tau,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: unit.to_string(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for s in crate::archivar::igra::parse_igra(&text) {
+            for lvl in &s.levels {
+                let Some(alt) = lvl.gph_m else {
+                    continue;
+                };
+                let position = Position::Surface {
+                    body_name: frame_body_name(&src.frame),
+                    lat: s.lat,
+                    lon: s.lon,
+                    alt,
+                };
+                let emitted: [(Option<f64>, FieldConfig); 6] = [
+                    (lvl.press_pa.map(|p| p / 100.0), fcfg("igra_air_pressure_hpa", 5, 7, "hPa")),
+                    (lvl.temp_c, fcfg("igra_air_temp_c", 4, 5, "C")),
+                    (lvl.wspd_ms, fcfg("igra_wind_speed_ms", 5, 7, "m/s")),
+                    (lvl.wdir_deg, fcfg("igra_wind_direction_deg", 5, 7, "deg")),
+                    (lvl.rh_pct, fcfg("igra_relative_humidity_pct", 1, 6, "%")),
+                    (lvl.dpdp_c, fcfg("igra_dewpoint_c", 4, 5, "C")),
+                ];
+                for (value, fc) in emitted {
+                    if let Some(v) = value {
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq: 0.0,
+                                bin_width: 0.0,
+                                epoch: now,
+                                position: position.clone(),
+                                name: fc.name.clone(),
+                                value: v,
+                            },
+                            fc,
+                        ));
+                    }
+                }
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
     let csv_zip_text: Option<String> = if src.format == "csv_zip" {
