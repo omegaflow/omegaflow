@@ -10,7 +10,7 @@ note cone 267.4955 -29.6079 chosen-as successor-of spiral-n5 voices mountain 0.1
 cone ra 264.8314 dec -28.4355 radius 900 instrument fink-lsst date 2026-09-05 outcome void (Fink returned 0 object rows) raw 0 floor 0 natural 0 agn 0 food 0
 note cone 264.8314 -28.4355 chosen-as successor-of spiral-n9 voices mountain 0.049 river absent mycelium absent sensory 0.000 future 0.528 synthesis 0.000 present 3 absent river mycelium
 
-# mycelium fan campaign, CDF-S kernel (ra 53.125 dec -28.1)
+note mycelium fan campaign, CDF-S kernel ra 53.1250 dec -28.1000 (2026-09-06).
 note mycelium campaign date 2026-09-06 kernel ra 53.1250 dec -28.1000 radius 900 arcsec floor 24 steps 5 AllWISE on
 cone ra 53.1250 dec -28.1000 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2685 above-floor 8 natural-excluded 8 agn-excluded 0 wise-pending 0 food 0 via kernel (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
 cone ra 52.7071 dec -27.7623 radius 900 instrument fink-lsst date 2026-09-06 outcome measured floor 24 rows-total 2546 above-floor 3 natural-excluded 3 agn-excluded 0 wise-pending 0 food 0 via golden-fan-n1 (no-survivor; every above-floor object carries a natural class or the mid-IR AGN wedge)
