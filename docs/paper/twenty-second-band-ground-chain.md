@@ -1,9 +1,9 @@
 <!--
   title: The 20-s Doppler band of Pioneer 10: a ground-chain fingerprint
   class: paper
-  date: 2026-09-17
-  version: 11
-  sha256: 9621399c78a17c993a9c8aba56b18722aa93862814445a0309af4f9947413b18
+  date: 2026-09-18
+  version: 12
+  sha256: 370249da1c70812e2efb3552672ffc037ca768bfc9d9e525b31a460ae27a78ec
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -196,7 +196,9 @@ carry a different station-fixed complex (1988 mode3-lt10 46,585 / 52,816 /
 dominant peak between the fields (rx43 +8,7, rx63 −5,8 mHz on the 1988 cell;
 +10,1 / −10,9 on s1.000), rx14 does not (Δ 0,002–0,004 mHz). The 44–58-mHz
 complex of the resid series is therefore not carried upstream of the reduction
-chain. The two fields are two stages of one chain: r[1] is the count-difference
+chain as a copy: the cross-rank of the two dominants per cell (below) separates
+the stations — carried and re-ranked at rx14 and rx63, created below the fsky
+floor at rx43. The two fields are two stages of one chain: r[1] is the count-difference
 observable (the TRK-2-18 equation — the counter difference over the compression
 interval against the bias-chain reference, reconstructed here from the ATDF
 items; no ODP stage operates on it), while r[8] has passed the NOCC chain — the
@@ -204,14 +206,21 @@ computed-model subtraction (light-time §8, media §10, station clock §2/§7), 
 spec-named endpoint average of the compression interval (Residual = (Rj + Ri)/2,
 TRK-2-18; transfer cos(πντ), nulling ν = (k+½)/τ — 50 mHz at τ = 10 s) and the
 1-mHz ATDF quantization (item 60). The dominant movement between the fields is
-a re-ranking within the dense station-fixed complex, not a creation; the
-stage-by-stage ablation of §1 measures the same act (rx14 45,75 → 57,11 mHz
-under the daily-curve cut, the 57,11 member at rank 6 before it). rx14's
-46,58-mHz member dominates both fields — it survives two different pipelines;
-whether rx43's 44,119 and rx63's 50,920 sit as sub-members in their fsky cells
-(one complex, re-ranked) or are absent there (created inside the NOCC chain) is
-the open measure — the probe holds both fields on the same records, and the
-cross-rank of the two dominants per cell is the decisive print. The fsky complex
+a re-ranking within the dense station-fixed complex, not a creation at rx14 and
+rx63; the stage-by-stage ablation of §1 measures the same act (rx14 45,75 → 57,11 mHz
+under the daily-curve cut, the 57,11 member at rank 6 before it). The
+cross-rank of the two dominants per cell (the same 1988 mode3-lt10 records in
+both fields) settles it: rx14 carries one complex, re-ranked — resid dominant
+46,581 mHz at rank 1 of 701 in its fsky cell (power 3,0×10⁷), fsky dominant
+46,585 mHz at rank 10 of 701 in resid (2,6×10⁷). rx63 carries it likewise —
+50,920 mHz at rank 48 of 701 in fsky (1,1×10⁵), 45,100 mHz at rank 91 of 701
+in resid (2,3×10⁷). rx43 does not carry it: 44,119 mHz sits below the floor of
+its fsky cell (rank 537 of 701, power 8,4 — beneath the cell median), 52,816 mHz
+sits at rank 606 of 701 in resid; the two dominants are disjoint, each below the
+other field's floor — the 44,119-mHz member is created inside the NOCC chain,
+not carried upstream. The strict-1,0-s sub-cell of the same records keeps the
+print (46,581 → rank 1 of 701, 44,239 → 434 of 701, 50,920 → 48 of 701; the
+dominants stay disjoint under both weightings). The fsky complex
 itself needs no reduction stage: it is receive-chain-borne, shaped only by the
 observable's own constructions — the first difference over the sampler interval
 (transfer 2 sin(πντ), nulls at k/τ, near-unity across the band for τ ≤ 10 s) and
@@ -226,10 +235,16 @@ carry none — 218 census lines peak at exactly 50,000 mHz, 214 of them in the
 in the resid fine classes (whose peaks span 44,0–58,0 and carry the
 station-fixed band), 4 in fsky fine cells (all st63-lt10-1992; the cell st63
 mode1 lt10 1992, n=9 370, reads resid 51,360 / fsky 50,000). The four fsky-fine
-cells lie outside the fold argument; the reference-path hypothesis (the item-40
-staircase, ×104,25 in r[1], on both sides of the residual difference) is the
-nearest unmeasured candidate — the decisive measurement is the LS of the
-reference field r[2] in these cells plus the per-cell floor ratio.
+cells lie outside the fold argument; the reference-path hypothesis is measured
+and not supported. The LS of the reference field r[2] in these cells (st63 lt10
+1992) carries no member in the band: mode1 (n = 9 370) peaks at 53,698 mHz —
+2,3× its own floor, FAP 1,00 (the band maximum noise alone reaches in every
+realization, the weakest possible peak); mode1+3 (n = 9 480) peaks at 54,613 mHz,
+4,1× its floor, FAP 1,00. No peak sits at 50,000 mHz. The item-40 staircase
+(×104,25 in r[1]) is not carried on the reference side of the residual
+difference; the same cell's fsky field peaks at 50,000 mHz (7,5× its floor, FAP
+0,904 — itself consistent with noise at cell level), so the four fsky-fine
+50,000-mHz cells remain a property of r[1] alone.
 The per-station census of the canonical residual is the standing measurement
 (the era × station × class × band table); the 1989–1991 Markwardt-ATDF files are
 absent from the harvest (a genuine archive gap — that product covers 1987/1988/1994,
