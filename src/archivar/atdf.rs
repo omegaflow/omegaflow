@@ -1130,14 +1130,14 @@ mod tests {
 
     fn set_field(rec: &mut [u8], fld: &Field, value: i64) {
         for b in fld.start..=fld.stop {
-            rec[b / 8] &= !(1u8 << (b % 8));
+            rec[b / 8] &= !(1u8 << (7 - (b % 8)));
         }
         let v = value as u64;
         let nbits = fld.stop - fld.start + 1;
         for k in 0..nbits {
             if (v >> k) & 1 == 1 {
                 let bit = fld.stop - k;
-                rec[bit / 8] |= 1u8 << (bit % 8);
+                rec[bit / 8] |= 1u8 << (7 - (bit % 8));
             }
         }
     }
