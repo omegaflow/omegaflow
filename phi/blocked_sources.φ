@@ -26,7 +26,7 @@ note SuperDARN — HF-Radar-Ionosphären-Konvektion, em. 2026-09-16: superdarn.c
 blocked account
 url https://psaftp.esac.esa.int/BepiColombo/bc_mpo_more/
 reg https://archives.esac.esa.int/psa/ftp/BepiColombo/bc_mpo_more/
-note BepiColombo MPO MORE (urn:esa:psa:bc_mpo_more). 2026-09-18: anon SFTP/Mirror 200, kein data/ (data_raw 404); Login ESA_USER/ESA_PASS rc 67/530 abgewiesen; 89517 TAP-LIDs, getProduct-Route an allen Hosts 404. Zugang gegatet → blocked account.
+note BepiColombo MPO MORE (urn:esa:psa:bc_mpo_more). 2026-09-18: FTP-Mirror 200, kein data/; Login rc 67/530; PSA-Route psa.esa.int/psa-tap/tap (anon ADQL 200; access_url NULL für MORE; data?retrieval_type=PRODUCT → 403). Gegatet → blocked account.
 
 pending
 url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
