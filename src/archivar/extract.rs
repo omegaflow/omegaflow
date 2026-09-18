@@ -63,6 +63,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
         "pioneer10_odf" => odf::parse_series(bytes),
+        "pathfinder_odf" => odf::parse_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
@@ -272,6 +273,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "pioneer10_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("pioneer10_odf_observable_hz"),
+            _ => None,
+        },
+        "pathfinder_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("pathfinder_odf_observable_hz"),
             _ => None,
         },
         "cassini_tnf" => match comp {
@@ -1917,14 +1922,23 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             fold: None,
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        let frame_name = frame_body_name(&src.frame);
         for r in crate::archivar::arpansa::parse_uv_xml(body) {
+            let Some((lat, lon)) = crate::archivar::arpansa::station_coords(&r.id) else {
+                continue;
+            };
             channels.push((
                 Channel {
                     z: 0.0,
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch: now,
-                    position: Position::Source,
+                    position: Position::Surface {
+                        body_name: frame_name.clone(),
+                        lat,
+                        lon,
+                        alt: 0.0,
+                    },
                     name: r.id,
                     value: r.index,
                 },
@@ -1992,6 +2006,52 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     }
                 }
             }
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "fugin_cube" {
+        let buf = match std::fs::read(body) {
+            Ok(b) => b,
+            Err(_) => return ExtractResult::Measurements(vec![]),
+        };
+        let Some(pixels) = crate::archivar::fugin::parse_fugin_cube(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fc = FieldConfig {
+            key: "fugin_moment0".to_string(),
+            name: "fugin_moment0".to_string(),
+            kernel: 0,
+            force: 0,
+            tau: src.ttl as f64 / 10.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "K m/s".to_string(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::with_capacity(pixels.len());
+        for p in &pixels {
+            let ra = p.ra_deg.to_radians();
+            let dec = p.dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::StateVector {
+                        p: [cd * ca, cd * sa, sd],
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    },
+                    name: fc.name.clone(),
+                    value: p.moment0_k_ms,
+                },
+                fc.clone(),
+            ));
         }
         return ExtractResult::Measurements(channels);
     }
