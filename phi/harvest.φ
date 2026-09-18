@@ -14,13 +14,13 @@ pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
 note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
-asset fehlt
+asset present
 format goes16_abi
 tag noaa-goes16.s3.amazonaws.com
 arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
-note GOES-16 ABI L1b RadC manifest; arm src/archivar/goes_abi.rs; compiler goes16_abi_compiler.rs; asset fehlt 2026-09-17 — run 35277937121 void (issue #37): 0 M6 RadC of 112 keys, `_M6C` vs S3 `-M6C`; dispatch harvest.yml -f format=goes16_abi.
+note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
 
 asset fehlt
 format lro_trk
