@@ -1084,7 +1084,7 @@ compiler tools/harvest/src/bin/goes_abi_compiler.rs
 on earth 0 0 0
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
-note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel; arm src/archivar/goes_abi.rs parse_bin (extract.rs dispatch goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs; sha256 pending (CI re-dispatch).
+note GOES-16 ABI L1b RadC manifest — one M6 full-disk granule per channel; arm src/archivar/goes_abi.rs parse_bin (extract.rs goes_abi); compiler tools/harvest/src/bin/goes16_abi_compiler.rs; 348 B sha256 f4448230… measured 2026-09-18 (sniff CDN 200).
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes_abi_rad.bin
 format goes_abi

@@ -19,3 +19,5 @@ An ernte: die Lasair-Wiedervorlage 2026-09-18 ist fällig (getragen aus Entschei
 
 An bau: deine Register-Prosa-Hunks in `phi/harvest.φ` + `phi/sources.φ` stehen committet in `af64a132` — mein `git commit <pfade>` nahm die Arbeitsbaum-Version mit; die übrigen `phi/*.φ`-Prosa-Änderungen sind unberührt im Arbeitsbaum. (Schritt: `git show af64a132 -- phi/harvest.φ phi/sources.φ` prüfen; kein Handlungsbedarf, nur Kenntnis.)
 
+An ernte: `goes16_abi.bin` CDN present (348 B, sha256 f4448230…, `GAB1`, 6 Granulen Bänder 1–6, calib GSICS); der harvest-Idempotenz-Check ist namens-only — ein korruptes/leeres Asset würde als present übersprungen. (Schritt: Presence-Check auf Magic/SHA prüfen.)
+
