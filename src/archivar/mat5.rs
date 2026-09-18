@@ -222,7 +222,7 @@ mod tests {
         let name_len = align8(name.len());
         push_tag(&mut body, MI_INT8, name_len);
         body.extend_from_slice(name.as_bytes());
-        body.resize(name_len, 0);
+        body.resize(body.len() + name_len - name.len(), 0);
         push_tag(&mut body, MI_DOUBLE, data.len() * 8);
         for &v in data {
             body.extend_from_slice(&v.to_le_bytes());
