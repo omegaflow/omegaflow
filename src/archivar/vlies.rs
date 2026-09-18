@@ -19,7 +19,7 @@ fn npix_of(nside: i64) -> Option<usize> {
 }
 
 pub fn parse_asset(b: &[u8]) -> Option<DensityField> {
-    if b.len() < HEADER_BYTES || &b[0..4] != MAGIC || b[4] != VERSION {
+    if b.len() < HEADER_BYTES || b[0..4] != MAGIC || b[4] != VERSION {
         return None;
     }
     let nside = u32::from_le_bytes(b[5..9].try_into().ok()?) as i64;

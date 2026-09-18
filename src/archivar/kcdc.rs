@@ -249,12 +249,11 @@ pub fn row_time(
     row: &[Option<f64>],
     gt_index: &BTreeMap<(i64, i64), f64>,
 ) -> Option<f64> {
-    if let Some(i) = col_of(table, "Gt") {
-        if let Some(Some(t)) = row.get(i) {
-            if *t > 0.0 {
-                return Some(*t);
-            }
-        }
+    if let Some(i) = col_of(table, "Gt")
+        && let Some(Some(t)) = row.get(i)
+        && *t > 0.0
+    {
+        return Some(*t);
     }
     gt_index.get(&join_key(table, row)?).copied()
 }
