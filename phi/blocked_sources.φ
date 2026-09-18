@@ -5,6 +5,11 @@ url https://babamul.caltech.edu/api/
 note Babamul (Caltech LSST-Broker, arXiv:2511.00164): 2026-09-15 — /api/alerts und /api/objects 401; Routen /api/babamul/objects und …/surveys/{survey}/alerts liefern Bearer <BABAMUL_API_TOKEN> HTTP 200. Konsument offen → pending.
 reg https://babamul.caltech.edu/
 
+pending
+url https://api.lasair.lsst.ac.uk/api
+note Lasair-LSST Broker: 2026-09-18 Endpoint api.lasair.lsst.ac.uk/api dokumentiert; Host aus eigenem Netz absent (direct 0, Proton 502), Statusseite lasair.lsst.ac.uk 200; LASAIR_LSST_TOKEN vorhanden, unverified. Schritt: Exit-Rotation + Query.
+reg https://lasair.lsst.ac.uk/
+
 descoped
 url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
 note Voyager open-loop ODR (PDS-Rings, 2026-09-14 anonym 200, jetzt 504/Cloudflare). Bau31: unitless ADC-Zählwerte, Doppler/Opazitäts-Produkt NICHT im Bundle → descoped. PPI-Basisband als voyager_odr in sources.φ; Reihen-Leser-Arm offen.
