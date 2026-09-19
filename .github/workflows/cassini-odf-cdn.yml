@@ -1,0 +1,32 @@
+name: cassini-odf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cassini-odf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the Cassini RSS ODF volumes and manifest cassini_odf.bin to the CDN
+        run: |
+          if gh release view atmos.nmsu.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "cassini_odf.bin"; then
+            echo "cassini_odf.bin already present — harvest skipped"
+            exit 0
+          fi
+          cargo run --release -p omegaflow-harvest --bin cassini_odf_compiler -- --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "cassini-odf-cdn: cassini_odf.bin returned void" \
+                 "The cassini_odf compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

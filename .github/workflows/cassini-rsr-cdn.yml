@@ -1,0 +1,32 @@
+name: cassini-rsr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cassini-rsr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest the first Cassini RSS RSR file and manifest cassini_rsr.bin to the CDN
+        run: |
+          if gh release view atmos.nmsu.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "cassini_rsr.bin"; then
+            echo "cassini_rsr.bin already present — harvest skipped"
+            exit 0
+          fi
+          cargo run --release -p omegaflow-harvest --bin cassini_rsr_compiler -- --files 1 --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "cassini-rsr-cdn: cassini_rsr.bin returned void" \
+                 "The cassini_rsr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
