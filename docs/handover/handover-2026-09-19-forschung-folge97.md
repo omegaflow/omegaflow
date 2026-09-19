@@ -3,7 +3,7 @@
   session: Forschung-Folge 97
   class: handover
   date: 2026-09-19
-  sha256: 801bb6df821d92dc13bd9e531f6911939219d5b1f8613386d07a346eb6861e79
+  sha256: a9136d53b4e0be26883a68100ca868bc6f8761d9b423fcc3a9d0c3c5b7c26202
   status: live
 -->
 # Handover — Forschung-Folge 97 (2026-09-19)
@@ -61,12 +61,13 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   **alten Binning-Stand** dispatcht; der Takens-Stand ist @`f3745142` noch nicht
   gelaufen.
 
-## Takens-Screen — Wandzeit-Messung + Dispatch — `wartend`
+## Takens-Screen — Wandzeit-Messung — `wartend`
 
-- Der erste Lauf auf dem gepushten Takens-Stand ist zugleich die
-  **Wandzeit-Messung** (O(n²)-Zelle gegen das alte O(n)-Gitter). (Schritt: nach
-  Push `gh workflow run hyperscanning-te -f null_model=phase -f percentile=95
-  -f surrogates=200`; Lauf-ID in Ledger + Übergabe; `ci_manage view <id>` einmal.)
+- Lauf `35468144989` dispatcht @`5219db7e` (`null_model=phase`, `percentile=95`,
+  `surrogates=200`) — der erste Lauf auf dem Takens-Stand, zugleich die
+  **Wandzeit-Messung** (O(n²)-Zelle gegen das alte O(n)-Gitter). (Schritt:
+  `ci_manage view 35468144989` einmal; grün mit Survivor/Pending ⇒ die Wandzeit
+  aus dem Lauf lesen; Exit-2-Gate ⇒ das ist die Messung, kein Defekt.)
   Erst diese Messung entscheidet den Watchdog-Floor-Punkt unten — kein Floor ohne sie.
 
 ## Bestätigungsstufe — `wartend`
