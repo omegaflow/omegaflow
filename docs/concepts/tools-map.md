@@ -90,7 +90,8 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--ads` | 2,05 s | | `--wayback` | 2,72 s |
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
-| `--all` | Σ der 13 Modi | | — letzte Stufe, nie der erste Zug | |
+| `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
+| `--all` | Σ der 15 Modi | | — letzte Stufe, nie der erste Zug | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -109,6 +110,10 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 - `archive_search --heasarc "table=<w3browse-tabelle> rows=<n>"` — echte
   W3Browse-Tabellen, z. B. `table=sao`; `master` existiert nicht (W3Browse sagt
   es wörtlich).
+- `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
+  `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
+- `archive_search --europepmc <query>` — Europe PMC REST search,
+  `url https://europepmc.org/article/<source>/<id>` + Titel/Jahr/DOI/Zitate.
 
 ## Gemessen — übrige lokale Werkzeuge
 
@@ -135,7 +140,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 
 | Werkzeug | Kann | Scope | Profile |
 |---|---|---|---|
-| `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 16 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
+| `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 18 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
 | `bin/archive_search` (Wrapper) | baut bei Bedarf, sonst `exec` | lokal | P1–P5 |
 | `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
