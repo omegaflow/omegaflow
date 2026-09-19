@@ -107,10 +107,7 @@ fn parse_pressure(text: &str) -> Vec<(f64, f64)> {
         let Some(days) = days_from_civil(year, month, day) else {
             continue;
         };
-        let unix = days as f64 * 86400.0
-            + hour as f64 * 3600.0
-            + minute as f64 * 60.0
-            + second
+        let unix = days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second
             - JST_OFFSET_S;
         samples.push((unix, hpa));
     }
@@ -137,7 +134,9 @@ fn main() {
     };
 
     let Some(entries) = zip_entries(&archive) else {
-        eprintln!("kyoto pressure: the Zenodo data.zip carries no readable central directory — pending");
+        eprintln!(
+            "kyoto pressure: the Zenodo data.zip carries no readable central directory — pending"
+        );
         std::process::exit(1);
     };
     let members: Vec<&ZipEntry> = entries
@@ -150,7 +149,9 @@ fn main() {
     }
 
     let Some(lsk) = embedded_lsk() else {
-        eprintln!("kyoto pressure: naif0012 table void — the TDB epoch stays void (no fabricated epoch)");
+        eprintln!(
+            "kyoto pressure: naif0012 table void — the TDB epoch stays void (no fabricated epoch)"
+        );
         std::process::exit(1);
     };
 

@@ -5,8 +5,7 @@ use omegaflow::te::{
     coherent_phase_surrogates, phase_randomized_surrogate, transfer_entropy_binned,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat,
-    resolve_channel,
+    channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat, resolve_channel,
 };
 
 const DEFAULT_LAGS: usize = 128;
@@ -241,8 +240,7 @@ fn main() {
     let seed: u64 = arg_value(&args, "--seed")
         .and_then(|v| v.parse().ok())
         .unwrap_or(SEED);
-    let max_points: Option<usize> = arg_value(&args, "--max-points")
-        .and_then(|v| v.parse().ok());
+    let max_points: Option<usize> = arg_value(&args, "--max-points").and_then(|v| v.parse().ok());
     let pct: f64 = arg_value(&args, "--percentile")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_PERCENTILE);
@@ -372,7 +370,15 @@ mod tests {
         let text = "# comment\n\npddecision G01 S01 a.set\npddecision G01 S02 b.set\n";
         let e = parse_manifest(text);
         assert_eq!(e.len(), 2);
-        assert_eq!(e[0], ("pddecision".into(), "G01".into(), "S01".into(), "a.set".into()));
+        assert_eq!(
+            e[0],
+            (
+                "pddecision".into(),
+                "G01".into(),
+                "S01".into(),
+                "a.set".into()
+            )
+        );
     }
 
     #[test]
