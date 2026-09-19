@@ -27,6 +27,8 @@ mark() { echo "$1" >>"$SEEN"; }
 # Median duration (s) of the last <=10 *successful* runs of one workflow,
 # read from the single poll table. Failures are fast and would poison the
 # floor; a run past 2x the success median is the one that does not flow.
+# Fewer than two successes carry no median basis: one sample has no spread,
+# and a single empty green run must not set the floor for every later run.
 median_duration() {
   local wf="$1"
   printf '%s\n' "$rows" | awk -F'\t' -v w="$wf" '
@@ -35,7 +37,7 @@ median_duration() {
       cmd="date -d \""$7"\" +%s"; cmd|getline e; close(cmd);
       if (e>s) print e-s
     }' | head -10 | sort -n |
-  awk '{a[NR]=$1} END{if(NR>0) print a[int((NR+1)/2)]}'
+  awk '{a[NR]=$1} END{if(NR>=2) print a[int((NR+1)/2)]}'
 }
 
 poll_once() {
@@ -60,7 +62,7 @@ poll_once() {
     s=$(date -d "$started" +%s 2>/dev/null) || continue
     med=$(median_duration "$wf")
     if [ -z "$med" ]; then
-      log "run $id in_progress ($wf), no successful history — no action"
+      log "run $id in_progress ($wf), no median basis — fewer than two successful runs — no action"
       mark "$id"
       continue
     fi

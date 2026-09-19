@@ -211,6 +211,10 @@ fn surrogate_family_maxima(
     out
 }
 
+fn screen_carries_a_measurement(triads_per_task: &[usize]) -> bool {
+    triads_per_task.iter().any(|&n| n >= 1)
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
@@ -269,6 +273,7 @@ fn main() {
     let mut tasks: Vec<String> = entries.iter().map(|e| e.0.clone()).collect();
     tasks.sort();
     tasks.dedup();
+    let mut triads_per_task: Vec<usize> = Vec::new();
 
     println!(
         "hyperscanning group TE screen | channel [{channel}] | lags 1..={lags} | surrogates {n_surr} | bins {bins} | percentile {pct} | null {}",
@@ -311,6 +316,7 @@ fn main() {
             }
         }
 
+        triads_per_task.push(triads.len());
         if triads.is_empty() {
             println!("=== {task}: no complete triad carries a series — pending (0 honored)");
             continue;
@@ -341,6 +347,13 @@ fn main() {
             println!("    no cell breaks the family maximum — the silence is the finding");
         }
     }
+
+    if !screen_carries_a_measurement(&triads_per_task) {
+        eprintln!(
+            "hyperscanning_group_te: no task carried a complete triad — the screen ran on no readable series; the run carries no measurement"
+        );
+        exit(2);
+    }
 }
 
 #[cfg(test)]
@@ -360,6 +373,13 @@ mod tests {
         let e = parse_manifest(text);
         assert_eq!(e.len(), 2);
         assert_eq!(e[0], ("pddecision".into(), "G01".into(), "S01".into(), "a.set".into()));
+    }
+
+    #[test]
+    fn a_screen_on_no_readable_series_carries_no_measurement() {
+        assert!(!screen_carries_a_measurement(&[]));
+        assert!(!screen_carries_a_measurement(&[0, 0, 0]));
+        assert!(screen_carries_a_measurement(&[0, 1, 0]));
     }
 
     #[test]
