@@ -87,8 +87,14 @@ fn cond_bin_te_gpu_crosscheck_against_cpu() {
             0.9 * y[t - 1] + (1.0 - 0.9) * c[t - 1] + 0.3 * noise(&mut rng)
         };
     }
-    let cpu = crate::te::transfer_entropy_conditional_binned_n(&y, &x, &[&c], 1, 4)
-        .expect("cpu resolves");
+    let cpu = crate::te::transfer_entropy_conditional_binned_n(
+        &y,
+        &x,
+        &[crate::te::LaggedCond { series: &c, lag: 0 }],
+        1,
+        4,
+    )
+    .expect("cpu resolves");
     let gpu_te = gpu.run(&y, &x, &c, 1).expect("gpu resolves");
     assert!(
         (gpu_te - cpu).abs() < 1e-3,
