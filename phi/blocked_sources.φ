@@ -33,10 +33,6 @@ reg https://www.cosmos.esa.int/web/psa/contact-us
 note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/89517 proprietär), data?PRODUCT → 403, kein Konto-Gate; Freigabe-Anfrage an psahelp@cosmos.esa.int 2026-09-18. bc_mpo_mag anonym offen (5020 Zeilen seit 2024-03-12).
 
 pending
-url https://pds-ppi.igpp.ucla.edu/mission/Voyager/VG2/RSS
-note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (.ODR, 5056 B, 968 Paare). ODR-Asset als voyager_odr in sources.φ; Jahr aus PDS3-Label START_TIME. Offen: Reihen-Leser-Arm + sample_count-Semantik.
-
-pending
 url https://data.ghrc.earthdata.nasa.gov/
 note NASA GHRC DAAC: ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. GLM L1B + TRMM LIS in sources.φ; CDN present 2026-09-19: glm_l1b.bin 1050368 B sha256 a7311a53…, trmm_lis.bin 30548 B sha256 4df26caf… (runs 35425276060/991 success).
 
