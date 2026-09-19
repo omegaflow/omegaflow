@@ -230,6 +230,38 @@ fn chanlocs_labels(source: &EegSource) -> Option<Vec<String>> {
         .collect()
 }
 
+pub fn parse_channels_tsv(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for raw in text.lines() {
+        let line = raw.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let name = line.split('\t').next().unwrap_or("").trim();
+        if name.is_empty() {
+            continue;
+        }
+        if out.is_empty() && name == "name" {
+            continue;
+        }
+        out.push(name.to_string());
+    }
+    out
+}
+
+pub fn labels_from_channels_tsv(set_path: &str) -> Option<Vec<String>> {
+    let path = std::path::Path::new(set_path);
+    let dir = path.parent()?;
+    let file = path.file_name()?.to_str()?;
+    let tsv = file.replace("_eeg.set", "_channels.tsv");
+    if tsv == file {
+        return None;
+    }
+    let text = std::fs::read_to_string(dir.join(tsv)).ok()?;
+    let labels = parse_channels_tsv(&text);
+    if labels.is_empty() { None } else { Some(labels) }
+}
+
 fn chanlocs_positions(source: &EegSource) -> Option<Vec<Option<(f64, f64, f64)>>> {
     let chanlocs = source.array("chanlocs")?;
     let omegaflow::matfile::MatData::Struct(fields) = &chanlocs.data else {
@@ -291,7 +323,10 @@ fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
     let pnts = field_usize(source, "pnts")?;
     let trials = field_usize(source, "trials").unwrap_or(1);
     let srate = field_double(source, "srate").filter(|v| v.is_finite() && *v > 0.0);
-    let labels = chanlocs_labels(source)?;
+    let labels = match chanlocs_labels(source) {
+        Some(labels) => labels,
+        None => Vec::new(),
+    };
     let samples = match &source.array("data")?.data {
         omegaflow::matfile::MatData::Single(s) => s.clone(),
         omegaflow::matfile::MatData::Double(d) => {
@@ -787,5 +822,47 @@ mod tests {
         };
         let bytes = omegaflow::openneuro_eeg::write_bin(&eeg);
         assert!(eeg_from_bin(&bytes).is_none());
+    }
+
+    fn flattened_eeg_without_chanlocs() -> Vec<u8> {
+        let mut bytes = vec![0u8; 128];
+        let text = b"MATLAB 5.0 MAT-file";
+        bytes[..text.len()].copy_from_slice(text);
+        bytes[124] = 0x00;
+        bytes[125] = 0x01;
+        bytes[126] = b'I';
+        bytes[127] = b'M';
+        bytes.extend_from_slice(&flags_dims_double(6, "nbchan", &[1, 1], &[2.0]));
+        bytes.extend_from_slice(&flags_dims_double(6, "pnts", &[1, 1], &[3.0]));
+        bytes.extend_from_slice(&flags_dims_double(6, "srate", &[1, 1], &[100.0]));
+        bytes.extend_from_slice(&single_matrix(
+            "data",
+            &[2, 3],
+            &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+        ));
+        bytes
+    }
+
+    #[test]
+    fn a_flattened_mat_without_chanlocs_reads_with_empty_labels() {
+        let bytes = flattened_eeg_without_chanlocs();
+        let (set, samples) = eeg_from_mat(&bytes).expect("the header reads without chanlocs");
+        assert_eq!(set.nbchan, 2);
+        assert_eq!(set.pnts, 3);
+        assert_eq!(set.labels, Vec::<String>::new());
+        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
+        assert_eq!(resolve_channel(&set, "Fz"), None);
+        assert_eq!(resolve_channel(&set, "2"), Some(1));
+    }
+
+    #[test]
+    fn channels_tsv_reads_the_name_column() {
+        let text = "name\ttype\tunits\nFz\tEEG\tuV\nCz\tEEG\tuV\n";
+        assert_eq!(
+            parse_channels_tsv(text),
+            vec!["Fz".to_string(), "Cz".to_string()]
+        );
+        assert!(parse_channels_tsv("name\ttype\n").is_empty());
+        assert!(parse_channels_tsv("").is_empty());
     }
 }
