@@ -1,0 +1,37 @@
+name: fmt-apply
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Apply cargo fmt --all on the checked-out commit
+        run: cargo fmt --all
+      - name: Commit and push the formatting
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add -A
+          git diff --staged --quiet && { echo "already formatted"; exit 0; }
+          git commit -m "style: apply cargo fmt --all"
+          git pull --rebase --autostash origin main
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            sleep 20
+            git pull --rebase --autostash origin main
+          done
+          exit 1

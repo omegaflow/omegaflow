@@ -3,7 +3,7 @@
   session: Bau-Folge 91
   class: handover
   date: 2026-09-19
-  sha256: cf4341aa171c8695c78c7ca0bd7f2b060b65ceb1d10e60e39fd5786275d2ed51
+  sha256: 3dec98a762f73ea43ffe11c8b697852e43fd1399a2ba3d79b7ca2c1a2ab9a17d
   status: live
 -->
 # Handover — Bau-Folge 91 (2026-09-19)
@@ -65,8 +65,10 @@ CI `35451506666` `clippy` rot; alle fünf lokalisiert:
 ## Offen
 
 - **fmt-Drift baumweit (54 Dateien)** — `cargo fmt` lokal strukturell verweigert
-  (`opencode.json`: `cargo *` deny, nur `cargo check`), kein CI-Apply-Workflow
-  vorhanden. (Schritt: Operator-/Workflow-Wort oder `rustfmt` auf eigene Dateien.) · `operator-gebunden`
+  (`opencode.json`: `cargo *` deny, nur `cargo check`). Neuer Apply-Pfad:
+  `.github/workflows/fmt-apply.yml` (workflow_dispatch, `cargo fmt --all` auf dem
+  ausgecheckten HEAD, Commit+Push mit Retry — kein geteilter Arbeitsbaum).
+  (Schritt: `gh workflow run fmt-apply.yml`; danach `ci-check`.) · `pending`
 - **`hdf5.rs` lazy Objektauflösung** — Guard steht, Graph-Traversal noch eager.
   (Schritt: bedarfsgesteuerte Auflösung im `Hdf5WindowReader`.) · `pending`
 - **`icesat2_atl03_compiler.rs` Pagination** — `HARVEST_WINDOW_MAX = 512` deckelt
