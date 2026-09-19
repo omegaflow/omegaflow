@@ -8818,9 +8818,10 @@ origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN000
 compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
 format sky1
 at sun
+sha256 e509844ed4a87c649c69561c9f91d353cf907e3fc5baeb7ab1b8ab69fe3721a5
 ttl 31536000
 field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
-note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; Re-Messung 2026-09-19: alle 270 fgn*.sky1 auf CDN jvo.nao.ac.jp present).
+note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s, kind generic); Compiler fugin_skymap_compiler.rs; 2026-09-19: 270 fgn*.sky1 auf CDN present, 270 Blöcke in sources.φ registriert.
 
 url https://github.com/omegaflow/sources/releases/download/vo.lmd.jussieu.fr/mars_dust_MY25_1FpSol.bin
 origin http://vo.lmd.jussieu.fr/tap/sync (mars_dust.epn_core, access_url http://vo.lmd.jussieu.fr:8080/mars_dust/griddedcdod/griddedcdod_MY25_1FpSol.fits)
@@ -8829,7 +8830,8 @@ format mars_dust
 at mars
 ttl 604800
 field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
-note LMD gridded column dust optical depth (CDOD, 9.3 µm Absorption, dimensionslos) der Mars-Atmosphäre, Montabone et al. 2015 (Icarus 251); TAP mars_dust.epn_core -> FITS-Cube 60x60x669 f64 -> 26xf64 Wire (magic MDST, presence=1 finite CDOD); CDN-Manifestation ausstehend (Dispatch).
+sha256 95cb85094cf4e120452b148977aa7666791ea391ccc6214b1b1f3a222e2d5402
+note LMD gridded CDOD 9.3 µm (dimensionslos, em) Mars, Montabone et al. 2015; TAP mars_dust.epn_core -> FITS 60x60x669 f64 -> 26xf64 Wire (magic MDST); CDN asset 500947208 B sha256 95cb8509… present (run 35461031672 success 2026-09-19).
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
@@ -10282,3 +10284,2694 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000003.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000003
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c9614211ff2c9fbde7be005651111722b884ef96cf1ea203c447b3a73402e17f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000003.sky1 (14212953 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000006.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000006
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b9111739c9a87aebcc8feeec8b4b87506023d36b948d457b27c8fc707a5f9346
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000006.sky1 (14212953 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000009.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000009
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 053e8575385e06977428be494336778499f745ee7d23ee5caa9d733e70a8af25
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000009.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000012.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000012
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3d5f8beb2522f67ea5782d061a3971a95fd17cf7afada3a328a21f18087bd4ec
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000012.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000015.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000015
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 64b52566f8588bdbda865524766b37d494ed353a41d09ef6036ddcbcfed6d511
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000015.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000018.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000018
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d08ec7493a315c787f1f5df7f346f418509363ed6b0ceb88d8677924d7322a1c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000018.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000021.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000021
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 eb969c07e15ef3dd8910e121ed64e18b3b026e47cc71f57869f38a0c2d5e495e
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000021.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000024.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000024
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d0470381dada94223ba8c1fce8a690bc52171090f6ea47153234c3a3208f5e10
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000024.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000027.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000027
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4b14afb9c9c51568c4e732bb32889552168f9cb2a729d9ca068690ebddcde146
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000027.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000030.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000030
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7aafbb831062a0f76c594292f4ed94436840673d929354078141245a92b5ddfb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000030.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000033.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000033
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 596f5917331536375819d65ba828a7828cdf2988488ec1111860b9b3b4ff7972
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000033.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000036.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000036
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d7f680cdc08924cb196debc2f715d929251abb1c8f0d84132564dc455b9b8ef1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000036.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000039.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000039
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 649190f0d962859fb954765cd8b638e9e444744240f21ad7711f9209d769f733
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000039.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000042.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000042
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1f6374ee682710772a88837371609107b978401663cd2fd7c2f3ad362b5bb3a5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000042.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000045.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000045
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1277a558a0f7d3c8c1a2f503233674b0c9e8bc520fe1a8db3a6b5bd7d5d89670
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000045.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000048.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000048
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7a0664557a6d6f230af9f0db1edbfa4b527086e73fd766a87fee8b0297513b70
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000048.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000051.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000051
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c91d52742ff239f86106b3e21b6c0c16ce5a18be2df413fe0185e6ee609ed337
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000051.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000054.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000054
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bd60c1600077c2eedfc0497e144b0b8abd59d1727fb2ccf690692aa7fcf7d3f5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000054.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000057.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000057
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5e766cc91f87dc895f6e2d6d006cbc624813eb1f6faafde43009b611c2d6bf1e
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000057.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000060.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000060
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 74087408bddbd438f8802064b5517fff83823c42ffa7b1c286c32bbee0853c43
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000060.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000063.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000063
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4b5cc5eda20c9c8916c4bf5e84734491e84ceca440f2781a84c3f6b249a15b79
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000063.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000066.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000066
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3525eb3e23c690e0adf6ae0f7d4860fe11223fda63836b16405dcd385a9bf38a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000066.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000069.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000069
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6574c19ccad6ed78a29fc3715ce2016262f44b10a631ac7eb095f699e10f24b5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000069.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000072.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000072
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6f9681b740b400667bf4810fddf178d39837e16213b8a5949e1b2b6cfc7911a3
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000072.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000075.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000075
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 9d3a9410da60e4bdfb44e34f25727aab499c02d13bff3b218c8d5e76a9ecca8d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000075.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000078.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000078
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d4d020f4de1923ee5efba691ed50686084ddecd47c623b249866f5d73e91b3a1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000078.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000081.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000081
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5e83472054392b1f7777a369c3592ace310b766210a8e4fbdcf8a61f2fed6b2d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000081.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000084.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000084
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 20d8b7a5a10c292e97fd7d2c28b0005de94e313f5d8e1931fc258b4b3253c0e5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000084.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000087.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000087
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 899a551570593c8470e169c9631bc9afe2a300f23edc8bf2dd90d1024ae2799b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000087.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000090.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000090
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8d7e183ac9295618cc7e3b94d48c51bf0fa6feb41cd04e7b7e665a6baba053be
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000090.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000093.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000093
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 149f3dd64e5639aa2822300d4e15e3ee53122ca82693f6b6e38c4a1ecf336063
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000093.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000096.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000096
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d1dc9e18648f0fc134c39ce6a73ed577e06a90195ece19585855eccdd7eb893c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000096.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000099.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000099
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 35d148033d20b631ad7c45c229a63ab506a602217270dcc8aad4d9847c46e7fb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000099.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000102.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000102
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3f5d41882d54e8e28f7705fcef6ccab1398c46cb1da561e59015119d92d1cb43
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000102.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000105.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000105
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4b07bb960f3a07881c2baae6ee4c30ef3689c22c6e36b7c9aefa76e6e1fab0dc
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000105.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000108.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000108
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 10228c3fec677c3956cd04dc4c967e819294e764eb1b6d54502d15d6cacfa9cb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000108.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000111.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000111
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c235ca6a0a5074facca65fd3de10d66063a84b87c52096f7327b8da0745b58c2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000111.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000114.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000114
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 df8880d696d925fdd2336c71f0a9a130615a0479dadf509af69b6425d5a37e8d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000114.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000117.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000117
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 94e9e7bf1e58645de1922a748bc7db7325f3f45d0a0680f5e09f49167a2192f8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000117.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000120.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000120
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 11716553ded27ad56cd373e60b9973a22de50681a24c61d371e3e960f2692299
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000120.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000123.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000123
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6b412bc156a936212c7c13cbb8034463b70f85daa72dc5f17855902028f5198d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000123.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000126.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000126
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 58a72f766923c0eaa410ca93ca2c229f908db93eded9693c1ea1d1abc99cecb6
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000126.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000129.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000129
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 684a8e1d0e67e4703b8ffa70851cac221ecde659978f9ba19ae9d72bf095d62a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000129.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000132.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000132
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b3de2314b70b9e2e376852c5e4d7d52d7346316f2392a11cac8c295742d816f5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000132.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000135.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000135
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1c563bedcef8942719bdb9c739f152fbfb52ab45864a58727d94f1e153d1a272
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000135.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000138.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000138
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c20335433496acb984e7a9e82601d6f0ba3b447311f3e86452563f694d16c232
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000138.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000141.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000141
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 046351ea3c38586c12e13b98212e971d95837cb21d32b34007c0897e34063ae8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000141.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000144.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000144
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1d373eb20a9f86e9141d3fc6dca6363745b73f387d222bcc2bdfae7a1cc54053
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000144.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000147.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000147
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2dec2536328c6a759795ad0227ec2f59cc5474ae6542b63ea8ceea80f1093a2f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000147.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000150.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000150
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 fa2b895030249100fb17c715b0b3d35dd507033e55873ddd73c1a9d3b450fae0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000150.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000153.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000153
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d327bd212bbd5707bd0da86a76d0312b39c0043175f4ffac78a23d2efd7bd84e
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000153.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000156.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000156
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b454b2ef14666cb657d248da7cd867fa31fe61f4cb190407f4725b99f0053c82
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000156.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000159.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000159
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2fdab763398b13dfa7c12fa12e2222803b1fbf571c0bcf3f16f1ff65bb736e56
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000159.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000162.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000162
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 76696798d05a4f4fcf1e0d66e148120f6252961408967ca44d5d8c786a2aa62f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000162.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000165.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000165
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 262c4ef69bf113f20d0a20d270bf9f696a0454fc90e59ef262843198f4f6e9d9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000165.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000168.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000168
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 85d174906ed26aab4aab60aca08463ae22c0d02bfe23ba985cc129e67e616a2e
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000168.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000171.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000171
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bb11215ecab2bc729fda09257b808d896ffc150c528f86f688dce82cd1f435cf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000171.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000174.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000174
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 801ccf0e5e7a38fdd5887785feb41d5cd23c18566bdf30f6e9b67d57ef8de1a9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000174.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000177.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000177
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 98405d664777c470e403601d4e4b801b77fe658761f68ac21d55f79d70b4513b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000177.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000180.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000180
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 dfff6cf36f972ecd0c7f9f57671e75a96207a0cfe95ecf09afd2e669179f9bbf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000180.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000183.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000183
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3e95ae0e80a73719eb149386e69d1e2b6e5a48ea125ba7627ea120502a03354a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000183.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000186.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000186
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 fac2066957a1818a29c73d7aaa691ea973909a904b7f49e716adc2ed936e69f7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000186.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000189.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000189
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 26420d15ec5ec125f147eac1f17f0664c1f9e94cc373eb748b827cc8dd66b600
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000189.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000192.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000192
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 74cd521d482af9fdfc47fcc2d0fa54deb978a418994412dc0e76a145fec5ceca
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000192.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000195.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000195
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 efa163a564c4884cbe16b4ef0145e34a80a9d36af30609ca7e9c03911c110520
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000195.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000198.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000198
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1cb87474827cd62c50f4ae938ea1cb985a70d4e85d21b60972164906e9fcf7b0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000198.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000201.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000201
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8d889cf3325f376f5d8da61ae729bd7fefd684acb696921d895dd9e5e46839df
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000201.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000204.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000204
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7b4c449a88cb68b34829a2c45c161a84cb73a92d4ba69c68424d37cadbd87649
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000204.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000207.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000207
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 371f5df14b78aca0181887047bbbb695ad812b267a1d599fbc4a3897f6be5229
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000207.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000210.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000210
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e051dadb8572a66cfc063fcb1637a864cebad2acac54be4231f07e278b0fa3e7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000210.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000213.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000213
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 15b0234bdafb2e412e472aef4d1a8618d6b431551487b9078cb90c2f8e11f90f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000213.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000216.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000216
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a71c3cb6f791043496604a002775b4551bd7ee432696ca4d318ac3e1c2377962
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000216.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000219.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000219
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 44efd3b95e50173301a6e8594753d887b8b23fedb05cedcbbf7673ade5c30db5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000219.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000222.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000222
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ffd72e31a9536547763bfe79d6617211e3ef8413f1293da8b5547634466540ec
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000222.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000225.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000225
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1deb9a9c7ab2a988d07d0bd87ba2163088a10976a4a9d339838fa21231928215
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000225.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000228.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000228
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4444367e324ab2b540e4fbf50b5f1448e1a8a21138273a02f0773b629c8ec3a9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000228.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000231.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000231
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e6f1bdcab1dc53942e9d9eaee391f6b7bdd510263ced06a677b4b2c42e11bb17
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000231.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000234.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000234
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 19fe2bf4af64719cc9d7be10c27b33383e92e762161ff5947728a9a2dd3f6366
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000234.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000237.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000237
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8509f21fbb9a75014019517eef32e2cf7c6eb4b30326a79aa3a58dd54c1a3c77
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000237.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000240.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000240
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0047a0d5d57b27d2ac0b3509bde6287ad2d21bd441d3ef01406021819b80f2ab
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000240.sky1 (7148553 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000243.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000243
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f4c6ec7ced594e94063afac58ae3d06e1b3086d6ff5dfc4e7f5f98098ed45589
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000243.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000246.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000246
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 717cef5260f1993fc50f86fb9fd7d2f248f5301065fbe111e8d645f2867ebdbf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000246.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000249.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000249
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a43e5af7866a8a1df762d5648c1613cfc86e3043ca641437185a2aa4c238e662
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000249.sky1 (33653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000252.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000252
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6981913ee97a4a5ab232d1e1bef34831676dbcbb1645ac679c8cf8cdbdf5d298
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000252.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000255.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000255
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 73fb4f8dee3b0fb68f4556dba766f55fb5fd267099b71f80d737e09e96661c30
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000255.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000258.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000258
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ae0cf4a594ce618b9b1f0f0b7aeea672fa0386dc7e5e8c3f8ff586e6b24dcd57
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000258.sky1 (7148553 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000261.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000261
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d981d5675477bd88e27fa09caa6584ea321142249ac60bf85df3ee106c2d6751
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000261.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000264.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000264
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 184db5603574640c3660de84733439e10c490a3615f4673deb42a1009d9dacbf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000264.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000267.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000267
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e56a44f31c56284829ad5ba39a318b12e2a20e32347270e61696cea37f3972df
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000267.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000270.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000270
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 fcb8466d1c3a0d4f93c805cc6c01da8b4346addad3bf2dd54b825d08cfd95a1a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000270.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000273.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000273
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 229ecce9f387695796b98484042f93e73ddcb4cd717b031b470fd219a581e7fb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000273.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000276.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000276
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 17fe1c5596a144bfc0aceec5e2e39a96dfdffd252867e824dc91638ef4cd9585
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000276.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000279.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000279
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 91ae635789c6eb7a30008a9a5eb48c6e28e507594e70a9e4c76f2abfdcf8a8a4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000279.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000282.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000282
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 28ccc034104b68ce7dcda22c87e2fec5f8e36620def782eff7005a5a9c08cdf0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000282.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000285.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000285
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f567b723b71b2f203e48bf88ac5b302ee25d19f46788ebb82185c901cff46a06
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000285.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000288.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000288
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ed110a2e6f20ad1f4750e0ffbab076ff0e3f3ad96e4e9880013dddf800541f1b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000288.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000291.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000291
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 45072145c5842bf18d81b1bfe388da6b41fc264b5603a18008a28e29ba6b1b78
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000291.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000294.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000294
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 70cb76d7c3a135f5981226435e47ce7ae376b44fe290115126c4b3ece704c1f8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000294.sky1 (14263453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000297.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000297
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 52b61113fc6e5f336b046423c0a03fde8a5d797f4226ea54289e3a57db997b3b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000297.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000300.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000300
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e51a0ee2cef0b293fd17d633b101af1bf436fbe331ff68a53cad3786014144bf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000300.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000303.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000303
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 52a213f81a2609333a9f3720eb2d19fc76fb943913438acbabb0f7163e6fecf4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000303.sky1 (14263413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000306.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000306
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f2676d60cc6efd8a7f7d54b9c954c5b922ea164dcffe04ab25c138ecb38edc45
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000306.sky1 (14263373 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000309.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000309
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 22dc2ae0caf81a1c32df83db252063df0c366e5dffad865619f1b3c5ef2b277b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000309.sky1 (14263373 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000312.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000312
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ea15870b193dcc85ca239d1b6d7ab003c6adfca968908291a53466c52fd29ab3
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000312.sky1 (14263373 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000315.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000315
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 51ba8bdb438e921f9c00dde03cbbc99ce4d8156f4db3efd767344175e0c4d030
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000315.sky1 (14229773 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000318.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000318
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 19104fe5e96307e1e1ce446aba1c3dd8069878404ff50dcdf40d463e50c2adc0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000318.sky1 (14229773 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000321.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000321
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bef1fb7675457ff1548c0dc3ad89391ee887e8fc8705717a416db576dfecc862
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000321.sky1 (14229773 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000324.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000324
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0fcf687b5a530b56f3194458a546ab79bf0f3c031d4edcd6847e3871a458e6a5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000324.sky1 (14246633 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000327.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000327
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3713b6d91b670db198e7ff891830019de3ecf840ad72d11cea3d77b23b377090
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000327.sky1 (14246633 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000330.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000330
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 de25316ba4bb31ddc19d7c653c0397e4852ca2e3a68d89c1c167fdfb25105180
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000330.sky1 (14246633 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000333.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000333
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 42987b62715eab7f8b891c63472eb57980956799f5f10f2cdc74911034708680
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000333.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000336.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000336
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4c41193ac44a532acccc1fca5c296d8ad345ef5a601f55daa4ba360bc6e3c624
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000336.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000339.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000339
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 18ab95f112210775fae216b646a344853c882099a6403c88a0a557b45d868cd4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000339.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000342.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000342
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b09fac4708d877f27a8ca5660a8f10d36b4bb6795d69faf09239dc16d12a1dc7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000342.sky1 (14196193 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000345.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000345
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 49bcbc0f0450448690269f090a00cbb90d2a3e0d7d90f8363ea18f7aaac7acaa
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000345.sky1 (14196193 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000348.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000348
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bb929faa3df27c5592235d512d06962cc6ea41c51c62766a6e7fd0aa4612d999
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000348.sky1 (14196193 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000351.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000351
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7eafe91e93aa4101988d9b024ba8fa100af4e3ad824250d2468b11d08329e0dd
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000351.sky1 (3469213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000354.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000354
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3ba55d2af856479ff7c7cbb33c9108d1a0f5fcfae8ae8293cf36d20aae6362e2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000354.sky1 (3469213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000357.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000357
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 be86f80f45fab2993e6a9cd8256924c575bbc1f166337db839ea57aa80da44fd
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000357.sky1 (3469213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000360.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000360
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c565aa042f8925b3c2e204a1ac24be53f4dfadfff16c31a64f7971a1c7926443
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000360.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000363.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000363
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 63e2a3264fd8e20a8e7152e36bed41a1bf4357d85f42518eb3b1680fa5b54c51
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000363.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000366.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000366
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 17b84f2c77fde79a69a21c5a33063a94c7c3d909acf598b02d4316ee2ffa7fb6
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000366.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000369.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000369
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ff5d8c2030ef05a86260178d0baa91c6f0e29f3c4e70e042c4a9ca1201823f1a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000369.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000372.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000372
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 459788520faf43d9c7688690bdc44426250c39b66a0aefa3e6ec6368c4957b15
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000372.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000375.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000375
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 439fa6fbbb9dc41529482bf2f8e10bcf71249e3a811e10260aa05ce9e18a9ea8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000375.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000378.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000378
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3477a359baefdf1c6ca4f28b63896fe588ce36fecc430566821c3eca4a1ddc64
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000378.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000381.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000381
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c1c6d515f1eb49ebfe75a284228eaf6060492fb6faed8f2743a43108ca18cfa2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000381.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000384.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000384
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0661d8ccd9702b0bee124c1cde99d3aff22bef590c656e99df521c0973ef3575
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000384.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000387.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000387
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 60a9584f06356d7ac01496404b3f361edfc2ab02ed967edb781e266e6811647a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000387.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000390.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000390
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b8adeb4ba874ca0bef26174d13f243a735a15075cbacb4babe0da6ff516772fb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000390.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000393.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000393
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a8d577dea3b88c8d8d129c99f4cd8abecef54db41b8b88a3aa6d8dc381377163
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000393.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000396.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000396
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 490bbaae940f1599d332cd7a2ad5c3cafc3e78a129c241d621ed6080f9fbc18a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000396.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000399.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000399
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5bb8d5d3dc024c3ff015dd5b1bc04fcb1c9e45614fb48743bdfff450b6106e71
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000399.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000402.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000402
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f6889910bd095b1168ccdb147a7e29f563f385023174bc94c5d3b01642b8f127
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000402.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000405.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000405
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d51a839006b691f35d17217eb6661f6e916af8671fd5d42f2a8a63b77143ea81
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000405.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000408.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000408
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e8aa3d8fcdce0f444eb04ef0bf6f135f55e4bf15f05aa74a0b87393413237ffa
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000408.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000411.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000411
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 71dbbf4fb8b06949f3b4096f840a2686bfc38abfeeda4a2da1061a9e1c935059
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000411.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000414.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000414
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 9c89adbb5cae34c7970c03262a89619772ae5755e5e55680c81c4a3f0f09b87d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000414.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000417.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000417
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 171aac94f6b4c045a896f70469dbbaf4a03f154f36273e925718bbb62cdff0d1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000417.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000420.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000420
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b4faaf9127d437dd6afdb937a956ebaa196177d3e7d715f24d098a964271b720
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000420.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000423.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000423
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c6c22e93e96d854907412b05cb7e60446179bb3628d29c9ada0a45ca8cc092a8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000423.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000426.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000426
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8ea566037f436cd1d76e5a095657bd2753340ea40c80a9b710294f1c208c0b4d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000426.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000429.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000429
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e98f778e4c24beb20662f544d677ef5f6a1fd5bffba2c9a5c48eb1e9140a1666
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000429.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000432.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000432
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 96063b6fa75d8f7e574b0a878e307b763b9785867308f2b927eb061710dc7a8d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000432.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000435.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000435
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 612eabeb9d3f8ce5e2d8fb562530b27cdc8a8a91a45352f8ea3c380a0591e249
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000435.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000438.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000438
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ec373a29455eff1597760ab97439e2d3620cf61a815ea4ed547352655ea39588
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000438.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000441.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000441
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7135941bd3bcec445a876501d4c3b684cec3f529016948def564a01994acc534
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000441.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000444.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000444
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0a3eaa4ad28b84b0e765fdf149eada34b3db8774e75ef2fac568322225be7db4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000444.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000447.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000447
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6b90dcdb1dbacb2a13fa2affbe8049d8841d6b3690c3514005f0a5dfdc22d58c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000447.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000450.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000450
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8e2905af8c28276885a2702b5aa48c1655820120fed206fb0c2b00e5ab291270
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000450.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000453.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000453
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c95d2ec8a178f160713da69ee41bd8f99bab1ca1c9f2c8089b5424012fe9b330
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000453.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000456.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000456
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6d176634a0e7e32c46706de4a9f423a1a46fcb744664348208937568abf91c1c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000456.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000459.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000459
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 03b97841603e599ecb7bdf6e33b5abced454e2f7a070ef622c48335d74fac05b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000459.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000462.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000462
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7b5b97e222500fdde3529a3a8ea7cf6210bf1b60a2a87dddb8bbfaead141c76e
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000462.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000465.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000465
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 48deee485cbc2dc93d5732d48f103f92382208506f1a799b51ba3696ed7b8db8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000465.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000468.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000468
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 37afe7ddd6685248c248cdd99afa253c10b23cb59f11dc97ce2c8a0c05d80e7b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000468.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000471.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000471
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 775b1a8e25cbc4816db263b378ab62c9fe74f4988276b2518a9cbeea07b5d8c2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000471.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000474.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000474
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e20c65a5590de4d28a5e033d2cf768d1a19257fa909be9ca76fd2002d9852ce9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000474.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000477.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000477
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 3904944d37209078137286bb227553a779e6da239f86658ea5ac63b63e385d81
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000477.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000480.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000480
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0c63b1550c4805883611d1ec763a5365474d9e83d5781539b9f0d59949c8dce4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000480.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000483.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000483
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 24753291de75d0759045d949e25e6d0d29aa04c1588737d13371d724aa744a3c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000483.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000486.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000486
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1c689e30e55d2f667986a5a0137eff3a33302b749b1fca53e9605ae436252a29
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000486.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000489.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000489
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 317c06649263648276c64dd7c2778fccc7bed2589604fb58098172052a058313
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000489.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000492.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000492
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 daee7824d5fa66002c319776ad2f4e701f9109c03c125d7298945e86997683b8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000492.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000495.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000495
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e186058e425db5e6ad0db023bfd066d7171c35debfd46b1070e6fa3fb4d39a30
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000495.sky1 (3561393 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000498.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000498
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c7d9fccb0585a4c11ddd547825f18fe533cf6813675ea4b2b2fd3c20ae4a8a88
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000498.sky1 (3561393 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000501.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000501
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4e3e8180ce4bee59db309b7c0ede69884f1f77287a9997f883ce56e37f552b76
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000501.sky1 (3561393 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000504.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000504
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8c06fe2ab1176f9f24d7c159ba983b2e99fdc5708c6f5cd01502342091ba00fc
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000504.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000507.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000507
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0d32b82455e1d6969d7f01f8469e49dfa445a08daa51958814d5cec84ec81ab7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000507.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000510.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000510
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7d21212de3020e660e900601522daa1555edbb47c9668f63cef572d0b3c8894d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000510.sky1 (3493993 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000513.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000513
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 24976398cf0eae47aa7ea65f5b1662bc86a2ad2ca9b437669228edbd3997f765
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000513.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000516.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000516
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 955baa4604fd4134fca3f667757a120e1486f503bb6d153945e4d7e12088b4f7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000516.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000519.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000519
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 396c3a2b6bebe9ebd9abd4ba691162b18e7c9660301b419471aeaa10edb8e35c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000519.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000522.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000522
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ed0ff9804d9140bd66944523c8cca656066b7c2306fa80019f74e7b27d386ee2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000522.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000525.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000525
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0391e6ae1ec019e57ef943fb695c48c9e34fc758acabd47efcc90116333dd154
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000525.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000528.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000528
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b7f88c81622fa12e939f80d98802e357d30ecbf8632e5e0ac30efff2da0db7c4
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000528.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000531.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000531
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 668fc379dbec74e42612fd4b01fa7d41bbf274b685fba63a7ffafa523277f905
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000531.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000534.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000534
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b3e6f4d92317f6b686111ace58a3683442457a08c5e1ad1cdc888e2521f85c71
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000534.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000537.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000537
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 af1fcbf282f68d23fc7620eec794555b81e4f1e845272187151715f0cdf15e42
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000537.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000540.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000540
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 17e8f85f503b3be3f18b10ba7bf6db603a2f5c2b2241d16559184d33d22984f7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000540.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000543.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000543
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 af4a350d1d4c5b9e8a9f78d6d88fb7426b5402e4c9b4dcb2af0db509b5bc209f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000543.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000546.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000546
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e0d29906df9d2a2961bdf51c4e0f69a4aa2dac81907cc28545d68d3175ea0e4c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000546.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000549.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000549
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 660d9fb037620d688c40bc14d920a10df62db489d93446507a907e83a1ba4092
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000549.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000552.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000552
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 583a9507934a684200c9f7c4dad9e2647dbd8c181b8e8c0d4db7d9b42f5b7cae
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000552.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000555.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000555
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 75b0648325f39a7ad23a9b07ef7335ee785052aecef451bf267557d3caae5e04
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000555.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000558.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000558
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 fb8eab04bc5b908e23d4c63c67c5aeaca5b78e4cc4d57604fa0e184d31284ed3
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000558.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000561.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000561
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a064fe522040f9dccbb71e25db5c9c0e9b3d7b91c1814d2405be06855bc371d1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000561.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000564.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000564
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 64fec0ab45c8d0782be5dde02e13d43802ae51467a4687b2b984d2596f4d93bb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000564.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000567.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000567
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 49595547769aa1378793b44b21031b68ae97ef447ecfce96e832277d212ad3c2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000567.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000570.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000570
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7ade2465c0e2f5d0d32f0b99fc76a4a969f59382396d80e8951cd53dc701539c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000570.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000573.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000573
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 508c188c0222e53fff7cd3147dfad92179e6b436514f931166c738a21fc8e0e1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000573.sky1 (3553213 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000576.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000576
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 43f5d3ac2ee759a0acfdd512d15ee47b6833ce81ec6b58749730dd62156ccb60
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000576.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000579.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000579
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e5ebb4c18afab29e22f44e6ed8c8888fa3e8efe001f0fb982c8805dd2a7818b9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000579.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000582.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000582
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 0e6baf782103b2b6ab47e514b3c3fc0421c1b4210e4b897cf2b1194c99f823d3
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000582.sky1 (3561513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000585.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000585
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5db70f2bbffbb9dfc8e82c5cc6aa3804d820ad394c63867543b7c8f91f0f0b62
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000585.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000588.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000588
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a7368735e9c4d96c3fa246da05a86e3f3043a5f7893cb58e162f595b362167ad
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000588.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000591.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000591
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8e6bf1d3c5996110675dc6f2dcc110901dbe128ec7d2e76433788fac5878f887
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000591.sky1 (3553133 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000594.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000594
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5626ecbaacbd88e855e1ad2b44c712f46143695b3b5c3a49c1522584b626cef5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000594.sky1 (3569793 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000597.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000597
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1b02e5246d727c40c8746ffef4b6a1d763199b8000b4ab203343277ad310e9d8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000597.sky1 (3569793 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000600.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000600
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1c749c39c2319a925c938523b962f38ee0472197a13eae1ec4960ac92a548218
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000600.sky1 (3569793 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000603.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000603
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 28267686503c1cf72b437218b61aa552bcce7ddb93ee4d44f88b52c8046bd74f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000603.sky1 (3502453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000606.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000606
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7542771442a775cec196d7a2971903dc811940a2bb1d9bd42c67c6141a5c8b53
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000606.sky1 (3502453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000609.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000609
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d28a9426363e0d4a63bfa6c958f6d9556e2bcbd6081c273795a41585920fae40
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000609.sky1 (3502453 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000612.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000612
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 dc322ec3ef5406b8a2ee3af3ff4fb0daeaeed62e0d10d2ec2dece449848367dc
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000612.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000615.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000615
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f981390cb0b4240a3dac03de628f3135ec92d1e0db942691efc9e0c9a1c882c5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000615.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000618.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000618
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 16204b4a00c9482bb7738371c655afd746ae6e1af5adc10195e5f3ae963aa086
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000618.sky1 (3553413 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000621.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000621
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 11e944ef2098f9330c0a5ca7c5280eebd4dec42b453c7d9acdecc8dc6c959a2d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000621.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000624.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000624
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8eb8b30066b87d72168fbd3c215811e168abf891ac5ae816196bca6ee881b97f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000624.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000627.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000627
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2962229929f8eed78abefc32b71fd6e5367f4cb6aa37f557f71f83617937a275
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000627.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000630.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000630
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ce683be30bf3a2f6207849e376d278edc96b5c0052a97966bdf81ad3d8901ab5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000630.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000633.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000633
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 27117797d4d6f6ac9870077761ea586f9dc268f4c8ca6abd3cf06287175b3ac2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000633.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000636.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000636
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 78674d67ebb5cea354582376f390a10acc8ad20b46ae8e24f0dcf5bfa7cce6fb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000636.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000639.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000639
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 279ee5a1a9228a0993649594b3373984cdc44560ead001e3e9d73668a2c7eb00
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000639.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000642.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000642
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 35e25ffbf19155badc9d6a8bc528f13d789bbe3da16ab1ff4672750eb7d0622a
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000642.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000645.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000645
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bbd94a1767601cc54b496b5e4f43e6d6cfc5a04281ad3275bfdcd99f60feb4e0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000645.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000648.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000648
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 63be2d7fb5ea35efa85ef1dd50f5c5e802926204567ad4a1b36f647c8ec6ab48
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000648.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000651.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000651
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 19f39ce4d1bc0c1a2f79db7602e3a8431f5f7ad3e913a55e305844aea4684bd3
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000651.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000654.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000654
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 39ff169fc5c93fb4c1863977c60b6815334320173eb2d26d36b347182c0029f7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000654.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000657.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000657
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 8d29ac33cbf1deb369db02bd139767cef8f7af01fc6521e4694762a381df6642
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000657.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000660.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000660
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 bc2a542ffbd72be9d778ba887468bb1b849451cfebb6ff81fb0a8a721314c8e2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000660.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000663.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000663
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 99096092642d7ddfd4b8f3880c86878d0607fc1f27c3d91c4fe7a37544941adb
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000663.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000666.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000666
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 96aeff5a83f23081fc3204c1f83612fe6c5cd4d8d965d9f6680bffbd55e1cc27
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000666.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000669.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000669
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 b80b7b3772ed92424a8102016e559240df8d9ae22264b51c483fbc1b5d7d64cc
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000669.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000672.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000672
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2cd2865ff74dc9a931292a450e73c60282899ae33542d03bedbe90e941e935e7
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000672.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000675.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000675
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4ab4cf6ca476bf7af3f266e0dddfec393113a6b53d2767a48cc774f176c0de00
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000675.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000678.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000678
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 95b4e5cf35c7b6c0f8a570b2caa3bb0a867d5de6cc5fabbdd11f8a8911e913a9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000678.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000681.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000681
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5d849b4ddf66238bba5424d360251fd690056d6c2f2ca1adccb2830da8bd8fdc
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000681.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000684.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000684
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2a54005e1edd04bd5ae80ead9dc54a2214a2997c68f6d3b26ceba54ba7415e45
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000684.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000687.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000687
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 120a6ac362e70da9888b2710f0a32357cb4672ea2b78d2d658c6e8f2a7eaa34b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000687.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000690.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000690
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e4087435359240ffc7da6ea6c7660fac0ea5615df8b7872225dcba95182b704b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000690.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000693.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000693
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 437a890a7a7c09d72d1c2b2d607d828cb002183855ad21c7cdfc2dd08407a944
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000693.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000696.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000696
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4e8d66be5947e204f8a0c9e368134c1fb4cb84e276c8c4a3d560a53e82a891ff
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000696.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000699.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000699
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 685a4600a87bff40f3fece4c0b85d839df5d26c8666dc924922b93c4790795cf
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000699.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000702.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000702
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 39eef7fbf145631f574c328a76948ae0c924bcfa06738c554298c68223d8d1d1
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000702.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000705.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000705
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 abdcf68cc6b434231239c7f23e30b26145127347cf7f3454391083bd081938ac
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000705.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000708.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000708
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 1d6a5be62c9d93e60da71b615e6c0ffcc29490f81a4b43c75559ccfe6be4353d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000708.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000711.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000711
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 01bc90bd6f51872d34d9c7633a009b037491666965ba4e4f9cce640ae0944472
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000711.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000714.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000714
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 96a8a78830963810a444f23cb19be4b96076638a2f60d4f8ffa7b2d769237fef
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000714.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000717.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000717
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7579329ec39346311ffe23af0ae9b9f88a0c152cfb4957216ef9b2ef7f656183
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000717.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000720.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000720
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7529b7dc7e148a3ff120b5053a532ff703d79fc0c18a2ef11747feda89d2e832
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000720.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000723.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000723
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ace7a410de2bbbe763c30817c594b4f69c46effdd964fd800a90226e0391ac75
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000723.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000726.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000726
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 67718a1851b89a6f534958231fd47b0b23ada60dfe8ae914fe709b868f3b15c8
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000726.sky1 (3553013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000729.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000729
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 aedd9298cabf8609092ef0b08a93a5668c2783589a331affe7d709c46c857f24
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000729.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000732.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000732
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a46eb4aad8114495ce34787c1bed8c737f5716e5efc6c2f77272769f1768c93f
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000732.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000735.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000735
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 575d814736eb54490f896f360d6c349cfc70069730ddf51e7e7f2e8cfd2d2f6b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000735.sky1 (3544653 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000738.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000738
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 6ab595ca380f290b7a7ae752c7608324d0efeed1863a28845ed0b6d394f1a234
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000738.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000741.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000741
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 c87b3f8fff36fa7dabc6722731970f0f9421b7832c3ab7c6615a83af91c29dc0
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000741.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000744.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000744
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 70d3dbe363af02016f38117bc9dfe3f586c0350113abc0d64755b7efb51b5e0c
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000744.sky1 (3486013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000747.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000747
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 aabb3f29aba76ca739c2519fad6ab3d223ee2741742dc8464d47cfc13f70bb8b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000747.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000750.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000750
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 2106f0acbc2abe718eb811c48d650417760fb84da1f614eeb00c9c573f78cf8b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000750.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000753.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000753
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 ff6b4de306b4e739103160beb7b365b8e371583a0dc580b149d1ffa5a3592cd2
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000753.sky1 (3594513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000756.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000756
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a3190159a3f86a638af3d106e84fc27822dc6fa649fc122b0c23f1ed41527de9
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000756.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000759.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000759
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 07598779204e2186089afe7d6ad1ccd7dc5ed2e432647d89dc18e9ff34d7fee6
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000759.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000762.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000762
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 9934cdeaf4faf504ca84c3785020350afb95e6276af535ff7abdc31ff3893269
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000762.sky1 (3561613 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000765.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000765
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 91a8eee21a3183c4ccc1e69296d94d7b8364668b9c6e36b0447bee987cccec26
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000765.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000768.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000768
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 84977b080db862b9dcecdda9a18b8564a6b9bc12235fec287ed704c7aa031217
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000768.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000771.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000771
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 7c302398d96d63bcf9fd1706dab1ee06172445311a88997629d8973288f02933
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000771.sky1 (3587053 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000774.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000774
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 f9c34583a4f4e7f12c36f08a77cfe737e5c50a6009169daa7f28450fe5b55233
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000774.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000777.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000777
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 5a664c1180492c518da1efe4ba3ce504dc129c4cd302b4ba63e5b0ce77d64e41
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000777.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000780.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000780
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 46cbb9343fa3fa6e6a5bf365e019105de20c88251ceaeb9d14da19c20402633d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000780.sky1 (3570013 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000783.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000783
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 90f49a4ba7e1da1e24f673239bbe04b56c161b4a3b571f52c5089bce4cf9335b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000783.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000786.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000786
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 42825679f08e304ad52a567271b197ad68cb41893f4c1d9c16ad3d282498a862
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000786.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000789.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000789
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 adebeb944f9175c5f581a3580174323078360dc90e221ccd28f11ea26ed33526
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000789.sky1 (3595513 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000792.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000792
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 e3c2e9c3429942e10c4bd710b9840d50cb1ccfadffdddd1d0e65e0606f09be30
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000792.sky1 (3553313 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000795.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000795
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 d28bdb7b92cc750196e3665fce808390a6546ff5118096f678fd4a1a93ea43b5
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000795.sky1 (3553313 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000798.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000798
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 86dd470359e35c835eb87d96e7db6e0776c021b57f99b8d58eae9fb29fdd406b
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000798.sky1 (3553313 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000801.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000801
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 19ca8396188acc1cfb6de2ef01d292bddd325fe7d6b1509923f8463f8df9831d
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000801.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000804.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000804
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 4e8af04ded771701ce180d466b66884cfd9f32e2226a143e068b138c59dc0023
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000804.sky1 (14263493 B); CDN present 2026-09-19.
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000807.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000807
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+sha256 a5bf929ad6b384b9f78d4e7a6aab401d1355581c55fbc196eb66779ed020ab73
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte fgn00000807.sky1 (14263493 B); CDN present 2026-09-19.
+

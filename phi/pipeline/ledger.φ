@@ -11,9 +11,9 @@ ausstehend
 kandidat https://dachs.fai.kz/tap
 note ivo://fai.kz/tap — Re-Messung 2026-09-19: sync-QUERY HTTP 500, VOTable-Error localhost:5432 connection refused; Root 200. Backend down; Re-Check.
 
-kompiliert
+verifiziert
 kandidat http://vo.lmd.jussieu.fr/tap
-note ivo://lmd.jussieu/tap — Schema 2026-09-19: mars_dust.epn_core = Montabone CDOD-FITS-Cubes (em, accept); vcd+mcd = GCM-Modelle (decline Modell). Port gebaut: mars_dust_compiler.rs + mars-dust-cdn.yml; sources.φ/harvest.φ registriert; CDN-Manifestation via Dispatch.
+note ivo://lmd.jussieu/tap — mars_dust.epn_core = Montabone CDOD-FITS-Cubes (em, accept); vcd+mcd = GCM-Modelle (decline Modell). Port mars_dust_compiler.rs; CDN asset 500947208 B sha256 95cb8509… present (run 35461031672 success 2026-09-19).
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
