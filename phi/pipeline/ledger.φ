@@ -119,9 +119,9 @@ ausstehend
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
-ausstehend
+parser-gap
 kandidat https://openneuro.org/datasets/ds007822
-note OpenNeuro EEG-Hyperscanning, 11 Triaden, EEGLAB .set MAT-v5, CC0, 379 MB. --dataset + workflow-Input gebaut (default ds005034, Filter getrennt); Probe run 35468307481 @cbd8573a in_progress. Schritt: Watchdog/ci_manage view 35468307481; grün → sources.φ-Registrierung.
+note OpenNeuro EEG-Hyperscanning, 11 Triaden, EEGLAB .set MAT-v5, CC0, 379 MB. Probe 35468606830 @7aa5c23e failure 2026-09-19: jedes .set „carries no EEG contract" (openneuro_compiler.rs:426/483; extract_eeg:300 → None, 0 honored). Schritt: --local-Lauf auf einer .set in CI, fehlendes Feld (nbchan/pnts/chanlocs/data) benennen; dann Arm/Guard in bau.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
