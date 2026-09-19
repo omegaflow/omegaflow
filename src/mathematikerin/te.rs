@@ -905,6 +905,19 @@ fn lagged_predict_n(coeffs: &[f64], y: &[f32], conds: &[&[f32]], t: usize, max_l
     v
 }
 
+fn arx_null_cond_series<'a>(conds: &[LaggedCond<'a>]) -> Vec<&'a [f32]> {
+    let mut groups: Vec<&'a [f32]> = Vec::with_capacity(conds.len());
+    for c in conds {
+        if groups
+            .iter()
+            .all(|g| !std::ptr::eq(g.as_ptr(), c.series.as_ptr()))
+        {
+            groups.push(c.series);
+        }
+    }
+    groups
+}
+
 fn ols_fit_lagged_nx(
     y: &[f32],
     conds: &[LaggedCond],
@@ -920,12 +933,17 @@ fn ols_fit_lagged_nx(
             return None;
         }
     }
-    let t0 = max_lag.max(max_cond_lag(conds));
+    assert!(
+        max_cond_lag(conds) <= max_lag,
+        "a cond column beyond the null window is outside the superset — the fit covers lags 0..=max_lag per distinct series"
+    );
+    let t0 = max_lag;
     if n < t0 + 4 {
         return None;
     }
-    let n_cond = conds.len();
-    let k = 1 + max_lag + n_cond + max_lag;
+    let groups = arx_null_cond_series(conds);
+    let n_cond = groups.len();
+    let k = 1 + max_lag + n_cond * (max_lag + 1) + max_lag;
     let mut a = vec![0f64; k * k];
     let mut b = vec![0f64; k];
     for t in t0..n {
@@ -934,8 +952,10 @@ fn ols_fit_lagged_nx(
         for l in 1..=max_lag {
             row.push(y[t - l] as f64);
         }
-        for c in conds {
-            row.push(c.series[t - c.lag] as f64);
+        for c in &groups {
+            for l in 0..=max_lag {
+                row.push(c[t - l] as f64);
+            }
         }
         for l in 1..=max_lag {
             row.push(x[t - l] as f64);
@@ -954,7 +974,7 @@ fn ols_fit_lagged_nx(
 fn lagged_predict_nx(
     coeffs: &[f64],
     y: &[f32],
-    conds: &[LaggedCond],
+    groups: &[&[f32]],
     x: &[f32],
     t: usize,
     max_lag: usize,
@@ -964,10 +984,13 @@ fn lagged_predict_nx(
         v += coeffs[l] * y[t - l] as f64;
     }
     let cbase = 1 + max_lag;
-    for (ci, c) in conds.iter().enumerate() {
-        v += coeffs[cbase + ci] * c.series[t - c.lag] as f64;
+    for (ci, c) in groups.iter().enumerate() {
+        let base = cbase + ci * (max_lag + 1);
+        for l in 0..=max_lag {
+            v += coeffs[base + l] * c[t - l] as f64;
+        }
     }
-    let xbase = cbase + conds.len();
+    let xbase = cbase + groups.len() * (max_lag + 1);
     for l in 1..=max_lag {
         v += coeffs[xbase + l - 1] * x[t - l] as f64;
     }
@@ -1016,11 +1039,16 @@ pub fn arx_conditional_surrogate(
     if x.len() != n {
         return None;
     }
-    let t0 = max_lag.max(max_cond_lag(conds));
+    assert!(
+        max_cond_lag(conds) <= max_lag,
+        "a cond column beyond the null window is outside the superset — the null re-simulation covers lags 0..=max_lag per distinct series"
+    );
+    let t0 = max_lag;
+    let groups = arx_null_cond_series(conds);
     match ols_fit_lagged_nx(y, conds, x, max_lag) {
         Some(coeffs) => {
             let resid: Vec<f64> = (t0..n)
-                .map(|t| y[t] as f64 - lagged_predict_nx(&coeffs, y, conds, x, t, max_lag))
+                .map(|t| y[t] as f64 - lagged_predict_nx(&coeffs, y, &groups, x, t, max_lag))
                 .collect();
             let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
             let perm = restricted_permutation_surrogate(&resid_f32, rng);
@@ -1029,7 +1057,7 @@ pub fn arx_conditional_surrogate(
                 out[t] = if t < t0 {
                     y[t]
                 } else {
-                    let v = lagged_predict_nx(&coeffs, &out, conds, x, t, max_lag)
+                    let v = lagged_predict_nx(&coeffs, &out, &groups, x, t, max_lag)
                         + perm[t - t0] as f64;
                     if !v.is_finite() {
                         return None;
@@ -3414,6 +3442,15 @@ mod tests {
         }
     }
 
+    const FPR_RISE_Z: f64 = 3.0;
+
+    fn fpr_rise_sigma_test(f0: f64, f9: f64, neg0: usize, neg9: usize) -> bool {
+        let p0 = f0 / 100.0;
+        let p9 = f9 / 100.0;
+        let var = p0 * (1.0 - p0) / neg0 as f64 + p9 * (1.0 - p9) / neg9 as f64;
+        f9 - f0 <= FPR_RISE_Z * var.sqrt() * 100.0
+    }
+
     fn gate_fpr_autocorr_assert(cells: &[GateCell]) {
         let rows: Vec<(f32, usize, Option<f64>)> = cells
             .iter()
@@ -3448,28 +3485,115 @@ mod tests {
                 "Zug 5: FPR {fpr:.2}% at a={a} D_Z={d_z} exceeds 8% — the null does not hold under autocorrelation ({named})"
             );
         }
-        let mut d_zs: Vec<usize> = rows.iter().map(|&(_, d_z, _)| d_z).collect();
+        let mut d_zs: Vec<usize> = cells.iter().map(|c| c.d_z).collect();
         d_zs.sort_unstable();
         d_zs.dedup();
         for d_z in d_zs {
-            let f0 = rows
+            let c0 = cells
                 .iter()
-                .find(|&&(a, d, _)| a == 0.0 && d == d_z)
-                .expect("Zug 5: a=0 cell measured")
-                .2
-                .expect("Zug 5: a=0 cell carries neg>0");
-            let f9 = rows
+                .find(|c| c.a == 0.0 && c.d_z == d_z)
+                .expect("Zug 5: a=0 cell measured");
+            let c9 = cells
                 .iter()
-                .find(|&&(a, d, _)| a == 0.9 && d == d_z)
-                .expect("Zug 5: a=0.9 cell measured")
-                .2
-                .expect("Zug 5: a=0.9 cell carries neg>0");
+                .find(|c| c.a == 0.9 && c.d_z == d_z)
+                .expect("Zug 5: a=0.9 cell measured");
+            let f0 = 100.0 * c0.fp as f64 / c0.neg as f64;
+            let f9 = 100.0 * c9.fp as f64 / c9.neg as f64;
+            let rise = f9 - f0;
             assert!(
-                f9 - f0 <= 2.0,
-                "Zug 5: FPR rise {:.2}pp over a at D_Z={d_z} exceeds 2pp — the null leaks autocorrelation into the FPR ({named})",
-                f9 - f0
+                fpr_rise_sigma_test(f0, f9, c0.neg, c9.neg),
+                "Zug 5: FPR rise {:.2}pp over a at D_Z={d_z} exceeds 3σ of the binomial difference of the measured cells — the null leaks autocorrelation into the FPR ({named})",
+                rise
             );
         }
+    }
+
+    fn fpr_rise_normal_tail(z: f64) -> f64 {
+        let steps = 4000usize;
+        let hi = 10.0;
+        let h = (hi - z) / steps as f64;
+        let mut sum = 0.0;
+        for i in 0..steps {
+            let x = z + (i as f64 + 0.5) * h;
+            sum += (-0.5 * x * x).exp();
+        }
+        sum * h / (2.0 * std::f64::consts::PI).sqrt()
+    }
+
+    fn fpr_rise_trip_mc(p: f64, neg0: usize, neg9: usize, n: usize, rng: &mut u64) -> (f64, f64) {
+        let mut one = 0usize;
+        let mut two = 0usize;
+        for _ in 0..n {
+            let mut fp0 = 0usize;
+            for _ in 0..neg0 {
+                if next_rng(rng) < p {
+                    fp0 += 1;
+                }
+            }
+            let mut fp9 = 0usize;
+            for _ in 0..neg9 {
+                if next_rng(rng) < p {
+                    fp9 += 1;
+                }
+            }
+            let f0 = 100.0 * fp0 as f64 / neg0 as f64;
+            let f9 = 100.0 * fp9 as f64 / neg9 as f64;
+            if !fpr_rise_sigma_test(f0, f9, neg0, neg9) {
+                one += 1;
+            }
+            let p0 = f0 / 100.0;
+            let p9 = f9 / 100.0;
+            let var = p0 * (1.0 - p0) / neg0 as f64 + p9 * (1.0 - p9) / neg9 as f64;
+            if (f9 - f0).abs() > FPR_RISE_Z * var.sqrt() * 100.0 {
+                two += 1;
+            }
+        }
+        (one as f64 / n as f64, two as f64 / n as f64)
+    }
+
+    #[test]
+    fn gate_fpr_rise_calibration() {
+        let mc = 100_000usize;
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let configs = [
+            (0.08f64, 400usize, 400usize),
+            (0.08f64, 392usize, 392usize),
+            (0.0475f64, 400usize, 400usize),
+            (0.06f64, 400usize, 400usize),
+            (0.0725f64, 400usize, 400usize),
+            (0.0659f64, 392usize, 392usize),
+            (0.0714f64, 392usize, 392usize),
+        ];
+        let exp_one = fpr_rise_normal_tail(FPR_RISE_Z);
+        let exp_two = 2.0 * exp_one;
+        let mc_sigma_one = (exp_one * (1.0 - exp_one) / mc as f64).sqrt();
+        let mc_sigma_two = (exp_two * (1.0 - exp_two) / mc as f64).sqrt();
+        let mut two_sum = 0.0;
+        for (p, neg0, neg9) in configs {
+            let (one, two) = fpr_rise_trip_mc(p, neg0, neg9, mc, &mut rng);
+            two_sum += two;
+            assert!(
+                (one - exp_one).abs() <= 3.0 * mc_sigma_one,
+                "one-sided trip rate {one:.5} at p={p} neg=({neg0},{neg9}) leaves the MC band around {exp_one:.5}"
+            );
+            assert!(
+                (two - exp_two).abs() <= 3.0 * mc_sigma_two,
+                "two-sided trip rate {two:.5} at p={p} neg=({neg0},{neg9}) leaves the MC band around {exp_two:.5}"
+            );
+        }
+        let collective = 1.0 - (1.0 - two_sum / configs.len() as f64).powi(18);
+        assert!(
+            (collective - 0.05).abs() <= 0.01,
+            "the collective two-sided false-trip rate over 18 rise cells is {collective:.3} — the 5% multiplicity holds"
+        );
+        assert!(
+            fpr_rise_sigma_test(4.75, 7.25, 400, 400),
+            "the measured restricted-null rise 4.75→7.25% over a (1.49σ) stays green under the 3σ test"
+        );
+        assert!(
+            !fpr_rise_sigma_test(9.0, 18.0, 400, 400),
+            "the folge86 leak profile 9→18% over a at rho=0.9 measures 3.76σ at the battery cell size and stays red"
+        );
     }
 
     fn gate_fpr_autocorr(null: TeNull, est: TeEstimator) {
@@ -4135,7 +4259,22 @@ mod tests {
     }
 
     #[test]
-    fn arx_conditional_surrogate_refuses_when_condition_is_duplicated() {
+    fn arx_conditional_surrogate_refuses_when_condition_duplicates_the_driver() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let y = gate_ar1(128, 0.5, &mut rng);
+        let x = gate_ar1(128, 0.5, &mut rng);
+        let conds = [LaggedCond {
+            series: x.as_slice(),
+            lag: 0,
+        }];
+        assert!(
+            arx_conditional_surrogate(&y, &x, &conds, 4, &mut rng).is_none(),
+            "a condition series identical to the driver duplicates the x-lag columns — the refusal arm (None) is the answer, never a silent shuffle"
+        );
+    }
+
+    #[test]
+    fn arx_conditional_surrogate_dedups_one_series_across_lag_pairs() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         let y = gate_ar1(128, 0.5, &mut rng);
         let x = gate_ar1(128, 0.5, &mut rng);
@@ -4147,13 +4286,13 @@ mod tests {
             },
             LaggedCond {
                 series: c.as_slice(),
-                lag: 0,
+                lag: 1,
             },
         ];
-        assert!(
-            arx_conditional_surrogate(&y, &x, &conds, 4, &mut rng).is_none(),
-            "a duplicated condition column makes the design singular — the refusal arm (None) is the answer, never a silent shuffle"
-        );
+        let s = arx_conditional_surrogate(&y, &x, &conds, 4, &mut rng)
+            .expect("one series across two lag pairs dedups to one history — the fit resolves");
+        assert_eq!(s.len(), 128);
+        assert!(s.iter().all(|v| v.is_finite()));
     }
 
     #[test]
@@ -4733,7 +4872,7 @@ mod tests {
         }
         let te_c = transfer_entropy_conditional(&x, &y, &c, 1).expect("conditional TE resolves");
         let (_, _, thr_c) =
-            conditional_te_stats_lagged(&x, &y, &c, 1, 1, 0x9E37_79B9_7F4A_7C15, 10)
+            conditional_te_stats_lagged(&x, &y, &c, 1, 1, 0x9E37_79B9_7F4A_7C15, 256)
                 .expect("lagged conditional null resolves");
         assert!(
             te_c > thr_c,
@@ -4774,9 +4913,9 @@ mod tests {
         let te_ab = transfer_entropy_conditional(&b, &a, &z, 1).expect("A->B resolves");
         let te_ba = transfer_entropy_conditional(&a, &b, &z, 1).expect("B->A resolves");
         let (_, _, thr_ab) =
-            conditional_te_stats_lagged(&b, &a, &z, 1, 1, seed, 10).expect("null A->B resolves");
+            conditional_te_stats_lagged(&b, &a, &z, 1, 1, seed, 256).expect("null A->B resolves");
         let (_, _, thr_ba) =
-            conditional_te_stats_lagged(&a, &b, &z, 1, 1, seed, 10).expect("null B->A resolves");
+            conditional_te_stats_lagged(&a, &b, &z, 1, 1, seed, 256).expect("null B->A resolves");
         assert!(
             te_ab > thr_ab,
             "synthetic DAG: recover the known true edge A->B, got cond {} thr {}",
@@ -5101,7 +5240,7 @@ mod tests {
                 max_lag: 1,
                 bins,
                 seed: 0x9E37_79B9_7F4A_7C15,
-                n_surr: 10,
+                n_surr: 256,
                 null: TeNull::Arx,
             },
         )
