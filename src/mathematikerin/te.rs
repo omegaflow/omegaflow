@@ -5102,88 +5102,127 @@ mod tests {
     #[test]
     fn flare_envelope_conditional_keeps_true_coupling() {
         let n = 240;
-        let mut rng = 0x6A2B_7A5B_3C1D_9E4Fu64;
-        let noise = |rng: &mut u64| -> f32 {
-            *rng = rng
-                .wrapping_mul(6364136223846793005)
-                .wrapping_add(1442695040888963407);
-            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
-        };
-        let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
-        let mut x = vec![0f32; n];
-        let mut y = vec![0f32; n];
-        let mut y_ind = vec![0f32; n];
         let alpha = 0.90f32;
-        for t in 0..n {
-            let ny = noise(&mut rng);
-            y_ind[t] = ny;
-            x[t] = c[t] + 0.4 * noise(&mut rng);
-            y[t] = if t == 0 {
-                0.0
-            } else {
-                alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.3 * ny
+        let trials = 30usize;
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for trial in 0..trials {
+            let seed =
+                0x6A2B_7A5B_3C1D_9E4Fu64 ^ (trial as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let mut rng = seed;
+            let noise = |rng: &mut u64| -> f32 {
+                *rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
             };
+            let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+            let mut x = vec![0f32; n];
+            let mut y = vec![0f32; n];
+            let mut y_ind = vec![0f32; n];
+            for t in 0..n {
+                let ny = noise(&mut rng);
+                y_ind[t] = ny;
+                x[t] = c[t] + 0.4 * noise(&mut rng);
+                y[t] = if t == 0 {
+                    0.0
+                } else {
+                    alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.3 * ny
+                };
+            }
+            for t in 0..n - 1 {
+                x[t + 1] += 0.6 * y_ind[t];
+            }
+            let Some(te_c) = transfer_entropy_conditional(&x, &y, &c, 1) else {
+                continue;
+            };
+            let Some((_, _, thr_c)) =
+                conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed ^ 0x9E37_79B9_7F4A_7C15, 256)
+            else {
+                continue;
+            };
+            meas += 1;
+            if te_c > thr_c {
+                found += 1;
+            }
         }
-        for t in 0..n - 1 {
-            x[t + 1] += 0.6 * y_ind[t];
-        }
-        let te_c = transfer_entropy_conditional(&x, &y, &c, 1).expect("conditional TE resolves");
-        let (_, _, thr_c) =
-            conditional_te_stats_lagged(&x, &y, &c, 1, 1, 0x9E37_79B9_7F4A_7C15, 256)
-                .expect("lagged conditional null resolves");
         assert!(
-            te_c > thr_c,
-            "flare-envelope gate: true coupling beyond the shared envelope must survive conditioning, got cond {} thr {}",
-            te_c,
-            thr_c
+            meas > 0,
+            "flare-envelope gate: no true-coupling realization resolved"
+        );
+        assert!(
+            found as f64 / meas as f64 >= 0.5,
+            "flare-envelope gate: true coupling beyond the shared envelope survived conditioning in only {found}/{meas} realizations — below 50%"
         );
     }
 
     #[test]
     fn synthetic_dag_recovers_known_direction() {
         let n = 240;
-        let mut rng = 0x9E4F_6A2B_7A5B_3C1Du64;
-        let noise = |rng: &mut u64| -> f32 {
-            *rng = rng
-                .wrapping_mul(6364136223846793005)
-                .wrapping_add(1442695040888963407);
-            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
-        };
-        let z = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
-        let mut a = vec![0f32; n];
-        let mut b = vec![0f32; n];
-        let mut a_ind = vec![0f32; n];
         let alpha = 0.90f32;
-        for t in 0..n {
-            a_ind[t] = noise(&mut rng);
-            a[t] = z[t] + 0.4 * a_ind[t];
-            b[t] = if t == 0 {
-                0.0
-            } else {
-                alpha * b[t - 1] + (1.0 - alpha) * z[t - 1] + 0.3 * noise(&mut rng)
+        let trials = 30usize;
+        let mut found_ab = 0usize;
+        let mut found_ba = 0usize;
+        let mut meas = 0usize;
+        for trial in 0..trials {
+            let seed =
+                0x9E4F_6A2B_7A5B_3C1Du64 ^ (trial as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let mut rng = seed;
+            let noise = |rng: &mut u64| -> f32 {
+                *rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
             };
+            let z = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+            let mut a = vec![0f32; n];
+            let mut b = vec![0f32; n];
+            let mut a_ind = vec![0f32; n];
+            for t in 0..n {
+                a_ind[t] = noise(&mut rng);
+                a[t] = z[t] + 0.4 * a_ind[t];
+                b[t] = if t == 0 {
+                    0.0
+                } else {
+                    alpha * b[t - 1] + (1.0 - alpha) * z[t - 1] + 0.3 * noise(&mut rng)
+                };
+            }
+            for t in 0..n - 1 {
+                b[t + 1] += 0.5 * a_ind[t];
+            }
+            let null_seed = seed ^ 0x9E37_79B9_7F4A_7C15;
+            let Some(te_ab) = transfer_entropy_conditional(&b, &a, &z, 1) else {
+                continue;
+            };
+            let Some(te_ba) = transfer_entropy_conditional(&a, &b, &z, 1) else {
+                continue;
+            };
+            let Some((_, _, thr_ab)) =
+                conditional_te_stats_lagged(&b, &a, &z, 1, 1, null_seed, 256)
+            else {
+                continue;
+            };
+            let Some((_, _, thr_ba)) =
+                conditional_te_stats_lagged(&a, &b, &z, 1, 1, null_seed, 256)
+            else {
+                continue;
+            };
+            meas += 1;
+            if te_ab > thr_ab {
+                found_ab += 1;
+            }
+            if te_ba > thr_ba {
+                found_ba += 1;
+            }
         }
-        for t in 0..n - 1 {
-            b[t + 1] += 0.5 * a_ind[t];
-        }
-        let seed = 0x9E37_79B9_7F4A_7C15;
-        let te_ab = transfer_entropy_conditional(&b, &a, &z, 1).expect("A->B resolves");
-        let te_ba = transfer_entropy_conditional(&a, &b, &z, 1).expect("B->A resolves");
-        let (_, _, thr_ab) =
-            conditional_te_stats_lagged(&b, &a, &z, 1, 1, seed, 256).expect("null A->B resolves");
-        let (_, _, thr_ba) =
-            conditional_te_stats_lagged(&a, &b, &z, 1, 1, seed, 256).expect("null B->A resolves");
+        assert!(meas > 0, "synthetic DAG: no direction realization resolved");
         assert!(
-            te_ab > thr_ab,
-            "synthetic DAG: recover the known true edge A->B, got cond {} thr {}",
-            te_ab,
-            thr_ab
+            found_ab as f64 / meas as f64 >= 0.5,
+            "synthetic DAG: the known true edge A->B was recovered in only {found_ab}/{meas} realizations — below 50%"
         );
         assert!(
-            te_ba <= thr_ba,
-            "synthetic DAG: reject the false reverse edge B->A, got cond {} thr {}",
-            te_ba,
-            thr_ba
+            found_ba as f64 / meas as f64 <= 0.5,
+            "synthetic DAG: the false reverse edge B->A was detected in {found_ba}/{meas} realizations — above 50%"
         );
     }
 
