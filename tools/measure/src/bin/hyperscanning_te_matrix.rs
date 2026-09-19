@@ -86,7 +86,14 @@ struct PairFinding {
     fam: Option<f64>,
 }
 
-fn best_pair(driver: &[f32], target: &[f32], lags: usize, n_surr: usize, bins: usize, seed: u64) -> Option<PairFinding> {
+fn best_pair(
+    driver: &[f32],
+    target: &[f32],
+    lags: usize,
+    n_surr: usize,
+    bins: usize,
+    seed: u64,
+) -> Option<PairFinding> {
     let n = driver.len().min(target.len());
     if n < MIN_N {
         return None;
@@ -149,8 +156,7 @@ fn main() {
     let seed: u64 = arg_value(&args, "--seed")
         .and_then(|v| v.parse().ok())
         .unwrap_or(SEED);
-    let max_points: Option<usize> = arg_value(&args, "--max-points")
-        .and_then(|v| v.parse().ok());
+    let max_points: Option<usize> = arg_value(&args, "--max-points").and_then(|v| v.parse().ok());
 
     let chan_note = match &channel {
         Some(sel) => format!("channel [{sel}]"),
@@ -169,7 +175,9 @@ fn main() {
                 series.push(Some(s));
             }
             None => {
-                println!("  [{path}] absent — the recording carries no readable series (0 honored)");
+                println!(
+                    "  [{path}] absent — the recording carries no readable series (0 honored)"
+                );
                 series.push(None);
             }
         }
@@ -194,9 +202,7 @@ fn main() {
                 continue;
             }
             let finding = match (&series[i], &series[j]) {
-                (Some(driver), Some(target)) => {
-                    best_pair(driver, target, lags, n_surr, bins, seed)
-                }
+                (Some(driver), Some(target)) => best_pair(driver, target, lags, n_surr, bins, seed),
                 _ => None,
             };
             match finding {

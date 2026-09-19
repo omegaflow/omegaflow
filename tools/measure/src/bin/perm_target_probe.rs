@@ -378,20 +378,14 @@ fn null_line(name: &str, values: &[f32], real_px1: f32, rng: &mut u64) {
         return;
     }
     let m = masses.iter().sum::<f32>() / masses.len() as f32;
-    let var = masses
-        .iter()
-        .map(|v| (v - m) * (v - m))
-        .sum::<f32>()
-        / masses.len() as f32;
+    let var = masses.iter().map(|v| (v - m) * (v - m)).sum::<f32>() / masses.len() as f32;
     let envelope = m + 2.0 * var.sqrt();
     let verdict = if real_px1 > envelope {
         "outside envelope"
     } else {
         "within envelope"
     };
-    println!(
-        " null {name:<22} | mean {m:.4} | +2σ {envelope:.4} | real {real_px1:.4} | {verdict}"
-    );
+    println!(" null {name:<22} | mean {m:.4} | +2σ {envelope:.4} | real {real_px1:.4} | {verdict}");
 }
 
 fn ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f32> {
@@ -565,12 +559,12 @@ fn main() {
         let row = row_from(xs, ts, n_eps);
         print_row(&format!("two-cluster {sep:.0}σ"), &row);
         if a_count * 10 < 3 * v.len() || b_count * 10 < 3 * v.len() {
-            eprintln!(
-                "g4: two-cluster {sep:.0}σ mode balance void (a={a_count}, b={b_count})"
-            );
+            eprintln!("g4: two-cluster {sep:.0}σ mode balance void (a={a_count}, b={b_count})");
             std::process::exit(2);
         }
     }
     println!();
-    println!("gates: g1 x finite — measured; g3 AR(1) lag-1 — measured; g4 two-cluster balance — measured");
+    println!(
+        "gates: g1 x finite — measured; g3 AR(1) lag-1 — measured; g4 two-cluster balance — measured"
+    );
 }

@@ -131,7 +131,14 @@ fn extract_id(resp: &str) -> Option<String> {
     Some(rest[..end].to_string())
 }
 
-fn sent_line(ts: u64, from: &str, to: &str, subject: &str, id: Option<&str>, bytes: usize) -> String {
+fn sent_line(
+    ts: u64,
+    from: &str,
+    to: &str,
+    subject: &str,
+    id: Option<&str>,
+    bytes: usize,
+) -> String {
     let subject_clean = subject
         .replace('\r', "")
         .replace('\t', " ")
@@ -276,7 +283,10 @@ mod tests {
 
     #[test]
     fn extract_id_reads_resend_response() {
-        assert_eq!(extract_id("{\"id\":\"abc-123\"}"), Some("abc-123".to_string()));
+        assert_eq!(
+            extract_id("{\"id\":\"abc-123\"}"),
+            Some("abc-123".to_string())
+        );
         assert_eq!(extract_id("{\"statusCode\":403}"), None);
     }
 

@@ -1,9 +1,9 @@
+#[path = "archive_search/arxiv_src.rs"]
+mod arxiv_src;
 #[path = "archive_search/datacite.rs"]
 mod datacite;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
-#[path = "archive_search/arxiv_src.rs"]
-mod arxiv_src;
 #[path = "archive_search/git.rs"]
 mod git;
 #[path = "archive_search/heasarc.rs"]
@@ -628,7 +628,13 @@ fn url_stem(input: &str) -> String {
 
 fn sanitize_stem(s: &str) -> String {
     s.chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '-' || c == '_' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect()
 }
 
@@ -1575,7 +1581,8 @@ mod tests {
         pdf.extend_from_slice(b"%PDF-1.4\n1 0 obj\n<< /Length 22 >>\nstream\n");
         pdf.extend_from_slice(body);
         pdf.extend_from_slice(b"\nendstream\nendobj\n%%EOF\n");
-        let path = env::temp_dir().join(format!("archive_search_{name}_{}.pdf", std::process::id()));
+        let path =
+            env::temp_dir().join(format!("archive_search_{name}_{}.pdf", std::process::id()));
         fs::write(&path, &pdf).expect("write temp pdf");
         path
     }
