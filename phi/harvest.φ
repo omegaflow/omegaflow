@@ -54,7 +54,7 @@ idempotent true
 timeout 120
 note exofop_toi.bin 358525 B sha256 440a7fdc…0321 CDN 200 measured 2026-09-19 (run 35426107470 success); Quelle download_toi.php?sort=toi&output=pipe 1770 Zeilen/63 Spalten; Format EXF1 44 B/Record, 6 Felder (TIC,TOI,RA,Dec,BJD,Tiefe ppm).
 
-asset fehlt
+asset present
 format gedi_l2a
 tag data.lpdaac.earthdatacloud.nasa.gov
 arm gedi_l2a_compiler
@@ -62,7 +62,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98 day 2025.07.09. Run 35351460528 timeout 180s: unbounded hdf5 traversal. Range-Guard MAX_TRAVERSAL_BYTES=1<<26 (Hdf5Note::TraversalBudget, Test object_header_traversal_is_range_bounded); Re-Run 35471362190 dispatchet 2026-09-19.
+note GEDI02_A v002 RH98 day 2025.07.09. Range-Guard MAX_TRAVERSAL_BYTES=1<<26 (Hdf5Note::TraversalBudget) behob den Hang; CDN --sniff 2026-09-19: 600520 B sha256 11c04ada… (run 35471362190).
 
 asset present
 format goes16_abi
