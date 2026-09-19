@@ -1581,7 +1581,7 @@ compiler tools/harvest/src/bin/exofop_compiler.rs
 at sun
 ttl 86400
 field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
-note Endpoint download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1770 Zeilen, 63 Spalten; TIC/TOI + RA/Dec (sexagesimal) + BJD-Epoch + Tiefe ppm (Force em ΔF/F); Asset via exofop_compiler --ci-mode.
+note Endpoint download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1770 Zeilen, 63 Spalten; TIC/TOI + RA/Dec (sexagesimal) + BJD-Epoch + Tiefe ppm (Force em ΔF/F); CDN-Asset exofop_toi.bin 358525 B sha256 440a7fdc…0321 measured 2026-09-19 (run 35426107470 success).
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
 format ephemeris_epm
