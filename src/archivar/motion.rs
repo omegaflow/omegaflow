@@ -259,8 +259,20 @@ pub fn body_fixed_to_icrs(
 ) -> Option<[f64; 3]> {
     let e = eph.get(name)?;
     let bp = e.props.as_ref()?;
-    let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
     let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
+    body_fixed_vector_to_icrs(name, [xb, yb, zb], tdb, eph)
+}
+
+pub fn body_fixed_vector_to_icrs(
+    name: &str,
+    xyz_body_fixed: [f64; 3],
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let bp = e.props.as_ref()?;
+    let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
+    let [xb, yb, zb] = xyz_body_fixed;
     let jd = tdb / 86400.0 + J2000_EPOCH;
     if !e.rotation_matrices.is_empty() {
         let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
