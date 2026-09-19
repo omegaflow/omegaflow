@@ -1734,6 +1734,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_arx_null_single_lag_col_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/mathematikerin/te.rs", &fx("arx_null_single_lag_col"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fn_riss_keeps_its_word_passes() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("riss_kept"));
