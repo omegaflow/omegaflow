@@ -44,3 +44,7 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_reversed_n1000
       - name: Run the two-confounder n=1000 FPR gate (the direct _2 path)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_2_fpr_n1000
+      - name: Run the coupling scan te_c/thr_c (the per-lag calibration curve)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture coupling_scan_te_over_thr_n1000
+      - name: Run the FPR-vs-bins sweep (the restricted-null calibration curve)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture fpr_bins_sweep_n2000
