@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use omegaflow::archivar::cassini_rsr;
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::cdn::upload_release;
@@ -6,6 +8,8 @@ const DATA: &str = "https://atmos.nmsu.edu/pdsd/archive/data/";
 const NETLOC: &str = "atmos.nmsu.edu";
 const PREFIX: &str = "cassini_rsr";
 const REQUEST_TTL_S: u64 = 604800;
+const CRAWL_THREADS: usize = 16;
+const CRAWL_DEPTH: u32 = 8;
 
 fn hrefs(text: &str) -> Vec<String> {
     let low = text.to_ascii_lowercase();
@@ -48,43 +52,105 @@ fn volumes() -> Option<Vec<String>> {
     Some(out)
 }
 
-fn crawl(url: &str, depth: u32, files: &mut Vec<String>, failures: &mut usize) {
-    if depth > 8 {
-        return;
+fn skip_dir(dir: &str) -> bool {
+    matches!(
+        dir,
+        "index" | "calib" | "catalog" | "document" | "errata" | "tlm" | "158" | "odf"
+    )
+}
+
+fn crawl_wave(urls: &[String]) -> (Vec<String>, Vec<String>, usize) {
+    if urls.is_empty() {
+        return (Vec::new(), Vec::new(), 0);
     }
-    let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
-        eprintln!("{url}: listing fetch void");
-        *failures += 1;
-        return;
-    };
-    let Ok(text) = std::str::from_utf8(&bytes) else {
-        eprintln!("{url}: listing not utf8");
-        *failures += 1;
-        return;
-    };
-    let in_rsr = url.ends_with("/rsr/");
-    for name in hrefs(text) {
-        if name.starts_with('?') || name.starts_with('/') || name == "../" {
-            continue;
+    let threads = CRAWL_THREADS.min(urls.len());
+    let chunk = urls.len().div_ceil(threads);
+    let results: Vec<(Vec<String>, Vec<String>, usize)> = std::thread::scope(|s| {
+        let handles: Vec<_> = urls
+            .chunks(chunk)
+            .map(|slice| {
+                s.spawn(move || {
+                    let mut dirs: Vec<String> = Vec::new();
+                    let mut files: Vec<String> = Vec::new();
+                    let mut failures = 0usize;
+                    for url in slice {
+                        let in_rsr = url.to_ascii_lowercase().ends_with("/rsr/");
+                        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+                            eprintln!("{url}: listing fetch void");
+                            failures += 1;
+                            continue;
+                        };
+                        let Ok(text) = std::str::from_utf8(&bytes) else {
+                            eprintln!("{url}: listing not utf8");
+                            failures += 1;
+                            continue;
+                        };
+                        for name in hrefs(text) {
+                            if name.starts_with('?')
+                                || name.starts_with('/')
+                                || name == "../"
+                                || name.contains("://")
+                            {
+                                continue;
+                            }
+                            if name.ends_with('/') {
+                                let dir = name.trim_end_matches('/').to_ascii_lowercase();
+                                if !skip_dir(&dir) {
+                                    dirs.push(format!("{url}{name}"));
+                                }
+                                continue;
+                            }
+                            if in_rsr && !name.to_ascii_lowercase().ends_with(".lbl") {
+                                files.push(format!("{url}{name}"));
+                            }
+                        }
+                    }
+                    (dirs, files, failures)
+                })
+            })
+            .collect();
+        handles.into_iter().map(|h| h.join().unwrap()).collect()
+    });
+    let mut dirs: Vec<String> = Vec::new();
+    let mut files: Vec<String> = Vec::new();
+    let mut failures = 0usize;
+    for (d, f, x) in results {
+        dirs.extend(d);
+        files.extend(f);
+        failures += x;
+    }
+    (dirs, files, failures)
+}
+
+fn crawl_all(vols: &[String]) -> (Vec<String>, usize) {
+    let mut visited: HashSet<String> = HashSet::new();
+    let mut frontier: Vec<String> = Vec::new();
+    for vol in vols {
+        let url = format!("{DATA}{vol}/");
+        if visited.insert(url.clone()) {
+            frontier.push(url);
         }
-        if name.contains("://") {
-            continue;
+    }
+    let mut files: Vec<String> = Vec::new();
+    let mut failures = 0usize;
+    for _ in 0..=CRAWL_DEPTH {
+        if frontier.is_empty() {
+            break;
         }
-        if name.ends_with('/') {
-            let dir = name.trim_end_matches('/').to_ascii_lowercase();
-            if matches!(
-                dir.as_str(),
-                "index" | "calib" | "catalog" | "document" | "errata" | "tlm" | "158" | "odf"
-            ) {
-                continue;
+        let (dirs, mut found, fail) = crawl_wave(&frontier);
+        files.append(&mut found);
+        failures += fail;
+        let mut next: Vec<String> = Vec::new();
+        for dir in dirs {
+            if visited.insert(dir.clone()) {
+                next.push(dir);
             }
-            crawl(&format!("{url}{name}"), depth + 1, files, failures);
-            continue;
         }
-        if in_rsr && !name.to_ascii_lowercase().ends_with(".lbl") {
-            files.push(format!("{url}{name}"));
-        }
+        frontier = next;
     }
+    files.sort();
+    files.dedup();
+    (files, failures)
 }
 
 fn arg_value(args: &[String], flag: &str) -> Option<String> {
@@ -112,12 +178,8 @@ fn main() {
                 std::process::exit(1);
             };
             eprintln!("cassini rss rsr volumes: {}", vols.len());
-            let mut files: Vec<String> = Vec::new();
-            for vol in &vols {
-                crawl(&format!("{DATA}{vol}/"), 0, &mut files, &mut failures);
-            }
-            files.sort();
-            files.dedup();
+            let (mut files, fail) = crawl_all(&vols);
+            failures = fail;
             files.truncate(files_limit);
             files
         }
@@ -153,6 +215,12 @@ fn main() {
         }
         eprintln!("no Cassini RSR samples — the series stays unwritten (0 honored)");
         return;
+    }
+    if failures > 0 {
+        eprintln!(
+            "{failures} listing/fetch/parse failures — the series stays unwritten (a partial harvest is not the measurement)"
+        );
+        std::process::exit(1);
     }
     rows.sort_by(|a, b| a.0.total_cmp(&b.0));
 
