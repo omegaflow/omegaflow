@@ -63,9 +63,9 @@ kompiliert
 kandidat https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.csv
 note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (erddap-tabledap-bass-20260907T0000.json-…-time_3E-max_time_-7days.json, 3339613 B, sha256 5503c6a58d32d56a2297f1332b807fe37293a0c0e16d4f0bf59a345fa00e766b, HTTP 200).
 
-ausstehend
+kompiliert
 kandidat https://exofop.ipac.caltech.edu/
-note Endpoint gemessen 2026-09-18: /tess/download_toi.php?sort=toi&output=pipe HTTP 200, Pipe-Header; Wert+Frame (TIC/TOI + RA/Dec + BJD-Epoch + Transit-Tiefe ppm). Force-Gate: em (photometrisches ΔF/F). Offen: Pipe-Arm bauen → sources.φ + harvest.φ + CDN.
+note 2026-09-19: Pipe-Arm gebaut (exofop_compiler.rs, extract.rs exofop_toi, Format EXF1 44 B/Record) + sources.φ/harvest.φ-Blöcke; Force em. CDN offen: gh workflow run exofop-cdn.yml → Asset exofop_toi.bin present.
 
 kompiliert
 kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/

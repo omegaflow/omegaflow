@@ -1871,6 +1871,81 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "exofop_toi" {
+        const MAGIC: [u8; 4] = *b"EXF1";
+        const VERSION: u8 = 1;
+        const HEADER_LEN: usize = 13;
+        const REC_BYTES: usize = 44;
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        if buf.len() < HEADER_LEN || buf[0..4] != MAGIC || buf[4] != VERSION {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let n = u64::from_le_bytes([
+            buf[5], buf[6], buf[7], buf[8], buf[9], buf[10], buf[11], buf[12],
+        ]) as usize;
+        if buf.len() != HEADER_LEN + n * REC_BYTES {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let f64_at = |rec: &[u8], r: std::ops::Range<usize>| -> Option<f64> {
+            rec.get(r)
+                .and_then(|x| <[u8; 8]>::try_from(x).ok())
+                .map(f64::from_le_bytes)
+        };
+        let f32_at = |rec: &[u8], r: std::ops::Range<usize>| -> Option<f32> {
+            rec.get(r)
+                .and_then(|x| <[u8; 4]>::try_from(x).ok())
+                .map(f32::from_le_bytes)
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::with_capacity(n);
+        let mut off = HEADER_LEN;
+        for _ in 0..n {
+            let Some(rec) = buf.get(off..off + REC_BYTES) else {
+                return ExtractResult::Measurements(vec![]);
+            };
+            off += REC_BYTES;
+            let ra_deg = match f64_at(rec, 16..24) {
+                Some(v) if v.is_finite() && (0.0..360.0).contains(&v) => v,
+                _ => continue,
+            };
+            let dec_deg = match f64_at(rec, 24..32) {
+                Some(v) if v.is_finite() && v.abs() <= 90.0 => v,
+                _ => continue,
+            };
+            let depth = match f32_at(rec, 40..44) {
+                Some(v) if v.is_finite() && v > 0.0 => v as f64,
+                _ => continue,
+            };
+            let ra = ra_deg.to_radians();
+            let dec = dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::StateVector {
+                        p,
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    },
+                    name: fc.name.clone(),
+                    value: depth,
+                },
+                fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
     if src.format == "vlde" {
         let mut buf = Vec::new();
         if let Ok(mut f) = std::fs::File::open(body) {
