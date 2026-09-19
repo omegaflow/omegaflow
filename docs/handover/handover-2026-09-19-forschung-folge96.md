@@ -3,7 +3,7 @@
   session: Forschung-Folge 96
   class: handover
   date: 2026-09-19
-  sha256: 1ff3a4432d5a018a4d4d040a6d4cb5264091325cbec3217772c687cddd8ec931
+  sha256: f47a0fa3a81af6b8c13201fc9e0145c784fd11146063dfac90628bd398937757
   status: live
 -->
 # Handover — Forschung-Folge 96 (2026-09-19)
@@ -44,9 +44,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `1789725472`. NSE/Haug bleibt Trigger. Eintrag zitiert (`external-state.md`),
   nicht kopiert.
 - **CI** — **`hyperscanning-te` `35465589119` in_progress** @`eb2e414e` (der
-  Screen-Re-Dispatch, 21:50 lokal nach dem Merge); `te-gate` `35462518676`
-  **pending** @`3d2e6adb`; `ci-check` churn; `fmt-apply` `35464780631` success.
-  Die CI-Zeile in `docs/zustand/external-state.md` wird zitiert, nicht kopiert.
+  Screen-Re-Dispatch, 21:50 lokal nach dem Merge); der kohärente Paar-Null
+  `35466436802` **pending** @`e8988ae3` (dieses Atom, dispatcht); `te-gate`
+  `35462518676` **pending** @`3d2e6adb`; `ci-check` churn; `fmt-apply`
+  `35464780631` success. Die CI-Zeile in `docs/zustand/external-state.md` wird
+  zitiert, nicht kopiert.
 
 ## Hyperscanning-TE — Screen-Verifikation (härtester undatiert)
 
@@ -61,11 +63,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   0 zurück — das Exit(2)-Gate des Werkzeugs konnte die Conclusion **nicht** rot
   machen; der Screen-Verifikationspfad war unwirksam. (Schritt: nach Push
   dispatch, siehe nächster Punkt.)
-- **Kohärenten Paar-Null auf den Screen anwenden** — zweiter Dispatch auf
-  derselben Kohorte. (Schritt: `gh workflow run hyperscanning-te -f
-  null_model=coherent-phase`; die Concurrency-Gruppe (`cancel-in-progress:
-  false`) reiht hinter dem Screen ein; die Differenz der Survivor-Zellen ist die
-  Messung „über das Lineare hinaus".)
+- **Kohärenten Paar-Null auf den Screen anwenden** — Lauf `35466436802`
+  pending @`e8988ae3`, dispatcht (`-f null_model=coherent-phase`); die
+  Concurrency-Gruppe (`cancel-in-progress: false`) reiht hinter dem Screen
+  `35465589119` ein. (Schritt: `ci_manage view 35466436802` einmal; die Differenz
+  der Survivor-Zellen gegen den Screen ist die Messung „über das Lineare hinaus".)
 - **Bestätigungsstufe** — Screening p95/200, Überlebende p99/1000. (Schritt:
   Workflow um `percentile`/`surrogates`-Inputs erweitern, dann
   `-f null_model=coherent-phase` mit p99/1000 auf die Survivor-Zellen.)
