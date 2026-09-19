@@ -131,6 +131,26 @@ idempotent true
 note 2 EEG assets present measured 2026-09-17 via gh release view openneuro.org; arm src/archivar/openneuro_eeg.rs; run 34765685872 (placebo-ave-cdn 2026-09-13); sham 88629831 B sha256 b2566cbf…, verum 92981937 B sha256 e1d8de64…
 
 asset present
+format openneuro_pd_eeg
+tag openneuro.org
+arm openneuro_compiler
+args --dataset ds007822
+pattern ^sub-G[0-9]+S[0-9]+_task-pd(decision|feedback|rest)_eeg\.bin$
+idempotent true
+timeout 240
+note ds007822 OpenNeuro Parkinson-EEG (99 .set): 99 assets uploaded run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); measured via ci_manage log 35471360435.
+
+asset fehlt
+format openneuro_snirf
+tag openneuro.org
+arm snirf_compiler
+args --dataset ds008192 --subject sub-101 --session 02
+pattern ^sub-101_ses-02_.*_nirs\.bin$
+idempotent true
+timeout 240
+note SNIRF-Arm der Probe run 35473247219 grün: sub-101/ses-02 nchan 52 pnts 8484 meas 52 samples 441168; 3599598 B roundtrip parses. ds008192 InterGenSynchrony 122 subj; CDN-Manifestation via harvest.yml.
+
+asset present
 format rosetta_odf
 tag archives.esac.esa.int
 arm rosetta_odf_compiler
