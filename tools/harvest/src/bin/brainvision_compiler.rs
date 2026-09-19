@@ -116,6 +116,21 @@ fn dir_of(rel: &str) -> &str {
     }
 }
 
+fn resolve_companion(
+    files: &HashMap<String, String>,
+    rel: &str,
+    declared: &str,
+    ext: &str,
+) -> Option<String> {
+    let by_declared = format!("{}{declared}", dir_of(rel));
+    if files.contains_key(&by_declared) {
+        return Some(by_declared);
+    }
+    rel.strip_suffix(".vhdr")
+        .map(|stem| format!("{stem}.{ext}"))
+        .filter(|r| files.contains_key(r))
+}
+
 fn latest_snapshot(dataset: &str) -> Option<(String, String)> {
     let body = graphql(&snapshot_query(dataset))?;
     snapshot_from_json(&body)
@@ -319,7 +334,6 @@ fn run(args: &[String]) -> Result<(), String> {
                 continue;
             }
         };
-        let dir = dir_of(rel);
         let data_file = match header.data_file.as_deref() {
             Some(f) => f,
             None => {
@@ -328,15 +342,15 @@ fn run(args: &[String]) -> Result<(), String> {
                 continue;
             }
         };
-        let eeg_rel = format!("{dir}{data_file}");
-        let eeg_url = match files.get(&eeg_rel) {
-            Some(u) => u,
+        let eeg_rel = match resolve_companion(&files, rel, data_file, "eeg") {
+            Some(r) => r,
             None => {
                 eprintln!("{rel}: the .eeg stays unfetched — skipped (0 honored)");
                 skipped += 1;
                 continue;
             }
         };
+        let eeg_url = &files[&eeg_rel];
         let eeg_path = format!("{out_root}/{eeg_rel}");
         if ci_mode || !std::path::Path::new(&eeg_path).exists() {
             download(eeg_url, &eeg_path)?;
@@ -350,25 +364,22 @@ fn run(args: &[String]) -> Result<(), String> {
             }
         };
         let vmrk_bytes = match header.marker_file.as_deref() {
-            Some(mf) => {
-                let m_rel = format!("{dir}{mf}");
-                match files.get(&m_rel) {
-                    Some(url) => {
-                        let m_path = format!("{out_root}/{m_rel}");
-                        if ci_mode || !std::path::Path::new(&m_path).exists() {
-                            download(url, &m_path)?;
-                        }
-                        match std::fs::read(&m_path) {
-                            Ok(b) => Some(b),
-                            Err(e) => {
-                                eprintln!("read {m_path} returned void: {e}");
-                                None
-                            }
+            Some(mf) => match resolve_companion(&files, rel, mf, "vmrk") {
+                Some(m_rel) => {
+                    let m_path = format!("{out_root}/{m_rel}");
+                    if ci_mode || !std::path::Path::new(&m_path).exists() {
+                        download(&files[&m_rel], &m_path)?;
+                    }
+                    match std::fs::read(&m_path) {
+                        Ok(b) => Some(b),
+                        Err(e) => {
+                            eprintln!("read {m_path} returned void: {e}");
+                            None
                         }
                     }
-                    None => None,
                 }
-            }
+                None => None,
+            },
             None => None,
         };
         let ex = match extract(&vhdr_bytes, vmrk_bytes.as_deref(), &eeg_bytes) {
@@ -500,6 +511,29 @@ mod tests {
         assert_eq!(
             vhdr_rels(&files),
             vec!["sub-01/eeg/sub-01_task-rest_eeg.vhdr".to_string()]
+        );
+    }
+
+    #[test]
+    fn companion_resolves_bids_stem_when_declared_name_is_absent() {
+        let body = r#"{"data":{"dataset":{"latestSnapshot":{"files":[
+            {"filename":"sub-01/eeg/sub-01_task-x_eeg.vhdr","size":100,"directory":false,"urls":["https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-x_eeg.vhdr?versionId=a"]},
+            {"filename":"sub-01/eeg/sub-01_task-x_eeg.eeg","size":200,"directory":false,"urls":["https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-x_eeg.eeg?versionId=b"]},
+            {"filename":"sub-01/eeg/sub-01_task-x_eeg.vmrk","size":300,"directory":false,"urls":["https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-x_eeg.vmrk?versionId=c"]}
+        ]}}}}"#;
+        let files = all_files_from_json(body).expect("the file tree parses");
+        let rel = "sub-01/eeg/sub-01_task-x_eeg.vhdr";
+        assert_eq!(
+            resolve_companion(&files, rel, "IBS_0001.eeg", "eeg").as_deref(),
+            Some("sub-01/eeg/sub-01_task-x_eeg.eeg")
+        );
+        assert_eq!(
+            resolve_companion(&files, rel, "IBS_0001.vmrk", "vmrk").as_deref(),
+            Some("sub-01/eeg/sub-01_task-x_eeg.vmrk")
+        );
+        assert_eq!(
+            resolve_companion(&files, rel, "sub-01_task-x_eeg.eeg", "eeg").as_deref(),
+            Some("sub-01/eeg/sub-01_task-x_eeg.eeg")
         );
     }
 
