@@ -695,7 +695,11 @@ fn assemble(
     out
 }
 
-fn extract_nc4(file: &mut impl Hdf5Access, g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
+fn extract_nc4(
+    file: &mut impl Hdf5Access,
+    g: &Granule,
+    lsk: &LeapSeconds,
+) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_path, lat_path, lon_path, time_path)) = choose_paths_nc4(file) else {
         return Vec::new();
     };
