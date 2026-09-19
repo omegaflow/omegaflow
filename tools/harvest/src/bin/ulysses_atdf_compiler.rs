@@ -115,9 +115,7 @@ fn manifest_family(
         paths.push(path);
     }
     for name in &names {
-        println!(
-            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
-        );
+        println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
         println!("format {prefix}");
         println!("at earth");
         println!("ttl 604800");

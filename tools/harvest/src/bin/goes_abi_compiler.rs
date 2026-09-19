@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::goes_abi::{
-    self, CALIB_GSICS_PENDING, HEADER_BYTES, REC_BYTES, calib_name, parse_gsics_txt, parse_granule,
+    self, CALIB_GSICS_PENDING, HEADER_BYTES, REC_BYTES, calib_name, parse_granule, parse_gsics_txt,
 };
 use std::process::Command;
 
