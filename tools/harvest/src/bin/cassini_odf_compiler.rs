@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
 use omegaflow::cdn::upload_release;
 use omegaflow::odf;
@@ -6,6 +8,8 @@ const DATA: &str = "https://atmos.nmsu.edu/pdsd/archive/data/";
 const NETLOC: &str = "atmos.nmsu.edu";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 const REQUEST_TTL_S: u64 = 604800;
+const CRAWL_THREADS: usize = 16;
+const CRAWL_DEPTH: u32 = 6;
 
 fn hrefs(text: &str) -> Vec<String> {
     let low = text.to_ascii_lowercase();
@@ -48,39 +52,112 @@ fn volumes() -> Option<Vec<String>> {
     Some(out)
 }
 
-fn crawl(url: &str, depth: u32, files: &mut Vec<String>, failures: &mut usize) {
-    if depth > 6 {
-        return;
+fn skip_dir(dir: &str) -> bool {
+    matches!(
+        dir,
+        "index"
+            | "calib"
+            | "catalog"
+            | "document"
+            | "errata"
+            | "rsr"
+            | "tlm"
+            | "158"
+            | "ckf"
+            | "eop"
+            | "ion"
+            | "spk"
+            | "tro"
+    )
+}
+
+fn crawl_wave(urls: &[String]) -> (Vec<String>, Vec<String>, usize) {
+    if urls.is_empty() {
+        return (Vec::new(), Vec::new(), 0);
     }
-    let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
-        eprintln!("{url}: listing fetch void");
-        *failures += 1;
-        return;
-    };
-    let Ok(text) = std::str::from_utf8(&bytes) else {
-        eprintln!("{url}: listing not utf8");
-        *failures += 1;
-        return;
-    };
-    for name in hrefs(text) {
-        if name.starts_with('?') || name.starts_with('/') || name == "../" {
-            continue;
+    let threads = CRAWL_THREADS.min(urls.len());
+    let chunk = urls.len().div_ceil(threads);
+    let results: Vec<(Vec<String>, Vec<String>, usize)> = std::thread::scope(|s| {
+        let handles: Vec<_> = urls
+            .chunks(chunk)
+            .map(|slice| {
+                s.spawn(move || {
+                    let mut dirs: Vec<String> = Vec::new();
+                    let mut files: Vec<String> = Vec::new();
+                    let mut failures = 0usize;
+                    for url in slice {
+                        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+                            eprintln!("{url}: listing fetch void");
+                            failures += 1;
+                            continue;
+                        };
+                        let Ok(text) = std::str::from_utf8(&bytes) else {
+                            eprintln!("{url}: listing not utf8");
+                            failures += 1;
+                            continue;
+                        };
+                        for name in hrefs(text) {
+                            if name.starts_with('?') || name.starts_with('/') || name == "../" {
+                                continue;
+                            }
+                            if name.to_ascii_lowercase().ends_with(".odf") {
+                                files.push(format!("{url}{name}"));
+                                continue;
+                            }
+                            if name.ends_with('/') {
+                                let dir = name.trim_end_matches('/').to_ascii_lowercase();
+                                if !skip_dir(&dir) {
+                                    dirs.push(format!("{url}{name}"));
+                                }
+                            }
+                        }
+                    }
+                    (dirs, files, failures)
+                })
+            })
+            .collect();
+        handles.into_iter().map(|h| h.join().unwrap()).collect()
+    });
+    let mut dirs: Vec<String> = Vec::new();
+    let mut files: Vec<String> = Vec::new();
+    let mut failures = 0usize;
+    for (d, f, x) in results {
+        dirs.extend(d);
+        files.extend(f);
+        failures += x;
+    }
+    (dirs, files, failures)
+}
+
+fn crawl_all(vols: &[String]) -> (Vec<String>, usize) {
+    let mut visited: HashSet<String> = HashSet::new();
+    let mut frontier: Vec<String> = Vec::new();
+    for vol in vols {
+        let url = format!("{DATA}{vol}/");
+        if visited.insert(url.clone()) {
+            frontier.push(url);
         }
-        if name.to_ascii_lowercase().ends_with(".odf") {
-            files.push(format!("{url}{name}"));
-            continue;
+    }
+    let mut files: Vec<String> = Vec::new();
+    let mut failures = 0usize;
+    for _ in 0..=CRAWL_DEPTH {
+        if frontier.is_empty() {
+            break;
         }
-        if name.ends_with('/') {
-            let dir = name.trim_end_matches('/').to_ascii_lowercase();
-            if matches!(
-                dir.as_str(),
-                "index" | "calib" | "catalog" | "document" | "errata"
-            ) {
-                continue;
+        let (dirs, mut found, fail) = crawl_wave(&frontier);
+        files.append(&mut found);
+        failures += fail;
+        let mut next: Vec<String> = Vec::new();
+        for dir in dirs {
+            if visited.insert(dir.clone()) {
+                next.push(dir);
             }
-            crawl(&format!("{url}{name}"), depth + 1, files, failures);
         }
+        frontier = next;
     }
+    files.sort();
+    files.dedup();
+    (files, failures)
 }
 
 fn main() {
@@ -95,13 +172,7 @@ fn main() {
         std::process::exit(1);
     };
     eprintln!("cassini rss odf volumes: {}", vols.len());
-    let mut failures = 0usize;
-    let mut files: Vec<String> = Vec::new();
-    for vol in &vols {
-        crawl(&format!("{DATA}{vol}/"), 0, &mut files, &mut failures);
-    }
-    files.sort();
-    files.dedup();
+    let (files, mut failures) = crawl_all(&vols);
     eprintln!("cassini rss odf files: {}", files.len());
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for url in &files {
@@ -155,6 +226,12 @@ fn main() {
         }
         eprintln!("no Cassini ODF orbit samples — the series stays unwritten (0 honored)");
         return;
+    }
+    if failures > 0 {
+        eprintln!(
+            "{failures} listing/fetch/parse failures — the series stays unwritten (a partial harvest is not the measurement)"
+        );
+        std::process::exit(1);
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
     let out = "data/atmos.nmsu.edu/cassini_odf.bin";
