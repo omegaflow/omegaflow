@@ -62,11 +62,13 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "vex_odf" => odf::parse_series(bytes),
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
+        "cassini_odf" => odf::parse_series(bytes),
         "pioneer10_odf" => odf::parse_series(bytes),
         "pathfinder_odf" => odf::parse_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
+        "cassini_rsr" => cassini_rsr::parse_series(bytes),
         "flac" => flac::parse_series(bytes),
         "bidsleep" => bidsleep::parse_bin(bytes),
         "bison_velocity" => crate::bison_velocity::parse_bin(bytes)
@@ -271,6 +273,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             odf::COMP_OBSERVABLE => Some("dawn_odf_observable_hz"),
             _ => None,
         },
+        "cassini_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("cassini_odf_observable_hz"),
+            _ => None,
+        },
         "pioneer10_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("pioneer10_odf_observable_hz"),
             _ => None,
@@ -300,6 +306,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             galileo_odr::COMP_AD2 => Some("galileo_odr_ad2_count"),
             galileo_odr::COMP_AD3 => Some("galileo_odr_ad3_count"),
             galileo_odr::COMP_AD4 => Some("galileo_odr_ad4_count"),
+            _ => None,
+        },
+        "cassini_rsr" => match comp {
+            cassini_rsr::COMP_I => Some("cassini_rsr_i_count"),
+            cassini_rsr::COMP_Q => Some("cassini_rsr_q_count"),
             _ => None,
         },
         "flac" => match comp {
