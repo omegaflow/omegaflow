@@ -1,4 +1,5 @@
 use super::*;
+use std::io::Write;
 use std::sync::atomic::AtomicU8;
 
 pub const Φ: f64 = 1.618033988749895;
@@ -203,6 +204,8 @@ pub struct OmegaLoop {
     pub ticks_since_turn: u64,
     pub natural_latency_ticks: u64,
     pub last_hud: Option<std::time::Instant>,
+    pub perm_log: Option<std::fs::File>,
+    pub perm_log_gen: u64,
 }
 
 impl OmegaLoop {
@@ -226,6 +229,14 @@ impl OmegaLoop {
             seismic_tx: ctx.seismic_tx,
             relay_tx: ctx.relay_tx,
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
+            perm_log: std::env::var("OMEGAFLOW_PERM_LOG").ok().and_then(|p| {
+                std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(p)
+                    .ok()
+            }),
+            perm_log_gen: 0,
             presence: ctx.presence,
             diode: ctx.diode,
             verdicts: ctx.verdicts,
@@ -1612,6 +1623,16 @@ impl OmegaLoop {
                 let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
+                if let Some(f) = self.perm_log.as_mut() {
+                    if self.ring_gen != self.perm_log_gen {
+                        self.perm_log_gen = self.ring_gen;
+                        let _ = writeln!(
+                            f,
+                            "{},{},{},{},{},{},{}",
+                            self.ring_gen, omega_sum, g, v_c, target, alpha, self.field_permeability
+                        );
+                    }
+                }
             }
             let tone_target = if self.tone_code.load(std::sync::atomic::Ordering::SeqCst)
                 == crate::archivar::hrv::TONE_STRESSED
