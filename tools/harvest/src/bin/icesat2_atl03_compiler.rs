@@ -56,6 +56,10 @@ fn parse_usize_arg(args: &[String], name: &str) -> Result<Option<usize>, String>
     }
 }
 
+fn window_slice<T>(items: Vec<T>, skip: usize, limit: usize) -> Vec<T> {
+    items.into_iter().skip(skip).take(limit).collect()
+}
+
 fn parse_secret(text: &str, key: &str) -> Option<String> {
     let mut found = None;
     for line in text.lines() {
@@ -896,7 +900,7 @@ fn run_harvest(args: &[String]) {
                 granules.len()
             );
         }
-        for g in granules.into_iter().skip(skip).take(limit) {
+        for g in window_slice(granules, skip, limit) {
             chosen.push(Chosen {
                 fetch: GranuleFetch::Bearer {
                     url: g.url.clone(),
@@ -971,7 +975,7 @@ fn run_harvest(args: &[String]) {
         }
         let mut objects = objects;
         objects.sort_by(|a, b| a.key.cmp(&b.key));
-        for obj in objects.into_iter().skip(skip).take(limit) {
+        for obj in window_slice(objects, skip, limit) {
             let s3_url = format!("s3://{BUCKET}/{}", obj.key);
             chosen.push(Chosen {
                 fetch: GranuleFetch::S3 {
@@ -1199,6 +1203,16 @@ mod tests {
         assert_eq!(parse_usize_arg(&args, "--beams"), Ok(None));
         let bad = vec!["--skip".to_string(), "x".to_string()];
         assert!(parse_usize_arg(&bad, "--skip").is_err());
+    }
+
+    #[test]
+    fn window_slice_applies_offset_then_limit() {
+        let items = vec!["a", "b", "c", "d", "e"];
+        assert_eq!(window_slice(items.clone(), 0, 3), vec!["a", "b", "c"]);
+        assert_eq!(window_slice(items.clone(), 1, 2), vec!["b", "c"]);
+        assert_eq!(window_slice(items.clone(), 4, 2), vec!["e"]);
+        assert_eq!(window_slice(items.clone(), 5, 2), Vec::<&str>::new());
+        assert_eq!(window_slice(items, 0, 0), Vec::<&str>::new());
     }
 
     #[test]
