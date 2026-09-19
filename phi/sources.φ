@@ -757,6 +757,13 @@ at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
+url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
+format arpansa
+ttl 600
+on earth 0 0 0
+field uv_index uv_index inverse-square em UVI 60.0 0.0 0.0
+note ARPANSA UV, 17 Stationen (erythemal index, em); per-station lat/lon gemessen 2026-09-18 aus api/categoriesSites + api/sitesByCategory/?categoryId=9 (arpansa.rs station_coords, Position::Surface).
+
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600
 on earth 35.68 139.69 0
@@ -1346,6 +1353,16 @@ fanout 25
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
+url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
+ttl 86400
+format text
+at earth
+rows
+field 1 maxi_J0006+202_2_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
+field 3 maxi_J0006+202_2_4kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
+field 5 maxi_J0006+202_4_10kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
+field 7 maxi_J0006+202_10_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
+
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
 ttl 86400
 format csv
@@ -1557,6 +1574,15 @@ at sun
 ttl 86400
 note gm descoped (gemessen 2026-09-16): Keplerelemente, kein GM — GM ist die Konstante der Sonne (src/archivar/kepler.rs:1).
 
+url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/exofop_toi.bin
+format exofop_toi
+origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
+compiler tools/harvest/src/bin/exofop_compiler.rs
+at sun
+ttl 86400
+field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
+note Endpoint download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1770 Zeilen, 63 Spalten; TIC/TOI + RA/Dec (sexagesimal) + BJD-Epoch + Tiefe ppm (Force em ΔF/F); Asset via exofop_compiler --ci-mode.
+
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
 format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
@@ -1719,15 +1745,6 @@ origin https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/gaia_sso_compiler.rs
 at sun
 ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/exofop_toi.bin
-format exofop_toi
-origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
-compiler tools/harvest/src/bin/exofop_compiler.rs
-at sun
-ttl 86400
-field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
-note Endpoint download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1770 Zeilen, 63 Spalten; TIC/TOI + RA/Dec (sexagesimal) + BJD-Epoch + Tiefe ppm (Force em ΔF/F); Asset via exofop_compiler --ci-mode.
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
 format intermagnet_dbdt
@@ -4877,16 +4894,6 @@ field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic 
 field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
 field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
 
-url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
-ttl 86400
-format text
-at earth
-rows
-field 1 maxi_J0006+202_2_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 3 maxi_J0006+202_2_4kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 5 maxi_J0006+202_4_10kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 7 maxi_J0006+202_10_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-
 url https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc
 format reference
 sha256 2f48f84fbd674054281bb6e294174f65e42219dd14713a052948257eabe482f2
@@ -5194,6 +5201,17 @@ url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
 format ndk
 at earth
 ttl 86400
+
+url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+format igra_zip
+on earth 0 0 0
+ttl 86400
+field igra_air_pressure_hpa igra_air_pressure_hpa patch-levy advective hPa 8640.0 0.0 0.0
+field igra_air_temp_c igra_air_temp_c exponential-decay thermal C 8640.0 0.0 0.0
+field igra_wind_speed_ms igra_wind_speed_ms patch-levy advective m/s 8640.0 0.0 0.0
+field igra_wind_direction_deg igra_wind_direction_deg patch-levy advective deg 8640.0 0.0 0.0
+field igra_relative_humidity_pct igra_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
+field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
 ttl 86400
@@ -7391,6 +7409,14 @@ at earth
 ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pathfinder_odf.bin
+format pathfinder_odf
+origin https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
+compiler tools/harvest/src/bin/pathfinder_odf_compiler.rs
+at earth
+ttl 604800
+field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
 format galileo_odf
 origin https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/ODF/
@@ -7410,6 +7436,36 @@ field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
 field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
 field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t509166701_682590741.bin
+format maven_tnf
+origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
+compiler tools/harvest/src/bin/maven_tnf_compiler.rs
+sha256 cbdf3ea4dccd3b687f91dea679ac44e4c8ba28ce93c072f9bcdcd0bac4db8956
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t682590742_801786860.bin
+format maven_tnf
+origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
+compiler tools/harvest/src/bin/maven_tnf_compiler.rs
+sha256 0806df61a32d13d065eacd94d76905f1dbde37edd05b5d5b763bb3b974457393
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t801786861_818274669.bin
+format maven_tnf
+origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
+compiler tools/harvest/src/bin/maven_tnf_compiler.rs
+sha256 17a69d1c5529ef6a3f89266aced9dca79865e1ced33f858d51b4e74654f44fb9
+at earth
+ttl 604800
+field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 194661152 B).
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/messenger_odf.bin
 format messenger_odf
 origin https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
@@ -7426,6 +7482,15 @@ at earth
 ttl 604800
 field sky_frequency_hz ulysses_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 note Ulysses SCE TRK-2-25 ATDF S-band sky-frequency; src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; asset present 2026-09-18: ulysses_atdf.bin 35187160 B sha256 5aeca72ed24fdbf4d48a6e70448df3fe8cfbf8ae2732ea6619ac0b0b4869be9a
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/ulysses_atdf_x.bin
+format ulysses_atdf_x
+origin https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/
+compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs
+at earth
+ttl 604800
+field sky_frequency_x_hz ulysses_sky_frequency_x_hz inverse-square em Hz 3600 0.0 0.0
+note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency series; src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
 format voyager_odr
@@ -7588,6 +7653,18 @@ on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
+format mariner_occlt
+origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
+compiler tools/harvest/src/bin/mariner_occlt_compiler.rs
+sha256 4aa487cb7ba2e1ac2258c9ace16dd6adc0d502352a4a6c3be9a1ea8f5e10eda0
+at earth
+ttl 604800
+field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
+field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
+field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
+note Mariner 10 Venus occultation telemetry signal data (NSSDC NSSD1346), native Serie; Arm src/archivar/mariner_occlt.rs + extract.rs mariner_occlt; Compiler mariner_occlt_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER
@@ -7604,15 +7681,6 @@ compiler tools/harvest/src/bin/pioneer_atdf_compiler.rs
 at earth
 ttl 604800
 field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/ulysses_atdf_x.bin
-format ulysses_atdf_x
-origin https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/DATA/
-compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs
-at earth
-ttl 604800
-field sky_frequency_x_hz ulysses_sky_frequency_x_hz inverse-square em Hz 3600 0.0 0.0
-note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency series; src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
@@ -8177,6 +8245,15 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/weberin_verdicts.bin
+format weberin_verdicts
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
+compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
+at sun
+ttl 604800
+note Weberin-Verdikt-Seitenkanal: Placed/Absent/Riss je Körper, encode_weberin_verdicts; CDN-Manifestation via .github/workflows/weberin-verdicts-cdn.yml (--ci-mode), ausstehend.
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/xp_spectra.bin
 format xp_spectra
 origin https://dc.g-vo.org/tap/sync
@@ -8665,6 +8742,15 @@ at sun
 ttl 31536000
 field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
 note H.E.S.S.-DL3-DR1-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma, value = summierte Gamma-Energie je Zelle); compiler dl3_skymap_compiler.rs --telescope hess; CDN asset measured 2026-09-17 (run 35251318800, 168133 B).
+
+url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
+origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+format sky1
+at sun
+ttl 31536000
+field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
+note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; CDN-Manifestation ausstehend).
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
@@ -10117,87 +10203,3 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t509166701_682590741.bin
-format maven_tnf
-origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
-compiler tools/harvest/src/bin/maven_tnf_compiler.rs
-sha256 cbdf3ea4dccd3b687f91dea679ac44e4c8ba28ce93c072f9bcdcd0bac4db8956
-at earth
-ttl 604800
-field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t682590742_801786860.bin
-format maven_tnf
-origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
-compiler tools/harvest/src/bin/maven_tnf_compiler.rs
-sha256 0806df61a32d13d065eacd94d76905f1dbde37edd05b5d5b763bb3b974457393
-at earth
-ttl 604800
-field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 1073741768 B).
-
-url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t801786861_818274669.bin
-format maven_tnf
-origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
-compiler tools/harvest/src/bin/maven_tnf_compiler.rs
-sha256 17a69d1c5529ef6a3f89266aced9dca79865e1ced33f858d51b4e74654f44fb9
-at earth
-ttl 604800
-field ul_phase_cycles maven_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
-note MAVEN ROSE TRK-2-34 TNF DT0 Uplink-Trägerphase, native Serie; Arm src/archivar/odf.rs tnf_rows/tnf_parse_series + extract.rs maven_tnf; Compiler maven_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35205267703, 194661152 B).
-
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
-format mariner_occlt
-origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
-compiler tools/harvest/src/bin/mariner_occlt_compiler.rs
-sha256 4aa487cb7ba2e1ac2258c9ace16dd6adc0d502352a4a6c3be9a1ea8f5e10eda0
-at earth
-ttl 604800
-field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
-field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
-field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
-note Mariner 10 Venus occultation telemetry signal data (NSSDC NSSD1346), native Serie; Arm src/archivar/mariner_occlt.rs + extract.rs mariner_occlt; Compiler mariner_occlt_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
-
-url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
-format arpansa
-ttl 600
-on earth 0 0 0
-field uv_index uv_index inverse-square em UVI 60.0 0.0 0.0
-note ARPANSA UV, 17 Stationen (erythemal index, em); per-station lat/lon gemessen 2026-09-18 aus api/categoriesSites + api/sitesByCategory/?categoryId=9 (arpansa.rs station_coords, Position::Surface).
-
-url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
-format igra_zip
-on earth 0 0 0
-ttl 86400
-field igra_air_pressure_hpa igra_air_pressure_hpa patch-levy advective hPa 8640.0 0.0 0.0
-field igra_air_temp_c igra_air_temp_c exponential-decay thermal C 8640.0 0.0 0.0
-field igra_wind_speed_ms igra_wind_speed_ms patch-levy advective m/s 8640.0 0.0 0.0
-field igra_wind_direction_deg igra_wind_direction_deg patch-levy advective deg 8640.0 0.0 0.0
-field igra_relative_humidity_pct igra_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
-field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pathfinder_odf.bin
-format pathfinder_odf
-origin https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
-compiler tools/harvest/src/bin/pathfinder_odf_compiler.rs
-at earth
-ttl 604800
-field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
-origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
-compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
-format sky1
-at sun
-ttl 31536000
-field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
-note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; CDN-Manifestation ausstehend).
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/weberin_verdicts.bin
-format weberin_verdicts
-compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
-at sun
-ttl 604800
-note Weberin-Verdikt-Seitenkanal: Placed/Absent/Riss je Körper, encode_weberin_verdicts; CDN-Manifestation via .github/workflows/weberin-verdicts-cdn.yml (--ci-mode), ausstehend.
