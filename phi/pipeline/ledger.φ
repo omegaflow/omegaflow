@@ -9,19 +9,19 @@
 
 ausstehend
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Re-Messung 2026-09-16 (flash+pro übereinstimmend): sync-QUERY HTTP 500 (PostgreSQL-Backend down, localhost:5432), Root nur HTML; Schema-Discovery unmöglich. Erneut gemessen 2026-09-16: localhost:5432 refused, Dienst antwortet, Backend down. Re-Check-Pflicht, kein dead.
+note ivo://fai.kz/tap — Re-Messung 2026-09-19: sync-QUERY HTTP 500, VOTable-Error localhost:5432 connection refused; Root 200. Backend down; Re-Check.
 
 ausstehend
 kandidat http://vo.lmd.jussieu.fr/tap
-note ivo://lmd.jussieu/tap — dritte Messung 2026-09-16 (grind-flash): Root HTTP 200 (12642 B), sync-QUERY 200 VOTable-Error (PostgreSQL-Backend, gleicher Ausfall wie dachs.fai.kz), Wayback 503. TAP-Front lebt, Backend down; Re-Check. Re-Messung 2026-09-16 https: Timeout; http-Route bleibt maßgeblich.
+note ivo://lmd.jussieu/tap — Re-Messung 2026-09-19: sync-QUERY 200, gültiges VOTable (tap_schema.tables beantwortet, QUERY_STATUS=OK); Root 200. Backend erholt — nächster Schritt: Schema-Discovery + Port (SOURCE_PORT.md).
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — dritte Messung 2026-09-16 (grind-flash): sync-QUERY 200 (2×) VOTable-Error „connection pool is closed"; COUNT(*) nicht beantwortet. TAP-Front lebt, Pool down; Re-Check. Re-Messung 2026-09-16 https: abgelaufenes Zertifikat; http-Route bleibt maßgeblich.
+note ivo://src.pas/tap — Re-Messung 2026-09-19: sync-QUERY 200, VOTable-Error localhost:5432 connection refused; Root 200. Backend down; Re-Check.
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Re-Messung 2026-09-16 (grind-flash): gegriddeter Total-Strom (EWCT/NSCT m/s), advective τ 21600. Route gemessen: griddap-Brackets URL-encoded (%5B/%5D), rohe [ → Tomcat 400; EWCT −0,172 m/s, NSCT −0,087 m/s (45.66184 N, 13.587437 E), time_coverage_end 2026-07-30T23:30:00Z. Geschwister-Check (tabledap/allDatasets, datasetID=~"HFRADAR.*", 21 HFRADAR_*_Totals): frischester maxTime 2026-07-31T00:00:00Z — kein lebendes Geschwister, die ganze Familie steht seit ~2026-07-30/31. Kein sources.φ-Block. Re-Messung 2026-09-16 bestätigt: letzter Zeitschritt 2026-07-30T23:30:00Z unverändert, kein lebendes Geschwister; die Familie steht. Nächster Schritt: maxTime erneut messen.
+note Re-Messung 2026-09-19: maxTime unverändert 2026-07-30T23:30:00Z (griddap time[last]); Familie-Frontier 2026-07-31T00:00:00Z (5 Geschwister), kein lebendes Geschwister. Familie steht; nächste Re-Messung fällig 2026-10-19.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
@@ -67,17 +67,17 @@ kompiliert
 kandidat https://exofop.ipac.caltech.edu/
 note 2026-09-19: Pipe-Arm gebaut (exofop_compiler.rs, extract.rs exofop_toi, EXF1 44 B/Record) + sources.φ/harvest.φ-Blöcke; Force em. CDN-Asset present: exofop_toi.bin 358525 B sha256 440a7fdc…0321 HTTP 200 (run 35426107470 success).
 
-kompiliert
+verifiziert
 kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/
-note Ulysses SCE Jupiter-Encounter, TRK-2-25 ATDF (288-Byte-Records, 28/8064-Block) — Arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series + extract.rs-Dispatch ulysses_atdf; Compiler tools/harvest/src/bin/ulysses_atdf_compiler.rs; phi/harvest.φ-Block ulysses_atdf (asset fehlt). CDN-Manifestation: Lauf 35270658104 (HEAD d101b20a) failure am "Second witness" — Job-Log gemessen (2026-09-17, forschung-folge70): `bands S 0 / X 0`, `0 S-band fsky samples`, `no fsky samples — the series stays unwritten (0 honored)`. Ursache: der Lauf trug den band_field-Fix (TKFORM 10→11 DOWNLINK_BAND) noch nicht; er landete erst in 7bf17ada (21:38 UTC), der Auto-Dispatcher legte danach neue Läufe (35277931000/33828/37121, queued) + den X-Lauf. Der S-Band-Nullwert war das alte Feld-Item (STATION), kein echter Nullwert. Die `shard is incomplete`-Meldung war ein Diagnose-Bug (assets=0 gegen shard=1 als incomplete gemeldet); behoben in .github/workflows/harvest.yml (0-Asset-Zweig zuerst). Bei Lauf-Abschluss: sha256/Größe messen + phi/sources.φ-Block auf present; Health-Issue 36 schließen, sobald das Asset steht. X-Band-Recovery-Kette gebaut 2026-09-17 (Option B, Rat: X eigene Komponente ulysses_sky_frequency_x_hz = COMP_ULY_SKYFREQ_X 2; X_BAND_RATIO 96·880/221, Träger 8408.209876 MHz Kanal 9; reduce_uly_skyfreq → UlySkyFreq{sband,xband}, per-Band-Median/Ref-Fenster; Compiler zweite Shard-Familie ulysses_atdf_x; extract.rs-Dispatch + main_flow-Serienliste). X-Ref-Fenster [2197e4, 2200e4] + Median-Halbweite abgeleitet, erste CI-Messung validiert (wartend); Dispatch 2026-09-17: harvest.yml -f format=ulysses_atdf_x → run 35277855134 (queued).
+note Ulysses SCE TRK-2-25 ATDF; Arm atdf.rs reduce_uly_skyfreq/parse_uly_series(+_x); Compiler ulysses_atdf_compiler.rs; CDN present 2026-09-19 (sniff): ulysses_atdf.bin 35187160 B sha256 5aeca72e…, ulysses_atdf_x.bin 40028696 B sha256 163897d2…; sources.φ registriert.
 
 verifiziert
 kandidat http://imbrium.mit.edu/LRORS/DATA/TRK/
 note LRO RSS raw tracking (Goddard Universal Tracking Data Format, 75-Byte-Records) — Formatdatei LRO_TRK.FMT gemessen http://imbrium.mit.edu/LRORS/LABEL/LRO_TRK.FMT (23513 B, HTTP 200; 29 Spalten: fixed lead 0x0D 0x0A 0x01, SIC=59, VID, SECONDS-of-year + MICROSECONDS, ANGLE_1/2 IEEE_REAL ×8.381903173e-8°, RTLT 48-bit in 1/256 ns, BIAS_DOPPLER 48-bit, AGC, TRANSMIT_FREQUENCY in 10s Hz, validity/sample-rate bits, tail 0x04); Doppler-Formel aus LRO_DESC_TRK.TXT (rate = −c(A−2.4e8)/B). Arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series + extract.rs-Dispatch lro_trk; Compiler tools/harvest/src/bin/lro_trk_compiler.rs (rekursive Listing /LRORS/DATA/TRK/); phi/harvest.φ-Block lro_trk (asset present). CDN present 2026-09-19 (run 35425365015 success): lro_trk_2009.bin 114787240 B sha256 c29af4b4…; sources.φ registriert.
 
-kompiliert
+verifiziert
 kandidat https://noaa-goes16.s3.amazonaws.com/
-note GOES-16 ABI L1b RadC Manifest — shared Bucket-Index src/archivar/goes_abi/s3.rs (ListBucket ?prefix=ABI-L1b-RadC/&delimiter=/, HTTP 200 ohne Auth), ein M6-Full-Disk-Granule je Kanal aus der neuesten Stunde (Archiv endet 2025/097/18, gemessen 2026-09-17); Arm src/archivar/goes_abi.rs parse_bin + extract.rs-Dispatch goes_abi; Compiler tools/harvest/src/bin/goes16_abi_compiler.rs (tag noaa-goes16.s3.amazonaws.com). phi/harvest.φ-Block goes16_abi (asset fehlt). CDN-Manifestation offen: harvest-dispatch feuert beim Push, dann sha256/Größe messen + phi/sources.φ-Block.
+note GOES-16 ABI L1b RadC Manifest; Arm goes_abi.rs parse_bin (extract.rs goes_abi); Compiler goes16_abi_compiler.rs; CDN present 2026-09-19 (sniff): goes16_abi.bin 348 B sha256 f4448230…, magic GAB1; sources.φ:1087 registriert.
 
 ausstehend
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
