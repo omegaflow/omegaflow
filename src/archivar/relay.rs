@@ -877,14 +877,15 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
             }
             if !sent_verdicts && !cfg.verdicts.is_empty() {
                 sent_verdicts = true;
-                if let Err(e) =
-                    write_ws_binary(&mut stream, &encode_weberin_verdicts(&cfg.verdicts))
-                {
-                    eprintln!(
-                        "ws verdict write returned {:?} — the browser connection ended",
-                        e.kind()
-                    );
-                    return;
+                let live = live_verdicts(&cfg.verdicts, system_now(&cfg.time));
+                if !live.is_empty() {
+                    if let Err(e) = write_ws_binary(&mut stream, &encode_weberin_verdicts(&live)) {
+                        eprintln!(
+                            "ws verdict write returned {:?} — the browser connection ended",
+                            e.kind()
+                        );
+                        return;
+                    }
                 }
             }
         }
