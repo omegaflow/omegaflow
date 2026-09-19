@@ -603,7 +603,10 @@ mod tests {
             true,
             Some(65535),
             Some((0, 4095)),
-            Calib { scale: 1.0, offset: 0.0 },
+            Calib {
+                scale: 1.0,
+                offset: 0.0,
+            },
         );
         assert_eq!(valid, 2);
         assert_eq!(sum, 30.0);
