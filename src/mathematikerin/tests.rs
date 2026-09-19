@@ -658,6 +658,104 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
 }
 
 #[test]
+fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_log_state.bin".to_string();
+
+    let path = "/tmp/omegaflow_perm_log_test.csv";
+    let _ = std::fs::remove_file(path);
+    app.perm_log = Some(
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(path)
+            .unwrap(),
+    );
+    app.perm_log_gen = 0;
+    app.ring_gen = 1;
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    app.tick();
+
+    let sum1: f32 = app.probe_omega.iter().sum();
+    let delta1 = sum1 - 0.0f32;
+    let g1 = sum1.abs();
+    let v_c1 = delta1.abs();
+    let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+
+    app.perm_log = None;
+    let text = std::fs::read_to_string(path).unwrap();
+    let lines: Vec<&str> = text.lines().collect();
+    assert_eq!(lines.len(), 1);
+    let fields: Vec<f32> = lines[0]
+        .split(',')
+        .map(|s| s.parse::<f32>().unwrap())
+        .collect();
+    assert_eq!(fields.len(), 7);
+    assert_eq!(fields[0], 1.0);
+    assert_eq!(fields[1], sum1);
+    assert_eq!(fields[2], g1);
+    assert_eq!(fields[3], v_c1);
+    assert_eq!(fields[4], perm_target(g1, v_c1));
+    assert_eq!(fields[5], alpha1);
+    assert_eq!(fields[6], app.field_permeability);
+
+    app.last_hud = None;
+    app.tick();
+    let after_none = std::fs::read_to_string(path).unwrap();
+    assert_eq!(after_none.lines().count(), 1);
+
+    let path3 = "/tmp/omegaflow_perm_log_test_same_gen.csv";
+    let _ = std::fs::remove_file(path3);
+    app.perm_log = Some(
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(path3)
+            .unwrap(),
+    );
+    app.perm_log_gen = 0;
+    app.ring_gen = 5;
+    app.last_hud = None;
+    app.tick();
+    app.last_hud = None;
+    app.tick();
+    app.perm_log = None;
+    let text3 = std::fs::read_to_string(path3).unwrap();
+    assert_eq!(text3.lines().count(), 1);
+
+    let _ = std::fs::remove_file(path);
+    let _ = std::fs::remove_file(path3);
+}
+
+#[test]
 fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
     assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
     let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
