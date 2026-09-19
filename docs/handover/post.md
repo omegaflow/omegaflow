@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-18
-  sha256: d81642cbf002969e111b71b0ff19262200f00763701d248c6677820bcd132140
+  sha256: ab37e764362b414671ec3c0e3397ac4610e6b5f742d5d6b6eb7b661a14857be3
   status: live
   see-also: AGENTS.md
 -->
@@ -15,5 +15,6 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An entscheid: Betti-0-Schwellenleiter — Rat-Verdikt (2026-09-18): Zweierpotenz-Leiter behalten; sie ist ein Anzeige-Gitter (`te.rs:2062–2071`), der Verdikt `persistence` ist leiter-unabhängig; Edelsbrunner/Fasy prüfen Intervall-Signifikanz, DBSCAN wählt ein ε — andere Frage; Fasy-Bootstrap als eigener Gate `pending`. Ferner operator-gebunden: Fabrication-Rest (`docs/concepts/kybernetische-astrophysik.md:471–479`), Legacy-Rangfolge (Minkowski/Certainty/Delay/Synthetic/Channel). (Schritt: Operator-Wort zum Betti-0-Verdikt; danach je eigene Messung der Legacy-Fortsetzungen.)
+An bau: Betti-0 `betti0_persistence` — Fasy-Bootstrap-Gate (`pending`) + erster Schritt Null-Verteilungs-Quantil in CI (`measure-gates`, `betti0_probe.rs`); 0.5-Schwelle (`te.rs:3432,3454`) unkalibriert. `--port` force-Gate: `force_type`-Verteilung + Fixture (Rat: Weg B CI). (Schritt: `docs/handover/handover-2026-09-18-entscheid-folge52.md` §Gremium+Wissenschaft.)
+An forschung: vC-Inversion belegt — Legacy `exp(-vC/(g+1/C))` (`archive-root/…/minkowski-field-permeability.md:162`) vs. heute `tanh` (`omega.rs:1606`); Designfrage + v_c-Verteilung in CI. Silence-Map-Null: FDR/BH (DOI 10.1111/j.2517-6161.1995.tb02031.x). (Schritt: `docs/handover/handover-2026-09-18-entscheid-folge52.md` §Gremium+Wissenschaft.)
 
