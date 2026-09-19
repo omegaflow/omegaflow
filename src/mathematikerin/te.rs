@@ -2272,8 +2272,7 @@ fn topological_te_with(
         if emb_s.is_empty() {
             continue;
         }
-        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s)
-        {
+        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s) {
             vals.push(te_s);
         }
     }
@@ -3468,7 +3467,8 @@ mod tests {
         let mut v = Vec::with_capacity(n);
         let mut x = 0.0f64;
         for t in 0..n {
-            x = phi * x + (2.0 * std::f64::consts::PI * t as f64 / period).sin()
+            x = phi * x
+                + (2.0 * std::f64::consts::PI * t as f64 / period).sin()
                 + gate_rng(rng) * 0.02
                 - 0.01;
             v.push(x as f32);
@@ -3494,8 +3494,12 @@ mod tests {
     #[test]
     fn topological_estimate_white_pair_is_none() {
         let mut rng = 0x0F0F_0F0F_DEAD_BEEFu64;
-        let a: Vec<f32> = (0..13).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
-        let b: Vec<f32> = (0..13).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+        let a: Vec<f32> = (0..13)
+            .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+            .collect();
+        let b: Vec<f32> = (0..13)
+            .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+            .collect();
         assert!(
             topological_te_estimate(&a, &b, 3).is_none(),
             "a white pair carries no tau, no estimate"
@@ -3539,8 +3543,12 @@ mod tests {
     fn topological_estimate_n_floor_short_series_is_none() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         for n in 8..=13usize {
-            let a: Vec<f32> = (0..n).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
-            let b: Vec<f32> = (0..n).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+            let a: Vec<f32> = (0..n)
+                .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+                .collect();
+            let b: Vec<f32> = (0..n)
+                .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+                .collect();
             assert!(
                 topological_te_estimate(&a, &b, 3).is_none(),
                 "n={n}: the short white pair carries no estimate"
