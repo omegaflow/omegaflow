@@ -412,8 +412,12 @@ mod tests {
     #[test]
     fn lutd_roundtrip_carries_fourteen_slots() {
         let records = vec![
-            [1.0, 2.2e9, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 0.0, 1.0],
-            [2.0, 2.2e9, 2.1e9, 1.0, 60.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 1.0, 1.0],
+            [
+                1.0, 2.2e9, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 0.0, 1.0,
+            ],
+            [
+                2.0, 2.2e9, 2.1e9, 1.0, 60.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 1.0, 1.0,
+            ],
         ];
         let bytes = write_bin(&records);
         let parsed = parse_bin(&bytes).unwrap();
@@ -425,14 +429,18 @@ mod tests {
 
     #[test]
     fn series_skips_absent_frequency() {
-        let row = [1.0, 0.0, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 0.0, 0.0, 1.0, 0.0, 1.0];
+        let row = [
+            1.0, 0.0, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 0.0, 0.0, 1.0, 0.0, 1.0,
+        ];
         let bytes = write_bin(&[row]);
         assert!(parse_series(&bytes).is_none());
     }
 
     #[test]
     fn series_roundtrip_and_component_name() {
-        let row = [1.0, 2.2e9, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 0.0, 1.0];
+        let row = [
+            1.0, 2.2e9, 2.1e9, 1.0, 50.0, 1.0, 59.0, 1.0e11, 0.4, 45.0, -45.0, 1.0, 0.0, 1.0,
+        ];
         let bytes = write_bin(&[row]);
         let parsed = parse_series(&bytes).expect("lro series parses");
         assert_eq!(parsed.len(), 1);
@@ -460,6 +468,10 @@ mod tests {
         let angle_bits = 190.0 / ANGLE_SCALE_DEG;
         rec[18..22].copy_from_slice(&(angle_bits as f32).to_be_bytes());
         let tr = tracking_record(&rec).unwrap();
-        assert!((tr.angle1 - (-170.0)).abs() < 1e-3, "X-Y angle folds to {}", tr.angle1);
+        assert!(
+            (tr.angle1 - (-170.0)).abs() < 1e-3,
+            "X-Y angle folds to {}",
+            tr.angle1
+        );
     }
 }
