@@ -3,7 +3,7 @@
   session: Forschung-Folge 86
   class: handover
   date: 2026-09-19
-  sha256: 22e30ac794b465365897675c7e95540ed17b966a81026041794fafb380b66bf8
+  sha256: dbd766036099935f2e5071e543f4522d436337db0aeb4931986853c253dfc512
   status: live
 -->
 # Handover — Forschung-Folge 86 (2026-09-19)
@@ -61,9 +61,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `lagged_predict_nx_zeroed`/`lagged_predict_2x_zeroed` gelöscht; Rename
   `arx_conditional_surrogate`/`arx_conditional_surrogate_2` (Name =
   Implementation). `cargo check -p omegaflow --all-targets` 0 Fehler/0 Warnungen.
-- **Re-Dispatch ausstehend:** nach Commit/Push `gh workflow run te-gate.yml`;
-  Run-ID registrieren; Verdikte `gate_conditional_arx_fpr_fn_n1000`/`_reversed`/`_2`
-  + FN-Arm `found/meas ≥ 0.5` lesen. (Schritt: `ci_manage view <neue-id>`.) `wartend`
+- **Re-Dispatch:** `gh workflow run te-gate.yml` → `35425288111` @`e9e9ef63`
+  (queued 2026-09-19); Trigger Run-Abschluss. Verdikte
+  `gate_conditional_arx_fpr_fn_n1000`/`_reversed`/`_2` + FN-Arm
+  `found/meas ≥ 0.5` lesen. (Schritt: `ci_manage view 35425288111`.) `wartend`
 - **Folge:** grünes Verdikt ⇒ `211A→193A`-Conditional-Check frei
   (`docs/paper/solar-seconds-matrix.md:37,46`); bis dahin `pending`.
 
