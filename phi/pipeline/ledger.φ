@@ -125,8 +125,8 @@ note 99 .set assets hochgeladen run 35471360435 (snapshot 1.0.0 bba8cdf8…, ope
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
-note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Probe run 35473247219 rot: .vhdr trägt DataFile=IBS_0001.eeg (Original-Name), OpenNeuro speichert sub-01/eeg/sub-01_task-jointaction_eeg.eeg → files.get(dir+DataFile) None (brainvision_compiler.rs:332). bau-Fix resolve_companion (uncommittet, bau98); nach Push Re-Probe.
+note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Probe run 35474638076 grün (sub-01 nbchan 64 samples 148391680, 593625434 B roundtrip); bau-Fix resolve_companion 8c7b885e. 32 .vhdr gemessen, alle task-jointaction. harvest.φ openneuro_brainvision (asset fehlt, shard 32) registriert; harvest.yml dispatch nach Push — Run einmal lesen, dann sources.φ url + asset present.
 
-ausstehend
+kompiliert
 kandidat https://openneuro.org/datasets/ds008192
-note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. Probe run 35473247219 grün: sub-101/ses-02 nchan 52 pnts 8484 meas 52 samples 441168; 3599598 B roundtrip. harvest.φ openneuro_snirf + sources.φ registriert.
+note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. harvest run 35474615876 success: asset sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin 3599598 B roundtrip parses (nchan 52 pnts 8484 samples 441168). harvest.φ openneuro_snirf asset present; sources.φ url-Zeile steht.
