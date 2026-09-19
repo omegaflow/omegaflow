@@ -2076,6 +2076,706 @@ compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin
+format openneuro_snirf
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/snirf_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pddecision_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdfeedback_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdrest_eeg.bin
+format openneuro_pd_eeg
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+at earth
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 format bidsleep
 origin https://physionet.org/files/bidsleep-dataset/1.0.0/
