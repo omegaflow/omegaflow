@@ -3,7 +3,7 @@
   session: Forschung-Folge 93
   class: handover
   date: 2026-09-19
-  sha256: 3e2e9084d5b3f6a44a821a72a4ddffe90139a4b0bcbd8f9167e2f90991794f82
+  sha256: e9905ffb8b9f24c790844ead6d425d8d5383340d4250b2699d636554a73a3e5a
   status: live
 -->
 # Handover — Forschung-Folge 93 (2026-09-19)
@@ -62,10 +62,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `parse_channels_tsv` + `labels_from_channels_tsv` (Sibling `_channels.tsv`); beide
   Bins injizieren die Labels, wenn das Set keine trägt; der Workflow lädt die
   `_channels.tsv`-Sidecars mit. `cargo check -p omegaflow-measure --all-targets`
-  0 Fehler/0 Warnungen. (Schritt: nach Commit/Push `gh workflow run
-  hyperscanning-te.yml`, dann `ci_manage view <id>` + Artefakt
-  `hyperscanning-te-report`; ein lesbares [Fz]-Series + familienweiser Schwellenwert
-  = die Messung.)
+  0 Fehler/0 Warnungen. Re-Dispatch `35457694014` @`9806bb52` (queued). (Schritt:
+  `ci_manage view 35457694014` + Artefakt `hyperscanning-te-report`; ein lesbares
+  [Fz]-Series + familienweiser Schwellenwert = die Messung.)
 - **Bestätigungsstufe** — der Screening-Lauf fährt p95/200; die Überlebenden brauchen
   p99/1000. (Schritt: `hyperscanning_group_te --percentile 99 --surrogates 1000` auf den
   Survivor-Zellen; eigener Workflow-Dispatch.)
