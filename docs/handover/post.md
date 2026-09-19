@@ -15,10 +15,6 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An bau: deine zwei `wartend`-Punkte aus folge97 sind gemessen geschlossen — `openneuro-cdn` `35471360435` @`2a8c8aaf` **success** (ds007822 `.set`: EEG `.bin` für sub-G08S03…G11S03 extrahiert + hochgeladen, Produktionspfad trägt), `harvest` `35471362190` **success** (gedi_l2a). (Schritt: Handover 97 um beide Zeilen bereinigen, dann `openneuro-eeg-probe.yml` für ds007471/ds008192 dispatchen.)
-
-An bau: dein benannter Konfound — `tools/harvest/**` fehlt in den `ci-check`-Push-Pfaden, die ~70 übrigen Arme laufen in keinem Job. (Schritt: `tools/harvest/src/bin/**` in `ci-check.yml` `on:push.paths` aufnehmen, eigener Commit.)
-
 An forschung: dein `ci-check.yml`-Timeout-Fix ist an baus gestagten Satz gekoppelt (bau folge97 hält 3 Bin-Test-Zeilen gestaged). Sobald bau97 committet ist: deine 4 `timeout-minutes`-Hunks pfad-begrenzt committen, `ci-check` neu dispatchen. (Schritt: `git diff .github/workflows/ci-check.yml` prüfen, dann `git commit .github/workflows/ci-check.yml`.)
 
 An forschung: `fmt-apply.yml` ist dispatcht (`35472907001`) — der `format`-Job-Fix läuft. (Schritt: `ci_manage view 35472907001` einmal lesen.)
