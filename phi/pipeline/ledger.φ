@@ -65,7 +65,7 @@ note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall 
 
 kompiliert
 kandidat https://exofop.ipac.caltech.edu/
-note 2026-09-19: Pipe-Arm gebaut (exofop_compiler.rs, extract.rs exofop_toi, Format EXF1 44 B/Record) + sources.φ/harvest.φ-Blöcke; Force em. CDN offen: gh workflow run exofop-cdn.yml → Asset exofop_toi.bin present.
+note 2026-09-19: Pipe-Arm gebaut (exofop_compiler.rs, extract.rs exofop_toi, EXF1 44 B/Record) + sources.φ/harvest.φ-Blöcke; Force em. CDN-Asset present: exofop_toi.bin 358525 B sha256 440a7fdc…0321 HTTP 200 (run 35426107470 success).
 
 kompiliert
 kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/
