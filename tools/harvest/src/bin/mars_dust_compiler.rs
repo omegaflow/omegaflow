@@ -93,10 +93,12 @@ fn tap_rows(root: &str, adql: &str) -> Option<(Option<Vec<String>>, Vec<Vec<Stri
     };
     let fields: Option<Vec<String>> = m.get("metadata").and_then(as_arr).map(|meta| {
         meta.iter()
-            .filter_map(|md| as_obj(md).and_then(|o| match o.get("name") {
-                Some(JsonVal::Str(s)) => Some(s.clone()),
-                _ => None,
-            }))
+            .filter_map(|md| {
+                as_obj(md).and_then(|o| match o.get("name") {
+                    Some(JsonVal::Str(s)) => Some(s.clone()),
+                    _ => None,
+                })
+            })
             .collect()
     });
     let data = m.get("data").and_then(as_arr)?;
@@ -116,7 +118,12 @@ fn col_pos(fields: &Option<Vec<String>>, name: &str, fallback: usize) -> Option<
 }
 
 fn cell_f64(cells: &[String], pos: usize) -> Option<f64> {
-    cells.get(pos)?.trim().parse::<f64>().ok().filter(|v| v.is_finite())
+    cells
+        .get(pos)?
+        .trim()
+        .parse::<f64>()
+        .ok()
+        .filter(|v| v.is_finite())
 }
 
 struct CubeRow {
@@ -206,11 +213,7 @@ impl SolAxis {
         }
         let f = (self.sol(k) - s0) / (s1 - s0);
         let jd = self.jd_first + f * (self.jd_last - self.jd_first);
-        if jd.is_finite() {
-            Some(jd)
-        } else {
-            None
-        }
+        if jd.is_finite() { Some(jd) } else { None }
     }
 }
 
@@ -294,7 +297,9 @@ fn compile_cube(
         },
     };
     if !(pixel_deg.is_finite() && pixel_deg > 0.0) {
-        return Err(format!("pixel scale {pixel_deg} deg is no positive measurement"));
+        return Err(format!(
+            "pixel scale {pixel_deg} deg is no positive measurement"
+        ));
     }
     let extent = a_radius * pixel_deg.to_radians();
     let crval3 = match header.f64("CRVAL3") {
@@ -329,8 +334,7 @@ fn compile_cube(
                 bf_grid.push(None);
                 continue;
             };
-            if !(lat_deg.is_finite() && (-90.0..=90.0).contains(&lat_deg) && lon_deg.is_finite())
-            {
+            if !(lat_deg.is_finite() && (-90.0..=90.0).contains(&lat_deg) && lon_deg.is_finite()) {
                 bf_grid.push(None);
                 continue;
             }
@@ -338,7 +342,11 @@ fn compile_cube(
             let lon = lon_deg.to_radians();
             let (sl, cl) = lat.sin_cos();
             let (so, co) = lon.sin_cos();
-            bf_grid.push(Some([a_radius * cl * co, a_radius * cl * so, a_radius * sl]));
+            bf_grid.push(Some([
+                a_radius * cl * co,
+                a_radius * cl * so,
+                a_radius * sl,
+            ]));
             bf_placed += 1;
         }
     }
@@ -459,8 +467,8 @@ fn run(args: &[String]) -> Result<(), String> {
                 .ok_or_else(|| format!("epn_core carries no row for {url}"))?;
             let row = row_from_cells(&fields, cells)
                 .ok_or_else(|| format!("the row for {url} carries no measured JD anchors"))?;
-            let fits = fetch_raw_bytes(&url, 604800)
-                .ok_or_else(|| format!("cube fetch void ({url})"))?;
+            let fits =
+                fetch_raw_bytes(&url, 604800).ok_or_else(|| format!("cube fetch void ({url})"))?;
             (fits, row)
         }
         (None, None, Some(path)) => {
@@ -479,7 +487,9 @@ fn run(args: &[String]) -> Result<(), String> {
             (fits, row)
         }
         (None, None, None) => {
-            return Err("--row <k> | --url <fits-url> | --input <fits-file> absent — refused".into());
+            return Err(
+                "--row <k> | --url <fits-url> | --input <fits-file> absent — refused".into(),
+            );
         }
     };
     let records = compile_cube(&fits, &row, &lsk, &eph)?;

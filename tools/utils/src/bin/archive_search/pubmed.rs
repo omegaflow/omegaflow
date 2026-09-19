@@ -63,7 +63,10 @@ fn fetch_summaries(ids: &[String]) -> Vec<String> {
     );
     match get(&url, &[], "40") {
         Some(f) if f.status == Some(200) => parse_summaries(&f.body),
-        Some(f) => vec![format!("pending — pubmed esummary HTTP {}", f.status_text())],
+        Some(f) => vec![format!(
+            "pending — pubmed esummary HTTP {}",
+            f.status_text()
+        )],
         None => vec!["pending — no network".to_string()],
     }
 }
@@ -148,11 +151,14 @@ mod tests {
 
     #[test]
     fn omits_the_absent_doi() {
-        let body = r#"{"result":{"uids":["1"],"1":{"title":"No doi","source":"J","pubdate":"2000"}}}"#;
+        let body =
+            r#"{"result":{"uids":["1"],"1":{"title":"No doi","source":"J","pubdate":"2000"}}}"#;
         assert_eq!(
             parse_summaries(body),
-            vec!["url https://pubmed.ncbi.nlm.nih.gov/1/\ttitle: No doi\tjournal: J\tdate: 2000"
-                .to_string()]
+            vec![
+                "url https://pubmed.ncbi.nlm.nih.gov/1/\ttitle: No doi\tjournal: J\tdate: 2000"
+                    .to_string()
+            ]
         );
     }
 

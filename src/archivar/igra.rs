@@ -167,8 +167,18 @@ mod tests {
     fn data_line(d: &DataLineFields) -> String {
         format!(
             "{:<2} {:>5} {:>6}{}{:>5}{}{:>5}{}{:>5} {:>5} {:>5} {:>5}",
-            d.lvltyp, d.etime, d.press, d.pflag, d.gph, d.zflag, d.temp, d.tflag, d.rh, d.dpdp,
-            d.wdir, d.wspd
+            d.lvltyp,
+            d.etime,
+            d.press,
+            d.pflag,
+            d.gph,
+            d.zflag,
+            d.temp,
+            d.tflag,
+            d.rh,
+            d.dpdp,
+            d.wdir,
+            d.wspd
         )
     }
 

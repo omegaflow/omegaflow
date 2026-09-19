@@ -103,7 +103,11 @@ impl std::fmt::Debug for HeaderDiag {
             f,
             ", symbol table {}, link info {}",
             if self.symtab_found { "found" } else { "absent" },
-            if self.link_info_found { "found" } else { "absent" }
+            if self.link_info_found {
+                "found"
+            } else {
+                "absent"
+            }
         )
     }
 }
@@ -444,9 +448,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         if len > MAX_READ_BYTES {
             return Err(Hdf5Note::ReadLength { off: start, len });
         }
-        if self.fetches >= MAX_FETCHES
-            || self.fetched_bytes.saturating_add(len) > MAX_FETCH_BYTES
-        {
+        if self.fetches >= MAX_FETCHES || self.fetched_bytes.saturating_add(len) > MAX_FETCH_BYTES {
             return Err(Hdf5Note::FetchBudget {
                 off: start,
                 reads: self.fetches,
@@ -596,11 +598,7 @@ fn v1_messages(
     Ok(out)
 }
 
-fn cont_target(
-    msg: &RawMessage,
-    offset_size: usize,
-    length_size: usize,
-) -> Option<(u64, u64)> {
+fn cont_target(msg: &RawMessage, offset_size: usize, length_size: usize) -> Option<(u64, u64)> {
     if msg.typ != MSG_CONT {
         return None;
     }
@@ -1628,7 +1626,9 @@ fn walk_symtab_nodes<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                 });
             }
             let n = le_u16(&head, 6) as usize;
-            let span = 8usize.checked_add(40 * n).ok_or(Hdf5Note::EndAtByte { off })?;
+            let span = 8usize
+                .checked_add(40 * n)
+                .ok_or(Hdf5Note::EndAtByte { off })?;
             let buf = r.read(addr, span as u64)?;
             if buf.len() < span {
                 return Err(Hdf5Note::EndAtByte {
@@ -2023,7 +2023,11 @@ fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     }
     let key_size = 8 + (rank + 1) * 8;
     let span = 24usize
-        .checked_add(nchildren.checked_mul(key_size + 8).ok_or(Hdf5Note::EndAtByte { off })?)
+        .checked_add(
+            nchildren
+                .checked_mul(key_size + 8)
+                .ok_or(Hdf5Note::EndAtByte { off })?,
+        )
         .ok_or(Hdf5Note::EndAtByte { off })?;
     let buf = r.read(addr, span as u64)?;
     if buf.len() < span {
@@ -2466,11 +2470,12 @@ impl<'a> Hdf5File<'a> {
                     return Err(Hdf5Note::Chunk { off: 0 });
                 }
                 let filtered = !obj.filters.is_empty();
-                let (recs, v1_index) = self.chunk_records_of(
-                    obj,
-                    rank,
-                    &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
-                )?;
+                let (recs, v1_index) =
+                    self.chunk_records_of(
+                        obj,
+                        rank,
+                        &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
+                    )?;
                 let mut out = vec![0u8; count * elem_size];
                 for rec in recs {
                     let scaled: Vec<usize> = if v1_index {
@@ -2621,11 +2626,9 @@ impl<'a> Hdf5File<'a> {
             _ => return None,
         };
         let (recs, v1_index) = self
-            .chunk_records_of(
-                obj,
-                rank,
-                &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
-            )
+            .chunk_records_of(obj, rank, &mut |_off: u64, _len: u64| -> Option<Vec<u8>> {
+                None
+            })
             .ok()?;
         let mut out = Vec::with_capacity(recs.len());
         for rec in recs {
@@ -2715,9 +2718,7 @@ impl<'a> Hdf5File<'a> {
             })?;
         let rec = recs
             .into_iter()
-            .find(|r| {
-                scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords)
-            })
+            .find(|r| scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords))
             .ok_or(ChunkReadDiag {
                 stage: "chunk not found",
                 note: None,
@@ -2744,10 +2745,12 @@ impl<'a> Hdf5File<'a> {
         }
         let mut actual_elems = 1usize;
         for d in 0..rank {
-            let start = coords[d].checked_mul(chunk_dims[d] as u64).ok_or(ChunkReadDiag {
-                stage: "coords overflow",
-                note: None,
-            })?;
+            let start = coords[d]
+                .checked_mul(chunk_dims[d] as u64)
+                .ok_or(ChunkReadDiag {
+                    stage: "coords overflow",
+                    note: None,
+                })?;
             let avail = ds.dims[d].saturating_sub(start);
             actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
         }
@@ -2755,12 +2758,10 @@ impl<'a> Hdf5File<'a> {
         let n = raw_elems.min(actual_elems);
         let mut out = Vec::with_capacity(n);
         for i in 0..n {
-            out.push(
-                decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
-                    stage: "numeric decode",
-                    note: Some(note),
-                })?,
-            );
+            out.push(decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
+                stage: "numeric decode",
+                note: Some(note),
+            })?);
         }
         let scale = obj
             .attrs
@@ -3599,7 +3600,8 @@ mod tests {
         let mut fetched: Vec<(u64, u64)> = Vec::new();
         let file = Hdf5File::parse_fetch(base, |off, len| {
             fetched.push((off, len));
-            full.get(off as usize..(off + len) as usize).map(|s| s.to_vec())
+            full.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
         })
         .expect("parse_fetch resolves the beyond-base object header via the fetch closure");
         let root = file.root().expect("root object gathered");
@@ -3631,7 +3633,8 @@ mod tests {
 
         let base = &full[..512];
         let file = Hdf5File::parse_fetch(base, |off, len| {
-            full.get(off as usize..(off + len) as usize).map(|s| s.to_vec())
+            full.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
         })
         .expect("the v1 object header is 16 bytes of prefix plus header_size");
         let root = file.root().expect("root object gathered");
@@ -3693,10 +3696,18 @@ mod tests {
         buf[64..72].copy_from_slice(&(ROOT as u64).to_le_bytes());
 
         let cont_data = [addr_bytes(CONT as u64), addr_bytes(24)].concat();
-        put(&mut buf, ROOT, &v1_header(2, vec![v1_msg(MSG_CONT as u16, cont_data)]));
+        put(
+            &mut buf,
+            ROOT,
+            &v1_header(2, vec![v1_msg(MSG_CONT as u16, cont_data)]),
+        );
 
         let symtab_data = [addr_bytes(SNOD as u64), addr_bytes(HEAP as u64)].concat();
-        put(&mut buf, CONT, &v1_msg(MSG_SYMBOL_TABLE as u16, symtab_data));
+        put(
+            &mut buf,
+            CONT,
+            &v1_msg(MSG_SYMBOL_TABLE as u16, symtab_data),
+        );
 
         let mut heap = vec![b'H', b'E', b'A', b'P', 0, 0, 0, 0];
         heap.extend_from_slice(&8u64.to_le_bytes());
@@ -3750,10 +3761,13 @@ mod tests {
         assert_eq!(dt.class, 1);
         assert_eq!(dt.size, 8);
         assert_eq!(
-            file.read_f64_dataset("d").expect("the contiguous payload reads"),
+            file.read_f64_dataset("d")
+                .expect("the contiguous payload reads"),
             vec![1.0, 2.0, 3.0, 4.0]
         );
-        let d = file.root_header_diag().expect("the root header diag stands");
+        let d = file
+            .root_header_diag()
+            .expect("the root header diag stands");
         assert_eq!(d.version, 1);
         assert_eq!(d.msgs_initial, 1);
         assert_eq!(d.cont_blocks, 1);
@@ -3806,7 +3820,9 @@ mod tests {
 
         let file = Hdf5File::parse(&buf)
             .expect("the v2 object header resolves through its self-cyclic continuation block");
-        let d = file.root_header_diag().expect("the root header diag stands");
+        let d = file
+            .root_header_diag()
+            .expect("the root header diag stands");
         assert_eq!(d.version, 2);
         assert_eq!(d.cont_blocks, 1);
         assert!(d.cont_blocks <= MAX_CONT_BLOCKS);
