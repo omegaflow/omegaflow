@@ -91,7 +91,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--all` | Σ der 15 Modi | | — letzte Stufe, nie der erste Zug | |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 16 Modi — letzte Stufe, nie der erste Zug |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -114,6 +114,10 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
   `url https://europepmc.org/article/<source>/<id>` + Titel/Jahr/DOI/Zitate.
+- `archive_search --psychporta <query>` — ZPID PsychPorta (PSYNDEX +
+  PsychArchives + Tests + Persons), Elasticsearch-POST an `/api/search`;
+  `total: N` + `url https://psychporta.org/works/<id>` + Titel/Index.
+  Deutschsprachige Psychologie (PubPsych ist seit Juni 2026 offline).
 
 ## Gemessen — übrige lokale Werkzeuge
 
@@ -140,7 +144,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 
 | Werkzeug | Kann | Scope | Profile |
 |---|---|---|---|
-| `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 18 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
+| `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 19 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
 | `bin/archive_search` (Wrapper) | baut bei Bedarf, sonst `exec` | lokal | P1–P5 |
 | `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
