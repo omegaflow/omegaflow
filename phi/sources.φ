@@ -6846,15 +6846,65 @@ at earth
 ttl 604800
 field observable_hz mars_express_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf.bin
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1080341864_1431499728.bin
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 f6847088f5272f22a3111b372a59f19aeacabf2db93b4e1936cf198c3f1b2351
 at earth
 ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
-note rosetta_odf (gemessen 2026-09-16): IFMS-AGC-Reader src/archivar/ifms_agc.rs; rosetta_odf_compiler.rs; Fixtur r32icl1l1a_ag1_072831317_02.RAW, 343978 B, sha256 13eb7667…fd48c, 1994 Zeilen; offen: planetary-odf-cdn.yml --ci-mode nach Push.
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1080341864_1431699247.bin
+format rosetta_odf
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 3d1cf8e1e2268857e2e36de8584b008dc109b1ade0efd18caa43cccbe89386d6
+at earth
+ttl 604800
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431499728_1464565518.bin
+format rosetta_odf
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 ae339c146a41bf07f5086172be8ef6ae4bdf7041248ffd5cc0789fb06f6f8fa9
+at earth
+ttl 604800
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431699248_1464772941.bin
+format rosetta_odf
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 24a53c78ad02f5ad3491b224cf16c9d559e500b9012fd6b5b82ae4ef89185174
+at earth
+ttl 604800
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464565518_1475187437.bin
+format rosetta_odf
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 a95ca2002beb9c198c884b80ed31e29edf1da2bc95c72c9dbcebe1bcad28f32e
+at earth
+ttl 604800
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464772941_1475187437.bin
+format rosetta_odf
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
+sha256 810d120f339cd604f031770e33553c8cd1c6386df5487fd22d4aea5286d6ca0b
+at earth
+ttl 604800
+field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
+field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
 format cassini_tnf
@@ -7067,14 +7117,15 @@ at earth
 ttl 604800
 field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk.bin
+url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk_2009.bin
 format lro_trk
 origin http://imbrium.mit.edu/LRORS/DATA/TRK/
 compiler tools/harvest/src/bin/lro_trk_compiler.rs
+sha256 c29af4b434237c409dbb0265447e279dc6fd1190f01c8a33a5457426c4256faa
 at earth
 ttl 604800
 field sky_frequency_hz lro_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
-note LRO RSS raw tracking (utF, 75-byte records) sky-frequency; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; compiler tools/harvest/src/bin/lro_trk_compiler.rs; sha256 pending (CI re-dispatch).
+note LRO RSS raw tracking (utF, 75-byte records) sky-frequency; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series; Asset lro_trk_2009.bin 114787240 B measured 2026-09-19 (run 35425365015 success).
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
