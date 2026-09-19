@@ -428,7 +428,9 @@ mod tests {
     fn ascii_data_or_foreign_bytes_reads_absent() {
         assert!(parse_vhdr(&[]).is_none());
         assert!(parse_vhdr(b"not a vhdr").is_none());
-        let ascii = String::from_utf8(vhdr()).unwrap().replace("BINARY", "ASCII");
+        let ascii = String::from_utf8(vhdr())
+            .unwrap()
+            .replace("BINARY", "ASCII");
         assert!(parse_vhdr(ascii.as_bytes()).is_none());
         let no_bin = String::from_utf8(vhdr())
             .unwrap()
