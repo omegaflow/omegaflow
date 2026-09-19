@@ -3997,7 +3997,7 @@ mod tests {
         for t in 1..n {
             y[t] = 0.5 * y[t - 1] + 0.6 * x[t - 1] + 0.1 * gate_gauss(&mut rng);
         }
-        let obs = transfer_entropy_conditional_binned_n(&x, &y, &[], 1, 4)
+        let obs = transfer_entropy_conditional_binned_n(&y, &x, &[], 1, 4)
             .expect("the linear coupling is measurable");
         let params = |null| TeStatsParams {
             lag: 1,
@@ -4008,9 +4008,9 @@ mod tests {
             null,
         };
         let (_, _, thr_coherent) =
-            conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::CoherentPhase))
+            conditional_te_stats_lagged_n(&y, &x, &[], params(TeNull::CoherentPhase))
                 .expect("the coherent null carries a threshold");
-        let (_, _, thr_phase) = conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::Phase))
+        let (_, _, thr_phase) = conditional_te_stats_lagged_n(&y, &x, &[], params(TeNull::Phase))
             .expect("the single-phase null carries a threshold");
         assert!(
             obs <= thr_coherent,
@@ -4031,11 +4031,11 @@ mod tests {
         for t in 1..n {
             y[t] = 0.3 * y[t - 1] + 1.2 * x[t - 1] * x[t - 1] + 0.1 * gate_gauss(&mut rng);
         }
-        let obs = transfer_entropy_conditional_binned_n(&x, &y, &[], 1, 4)
+        let obs = transfer_entropy_conditional_binned_n(&y, &x, &[], 1, 4)
             .expect("the nonlinear transfer is measurable");
         let (_, _, thr) = conditional_te_stats_lagged_n(
-            &x,
             &y,
+            &x,
             &[],
             TeStatsParams {
                 lag: 1,
