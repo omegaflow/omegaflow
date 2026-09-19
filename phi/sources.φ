@@ -6923,7 +6923,7 @@ compiler tools/harvest/src/bin/cassini_odf_compiler.rs
 at earth
 ttl 604800
 field observable_hz cassini_odf_observable_hz inverse-square em hz 604800 0.0 0.0
-note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Asset fehlt (Erstlauf offen).
+note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Erstlauf 2026-09-19 run 35451207386 leer (atmos-Fetch reset, Fehlgrün gefixt); Asset fehlt, Re-Dispatch nach Push.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_rsr.bin
 format cassini_rsr
@@ -6933,7 +6933,7 @@ at earth
 ttl 604800
 field i_count cassini_rsr_i_count inverse-square em count 604800 0.0 0.0
 field q_count cassini_rsr_q_count inverse-square em count 604800 0.0 0.0
-note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Asset fehlt (Erstlauf offen).
+note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Erstlauf 2026-09-19 run 35451218520 leer (atmos-Fetch reset + pds-app-bar-Href, gefixt); Asset fehlt, Re-Dispatch nach Push.
 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_ocru_odf.bin
 format juno_ocru_odf

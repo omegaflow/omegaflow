@@ -60,11 +60,17 @@ jobs:
                 wf=${wf:-harvest.yml}
                 echo "format $fmt: asset fehlt — dispatch $wf"
                 tmo=$(printf '%s\n' "$block" | sed -n 's/^timeout //p')
-                if [ -n "$tmo" ]; then
-                  gh workflow run "$wf" -f format="$fmt" -f timeout="$tmo" --repo '${{ github.repository }}' \
-                    || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+                if grep -qE '^[[:space:]]+format:' ".github/workflows/$wf"; then
+                  if [ -n "$tmo" ]; then
+                    gh workflow run "$wf" -f format="$fmt" -f timeout="$tmo" --repo '${{ github.repository }}' \
+                      || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+                  else
+                    gh workflow run "$wf" -f format="$fmt" --repo '${{ github.repository }}' \
+                      || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+                  fi
                 else
-                  gh workflow run "$wf" -f format="$fmt" --repo '${{ github.repository }}' \
+                  echo "format $fmt: $wf declares no format input — dispatch without inputs"
+                  gh workflow run "$wf" --repo '${{ github.repository }}' \
                     || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
                 fi
                 ;;
