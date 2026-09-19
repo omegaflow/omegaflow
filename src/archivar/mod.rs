@@ -21,6 +21,7 @@ pub mod bison_shift;
 pub mod bison_velocity;
 pub mod bl_narrowband;
 pub mod bpc;
+pub mod brainvision;
 pub mod bsp_reader;
 pub mod bzip2;
 pub mod cassini_rsr;
@@ -152,6 +153,7 @@ pub mod port;
 pub mod relay;
 pub mod render;
 pub mod skymap;
+pub mod snirf;
 pub mod spatial;
 pub mod spectral;
 #[cfg(test)]

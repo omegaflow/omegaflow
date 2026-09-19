@@ -10,6 +10,9 @@ const MI_SINGLE: u32 = 7;
 const MI_DOUBLE: u32 = 9;
 const MI_MATRIX: u32 = 14;
 const MI_COMPRESSED: u32 = 15;
+const MI_UTF8: u32 = 16;
+const MI_UTF16: u32 = 17;
+const MI_UTF32: u32 = 18;
 
 const MX_CELL_CLASS: u32 = 1;
 const MX_STRUCT_CLASS: u32 = 2;
@@ -111,7 +114,7 @@ fn read_tag(bytes: &[u8], pos: &mut usize) -> Option<(u32, usize, usize)> {
     }
     let v = u32::from_le_bytes(bytes[*pos..*pos + 4].try_into().ok()?);
     let ty = v & 0xFFFF;
-    let small_type = (1..=7).contains(&ty) || ty == 9;
+    let small_type = (1..=7).contains(&ty) || ty == 9 || (16..=18).contains(&ty);
     if small_type && (v >> 16) != 0 {
         let nbytes = (v >> 16) as usize;
         *pos += 4;
@@ -258,6 +261,39 @@ fn read_data(body: &[u8], pos: &mut usize, t: u32, s: usize, cls: u32) -> Option
                 let at = *pos + i * 2;
                 let u = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
                 if let Some(c) = char::from_u32(u as u32) {
+                    let mut buf = [0u8; 4];
+                    v.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
+                }
+            }
+            *pos = align8(*pos + s);
+            Some(MatData::Char(v))
+        }
+        (MX_CHAR, MI_UTF8) => {
+            let v = body[*pos..*pos + s].to_vec();
+            *pos = align8(*pos + s);
+            Some(MatData::Char(v))
+        }
+        (MX_CHAR, MI_UTF16) => {
+            let n = s / 2;
+            let mut v = Vec::with_capacity(n);
+            for i in 0..n {
+                let at = *pos + i * 2;
+                let u = u16::from_le_bytes(body[at..at + 2].try_into().ok()?);
+                if let Some(c) = char::from_u32(u as u32) {
+                    let mut buf = [0u8; 4];
+                    v.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
+                }
+            }
+            *pos = align8(*pos + s);
+            Some(MatData::Char(v))
+        }
+        (MX_CHAR, MI_UTF32) => {
+            let n = s / 4;
+            let mut v = Vec::with_capacity(n);
+            for i in 0..n {
+                let at = *pos + i * 4;
+                let u = u32::from_le_bytes(body[at..at + 4].try_into().ok()?);
+                if let Some(c) = char::from_u32(u) {
                     let mut buf = [0u8; 4];
                     v.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
                 }
@@ -835,6 +871,63 @@ mod tests {
         match &arrays[0].data {
             MatData::Char(c) => assert_eq!(c, b"E1"),
             _ => panic!("not char"),
+        }
+    }
+
+    fn utf8_char_matrix(name: &str, text: &str) -> Vec<u8> {
+        let mut body = flags_class(MX_CHAR);
+        body.extend_from_slice(&dims_tag(&[1, text.len() as i32]));
+        body.extend_from_slice(&name_tag(name));
+        body.extend_from_slice(&(MI_UTF8 as u16).to_le_bytes());
+        body.extend_from_slice(&(text.len() as u16).to_le_bytes());
+        body.extend_from_slice(text.as_bytes());
+        pad_body(&mut body);
+        let mut out = Vec::new();
+        out.extend_from_slice(&MI_MATRIX.to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        out.extend_from_slice(&body);
+        out
+    }
+
+    #[test]
+    fn a_utf8_char_matrix_decodes_to_utf8() {
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&utf8_char_matrix("labels", "P3"));
+        let arrays = parse_mat(&bytes).unwrap();
+        match &arrays[0].data {
+            MatData::Char(c) => assert_eq!(c, b"P3"),
+            other => panic!("not char, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn a_chanlocs_struct_with_utf8_labels_decodes_each_label() {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[(
+                "labels",
+                vec![
+                    utf8_char_matrix("labels", "Fp1"),
+                    utf8_char_matrix("labels", "Fp2"),
+                ],
+            )],
+        );
+        let mut bytes = build_header();
+        bytes.extend_from_slice(&chanlocs);
+        let arrays = parse_mat(&bytes).unwrap();
+        let MatData::Struct(fields) = &arrays[0].data else {
+            panic!("not struct");
+        };
+        let labels = fields.iter().find(|f| f.name == "labels").unwrap();
+        assert_eq!(labels.values.len(), 2);
+        match &labels.values[0].data {
+            MatData::Char(c) => assert_eq!(c, b"Fp1"),
+            other => panic!("not char, got {other:?}"),
+        }
+        match &labels.values[1].data {
+            MatData::Char(c) => assert_eq!(c, b"Fp2"),
+            other => panic!("not char, got {other:?}"),
         }
     }
 }

@@ -11,6 +11,7 @@ pub struct Fetch {
     pub body: String,
     pub raw: Vec<u8>,
     pub retry_after: Option<u64>,
+    pub complete: bool,
 }
 
 impl Fetch {
@@ -75,6 +76,7 @@ fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) ->
         body: String::from_utf8_lossy(body).to_string(),
         raw: body.to_vec(),
         retry_after: retry,
+        complete: out.status.success(),
     })
 }
 
@@ -1069,7 +1071,15 @@ fn sniff_lines_from(f: &Fetch, url: &str) -> Vec<String> {
         format!("status {}", f.status_text()),
         format!("bytes {}", bytes.len()),
         format!("magic {}", magic_label(crate::magic::magic_identity(bytes))),
-        format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes)),
+        if f.complete {
+            format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes))
+        } else {
+            format!(
+                "sha256 partial {} (download incomplete, {} bytes)",
+                omegaflow::sha256::sha256_hex(bytes),
+                bytes.len()
+            )
+        },
     ]
 }
 
@@ -1331,6 +1341,7 @@ mod tests {
             body: String::new(),
             raw: Vec::new(),
             retry_after: None,
+            complete: true,
         })
     }
 
@@ -1432,7 +1443,29 @@ mod tests {
             body: String::from_utf8_lossy(&raw).to_string(),
             raw,
             retry_after: None,
+            complete: true,
         }
+    }
+
+    fn partial_fetch() -> Fetch {
+        Fetch {
+            complete: false,
+            ..lossy_fetch()
+        }
+    }
+
+    #[test]
+    fn sniff_lines_marks_a_partial_download() {
+        let complete = lossy_fetch();
+        let lines = sniff_lines_from(&complete, "https://example.com/blob");
+        let raw_sha = omegaflow::sha256::sha256_hex(&complete.raw);
+        assert_eq!(lines[4], format!("sha256 {}", raw_sha));
+
+        let partial = partial_fetch();
+        let partial_lines = sniff_lines_from(&partial, "https://example.com/blob");
+        assert!(partial_lines[4].starts_with("sha256 partial "));
+        assert!(partial_lines[4].contains(&raw_sha));
+        assert_eq!(partial_lines[2], "bytes 4");
     }
 
     #[test]
