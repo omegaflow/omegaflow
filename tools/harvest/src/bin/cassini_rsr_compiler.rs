@@ -138,11 +138,17 @@ fn main() {
         };
         let before = rows.len();
         rows.extend(cassini_rsr::series(&records, &lsk));
-        eprintln!("{url}: {} records, {} series rows", records.len(), rows.len() - before);
+        eprintln!(
+            "{url}: {} records, {} series rows",
+            records.len(),
+            rows.len() - before
+        );
     }
     if rows.is_empty() {
         if failures > 0 {
-            eprintln!("no Cassini RSR samples — {failures} fetch/parse failures, the series stays unwritten");
+            eprintln!(
+                "no Cassini RSR samples — {failures} fetch/parse failures, the series stays unwritten"
+            );
             std::process::exit(1);
         }
         eprintln!("no Cassini RSR samples — the series stays unwritten (0 honored)");
