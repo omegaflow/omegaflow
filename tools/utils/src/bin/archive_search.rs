@@ -28,6 +28,8 @@ mod paged;
 mod pdf;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
+#[path = "archive_search/psychporta.rs"]
+mod psychporta;
 #[path = "archive_search/pubmed.rs"]
 mod pubmed;
 #[path = "archive_search/secrets.rs"]
@@ -236,6 +238,7 @@ fn main() {
             "--openalex" => mode = Mode::Net("openalex"),
             "--pubmed" => mode = Mode::Net("pubmed"),
             "--europepmc" => mode = Mode::Net("europepmc"),
+            "--psychporta" => mode = Mode::Net("psychporta"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -492,7 +495,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
@@ -507,7 +510,7 @@ fn usage() {
         "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
     );
     eprintln!(
-        "  --all       the query through every keyword search mode (15 calls — the last move, never the first)"
+        "  --all       the query through every keyword search mode (16 calls — the last move, never the first)"
     );
     eprintln!();
     eprintln!(
