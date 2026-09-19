@@ -1,0 +1,55 @@
+name: mars-dust-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: LMD mars_dust CDOD FITS cube URL (mars_dust.epn_core access_url)
+        required: true
+        type: string
+        default: http://vo.lmd.jussieu.fr:8080/mars_dust/griddedcdod/griddedcdod_MY25_1FpSol.fits
+      asset:
+        description: output asset name on the CDN (netloc vo.lmd.jussieu.fr)
+        required: true
+        type: string
+        default: mars_dust_MY25_1FpSol.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  mars-dust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the vo.lmd.jussieu.fr release exists on the CDN
+        run: |
+          if ! gh release view vo.lmd.jussieu.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create vo.lmd.jussieu.fr --repo omegaflow/sources \
+              --title "vo.lmd.jussieu.fr" \
+              --notes "LMD mars_dust gridded CDOD cubes (column dust optical depth, 9.3 um absorption, dimensionless, em) compiled to the 26xf64 wire. Header 8 B: magic MDST (4), count (u32 LE). Record stride 208 B LE, 26 x f64: x,y,z (ICRS m, planetocentric Mars mean-radius sphere via A_RADIUS rotated by the WGCCRE/CK frame and translated by the Mars SPK), val (CDOD), epoch (JD UTC from epn_core time_min/time_max linear over the sol axis), ttl, tau, extent (A_RADIUS x pixel scale), kernel_id (0), force_type (0 em), absorption, advection, vx,vy,vz (pad), pole_x,y,z (pad), j2,j4,r_eq (pad), color_index (pad), freq, bin_width (pad 0 = no band), phase (pad), presence (1 = finite CDOD, 0 = absent)."
+          fi
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view vo.lmd.jussieu.fr --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Compile the mars_dust CDOD cube and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin mars_dust_compiler -- \
+            --url "${{ inputs.url }}" --out "${{ inputs.asset }}" \
+            --ci-mode
