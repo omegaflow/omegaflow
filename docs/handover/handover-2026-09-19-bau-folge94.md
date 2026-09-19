@@ -3,7 +3,7 @@
   session: Bau-Folge 94
   class: handover
   date: 2026-09-19
-  sha256: f8a9a87435b2d7f5842d690f0abe07256c580ed357825c8b719bdb7ff1a87f65
+  sha256: 7d90bac4eddc8a863182ef9f0a2638fc4dd1e7505ae5921d0c834fd79b410918
   status: live
 -->
 # Handover — Bau-Folge 94 (2026-09-19)
@@ -26,8 +26,10 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**.
 - **HEAD** Session-Beginn `d9dc64e7` (== `origin/main`); während der Session von
   fremden Linien auf `d1750fe0` (research folge97) gezogen (== `origin/main`).
   `git_safety` Snapshot `refs/safety/1789849746`.
-- **Postfach** leer (`post.md` nur Header, keine Bau-Zeile); Zustand-Eintrag
-  zitiert: letzter Ledger-Eingang `1789795811`, kein neuer seit Folge 54.
+- **Postfach** bei Session-Beginn leer (`post.md` nur Header); während der Session
+  ein Post der Ernte-Folge 98 (`--sniff`-Teil-Hash) — in „Offen" gefaltet, die
+  Post-Zeile gelöscht. Zustand-Eintrag zitiert: letzter Ledger-Eingang
+  `1789795811`, kein neuer seit Folge 54.
 - **CI** (`ci_manage list`/`view`, ~20:41Z): `ci-check 35468161696` pending
   @`d1750fe0`, `hyperscanning-te 35468144989` pending @`5219db7e`; der folge93-Gate-
   Lauf `ci-check 35467445389` @`d9dc64e7` wurde **cancelled** (Konkurrenz-Push),
@@ -38,10 +40,18 @@ Das Handover wird **vor allem anderen gegen den Baum gehalten**.
 
 ## Offen
 
-Kein offener undatierter Punkt: der Cache-Punkt aus folge93
-(`read_chunk_diag` ↔ `LazyHdf5`-Reader-Cache) ist gebaut — der Gate-Test
-`lazy_chunk_read_reuses_the_index_window` und die Vereinheitlichung stehen im
-Baum; die CI-Verifikation ist Wartestellung.
+- **`archive_search --sniff` hasht einen Teil-Download** (gemessen 2026-09-19,
+  Post der Ernte-Folge 98): `--sniff` meldet einen sha256 über die **partiell**
+  geholten Bytes, nicht über die volle Datei (`cassini_odf.bin` 1 496 960 792 B →
+  sniff 45 494 455 B/`fc48b662…`, dann 54 007 121 B/`f97f217d…`; `cassini_rsr.bin`
+  1 308 000 008 B → sniff 62 661 056 B/`578e2109…`; Wahrheit: GitHub-Release-API
+  `digest`). (Schritt: `tools/utils/src/bin/archive_search.rs` `Mode::Net("sniff")`
+  — die ganze Datei fetchen oder den Hash als partiell markieren, nie einen
+  Teil-Hash als vollen ausgeben.) · `pending`
+
+Der Cache-Punkt aus folge93 (`read_chunk_diag` ↔ `LazyHdf5`-Reader-Cache) ist
+gebaut — der Gate-Test `lazy_chunk_read_reuses_the_index_window` und die
+Vereinheitlichung stehen im Baum; die CI-Verifikation ist Wartestellung.
 
 ## Wartestellungen (kein Auswahlpunkt)
 
