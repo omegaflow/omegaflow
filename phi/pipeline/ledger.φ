@@ -121,15 +121,11 @@ note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitigno
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007822
-note OpenNeuro EEG-Hyperscanning, 11 Triaden (3 gleichzeitig), Prisoner's Dilemma (pddecision/pdfeedback/pdrest), EEGLAB .set MAT-v5, CC0, 379 MB, Kanal Fz. Schritt: openneuro_compiler auf ds007822 parametrisieren, dann --probe.
+note OpenNeuro EEG-Hyperscanning, 11 Triaden, Prisoner's Dilemma, EEGLAB .set MAT-v5, CC0, 379 MB, Kanal Fz. --dataset gebaut (default ds005034); Dispatch HTTP 422 (remote ohne dataset-Input). Schritt: commit+push (Operator /commit), dann dispatch.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
 note OpenNeuro Joint-agency-EEG (musikalische Joint Action), Dyaden, 32 Kanäle, BrainVision, 32 Subj., CC0, 8,66 GB. Schritt: BrainVision-Ingest-Arm bauen, dann --probe.
-
-ausstehend
-kandidat https://openneuro.org/datasets/ds004103
-note OpenNeuro hyperscanning-fMRI (Opening Treasure Chest), 33 Dyaden, CC0; Summary-Metadaten leer. fMRI-Zeitauflösung → kein TE-Pfad. Schritt: BOLD-Ingest-Arm bauen, dann --probe.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds008192

@@ -4,7 +4,6 @@ use omegaflow::matfile::{MatArray, MatData, MatField, parse_mat};
 use omegaflow::openneuro_eeg::{EegEvent, Events, OpenNeuroEeg, Samples, parse_bin, write_bin};
 use std::process::Command;
 
-const DATASET: &str = "ds005034";
 const NETLOC: &str = "openneuro.org";
 const GRAPHQL: &str = "https://openneuro.org/crn/graphql";
 
@@ -62,13 +61,13 @@ fn graphql(query: &str) -> Option<String> {
     }
 }
 
-fn snapshot_query() -> String {
-    format!(r#"query {{ dataset(id: "{DATASET}") {{ latestSnapshot {{ tag hexsha }} }} }}"#)
+fn snapshot_query(dataset: &str) -> String {
+    format!(r#"query {{ dataset(id: "{dataset}") {{ latestSnapshot {{ tag hexsha }} }} }}"#)
 }
 
-fn files_query(hexsha: &str) -> String {
+fn files_query(hexsha: &str, dataset: &str) -> String {
     format!(
-        r#"query {{ dataset(id: "{DATASET}") {{ latestSnapshot {{ files(tree: "{hexsha}", recursive: true) {{ filename size directory urls }} }} }} }}"#
+        r#"query {{ dataset(id: "{dataset}") {{ latestSnapshot {{ files(tree: "{hexsha}", recursive: true) {{ filename size directory urls }} }} }} }}"#
     )
 }
 
@@ -112,13 +111,13 @@ fn files_from_json(body: &str) -> Option<Vec<(String, String)>> {
     Some(out)
 }
 
-fn latest_snapshot() -> Option<(String, String)> {
-    let body = graphql(&snapshot_query())?;
+fn latest_snapshot(dataset: &str) -> Option<(String, String)> {
+    let body = graphql(&snapshot_query(dataset))?;
     snapshot_from_json(&body)
 }
 
-fn set_files(hexsha: &str) -> Option<Vec<(String, String)>> {
-    let body = graphql(&files_query(hexsha))?;
+fn set_files(hexsha: &str, dataset: &str) -> Option<Vec<(String, String)>> {
+    let body = graphql(&files_query(hexsha, dataset))?;
     files_from_json(&body)
 }
 
@@ -411,9 +410,13 @@ fn report(extract: &EegExtract) {
 
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let dataset = match arg_value(args, "--dataset") {
+        Some(d) => d,
+        None => "ds005034".to_string(),
+    };
     let out_root = match arg_value(args, "--out") {
         Some(p) => p,
-        None => format!("data/{NETLOC}/{DATASET}"),
+        None => format!("data/{NETLOC}/{dataset}"),
     };
 
     if let Some(local) = arg_value(args, "--local") {
@@ -431,8 +434,8 @@ fn run(args: &[String]) -> Result<(), String> {
     let task_filter = arg_value(args, "--task");
 
     let (snapshot_tag, hexsha) =
-        latest_snapshot().ok_or("the OpenNeuro snapshot carries no tag or hexsha")?;
-    let files = set_files(&hexsha).ok_or("the OpenNeuro file tree reads void")?;
+        latest_snapshot(&dataset).ok_or("the OpenNeuro snapshot carries no tag or hexsha")?;
+    let files = set_files(&hexsha, &dataset).ok_or("the OpenNeuro file tree reads void")?;
     if files.is_empty() {
         return Err("the dataset carries no .set file — nothing manifestiert (0 honored)".into());
     }
@@ -456,7 +459,7 @@ fn run(args: &[String]) -> Result<(), String> {
         .collect();
 
     eprintln!(
-        "{DATASET} snapshot {snapshot_tag} ({hexsha}): {} .set file(s), out root {out_root}",
+        "{dataset} snapshot {snapshot_tag} ({hexsha}): {} .set file(s), out root {out_root}",
         filtered.len()
     );
     let mut staged: Vec<String> = Vec::new();

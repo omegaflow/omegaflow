@@ -6,6 +6,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      dataset:
+        description: OpenNeuro dataset ID
+        required: true
+        default: ds005034
 permissions:
   contents: write
 env:
@@ -20,6 +25,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Idempotence — skip if both EEG assets already exist on the CDN
         id: idempotence
+        if: inputs.dataset == 'ds005034'
         run: |
           present=$(gh release view openneuro.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null)
@@ -31,8 +37,16 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "EEG asset(s) missing — compiling and manifesting"
           fi
-      - name: Compile the OpenNeuro ds005034 EEG pair and upload to CDN
-        if: steps.idempotence.outputs.present == 'false'
+      - name: Dataset filters — the ds005034 pair carries subject/task, a probe carries none
+        id: filters
+        run: |
+          if [ "${{ inputs.dataset }}" = "ds005034" ]; then
+            echo "args=--subject sub-02 --task rest" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile the OpenNeuro dataset and upload to CDN
+        if: inputs.dataset != 'ds005034' || steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin openneuro_compiler -- \
-            --subject sub-02 --task rest --ci-mode
+            --ci-mode --dataset "${{ inputs.dataset }}" ${{ steps.filters.outputs.args }}
