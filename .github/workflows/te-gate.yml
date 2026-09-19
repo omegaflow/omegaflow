@@ -52,3 +52,5 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_mi_lag_stability
       - name: Run the flare-envelope true-coupling gate (the power study; 43% at n=240)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
+      - name: Run the flare-envelope power probe (print-only; n in 400/600/1000)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
