@@ -244,7 +244,7 @@ fn run(args: &[String]) -> Result<(), String> {
             None => {
                 return Err(format!(
                     "{local}: the .vhdr names no DataFile — the samples stay unread"
-                ))
+                ));
             }
         };
         let eeg_path = parent.join(data_file);
@@ -374,7 +374,9 @@ fn run(args: &[String]) -> Result<(), String> {
         let ex = match extract(&vhdr_bytes, vmrk_bytes.as_deref(), &eeg_bytes) {
             Some(x) => x,
             None => {
-                eprintln!("{rel}: the triple carries no BrainVision contract — skipped (0 honored)");
+                eprintln!(
+                    "{rel}: the triple carries no BrainVision contract — skipped (0 honored)"
+                );
                 skipped += 1;
                 continue;
             }
