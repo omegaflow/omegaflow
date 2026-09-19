@@ -3,7 +3,7 @@ use std::process::exit;
 
 use omegaflow::force::force_name_of;
 use omegaflow::te::{
-    TeNull, TeStatsParams, benjamini_hochberg, conditional_te_stats_lagged_n,
+    LaggedCond, TeNull, TeStatsParams, benjamini_hochberg, conditional_te_stats_lagged_n,
     hilbert_instantaneous_phase, transfer_entropy_conditional_binned_n,
 };
 
@@ -53,7 +53,7 @@ fn normal_cdf(x: f64) -> f64 {
 fn conditional_link(
     target: &[f32],
     driver: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond<'_>],
     lag: usize,
     max_lag: usize,
     bins: usize,
@@ -165,9 +165,12 @@ fn main() {
             if drv == tgt {
                 continue;
             }
-            let conds: Vec<&[f32]> = (0..N_FORCE)
+            let conds: Vec<LaggedCond> = (0..N_FORCE)
                 .filter(|&k| k != drv && k != tgt)
-                .map(|k| phases[k].as_slice())
+                .map(|k| LaggedCond {
+                    series: phases[k].as_slice(),
+                    lag: 0,
+                })
                 .collect();
             for &lag in &lags {
                 let seed_t = SEED
@@ -297,8 +300,20 @@ mod tests {
                 (0.4 * yp + 0.6 * xl + 0.5 * z[t] as f64 + 0.3 * (next_rng(&mut rng) * 2.0 - 1.0))
                     as f32;
         }
-        let (te, thr, p) =
-            conditional_link(&y, &x, &[&z], 1, 1, 3, SEED, 100).expect("conditional link resolves");
+        let (te, thr, p) = conditional_link(
+            &y,
+            &x,
+            &[LaggedCond {
+                series: &z,
+                lag: 0,
+            }],
+            1,
+            1,
+            3,
+            SEED,
+            100,
+        )
+        .expect("conditional link resolves");
         assert!(
             te > thr,
             "true arrow must clear its own null: te {te} thr {thr}"
