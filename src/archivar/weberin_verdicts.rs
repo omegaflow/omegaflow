@@ -174,6 +174,14 @@ pub fn is_stale(line: &VerdictLine, now_tdb: Option<f64>) -> bool {
     }
 }
 
+pub fn live_verdicts(lines: &[VerdictLine], now_tdb: Option<f64>) -> Vec<VerdictLine> {
+    lines
+        .iter()
+        .filter(|line| !is_stale(line, now_tdb))
+        .cloned()
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -267,5 +275,16 @@ mod tests {
     fn a_future_weave_is_not_stale() {
         let line = &sample()[0];
         assert!(!is_stale(line, Some(line.weave_epoch - 100.0)));
+    }
+
+    #[test]
+    fn live_verdicts_drops_only_the_expired_lines() {
+        let mut lines = sample();
+        let now = 8.0e8 + VERDICT_STALE_S as f64;
+        lines[1].weave_epoch = now;
+        let live = live_verdicts(&lines, Some(now));
+        assert_eq!(live.len(), 2);
+        assert!(live.iter().all(|l| l.name != "apophis"));
+        assert_eq!(live_verdicts(&lines, None).len(), 3);
     }
 }
