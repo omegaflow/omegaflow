@@ -6,8 +6,24 @@ use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 
 pub const MODES: &[&str] = &[
-    "local", "leads", "mft", "index", "git", "verdict", "arxiv", "ads", "ntrs", "wayback",
-    "crossref", "wiki", "github", "crates", "librs", "openalex", "pubmed", "europepmc",
+    "local",
+    "leads",
+    "mft",
+    "index",
+    "git",
+    "verdict",
+    "arxiv",
+    "ads",
+    "ntrs",
+    "wayback",
+    "crossref",
+    "wiki",
+    "github",
+    "crates",
+    "librs",
+    "openalex",
+    "pubmed",
+    "europepmc",
     "psychporta",
 ];
 

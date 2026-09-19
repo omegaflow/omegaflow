@@ -222,10 +222,7 @@ impl<'a> Pdf<'a> {
                 let data = self.objstms.get(owner)?;
                 let entries = self.objstm_entries.get(owner)?;
                 let (_, off) = entries.get(*index)?;
-                let end = entries
-                    .get(*index + 1)
-                    .map(|e| e.1)
-                    .unwrap_or(data.len());
+                let end = entries.get(*index + 1).map(|e| e.1).unwrap_or(data.len());
                 data.get(*off..end)
             }
         }
@@ -374,10 +371,13 @@ impl<'a> Pdf<'a> {
             };
             if let Some(fd) = font_dict {
                 let cmap = self.font_to_unicode(fd);
-                out.insert(name, FontInfo {
-                    cmap,
-                    kind: font_kind(fd),
-                });
+                out.insert(
+                    name,
+                    FontInfo {
+                        cmap,
+                        kind: font_kind(fd),
+                    },
+                );
             }
             i = j;
         }
@@ -459,7 +459,10 @@ fn simple_encoding_allows_ascii(font_dict: &[u8]) -> bool {
     names.iter().any(|n| {
         matches!(
             n.as_str(),
-            "StandardEncoding" | "WinAnsiEncoding" | "MacRomanEncoding" | "MacExpertEncoding"
+            "StandardEncoding"
+                | "WinAnsiEncoding"
+                | "MacRomanEncoding"
+                | "MacExpertEncoding"
                 | "PDFDocEncoding"
         )
     })
@@ -632,11 +635,7 @@ fn decode_string(font: &FontInfo, s: &[u8]) -> Option<String> {
                     return Some(text);
                 }
             }
-            if allow_ascii {
-                raw_text(s)
-            } else {
-                None
-            }
+            if allow_ascii { raw_text(s) } else { None }
         }
     }
 }
@@ -665,11 +664,7 @@ fn raw_text(s: &[u8]) -> Option<String> {
             _ => return None,
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn plausible(text: &str) -> bool {
@@ -712,11 +707,7 @@ fn cmap_decode(map: &HashMap<Vec<u8>, Vec<u8>>, s: &[u8]) -> Option<Vec<u8>> {
             return None;
         }
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn parse_cmap(data: &[u8]) -> Option<HashMap<Vec<u8>, Vec<u8>>> {
@@ -774,11 +765,9 @@ fn parse_cmap(data: &[u8]) -> Option<HashMap<Vec<u8>, Vec<u8>>> {
                     };
                     match dst {
                         CmapDest::Start(start) => {
-                            if let (Some(lo_v), Some(hi_v), Some(st_v)) = (
-                                bytes_to_u64(&lo),
-                                bytes_to_u64(&hi),
-                                bytes_to_u64(&start),
-                            ) {
+                            if let (Some(lo_v), Some(hi_v), Some(st_v)) =
+                                (bytes_to_u64(&lo), bytes_to_u64(&hi), bytes_to_u64(&start))
+                            {
                                 let count = hi_v.saturating_sub(lo_v).saturating_add(1);
                                 for j in 0..count.min(65536) {
                                     if let (Some(code), Some(dest)) = (
@@ -812,11 +801,7 @@ fn parse_cmap(data: &[u8]) -> Option<HashMap<Vec<u8>, Vec<u8>>> {
             _ => i = ni,
         }
     }
-    if map.is_empty() {
-        None
-    } else {
-        Some(map)
-    }
+    if map.is_empty() { None } else { Some(map) }
 }
 
 fn read_word(data: &[u8], start: usize) -> (&str, usize) {
@@ -1012,7 +997,13 @@ fn parms_int(dict: &[u8], key: &str) -> Option<u32> {
     None
 }
 
-fn apply_predictor(data: &[u8], predictor: u32, colors: u32, bpc: u32, columns: u32) -> Option<Vec<u8>> {
+fn apply_predictor(
+    data: &[u8],
+    predictor: u32,
+    colors: u32,
+    bpc: u32,
+    columns: u32,
+) -> Option<Vec<u8>> {
     match predictor {
         2 => tiff_predictor(data, colors, bpc, columns),
         10..=15 => png_predictor(data, colors, bpc, columns),
@@ -1196,10 +1187,7 @@ fn read_name(data: &[u8], start: usize) -> (String, usize) {
     {
         j += 1;
     }
-    (
-        String::from_utf8_lossy(&data[start + 1..j]).into_owned(),
-        j,
-    )
+    (String::from_utf8_lossy(&data[start + 1..j]).into_owned(), j)
 }
 
 pub struct PdfImage {
@@ -1374,10 +1362,7 @@ fn dict_names(dict: &[u8], key: &str) -> Vec<String> {
     while i < v.len() {
         if v[i] == b'/' {
             let mut j = i + 1;
-            while j < v.len()
-                && !is_ws(v[j])
-                && !matches!(v[j], b'/' | b'[' | b']' | b'<' | b'>')
-            {
+            while j < v.len() && !is_ws(v[j]) && !matches!(v[j], b'/' | b'[' | b']' | b'<' | b'>') {
                 j += 1;
             }
             out.push(String::from_utf8_lossy(&v[i + 1..j]).into_owned());
@@ -1804,9 +1789,17 @@ mod tests {
         let content_dict = format!("<< /Length {} >>", content.len());
         let cmap_dict = format!("<< /Length {} >>", cmap.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>",
+                &[],
+            ),
             &obj("2", &content_dict, content),
-            &obj("3", "<< /Type /Font /Subtype /Type0 /ToUnicode 4 0 R >>", &[]),
+            &obj(
+                "3",
+                "<< /Type /Font /Subtype /Type0 /ToUnicode 4 0 R >>",
+                &[],
+            ),
             &obj("4", &cmap_dict, cmap),
         ]);
         assert_eq!(pdf_text(&pdf), Some("AB".to_string()));
@@ -1819,9 +1812,17 @@ mod tests {
         let content_dict = format!("<< /Length {} >>", content.len());
         let cmap_dict = format!("<< /Length {} >>", cmap.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>",
+                &[],
+            ),
             &obj("2", &content_dict, content),
-            &obj("3", "<< /Type /Font /Subtype /Type0 /ToUnicode 4 0 R >>", &[]),
+            &obj(
+                "3",
+                "<< /Type /Font /Subtype /Type0 /ToUnicode 4 0 R >>",
+                &[],
+            ),
             &obj("4", &cmap_dict, cmap),
         ]);
         assert_eq!(pdf_text(&pdf), Some("ABCCD".to_string()));
@@ -1839,7 +1840,11 @@ mod tests {
             stm.len()
         );
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 9 0 R /Resources << >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 9 0 R /Resources << >> >>",
+                &[],
+            ),
             &obj("5", &objstm_dict, &stm),
         ]);
         assert_eq!(pdf_text(&pdf), Some("Hi".to_string()));
@@ -1850,7 +1855,11 @@ mod tests {
         let content = zlib_stored(b"BT (Flate Array) Tj ET");
         let content_dict = format!("<< /Length {} /Filter [/FlateDecode] >>", content.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << >> >>",
+                &[],
+            ),
             &obj("2", &content_dict, &content),
         ]);
         assert_eq!(pdf_text(&pdf), Some("Flate Array".to_string()));
@@ -1861,9 +1870,17 @@ mod tests {
         let draw = b"q 12 0 0 12 0 0 cm /Im1 Do Q";
         let draw_dict = format!("<< /Length {} >>", draw.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << /XObject << /Im1 3 0 R >> >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << /XObject << /Im1 3 0 R >> >> >>",
+                &[],
+            ),
             &obj("2", &draw_dict, draw),
-            &obj("3", "<< /Type /XObject /Subtype /Image /Width 1 /Height 1 /ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /DCTDecode /Length 6 >>", &JPEG_MIN),
+            &obj(
+                "3",
+                "<< /Type /XObject /Subtype /Image /Width 1 /Height 1 /ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /DCTDecode /Length 6 >>",
+                &JPEG_MIN,
+            ),
         ]);
         assert_eq!(pdf_text(&pdf), None);
     }
@@ -1873,7 +1890,11 @@ mod tests {
         let noise = b"BT (\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0b\x0c\x0d\x0e\x0f) Tj ET";
         let noise_dict = format!("<< /Length {} >>", noise.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << >> >>",
+                &[],
+            ),
             &obj("2", &noise_dict, noise),
         ]);
         assert_eq!(pdf_text(&pdf), None);
@@ -1884,9 +1905,17 @@ mod tests {
         let content = b"BT /F1 12 Tf (GL) Tj ET";
         let content_dict = format!("<< /Length {} >>", content.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>",
+                &[],
+            ),
             &obj("2", &content_dict, content),
-            &obj("3", "<< /Type /Font /Subtype /Type0 /Encoding /Identity-H >>", &[]),
+            &obj(
+                "3",
+                "<< /Type /Font /Subtype /Type0 /Encoding /Identity-H >>",
+                &[],
+            ),
         ]);
         assert_eq!(pdf_text(&pdf), None);
     }
@@ -1898,7 +1927,11 @@ mod tests {
         let pdf = assemble_pdf(&[
             &obj("1", "<< /Type /Catalog /Pages 2 0 R >>", &[]),
             &obj("2", "<< /Type /Pages /Kids [3 0 R] /Count 1 >>", &[]),
-            &obj("3", "<< /Parent 2 0 R /Contents 4 0 R /Resources << >> >>", &[]),
+            &obj(
+                "3",
+                "<< /Parent 2 0 R /Contents 4 0 R /Resources << >> >>",
+                &[],
+            ),
             &obj("4", &content_dict, content),
         ]);
         assert_eq!(pdf_text(&pdf), Some("Tree Text".to_string()));
@@ -1909,9 +1942,17 @@ mod tests {
         let content = b"BT /F1 12 Tf (WinAnsi Text) Tj ET";
         let content_dict = format!("<< /Length {} >>", content.len());
         let pdf = assemble_pdf(&[
-            &obj("1", "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>", &[]),
+            &obj(
+                "1",
+                "<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>",
+                &[],
+            ),
             &obj("2", &content_dict, content),
-            &obj("3", "<< /Type /Font /Subtype /Type1 /Encoding /WinAnsiEncoding >>", &[]),
+            &obj(
+                "3",
+                "<< /Type /Font /Subtype /Type1 /Encoding /WinAnsiEncoding >>",
+                &[],
+            ),
         ]);
         assert_eq!(pdf_text(&pdf), Some("WinAnsi Text".to_string()));
     }
@@ -1950,7 +1991,10 @@ mod tests {
         assert_eq!(images.len(), 1);
         assert_eq!(images[0].filter, "FlateDecode");
         let png = &images[0].data;
-        assert_eq!(&png[0..8], &[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+        assert_eq!(
+            &png[0..8],
+            &[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+        );
         assert_eq!(&png[12..16], b"IHDR");
         assert_eq!(be_u32(&png[16..20]), 1);
         assert_eq!(be_u32(&png[20..24]), 1);
