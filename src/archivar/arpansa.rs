@@ -62,8 +62,7 @@ pub fn parse_uv_xml(body: &str) -> Vec<UvReading> {
     readings
 }
 
-pub const STATION_COORD_SOURCE: &str =
-    "https://uvdata.arpansa.gov.au/api/categoriesSites";
+pub const STATION_COORD_SOURCE: &str = "https://uvdata.arpansa.gov.au/api/categoriesSites";
 
 pub fn station_coords(id: &str) -> Option<(f64, f64)> {
     const COORDS: &[(&str, f64, f64)] = &[

@@ -1,8 +1,7 @@
 use omegaflow::cdn::upload_release;
 use std::process::Command;
 
-const PIPE_URL: &str =
-    "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe";
+const PIPE_URL: &str = "https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe";
 const CDN_TAG: &str = "exofop.ipac.caltech.edu";
 
 const MAGIC: [u8; 4] = *b"EXF1";
@@ -23,11 +22,7 @@ fn cell<'a>(cells: &'a [&str], idx: usize) -> Option<&'a str> {
 
 fn cell_f64(cells: &[&str], idx: usize) -> Option<f64> {
     let v: f64 = cell(cells, idx)?.parse().ok()?;
-    if v.is_finite() {
-        Some(v)
-    } else {
-        None
-    }
+    if v.is_finite() { Some(v) } else { None }
 }
 
 fn sexagesimal_deg(s: &str, hours: bool) -> Option<f64> {
@@ -51,11 +46,7 @@ fn sexagesimal_deg(s: &str, hours: bool) -> Option<f64> {
     if neg {
         deg = -deg;
     }
-    if deg.is_finite() {
-        Some(deg)
-    } else {
-        None
-    }
+    if deg.is_finite() { Some(deg) } else { None }
 }
 
 fn record_bytes(line: &str) -> Option<Vec<u8>> {

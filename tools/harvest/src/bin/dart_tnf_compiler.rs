@@ -3,7 +3,8 @@ use omegaflow::cdn::upload_release;
 use omegaflow::odf;
 
 const BASE: &str = "https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/";
-const COLLECTION: &str = "https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/collection_data_trk234.csv";
+const COLLECTION: &str =
+    "https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/collection_data_trk234.csv";
 const NETLOC: &str = "pdssbn.astro.umd.edu";
 
 fn products(text: &str) -> Vec<(String, String)> {

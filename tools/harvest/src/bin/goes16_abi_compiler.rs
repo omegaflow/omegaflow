@@ -1,9 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::goes_abi::s3::S3Key;
-use omegaflow::goes_abi::{
-    self, CALIB_GSICS_PENDING, calib_name, parse_gsics_txt, parse_granule,
-};
+use omegaflow::goes_abi::{self, CALIB_GSICS_PENDING, calib_name, parse_granule, parse_gsics_txt};
 
 const CDN_TAG: &str = "noaa-goes16.s3.amazonaws.com";
 const BUCKET: &str = "noaa-goes16.s3.amazonaws.com";
@@ -62,14 +60,15 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let gsics_text = if ci_mode {
-        fetch_raw_bytes(GSICS_DEFAULT_URL, REQUEST_TTL_S)
-            .and_then(|b| String::from_utf8(b).ok())
+        fetch_raw_bytes(GSICS_DEFAULT_URL, REQUEST_TTL_S).and_then(|b| String::from_utf8(b).ok())
     } else {
         None
     };
     let gsics_table = gsics_text.as_deref().map(parse_gsics_txt);
     let Some(hour) = latest_hour_prefix() else {
-        eprintln!("noaa-goes16: bucket index fetch void — the manifest stays unwritten (0 honored)");
+        eprintln!(
+            "noaa-goes16: bucket index fetch void — the manifest stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     };
     let Some(list) = goes_abi::s3::list(BUCKET, &hour) else {
@@ -80,7 +79,9 @@ fn main() {
     let chosen = newest_per_channel(&list.keys);
     eprintln!("noaa-goes16: {} M6 RadC granules selected", chosen.len());
     if chosen.is_empty() {
-        eprintln!("noaa-goes16: no G16 M6 RadC granule in the newest hour — the manifest stays unwritten (0 honored)");
+        eprintln!(
+            "noaa-goes16: no G16 M6 RadC granule in the newest hour — the manifest stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     }
     let mut records = Vec::with_capacity(chosen.len());
@@ -119,7 +120,9 @@ fn main() {
     }
     records.sort_by(|a, b| a.t.total_cmp(&b.t));
     let Some(bin) = goes_abi::write_bin(&records) else {
-        eprintln!("noaa-goes16: a record refuses the GAB1 gate — the manifest stays unwritten (0 honored)");
+        eprintln!(
+            "noaa-goes16: a record refuses the GAB1 gate — the manifest stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     };
     let out = "data/noaa-goes16.s3.amazonaws.com/goes16_abi.bin";
@@ -174,11 +177,21 @@ mod tests {
             size: 1,
         };
         let keys = vec![
-            mk("ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G16_s20250971801174_e20250971803547_c20250971803585.nc"),
-            mk("ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G16_s20250971811174_e20250971813547_c20250971813584.nc"),
-            mk("ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C02_G16_s20250971801174_e20250971803546_c20250971803586.nc"),
-            mk("ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M3C01_G16_s20250971811174_e20250971813547_c20250971813584.nc"),
-            mk("ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G17_s20250971811174_e20250971813547_c20250971813584.nc"),
+            mk(
+                "ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G16_s20250971801174_e20250971803547_c20250971803585.nc",
+            ),
+            mk(
+                "ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G16_s20250971811174_e20250971813547_c20250971813584.nc",
+            ),
+            mk(
+                "ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C02_G16_s20250971801174_e20250971803546_c20250971803586.nc",
+            ),
+            mk(
+                "ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M3C01_G16_s20250971811174_e20250971813547_c20250971813584.nc",
+            ),
+            mk(
+                "ABI-L1b-RadC/2025/097/18/OR_ABI-L1b-RadC-M6C01_G17_s20250971811174_e20250971813547_c20250971813584.nc",
+            ),
         ];
         let chosen = newest_per_channel(&keys);
         assert_eq!(chosen.len(), 2);
