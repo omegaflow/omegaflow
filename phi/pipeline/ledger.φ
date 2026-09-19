@@ -118,3 +118,19 @@ note 423 Blöcke (index.φ) — Datei am Datenträger vorhanden (302462 B, gitig
 ausstehend
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
+
+ausstehend
+kandidat https://openneuro.org/datasets/ds007822
+note OpenNeuro EEG-Hyperscanning, 11 Triaden (3 gleichzeitig), Prisoner's Dilemma (pddecision/pdfeedback/pdrest), EEGLAB .set MAT-v5, CC0, 379 MB, Kanal Fz. Schritt: openneuro_compiler auf ds007822 parametrisieren, dann --probe.
+
+ausstehend
+kandidat https://openneuro.org/datasets/ds007471
+note OpenNeuro Joint-agency-EEG (musikalische Joint Action), Dyaden, 32 Kanäle, BrainVision, 32 Subj., CC0, 8,66 GB. Schritt: BrainVision-Ingest-Arm bauen, dann --probe.
+
+ausstehend
+kandidat https://openneuro.org/datasets/ds004103
+note OpenNeuro hyperscanning-fMRI (Opening Treasure Chest), 33 Dyaden, CC0; Summary-Metadaten leer. fMRI-Zeitauflösung → kein TE-Pfad. Schritt: BOLD-Ingest-Arm bauen, dann --probe.
+
+ausstehend
+kandidat https://openneuro.org/datasets/ds008192
+note OpenNeuro InterGenSynchrony, longitudinales fNIRS-Hyperscanning, 122 Subj. (31 intergen. + 30 gleichalt. Dyaden), .snirf + MoCap, CC0, 2,79 GB. Schritt: SNIRF-Ingest-Arm bauen, dann --probe.
