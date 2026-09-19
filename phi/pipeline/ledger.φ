@@ -119,14 +119,14 @@ ausstehend
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
-parser-gap
+ausstehend
 kandidat https://openneuro.org/datasets/ds007822
-note OpenNeuro EEG-Hyperscanning, 11 Triaden, EEGLAB .set MAT-v5, CC0, 379 MB. Probe 35468606830 @7aa5c23e failure 2026-09-19: jedes .set „carries no EEG contract" (openneuro_compiler.rs:426/483; extract_eeg:300 → None, 0 honored). Schritt: --local-Lauf auf einer .set in CI, fehlendes Feld (nbchan/pnts/chanlocs/data) benennen; dann Arm/Guard in bau.
+note Gemessen 2026-09-19: chanlocs.labels als miUTF8 (Typ 16, Kleinformat-Tag) — matfile.rs read_tag/read_data ohne Typ-16-Arm → labels Empty → extract_eeg None. Fix: MI_UTF8/16/32 + small_type 16..=18, 2 Tests. Schritt: --local in CI.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
-note OpenNeuro Joint-agency-EEG (musikalische Joint Action), Dyaden, 32 Kanäle, BrainVision, 32 Subj., CC0, 8,66 GB. Schritt: BrainVision-Ingest-Arm bauen, dann --probe.
+note OpenNeuro Joint-agency-EEG, Dyaden, 32 Kanäle, BrainVision, 32 Subj., CC0, 8,66 GB. Arm gebaut 2026-09-19: brainvision.rs + brainvision_compiler.rs (Roundtrip, --local, CDN hinter --ci-mode), check 0/0. Schritt: CI-Probe --local.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds008192
-note OpenNeuro InterGenSynchrony, longitudinales fNIRS-Hyperscanning, 122 Subj. (31 intergen. + 30 gleichalt. Dyaden), .snirf + MoCap, CC0, 2,79 GB. Schritt: SNIRF-Ingest-Arm bauen, dann --probe.
+note OpenNeuro InterGenSynchrony, longitudinales fNIRS-Hyperscanning, 122 Subj., .snirf + MoCap, CC0, 2,79 GB. Arm gebaut 2026-09-19: snirf.rs + snirf_compiler.rs (Roundtrip, --probe, CDN hinter --ci-mode), check 0/0. Schritt: --probe in CI.
