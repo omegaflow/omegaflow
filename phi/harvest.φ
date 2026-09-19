@@ -27,6 +27,7 @@ asset present
 format exofop_toi
 tag exofop.ipac.caltech.edu
 arm exofop_compiler
+workflow exofop-cdn.yml
 pattern ^exofop_toi\.bin$
 idempotent true
 timeout 120
@@ -40,7 +41,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09. Run 35351460528 cancelled 2026-09-19 at timeout 180 with no progress — gather_messages hang persists despite c4533fe9 (HashSet+MAX_CONT_BLOCKS). Wartend: code measurement, kein Re-Dispatch.
+note GEDI02_A v002 RH98; day 2025.07.09. Run 35351460528 cancelled at timeout 180 with no output; Hang in hdf5.rs gather_messages (v1 cont-loop read hdf5.rs:652, v2 :715) — eager parse_fetch traversiert den ganzen Objektgraphen, globaler Range-Guard fehlt. Blockiert (Code).
 
 asset present
 format goes16_abi
@@ -58,9 +59,9 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007 photon heights; day 2026.06.30. Run 35351464250 cancelled at timeout 180 (granule 1 parsed, 8192 records); re-dispatch 35425364754 cancelled 2026-09-19 (timeout 360); CDN icesat2_atl03.bin 404 — wartend.
+note ATL03 v007 photon heights; day 2026.06.30 (215 Granules). Run 35425364754 vom ci_watchdog gecancelt (1598 s > 2× Median 71 s), nicht vom Job-Timeout 360; ~100 min/Granule, --limit 2 seriell ohne Offset. Blockiert (Budget): --limit 1 + --skip nötig.
 
-asset fehlt
+asset present
 format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler
@@ -70,7 +71,7 @@ pattern ^lro_trk_2009(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 timeout 120
 idempotent true
-note LRO RSS raw tracking — utF, 75-byte records; one year per run; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series. Run 35351467845 cancelled 2026-09-19 at timeout 16 while productive (day 230/365 in 16 min); re-dispatched 35425365015 timeout 120.
+note LRO RSS raw tracking — utF, 75-byte records; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series. Run 35425365015 success 2026-09-19: lro_trk_2009.bin 114787240 B sha256 c29af4b4… CDN present; in sources.φ registriert.
 
 asset present
 format maven_tnf
@@ -98,14 +99,14 @@ pattern ^sub-[0-9]+_ses-[a-z]+_task-[a-z]+_eeg\.bin$
 idempotent true
 note 2 EEG assets present measured 2026-09-17 via gh release view openneuro.org; arm src/archivar/openneuro_eeg.rs; run 34765685872 (placebo-ave-cdn 2026-09-13); sham 88629831 B sha256 b2566cbf…, verum 92981937 B sha256 e1d8de64…
 
-asset fehlt
+asset present
 format rosetta_odf
 tag archives.esac.esa.int
 arm rosetta_odf_compiler
 pattern ^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 idempotent true
 timeout 350
-note Rosetta RSI IFMS AGC; arm ifms_agc.rs; compiler rosetta_odf_compiler.rs; run 35351411938 success 2026-09-18; rosetta_odf.bin 404 — release archives.esac.esa.int: 6 shards (4×1073741816 B, 2×~290 MB), URLs not registered.
+note Rosetta RSI IFMS AGC; compiler rosetta_odf_compiler.rs; 6 Shards im release archives.esac.esa.int (4×1073741816 B, 295640096 B, 289151480 B), URLs+sha256 in sources.φ gemessen 2026-09-19; run 35351411938 success 2026-09-18.
 
 asset present
 format swot_l2_lr_ssh
