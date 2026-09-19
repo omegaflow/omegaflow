@@ -43,7 +43,14 @@ jobs:
             printf '%s %s %s %s\n' "$task" "$triad" "$sub" "data/$fn" >> manifest.txt
             count=$((count+1))
           done < files.tsv
-          echo "downloaded $count .set file(s)"
+          jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_channels.tsv")) | [.filename, .urls[0]] | @tsv' tree.json > channels.tsv
+          nch=0
+          while IFS=$'\t' read -r fn url; do
+            mkdir -p "data/$(dirname "$fn")"
+            curl -sSL --retry 2 -o "data/$fn" "$url"
+            nch=$((nch+1))
+          done < channels.tsv
+          echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
       - name: Run the family-wise TE screen (Fz, lags 128, 200 surrogates)
