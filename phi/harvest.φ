@@ -94,6 +94,16 @@ timeout 120
 idempotent true
 note LRO RSS raw tracking — utF, 75-byte records; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series. Run 35425365015 success 2026-09-19: lro_trk_2009.bin 114787240 B sha256 c29af4b4… CDN present; in sources.φ registriert.
 
+asset fehlt
+format mars_dust
+tag vo.lmd.jussieu.fr
+arm mars_dust_compiler
+workflow mars-dust-cdn.yml
+pattern ^mars_dust_MY[0-9]+_[0-9]+FpSol\.bin$
+idempotent true
+timeout 240
+note LMD gridded CDOD 9.3 µm Kolonnen-Opazität (dimensionslos, em) 60x60x669 f64 pro Cube, Montabone et al. 2015; TAP mars_dust.epn_core access_url FITS; Wire 26xf64 magic MDST, presence=1 finite CDOD; epoch JD UTC linear über die sol-Achse; CDN-Manifestation ausstehend (Dispatch).
+
 asset present
 format maven_tnf
 tag pds-ppi.igpp.ucla.edu

@@ -8820,7 +8820,16 @@ format sky1
 at sun
 ttl 31536000
 field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
-note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; CDN-Manifestation ausstehend).
+note FUGIN-12CO-Moment-0-Karte (moment-0 K·m/s je nativem Pixel, kind generic; Compiler fugin_skymap_compiler.rs; access_url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000; Re-Messung 2026-09-19: alle 270 fgn*.sky1 auf CDN jvo.nao.ac.jp present).
+
+url https://github.com/omegaflow/sources/releases/download/vo.lmd.jussieu.fr/mars_dust_MY25_1FpSol.bin
+origin http://vo.lmd.jussieu.fr/tap/sync (mars_dust.epn_core, access_url http://vo.lmd.jussieu.fr:8080/mars_dust/griddedcdod/griddedcdod_MY25_1FpSol.fits)
+compiler tools/harvest/src/bin/mars_dust_compiler.rs
+format mars_dust
+at mars
+ttl 604800
+field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
+note LMD gridded column dust optical depth (CDOD, 9.3 µm Absorption, dimensionslos) der Mars-Atmosphäre, Montabone et al. 2015 (Icarus 251); TAP mars_dust.epn_core -> FITS-Cube 60x60x669 f64 -> 26xf64 Wire (magic MDST, presence=1 finite CDOD); CDN-Manifestation ausstehend (Dispatch).
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
