@@ -5356,6 +5356,65 @@ mod tests {
         );
     }
 
+    #[ignore = "print-only power probe for the flare-envelope gate — runs in te-gate.yml"]
+    #[test]
+    fn flare_envelope_power_probe() {
+        let alpha = 0.90f32;
+        let trials = 30usize;
+        for &n in &[400usize, 600usize, 1000usize] {
+            let mut found = 0usize;
+            let mut meas = 0usize;
+            for trial in 0..trials {
+                let seed =
+                    0x6A2B_7A5B_3C1D_9E4Fu64 ^ (trial as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+                let mut rng = seed;
+                let noise = |rng: &mut u64| -> f32 {
+                    *rng = rng
+                        .wrapping_mul(6364136223846793005)
+                        .wrapping_add(1442695040888963407);
+                    (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+                };
+                let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+                let mut x = vec![0f32; n];
+                let mut y = vec![0f32; n];
+                let mut y_ind = vec![0f32; n];
+                for t in 0..n {
+                    let ny = noise(&mut rng);
+                    y_ind[t] = ny;
+                    x[t] = c[t] + 0.4 * noise(&mut rng);
+                    y[t] = if t == 0 {
+                        0.0
+                    } else {
+                        alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.3 * ny
+                    };
+                }
+                for t in 0..n - 1 {
+                    x[t + 1] += 0.6 * y_ind[t];
+                }
+                let Some(te_c) = transfer_entropy_conditional(&x, &y, &c, 1) else {
+                    continue;
+                };
+                let Some((_, _, thr_c)) =
+                    conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed ^ 0x9E37_79B9_7F4A_7C15, 256)
+                else {
+                    continue;
+                };
+                meas += 1;
+                if te_c > thr_c {
+                    found += 1;
+                }
+            }
+            if meas > 0 {
+                println!(
+                    "flare power probe: n={n} found={found} meas={meas} power={:.3}",
+                    found as f64 / meas as f64
+                );
+            } else {
+                println!("flare power probe: n={n} found=0 meas=0 (no realization resolved)");
+            }
+        }
+    }
+
     #[test]
     fn synthetic_dag_recovers_known_direction() {
         let n = 240;
