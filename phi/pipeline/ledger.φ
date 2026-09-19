@@ -121,7 +121,7 @@ note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitigno
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007822
-note OpenNeuro EEG-Hyperscanning, 11 Triaden, Prisoner's Dilemma, EEGLAB .set MAT-v5, CC0, 379 MB, Kanal Fz. --dataset gebaut (default ds005034); Dispatch HTTP 422 (remote ohne dataset-Input). Schritt: commit+push (Operator /commit), dann dispatch.
+note OpenNeuro EEG-Hyperscanning, 11 Triaden, EEGLAB .set MAT-v5, CC0, 379 MB. --dataset + workflow-Input gebaut (default ds005034, Filter getrennt); Probe run 35468307481 @cbd8573a in_progress. Schritt: Watchdog/ci_manage view 35468307481; grün → sources.φ-Registrierung.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
