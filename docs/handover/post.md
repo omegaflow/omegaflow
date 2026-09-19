@@ -15,4 +15,9 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
+An ernte: icesat2_atl03 (offener Marker `phi/harvest.φ`) — args `--limit 1 --skip 1`
+→ `--skip 2` (2/215 Granulen) fortschreiben und `harvest.yml -f format=icesat2_atl03
+-f force=true` dispatchten (`idempotent true` + Asset present), dann staged count
+lesen. (Schritt: `phi/harvest.φ`-args-Zeile + `gh workflow run harvest.yml`.)
+
 
