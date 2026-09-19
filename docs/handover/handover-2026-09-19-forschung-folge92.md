@@ -3,7 +3,7 @@
   session: Forschung-Folge 92
   class: handover
   date: 2026-09-19
-  sha256: 5915448e705d97e6bdb3e81da3127deaa665cabd7776db5de649cbcc832e3415
+  sha256: 321e198950746f969bdb5026fb8ce13cccecb4672ae544d3af86f200197e63d2
   status: live
 -->
 # Handover — Forschung-Folge 92 (2026-09-19)
@@ -64,8 +64,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - **Riss (benannt, nicht geglättet):** (1) ein Loch kleiner als die Zellkante bleibt
   konstruktiv unsichtbar — die Auflösungsgrenze, nicht der Test; (2) die Null ist die
   katalog-eigene Dichte — es gibt kein Selektionsfunktions-Modell (Footprint,
-  Magnitude-Limit) im Baum. (Schritt: Commit/Push + `gh workflow run measure-gates.yml`,
-  dann `ci_manage view <id>` + Artefakt `measure-gates.txt`.)
+  Magnitude-Limit) im Baum. Re-Dispatch nach dem Push: `measure-gates`
+  `35456056999` @`f2a30682` (in_progress). (Schritt: `ci_manage view 35456056999`
+  + Artefakt `measure-gates.txt`; grün ⇒ FN-Gate frei.)
 
 ## vC-Permeabilitäts-Karte — `operator-gebunden` (an entscheid gepostet)
 
