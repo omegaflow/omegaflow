@@ -23,6 +23,7 @@ pub mod bl_narrowband;
 pub mod bpc;
 pub mod bsp_reader;
 pub mod bzip2;
+pub mod cassini_rsr;
 pub mod ccor;
 pub mod cdf;
 pub mod cdf25;

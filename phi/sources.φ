@@ -6916,6 +6916,25 @@ ttl 604800
 field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
 note Cassini TRK-2-34 TNF Uplink-Trägerphase (DT0); Arm src/archivar/odf.rs tnf_parse_series + extract.rs cassini_tnf; Compiler tools/harvest/src/bin/cassini_tnf_compiler.rs; CDN-Asset gemessen 2026-09-17 (191163176 B, run 35156062244).
 
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_odf.bin
+format cassini_odf
+origin procedure: https://atmos.nmsu.edu/pdsd/archive/data/ (Live-Listing co-ss-rss-1-* Volumes /odf/)
+compiler tools/harvest/src/bin/cassini_odf_compiler.rs
+at earth
+ttl 604800
+field observable_hz cassini_odf_observable_hz inverse-square em hz 604800 0.0 0.0
+note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Asset fehlt (Erstlauf offen).
+
+url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_rsr.bin
+format cassini_rsr
+origin procedure: https://atmos.nmsu.edu/pdsd/archive/data/ (Live-Listing co-ss-rss-1-* Volumes /rsr/)
+compiler tools/harvest/src/bin/cassini_rsr_compiler.rs
+at earth
+ttl 604800
+field i_count cassini_rsr_i_count inverse-square em count 604800 0.0 0.0
+field q_count cassini_rsr_q_count inverse-square em count 604800 0.0 0.0
+note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Asset fehlt (Erstlauf offen).
+
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_ocru_odf.bin
 format juno_ocru_odf
 origin https://atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/
