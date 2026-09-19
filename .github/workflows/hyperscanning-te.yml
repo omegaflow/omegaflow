@@ -18,6 +18,14 @@ on:
         description: EEG channel label (a named electrode, not the common average)
         type: string
         default: Fz
+      percentile:
+        description: family-wise threshold percentile (screen 95, confirmation 99)
+        type: string
+        default: "95"
+      surrogates:
+        description: phase-randomized surrogate count (screen 200, confirmation 1000)
+        type: string
+        default: "200"
 permissions:
   contents: read
 env:
@@ -65,13 +73,14 @@ jobs:
           echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
-      - name: Run the family-wise TE screen (lags 128, 200 surrogates)
+      - name: Run the family-wise TE screen (Takens tau, dim 3, cap 4096)
         run: |
           set -o pipefail
           {
             echo "SHA $(git rev-parse HEAD)"
             cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
-              --manifest manifest.txt --channel "${{ inputs.channel }}" --lags 128 --surrogates 200 \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" --max-points 4096 --surrogates "${{ inputs.surrogates }}" \
+              --percentile "${{ inputs.percentile }}" \
               --null "${{ inputs.null_model }}"
           } | tee report.txt
       - uses: actions/upload-artifact@v4
