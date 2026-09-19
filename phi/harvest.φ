@@ -7,7 +7,7 @@ idempotent true
 timeout 60
 note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch); .tab 4828824 B sha256 8d7e6007…; CDN-Asset 1733432 B sha256 8f83ec79… gemessen 2026-09-18.
 
-asset fehlt
+asset present
 format cassini_odf
 tag atmos.nmsu.edu
 arm cassini_odf_compiler
@@ -15,9 +15,9 @@ workflow cassini-odf-cdn.yml
 pattern ^cassini_odf\.bin$
 idempotent true
 timeout 350
-note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Crawl parallel+geprunt (16 Threads) seit 2026-09-19 — seriell 73 min, ci_watchdog cancelt bei 2×381 s Median aus den leeren Erstläufen; Hard-Abort bei Teil-Fetch; Asset fehlt, Re-Dispatch beim Push.
+note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Crawl parallel+geprunt (16 Threads) seit 2026-09-19 — seriell 73 min, ci_watchdog cancelt bei 2×381 s Median aus den leeren Erstläufen; Hard-Abort bei Teil-Fetch; Asset present 1496960792 B sha256 12d9357f… run 35466653128.
 
-asset fehlt
+asset present
 format cassini_rsr
 tag atmos.nmsu.edu
 arm cassini_rsr_compiler
@@ -26,7 +26,7 @@ workflow cassini-rsr-cdn.yml
 pattern ^cassini_rsr\.bin$
 idempotent true
 timeout 350
-note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Compiler tools/harvest/src/bin/cassini_rsr_compiler.rs --files 1; Crawl parallel+geprunt (16 Threads) — seriell >2×438 s Median, Watchdog-Cancel; Hard-Abort bei Teil-Fetch; Asset fehlt.
+note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Compiler tools/harvest/src/bin/cassini_rsr_compiler.rs --files 1; Crawl parallel+geprunt (16 Threads) — seriell >2×438 s Median, Watchdog-Cancel; Hard-Abort bei Teil-Fetch; Asset present 1308000008 B sha256 f9088327… run 35455838104.
 
 asset present
 format catalog_gaia_sso
