@@ -122,6 +122,17 @@ shard 4
 idempotent true
 note Quelle vollständig gemessen 2026-09-18: odrs_0001–0238 tragen odf/ (odrs_0239–0299 HTTP 404, kein odf/); neuestes ODF odrs_0238/7163164b.lbl STOP 2017-06-13T13:15:09 == Register-End-Shard t550631778; kein Re-Harvest.
 
+asset fehlt
+format openneuro_brainvision
+tag openneuro.org
+arm brainvision_compiler
+args --dataset ds007471
+pattern ^sub-[0-9]+_task-jointaction_eeg\.bin$
+shard 32
+idempotent true
+timeout 350
+note ds007471 OpenNeuro joint-agency-EEG BrainVision (32 subj., CC0, 8,66 GB): probe run 35474638076 grün — sub-01 nbchan 64 pnts 2318620 samples 148391680, 593625434 B roundtrip parses (2230 events); snapshot bc6f839b; bau-Fix resolve_companion 8c7b885e.
+
 asset present
 format openneuro_eeg
 tag openneuro.org
@@ -140,7 +151,7 @@ idempotent true
 timeout 240
 note ds007822 OpenNeuro Parkinson-EEG (99 .set): 99 assets uploaded run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); measured via ci_manage log 35471360435.
 
-asset fehlt
+asset present
 format openneuro_snirf
 tag openneuro.org
 arm snirf_compiler
@@ -148,7 +159,7 @@ args --dataset ds008192 --subject sub-101 --session 02
 pattern ^sub-101_ses-02_.*_nirs\.bin$
 idempotent true
 timeout 240
-note SNIRF-Arm der Probe run 35473247219 grün: sub-101/ses-02 nchan 52 pnts 8484 meas 52 samples 441168; 3599598 B roundtrip parses. ds008192 InterGenSynchrony 122 subj; CDN-Manifestation via harvest.yml.
+note ds008192 InterGenSynchrony (SNIRF, 122 subj.): asset sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin 3599598 B roundtrip parses (nchan 52 pnts 8484 samples 441168), harvest run 35474615876 success; sources.φ url-Zeile steht.
 
 asset present
 format rosetta_odf
