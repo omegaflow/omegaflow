@@ -1,0 +1,60 @@
+name: hyperscanning-te
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the ds007822 EEG recordings and build the manifest
+        run: |
+          set -euo pipefail
+          H=$(curl -sS -X POST https://openneuro.org/crn/graphql \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -nc --arg q '{ dataset(id:"ds007822"){ latestSnapshot { hexsha } } }' '{query:$q}')" \
+            | jq -r '.data.dataset.latestSnapshot.hexsha')
+          echo "snapshot $H"
+          curl -sS -X POST https://openneuro.org/crn/graphql \
+            -H 'Content-Type: application/json' \
+            -d "$(jq -nc --arg q "{ dataset(id:\"ds007822\"){ latestSnapshot { files(tree: \"$H\", recursive: true) { filename urls } } } }" '{query:$q}')" \
+            -o tree.json
+          mkdir -p data
+          : > manifest.txt
+          jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_eeg.set")) | [.filename, .urls[0]] | @tsv' tree.json > files.tsv
+          count=0
+          while IFS=$'\t' read -r fn url; do
+            sub=$(printf '%s' "$fn" | cut -d/ -f1)
+            base=$(basename "$fn")
+            task=$(printf '%s' "$base" | sed -E 's/.*_task-([^_]+)_eeg\.set/\1/')
+            triad=$(printf '%s' "$sub" | sed -E 's/^sub-G([0-9]+)S[0-9]+$/G\1/')
+            mkdir -p "data/$(dirname "$fn")"
+            curl -sSL --retry 2 -o "data/$fn" "$url"
+            printf '%s %s %s %s\n' "$task" "$triad" "$sub" "data/$fn" >> manifest.txt
+            count=$((count+1))
+          done < files.tsv
+          echo "downloaded $count .set file(s)"
+          sort -o manifest.txt manifest.txt
+          head -6 manifest.txt
+      - name: Run the family-wise TE screen (Fz, lags 128, 200 surrogates)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel Fz --lags 128 --surrogates 200
+          } | tee report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hyperscanning-te-report
+          path: report.txt
