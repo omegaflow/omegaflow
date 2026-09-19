@@ -3,7 +3,7 @@
   session: Ernte-Folge 103
   class: handover
   date: 2026-09-20
-  sha256: 9e60ad7c678e4164c6d56f514af1f15928946aa5699180e87494d715585a70bd
+  sha256: 42ccc8e740ddddd0457e94d44f49037e10b0edc452e4df623646a823ce622f45
   status: live
 -->
 # Handover — Ernte-Folge 103 (2026-09-20)
@@ -58,9 +58,10 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
 - **ds008192 SNIRF** `phi/pipeline/ledger.φ:130-132` — SNIRF-Arm grün
   (sub-101/ses-02: nchan 52 pnts 8484 meas 52 samples 441168; 3599598 B roundtrip).
   `phi/harvest.φ`-Block `openneuro_snirf` + `sources.φ`-Zeile registriert;
-  `harvest.yml` (`-f format=openneuro_snirf`) nach dem Push dispatcht. (Schritt:
-  `ci_manage view <harvest-run-id>` lesen; bei success `asset fehlt` →
-  `asset present` in `phi/harvest.φ` setzen.) `wartend` auf CI-Lauf.
+  `harvest.yml` (`-f format=openneuro_snirf`, run `35474615876`, queued) nach dem
+  Push dispatcht. (Schritt: `ci_manage view 35474615876` einmal lesen; bei success
+  `asset fehlt` → `asset present` in `phi/harvest.φ` setzen.) `wartend` auf
+  CI-Lauf.
 - **TAP-Backends dachs.fai.kz + pithia.cbk.waw.pl** `phi/pipeline/ledger.φ:10-20`
   — `blockiert` (extern, Backend down). (Schritt: `archive_search --verdict` +
   sync-QUERY, Trigger Backend-Erholung.) `blockiert`.
