@@ -3,7 +3,7 @@
   session: Forschung-Folge 103
   class: handover
   date: 2026-09-20
-  sha256: 9e44b62a92a1f0ca1a55cec7af5e3dff8800f3c9b7c5ad577476065c253c2a97
+  sha256: 8355cd50699cb870d5fe75199fa34daa502ac538110062e89660ec33abca6716
   status: live
 -->
 # Handover — Forschung-Folge 103 (2026-09-20)
@@ -49,6 +49,8 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   `harvest-dispatch` `35474610602`/`35474630076`, `auto-dispatch` `35474630080`,
   `swpc-mirror-cdn` `35474661305`, `allwise-cdn` `35471283884`, `fmt-apply`
   `35472907001`; **cancelled** die ci-check-Kette (per-ref-Concurrency).
+  Nach dem Push (`5b406e16`): `ci-check` `35475222662` (Push-Auto) + `te-gate`
+  `35475226890` (dispatcht) pending.
 - **TE-Gate n=1000 FPR-Boden** — Verdikt `35425288111` @`e9e9ef63` **failure**
   (gemessen, `ci_manage log`): `gate_conditional_arx_fpr_fn_n1000`, FPR rise
   4.00pp bei rho=0.5 (a=0: 2/100 → a=0.9: 6/100), größte Zelle 7/100 (unter dem
@@ -64,8 +66,10 @@ Die feste `fpr9 - fpr0 <= 2.0`-Decke in vier Gates (`te.rs:4490`
 `_reversed`, `4973` `_2`) ist durch `fpr_rise_sigma_test(fpr0, fpr9, neg0, neg9)`
 ersetzt (3σ, bereits in `gate_fpr_autocorr_assert` seit `1934c012`); die 8%-Zell-
 und FN-Äste unberührt. `cargo check --all-targets` 0 Fehler / 0 Warnungen.
-(Schritt: nach dem Push `gh workflow run te-gate.yml`, dann `ci_manage view <id>`
-lesen; der Prä-Fix-Lauf `35473941500` @`9f48b5bd` bleibt als Prä-Fix-Messung lesbar.)
+Commit `5b406e16` gepusht; `te-gate` `35475226890` @`5b406e16` dispatcht (queued
+hinter dem Prä-Fix-Lauf). (Schritt: `ci_manage view 35475226890` liest das
+kalibrierte Verdikt; der Prä-Fix-Lauf `35473941500` @`9f48b5bd` bleibt als
+Prä-Fix-Messung lesbar.)
 
 ## Flare-Gate — Power-Probe gebaut — `wartend` (CI-Verdikt)
 
