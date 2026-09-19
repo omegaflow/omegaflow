@@ -3,7 +3,7 @@
   session: Forschung-Folge 92
   class: handover
   date: 2026-09-19
-  sha256: 321e198950746f969bdb5026fb8ce13cccecb4672ae544d3af86f200197e63d2
+  sha256: 6eb2f55f73269825618c4ac0dfe611b9fd7b844a72004585aa691af789129839
   status: live
 -->
 # Handover — Forschung-Folge 92 (2026-09-19)
@@ -109,6 +109,30 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Datum. (Schritt: vor dem 28.09. den konkreten Abruf-Schritt je Kanal in
   `docs/paper/flyby-path-2-preregistration.md` setzen.)
 
+## Hyperscanning-TE (OpenNeuro ds007822) — offen (aus eigener Übergabe gefaltet)
+
+Gebaut/committet (`778c68db`): `hyperscanning_group_te` (familiäre Max-Statistik,
+`--channel Fz --lags 128 --surrogates 200`, Schwelle = empirisches Perzentil der
+Surrogat-Familien-Maxima), `hyperscanning_te_matrix`, `eeglab.rs` liest Double-MAT,
+Workflow `.github/workflows/hyperscanning-te.yml`.
+
+- **CI-Lauf `35456288477` (hyperscanning-te, queued 2026-09-19T16:51:48Z) — Ergebnis ungelesen.**
+  Zugleich der erste Parser-Test auf echten ds007822-`.set` (MAT v5, Fz-Label).
+  (Schritt: `ci_manage view 35456288477` einmalig; meldet das Werkzeug `absent`, fehlt Fz
+  im Montage-Label oder das Format weicht ab — dann Kanal/Label justieren.)
+- **Bestätigungsstufe** — der Screening-Lauf fährt p95/200; die Überlebenden brauchen p99/1000.
+  (Schritt: `hyperscanning_group_te --percentile 99 --surrogates 1000` auf den Survivor-Zellen;
+  eigener Workflow-Dispatch.)
+- **Kohärente Phasen-Null** — gemeinsame Rotation beider Serien (der eigentliche Paar-Null;
+  heute trägt die Einzel-Phasen-Null nur als konservative Obernull).
+  (Schritt: neues `TeNull`-Modell in `src/mathematikerin/te.rs` + Kalibrier-Gate-Test im selben Atom.)
+- **Eigen-Historie als Konditionierer** — die eigene Vergangenheit des Ziels ist der
+  nächstliegende Konfundierer; der Apparat existiert (`conditional_te_*_n` mit `conds`).
+  (Schritt: `hyperscanning_group_te` ruft `&[]` — `LaggedCond` auf die Zielserie setzen.)
+- **Mehrere Frontalkanäle** — Fz/F3/F4 als getrennte Matrizen. (Schritt: `--channel F3`/`F4`.)
+- **Topologische TE** (Takens, `te_compute`) als Upgrade der binned 4-Bin-Schätzung.
+  (Schritt: `topological_te_phase` statt `transfer_entropy_binned` im Gruppen-Werkzeug.)
+
 ## Benchmark
 
 - Rat (`council`, pro/max) entschied den Null-Fix — die TE-/Null-Konstruktion ist
@@ -125,10 +149,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 - **Fremd (nicht angefasst):** `docs/zustand/external-state.md` (Entscheid-Folge 53),
   `docs/handover/post.md`, `phi/harvest.φ`, `phi/sources.φ`, `src/archivar/hdf5.rs`,
   `src/mathematikerin/te.rs`, `tools/harvest/src/bin/{cassini_odf,cassini_rsr,icesat2_atl03}_compiler.rs`,
-  `tools/measure/src/eeglab.rs`, `.github/workflows/harvest-dispatch.yml`, die
+  `.github/workflows/harvest-dispatch.yml`, die
   `handover-2026-09-1*`-Renames/Moves, `?? bin/register_lookup`,
-  `?? handover-2026-09-19-entscheid-folge53.md`, `?? handover-2026-09-19-ernte-folge93.md`,
-  `?? tools/measure/src/bin/hyperscanning_te_matrix.rs`.
+  `?? handover-2026-09-19-entscheid-folge53.md`, `?? handover-2026-09-19-ernte-folge93.md`.
 
 ## Abschluss
 
