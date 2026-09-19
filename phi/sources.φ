@@ -1720,6 +1720,15 @@ compiler tools/harvest/src/bin/gaia_sso_compiler.rs
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/exofop_toi.bin
+format exofop_toi
+origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
+compiler tools/harvest/src/bin/exofop_compiler.rs
+at sun
+ttl 86400
+field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
+note Endpoint download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1770 Zeilen, 63 Spalten; TIC/TOI + RA/Dec (sexagesimal) + BJD-Epoch + Tiefe ppm (Force em ΔF/F); Asset via exofop_compiler --ci-mode.
+
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
 format intermagnet_dbdt
 origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
