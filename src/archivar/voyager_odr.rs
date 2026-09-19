@@ -576,7 +576,10 @@ mod tests {
         assert_eq!(series[1].1, 1.0);
         let tol = 8.0 * f64::EPSILON * series[0].0.abs();
         assert!((series[1].0 - series[0].0 - 1.0 / 300_000.0).abs() < tol);
-        assert_eq!(series[DATA_SAMPLES - 1].1, (DATA_SAMPLES - 1) as f64);
+        assert_eq!(
+            series[DATA_SAMPLES - 1].1,
+            ((DATA_SAMPLES - 1) % 256) as f64
+        );
     }
 
     #[test]
