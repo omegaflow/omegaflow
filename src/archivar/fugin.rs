@@ -40,11 +40,11 @@ pub fn parse_fugin_cube(buf: &[u8]) -> Option<Vec<FuginPixel>> {
             let mut sum_k = 0.0;
             let mut finite = 0u32;
             for z in 0..nz {
-                if let Some(v) = image.value_f64(buf, [x, y, z]) {
-                    if v.is_finite() {
-                        sum_k += v;
-                        finite += 1;
-                    }
+                if let Some(v) = image.value_f64(buf, [x, y, z])
+                    && v.is_finite()
+                {
+                    sum_k += v;
+                    finite += 1;
                 }
             }
             if finite == 0 {
