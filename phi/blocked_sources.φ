@@ -20,7 +20,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 
 pending
 url https://atmos.nmsu.edu/pdsd/archive/data/co-ss-rss-1-scc1-v10/
-note Cassini RSS raw closed-loop (PDS-Atmosphären-Knoten, co-ss-rss-1-scc1..14/sce1/digr/engr); cassini_tnf deckt nur co-s-rss-1-*. 2026-09-19: URL HTTP 200; Format (Tracking-Record) unverifiziert → pending.
+note Cassini RSS: co-ss-rss-1-scc1..14/sce1 = open-loop RSR (4260 B SFDU I/Q, DSN 820-013) + ODF TRK-2-18 (36 B); co-ssa-rss-1-digr1..5/engr1..8. 2026-09-19 scc1 200. RSR-Parser fehlt (Arm cassini_rsr); odf::parse_odf deckt ODF; cassini_tnf deckt nicht.
 
 blocked account
 url https://superdarn.ca/data-access
