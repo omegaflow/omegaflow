@@ -3658,3 +3658,7 @@ note GloFAS-Reanalyse (EWDS cems-glofas-historical, 2026-09-16: HTTP 200, CDS-Ke
 decline aggregated-index
 url https://zenodo.org/records/10725446
 note WWLLN Lightning Climatology (WGLC), Kaplan 2024 (10.5281/zenodo.10725446, NetCDF-4, 2010–2023) — Gitteraggregat aus Stroke-Counts, keine Ereignis-Records; wie Thunder-Hour. Roh-Strokes blocked (UW-copyright); decline 2026-09-17.
+
+decline no-te-path
+url https://openneuro.org/datasets/ds004103
+note OpenNeuro hyperscanning-fMRI (Opening Treasure Chest), 33 Dyaden, CC0; BOLD-fMRI-Zeitauflösung → kein TE-Pfad.
