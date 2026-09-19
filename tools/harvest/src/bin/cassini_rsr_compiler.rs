@@ -22,14 +22,14 @@ fn hrefs(text: &str) -> Vec<String> {
     out
 }
 
-fn volumes() -> Vec<String> {
+fn volumes() -> Option<Vec<String>> {
     let Some(bytes) = fetch_raw_bytes(DATA, REQUEST_TTL_S) else {
         eprintln!("rss volume listing fetch void ({DATA})");
-        return Vec::new();
+        return None;
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
         eprintln!("rss volume listing not utf8");
-        return Vec::new();
+        return None;
     };
     let mut out: Vec<String> = hrefs(text)
         .into_iter()
@@ -45,24 +45,29 @@ fn volumes() -> Vec<String> {
         .collect();
     out.sort();
     out.dedup();
-    out
+    Some(out)
 }
 
-fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
+fn crawl(url: &str, depth: u32, files: &mut Vec<String>, failures: &mut usize) {
     if depth > 8 {
         return;
     }
     let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
         eprintln!("{url}: listing fetch void");
+        *failures += 1;
         return;
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
         eprintln!("{url}: listing not utf8");
+        *failures += 1;
         return;
     };
     let in_rsr = url.ends_with("/rsr/");
     for name in hrefs(text) {
         if name.starts_with('?') || name.starts_with('/') || name == "../" {
+            continue;
+        }
+        if name.contains("://") {
             continue;
         }
         if name.ends_with('/') {
@@ -73,7 +78,7 @@ fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
             ) {
                 continue;
             }
-            crawl(&format!("{url}{name}"), depth + 1, files);
+            crawl(&format!("{url}{name}"), depth + 1, files, failures);
             continue;
         }
         if in_rsr && !name.to_ascii_lowercase().ends_with(".lbl") {
@@ -98,14 +103,18 @@ fn main() {
         return;
     };
 
+    let mut failures = 0usize;
     let files: Vec<String> = match explicit {
         Some(url) => vec![url],
         None => {
-            let vols = volumes();
+            let Some(vols) = volumes() else {
+                eprintln!("rss volume listing unavailable — the series stays unwritten");
+                std::process::exit(1);
+            };
             eprintln!("cassini rss rsr volumes: {}", vols.len());
             let mut files: Vec<String> = Vec::new();
             for vol in &vols {
-                crawl(&format!("{DATA}{vol}/"), 0, &mut files);
+                crawl(&format!("{DATA}{vol}/"), 0, &mut files, &mut failures);
             }
             files.sort();
             files.dedup();
@@ -119,10 +128,12 @@ fn main() {
     for url in &files {
         let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
             eprintln!("{url}: fetch void");
+            failures += 1;
             continue;
         };
         let Some(records) = cassini_rsr::parse_records(&bytes) else {
             eprintln!("{url}: record scan void — {} B", bytes.len());
+            failures += 1;
             continue;
         };
         let before = rows.len();
@@ -130,6 +141,10 @@ fn main() {
         eprintln!("{url}: {} records, {} series rows", records.len(), rows.len() - before);
     }
     if rows.is_empty() {
+        if failures > 0 {
+            eprintln!("no Cassini RSR samples — {failures} fetch/parse failures, the series stays unwritten");
+            std::process::exit(1);
+        }
         eprintln!("no Cassini RSR samples — the series stays unwritten (0 honored)");
         return;
     }
