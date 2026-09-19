@@ -1185,38 +1185,28 @@ pub fn conditional_te_surrogates_n(
         block
     };
     for _ in 0..n_surr {
-        let (xs_buf, ys) = if null == TeNull::CoherentPhase {
-            let mut both = coherent_phase_surrogates(&[x, y], &mut rng);
-            let ys = both
-                .pop()
-                .expect("coherent phase yields one series per input");
-            let xs = both
-                .pop()
-                .expect("coherent phase yields one series per input");
-            (Some(xs), ys)
-        } else {
-            let xs_buf = if null == TeNull::XShift {
-                Some(x_shift_surrogate(x, &mut rng))
-            } else {
-                None
-            };
-            let ys = match null {
-                TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
-                TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
-                TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
-                TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
-                TeNull::XShift => y.to_vec(),
-                TeNull::Arx => {
-                    let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng) else {
-                        continue;
-                    };
-                    s
-                }
-                TeNull::CoherentPhase => {
-                    unreachable!("coherent phase is handled before the per-series null match")
-                }
-            };
-            (xs_buf, ys)
+        let (xs_buf, ys) = match null {
+            TeNull::CoherentPhase => {
+                let mut both = coherent_phase_surrogates(&[x, y], &mut rng);
+                let ys = both
+                    .pop()
+                    .expect("coherent phase yields one series per input");
+                let xs = both
+                    .pop()
+                    .expect("coherent phase yields one series per input");
+                (Some(xs), ys)
+            }
+            TeNull::XShift => (Some(x_shift_surrogate(x, &mut rng)), y.to_vec()),
+            TeNull::Block => (None, block_bootstrap_surrogate(y, block_len, &mut rng)),
+            TeNull::Shift => (None, cycle_phase_shift_surrogate(y, y.len(), &mut rng)),
+            TeNull::Phase => (None, phase_randomized_surrogate(y, &mut rng)),
+            TeNull::RestrictedPermutation => (None, restricted_permutation_surrogate(y, &mut rng)),
+            TeNull::Arx => {
+                let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng) else {
+                    continue;
+                };
+                (None, s)
+            }
         };
         let xs: &[f32] = xs_buf.as_deref().unwrap_or(x);
         let te = match est {
@@ -2828,6 +2818,7 @@ mod tests {
         );
     }
 
+    #[ignore = "n up to 4096 x 200-surrogate MI-lag sweep — heavy, runs in te-gate.yml"]
     #[test]
     fn gate_mi_lag_stability() {
         for &n in &[32usize, 64, 128, 512, 4096] {
@@ -5299,6 +5290,7 @@ mod tests {
         );
     }
 
+    #[ignore = "power study pending at n=240 (43% vs the 50% floor) — runs in te-gate.yml"]
     #[test]
     fn flare_envelope_conditional_keeps_true_coupling() {
         let n = 240;

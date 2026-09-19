@@ -48,3 +48,7 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture coupling_scan_te_over_thr_n1000
       - name: Run the FPR-vs-bins sweep (the restricted-null calibration curve)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture fpr_bins_sweep_n2000
+      - name: Run the MI-lag stability sweep (the tau-instability gate, n up to 4096 x 200 surrogates)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_mi_lag_stability
+      - name: Run the flare-envelope true-coupling gate (the power study; 43% at n=240)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
