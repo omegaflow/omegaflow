@@ -446,11 +446,11 @@ fn probe_granule(bytes: &[u8], name: &str) {
         return;
     }
     if bytes.starts_with(&HDF5_MAGIC) {
-        let Ok(file) = Hdf5File::parse(bytes) else {
+        let Ok(mut file) = Hdf5File::parse(bytes) else {
             eprintln!("{name}: netCDF-4 parse returned void");
             return;
         };
-        let group = match nc4_group(&file, "") {
+        let group = match nc4_group(&mut file, "") {
             Ok(g) => g,
             Err(_) => {
                 eprintln!("{name}: netCDF-4 group read returned void");
