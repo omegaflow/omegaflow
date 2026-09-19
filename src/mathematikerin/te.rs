@@ -4487,8 +4487,8 @@ mod tests {
             let fpr0 = 100.0 * f0.fp as f64 / f0.neg as f64;
             let fpr9 = 100.0 * f9.fp as f64 / f9.neg as f64;
             assert!(
-                fpr9 - fpr0 <= 2.0,
-                "FPR-vs-bins sweep: FPR rise {:.2}pp over a at bins={bins} exceeds 2pp ({names})",
+                fpr_rise_sigma_test(fpr0, fpr9, f0.neg, f9.neg),
+                "FPR-vs-bins sweep: FPR rise {:.2}pp over a at bins={bins} exceeds 3σ of the binomial difference of the measured cells ({names})",
                 fpr9 - fpr0
             );
         }
@@ -4792,8 +4792,8 @@ mod tests {
             let fpr0 = 100.0 * f0.2 as f64 / f0.3 as f64;
             let fpr9 = 100.0 * f9.2 as f64 / f9.3 as f64;
             assert!(
-                fpr9 - fpr0 <= 2.0,
-                "conditional FP/FN gate: FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+                fpr_rise_sigma_test(fpr0, fpr9, f0.3, f9.3),
+                "conditional FP/FN gate: FPR rise {:.2}pp over a at rho={rho} exceeds 3σ of the binomial difference of the measured cells ({named})",
                 fpr9 - fpr0
             );
         }
@@ -4870,8 +4870,8 @@ mod tests {
             let fpr0 = 100.0 * f0.2 as f64 / f0.3 as f64;
             let fpr9 = 100.0 * f9.2 as f64 / f9.3 as f64;
             assert!(
-                fpr9 - fpr0 <= 2.0,
-                "conditional FP/FN gate (reversed): FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+                fpr_rise_sigma_test(fpr0, fpr9, f0.3, f9.3),
+                "conditional FP/FN gate (reversed): FPR rise {:.2}pp over a at rho={rho} exceeds 3σ of the binomial difference of the measured cells ({named})",
                 fpr9 - fpr0
             );
         }
@@ -4970,8 +4970,8 @@ mod tests {
         let fpr0 = 100.0 * f0.1 as f64 / f0.2 as f64;
         let fpr9 = 100.0 * f9.1 as f64 / f9.2 as f64;
         assert!(
-            fpr9 - fpr0 <= 2.0,
-            "conditional FP/FN gate (2): FPR rise {:.2}pp over a at rho={rho} exceeds 2pp ({named})",
+            fpr_rise_sigma_test(fpr0, fpr9, f0.2, f9.2),
+            "conditional FP/FN gate (2): FPR rise {:.2}pp over a at rho={rho} exceeds 3σ of the binomial difference of the measured cells ({named})",
             fpr9 - fpr0
         );
         let mut found = 0usize;
