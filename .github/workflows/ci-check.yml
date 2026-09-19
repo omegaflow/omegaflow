@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'static/**'
       - 'phi/**'
+      - 'tools/harvest/**'
       - 'tools/register/**'
       - 'tools/utils/**'
       - 'docs/**'
