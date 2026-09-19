@@ -152,11 +152,15 @@ fn median_nearest_neighbor(points: &[[f64; 3]]) -> Option<f64> {
     Some(nn[nn.len() / 2])
 }
 
-fn bandwidths(points: &[[f64; 3]]) -> Option<[f64; 3]> {
+fn bandwidths(points: &[[f64; 3]], cell: f64) -> Option<[f64; 3]> {
     let xs: Vec<f32> = points.iter().map(|p| p[0] as f32).collect();
     let ys: Vec<f32> = points.iter().map(|p| p[1] as f32).collect();
     let zs: Vec<f32> = points.iter().map(|p| p[2] as f32).collect();
-    Some([silverman(&xs)?, silverman(&ys)?, silverman(&zs)?])
+    Some([
+        silverman(&xs)?.max(cell),
+        silverman(&ys)?.max(cell),
+        silverman(&zs)?.max(cell),
+    ])
 }
 
 fn load_catalog(bytes: &[u8]) -> Option<Catalog> {
@@ -181,7 +185,7 @@ fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
     if points.len() < MIN_STARS {
         return None;
     }
-    let band = bandwidths(points)?;
+    let band = bandwidths(points, cell)?;
     let mut counts: HashMap<CellKey, usize> = HashMap::new();
     for p in points {
         let entry = counts.entry(cell_key(*p, cell)).or_insert(0);
@@ -371,15 +375,15 @@ fn main() {
         cell_m.log2() as i64
     );
 
-    let band = match bandwidths(&catalog.points) {
+    let band = match bandwidths(&catalog.points, cell_m) {
         Some(b) => b,
         None => {
-            eprintln!("the position field carries no variance — no Silverman bandwidth (0 honored)");
+            eprintln!("the position field carries no variance — no null bandwidth (0 honored)");
             std::process::exit(2);
         }
     };
     println!(
-        "Silverman bandwidth h (the deficit resolution, per axis): hx {:.6e} m | hy {:.6e} m | hz {:.6e} m — a hole smaller than h is constructively invisible",
+        "null bandwidth h (Silverman floored at the cell edge — the deficit resolution, per axis): hx {:.6e} m | hy {:.6e} m | hz {:.6e} m — a hole smaller than h is constructively invisible",
         band[0], band[1], band[2]
     );
 
