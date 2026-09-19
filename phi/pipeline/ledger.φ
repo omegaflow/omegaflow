@@ -121,12 +121,12 @@ note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitigno
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007822
-note Gemessen 2026-09-19: chanlocs.labels als miUTF8 (Typ 16, Kleinformat-Tag) — matfile.rs read_tag/read_data ohne Typ-16-Arm → labels Empty → extract_eeg None. Fix: MI_UTF8/16/32 + small_type 16..=18, 2 Tests. Schritt: --local in CI.
+note Gemessen 2026-09-19: chanlocs.labels miUTF8 (Typ 16) → matfile.rs ohne Typ-16-Arm → labels Empty. Fix: MI_UTF8/16/32 + small_type 16..=18. Produktionspfad extract_eeg→chanlocs_labels verifiziert; Probe openneuro-cdn run 35471360435.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
-note OpenNeuro Joint-agency-EEG, Dyaden, 32 Kanäle, BrainVision, 32 Subj., CC0, 8,66 GB. Arm gebaut 2026-09-19: brainvision.rs + brainvision_compiler.rs (Roundtrip, --local, CDN hinter --ci-mode), check 0/0. Schritt: CI-Probe --local.
+note OpenNeuro Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Arm + Compiler gebaut (check 0/0); Probe-Arm openneuro-eeg-probe.yml (ds007471 --subject sub-01) + ci-check-Bin-Test. Grün ⇒ format-Block in harvest.φ + harvest.yml → CDN.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds008192
-note OpenNeuro InterGenSynchrony, longitudinales fNIRS-Hyperscanning, 122 Subj., .snirf + MoCap, CC0, 2,79 GB. Arm gebaut 2026-09-19: snirf.rs + snirf_compiler.rs (Roundtrip, --probe, CDN hinter --ci-mode), check 0/0. Schritt: --probe in CI.
+note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. Arm + Compiler (check 0/0); Probe-Arm openneuro-eeg-probe.yml (ds008192 --subject sub-101 --session 02) + ci-check-Bin-Test. Grün ⇒ format-Block in harvest.φ + harvest.yml → CDN.
