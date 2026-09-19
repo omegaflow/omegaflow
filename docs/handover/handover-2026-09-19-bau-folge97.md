@@ -3,7 +3,7 @@
   session: Bau-Folge 97
   class: handover
   date: 2026-09-19
-  sha256: 7dc75375aa2df09c6db12d09b924ee54cf93464c7d864f532419c37a26cfb157
+  sha256: cc65e7117e640146a80cee1cf62e57636453121a26756858995ad10c236362d7
   status: live
 -->
 # Handover — Bau-Folge 97 (2026-09-19)
@@ -34,30 +34,22 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
 
 ## Offen
 
-- **ds007822 EEGLAB-.set Probe** `phi/pipeline/ledger.φ:122-124`. Produktionspfad
-  verifiziert (`extract_eeg`→`chanlocs_labels`→`matfile.rs` Typ-16-Arm); Probe
-  `openneuro-cdn run 35471360435` (dataset ds007822) dispatchet. (Schritt:
-  `ci_manage view 35471360435` einmal lesen; grün ⇒ Parser-Gap geschlossen.) · `wartend`
 - **ds007471 BrainVision-Probe** `phi/pipeline/ledger.φ:126-128`. Arm + Compiler im
   Baum; CI-Arm gebaut: `.github/workflows/openneuro-eeg-probe.yml`
-  (`--dataset ds007471 --subject sub-01`, ohne `--ci-mode`) + ci-check-Bin-Test.
-  (Schritt: nach Push `gh workflow run openneuro-eeg-probe.yml`, dann
-  `ci_manage view` einmal; das Verdikt ist der **staged count** im Log, nicht die
-  Exit-Farbe — `contains("sub-01")` über-matcht sub-010…). Grün ⇒ format-Block in
-  `phi/harvest.φ` + `harvest.yml` → CDN. · `wartend`
+  (`--dataset ds007471 --subject sub-01`, ohne `--ci-mode`) + ci-check-Bin-Test;
+  Probe `run 35473247219` dispatcht. (Schritt: `ci_manage view 35473247219` einmal
+  lesen; das Verdikt ist der **staged count** im Log, nicht die Exit-Farbe —
+  `contains("sub-01")` über-matcht sub-010…). Grün ⇒ format-Block in `phi/harvest.φ`
+  + `harvest.yml` → CDN. · `wartend`
 - **ds008192 SNIRF-Probe** `phi/pipeline/ledger.φ:130-132`. Arm + Compiler im Baum;
-  derselbe CI-Arm (`--dataset ds008192 --subject sub-101 --session 02`). (Schritt:
-  wie ds007471; staged count lesen.) Grün ⇒ format-Block in `phi/harvest.φ` +
-  `harvest.yml` → CDN. · `wartend`
-- **gedi_l2a HDF5-Hang** `phi/harvest.φ:57-65`. Range-Guard im Baum (Root-`cargo
-  test` des ci-check deckt den Test); Re-Run `harvest run 35471362190`
-  (format gedi_l2a) dispatchet. (Schritt: `ci_manage view 35471362190` einmal
-  lesen; grün ⇒ `gedi_l2a.bin` present.) · `wartend`
+  derselbe CI-Arm (`--dataset ds008192 --subject sub-101 --session 02`); Probe
+  `run 35473247219` dispatcht. (Schritt: wie ds007471; staged count lesen.) Grün ⇒
+  format-Block in `phi/harvest.φ` + `harvest.yml` → CDN. · `wartend`
 
 ## Wartestellungen (kein Auswahlpunkt)
 
-- **ci-check-Bin-Tests** (openneuro/brainvision/snirf) — der `test`-Job des
-  `ci-check`-Laufs am Push dieses Commits. · `wartend`
+- **ci-check-Bin-Tests** (openneuro/brainvision/snirf) — `test`-Job des
+  `ci-check`-Laufs `35473248876` (nach Push dispatcht). · `wartend`
 - **`--sniff` Partial-Hash-Fix + lazy_chunk-/folge93-Gates + TE-Gates** —
   derselbe `ci-check`-Lauf. · `wartend`
 - `te-gate 35462518676` @`3d2e6adb` · `wartend`
