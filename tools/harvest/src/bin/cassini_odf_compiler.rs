@@ -22,14 +22,14 @@ fn hrefs(text: &str) -> Vec<String> {
     out
 }
 
-fn volumes() -> Vec<String> {
+fn volumes() -> Option<Vec<String>> {
     let Some(bytes) = fetch_raw_bytes(DATA, REQUEST_TTL_S) else {
         eprintln!("rss volume listing fetch void ({DATA})");
-        return Vec::new();
+        return None;
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
         eprintln!("rss volume listing not utf8");
-        return Vec::new();
+        return None;
     };
     let mut out: Vec<String> = hrefs(text)
         .into_iter()
@@ -45,19 +45,21 @@ fn volumes() -> Vec<String> {
         .collect();
     out.sort();
     out.dedup();
-    out
+    Some(out)
 }
 
-fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
+fn crawl(url: &str, depth: u32, files: &mut Vec<String>, failures: &mut usize) {
     if depth > 6 {
         return;
     }
     let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
         eprintln!("{url}: listing fetch void");
+        *failures += 1;
         return;
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
         eprintln!("{url}: listing not utf8");
+        *failures += 1;
         return;
     };
     for name in hrefs(text) {
@@ -76,7 +78,7 @@ fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
             ) {
                 continue;
             }
-            crawl(&format!("{url}{name}"), depth + 1, files);
+            crawl(&format!("{url}{name}"), depth + 1, files, failures);
         }
     }
 }
@@ -88,11 +90,15 @@ fn main() {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
-    let vols = volumes();
+    let Some(vols) = volumes() else {
+        eprintln!("rss volume listing unavailable — the series stays unwritten");
+        std::process::exit(1);
+    };
     eprintln!("cassini rss odf volumes: {}", vols.len());
+    let mut failures = 0usize;
     let mut files: Vec<String> = Vec::new();
     for vol in &vols {
-        crawl(&format!("{DATA}{vol}/"), 0, &mut files);
+        crawl(&format!("{DATA}{vol}/"), 0, &mut files, &mut failures);
     }
     files.sort();
     files.dedup();
@@ -101,10 +107,12 @@ fn main() {
     for url in &files {
         let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
             eprintln!("{url}: fetch void");
+            failures += 1;
             continue;
         };
         let Some(recs) = odf::parse_odf(&bytes) else {
             eprintln!("{url}: parse void — {} B", bytes.len());
+            failures += 1;
             continue;
         };
         let mut kept = 0usize;
@@ -139,6 +147,10 @@ fn main() {
         );
     }
     if merged.is_empty() {
+        if failures > 0 {
+            eprintln!("no Cassini ODF orbit samples — {failures} fetch/parse failures, the series stays unwritten");
+            std::process::exit(1);
+        }
         eprintln!("no Cassini ODF orbit samples — the series stays unwritten (0 honored)");
         return;
     }
