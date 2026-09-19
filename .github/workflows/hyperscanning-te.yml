@@ -6,6 +6,18 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      null_model:
+        description: null model — phase rotates each series alone; coherent-phase rotates a triad with one shared phase vector (the pair null for transfer beyond the linear cross-correlation)
+        type: choice
+        options:
+          - phase
+          - coherent-phase
+        default: phase
+      channel:
+        description: EEG channel label (a named electrode, not the common average)
+        type: string
+        default: Fz
 permissions:
   contents: read
 env:
@@ -53,12 +65,14 @@ jobs:
           echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
-      - name: Run the family-wise TE screen (Fz, lags 128, 200 surrogates)
+      - name: Run the family-wise TE screen (lags 128, 200 surrogates)
         run: |
+          set -o pipefail
           {
             echo "SHA $(git rev-parse HEAD)"
             cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
-              --manifest manifest.txt --channel Fz --lags 128 --surrogates 200
+              --manifest manifest.txt --channel "${{ inputs.channel }}" --lags 128 --surrogates 200 \
+              --null "${{ inputs.null_model }}"
           } | tee report.txt
       - uses: actions/upload-artifact@v4
         if: always()
