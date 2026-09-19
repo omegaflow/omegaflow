@@ -416,7 +416,7 @@ fn digamma(x: f64) -> f64 {
 pub fn transfer_entropy_ksg_conditional_n(
     x: &[f32],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     lag: usize,
     k: usize,
 ) -> Option<f64> {
@@ -424,8 +424,12 @@ pub fn transfer_entropy_ksg_conditional_n(
     if n < 8 || y.len() < n || k == 0 {
         return None;
     }
+    let lo = max_cond_lag(conds);
+    if lo >= n {
+        return None;
+    }
     for c in conds {
-        if c.len() < n {
+        if c.series.len() < n {
             return None;
         }
     }
@@ -433,31 +437,32 @@ pub fn transfer_entropy_ksg_conditional_n(
         return None;
     }
     for c in conds {
-        if c.iter().any(|v| !v.is_finite()) {
+        if c.series.iter().any(|v| !v.is_finite()) {
             return None;
         }
     }
     let shift = if lag == 0 { 1usize } else { lag };
     let m = n.checked_sub(shift)?;
-    if m < 8 {
+    let m_eff = m.checked_sub(lo)?;
+    if m_eff < 8 {
         return None;
     }
     let dim = 3 + conds.len();
-    let mut pts: Vec<f64> = Vec::with_capacity(m * dim);
-    for t in 0..m {
+    let mut pts: Vec<f64> = Vec::with_capacity(m_eff * dim);
+    for t in lo..m {
         pts.push(x[t + shift] as f64);
         pts.push(x[t] as f64);
         pts.push(y[t] as f64);
         for c in conds {
-            pts.push(c[t] as f64);
+            pts.push(c.series[t - c.lag] as f64);
         }
     }
-    let k_eff = k.min(m - 1);
-    let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
+    let k_eff = k.min(m_eff - 1);
+    let mut dists: Vec<f64> = Vec::with_capacity(m_eff - 1);
     let mut sum = 0.0f64;
-    for i in 0..m {
+    for i in 0..m_eff {
         dists.clear();
-        for j in 0..m {
+        for j in 0..m_eff {
             if j == i {
                 continue;
             }
@@ -476,7 +481,7 @@ pub fn transfer_entropy_ksg_conditional_n(
         let mut n_xc = 0usize;
         let mut n_xxc = 0usize;
         let mut n_xyc = 0usize;
-        for j in 0..m {
+        for j in 0..m_eff {
             if j == i {
                 continue;
             }
@@ -498,13 +503,23 @@ pub fn transfer_entropy_ksg_conditional_n(
         sum +=
             digamma((n_xc + 1) as f64) - digamma((n_xxc + 1) as f64) - digamma((n_xyc + 1) as f64);
     }
-    Some(digamma(k_eff as f64) + sum / m as f64)
+    Some(digamma(k_eff as f64) + sum / m_eff as f64)
+}
+
+#[derive(Clone, Copy)]
+pub struct LaggedCond<'a> {
+    pub series: &'a [f32],
+    pub lag: usize,
+}
+
+fn max_cond_lag(conds: &[LaggedCond]) -> usize {
+    conds.iter().map(|c| c.lag).fold(0, usize::max)
 }
 
 pub fn transfer_entropy_conditional_binned_n(
     x: &[f32],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     lag: usize,
     bins: usize,
 ) -> Option<f64> {
@@ -512,14 +527,18 @@ pub fn transfer_entropy_conditional_binned_n(
     if n < 8 || bins < 2 || y.len() < n {
         return None;
     }
+    let lo = max_cond_lag(conds);
+    if lo >= n {
+        return None;
+    }
     for c in conds {
-        if c.len() < n {
+        if c.series.len() < n {
             return None;
         }
     }
     let shift = if lag == 0 { 1usize } else { lag };
     let m = n.checked_sub(shift)?;
-    if m < 8 {
+    if m.checked_sub(lo)? < 8 {
         return None;
     }
     let (mn_x, mx_x) = bin_edges(x)?;
@@ -528,7 +547,7 @@ pub fn transfer_entropy_conditional_binned_n(
     let range_y = mx_y - mn_y;
     let mut cond_edges: Vec<(f32, f32)> = Vec::with_capacity(conds.len());
     for c in conds {
-        let (mn, mx) = bin_edges(c)?;
+        let (mn, mx) = bin_edges(c.series)?;
         cond_edges.push((mn, mx - mn));
     }
     let bx: Vec<usize> = x
@@ -542,7 +561,7 @@ pub fn transfer_entropy_conditional_binned_n(
     let bcond: Vec<Vec<usize>> = conds
         .iter()
         .zip(&cond_edges)
-        .map(|(c, &(mn, range))| c.iter().map(|&v| bin_index(v, mn, range, bins)).collect())
+        .map(|(c, &(mn, range))| c.series.iter().map(|&v| bin_index(v, mn, range, bins)).collect())
         .collect();
 
     let mut keybuf: Vec<usize> = Vec::with_capacity(conds.len() + 3);
@@ -551,73 +570,73 @@ pub fn transfer_entropy_conditional_binned_n(
     let mut map_xyz: std::collections::HashMap<u64, usize> = std::collections::HashMap::new();
     let mut map_fxz: std::collections::HashMap<u64, usize> = std::collections::HashMap::new();
 
-    for s in 0..m {
+    for s in lo..m {
         keybuf.clear();
         keybuf.push(bx[s + shift]);
         keybuf.push(bx[s]);
         keybuf.push(by[s]);
-        for b in &bcond {
-            keybuf.push(b[s]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[s - c.lag]);
         }
         *map_full.entry(joint_key(&keybuf, bins)).or_insert(0) += 1;
     }
-    for s in 0..n {
+    for s in lo..n {
         keybuf.clear();
         keybuf.push(bx[s]);
-        for b in &bcond {
-            keybuf.push(b[s]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[s - c.lag]);
         }
         *map_xz.entry(joint_key(&keybuf, bins)).or_insert(0) += 1;
     }
-    for s in 0..n {
+    for s in lo..n {
         keybuf.clear();
         keybuf.push(bx[s]);
         keybuf.push(by[s]);
-        for b in &bcond {
-            keybuf.push(b[s]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[s - c.lag]);
         }
         *map_xyz.entry(joint_key(&keybuf, bins)).or_insert(0) += 1;
     }
-    for s in 0..m {
+    for s in lo..m {
         keybuf.clear();
         keybuf.push(bx[s + shift]);
         keybuf.push(bx[s]);
-        for b in &bcond {
-            keybuf.push(b[s]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[s - c.lag]);
         }
         *map_fxz.entry(joint_key(&keybuf, bins)).or_insert(0) += 1;
     }
 
-    let mf = m as f64;
-    let nf = n as f64;
+    let mf = (m - lo) as f64;
+    let nf = (n - lo) as f64;
     let mut te = 0.0;
-    for t in 0..m {
+    for t in lo..m {
         keybuf.clear();
         keybuf.push(bx[t + shift]);
         keybuf.push(bx[t]);
         keybuf.push(by[t]);
-        for b in &bcond {
-            keybuf.push(b[t]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[t - c.lag]);
         }
         let p5 = *map_full.get(&joint_key(&keybuf, bins)).unwrap_or(&0) as f64 / mf;
         keybuf.clear();
         keybuf.push(bx[t]);
-        for b in &bcond {
-            keybuf.push(b[t]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[t - c.lag]);
         }
         let p3 = *map_xz.get(&joint_key(&keybuf, bins)).unwrap_or(&0) as f64 / nf;
         keybuf.clear();
         keybuf.push(bx[t]);
         keybuf.push(by[t]);
-        for b in &bcond {
-            keybuf.push(b[t]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[t - c.lag]);
         }
         let p4a = *map_xyz.get(&joint_key(&keybuf, bins)).unwrap_or(&0) as f64 / nf;
         keybuf.clear();
         keybuf.push(bx[t + shift]);
         keybuf.push(bx[t]);
-        for b in &bcond {
-            keybuf.push(b[t]);
+        for (b, c) in bcond.iter().zip(conds) {
+            keybuf.push(b[t - c.lag]);
         }
         let p4b = *map_fxz.get(&joint_key(&keybuf, bins)).unwrap_or(&0) as f64 / mf;
         te += ((p5 * p3) / (p4a * p4b).max(1e-300)).ln();
@@ -773,10 +792,11 @@ pub fn conditional_te_stats_lagged(
     seed: u64,
     n_surr: usize,
 ) -> Option<(f64, f64, f64)> {
+    let conds = [LaggedCond { series: c, lag: 0 }];
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let Some(ys) = arx_conditional_surrogate(y, x, &[c], max_lag, &mut rng) else {
+        let Some(ys) = arx_conditional_surrogate(y, x, &conds, max_lag, &mut rng) else {
             continue;
         };
         if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
@@ -791,71 +811,6 @@ pub fn conditional_te_stats_lagged(
     let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
     let sd = var.sqrt();
     Some((mean, sd, mean + 2.0 * sd))
-}
-
-fn ols_fit_lagged_2x(
-    y: &[f32],
-    c1: &[f32],
-    c2: &[f32],
-    x: &[f32],
-    max_lag: usize,
-) -> Option<Vec<f64>> {
-    let n = y.len();
-    if n < max_lag + 4 || y.len() != c1.len() || y.len() != c2.len() || x.len() != n {
-        return None;
-    }
-    let k = 1 + max_lag + (max_lag + 1) + (max_lag + 1) + max_lag;
-    let mut a = vec![0f64; k * k];
-    let mut b = vec![0f64; k];
-    for t in max_lag..n {
-        let mut row = Vec::with_capacity(k);
-        row.push(1.0);
-        for l in 1..=max_lag {
-            row.push(y[t - l] as f64);
-        }
-        for l in 0..=max_lag {
-            row.push(c1[t - l] as f64);
-        }
-        for l in 0..=max_lag {
-            row.push(c2[t - l] as f64);
-        }
-        for l in 1..=max_lag {
-            row.push(x[t - l] as f64);
-        }
-        let yt = y[t] as f64;
-        for i in 0..k {
-            b[i] += row[i] * yt;
-            for j in 0..k {
-                a[i * k + j] += row[i] * row[j];
-            }
-        }
-    }
-    solve_linear(&a, &b, k)
-}
-
-fn lagged_predict_2x(
-    coeffs: &[f64],
-    y: &[f32],
-    c1: &[f32],
-    c2: &[f32],
-    x: &[f32],
-    t: usize,
-    max_lag: usize,
-) -> f64 {
-    let mut v = coeffs[0];
-    for l in 1..=max_lag {
-        v += coeffs[l] * y[t - l] as f64;
-    }
-    for l in 0..=max_lag {
-        v += coeffs[1 + max_lag + l] * c1[t - l] as f64;
-    }
-    for l in 0..=max_lag {
-        v += coeffs[2 + 2 * max_lag + l] * c2[t - l] as f64;
-    }
-    for l in 1..=max_lag {
-        v += coeffs[3 + 3 * max_lag + l - 1] * x[t - l] as f64;
-    }
-    v
 }
 
 #[derive(Clone, Copy)]
@@ -879,10 +834,11 @@ pub fn conditional_te_stats_lagged_2(
         seed,
         n_surr,
     } = p;
+    let conds = [LaggedCond { series: c1, lag: 0 }, LaggedCond { series: c2, lag: 0 }];
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let Some(ys) = arx_conditional_surrogate_2(y, x, c1, c2, max_lag, &mut rng) else {
+        let Some(ys) = arx_conditional_surrogate(y, x, &conds, max_lag, &mut rng) else {
             continue;
         };
         if let Some(te) = transfer_entropy_conditional_2(x, &ys, c1, c2, lag) {
@@ -951,33 +907,35 @@ fn lagged_predict_n(coeffs: &[f64], y: &[f32], conds: &[&[f32]], t: usize, max_l
 
 fn ols_fit_lagged_nx(
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     x: &[f32],
     max_lag: usize,
 ) -> Option<Vec<f64>> {
     let n = y.len();
-    if n < max_lag + 4 || x.len() != n {
+    if x.len() != n {
         return None;
     }
     for c in conds {
-        if c.len() != n {
+        if c.series.len() != n {
             return None;
         }
     }
+    let t0 = max_lag.max(max_cond_lag(conds));
+    if n < t0 + 4 {
+        return None;
+    }
     let n_cond = conds.len();
-    let k = 1 + max_lag + n_cond * (max_lag + 1) + max_lag;
+    let k = 1 + max_lag + n_cond + max_lag;
     let mut a = vec![0f64; k * k];
     let mut b = vec![0f64; k];
-    for t in max_lag..n {
+    for t in t0..n {
         let mut row = Vec::with_capacity(k);
         row.push(1.0);
         for l in 1..=max_lag {
             row.push(y[t - l] as f64);
         }
         for c in conds {
-            for l in 0..=max_lag {
-                row.push(c[t - l] as f64);
-            }
+            row.push(c.series[t - c.lag] as f64);
         }
         for l in 1..=max_lag {
             row.push(x[t - l] as f64);
@@ -996,7 +954,7 @@ fn ols_fit_lagged_nx(
 fn lagged_predict_nx(
     coeffs: &[f64],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     x: &[f32],
     t: usize,
     max_lag: usize,
@@ -1005,13 +963,11 @@ fn lagged_predict_nx(
     for l in 1..=max_lag {
         v += coeffs[l] * y[t - l] as f64;
     }
+    let cbase = 1 + max_lag;
     for (ci, c) in conds.iter().enumerate() {
-        let base = 1 + max_lag + ci * (max_lag + 1);
-        for l in 0..=max_lag {
-            v += coeffs[base + l] * c[t - l] as f64;
-        }
+        v += coeffs[cbase + ci] * c.series[t - c.lag] as f64;
     }
-    let xbase = 1 + max_lag + conds.len() * (max_lag + 1);
+    let xbase = cbase + conds.len();
     for l in 1..=max_lag {
         v += coeffs[xbase + l - 1] * x[t - l] as f64;
     }
@@ -1049,7 +1005,7 @@ pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Optio
 pub fn arx_conditional_surrogate(
     y: &[f32],
     x: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     max_lag: usize,
     rng: &mut u64,
 ) -> Option<Vec<f32>> {
@@ -1060,58 +1016,21 @@ pub fn arx_conditional_surrogate(
     if x.len() != n {
         return None;
     }
+    let t0 = max_lag.max(max_cond_lag(conds));
     match ols_fit_lagged_nx(y, conds, x, max_lag) {
         Some(coeffs) => {
-            let resid: Vec<f64> = (max_lag..n)
+            let resid: Vec<f64> = (t0..n)
                 .map(|t| y[t] as f64 - lagged_predict_nx(&coeffs, y, conds, x, t, max_lag))
                 .collect();
             let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
             let perm = restricted_permutation_surrogate(&resid_f32, rng);
             let mut out = vec![0f32; n];
             for t in 0..n {
-                out[t] = if t < max_lag {
+                out[t] = if t < t0 {
                     y[t]
                 } else {
                     let v = lagged_predict_nx(&coeffs, &out, conds, x, t, max_lag)
-                        + perm[t - max_lag] as f64;
-                    if !v.is_finite() {
-                        return None;
-                    }
-                    v as f32
-                };
-            }
-            Some(out)
-        }
-        None => None,
-    }
-}
-
-pub fn arx_conditional_surrogate_2(
-    y: &[f32],
-    x: &[f32],
-    c1: &[f32],
-    c2: &[f32],
-    max_lag: usize,
-    rng: &mut u64,
-) -> Option<Vec<f32>> {
-    let n = y.len();
-    if x.len() != n {
-        return None;
-    }
-    match ols_fit_lagged_2x(y, c1, c2, x, max_lag) {
-        Some(coeffs) => {
-            let resid: Vec<f64> = (max_lag..n)
-                .map(|t| y[t] as f64 - lagged_predict_2x(&coeffs, y, c1, c2, x, t, max_lag))
-                .collect();
-            let resid_f32: Vec<f32> = resid.iter().map(|&v| v as f32).collect();
-            let perm = restricted_permutation_surrogate(&resid_f32, rng);
-            let mut out = vec![0f32; n];
-            for t in 0..n {
-                out[t] = if t < max_lag {
-                    y[t]
-                } else {
-                    let v = lagged_predict_2x(&coeffs, &out, c1, c2, x, t, max_lag)
-                        + perm[t - max_lag] as f64;
+                        + perm[t - t0] as f64;
                     if !v.is_finite() {
                         return None;
                     }
@@ -1157,7 +1076,7 @@ pub struct TeStatsParams {
 pub fn conditional_te_stats_lagged_n(
     x: &[f32],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     p: TeStatsParams,
 ) -> Option<(f64, f64, f64)> {
     let TeStatsParams {
@@ -1207,7 +1126,7 @@ pub struct TeSurrogateParams {
 pub fn conditional_te_surrogates_n(
     x: &[f32],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond],
     p: TeSurrogateParams,
 ) -> Option<Vec<f64>> {
     let TeSurrogateParams {
@@ -1343,7 +1262,7 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
     let test = |j: usize,
                 i: usize,
                 lag: usize,
-                conds: &[&[f32]],
+                conds: &[LaggedCond],
                 seed_t: u64|
      -> Option<(f64, f64, f64)> {
         let te = match est {
@@ -1418,13 +1337,10 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                 }
                 let mut removed_here = false;
                 for (ci, comb) in subsets_of_size(&rest, p).iter().enumerate() {
-                    let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();
-                    cond_idxs.sort_unstable();
-                    cond_idxs.dedup();
-                    let conds: Vec<&[f32]> = cond_idxs
-                        .into_iter()
-                        .filter(|&d| d != i && d != j)
-                        .map(|d| series[d])
+                    let conds: Vec<LaggedCond> = comb
+                        .iter()
+                        .filter(|&&(d, _)| d != i && d != j)
+                        .map(|&(d, l)| LaggedCond { series: series[d], lag: l })
                         .collect();
                     let seed_t = seed
                         ^ (j as u64).wrapping_mul(0x9E37_79B9)
@@ -1466,13 +1382,10 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                         cond_specs.push((d, l));
                     }
                 }
-                let mut cond_idxs: Vec<usize> = cond_specs.iter().map(|&(d, _)| d).collect();
-                cond_idxs.sort_unstable();
-                cond_idxs.dedup();
-                let conds: Vec<&[f32]> = cond_idxs
-                    .into_iter()
-                    .filter(|&d| d != i && d != j)
-                    .map(|d| series[d])
+                let conds: Vec<LaggedCond> = cond_specs
+                    .iter()
+                    .filter(|&&(d, _)| d != i && d != j)
+                    .map(|&(d, l)| LaggedCond { series: series[d], lag: l })
                     .collect();
                 let seed_t = seed
                     ^ (j as u64).wrapping_mul(0x9E37_79B9)
@@ -2803,8 +2716,14 @@ mod tests {
         let x: Vec<f32> = (0..n)
             .map(|t| 0.4 * c2[t] + (t as f32 * 0.23).sin())
             .collect();
-        let cond_surr = arx_conditional_surrogate(&y, &x, &[&c], max_lag, &mut rng_a)
-            .expect("the conditional Arx fit resolves");
+        let cond_surr = arx_conditional_surrogate(
+            &y,
+            &x,
+            &[LaggedCond { series: &c, lag: 0 }],
+            max_lag,
+            &mut rng_a,
+        )
+        .expect("the conditional Arx fit resolves");
         let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b)
             .expect("the unconditional Arx fit resolves");
         assert_eq!(cond_surr.len(), n);
@@ -2820,8 +2739,14 @@ mod tests {
             max_diff
         );
         let mut rng_c = 42u64;
-        let s2 = arx_conditional_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng_c)
-            .expect("the two-confounder Arx fit resolves");
+        let s2 = arx_conditional_surrogate(
+            &y,
+            &x,
+            &[LaggedCond { series: &c, lag: 0 }, LaggedCond { series: &c2, lag: 0 }],
+            max_lag,
+            &mut rng_c,
+        )
+        .expect("the two-confounder Arx fit resolves");
         assert_eq!(s2.len(), n);
         assert!(
             s2.iter().all(|v| v.is_finite()),
@@ -3840,6 +3765,157 @@ mod tests {
         }
     }
 
+    #[test]
+    #[ignore = "coupling scan for the per-lag gate — heavy, runs in te-gate.yml"]
+    fn coupling_scan_te_over_thr_n1000() {
+        let n = 800usize;
+        let couplings = [0.3f32, 0.6, 0.9, 1.2, 2.0];
+        let trials = 5usize;
+        let n_surr = 40usize;
+        let mut rng = 0x6A2B_7A5B_3C1D_9E4Fu64;
+        let noise = |rng: &mut u64| -> f32 {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            (((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)) as f32
+        };
+        let mut ratios: Vec<(f32, Option<f64>)> = Vec::new();
+        for &coupling in &couplings {
+            let mut te_sum = 0.0;
+            let mut thr_sum = 0.0;
+            let mut meas = 0usize;
+            for t in 0..trials {
+                let seed = 0x9E37_79B9_7F4A_7C15
+                    ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+                let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
+                let mut x = vec![0f32; n];
+                let mut y = vec![0f32; n];
+                let mut y_ind = vec![0f32; n];
+                let alpha = 0.90f32;
+                for t in 0..n {
+                    let ny = noise(&mut rng);
+                    y_ind[t] = ny;
+                    x[t] = c[t] + 0.4 * noise(&mut rng);
+                    y[t] = if t == 0 {
+                        0.0
+                    } else {
+                        alpha * y[t - 1] + (1.0 - alpha) * c[t - 1] + 0.3 * ny
+                    };
+                }
+                for t in 0..n - 1 {
+                    x[t + 1] += coupling * y_ind[t];
+                }
+                let Some(te) = transfer_entropy_conditional(&x, &y, &c, 1) else {
+                    continue;
+                };
+                let Some((_, _, thr)) =
+                    conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed, n_surr)
+                else {
+                    continue;
+                };
+                te_sum += te;
+                thr_sum += thr;
+                meas += 1;
+            }
+            let ratio = (meas > 0).then(|| (te_sum / meas as f64) / (thr_sum / meas as f64));
+            match ratio {
+                Some(r) => println!(
+                    "coupling={coupling} te={:.4} thr={:.4} te/thr={r:.3}",
+                    te_sum / meas as f64,
+                    thr_sum / meas as f64
+                ),
+                None => println!("coupling={coupling}: unmeasured"),
+            }
+            ratios.push((coupling, ratio));
+        }
+        let named: String = ratios
+            .iter()
+            .map(|&(c, r)| match r {
+                Some(r) => format!("c={c}:{r:.3} "),
+                None => format!("c={c}:unmeasured "),
+            })
+            .collect();
+        for &(c, r) in &ratios {
+            assert!(
+                r.is_some(),
+                "coupling scan: cell c={c} unmeasured — never a passing zero ({named})"
+            );
+        }
+        let strongest = ratios
+            .iter()
+            .find(|&&(c, _)| c == 2.0)
+            .expect("c=2.0 cell measured")
+            .1
+            .expect("c=2.0 cell carries a ratio");
+        assert!(
+            strongest > 1.0,
+            "coupling scan: the strongest coupling does not clear its null (te/thr {strongest:.3}) — the null swallows the true coupling ({named})"
+        );
+    }
+
+    #[test]
+    #[ignore = "FPR-vs-bins sweep for the per-lag gate — heavy, runs in te-gate.yml"]
+    fn fpr_bins_sweep_n2000() {
+        let bins_set = [16usize, 32, 64, 128];
+        let a_set = [0.0f32, 0.5, 0.9];
+        let trials_per_cell = 336usize;
+        for &bins in &bins_set {
+            let cells: Vec<(f32, usize, usize)> = a_set
+                .iter()
+                .map(|&a| (a, 0usize, trials_per_cell))
+                .collect();
+            let out = gate_fpr_cells_from(
+                150,
+                &cells,
+                GateParams {
+                    null: TeNull::RestrictedPermutation,
+                    est: TeEstimator::Binned,
+                    max_lag: 2,
+                    null_lag: 12,
+                    bins,
+                    block: 0,
+                    n_surr: 200,
+                },
+            );
+            let mut names = String::new();
+            for (c, a) in out.iter().zip(&a_set) {
+                let fpr = (c.neg > 0).then(|| 100.0 * c.fp as f64 / c.neg as f64);
+                match fpr {
+                    Some(f) => {
+                        names.push_str(&format!("a={a}:{f:.2}% "));
+                        println!("bins={bins} a={a} fpr={f:.2}%");
+                    }
+                    None => {
+                        names.push_str(&format!("a={a}:unmeasured "));
+                        println!("bins={bins} a={a} fpr=unmeasured");
+                    }
+                }
+            }
+            for (c, a) in out.iter().zip(&a_set) {
+                assert!(
+                    c.neg > 0,
+                    "FPR-vs-bins sweep: bins={bins} a={a} cell unmeasured (neg=0) — never a passing zero ({names})"
+                );
+            }
+            for (c, a) in out.iter().zip(&a_set) {
+                let fpr = 100.0 * c.fp as f64 / c.neg as f64;
+                assert!(
+                    fpr <= 8.0,
+                    "FPR-vs-bins sweep: FPR {fpr:.2}% at bins={bins} a={a} exceeds 8% ({names})"
+                );
+            }
+            let f0 = out.iter().find(|c| c.a == 0.0).expect("a=0 cell measured");
+            let f9 = out.iter().find(|c| c.a == 0.9).expect("a=0.9 cell measured");
+            let fpr0 = 100.0 * f0.fp as f64 / f0.neg as f64;
+            let fpr9 = 100.0 * f9.fp as f64 / f9.neg as f64;
+            assert!(
+                fpr9 - fpr0 <= 2.0,
+                "FPR-vs-bins sweep: FPR rise {:.2}pp over a at bins={bins} exceeds 2pp ({names})",
+                fpr9 - fpr0
+            );
+        }
+    }
+
     fn gate_conditional_driver(
         n: usize,
         a: f32,
@@ -3984,14 +4060,27 @@ mod tests {
                 let c2 = gate_ar1(n, a as f64, &mut rng);
                 let y = gate_ar1(n, a as f64, &mut rng);
                 let x = gate_ar1(n, a as f64, &mut rng);
-                let conds = [c.as_slice()];
+                let conds = [LaggedCond {
+                    series: c.as_slice(),
+                    lag: 0,
+                }];
+                let conds2 = [
+                    LaggedCond {
+                        series: c.as_slice(),
+                        lag: 0,
+                    },
+                    LaggedCond {
+                        series: c2.as_slice(),
+                        lag: 0,
+                    },
+                ];
                 assert!(
-                    ols_fit_lagged_n(&y, &conds, max_lag).is_some(),
-                    "n={n} max_lag={max_lag} a={a}: the ARX fit must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
+                    ols_fit_lagged_n(&y, &[c.as_slice()], max_lag).is_some(),
+                    "n={n} max_lag={max_lag} a={a}: the ARX fit resolves — the refusal arm (None) is the answer, never a silent shuffle"
                 );
                 assert!(
                     ols_fit_lagged_nx(&y, &conds, &x, max_lag).is_some(),
-                    "n={n} max_lag={max_lag} a={a}: the full ARX fit (x-lags included) must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
+                    "n={n} max_lag={max_lag} a={a}: the full ARX fit (x-lags included) resolves — the refusal arm (None) is the answer, never a silent shuffle"
                 );
                 let s = arx_conditional_surrogate(&y, &x, &conds, max_lag, &mut rng)
                     .expect("the refusal is the None arm, never a silent shuffle");
@@ -4006,10 +4095,10 @@ mod tests {
                     "n={n}: an x length mismatch is the refusal arm (None), never a silent shuffle"
                 );
                 assert!(
-                    ols_fit_lagged_2x(&y, &c, &c2, &x, max_lag).is_some(),
-                    "n={n} max_lag={max_lag} a={a}: the two-confounder full ARX fit (x-lags included) must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
+                    ols_fit_lagged_nx(&y, &conds2, &x, max_lag).is_some(),
+                    "n={n} max_lag={max_lag} a={a}: the two-confounder full ARX fit (x-lags included) resolves — the refusal arm (None) is the answer, never a silent shuffle"
                 );
-                let s2 = arx_conditional_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng)
+                let s2 = arx_conditional_surrogate(&y, &x, &conds2, max_lag, &mut rng)
                     .expect("the refusal is the None arm, never a silent shuffle");
                 assert_eq!(
                     s2.len(),
@@ -4021,7 +4110,7 @@ mod tests {
                     "n={n} a={a}: the two-confounder surrogate must stay finite"
                 );
                 assert!(
-                    arx_conditional_surrogate_2(&y, &x[..n - 1], &c, &c2, max_lag, &mut rng)
+                    arx_conditional_surrogate(&y, &x[..n - 1], &conds2, max_lag, &mut rng)
                         .is_none(),
                     "n={n}: an x length mismatch is the refusal arm (None), never a silent shuffle"
                 );
@@ -4051,10 +4140,19 @@ mod tests {
         let y = gate_ar1(128, 0.5, &mut rng);
         let x = gate_ar1(128, 0.5, &mut rng);
         let c = gate_ar1(128, 0.5, &mut rng);
-        let conds = [c.as_slice(), c.as_slice()];
+        let conds = [
+            LaggedCond {
+                series: c.as_slice(),
+                lag: 0,
+            },
+            LaggedCond {
+                series: c.as_slice(),
+                lag: 0,
+            },
+        ];
         assert!(
             arx_conditional_surrogate(&y, &x, &conds, 4, &mut rng).is_none(),
-            "a duplicated condition series makes the design singular — the refusal arm (None) is the answer, never a silent shuffle"
+            "a duplicated condition column makes the design singular — the refusal arm (None) is the answer, never a silent shuffle"
         );
     }
 
@@ -4266,7 +4364,7 @@ mod tests {
             let fpr = 100.0 * fp as f64 / neg as f64;
             assert!(
                 fpr <= 8.0,
-                "conditional FP/FN gate (2): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — arx_conditional_surrogate_2 leaks ({named})"
+                "conditional FP/FN gate (2): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — the two-confounder Arx null leaks ({named})"
             );
         }
         let f0 = rows
@@ -4402,10 +4500,10 @@ mod tests {
             };
             let refs: Vec<&[f32]> = series.iter().map(|s| s.as_slice()).collect();
             for &(driver, target, lag, _sign) in &links {
-                let true_parents: Vec<&[f32]> = links
+                let true_parents: Vec<LaggedCond> = links
                     .iter()
                     .filter(|&&(d, t, l, _)| (d, t, l) != (driver, target, lag) && t == target)
-                    .map(|&(d, _, _, _)| refs[d])
+                    .map(|&(d, _, l, _)| LaggedCond { series: refs[d], lag: l })
                     .collect();
                 total += 1;
                 let mut hits = 0usize;
@@ -4837,10 +4935,22 @@ mod tests {
             .zip(&c2)
             .map(|(&a, &b)| a + b + 0.4 * noise(&mut rng))
             .collect();
-        let te_1 = transfer_entropy_conditional_binned_n(&x, &y, &[&c1], 1, 3)
-            .expect("one-confounder binned TE resolves");
-        let te_2 = transfer_entropy_conditional_binned_n(&x, &y, &[&c1, &c2], 1, 3)
-            .expect("two-confounder binned TE resolves");
+        let te_1 = transfer_entropy_conditional_binned_n(
+            &x,
+            &y,
+            &[LaggedCond { series: &c1, lag: 0 }],
+            1,
+            3,
+        )
+        .expect("one-confounder binned TE resolves");
+        let te_2 = transfer_entropy_conditional_binned_n(
+            &x,
+            &y,
+            &[LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }],
+            1,
+            3,
+        )
+        .expect("two-confounder binned TE resolves");
         assert!(
             te_2 < te_1,
             "two-confounder binned must remove more than one, got 2:{te_2} >= 1:{te_1}"
@@ -4878,10 +4988,22 @@ mod tests {
         for t in 0..n - 1 {
             b[t + 1] += 0.5 * a_ind[t];
         }
-        let te_ab = transfer_entropy_conditional_binned_n(&b, &a, &[&z], 1, 4)
-            .expect("binned A->B resolves");
-        let te_ba = transfer_entropy_conditional_binned_n(&a, &b, &[&z], 1, 4)
-            .expect("binned B->A resolves");
+        let te_ab = transfer_entropy_conditional_binned_n(
+            &b,
+            &a,
+            &[LaggedCond { series: &z, lag: 0 }],
+            1,
+            4,
+        )
+        .expect("binned A->B resolves");
+        let te_ba = transfer_entropy_conditional_binned_n(
+            &a,
+            &b,
+            &[LaggedCond { series: &z, lag: 0 }],
+            1,
+            4,
+        )
+        .expect("binned B->A resolves");
         assert!(
             te_ab > te_ba,
             "binned DAG: recover A->B over B->A, got fwd {te_ab} rev {te_ba}"
@@ -4917,10 +5039,22 @@ mod tests {
         }
         let kde_ab = transfer_entropy_conditional(&b, &a, &z, 1).expect("KDE A->B resolves");
         let kde_ba = transfer_entropy_conditional(&a, &b, &z, 1).expect("KDE B->A resolves");
-        let bin_ab = transfer_entropy_conditional_binned_n(&b, &a, &[&z], 1, 4)
-            .expect("binned A->B resolves");
-        let bin_ba = transfer_entropy_conditional_binned_n(&a, &b, &[&z], 1, 4)
-            .expect("binned B->A resolves");
+        let bin_ab = transfer_entropy_conditional_binned_n(
+            &b,
+            &a,
+            &[LaggedCond { series: &z, lag: 0 }],
+            1,
+            4,
+        )
+        .expect("binned A->B resolves");
+        let bin_ba = transfer_entropy_conditional_binned_n(
+            &a,
+            &b,
+            &[LaggedCond { series: &z, lag: 0 }],
+            1,
+            4,
+        )
+        .expect("binned B->A resolves");
         assert!(
             kde_ab > kde_ba,
             "KDE reference must recover the direction, got fwd {kde_ab} rev {kde_ba}"
@@ -4955,12 +5089,13 @@ mod tests {
             };
         }
         let bins = 3;
-        let te_c = transfer_entropy_conditional_binned_n(&x, &y, &[&c1, &c2], 1, bins)
+        let conds = [LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }];
+        let te_c = transfer_entropy_conditional_binned_n(&x, &y, &conds, 1, bins)
             .expect("two-driver binned TE resolves");
         let (_, _, thr) = conditional_te_stats_lagged_n(
             &x,
             &y,
-            &[&c1, &c2],
+            &conds,
             TeStatsParams {
                 lag: 1,
                 max_lag: 1,
@@ -4973,7 +5108,7 @@ mod tests {
         .expect("lagged N-dim null resolves");
         assert!(
             te_c <= thr,
-            "binned N-dim null must not leak on the multi-driver impulsive confound, got te {te_c} thr {thr}"
+            "binned N-dim null does not leak on the multi-driver impulsive confound, got te {te_c} thr {thr}"
         );
     }
 
@@ -5006,12 +5141,13 @@ mod tests {
             y[t + 1] += 0.5 * x_ind[t];
         }
         let bins = 3;
-        let te_c = transfer_entropy_conditional_binned_n(&y, &x, &[&c1, &c2], 1, bins)
+        let conds = [LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }];
+        let te_c = transfer_entropy_conditional_binned_n(&y, &x, &conds, 1, bins)
             .expect("two-driver binned TE resolves");
         let (_, _, thr) = conditional_te_stats_lagged_n(
             &y,
             &x,
-            &[&c1, &c2],
+            &conds,
             TeStatsParams {
                 lag: 1,
                 max_lag: 1,
@@ -5024,7 +5160,7 @@ mod tests {
         .expect("lagged N-dim null resolves");
         assert!(
             te_c > thr,
-            "binned N-dim null must keep the true coupling beyond the shared drivers, got te {te_c} thr {thr}"
+            "binned N-dim null keeps the true coupling beyond the shared drivers, got te {te_c} thr {thr}"
         );
     }
 
