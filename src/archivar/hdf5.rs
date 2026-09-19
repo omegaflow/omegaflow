@@ -28,6 +28,7 @@ const MAX_CONT_BLOCKS: usize = 1 << 12;
 const MAX_READ_BYTES: u64 = 1 << 24;
 const MAX_FETCH_BYTES: u64 = 1 << 28;
 const MAX_FETCHES: usize = 1 << 12;
+const MAX_TRAVERSAL_BYTES: u64 = 1 << 26;
 
 #[derive(Clone, Debug)]
 pub enum Hdf5Note {
@@ -53,6 +54,7 @@ pub enum Hdf5Note {
     Chunk { off: usize },
     ReadLength { off: usize, len: u64 },
     FetchBudget { off: usize, reads: usize },
+    TraversalBudget { off: usize, bytes: u64 },
     VlenNotRead,
     VirtualDataset,
 }
@@ -418,6 +420,7 @@ struct Hdf5WindowReader<'a, F> {
     cache: HashMap<u64, Vec<u8>>,
     fetched_bytes: u64,
     fetches: usize,
+    read_bytes: u64,
 }
 
 impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
@@ -428,6 +431,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
             cache: HashMap::new(),
             fetched_bytes: 0,
             fetches: 0,
+            read_bytes: 0,
         }
     }
 
@@ -436,12 +440,20 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         let end = start
             .checked_add(len as usize)
             .ok_or(Hdf5Note::EndAtByte { off: start })?;
+        if self.read_bytes.saturating_add(len) > MAX_TRAVERSAL_BYTES {
+            return Err(Hdf5Note::TraversalBudget {
+                off: start,
+                bytes: self.read_bytes,
+            });
+        }
         if end <= self.base.len() {
+            self.read_bytes = self.read_bytes.saturating_add(len);
             return Ok(self.base[start..end].to_vec());
         }
         for (&wstart, window) in &self.cache {
             let ws = wstart as usize;
             if start >= ws && end <= ws + window.len() {
+                self.read_bytes = self.read_bytes.saturating_add(len);
                 return Ok(window[start - ws..end - ws].to_vec());
             }
         }
@@ -460,6 +472,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         }
         self.fetches += 1;
         self.fetched_bytes = self.fetched_bytes.saturating_add(window.len() as u64);
+        self.read_bytes = self.read_bytes.saturating_add(len);
         self.cache.insert(off, window.clone());
         Ok(window)
     }
@@ -4634,6 +4647,53 @@ mod tests {
         match last {
             Err(Hdf5Note::FetchBudget { reads, .. }) => assert_eq!(reads, MAX_FETCHES),
             other => panic!("the reader reports its exhausted fetch budget, found {other:?}"),
+        }
+    }
+
+    #[test]
+    fn object_header_traversal_is_range_bounded() {
+        const BLOCK: u64 = 1 << 15;
+        const ROOT: usize = 128;
+        const CONT_START: u64 = 1 << 20;
+
+        let mut base: Vec<u8> = vec![0u8; 512];
+        base[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        base[8] = 0;
+        base[13] = 8;
+        base[14] = 8;
+        base[64..72].copy_from_slice(&(ROOT as u64).to_le_bytes());
+
+        base[ROOT] = 1;
+        base[ROOT + 2..ROOT + 4].copy_from_slice(&0xFFFFu16.to_le_bytes());
+        base[ROOT + 8..ROOT + 12].copy_from_slice(&24u32.to_le_bytes());
+        let m = ROOT + 16;
+        base[m..m + 2].copy_from_slice(&(MSG_CONT as u16).to_le_bytes());
+        base[m + 2..m + 4].copy_from_slice(&16u16.to_le_bytes());
+        base[m + 8..m + 16].copy_from_slice(&CONT_START.to_le_bytes());
+        base[m + 16..m + 24].copy_from_slice(&BLOCK.to_le_bytes());
+
+        let fetch = |off: u64, len: u64| -> Option<Vec<u8>> {
+            let mut block = vec![0u8; len as usize];
+            block[..2].copy_from_slice(&(MSG_CONT as u16).to_le_bytes());
+            block[2..4].copy_from_slice(&(len.saturating_sub(8) as u16).to_le_bytes());
+            block[8..16].copy_from_slice(&(off + len).to_le_bytes());
+            block[16..24].copy_from_slice(&len.to_le_bytes());
+            Some(block)
+        };
+
+        let note = Hdf5File::parse_fetch(&base, fetch)
+            .err()
+            .expect("the over-long continuation chain is bounded by the traversal budget");
+        match note {
+            Hdf5Note::TraversalBudget { bytes, .. } => {
+                assert!(bytes <= MAX_TRAVERSAL_BYTES);
+                assert!(bytes + BLOCK > MAX_TRAVERSAL_BYTES);
+                assert!(
+                    bytes / BLOCK < MAX_CONT_BLOCKS as u64,
+                    "the global traversal budget fires before the per-block guard"
+                );
+            }
+            other => panic!("the traversal budget note is expected, found {other:?}"),
         }
     }
 }

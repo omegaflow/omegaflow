@@ -629,6 +629,24 @@ mod tests {
         mi_matrix(&body)
     }
 
+    fn utf8_char_matrix(name: &str, text: &[u8]) -> Vec<u8> {
+        let mut body = Vec::new();
+        body.extend_from_slice(&6u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&4u32.to_le_bytes());
+        body.extend_from_slice(&0u32.to_le_bytes());
+        body.extend_from_slice(&5u32.to_le_bytes());
+        body.extend_from_slice(&8u32.to_le_bytes());
+        body.extend_from_slice(&1i32.to_le_bytes());
+        body.extend_from_slice(&(text.len() as i32).to_le_bytes());
+        body.extend_from_slice(&name_tag(name));
+        body.extend_from_slice(&16u16.to_le_bytes());
+        body.extend_from_slice(&(text.len() as u16).to_le_bytes());
+        body.extend_from_slice(text);
+        pad_body(&mut body);
+        mi_matrix(&body)
+    }
+
     fn pad_body(body: &mut Vec<u8>) {
         while body.len() % 8 != 0 {
             body.push(0);
@@ -778,6 +796,39 @@ mod tests {
         assert_eq!(extract.srate, Some(100.0));
         assert_eq!(extract.labels.len(), 2);
         assert!(extract.events.is_none());
+        match extract.samples {
+            Samples::Single(s) => assert_eq!(s.len(), 6),
+            _ => panic!("not single"),
+        }
+    }
+
+    #[test]
+    fn a_flattened_mat_v5_eeg_with_utf8_labels_extracts() {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[(
+                "labels",
+                vec![
+                    utf8_char_matrix("labels", b"Fp1"),
+                    utf8_char_matrix("labels", b"Fp2"),
+                ],
+            )],
+        );
+        let mut bytes = header();
+        bytes.extend_from_slice(&flags_dims_double("nbchan", &[1, 1], &[2.0]));
+        bytes.extend_from_slice(&flags_dims_double("pnts", &[1, 1], &[3.0]));
+        bytes.extend_from_slice(&flags_dims_double("srate", &[1, 1], &[100.0]));
+        bytes.extend_from_slice(&single_matrix(
+            "data",
+            &[2, 3],
+            &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+        ));
+        bytes.extend_from_slice(&chanlocs);
+        let extract = extract_eeg(&bytes).expect("the flattened EEG with utf8 labels extracts");
+        assert_eq!(extract.nbchan, 2);
+        assert_eq!(extract.pnts, 3);
+        assert_eq!(extract.labels, vec!["Fp1".to_string(), "Fp2".to_string()]);
         match extract.samples {
             Samples::Single(s) => assert_eq!(s.len(), 6),
             _ => panic!("not single"),
