@@ -310,9 +310,7 @@ fn main() {
             .iter()
             .filter(|exp| {
                 !actual.contains(exp.as_str())
-                    && actual
-                        .iter()
-                        .any(|a| shard_base(a) == Some(exp.as_str()))
+                    && actual.iter().any(|a| shard_base(a) == Some(exp.as_str()))
             })
             .cloned()
             .collect();

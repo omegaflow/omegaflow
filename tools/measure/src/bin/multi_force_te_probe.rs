@@ -303,10 +303,7 @@ mod tests {
         let (te, thr, p) = conditional_link(
             &y,
             &x,
-            &[LaggedCond {
-                series: &z,
-                lag: 0,
-            }],
+            &[LaggedCond { series: &z, lag: 0 }],
             1,
             1,
             3,

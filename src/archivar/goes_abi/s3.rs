@@ -129,9 +129,17 @@ mod tests {
         let page = parse_list_body(BODY).expect("listing parses");
         assert_eq!(page.keys.len(), 2);
         assert_eq!(page.keys[0].size, 12280502);
-        assert!(page.keys[0].key.ends_with("M6C01_G16_s20250971801174_e20250971803547_c20250971803585.nc"));
+        assert!(
+            page.keys[0]
+                .key
+                .ends_with("M6C01_G16_s20250971801174_e20250971803547_c20250971803585.nc")
+        );
         assert_eq!(page.keys[1].size, 9037330);
-        assert!(page.keys[1].key.ends_with("M6C02_G16_s20250971801174_e20250971803546_c20250971803586.nc"));
+        assert!(
+            page.keys[1]
+                .key
+                .ends_with("M6C02_G16_s20250971801174_e20250971803546_c20250971803586.nc")
+        );
         assert_eq!(page.prefixes, vec!["ABI-L1b-RadC/2025/097/19/".to_string()]);
         assert!(!page.truncated);
         assert_eq!(page.next_marker, None);
@@ -142,7 +150,10 @@ mod tests {
         let body = r#"<ListBucketResult><Name>b</Name><Prefix>p</Prefix><IsTruncated>true</IsTruncated><NextMarker>ABI-L1b-RadC/2025/097/19/</NextMarker><Contents><Key>k</Key><Size>1</Size></Contents></ListBucketResult>"#;
         let page = parse_list_body(body).expect("listing parses");
         assert!(page.truncated);
-        assert_eq!(page.next_marker.as_deref(), Some("ABI-L1b-RadC/2025/097/19/"));
+        assert_eq!(
+            page.next_marker.as_deref(),
+            Some("ABI-L1b-RadC/2025/097/19/")
+        );
     }
 
     #[test]

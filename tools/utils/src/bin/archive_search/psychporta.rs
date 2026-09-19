@@ -52,8 +52,7 @@ pub fn psychporta_lines(query: &str, max: usize) -> Vec<String> {
                     }
                     let count = out.len();
                     from += count;
-                    let has_more =
-                        count >= max && total.is_some_and(|t| (from as u64) < t);
+                    let has_more = count >= max && total.is_some_and(|t| (from as u64) < t);
                     (out, has_more)
                 }
                 None => (
@@ -162,8 +161,10 @@ mod tests {
         let (_, lines) = parse_psychporta(&v);
         assert_eq!(
             lines,
-            vec!["url https://psychporta.org/works/pt_x\ttitle: A measured test\tindex: tests"
-                .to_string()]
+            vec![
+                "url https://psychporta.org/works/pt_x\ttitle: A measured test\tindex: tests"
+                    .to_string()
+            ]
         );
     }
 

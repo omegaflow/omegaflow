@@ -139,7 +139,9 @@ fn main() {
     let tol_m = match arg_value(&args, "--tol").and_then(|w| w.parse::<f64>().ok()) {
         Some(t) if t.is_finite() && t > 0.0 => t,
         Some(_) => {
-            eprintln!("weberin-verdicts: --tol not a finite positive value — the weave stays closed");
+            eprintln!(
+                "weberin-verdicts: --tol not a finite positive value — the weave stays closed"
+            );
             return;
         }
         None => omegaflow::weberin::WEBERIN_TOL_M,
@@ -352,10 +354,7 @@ fn main() {
         return;
     }
 
-    let riss = lines
-        .iter()
-        .filter(|l| l.word == VerdictWord::Riss)
-        .count();
+    let riss = lines.iter().filter(|l| l.word == VerdictWord::Riss).count();
     let absent = lines
         .iter()
         .filter(|l| l.word == VerdictWord::Absent)
