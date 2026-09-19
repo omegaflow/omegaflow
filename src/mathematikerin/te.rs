@@ -1418,7 +1418,14 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                 }
                 let mut removed_here = false;
                 for (ci, comb) in subsets_of_size(&rest, p).iter().enumerate() {
-                    let conds: Vec<&[f32]> = comb.iter().map(|&(d, _)| series[d]).collect();
+                    let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();
+                    cond_idxs.sort_unstable();
+                    cond_idxs.dedup();
+                    let conds: Vec<&[f32]> = cond_idxs
+                        .into_iter()
+                        .filter(|&d| d != i && d != j)
+                        .map(|d| series[d])
+                        .collect();
                     let seed_t = seed
                         ^ (j as u64).wrapping_mul(0x9E37_79B9)
                         ^ (i as u64).wrapping_mul(0x85EB_CA6B)
@@ -1459,7 +1466,14 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                         cond_specs.push((d, l));
                     }
                 }
-                let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();
+                let mut cond_idxs: Vec<usize> = cond_specs.iter().map(|&(d, _)| d).collect();
+                cond_idxs.sort_unstable();
+                cond_idxs.dedup();
+                let conds: Vec<&[f32]> = cond_idxs
+                    .into_iter()
+                    .filter(|&d| d != i && d != j)
+                    .map(|d| series[d])
+                    .collect();
                 let seed_t = seed
                     ^ (j as u64).wrapping_mul(0x9E37_79B9)
                     ^ (i as u64).wrapping_mul(0x85EB_CA6B)
@@ -4028,6 +4042,19 @@ mod tests {
         assert!(
             arx_restricted_surrogate(&ynan, 2, &mut rng).is_none(),
             "a NaN-carrying series is the refusal arm (None), never a silent shuffle"
+        );
+    }
+
+    #[test]
+    fn arx_conditional_surrogate_refuses_when_condition_is_duplicated() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let y = gate_ar1(128, 0.5, &mut rng);
+        let x = gate_ar1(128, 0.5, &mut rng);
+        let c = gate_ar1(128, 0.5, &mut rng);
+        let conds = [c.as_slice(), c.as_slice()];
+        assert!(
+            arx_conditional_surrogate(&y, &x, &conds, 4, &mut rng).is_none(),
+            "a duplicated condition series makes the design singular — the refusal arm (None) is the answer, never a silent shuffle"
         );
     }
 

@@ -31,7 +31,9 @@
     ["Riss => Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss is its own state, never absent, never 0.0"],
     ["Riss => VerdictWord::Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss carries both witness lines"],
     ["Riss => None", "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"],
-    ["Riss => 0.0", "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"]
+    ["Riss => 0.0", "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"],
+    ["cond_specs.iter().map(|&(d, _)| series[d]).collect()", "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"],
+    ["comb.iter().map(|&(d, _)| series[d]).collect()", "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -314,6 +316,7 @@
     "phi_register_comment": "# anmerkung: der eintrag traegt keine quelle",
     "riss_as_absent": "VerdictWord::Riss => VerdictWord::Absent,",
     "riss_as_zero": "VerdictWord::Riss => 0.0,",
-    "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,"
+    "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,",
+    "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();"
   }
 }
