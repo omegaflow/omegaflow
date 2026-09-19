@@ -25,6 +25,7 @@ const REC_BYTES: usize = REC_FIELDS * 8;
 const PREFIX_WINDOW: u64 = 1 << 9;
 const REC_CAP: usize = 1 << 13;
 const LIST_MAX_KEYS: u32 = 20;
+const HARVEST_WINDOW_MAX: usize = 1 << 9;
 const LIST_MAX_T_S: u64 = 1 << 7;
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const BEAMS: [&str; 6] = ["gt1l", "gt1r", "gt2l", "gt2r", "gt3l", "gt3r"];
@@ -41,6 +42,16 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn arg_usize(args: &[String], name: &str) -> Option<usize> {
     arg_value(args, name).and_then(|v| v.parse::<usize>().ok())
+}
+
+fn parse_usize_arg(args: &[String], name: &str) -> Result<Option<usize>, String> {
+    match arg_value(args, name) {
+        None => Ok(None),
+        Some(v) => v
+            .parse::<usize>()
+            .map(Some)
+            .map_err(|_| format!("{name} {v} carries no non-negative integer — refused")),
+    }
 }
 
 fn parse_secret(text: &str, key: &str) -> Option<String> {
@@ -766,7 +777,33 @@ struct Chosen {
 
 fn run_harvest(args: &[String]) {
     let out_path = arg_value(args, "--out").unwrap_or(DEFAULT_OUT.to_string());
-    let limit = arg_usize(args, "--limit").unwrap_or(2).clamp(1, 8);
+    let limit = match parse_usize_arg(args, "--limit") {
+        Ok(Some(n)) if (1..=8).contains(&n) => n,
+        Ok(Some(n)) => {
+            eprintln!("icesat2-atl03: --limit {n} lies outside 1..=8 — refused");
+            std::process::exit(2);
+        }
+        Ok(None) => 2,
+        Err(m) => {
+            eprintln!("icesat2-atl03: {m}");
+            std::process::exit(2);
+        }
+    };
+    let skip = match parse_usize_arg(args, "--skip") {
+        Ok(Some(n)) => n,
+        Ok(None) => 0,
+        Err(m) => {
+            eprintln!("icesat2-atl03: {m}");
+            std::process::exit(2);
+        }
+    };
+    let window = skip.saturating_add(limit);
+    if window > HARVEST_WINDOW_MAX {
+        eprintln!(
+            "icesat2-atl03: --skip {skip} + --limit {limit} = {window} exceeds the {HARVEST_WINDOW_MAX}-granule window — refused"
+        );
+        std::process::exit(2);
+    }
     let beams = arg_usize(args, "--beams")
         .unwrap_or(BEAMS.len())
         .clamp(1, BEAMS.len());
@@ -787,7 +824,7 @@ fn run_harvest(args: &[String]) {
         let version = arg_value(args, "--version").unwrap_or(ATL03_VERSION.to_string());
         let Some(day) = arg_value(args, "--day") else {
             eprintln!(
-                "usage: icesat2_atl03_compiler --cmr --day <YYYY.MM.DD> [--version 007] [--limit N] [--beams N] [--out <path>] [--ci-mode] — refused"
+                "usage: icesat2_atl03_compiler --cmr --day <YYYY.MM.DD> [--version 007] [--limit N] [--skip K] [--beams N] [--out <path>] [--ci-mode] — refused"
             );
             std::process::exit(2);
         };
@@ -795,7 +832,7 @@ fn run_harvest(args: &[String]) {
             eprintln!("icesat2-atl03: --day {day} carries no civil date (YYYY.MM.DD) — refused");
             std::process::exit(2);
         };
-        let page_size = limit.saturating_add(8).min(64);
+        let page_size = window.saturating_add(8).min(HARVEST_WINDOW_MAX);
         let Some(granules) =
             cmr_granules(ATL03_SHORT_NAME, &version, &format!("{start},{end}"), page_size)
         else {
@@ -812,8 +849,12 @@ fn run_harvest(args: &[String]) {
         }
         let mut granules = granules;
         granules.sort_by(|a, b| a.url.cmp(&b.url));
-        granules.truncate(limit);
-        for g in granules {
+        if granules.len() >= page_size {
+            eprintln!(
+                "icesat2-atl03: the CMR page holds {page_size} granules — the slice is drawn from this page, the set may be partial"
+            );
+        }
+        for g in granules.into_iter().skip(skip).take(limit) {
             chosen.push(Chosen {
                 fetch: GranuleFetch::Bearer {
                     url: g.url.clone(),
@@ -830,7 +871,7 @@ fn run_harvest(args: &[String]) {
                 Some(p) => p,
                 None => {
                     eprintln!(
-                        "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--beams N] [--out <path>] [--ci-mode] | --cmr --day <YYYY.MM.DD> [--version 007] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
+                        "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--skip K] [--beams N] [--out <path>] [--ci-mode] | --cmr --day <YYYY.MM.DD> [--version 007] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
                     );
                     std::process::exit(2);
                 }
@@ -840,7 +881,9 @@ fn run_harvest(args: &[String]) {
             eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
             std::process::exit(2);
         };
-        let list_keys = (limit as u32).saturating_add(8).min(LIST_MAX_KEYS);
+        let list_keys = (window as u32)
+            .saturating_add(8)
+            .min(HARVEST_WINDOW_MAX as u32);
         let Some((objects, truncated, _)) = list_page(BUCKET, &prefix, false, list_keys, &creds)
         else {
             eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
@@ -857,8 +900,7 @@ fn run_harvest(args: &[String]) {
         }
         let mut objects = objects;
         objects.sort_by(|a, b| a.key.cmp(&b.key));
-        objects.truncate(limit);
-        for obj in objects {
+        for obj in objects.into_iter().skip(skip).take(limit) {
             let s3_url = format!("s3://{BUCKET}/{}", obj.key);
             chosen.push(Chosen {
                 fetch: GranuleFetch::S3 {
@@ -1045,6 +1087,21 @@ mod tests {
         assert_eq!(end, "2026-06-30T23:59:59Z");
         assert!(day_temporal("not-a-day").is_none());
         assert!(day_temporal("2026.13.40").is_none());
+    }
+
+    #[test]
+    fn skip_and_limit_args_parse_strictly() {
+        let args = vec![
+            "--skip".to_string(),
+            "7".to_string(),
+            "--limit".to_string(),
+            "1".to_string(),
+        ];
+        assert_eq!(parse_usize_arg(&args, "--skip"), Ok(Some(7)));
+        assert_eq!(parse_usize_arg(&args, "--limit"), Ok(Some(1)));
+        assert_eq!(parse_usize_arg(&args, "--beams"), Ok(None));
+        let bad = vec!["--skip".to_string(), "x".to_string()];
+        assert!(parse_usize_arg(&bad, "--skip").is_err());
     }
 
     #[test]
