@@ -771,7 +771,11 @@ pub fn reduce_uly_skyfreq(
         };
         let drate = (dcnt[j] + doff - dcnt[i]) / (t[j] - t[i]);
         let sdoppler = if bias[i] >= 0 { 1.0 } else { -1.0 };
-        let ratio = if bands[i] == ULY_BAND_X { X_BAND_RATIO } else { S_BAND_RATIO };
+        let ratio = if bands[i] == ULY_BAND_X {
+            X_BAND_RATIO
+        } else {
+            S_BAND_RATIO
+        };
         fsky[i] = ratio * ref_hz[i] - sdoppler * (drate - RATE_OFFSET);
         good[i] = true;
     }
@@ -868,7 +872,11 @@ pub fn reduce_uly_skyfreq(
     }
     let n_sband_out = out_s.len();
     let n_xband_out = out_x.len();
-    let n_slipped = out_s.iter().chain(out_x.iter()).filter(|r| r[9] != 0.0).count();
+    let n_slipped = out_s
+        .iter()
+        .chain(out_x.iter())
+        .filter(|r| r[9] != 0.0)
+        .count();
     let mut stations: Vec<i64> = out_s
         .iter()
         .chain(out_x.iter())
@@ -1156,8 +1164,16 @@ mod tests {
 
     fn ulysses_file(bands: &[i64]) -> Vec<u8> {
         let mut file = vec![0u8; PHYSICAL_RECORD];
-        set_field(&mut file[0..LOGICAL_RECORD], field_of(IDFORM, 3).unwrap(), 90);
-        set_field(&mut file[0..LOGICAL_RECORD], field_of(IDFORM, 4).unwrap(), 1);
+        set_field(
+            &mut file[0..LOGICAL_RECORD],
+            field_of(IDFORM, 3).unwrap(),
+            90,
+        );
+        set_field(
+            &mut file[0..LOGICAL_RECORD],
+            field_of(IDFORM, 4).unwrap(),
+            1,
+        );
         for (idx, &band) in bands.iter().enumerate() {
             let lo = (2 + idx) * LOGICAL_RECORD;
             let hi = (3 + idx) * LOGICAL_RECORD;
@@ -1186,7 +1202,10 @@ mod tests {
         let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
         let file = ulysses_file(&[ULY_BAND_X, ULY_BAND_X]);
         let res = reduce_uly_skyfreq("x_band", 1.0, &file, &lsk).expect("reduce returns samples");
-        assert!(res.sband.is_empty(), "X records must not land in the S vector");
+        assert!(
+            res.sband.is_empty(),
+            "X records must not land in the S vector"
+        );
         assert_eq!(res.xband.len(), 1);
         let expected = X_BAND_RATIO * 21_980_000.0;
         assert!(
@@ -1218,7 +1237,15 @@ mod tests {
         assert_eq!(out_x.len(), 1);
         assert_eq!(no_pair, 2, "the tail record of each band stays unpaired");
         assert_eq!(
-            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            out_s.len()
+                + out_x.len()
+                + no_pair
+                + bias_rejected
+                + ref_rejected
+                + gap_rejected
+                + wrap_rejected
+                + med_rejected
+                + no_doppler,
             n
         );
         let s_expected = S_BAND_RATIO * 21_980_000.0;
@@ -1231,12 +1258,7 @@ mod tests {
     fn reduce_uly_skyfreq_alternating_bands_pair_within_band() {
         let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
         let file = ulysses_file(&[
-            ULY_BAND_S,
-            ULY_BAND_X,
-            ULY_BAND_S,
-            ULY_BAND_X,
-            ULY_BAND_S,
-            ULY_BAND_X,
+            ULY_BAND_S, ULY_BAND_X, ULY_BAND_S, ULY_BAND_X, ULY_BAND_S, ULY_BAND_X,
         ]);
         let res = reduce_uly_skyfreq("alternating", 1.0, &file, &lsk)
             .expect("reduce returns samples for both bands");
@@ -1256,7 +1278,15 @@ mod tests {
         assert_eq!(out_x.len(), 2, "X records pair with the next X record");
         assert_eq!(no_pair, 2, "the tail record of each band stays unpaired");
         assert_eq!(
-            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            out_s.len()
+                + out_x.len()
+                + no_pair
+                + bias_rejected
+                + ref_rejected
+                + gap_rejected
+                + wrap_rejected
+                + med_rejected
+                + no_doppler,
             n
         );
         let s_expected = S_BAND_RATIO * 21_980_000.0;
@@ -1301,7 +1331,15 @@ mod tests {
         assert_eq!(out_x.len(), 2, "each X record pairs with its successor");
         assert_eq!(no_pair, 1, "the tail record stays unpaired");
         assert_eq!(
-            out_s.len() + out_x.len() + no_pair + bias_rejected + ref_rejected + gap_rejected + wrap_rejected + med_rejected + no_doppler,
+            out_s.len()
+                + out_x.len()
+                + no_pair
+                + bias_rejected
+                + ref_rejected
+                + gap_rejected
+                + wrap_rejected
+                + med_rejected
+                + no_doppler,
             n
         );
         let expected = X_BAND_RATIO * 21_980_000.0;

@@ -1725,7 +1725,11 @@ fn clock_record(clock: &mut HashMap<String, (f64, u32)>, url: &str, ok: bool) {
         Some((_, f)) => *f,
         None => 0,
     };
-    let next = if ok { 0 } else { (prev + 1).min(FETCH_VOID_CAP) };
+    let next = if ok {
+        0
+    } else {
+        (prev + 1).min(FETCH_VOID_CAP)
+    };
     clock.insert(url.to_string(), (now, next));
 }
 
