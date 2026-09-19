@@ -23,14 +23,14 @@ pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
 note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
-asset fehlt
+asset present
 format exofop_toi
 tag exofop.ipac.caltech.edu
 arm exofop_compiler
 pattern ^exofop_toi\.bin$
 idempotent true
 timeout 120
-note download_toi.php?sort=toi&output=pipe HTTP 200 (2026-09-19): 1771 Zeilen (1 Header + 1770 Daten), 63 Spalten; RA/Dec sexagesimal → Grad; Format EXF1 v1, 44 B/Record, 6 Felder (TIC, TOI, RA, Dec, BJD, Tiefe ppm).
+note exofop_toi.bin 358525 B sha256 440a7fdc…0321 CDN 200 measured 2026-09-19 (run 35426107470 success); Quelle download_toi.php?sort=toi&output=pipe 1770 Zeilen/63 Spalten; Format EXF1 44 B/Record, 6 Felder (TIC,TOI,RA,Dec,BJD,Tiefe ppm).
 
 asset fehlt
 format gedi_l2a
@@ -58,7 +58,7 @@ args --cmr --day 2026.06.30 --version 007
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007 photon heights; day 2026.06.30. Run 35351464250 cancelled 2026-09-19 at timeout 180: granule 1 fully parsed (8192 records), granule 2 in fetch — productive. Re-dispatched 35425364754 timeout 360.
+note ATL03 v007 photon heights; day 2026.06.30. Run 35351464250 cancelled at timeout 180 (granule 1 parsed, 8192 records); re-dispatch 35425364754 cancelled 2026-09-19 (timeout 360); CDN icesat2_atl03.bin 404 — wartend.
 
 asset fehlt
 format lro_trk
@@ -105,7 +105,7 @@ arm rosetta_odf_compiler
 pattern ^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 idempotent true
 timeout 350
-note Rosetta RSI IFMS AGC series; arm src/archivar/ifms_agc.rs; compiler rosetta_odf_compiler.rs; run 35313968728 HTTP 422 — 2415275024 B > 2^31; sharding built 2026-09-18 (PODF_SHARD_BUDGET, 3 shards); timeout 350 planetary-odf-cdn.yml:29.
+note Rosetta RSI IFMS AGC; arm ifms_agc.rs; compiler rosetta_odf_compiler.rs; run 35351411938 success 2026-09-18; rosetta_odf.bin 404 — release archives.esac.esa.int: 6 shards (4×1073741816 B, 2×~290 MB), URLs not registered.
 
 asset present
 format swot_l2_lr_ssh
