@@ -3,7 +3,7 @@
   session: Forschung-Folge 99
   class: handover
   date: 2026-09-19
-  sha256: 2035041ac6c346cb8bff04095096cfe6511850816afaaba9d0da3e49e057ea2c
+  sha256: 88b1c27df4280e076b09b735111cc84644c5b62bcbd91789999154e905e9d613
   status: live
 -->
 # Handover — Forschung-Folge 99 (2026-09-19)
@@ -65,10 +65,11 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   wird benannt). Schätzer und Null unverändert → die vier Kalibrier-Gates laufen
   unberührt. Neue Tests `family_fn_gate` (starkes lineares Paar A→B + schwächeres
   nichtlineares C→D, `coherent=true`: Per-Zelle findet C→D, Familien-Max nicht —
-  die entfernte FN) und `family_fp_gate` (unabhängige strukturierte Familie,
+  die entfernte FN) und   `family_fp_gate` (unabhängige strukturierte Familie,
   Per-Zelle nahe Zufall). (Schritt: das Verdikt des `ci-check` `cargo test
-  --release` auf dem eigenen HEAD lesen; grün ⇒ Fix hält; rot ⇒ `family_fn_gate`-
-  Power/Tuning nachziehen — die neuen Gates sind lokal ungemessen, CI ist die Messung.)
+  --release` auf dem eigenen HEAD `2454de6e` lesen — dispatcht `35470066148`;
+  grün ⇒ Fix hält; rot ⇒ `family_fn_gate`-Power/Tuning nachziehen — die neuen
+  Gates sind lokal ungemessen, CI ist die Messung.)
 - **Riss 2 — zirkuläres FFT-Randartefakt — offen:** `phase_randomized_surrogate`
   (`te.rs:1577–1601`) nullt auf `next_power_of_two`, rotiert zirkulär, schneidet ab;
   DC/Nyquist unrotiert. Richtung plausibel FN, **ungemessen** (kein Rand-/
