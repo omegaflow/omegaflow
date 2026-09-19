@@ -1,0 +1,33 @@
+name: openneuro-eeg-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  eeg-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arm: brainvision
+            bin: brainvision_compiler
+            args: --dataset ds007471 --subject sub-01
+          - arm: snirf
+            bin: snirf_compiler
+            args: --dataset ds008192 --subject sub-101 --session 02
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Probe the ${{ matrix.arm }} arm on real data (no --ci-mode, no CDN upload)
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ${{ matrix.bin }} -- ${{ matrix.args }}
