@@ -25,6 +25,9 @@ const FILTER_FLETCHER32: u16 = 3;
 const FILTER_SCALEOFFSET: u16 = 6;
 
 const MAX_CONT_BLOCKS: usize = 1 << 12;
+const MAX_READ_BYTES: u64 = 1 << 24;
+const MAX_FETCH_BYTES: u64 = 1 << 28;
+const MAX_FETCHES: usize = 1 << 12;
 
 #[derive(Clone, Debug)]
 pub enum Hdf5Note {
@@ -48,6 +51,8 @@ pub enum Hdf5Note {
     SharedMessage,
     AbsentObject { name: String },
     Chunk { off: usize },
+    ReadLength { off: usize, len: u64 },
+    FetchBudget { off: usize, reads: usize },
     VlenNotRead,
     VirtualDataset,
 }
@@ -407,6 +412,8 @@ struct Hdf5WindowReader<'a, F> {
     base: &'a [u8],
     fetch: F,
     cache: HashMap<u64, Vec<u8>>,
+    fetched_bytes: u64,
+    fetches: usize,
 }
 
 impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
@@ -415,6 +422,8 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
             base,
             fetch,
             cache: HashMap::new(),
+            fetched_bytes: 0,
+            fetches: 0,
         }
     }
 
@@ -432,10 +441,23 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
                 return Ok(window[start - ws..end - ws].to_vec());
             }
         }
+        if len > MAX_READ_BYTES {
+            return Err(Hdf5Note::ReadLength { off: start, len });
+        }
+        if self.fetches >= MAX_FETCHES
+            || self.fetched_bytes.saturating_add(len) > MAX_FETCH_BYTES
+        {
+            return Err(Hdf5Note::FetchBudget {
+                off: start,
+                reads: self.fetches,
+            });
+        }
         let window = (self.fetch)(off, len).ok_or(Hdf5Note::AbsentAtByte { off: start })?;
         if (window.len() as u64) < len {
             return Err(Hdf5Note::EndAtByte { off: start });
         }
+        self.fetches += 1;
+        self.fetched_bytes = self.fetched_bytes.saturating_add(window.len() as u64);
         self.cache.insert(off, window.clone());
         Ok(window)
     }
@@ -3788,5 +3810,74 @@ mod tests {
         assert_eq!(d.version, 2);
         assert_eq!(d.cont_blocks, 1);
         assert!(d.cont_blocks <= MAX_CONT_BLOCKS);
+    }
+
+    #[test]
+    fn continuation_length_beyond_read_cap_terminates() {
+        fn put(buf: &mut Vec<u8>, at: usize, bytes: &[u8]) {
+            if buf.len() < at + bytes.len() {
+                buf.resize(at + bytes.len(), 0);
+            }
+            buf[at..at + bytes.len()].copy_from_slice(bytes);
+        }
+        fn v2_cont(addr: u64, len: u64) -> Vec<u8> {
+            let mut m = vec![MSG_CONT, 16, 0, 0];
+            m.extend_from_slice(&addr.to_le_bytes());
+            m.extend_from_slice(&len.to_le_bytes());
+            m
+        }
+
+        const ROOT: usize = 128;
+        const CONT: u64 = 1 << 30;
+        const CONT_LEN: u64 = 1 << 40;
+
+        let mut buf: Vec<u8> = vec![0u8; 512];
+        buf[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf[8] = 2;
+        buf[9] = 8;
+        buf[10] = 8;
+        buf[36..44].copy_from_slice(&(ROOT as u64).to_le_bytes());
+        let sb_ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&sb_ck.to_le_bytes());
+
+        put(&mut buf, ROOT, b"OHDR");
+        buf[ROOT + 4] = 2;
+        buf[ROOT + 5] = 0;
+        buf[ROOT + 6] = 20;
+        put(&mut buf, ROOT + 7, &v2_cont(CONT, CONT_LEN));
+        let root_end = ROOT + 7 + 20;
+        let root_ck = jenkins_lookup3(&buf[ROOT..root_end]);
+        put(&mut buf, root_end, &root_ck.to_le_bytes());
+
+        let note = Hdf5File::parse(&buf)
+            .err()
+            .expect("a continuation length beyond the read cap ends the parse");
+        match note {
+            Hdf5Note::ReadLength { len, .. } => assert_eq!(len, CONT_LEN),
+            other => panic!("the parse reports the read length, found {other:?}"),
+        }
+    }
+
+    #[test]
+    fn window_reader_stops_at_the_fetch_budget() {
+        let base: Vec<u8> = Vec::new();
+        let mut served = 0usize;
+        let mut reader = Hdf5WindowReader::new(&base, |_off: u64, len: u64| {
+            served += 1;
+            Some(vec![0u8; len as usize])
+        });
+        let mut last: Result<Vec<u8>, Hdf5Note> = Ok(Vec::new());
+        for i in 0..=MAX_FETCHES {
+            last = reader.read((1 << 30) | i as u64, 16);
+            if last.is_err() {
+                break;
+            }
+        }
+        drop(reader);
+        assert_eq!(served, MAX_FETCHES);
+        match last {
+            Err(Hdf5Note::FetchBudget { reads, .. }) => assert_eq!(reads, MAX_FETCHES),
+            other => panic!("the reader reports its exhausted fetch budget, found {other:?}"),
+        }
     }
 }
