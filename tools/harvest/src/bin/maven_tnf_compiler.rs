@@ -137,13 +137,13 @@ fn main() {
         paths.push(path);
     }
     for name in &names {
-        println!(
-            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
-        );
+        println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
         println!("format {PREFIX}");
         println!("at earth");
         println!("ttl 604800");
-        println!("field ul_phase_cycles {PREFIX}_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0");
+        println!(
+            "field ul_phase_cycles {PREFIX}_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0"
+        );
         println!();
     }
     if ci_mode {

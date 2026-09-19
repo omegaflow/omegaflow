@@ -177,7 +177,8 @@ fn load_ephemeris_cache(
             star_samples: Vec::new(),
             curves: None,
             spectral: None,
-            fetch_ok: true, sample_ttl_override: None,
+            fetch_ok: true,
+            sample_ttl_override: None,
         });
     }
 }
@@ -582,8 +583,9 @@ pub fn main_flow() {
         Ok(path) => path,
         Err(_) => "data/weberin_verdicts.bin".to_string(),
     };
-    let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> =
-        std::sync::Arc::new(std::sync::RwLock::new(load_weberin_verdicts(&verdicts_path)));
+    let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> = std::sync::Arc::new(
+        std::sync::RwLock::new(load_weberin_verdicts(&verdicts_path)),
+    );
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
@@ -1058,7 +1060,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                         } else {
                             eprintln!(
@@ -1074,7 +1077,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                         }
                     });
@@ -1111,7 +1115,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: false, sample_ttl_override: None,
+                            fetch_ok: false,
+                            sample_ttl_override: None,
                         });
                         return;
                     }
@@ -1127,7 +1132,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1142,7 +1148,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1222,7 +1229,8 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: false, sample_ttl_override: None,
+                                    fetch_ok: false,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
@@ -1237,7 +1245,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1254,7 +1263,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1269,7 +1279,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1290,7 +1301,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let url = src_clone.url.clone();
                     let base = match [".dds", ".das", ".dods"]
@@ -1349,7 +1361,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1426,7 +1439,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: false, sample_ttl_override: None,
+                                fetch_ok: false,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1442,7 +1456,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: false, sample_ttl_override: None,
+                                fetch_ok: false,
+                                sample_ttl_override: None,
                             });
                             return;
                         };
@@ -1462,7 +1477,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1484,7 +1500,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1512,7 +1529,8 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: false, sample_ttl_override: None,
+                                    fetch_ok: false,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
@@ -1527,7 +1545,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1544,7 +1563,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1559,7 +1579,8 @@ pub fn main_flow() {
                         star_samples,
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1579,7 +1600,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
@@ -1681,7 +1703,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: Some(hash),
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -1701,7 +1724,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("xp_spectra").to_string();
@@ -1789,7 +1813,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: Some(hash),
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                         sent += 1;
                     }
@@ -1812,7 +1837,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("jwst_spectra").to_string();
@@ -1908,7 +1934,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: Some(hash),
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     }
                     eprintln!(
@@ -1945,7 +1972,8 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: false, sample_ttl_override: None,
+                                    fetch_ok: false,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
@@ -1960,7 +1988,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1977,7 +2006,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -1992,7 +2022,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: Some(Arc::new(curves)),
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2014,7 +2045,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url
                         .rsplit('/')
@@ -2098,7 +2130,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2166,7 +2199,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
@@ -2253,7 +2287,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2278,7 +2313,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("gebco").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
@@ -2369,7 +2405,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("slab2").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
@@ -2458,7 +2495,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("volume").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_volume_{name}"));
@@ -2544,7 +2582,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
@@ -2638,7 +2677,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2660,7 +2700,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("wind_waves").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
@@ -2747,7 +2788,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2768,7 +2810,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let name = url.rsplit('/').next().unwrap_or("gong").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_gong_{name}"));
@@ -2847,7 +2890,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -2876,7 +2920,10 @@ pub fn main_flow() {
                     ) {
                         Some(u) => u,
                         None => {
-                            eprintln!("{} {}: url render void — retry in ttl/Φ", src_clone.format, src_idx);
+                            eprintln!(
+                                "{} {}: url render void — retry in ttl/Φ",
+                                src_clone.format, src_idx
+                            );
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2885,12 +2932,14 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
                     };
-                    let tmp_path = content_cache(&format!("omegaflow_{}_{}.zip", src_clone.format, src_idx));
+                    let tmp_path =
+                        content_cache(&format!("omegaflow_{}_{}.zip", src_clone.format, src_idx));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
                         let body = render_source_body(
@@ -2914,7 +2963,10 @@ pub fn main_flow() {
                         ) {
                             Some(b) => b,
                             None => {
-                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", src_clone.format, src_idx);
+                                eprintln!(
+                                    "{} {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    src_clone.format, src_idx
+                                );
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -2923,13 +2975,17 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: false, sample_ttl_override: None,
+                                    fetch_ok: false,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("{} {}: write void — retry in ttl/Φ", src_clone.format, src_idx);
+                            eprintln!(
+                                "{} {}: write void — retry in ttl/Φ",
+                                src_clone.format, src_idx
+                            );
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -2938,7 +2994,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -2954,10 +3011,14 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!("{} {}: extract void — retry in ttl/Φ", src_clone.format, src_idx);
+                        eprintln!(
+                            "{} {}: extract void — retry in ttl/Φ",
+                            src_clone.format, src_idx
+                        );
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -2966,7 +3027,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     }
                 });
@@ -2987,7 +3049,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let tmp_path = content_cache(&format!("omegaflow_sky1_{src_idx}.sky1"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
@@ -3016,7 +3079,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
                         eprintln!("sky1 {}: extract void — retry in ttl/Φ", src_idx);
@@ -3040,7 +3104,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let tmp_path = content_cache(&format!("omegaflow_vlde_{src_idx}.vlde"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
@@ -3069,7 +3134,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
                         eprintln!("vlde {}: extract void — retry in ttl/Φ", src_idx);
@@ -3111,7 +3177,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -3131,7 +3198,8 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: true, sample_ttl_override: None,
+                                    fetch_ok: true,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
@@ -3146,7 +3214,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -3162,7 +3231,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
                         eprintln!("fits {}: extract void — retry in ttl/Φ", src_idx);
@@ -3174,7 +3244,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     }
                 });
@@ -3213,7 +3284,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -3236,7 +3308,8 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
-                                    fetch_ok: true, sample_ttl_override: None,
+                                    fetch_ok: true,
+                                    sample_ttl_override: None,
                                 });
                                 return;
                             }
@@ -3251,7 +3324,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             return;
                         }
@@ -3267,7 +3341,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
                         eprintln!("tar_gz_yaml {}: extract void — retry in ttl/Φ", src_idx);
@@ -3279,7 +3354,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     }
                 });
@@ -3302,7 +3378,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok, sample_ttl_override: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
                     };
                     let url = match render_source_url(
                         &src_clone,
@@ -3436,7 +3513,8 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
-                        fetch_ok: true, sample_ttl_override: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
                     });
                 });
                 continue;
@@ -3546,7 +3624,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     } else {
                         eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
@@ -3558,7 +3637,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                     }
                     return;
@@ -3590,7 +3670,8 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
-                            fetch_ok: true, sample_ttl_override: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
                         });
                         return;
                     }
@@ -3645,7 +3726,8 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
-                                fetch_ok: true, sample_ttl_override: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
                             });
                             v
                         }
@@ -3667,7 +3749,8 @@ pub fn main_flow() {
 
                     curves: None,
                     spectral: None,
-                    fetch_ok, sample_ttl_override,
+                    fetch_ok,
+                    sample_ttl_override,
                 });
             });
         }

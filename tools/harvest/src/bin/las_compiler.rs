@@ -73,10 +73,7 @@ fn wkt_epsg(wkt: &str) -> Option<u16> {
                     let tag = &rest[..rest.len().min(7)];
                     if tag.starts_with(b"\"EPSG\",") {
                         let digits = &rest[7..];
-                        let count = digits
-                            .iter()
-                            .take_while(|c| c.is_ascii_digit())
-                            .count();
+                        let count = digits.iter().take_while(|c| c.is_ascii_digit()).count();
                         if count > 0 {
                             return std::str::from_utf8(&digits[..count])
                                 .ok()
@@ -103,9 +100,9 @@ fn resolve_crs(crs: &LasCrs) -> Option<CrsAxis> {
             zone: code - 32700,
             southern: true,
         }),
-        LasCrs::Epsg(code) if (26901..=26923).contains(code) => Some(CrsAxis::Nad83Utm {
-            zone: code - 26900,
-        }),
+        LasCrs::Epsg(code) if (26901..=26923).contains(code) => {
+            Some(CrsAxis::Nad83Utm { zone: code - 26900 })
+        }
         LasCrs::Wkt(wkt) => wkt_epsg(wkt).and_then(|code| resolve_crs(&LasCrs::Epsg(code))),
         _ => None,
     }
@@ -125,17 +122,17 @@ fn utm_inverse(zone: u16, southern: bool, easting: f64, northing: f64) -> Option
         return None;
     }
     let x = easting - UTM_FALSE_EASTING;
-    let y = northing - if southern {
-        UTM_FALSE_NORTHING_SOUTH
-    } else {
-        0.0
-    };
+    let y = northing
+        - if southern {
+            UTM_FALSE_NORTHING_SOUTH
+        } else {
+            0.0
+        };
     let m = y / UTM_K0;
     if !m.is_finite() {
         return None;
     }
-    let mu = m
-        / (GRS80_A * (1.0 - e2 / 4.0 - 3.0 * e2 * e2 / 64.0 - 5.0 * e2 * e2 * e2 / 256.0));
+    let mu = m / (GRS80_A * (1.0 - e2 / 4.0 - 3.0 * e2 * e2 / 64.0 - 5.0 * e2 * e2 * e2 / 256.0));
     if !mu.is_finite() {
         return None;
     }
@@ -179,8 +176,7 @@ fn utm_inverse(zone: u16, southern: bool, easting: f64, northing: f64) -> Option
         - (n1 * tan_phi1 / r1)
             * (d * d / 2.0
                 - (5.0 + 3.0 * t1 + 10.0 * c1 - 4.0 * c1 * c1 - 9.0 * ep2) * d.powi(4) / 24.0
-                + (61.0 + 90.0 * t1 + 298.0 * c1 + 45.0 * t1 * t1 - 252.0 * ep2
-                    - 3.0 * c1 * c1)
+                + (61.0 + 90.0 * t1 + 298.0 * c1 + 45.0 * t1 * t1 - 252.0 * ep2 - 3.0 * c1 * c1)
                     * d.powi(6)
                     / 720.0);
     if !phi.is_finite() {

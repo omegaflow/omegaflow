@@ -1,5 +1,5 @@
 use omegaflow::commit_gate::{
-    canon_diff, declared_canon, prose_violation, register_classes, Gate, json_write,
+    Gate, canon_diff, declared_canon, json_write, prose_violation, register_classes,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
