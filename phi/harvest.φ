@@ -62,7 +62,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98; day 2025.07.09. Run 35351460528 cancelled at timeout 180 with no output; Hang in hdf5.rs gather_messages (v1 cont-loop read hdf5.rs:652, v2 :715) — eager parse_fetch traversiert den ganzen Objektgraphen, globaler Range-Guard fehlt. Blockiert (Code).
+note GEDI02_A v002 RH98 day 2025.07.09. Run 35351460528 timeout 180s no output: unbounded hdf5 object-graph traversal. Range-Guard gebaut (byte budget MAX_TRAVERSAL_BYTES=1<<26, Hdf5Note::TraversalBudget); test object_header_traversal_is_range_bounded.
 
 asset present
 format goes16_abi
@@ -76,11 +76,11 @@ asset fehlt
 format icesat2_atl03
 tag data.nsidc.earthdatacloud.nasa.gov
 arm icesat2_atl03_compiler
-args --cmr --day 2026.06.30 --version 007
+args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 0
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007 photon heights; day 2026.06.30 (215 Granules). Run 35425364754 vom ci_watchdog gecancelt (1598 s > 2× Median 71 s), nicht vom Job-Timeout 360; ~100 min/Granule, --limit 2 seriell ohne Offset. Blockiert (Budget): --limit 1 + --skip nötig.
+note ATL03 v007 photon heights; day 2026.06.30 (215 Granules). --limit/--skip im Compiler vorhanden (window_slice, Test window_slice_applies_offset_then_limit); args --limit 1 --skip 0; skip je Lauf fortschreiben.
 
 asset present
 format lro_trk
