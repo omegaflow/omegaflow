@@ -439,6 +439,21 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         self.cache.insert(off, window.clone());
         Ok(window)
     }
+
+    fn read_upto(&mut self, off: u64, len: u64) -> Result<Vec<u8>, Hdf5Note> {
+        match self.read(off, len) {
+            Ok(bytes) => Ok(bytes),
+            Err(Hdf5Note::AbsentAtByte { .. }) => {
+                let start = off as usize;
+                if start >= self.base.len() {
+                    return Err(Hdf5Note::AbsentAtByte { off: start });
+                }
+                let end = start.saturating_add(len as usize).min(self.base.len());
+                Ok(self.base[start..end].to_vec())
+            }
+            Err(note) => Err(note),
+        }
+    }
 }
 
 fn parse_superblock(buf: &[u8]) -> Result<Superblock, Hdf5Note> {
@@ -591,7 +606,7 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     length_size: usize,
 ) -> Result<(Vec<RawMessage>, HeaderDiag), Hdf5Note> {
     let off = addr as usize;
-    let head = r.read(addr, 64)?;
+    let head = r.read_upto(addr, 64)?;
     if head.len() < 6 {
         return Err(Hdf5Note::EndAtByte {
             off: off + head.len(),
