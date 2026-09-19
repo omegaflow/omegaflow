@@ -2,15 +2,14 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    coherent_phase_surrogates, phase_randomized_surrogate, transfer_entropy_binned,
+    coherent_phase_surrogates, phase_randomized_surrogate, topological_te_estimate,
 };
 use omegaflow_measure::eeglab::{
     channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat, resolve_channel,
 };
 
-const DEFAULT_LAGS: usize = 128;
+const DIM: usize = 3;
 const DEFAULT_SURROGATES: usize = 200;
-const DEFAULT_BINS: usize = 4;
 const DEFAULT_PERCENTILE: f64 = 95.0;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const MIN_N: usize = 32;
@@ -25,11 +24,14 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn usage() {
     eprintln!(
         "hyperscanning_group_te — the family-wise TE screen over a hyperscanning cohort:\n\
-         per task, one transfer-entropy family is tested (every triad x every ordered pair x every\n\
-         lag). The null is the empirical distribution of the family maximum over phase-randomized\n\
-         surrogates (the max-statistic carries the whole family, FWER = 1 - percentile):\n\
-         \x20 hyperscanning_group_te --manifest <file> [--channel <label>] [--lags <n>]\n\
-         \x20     [--surrogates <n>] [--bins <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
+         per task, one transfer-entropy family is tested (every triad x every ordered pair).\n\
+         The one estimator is the Takens estimate (dim 3; per series the mutual-information\n\
+         lag tau replaces the lag grid) — the observed path and the surrogate path run the\n\
+         same estimator function. The null is the empirical distribution of the family\n\
+         maximum over phase-randomized surrogates (the max-statistic carries the whole\n\
+         family, FWER = 1 - percentile):\n\
+         \x20 hyperscanning_group_te --manifest <file> [--channel <label>]\n\
+         \x20     [--surrogates <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
          \x20     [--null phase|coherent-phase]\n\
          \x20 --null phase (default) rotates each series alone; coherent-phase rotates every series\n\
          \x20 of a triad with one shared phase vector, preserving the linear cross-structure — the\n\
@@ -105,20 +107,16 @@ fn percentile(sorted: &[f64], p: f64) -> Option<f64> {
     Some(sorted[lo] * (1.0 - frac) + sorted[hi] * frac)
 }
 
-fn family_max(series: &[Vec<f32>], lags: usize, bins: usize) -> Option<f64> {
+fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
     let mut best: Option<f64> = None;
     for i in 0..series.len() {
         for j in 0..series.len() {
             if i == j {
                 continue;
             }
-            let n = series[i].len().min(series[j].len());
-            let lags = lags.min(n.saturating_sub(8));
-            for lag in 1..=lags {
-                if let Some(te) = transfer_entropy_binned(&series[j], &series[i], lag, bins) {
-                    if best.map_or(true, |b| te > b) {
-                        best = Some(te);
-                    }
+            if let Some(est) = topological_te_estimate(&series[j], &series[i], dim) {
+                if best.map_or(true, |b| est.te > b) {
+                    best = Some(est.te);
                 }
             }
         }
@@ -130,15 +128,12 @@ struct Cell {
     triad: String,
     driver: String,
     target: String,
-    lag: usize,
+    tau_x: usize,
+    tau_y: usize,
     te: f64,
 }
 
-fn observed_cells(
-    triads: &[(String, Vec<(String, Vec<f32>)>)],
-    lags: usize,
-    bins: usize,
-) -> Vec<Cell> {
+fn observed_cells(triads: &[(String, Vec<(String, Vec<f32>)>)], dim: usize) -> Vec<Cell> {
     let mut out = Vec::new();
     for (triad, series) in triads {
         for i in 0..series.len() {
@@ -146,19 +141,15 @@ fn observed_cells(
                 if i == j {
                     continue;
                 }
-                let n = series[i].1.len().min(series[j].1.len());
-                let lags = lags.min(n.saturating_sub(8));
-                for lag in 1..=lags {
-                    if let Some(te) = transfer_entropy_binned(&series[j].1, &series[i].1, lag, bins)
-                    {
-                        out.push(Cell {
-                            triad: triad.clone(),
-                            driver: series[i].0.clone(),
-                            target: series[j].0.clone(),
-                            lag,
-                            te,
-                        });
-                    }
+                if let Some(est) = topological_te_estimate(&series[j].1, &series[i].1, dim) {
+                    out.push(Cell {
+                        triad: triad.clone(),
+                        driver: series[i].0.clone(),
+                        target: series[j].0.clone(),
+                        tau_x: est.tau_x,
+                        tau_y: est.tau_y,
+                        te: est.te,
+                    });
                 }
             }
         }
@@ -168,8 +159,7 @@ fn observed_cells(
 
 fn surrogate_family_maxima(
     triads: &[(String, Vec<(String, Vec<f32>)>)],
-    lags: usize,
-    bins: usize,
+    dim: usize,
     n_surr: usize,
     seed: u64,
     coherent: bool,
@@ -196,7 +186,7 @@ fn surrogate_family_maxima(
                     randomized.push(phase_randomized_surrogate(v, &mut rng));
                 }
             }
-            if let Some(m) = family_max(&randomized, lags, bins) {
+            if let Some(m) = family_max(&randomized, dim) {
                 if family.map_or(true, |f| m > f) {
                     family = Some(m);
                 }
@@ -228,15 +218,9 @@ fn main() {
         Some(c) => c,
         None => "Fz".to_string(),
     };
-    let lags: usize = arg_value(&args, "--lags")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_LAGS);
     let n_surr: usize = arg_value(&args, "--surrogates")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_SURROGATES);
-    let bins: usize = arg_value(&args, "--bins")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(DEFAULT_BINS);
     let seed: u64 = arg_value(&args, "--seed")
         .and_then(|v| v.parse().ok())
         .unwrap_or(SEED);
@@ -274,7 +258,7 @@ fn main() {
     let mut triads_per_task: Vec<usize> = Vec::new();
 
     println!(
-        "hyperscanning group TE screen | channel [{channel}] | lags 1..={lags} | surrogates {n_surr} | bins {bins} | percentile {pct} | null {}",
+        "hyperscanning group TE screen | channel [{channel}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {}",
         if coherent { "coherent-phase" } else { "phase" }
     );
 
@@ -320,8 +304,8 @@ fn main() {
             continue;
         }
 
-        let cells = observed_cells(&triads, lags, bins);
-        let maxima = surrogate_family_maxima(&triads, lags, bins, n_surr, seed, coherent);
+        let cells = observed_cells(&triads, DIM);
+        let maxima = surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent);
         let Some(threshold) = percentile(&maxima, pct) else {
             println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
             continue;
@@ -337,8 +321,8 @@ fn main() {
         );
         for c in &survivors {
             println!(
-                "    SURVIVOR {} {}→{} lag {} TE {:.4e}",
-                c.triad, c.driver, c.target, c.lag, c.te
+                "    SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
             );
         }
         if survivors.is_empty() {
@@ -401,26 +385,38 @@ mod tests {
         (0..n).map(|_| (next_rng(rng) * 2.0 - 1.0) as f32).collect()
     }
 
+    fn ar1_sine(n: usize, phi: f64, period: f64, phase: f64, noise: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = phi * x + (2.0 * std::f64::consts::PI * t as f64 / period + phase).sin()
+                + noise * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
     #[test]
-    fn a_driven_series_breaks_the_family_maximum() {
+    fn a_structured_driver_breaks_the_family_maximum() {
         let mut rng = SEED ^ 0xDEAD_BEEF;
         let n = 400usize;
-        let delay = 5usize;
-        let a = white(n, &mut rng);
+        let delay = 8usize;
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, &mut rng);
         let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
         for t in 0..n {
-            b[t] = if t >= delay {
-                (0.95 * a[t - delay] as f64 + (next_rng(&mut rng) * 0.05 - 0.025)) as f32
-            } else {
-                (next_rng(&mut rng) * 0.1 - 0.05) as f32
-            };
+            x = 0.5 * x
+                + if t >= delay { 0.8 * a[t - delay] as f64 } else { 0.0 }
+                + (next_rng(&mut rng) * 0.04 - 0.02);
+            b[t] = x as f32;
         }
         let triads = vec![(
             "G01".to_string(),
             vec![("S01".to_string(), a), ("S02".to_string(), b)],
         )];
-        let cells = observed_cells(&triads, 32, 4);
-        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED, false);
+        let cells = observed_cells(&triads, DIM);
+        assert!(!cells.is_empty(), "the structured pair carries no cell");
+        let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED, false);
         let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
         let observed = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
         assert!(
@@ -430,23 +426,84 @@ mod tests {
         let top = cells.iter().max_by(|x, y| x.te.total_cmp(&y.te)).unwrap();
         assert_eq!(top.driver, "S01");
         assert_eq!(top.target, "S02");
-        assert_eq!(top.lag, delay);
     }
 
     #[test]
-    fn independent_series_stay_under_the_family_maximum() {
+    fn independent_structured_series_stay_under_the_family_maximum() {
         let mut rng = SEED ^ 0x1234_5678;
-        let n = 400usize;
-        let a = white(n, &mut rng);
-        let b = white(n, &mut rng);
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let a = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false);
+            let Some(threshold) = percentile(&maxima, 95.0) else {
+                continue;
+            };
+            meas += 1;
+            if cells.iter().any(|c| c.te > threshold) {
+                fp += 1;
+            }
+        }
+        println!(
+            "structured-FP gate: {fp} of {meas} measurable trials carried a survivor"
+        );
+        assert!(
+            meas >= 16,
+            "structured-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 4,
+            "structured-FP gate: {fp} of {meas} above the family maximum — the null does not hold"
+        );
+    }
+
+    #[test]
+    fn white_noise_pair_carries_no_cell() {
+        let mut rng = SEED ^ 0x0F0F_0F0F;
+        let a = white(13, &mut rng);
+        let b = white(13, &mut rng);
         let triads = vec![(
             "G01".to_string(),
-            vec![("S01".to_string(), a), ("S02".to_string(), b)],
+            vec![("S01".to_string(), a.clone()), ("S02".to_string(), b.clone())],
         )];
-        let cells = observed_cells(&triads, 32, 4);
-        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED, false);
-        let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
-        let survivors = cells.iter().filter(|c| c.te > threshold).count();
-        assert_eq!(survivors, 0, "independent series carry no survivor");
+        let cells = observed_cells(&triads, DIM);
+        assert!(cells.is_empty(), "a white pair carries no cell");
+        assert!(
+            family_max(&[a, b], DIM).is_none(),
+            "a white pair carries no family maximum — the screen reports pending, never a green idle"
+        );
+    }
+
+    #[test]
+    fn family_max_equals_observed_max() {
+        let mut rng = SEED ^ 0x5A5A_5A5A;
+        let s1 = ar1_sine(400, 0.6, 37.0, 0.1, 0.05, &mut rng);
+        let s2 = ar1_sine(400, 0.6, 43.0, 1.2, 0.05, &mut rng);
+        let s3 = ar1_sine(400, 0.6, 51.0, 2.3, 0.05, &mut rng);
+        let series = vec![s1.clone(), s2.clone(), s3.clone()];
+        let members = vec![
+            ("S01".to_string(), s1),
+            ("S02".to_string(), s2),
+            ("S03".to_string(), s3),
+        ];
+        let triads = vec![("G01".to_string(), members)];
+        let fm = family_max(&series, DIM).expect("the family carries a maximum");
+        let cells = observed_cells(&triads, DIM);
+        let om = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+        assert_eq!(
+            fm, om,
+            "family_max and the observed cell maximum run the one estimator on the same pairs"
+        );
     }
 }
