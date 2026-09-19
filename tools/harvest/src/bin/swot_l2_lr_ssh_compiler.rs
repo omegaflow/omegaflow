@@ -764,7 +764,10 @@ impl Granule {
 
 fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
     let Some(w1) = g.read_range(0, META_WINDOW) else {
-        eprintln!("{}: range read returned void — granule stays pending", g.url);
+        eprintln!(
+            "{}: range read returned void — granule stays pending",
+            g.url
+        );
         return Vec::new();
     };
     if w1.len() >= 3 && w1[..3] == CDF_MAGIC {
@@ -1291,7 +1294,9 @@ mod tests {
         );
         assert_eq!(
             granules[0].data_url.as_deref(),
-            Some("https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/x.nc")
+            Some(
+                "https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/x.nc"
+            )
         );
     }
 }

@@ -79,7 +79,11 @@ fn main() {
                 record_index as u64,
             ));
         }
-        eprintln!("{tar}: {} records of {} samples", recs.len(), mariner_occlt::SAMPLES_PER_RECORD);
+        eprintln!(
+            "{tar}: {} records of {} samples",
+            recs.len(),
+            mariner_occlt::SAMPLES_PER_RECORD
+        );
     }
     if let (Some(a), Some(b)) = (first_clock, last_clock) {
         eprintln!(
@@ -100,7 +104,11 @@ fn main() {
     }
     match mariner_occlt::parse_mocc_bin(&bin) {
         Some(parsed) => {
-            eprintln!("{out}: {} records, {} B — roundtrip parses", parsed.len(), bin.len());
+            eprintln!(
+                "{out}: {} records, {} B — roundtrip parses",
+                parsed.len(),
+                bin.len()
+            );
         }
         None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
     }

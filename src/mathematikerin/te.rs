@@ -561,7 +561,12 @@ pub fn transfer_entropy_conditional_binned_n(
     let bcond: Vec<Vec<usize>> = conds
         .iter()
         .zip(&cond_edges)
-        .map(|(c, &(mn, range))| c.series.iter().map(|&v| bin_index(v, mn, range, bins)).collect())
+        .map(|(c, &(mn, range))| {
+            c.series
+                .iter()
+                .map(|&v| bin_index(v, mn, range, bins))
+                .collect()
+        })
         .collect();
 
     let mut keybuf: Vec<usize> = Vec::with_capacity(conds.len() + 3);
@@ -834,7 +839,10 @@ pub fn conditional_te_stats_lagged_2(
         seed,
         n_surr,
     } = p;
-    let conds = [LaggedCond { series: c1, lag: 0 }, LaggedCond { series: c2, lag: 0 }];
+    let conds = [
+        LaggedCond { series: c1, lag: 0 },
+        LaggedCond { series: c2, lag: 0 },
+    ];
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
@@ -1179,8 +1187,12 @@ pub fn conditional_te_surrogates_n(
     for _ in 0..n_surr {
         let (xs_buf, ys) = if null == TeNull::CoherentPhase {
             let mut both = coherent_phase_surrogates(&[x, y], &mut rng);
-            let ys = both.pop().expect("coherent phase yields one series per input");
-            let xs = both.pop().expect("coherent phase yields one series per input");
+            let ys = both
+                .pop()
+                .expect("coherent phase yields one series per input");
+            let xs = both
+                .pop()
+                .expect("coherent phase yields one series per input");
             (Some(xs), ys)
         } else {
             let xs_buf = if null == TeNull::XShift {
@@ -1195,8 +1207,7 @@ pub fn conditional_te_surrogates_n(
                 TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
                 TeNull::XShift => y.to_vec(),
                 TeNull::Arx => {
-                    let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng)
-                    else {
+                    let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng) else {
                         continue;
                     };
                     s
@@ -1379,7 +1390,10 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                     let conds: Vec<LaggedCond> = comb
                         .iter()
                         .filter(|&&(d, _)| d != i && d != j)
-                        .map(|&(d, l)| LaggedCond { series: series[d], lag: l })
+                        .map(|&(d, l)| LaggedCond {
+                            series: series[d],
+                            lag: l,
+                        })
                         .collect();
                     let seed_t = seed
                         ^ (j as u64).wrapping_mul(0x9E37_79B9)
@@ -1424,7 +1438,10 @@ pub fn pcmci_links(series: &[&[f32]], p: PcmciParams) -> Option<Vec<CausalLink>>
                 let conds: Vec<LaggedCond> = cond_specs
                     .iter()
                     .filter(|&&(d, _)| d != i && d != j)
-                    .map(|&(d, l)| LaggedCond { series: series[d], lag: l })
+                    .map(|&(d, l)| LaggedCond {
+                        series: series[d],
+                        lag: l,
+                    })
                     .collect();
                 let seed_t = seed
                     ^ (j as u64).wrapping_mul(0x9E37_79B9)
@@ -2814,7 +2831,13 @@ mod tests {
         let s2 = arx_conditional_surrogate(
             &y,
             &x,
-            &[LaggedCond { series: &c, lag: 0 }, LaggedCond { series: &c2, lag: 0 }],
+            &[
+                LaggedCond { series: &c, lag: 0 },
+                LaggedCond {
+                    series: &c2,
+                    lag: 0,
+                },
+            ],
             max_lag,
             &mut rng_c,
         )
@@ -3878,9 +3901,8 @@ mod tests {
         let (_, _, thr_coherent) =
             conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::CoherentPhase))
                 .expect("the coherent null carries a threshold");
-        let (_, _, thr_phase) =
-            conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::Phase))
-                .expect("the single-phase null carries a threshold");
+        let (_, _, thr_phase) = conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::Phase))
+            .expect("the single-phase null carries a threshold");
         assert!(
             obs <= thr_coherent,
             "the coherent null preserves the linear cross-structure — the linear transfer stays under its threshold: obs {obs:.5} threshold {thr_coherent:.5}"
@@ -4166,8 +4188,7 @@ mod tests {
             let mut thr_sum = 0.0;
             let mut meas = 0usize;
             for t in 0..trials {
-                let seed = 0x9E37_79B9_7F4A_7C15
-                    ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+                let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
                 let c = flare_envelope(n, &[30usize, 150usize], 1.0, 12.0);
                 let mut x = vec![0f32; n];
                 let mut y = vec![0f32; n];
@@ -4189,8 +4210,7 @@ mod tests {
                 let Some(te) = transfer_entropy_conditional(&x, &y, &c, 1) else {
                     continue;
                 };
-                let Some((_, _, thr)) =
-                    conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed, n_surr)
+                let Some((_, _, thr)) = conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed, n_surr)
                 else {
                     continue;
                 };
@@ -4286,7 +4306,10 @@ mod tests {
                 );
             }
             let f0 = out.iter().find(|c| c.a == 0.0).expect("a=0 cell measured");
-            let f9 = out.iter().find(|c| c.a == 0.9).expect("a=0.9 cell measured");
+            let f9 = out
+                .iter()
+                .find(|c| c.a == 0.9)
+                .expect("a=0.9 cell measured");
             let fpr0 = 100.0 * f0.fp as f64 / f0.neg as f64;
             let fpr9 = 100.0 * f9.fp as f64 / f9.neg as f64;
             assert!(
@@ -4471,8 +4494,7 @@ mod tests {
                     "n={n} a={a}: the surrogate must stay finite"
                 );
                 assert!(
-                    arx_conditional_surrogate(&y, &x[..n - 1], &conds, max_lag, &mut rng)
-                        .is_none(),
+                    arx_conditional_surrogate(&y, &x[..n - 1], &conds, max_lag, &mut rng).is_none(),
                     "n={n}: an x length mismatch is the refusal arm (None), never a silent shuffle"
                 );
                 assert!(
@@ -4899,7 +4921,10 @@ mod tests {
                 let true_parents: Vec<LaggedCond> = links
                     .iter()
                     .filter(|&&(d, t, l, _)| (d, t, l) != (driver, target, lag) && t == target)
-                    .map(|&(d, _, l, _)| LaggedCond { series: refs[d], lag: l })
+                    .map(|&(d, _, l, _)| LaggedCond {
+                        series: refs[d],
+                        lag: l,
+                    })
                     .collect();
                 total += 1;
                 let mut hits = 0usize;
@@ -5373,7 +5398,10 @@ mod tests {
         let te_1 = transfer_entropy_conditional_binned_n(
             &x,
             &y,
-            &[LaggedCond { series: &c1, lag: 0 }],
+            &[LaggedCond {
+                series: &c1,
+                lag: 0,
+            }],
             1,
             3,
         )
@@ -5381,7 +5409,16 @@ mod tests {
         let te_2 = transfer_entropy_conditional_binned_n(
             &x,
             &y,
-            &[LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }],
+            &[
+                LaggedCond {
+                    series: &c1,
+                    lag: 0,
+                },
+                LaggedCond {
+                    series: &c2,
+                    lag: 0,
+                },
+            ],
             1,
             3,
         )
@@ -5524,7 +5561,16 @@ mod tests {
             };
         }
         let bins = 3;
-        let conds = [LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }];
+        let conds = [
+            LaggedCond {
+                series: &c1,
+                lag: 0,
+            },
+            LaggedCond {
+                series: &c2,
+                lag: 0,
+            },
+        ];
         let te_c = transfer_entropy_conditional_binned_n(&x, &y, &conds, 1, bins)
             .expect("two-driver binned TE resolves");
         let (_, _, thr) = conditional_te_stats_lagged_n(
@@ -5576,7 +5622,16 @@ mod tests {
             y[t + 1] += 0.5 * x_ind[t];
         }
         let bins = 3;
-        let conds = [LaggedCond { series: &c1, lag: 0 }, LaggedCond { series: &c2, lag: 0 }];
+        let conds = [
+            LaggedCond {
+                series: &c1,
+                lag: 0,
+            },
+            LaggedCond {
+                series: &c2,
+                lag: 0,
+            },
+        ];
         let te_c = transfer_entropy_conditional_binned_n(&y, &x, &conds, 1, bins)
             .expect("two-driver binned TE resolves");
         let (_, _, thr) = conditional_te_stats_lagged_n(

@@ -154,8 +154,8 @@ fn kyoto_pressure_section() {
     let mut parsed_days = 0usize;
     let mut absent: Vec<&str> = Vec::new();
     for name in &days {
-        let Some(samples) = zip_member(&archive, name)
-            .map(|b| parse_pressure(&String::from_utf8_lossy(&b)))
+        let Some(samples) =
+            zip_member(&archive, name).map(|b| parse_pressure(&String::from_utf8_lossy(&b)))
         else {
             absent.push(name.as_str());
             continue;
@@ -192,9 +192,9 @@ fn kyoto_pressure_section() {
         None
     };
     match pooled {
-        Some(p) => println!(
-            "pooled baseline (mean over {other_count} other-day samples): {p:.2} hPa"
-        ),
+        Some(p) => {
+            println!("pooled baseline (mean over {other_count} other-day samples): {p:.2} hPa")
+        }
         None => println!("pooled baseline: absent — no other-day samples (0 honored)"),
     }
     primary_samples.sort_by(|a, b| a.unix.total_cmp(&b.unix));
@@ -231,7 +231,10 @@ fn kyoto_pressure_section() {
                 println!("anomaly vs pooled baseline: {:.2} hPa", v - p);
             }
             if let Some(lb) = local_base {
-                println!("anomaly vs local 2-h pre-arrival baseline: {:.2} hPa", v - lb);
+                println!(
+                    "anomaly vs local 2-h pre-arrival baseline: {:.2} hPa",
+                    v - lb
+                );
                 if let Some(peak_idx) = primary_samples.iter().position(|s| s.unix == ts) {
                     let mut rise_idx = peak_idx;
                     while rise_idx > 0 && primary_samples[rise_idx - 1].hpa >= lb {
@@ -255,9 +258,9 @@ fn kyoto_pressure_section() {
                 }
             }
         }
-        None => println!(
-            "day window maximum: absent — no samples on {KYOTO_DAY_MEMBER} (0 honored)"
-        ),
+        None => {
+            println!("day window maximum: absent — no samples on {KYOTO_DAY_MEMBER} (0 honored)")
+        }
     }
     println!();
 }

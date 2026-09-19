@@ -91,7 +91,9 @@ fn main() {
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
         None => {
-            eprintln!("fugin_skymap_compiler: --out <path> absent — the output path is never silent");
+            eprintln!(
+                "fugin_skymap_compiler: --out <path> absent — the output path is never silent"
+            );
             std::process::exit(1);
         }
     };
@@ -229,7 +231,11 @@ mod tests {
             },
         ];
         let records = records_of(&pixels);
-        assert_eq!(records.len(), 2, "a negative moment-0 pixel is a real measurement");
+        assert_eq!(
+            records.len(),
+            2,
+            "a negative moment-0 pixel is a real measurement"
+        );
         let neg = records
             .iter()
             .find(|r| r.value < 0.0)
@@ -246,7 +252,11 @@ mod tests {
     fn negative_moment0_cube_survives_end_to_end() {
         let buf = fugin_cube_fixture_with_negative();
         let pixels = parse_fugin_cube(&buf).expect("2x2x2 VRAD cube parses");
-        assert_eq!(pixels.len(), 2, "all-NaN pixels stay absent, two carry finite channels");
+        assert_eq!(
+            pixels.len(),
+            2,
+            "all-NaN pixels stay absent, two carry finite channels"
+        );
         let records = records_of(&pixels);
         assert_eq!(records.len(), 2);
         assert!(

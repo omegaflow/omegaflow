@@ -135,7 +135,9 @@ fn main() {
     visited.insert(LISTING.to_string());
     collect_trk_files(LISTING, MAX_DEPTH, year, &mut files, &mut visited);
     if files.is_empty() {
-        eprintln!("{LISTING}: no .TRK files in listing tree — the series stays unwritten (0 honored)");
+        eprintln!(
+            "{LISTING}: no .TRK files in listing tree — the series stays unwritten (0 honored)"
+        );
         return;
     }
     files.sort();
@@ -210,9 +212,7 @@ fn main() {
         paths.push(path);
     }
     for name in &names {
-        println!(
-            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}"
-        );
+        println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
         println!("format {PREFIX}");
         println!("at earth");
         println!("ttl 604800");

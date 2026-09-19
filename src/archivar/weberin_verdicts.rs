@@ -164,7 +164,10 @@ pub fn load_weberin_verdicts(path: &str) -> Vec<VerdictLine> {
 }
 
 pub fn riss_bodies(lines: &[VerdictLine]) -> Vec<&VerdictLine> {
-    lines.iter().filter(|l| l.word == VerdictWord::Riss).collect()
+    lines
+        .iter()
+        .filter(|l| l.word == VerdictWord::Riss)
+        .collect()
 }
 
 pub fn is_stale(line: &VerdictLine, now_tdb: Option<f64>) -> bool {

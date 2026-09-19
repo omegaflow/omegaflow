@@ -148,7 +148,9 @@ fn main() {
     }
     if merged.is_empty() {
         if failures > 0 {
-            eprintln!("no Cassini ODF orbit samples — {failures} fetch/parse failures, the series stays unwritten");
+            eprintln!(
+                "no Cassini ODF orbit samples — {failures} fetch/parse failures, the series stays unwritten"
+            );
             std::process::exit(1);
         }
         eprintln!("no Cassini ODF orbit samples — the series stays unwritten (0 honored)");

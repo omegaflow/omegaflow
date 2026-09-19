@@ -3,7 +3,7 @@ use std::collections::{BTreeSet, HashMap};
 use omegaflow::archivar::cdn::{CDN_BASE, CDN_RELEASE};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::spatial::{
-    parse_star_record, star_position_at, star_stride, STAR_RECORD_BYTES,
+    STAR_RECORD_BYTES, parse_star_record, star_position_at, star_stride,
 };
 use omegaflow::te::{benjamini_hochberg, gaussian, silverman};
 
@@ -348,7 +348,9 @@ fn main() {
             Some(d) => match ceil_power_of_two(d) {
                 Some(p) => p,
                 None => {
-                    eprintln!("median neighbor distance {d}: no power-of-two edge — the grid stays unbuilt");
+                    eprintln!(
+                        "median neighbor distance {d}: no power-of-two edge — the grid stays unbuilt"
+                    );
                     std::process::exit(2);
                 }
             },
@@ -361,9 +363,7 @@ fn main() {
         },
     };
 
-    println!(
-        "=== silence-map-probe — catalog deficit against the BH-corrected null ==="
-    );
+    println!("=== silence-map-probe — catalog deficit against the BH-corrected null ===");
     println!(
         "catalog {label}: {} records | {} positioned stars | {} refused",
         catalog.records,
@@ -389,7 +389,10 @@ fn main() {
 
     match silence_map(&catalog.points, cell_m) {
         Some(m) => {
-            println!("evaluated cells (occupied + 1-cell dilation): {}", m.total_cells);
+            println!(
+                "evaluated cells (occupied + 1-cell dilation): {}",
+                m.total_cells
+            );
             println!(
                 "blind cells (lambda_hat <= 4, a deficit below the null floor is untestable): {} / {}",
                 m.blind_cells, m.total_cells
@@ -505,10 +508,12 @@ mod tests {
     fn homogeneous_poisson_field_stays_near_chance() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         let field = poisson_field(8, 1.0, 10.0, &mut rng);
-        let map = silence_map(&field, 1.0)
-            .expect("a homogeneous field must be measurable");
+        let map = silence_map(&field, 1.0).expect("a homogeneous field must be measurable");
         let testable = map.still_cells + map.consistent_cells;
-        assert!(testable > 0, "FP gate: the homogeneous field carries no testable cells");
+        assert!(
+            testable > 0,
+            "FP gate: the homogeneous field carries no testable cells"
+        );
         let fraction = map.still_cells as f64 / testable as f64;
         assert!(
             fraction < 0.1,
@@ -521,8 +526,7 @@ mod tests {
     fn an_inserted_hole_is_detected() {
         let mut rng = 0x517C_C1B7_2722_0A95u64;
         let field = poisson_field(8, 1.0, 25.0, &mut rng);
-        let baseline = silence_map(&field, 1.0)
-            .expect("the baseline field must be measurable");
+        let baseline = silence_map(&field, 1.0).expect("the baseline field must be measurable");
         let hole_lo = 3.0;
         let hole_hi = 5.0;
         let holed: Vec<[f64; 3]> = field
@@ -537,8 +541,7 @@ mod tests {
             })
             .copied()
             .collect();
-        let holed_map = silence_map(&holed, 1.0)
-            .expect("the holed field must be measurable");
+        let holed_map = silence_map(&holed, 1.0).expect("the holed field must be measurable");
         assert!(
             holed_map.still_cells > baseline.still_cells,
             "FN gate: the hole is not detected ({} still vs {} baseline)",
@@ -555,8 +558,7 @@ mod tests {
     fn a_low_density_field_names_its_cells_blind() {
         let mut rng = 0x6A09_E667_F3BC_C909u64;
         let field = poisson_field(8, 1.0, 1.0, &mut rng);
-        let map = silence_map(&field, 1.0)
-            .expect("a lambda=1 field must be measurable");
+        let map = silence_map(&field, 1.0).expect("a lambda=1 field must be measurable");
         assert_eq!(
             map.still_cells, 0,
             "blind gate: a lambda=1 field must carry no still cells"
@@ -575,10 +577,12 @@ mod tests {
     fn a_deficit_free_field_does_not_hold_the_map_verdict() {
         let mut rng = 0xBB67_AE85_84CA_A73Bu64;
         let field = poisson_field(8, 1.0, 10.0, &mut rng);
-        let map = silence_map(&field, 1.0)
-            .expect("a homogeneous field must be measurable");
+        let map = silence_map(&field, 1.0).expect("a homogeneous field must be measurable");
         let testable = map.still_cells + map.consistent_cells;
-        assert!(testable > 0, "BH gate: the homogeneous field carries no testable cells");
+        assert!(
+            testable > 0,
+            "BH gate: the homogeneous field carries no testable cells"
+        );
         assert!(
             map.still_cells as f64 <= FDR_LEVEL * testable as f64,
             "BH gate: a deficit-free field reports {} still of {} testable — above the FDR budget",

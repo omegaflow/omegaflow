@@ -395,8 +395,8 @@ enum StateClass {
 
 fn state_class(state: &str) -> Option<StateClass> {
     match state.trim() {
-        "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen"
-        | "absent" | "review" => Some(StateClass::Open("ernte")),
+        "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen" | "absent"
+        | "review" => Some(StateClass::Open("ernte")),
         "parser-gap" | "asset fehlt" => Some(StateClass::Open("bau")),
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
         | "refused" => Some(StateClass::Released),
@@ -487,14 +487,16 @@ fn scan_dispositions_text(
             snippet(note, 160)
         };
         if state == "descoped" {
-            released_out.push(format!("RELEASED\t{}:{}\t{} | {}", path, start_line, state, step));
+            released_out.push(format!(
+                "RELEASED\t{}:{}\t{} | {}",
+                path, start_line, state, step
+            ));
             n += 1;
             continue;
         }
         match disposition_owner(state) {
             Some(owner) => {
-                let tag = if state == "pending" && note.to_lowercase().contains("antwort offen")
-                {
+                let tag = if state == "pending" && note.to_lowercase().contains("antwort offen") {
                     "wartend"
                 } else {
                     owner
@@ -567,7 +569,15 @@ fn scan_state_blocks_text(
             .map(|(_, l)| l.trim())
             .unwrap_or("");
         let step = snippet(note, 120);
-        emit_classified(path, start_line, state, &step, open_out, released_out, &mut open);
+        emit_classified(
+            path,
+            start_line,
+            state,
+            &step,
+            open_out,
+            released_out,
+            &mut open,
+        );
     }
     open
 }
@@ -589,7 +599,15 @@ fn scan_index_text(
             None => continue,
         };
         let step = snippet(t, 120);
-        emit_classified(path, idx + 1, state, &step, open_out, released_out, &mut open);
+        emit_classified(
+            path,
+            idx + 1,
+            state,
+            &step,
+            open_out,
+            released_out,
+            &mut open,
+        );
     }
     open
 }
@@ -671,11 +689,7 @@ fn scan_state_blocks(
     scan_state_blocks_text(&text, &path.to_string_lossy(), open_out, released_out)
 }
 
-fn scan_index(
-    path: &Path,
-    open_out: &mut Vec<String>,
-    released_out: &mut Vec<String>,
-) -> usize {
+fn scan_index(path: &Path, open_out: &mut Vec<String>, released_out: &mut Vec<String>) -> usize {
     let text = match fs::read_to_string(path) {
         Ok(t) => t,
         Err(_) => return 0,
@@ -704,11 +718,7 @@ fn scan_note_markers(
     )
 }
 
-fn scan_probe(
-    path: &Path,
-    open_out: &mut Vec<String>,
-    released_out: &mut Vec<String>,
-) -> usize {
+fn scan_probe(path: &Path, open_out: &mut Vec<String>, released_out: &mut Vec<String>) -> usize {
     let text = match fs::read_to_string(path) {
         Ok(t) => t,
         Err(_) => return 0,
@@ -904,7 +914,11 @@ fn run_open() {
 
     let mut ledger_open: Vec<String> = Vec::new();
     let mut ledger_released: Vec<String> = Vec::new();
-    let ledger = scan_state_blocks(Path::new(LEDGER_PATH), &mut ledger_open, &mut ledger_released);
+    let ledger = scan_state_blocks(
+        Path::new(LEDGER_PATH),
+        &mut ledger_open,
+        &mut ledger_released,
+    );
     print_section("LEDGER", ledger, &ledger_open, &ledger_released);
 
     let mut index_open: Vec<String> = Vec::new();
@@ -943,11 +957,20 @@ fn run_open() {
         &mut footprints_open,
         &mut footprints_released,
     );
-    print_section("FOOTPRINTS", footprints, &footprints_open, &footprints_released);
+    print_section(
+        "FOOTPRINTS",
+        footprints,
+        &footprints_open,
+        &footprints_released,
+    );
 
     let mut harvest_open: Vec<String> = Vec::new();
     let mut harvest_released: Vec<String> = Vec::new();
-    let harvest = scan_state_blocks(Path::new(HARVEST_PATH), &mut harvest_open, &mut harvest_released);
+    let harvest = scan_state_blocks(
+        Path::new(HARVEST_PATH),
+        &mut harvest_open,
+        &mut harvest_released,
+    );
     print_section("HARVEST", harvest, &harvest_open, &harvest_released);
 
     let mut nrs_open: Vec<String> = Vec::new();
@@ -1741,9 +1764,17 @@ mod tests {
         let dir = env::temp_dir().join(format!("register_lookup_catalog_{}", std::process::id()));
         let _ = fs::create_dir_all(&dir);
         let f1 = dir.join("cat_a.\u{3c6}");
-        fs::write(&f1, "# header\ncandidate https://a\ncandidate https://b\ndecline https://c\n").unwrap();
+        fs::write(
+            &f1,
+            "# header\ncandidate https://a\ncandidate https://b\ndecline https://c\n",
+        )
+        .unwrap();
         let f2 = dir.join("cat_b.\u{3c6}");
-        fs::write(&f2, "doi:10.1 | PhD candidates study\ncandidatex https://no\n").unwrap();
+        fs::write(
+            &f2,
+            "doi:10.1 | PhD candidates study\ncandidatex https://no\n",
+        )
+        .unwrap();
         let mut out = Vec::new();
         let n = scan_catalog_candidates(&dir, &mut out);
         assert_eq!(n, 2);

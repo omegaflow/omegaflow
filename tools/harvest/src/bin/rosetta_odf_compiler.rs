@@ -185,11 +185,7 @@ fn harvest_all(urls: &[String]) -> Vec<(f64, f64, f64)> {
     })
 }
 
-fn flush_shard(
-    rows: &[(f64, f64, f64)],
-    names: &mut Vec<String>,
-    paths: &mut Vec<String>,
-) {
+fn flush_shard(rows: &[(f64, f64, f64)], names: &mut Vec<String>, paths: &mut Vec<String>) {
     let t_lo = rows[0].0;
     let t_hi = rows[rows.len() - 1].0;
     let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
@@ -275,8 +271,12 @@ fn main() {
         println!("format {PREFIX}");
         println!("at earth");
         println!("ttl 604800");
-        println!("field carrier_level_dbm {PREFIX}_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0");
-        println!("field polar_angle_cycles {PREFIX}_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0");
+        println!(
+            "field carrier_level_dbm {PREFIX}_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0"
+        );
+        println!(
+            "field polar_angle_cycles {PREFIX}_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0"
+        );
         println!();
     }
 
