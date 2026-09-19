@@ -34,11 +34,11 @@ note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
-note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert — CDN-Manifestation offen.
+note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert; CDN dispatcht 2026-09-19 (glm 35425276060, trmm 35425276991).
 
 pending
 url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+access_url,access_estsize+FROM+fugin.cube
-note FUGIN (fugin.rs): NAXIS=3 VRAD CDELT3=650m/s → moment-0 K·m/s. TAP 2026-09-18: 810 Zeilen, 270 Cubes (89/89/92 12CO/13CO/C18O, estsize>65536 KB), 540 2D-Maps descoped-mit-Messung. Pilot fgn00000000.sky1 CDN; Bulk fugin-cdn-dispatch.
+note FUGIN (fugin.rs): NAXIS=3 VRAD CDELT3=650m/s → moment-0 K·m/s. TAP 2026-09-18: 810 Zeilen, 270 Cubes (89/89/92 12CO/13CO/C18O, estsize>65536 KB), 540 2D-Maps descoped-mit-Messung. Pilot fgn00000000.sky1 CDN; Bulk dispatcht 2026-09-19 (35425278304).
 
 pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
