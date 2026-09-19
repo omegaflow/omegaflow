@@ -1,4 +1,4 @@
-use omegaflow::archivar::bc_mpo_mag::{parse_bin, write_bin, FIELDS_PER_RECORD};
+use omegaflow::archivar::bc_mpo_mag::{FIELDS_PER_RECORD, parse_bin, write_bin};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;

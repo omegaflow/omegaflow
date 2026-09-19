@@ -259,7 +259,11 @@ pub fn labels_from_channels_tsv(set_path: &str) -> Option<Vec<String>> {
     }
     let text = std::fs::read_to_string(dir.join(tsv)).ok()?;
     let labels = parse_channels_tsv(&text);
-    if labels.is_empty() { None } else { Some(labels) }
+    if labels.is_empty() {
+        None
+    } else {
+        Some(labels)
+    }
 }
 
 fn chanlocs_positions(source: &EegSource) -> Option<Vec<Option<(f64, f64, f64)>>> {

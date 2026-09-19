@@ -23,9 +23,7 @@ pub fn parse_fugin_cube(buf: &[u8]) -> Option<Vec<FuginPixel>> {
     {
         return None;
     }
-    let delta_v_ms = header
-        .f64("CDELT3")
-        .filter(|v| v.is_finite() && *v > 0.0)?;
+    let delta_v_ms = header.f64("CDELT3").filter(|v| v.is_finite() && *v > 0.0)?;
     let (image, _) = FitsImage::parse(buf, 0)?;
     let nx = image.dims[0];
     let ny = image.dims[1];
@@ -50,9 +48,7 @@ pub fn parse_fugin_cube(buf: &[u8]) -> Option<Vec<FuginPixel>> {
             if finite == 0 {
                 continue;
             }
-            let Some((glon_deg, glat_deg)) =
-                image.world(x as f64 + 1.0, y as f64 + 1.0)
-            else {
+            let Some((glon_deg, glat_deg)) = image.world(x as f64 + 1.0, y as f64 + 1.0) else {
                 continue;
             };
             let theta = (90.0 - glat_deg).to_radians();
