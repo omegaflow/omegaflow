@@ -2803,6 +2803,72 @@ mod tests {
     }
 
     #[test]
+    fn gate_phase_surrogate_padding_edge() {
+        fn deviation(n: usize) -> f64 {
+            let x: Vec<f32> = (0..n)
+                .map(|t| 0.05 * t as f32 + (t as f32 * 0.13).sin())
+                .collect();
+            let mut rng = 42u64;
+            let s = phase_randomized_surrogate(&x, &mut rng);
+            (1..=8)
+                .map(|lag| (autocorr(&x, lag) - autocorr(&s, lag)).abs())
+                .fold(0.0f64, f64::max)
+        }
+        let dev_exact = deviation(1024);
+        let dev_pad = deviation(1000);
+        println!(
+            "gate_phase_surrogate_padding_edge: n=1024 deviation {:.4e}, n=1000 deviation {:.4e}",
+            dev_exact, dev_pad
+        );
+        assert!(
+            dev_pad <= dev_exact + 0.15,
+            "padding artifact measured: n=1000 lag-autocorr deviation {:.4e} vs n=1024 {:.4e}",
+            dev_pad,
+            dev_exact
+        );
+    }
+
+    #[test]
+    fn gate_mi_lag_stability() {
+        for &n in &[32usize, 64, 128, 512, 4096] {
+            let x = gate_ar1_sine(n, 0.6, 11.0, &mut 7u64);
+            let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+            let base = find_mi_lag(&xf);
+            let mut rng = 99u64;
+            let reps = 200usize;
+            let mut taus: Vec<usize> = Vec::new();
+            let mut none = 0usize;
+            for _ in 0..reps {
+                let s = phase_randomized_surrogate(&x, &mut rng);
+                let sf: Vec<f64> = s.iter().map(|&v| v as f64).collect();
+                match find_mi_lag(&sf) {
+                    Some(t) => taus.push(t),
+                    None => none += 1,
+                }
+            }
+            let mean = if taus.is_empty() {
+                0.0
+            } else {
+                taus.iter().sum::<usize>() as f64 / taus.len() as f64
+            };
+            let sd = if taus.is_empty() {
+                0.0
+            } else {
+                (taus
+                    .iter()
+                    .map(|&t| (t as f64 - mean) * (t as f64 - mean))
+                    .sum::<f64>()
+                    / taus.len() as f64)
+                    .sqrt()
+            };
+            println!(
+                "gate_mi_lag_stability: n={} base_tau={:?} none={}/{} tau_mean={:.2} tau_sd={:.2}",
+                n, base, none, reps, mean, sd
+            );
+        }
+    }
+
+    #[test]
     fn conditional_arx_surrogate_differs_from_unconditional_2_cond_finite() {
         let n = 300;
         let max_lag = 3;
