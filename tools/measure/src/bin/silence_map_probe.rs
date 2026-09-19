@@ -5,15 +5,13 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::spatial::{
     parse_star_record, star_position_at, star_stride, STAR_RECORD_BYTES,
 };
-use omegaflow::te::{gaussian, silverman};
+use omegaflow::te::{benjamini_hochberg, gaussian, silverman};
 
 const STARS_CDN_FILE: &str = "dr3_stars.bin";
-const DEFAULT_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
-const DEFAULT_SURROGATES: usize = 128;
 const MIN_STARS: usize = 32;
 const MIN_CELLS: usize = 8;
 const MIN_EXPECT_COUNT: f64 = 0.5;
-const POISSON_NORMAL_LAMBDA: f64 = 700.0;
+const FDR_LEVEL: f64 = 0.05;
 
 type CellKey = (i64, i64, i64);
 
@@ -24,8 +22,8 @@ struct SilenceMap {
     absent_cells: usize,
     blind_cells: usize,
     consistent_cells: usize,
-    ensemble_max: usize,
-    level: f64,
+    fdr_cutoff: f64,
+    fdr_level: f64,
     deficits: Vec<f64>,
     counts: Vec<usize>,
 }
@@ -82,34 +80,30 @@ fn ceil_power_of_two(v: f64) -> Option<f64> {
     Some(2f64.powi(v.log2().ceil() as i32))
 }
 
-fn next_rng(rng: &mut u64) -> f64 {
-    *rng = rng
-        .wrapping_mul(6364136223846793005)
-        .wrapping_add(1442695040888963407);
-    ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+fn ln_factorial(k: u64) -> f64 {
+    let mut s = 0.0;
+    for i in 2..=k {
+        s += (i as f64).ln();
+    }
+    s
 }
 
-fn poisson(lambda: f64, rng: &mut u64) -> u64 {
-    if lambda <= 0.0 {
-        return 0;
+fn poisson_lower_tail(count: u64, lam: f64) -> f64 {
+    if !(lam > 0.0) {
+        return 1.0;
     }
-    if lambda > POISSON_NORMAL_LAMBDA {
-        let u1 = next_rng(rng).max(1.0e-12);
-        let u2 = next_rng(rng);
-        let z = (-2.0 * u1.ln()).sqrt() * (2.0 * std::f64::consts::PI * u2).cos();
-        return (lambda + z * lambda.sqrt()).max(0.0).round() as u64;
-    }
-    let l = (-lambda).exp();
-    let mut k: u64 = 0;
-    let mut p = 1.0;
-    loop {
-        k += 1;
-        p *= next_rng(rng);
-        if p <= l {
-            break;
+    let l_lam = lam.ln();
+    let mut max = f64::NEG_INFINITY;
+    let mut terms: Vec<f64> = Vec::with_capacity(count as usize + 1);
+    for k in 0..=count {
+        let log_term = -lam + (k as f64) * l_lam - ln_factorial(k);
+        if log_term > max {
+            max = log_term;
         }
+        terms.push(log_term);
     }
-    k - 1
+    let sum: f64 = terms.iter().map(|t| (t - max).exp()).sum();
+    (max + sum.ln()).exp().min(1.0)
 }
 
 fn median_nearest_neighbor(points: &[[f64; 3]]) -> Option<f64> {
@@ -183,13 +177,8 @@ fn load_catalog(bytes: &[u8]) -> Option<Catalog> {
     })
 }
 
-fn silence_map(
-    points: &[[f64; 3]],
-    cell: f64,
-    surrogates: usize,
-    seed: u64,
-) -> Option<SilenceMap> {
-    if points.len() < MIN_STARS || surrogates < 2 {
+fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
+    if points.len() < MIN_STARS {
         return None;
     }
     let band = bandwidths(points)?;
@@ -224,14 +213,11 @@ fn silence_map(
         }
         expectation.push(sum * volume);
     }
-    let mut still = 0usize;
     let mut absent = 0usize;
     let mut blind = 0usize;
-    let mut consistent = 0usize;
     let mut deficits: Vec<f64> = Vec::new();
     let mut obs_counts: Vec<usize> = Vec::new();
-    let mut testable: Vec<usize> = Vec::new();
-    let mut thresholds: Vec<f64> = Vec::new();
+    let mut p_values: Vec<f64> = Vec::new();
     for (i, k) in keys.iter().enumerate() {
         let count = match counts.get(k) {
             Some(c) => *c,
@@ -247,39 +233,27 @@ fn silence_map(
             blind += 1;
             continue;
         }
-        testable.push(i);
-        thresholds.push(threshold);
-        let observed = count as f64;
-        deficits.push(observed - threshold);
+        deficits.push(count as f64 - threshold);
         obs_counts.push(count);
-        if observed < threshold {
-            still += 1;
-        } else {
-            consistent += 1;
-        }
+        p_values.push(poisson_lower_tail(count as u64, lam));
     }
-    let mut rng = seed.wrapping_add(0x9E37_79B9_7F4A_7C15);
-    let mut ensemble_max = 0usize;
-    for _ in 0..surrogates {
-        let mut silent = 0usize;
-        for (&i, &threshold) in testable.iter().zip(thresholds.iter()) {
-            if (poisson(expectation[i], &mut rng) as f64) < threshold {
-                silent += 1;
-            }
-        }
-        if silent > ensemble_max {
-            ensemble_max = silent;
-        }
-    }
-    let level = 1.0 / (surrogates as f64 + 1.0);
+    let cutoff = match benjamini_hochberg(&p_values, FDR_LEVEL) {
+        Some(c) => c,
+        None => 0.0,
+    };
+    let still = p_values
+        .iter()
+        .filter(|&&p| cutoff > 0.0 && p <= cutoff)
+        .count();
+    let consistent = p_values.len() - still;
     Some(SilenceMap {
         total_cells: keys.len(),
         still_cells: still,
         absent_cells: absent,
         blind_cells: blind,
         consistent_cells: consistent,
-        ensemble_max,
-        level,
+        fdr_cutoff: cutoff,
+        fdr_level: FDR_LEVEL,
         deficits,
         counts: obs_counts,
     })
@@ -337,27 +311,6 @@ fn main() {
         },
         None => None,
     };
-    let seed: u64 = match arg_value(&args, "--seed") {
-        Some(v) => match v.parse::<u64>() {
-            Ok(s) => s,
-            Err(..) => {
-                eprintln!("--seed {v}: not a u64 — the RNG stays unseeded");
-                std::process::exit(2);
-            }
-        },
-        None => DEFAULT_SEED,
-    };
-    let surrogates: usize = match arg_value(&args, "--surrogates") {
-        Some(v) => match v.parse::<usize>() {
-            Ok(s) => s,
-            Err(..) => {
-                eprintln!("--surrogates {v}: not a usize — the null stays unbuilt");
-                std::process::exit(2);
-            }
-        },
-        None => DEFAULT_SURROGATES,
-    };
-
     let stars_arg = arg_value(&args, "--stars");
     let cdn_url = format!("{CDN_BASE}/{CDN_RELEASE}/{STARS_CDN_FILE}");
     let (label, bytes): (String, Vec<u8>) = match &stars_arg {
@@ -405,7 +358,7 @@ fn main() {
     };
 
     println!(
-        "=== silence-map-probe — catalog deficit against the ensemble null ==="
+        "=== silence-map-probe — catalog deficit against the BH-corrected null ==="
     );
     println!(
         "catalog {label}: {} records | {} positioned stars | {} refused",
@@ -414,7 +367,7 @@ fn main() {
         catalog.refused
     );
     println!(
-        "cell {cell_m} m (2^{}) | surrogates {surrogates} | seed {seed}",
+        "cell {cell_m} m (2^{}) | FDR level {FDR_LEVEL}",
         cell_m.log2() as i64
     );
 
@@ -430,7 +383,7 @@ fn main() {
         band[0], band[1], band[2]
     );
 
-    match silence_map(&catalog.points, cell_m, surrogates, seed) {
+    match silence_map(&catalog.points, cell_m) {
         Some(m) => {
             println!("evaluated cells (occupied + 1-cell dilation): {}", m.total_cells);
             println!(
@@ -438,7 +391,7 @@ fn main() {
                 m.blind_cells, m.total_cells
             );
             println!(
-                "still cells (observed count below lambda_hat - 2 sqrt(lambda_hat)): {} / {}",
+                "still cells (BH-significant deficit, lower-tail Poisson p): {} / {}",
                 m.still_cells, m.total_cells
             );
             println!(
@@ -449,17 +402,18 @@ fn main() {
                 "consistent cells: {} / {}",
                 m.consistent_cells, m.total_cells
             );
+            let testable = m.still_cells + m.consistent_cells;
             println!(
-                "ensemble null: observed still {} vs ensemble maximum {} over {surrogates} Poisson fields | level 1/(s+1) = {:.6}",
-                m.still_cells, m.ensemble_max, m.level
+                "BH FDR level {} over {testable} testable cells | cutoff {:.6} | significant still cells {} / {testable}",
+                m.fdr_level, m.fdr_cutoff, m.still_cells
             );
-            if m.still_cells > m.ensemble_max {
+            if m.still_cells > 0 {
                 println!(
-                    "map verdict: catalog deficit holds — the observed still count exceeds the ensemble maximum"
+                    "map verdict: catalog deficit holds — at least one cell carries a BH-significant deficit"
                 );
             } else {
                 println!(
-                    "map verdict: no catalog deficit over the null — the observed still count does not exceed the ensemble maximum"
+                    "map verdict: no catalog deficit over the BH-corrected null — no cell carries a significant deficit"
                 );
             }
             println!(
@@ -485,7 +439,7 @@ fn main() {
         }
         None => {
             eprintln!(
-                "below the measurement floor ({} stars / {} cells minimum, or the null carried fewer than 2 valid surrogates) — no verdict (0 honored)",
+                "below the measurement floor ({} stars / {} cells minimum) — no verdict (0 honored)",
                 MIN_STARS, MIN_CELLS
             );
             std::process::exit(2);
@@ -496,6 +450,38 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const POISSON_NORMAL_LAMBDA: f64 = 700.0;
+
+    fn next_rng(rng: &mut u64) -> f64 {
+        *rng = rng
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
+    }
+
+    fn poisson(lambda: f64, rng: &mut u64) -> u64 {
+        if lambda <= 0.0 {
+            return 0;
+        }
+        if lambda > POISSON_NORMAL_LAMBDA {
+            let u1 = next_rng(rng).max(1.0e-12);
+            let u2 = next_rng(rng);
+            let z = (-2.0 * u1.ln()).sqrt() * (2.0 * std::f64::consts::PI * u2).cos();
+            return (lambda + z * lambda.sqrt()).max(0.0).round() as u64;
+        }
+        let l = (-lambda).exp();
+        let mut k: u64 = 0;
+        let mut p = 1.0;
+        loop {
+            k += 1;
+            p *= next_rng(rng);
+            if p <= l {
+                break;
+            }
+        }
+        k - 1
+    }
 
     fn poisson_field(ncells: usize, cell: f64, density: f64, rng: &mut u64) -> Vec<[f64; 3]> {
         let side = ncells as f64 * cell;
@@ -515,7 +501,7 @@ mod tests {
     fn homogeneous_poisson_field_stays_near_chance() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         let field = poisson_field(8, 1.0, 10.0, &mut rng);
-        let map = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15)
+        let map = silence_map(&field, 1.0)
             .expect("a homogeneous field must be measurable");
         let testable = map.still_cells + map.consistent_cells;
         assert!(testable > 0, "FP gate: the homogeneous field carries no testable cells");
@@ -531,7 +517,7 @@ mod tests {
     fn an_inserted_hole_is_detected() {
         let mut rng = 0x517C_C1B7_2722_0A95u64;
         let field = poisson_field(8, 1.0, 25.0, &mut rng);
-        let baseline = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15)
+        let baseline = silence_map(&field, 1.0)
             .expect("the baseline field must be measurable");
         let hole_lo = 3.0;
         let hole_hi = 5.0;
@@ -547,7 +533,7 @@ mod tests {
             })
             .copied()
             .collect();
-        let holed_map = silence_map(&holed, 1.0, 128, 0x9E37_79B9_7F4A_7C15)
+        let holed_map = silence_map(&holed, 1.0)
             .expect("the holed field must be measurable");
         assert!(
             holed_map.still_cells > baseline.still_cells,
@@ -555,13 +541,17 @@ mod tests {
             holed_map.still_cells,
             baseline.still_cells
         );
+        assert!(
+            holed_map.fdr_cutoff > 0.0,
+            "BH gate: the detected hole carries no positive FDR cutoff"
+        );
     }
 
     #[test]
     fn a_low_density_field_names_its_cells_blind() {
         let mut rng = 0x6A09_E667_F3BC_C909u64;
         let field = poisson_field(8, 1.0, 1.0, &mut rng);
-        let map = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15)
+        let map = silence_map(&field, 1.0)
             .expect("a lambda=1 field must be measurable");
         assert_eq!(
             map.still_cells, 0,
@@ -581,12 +571,15 @@ mod tests {
     fn a_deficit_free_field_does_not_hold_the_map_verdict() {
         let mut rng = 0xBB67_AE85_84CA_A73Bu64;
         let field = poisson_field(8, 1.0, 10.0, &mut rng);
-        let map = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15)
+        let map = silence_map(&field, 1.0)
             .expect("a homogeneous field must be measurable");
+        let testable = map.still_cells + map.consistent_cells;
+        assert!(testable > 0, "BH gate: the homogeneous field carries no testable cells");
         assert!(
-            map.still_cells <= map.ensemble_max,
-            "ensemble gate: a deficit-free field holds the map verdict ({} still > {} ensemble maximum)",
-            map.still_cells, map.ensemble_max
+            map.still_cells as f64 <= FDR_LEVEL * testable as f64,
+            "BH gate: a deficit-free field reports {} still of {} testable — above the FDR budget",
+            map.still_cells,
+            testable
         );
     }
 
@@ -594,8 +587,8 @@ mod tests {
     fn identical_inputs_measure_equal() {
         let mut rng = 0x2722_0A95_517C_C1B7u64;
         let field = poisson_field(6, 1.0, 8.0, &mut rng);
-        let a = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15);
-        let b = silence_map(&field, 1.0, 128, 0x9E37_79B9_7F4A_7C15);
+        let a = silence_map(&field, 1.0);
+        let b = silence_map(&field, 1.0);
         match (a, b) {
             (Some(x), Some(y)) => assert_eq!(
                 x, y,
@@ -614,7 +607,7 @@ mod tests {
             [2.0, 2.0, 2.0],
             [3.0, 3.0, 3.0],
         ];
-        let map = silence_map(&points, 1.0, 10, 0x9E37_79B9_7F4A_7C15);
+        let map = silence_map(&points, 1.0);
         assert!(
             map.is_none(),
             "n-floor gate: a 4-star field must carry no verdict"
