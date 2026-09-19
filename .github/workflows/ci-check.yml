@@ -53,6 +53,9 @@ jobs:
     - run: cargo test --release -p omegaflow-utils
     - run: cargo test --release -p omegaflow-harvest --bin skydirection_compiler
     - run: cargo test --release -p omegaflow-harvest --bin kcdc_compiler
+    - run: cargo test --release -p omegaflow-harvest --bin openneuro_compiler
+    - run: cargo test --release -p omegaflow-harvest --bin brainvision_compiler
+    - run: cargo test --release -p omegaflow-harvest --bin snirf_compiler
     - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
     - run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs
     - if: failure()
