@@ -1,5 +1,5 @@
 <!--
-  title: Armstrong, Woo & Estabrook 1979 — interplanetary phase scintillation (scanned; figures transcribed)
+  title: Armstrong, Woo & Estabrook 1979 — interplanetary phase scintillation
   class: paper
   date: 2026-09-19
   sha256: debdac54061a1d7f73a2bd482b79e2726290eb996611e4516b8b2953d1fd4b7c
