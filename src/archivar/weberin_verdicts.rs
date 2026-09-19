@@ -281,7 +281,8 @@ mod tests {
     fn live_verdicts_drops_only_the_expired_lines() {
         let mut lines = sample();
         let now = 8.0e8 + VERDICT_STALE_S as f64;
-        lines[1].weave_epoch = now;
+        lines[0].weave_epoch = now;
+        lines[2].weave_epoch = now;
         let live = live_verdicts(&lines, Some(now));
         assert_eq!(live.len(), 2);
         assert!(live.iter().all(|l| l.name != "apophis"));
