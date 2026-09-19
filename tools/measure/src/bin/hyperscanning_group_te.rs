@@ -23,13 +23,15 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     eprintln!(
-        "hyperscanning_group_te — the family-wise TE screen over a hyperscanning cohort:\n\
+        "hyperscanning_group_te — the two-level TE screen over a hyperscanning cohort:\n\
          per task, one transfer-entropy family is tested (every triad x every ordered pair).\n\
          The one estimator is the Takens estimate (dim 3; per series the mutual-information\n\
          lag tau replaces the lag grid) — the observed path and the surrogate path run the\n\
-         same estimator function. The null is the empirical distribution of the family\n\
-         maximum over phase-randomized surrogates (the max-statistic carries the whole\n\
-         family, FWER = 1 - percentile):\n\
+         same estimator function. The null is the empirical distribution over phase-randomized\n\
+         surrogates, read at two levels: the family maximum (the max-statistic carries the whole\n\
+         family, FWER = 1 - percentile, the stricter line) and the per-cell distribution (each\n\
+         ordered pair against its own surrogate series, naming the weaker transfer the family\n\
+         maximum masks):\n\
          \x20 hyperscanning_group_te --manifest <file> [--channel <label>]\n\
          \x20     [--surrogates <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
          \x20     [--null phase|coherent-phase]\n\
@@ -107,6 +109,7 @@ fn percentile(sorted: &[f64], p: f64) -> Option<f64> {
     Some(sorted[lo] * (1.0 - frac) + sorted[hi] * frac)
 }
 
+#[cfg(test)]
 fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
     let mut best: Option<f64> = None;
     for i in 0..series.len() {
@@ -131,13 +134,20 @@ struct Cell {
     tau_x: usize,
     tau_y: usize,
     te: f64,
+    slot: usize,
+}
+
+fn cell_slot(offset: usize, members: usize, i: usize, j: usize) -> usize {
+    offset + i * (members - 1) + if j < i { j } else { j - 1 }
 }
 
 fn observed_cells(triads: &[(String, Vec<(String, Vec<f32>)>)], dim: usize) -> Vec<Cell> {
     let mut out = Vec::new();
+    let mut offset = 0usize;
     for (triad, series) in triads {
-        for i in 0..series.len() {
-            for j in 0..series.len() {
+        let members = series.len();
+        for i in 0..members {
+            for j in 0..members {
                 if i == j {
                     continue;
                 }
@@ -149,12 +159,19 @@ fn observed_cells(triads: &[(String, Vec<(String, Vec<f32>)>)], dim: usize) -> V
                         tau_x: est.tau_x,
                         tau_y: est.tau_y,
                         te: est.te,
+                        slot: cell_slot(offset, members, i, j),
                     });
                 }
             }
         }
+        offset += members * members.saturating_sub(1);
     }
     out
+}
+
+struct SurrogateFamily {
+    maxima: Vec<f64>,
+    cell_distributions: Vec<Vec<f64>>,
 }
 
 fn surrogate_family_maxima(
@@ -163,12 +180,20 @@ fn surrogate_family_maxima(
     n_surr: usize,
     seed: u64,
     coherent: bool,
-) -> Vec<f64> {
+) -> SurrogateFamily {
+    let mut offsets = Vec::with_capacity(triads.len());
+    let mut total_cells = 0usize;
+    for (_, series) in triads {
+        offsets.push(total_cells);
+        total_cells += series.len() * series.len().saturating_sub(1);
+    }
+    let mut cell_distributions: Vec<Vec<f64>> = vec![Vec::new(); total_cells];
     let mut out = Vec::with_capacity(n_surr);
     for s in 0..n_surr {
         let mut family: Option<f64> = None;
         for (t, (_, series)) in triads.iter().enumerate() {
-            let mut randomized: Vec<Vec<f32>> = Vec::with_capacity(series.len());
+            let members = series.len();
+            let mut randomized: Vec<Vec<f32>> = Vec::with_capacity(members);
             if coherent {
                 let mut rng = seed
                     ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
@@ -186,9 +211,19 @@ fn surrogate_family_maxima(
                     randomized.push(phase_randomized_surrogate(v, &mut rng));
                 }
             }
-            if let Some(m) = family_max(&randomized, dim) {
-                if family.map_or(true, |f| m > f) {
-                    family = Some(m);
+            for i in 0..members {
+                for j in 0..members {
+                    if i == j {
+                        continue;
+                    }
+                    if let Some(est) = topological_te_estimate(&randomized[j], &randomized[i], dim)
+                    {
+                        if family.map_or(true, |f| est.te > f) {
+                            family = Some(est.te);
+                        }
+                        let slot = cell_slot(offsets[t], members, i, j);
+                        cell_distributions[slot].push(est.te);
+                    }
                 }
             }
         }
@@ -197,7 +232,23 @@ fn surrogate_family_maxima(
         }
     }
     out.sort_by(f64::total_cmp);
-    out
+    SurrogateFamily {
+        maxima: out,
+        cell_distributions,
+    }
+}
+
+fn per_cell_survivors<'a>(
+    cells: &'a [Cell],
+    family: &SurrogateFamily,
+    pct: f64,
+) -> Vec<&'a Cell> {
+    cells
+        .iter()
+        .filter(|c| {
+            percentile(&family.cell_distributions[c.slot], pct).map_or(false, |t| c.te > t)
+        })
+        .collect()
 }
 
 fn screen_carries_a_measurement(triads_per_task: &[usize]) -> bool {
@@ -305,28 +356,48 @@ fn main() {
         }
 
         let cells = observed_cells(&triads, DIM);
-        let maxima = surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent);
-        let Some(threshold) = percentile(&maxima, pct) else {
+        let family = surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent);
+        let Some(threshold) = percentile(&family.maxima, pct) else {
             println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
             continue;
         };
         let observed_max = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
-        let survivors: Vec<&Cell> = cells.iter().filter(|c| c.te > threshold).collect();
+        let family_survivors: Vec<&Cell> = cells.iter().filter(|c| c.te > threshold).collect();
+        let cell_survivors = per_cell_survivors(&cells, &family, pct);
 
         println!(
-            "=== {task}: {} triad(s) | {} cell(s) | fam-max p{pct} = {threshold:.4e} | observed max = {observed_max:.4e} | survivors = {}",
+            "=== {task}: {} triad(s) | {} cell(s) | fam-max p{pct} = {threshold:.4e} | observed max = {observed_max:.4e} | family-max survivors = {} | per-cell survivors = {}",
             triads.len(),
             cells.len(),
-            survivors.len()
+            family_survivors.len(),
+            cell_survivors.len()
         );
-        for c in &survivors {
+        for c in &family_survivors {
             println!(
-                "    SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                "    FAMILY-MAX SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
                 c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
             );
         }
-        if survivors.is_empty() {
-            println!("    no cell breaks the family maximum — the silence is the finding");
+        for c in &cell_survivors {
+            if family_survivors.iter().any(|f| f.slot == c.slot) {
+                println!(
+                    "    PER-CELL SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                    c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
+                );
+            } else {
+                println!(
+                    "    PER-CELL SURVIVOR (masked by the family maximum) {} {}→{} tau {}/{} TE {:.4e}",
+                    c.triad, c.driver, c.target, c.tau_x, c.tau_y, c.te
+                );
+            }
+        }
+        if family_survivors.is_empty() {
+            println!("    no cell breaks the family maximum — the family-max silence is the finding");
+        }
+        if cell_survivors.is_empty() {
+            println!(
+                "    no cell breaks its own surrogate distribution — the cell-level silence is the finding"
+            );
         }
     }
 
@@ -416,7 +487,7 @@ mod tests {
         )];
         let cells = observed_cells(&triads, DIM);
         assert!(!cells.is_empty(), "the structured pair carries no cell");
-        let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED, false);
+        let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED, false).maxima;
         let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
         let observed = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
         assert!(
@@ -445,7 +516,8 @@ mod tests {
             if cells.is_empty() {
                 continue;
             }
-            let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false);
+            let maxima =
+                surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false).maxima;
             let Some(threshold) = percentile(&maxima, 95.0) else {
                 continue;
             };
@@ -504,6 +576,112 @@ mod tests {
         assert_eq!(
             fm, om,
             "family_max and the observed cell maximum run the one estimator on the same pairs"
+        );
+    }
+
+    #[test]
+    fn family_fn_gate() {
+        let mut rng = SEED ^ 0xFACE_FEED;
+        let n = 600usize;
+        let delay = 8usize;
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, &mut rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay { 0.8 * a[t - delay] as f64 } else { 0.0 }
+                + (next_rng(&mut rng) * 0.04 - 0.02);
+            b[t] = x as f32;
+        }
+        let c = ar1_sine(n, 0.6, 29.0, 1.1, 0.02, &mut rng);
+        let mut d = vec![0.0f32; n];
+        let mut y = 0.0f64;
+        for t in 0..n {
+            y = 0.5 * y
+                + if t >= 2 {
+                    0.35 * (c[t - 2] as f64) * (c[t - 2] as f64)
+                } else {
+                    0.0
+                }
+                + (next_rng(&mut rng) * 0.04 - 0.02);
+            d[t] = y as f32;
+        }
+        let triads = vec![(
+            "G01".to_string(),
+            vec![
+                ("A".to_string(), a),
+                ("B".to_string(), b),
+                ("C".to_string(), c),
+                ("D".to_string(), d),
+            ],
+        )];
+        let cells = observed_cells(&triads, DIM);
+        let family = surrogate_family_maxima(&triads, DIM, 100, SEED, true);
+        let family_threshold =
+            percentile(&family.maxima, 95.0).expect("the family maximum is measurable");
+        let family_survivors: Vec<&Cell> =
+            cells.iter().filter(|c| c.te > family_threshold).collect();
+        let cell_survivors = per_cell_survivors(&cells, &family, 95.0);
+
+        let linear = cells
+            .iter()
+            .find(|c| c.driver == "A" && c.target == "B")
+            .expect("the linear cell is estimated");
+        let nonlinear = cells
+            .iter()
+            .find(|c| c.driver == "C" && c.target == "D")
+            .expect("the nonlinear cell is estimated");
+
+        assert!(
+            cell_survivors.iter().any(|c| c.slot == nonlinear.slot),
+            "the per-cell rule finds the weaker nonlinear transfer: TE {:.4e}",
+            nonlinear.te
+        );
+        assert!(
+            !family_survivors.iter().any(|c| c.slot == nonlinear.slot),
+            "the family maximum masks the nonlinear transfer (the FN this fix removes): TE {:.4e} vs fam-max {:.4e}",
+            nonlinear.te,
+            family_threshold
+        );
+        assert!(
+            !cell_survivors.iter().any(|c| c.slot == linear.slot),
+            "the strong linear pair is not reported as transfer beyond its coherent null: TE {:.4e}",
+            linear.te
+        );
+    }
+
+    #[test]
+    fn family_fp_gate() {
+        let mut rng = SEED ^ 0xC0FF_EE00;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let a = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 6,
+            "per-cell-FP gate: {fp} of {meas} above their own null — the per-cell rule exceeds chance"
         );
     }
 }
