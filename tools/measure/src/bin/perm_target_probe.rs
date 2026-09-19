@@ -4,6 +4,7 @@ use omegaflow::archivar::{
 };
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::mathematikerin::omega::perm_target;
+use omegaflow::sha256::sha256_hex;
 use omegaflow::te::phase_randomized_surrogate;
 use std::collections::HashMap;
 
@@ -239,6 +240,125 @@ fn print_row(name: &str, r: &MapRow) {
     );
 }
 
+fn row_from_quantity(values: &[f32], n_eps: usize) -> MapRow {
+    let mut sorted = values.to_vec();
+    sorted.sort_by(|a, b| a.total_cmp(b));
+    let n = sorted.len();
+    MapRow {
+        n,
+        n_eps,
+        x_q: [
+            quantile(&sorted, 0.10),
+            quantile(&sorted, 0.25),
+            quantile(&sorted, 0.50),
+            quantile(&sorted, 0.75),
+            quantile(&sorted, 0.90),
+        ],
+        px1: sorted.iter().filter(|&&x| x > 1.0).count() as f32 / n as f32,
+        px3: sorted.iter().filter(|&&x| x > 3.0).count() as f32 / n as f32,
+        t_q: [
+            quantile(&sorted, 0.10),
+            quantile(&sorted, 0.50),
+            quantile(&sorted, 0.90),
+        ],
+    }
+}
+
+fn live_mode(path: &str) {
+    let bytes = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(_) => {
+            println!("live dump absent");
+            std::process::exit(2);
+        }
+    };
+    let text = String::from_utf8_lossy(&bytes);
+
+    let mut sensors: Option<&str> = None;
+    for line in text.lines() {
+        let t = line.trim();
+        if let Some(rest) = t.strip_prefix('#') {
+            if let Some(v) = rest.trim().strip_prefix("sensors=") {
+                sensors = Some(v.trim());
+            }
+        }
+    }
+    if sensors == Some("no") {
+        println!("refused: self-driven dump is not the sensor field");
+        std::process::exit(2);
+    }
+    let sensors_label = match sensors {
+        Some("yes") => "yes",
+        _ => "unknown",
+    };
+
+    let mut gs: Vec<f32> = Vec::new();
+    let mut vcs: Vec<f32> = Vec::new();
+    let mut targets: Vec<f32> = Vec::new();
+    let mut perms: Vec<f32> = Vec::new();
+    for line in text.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cols: Vec<&str> = t.split(',').collect();
+        if cols.len() < 6 {
+            continue;
+        }
+        if cols[0].trim().parse::<u64>().is_err() {
+            continue;
+        }
+        let (Ok(g), Ok(v_c), Ok(target), Ok(fp)) = (
+            cols[2].trim().parse::<f32>(),
+            cols[3].trim().parse::<f32>(),
+            cols[4].trim().parse::<f32>(),
+            cols[cols.len() - 1].trim().parse::<f32>(),
+        ) else {
+            continue;
+        };
+        if !g.is_finite() || !v_c.is_finite() || !target.is_finite() || !fp.is_finite() {
+            continue;
+        }
+        gs.push(g);
+        vcs.push(v_c);
+        targets.push(target);
+        perms.push(fp);
+    }
+
+    if gs.is_empty() {
+        println!("live dump absent");
+        std::process::exit(2);
+    }
+
+    println!("=== perm_target_probe --live: the realized live-field input distribution ===");
+    println!("sha256={} sensors={sensors_label}", sha256_hex(&bytes));
+    println!();
+
+    let n = gs.len();
+    let n_eps = gs.iter().filter(|&&g| g == 0.0).count();
+    let xs: Vec<f32> = gs
+        .iter()
+        .zip(&vcs)
+        .map(|(&g, &v_c)| v_c / (g + PERM_GROUND))
+        .collect();
+
+    println!(
+        " {:<26} | {:>6} | {:>6} | {:>34} | {:>13} | {:>21}",
+        "quantity", "n", "n_eps", "q10 q25 q50 q75 q90", "P(>1) P(>3)", "q10 q50 q90"
+    );
+    print_row("g", &row_from_quantity(&gs, n_eps));
+    print_row("v_c", &row_from_quantity(&vcs, 0));
+    print_row("x=v_c/(g+PERM_GROUND)", &row_from_quantity(&xs, 0));
+    print_row("target", &row_from_quantity(&targets, 0));
+    print_row("field_permeability", &row_from_quantity(&perms, 0));
+    println!();
+    println!(
+        "epsilon-floor fraction: {:.6} ({n_eps}/{n})",
+        n_eps as f32 / n as f32
+    );
+    println!("TE-branch live distribution: pending");
+}
+
 fn null_line(name: &str, values: &[f32], real_px1: f32, rng: &mut u64) {
     let n = values.len().saturating_sub(1);
     if n < 64 {
@@ -318,6 +438,20 @@ fn two_cluster(n: usize, sep: f64, rng: &mut u64) -> (Vec<f32>, usize, usize) {
 }
 
 fn main() {
+    let mut args = std::env::args().skip(1);
+    if let Some(first) = args.next() {
+        if first == "--live" {
+            match args.next() {
+                Some(p) => live_mode(&p),
+                None => {
+                    println!("live dump absent");
+                    std::process::exit(2);
+                }
+            }
+            return;
+        }
+    }
+
     println!(
         "=== perm_target_probe: the realized input distribution of the permeability map, measured ==="
     );
