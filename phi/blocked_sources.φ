@@ -14,9 +14,13 @@ descoped
 url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
 note Voyager open-loop ODR (PDS-Rings, 2026-09-14 anonym 200, jetzt 504/Cloudflare). Bau31: unitless ADC-Zählwerte, Doppler/Opazitäts-Produkt NICHT im Bundle → descoped. PPI-Basisband als voyager_odr in sources.φ; Reihen-Leser-Arm offen.
 
-pending
+descoped
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
-note Cassini RSS raw (PDS-Rings, CORSS_8xxx). 2026-09-16: pds-rings.seti.org/cassini/rss/ HTTP 200; Volumes (CORSS_8001.tar.gz u. a.) offen, ein Teil request-only. Bahnverfolgung em/Range-Rate; Compiler-Arm ungebaut → pending.
+note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — normal optical depth τ(r)-Profile, binned+rekonstruiert (Marouf 1986). 2026-09-19 tar.gz HTTP 200 (5.7G+v1 397M), offen. Raw RSS NICHT im Bundle → atmos.nmsu.edu (cassini_tnf).
+
+pending
+url https://atmos.nmsu.edu/pdsd/archive/data/co-ss-rss-1-scc1-v10/
+note Cassini RSS raw closed-loop (PDS-Atmosphären-Knoten, co-ss-rss-1-scc1..14/sce1/digr/engr); cassini_tnf deckt nur co-s-rss-1-*. 2026-09-19: URL HTTP 200; Format (Tracking-Record) unverifiziert → pending.
 
 blocked account
 url https://superdarn.ca/data-access
@@ -34,20 +38,15 @@ note Voyager RSS (PDS-PPI, anonym HTTP 200, 2026-09-14): PPI-VG2/RSS-Basisband (
 
 pending
 url https://data.ghrc.earthdata.nasa.gov/
-note NASA GHRC DAAC. 2026-09-16: anonym HTTP 200 = Egress-Login; ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. ISS LIS/OTD registriert. GLM L1B + TRMM LIS: Compiler gebaut, in sources.φ registriert; CDN dispatcht 2026-09-19 (glm 35425276060, trmm 35425276991).
+note NASA GHRC DAAC: ghrcw-protected 401 anonym / 200 mit EARTHDATA_EDL_TOKEN. GLM L1B + TRMM LIS in sources.φ; CDN present 2026-09-19: glm_l1b.bin 1050368 B sha256 a7311a53…, trmm_lis.bin 30548 B sha256 4df26caf… (runs 35425276060/991 success).
 
 pending
 url http://jvo.nao.ac.jp/skynode/do/tap/nobeyama/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+access_url,access_estsize+FROM+fugin.cube
-note FUGIN (fugin.rs): NAXIS=3 VRAD CDELT3=650m/s → moment-0 K·m/s. TAP 2026-09-18: 810 Zeilen, 270 Cubes (89/89/92 12CO/13CO/C18O, estsize>65536 KB), 540 2D-Maps descoped-mit-Messung. Pilot fgn00000000.sky1 CDN; Bulk dispatcht 2026-09-19 (35425278304).
+note FUGIN (fugin.rs): NAXIS=3 VRAD CDELT3=650m/s → moment-0 K·m/s. TAP 2026-09-18: 810 Zeilen, 270 Cubes; 540 2D-Maps descoped-mit-Messung. Pilot fgn00000000.sky1 CDN present 2026-09-19: 14212953 B sha256 e509844e… (35425278304 success).
 
 pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
 note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n). 2026-09-18 NUL-CSV-Arm in extract.rs (split_csv_line/csv_to_json) gebaut, Parser-Gap geschlossen. Physik em/psfMag, kein Konsument → pending.
-
-pending
-url https://kcdc.iap.kit.edu
-reg https://kcdc.iap.kit.edu/accounts/login
-note KCDC — KASCADE Cosmic-ray Data Centre: Konto omegaflow, Login+CSRF offen, Konsument kcdc_compiler.rs/kcdc.rs gebaut. 2026-09-17: 0 Events = log10-Schlitz, kein Server-Bug; Join-Fix gebaut. Offen: Push+CI → kcdc_kascade in sources.φ.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
