@@ -33,7 +33,8 @@
     ["Riss => None", "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"],
     ["Riss => 0.0", "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"],
     ["cond_specs.iter().map(|&(d, _)| series[d]).collect()", "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"],
-    ["comb.iter().map(|&(d, _)| series[d]).collect()", "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"]
+    ["comb.iter().map(|&(d, _)| series[d]).collect()", "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"],
+    ["cond_idxs.dedup()", "the pcmci condition pair set mapped to bare series indices and deduplicated drops the chosen lag — one whole channel series is conditioned instead of the exact (series, lag) column, so the null reproduces the coupling in the surrogate or swallows the true coupling"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -317,6 +318,7 @@
     "riss_as_absent": "VerdictWord::Riss => VerdictWord::Absent,",
     "riss_as_zero": "VerdictWord::Riss => 0.0,",
     "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,",
-    "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();"
+    "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();",
+    "pcmci_cond_lag_dedup": "let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();\ncond_idxs.sort_unstable();\ncond_idxs.dedup();"
   }
 }

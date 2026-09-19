@@ -1725,6 +1725,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_pcmci_cond_lag_dedup_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("pcmci_cond_lag_dedup"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fn_riss_keeps_its_word_passes() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("riss_kept"));
