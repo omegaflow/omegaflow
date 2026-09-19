@@ -3,7 +3,7 @@
   session: Ernte-Folge 95
   class: handover
   date: 2026-09-19
-  sha256: 2d3f3ed5fc6f35d8965c32bd11f67e95f436152b72a94b51896cf6ed97c277ed
+  sha256: d4c0ac8d0819c02a874a139047a921c0ff799120ef0889abecc8d8085ab7f0ee
   status: live
 -->
 # Handover — Ernte-Folge 95 (2026-09-19)
@@ -63,10 +63,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - **mars_dust CDN-Manifestation** — Compiler `tools/harvest/src/bin/mars_dust_compiler.rs`
   + `.github/workflows/mars-dust-cdn.yml` gebaut (cargo check sauber), in
-  `phi/sources.φ`/`phi/harvest.φ` registriert, Workflow nach Push dispatcht.
-  Auslöser: Run-Abschluss. **Schritt:** Ergebnis aus Watchdog-Snapshot /
-  `ci_manage view <id>`; bei Erfolg Größe/sha256 messen und `sources.φ`-`sha256`-Zeile +
-  `harvest.φ` (`asset present`) fortschreiben. `wartend`.
+  `phi/sources.φ`/`phi/harvest.φ` registriert, Workflow nach Push dispatcht
+  (run `35461011833`). Auslöser: Run-Abschluss. **Schritt:** Ergebnis aus
+  Watchdog-Snapshot / `ci_manage view 35461011833`; bei Erfolg Größe/sha256 messen und
+  `sources.φ`-`sha256`-Zeile + `harvest.φ` (`asset present`) fortschreiben. `wartend`.
 - **Cassini ODF+RSR** `phi/harvest.φ:10-29`, `phi/sources.φ:6919-6936` — Runs
   `35455805362`/`35455807084` **cancelled**, kein Asset. **Schritt:** Re-Dispatch nach
   Push (`gh workflow run cassini-odf-cdn.yml` / `cassini-rsr-cdn.yml`), Ergebnis lesen.
