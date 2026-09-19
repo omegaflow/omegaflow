@@ -1381,8 +1381,12 @@ fn parse_btree_header<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     r: &mut Hdf5WindowReader<F>,
     addr: u64,
 ) -> Result<(u8, BtreeHeader), Hdf5Note> {
-    let off = addr as usize;
     let buf = r.read(addr, 38)?;
+    parse_btree_header_bytes(&buf, addr)
+}
+
+fn parse_btree_header_bytes(buf: &[u8], addr: u64) -> Result<(u8, BtreeHeader), Hdf5Note> {
+    let off = addr as usize;
     let mut found = [0u8; 4];
     found.copy_from_slice(buf.get(..4).unwrap_or(b"    "));
     if buf.len() < 4 || &buf[..4] != b"BTHD" {
@@ -2072,9 +2076,10 @@ fn v1_chunk_records<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     r: &mut Hdf5WindowReader<F>,
     addr: u64,
     rank: usize,
+    head: &[u8],
 ) -> Result<Vec<ChunkRec>, Hdf5Note> {
     let mut out = Vec::new();
-    walk_v1_chunk_node(r, addr, rank, &mut out)?;
+    walk_v1_chunk_node(r, addr, rank, head, &mut out)?;
     Ok(out)
 }
 
@@ -2082,10 +2087,10 @@ fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     r: &mut Hdf5WindowReader<F>,
     addr: u64,
     rank: usize,
+    head: &[u8],
     out: &mut Vec<ChunkRec>,
 ) -> Result<(), Hdf5Note> {
     let off = addr as usize;
-    let head = r.read(addr, 24)?;
     if head.len() < 24 {
         return Err(Hdf5Note::EndAtByte {
             off: off + head.len(),
@@ -2113,21 +2118,19 @@ fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                 .ok_or(Hdf5Note::EndAtByte { off })?,
         )
         .ok_or(Hdf5Note::EndAtByte { off })?;
-    let buf = r.read(addr, span as u64)?;
-    if buf.len() < span {
-        return Err(Hdf5Note::EndAtByte {
-            off: off + buf.len(),
-        });
+    if nchildren == 0 {
+        return Ok(());
     }
-    let mut p = 24usize;
+    let body = r.read(addr + 24, (span - 24) as u64)?;
+    let mut p = 0usize;
     for _ in 0..nchildren {
-        let nbytes = le_u32(&buf, p) as usize;
-        let filter_mask = le_u32(&buf, p + 4);
+        let nbytes = le_u32(&body, p) as usize;
+        let filter_mask = le_u32(&body, p + 4);
         let mut scaled = Vec::with_capacity(rank);
         for d in 0..rank {
-            scaled.push(le_u64(&buf, p + 8 + d * 8));
+            scaled.push(le_u64(&body, p + 8 + d * 8));
         }
-        let child = le_u64(&buf, p + key_size);
+        let child = le_u64(&body, p + key_size);
         p += key_size + 8;
         if child == UNDEF {
             continue;
@@ -2140,7 +2143,8 @@ fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                 scaled,
             });
         } else {
-            walk_v1_chunk_node(r, child, rank, out)?;
+            let child_head = r.read(child, 24)?;
+            walk_v1_chunk_node(r, child, rank, &child_head, out)?;
         }
     }
     Ok(())
@@ -2217,9 +2221,12 @@ fn chunk_records_with<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     rank: usize,
     filtered: bool,
 ) -> Result<(Vec<ChunkRec>, bool), Hdf5Note> {
-    let sig = reader.read(btree, 4)?;
-    if sig.as_slice() == b"BTHD" {
-        let (typ, hdr) = parse_btree_header(reader, btree)?;
+    let head = reader.read(btree, 24)?;
+    if &head[..4] == b"BTHD" {
+        let mut hbuf = head;
+        let tail = reader.read(btree + 24, 14)?;
+        hbuf.extend_from_slice(&tail);
+        let (typ, hdr) = parse_btree_header_bytes(&hbuf, btree)?;
         if typ != 10 && typ != 11 {
             return Err(Hdf5Note::Btree {
                 typ,
@@ -2228,18 +2235,16 @@ fn chunk_records_with<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
         }
         Ok((chunk_records(reader, &hdr, rank, filtered)?, false))
     } else {
-        Ok((v1_chunk_records(reader, btree, rank)?, true))
+        Ok((v1_chunk_records(reader, btree, rank, &head)?, true))
     }
 }
 
-fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
-    base: &[u8],
+fn chunk_read_plan(
     obj: &Hdf5Object,
     ds: &Hdf5Dataspace,
     dt: &Hdf5Datatype,
     coords: &[u64],
-    mut fetch: F,
-) -> Result<Vec<f64>, ChunkReadDiag> {
+) -> Result<(Vec<u32>, u64, bool), ChunkReadDiag> {
     if dt.class == 9 {
         return Err(ChunkReadDiag {
             stage: "vlen dataset",
@@ -2260,11 +2265,11 @@ fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             note: None,
         });
     }
-    let chunk_dims = match obj.layout.as_ref() {
+    let (chunk_dims, btree) = match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked {
             chunk_dims,
             elem_size: declared,
-            ..
+            btree,
         }) => {
             if *declared as usize != elem_size {
                 return Err(ChunkReadDiag {
@@ -2272,7 +2277,7 @@ fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
                     note: None,
                 });
             }
-            chunk_dims.clone()
+            (chunk_dims.clone(), *btree)
         }
         _ => {
             return Err(ChunkReadDiag {
@@ -2281,16 +2286,19 @@ fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             });
         }
     };
-    let btree = match obj.layout.as_ref() {
-        Some(Hdf5Layout::Chunked { btree, .. }) => *btree,
-        _ => {
-            return Err(ChunkReadDiag {
-                stage: "layout not chunked",
-                note: None,
-            });
-        }
-    };
-    let filtered = !obj.filters.is_empty();
+    Ok((chunk_dims, btree, !obj.filters.is_empty()))
+}
+
+fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    base: &[u8],
+    obj: &Hdf5Object,
+    ds: &Hdf5Dataspace,
+    dt: &Hdf5Datatype,
+    coords: &[u64],
+    mut fetch: F,
+) -> Result<Vec<f64>, ChunkReadDiag> {
+    let (chunk_dims, btree, filtered) = chunk_read_plan(obj, ds, dt, coords)?;
+    let rank = ds.dims.len();
     let mut reader = Hdf5WindowReader::new(base, &mut fetch);
     let (recs, v1_index) =
         chunk_records_with(&mut reader, btree, rank, filtered).map_err(|note| ChunkReadDiag {
@@ -2298,9 +2306,24 @@ fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             note: Some(note),
         })?;
     drop(reader);
+    chunk_values_from(&recs, v1_index, obj, ds, dt, coords, &chunk_dims, fetch)
+}
+
+fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    recs: &[ChunkRec],
+    v1_index: bool,
+    obj: &Hdf5Object,
+    ds: &Hdf5Dataspace,
+    dt: &Hdf5Datatype,
+    coords: &[u64],
+    chunk_dims: &[u32],
+    mut fetch: F,
+) -> Result<Vec<f64>, ChunkReadDiag> {
+    let elem_size = dt.size;
+    let rank = ds.dims.len();
     let rec = recs
-        .into_iter()
-        .find(|r| scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords))
+        .iter()
+        .find(|r| scaled_to_coords(&r.scaled, chunk_dims, v1_index).as_deref() == Some(coords))
         .ok_or(ChunkReadDiag {
             stage: "chunk not found",
             note: None,
@@ -2947,6 +2970,7 @@ impl<'a> Hdf5Access for Hdf5File<'a> {
 pub struct LazyHdf5<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> {
     reader: Hdf5WindowReader<'a, F>,
     objects: HashMap<u64, Hdf5Object>,
+    chunk_index_cache: HashMap<u64, (Vec<ChunkRec>, bool)>,
     root: u64,
     offset_size: usize,
     length_size: usize,
@@ -2958,6 +2982,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
         Ok(LazyHdf5 {
             reader: Hdf5WindowReader::new(buf, fetch),
             objects: HashMap::new(),
+            chunk_index_cache: HashMap::new(),
             root: sb.root,
             offset_size: sb.offset_size,
             length_size: sb.length_size,
@@ -3060,14 +3085,34 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
         &mut self,
         dataset: &str,
         coords: &[u64],
-        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+        mut fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
     ) -> Result<Vec<f64>, ChunkReadDiag> {
         let base = self.reader.base;
         let (obj, ds, dt) = self.dataset(dataset).map_err(|note| ChunkReadDiag {
             stage: "dataset absent",
             note: Some(note),
         })?;
-        read_chunk_resolved(base, obj, ds, dt, coords, fetch)
+        let obj = obj.clone();
+        let ds = ds.clone();
+        let dt = dt.clone();
+        let (chunk_dims, btree, filtered) = chunk_read_plan(&obj, &ds, &dt, coords)?;
+        let rank = ds.dims.len();
+        let (recs, v1_index) = match self.chunk_index_cache.get(&btree) {
+            Some(cached) => cached.clone(),
+            None => {
+                let mut reader = Hdf5WindowReader::new(base, &mut fetch);
+                let recs_v1 =
+                    chunk_records_with(&mut reader, btree, rank, filtered).map_err(|note| {
+                        ChunkReadDiag {
+                            stage: "chunk index read",
+                            note: Some(note),
+                        }
+                    })?;
+                self.chunk_index_cache.insert(btree, recs_v1.clone());
+                recs_v1
+            }
+        };
+        chunk_values_from(&recs, v1_index, &obj, &ds, &dt, coords, &chunk_dims, fetch)
     }
 
     pub fn read_dataset(&mut self, name: &str) -> Result<Vec<u8>, Hdf5Note> {
@@ -3250,92 +3295,7 @@ mod tests {
         Some(std::fs::read(path).expect("fixture read"))
     }
 
-    #[test]
-    fn lookup3_matches_reference_vectors() {
-        let a = jenkins_lookup3(b"");
-        let b = jenkins_lookup3(b"abc");
-        let c = jenkins_lookup3(&[0u8; 48]);
-        assert_eq!(a, 0x31b8a510);
-        assert_eq!(b, 0x0e397631);
-        assert_eq!(c, 0x7a1e4f2c);
-    }
-
-    #[test]
-    fn fletcher32_big_endian_words() {
-        let mut c0 = 0u32;
-        let mut c1 = 0u32;
-        for k in 0..4usize {
-            let word = ((k as u32) << 8) | (k + 1) as u32;
-            c0 = (c0 + word) % 0xffff;
-            c1 = (c1 + c0) % 0xffff;
-        }
-        let f = (c1 << 16) | c0;
-        assert_eq!(f, 0x0a14060a);
-    }
-
-    #[test]
-    fn shuffle_unshuffle_roundtrip() {
-        let elem_size = 8usize;
-        let n = 6usize;
-        let mut data = vec![0u8; elem_size * n];
-        for e in 0..n {
-            for j in 0..elem_size {
-                data[e * elem_size + j] = (e * 10 + j) as u8;
-            }
-        }
-        let shuffled = {
-            let mut out = vec![0u8; data.len()];
-            for e in 0..n {
-                for j in 0..elem_size {
-                    out[j * n + e] = data[e * elem_size + j];
-                }
-            }
-            out
-        };
-        let filters = vec![Hdf5Filter {
-            id: FILTER_SHUFFLE,
-            flags: 0,
-            cd_values: Vec::new(),
-        }];
-        let mut raw = shuffled.clone();
-        apply_filters(&mut raw, &filters, elem_size, 0).unwrap();
-        assert_eq!(raw, data);
-    }
-
-    #[test]
-    fn fletcher32_filter_verifies_and_strips() {
-        let body = vec![0xABu8, 0xCD, 0x12, 0x34, 0x56, 0x78];
-        let mut c0 = 0u32;
-        let mut c1 = 0u32;
-        for k in 0..3usize {
-            let word = ((body[2 * k] as u32) << 8) | body[2 * k + 1] as u32;
-            c0 = (c0 + word) % 0xffff;
-            c1 = (c1 + c0) % 0xffff;
-        }
-        let checksum = (c1 << 16) | c0;
-        let mut chunk = body.clone();
-        chunk.extend_from_slice(&checksum.to_le_bytes());
-        let filters = vec![Hdf5Filter {
-            id: FILTER_FLETCHER32,
-            flags: 0,
-            cd_values: Vec::new(),
-        }];
-        apply_filters(&mut chunk, &filters, 8, 0).unwrap();
-        assert_eq!(chunk, body);
-    }
-
-    #[test]
-    fn scaled_offsets_to_chunk_coordinates() {
-        let dims = [2u32, 3];
-        assert_eq!(scaled_to_coords(&[4, 9], &dims, true).unwrap(), vec![2, 3]);
-        assert_eq!(scaled_to_coords(&[4, 9], &dims, false).unwrap(), vec![4, 9]);
-        assert_eq!(scaled_to_coords(&[5, 9], &dims, true), None);
-        assert_eq!(scaled_to_coords(&[4], &dims, true), None);
-        assert_eq!(scaled_to_coords(&[0, 0], &[0, 3], true), None);
-    }
-
-    #[test]
-    fn chunked_layout_chunk_index_and_stream() {
+    fn synthetic_chunked_image() -> (Vec<u8>, u64) {
         fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
             let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
             m.extend_from_slice(&data);
@@ -3428,6 +3388,99 @@ mod tests {
         buf.extend_from_slice(&3.0f64.to_le_bytes());
         buf.extend_from_slice(&4.0f64.to_le_bytes());
 
+        (buf, btree_addr)
+    }
+
+    #[test]
+    fn lookup3_matches_reference_vectors() {
+        let a = jenkins_lookup3(b"");
+        let b = jenkins_lookup3(b"abc");
+        let c = jenkins_lookup3(&[0u8; 48]);
+        assert_eq!(a, 0x31b8a510);
+        assert_eq!(b, 0x0e397631);
+        assert_eq!(c, 0x7a1e4f2c);
+    }
+
+    #[test]
+    fn fletcher32_big_endian_words() {
+        let mut c0 = 0u32;
+        let mut c1 = 0u32;
+        for k in 0..4usize {
+            let word = ((k as u32) << 8) | (k + 1) as u32;
+            c0 = (c0 + word) % 0xffff;
+            c1 = (c1 + c0) % 0xffff;
+        }
+        let f = (c1 << 16) | c0;
+        assert_eq!(f, 0x0a14060a);
+    }
+
+    #[test]
+    fn shuffle_unshuffle_roundtrip() {
+        let elem_size = 8usize;
+        let n = 6usize;
+        let mut data = vec![0u8; elem_size * n];
+        for e in 0..n {
+            for j in 0..elem_size {
+                data[e * elem_size + j] = (e * 10 + j) as u8;
+            }
+        }
+        let shuffled = {
+            let mut out = vec![0u8; data.len()];
+            for e in 0..n {
+                for j in 0..elem_size {
+                    out[j * n + e] = data[e * elem_size + j];
+                }
+            }
+            out
+        };
+        let filters = vec![Hdf5Filter {
+            id: FILTER_SHUFFLE,
+            flags: 0,
+            cd_values: Vec::new(),
+        }];
+        let mut raw = shuffled.clone();
+        apply_filters(&mut raw, &filters, elem_size, 0).unwrap();
+        assert_eq!(raw, data);
+    }
+
+    #[test]
+    fn fletcher32_filter_verifies_and_strips() {
+        let body = vec![0xABu8, 0xCD, 0x12, 0x34, 0x56, 0x78];
+        let mut c0 = 0u32;
+        let mut c1 = 0u32;
+        for k in 0..3usize {
+            let word = ((body[2 * k] as u32) << 8) | body[2 * k + 1] as u32;
+            c0 = (c0 + word) % 0xffff;
+            c1 = (c1 + c0) % 0xffff;
+        }
+        let checksum = (c1 << 16) | c0;
+        let mut chunk = body.clone();
+        chunk.extend_from_slice(&checksum.to_le_bytes());
+        let filters = vec![Hdf5Filter {
+            id: FILTER_FLETCHER32,
+            flags: 0,
+            cd_values: Vec::new(),
+        }];
+        apply_filters(&mut chunk, &filters, 8, 0).unwrap();
+        assert_eq!(chunk, body);
+    }
+
+    #[test]
+    fn scaled_offsets_to_chunk_coordinates() {
+        let dims = [2u32, 3];
+        assert_eq!(scaled_to_coords(&[4, 9], &dims, true).unwrap(), vec![2, 3]);
+        assert_eq!(scaled_to_coords(&[4, 9], &dims, false).unwrap(), vec![4, 9]);
+        assert_eq!(scaled_to_coords(&[5, 9], &dims, true), None);
+        assert_eq!(scaled_to_coords(&[4], &dims, true), None);
+        assert_eq!(scaled_to_coords(&[0, 0], &[0, 3], true), None);
+    }
+
+    #[test]
+    fn chunked_layout_chunk_index_and_stream() {
+        let (buf, btree_addr) = synthetic_chunked_image();
+        let chunk0_addr = btree_addr + 88u64;
+        let chunk1_addr = chunk0_addr + 16u64;
+
         let file = Hdf5File::parse(&buf).unwrap();
         let (_, ds, dt) = file.dataset("d").unwrap();
         assert_eq!(ds.dims, vec![4]);
@@ -3450,6 +3503,59 @@ mod tests {
         assert_eq!(
             file.read_f64_dataset("d").unwrap(),
             vec![1.0, 2.0, 3.0, 4.0]
+        );
+    }
+
+    #[test]
+    fn lazy_chunk_read_reuses_the_index_window() {
+        use std::cell::RefCell;
+
+        let (image, btree_addr) = synthetic_chunked_image();
+        let base = &image[..48];
+        let log: RefCell<Vec<(u64, u64)>> = RefCell::new(Vec::new());
+
+        let mut lazy = LazyHdf5::open(base, |off, len| {
+            log.borrow_mut().push((off, len));
+            image
+                .get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        })
+        .unwrap();
+
+        let first = lazy
+            .read_chunk_diag("d", &[0], |off, len| {
+                log.borrow_mut().push((off, len));
+                image
+                    .get(off as usize..(off + len) as usize)
+                    .map(|s| s.to_vec())
+            })
+            .unwrap();
+        assert_eq!(first, vec![1.0, 2.0]);
+        let after_first = log.borrow().len();
+        assert!(
+            log.borrow()[..after_first]
+                .iter()
+                .any(|(off, _)| *off == btree_addr),
+            "the first chunk read traverses the B-tree index"
+        );
+
+        let second = lazy
+            .read_chunk_diag("d", &[1], |off, len| {
+                log.borrow_mut().push((off, len));
+                image
+                    .get(off as usize..(off + len) as usize)
+                    .map(|s| s.to_vec())
+            })
+            .unwrap();
+        assert_eq!(second, vec![3.0, 4.0]);
+
+        let btree_fetches_second = log.borrow()[after_first..]
+            .iter()
+            .filter(|(off, _)| *off == btree_addr)
+            .count();
+        assert_eq!(
+            btree_fetches_second, 0,
+            "the second chunk read reuses the cached index; measured {btree_fetches_second} B-tree fetches"
         );
     }
 
