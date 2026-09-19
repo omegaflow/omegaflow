@@ -3,7 +3,7 @@
   session: Ernte-Folge 104
   class: handover
   date: 2026-09-20
-  sha256: e68935b308296c4d7616ce6faaa7ee5d55b2a3295df46ba380847434c24ea1e9
+  sha256: c16f1f724e0650886cf1242f4cb6e4c450f140c1e82e292d4b2f785f9763146f
   status: live
 -->
 # Handover — Ernte-Folge 104 (2026-09-20)
@@ -47,9 +47,9 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
   593625434 B roundtrip parses; 32 `.vhdr` gemessen, alle `task-jointaction`.
   `harvest.φ`-Block `openneuro_brainvision` (`asset fehlt`, `shard 32`,
   pattern `^sub-[0-9]+_task-jointaction_eeg\.bin$`) + Ledger registriert.
-  (Schritt: nach Push `harvest.yml -f format=openneuro_brainvision` dispatchten,
-  Run einmal lesen, dann `sources.φ` url-Zeilen + `asset present` setzen,
-  Ledger → `kompiliert`.) `wartend` auf CI-Lauf.
+  (Schritt: `harvest.yml -f format=openneuro_brainvision` dispatcht — run
+  `35476235446` queued @`95769e75`; Run einmal lesen, dann `sources.φ` url-Zeilen
+  + `asset present` setzen, Ledger → `kompiliert`.) `wartend` auf CI-Lauf.
 - **TAP-Backends dachs.fai.kz + pithia.cbk.waw.pl** `phi/pipeline/ledger.φ:10-20`
   — `blockiert` (extern, Backend down). (Schritt: `archive_search --verdict` +
   sync-QUERY, Trigger Backend-Erholung.) `blockiert`.
