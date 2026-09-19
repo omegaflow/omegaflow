@@ -4719,7 +4719,7 @@ fn fugin_cube_fixture() -> Vec<u8> {
     for v in data {
         buf.extend_from_slice(&v.to_be_bytes());
     }
-    while buf.len() % 2880 != 0 {
+    while !buf.len().is_multiple_of(2880) {
         buf.push(0);
     }
     buf

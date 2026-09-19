@@ -1623,15 +1623,15 @@ impl OmegaLoop {
                 let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
-                if let Some(f) = self.perm_log.as_mut() {
-                    if self.ring_gen != self.perm_log_gen {
-                        self.perm_log_gen = self.ring_gen;
-                        let _ = writeln!(
-                            f,
-                            "{},{},{},{},{},{},{}",
-                            self.ring_gen, omega_sum, g, v_c, target, alpha, self.field_permeability
-                        );
-                    }
+                if let Some(f) = self.perm_log.as_mut()
+                    && self.ring_gen != self.perm_log_gen
+                {
+                    self.perm_log_gen = self.ring_gen;
+                    let _ = writeln!(
+                        f,
+                        "{},{},{},{},{},{},{}",
+                        self.ring_gen, omega_sum, g, v_c, target, alpha, self.field_permeability
+                    );
                 }
             }
             let tone_target = if self.tone_code.load(std::sync::atomic::Ordering::SeqCst)
