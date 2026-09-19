@@ -1,7 +1,9 @@
 use std::env;
 use std::process::exit;
 
-use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_binned};
+use omegaflow::te::{
+    coherent_phase_surrogates, phase_randomized_surrogate, transfer_entropy_binned,
+};
 use omegaflow_measure::eeglab::{
     channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat,
     resolve_channel,
@@ -29,6 +31,10 @@ fn usage() {
          surrogates (the max-statistic carries the whole family, FWER = 1 - percentile):\n\
          \x20 hyperscanning_group_te --manifest <file> [--channel <label>] [--lags <n>]\n\
          \x20     [--surrogates <n>] [--bins <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
+         \x20     [--null phase|coherent-phase]\n\
+         \x20 --null phase (default) rotates each series alone; coherent-phase rotates every series\n\
+         \x20 of a triad with one shared phase vector, preserving the linear cross-structure — the\n\
+         \x20 pair null for transfer beyond the linear cross-correlation.\n\
          manifest lines: <task> <triad> <slot> <path> (blank and # lines skipped).\n\
          each path reads as a text .set, a MAT-v5 EEG struct, or an EEGB .bin; one series per\n\
          participant is taken (--channel, default Fz) — a named electrode, not the common average.\n\
@@ -167,19 +173,29 @@ fn surrogate_family_maxima(
     bins: usize,
     n_surr: usize,
     seed: u64,
+    coherent: bool,
 ) -> Vec<f64> {
     let mut out = Vec::with_capacity(n_surr);
     for s in 0..n_surr {
         let mut family: Option<f64> = None;
         for (t, (_, series)) in triads.iter().enumerate() {
             let mut randomized: Vec<Vec<f32>> = Vec::with_capacity(series.len());
-            for (k, (_, v)) in series.iter().enumerate() {
+            if coherent {
                 let mut rng = seed
                     ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
                     ^ ((t as u64) << 20)
-                    ^ ((k as u64) << 8)
                     ^ 0xA5A5_5A5A;
-                randomized.push(phase_randomized_surrogate(v, &mut rng));
+                let refs: Vec<&[f32]> = series.iter().map(|(_, v)| v.as_slice()).collect();
+                randomized = coherent_phase_surrogates(&refs, &mut rng);
+            } else {
+                for (k, (_, v)) in series.iter().enumerate() {
+                    let mut rng = seed
+                        ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+                        ^ ((t as u64) << 20)
+                        ^ ((k as u64) << 8)
+                        ^ 0xA5A5_5A5A;
+                    randomized.push(phase_randomized_surrogate(v, &mut rng));
+                }
             }
             if let Some(m) = family_max(&randomized, lags, bins) {
                 if family.map_or(true, |f| m > f) {
@@ -226,6 +242,16 @@ fn main() {
     let pct: f64 = arg_value(&args, "--percentile")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_PERCENTILE);
+    let coherent = match arg_value(&args, "--null").as_deref() {
+        Some("coherent-phase") => true,
+        Some("phase") | None => false,
+        Some(other) => {
+            eprintln!(
+                "hyperscanning_group_te: --null {other} is not a null model (phase|coherent-phase)"
+            );
+            exit(2);
+        }
+    };
 
     let text = match std::fs::read_to_string(&manifest_path) {
         Ok(t) => t,
@@ -245,7 +271,8 @@ fn main() {
     tasks.dedup();
 
     println!(
-        "hyperscanning group TE screen | channel [{channel}] | lags 1..={lags} | surrogates {n_surr} | bins {bins} | percentile {pct}"
+        "hyperscanning group TE screen | channel [{channel}] | lags 1..={lags} | surrogates {n_surr} | bins {bins} | percentile {pct} | null {}",
+        if coherent { "coherent-phase" } else { "phase" }
     );
 
     for task in &tasks {
@@ -290,7 +317,7 @@ fn main() {
         }
 
         let cells = observed_cells(&triads, lags, bins);
-        let maxima = surrogate_family_maxima(&triads, lags, bins, n_surr, seed);
+        let maxima = surrogate_family_maxima(&triads, lags, bins, n_surr, seed, coherent);
         let Some(threshold) = percentile(&maxima, pct) else {
             println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
             continue;
@@ -367,7 +394,7 @@ mod tests {
             vec![("S01".to_string(), a), ("S02".to_string(), b)],
         )];
         let cells = observed_cells(&triads, 32, 4);
-        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED);
+        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED, false);
         let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
         let observed = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
         assert!(
@@ -391,7 +418,7 @@ mod tests {
             vec![("S01".to_string(), a), ("S02".to_string(), b)],
         )];
         let cells = observed_cells(&triads, 32, 4);
-        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED);
+        let maxima = surrogate_family_maxima(&triads, 32, 4, 50, SEED, false);
         let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
         let survivors = cells.iter().filter(|c| c.te > threshold).count();
         assert_eq!(survivors, 0, "independent series carry no survivor");
