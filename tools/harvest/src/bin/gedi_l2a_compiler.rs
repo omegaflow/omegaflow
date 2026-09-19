@@ -6,7 +6,7 @@ use omegaflow::archivar::range::{
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
+    Endian, Hdf5Access, Hdf5Datatype, Hdf5Layout, Hdf5Object, LazyHdf5, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
 use std::env;
@@ -532,7 +532,7 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
     }
 }
 
-fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
+fn first_values(file: &mut impl Hdf5Access, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = match file.dataset(path) {
         Ok(t) => t,
         Err(e) => {
@@ -621,7 +621,7 @@ fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec
     Some(values)
 }
 
-fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
+fn rh98_column(file: &mut impl Hdf5Access, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = match file.dataset(path) {
         Ok(t) => t,
         Err(e) => {
@@ -717,7 +717,7 @@ fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<
 }
 
 fn extract_from(
-    file: &Hdf5File,
+    file: &mut impl Hdf5Access,
     fetch: &GranuleFetch,
     beams: usize,
     anchor_tdb: f64,
@@ -795,8 +795,8 @@ fn harvest_granule(
         eprintln!("{label}: range read returned void — granule stays pending");
         return Vec::new();
     };
-    match Hdf5File::parse_fetch(&prefix, |off, len| fetch.range(off, len)) {
-        Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
+    match LazyHdf5::open(&prefix, |off, len| fetch.range(off, len)) {
+        Ok(mut file) => extract_from(&mut file, fetch, beams, anchor_tdb),
         Err(note) => {
             eprintln!("{label}: metadata unread ({note:?}) — granule stays pending");
             Vec::new()
