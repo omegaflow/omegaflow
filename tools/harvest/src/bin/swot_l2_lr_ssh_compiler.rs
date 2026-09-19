@@ -6,7 +6,7 @@ use omegaflow::archivar::range::{
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
+    Endian, Hdf5Access, Hdf5Datatype, Hdf5Layout, Hdf5Object, LazyHdf5, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
 use omegaflow::netcdf::{NetcdfFile, NetcdfType, NetcdfVar, nc4_group};
@@ -139,7 +139,7 @@ fn epoch_from_units(units: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix)
 }
 
-fn nc4_time_units(file: &Hdf5File, time_path: &str) -> Option<String> {
+fn nc4_time_units(file: &mut impl Hdf5Access, time_path: &str) -> Option<String> {
     let a = file.attribute(time_path, "units")?;
     if a.datatype.class != 3 {
         return None;
@@ -506,7 +506,7 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
     }
 }
 
-fn nc4_first_values(file: &Hdf5File, g: &Granule, path: &str) -> Option<Vec<f64>> {
+fn nc4_first_values(file: &mut impl Hdf5Access, g: &Granule, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = file.dataset(path).ok()?;
     if dt.class == 9 || dt.class == 3 {
         return None;
@@ -550,12 +550,12 @@ fn nc4_first_values(file: &Hdf5File, g: &Granule, path: &str) -> Option<Vec<f64>
     Some(values)
 }
 
-fn nc4_fill(file: &Hdf5File, path: &str) -> Option<f64> {
+fn nc4_fill(file: &mut impl Hdf5Access, path: &str) -> Option<f64> {
     let obj = file.resolve(path).ok()?;
     attr_number(obj, "_FillValue").or_else(|| attr_number(obj, "missing_value"))
 }
 
-fn choose_paths_nc4(file: &Hdf5File) -> Option<(String, String, String, String)> {
+fn choose_paths_nc4(file: &mut impl Hdf5Access) -> Option<(String, String, String, String)> {
     for g in NC4_GROUPS {
         let Ok(grp) = nc4_group(file, g) else {
             continue;
@@ -695,7 +695,7 @@ fn assemble(
     out
 }
 
-fn extract_nc4(file: &Hdf5File, g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
+fn extract_nc4(file: &mut impl Hdf5Access, g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
     let Some((ssha_path, lat_path, lon_path, time_path)) = choose_paths_nc4(file) else {
         return Vec::new();
     };
@@ -781,8 +781,8 @@ fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
             }
         }
     } else if w1.len() >= 4 && w1[..4] == HDF_MAGIC {
-        match Hdf5File::parse_fetch(&w1, |off, len| g.read_range(off, len)) {
-            Ok(file) => return extract_nc4(&file, g, lsk),
+        match LazyHdf5::open(&w1, |off, len| g.read_range(off, len)) {
+            Ok(mut file) => return extract_nc4(&mut file, g, lsk),
             Err(note) => {
                 eprintln!(
                     "{}: nc4 header window of {} B stayed unread ({:?}) — escalating once",
@@ -816,8 +816,8 @@ fn harvest_granule(g: &Granule, lsk: &LeapSeconds) -> Vec<[f64; REC_FIELDS]> {
             }
         }
     } else if w2.len() >= 4 && w2[..4] == HDF_MAGIC {
-        match Hdf5File::parse_fetch(&w2, |off, len| g.read_range(off, len)) {
-            Ok(file) => extract_nc4(&file, g, lsk),
+        match LazyHdf5::open(&w2, |off, len| g.read_range(off, len)) {
+            Ok(mut file) => extract_nc4(&mut file, g, lsk),
             Err(n2) => {
                 eprintln!(
                     "{}: metadata beyond {} B ({:?}) — granule stays pending",

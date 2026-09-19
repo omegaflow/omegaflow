@@ -6,7 +6,7 @@ use omegaflow::archivar::range::{
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{
-    Endian, Hdf5Datatype, Hdf5File, Hdf5Layout, Hdf5Object, decode_f32, decode_f64,
+    Endian, Hdf5Access, Hdf5Datatype, Hdf5Layout, Hdf5Object, LazyHdf5, decode_f32, decode_f64,
 };
 use omegaflow::lsk::days_from_civil;
 use std::env;
@@ -26,6 +26,8 @@ const PREFIX_WINDOW: u64 = 1 << 9;
 const REC_CAP: usize = 1 << 13;
 const LIST_MAX_KEYS: u32 = 20;
 const HARVEST_WINDOW_MAX: usize = 1 << 9;
+const CMR_PAGE_MAX: usize = 1 << 7;
+const S3_PAGE_MAX: u32 = 1 << 7;
 const LIST_MAX_T_S: u64 = 1 << 7;
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const BEAMS: [&str; 6] = ["gt1l", "gt1r", "gt2l", "gt2r", "gt3l", "gt3r"];
@@ -165,7 +167,7 @@ fn xml_text(doc: &str, tag: &str) -> Option<String> {
     Some(doc[start..end].to_string())
 }
 
-fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>)> {
+fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>, Option<String>)> {
     let mut objects = Vec::new();
     let mut rest = body;
     while let Some(start) = rest.find("<Contents>") {
@@ -194,7 +196,8 @@ fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>)> {
         rest = &after_open[end + "</CommonPrefixes>".len()..];
     }
     let truncated = xml_text(body, "IsTruncated").as_deref() == Some("true");
-    Some((objects, truncated, dirs))
+    let next_token = xml_text(body, "NextContinuationToken");
+    Some((objects, truncated, dirs, next_token))
 }
 
 fn list_page(
@@ -202,12 +205,16 @@ fn list_page(
     prefix: &str,
     dirs: bool,
     max_keys: u32,
+    continuation_token: Option<&str>,
     creds: &S3Credentials,
-) -> Option<(Vec<Obj>, bool, Vec<String>)> {
+) -> Option<(Vec<Obj>, bool, Vec<String>, Option<String>)> {
     let mut params: Vec<(String, String)> = vec![
         ("list-type".to_string(), "2".to_string()),
         ("max-keys".to_string(), max_keys.to_string()),
     ];
+    if let Some(token) = continuation_token {
+        params.push(("continuation-token".to_string(), token.to_string()));
+    }
     if !prefix.is_empty() {
         params.push(("prefix".to_string(), prefix.to_string()));
     }
@@ -388,21 +395,40 @@ fn cmr_parse(body: &str) -> Option<Vec<CmrGranule>> {
     Some(out)
 }
 
+fn cmr_page_continues(collected: usize, window: usize, page_len: usize, page_size: usize) -> bool {
+    collected < window && page_len > 0 && page_len >= page_size
+}
+
 fn cmr_granules(
     short_name: &str,
     version: &str,
     temporal: &str,
     page_size: usize,
-) -> Option<Vec<CmrGranule>> {
-    let query = format!(
-        "short_name={}&version={}&temporal={}&page_size={}",
-        uri_encode_query(short_name),
-        uri_encode_query(version),
-        uri_encode_query(temporal),
-        page_size
-    );
-    let url = format!("{CMR_GRANULES_URL}?{query}");
-    cmr_parse(&cmr_fetch(&url)?)
+    window: usize,
+) -> Option<(Vec<CmrGranule>, usize)> {
+    let mut all: Vec<CmrGranule> = Vec::new();
+    let mut page_num = 1usize;
+    let mut pages = 0usize;
+    loop {
+        let query = format!(
+            "short_name={}&version={}&temporal={}&page_size={}&page_num={}",
+            uri_encode_query(short_name),
+            uri_encode_query(version),
+            uri_encode_query(temporal),
+            page_size,
+            page_num
+        );
+        let url = format!("{CMR_GRANULES_URL}?{query}");
+        let page = cmr_parse(&cmr_fetch(&url)?)?;
+        pages += 1;
+        let page_len = page.len();
+        all.extend(page);
+        if !cmr_page_continues(all.len(), window, page_len, page_size) {
+            break;
+        }
+        page_num += 1;
+    }
+    Some((all, pages))
 }
 
 fn attr_number(obj: &Hdf5Object, name: &str) -> Option<f64> {
@@ -529,7 +555,7 @@ fn decode_value(raw: &[u8], i: usize, dt: &Hdf5Datatype) -> Option<f64> {
     }
 }
 
-fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
+fn first_values(file: &mut impl Hdf5Access, fetch: &GranuleFetch, path: &str) -> Option<Vec<f64>> {
     let (obj, ds, dt) = match file.dataset(path) {
         Ok(t) => t,
         Err(e) => {
@@ -619,7 +645,7 @@ fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec
 }
 
 fn extract_from(
-    file: &Hdf5File,
+    file: &mut impl Hdf5Access,
     fetch: &GranuleFetch,
     beams: usize,
     anchor_tdb: f64,
@@ -680,8 +706,8 @@ fn harvest_granule(
         eprintln!("{label}: range read returned void — granule stays pending");
         return Vec::new();
     };
-    match Hdf5File::parse_fetch(&prefix, |off, len| fetch.range(off, len)) {
-        Ok(file) => extract_from(&file, fetch, beams, anchor_tdb),
+    match LazyHdf5::open(&prefix, |off, len| fetch.range(off, len)) {
+        Ok(mut file) => extract_from(&mut file, fetch, beams, anchor_tdb),
         Err(note) => {
             eprintln!("{label}: metadata unread ({note:?}) — granule stays pending");
             Vec::new()
@@ -734,7 +760,8 @@ fn run_list(args: &[String]) {
         eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
         std::process::exit(2);
     };
-    let Some((objects, truncated, common)) = list_page(BUCKET, &prefix, dirs, max_keys, &creds)
+    let Some((objects, truncated, common, _token)) =
+        list_page(BUCKET, &prefix, dirs, max_keys, None, &creds)
     else {
         eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
         std::process::exit(1);
@@ -838,12 +865,13 @@ fn run_harvest(args: &[String]) {
             eprintln!("icesat2-atl03: --day {day} carries no civil date (YYYY.MM.DD) — refused");
             std::process::exit(2);
         };
-        let page_size = window.saturating_add(8).min(HARVEST_WINDOW_MAX);
-        let Some(granules) = cmr_granules(
+        let page_size = window.min(CMR_PAGE_MAX);
+        let Some((granules, pages)) = cmr_granules(
             ATL03_SHORT_NAME,
             &version,
             &format!("{start},{end}"),
             page_size,
+            window,
         ) else {
             eprintln!(
                 "icesat2-atl03: the CMR granule search returned void for {ATL03_SHORT_NAME} v{version} on {day}"
@@ -858,9 +886,14 @@ fn run_harvest(args: &[String]) {
         }
         let mut granules = granules;
         granules.sort_by(|a, b| a.url.cmp(&b.url));
-        if granules.len() >= page_size {
+        eprintln!(
+            "icesat2-atl03: CMR walked {pages} page(s), collected {} granules for {ATL03_SHORT_NAME} v{version} on {day}",
+            granules.len()
+        );
+        if granules.len() < window {
             eprintln!(
-                "icesat2-atl03: the CMR page holds {page_size} granules — the slice is drawn from this page, the set may be partial"
+                "icesat2-atl03: the CMR source carries {} granules — the source is exhausted below the {window}-granule window; the harvest takes what exists",
+                granules.len()
             );
         }
         for g in granules.into_iter().skip(skip).take(limit) {
@@ -890,17 +923,46 @@ fn run_harvest(args: &[String]) {
             eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
             std::process::exit(2);
         };
-        let list_keys = (window as u32)
-            .saturating_add(8)
-            .min(HARVEST_WINDOW_MAX as u32);
-        let Some((objects, truncated, _)) = list_page(BUCKET, &prefix, false, list_keys, &creds)
-        else {
-            eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
-            std::process::exit(1);
-        };
-        if truncated {
+        let list_keys = (window as u32).min(S3_PAGE_MAX);
+        let mut objects: Vec<Obj> = Vec::new();
+        let mut pages = 0usize;
+        let mut token: Option<String> = None;
+        let mut exhausted = false;
+        loop {
+            let Some((mut page, truncated, _, next)) =
+                list_page(BUCKET, &prefix, false, list_keys, token.as_deref(), &creds)
+            else {
+                eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
+                std::process::exit(1);
+            };
+            pages += 1;
+            let page_len = page.len();
+            objects.append(&mut page);
+            if objects.len() >= window {
+                break;
+            }
+            if !truncated {
+                exhausted = true;
+                break;
+            }
+            match next {
+                Some(n) if page_len > 0 => token = Some(n),
+                _ => {
+                    exhausted = true;
+                    break;
+                }
+            }
+        }
+        objects.truncate(HARVEST_WINDOW_MAX);
+        if exhausted {
             eprintln!(
-                "icesat2-atl03: the listing at s3://{BUCKET}/{prefix} is truncated — the harvest is partial"
+                "icesat2-atl03: s3://{BUCKET}/{prefix} walked {pages} page(s), collected {} objects — the source is exhausted below the {window}-object window; the harvest takes what exists",
+                objects.len()
+            );
+        } else {
+            eprintln!(
+                "icesat2-atl03: s3://{BUCKET}/{prefix} walked {pages} page(s), collected {} objects for the {window}-object window",
+                objects.len()
             );
         }
         if objects.is_empty() {
@@ -1059,10 +1121,11 @@ mod tests {
     #[test]
     fn parse_page_decodes_objects_dirs_and_truncation() {
         let doc = "<ListBucketResult><IsTruncated>true</IsTruncated>\
+<NextContinuationToken>1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=</NextContinuationToken>\
 <Contents><Key>ATLAS/ATL03/2026.01.01/ATL03_20260101000000_01.h5</Key><LastModified>2026-01-01T00:00:00.000Z</LastModified><Size>73400320</Size></Contents>\
 <CommonPrefixes><Prefix>ATLAS/ATL03/2026.01.02/</Prefix></CommonPrefixes>\
 </ListBucketResult>";
-        let (objects, truncated, dirs) = parse_page(doc).unwrap();
+        let (objects, truncated, dirs, token) = parse_page(doc).unwrap();
         assert!(truncated);
         assert_eq!(objects.len(), 1);
         assert_eq!(
@@ -1071,6 +1134,31 @@ mod tests {
         );
         assert_eq!(objects[0].size, 73_400_320);
         assert_eq!(dirs, vec!["ATLAS/ATL03/2026.01.02/"]);
+        assert_eq!(
+            token.as_deref(),
+            Some("1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=")
+        );
+    }
+
+    #[test]
+    fn parse_page_absent_continuation_token_stays_none() {
+        let doc = "<ListBucketResult><IsTruncated>false</IsTruncated>\
+<Contents><Key>ATLAS/ATL03/2026.01.01/ATL03_20260101000000_01.h5</Key><LastModified>2026-01-01T00:00:00.000Z</LastModified><Size>73400320</Size></Contents>\
+</ListBucketResult>";
+        let (objects, truncated, dirs, token) = parse_page(doc).unwrap();
+        assert!(!truncated);
+        assert_eq!(objects.len(), 1);
+        assert!(dirs.is_empty());
+        assert!(token.is_none());
+    }
+
+    #[test]
+    fn cmr_page_loop_terminates_on_window_end_and_exhaustion() {
+        assert!(cmr_page_continues(50, 100, 50, 50));
+        assert!(!cmr_page_continues(100, 100, 50, 50));
+        assert!(!cmr_page_continues(120, 100, 50, 50));
+        assert!(!cmr_page_continues(50, 100, 49, 50));
+        assert!(!cmr_page_continues(50, 100, 0, 50));
     }
 
     #[test]

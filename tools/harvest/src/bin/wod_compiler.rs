@@ -200,14 +200,14 @@ fn compile_file(bytes: &[u8], lsk: &lsk::LeapSeconds) -> Result<Vec<GeoRec>, Str
 }
 
 fn probe(bytes: &[u8], name: &str) {
-    let file = match Hdf5File::parse(bytes) {
+    let mut file = match Hdf5File::parse(bytes) {
         Ok(f) => f,
         Err(n) => {
             eprintln!("wod: {name} hdf5 parse: {n:?}");
             return;
         }
     };
-    let group = match nc4_group(&file, "") {
+    let group = match nc4_group(&mut file, "") {
         Ok(g) => g,
         Err(n) => {
             eprintln!("wod: {name} group enumeration: {n:?}");
