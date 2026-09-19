@@ -294,6 +294,16 @@ fn eeg_from_source(source: &EegSource) -> Option<(EeglabSet, Vec<f32>)> {
     let labels = chanlocs_labels(source)?;
     let samples = match &source.array("data")?.data {
         omegaflow::matfile::MatData::Single(s) => s.clone(),
+        omegaflow::matfile::MatData::Double(d) => {
+            let mut out = Vec::with_capacity(d.len());
+            for &v in d {
+                if !v.is_finite() {
+                    return None;
+                }
+                out.push(v as f32);
+            }
+            out
+        }
         _ => return None,
     };
     let total = nbchan.checked_mul(pnts)?.checked_mul(trials)?;
@@ -681,6 +691,57 @@ mod tests {
         assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
         assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
         assert_eq!(resolve_channel(&set, "E2"), Some(1));
+    }
+
+    #[test]
+    fn a_double_data_mat_maps_onto_the_set_and_series() {
+        let chanlocs = struct_matrix(
+            "chanlocs",
+            &[1, 2],
+            &[(
+                "labels",
+                vec![char_matrix("labels", b"Fp1"), char_matrix("labels", b"Fp2")],
+            )],
+        );
+        let eeg = struct_matrix(
+            "EEG",
+            &[1, 1],
+            &[
+                (
+                    "nbchan",
+                    vec![flags_dims_double(6, "nbchan", &[1, 1], &[2.0])],
+                ),
+                ("pnts", vec![flags_dims_double(6, "pnts", &[1, 1], &[3.0])]),
+                (
+                    "srate",
+                    vec![flags_dims_double(6, "srate", &[1, 1], &[100.0])],
+                ),
+                (
+                    "data",
+                    vec![flags_dims_double(
+                        6,
+                        "data",
+                        &[2, 3],
+                        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+                    )],
+                ),
+                ("chanlocs", vec![chanlocs]),
+            ],
+        );
+        let mut bytes = vec![0u8; 128];
+        let text = b"MATLAB 5.0 MAT-file";
+        bytes[..text.len()].copy_from_slice(text);
+        bytes[124] = 0x00;
+        bytes[125] = 0x01;
+        bytes[126] = b'I';
+        bytes[127] = b'M';
+        bytes.extend_from_slice(&eeg);
+        let (set, samples) = eeg_from_mat(&bytes).expect("the double-data EEG maps");
+        assert_eq!(set.nbchan, 2);
+        assert_eq!(set.pnts, 3);
+        assert_eq!(set.labels, vec!["Fp1".to_string(), "Fp2".to_string()]);
+        assert_eq!(channel_series(&samples, &set, 0), Some(vec![1.0, 3.0, 5.0]));
+        assert_eq!(channel_series(&samples, &set, 1), Some(vec![2.0, 4.0, 6.0]));
     }
 
     #[test]
