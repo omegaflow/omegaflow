@@ -2240,6 +2240,12 @@ pub struct TopologicalVerdict {
     pub pe_motifs_y: usize,
 }
 
+pub struct TopologicalEstimate {
+    pub te: f64,
+    pub tau_x: usize,
+    pub tau_y: usize,
+}
+
 fn topological_te_with(
     x: &[f32],
     y: &[f32],
@@ -2253,19 +2259,10 @@ fn topological_te_with(
     if n < 8 || y.len() != n || dim < 2 {
         return None;
     }
+    let estimate = topological_te_estimate(x, y, dim)?;
     let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
     let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
-    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
-        return None;
-    }
-    let tau_x = find_mi_lag(&xf)?;
-    let tau_y = find_mi_lag(&yf)?;
-    let emb_x = embed_series(&xf, tau_x, dim);
-    let emb_y = embed_series(&yf, tau_y, dim);
-    if emb_x.is_empty() || emb_y.is_empty() {
-        return None;
-    }
-    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    let emb_x = embed_series(&xf, estimate.tau_x, dim);
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
@@ -2285,7 +2282,8 @@ fn topological_te_with(
         if emb_s.is_empty() {
             continue;
         }
-        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, tau_x, tau_s) {
+        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s)
+        {
             vals.push(te_s);
         }
     }
@@ -2311,9 +2309,9 @@ fn topological_te_with(
         None => (None, 0),
     };
     Some(TopologicalVerdict {
-        tau_x,
-        tau_y,
-        te,
+        tau_x: estimate.tau_x,
+        tau_y: estimate.tau_y,
+        te: estimate.te,
         threshold: mean + 2.0 * sd,
         surrogate_mean: mean,
         surrogate_sd: sd,
@@ -2323,6 +2321,27 @@ fn topological_te_with(
         pe_motifs_x: motifs_x,
         pe_motifs_y: motifs_y,
     })
+}
+
+pub fn topological_te_estimate(x: &[f32], y: &[f32], dim: usize) -> Option<TopologicalEstimate> {
+    let n = x.len();
+    if n < 8 || y.len() != n || dim < 2 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let tau_x = find_mi_lag(&xf)?;
+    let tau_y = find_mi_lag(&yf)?;
+    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_y = embed_series(&yf, tau_y, dim);
+    if emb_x.is_empty() || emb_y.is_empty() {
+        return None;
+    }
+    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    Some(TopologicalEstimate { te, tau_x, tau_y })
 }
 
 pub fn topological_te_phase(
@@ -3386,6 +3405,96 @@ mod tests {
             ab.is_none() || ba.is_none(),
             "Kalibrier-Gate n-Floor: n=16 carries no verdict"
         );
+    }
+
+    fn gate_ar1_sine(n: usize, phi: f64, period: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = phi * x + (2.0 * std::f64::consts::PI * t as f64 / period).sin()
+                + gate_rng(rng) * 0.02
+                - 0.01;
+            v.push(x as f32);
+        }
+        v
+    }
+
+    #[test]
+    fn topological_estimate_deterministic() {
+        let mut rng = 0xC0FF_EE11_1234_5678u64;
+        let a = gate_ar1_sine(400, 0.6, 37.0, &mut rng);
+        let b = gate_ar1_sine(400, 0.6, 43.0, &mut rng);
+        let e1 = topological_te_estimate(&a, &b, 3).expect("the pair carries an estimate");
+        let e2 = topological_te_estimate(&a, &b, 3).expect("the pair carries an estimate");
+        assert_eq!(
+            e1.te, e2.te,
+            "the estimate is seed-free: the same pair measures the same TE"
+        );
+        assert_eq!(e1.tau_x, e2.tau_x);
+        assert_eq!(e1.tau_y, e2.tau_y);
+    }
+
+    #[test]
+    fn topological_estimate_white_pair_is_none() {
+        let mut rng = 0x0F0F_0F0F_DEAD_BEEFu64;
+        let a: Vec<f32> = (0..13).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+        let b: Vec<f32> = (0..13).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+        assert!(
+            topological_te_estimate(&a, &b, 3).is_none(),
+            "a white pair carries no tau, no estimate"
+        );
+        assert!(topological_te_estimate(&b, &a, 3).is_none());
+    }
+
+    #[test]
+    fn topological_estimate_symmetry_identical_series_measure_equally() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1_sine(400, 0.6, 37.0, &mut rng);
+        let b = a.clone();
+        match (
+            topological_te_estimate(&a, &b, 3),
+            topological_te_estimate(&b, &a, 3),
+        ) {
+            (Some(x), Some(y)) => assert!(
+                (x.te - y.te).abs() < 1e-12,
+                "estimate symmetry: a=b measures unequal, {} vs {}",
+                x.te,
+                y.te
+            ),
+            (None, None) => {}
+            _ => panic!("estimate symmetry: one direction measurable, the other not"),
+        }
+    }
+
+    #[test]
+    fn topological_estimate_tau_fields_match_mi_lag() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let a = gate_ar1_sine(400, 0.6, 37.0, &mut rng);
+        let b = gate_ar1_sine(400, 0.6, 43.0, &mut rng);
+        let est = topological_te_estimate(&a, &b, 3).expect("the pair carries an estimate");
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        assert_eq!(est.tau_x, find_mi_lag(&af).expect("x carries a lag"));
+        assert_eq!(est.tau_y, find_mi_lag(&bf).expect("y carries a lag"));
+    }
+
+    #[test]
+    fn topological_estimate_n_floor_short_series_is_none() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        for n in 8..=13usize {
+            let a: Vec<f32> = (0..n).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+            let b: Vec<f32> = (0..n).map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32).collect();
+            assert!(
+                topological_te_estimate(&a, &b, 3).is_none(),
+                "n={n}: the short white pair carries no estimate"
+            );
+            let mut r2 = 0xABCD_EF01_2345_6789u64 ^ (n as u64);
+            let s = gate_ar1_sine(n, 0.6, 37.0, &mut r2);
+            assert!(
+                topological_te_estimate(&s, &s, 3).is_none(),
+                "n={n}: the short structured series carries no estimate"
+            );
+        }
     }
 
     fn betti_ar1(n: usize, phi: f64, rng: &mut u64) -> Vec<f64> {
