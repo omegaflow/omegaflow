@@ -1081,8 +1081,22 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
 }
 
 const QUERY_MODES: &[&str] = &[
-    "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs", "brave",
-    "datacite", "zenodo", "wayback", "pubmed", "europepmc", "psychporta",
+    "openalex",
+    "arxiv",
+    "crossref",
+    "ads",
+    "ntrs",
+    "wiki",
+    "github",
+    "crates",
+    "librs",
+    "brave",
+    "datacite",
+    "zenodo",
+    "wayback",
+    "pubmed",
+    "europepmc",
+    "psychporta",
 ];
 
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
@@ -1232,8 +1246,22 @@ mod tests {
     #[test]
     fn query_mode_list_is_the_full_keyword_search_set() {
         let mut expected = vec![
-            "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs",
-            "brave", "datacite", "zenodo", "wayback", "pubmed", "europepmc", "psychporta",
+            "openalex",
+            "arxiv",
+            "crossref",
+            "ads",
+            "ntrs",
+            "wiki",
+            "github",
+            "crates",
+            "librs",
+            "brave",
+            "datacite",
+            "zenodo",
+            "wayback",
+            "pubmed",
+            "europepmc",
+            "psychporta",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();

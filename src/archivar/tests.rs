@@ -4739,8 +4739,10 @@ fn test_fugin_cube_moment0_integrates_and_maps_positions() {
         .find(|p| (p.moment0_k_ms - 3900.0).abs() < 1e-9)
         .expect("center pixel: finite 1.0+2.0+3.0 over 650 m/s");
     assert!(center.ra_deg.is_finite() && center.dec_deg.is_finite());
-    let (ra_exp, dec_exp) =
-        crate::mathematikerin::healpix::galactic_to_icrs((90.0f64).to_radians(), 20.0f64.to_radians());
+    let (ra_exp, dec_exp) = crate::mathematikerin::healpix::galactic_to_icrs(
+        (90.0f64).to_radians(),
+        20.0f64.to_radians(),
+    );
     assert!(
         (center.ra_deg - ra_exp).abs() < 1e-9,
         "glon=20 glat=0 maps to ICRS through the theta/phi convention"
@@ -4750,8 +4752,10 @@ fn test_fugin_cube_moment0_integrates_and_maps_positions() {
         .iter()
         .find(|p| (p.moment0_k_ms - 13000.0).abs() < 1e-9)
         .expect("corner pixel: 4 x 5.0 over 650 m/s");
-    let (ra2, dec2) =
-        crate::mathematikerin::healpix::galactic_to_icrs((90.0f64 - 0.5).to_radians(), 20.5f64.to_radians());
+    let (ra2, dec2) = crate::mathematikerin::healpix::galactic_to_icrs(
+        (90.0f64 - 0.5).to_radians(),
+        20.5f64.to_radians(),
+    );
     assert!((corner.ra_deg - ra2).abs() < 1e-9);
     assert!((corner.dec_deg - dec2).abs() < 1e-9);
 }
@@ -4982,7 +4986,10 @@ fn rfc1123_from_unix(secs: u64) -> String {
     )
 }
 
-fn local_http_head(last_modified: String, connections: usize) -> (String, std::thread::JoinHandle<()>) {
+fn local_http_head(
+    last_modified: String,
+    connections: usize,
+) -> (String, std::thread::JoinHandle<()>) {
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let port = listener.local_addr().unwrap().port();
     let handle = std::thread::spawn(move || {
@@ -5021,7 +5028,10 @@ fn test_cdn_fresh_uses_ttl_alone_without_floor() {
     over.join().unwrap();
 }
 
-fn local_http_head_get(stale_lm: String, body: &'static str) -> (String, std::thread::JoinHandle<()>) {
+fn local_http_head_get(
+    stale_lm: String,
+    body: &'static str,
+) -> (String, std::thread::JoinHandle<()>) {
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     listener.set_nonblocking(true).unwrap();
     let port = listener.local_addr().unwrap().port();
@@ -8644,7 +8654,20 @@ fn voyager_saturn_register_field_names_match_components() {
 
 #[test]
 fn mariner_occlt_series_dispatch_and_component_names() {
-    let row = [1.0e9, 38.0, 4.0, 20.0, 25.0, 637_641_753.0, 4096.0, -14.0, 14.0, -13.9, 0.0, 0.0];
+    let row = [
+        1.0e9,
+        38.0,
+        4.0,
+        20.0,
+        25.0,
+        637_641_753.0,
+        4096.0,
+        -14.0,
+        14.0,
+        -13.9,
+        0.0,
+        0.0,
+    ];
     let bytes = super::mariner_occlt::write_mocc_bin(&[row]);
     let parsed = super::extract::series_parse_bin("mariner_occlt", &bytes)
         .expect("mariner_occlt series parses");
@@ -8668,7 +8691,10 @@ fn mariner_occlt_series_dispatch_and_component_names() {
         super::extract::series_component_name("mariner_occlt", super::mariner_occlt::COMP_AMP_MEAN),
         Some("mariner10_occlt_amp_mean")
     );
-    assert_eq!(super::extract::series_component_name("mariner_occlt", 99), None);
+    assert_eq!(
+        super::extract::series_component_name("mariner_occlt", 99),
+        None
+    );
 }
 
 #[test]
@@ -8838,8 +8864,8 @@ fn odf_series_dispatch_and_component_names() {
 fn rosetta_odf_series_dispatch_and_component_names() {
     let samples = [(1.5e9, -86.4, 0.068), (1.5e9 + 1.0, -87.2, 0.076)];
     let bytes = super::ifms_agc::write_series(&samples);
-    let parsed = super::extract::series_parse_bin("rosetta_odf", &bytes)
-        .expect("rosetta_odf series parses");
+    let parsed =
+        super::extract::series_parse_bin("rosetta_odf", &bytes).expect("rosetta_odf series parses");
     assert_eq!(parsed.len(), 4);
     assert_eq!(parsed[0].0, 1.5e9);
     assert_eq!(parsed[0].1, -86.4);
@@ -8858,7 +8884,10 @@ fn rosetta_odf_series_dispatch_and_component_names() {
         super::extract::series_component_name("rosetta_odf", super::ifms_agc::COMP_POLAR_ANGLE),
         Some("rosetta_odf_polar_angle_cycles")
     );
-    assert_eq!(super::extract::series_component_name("rosetta_odf", 99), None);
+    assert_eq!(
+        super::extract::series_component_name("rosetta_odf", 99),
+        None
+    );
 }
 
 #[test]
