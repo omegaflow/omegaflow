@@ -11,6 +11,10 @@ pub const JUMP_GRID: f64 = 268435456.0;
 
 pub const PERM_GROUND: f32 = f32::EPSILON;
 
+pub fn perm_target(g: f32, v_c: f32) -> f32 {
+    (v_c / (g + PERM_GROUND)).tanh()
+}
+
 pub const TONE_FLOOR_SCALE: f32 = 0.25;
 
 pub const AIM_HALF_SWEEP_RAD: f32 = std::f32::consts::FRAC_PI_2;
@@ -1604,7 +1608,7 @@ impl OmegaLoop {
                 self.prev_omega_sum = omega_sum;
                 let g = omega_sum.abs();
                 let v_c = delta.abs();
-                let target = (v_c / (g + PERM_GROUND)).tanh();
+                let target = perm_target(g, v_c);
                 let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
