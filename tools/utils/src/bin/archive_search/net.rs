@@ -1082,7 +1082,7 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
 
 const QUERY_MODES: &[&str] = &[
     "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs", "brave",
-    "datacite", "zenodo", "wayback",
+    "datacite", "zenodo", "wayback", "pubmed", "europepmc",
 ];
 
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
@@ -1182,6 +1182,8 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "openalex" => crate::openalex::openalex_lines(query, max),
+        "pubmed" => crate::pubmed::pubmed_lines(query, max),
+        "europepmc" => crate::europepmc::europepmc_lines(query, max),
         "supermag" => {
             let user = match resolve_key(
                 env.get("SUPERMAG_USER").map(String::as_str).unwrap_or(""),
@@ -1230,7 +1232,7 @@ mod tests {
     fn query_mode_list_is_the_full_keyword_search_set() {
         let mut expected = vec![
             "openalex", "arxiv", "crossref", "ads", "ntrs", "wiki", "github", "crates", "librs",
-            "brave", "datacite", "zenodo", "wayback",
+            "brave", "datacite", "zenodo", "wayback", "pubmed", "europepmc",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
