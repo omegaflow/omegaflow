@@ -1079,6 +1079,7 @@ pub enum TeNull {
     RestrictedPermutation,
     XShift,
     Arx,
+    CoherentPhase,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -1176,27 +1177,37 @@ pub fn conditional_te_surrogates_n(
         block
     };
     for _ in 0..n_surr {
-        let xs_owned;
-        let xs: &[f32] = if null == TeNull::XShift {
-            xs_owned = x_shift_surrogate(x, &mut rng);
-            &xs_owned
+        let (xs_buf, ys) = if null == TeNull::CoherentPhase {
+            let mut both = coherent_phase_surrogates(&[x, y], &mut rng);
+            let ys = both.pop().expect("coherent phase yields one series per input");
+            let xs = both.pop().expect("coherent phase yields one series per input");
+            (Some(xs), ys)
         } else {
-            x
+            let xs_buf = if null == TeNull::XShift {
+                Some(x_shift_surrogate(x, &mut rng))
+            } else {
+                None
+            };
+            let ys = match null {
+                TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
+                TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
+                TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
+                TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
+                TeNull::XShift => y.to_vec(),
+                TeNull::Arx => {
+                    let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng)
+                    else {
+                        continue;
+                    };
+                    s
+                }
+                TeNull::CoherentPhase => {
+                    unreachable!("coherent phase is handled before the per-series null match")
+                }
+            };
+            (xs_buf, ys)
         };
-        let ys = match null {
-            TeNull::Block => block_bootstrap_surrogate(y, block_len, &mut rng),
-            TeNull::Shift => cycle_phase_shift_surrogate(y, y.len(), &mut rng),
-            TeNull::Phase => phase_randomized_surrogate(y, &mut rng),
-            TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
-            TeNull::XShift => y.to_vec(),
-            TeNull::Arx => {
-                let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng)
-                else {
-                    continue;
-                };
-                s
-            }
-        };
+        let xs: &[f32] = xs_buf.as_deref().unwrap_or(x);
         let te = match est {
             TeEstimator::Binned => transfer_entropy_conditional_binned_n(xs, &ys, conds, lag, bins),
             TeEstimator::Ksg => transfer_entropy_ksg_conditional_n(xs, &ys, conds, lag, k),
@@ -1570,6 +1581,41 @@ pub fn phase_randomized_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
     }
     fft(&mut re, &mut im, true);
     v.iter().enumerate().map(|(i, _)| re[i] as f32).collect()
+}
+
+pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> {
+    let Some(n) = vs.iter().map(|v| v.len()).min() else {
+        return Vec::new();
+    };
+    if n < 2 {
+        return vs.iter().map(|v| v.to_vec()).collect();
+    }
+    let m = n.next_power_of_two();
+    let mut phases: Vec<f64> = vec![0.0; m];
+    for k in 1..m / 2 {
+        phases[k] = next_rng(rng) * 2.0 * std::f64::consts::PI;
+    }
+    vs.iter()
+        .map(|v| {
+            let mut re: Vec<f64> = vec![0.0; m];
+            let mut im: Vec<f64> = vec![0.0; m];
+            for (i, &x) in v.iter().enumerate().take(n) {
+                re[i] = x as f64;
+            }
+            fft(&mut re, &mut im, false);
+            for k in 1..m / 2 {
+                let (s, c) = phases[k].sin_cos();
+                let (ar, ai) = (re[k], im[k]);
+                re[k] = ar * c - ai * s;
+                im[k] = ar * s + ai * c;
+                let j = m - k;
+                re[j] = re[k];
+                im[j] = -im[k];
+            }
+            fft(&mut re, &mut im, true);
+            (0..n).map(|i| re[i] as f32).collect()
+        })
+        .collect()
 }
 
 pub fn block_bootstrap_surrogate(v: &[f32], block: usize, rng: &mut u64) -> Vec<f32> {
@@ -1969,9 +2015,7 @@ pub fn betti0_persistence(series: &[f64], dim: usize) -> Option<Betti0Verdict> {
         return None;
     }
     edges.sort_unstable_by(|a, b| a.0.total_cmp(&b.0));
-    let Some(d_min) = edges.iter().map(|e| e.0).find(|&d| d > 0.0) else {
-        return None;
-    };
+    let d_min = edges.iter().map(|e| e.0).find(|&d| d > 0.0)?;
     let d_max = edges[edges.len() - 1].0;
     let mut ladder = Vec::new();
     let mut k = 0u32;
@@ -3787,6 +3831,95 @@ mod tests {
     #[test]
     fn gate_fpr_autocorrelation_arx_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Arx, TeEstimator::Binned);
+    }
+
+    #[test]
+    fn gate_fpr_autocorrelation_coherent_phase_null_binned_n_surr_200() {
+        gate_fpr_autocorr(TeNull::CoherentPhase, TeEstimator::Binned);
+    }
+
+    #[test]
+    #[ignore = "n=1000 calibration gate — heavy, runs in te-gate.yml"]
+    fn gate_fpr_autocorrelation_coherent_phase_null_binned_n_1000() {
+        let cells = gate_fpr_coarse_cells(
+            1000,
+            GateParams {
+                null: TeNull::CoherentPhase,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 200,
+            },
+        );
+        gate_fpr_autocorr_assert(&cells);
+    }
+
+    #[test]
+    fn coherent_phase_null_absorbs_linear_cross_coupling() {
+        let mut rng = 0x1357_9BDF_2468_ACE0u64;
+        let n = 400usize;
+        let x = gate_ar1(n, 0.7, &mut rng);
+        let mut y = vec![0f32; n];
+        for t in 1..n {
+            y[t] = 0.5 * y[t - 1] + 0.6 * x[t - 1] + 0.1 * gate_gauss(&mut rng);
+        }
+        let obs = transfer_entropy_conditional_binned_n(&x, &y, &[], 1, 4)
+            .expect("the linear coupling is measurable");
+        let params = |null| TeStatsParams {
+            lag: 1,
+            max_lag: 8,
+            bins: 4,
+            seed: 0x9E37_79B9_7F4A_7C15,
+            n_surr: 200,
+            null,
+        };
+        let (_, _, thr_coherent) =
+            conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::CoherentPhase))
+                .expect("the coherent null carries a threshold");
+        let (_, _, thr_phase) =
+            conditional_te_stats_lagged_n(&x, &y, &[], params(TeNull::Phase))
+                .expect("the single-phase null carries a threshold");
+        assert!(
+            obs <= thr_coherent,
+            "the coherent null preserves the linear cross-structure — the linear transfer stays under its threshold: obs {obs:.5} threshold {thr_coherent:.5}"
+        );
+        assert!(
+            obs > thr_phase,
+            "the single-phase null destroys the cross-phase — the linear transfer breaks its threshold: obs {obs:.5} threshold {thr_phase:.5}"
+        );
+    }
+
+    #[test]
+    fn coherent_phase_null_detects_nonlinear_transfer() {
+        let mut rng = 0x2468_ACE0_1357_9BDFu64;
+        let n = 600usize;
+        let x = gate_ar1(n, 0.7, &mut rng);
+        let mut y = vec![0f32; n];
+        for t in 1..n {
+            y[t] = 0.3 * y[t - 1] + 1.2 * x[t - 1] * x[t - 1] + 0.1 * gate_gauss(&mut rng);
+        }
+        let obs = transfer_entropy_conditional_binned_n(&x, &y, &[], 1, 4)
+            .expect("the nonlinear transfer is measurable");
+        let (_, _, thr) = conditional_te_stats_lagged_n(
+            &x,
+            &y,
+            &[],
+            TeStatsParams {
+                lag: 1,
+                max_lag: 8,
+                bins: 4,
+                seed: 0x9E37_79B9_7F4A_7C15,
+                n_surr: 200,
+                null: TeNull::CoherentPhase,
+            },
+        )
+        .expect("the coherent null carries a threshold");
+        assert!(
+            obs > thr,
+            "the bispectral transfer survives the coherent null: obs {obs:.5} threshold {thr:.5}"
+        );
     }
 
     #[test]
