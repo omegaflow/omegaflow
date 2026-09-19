@@ -5,7 +5,8 @@ use omegaflow::te::{
     TeNull, TeStatsParams, conditional_te_stats_lagged_n, transfer_entropy_binned,
 };
 use omegaflow_measure::eeglab::{
-    channel_series, common_average_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+    channel_series, common_average_series, labels_from_channels_tsv, open_set, open_set_bin,
+    open_set_mat, resolve_channel,
 };
 
 const DEFAULT_LAGS: usize = 24;
@@ -53,9 +54,14 @@ fn usage() {
 }
 
 fn load_series(path: &str, channel: Option<&str>, max_points: Option<usize>) -> Option<Vec<f32>> {
-    let (set, samples) = open_set(path)
+    let (mut set, samples) = open_set(path)
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
+    if set.labels.is_empty() {
+        if let Some(labels) = labels_from_channels_tsv(path) {
+            set.labels = labels;
+        }
+    }
     let mut series = match channel {
         Some(sel) => {
             let ch = resolve_channel(&set, sel)?;

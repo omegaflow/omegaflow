@@ -3,7 +3,8 @@ use std::process::exit;
 
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_binned};
 use omegaflow_measure::eeglab::{
-    channel_series, open_set, open_set_bin, open_set_mat, resolve_channel,
+    channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat,
+    resolve_channel,
 };
 
 const DEFAULT_LAGS: usize = 128;
@@ -64,9 +65,14 @@ fn load_series(
     channel: &str,
     max_points: Option<usize>,
 ) -> Option<(Vec<f32>, Option<f64>)> {
-    let (set, samples) = open_set(path)
+    let (mut set, samples) = open_set(path)
         .or_else(|| open_set_mat(path))
         .or_else(|| open_set_bin(path))?;
+    if set.labels.is_empty() {
+        if let Some(labels) = labels_from_channels_tsv(path) {
+            set.labels = labels;
+        }
+    }
     let ch = resolve_channel(&set, channel)?;
     let mut series = channel_series(&samples, &set, ch)?;
     if let Some(cap) = max_points {
