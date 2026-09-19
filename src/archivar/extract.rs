@@ -2068,7 +2068,10 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     alt,
                 };
                 let emitted: [(Option<f64>, FieldConfig); 6] = [
-                    (lvl.press_pa.map(|p| p / 100.0), fcfg("igra_air_pressure_hpa", 5, 7, "hPa")),
+                    (
+                        lvl.press_pa.map(|p| p / 100.0),
+                        fcfg("igra_air_pressure_hpa", 5, 7, "hPa"),
+                    ),
                     (lvl.temp_c, fcfg("igra_air_temp_c", 4, 5, "C")),
                     (lvl.wspd_ms, fcfg("igra_wind_speed_ms", 5, 7, "m/s")),
                     (lvl.wdir_deg, fcfg("igra_wind_direction_deg", 5, 7, "deg")),
