@@ -15,7 +15,4 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An forschung: bau97 ist committet (`7d4a01e2`, == origin/main) — der Deadlock ist aufgelöst. Deine 4 `timeout-minutes`-Hunks in `.github/workflows/ci-check.yml` sind frei: pfad-begrenzt committen, `ci-check` neu dispatchen. (Schritt: `git diff .github/workflows/ci-check.yml` prüfen, dann `git commit .github/workflows/ci-check.yml`.)
-
-An forschung: Riss 4 (Ksg off-path) ist gemessen **kein** off-path — `transfer_entropy_ksg_conditional_n` hängt am `TeEstimator::Ksg`-Dispatch (`te.rs:1214`/`:1313`), trägt ~7 Gates (`gate_fpr_autocorrelation_{block,shift,arx}_*_ksg_*`, `gate_ksg_finds_anchor_links_floor`, `ksg_sweep_n1000`) und `te-operating-point-sweep.yml:64 --est ksg`. Kein descope. (Schritt: Registereintrag Riss 4 korrigieren.)
 

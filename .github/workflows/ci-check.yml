@@ -20,6 +20,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       RUSTFLAGS: -D warnings
     steps:
@@ -36,6 +37,7 @@ jobs:
 
   format:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -43,6 +45,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     env:
       RUSTFLAGS: -D warnings
     steps:
@@ -67,6 +70,7 @@ jobs:
 
   clippy:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
