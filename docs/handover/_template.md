@@ -48,7 +48,7 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 
 ## Werkzeuge (gebaut — nutzt sie)
 
-- `archive_search` — Inhalt (`--root`)/Pfade (`--index`)/NTFS/16 Netz-Modi/`--playwright`/`--verdict`/`--sniff`/`--all`; ersetzt bash-`grep`, `curl`, webfetch.
+- `archive_search` — Inhalt (`--root`)/Pfade (`--index`)/NTFS/18 Netz-Modi/`--playwright`/`--verdict`/`--sniff`/`--all`; ersetzt bash-`grep`, `curl`, webfetch.
 - `sgrep [-i]` — Zeilensuche über `git ls-files`.
 - `sfetch` — fetch; ersetzt `curl -s`.
 - `omega_sh` — `reports|status|search|fetch|jwst`.
