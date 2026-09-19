@@ -62,7 +62,7 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98 day 2025.07.09. Run 35351460528 timeout 180s no output: unbounded hdf5 object-graph traversal. Range-Guard gebaut (byte budget MAX_TRAVERSAL_BYTES=1<<26, Hdf5Note::TraversalBudget); test object_header_traversal_is_range_bounded.
+note GEDI02_A v002 RH98 day 2025.07.09. Run 35351460528 timeout 180s: unbounded hdf5 traversal. Range-Guard MAX_TRAVERSAL_BYTES=1<<26 (Hdf5Note::TraversalBudget, Test object_header_traversal_is_range_bounded); Re-Run 35471362190 dispatchet 2026-09-19.
 
 asset present
 format goes16_abi
@@ -72,15 +72,15 @@ pattern ^goes16_abi\.bin$
 idempotent true
 note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
 
-asset fehlt
+asset present
 format icesat2_atl03
 tag data.nsidc.earthdatacloud.nasa.gov
 arm icesat2_atl03_compiler
-args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 0
+args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 1
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007 photon heights; day 2026.06.30 (215 Granules). --limit/--skip im Compiler vorhanden (window_slice, Test window_slice_applies_offset_then_limit); args --limit 1 --skip 0; skip je Lauf fortschreiben.
+note ATL03 v007 photon heights; day 2026.06.30 (215 Granules). CDN --sniff 2026-09-19: 917512 B sha256 3273b652… (run 35470954779); args --limit 1 --skip 1 (1/215, skip je Lauf fortschreiben).
 
 asset present
 format lro_trk
