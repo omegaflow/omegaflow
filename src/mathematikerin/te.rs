@@ -776,7 +776,7 @@ pub fn conditional_te_stats_lagged(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let Some(ys) = arx_restricted_surrogate_conditional(y, x, &[c], max_lag, &mut rng) else {
+        let Some(ys) = arx_conditional_surrogate(y, x, &[c], max_lag, &mut rng) else {
             continue;
         };
         if let Some(te) = transfer_entropy_conditional(x, &ys, c, lag) {
@@ -858,27 +858,6 @@ fn lagged_predict_2x(
     v
 }
 
-fn lagged_predict_2x_zeroed(
-    coeffs: &[f64],
-    y: &[f32],
-    c1: &[f32],
-    c2: &[f32],
-    t: usize,
-    max_lag: usize,
-) -> f64 {
-    let mut v = coeffs[0];
-    for l in 1..=max_lag {
-        v += coeffs[l] * y[t - l] as f64;
-    }
-    for l in 0..=max_lag {
-        v += coeffs[1 + max_lag + l] * c1[t - l] as f64;
-    }
-    for l in 0..=max_lag {
-        v += coeffs[2 + 2 * max_lag + l] * c2[t - l] as f64;
-    }
-    v
-}
-
 #[derive(Clone, Copy)]
 pub struct TeStats2Params {
     pub lag: usize,
@@ -903,7 +882,7 @@ pub fn conditional_te_stats_lagged_2(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let Some(ys) = arx_restricted_surrogate_2(y, x, c1, c2, max_lag, &mut rng) else {
+        let Some(ys) = arx_conditional_surrogate_2(y, x, c1, c2, max_lag, &mut rng) else {
             continue;
         };
         if let Some(te) = transfer_entropy_conditional_2(x, &ys, c1, c2, lag) {
@@ -1039,26 +1018,6 @@ fn lagged_predict_nx(
     v
 }
 
-fn lagged_predict_nx_zeroed(
-    coeffs: &[f64],
-    y: &[f32],
-    conds: &[&[f32]],
-    t: usize,
-    max_lag: usize,
-) -> f64 {
-    let mut v = coeffs[0];
-    for l in 1..=max_lag {
-        v += coeffs[l] * y[t - l] as f64;
-    }
-    for (ci, c) in conds.iter().enumerate() {
-        let base = 1 + max_lag + ci * (max_lag + 1);
-        for l in 0..=max_lag {
-            v += coeffs[base + l] * c[t - l] as f64;
-        }
-    }
-    v
-}
-
 pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Option<Vec<f32>> {
     let n = y.len();
     let p = order;
@@ -1087,7 +1046,7 @@ pub fn arx_restricted_surrogate(y: &[f32], order: usize, rng: &mut u64) -> Optio
     }
 }
 
-pub fn arx_restricted_surrogate_conditional(
+pub fn arx_conditional_surrogate(
     y: &[f32],
     x: &[f32],
     conds: &[&[f32]],
@@ -1113,7 +1072,7 @@ pub fn arx_restricted_surrogate_conditional(
                 out[t] = if t < max_lag {
                     y[t]
                 } else {
-                    let v = lagged_predict_nx_zeroed(&coeffs, &out, conds, t, max_lag)
+                    let v = lagged_predict_nx(&coeffs, &out, conds, x, t, max_lag)
                         + perm[t - max_lag] as f64;
                     if !v.is_finite() {
                         return None;
@@ -1127,7 +1086,7 @@ pub fn arx_restricted_surrogate_conditional(
     }
 }
 
-pub fn arx_restricted_surrogate_2(
+pub fn arx_conditional_surrogate_2(
     y: &[f32],
     x: &[f32],
     c1: &[f32],
@@ -1151,7 +1110,7 @@ pub fn arx_restricted_surrogate_2(
                 out[t] = if t < max_lag {
                     y[t]
                 } else {
-                    let v = lagged_predict_2x_zeroed(&coeffs, &out, c1, c2, t, max_lag)
+                    let v = lagged_predict_2x(&coeffs, &out, c1, c2, x, t, max_lag)
                         + perm[t - max_lag] as f64;
                     if !v.is_finite() {
                         return None;
@@ -1284,7 +1243,7 @@ pub fn conditional_te_surrogates_n(
             TeNull::RestrictedPermutation => restricted_permutation_surrogate(y, &mut rng),
             TeNull::XShift => y.to_vec(),
             TeNull::Arx => {
-                let Some(s) = arx_restricted_surrogate_conditional(y, x, conds, max_lag, &mut rng)
+                let Some(s) = arx_conditional_surrogate(y, x, conds, max_lag, &mut rng)
                 else {
                     continue;
                 };
@@ -2830,7 +2789,7 @@ mod tests {
         let x: Vec<f32> = (0..n)
             .map(|t| 0.4 * c2[t] + (t as f32 * 0.23).sin())
             .collect();
-        let cond_surr = arx_restricted_surrogate_conditional(&y, &x, &[&c], max_lag, &mut rng_a)
+        let cond_surr = arx_conditional_surrogate(&y, &x, &[&c], max_lag, &mut rng_a)
             .expect("the conditional Arx fit resolves");
         let uncond_surr = arx_restricted_surrogate(&y, max_lag, &mut rng_b)
             .expect("the unconditional Arx fit resolves");
@@ -2847,7 +2806,7 @@ mod tests {
             max_diff
         );
         let mut rng_c = 42u64;
-        let s2 = arx_restricted_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng_c)
+        let s2 = arx_conditional_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng_c)
             .expect("the two-confounder Arx fit resolves");
         assert_eq!(s2.len(), n);
         assert!(
@@ -4020,7 +3979,7 @@ mod tests {
                     ols_fit_lagged_nx(&y, &conds, &x, max_lag).is_some(),
                     "n={n} max_lag={max_lag} a={a}: the full ARX fit (x-lags included) must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
                 );
-                let s = arx_restricted_surrogate_conditional(&y, &x, &conds, max_lag, &mut rng)
+                let s = arx_conditional_surrogate(&y, &x, &conds, max_lag, &mut rng)
                     .expect("the refusal is the None arm, never a silent shuffle");
                 assert_eq!(s.len(), n, "n={n}: the surrogate carries the series length");
                 assert!(
@@ -4028,7 +3987,7 @@ mod tests {
                     "n={n} a={a}: the surrogate must stay finite"
                 );
                 assert!(
-                    arx_restricted_surrogate_conditional(&y, &x[..n - 1], &conds, max_lag, &mut rng)
+                    arx_conditional_surrogate(&y, &x[..n - 1], &conds, max_lag, &mut rng)
                         .is_none(),
                     "n={n}: an x length mismatch is the refusal arm (None), never a silent shuffle"
                 );
@@ -4036,7 +3995,7 @@ mod tests {
                     ols_fit_lagged_2x(&y, &c, &c2, &x, max_lag).is_some(),
                     "n={n} max_lag={max_lag} a={a}: the two-confounder full ARX fit (x-lags included) must resolve — a failed fit is the refusal arm (None), never a silent shuffle"
                 );
-                let s2 = arx_restricted_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng)
+                let s2 = arx_conditional_surrogate_2(&y, &x, &c, &c2, max_lag, &mut rng)
                     .expect("the refusal is the None arm, never a silent shuffle");
                 assert_eq!(
                     s2.len(),
@@ -4048,7 +4007,7 @@ mod tests {
                     "n={n} a={a}: the two-confounder surrogate must stay finite"
                 );
                 assert!(
-                    arx_restricted_surrogate_2(&y, &x[..n - 1], &c, &c2, max_lag, &mut rng)
+                    arx_conditional_surrogate_2(&y, &x[..n - 1], &c, &c2, max_lag, &mut rng)
                         .is_none(),
                     "n={n}: an x length mismatch is the refusal arm (None), never a silent shuffle"
                 );
@@ -4280,7 +4239,7 @@ mod tests {
             let fpr = 100.0 * fp as f64 / neg as f64;
             assert!(
                 fpr <= 8.0,
-                "conditional FP/FN gate (2): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — arx_restricted_surrogate_2 leaks ({named})"
+                "conditional FP/FN gate (2): FPR {fpr:.2}% at a={a} rho={rho} exceeds 8% — arx_conditional_surrogate_2 leaks ({named})"
             );
         }
         let f0 = rows
