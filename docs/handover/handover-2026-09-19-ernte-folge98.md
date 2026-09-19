@@ -3,7 +3,7 @@
   session: Ernte-Folge 98
   class: handover
   date: 2026-09-19
-  sha256: 41c3525e4240caad252f7b38d07baabf4865972aab213bf962ba1f801b89bdc2
+  sha256: 40ea85387bf2dcffa19c576ed7a8d75b099c4c667bb0421230df6ad07025ab2b
   status: live
 -->
 # Handover — Ernte-Folge 98 (2026-09-19)
@@ -55,9 +55,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Compiler gebaut (`openneuro_compiler.rs`, Default `ds005034`), `openneuro-cdn.yml`
   mit Workflow-Input `dataset` + Filter-Trennung (ds005034: `--subject sub-02 --task
   rest`; Probe: keine Filter); `cargo check -p omegaflow-harvest --all-targets` 0/0.
-  Probe `wartend` (Trigger: Push): nach `/commit`+Push `gh workflow run
-  openneuro-cdn.yml -f dataset=ds007822`, Ergebnis aus Watchdog / `ci_manage view
-  <id>`. ds004103 (BOLD-fMRI) per Messung `declined` (`declined_sources.φ`).
+  Probe **dispatcht** `35468307481` @`cbd8573a` (in_progress, `gh workflow run
+  openneuro-cdn.yml -f dataset=ds007822`), `wartend` (Trigger: Run-Abschluss);
+  Ergebnis aus Watchdog / `ci_manage view 35468307481`, grün → `sources.φ`-Registrierung.
+  ds004103 (BOLD-fMRI) per Messung `declined` (`declined_sources.φ`).
   ds007471 (BrainVision-`.vhdr/.eeg/.vmrk`-Arm) + ds008192 (SNIRF/HDF5-Arm) offen →
   bau. `wartend`.
 - **archive_search `--sniff` Riss** — `--sniff` meldet einen sha256 über einen
