@@ -42,6 +42,14 @@ fn note_text(note: &Hdf5Note) -> String {
         Hdf5Note::Chunk { off } => format!("chunk at byte {} lies outside the shape", off),
         Hdf5Note::VlenNotRead => "variable-length dataset data stays unread".to_string(),
         Hdf5Note::VirtualDataset => "virtual dataset unread".to_string(),
+        Hdf5Note::ReadLength { off, len } => format!(
+            "read of {} bytes at byte {} exceeds the per-read cap — the chunk stays unfetched",
+            len, off
+        ),
+        Hdf5Note::FetchBudget { off, reads } => format!(
+            "fetch budget exhausted after {} reads at byte {} — the read stops here",
+            reads, off
+        ),
     }
 }
 
