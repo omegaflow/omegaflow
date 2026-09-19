@@ -27,6 +27,32 @@ jobs:
         run: cargo test --release -p omegaflow-measure --bin silence_map_probe >> measure-gates.txt 2>&1
       - name: Run the silence-map probe against the CDN catalog (the real measurement)
         run: cargo run --release -p omegaflow-measure --bin silence_map_probe >> measure-gates.txt 2>&1
+      - name: Fetch the SWPC live channels into the archivar cache
+        run: |
+          mkdir -p cache/services.swpc.noaa.gov
+          for attempt in 1 2 3; do
+            curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-rtsw-rtsw_wind_1m.json \
+              https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-rtsw-rtsw_mag_1m.json \
+              https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-goes-primary-xrays-7-day.json \
+              https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o cache/services.swpc.noaa.gov/json-goes-primary-euvs-7-day.json \
+              https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s cache/services.swpc.noaa.gov/json-rtsw-rtsw_wind_1m.json
+          test -s cache/services.swpc.noaa.gov/json-rtsw-rtsw_mag_1m.json
+          test -s cache/services.swpc.noaa.gov/json-goes-primary-xrays-7-day.json
+          test -s cache/services.swpc.noaa.gov/json-goes-primary-euvs-7-day.json
+      - name: Run the perm-target probe (the realized input distribution of the permeability map)
+        run: cargo run --release -p omegaflow-measure --bin perm_target_probe >> measure-gates.txt 2>&1
       - name: Raise an issue when a measure gate fails
         if: failure()
         run: |
