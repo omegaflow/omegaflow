@@ -3,7 +3,7 @@
   session: Ernte-Folge 93
   class: handover
   date: 2026-09-19
-  sha256: 70a8002ad8dc194f2793b5719efe92229c1948c0cd64197b6123d58bb0bf4422
+  sha256: 3a719fa95e0c8bf8d8af72a032b1ffc4ee63acb7d3ecc02cd419baeb11da5b8c
   status: live
 -->
 # Handover — Ernte-Folge 93 (2026-09-19)
@@ -57,9 +57,10 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   in `cassini_odf_compiler.rs`/`cassini_rsr_compiler.rs`; RSR-Crawl-Bug (absoluter
   `pds-app-bar`-Href als „Datei"); `harvest-dispatch`-422 (Ziel-Workflows ohne
   `format`-Input). Route jetzt offen (`archive_search --verdict
-  https://atmos.nmsu.edu/pdsd/archive/data/` → stage 1 HTTP 200). **Schritt:**
-  nach Push `gh workflow run cassini-odf-cdn.yml` + `gh workflow run
-  cassini-rsr-cdn.yml`; Größe/sha256 aus dem Run messen und `sources.φ`
+  https://atmos.nmsu.edu/pdsd/archive/data/` → stage 1 HTTP 200). Dispatch nach
+  Push (dieses Atom): `cassini-odf-cdn` `35455805362`, `cassini-rsr-cdn`
+  `35455807084`. **Schritt:** Run-Ergebnis aus dem Watchdog-Snapshot lesen
+  (`ci_manage view <id>`); bei Erfolg Größe/sha256 messen und `sources.φ`
   (sha256-Zeile) + `harvest.φ` (`asset present`) fortschreiben.
 - **gedi_l2a** `phi/harvest.φ:57-65` — `blockiert` (Code). `src/archivar/hdf5.rs`
   ist im Working Tree fremd geändert (bau, gedi-Fix). Ernte-Schritt: keiner (an bau).
