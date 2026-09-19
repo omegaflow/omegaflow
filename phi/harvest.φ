@@ -15,7 +15,7 @@ workflow cassini-odf-cdn.yml
 pattern ^cassini_odf\.bin$
 idempotent true
 timeout 350
-note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Asset fehlt (Erstlauf offen).
+note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce* /odf/; Arm odf::parse_odf; Compiler tools/harvest/src/bin/cassini_odf_compiler.rs; Erstlauf 2026-09-19 run 35451207386 leer (atmos-Fetch reset, Fehlgrün gefixt); Asset fehlt, Re-Dispatch nach Push.
 
 asset fehlt
 format cassini_rsr
@@ -26,7 +26,7 @@ workflow cassini-rsr-cdn.yml
 pattern ^cassini_rsr\.bin$
 idempotent true
 timeout 350
-note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Compiler tools/harvest/src/bin/cassini_rsr_compiler.rs --files 1; Asset fehlt (Erstlauf offen).
+note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88) = erster Sample; Arm src/archivar/cassini_rsr.rs; Compiler tools/harvest/src/bin/cassini_rsr_compiler.rs --files 1; Erstlauf 2026-09-19 run 35451218520 leer (atmos-Fetch reset + pds-app-bar-Href, gefixt); Asset fehlt, Re-Dispatch nach Push.
 
 asset present
 format catalog_gaia_sso
