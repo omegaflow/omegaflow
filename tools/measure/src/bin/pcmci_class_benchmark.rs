@@ -722,6 +722,7 @@ fn main() {
             TeNull::RestrictedPermutation => "restricted-permutation",
             TeNull::XShift => "x-shift",
             TeNull::Arx => "arx",
+            TeNull::CoherentPhase => "coherent-phase",
         },
         BLOCK.load(Ordering::Relaxed),
         match estimator() {
