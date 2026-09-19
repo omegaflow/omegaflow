@@ -3422,6 +3422,130 @@ mod tests {
         );
     }
 
+    fn betti0_quantile(sorted: &[f64], p: f64) -> f64 {
+        let i = (sorted.len() as f64 * p).ceil() as usize;
+        sorted[i - 1]
+    }
+
+    fn betti0_bootstrap(
+        series: &[f64],
+        dim: usize,
+        n_boot: usize,
+        rng: &mut u64,
+    ) -> (Option<f64>, Option<f64>, Option<f64>, usize) {
+        let m = series.len();
+        let point = betti0_persistence(series, dim).map(|v| v.persistence);
+        let mut values = Vec::with_capacity(n_boot);
+        let mut resampled = Vec::with_capacity(m);
+        for _ in 0..n_boot {
+            resampled.clear();
+            for _ in 0..m {
+                let idx = ((gate_rng(rng) * m as f64) as usize).min(m - 1);
+                resampled.push(series[idx]);
+            }
+            if let Some(v) = betti0_persistence(&resampled, dim) {
+                values.push(v.persistence);
+            }
+        }
+        if values.is_empty() {
+            return (point, None, None, 0);
+        }
+        values.sort_unstable_by(|a, b| a.total_cmp(b));
+        let n_meas = values.len();
+        (
+            point,
+            Some(betti0_quantile(&values, 0.025)),
+            Some(betti0_quantile(&values, 0.975)),
+            n_meas,
+        )
+    }
+
+    #[test]
+    fn betti0_calibration_fp_null_q95_stays_below_threshold() {
+        let mut rng = 0xB377_0C4A_17E5_33D2u64;
+        let mut values = Vec::with_capacity(100);
+        for _ in 0..100 {
+            let a = betti_ar1(300, 0.7, &mut rng);
+            if let Some(v) = betti0_persistence(&a, 3) {
+                values.push(v.persistence);
+            }
+        }
+        assert!(
+            values.len() >= 90,
+            "betti0-calibration FP: {} of 100 AR(1) nulls measurable — the machine stays silent too often",
+            values.len()
+        );
+        values.sort_unstable_by(|a, b| a.total_cmp(b));
+        let q95 = betti0_quantile(&values, 0.95);
+        let above = values.iter().filter(|&&p| p >= 0.5).count();
+        assert!(
+            q95 < 0.5,
+            "betti0-calibration FP: q95 = {q95:.4} of the AR(1) null distribution, {} of {} at or above 0.5 — the 0.5 threshold sits inside the null spread",
+            above,
+            values.len()
+        );
+    }
+
+    #[test]
+    fn betti0_calibration_fn_structured_q05_stays_above_threshold() {
+        let mut rng = 0x17E5_33D2_B377_0C4Au64;
+        let mut values = Vec::with_capacity(100);
+        for _ in 0..100 {
+            let s = betti_two_cluster(320, &mut rng);
+            if let Some(v) = betti0_persistence(&s, 2) {
+                values.push(v.persistence);
+            }
+        }
+        assert!(
+            values.len() >= 90,
+            "betti0-calibration FN: {} of 100 two-cluster series measurable — the machine stays silent too often",
+            values.len()
+        );
+        values.sort_unstable_by(|a, b| a.total_cmp(b));
+        let q05 = betti0_quantile(&values, 0.05);
+        let below = values.iter().filter(|&&p| p <= 0.5).count();
+        assert!(
+            q05 > 0.5,
+            "betti0-calibration FN: q05 = {q05:.4} of the two-cluster distribution, {} of {} at or below 0.5 — the 0.5 threshold swallows the persistent component",
+            below,
+            values.len()
+        );
+    }
+
+    #[test]
+    fn betti0_bootstrap_fp_ci_upper_stays_below_threshold() {
+        let mut rng = 0x4A17_E533_D2B3_770Cu64;
+        let a = betti_ar1(300, 0.7, &mut rng);
+        let (point, ci_low, ci_high, n_meas) = betti0_bootstrap(&a, 3, 200, &mut rng);
+        assert!(
+            n_meas >= 180,
+            "betti0-bootstrap FP: {} of 200 resamples measurable — the bootstrap stays silent too often",
+            n_meas
+        );
+        let (ci_low, ci_high) = (ci_low.unwrap(), ci_high.unwrap());
+        assert!(
+            ci_high < 0.5,
+            "betti0-bootstrap FP: the 95% percentile bootstrap CI [{ci_low:.4}, {ci_high:.4}] reaches the 0.5 threshold (point estimate {point:?})"
+        );
+    }
+
+    #[test]
+    fn betti0_bootstrap_fn_ci_lower_stays_above_threshold() {
+        let mut rng = 0xE533_D2B3_770C_4A17u64;
+        let s = betti_two_cluster(320, &mut rng);
+        let (point, ci_low, ci_high, n_meas) = betti0_bootstrap(&s, 2, 200, &mut rng);
+        assert!(
+            n_meas >= 180,
+            "betti0-bootstrap FN: {} of 200 resamples measurable — the bootstrap stays silent too often",
+            n_meas
+        );
+        let (ci_low, ci_high) = (ci_low.unwrap(), ci_high.unwrap());
+        assert!(
+            ci_low > 0.5,
+            "betti0-bootstrap FN: the 95% percentile bootstrap CI [{ci_low:.4}, {ci_high:.4}] reaches the 0.5 threshold (point estimate {point:?})"
+        );
+    }
+
     #[test]
     fn phase_block_null_stays_byte_identical_at_ten() {
         let mut rng = 0x0A95_517C_C1B7_2722u64;
