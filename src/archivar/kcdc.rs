@@ -424,6 +424,9 @@ mod tests {
             mapped_times(&mapping, &gt, "grande"),
             vec![Some(200.0), Some(300.0)]
         );
-        assert_eq!(mapped_times(&mapping, &gt, "absent"), Vec::<Option<f64>>::new());
+        assert_eq!(
+            mapped_times(&mapping, &gt, "absent"),
+            Vec::<Option<f64>>::new()
+        );
     }
 }

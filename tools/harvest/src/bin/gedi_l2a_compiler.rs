@@ -271,8 +271,14 @@ fn list_page(
 }
 
 enum GranuleFetch {
-    S3 { s3_url: String, creds: S3Credentials },
-    Bearer { url: String, token: String },
+    S3 {
+        s3_url: String,
+        creds: S3Credentials,
+    },
+    Bearer {
+        url: String,
+        token: String,
+    },
 }
 
 impl GranuleFetch {
@@ -561,14 +567,14 @@ fn first_values(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
             let coords = vec![0u64; rank];
-            let chunk =
-                match file.read_chunk_diag(path, &coords, |off, len| fetch.range(off, len)) {
-                    Ok(c) => c,
-                    Err(diag) => {
-                        eprintln!("gedi-l2a: {path} — {diag:?}");
-                        return None;
-                    }
-                };
+            let chunk = match file.read_chunk_diag(path, &coords, |off, len| fetch.range(off, len))
+            {
+                Ok(c) => c,
+                Err(diag) => {
+                    eprintln!("gedi-l2a: {path} — {diag:?}");
+                    return None;
+                }
+            };
             values.extend(chunk.into_iter().take(want as usize));
         }
         Some(Hdf5Layout::Contiguous { addr, size }) => {
@@ -648,14 +654,14 @@ fn rh98_column(file: &Hdf5File, fetch: &GranuleFetch, path: &str) -> Option<Vec<
     }
     match obj.layout.as_ref() {
         Some(Hdf5Layout::Chunked { .. }) => {
-            let chunk =
-                match file.read_chunk_diag(path, &[0, 0], |off, len| fetch.range(off, len)) {
-                    Ok(c) => c,
-                    Err(diag) => {
-                        eprintln!("gedi-l2a: {path} — {diag:?}");
-                        return None;
-                    }
-                };
+            let chunk = match file.read_chunk_diag(path, &[0, 0], |off, len| fetch.range(off, len))
+            {
+                Ok(c) => c,
+                Err(diag) => {
+                    eprintln!("gedi-l2a: {path} — {diag:?}");
+                    return None;
+                }
+            };
             let avail = chunk.len() / 101;
             let mut out = Vec::with_capacity(avail);
             for r in 0..avail {
@@ -922,9 +928,12 @@ fn run_harvest(args: &[String]) {
             std::process::exit(2);
         };
         let page_size = limit.saturating_add(8).min(64);
-        let Some(granules) =
-            cmr_granules(GEDI_SHORT_NAME, &version, &format!("{start},{end}"), page_size)
-        else {
+        let Some(granules) = cmr_granules(
+            GEDI_SHORT_NAME,
+            &version,
+            &format!("{start},{end}"),
+            page_size,
+        ) else {
             eprintln!(
                 "gedi-l2a: the CMR granule search returned void for {GEDI_SHORT_NAME} v{version} on {day}"
             );
