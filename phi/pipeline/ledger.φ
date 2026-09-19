@@ -119,14 +119,14 @@ ausstehend
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 49 Blöcke (index.φ) — Datei am Datenträger vorhanden (16175 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
-ausstehend
+kompiliert
 kandidat https://openneuro.org/datasets/ds007822
-note Gemessen 2026-09-19: chanlocs.labels miUTF8 (Typ 16) → matfile.rs ohne Typ-16-Arm → labels Empty. Fix: MI_UTF8/16/32 + small_type 16..=18. run 35471360435 success: EEG .bin (sub-G08S03…G11S03) — Gap geschlossen.
+note 99 .set assets hochgeladen run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); sources.φ (99 url-Zeilen) + harvest.φ openneuro_pd_eeg registriert 2026-09-20.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds007471
-note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Arm + Compiler gebaut (check 0/0); Probe openneuro-eeg-probe.yml run 35473247219 (ds007471 --subject sub-01) + ci-check-Bin-Test. Grün ⇒ format-Block in harvest.φ + harvest.yml → CDN.
+note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Probe run 35473247219 rot: .vhdr trägt DataFile=IBS_0001.eeg (Original-Name), OpenNeuro speichert sub-01/eeg/sub-01_task-jointaction_eeg.eeg → files.get(dir+DataFile) None (brainvision_compiler.rs:332). bau-Fix resolve_companion (uncommittet, bau98); nach Push Re-Probe.
 
 ausstehend
 kandidat https://openneuro.org/datasets/ds008192
-note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. Arm + Compiler; Probe openneuro-eeg-probe.yml run 35473247219 (ds008192 --subject sub-101 --session 02) + ci-check-Bin-Test. Grün ⇒ format-Block in harvest.φ + harvest.yml → CDN.
+note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. Probe run 35473247219 grün: sub-101/ses-02 nchan 52 pnts 8484 meas 52 samples 441168; 3599598 B roundtrip. harvest.φ openneuro_snirf + sources.φ registriert.
