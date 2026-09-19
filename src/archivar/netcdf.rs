@@ -1,4 +1,4 @@
-use crate::hdf5::{Hdf5File, Hdf5Note};
+use crate::hdf5::{Hdf5Access, Hdf5File, Hdf5Note};
 
 const MAGIC: [u8; 3] = *b"CDF";
 const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
@@ -599,29 +599,32 @@ fn leaf_name(path: &str) -> String {
     }
 }
 
-pub fn nc4_group(file: &Hdf5File, path: &str) -> Result<Nc4Group, Hdf5Note> {
+pub fn nc4_group(file: &mut impl Hdf5Access, path: &str) -> Result<Nc4Group, Hdf5Note> {
     let obj = file.resolve(path)?;
+    let links: Vec<String> = obj
+        .links
+        .iter()
+        .filter(|l| l.addr != u64::MAX)
+        .map(|l| l.name.clone())
+        .collect();
     let mut variables = Vec::new();
     let mut groups = Vec::new();
     let mut named_types = Vec::new();
-    for link in &obj.links {
-        if link.addr == u64::MAX {
-            continue;
-        }
-        let child_path = join_path(path, &link.name);
+    for name in links {
+        let child_path = join_path(path, &name);
         let child = file.resolve(&child_path)?;
         if child.is_group {
-            groups.push(link.name.clone());
+            groups.push(name);
             continue;
         }
         match &child.dataspace {
             Some(ds) => variables.push(Nc4Variable {
-                name: link.name.clone(),
+                name,
                 dims: ds.dims.clone(),
                 datatype_class: child.datatype.as_ref().map(|d| d.class),
                 datatype_size: child.datatype.as_ref().map(|d| d.size),
             }),
-            None => named_types.push(link.name.clone()),
+            None => named_types.push(name),
         }
     }
     Ok(Nc4Group {
