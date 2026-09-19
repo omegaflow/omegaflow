@@ -148,7 +148,8 @@ mod tests {
 
     #[test]
     fn job_level_concurrency_is_not_workflow_level() {
-        let text = "name: x\non:\n  workflow_dispatch:\njobs:\n  a:\n    concurrency:\n      group: g\n";
+        let text =
+            "name: x\non:\n  workflow_dispatch:\njobs:\n  a:\n    concurrency:\n      group: g\n";
         let header = workflow_header(text);
         assert!(workflow_concurrency_block(&header).is_none());
     }

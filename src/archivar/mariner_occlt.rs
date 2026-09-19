@@ -32,11 +32,7 @@ pub struct MarinerOccltRecord {
 
 pub fn sample(b: u8) -> f64 {
     let mag = f64::from(b & 0x0f);
-    if b & 0x20 != 0 {
-        -mag
-    } else {
-        mag
-    }
+    if b & 0x20 != 0 { -mag } else { mag }
 }
 
 pub fn record(payload: &[u8]) -> Option<MarinerOccltRecord> {
@@ -81,10 +77,7 @@ pub fn record(payload: &[u8]) -> Option<MarinerOccltRecord> {
         second,
         frac,
         tag: u64::from(u32::from_be_bytes([
-            payload[4],
-            payload[5],
-            payload[6],
-            payload[7],
+            payload[4], payload[5], payload[6], payload[7],
         ])),
         amp_min: min,
         amp_max: max,
@@ -113,7 +106,11 @@ pub fn parse(bytes: &[u8]) -> Option<Vec<MarinerOccltRecord>> {
     Some(out)
 }
 
-pub fn to_bin_row(r: &MarinerOccltRecord, file_index: u64, record_index: u64) -> [f64; MOCC_STRIDE] {
+pub fn to_bin_row(
+    r: &MarinerOccltRecord,
+    file_index: u64,
+    record_index: u64,
+) -> [f64; MOCC_STRIDE] {
     [
         row_epoch(r),
         r.clock_hh as f64,
@@ -195,8 +192,8 @@ mod tests {
     use super::*;
 
     const MEASURED_SAMPLE_PREFIX: [u8; 16] = [
-        0x04, 0x35, 0x37, 0x3d, 0x3e, 0x38, 0x1e, 0x00, 0x3e, 0x09, 0x00, 0x01, 0x03, 0x05,
-        0x05, 0x0a,
+        0x04, 0x35, 0x37, 0x3d, 0x3e, 0x38, 0x1e, 0x00, 0x3e, 0x09, 0x00, 0x01, 0x03, 0x05, 0x05,
+        0x0a,
     ];
 
     fn measured_record_bytes(fill: u8) -> Vec<u8> {

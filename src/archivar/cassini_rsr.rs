@@ -84,7 +84,9 @@ pub fn parse_records(bytes: &[u8]) -> Option<Vec<RsrRecord>> {
     let n = bytes.len() / RECORD_BYTES;
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
-        out.push(read_record(&bytes[i * RECORD_BYTES..(i + 1) * RECORD_BYTES])?);
+        out.push(read_record(
+            &bytes[i * RECORD_BYTES..(i + 1) * RECORD_BYTES],
+        )?);
     }
     Some(out)
 }
