@@ -97,8 +97,7 @@ fn write_geometry(buf: &mut Vec<u8>, g: &Geometry, rows: usize) -> Option<()> {
         }
         Geometry::Pos3(v) => {
             if v.len() != rows
-                || v
-                    .iter()
+                || v.iter()
                     .any(|(x, y, z)| !x.is_finite() || !y.is_finite() || !z.is_finite())
             {
                 return None;
@@ -185,11 +184,9 @@ pub fn write_bin(bin: &SnirfBin) -> Option<Vec<u8>> {
         return None;
     }
     if let Some(list) = meas
-        && list.iter().any(|c| {
-            c.data_type_label
-                .as_ref()
-                .is_some_and(|s| s.len() > 0xFFFF)
-        })
+        && list
+            .iter()
+            .any(|c| c.data_type_label.as_ref().is_some_and(|s| s.len() > 0xFFFF))
     {
         return None;
     }
@@ -413,12 +410,22 @@ pub fn parse_bin(bytes: &[u8]) -> Option<SnirfBin> {
         off += 8;
     }
     let source_geometry = if flags & FLAG_SRC_POS != 0 {
-        Some(take_geometry(bytes, &mut off, nsources, flags & FLAG_SRC_3D != 0)?)
+        Some(take_geometry(
+            bytes,
+            &mut off,
+            nsources,
+            flags & FLAG_SRC_3D != 0,
+        )?)
     } else {
         None
     };
     let detector_geometry = if flags & FLAG_DET_POS != 0 {
-        Some(take_geometry(bytes, &mut off, ndetectors, flags & FLAG_DET_3D != 0)?)
+        Some(take_geometry(
+            bytes,
+            &mut off,
+            ndetectors,
+            flags & FLAG_DET_3D != 0,
+        )?)
     } else {
         None
     };
@@ -471,7 +478,9 @@ pub fn parse_bin(bytes: &[u8]) -> Option<SnirfBin> {
         } else {
             let mut v = Vec::with_capacity(time_n);
             for _ in 0..time_n {
-                v.push(f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?));
+                v.push(f64::from_le_bytes(
+                    bytes.get(off..off + 8)?.try_into().ok()?,
+                ));
                 off += 8;
             }
             Some(TimeBase::Series(v))
@@ -564,11 +573,7 @@ fn read_label_array(file: &Hdf5File, path: &str) -> Option<Vec<Option<String>>> 
                     .trim_end_matches('\0')
                     .trim()
                     .to_string();
-                if s.is_empty() {
-                    None
-                } else {
-                    Some(s)
-                }
+                if s.is_empty() { None } else { Some(s) }
             })
             .collect(),
     )
@@ -596,13 +601,19 @@ fn channel_rows(file: &Hdf5File, base: &str) -> Result<Vec<SnirfChannel>, String
     if let Some(v) = &dti
         && v.len() != n
     {
-        return Err(format!("{base}: sourceIndex {n} vs dataTypeIndex {}", v.len()));
+        return Err(format!(
+            "{base}: sourceIndex {n} vs dataTypeIndex {}",
+            v.len()
+        ));
     }
     let dtl = read_label_array(file, &format!("{base}/dataTypeLabel"));
     if let Some(v) = &dtl
         && v.len() != n
     {
-        return Err(format!("{base}: sourceIndex {n} vs dataTypeLabel {}", v.len()));
+        return Err(format!(
+            "{base}: sourceIndex {n} vs dataTypeLabel {}",
+            v.len()
+        ));
     }
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
@@ -750,7 +761,7 @@ pub fn parse_snirf(bytes: &[u8]) -> Result<SnirfExtract, String> {
         (c, s) => {
             return Err(format!(
                 "dataTimeSeries datatype class {c} size {s} — not numeric"
-            ))
+            ));
         }
     };
     let values = file
@@ -765,20 +776,20 @@ pub fn parse_snirf(bytes: &[u8]) -> Result<SnirfExtract, String> {
 
     let channels = measurement_channels(&file)?;
     let n_ml = channels.len();
-    let nchan = u32::try_from(n_ml)
-        .map_err(|_| format!("measurementList length {n_ml} beyond u32"))?;
+    let nchan =
+        u32::try_from(n_ml).map_err(|_| format!("measurementList length {n_ml} beyond u32"))?;
     let (channel_in_dim0, pnts) = match (d0 == n_ml as u64, d1 == n_ml as u64) {
         (true, true) => {
             return Err(format!(
                 "the channel axis stays ambiguous — both dataTimeSeries dims {d0} match the measurementList"
-            ))
+            ));
         }
         (true, false) => (true, d1),
         (false, true) => (false, d0),
         (false, false) => {
             return Err(format!(
                 "measurementList length {n_ml} matches neither dataTimeSeries dim {d0} nor {d1}"
-            ))
+            ));
         }
     };
     if pnts == 0 {
@@ -809,7 +820,7 @@ pub fn parse_snirf(bytes: &[u8]) -> Result<SnirfExtract, String> {
         n => {
             return Err(format!(
                 "time carries {n} points, the dataTimeSeries witnesses {pnts} rows"
-            ))
+            ));
         }
     };
 
@@ -830,9 +841,8 @@ pub fn parse_snirf(bytes: &[u8]) -> Result<SnirfExtract, String> {
     let source_geometry = probe_geometry(&file, "source")?;
     let detector_geometry = probe_geometry(&file, "detector")?;
     let nsources = match &source_geometry {
-        Some(g) => {
-            u32::try_from(geometry_rows(g)).map_err(|_| "source geometry rows beyond u32".to_string())?
-        }
+        Some(g) => u32::try_from(geometry_rows(g))
+            .map_err(|_| "source geometry rows beyond u32".to_string())?,
         None => channels
             .iter()
             .map(|c| c.source_index)
@@ -840,9 +850,8 @@ pub fn parse_snirf(bytes: &[u8]) -> Result<SnirfExtract, String> {
             .ok_or("measurementList carries no source")?,
     };
     let ndetectors = match &detector_geometry {
-        Some(g) => {
-            u32::try_from(geometry_rows(g)).map_err(|_| "detector geometry rows beyond u32".to_string())?
-        }
+        Some(g) => u32::try_from(geometry_rows(g))
+            .map_err(|_| "detector geometry rows beyond u32".to_string())?,
         None => channels
             .iter()
             .map(|c| c.detector_index)
@@ -1098,7 +1107,12 @@ mod tests {
         let si = h.ds(0, 4, &[n as u64], &i32s(src));
         let di = h.ds(0, 4, &[n as u64], &i32s(det));
         let wl = h.ds(0, 4, &[n as u64], &i32s(wli));
-        let dti = h.ds(0, 4, &[n as u64], &i32s(&(1..=n as i32).collect::<Vec<i32>>()));
+        let dti = h.ds(
+            0,
+            4,
+            &[n as u64],
+            &i32s(&(1..=n as i32).collect::<Vec<i32>>()),
+        );
         let mut raw = Vec::new();
         for s in ["HbO", "HbR"] {
             raw.extend_from_slice(s.as_bytes());
@@ -1124,7 +1138,12 @@ mod tests {
     fn fixture(ml_name: &str, time: Option<&[f64]>, src: &[i32], wl: &[f64]) -> Vec<u8> {
         let mut h = H5::new();
         let probe = probe_group(&mut h, wl, &[0.0, 0.0, 3.0, 0.0], &[1.0, 0.0, 4.0, 0.0]);
-        let series = h.ds(1, 4, &[4, 2], &f32s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
+        let series = h.ds(
+            1,
+            4,
+            &[4, 2],
+            &f32s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]),
+        );
         let mut children: Vec<(&str, usize)> = vec![("dataTimeSeries", series)];
         if let Some(t) = time {
             let t_ds = h.ds(1, 8, &[t.len() as u64], &f64s(t));
@@ -1191,8 +1210,14 @@ mod tests {
         assert_eq!(ex.ndetectors, 2);
         assert_eq!(ex.labels, vec!["S1-D1@1", "S2-D2@1"]);
         assert_eq!(ex.wavelengths, vec![760.0, 850.0]);
-        assert_eq!(ex.source_geometry, Some(Geometry::Pos2(vec![(0.0, 0.0), (3.0, 0.0)])));
-        assert_eq!(ex.detector_geometry, Some(Geometry::Pos2(vec![(1.0, 0.0), (4.0, 0.0)])));
+        assert_eq!(
+            ex.source_geometry,
+            Some(Geometry::Pos2(vec![(0.0, 0.0), (3.0, 0.0)]))
+        );
+        assert_eq!(
+            ex.detector_geometry,
+            Some(Geometry::Pos2(vec![(1.0, 0.0), (4.0, 0.0)]))
+        );
         assert_eq!(
             ex.meas_list,
             vec![
@@ -1235,8 +1260,18 @@ mod tests {
     #[test]
     fn per_channel_measurement_lists_extract() {
         let mut h = H5::new();
-        let probe = probe_group(&mut h, &[760.0, 850.0], &[0.0, 0.0, 3.0, 0.0], &[1.0, 0.0, 4.0, 0.0]);
-        let series = h.ds(1, 4, &[4, 2], &f32s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
+        let probe = probe_group(
+            &mut h,
+            &[760.0, 850.0],
+            &[0.0, 0.0, 3.0, 0.0],
+            &[1.0, 0.0, 4.0, 0.0],
+        );
+        let series = h.ds(
+            1,
+            4,
+            &[4, 2],
+            &f32s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]),
+        );
         let time = h.ds(1, 8, &[4], &f64s(&[0.0, 0.1, 0.2, 0.3]));
         let ch1 = scalar_ml(&mut h, 1, 1, 1, 1, "HbO");
         let ch2 = scalar_ml(&mut h, 2, 2, 1, 2, "HbR");
@@ -1277,11 +1312,29 @@ mod tests {
     #[test]
     fn transposed_series_reads_time_major() {
         let mut h = H5::new();
-        let probe = probe_group(&mut h, &[760.0, 850.0], &[0.0, 0.0, 3.0, 0.0], &[1.0, 0.0, 4.0, 0.0]);
-        let series = h.ds(1, 8, &[2, 4], &f64s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
+        let probe = probe_group(
+            &mut h,
+            &[760.0, 850.0],
+            &[0.0, 0.0, 3.0, 0.0],
+            &[1.0, 0.0, 4.0, 0.0],
+        );
+        let series = h.ds(
+            1,
+            8,
+            &[2, 4],
+            &f64s(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]),
+        );
         let time = h.ds(1, 8, &[4], &f64s(&[0.0, 0.1, 0.2, 0.3]));
         let ml = array_ml_group(&mut h, &[1, 2], &[1, 2], &[1, 1]);
-        let bytes = finish_nirs(h, probe, vec![("dataTimeSeries", series), ("time", time), ("measurementList1", ml)]);
+        let bytes = finish_nirs(
+            h,
+            probe,
+            vec![
+                ("dataTimeSeries", series),
+                ("time", time),
+                ("measurementList1", ml),
+            ],
+        );
         let ex = parse_snirf(&bytes).expect("the transposed series extracts");
         assert_eq!(ex.nchan, 2);
         assert_eq!(ex.pnts, 4);
@@ -1300,7 +1353,13 @@ mod tests {
             &[760.0, 850.0],
         );
         let ex = parse_snirf(&bytes).expect("the spacing pair extracts");
-        assert_eq!(ex.time, Some(TimeBase::Spacing { start: 5.0, step: 0.02 }));
+        assert_eq!(
+            ex.time,
+            Some(TimeBase::Spacing {
+                start: 5.0,
+                step: 0.02
+            })
+        );
         assert_eq!(ex.pnts, 4);
     }
 
@@ -1321,32 +1380,60 @@ mod tests {
     #[test]
     fn ambiguous_square_dims_skip() {
         let mut h = H5::new();
-        let probe = probe_group(&mut h, &[760.0, 850.0], &[0.0, 0.0, 3.0, 0.0], &[1.0, 0.0, 4.0, 0.0]);
+        let probe = probe_group(
+            &mut h,
+            &[760.0, 850.0],
+            &[0.0, 0.0, 3.0, 0.0],
+            &[1.0, 0.0, 4.0, 0.0],
+        );
         let series = h.ds(1, 4, &[2, 2], &f32s(&[1.0, 2.0, 3.0, 4.0]));
         let time = h.ds(1, 8, &[2], &f64s(&[0.0, 0.1]));
         let ml = array_ml_group(&mut h, &[1, 2], &[1, 2], &[1, 1]);
-        let bytes = finish_nirs(h, probe, vec![("dataTimeSeries", series), ("time", time), ("measurementList1", ml)]);
+        let bytes = finish_nirs(
+            h,
+            probe,
+            vec![
+                ("dataTimeSeries", series),
+                ("time", time),
+                ("measurementList1", ml),
+            ],
+        );
         let err = parse_snirf(&bytes).unwrap_err();
         assert!(err.contains("ambiguous"), "{err}");
     }
 
     #[test]
     fn time_contradiction_skips() {
-        let bytes = fixture("measurementList1", Some(&[0.0, 0.1, 0.2]), &[1, 2], &[760.0, 850.0]);
+        let bytes = fixture(
+            "measurementList1",
+            Some(&[0.0, 0.1, 0.2]),
+            &[1, 2],
+            &[760.0, 850.0],
+        );
         let err = parse_snirf(&bytes).unwrap_err();
         assert!(err.contains("witnesses"), "{err}");
     }
 
     #[test]
     fn implausible_wavelength_skips() {
-        let bytes = fixture("measurementList1", Some(&[0.0, 0.1, 0.2, 0.3]), &[1, 2], &[760.0, -5.0]);
+        let bytes = fixture(
+            "measurementList1",
+            Some(&[0.0, 0.1, 0.2, 0.3]),
+            &[1, 2],
+            &[760.0, -5.0],
+        );
         let err = parse_snirf(&bytes).unwrap_err();
         assert!(err.contains("wavelength carries"), "{err}");
     }
 
     #[test]
     fn source_index_beyond_geometry_skips() {
-        let bytes = fixture("measurementList1", Some(&[0.0, 0.1, 0.2, 0.3]), &[3, 2], &[760.0, 850.0]);
+        let bytes = fixture(
+            "measurementList1",
+            Some(&[0.0, 0.1, 0.2, 0.3]),
+            &[3, 2],
+            &[760.0, 850.0],
+        );
         let err = parse_snirf(&bytes).unwrap_err();
         assert!(err.contains("exceeds"), "{err}");
     }
@@ -1354,11 +1441,29 @@ mod tests {
     #[test]
     fn nan_sample_skips() {
         let mut h = H5::new();
-        let probe = probe_group(&mut h, &[760.0, 850.0], &[0.0, 0.0, 3.0, 0.0], &[1.0, 0.0, 4.0, 0.0]);
-        let series = h.ds(1, 4, &[4, 2], &f32s(&[1.0, f32::NAN, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
+        let probe = probe_group(
+            &mut h,
+            &[760.0, 850.0],
+            &[0.0, 0.0, 3.0, 0.0],
+            &[1.0, 0.0, 4.0, 0.0],
+        );
+        let series = h.ds(
+            1,
+            4,
+            &[4, 2],
+            &f32s(&[1.0, f32::NAN, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]),
+        );
         let time = h.ds(1, 8, &[4], &f64s(&[0.0, 0.1, 0.2, 0.3]));
         let ml = array_ml_group(&mut h, &[1, 2], &[1, 2], &[1, 1]);
-        let bytes = finish_nirs(h, probe, vec![("dataTimeSeries", series), ("time", time), ("measurementList1", ml)]);
+        let bytes = finish_nirs(
+            h,
+            probe,
+            vec![
+                ("dataTimeSeries", series),
+                ("time", time),
+                ("measurementList1", ml),
+            ],
+        );
         let err = parse_snirf(&bytes).unwrap_err();
         assert!(err.contains("carries NaN"), "{err}");
     }
@@ -1404,7 +1509,10 @@ mod tests {
     #[test]
     fn wire_roundtrip_double_spacing_pos3_without_measlist() {
         let mut bin = bin_with_samples(Samples::Double(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]));
-        bin.time = Some(TimeBase::Spacing { start: 2.5, step: 0.05 });
+        bin.time = Some(TimeBase::Spacing {
+            start: 2.5,
+            step: 0.05,
+        });
         bin.source_geometry = Some(Geometry::Pos3(vec![(0.0, 0.0, 1.0), (3.0, 0.0, 1.0)]));
         bin.detector_geometry = Some(Geometry::Pos3(vec![(1.0, 0.0, 1.0), (4.0, 0.0, 1.0)]));
         bin.meas_list = None;
@@ -1425,7 +1533,10 @@ mod tests {
         assert!(parse_bin(b"").is_none());
         assert!(parse_bin(b"SNIR").is_none());
         assert!(parse_bin(b"XXXX").is_none());
-        let bytes = write_bin(&bin_with_samples(Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))).unwrap();
+        let bytes = write_bin(&bin_with_samples(Samples::Single(vec![
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+        ])))
+        .unwrap();
         assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
     }
 
@@ -1437,12 +1548,13 @@ mod tests {
         let bin = bin_with_samples(Samples::Single(vec![1.0, 2.0, 3.0]));
         assert!(write_bin(&bin).is_none());
         let mut bin = bin_with_samples(Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]));
-        bin.time = Some(TimeBase::Spacing { start: 0.0, step: 0.0 });
+        bin.time = Some(TimeBase::Spacing {
+            start: 0.0,
+            step: 0.0,
+        });
         assert!(write_bin(&bin).is_none());
         let mut bin = bin_with_samples(Samples::Single(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]));
         bin.wavelengths = vec![760.0, -850.0];
         assert!(write_bin(&bin).is_none());
     }
 }
-
-
