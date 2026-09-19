@@ -114,7 +114,8 @@ mod tests {
 
     #[test]
     fn falls_back_to_the_source_id_without_a_pmid() {
-        let body = r#"{"resultList":{"result":[{"id":"PPR123","source":"PPR","title":"A preprint"}]}}"#;
+        let body =
+            r#"{"resultList":{"result":[{"id":"PPR123","source":"PPR","title":"A preprint"}]}}"#;
         assert_eq!(
             parse_europepmc(body),
             vec!["url https://europepmc.org/article/PPR/PPR123\ttitle: A preprint".to_string()]
