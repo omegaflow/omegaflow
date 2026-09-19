@@ -3,7 +3,7 @@
   session: Bau-Folge 90
   class: handover
   date: 2026-09-19
-  sha256: 6c6a08cdb4a4c4f871ecdab9b8f5114fafbb504f4df063797825e85bc2122fc6
+  sha256: 234e707ba9e708df04011ef2a435c54322cc069e3191a38442857c3621614d0a
   status: live
 -->
 # Handover — Bau-Folge 90 (2026-09-19)
@@ -50,6 +50,9 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   reduziert. `te-gate` `35451283398` @`1934c012` `pending` (kein Verdikt lesbar).
   `measure-gates` `35454958335` @`5cba9f70` failure (`silence_map_probe` exit 101,
   fremd). Jüngster `ci-check` `35456571554` @`49801083` `pending` (fremd).
+  Am Session-Ende: eigener Commit `1b0c3303` gepusht (die fremde Linie hat ihn im
+  Fast-Forward mitgenommen, HEAD `2c13f7da`); `measure-gates` `35457737916`
+  @`2c13f7da` `pending` — dispatcht, misst die neuen Betti-0-Gates.
 
 ## Zwei rote TE-Gates — der folge89-Fix ist unvollständig · `pending`
 
