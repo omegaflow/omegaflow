@@ -3176,8 +3176,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
                 let btree = *btree;
                 let chunk_dims = chunk_dims.clone();
                 let filtered = !obj.filters.is_empty();
-                let (recs, v1_index) =
-                    chunk_records_with(&mut self.reader, btree, rank, filtered)?;
+                let (recs, v1_index) = chunk_records_with(&mut self.reader, btree, rank, filtered)?;
                 let mut out = vec![0u8; count * elem_size];
                 for rec in recs {
                     let scaled: Vec<usize> = if v1_index {
@@ -3192,8 +3191,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
                     if scaled.len() != rank {
                         return Err(Hdf5Note::Chunk { off: 0 });
                     }
-                    let chunk_elems: usize =
-                        chunk_dims.iter().fold(1, |a, d| a * (*d as usize));
+                    let chunk_elems: usize = chunk_dims.iter().fold(1, |a, d| a * (*d as usize));
                     let len = if rec.size > 0 {
                         rec.size
                     } else {
@@ -4253,8 +4251,7 @@ mod tests {
             !served_after_a.iter().any(|&(off, _)| off == B_ADDR),
             "the sibling dataset B header is never fetched"
         );
-        let (_again, _again_ds, _again_dt) =
-            file.dataset("A").expect("dataset A resolves again");
+        let (_again, _again_ds, _again_dt) = file.dataset("A").expect("dataset A resolves again");
         assert_eq!(
             served.borrow().len(),
             served_after_a.len(),
@@ -4348,8 +4345,7 @@ mod tests {
         let sb_ck = jenkins_lookup3(&full[..44]);
         full[44..48].copy_from_slice(&sb_ck.to_le_bytes());
         full[ROOT..ROOT + root_header.len()].copy_from_slice(&root_header);
-        full[VAR_ADDR as usize..VAR_ADDR as usize + var_header.len()]
-            .copy_from_slice(&var_header);
+        full[VAR_ADDR as usize..VAR_ADDR as usize + var_header.len()].copy_from_slice(&var_header);
 
         let base = &full[..512];
         let served = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
