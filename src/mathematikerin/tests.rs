@@ -596,6 +596,68 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
 }
 
 #[test]
+fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_tick_state.bin".to_string();
+
+    app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    app.tick();
+    let sum1: f32 = app.probe_omega.iter().sum();
+    let delta1 = sum1 - 0.0f32;
+    let g1 = sum1.abs();
+    let v_c1 = delta1.abs();
+    let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+    let expected1 = 0.0f32 + (perm_target(g1, v_c1) - 0.0f32) * alpha1;
+    assert_eq!(app.field_permeability, expected1);
+    assert_eq!(app.prev_omega_sum, sum1);
+    assert_eq!(app.natural_latency_ticks, 1);
+
+    app.last_hud = None;
+    app.probe_omega = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
+    app.tick();
+    let sum2: f32 = app.probe_omega.iter().sum();
+    let delta2 = sum2 - sum1;
+    assert_eq!(app.prev_omega_sum, sum2);
+    assert_eq!(app.prev_delta, delta2);
+
+    app.prev_omega_sum = 0.0;
+    app.prev_delta = 0.0;
+    app.natural_latency_ticks = 1;
+    app.probe_omega = [0.0; 9];
+    for _ in 0..20 {
+        app.last_hud = None;
+        app.tick();
+    }
+    assert_eq!(app.field_permeability, PERM_GROUND);
+}
+
+#[test]
 fn the_aim_law_maps_thrust_to_pan_tilt_pulse_widths() {
     assert_eq!(aim_pulse_ms([0.0, 0.0, 0.0]), (None, None));
     let (pan, tilt) = aim_pulse_ms([1.0, 0.0, 0.0]);
