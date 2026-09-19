@@ -2,7 +2,7 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    TeNull, TeStatsParams, conditional_te_stats_lagged_n, transfer_entropy_binned,
+    LaggedCond, TeNull, TeStatsParams, conditional_te_stats_lagged_n, transfer_entropy_binned,
     transfer_entropy_conditional_binned_n,
 };
 use omegaflow_measure::eeglab::{
@@ -406,11 +406,23 @@ fn run_pair(
         let mut cond_arrow_ba = 0usize;
         for lag in 1..=lag_max {
             let lag_seed = seed ^ (lag as u64).wrapping_mul(LAG_SEED_MIX);
-            let te_ab = transfer_entropy_conditional_binned_n(b, a, &[c], lag, bins);
+            let te_ab = transfer_entropy_conditional_binned_n(
+                b,
+                a,
+                &[LaggedCond {
+                    series: c.as_slice(),
+                    lag: 0,
+                }],
+                lag,
+                bins,
+            );
             let fam_ab = conditional_te_stats_lagged_n(
                 b,
                 a,
-                &[c],
+                &[LaggedCond {
+                    series: c.as_slice(),
+                    lag: 0,
+                }],
                 TeStatsParams {
                     lag,
                     max_lag: lag,
@@ -421,11 +433,23 @@ fn run_pair(
                 },
             )
             .map(|(_, _, thr)| thr);
-            let te_ba = transfer_entropy_conditional_binned_n(a, b, &[c], lag, bins);
+            let te_ba = transfer_entropy_conditional_binned_n(
+                a,
+                b,
+                &[LaggedCond {
+                    series: c.as_slice(),
+                    lag: 0,
+                }],
+                lag,
+                bins,
+            );
             let fam_ba = conditional_te_stats_lagged_n(
                 a,
                 b,
-                &[c],
+                &[LaggedCond {
+                    series: c.as_slice(),
+                    lag: 0,
+                }],
                 TeStatsParams {
                     lag,
                     max_lag: lag,
@@ -676,12 +700,24 @@ mod tests {
             };
         }
         let lag_seed = SEED ^ (delay as u64).wrapping_mul(LAG_SEED_MIX);
-        let te = transfer_entropy_conditional_binned_n(&b, &a, &[&c], delay, 4)
-            .expect("the conditional TE is measurable");
+        let te = transfer_entropy_conditional_binned_n(
+            &b,
+            &a,
+            &[LaggedCond {
+                series: c.as_slice(),
+                lag: 0,
+            }],
+            delay,
+            4,
+        )
+        .expect("the conditional TE is measurable");
         let (_, _, fam) = conditional_te_stats_lagged_n(
             &b,
             &a,
-            &[&c],
+            &[LaggedCond {
+                series: c.as_slice(),
+                lag: 0,
+            }],
             TeStatsParams {
                 lag: delay,
                 max_lag: delay,

@@ -1,6 +1,6 @@
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::te::{
-    TeEstimator, TeNull, TeStats2Params, TeStatsParams, TeSurrogateParams,
+    LaggedCond, TeEstimator, TeNull, TeStats2Params, TeStatsParams, TeSurrogateParams,
     conditional_te_stats_lagged, conditional_te_stats_lagged_2, conditional_te_stats_lagged_n,
     conditional_te_surrogates_n, transfer_entropy_conditional_2,
     transfer_entropy_conditional_binned_n, transfer_entropy_conditional_h,
@@ -344,7 +344,7 @@ fn joint_key(indices: &[usize], bins: usize) -> u64 {
 fn occupied_joint_cells(
     x: &[f32],
     y: &[f32],
-    conds: &[&[f32]],
+    conds: &[LaggedCond<'_>],
     lag: usize,
     bins: usize,
 ) -> Option<(usize, usize)> {
@@ -353,7 +353,7 @@ fn occupied_joint_cells(
         return None;
     }
     for c in conds {
-        if c.len() < n {
+        if c.series.len() < n {
             return None;
         }
     }
@@ -368,7 +368,7 @@ fn occupied_joint_cells(
     let range_y = mx_y - mn_y;
     let mut cond_edges: Vec<(f32, f32)> = Vec::with_capacity(conds.len());
     for c in conds {
-        let (mn, mx) = bin_edges(c)?;
+        let (mn, mx) = bin_edges(c.series)?;
         cond_edges.push((mn, mx - mn));
     }
     let bx: Vec<usize> = x
@@ -382,7 +382,12 @@ fn occupied_joint_cells(
     let bcond: Vec<Vec<usize>> = conds
         .iter()
         .zip(&cond_edges)
-        .map(|(c, &(mn, range))| c.iter().map(|&v| bin_index(v, mn, range, bins)).collect())
+        .map(|(c, &(mn, range))| {
+            c.series
+                .iter()
+                .map(|&v| bin_index(v, mn, range, bins))
+                .collect()
+        })
         .collect();
     let mut keybuf: Vec<usize> = Vec::with_capacity(conds.len() + 3);
     let mut seen: std::collections::HashSet<u64> = std::collections::HashSet::new();
@@ -650,8 +655,13 @@ fn main() {
                         )
                     }
                     _ => {
-                        let conds: Vec<&[f32]> =
-                            confs.iter().map(|&ci| ev.lines[ci].as_slice()).collect();
+                        let conds: Vec<LaggedCond> = confs
+                            .iter()
+                            .map(|&ci| LaggedCond {
+                                series: ev.lines[ci].as_slice(),
+                                lag: 0,
+                            })
+                            .collect();
                         if let Some((occ, mm)) = occupied_joint_cells(hot, cool, &conds, lag, bins)
                         {
                             occ_sum += occ;
