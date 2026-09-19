@@ -4598,7 +4598,11 @@ fn test_arpansa_uv_xml_emits_station_channels() {
             assert_eq!(v[0].1.force, 0);
             assert_eq!(v[0].1.kernel, 0);
             assert_eq!(v[0].1.unit, "UVI");
-            assert!(matches!(v[0].0.position, super::Position::Source));
+            assert!(matches!(
+                &v[0].0.position,
+                super::Position::Surface { lat, lon, .. }
+                    if (*lat - -34.95).abs() < 1e-9 && (*lon - 138.52).abs() < 1e-9
+            ));
         }
         _ => panic!("extract variant unexpected"),
     }
