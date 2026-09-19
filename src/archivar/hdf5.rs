@@ -772,6 +772,90 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     Ok((out, diag))
 }
 
+fn parse_object_header<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    reader: &mut Hdf5WindowReader<F>,
+    addr: u64,
+    offset_size: usize,
+    length_size: usize,
+) -> Result<Hdf5Object, Hdf5Note> {
+    let (msgs, diag) = gather_messages(reader, addr, offset_size, length_size)?;
+    let mut obj = Hdf5Object {
+        addr,
+        header: diag,
+        ..Default::default()
+    };
+    let mut links = Vec::new();
+    let mut compact_links = Vec::new();
+    let mut fill_old: Option<RawMessage> = None;
+    let mut fill_new: Option<RawMessage> = None;
+    for m in &msgs {
+        if m.flags & MSG_FLAG_SHARED != 0 {
+            let shared = parse_shared_ref(&m.data, offset_size, length_size)?;
+            match (m.typ, shared.share_type) {
+                (MSG_DATATYPE, SHARE_TYPE_COMMITTED) => {
+                    obj.committed_datatype = Some(shared.addr);
+                }
+                _ => {
+                    return Err(Hdf5Note::SharedMessage);
+                }
+            }
+            continue;
+        }
+        match m.typ {
+            MSG_DATASPACE => {
+                obj.dataspace = Some(parse_dataspace(&m.data, 0)?);
+            }
+            MSG_DATATYPE => {
+                obj.datatype = Some(parse_datatype(&m.data, 0)?.0);
+            }
+            MSG_LAYOUT => {
+                obj.layout = Some(parse_layout(&m.data, 0)?);
+            }
+            MSG_FILTERS => {
+                obj.filters = parse_filters(&m.data, 0)?;
+            }
+            MSG_FILL => {
+                fill_new = Some(m.clone());
+            }
+            MSG_FILL_OLD => {
+                fill_old = Some(m.clone());
+            }
+            MSG_GROUP_INFO => {
+                obj.is_group = true;
+            }
+            MSG_LINK_INFO => {
+                obj.is_group = true;
+                links = read_links_modern(reader, m)?;
+            }
+            MSG_LINK => {
+                compact_links.push(parse_link(&m.data, 0)?);
+            }
+            MSG_SYMBOL_TABLE => {
+                obj.is_group = true;
+                links = read_symtab_group(reader, m)?;
+            }
+            _ => {}
+        }
+    }
+    if let Some(f) = fill_new {
+        let (defined, data) = parse_fill(&f)?;
+        obj.fill_defined = defined;
+        obj.fill = data;
+    } else if let Some(f) = fill_old {
+        let (defined, data) = parse_fill_old(&f)?;
+        obj.fill_defined = defined;
+        obj.fill = data;
+    }
+    let mut attrs = attr_messages(&msgs)?;
+    attrs.extend(dense_attrs(reader, &msgs)?);
+    obj.attrs = attrs;
+    if links.is_empty() {
+        links = compact_links;
+    }
+    obj.links = links;
+    Ok(obj)
+}
+
 fn parse_dataspace(buf: &[u8], off: usize) -> Result<Hdf5Dataspace, Hdf5Note> {
     if off + 2 > buf.len() {
         return Err(Hdf5Note::EndAtByte { off });
@@ -2127,6 +2211,161 @@ fn scaled_to_coords(scaled: &[u64], chunk_dims: &[u32], v1_index: bool) -> Optio
     Some(out)
 }
 
+fn chunk_records_with<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    reader: &mut Hdf5WindowReader<F>,
+    btree: u64,
+    rank: usize,
+    filtered: bool,
+) -> Result<(Vec<ChunkRec>, bool), Hdf5Note> {
+    let sig = reader.read(btree, 4)?;
+    if sig.as_slice() == b"BTHD" {
+        let (typ, hdr) = parse_btree_header(reader, btree)?;
+        if typ != 10 && typ != 11 {
+            return Err(Hdf5Note::Btree {
+                typ,
+                off: btree as usize,
+            });
+        }
+        Ok((chunk_records(reader, &hdr, rank, filtered)?, false))
+    } else {
+        Ok((v1_chunk_records(reader, btree, rank)?, true))
+    }
+}
+
+fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+    base: &[u8],
+    obj: &Hdf5Object,
+    ds: &Hdf5Dataspace,
+    dt: &Hdf5Datatype,
+    coords: &[u64],
+    mut fetch: F,
+) -> Result<Vec<f64>, ChunkReadDiag> {
+    if dt.class == 9 {
+        return Err(ChunkReadDiag {
+            stage: "vlen dataset",
+            note: Some(Hdf5Note::VlenNotRead),
+        });
+    }
+    let elem_size = dt.size;
+    let rank = ds.dims.len();
+    if rank == 0 {
+        return Err(ChunkReadDiag {
+            stage: "rank zero",
+            note: None,
+        });
+    }
+    if coords.len() != rank {
+        return Err(ChunkReadDiag {
+            stage: "coords rank mismatch",
+            note: None,
+        });
+    }
+    let chunk_dims = match obj.layout.as_ref() {
+        Some(Hdf5Layout::Chunked {
+            chunk_dims,
+            elem_size: declared,
+            ..
+        }) => {
+            if *declared as usize != elem_size {
+                return Err(ChunkReadDiag {
+                    stage: "declared elem size mismatch",
+                    note: None,
+                });
+            }
+            chunk_dims.clone()
+        }
+        _ => {
+            return Err(ChunkReadDiag {
+                stage: "layout not chunked",
+                note: None,
+            });
+        }
+    };
+    let btree = match obj.layout.as_ref() {
+        Some(Hdf5Layout::Chunked { btree, .. }) => *btree,
+        _ => {
+            return Err(ChunkReadDiag {
+                stage: "layout not chunked",
+                note: None,
+            });
+        }
+    };
+    let filtered = !obj.filters.is_empty();
+    let mut reader = Hdf5WindowReader::new(base, &mut fetch);
+    let (recs, v1_index) =
+        chunk_records_with(&mut reader, btree, rank, filtered).map_err(|note| ChunkReadDiag {
+            stage: "chunk index read",
+            note: Some(note),
+        })?;
+    drop(reader);
+    let rec = recs
+        .into_iter()
+        .find(|r| scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords))
+        .ok_or(ChunkReadDiag {
+            stage: "chunk not found",
+            note: None,
+        })?;
+    let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
+    let stored_len = if rec.size > 0 {
+        rec.size
+    } else {
+        chunk_elems * elem_size
+    };
+    let mut raw = fetch(rec.addr, stored_len as u64).ok_or(ChunkReadDiag {
+        stage: "chunk data fetch void",
+        note: Some(Hdf5Note::AbsentAtByte {
+            off: rec.addr as usize,
+        }),
+    })?;
+    if !obj.filters.is_empty() {
+        apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).map_err(|note| {
+            ChunkReadDiag {
+                stage: "chunk filter",
+                note: Some(note),
+            }
+        })?;
+    }
+    let mut actual_elems = 1usize;
+    for d in 0..rank {
+        let start = coords[d]
+            .checked_mul(chunk_dims[d] as u64)
+            .ok_or(ChunkReadDiag {
+                stage: "coords overflow",
+                note: None,
+            })?;
+        let avail = ds.dims[d].saturating_sub(start);
+        actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
+    }
+    let raw_elems = raw.len() / elem_size;
+    let n = raw_elems.min(actual_elems);
+    let mut out = Vec::with_capacity(n);
+    for i in 0..n {
+        out.push(decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
+            stage: "numeric decode",
+            note: Some(note),
+        })?);
+    }
+    let scale = obj
+        .attrs
+        .iter()
+        .find(|a| a.name == "scale_factor")
+        .and_then(attr_number);
+    if let Some(scale) = scale {
+        let offset = obj
+            .attrs
+            .iter()
+            .find(|a| a.name == "add_offset")
+            .and_then(attr_number);
+        for v in out.iter_mut() {
+            *v = match offset {
+                Some(o) => *v * scale + o,
+                None => *v * scale,
+            };
+        }
+    }
+    Ok(out)
+}
+
 const WGS84_EQUATORIAL_M: f64 = 6_378_137.0;
 const WGS84_POLAR_M: f64 = 6_356_752.314_245;
 
@@ -2261,87 +2500,15 @@ impl<'a> Hdf5File<'a> {
             if addr == UNDEF || objects.contains_key(&addr) {
                 continue;
             }
-            let (msgs, diag) = gather_messages(&mut reader, addr, offset_size, length_size)?;
-            let mut obj = Hdf5Object {
-                addr,
-                header: diag,
-                ..Default::default()
-            };
-            let mut links = Vec::new();
-            let mut compact_links = Vec::new();
-            let mut fill_old: Option<RawMessage> = None;
-            let mut fill_new: Option<RawMessage> = None;
-            for m in &msgs {
-                if m.flags & MSG_FLAG_SHARED != 0 {
-                    let shared = parse_shared_ref(&m.data, offset_size, length_size)?;
-                    match (m.typ, shared.share_type) {
-                        (MSG_DATATYPE, SHARE_TYPE_COMMITTED) => {
-                            obj.committed_datatype = Some(shared.addr);
-                            stack.push(shared.addr);
-                        }
-                        _ => {
-                            return Err(Hdf5Note::SharedMessage);
-                        }
-                    }
-                    continue;
-                }
-                match m.typ {
-                    MSG_DATASPACE => {
-                        obj.dataspace = Some(parse_dataspace(&m.data, 0)?);
-                    }
-                    MSG_DATATYPE => {
-                        obj.datatype = Some(parse_datatype(&m.data, 0)?.0);
-                    }
-                    MSG_LAYOUT => {
-                        obj.layout = Some(parse_layout(&m.data, 0)?);
-                    }
-                    MSG_FILTERS => {
-                        obj.filters = parse_filters(&m.data, 0)?;
-                    }
-                    MSG_FILL => {
-                        fill_new = Some(m.clone());
-                    }
-                    MSG_FILL_OLD => {
-                        fill_old = Some(m.clone());
-                    }
-                    MSG_GROUP_INFO => {
-                        obj.is_group = true;
-                    }
-                    MSG_LINK_INFO => {
-                        obj.is_group = true;
-                        links = read_links_modern(&mut reader, m)?;
-                    }
-                    MSG_LINK => {
-                        compact_links.push(parse_link(&m.data, 0)?);
-                    }
-                    MSG_SYMBOL_TABLE => {
-                        obj.is_group = true;
-                        links = read_symtab_group(&mut reader, m)?;
-                    }
-                    _ => {}
-                }
+            let obj = parse_object_header(&mut reader, addr, offset_size, length_size)?;
+            if let Some(c) = obj.committed_datatype {
+                stack.push(c);
             }
-            if let Some(f) = fill_new {
-                let (defined, data) = parse_fill(&f)?;
-                obj.fill_defined = defined;
-                obj.fill = data;
-            } else if let Some(f) = fill_old {
-                let (defined, data) = parse_fill_old(&f)?;
-                obj.fill_defined = defined;
-                obj.fill = data;
-            }
-            let mut attrs = attr_messages(&msgs)?;
-            attrs.extend(dense_attrs(&mut reader, &msgs)?);
-            obj.attrs = attrs;
-            if links.is_empty() {
-                links = compact_links;
-            }
-            for l in &links {
+            for l in &obj.links {
                 if l.addr != UNDEF {
                     stack.push(l.addr);
                 }
             }
-            obj.links = links;
             objects.insert(addr, obj);
         }
         let committed: Vec<(u64, u64)> = objects
@@ -2600,19 +2767,7 @@ impl<'a> Hdf5File<'a> {
         };
         let filtered = !obj.filters.is_empty();
         let mut reader = Hdf5WindowReader::new(self.buf, fetch);
-        let sig = reader.read(btree, 4)?;
-        if sig.as_slice() == b"BTHD" {
-            let (typ, hdr) = parse_btree_header(&mut reader, btree)?;
-            if typ != 10 && typ != 11 {
-                return Err(Hdf5Note::Btree {
-                    typ,
-                    off: btree as usize,
-                });
-            }
-            Ok((chunk_records(&mut reader, &hdr, rank, filtered)?, false))
-        } else {
-            Ok((v1_chunk_records(&mut reader, btree, rank)?, true))
-        }
+        chunk_records_with(&mut reader, btree, rank, filtered)
     }
 
     pub fn chunk_index(&self, dataset: &str) -> Option<Vec<(Vec<u64>, u64)>> {
@@ -2663,125 +2818,13 @@ impl<'a> Hdf5File<'a> {
         &self,
         dataset: &str,
         coords: &[u64],
-        mut fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
     ) -> Result<Vec<f64>, ChunkReadDiag> {
         let (obj, ds, dt) = self.dataset(dataset).map_err(|note| ChunkReadDiag {
             stage: "dataset absent",
             note: Some(note),
         })?;
-        if dt.class == 9 {
-            return Err(ChunkReadDiag {
-                stage: "vlen dataset",
-                note: Some(Hdf5Note::VlenNotRead),
-            });
-        }
-        let elem_size = dt.size;
-        let rank = ds.dims.len();
-        if rank == 0 {
-            return Err(ChunkReadDiag {
-                stage: "rank zero",
-                note: None,
-            });
-        }
-        if coords.len() != rank {
-            return Err(ChunkReadDiag {
-                stage: "coords rank mismatch",
-                note: None,
-            });
-        }
-        let chunk_dims = match obj.layout.as_ref() {
-            Some(Hdf5Layout::Chunked {
-                chunk_dims,
-                elem_size: declared,
-                ..
-            }) => {
-                if *declared as usize != elem_size {
-                    return Err(ChunkReadDiag {
-                        stage: "declared elem size mismatch",
-                        note: None,
-                    });
-                }
-                chunk_dims.clone()
-            }
-            _ => {
-                return Err(ChunkReadDiag {
-                    stage: "layout not chunked",
-                    note: None,
-                });
-            }
-        };
-        let (recs, v1_index) = self
-            .chunk_records_of(obj, rank, &mut fetch)
-            .map_err(|note| ChunkReadDiag {
-                stage: "chunk index read",
-                note: Some(note),
-            })?;
-        let rec = recs
-            .into_iter()
-            .find(|r| scaled_to_coords(&r.scaled, &chunk_dims, v1_index).as_deref() == Some(coords))
-            .ok_or(ChunkReadDiag {
-                stage: "chunk not found",
-                note: None,
-            })?;
-        let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
-        let stored_len = if rec.size > 0 {
-            rec.size
-        } else {
-            chunk_elems * elem_size
-        };
-        let mut raw = fetch(rec.addr, stored_len as u64).ok_or(ChunkReadDiag {
-            stage: "chunk data fetch void",
-            note: Some(Hdf5Note::AbsentAtByte {
-                off: rec.addr as usize,
-            }),
-        })?;
-        if !obj.filters.is_empty() {
-            apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).map_err(|note| {
-                ChunkReadDiag {
-                    stage: "chunk filter",
-                    note: Some(note),
-                }
-            })?;
-        }
-        let mut actual_elems = 1usize;
-        for d in 0..rank {
-            let start = coords[d]
-                .checked_mul(chunk_dims[d] as u64)
-                .ok_or(ChunkReadDiag {
-                    stage: "coords overflow",
-                    note: None,
-                })?;
-            let avail = ds.dims[d].saturating_sub(start);
-            actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
-        }
-        let raw_elems = raw.len() / elem_size;
-        let n = raw_elems.min(actual_elems);
-        let mut out = Vec::with_capacity(n);
-        for i in 0..n {
-            out.push(decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
-                stage: "numeric decode",
-                note: Some(note),
-            })?);
-        }
-        let scale = obj
-            .attrs
-            .iter()
-            .find(|a| a.name == "scale_factor")
-            .and_then(attr_number);
-        if let Some(scale) = scale {
-            let offset = obj
-                .attrs
-                .iter()
-                .find(|a| a.name == "add_offset")
-                .and_then(attr_number);
-            for v in out.iter_mut() {
-                *v = match offset {
-                    Some(o) => *v * scale + o,
-                    None => *v * scale,
-                };
-            }
-        }
-        Ok(out)
+        read_chunk_resolved(self.buf, obj, ds, dt, coords, fetch)
     }
 
     pub fn geostationary_projection(&self) -> Result<GeostationaryProjection, Hdf5Note> {
@@ -2837,6 +2880,346 @@ impl<'a> Hdf5File<'a> {
         Err(Hdf5Note::AbsentObject {
             name: "geostationary_projection".to_string(),
         })
+    }
+}
+
+pub trait Hdf5Access {
+    fn resolve<'s>(&'s mut self, path: &str) -> Result<&'s Hdf5Object, Hdf5Note>;
+    fn dataset<'s>(
+        &'s mut self,
+        name: &str,
+    ) -> Result<(&'s Hdf5Object, &'s Hdf5Dataspace, &'s Hdf5Datatype), Hdf5Note>;
+    fn attribute<'s>(&'s mut self, name: &str, attr: &str) -> Option<&'s Hdf5Attribute>;
+    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag>;
+    fn read_chunk(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Option<Vec<f64>>;
+    fn read_chunk_diag(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag>;
+}
+
+impl<'a> Hdf5Access for Hdf5File<'a> {
+    fn resolve<'s>(&'s mut self, path: &str) -> Result<&'s Hdf5Object, Hdf5Note> {
+        Hdf5File::resolve(self, path)
+    }
+
+    fn dataset<'s>(
+        &'s mut self,
+        name: &str,
+    ) -> Result<(&'s Hdf5Object, &'s Hdf5Dataspace, &'s Hdf5Datatype), Hdf5Note> {
+        Hdf5File::dataset(self, name)
+    }
+
+    fn attribute<'s>(&'s mut self, name: &str, attr: &str) -> Option<&'s Hdf5Attribute> {
+        Hdf5File::attribute(self, name, attr)
+    }
+
+    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+        Hdf5File::root_header_diag(self)
+    }
+
+    fn read_chunk(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Option<Vec<f64>> {
+        Hdf5File::read_chunk(self, dataset, coords, fetch)
+    }
+
+    fn read_chunk_diag(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag> {
+        Hdf5File::read_chunk_diag(self, dataset, coords, fetch)
+    }
+}
+
+pub struct LazyHdf5<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> {
+    reader: Hdf5WindowReader<'a, F>,
+    objects: HashMap<u64, Hdf5Object>,
+    root: u64,
+    offset_size: usize,
+    length_size: usize,
+}
+
+impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
+    pub fn open(buf: &'a [u8], fetch: F) -> Result<LazyHdf5<'a, F>, Hdf5Note> {
+        let sb = parse_superblock(buf)?;
+        Ok(LazyHdf5 {
+            reader: Hdf5WindowReader::new(buf, fetch),
+            objects: HashMap::new(),
+            root: sb.root,
+            offset_size: sb.offset_size,
+            length_size: sb.length_size,
+        })
+    }
+
+    fn ensure_object(&mut self, addr: u64) -> Result<(), Hdf5Note> {
+        if self.objects.contains_key(&addr) {
+            return Ok(());
+        }
+        let (offset_size, length_size) = (self.offset_size, self.length_size);
+        let obj = parse_object_header(&mut self.reader, addr, offset_size, length_size)?;
+        self.objects.insert(addr, obj);
+        let committed = self.objects[&addr].committed_datatype;
+        if let Some(c) = committed {
+            if let Err(note) = self.ensure_object(c) {
+                self.objects.remove(&addr);
+                return Err(note);
+            }
+            let dt = self.objects.get(&c).and_then(|o| o.datatype.clone());
+            self.objects.get_mut(&addr).expect("inserted").datatype = dt;
+        }
+        Ok(())
+    }
+
+    fn path_addr(&mut self, path: &str) -> Result<u64, Hdf5Note> {
+        self.ensure_object(self.root)?;
+        let mut current = self.root;
+        for part in path.split('/').filter(|p| !p.is_empty()) {
+            let addr = match self.objects[&current].links.iter().find(|l| l.name == part) {
+                Some(l) if l.addr != UNDEF => l.addr,
+                _ => {
+                    return Err(Hdf5Note::AbsentObject {
+                        name: part.to_string(),
+                    });
+                }
+            };
+            self.ensure_object(addr)?;
+            current = addr;
+        }
+        Ok(current)
+    }
+
+    pub fn resolve<'s>(&'s mut self, path: &str) -> Result<&'s Hdf5Object, Hdf5Note> {
+        let addr = self.path_addr(path)?;
+        self.objects
+            .get(&addr)
+            .ok_or(Hdf5Note::Address { off: addr as usize })
+    }
+
+    pub fn dataset<'s>(
+        &'s mut self,
+        name: &str,
+    ) -> Result<(&'s Hdf5Object, &'s Hdf5Dataspace, &'s Hdf5Datatype), Hdf5Note> {
+        let addr = self.path_addr(name)?;
+        let obj = self
+            .objects
+            .get(&addr)
+            .ok_or(Hdf5Note::Address { off: addr as usize })?;
+        let ds = obj
+            .dataspace
+            .as_ref()
+            .ok_or_else(|| Hdf5Note::AbsentObject {
+                name: name.to_string(),
+            })?;
+        let dt = obj
+            .datatype
+            .as_ref()
+            .ok_or_else(|| Hdf5Note::AbsentObject {
+                name: name.to_string(),
+            })?;
+        Ok((obj, ds, dt))
+    }
+
+    pub fn attribute<'s>(&'s mut self, name: &str, attr: &str) -> Option<&'s Hdf5Attribute> {
+        let addr = self.path_addr(name).ok()?;
+        self.objects
+            .get(&addr)?
+            .attrs
+            .iter()
+            .find(|a| a.name == attr)
+    }
+
+    pub fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+        let root = self.root;
+        self.ensure_object(root).ok()?;
+        self.objects.get(&root).map(|o| &o.header)
+    }
+
+    pub fn read_chunk(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Option<Vec<f64>> {
+        self.read_chunk_diag(dataset, coords, fetch).ok()
+    }
+
+    pub fn read_chunk_diag(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag> {
+        let base = self.reader.base;
+        let (obj, ds, dt) = self.dataset(dataset).map_err(|note| ChunkReadDiag {
+            stage: "dataset absent",
+            note: Some(note),
+        })?;
+        read_chunk_resolved(base, obj, ds, dt, coords, fetch)
+    }
+
+    pub fn read_dataset(&mut self, name: &str) -> Result<Vec<u8>, Hdf5Note> {
+        let obj = self.resolve(name)?.clone();
+        let ds = obj
+            .dataspace
+            .as_ref()
+            .ok_or_else(|| Hdf5Note::AbsentObject {
+                name: name.to_string(),
+            })?;
+        let dt = obj
+            .datatype
+            .as_ref()
+            .ok_or_else(|| Hdf5Note::AbsentObject {
+                name: name.to_string(),
+            })?;
+        if dt.class == 9 {
+            return Err(Hdf5Note::VlenNotRead);
+        }
+        let elem_size = dt.size;
+        let count: usize = ds.dims.iter().fold(1usize, |a, d| a * (*d as usize));
+        match obj.layout.as_ref() {
+            Some(Hdf5Layout::Compact { data }) => Ok(data.clone()),
+            Some(Hdf5Layout::Contiguous { addr, size }) => {
+                let len = count * elem_size;
+                if *size > 0 && *size as usize != len {
+                    return Err(Hdf5Note::Chunk {
+                        off: *addr as usize,
+                    });
+                }
+                if *addr == UNDEF {
+                    return Ok(unallocated_contiguous(obj.fill_defined, &obj.fill, len));
+                }
+                Ok(self.reader.read(*addr, len as u64)?)
+            }
+            Some(Hdf5Layout::Chunked {
+                btree,
+                chunk_dims,
+                elem_size: declared,
+            }) => {
+                if *declared as usize != elem_size {
+                    return Err(Hdf5Note::Chunk { off: 0 });
+                }
+                let rank = ds.dims.len();
+                if rank == 0 {
+                    return Err(Hdf5Note::Chunk { off: 0 });
+                }
+                let btree = *btree;
+                let chunk_dims = chunk_dims.clone();
+                let filtered = !obj.filters.is_empty();
+                let (recs, v1_index) =
+                    chunk_records_with(&mut self.reader, btree, rank, filtered)?;
+                let mut out = vec![0u8; count * elem_size];
+                for rec in recs {
+                    let scaled: Vec<usize> = if v1_index {
+                        rec.scaled.iter().map(|s| *s as usize).collect()
+                    } else {
+                        rec.scaled
+                            .iter()
+                            .zip(chunk_dims.iter())
+                            .map(|(s, c)| (*s as usize) * (*c as usize))
+                            .collect()
+                    };
+                    if scaled.len() != rank {
+                        return Err(Hdf5Note::Chunk { off: 0 });
+                    }
+                    let chunk_elems: usize =
+                        chunk_dims.iter().fold(1, |a, d| a * (*d as usize));
+                    let len = if rec.size > 0 {
+                        rec.size
+                    } else {
+                        chunk_elems * elem_size
+                    };
+                    let mut raw = self.reader.read(rec.addr, len as u64)?;
+                    if filtered {
+                        apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask)?;
+                    }
+                    if raw.len() > chunk_elems * elem_size {
+                        raw.truncate(chunk_elems * elem_size);
+                    }
+                    let mut idx = vec![0usize; rank];
+                    for flat in 0..chunk_elems {
+                        let mut rem = flat;
+                        for d in (0..rank).rev() {
+                            idx[d] = rem % chunk_dims[d] as usize;
+                            rem /= chunk_dims[d] as usize;
+                        }
+                        let mut skip = false;
+                        for d in 0..rank {
+                            if scaled[d] + idx[d] >= ds.dims[d] as usize {
+                                skip = true;
+                                break;
+                            }
+                        }
+                        if skip {
+                            continue;
+                        }
+                        let mut dst_off = 0usize;
+                        let mut dst_stride = 1usize;
+                        for d in (0..rank).rev() {
+                            dst_off += (scaled[d] + idx[d]) * dst_stride;
+                            dst_stride *= ds.dims[d] as usize;
+                        }
+                        out[dst_off * elem_size..(dst_off + 1) * elem_size]
+                            .copy_from_slice(&raw[flat * elem_size..(flat + 1) * elem_size]);
+                    }
+                }
+                Ok(out)
+            }
+            None => Err(Hdf5Note::AbsentObject {
+                name: name.to_string(),
+            }),
+        }
+    }
+}
+
+impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5Access for LazyHdf5<'a, F> {
+    fn resolve<'s>(&'s mut self, path: &str) -> Result<&'s Hdf5Object, Hdf5Note> {
+        LazyHdf5::resolve(self, path)
+    }
+
+    fn dataset<'s>(
+        &'s mut self,
+        name: &str,
+    ) -> Result<(&'s Hdf5Object, &'s Hdf5Dataspace, &'s Hdf5Datatype), Hdf5Note> {
+        LazyHdf5::dataset(self, name)
+    }
+
+    fn attribute<'s>(&'s mut self, name: &str, attr: &str) -> Option<&'s Hdf5Attribute> {
+        LazyHdf5::attribute(self, name, attr)
+    }
+
+    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+        LazyHdf5::root_header_diag(self)
+    }
+
+    fn read_chunk(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Option<Vec<f64>> {
+        LazyHdf5::read_chunk(self, dataset, coords, fetch)
+    }
+
+    fn read_chunk_diag(
+        &mut self,
+        dataset: &str,
+        coords: &[u64],
+        fetch: impl FnMut(u64, u64) -> Option<Vec<u8>>,
+    ) -> Result<Vec<f64>, ChunkReadDiag> {
+        LazyHdf5::read_chunk_diag(self, dataset, coords, fetch)
     }
 }
 
@@ -3510,11 +3893,11 @@ mod tests {
             return;
         }
         let bytes = std::fs::read(WOD_MBT).expect("fixture read");
-        let file = Hdf5File::parse(&bytes).unwrap();
+        let mut file = Hdf5File::parse(&bytes).unwrap();
         let root = file.root().unwrap();
         assert!(root.links.iter().any(|l| l.name == "Temperature"));
         assert!(root.links.iter().any(|l| l.name == "Temperature_row_size"));
-        let group = crate::netcdf::nc4_group(&file, "").unwrap();
+        let group = crate::netcdf::nc4_group(&mut file, "").unwrap();
         assert!(group.variables.iter().any(|v| v.name == "Temperature"));
         let flat = file.read_f64_dataset("Temperature").unwrap();
         let profiles =
@@ -3641,6 +4024,257 @@ mod tests {
         assert!(
             root.is_group,
             "the v1 header message at offset 16 lies inside 16 + header_size"
+        );
+    }
+
+    #[test]
+    fn lazy_resolution_fetches_only_the_requested_path() {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_i32() -> Vec<u8> {
+            vec![
+                0x10, 0x08, 0x00, 0x00, 0x04, 0, 0, 0, 0x00, 0x00, 0x20, 0x00,
+            ]
+        }
+        fn layout(addr: u64, size: u64) -> Vec<u8> {
+            let mut d = vec![3u8, 1];
+            d.extend_from_slice(&addr.to_le_bytes());
+            d.extend_from_slice(&size.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+
+        const ROOT: usize = 128;
+        const A_ADDR: u64 = 1 << 20;
+        const B_ADDR: u64 = (1 << 20) + 256;
+        const A_PAYLOAD: u64 = (1 << 20) + 512;
+        const B_PAYLOAD: u64 = (1 << 20) + 768;
+
+        let a_header = header(vec![
+            message(MSG_DATASPACE, dataspace(&[4])),
+            message(MSG_DATATYPE, datatype_i32()),
+            message(MSG_LAYOUT, layout(A_PAYLOAD, 16)),
+        ]);
+        let b_header = header(vec![
+            message(MSG_DATASPACE, dataspace(&[2])),
+            message(MSG_DATATYPE, datatype_i32()),
+            message(MSG_LAYOUT, layout(B_PAYLOAD, 8)),
+        ]);
+        let root_header = header(vec![
+            message(MSG_GROUP_INFO, vec![0, 0]),
+            message(MSG_LINK, link("A", A_ADDR)),
+            message(MSG_LINK, link("B", B_ADDR)),
+        ]);
+
+        let mut full = vec![0u8; (B_PAYLOAD + 32) as usize];
+        full[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        full[8] = 2;
+        full[9] = 8;
+        full[10] = 8;
+        full[36..44].copy_from_slice(&(ROOT as u64).to_le_bytes());
+        let sb_ck = jenkins_lookup3(&full[..44]);
+        full[44..48].copy_from_slice(&sb_ck.to_le_bytes());
+        full[ROOT..ROOT + root_header.len()].copy_from_slice(&root_header);
+        full[A_ADDR as usize..A_ADDR as usize + a_header.len()].copy_from_slice(&a_header);
+        full[B_ADDR as usize..B_ADDR as usize + b_header.len()].copy_from_slice(&b_header);
+
+        let base = &full[..512];
+        let served = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+        let full_ref: &[u8] = &full;
+        let mut file = LazyHdf5::open(base, {
+            let served = std::rc::Rc::clone(&served);
+            move |off, len| {
+                served.borrow_mut().push((off, len));
+                full_ref
+                    .get(off as usize..(off + len) as usize)
+                    .map(|s| s.to_vec())
+            }
+        })
+        .expect("open reads the superblock only");
+        let (_, ds, dt) = file.dataset("A").expect("dataset A resolves on demand");
+        assert_eq!(ds.dims, vec![4]);
+        assert_eq!(dt.class, 0);
+        assert_eq!(dt.size, 4);
+        let served_after_a: Vec<(u64, u64)> = served.borrow().clone();
+        assert_eq!(
+            served_after_a
+                .iter()
+                .filter(|&&(off, _)| off == A_ADDR)
+                .count(),
+            1,
+            "the requested dataset header is fetched exactly once"
+        );
+        assert!(
+            !served_after_a.iter().any(|&(off, _)| off == B_ADDR),
+            "the sibling dataset B header is never fetched"
+        );
+        let (_again, _again_ds, _again_dt) =
+            file.dataset("A").expect("dataset A resolves again");
+        assert_eq!(
+            served.borrow().len(),
+            served_after_a.len(),
+            "the second resolution of A adds zero fetches"
+        );
+        drop(file);
+
+        let mut eager_served: Vec<(u64, u64)> = Vec::new();
+        let eager = Hdf5File::parse_fetch(base, |off, len| {
+            eager_served.push((off, len));
+            full.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        })
+        .expect("the eager parse resolves every reachable object header");
+        drop(eager);
+        assert!(
+            eager_served.iter().any(|&(off, _)| off == B_ADDR),
+            "the eager face serves B — the lazy omission is design, not accident"
+        );
+    }
+
+    #[test]
+    fn lazy_rollback_retries_a_failed_datatype_chase() {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn message_flags(typ: u8, flags: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, flags];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn layout(addr: u64, size: u64) -> Vec<u8> {
+            let mut d = vec![3u8, 1];
+            d.extend_from_slice(&addr.to_le_bytes());
+            d.extend_from_slice(&size.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+        fn shared_datatype(addr: u64) -> Vec<u8> {
+            let mut data = vec![2u8, SHARE_TYPE_COMMITTED];
+            data.extend_from_slice(&addr.to_le_bytes());
+            data
+        }
+
+        const ROOT: usize = 128;
+        const VAR_ADDR: u64 = 1 << 20;
+        const DT_ADDR: u64 = (1 << 20) + 512;
+        const PAYLOAD_ADDR: u64 = (1 << 20) + 1024;
+
+        let var_header = header(vec![
+            message(MSG_DATASPACE, dataspace(&[4])),
+            message_flags(MSG_DATATYPE, MSG_FLAG_SHARED, shared_datatype(DT_ADDR)),
+            message(MSG_LAYOUT, layout(PAYLOAD_ADDR, 16)),
+        ]);
+        let root_header = header(vec![
+            message(MSG_GROUP_INFO, vec![0, 0]),
+            message(MSG_LINK, link("v", VAR_ADDR)),
+        ]);
+
+        let mut full = vec![0u8; (PAYLOAD_ADDR + 64) as usize];
+        full[..8].copy_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        full[8] = 2;
+        full[9] = 8;
+        full[10] = 8;
+        full[36..44].copy_from_slice(&(ROOT as u64).to_le_bytes());
+        let sb_ck = jenkins_lookup3(&full[..44]);
+        full[44..48].copy_from_slice(&sb_ck.to_le_bytes());
+        full[ROOT..ROOT + root_header.len()].copy_from_slice(&root_header);
+        full[VAR_ADDR as usize..VAR_ADDR as usize + var_header.len()]
+            .copy_from_slice(&var_header);
+
+        let base = &full[..512];
+        let served = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+        let full_ref: &[u8] = &full;
+        let mut file = LazyHdf5::open(base, {
+            let served = std::rc::Rc::clone(&served);
+            move |off, len| {
+                served.borrow_mut().push((off, len));
+                if off == DT_ADDR {
+                    return None;
+                }
+                full_ref
+                    .get(off as usize..(off + len) as usize)
+                    .map(|s| s.to_vec())
+            }
+        })
+        .expect("open reads the superblock only");
+
+        let first = file.dataset("v");
+        assert!(
+            matches!(first, Err(Hdf5Note::AbsentAtByte { off }) if off == DT_ADDR as usize),
+            "the committed-datatype chase reports the true note, found {first:?}"
+        );
+        let served_first: Vec<(u64, u64)> = served.borrow().clone();
+        assert_eq!(
+            served_first
+                .iter()
+                .filter(|&&(off, _)| off == VAR_ADDR)
+                .count(),
+            1
+        );
+        let second = file.dataset("v");
+        assert!(
+            matches!(second, Err(Hdf5Note::AbsentAtByte { .. })),
+            "the second attempt still fails with the true note, found {second:?}"
+        );
+        assert_eq!(
+            served
+                .borrow()
+                .iter()
+                .filter(|&&(off, _)| off == VAR_ADDR)
+                .count(),
+            2,
+            "the second attempt refetches the rolled-back object header"
         );
     }
 
