@@ -238,16 +238,10 @@ fn surrogate_family_maxima(
     }
 }
 
-fn per_cell_survivors<'a>(
-    cells: &'a [Cell],
-    family: &SurrogateFamily,
-    pct: f64,
-) -> Vec<&'a Cell> {
+fn per_cell_survivors<'a>(cells: &'a [Cell], family: &SurrogateFamily, pct: f64) -> Vec<&'a Cell> {
     cells
         .iter()
-        .filter(|c| {
-            percentile(&family.cell_distributions[c.slot], pct).map_or(false, |t| c.te > t)
-        })
+        .filter(|c| percentile(&family.cell_distributions[c.slot], pct).map_or(false, |t| c.te > t))
         .collect()
 }
 
@@ -392,7 +386,9 @@ fn main() {
             }
         }
         if family_survivors.is_empty() {
-            println!("    no cell breaks the family maximum — the family-max silence is the finding");
+            println!(
+                "    no cell breaks the family maximum — the family-max silence is the finding"
+            );
         }
         if cell_survivors.is_empty() {
             println!(
@@ -456,11 +452,19 @@ mod tests {
         (0..n).map(|_| (next_rng(rng) * 2.0 - 1.0) as f32).collect()
     }
 
-    fn ar1_sine(n: usize, phi: f64, period: f64, phase: f64, noise: f64, rng: &mut u64) -> Vec<f32> {
+    fn ar1_sine(
+        n: usize,
+        phi: f64,
+        period: f64,
+        phase: f64,
+        noise: f64,
+        rng: &mut u64,
+    ) -> Vec<f32> {
         let mut v = Vec::with_capacity(n);
         let mut x = 0.0f64;
         for t in 0..n {
-            x = phi * x + (2.0 * std::f64::consts::PI * t as f64 / period + phase).sin()
+            x = phi * x
+                + (2.0 * std::f64::consts::PI * t as f64 / period + phase).sin()
                 + noise * (next_rng(rng) * 2.0 - 1.0);
             v.push(x as f32);
         }
@@ -477,7 +481,11 @@ mod tests {
         let mut x = 0.0f64;
         for t in 0..n {
             x = 0.5 * x
-                + if t >= delay { 0.8 * a[t - delay] as f64 } else { 0.0 }
+                + if t >= delay {
+                    0.8 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
                 + (next_rng(&mut rng) * 0.04 - 0.02);
             b[t] = x as f32;
         }
@@ -516,8 +524,7 @@ mod tests {
             if cells.is_empty() {
                 continue;
             }
-            let maxima =
-                surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false).maxima;
+            let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), false).maxima;
             let Some(threshold) = percentile(&maxima, 95.0) else {
                 continue;
             };
@@ -526,9 +533,7 @@ mod tests {
                 fp += 1;
             }
         }
-        println!(
-            "structured-FP gate: {fp} of {meas} measurable trials carried a survivor"
-        );
+        println!("structured-FP gate: {fp} of {meas} measurable trials carried a survivor");
         assert!(
             meas >= 16,
             "structured-FP gate: {} of {trials} measurable — the machine stays silent too often",
@@ -547,7 +552,10 @@ mod tests {
         let b = white(13, &mut rng);
         let triads = vec![(
             "G01".to_string(),
-            vec![("S01".to_string(), a.clone()), ("S02".to_string(), b.clone())],
+            vec![
+                ("S01".to_string(), a.clone()),
+                ("S02".to_string(), b.clone()),
+            ],
         )];
         let cells = observed_cells(&triads, DIM);
         assert!(cells.is_empty(), "a white pair carries no cell");
@@ -589,7 +597,11 @@ mod tests {
         let mut x = 0.0f64;
         for t in 0..n {
             x = 0.5 * x
-                + if t >= delay { 0.8 * a[t - delay] as f64 } else { 0.0 }
+                + if t >= delay {
+                    0.8 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
                 + (next_rng(&mut rng) * 0.04 - 0.02);
             b[t] = x as f32;
         }
