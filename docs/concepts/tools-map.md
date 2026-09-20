@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 573fbb69b798c2c311e561351bd20a7bb3b9fc9e65722d779f43bab3c7b37635
+  sha256: 2d461cbbd40237facbf5a81ad064976ea279303372e5b44b05d779226691e0eb
   status: live
   see-also: AGENTS.md
 -->
@@ -91,7 +91,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 31 Modi — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 33 Modi — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
 | `--pubchem` | — (neu) | | `--uniprot` | — (neu) |
@@ -100,6 +100,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--go` | — (neu, QuickGO) | | `--unpaywall` | — (neu, braucht `UNPAYWALL_EMAIL`) |
 | `--core` | — (neu, keyless/`CORE_API_KEY`) | | `--materialsproject` | — (neu, braucht `MP_API_KEY`) |
 | `--semanticscholar` | — (neu, keyless 429/`S2_API_KEY`) | | | |
+| `--reactome` | — (neu, keyless) | | `--interpro` | — (neu, keyless) |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -165,6 +166,14 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 - `archive_search --semanticscholar <query>` — S2 Academic Graph
   (`/graph/v1/paper/search`); keyless 429 (geteilter Pool), `S2_API_KEY` hebt
   das Limit. `url` + Titel/DOI/arXiv/Jahr/Zitate.
+- `archive_search --reactome <query>` — Reactome ContentService-Suche
+  (`/ContentService/search/query?query=&cluster=true`); keyless.
+  `url https://reactome.org/content/detail/<stId>` + Name/Typ/Spezies/Datenbank/
+  Referenz.
+- `archive_search --interpro <query>` — InterPro-Eintragssuche über
+  `/api/entry/all/protein/reviewed/?search=`; keyless.
+  `url https://www.ebi.ac.uk/interpro/entry/<source_database>/<accession>` +
+  Name/Typ/Quelle/integrierter Eintrag.
 
 ## Gemessen — übrige lokale Werkzeuge
 
