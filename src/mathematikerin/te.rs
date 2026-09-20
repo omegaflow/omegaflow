@@ -5394,9 +5394,15 @@ mod tests {
                 let Some(te_c) = transfer_entropy_conditional(&x, &y, &c, 1) else {
                     continue;
                 };
-                let Some((_, _, thr_c)) =
-                    conditional_te_stats_lagged(&x, &y, &c, 1, 1, seed ^ 0x9E37_79B9_7F4A_7C15, 256)
-                else {
+                let Some((_, _, thr_c)) = conditional_te_stats_lagged(
+                    &x,
+                    &y,
+                    &c,
+                    1,
+                    1,
+                    seed ^ 0x9E37_79B9_7F4A_7C15,
+                    256,
+                ) else {
                     continue;
                 };
                 meas += 1;

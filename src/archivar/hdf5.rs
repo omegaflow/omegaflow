@@ -2368,7 +2368,10 @@ fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             stage: "chunk not found",
             note: None,
         })?;
-    let chunk_elems: usize = plan.chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
+    let chunk_elems: usize = plan
+        .chunk_dims
+        .iter()
+        .fold(1usize, |a, d| a * (*d as usize));
     let stored_len = if rec.size > 0 {
         rec.size
     } else {
@@ -2403,10 +2406,12 @@ fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     let n = raw_elems.min(actual_elems);
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
-        out.push(decode_numeric(&raw, i, plan.dt).map_err(|note| ChunkReadDiag {
-            stage: "numeric decode",
-            note: Some(note),
-        })?);
+        out.push(
+            decode_numeric(&raw, i, plan.dt).map_err(|note| ChunkReadDiag {
+                stage: "numeric decode",
+                note: Some(note),
+            })?,
+        );
     }
     let scale = plan
         .obj

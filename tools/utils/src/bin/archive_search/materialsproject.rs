@@ -16,15 +16,22 @@ pub fn materialsproject_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) if f.status == Some(200) => {
             let out = parse_materialsproject(&f.body);
             if out.is_empty() {
-                vec![format!("absent — materialsproject carries no entry: {}", query)]
+                vec![format!(
+                    "absent — materialsproject carries no entry: {}",
+                    query
+                )]
             } else {
                 out
             }
         }
         Some(f) if f.status == Some(401) || f.status == Some(403) => vec![
-            "pending — materialsproject refuses the key (HTTP 401/403); check MP_API_KEY".to_string(),
+            "pending — materialsproject refuses the key (HTTP 401/403); check MP_API_KEY"
+                .to_string(),
         ],
-        Some(f) => vec![format!("pending — materialsproject HTTP {}", f.status_text())],
+        Some(f) => vec![format!(
+            "pending — materialsproject HTTP {}",
+            f.status_text()
+        )],
         None => vec!["pending — no network".to_string()],
     }
 }

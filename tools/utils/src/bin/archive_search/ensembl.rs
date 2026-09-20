@@ -51,10 +51,13 @@ mod tests {
 
     #[test]
     fn reads_the_entry_fields() {
-        let body = r#"{"hitCount":1979,"entries":[{"id":"ENSG00000139618","source":"ensembl_gene"}]}"#;
+        let body =
+            r#"{"hitCount":1979,"entries":[{"id":"ENSG00000139618","source":"ensembl_gene"}]}"#;
         assert_eq!(
             parse_ensembl(body),
-            vec!["url https://www.ensembl.org/id/ENSG00000139618\tsource: ensembl_gene".to_string()]
+            vec![
+                "url https://www.ensembl.org/id/ENSG00000139618\tsource: ensembl_gene".to_string()
+            ]
         );
     }
 

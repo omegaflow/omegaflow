@@ -42,9 +42,7 @@ fn field(v: &json::Json, key: &str) -> Option<String> {
 
 pub fn entrez_lines(query: &str, max: usize) -> Vec<String> {
     let Some(db) = parameter(query, "db") else {
-        return vec![
-            "usage — entrez needs db=<database>: db=nuccore|sra|gds <term>".to_string(),
-        ];
+        return vec!["usage — entrez needs db=<database>: db=nuccore|sra|gds <term>".to_string()];
     };
     let term = term(query);
     if term.is_empty() {
@@ -95,12 +93,7 @@ fn parse_entrez(body: &str, db: &str, max: usize) -> Vec<String> {
         out.push(format!("query: {}", translation));
     }
     for id in ids.iter().filter_map(|id| id.as_str()).take(max) {
-        out.push(format!(
-            "url {}\tdb: {}\tid: {}",
-            entry_url(db, id),
-            db,
-            id
-        ));
+        out.push(format!("url {}\tdb: {}\tid: {}", entry_url(db, id), db, id));
     }
     out
 }
@@ -146,7 +139,14 @@ mod tests {
 
     #[test]
     fn an_empty_search_carries_nothing() {
-        assert!(parse_entrez(r#"{"esearchresult":{"count":"0","idlist":[]}}"#, "nuccore", 10).is_empty());
+        assert!(
+            parse_entrez(
+                r#"{"esearchresult":{"count":"0","idlist":[]}}"#,
+                "nuccore",
+                10
+            )
+            .is_empty()
+        );
     }
 
     #[test]
@@ -158,8 +158,14 @@ mod tests {
     fn reads_db_and_term_tokens() {
         assert_eq!(parameter("db=sra SRR123", "db").as_deref(), Some("sra"));
         assert_eq!(term("db=sra SRR123"), "SRR123");
-        assert_eq!(term("db=nuccore term=BRCA1[All Fields]"), "BRCA1[All Fields]");
-        assert_eq!(term("db=nuccore BRCA1 breast cancer"), "BRCA1 breast cancer");
+        assert_eq!(
+            term("db=nuccore term=BRCA1[All Fields]"),
+            "BRCA1[All Fields]"
+        );
+        assert_eq!(
+            term("db=nuccore BRCA1 breast cancer"),
+            "BRCA1 breast cancer"
+        );
     }
 
     #[test]
