@@ -1,9 +1,53 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 const CHALLENGE =
   /just a moment|nur einen moment|attention required|checking your browser|verifying you are human|enable javascript and cookies|ddos protection|sicherheitsüberprüfung|überprüfung erfolgreich|warten auf antwort|ray id/i;
+
+const SAME_SITE = { strict: 'Strict', lax: 'Lax', none: 'None', no_restriction: 'None' };
+
+async function loadCookies(context) {
+  const cookiesPath = process.env.OMEGAFLOW_COOKIES;
+  if (!cookiesPath) return 0;
+  let raw;
+  try {
+    raw = fs.readFileSync(cookiesPath, 'utf8');
+  } catch (e) {
+    process.stderr.write('playwright_fetch: OMEGAFLOW_COOKIES set but unreadable: ' + cookiesPath + '\n');
+    process.exit(2);
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    process.stderr.write('playwright_fetch: OMEGAFLOW_COOKIES is not valid JSON: ' + cookiesPath + '\n');
+    process.exit(2);
+  }
+  const list = Array.isArray(parsed) ? parsed : parsed && Array.isArray(parsed.cookies) ? parsed.cookies : null;
+  if (!list) {
+    process.stderr.write('playwright_fetch: OMEGAFLOW_COOKIES must carry a Cookie-Editor JSON array: ' + cookiesPath + '\n');
+    process.exit(2);
+  }
+  const cookies = [];
+  for (const c of list) {
+    if (!c || typeof c.name !== 'string' || typeof c.value !== 'string' || typeof c.domain !== 'string') continue;
+    const cookie = { name: c.name, value: c.value, domain: c.domain, path: typeof c.path === 'string' ? c.path : '/' };
+    if (!c.session && typeof c.expirationDate === 'number') cookie.expires = c.expirationDate;
+    if (typeof c.httpOnly === 'boolean') cookie.httpOnly = c.httpOnly;
+    if (typeof c.secure === 'boolean') cookie.secure = c.secure;
+    const sameSite = typeof c.sameSite === 'string' ? SAME_SITE[c.sameSite.toLowerCase()] : undefined;
+    if (sameSite) cookie.sameSite = sameSite;
+    cookies.push(cookie);
+  }
+  if (cookies.length === 0) {
+    process.stderr.write('playwright_fetch: OMEGAFLOW_COOKIES carried no usable cookies: ' + cookiesPath + '\n');
+    process.exit(2);
+  }
+  await context.addCookies(cookies);
+  return cookies.length;
+}
 
 async function main() {
   const input = process.argv[2];
@@ -34,6 +78,11 @@ async function main() {
     browser = await chromium.launch({ channel: 'chrome', headless: true, ...(proxy ? { proxy: { server: proxy } } : {}) });
     context = await browser.newContext({ viewport: options.viewport });
     page = await context.newPage();
+  }
+
+  const cookiesLoaded = await loadCookies(context);
+  if (cookiesLoaded > 0) {
+    process.stderr.write('playwright_fetch: ' + cookiesLoaded + ' cookies loaded from OMEGAFLOW_COOKIES\n');
   }
 
   let status = null;

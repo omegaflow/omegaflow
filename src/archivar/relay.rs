@@ -1098,4 +1098,90 @@ mod tests {
         assert_eq!(relay_tau(0.0, Some(0.0)), None);
         assert_eq!(relay_tau(0.0, Some(-1.0)), None);
     }
+
+    #[cfg(feature = "browser_relay")]
+    fn relay_ws_config() -> WsConfig {
+        let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
+        drop(field_tx);
+        let (kinetic_tx, kinetic_rx) = mpsc::channel::<PresenceFrame>();
+        drop(kinetic_tx);
+        let (sample_tx, sample_rx) = mpsc::channel::<Vec<Sample>>();
+        drop(sample_rx);
+        let (presence_tx, presence_rx) = mpsc::channel::<(
+            String,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+            f64,
+        )>();
+        drop(presence_rx);
+        WsConfig {
+            bodies: Arc::new(Vec::new()),
+            index_html: Vec::new(),
+            constants_js: Vec::new(),
+            field_rx,
+            kinetic_rx,
+            sample_tx,
+            presence_tx,
+            time: Arc::new(Mutex::new(None::<LeapSeconds>)),
+            consent: Arc::new(AtomicBool::new(false)),
+            diode: Arc::new(RwLock::new(DiodeState {
+                force_ref: [0.0; 9],
+                expose_offset: crate::mathematikerin::EXPOSE_OFFSET_BASE,
+                em_color: [0.0; 4],
+            })),
+            sources: Arc::new(Vec::new()),
+            verdicts: Arc::new(Vec::new()),
+        }
+    }
+
+    #[cfg(feature = "browser_relay")]
+    fn ingress_status_line(path: &str) -> String {
+        use std::io::BufRead;
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind a loopback port");
+        let addr = listener.local_addr().expect("read the loopback address");
+        let server = thread::spawn(move || {
+            let (stream, _) = listener.accept().expect("accept the client");
+            handle_ingress(stream, relay_ws_config());
+        });
+        let mut client = TcpStream::connect(addr).expect("connect to the relay");
+        client
+            .write_all(format!("GET {} HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n", path).as_bytes())
+            .expect("write the request");
+        let mut reader = std::io::BufReader::new(&mut client);
+        let mut status = String::new();
+        reader.read_line(&mut status).expect("read the status line");
+        drop(reader);
+        drop(client);
+        server.join().expect("the relay thread ends");
+        status
+    }
+
+    #[cfg(feature = "browser_relay")]
+    #[test]
+    fn top_level_static_js_routes_reach_the_asset() {
+        std::env::set_current_dir(env!("CARGO_MANIFEST_DIR"))
+            .expect("the manifest root is the working directory");
+        for module in ["palette.js", "webserial.js", "sensorium.js", "radiator.js"] {
+            let status = ingress_status_line(&format!("/{}", module));
+            assert!(
+                status.starts_with("HTTP/1.1 200 OK"),
+                "GET /{} returned {}",
+                module,
+                status.trim_end()
+            );
+        }
+        let absent = ingress_status_line("/does-not-exist.js");
+        assert!(
+            absent.starts_with("HTTP/1.1 404 Not Found"),
+            "GET /does-not-exist.js returned {}",
+            absent.trim_end()
+        );
+    }
 }

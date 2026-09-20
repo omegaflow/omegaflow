@@ -4,7 +4,7 @@
   date: 2026-09-14
   sha256: f5ec41f028cd0affdfdc0249070897d9f33535ff562043b163223a32bb87a321
   status: live
-  see-also: docs/handover/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
+  see-also: docs/handover/archiv/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
 # Warteliste — offene Alternativen (Stand 2026-09-14, Runde 2)
 

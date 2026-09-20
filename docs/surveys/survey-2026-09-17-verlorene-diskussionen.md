@@ -14,7 +14,7 @@ ein Prinzip, dreifach verhandelt, lokal gebaut, CI-Instanz nie gebaut. Frage:
 welche Diskussionen wurden verhandelt und nie gebaut, wo behauptet die Doku den
 Baum, wo drifteten Namen/Ebenen — und weitere solcher lost-and-forgotten-Fälle.
 
-Provenienz der Messung: `git -C /home/johannes/backup/archive-root/omegaflow-legacy
+Provenienz der Messung: `git -C archive-root/omegaflow-legacy
 log --all -S/--grep`, `git grep`, `archive_search --root`, `sgrep`, `sread` über
 beide Repos. Alle Belege Hash/Datei:Zeile. Wo unklar: als offen benannt, nie
 spekuliert.
@@ -24,7 +24,7 @@ spekuliert.
 Das aktuelle Repo ist ein Fresh Start — `8399b401`/`52eca216` („no branch
 legacy"). `d9d2c720` existiert dort nicht (`git log -1 d9d2c720` → unbekannter
 Commit); die Entscheidungs-Historie lebt ausschließlich im Legacy-Repo
-`/home/johannes/backup/archive-root/omegaflow-legacy`. Jede Archäologie über
+`archive-root/omegaflow-legacy`. Jede Archäologie über
 Diskussionen läuft zwingend über das Legacy-Repo. Das Survey
 `survey-2026-09-17-omegaflow-legacy-konzepte.md` deckt „verlorene Ideen" ab —
 diese Karte ergänzt die Diskussions-/Entscheidungs-Nähte, ohne zu duplizieren.

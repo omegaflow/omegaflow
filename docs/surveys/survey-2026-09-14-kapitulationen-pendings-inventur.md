@@ -4,7 +4,7 @@
   date: 2026-09-14
   sha256: d7d9c671f05cfc31a5d9b9bf718555f490db05a7e1c85bb4408fac210da9e1ca
   status: live
-  see-also: phi/blocked_sources.φ phi/dead_sources.φ phi/pipeline/refusal_ledger.φ AGENTS.md
+  see-also: phi/blocked_sources.φ phi/dead_sources.φ AGENTS.md
 -->
 # Kapitulationen & Pendings — Register-Inventur (Stand 2026-09-14)
 
