@@ -3,7 +3,7 @@
   session: Entscheid-Folge XV
   class: handover
   date: 2026-09-16
-  sha256: 020a655f9f9afa83aba104ac7bd8b6bf21c2c6244ff28ffc3a0c92a55c3e910e
+  sha256: a80b82cb72250cdb4d6b52fd708ea7e840864683bccd738ab43f4b03919938c7
   status: live
 -->
 # Handover — Entscheid-Folge XV (2026-09-16)
