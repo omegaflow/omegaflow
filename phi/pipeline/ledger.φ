@@ -67,33 +67,33 @@ ausstehend
 queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
 note 16 Blöcke (index.φ) — Datei am Datenträger vorhanden (3922 B, gitignored, lokal), bis zu diesem Atom nicht im Ledger registriert; --port blockiert (gemessen 2026-09-17): die Korpora tragen kein `force`-Direktiv → default_kernel_for("") = None → jeder field_in fällt; der Lauf hat keinen sanktionierten Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). Nächster Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs (`release-build.yml`) auf den gitignorierten Korpora, dann --port + --probe; dann Disposition.
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20: 1048 konv., 8 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 1048 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 1045 parsen (vor Fix 8), 148 verifiziert / 897 declined; ra/dec-Fix greift. Nächster Schritt: Review der 148 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
-note 874 Blöcke; --port 2026-09-20: 874 konv., 8 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 874 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 873 parsen (vor Fix 8), 25 verifiziert / 848 declined; ra/dec-Fix greift. Nächster Schritt: Review der 25 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20: 1048 konv., 8 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 1048 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 969 parsen (vor Fix 8), 156 verifiziert / 813 declined; ra/dec-Fix greift. Nächster Schritt: Review der 156 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_183l.φ
-note 19 Blöcke; fünf force-Direktiven; --port 2026-09-20: 19 konv., 1 parst, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 19 Blöcke, fünf force-Direktiven; --port 2026-09-20 frisches Binär 02ee415e: 14 parsen (vor Fix 1), 4 verifiziert / 10 declined. Nächster Schritt: Review der 4 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_2k.φ
-note 177 Blöcke; --port 2026-09-20: 177 konv., 0 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 177 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 14 parsen (vor Fix 0), 3 verifiziert / 11 declined; ra/dec-Fix greift. Nächster Schritt: Review der 3 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_7k.φ
-note 425 Blöcke; --port 2026-09-20: 425 konv., 6 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 425 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 422 parsen (vor Fix 6), 21 verifiziert / 401 declined; ra/dec-Fix greift. Nächster Schritt: Review der 21 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
-parser-gap
+verifiziert
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
-note 50 Blöcke; --port 2026-09-20: 50 konv., 8 parsen, 0 Survivor; ra/dec fielen im Konverter; port.rs-Fix ra/dec/plx/z+dist/pmra/pmdec/radvel; dist_key ohne dist_scale absent; pos (body fehlt); Re-Lauf pending (Operator-Wort erteilt 2026-09-20; lokales Binär veraltet → frisches Release-Binär, s. external-state.md).
+note 50 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 49 parsen (vor Fix 8), 11 verifiziert / 38 declined; ra/dec-Fix greift. Nächster Schritt: Review der 11 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
 
 kompiliert
 kandidat https://openneuro.org/datasets/ds007822
