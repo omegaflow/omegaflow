@@ -594,10 +594,7 @@ fn channel_rows(file: &Hdf5File, base: &str) -> Result<Vec<SnirfChannel>, String
             wl.len()
         ));
     }
-    let dti: Option<Vec<f64>> = match index_array(file, &format!("{base}/dataTypeIndex")) {
-        Ok(v) => Some(v),
-        Err(_) => None,
-    };
+    let dti: Option<Vec<f64>> = index_array(file, &format!("{base}/dataTypeIndex")).ok();
     if let Some(v) = &dti
         && v.len() != n
     {
@@ -1024,6 +1021,7 @@ mod tests {
             sb[48..56].copy_from_slice(&u64::MAX.to_le_bytes());
             sb[64..72].copy_from_slice(&(root_addr as u64).to_le_bytes());
             self.patch(0, &sb);
+            self.bytes.resize(eof + 512, 0);
             self.bytes
         }
     }
@@ -1073,7 +1071,7 @@ mod tests {
         out.push(0);
         out.extend_from_slice(&(msgs.len() as u16).to_le_bytes());
         out.extend_from_slice(&1u32.to_le_bytes());
-        out.extend_from_slice(&((16 + body.len()) as u32).to_le_bytes());
+        out.extend_from_slice(&(body.len() as u32).to_le_bytes());
         out.extend_from_slice(&0u32.to_le_bytes());
         out.extend_from_slice(&body);
         out
