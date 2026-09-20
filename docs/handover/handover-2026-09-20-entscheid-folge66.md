@@ -3,7 +3,7 @@
   session: Entscheid-Folge 66
   class: handover
   date: 2026-09-20
-  sha256: f4332b1370a9af78442053142d8468e754222db01bbc3d0db9057423b9ff1cc4
+  sha256: 9c841f26a42d0ad8e10663a6a27e6ad938de96b9bf2aee5813f601aa168274ab
   status: live
 -->
 # Handover — Entscheid-Folge 66 (2026-09-20)
@@ -70,9 +70,10 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
     `.github/workflows/free-model-agent-bench.yml`: jedes der 105 Modelle als
     `opencode run --pure --format json --model <provider>/<id> --agent general` mit
     `archive_search` (bash); Score = `T7_EXPECT`; TSV `status, ms, tool_calls`.
-  - `cargo check` sauber (beide Bins). **`termin`** (nach `/commit`+Push):
-    `gh workflow run free-model-bench.yml -f task=T7` und `gh workflow run
-    free-model-agent-bench.yml`. (Schritt: `ci_manage view <id>`; Artefakt lesen.)
+  - `cargo check` sauber (beide Bins). **Dispatch 2026-09-20** (nach Push `7b4753ef`):
+    `free-model-bench` T7 = **`35532890353`** (pending, hinter dem laufenden
+    `35527517605`), `free-model-agent-bench` = **`35532892161`** (queued). (Schritt:
+    `ci_manage view <id>` einmalig; Artefakt lesen — **kein Poll**.)
   - **`pending`** (agentisch, benannt): npm-Override models.dev-bekannter Provider;
     Event-Serialisierung (eine JSON-Zeile/Event); `archive_search --playwright`-Browser
     im Runner; `FREE_MODEL_KEYS`-Secret (Operator). Erster CI-Lauf misst sie.
