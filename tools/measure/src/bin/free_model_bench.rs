@@ -104,7 +104,8 @@ fn key_for(m: &Model) -> Option<String> {
             }
         }
     }
-    let cfg = std::fs::read_to_string(format!("{}/.config/opencode/opencode.jsonc", home())).ok()?;
+    let cfg =
+        std::fs::read_to_string(format!("{}/.config/opencode/opencode.jsonc", home())).ok()?;
     if let Some(pos) = cfg.find(&format!("\"{}\"", m.provider)) {
         if let Some(k) = extract_string_after(&cfg[pos..], "apiKey") {
             if !k.is_empty() {
@@ -139,7 +140,12 @@ fn call(url: &str, key: &str, body: &str) -> Resp {
     let mut child = match child {
         Ok(c) => c,
         Err(_) => {
-            return Resp { code: None, body: String::new(), ms: start.elapsed().as_millis(), timed_out: false };
+            return Resp {
+                code: None,
+                body: String::new(),
+                ms: start.elapsed().as_millis(),
+                timed_out: false,
+            };
         }
     };
     if let Some(mut si) = child.stdin.take() {
@@ -148,16 +154,29 @@ fn call(url: &str, key: &str, body: &str) -> Resp {
     let out = match child.wait_with_output() {
         Ok(o) => o,
         Err(_) => {
-            return Resp { code: None, body: String::new(), ms: start.elapsed().as_millis(), timed_out: false };
+            return Resp {
+                code: None,
+                body: String::new(),
+                ms: start.elapsed().as_millis(),
+                timed_out: false,
+            };
         }
     };
     let ms = start.elapsed().as_millis();
     let text = String::from_utf8_lossy(&out.stdout).to_string();
     let (body_text, code) = match text.rfind('\n') {
-        Some(i) => (text[..i].to_string(), text[i + 1..].trim().parse::<u16>().ok()),
+        Some(i) => (
+            text[..i].to_string(),
+            text[i + 1..].trim().parse::<u16>().ok(),
+        ),
         None => (text, None),
     };
-    Resp { code, body: body_text, ms, timed_out: out.status.code() == Some(28) }
+    Resp {
+        code,
+        body: body_text,
+        ms,
+        timed_out: out.status.code() == Some(28),
+    }
 }
 
 fn retry_hint(body: &str) -> u64 {
@@ -224,9 +243,22 @@ fn build_body(task: &str) -> String {
 
 fn check(task: &str, body: &str) -> bool {
     match task {
-        "T1" => body.contains("\"tool_calls\"") && body.contains("get_weather") && body.contains("Berlin"),
+        "T1" => {
+            body.contains("\"tool_calls\"")
+                && body.contains("get_weather")
+                && body.contains("Berlin")
+        }
         "T3" => body.contains("..=n"),
-        "T4" => ["\"name\"", "\"count\"", "\"mode\"", "\"fast\"", "\"meta\"", "\"ok\""].iter().all(|k| body.contains(k)),
+        "T4" => [
+            "\"name\"",
+            "\"count\"",
+            "\"mode\"",
+            "\"fast\"",
+            "\"meta\"",
+            "\"ok\"",
+        ]
+        .iter()
+        .all(|k| body.contains(k)),
         "T5" => body.contains("250"),
         "T6" => body.contains("QX7-4412"),
         "T7" => {
@@ -280,9 +312,23 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
             }
             let r2 = call(&url, key, &build_body("T2b"));
             total_ms += r2.ms;
-            return (if r2.body.contains("get_umbrella_advice") { "pass".into() } else { "no_tool".into() }, total_ms);
+            return (
+                if r2.body.contains("get_umbrella_advice") {
+                    "pass".into()
+                } else {
+                    "no_tool".into()
+                },
+                total_ms,
+            );
         }
-        return (if check(task, &r.body) { "pass".into() } else { "wrong_answer".into() }, total_ms);
+        return (
+            if check(task, &r.body) {
+                "pass".into()
+            } else {
+                "wrong_answer".into()
+            },
+            total_ms,
+        );
     }
 }
 
@@ -295,7 +341,12 @@ fn parse_model(line: &str) -> Option<Model> {
     if provider.is_empty() || id.is_empty() || base.is_empty() || env_var.is_empty() {
         return None;
     }
-    Some(Model { provider, id, base, env_var })
+    Some(Model {
+        provider,
+        id,
+        base,
+        env_var,
+    })
 }
 
 fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
@@ -304,16 +355,32 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
         Err(_) => return,
     };
     for r in rows {
-        let _ = writeln!(f, "{}\t{}\t{}\t{}\t{}\t{}", r.provider, r.model, r.task, r.trial, r.status, r.ms);
+        let _ = writeln!(
+            f,
+            "{}\t{}\t{}\t{}\t{}\t{}",
+            r.provider, r.model, r.task, r.trial, r.status, r.ms
+        );
     }
     for m in models {
-        let mrows: Vec<&Row> = rows.iter().filter(|r| r.provider == m.provider && r.model == m.id && r.task != "-").collect();
+        let mrows: Vec<&Row> = rows
+            .iter()
+            .filter(|r| r.provider == m.provider && r.model == m.id && r.task != "-")
+            .collect();
         if mrows.is_empty() {
             continue;
         }
-        let count = |t: &str, s: &str| mrows.iter().filter(|r| r.task == t && r.status == s).count();
+        let count = |t: &str, s: &str| {
+            mrows
+                .iter()
+                .filter(|r| r.task == t && r.status == s)
+                .count()
+        };
         let n_t = |t: &str| mrows.iter().filter(|r| r.task == t).count();
-        let mut lats: Vec<u128> = mrows.iter().filter(|r| r.status == "pass").map(|r| r.ms).collect();
+        let mut lats: Vec<u128> = mrows
+            .iter()
+            .filter(|r| r.status == "pass")
+            .map(|r| r.ms)
+            .collect();
         lats.sort();
         let pct = |q: f64| -> u128 {
             if lats.is_empty() {
@@ -325,7 +392,10 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
         let n429 = mrows.iter().filter(|r| r.status == "http_429").count();
         let n5 = mrows.iter().filter(|r| r.status == "http_5xx").count();
         let nt = mrows.iter().filter(|r| r.status == "timeout").count();
-        let np = mrows.iter().filter(|r| r.status.starts_with("pending")).count();
+        let np = mrows
+            .iter()
+            .filter(|r| r.status.starts_with("pending"))
+            .count();
         let _ = writeln!(
             f,
             "{}\t{}\tSUMMARY\ttool_ok={}/{}\tT2={}/{}\tT3={}/{}\tT4={}/{}\tT5={}/{}\tT6={}/{}\tT7={}/{}\tp50={}\tp95={}\t429={}\t5xx={}\ttimeout={}\tpending={}",
@@ -374,7 +444,15 @@ fn main() {
     }
 
     let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
-    let tasks: [(&str, u32); 7] = [("T1", 10), ("T2", 5), ("T3", 3), ("T4", 5), ("T5", 3), ("T6", 3), ("T7", 3)];
+    let tasks: [(&str, u32); 7] = [
+        ("T1", 10),
+        ("T2", 5),
+        ("T3", 3),
+        ("T4", 5),
+        ("T5", 3),
+        ("T6", 3),
+        ("T7", 3),
+    ];
     let mut rows: Vec<Row> = Vec::new();
 
     for m in &models {
