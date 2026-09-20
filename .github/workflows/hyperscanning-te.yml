@@ -75,7 +75,7 @@ jobs:
           echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
-      - name: Run the family-wise TE screen (Takens tau, dim 3, cap 4096)
+      - name: Run the family-wise TE screen and write the per-cell nominees (Takens tau, dim 3, cap 4096)
         run: |
           set -o pipefail
           {
@@ -83,10 +83,25 @@ jobs:
             cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
               --manifest manifest.txt --channel "${{ inputs.channel }}" --max-points 4096 --surrogates "${{ inputs.surrogates }}" \
               --percentile "${{ inputs.percentile }}" \
-              --null "${{ inputs.null_model }}"
+              --null "${{ inputs.null_model }}" \
+              --nominees-out nominees.tsv
           } | tee report.txt
+      - name: Confirm the nominees against their own per-cell nulls (p99, 1000 surrogates, fresh seed)
+        if: always()
+        run: |
+          set -o pipefail
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" --max-points 4096 \
+              --nominees nominees.tsv \
+              --null "${{ inputs.null_model }}"
+          } | tee confirmation.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: hyperscanning-te-report
-          path: report.txt
+          path: |
+            report.txt
+            nominees.tsv
+            confirmation.txt
