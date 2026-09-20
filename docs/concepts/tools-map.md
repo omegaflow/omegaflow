@@ -103,7 +103,8 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--reactome` | — (neu, keyless) | | `--interpro` | — (neu, keyless) |
 | `--alphafold` | — (neu, keyless, UniProt-Accession) | | | |
 | `--entrez` | — (neu, keyless, `db=nuccore\|sra\|gds`) | | | |
-| `--ena` | — (neu, keyless, `result=read_run\|study\|sample\|analysis\|assembly`) | | | |
+| `--ena` | — (neu, keyless, `result=read_run\|study\|sample\|analysis\|assembly`) | | |
+| `--cod` | — (neu, keyless, `text=` Freitext + COD-Parameter) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -193,6 +194,13 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   ~70 MB bei `read_run`), `query`/`term` optional (leer = erste Datensätze).
   `count <n>\tresult: <type>` + je Treffer `url https://www.ebi.ac.uk/ena/browser/view/<accession>`
   (aus dem `*_accession`-Feld) + die angeforderten Felder. Kein Eintrag → `absent`.
+- `archive_search --cod "text=<free text> [el1=.. el2=.. nel=..] [fields=<comma-list>] [max=<n>]"`
+  — Crystallography Open Database REST (`/cod/result?format=json`, keyless). Freitext über
+  `text=`, weitere COD-Parameter (`el1`/`el2`/`el3`/`nel`/`formula`/`sg`/`year`/`doi`/`id` …)
+  werden als key=value durchgereicht; `fields=` wählt die Anzeigefelder (Default:
+  `file,chemname,formula,sg,a,b,c,alpha,beta,gamma,vol,year,doi`), `max=` die lokale
+  Zeilengrenze. Je Treffer `url https://www.crystallography.net/cod/<file>.html` + die Felder.
+  Kein Eintrag → `absent`.
 
 ## Gemessen — übrige lokale Werkzeuge
 

@@ -27,6 +27,7 @@ pub const MODES: &[&str] = &[
     "psychporta",
     "awmf",
     "cochrane",
+    "cod",
     "core",
     "materialsproject",
     "semanticscholar",

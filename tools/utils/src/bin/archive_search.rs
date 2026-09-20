@@ -10,6 +10,8 @@ mod chembl;
 mod clinicaltrials;
 #[path = "archive_search/cochrane.rs"]
 mod cochrane;
+#[path = "archive_search/cod.rs"]
+mod cod;
 #[path = "archive_search/core.rs"]
 mod core_api;
 #[path = "archive_search/datacite.rs"]
@@ -281,6 +283,7 @@ fn main() {
             "--psychporta" => mode = Mode::Net("psychporta"),
             "--awmf" => mode = Mode::Net("awmf"),
             "--cochrane" => mode = Mode::Net("cochrane"),
+            "--cod" => mode = Mode::Net("cod"),
             "--core" => mode = Mode::Net("core"),
             "--materialsproject" => mode = Mode::Net("materialsproject"),
             "--semanticscholar" => mode = Mode::Net("semanticscholar"),
@@ -555,7 +558,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
@@ -566,6 +569,9 @@ fn usage() {
     );
     eprintln!(
         "  --ena       key=value: result=<type> fields=<comma-list> <query>   (EBI ENA portal API, e.g. result=read_run fields=run_accession,country)"
+    );
+    eprintln!(
+        "  --cod       key=value: text=<free text> [el1=.. el2=.. nel=..] [fields=<comma-list>] [max=<n>]   (Crystallography Open Database, e.g. text=quartz)"
     );
     eprintln!("  --isc       key=value: start/end/minmag/minlat/maxlat/minlon/maxlon");
     eprintln!(
