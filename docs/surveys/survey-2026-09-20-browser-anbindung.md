@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: e0ad6ad6842d7b9e490470dafc938b2d78cf702cb05597291c8c643b85c3d19b
+  sha256: c272bfcec03c32e515c1fac9baf698cff6a4768c7201cc71a9d2a3c59ab02838
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -92,8 +92,9 @@ ist Library, keine Extension. DevTools Recorder eingebaut → als Extension-Such
   `minimum_chrome_version: 123.0` (`src/assets/manifest/chrome.json`); **hCaptcha nicht
   unterstützt** (README nennt nur reCAPTCHA; offenes Issue #319); STT = **lokales
   Whisper** (`Xenova/whisper-tiny`, wasm/q8, via `@huggingface/transformers`), nicht die
-  Web-Speech-API. Offen bleibt nur das Store-„Updated"-Datum (CWS-Listing ist nicht
-  skriptbar) → `pending`, Schritt: im echten Browser lesen.
+  Web-Speech-API. Store-„Updated"-Datum **gemessen 2026-09-20** (Operator-Lesung im
+  echten Browser): Version **3.4.0**, aktualisiert **20. Juni 2026**, Größe 6,57 MiB,
+  Sprache English — die Store-`pending`-Lücke ist geschlossen.
 
 ## Befund C — Verdikte
 
