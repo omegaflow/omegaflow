@@ -46,6 +46,7 @@ pub fn port_block(block: &str) -> String {
     let mut pmra_key: Option<String> = None;
     let mut pmdec_key: Option<String> = None;
     let mut radvel_key: Option<String> = None;
+    let mut rv_scale: Option<String> = None;
     let mut tau_key: Option<String> = None;
     let mut vel_key: Option<String> = None;
     let mut trk_key: Option<String> = None;
@@ -117,6 +118,7 @@ pub fn port_block(block: &str) -> String {
             "pmra_key" if parts.len() >= 2 => pmra_key = Some(parts[1].to_string()),
             "pmdec_key" if parts.len() >= 2 => pmdec_key = Some(parts[1].to_string()),
             "radvel_key" if parts.len() >= 2 => radvel_key = Some(parts[1].to_string()),
+            "rv_scale" if parts.len() >= 2 => rv_scale = Some(parts[1].to_string()),
             "tau_key" if parts.len() >= 2 => tau_key = Some(parts[1].to_string()),
             "vel_key" if parts.len() >= 2 => vel_key = Some(parts[1].to_string()),
             "trk_key" if parts.len() >= 2 => trk_key = Some(parts[1].to_string()),
@@ -228,6 +230,11 @@ pub fn port_block(block: &str) -> String {
             out.push_str("radvel ");
             out.push_str(k);
             out.push('\n');
+            if let Some(s) = &rv_scale {
+                out.push_str("rv_scale ");
+                out.push_str(s);
+                out.push('\n');
+            }
         }
         if let Some(k) = &dist_key {
             if let Some(plx) = k.strip_prefix("1000/") {
