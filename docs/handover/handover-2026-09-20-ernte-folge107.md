@@ -3,7 +3,7 @@
   session: Ernte-Folge 107
   class: handover
   date: 2026-09-20
-  sha256: 9d8661ee0fd4330d9bf1072b0cb45392602c79ac71feb51171ca5ed3b0192cf9
+  sha256: 126e2e1013c08c89740bd3464f266fb1d536245400bbf9982f588986c75bdecb
   status: live
 -->
 # Handover — Ernte-Folge 107 (2026-09-20)
@@ -39,7 +39,7 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
 - **icesat2_atl03** `phi/harvest.φ:79` — run `35515194248` success gelesen
   (8192 records, 458760 B, CDN sha256 `fdba6385…`); args auf `--skip 3`
   (3/215) gesetzt, committet, `harvest.yml -f format=icesat2_atl03 -f force=true`
-  dispatcht: Run `PENDING` (`in_progress` bei Dispatch). (Schritt: `ci_manage view
+  dispatcht: Run `35516529023` (head `37369e95`, `in_progress` bei Dispatch). (Schritt: `ci_manage view
   <run-id>` einmalig den staged count lesen, dann `phi/harvest.φ`-note fortschreiben
   und `--skip 4` dispatchten.)
 - **TAP-Backends dachs.fai.kz + pithia.cbk.waw.pl** `phi/pipeline/ledger.φ:10-20`
