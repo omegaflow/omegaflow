@@ -4071,3 +4071,7 @@ decline text-warning
 url https://promedmail.org/feed/
 note ProMED-Mail Disease-Feed; direct 404, Wayback 2019-12-26 200 — Text-Warnungen, kein Feldwert.
 
+decline no-physical-force
+url https://gwosc.org/eventapi/jsonfull/allevents/
+note 671 Events; events=Objekt (kein Array). SNR/chi_eff/p_astro/redshift dimensionslos; Massen M_sun, luminosity_distance Mpc, far 1/yr = positionslose Quellparameter. Kein ra/dec. GW-Skymap via GraceDB gw250207_115645.sky1 (sources.φ:9814).
+
