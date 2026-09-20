@@ -3,7 +3,7 @@
   session: Entscheid-Folge 60
   class: handover
   date: 2026-09-20
-  sha256: ee2cc92df93745faecb6bfbbaa186f81a6a7c6391be647986a7b5b7c501e91fc
+  sha256: 9776feb2be5193cf84c02cea8a383568e6f94b57dfa3799ba1cd5a484ea6cdea
   status: live
 -->
 # Handover — Entscheid-Folge 60 (2026-09-20)
@@ -44,34 +44,45 @@ wird **vor allem anderen gegen den Baum gehalten**.
   `1789853943` (Rubin-Forum Summary, informativ); kein neuer Eingang. Zitiert nach
   Forschung-Folge 104 (frisch gemessen); Intervall 2⁶ min war abgelaufen, der
   Ledger-Tail unverändert.
-- **Post** — `post.md` leer (nur Header); keine Zeile an `entscheid`.
-- **Baum** — fremd uncommittet (nicht angefasst): die drei
-  `handover-2026-09-16-*`-Renames (`D` + `??` in `archiv/`).
+- **Post** — `post.md` trägt jetzt sechs Zeilen (dieses Atom): `An ernte` ×2
+  (icesat2-Tag, Doppel-Tracking), `An forschung` ×2 (Flyby-Auftrag, folge44/51-Move),
+  `An bau` ×2 (register_lookup-Binary, ci-check-Glue). Keine Zeile an `entscheid`.
+- **Baum** — nach dem Meta-Pass: `entscheid24`-Move gestaged (eigene Linie);
+  fremd bleiben die `forschung44/51`-Paare (an forschung gepostet). HEAD inzwischen
+  `4a3ffe31` (ernte105).
 
 ## Offen
 
-- **F1 — Rat-Konvention** „keine gestagten Fremd-Hunks in geteilten Dateien am
-  Sessionende" als AGENTS.md-Zeile (härtester undatierter Punkt). **`operator-gebunden`**
-  (Rat-Beschluss). Begleiter (Meta-Befund): für **verwaiste uncommittete
-  Baumzustände** (das 09-16-Limbo, unten) existiert kein Trigger, nur die
-  Safety-Nets — eine Wiedervorlage-Regel „verwaister Baumzustand älter als N Tage"
-  gehört als F1-Begleiter ins selbe Operator-Wort. (Schritt: Ratssitz `council`
-  oder Operator-Wort.)
-- **Pipeline-Port force-Gate — binär A/B** (seit folge46, 14 Folgen). **`operator-gebunden`**.
-- **vC-Permeabilität — Vollzug** (Operator-Maschine). **`operator-gebunden`**.
-- **register_lookup-Symlink** — PATH-Eingriff. **`operator-gebunden`**.
-- **opencode-Browser-Bridge** — kein Target (`browser_targets` leer). **`operator-gebunden`**.
-- **Limadou PI-Freigabe** — per-act consent. **`operator-gebunden`**.
 - **F2 — flare-Gate-Power** — print-only Probe n∈{400,600,1000}, dann n setzen
   oder Driver-Design ändern; Floor bleibt. An forschung gepostet. **`wartend`**.
-- **09-16-Limbo** — drei Handover-Renames (`entscheid24`/`forschung44`/
-  `forschung51` → `archiv/`) seit vier Tagen uncommittet, für alle Linien „fremd",
-  ohne Besitzer. Nicht angefasst (fremd). **`operator-gebunden`** (F1-Begleiter:
-  Wiedervorlage-Regel für verwaiste Baumzustände).
+- **09-16-Limbo** — `entscheid24` → `archiv/` in diesem Atom committet (eigene
+  Linie, atomarer Move); `forschung44/51` an forschung gepostet (Dateiname trägt
+  den Besitzer). **`wartend`** (forschung-Pass).
 - `termin` — **Lasair-LSST** (API 502, Backend server-seitig; Trigger
   Banner-Wechsel). **BepiColombo MORE** (~April 2027).
 - `blockiert` — TAP-Backends dachs/pithia (extern). `wartend` — adoption-Block,
   SuperDARN-Globus, GitHub-PII/GC, Rubin-Review, Sonden-Antworten.
+
+## Operator-Queue (einmal vorlegen beim Operator-Rückkehr; einfache Sprache)
+
+F1 (Aufräum-Regel), die Queue-Mechanik und die Klartext-Regel sind mit
+Operator-Wort 2026-09-20 in `AGENTS.md` gesetzt. Verbleibend, in einfacher Sprache:
+
+1. **Pipeline-Port force-gate — A oder B?** (ältester, seit folge46) — *Lage:* ein
+   Schalter beim Quellen-Einlesen ordnet eine Kraft zwei möglichen Weisen zu;
+   welche physikalisch gilt, ist offen. *Frage:* welche der zwei? *Ja:* der Schalter
+   wird fest gesetzt. *Offen:* die zwei Optionen + ihre Folge müssen vor dem
+   Vorlegen präzisiert werden (`phi/pipeline/`).
+2. **vC-Permeabilität — Vollzug** — *Lage:* ein gemessener Wert soll auf deiner
+   Maschine in Betrieb gehen; diese Maschine kann es nicht. *Frage:* führen wir ihn
+   auf deiner Maschine aus? *Ja:* du startest den Lauf; *Nein:* bleibt offen.
+3. **register_lookup-Symlink** — *Lage:* das Werkzeug soll im System-Pfad liegen.
+   *Frage:* erlaubst du den PATH-Eingriff? *Ja:* Symlink wird gesetzt; *Nein:* bleibt.
+4. **opencode-Browser-Bridge** — *Lage:* die Browser-Brücke hat kein verbundenes
+   Fenster. *Frage:* verbindest du die Extension? *Ja:* Brücke nutzbar; *Nein:* bleibt.
+5. **Limadou PI-Freigabe** — *Lage:* eine Datenfreigabe braucht deine Zustimmung
+   pro Anfrage. *Frage:* senden wir die Anfrage? *Ja:* die Anfrage geht raus
+   (per-act); *Nein:* bleibt.
 
 ## Quer-Linien (Meta-Pass, alle vier lebenden Handover gelesen)
 
@@ -91,24 +102,50 @@ Vier Befunde gegen den Baum gehalten (GLM-Meta-Überblick):
   Auftrag**; vor dem 28.09. muss die Feldfüllung am Perigäum-Tubus registriert
   werden, sonst ist die Demonstration post-hoc. → Post `An forschung` (unten).
 
+## Reibung / Myzel (Untersuchung 2026-09-20 — Wissenschaft + Gremium)
+
+Gemessene Reibungskarte (Wissenschaft) + Rat + 2× Forschung (~28 `archive_search`):
+
+- **`register_lookup`-Binary veraltet** — Quelle implementiert `--open`
+  (`tools/register/src/bin/register_lookup.rs:1324/1331`), PATH-Binary kennt nur
+  `--live`/`--history` (gemessen). Jeder Pass liest durch dieses Instrument →
+  „kein wählbarer Punkt" kann ungemessene Null sein. → Post `An bau`. **`wartend`**.
+- **`ci-check` 80,6 % cancelled** (29/36, 0 success/100) — Queue + Glue-Period
+  (Loss → Delay), Push joined statt reset. → Post `An bau`. **`wartend`**.
+- **Per-Linie `post`-Kanäle** (CRDT/Stigmergie: kommutative Appends statt Mutex) —
+  **nicht** präemptiv splitten (Rat: temporalen Fix zuerst, eine gemessene Woche);
+  der hunk-scharfe Commit ist die benannte Struktur-Lücke. **`wartend`**.
+- **Operator-Queue** (Ashby: requisite variety → am Rand komprimieren, zentral
+  batchen, ein Trigger statt 14 Wiederholungen). **`operator-gebunden`** (F1).
+- **Own-line atomare Moves** — `entscheid24` committet; `forschung44/51` gepostet.
+
+Kanon der drei Stimmen: Berg (Besitz/atomare Move/Vielfalt), Fluss (Kollision =
+Commit-Granularität), Myzel (stigmergischer Trace), Sinn (negative Deklaration
+trägt Coverage), Zukunft (Homöostat, Viability-Kernel). Konvergenz-Satz: *das
+Myzel ist auf der Schreibseite konfliktfrei und auf der Leseseite ein kalibriertes,
+Coverage-tragendes Instrument — eine Nachricht wird nur bei Schwellen-Übertritt
+gesendet und trägt ihre eigene Vollendung.*
+
 ## Geteilter Baum — eigener Pfad-Satz
 
 - `docs/zustand/external-state.md` (CI-Zeile `f7364835` → `c5f9fc68`)
-- `docs/handover/handover-2026-09-20-entscheid-folge60.md` (neu)
-- Move `handover-2026-09-20-entscheid-folge59.md` → `archiv/`
-- `docs/handover/post.md` (drei `An ernte`/`An forschung`-Zeilen — **nicht
-  committet**, um erntes uncommitteten `post.md`-Hunk nicht zu sweepen; der
-  Empfänger faltet die Zeilen in seinem Commit)
-- Fremd uncommittet (nicht angefasst): die drei `handover-2026-09-16-*`-Renames,
-  erntes `phi/harvest.φ`/`phi/pipeline/ledger.φ`/`phi/sources.φ`/`post.md`-Hunks,
-  `handover-2026-09-20-ernte-folge105.md`.
+- `docs/handover/handover-2026-09-20-entscheid-folge60.md` (Offen + Reibung/Myzel +
+  Operator-Queue)
+- `AGENTS.md` (F1-Bullet in der Write-Boundary; Operator-Queue- + Klartext-Regel)
+- `docs/handover/post.md` (sechs Zeilen: `An ernte`×2, `An forschung`×2, `An bau`×2)
+- Move `handover-2026-09-16-entscheid-folge24.md` → `archiv/` (eigene Linie, atomar)
+- (früherer Commit `d230d6f6`: `external-state.md` CI-Zeile, folge60 neu, Move folge59)
+- Fremd uncommittet (nicht angefasst): `forschung44/51`-Paare (an forschung
+  gepostet), erntes `phi/*.φ`-Hunks.
 
 ## Benchmark
 
-- Kein Dispatch — kein abarbeitbarer Bau-/Recherche-Punkt in dieser Linie; alle
-  offenen Punkte sind `operator-gebunden` oder `wartend`. Der stehende Pass
-  (HEAD-Wechsel `f7364835` → `c5f9fc68`) lief in der Hauptsession. Routineklasse
-  geschlossen (`grind-flash` $0.0008, 2026-09-16). Kein Doppellauf.
+- **Reibungs-/Myzel-Untersuchung:** 4 Dispatches — `council` (Gremium, pro/max,
+  Architektur), `general` (gemessene Reibungskarte, flash), 2× `research-max`
+  (Berg/Myzel/Zukunft + Fluss/Sinn, je pro/max, ~28 `archive_search`-Aufrufe).
+  Der Rat lieferte den Rang, die Forschung den Konvergenz-Satz. Pro/max
+  gerechtfertigt: Architektur-Urteil (5 Stimmen) + mehrstufige Quellenforschung;
+  die Reibungskarte war flash-Klasse. Kein Doppellauf.
 
 ## Abschluss
 
