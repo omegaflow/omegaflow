@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: 638b90bd94ce7ab625ba43f870f4b8081e15240bd4a1d88464003a58565ead2b
+  sha256: e0ad6ad6842d7b9e490470dafc938b2d78cf702cb05597291c8c643b85c3d19b
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -43,10 +43,11 @@ npm `@playwright/mcp@0.0.82`, 2026-09-18, 37 387★): Extension dockt an bestehe
 Operator-Tabs an (Session/Cookies/Extensions). **@vymalo/opencode-browser** npm **0.17.0**
 (Projekt nutzt 0.16.1 → Versionslücke gemessen), MIT, Repo-Heimat jetzt
 ADORSYS-GIS/lightbridge-opencode-toolbeit. **hangwin/mcp-chrome** (MIT, push 2026-01-06,
-~8,5 Monate still, 12 437★). **BrowserMCP** (browsermcp/mcp, Lizenz/Aktivität
-ungemessen). **real-browser-mcp** (51★, Nische). **kapture** (license null → aus).
-**native-devtools-mcp** (vectora-foundry, **Rust** gemessen, MIT, 0.10.1; Linux-Support
-laut Beschreibung unklar). Gesichtet, nicht im Detail: different-ai/opencode-browser
+~8,5 Monate still, 12 437★). **BrowserMCP** (browsermcp/mcp, **Apache-2.0 gemessen**;
+läuft lokal — README: „your browser activity stays on your device and isn't sent to
+remote servers"). **real-browser-mcp** (51★, Nische). **kapture** (license null → aus).
+**native-devtools-mcp** (vectora-foundry, **Rust** gemessen, MIT, 0.10.1; **Linux nicht
+unterstützt** — README „Linux is not supported yet", badge macOS|Windows|Android). Gesichtet, nicht im Detail: different-ai/opencode-browser
 (580★, license null), michaljach/opencode-browser (100★, MIT), stowns/opencode-browser-
 extension (2★, license null), Smotree/BrowserMCP, cmsflash/agent-browser-mcp.
 
@@ -87,19 +88,24 @@ ist Library, keine Extension. DevTools Recorder eingebaut → als Extension-Such
   Commit-Messages nennen **„feat: solve challenges with a local Whisper model"** →
   lokale Spracherkennung existiert als Weg. Der Web-Speech-API-Weg (Chrome = Google-
   Server-STT) bleibt als Alternative ungemessen → `pending`.
-- **Offen:** manifest_version/MV3, Store-„Updated"-Datum, hCaptcha-Support,
-  Store-Beschreibungs-Riss (Brave-Snippet nennt „CaptchaAI… Turnstile, Geetest", passt
-  nicht zum Repo) → `pending`, Schritte im Handover.
+- **Gemessen 2026-09-20 (Folge 110):** `manifest_version: 3`,
+  `minimum_chrome_version: 123.0` (`src/assets/manifest/chrome.json`); **hCaptcha nicht
+  unterstützt** (README nennt nur reCAPTCHA; offenes Issue #319); STT = **lokales
+  Whisper** (`Xenova/whisper-tiny`, wasm/q8, via `@huggingface/transformers`), nicht die
+  Web-Speech-API. Offen bleibt nur das Store-„Updated"-Datum (CWS-Listing ist nicht
+  skriptbar) → `pending`, Schritt: im echten Browser lesen.
 
 ## Befund C — Verdikte
 
 - **bereichernd:** Chrome DevTools MCP (Ziel i; Telemetrie-Flags Bedingung),
   Playwright Browser Extension (Pfad 2 → echtes Profil; **befund-gated**, s. Rat),
-  @vymalo 0.17.0 (Pfad-1-Update), BrowserMCP (nach Lizenz-Messung), Cookie-Editor
-  (Ziel iii, Operator-Werkzeug), Privacy Pass (Ziel ii), MarkDownload (Nische),
-  Tab Session Manager (niedrig), native-devtools-mcp (Rust, Linux-Support messen).
+  @vymalo 0.17.0 (Pfad-1-Update; **Drop-in gemessen** — 0.17.0-BREAKING betrifft nur
+  `lightbridge`, Browser-Options unverändert, `{port, token}` gültig), BrowserMCP
+  (Apache-2.0, lokal), Cookie-Editor (Ziel iii, Operator-Werkzeug), Privacy Pass (Ziel ii),
+  MarkDownload (Nische), Tab Session Manager (niedrig).
 - **abgelehnt:** kapture / different-ai-opencode-browser / stowns (license null),
-  real-browser-mcp (Nische), nanobrowser (In-Browser-Agent-Paradigma, keine Bridge),
+  real-browser-mcp (Nische), native-devtools-mcp (Linux nicht unterstützt),
+  nanobrowser (In-Browser-Agent-Paradigma, keine Bridge),
   browser-use + FlareSolverr (Python gemessen), alle bezahlten Solver/Cloud-Browser
   (Option c), Session-Replay-Extensions (nur SaaS).
 - **Ersetzt wird nichts.** Pfad 1 bleibt (Operator-Profil-Bridge), Pfad 2 bleibt
@@ -122,6 +128,11 @@ Identitäten, je mit gemessener Nutzung; Konsolidierung wäre ein Descope ohne B
 - **(ii) Recherche → Pfad 3 erster Zug**, Pfad 2 für mehrschrittige Flüsse. Die
   Playwright-Browser-Extension wird **befund-gated** erst eingebaut, wenn Pfad 1 an
   einer konkreten Seite gemessen scheitert — nie als vierte Dauerleitung.
+- **Store-IDs (gemessen 2026-09-20, Folge 110):** „OpenCode Browser"
+  `cabnfapnafjlijmbpmgjkgobhdkbmpci`; Playwright Extension
+  `mmlmfjhmonkocbjadbfplnigmagldckm`; Buster `mpbjkejclgfgadiemmefgebjfooflfhl`;
+  `chrome-devtools-mcp` npm **1.9.0** (Telemetrie-Flags `--no-usage-statistics`,
+  `--no-performance-crux` bestätigt).
 - **Buster (Option b) descoped mit Befund** — solange das Operator-Wort ausbleibt;
   Option (a) braucht die Operator-Präsenz ohnehin, die Captcha reitet denselben Akt.
   Bezahlte Solver bleiben ausgeschlossen.
