@@ -19,13 +19,14 @@ jobs:
     - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn
     - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage
     - run: cargo build --release -p omegaflow-gate --bin commit_check
+    - run: cargo build --release -p omegaflow --bin omegaflow
     - name: Write tools.manifest
       env:
         TOOLS_SHA: ${{ github.sha }}
       run: |
         {
           echo "git_sha=${TOOLS_SHA}"
-          for t in register_lookup session_burn archive_search sgrep sfetch sread git_safety omega_sh ci_manage commit_check; do
+          for t in register_lookup session_burn archive_search sgrep sfetch sread git_safety omega_sh ci_manage commit_check omegaflow; do
             echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
           done
         } > tools.manifest
@@ -46,5 +47,6 @@ jobs:
           target/release/omega_sh \
           target/release/ci_manage \
           target/release/commit_check \
+          target/release/omegaflow \
           tools.manifest \
           --clobber --repo omegaflow/omegaflow
