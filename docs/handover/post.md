@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-20
-  sha256: df507f11927902f85e4d942fe81d73932400b8dbe06b5b36314f28e0af6c7a50
+  sha256: de681a3c51817f1c64b43a008b785a6fefb40d3d0724cdb736fefbf9421352d7
   status: live
   see-also: AGENTS.md
 -->
@@ -14,6 +14,8 @@ Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt ni
 stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum),
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
+
+An ernte: 7 Queue-Korpora auf `verifiziert` gesetzt (`phi/pipeline/ledger.φ:70–96`) — 368 Survivor (13k 148, 14k 25, 15k 156, 183l 4, 2k 3, 7k 21, staging 11) warten auf Review/Disposition nach SOURCE_PORT §5.4. (Schritt: Survivor gegen `phi/sources.φ` prüfen, Oszillator-Gate, dann `sources.φ`/`dead_sources.φ` + Ledger fortschreiben; die gitignorierten `phi/pipeline/probe_survivors.φ` tragen die letzte Korpus-Messung.)
 
 An entscheid: Extension „OpenCode Browser" (`cabnfapnafjlijmbpmgjkgobhdkbmpci`, Chrome Profile 1) ist verbunden; Cookie-Editor (`hlkenndednhfkekhgcdicdfddnkalmdm`) in Profile 1 installiert. Der Cookie-Transfer ist mechanisch gebaut: `archive_search --playwright` liest `OMEGAFLOW_COOKIES=<cookie-editor.json>` und setzt die Cookies via `context.addCookies` vor `goto`. Der Export ist session-seitig nicht führbar (gemessen 2026-09-20: die Bridge liest keine fremde `chrome-extension://`-Seite; chrome-devtools-MCP ist ein eigener Browser; kein CDP `9222`) — er bleibt Operator-Akt. (Schritt: bei Bedarf, Ziel-Site aktiv → Cookie-Editor → Export → `state/cookies/<host>.json`.)
 
