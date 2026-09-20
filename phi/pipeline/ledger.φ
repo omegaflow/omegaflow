@@ -11,10 +11,6 @@ ausstehend
 kandidat https://dachs.fai.kz/tap
 note ivo://fai.kz/tap — Re-Messung 2026-09-20 (research-max): Web/TLS up (Zert 2026-09-08), PostgreSQL localhost:5432 tot → alle DB-Pfade 500; VOSI availability meldet fälschlich up; GAVO-RofR 116 Zeilen, kein Spiegel. Trigger: sync-QUERY 500→200. Backend down.
 
-verifiziert
-kandidat http://vo.lmd.jussieu.fr/tap
-note ivo://lmd.jussieu/tap — mars_dust.epn_core = Montabone CDOD-FITS-Cubes (em, accept); vcd+mcd = GCM-Modelle (decline Modell). Port mars_dust_compiler.rs; CDN asset 500947208 B sha256 95cb8509… present (run 35461031672 success 2026-09-19).
-
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
 note ivo://src.pas/tap — Re-Messung 2026-09-20 (research-max): DB localhost:5432 tot → sync-QUERY 200/VOTable ERROR, /tap/tables 500; https-Zert abgelaufen; VOSI availability fälschlich up; RofR 22 Zeilen, kein Spiegel; Operator tomasik@cbk.waw.pl publiziert. Trigger: /tap/tables 500→200. Backend down.
@@ -26,34 +22,6 @@ note Re-Messung 2026-09-19: maxTime unverändert 2026-07-30T23:30:00Z (griddap t
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
-
-kompiliert
-kandidat https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.csv
-note Re-Messung 2026-09-16 (grind-pro): lebendes Dataset gefunden — OBSEA_seabed_station_TS_L1c, maxTime 2026-09-14T08:00:00Z (30-min-Mittel), Kraft accept (passiver Treiber). Das zuvor bekannte OBSEA_moored_buoy_meteo_L1c bleibt eingefroren 2026-05-12. sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 792196294d0435af44a921e3146d2b0041144d28262a691b2cf5f3914c8e6b2c, HTTP 200).
-
-kompiliert
-kandidat https://api.v2.sondehub.org/sonde/Y3313219
-note Re-Check 2026-09-16 (grind-flash): ~1 Nachricht/s (1 Hz, RS41), Frame 4058→12205 in 2026-09-16 07:00–09:16; sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (sonde-Y3313219.json, 5548231 B, sha256 64a0097f43ccb82373037263fc2090c0e380024e7f1ebbf607e1de96d1dcdcc7, HTTP 200).
-
-kompiliert
-kandidat https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.csv
-note Re-Check 2026-09-16 (grind-flash): maxTime 2026-09-16T09:31:42Z, Intervall ~20–30 min (Ø ~27); sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (erddap-tabledap-bass-20260907T0000.json-…-time_3E-max_time_-7days.json, 3339613 B, sha256 5503c6a58d32d56a2297f1332b807fe37293a0c0e16d4f0bf59a345fa00e766b, HTTP 200).
-
-kompiliert
-kandidat https://exofop.ipac.caltech.edu/
-note 2026-09-19: Pipe-Arm gebaut (exofop_compiler.rs, extract.rs exofop_toi, EXF1 44 B/Record) + sources.φ/harvest.φ-Blöcke; Force em. CDN-Asset present: exofop_toi.bin 358525 B sha256 440a7fdc…0321 HTTP 200 (run 35426107470 success).
-
-verifiziert
-kandidat https://pds-ppi.igpp.ucla.edu/data/ULY-J-SCE-1-TDF-V1.0/
-note Ulysses SCE TRK-2-25 ATDF; Arm atdf.rs reduce_uly_skyfreq/parse_uly_series(+_x); Compiler ulysses_atdf_compiler.rs; CDN present 2026-09-19 (sniff): ulysses_atdf.bin 35187160 B sha256 5aeca72e…, ulysses_atdf_x.bin 40028696 B sha256 163897d2…; sources.φ registriert.
-
-verifiziert
-kandidat http://imbrium.mit.edu/LRORS/DATA/TRK/
-note LRO RSS raw tracking (Goddard Universal Tracking Data Format, 75-Byte-Records) — Formatdatei LRO_TRK.FMT gemessen http://imbrium.mit.edu/LRORS/LABEL/LRO_TRK.FMT (23513 B, HTTP 200; 29 Spalten: fixed lead 0x0D 0x0A 0x01, SIC=59, VID, SECONDS-of-year + MICROSECONDS, ANGLE_1/2 IEEE_REAL ×8.381903173e-8°, RTLT 48-bit in 1/256 ns, BIAS_DOPPLER 48-bit, AGC, TRANSMIT_FREQUENCY in 10s Hz, validity/sample-rate bits, tail 0x04); Doppler-Formel aus LRO_DESC_TRK.TXT (rate = −c(A−2.4e8)/B). Arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series + extract.rs-Dispatch lro_trk; Compiler tools/harvest/src/bin/lro_trk_compiler.rs (rekursive Listing /LRORS/DATA/TRK/); phi/harvest.φ-Block lro_trk (asset present). CDN present 2026-09-19 (run 35425365015 success): lro_trk_2009.bin 114787240 B sha256 c29af4b4…; sources.φ registriert.
-
-verifiziert
-kandidat https://noaa-goes16.s3.amazonaws.com/
-note GOES-16 ABI L1b RadC Manifest; Arm goes_abi.rs parse_bin (extract.rs goes_abi); Compiler goes16_abi_compiler.rs; CDN present 2026-09-19 (sniff): goes16_abi.bin 348 B sha256 f4448230…, magic GAB1; sources.φ:1087 registriert.
 
 ausstehend
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
@@ -94,15 +62,3 @@ note 425 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 422 parsen (vor Fi
 verifiziert
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 50 Blöcke; --port 2026-09-20 frisches Binär 02ee415e: 49 parsen (vor Fix 8), 11 verifiziert / 38 declined; ra/dec-Fix greift. Nächster Schritt: Review der 11 Survivor → sources.φ/dead_sources.φ (SOURCE_PORT §5.4).
-
-kompiliert
-kandidat https://openneuro.org/datasets/ds007822
-note 99 .set assets hochgeladen run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); sources.φ (99 url-Zeilen) + harvest.φ openneuro_pd_eeg registriert 2026-09-20.
-
-kompiliert
-kandidat https://openneuro.org/datasets/ds007471
-note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. harvest run 35476235446 success: 32 .bin assets present (452943428–701670196 B), 32 url-Zeilen + sha256 in sources.φ, harvest.φ asset present; probe run 35474638076 sub-01 593625434 B roundtrip.
-
-kompiliert
-kandidat https://openneuro.org/datasets/ds008192
-note InterGenSynchrony Hyperscanning, 122 Subj., .snirf, 2,79 GB. harvest run 35474615876 success: asset sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin 3599598 B roundtrip parses (nchan 52 pnts 8484 samples 441168). harvest.φ openneuro_snirf asset present; sources.φ url-Zeile steht.
