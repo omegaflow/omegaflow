@@ -76,11 +76,11 @@ asset present
 format icesat2_atl03
 tag data.nsidc.earthdatacloud.nasa.gov
 arm icesat2_atl03_compiler
-args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 7
+args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 8
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007; day 2026.06.30 (215 Granules). Run 35521080432 success (skip 6, granule ATL03_20260630003802_02443209_007_01.h5, 771751936 B): 8192 records, 458760 B, CDN --sniff sha256 4e1f8aa3…; args --limit 1 --skip 7 (7/215, skip fortschreiben).
+note ATL03 v007; day 2026.06.30 (215 Granules). Run 35521538602 success (skip 7, granule ATL03_20260630004404_02443210_007_01.h5, 1006632960 B): 8192 records, 458760 B, CDN --sniff sha256 c2606e4f…; args --limit 1 --skip 8 (8/215, skip fortschreiben).
 
 asset present
 format lro_trk
