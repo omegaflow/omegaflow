@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       task:
-        description: "Optional single task (T1..T6); empty runs all"
+        description: "Optional single task (T1..T7); empty runs all"
         required: false
         default: ""
       model:

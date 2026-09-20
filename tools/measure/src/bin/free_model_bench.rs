@@ -9,6 +9,14 @@ const MODELS_TSV: &str = include_str!("../../free_models.tsv");
 const TOOLS1: &str = r#"[{"type":"function","function":{"name":"get_weather","description":"Get current weather","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}}]"#;
 const TOOLS2: &str = r#"[{"type":"function","function":{"name":"get_weather","description":"Get current weather","parameters":{"type":"object","properties":{"city":{"type":"string"}},"required":["city"]}}},{"type":"function","function":{"name":"get_umbrella_advice","description":"Advise on umbrella given weather","parameters":{"type":"object","properties":{"weather":{"type":"string"}},"required":["weather"]}}}]"#;
 
+const T7_EXPECT: [&str; 5] = [
+    "MacArthur Fellowship|free",
+    "Thiel Fellowship|duty",
+    "Emergent Ventures|free",
+    "Astera Residency|duty",
+    "Long-Term Future Fund|closed",
+];
+
 struct Model {
     provider: String,
     id: String,
@@ -205,6 +213,11 @@ fn build_body(task: &str) -> String {
             let p = format!("{} At the very end: what is the access code mentioned in the document? Return only the code.", build_filler());
             body_with(&p, None, 64)
         }
+        "T7" => body_with(
+            "Classify each funding program by the obligations it imposes on the recipient. Answer with exactly one line per program in the format NAME|LABEL, no spaces around the pipe, nothing else. LABEL is one of: free (no release, publication, or reporting obligations), duty (carries obligations), closed (not currently open). Programs: MacArthur Fellowship, Thiel Fellowship, Emergent Ventures, Astera Residency, Long-Term Future Fund.",
+            None,
+            256,
+        ),
         _ => String::new(),
     }
 }
@@ -216,6 +229,10 @@ fn check(task: &str, body: &str) -> bool {
         "T4" => ["\"name\"", "\"count\"", "\"mode\"", "\"fast\"", "\"meta\"", "\"ok\""].iter().all(|k| body.contains(k)),
         "T5" => body.contains("250"),
         "T6" => body.contains("QX7-4412"),
+        "T7" => {
+            let n = body.replace(" |", "|").replace("| ", "|");
+            T7_EXPECT.iter().all(|k| n.contains(k)) && !n.contains("Thiel Fellowship|free")
+        }
         _ => false,
     }
 }
@@ -311,7 +328,7 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
         let np = mrows.iter().filter(|r| r.status.starts_with("pending")).count();
         let _ = writeln!(
             f,
-            "{}\t{}\tSUMMARY\ttool_ok={}/{}\tT2={}/{}\tT3={}/{}\tT4={}/{}\tT5={}/{}\tT6={}/{}\tp50={}\tp95={}\t429={}\t5xx={}\ttimeout={}\tpending={}",
+            "{}\t{}\tSUMMARY\ttool_ok={}/{}\tT2={}/{}\tT3={}/{}\tT4={}/{}\tT5={}/{}\tT6={}/{}\tT7={}/{}\tp50={}\tp95={}\t429={}\t5xx={}\ttimeout={}\tpending={}",
             m.provider, m.id,
             count("T1", "pass"), n_t("T1"),
             count("T2", "pass"), n_t("T2"),
@@ -319,6 +336,7 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
             count("T4", "pass"), n_t("T4"),
             count("T5", "pass"), n_t("T5"),
             count("T6", "pass"), n_t("T6"),
+            count("T7", "pass"), n_t("T7"),
             pct(0.5), pct(0.95), n429, n5, nt, np
         );
     }
@@ -356,7 +374,7 @@ fn main() {
     }
 
     let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
-    let tasks: [(&str, u32); 6] = [("T1", 10), ("T2", 5), ("T3", 3), ("T4", 5), ("T5", 3), ("T6", 3)];
+    let tasks: [(&str, u32); 7] = [("T1", 10), ("T2", 5), ("T3", 3), ("T4", 5), ("T5", 3), ("T6", 3), ("T7", 3)];
     let mut rows: Vec<Row> = Vec::new();
 
     for m in &models {
