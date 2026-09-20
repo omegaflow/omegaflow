@@ -1092,13 +1092,13 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: dist_key.into(),
-            dist_scale: 1.0,
+            dist_scale: None,
             plx_key: plx_key.into(),
             z_key: z_key.into(),
             pmra_key: pmra_key.into(),
             pmdec_key: pmdec_key.into(),
             rv_key: rv_key.into(),
-            rv_scale: 1.0,
+            rv_scale: None,
             epoch_key: epoch_key.into(),
             fields,
             tau_key: String::new(),
@@ -3421,6 +3421,19 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         else {
                             continue;
                         };
+                        let dist_scaled = |v: &JsonVal| -> Option<f64> {
+                            let scale = match *dist_scale {
+                                Some(s) => s,
+                                None => return None,
+                            };
+                            if dist_key.is_empty() {
+                                return None;
+                            }
+                            match jpath(v, dist_key) {
+                                Some(dd) if dd.is_finite() && dd > 0.0 => Some(dd * scale),
+                                _ => None,
+                            }
+                        };
                         let d = if !plx_key.is_empty() {
                             match jpath(v, plx_key) {
                                 Some(plx) if plx.is_finite() && plx > 0.0 => {
@@ -3432,35 +3445,23 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                             Some(z) if z.is_finite() && z > 0.0 => {
                                                 z * C_LIGHT / HUBBLE_H0
                                             }
-                                            _ => {
-                                                if !dist_key.is_empty() {
-                                                    match jpath(v, dist_key) {
-                                                        Some(dd) if dd.is_finite() && dd > 0.0 => {
-                                                            dd * dist_scale
-                                                        }
-                                                        _ => continue,
-                                                    }
-                                                } else {
-                                                    continue;
-                                                }
-                                            }
-                                        }
-                                    } else if !dist_key.is_empty() {
-                                        match jpath(v, dist_key) {
-                                            Some(dd) if dd.is_finite() && dd > 0.0 => {
-                                                dd * dist_scale
-                                            }
-                                            _ => continue,
+                                            _ => match dist_scaled(v) {
+                                                Some(dd) => dd,
+                                                None => continue,
+                                            },
                                         }
                                     } else {
-                                        continue;
+                                        match dist_scaled(v) {
+                                            Some(dd) => dd,
+                                            None => continue,
+                                        }
                                     }
                                 }
                             }
                         } else if !dist_key.is_empty() {
-                            match jpath(v, dist_key) {
-                                Some(dd) if dd.is_finite() && dd > 0.0 => dd * dist_scale,
-                                _ => {
+                            match dist_scaled(v) {
+                                Some(dd) => dd,
+                                None => {
                                     if !z_key.is_empty() {
                                         match jpath(v, z_key) {
                                             Some(z) if z.is_finite() && z > 0.0 => {
@@ -3512,9 +3513,12 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         let vr = if rv_key.is_empty() {
                             None
                         } else {
-                            jpath(v, rv_key)
-                                .filter(|x| x.is_finite())
-                                .map(|v| v * rv_scale)
+                            match rv_scale {
+                                Some(scale) => jpath(v, rv_key)
+                                    .filter(|x| x.is_finite())
+                                    .map(|v| v * scale),
+                                None => None,
+                            }
                         };
                         let a_hat = [-sa, ca, 0.0];
                         let d_hat = [-sd * ca, -sd * sa, cd];
