@@ -1564,16 +1564,32 @@ fn next_rng(rng: &mut u64) -> f64 {
     ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
 }
 
+fn endpoint_matched(v: &[f32]) -> (Vec<f64>, Vec<f64>) {
+    let n = v.len();
+    let first = v[0] as f64;
+    let last = v[n - 1] as f64;
+    let slope = (last - first) / (n - 1) as f64;
+    let mut residual = Vec::with_capacity(n);
+    let mut ramp = Vec::with_capacity(n);
+    for t in 0..n {
+        let r = first + slope * t as f64;
+        ramp.push(r);
+        residual.push(v[t] as f64 - r);
+    }
+    (residual, ramp)
+}
+
 pub fn phase_randomized_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
     let n = v.len();
     if n < 2 {
         return v.to_vec();
     }
+    let (residual, ramp) = endpoint_matched(v);
     let m = n.next_power_of_two();
     let mut re: Vec<f64> = vec![0.0; m];
     let mut im: Vec<f64> = vec![0.0; m];
-    for (i, &x) in v.iter().enumerate() {
-        re[i] = x as f64;
+    for (i, &x) in residual.iter().enumerate() {
+        re[i] = x;
     }
     fft(&mut re, &mut im, false);
     for k in 1..m / 2 {
@@ -1587,7 +1603,7 @@ pub fn phase_randomized_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
         im[j] = -im[k];
     }
     fft(&mut re, &mut im, true);
-    v.iter().enumerate().map(|(i, _)| re[i] as f32).collect()
+    (0..n).map(|i| (re[i] + ramp[i]) as f32).collect()
 }
 
 pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> {
@@ -1604,10 +1620,11 @@ pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> 
     }
     vs.iter()
         .map(|v| {
+            let (residual, ramp) = endpoint_matched(&v[..n]);
             let mut re: Vec<f64> = vec![0.0; m];
             let mut im: Vec<f64> = vec![0.0; m];
-            for (i, &x) in v.iter().enumerate().take(n) {
-                re[i] = x as f64;
+            for (i, &x) in residual.iter().enumerate() {
+                re[i] = x;
             }
             fft(&mut re, &mut im, false);
             for k in 1..m / 2 {
@@ -1620,7 +1637,7 @@ pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> 
                 im[j] = -im[k];
             }
             fft(&mut re, &mut im, true);
-            (0..n).map(|i| re[i] as f32).collect()
+            (0..n).map(|i| (re[i] + ramp[i]) as f32).collect()
         })
         .collect()
 }
