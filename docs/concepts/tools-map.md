@@ -91,7 +91,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 33 Modi — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 34 Modi — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
 | `--pubchem` | — (neu) | | `--uniprot` | — (neu) |
@@ -101,6 +101,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--core` | — (neu, keyless/`CORE_API_KEY`) | | `--materialsproject` | — (neu, braucht `MP_API_KEY`) |
 | `--semanticscholar` | — (neu, keyless 429/`S2_API_KEY`) | | | |
 | `--reactome` | — (neu, keyless) | | `--interpro` | — (neu, keyless) |
+| `--alphafold` | — (neu, keyless, UniProt-Accession) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -174,6 +175,10 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `/api/entry/all/protein/reviewed/?search=`; keyless.
   `url https://www.ebi.ac.uk/interpro/entry/<source_database>/<accession>` +
   Name/Typ/Quelle/integrierter Eintrag.
+- `archive_search --alphafold <acc>` — AlphaFold DB Vorhersage über
+  `/api/prediction/<uniprot-accession>`; keyless.
+  `url <pdbUrl>` + Eintrag/Accession/Proteinname/Gen/Organismus/pLDDT/
+  Sequenzdatum.
 
 ## Gemessen — übrige lokale Werkzeuge
 
