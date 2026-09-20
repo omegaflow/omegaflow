@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: 9216ce0773669cf6e245440877bde3f12f1e0836f7c9244312e2d4a391d8493d
+  sha256: 94ca5632f0e73d2aacda657959cc17f64b20a72d94cbd785b5d8a93c1527f590
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -28,6 +28,25 @@
 - `operator-gebunden` — **`pro` nur für die harten Atome**, Session beim
   Atom-Wechsel schließen (die 15-h-Session ist das Gegenbeispiel). (Schritt:
   Dispatch-Praxis der Linien-Session.)
+
+## Funding (pflichtfreie Wege)
+
+- **Angefragt (2026-09-20, Resend):** Research-Credits an DeepSeek
+  `api-service@deepseek.com` (`01a0be5b-a410…`), Moonshot `api-service@moonshot.ai`
+  (`…a506…`), Z.ai `user_feedback@z.ai` (`…a5fe…`); Hardware-Sponsoring an
+  Framework `support@frame.work` (`…a6e6…`). Entwürfe lokal `state/mail/`.
+- **Erkundung:** `docs/surveys/survey-funding-erkundung.md`. Realismus-Lesart:
+  große Fellowships (Shuttleworth/Mozilla) brauchen **öffentliche Wirkung** —
+  fehlt noch; die konkretesten DE-Türen (Prototype Fund, Fellow-Programm Freies
+  Wissen) tragen **Release-/Publikationspflicht**. Pflichtfrei bleiben:
+  Free-Tier-APIs (Gemini/Groq/Cerebras/NVIDIA/Cloudflare/Mistral/Cohere),
+  GitHub Sponsors/Open Collective/Patreon, Hardware-Sponsoring, Steuer, Altgerät.
+- `operator-gebunden` — **Sponsoring erst mit Sichtbarkeit**: GitHub Sponsors /
+  Open Collective aufsetzen, aber ohne Publikum ~0 €. (Schritt: Nadel III
+  schließen → Preprint → dann Antrag/Sponsoring.)
+- `operator-gebunden` — Framework-/Tuxedo-**Sponsoring-Formular** ausfüllen
+  (Framework-Formular auf `frame.work/contact-us`; Tuxedo nutzt Formular).
+  (Schritt: Browser-Formular, Operator-Wort.)
 
 ## Abschluss
 
