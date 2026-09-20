@@ -1,4 +1,3 @@
-use std::os::unix::fs::FileExt;
 use std::path::Path;
 use std::sync::Arc;
 
@@ -65,6 +64,35 @@ impl From<std::io::Error> for DafError {
     }
 }
 
+fn read_exact_at(file: &std::fs::File, buf: &mut [u8], offset: u64) -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        std::os::unix::fs::FileExt::read_exact_at(file, buf, offset)
+    }
+    #[cfg(windows)]
+    {
+        let mut done = 0usize;
+        while done < buf.len() {
+            match std::os::windows::fs::FileExt::seek_read(
+                file,
+                &mut buf[done..],
+                offset + done as u64,
+            ) {
+                Ok(0) => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::UnexpectedEof,
+                        "read_exact_at reached end of file",
+                    ))
+                }
+                Ok(n) => done += n,
+                Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+                Err(e) => return Err(e),
+            }
+        }
+        Ok(())
+    }
+}
+
 pub const RECORD_BYTES: usize = 1024;
 pub const DOUBLE_BYTES: usize = 8;
 
@@ -102,7 +130,7 @@ impl DafFile {
             return Err(DafError::TooSmall(len as usize));
         }
         let mut header = vec![0u8; RECORD_BYTES];
-        file.read_exact_at(&mut header, 0)?;
+        read_exact_at(&file, &mut header, 0)?;
         let (idword, nd, ni, fward) = Self::parse_header(&header)?;
         Ok(DafFile {
             inner: Arc::new(DafInner {
@@ -174,7 +202,7 @@ impl DafFile {
             DafSource::Owned(data) => Ok(data[byte_start..byte_start + byte_len].to_vec()),
             DafSource::File(file) => {
                 let mut buf = vec![0u8; byte_len];
-                file.read_exact_at(&mut buf, byte_start as u64)?;
+                read_exact_at(file, &mut buf, byte_start as u64)?;
                 Ok(buf)
             }
         }
