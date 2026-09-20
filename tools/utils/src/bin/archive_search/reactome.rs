@@ -112,7 +112,10 @@ mod tests {
 
     #[test]
     fn the_highlight_markup_falls() {
-        assert_eq!(strip_tags("<span class=\"highlighting\" >TP53</span> Q5*"), "TP53 Q5*");
+        assert_eq!(
+            strip_tags("<span class=\"highlighting\" >TP53</span> Q5*"),
+            "TP53 Q5*"
+        );
     }
 
     #[test]

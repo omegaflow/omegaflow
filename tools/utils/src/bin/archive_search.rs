@@ -12,10 +12,6 @@ mod clinicaltrials;
 mod cochrane;
 #[path = "archive_search/core.rs"]
 mod core_api;
-#[path = "archive_search/materialsproject.rs"]
-mod materialsproject;
-#[path = "archive_search/semanticscholar.rs"]
-mod semanticscholar;
 #[path = "archive_search/datacite.rs"]
 mod datacite;
 #[path = "archive_search/doaj.rs"]
@@ -24,22 +20,12 @@ mod doaj;
 mod ensembl;
 #[path = "archive_search/entrez.rs"]
 mod entrez;
-#[path = "archive_search/go.rs"]
-mod go;
-#[path = "archive_search/openfda.rs"]
-mod openfda;
-#[path = "archive_search/pdb.rs"]
-mod pdb;
-#[path = "archive_search/pubchem.rs"]
-mod pubchem;
-#[path = "archive_search/uniprot.rs"]
-mod uniprot;
-#[path = "archive_search/unpaywall.rs"]
-mod unpaywall;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
 #[path = "archive_search/git.rs"]
 mod git;
+#[path = "archive_search/go.rs"]
+mod go;
 #[path = "archive_search/heasarc.rs"]
 mod heasarc;
 #[path = "archive_search/index.rs"]
@@ -52,32 +38,46 @@ mod isc;
 mod json;
 #[path = "archive_search/magic.rs"]
 mod magic;
+#[path = "archive_search/materialsproject.rs"]
+mod materialsproject;
 #[path = "archive_search/net.rs"]
 mod net;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
+#[path = "archive_search/openfda.rs"]
+mod openfda;
 #[path = "archive_search/paged.rs"]
 mod paged;
+#[path = "archive_search/pdb.rs"]
+mod pdb;
 #[path = "archive_search/pdf.rs"]
 mod pdf;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/psychporta.rs"]
 mod psychporta;
+#[path = "archive_search/pubchem.rs"]
+mod pubchem;
 #[path = "archive_search/pubmed.rs"]
 mod pubmed;
 #[path = "archive_search/reactome.rs"]
 mod reactome;
 #[path = "archive_search/secrets.rs"]
 mod secrets;
+#[path = "archive_search/semanticscholar.rs"]
+mod semanticscholar;
 #[path = "archive_search/server.rs"]
 mod server;
 #[path = "archive_search/supermag.rs"]
 mod supermag;
 #[path = "archive_search/token.rs"]
 mod token;
+#[path = "archive_search/uniprot.rs"]
+mod uniprot;
+#[path = "archive_search/unpaywall.rs"]
+mod unpaywall;
 #[path = "archive_search/web.rs"]
 mod web;
 #[path = "archive_search/zenodo.rs"]

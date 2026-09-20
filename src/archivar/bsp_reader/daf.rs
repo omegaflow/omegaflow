@@ -82,7 +82,7 @@ fn read_exact_at(file: &std::fs::File, buf: &mut [u8], offset: u64) -> std::io::
                     return Err(std::io::Error::new(
                         std::io::ErrorKind::UnexpectedEof,
                         "read_exact_at reached end of file",
-                    ))
+                    ));
                 }
                 Ok(n) => done += n,
                 Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}

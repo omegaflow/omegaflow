@@ -5,7 +5,8 @@ const ENDPOINT: &str = "https://api.core.ac.uk/v3/search/works/";
 
 pub fn core_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("{}?q={}&limit={}", ENDPOINT, urlencode(query), max);
-    let header = crate::token::secret("CORE_API_KEY").map(|k| format!("Authorization: Bearer {}", k));
+    let header =
+        crate::token::secret("CORE_API_KEY").map(|k| format!("Authorization: Bearer {}", k));
     let extra: Vec<&str> = match &header {
         Some(h) => vec!["-H", h.as_str()],
         None => Vec::new(),
@@ -54,7 +55,10 @@ fn parse_core(body: &str) -> Vec<String> {
         if let Some(doi) = field(record, "doi") {
             line.push_str(&format!("\tdoi: {}", doi));
         }
-        if let Some(year) = record.get("yearPublished").and_then(|y| y.as_scalar_string()) {
+        if let Some(year) = record
+            .get("yearPublished")
+            .and_then(|y| y.as_scalar_string())
+        {
             line.push_str(&format!("\tyear: {}", year));
         }
         if let Some(download) = field(record, "downloadUrl") {
