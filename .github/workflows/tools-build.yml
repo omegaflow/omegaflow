@@ -1,0 +1,50 @@
+name: tools-build
+on:
+  workflow_dispatch:
+  push:
+    paths: ['tools/**','src/**','bin/**','Cargo.toml','Cargo.lock']
+permissions:
+  contents: write
+concurrency:
+  group: tools-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn
+    - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage
+    - run: cargo build --release -p omegaflow-gate --bin commit_check
+    - name: Write tools.manifest
+      env:
+        TOOLS_SHA: ${{ github.sha }}
+      run: |
+        {
+          echo "git_sha=${TOOLS_SHA}"
+          for t in register_lookup session_burn archive_search sgrep sfetch sread git_safety omega_sh ci_manage commit_check; do
+            echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
+          done
+        } > tools.manifest
+    - name: Publish to tools-latest
+      env:
+        GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+      run: |
+        gh release view tools-latest --repo omegaflow/omegaflow >/dev/null 2>&1 || \
+          gh release create tools-latest --title tools-latest --generate-notes --repo omegaflow/omegaflow
+        gh release upload tools-latest \
+          target/release/register_lookup \
+          target/release/session_burn \
+          target/release/archive_search \
+          target/release/sgrep \
+          target/release/sfetch \
+          target/release/sread \
+          target/release/git_safety \
+          target/release/omega_sh \
+          target/release/ci_manage \
+          target/release/commit_check \
+          tools.manifest \
+          --clobber --repo omegaflow/omegaflow

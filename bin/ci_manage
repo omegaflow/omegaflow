@@ -1,17 +1,17 @@
 #!/bin/sh
-# The CI manage tool the sessions and the ci_watchdog run: execs the release
-# binary; the build belongs to CI. A dirty or broken working tree never blocks
-# a run read/cancel/rerun — the existing release binary runs, and a binary
-# older than the tree still runs.
+# The CI runs reader: execs the release binary refreshed by bin/.tools_ensure; never builds.
 set -u
-root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" ci_manage
 bin="$root/target/release/ci_manage"
 if [ ! -x "$bin" ]; then
-    echo "ci_manage: no release binary on PATH — the build belongs to CI" >&2
+    echo "ci_manage: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
-fi
-if find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
-        \( -name '*.rs' -o -name '*.cjs' \) -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
-    echo "ci_manage: release binary is older than the tree — running the existing binary; the rebuild belongs to CI" >&2
 fi
 exec "$bin" "$@"
