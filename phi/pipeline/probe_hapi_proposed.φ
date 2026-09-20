@@ -1,6 +1,3 @@
-# proposed canonical VirES HAPI blocks — 7 Discovery-Ladder datasets (proposal only, not registered)
-# each series is a real window over its actual data span; ttl = series cadence; no live-vs-archive frame
-
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
 ttl 10
 at earth
@@ -16,7 +13,6 @@ field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-i
 url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
 ttl 10
 at earth
-# pending crosswind unit — VirES HAPI info declares kg/m3 (density unit duplicated onto crosswind and its unit-vector direction); the measurement is a neutral-wind speed (samples 1e1–1e2 m/s) — m/s registered
 hapi crosswind=champ_thermosphere_crosswind_ms
 field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0
 
@@ -29,7 +25,6 @@ field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 ttl 5
 at earth
-# pending Distance force — KBR inter-satellite range: EM-carrier ranging (radar precedent) vs gravity-field science; no non-ambiguous basis, column stays in the hapi mapping for alignment and manifests nothing
 hapi Distance=gracefo_kbr_inter_satellite_range_m Absolute_Ne=gracefo_kbr_absolute_electron_density_cm3
 field gracefo_kbr_absolute_electron_density_cm3 gracefo_kbr_absolute_electron_density_cm3 inverse-square em 1/cm3 5 0.0 0.0
 
