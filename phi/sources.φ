@@ -7977,7 +7977,7 @@ compiler tools/harvest/src/bin/icesat2_atl03_compiler.rs
 on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
-note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; Compiler-Arm --cmr (CMR→GetObject) gebaut, Version 007; CDN-Asset 458760 B sha256 bc670bf6… (run 35522225969, skip 8).
+note protected-bucket 403 gemessen 2026-09-17 (Listing Deny); 2026-09-18 GetObject 206 mit EDL-Token/401 ohne; Compiler-Arm --cmr (CMR→GetObject) gebaut, Version 007; CDN-Asset 458760 B sha256 79d3ba21… (run 35524334872, skip 9).
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
 format bgr_infrasound
