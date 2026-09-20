@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-20
-  sha256: dcd4b10ea52578bc54608bf477565ab65e8f12fc74d320a144316ffaf4c6667f
+  sha256: 6fcd6edcdb1f12bf61baa833cfa1a7ee6926874e7ee049737e0894e1f6a61c37
   status: live
   see-also: AGENTS.md
 -->
@@ -18,7 +18,5 @@ richtige Zustand, kein Verlust.
 An bau: `register_lookup` — die Quelle implementiert `--open` (`tools/register/src/bin/register_lookup.rs:1324` usage, `:1331` dispatch → `run_open()`), das PATH-Binary kennt nur `--live`/`--history` (gemessen 2026-09-20: `--open` abgewiesen). Jeder Planungs-Pass aller vier Linien liest durch dieses veraltete Instrument — „kein wählbarer Punkt" kann eine ungemessene Null sein (0-Kanon). (Schritt: Release-Binary neu bauen — Stale-Check-Wrapper wie `bin/archive_search`; der Pass trägt künftig eine Coverage-Zeile, damit ein veraltetes Instrument `pending` liest, nie eine stille Null.)
 
 An bau: `ci-check` ist 29/36 = 80,6 % cancelled, 0 success in den letzten 100 Läufen (`ci_manage list --limit 100`); vier pushende Linien reseten die Gate-Uhr. Queue + Glue-Period statt Loss (Loss → Delay): ein Push **joined** den laufenden Lauf, resettet ihn nicht; eine Gate-Periode pro Ref bedient die Union der Pushes im Fenster. (Schritt: `ci-check.yml` concurrency + Mindest-Periode; bau98 hat die Pfad-Filter-Tuning begonnen.)
-
-An forschung: der Operator hat force-gate **B** entschieden (skip + Review, kein Default) — der **Kernel-Riss** (thermal/diffusion/advective: `default_kernel_for` `src/mathematikerin/force.rs:64-66` vs. `kernel_id_for_force` `force.rs:36-37`; live `sources.φ` folgt erfc) ist als Widerspruch zu **messen**, nie zu glätten (`port.rs:1357/1509` trägt `UNCERTAIN`→Review). (Schritt: Messung/Probe bauen, Riss als `VerdictWord::Riss` mit beiden Zeugenlinien tragen.)
 
 
