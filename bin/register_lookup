@@ -1,24 +1,17 @@
 #!/bin/sh
-# The register reader the sessions run: builds only when needed, then execs it.
-# A dirty or broken working tree never blocks the lookup — the existing
-# release binary runs; the rebuild is a CI job, not a per-call tax.
+# The register reader: execs the release binary refreshed by bin/.tools_ensure; never builds.
 set -u
-root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" register_lookup
 bin="$root/target/release/register_lookup"
-stamp="$root/target/release/.register_lookup_build_stamp"
-needs_build=0
 if [ ! -x "$bin" ]; then
-    needs_build=1
-elif find "$root/tools/register/src" "$root/src" "$root/Cargo.toml" "$root/tools/register/Cargo.toml" \
-        \( -name '*.rs' -o -name '*.cjs' \) -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
-    needs_build=1
-fi
-if [ "$needs_build" = 1 ] && { [ ! -f "$stamp" ] || find "$stamp" -mmin +5 | grep -q .; }; then
-    (cd "$root" && cargo build --release -q -p omegaflow-register --bin register_lookup 2>/dev/null) || true
-    touch "$stamp"
-fi
-if [ ! -x "$bin" ]; then
-    echo "register_lookup: no release binary and the rebuild failed (the tree does not compile) — the build belongs to CI" >&2
+    echo "register_lookup: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
 fi
 exec "$bin" "$@"
