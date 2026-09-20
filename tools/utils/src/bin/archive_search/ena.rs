@@ -205,7 +205,10 @@ mod tests {
             term("result=read_run query=tax_tree(9606)"),
             "tax_tree(9606)"
         );
-        assert_eq!(term("result=read_run term=country=Germany"), "country=Germany");
+        assert_eq!(
+            term("result=read_run term=country=Germany"),
+            "country=Germany"
+        );
     }
 
     #[test]

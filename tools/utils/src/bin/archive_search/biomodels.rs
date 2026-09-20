@@ -164,9 +164,11 @@ mod tests {
     #[test]
     fn an_empty_search_carries_nothing() {
         let fields = vec!["name".to_string()];
-        assert!(parse_biomodels(r#"{"entries":[]}"#, &fields, 10)
-            .unwrap()
-            .is_empty());
+        assert!(
+            parse_biomodels(r#"{"entries":[]}"#, &fields, 10)
+                .unwrap()
+                .is_empty()
+        );
     }
 
     #[test]
@@ -181,18 +183,19 @@ mod tests {
     #[test]
     fn a_record_without_an_id_carries_nothing() {
         let fields = vec!["name".to_string()];
-        assert!(parse_biomodels(
-            r#"{"entries":[{"fields":{"name":["x"]}}]}"#,
-            &fields,
-            10
-        )
-        .unwrap()
-        .is_empty());
+        assert!(
+            parse_biomodels(r#"{"entries":[{"fields":{"name":["x"]}}]}"#, &fields, 10)
+                .unwrap()
+                .is_empty()
+        );
     }
 
     #[test]
     fn reads_key_value_params_and_free_text() {
-        assert_eq!(parameter("text=p53 fields=name", "text").as_deref(), Some("p53"));
+        assert_eq!(
+            parameter("text=p53 fields=name", "text").as_deref(),
+            Some("p53")
+        );
         assert_eq!(
             query_params("text=p53 max=2"),
             vec![("query".to_string(), "p53".to_string())]
