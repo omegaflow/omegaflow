@@ -15,6 +15,4 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An entscheid: Hardware-Sponsoring ist operator-gebunden — Pine64 (`1789922257` → `info@pine64.org`), Framework (Ticket `NG2HWBZM`), Tuxedo (`#991311279`). (Schritt: in die Operator-Queue legen.)
-
 
