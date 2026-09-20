@@ -56,3 +56,19 @@ descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped mit Messung: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
 
+
+blocked key
+url https://api.le-systeme-solaire.net/rest/bodies/
+note solar-system-open-data REST: HTTP 401 (Bearer-Token) 2026-09-20; Koerperdaten ohne Konto nicht abrufbar.
+reg https://api.le-systeme-solaire.net/
+
+blocked account
+url https://developer.amentum.io/register
+note Amentum Developer (geomagnetisch/aviation-radiation/gravity, trial): Registrierung HTTP 200; Zugang nur mit Konto.
+reg https://developer.amentum.io/register
+
+parser-def cdf
+url https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
+note LIRA/RPW-L3 (Solar Orbiter BIA-E-Feld, Tages-CDFs bis 2025-12-31) HTTP 200 2867 B; cdf_reader-Atom fehlt.
+reg https://cdf.gsfc.nasa.gov/
+

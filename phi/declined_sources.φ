@@ -3662,3 +3662,412 @@ note WWLLN Lightning Climatology (WGLC), Kaplan 2024 (10.5281/zenodo.10725446, N
 decline no-te-path
 url https://openneuro.org/datasets/ds004103
 note OpenNeuro hyperscanning-fMRI (Opening Treasure Chest), 33 Dyaden, CC0; BOLD-fMRI-Zeitauflösung → kein TE-Pfad.
+
+decline aggregate-index
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+note SWPC observed-solar-cycle-indices (HTTP 200 512287 B) — aggregierter positionsloser Sonnenflecken-Index; SILSO selbe Klasse declined.
+
+decline derived-satellite-index
+url https://neo.gsfc.nasa.gov/servlet/RenderData?si=1586675&cs=rgb&format=CSV&width=360&height=180
+note NEO MODIS NDVI CSV (HTTP 200 254689 B) — Vegetationsindex, abgeleitetes Satellitenprodukt, kein Sensor am Ort.
+
+decline derived-satellite-index
+url https://www.cpom.ucl.ac.uk/csopr/seaice.html
+note CPOM/UCL Sea-Ice (HTTP 200 92 B) — abgeleitetes Kryosphaeren-Produkt, kein Sensor am Ort.
+
+decline model
+url https://ssd-api.jpl.nasa.gov/sentry.api
+note JPL Sentry Impact-Risk (HTTP 200 577536 B) — Risikomodell, kein Messwert am Ort.
+
+decline model
+url https://thredds.silam.fmi.fi/
+note FMI SILAM THREDDS (HTTP 200) — atmosphaerische Dispersions-Modellierung/Reanalyse.
+
+decline model
+url https://www.gi.alaska.edu/monitors/aurora-forecast
+note UAF Aurora-Forecast (HTTP 200) — Vorhersage, kein gemessenes Feld.
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/01/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/02/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/03/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/04/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/05/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/06/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/07/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/08/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/09/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/10/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/11/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/12/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/13/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/15/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/16/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/17/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/18/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/19/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/20/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/21/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/22/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/23/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/24/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/25/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/26/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/27/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/28/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/29/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/30/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/31/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/32/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/33/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/34/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/35/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/36/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/37/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/38/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/39/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/40/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/41/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/42/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/43/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/44/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/45/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/46/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/47/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/50/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/51/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/66/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/67/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/91/
+note HTTP 404 direct+proton (2026-09-20), wayback 503; DSI-3240 retired 2024-12-31, Nachfolger https://www.ncei.noaa.gov/data/coop-hourly-precipitation/ (200); Bulk-Stationsarchiv ohne Oszillator (Sibling ISD declined_sources.φ:3062).
+
+decline no-physical-force
+url https://www.ocearch.org/tracker/
+note OCEARCH Shark-Tracker (HTTP 200) — Telemetrie aktiver Objekte (Akteur traegt Kinematik), kein propagierendes Feld.
+
+decline reference-constant
+url https://itrf.ign.fr/
+note ITRF terrestrischer Referenzrahmen (HTTP 200) — Referenz-Konstanten, kein Feldwert.
+
+decline registry/katalog
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/
+note NASA GES DISC OPeNDAP-Root (HTTP 200 26799 B) — Archiv-/Discovery-Einstieg, kein Messwert am Punkt.
+
+decline registry/katalog
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+note AERONET-Stationsliste (lat/lon, v3.txt), kein AOD-Messwert; AOD integriert (sources.φ:1367); HTTP 200 73742 B.
+
+decline registry/katalog
+url https://catalogue.marine.copernicus.eu/api/records
+note CMEMS catalogue.marine (direct 0, Proton 0, Wayback 200) — Datenkatalog, kein Messwert.
+
+decline registry/katalog
+url https://cdaw.gsfc.nasa.gov/CME_list/
+note CDAW SOHO CME-Katalog (HTML, HTTP 200) — Katalog-Index, kein Maschinen-Feed.
+
+decline registry/katalog
+url https://emergency.copernicus.eu
+note Copernicus Emergency Portal (HTTP 200) — Infrastruktur-/Katalog-Portal, kein Messwert.
+
+decline registry/katalog
+url https://gcn.gsfc.nasa.gov/gcn3_archive.html
+note GCN GRB-Circulars-Archiv (HTML, HTTP 200) — Ereignis-Archiv ohne Maschinen-Feed; GCN-Alerts via amon_compiler integriert.
+
+decline registry/katalog
+url https://hub.arcgis.com/api/v3/search
+note ArcGIS Hub v3/search (HTTP 200 10691006 B) — Crawl-Einstieg/Katalog, kein Messwert.
+
+decline registry/katalog
+url https://kmtnet.kasi.re.kr/
+note KMTNet Portal (HTTP 200 50 B) — Survey-Portal, kein Feed.
+
+decline registry/katalog
+url https://saber.gats-inc.com/
+note SABER/TIMED Portal (HTTP 200 91386 B) — Datenportal-Root, kein Feed.
+
+decline registry/katalog
+url https://stac.openlandmap.org/
+note OpenLandMap STAC (HTTP 200) — Boden-Katalog, kein Messwert.
+
+decline registry/katalog
+url https://thredds.met.no/
+note MET Norway THREDDS (direct 301, Proton 200) — Daten-Katalog, kein Messwert am Punkt.
+
+decline registry/katalog
+url https://www.arcgis.com/sharing/rest/search?q=*&f=json&num=100&start=0
+note ArcGIS sharing/rest/search (HTTP 200) — Crawl-Einstieg/Katalog, kein Messwert.
+
+decline registry/katalog
+url https://www.emsc-csem.org/Earthquake/
+note EMSC-CSEM Erdbeben (HTML, HTTP 200) — HTML-Katalog ohne Feed; USGS/ISC-Katalog integriert.
+
+decline superseded-by-integrated
+url https://api.nasa.gov/DONKI/CME
+note DONKI-CME via https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME sources.φ:1169 integriert; api.nasa.gov/DONKI-Katalog-Host declined_sources.φ:366. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://api.nasa.gov/DONKI/FLR
+note DONKI-FLR via https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR sources.φ:1177 integriert. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+note NOAA-CO-OPS water_level via sources.φ:897 (station={station}, datum=MLLW, metric, latest) integriert; Stationen mdapi sources.φ:900. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://archive.eso.org/
+note ESO Science Archive — TAP_CAT integriert (sources.φ:9591); Portal-Root HTTP 200 2026-09-20.
+
+decline superseded-by-integrated
+url https://cds.climate.copernicus.eu/api/catalogue/v1/collections
+note CDS collections (STAC-Registry) — dieselbe Messung via cds.climate.copernicus.eu/api integriert (sources.φ:7903).
+
+decline superseded-by-integrated
+url https://celestrak.org/SpaceData/EOP-All.csv
+note CelesTrak EOP — als celestrak_eop.bin integriert (origin sources.φ:7933); HTTP 200 2026-09-20.
+
+decline superseded-by-integrated
+url https://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+note Oulu-Neutronenmonitor — dieselbe Messung wie die integrierten OULU-Felder (sources.φ:1063); HTTP 404, Wayback 200.
+
+decline superseded-by-integrated
+url https://datalab.noirlab.edu/
+note NOIRLab Astro Data Lab — TAP integriert (sources.φ:9627); Portal-Root HTTP 200.
+
+decline superseded-by-integrated
+url https://earthquake.usgs.gov/fdsnws/event/1/query
+note USGS-FDSNWS-Event in sources.φ:97/104 integriert; Jahres-/Magnituden-Varianten declined_sources.φ:1030-1134. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://firms.modaps.eosdis.nasa.gov/api/area/
+note FIRMS area/csv/{FIRMS_MAP_KEY}/… in sources.φ:989/999/1009 integriert; Basis /api/area/ ohne Key. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+note Mauna-Loa-CO2 = co2_weekly_mlo sources.φ:1160 (on earth 19.5 -155.6, diffusion ppm); daily- statt weekly-Aufloesung. HTTP 200 432310 B (2026-09-20).
+
+decline superseded-by-integrated
+url https://gong2.nso.edu/products/
+note GONG — p-Moden via gong2.nso.edu/ftp/TSERIES integriert (sources.φ:8942); products/ Verzeichnis-Index HTTP 200.
+
+decline superseded-by-integrated
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync
+note HEASARC Xamin-TAP — als origin der Swift-GRB-Bloecke integriert (sources.φ:9180); Root 404, /sync VOTable-only (dead_sources.φ:511).
+
+decline superseded-by-integrated
+url https://imag-data.bgs.ac.uk
+note INTERMAGNET XYZF 1-min via sources.φ:5769/5779 (GIN_V1/hapi/data) integriert; Host-Root traegt keinen Messwert. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices
+note INTERMAGNET-Messung via HAPI-Route sources.φ:5769/5782 integriert; GINServices nur Observatoriumsliste (stations-Zeile). HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON
+note BGS GIN — Messung via HAPI-Fanout integriert (sources.φ:5779); GINServices nur Capabilities-Route (declined_sources.φ:1498).
+
+decline superseded-by-integrated
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+note HAPI-Katalog = Stationsliste des integrierten INTERMAGNET-Fanouts (sources.φ:5779/5782); kein eigener Messwert.
+
+decline superseded-by-integrated
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf
+note INTERMAGNET-Fanout — identische Vorlage integriert (sources.φ:5779); HTTP 200.
+
+decline superseded-by-integrated
+url https://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch?op=rs_list&ds=hmi.M_720s
+note JSOC jsoc_fetch — derselbe Endpoint traegt die integrierten AIA-Bloecke (sources.φ:1766); HMI-Serie Variante.
+
+decline superseded-by-integrated
+url https://maia.usno.navy.mil/ser7/finals2000A.daily
+note IERS-EOP (UT1-UTC + Polbewegung) — dieselbe Messung wie der integrierte ser7/finals.all-Block (sources.φ:5798); HTTP 200.
+
+decline superseded-by-integrated
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=20
+note CNEOS-Feuerkugeln — dieselbe Messung wie fireball.api?limit=200 integriert (sources.φ:1265); HTTP 200.
+
+decline superseded-by-integrated
+url https://supermag.jhuapl.edu/mag/?fidelity=low&format=json
+note SuperMAG — als supermag_*.bin integriert (origin data-api.php, sources.φ:9286); HTTP 200.
+
+decline superseded-by-integrated
+url https://www.isc.ac.uk/iscbulletin/search/catalogue/
+note ISC-Bulletin — als isc_bulletin.iscb integriert (origin fdsnws/event/1/query, sources.φ:9390); HTTP 200.
+
+decline superseded-by-integrated
+url https://www.nhc.noaa.gov/CurrentStorms.json
+note NHC-CurrentStorms in sources.φ:731 integriert; basin-Variante declined_sources.φ:3102. HTTP 200 (2026-09-20).
+
+decline superseded-by-integrated
+url https://www.pangaea.de/
+note PANGAEA-Portal — Messungen via DOI-Harvester integriert (sources.φ:9062); Portal-Root HTTP 200.
+
+decline superseded-by-integrated
+url https://www.wis-tns.org/system/files/uploaded/tns_public_objects.csv
+note TNS public objects — dieselbe Messung wie tns_public_objects.csv.zip integriert (sources.φ:1324); HTTP 200.
+
+decline text-warning
+url https://healthmap.org/ai.php?v=2.0&limit=50&striphtml=0
+note HealthMap Ausbruchs-Alerts (HTTP 200 17 B) — Text-/Positionswarnungen, keine physikalische Feldmessung.
+
+decline text-warning
+url https://promedmail.org/feed/
+note ProMED-Mail Disease-Feed; direct 404, Wayback 2019-12-26 200 — Text-Warnungen, kein Feldwert.
+

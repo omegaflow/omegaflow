@@ -15,10 +15,6 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An ernte: 7 Queue-Korpora auf `verifiziert` gesetzt (`phi/pipeline/ledger.φ:70–96`) — 368 Survivor (13k 148, 14k 25, 15k 156, 183l 4, 2k 3, 7k 21, staging 11) warten auf Review/Disposition nach SOURCE_PORT §5.4. (Schritt: Survivor gegen `phi/sources.φ` prüfen, Oszillator-Gate, dann `sources.φ`/`dead_sources.φ` + Ledger fortschreiben; die gitignorierten `phi/pipeline/probe_survivors.φ` tragen die letzte Korpus-Messung.)
-
-An ernte: force-gate B gebaut — ein Block ohne `force`-Direktiv fällt nicht mehr still, er bleibt `# pending … review` (`src/archivar/port.rs` `field_or_review`). Die 3 `ausstehend` Queue-Korpora (30-astro, earth-stac-sentinel, exotic-neutrino-ligo, `ledger.φ:58–66`) tragen genau diesen Blocker. (Schritt: Re-Lauf auf dem nächsten frischen Binär `bin/.tools_ensure omegaflow`, `# pending`-Review-Zeilen zählen, dann Disposition SOURCE_PORT §5.4.)
-
 An entscheid: Extension „OpenCode Browser" (`cabnfapnafjlijmbpmgjkgobhdkbmpci`, Chrome Profile 1) ist verbunden; Cookie-Editor (`hlkenndednhfkekhgcdicdfddnkalmdm`) in Profile 1 installiert. Der Cookie-Transfer ist mechanisch gebaut: `archive_search --playwright` liest `OMEGAFLOW_COOKIES=<cookie-editor.json>` und setzt die Cookies via `context.addCookies` vor `goto`. Der Export ist session-seitig nicht führbar (gemessen 2026-09-20: die Bridge liest keine fremde `chrome-extension://`-Seite; chrome-devtools-MCP ist ein eigener Browser; kein CDP `9222`) — er bleibt Operator-Akt. (Schritt: bei Bedarf, Ziel-Site aktiv → Cookie-Editor → Export → `state/cookies/<host>.json`.)
 
 An entscheid: Pine64 Ox64 — erledigt: der Operator hat die Versanddaten gegeben, die Antwort an `info@pine64.org` ist gesendet (`sent_ledger` `1789931195`, Resend `01a0c036-8aea-70aa-8ade-29b1dfbd2d1c`). Queue-Punkt schließen. (Schritt: keine.)
