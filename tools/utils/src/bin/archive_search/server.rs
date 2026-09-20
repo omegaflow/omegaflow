@@ -28,6 +28,7 @@ pub const MODES: &[&str] = &[
     "awmf",
     "cochrane",
     "cod",
+    "biomodels",
     "core",
     "materialsproject",
     "semanticscholar",
