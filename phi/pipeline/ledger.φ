@@ -123,9 +123,9 @@ kompiliert
 kandidat https://openneuro.org/datasets/ds007822
 note 99 .set assets hochgeladen run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); sources.φ (99 url-Zeilen) + harvest.φ openneuro_pd_eeg registriert 2026-09-20.
 
-ausstehend
+kompiliert
 kandidat https://openneuro.org/datasets/ds007471
-note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. Probe run 35474638076 grün (sub-01 nbchan 64 samples 148391680, 593625434 B roundtrip); bau-Fix resolve_companion 8c7b885e. 32 .vhdr gemessen, alle task-jointaction. harvest.φ openneuro_brainvision (asset fehlt, shard 32) registriert; harvest.yml run 35476235446 queued @95769e75 — Run einmal lesen, dann sources.φ url + asset present.
+note Joint-agency-EEG, BrainVision, 32 Subj., CC0, 8,66 GB. harvest run 35476235446 success: 32 .bin assets present (452943428–701670196 B), 32 url-Zeilen + sha256 in sources.φ, harvest.φ asset present; probe run 35474638076 sub-01 593625434 B roundtrip.
 
 kompiliert
 kandidat https://openneuro.org/datasets/ds008192
