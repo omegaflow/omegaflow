@@ -14,7 +14,10 @@ pub fn clinicaltrials_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) if f.status == Some(200) => {
             let out = parse_clinicaltrials(&f.body);
             if out.is_empty() {
-                vec![format!("absent — clinicaltrials carries no entry: {}", query)]
+                vec![format!(
+                    "absent — clinicaltrials carries no entry: {}",
+                    query
+                )]
             } else {
                 out
             }
