@@ -221,7 +221,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst — **HTML/Text**; für Binärdownloads (PDF/PNG) `sfetch --raw` oder `curl -o`, sonst zerstört (`from_utf8_lossy` + Tag-Strip) |
 | `smail --dry-run` | 0,288 s | kein Versand |
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
-| `register_lookup --dropped [<line>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle) |
+| `register_lookup --dropped [<line>] [--persist <n>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle); `--persist <n>` = nur Punkte, die ≥n Übergaben überleben, dann verschwinden |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
