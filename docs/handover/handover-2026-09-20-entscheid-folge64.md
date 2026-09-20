@@ -3,7 +3,7 @@
   session: Entscheid-Folge 64
   class: handover
   date: 2026-09-20
-  sha256: 5f3ef4288e5243f2ed86e012a3071772931e94524e456a96ec372f648d93fe40
+  sha256: 67696b17c2c8368684a7281af0f5c04923be5f202acb1172162e3a93b931e1e8
   status: live
 -->
 # Handover — Entscheid-Folge 64 (2026-09-20)
@@ -75,11 +75,13 @@ live gegen `https://api.unorouter.com/v1`.
   Code-Bugfix, Structured Output, Reasoning, Long-Context; je Trial HTTP-Status +
   Latenz, 429-Backoff aus „retry in Ns", TSV mit per-Modell-Summary (tool_ok%,
   Task-Pass%, p50/p95, 429/5xx/timeout/pending). **`cargo check` 0 Fehler / 0
-  Warnungen.** Offen: (Schritt 1) die 10 Provider-Keys als GitHub-Secrets setzen
-  (`gh secret set <ENV> --repo <owner/omegaflow>`); (Schritt 2)
-  `gh workflow run free-model-bench.yml`; (Schritt 3) Artefakt `free-model-bench.tsv`
-  lesen und das Ranking in dieses Handover. **`operator-gebunden`** (Secrets +
-  Dispatch-Wort).
+  Warnungen.** **Secrets + Dispatch erledigt** (2026-09-20): das Repo war am
+  100-Secret-Limit → alle Keys als **ein** Secret `FREE_MODEL_KEYS` (JSON) gesetzt,
+  die 8 Einzel-Secrets entfernt; der Workflow exportiert die Env-Variablen daraus.
+  `opencode` (Zen) hat **keinen** Key in `auth.json` → die 7 Zen-Modelle laufen
+  `pending_no_key`. Lauf dispatcht: **`35527517605`**. Offen: Artefakt
+  `free-model-bench.tsv` lesen + das Ranking hier eintragen. **`wartend`**
+  (Auslöser: Run-Abschluss — `ci_manage view 35527517605` / Watchdog).
 - **Mistral-Disposition** — gemessen kein Free-API-Modell; die 7 Whitelist-Einträge
   als „frei" falsch; Provider deaktiviert. **`operator-gebunden`** (Operator-Queue).
 - **Inception-Disposition** — `mercury-2` per-Token bezahlt (2,5e-7); Free-Tier
