@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: 326c54efc31d96e2f2d40b4abb831d18ad8e611f234356e9dea6ea37da707f00
+  sha256: c7e482ab71c36ca0dd169b207cd3b8dda1a2760a136429c846c80d0e3e4b4b83
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -60,6 +60,24 @@
 - `operator-gebunden` — **Mantis-Shrimp-Hardware**: Espressif-Sponsorship +
   Crowd Supply; **GSoC/OpenAstronomy** + **ESA SOCIS** als Mentoring-Orga.
   (Schritt: Formular/Bewerbung, Operator-Wort.)
+
+## Operator-Entscheidungen (2026-09-20)
+
+- **Pipeline force-gate: B** (skip + Review, kein Default). Ein Block ohne
+  `force`-Direktiv bleibt `pending`/Review (`default_kernel_for("") = None`,
+  `src/mathematikerin/force.rs:68`, `src/archivar/port.rs:18`); der ehrliche
+  dritte Zustand ist `UNCERTAIN`→Review (`port.rs:1357/1509`). **Der Kernel-Riss**
+  (thermal/diffusion/advective: `default_kernel_for` `force.rs:64-66` vs.
+  `kernel_id_for_force` `force.rs:36-37`; live `sources.φ` folgt erfc) wird als
+  **Widerspruch getragen und gemessen**, nie geglättet.
+- **vC-Permeabilität:** Operator führt den **versteckten sensor-getriebenen Lauf**
+  aus (`OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`), danach
+  `perm_target_probe --live <pfad>` (`tools/measure/src/bin/perm_target_probe.rs`).
+  Der CI-Lauf ist laut Rat **descoped** (analytischer Ruhepunkt, null
+  Verteilungsinfo). Lokale Funktionsläufe sind der Session strukturell verweigert.
+- **register_lookup-Symlink:** erledigt (liegt in `~/.local/bin`, auf PATH).
+- **opencode-Browser-Brücke:** verbunden.
+- **Limadou CSES-02-PI-Freigabe:** offen — per-act-Wort des Operators.
 
 ## Abschluss
 
