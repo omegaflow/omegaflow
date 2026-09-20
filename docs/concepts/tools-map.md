@@ -105,6 +105,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--entrez` | — (neu, keyless, `db=nuccore\|sra\|gds`) | | | |
 | `--ena` | — (neu, keyless, `result=read_run\|study\|sample\|analysis\|assembly`) | | |
 | `--cod` | — (neu, keyless, `text=` Freitext + COD-Parameter) | | | |
+| `--biomodels` | — (neu, keyless, EBI Search, `text=` Freitext) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -201,6 +202,11 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `file,chemname,formula,sg,a,b,c,alpha,beta,gamma,vol,year,doi`), `max=` die lokale
   Zeilengrenze. Je Treffer `url https://www.crystallography.net/cod/<file>.html` + die Felder.
   Kein Eintrag → `absent`.
+- `archive_search --biomodels "text=<free text> [fields=<comma-list>] [max=<n>]"`
+  — EBI BioModels über die EBI-Search-REST (`/ebisearch/ws/rest/biomodels?format=json&size=`,
+  keyless). Freitext über `text=` (auch `query=`/`term=` oder blank), `fields=` wählt die
+  Anzeigefelder (Default: `name`), `max=` die lokale Zeilengrenze. Je Treffer
+  `url https://www.ebi.ac.uk/biomodels/<id>` + die Felder. Kein Eintrag → `absent`.
 
 ## Gemessen — übrige lokale Werkzeuge
 
