@@ -18,6 +18,7 @@ const PLANE_ROOT: &str = "https://ps1images.stsci.edu/rings.v3.skycell";
 const DEFAULT_ORDER: u32 = 12;
 
 const PROBE_WORKERS: u32 = 8;
+const PLANE_WORKERS: usize = 4;
 const SUBCELL_MAX: u32 = 99;
 const PROJ_SEARCH_HIGH: u32 = 9999;
 const PROJ_SOUTH_SEED: u32 = 637;
@@ -107,6 +108,11 @@ fn curl_bytes(url: &str) -> FetchOutcome {
         .arg("-sSf")
         .arg("-m")
         .arg("300")
+        .arg("--retry")
+        .arg("5")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("--retry-all-errors")
         .arg(url)
         .output();
     match out {
@@ -297,36 +303,55 @@ fn query_skycell(ra_deg: f64, dec_deg: f64) -> Option<Vec<(u32, u32)>> {
     }
 }
 
-struct Plane {
-    max_count: u64,
-    measured: u64,
-    accum: HashMap<u32, f64>,
+enum RegridOutcome {
+    Fetched {
+        max_count: u64,
+        measured: u64,
+        unmapped: u64,
+        accum: HashMap<u32, f64>,
+    },
+    NonGnomonic,
+    Empty,
+    Unreadable,
+    Unread,
 }
 
-fn regrid_plane(buf: &[u8], census: &mut Census, nside: i64) -> Option<Plane> {
-    let (_, ext_off) = FitsHeader::parse(buf, 0)?;
-    let (header, _) = FitsHeader::parse(buf, ext_off)?;
-    let (image, _) = FitsCompressedImage::parse(buf, ext_off)?;
+enum PlaneWork {
+    Fetched(RegridOutcome),
+    Missing,
+    Refused(String),
+}
+
+fn regrid_plane(buf: &[u8], nside: i64) -> RegridOutcome {
+    let Some((_, ext_off)) = FitsHeader::parse(buf, 0) else {
+        return RegridOutcome::Unread;
+    };
+    let Some((header, _)) = FitsHeader::parse(buf, ext_off) else {
+        return RegridOutcome::Unread;
+    };
+    let Some((image, _)) = FitsCompressedImage::parse(buf, ext_off) else {
+        return RegridOutcome::Unread;
+    };
     let width = image.dims[0];
     let height = image.dims[1];
     if image.dims[2] != 1 || image.tiles_per_axis(0) != 1 || image.tile[1] > 1 {
-        census.planes_unreadable += 1;
-        eprintln!("regrid_plane: tile layout outside the measured single-row-per-tile shape");
-        return None;
+        return RegridOutcome::Unreadable;
     }
-    let wcs = FitsWcs::from_header(&header, width, height)?;
+    let Some(wcs) = FitsWcs::from_header(&header, width, height) else {
+        return RegridOutcome::Unread;
+    };
     if !wcs.is_tan() {
-        census.planes_non_gnomonic += 1;
-        eprintln!(
-            "regrid_plane: a non-gnomonic projection plane stayed unharvested (measured sky is not fabricated)"
-        );
-        return None;
+        return RegridOutcome::NonGnomonic;
     }
-    let mut regrid = ZenithalRegrid::new(wcs, nside)?;
+    let Some(mut regrid) = ZenithalRegrid::new(wcs, nside) else {
+        return RegridOutcome::Unread;
+    };
     let mut max_count: u64 = 0;
     let mut measured: u64 = 0;
     for t1 in 0..image.tiles_per_axis(1) {
-        let vals = image.tile_pixels(buf, [0, t1, 0])?;
+        let Some(vals) = image.tile_pixels(buf, [0, t1, 0]) else {
+            return RegridOutcome::Unread;
+        };
         let y = t1;
         if y >= height {
             continue;
@@ -354,17 +379,14 @@ fn regrid_plane(buf: &[u8], census: &mut Census, nside: i64) -> Option<Plane> {
         .map(|(k, a)| (k, a.count_sr))
         .collect();
     if accum.is_empty() {
-        census.planes_empty += 1;
-        eprintln!("regrid_plane: the plane carries no measured coverage");
-        return None;
+        return RegridOutcome::Empty;
     }
-    census.unmapped_pixels += unmapped;
-    census.measured_pixels += measured;
-    Some(Plane {
+    RegridOutcome::Fetched {
         max_count,
         measured,
+        unmapped,
         accum,
-    })
+    }
 }
 
 fn harvest_skycell(
@@ -376,50 +398,105 @@ fn harvest_skycell(
     nside: i64,
 ) {
     census.skycells += 1;
-    for (filter, band) in BANDS.iter() {
-        let url = plane_url(proj, sub, *filter);
-        match curl_bytes(&url) {
-            FetchOutcome::Bytes(buf) => {
-                census.planes_fetched += 1;
-                match regrid_plane(&buf, census, nside) {
-                    Some(plane) => {
-                        let bi = band_index(*band);
-                        let dest = &mut band_accum[bi];
-                        for (ipix, count_sr) in plane.accum {
-                            *dest.entry(ipix).or_insert(0.0) += count_sr;
-                        }
-                        if plane.max_count > band_max[bi] {
-                            band_max[bi] = plane.max_count;
-                        }
-                        eprintln!(
-                            "  {}.{:03} {} plane: {} measured pixels, max num {}",
-                            proj, sub, filter, plane.measured, plane.max_count
-                        );
+    let next = AtomicU64::new(0);
+    let (tx, rx) = mpsc::channel::<(usize, PlaneWork)>();
+    std::thread::scope(|s| {
+        for _ in 0..PLANE_WORKERS {
+            let tx = tx.clone();
+            let next = &next;
+            s.spawn(move || {
+                loop {
+                    let bi = next.fetch_add(1, Ordering::Relaxed) as usize;
+                    if bi >= BANDS.len() {
+                        break;
                     }
-                    None => {
+                    let filter = BANDS[bi].0;
+                    let url = plane_url(proj, sub, filter);
+                    let work = match curl_bytes(&url) {
+                        FetchOutcome::Bytes(buf) => PlaneWork::Fetched(regrid_plane(&buf, nside)),
+                        FetchOutcome::Missing => PlaneWork::Missing,
+                        FetchOutcome::Refused(msg) => PlaneWork::Refused(msg),
+                    };
+                    let _ = tx.send((bi, work));
+                }
+            });
+        }
+        drop(tx);
+        for (bi, work) in rx {
+            let filter = BANDS[bi].0;
+            match work {
+                PlaneWork::Fetched(outcome) => {
+                    census.planes_fetched += 1;
+                    let stayed_unread = match outcome {
+                        RegridOutcome::Fetched {
+                            max_count,
+                            measured,
+                            unmapped,
+                            accum,
+                        } => {
+                            let dest = &mut band_accum[bi];
+                            for (ipix, count_sr) in accum {
+                                *dest.entry(ipix).or_insert(0.0) += count_sr;
+                            }
+                            if max_count > band_max[bi] {
+                                band_max[bi] = max_count;
+                            }
+                            census.unmapped_pixels += unmapped;
+                            census.measured_pixels += measured;
+                            eprintln!(
+                                "  {}.{:03} {} plane: {} measured pixels, max num {}",
+                                proj, sub, filter, measured, max_count
+                            );
+                            false
+                        }
+                        RegridOutcome::NonGnomonic => {
+                            census.planes_non_gnomonic += 1;
+                            eprintln!(
+                                "regrid_plane: a non-gnomonic projection plane stayed unharvested (measured sky is not fabricated)"
+                            );
+                            true
+                        }
+                        RegridOutcome::Empty => {
+                            census.planes_empty += 1;
+                            eprintln!("regrid_plane: the plane carries no measured coverage");
+                            true
+                        }
+                        RegridOutcome::Unreadable => {
+                            census.planes_unreadable += 1;
+                            eprintln!(
+                                "regrid_plane: tile layout outside the measured single-row-per-tile shape"
+                            );
+                            true
+                        }
+                        RegridOutcome::Unread => {
+                            census.planes_unreadable += 1;
+                            true
+                        }
+                    };
+                    if stayed_unread {
                         eprintln!(
                             "  {}.{:03} {} plane stayed unread — its measured sky is not harvested",
                             proj, sub, filter
                         );
                     }
                 }
-            }
-            FetchOutcome::Missing => {
-                census.planes_missing += 1;
-                eprintln!(
-                    "  {}.{:03} {} plane is absent (the band has no stack here)",
-                    proj, sub, filter
-                );
-            }
-            FetchOutcome::Refused(msg) => {
-                census.planes_unreadable += 1;
-                eprintln!(
-                    "  {}.{:03} {} plane fetch returned void: {msg}",
-                    proj, sub, filter
-                );
+                PlaneWork::Missing => {
+                    census.planes_missing += 1;
+                    eprintln!(
+                        "  {}.{:03} {} plane is absent (the band has no stack here)",
+                        proj, sub, filter
+                    );
+                }
+                PlaneWork::Refused(msg) => {
+                    census.planes_unreadable += 1;
+                    eprintln!(
+                        "  {}.{:03} {} plane fetch returned void: {msg}",
+                        proj, sub, filter
+                    );
+                }
             }
         }
-    }
+    });
 }
 
 fn run(args: &[String]) -> Result<(), String> {
@@ -584,6 +661,13 @@ fn run(args: &[String]) -> Result<(), String> {
                 ra = (ra + ra_step) % 360.0;
             }
         }
+    }
+
+    if census.planes_unreadable > 0 {
+        return Err(format!(
+            "{} planes stayed unreadable — the chunk stays void, the hourly schedule retries it",
+            census.planes_unreadable
+        ));
     }
 
     let nominal_missing = band_max.iter().all(|m| *m == 0);
