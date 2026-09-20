@@ -281,13 +281,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     ra_key: String::new(),
                     dec_key: String::new(),
                     dist_key: String::new(),
-                    dist_scale: 1.0,
+                    dist_scale: None,
                     plx_key: String::new(),
                     z_key: String::new(),
                     pmra_key: String::new(),
                     pmdec_key: String::new(),
                     rv_key: String::new(),
-                    rv_scale: 1.0,
+                    rv_scale: None,
                     epoch_key: String::new(),
                     fields: Vec::new(),
                     tau_key: String::new(),
@@ -1281,7 +1281,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 if let Ok(v) = parts[1].parse::<f64>()
                     && let Some(Extract::CelestialMap { dist_scale, .. }) = cur_extracts.last_mut()
                 {
-                    *dist_scale = v;
+                    *dist_scale = Some(v);
+                }
+            }
+            "rv_scale" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>()
+                    && let Some(Extract::CelestialMap { rv_scale, .. }) = cur_extracts.last_mut()
+                {
+                    *rv_scale = Some(v);
                 }
             }
             "tname" if parts.len() >= 2 => {}
