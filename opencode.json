@@ -147,6 +147,13 @@
       }
     }
   },
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@1.9.0", "--no-usage-statistics", "--no-performance-crux"],
+      "enabled": true
+    }
+  },
   "permission": {
     "edit": "allow",
     "webfetch": "deny",
