@@ -1,0 +1,50 @@
+name: free-model-bench
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Optional single task (T1..T6); empty runs all"
+        required: false
+        default: ""
+      model:
+        description: "Optional model-id substring filter; empty runs all 105"
+        required: false
+        default: ""
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  free-model-bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Benchmark the free models
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          KILO_API_KEY: ${{ secrets.KILO_API_KEY }}
+          KENARI_API_KEY: ${{ secrets.KENARI_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          TOKENROUTER_API_KEY: ${{ secrets.TOKENROUTER_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: |
+          args=(--out free-model-bench.tsv)
+          if [ -n "${{ inputs.task }}" ]; then args+=(--task "${{ inputs.task }}"); fi
+          if [ -n "${{ inputs.model }}" ]; then args+=(--model "${{ inputs.model }}"); fi
+          cargo run --release -p omegaflow-measure --bin free_model_bench -- "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: free-model-bench
+          path: free-model-bench.tsv
