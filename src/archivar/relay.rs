@@ -414,6 +414,13 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     json.push(']');
                     emit(&mut s, "200 OK", "application/json", json.as_bytes());
                 }
+                _ if path.ends_with(".js") && !path.trim_start_matches('/').contains('/') => {
+                    let asset = format!("static{}", path);
+                    match std::fs::read(resolve_asset(&asset)) {
+                        Ok(v) => emit(&mut s, "200 OK", "application/javascript", &v),
+                        Err(_) => emit_void(&mut s),
+                    }
+                }
                 _ => {
                     emit_void(&mut s);
                     break;
