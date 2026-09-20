@@ -46,7 +46,33 @@ jobs:
           done
           formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | grep '^+format ' | sed 's/^+format //' || true)"
           formats="$formats $(git diff --unified=6 "$before" '${{ github.sha }}' -- phi/harvest.φ | grep '^[ +-]format ' | sed 's/^[ +-]format //' || true)"
+          args_changed=""
+          if git show "$before:phi/harvest.φ" > /tmp/harvest_before.φ 2>/dev/null; then
+            for fmt in $formats; do
+              old=$(awk -v f="$fmt" '$1=="format" {cur=$2} $1=="args" && cur==f {print; exit}' /tmp/harvest_before.φ)
+              new=$(awk -v f="$fmt" '$1=="format" {cur=$2} $1=="args" && cur==f {print; exit}' phi/harvest.φ)
+              if [ "$old" != "$new" ]; then
+                args_changed="$args_changed $fmt"
+              fi
+            done
+          else
+            echo "no phi/harvest.φ at $before — args-change compare void, no auto-force"
+          fi
+          formats=$(printf '%s\n' $formats $args_changed | sort -u)
           bad=0
+          dispatch() {
+            local fmt="$1" wf="$2" tmo="$3" force="$4"
+            local inputs=()
+            if grep -qE '^[[:space:]]+format:' ".github/workflows/$wf"; then
+              inputs+=(-f format="$fmt")
+              if [ -n "$tmo" ]; then inputs+=(-f timeout="$tmo"); fi
+              if [ "$force" = "true" ]; then inputs+=(-f force=true); fi
+            else
+              echo "format $fmt: $wf declares no format input — dispatch without inputs"
+            fi
+            gh workflow run "$wf" "${inputs[@]}" --repo '${{ github.repository }}' \
+              || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
+          }
           for fmt in $formats; do
             block=$(cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup "$fmt" 2>/dev/null || true)
             if [ -z "$block" ]; then
@@ -54,28 +80,32 @@ jobs:
               continue
             fi
             asset=$(printf '%s\n' "$block" | sed -n 's/^asset //p')
+            wf=$(printf '%s\n' "$block" | sed -n 's/^workflow //p')
+            wf=${wf:-harvest.yml}
+            tmo=$(printf '%s\n' "$block" | sed -n 's/^timeout //p')
+            idem=$(printf '%s\n' "$block" | sed -n 's/^idempotent //p')
             case "$asset" in
               fehlt)
-                wf=$(printf '%s\n' "$block" | sed -n 's/^workflow //p')
-                wf=${wf:-harvest.yml}
                 echo "format $fmt: asset fehlt — dispatch $wf"
-                tmo=$(printf '%s\n' "$block" | sed -n 's/^timeout //p')
-                if grep -qE '^[[:space:]]+format:' ".github/workflows/$wf"; then
-                  if [ -n "$tmo" ]; then
-                    gh workflow run "$wf" -f format="$fmt" -f timeout="$tmo" --repo '${{ github.repository }}' \
-                      || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
-                  else
-                    gh workflow run "$wf" -f format="$fmt" --repo '${{ github.repository }}' \
-                      || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
-                  fi
-                else
-                  echo "format $fmt: $wf declares no format input — dispatch without inputs"
-                  gh workflow run "$wf" --repo '${{ github.repository }}' \
-                    || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
-                fi
+                dispatch "$fmt" "$wf" "$tmo" false
                 ;;
               present)
-                echo "format $fmt: asset present — no dispatch"
+                case " $args_changed " in
+                  *" $fmt "*)
+                    if [ "$idem" != "true" ]; then
+                      echo "format $fmt: asset present, args changed, no idempotence gate — dispatch $wf"
+                      dispatch "$fmt" "$wf" "$tmo" false
+                    elif grep -qE '^[[:space:]]+force:' ".github/workflows/$wf"; then
+                      echo "format $fmt: asset present, args changed — dispatch $wf force=true"
+                      dispatch "$fmt" "$wf" "$tmo" true
+                    else
+                      echo "format $fmt: args changed, $wf declares no force input — manual dispatch register duty"
+                    fi
+                    ;;
+                  *)
+                    echo "format $fmt: asset present — no dispatch"
+                    ;;
+                esac
                 ;;
               *)
                 echo "format $fmt: block unmeasured — register duty, no dispatch"
