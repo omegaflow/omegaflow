@@ -41,6 +41,15 @@ pub fn port_block(block: &str) -> String {
     let mut dec_key: Option<String> = None;
     let mut plx_key: Option<String> = None;
     let mut z_key: Option<String> = None;
+    let mut dist_key: Option<String> = None;
+    let mut dist_scale: Option<String> = None;
+    let mut pmra_key: Option<String> = None;
+    let mut pmdec_key: Option<String> = None;
+    let mut radvel_key: Option<String> = None;
+    let mut tau_key: Option<String> = None;
+    let mut vel_key: Option<String> = None;
+    let mut trk_key: Option<String> = None;
+    let mut vr_key: Option<String> = None;
     let mut alt_key: Option<String> = None;
     let mut epoch_key: Option<String> = None;
     let mut post_body: Option<String> = None;
@@ -103,6 +112,15 @@ pub fn port_block(block: &str) -> String {
             "dec_key" if parts.len() >= 2 => dec_key = Some(parts[1].to_string()),
             "plx_key" if parts.len() >= 2 => plx_key = Some(parts[1].to_string()),
             "z_key" if parts.len() >= 2 => z_key = Some(parts[1].to_string()),
+            "dist_key" if parts.len() >= 2 => dist_key = Some(parts[1].to_string()),
+            "dist_scale" if parts.len() >= 2 => dist_scale = Some(parts[1].to_string()),
+            "pmra_key" if parts.len() >= 2 => pmra_key = Some(parts[1].to_string()),
+            "pmdec_key" if parts.len() >= 2 => pmdec_key = Some(parts[1].to_string()),
+            "radvel_key" if parts.len() >= 2 => radvel_key = Some(parts[1].to_string()),
+            "tau_key" if parts.len() >= 2 => tau_key = Some(parts[1].to_string()),
+            "vel_key" if parts.len() >= 2 => vel_key = Some(parts[1].to_string()),
+            "trk_key" if parts.len() >= 2 => trk_key = Some(parts[1].to_string()),
+            "vr_key" if parts.len() >= 2 => vr_key = Some(parts[1].to_string()),
             "alt_key" if parts.len() >= 2 => alt_key = Some(parts[1].to_string()),
             "epoch_key" if parts.len() >= 2 => epoch_key = Some(parts[1].to_string()),
             "field" | "field_in" | "first" | "last" | "count" | "path" | "deep" | "last_row"
@@ -196,6 +214,37 @@ pub fn port_block(block: &str) -> String {
             out.push_str(k);
             out.push('\n');
         }
+        if let Some(k) = &pmra_key {
+            out.push_str("pmra ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &pmdec_key {
+            out.push_str("pmdec ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &radvel_key {
+            out.push_str("radvel ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &dist_key {
+            if let Some(plx) = k.strip_prefix("1000/") {
+                if plx_key.is_none() {
+                    out.push_str("plx ");
+                    out.push_str(plx);
+                    out.push('\n');
+                }
+            } else if let Some(s) = &dist_scale {
+                out.push_str("dist ");
+                out.push_str(k);
+                out.push('\n');
+                out.push_str("dist_scale ");
+                out.push_str(s);
+                out.push('\n');
+            }
+        }
     } else {
         if let Some(k) = &lat_key {
             out.push_str("lat ");
@@ -217,6 +266,26 @@ pub fn port_block(block: &str) -> String {
             out.push_str(k);
             out.push('\n');
         }
+    }
+    if let Some(k) = &tau_key {
+        out.push_str("tau_key ");
+        out.push_str(k);
+        out.push('\n');
+    }
+    if let Some(k) = &vel_key {
+        out.push_str("vel ");
+        out.push_str(k);
+        out.push('\n');
+    }
+    if let Some(k) = &trk_key {
+        out.push_str("trk ");
+        out.push_str(k);
+        out.push('\n');
+    }
+    if let Some(k) = &vr_key {
+        out.push_str("vr ");
+        out.push_str(k);
+        out.push('\n');
     }
     for r in &raw_extracts {
         let parts: Vec<&str> = r.split_whitespace().collect();
