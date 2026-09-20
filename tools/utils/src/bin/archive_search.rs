@@ -22,6 +22,8 @@ mod datacite;
 mod doaj;
 #[path = "archive_search/ensembl.rs"]
 mod ensembl;
+#[path = "archive_search/entrez.rs"]
+mod entrez;
 #[path = "archive_search/go.rs"]
 mod go;
 #[path = "archive_search/openfda.rs"]
@@ -287,6 +289,7 @@ fn main() {
             "--pdb" => mode = Mode::Net("pdb"),
             "--chembl" => mode = Mode::Net("chembl"),
             "--ensembl" => mode = Mode::Net("ensembl"),
+            "--entrez" => mode = Mode::Net("entrez"),
             "--doaj" => mode = Mode::Net("doaj"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
@@ -549,12 +552,15 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
     );
     eprintln!("  --sniff     reports magic bytes + sha256");
+    eprintln!(
+        "  --entrez    key=value: db=<database> <term>   (NCBI E-utilities esearch, e.g. db=nuccore|sra|gds)"
+    );
     eprintln!("  --isc       key=value: start/end/minmag/minlat/maxlat/minlon/maxlon");
     eprintln!(
         "  --supermag  key=value: station=<code> start=<YYYYMMDDHHMM> end=<YYYYMMDDHHMM>   (data; logon = SUPERMAG_USER)"
