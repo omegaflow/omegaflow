@@ -3,7 +3,7 @@
   session: Entscheid-Folge 63
   class: handover
   date: 2026-09-20
-  sha256: ed12f51d0d48f8f83358721f3c42a906e6eb474f3a45a922d0f27f44c04822c8
+  sha256: 257d98e83c189ff908d2a55eec59d8c72d06d18ac8433d6520673e81d45dd7d7
   status: live
 -->
 # Handover — Entscheid-Folge 63 (2026-09-20)
@@ -50,7 +50,7 @@ Pricing-Seiten via `archive_search --playwright`); Roh-JSON unter
 | opencode (Zen) | 77 | 7 | `big-pickle` + `mimo-v2.5-free`/`ling-3.0-flash-fin-free`/`nemotron-3-ultra-free`/`nemotron-3.5-lightning-free`/`muse-spark-1.3-contributor-free`/`jev-1.13-free` (Doku `opencode.ai/docs/zen`); `deepseek-v4-flash-free` nur im Katalog, nicht in der Free-Liste |
 | mistral | 46 | **0** | kein `free`/`pricing`; gratis nur der Vibe-Plan (Riss) |
 | inception | 2 | **0** | `mercury-2` 2,5e-7 / `mercury-2.5` 4e-8 (bezahlt; Free-Tier 100 Mio Token = separate Linie) |
-| nvidia | 82 | 38 „Free Endpoint" | Preview-Credits, clientseitiger Filter |
+| nvidia | 82 | 38 „Free Endpoint" | Free-Marker nur auf build.nvidia.com (`?filters=availability:free_endpoint` = 38); 24 API-IDs zugeordnet, 14 Nicht-LLM (`pending`); Whitelist auf 15 frei-LLMs erweitert |
 
 **Config bereinigt** (`~/.config/opencode/opencode.jsonc`, untracked): kenari +3
 (`agnes-2-0-flash:free`, `agnes-2-5-flash:free`, `laguna-xs-2-1:free`); opencode
@@ -71,7 +71,11 @@ orpheus, 2× llama-prompt-guard); `allam-2-7b`, `groq/compound`,
 Neurons/Tag gratis, 7 Modelle nur bezahlt (kimi-k2.6, kimi-k2.7-code, glm-5.2,
 glm-5.3, glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813).
 **Whitelists gesetzt:** google 17 (Free-Tier-Modelle), groq 10 (Free-Plan),
-cloudflare-workers-ai 20 (alle außer die 7 bezahlten).
+cloudflare-workers-ai 20 (alle außer die 7 bezahlten), nvidia 15 (frei-LLMs).
+**`models`-Block ergänzt** für opencode-unbekannte IDs (`jev-1.13-free`, kenari
+`agnes-2-0/2-5-flash:free`/`laguna-xs-2-1:free`, tokenrouter
+`nemotron-3-nano-omni-…:free`, google `3.5-transcribe`/`-live`/`robotics-er-2`) —
+sonst erscheinen sie nicht. **`mistral` deaktiviert** (`disabled_providers`).
 
 ## Offen
 
