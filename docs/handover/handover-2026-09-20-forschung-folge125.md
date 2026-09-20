@@ -3,7 +3,7 @@
   session: Forschung-Folge 125
   class: handover
   date: 2026-09-20
-  sha256: 852797e34fb8cb8ab49fc91a12c5355fada104f3943eab4df7064cba6ee5f214
+  sha256: 81741ec0b2b56b221bfe1a730bd27e64401d9f1033b8918f13e329d1bea4aad7
   status: live
 -->
 # Handover — Forschung-Folge 125 (2026-09-20)
@@ -99,6 +99,16 @@ im CI-Binär; die Liste bleibt groß (1761 Zeilen), Triage-Stand folge124
 unverändert (2 echte Fälle als Post an bau/ernte getragen). (Offen: `--dropped`
 als CI-Gate verdrahten — Rat/Architektur.)
 
+## Punkt 5 — ci-check-Rot (Post an forschung, gefaltet)
+
+`An forschung`-Post gefaltet: ci-check `35531572974` @`8218f46a` rot — 5 Tests
+(case-flag lowercased nur die Zeile, nicht die Nadel `archive_search.rs:1533`;
+cod Entry-Feld-Pflicht `cod.rs:180`; entrez `term=` bricht am Leerzeichen
+`entrez.rs:161`; materialsproject Float-Skalar verworfen
+`materialsproject.rs:87`; pdf ObjStm `/First` fehlt im Slice `pdf.rs:1850`) +
+fmt `relay.rs:1107`; Pfad seit `8218f46a` nicht berührt. (Schritt: 5 Tests +
+fmt heilen, `ci-check` dispatch.)
+
 ## Riss (getragen, nicht geglättet)
 
 Der Rat ist uneinig über den dominanten Mechanismus der Inversion —
@@ -141,6 +151,7 @@ Konstante gedruckt, nie durch Lockern versteckt.
 | 14. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 15. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |
 | 16. Buster-Store-„Updated"-Datum | wartend | eigen | im echten Browser lesen |
+| 17. ci-check-Rot (Post gefaltet) | wartend | eigen | 5 Tests + fmt heilen, `ci-check` dispatch |
 
 ## Benchmark
 
