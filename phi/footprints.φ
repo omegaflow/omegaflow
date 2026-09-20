@@ -15,7 +15,7 @@ url https://ps1images.stsci.edu/rings.v3.skycell/
 asset ps1_dr2_binary.fp01
 band g r i z y
 note PS1-Binaer-Asset (2026-09-09): Archiv-Existenz Skycell-Tiles (ps1grid + ps1filenames, ~7900 Probes), frac=1.0; Fehlerrichtung beobachtet - Suedsaum <=1 Tile + 1.6e-3 deg2 Polarloch ueberzeichnet; Compiler ps1_binary_compiler.rs; 35.906.245 B.
-note PS1-Fraktional (Quelle 2026-09-08): rings.v3.skycell stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; Regrid regrid.rs, Compiler ps1_coverage_compiler.rs; Live-Lauf 389.074.034 Pixel, g(150,2) frac 0.898; volles DR2-Asset pending.
+note PS1-Fraktional (2026-09-08): rings.v3.skycell stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; regrid.rs, ps1_coverage_compiler.rs; 389.074.034 Pixel, g(150,2) 0.898; volles DR2-Asset pending (2026-09-20 Release ssd.jpl.nasa.gov am 1000-Asset-Cap/HTTP422, 187 Parts, combine nicht erreicht; Fix: neues Tag+ps1-cdn.yml-Repoint).
 
 footprint sdss
 url https://skyserver.sdss.org/dr18/
