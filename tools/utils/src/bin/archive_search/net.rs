@@ -1124,6 +1124,7 @@ const QUERY_MODES: &[&str] = &[
     "unpaywall",
     "reactome",
     "interpro",
+    "alphafold",
 ];
 
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
@@ -1243,6 +1244,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "unpaywall" => crate::unpaywall::unpaywall_lines(query),
         "reactome" => crate::reactome::reactome_lines(query, max),
         "interpro" => crate::interpro::interpro_lines(query, max),
+        "alphafold" => crate::alphafold::alphafold_lines(query, max),
         "supermag" => {
             let user = match resolve_key(
                 env.get("SUPERMAG_USER").map(String::as_str).unwrap_or(""),
@@ -1321,6 +1323,9 @@ mod tests {
             "doaj",
             "go",
             "unpaywall",
+            "reactome",
+            "interpro",
+            "alphafold",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
