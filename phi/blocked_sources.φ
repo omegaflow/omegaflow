@@ -67,8 +67,3 @@ url https://developer.amentum.io/register
 note Amentum Developer (geomagnetisch/aviation-radiation/gravity, trial): Registrierung HTTP 200; Zugang nur mit Konto.
 reg https://developer.amentum.io/register
 
-parser-def cdf
-url https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
-note LIRA/RPW-L3 (Solar Orbiter BIA-E-Feld, Tages-CDFs bis 2025-12-31) HTTP 200 2867 B; cdf_reader-Atom fehlt.
-reg https://cdf.gsfc.nasa.gov/
-

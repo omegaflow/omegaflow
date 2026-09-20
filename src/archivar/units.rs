@@ -69,6 +69,8 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "kt_tnt" => Some(value * 4.184e12),
         "kg/m3" | "kg/m³" => Some(value),
         "1/m3" => Some(value),
+        "bq/l" => Some(value * 1e3),
+        "bq/m3" | "bq/m³" => Some(value),
         "tecu" => Some(value * 1e16),
         _ => None,
     }
@@ -189,6 +191,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "sfu",
             "1/cm3",
             "1/m3",
+            "bq/l",
+            "bq/m3",
             "tecu",
             "wm2_1au",
             "1e-4w/m2",

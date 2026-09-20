@@ -370,20 +370,22 @@ fn scan_markers(
 }
 
 fn disposition_owner(state: &str) -> Option<&'static str> {
-    let s = state.trim();
-    if s.starts_with("blocked parser-def") {
-        return Some("bau");
+    let mut tokens = state.trim().split_whitespace();
+    match tokens.next() {
+        Some("parser-def" | "parser-gap") => Some("bau"),
+        Some("asset") => match tokens.next() {
+            Some("fehlt") => Some("bau"),
+            _ => None,
+        },
+        Some("ausstehend" | "verifiziert" | "kompiliert" | "pending") => Some("ernte"),
+        Some("blocked") => match tokens.next() {
+            Some("account" | "key") => Some("entscheid"),
+            Some("ip-blocked") => Some("ernte"),
+            Some("parser-def") => Some("bau"),
+            _ => None,
+        },
+        _ => None,
     }
-    if s == "blocked account" || s == "blocked key" {
-        return Some("entscheid");
-    }
-    if s == "blocked ip-blocked" {
-        return Some("ernte");
-    }
-    if s == "pending" {
-        return Some("ernte");
-    }
-    None
 }
 
 #[derive(Debug, PartialEq)]
@@ -2058,6 +2060,14 @@ mod tests {
         assert_eq!(disposition_owner("blocked ip-blocked"), Some("ernte"));
         assert_eq!(disposition_owner("pending"), Some("ernte"));
         assert_eq!(disposition_owner("descoped"), None);
+    }
+
+    #[test]
+    fn status_owner_maps_on_first_token() {
+        assert_eq!(disposition_owner("parser-def cdf"), Some("bau"));
+        assert_eq!(disposition_owner("blocked account"), Some("entscheid"));
+        assert_eq!(disposition_owner("blocked parser-def odf"), Some("bau"));
+        assert_eq!(disposition_owner("blocked mystery"), None);
     }
 
     #[test]

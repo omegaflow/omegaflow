@@ -171,7 +171,15 @@ fn probe(path: &str) {
                             let last = records.last().map(|(r, v)| (r, v.clone()));
                             eprintln!("    {} records {:?} .. {:?}", records.len(), first, last);
                             if var.name == "EDC_SRF" {
-                                let cols = records.first().map(|(_, v)| v.len()).unwrap_or(0);
+                                let cols = match records.first() {
+                                    Some((_, v)) => v.len(),
+                                    None => {
+                                        eprintln!(
+                                            "    EDC_SRF carries no records — no column stats"
+                                        );
+                                        continue;
+                                    }
+                                };
                                 for col in 0..cols {
                                     let mut real = 0usize;
                                     let mut mn = f64::INFINITY;
@@ -209,11 +217,20 @@ fn day_index(db: &str) -> HashMap<i64, String> {
         if !path.contains(PREFIX) {
             continue;
         }
-        let file = path.rsplit('/').next().unwrap_or("");
-        let stem = file.strip_suffix(".cdf").unwrap_or(file);
+        let Some(file) = path.rsplit('/').next() else {
+            continue;
+        };
+        let stem = match file.strip_suffix(".cdf") {
+            Some(s) => s,
+            None => file,
+        };
         let mut parts = stem.rsplit('_');
-        let ver = parts.next().unwrap_or("");
-        let date = parts.next().unwrap_or("");
+        let Some(ver) = parts.next() else {
+            continue;
+        };
+        let Some(date) = parts.next() else {
+            continue;
+        };
         let Some(n) = ver.strip_prefix('V').and_then(|v| v.parse::<u32>().ok()) else {
             continue;
         };
@@ -233,15 +250,21 @@ fn day_index(db: &str) -> HashMap<i64, String> {
                     .rsplit('_')
                     .next()
                     .and_then(|v| v.strip_prefix('V'))
-                    .and_then(|v| v.parse::<u32>().ok())
-                    .unwrap_or(0);
-                if n > cur {
+                    .and_then(|v| v.parse::<u32>().ok());
+                if cur.map_or(true, |c| n > c) {
                     *existing = path.to_string();
                 }
             })
             .or_insert_with(|| path.to_string());
     }
     map
+}
+
+fn lock_recovered<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    match mutex.lock() {
+        Ok(guard) => guard,
+        Err(poison) => poison.into_inner(),
+    }
 }
 
 struct DayOutcome {
@@ -263,10 +286,7 @@ fn harvest_day(
 ) {
     let url = format!("{BASE_URL}{path}");
     let Some(bytes) = fetch(&url) else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
+        lock_recovered(outcomes).push(DayOutcome {
                 day,
                 rows: 0,
                 fills: 0,
@@ -288,37 +308,25 @@ fn harvest_day(
         Ok(f) => f,
         Err(note) => {
             outcome.note = Some(format!("{:?}", note));
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(outcome);
+            lock_recovered(outcomes).push(outcome);
             return;
         }
     };
     let Some(epoch_var) = file.var("Epoch") else {
         outcome.note = Some("Epoch absent".to_string());
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(outcome);
+        lock_recovered(outcomes).push(outcome);
         return;
     };
     let Some(edc) = file.var("EDC_SRF") else {
         outcome.note = Some("EDC_SRF absent".to_string());
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(outcome);
+        lock_recovered(outcomes).push(outcome);
         return;
     };
     let epoch_map = match file.epoch_map(&bytes, epoch_var) {
         Ok(m) => m,
         Err(note) => {
             outcome.note = Some(format!("Epoch {:?}", note));
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(outcome);
+            lock_recovered(outcomes).push(outcome);
             return;
         }
     };
@@ -326,10 +334,7 @@ fn harvest_day(
         Ok(r) => r,
         Err(note) => {
             outcome.note = Some(format!("EDC_SRF {:?}", note));
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(outcome);
+            lock_recovered(outcomes).push(outcome);
             return;
         }
     };
@@ -379,13 +384,10 @@ fn harvest_day(
         }
     }
     day_records.sort_by(|a, b| a.0.total_cmp(&b.0));
-    let mut guard = records.lock().unwrap_or_else(|e| e.into_inner());
+    let mut guard = lock_recovered(records);
     guard.extend(day_records);
     drop(guard);
-    outcomes
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .push(outcome);
+    lock_recovered(outcomes).push(outcome);
 }
 
 fn main() {
@@ -395,13 +397,18 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "rpw_efield.bin".to_string());
-    let decimate_min: f64 = arg_value(&args, "--decimate-min")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(10.0);
-    let jobs: usize = arg_value(&args, "--jobs")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(4);
+    let out = match arg_value(&args, "--out") {
+        Some(p) => p,
+        None => "rpw_efield_lira.bin".to_string(),
+    };
+    let decimate_min: f64 = match arg_value(&args, "--decimate-min").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => 10.0,
+    };
+    let jobs: usize = match arg_value(&args, "--jobs").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => 4,
+    };
     let start_day = match arg_value(&args, "--window-start")
         .as_deref()
         .and_then(parse_days)
@@ -508,10 +515,19 @@ fn main() {
             });
         }
     });
-    let outcomes_guard = Arc::try_unwrap(outcomes)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let outcomes_guard = match Arc::try_unwrap(outcomes) {
+        Ok(mutex) => match mutex.into_inner() {
+            Ok(v) => v,
+            Err(_) => {
+                eprintln!("outcomes: the mutex is poisoned — the aggregate stays unread");
+                std::process::exit(1);
+            }
+        },
+        Err(_) => {
+            eprintln!("outcomes: the Arc still carries handles — the aggregate stays unread");
+            std::process::exit(1);
+        }
+    };
     let mut void_days = 0usize;
     let mut ex_real_days = 0usize;
     let mut missing_epochs_total = 0usize;
@@ -533,10 +549,19 @@ fn main() {
         "{} days void, {} days with real ex values, {} records without epoch",
         void_days, ex_real_days, missing_epochs_total
     );
-    let records_guard = Arc::try_unwrap(records)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let records_guard = match Arc::try_unwrap(records) {
+        Ok(mutex) => match mutex.into_inner() {
+            Ok(v) => v,
+            Err(_) => {
+                eprintln!("records: the mutex is poisoned — the aggregate stays unread");
+                std::process::exit(1);
+            }
+        },
+        Err(_) => {
+            eprintln!("records: the Arc still carries handles — the aggregate stays unread");
+            std::process::exit(1);
+        }
+    };
     let mut raw = records_guard;
     raw.sort_by(|a, b| a.0.total_cmp(&b.0));
     let mut harvested = raw.len();

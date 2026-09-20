@@ -298,6 +298,8 @@ fn test_convert_to_si() {
     close(convert_to_si(3.0, "microMoleQuanta/m^2/sec"), 3.0e-6);
     close(convert_to_si(40.0, "dbhz"), 1.0e4);
     close(convert_to_si(30.0, "dBHz"), 1.0e3);
+    close(convert_to_si(1.0, "Bq/L"), 1.0e3);
+    close(convert_to_si(2.0, "BQ/M³"), 2.0);
     assert!(convert_to_si(9.0, "weird").is_none());
     assert!(convert_to_si(7.2, "M").is_none());
     assert!(convert_to_si(5.0, "mag").is_none());
@@ -368,6 +370,8 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"dbhz"));
     assert!(allowed_units_for_force(0).contains(&"m-2.s-1.tev-1"));
     assert!(allowed_units_for_force(0).contains(&"tev"));
+    assert!(allowed_units_for_force(0).contains(&"bq/l"));
+    assert!(allowed_units_for_force(0).contains(&"bq/m3"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
