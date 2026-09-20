@@ -1438,6 +1438,31 @@ fn is_container_heading(heading: &str) -> bool {
         == 0
 }
 
+const CONTAINER_TAILS: &[&str] = &[
+    "punkte",
+    "offen",
+    "wartend",
+    "termin",
+    "benchmark",
+    "stehender pass",
+    "geteilter baum",
+    "abschluss",
+    "postfach",
+    "ci",
+];
+
+fn is_container_text(text: &str) -> bool {
+    if is_container_heading(text) {
+        return true;
+    }
+    let lower = normalize_text(text).to_lowercase();
+    CONTAINER_TAILS.iter().any(|tail| {
+        lower == *tail
+            || lower.ends_with(&format!(" {}", tail))
+            || lower.ends_with(&format!("-{}", tail))
+    })
+}
+
 fn strip_bullet_marker(trimmed: &str) -> Option<&str> {
     if let Some(rest) = trimmed.strip_prefix("- ") {
         return Some(rest.trim());
@@ -1505,6 +1530,7 @@ fn extract_open_points(text: &str) -> Vec<OpenPoint> {
             }
         }
     }
+    points.retain(|p| !is_container_text(&p.text));
     points
 }
 
@@ -1658,8 +1684,25 @@ fn dropped_line_filter(args: &[String]) -> Option<&str> {
     None
 }
 
+fn persist_threshold(args: &[String]) -> usize {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == "--persist" {
+            return match it.next() {
+                Some(value) => match value.parse::<usize>() {
+                    Ok(n) if n >= 1 => n,
+                    _ => 1,
+                },
+                None => 1,
+            };
+        }
+    }
+    1
+}
+
 fn run_dropped(args: &[String]) {
     let filter = dropped_line_filter(args);
+    let threshold = persist_threshold(args);
     let handovers = collect_handovers();
     let mut commit_cache: BTreeMap<String, Option<String>> = BTreeMap::new();
     let mut pairs = 0usize;
@@ -1672,11 +1715,15 @@ fn run_dropped(args: &[String]) {
                 continue;
             }
         }
+        let padded: Vec<String> = list
+            .iter()
+            .map(|h| format!(" {} ", normalize_text(&h.text)))
+            .collect();
         for index in 0..list.len().saturating_sub(1) {
             let n = &list[index];
             let next = &list[index + 1];
             pairs += 1;
-            let next_padded = format!(" {} ", normalize_text(&next.text));
+            let next_padded = &padded[index + 1];
             let mut seen_keys: Vec<String> = Vec::new();
             for point in extract_open_points(&n.text) {
                 let tokens = point_key_tokens(&point.text);
@@ -1689,7 +1736,21 @@ fn run_dropped(args: &[String]) {
                 }
                 seen_keys.push(key.clone());
                 candidates += 1;
-                if next_padded.contains(&format!(" {} ", key)) {
+                let needle = format!(" {} ", key);
+                if next_padded.contains(&needle) {
+                    continue;
+                }
+                let mut persist = 1usize;
+                let mut back = index;
+                while back > 0 {
+                    if padded[back - 1].contains(&needle) {
+                        persist += 1;
+                        back -= 1;
+                    } else {
+                        break;
+                    }
+                }
+                if persist < threshold {
                     continue;
                 }
                 let git_status = match distinctive_token(&tokens) {
@@ -1708,12 +1769,13 @@ fn run_dropped(args: &[String]) {
                 };
                 dropped += 1;
                 println!(
-                    "DROPPED\t{}\t{}:{}\t{}\t{}\tgit: {}",
+                    "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
                     line,
                     n.path,
                     point.lineno,
                     next.path,
                     snippet(&point.text, 160),
+                    persist,
                     git_status
                 );
             }
@@ -1724,14 +1786,14 @@ fn run_dropped(args: &[String]) {
         None => String::new(),
     };
     println!(
-        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved",
-        scope, pairs, candidates, dropped, resolved
+        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved, persist >= {}",
+        scope, pairs, candidates, dropped, resolved, threshold
     );
 }
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>]   (open points of handover N absent from handover N+1 with no resolving commit in between)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
