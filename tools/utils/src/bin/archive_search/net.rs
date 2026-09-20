@@ -1239,6 +1239,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "pdb" => crate::pdb::pdb_lines(query, max),
         "chembl" => crate::chembl::chembl_lines(query, max),
         "ensembl" => crate::ensembl::ensembl_lines(query, max),
+        "entrez" => crate::entrez::entrez_lines(query, max),
         "doaj" => crate::doaj::doaj_lines(query, max),
         "go" => crate::go::go_lines(query, max),
         "unpaywall" => crate::unpaywall::unpaywall_lines(query),

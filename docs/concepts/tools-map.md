@@ -102,6 +102,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--semanticscholar` | — (neu, keyless 429/`S2_API_KEY`) | | | |
 | `--reactome` | — (neu, keyless) | | `--interpro` | — (neu, keyless) |
 | `--alphafold` | — (neu, keyless, UniProt-Accession) | | | |
+| `--entrez` | — (neu, keyless, `db=nuccore\|sra\|gds`) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -179,6 +180,11 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `/api/prediction/<uniprot-accession>`; keyless.
   `url <pdbUrl>` + Eintrag/Accession/Proteinname/Gen/Organismus/pLDDT/
   Sequenzdatum.
+- `archive_search --entrez "db=<database> <term>"` — NCBI E-utilities esearch
+  (`esearch.fcgi?db=&term=&retmode=json`); keyless. `db=nuccore|sra|gds`
+  (GenBank/SRA/GEO), `term=` optional statt des Rests. `count <n>` +
+  `query: <querytranslation>` + je Treffer `url https://www.ncbi.nlm.nih.gov/<db>/<id>`
+  + `db`/`id` (GEO als `geo/query/acc.cgi?acc=`).
 
 ## Gemessen — übrige lokale Werkzeuge
 
