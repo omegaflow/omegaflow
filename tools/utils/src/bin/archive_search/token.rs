@@ -9,7 +9,7 @@ pub fn set_secrets(env: HashMap<String, String>) {
     let _ = SECRETS.set(env);
 }
 
-fn secret(name: &str) -> Option<String> {
+pub(crate) fn secret(name: &str) -> Option<String> {
     if let Some(map) = SECRETS.get() {
         if let Some(value) = map.get(name) {
             if !value.is_empty() {

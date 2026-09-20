@@ -1,7 +1,37 @@
 #[path = "archive_search/arxiv_src.rs"]
 mod arxiv_src;
+#[path = "archive_search/awmf.rs"]
+mod awmf;
+#[path = "archive_search/chembl.rs"]
+mod chembl;
+#[path = "archive_search/clinicaltrials.rs"]
+mod clinicaltrials;
+#[path = "archive_search/cochrane.rs"]
+mod cochrane;
+#[path = "archive_search/core.rs"]
+mod core_api;
+#[path = "archive_search/materialsproject.rs"]
+mod materialsproject;
+#[path = "archive_search/semanticscholar.rs"]
+mod semanticscholar;
 #[path = "archive_search/datacite.rs"]
 mod datacite;
+#[path = "archive_search/doaj.rs"]
+mod doaj;
+#[path = "archive_search/ensembl.rs"]
+mod ensembl;
+#[path = "archive_search/go.rs"]
+mod go;
+#[path = "archive_search/openfda.rs"]
+mod openfda;
+#[path = "archive_search/pdb.rs"]
+mod pdb;
+#[path = "archive_search/pubchem.rs"]
+mod pubchem;
+#[path = "archive_search/uniprot.rs"]
+mod uniprot;
+#[path = "archive_search/unpaywall.rs"]
+mod unpaywall;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
 #[path = "archive_search/git.rs"]
@@ -239,6 +269,21 @@ fn main() {
             "--pubmed" => mode = Mode::Net("pubmed"),
             "--europepmc" => mode = Mode::Net("europepmc"),
             "--psychporta" => mode = Mode::Net("psychporta"),
+            "--awmf" => mode = Mode::Net("awmf"),
+            "--cochrane" => mode = Mode::Net("cochrane"),
+            "--core" => mode = Mode::Net("core"),
+            "--materialsproject" => mode = Mode::Net("materialsproject"),
+            "--semanticscholar" => mode = Mode::Net("semanticscholar"),
+            "--clinicaltrials" => mode = Mode::Net("clinicaltrials"),
+            "--openfda" => mode = Mode::Net("openfda"),
+            "--pubchem" => mode = Mode::Net("pubchem"),
+            "--uniprot" => mode = Mode::Net("uniprot"),
+            "--pdb" => mode = Mode::Net("pdb"),
+            "--chembl" => mode = Mode::Net("chembl"),
+            "--ensembl" => mode = Mode::Net("ensembl"),
+            "--doaj" => mode = Mode::Net("doaj"),
+            "--go" => mode = Mode::Net("go"),
+            "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -495,7 +540,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
