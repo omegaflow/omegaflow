@@ -9,7 +9,7 @@
 
 ausstehend
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Re-Messung 2026-09-19 (Playwright): sync-QUERY HTTP 500, VOTable-Error localhost:5432 connection refused; Root 200. Backend down; Re-Check.
+note ivo://fai.kz/tap — Re-Messung 2026-09-20 (research-max): Web/TLS up (Zert 2026-09-08), PostgreSQL localhost:5432 tot → alle DB-Pfade 500; VOSI availability meldet fälschlich up; GAVO-RofR 116 Zeilen, kein Spiegel. Trigger: sync-QUERY 500→200. Backend down.
 
 verifiziert
 kandidat http://vo.lmd.jussieu.fr/tap
@@ -17,7 +17,7 @@ note ivo://lmd.jussieu/tap — mars_dust.epn_core = Montabone CDOD-FITS-Cubes (e
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — Re-Messung 2026-09-19 (Playwright): https-Zertifikat abgelaufen (ERR_CERT_DATE_INVALID), http sync-QUERY 200, VOTable-Error localhost:5432 connection refused; Root 200. Backend down; Re-Check.
+note ivo://src.pas/tap — Re-Messung 2026-09-20 (research-max): DB localhost:5432 tot → sync-QUERY 200/VOTable ERROR, /tap/tables 500; https-Zert abgelaufen; VOSI availability fälschlich up; RofR 22 Zeilen, kein Spiegel; Operator tomasik@cbk.waw.pl publiziert. Trigger: /tap/tables 500→200. Backend down.
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
