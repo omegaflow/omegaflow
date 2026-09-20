@@ -122,7 +122,7 @@ shard 4
 idempotent true
 note Quelle vollständig gemessen 2026-09-18: odrs_0001–0238 tragen odf/ (odrs_0239–0299 HTTP 404, kein odf/); neuestes ODF odrs_0238/7163164b.lbl STOP 2017-06-13T13:15:09 == Register-End-Shard t550631778; kein Re-Harvest.
 
-asset fehlt
+asset present
 format openneuro_brainvision
 tag openneuro.org
 arm brainvision_compiler
@@ -131,7 +131,7 @@ pattern ^sub-[0-9]+_task-jointaction_eeg\.bin$
 shard 32
 idempotent true
 timeout 350
-note ds007471 OpenNeuro joint-agency-EEG BrainVision (32 subj., CC0, 8,66 GB): probe run 35474638076 grün — sub-01 nbchan 64 pnts 2318620 samples 148391680, 593625434 B roundtrip parses (2230 events); snapshot bc6f839b; bau-Fix resolve_companion 8c7b885e.
+note ds007471 OpenNeuro joint-agency-EEG BrainVision (32 subj., CC0): harvest run 35476235446 success — 32 .bin present (452943428–701670196 B), sha256 in sources.φ; probe run 35474638076 sub-01 593625434 B roundtrip.
 
 asset present
 format openneuro_eeg
