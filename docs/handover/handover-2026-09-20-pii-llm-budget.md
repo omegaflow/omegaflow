@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: 94ca5632f0e73d2aacda657959cc17f64b20a72d94cbd785b5d8a93c1527f590
+  sha256: 7fb28f8bd9300b1c52ba078def126f5173a3480b9b7f0cf6e356f2930e1a652e
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -33,8 +33,14 @@
 
 - **Angefragt (2026-09-20, Resend):** Research-Credits an DeepSeek
   `api-service@deepseek.com` (`01a0be5b-a410…`), Moonshot `api-service@moonshot.ai`
-  (`…a506…`), Z.ai `user_feedback@z.ai` (`…a5fe…`); Hardware-Sponsoring an
-  Framework `support@frame.work` (`…a6e6…`). Entwürfe lokal `state/mail/`.
+  (`…a506…`), Z.ai `user_feedback@z.ai` (`…a5fe…`); Hardware an Framework
+  `support@frame.work` (`…a6e6…`), Slimbook `info@slimbook.com` (`01a0be7a-…a82`),
+  PINE64 `sales@pine64.org` + `info@pine64eu.com` (`01a0be7b-8250…`/`…8366…`).
+  **Tuxedo-Formular** vom Operator abgeschickt (2026-09-20). Entwürfe lokal
+  `state/mail/`. Geprüft ohne Einzel-Sponsoring: Framework (org), System76
+  (Marketing), NovaCustom/Star Labs (kein Programm), KDE/GNOME (nur eigene
+  Contributor), PINE64 (ARM/RISC-V — als Mantis-Shrimp-Plattform, Spec
+  `docs/specs/mantis-shrimp-bom.md`).
 - **Erkundung:** `docs/surveys/survey-funding-erkundung.md`. Realismus-Lesart:
   große Fellowships (Shuttleworth/Mozilla) brauchen **öffentliche Wirkung** —
   fehlt noch; die konkretesten DE-Türen (Prototype Fund, Fellow-Programm Freies
