@@ -1136,6 +1136,15 @@ ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield_lira.bin
+format rpw_efield
+origin https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
+compiler tools/harvest/src/bin/bia_efield_compiler.rs
+at solar_orbiter
+ttl 3600
+field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
+field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
 origin https://www.ncei.noaa.gov/pub/data/uscrn/products
