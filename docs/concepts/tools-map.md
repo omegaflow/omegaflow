@@ -1,8 +1,8 @@
 <!--
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
-  date: 2026-09-17
-  sha256: e895153d2d6448ac5bf1d8f352912abf27db3e7e2daf6d7c88e032bcf16a430e
+  date: 2026-09-20
+  sha256: 573fbb69b798c2c311e561351bd20a7bb3b9fc9e65722d779f43bab3c7b37635
   status: live
   see-also: AGENTS.md
 -->
@@ -91,7 +91,15 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 16 Modi — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 31 Modi — letzte Stufe, nie der erste Zug |
+| `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
+| `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
+| `--pubchem` | — (neu) | | `--uniprot` | — (neu) |
+| `--pdb` | — (neu, PDBe) | | `--chembl` | — (neu) |
+| `--ensembl` | — (neu, EBI Search) | | `--doaj` | — (neu) |
+| `--go` | — (neu, QuickGO) | | `--unpaywall` | — (neu, braucht `UNPAYWALL_EMAIL`) |
+| `--core` | — (neu, keyless/`CORE_API_KEY`) | | `--materialsproject` | — (neu, braucht `MP_API_KEY`) |
+| `--semanticscholar` | — (neu, keyless 429/`S2_API_KEY`) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -118,6 +126,45 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   PsychArchives + Tests + Persons), Elasticsearch-POST an `/api/search`;
   `total: N` + `url https://psychporta.org/works/<id>` + Titel/Index.
   Deutschsprachige Psychologie (PubPsych ist seit Juni 2026 offline).
+- `archive_search --awmf <query>` — AWMF-Leitlinienregister über
+  `leitlinien-api.awmf.org/v1/search?keywords=` (öffentlicher Register-Key im
+  Header `Api-Key`; Override `AWMF_API_KEY`); `url .../detail/<id>` + Klasse/
+  Release/Beschreibung.
+- `archive_search --cochrane <query>` — Cochrane Database of Systematic Reviews
+  über den offenen Europe-PMC-Index (`JOURNAL:"Cochrane Database Syst Rev"`);
+  die Direktseite ist Cloudflare-blockiert (403), Volltext ist Abo. Baut die
+  kanonische `cochranelibrary.com/cdsr/doi/<doi>/full`-URL.
+- `archive_search --clinicaltrials <query>` — ClinicalTrials.gov API v2
+  (`query.term`), `url .../study/<NCT>` + Titel/Status.
+- `archive_search --openfda <query>` — openFDA Arzneimittel-Label
+  (`drug/label.json`, `openfda.generic_name`); `url` DailyMed `setid` + Marke/
+  Hersteller/Datum.
+- `archive_search --pubchem <query>` — PubChem PUG-REST Namens-Lookup
+  (`property/MolecularFormula,MolecularWeight,IUPACName`); `url .../compound/<CID>`.
+- `archive_search --uniprot <query>` — UniProtKB REST search;
+  `url .../uniprotkb/<acc>/entry` + Proteinname/Organismus.
+- `archive_search --pdb <query>` — PDBe/Solr (`search/pdb/select`);
+  `url .../pdbe/entry/pdb/<ID>` + Titel.
+- `archive_search --chembl <query>` — ChEMBL Molekül-Suche; Report-Card-URL +
+  `pref_name`/`max_phase`/Formel/Masse.
+- `archive_search --ensembl <query>` — EBI Search über `ensembl`;
+  `url https://www.ensembl.org/id/<id>` + `source`.
+- `archive_search --doaj <query>` — DOAJ Artikel-Suche; DOI-URL + Titel/Journal.
+- `archive_search --go <query>` — QuickGO GO-Term-Suche; Term-URL + Name/
+  Definition.
+- `archive_search --unpaywall <DOI>` — legale OA-Version eines DOI
+  (`api.unpaywall.org/v2/<doi>`); braucht `UNPAYWALL_EMAIL` (Kontakt-Adresse,
+  Unpaywall-Pflicht), sonst `pending`.
+- `archive_search --core <query>` — CORE v3 (`/v3/search/works/?q=`, Trailing-
+  Slash); keyless mit 1 Batch / 5 Req pro 10 s, `CORE_API_KEY` (Bearer) hebt
+  das Limit. `url https://core.ac.uk/works/<id>` + Titel/DOI/Jahr/Volltext.
+- `archive_search --materialsproject <query>` — Materials Project
+  (`/materials/summary/search?q=`), Header `X-API-KEY`; braucht `MP_API_KEY`
+  (Dashboard), sonst `pending`. `url .../materials/<material_id>` + Formel/
+  Bandlücke/Stabilität.
+- `archive_search --semanticscholar <query>` — S2 Academic Graph
+  (`/graph/v1/paper/search`); keyless 429 (geteilter Pool), `S2_API_KEY` hebt
+  das Limit. `url` + Titel/DOI/arXiv/Jahr/Zitate.
 
 ## Gemessen — übrige lokale Werkzeuge
 

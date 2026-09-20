@@ -50,6 +50,10 @@ fn note_text(note: &Hdf5Note) -> String {
             "fetch budget exhausted after {} reads at byte {} — the read stops here",
             reads, off
         ),
+        Hdf5Note::TraversalBudget { off, bytes } => format!(
+            "traversal budget exhausted after {} bytes at byte {} — the walk stops here",
+            bytes, off
+        ),
     }
 }
 
