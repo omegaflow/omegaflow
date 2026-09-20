@@ -2,7 +2,7 @@
   title: Auftrag — Roh-Tracking-Anfragen (request-only) — fünf offene Sonden-Daten
   class: auftrag
   date: 2026-09-16
-  sha256: ce3bb8398763cc8dada82a50de646ffdea87c668d0e1387ed6b3493ef266469f
+  sha256: 2d15607e50fe192072166407fd86ea33c6c9b9a4f7a745d0594c2eb25804045d
   status: live
   see-also: docs/auftrag/archiv/auftrag-flyby-doppler-rohdaten.md phi/blocked_sources.φ
 -->
