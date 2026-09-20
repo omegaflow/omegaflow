@@ -1319,9 +1319,419 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
     n
 }
 
+const HANDOVER_DIRS: &[&str] = &["docs/handover", "docs/handover/archiv"];
+
+const DROPPED_STATUS_TAGS: &[&str] = &[
+    "wartend",
+    "wartestell",
+    "operator-gebunden",
+    "blockiert",
+    "termin",
+    "pending",
+    "offen",
+    "ausstehend",
+];
+
+const DROPPED_STOPWORDS: &[&str] = &[
+    "der", "die", "das", "den", "dem", "des", "ein", "eine", "einen", "einem", "eines", "und",
+    "oder", "aber", "ist", "sind", "wird", "werden", "wurde", "nicht", "kein", "keine", "fuer",
+    "mit", "von", "auf", "aus", "als", "auch", "nur", "noch", "the", "and", "for", "with",
+    "from", "that", "this", "into", "over", "after", "punkt", "status", "schritt", "offen",
+    "wartend", "blockiert", "pending",
+];
+
+struct Handover {
+    date: String,
+    folge: Option<u32>,
+    path: String,
+    text: String,
+}
+
+struct OpenPoint {
+    lineno: usize,
+    text: String,
+}
+
+fn is_date_field(s: &str) -> bool {
+    let bytes = s.as_bytes();
+    bytes.len() == 10
+        && bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes[..4].iter().all(u8::is_ascii_digit)
+        && bytes[5..7].iter().all(u8::is_ascii_digit)
+        && bytes[8..].iter().all(u8::is_ascii_digit)
+}
+
+fn parse_handover_name(name: &str) -> Option<(String, String, Option<u32>)> {
+    let stem = name.strip_suffix(".md")?;
+    let rest = stem.strip_prefix("handover-")?;
+    if rest.len() < 12 {
+        return None;
+    }
+    let date = &rest[..10];
+    if !is_date_field(date) || rest.as_bytes()[10] != b'-' {
+        return None;
+    }
+    let tail = &rest[11..];
+    if tail.is_empty() {
+        return None;
+    }
+    let (line, folge) = match tail.rfind("-folge") {
+        Some(at) => {
+            let line = &tail[..at];
+            let after = &tail[at + 6..];
+            let digits: String = after.chars().take_while(|c| c.is_ascii_digit()).collect();
+            (line.to_string(), digits.parse::<u32>().ok())
+        }
+        None => (tail.to_string(), None),
+    };
+    if line.is_empty() {
+        return None;
+    }
+    Some((line, date.to_string(), folge))
+}
+
+fn normalize_words(text: &str) -> Vec<String> {
+    let mut words: Vec<String> = Vec::new();
+    let mut current = String::new();
+    for ch in text.chars() {
+        if ch.is_alphanumeric() || ch == '-' {
+            for lower in ch.to_lowercase() {
+                current.push(lower);
+            }
+        } else if !current.is_empty() {
+            words.push(std::mem::take(&mut current));
+        }
+    }
+    if !current.is_empty() {
+        words.push(current);
+    }
+    words
+}
+
+fn normalize_text(text: &str) -> String {
+    normalize_words(text).join(" ")
+}
+
+fn is_meaningful_word(word: &str) -> bool {
+    word.chars().any(|c| c.is_alphanumeric())
+}
+
+fn is_status_word(word: &str) -> bool {
+    DROPPED_STATUS_TAGS
+        .iter()
+        .any(|tag| word == *tag || word.starts_with(tag))
+}
+
+fn tag_in_words(words: &[String]) -> bool {
+    words.iter().any(|w| is_status_word(w))
+}
+
+fn is_container_heading(heading: &str) -> bool {
+    if heading.to_lowercase().contains("kein auswahlpunkt") {
+        return true;
+    }
+    normalize_words(heading)
+        .iter()
+        .filter(|w| is_meaningful_word(w) && !is_status_word(w))
+        .count()
+        == 0
+}
+
+fn strip_bullet_marker(trimmed: &str) -> Option<&str> {
+    if let Some(rest) = trimmed.strip_prefix("- ") {
+        return Some(rest.trim());
+    }
+    if let Some(rest) = trimmed.strip_prefix("* ") {
+        return Some(rest.trim());
+    }
+    let digits: String = trimmed.chars().take_while(|c| c.is_ascii_digit()).collect();
+    if digits.is_empty() {
+        return None;
+    }
+    trimmed[digits.len()..].strip_prefix(". ").map(str::trim)
+}
+
+fn leading_region(body: &str) -> &str {
+    match body.find(|c| c == '\u{2014}' || c == '\u{2013}' || c == ':') {
+        Some(at) => &body[..at],
+        None => body,
+    }
+}
+
+fn extract_open_points(text: &str) -> Vec<OpenPoint> {
+    let mut points: Vec<OpenPoint> = Vec::new();
+    let mut section_open = false;
+    for (idx, raw) in text.lines().enumerate() {
+        let lineno = idx + 1;
+        let trimmed = raw.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("## ") {
+            let heading = rest.trim();
+            let open = tag_in_words(&normalize_words(heading))
+                || heading.to_lowercase().starts_with("punkt");
+            if open && !is_container_heading(heading) {
+                points.push(OpenPoint {
+                    lineno,
+                    text: heading.to_string(),
+                });
+            }
+            section_open = open;
+            continue;
+        }
+        if let Some(cells) = split_table_row(raw) {
+            if cells.len() < 2 || is_table_separator(&cells) {
+                continue;
+            }
+            let first = cells[0].trim();
+            if first.is_empty() || first.eq_ignore_ascii_case("punkt") {
+                continue;
+            }
+            let row_open =
+                section_open || cells.iter().any(|c| tag_in_words(&normalize_words(c)));
+            if row_open {
+                points.push(OpenPoint {
+                    lineno,
+                    text: first.to_string(),
+                });
+            }
+            continue;
+        }
+        if let Some(body) = strip_bullet_marker(trimmed) {
+            if section_open || tag_in_words(&normalize_words(leading_region(body))) {
+                points.push(OpenPoint {
+                    lineno,
+                    text: body.to_string(),
+                });
+            }
+        }
+    }
+    points
+}
+
+fn point_key_tokens(text: &str) -> Vec<String> {
+    normalize_words(text)
+        .into_iter()
+        .filter(|w| is_meaningful_word(w) && !is_status_word(w))
+        .collect()
+}
+
+fn match_prefix(tokens: &[String]) -> Option<String> {
+    if tokens.is_empty() {
+        return None;
+    }
+    let take = tokens.len().min(6);
+    Some(tokens[..take].join(" "))
+}
+
+fn distinctive_token(tokens: &[String]) -> Option<String> {
+    let mut best: Option<&String> = None;
+    for word in tokens {
+        if !is_meaningful_word(word)
+            || word.chars().all(|c| c.is_ascii_digit())
+            || DROPPED_STOPWORDS.contains(&word.as_str())
+        {
+            continue;
+        }
+        if word.chars().count() >= 5 {
+            return Some(word.clone());
+        }
+        if best.map_or(true, |b| word.chars().count() > b.chars().count()) {
+            best = Some(word);
+        }
+    }
+    best.cloned()
+}
+
+fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
+    let mut by_line: BTreeMap<String, Vec<Handover>> = BTreeMap::new();
+    let mut seen: Vec<String> = Vec::new();
+    for dir in HANDOVER_DIRS {
+        let entries = match fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+        paths.sort();
+        for path in paths {
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !name.ends_with(".md") || name.starts_with('_') || name == "post.md" {
+                continue;
+            }
+            if seen.iter().any(|s| s == &name) {
+                continue;
+            }
+            let parsed = match parse_handover_name(&name) {
+                Some(p) => p,
+                None => continue,
+            };
+            let text = match fs::read_to_string(&path) {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
+            seen.push(name);
+            let (line, date, folge) = parsed;
+            by_line.entry(line).or_default().push(Handover {
+                date,
+                folge,
+                path: path.to_string_lossy().to_string(),
+                text,
+            });
+        }
+    }
+    for list in by_line.values_mut() {
+        list.sort_by(|a, b| {
+            a.date
+                .cmp(&b.date)
+                .then(a.folge.cmp(&b.folge))
+                .then(a.path.cmp(&b.path))
+        });
+    }
+    by_line
+}
+
+fn commit_for_path(path: &str) -> Option<String> {
+    let output = Command::new("git")
+        .args(["log", "--diff-filter=A", "--format=%H", "-1", "--", path])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let first = stdout.lines().next()?.trim().to_string();
+    if first.is_empty() {
+        None
+    } else {
+        Some(first)
+    }
+}
+
+fn commit_for_path_cached(
+    path: &str,
+    cache: &mut BTreeMap<String, Option<String>>,
+) -> Option<String> {
+    if let Some(value) = cache.get(path) {
+        return value.clone();
+    }
+    let value = commit_for_path(path);
+    cache.insert(path.to_string(), value.clone());
+    value
+}
+
+fn commit_touches(lower: Option<&str>, upper: Option<&str>, token: &str) -> Option<bool> {
+    let mut cmd = Command::new("git");
+    cmd.arg("log")
+        .arg("--oneline")
+        .arg(format!("--grep={}", token));
+    match (lower, upper) {
+        (Some(a), Some(b)) => {
+            cmd.arg(format!("{}..{}", a, b));
+        }
+        (Some(a), None) => {
+            cmd.arg(format!("{}..HEAD", a));
+        }
+        (None, Some(b)) => {
+            cmd.arg(b);
+        }
+        (None, None) => {}
+    }
+    let output = cmd.output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    Some(!output.stdout.is_empty())
+}
+
+fn dropped_line_filter(args: &[String]) -> Option<&str> {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == "--dropped" {
+            return match it.next() {
+                Some(next) if !next.starts_with("--") => Some(next.as_str()),
+                _ => None,
+            };
+        }
+    }
+    None
+}
+
+fn run_dropped(args: &[String]) {
+    let filter = dropped_line_filter(args);
+    let handovers = collect_handovers();
+    let mut commit_cache: BTreeMap<String, Option<String>> = BTreeMap::new();
+    let mut pairs = 0usize;
+    let mut candidates = 0usize;
+    let mut dropped = 0usize;
+    let mut resolved = 0usize;
+    for (line, list) in &handovers {
+        if let Some(wanted) = filter {
+            if wanted != line.as_str() {
+                continue;
+            }
+        }
+        for index in 0..list.len().saturating_sub(1) {
+            let n = &list[index];
+            let next = &list[index + 1];
+            pairs += 1;
+            let next_padded = format!(" {} ", normalize_text(&next.text));
+            let mut seen_keys: Vec<String> = Vec::new();
+            for point in extract_open_points(&n.text) {
+                let tokens = point_key_tokens(&point.text);
+                let key = match match_prefix(&tokens) {
+                    Some(k) => k,
+                    None => continue,
+                };
+                if seen_keys.iter().any(|k| k == &key) {
+                    continue;
+                }
+                seen_keys.push(key.clone());
+                candidates += 1;
+                if next_padded.contains(&format!(" {} ", key)) {
+                    continue;
+                }
+                let git_status = match distinctive_token(&tokens) {
+                    Some(token) => {
+                        let lower = commit_for_path_cached(&n.path, &mut commit_cache);
+                        let upper = commit_for_path_cached(&next.path, &mut commit_cache);
+                        match commit_touches(lower.as_deref(), upper.as_deref(), &token) {
+                            Some(true) => {
+                                resolved += 1;
+                                "resolved"
+                            }
+                            _ => "none",
+                        }
+                    }
+                    None => "none",
+                };
+                dropped += 1;
+                println!(
+                    "DROPPED\t{}\t{}:{}\t{}\t{}\tgit: {}",
+                    line,
+                    n.path,
+                    point.lineno,
+                    next.path,
+                    snippet(&point.text, 160),
+                    git_status
+                );
+            }
+        }
+    }
+    let scope = match filter {
+        Some(f) => format!(" {}", f),
+        None => String::new(),
+    };
+    println!(
+        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved",
+        scope, pairs, candidates, dropped, resolved
+    );
+}
+
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>]   (open points of handover N absent from handover N+1 with no resolving commit in between)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -1330,6 +1740,10 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--open") {
         run_open();
+        return;
+    }
+    if args.iter().any(|a| a == "--dropped") {
+        run_dropped(&args);
         return;
     }
     if args.iter().any(|a| a == "--history") {
@@ -1782,5 +2196,62 @@ mod tests {
         assert!(out[0].starts_with("CANDIDATES\t"));
         assert!(out[0].contains("cat_a.\u{3c6}\t2 \u{2192} ernte"));
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn parse_handover_name_reads_folge_and_single_session() {
+        assert_eq!(
+            parse_handover_name("handover-2026-09-20-bau-folge113.md"),
+            Some(("bau".to_string(), "2026-09-20".to_string(), Some(113)))
+        );
+        assert_eq!(
+            parse_handover_name("handover-2026-09-20-pii-llm-budget.md"),
+            Some(("pii-llm-budget".to_string(), "2026-09-20".to_string(), None))
+        );
+        assert_eq!(
+            parse_handover_name("handover-2026-09-15-bau-folge33-p8-gate.md"),
+            Some(("bau".to_string(), "2026-09-15".to_string(), Some(33)))
+        );
+        assert_eq!(parse_handover_name("post.md"), None);
+        assert_eq!(parse_handover_name("not-a-handover.md"), None);
+    }
+
+    #[test]
+    fn extract_open_points_reads_container_rows_and_thread_headings() {
+        let text = "# H\n\n## Offen\n\n| Punkt | Status | Bindung | Schritt |\n|---|---|---|---|\n| alpha beta gamma delta epsilon zeta | `wartend` | `termin` | run |\n\n## Stehender Pass (gemessen)\n\n- **HEAD** `abc` == `origin/main`.\n\n## Zwei rote Gates \u{2014} unvollst\u{e4}ndig \u{b7} `pending`\n\n- ein weiterer offener Punkt\n";
+        let points = extract_open_points(text);
+        let texts: Vec<&str> = points.iter().map(|p| p.text.as_str()).collect();
+        assert!(texts.iter().any(|t| t.starts_with("alpha beta gamma")));
+        assert!(texts
+            .iter()
+            .any(|t| t.starts_with("Zwei rote Gates")));
+        assert!(texts.iter().any(|t| t.starts_with("ein weiterer")));
+        assert!(!texts.iter().any(|t| t.starts_with("HEAD")));
+    }
+
+    #[test]
+    fn status_word_matches_tag_but_not_embedded_substring() {
+        assert!(tag_in_words(&normalize_words("das ist `wartend`")));
+        assert!(tag_in_words(&normalize_words("bleibt offen")));
+        assert!(!tag_in_words(&normalize_words("deterministisch")));
+    }
+
+    #[test]
+    fn match_prefix_uses_six_words_and_drops_the_status_tag() {
+        let tokens = point_key_tokens("3 ausstehend Queue-Korpora (30-astro, earth-stac-sentinel)");
+        assert_eq!(tokens[0], "3");
+        assert!(!tokens.iter().any(|t| t == "ausstehend"));
+        assert_eq!(
+            match_prefix(&tokens),
+            Some("3 queue-korpora 30-astro earth-stac-sentinel".to_string())
+        );
+    }
+
+    #[test]
+    fn distinctive_token_prefers_the_long_word_and_rejects_stopwords() {
+        let tokens = vec!["am".to_string(), "head".to_string(), "8218f46a".to_string()];
+        assert_eq!(distinctive_token(&tokens), Some("8218f46a".to_string()));
+        let words = vec!["der".to_string(), "die".to_string()];
+        assert_eq!(distinctive_token(&words), None);
     }
 }

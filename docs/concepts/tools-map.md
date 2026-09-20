@@ -221,6 +221,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sfetch` / `curl -s` | 0,113 / 0,073 s | `sfetch` zuerst — **HTML/Text**; für Binärdownloads (PDF/PNG) `sfetch --raw` oder `curl -o`, sonst zerstört (`from_utf8_lossy` + Tag-Strip) |
 | `smail --dry-run` | 0,288 s | kein Versand |
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
+| `register_lookup --dropped [<line>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle) |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
@@ -238,7 +239,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
-| `register_lookup` | `--live`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan | lokal | P4 |
+| `register_lookup` | `--open`/`--dropped`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff | lokal | P4 |
 | `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
