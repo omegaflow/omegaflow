@@ -6812,6 +6812,16 @@ fn test_keplermap_elements_to_icrs() {
 }
 
 #[test]
+fn test_port_block_without_force_directive_stays_review() {
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
+    let conv = super::port_block(block);
+    assert!(
+        conv.contains("# pending field quake_depth — no force directive, review"),
+        "missing force directive must stay review, got: {conv}"
+    );
+}
+
+#[test]
 fn test_field_in_nested_port_and_flatten_generic() {
     let legacy = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\nfield_in properties.mag quake_mag\n";
     let conv = super::port_block(legacy);
