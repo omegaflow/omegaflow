@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: c7e482ab71c36ca0dd169b207cd3b8dda1a2760a136429c846c80d0e3e4b4b83
+  sha256: a5db7533288f3ed119bcf9f0db720b260f576c7b4f3e3ff6ac9e87b0109fb98f
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -77,7 +77,13 @@
   Verteilungsinfo). Lokale Funktionsläufe sind der Session strukturell verweigert.
 - **register_lookup-Symlink:** erledigt (liegt in `~/.local/bin`, auf PATH).
 - **opencode-Browser-Brücke:** verbunden.
-- **Limadou CSES-02-PI-Freigabe:** offen — per-act-Wort des Operators.
+- **Limadou CSES-02-PI-Freigabe:** Thread existiert bereits — Anfrage 23.08.2026,
+  Sotgius Antwort: das Zugriffsverfahren wird für die **CSES-02-Aufnahme
+  überarbeitet**, warten. Entwürfe `state/mail/sotgiu-reply.md` (danken+warten) und
+  `limadou-pi-nachfassen.md`. Diese Session sendete irrtümlich ein **Duplikat**
+  (`01a0beb8-…`) und danach eine **Korrektur** (`01a0bebe-…`). **Lehre:** der
+  Planungs-Pass liest die **Post** (Inbox/Ledger) **vor** dem Handeln — hier
+  versäumt; jeder Außen-Akt prüft zuerst den bestehenden Thread.
 
 ## Abschluss
 
