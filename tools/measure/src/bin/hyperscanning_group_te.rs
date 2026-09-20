@@ -232,6 +232,9 @@ fn surrogate_family_maxima(
         }
     }
     out.sort_by(f64::total_cmp);
+    for d in cell_distributions.iter_mut() {
+        d.sort_by(f64::total_cmp);
+    }
     SurrogateFamily {
         maxima: out,
         cell_distributions,
@@ -644,14 +647,31 @@ mod tests {
             .find(|c| c.driver == "C" && c.target == "D")
             .expect("the nonlinear cell is estimated");
 
+        let null_floor = &family.cell_distributions[nonlinear.slot];
+        let null_mean = null_floor.iter().sum::<f64>() / null_floor.len() as f64;
+        let null_sd = (null_floor
+            .iter()
+            .map(|v| (v - null_mean) * (v - null_mean))
+            .sum::<f64>()
+            / null_floor.len() as f64)
+            .sqrt();
+        let null_p95 = percentile(null_floor, 95.0).expect("the per-cell null is measurable");
+        let floor_excess = nonlinear.te - null_mean;
+
         assert!(
             cell_survivors.iter().any(|c| c.slot == nonlinear.slot),
-            "the per-cell rule finds the weaker nonlinear transfer: TE {:.4e}",
-            nonlinear.te
+            "the per-cell rule finds the weaker nonlinear transfer: TE {:.4e} | null mean {:.4e} sd {:.4e} p95 {:.4e} | excess {:.4e} ({:.2} sd) | fam-max {:.4e}",
+            nonlinear.te,
+            null_mean,
+            null_sd,
+            null_p95,
+            floor_excess,
+            floor_excess / null_sd,
+            family_threshold
         );
         assert!(
             !family_survivors.iter().any(|c| c.slot == nonlinear.slot),
-            "the family maximum masks the nonlinear transfer (the FN this fix removes): TE {:.4e} vs fam-max {:.4e}",
+            "the family maximum does not carry the weak nonlinear transfer (the mask the per-cell stage exists for): TE {:.4e} vs fam-max {:.4e}",
             nonlinear.te,
             family_threshold
         );
