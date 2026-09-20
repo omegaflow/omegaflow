@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Auto-resume chunked PS1 DR2 harvest (one subcell chunk per step)
+      - name: Auto-resume chunked PS1 DR2 harvest, slab-sharded by band range
         run: |
           cargo build -p omegaflow-harvest --release --bin ps1_coverage_compiler --bin ps1_coverage_combiner
           band_min=637
@@ -25,67 +25,130 @@ jobs:
           sub_min=0
           sub_max=99
           chunk=10
+          slab_bands=80
           budget_s=5400
           deadline=$(( $(date +%s) + budget_s ))
-          if ! parts=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-              --json assets --jq '.assets[]|select(.name|startswith("ps1_part_"))|.name' 2>/tmp/gh_listing.err); then
-            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
-            exit 1
-          fi
-          finished_all=1
-          # harvest from the south edge upward; each band splits into subcell chunks,
-          # one undone chunk per step, the deadline checked between chunks
+          slab_tag() { echo "ps1-dr2-$(( ($1 / slab_bands) * slab_bands ))"; }
+
+          declare -A slab_parts
+          list_slab() {
+            local tag="$1"
+            if [ -z "${slab_parts[$tag]+set}" ]; then
+              slab_parts[$tag]=$(gh release view "$tag" --repo omegaflow/sources \
+                --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+            fi
+          }
+          has_part() {
+            printf '%s\n' "${slab_parts[$1]}" | grep -qx "$2"
+          }
+
+          # harvest from the south edge upward; one subcell chunk per step, a whole
+          # band skipped once its band part stands. Parts land on the slab tag that
+          # names their band range, never on the shared release (its 1000-asset cap
+          # is closed).
           P=$band_min
           while [ "$P" -le "$band_max" ]; do
             if [ "$(date +%s)" -ge "$deadline" ]; then
-              finished_all=0
               break
             fi
-            if echo "$parts" | grep -qx "ps1_part_${P}.fp01"; then
+            tag=$(slab_tag "$P")
+            list_slab "$tag"
+            if has_part "$tag" "ps1_part_${P}.fp01"; then
               P=$((P+1))
               continue
             fi
             s=$sub_min
             while [ "$s" -le "$sub_max" ]; do
               if [ "$(date +%s)" -ge "$deadline" ]; then
-                finished_all=0
                 break 2
               fi
               e=$(( s + chunk - 1 ))
               [ "$e" -gt "$sub_max" ] && e=$sub_max
               name="ps1_part_${P}_${s}_${e}.fp01"
-              if echo "$parts" | grep -qx "$name"; then
+              if has_part "$tag" "$name"; then
                 s=$((e+1))
                 continue
               fi
-              echo "=== harvesting projcell band ${P} subcell ${s}..${e} ==="
-              if ./target/release/ps1_coverage_compiler --full --proj-min "${P}" --proj-max "${P}" \
+              echo "=== harvesting band ${P} subcell ${s}..${e} -> ${tag} ==="
+              if ./target/release/ps1_coverage_compiler --full --order 10 \
+                  --proj-min "${P}" --proj-max "${P}" \
                   --sub-min "${s}" --sub-max "${e}" --out "$name" --ci-mode; then
-                echo "uploaded ${name}"
-                parts="${parts}"$'\n'"${name}"
+                echo "uploaded ${name} to ${tag}"
+                slab_parts[$tag]="${slab_parts[$tag]}"$'\n'"${name}"
               else
                 echo "chunk ${name} void this run — the hourly schedule retries it"
-                finished_all=0
                 break 2
               fi
               s=$((e+1))
             done
             P=$((P+1))
           done
-          # combine when the whole span is covered and the final asset is absent
-          if ! has_final=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
-              --json assets --jq '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/tmp/gh_listing.err); then
-            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
-            exit 1
-          fi
-          if [ "$finished_all" = "1" ] && [ "$has_final" = "0" ]; then
-            echo "=== combining ==="
-            mkdir -p parts
-            gh release download ssd.jpl.nasa.gov -p "ps1_part_*.fp01" --repo omegaflow/sources --dir parts --clobber
-            ./target/release/ps1_coverage_combiner --parts-dir parts --out ps1_dr2_coverage.fp01 \
-              --expect-min "$band_min" --expect-max "$band_max"
-            gh release upload ssd.jpl.nasa.gov ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
-            echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
+
+          # band combine: a band whose ten chunks tile 0..99 becomes one band part on
+          # the same slab tag; the chunks then leave — the band part is the durable
+          # unit, and the final combine opens one stream per band, not per chunk
+          combine_deadline=$(( $(date +%s) + 1800 ))
+          for ((P=band_min; P<=band_max; P++)); do
+            if [ "$(date +%s)" -ge "$combine_deadline" ]; then
+              echo "band combine window closed — the hourly schedule resumes it"
+              break
+            fi
+            tag=$(slab_tag "$P")
+            list_slab "$tag"
+            has_part "$tag" "ps1_part_${P}.fp01" && continue
+            complete=1
+            for ((s=sub_min; s<=sub_max; s+=chunk)); do
+              e=$(( s + chunk - 1 ))
+              [ "$e" -gt "$sub_max" ] && e=$sub_max
+              has_part "$tag" "ps1_part_${P}_${s}_${e}.fp01" || { complete=0; break; }
+            done
+            [ "$complete" = "1" ] || continue
+            echo "=== band combine ${P} on ${tag} ==="
+            rm -rf parts && mkdir -p parts
+            gh release download "$tag" --repo omegaflow/sources -p "ps1_part_${P}_*.fp01" --dir parts --clobber
+            ./target/release/ps1_coverage_combiner --parts-dir parts --out "ps1_part_${P}.fp01" \
+              --expect-min "$P" --expect-max "$P"
+            gh release upload "$tag" "ps1_part_${P}.fp01" --clobber --repo omegaflow/sources
+            for ((s=sub_min; s<=sub_max; s+=chunk)); do
+              e=$(( s + chunk - 1 ))
+              [ "$e" -gt "$sub_max" ] && e=$sub_max
+              gh release delete-asset "$tag" "ps1_part_${P}_${s}_${e}.fp01" --yes --repo omegaflow/sources || true
+            done
+            unset slab_parts[$tag]
+          done
+
+          # final combine: every band part present -> one asset on the shared release
+          all_present=1
+          for ((P=band_min; P<=band_max; P++)); do
+            tag=$(slab_tag "$P")
+            list_slab "$tag"
+            has_part "$tag" "ps1_part_${P}.fp01" || { all_present=0; break; }
+          done
+          if [ "$all_present" = "1" ]; then
+            if ! has_final=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+                --json assets --jq '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/tmp/gh_listing.err); then
+              echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+              exit 1
+            fi
+            if [ "$has_final" = "0" ]; then
+              echo "=== final combine ==="
+              rm -rf parts && mkdir -p parts
+              for ((P=band_min; P<=band_max; P++)); do
+                tag=$(slab_tag "$P")
+                gh release download "$tag" --repo omegaflow/sources -p "ps1_part_*.fp01" --dir parts --clobber
+              done
+              ./target/release/ps1_coverage_combiner --parts-dir parts --out ps1_dr2_coverage.fp01 \
+                --expect-min "$band_min" --expect-max "$band_max"
+              # the legacy order-12 chunks on the shared release cannot merge into an
+              # order-10 final; free their slots before the final upload (813 + 1 <= 1000)
+              legacy=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets \
+                --jq '.assets[]?|select(.name|startswith("ps1_part_"))|.name' 2>/dev/null || true)
+              for name in $legacy; do
+                gh release delete-asset ssd.jpl.nasa.gov "$name" --yes --repo omegaflow/sources || true
+              done
+              gh release upload ssd.jpl.nasa.gov ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
+              echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
+            fi
           else
-            echo "combine not reached this run: finished_all=${finished_all}, final present=${has_final}"
+            echo "final combine not reached: not every band part stands yet"
           fi
