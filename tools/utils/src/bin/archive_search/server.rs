@@ -38,6 +38,7 @@ pub const MODES: &[&str] = &[
     "chembl",
     "ensembl",
     "entrez",
+    "ena",
     "doaj",
     "go",
     "unpaywall",
