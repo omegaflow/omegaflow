@@ -28,7 +28,7 @@ pre { margin: 0; padding: 12px 16px; white-space: pre-wrap; word-break: break-wo
 <pre id="out"></pre>
 <script>
 const $ = (id) => document.getElementById(id);
-const MODES = ['local','leads','mft','index','git','verdict','arxiv','ads','ntrs','wayback','crossref','wiki','github','crates','librs','openalex','pubmed','europepmc','psychporta'];
+const MODES = ['local','leads','mft','index','git','verdict','arxiv','ads','ntrs','wayback','crossref','wiki','github','crates','librs','openalex','pubmed','europepmc','psychporta','awmf','cochrane','core','materialsproject','semanticscholar','clinicaltrials','openfda','pubchem','uniprot','pdb','chembl','ensembl','doaj','go','unpaywall'];
 let active = 'local';
 let timer = null;
 const bar = $('bar');
