@@ -35,7 +35,8 @@
     ["cond_specs.iter().map(|&(d, _)| series[d]).collect()", "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"],
     ["comb.iter().map(|&(d, _)| series[d]).collect()", "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"],
     ["cond_idxs.dedup()", "the pcmci condition pair set mapped to bare series indices and deduplicated drops the chosen lag — the estimator conditions one whole channel series instead of the exact (series, lag) column, and the conditioning swallows the true coupling or carries the tested edge's own columns"],
-    ["row.push(c.series[t - c.lag] as f64)", "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"]
+    ["row.push(c.series[t - c.lag] as f64)", "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"],
+    ["kernel_id_for_force(5), Some(3)", "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -321,6 +322,7 @@
     "riss_kept": "VerdictWord::Riss => VerdictWord::Riss,",
     "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();",
     "pcmci_cond_lag_dedup": "let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();\ncond_idxs.sort_unstable();\ncond_idxs.dedup();",
-    "arx_null_single_lag_col": "row.push(c.series[t - c.lag] as f64);"
+    "arx_null_single_lag_col": "row.push(c.series[t - c.lag] as f64);",
+    "kernel_id_second_table": "assert_eq!(kernel_id_for_force(5), Some(3));"
   }
 }
