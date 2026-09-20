@@ -74,7 +74,10 @@ fn parse_semanticscholar(body: &str) -> Vec<String> {
         if let Some(year) = paper.get("year").and_then(|y| y.as_scalar_string()) {
             line.push_str(&format!("\tyear: {}", year));
         }
-        if let Some(cites) = paper.get("citationCount").and_then(|c| c.as_scalar_string()) {
+        if let Some(cites) = paper
+            .get("citationCount")
+            .and_then(|c| c.as_scalar_string())
+        {
             line.push_str(&format!("\tcites: {}", cites));
         }
         out.push(line);

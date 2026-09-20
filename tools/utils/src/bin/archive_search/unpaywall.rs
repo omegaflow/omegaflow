@@ -15,7 +15,12 @@ pub fn unpaywall_lines(query: &str) -> Vec<String> {
         .trim_start_matches("https://doi.org/")
         .trim_start_matches("http://doi.org/")
         .trim_start_matches("doi:");
-    let url = format!("{}/{}?email={}", ENDPOINT, urlencode(doi), urlencode(&email));
+    let url = format!(
+        "{}/{}?email={}",
+        ENDPOINT,
+        urlencode(doi),
+        urlencode(&email)
+    );
     match get(&url, &[], "40") {
         Some(f) if f.status == Some(200) => {
             let out = parse_unpaywall(&f.body);

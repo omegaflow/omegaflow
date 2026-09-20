@@ -61,7 +61,10 @@ mod tests {
         let body = r#"{"response":{"numFound":3823,"docs":[{"pdb_id":"3f6z","title":"Crystal structure of MliC"}]}}"#;
         assert_eq!(
             parse_pdb(body),
-            vec!["url https://www.ebi.ac.uk/pdbe/entry/pdb/3F6Z\ttitle: Crystal structure of MliC".to_string()]
+            vec![
+                "url https://www.ebi.ac.uk/pdbe/entry/pdb/3F6Z\ttitle: Crystal structure of MliC"
+                    .to_string()
+            ]
         );
     }
 

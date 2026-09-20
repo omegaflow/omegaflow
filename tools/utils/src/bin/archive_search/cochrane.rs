@@ -70,7 +70,10 @@ fn field(v: &json::Json, key: &str) -> Option<String> {
 fn review_url(record: &json::Json) -> Option<String> {
     if let Some(doi) = field(record, "doi") {
         if doi.starts_with("10.1002/14651858") {
-            return Some(format!("https://www.cochranelibrary.com/cdsr/doi/{}/full", doi));
+            return Some(format!(
+                "https://www.cochranelibrary.com/cdsr/doi/{}/full",
+                doi
+            ));
         }
     }
     let pmid = field(record, "pmid")?;
@@ -111,7 +114,10 @@ mod tests {
 
     #[test]
     fn composes_the_journal_filter() {
-        assert_eq!(composed("asthma"), "(JOURNAL:\"Cochrane Database Syst Rev\") AND (asthma)");
+        assert_eq!(
+            composed("asthma"),
+            "(JOURNAL:\"Cochrane Database Syst Rev\") AND (asthma)"
+        );
         assert_eq!(composed("  "), "JOURNAL:\"Cochrane Database Syst Rev\"");
     }
 
