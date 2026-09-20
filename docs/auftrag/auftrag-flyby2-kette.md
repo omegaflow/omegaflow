@@ -2,7 +2,7 @@
   title: Auftrag — Flyby-Path-2-Kette vor dem 28.09.2026 (JUICE-Perigäum)
   class: auftrag
   date: 2026-09-20
-  sha256: 3df49a1c25c84939796fc0f49d61c927325cccb04b327052aa4f2cd3112bdf2e
+  sha256: 644ea7554e9d01e12056a2659778a84b85ed59b8642826b9c386cddee5cc0606
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md
 -->
@@ -40,7 +40,7 @@ Füllen (das Füllen braucht die gemessene Plasmakette).
 | OMNI2 (Plasmadruck) | `918-928` | registriert (live) |
 | ACE | `1200-1213` | registriert (live) |
 | WIND | `3013-3028` | nur Orbit/Waves — **kein Plasma** |
-| DSCOVR | — | **fehlt** (kein Eintrag) |
+| DSCOVR | — | eigene keyless JSON-Route **retired** (404); L1 lebt im RTSW-Feed |
 | JUICE in-situ | — | erst **nach** dem Flyby |
 
 `phi/pipeline/ledger.φ` trägt **keinen** Ernte-Zustand der Kette (kein
@@ -49,19 +49,24 @@ flyby/rtsw/swarm/kp/omni-Eintrag) — die Kanäle sind Live-`url`-Zeilen, nicht 
 
 ## Lieferung
 
-1. Die lebenden Kanalzellen transit-time-korrigiert am Perigäum-Tubus füllen;
-   jede Zelle ohne Messung bleibt `pending`, nie `0.0` (0 honored).
-2. Das Ergebnis als Addendum zum Siegel committen (σ-Metrik angewandt).
-3. `DSCOVR` als Kanal prüfen und, falls tragend, in `phi/sources.φ` registrieren.
+1. **Bereitschaft gemessen 2026-09-20** (Addendum §"Chain readiness"): alle
+   Kanalrouten HTTP 200 (stage 1), Selektoren gegen die File-Ordnung geprüft,
+   Transit-Methode benannt (Lichtzeit 5,0 s; Advektion `d/v_sw`; Kp 3-h; Swarm am
+   Ort). Keine Zellwerte vor dem Perigäum — jede Zelle bleibt `pending` (0 honored).
+2. Das Ergebnis als Addendum zum Siegel committet (σ-Metrik angewandt).
+3. `DSCOVR` geprüft (2026-09-20): die eigene keyless Route ist retired (404); der
+   L1-Echtzeit-Solarwind lebt im registrierten RTSW-Feed (multi-source, `source`
+   je Messwert). Keine neue `sources.φ`-Zeile — eine DSCOVR-Familie wäre ein
+   Duplikat; `where source DSCOVR` bleibt `pending` Parser-Prüfung.
 
 ## Frist / Owner / nächster Schritt
 
 - **Frist:** hart vor dem 28.09.2026 (Perigäum); nach dem Ereignis ist die
   Vorhersage post-hoc.
 - **Owner:** Forschung-Linie; Kette füllen `research-max`.
-- **Nächster Schritt:** die Kanalzellen gegen die registrierten Quellen messen
-  (`archive_search`/`sfetch` auf RTSW/Kp/Swarm/OMNI2), Transit-Korrektur
-  anwenden, `pending`-Zellen benennen.
+- **Nächster Schritt:** die Zellen ab dem Perigäum aus den lebenden Kanälen
+  füllen (RTSW/ACE Minuten, Kp ≤ 3 h, Swarm ≤ 1 d; OMNI2 ~1–2 d nur Verifikation;
+  JUICE nach dem Flyby) und je Messwert `source`+`active` mitprotokollieren.
 
 ## Abschluss
 
