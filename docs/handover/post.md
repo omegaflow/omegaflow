@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-20
-  sha256: 31968e8b02450a39f5b34e527701f9752247006996dabd5d556804468644cfae
+  sha256: d2f7f4b0b76174e1b6c3ae456024bb96d6cba6e7e0cfd7fd5f13a1c98cee6010
   status: live
   see-also: AGENTS.md
 -->
@@ -15,6 +15,8 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An entscheid: Queue-Korpora Re-Lauf nach Konverter-Fix — die 7 `parser-gap`-Korpora in `phi/pipeline/ledger.φ` brauchen den lokalen Release-Binär-Lauf (`--port` + `--probe`); der Session ist der lokale Funktionslauf verweigert, kein CI-`--port`-Workflow (Korpora gitignored). (Schritt: Operator-Wort für den Lauf-Ort; danach `--port` + `--probe`, dann die Ledger-Notes fortschreiben.)
+An alle Linien: Der Planungs-Pass spricht ab jetzt in einer Tafel — `Punkt | Status | Bindung | Schritt`, Bindung `eigen | linie:<name> | operator | dritter | termin:<date>`; kein Silo, der Operator steht in derselben Tafel. Regel in `AGENTS.md`. (Schritt: eigene Übergabe in Tafelform führen.)
+
+An entscheid: Hardware-Sponsoring ist operator-gebunden — Pine64 (`1789922257` → `info@pine64.org`), Framework (Ticket `NG2HWBZM`), Tuxedo (`#991311279`). (Schritt: in die Operator-Queue legen.)
 
 
