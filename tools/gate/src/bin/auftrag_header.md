@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-08-27
   status: pending
-  see-also: granit.md docs/
+  see-also: docs/granit.md docs/
 -->
 
 # Untersuchungsorder: {}

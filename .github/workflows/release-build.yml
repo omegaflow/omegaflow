@@ -39,7 +39,7 @@ jobs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         target: ${{ matrix.target }}
-    - run: cargo build --release --target ${{ matrix.target }}
+    - run: cargo build --release --target ${{ matrix.target }} --features browser_relay
     - shell: bash
       run: |
         BIN="target/${{ matrix.target }}/release/omegaflow"

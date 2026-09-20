@@ -52,7 +52,7 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo test --release
+    - run: cargo test --release --features browser_relay
     - run: cargo test --release -p omegaflow-register
     - run: cargo test --release -p omegaflow-utils
     - run: cargo test --release -p omegaflow-harvest --bin skydirection_compiler
