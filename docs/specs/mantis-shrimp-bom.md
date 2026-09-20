@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-13)
   class: ref
   date: 2026-09-13
-  sha256: d0ab1736014ebbade66e330007920fe637703e4ad760b4e32e1deba547428fe6
+  sha256: 56efc939b50dee8cbfad2367b6480740c7c9efdb619fd99d3bc6d52813fe6b36
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-13)
 
@@ -91,6 +91,22 @@ Schwache Picks: SG90 nur als Bulk-Treffer (Einzelstück ~2 €), Bass-Exciter te
 | Erdungslasche | `grounding+lug+stainless` |
 
 Suche: `https://www.aliexpress.com/wholesale?SearchText=<suche>`
+
+## Plattform-Vergleich — ESP32-S3 (aktuell) vs. PINE64 Ox64
+
+| Merkmal | ESP32-S3 (BOM) | PINE64 Ox64 |
+|---|---|---|
+| Architektur | Xtensa LX7, dual-core 32-bit | RISC-V BL808 (C906 64-bit + E907 + LP) |
+| Funk | WiFi + BLE | WiFi + BLE + **ZigBee** |
+| Ökosystem | sehr groß (ESP-IDF/Arduino) | kleiner (RISC-V, Buildroot/OpenWrt) |
+| I2C/SPI-Treiber | reichlich | weniger fertig |
+| Rolle | gebauter Mantis-Shrimp-Knoten | Alternative/Zweitknoten: RISC-V + ZigBee-Mesh |
+| Bezug | AliExpress (BOM) | PINE64 (EU: `pine64eu.com`) |
+
+Verdikt: **ESP32-S3 bleibt die gebaute Plattform** (Bibliotheken, Preis,
+Sensorknoten erprobt). **Ox64** ist als Zweitknoten spannend — RISC-V-Erfahrung
+und ZigBee-Mesh —, kostet aber Treiber-Arbeit. PINE64 schickt Geräte an
+Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
 ## Notizen
 
