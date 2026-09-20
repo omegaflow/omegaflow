@@ -1,0 +1,69 @@
+name: free-model-agent-bench
+
+concurrency:
+  group: free-model-agent-bench
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Model id substring filter (empty = all 105 free models)'
+        required: false
+        type: string
+        default: ''
+      timeout:
+        description: 'Per-model timeout in seconds'
+        required: false
+        type: string
+        default: '300'
+
+permissions:
+  contents: read
+
+env:
+  RUSTFLAGS: -D warnings
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install opencode
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
+      - name: Ensure archive_search (tools-latest release)
+        run: sh bin/.tools_ensure archive_search
+      - name: Build agent bench (release)
+        run: cargo build --release -p omegaflow-measure --bin free_model_agent_bench
+      - name: Write opencode provider config
+        env:
+          FREE_MODEL_KEYS: ${{ secrets.FREE_MODEL_KEYS }}
+        run: |
+          if [ -z "$FREE_MODEL_KEYS" ]; then
+            echo "FREE_MODEL_KEYS secret is not set — expected a JSON object mapping free_models.tsv env_var names to api keys" >&2
+            exit 1
+          fi
+          mkdir -p "$HOME/.config/opencode"
+          FREE_MODEL_KEYS="$FREE_MODEL_KEYS" ./target/release/free_model_agent_bench \
+            --emit-config "$HOME/.config/opencode/opencode.json"
+      - name: Run agent benchmark
+        env:
+          PATH: ${{ github.workspace }}/target/release:$PATH
+        run: |
+          extra=()
+          if [ -n "${{ inputs.model }}" ]; then extra+=(--model "${{ inputs.model }}"); fi
+          ./target/release/free_model_agent_bench \
+            --out free-model-agent-bench.tsv \
+            --timeout "${{ inputs.timeout }}" \
+            "${extra[@]}"
+      - name: Upload bench artifact
+        if: always() && hashFiles('free-model-agent-bench.tsv') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-model-agent-bench
+          path: free-model-agent-bench.tsv
+          retention-days: 7
