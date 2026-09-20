@@ -25,6 +25,21 @@ pub const MODES: &[&str] = &[
     "pubmed",
     "europepmc",
     "psychporta",
+    "awmf",
+    "cochrane",
+    "core",
+    "materialsproject",
+    "semanticscholar",
+    "clinicaltrials",
+    "openfda",
+    "pubchem",
+    "uniprot",
+    "pdb",
+    "chembl",
+    "ensembl",
+    "doaj",
+    "go",
+    "unpaywall",
 ];
 
 pub struct AppState {
