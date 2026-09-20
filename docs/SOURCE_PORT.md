@@ -196,18 +196,17 @@ dist/dist_scale/z`.
 
 | Dokument | Rolle | Status |
 |----------|-------|--------|
-| `docs/concepts/sources-v2-spec.md` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
-| `docs/concepts/force-system.md` | 9 Kraftkanäle, IDs, Ausbreitungsgeschwindigkeiten | bindend |
-| `docs/concepts/url-templates.md` | Template-Variablen (Spatial/Temporal) | bindend |
-| `docs/concepts/constants.md` | Φ, c, Konstanten | bindend |
-| `docs/concepts/time.md` | Zeit-/Epoch-Handling | nachschlagen |
-| `docs/concepts/si-units.md` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
+| `docs/specs/sources-v2-spec.md` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
+| `docs/specs/force-system.md` | 9 Kraftkanäle, IDs, Ausbreitungsgeschwindigkeiten | bindend |
+| `docs/specs/url-templates.md` | Template-Variablen (Spatial/Temporal) | bindend |
+| `docs/specs/constants.md` | Φ, c, Konstanten | bindend |
+| `docs/specs/time.md` | Zeit-/Epoch-Handling | nachschlagen |
+| `docs/specs/si-units.md` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
 | `docs/reference/NIST_SP330_tables.md`, `NIST_SP811_units.md`, `ucum-essence.xml` | Unit-Identität (BIPM/UCUM) | nachschlagen |
 | `docs/concepts/parser-magic.md` | Parser-Intelligenz + offene Lücken (P05/P07/P08) | nachschlagen |
 | `docs/reference/naif_body_ids.tsv` | Bodynamen für Frames | nachschlagen |
-| `docs/concepts/domain-coverage.md` | Host-Manifest der Grind-Wellen | nachschlagen |
-| `docs/concepts/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
-| `docs/concepts/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
+| `docs/specs/domain-coverage.md` | Host-Manifest der Grind-Wellen | nachschlagen |
+| `docs/specs/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
 
 ## 8. Oszillator-Gate + τ + Klassifikation
 
@@ -230,9 +229,12 @@ Transponder), von einem Sensor am Ort gemessen, bleibt accept.
 
 τ: temporal decay des Prozesses in Sekunden; schnell wechselnd → ttl/10,
 stabil (Kataloge, Geologie) → ttl; explizites Prozesswissen schlägt beides.
-Kernel-Vorgabe pro Force (Konverter): em/gravity → inverse-square, acoustic/
-seismic-body/diffusion → gaussian-inverse-square, seismic-surface → erfc,
-thermal → exponential-decay, advective → patch-levy.
+Kernel-Default pro Force für Zeilen **ohne** Kernel-Token (Konverter-Fallback,
+`sources-v2-spec.md:70-71`): em/gravity → inverse-square, acoustic/seismic-body/
+diffusion → gaussian-inverse-square, seismic-surface → erfc, thermal →
+exponential-decay, advective → patch-levy. Eine deklarierte Zeile bindet: der
+Parser liest den Token zuerst (`parse.rs:759/1167`), der Konverter materialisiert
+den Default nur im Synthese-/Entwurfspfad (`port.rs:18/1214/1237`).
 
 Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
 unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
