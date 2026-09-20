@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-08-28
-  sha256: 04137f189a41bc61a5be9ab98a4cb903010e523b56596fcaa099e078ac250db3
+  sha256: 3855d9bfca177a7a6a1d1498786fc4318e4247f01163cb22ba4707c722f518bc
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -42,6 +42,38 @@ measured on an independent path. A = A: the prediction of the thing is tested
 against the thing. No field value is filled before its measurement exists; an
 unfilled link is `pending`, never 0.0. The σ-Metric is the measure of the chain's
 agreement — agreement = no channel residual above fam (silence is a full finding).
+
+## Chain readiness (measured 2026-09-20)
+
+The chain stands ready; no cell value exists before its measurement — the perigee
+tube lies in the future, every cell stays `pending` until filled (0 honored).
+Readiness per channel, measured 2026-09-20:
+
+| channel | route (`phi/sources.φ`) | reachability | cadence | transit | fills |
+|---|---|---|---|---|---|
+| plasma-pressure gradient | RTSW wind `:164-169` | HTTP 200, stage 1 | 1 min (ttl 60) | L1 lead `d/v_sw` (the same feed's measured speed); light time `d/c` = 5.0 s (`d` = 1.5e9 m, `c` = 2.99792458e8 m/s) | at the perigee, minutes after |
+| IMF-Bz | RTSW mag `:158-162` | HTTP 200, stage 1 | 1 min | same | at the perigee, minutes after |
+| Kp | NOAA `:179-183`, GFZ `:1336-1339` | HTTP 200, stage 1 | 3-h (interval stamps measured in the file) | none (at Earth); 3-h alignment to the perigee interval | at the interval, ≤ 3 h |
+| Swarm magnetic field | EFIA-LP / FACATMS / MAGA-LR `:6059-6078` | HTTP 200, HAPI code 1200 | 1-h window; the yesterday window served complete (7209 lines) → latency ≤ 1 d | none (at the site) | ≤ 1 d after |
+| JUICE in-situ field | after the flyby | — | — | — | after 28./29.09. |
+
+OMNI2 (`:918-928`): HTTP 200, 1-h merged; the 13.–19.09. window served populated
+on 20.09. → latency ≈ 1–2 d — it cannot carry the pre-flyby prediction; it is the
+verification channel. Its time-shift convention is verified before any OMNI2 cell
+fills.
+
+The RTSW feed is multi-source and carries a per-reading `source` field (measured:
+newest reading `source "IMAP", active:false`); every fill records the per-reading
+`source` and `active` flag. The seal reads "RTSW at L1", so any L1 monitor
+qualifies; the per-reading log is the duty.
+
+DSCOVR (measured 2026-09-20): the dedicated keyless DSCOVR JSON routes are retired
+— `products/solar-wind/plasma-7-day.json`, `products/solar-wind/mag-7-day.json`,
+`json/dscovr/dscovr_mag_1m.json`, `json/dscovr/dscovr_fc_1m.json` all HTTP 404
+(stage 1 and 2; the wayback register holds only a 2016 snapshot). The L1 real-time
+solar wind lives in the registered RTSW feed (`:158-169`). No new `sources.φ` line:
+a DSCOVR entry would duplicate the same source family; a DSCOVR-only isolation
+(`where source DSCOVR`) is `pending` a parser check and is not required by the seal.
 
 ## The operator seal (pending)
 
