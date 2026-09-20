@@ -1212,9 +1212,10 @@ pub fn is_coord_key(key: &str) -> bool {
 pub fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<String> {
     let fid = force_id_of(force)?;
     let kid = kernel_id_for_force(fid)?;
+    let kernel = kernel_name_of(kid)?;
     Some(format!(
         "field {} {} {} {} {} {} 0.0 0.0\n",
-        key, key, kid, force, unit, tau
+        key, key, kernel, force, unit, tau
     ))
 }
 
