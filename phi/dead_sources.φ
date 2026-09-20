@@ -975,3 +975,48 @@ dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
 note ALeRCE: ztf.alerce.online DNS dead, ztf.alerce.cl Connect blockiert. Recheck 2026-09-11 (anonym): api.alerce.online/alerts/v1/objects HTTP 200 — Compiler-Pfad sources.φ:848 live. ztf.alerce.online bleibt DNS-tot.
 
+
+dead unreachable
+url http://sprite.atmos.nthu.edu.tw/
+note HTTP 0 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead unreachable
+url https://asim.dtu.dk/
+note HTTP 0 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead unreachable
+url https://cr0.izmiran.ru/mosc/main.txt
+note HTTP 0 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead 404
+url https://lambda.gsfc.nasa.gov/data/map/dr5/skymaps/5yr/raw/wmap_5yr_wmap_v1.fits
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead 404
+url https://lgdc.uml.edu/common/DIDBGetValues
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; GIRO-Ionosonde; 2026-09-20.
+
+dead 404
+url https://livingatlas.arcgis.com/api/v3/datasets
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead 404
+url https://renass.unistra.fr/api/
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead 404
+url https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/regional_monitoring/palmer.txt
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-20.
+
+dead 404
+url https://www.iris.edu/app/stationmonitor/
+note HTTP 404 direct+Proton, Wayback 200; IRIS-Nachfolger earthscope; 2026-09-20.
+
+dead 404
+url https://www.pmel.noaa.gov/acoustics/data/
+note HTTP 404 direct+Proton, Wayback 200; 2026-09-20.
+
+dead 404
+url https://xeno-canto.org/api/2/recordings?query=corvus+corax
+note API v2 HTTP 404 direct+Proton; v3-Nachfolger nicht im Register; 2026-09-20.
+
