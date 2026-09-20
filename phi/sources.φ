@@ -7718,6 +7718,7 @@ ra raj2000
 dec dej2000
 plx parallax
 radvel rv
+rv_scale 1000.0
 field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -8734,6 +8735,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
@@ -8776,6 +8778,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
@@ -8828,6 +8831,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -8927,6 +8931,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
@@ -8949,6 +8954,7 @@ ra ra
 dec dec
 plx plx
 radvel rv
+rv_scale 1000.0
 field rv harps_rv_km_s gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
@@ -8977,6 +8983,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
@@ -9007,6 +9014,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
@@ -9024,6 +9032,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -9074,6 +9083,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
@@ -9092,6 +9102,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
@@ -9109,6 +9120,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
@@ -9128,6 +9140,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -9145,6 +9158,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -9205,6 +9219,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -9236,6 +9251,7 @@ dist dist_pc
 pmra pmra
 pmdec pmdec
 radvel rv
+rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -9495,6 +9511,7 @@ cmap .
 ra RAJ2000
 dec DEJ2000
 radvel HRV
+rv_scale 1000.0
 field Teffs rave_dr6_teffs_sparv gaussian-inverse-square thermal K 604800 0.0 0.0
 field Teffir rave_dr6_teff_irfm gaussian-inverse-square thermal K 604800 0.0 0.0
 
