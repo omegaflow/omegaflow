@@ -26,13 +26,19 @@ base="https://github.com/omegaflow/omegaflow/releases/download/tools-latest"
 
 mkdir -p "$rel"
 
-# TTL gate: a manifest fetched within the watchdog cadence (2^6 min = 3840 s)
-# stands; the network is skipped until it ages out.
-if [ -f "$stamp" ]; then
+# TTL gate: within the watchdog cadence (2^6 min = 3840 s) the network is
+# skipped — but only when the installed binary matches the cached manifest
+# (content-addressed, never mtime): a stale artifact refreshes.
+if [ -f "$stamp" ] && [ -f "$manifest" ]; then
     mtime="$(stat -c %Y "$stamp" 2>/dev/null || stat -f %m "$stamp" 2>/dev/null || echo 0)"
     now="$(date +%s)"
     if [ "$now" -lt $(( mtime + 3840 )) ]; then
-        exit 0
+        remote_sha="$(awk -v t="$tool" '$1 == t { print $2 }' "$manifest")"
+        local_sha=""
+        [ -f "$bin" ] && local_sha="$(sha256sum "$bin" | awk '{print $1}')"
+        if [ -n "$remote_sha" ] && [ "$local_sha" = "$remote_sha" ]; then
+            exit 0
+        fi
     fi
 fi
 
@@ -45,12 +51,12 @@ code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$base/tools.manifes
 echo "tools: $tool — release route $base/tools.manifest -> HTTP ${code:-absent}" >&2
 
 tmpm="$rel/.tools_manifest.tmp"
-rm -f "$tmpm" "$rel/tools.manifest"
+rm -f "$tmpm"
 
 if curl -fsSL --max-time 5 "$base/tools.manifest" -o "$tmpm" 2>/dev/null && [ -s "$tmpm" ]; then
     :
-elif gh release download tools-latest --repo omegaflow/omegaflow --pattern tools.manifest --dir "$rel" --clobber >/dev/null 2>&1 && [ -s "$rel/tools.manifest" ]; then
-    mv -f "$rel/tools.manifest" "$tmpm"
+elif gh release download tools-latest --repo omegaflow/omegaflow --pattern tools.manifest --output "$tmpm" --clobber >/dev/null 2>&1 && [ -s "$tmpm" ]; then
+    :
 fi
 
 if [ ! -s "$tmpm" ]; then
