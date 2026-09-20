@@ -3,7 +3,7 @@
   session: Forschung-Folge 124
   class: handover
   date: 2026-09-20
-  sha256: 68cb86e7b83008b278265904cb6456c09cc733c403ff0e454c5e03314c7a46f3
+  sha256: a5790f9f605ca34bfdbacbaa6fb68bdd27f8a5e3359223a43029873cf997284c
   status: live
 -->
 # Handover — Forschung-Folge 124 (2026-09-20)
@@ -83,12 +83,25 @@ aufeinanderfolgende Übergaben und meldet jeden offenen Punkt aus N, der in N+1
 fehlt, mit `git: resolved|none` über `git log --grep`. Deckt **alle** Linien ab
 (kein Arg = alle). `cargo check -p omegaflow-register --bin register_lookup`: 0/0.
 
-**Offen:** das Werkzeug ist noch nicht gebaut/gelaufen (CI-only). (Schritt: nach
-Push `tools-build` abwarten, dann `register_lookup --dropped` einmal lesen und
-den ersten Fund gegen den Baum halten.) **Noch zu entscheiden:** als CI-Gate
-verdrahten, damit ein stiller Drop rot wird (Rat/Architektur). Bekannte Grenzen
-des Heuristik-Matchings stehen im Werkzeug-Report (6-Wort-Präfix; verschobene
-Punkte gelten als präsent).
+**Sweep gelaufen (frisches CI-Binär nach `tools-build` `35533686434`/`35533774541`
+success):** `433 Paare, 3299 Kandidaten, 1748 dropped, 164 commit-resolved`.
+Triage (read-only) über die 96 strukturellen Ketten: **~70 Matcher-Rauschen**
+(Container-Überschriften, CI-Run-ID-Churn, Meta-Sätze), ~25 zentral in
+`external-state.md`/Registern getrackt (kein Drop — relokiert). **Nur zwei klar
+still-offen:** bau „strukturierte Feld-Grammatik" (Kanon-Akt, operator-gebunden,
+letzte Nennung `bau-folge74`) und ernte „Rosetta ungelaufene Pfade /
+Idempotenz-Gate" (letzte Nennung `ernte-folge75`) — beide als Post-Zeile an die
+Eigentümerlinie getragen. Vier ambigu (betti0/fasy, Watchdog-Floor, Riss 4,
+entscheid-`65f9243b`-install). Der Hyperscanning-Strang wäre vom Werkzeug
+gefangen worden — Validierung.
+
+**Gebaut (dieses Atom):** `--persist <n>` (meldet nur Punkte, die ≥n Übergaben
+überleben, dann verschwinden) + Container-Ausschluss. `cargo check`: 0/0.
+
+**Offen:** `--persist` ist noch nicht im CI-Binär (neuer Commit → `tools-build`).
+(Schritt: nach Push `register_lookup --dropped --persist 2` einmal lesen.)
+**Noch zu entscheiden:** als CI-Gate verdrahten, damit ein stiller Drop rot wird
+(Rat/Architektur).
 
 ## Punkt 3 — `te-gate`-Verdikt @`e6b6eec8`
 
@@ -117,6 +130,9 @@ Konstante gedruckt, nie durch Lockern versteckt.
 - Flyby-Path-2-Kette — `termin:2026-09-28` (Zellen ab Perigäum füllen).
 - NSE/Haug — `wartend`/`dritter` (Trigger Dateieingang).
 - BepiColombo MORE — `termin:2027-04` (Freigabe Wissenschaftsphase).
+- Buster-Store-„Updated"-Datum — `wartend`/`pending`: CWS-Listing nicht
+  skriptbar (nur im echten Browser lesbar); aus folge116 still gefallen, jetzt
+  zurückgetragen. (Schritt: im echten Browser lesen.)
 
 ## Planungs-Tafel (offene Punkte)
 
@@ -130,7 +146,7 @@ Konstante gedruckt, nie durch Lockern versteckt.
 | 6. Frontalkanäle F3/F4 | wartend | eigen | getrennte Läufe nach Bestätigung |
 | 7. Takens-Wandzeit + Watchdog-Floor | wartend | eigen | beim grünen Screen Wandzeit lesen |
 | 8. Eigen-Historie Konditionierer | wartend | eigen | `LaggedCond` auf Zielserie |
-| 9. `--dropped` gebaut, nicht gelaufen | wartend | eigen | nach Push `tools-build`, dann einmal laufen |
+| 9. `--dropped` gelaufen; `--persist`-Filter noch nicht im CI-Binär | wartend | eigen | nach Push `register_lookup --dropped --persist 2` einmal |
 | 10. `--dropped` als CI-Gate | wartend | eigen | Rat: Gate-Verdrahtung entscheiden |
 | 11. `te-gate`-Verdikt `35531196101` | wartend | eigen | `ci_manage view 35531196101` einmal |
 | 12. Cookie-Editor-Export | wartend | operator | Operator nennt Host |
@@ -138,6 +154,7 @@ Konstante gedruckt, nie durch Lockern versteckt.
 | 14. Flyby-Path-2 | termin:2026-09-28 | termin | Zellen ab Perigäum |
 | 15. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 16. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |
+| 17. Buster-Store-„Updated"-Datum | wartend | eigen | im echten Browser lesen |
 
 ## Benchmark
 
