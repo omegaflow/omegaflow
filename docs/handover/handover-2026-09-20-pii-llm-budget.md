@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: a5db7533288f3ed119bcf9f0db720b260f576c7b4f3e3ff6ac9e87b0109fb98f
+  sha256: 1644ee6912bd89618c4e6d3950fcd0f14eb23df9d42536a8e332d6edfb31f235
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -70,11 +70,16 @@
   (thermal/diffusion/advective: `default_kernel_for` `force.rs:64-66` vs.
   `kernel_id_for_force` `force.rs:36-37`; live `sources.φ` folgt erfc) wird als
   **Widerspruch getragen und gemessen**, nie geglättet.
-- **vC-Permeabilität:** Operator führt den **versteckten sensor-getriebenen Lauf**
-  aus (`OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`), danach
+- **vC-Permeabilität — `termin` (wartet auf die Sensoren):** Operator führt den
+  **versteckten sensor-getriebenen Lauf** aus
+  (`OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`), danach
   `perm_target_probe --live <pfad>` (`tools/measure/src/bin/perm_target_probe.rs`).
-  Der CI-Lauf ist laut Rat **descoped** (analytischer Ruhepunkt, null
-  Verteilungsinfo). Lokale Funktionsläufe sind der Session strukturell verweigert.
+  **Bedingung (Operator-Wort 2026-09-20): erst wenn alles fertig ist und Smartwatch
+  + Mantis-Shrimp-Sensoren angeschlossen sind.** Ohne Sensoren ist der Lauf der
+  descopte Ruhepunkt `(0,0,0,PERM_GROUND)`; der CI-Lauf ebenso. Lokale
+  Funktionsläufe sind der Session strukturell verweigert.
+- **Roadmap (Operator-Wort 2026-09-20):** alle Fäden auf 0 → Sensoren anschließen →
+  Messlauf → **Mails + Publikation als letzter Schritt.**
 - **register_lookup-Symlink:** erledigt (liegt in `~/.local/bin`, auf PATH).
 - **opencode-Browser-Brücke:** verbunden.
 - **Limadou CSES-02-PI-Freigabe:** Thread existiert bereits — Anfrage 23.08.2026,
