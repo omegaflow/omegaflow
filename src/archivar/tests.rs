@@ -1002,13 +1002,13 @@ fn test_celestial_map_redshift_distance() {
             ra_key: "ra".into(),
             dec_key: "declination".into(),
             dist_key: String::new(),
-            dist_scale: 1.0,
+            dist_scale: Some(1.0),
             plx_key: String::new(),
             z_key: "redshift".into(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
@@ -1096,13 +1096,13 @@ fn test_extract_csv_zip_end_to_end() {
             ra_key: "ra".into(),
             dec_key: "declination".into(),
             dist_key: String::new(),
-            dist_scale: 1.0,
+            dist_scale: Some(1.0),
             plx_key: String::new(),
             z_key: "redshift".into(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
@@ -1173,8 +1173,43 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     assert_eq!(sources.len(), 1);
     match &sources[0].extracts[0] {
         Extract::CelestialMap { dist_scale, .. } => {
-            assert!((dist_scale - 3.085677581e19).abs() < 1e6);
+            assert_eq!(*dist_scale, Some(3.085677581e19));
         }
+        _ => panic!("expected CelestialMap extract"),
+    }
+}
+
+#[test]
+fn test_parse_sources_dist_without_scale_is_absent() {
+    let phi = "url https://example.com/comets.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+dist dist_au\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    match &sources[0].extracts[0] {
+        Extract::CelestialMap { dist_scale, .. } => assert_eq!(*dist_scale, None),
+        _ => panic!("expected CelestialMap extract"),
+    }
+}
+
+#[test]
+fn test_parse_sources_rv_scale_directive() {
+    let phi = "url https://example.com/x.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+radvel rv\n\
+rv_scale 1000.0\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    match &sources[0].extracts[0] {
+        Extract::CelestialMap { rv_scale, .. } => assert_eq!(*rv_scale, Some(1000.0)),
         _ => panic!("expected CelestialMap extract"),
     }
 }
@@ -1304,13 +1339,13 @@ fn test_extract_cmap_dist_scale_kpc() {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: "dist_kpc".into(),
-            dist_scale: 3.085677581e19,
+            dist_scale: Some(3.085677581e19),
             plx_key: String::new(),
             z_key: String::new(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "H".into(),
@@ -1375,6 +1410,165 @@ fn test_extract_cmap_dist_scale_kpc() {
 }
 
 #[test]
+fn test_extract_cmap_dist_without_scale_is_absent() {
+    let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
+    let src = SourceConfig {
+        ttl: 604800,
+        url: "https://example.com/x".into(),
+        frame: Frame::Barycenter {
+            body_name: "sun".into(),
+            scale: 1.0,
+        },
+        format: "json".into(),
+        extracts: vec![Extract::CelestialMap {
+            arr_path: ".".into(),
+            ra_key: "ra".into(),
+            dec_key: "dec".into(),
+            dist_key: "dist_kpc".into(),
+            dist_scale: None,
+            plx_key: String::new(),
+            z_key: String::new(),
+            pmra_key: String::new(),
+            pmdec_key: String::new(),
+            rv_key: String::new(),
+            rv_scale: Some(1.0),
+            epoch_key: String::new(),
+            fields: vec![FieldConfig {
+                key: "H".into(),
+                name: "comet_h_mag".into(),
+                kernel: 0,
+                force: 0,
+                tau: 604800.0,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+            }],
+            tau_key: String::new(),
+        }],
+        headers: vec![],
+        post_body: None,
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+        hapi_fill: HashMap::new(),
+        window: None,
+        live_only: false,
+    };
+    let fixture_lsk = LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    };
+    match extract(&src, json, 8.0e8, &fixture_lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert!(channels.is_empty(), "dist without a measured scale is absent");
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+}
+
+#[test]
+fn test_extract_cmap_rv_without_scale_is_absent() {
+    let json = r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"rv":50.0,"H":5.5}]"#;
+    let src = SourceConfig {
+        ttl: 604800,
+        url: "https://example.com/x".into(),
+        frame: Frame::Barycenter {
+            body_name: "sun".into(),
+            scale: 1.0,
+        },
+        format: "json".into(),
+        extracts: vec![Extract::CelestialMap {
+            arr_path: ".".into(),
+            ra_key: "ra".into(),
+            dec_key: "dec".into(),
+            dist_key: String::new(),
+            dist_scale: None,
+            plx_key: "plx".into(),
+            z_key: String::new(),
+            pmra_key: String::new(),
+            pmdec_key: String::new(),
+            rv_key: "rv".into(),
+            rv_scale: None,
+            epoch_key: String::new(),
+            fields: vec![FieldConfig {
+                key: "H".into(),
+                name: "comet_h_mag".into(),
+                kernel: 0,
+                force: 0,
+                tau: 604800.0,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+            }],
+            tau_key: String::new(),
+        }],
+        headers: vec![],
+        post_body: None,
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+        hapi_fill: HashMap::new(),
+        window: None,
+        live_only: false,
+    };
+    let fixture_lsk = LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    };
+    match extract(&src, json, 8.0e8, &fixture_lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            if let Position::StateVector { v, .. } = channels[0].0.position {
+                assert!(v[0].abs() < 1e-9, "radial velocity without a scale is absent");
+                assert!(v[1].abs() < 1e-9);
+                assert!(v[2].abs() < 1e-9);
+            } else {
+                panic!("expected StateVector position");
+            }
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+}
+
+#[test]
 fn test_extract_cmap_pm_radvel_plx() {
     let json =
         r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"pmra":1000.0,"pmdec":2000.0,"rv":50.0,"H":5.5}]"#;
@@ -1391,13 +1585,13 @@ fn test_extract_cmap_pm_radvel_plx() {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: String::new(),
-            dist_scale: 1.0,
+            dist_scale: Some(1.0),
             plx_key: "plx".into(),
             z_key: String::new(),
             pmra_key: "pmra".into(),
             pmdec_key: "pmdec".into(),
             rv_key: "rv".into(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "H".into(),
@@ -1510,13 +1704,13 @@ fn test_extract_cmap_no_distance_skipped() {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: String::new(),
-            dist_scale: 1.0,
+            dist_scale: Some(1.0),
             plx_key: String::new(),
             z_key: String::new(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "H".into(),
@@ -1586,13 +1780,13 @@ fn test_extract_cmap_null_dist_skipped() {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: "dist_pc".into(),
-            dist_scale: 3.085677581e16,
+            dist_scale: Some(3.085677581e16),
             plx_key: String::new(),
             z_key: String::new(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "H".into(),
@@ -1664,13 +1858,13 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
             ra_key: "RAdeg_HI".into(),
             dec_key: "Decdeg_HI".into(),
             dist_key: "Dist".into(),
-            dist_scale: 3.085677581e22,
+            dist_scale: Some(3.085677581e22),
             plx_key: String::new(),
             z_key: String::new(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "HIflux".into(),
@@ -2483,11 +2677,12 @@ fn test_port_convert_ra_dec_key() {
 }
 #[test]
 fn test_port_convert_dist_pm_rv_keys() {
-    let with_scale = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\npmra_key pmRA\npmdec_key pmDE\nradvel_key RadialVelocity\ndist_key sy_dist\ndist_scale 3.085677581e16\nfield Name star_name\n";
+    let with_scale = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\npmra_key pmRA\npmdec_key pmDE\nradvel_key RadialVelocity\nrv_scale 1000.0\ndist_key sy_dist\ndist_scale 3.085677581e16\nfield Name star_name\n";
     let conv = super::port_block(with_scale);
     assert!(conv.contains("pmra pmRA\n"));
     assert!(conv.contains("pmdec pmDE\n"));
     assert!(conv.contains("radvel RadialVelocity\n"));
+    assert!(conv.contains("rv_scale 1000.0\n"));
     assert!(conv.contains("dist sy_dist\n"));
     assert!(conv.contains("dist_scale 3.085677581e16\n"));
     let srcs = super::parse_sources(&conv);
@@ -2501,14 +2696,16 @@ fn test_port_convert_dist_pm_rv_keys() {
                 pmra_key,
                 pmdec_key,
                 rv_key,
+                rv_scale,
                 ..
             } = e
             {
                 assert_eq!(dist_key, "sy_dist");
-                assert_eq!(*dist_scale, 3.085677581e16);
+                assert_eq!(*dist_scale, Some(3.085677581e16));
                 assert_eq!(pmra_key, "pmRA");
                 assert_eq!(pmdec_key, "pmDE");
                 assert_eq!(rv_key, "RadialVelocity");
+                assert_eq!(*rv_scale, Some(1000.0));
                 found = true;
             }
         }
@@ -6712,13 +6909,13 @@ fn test_flux_from_mag_manifests() {
             ra_key: "ra".into(),
             dec_key: "dec".into(),
             dist_key: String::new(),
-            dist_scale: 1.0,
+            dist_scale: Some(1.0),
             plx_key: "plx".into(),
             z_key: String::new(),
             pmra_key: String::new(),
             pmdec_key: String::new(),
             rv_key: String::new(),
-            rv_scale: 1.0,
+            rv_scale: Some(1.0),
             epoch_key: String::new(),
             fields: vec![FieldConfig {
                 key: "mag".into(),
