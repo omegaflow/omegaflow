@@ -55,7 +55,9 @@ fn parse_openfda(body: &str) -> Vec<String> {
             line.push_str(ENDPOINT);
         }
         if let Some(openfda) = record.get("openfda") {
-            if let Some(name) = first(openfda, "brand_name").or_else(|| first(openfda, "generic_name")) {
+            if let Some(name) =
+                first(openfda, "brand_name").or_else(|| first(openfda, "generic_name"))
+            {
                 line.push_str(&format!("\ttitle: {}", name));
             }
             if let Some(manufacturer) = first(openfda, "manufacturer_name") {
