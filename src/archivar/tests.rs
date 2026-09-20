@@ -2482,6 +2482,51 @@ fn test_port_convert_ra_dec_key() {
     assert!(found, "celestial map extract present");
 }
 #[test]
+fn test_port_convert_dist_pm_rv_keys() {
+    let with_scale = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\npmra_key pmRA\npmdec_key pmDE\nradvel_key RadialVelocity\ndist_key sy_dist\ndist_scale 3.085677581e16\nfield Name star_name\n";
+    let conv = super::port_block(with_scale);
+    assert!(conv.contains("pmra pmRA\n"));
+    assert!(conv.contains("pmdec pmDE\n"));
+    assert!(conv.contains("radvel RadialVelocity\n"));
+    assert!(conv.contains("dist sy_dist\n"));
+    assert!(conv.contains("dist_scale 3.085677581e16\n"));
+    let srcs = super::parse_sources(&conv);
+    assert!(!srcs.is_empty());
+    let mut found = false;
+    for s in &srcs {
+        for e in &s.extracts {
+            if let super::Extract::CelestialMap {
+                dist_key,
+                dist_scale,
+                pmra_key,
+                pmdec_key,
+                rv_key,
+                ..
+            } = e
+            {
+                assert_eq!(dist_key, "sy_dist");
+                assert_eq!(*dist_scale, 3.085677581e16);
+                assert_eq!(pmra_key, "pmRA");
+                assert_eq!(pmdec_key, "pmDE");
+                assert_eq!(rv_key, "RadialVelocity");
+                found = true;
+            }
+        }
+    }
+    assert!(found, "celestial map extract present");
+
+    let parallax = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RA_ICRS\ndec_key DE_ICRS\ndist_key 1000/Plx\n";
+    let conv = super::port_block(parallax);
+    assert!(conv.contains("plx Plx\n"));
+    assert!(!conv.contains("dist "));
+    assert!(!conv.contains("dist_scale "));
+
+    let no_scale = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\ndist_key Dist\n";
+    let conv = super::port_block(no_scale);
+    assert!(!conv.contains("dist "));
+    assert!(!conv.contains("dist_scale "));
+}
+#[test]
 fn test_walk_celestial_cmap() {
     let j = super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
     let mut fields = String::new();
