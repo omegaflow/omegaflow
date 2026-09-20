@@ -46,7 +46,7 @@ witness s2-direction
 url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
 record sky1
 force em
-note VTSCat — VERITAS-Datenkatalog (GitHub, CC0): Spektral-Flusspunkte je Publikation als ECSV/YAML. S²-Richtung (τ=0), kind gamma, em. ECSV/YAML-Reader steht; kompiliert als vtscat_flux.sky1 via vtscat_compiler — Asset pending (2026-09-16 HTTP 404).
+note VTSCat — VERITAS-Datenkatalog (GitHub, CC0): Spektral-Flusspunkte je Publikation als ECSV/YAML. S²-Richtung (τ=0), kind gamma, em. ECSV/YAML-Reader steht; kompiliert als vtscat_flux.sky1 via vtscat_compiler — CDN live (sources.φ:9723, 3853 B, sha256 ca6ea9aa…, run 35144789674).
 
 witness s2-direction
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
@@ -64,7 +64,7 @@ witness s2-direction
 url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
 record sky1
 force em
-note H.E.S.S. DL3 DR1 (2026-09-16 HTTP 206/200). S²-Richtung (τ=0), kind gamma, em. Reduktion dl3::parse_events + reduce_grid; kompiliert als dl3_skymap.sky1 via dl3_skymap_compiler --telescope hess — Asset pending (2026-09-16 HTTP 404).
+note H.E.S.S. DL3 DR1 (2026-09-16 HTTP 206/200). S²-Richtung (τ=0), kind gamma, em. Reduktion dl3::parse_events + reduce_grid; kompiliert als hess_dl3.sky1 via dl3_skymap_compiler --telescope hess — CDN live (sources.φ:9733, 168133 B, run 35251318800).
 
 witness s2-direction
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
@@ -82,7 +82,7 @@ witness s2-direction
 url https://opendata.magic.pic.es
 record sky1
 force em
-note MAGIC Open Data Repository (PIC) — Low-level-DL3. S²-Richtung (τ=0), kind gamma, em. Reduktion dl3::parse_events; kompiliert als dl3_skymap.sky1 via dl3_skymap_compiler --telescope magic — Asset pending (2026-09-16 HTTP 404).
+note MAGIC Open Data Repository (PIC) — Low-level-DL3. S²-Richtung (τ=0), kind gamma, em. Reduktion dl3::parse_events; kompiliert als magic_dl3.sky1 via dl3_skymap_compiler --telescope magic — CDN live (sources.φ:9778, 473 B, sha256 0085e395…, run 35268770926).
 
 witness s2-direction
 url https://vo.km3net.de/ant20_01/nu/cone/form
