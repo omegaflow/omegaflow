@@ -103,6 +103,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--reactome` | — (neu, keyless) | | `--interpro` | — (neu, keyless) |
 | `--alphafold` | — (neu, keyless, UniProt-Accession) | | | |
 | `--entrez` | — (neu, keyless, `db=nuccore\|sra\|gds`) | | | |
+| `--ena` | — (neu, keyless, `result=read_run\|study\|sample\|analysis\|assembly`) | | | |
 
 ## Interfaces — exakt (damit niemand rät)
 
@@ -185,6 +186,13 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   (GenBank/SRA/GEO), `term=` optional statt des Rests. `count <n>` +
   `query: <querytranslation>` + je Treffer `url https://www.ncbi.nlm.nih.gov/<db>/<id>`
   + `db`/`id` (GEO als `geo/query/acc.cgi?acc=`).
+- `archive_search --ena "result=<type> fields=<comma-list> <query>"` — EBI European
+  Nucleotide Archive Portal API (`portal/api/search?format=json&limit=`, Gesamtzahl
+  über `portal/api/count`); keyless. `result=read_run|study|sample|analysis|assembly`,
+  `fields` ist Pflicht (ohne `fields` liefert ENA den vollen Feldsatz, gemessen
+  ~70 MB bei `read_run`), `query`/`term` optional (leer = erste Datensätze).
+  `count <n>\tresult: <type>` + je Treffer `url https://www.ebi.ac.uk/ena/browser/view/<accession>`
+  (aus dem `*_accession`-Feld) + die angeforderten Felder. Kein Eintrag → `absent`.
 
 ## Gemessen — übrige lokale Werkzeuge
 
