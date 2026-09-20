@@ -27,30 +27,6 @@ ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-parser-gap
-kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
-note Parser-gap: VOTable-JSON — IRSA liefert s_ra/s_dec nur als FIELD-Metadaten + 3,18-MB-Antwort; Probe void (§15.1, 2026-08-19).
-
-parser-gap
-kandidat https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+object_id,right_ascension,declination+FROM+catalogue.mer_catalogue
-note Parser-gap: Spaltennamen-aus-metadata — Antwortform {metadata:[{name:…}], data:[[…]]} (Rows als Skalar-Arrays); Probe void (§15.4, 2026-08-19).
-
-parser-gap
-kandidat https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
-note Parser-gap: Probe-Env-Marker — Endpoint lebt, Probe void nur wegen Env-Marker; Nachweis im Register-Lauf offen (§15.6, 2026-08-19).
-
-parser-gap
-kandidat https://data.nrao.edu/portal/
-note Parser-gap: Angular-SPA — REST-Pfade 404, nur die SPA-Hülle; alter TAP retired (§15.7, 2026-08-19).
-
-parser-gap
-kandidat https://chime-frb.ca/
-note Parser-gap: kein Listen-Feed — Portal lebt, Count-Extract leer, Kataloge via CANFAR-DOIs (§15.8, 2026-08-19).
-
-parser-gap
-kandidat https://gcn.nasa.gov/missions/svom
-note Parser-gap: kein Listen-Feed — GCN-v0.1-API tot (404 Remix-SPA), Circulars nur per SPA-Suche + /circulars/{id}.json ohne ra/dec (§15.9, 2026-08-19).
-
 kompiliert
 kandidat https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.csv
 note Re-Messung 2026-09-16 (grind-pro): lebendes Dataset gefunden — OBSEA_seabed_station_TS_L1c, maxTime 2026-09-14T08:00:00Z (30-min-Mittel), Kraft accept (passiver Treiber). Das zuvor bekannte OBSEA_moored_buoy_meteo_L1c bleibt eingefroren 2026-05-12. sources.φ-Block + CDN-Asset vorhanden, gemessen 2026-09-17 (emso_obsea_seabed_ts.json, 25544 B, sha256 792196294d0435af44a921e3146d2b0041144d28262a691b2cf5f3914c8e6b2c, HTTP 200).
