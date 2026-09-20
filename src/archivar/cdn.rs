@@ -5,6 +5,11 @@ use std::sync::{Mutex, OnceLock};
 pub const CDN_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
+pub const PS1_SLAB_BANDS: u32 = 80;
+
+pub fn ps1_slab_tag(proj: u32) -> String {
+    format!("ps1-dr2-{}", (proj / PS1_SLAB_BANDS) * PS1_SLAB_BANDS)
+}
 
 pub fn cdn_base() -> String {
     if let Ok(base) = std::env::var("OMEGAFLOW_CDN_BASE") {
