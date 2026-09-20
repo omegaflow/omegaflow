@@ -2,7 +2,7 @@
   title: Zustand — geteilter externer Zustand
   class: zustand
   date: 2026-09-20
-  sha256: bdd2da67011516793b13998587db696be05cc5636f91fd8df37238be28e4251c
+  sha256: 70bc3e38d65e2a384c736c86047ee6b80c40d019f8f363fd07c0b8ae35f6f940
   status: live
   see-also: AGENTS.md
 -->
@@ -24,3 +24,4 @@ Eintrag ist nicht null — er ist `pending` mit Fälligkeit, eine Registraturpfl
 | TE-Gate n=1000 FPR-Boden | Verdikt **failure** (`te-gate` `35425288111` @`e9e9ef63`, 2026-09-19 11:22Z): `gate_conditional_arx_fpr_fn_n1000` — FPR rise 4.00pp über a bei rho=0.5 (a=0: 2/100 → a=0.9: 6/100) über der festen 2pp-Decke; größte Zelle 7/100 (unter dem 8%-Boden — die Null hielt). Rat (Forschung-Folge 103): die feste 2pp-Decke ist fabriziert (unter 1σ bei neg≈100) — `fpr_rise_sigma_test` (3σ Binomial-Differenz, seit `1934c012` in `gate_fpr_autocorr_assert`) auf die vier verbleibenden Gates angewandt (`te.rs:4490,4795,4873,4973`); `cargo check --all-targets` 0/0; Commit `5b406e16`, `te-gate` `35475226890` @`5b406e16` dispatcht. Prä-Fix-Lauf `35473941500` @`9f48b5bd` in_progress. | 2026-09-20 (Forschung-Folge 103, `ci_manage log 35425288111`) | Run-Abschluss (`35475226890`) | `ci_manage view 35475226890` |
 | dr3_stars.bin (CDN) | 75 001 828 B = 44-B-Stride (`rv`), sha256 fb9a14089ef8348e12961caf8253c8e886b4a16862a1a71394b96465d75bcfbb; sniff 2026-09-16: HTTP 200, present | 2026-09-16 (sniff) | HEAD-Wechsel / gaia-cdn Re-Dispatch | `gh workflow run gaia-cdn.yml` |
 | voyager_odr Shards (CDN) | 14 Shards `voyager_odr_s0..s13.bin` present (run success; 452 MB–1.06 GB je Shard); in `phi/sources.φ` als 14 Blöcke registriert, die Einzeldatei `voyager_odr.bin` (Teilmenge, `C0XR13AA` im INDEX) ersetzt | run 35143340703 (2026-09-16, success) | HEAD-Wechsel / Re-Dispatch | `gh run view 35143340703` (idempotent — skip bei vorhandenen Shards) |
+| DeepSeek-Provider-Budget (extern) | Balance-Alert $20 aktiv (2026-09-20 gesetzt); Verbrauchszahlen privat, nicht getrackt; Peak Mo–Fr 01–04 & 06–10 UTC — off-peak halber Preis | 2026-09-20 (`platform.deepseek.com/usage`) | wöchentlich / neuer Top-up | `platform.deepseek.com/usage`; Top-up ≤ $50/Woche (Balance ist das Cap), schwere Läufe off-peak |
