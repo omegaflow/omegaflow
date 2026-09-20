@@ -1,7 +1,8 @@
 use crate::json;
 use crate::net::{get, urlencode};
 
-const ENDPOINT: &str = "https://api.materialsproject.org/materials/summary/search";
+const ENDPOINT: &str = "https://api.materialsproject.org/materials/summary/";
+const FIELDS: &str = "material_id,formula_pretty,band_gap,is_stable";
 
 pub fn materialsproject_lines(query: &str, max: usize) -> Vec<String> {
     let Some(key) = crate::token::secret("MP_API_KEY") else {
@@ -10,7 +11,13 @@ pub fn materialsproject_lines(query: &str, max: usize) -> Vec<String> {
                 .to_string(),
         ];
     };
-    let url = format!("{}?q={}&_limit={}", ENDPOINT, urlencode(query), max);
+    let url = format!(
+        "{}?formula={}&_fields={}&_limit={}",
+        ENDPOINT,
+        urlencode(query),
+        FIELDS,
+        max
+    );
     let header = format!("X-API-KEY: {}", key);
     match get(&url, &["-H", &header], "40") {
         Some(f) if f.status == Some(200) => {
