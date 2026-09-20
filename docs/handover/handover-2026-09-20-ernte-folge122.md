@@ -3,7 +3,7 @@
   session: Ernte-Folge 122
   class: handover
   date: 2026-09-20
-  sha256: 3d3972449816181076c74219d6141400c2249301c9648a6bebb4fa0d69d0942e
+  sha256: d3289a0c739c4c75c5b86eb6d02e1f391c94d0567b9cd8b4cd65816d5689c438
   status: live
 -->
 # Handover — Ernte-Folge 122 (2026-09-20)
@@ -35,7 +35,8 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
   `1789930255`.
 - **CI-Status** — der zustand-Eintrag (Forschung-Folge 122, HEAD-Wechsel) ist
   aktuell. ps1-cdn: `35530153972` @`e09a996b` in_progress, `35530552549`
-  @`cd742454` pending — beide auf Vor-Fix-HEADs, kein Verdikt.
+  @`cd742454` pending (Vor-Fix-HEADs); **Neu-Dispatch `35531159323` @`4502dbfa`**
+  (dieser Commit, nach Push) — Verdikt offen, einmalig lesen.
 
 ## PS1-Ernte-Rate — sequentieller Plane-Fetch (Engpass gemessen)
 
@@ -45,18 +46,18 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
   Downloads — das war der Engpass. `curl_bytes` hatte keinen Retry: ein
   transienter 429/503 fiel als `Refused` weg, der Chunk wurde dennoch
   geschrieben/hochgeladen — ein stilles Coverage-Loch.
-- **Offen (eigen, wartend auf den ps1-cdn-Lauf auf dem Fix-HEAD):** die Rate und
-  die Loch-Freiheit am lebenden Lauf verifizieren; `PLANE_WORKERS=4` ggf. tunen.
-  Schritt: nach Push `gh workflow run ps1-cdn.yml` → `ci_manage log <id>`
-  (Parts je Fenster + `planes_unreadable`-Abort prüfen).
+- **Offen (eigen, wartend auf `ps1-cdn` `35531159323` @`4502dbfa`):** die Rate
+  und die Loch-Freiheit am lebenden Lauf verifizieren; `PLANE_WORKERS=4` ggf.
+  tunen. Schritt: `ci_manage log 35531159323` (Parts je Fenster +
+  `planes_unreadable`-Abort prüfen) — einmalig, nie pollen.
 
 ## PS1-Fraktional Order-10-Final (wartend)
 
 - Das Slab-Sharding steht (`cd742454`); der erste ps1-cdn-Lauf (`35530153972`
   @`e09a996b`, `35530552549` @`cd742454`) trägt noch kein Verdikt. Offen: beim
   Combine die Order-10-Final-Größe messen → `asset`-Zeile in `footprints.φ`.
-  Schritt: `ci_manage view 35530153972` / `35530552549`; Größe aus dem
-  Final-Combine-Log.
+  Schritt: `ci_manage view 35530153972` / `35530552549` / `35531159323`; Größe
+  aus dem Final-Combine-Log.
 
 ## Wartend (kein Auswahlpunkt)
 
