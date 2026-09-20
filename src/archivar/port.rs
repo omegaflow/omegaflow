@@ -37,6 +37,10 @@ pub fn port_block(block: &str) -> String {
     let mut map_line: Option<String> = None;
     let mut lat_key: Option<String> = None;
     let mut lon_key: Option<String> = None;
+    let mut ra_key: Option<String> = None;
+    let mut dec_key: Option<String> = None;
+    let mut plx_key: Option<String> = None;
+    let mut z_key: Option<String> = None;
     let mut alt_key: Option<String> = None;
     let mut epoch_key: Option<String> = None;
     let mut post_body: Option<String> = None;
@@ -95,6 +99,10 @@ pub fn port_block(block: &str) -> String {
             }
             "lat_key" if parts.len() >= 2 => lat_key = Some(parts[1].to_string()),
             "lon_key" if parts.len() >= 2 => lon_key = Some(parts[1].to_string()),
+            "ra_key" if parts.len() >= 2 => ra_key = Some(parts[1].to_string()),
+            "dec_key" if parts.len() >= 2 => dec_key = Some(parts[1].to_string()),
+            "plx_key" if parts.len() >= 2 => plx_key = Some(parts[1].to_string()),
+            "z_key" if parts.len() >= 2 => z_key = Some(parts[1].to_string()),
             "alt_key" if parts.len() >= 2 => alt_key = Some(parts[1].to_string()),
             "epoch_key" if parts.len() >= 2 => epoch_key = Some(parts[1].to_string()),
             "field" | "field_in" | "first" | "last" | "count" | "path" | "deep" | "last_row"
@@ -105,12 +113,13 @@ pub fn port_block(block: &str) -> String {
         }
     }
 
-    let celestial = matches!(
-        (lat_key.as_deref(), lon_key.as_deref()),
-        (Some(k1), Some(k2))
-            if (k1.eq_ignore_ascii_case("ra") || k1.eq_ignore_ascii_case("s_ra"))
-                && (k2.eq_ignore_ascii_case("dec") || k2.eq_ignore_ascii_case("s_dec"))
-    );
+    let celestial = (ra_key.is_some() && dec_key.is_some())
+        || matches!(
+            (lat_key.as_deref(), lon_key.as_deref()),
+            (Some(k1), Some(k2))
+                if (k1.eq_ignore_ascii_case("ra") || k1.eq_ignore_ascii_case("s_ra"))
+                    && (k2.eq_ignore_ascii_case("dec") || k2.eq_ignore_ascii_case("s_dec"))
+        );
     let named_keys = lat_key
         .as_deref()
         .is_some_and(|k| k.parse::<f64>().is_err())
@@ -167,13 +176,23 @@ pub fn port_block(block: &str) -> String {
         }
     }
     if celestial {
-        if let Some(k) = &lat_key {
+        if let Some(k) = ra_key.as_deref().or(lat_key.as_deref()) {
             out.push_str("ra ");
             out.push_str(k);
             out.push('\n');
         }
-        if let Some(k) = &lon_key {
+        if let Some(k) = dec_key.as_deref().or(lon_key.as_deref()) {
             out.push_str("dec ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &plx_key {
+            out.push_str("plx ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &z_key {
+            out.push_str("z ");
             out.push_str(k);
             out.push('\n');
         }

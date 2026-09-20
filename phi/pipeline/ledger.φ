@@ -93,31 +93,31 @@ note 16 Blöcke (index.φ) — Datei am Datenträger vorhanden (3922 B, gitignor
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 1048 konv., 8 parsen, --probe 0 Survivor; 1040 fallen im Konverter (source/method/body/pos — post_body-Migration offen, bau).
+note 1048 Blöcke; --port 2026-09-20: 1048 konv., 8 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter (1018 Treffer/7 Dateien); port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
-note 874 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 874 konv., 8 parsen, --probe 0 Survivor; 866 fallen im Konverter (source/method/body/pos — post_body-Migration offen, bau).
+note 874 Blöcke; --port 2026-09-20: 874 konv., 8 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter (1018 Treffer/7 Dateien); port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 1048 konv., 8 parsen, --probe 0 Survivor; 1040 fallen im Konverter (source/method/body/pos — post_body-Migration offen, bau).
+note 1048 Blöcke; --port 2026-09-20: 1048 konv., 8 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter (1018 Treffer/7 Dateien); port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_183l.φ
-note 19 Blöcke; fünf force-Direktiven 2026-09-17; --port 2026-09-20 (Operator-Wort, Release-Binär): 19 konv., 1 parst, --probe 0 Survivor; 18 fallen (source/method/body/pos — post_body-Migration offen, bau).
+note 19 Blöcke; fünf force-Direktiven 2026-09-17; --port 2026-09-20: 19 konv., 1 parst, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter; port.rs-Fix ra/dec/plx/z; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_2k.φ
-note 177 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 177 konv., 0 parsen, --probe 0 Survivor; kein Block erreicht die Probe (source/method/body/pos — post_body-Migration offen, bau).
+note 177 Blöcke; --port 2026-09-20: 177 konv., 0 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter; port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_7k.φ
-note 425 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 425 konv., 6 parsen, --probe 0 Survivor; 419 fallen im Konverter (source/method/body/pos — post_body-Migration offen, bau).
+note 425 Blöcke; --port 2026-09-20: 425 konv., 6 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter (1018 Treffer/7 Dateien); port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 parser-gap
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
-note 50 Blöcke; --port 2026-09-20 (Operator-Wort, Release-Binär): 50 konv., 8 parsen, --probe 0 Survivor; 42 fallen im Konverter (source/method/body/pos — post_body-Migration offen, bau).
+note 50 Blöcke; --port 2026-09-20: 50 konv., 8 parsen, 0 Survivor; gemessen 2026-09-20: ra_key/dec_key fielen im Konverter; port.rs-Fix ra/dec/plx/z 2026-09-20; Re-Lauf pending (Operator-Wort); dist_key/pos Quellen-Befund.
 
 kompiliert
 kandidat https://openneuro.org/datasets/ds007822
