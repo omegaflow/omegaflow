@@ -8383,7 +8383,7 @@ fn hapi_draft_names_register_unit_when_server_unit_is_off_registry() {
     );
     assert!(
         fields.contains(
-            "field crosswind crosswind gaussian-inverse-square advective kg/m3 60 0.0 0.0"
+            "field crosswind crosswind patch-levy advective kg/m3 60 0.0 0.0"
         ),
         "field line keeps the server unit verbatim: {fields}"
     );
