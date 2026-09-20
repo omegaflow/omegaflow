@@ -1230,6 +1230,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "awmf" => crate::awmf::awmf_lines(query, max),
         "cochrane" => crate::cochrane::cochrane_lines(query, max),
         "cod" => crate::cod::cod_lines(query, max),
+        "biomodels" => crate::biomodels::biomodels_lines(query, max),
         "core" => crate::core_api::core_lines(query, max),
         "materialsproject" => crate::materialsproject::materialsproject_lines(query, max),
         "semanticscholar" => crate::semanticscholar::semanticscholar_lines(query, max),

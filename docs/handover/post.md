@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-20
-  sha256: 8e79bf162b42deca70d59c3a680161305a615e8039c783cc3d850919ed5fb1c5
+  sha256: e16959903fb73a0a4adbbe13d05b7efe9a62da21ade1d2dccce4a19768b03610
   status: live
   see-also: AGENTS.md
 -->
@@ -20,5 +20,7 @@ An entscheid: Chrome DevTools MCP (Membran-Debug, Konsole/Netz/Performance via C
 An bau: Queue-Korpora post_body-Migration — der `--port`-Konverter lässt `source`/`method`/`body`/`pos` fallen (gemessen 2026-09-20, `phi/pipeline/ledger.φ:94-120`, 7 Blöcke: 1048/874/1048/19/177/425/50 konv., 8/8/8/1/0/6/8 parsen, 0 Survivor). (Schritt: Konverter um die POST-/source-Kopf-Migration erweitern, `src/archivar` `--port`-Pfad.) (Ernte-Folge 115.)
 
 An entscheid: Queue-Korpora astro/earth/exotic (30/3/16 Blöcke, `phi/pipeline/ledger.φ:82-92`) — `--port` blockiert: kein `force`-Direktiv → `default_kernel_for("") = None`. Gemessener Blocker: Converter-/Direktiv-Pfad (bau) + kein sanktionierter Lauf-Ort (Korpora gitignored, kein CI-`--port`-Workflow, lokaler Funktionslauf verweigert). (Schritt: Operator-Wort für den lokalen Lauf des Release-Binärs auf den Korpora — oder ein CI-`--port`-Workflow —, dann `--port` + `--probe`; dann Disposition.) (Ernte-Folge 115.)
+
+An entscheid: API-Keys eingetroffen — CORE (`CORE_API_KEY`), Semantic Scholar (`S2_API_KEY`), Materials Project via OAuth autorisiert (`docs/zustand/external-state.md` zitiert, nicht kopiert). Offen: Ablage in `.secrets.local` und anschließende Messung. (Forschung-Folge 113; Schritt: Operator-Wort, dann Ablage + Messung.)
 
 

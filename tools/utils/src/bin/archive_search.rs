@@ -4,6 +4,8 @@ mod alphafold;
 mod arxiv_src;
 #[path = "archive_search/awmf.rs"]
 mod awmf;
+#[path = "archive_search/biomodels.rs"]
+mod biomodels;
 #[path = "archive_search/chembl.rs"]
 mod chembl;
 #[path = "archive_search/clinicaltrials.rs"]
@@ -284,6 +286,7 @@ fn main() {
             "--awmf" => mode = Mode::Net("awmf"),
             "--cochrane" => mode = Mode::Net("cochrane"),
             "--cod" => mode = Mode::Net("cod"),
+            "--biomodels" => mode = Mode::Net("biomodels"),
             "--core" => mode = Mode::Net("core"),
             "--materialsproject" => mode = Mode::Net("materialsproject"),
             "--semanticscholar" => mode = Mode::Net("semanticscholar"),
@@ -558,7 +561,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
@@ -572,6 +575,9 @@ fn usage() {
     );
     eprintln!(
         "  --cod       key=value: text=<free text> [el1=.. el2=.. nel=..] [fields=<comma-list>] [max=<n>]   (Crystallography Open Database, e.g. text=quartz)"
+    );
+    eprintln!(
+        "  --biomodels key=value: text=<free text> [fields=<comma-list>] [max=<n>]   (EBI BioModels via EBI Search, e.g. text=p53)"
     );
     eprintln!("  --isc       key=value: start/end/minmag/minlat/maxlat/minlon/maxlon");
     eprintln!(
