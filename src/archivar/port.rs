@@ -26,6 +26,21 @@ pub fn port_field_synth(
     ))
 }
 
+fn field_or_review(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> Option<String> {
+    if default_kernel_for(force).is_none() {
+        let reason = if force.is_empty() {
+            "no force directive".to_string()
+        } else {
+            format!("force {} not in the force registry", force)
+        };
+        return Some(format!(
+            "# pending {} {} — {}, review\n",
+            directive, name, reason
+        ));
+    }
+    port_field_synth(directive, force, key, name, ttl)
+}
+
 pub fn port_block(block: &str) -> String {
     let mut head: Vec<String> = Vec::new();
     let mut force = String::new();
@@ -301,13 +316,13 @@ pub fn port_block(block: &str) -> String {
         }
         let s = match parts[0] {
             "field" | "field_in" if parts.len() >= 3 => {
-                port_field_synth("field", &force, parts[1], parts[2], ttl)
+                field_or_review("field", &force, parts[1], parts[2], ttl)
             }
             "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                port_field_synth(parts[0], &force, parts[1], parts[2], ttl)
+                field_or_review(parts[0], &force, parts[1], parts[2], ttl)
             }
             "last_row" if parts.len() >= 3 => {
-                port_field_synth("lastrow", &force, parts[1], parts[2], ttl)
+                field_or_review("lastrow", &force, parts[1], parts[2], ttl)
             }
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
@@ -321,7 +336,7 @@ pub fn port_block(block: &str) -> String {
             "regex" if parts.len() >= 3 => {
                 let name = parts[parts.len() - 1];
                 let pat = parts[1..parts.len() - 1].join(" ");
-                port_field_synth("regex", &force, &pat, name, ttl)
+                field_or_review("regex", &force, &pat, name, ttl)
             }
             _ => None,
         };
