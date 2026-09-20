@@ -3,7 +3,7 @@
   session: Forschung-Folge 121
   class: handover
   date: 2026-09-20
-  sha256: b1a787474fc5d6069b0c19159862e406d752c67b16474d25dd6abcd00772b378
+  sha256: 3cc5aab17ffd4ca35d1623a8b215592cbeb364b71591a0c038b5574ebebf833d
   status: live
 -->
 # Handover — Forschung-Folge 121 (2026-09-20)
@@ -104,10 +104,10 @@ clean. Werkzeug-Karte (`docs/concepts/tools-map.md`) fortgeschrieben.
 
 | Punkt | Status | Bindung | Schritt |
 |---|---|---|---|
-| 1. `ci-check`-Verdikt @gepushtem HEAD (path_reference_scan + Relay-Routentest) | wartend | eigen | `ci_manage view <id>` (Trigger Lauf-Abschluss) |
-| 2. `tools-build`-Verdikt (Binär trägt `browser_relay`) | wartend | eigen | `ci_manage view <id>` (Trigger Lauf-Abschluss) |
+| 1. `ci-check`-Verdikt @`f75e3245` (path_reference_scan + Relay-Routentest) | wartend | eigen | `ci_manage view 35530480032` (Trigger Lauf-Abschluss) |
+| 2. `tools-build`-Verdikt (Binär trägt `browser_relay` + `OMEGAFLOW_COOKIES`) | wartend | eigen | `ci_manage view 35530482159` (Trigger Lauf-Abschluss) |
 | 3. TE-Gate-Verdikt `35513982359` @`7d0a1272` | wartend | eigen | `ci_manage view 35513982359` (success → vier `fpr_rise_sigma_test`-Zeilen) |
-| 4. `archive_search`-Rebuild mit `OMEGAFLOW_COOKIES` (cjs `include_str!`) | wartend | eigen | `tools-build` nach Push; `ci_manage view <id>` |
+| 4. `archive_search`-Rebuild mit `OMEGAFLOW_COOKIES` (cjs `include_str!`) | wartend | eigen | `ci_manage view 35530482159` (tools-build) |
 | 5. Cookie-Editor-Export (JSON für `OMEGAFLOW_COOKIES`) | operator-gebunden | operator | bei Pfad-3-Consent-Wand: Cookie-Editor → Export |
 | 6. Hardware-Sponsoring Framework/Tuxedo/Pine64 | wartend | dritter | Trigger Antwort (Framework `NG2HWBZM`, Tuxedo `#991311279`, Pine64) |
 | 7. Flyby-Path-2-Kette | termin:2026-09-28 | termin | Zellen ab Perigäum füllen |
