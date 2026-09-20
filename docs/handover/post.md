@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-20
-  sha256: b3040c57adc7d0e5ad3ca59d46d40ebc7d0af4cd867eecb4df5698e674ff17ec
+  sha256: 2ae1b0d49f319957946d088e6aa80a84a49e3163d9033d54d02f982fa2dcd7ff
   status: live
   see-also: AGENTS.md
 -->
@@ -14,6 +14,8 @@ Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt ni
 stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum),
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
+
+An entscheid: Chrome DevTools MCP (Membran-Debug, Konsole/Netz/Performance via CDP am live Chrome) anbinden? Ja → Operator-Wort, dann `opencode.json` `mcp.chrome-devtools` pinnen (npm `chrome-devtools-mcp@1.9.0`, Flags `--no-usage-statistics` `--no-performance-crux`); Nein → Browser-Anbindung bleibt ohne Debugger-Pfad. Ferner: Cookie-Editor-Transfer Operator-Profil ↔ persistentes Playwright-Profil nur per Operator-Wort. (Forschung-Folge 109; Schritt: Operator-Wort, dann Anbindung.)
 
 An entscheid: `LASAIR_LSST_TOKEN` fehlt lokal (gemessen 2026-09-20, env + `.secrets.local`; die Zeile `blocked_sources.φ:8-11` behauptete „vorhanden, unverified" — widerlegt). Lasair-LSST-Backend zusätzlich extern 502, keine Route. Operator-Frage (einfach): Ist ein Lasair-LSST-API-Token vorhanden oder beschaffbar? Ja → Token nach `.secrets.local`; Nein → Broker bleibt ohne Route. (Ernte-Folge 108; Schritt: Operator-Wort, dann Token-Messung.)
 
