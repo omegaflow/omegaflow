@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: ''
+      task:
+        description: 'Task: t7 (default, T7 funding-obligation classification) or funding-research'
+        required: false
+        type: string
+        default: 't7'
       timeout:
         description: 'Per-model timeout in seconds'
         required: false
@@ -37,6 +42,8 @@ jobs:
           echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
       - name: Ensure archive_search (tools-latest release)
         run: sh bin/.tools_ensure archive_search
+      - name: Install Chromium for archive_search --playwright
+        run: npx -y playwright install --with-deps chromium
       - name: Build agent bench (release)
         run: cargo build --release -p omegaflow-measure --bin free_model_agent_bench
       - name: Write opencode provider config
@@ -56,14 +63,17 @@ jobs:
         run: |
           extra=()
           if [ -n "${{ inputs.model }}" ]; then extra+=(--model "${{ inputs.model }}"); fi
+          if [ -n "${{ inputs.task }}" ]; then extra+=(--task "${{ inputs.task }}"); fi
           ./target/release/free_model_agent_bench \
             --out free-model-agent-bench.tsv \
             --timeout "${{ inputs.timeout }}" \
             "${extra[@]}"
-      - name: Upload bench artifact
+      - name: Upload bench artifacts
         if: always() && hashFiles('free-model-agent-bench.tsv') != ''
         uses: actions/upload-artifact@v4
         with:
           name: free-model-agent-bench
-          path: free-model-agent-bench.tsv
+          path: |
+            free-model-agent-bench.tsv
+            free-model-agent-bench.tsv.answers
           retention-days: 7
