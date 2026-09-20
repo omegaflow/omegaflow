@@ -1,7 +1,5 @@
 #!/bin/sh
-# The divers' content search: execs the release binary; the build belongs to
-# CI. A dirty or broken working tree never blocks the search — the existing
-# release binary runs, and a binary older than the tree still runs.
+# The content search: execs the release binary refreshed by bin/.tools_ensure; never builds.
 set -u
 self="$0"
 while [ -h "$self" ]; do
@@ -10,13 +8,10 @@ while [ -h "$self" ]; do
     case "$self" in /*) ;; *) self="$d/$self" ;; esac
 done
 root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" sgrep
 bin="$root/target/release/sgrep"
 if [ ! -x "$bin" ]; then
-    echo "sgrep: no release binary on PATH — the build belongs to CI" >&2
+    echo "sgrep: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
-fi
-if find "$root/tools/utils/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
-        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
-    echo "sgrep: release binary is older than the tree — running the existing binary; the rebuild belongs to CI" >&2
 fi
 exec "$bin" "$@"
