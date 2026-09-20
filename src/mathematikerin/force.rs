@@ -31,12 +31,8 @@ pub fn force_name_of(id: u8) -> Option<&'static str> {
 }
 
 pub fn kernel_id_for_force(force: u8) -> Option<u8> {
-    match force {
-        0 | 1 | 8 => Some(0),
-        2 | 3 | 4 | 7 => Some(1),
-        5 | 6 => Some(3),
-        _ => None,
-    }
+    let (kernel, _) = default_kernel_for(force_name_of(force)?)?;
+    crate::archivar::extract::kernel_id_of(kernel)
 }
 
 pub fn force_opaque(id: u8) -> Option<bool> {
@@ -246,9 +242,15 @@ mod tests {
 
     #[test]
     fn test_kernel_ids() {
-        assert_eq!(kernel_id_for_force(8), Some(0));
-        assert_eq!(kernel_id_for_force(0), Some(0));
-        assert_eq!(kernel_id_for_force(5), Some(3));
+        for id in 0..9 {
+            let name = force_name_of(id).expect("force name");
+            let (kernel, _) = default_kernel_for(name).expect("default kernel");
+            assert_eq!(
+                kernel_id_for_force(id),
+                crate::archivar::extract::kernel_id_of(kernel),
+                "kernel id for {name} disagrees with the registry"
+            );
+        }
         assert_eq!(kernel_id_for_force(9), None);
     }
 
