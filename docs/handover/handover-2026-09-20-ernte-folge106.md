@@ -3,7 +3,7 @@
   session: Ernte-Folge 106
   class: handover
   date: 2026-09-20
-  sha256: 38e7e4fc88979738b51c5c25d46ea176626d2995040d58e83bd3ef7e97ef323b
+  sha256: bd2cc74c74ca82b454a6a4f548a29fe72f683b67dfecd1171bfa0a10f5749f28
   status: live
 -->
 # Handover — Ernte-Folge 106 (2026-09-20)
@@ -42,10 +42,10 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
 ## Offen
 
 - **icesat2_atl03** `phi/harvest.φ:79` — args auf `--skip 2` (2/215 Granulen)
-  gesetzt; der Lauf ist erntes eigener Pfad (Post an ernte, gefaltet). (Schritt:
-  `phi/harvest.φ` committen + pushen, dann `gh workflow run harvest.yml
-  -f format=icesat2_atl03 -f force=true`, Run-ID registrieren, dann
-  `ci_manage view <id>` den staged count lesen.)
+  gesetzt, committet (`3f8d7f7d`), dispatcht. Der Lauf ist erntes eigener Pfad
+  (Post an ernte, gefaltet). Run `35515194248` (harvest, head `3f8d7f7d`,
+  `in_progress` bei Dispatch). (Schritt: `ci_manage view 35515194248` einmalig den
+  staged count lesen, dann `phi/harvest.φ`-note mit dem Ergebnis fortschreiben.)
 - **TAP-Backends dachs.fai.kz + pithia.cbk.waw.pl** `phi/pipeline/ledger.φ:10-20`
   — `blockiert` (extern, Backend down). (Schritt: `archive_search --verdict` +
   sync-QUERY, Trigger Backend-Erholung.) `blockiert`.
