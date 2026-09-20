@@ -3,7 +3,7 @@
   session: PII-Audit & LLM-Budget
   class: handover
   date: 2026-09-20
-  sha256: 7fb28f8bd9300b1c52ba078def126f5173a3480b9b7f0cf6e356f2930e1a652e
+  sha256: 326c54efc31d96e2f2d40b4abb831d18ad8e611f234356e9dea6ea37da707f00
   status: live
 -->
 # Handover — PII-Audit & LLM-Budget (2026-09-20)
@@ -47,12 +47,19 @@
   Wissen) tragen **Release-/Publikationspflicht**. Pflichtfrei bleiben:
   Free-Tier-APIs (Gemini/Groq/Cerebras/NVIDIA/Cloudflare/Mistral/Cohere),
   GitHub Sponsors/Open Collective/Patreon, Hardware-Sponsoring, Steuer, Altgerät.
+- **Entscheidung (Operator, 2026-09-20): nicht-kommerziell — kein
+  OSI-Relizenzieren.** PolyForm/CC BY-NC-SA bleiben. Folge: alle
+  **OSI-Lizenz-gated** Förderer entfallen (Prototype Fund, Software Sprint, NGI,
+  FLOSS/fund, Sovereign Tech Fund, NumFOCUS, CZI, Wikimedia). Es bleiben:
+  Spenden, Hardware-Sponsoring, Research-Credits, Free-Tiers, Steuer, Altgerät.
+  Rust-Foundation-Community-Grants sind **eingestellt** (nur noch Maintainers
+  Fund, für Rust-Sprach-Maintainer).
 - `operator-gebunden` — **Sponsoring erst mit Sichtbarkeit**: GitHub Sponsors /
   Open Collective aufsetzen, aber ohne Publikum ~0 €. (Schritt: Nadel III
   schließen → Preprint → dann Antrag/Sponsoring.)
-- `operator-gebunden` — Framework-/Tuxedo-**Sponsoring-Formular** ausfüllen
-  (Framework-Formular auf `frame.work/contact-us`; Tuxedo nutzt Formular).
-  (Schritt: Browser-Formular, Operator-Wort.)
+- `operator-gebunden` — **Mantis-Shrimp-Hardware**: Espressif-Sponsorship +
+  Crowd Supply; **GSoC/OpenAstronomy** + **ESA SOCIS** als Mentoring-Orga.
+  (Schritt: Formular/Bewerbung, Operator-Wort.)
 
 ## Abschluss
 
