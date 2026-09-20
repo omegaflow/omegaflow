@@ -27,6 +27,75 @@ const T7_EXPECT: [&str; 5] = [
     "Long-Term Future Fund|closed",
 ];
 
+const FUNDING_RESEARCH_TASK: &str = concat!(
+    "You are a researcher working for omegaflow, an independent open-source research system written in Rust: a WebGPU point cloud rendering an ICRS block universe (astronomy), plus a hardware companion device. The project has no institutional backing.\n",
+    "Find concrete, currently open hardware-sponsorship and token/compute-funding routes that an unaffiliated individual open-source researcher can actually apply for. omegaflow needs single-board computers, dev kits, and sensors, and free API/GPU compute quotas to survive.\n",
+    "Use your tools, for example:\n",
+    "  archive_search --brave \"hardware sponsorship open source projects\"\n",
+    "  archive_search --playwright <url-of-the-program-page>\n",
+    "  sfetch <url>\n",
+    "A route counts only if you have read its program page or another primary source and it names a way an individual without an institution can apply.\n",
+    "Answer with exactly one line per route, nothing else, in the format\n",
+    "ROUTE|WAS_ES_GIBT|ANTRAGSWEG_URL|FRIST|NAECHSTER_SCHRITT\n",
+    "with no spaces around the pipes. ROUTE = program or provider name. WAS_ES_GIBT = what it gives (hardware, GPU credits, API tokens, compute). ANTRAGSWEG_URL = the exact application URL. FRIST = deadline, or rolling when there is none. NAECHSTER_SCHRITT = the next concrete step.\n",
+    "After the route lines you may add a short justification naming the page where each route was verified.\n",
+    "No generic advice, no vague programs, no fluff — only routes you verified on a page you actually read.\n"
+);
+
+enum Task {
+    T7,
+    FundingResearch,
+    Custom { prompt: String },
+}
+
+impl Task {
+    fn prompt(&self) -> String {
+        match self {
+            Task::T7 => TASK.to_string(),
+            Task::FundingResearch => FUNDING_RESEARCH_TASK.to_string(),
+            Task::Custom { prompt } => prompt.clone(),
+        }
+    }
+
+    fn scoring(&self) -> bool {
+        matches!(self, Task::T7)
+    }
+}
+
+fn resolve_task(task_name: Option<String>, task_file: Option<String>) -> Task {
+    if let Some(path) = task_file {
+        if task_name.is_some() {
+            eprintln!("free_model_agent_bench: --task and --task-file are mutually exclusive");
+            std::process::exit(2);
+        }
+        let content = match std::fs::read_to_string(&path) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("free_model_agent_bench: cannot read --task-file {}: {}", path, e);
+                std::process::exit(2);
+            }
+        };
+        if content.trim().is_empty() {
+            eprintln!("free_model_agent_bench: --task-file {} is empty", path);
+            std::process::exit(2);
+        }
+        return Task::Custom {
+            prompt: content.trim().to_string(),
+        };
+    }
+    match task_name.as_deref() {
+        None | Some("t7") => Task::T7,
+        Some("funding-research") => Task::FundingResearch,
+        Some(other) => {
+            eprintln!(
+                "free_model_agent_bench: unknown --task '{}' (known: t7, funding-research)",
+                other
+            );
+            std::process::exit(2);
+        }
+    }
+}
+
 struct Model {
     provider: String,
     id: String,
@@ -43,6 +112,7 @@ struct Row {
     status: String,
     ms: u128,
     tool_calls: String,
+    answer: String,
 }
 
 struct Accum {
@@ -351,6 +421,26 @@ fn absorb(line: &str, acc: &mut Accum) {
     }
 }
 
+fn absorb_stream(output: &str, acc: &mut Accum) {
+    let mut rest = output;
+    while !rest.is_empty() {
+        match rest.find('{') {
+            Some(start) => match balanced_object(&rest[start..]) {
+                Some(end) => {
+                    let end = start + end;
+                    absorb(&rest[start..end], acc);
+                    rest = &rest[end..];
+                }
+                None => match rest[start..].find('\n') {
+                    Some(nl) => rest = &rest[start + nl + 1..],
+                    None => break,
+                },
+            },
+            None => break,
+        }
+    }
+}
+
 fn answer_text(acc: &Accum) -> String {
     if acc.messages.is_empty() {
         let mut s = String::new();
@@ -399,6 +489,18 @@ fn clip(s: &str, max: usize) -> String {
         start += 1;
     }
     flat[start..].to_string()
+}
+
+fn safe_file_part(s: &str) -> String {
+    s.chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect()
 }
 
 fn read_all<R: Read>(mut r: R) -> String {
@@ -510,7 +612,8 @@ fn emit_opencode_config(path: &str) -> i32 {
     }
 }
 
-fn run_one(m: &Model, dir: Option<&str>, timeout: Duration) -> Row {
+fn run_one(m: &Model, dir: Option<&str>, timeout: Duration, task: &Task) -> Row {
+    let prompt = task.prompt();
     let start = Instant::now();
     let model_arg = format!("{}/{}", m.provider, m.id);
     let mut cmd = Command::new("opencode");
@@ -527,7 +630,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration) -> Row {
     if let Some(d) = dir {
         cmd.args(["--dir", d]);
     }
-    cmd.arg(TASK)
+    cmd.arg(&prompt)
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
@@ -538,6 +641,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration) -> Row {
                 status: "spawn_failed".into(),
                 ms: start.elapsed().as_millis(),
                 tool_calls: "pending".into(),
+                answer: String::new(),
             }
         }
     };
@@ -571,13 +675,6 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration) -> Row {
         }
     }
     let ms = start.elapsed().as_millis();
-    if timed_out {
-        return Row {
-            status: "timeout".into(),
-            ms,
-            tool_calls: "pending".into(),
-        };
-    }
     let out = match out_handle {
         Some(h) => match h.join() {
             Ok(s) => s,
@@ -593,43 +690,58 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration) -> Row {
         None => String::new(),
     };
     let mut acc = Accum::new();
-    for line in out.lines() {
-        absorb(line, &mut acc);
-    }
+    absorb_stream(&out, &mut acc);
     let trimmed = answer_text(&acc).trim().to_string();
-    if trimmed.is_empty() {
-        if exit_code != Some(0) {
+    if timed_out {
+        let keep = !trimmed.is_empty() && trimmed != prompt.trim();
+        return Row {
+            status: "timeout".into(),
+            ms,
+            tool_calls: tool_calls_for(&acc),
+            answer: if keep { trimmed } else { String::new() },
+        };
+    }
+    let echoed = trimmed == prompt.trim();
+    let no_answer = trimmed.is_empty() || (echoed && (!task.scoring() || acc.messages.is_empty()));
+    if no_answer {
+        if trimmed.is_empty() && exit_code != Some(0) {
             let code_str = match exit_code {
                 Some(c) => c.to_string(),
                 None => "-".into(),
             };
             eprintln!("  exit={} stderr_tail={}", code_str, clip(&err, 240));
         }
+        let status = if task.scoring() { "no_output" } else { "empty" };
         return Row {
-            status: "no_output".into(),
+            status: status.into(),
             ms,
             tool_calls: tool_calls_for(&acc),
+            answer: String::new(),
         };
     }
-    if acc.messages.is_empty() && trimmed == TASK.trim() {
-        return Row {
-            status: "no_output".into(),
-            ms,
-            tool_calls: tool_calls_for(&acc),
-        };
-    }
-    if score(&trimmed) {
-        Row {
-            status: "pass".into(),
-            ms,
-            tool_calls: tool_calls_for(&acc),
+    if task.scoring() {
+        if score(&trimmed) {
+            Row {
+                status: "pass".into(),
+                ms,
+                tool_calls: tool_calls_for(&acc),
+                answer: trimmed,
+            }
+        } else {
+            eprintln!("  answer_tail={}", clip(&trimmed, 240));
+            Row {
+                status: "wrong_answer".into(),
+                ms,
+                tool_calls: tool_calls_for(&acc),
+                answer: trimmed,
+            }
         }
     } else {
-        eprintln!("  answer_tail={}", clip(&trimmed, 240));
         Row {
-            status: "wrong_answer".into(),
+            status: "ok".into(),
             ms,
             tool_calls: tool_calls_for(&acc),
+            answer: trimmed,
         }
     }
 }
@@ -640,6 +752,8 @@ fn main() {
     let mut filter: Option<String> = None;
     let mut timeout: u64 = 300;
     let mut emit_config: Option<String> = None;
+    let mut task_name: Option<String> = None;
+    let mut task_file: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -673,6 +787,18 @@ fn main() {
                     i += 1;
                 }
             }
+            "--task" => {
+                if i + 1 < args.len() {
+                    task_name = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
+            "--task-file" => {
+                if i + 1 < args.len() {
+                    task_file = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
             _ => {}
         }
         i += 1;
@@ -680,6 +806,7 @@ fn main() {
     if let Some(path) = emit_config {
         std::process::exit(emit_opencode_config(&path));
     }
+    let task = resolve_task(task_name, task_file);
     let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
     let dir = env::current_dir()
         .ok()
@@ -692,22 +819,41 @@ fn main() {
         }
     };
     let mut file = file;
-    let _ = writeln!(file, "provider\tmodel\tstatus\tms\ttool_calls");
+    let answers_dir = format!("{}.answers", out);
+    if let Err(e) = std::fs::create_dir_all(&answers_dir) {
+        eprintln!(
+            "free_model_agent_bench: cannot create answers dir {}: {}",
+            answers_dir, e
+        );
+        std::process::exit(2);
+    }
+    let _ = writeln!(
+        file,
+        "provider\tmodel\tstatus\tms\ttool_calls\tanswer_chars"
+    );
     for m in &models {
         if let Some(f) = &filter {
             if !m.id.contains(f.as_str()) {
                 continue;
             }
         }
-        let row = run_one(m, dir.as_deref(), Duration::from_secs(timeout));
+        let row = run_one(m, dir.as_deref(), Duration::from_secs(timeout), &task);
+        let answer_chars = row.answer.chars().count();
         eprintln!(
-            "{} {} {} {}ms tool_calls={}",
-            m.provider, m.id, row.status, row.ms, row.tool_calls
+            "{} {} {} {}ms tool_calls={} answer_chars={}",
+            m.provider, m.id, row.status, row.ms, row.tool_calls, answer_chars
         );
+        if !row.answer.is_empty() {
+            let name = format!("{}__{}.md", safe_file_part(&m.provider), safe_file_part(&m.id));
+            let path = format!("{}/{}", answers_dir, name);
+            if let Err(e) = std::fs::write(&path, row.answer.as_bytes()) {
+                eprintln!("free_model_agent_bench: cannot write answer {}: {}", path, e);
+            }
+        }
         let _ = writeln!(
             file,
-            "{}\t{}\t{}\t{}\t{}",
-            m.provider, m.id, row.status, row.ms, row.tool_calls
+            "{}\t{}\t{}\t{}\t{}\t{}",
+            m.provider, m.id, row.status, row.ms, row.tool_calls, answer_chars
         );
         let _ = file.flush();
     }
