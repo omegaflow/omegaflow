@@ -1599,8 +1599,8 @@ pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> 
     }
     let m = n.next_power_of_two();
     let mut phases: Vec<f64> = vec![0.0; m];
-    for k in 1..m / 2 {
-        phases[k] = next_rng(rng) * 2.0 * std::f64::consts::PI;
+    for phase in phases.iter_mut().take(m / 2).skip(1) {
+        *phase = next_rng(rng) * 2.0 * std::f64::consts::PI;
     }
     vs.iter()
         .map(|v| {

@@ -125,10 +125,7 @@ pub fn parse_vhdr(bytes: &[u8]) -> Option<BrainVisionHeader> {
                     header.sampling_interval_us = value.parse::<u64>().ok().filter(|v| *v > 0);
                 }
                 "NumberOfChannels" => {
-                    let Some(n) = value.parse::<u64>().ok() else {
-                        return None;
-                    };
-                    declared_channels = Some(n);
+                    declared_channels = Some(value.parse::<u64>().ok()?);
                 }
                 _ => {}
             },
@@ -183,9 +180,7 @@ pub fn parse_vhdr(bytes: &[u8]) -> Option<BrainVisionHeader> {
     if !saw_channel_infos || header.channels.is_empty() {
         return None;
     }
-    if header.binary_format.is_none() {
-        return None;
-    }
+    header.binary_format.as_ref()?;
     if let Some(n) = declared_channels
         && n as usize != header.channels.len()
     {
@@ -250,7 +245,7 @@ pub fn parse_vmrk(bytes: &[u8]) -> Option<Vec<BrainVisionMarker>> {
             }
         });
         let type_ = fields
-            .get(0)
+            .first()
             .map(|f| f.trim().to_string())
             .filter(|s| !s.is_empty());
         let description = fields
@@ -297,8 +292,8 @@ pub fn decode_samples(header: &BrainVisionHeader, eeg: &[u8]) -> Option<Samples>
         .as_deref()
         .is_some_and(|o| o.eq_ignore_ascii_case("VECTORIZED"));
     let mut out = Vec::with_capacity(eeg.len() / elem);
-    for t in 0..pnts {
-        for ch in 0..nbchan as usize {
+    for ch in 0..nbchan as usize {
+        for t in 0..pnts {
             let at = if vectorized {
                 (ch * pnts + t) * elem
             } else {
@@ -311,7 +306,7 @@ pub fn decode_samples(header: &BrainVisionHeader, eeg: &[u8]) -> Option<Samples>
                 "INT_32" => i32::from_le_bytes(raw.try_into().ok()?) as f32,
                 _ => f32::from_le_bytes(raw.try_into().ok()?),
             };
-            let scale = header.channels.get(ch)?.resolution.map_or(1.0f64, |r| r);
+            let scale = header.channels.get(ch)?.resolution.unwrap_or(1.0f64);
             let scaled = value * scale as f32;
             if !scaled.is_finite() {
                 return None;
