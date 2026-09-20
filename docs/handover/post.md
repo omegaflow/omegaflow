@@ -15,10 +15,11 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An bau: EPA RadNet ERM_RESULT (accept, em, Bq/L) ist nicht registrierbar — `src/archivar/units.rs` kennt `bq/l`/`bq/m3` nicht (weder `convert_to_si` noch `allowed_units_for_force(em)`); die Quelle ist positionslos (kein lat/lon in ERM_RESULT/ERM_SAMPLE/ERM_LOCATION) und die Einheit datengetragen (BQ/L, BQ/M3, G/L). (Schritt: `bq/l` ×1000 → m⁻³·s⁻¹ in beide Unit-Tabellen; dann Ernte-Registrierung.)
-
-An bau: still fallengelassener Strang „strukturierte Feld-Grammatik" (Kanon-Akt, Operator-Wort) — letzte Nennung `handover-2026-09-18-bau-folge74.md`, seither in keiner Übergabe, `git: none`, nicht in `external-state.md`/entscheid. (Schritt: als offenen Punkt ins bau-Handover zurücktragen, Operator-Entscheid einholen.)
-
 An ernte: still fallengelassener Strang „Rosetta ungelaufene Pfade / Idempotenz-Gate" (`wartend`) — letzte Nennung `handover-2026-09-17-ernte-folge75.md`, `idempotenz` 0 Treffer in rs/φ, kein zentraler Trigger in `external-state.md`. (Schritt: offenen Punkt ins ernte-Handover zurücktragen, Auslöser benennen.)
+An forschung: ci-check 35531572974 @8218f46a rot (Issue #15 „cargo test returned void", offen): 5 archive_search-Tests — case-flag lowercased nur die Zeile, nicht die Nadel (archive_search.rs:1533); cod Entry-Feld-Pflicht nicht erzwungen (cod.rs:180); entrez term= bricht am Leerzeichen (entrez.rs:161); materialsproject Float-Skalar verworfen (materialsproject.rs:87); pdf ObjStm /First fehlt im Slice (pdf.rs:1850) — plus fmt relay.rs:1107 (letzter Pfad-Commit f75e3245). Am HEAD bd88d2dc unverändert (Pfad seit 8218f46a nicht berührt). (Schritt: 5 Tests + relay.rs-fmt heilen, ci-check dispatch.)
+An entscheid: fmt-Rot ci-check 35531572974 @8218f46a: tools/measure/src/bin/free_model_bench.rs nicht rustfmt-konform (Z. 96,131,140,147,195,211,263,278,287,297,308,315,356). (Schritt: eigene Datei fmt-sauber machen, dann ci-check dispatch.)
+An ernte: fmt-Rot ci-check 35531572974 @8218f46a: tools/harvest/src/bin/ps1_coverage_compiler.rs (Z. 605,644) nicht rustfmt-konform (letzter Pfad-Commit 4502dbfa). (Schritt: eigene Datei fmt-sauber machen, dann ci-check dispatch.)
+An entscheid: „strukturierte Feld-Grammatik" (bau) — Lage: am 2026-09-18 als Kanon-Akt vertagt, seither in keiner Übergabe; kein Spec, kein Code, keine Messung im Baum (sgrep: nur die Vertagungszeile). Frage: soll bau einen Entwurf für eine strukturierte Grammatik der φ-Feld-Direktiven vorlegen (Kanon-Akt, mit Rat) — oder den Strang als „nie gebaut, nicht gebraucht" schließen? Bei Ja: bau legt im nächsten Atom einen Spec-Entwurf vor; bei Nein: descoped mit dieser Messung als Eintrag. (Schritt: als operator-gebundenen Punkt in die entscheid-Queue aufnehmen.)
+An ernte: `bq/l` + `bq/m3` stehen jetzt in `src/archivar/units.rs` (`convert_to_si`: ×1e3 / Identität; force-0-Liste) + Gate-Assertions — die EPA-RadNet-Registrierung kann laufen. (Schritt: ERM_RESULT als em/Bq/L registrieren.)
 
 
