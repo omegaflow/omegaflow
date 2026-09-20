@@ -255,6 +255,45 @@ mod tests {
     }
 
     #[test]
+    fn kernel_riss_thermal_diffusion_advective() {
+        let register = include_str!("../../phi/sources.φ");
+        let live_kernels = |force: &str| -> Vec<&str> {
+            register
+                .lines()
+                .filter_map(|l| {
+                    let p: Vec<&str> = l.split_whitespace().collect();
+                    match p.first().copied() {
+                        Some("field" | "first" | "last" | "lastrow")
+                            if p.len() >= 5 && p[4] == force =>
+                        {
+                            Some(p[3])
+                        }
+                        _ => None,
+                    }
+                })
+                .collect()
+        };
+        for (force, port_default) in [
+            ("thermal", "exponential-decay"),
+            ("diffusion", "gaussian-inverse-square"),
+            ("advective", "patch-levy"),
+        ] {
+            assert_eq!(
+                default_kernel_for(force).map(|(kernel, _)| kernel),
+                Some(port_default),
+                "port default for {force} moved — a decision, not a smoothing"
+            );
+            let live = live_kernels(force);
+            assert!(!live.is_empty(), "live register carries no {force} line");
+            assert!(
+                live.iter().any(|kernel| *kernel != port_default),
+                "the {force} riss is gone: every live line uses {port_default}; \
+                 the register was smoothed — decide explicitly"
+            );
+        }
+    }
+
+    #[test]
     fn test_force_opacity() {
         assert_eq!(force_opaque(0), Some(true));
         assert_eq!(force_opaque(1), Some(false));

@@ -38,7 +38,8 @@
     ["row.push(c.series[t - c.lag] as f64)", "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"],
     ["kernel_id_for_force(5), Some(3)", "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"],
     ["dist_scale: 1.0", "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"],
-    ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"]
+    ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"],
+    ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
