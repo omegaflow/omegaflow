@@ -1,4 +1,0 @@
-# Display mapping only: the operator's private address is shown as the
-# project address in log/blame output. The raw commit objects are unaffected;
-# removing it from history needs a rewrite (see the PII audit).
-Johannes Tyroller <code@omegaflow.space> <<operator-adresse>>
