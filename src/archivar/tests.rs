@@ -1479,7 +1479,10 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
     };
     match extract(&src, json, 8.0e8, &fixture_lsk) {
         ExtractResult::Measurements(channels) => {
-            assert!(channels.is_empty(), "dist without a measured scale is absent");
+            assert!(
+                channels.is_empty(),
+                "dist without a measured scale is absent"
+            );
         }
         ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
     }
@@ -1557,7 +1560,10 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
         ExtractResult::Measurements(channels) => {
             assert_eq!(channels.len(), 1);
             if let Position::StateVector { v, .. } = channels[0].0.position {
-                assert!(v[0].abs() < 1e-9, "radial velocity without a scale is absent");
+                assert!(
+                    v[0].abs() < 1e-9,
+                    "radial velocity without a scale is absent"
+                );
                 assert!(v[1].abs() < 1e-9);
                 assert!(v[2].abs() < 1e-9);
             } else {

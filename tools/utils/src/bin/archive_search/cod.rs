@@ -75,7 +75,10 @@ fn cod_url(params: &[(String, String)]) -> String {
 }
 
 fn entry_field(fields: &[String]) -> Option<&str> {
-    fields.iter().find(|f| f.as_str() == "file").map(String::as_str)
+    fields
+        .iter()
+        .find(|f| f.as_str() == "file")
+        .map(String::as_str)
 }
 
 fn scalar(v: &json::Json, key: &str) -> Option<String> {
@@ -99,7 +102,9 @@ pub fn cod_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) if f.status == Some(200) => match parse_cod(&f.body, &fields, cap) {
             None => vec!["pending — the cod response carries no JSON".to_string()],
             Some(lines) if lines.is_empty() => {
-                vec![format!("absent — the COD register carries no entry: {query}")]
+                vec![format!(
+                    "absent — the COD register carries no entry: {query}"
+                )]
             }
             Some(lines) => lines,
         },
@@ -136,11 +141,7 @@ mod tests {
     #[test]
     fn reads_the_records_and_renders_entry_urls() {
         let body = r#"[{"file":"1009000","chemname":"Gallium arsenate(V)","a":"4.994","year":"1999"},{"file":"1009001","chemname":"","a":"4.9942"}]"#;
-        let fields = vec![
-            "file".to_string(),
-            "chemname".to_string(),
-            "a".to_string(),
-        ];
+        let fields = vec!["file".to_string(), "chemname".to_string(), "a".to_string()];
         assert_eq!(
             parse_cod(body, &fields, 10).unwrap(),
             vec![
@@ -176,9 +177,11 @@ mod tests {
     #[test]
     fn a_record_without_the_entry_field_carries_nothing() {
         let fields = vec!["a".to_string()];
-        assert!(parse_cod(r#"[{"a":"4.994"}]"#, &fields, 10)
-            .unwrap()
-            .is_empty());
+        assert!(
+            parse_cod(r#"[{"a":"4.994"}]"#, &fields, 10)
+                .unwrap()
+                .is_empty()
+        );
     }
 
     #[test]

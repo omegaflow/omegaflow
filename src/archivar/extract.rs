@@ -3422,10 +3422,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             continue;
                         };
                         let dist_scaled = |v: &JsonVal| -> Option<f64> {
-                            let scale = match *dist_scale {
-                                Some(s) => s,
-                                None => return None,
-                            };
+                            let scale = (*dist_scale)?;
                             if dist_key.is_empty() {
                                 return None;
                             }
