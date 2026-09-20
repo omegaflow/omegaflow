@@ -40,6 +40,8 @@ mod git;
 mod heasarc;
 #[path = "archive_search/index.rs"]
 mod index;
+#[path = "archive_search/interpro.rs"]
+mod interpro;
 #[path = "archive_search/isc.rs"]
 mod isc;
 #[path = "archive_search/json.rs"]
@@ -62,6 +64,8 @@ mod playwright;
 mod psychporta;
 #[path = "archive_search/pubmed.rs"]
 mod pubmed;
+#[path = "archive_search/reactome.rs"]
+mod reactome;
 #[path = "archive_search/secrets.rs"]
 mod secrets;
 #[path = "archive_search/server.rs"]
@@ -284,6 +288,8 @@ fn main() {
             "--doaj" => mode = Mode::Net("doaj"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
+            "--reactome" => mode = Mode::Net("reactome"),
+            "--interpro" => mode = Mode::Net("interpro"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -540,7 +546,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--reactome|--interpro|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
