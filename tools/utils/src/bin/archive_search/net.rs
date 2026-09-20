@@ -1122,6 +1122,8 @@ const QUERY_MODES: &[&str] = &[
     "doaj",
     "go",
     "unpaywall",
+    "reactome",
+    "interpro",
 ];
 
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
@@ -1239,6 +1241,8 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "doaj" => crate::doaj::doaj_lines(query, max),
         "go" => crate::go::go_lines(query, max),
         "unpaywall" => crate::unpaywall::unpaywall_lines(query),
+        "reactome" => crate::reactome::reactome_lines(query, max),
+        "interpro" => crate::interpro::interpro_lines(query, max),
         "supermag" => {
             let user = match resolve_key(
                 env.get("SUPERMAG_USER").map(String::as_str).unwrap_or(""),
