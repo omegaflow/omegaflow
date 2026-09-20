@@ -1,10 +1,10 @@
 use omegaflow::archivar::fits::{FitsCompressedImage, FitsHeader, FitsWcs};
 use omegaflow::archivar::footprint::{
-    FootprintBand, FootprintRecord, HEADER_LEN, NSIDE, REC_BYTES, band_code, decode_rec,
-    encode_rec, parse_header, write_header,
+    FootprintBand, FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec,
+    parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::{CDN_RELEASE, ps1_slab_tag, upload_release};
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
 use std::f64::consts::PI;
@@ -15,9 +15,7 @@ use std::sync::mpsc;
 
 const FILENAMES: &str = "https://ps1images.stsci.edu/cgi-bin/ps1filenames.py";
 const PLANE_ROOT: &str = "https://ps1images.stsci.edu/rings.v3.skycell";
-const NPIX: i64 = 12 * NSIDE * NSIDE;
-const ORDER: u8 = NSIDE.trailing_zeros() as u8;
-const HP_SR: f64 = 4.0 * PI / (NPIX as f64);
+const DEFAULT_ORDER: u32 = 12;
 
 const PROBE_WORKERS: u32 = 8;
 const SUBCELL_MAX: u32 = 99;
@@ -305,7 +303,7 @@ struct Plane {
     accum: HashMap<u32, f64>,
 }
 
-fn regrid_plane(buf: &[u8], census: &mut Census) -> Option<Plane> {
+fn regrid_plane(buf: &[u8], census: &mut Census, nside: i64) -> Option<Plane> {
     let (_, ext_off) = FitsHeader::parse(buf, 0)?;
     let (header, _) = FitsHeader::parse(buf, ext_off)?;
     let (image, _) = FitsCompressedImage::parse(buf, ext_off)?;
@@ -324,7 +322,7 @@ fn regrid_plane(buf: &[u8], census: &mut Census) -> Option<Plane> {
         );
         return None;
     }
-    let mut regrid = ZenithalRegrid::new(wcs, NSIDE)?;
+    let mut regrid = ZenithalRegrid::new(wcs, nside)?;
     let mut max_count: u64 = 0;
     let mut measured: u64 = 0;
     for t1 in 0..image.tiles_per_axis(1) {
@@ -375,6 +373,7 @@ fn harvest_skycell(
     band_accum: &mut [HashMap<u32, f64>; 5],
     band_max: &mut [u64; 5],
     census: &mut Census,
+    nside: i64,
 ) {
     census.skycells += 1;
     for (filter, band) in BANDS.iter() {
@@ -382,7 +381,7 @@ fn harvest_skycell(
         match curl_bytes(&url) {
             FetchOutcome::Bytes(buf) => {
                 census.planes_fetched += 1;
-                match regrid_plane(&buf, census) {
+                match regrid_plane(&buf, census, nside) {
                     Some(plane) => {
                         let bi = band_index(*band);
                         let dest = &mut band_accum[bi];
@@ -444,6 +443,14 @@ fn run(args: &[String]) -> Result<(), String> {
         Some(v) => v,
         None => 0.2,
     };
+    let order = u32_arg(args, "--order").unwrap_or(DEFAULT_ORDER);
+    if order > 29 {
+        return Err(format!(
+            "order {order} exceeds the HEALPix limit 29 — the asset stays unwritten"
+        ));
+    }
+    let nside: i64 = 1i64 << order;
+    let hp_sr: f64 = 4.0 * PI / (12.0 * (nside * nside) as f64);
 
     let mut census = Census {
         grid_queries: 0,
@@ -474,6 +481,8 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut finished = false;
     let mut chunked = false;
 
+    let mut slab_tag = CDN_RELEASE.to_string();
+
     if full_mode {
         let proj_min = match u32_arg(args, "--proj-min") {
             Some(v) => v,
@@ -483,6 +492,12 @@ fn run(args: &[String]) -> Result<(), String> {
             Some(v) => v,
             None => scan_proj_high(PROJ_NORTH_SEED, SUBCELL_MAX),
         };
+        if ps1_slab_tag(proj_min) != ps1_slab_tag(proj_max) {
+            return Err(format!(
+                "projcell span {proj_min}..{proj_max} crosses a slab boundary — the caller shards by band"
+            ));
+        }
+        slab_tag = ps1_slab_tag(proj_min);
         let sub_min = match u32_arg(args, "--sub-min") {
             Some(v) => v,
             None => 0,
@@ -513,7 +528,7 @@ fn run(args: &[String]) -> Result<(), String> {
             }
             seen.insert((proj, sub), ());
             eprintln!("skycell {}.{:03}", proj, sub);
-            harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census);
+            harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census, nside);
             if let Some(lim) = limit {
                 if census.skycells >= lim {
                     finished = true;
@@ -552,7 +567,7 @@ fn run(args: &[String]) -> Result<(), String> {
                         }
                         seen.insert((proj, sub), ());
                         eprintln!("skycell {}.{:03}", proj, sub);
-                        harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census);
+                        harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census, nside);
                         if let Some(lim) = limit {
                             if census.skycells >= lim {
                                 finished = true;
@@ -582,9 +597,9 @@ fn run(args: &[String]) -> Result<(), String> {
             }
             let nominal = *m as f64;
             for (&ipix, &count_sr) in band_accum[bi].iter() {
-                let frac = (count_sr / (nominal * HP_SR)).clamp(0.0, 1.0) as f32;
+                let frac = (count_sr / (nominal * hp_sr)).clamp(0.0, 1.0) as f32;
                 records.push(FootprintRecord {
-                    order: ORDER,
+                    order: order as u8,
                     band: BANDS[bi].1,
                     ipix,
                     frac,
@@ -685,8 +700,10 @@ fn run(args: &[String]) -> Result<(), String> {
         census.measured_pixels,
         census.unmapped_pixels
     );
-    if ci_mode && !upload_asset(&out_path) {
-        return Err(format!("{out_path}: CDN upload returned void"));
+    if ci_mode && !upload_release(&slab_tag, &out_path) {
+        return Err(format!(
+            "{out_path}: CDN upload to {slab_tag} returned void"
+        ));
     }
     Ok(())
 }
@@ -721,7 +738,8 @@ mod tests {
 
     #[test]
     fn nominal_normalization_clamps_to_one() {
-        let hp_sr = HP_SR;
+        let nside: i64 = 1i64 << DEFAULT_ORDER;
+        let hp_sr = 4.0 * PI / (12.0 * (nside * nside) as f64);
         let count_sr = 2.0 * 5.0 * hp_sr;
         let frac = (count_sr / (5.0 * hp_sr)).clamp(0.0, 1.0);
         assert_eq!(frac, 1.0);
