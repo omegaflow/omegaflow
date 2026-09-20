@@ -43,7 +43,6 @@ phi/pipeline/decline_lens.φ
 phi/pipeline/library.φ
 phi/pipeline/index.φ
 phi/pipeline/probe_wave.φ
-phi/pipeline/probe_hapi_proposed.φ
 phi/pipeline/probe_batch_skymap.φ
 
 # --- Katalog ---
