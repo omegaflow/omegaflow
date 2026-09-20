@@ -2776,6 +2776,230 @@ compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-01_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-03_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-04_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-05_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-06_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-07_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-08_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-09_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-10_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-11_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-12_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-13_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-14_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-15_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-16_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-17_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-18_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-19_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-20_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-21_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-22_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-23_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-24_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-25_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-26_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-27_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-28_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-29_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-30_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-31_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-32_task-jointaction_eeg.bin
+format openneuro_brainvision
+origin https://openneuro.org/crn/graphql
+compiler tools/harvest/src/bin/brainvision_compiler.rs
+at earth
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 format bidsleep
 origin https://physionet.org/files/bidsleep-dataset/1.0.0/
