@@ -4,7 +4,7 @@
   date: 2026-09-17
   sha256: 2e68780c8bf2f28d82f9f511d3aee11498a56baae310a4b161bcde4825c3b9a9
   status: live
-  see-also: docs/concepts/master.md docs/handover/handover-2026-09-17-forschung-folge56.md
+  see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
 # Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
 
@@ -15,7 +15,7 @@ welche Ideen sind verloren gegangen, erhaltenswert, und heute entblockbar?
 
 Provenienz der Messung: `git clone` von `github.com/omegaflow/omegaflow-legacy` (shallow)
 nach `/tmp/opencode/of-legacy`; Gegenstücke im heutigen Baum über
-`sgrep`/`archive_search --root /home/johannes/projects/omegaflow`.
+`sgrep`/`archive_search --root .`.
 
 ## Befund: die Migration war gründlich
 

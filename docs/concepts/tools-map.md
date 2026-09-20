@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: b1e28fd33aa2a0a4e073d48195583d78bb51370635ed6aff7d749f272fd28afd
+  sha256: 0e7cfa9083a954f6c2fbe5754d7bf7993ecb2973933bbbcb967713540ed6d1ec
   status: live
   see-also: AGENTS.md
 -->
@@ -253,7 +253,7 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
 |---|---|---|---|
 | `@vymalo/opencode-browser` (Plugin, Bridge Port 4517, Extension am Operator-Profil) | UI-Automator am echten Profil | (iii) Registrierung, interaktive Seiten | `browser_open`/`click`/`type`/`snapshot`/`get_text`/`get_html`; Fokus nie erzwungen (`focus:false`), Inhalt statt Pixel |
 | `@playwright/mcp` (globaler MCP, headless) | Kopflos-Automator | (ii) mehrschrittige Flüsse, Cross-Browser/Tests | MCP-Tools; eigene Session |
-| `archive_search --playwright` | Kopflos-Fetcher mit SOCKS/proton + Interstitial-Erkennung | (ii) Recherche, erster Zug | `archive_search --playwright <url> [--headed]` |
+| `archive_search --playwright` | Kopflos-Fetcher mit SOCKS/proton + Interstitial-Erkennung; `OMEGAFLOW_COOKIES=<cookie-editor.json>` setzt eine Session vor `goto` | (ii) Recherche, erster Zug | `archive_search --playwright <url> [--headed]` |
 
 - **(i) Membran-Debug** → **Chrome DevTools MCP** (Konsole/Netz/Performance via CDP auf
   dem Pfad-1-Chrome) — **noch nicht angebunden**; braucht das Operator-Wort
@@ -265,7 +265,11 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
   Bezahlte Solver (Option c) sind ausgeschlossen.
 - **Cookie-Editor** (Moustachauve/cookie-editor, GPL-3.0) ist **manuelles**
   Operator-Werkzeug — Cookie-Transfer Operator-Profil ↔ persistentes Profil nur per Akt
-  mit Operator-Wort (Cookies = Zugangsdaten).
+  mit Operator-Wort (Cookies = Zugangsdaten). Mechanischer Weg (Forschung-Folge 121,
+  Operator-Wort „bau B"): der Cookie-Editor-Export wird als `OMEGAFLOW_COOKIES=<json>`
+  an `archive_search --playwright` gereicht (`context.addCookies` vor `goto`, headless
+  wie headed); unset = keine Cookies (0 geehrt), gesetzt-aber-kaputt = benannter
+  Abbruch `exit(2)`. Die Datei bleibt lokal/ungtracked.
 - **Privacy Pass** (Cloudflare) reduziert Challenge-Häufigkeit, löst keine Captcha.
 - Pfad-1-Version: die globale Config (`~/.config/opencode/opencode.jsonc`) pinnt
   **`@vymalo/opencode-browser@0.17.0`** (gemessen 2026-09-20, Forschung-Folge 115) —

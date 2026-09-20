@@ -123,7 +123,7 @@ ausstehend 0 pipeline/catalog/rpw_datacenter_catalog.φ
 # (celestrak_eop, cosmic_wetprf, ncei_goes_xrs, ncei_ssi, noaa_gk2a, noaa_goes16, noaa_wod, twomass).
 
 # ------------------------------------------------------------------
-# ERLEDIGT — im Archiv (read-only, /home/johannes/projects/archive/phi-research/)
+# ERLEDIGT — im Archiv (read-only, archive/phi-research/)
 # ------------------------------------------------------------------
 erledigt 284 archive/phi-research/batches/
 erledigt 242 archive/phi-research/probe_batches/

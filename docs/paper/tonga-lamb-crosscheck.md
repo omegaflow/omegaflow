@@ -4,7 +4,7 @@
   date: 2026-09-17
   sha256: 77cb47ad6899d858a68203f0467d688c51934d5415053048fc6bec436fb2d6d4
   status: live
-  see-also: docs/handover/handover-2026-09-17-forschung-folge58.md
+  see-also: docs/handover/archiv/handover-2026-09-17-forschung-folge58.md
 -->
 # Hunga Tonga 2022 — the Lamb wave measured cross-medium
 

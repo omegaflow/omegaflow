@@ -4,7 +4,7 @@
   date: 2026-09-16
   sha256: 2d15607e50fe192072166407fd86ea33c6c9b9a4f7a745d0594c2eb25804045d
   status: live
-  see-also: docs/auftrag/archiv/auftrag-flyby-doppler-rohdaten.md phi/blocked_sources.φ
+  see-also: phi/blocked_sources.φ
 -->
 # Auftrag: die request-only-Rohdaten der fünf offenen Sonden — Anfrage-Vorlagen
 

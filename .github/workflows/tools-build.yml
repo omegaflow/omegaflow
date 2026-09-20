@@ -19,7 +19,7 @@ jobs:
     - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn
     - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage
     - run: cargo build --release -p omegaflow-gate --bin commit_check
-    - run: cargo build --release -p omegaflow --bin omegaflow
+    - run: cargo build --release -p omegaflow --bin omegaflow --features browser_relay
     - name: Write tools.manifest
       env:
         TOOLS_SHA: ${{ github.sha }}
