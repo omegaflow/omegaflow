@@ -1,3 +1,5 @@
+#[path = "archive_search/alphafold.rs"]
+mod alphafold;
 #[path = "archive_search/arxiv_src.rs"]
 mod arxiv_src;
 #[path = "archive_search/awmf.rs"]
@@ -290,6 +292,7 @@ fn main() {
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
             "--interpro" => mode = Mode::Net("interpro"),
+            "--alphafold" => mode = Mode::Net("alphafold"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -546,7 +549,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--reactome|--interpro|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
