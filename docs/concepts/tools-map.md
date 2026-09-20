@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 2d461cbbd40237facbf5a81ad064976ea279303372e5b44b05d779226691e0eb
+  sha256: b1e28fd33aa2a0a4e073d48195583d78bb51370635ed6aff7d749f272fd28afd
   status: live
   see-also: AGENTS.md
 -->
@@ -221,6 +221,31 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
 | `curl` | nur wo `sfetch`/`archive_search` nichts trägt | Netz | P3 |
+
+## Browser-Anbindung — die drei Pfade (Rat 2026-09-20: nicht konsolidieren)
+
+Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Verdikte:
+`docs/surveys/survey-2026-09-20-browser-anbindung.md`.
+
+| Pfad | Natur | Rolle | Eintritt |
+|---|---|---|---|
+| `@vymalo/opencode-browser` (Plugin, Bridge Port 4517, Extension am Operator-Profil) | UI-Automator am echten Profil | (iii) Registrierung, interaktive Seiten | `browser_open`/`click`/`type`/`snapshot`/`get_text`/`get_html`; Fokus nie erzwungen (`focus:false`), Inhalt statt Pixel |
+| `@playwright/mcp` (globaler MCP, headless) | Kopflos-Automator | (ii) mehrschrittige Flüsse, Cross-Browser/Tests | MCP-Tools; eigene Session |
+| `archive_search --playwright` | Kopflos-Fetcher mit SOCKS/proton + Interstitial-Erkennung | (ii) Recherche, erster Zug | `archive_search --playwright <url> [--headed]` |
+
+- **(i) Membran-Debug** → **Chrome DevTools MCP** (Konsole/Netz/Performance via CDP auf
+  dem Pfad-1-Chrome) — **noch nicht angebunden**; braucht das Operator-Wort
+  (Debugger-Rechte am live Chrome), Telemetrie-Flags `--no-usage-statistics`
+  `--no-performance-crux` sind Bedingung.
+- **(iii) Captcha** — Option (a) gesetzt: die Operatorin löst selbst im sichtbaren
+  Browser. Option (b) Buster (dessant/buster, GPL-3.0, reCAPTCHA-Audio, lokal per
+  Whisper möglich) ist **descoped mit Befund**, solange das Operator-Wort ausbleibt.
+  Bezahlte Solver (Option c) sind ausgeschlossen.
+- **Cookie-Editor** (Moustachauve/cookie-editor, GPL-3.0) ist **manuelles**
+  Operator-Werkzeug — Cookie-Transfer Operator-Profil ↔ persistentes Profil nur per Akt
+  mit Operator-Wort (Cookies = Zugangsdaten).
+- **Privacy Pass** (Cloudflare) reduziert Challenge-Häufigkeit, löst keine Captcha.
+- Pfad-1-Version: npm **0.17.0** vorhanden (Projekt 0.16.1) — Versionslücke, kein Zustand.
 
 ## Profile (aus AGENTS.md) — gemessene Kosten ihres erlaubten Satzes
 
