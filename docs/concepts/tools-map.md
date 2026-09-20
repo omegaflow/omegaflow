@@ -193,15 +193,15 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `git_safety --list` | 0,017 s | |
 | `git_safety --close [<own-path>…]` | — | Commit-Abschluss-Check in einem Aufruf |
 | `session_burn` | — | Release-Binär fehlt noch (Baum rot) — bis dahin `cargo run -p omegaflow-register` |
-| `./bin/archive_search` (Wrapper) | 0,009 s nach Stempel | baut bei Bedarf, 5-min-Cooldown, Fallback statt Tod |
+| `./bin/archive_search` (Wrapper) | 0,009 s nach Stempel | execs `bin/.tools_ensure` (Refresh aus `tools-latest`), baut nie |
 | OpenCode-Tools (`read`/`grep`/`glob`) | ein Tool-Round-Trip, kein Prozess | Kosten sind Kontext, nicht CPU |
 
 ## Werkzeug → kann → darf
 
 | Werkzeug | Kann | Scope | Profile |
 |---|---|---|---|
-| `archive_search` (PATH, Symlink auf `target/release`) | Inhalt, Pfade, NTFS, 19 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
-| `bin/archive_search` (Wrapper) | baut bei Bedarf, sonst `exec` | lokal | P1–P5 |
+| `archive_search` (PATH, Symlink auf `bin/archive_search`) | Inhalt, Pfade, NTFS, 19 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
+| `bin/archive_search` (Wrapper) | execs `bin/.tools_ensure`, sonst `exec` | lokal | P1–P5 |
 | `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |

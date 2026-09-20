@@ -1,0 +1,112 @@
+#!/bin/sh
+# Ensures one release tool from the rolling tools-latest release; the build
+# belongs to CI (tools-build). Content-addressed by sha256, never mtime — a
+# stale or absent artifact reads pending, named, never a silent zero.
+set -u
+
+tool="${1:-}"
+if [ -z "$tool" ]; then
+    echo "tools_ensure: tool name required" >&2
+    exit 2
+fi
+
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+
+rel="$root/target/release"
+bin="$rel/$tool"
+manifest="$rel/.tools_manifest"
+stamp="$rel/.tools_manifest.checked"
+base="https://github.com/omegaflow/omegaflow/releases/download/tools-latest"
+
+mkdir -p "$rel"
+
+# TTL gate: a manifest fetched within the watchdog cadence (2^6 min = 3840 s)
+# stands; the network is skipped until it ages out.
+if [ -f "$stamp" ]; then
+    mtime="$(stat -c %Y "$stamp" 2>/dev/null || stat -f %m "$stamp" 2>/dev/null || echo 0)"
+    now="$(date +%s)"
+    if [ "$now" -lt $(( mtime + 3840 )) ]; then
+        exit 0
+    fi
+fi
+
+# The attempt stamps the gate before it runs: a refused or absent release is
+# consulted at most once per cadence, never on every call.
+touch "$stamp"
+
+# measure the release route, then fetch the manifest (curl primary, gh secondary)
+code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$base/tools.manifest" 2>/dev/null)"
+echo "tools: $tool — release route $base/tools.manifest -> HTTP ${code:-absent}" >&2
+
+tmpm="$rel/.tools_manifest.tmp"
+rm -f "$tmpm" "$rel/tools.manifest"
+
+if curl -fsSL --max-time 5 "$base/tools.manifest" -o "$tmpm" 2>/dev/null && [ -s "$tmpm" ]; then
+    :
+elif gh release download tools-latest --repo omegaflow/omegaflow --pattern tools.manifest --dir "$rel" --clobber >/dev/null 2>&1 && [ -s "$rel/tools.manifest" ]; then
+    mv -f "$rel/tools.manifest" "$tmpm"
+fi
+
+if [ ! -s "$tmpm" ]; then
+    rm -f "$tmpm"
+    if [ -x "$bin" ]; then
+        echo "tools: $tool installed $(sha256sum "$bin" | awk '{print $1}') — release manifest unreachable, running installed" >&2
+        exit 0
+    fi
+    echo "tools: $tool pending — no release installed; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+
+mv -f "$tmpm" "$manifest"
+
+remote_sha="$(awk -v t="$tool" '$1 == t { print $2 }' "$manifest")"
+
+if [ -z "$remote_sha" ]; then
+    if [ -x "$bin" ]; then
+        echo "tools: $tool installed $(sha256sum "$bin" | awk '{print $1}') — absent from the tools-latest manifest, running installed" >&2
+        exit 0
+    fi
+    echo "tools: $tool pending — absent from the tools-latest manifest; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+
+local_sha=""
+if [ -f "$bin" ]; then
+    local_sha="$(sha256sum "$bin" | awk '{print $1}')"
+fi
+
+if [ "$local_sha" = "$remote_sha" ]; then
+    exit 0
+fi
+
+tmp="$rel/.$tool.download"
+rm -f "$tmp"
+
+curl -fsSL --max-time 120 "$base/$tool" -o "$tmp" 2>/dev/null
+
+if [ ! -s "$tmp" ]; then
+    rm -f "$tmp"
+    if [ -x "$bin" ]; then
+        echo "tools: $tool installed $local_sha — release download unreachable, running installed" >&2
+        exit 0
+    fi
+    echo "tools: $tool pending — no release installed; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+
+got="$(sha256sum "$tmp" | awk '{print $1}')"
+if [ "$got" != "$remote_sha" ]; then
+    rm -f "$tmp"
+    echo "tools: $tool riss — remote $remote_sha vs downloaded $got, keeping installed ${local_sha:-absent}" >&2
+    exit 1
+fi
+
+chmod +x "$tmp"
+mv -f "$tmp" "$bin"
+exit 0

@@ -1,7 +1,5 @@
 #!/bin/sh
-# The working-tree safety net the sessions run: execs the release binary; the
-# build belongs to CI. A dirty or broken working tree never blocks a call — the
-# existing release binary runs, and a binary older than the tree still runs.
+# The working-tree safety net: execs the release binary refreshed by bin/.tools_ensure; never builds.
 set -u
 self="$0"
 while [ -h "$self" ]; do
@@ -10,13 +8,10 @@ while [ -h "$self" ]; do
     case "$self" in /*) ;; *) self="$d/$self" ;; esac
 done
 root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" git_safety
 bin="$root/target/release/git_safety"
 if [ ! -x "$bin" ]; then
-    echo "git_safety: no release binary on PATH — the build belongs to CI" >&2
+    echo "git_safety: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
-fi
-if find "$root/tools/utils/src" "$root/src" "$root/Cargo.toml" "$root/tools/utils/Cargo.toml" \
-        -name '*.rs' -newer "$bin" -print -quit 2>/dev/null | grep -q .; then
-    echo "git_safety: release binary is older than the tree — running the existing binary; the rebuild belongs to CI" >&2
 fi
 exec "$bin" "$@"
