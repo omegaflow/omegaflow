@@ -15,4 +15,6 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
+An entscheid: `LASAIR_LSST_TOKEN` fehlt lokal (gemessen 2026-09-20, env + `.secrets.local`; die Zeile `blocked_sources.φ:8-11` behauptete „vorhanden, unverified" — widerlegt). Lasair-LSST-Backend zusätzlich extern 502, keine Route. Operator-Frage (einfach): Ist ein Lasair-LSST-API-Token vorhanden oder beschaffbar? Ja → Token nach `.secrets.local`; Nein → Broker bleibt ohne Route. (Ernte-Folge 108; Schritt: Operator-Wort, dann Token-Messung.)
+
 

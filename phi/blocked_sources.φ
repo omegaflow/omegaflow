@@ -7,7 +7,7 @@ reg https://babamul.caltech.edu/
 
 pending
 url https://api.lasair.lsst.ac.uk/api
-note Lasair-LSST Broker: 2026-09-18 Endpoint api.lasair.lsst.ac.uk/api dokumentiert; Host aus eigenem Netz absent (direct 0, Proton 502), Statusseite lasair.lsst.ac.uk 200; LASAIR_LSST_TOKEN vorhanden, unverified. Schritt: Exit-Rotation + Query.
+note Lasair-LSST Broker: 2026-09-20 (research-max) api.lasair.lsst.ac.uk/api Backend 502 über alle Proton-Exits, direct 000; Frontend 200, Banner unverändert 2026-09-10; ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/objects 401 (auth); LASAIR_LSST_TOKEN lokal nicht vorhanden → Key-Gap. Schritt: Token-Frage an Operator + Banner-Trigger.
 reg https://lasair.lsst.ac.uk/
 
 descoped
