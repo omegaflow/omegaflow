@@ -2900,7 +2900,7 @@ note grind: grind_terrapulse_a.φ
 
 decline reference
 url https://webbook.nist.gov/cgi/cbook.cgi?Name=
-note Referenzkonstanten — per Gate declined.
+note 2026-09-20: ?Name=/?Formula=/?ID= 200 text/html, Registry (Molmasse/InChI/CAS), positionslos, kein Feld. JCAMP ?JCAMP=<id>&Index=&Type=IR|Mass 200 chemical/x-jcamp-dx: statisches Referenzspektrum per bekannter ID. Kein JSON/TSV/API/Dump.
 
 decline variant
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
