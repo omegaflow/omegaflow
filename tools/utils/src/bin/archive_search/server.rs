@@ -40,6 +40,8 @@ pub const MODES: &[&str] = &[
     "doaj",
     "go",
     "unpaywall",
+    "reactome",
+    "interpro",
 ];
 
 pub struct AppState {
