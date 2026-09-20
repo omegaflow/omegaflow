@@ -52,6 +52,10 @@ pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
+blocked parser-def
+url https://webbook.nist.gov/chemistry/
+note NIST WebBook (--nist) 2026-09-20: cbook.cgi?Name=/Formula=/ID= 200 text/html, kein JSON/XML/TSV; JCAMP/InChI/MOL nur per bekannter ID. Kein offizielles API → Query-Modus bräuchte HTML-Scrape; parser-def (html). Host: getrennte declined-Referenz.
+
 descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped mit Messung: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
