@@ -133,6 +133,9 @@ cloudflare/cloudflared-config.yml
 markiert.csv
 omegaflow-pruefdatei.csv
 
+# Lokales Anzeige-Mapping (enthält die private Operator-Adresse) — nie ins Repo
+.mailmap
+
 # Firmware (eigener Workspace, Build im CI) — lokale target/ und Lockfiles nicht ins Repo
 firmware/*/target/
 firmware/*/Cargo.lock
