@@ -440,12 +440,6 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         let end = start
             .checked_add(len as usize)
             .ok_or(Hdf5Note::EndAtByte { off: start })?;
-        if self.read_bytes.saturating_add(len) > MAX_TRAVERSAL_BYTES {
-            return Err(Hdf5Note::TraversalBudget {
-                off: start,
-                bytes: self.read_bytes,
-            });
-        }
         if end <= self.base.len() {
             self.read_bytes = self.read_bytes.saturating_add(len);
             return Ok(self.base[start..end].to_vec());
@@ -459,6 +453,12 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         }
         if len > MAX_READ_BYTES {
             return Err(Hdf5Note::ReadLength { off: start, len });
+        }
+        if self.read_bytes.saturating_add(len) > MAX_TRAVERSAL_BYTES {
+            return Err(Hdf5Note::TraversalBudget {
+                off: start,
+                bytes: self.read_bytes,
+            });
         }
         if self.fetches >= MAX_FETCHES || self.fetched_bytes.saturating_add(len) > MAX_FETCH_BYTES {
             return Err(Hdf5Note::FetchBudget {
@@ -490,6 +490,10 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
             }
             Err(note) => Err(note),
         }
+    }
+
+    fn forget(&mut self, off: u64) {
+        self.cache.remove(&off);
     }
 }
 
@@ -720,7 +724,11 @@ fn gather_messages<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             };
             let chunk0_end = chunk0_off + chunk0_size;
             let ohdr_span = chunk0_end + 4;
-            let buf = r.read(addr, ohdr_span as u64)?;
+            let mut buf = head;
+            if buf.len() < ohdr_span {
+                let tail = r.read(addr + buf.len() as u64, (ohdr_span - buf.len()) as u64)?;
+                buf.extend_from_slice(&tail);
+            }
             if buf.len() < ohdr_span {
                 return Err(Hdf5Note::EndAtByte {
                     off: off + buf.len(),
@@ -1415,12 +1423,12 @@ fn parse_btree_header_bytes(buf: &[u8], addr: u64) -> Result<(u8, BtreeHeader), 
     Ok((
         typ,
         BtreeHeader {
-            node_size: le_u32(&buf, 6) as usize,
-            record_size: le_u16(&buf, 10) as usize,
-            depth: le_u16(&buf, 12),
-            root_addr: le_u64(&buf, 16),
-            root_nrec: le_u16(&buf, 24),
-            total_records: le_u64(&buf, 26),
+            node_size: le_u32(buf, 6) as usize,
+            record_size: le_u16(buf, 10) as usize,
+            depth: le_u16(buf, 12),
+            root_addr: le_u64(buf, 16),
+            root_nrec: le_u16(buf, 24),
+            total_records: le_u64(buf, 26),
         },
     ))
 }
@@ -2116,7 +2124,7 @@ fn walk_v1_chunk_node<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     }
     let node_type = head[4];
     let level = head[5];
-    let nchildren = le_u16(&head, 6) as usize;
+    let nchildren = le_u16(head, 6) as usize;
     if node_type != 1 {
         return Err(Hdf5Note::Btree {
             typ: node_type,
@@ -2302,6 +2310,16 @@ fn chunk_read_plan(
     Ok((chunk_dims, btree, !obj.filters.is_empty()))
 }
 
+struct ChunkPlan<'a> {
+    recs: &'a [ChunkRec],
+    v1_index: bool,
+    obj: &'a Hdf5Object,
+    ds: &'a Hdf5Dataspace,
+    dt: &'a Hdf5Datatype,
+    coords: &'a [u64],
+    chunk_dims: &'a [u32],
+}
+
 fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     base: &[u8],
     obj: &Hdf5Object,
@@ -2319,29 +2337,38 @@ fn read_chunk_resolved<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             note: Some(note),
         })?;
     drop(reader);
-    chunk_values_from(&recs, v1_index, obj, ds, dt, coords, &chunk_dims, fetch)
+    chunk_values_from(
+        &ChunkPlan {
+            recs: &recs,
+            v1_index,
+            obj,
+            ds,
+            dt,
+            coords,
+            chunk_dims: &chunk_dims,
+        },
+        fetch,
+    )
 }
 
 fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
-    recs: &[ChunkRec],
-    v1_index: bool,
-    obj: &Hdf5Object,
-    ds: &Hdf5Dataspace,
-    dt: &Hdf5Datatype,
-    coords: &[u64],
-    chunk_dims: &[u32],
+    plan: &ChunkPlan,
     mut fetch: F,
 ) -> Result<Vec<f64>, ChunkReadDiag> {
-    let elem_size = dt.size;
-    let rank = ds.dims.len();
-    let rec = recs
+    let elem_size = plan.dt.size;
+    let rank = plan.ds.dims.len();
+    let rec = plan
+        .recs
         .iter()
-        .find(|r| scaled_to_coords(&r.scaled, chunk_dims, v1_index).as_deref() == Some(coords))
+        .find(|r| {
+            scaled_to_coords(&r.scaled, plan.chunk_dims, plan.v1_index).as_deref()
+                == Some(plan.coords)
+        })
         .ok_or(ChunkReadDiag {
             stage: "chunk not found",
             note: None,
         })?;
-    let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
+    let chunk_elems: usize = plan.chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
     let stored_len = if rec.size > 0 {
         rec.size
     } else {
@@ -2353,8 +2380,8 @@ fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
             off: rec.addr as usize,
         }),
     })?;
-    if !obj.filters.is_empty() {
-        apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask).map_err(|note| {
+    if !plan.obj.filters.is_empty() {
+        apply_filters(&mut raw, &plan.obj.filters, elem_size, rec.filter_mask).map_err(|note| {
             ChunkReadDiag {
                 stage: "chunk filter",
                 note: Some(note),
@@ -2363,31 +2390,33 @@ fn chunk_values_from<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
     }
     let mut actual_elems = 1usize;
     for d in 0..rank {
-        let start = coords[d]
-            .checked_mul(chunk_dims[d] as u64)
+        let start = plan.coords[d]
+            .checked_mul(plan.chunk_dims[d] as u64)
             .ok_or(ChunkReadDiag {
                 stage: "coords overflow",
                 note: None,
             })?;
-        let avail = ds.dims[d].saturating_sub(start);
-        actual_elems *= avail.min(chunk_dims[d] as u64) as usize;
+        let avail = plan.ds.dims[d].saturating_sub(start);
+        actual_elems *= avail.min(plan.chunk_dims[d] as u64) as usize;
     }
     let raw_elems = raw.len() / elem_size;
     let n = raw_elems.min(actual_elems);
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
-        out.push(decode_numeric(&raw, i, dt).map_err(|note| ChunkReadDiag {
+        out.push(decode_numeric(&raw, i, plan.dt).map_err(|note| ChunkReadDiag {
             stage: "numeric decode",
             note: Some(note),
         })?);
     }
-    let scale = obj
+    let scale = plan
+        .obj
         .attrs
         .iter()
         .find(|a| a.name == "scale_factor")
         .and_then(attr_number);
     if let Some(scale) = scale {
-        let offset = obj
+        let offset = plan
+            .obj
             .attrs
             .iter()
             .find(|a| a.name == "add_offset")
@@ -2926,7 +2955,7 @@ pub trait Hdf5Access {
         name: &str,
     ) -> Result<(&'s Hdf5Object, &'s Hdf5Dataspace, &'s Hdf5Datatype), Hdf5Note>;
     fn attribute<'s>(&'s mut self, name: &str, attr: &str) -> Option<&'s Hdf5Attribute>;
-    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag>;
+    fn root_header_diag(&mut self) -> Option<&HeaderDiag>;
     fn read_chunk(
         &mut self,
         dataset: &str,
@@ -2957,7 +2986,7 @@ impl<'a> Hdf5Access for Hdf5File<'a> {
         Hdf5File::attribute(self, name, attr)
     }
 
-    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+    fn root_header_diag(&mut self) -> Option<&HeaderDiag> {
         Hdf5File::root_header_diag(self)
     }
 
@@ -3013,6 +3042,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
         if let Some(c) = committed {
             if let Err(note) = self.ensure_object(c) {
                 self.objects.remove(&addr);
+                self.reader.forget(addr);
                 return Err(note);
             }
             let dt = self.objects.get(&c).and_then(|o| o.datatype.clone());
@@ -3079,7 +3109,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
             .find(|a| a.name == attr)
     }
 
-    pub fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+    pub fn root_header_diag(&mut self) -> Option<&HeaderDiag> {
         let root = self.root;
         self.ensure_object(root).ok()?;
         self.objects.get(&root).map(|o| &o.header)
@@ -3125,7 +3155,18 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> LazyHdf5<'a, F> {
                 recs_v1
             }
         };
-        chunk_values_from(&recs, v1_index, &obj, &ds, &dt, coords, &chunk_dims, fetch)
+        chunk_values_from(
+            &ChunkPlan {
+                recs: &recs,
+                v1_index,
+                obj: &obj,
+                ds: &ds,
+                dt: &dt,
+                coords,
+                chunk_dims: &chunk_dims,
+            },
+            fetch,
+        )
     }
 
     pub fn read_dataset(&mut self, name: &str) -> Result<Vec<u8>, Hdf5Note> {
@@ -3256,7 +3297,7 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5Access for LazyHdf5<'a, F> {
         LazyHdf5::attribute(self, name, attr)
     }
 
-    fn root_header_diag<'s>(&'s mut self) -> Option<&'s HeaderDiag> {
+    fn root_header_diag(&mut self) -> Option<&HeaderDiag> {
         LazyHdf5::root_header_diag(self)
     }
 
