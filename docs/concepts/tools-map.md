@@ -267,7 +267,9 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
   Operator-Werkzeug — Cookie-Transfer Operator-Profil ↔ persistentes Profil nur per Akt
   mit Operator-Wort (Cookies = Zugangsdaten).
 - **Privacy Pass** (Cloudflare) reduziert Challenge-Häufigkeit, löst keine Captcha.
-- Pfad-1-Version: npm **0.17.0** vorhanden (Projekt 0.16.1) — Versionslücke, kein Zustand.
+- Pfad-1-Version: die globale Config (`~/.config/opencode/opencode.jsonc`) pinnt
+  **`@vymalo/opencode-browser@0.17.0`** (gemessen 2026-09-20, Forschung-Folge 115) —
+  die Versionslücke 0.16.1 → 0.17.0 ist geschlossen, kein Zustand mehr.
 
 ## Profile (aus AGENTS.md) — gemessene Kosten ihres erlaubten Satzes
 
