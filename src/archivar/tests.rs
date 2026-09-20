@@ -2449,6 +2449,39 @@ fn test_port_convert_celestial_and_post() {
     );
 }
 #[test]
+fn test_port_convert_ra_dec_key() {
+    let celestial = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\nplx_key Plx\nz_key z\ndist_key dist\nfield Name star_name\n";
+    let conv = super::port_block(celestial);
+    assert!(conv.contains("at sun\n"));
+    assert!(conv.contains("ra RAJ2000\n"));
+    assert!(conv.contains("dec DEJ2000\n"));
+    assert!(conv.contains("plx Plx\n"));
+    assert!(conv.contains("z z\n"));
+    assert!(!conv.contains("dist "));
+    let srcs = super::parse_sources(&conv);
+    assert!(!srcs.is_empty());
+    let mut found = false;
+    for s in &srcs {
+        for e in &s.extracts {
+            if let super::Extract::CelestialMap {
+                ra_key,
+                dec_key,
+                plx_key,
+                z_key,
+                ..
+            } = e
+            {
+                assert_eq!(ra_key, "RAJ2000");
+                assert_eq!(dec_key, "DEJ2000");
+                assert_eq!(plx_key, "Plx");
+                assert_eq!(z_key, "z");
+                found = true;
+            }
+        }
+    }
+    assert!(found, "celestial map extract present");
+}
+#[test]
 fn test_walk_celestial_cmap() {
     let j = super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
     let mut fields = String::new();
