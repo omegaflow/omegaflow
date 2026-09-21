@@ -348,6 +348,7 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
     match format {
         "gdp_drifter" => gdp_drifter::component_name(comp),
         "hfrnet_rtv" => hfrnet_rtv::component_name(comp),
+        "emodnet_hfr" => emodnet_hfr::component_name(comp),
         "bgr_infrasound" => match comp {
             crate::geo::COMP_BGR_AZIM => Some("bgr_infrasound_back_azimuth_deg"),
             crate::geo::COMP_BGR_VAPP => Some("bgr_infrasound_apparent_velocity_ms"),

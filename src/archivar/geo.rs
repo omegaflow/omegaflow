@@ -211,6 +211,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "las" => Some(MAGIC_LAS),
         "kyoto_pressure" => Some(MAGIC_KYOTO),
         "hfrnet_rtv" => Some(MAGIC_HFR),
+        "emodnet_hfr" => Some(MAGIC_HFR),
         _ => None,
     }
 }
@@ -247,6 +248,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "las" => Some(COMP_LAS_MAX),
         "kyoto_pressure" => Some(COMP_KYOTO_MAX),
         "hfrnet_rtv" => Some(COMP_HFR_MAX),
+        "emodnet_hfr" => Some(COMP_HFR_MAX),
         _ => None,
     }
 }

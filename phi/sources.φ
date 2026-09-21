@@ -8710,6 +8710,16 @@ field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 note CDN-Asset sha256 6bad8000681201568461adab5db4e4958610e971276ae3fcec4dc2971c5ae657 (480728 B); ERDDAP ucsdHfrW1_Lon0360 HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml; Lauf 35581429287 success.
 
+url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
+format emodnet_hfr
+origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
+compiler tools/harvest/src/bin/emodnet_hfr_compiler.rs
+on earth 0 0 0
+ttl 86400
+field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
+field NSCT emodnet_hfr_northward_m_s patch-levy advective m/s 21600 0.0 0.0
+note CDN-Asset pending sha256; ERDDAP EUHFR_NRTcurrent_HFR-NAdr-Total HTTP 200 gemessen 2026-09-21 (EWCT/NSCT m s-1, Tiefe 0.0, PT30M); Arm emodnet_hfr geo HFR1; griddap braucht %5B/%5D; workflow emodnet-hfr-cdn.yml.
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
 compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
