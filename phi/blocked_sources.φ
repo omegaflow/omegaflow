@@ -1,11 +1,6 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
 
 pending
-url https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST-Broker): /api/babamul/objects und /surveys/{survey}/alerts Bearer <BABAMUL_API_TOKEN> HTTP 200 (2026-09-21); {data:[{candidate:{ra,dec,magpsf,magap,band}}]}. Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow offen.
-reg https://babamul.caltech.edu/
-
-pending
 url https://api.lasair.lsst.ac.uk/api
 note Lasair-LSST Broker: 2026-09-20 api.lasair.lsst.ac.uk/api 502 über Proton-Exit (direct 000); Frontend 200; ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/objects 401; LASAIR_LSST_TOKEN vorhanden (.secrets.local, 41 Z.) → kein Key-Gap; Token unmessbar bis Upstream erholt. Schritt: Backend-Trigger.
 reg https://lasair.lsst.ac.uk/
@@ -27,14 +22,6 @@ pending
 url https://psa.esa.int/psa-tap/tap/
 reg https://www.cosmos.esa.int/web/psa/contact-us
 note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/89517 proprietär), data?PRODUCT → 403, kein Konto-Gate; Freigabe-Anfrage an psahelp@cosmos.esa.int 2026-09-18. bc_mpo_mag anonym offen (5020 Zeilen seit 2024-03-12).
-
-pending
-url https://data.ghrc.earthdata.nasa.gov/
-note GHRC DAAC: ghrcw-protected 401 anonym/200 mit EDL-Token (2026-09-21). "Compiler+CDN ungebaut" widerlegt: glm/trmm-Compiler gebaut; CDN glm_l1b.bin 1050368 B a7311a53…+trmm_lis.bin 30548 B 4df26caf… (200). noaa-goes16/18 S3 200; ghrc.s3 403.
-
-pending
-url http://ia2-tap.oats.inaf.it:8080/wgetap
-note IA2 TAP (INAF/OATS) — wgesdss.laurino2011 anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n; ra,dec_,psfMag_g/i/r/u/z, 2026-09-21). Parser ia2_tap.rs + Compiler ia2_tap_compiler.rs gebaut (sky1); Workflow offen.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
@@ -73,5 +60,5 @@ note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableF
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (loc/state/city); AGOL count=140. FRS get_facilities flappt 503/200; pgm_sys_acrnm verworfen, program_name akzeptiert (RadNet leer). Schritt: FRS-Akronym messen.
+note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen: get_program_list 500 (ORDS), RADNET/ERM nicht in FRS_PROGRAM_FACILITY; get_facilities verlangt state_abbr/registry_id/zip. Koordinaten via AGOL Item caed82e8e13f47b183e2c7a1412949bc.
 

@@ -14013,7 +14013,7 @@ format sky1
 at sun
 ttl 3600
 field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
-note Babamul Caltech LSST/ZTF-Broker /surveys/ZTF/alerts Bearer <BABAMUL_API_TOKEN> HTTP 200 2026-09-21; sky1 value=magpsf; Workflow babamul-cdn.yml; CDN-Asset pending sha256.
+note Babamul Caltech LSST/ZTF-Broker /api/babamul/objects Bearer 200 2026-09-21 (anonym 401); /surveys/{survey}/alerts verlangt Pflichtparameter — 400 ohne; sky1 value=magpsf; Workflow babamul-cdn.yml; CDN babamul_alerts.bin 404.
 
 url https://github.com/omegaflow/sources/releases/download/ia2-tap.oats.inaf.it/ia2_wgesdss.bin
 origin http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL
