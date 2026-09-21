@@ -1,5 +1,5 @@
 ---
-description: Mountain-Linie — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Mountain-Linie (Fundament — was ruht, was bleibt) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 

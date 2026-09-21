@@ -1,5 +1,5 @@
 ---
-description: Sensory-Linie — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Sensory-Linie (Sinne — Wahrnehmung, Muster im Rauschen) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
