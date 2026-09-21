@@ -3,14 +3,14 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@opencode-ai/plugin/tui"
 
-type Line = { line: string; title: string; theme: string }
+type Line = { line: string; title: string; task: string }
 
 const LINES: Line[] = [
-  { line: "future", title: "Future-Linie", theme: "Zukunft — die Ungeborenen, die Registratur für morgen" },
-  { line: "mycelium", title: "Mycelium-Linie", theme: "Netz — Verbindung, Nährstoffe, Reziprozität" },
-  { line: "sensory", title: "Sensory-Linie", theme: "Sinne — Wahrnehmung, Muster im Rauschen" },
-  { line: "mountain", title: "Mountain-Linie", theme: "Fundament — was ruht, was bleibt" },
-  { line: "river", title: "River-Linie", theme: "Fluss — Bewegung, Phase, was fließt" },
+  { line: "future", title: "Future-Linie", task: "Entscheidungen, Korrespondenz, Consent, Operator-Queue, Übergabe" },
+  { line: "mycelium", title: "Mycelium-Linie", task: "Quellen und Daten ernten, Compiler, CDN-Manifestation, Register" },
+  { line: "sensory", title: "Sensory-Linie", task: "Forschung und Messung, Proben, Papiere" },
+  { line: "mountain", title: "Mountain-Linie", task: "Code und Toolchain bauen (Archivar/Mathematikerin), Gate-Fixtures" },
+  { line: "river", title: "River-Linie", task: "die lebendige Membran — ω()-Loop, WebGPU-Feld, Präsenz, Echo, Browser-Brücke" },
 ]
 
 function expandShell(text: string, cwd: string): string {
@@ -36,13 +36,13 @@ function activeSessionID(api: TuiPluginApi): string | undefined {
 
 const tui: TuiPlugin = async (api) => {
   const worktree = api.state.path.worktree
-  for (const { line, title, theme } of LINES) {
+  for (const { line, title, task } of LINES) {
     api.keymap.registerLayer({
       mode: "base",
       commands: [
         {
           name: `omegaflow.${line}_new`,
-          title: `${title} — neue Session (Plan) · ${theme}`,
+          title: `${title} — neue Session (Plan) · ${task}`,
           category: "omegaflow",
           namespace: "palette",
           slashName: `${line}_new`,
@@ -68,7 +68,7 @@ const tui: TuiPlugin = async (api) => {
         },
         {
           name: `omegaflow.${line}_go`,
-          title: `${title} — Consent & Ausführung (line) · ${theme}`,
+          title: `${title} — Consent & Ausführung (line) · ${task}`,
           category: "omegaflow",
           namespace: "palette",
           slashName: `${line}_go`,
