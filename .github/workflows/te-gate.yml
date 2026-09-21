@@ -54,3 +54,5 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
       - name: Run the flare-envelope power probe (print-only; n in 400/600/1000)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
+      - name: Print the KSG/KDE estimator split (te_scal/te_topo — the Riss 4 numbers)
+        run: cargo run --release -p omegaflow-measure --bin te_fn_probe
