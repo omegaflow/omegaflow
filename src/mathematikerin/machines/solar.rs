@@ -386,13 +386,13 @@ impl SolarMachine {
         });
         let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 288,
+            size: te_verdict_bytes(TE_KSG_K_PROD),
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
         let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 288,
+            size: te_verdict_bytes(TE_KSG_K_PROD),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -544,7 +544,7 @@ impl SolarMachine {
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
         let max_lag = (m as f64 / Φ) as u32;
-        let param = [m as u32, max_lag, 1.0f32.to_bits(), 0];
+        let param = [m as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K_PROD];
         let mut pb = [0u8; 16];
         for (i, x) in param.iter().enumerate() {
             pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
@@ -557,7 +557,7 @@ impl SolarMachine {
             pass.set_bind_group(0, bind, &[]);
             pass.dispatch_workgroups(1, 1, 1);
         }
-        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
         queue.submit(std::iter::once(enc.finish()));
         let mapped = Arc::new(AtomicBool::new(false));
         let m2 = mapped.clone();
