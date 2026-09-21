@@ -40,7 +40,7 @@ jobs:
           SLICE="${NED_SLICE:-48}"
           MAXREC="${NED_MAXREC:-2000}"
           SPACING="${NED_SPACING:-5.0}"
-          RELEASE="ssd.jpl.nasa.gov"
+          RELEASE="ned.ipac.caltech.edu-ned"
           REPO="omegaflow/sources"
           BIN="$(pwd)/target/release/ned_cone_compiler"
           if ! TOTAL="$("$BIN" --count --sr-arcmin "$SR" --spacing-deg "$SPACING")"; then

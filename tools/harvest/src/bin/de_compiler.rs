@@ -12,7 +12,7 @@ use omegaflow::pck::{self, PckBody};
 const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
 const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
 const DE_BODIES: [&str; 3] = ["sun", "moon", "earth"];
-const DEFAULT_NETLOC: &str = "ssd.jpl.nasa.gov";
+const DEFAULT_NETLOC: &str = "ssd.jpl.nasa.gov-de";
 
 fn fetch_text(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -92,7 +92,7 @@ fn main() {
             "  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin"
         );
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
-        eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov");
+        eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov-de");
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");
         eprintln!("  --ci-mode uploads each asset to the <netloc> CDN release");
         std::process::exit(1);

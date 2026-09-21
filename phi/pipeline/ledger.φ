@@ -9,7 +9,7 @@
 
 verifiziert
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Re-Messung 2026-09-21 (ernte): /tap/tables 200 (obscore), sync-QUERY 200 mit Daten (TOP 1 obs_id → grb_photometry/GRB200829A-0002_r_b1.fit). PostgreSQL erreichbar; Trigger sync-QUERY 500→200 erfüllt → verifiziert. Nächster Schritt: Compiler/Katalog obscore.
+note ivo://fai.kz/tap — Compiler fai_kz_compiler.rs + Format fai_kz_obscore (MAGIC FAI1, 57 B/Record) gebaut 2026-09-21 (ernte); obscore sync-QUERY 200, 5048 Zeilen (image 3003/spectrum 2045). CI-Lauf/Asset pending → dann kompiliert. Feld-Klassifikation pending.
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
@@ -19,9 +19,9 @@ ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
 note Re-Messung 2026-09-21: erddap.emodnet-physics.eu HTTP 0 (ERR_TIMED_OUT, kein .eu-exit, wayback 503); maxTime/Geschwister nicht messbar. Stand 2026-09-19: maxTime 2026-07-30T23:30:00Z, Frontier 2026-07-31T00:00:00Z, 5 Geschw. Trigger: Host erreichbar.
 
-ausstehend
+kompiliert
 kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
-note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml, sources.φ-Block pending sha256; Manifestation offen — Lauf 35581429287 dispatched (Vorgänger 35577618006 Transient-Failure); ucsdHfrW2 200.
+note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml; Manifestation sha256 6bad8000681201568461adab5db4e4958610e971276ae3fcec4dc2971c5ae657 (480728 B); Lauf 35581429287 success.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/

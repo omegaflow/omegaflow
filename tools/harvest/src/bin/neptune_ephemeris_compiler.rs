@@ -9,7 +9,7 @@ use omegaflow::pck::{self, PckBody};
 
 const IAU_PCK_10: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc";
 const IAU_PCK_11: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc";
-const NETLOC: &str = "ssd.jpl.nasa.gov";
+const NETLOC: &str = "ssd.jpl.nasa.gov-neptune";
 const LABEL: &str = "de440";
 const NEPTUNE_BARYCENTER: i32 = 8;
 const BODY_NAME: &str = "neptune";
