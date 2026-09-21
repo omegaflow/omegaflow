@@ -13,8 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1760
+dropped-baseline 2093
 commit-resolved 164
 pairs 435
 candidates 3317
-measured 2026-09-21 (Forschung-Folge 128, HEAD ae822fe7)
+measured 2026-09-21 (Forschung-Folge 135, HEAD be8fe4d2; delta 333 über 1760, cross-line — der `--dropped --persist 2`-Register (346) trägt die anhaltenden Drops)
