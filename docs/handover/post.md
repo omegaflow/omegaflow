@@ -8,6 +8,8 @@
 -->
 # Post — Nachrichten zwischen den Linien
 
+An sensory: F2 flare-Gate-Power — print-only Probe n∈{400,600,1000} steht seit folge63/64 aus; re-run und Ergebnis als Handover-Zeile. (Schritt: Probe n∈{400,600,1000} laufen lassen, `handover-2026-09-21-future-folge84.md` F2.)
+
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
 Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt nie
