@@ -1,4 +1,4 @@
-use omegaflow::te::{embed_series, find_mi_lag, transfer_entropy_embedded};
+use omegaflow::te::{embed_series, find_mi_lag, transfer_entropy_embedded_kde};
 
 const N_TRIALS: usize = 30;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -151,7 +151,7 @@ fn main() {
         if emb_x.is_empty() || emb_y.is_empty() {
             continue;
         }
-        let Some(te) = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y) else {
+        let Some(te) = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y) else {
             continue;
         };
         te_sum += te;
@@ -168,7 +168,7 @@ fn main() {
             if h_check.is_none() {
                 continue;
             }
-            if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, tau_x, tau_y) {
+            if let Some(te_s) = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_s, tau_x, tau_y) {
                 vals.push(te_s);
             }
         }
@@ -182,16 +182,19 @@ fn main() {
             }
         }
     }
+    let rate = if meas > 0 {
+        format!("{:.1}", fp as f64 * 100.0 / meas as f64)
+    } else {
+        "absent".to_string()
+    };
+    let te_mean = if meas > 0 {
+        format!("{:.4e}", te_sum / meas as f64)
+    } else {
+        "absent".to_string()
+    };
     println!(
-        "FP with CORRECT RNG (full circle, phi ∈ [0, 2π)): {}/{} = {:.1} %, te mean {:.4e}",
-        fp,
-        meas,
-        fp as f64 * 100.0 / meas.max(1) as f64,
-        if meas > 0 {
-            te_sum / meas as f64
-        } else {
-            f64::NAN
-        }
+        "FP with CORRECT RNG (full circle, phi ∈ [0, 2π)): {}/{} = {} %, te mean {}",
+        fp, meas, rate, te_mean
     );
     println!(
         "Counter-value (canonical, broken half circle): 100 % — the row above reads whether the RNG is the root."
