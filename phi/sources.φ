@@ -8727,7 +8727,8 @@ compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
 format quaoar_occlt
 ttl 604800
 at earth
-note CDN-Asset pending (sha256 nach Manifestation); Quaoar (50000) Sternbedeckungs-Lichtkurven data/YYYYMMDD_site.txt → QAO1-Serie; Arm quaoar_occlt.rs; ZIP 297 Einträge gemessen 2026-09-21; workflow quaoar-occlt-cdn.yml.
+sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
+note kompiliert 2026-09-21: Lauf quaoar-occlt-cdn 35595708241 success, quaoar_occlt.bin 2540672 B (sniff 200); Quaoar (50000) Sternbedeckungs-Lichtkurven data/YYYYMMDD_site.txt → QAO1-Serie; Arm quaoar_occlt.rs; ZIP 297 Einträge.
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
