@@ -9,7 +9,7 @@
 
 kompiliert
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap fai_kz_compiler.rs fai_kz_obscore; obscore sync-QUERY 200, 5048 Zeilen; CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B) fai-kz-cdn Lauf 35591261870 success. Feld-Klassifikation pending.
+note ivo://fai.kz/tap; obscore sync-QUERY 200, 5048 Zeilen; CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B) fai-kz-cdn 35591261870 success; em-Beobachtungs-Zeuge S²-Richtung Band em_min/em_max Wert absent.
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
