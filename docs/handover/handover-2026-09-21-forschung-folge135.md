@@ -3,7 +3,7 @@
   session: Forschung-Folge 135
   class: handover
   date: 2026-09-21
-  sha256: ae61ae22500967cd1a1fe2adea9c559458d49dd3bba3bcaf287235f9679037dd
+  sha256: 03d5f489e4eaab2af7562e0874ca800a6d408ed12e648c5281559d1ba12ea45f
   status: live
 -->
 # Handover — Forschung-Folge 135 (Stand 2026-09-21)
@@ -32,8 +32,9 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   Job-Log HTTP 404): `hyperscanning-te` `35587070232` @`0f8bc1b2` (in_progress
   ohne Abschluss), `te-gate` `35586377356` @`42aeeea4` (pending, 0 Jobs),
   `ci-check` `35592556416` @`0c0b30fb` (in_progress nach Job-Ende 11:23).
-  Gecancelt (frei die Concurrency-Gruppe); `hyperscanning-te` neu dispatcht:
-  `35595713732` @`be8fe4d2`. Kein Poll.
+  Gecancelt (frei die Concurrency-Gruppe); neu dispatcht **mit dem Push**, alle
+  drei @`44e77da0`: `hyperscanning-te` `35596009980`, `te-gate` `35595896140`,
+  `ci-check` `35595889051`. Kein Poll.
 
 ## Riss — getragen als Naht (unverändert, gemessen 35584758519 @c7cb201f)
 
@@ -50,10 +51,10 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Fix A committet (`0f8bc1b2`); der alte Lauf `35587070232` war
-  ghost-locked (Job-Log 404, kein Verdikt). Neu dispatcht: `35595713732`
-  @`be8fe4d2` (`gh workflow run hyperscanning-te.yml`, Defaults phase/Fz/95/200).
+  ghost-locked (Job-Log 404, kein Verdikt). Neu dispatcht: `35596009980`
+  @`44e77da0` (`gh workflow run hyperscanning-te.yml`, Defaults phase/Fz/95/200).
 - **Blockade:** Run-Abschluss (funktionaler Lauf nur in CI).
-- **Braucht:** `ci_manage view 35595713732` einmal.
+- **Braucht:** `ci_manage view 35596009980` einmal.
 
 ## Punkt 2 — `te-gate` n=1000-FPR-Boden
 
@@ -92,7 +93,7 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
 ## Punkt 5 — Frontalkanäle F3/F4; Takens-Wandzeit
 
 - **Status:** wartend | **Bindung:** eigen
-- **Lage:** beide hängen am grünen Screen; der Lauf `35595713732` liefert die
+- **Lage:** beide hängen am grünen Screen; der Lauf `35596009980` liefert die
   Wandzeit.
 - **Blockade:** Run-Abschluss.
 - **Braucht:** nach grünem Lauf Wandzeit lesen; F3/F4 getrennt fahren.
@@ -131,11 +132,11 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
 
 | Punkt | Status | Bindung | Lage | Blockade | Braucht |
 |---|---|---|---|---|---|
-| 1. `family_fn_gate` Fix A | wartend | eigen | `35595713732` @`be8fe4d2` neu dispatcht | Run-Abschluss | `ci_manage view 35595713732` |
+| 1. `family_fn_gate` Fix A | wartend | eigen | `35596009980` @`44e77da0` neu dispatcht | Run-Abschluss | `ci_manage view 35596009980` |
 | 2. `te-gate` n=1000 | wartend | eigen | `35586377356` gecancelt | Push + Run | `gh workflow run te-gate.yml` nach Push |
 | 3. `--dropped` Baseline | wartend | eigen | current 2093, Baseline auf 2093 gesetzt | nächster ci-check | `ci_manage view <ci-check-id>` |
 | 4. confirmation-Test | blockiert | eigen | rot am Schätzer | Schätzer-Güte | Rat (Instrument vs. Pfad) |
-| 5. F3/F4 + Takens | wartend | eigen | — | grüner Screen (←1) | `ci_manage view 35595713732` |
+| 5. F3/F4 + Takens | wartend | eigen | — | grüner Screen (←1) | `ci_manage view 35596009980` |
 | 6. Riss 4 KSG↔KDE | wartend | eigen | B committet; `te_fn_probe`-Step neu | CI-Nachweis + Zahlen | ci-check; `te-gate`-Lauf |
 | 8. Flyby-Path-2 | termin:2026-09-28 | termin | Auftrag steht | Datum | Zellen ab Perigäum |
 | 9. NSE/Haug | wartend | dritter | Route offen | Dateieingang | Trigger |
