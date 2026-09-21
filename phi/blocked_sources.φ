@@ -18,10 +18,10 @@ descoped
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
 note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — normal optical depth τ(r)-Profile, binned+rekonstruiert (Marouf 1986). 2026-09-19 tar.gz HTTP 200 (5.7G+v1 397M), offen. Raw RSS NICHT im Bundle → atmos.nmsu.edu (cassini_tnf).
 
-blocked account
-url https://superdarn.ca/data-access
+pending
+url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN — HF-Radar-Ionosphären-Konvektion, em. 2026-09-16: superdarn.ca HTTP 200, /data-access HTTP 200; Datenroute über Globus + PI-Vereinbarung (piagreement); api.superdarn.ca DNS-tot. Zugang gegatet → blocked account.
+note SuperDARN 2026-09-21: FITACF-POST superdarn.ca/data-download → sdc-serv.usask.ca/data/…fitacf.bz2 (200, sha256 48637f08…); Inventar /db-fitacf-files-bounce; FRDR 31 Datasets; Zenodo 822 Records cc-zero; nur full-res RAWACF Globus+PI. pending.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -59,12 +59,12 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 blocked key
 url https://api.le-systeme-solaire.net/rest/bodies/
-note solar-system-open-data REST: HTTP 401 (Bearer-Token) 2026-09-20; Koerperdaten ohne Konto nicht abrufbar.
-reg https://api.le-systeme-solaire.net/
+note solar-system-open-data REST: HTTP 401 (Bearer) 2026-09-20. Key frei/selbstbedienung: api.le-systeme-solaire.net/en/generatekey.html (200, „Enter your email to get your free API Key"), Token+Zugang kostenlos. E-Mail-Registrierung offen → operator.
+reg https://api.le-systeme-solaire.net/en/generatekey.html
 
 blocked account
 url https://developer.amentum.io/register
-note Amentum Developer (geomagnetisch/aviation-radiation/gravity, trial): Registrierung HTTP 200; Zugang nur mit Konto.
+note Amentum Developer (geomagnetisch/aviation-radiation/gravity): register 200 2026-09-21, „14-day free trial", Selbstbedienung (E-Mail+Passwort), SLA. Zugang nur mit Konto → operator.
 reg https://developer.amentum.io/register
 
 pending
