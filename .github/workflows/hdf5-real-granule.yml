@@ -24,4 +24,4 @@ jobs:
           "https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/2026/001/00/OR_GLM-L2-LCFA_G18_s20260010029200_e20260010029400_c20260010029411.nc"
         echo "07caa4325bac5ea25ab35226156b05d98c6f94721eaf54d266d3f20016cffc4e  granule.nc" | sha256sum -c -
     - name: Real-granule read — the name btree materializes every element
-      run: GLM_L2_GRANULE=granule.nc cargo test --release -p omegaflow -- --ignored real_granule_glm_l2_name_btree_materializes_every_element
+      run: GLM_L2_GRANULE=granule.nc cargo test --release -p omegaflow -- --ignored --nocapture real_granule_glm_l2_name_btree_materializes_every_element

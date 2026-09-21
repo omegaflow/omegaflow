@@ -521,11 +521,106 @@ fn te_embedded_kde(tau_x: u32, tau_y: u32, sy: u32, h_f: f32, h_x: f32, h_y: f32
     return te / f32(m);
 }
 
+fn digamma_f32(x: f32) -> f32 {
+    var v = x;
+    var acc: f32 = 0.0;
+    while (v < 8.0) {
+        acc = acc - 1.0 / v;
+        v = v + 1.0;
+    }
+    let inv = 1.0 / v;
+    let inv2 = inv * inv;
+    return acc + log(v) - 0.5 * inv - inv2 * (1.0 / 12.0 - inv2 * (1.0 / 120.0 - inv2 * (1.0 / 252.0 - inv2 * (1.0 / 240.0))));
+}
+
+fn ksg_joint_max(sy: u32, i: u32, j: u32, tau_x: u32, tau_y: u32) -> f32 {
+    var d: f32 = 0.0;
+    let df = abs(ser_at(0u, i + tau_x) - ser_at(0u, j + tau_x));
+    d = max(d, df);
+    for (var di = 0u; di < DIM; di = di + 1u) {
+        let i_x = i - (DIM - 1u - di) * tau_x;
+        let j_x = j - (DIM - 1u - di) * tau_x;
+        d = max(d, abs(ser_at(0u, i_x) - ser_at(0u, j_x)));
+    }
+    for (var di = 0u; di < DIM; di = di + 1u) {
+        let i_y = i - (DIM - 1u - di) * tau_y;
+        let j_y = j - (DIM - 1u - di) * tau_y;
+        d = max(d, abs(ser_at(sy, i_y) - ser_at(sy, j_y)));
+    }
+    return d;
+}
+
+fn ksg_eps(sy: u32, i: u32, t_low: u32, m: u32, tau_x: u32, tau_y: u32, k_eff: u32) -> f32 {
+    var remaining = k_eff;
+    var floor_v: f32 = 0.0;
+    var have_floor = false;
+    while (remaining > 0u) {
+        var best: f32 = 3.4028235e38;
+        var count: u32 = 0u;
+        for (var j = t_low; j < t_low + m; j = j + 1u) {
+            if (j == i) { continue; }
+            let d = ksg_joint_max(sy, i, j, tau_x, tau_y);
+            if (have_floor && d <= floor_v) { continue; }
+            if (d < best) { best = d; count = 1u; }
+            else if (d == best) { count = count + 1u; }
+        }
+        if (count >= remaining) { return best; }
+        remaining = remaining - count;
+        floor_v = best;
+        have_floor = true;
+    }
+    return 3.4028235e38;
+}
+
+fn te_embedded_ksg(tau_x: u32, tau_y: u32, sy: u32, n: u32, k: u32) -> f32 {
+    let back_x = (DIM - 1u) * tau_x;
+    let back_y = (DIM - 1u) * tau_y;
+    let t_low = max(back_x, back_y);
+    let t_high = n - tau_x - 1u;
+    let m = t_high - t_low + 1u;
+    let k_eff = min(k, m - 1u);
+    var sum: f32 = 0.0;
+    for (var i = t_low; i <= t_high; i = i + 1u) {
+        let eps = ksg_eps(sy, i, t_low, m, tau_x, tau_y, k_eff);
+        var n_x: u32 = 0u;
+        var n_xx: u32 = 0u;
+        var n_xy: u32 = 0u;
+        for (var j = t_low; j <= t_high; j = j + 1u) {
+            if (j == i) { continue; }
+            let fut = abs(ser_at(0u, i + tau_x) - ser_at(0u, j + tau_x)) < eps;
+            var sx = true;
+            for (var di = 0u; di < DIM; di = di + 1u) {
+                let i_x = i - (DIM - 1u - di) * tau_x;
+                let j_x = j - (DIM - 1u - di) * tau_x;
+                if (abs(ser_at(0u, i_x) - ser_at(0u, j_x)) >= eps) {
+                    sx = false;
+                    break;
+                }
+            }
+            var sy_ok = true;
+            for (var di = 0u; di < DIM; di = di + 1u) {
+                let i_y = i - (DIM - 1u - di) * tau_y;
+                let j_y = j - (DIM - 1u - di) * tau_y;
+                if (abs(ser_at(sy, i_y) - ser_at(sy, j_y)) >= eps) {
+                    sy_ok = false;
+                    break;
+                }
+            }
+            if (fut && sx) { n_x = n_x + 1u; }
+            if (sx) { n_xx = n_xx + 1u; }
+            if (sx && sy_ok) { n_xy = n_xy + 1u; }
+        }
+        sum = sum + digamma_f32(f32(n_xx + 1u)) - digamma_f32(f32(n_x + 1u)) - digamma_f32(f32(n_xy + 1u));
+    }
+    return digamma_f32(f32(k_eff)) + sum / f32(m);
+}
+
 @compute @workgroup_size(16)
 fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
     let tid = gid.x;
     let n = params.x;
     let max_lag = params.y;
+    let k = params.w;
     if (tid >= SERIES_COUNT) { return; }
     var tau: f32 = 0.0;
     var te: f32 = 0.0;
@@ -533,6 +628,8 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
     var motifs: f32 = 0.0;
     var valid: f32 = 0.0;
     var pe_valid: f32 = 0.0;
+    var ksg_te: f32 = 0.0;
+    var ksg_valid: f32 = 0.0;
     var finite_ok: bool = true;
     for (var i = 0u; i < n; i = i + 1u) {
         let va = ser_at(tid, i);
@@ -583,6 +680,11 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
                             valid = 1.0;
                         }
                     }
+                    if (m >= 8u && k > 0u) {
+                        tau = f32(u_ty);
+                        ksg_te = te_embedded_ksg(u_tx, u_ty, tid, n, k);
+                        ksg_valid = 1.0;
+                    }
                 }
             }
         }
@@ -602,6 +704,11 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
     verdict[o + 3u] = motifs;
     verdict[o + 4u] = valid;
     verdict[o + 5u] = pe_valid;
+    if (k > 0u) {
+        let o_ksg = SERIES_COUNT * 6u + tid * 2u;
+        verdict[o_ksg + 0u] = ksg_te;
+        verdict[o_ksg + 1u] = ksg_valid;
+    }
 }
 "#;
 

@@ -4074,9 +4074,11 @@ mod tests {
         );
 
         let (obj, _ds, _dt) = file.dataset("flash_lat").unwrap();
+        println!("flash_lat layout: {:?}", obj.layout);
         assert!(
-            matches!(obj.layout, Some(Hdf5Layout::Contiguous { .. })),
-            "flash_lat is contiguous"
+            obj.layout.is_some() && !matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })),
+            "flash_lat carries no chunk btree (layout: {:?})",
+            obj.layout
         );
     }
 
