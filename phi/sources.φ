@@ -8718,7 +8718,7 @@ on earth 0 0 0
 ttl 86400
 field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field NSCT emodnet_hfr_northward_m_s patch-levy advective m/s 21600 0.0 0.0
-note CDN-Asset pending sha256; ERDDAP EUHFR_NRTcurrent_HFR-NAdr-Total HTTP 200 gemessen 2026-09-21 (EWCT/NSCT m s-1, Tiefe 0.0, PT30M); Arm emodnet_hfr geo HFR1; griddap braucht %5B/%5D; workflow emodnet-hfr-cdn.yml.
+note CDN-Asset sha256 adb411288302e725ca957d12505e1e4a934b1a34415a08a20c4d07b3e4cce7ac (24248 B); Lauf 35598877845 success; ERDDAP HTTP 200 2026-09-21 (EWCT/NSCT m s-1, Tiefe 0.0, PT30M); Arm emodnet_hfr geo HFR1; workflow emodnet-hfr-cdn.yml.
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
