@@ -2,7 +2,8 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    coherent_phase_surrogates, phase_randomized_surrogate, topological_te_estimate,
+    coherent_phase_surrogates, find_mi_lag, phase_randomized_surrogate, topological_te_estimate,
+    topological_te_estimate_frozen,
 };
 use omegaflow_measure::eeglab::{
     channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat, resolve_channel,
@@ -286,6 +287,29 @@ fn randomized_triad(
     }
 }
 
+fn member_taus(series: &[(String, Vec<f32>)]) -> Vec<Option<usize>> {
+    series
+        .iter()
+        .map(|(_, v)| {
+            let vf: Vec<f64> = v.iter().map(|&x| x as f64).collect();
+            find_mi_lag(&vf)
+        })
+        .collect()
+}
+
+fn frozen_estimate(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    tau_x: Option<usize>,
+    tau_y: Option<usize>,
+) -> Option<f64> {
+    match (tau_x, tau_y) {
+        (Some(tx), Some(ty)) => topological_te_estimate_frozen(x, y, dim, tx, ty).map(|e| e.te),
+        _ => None,
+    }
+}
+
 fn surrogate_family_maxima(
     triads: &[(String, Vec<(String, Vec<f32>)>)],
     dim: usize,
@@ -299,6 +323,7 @@ fn surrogate_family_maxima(
         offsets.push(total_cells);
         total_cells += series.len() * series.len().saturating_sub(1);
     }
+    let frozen: Vec<Vec<Option<usize>>> = triads.iter().map(|(_, s)| member_taus(s)).collect();
     let mut cell_distributions: Vec<Vec<f64>> = vec![Vec::new(); total_cells];
     let mut out = Vec::with_capacity(n_surr);
     for s in 0..n_surr {
@@ -311,13 +336,18 @@ fn surrogate_family_maxima(
                     if i == j {
                         continue;
                     }
-                    if let Some(est) = topological_te_estimate(&randomized[j], &randomized[i], dim)
-                    {
-                        if family.map_or(true, |f| est.te > f) {
-                            family = Some(est.te);
+                    if let Some(te) = frozen_estimate(
+                        &randomized[j],
+                        &randomized[i],
+                        dim,
+                        frozen[t][j],
+                        frozen[t][i],
+                    ) {
+                        if family.map_or(true, |f| te > f) {
+                            family = Some(te);
                         }
                         let slot = cell_slot(offsets[t], members, i, j);
-                        cell_distributions[slot].push(est.te);
+                        cell_distributions[slot].push(te);
                     }
                 }
             }
@@ -356,6 +386,7 @@ fn confirmation_cell_nulls(
     for (idx, p) in plan.iter().enumerate() {
         by_triad[p.0].push(idx);
     }
+    let frozen: Vec<Vec<Option<usize>>> = triads.iter().map(|(_, s)| member_taus(s)).collect();
     for s in 0..n_surr {
         for (ti, members) in triads.iter().enumerate() {
             if by_triad[ti].is_empty() {
@@ -364,8 +395,14 @@ fn confirmation_cell_nulls(
             let randomized = randomized_triad(&members.1, seed, s, ti, coherent);
             for &idx in &by_triad[ti] {
                 let (_, i, j, _) = plan[idx];
-                if let Some(est) = topological_te_estimate(&randomized[j], &randomized[i], dim) {
-                    dists[idx].push(est.te);
+                if let Some(te) = frozen_estimate(
+                    &randomized[j],
+                    &randomized[i],
+                    dim,
+                    frozen[ti][j],
+                    frozen[ti][i],
+                ) {
+                    dists[idx].push(te);
                 }
             }
         }
@@ -792,6 +829,26 @@ mod tests {
         v
     }
 
+    fn rich_series(n: usize, rng: &mut u64) -> Vec<f32> {
+        let periods = [7.3f64, 13.1, 23.7, 41.9, 67.3];
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for t in 0..n {
+            let s: f64 = periods
+                .iter()
+                .enumerate()
+                .map(|(k, &p)| {
+                    let amp = k as f64 + 1.0;
+                    let angle = 2.0 * std::f64::consts::PI * t as f64 / p + k as f64 * 0.9;
+                    amp * angle.sin()
+                })
+                .sum();
+            x = 0.6 * x + s + 0.3 * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
     #[test]
     fn a_structured_driver_breaks_the_family_maximum() {
         let mut rng = SEED ^ 0xDEAD_BEEF;
@@ -1032,6 +1089,39 @@ mod tests {
         assert!(
             fp <= 6,
             "per-cell-FP gate: {fp} of {meas} above their own null — the per-cell rule exceeds chance"
+        );
+    }
+
+    #[test]
+    fn coherent_null_fp_gate() {
+        let mut rng = SEED ^ 0xC0FF_1E11;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let a = rich_series(400, &mut rng);
+            let b = rich_series(400, &mut rng);
+            let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
+            let triads = vec![("G01".to_string(), members)];
+            let cells = observed_cells(&triads, DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&triads, DIM, 50, SEED ^ (t as u64), true);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("coherent-per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "coherent-per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 6,
+            "coherent-per-cell-FP gate: {fp} of {meas} above their own coherent null — the per-cell rule exceeds chance"
         );
     }
 
