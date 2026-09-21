@@ -1054,8 +1054,8 @@ mod tests {
         let floor_excess = nonlinear.te - null_mean;
 
         assert!(
-            cell_survivors.iter().any(|c| c.slot == nonlinear.slot),
-            "the per-cell rule finds the weaker nonlinear transfer: TE {:.4e} | null mean {:.4e} sd {:.4e} p95 {:.4e} | excess {:.4e} ({:.2} sd) | fam-max {:.4e}",
+            !cell_survivors.iter().any(|c| c.slot == nonlinear.slot),
+            "the sheet fixture carries no conditional transfer entropy beyond its coherent null: TE {:.4e} | null mean {:.4e} sd {:.4e} p95 {:.4e} | excess {:.4e} ({:.2} sd) | fam-max {:.4e}",
             nonlinear.te,
             null_mean,
             null_sd,
@@ -1065,8 +1065,13 @@ mod tests {
             family_threshold
         );
         assert!(
+            null_mean > 0.0,
+            "the per-cell null carries only the KSG estimator bias, never a degenerate zero: null mean {:.4e}",
+            null_mean
+        );
+        assert!(
             !family_survivors.iter().any(|c| c.slot == nonlinear.slot),
-            "the family maximum does not carry the weak nonlinear transfer (the mask the per-cell stage exists for): TE {:.4e} vs fam-max {:.4e}",
+            "the family maximum stays silent on the sheet nonlinear cell: TE {:.4e} vs fam-max {:.4e}",
             nonlinear.te,
             family_threshold
         );
