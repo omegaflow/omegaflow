@@ -3,7 +3,7 @@
   session: Ernte-Folge 131
   class: handover
   date: 2026-09-21
-  sha256: a1fa318fe236dc68334ea9235d5df75dfa6c72971e524e5871f700d5055de381
+  sha256: 7a2dbc408f648c54cd4e683ea30eba717ab82a2a8ba8bb8a9e38ddabf6fe1fc9
   status: live
 -->
 # Handover — Ernte-Folge 131 (2026-09-21)
@@ -39,14 +39,14 @@ Wartestellungen sind kein Auswahlpunkt.
 - **Lage:** Alle 148 `sources.φ`-`url`-Zeilen vom gekappten Tag
   `releases/download/ssd.jpl.nasa.gov/` auf Familien-Tags umgestellt
   (`sgrep -c` = 0); Compiler `eve`/`ned`/`de`/`neptune_ephemeris` auf
-  `upload_release(<familie>)` migriert; `cargo check` 0/0. Geänderte Workflows
-  dispatched: eve `35590913080`, ned `35590915445`, de44 `35590918321`,
-  neptune-de440s `35590921109`.
-- **Blockade:** neue Workflows (babamul/ia2/fai-kz) sind vor dem Push nicht
-  dispatchbar (HTTP 404 auf default branch).
-- **Braucht:** nach Push `gh workflow run {babamul,ia2,fai-kz}-cdn.yml`; die
-  migrierten Tags brauchen die Re-Manifestation (betroffene `-cdn.yml` prüfen,
-  Vormittags-Failures zuordnen).
+  `upload_release(<familie>)` migriert; `cargo check` 0/0. Nach dem Push alle 7
+  Workflows dispatched: babamul `35591238287`, ia2 `35591241104`, fai-kz
+  `35591243929`, eve `35591246071`, ned `35591248345`, de44 `35591251300`,
+  neptune-de440s `35591254999`.
+- **Blockade:** keine.
+- **Braucht:** Lauf-Abschluss prüfen (`ci_manage view`); bei success sha256 →
+  `sources.φ`/`ledger.φ` → `kompiliert`; die migrierten Tags brauchen die
+  Re-Manifestation (Vormittags-Failures zuordnen).
 
 ### neptune_ephemeris_compiler — Registerzeile fehlt
 - **Status:** offen | **Bindung:** eigen
@@ -57,22 +57,24 @@ Wartestellungen sind kein Auswahlpunkt.
   nicht-manifestiert benennen.
 
 ### Babamul / IA2 — Manifestation
-- **Status:** wartend | **Bindung:** termin (Push)
+- **Status:** wartend | **Bindung:** termin (Läufe `35591238287`/`35591241104`)
 - **Lage:** Workflows `babamul-cdn.yml`/`ia2-cdn.yml` gebaut (Muster
   `hfrnet-cdn.yml`, Tags `babamul.caltech.edu`/`ia2-tap.oats.inaf.it`);
-  `sources.φ`-Blöcke eingetragen (pending sha256); Routen 200 (2026-09-21).
-- **Blockade:** Push.
-- **Braucht:** nach Push `gh workflow run {babamul,ia2}-cdn.yml`; bei success
-  sha256 → `sources.φ` + `ledger.φ` → `kompiliert`.
+  `sources.φ`-Blöcke eingetragen (pending sha256); Routen 200 (2026-09-21);
+  gepusht + dispatched.
+- **Blockade:** Lauf-Abschluss.
+- **Braucht:** `ci_manage view`; bei success sha256 → `sources.φ` + `ledger.φ`
+  → `kompiliert`.
 
 ### TAP fai.kz — Manifestation + Feld-Klassifikation
-- **Status:** wartend | **Bindung:** termin (Push)
+- **Status:** wartend | **Bindung:** termin (Lauf `35591243929`)
 - **Lage:** `src/archivar/fai_kz.rs` (Format FAI1, 57 B/Record) +
   `tools/harvest/src/bin/fai_kz_compiler.rs` gebaut (`cargo check` 0/0);
   `sources.φ`-Block eingetragen; `ledger.φ:10` bleibt `verifiziert` (Compiler
-  gebaut, Asset pending); obscore 5048 Zeilen (image 3003/spectrum 2045).
-- **Blockade:** Push; Feld-Klassifikation (obscore trägt keinen skalaren Fluss).
-- **Braucht:** nach Push `gh workflow run fai-kz-cdn.yml` → sha256 → `kompiliert`;
+  gebaut, Asset pending); obscore 5048 Zeilen (image 3003/spectrum 2045);
+  gepusht + dispatched.
+- **Blockade:** Lauf-Abschluss; Feld-Klassifikation (obscore trägt keinen skalaren Fluss).
+- **Braucht:** `ci_manage view 35591243929` → bei success sha256 → `kompiliert`;
   Feld-/force-/τ-Zeilen sind ein Oszillator-Gate-Entscheid (`pending`).
 
 ### Quaoar Sternbedeckung — Manifestation
