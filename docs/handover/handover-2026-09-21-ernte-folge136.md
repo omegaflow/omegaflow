@@ -3,7 +3,7 @@
   session: Ernte-Folge 136
   class: handover
   date: 2026-09-21
-  sha256: cad5f4e54cafc5e870670bee162e5fa211cccf8d6ae464ba73798629a9cb6cb4
+  sha256: ddb978e2403f5ba4fa5efe390af67fb66f859cc4ff06c4d0adad774faacb1eff
   status: live
 -->
 # Handover — Ernte-Folge 136 (2026-09-21)
@@ -61,16 +61,16 @@ abgearbeitet. Jeder offene Punkt ist aufgeschlüsselt: **Lage** / **Blockade** /
 ## Offen (aufgeschlüsselt)
 
 ### Babamul CDN-Manifestation
-- **Status:** ausstehend | **Bindung:** eigen
-- **Lage:** CI `35649296996` (babamul-cdn) dispatched 2026-09-21, queued; note in `phi/sources.φ:14016` + `ledger.φ:20`.
-- **Blockade:** Lauf nicht abgeschlossen.
-- **Braucht:** einmal `ci_manage view 35649296996` → sha256/Größe in `sources.φ:14016` + `ledger.φ`.
+- **Status:** blockiert | **Bindung:** eigen
+- **Lage:** CI `35649296996` (babamul-cdn) **failure**: `babamul_compiler --ci-mode` läuft, dann exit 1 — „53 B carry no measured candidate — the bin stays unwritten (0 honored)". `sources.φ:14016` + `ledger.φ:20`.
+- **Blockade:** Compiler bricht bei 0 gemessenem Kandidaten mit exit 1 ab; der Workflow wertet das als Fehler.
+- **Braucht:** Bau-Atom — Compiler soll bei wahrhaftigem Leer (0 honored) exit 0 geben (oder der Workflow toleriert es), dann Re-Dispatch.
 
 ### EPA RadNet AGOL
 - **Status:** wartend | **Bindung:** eigen
-- **Lage:** CI `35649300152` (radnet-cdn) dispatched, queued; `blocked_sources.φ:63`, `sources.φ:1164`.
-- **Blockade:** Lauf nicht abgeschlossen.
-- **Braucht:** einmal `ci_manage view 35649300152` → `unjoined`-Zähler in die note.
+- **Lage:** CI `35649300152` (radnet-cdn) **success**; `blocked_sources.φ:63`, `sources.φ:1164`.
+- **Blockade:** keine.
+- **Braucht:** `unjoined`-Zähler aus dem Lauf lesen (`ci_manage log 35649300152`) → in die note.
 
 ### src.pas TAP
 - **Status:** wartend | **Bindung:** termin (Dienst)
