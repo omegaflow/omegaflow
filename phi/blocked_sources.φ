@@ -73,5 +73,5 @@ note DEMETER ISL (CDPP) — Re-Messung 2026-09-21: rs-order/rs-catalog GET+POST 
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet hist. Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (nur loc_num/state/city); AGOL EPA_Radiation_Air_Monitors count=140 (nur Luft); geopub ERM_RADNET 404; FRS ofmpub get_facilities 503. Schritt: FRS-Retry RadNet.
+note EPA RadNet hist. Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (nur loc_num/state/city); RadNet Dashboard (near-real-time Air) offen mit Monitor-Standorten; AGOL EPA_Radiation_Air_Monitors count=140 (nur Luft); FRS ofmpub get_facilities 503. Schritt: FRS-Retry RadNet.
 
