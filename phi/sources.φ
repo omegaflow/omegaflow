@@ -1158,6 +1158,7 @@ url https://github.com/omegaflow/sources/releases/download/data.epa.gov/radnet.b
 format radnet
 origin https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
 compiler tools/harvest/src/bin/radnet_compiler.rs
+sha256 128ac4fd695f63a2e5fd156e1b416408880577555acf9e676d0e76b242a31c34
 at earth
 ttl 86400
 note EPA RadNet ERM_RESULT (Envirofacts): Route 200 2026-09-21; result_in_si=Bq/L (em), result_date YYYY-MM-DD; lat/lon ueber FEMA/Univ-Arizona AGOL (item caed82e8e13f47b183e2c7a1412949bc, Stand 2021), exakter Station-Join.
