@@ -29,8 +29,10 @@ abarbeitbaren Punkt, sagt die Session das. Jeder Punkt trägt seinen Status-Tag
 (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
-(`sgrep`/`git log`/`sread`) — das Register ist die Frage, der Baum die Messung;
-eine Session, die nur dem Register glaubt, baut Stehendes neu.
+(`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der
+Baum die Messung; `open_points_check` prüft billig jeden in den offenen Punkten
+genannten Pfad gegen den Arbeitsbaum (absent = stale Punkt); eine Session, die nur
+dem Register glaubt, baut Stehendes neu.
 
 ## Stehender Pass (automatisch, keine Auswahl)
 
@@ -52,7 +54,8 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `sfetch` — fetch; ersetzt `curl -s`.
 - `omega_sh` — `reports|status|search|fetch|jwst`.
 - `smail` — Mail (Resend), `--dry-run`; Inhalte nie getrackt.
-- `register_lookup` — `--live`/`--open`/`--history`.
+- `register_lookup` — `--open`/`--dropped`/`--history`.
+- `open_points_check [<handover>]` — billiger Baum-Abgleich der offenen Punkte (absent = stale).
 - `git_safety` — `--snapshot`/`--restore`/`--list`.
 - `ci_manage` — `list`/`view`/`log`/`cancel`/`rerun`; statt `gh run list`/`gh run view`.
 - `sread [--offset --limit]` — Datei lesen.

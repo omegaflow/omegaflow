@@ -223,6 +223,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --dropped [<line>] [--persist <n>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle); `--persist <n>` = nur Punkte, die ≥n Übergaben überleben, dann verschwinden |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
+| `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
 | `git_safety --close [<own-path>…]` | — | Commit-Abschluss-Check in einem Aufruf |
@@ -240,6 +241,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
 | `register_lookup` | `--open`/`--dropped`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff | lokal | P4 |
+| `open_points_check` | Pfad-Abgleich der offenen Punkte gegen den Arbeitsbaum (stale Punkt = genannter Pfad absent) | lokal | P4 |
 | `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
@@ -283,7 +285,7 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
 | P1 | build | edit + full bash | alle oben; teure Builds sind CI |
 | P2 | explore, council | git-read + `sgrep` | `sgrep` 0,04–0,08 s |
 | P3 | general, research-max | `archive_search`/`sfetch`/`curl`/`proton-wg` + git-read + `sgrep`/`omega_sh` | Netz-Modi 0,5–24 s, lokal 0,02–0,11 s |
-| P4 | plan | `register_lookup` + `git_safety` + git-read + `sgrep` | 0,05 + 1,2 + 0,07 s |
+| P4 | plan | `register_lookup` + `git_safety` + `open_points_check` + git-read + `sgrep` | 0,05 + 1,2 + 0,07 s |
 | P5 | grind-* | edit + full bash | wie P1 |
 | P6 | vision | nichts (kein edit, kein bash) | — |
 
