@@ -605,7 +605,14 @@ fn run(args: &[String]) -> Result<(), String> {
             }
             seen.insert((proj, sub), ());
             eprintln!("skycell {}.{:03}", proj, sub);
-            harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census, nside);
+            harvest_skycell(
+                proj,
+                sub,
+                &mut band_accum,
+                &mut band_max,
+                &mut census,
+                nside,
+            );
             if let Some(lim) = limit {
                 if census.skycells >= lim {
                     finished = true;
@@ -644,7 +651,14 @@ fn run(args: &[String]) -> Result<(), String> {
                         }
                         seen.insert((proj, sub), ());
                         eprintln!("skycell {}.{:03}", proj, sub);
-                        harvest_skycell(proj, sub, &mut band_accum, &mut band_max, &mut census, nside);
+                        harvest_skycell(
+                            proj,
+                            sub,
+                            &mut band_accum,
+                            &mut band_max,
+                            &mut census,
+                            nside,
+                        );
                         if let Some(lim) = limit {
                             if census.skycells >= lim {
                                 finished = true;
