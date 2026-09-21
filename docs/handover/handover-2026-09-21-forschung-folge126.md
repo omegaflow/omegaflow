@@ -3,7 +3,7 @@
   session: Forschung-Folge 126
   class: handover
   date: 2026-09-21
-  sha256: 17a2f9982dc8f96207de2186f21e3639698748afad779df9babf52c1b26a6634
+  sha256: f675e2db8be74a3f9244414f9c21dc5b11cc874989b6adbdf6bd667cf18ae4f7
   status: live
 -->
 # Handover — Forschung-Folge 126 (2026-09-21)
@@ -64,10 +64,10 @@ auf den Wert der wahren Serie ein, statt es je Surrogat neu zu suchen.
 - `cargo check -p omegaflow --all-targets` + `cargo check -p omegaflow-measure
   --all-targets`: 0/0.
 
-**Offen:** Verdikt — nach Commit+Push `gh workflow run hyperscanning-te.yml`,
-`ci_manage view <id>` einmal. Prognose: die eingefrorene Null fällt auf den
+**Offen:** Verdikt — **dispatcht** `hyperscanning-te` `35567708611` @`f0ca4026`
+(in_progress, post-push). Prognose: die eingefrorene Null fällt auf den
 gemeinsamen Schätzer-Boden; ob das Excess über p95 trägt, entscheidet der Lauf.
-(Schritt: dispatch nach Push, einmal lesen.)
+(Schritt: `ci_manage view 35567708611` einmal — nie pollen.)
 
 ## Punkt 2 — Kohärente-Null-FP-Gate gebaut (Symmetrie-Arm)
 
@@ -81,8 +81,9 @@ Pfad war nur im FN-Gate, nie im FP-Gate). Der CI-Teststep ist um
 ## Punkt 3 — `te-gate` n=1000-FPR-Boden
 
 `te-gate` `35534898200` @`bd88d2dc` **cancelled** (2026-09-21T02:15) — kein
-Verdikt; der n=1000-FPR-Boden bleibt ungemessen. (Schritt: neu dispatchen nach
-Push, `ci_manage view <id>` einmal.)
+Verdikt; der n=1000-FPR-Boden bleibt ungemessen. Neu **dispatcht** `te-gate`
+`35567711055` @`f0ca4026` (in_progress, post-push). (Schritt:
+`ci_manage view 35567711055` einmal.)
 
 ## Punkt 4 — nominees-Tests in den CI-Teststep?
 
@@ -144,9 +145,9 @@ wird als gemessene Konstante gedruckt, nie durch Lockern versteckt.
 
 | Punkt | Status | Bindung | Schritt |
 |---|---|---|---|
-| 1. τ-Einfrieren-Verdikt | wartend | eigen | nach Push `gh workflow run hyperscanning-te.yml`, `ci_manage view` einmal |
-| 2. Kohärente-Null-FP-Gate-Verdikt | wartend | eigen | Run lesen |
-| 3. `te-gate` n=1000-FPR | wartend | eigen | re-dispatch, `ci_manage view` einmal |
+| 1. τ-Einfrieren-Verdikt | wartend | eigen | `ci_manage view 35567708611` einmal |
+| 2. Kohärente-Null-FP-Gate-Verdikt | wartend | eigen | im Lauf `35567708611` |
+| 3. `te-gate` n=1000-FPR | wartend | eigen | `ci_manage view 35567711055` einmal |
 | 4. nominees-Tests in CI-Teststep? | wartend | eigen | Entscheidung + Workflow-Zeile |
 | 5. ci-check-Rot | wartend | eigen | `ci_manage view 35566258372`, heilen/benennen |
 | 6. `--dropped` als CI-Gate | wartend | eigen | Rat: Gate-Verdrahtung |
@@ -197,6 +198,7 @@ Zustand-Zeile folgt im nächsten freien Pass.
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
-Consent (Delegation), nie das Commit-Wort. Nach dem Push: `gh workflow run
-hyperscanning-te.yml` (τ-Einfrier-Verdikt) + `gh workflow run te-gate.yml`
-(n=1000-FPR-Boden), je `ci_manage view <id>` einmal.
+Consent (Delegation), nie das Commit-Wort. Commit `f0ca4026` gepusht (==
+`origin/main`); dispatcht: `hyperscanning-te` `35567708611` (τ-Einfrier-Verdikt) +
+`te-gate` `35567711055` (n=1000-FPR-Boden), beide @`f0ca4026`, in_progress — je
+`ci_manage view <id>` einmal, nie pollen.
