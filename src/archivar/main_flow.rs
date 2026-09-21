@@ -2567,6 +2567,7 @@ pub fn main_flow() {
                     | "copernicus_cdm_obs"
                     | "gdp_drifter"
                     | "hfrnet_rtv"
+                    | "emodnet_hfr"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

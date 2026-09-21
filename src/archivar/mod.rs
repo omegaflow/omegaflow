@@ -42,6 +42,7 @@ pub mod dl3;
 pub mod double;
 pub mod drs_fits;
 pub mod eea;
+pub mod emodnet_hfr;
 pub mod ephemeris;
 pub mod euvs;
 pub mod exclude;

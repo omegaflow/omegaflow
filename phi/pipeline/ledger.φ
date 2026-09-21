@@ -15,9 +15,9 @@ ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
 note ivo://src.pas/tap — 2026-09-21 PL-Exit (Operator-Wort): /tap HTTP 200; /tap/tables HTTP 500 (PostgreSQL localhost:5432 refused) — Route offen, Backend down. Tabellen pl610_dynamic_spectra_*, ionosondes, nqmaps, h2tecmaps, iriwarsaw. Trigger: /tap/tables 500→200.
 
-ausstehend
+verifiziert
 kandidat https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
-note 2026-09-21: Dataset umbenannt HFRADAR_NADR_Totals → EUHFR_NRTcurrent_HFR-NAdr-Total (56 HFRADAR-Totals live); Host direkt HTTP 200 (früherer Timeout transient); time_coverage_end 2026-09-21T10:00:00Z, start 2021-01-01, PT30M. Trigger: Compiler/Manifestation.
+note Compiler gebaut 2026-09-21: emodnet_hfr_compiler.rs + Arm emodnet_hfr.rs (geo HFR1, advective m/s, EWCT/NSCT), Workflow emodnet-hfr-cdn.yml; Manifestation offen (Asset pending sha256).
 
 kompiliert
 kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
