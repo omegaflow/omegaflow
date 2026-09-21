@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -247,7 +247,7 @@ fn main() {
     }
     if let Some(path) = out {
         let _ = fs::write(&path, buf);
-        if ci_mode && !upload_asset(&path) {
+        if ci_mode && !upload_release("doi.pangaea.de", &path) {
             eprintln!("upload: {} did not reach the CDN", path);
             std::process::exit(1);
         }

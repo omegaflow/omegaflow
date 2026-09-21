@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::wso_polar::{parse_bin, write_bin};
 use std::process::Command;
@@ -61,7 +61,10 @@ fn parse_mt(s: &str) -> Option<f64> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "wso_polar.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "wso_polar.bin".to_string(),
+    };
 
     let Some(body) = fetch(POLAR_URL) else {
         eprintln!("Polar.html fetch void — the series stays unwritten (0 honored)");
@@ -124,7 +127,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("wso.stanford.edu", &out) {
         std::process::exit(1);
     }
 }

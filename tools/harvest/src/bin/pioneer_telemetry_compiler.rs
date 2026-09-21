@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
 use omegaflow::pioneer_telemetry::{FILES, parse_bin, parse_series, write_bin};
 use std::process::Command;
@@ -37,7 +37,10 @@ fn fetch(url: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "pioneer10_telemetry.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "pioneer10_telemetry.bin".to_string(),
+    };
     let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
         Some(t) => t,
         None => {
@@ -102,7 +105,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("spdf.gsfc.nasa.gov", &out) {
         std::process::exit(1);
     }
 }

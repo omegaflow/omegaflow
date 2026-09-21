@@ -1,7 +1,7 @@
 use omegaflow::archivar::ck::{CkFile, CkFrameRef, SclkFile, switch_resolution};
 use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
-use omegaflow::cdn::{body_url, upload_asset};
+use omegaflow::cdn::{body_url, upload_release};
 use omegaflow::fk::FkFile;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::mat::matmul;
@@ -890,7 +890,7 @@ fn flatten(
                 body_name,
                 granules.len()
             ));
-            if ci_mode && !upload_asset(&path) {
+            if ci_mode && !upload_release("ssd.jpl.nasa.gov-ephemeris", &path) {
                 upload_failed += 1;
             } else if ci_mode {
                 emit(&format!("upload {} → CDN", body_name));
@@ -1307,7 +1307,7 @@ fn flatten_juice_cog(
     );
     let mut reached_cdn = false;
     if written && ci_mode {
-        if upload_asset("ephemeris_juice_cog.bin") {
+        if upload_release("ssd.jpl.nasa.gov-ephemeris", "ephemeris_juice_cog.bin") {
             reached_cdn = true;
             emit("upload ephemeris_juice_cog.bin → CDN");
         } else {

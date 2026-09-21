@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::skymap::{
     HEADER_LEN, KIND_GAMMA, KIND_GENERIC, REC_BYTES, SkymapRecord, decode_rec, encode_rec,
     parse_header, write_header,
@@ -163,7 +163,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "skipped: {} bad-cell, {} out-of-range, {} unplaceable",
         census[0], census[1], census[2]
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("tapvizier.cds.unistra.fr", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

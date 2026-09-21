@@ -1,6 +1,6 @@
 use omegaflow::archivar::f107::{parse_bin, write_bin};
 use omegaflow::archivar::fetch_raw;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::civil_from_days;
 
@@ -37,7 +37,10 @@ fn parse_line(line: &str, year: i64) -> Option<(i64, f64)> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "f107_penticton.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "f107_penticton.bin".to_string(),
+    };
     let now_unix = match std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs() as i64)
@@ -115,7 +118,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("www.ngdc.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

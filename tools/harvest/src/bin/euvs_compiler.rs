@@ -1,6 +1,6 @@
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::euvs::{COMP_LYA1216, parse_bin, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use std::process::Command;
 
@@ -187,7 +187,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("www.ncei.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

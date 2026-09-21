@@ -1,5 +1,5 @@
 use omegaflow::archivar::membrane::embedded_lsk;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::s2event::{
     REC_BYTES as S2E_REC, ROOT_NEUTRINO, S2EventRecord, decode_rec as s2e_decode,
@@ -355,10 +355,10 @@ fn run(args: &[String]) -> Result<(), String> {
         "skipped: {skipped_direction} row(s) without a measured direction, {unprojectable} unprojectable"
     );
     if ci_mode {
-        if !upload_asset(&out_path) {
+        if !upload_release("ssd.jpl.nasa.gov-icecat", &out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
-        if !upload_asset(&out_map) {
+        if !upload_release("ssd.jpl.nasa.gov-icecat", &out_map) {
             return Err(format!("{out_map}: CDN upload returned void"));
         }
     }

@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::equilibrium::{AU_M, SUN_RADIUS_M, teq};
 use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use omegaflow::jwst::{JwstSpectrum, parse_jwst_bin};
@@ -290,7 +290,7 @@ fn main() {
             return;
         }
     }
-    if ci_mode && !upload_asset(&output) {
+    if ci_mode && !upload_release("exoplanetarchive.ipac.caltech.edu", &output) {
         eprintln!("upload: {} did not reach the CDN", output);
         std::process::exit(1);
     }
