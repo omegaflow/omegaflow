@@ -3,7 +3,7 @@
   session: Forschung-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: a275ce653279f5511c98c130b73236d5dcfcf69256cac90948b684e79f77bd2d
+  sha256: 86c3e9172a42353d7d853a1637e8cc3b942739641abc7e902321a10eefb3b70c
   status: live
 -->
 # Handover — Forschung-Folge 132 (Stand 2026-09-21)
@@ -27,48 +27,54 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
 - **Postfach** — neuester Ledger-Eingang `1789978555` (Brave Search API „usage
   limit reached", 100 % von $5.00 free credits, informativ); kein neuer Eingang,
   kein handlungsbedürftiger Fall.
-- **CI** — `hyperscanning-te` `35584758519` @`c7cb201f` **in_progress** (trägt
-  `fn_gate_sweep` + `--nocapture`; `updated_at` seit `09:42:19` unverändert —
-  Ghost-Verdacht wie `te-gate`); `te-gate` `35578257445` @`2ae4978a` **pending**
-  (Ghost-Verdacht); `ci-check` `35578412609` @`a476ccfb` **failure** (dropped-gate:
-  baseline 1760 | current 1819 | delta 59); `ci-check` `35584795196` @`d78c95cc`
-  in_progress; `tools-build` `35584750291` success; `hfrnet-cdn` `35581429287`
-  success.
+- **CI** — `hyperscanning-te` `35584758519` @`c7cb201f` **failure**: 5/6 Tests
+  grün, nur `family_fn_gate` rot (die bekannte FN); **`fn_gate_sweep` gelaufen
+  und grün**, die Response-Tafel gedruckt (Verdikt s. Punkt 1). `te-gate`
+  `35578257445` @`2ae4978a` **pending** (Ghost-Verdacht); `ci-check`
+  `35578412609` @`a476ccfb` **failure** (dropped-gate: baseline 1760 | current
+  1819 | delta 59); nach dem Push dieser Session: `ci-check` `35585642642`
+  @`e9556f86` pending + `tools-build` `35585642669` queued.
 
-## Punkt 1 — `family_fn_gate` FN: Response-Kurve messen
-
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Der Sweep-Test `fn_gate_sweep` ist gebaut und committet (`c7cb201f`);
-  der Lauf `35584758519` @`c7cb201f` steht auf **in_progress** (seit `09:42:19`
-  ohne Fortschritt — Ghost-Verdacht). Der FN selbst ist diagnostiziert: die
-  Fixture C→D legt die 7-dim Joint-Wolke auf ein 6-dim Sheet (`d_eff=6`), TE≈0
-  ist die physikalisch wahre Antwort; die per-cell-Null trägt nur den
-  KSG-Eigenbias.
-- **Blockade:** Lauf-Abschluss.
-- **Braucht:** `ci_manage log 35584758519` **einmal**, sobald der Lauf beendet ist
-  → Verdikt-Regel (stochastischer Arm grün + Sheet-Arme rot → Fix = Fixture/Gate;
-  τ-fest-2 grün → Fix = τ-Ausrichtung; Null-Mittel n=2400 unter dem beobachteten
-  TE → n-Floor; stochastischer Arm rot → Fix = Schätzer).
-
-## Punkt 2 — `family_fn_gate`: Gate/Fixture ehrlich schneiden
+## Punkt 1 — `family_fn_gate`: Gate/Fixture ehrlich schneiden (Sweep-Verdikt gefallen)
 
 - **Status:** wartend | **Bindung:** eigen
-- **Lage:** hängt am Sweep-Verdikt; danach Fix A (Assert `hyperscanning_group_te.rs:1035`
-  auf die gemessene Wahrheit) oder Fix B (stochastischer Treiber ins Gate).
-- **Blockade:** Sweep-Verdikt (Punkt 1).
-- **Braucht:** Punkt 1.
+- **Lage:** Der Sweep `35584758519` @`c7cb201f` ist gelandet: **5/6 Tests grün**,
+  nur `family_fn_gate` rot (die bekannte FN, Assert
+  `tools/measure/src/bin/hyperscanning_group_te.rs:1056`); `fn_gate_sweep` selbst
+  grün. Die Response-Tafel (KSG/KDE × τ∈{mi,2,1}; n∈{600,1200,2400} bei s=0.35;
+  s∈{0.05…0.5} bei n=1200; plus stochastic-driver-Arm):
+  - **stochastic-driver** (n=600, s=0.35) **KSG τ=2: excess +18.2 sd** (TE
+    3.51e-1, null_mu 1.82e-2) → der KSG-Schätzer findet den vollrangigen
+    AR(1)-Treiber. **Kein Schätzer-Bug.**
+  - Sheet-Arme (KSG) negativ über alle n/s: mi −2.55/−1.51/−2.75,
+    τ=2 −3.18/−1.91/−2.46, τ=1 −1.11/+0.18/−0.17 → TE≈0 ist die physikalisch
+    wahre Antwort der quasi-deterministischen Sheet-Fixture.
+  - **Konfundierung:** KDE τ=1 zeigt einen fremden positiven Excess
+    (n-sweep +1.04/+1.31/+3.30; s-sweep +0.17…+1.41) — der KDE-Pfad bei τ=1,
+    nicht der kanonische KSG (`src/mathematikerin/te.rs`); der KDE-stochastic-Arm
+    ist wegen des großen KDE-Nulls (0.78) blind (excess −1.2).
+  - **Verdikt nach der Regel** (stochastischer Arm grün + Sheet-Arme rot):
+    **Fix = Fixture/Gate**, nicht Schätzer.
+- **Blockade:** keine.
+- **Braucht:** Fix A — den Assert `hyperscanning_group_te.rs:1056` auf die
+  gemessene Wahrheit schreiben (die Sheet-Fixture trägt keine bedingte
+  Transfer-Entropie) — oder Fix B — den stochastischen Treiber ins Gate nehmen;
+  den KDE-τ=1-Ausreißer als Konfundierung benennen.
 
-## Punkt 3 — Diskriminator-μ-Werte (W1/W2/W3/K1/K2/K3)
+## Punkt 2 — Diskriminator-μ-Werte (W1/W2/W3/K1/K2/K3) — gemessen
 
 - **Status:** wartend | **Bindung:** eigen
-- **Lage:** `self_null_discriminator` grün; die Workflow-Zeile trägt jetzt
-  `--nocapture` (committet `c7cb201f`). μ_S = 1.0335e-1 (aus dem
-  `family_fn_gate`-Druck).
-- **Blockade:** Sweep-Lauf.
-- **Braucht:** `ci_manage log` aus Punkt 1; Riss-Regel anwenden
-  (`|μ_W1 − μ_S| ≤ 2σ_W1` → struktureller Boden; `μ_S − μ_W1 > 2σ_W1` → Naht).
+- **Lage:** gemessen `35584758519` @`c7cb201f`. μ_S (KSG per-cell, aus
+  `family_fn_gate`) = 1.0335e-1. **KSG:** W1 driver-white −1.4616e-2
+  (sd 5.175e-3, p95 −6.005e-3), W2 both-white +1.278e-3, W3 target-white
+  +3.335e-3. **KDE:** K1 1.1134e-1 (sd 5.430e-3), K2 1.0702e0, K3 6.3224e-1.
+  **Riss-Regel:** μ_S − μ_W1 = 0.1180 > 2σ_W1 = 0.0104 → **Naht** (der
+  Weiß-Treiber-Null liegt weit unter dem Sheet-Null).
+- **Blockade:** keine.
+- **Braucht:** die Naht-Aussage tragen (Rat bei der Formulierung); die
+  μ-Zeilen sind die gemessenen Zahlen des aufgelösten Risses.
 
-## Punkt 4 — `te-gate` n=1000-FPR-Boden
+## Punkt 3 — `te-gate` n=1000-FPR-Boden
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** `35578257445` @`2ae4978a` **pending** (Ghost-Verdacht wie der
@@ -76,7 +82,7 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
 - **Blockade:** Run-Abschluss.
 - **Braucht:** `ci_manage view 35578257445` einmal.
 
-## Punkt 5 — `--dropped` Delta-Gate: Klassifikator statt Baseline-Bump
+## Punkt 4 — `--dropped` Delta-Gate: Klassifikator statt Baseline-Bump
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** `ci-check` `35578412609` @`a476ccfb` **failure**: `dropped-gate:
@@ -98,30 +104,32 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   korrigierten Zähler; danach die Baseline auf den **gemessenen** Wert setzen
   (in dem Commit, der den legitimen Drop trägt).
 
-## Punkt 6 — confirmation-Test nach grünem Screen
+## Punkt 5 — confirmation-Test nach grünem Screen
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** `confirmation_confirms_the_strong_pair_against_its_own_null` bleibt aus
   dem Teststep; sie assertet `observed.te > p99`, am aktuellen Schätzer rot.
-- **Blockade:** grüner `family_fn_gate` (Punkt 1/2).
+- **Blockade:** grüner `family_fn_gate` (Punkt 1).
 - **Braucht:** nach grünem Lauf `confirmation_…` in
   `.github/workflows/hyperscanning-te.yml` aufnehmen.
 
-## Punkt 7 — Frontalkanäle F3/F4; Takens-Wandzeit + Watchdog-Floor
+## Punkt 6 — Frontalkanäle F3/F4; Takens-Wandzeit + Watchdog-Floor
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** beide hängen am grünen Screen.
 - **Blockade:** grüner Screen.
 - **Braucht:** nach grünem Lauf Wandzeit lesen; F3/F4 getrennt fahren.
 
-## Riss (getragen, nicht geglättet)
+## Riss (aufgelöst in gemessene Zahlen)
 
-Der Rat trägt den Riss als **Vorhersage-Paar** bis der Sweep läuft:
-Mountain/River — weißer Boden ≈ Surrogat-Boden (struktureller Boden, Sheet);
-Mycelium/Sensory — weißer Boden < Surrogat-Boden, mindestens im KDE-Arm (Naht).
-Die Diagnose stützt den strukturellen Boden, aber die `self_null_discriminator`-μ-Zeilen
-sind noch nicht gelesen (Punkt 1/3). Löst sich der Riss in zwei gemessene Zahlen
-auf, tragen beide Linien ihren gemessenen Anteil.
+Der Sweep ist gelaufen; der Riss löst sich in zwei gemessene Zahlen auf
+(Punkt 2): μ_S = 1.0335e-1 (Sheet-Null, KSG) gegen μ_W1 = −1.4616e-2
+(Weiß-Treiber-Null, KSG), 2σ_W1 = 0.0104 → μ_S − μ_W1 = 0.1180 > 2σ_W1 →
+**Naht** (Mycelium/Sensory: der Weiß-Treiber-Boden liegt unter dem Sheet-Null).
+Mountain/River (weißer Boden ≈ Surrogat-Boden) ist damit nicht bestätigt.
+Der stochastic-driver-Arm (KSG τ=2, excess +18.2 sd) trägt den Schätzer-Befund
+getrennt: der rote `family_fn_gate`-Assert ist eine Fixture-/Gate-Frage, kein
+Schätzer-Boden (Punkt 1).
 
 ## Wartend / operator-gebunden / termin
 
@@ -142,18 +150,17 @@ auf, tragen beide Linien ihren gemessenen Anteil.
 
 | Punkt | Status | Bindung | Lage | Blockade | Braucht |
 |---|---|---|---|---|---|
-| 1. `fn_gate_sweep` Kurve | wartend | eigen | Lauf `35584758519` in_progress (Ghost) | Lauf-Abschluss | `ci_manage log` einmal |
-| 2. Gate/Fixture schneiden | wartend | eigen | hängt am Verdikt | Sweep-Verdikt | Punkt 1 |
-| 3. Diskriminator-μ | wartend | eigen | `--nocapture` committet | Sweep-Lauf | `ci_manage log` aus P1 |
-| 4. `te-gate` n=1000 | wartend | eigen | `35578257445` pending (Ghost) | Run-Abschluss | `ci_manage view` einmal |
-| 5. `--dropped` Klassifikator | wartend | eigen | Fix gebaut (uncommittet) | CI-Messung | `ci-check`-Zähler → Baseline |
-| 6. confirmation-Test | wartend | eigen | rot am Schätzer | grüner Screen | Workflow-Zeile |
-| 7. F3/F4 + Takens | wartend | eigen | — | grüner Screen | getrennte Läufe |
-| 8. Riss 4 Ksg (WGSL) | operator-gebunden | operator | Post-Zeile gelegt | Operator | entscheid-Antwort |
-| 9. Cookie-Editor | wartend | operator | kein Host benannt | Operator | Host nennen |
-| 10. Flyby-Path-2 | termin:2026-09-28 | termin | Auftrag steht | Datum | Zellen ab Perigäum |
-| 11. NSE/Haug | wartend | dritter | Route offen | Dateieingang | Trigger |
-| 12. BepiColombo MORE | termin:2027-04 | termin | Anfrage gesendet | Freigabe | Wissenschaftsphase |
+| 1. Gate/Fixture schneiden | wartend | eigen | Verdikt: Fix = Fixture/Gate | keine | Assert `:1056` / stochastischer Treiber |
+| 2. Diskriminator-μ | wartend | eigen | Naht (μ_S−μ_W1 > 2σ_W1) | keine | Naht tragen (Rat) |
+| 3. `te-gate` n=1000 | wartend | eigen | `35578257445` pending (Ghost) | Run-Abschluss | `ci_manage view` einmal |
+| 4. `--dropped` Klassifikator | wartend | eigen | Fix gebaut (committet) | CI-Messung | `ci-check`-Zähler → Baseline |
+| 5. confirmation-Test | wartend | eigen | rot am Schätzer | grüner Screen | Workflow-Zeile |
+| 6. F3/F4 + Takens | wartend | eigen | — | grüner Screen | getrennte Läufe |
+| 7. Riss 4 Ksg (WGSL) | operator-gebunden | operator | Post-Zeile gelegt | Operator | entscheid-Antwort |
+| 8. Cookie-Editor | wartend | operator | kein Host benannt | Operator | Host nennen |
+| 9. Flyby-Path-2 | termin:2026-09-28 | termin | Auftrag steht | Datum | Zellen ab Perigäum |
+| 10. NSE/Haug | wartend | dritter | Route offen | Dateieingang | Trigger |
+| 11. BepiColombo MORE | termin:2027-04 | termin | Anfrage gesendet | Freigabe | Wissenschaftsphase |
 
 ## Benchmark
 
