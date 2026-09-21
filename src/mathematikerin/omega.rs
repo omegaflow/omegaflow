@@ -195,6 +195,7 @@ pub struct OmegaLoop {
     pub solar: SolarMachine,
     pub matrix: MatrixMachine,
     pub te_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
+    pub te_cpu: Option<(usize, usize, Option<f64>, Option<f64>)>,
     pub field_permeability: f32,
     pub tone_scale: f32,
     pub prev_omega_sum: f32,
@@ -309,6 +310,7 @@ impl OmegaLoop {
             solar: SolarMachine::new(ctx.solar_rx),
             matrix: MatrixMachine::new(ctx.machine_rx),
             te_topology: None,
+            te_cpu: None,
             field_permeability: 0.0,
             tone_scale: 1.0,
             prev_omega_sum: 0.0,
@@ -454,6 +456,16 @@ impl OmegaLoop {
         ys: &[f32],
         m: usize,
     ) -> Option<crate::te::TopologicalVerdict> {
+        self.te_cpu = match crate::te::topological_te_phase(
+            xs,
+            ys,
+            3,
+            3,
+            self.ring_gen.wrapping_add(0x9E37_79B9_7F4A_7C15),
+        ) {
+            Some(v) => Some((v.tau_x, v.tau_y, Some(v.te), Some(v.threshold))),
+            None => None,
+        };
         let device = self.device.clone()?;
         let mut carry: Option<crate::te::TopologicalVerdict> = None;
         if let Some(prev) = self.te_map.take() {
@@ -1685,6 +1697,10 @@ impl OmegaLoop {
                 Some((t, h)) => (format!("{:.3}", t), format!("{:.3}", h)),
                 None => ("-".to_string(), "-".to_string()),
             };
+            let te_cpu_s = match self.te_cpu {
+                Some((_, _, Some(t), Some(h))) => format!("{:.3}/{:.3}", t, h),
+                _ => "-".to_string(),
+            };
             let (tau_s, pe_s) = match self.te_topology {
                 Some((tx, ty, px, py)) => {
                     let pe = match (px, py) {
@@ -1705,7 +1721,7 @@ impl OmegaLoop {
                 }
             };
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -1726,6 +1742,7 @@ impl OmegaLoop {
                 self.force_ref[8],
                 te_s,
                 thr_s,
+                te_cpu_s,
                 tau_s,
                 pe_s,
                 te_word,

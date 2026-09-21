@@ -603,6 +603,90 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
 }
 
 #[test]
+fn te_probe_keeps_the_cpu_topology_on_a_coupled_pair() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    let n = 512usize;
+    let mut x = vec![0f32; n];
+    let mut y = vec![0f32; n];
+    for (t, yt) in y.iter_mut().enumerate() {
+        *yt = (t as f32 * 0.5).sin();
+    }
+    for t in 0..n - 1 {
+        x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+    }
+    let _ = app.te_probe(&x, &y, n);
+    let (tau_x, tau_y, te, threshold) = app
+        .te_cpu
+        .expect("the coupled pair carries a cpu verdict");
+    assert!(tau_x >= 1 && tau_y >= 1, "tau {} {}", tau_x, tau_y);
+    let te_v = te.expect("the cpu verdict carries a te");
+    let thr_v = threshold.expect("the cpu verdict carries a threshold");
+    assert!(te_v.is_finite(), "te {}", te_v);
+    assert!(thr_v.is_finite(), "threshold {}", thr_v);
+}
+
+#[test]
+fn te_probe_keeps_the_cpu_topology_absent_on_a_short_series() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    let x = vec![0f32; 7];
+    let y = vec![0f32; 7];
+    let _ = app.te_probe(&x, &y, 7);
+    assert!(app.te_cpu.is_none());
+}
+
+#[test]
 fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
     let mut app = OmegaLoop {
         ..OmegaLoop::new(
