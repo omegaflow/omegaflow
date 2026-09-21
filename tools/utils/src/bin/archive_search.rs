@@ -592,7 +592,8 @@ fn usage() {
         "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
     );
     eprintln!(
-        "  --all       the query through every keyword search mode (16 calls — the last move, never the first)"
+        "  --all       the query through every keyword search mode ({} calls — the last move, never the first)",
+        net::query_mode_count()
     );
     eprintln!();
     eprintln!(

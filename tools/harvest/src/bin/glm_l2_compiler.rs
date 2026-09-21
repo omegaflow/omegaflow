@@ -47,6 +47,7 @@ struct VarLoad {
     size: usize,
     endian: Endian,
     signed: bool,
+    class: u8,
     n: usize,
 }
 
@@ -70,6 +71,7 @@ fn dataset_load(file: &Hdf5File, name: &str) -> Option<VarLoad> {
         size: dt.size,
         endian: dt.endian,
         signed: dt.signed,
+        class: dt.class,
         n,
     })
 }
@@ -143,6 +145,42 @@ fn decode_float_at(data: &[u8], off: usize, size: usize, endian: Endian) -> Opti
         }
         _ => None,
     }
+}
+
+fn decode_num_at(var: &VarLoad, idx: usize, unsigned: bool) -> Option<f64> {
+    let off = idx.checked_mul(var.size)?;
+    match var.class {
+        0 => decode_int_at(
+            &var.raw,
+            off,
+            var.size,
+            var.endian,
+            var.signed && !unsigned,
+        )
+        .map(|v| v as f64),
+        1 => decode_float_at(&var.raw, off, var.size, var.endian),
+        _ => None,
+    }
+}
+
+struct NumGate {
+    unsigned: bool,
+    fill: Option<i64>,
+    valid: Option<(i64, i64)>,
+    scale: Option<f64>,
+    offset: Option<f64>,
+}
+
+fn gated_value(var: &VarLoad, gate: &NumGate, idx: usize) -> Option<f64> {
+    let raw = decode_num_at(var, idx, gate.unsigned)?;
+    if var.class == 0 {
+        if !fill_valid_int_ok(raw as i64, gate.fill, gate.valid) {
+            return None;
+        }
+    } else if !raw.is_finite() {
+        return None;
+    }
+    scaled(raw, gate.scale, gate.offset)
 }
 
 fn attr_find<'a>(attrs: &'a [Hdf5Attribute], name: &str) -> Option<&'a Hdf5Attribute> {
@@ -276,33 +314,57 @@ fn scaled(raw: f64, scale: Option<f64>, offset: Option<f64>) -> Option<f64> {
     if v.is_finite() { Some(v) } else { None }
 }
 
-fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>, u64) {
+struct GateSkips {
+    qf: u64,
+    degraded: u64,
+    energy: u64,
+    time: u64,
+    lat: u64,
+    lon: u64,
+    tdb: u64,
+}
+
+impl GateSkips {
+    fn zero() -> GateSkips {
+        GateSkips {
+            qf: 0,
+            degraded: 0,
+            energy: 0,
+            time: 0,
+            lat: 0,
+            lon: 0,
+            tdb: 0,
+        }
+    }
+}
+
+fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>, GateSkips) {
     let Some(lat_v) = dataset_load(file, "flash_lat") else {
         eprintln!("glm_l2: {} carries no flash_lat", src);
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(lon_v) = dataset_load(file, "flash_lon") else {
         eprintln!("glm_l2: {} carries no flash_lon", src);
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(energy_v) = dataset_load(file, "flash_energy") else {
         eprintln!("glm_l2: {} carries no flash_energy", src);
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(time_v) = dataset_load(file, "flash_time_offset_of_first_event") else {
         eprintln!("glm_l2: {} carries no flash_time_offset_of_first_event", src);
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(qf_v) = dataset_load(file, "flash_quality_flag") else {
         eprintln!("glm_l2: {} carries no flash_quality_flag", src);
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(time_attrs) = dataset_attrs(file, "flash_time_offset_of_first_event") else {
         eprintln!(
             "glm_l2: {} carries no attributes on flash_time_offset_of_first_event",
             src
         );
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let time_unsigned = attr_unsigned(time_attrs);
     let Some(units) = attr_string(time_attrs, "units") else {
@@ -310,95 +372,124 @@ fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>,
             "glm_l2: {} carries no units string on flash_time_offset_of_first_event — no epoch, no records",
             src
         );
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
     let Some(epoch_unix) = units_epoch_unix(&units) else {
         eprintln!(
             "glm_l2: {} units '{units}' parses void — no epoch, no records",
             src
         );
-        return (Vec::new(), 0);
+        return (Vec::new(), GateSkips::zero());
     };
-    let time_scale = attr_number(time_attrs, "scale_factor");
-    let time_offset = attr_number(time_attrs, "add_offset");
-    let time_fill = attr_int_unsigned(time_attrs, "_FillValue", time_unsigned);
-    let time_valid = attr_pair_int_unsigned(time_attrs, "valid_range", time_unsigned);
+    let time_gate = NumGate {
+        unsigned: time_unsigned,
+        fill: attr_int_unsigned(time_attrs, "_FillValue", time_unsigned),
+        valid: attr_pair_int_unsigned(time_attrs, "valid_range", time_unsigned),
+        scale: attr_number(time_attrs, "scale_factor"),
+        offset: attr_number(time_attrs, "add_offset"),
+    };
     let energy_attrs = dataset_attrs(file, "flash_energy");
     let energy_unsigned = energy_attrs.is_some_and(attr_unsigned);
-    let energy_scale = energy_attrs.and_then(|a| attr_number(a, "scale_factor"));
-    let energy_offset = energy_attrs.and_then(|a| attr_number(a, "add_offset"));
-    let energy_fill =
-        energy_attrs.and_then(|a| attr_int_unsigned(a, "_FillValue", energy_unsigned));
-    let energy_valid =
-        energy_attrs.and_then(|a| attr_pair_int_unsigned(a, "valid_range", energy_unsigned));
+    let energy_gate = NumGate {
+        unsigned: energy_unsigned,
+        fill: energy_attrs.and_then(|a| attr_int_unsigned(a, "_FillValue", energy_unsigned)),
+        valid: energy_attrs.and_then(|a| attr_pair_int_unsigned(a, "valid_range", energy_unsigned)),
+        scale: energy_attrs.and_then(|a| attr_number(a, "scale_factor")),
+        offset: energy_attrs.and_then(|a| attr_number(a, "add_offset")),
+    };
+    let lat_attrs = dataset_attrs(file, "flash_lat");
+    let lat_unsigned = lat_attrs.is_some_and(attr_unsigned);
+    let lat_gate = NumGate {
+        unsigned: lat_unsigned,
+        fill: lat_attrs.and_then(|a| attr_int_unsigned(a, "_FillValue", lat_unsigned)),
+        valid: lat_attrs.and_then(|a| attr_pair_int_unsigned(a, "valid_range", lat_unsigned)),
+        scale: lat_attrs.and_then(|a| attr_number(a, "scale_factor")),
+        offset: lat_attrs.and_then(|a| attr_number(a, "add_offset")),
+    };
+    let lon_attrs = dataset_attrs(file, "flash_lon");
+    let lon_unsigned = lon_attrs.is_some_and(attr_unsigned);
+    let lon_gate = NumGate {
+        unsigned: lon_unsigned,
+        fill: lon_attrs.and_then(|a| attr_int_unsigned(a, "_FillValue", lon_unsigned)),
+        valid: lon_attrs.and_then(|a| attr_pair_int_unsigned(a, "valid_range", lon_unsigned)),
+        scale: lon_attrs.and_then(|a| attr_number(a, "scale_factor")),
+        offset: lon_attrs.and_then(|a| attr_number(a, "add_offset")),
+    };
     let qf_attrs = dataset_attrs(file, "flash_quality_flag");
     let qf_fill = qf_attrs.and_then(|a| attr_int(a, "_FillValue"));
+    for (name, var) in [
+        ("flash_lat", &lat_v),
+        ("flash_lon", &lon_v),
+        ("flash_energy", &energy_v),
+        ("flash_time_offset_of_first_event", &time_v),
+        ("flash_quality_flag", &qf_v),
+    ] {
+        if var.raw.len() < var.n.saturating_mul(var.size) {
+            eprintln!(
+                "glm_l2: {} {name} reads {} B < {} × {} B — the dataset reads short",
+                src,
+                var.raw.len(),
+                var.n,
+                var.size
+            );
+            return (Vec::new(), GateSkips::zero());
+        }
+    }
     let n = lat_v.n.min(lon_v.n).min(energy_v.n).min(time_v.n).min(qf_v.n);
     let mut out = Vec::new();
-    let mut degraded = 0u64;
+    let mut skips = GateSkips::zero();
     for j in 0..n {
-        let Some(qf) = decode_int_at(&qf_v.raw, j * qf_v.size, qf_v.size, qf_v.endian, qf_v.signed)
-        else {
+        let Some(qf) = decode_num_at(&qf_v, j, false) else {
+            skips.qf += 1;
             continue;
         };
-        if qf_fill.is_some_and(|f| qf == f) {
+        let qf_is_fill = if qf_v.class == 0 {
+            qf_fill.is_some_and(|f| qf as i64 == f)
+        } else {
+            !qf.is_finite()
+        };
+        if qf_is_fill {
+            skips.qf += 1;
             continue;
         }
-        if qf != 0 {
-            degraded += 1;
+        if qf != 0.0 {
+            skips.degraded += 1;
             continue;
         }
-        let Some(raw_energy) = decode_int_at(
-            &energy_v.raw,
-            j * energy_v.size,
-            energy_v.size,
-            energy_v.endian,
-            energy_v.signed && !energy_unsigned,
-        ) else {
+        let Some(energy) = gated_value(&energy_v, &energy_gate, j) else {
+            skips.energy += 1;
             continue;
         };
-        if !fill_valid_int_ok(raw_energy, energy_fill, energy_valid) {
+        if !(energy > 0.0) {
+            skips.energy += 1;
             continue;
         }
-        let Some(raw_time) = decode_int_at(
-            &time_v.raw,
-            j * time_v.size,
-            time_v.size,
-            time_v.endian,
-            time_v.signed && !time_unsigned,
-        ) else {
-            continue;
-        };
-        if !fill_valid_int_ok(raw_time, time_fill, time_valid) {
-            continue;
-        }
-        let Some(lat) = decode_float_at(&lat_v.raw, j * lat_v.size, lat_v.size, lat_v.endian)
-        else {
-            continue;
-        };
-        if !lat.is_finite() || lat.abs() > 90.0 {
-            continue;
-        }
-        let Some(lon) = decode_float_at(&lon_v.raw, j * lon_v.size, lon_v.size, lon_v.endian)
-        else {
-            continue;
-        };
-        if !lon.is_finite() || lon.abs() > 180.0 {
-            continue;
-        }
-        let Some(energy) = scaled(raw_energy as f64, energy_scale, energy_offset) else {
-            continue;
-        };
-        if !energy.is_finite() || energy <= 0.0 {
-            continue;
-        }
-        let Some(tsec) = scaled(raw_time as f64, time_scale, time_offset) else {
+        let Some(tsec) = gated_value(&time_v, &time_gate, j) else {
+            skips.time += 1;
             continue;
         };
         if !tsec.is_finite() {
+            skips.time += 1;
+            continue;
+        }
+        let Some(lat) = gated_value(&lat_v, &lat_gate, j) else {
+            skips.lat += 1;
+            continue;
+        };
+        if !lat.is_finite() || lat.abs() > 90.0 {
+            skips.lat += 1;
+            continue;
+        }
+        let Some(lon) = gated_value(&lon_v, &lon_gate, j) else {
+            skips.lon += 1;
+            continue;
+        };
+        if !lon.is_finite() || lon.abs() > 180.0 {
+            skips.lon += 1;
             continue;
         }
         let Some(tdb) = lsk.unix_to_tdb(epoch_unix + tsec) else {
+            skips.tdb += 1;
             continue;
         };
         out.push(GeoRec {
@@ -413,7 +504,7 @@ fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>,
             station: 0,
         });
     }
-    (out, degraded)
+    (out, skips)
 }
 
 fn run(out_path: &str, granules: &[String], lsk: &LeapSeconds, ci: bool) -> Result<(), String> {
@@ -421,12 +512,18 @@ fn run(out_path: &str, granules: &[String], lsk: &LeapSeconds, ci: bool) -> Resu
     for src in granules {
         let bytes = granule_bytes(src).ok_or(format!("{src} stayed unreadable"))?;
         let file = Hdf5File::parse(&bytes).map_err(|e| format!("{src} parses void ({e:?})"))?;
-        let (recs, degraded) = flash_records(&file, lsk, src);
+        let (recs, skips) = flash_records(&file, lsk, src);
         eprintln!(
-            "glm_l2: {} → {} flashes ({} quality-degraded skipped)",
+            "glm_l2: {} → {} flashes ({} degraded; skipped qf {} energy {} time {} lat {} lon {} tdb {})",
             src,
             recs.len(),
-            degraded
+            skips.degraded,
+            skips.qf,
+            skips.energy,
+            skips.time,
+            skips.lat,
+            skips.lon,
+            skips.tdb
         );
         records.extend(recs);
     }
@@ -542,5 +639,86 @@ mod tests {
         assert!(fill_valid_int_ok(65530, Some(65535), Some((0, 65530))));
         assert!(fill_valid_int_ok(0, Some(65535), Some((0, 65530))));
         assert!(fill_valid_int_ok(12345, None, None));
+    }
+
+    fn num_gate(scale: Option<f64>, offset: Option<f64>) -> NumGate {
+        NumGate {
+            unsigned: false,
+            fill: None,
+            valid: None,
+            scale,
+            offset,
+        }
+    }
+
+    #[test]
+    fn float32_energy_decodes_as_float_not_int_bits() {
+        let raw = 1.5f32.to_le_bytes().to_vec();
+        let float_var = VarLoad {
+            raw: raw.clone(),
+            size: 4,
+            endian: Endian::Le,
+            signed: true,
+            class: 1,
+            n: 1,
+        };
+        assert_eq!(gated_value(&float_var, &num_gate(None, None), 0), Some(1.5));
+        let int_var = VarLoad {
+            raw,
+            size: 4,
+            endian: Endian::Le,
+            signed: false,
+            class: 0,
+            n: 1,
+        };
+        assert_eq!(
+            gated_value(&int_var, &num_gate(None, None), 0),
+            Some(0x3FC0_0000u32 as f64)
+        );
+    }
+
+    #[test]
+    fn float64_time_offset_decodes_as_seconds() {
+        let var = VarLoad {
+            raw: 820_497_600.0f64.to_le_bytes().to_vec(),
+            size: 8,
+            endian: Endian::Le,
+            signed: true,
+            class: 1,
+            n: 1,
+        };
+        assert_eq!(
+            gated_value(&var, &num_gate(None, None), 0),
+            Some(820_497_600.0)
+        );
+    }
+
+    #[test]
+    fn non_finite_float_is_gated_not_compared() {
+        let var = VarLoad {
+            raw: f32::NAN.to_le_bytes().to_vec(),
+            size: 4,
+            endian: Endian::Le,
+            signed: true,
+            class: 1,
+            n: 1,
+        };
+        assert_eq!(gated_value(&var, &num_gate(None, None), 0), None);
+    }
+
+    #[test]
+    fn int16_latlon_scales_through_the_gate() {
+        let var = VarLoad {
+            raw: 3380i16.to_le_bytes().to_vec(),
+            size: 2,
+            endian: Endian::Le,
+            signed: true,
+            class: 0,
+            n: 1,
+        };
+        assert_eq!(
+            gated_value(&var, &num_gate(Some(0.01), None), 0),
+            Some(33.8)
+        );
     }
 }
