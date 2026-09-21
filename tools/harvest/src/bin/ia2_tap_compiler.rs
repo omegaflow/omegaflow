@@ -1,13 +1,14 @@
 use omegaflow::archivar::{fetch_raw_bytes, ia2_tap};
 use omegaflow::cdn::upload_release;
 use omegaflow::skymap::{
-    decode_rec, encode_rec, parse_header, write_header, HEADER_LEN, REC_BYTES, SkymapRecord,
+    HEADER_LEN, REC_BYTES, SkymapRecord, decode_rec, encode_rec, parse_header, write_header,
 };
 
 const NETLOC: &str = "ia2-tap.oats.inaf.it";
 const BASE: &str =
     "http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=";
-const SRC_QUERY: &str = "SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL";
+const SRC_QUERY: &str =
+    "SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL";
 const DEFAULT_OUT: &str = "data/ia2-tap.oats.inaf.it/ia2_wgesdss.bin";
 const FETCH_TTL: u64 = 604800;
 

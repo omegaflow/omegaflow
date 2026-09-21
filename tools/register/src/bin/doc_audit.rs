@@ -107,9 +107,11 @@ fn run_audit(root: &str) -> Audit {
             .strip_prefix("handover-")
             .and_then(|s| s.split_once('-').map(|(_, rest)| rest.to_string()))
         {
-            let bare = ["future", "mountain", "mycelium", "sensory", "river"].iter().any(|l| {
-                slug.starts_with(l) && slug[l.len()..].chars().all(|c| c.is_ascii_digit())
-            });
+            let bare = ["future", "mountain", "mycelium", "sensory", "river"]
+                .iter()
+                .any(|l| {
+                    slug.starts_with(l) && slug[l.len()..].chars().all(|c| c.is_ascii_digit())
+                });
             if bare {
                 problems.push(format!(
                     "{name}: line slug '{slug}' drifts from <line>-folge<N>"

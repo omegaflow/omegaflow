@@ -308,7 +308,13 @@ fn check(task: &str, body: &str) -> bool {
 
 fn note_of(body: &str) -> String {
     body.chars()
-        .map(|c| if c == '\n' || c == '\r' || c == '\t' { ' ' } else { c })
+        .map(|c| {
+            if c == '\n' || c == '\r' || c == '\t' {
+                ' '
+            } else {
+                c
+            }
+        })
         .take(160)
         .collect()
 }
@@ -427,7 +433,10 @@ fn write_summary(f: &mut std::fs::File, models: &[Model], rows: &[Row]) {
         let n429 = mrows.iter().filter(|r| r.status == "http_429").count();
         let n5 = mrows.iter().filter(|r| r.status == "http_5xx").count();
         let nt = mrows.iter().filter(|r| r.status == "timeout").count();
-        let np = mrows.iter().filter(|r| r.status.starts_with("pending")).count();
+        let np = mrows
+            .iter()
+            .filter(|r| r.status.starts_with("pending"))
+            .count();
         let _ = writeln!(
             f,
             "{}\t{}\tSUMMARY\ttool_ok={}/{}\tT2={}/{}\tT3={}/{}\tT4={}/{}\tT5={}/{}\tT6={}/{}\tT7={}/{}\tp50={}\tp95={}\t429={}\t5xx={}\ttimeout={}\tpending={}",

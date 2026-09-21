@@ -2153,7 +2153,10 @@ mod tests {
             disposition_owner("blocked parser-def drs-fits"),
             Some("mountain")
         );
-        assert_eq!(disposition_owner("blocked parser-def odf"), Some("mountain"));
+        assert_eq!(
+            disposition_owner("blocked parser-def odf"),
+            Some("mountain")
+        );
         assert_eq!(disposition_owner("blocked account"), Some("future"));
         assert_eq!(disposition_owner("blocked key"), Some("future"));
         assert_eq!(disposition_owner("blocked ip-blocked"), Some("mycelium"));
@@ -2165,7 +2168,10 @@ mod tests {
     fn status_owner_maps_on_first_token() {
         assert_eq!(disposition_owner("parser-def cdf"), Some("mountain"));
         assert_eq!(disposition_owner("blocked account"), Some("future"));
-        assert_eq!(disposition_owner("blocked parser-def odf"), Some("mountain"));
+        assert_eq!(
+            disposition_owner("blocked parser-def odf"),
+            Some("mountain")
+        );
         assert_eq!(disposition_owner("blocked mystery"), None);
     }
 
@@ -2460,7 +2466,10 @@ mod tests {
 
     #[test]
     fn count_flag_reads_the_count_switch() {
-        assert!(count_flag(&["--dropped".to_string(), "--count".to_string()]));
+        assert!(count_flag(&[
+            "--dropped".to_string(),
+            "--count".to_string()
+        ]));
         assert!(!count_flag(&["--dropped".to_string()]));
     }
 

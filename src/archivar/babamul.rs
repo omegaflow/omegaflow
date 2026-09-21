@@ -19,7 +19,9 @@ pub fn parse_alerts(body: &str) -> Option<Vec<BabamulAlert>> {
     let mut out = Vec::new();
     for item in data {
         let JsonVal::Obj(o) = item else { continue };
-        let Some(cand) = o.get("candidate") else { continue };
+        let Some(cand) = o.get("candidate") else {
+            continue;
+        };
         let (Some(ra), Some(dec)) = (jnum(cand, "ra"), jnum(cand, "dec")) else {
             continue;
         };
@@ -44,7 +46,9 @@ pub fn parse_alerts(body: &str) -> Option<Vec<BabamulAlert>> {
 pub fn to_skymap(alerts: &[BabamulAlert]) -> Vec<crate::skymap::SkymapRecord> {
     let mut out = Vec::new();
     for a in alerts {
-        let Some(val) = a.magpsf.or(a.magap) else { continue };
+        let Some(val) = a.magpsf.or(a.magap) else {
+            continue;
+        };
         let Some((order, ipix)) = crate::skymap::SkymapRecord::pixel_of(a.ra, a.dec) else {
             continue;
         };
@@ -85,7 +89,10 @@ mod tests {
         assert!(parse_alerts(r#"{"message":"found 0 alerts","data":[]}"#).is_none());
         assert!(parse_alerts("").is_none());
         assert!(parse_alerts(r#"{"data":[{"candidate":{"ra":10.0,"dec":5.0}}]}"#).is_none());
-        assert!(parse_alerts(r#"{"data":[{"candidate":{"ra":400.0,"dec":5.0,"magpsf":15.0}}]}"#).is_none());
+        assert!(
+            parse_alerts(r#"{"data":[{"candidate":{"ra":400.0,"dec":5.0,"magpsf":15.0}}]}"#)
+                .is_none()
+        );
     }
 
     #[test]

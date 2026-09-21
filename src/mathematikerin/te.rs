@@ -2239,8 +2239,7 @@ pub fn transfer_entropy_embedded_ksg(
                 continue;
             }
             let fut = (pts[j * jd] - pts[i * jd]).abs() < eps;
-            let sx = (0..dim)
-                .all(|di| (pts[j * jd + 1 + di] - pts[i * jd + 1 + di]).abs() < eps);
+            let sx = (0..dim).all(|di| (pts[j * jd + 1 + di] - pts[i * jd + 1 + di]).abs() < eps);
             let sy = (0..dim)
                 .all(|di| (pts[j * jd + 1 + dim + di] - pts[i * jd + 1 + dim + di]).abs() < eps);
             if fut && sx {
@@ -2253,8 +2252,7 @@ pub fn transfer_entropy_embedded_ksg(
                 n_xy += 1;
             }
         }
-        sum +=
-            digamma((n_xx + 1) as f64) - digamma((n_x + 1) as f64) - digamma((n_xy + 1) as f64);
+        sum += digamma((n_xx + 1) as f64) - digamma((n_x + 1) as f64) - digamma((n_xy + 1) as f64);
     }
     Some(digamma(k_eff as f64) + sum / m as f64)
 }
@@ -2310,7 +2308,13 @@ fn bin_of(v: f64, edges: &[f64]) -> usize {
     edges.iter().filter(|&&e| e < v).count()
 }
 
-pub fn transfer_entropy_reduced_normalized(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
+pub fn transfer_entropy_reduced_normalized(
+    xs: &[f64],
+    ys: &[f64],
+    k: usize,
+    l: usize,
+    c: usize,
+) -> Option<f64> {
     if c < 2 || k == 0 || l == 0 {
         return None;
     }
@@ -3760,7 +3764,9 @@ mod tests {
             let mut b: Vec<f32> = Vec::with_capacity(a.len());
             b.push(gate_rng(&mut rng) as f32);
             for i in 1..a.len() {
-                let v = 0.5 * b[i - 1] as f64 + 0.6 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1);
+                let v = 0.5 * b[i - 1] as f64
+                    + 0.6 * a[i - 1] as f64
+                    + (gate_rng(&mut rng) * 0.2 - 0.1);
                 b.push(v as f32);
             }
             let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
@@ -3798,7 +3804,9 @@ mod tests {
             let mut b: Vec<f32> = Vec::with_capacity(a.len());
             b.push(gate_rng(&mut rng) as f32);
             for i in 1..a.len() {
-                let v = 0.5 * b[i - 1] as f64 + 0.6 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1);
+                let v = 0.5 * b[i - 1] as f64
+                    + 0.6 * a[i - 1] as f64
+                    + (gate_rng(&mut rng) * 0.2 - 0.1);
                 b.push(v as f32);
             }
             let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
@@ -3894,7 +3902,9 @@ mod tests {
                 y
             ),
             (None, None) => {}
-            _ => panic!("Kalibrier-Gate symmetry reduced-TE: one direction measurable, the other not"),
+            _ => panic!(
+                "Kalibrier-Gate symmetry reduced-TE: one direction measurable, the other not"
+            ),
         }
     }
 

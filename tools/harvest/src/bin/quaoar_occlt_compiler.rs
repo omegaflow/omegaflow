@@ -63,7 +63,10 @@ fn main() {
             continue;
         };
         extracted += 1;
-        records.extend(quaoar_occlt::to_recs(&samples, quaoar_occlt::site_code(site)));
+        records.extend(quaoar_occlt::to_recs(
+            &samples,
+            quaoar_occlt::site_code(site),
+        ));
     }
     if records.is_empty() {
         eprintln!(
@@ -73,7 +76,8 @@ fn main() {
         std::process::exit(1);
     }
     records.sort_by(|a, b| {
-        a.tdb.total_cmp(&b.tdb)
+        a.tdb
+            .total_cmp(&b.tdb)
             .then(a.site.cmp(&b.site))
             .then(a.comp.cmp(&b.comp))
     });

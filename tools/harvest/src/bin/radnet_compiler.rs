@@ -1,9 +1,9 @@
+use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::motion::{BodyEphemeris, body_fixed_to_icrs};
 use omegaflow::archivar::parse_ephemeris_binary;
-use omegaflow::archivar::LeapSeconds;
 use omegaflow::cdn::{body_url, upload_release};
 use omegaflow::json::{JsonVal, parse_json};
 use std::collections::HashMap;
@@ -230,11 +230,7 @@ enum Join {
 
 fn resolve_join(loc: &LocationRow, layer: &Layer) -> Join {
     let station_key = norm_of(&loc.station);
-    let pair_key = format!(
-        "{} {}",
-        norm_of(&loc.state_abbr),
-        norm_of(&loc.city_name)
-    );
+    let pair_key = format!("{} {}", norm_of(&loc.state_abbr), norm_of(&loc.city_name));
     let station_matches = if station_key.is_empty() {
         None
     } else {
@@ -698,7 +694,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let eph_bytes = match arg_value(args, "--ephemeris") {
         Some(src) if src.starts_with("http") => fetch_raw_bytes(&src, 604800)
             .ok_or_else(|| format!("earth ephemeris fetch void ({src})"))?,
-        Some(path) => std::fs::read(&path).map_err(|e| format!("earth ephemeris read {path}: {e}"))?,
+        Some(path) => {
+            std::fs::read(&path).map_err(|e| format!("earth ephemeris read {path}: {e}"))?
+        }
         None => fetch_raw_bytes(&body_url(EARTH), 604800)
             .ok_or_else(|| "earth ephemeris fetch void (CDN)".to_string())?,
     };
@@ -724,15 +722,8 @@ fn run(args: &[String]) -> Result<(), String> {
     tsk.page_void += pv;
     let results = parse_results(&res_rows, &mut tsk);
 
-    let (records, skips, riss_lines) = compile(
-        &results,
-        &analysis,
-        &sample,
-        &location,
-        &layer,
-        &lsk,
-        &eph,
-    );
+    let (records, skips, riss_lines) =
+        compile(&results, &analysis, &sample, &location, &layer, &lsk, &eph);
     if records.is_empty() {
         return Err(format!(
             "no record left the harvest — {} result rows read; skips: no_analysis {}, no_sample {}, no_location {}, unjoined {}, riss_station {}, riss_witness {}, value {}, date {}, clock {}, frame {}",
@@ -836,7 +827,10 @@ mod tests {
 
     #[test]
     fn join_matches_the_exact_station_key() {
-        let layer = layer_from(vec![feat("Dover", "Dover", "DE"), feat("Wilmington", "Wilmington", "DE")]);
+        let layer = layer_from(vec![
+            feat("Dover", "Dover", "DE"),
+            feat("Wilmington", "Wilmington", "DE"),
+        ]);
         assert!(matches!(
             resolve_join(&loc("DOVER", "DE", "DOVER"), &layer),
             Join::Coord(0)
@@ -858,7 +852,10 @@ mod tests {
 
     #[test]
     fn join_refuses_a_nonunique_pair_without_station() {
-        let layer = layer_from(vec![feat("Site A", "Dover", "DE"), feat("Site B", "Dover", "DE")]);
+        let layer = layer_from(vec![
+            feat("Site A", "Dover", "DE"),
+            feat("Site B", "Dover", "DE"),
+        ]);
         assert!(matches!(
             resolve_join(&loc("X", "DE", "Dover"), &layer),
             Join::Unjoined
@@ -871,7 +868,10 @@ mod tests {
 
     #[test]
     fn join_marks_multiple_station_matches_a_riss() {
-        let layer = layer_from(vec![feat("Dover", "Dover", "DE"), feat("Dover", "Dover AFB", "DE")]);
+        let layer = layer_from(vec![
+            feat("Dover", "Dover", "DE"),
+            feat("Dover", "Dover AFB", "DE"),
+        ]);
         match resolve_join(&loc("Dover", "DE", "Dover"), &layer) {
             Join::RissStation(names) => assert_eq!(names.len(), 2),
             other => panic!("the join carries {other:?}, not RissStation"),
@@ -898,7 +898,10 @@ mod tests {
 
     #[test]
     fn station_wins_when_the_pair_is_no_witness() {
-        let layer = layer_from(vec![feat("Dover", "Dover", "DE"), feat("Dover AFB", "Dover", "DE")]);
+        let layer = layer_from(vec![
+            feat("Dover", "Dover", "DE"),
+            feat("Dover AFB", "Dover", "DE"),
+        ]);
         assert!(matches!(
             resolve_join(&loc("Dover", "DE", "Dover"), &layer),
             Join::Coord(0)
@@ -983,28 +986,94 @@ mod tests {
         let layer = layer_from(vec![feat("Dover", "Dover", "DE")]);
         let lsk = embedded_lsk().expect("embedded lsk");
         let mut analysis = HashMap::new();
-        analysis.insert("11".into(), AnalysisRow { samp_num: Some("21".into()) });
+        analysis.insert(
+            "11".into(),
+            AnalysisRow {
+                samp_num: Some("21".into()),
+            },
+        );
         analysis.insert("12".into(), AnalysisRow { samp_num: None });
-        analysis.insert("13".into(), AnalysisRow { samp_num: Some("99".into()) });
-        analysis.insert("14".into(), AnalysisRow { samp_num: Some("22".into()) });
-        analysis.insert("15".into(), AnalysisRow { samp_num: Some("23".into()) });
+        analysis.insert(
+            "13".into(),
+            AnalysisRow {
+                samp_num: Some("99".into()),
+            },
+        );
+        analysis.insert(
+            "14".into(),
+            AnalysisRow {
+                samp_num: Some("22".into()),
+            },
+        );
+        analysis.insert(
+            "15".into(),
+            AnalysisRow {
+                samp_num: Some("23".into()),
+            },
+        );
         let mut sample = HashMap::new();
-        sample.insert("21".into(), SampleRow { loc_num: Some("31".into()) });
+        sample.insert(
+            "21".into(),
+            SampleRow {
+                loc_num: Some("31".into()),
+            },
+        );
         sample.insert("22".into(), SampleRow { loc_num: None });
-        sample.insert("23".into(), SampleRow { loc_num: Some("32".into()) });
+        sample.insert(
+            "23".into(),
+            SampleRow {
+                loc_num: Some("32".into()),
+            },
+        );
         let mut location = HashMap::new();
         location.insert("31".into(), loc("Dover", "DE", "Dover"));
         location.insert("32".into(), loc("X", "MD", "X"));
         let results = vec![
-            ResultRow { ana_num: "10".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "11".into(), result_in_si: Some(-1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "11".into(), result_in_si: Some(1.0), result_date: Some("not-a-date".into()) },
-            ResultRow { ana_num: "12".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "13".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "14".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "15".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
-            ResultRow { ana_num: "11".into(), result_in_si: Some(1.0), result_date: Some("1971-12-31".into()) },
-            ResultRow { ana_num: "11".into(), result_in_si: Some(1.0), result_date: Some("2015-06-15".into()) },
+            ResultRow {
+                ana_num: "10".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "11".into(),
+                result_in_si: Some(-1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "11".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("not-a-date".into()),
+            },
+            ResultRow {
+                ana_num: "12".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "13".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "14".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "15".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
+            ResultRow {
+                ana_num: "11".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("1971-12-31".into()),
+            },
+            ResultRow {
+                ana_num: "11".into(),
+                result_in_si: Some(1.0),
+                result_date: Some("2015-06-15".into()),
+            },
         ];
         let (records, skips, lines) = compile(
             &results,
