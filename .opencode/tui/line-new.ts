@@ -3,14 +3,14 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@opencode-ai/plugin/tui"
 
-type Line = { line: string; title: string }
+type Line = { line: string; title: string; theme: string }
 
 const LINES: Line[] = [
-  { line: "future", title: "Future-Linie" },
-  { line: "mycelium", title: "Mycelium-Linie" },
-  { line: "sensory", title: "Sensory-Linie" },
-  { line: "mountain", title: "Mountain-Linie" },
-  { line: "river", title: "River-Linie" },
+  { line: "future", title: "Future-Linie", theme: "Zukunft — die Ungeborenen, die Registratur für morgen" },
+  { line: "mycelium", title: "Mycelium-Linie", theme: "Netz — Verbindung, Nährstoffe, Reziprozität" },
+  { line: "sensory", title: "Sensory-Linie", theme: "Sinne — Wahrnehmung, Muster im Rauschen" },
+  { line: "mountain", title: "Mountain-Linie", theme: "Fundament — was ruht, was bleibt" },
+  { line: "river", title: "River-Linie", theme: "Fluss — Bewegung, Phase, was fließt" },
 ]
 
 function expandShell(text: string, cwd: string): string {
@@ -36,13 +36,13 @@ function activeSessionID(api: TuiPluginApi): string | undefined {
 
 const tui: TuiPlugin = async (api) => {
   const worktree = api.state.path.worktree
-  for (const { line, title } of LINES) {
+  for (const { line, title, theme } of LINES) {
     api.keymap.registerLayer({
       mode: "base",
       commands: [
         {
           name: `omegaflow.${line}_new`,
-          title: `${title} — neue Session (Plan)`,
+          title: `${title} — neue Session (Plan) · ${theme}`,
           category: "omegaflow",
           namespace: "palette",
           slashName: `${line}_new`,
@@ -68,7 +68,7 @@ const tui: TuiPlugin = async (api) => {
         },
         {
           name: `omegaflow.${line}_go`,
-          title: `${title} — Consent & Ausführung (line)`,
+          title: `${title} — Consent & Ausführung (line) · ${theme}`,
           category: "omegaflow",
           namespace: "palette",
           slashName: `${line}_go`,
