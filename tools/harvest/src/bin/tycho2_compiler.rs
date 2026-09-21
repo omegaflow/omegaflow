@@ -200,10 +200,10 @@ fn parse_tyc2_record(
     let mut dec = num(b, 29, 40);
     let mut pm_ra = num(b, 42, 48);
     let mut pm_de = num(b, 50, 56);
-        let mut hip: i32 = match field(b, 143, 148).and_then(|s| s.trim().parse().ok()) {
-            Some(h) => h,
-            None => 0,
-        };
+    let mut hip: i32 = match field(b, 143, 148).and_then(|s| s.trim().parse().ok()) {
+        Some(h) => h,
+        None => 0,
+    };
     if ra.is_none() || dec.is_none() {
         let Some(s) = suppl.get(&key).or_else(|| tyc1.get(&key)) else {
             return None;

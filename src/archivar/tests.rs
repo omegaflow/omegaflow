@@ -8057,12 +8057,14 @@ fn glm_l2_geo_series_roundtrip_and_component_name() {
     }];
     let magic = crate::geo::magic_of("glm_l2").expect("the glm_l2 format carries a magic");
     let bytes = crate::geo::write_bin(magic, &recs);
-    let parsed =
-        super::extract::geo_series_parse_bin("glm_l2", &bytes).expect("glm_l2 bin parses");
+    let parsed = super::extract::geo_series_parse_bin("glm_l2", &bytes).expect("glm_l2 bin parses");
     assert_eq!(parsed.len(), 1);
     assert_eq!(parsed[0].val, 1.428_5e-14);
     assert_eq!(parsed[0].comp, crate::geo::COMP_GLML2_FLASH_ENERGY);
-    assert_eq!(crate::geo::comp_max("glm_l2"), Some(crate::geo::COMP_GLML2_MAX));
+    assert_eq!(
+        crate::geo::comp_max("glm_l2"),
+        Some(crate::geo::COMP_GLML2_MAX)
+    );
     assert_eq!(
         super::extract::geo_series_component_name("glm_l2", crate::geo::COMP_GLML2_FLASH_ENERGY),
         Some("glm_l2_flash_radiant_energy_j")

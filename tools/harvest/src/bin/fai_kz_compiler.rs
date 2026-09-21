@@ -71,7 +71,9 @@ fn main() {
     };
     let adql = obscore_adql(limit);
     let Some((code, body)) = tap_csv(&adql, limit) else {
-        eprintln!("{TAP_SYNC}: the TAP query did not answer (measured stall) — the harvest stays pending");
+        eprintln!(
+            "{TAP_SYNC}: the TAP query did not answer (measured stall) — the harvest stays pending"
+        );
         std::process::exit(1);
     };
     if code != "200" {
@@ -120,10 +122,7 @@ fn main() {
     match parse_bin(&bin) {
         Some(parsed) if parsed.len() == records.len() => {
             let with_em = records.iter().filter(|r| r.em_band_m.is_some()).count();
-            let with_exp = records
-                .iter()
-                .filter(|r| r.t_exptime_s.is_some())
-                .count();
+            let with_exp = records.iter().filter(|r| r.t_exptime_s.is_some()).count();
             eprintln!(
                 "{out_path}: {} observations ({} B; rows {} | position_void {} | time_void {} | spectral_void {} | exposure_void {}; {} with spectral band, {} with exposure), roundtrip parses",
                 records.len(),

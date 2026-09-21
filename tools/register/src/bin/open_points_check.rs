@@ -4,7 +4,14 @@ use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
 const PREFIXES: [&str; 8] = [
-    "src/", "tools/", "docs/", "phi/", "bin/", "state/", ".github/", "firmware/",
+    "src/",
+    "tools/",
+    "docs/",
+    "phi/",
+    "bin/",
+    "state/",
+    ".github/",
+    "firmware/",
 ];
 
 fn main() {
@@ -123,7 +130,20 @@ fn normalize(word: &str) -> Option<String> {
     let trimmed = word.trim_start_matches(|c: char| {
         matches!(
             c,
-            '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>' | ',' | ';' | '\'' | '"' | '|' | '*' | '`'
+            '(' | ')'
+                | '['
+                | ']'
+                | '{'
+                | '}'
+                | '<'
+                | '>'
+                | ','
+                | ';'
+                | '\''
+                | '"'
+                | '|'
+                | '*'
+                | '`'
         )
     });
     if trimmed.starts_with('/') || trimmed.starts_with("http") {
