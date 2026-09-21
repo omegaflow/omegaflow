@@ -109,8 +109,8 @@ mod tests {
         assert!((rows[0].lon - (-117.24226)).abs() < 1e-9);
         assert_eq!(rows[1].u, Some(0.08));
         assert_eq!(rows[1].v, None);
-        let expected = crate::lsk::days_from_civil(2026, 9, 21).unwrap() as f64 * 86400.0
-            + 5.0 * 3600.0;
+        let expected =
+            crate::lsk::days_from_civil(2026, 9, 21).unwrap() as f64 * 86400.0 + 5.0 * 3600.0;
         let expected = lsk.unix_to_tdb(expected).unwrap();
         assert!((rows[0].t - expected).abs() < 1e-6);
     }
@@ -119,8 +119,11 @@ mod tests {
     fn parse_csv_rejects_header_only_and_void() {
         let lsk = embedded_lsk().expect("embedded naif0012 parses");
         assert!(
-            parse_csv("time,latitude,longitude,water_u,water_v\nUTC,d,e,m s-1,m s-1\n", &lsk)
-                .is_none()
+            parse_csv(
+                "time,latitude,longitude,water_u,water_v\nUTC,d,e,m s-1,m s-1\n",
+                &lsk
+            )
+            .is_none()
         );
         assert!(parse_csv("", &lsk).is_none());
     }

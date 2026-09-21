@@ -167,12 +167,8 @@ fn main() {
     };
     let tdb = (jd - J2000_EPOCH) * 86400.0;
 
-    let dastcom_bytes = match ensure_bin(
-        &dastcom_path,
-        CDN_TAG,
-        "dastcom_asteroids.bin",
-        BIN_TTL_S,
-    ) {
+    let dastcom_bytes = match ensure_bin(&dastcom_path, CDN_TAG, "dastcom_asteroids.bin", BIN_TTL_S)
+    {
         Some(b) => b,
         None => {
             eprintln!(

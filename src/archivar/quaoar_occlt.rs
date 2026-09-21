@@ -92,9 +92,7 @@ pub fn zip_entries(data: &[u8]) -> Option<Vec<ZipEntry>> {
             comp_size,
             local_offset,
         });
-        off = name_end
-            .checked_add(extra_len)?
-            .checked_add(comment_len)?;
+        off = name_end.checked_add(extra_len)?.checked_add(comment_len)?;
     }
     Some(out)
 }
@@ -106,7 +104,10 @@ pub fn zip_extract(data: &[u8], e: &ZipEntry) -> Option<Vec<u8>> {
     }
     let name_len = le16(data, off + 26)? as usize;
     let extra_len = le16(data, off + 28)? as usize;
-    let start = off.checked_add(30)?.checked_add(name_len)?.checked_add(extra_len)?;
+    let start = off
+        .checked_add(30)?
+        .checked_add(name_len)?
+        .checked_add(extra_len)?;
     let end = start.checked_add(e.comp_size as usize)?;
     if end > data.len() {
         return None;
@@ -150,8 +151,7 @@ pub fn parse_filename(name: &str) -> Option<(&'static str, &str, &str)> {
     } else if let Some(site) = rest.strip_prefix("_chi2_") {
         Some(("chi2", date, site))
     } else {
-        rest.strip_prefix('_')
-            .map(|site| ("lc", date, site))
+        rest.strip_prefix('_').map(|site| ("lc", date, site))
     }
 }
 

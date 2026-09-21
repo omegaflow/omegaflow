@@ -435,7 +435,10 @@ fn main() {
         });
     }
     eprintln!("\ntess stars with curves: {}", curves.len());
-    if write_asset(&curves, &out_path) && ci_mode && !upload_release("exofop.ipac.caltech.edu", &out_path) {
+    if write_asset(&curves, &out_path)
+        && ci_mode
+        && !upload_release("exofop.ipac.caltech.edu", &out_path)
+    {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

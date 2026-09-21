@@ -3492,7 +3492,12 @@ mod tests {
             d.extend_from_slice(&addr.to_le_bytes());
             d
         }
-        fn btree_header_v2(leaf_addr: u64, nrec: u16, node_size: usize, record_size: u16) -> Vec<u8> {
+        fn btree_header_v2(
+            leaf_addr: u64,
+            nrec: u16,
+            node_size: usize,
+            record_size: u16,
+        ) -> Vec<u8> {
             let mut d = Vec::with_capacity(38);
             d.extend_from_slice(b"BTHD");
             d.push(0);
@@ -3587,7 +3592,11 @@ mod tests {
         assert!(matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })));
 
         let index = file.chunk_index("d").unwrap();
-        assert_eq!(index.len(), 3, "one v2 B-tree record per single-element chunk");
+        assert_eq!(
+            index.len(),
+            3,
+            "one v2 B-tree record per single-element chunk"
+        );
 
         let fetch = |off: u64, len: u64| {
             buf.get(off as usize..(off + len) as usize)
