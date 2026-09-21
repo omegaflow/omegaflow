@@ -93,7 +93,6 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
 | `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 34 Modi — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
-| `--searxng` | — (neu, braucht `SEARXNG_URL`, format=json) | | | |
 | `--mwmbl` | 0,78 s (neu, keyless JSON, kein Gate) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
 | `--pubchem` | — (neu) | | `--uniprot` | — (neu) |
@@ -126,20 +125,6 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 - `archive_search --heasarc "table=<w3browse-tabelle> rows=<n>"` — echte
   W3Browse-Tabellen, z. B. `table=sao`; `master` existiert nicht (W3Browse sagt
   es wörtlich).
-- `archive_search --searxng <query>` — Meta-Suche über eine SearXNG-Instanz
-  (`<base>/search?q=&format=json&language=all&safesearch=0`); Basis-URL aus
-  `SEARXNG_URL` (`.secrets.local/.env`). Gemessen 2026-09-21 (Sweep über 101
-  Instanzen aus `searx.space/data/instances.json`): die meisten liefern trotz
-  HTTP 200 HTML statt JSON; die zwei JSON-fähigen (`sx.xo.st`,
-  `search.mectov.my.id`) geben die Query korrekt zurück, aber **irrelevante
-  Fremdtreffer** (Bing-Proxy-Müll) — unbrauchbar. Der tragfähige Weg ist eine
-  **selbst gehostete** Instanz (`format=json` in `settings.yml`); ohne
-  `SEARXNG_URL` bleibt der Modus `pending`. Je Treffer `url` + Titel/Engine/
-  Beschreibung. Gemessen 2026-09-21: der **Playwright-Pfad** (echter Browser)
-  löst die Marginalia-JS-Challenge (`sst=`) → HTTP 200, hochwertige akademische
-  Treffer; die **IP-Blocks** löst er nicht — DuckDuckGo antwortet auch über den
-  Proton-Exit `169.150.218.57` mit 403 (Datacenter-IP-Reputation), Mojeek mit
-  403 „automated queries".
 - `archive_search --mwmbl <query>` — offene Community-Suchmaschine
   (`mwmbl.org/api/v1/search/?s=`), **keyless JSON, kein Gate**; Antwort
   `[{url, title:[{value,is_bold}], extract:[{value,is_bold}], source}]` → `url` +
