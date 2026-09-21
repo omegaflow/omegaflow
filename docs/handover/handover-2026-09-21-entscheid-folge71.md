@@ -3,7 +3,7 @@
   session: Entscheid-Folge 71
   class: handover
   date: 2026-09-21
-  sha256: cefdb022caeeae12024085f4621ac6e9ed742f7b3011f6a954545d58d4dcbf7e
+  sha256: 0be48a1dfea9cc5db923346149e9b0ad7b286b26eb008d373ab422bfbcdf0929
   status: live
 -->
 # Handover — Entscheid-Folge 71 (2026-09-21)
@@ -96,9 +96,9 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   is a subagent … Falling back to default agent`), 0 Antworten. **Beide geheilt**
   (model-Feld ergänzt; `--agent plan` = read-only Primary). `cargo check -p
   omegaflow-measure` clean. Kein Ranking möglich — Klasse bleibt **pending**.
-  (Schritt: nach dem Push `gh workflow run free-model-bench.yml -f task=T7` +
-  `gh workflow run free-model-agent-bench.yml -f task=funding-research`; Run-Ids
-  registrieren; Artefakte einmalig lesen.)
+  (Schritt: dispatcht 2026-09-21 nach dem Push — `free-model-bench` `35567266519`
+  (task T7), `free-model-agent-bench` `35567268692` (task funding-research), beide
+  queued; kein Poll — `ci_manage view <id>` einmalig, Artefakte einmalig lesen.)
 - **Eigenprize / Solitude** — `termin`; Eigenprize nächste Runde **ohne Datum**
   (Reminder auf `eigen.build`), Solitude ~Herbst 2027. Entwürfe existieren
   (`state/mail/eigenprize-application.md`, `state/mail/solitude-application.md`,
