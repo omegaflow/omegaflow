@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 use std::process::Command;
 
+use omegaflow::cdn::upload_release;
+
 const CONE_ENDPOINT: &str = "https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition";
+const CDN_TAG: &str = "ned.ipac.caltech.edu-ned";
 
 fn splitmix64(mut x: u64) -> u64 {
     x = x.wrapping_add(0x9E37_79B9_7F4A_7C15);
@@ -446,6 +449,7 @@ fn main() {
     let mut out: Option<String> = None;
     let mut root = CONE_ENDPOINT.to_string();
     let mut count_only = false;
+    let mut ci_mode = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -488,6 +492,7 @@ fn main() {
                 i += 1;
             }
             "--count" => count_only = true,
+            "--ci-mode" => ci_mode = true,
             _ => {}
         }
         i += 1;
@@ -551,6 +556,9 @@ fn main() {
                 skipped,
                 out_path
             );
+            if ci_mode && !upload_release(CDN_TAG, &out_path) {
+                std::process::exit(1);
+            }
         }
         None => {
             eprintln!(
