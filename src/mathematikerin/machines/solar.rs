@@ -442,11 +442,11 @@ impl SolarMachine {
                     None => "-".to_string(),
                 };
                 format!(
-                    "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
+                    "solar te(kde) {} n {} te(kde) {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
                     label, n, v.te, v.threshold, v.tau_x, v.tau_y, pe_x, pe_y, state
                 )
             }
-            None => format!("solar te {} n {} state {}", label, n, state),
+            None => format!("solar te(kde) {} n {} state {}", label, n, state),
         };
         if self.named != line {
             eprintln!("{}", line);
