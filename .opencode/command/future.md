@@ -1,5 +1,5 @@
 ---
-description: Future-Linie — Entscheidungen, Korrespondenz, Consent, Operator-Queue, Übergabe. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Future-Linie — die Menschenwelt als Anrede: Forscherkorrespondenz, Anträge, Consent, Operator-Queue, Übergabe. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 

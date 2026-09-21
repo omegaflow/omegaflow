@@ -90,7 +90,8 @@
     "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
     "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
     "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made",
-    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank"
+    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
+    "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -175,6 +176,10 @@
     ["wrangler kv", "cloudflare write"],
     ["wrangler pages", "cloudflare write"]
   ],
+  "human_threshold": [
+    "smail --send"
+  ],
+  "registered_word": "wort:",
   "unit_tokens": [
     "km/s",
     "m/s",
@@ -364,6 +369,9 @@
     "pcmci_cond_lag_dedup": "let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();\ncond_idxs.sort_unstable();\ncond_idxs.dedup();",
     "arx_null_single_lag_col": "row.push(c.series[t - c.lag] as f64);",
     "kernel_id_second_table": "assert_eq!(kernel_id_for_force(5), Some(3));",
-    "cdn_capped_release_blocked": "if ci_mode && !upload_asset(&out_path) {"
+    "cdn_capped_release_blocked": "if ci_mode && !upload_asset(&out_path) {",
+    "human_threshold_send": "smail --send --to role@example.org",
+    "human_threshold_dry_run": "smail --dry-run --to role@example.org",
+    "human_threshold_with_word": "smail --send … Wort: Adoptions-Mails senden"
   }
 }

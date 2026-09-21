@@ -43,6 +43,8 @@ struct Vocab {
     measure_step_markers: Vec<String>,
     measure_step_due: Vec<String>,
     consent_acts: Vec<(String, String)>,
+    human_threshold: Vec<String>,
+    registered_word: String,
     unit_tokens: Vec<String>,
     diagnostic_markers: Vec<String>,
     de_determiners: Vec<String>,
@@ -73,6 +75,16 @@ fn str_list(json: &JsonVal, key: &str) -> Vec<String> {
             _ => Vec::new(),
         },
         _ => Vec::new(),
+    }
+}
+
+fn str_value(json: &JsonVal, key: &str) -> String {
+    match json {
+        JsonVal::Obj(map) => match map.get(key) {
+            Some(JsonVal::Str(s)) => s.clone(),
+            _ => String::new(),
+        },
+        _ => String::new(),
     }
 }
 
@@ -132,6 +144,8 @@ fn load_vocab() -> Vocab {
         measure_step_markers: str_list(&json, "measure_step_markers"),
         measure_step_due: str_list(&json, "measure_step_due"),
         consent_acts: pair_list(&json, "consent_acts"),
+        human_threshold: str_list(&json, "human_threshold"),
+        registered_word: str_value(&json, "registered_word"),
         unit_tokens: str_list(&json, "unit_tokens"),
         diagnostic_markers: str_list(&json, "diagnostic_markers"),
         de_determiners: str_list(&json, "de_determiners"),
@@ -419,6 +433,7 @@ impl Gate {
             self.check_serial_priority(text),
             self.check_measure_step(text),
             self.check_consent_act(text),
+            self.check_human_threshold(text),
         ]
         .into_iter()
         .flatten()
@@ -611,6 +626,28 @@ impl Gate {
         None
     }
 
+    fn check_human_threshold(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        let word = vocab().registered_word.to_lowercase();
+        for marker in &vocab().human_threshold {
+            let ml = marker.to_lowercase();
+            if !lower.contains(&ml) {
+                continue;
+            }
+            if lower.contains(&word) {
+                continue;
+            }
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "human-threshold".to_string(),
+                line: 0,
+                feedback: feedback("human_threshold").to_string(),
+                quote: clip(text, 80),
+            });
+        }
+        None
+    }
+
     fn check_zero_fabrication(&self, text: &str) -> Option<Verdict> {
         let lower = text.to_lowercase();
         let bytes = text.as_bytes();
@@ -783,6 +820,9 @@ impl Gate {
         if tool == "bash" {
             let obj = parse_json(args_json)?;
             let command = jstr(&obj, "command")?;
+            if let Some(v) = self.check_human_threshold(&command) {
+                return Some(v);
+            }
             return self.check_consent_act(&command);
         }
         if !matches!(tool, "edit" | "write" | "patch" | "multiedit") {
@@ -802,6 +842,9 @@ impl Gate {
         let Some(content) = content else {
             return None;
         };
+        if let Some(v) = self.check_human_threshold(&content) {
+            return Some(v);
+        }
         let is_code = path.ends_with(".rs")
             || path.ends_with(".js")
             || path.ends_with(".wgsl")
@@ -2326,6 +2369,31 @@ mod tests {
         let mut g = test_gate();
         let findings = g.check_input(&fx("consent_dry_run"));
         assert!(findings.iter().all(|v| v.rule != "consent-act"));
+    }
+
+    #[test]
+    fn fp_human_threshold_send_without_word() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("human_threshold_send"));
+        assert!(findings.iter().any(|v| v.rule == "human-threshold"));
+        let args = format!(r#"{{"command":"{}"}}"#, fx("human_threshold_send"));
+        let v = g.check_tool_call("bash", &args).unwrap();
+        assert_eq!(v.rule, "human-threshold");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_human_threshold_dry_run_passes() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("human_threshold_dry_run"));
+        assert!(findings.iter().all(|v| v.rule != "human-threshold"));
+    }
+
+    #[test]
+    fn fn_human_threshold_with_word_passes() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("human_threshold_with_word"));
+        assert!(findings.iter().all(|v| v.rule != "human-threshold"));
     }
 
     #[test]
