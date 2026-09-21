@@ -1022,77 +1022,6 @@ pub fn brave_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     }
 }
 
-pub fn searxng_lines(query: &str, base: &str, max: usize) -> Vec<String> {
-    let base = base.trim().trim_end_matches('/');
-    if base.is_empty() {
-        return vec![
-            "pending — SEARXNG_URL absent from .secrets.local/.env (self-host SearXNG or name a JSON-capable instance)"
-                .to_string(),
-        ];
-    }
-    let url = format!(
-        "{}/search?q={}&format=json&language=all&safesearch=0",
-        base,
-        urlencode(query)
-    );
-    let extra = [
-        "-H",
-        "Accept: application/json",
-        "-H",
-        "User-Agent: omegaflow-archive-search",
-    ];
-    match get(&url, &extra, "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = searxng_results(&v, max);
-                if out.is_empty() {
-                    out.push(format!("absent — SearXNG carries no entry: {}", query));
-                }
-                out
-            }
-            None => vec!["pending — the SearXNG response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!(
-            "pending — SearXNG HTTP {} (the instance may refuse the JSON format — enable it in settings.yml or self-host)",
-            f.status_text()
-        )],
-        None => vec!["pending — no network".to_string()],
-    }
-}
-
-fn searxng_results(v: &Json, max: usize) -> Vec<String> {
-    let mut out = Vec::new();
-    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
-        return out;
-    };
-    for r in results {
-        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
-        if link.is_empty() {
-            continue;
-        }
-        let title = r.get("title").and_then(|t| t.as_str()).unwrap_or("");
-        let engine = r.get("engine").and_then(|e| e.as_str()).unwrap_or("");
-        let mut line = format!("url {}\ttitle: {}", link, title);
-        if !engine.is_empty() {
-            line.push_str(&format!("\tengine: {}", engine));
-        }
-        if let Some(desc) = r
-            .get("content")
-            .and_then(|c| c.as_str())
-            .map(|c| flatten(&strip_tags(c)))
-        {
-            if !desc.is_empty() {
-                line.push_str(&format!("\tdescription: {}", desc));
-            }
-        }
-        out.push(line);
-        if out.len() >= max {
-            break;
-        }
-    }
-    out
-}
-
 pub fn mwmbl_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("https://mwmbl.org/api/v1/search/?s={}", urlencode(query));
     let headers = [
@@ -1264,7 +1193,6 @@ const QUERY_MODES: &[&str] = &[
     "crates",
     "librs",
     "brave",
-    "searxng",
     "mwmbl",
     "datacite",
     "zenodo",
@@ -1385,19 +1313,6 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 )],
             }
         }
-        "searxng" => {
-            let base = resolve_key(
-                env.get("SEARXNG_URL").map(String::as_str).unwrap_or(""),
-                env,
-            );
-            match base {
-                Secret::Value(u) => searxng_lines(query, &u, max),
-                Secret::Absent(marker) => vec![format!(
-                    "pending — {} absent from .secrets.local/.env",
-                    token_key("SEARXNG_URL", marker)
-                )],
-            }
-        }
         "mwmbl" => mwmbl_lines(query, max),
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
@@ -1485,7 +1400,6 @@ mod tests {
             "crates",
             "librs",
             "brave",
-            "searxng",
             "mwmbl",
             "datacite",
             "zenodo",
@@ -1516,29 +1430,6 @@ mod tests {
         let mut actual = QUERY_MODES.to_vec();
         actual.sort_unstable();
         assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn searxng_results_carry_url_title_engine() {
-        let body = r#"{"results":[
-            {"url":"https://example.org/a","title":"A <b>title</b>","content":"a  short\nsummary","engine":"duckduckgo"},
-            {"url":"","title":"no url","content":"x","engine":"y"},
-            {"url":"https://example.org/b","title":"B","content":"","engine":""}
-        ]}"#;
-        let v = json::parse(body).expect("json");
-        let lines = searxng_results(&v, 10);
-        assert_eq!(lines.len(), 2);
-        assert_eq!(
-            lines[0],
-            "url https://example.org/a\ttitle: A <b>title</b>\tengine: duckduckgo\tdescription: a short summary"
-        );
-        assert_eq!(lines[1], "url https://example.org/b\ttitle: B");
-    }
-
-    #[test]
-    fn searxng_lines_names_the_missing_url_as_pending() {
-        let lines = searxng_lines("x", "   ", 10);
-        assert!(lines[0].starts_with("pending — SEARXNG_URL absent"));
     }
 
     #[test]
