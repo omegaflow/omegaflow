@@ -353,11 +353,17 @@ pub fn flush_port_block(
     converted: &mut String,
     total: &mut usize,
     parsed: &mut usize,
+    pending: &mut usize,
 ) {
     *total += 1;
     let conv = port_block(block);
-    if !parse_sources(&conv).is_empty() {
+    let srcs = parse_sources(&conv);
+    if !srcs.is_empty() {
         *parsed += 1;
+        converted.push_str(&conv);
+        converted.push('\n');
+    } else if conv.contains("# pending ") {
+        *pending += 1;
         converted.push_str(&conv);
         converted.push('\n');
     }
@@ -376,12 +382,13 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
     let mut block = String::new();
     let mut total = 0usize;
     let mut parsed = 0usize;
+    let mut pending = 0usize;
     let mut in_source = false;
     for line in content.lines() {
         let t = line.trim_start();
         if t.starts_with("source ") {
             if !block.is_empty() {
-                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
                 block = String::new();
             }
             in_source = true;
@@ -391,7 +398,7 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         }
         if t.starts_with("url ") && !in_source {
             if !block.is_empty() {
-                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
                 block = String::new();
             }
             block.push_str(line);
@@ -402,15 +409,15 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         block.push('\n');
     }
     if !block.is_empty() {
-        flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+        flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
     }
     if std::fs::write(output, &converted).is_err() {
         eprintln!("--port: output unwritable: {}", output);
         return 1;
     }
     eprintln!(
-        "--port: {} blocks converted, {} parse in the current parser → {}",
-        total, parsed, output
+        "--port: {} blocks converted, {} parse in the current parser, {} pending review → {}",
+        total, parsed, pending, output
     );
     0
 }
