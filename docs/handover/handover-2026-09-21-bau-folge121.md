@@ -3,7 +3,7 @@
   session: Bau-Folge 121
   class: handover
   date: 2026-09-21
-  sha256: 7f8883865c329ccbb83c2ccd424443169bffa2e30feb7a1b6a28bd9edcb08427
+  sha256: e35b2b70361e0fdb03d4e4183d75575d1c7f021aadf01eee11829a635cb1756f
   status: live
 -->
 # Handover — Bau-Folge 121 (2026-09-21)
@@ -111,10 +111,30 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Braucht:** Operator-Wort — Prototyp bauen oder descopen (via entscheid-Linie);
   bis dahin kein Schritt.
 
+### 3. SearXNG-self-host / IP-Route für Web-Suche
+- **Status:** `operator-gebunden` | **Bindung:** `operator`
+- **Lage:** `--searxng` ist gebaut, braucht `SEARXNG_URL`; öffentliche Instanzen
+  sind unbrauchbar (101-Sweep: nur 2 liefern JSON, beide mit irrelevanten
+  Fremdtreffern). `--mwmbl` (keyless, kein Gate) deckt die keyless Web-Suche
+  bereits ab und läuft live. Der Playwright-Pfad löst JS-Challenges (Marginalia
+  200, hochwertige Treffer), aber **nicht** die IP-Blocks — DDG antwortet über den
+  Proton-Exit `169.150.218.57` mit 403 (direct 202), Mojeek 403 „automated
+  queries": Datacenter-IP-Reputation. DNS (`dnsforge`/AdGuard/DNS0) ändert nur die
+  Namensauflösung, nicht die Quell-IP. FMHY-Proxy-Liste (`fmhy.net/privacy`):
+  3X-UI, Xray, Hysteria, sing-box, Scramjet/Nebula, v2rayN/NekoBox/Hiddify/
+  ClashVerge — **keine kostenlose residential-Route**.
+- **Blockade:** eine echte residential-/ungated-Route oder das Operator-Wort für
+  einen lokalen Dienst.
+- **Braucht:** Operator-Entscheid — (a) selbst gehosteten SearXNG starten (Docker
+  `searxng/searxng`, `search.formats: [html, json]`, Limiter `false`, dann
+  `SEARXNG_URL=http://localhost:8888`), (b) `--mwmbl` als Web-Suche genügen
+  lassen, oder (c) eine residential-Route benennen.
+
 ## Benchmark
 
 - **Bau-Folge 121:** `grind-flash` ×1 (archive_search `--verdict`-Fix, ~2 min);
-  `--searxng`-Modus im `build`-Kontext. Flash-first; keine Eskalation nötig.
+  `--searxng`- und `--mwmbl`-Modus + die harte SearXNG-/IP-Recherche im
+  `build`-Kontext. Flash-first; keine Eskalation nötig.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
