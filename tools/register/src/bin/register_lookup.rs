@@ -1335,11 +1335,54 @@ const DROPPED_STATUS_TAGS: &[&str] = &[
 ];
 
 const DROPPED_STOPWORDS: &[&str] = &[
-    "der", "die", "das", "den", "dem", "des", "ein", "eine", "einen", "einem", "eines", "und",
-    "oder", "aber", "ist", "sind", "wird", "werden", "wurde", "nicht", "kein", "keine", "fuer",
-    "mit", "von", "auf", "aus", "als", "auch", "nur", "noch", "the", "and", "for", "with",
-    "from", "that", "this", "into", "over", "after", "punkt", "status", "schritt", "offen",
-    "wartend", "blockiert", "pending",
+    "der",
+    "die",
+    "das",
+    "den",
+    "dem",
+    "des",
+    "ein",
+    "eine",
+    "einen",
+    "einem",
+    "eines",
+    "und",
+    "oder",
+    "aber",
+    "ist",
+    "sind",
+    "wird",
+    "werden",
+    "wurde",
+    "nicht",
+    "kein",
+    "keine",
+    "fuer",
+    "mit",
+    "von",
+    "auf",
+    "aus",
+    "als",
+    "auch",
+    "nur",
+    "noch",
+    "the",
+    "and",
+    "for",
+    "with",
+    "from",
+    "that",
+    "this",
+    "into",
+    "over",
+    "after",
+    "punkt",
+    "status",
+    "schritt",
+    "offen",
+    "wartend",
+    "blockiert",
+    "pending",
 ];
 
 struct Handover {
@@ -1513,8 +1556,7 @@ fn extract_open_points(text: &str) -> Vec<OpenPoint> {
             if first.is_empty() || first.eq_ignore_ascii_case("punkt") {
                 continue;
             }
-            let row_open =
-                section_open || cells.iter().any(|c| tag_in_words(&normalize_words(c)));
+            let row_open = section_open || cells.iter().any(|c| tag_in_words(&normalize_words(c)));
             if row_open {
                 points.push(OpenPoint {
                     lineno,
@@ -1630,11 +1672,7 @@ fn commit_for_path(path: &str) -> Option<String> {
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
     let first = stdout.lines().next()?.trim().to_string();
-    if first.is_empty() {
-        None
-    } else {
-        Some(first)
-    }
+    if first.is_empty() { None } else { Some(first) }
 }
 
 fn commit_for_path_cached(
@@ -2294,9 +2332,7 @@ mod tests {
         let points = extract_open_points(text);
         let texts: Vec<&str> = points.iter().map(|p| p.text.as_str()).collect();
         assert!(texts.iter().any(|t| t.starts_with("alpha beta gamma")));
-        assert!(texts
-            .iter()
-            .any(|t| t.starts_with("Zwei rote Gates")));
+        assert!(texts.iter().any(|t| t.starts_with("Zwei rote Gates")));
         assert!(texts.iter().any(|t| t.starts_with("ein weiterer")));
         assert!(!texts.iter().any(|t| t.starts_with("HEAD")));
     }

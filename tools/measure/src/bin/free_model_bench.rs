@@ -224,14 +224,47 @@ fn body_with(prompt: &str, tools: Option<&str>, max_tokens: u32, model: &str) ->
 
 fn build_body(task: &str, model: &str) -> String {
     match task {
-        "T1" => body_with("Call the get_weather tool for the city Berlin. You must use the tool.", Some(TOOLS1), 256, model),
-        "T2" => body_with("Get the weather for Berlin, then advise on an umbrella. Use the tools.", Some(TOOLS2), 256, model),
-        "T2b" => body_with("The get_weather result for Berlin is: rain. Now call the get_umbrella_advice tool with weather=rain.", Some(TOOLS2), 256, model),
-        "T3" => body_with("Fix this Rust function so it sums 1 through n inclusive:\nfn sum_to(n: u32) -> u32 { let mut s = 0; for i in 1..n { s += i; } s }\nReturn only the corrected function.", None, 512, model),
-        "T4" => body_with("Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".", None, 256, model),
-        "T5" => body_with("A train travels 60 km/h for 2.5 hours, then 80 km/h for 1.25 hours. What is the total distance in km? End with: Answer: <number>", None, 256, model),
+        "T1" => body_with(
+            "Call the get_weather tool for the city Berlin. You must use the tool.",
+            Some(TOOLS1),
+            256,
+            model,
+        ),
+        "T2" => body_with(
+            "Get the weather for Berlin, then advise on an umbrella. Use the tools.",
+            Some(TOOLS2),
+            256,
+            model,
+        ),
+        "T2b" => body_with(
+            "The get_weather result for Berlin is: rain. Now call the get_umbrella_advice tool with weather=rain.",
+            Some(TOOLS2),
+            256,
+            model,
+        ),
+        "T3" => body_with(
+            "Fix this Rust function so it sums 1 through n inclusive:\nfn sum_to(n: u32) -> u32 { let mut s = 0; for i in 1..n { s += i; } s }\nReturn only the corrected function.",
+            None,
+            512,
+            model,
+        ),
+        "T4" => body_with(
+            "Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".",
+            None,
+            256,
+            model,
+        ),
+        "T5" => body_with(
+            "A train travels 60 km/h for 2.5 hours, then 80 km/h for 1.25 hours. What is the total distance in km? End with: Answer: <number>",
+            None,
+            256,
+            model,
+        ),
         "T6" => {
-            let p = format!("{} At the very end: what is the access code mentioned in the document? Return only the code.", build_filler());
+            let p = format!(
+                "{} At the very end: what is the access code mentioned in the document? Return only the code.",
+                build_filler()
+            );
             body_with(&p, None, 64, model)
         }
         "T7" => body_with(
@@ -395,22 +428,32 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
         let n429 = mrows.iter().filter(|r| r.status == "http_429").count();
         let n5 = mrows.iter().filter(|r| r.status == "http_5xx").count();
         let nt = mrows.iter().filter(|r| r.status == "timeout").count();
-        let np = mrows
-            .iter()
-            .filter(|r| r.status.starts_with("pending"))
-            .count();
+        let np = mrows.iter().filter(|r| r.status.starts_with("pending")).count();
         let _ = writeln!(
             f,
             "{}\t{}\tSUMMARY\ttool_ok={}/{}\tT2={}/{}\tT3={}/{}\tT4={}/{}\tT5={}/{}\tT6={}/{}\tT7={}/{}\tp50={}\tp95={}\t429={}\t5xx={}\ttimeout={}\tpending={}",
-            m.provider, m.id,
-            count("T1", "pass"), n_t("T1"),
-            count("T2", "pass"), n_t("T2"),
-            count("T3", "pass"), n_t("T3"),
-            count("T4", "pass"), n_t("T4"),
-            count("T5", "pass"), n_t("T5"),
-            count("T6", "pass"), n_t("T6"),
-            count("T7", "pass"), n_t("T7"),
-            pct(0.5), pct(0.95), n429, n5, nt, np
+            m.provider,
+            m.id,
+            count("T1", "pass"),
+            n_t("T1"),
+            count("T2", "pass"),
+            n_t("T2"),
+            count("T3", "pass"),
+            n_t("T3"),
+            count("T4", "pass"),
+            n_t("T4"),
+            count("T5", "pass"),
+            n_t("T5"),
+            count("T6", "pass"),
+            n_t("T6"),
+            count("T7", "pass"),
+            n_t("T7"),
+            pct(0.5),
+            pct(0.95),
+            n429,
+            n5,
+            nt,
+            np
         );
     }
 }
