@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 1ba6bafcff5e9a80b98d6e06abfe332be0f9129aae93e0e58ba2b9e6038bb287
+  sha256: aa9bed988c4cdc5670cf52cb5c8f41cebe420018aadac548edbe8a0abb239e8d
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -83,13 +83,15 @@ Wartestellungen sind kein Auswahlpunkt.
 - **Blockade:** FRS-Maintenance (nur hist. Matrizen).
 - **Braucht:** FRS-Retry `pgm_sys_acrnm RadNet`; Luft-Route via Dashboard nutzbar.
 
-### EMODnet maxTime
-- **Status:** wartend | **Bindung:** termin (Compiler/Manifestation)
-- **Lage:** `ledger.φ:18` — Dataset umbenannt `HFRADAR_NADR_Totals` →
-  `EUHFR_NRTcurrent_HFR-NAdr-Total` (56 HFRADAR-Totals live); Host direkt HTTP 200;
-  `time_coverage_end` 2026-09-21T10:00:00Z (PT30M).
-- **Blockade:** keine (Route + Host offen).
-- **Braucht:** Compiler/Manifestation auf die neue Dataset-ID.
+### EMODnet HFR-NAdr — Manifestation
+- **Status:** wartend | **Bindung:** termin (Lauf)
+- **Lage:** `ledger.φ:18` — Compiler `emodnet_hfr_compiler.rs` + Arm `emodnet_hfr.rs`
+  (geo HFR1, EWCT/NSCT advective m/s) + Workflow `emodnet-hfr-cdn.yml` gebaut
+  (`cargo check` 0/0); `sources.φ:8713`-Block pending sha256; Dataset
+  `EUHFR_NRTcurrent_HFR-NAdr-Total`, maxTime 2026-09-21T10:00:00Z.
+- **Blockade:** Lauf.
+- **Braucht:** `gh workflow run emodnet-hfr-cdn.yml` (nach Push); bei success
+  sha256 → `sources.φ`/`ledger.φ` → `kompiliert`.
 
 ### src.pas TAP
 - **Status:** wartend | **Bindung:** termin (Dienst-Backend)
