@@ -68,9 +68,8 @@ google	gemini-3.5-flash	https://generativelanguage.googleapis.com/v1beta/openai	
 google	gemini-3.5-flash-lite	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 google	gemini-3.1-flash-lite	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 google	gemini-3-flash-preview	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
-google	gemini-2.5-pro	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
+google	gemini-3.1-pro-preview	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 google	gemini-2.5-flash	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
-google	gemini-2.5-flash-lite	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 google	gemma-4-26b-a4b-it	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 google	gemma-4-31b-it	https://generativelanguage.googleapis.com/v1beta/openai	GOOGLE_API_KEY
 groq	openai/gpt-oss-120b	https://api.groq.com/openai/v1	GROQ_API_KEY
