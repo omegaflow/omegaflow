@@ -8701,7 +8701,15 @@ on earth 0 0 0
 ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
-note CDN-Asset pending (sha256 nach Manifestation); ERDDAP griddap ucsdHfrW1_Lon0360 .csv time,latitude,longitude,water_u,water_v m/s HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml.
+note CDN-Asset pending (sha256 nach Manifestation); ERDDAP griddap ucsdHfrW1_Lon0360 .csv time,latitude,longitude,water_u,water_v m/s HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml; Lauf 35581429287 dispatched.
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
+origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
+compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
+format quaoar_occlt
+ttl 604800
+at earth
+note CDN-Asset pending (sha256 nach Manifestation); Quaoar (50000) Sternbedeckungs-Lichtkurven data/YYYYMMDD_site.txt → QAO1-Serie; Arm quaoar_occlt.rs; ZIP 297 Einträge gemessen 2026-09-21; workflow quaoar-occlt-cdn.yml.
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf

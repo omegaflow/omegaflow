@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
@@ -261,7 +261,7 @@ fn main() {
         buf.len(),
         out_path
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("www.minorplanetcenter.net", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

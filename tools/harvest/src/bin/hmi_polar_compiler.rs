@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
 use omegaflow::hmi_polar::{parse_bin, write_bin};
 use omegaflow::json::{JsonVal, jnum, parse_json};
@@ -390,7 +390,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("jsoc1.stanford.edu", &out) {
         std::process::exit(1);
     }
 }
