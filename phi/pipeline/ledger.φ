@@ -27,9 +27,9 @@ ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 200), aber „Permission Denied" für omegaflow. PI Sotgiu antwortete 2026-09-16: Limadou-Website wird für CSES-02 umgebaut, „recommend waiting a few weeks before proceeding with your access request"; die Linie hat quittiert, Doppel-Anfrage 2026-09-20 (sent_ledger 1789906154/1789906520). Trigger: neue Anleitung auf dem Limadou-Portal. CSES-Limadou (em/electric) accept. DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-ausstehend
+kompiliert
 kandidat https://zenodo.org/api/records/21185812
-note Quaoar-Sternbedeckung, cc-by-4.0, Quaoar_paper.zip 572467032 B, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574; Compiler quaoar_occlt_compiler.rs + Arm quaoar_occlt.rs + Workflow quaoar-occlt-cdn.yml gebaut 2026-09-21; Manifestation offen.
+note Quaoar-Sternbedeckung, cc-by-4.0, Quaoar_paper.zip 572467032 B, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574; Compiler quaoar_occlt_compiler.rs + Arm quaoar_occlt.rs + Workflow quaoar-occlt-cdn.yml; manifestiert 2026-09-21 quaoar_occlt.bin 2540672 B sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23 (Lauf 35595708241 success).
 
 disponiert
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
@@ -70,3 +70,11 @@ note 425 Blöcke; --port 2026-09-20: 21 verifiziert / 401 declined. Review 2026-
 disponiert
 queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
 note 50 Blöcke; --port 2026-09-20: 11 verifiziert / 38 declined. Review 2026-09-20: 0 → sources.φ, 4 → declined_sources.φ, 7 skipped. Nächster Schritt: keine.
+
+disponiert
+bestand phi/pipeline/catalog/candidates-pools
+note Force-Gate-Re-Messung 2026-09-21: Survivor (IERS-EOP/RAPID/e-callisto/Coral/CNEOS) alle disponiert — maia finals.all + fireball.api in sources.φ; cad/rapid/tsr.lol decline, e-callisto/coralreefwatch dead. 34-offen = URL-Dedupe-Lücke.
+
+parser-gap
+bestand src/archivar/demeter.rs
+note DEMETER (CDPP): demeter.rs:60 verlangt Marker ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST (1144 ISL SURVEY), 289-B-Bloecke sonst identisch (TOULOUSE@26..34, 6 f32@265..289). Schritt: Marker-Pruefung auf ISL SURVEY|ISL BURST erweitern.
