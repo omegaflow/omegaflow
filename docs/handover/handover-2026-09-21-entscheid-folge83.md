@@ -3,7 +3,7 @@
   session: Entscheid-Folge 83
   class: handover
   date: 2026-09-21
-  sha256: 72a9f1ca61379cd2dfc6750c1008dc76f3b76520b50886d1d9433c0ff6560e79
+  sha256: 402b73b145d17e21dc0f898b9e3c83c3247f16278db3334d50da88a8f4f9c3da
   status: live
 -->
 # Handover — Entscheid-Folge 83 (2026-09-21)
@@ -149,6 +149,54 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** kein Bedarf.
 - **Braucht:** nichts — wartend.
 
+## Zurückgeholt — stille Verluste (`register_lookup --dropped entscheid --persist 5`)
+
+`--persist 5`: 36 gedroppte Punkte (`git: none` = kein auflösender Commit). Die
+über ≥5 Handover getragenen und dann still fallengelassenen Punkte, zurück in das
+Register:
+
+### adoption-Block — die drei Paper-Mails (Toth/Turyshev/Markwardt)
+- **Status:** operator-gebunden | **Bindung:** operator (Send) / dritter
+- **Lage:** `state/mail/adoption-mails.md` — drei sendfertige Entwürfe zum Papier `docs/paper/twenty-second-band-ground-chain.md` (v10, Pin `b4e70b1d`); Adressen gemessen 2026-09-16 (`vttoth@vttoth.com`, `turyshev@jpl.nasa.gov`, `craig.b.markwardt@nasa.gov`). Getragen 11 Handover (bis folge56/57), dann still fallengelassen.
+- **Blockade:** Sende-Wort fehlt.
+- **Braucht:** Operator-Wort „Adoptions-Mails senden" (`smail --send` ×3).
+
+### ESP32-Modul (Puls/HRV-Träger)
+- **Status:** operator-gebunden | **Bindung:** operator / `linie:bau`
+- **Lage:** physischer Träger für Puls/HRV (HRV-Gate `src/archivar/hrv.rs`); BOM. Getragen 30 Handover (bis folge52/53), dann fallengelassen.
+- **Blockade:** Hardware fehlt.
+- **Braucht:** Operator-Wort Hardware / Bau-Spec.
+
+### Pipeline-Port force-Gate — binär A/B (seit folge46)
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Lage:** kein sanktionierter Ort für den force-Gate-Port. Getragen bis folge59/60, dann fallengelassen.
+- **Blockade:** Operator-Entscheid.
+- **Braucht:** Wort A/B.
+
+### F2 — flare-Gate-Power
+- **Status:** eigen (an forschung) | **Bindung:** `linie:forschung`
+- **Lage:** print-only Probe n∈{400,600,1000}. Bis folge63/64 getragen.
+- **Blockade:** keiner (Messung).
+- **Braucht:** forschung re-run.
+
+### vC-Permeabilität — Vollzug
+- **Status:** termin | **Bindung:** operator (Maschine)
+- **Lage:** versteckter sensor-getriebener Lauf wartet. Bis folge71/72 getragen.
+- **Blockade:** Operator-Maschine.
+- **Braucht:** Wort für den hidden Lauf (`OMEGAFLOW_HIDDEN=1`).
+
+## Termine (Wiedervorlage — zurückgeholt)
+
+Die `Termine`-Sektion verschwand folge56→57; hier zurück:
+- **2026-09-22** — AllWISE-Coverage (`allwise_coverage.fp01`).
+- **2026-09-24** — Rubin-Forum-Umzug auf `rubin.community`.
+- **2026-09-28** — JUICE-Flyby (Kernel 000113+); Feld-Zustand füllen.
+- **2026-09-30** — EDL-Token-Erneuerung (`EARTHDATA_EDL_TOKEN`).
+- **~2026-10-07** — CSES-Limadou: neue Antragsprozedur nach CSES-02-Umstellung.
+- **2026-12-02** — NOIRLab Speisekammer-Frage (Gaia DR4).
+- **2026-12-03** — Europa Clipper (Fenster).
+- **~2027-04** — BepiColombo MORE: öffentliche Freigabe (Wissenschaftsphase).
+
 ## Operator-Queue (Stand folge83; DEMETER entfällt — Zugang gemessen)
 
 1. **SSI** — Video aufnehmen + hosten, PII-Felder, dann „einreichen". Frist 05.10.2026. (seit 2026-09-21)
@@ -164,6 +212,33 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 11. **Free-Model-Bench** — Cloudflare-Token mit „Workers AI"-Permission? (seit 2026-09-21)
 12. **SSDC** — warten (Host DNS-tot). (seit 2026-09-16)
 13. **Cookie-Transfer** — nichts. (seit 2026-09-16)
+
+## Linien × Stimmen (Vorschlag — Schwerpunkt, kein Entscheidungsgrund; das Gremium bleibt)
+
+Operator-Wort 2026-09-21: jede Linie kann einer der fünf Stimmen (`docs/council.yaml`)
+als **Schwerpunkt** zugeordnet werden — nicht als Entscheidungsgrundlage (der Rat
+bleibt), sondern als Färbung. Jede Linie gegen die Stimmen gehalten:
+
+| Linie | stärkste Stimme | warum | zweitstärkste |
+|---|---|---|---|
+| **bau** | **Mountain** | das Fundament, was bleibt; Archivar/Mathematikerin als Granit; A = A | Mycelium |
+| **ernte** | **Mycelium** | Netzwerk/Nährstoffe — Quellen, Compiler, CDN; Reziprozität mit den Quellen | River |
+| **forschung** | **Sensory** | erweiterte Wahrnehmung — Messung, Probe, Muster im Rauschen | Future |
+| **entscheid** | **Future** | Consent derer, die nicht sprechen; die Registratur für morgen; wer profitiert/wer nicht | River |
+| **neu: präsenz** | **River** | Bewegung, Phase, was fließt — der ω()-Loop, die WebGPU-Membran, die Präsenz im Strom, Rückkopplung | Sensory |
+
+**Vorschlag fünfte Linie: `präsenz` (River).** Das unbesetzte Funktionsfeld ist die
+**lebendige Membran** — der ω()-Loop, das WebGPU-Feld, die Präsenz in Ruhe, das Echo
+(`target = inTE/(inTE+threshold+ε)`), die Browser-Brücke, die Aktuatoren. Gebaut von
+`bau`, gemessen von `forschung`, aber von **keiner Linie als ihr Feld getragen**.
+`präsenz` trägt es.
+
+**Alternative** (falls `entscheid`→River, weil Korrespondenz der Fluss zwischen den
+Linien ist): fünfte Linie `registratur` (Future) — trägt die dauerhafte Erinnerung
+(Handover, Ledger, CDN-Register, die Messreihe für die nächste Session).
+
+**Der Rat sitzt für diese Architektur** (neue Linie = Architektur-Akt, braucht
+Operator-/Rat-Wort).
 
 ## Benchmark
 
