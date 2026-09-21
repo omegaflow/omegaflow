@@ -2210,6 +2210,34 @@ pub fn transfer_entropy_embedded_ksg(
         pts.extend_from_slice(&emb_x[t - back_x]);
         pts.extend_from_slice(&emb_y[t - back_y]);
     }
+    let mut col_mean = vec![0.0f64; jd];
+    for row in 0..m {
+        for d in 0..jd {
+            col_mean[d] += pts[row * jd + d];
+        }
+    }
+    for v in col_mean.iter_mut() {
+        *v /= m as f64;
+    }
+    let mut col_sd = vec![0.0f64; jd];
+    for row in 0..m {
+        for d in 0..jd {
+            let e = pts[row * jd + d] - col_mean[d];
+            col_sd[d] += e * e;
+        }
+    }
+    for d in 0..jd {
+        let var = col_sd[d] / m as f64;
+        if var <= 0.0 || !var.is_finite() {
+            return None;
+        }
+        col_sd[d] = var.sqrt();
+    }
+    for row in 0..m {
+        for d in 0..jd {
+            pts[row * jd + d] = (pts[row * jd + d] - col_mean[d]) / col_sd[d];
+        }
+    }
     let k_eff = k.min(m - 1);
     let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
     let mut sum = 0.0f64;
