@@ -413,8 +413,8 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
   2026-09-18: `phi/pipeline/queue/` trägt keine `.φ`) — nie gebaut, nicht
   gebraucht: `register_lookup --open` ist die Queue — es liest die
   Zustands-Register owner-getaggt (`blocked parser-def`/`parser-gap`/`asset
-  fehlt` → bau, `blocked account`/`blocked key` → entscheid → operator,
-  `blocked ip-blocked`/`pending`/`ausstehend`/`kompiliert` → ernte, released
+  fehlt` → mountain, `blocked account`/`blocked key` → future → operator,
+  `blocked ip-blocked`/`pending`/`ausstehend`/`kompiliert` → mycelium, released
   Zustände → released), dazu `pipeline/ledger.φ` und die `probe_*`-Entwürfe
   per-Eintrag, die Katalog-Kandidatenpools als Zählzeile; die Kaskade ist
   Grind-Werkzeug, kein Archivar-Code.

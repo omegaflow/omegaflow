@@ -13,6 +13,7 @@ omegaflow.wasm
 !.opencode/command/commit.md
 !.opencode/command/start.md
 !.opencode/command/browser.md
+!.opencode/command/river.md
 # TUI-Plugin: die `_new`-Befehle (/new + Linien-Prompt in einer Session) — versioniert wie die Commands.
 !.opencode/tui.json
 !.opencode/tui/
