@@ -13,7 +13,7 @@ note ivo://fai.kz/tap; obscore sync-QUERY 200, 5048 Zeilen; CDN-Asset sha256 65b
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — Re-Messung 2026-09-21 (ernte): direct + proton-exit HTTP 0 (0 bytes), wayback 503; Route absent, nicht PostgreSQL-500. Trigger /tap/tables 500→200 unerreicht. Backend weiter ausstehend.
+note ivo://src.pas/tap — 2026-09-21 Operator-Wort PL-Exit: /tap HTTP 200 (13342 B); /tap/tables HTTP 500 "Cannot connect to database localhost:5432 Connection refused" — Route offen, Dienst-Backend down. Trigger: /tap/tables 500→200.
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json

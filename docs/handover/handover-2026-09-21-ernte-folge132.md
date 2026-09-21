@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 0eb658d48ba0556d3fe5eb8d0b0333c1ed89bab8e8d9fbf7127c36b0bc276974
+  sha256: efc4fe7e02f6bca2eb08b2a8c99af75649e6f1053d3945a228f599638f297c26
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -87,10 +87,12 @@ Wartestellungen sind kein Auswahlpunkt.
 - **Braucht:** Re-Messung bei Erreichbarkeit.
 
 ### src.pas TAP
-- **Status:** wartend | **Bindung:** termin (Route)
-- **Lage:** `ledger.φ:14` — direct+proton HTTP 0, wayback 503.
-- **Blockade:** Route.
-- **Braucht:** `bin/proton-wg.sh suggest pithia.cbk.waw.pl` (Operator-Wort).
+- **Status:** wartend | **Bindung:** termin (Dienst-Backend)
+- **Lage:** `ledger.φ:14` — Operator-Wort PL-Exit erteilt 2026-09-21; über PL-Exit
+  `/tap` HTTP 200, `/tap/tables` HTTP 500 (PostgreSQL `localhost:5432` refused)
+  → Route offen, Dienst-Backend down.
+- **Blockade:** Pithia-Datenbank (dienstseitig).
+- **Braucht:** Re-Messung `/tap/tables` bei 200 (Trigger).
 
 ### Wartend (kein Auswahlpunkt)
 - Lasair-LSST (502), Sonden-Antworten, BepiColombo bc_mpo_more,
