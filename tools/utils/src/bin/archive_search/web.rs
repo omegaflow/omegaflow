@@ -122,13 +122,10 @@ pub const PAGE: &str = r##"
   label.live input{accent-color:var(--accent2);}
   .chips{
     display:flex;
+    flex-wrap:wrap;
     gap:7px;
-    overflow-x:auto;
     padding:4px 2px 10px;
-    scrollbar-width:thin;
   }
-  .chips::-webkit-scrollbar{height:8px;}
-  .chips::-webkit-scrollbar-thumb{background:#384a6b;border-radius:4px;}
   .chip{
     flex:0 0 auto;
     border:1px solid var(--line);
