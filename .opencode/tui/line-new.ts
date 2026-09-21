@@ -6,9 +6,9 @@ import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@opencode-ai/plug
 type Line = { line: string; title: string; task: string }
 
 const LINES: Line[] = [
-  { line: "future", title: "Future-Linie", task: "Entscheidungen, Korrespondenz, Consent, Operator-Queue, Übergabe" },
-  { line: "mycelium", title: "Mycelium-Linie", task: "Quellen und Daten ernten, Compiler, CDN-Manifestation, Register" },
-  { line: "sensory", title: "Sensory-Linie", task: "Forschung und Messung, Proben, Papiere" },
+  { line: "future", title: "Future-Linie", task: "die Menschenwelt als Anrede: Forscherkorrespondenz, Anträge, Consent, Operator-Queue, Übergabe" },
+  { line: "mycelium", title: "Mycelium-Linie", task: "die Maschinenwelt schreiben: Quellen und Daten ernten, Compiler, CDN-Manifestation, Register" },
+  { line: "sensory", title: "Sensory-Linie", task: "Forschung und Messung, Proben, Papiere; liest Maschinen- und Menschenwelt" },
   { line: "mountain", title: "Mountain-Linie", task: "Code und Toolchain bauen (Archivar/Mathematikerin), Gate-Fixtures" },
   { line: "river", title: "River-Linie", task: "die lebendige Membran — ω()-Loop, WebGPU-Feld, Präsenz, Echo, Browser-Brücke" },
 ]
