@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn
+    - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn --bin open_points_check
     - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage
     - run: cargo build --release -p omegaflow-gate --bin commit_check
     - run: cargo build --release -p omegaflow --bin omegaflow --features browser_relay
@@ -26,7 +26,7 @@ jobs:
       run: |
         {
           echo "git_sha=${TOOLS_SHA}"
-          for t in register_lookup session_burn archive_search sgrep sfetch sread git_safety omega_sh ci_manage commit_check omegaflow; do
+          for t in register_lookup session_burn open_points_check archive_search sgrep sfetch sread git_safety omega_sh ci_manage commit_check omegaflow; do
             echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
           done
         } > tools.manifest
@@ -39,6 +39,7 @@ jobs:
         gh release upload tools-latest \
           target/release/register_lookup \
           target/release/session_burn \
+          target/release/open_points_check \
           target/release/archive_search \
           target/release/sgrep \
           target/release/sfetch \

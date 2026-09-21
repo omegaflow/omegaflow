@@ -3,7 +3,7 @@
   session: Entscheid-Folge 72
   class: handover
   date: 2026-09-21
-  sha256: 985a7dca3404dc77a51df52bb409df325f861fecfc9b337d4db6773cc60f7fe9
+  sha256: ea5660cd0bd7de27cc84b1b10a8015407bf29455773641af9001acca9cc728c7
   status: live
 -->
 # Handover — Entscheid-Folge 72 (2026-09-21)
@@ -38,10 +38,23 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
   in der Queue); `post.md`-Zeile `An entscheid:` (fmt-Rot) gefaltet + gelöscht.
 - **`git_safety --snapshot`** — `refs/safety/1789971132`/`1789972126`.
 
+## Gemessen (kein Punkt)
+
+- **`open_points_check` gebaut** (`tools/register/src/bin/open_points_check.rs`, std-only):
+  extrahiert die in den offenen Punkten genannten Pfade und prüft sie gegen den
+  Arbeitsbaum; `ABSENT` = stale Punkt. Verkabelt in AGENTS.md (Planungs-Pass +
+  P4-Profil), den fünf Linien-Befehlen, `_template.md` und `tools-map.md`;
+  Release-Eintrag + Wrapper (`bin/open_points_check`) gesetzt.
+- **Fremd-Rot:** `tools/register/src/bin/register_lookup.rs` (**uncommittet**,
+  fremde Linie) kompiliert im Test-Build nicht (`cargo check --tests -p
+  omegaflow-register`: E0308/E0061 um `scan_catalog_candidates` im Test) — dem
+  Operator gemeldet; nicht angefasst.
+
 ## Offen (Tafel — parallel abarbeitbar, keine Rangfolge)
 
 | Punkt | Status | Bindung | Schritt |
 |---|---|---|---|
+| open_points_check im Release | `wartend` | `eigen` | nach `tools-build` im `tools-latest`-Release + `~/.local/bin`-Symlink; dann läuft der Baum-Abgleich im Planungs-Pass |
 | Bewerbungs-/Programm-Anforderungen | `eigen` | `eigen` | `research-max` misst Espressif-Dev-Programm, Crowd-Supply-Bedingungen, GSoC-/SOCIS-Eligibility (Espressif/GSoC/SOCIS = Projekt-Vorschlag, Crowd Supply = fertiges Produkt) |
 | Free-Model-Bench (P13 + P2–P4) | `wartend` | `eigen` | Artefakte **einmalig** lesen, sobald die Läufe durch sind — `ci_manage view 35567266519`/`35567268692`; Ranking oder pending |
 | smail-Wahrheits-Riegel | `wartend` | `linie:bau` | bau baut `tools/service/src/bin/smail.rs` (QUELLEN-Block-Parse, `--send`-Refusal exit 2, `--dry-run`-Tabelle, kein Bypass-Flag); bis dahin bindet die Session-Pflicht |
@@ -88,8 +101,13 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 - `AGENTS.md` (Truth-gate-Regel; Parallel-Regel — keine Rangfolge)
 - `src/gate/commit_gate.rs` (`state_claim` + `serial_priority` Prüfung + Tests)
 - `src/gate/commit_gate_vocab.json` (`state_claim`- + `serial_priority`-Liste)
-- `docs/handover/_template.md` (Parallel-Regel, Sektion ohne Rang)
-- `.opencode/command/{entscheid,bau,ernte,forschung}.md` (Phase-1-Auswahl → Parallel-Tafel; `register_lookup --live` → `--open` korrigiert)
+- `docs/handover/_template.md` (Parallel-Regel, Sektion ohne Rang; `open_points_check`)
+- `.opencode/command/{entscheid,bau,ernte,forschung,start}.md` (Phase-1-Auswahl → Parallel-Tafel; `register_lookup --live` → `--open`; `open_points_check` im Pass)
+- `tools/register/src/bin/open_points_check.rs` (neu — billiger Baum-Abgleich)
+- `bin/open_points_check` (Wrapper, neu)
+- `.github/workflows/tools-build.yml` (Bin + Manifest + Upload)
+- `opencode.json` (plan-Profil: `open_points_check` erlaubt)
+- `docs/concepts/tools-map.md` (Werkzeug-Zeilen + P4-Profil)
 - `docs/handover/post.md` (`An entscheid:` gefaltet + gelöscht, `An bau:` + `An forschung:` neu)
 - **von bau folge117 committet (`a70b1ee2`, nicht mehr eigener Pfad):**
   `tools/measure/src/bin/free_model_bench.rs`,
