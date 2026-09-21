@@ -26,7 +26,13 @@ pub fn port_field_synth(
     ))
 }
 
-fn field_or_review(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> Option<String> {
+fn field_or_review(
+    directive: &str,
+    force: &str,
+    key: &str,
+    name: &str,
+    ttl: u64,
+) -> Option<String> {
     if default_kernel_for(force).is_none() {
         let reason = if force.is_empty() {
             "no force directive".to_string()
@@ -390,7 +396,13 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         let t = line.trim_start();
         if t.starts_with("source ") {
             if !block.is_empty() {
-                flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
+                flush_port_block(
+                    &block,
+                    &mut converted,
+                    &mut total,
+                    &mut parsed,
+                    &mut pending,
+                );
                 block = String::new();
             }
             in_source = true;
@@ -400,7 +412,13 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         }
         if t.starts_with("url ") && !in_source {
             if !block.is_empty() {
-                flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
+                flush_port_block(
+                    &block,
+                    &mut converted,
+                    &mut total,
+                    &mut parsed,
+                    &mut pending,
+                );
                 block = String::new();
             }
             block.push_str(line);
@@ -411,7 +429,13 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         block.push('\n');
     }
     if !block.is_empty() {
-        flush_port_block(&block, &mut converted, &mut total, &mut parsed, &mut pending);
+        flush_port_block(
+            &block,
+            &mut converted,
+            &mut total,
+            &mut parsed,
+            &mut pending,
+        );
     }
     if std::fs::write(output, &converted).is_err() {
         eprintln!("--port: output unwritable: {}", output);

@@ -254,10 +254,15 @@ fn main() {
     for w in workers {
         let _ = w.join();
     }
-    let mut raw = match Arc::try_unwrap(records).ok().and_then(|m| m.into_inner().ok()) {
+    let mut raw = match Arc::try_unwrap(records)
+        .ok()
+        .and_then(|m| m.into_inner().ok())
+    {
         Some(r) => r,
         None => {
-            eprintln!("records: the worker buffer stays shared after join — the bin stays unwritten");
+            eprintln!(
+                "records: the worker buffer stays shared after join — the bin stays unwritten"
+            );
             std::process::exit(1);
         }
     };
@@ -269,10 +274,15 @@ fn main() {
             None => continue,
         }
     }
-    let days_covered = match Arc::try_unwrap(day_count).ok().and_then(|m| m.into_inner().ok()) {
+    let days_covered = match Arc::try_unwrap(day_count)
+        .ok()
+        .and_then(|m| m.into_inner().ok())
+    {
         Some(d) => d,
         None => {
-            eprintln!("day_count: the worker counter stays shared after join — the window stays unmeasured");
+            eprintln!(
+                "day_count: the worker counter stays shared after join — the window stays unmeasured"
+            );
             std::process::exit(1);
         }
     };

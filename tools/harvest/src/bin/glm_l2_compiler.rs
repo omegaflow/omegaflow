@@ -150,14 +150,8 @@ fn decode_float_at(data: &[u8], off: usize, size: usize, endian: Endian) -> Opti
 fn decode_num_at(var: &VarLoad, idx: usize, unsigned: bool) -> Option<f64> {
     let off = idx.checked_mul(var.size)?;
     match var.class {
-        0 => decode_int_at(
-            &var.raw,
-            off,
-            var.size,
-            var.endian,
-            var.signed && !unsigned,
-        )
-        .map(|v| v as f64),
+        0 => decode_int_at(&var.raw, off, var.size, var.endian, var.signed && !unsigned)
+            .map(|v| v as f64),
         1 => decode_float_at(&var.raw, off, var.size, var.endian),
         _ => None,
     }
@@ -353,7 +347,10 @@ fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>,
         return (Vec::new(), GateSkips::zero());
     };
     let Some(time_v) = dataset_load(file, "flash_time_offset_of_first_event") else {
-        eprintln!("glm_l2: {} carries no flash_time_offset_of_first_event", src);
+        eprintln!(
+            "glm_l2: {} carries no flash_time_offset_of_first_event",
+            src
+        );
         return (Vec::new(), GateSkips::zero());
     };
     let Some(qf_v) = dataset_load(file, "flash_quality_flag") else {
@@ -436,7 +433,12 @@ fn flash_records(file: &Hdf5File, lsk: &LeapSeconds, src: &str) -> (Vec<GeoRec>,
             return (Vec::new(), GateSkips::zero());
         }
     }
-    let n = lat_v.n.min(lon_v.n).min(energy_v.n).min(time_v.n).min(qf_v.n);
+    let n = lat_v
+        .n
+        .min(lon_v.n)
+        .min(energy_v.n)
+        .min(time_v.n)
+        .min(qf_v.n);
     let mut out = Vec::new();
     let mut skips = GateSkips::zero();
     for j in 0..n {
@@ -558,9 +560,7 @@ fn main() {
     let out = match arg_value(&args, "--out") {
         Some(p) => p,
         None => {
-            eprintln!(
-                "glm_l2_compiler: --out <file.bin> absent — the output path is never silent"
-            );
+            eprintln!("glm_l2_compiler: --out <file.bin> absent — the output path is never silent");
             std::process::exit(1);
         }
     };
