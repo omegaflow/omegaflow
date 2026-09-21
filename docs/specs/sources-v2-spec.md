@@ -1,12 +1,12 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: cdd87f8fb5ac799ee02d7e6731eada525eb3967b16013ed1c60dbcb74e59561a
+  sha256: 11f6d1bc9480b43850338d06967ef5470a6c918702f9fc07a080da07364de507
 -->
 # sources.φ — Canonical Format Specification
 
-Verified against the living parser (`load_sources` in `src/main.rs`). Every
-directive listed here has a parser arm. Directives without a parser arm are
+Verified against the living parser (`load_sources` in `src/archivar/parse.rs`).
+Every directive listed here has a parser arm. Directives without a parser arm are
 listed under "Non-Goals & Known Parser Gaps" as open work — writing them into a block today produces nothing
 (unimplemented).
 
@@ -70,7 +70,7 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
 | `field <key> <force> <unit> <tau>` | 5 | **Scalar physical measurement.** Key = JSON path (dot-notation). Kernel = force default (see „Force → default kernel"). τ in seconds, must be > 0. |
 | `field <key> <force> <unit> <tau> <kernel>` | 6 | Same, with explicit kernel name. |
 | `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Legacy long form. τ > 0 required. |
-| `field <key> <identifier>` | 3 | Annotation inside map/cmap/rows after a `force` directive. τ = 0 → **never manifests** (τ-Gate). Documentation only. |
+| `field <key> <identifier>` | 3 | **Refused** (τ-Gate): an annotation-only field carries no τ, so the parser refuses it — writing it produces nothing. Legacy corpora only; the `--gold` port migrates it to a τ-carrying form. |
 | `first/last/lastrow/objlast/path/deep/regex <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Positioned scalar extract variants (same 9-token config). |
 | `count <path> [name]` | 2–3 | Extracted but τ = 0 → never manifests unless paired with a τ-carrying `field` of the same name. |
 | `geojson <mag_key> <min_mag> <out1> <out2> <tau> <absorption> <advection>` | 8 | GeoJSON event extract. |
@@ -328,9 +328,10 @@ position data that belong in `lat`/`lon`/`alt`/`ra`/`dec`/`plx` directives.
 ### 3.7 Strings / Text
 
 Any field whose API value is a string type. The field value must be numeric.
-Exception: `field <key> <identifier>` inside map/cmap may annotate string fields
-for property tracking (e.g., quality flags, event types coded as strings) — but
-the field value itself remains the physical measurement from a numeric field.
+The 3-token annotation form `field <key> <identifier>` (map/cmap, property
+tracking of quality flags or string-coded event types) is **refused** by the
+parser (τ-Gate) — a field without τ never manifests, and the annotation is not
+carried; a τ-carrying numeric field is required.
 
 #### 3.9 Position-Only Oscillators
 
@@ -596,8 +597,13 @@ convert to rad (the field inventory carries direction angles). Per-row τ:
 
 Directives that appear in legacy corpora but have **no parser arm** (writing
 them produces nothing): `body`, `pos`, `source`, `lat_key`/`lon_key`/`alt_key`,
-`extent`, `reach_ttl`, `note`, `tau` (as key directive), `force biotic`.
+`extent`, `reach_ttl`, `note`, `tau` (as key directive), `force biotic`, and the
+3-token `field <key> <identifier>` annotation form (refused by the τ-Gate).
 `method` is consumed only by the `--gold` port converter (POST → `post_body`).
+
+Parser arms not yet carried in the §1 table (accepted by the parser; table
+entries pending): `profile`, `quakeml`, `alerce`, `xmlcount`, `lastobj`,
+`lastline`, `lat_sign`, `lon_sign`, `epoch_scale`.
 `field_in` is refused with a registration line: the `--gold` port migrates it
 to `field` (nested dot-paths and array indices survive via jpath). Map rows
 without an `epoch` key anchor at fetch time; map rows without an `alt` key
