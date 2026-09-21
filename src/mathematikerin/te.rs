@@ -2079,7 +2079,9 @@ pub fn betti0_persistence(series: &[f64], dim: usize) -> Option<Betti0Verdict> {
     })
 }
 
-pub fn transfer_entropy_embedded(
+const TE_KSG_K: usize = 4;
+
+pub fn transfer_entropy_embedded_kde(
     x: &[f64],
     emb_x: &[Vec<f64>],
     emb_y: &[Vec<f64>],
@@ -2158,6 +2160,103 @@ pub fn transfer_entropy_embedded(
         te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
     }
     Some(te / m as f64)
+}
+
+pub fn transfer_entropy_embedded_ksg(
+    x: &[f64],
+    emb_x: &[Vec<f64>],
+    emb_y: &[Vec<f64>],
+    tau_x: usize,
+    tau_y: usize,
+    k: usize,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || tau_x == 0 || tau_y == 0 || k == 0 || x.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let dim = {
+        let s = emb_x.first()?;
+        s.len()
+    };
+    if dim < 2 {
+        return None;
+    }
+    if emb_y.first().is_none_or(|s| s.len() != dim) {
+        return None;
+    }
+    if emb_x.iter().flatten().any(|v| !v.is_finite())
+        || emb_y.iter().flatten().any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let back_x = (dim - 1) * tau_x;
+    let back_y = (dim - 1) * tau_y;
+    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+        return None;
+    }
+    let t_low = back_x.max(back_y);
+    let t_high = n.checked_sub(tau_x + 1)?;
+    if t_low > t_high {
+        return None;
+    }
+    let m = t_high - t_low + 1;
+    if m < 8 {
+        return None;
+    }
+    let jd = 1 + 2 * dim;
+    let mut pts: Vec<f64> = Vec::with_capacity(m * jd);
+    for t in t_low..=t_high {
+        pts.push(x[t + tau_x]);
+        pts.extend_from_slice(&emb_x[t - back_x]);
+        pts.extend_from_slice(&emb_y[t - back_y]);
+    }
+    let k_eff = k.min(m - 1);
+    let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
+    let mut sum = 0.0f64;
+    for i in 0..m {
+        dists.clear();
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let mut d = 0.0f64;
+            for di in 0..jd {
+                let dd = (pts[j * jd + di] - pts[i * jd + di]).abs();
+                if dd > d {
+                    d = dd;
+                }
+            }
+            dists.push(d);
+        }
+        let eps = *dists
+            .select_nth_unstable_by(k_eff - 1, |a, b| a.total_cmp(b))
+            .1;
+        let mut n_x = 0usize;
+        let mut n_xx = 0usize;
+        let mut n_xy = 0usize;
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let fut = (pts[j * jd] - pts[i * jd]).abs() < eps;
+            let sx = (0..dim)
+                .all(|di| (pts[j * jd + 1 + di] - pts[i * jd + 1 + di]).abs() < eps);
+            let sy = (0..dim)
+                .all(|di| (pts[j * jd + 1 + dim + di] - pts[i * jd + 1 + dim + di]).abs() < eps);
+            if fut && sx {
+                n_x += 1;
+            }
+            if sx {
+                n_xx += 1;
+            }
+            if sx && sy {
+                n_xy += 1;
+            }
+        }
+        sum +=
+            digamma((n_xx + 1) as f64) - digamma((n_x + 1) as f64) - digamma((n_xy + 1) as f64);
+    }
+    Some(digamma(k_eff as f64) + sum / m as f64)
 }
 
 fn permutation_entropy_counts(
@@ -2289,7 +2388,9 @@ fn topological_te_with(
         if emb_s.is_empty() {
             continue;
         }
-        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s) {
+        if let Some(te_s) =
+            transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s, TE_KSG_K)
+        {
             vals.push(te_s);
         }
     }
@@ -2346,7 +2447,7 @@ pub fn topological_te_estimate(x: &[f32], y: &[f32], dim: usize) -> Option<Topol
     if emb_x.is_empty() || emb_y.is_empty() {
         return None;
     }
-    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K)?;
     Some(TopologicalEstimate { te, tau_x, tau_y })
 }
 
@@ -2371,7 +2472,7 @@ pub fn topological_te_estimate_frozen(
     if emb_x.is_empty() || emb_y.is_empty() {
         return None;
     }
-    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K)?;
     Some(TopologicalEstimate { te, tau_x, tau_y })
 }
 
@@ -2436,7 +2537,7 @@ fn topological_te_instantaneous_phase_with(
     if emb_x.is_empty() || emb_y.is_empty() {
         return None;
     }
-    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    let te = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
@@ -2459,7 +2560,7 @@ fn topological_te_instantaneous_phase_with(
         if emb_s.is_empty() {
             continue;
         }
-        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, tau_x, tau_s) {
+        if let Some(te_s) = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_s, tau_x, tau_s) {
             vals.push(te_s);
         }
     }
@@ -3117,7 +3218,7 @@ mod tests {
         let tau_y = find_mi_lag(&yf).unwrap();
         let emb_x = embed_series(&xf, tau_x, 3);
         let emb_y = embed_series(&yf, tau_y, 3);
-        let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
+        let te = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
         assert!(
             te > 0.0,
             "embedded causal TE should be positive, got {}",
@@ -3134,7 +3235,7 @@ mod tests {
         let tau_y = find_mi_lag(&yf).unwrap();
         let emb_x = embed_series(&xf, tau_x, 3);
         let emb_y = embed_series(&yf, tau_y, 3);
-        let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
+        let te = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
         assert!(
             te.abs() < 0.15,
             "independent embedded TE should be near zero, got {}",
@@ -3149,7 +3250,7 @@ mod tests {
         let emb_x = embed_series(&x, tau, 3);
         let emb_y = embed_series(&x, tau, 3);
         assert!(emb_x.is_empty());
-        assert!(transfer_entropy_embedded(&x, &emb_x, &emb_y, tau, tau).is_none());
+        assert!(transfer_entropy_embedded_kde(&x, &emb_x, &emb_y, tau, tau).is_none());
     }
 
     #[test]

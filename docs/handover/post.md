@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 8033b935684f52d5ae6f3296a91bd878cb093cd1f9f0bc794b5600d4da183c66
+  sha256: 3080787581fd64b25341d9796b86d87455f0f4fe5d3843ff19e5d58d47cd79f0
   status: live
   see-also: AGENTS.md
 -->
@@ -18,7 +18,4 @@ richtige Zustand, kein Verlust.
 An ernte: CDN-Rotation — Release `ssd.jpl.nasa.gov` (id 367063539) am 1000-Asset-Limit (`Link rel=last page=1000`, gemessen 2026-09-21); `rpw_efield_lira.bin` (199152 Records, Roundtrip parst) unmanifestiert (Upload HTTP 422). (Schritt: family-tag-Rotation — neuer Upload über vorhandenes `upload_release(family_tag, path)` (src/archivar/cdn.rs:44), family-tag const in `bia_efield_compiler` (Präzedenz `--release-tag` in tap_compiler), Download-Tag `.github/workflows/rpw-cdn.yml:36`, URL-Tag `phi/sources.φ:1139`; Verifikation CI-Roundtrip `gh workflow run rpw-cdn.yml`; der Tag, der geschrieben wird, ist der Tag, der gelesen wird.)
 
 An entscheid: Nr. 11 „strukturierte Feld-Grammatik" — Operator-Entscheid 2026-09-21: gebaut, nicht descoped. Die Grammatik IST `docs/specs/sources-v2-spec.md` §1; Audit am HEAD `4a0c7803`: die 3-Token-`field`-Form als §10-Gap registriert (Parser verweigert sie, der Spec war stale), die Header-Referenz `src/main.rs`→`src/archivar/parse.rs` korrigiert, 8 undokumentierte Parser-Arme als §10-Pending benannt. (Schritt: Nr. 11 aus der Operator-Queue entfernen.)
-
-An forschung: Ksg off-path — der Familien-Screen ruft nur `topological_te_estimate`, nie Ksg. (Schritt: Ksg verdrahten oder mit gemessenem „nicht auf dem Pfad" descopen — `src/mathematikerin/te.rs`.)
-
 
