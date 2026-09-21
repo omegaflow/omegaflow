@@ -3602,6 +3602,425 @@ mod tests {
         assert_eq!(data, vec![10.0, 20.0, 30.0]);
     }
 
+    fn btree_header_v2_full(
+        root_addr: u64,
+        nrec: u16,
+        total: u64,
+        depth: u16,
+        node_size: usize,
+        record_size: u16,
+    ) -> Vec<u8> {
+        let mut d = Vec::with_capacity(38);
+        d.extend_from_slice(b"BTHD");
+        d.push(0);
+        d.push(10);
+        d.extend_from_slice(&(node_size as u32).to_le_bytes());
+        d.extend_from_slice(&record_size.to_le_bytes());
+        d.extend_from_slice(&depth.to_le_bytes());
+        d.push(100);
+        d.push(40);
+        d.extend_from_slice(&root_addr.to_le_bytes());
+        d.extend_from_slice(&nrec.to_le_bytes());
+        d.extend_from_slice(&total.to_le_bytes());
+        let ck = jenkins_lookup3(&d[..34]);
+        d.extend_from_slice(&ck.to_le_bytes());
+        assert_eq!(d.len(), 38);
+        d
+    }
+
+    fn btree_leaf_node_v2(entries: &[(u64, u64)], node_size: usize, record_size: usize) -> Vec<u8> {
+        let mut node = Vec::with_capacity(node_size);
+        node.extend_from_slice(b"BTLF");
+        node.push(0);
+        node.push(10);
+        for (scaled, addr) in entries {
+            node.extend_from_slice(&addr.to_le_bytes());
+            node.extend_from_slice(&scaled.to_le_bytes());
+        }
+        let pos = 6 + entries.len() * record_size;
+        let ck = jenkins_lookup3(&node[..pos]);
+        node.extend_from_slice(&ck.to_le_bytes());
+        node.resize(node_size, 0);
+        node
+    }
+
+    fn btree_internal_node_v2(
+        records: &[(u64, u64)],
+        children: &[(u64, u16)],
+        totals: &[u64],
+        node_size: usize,
+        record_size: usize,
+        nsz: usize,
+        tsz: usize,
+    ) -> Vec<u8> {
+        assert_eq!(
+            children.len(),
+            records.len() + 1,
+            "internal node carries one child pointer per record plus one"
+        );
+        let mut node = Vec::with_capacity(node_size);
+        node.extend_from_slice(b"BTIN");
+        node.push(0);
+        node.push(10);
+        for (scaled, addr) in records {
+            node.extend_from_slice(&addr.to_le_bytes());
+            node.extend_from_slice(&scaled.to_le_bytes());
+        }
+        for (k, (addr, nrec)) in children.iter().enumerate() {
+            node.extend_from_slice(&addr.to_le_bytes());
+            node.extend_from_slice(&nrec.to_le_bytes()[..nsz]);
+            if tsz > 0 {
+                node.extend_from_slice(&totals[k].to_le_bytes()[..tsz]);
+            }
+        }
+        let pos = 6 + records.len() * record_size + children.len() * (8 + nsz + tsz);
+        let ck = jenkins_lookup3(&node[..pos]);
+        node.extend_from_slice(&ck.to_le_bytes());
+        node.resize(node_size, 0);
+        node
+    }
+
+    fn synthetic_chunked_image_v2_multilevel_depth1() -> Vec<u8> {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_f64() -> Vec<u8> {
+            let mut d = vec![
+                0x11, 0x00, 0x00, 0x00, 0x08, 0, 0, 0, 0x00, 0x00, 0x40, 0x00,
+            ];
+            d.extend_from_slice(&[0u8; 8]);
+            d
+        }
+        fn layout_chunked(btree: u64, chunk: u32, elem: u32) -> Vec<u8> {
+            let mut d = vec![3u8, 2, 2];
+            d.extend_from_slice(&btree.to_le_bytes());
+            d.extend_from_slice(&chunk.to_le_bytes());
+            d.extend_from_slice(&elem.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+
+        let root_proto = header(vec![message(MSG_LINK, link("d", 0))]);
+        let d_proto = header(vec![
+            message(MSG_DATASPACE, dataspace(&[5])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(0, 1, 8)),
+        ]);
+        let root_addr = 48u64;
+        let d_addr = root_addr + root_proto.len() as u64;
+        let btree_addr = d_addr + d_proto.len() as u64;
+        let record_size = 16usize;
+        let node_size = 72usize;
+        let internal_addr = btree_addr + 38u64;
+        let leaf0_addr = internal_addr + node_size as u64;
+        let leaf1_addr = leaf0_addr + node_size as u64;
+        let leaf2_addr = leaf1_addr + node_size as u64;
+        let chunk_base = leaf2_addr + node_size as u64;
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&root_addr.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        buf.extend_from_slice(&header(vec![message(MSG_LINK, link("d", d_addr))]));
+        buf.extend_from_slice(&header(vec![
+            message(MSG_DATASPACE, dataspace(&[5])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(btree_addr, 1, 8)),
+        ]));
+        buf.extend_from_slice(&btree_header_v2_full(
+            internal_addr,
+            2,
+            5,
+            1,
+            node_size,
+            record_size as u16,
+        ));
+        buf.extend_from_slice(&btree_internal_node_v2(
+            &[(1, chunk_base + 8), (3, chunk_base + 24)],
+            &[(leaf0_addr, 1), (leaf1_addr, 1), (leaf2_addr, 1)],
+            &[],
+            node_size,
+            record_size,
+            1,
+            0,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(0, chunk_base)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(2, chunk_base + 16)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(4, chunk_base + 32)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&10.0f64.to_le_bytes());
+        buf.extend_from_slice(&20.0f64.to_le_bytes());
+        buf.extend_from_slice(&30.0f64.to_le_bytes());
+        buf.extend_from_slice(&40.0f64.to_le_bytes());
+        buf.extend_from_slice(&50.0f64.to_le_bytes());
+
+        buf
+    }
+
+    fn synthetic_chunked_image_v2_multilevel_depth2() -> Vec<u8> {
+        fn message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+            let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+            m.extend_from_slice(&data);
+            m
+        }
+        fn header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+            let mut body = vec![b'O', b'H', b'D', b'R', 2, 0];
+            let m: usize = messages.iter().map(|x| x.len()).sum();
+            body.push(m as u8);
+            for msg in messages {
+                body.extend_from_slice(&msg);
+            }
+            let ck = jenkins_lookup3(&body);
+            body.extend_from_slice(&ck.to_le_bytes());
+            body
+        }
+        fn dataspace(dims: &[u64]) -> Vec<u8> {
+            let mut d = vec![2u8, dims.len() as u8, 0, 0];
+            for dim in dims {
+                d.extend_from_slice(&dim.to_le_bytes());
+            }
+            d
+        }
+        fn datatype_f64() -> Vec<u8> {
+            let mut d = vec![
+                0x11, 0x00, 0x00, 0x00, 0x08, 0, 0, 0, 0x00, 0x00, 0x40, 0x00,
+            ];
+            d.extend_from_slice(&[0u8; 8]);
+            d
+        }
+        fn layout_chunked(btree: u64, chunk: u32, elem: u32) -> Vec<u8> {
+            let mut d = vec![3u8, 2, 2];
+            d.extend_from_slice(&btree.to_le_bytes());
+            d.extend_from_slice(&chunk.to_le_bytes());
+            d.extend_from_slice(&elem.to_le_bytes());
+            d
+        }
+        fn link(name: &str, addr: u64) -> Vec<u8> {
+            let mut d = vec![0, 0, name.len() as u8];
+            d.extend_from_slice(name.as_bytes());
+            d.extend_from_slice(&addr.to_le_bytes());
+            d
+        }
+
+        let root_proto = header(vec![message(MSG_LINK, link("d", 0))]);
+        let d_proto = header(vec![
+            message(MSG_DATASPACE, dataspace(&[6])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(0, 1, 8)),
+        ]);
+        let root_addr = 48u64;
+        let d_addr = root_addr + root_proto.len() as u64;
+        let btree_addr = d_addr + d_proto.len() as u64;
+        let record_size = 16usize;
+        let node_size = 48usize;
+        let internal_addr = btree_addr + 38u64;
+        let middle0_addr = internal_addr + node_size as u64;
+        let middle1_addr = middle0_addr + node_size as u64;
+        let leaf_a_addr = middle1_addr + node_size as u64;
+        let leaf_b_addr = leaf_a_addr + node_size as u64;
+        let leaf_c_addr = leaf_b_addr + node_size as u64;
+        let chunk_base = leaf_c_addr + node_size as u64;
+
+        let mut buf: Vec<u8> = Vec::new();
+        buf.extend_from_slice(&[0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a]);
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&root_addr.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = jenkins_lookup3(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        buf.extend_from_slice(&header(vec![message(MSG_LINK, link("d", d_addr))]));
+        buf.extend_from_slice(&header(vec![
+            message(MSG_DATASPACE, dataspace(&[6])),
+            message(MSG_DATATYPE, datatype_f64()),
+            message(MSG_LAYOUT, layout_chunked(btree_addr, 1, 8)),
+        ]));
+        buf.extend_from_slice(&btree_header_v2_full(
+            internal_addr,
+            1,
+            6,
+            2,
+            node_size,
+            record_size as u16,
+        ));
+        buf.extend_from_slice(&btree_internal_node_v2(
+            &[(3, chunk_base + 24)],
+            &[(middle0_addr, 1), (middle1_addr, 1)],
+            &[3, 2],
+            node_size,
+            record_size,
+            1,
+            1,
+        ));
+        buf.extend_from_slice(&btree_internal_node_v2(
+            &[(1, chunk_base + 8)],
+            &[(leaf_a_addr, 1), (leaf_b_addr, 1)],
+            &[],
+            node_size,
+            record_size,
+            1,
+            0,
+        ));
+        buf.extend_from_slice(&btree_internal_node_v2(
+            &[(5, chunk_base + 40)],
+            &[(leaf_c_addr, 1), (UNDEF, 0)],
+            &[],
+            node_size,
+            record_size,
+            1,
+            0,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(0, chunk_base)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(2, chunk_base + 16)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&btree_leaf_node_v2(
+            &[(4, chunk_base + 32)],
+            node_size,
+            record_size,
+        ));
+        buf.extend_from_slice(&10.0f64.to_le_bytes());
+        buf.extend_from_slice(&20.0f64.to_le_bytes());
+        buf.extend_from_slice(&30.0f64.to_le_bytes());
+        buf.extend_from_slice(&40.0f64.to_le_bytes());
+        buf.extend_from_slice(&50.0f64.to_le_bytes());
+        buf.extend_from_slice(&60.0f64.to_le_bytes());
+
+        buf
+    }
+
+    #[test]
+    fn chunked_v2_multilevel_internal_root_materializes_every_element() {
+        let buf = synthetic_chunked_image_v2_multilevel_depth1();
+        let file = Hdf5File::parse(&buf).unwrap();
+        let (obj, ds, dt) = file.dataset("d").unwrap();
+        assert_eq!(ds.dims, vec![5]);
+        assert_eq!(dt.size, 8);
+        assert!(matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })));
+
+        let index = file.chunk_index("d").unwrap();
+        assert_eq!(
+            index.len(),
+            5,
+            "internal-root records and leaf records all surface"
+        );
+        let mut coords: Vec<u64> = index.iter().map(|(c, _)| c[0]).collect();
+        coords.sort();
+        assert_eq!(coords, vec![0, 1, 2, 3, 4], "every chunk coordinate carries one record");
+
+        let fetch = |off: u64, len: u64| {
+            buf.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+        for k in 0..5u64 {
+            assert_eq!(
+                file.read_chunk("d", &[k], fetch).unwrap(),
+                vec![(k + 1) as f64 * 10.0]
+            );
+        }
+        assert!(file.read_chunk("d", &[5], fetch).is_none());
+
+        let data = file.read_f64_dataset("d").unwrap();
+        assert_eq!(
+            data.len(),
+            5,
+            "every element reaches its own coordinate across internal and leaf nodes"
+        );
+        assert_eq!(data, vec![10.0, 20.0, 30.0, 40.0, 50.0]);
+    }
+
+    #[test]
+    fn chunked_v2_multilevel_depth2_materializes_every_element() {
+        let buf = synthetic_chunked_image_v2_multilevel_depth2();
+        let file = Hdf5File::parse(&buf).unwrap();
+        let (obj, ds, dt) = file.dataset("d").unwrap();
+        assert_eq!(ds.dims, vec![6]);
+        assert_eq!(dt.size, 8);
+        assert!(matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })));
+
+        let index = file.chunk_index("d").unwrap();
+        assert_eq!(
+            index.len(),
+            6,
+            "records from internal nodes and leaf nodes all surface"
+        );
+        let mut coords: Vec<u64> = index.iter().map(|(c, _)| c[0]).collect();
+        coords.sort();
+        assert_eq!(coords, vec![0, 1, 2, 3, 4, 5], "every chunk coordinate carries one record");
+
+        let fetch = |off: u64, len: u64| {
+            buf.get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+        for k in 0..6u64 {
+            assert_eq!(
+                file.read_chunk("d", &[k], fetch).unwrap(),
+                vec![(k + 1) as f64 * 10.0]
+            );
+        }
+        assert!(file.read_chunk("d", &[6], fetch).is_none());
+
+        let data = file.read_f64_dataset("d").unwrap();
+        assert_eq!(
+            data.len(),
+            6,
+            "every element reaches its own coordinate across two internal levels and leaves"
+        );
+        assert_eq!(data, vec![10.0, 20.0, 30.0, 40.0, 50.0, 60.0]);
+    }
+
     #[test]
     fn lookup3_matches_reference_vectors() {
         let a = jenkins_lookup3(b"");
