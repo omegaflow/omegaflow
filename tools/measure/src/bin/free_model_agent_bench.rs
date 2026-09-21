@@ -625,7 +625,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration, task: &Task) -> Row 
         "--model",
         &model_arg,
         "--agent",
-        "general",
+        "plan",
     ]);
     if let Some(d) = dir {
         cmd.args(["--dir", d]);
