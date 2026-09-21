@@ -73,8 +73,24 @@ note 50 Blöcke; --port 2026-09-20: 11 verifiziert / 38 declined. Review 2026-09
 
 disponiert
 bestand phi/pipeline/catalog/candidates-pools
-note Force-Gate-Re-Messung 2026-09-21: Survivor (IERS-EOP/RAPID/e-callisto/Coral/CNEOS) alle disponiert — maia finals.all + fireball.api in sources.φ; cad/rapid/tsr.lol decline, e-callisto/coralreefwatch dead. 34-offen = URL-Dedupe-Lücke.
+note Force-Gate 2026-09-21: Survivor (IERS-EOP/RAPID/e-callisto/Coral/CNEOS) disponiert — maia finals.all + fireball.api in sources.φ. 34 offene candidate = URL-Varianten disponierter Quellen, lokal decline/dead markiert.
 
 parser-gap
 bestand src/archivar/demeter.rs
 note DEMETER (CDPP): demeter.rs:60 verlangt Marker ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST (1144 ISL SURVEY), 289-B-Bloecke sonst identisch (TOULOUSE@26..34, 6 f32@265..289). Schritt: Marker-Pruefung auf ISL SURVEY|ISL BURST erweitern.
+
+kompiliert
+kandidat https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
+note glm_l2-Asset CDN sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213 (126728 B); Lauf 35623731418 success, asset already present (manifest skipped), Fix attr_unsigned _Unsigned-String-Test gruen.
+
+ausstehend
+kandidat https://babamul.caltech.edu/api/
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow babamul-cdn.yml, CDN babamul_alerts.bin 404.
+
+kompiliert
+kandidat https://data.ghrc.earthdata.nasa.gov/
+note GHRC DAAC: glm_l1b.bin CDN 1050368 B sha256 a7311a53… (200), trmm_lis.bin 30548 B 4df26caf… (200); glm/trmm-Compiler gebaut. Korrektur 2026-09-21: ghrcw-protected anonym 404, mit EDL-Token 404 (nicht 401/200).
+
+kompiliert
+kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
+note IA2 TAP (INAF/OATS): /wgetap/sync -L 200, FORMAT=csv NUL-getrennt (ra,dec_,psfMag_g/i/r/u/z); ia2_wgesdss.bin CDN 200. Parser ia2_tap.rs + Compiler ia2_tap_compiler.rs gebaut (sky1).
