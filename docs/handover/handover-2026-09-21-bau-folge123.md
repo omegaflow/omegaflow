@@ -3,7 +3,7 @@
   session: Bau-Folge 123
   class: handover
   date: 2026-09-21
-  sha256: afd88206b9e0cc9255f95af833376d2390463a96646edc68f43eb30c516ef1b4
+  sha256: 1956e0efbfa03441ea2767addfdd5d1b4e5fe03795c8aedb701134e5689b3797
   status: live
 -->
 # Handover — Bau-Folge 123 (2026-09-21)
@@ -60,9 +60,10 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   (qf/energy/time/lat/lon/tdb) in der Granule-Zeile, Kurz-Lese-Diagnose, 4 neue
   Tests. `cargo check -p omegaflow-harvest --all-targets` 0 Fehler/0 Warnungen.
 - **Blockade:** Commit-Wort + Push (der Lauf checkt main aus).
-- **Braucht:** `/commit` → push → `gh workflow run glm-l2-cdn` (der Lauf druckt
-  N flashes + Gate-Zähler je Granule = definitive Messung; danach sha256 in
-  `phi/sources.φ`, wenn das Asset steht).
+- **Braucht:** Lauf `35599198872` dispatcht (nach Commit+Push); Log einmalig
+  lesen (`ci_manage view 35599198872`) — druckt N flashes + Gate-Zähler je
+  Granule = definitive Messung; danach sha256 in `phi/sources.φ`, wenn das Asset
+  steht.
 
 ### 2. PINE64 / Mantis-Shrimp (Ox64-Dokumentation) — von entscheid gefaltet
 - **Status:** `eigen` | **Bindung:** `eigen`
@@ -78,7 +79,7 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `gh release upload` ergänzt (Z. 21/30/51) — `cargo build --release
   -p omegaflow-measure --bin text_review`, Manifest-Schleife, Upload-Liste.
 - **Blockade:** Push (der Workflow triggert auf push `tools/**`).
-- **Braucht:** `/commit` → push → `tools-build`-Lauf; danach
+- **Braucht:** `tools-build`-Lauf `35599194982` dispatcht; danach
   `bin/.tools_ensure text_review` prüft den sha gegen `tools.manifest`.
 
 ## Benchmark
