@@ -338,12 +338,19 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         gpu_v.surrogates_used,
         cpu_v.surrogates_used
     );
-    let te_rel = ((gpu_v.te - cpu_v.te) / cpu_v.te.abs()).abs();
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let emb_x = crate::te::embed_series(&xf, gpu_v.tau_x, 3);
+    let emb_y = crate::te::embed_series(&yf, gpu_v.tau_y, 3);
+    let kde_cpu =
+        crate::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_x, gpu_v.tau_y)
+            .expect("the KDE reference carries a TE at the GPU lags");
+    let te_rel = ((gpu_v.te - kde_cpu) / kde_cpu.abs()).abs();
     assert!(
         te_rel < 0.1,
-        "te diverges: gpu {} cpu {} rel {}",
+        "te diverges from the KDE reference: gpu {} kde-cpu {} rel {}",
         gpu_v.te,
-        cpu_v.te,
+        kde_cpu,
         te_rel
     );
     match (gpu_v.pe_x, cpu_v.pe_x) {
