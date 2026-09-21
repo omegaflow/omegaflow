@@ -1760,6 +1760,53 @@ fn commit_touches(lower: Option<&str>, upper: Option<&str>, token: &str) -> Opti
     Some(!output.stdout.is_empty())
 }
 
+fn commit_resolves_all_lines(token: &str) -> Option<bool> {
+    let by_message = Command::new("git")
+        .arg("log")
+        .arg("--all")
+        .arg("--oneline")
+        .arg(format!("--grep={}", token))
+        .output()
+        .ok()?;
+    if !by_message.status.success() {
+        return None;
+    }
+    if !by_message.stdout.is_empty() {
+        return Some(true);
+    }
+    let by_content = Command::new("git")
+        .arg("log")
+        .arg("--all")
+        .arg("--oneline")
+        .arg(format!("-S{}", token))
+        .output()
+        .ok()?;
+    if !by_content.status.success() {
+        return None;
+    }
+    Some(!by_content.stdout.is_empty())
+}
+
+fn commit_resolves_all_lines_cached(
+    token: &str,
+    cache: &mut BTreeMap<String, Option<bool>>,
+) -> Option<bool> {
+    if let Some(value) = cache.get(token) {
+        return *value;
+    }
+    let value = commit_resolves_all_lines(token);
+    cache.insert(token.to_string(), value);
+    value
+}
+
+fn resolution_status(own_range: Option<bool>, all_lines: Option<bool>) -> &'static str {
+    if own_range == Some(true) || all_lines == Some(true) {
+        "resolved"
+    } else {
+        "none"
+    }
+}
+
 fn dropped_line_filter(args: &[String]) -> Option<&str> {
     let mut it = args.iter();
     while let Some(a) = it.next() {
@@ -1799,6 +1846,7 @@ fn run_dropped(args: &[String]) {
     let count_only = count_flag(args);
     let handovers = collect_handovers();
     let mut commit_cache: BTreeMap<String, Option<String>> = BTreeMap::new();
+    let mut all_lines_cache: BTreeMap<String, Option<bool>> = BTreeMap::new();
     let mut pairs = 0usize;
     let mut candidates = 0usize;
     let mut dropped = 0usize;
@@ -1855,13 +1903,17 @@ fn run_dropped(args: &[String]) {
                     Some(token) => {
                         let lower = commit_for_path_cached(&n.path, &mut commit_cache);
                         let upper = commit_for_path_cached(&next.path, &mut commit_cache);
-                        match commit_touches(lower.as_deref(), upper.as_deref(), &token) {
-                            Some(true) => {
-                                resolved += 1;
-                                "resolved"
-                            }
-                            _ => "none",
+                        let own_range = commit_touches(lower.as_deref(), upper.as_deref(), &token);
+                        let all_lines = if own_range == Some(true) {
+                            None
+                        } else {
+                            commit_resolves_all_lines_cached(&token, &mut all_lines_cache)
+                        };
+                        let status = resolution_status(own_range, all_lines);
+                        if status == "resolved" {
+                            resolved += 1;
                         }
+                        status
                     }
                     None => "none",
                 };
@@ -2479,5 +2531,14 @@ mod tests {
         assert_eq!(distinctive_token(&tokens), Some("8218f46a".to_string()));
         let words = vec!["der".to_string(), "die".to_string()];
         assert_eq!(distinctive_token(&words), None);
+    }
+
+    #[test]
+    fn resolution_status_accepts_own_or_foreign_resolution() {
+        assert_eq!(resolution_status(Some(true), None), "resolved");
+        assert_eq!(resolution_status(None, Some(true)), "resolved");
+        assert_eq!(resolution_status(Some(false), Some(true)), "resolved");
+        assert_eq!(resolution_status(Some(false), Some(false)), "none");
+        assert_eq!(resolution_status(None, None), "none");
     }
 }
