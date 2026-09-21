@@ -3,7 +3,7 @@
   session: Entscheid-Folge 72
   class: handover
   date: 2026-09-21
-  sha256: d2d256dadbdc87e0c486e70401acae1656c0bf98f0efef6d17cc7baed89153ab
+  sha256: 985a7dca3404dc77a51df52bb409df325f861fecfc9b337d4db6773cc60f7fe9
   status: live
 -->
 # Handover — Entscheid-Folge 72 (2026-09-21)
@@ -46,41 +46,35 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 | Free-Model-Bench (P13 + P2–P4) | `wartend` | `eigen` | Artefakte **einmalig** lesen, sobald die Läufe durch sind — `ci_manage view 35567266519`/`35567268692`; Ranking oder pending |
 | smail-Wahrheits-Riegel | `wartend` | `linie:bau` | bau baut `tools/service/src/bin/smail.rs` (QUELLEN-Block-Parse, `--send`-Refusal exit 2, `--dry-run`-Tabelle, kein Bypass-Flag); bis dahin bindet die Session-Pflicht |
 | PINE64-Dokumentationspflicht | `blockiert` | `linie:bau` | Post an bau: Mantis-Shrimp minimal bauen (Spec + BOM liegen), dann Ox64 dokumentieren |
-| PINE64-Korrektur | `operator-gebunden` | `operator` | Operator-Wort auf den Draft `state/mail/pine64-correction.body.txt`; dann `smail --to info@pine64.org … --send` (vorher QUELLEN-Block entfernen, bis bau's Riegel steht) |
-| Mantis-Shrimp-Bewerbungen | `operator-gebunden` | `operator` | nach dem Korrektur-Wort neu vorlegen, mit gemessenem Sachverhalt |
+| Mantis-Shrimp-Bewerbungen | `operator-gebunden` | `operator` | mit gemessenem Sachverhalt vorlegen (Espressif/GSoC/SOCIS = Projekt-Vorschlag, Crowd Supply = fertiges Produkt) |
 
 ## Operator-Queue (Stand folge72; einfache Sprache, je Frage mit Alter)
 
-1. **PINE64-Korrektur** — Draft liegt (`state/mail/pine64-correction.body.txt`).
-   **Frage:** soll die Korrektur (die frühere „currently built"-Zeile war falsch)
-   an PINE64 gesendet werden? (Alter: seit 2026-09-21)
-2. **Mantis-Shrimp-Bewerbungen** (Espressif / Crowd Supply / GSoC / SOCIS) —
+1. **Mantis-Shrimp-Bewerbungen** (Espressif / Crowd Supply / GSoC / SOCIS) —
    **Frage:** Programme messen (research-max), descopen, oder direkt bauen?
    (Alter: seit 2026-09-16)
-3. **Eigenprize / Solitude** — Eigenprize-Runde geschlossen (Deadline 31.03.2026,
+2. **Eigenprize / Solitude** — Eigenprize-Runde geschlossen (Deadline 31.03.2026,
    keine nächste Runde datiert). **Frage:** „Remind me" auf `https://eigen.build`
    setzen und `state/mail/eigenprize-application.md` finalisieren? Solitude
    ~Herbst 2027. (Alter: seit 2026-09-20)
-4. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
+3. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis. **Frage:** App unter
    `github.com/settings/connections/applications` widerrufen? (Alter: seit 2026-09-20)
-5. **SuperDARN** (`blocked account`) — HF-Radar-Ionosphären-Konvektion; Route
+4. **SuperDARN** (`blocked account`) — HF-Radar-Ionosphären-Konvektion; Route
    über Globus + PI-Vereinbarung. **Frage:** Konto + PI-Vereinbarung eingehen?
    (Alter: seit 2026-09-16)
-6. **solar-system-open-data REST** (`blocked key`) — HTTP 401 (Bearer-Token).
+5. **solar-system-open-data REST** (`blocked key`) — HTTP 401 (Bearer-Token).
    **Frage:** Konto/Token anlegen? (Alter: seit 2026-09-20)
-7. **Amentum Developer** (`blocked account`) — geomagnetisch/aviation-radiation/
+6. **Amentum Developer** (`blocked account`) — geomagnetisch/aviation-radiation/
    gravity (trial). **Frage:** Registrierung `developer.amentum.io/register`?
    (Alter: seit 2026-09-20)
-8. **Split-Routing-Verifikation** — `./bin/proton-exit.sh ca` + direct↔tunnel-
+7. **Split-Routing-Verifikation** — `./bin/proton-exit.sh ca` + direct↔tunnel-
    Nachmessung der 8 `000`-Hosts. **Frage:** Operator-Wort/Route (sudo+Netz)?
    (Alter: seit Ernte folge12–17)
-9. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf". (Alter: seit 2026-09-16)
-10. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt, Antwort
-    gesendet); Framework **nicht passend**; Tuxedo Ticket#991311279 **wartend**.
-11. **Strukturierte Feld-Grammatik** (bau, aus `post.md` gefaltet) — am 2026-09-18
-    als Kanon-Akt vertagt. **Frage:** Spec-Entwurf (Kanon-Akt, mit Rat) oder
-    descoped mit Messung? (Alter: seit 2026-09-18)
+8. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf". (Alter: seit 2026-09-16)
+9. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt, Antwort +
+   Korrektur gesendet); Framework **nicht passend**; Tuxedo Ticket#991311279 **declined**
+   (keine kostenlosen Geräte/Sponsorings an Privatpersonen — beidseitig geschlossen).
 
 ## Benchmark
 
