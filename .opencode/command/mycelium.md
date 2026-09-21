@@ -1,5 +1,5 @@
 ---
-description: Mycelium-Linie (Netz — Verbindung, Nährstoffe, Reziprozität) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Mycelium-Linie — erntet Quellen und Daten, Compiler, CDN-Manifestation, Register. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
