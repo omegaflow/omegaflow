@@ -2310,7 +2310,7 @@ fn bin_of(v: f64, edges: &[f64]) -> usize {
     edges.iter().filter(|&&e| e < v).count()
 }
 
-pub fn transfer_entropy_reduced(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
+pub fn transfer_entropy_reduced_normalized(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
     if c < 2 || k == 0 || l == 0 {
         return None;
     }
@@ -2361,12 +2361,16 @@ pub fn transfer_entropy_reduced(xs: &[f64], ys: &[f64], k: usize, l: usize, c: u
     let s_yx = sorted_log_sum(&n23, log_factorial);
     let multiset = |v: u64| log_choose(v + c as u64 - 1, c - 1);
     let corr = sorted_log_sum(&n2, multiset) - sorted_log_sum(&n23, multiset);
-    let ln_r = (s_full + s_y - s_fy - s_yx + corr) / n_pairs as f64;
-    Some(ln_r * std::f64::consts::LOG2_E)
+    let num = s_full + s_y - s_fy - s_yx + corr;
+    let denom = if num > 0.0 { s_y - s_fy + corr } else { -corr };
+    if !denom.is_finite() || denom <= 0.0 {
+        return None;
+    }
+    Some(num / denom)
 }
 
 pub fn reduced_te_flow(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
-    let r = transfer_entropy_reduced(xs, ys, k, l, c)?;
+    let r = transfer_entropy_reduced_normalized(xs, ys, k, l, c)?;
     (r.is_finite() && r > 0.0).then_some(r)
 }
 
@@ -3736,16 +3740,52 @@ mod tests {
             "KDE estimate must resolve for the AR(1) fixture"
         );
         let kde = kde_estimate.unwrap();
-        let reduced_estimate = transfer_entropy_reduced(&xf, &yf, 1, 1, 4);
+        let reduced_estimate = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4);
         assert!(
             reduced_estimate.is_some(),
             "reduced-TE estimate must resolve for the AR(1) fixture"
         );
         let reduced = reduced_estimate.unwrap();
         println!(
-            "split recording: ksg={:.6} kde={:.6} reduced_te={:.6}",
+            "split recording: ksg={:.6} kde={:.6} reduced_te_rhat={:.6}",
             ksg.te, kde, reduced
         );
+    }
+
+    #[test]
+    fn gate_reduced_te_normalized_bounded() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        for _ in 0..20 {
+            let a = gate_ar1(300, 0.5, &mut rng);
+            let mut b: Vec<f32> = Vec::with_capacity(a.len());
+            b.push(gate_rng(&mut rng) as f32);
+            for i in 1..a.len() {
+                let v = 0.5 * b[i - 1] as f64 + 0.6 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1);
+                b.push(v as f32);
+            }
+            let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+            if let Some(r) = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4) {
+                assert!(
+                    r.abs() <= 1.0,
+                    "Kalibrier-Gate Normierung reduced-TE: coupled pair yields |R̂|={} outside [-1,1]",
+                    r
+                );
+            }
+        }
+        for _ in 0..20 {
+            let a = gate_ar1(300, 0.7, &mut rng);
+            let b = gate_ar1(300, 0.7, &mut rng);
+            let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+            if let Some(r) = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4) {
+                assert!(
+                    r.abs() <= 1.0,
+                    "Kalibrier-Gate Normierung reduced-TE: independent pair yields |R̂|={} outside [-1,1]",
+                    r
+                );
+            }
+        }
     }
 
     #[test]
@@ -3763,7 +3803,7 @@ mod tests {
             }
             let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
             let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
-            if let Some(r) = transfer_entropy_reduced(&xf, &yf, 1, 1, 4) {
+            if let Some(r) = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4) {
                 meas += 1;
                 if r > 0.0 {
                     found += 1;
@@ -3793,7 +3833,7 @@ mod tests {
             let b = gate_ar1(300, 0.7, &mut rng);
             let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
             let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
-            if let Some(r) = transfer_entropy_reduced(&xf, &yf, 1, 1, 4) {
+            if let Some(r) = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4) {
                 meas += 1;
                 if r > 0.0 {
                     fp += 1;
@@ -3820,17 +3860,17 @@ mod tests {
         let b = gate_ar1(300, 0.7, &mut rng);
         let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
         let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
-        let below = transfer_entropy_reduced(&xf[..255], &yf[..255], 2, 2, 4);
+        let below = transfer_entropy_reduced_normalized(&xf[..255], &yf[..255], 2, 2, 4);
         assert!(
             below.is_none(),
             "Kalibrier-Gate n-Floor reduced-TE: n=255 below the C^l*C^k=256 contingency table carries no verdict"
         );
-        let boundary = transfer_entropy_reduced(&xf[..258], &yf[..258], 2, 2, 4);
+        let boundary = transfer_entropy_reduced_normalized(&xf[..258], &yf[..258], 2, 2, 4);
         assert!(
             boundary.is_some(),
             "Kalibrier-Gate n-Floor reduced-TE: n=258 at the C^l*C^k=256 table boundary carries a verdict"
         );
-        let above = transfer_entropy_reduced(&xf, &yf, 2, 2, 4);
+        let above = transfer_entropy_reduced_normalized(&xf, &yf, 2, 2, 4);
         assert!(
             above.is_some(),
             "Kalibrier-Gate n-Floor reduced-TE: n=300 above the table size carries a verdict"
@@ -3844,8 +3884,8 @@ mod tests {
         let b = a.clone();
         let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
         let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
-        let ab = transfer_entropy_reduced(&xf, &yf, 1, 1, 4);
-        let ba = transfer_entropy_reduced(&yf, &xf, 1, 1, 4);
+        let ab = transfer_entropy_reduced_normalized(&xf, &yf, 1, 1, 4);
+        let ba = transfer_entropy_reduced_normalized(&yf, &xf, 1, 1, 4);
         match (ab, ba) {
             (Some(x), Some(y)) => assert!(
                 (x - y).abs() < 1e-12,
