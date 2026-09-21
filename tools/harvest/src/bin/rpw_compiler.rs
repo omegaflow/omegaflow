@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use omegaflow::rpw::{COMP_EY, COMP_EZ, parse_bin, write_bin};
 use std::process::Command;
@@ -9,6 +9,13 @@ const BASE: &str = "https://amda.irap.omp.eu/service/hapi";
 const DATASET: &str = "solo-rpw-efield10s";
 const FILL: f64 = -1.0e31;
 const WINDOW_DAYS: i64 = 10;
+
+fn lock_recovered<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    match mutex.lock() {
+        Ok(guard) => guard,
+        Err(poison) => poison.into_inner(),
+    }
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -157,10 +164,10 @@ fn harvest_window(
         }
     }
     window_records.sort_by(|a, b| a.0.total_cmp(&b.0));
-    let mut day_count_guard = day_count.lock().unwrap_or_else(|e| e.into_inner());
+    let mut day_count_guard = lock_recovered(&day_count);
     *day_count_guard += (end_day - start_day + 1) as usize;
     drop(day_count_guard);
-    let mut guard = records.lock().unwrap_or_else(|e| e.into_inner());
+    let mut guard = lock_recovered(&records);
     guard.extend(window_records);
     eprintln!(
         "window {}-{}: {} rows, {} fill-skipped, {} buckets",
@@ -175,7 +182,10 @@ fn harvest_window(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "rpw_efield.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(p) => p,
+        None => "rpw_efield.bin".to_string(),
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(10.0);
@@ -244,11 +254,13 @@ fn main() {
     for w in workers {
         let _ = w.join();
     }
-    let records_guard = Arc::try_unwrap(records)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
-    let mut raw = records_guard;
+    let mut raw = match Arc::try_unwrap(records).ok().and_then(|m| m.into_inner().ok()) {
+        Some(r) => r,
+        None => {
+            eprintln!("records: the worker buffer stays shared after join — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     raw.sort_by(|a, b| a.0.total_cmp(&b.0));
     let mut records_tdb: Vec<(f64, f64, u32)> = Vec::with_capacity(raw.len());
     for (t, v, c) in raw {
@@ -257,10 +269,13 @@ fn main() {
             None => continue,
         }
     }
-    let days_covered = Arc::try_unwrap(day_count)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let days_covered = match Arc::try_unwrap(day_count).ok().and_then(|m| m.into_inner().ok()) {
+        Some(d) => d,
+        None => {
+            eprintln!("day_count: the worker counter stays shared after join — the window stays unmeasured");
+            std::process::exit(1);
+        }
+    };
     eprintln!(
         "{}: {} days, {} records, {} medians/min window ({} B)",
         DATASET,
@@ -323,7 +338,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("amda.irap.omp.eu", &out) {
         std::process::exit(1);
     }
 }
