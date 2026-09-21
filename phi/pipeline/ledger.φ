@@ -21,11 +21,15 @@ note Re-Messung 2026-09-19: maxTime unverändert 2026-07-30T23:30:00Z (griddap t
 
 ausstehend
 kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
-note HF-Radar US-West-Coast RTV Gitter (1 km); Re-Messung 2026-09-21: HTTP 200, time_coverage_end 2026-09-21T05:00:00Z, water_u/water_v m/s; Geschwister ucsdHfrW2 (2 km) 200; hfrnet-tds.ucsd.edu tot (dead_sources.φ:519), upwell.pfeg.noaa.gov 302→coastwatch. Compiler offen.
+note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml, sources.φ-Block pending sha256; Manifestation offen; Geschwister ucsdHfrW2 200; hfrnet-tds tot (dead_sources.φ:519).
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
+note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 200), aber „Permission Denied" für omegaflow. PI Sotgiu antwortete 2026-09-16: Limadou-Website wird für CSES-02 umgebaut, „recommend waiting a few weeks before proceeding with your access request"; die Linie hat quittiert, Doppel-Anfrage 2026-09-20 (sent_ledger 1789906154/1789906520). Trigger: neue Anleitung auf dem Limadou-Portal. CSES-Limadou (em/electric) accept. DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
+
+ausstehend
+kandidat https://zenodo.org/api/records/21185812
+note Quaoar (50000) Sternbedeckungs-Astrometrie 14 a, cc-by-4.0, Quaoar_paper.zip 572467032 B, md5 420a1e9435d569a600c195d39d87dce8, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574 (gestreamt 2026-09-16 ernte-folge52, 2026-09-21 bestätigt); Route 200. Compiler offen.
 
 disponiert
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
