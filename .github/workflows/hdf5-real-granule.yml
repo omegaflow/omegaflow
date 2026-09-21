@@ -1,0 +1,27 @@
+name: hdf5-real-granule
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/archivar/hdf5.rs'
+permissions:
+  contents: read
+concurrency:
+  group: hdf5-real-granule
+  cancel-in-progress: false
+jobs:
+  real-granule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Fetch the measured GLM-L2-LCFA granule (noaa-goes18, token-free)
+      run: |
+        curl -sSfL --retry 3 --max-time 300 -o granule.nc \
+          "https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/2026/001/00/OR_GLM-L2-LCFA_G18_s20260010029200_e20260010029400_c20260010029411.nc"
+        echo "07caa4325bac5ea25ab35226156b05d98c6f94721eaf54d266d3f20016cffc4e  granule.nc" | sha256sum -c -
+    - name: Real-granule read — the name btree materializes every element
+      run: GLM_L2_GRANULE=granule.nc cargo test --release -p omegaflow -- --ignored real_granule_glm_l2_name_btree_materializes_every_element

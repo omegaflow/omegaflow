@@ -4022,6 +4022,56 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "reads the measured real GLM-L2-LCFA granule; the hdf5-real-granule workflow sets GLM_L2_GRANULE"]
+    fn real_granule_glm_l2_name_btree_materializes_every_element() {
+        let path = std::env::var_os("GLM_L2_GRANULE")
+            .expect("GLM_L2_GRANULE absent — the real granule path is not set");
+        let bytes = match std::fs::read(&path) {
+            Ok(bytes) => bytes,
+            Err(e) => panic!("{} unreadable: {e}", path.to_string_lossy()),
+        };
+        let file = Hdf5File::parse(&bytes).unwrap();
+
+        let root = file.root().unwrap();
+        let n_links = root.links.len();
+        assert!(n_links > 0, "the real granule root group reads empty");
+
+        let fetch = |off: u64, len: u64| {
+            bytes
+                .get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+        let mut r = Hdf5WindowReader::new(&bytes, fetch);
+        let (msgs, _diag) = gather_messages(&mut r, 48, 8, 8).unwrap();
+        let linfo = msgs
+            .iter()
+            .find(|m| m.typ == MSG_LINK_INFO)
+            .expect("no LinkInfo message in the root header");
+        let (Some(_fh), Some(name_bt), _co) = link_info_of(linfo).unwrap() else {
+            panic!("LinkInfo carries no name btree");
+        };
+        let (_typ, hdr) = parse_btree_header(&mut r, name_bt).unwrap();
+        assert!(hdr.depth >= 1, "the real name index is multi-level (depth {})", hdr.depth);
+        let records =
+            btree_records(&mut r, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize).unwrap();
+        assert_eq!(
+            records.len(),
+            hdr.total_records as usize,
+            "every name-index record materializes — internal and leaf"
+        );
+        assert_eq!(
+            n_links, records.len(),
+            "every materialized record becomes a root-group link"
+        );
+
+        let (obj, _ds, _dt) = file.dataset("flash_lat").unwrap();
+        assert!(
+            matches!(obj.layout, Some(Hdf5Layout::Contiguous { .. })),
+            "flash_lat is contiguous"
+        );
+    }
+
+    #[test]
     fn lookup3_matches_reference_vectors() {
         let a = jenkins_lookup3(b"");
         let b = jenkins_lookup3(b"abc");
