@@ -67,3 +67,7 @@ url https://developer.amentum.io/register
 note Amentum Developer (geomagnetisch/aviation-radiation/gravity, trial): Registrierung HTTP 200; Zugang nur mit Konto.
 reg https://developer.amentum.io/register
 
+blocked ip-blocked
+url https://regards.cnes.fr/api/v1/rs-order
+note DEMETER ISL (CDPP) — demeter-cdn 35228716483 (2026-09-20, exit 1): 12× F5 ASM block auf rs-order create, dann curl exit 6 (regards.cnes.fr DNS tot); Token ok (286); 0/578 orders, 0 files; 77 Shards nie registriert. Schritt: Runner-Egress/DNS messen, dann Re-Dispatch.
+
