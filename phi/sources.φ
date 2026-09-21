@@ -3149,14 +3149,6 @@ at moon
 ttl 86400
 note CDN-Asset sha256 3c49075fedc7792406763bd13383cd950f7d66f6b2aaf78d508dd069d3634943 (6629784 B); de44-cdn Lauf 35591251300 success.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_neptune.bin
-format ephemeris_de440
-origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
-compiler tools/harvest/src/bin/de_compiler.rs
-at neptune
-ttl 86400
-note CDN-Asset pending — sniff 404.
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_sun.bin
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
@@ -14026,4 +14018,4 @@ compiler tools/harvest/src/bin/fai_kz_compiler.rs
 format fai_kz_obscore
 at sun
 ttl 86400
-note CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B); ivo://fai.kz/tap obscore 5048 Zeilen image 3003/spectrum 2045 sync-QUERY 200 2026-09-21; fai_kz_compiler.rs; fai-kz-cdn.yml Lauf 35591261870 success.
+note CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B); ivo://fai.kz/tap obscore 5048 Zeilen image 3003/spectrum 2045 sync-QUERY 200 2026-09-21; em-Beobachtungs-Zeuge S²-Richtung Band em_min/em_max Wert absent
