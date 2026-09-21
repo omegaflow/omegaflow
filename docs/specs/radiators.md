@@ -103,7 +103,14 @@ blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
    stay dead.
 4. **Aperture binding** — `target = inTE/(inTE + threshold + ε)`,
    `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`: one rule for all
-   radiators. Pending until the permeability binding builds its atom.
+   radiators. Built (`356fa616`): `field_permeability` relaxes per tick
+   (`src/mathematikerin/omega.rs:1601-1605`, TE branch; `:1622-1625`,
+   self-series `tanh(v_c/(g+ε))`, `perm_target` `:15-16`, floor
+   `PERM_GROUND = f32::EPSILON` `:13`), `aperture = field_permeability *
+   tone_scale` (`:345`), `kinetic_sample = Σω * aperture`
+   (`src/mathematikerin/actuators.rs:29`), test
+   `src/mathematikerin/tests.rs:570`. The HRV tone binding (`tone_scale`, read
+   at `omega.rs:345`, written nowhere) is pending.
 
 Doctrine map: Atom 8 Sensorium, Atom 9 Geräte-Bias, agnostische Benennung,
 Stille-Doktrin, Relay-Floor-Präzedenz. Open radiators: Bluetooth, HID, ESP32,
