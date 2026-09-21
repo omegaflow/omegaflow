@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::cif::{Crystal, parse_cif};
 use omegaflow::matfile::{MatData, parse_mat};
 use omegaflow::rixs::{
@@ -449,7 +449,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_asset(&path);
+            let _ = upload_release("www.crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -478,7 +478,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_asset(&path);
+            let _ = upload_release("www.crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -510,7 +510,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_asset(&path);
+            let _ = upload_release("www.crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -540,7 +540,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_asset(&path);
+            let _ = upload_release("www.crystallography.net", &path);
         }
         compiled += 1;
     }

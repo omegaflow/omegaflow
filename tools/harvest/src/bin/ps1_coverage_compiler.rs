@@ -4,7 +4,7 @@ use omegaflow::archivar::footprint::{
     parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
-use omegaflow::cdn::{CDN_RELEASE, ps1_slab_tag, upload_release};
+use omegaflow::cdn::{CDN_TAG, ps1_slab_tag, upload_release};
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
 use std::f64::consts::PI;
@@ -558,7 +558,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut finished = false;
     let mut chunked = false;
 
-    let mut slab_tag = CDN_RELEASE.to_string();
+    let mut slab_tag = CDN_TAG.to_string();
 
     if full_mode {
         let proj_min = match u32_arg(args, "--proj-min") {

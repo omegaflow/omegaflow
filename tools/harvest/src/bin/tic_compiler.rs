@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 
 const TIC_RECORD_STRIDE: usize = 44;
@@ -20,8 +20,8 @@ fn cell_f64(cells: &[&str], idx: usize) -> Option<f64> {
     s.parse::<f64>().ok()
 }
 
-fn cell_f32(cells: &[&str], idx: usize) -> f32 {
-    cell_f64(cells, idx).map(|v| v as f32).unwrap_or(0.0)
+fn cell_f32(cells: &[&str], idx: usize) -> Option<f32> {
+    cell_f64(cells, idx).map(|v| v as f32)
 }
 
 fn record_bytes(line: &str) -> Option<Vec<u8>> {
@@ -37,23 +37,23 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     }
     let pm_ra = cell_f64(&cells, COL_PMRA)? as f32;
     let pm_de = cell_f64(&cells, COL_PMDEC)? as f32;
-    let plx_raw = cell_f32(&cells, COL_PLX);
-    let plx = if plx_raw.is_finite() && plx_raw > 0.0 {
-        plx_raw
-    } else {
-        0.0
+    let plx = match cell_f32(&cells, COL_PLX) {
+        Some(v) if v.is_finite() && v > 0.0 => v,
+        Some(_) | None => 0.0,
     };
     let tmag = cell_f64(&cells, COL_TMAG)? as f32;
     if !tmag.is_finite() || tmag <= 0.0 {
         return None;
     }
-    let d = cell_f32(&cells, COL_DIST);
-    let dist_pc = if d > 0.0 {
-        d
-    } else if plx > 0.0 {
-        1000.0 / plx
-    } else {
-        0.0
+    let dist_pc = match cell_f32(&cells, COL_DIST) {
+        Some(v) if v > 0.0 => v,
+        Some(_) | None => {
+            if plx > 0.0 {
+                1000.0 / plx
+            } else {
+                0.0
+            }
+        }
     };
 
     let mut out = Vec::with_capacity(TIC_RECORD_STRIDE);
@@ -69,8 +69,14 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
 }
 
 fn compile_catalog(input: &str, out_path: &str) -> usize {
-    let packed = std::fs::read(input).unwrap_or_else(|e| panic!("read {}: {}", input, e));
-    let bytes = gunzip(&packed).unwrap_or_else(|| panic!("gunzip {}", input));
+    let packed = match std::fs::read(input) {
+        Ok(b) => b,
+        Err(e) => panic!("read {}: {}", input, e),
+    };
+    let bytes = match gunzip(&packed) {
+        Some(b) => b,
+        None => panic!("gunzip {}", input),
+    };
     let text = String::from_utf8_lossy(&bytes);
     let mut buf = Vec::new();
     let mut written = 0usize;
@@ -90,7 +96,10 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
             }
         }
     }
-    std::fs::write(out_path, &buf).unwrap_or_else(|e| panic!("write {}: {}", out_path, e));
+    match std::fs::write(out_path, &buf) {
+        Ok(()) => {}
+        Err(e) => panic!("write {}: {}", out_path, e),
+    }
     eprintln!(
         "tic: {} records, {} skipped, {} B -> {}",
         written,
@@ -141,7 +150,7 @@ fn main() {
         }
     };
     compile_catalog(&input, &out_path);
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("archive.stsci.edu", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
     embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_RELEASE};
+use omegaflow::cdn::{CDN_BASE, CDN_TAG};
 use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
@@ -162,7 +162,7 @@ fn main() {
 
     let dastcom_bytes = match ensure_bin(
         &dastcom_path,
-        CDN_RELEASE,
+        CDN_TAG,
         "dastcom_asteroids.bin",
         BIN_TTL_S,
     ) {
@@ -188,7 +188,7 @@ fn main() {
 
     let comets: Vec<CometRec> = match ensure_bin(
         &dcom5_path,
-        CDN_RELEASE,
+        CDN_TAG,
         "dcom5_comets.bin",
         BIN_TTL_S,
     ) {

@@ -2,7 +2,7 @@ use omegaflow::archivar::footprint::{
     FootprintBand, FootprintRecord, HEADER_LEN, MAGIC, REC_BYTES, decode_rec, encode_rec,
     parse_header, write_header,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::healpix::pix2ang_nest;
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
@@ -728,7 +728,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "census: {} existence probes ({} zone 15 skycells, {} complete-zone samples), {} present, {} absent",
         census.requests, census.zone15_probes, census.samples, census.present, census.absent
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("ps1images.stsci.edu", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

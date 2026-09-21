@@ -1,5 +1,5 @@
 use omegaflow::archivar::tns::{NAME_LEN, TnsObject, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::process::Command;
 
 const TNS_BASE: &str = "https://www.wis-tns.org";
@@ -133,7 +133,7 @@ fn run(out_path: &str, candidates: &[(f64, f64)], radius: f64, ci: bool) -> Resu
     std::fs::write(out_path, &bytes).map_err(|e| format!("{out_path}: {e}"))?;
     println!("tns.bin: {} objects, {} B", objs.len(), bytes.len());
     if ci {
-        if !upload_asset(out_path) {
+        if !upload_release("www.wis-tns.org", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("tns.bin: uploaded to the CDN");

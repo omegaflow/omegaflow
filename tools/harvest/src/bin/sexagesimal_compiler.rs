@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use std::io::Write;
 
@@ -403,8 +403,12 @@ fn main() {
                 i += 1;
             }
             "--join-dist2" => {
+                let path = match args.get(i + 1).cloned() {
+                    Some(p) => p,
+                    None => String::new(),
+                };
                 join_dist2 = Some((
-                    args.get(i + 1).cloned().unwrap_or_default(),
+                    path,
                     args.get(i + 2)
                         .and_then(|s| s.parse::<f64>().ok())
                         .unwrap_or(0.0083),
@@ -453,7 +457,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("exofop.ipac.caltech.edu", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

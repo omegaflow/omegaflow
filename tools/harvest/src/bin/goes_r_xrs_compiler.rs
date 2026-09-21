@@ -1,5 +1,5 @@
 use omegaflow::archivar::goes::{COMP_XRSA, COMP_XRSB, parse_bin, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::collections::HashMap;
@@ -325,7 +325,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("www.ncei.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

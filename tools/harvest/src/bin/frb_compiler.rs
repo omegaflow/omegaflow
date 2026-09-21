@@ -1,5 +1,5 @@
 use omegaflow::archivar::membrane::embedded_lsk;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::io::Write;
 use std::process::Command;
 
@@ -314,7 +314,10 @@ fn main() {
     while i < args.len() {
         match args[i].as_str() {
             "--out" => {
-                out = args.get(i + 1).cloned().unwrap_or_default();
+                out = match args.get(i + 1).cloned() {
+                    Some(v) => v,
+                    None => String::new(),
+                };
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -449,7 +452,7 @@ fn main() {
         stats.repeater,
         stats.flagged,
     );
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("cdsarc.cds.unistra.fr", &out) {
         eprintln!("upload: {} did not reach the CDN", out);
         std::process::exit(1);
     }

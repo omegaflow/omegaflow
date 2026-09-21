@@ -2,7 +2,7 @@ note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung ech
 
 pending
 url https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST-Broker, arXiv:2511.00164): 2026-09-15 — /api/alerts und /api/objects 401; Routen /api/babamul/objects und …/surveys/{survey}/alerts liefern Bearer <BABAMUL_API_TOKEN> HTTP 200. Route live, Physik em; der Konsument ist eine Bau-Reihenfolge, kein Quellen-Verdikt. Schritt: Alert-Parser + Compiler bauen.
+note Babamul (Caltech LSST-Broker): /api/babamul/objects und /surveys/{survey}/alerts Bearer <BABAMUL_API_TOKEN> HTTP 200 (2026-09-21); {data:[{candidate:{ra,dec,magpsf,magap,band}}]}. Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow offen.
 reg https://babamul.caltech.edu/
 
 pending
@@ -34,7 +34,7 @@ note GHRC DAAC: ghrcw-protected 401 anonym/200 mit EDL-Token (2026-09-21). "Comp
 
 pending
 url http://ia2-tap.oats.inaf.it:8080/wgetap
-note IA2 TAP (INAF/OATS) — wgesdss.laurino2011, anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n). 2026-09-18 NUL-CSV-Arm in extract.rs (split_csv_line/csv_to_json) gebaut, Parser-Gap geschlossen. Physik em/psfMag; der Konsument ist eine Bau-Reihenfolge, kein Quellen-Verdikt. Schritt: Compiler/Consumer bauen.
+note IA2 TAP (INAF/OATS) — wgesdss.laurino2011 anonym 200; /wgetap/sync 303→200, FORMAT=csv NUL-getrennt (Feld \0, Zeile \n; ra,dec_,psfMag_g/i/r/u/z, 2026-09-21). Parser ia2_tap.rs + Compiler ia2_tap_compiler.rs gebaut (sky1); Workflow offen.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
@@ -69,9 +69,9 @@ reg https://developer.amentum.io/register
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER ISL (CDPP) — Re-Messung 2026-09-21 (research-max): regards.cnes.fr DNS+Root HTTP 200; rs-order GET 403 = Auth-Gate (Jetty-Backend erreicht), kein F5-ASM-Text; Login 200 access_token present; rs-catalog search HTTP 500. create-POST offen → Re-Dispatch demeter-cdn.
+note DEMETER ISL (CDPP) — Re-Messung 2026-09-21: rs-order/rs-catalog GET+POST 403 ohne Token (Jetty); cdpp-archive.cnes.fr REGARDS-SPA 200; CDPP: "valid email needed to create account"; SPDF/CDAWeb demeter 404. Kein anonymer Pfad. Schritt: CDPP/REGARDS-Konto.
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet historische Precip-/Milch-/Wasser-Stationen ohne Koordinaten (ERM_LOCATION nur city/state; EPA-Koordinatentabelle 404/403 gemessen 2026-09-21). Nur die 140 festen Luftmonitore sind ueber AGOL verortet (sources.φ radnet); Rest position-absent, Record skip. Schritt: EPA-publizierte Koordinatentabelle erneut messen.
+note EPA RadNet hist. Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (nur loc_num/state/city); AGOL EPA_Radiation_Air_Monitors count=140 (nur Luft); geopub ERM_RADNET 404; FRS ofmpub get_facilities 503. Schritt: FRS-Retry RadNet.
 

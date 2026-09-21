@@ -40,7 +40,8 @@
     ["dist_scale: 1.0", "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"],
     ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"],
     ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"],
-    ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"]
+    ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"],
+    ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -343,6 +344,7 @@
     "pcmci_cond_endpoint_series": "let conds: Vec<&[f32]> = cond_specs.iter().map(|&(d, _)| series[d]).collect();",
     "pcmci_cond_lag_dedup": "let mut cond_idxs: Vec<usize> = comb.iter().map(|&(d, _)| d).collect();\ncond_idxs.sort_unstable();\ncond_idxs.dedup();",
     "arx_null_single_lag_col": "row.push(c.series[t - c.lag] as f64);",
-    "kernel_id_second_table": "assert_eq!(kernel_id_for_force(5), Some(3));"
+    "kernel_id_second_table": "assert_eq!(kernel_id_for_force(5), Some(3));",
+    "cdn_capped_release_blocked": "if ci_mode && !upload_asset(&out_path) {"
   }
 }

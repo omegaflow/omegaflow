@@ -58,11 +58,17 @@ jobs:
         run: |
           ./target/release/signal_cone_audit_probe 2>&1 | tee signal_cone_audit_verdict.log
 
+      - name: Ensure the ssd.jpl.nasa.gov-signal-cone release exists on the CDN
+        run: |
+          gh release view ssd.jpl.nasa.gov-signal-cone --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create ssd.jpl.nasa.gov-signal-cone --repo omegaflow/sources \
+                 --title "ssd.jpl.nasa.gov-signal-cone" --notes "CDN family release"
+
       - name: Persist the audit log to the CDN (ssd.jpl.nasa.gov)
         if: always()
         continue-on-error: true
         run: |
-          gh release upload ssd.jpl.nasa.gov signal_cone_audit_verdict.log --clobber --repo omegaflow/sources \
+          gh release upload ssd.jpl.nasa.gov-signal-cone signal_cone_audit_verdict.log --clobber --repo omegaflow/sources \
             || { echo "log upload void — the local log is the artifact"; exit 0; }
 
       - uses: actions/cache@v4

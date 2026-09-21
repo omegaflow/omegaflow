@@ -1,6 +1,6 @@
 use std::collections::{BTreeSet, HashMap};
 
-use omegaflow::archivar::cdn::{CDN_BASE, CDN_RELEASE};
+use omegaflow::archivar::cdn::{CDN_BASE, CDN_TAG};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::spatial::{
     STAR_RECORD_BYTES, parse_star_record, star_position_at, star_stride,
@@ -316,7 +316,7 @@ fn main() {
         None => None,
     };
     let stars_arg = arg_value(&args, "--stars");
-    let cdn_url = format!("{CDN_BASE}/{CDN_RELEASE}/{STARS_CDN_FILE}");
+    let cdn_url = format!("{CDN_BASE}/{CDN_TAG}/{STARS_CDN_FILE}");
     let (label, bytes): (String, Vec<u8>) = match &stars_arg {
         Some(path) => match std::fs::read(path) {
             Ok(b) => (path.clone(), b),

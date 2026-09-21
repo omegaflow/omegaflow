@@ -1,6 +1,6 @@
 use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::radio::{RADIO_BIN_WIDTH_HZ, RADIO_FREQ_HZ, RadioSource, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::path::Path;
 
 const NVSS_DEFAULT: &str = "tmp/nvss.json";
@@ -118,7 +118,7 @@ fn run(
     println!("radio.bin: {} sources, {} B", sources.len(), bytes.len());
 
     if ci {
-        if !upload_asset(out_path) {
+        if !upload_release("www.ncei.noaa.gov", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("radio.bin: uploaded to the CDN");

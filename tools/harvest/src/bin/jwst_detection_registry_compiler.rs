@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use std::collections::BTreeMap;
 use std::process::Command;
@@ -416,7 +416,7 @@ fn main() {
             return;
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("exoplanetarchive.ipac.caltech.edu", &out) {
         eprintln!("upload: {} did not reach the CDN", out);
         std::process::exit(1);
     }
