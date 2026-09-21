@@ -49,11 +49,6 @@ url https://api.le-systeme-solaire.net/rest/bodies/
 note solar-system-open-data REST: HTTP 401 (Bearer) 2026-09-20. Key frei/selbstbedienung: api.le-systeme-solaire.net/en/generatekey.html (200, „Enter your email to get your free API Key"), Token+Zugang kostenlos. E-Mail-Registrierung offen → operator.
 reg https://api.le-systeme-solaire.net/en/generatekey.html
 
-blocked account
-url https://developer.amentum.io/register
-note Amentum Developer (geomagnetisch/aviation-radiation/gravity): register 200 2026-09-21, „14-day free trial", Selbstbedienung (E-Mail+Passwort), SLA. Zugang nur mit Konto → operator.
-reg https://developer.amentum.io/register
-
 pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gap: demeter.rs:60 verlangt ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST. Schritt: Marker auf ISL SURVEY|ISL BURST erweitern.
