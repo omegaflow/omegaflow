@@ -285,7 +285,7 @@ slow, expensive fallback, not the first move.
 
 ### The cost ladder — the research cascade
 
-The tool speaks to **sixteen** sources, not three. The cascade, in order — and
+The tool speaks to **42** network modes, not three. The cascade, in order — and
 for source *discovery* the breadth is the answer, not a cost:
 
 1. **Content in the live tree** → `archive_search <kw> --root <dir>` or `sgrep`.
@@ -297,13 +297,13 @@ for source *discovery* the breadth is the answer, not a cost:
 3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
    `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
 4. **Unknown source** → `--brave <query>` first (keyword web search), then
-   **`--all <query>`** — every keyword mode at once (13): arXiv, ADS, NTRS,
-   Wayback, Crossref, Wiki, GitHub, crates, librs, Brave, DataCite, Zenodo,
-   OpenAlex (plus `--isc`/`--supermag`/`--heasarc` by key=value). It prints the
+   **`--all <query>`** — every keyword mode at once (35; the canon is the tool's
+   own `--help`). The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
+   `--ena`/`--supermag`/`--heasarc`) run individually. It prints the
    top 5 per source inline **and writes the full result to a temp file** (the
    paged sources openalex/zenodo run ~100 deep) — read that file; the inline
    summary is not the whole answer. A diver that draws only `--ads`/`--arxiv`
-   has left eleven databases unasked.
+   has left 33 modes unasked.
 5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
 
 The three measures are distinct: `--verdict` measures reachability, `--sniff`

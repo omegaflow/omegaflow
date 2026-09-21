@@ -1220,6 +1220,10 @@ const QUERY_MODES: &[&str] = &[
     "alphafold",
 ];
 
+pub fn query_mode_count() -> usize {
+    QUERY_MODES.len()
+}
+
 fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
