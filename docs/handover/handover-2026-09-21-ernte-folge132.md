@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 731b83b6eab788fe8e9870c809c83836982ab9c5386bc13050c07b1305e7485a
+  sha256: 08fc53a3271d98aa39df695ba30cff7f32828ca736356b573f0d10b7fa07058d
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -54,12 +54,14 @@ Wartestellungen sind kein Auswahlpunkt.
 
 ## Offen (aufgeschlüsselt)
 
-### Re-Dispatch der 29 gefixten Workflows + sha256-Nachzug
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** 29 Workflows gefixt (git `M`), noch nicht gepusht/dispatcht.
-- **Blockade:** Commit/Push-Wort.
-- **Braucht:** nach Push `gh workflow run <file>` je Workflow; bei success
-  sha256 → `sources.φ`-note → `kompiliert`.
+### sha256-Nachzug der 29 neu dispatchten Läufe
+- **Status:** wartend | **Bindung:** termin (Läufe)
+- **Lage:** Commit `1bd3a53f` auf `origin/main` (via Merge `6dc8a4eb`); 29
+  `-cdn`-Workflows dispatched 2026-09-21, Läufe `35594472387`–`35594552094`
+  (avo…wds) queued.
+- **Blockade:** Lauf-Abschluss.
+- **Braucht:** `ci_manage list`/Watchdog-Snapshot; bei success sha256 →
+  `sources.φ`-note → `kompiliert`.
 
 ### fai.kz Feld-Klassifikation
 - **Status:** offen | **Bindung:** eigen
