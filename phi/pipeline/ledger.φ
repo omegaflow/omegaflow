@@ -17,7 +17,7 @@ note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 20
 
 ausstehend
 kandidat https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow babamul-cdn.yml, CI-Lauf 35649296996 dispatched 2026-09-21 (queued); CDN babamul_alerts.bin 404.
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser+Compiler gebaut (sky1); babamul-cdn.yml CI-Lauf 35649296996 failure (exit 1: 0 honored, bin unwritten); CDN babamul_alerts.bin 404.
 
 parser-gap
 bestand src/archivar/demeter.rs
