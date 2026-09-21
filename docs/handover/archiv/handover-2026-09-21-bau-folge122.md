@@ -50,17 +50,25 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Offen (aufgeschlüsselt)
 
-### 1. glm_l2.bin CDN-Manifestation — Compiler liest 0 Flashes
-- **Status:** `blockiert` | **Bindung:** `eigen`
-- **Lage:** Lauf `35579950220` @grünem HEAD — **failure**. Der Compiler lief über
-  die ~30 Granules von `GLM-L2-LCFA/2026/001/00/` und meldete je Granule
-  `0 flashes` → `exit 1` via `tools/harvest/src/bin/glm_l2_compiler.rs:434`; kein
-  Upload. Echte GLM-L2-LCFA-Granules tragen hunderte–tausende Flashes. Asset
-  `--sniff` 404.
-- **Blockade:** Parser-Defekt (Record-Zahl/Dimension/Qualitäts-Gate).
-- **Braucht:** erste Messung — `dataset_load`/Dimension in `glm_l2_compiler.rs`
-  gegen ein echtes Granule (Record-Zahl + `flash_quality_flag`-Verteilung);
-  `grind-max`. Danach Re-Dispatch + sha256 in `phi/sources.φ`.
+### 1. glm_l2.bin CDN-Manifestation — Fix gebaut, Lauf misst das Gate
+- **Status:** `blockiert` | **Bindung:** `operator`
+- **Lage:** Lauf `35579950220` failure (0 flashes je Granule, `glm_l2_compiler.rs:434`).
+  Gemessen am echten Granule `…s20260010000000_e20260010000200…nc` (Byte-Ebene):
+  5 Datasets, alle dims `[12]` — `flash_lat`/`flash_lon` **float32**,
+  `flash_energy`/`flash_time_offset_of_first_event`/`flash_quality_flag`
+  **int16** (LE, signed), Fill `-1`, chunked `[256]`, units
+  `seconds since YYYY-MM-DD 00:00:00.000` (parst). Kein
+  Early-Return-Log → alle Datasets/Attrs laden; 0–5 qf-degraded je Granule;
+  der Rest stirbt an einem der Record-Gates (energy/time/lat/lon/tdb).
+  Fix gebaut (`glm_l2_compiler.rs`): Klassen-bewusster Decode
+  (`decode_num_at`/`NumGate`/`gated_value` — int wie float, float
+  NaN-gated, `_Unsigned`-bewusst), per-Gate-Skip-Zähler (qf/energy/time/
+  lat/lon/tdb) in der Granule-Zeile, Kurz-Lese-Diagnose, 4 neue Tests.
+  `cargo check -p omegaflow-harvest --all-targets` 0 Fehler/0 Warnungen.
+- **Blockade:** Commit-Wort + Push (der Lauf checkt main aus).
+- **Braucht:** `/commit` → push → `gh workflow run glm-l2-cdn` (der Lauf
+  druckt N flashes + Gate-Zähler je Granule = definitive Messung; danach
+  sha256 in `phi/sources.φ`, wenn das Asset steht).
 
 ### 2. PINE64 / Mantis-Shrimp (Ox64-Dokumentation)
 - **Status:** `blockiert` | **Bindung:** `linie:entscheid`
@@ -94,9 +102,10 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   Dispatch, Tests), `docs/concepts/tools-map.md` (`--searxng` entfernt), neues
   `docs/handover/handover-2026-09-21-bau-folge122.md`, Move
   `handover-2026-09-21-bau-folge121.md` → `archiv/`.
-- **Fremd (nicht angefasst):** die `*-cdn.yml`, `post.md`, `phi/pipeline/ledger.φ`,
-  `phi/sources.φ`, gestaged `forschung-folge134` + `external-state.md` +
-  `KERNEL_INDEX.md`. Nie ein nacktes `git commit`.
+- **Diese Session (GLM-L2-Fix):** `tools/harvest/src/bin/glm_l2_compiler.rs`
+  (klassen-bewusster Decode + Gate-Zähler + Diagnose + Tests), Hunk in dieser
+  Übergabe (Punkt 1). `phi/sources.φ` und `.github/workflows/tools-build.yml`
+  bleiben fremd (uncommitted) — nicht angefasst.
 
 ## Abschluss
 
