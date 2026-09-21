@@ -3,7 +3,7 @@
   session: Bau-Folge 119
   class: handover
   date: 2026-09-21
-  sha256: 66dee9e44d10529a68b657773b44551bb4a7e7c25745d48c409a278649dd0404
+  sha256: 48c37cb797832d4163fc63b6530bf64236cf43007797717d53c9db424382a40e
   status: live
 -->
 # Handover — Bau-Folge 119 (2026-09-21)
@@ -59,12 +59,11 @@ abgearbeitet (Operator-Wort 2026-09-21). Jeder Punkt trägt seinen Status-Tag
 
 ### radnet.bin CDN-Manifestation
 - **Status:** `wartend` | **Bindung:** `eigen`
-- **Lage:** Workflow `radnet-cdn.yml` gebaut und nach dem Commit dispatcht; das
-  Asset ist noch nicht manifestiert.
+- **Lage:** Workflow `radnet-cdn.yml` gebaut und dispatcht als Lauf
+  `35573513812` (@`ab8ad28c`); das Asset ist noch nicht manifestiert.
 - **Blockade:** Run-Abschluss (CI).
-- **Braucht:** `ci_manage view <run-id>` (Run-ID im Dispatch registriert) /
-  Watchdog-Snapshot; danach `archive_search --sniff` auf
-  `…/download/data.epa.gov/radnet.bin`.
+- **Braucht:** `bin/ci_manage view 35573513812` / Watchdog-Snapshot; danach
+  `archive_search --sniff` auf `…/download/data.epa.gov/radnet.bin`.
 
 ## Benchmark
 
