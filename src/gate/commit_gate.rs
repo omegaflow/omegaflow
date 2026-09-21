@@ -33,6 +33,7 @@ struct Vocab {
     state_claim: Vec<String>,
     serial_priority: Vec<String>,
     unstable_pointer: Vec<String>,
+    line_routing: Vec<String>,
     german_chars: Vec<char>,
     german_function_words: Vec<String>,
     speculation: Vec<String>,
@@ -121,6 +122,7 @@ fn load_vocab() -> Vocab {
         state_claim: str_list(&json, "state_claim"),
         serial_priority: str_list(&json, "serial_priority"),
         unstable_pointer: str_list(&json, "unstable_pointer"),
+        line_routing: str_list(&json, "line_routing"),
         german_chars,
         german_function_words: str_list(&json, "german_function_words"),
         speculation: str_list(&json, "speculation"),
@@ -823,6 +825,9 @@ impl Gate {
                 quote: clip(&path, 90),
             });
         }
+        if let Some(v) = check_line_routing(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -974,6 +979,25 @@ impl Gate {
         }
         None
     }
+}
+
+fn check_line_routing(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("docs/") && path.contains("/archiv/") {
+        return None;
+    }
+    let lower = content.to_lowercase();
+    for marker in &vocab().line_routing {
+        if let Some(idx) = lower.find(marker.as_str()) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "line-routing".to_string(),
+                line: line_of(content, idx),
+                feedback: feedback("line_routing").to_string(),
+                quote: clip(content, 90),
+            });
+        }
+    }
+    None
 }
 
 pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<String>) {
@@ -1757,6 +1781,88 @@ mod tests {
             let v = g.check_tool_call("edit", &args).unwrap();
             assert_eq!(v.rule, "fabrication");
         }
+    }
+
+    #[test]
+    fn fp_tool_line_routing_old_names_blocked() {
+        let mut g = test_gate();
+        for marker in &vocab().line_routing {
+            let args = tool_args("docs/handover/handover-2026-09-22-x.md", marker);
+            let v = g.check_tool_call("write", &args).unwrap();
+            assert_eq!(v.rule, "line-routing", "marker {} not blocked", marker);
+            assert_eq!(v.severity, Severity::Hard);
+        }
+    }
+
+    #[test]
+    fn fn_tool_line_routing_archived_docs_pass() {
+        let mut g = test_gate();
+        for marker in &vocab().line_routing {
+            let args = tool_args(
+                "docs/handover/archiv/handover-2026-09-18-x-folge74.md",
+                marker,
+            );
+            assert!(
+                g.check_tool_call("write", &args).is_none(),
+                "marker {} blocked in handover archive",
+                marker
+            );
+        }
+        let slug_marker = vocab()
+            .line_routing
+            .iter()
+            .find(|m| m.starts_with('-'))
+            .unwrap()
+            .clone();
+        let slug_path = format!(
+            "docs/handover/archiv/handover-2026-09-18{}74.md",
+            slug_marker
+        );
+        let args = tool_args(&slug_path, "the point rests in the archive");
+        assert!(g.check_tool_call("write", &args).is_none());
+        let post_marker = vocab()
+            .line_routing
+            .iter()
+            .find(|m| m.starts_with("an "))
+            .unwrap()
+            .clone();
+        let post_text = format!("{} stays", post_marker);
+        let args = tool_args("docs/auftrag/archiv/auftrag-alt.md", &post_text);
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_line_routing_voice_names_pass() {
+        let mut g = test_gate();
+        let clean = [
+            (
+                "docs/handover/handover-2026-09-22-future-folge84.md",
+                "the future line carries the point",
+            ),
+            ("docs/handover/post.md", "An mountain: tree red (step: fix)"),
+            (
+                "docs/handover/handover-2026-09-22-river-folge1.md",
+                "/river_go switches the agent",
+            ),
+            (
+                "docs/handover/handover-2026-09-22-mycelium-folge2.md",
+                "linie:sensory takes over",
+            ),
+        ];
+        for (path, text) in clean {
+            let args = tool_args(path, text);
+            assert!(g.check_tool_call("write", &args).is_none(), "{path}");
+        }
+    }
+
+    #[test]
+    fn fn_tool_line_routing_general_nouns_pass() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-22-x.md",
+            "ernte forschung entscheidet gebaut",
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]

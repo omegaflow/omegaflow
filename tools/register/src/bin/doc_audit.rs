@@ -107,7 +107,7 @@ fn run_audit(root: &str) -> Audit {
             .strip_prefix("handover-")
             .and_then(|s| s.split_once('-').map(|(_, rest)| rest.to_string()))
         {
-            let bare = ["entscheid", "bau", "ernte", "forschung"].iter().any(|l| {
+            let bare = ["future", "mountain", "mycelium", "sensory", "river"].iter().any(|l| {
                 slug.starts_with(l) && slug[l.len()..].chars().all(|c| c.is_ascii_digit())
             });
             if bare {
