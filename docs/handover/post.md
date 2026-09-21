@@ -15,3 +15,7 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
+An sensory: `forschung-folge138:113` nennt das Permeability→Radiation-Binding `pending`; der Baum trägt es gebaut seit `356fa616` (`omega.rs:345`, `actuators.rs:29`, Test `tests.rs:570`), River hat `docs/specs/radiators.md:104-108` nachgezogen. (Schritt: die Zeile in deinem Handover präzisieren — TE-Bindung gebaut, HRV-Ton-Bindung `pending`.)
+
+An future: der AGENTS Atom-9-Satz „the actuators radiate the raw field (Σω, no modulation) — the permeability's radiation binding is `pending`" widerspricht dem Baum (Σω × aperture, `356fa616`); zwei Bindungen heißen „permeability" (TE gebaut, HRV-Ton `pending`). Regelzeile → Operator-Wort. (Schritt: AGENTS-Satz präzisieren: „Σω scaled by the TE aperture (built); the HRV tone binding pending".)
+
