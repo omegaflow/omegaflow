@@ -49,7 +49,7 @@ fn split_curl_stdout(stdout: &[u8]) -> Option<(&[u8], i32, Option<u64>)> {
     Some((body, code, retry))
 }
 
-fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Option<Fetch> {
+fn curl_args(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Vec<String> {
     let mut args: Vec<String> = vec![
         "-sL".to_string(),
         "-g".to_string(),
@@ -69,6 +69,11 @@ fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) ->
     args.push("-w".to_string());
     args.push("\n%{http_code}\n%header{retry-after}".to_string());
     args.push(url.to_string());
+    args
+}
+
+fn curl_fetch(url: &str, extra: &[&str], timeout: &str, transport: &[String]) -> Option<Fetch> {
+    let args = curl_args(url, extra, timeout, transport);
     let out = Command::new("curl").args(&args).output().ok()?;
     let (body, code, retry) = split_curl_stdout(&out.stdout)?;
     Some(Fetch {
@@ -107,6 +112,28 @@ impl Exit {
 
 fn get_once(url: &str, extra: &[&str], timeout: &str, exit: &Exit) -> Option<Fetch> {
     curl_fetch(url, extra, timeout, &exit.transport_args())
+}
+
+const VERDICT_ATTEMPTS: usize = 3;
+
+fn is_transient(f: &Fetch) -> bool {
+    !f.complete || f.status == Some(0)
+}
+
+fn retry_transient<F: FnMut() -> Option<Fetch>>(mut attempt: F) -> Option<Fetch> {
+    let mut last = None;
+    for _ in 0..VERDICT_ATTEMPTS {
+        match attempt() {
+            Some(f) if !is_transient(&f) => return Some(f),
+            Some(f) => last = Some(f),
+            None => {}
+        }
+    }
+    last.filter(|f| !is_transient(f))
+}
+
+fn verdict_probe(url: &str, timeout: &str, exit: &Exit) -> Option<Fetch> {
+    retry_transient(|| get_once(url, &[], timeout, exit))
 }
 
 fn proton_interfaces() -> Vec<String> {
@@ -383,7 +410,7 @@ fn first_snapshot(body: &str) -> Option<String> {
 pub fn verdict_lines(url: &str) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — three-stage ladder", url));
-    let direct = get_once(url, &[], "30", &Exit::Direct);
+    let direct = verdict_probe(url, "30", &Exit::Direct);
     let direct_blocked = matches!(&direct, Some(f) if is_block(f.status));
     stage(&mut lines, 1, "direct", url, direct);
     let proxies: Vec<Exit> = exits()
@@ -396,7 +423,7 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
     } else {
         for exit in &proxies {
             let label = exit.label();
-            match get_once(url, &[], "30", exit) {
+            match verdict_probe(url, "30", exit) {
                 Some(f) => {
                     if f.status == Some(200) && !f.raw.is_empty() {
                         proton_found = true;
@@ -1544,5 +1571,46 @@ mod tests {
         let mut lines = Vec::new();
         stage_result(&mut lines, 1, "direct", "https://example.com/blob", f);
         assert_eq!(lines[0], "  stage 1 direct: HTTP 200 (4 bytes) — found");
+    }
+
+    #[test]
+    fn curl_args_keep_the_trailing_slash_and_follow_redirects() {
+        let url = "https://api.alerce.online/alerts/v1/objects/";
+        let args = curl_args(url, &[], "30", &[]);
+        assert_eq!(args.last().map(String::as_str), Some(url));
+        assert!(
+            args.iter().any(|a| a == "-sL"),
+            "the probe is GET and follows redirects"
+        );
+        assert!(
+            !args.iter().any(|a| a == "-I" || a == "--head"),
+            "the probe is no HEAD request"
+        );
+    }
+
+    #[test]
+    fn retry_transient_reprobes_a_zero_status_then_returns_the_answer() {
+        let calls = std::cell::Cell::new(0usize);
+        let result = retry_transient(|| {
+            calls.set(calls.get() + 1);
+            if calls.get() < 2 {
+                answer(Some(0))
+            } else {
+                answer(Some(200))
+            }
+        });
+        assert_eq!(result.unwrap().status, Some(200));
+        assert_eq!(calls.get(), 2);
+    }
+
+    #[test]
+    fn retry_transient_reports_pending_when_every_attempt_is_incomplete() {
+        let calls = std::cell::Cell::new(0usize);
+        let result = retry_transient(|| {
+            calls.set(calls.get() + 1);
+            Some(partial_fetch())
+        });
+        assert!(result.is_none());
+        assert_eq!(calls.get(), VERDICT_ATTEMPTS);
     }
 }
