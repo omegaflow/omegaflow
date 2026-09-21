@@ -1764,6 +1764,10 @@ fn dropped_line_filter(args: &[String]) -> Option<&str> {
     None
 }
 
+fn count_flag(args: &[String]) -> bool {
+    args.iter().any(|a| a == "--count")
+}
+
 fn persist_threshold(args: &[String]) -> usize {
     let mut it = args.iter();
     while let Some(a) = it.next() {
@@ -1783,6 +1787,7 @@ fn persist_threshold(args: &[String]) -> usize {
 fn run_dropped(args: &[String]) {
     let filter = dropped_line_filter(args);
     let threshold = persist_threshold(args);
+    let count_only = count_flag(args);
     let handovers = collect_handovers();
     let mut commit_cache: BTreeMap<String, Option<String>> = BTreeMap::new();
     let mut pairs = 0usize;
@@ -1833,6 +1838,10 @@ fn run_dropped(args: &[String]) {
                 if persist < threshold {
                     continue;
                 }
+                dropped += 1;
+                if count_only {
+                    continue;
+                }
                 let git_status = match distinctive_token(&tokens) {
                     Some(token) => {
                         let lower = commit_for_path_cached(&n.path, &mut commit_cache);
@@ -1847,7 +1856,6 @@ fn run_dropped(args: &[String]) {
                     }
                     None => "none",
                 };
-                dropped += 1;
                 println!(
                     "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
                     line,
@@ -1861,6 +1869,10 @@ fn run_dropped(args: &[String]) {
             }
         }
     }
+    if count_only {
+        println!("{}", dropped);
+        return;
+    }
     let scope = match filter {
         Some(f) => format!(" {}", f),
         None => String::new(),
@@ -1873,7 +1885,7 @@ fn run_dropped(args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints only the dropped integer)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -2425,6 +2437,12 @@ mod tests {
             match_prefix(&tokens),
             Some("3 queue-korpora 30-astro earth-stac-sentinel".to_string())
         );
+    }
+
+    #[test]
+    fn count_flag_reads_the_count_switch() {
+        assert!(count_flag(&["--dropped".to_string(), "--count".to_string()]));
+        assert!(!count_flag(&["--dropped".to_string()]));
     }
 
     #[test]
