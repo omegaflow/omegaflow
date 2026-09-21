@@ -357,13 +357,15 @@ pub fn flush_port_block(
 ) {
     *total += 1;
     let conv = port_block(block);
+    if conv.contains("# pending ") {
+        *pending += 1;
+        converted.push_str(&conv);
+        converted.push('\n');
+        return;
+    }
     let srcs = parse_sources(&conv);
     if !srcs.is_empty() {
         *parsed += 1;
-        converted.push_str(&conv);
-        converted.push('\n');
-    } else if conv.contains("# pending ") {
-        *pending += 1;
         converted.push_str(&conv);
         converted.push('\n');
     }
