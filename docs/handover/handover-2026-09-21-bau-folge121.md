@@ -3,7 +3,7 @@
   session: Bau-Folge 121
   class: handover
   date: 2026-09-21
-  sha256: 7355e7be5e893b76d31ea55d940faca81a4ea1d47c9a2f07b7ef5ad06a2e2135
+  sha256: 7f8883865c329ccbb83c2ccd424443169bffa2e30feb7a1b6a28bd9edcb08427
   status: live
 -->
 # Handover — Bau-Folge 121 (2026-09-21)
@@ -71,6 +71,17 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   gehostete Instanz** (Docker `searxng/searxng`, `search.formats: [html, json]`,
   Limiter `false`), dann `SEARXNG_URL=http://localhost:8888`. Rezept:
   `docs.searxng.org/admin/settings/settings_search.html` + `installation-docker.html`.
+- **`--mwmbl`-Modus gebaut** (keyless Brave-Ersatz, FMHY-Fund): offene
+  Community-Suchmaschine `mwmbl.org/api/v1/search/?s=`, keyless JSON
+  `[{url,title:[{value}],extract:[{value}],source}]`; `mwmbl_lines`/`mwmbl_results`
+  in `net.rs`, registriert in `QUERY_MODES`/`run_lines`/`--help`, 1 Gate-Test;
+  `cargo check -p omegaflow-utils --all-targets` 0 Fehler/0 Warnungen. Gemessen:
+  relevante Treffer (Wikipedia/Frontiers/Nagoya), 0,78 s, kein Gate/Key.
+- **Proton-IP-Frage gemessen:** der Playwright-Pfad löst JS-Challenges (Marginalia
+  200, hochwertige Treffer), aber nicht die IP-Blocks — DDG: direct 202, über den
+  Proton-Exit `169.150.218.57` **403**; Mojeek 403 „automated queries".
+  Datacenter-IP-Reputation; ein DNS-Wechsel ändert nur die Namensauflösung, nicht
+  die Quell-IP. Der Weg durch das Gate ist keyless/ungated (Mwmbl) oder residential.
 
 ## Offen (aufgeschlüsselt)
 

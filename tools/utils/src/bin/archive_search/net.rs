@@ -1093,6 +1093,71 @@ fn searxng_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+pub fn mwmbl_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!("https://mwmbl.org/api/v1/search/?s={}", urlencode(query));
+    let headers = [
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+    ];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = mwmbl_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Mwmbl carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Mwmbl response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Mwmbl HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn mwmbl_text(v: Option<&Json>) -> String {
+    let Some(parts) = v.and_then(|x| x.as_arr()) else {
+        return String::new();
+    };
+    let mut out = String::new();
+    for p in parts {
+        if let Some(s) = p.get("value").and_then(|x| x.as_str()) {
+            out.push_str(s);
+        }
+    }
+    out
+}
+
+fn mwmbl_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.as_arr() else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(&mwmbl_text(r.get("title")));
+        let extract = flatten(&mwmbl_text(r.get("extract")));
+        let source = r.get("source").and_then(|s| s.as_str()).unwrap_or("");
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if !source.is_empty() {
+            line.push_str(&format!("\tsource: {}", source));
+        }
+        if !extract.is_empty() {
+            line.push_str(&format!("\tdescription: {}", extract));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
 pub fn librs_lines(query: &str) -> Vec<String> {
     let url = format!("https://lib.rs/search?q={}", urlencode(query));
     let headers = [
@@ -1200,6 +1265,7 @@ const QUERY_MODES: &[&str] = &[
     "librs",
     "brave",
     "searxng",
+    "mwmbl",
     "datacite",
     "zenodo",
     "wayback",
@@ -1332,6 +1398,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 )],
             }
         }
+        "mwmbl" => mwmbl_lines(query, max),
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
@@ -1419,6 +1486,7 @@ mod tests {
             "librs",
             "brave",
             "searxng",
+            "mwmbl",
             "datacite",
             "zenodo",
             "wayback",
@@ -1471,6 +1539,29 @@ mod tests {
     fn searxng_lines_names_the_missing_url_as_pending() {
         let lines = searxng_lines("x", "   ", 10);
         assert!(lines[0].starts_with("pending — SEARXNG_URL absent"));
+    }
+
+    #[test]
+    fn mwmbl_results_carry_url_title_source_extract() {
+        let body = r#"[
+            {"url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+             "title":[{"value":"Interplanetary","is_bold":true},{"value":" scintillation","is_bold":false}],
+             "extract":[{"value":"In astronomy, "},{"value":"interplanetary scintillation"}],
+             "source":"wikipedia"},
+            {"url":"","title":[{"value":"no url"}],"extract":[],"source":"x"},
+            {"url":"https://example.org/b","title":[{"value":"B"}],"extract":[{"value":"text"}],"source":""}
+        ]"#;
+        let v = json::parse(body).expect("json");
+        let lines = mwmbl_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tsource: wikipedia\tdescription: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(
+            lines[1],
+            "url https://example.org/b\ttitle: B\tdescription: text"
+        );
     }
 
     #[test]
