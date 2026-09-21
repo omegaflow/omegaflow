@@ -620,14 +620,7 @@ fn main() {
             return;
         }
         run_confirmation(
-            &entries,
-            &nominees,
-            &channel,
-            max_points,
-            n_surr,
-            pct,
-            seed,
-            coherent,
+            &entries, &nominees, &channel, max_points, n_surr, pct, seed, coherent,
         );
         return;
     }
