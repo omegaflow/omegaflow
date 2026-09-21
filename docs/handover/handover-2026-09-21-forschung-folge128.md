@@ -3,7 +3,7 @@
   session: Forschung-Folge 128
   class: handover
   date: 2026-09-21
-  sha256: bdc125613eda6acce2bebf3c3e9311fa73f3cd88005276fbfb3e9e68205cf797
+  sha256: 72a8de9a44c926d47a32f48eb8bdf6d18bedf8a62d4feb9971188d1c6d64f870
   status: live
 -->
 # Handover — Forschung-Folge 128 (Stand 2026-09-21)
@@ -55,14 +55,17 @@ kleinere Block ertrinkt nicht mehr. `cargo check -p omegaflow --all-targets` +
 `-p omegaflow-measure --all-targets`: 0/0.
 
 **Offen:** CI-Verdikt der Reparatur. Nach Push `hyperscanning-te` + `te-gate`
-@neuer SHA dispatcht; erwartet: Excess ≥ 0 (TE kehrt von 9.4e-3 auf ~0.1–0.26
-zurück, Null ≤ 0.10). (Schritt: `ci_manage view <id>` einmal nach Push.)
+@`a70d20c7` dispatcht `hyperscanning-te` `35572559304`; erwartet: Excess ≥ 0 (TE
+kehrt von 9.4e-3 auf ~0.1–0.26 zurück, Null ≤ 0.10). (Schritt:
+`ci_manage view 35572559304` einmal.)
 
 ## Punkt 2 — `te-gate` n=1000-FPR-Boden
 
-`te-gate` `35570482875` @`ca7aa66d` pending — der n=1000-FPR-Boden bleibt
-ungemessen. Eintrag `docs/zustand/external-state.md` (TE-Gate n=1000). (Schritt:
-`ci_manage view 35570482875` einmal.)
+Der Kalibrier-Lauf `35570482875` @`ca7aa66d` hing; post-push neu dispatcht
+`te-gate` `35572569205` @`a70d20c7` (misst die Kalibrier-Gates am neuen Schätzer).
+Der n=1000-FPR-Boden bleibt ungemessen. Eintrag
+`docs/zustand/external-state.md` (TE-Gate n=1000). (Schritt:
+`ci_manage view 35572569205` einmal.)
 
 ## Punkt 3 — nominees-Tests: Entscheidung + Workflow-Zeile (gebaut)
 
@@ -114,8 +117,8 @@ Messschritt benannt, nicht gebaut.
 
 | Punkt | Status | Bindung | Schritt |
 |---|---|---|---|
-| 1. Skalen-Reparatur-Verdikt | wartend | eigen | `ci_manage view <id>` einmal nach Push |
-| 2. `te-gate` n=1000-FPR | wartend | eigen | `ci_manage view 35570482875` einmal |
+| 1. Skalen-Reparatur-Verdikt | wartend | eigen | `ci_manage view 35572559304` einmal |
+| 2. `te-gate` n=1000-FPR | wartend | eigen | `ci_manage view 35572569205` einmal |
 | 3. confirmation-Test nach grünem Screen | wartend | eigen | Workflow-Zeile ergänzen |
 | 4. `--dropped` Delta-Gate bauen | wartend | eigen | Baseline-Register + Workflow-Bedingung |
 | 5. Frontalkanäle F3/F4 | wartend | eigen | getrennte Läufe nach grünem Screen |
@@ -150,3 +153,7 @@ Messschritt benannt, nicht gebaut.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
 Consent (Delegation), nie das Commit-Wort.
+
+Commit `a70d20c7` gepusht (== `origin/main`); dispatcht (post-push):
+`hyperscanning-te` `35572559304`, `te-gate` `35572569205` — je
+`ci_manage view <id>` einmal, nie pollen.
