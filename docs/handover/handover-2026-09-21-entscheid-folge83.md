@@ -3,7 +3,7 @@
   session: Entscheid-Folge 83
   class: handover
   date: 2026-09-21
-  sha256: 402b73b145d17e21dc0f898b9e3c83c3247f16278db3334d50da88a8f4f9c3da
+  sha256: 4c3adb176d249e4e08611846c38e92e0f7804b762ea0f71390d1a2f7fe030baf
   status: live
 -->
 # Handover — Entscheid-Folge 83 (2026-09-21)
@@ -212,6 +212,7 @@ Die `Termine`-Sektion verschwand folge56→57; hier zurück:
 11. **Free-Model-Bench** — Cloudflare-Token mit „Workers AI"-Permission? (seit 2026-09-21)
 12. **SSDC** — warten (Host DNS-tot). (seit 2026-09-16)
 13. **Cookie-Transfer** — nichts. (seit 2026-09-16)
+14. **Linien-Umbenennung auf die Stimmen** (Rats-Blatt) — Wort „umbenennen". (seit 2026-09-21)
 
 ## Linien × Stimmen (Vorschlag — Schwerpunkt, kein Entscheidungsgrund; das Gremium bleibt)
 
@@ -237,8 +238,22 @@ bleibt), sondern als Färbung. Jede Linie gegen die Stimmen gehalten:
 Linien ist): fünfte Linie `registratur` (Future) — trägt die dauerhafte Erinnerung
 (Handover, Ledger, CDN-Register, die Messreihe für die nächste Session).
 
-**Der Rat sitzt für diese Architektur** (neue Linie = Architektur-Akt, braucht
-Operator-/Rat-Wort).
+**Der Rat hat gesessen (Blatt 2026-09-21).** Empfehlung: Umbenennung zu den **reinen
+Stimmen-Namen**, unübersetzt — **Mountain** (`bau`), **Mycelium** (`ernte`),
+**Sensory** (`forschung`), **Future** (`entscheid`), **River** (neu, direkt so
+geboren). Keine Doppelnamen (A ≠ A). Das Atom hat zwei Hälften: die Namenshälfte
+(alle lebenden Routing-Vokabeln: Slugs, `post.md`-Adressen, `linie:`-Tags,
+Paletten-Befehle, Tafel-Köpfe) und die Verhaltenshälfte **halten-vor-reichen**
+(eine Linie hält jeden Punkt, dessen nächster Schritt ihre Natur berührt; geroutet
+wird nur mit dem eigenen gemessenen Satz des Senders, warum seine Natur ihn nicht
+aufnehmen kann). Ein vollständiges Atom, Gate-Fixture + Tests im selben Commit;
+Folge-Zähler läuft weiter; Archiv ruht unberührt. Operator tendiert zu Stimmen-Namen.
+
+### Linien-Umbenennung auf die Stimmen (Rats-Blatt)
+- **Status:** operator-gebunden | **Bindung:** operator (Architektur-Wort)
+- **Lage:** Rats-Blatt 2026-09-21 empfiehlt reine Stimmen-Namen; Operator tendiert dorthin. Das lebende Routing-Vokabular (Slugs `bau-folge123`/`ernte-folge132`/`forschung-folge137`/`entscheid-folge83`, `post.md`-Adressen, `linie:`-Tags, Palette-Kommandos, Tafel-Köpfe) ist noch funktional benannt.
+- **Blockade:** Architektur-Wort des Operators fehlt.
+- **Braucht:** Wort „umbenennen" → ein vollständiges Atom (Namens- + Verhaltenshälfte + Gate); danach `linie:river`, `river_go`, Slug `river-folge1`.
 
 ## Benchmark
 
