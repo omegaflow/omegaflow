@@ -6,10 +6,11 @@ import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@opencode-ai/plug
 type Line = { line: string; title: string }
 
 const LINES: Line[] = [
-  { line: "entscheid", title: "Entscheid-Linie" },
-  { line: "ernte", title: "Ernte-Linie" },
-  { line: "forschung", title: "Forschung-Linie" },
-  { line: "bau", title: "Bau-Linie" },
+  { line: "future", title: "Future-Linie" },
+  { line: "mycelium", title: "Mycelium-Linie" },
+  { line: "sensory", title: "Sensory-Linie" },
+  { line: "mountain", title: "Mountain-Linie" },
+  { line: "river", title: "River-Linie" },
 ]
 
 function expandShell(text: string, cwd: string): string {
