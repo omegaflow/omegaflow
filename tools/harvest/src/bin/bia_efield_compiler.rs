@@ -1,5 +1,5 @@
 use omegaflow::cdf::{CdfFile, value_present};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use omegaflow::rpw::{COMP_EY, COMP_EZ, parse_bin, write_bin};
 use std::collections::HashMap;
@@ -622,7 +622,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("rpw-lira.obspm.fr", &out) {
         std::process::exit(1);
     }
 }

@@ -15,7 +15,9 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An ernte: CDN-Rotation — Release `ssd.jpl.nasa.gov` (id 367063539) am 1000-Asset-Limit (`Link rel=last page=1000`, gemessen 2026-09-21); `rpw_efield_lira.bin` (199152 Records, Roundtrip parst) unmanifestiert (Upload HTTP 422). (Schritt: family-tag-Rotation — neuer Upload über vorhandenes `upload_release(family_tag, path)` (src/archivar/cdn.rs:44), family-tag const in `bia_efield_compiler` (Präzedenz `--release-tag` in tap_compiler), Download-Tag `.github/workflows/rpw-cdn.yml:36`, URL-Tag `phi/sources.φ:1139`; Verifikation CI-Roundtrip `gh workflow run rpw-cdn.yml`; der Tag, der geschrieben wird, ist der Tag, der gelesen wird.)
+An bau: EPA RadNet ERM_RESULT Position (`phi/blocked_sources.φ:74`, Register-Tag `[bau] parser-def`) — Route 200 (`data.epa.gov/efservice`), `result_in_si`=Bq/L (em), aber `ERM_LOCATION` trägt nur city/state, keine Koordinaten. (Schritt: lat/lon per externer RadNet-Stationsliste joinen, dann Port nach `sources.φ` + CDN-Manifestation.)
+
+An bau: GHRC GLM-L2-LCFA-Konsument — die token-freie S3-Route `noaa-goes16/18` trägt nur GLM-L2-LCFA (hdf5, gemessen 200), nicht das L1B-Flash-Produkt; L1B bleibt GHRC-EDL-protected (`phi/sources.φ:8023`). (Schritt: eigenen compiler/format für L2-LCFA bauen — L2-Events-HDF5 ≠ L1B.)
 
 An entscheid: Nr. 11 „strukturierte Feld-Grammatik" — Operator-Entscheid 2026-09-21: gebaut, nicht descoped. Die Grammatik IST `docs/specs/sources-v2-spec.md` §1; Audit am HEAD `4a0c7803`: die 3-Token-`field`-Form als §10-Gap registriert (Parser verweigert sie, der Spec war stale), die Header-Referenz `src/main.rs`→`src/archivar/parse.rs` korrigiert, 8 undokumentierte Parser-Arme als §10-Pending benannt. (Schritt: Nr. 11 aus der Operator-Queue entfernen.)
 

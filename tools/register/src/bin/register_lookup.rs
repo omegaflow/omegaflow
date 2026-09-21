@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -62,6 +62,12 @@ const PROBE_PATHS: &[&str] = &[
     "phi/pipeline/probe_batch_skymap.\u{3c6}",
 ];
 const CATALOG_DIR: &str = "phi/pipeline/catalog";
+const DISPOSITION_REGISTER_PATHS: &[&str] = &[
+    "phi/declined_sources.\u{3c6}",
+    "phi/dead_sources.\u{3c6}",
+    "phi/blocked_sources.\u{3c6}",
+    "phi/sources.\u{3c6}",
+];
 
 fn snippet(line: &str, max: usize) -> String {
     let trimmed = line.trim();
@@ -728,14 +734,40 @@ fn scan_probe(path: &Path, open_out: &mut Vec<String>, released_out: &mut Vec<St
     scan_probe_text(&text, &path.to_string_lossy(), open_out, released_out)
 }
 
-fn scan_catalog_candidates(dir: &Path, out: &mut Vec<String>) -> usize {
+fn collect_disposed_urls(paths: &[&str]) -> BTreeSet<String> {
+    let mut urls = BTreeSet::new();
+    for path in paths {
+        let text = match fs::read_to_string(path) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        for line in text.lines() {
+            let t = line.trim_start();
+            let value = t.strip_prefix("url ").or_else(|| t.strip_prefix("reg "));
+            if let Some(url) = value {
+                let url = url.trim();
+                if !url.is_empty() {
+                    urls.insert(url.to_string());
+                }
+            }
+        }
+    }
+    urls
+}
+
+fn scan_catalog_candidates(
+    dir: &Path,
+    disposed: &BTreeSet<String>,
+    out: &mut Vec<String>,
+) -> (usize, usize) {
     let entries = match fs::read_dir(dir) {
         Ok(e) => e,
-        Err(_) => return 0,
+        Err(_) => return (0, 0),
     };
     let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
     paths.sort();
     let mut total = 0;
+    let mut skipped = 0;
     for path in paths {
         if !path.is_file() {
             continue;
@@ -750,7 +782,12 @@ fn scan_catalog_candidates(dir: &Path, out: &mut Vec<String>) -> usize {
         };
         let mut n = 0usize;
         for line in text.lines() {
-            if line.trim_start().starts_with("candidate ") {
+            let t = line.trim_start();
+            if let Some(url) = t.strip_prefix("candidate ") {
+                if disposed.contains(url.trim()) {
+                    skipped += 1;
+                    continue;
+                }
                 n += 1;
             }
         }
@@ -764,7 +801,7 @@ fn scan_catalog_candidates(dir: &Path, out: &mut Vec<String>) -> usize {
         ));
         total += n;
     }
-    total
+    (total, skipped)
 }
 
 fn print_section(name: &str, open_count: usize, open_lines: &[String], released_lines: &[String]) {
@@ -995,7 +1032,9 @@ fn run_open() {
     print_section("PROBES", probe, &probe_open, &probe_released);
 
     let mut candidates_out: Vec<String> = Vec::new();
-    let candidates = scan_catalog_candidates(Path::new(CATALOG_DIR), &mut candidates_out);
+    let disposed_urls = collect_disposed_urls(DISPOSITION_REGISTER_PATHS);
+    let (candidates, candidates_disposed) =
+        scan_catalog_candidates(Path::new(CATALOG_DIR), &disposed_urls, &mut candidates_out);
     for line in &candidates_out {
         println!("{}", line);
     }
@@ -1005,7 +1044,7 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates",
+        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
         docs.len(),
         opens.len(),
         released.len(),
@@ -1024,6 +1063,7 @@ fn run_open() {
         nrs,
         probe,
         candidates,
+        candidates_disposed,
     );
 }
 
@@ -2300,11 +2340,43 @@ mod tests {
         )
         .unwrap();
         let mut out = Vec::new();
-        let n = scan_catalog_candidates(&dir, &mut out);
+        let (n, skipped) = scan_catalog_candidates(&dir, &BTreeSet::new(), &mut out);
         assert_eq!(n, 2);
+        assert_eq!(skipped, 0);
         assert_eq!(out.len(), 1);
         assert!(out[0].starts_with("CANDIDATES\t"));
         assert!(out[0].contains("cat_a.\u{3c6}\t2 \u{2192} ernte"));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn scan_catalog_candidates_dedupes_against_register_urls() {
+        let dir = env::temp_dir().join(format!(
+            "register_lookup_catalog_disposed_{}",
+            std::process::id()
+        ));
+        let _ = fs::create_dir_all(&dir);
+        let reg = dir.join("declined_tmp.\u{3c6}");
+        fs::write(
+            &reg,
+            "decline no-physical-force\nurl https://dead\nnote gone\n\npending\nreg https://portal\n",
+        )
+        .unwrap();
+        let cat = dir.join("cat_d.\u{3c6}");
+        fs::write(
+            &cat,
+            "# header\ncandidate https://a\ncandidate https://dead\ncandidate https://portal\ncandidate https://b\n",
+        )
+        .unwrap();
+        let disposed = collect_disposed_urls(&[reg.to_str().unwrap()]);
+        assert!(disposed.contains("https://dead"));
+        assert!(disposed.contains("https://portal"));
+        let mut out = Vec::new();
+        let (n, skipped) = scan_catalog_candidates(&dir, &disposed, &mut out);
+        assert_eq!(n, 2);
+        assert_eq!(skipped, 2);
+        assert_eq!(out.len(), 1);
+        assert!(out[0].contains("cat_d.\u{3c6}\t2 \u{2192} ernte"));
         let _ = fs::remove_dir_all(&dir);
     }
 
