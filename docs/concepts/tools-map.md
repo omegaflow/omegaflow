@@ -130,6 +130,9 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `[{url, title:[{value,is_bold}], extract:[{value,is_bold}], source}]` → `url` +
   Titel/Quelle/Auszug. Gemessen 2026-09-21: relevante Treffer (Wikipedia/
   Frontiers/Nagoya), 0,78 s, 200. Der beste keyless Brave-Ersatz.
+- `archive_search --brave <query>` — Brave Search API (`BRAVE_API_KEY`);
+  gemessen 2026-09-21: **HTTP 402** (free credits erschöpft, Ledger `1789978555`)
+  bis zum Monatswechsel — die Kaskade führt darum `--mwmbl` zuerst.
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,

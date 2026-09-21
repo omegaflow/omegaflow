@@ -565,6 +565,9 @@ fn usage() {
         "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
+        "  --brave     Brave Search API (X-Subscription-Token); HTTP 402 while the free quota is spent — the keyless path is --mwmbl"
+    );
+    eprintln!(
         "  --mwmbl     open community meta-search (mwmbl.org), keyless JSON; url + title/source/extract"
     );
     eprintln!(
@@ -592,7 +595,7 @@ fn usage() {
         "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
     );
     eprintln!(
-        "  --all       the query through every keyword search mode ({} calls — the last move, never the first)",
+        "  --all       the query through every keyword search mode ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
         net::query_mode_count()
     );
     eprintln!();
