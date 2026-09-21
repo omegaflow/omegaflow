@@ -39,7 +39,8 @@
     ["kernel_id_for_force(5), Some(3)", "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"],
     ["dist_scale: 1.0", "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"],
     ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"],
-    ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"]
+    ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"],
+    ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
