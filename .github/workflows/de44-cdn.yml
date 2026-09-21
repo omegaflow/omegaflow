@@ -20,11 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the ssd.jpl.nasa.gov release exists on the CDN
+      - name: Ensure the ssd.jpl.nasa.gov-de release exists on the CDN
         run: |
-          if ! gh release view ssd.jpl.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create ssd.jpl.nasa.gov --repo omegaflow/sources \
-              --title "ssd.jpl.nasa.gov" \
+          if ! gh release view ssd.jpl.nasa.gov-de --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ssd.jpl.nasa.gov-de --repo omegaflow/sources \
+              --title "ssd.jpl.nasa.gov-de" \
               --notes "raw JPL ephemeris bins compiled for omegaflow measure tools (CDN tag = netloc)"
           fi
       - name: Compile the DE440 sun/moon/earth line and upload
