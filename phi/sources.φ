@@ -1154,6 +1154,15 @@ at earth
 ttl 3600
 field us_crn_hourly_temp_c us_crn_hourly_temp_c exponential-decay thermal degree_C 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.epa.gov/radnet.bin
+format radnet
+origin https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
+compiler tools/harvest/src/bin/radnet_compiler.rs
+at earth
+ttl 86400
+note EPA RadNet ERM_RESULT (Envirofacts): Route 200 2026-09-21; result_in_si=Bq/L (em), result_date YYYY-MM-DD; lat/lon ueber FEMA/Univ-Arizona AGOL (item caed82e8e13f47b183e2c7a1412949bc, Stand 2021), exakter Station-Join.
+field result_in_si radnet_activity_bq_l inverse-square em Bq/L 86400 0.0 0.0
+
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
 ttl 3600
 on earth 0 0 0
