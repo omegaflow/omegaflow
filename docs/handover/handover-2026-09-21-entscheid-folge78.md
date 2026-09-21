@@ -3,7 +3,7 @@
   session: Entscheid-Folge 78
   class: handover
   date: 2026-09-21
-  sha256: 1e151793226da63dcc0545f74d87d3d2b11bfb0246adc6d91d035ee7dab7a377
+  sha256: 9b8897a896d0820872ffb28778e3ffcaa73c3766cdb1094675605fbf69e97f79
   status: live
 -->
 # Handover — Entscheid-Folge 78 (2026-09-21)
@@ -131,8 +131,9 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 ### Free-Model-Bench (105 Modelle)
 - **Status:** wartend | **Bindung:** eigen (Lauf) / operator (Cloudflare-Token)
 - **Lage:** Artefakt gelesen, Riss diagnostiziert, Bench repariert (parallel +
-  Antwort-Mitschnitt, `cargo check` 0/0). Der volle T1–T7-Lauf ist nach Commit/Push
-  dispatchbar (`gh workflow run free-model-bench.yml`, leerer `task`).
+  Antwort-Mitschnitt, `cargo check` 0/0). Der volle T1–T7-Lauf ist dispatcht:
+  **`35591218967` @`eb17b7ae`** (queued, kein Poll — Ergebnis via `ci_manage view`/
+  Artefakt einmal lesen).
 - **Blockade:** Cloudflare-Zweig tot (alle 3 Tokens ohne Workers-AI-Permission) →
   11 Modelle fallen aus; google `gemini-2.5-pro`/`gemini-2.5-flash-lite` stale.
 - **Braucht:** (a) Operator rotiert einen Cloudflare-Token mit „Workers AI"-Permission
