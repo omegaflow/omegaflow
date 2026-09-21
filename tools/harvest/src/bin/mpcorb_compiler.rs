@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip_stream;
 use omegaflow::json::parse_json;
 use omegaflow::mpcorb::{encode_record, is_distant_object, rec_from_object};
@@ -210,7 +210,7 @@ fn main() {
         }
     };
     compile_catalog(&input, &out_path, distant_only);
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("minorplanetcenter.net", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

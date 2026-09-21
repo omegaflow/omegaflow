@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::suprastrom::{SuprastromBin, SuprastromPoint, SuprastromSeries};
 use std::collections::BTreeMap;
 use std::process::Command;
@@ -113,7 +113,10 @@ fn parse_penetration(html: &str, source_id: &str) -> Vec<SuprastromSeries> {
             continue;
         }
         let rows = table_rows(table);
-        let header = rows.first().map(|r| r.clone()).unwrap_or_default();
+        let header = match rows.first().map(|r| r.clone()) {
+            Some(r) => r,
+            None => Vec::new(),
+        };
         if header.is_empty() {
             rest = &rest[te..];
             continue;
@@ -253,7 +256,7 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!("srd62_compiler: wrote {} ({} points)", out_path, n_points);
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("srdata.nist.gov", &out_path) {
         eprintln!("srd62_compiler: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

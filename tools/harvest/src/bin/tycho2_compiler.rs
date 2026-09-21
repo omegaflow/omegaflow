@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use std::collections::{HashMap, HashSet};
 use std::io::Write;
@@ -52,9 +52,10 @@ fn load_tyc1(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize 
         let Some(vt) = num(b, 231, 236) else {
             continue;
         };
-        let hip: i32 = field(b, 211, 216)
-            .and_then(|s| s.trim().parse().ok())
-            .unwrap_or(0);
+        let hip: i32 = match field(b, 211, 216).and_then(|s| s.trim().parse().ok()) {
+            Some(h) => h,
+            None => 0,
+        };
         let (Some(t1s), Some(t2s), Some(t3s)) = (field(b, 3, 6), field(b, 8, 11), field(b, 13, 14))
         else {
             continue;
@@ -120,9 +121,10 @@ fn load_suppl(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize
         let Some(mag) = num(b, 97, 102) else {
             continue;
         };
-        let hip: i32 = field(b, 116, 121)
-            .and_then(|s| s.trim().parse().ok())
-            .unwrap_or(0);
+        let hip: i32 = match field(b, 116, 121).and_then(|s| s.trim().parse().ok()) {
+            Some(h) => h,
+            None => 0,
+        };
         let Some(key) = tyc_key(line) else {
             continue;
         };
@@ -158,7 +160,10 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
     if f.len() < 54 {
         return None;
     }
-    let hip: i32 = f[0].trim().parse().ok().unwrap_or(0);
+    let hip: i32 = match f[0].trim().parse().ok() {
+        Some(h) => h,
+        None => 0,
+    };
     let ra = f[6].trim().parse::<f64>().ok()?;
     let dec = f[8].trim().parse::<f64>().ok()?;
     let plx = f[10].trim().parse::<f64>().ok()?;
@@ -195,9 +200,10 @@ fn parse_tyc2_record(
     let mut dec = num(b, 29, 40);
     let mut pm_ra = num(b, 42, 48);
     let mut pm_de = num(b, 50, 56);
-    let mut hip: i32 = field(b, 143, 148)
-        .and_then(|s| s.trim().parse().ok())
-        .unwrap_or(0);
+        let mut hip: i32 = match field(b, 143, 148).and_then(|s| s.trim().parse().ok()) {
+            Some(h) => h,
+            None => 0,
+        };
     if ra.is_none() || dec.is_none() {
         let Some(s) = suppl.get(&key).or_else(|| tyc1.get(&key)) else {
             return None;
@@ -255,7 +261,9 @@ fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64, Option<f64>)>> {
         let Ok(hip) = hip_s.trim().parse::<i32>() else {
             continue;
         };
-        let plx = num(b, 80, 86).unwrap_or(0.0);
+        let Some(plx) = num(b, 80, 86) else {
+            continue;
+        };
         if !plx.is_finite() || plx <= 0.0 {
             continue;
         }
@@ -338,7 +346,11 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&(row.plx_mas as f32).to_le_bytes());
     out.extend_from_slice(&(row.mag as f32).to_le_bytes());
     out.extend_from_slice(&(10.0f64.powf(-0.4 * row.mag) as f32).to_le_bytes());
-    out.extend_from_slice(&(row.bp_rp.map(|v| v as f32).unwrap_or(0.0).to_le_bytes()));
+    let bp_rp = match row.bp_rp {
+        Some(v) => v as f32,
+        None => 0.0,
+    };
+    out.extend_from_slice(&bp_rp.to_le_bytes());
     out.extend_from_slice(&(row.rv as f32).to_le_bytes());
 }
 
@@ -366,7 +378,10 @@ fn main() {
     while i < args.len() {
         match args[i].as_str() {
             "--source" => {
-                source = args.get(i + 1).cloned().unwrap_or_default();
+                source = match args.get(i + 1).cloned() {
+                    Some(v) => v,
+                    None => String::new(),
+                };
                 i += 1;
             }
             "--input" => {
@@ -427,7 +442,10 @@ fn main() {
             }
         }
         let hip_map = match &hip {
-            Some(p) => load_hip(p).unwrap_or_default(),
+            Some(p) => match load_hip(p) {
+                Some(m) => m,
+                None => HashMap::new(),
+            },
             None => HashMap::new(),
         };
         let mut recovered = 0usize;
@@ -523,7 +541,7 @@ fn main() {
             buf.len(),
             out_path
         );
-        if ci_mode && !upload_asset(&out_path) {
+        if ci_mode && !upload_release("gea.esac.esa.int", &out_path) {
             eprintln!("upload: {} did not reach the CDN", out_path);
             std::process::exit(1);
         }
@@ -563,9 +581,10 @@ fn main() {
             if !(plx > 0.0) || !(vmag < 1.94) {
                 continue;
             }
-            let hip: i32 = field(b, 9, 14)
-                .and_then(|s| s.trim().parse().ok())
-                .unwrap_or(0);
+            let hip: i32 = match field(b, 9, 14).and_then(|s| s.trim().parse().ok()) {
+                Some(h) => h,
+                None => 0,
+            };
             let Some(pm_ra) = num(b, 88, 95) else {
                 continue;
             };
@@ -833,7 +852,7 @@ fn main() {
         buf.len(),
         out_path
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("gea.esac.esa.int", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

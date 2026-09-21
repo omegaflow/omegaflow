@@ -2,7 +2,7 @@ use omegaflow::archivar::PARSEC_M;
 use omegaflow::archivar::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::archivar::skydirection::{SkyDirection, parse_bin, write_bin};
 use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow_measure::weberin::deredden::{StarIndex, build_star_index};
 
 const DEG2_PER_SR: f64 = 129600.0 / std::f64::consts::PI;
@@ -309,7 +309,7 @@ fn main() {
                             println!(
                                 "Direction-distance join: {out} written with {placed} direction(s) carrying a measured distance; the distance-less stay distance-less (0 honored)"
                             );
-                            if ci_mode && !upload_asset(&out) {
+                            if ci_mode && !upload_release("ssd.jpl.nasa.gov-direction", &out) {
                                 eprintln!(
                                     "Direction-distance join: {out} did not reach the CDN release ssd.jpl.nasa.gov — the joined asset stands local, the manifest is pending"
                                 );

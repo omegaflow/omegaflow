@@ -6,7 +6,7 @@ use omegaflow::archivar::{
     embedded_lsk, encode_weberin_verdicts, extract, fetch_raw_bytes, load_sources,
     parse_ephemeris_binary, system_now,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_RELEASE, upload_asset};
+use omegaflow::cdn::{CDN_BASE, CDN_TAG, upload_release};
 use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
@@ -169,7 +169,7 @@ fn main() {
 
     let dastcom_bytes = match ensure_bin(
         &dastcom_path,
-        CDN_RELEASE,
+        CDN_TAG,
         "dastcom_asteroids.bin",
         BIN_TTL_S,
     ) {
@@ -195,7 +195,7 @@ fn main() {
 
     let comets: Vec<CometRec> = match ensure_bin(
         &dcom5_path,
-        CDN_RELEASE,
+        CDN_TAG,
         "dcom5_comets.bin",
         BIN_TTL_S,
     ) {
@@ -375,9 +375,9 @@ fn main() {
         "weberin_verdicts: {} lines ({riss} riss, {absent} absent, {placed} placed) -> {out}",
         lines.len()
     );
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("ssd.jpl.nasa.gov-weberin", &out) {
         eprintln!(
-            "weberin_verdicts: {out} did not reach the CDN release {CDN_RELEASE} — the verdict bin stands local, the manifest is pending"
+            "weberin_verdicts: {out} did not reach the CDN release {CDN_TAG} — the verdict bin stands local, the manifest is pending"
         );
     }
 }

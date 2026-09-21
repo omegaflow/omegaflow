@@ -1,7 +1,7 @@
 use omegaflow::archivar::json::{JsonVal, jstr, parse_json};
 use omegaflow::archivar::skydirection::{SkyDirection, parse_bin, write_bin};
 use omegaflow::archivar::{C_LIGHT, HUBBLE_H0, PARSEC_M};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow_measure::weberin::deredden::ang_sep_arcsec;
 use std::process::Command;
 
@@ -279,7 +279,7 @@ fn checkpoint(out_path: &Option<String>, working: &[SkyDirection], ci_mode: bool
             println!(
                 "Direction-redshift join: {out} checkpointed with {placed} direction(s) carrying a measured redshift; the redshift-less stay redshift-less (0 honored)"
             );
-            if ci_mode && !upload_asset(out) {
+            if ci_mode && !upload_release("ssd.jpl.nasa.gov-direction", out) {
                 eprintln!(
                     "direction_z_join: {out} did not reach the CDN release ssd.jpl.nasa.gov — the joined asset stands local, the manifest is pending"
                 );

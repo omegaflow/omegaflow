@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the www.atnf.csiro.au release exists on the CDN
+        run: |
+          gh release view www.atnf.csiro.au --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create www.atnf.csiro.au --repo omegaflow/sources \
+                 --title "www.atnf.csiro.au" --notes "CDN family release"
       - name: Compile ATNF pulsar catalog and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
@@ -34,4 +39,4 @@ jobs:
                  "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           sha256sum psr.json | tee psr.json.sha256
-          gh release upload ssd.jpl.nasa.gov psr.json.sha256 --repo omegaflow/sources --clobber
+          gh release upload www.atnf.csiro.au psr.json.sha256 --repo omegaflow/sources --clobber

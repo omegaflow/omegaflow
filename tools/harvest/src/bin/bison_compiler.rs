@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::bison_velocity::{parse_bin, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::FitsHeader;
 use omegaflow::inflate::gunzip;
 
@@ -18,7 +18,10 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "bison_pmode.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "bison_pmode.bin".to_string(),
+    };
 
     let bytes = match arg_value(&args, "--fill") {
         Some(p) => std::fs::read(&p).ok(),
@@ -86,7 +89,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("bison.ph.bham.ac.uk", &out) {
         std::process::exit(1);
     }
 }

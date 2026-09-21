@@ -1,4 +1,4 @@
-use omegaflow::cdn::{upload_asset, upload_release};
+use omegaflow::cdn::upload_release;
 use omegaflow::spectral::{
     XP_GRID_SAMPLES, XpStar, parse_xp_spectra_bin, write_xp_spectra_bin, xp_bins_from_flux_array,
 };
@@ -423,7 +423,7 @@ fn main() {
     if ci_mode {
         let reached = match release_tag.as_deref() {
             Some(tag) => upload_release(tag, &out),
-            None => upload_asset(&out),
+            None => upload_release("gea.esac.esa.int", &out),
         };
         if !reached {
             std::process::exit(1);

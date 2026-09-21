@@ -1,5 +1,5 @@
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::skydirection::{
     SkyBandSeries, SkyDirection, SkyFluxSample, SkyFluxSeries, SkySample, parse_bin, write_bin,
@@ -677,7 +677,7 @@ fn main() {
         println!("skydirection_compiler: write {out} returned void — the asset stays unwritten");
         return;
     }
-    if ci && !upload_asset(&out) {
+    if ci && !upload_release("lasair-ztf.lsst.ac.uk", &out) {
         println!(
             "skydirection_compiler: {out} did not reach the CDN — the local asset stands, the manifest is pending"
         );

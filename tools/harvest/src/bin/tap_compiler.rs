@@ -1,4 +1,4 @@
-use omegaflow::cdn::{upload_asset, upload_release};
+use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, parse_json};
 use std::io::Write;
 use std::process::Command;
@@ -1627,7 +1627,7 @@ fn main() {
         if ci_mode && !out_path_band.is_empty() {
             let reached = match release_tag.as_deref() {
                 Some(tag) => upload_release(tag, &out_path_band),
-                None => upload_asset(&out_path_band),
+                None => upload_release("tapvizier.cds.unistra.fr", &out_path_band),
             };
             if !reached {
                 eprintln!("upload: {} did not reach the CDN", out_path_band);
@@ -1733,7 +1733,7 @@ fn main() {
     if ci_mode {
         let reached = match release_tag.as_deref() {
             Some(tag) => upload_release(tag, &out_path),
-            None => upload_asset(&out_path),
+            None => upload_release("tapvizier.cds.unistra.fr", &out_path),
         };
         if !reached {
             eprintln!("upload: {} did not reach the CDN", out_path);

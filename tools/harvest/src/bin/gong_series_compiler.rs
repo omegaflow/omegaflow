@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::gong_series::{parse_bin, write_bin};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::lzw::uncompress_z;
@@ -151,7 +151,10 @@ fn compile_run(month: &str, run: &str, days: i64, lmax: u32) -> Vec<(u32, i32, i
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "gong_series.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "gong_series.bin".to_string(),
+    };
     let lmax: u32 = arg_value(&args, "--lmax")
         .and_then(|v| v.parse().ok())
         .unwrap_or(2);
@@ -210,10 +213,10 @@ fn main() {
     for w in workers {
         let _ = w.join();
     }
-    let mut modes = Arc::try_unwrap(collected)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let mut modes = match Arc::try_unwrap(collected).ok().and_then(|m| m.into_inner().ok()) {
+        Some(v) => v,
+        None => Vec::new(),
+    };
     modes.sort_by(|a, b| (a.0, a.1, a.2).cmp(&(b.0, b.1, b.2)));
     let n_runs = n_runs.load(Ordering::SeqCst);
     eprintln!(
@@ -244,7 +247,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("gong2.nso.edu", &out) {
         std::process::exit(1);
     }
 }

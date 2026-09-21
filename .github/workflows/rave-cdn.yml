@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
+      - name: Ensure the rave-survey.org release exists on the CDN
+        run: |
+          gh release view rave-survey.org --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create rave-survey.org --repo omegaflow/sources \
+                 --title "rave-survey.org" --notes "CDN family release"
       - name: Chunk-compile RAVE DR5 (24 RA-slices, rv-gate) and upload to CDN
         run: |
           mkdir -p kernels
@@ -39,7 +44,7 @@ jobs:
             [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
           done
           jq -s 'add' kernels/rave_c*.json > rave_dr5.json
-          gh release upload ssd.jpl.nasa.gov rave_dr5.json --clobber --repo omegaflow/sources \
+          gh release upload rave-survey.org rave_dr5.json --clobber --repo omegaflow/sources \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: rave_dr5 returned void" \
                  "rave_dr5 chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

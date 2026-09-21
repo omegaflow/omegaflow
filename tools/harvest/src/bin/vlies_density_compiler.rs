@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::spatial::{STAR_RECORD_BYTES, parse_star_record, star_stride};
-use omegaflow::cdn::{CDN_BASE, upload_asset};
+use omegaflow::cdn::{CDN_BASE, upload_release};
 use omegaflow::mathematikerin::healpix::ang2pix_nest;
 
 const NSIDE: i64 = 128;
@@ -347,7 +347,7 @@ fn run(args: &[String]) -> Result<(), String> {
         asset.len(),
         field.counts.len()
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("ssd.jpl.nasa.gov-vlies", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

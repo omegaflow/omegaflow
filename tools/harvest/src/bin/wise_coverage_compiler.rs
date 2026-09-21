@@ -4,7 +4,7 @@ use omegaflow::archivar::footprint::{
     parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
@@ -649,7 +649,7 @@ fn run(args: &[String]) -> Result<(), String> {
         census.absent_pixels,
         census.unmapped_pixels
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("irsa.ipac.caltech.edu", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

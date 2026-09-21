@@ -1,5 +1,5 @@
 use omegaflow::bison_shift::{parse_bin, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::process::Command;
 
 const SHIFT_URL: &str = "https://edata.bham.ac.uk/1572/1/bison_7day_2025paper.txt";
@@ -40,7 +40,10 @@ fn fetch(url: &str) -> Option<Vec<u8>> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "bison_shift.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "bison_shift.bin".to_string(),
+    };
 
     let body = match arg_value(&args, "--file") {
         Some(p) => std::fs::read(&p).ok(),
@@ -111,7 +114,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("edata.bham.ac.uk", &out) {
         std::process::exit(1);
     }
 }

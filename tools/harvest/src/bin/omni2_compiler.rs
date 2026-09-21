@@ -2,7 +2,7 @@ use omegaflow::archivar::omni2::{
     COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_PRESSURE, COMP_T1800, COMP_V1800, parse_bin,
     write_bin,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::process::Command;
 use std::sync::atomic::{AtomicI64, Ordering};
@@ -373,7 +373,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("cdaweb.gsfc.nasa.gov", &out) {
         std::process::exit(1);
     }
 }

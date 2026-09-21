@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, parse_json};
 use std::process::Command;
 
@@ -128,7 +128,10 @@ fn write_json(rows: &[(f64, f64, f64, f64)], path: &str) -> bool {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "cosmicflows_cf4.json".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "cosmicflows_cf4.json".to_string(),
+    };
     let ci_mode = has_flag(&args, "--ci-mode");
 
     let adql = "SELECT PGC, RAJ2000, DEJ2000, DM, Vcmb \
@@ -198,7 +201,7 @@ fn main() {
         }
     }
     if ci_mode {
-        let _ = upload_asset(&out);
+        let _ = upload_release("tapvizier.cds.unistra.fr", &out);
     }
 }
 

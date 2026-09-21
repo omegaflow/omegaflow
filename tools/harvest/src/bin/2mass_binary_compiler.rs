@@ -2,7 +2,7 @@ use omegaflow::archivar::footprint::{
     FootprintBand, FootprintRecord, HEADER_LEN, MAGIC, REC_BYTES, decode_rec, encode_rec,
     parse_header, write_header,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::healpix::pix2ang_nest;
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
@@ -394,7 +394,7 @@ fn run(args: &[String]) -> Result<(), String> {
     eprintln!(
         "bands: j h ks share the one 2MASS scan footprint (simultaneous observation), frac 1.0 for observed"
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("irsa.ipac.caltech.edu", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use std::io::Write;
@@ -435,7 +435,7 @@ fn main() {
         });
     }
     eprintln!("\ntess stars with curves: {}", curves.len());
-    if write_asset(&curves, &out_path) && ci_mode && !upload_asset(&out_path) {
+    if write_asset(&curves, &out_path) && ci_mode && !upload_release("exofop.ipac.caltech.edu", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

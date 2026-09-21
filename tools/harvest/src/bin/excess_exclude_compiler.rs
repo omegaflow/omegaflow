@@ -1,6 +1,6 @@
 use omegaflow::archivar::exclude::{ExcludeKind, ExcludeRow, NAME_LEN, write_bin};
 use omegaflow::archivar::ir::parse_bin as parse_ir;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::process::Command;
 
 const TAP_ROOT: &str = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync";
@@ -204,7 +204,7 @@ fn run(
         radius
     );
     if ci {
-        if !upload_asset(out_path) {
+        if !upload_release("tapvizier.cds.unistra.fr", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("exclude.bin: uploaded to the CDN");

@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::dastcom::{COMET_RECORD_BYTES, comet_state_at, parse_comet_record};
 use omegaflow::kepler::AU_M;
 use std::io::Write;
@@ -248,7 +248,7 @@ fn main() {
                 std::process::exit(1);
             }
         }
-        if ci_mode && !upload_asset(catalog_path) {
+        if ci_mode && !upload_release("ssd.jpl.nasa.gov-dcom5", catalog_path) {
             eprintln!("upload: {} did not reach the CDN", catalog_path);
             std::process::exit(1);
         }
@@ -310,7 +310,7 @@ fn main() {
         buf.len(),
         out_path
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("ssd.jpl.nasa.gov-dcom5", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

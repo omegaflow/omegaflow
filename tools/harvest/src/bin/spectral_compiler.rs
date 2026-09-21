@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32};
 use omegaflow::lsk::parse as parse_lsk;
 use omegaflow::nc4::time_row_month;
@@ -16,7 +16,10 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "spectra.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "spectra.bin".to_string(),
+    };
     let (year, month) = match arg_value(&args, "--month").as_deref().and_then(|m| {
         let (y, mo) = m.split_once('-')?;
         Some((y.parse::<u32>().ok()?, mo.parse::<u32>().ok()?))
@@ -203,7 +206,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("ncei.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

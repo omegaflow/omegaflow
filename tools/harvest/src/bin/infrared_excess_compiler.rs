@@ -1,5 +1,5 @@
 use omegaflow::archivar::ir::{IR_EXCESS_THRESHOLD_MAG, IrSource, write_bin};
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use std::process::Command;
 
 const TAP_ROOT: &str = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync";
@@ -108,7 +108,7 @@ fn run(out_path: &str, limit: usize, ci: bool) -> Result<(), String> {
     println!("ir.bin: written to {out_path}");
 
     if ci {
-        if !upload_asset(out_path) {
+        if !upload_release("tapvizier.cds.unistra.fr", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("ir.bin: uploaded to the CDN");

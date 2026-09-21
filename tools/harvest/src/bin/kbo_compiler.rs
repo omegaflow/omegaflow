@@ -253,7 +253,7 @@ fn cross_check(
         let name = name_of(rec).to_string();
         let mpc = num_map
             .get(&leading_number(&name).unwrap_or(-1))
-            .or_else(|| prov_map.get(&prov_of(&name).unwrap_or_default()));
+            .or_else(|| prov_of(&name).and_then(|p| prov_map.get(&p)));
         match mpc {
             Some(m) => {
                 if (rec.epoch_jd - m.epoch_jd).abs() > EPOCH_GATE_JD {
@@ -392,7 +392,10 @@ fn main() {
         match args[i].as_str() {
             "--out" => {
                 i += 1;
-                out = args.get(i).cloned().unwrap_or_default();
+                out = match args.get(i).cloned() {
+                    Some(v) => v,
+                    None => String::new(),
+                };
             }
             "--ci-mode" => ci_mode = true,
             "--etno" => etno = true,
@@ -402,7 +405,10 @@ fn main() {
             }
             "--probe" => {
                 i += 1;
-                let n = args.get(i).cloned().unwrap_or_default();
+                let n = match args.get(i).cloned() {
+                    Some(v) => v,
+                    None => String::new(),
+                };
                 i += 1;
                 let jd = args.get(i).and_then(|s| s.parse::<f64>().ok());
                 if let Some(jd) = jd {
@@ -437,7 +443,10 @@ fn main() {
         eprintln!("sbdb harvest void");
         return;
     }
-    let idx = idx.unwrap_or_default();
+    let idx = match idx {
+        Some(x) => x,
+        None => HashMap::new(),
+    };
     let (all_rows, dup) = dedupe(all_rows, &idx);
     eprintln!(
         "sbdb: base count {} + etno count {}, zeilen {}, doppelte {}",
@@ -546,7 +555,7 @@ fn main() {
         }
     }
 
-    if ci_mode && !omegaflow::cdn::upload_asset(&out) {
+    if ci_mode && !omegaflow::cdn::upload_release("ssd-api.jpl.nasa.gov", &out) {
         eprintln!("ci upload void (GH_TOKEN absent)");
     }
 }
