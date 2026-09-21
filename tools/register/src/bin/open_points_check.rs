@@ -120,26 +120,34 @@ fn path_tokens(line: &str) -> Vec<String> {
 }
 
 fn normalize(word: &str) -> Option<String> {
-    let trimmed = word.trim_matches(|c: char| {
+    let trimmed = word.trim_start_matches(|c: char| {
         matches!(
             c,
             '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>' | ',' | ';' | '\'' | '"' | '|' | '*' | '`'
         )
     });
-    let trimmed = trimmed.strip_prefix("./").unwrap_or(trimmed);
     if trimmed.starts_with('/') || trimmed.starts_with("http") {
         return None;
     }
-    let without_lines = match trimmed.split_once(':') {
-        Some((head, tail))
-            if !tail.is_empty()
-                && tail.chars().all(|c| c.is_ascii_digit() || c == ',') =>
+    let without_lines = match trimmed.find(':') {
+        Some(pos)
+            if trimmed[pos + 1..]
+                .chars()
+                .next()
+                .map(|c| c.is_ascii_digit())
+                .unwrap_or(false) =>
         {
-            head
+            &trimmed[..pos]
         }
         _ => trimmed,
     };
-    let cleaned = without_lines.trim_end_matches('.');
+    let cleaned = without_lines.trim_end_matches(|c: char| {
+        matches!(
+            c,
+            ')' | ']' | '}' | '>' | ',' | ';' | '\'' | '"' | '|' | '*' | '`' | '.'
+        )
+    });
+    let cleaned = cleaned.strip_prefix("./").unwrap_or(cleaned);
     if !is_repo_path(cleaned) {
         return None;
     }
@@ -175,6 +183,14 @@ mod tests {
         );
         assert_eq!(
             normalize("`docs/handover/post.md`").as_deref(),
+            Some("docs/handover/post.md")
+        );
+        assert_eq!(
+            normalize("(`.github/workflows/hyperscanning-te.yml:41`).").as_deref(),
+            Some(".github/workflows/hyperscanning-te.yml")
+        );
+        assert_eq!(
+            normalize("docs/handover/post.md).").as_deref(),
             Some("docs/handover/post.md")
         );
     }
