@@ -75,7 +75,7 @@ pub fn to_skymap(sources: &[Ia2Source]) -> Vec<crate::skymap::SkymapRecord> {
 mod tests {
     use super::*;
 
-    const MEASURED_NUL_CSV: &str = "ra\0dec_\0psfMag_r\0psfMag_g\n0.00460846\01.17697726\020.99679946899414\020.968534469604492\n0.00784693\0-9.78113858\019.324390411376953\019.5224609375\n";
+    const MEASURED_NUL_CSV: &str = "ra\x00dec_\x00psfMag_r\x00psfMag_g\n0.00460846\x001.17697726\x0020.99679946899414\x0020.968534469604492\n0.00784693\x00-9.78113858\x0019.324390411376953\x0019.5224609375\n";
 
     #[test]
     fn parse_sources_carries_measured_nul_csv_rows() {
@@ -91,8 +91,8 @@ mod tests {
     fn parse_sources_rejects_header_only_and_void() {
         assert!(parse_sources("ra\0dec_\0psfMag_r\0psfMag_g\n").is_none());
         assert!(parse_sources("").is_none());
-        assert!(parse_sources("ra\0dec_\0psfMag_r\n0.0\00.0\015.0\n").is_none());
-        assert!(parse_sources("ra\0dec_\0psfMag_r\0psfMag_g\n0.0\0-95.0\015.0\0NaN\n").is_none());
+        assert!(parse_sources("ra\x00dec_\x00psfMag_r\n0.0\x000.0\x0015.0\n").is_none());
+        assert!(parse_sources("ra\x00dec_\x00psfMag_r\x00psfMag_g\n0.0\x00-95.0\x0015.0\x00NaN\n").is_none());
     }
 
     #[test]
@@ -100,8 +100,8 @@ mod tests {
         let rows = parse_sources(MEASURED_NUL_CSV).unwrap();
         let skymap = to_skymap(&rows);
         assert_eq!(skymap.len(), 2);
-        assert_eq!(skymap[0].value, 20.99679946899414);
+        assert_eq!(skymap[0].value, 20.996_8);
         assert_eq!(skymap[0].kind, crate::skymap::KIND_GENERIC);
-        assert_eq!(skymap[0].dec_deg, 1.17697726);
+        assert_eq!(skymap[0].dec_deg, 1.176_977_3);
     }
 }

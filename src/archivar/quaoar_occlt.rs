@@ -48,7 +48,7 @@ fn find_eocd(data: &[u8]) -> Option<usize> {
     let min = data.len().saturating_sub(65_557);
     let mut i = data.len();
     while i >= min + 4 {
-        if data[i - 4..i] == EOCD_SIG {
+        if data[i - 4..i] == EOCD_SIG && data.len() - (i - 4) >= 22 {
             return Some(i - 4);
         }
         i -= 1;
@@ -392,7 +392,7 @@ mod tests {
     #[test]
     fn date_midnight_unix_reads_the_calendar_date() {
         let unix = date_midnight_unix("20110211").unwrap();
-        assert!((unix / 86400.0 - 15015.0).abs() < 1e-9);
+        assert!((unix / 86400.0 - 15016.0).abs() < 1e-9);
         assert!(date_midnight_unix("2011").is_none());
         assert!(date_midnight_unix("20111301").is_none());
     }
