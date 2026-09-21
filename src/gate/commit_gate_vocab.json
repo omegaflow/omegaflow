@@ -46,6 +46,20 @@
     "unwrap_or(0.0)",
     "unwrap_or(0)"
   ],
+  "state_claim": [
+    "currently built on"
+  ],
+  "serial_priority": [
+    "härtesten undatierten Punkt",
+    "härtester undatierter Punkt",
+    "härtester undatiert",
+    "härteste undatierte",
+    "härtester Punkt",
+    "härtesten Punkt",
+    "hardest undated point",
+    "hardest point",
+    "der erste ist der härteste"
+  ],
   "unstable_pointer": [
     "mail_ledger.φ:"
   ],
@@ -54,7 +68,9 @@
     "zero_fabrication": "unwrap_or(0.0) is a fabricated zero — the physical value is absent, not zero",
     "unstable_pointer": "a line-number pointer into a shared register drifts — the register is rewritten by many lines; cite the subject/sender, never the line number",
     "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
-    "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous"
+    "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
+    "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made",
+    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],

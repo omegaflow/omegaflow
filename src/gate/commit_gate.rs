@@ -30,6 +30,8 @@ struct Vocab {
     single_path: Vec<String>,
     fabrication: Vec<(String, String)>,
     zero_fabrication: Vec<String>,
+    state_claim: Vec<String>,
+    serial_priority: Vec<String>,
     unstable_pointer: Vec<String>,
     german_chars: Vec<char>,
     german_function_words: Vec<String>,
@@ -116,6 +118,8 @@ fn load_vocab() -> Vocab {
         single_path: str_list(&json, "single_path"),
         fabrication: pair_list(&json, "fabrication"),
         zero_fabrication: str_list(&json, "zero_fabrication"),
+        state_claim: str_list(&json, "state_claim"),
+        serial_priority: str_list(&json, "serial_priority"),
         unstable_pointer: str_list(&json, "unstable_pointer"),
         german_chars,
         german_function_words: str_list(&json, "german_function_words"),
@@ -395,6 +399,8 @@ impl Gate {
             .or_else(|| self.find_learned(text))
             .or_else(|| self.check_register_numbers(text))
             .or_else(|| self.check_unbacked_claim(text))
+            .or_else(|| self.check_state_claim(text))
+            .or_else(|| self.check_serial_priority(text))
             .or_else(|| self.check_measure_step(text))
     }
 
@@ -407,6 +413,8 @@ impl Gate {
             self.find_learned(text),
             self.check_register_numbers(text),
             self.check_unbacked_claim(text),
+            self.check_state_claim(text),
+            self.check_serial_priority(text),
             self.check_measure_step(text),
             self.check_consent_act(text),
         ]
@@ -496,6 +504,54 @@ impl Gate {
             feedback: "a completion claim needs an anchor: name the path (src/…, docs/…) that backs it in the tree — a commit SHA is not a measurement".to_string(),
             quote: clip(text, 80),
         })
+    }
+
+    fn check_state_claim(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        for claim in &vocab().state_claim {
+            let cl = claim.to_lowercase();
+            if !lower.contains(&cl) {
+                continue;
+            }
+            let in_backticks = lower.contains(&format!("`{}`", cl));
+            let in_quotes = lower.contains(&format!("\"{}\"", cl))
+                || lower.contains(&format!("\u{201C}{}\u{201D}", cl));
+            if in_backticks || in_quotes {
+                continue;
+            }
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "state-claim".to_string(),
+                line: 0,
+                feedback: feedback("state_claim").to_string(),
+                quote: clip(text, 90),
+            });
+        }
+        None
+    }
+
+    fn check_serial_priority(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        for phrase in &vocab().serial_priority {
+            let pl = phrase.to_lowercase();
+            if !lower.contains(&pl) {
+                continue;
+            }
+            let in_backticks = lower.contains(&format!("`{}`", pl));
+            let in_quotes = lower.contains(&format!("\"{}\"", pl))
+                || lower.contains(&format!("\u{201C}{}\u{201D}", pl));
+            if in_backticks || in_quotes {
+                continue;
+            }
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "serial-priority".to_string(),
+                line: 0,
+                feedback: feedback("serial_priority").to_string(),
+                quote: clip(text, 90),
+            });
+        }
+        None
     }
 
     fn check_measure_step(&self, text: &str) -> Option<Verdict> {
@@ -891,6 +947,12 @@ impl Gate {
             }
         }
         if !is_code {
+            if let Some(v) = self.check_state_claim(&content) {
+                return Some(v);
+            }
+            if let Some(v) = self.check_serial_priority(&content) {
+                return Some(v);
+            }
             if path.starts_with("docs/") && path.ends_with(".md") {
                 for marker in &vocab().unstable_pointer {
                     if let Some(idx) = content.find(marker.as_str()) {
@@ -1695,6 +1757,75 @@ mod tests {
             let v = g.check_tool_call("edit", &args).unwrap();
             assert_eq!(v.rule, "fabrication");
         }
+    }
+
+    #[test]
+    fn fp_state_claim_prose_blocked() {
+        let mut g = test_gate();
+        let v = g
+            .check_text("the node is currently built on an ESP32-S3")
+            .unwrap();
+        assert_eq!(v.rule, "state-claim");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_state_claim_prose_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-21-example.md",
+            "the node is currently built on an ESP32-S3",
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "state-claim");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_state_claim_backticked_passes() {
+        let mut g = test_gate();
+        assert!(
+            g.check_text("the phrase `currently built on` is a fabrication marker")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn fp_input_state_claim_collected() {
+        let mut g = test_gate();
+        let findings = g.check_input("the device is currently built on the Ox64");
+        assert!(findings.iter().any(|v| v.rule == "state-claim"));
+    }
+
+    #[test]
+    fn fp_serial_priority_blocked() {
+        let mut g = test_gate();
+        for phrase in &vocab().serial_priority {
+            let v = g.check_text(phrase).unwrap();
+            assert_eq!(v.rule, "serial-priority");
+            assert_eq!(v.severity, Severity::Hard);
+        }
+    }
+
+    #[test]
+    fn fp_tool_serial_priority_prose_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-21-example.md",
+            "the first open section names the hardest point",
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "serial-priority");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_serial_priority_quoted_passes() {
+        let mut g = test_gate();
+        assert!(
+            g.check_text("there is no \"hardest point\" and no priority ladder")
+                .is_none()
+        );
     }
 
     #[test]

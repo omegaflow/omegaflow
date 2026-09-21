@@ -17,16 +17,15 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
 darf schmutzig sein.
 
-Der erste offene Abschnitt benennt den härtesten undatierten Punkt (datierte
-Wiedervorlagen schweigen vor ihrem Datum). Jeder offene Punkt trägt seinen
-nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL oder Anfrage;
-„Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt. Kein
-Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
-Der Planungs-Pass nennt die offenen Punkte als nummerierte Auswahl (der erste ist
-der härteste undatierte); die Session arbeitet so viele ab wie möglich.
-Wartestellungen (`wartend`) sind kein Auswahlpunkt — sie nennen nur ihren Auslöser
-und werden nie als Handlungsschritt geführt; gibt es keinen abarbeitbaren
-undatierten Punkt, sagt die Session das. Jeder Punkt trägt seinen Status-Tag
+Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
+**parallel** von Agenten abgearbeitet (Operator-Wort 2026-09-21). Jeder offene
+Punkt trägt seinen nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL
+oder Anfrage; „Schritt unbekannt — erste Messung: X" ist ein vollständiger
+Schritt. Kein Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt
+nicht. Der Planungs-Pass legt **alle** eigenen Punkte als Tafel vor und schlägt
+vor, jeden parallel abarbeitbaren zu dispatchen; `operator-gebunden`,
+`blockiert` und `wartend` werden benannt, nie dispatcht. Gibt es keinen
+abarbeitbaren Punkt, sagt die Session das. Jeder Punkt trägt seinen Status-Tag
 (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
@@ -60,7 +59,7 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `session_burn` — Burn je Session.
 - `gh` — nur `workflow run`/`run download`.
 
-## <Sektion — härtester undatierter Punkt zuerst>
+## <Sektion — parallel abarbeitbare Punkte>
 
 - <offener Punkt — mit nächstem Schritt> (Schritt: <Tool/Datei/URL/Anfrage>)
 
