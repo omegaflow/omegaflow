@@ -69,6 +69,35 @@ jobs:
           "Test job failed on ${{ github.sha }}" \
           health
 
+  dropped-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-register --bin register_lookup
+    - name: Delta-Gate — dropped baseline
+      run: |
+        baseline=$(awk '/^dropped-baseline /{print $2}' docs/zustand/dropped-baseline.md)
+        if [ -z "$baseline" ]; then
+          echo "dropped-gate: baseline pending — docs/zustand/dropped-baseline.md carries no dropped-baseline line; register the measured baseline" >&2
+          exit 1
+        fi
+        current=$(target/release/register_lookup --dropped --count)
+        echo "dropped-gate: baseline ${baseline} | current ${current} | delta $((current - baseline))"
+        if [ "$current" -gt "$baseline" ]; then
+          echo "dropped-gate: delta $((current - baseline)) > 0 — open points dropped without a resolving commit; carry them forward or bump the baseline in the accepting commit" >&2
+          exit 1
+        fi
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: dropped-gate returned void" \
+          "dropped-gate failed on ${{ github.sha }}" \
+          health
+
   clippy:
     runs-on: ubuntu-latest
     timeout-minutes: 120

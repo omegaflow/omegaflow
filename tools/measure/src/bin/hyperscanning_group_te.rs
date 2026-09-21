@@ -759,6 +759,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use omegaflow::te::{embed_series, transfer_entropy_embedded_kde};
 
     fn next_rng(rng: &mut u64) -> f64 {
         *rng = rng
@@ -958,12 +959,10 @@ mod tests {
         );
     }
 
-    #[test]
-    fn family_fn_gate() {
-        let mut rng = SEED ^ 0xFACE_FEED;
+    fn fn_gate_fixture(rng: &mut u64) -> (Vec<f32>, Vec<f32>, Vec<f32>, Vec<f32>) {
         let n = 600usize;
         let delay = 8usize;
-        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, &mut rng);
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, rng);
         let mut b = vec![0.0f32; n];
         let mut x = 0.0f64;
         for t in 0..n {
@@ -973,10 +972,10 @@ mod tests {
                 } else {
                     0.0
                 }
-                + (next_rng(&mut rng) * 0.04 - 0.02);
+                + (next_rng(rng) * 0.04 - 0.02);
             b[t] = x as f32;
         }
-        let c = ar1_sine(n, 0.6, 29.0, 1.1, 0.02, &mut rng);
+        let c = ar1_sine(n, 0.6, 29.0, 1.1, 0.02, rng);
         let mut d = vec![0.0f32; n];
         let mut y = 0.0f64;
         for t in 0..n {
@@ -986,9 +985,16 @@ mod tests {
                 } else {
                     0.0
                 }
-                + (next_rng(&mut rng) * 0.04 - 0.02);
+                + (next_rng(rng) * 0.04 - 0.02);
             d[t] = y as f32;
         }
+        (a, b, c, d)
+    }
+
+    #[test]
+    fn family_fn_gate() {
+        let mut rng = SEED ^ 0xFACE_FEED;
+        let (a, b, c, d) = fn_gate_fixture(&mut rng);
         let triads = vec![(
             "G01".to_string(),
             vec![
@@ -1047,6 +1053,176 @@ mod tests {
             !cell_survivors.iter().any(|c| c.slot == linear.slot),
             "the strong linear pair is not reported as transfer beyond its coherent null: TE {:.4e}",
             linear.te
+        );
+    }
+
+    const SELF_NULL_SEEDS: usize = 100;
+
+    fn white_like(v: &[f32], rng: &mut u64) -> Vec<f32> {
+        let n = v.len() as f64;
+        let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
+        let sd = (v
+            .iter()
+            .map(|&x| {
+                let e = x as f64 - mean;
+                e * e
+            })
+            .sum::<f64>()
+            / n)
+            .sqrt();
+        (0..v.len())
+            .map(|_| (mean + (next_rng(rng) - 0.5) * 12.0f64.sqrt() * sd) as f32)
+            .collect()
+    }
+
+    fn ksg_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
+        topological_te_estimate_frozen(target, driver, DIM, tau_t, tau_d).map(|e| e.te)
+    }
+
+    fn kde_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
+        let xf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+        let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&xf, tau_t, DIM);
+        let emb_d = embed_series(&df, tau_d, DIM);
+        if emb_x.is_empty() || emb_d.is_empty() {
+            return None;
+        }
+        transfer_entropy_embedded_kde(&xf, &emb_x, &emb_d, tau_t, tau_d)
+    }
+
+    fn white_arm(
+        target: &[f32],
+        driver: &[f32],
+        white_target: bool,
+        white_driver: bool,
+        tau_t: usize,
+        tau_d: usize,
+        seed_base: u64,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ) -> Vec<f64> {
+        let mut out = Vec::with_capacity(SELF_NULL_SEEDS);
+        for s in 0..SELF_NULL_SEEDS {
+            let mut rng = seed_base ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let t: Vec<f32> = if white_target {
+                white_like(target, &mut rng)
+            } else {
+                target.to_vec()
+            };
+            let d: Vec<f32> = if white_driver {
+                white_like(driver, &mut rng)
+            } else {
+                driver.to_vec()
+            };
+            if let Some(te) = est(&t, &d, tau_t, tau_d) {
+                out.push(te);
+            }
+        }
+        out
+    }
+
+    struct ArmStats {
+        mu: f64,
+        sd: f64,
+        p95: f64,
+    }
+
+    fn arm_stats(vals: &[f64]) -> Option<ArmStats> {
+        if vals.len() < 2 {
+            return None;
+        }
+        let n = vals.len() as f64;
+        let mu = vals.iter().sum::<f64>() / n;
+        let sd = (vals.iter().map(|v| (v - mu) * (v - mu)).sum::<f64>() / n).sqrt();
+        let mut sorted = vals.to_vec();
+        sorted.sort_by(f64::total_cmp);
+        Some(ArmStats {
+            mu,
+            sd,
+            p95: percentile(&sorted, 95.0)?,
+        })
+    }
+
+    #[test]
+    fn self_null_discriminator() {
+        let mut rng = SEED ^ 0xFACE_FEED;
+        let (_, _, c, d) = fn_gate_fixture(&mut rng);
+        let members = vec![("C".to_string(), c.clone()), ("D".to_string(), d.clone())];
+        let taus = member_taus(&members);
+        let tau_c = taus[0].expect("self_null_discriminator: the driver c carries no MI lag");
+        let tau_d = taus[1].expect("self_null_discriminator: the target d carries no MI lag");
+        println!(
+            "self_null_discriminator: tau_driver={tau_c} tau_target={tau_d} n=600 dim=3 seeds={SELF_NULL_SEEDS}"
+        );
+
+        let w1 = white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E11B, ksg_te_frozen);
+        let w2 = white_arm(&d, &c, true, true, tau_d, tau_c, SEED ^ 0x51A7_E11C, ksg_te_frozen);
+        let w3 = white_arm(&d, &c, true, false, tau_d, tau_c, SEED ^ 0x51A7_E11D, ksg_te_frozen);
+        let k1 = white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E12B, kde_te_frozen);
+        let k2 = white_arm(&d, &c, true, true, tau_d, tau_c, SEED ^ 0x51A7_E12C, kde_te_frozen);
+        let k3 = white_arm(&d, &c, true, false, tau_d, tau_c, SEED ^ 0x51A7_E12D, kde_te_frozen);
+
+        for (name, vals) in [
+            ("KSG W1 driver-white", &w1),
+            ("KSG W2 both-white", &w2),
+            ("KSG W3 target-white", &w3),
+            ("KDE K1 driver-white", &k1),
+            ("KDE K2 both-white", &k2),
+            ("KDE K3 target-white", &k3),
+        ] {
+            assert_eq!(
+                vals.len(),
+                SELF_NULL_SEEDS,
+                "self_null_discriminator {name}: {} of {SELF_NULL_SEEDS} seeds measurable",
+                vals.len()
+            );
+            let s = arm_stats(vals).expect("self_null_discriminator: the arm is degenerate");
+            println!(
+                "self_null_discriminator {name}: n={} mu={:.6e} sd={:.6e} p95={:.6e}",
+                vals.len(),
+                s.mu,
+                s.sd,
+                s.p95
+            );
+        }
+
+        for &tau_driver in &[1usize, 2, 4, 8, tau_c] {
+            let vals = white_arm(
+                &d,
+                &c,
+                false,
+                true,
+                tau_d,
+                tau_driver,
+                SEED ^ 0x51A7_E13B ^ ((tau_driver as u64) << 16),
+                ksg_te_frozen,
+            );
+            assert_eq!(
+                vals.len(),
+                SELF_NULL_SEEDS,
+                "self_null_discriminator sweep tau_driver={tau_driver}: {} of {SELF_NULL_SEEDS} seeds measurable",
+                vals.len()
+            );
+            let s = arm_stats(&vals).expect("self_null_discriminator: the sweep arm is degenerate");
+            println!(
+                "self_null_discriminator sweep W1 tau_driver={tau_driver}: n={} mu={:.6e} sd={:.6e} p95={:.6e}",
+                vals.len(),
+                s.mu,
+                s.sd,
+                s.p95
+            );
+        }
+
+        let w1_again =
+            white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E11B, ksg_te_frozen);
+        let k1_again =
+            white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E12B, kde_te_frozen);
+        assert_eq!(
+            w1, w1_again,
+            "self_null_discriminator: the W1 arm is not seed-deterministic"
+        );
+        assert_eq!(
+            k1, k1_again,
+            "self_null_discriminator: the K1 arm is not seed-deterministic"
         );
     }
 
