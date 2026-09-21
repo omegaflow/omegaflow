@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: aa9bed988c4cdc5670cf52cb5c8f41cebe420018aadac548edbe8a0abb239e8d
+  sha256: 1cc5f02677a8fa8f3b8392cb7b34fab74d7fa1440f026522895a954afed4df10
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -84,14 +84,14 @@ Wartestellungen sind kein Auswahlpunkt.
 - **Braucht:** FRS-Retry `pgm_sys_acrnm RadNet`; Luft-Route via Dashboard nutzbar.
 
 ### EMODnet HFR-NAdr — Manifestation
-- **Status:** wartend | **Bindung:** termin (Lauf)
+- **Status:** wartend | **Bindung:** termin (Run `35598868957`)
 - **Lage:** `ledger.φ:18` — Compiler `emodnet_hfr_compiler.rs` + Arm `emodnet_hfr.rs`
   (geo HFR1, EWCT/NSCT advective m/s) + Workflow `emodnet-hfr-cdn.yml` gebaut
-  (`cargo check` 0/0); `sources.φ:8713`-Block pending sha256; Dataset
-  `EUHFR_NRTcurrent_HFR-NAdr-Total`, maxTime 2026-09-21T10:00:00Z.
-- **Blockade:** Lauf.
-- **Braucht:** `gh workflow run emodnet-hfr-cdn.yml` (nach Push); bei success
-  sha256 → `sources.φ`/`ledger.φ` → `kompiliert`.
+  (`cargo check` 0/0), dispatched 2026-09-21; `sources.φ:8713`-Block pending sha256;
+  Dataset `EUHFR_NRTcurrent_HFR-NAdr-Total`, maxTime 2026-09-21T10:00:00Z.
+- **Blockade:** Lauf-Abschluss.
+- **Braucht:** `ci_manage view 35598868957`; bei success sha256 →
+  `sources.φ`/`ledger.φ` → `kompiliert`.
 
 ### src.pas TAP
 - **Status:** wartend | **Bindung:** termin (Dienst-Backend)
