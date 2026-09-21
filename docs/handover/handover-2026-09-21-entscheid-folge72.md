@@ -3,7 +3,7 @@
   session: Entscheid-Folge 72
   class: handover
   date: 2026-09-21
-  sha256: ea5660cd0bd7de27cc84b1b10a8015407bf29455773641af9001acca9cc728c7
+  sha256: 3b551f079bfa061a7b49b707a02e5b80419ad1ccc006e03d6018b5a8d5c6767f
   status: live
 -->
 # Handover — Entscheid-Folge 72 (2026-09-21)
@@ -123,4 +123,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Nach dem Push wurde
 `ci-check.yml` dispatcht (`35569577597` @`d4e62c45`, Verifikation der Gate-Tests
 `state_claim`/`serial_priority`); kein Poll — das Ergebnis wird einmalig gelesen
-(`ci_manage view 35569577597`).
+(`ci_manage view 35569577597`). Nach dem `open_points_check`-Atom: `tools-build`
+`35570698807` (Bin + Manifest) und `ci-check` `35570701214` @`9e9eaea2`; kein Poll
+— einmalig lesen (`ci_manage view <id>`).
