@@ -112,5 +112,5 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Confirm the strong pair against its own per-cell null (p99, 200 surrogates)
-        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- confirmation_confirms_the_strong_pair_against_its_own_null --nocapture
+      - name: Confirm the stochastic pair and guard the deterministic Riss (p99/p1, 200 surrogates)
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- confirmation_stochastic_driver_pair_clears_its_own_null riss_guard_deterministic_pair_measures_below_its_own_null --nocapture

@@ -1602,12 +1602,13 @@ mod tests {
         assert_eq!(n[0].threshold, 0.25);
     }
 
-    #[test]
-    fn confirmation_confirms_the_strong_pair_against_its_own_null() {
-        let mut rng = SEED ^ 0x0C0F_FEE1;
-        let n = 800usize;
-        let delay = 8usize;
-        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, &mut rng);
+    fn strong_pair_fixture(
+        n: usize,
+        delay: usize,
+        driver_noise: f64,
+        rng: &mut u64,
+    ) -> (Vec<f32>, Vec<f32>) {
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, driver_noise, rng);
         let mut b = vec![0.0f32; n];
         let mut x = 0.0f64;
         for t in 0..n {
@@ -1617,9 +1618,16 @@ mod tests {
                 } else {
                     0.0
                 }
-                + (next_rng(&mut rng) * 0.02 - 0.01);
+                + (next_rng(rng) * 0.02 - 0.01);
             b[t] = x as f32;
         }
+        (a, b)
+    }
+
+    fn strong_pair_cell(
+        a: Vec<f32>,
+        b: Vec<f32>,
+    ) -> (Vec<f64>, f64) {
         let triads = vec![(
             "G01".to_string(),
             vec![("A".to_string(), a), ("B".to_string(), b)],
@@ -1635,14 +1643,38 @@ mod tests {
         };
         let plan = vec![(0usize, 0usize, 1usize, &nominee)];
         let dists = confirmation_cell_nulls(&triads, &plan, DIM, 200, CONFIRM_SEED, false);
-        let threshold = percentile(&dists[0], 99.0).expect("the per-cell null is measurable");
         let observed = topological_te_estimate(&triads[0].1[1].1, &triads[0].1[0].1, DIM)
             .expect("the observed cell is estimated");
+        (dists.into_iter().next().expect("the plan carries one cell"), observed.te)
+    }
+
+    #[test]
+    fn confirmation_stochastic_driver_pair_clears_its_own_null() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = strong_pair_fixture(800, 8, 0.05, &mut rng);
+        let (dists, observed) = strong_pair_cell(a, b);
+        let threshold = percentile(&dists, 99.0).expect("the per-cell null is measurable");
         assert!(
-            observed.te > threshold,
-            "the confirmation wiring confirms the strong pair against its own per-cell null: TE {:.4e} vs p99 {:.4e}",
-            observed.te,
+            observed > threshold,
+            "the stochastic driver pair clears its own per-cell null: TE {:.4e} vs p99 {:.4e}",
+            observed,
             threshold
+        );
+    }
+
+    #[test]
+    fn riss_guard_deterministic_pair_measures_below_its_own_null() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = strong_pair_fixture(800, 8, 0.0, &mut rng);
+        let (dists, observed) = strong_pair_cell(a, b);
+        let floor = percentile(&dists, 1.0).expect("the per-cell null is measurable");
+        let p99 = percentile(&dists, 99.0).expect("the per-cell null is measurable");
+        assert!(
+            observed < floor,
+            "the deterministic strong pair measures below its own per-cell null floor: TE {:.4e} vs p1 {:.4e} (p99 {:.4e})",
+            observed,
+            floor,
+            p99
         );
     }
 }
