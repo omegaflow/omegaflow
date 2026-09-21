@@ -20,6 +20,10 @@ kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index
 note Re-Messung 2026-09-19: maxTime unverändert 2026-07-30T23:30:00Z (griddap time[last]); Familie-Frontier 2026-07-31T00:00:00Z (5 Geschwister), kein lebendes Geschwister. Familie steht; nächste Re-Messung fällig 2026-10-19.
 
 ausstehend
+kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
+note HF-Radar US-West-Coast RTV Gitter (1 km); Re-Messung 2026-09-21: HTTP 200, time_coverage_end 2026-09-21T05:00:00Z, water_u/water_v m/s; Geschwister ucsdHfrW2 (2 km) 200; hfrnet-tds.ucsd.edu tot (dead_sources.φ:519), upwell.pfeg.noaa.gov 302→coastwatch. Compiler offen.
+
+ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note Re-Messung 2026-09-16 (grind-pro): SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (tools.ssdc.asi.it/cas/login → query.php 200), aber „Permission Denied! The user omegaflow does not have permission … send an email to alessandro.sotgiu@roma2.infn.it". Kein Routen-/Format-Gap, sondern PI-Freigabe; CSES-Limadou (em/electric) accept. Offen: Freigabe (Anfrage läuft); Follow-up an den PI ist per-act consent (Operator). DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
