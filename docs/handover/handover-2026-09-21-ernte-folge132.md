@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 08fc53a3271d98aa39df695ba30cff7f32828ca736356b573f0d10b7fa07058d
+  sha256: 03471f1fa210139e93fcacb8e33c059ae6ed0d688d361a11318caf72600c3a73
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -38,51 +38,15 @@ Wartestellungen sind kein Auswahlpunkt.
 - **Zustand** — `external-state.md` von entscheid fortgeschrieben (fremd); der
   CI-Status-Eintrag wurde nicht angetastet (fremder Hunks in derselben Datei).
 
-## In dieser Folge gebaut (git trägt)
-
-- **29 CDN-Workflows gefixt:** babamul (`BABAMUL_API_TOKEN`-env), ned
-  (Release-Create-Step), tess + 26 weitere (Checkout+Toolchain ergänzt:
-  avo, bzcat5, cbdata, chandra-csc, corot, denis, exoplanets, first14, frb-a279,
-  frbcat, gcvs, lmxb, magnetar, merlin, mktypes, nvss, pangaea, pastel, polarbase,
-  rave, sb9, sncat, swiftgrb, tevcat, vsx, wds).
-- **sha256 aufgenommen** (gemessen via `archive_search --sniff`, in `sources.φ`):
-  fai_kz_obscore `65b9e7c8…` (244025 B), ia2_wgesdss `03a15151…` (100013 B),
-  de440/de442 × earth/moon/sun (6× `…`, 6629784 B), neptune `21991403…` (1808616 B).
-  `ledger.φ:10` → `kompiliert`.
-- **neptune_ephemeris_compiler-Registerblock** in `sources.φ` angelegt
-  (`ssd.jpl.nasa.gov-neptune`, de440s.bsp).
-
 ## Offen (aufgeschlüsselt)
 
-### sha256-Nachzug der 29 neu dispatchten Läufe
+### sha256-Nachzug der neu dispatchten Läufe
 - **Status:** wartend | **Bindung:** termin (Läufe)
-- **Lage:** Commit `1bd3a53f` auf `origin/main` (via Merge `6dc8a4eb`); 29
-  `-cdn`-Workflows dispatched 2026-09-21, Läufe `35594472387`–`35594552094`
-  (avo…wds) queued.
+- **Lage:** 29 `-cdn`-Workflows dispatched (Läufe `35594472387`–`35594552094`,
+  avo…wds) + psr-cdn `35594952955`; queued.
 - **Blockade:** Lauf-Abschluss.
 - **Braucht:** `ci_manage list`/Watchdog-Snapshot; bei success sha256 →
   `sources.φ`-note → `kompiliert`.
-
-### fai.kz Feld-Klassifikation
-- **Status:** offen | **Bindung:** eigen
-- **Lage:** obscore 5048 Zeilen (image 3003/spectrum 2045); kein skalarer Fluss.
-- **Blockade:** Oszillator-Gate-Entscheid.
-- **Braucht:** Feld-/force-/τ-Zeilen festlegen (`pending`).
-
-### de440_neptune `-de`-Block (404)
-- **Status:** offen | **Bindung:** eigen
-- **Lage:** `sources.φ` Block `ssd.jpl.nasa.gov-de/ephemeris_de440_neptune.bin`
-  → sniff 404; `de_compiler`-Scope ist sun/moon/earth. Der gültige Block ist
-  `ssd.jpl.nasa.gov-neptune` (`21991403…`).
-- **Blockade:** keine.
-- **Braucht:** stale Block prüfen und disponieren/entfernen.
-
-### psr-cdn TAP HTTP 400
-- **Status:** offen | **Bindung:** eigen
-- **Lage:** psr-cdn `35587702458`/`35587801743` — `curl (22) 400` → query void;
-  Workflow trägt checkout.
-- **Blockade:** quellseitig (VizieR/TAP).
-- **Braucht:** TAP-Query-Adresse/Format messen.
 
 ### Quaoar Sternbedeckung — Manifestation
 - **Status:** wartend | **Bindung:** termin (Run)
