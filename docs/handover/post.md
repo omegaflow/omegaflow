@@ -15,7 +15,6 @@ stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
 
-An entscheid: Ksg off-path (Forschung-Linie) — der Familien-Screen ruft nur `topological_te_estimate`, nie Ksg; operator-gebunden: verdrahten oder descopen mit gemessenem „nicht auf dem Pfad". (Schritt: in die Operator-Queue, Operator-Wort einholen.)
 An bau: force-gate B (Block ohne `force`-Direktiv bleibt `# pending … review`) erreicht den `--port`-Output nicht — `port_mode` (src/archivar/port.rs:359-363 `flush_port_block`) verwirft jeden Block, dessen konvertierter Text `parse_sources(&conv).is_empty()` ist, den `# pending`-Kommentar inklusive; gemessen 2026-09-20 an astro (16 nicht-parsende Blöcke) und stac (1). (Schritt: pending-Blöcke in den Output durchreichen, Gate-Test ergänzen.)
 
 
