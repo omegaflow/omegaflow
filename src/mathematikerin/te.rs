@@ -3594,6 +3594,46 @@ mod tests {
     }
 
     #[test]
+    fn riss_ksg_kde_estimator_split_is_measured() {
+        let seed = 0x9E37_79B9_7F4A_7C15;
+        let mut rng = seed;
+        let a = gate_ar1(300, 0.5, &mut rng);
+        let b: Vec<f32> = (0..a.len())
+            .map(|i| {
+                if i == 0 {
+                    gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        let ksg_verdict = topological_te_phase(&b, &a, 3, 3, seed);
+        assert!(
+            ksg_verdict.is_some(),
+            "KSG phase estimate must resolve for the AR(1) fixture"
+        );
+        let ksg = ksg_verdict.unwrap();
+        let xf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let tau_x = find_mi_lag(&xf).expect("driver MI-lag resolves");
+        let tau_y = find_mi_lag(&yf).expect("target MI-lag resolves");
+        let emb_x = embed_series(&xf, tau_x, 3);
+        let emb_y = embed_series(&yf, tau_y, 3);
+        let kde_estimate = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y);
+        assert!(
+            kde_estimate.is_some(),
+            "KDE estimate must resolve for the AR(1) fixture"
+        );
+        let kde = kde_estimate.unwrap();
+        assert!(
+            (ksg.te - kde).abs() > 0.0,
+            "KSG/KDE estimator riss is measured: ksg={} kde={}",
+            ksg.te,
+            kde
+        );
+    }
+
+    #[test]
     fn calibration_n_floor_no_statement_below_threshold() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         let a = gate_ar1(16, 0.7, &mut rng);
