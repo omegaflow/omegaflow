@@ -38,6 +38,7 @@ struct Row {
     trial: u32,
     status: String,
     ms: u128,
+    note: String,
 }
 
 fn json_escape(s: &str) -> String {
@@ -305,7 +306,14 @@ fn check(task: &str, body: &str) -> bool {
     }
 }
 
-fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
+fn note_of(body: &str) -> String {
+    body.chars()
+        .map(|c| if c == '\n' || c == '\r' || c == '\t' { ' ' } else { c })
+        .take(160)
+        .collect()
+}
+
+fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128, String) {
     let url = format!("{}/chat/completions", m.base.trim_end_matches('/'));
     let mut total_ms = 0u128;
     let mut attempt = 0;
@@ -315,15 +323,15 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
         let r = call(&url, key, &body);
         total_ms += r.ms;
         if r.timed_out {
-            return ("timeout".into(), total_ms);
+            return ("timeout".into(), total_ms, String::new());
         }
         let code = match r.code {
             Some(c) => c,
-            None => return ("timeout".into(), total_ms),
+            None => return ("timeout".into(), total_ms, note_of(&r.body)),
         };
         if code == 429 {
             if attempt >= 3 {
-                return ("pending_rate_limited".into(), total_ms);
+                return ("pending_rate_limited".into(), total_ms, note_of(&r.body));
             }
             let wait = retry_hint(&r.body);
             thread::sleep(Duration::from_secs(wait));
@@ -331,20 +339,20 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
         }
         if (500..600).contains(&code) {
             if attempt >= 2 {
-                return ("http_5xx".into(), total_ms);
+                return ("http_5xx".into(), total_ms, note_of(&r.body));
             }
             continue;
         }
         if code >= 400 {
             if r.body.to_lowercase().contains("context") {
-                return ("pending_context".into(), total_ms);
+                return ("pending_context".into(), total_ms, note_of(&r.body));
             }
-            return (format!("http_{}", code), total_ms);
+            return (format!("http_{}", code), total_ms, note_of(&r.body));
         }
         if task == "T2" {
             let first = r.body.contains("\"tool_calls\"") && r.body.contains("get_weather");
             if !first {
-                return ("no_tool".into(), total_ms);
+                return ("no_tool".into(), total_ms, note_of(&r.body));
             }
             let r2 = call(&url, key, &build_body("T2b", &m.id));
             total_ms += r2.ms;
@@ -355,6 +363,7 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
                     "no_tool".into()
                 },
                 total_ms,
+                note_of(&r2.body),
             );
         }
         return (
@@ -364,6 +373,7 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
                 "wrong_answer".into()
             },
             total_ms,
+            note_of(&r.body),
         );
     }
 }
@@ -393,8 +403,8 @@ fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
     for r in rows {
         let _ = writeln!(
             f,
-            "{}\t{}\t{}\t{}\t{}\t{}",
-            r.provider, r.model, r.task, r.trial, r.status, r.ms
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}",
+            r.provider, r.model, r.task, r.trial, r.status, r.ms, r.note
         );
     }
     for m in models {
@@ -499,49 +509,75 @@ fn main() {
         ("T6", 3),
         ("T7", 3),
     ];
-    let mut rows: Vec<Row> = Vec::new();
-
-    for m in &models {
-        if let Some(f) = &filter {
-            if !m.id.contains(f.as_str()) {
-                continue;
-            }
-        }
-        let key = match key_for(m) {
-            Some(k) => k,
-            None => {
-                rows.push(Row {
-                    provider: m.provider.clone(),
-                    model: m.id.clone(),
-                    task: "-".into(),
-                    trial: 0,
-                    status: "pending_no_key".into(),
-                    ms: 0,
-                });
-                continue;
-            }
-        };
-        eprintln!("== {} {} ==", m.provider, m.id);
-        for (t, n) in tasks {
-            if let Some(tf) = &task_filter {
-                if tf != t {
-                    continue;
-                }
-            }
-            for trial in 1..=n {
-                let (status, ms) = run_trial(t, m, &key);
-                eprintln!("  {} {}/{} {}", t, trial, n, status);
-                rows.push(Row {
-                    provider: m.provider.clone(),
-                    model: m.id.clone(),
-                    task: t.into(),
-                    trial,
-                    status,
-                    ms,
-                });
-            }
-        }
+    let selected: Vec<&Model> = models
+        .iter()
+        .filter(|m| filter.as_ref().map_or(true, |f| m.id.contains(f.as_str())))
+        .collect();
+    let workers: usize = env::var("BENCH_WORKERS")
+        .ok()
+        .and_then(|v| v.parse::<std::num::NonZeroUsize>().ok())
+        .map(|v| v.get())
+        .unwrap_or(6);
+    let mut groups: Vec<Vec<&Model>> = vec![Vec::new(); workers];
+    for (i, m) in selected.iter().enumerate() {
+        groups[i % workers].push(m);
     }
+    let tf_ref = &task_filter;
+
+    let rows: Vec<Row> = std::thread::scope(|scope| {
+        let mut handles = Vec::new();
+        for g in groups {
+            handles.push(scope.spawn(move || {
+                let mut local: Vec<Row> = Vec::new();
+                for m in g {
+                    let key = match key_for(m) {
+                        Some(k) => k,
+                        None => {
+                            local.push(Row {
+                                provider: m.provider.clone(),
+                                model: m.id.clone(),
+                                task: "-".into(),
+                                trial: 0,
+                                status: "pending_no_key".into(),
+                                ms: 0,
+                                note: String::new(),
+                            });
+                            continue;
+                        }
+                    };
+                    eprintln!("== {} {} ==", m.provider, m.id);
+                    for (t, n) in tasks {
+                        if let Some(tf) = tf_ref {
+                            if tf != t {
+                                continue;
+                            }
+                        }
+                        for trial in 1..=n {
+                            let (status, ms, note) = run_trial(t, m, &key);
+                            eprintln!("  {} {} {}/{} {}", m.provider, t, trial, n, status);
+                            local.push(Row {
+                                provider: m.provider.clone(),
+                                model: m.id.clone(),
+                                task: t.into(),
+                                trial,
+                                status,
+                                ms,
+                                note,
+                            });
+                        }
+                    }
+                }
+                local
+            }));
+        }
+        let mut all: Vec<Row> = Vec::new();
+        for h in handles {
+            if let Ok(v) = h.join() {
+                all.extend(v);
+            }
+        }
+        all
+    });
 
     write_tsv(&out, &models, &rows);
     eprintln!("wrote {}", out);
