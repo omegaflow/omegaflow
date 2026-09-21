@@ -33,7 +33,9 @@ pub fn parse_sources(body: &str) -> Option<Vec<Ia2Source>> {
         }
         let fields = split_csv_line(line);
         let at = |i: usize| fields.get(i).and_then(|s| cell_f64(s));
-        let (Some(ra), Some(dec)) = (at(ira), at(idec)) else { continue };
+        let (Some(ra), Some(dec)) = (at(ira), at(idec)) else {
+            continue;
+        };
         if !(0.0..=360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) {
             continue;
         }
@@ -55,7 +57,9 @@ pub fn parse_sources(body: &str) -> Option<Vec<Ia2Source>> {
 pub fn to_skymap(sources: &[Ia2Source]) -> Vec<crate::skymap::SkymapRecord> {
     let mut out = Vec::new();
     for s in sources {
-        let Some(val) = s.psfmag_r.or(s.psfmag_g) else { continue };
+        let Some(val) = s.psfmag_r.or(s.psfmag_g) else {
+            continue;
+        };
         let Some((order, ipix)) = crate::skymap::SkymapRecord::pixel_of(s.ra, s.dec) else {
             continue;
         };

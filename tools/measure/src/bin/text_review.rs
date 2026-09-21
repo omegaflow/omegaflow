@@ -348,7 +348,10 @@ fn build_report(draft_path: &str, rows: &[Review], ts: Option<u64>) -> String {
                 r.push_str(&format!("## {} {}\n\n{}\n\n", row.provider, row.model, t));
             }
             None => {
-                r.push_str(&format!("- {} {}: {}\n", row.provider, row.model, row.status));
+                r.push_str(&format!(
+                    "- {} {}: {}\n",
+                    row.provider, row.model, row.status
+                ));
             }
         }
     }
@@ -500,7 +503,10 @@ fn main() {
     }
 
     let ok = rows.iter().filter(|r| r.status == "ok").count();
-    let pending = rows.iter().filter(|r| r.status.starts_with("pending")).count();
+    let pending = rows
+        .iter()
+        .filter(|r| r.status.starts_with("pending"))
+        .count();
     let http = rows.iter().filter(|r| r.status.starts_with("http")).count();
     let timeout_n = rows.iter().filter(|r| r.status == "timeout").count();
     println!(

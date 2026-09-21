@@ -1180,12 +1180,66 @@ mod tests {
             "self_null_discriminator: tau_driver={tau_c} tau_target={tau_d} n=600 dim=3 seeds={SELF_NULL_SEEDS}"
         );
 
-        let w1 = white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E11B, ksg_te_frozen);
-        let w2 = white_arm(&d, &c, true, true, tau_d, tau_c, SEED ^ 0x51A7_E11C, ksg_te_frozen);
-        let w3 = white_arm(&d, &c, true, false, tau_d, tau_c, SEED ^ 0x51A7_E11D, ksg_te_frozen);
-        let k1 = white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E12B, kde_te_frozen);
-        let k2 = white_arm(&d, &c, true, true, tau_d, tau_c, SEED ^ 0x51A7_E12C, kde_te_frozen);
-        let k3 = white_arm(&d, &c, true, false, tau_d, tau_c, SEED ^ 0x51A7_E12D, kde_te_frozen);
+        let w1 = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11B,
+            ksg_te_frozen,
+        );
+        let w2 = white_arm(
+            &d,
+            &c,
+            true,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11C,
+            ksg_te_frozen,
+        );
+        let w3 = white_arm(
+            &d,
+            &c,
+            true,
+            false,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11D,
+            ksg_te_frozen,
+        );
+        let k1 = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12B,
+            kde_te_frozen,
+        );
+        let k2 = white_arm(
+            &d,
+            &c,
+            true,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12C,
+            kde_te_frozen,
+        );
+        let k3 = white_arm(
+            &d,
+            &c,
+            true,
+            false,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12D,
+            kde_te_frozen,
+        );
 
         for (name, vals) in [
             ("KSG W1 driver-white", &w1),
@@ -1238,10 +1292,26 @@ mod tests {
             );
         }
 
-        let w1_again =
-            white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E11B, ksg_te_frozen);
-        let k1_again =
-            white_arm(&d, &c, false, true, tau_d, tau_c, SEED ^ 0x51A7_E12B, kde_te_frozen);
+        let w1_again = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E11B,
+            ksg_te_frozen,
+        );
+        let k1_again = white_arm(
+            &d,
+            &c,
+            false,
+            true,
+            tau_d,
+            tau_c,
+            SEED ^ 0x51A7_E12B,
+            kde_te_frozen,
+        );
         assert_eq!(
             w1, w1_again,
             "self_null_discriminator: the W1 arm is not seed-deterministic"
@@ -1277,7 +1347,10 @@ mod tests {
         SEED ^ (n as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ s.to_bits()
     }
 
-    fn sweep_estimators() -> [(&'static str, fn(&[f32], &[f32], usize, usize) -> Option<f64>); 2] {
+    fn sweep_estimators() -> [(
+        &'static str,
+        fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ); 2] {
         [("KSG", ksg_te_frozen), ("KDE", kde_te_frozen)]
     }
 
@@ -1314,9 +1387,8 @@ mod tests {
     ) -> Vec<f64> {
         let mut out = Vec::with_capacity(n_surr);
         for s in 0..n_surr {
-            let mut rng = SWEEP_NULL_SEED
-                ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
-                ^ 0xA5A5_5A5A;
+            let mut rng =
+                SWEEP_NULL_SEED ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ 0xA5A5_5A5A;
             let refs = vec![driver, target];
             let randomized = coherent_phase_surrogates(&refs, &mut rng);
             if let Some(te) = est(&randomized[1], &randomized[0], tau_t, tau_d) {
@@ -1377,7 +1449,16 @@ mod tests {
                     continue;
                 };
                 sweep_cell_row(
-                    arm, n, s, est_name, est, tau_d, tau_t, tau_name(tau_mode), n_surr, &driver,
+                    arm,
+                    n,
+                    s,
+                    est_name,
+                    est,
+                    tau_d,
+                    tau_t,
+                    tau_name(tau_mode),
+                    n_surr,
+                    &driver,
                     &target,
                 );
             }
@@ -1390,7 +1471,9 @@ mod tests {
         let driver = ar1_noise(n, 0.6, 1.0, &mut rng);
         let target = quad_target(&driver, s, delay, &mut rng);
         for (est_name, est) in sweep_estimators() {
-            sweep_cell_row(arm, n, s, est_name, est, 2, 2, "2", n_surr, &driver, &target);
+            sweep_cell_row(
+                arm, n, s, est_name, est, 2, 2, "2", n_surr, &driver, &target,
+            );
         }
     }
 
@@ -1400,7 +1483,9 @@ mod tests {
             "fn_gate_sweep: coherent per-cell null | dim {DIM} | surrogates {} (n <= 1200), {} (n = {})",
             SWEEP_SURROGATES, SWEEP_SURROGATES_LARGE_N, SWEEP_LARGE_N
         );
-        println!("fn_gate_sweep: arm | n | s | est | tau | te | null_mu | null_sd | null_p95 | excess_sd | pass_p95");
+        println!(
+            "fn_gate_sweep: arm | n | s | est | tau | te | null_mu | null_sd | null_p95 | excess_sd | pass_p95"
+        );
         for &n in &[600usize, 1200, 2400] {
             sweep_quad_arm("n-sweep", n, 0.35, SWEEP_DELAY);
         }

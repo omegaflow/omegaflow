@@ -213,7 +213,10 @@ fn main() {
     for w in workers {
         let _ = w.join();
     }
-    let mut modes = match Arc::try_unwrap(collected).ok().and_then(|m| m.into_inner().ok()) {
+    let mut modes = match Arc::try_unwrap(collected)
+        .ok()
+        .and_then(|m| m.into_inner().ok())
+    {
         Some(v) => v,
         None => Vec::new(),
     };
