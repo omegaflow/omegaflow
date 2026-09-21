@@ -287,13 +287,13 @@ fn harvest_day(
     let url = format!("{BASE_URL}{path}");
     let Some(bytes) = fetch(&url) else {
         lock_recovered(outcomes).push(DayOutcome {
-                day,
-                rows: 0,
-                fills: 0,
-                ex_real: 0,
-                missing_epochs: 0,
-                note: Some("fetch void".to_string()),
-            });
+            day,
+            rows: 0,
+            fills: 0,
+            ex_real: 0,
+            missing_epochs: 0,
+            note: Some("fetch void".to_string()),
+        });
         return;
     };
     let mut outcome = DayOutcome {
