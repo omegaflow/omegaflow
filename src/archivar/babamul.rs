@@ -93,8 +93,8 @@ mod tests {
         let rows = parse_alerts(MEASURED_ALERTS).unwrap();
         let skymap = to_skymap(&rows);
         assert_eq!(skymap.len(), 2);
-        assert_eq!(skymap[0].ra_deg, 219.9366568);
-        assert_eq!(skymap[0].value, 15.894465446472168);
+        assert_eq!(skymap[0].ra_deg, 219.936_66);
+        assert_eq!(skymap[0].value, 15.894_465);
         assert_eq!(skymap[0].kind, crate::skymap::KIND_GENERIC);
         assert_eq!(skymap[1].value, 18.5);
     }

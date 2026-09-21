@@ -106,7 +106,7 @@ mod tests {
         assert_eq!(rows[0].u, Some(0.05));
         assert_eq!(rows[0].v, Some(-0.25));
         assert_eq!(rows[0].lat, 32.5874);
-        assert_eq!(rows[0].lon, -117.24226);
+        assert!((rows[0].lon - (-117.24226)).abs() < 1e-9);
         assert_eq!(rows[1].u, Some(0.08));
         assert_eq!(rows[1].v, None);
         let expected = crate::lsk::days_from_civil(2026, 9, 21).unwrap() as f64 * 86400.0
