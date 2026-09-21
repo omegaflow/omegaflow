@@ -1619,10 +1619,19 @@ fn extract_open_points(text: &str) -> Vec<OpenPoint> {
 }
 
 fn point_key_tokens(text: &str) -> Vec<String> {
-    normalize_words(text)
+    let tokens: Vec<String> = normalize_words(text)
         .into_iter()
         .filter(|w| is_meaningful_word(w) && !is_status_word(w))
-        .collect()
+        .collect();
+    let start = tokens
+        .iter()
+        .position(|w| !is_enumeration_token(w))
+        .unwrap_or(tokens.len());
+    tokens[start..].to_vec()
+}
+
+fn is_enumeration_token(word: &str) -> bool {
+    !word.is_empty() && word.chars().all(|c| c.is_ascii_digit())
 }
 
 fn match_prefix(tokens: &[String]) -> Option<String> {
@@ -2431,12 +2440,22 @@ mod tests {
     #[test]
     fn match_prefix_uses_six_words_and_drops_the_status_tag() {
         let tokens = point_key_tokens("3 ausstehend Queue-Korpora (30-astro, earth-stac-sentinel)");
-        assert_eq!(tokens[0], "3");
+        assert_eq!(tokens[0], "queue-korpora");
         assert!(!tokens.iter().any(|t| t == "ausstehend"));
         assert_eq!(
             match_prefix(&tokens),
-            Some("3 queue-korpora 30-astro earth-stac-sentinel".to_string())
+            Some("queue-korpora 30-astro earth-stac-sentinel".to_string())
         );
+    }
+
+    #[test]
+    fn point_key_ignores_a_leading_enumeration_number() {
+        let seven = match_prefix(&point_key_tokens("7. Riss 4 Ksg (WGSL)"));
+        let eight = match_prefix(&point_key_tokens("8. Riss 4 Ksg (WGSL)"));
+        assert_eq!(seven, Some("riss 4 ksg wgsl".to_string()));
+        assert_eq!(seven, eight);
+        let other = match_prefix(&point_key_tokens("7. Riss 4 Ksg (Rust)"));
+        assert_ne!(seven, other);
     }
 
     #[test]
