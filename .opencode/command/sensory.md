@@ -1,5 +1,5 @@
 ---
-description: Sensory-Linie — Forschung und Messung, Proben, Papiere. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Sensory-Linie — Forschung und Messung, Proben, Papiere; liest die Maschinen- und die Menschenwelt. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
