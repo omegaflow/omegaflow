@@ -3,7 +3,7 @@
   session: Entscheid-Folge 77
   class: handover
   date: 2026-09-21
-  sha256: f794d59cc6ef5814a7ba3525c13a476d9e9a57200285a735259faa13636dd9d0
+  sha256: 7c2ff60315568410244b3831bc46b9422f6b93dab3897b20307d827334f0c6a5
   status: live
 -->
 # Handover — Entscheid-Folge 77 (2026-09-21)
@@ -50,6 +50,9 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   text_review` → 0 Fehler, 0 Warnungen.
 - **Delegation:** 1 × `grind-flash` (Bau), flash-first; Klasse „measure-Bin-Bau",
   kein pro/max-Doppel.
+- **Förder-Entwürfe geschrieben** (gitignored): EV einreichungsfertig (montiertes
+  Proposal + Tweet-Satz, `state/mail/emergent-ventures-application.md`); SSI-Entwurf
+  (`state/mail/ssi-fellowship-application.md`). Gegenlesung pending (Build).
 
 ## Offen (aufgeschlüsselt)
 
@@ -57,10 +60,11 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Bin im Baum, `cargo check` 0/0; Release kommt mit `tools-build` →
   `tools-latest`.
-- **Blockade:** lokaler Funktionslauf strukturell CI.
-- **Braucht:** nach dem Push `gh workflow run tools-build.yml`; dann
-  `bin/.tools_ensure text_review` + `text_review
-  state/mail/emergent-ventures-application.md --model glm --model gemini --model qwen`.
+- **Blockade:** `tools-build` `35586926243` @`3764b5c0` **pending** (queued);
+  lokaler Funktionslauf strukturell CI.
+- **Braucht:** nach success `bin/.tools_ensure text_review`; dann `text_review
+  state/mail/emergent-ventures-application.md --model glm --model gemini --model qwen`
+  (Report gitignored neben dem Entwurf).
 
 ### Förderung Person/Ideen/Projekte — Emergent Ventures
 - **Status:** wartend (Session-Arbeit; nur der Einreichungs-Akt `operator-gebunden`)
@@ -70,15 +74,18 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `https://mercatus.tfaforms.net/5099527` (HTTP 200); Fragen + Feldliste gemessen;
   Entwurf `state/mail/emergent-ventures-application.md`.
 - **Blockade:** keine.
-- **Braucht:** Entwurf einreichungsfertig (Proposal montieren, Tweet-Satz); dann
-  Operator-Wort „einreichen".
+- **Braucht:** Operator-Wort „einreichen" auf dem vorgelegten Entwurf — das
+  montierte Proposal + der Tweet-Satz liegen in
+  `state/mail/emergent-ventures-application.md`.
 
 ### SSI Fellowship (software.ac.uk)
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** offen bis **05.10.2026**, £4.000, keine Institution; DE nur über max. 3
   internationale Plätze mit UK-Nutzen-Nachweis (`docs/surveys/survey-funding-quellen.md`).
-- **Blockade:** UK-Nutzen-Argument noch nicht geschrieben.
-- **Braucht:** Entwurf mit dem Open-Method-Nutzen für UK.
+- **Blockade:** der UK-Nutzen ist argumentiert, aber dünn (kein UK-Bezug des
+  Projekts).
+- **Braucht:** Entwurf schärfen (`state/mail/ssi-fellowship-application.md` liegt);
+  dann Operator-Wort.
 
 ### NLnet Restack / CodeSupply
 - **Status:** operator-gebunden | **Bindung:** operator
