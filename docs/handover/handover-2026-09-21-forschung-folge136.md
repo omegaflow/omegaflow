@@ -3,7 +3,7 @@
   session: Forschung-Folge 136
   class: handover
   date: 2026-09-21
-  sha256: a6deab6ec6a9292c3e6e7b58e2213ba7cc4edb2858edee5d7021c4fea8d27a9d
+  sha256: 8b8636dd93930426569add694d9c31664f4f5eb1f05322883864ac507671eaab
   status: live
 -->
 # Handover — Forschung-Folge 136 (Stand 2026-09-21)
@@ -31,8 +31,10 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
 - **CI** — die drei @`44e77da0` dispatchten Läufe sind **nicht aufgelöst**:
   `hyperscanning-te` `35596009980` in_progress (`archive_search --playwright`:
   „hyperscanning-te #17 · 44e77da · In progress"), `te-gate` `35595896140`
-  pending, `ci-check` `35595889051` cancelled (von `be8fe4d2`/`fe8ee746`
-  überholt). Kein Poll.
+  in_progress (seit 12:16), `ci-check` `35595889051` cancelled (von
+  `be8fe4d2`/`fe8ee746` überholt). Nach dem Push @`bdd2cf1e` neu dispatcht:
+  `hyperscanning-te` `35598791059` queued (`confirm`-Job), `ci-check`
+  `35598781610` pending. Kein Poll.
 
 ## Riss — getragen als Naht (unverändert, gemessen 35584758519 @c7cb201f)
 
@@ -49,9 +51,10 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
 
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Fix A committet (`0f8bc1b2`); `35596009980` @`44e77da0` in_progress
-  (live via `--playwright` bestätigt), kein Verdikt.
+  (live via `--playwright` bestätigt). Nach dem Push @`bdd2cf1e` neu dispatcht:
+  `hyperscanning-te` `35598791059` queued.
 - **Blockade:** Run-Abschluss (funktionaler Lauf nur in CI).
-- **Braucht:** `ci_manage view 35596009980` einmal.
+- **Braucht:** `ci_manage view 35598791059` einmal.
 
 ## Punkt 2 — `te-gate` n=1000-FPR-Boden
 
@@ -86,8 +89,8 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
   MDL-Signifikanz **ohne Simulation**, Referenz
   `github.com/aleckirkley/Reduced-Transfer-Entropy`.
 - **Blockade:** Verdikt des `confirm`-Jobs.
-- **Braucht:** `gh workflow run hyperscanning-te.yml` nach dem Push;
-  `ci_manage view <id>`; danach Schätzer-Entscheid (p99-Screen vs. reduced TE).
+- **Braucht:** `ci_manage view 35598791059` (Verdikt des `confirm`-Jobs); danach
+  Schätzer-Entscheid (p99-Screen vs. reduced TE).
 
 ## Punkt 5 — Frontalkanäle F3/F4; Takens-Wandzeit
 
@@ -127,10 +130,10 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
 
 | Punkt | Status | Bindung | Lage | Blockade | Braucht |
 |---|---|---|---|---|---|
-| 1. `family_fn_gate` Fix A | wartend | eigen | `35596009980` in_progress | Run-Abschluss | `ci_manage view 35596009980` |
+| 1. `family_fn_gate` Fix A | wartend | eigen | `35598791059` queued @`bdd2cf1e` | Run-Abschluss | `ci_manage view 35598791059` |
 | 2. `te-gate` n=1000 | wartend | eigen | `35595896140` pending | Run-Abschluss | `ci_manage view 35595896140` |
 | 3. `--dropped` Baseline | wartend | eigen | current 2158, Baseline 2158 | nächster ci-check | `ci_manage view <ci-check-id>` |
-| 4. confirmation-Test | wartend | eigen | `confirm`-Job neu verdrahtet | Job-Verdikt | `gh workflow run hyperscanning-te.yml` |
+| 4. confirmation-Test | wartend | eigen | `confirm`-Job verdrahtet; `35598791059` queued | Job-Verdikt | `ci_manage view 35598791059` |
 | 5. F3/F4 + Takens | wartend | eigen | — | grüner Screen (←1) | `ci_manage view 35596009980` |
 | 6. Riss 4 KSG↔KDE | wartend | eigen | B committet; `te_fn_probe`-Step | CI-Nachweis + Zahlen | ci-check; `te-gate`-Lauf |
 | 8. Flyby-Path-2 | termin:2026-09-28 | termin | Auftrag steht | Datum | Zellen ab Perigäum |
