@@ -6826,6 +6826,40 @@ fn test_port_block_without_force_directive_stays_review() {
 }
 
 #[test]
+fn test_flush_port_block_carries_pending_review_marker() {
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
+    let mut converted = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    let mut pending = 0usize;
+    super::flush_port_block(block, &mut converted, &mut total, &mut parsed, &mut pending);
+    assert_eq!(total, 1);
+    assert_eq!(parsed, 0);
+    assert_eq!(pending, 1, "the review block is counted as pending");
+    assert!(
+        converted.contains("# pending field quake_depth — no force directive, review"),
+        "the pending review marker must reach the port output, got: {converted}"
+    );
+}
+
+#[test]
+fn test_flush_port_block_drops_a_block_with_no_recognized_content() {
+    let block = "source nothing\n";
+    let mut converted = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    let mut pending = 0usize;
+    super::flush_port_block(block, &mut converted, &mut total, &mut parsed, &mut pending);
+    assert_eq!(total, 1);
+    assert_eq!(parsed, 0);
+    assert_eq!(pending, 0);
+    assert!(
+        converted.is_empty(),
+        "a block with nothing to say stays silent, got: {converted}"
+    );
+}
+
+#[test]
 fn test_field_in_nested_port_and_flatten_generic() {
     let legacy = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\nfield_in properties.mag quake_mag\n";
     let conv = super::port_block(legacy);
