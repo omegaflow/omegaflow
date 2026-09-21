@@ -1,0 +1,37 @@
+name: radnet-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  radnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.epa.gov release exists on the CDN
+        run: |
+          if ! gh release view data.epa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.epa.gov --repo omegaflow/sources \
+              --title "data.epa.gov" \
+              --notes "EPA RadNet ERM_RESULT (Envirofacts) joined to the FEMA/Univ-Arizona AGOL air-monitor layer, compiled to ICRS 26x8 wire records (medium em). result_in_si Bq/L, result_date date precision, earth body-fixed to ICRS via the ssd.jpl.nasa.gov ephemeris. Magic RDNT."
+          fi
+      - name: Compiler tests
+        run: cargo test -p omegaflow-harvest --release --bin radnet_compiler
+      - name: Compile the RadNet ICRS records and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin radnet_compiler -- \
+            --out radnet.bin --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "radnet-cdn: radnet.bin returned void" \
+                 "radnet compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
