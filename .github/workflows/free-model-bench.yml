@@ -19,10 +19,11 @@ permissions:
   contents: read
 env:
   RUSTFLAGS: -D warnings
+  BENCH_WORKERS: "12"
 jobs:
   free-model-bench:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 480
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
