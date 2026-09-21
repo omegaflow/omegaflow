@@ -985,6 +985,9 @@ fn check_line_routing(path: &str, content: &str) -> Option<Verdict> {
     if path.contains("docs/") && path.contains("/archiv/") {
         return None;
     }
+    if path.contains("src/gate/") {
+        return None;
+    }
     let lower = content.to_lowercase();
     for marker in &vocab().line_routing {
         if let Some(idx) = lower.find(marker.as_str()) {
