@@ -34,6 +34,7 @@ struct Vocab {
     serial_priority: Vec<String>,
     unstable_pointer: Vec<String>,
     line_routing: Vec<String>,
+    routing_act_home: Vec<String>,
     german_chars: Vec<char>,
     german_function_words: Vec<String>,
     speculation: Vec<String>,
@@ -135,6 +136,7 @@ fn load_vocab() -> Vocab {
         serial_priority: str_list(&json, "serial_priority"),
         unstable_pointer: str_list(&json, "unstable_pointer"),
         line_routing: str_list(&json, "line_routing"),
+        routing_act_home: str_list(&json, "routing_act_home"),
         german_chars,
         german_function_words: str_list(&json, "german_function_words"),
         speculation: str_list(&json, "speculation"),
@@ -871,6 +873,9 @@ impl Gate {
         if let Some(v) = check_line_routing(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_routing_act_home(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -1041,6 +1046,30 @@ fn check_line_routing(path: &str, content: &str) -> Option<Verdict> {
                 feedback: feedback("line_routing").to_string(),
                 quote: clip(content, 90),
             });
+        }
+    }
+    None
+}
+
+fn check_routing_act_home(path: &str, content: &str) -> Option<Verdict> {
+    if !path.starts_with("docs/handover/") {
+        return None;
+    }
+    if path.starts_with("docs/handover/archiv/") || path == "docs/handover/post.md" {
+        return None;
+    }
+    for (idx, line) in content.lines().enumerate() {
+        let t = line.trim_start().to_lowercase();
+        for marker in &vocab().routing_act_home {
+            if t.starts_with(marker.as_str()) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "routing-act-home".to_string(),
+                    line: idx + 1,
+                    feedback: feedback("routing_act_home").to_string(),
+                    quote: clip(line, 90),
+                });
+            }
         }
     }
     None
@@ -1907,6 +1936,35 @@ mod tests {
         let args = tool_args(
             "docs/handover/handover-2026-09-22-x.md",
             "ernte forschung entscheidet gebaut",
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_routing_act_home() {
+        let mut g = test_gate();
+        let live = "docs/handover/handover-2026-09-22-river-folge5.md";
+        for marker in &vocab().routing_act_home {
+            let args = tool_args(live, marker);
+            let v = g.check_tool_call("write", &args).unwrap();
+            assert_eq!(v.rule, "routing-act-home");
+            assert_eq!(v.severity, Severity::Hard);
+        }
+        for marker in &vocab().routing_act_home {
+            let args = tool_args("docs/handover/post.md", marker);
+            assert!(g.check_tool_call("write", &args).is_none());
+        }
+        for marker in &vocab().routing_act_home {
+            let args = tool_args("docs/handover/archiv/handover-2026-09-18-x.md", marker);
+            assert!(g.check_tool_call("write", &args).is_none());
+        }
+        let args = tool_args(live, "Post An future steht");
+        assert!(g.check_tool_call("write", &args).is_none());
+        let args = tool_args("docs/auftrag/auftrag-x.md", "An future:");
+        assert!(g.check_tool_call("write", &args).is_none());
+        let args = tool_args(
+            "docs/handover/_template.md",
+            "the line carries its open points",
         );
         assert!(g.check_tool_call("write", &args).is_none());
     }
