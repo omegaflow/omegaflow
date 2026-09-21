@@ -1127,7 +1127,7 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
+url https://github.com/omegaflow/sources/releases/download/amda.irap.omp.eu/rpw_efield.bin
 format rpw_efield
 origin https://amda.irap.omp.eu/service/hapi
 compiler tools/harvest/src/bin/rpw_compiler.rs
@@ -1136,7 +1136,7 @@ ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield_lira.bin
+url https://github.com/omegaflow/sources/releases/download/rpw-lira.obspm.fr/rpw_efield_lira.bin
 format rpw_efield
 origin https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
 compiler tools/harvest/src/bin/bia_efield_compiler.rs
@@ -1416,7 +1416,7 @@ epoch 11
 lat 5
 lon 6
 field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
-note AQS daily_88101: Route 200 (8647326 B) 2026-09-21. "Arithmetic Mean"=Sp.16 (0-bas.), deckt field 16; lat=5, lon=6, Date Local=11. Kein aqs_parser — csv_zip/rows-Pfad; header-key gebaut+getestet tests.rs:9748. Verdikt: gebaut.
+note AQS daily_88101 2026-09-21: Route 200 (8647326 B). EPA-Format: Arithmetic Mean=Sp.17 (0-bas.16=field16)=Tagesmittel; lat5/lon6/DateLocal11. SampleDuration 1HOUR mittelt Stundenwerte, Tagesmittel bleibt; pm25_daily_ug_m3 korrekt; tests.rs:9748.
 
 url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
 ttl 86400
@@ -8020,6 +8020,7 @@ sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
+note NOAA-S3 noaa-goes16 2026-09-21: prefix=GLM → nur GLM-L2-LCFA/ (Objekt 200 hdf5 c42a392b); kein L1B im offenen Bucket, origin bleibt GHRC-EDL-protected. Token-freie L2-Route braucht eigenen compiler/format.
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
 format iss_lis
