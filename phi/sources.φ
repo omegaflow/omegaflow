@@ -1416,6 +1416,7 @@ epoch 11
 lat 5
 lon 6
 field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
+note AQS daily_88101: Route 200 (8647326 B) 2026-09-21. "Arithmetic Mean"=Sp.16 (0-bas.), deckt field 16; lat=5, lon=6, Date Local=11. Kein aqs_parser — csv_zip/rows-Pfad; header-key gebaut+getestet tests.rs:9748. Verdikt: gebaut.
 
 url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
 ttl 86400
