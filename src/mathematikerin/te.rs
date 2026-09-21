@@ -1571,10 +1571,10 @@ fn endpoint_matched(v: &[f32]) -> (Vec<f64>, Vec<f64>) {
     let slope = (last - first) / (n - 1) as f64;
     let mut residual = Vec::with_capacity(n);
     let mut ramp = Vec::with_capacity(n);
-    for t in 0..n {
+    for (t, &x) in v.iter().enumerate() {
         let r = first + slope * t as f64;
         ramp.push(r);
-        residual.push(v[t] as f64 - r);
+        residual.push(x as f64 - r);
     }
     (residual, ramp)
 }
@@ -5672,6 +5672,253 @@ mod tests {
         assert!(
             above >= 3,
             "Zug 6: the ksg estimator finds {above}/{total} anchor links above 70% power — the estimator is broken where binned was blind"
+        );
+    }
+
+    #[test]
+    fn gate_wgsl_ksg_parity_real_and_surrogate_against_cpu_reference() {
+        use std::sync::Arc;
+        use std::sync::atomic::{AtomicBool, Ordering};
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+        let adapter_options = wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::None,
+            compatible_surface: None,
+            force_fallback_adapter: false,
+        };
+        let adapter = match pollster::block_on(instance.request_adapter(&adapter_options)) {
+            Some(a) => a,
+            None => {
+                eprintln!("compute-only device request returned void — wgsl ksg parity skipped");
+                return;
+            }
+        };
+        let (device, queue) = match pollster::block_on(
+            adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+        ) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(crate::mathematikerin::TE_WGSL.into()),
+        });
+        let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = crate::mathematikerin::storage_entry(
+                        true,
+                        wgpu::ShaderStages::COMPUTE,
+                    );
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = crate::mathematikerin::storage_entry(
+                        false,
+                        wgpu::ShaderStages::COMPUTE,
+                    );
+                    e.binding = 2;
+                    e
+                },
+            ],
+        });
+        let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&te_layout],
+            push_constant_ranges: &[],
+        });
+        let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&te_pipe_layout),
+            module: &module,
+            entry_point: Some("te_compute"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: crate::mathematikerin::TE_SERIES_BYTES,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 384,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 384,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        let n = 200usize;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let seed = 42u64;
+        let mut data = vec![0f32; 12 * crate::mathematikerin::TE_SERIES_STRIDE];
+        data[0..n].copy_from_slice(&x);
+        data[crate::mathematikerin::TE_SERIES_STRIDE..crate::mathematikerin::TE_SERIES_STRIDE + n]
+            .copy_from_slice(&y);
+        let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+        let mut surrogates: Vec<Vec<f32>> = Vec::with_capacity(10);
+        for s in 0..10 {
+            let surr = phase_randomized_surrogate(&y, &mut rng);
+            let off = (2 + s) * crate::mathematikerin::TE_SERIES_STRIDE;
+            data[off..off + n].copy_from_slice(&surr);
+            surrogates.push(surr);
+        }
+        queue.write_buffer(&series_buf, 0, &crate::mathematikerin::le_bytes_f32(&data));
+        let max_lag = (n as f64 / Φ) as u32;
+        let param = [n as u32, max_lag, 1.0f32.to_bits(), TE_KSG_K as u32];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(&param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, 384);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(
+            mapped.load(Ordering::SeqCst),
+            "wgsl ksg parity readback returned void"
+        );
+        let mapped_data = slice.get_mapped_range();
+        let mut verdict = [0f32; 96];
+        for k in 0..96 {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+            verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(mapped_data);
+        read_buf.unmap();
+        assert_eq!(
+            verdict[10],
+            1.0,
+            "the kde real-pair slot must stay valid alongside the ksg mirror"
+        );
+        assert_eq!(
+            verdict[75],
+            1.0,
+            "the wgsl ksg real-pair slot is absent at k={}",
+            TE_KSG_K
+        );
+        let tau_x = verdict[0] as usize;
+        let tau_y = verdict[6] as usize;
+        let gpu_te = verdict[74];
+        let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&xf, tau_x, 3);
+        let emb_y = embed_series(&yf, tau_y, 3);
+        let cpu_opt = transfer_entropy_embedded_ksg(
+            &xf,
+            &emb_x,
+            &emb_y,
+            tau_x,
+            tau_y,
+            TE_KSG_K,
+        );
+        let cpu_te = cpu_opt.expect("the KSG reference carries a TE at the GPU lags");
+        let gap = (gpu_te as f64 - cpu_te).abs();
+        assert!(
+            gap < 0.05 + 0.05 * cpu_te.abs(),
+            "wgsl ksg parity: gpu {} cpu {} gap {}",
+            gpu_te,
+            cpu_te,
+            gap
+        );
+        let mut ksg_surrogates = 0usize;
+        for s in 2..12 {
+            if verdict[73 + 2 * s] != 1.0 {
+                continue;
+            }
+            let tau_s = verdict[s * 6] as usize;
+            let gpu_s = verdict[72 + 2 * s];
+            let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
+            let emb_s = embed_series(&ysf, tau_s, 3);
+            let cpu_s_opt = transfer_entropy_embedded_ksg(
+                &xf,
+                &emb_x,
+                &emb_s,
+                tau_x,
+                tau_s,
+                TE_KSG_K,
+            );
+            let cpu_s = cpu_s_opt.expect("the KSG reference carries a surrogate TE at GPU lags");
+            let gap_s = (gpu_s as f64 - cpu_s).abs();
+            assert!(
+                gap_s < 0.05 + 0.05 * cpu_s.abs(),
+                "wgsl ksg surrogate {s} parity: gpu {} cpu {} gap {}",
+                gpu_s,
+                cpu_s,
+                gap_s
+            );
+            ksg_surrogates += 1;
+        }
+        assert!(
+            ksg_surrogates >= 2,
+            "wgsl ksg surrogate parity holds on {ksg_surrogates} series — the null mirror needs at least two"
         );
     }
 
