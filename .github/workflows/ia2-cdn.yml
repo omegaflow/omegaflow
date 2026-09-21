@@ -1,0 +1,44 @@
+name: ia2-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ia2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view ia2-tap.oats.inaf.it --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ia2_wgesdss.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ia2_wgesdss.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ia2_wgesdss.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the ia2-tap.oats.inaf.it release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ia2-tap.oats.inaf.it --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ia2-tap.oats.inaf.it --repo omegaflow/sources \
+              --title "ia2-tap.oats.inaf.it" \
+              --notes "IA2 TAP (INAF/OATS) wgesdss.laurino2011 sources packaged to omegaflow sky1 binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile the IA2 wgesdss sources and manifest the bin to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ia2_tap_compiler -- --ci-mode

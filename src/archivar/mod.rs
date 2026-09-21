@@ -46,6 +46,7 @@ pub mod ephemeris;
 pub mod euvs;
 pub mod exclude;
 pub mod f107;
+pub mod fai_kz;
 pub mod fits;
 pub mod fk;
 pub mod flac;
