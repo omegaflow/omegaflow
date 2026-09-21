@@ -21,6 +21,11 @@ pub const MODES: &[&str] = &[
     "github",
     "crates",
     "librs",
+    "brave",
+    "mwmbl",
+    "datacite",
+    "zenodo",
+    "isc",
     "openalex",
     "pubmed",
     "europepmc",
@@ -47,6 +52,8 @@ pub const MODES: &[&str] = &[
     "reactome",
     "interpro",
     "alphafold",
+    "supermag",
+    "heasarc",
 ];
 
 pub struct AppState {
@@ -108,7 +115,11 @@ fn handle(mut stream: TcpStream, state: Arc<AppState>) -> Result<(), String> {
         "/api/run" => {
             let mode = param(&params, "mode");
             let q = param(&params, "q");
-            let body = api_run(&state, &mode, &q);
+            let limit = param(&params, "limit")
+                .parse::<usize>()
+                .unwrap_or(40)
+                .clamp(1, 500);
+            let body = api_run(&state, &mode, &q, limit);
             respond(&mut stream, 200, "application/json; charset=utf-8", &body)
         }
         "/api/status" => {
@@ -211,8 +222,9 @@ fn run_mode(state: &AppState, mode: &str, q: &str) -> Vec<String> {
     }
 }
 
-fn api_run(state: &AppState, mode: &str, q: &str) -> String {
-    let lines = run_mode(state, mode, q);
+fn api_run(state: &AppState, mode: &str, q: &str, limit: usize) -> String {
+    let mut lines = run_mode(state, mode, q);
+    lines.truncate(limit);
     let mut out = String::from("[");
     for (i, line) in lines.iter().enumerate() {
         if i > 0 {
