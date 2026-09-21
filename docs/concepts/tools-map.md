@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 0e7cfa9083a954f6c2fbe5754d7bf7993ecb2973933bbbcb967713540ed6d1ec
+  sha256: 5bde60e7cd0fcc797d7bedddf1a4a4419836630dc54dd3b78d0a8376d4e5ce9f
   status: live
   see-also: AGENTS.md
 -->
@@ -93,6 +93,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
 | `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 34 Modi — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
+| `--searxng` | — (neu, braucht `SEARXNG_URL`, format=json) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
 | `--pubchem` | — (neu) | | `--uniprot` | — (neu) |
 | `--pdb` | — (neu, PDBe) | | `--chembl` | — (neu) |
@@ -124,6 +125,12 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 - `archive_search --heasarc "table=<w3browse-tabelle> rows=<n>"` — echte
   W3Browse-Tabellen, z. B. `table=sao`; `master` existiert nicht (W3Browse sagt
   es wörtlich).
+- `archive_search --searxng <query>` — Meta-Suche über eine SearXNG-Instanz
+  (`<base>/search?q=&format=json&language=all&safesearch=0`); Basis-URL aus
+  `SEARXNG_URL` (`.secrets.local/.env`). Die meisten öffentlichen Instanzen
+  liefern trotz HTTP 200 HTML statt JSON (gemessen 2026-09-21: `searx.be`,
+  `search.inetol.net`) → `pending`; `format=json` in `settings.yml` freischalten
+  oder selbst hosten. Je Treffer `url` + Titel/Engine/Beschreibung.
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
