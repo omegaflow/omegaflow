@@ -19,5 +19,5 @@ An bau: EPA RadNet ERM_RESULT Position (`phi/blocked_sources.φ:74`, Register-Ta
 
 An bau: GHRC GLM-L2-LCFA-Konsument — die token-freie S3-Route `noaa-goes16/18` trägt nur GLM-L2-LCFA (hdf5, gemessen 200), nicht das L1B-Flash-Produkt; L1B bleibt GHRC-EDL-protected (`phi/sources.φ:8023`). (Schritt: eigenen compiler/format für L2-LCFA bauen — L2-Events-HDF5 ≠ L1B.)
 
-An entscheid: Nr. 11 „strukturierte Feld-Grammatik" — Operator-Entscheid 2026-09-21: gebaut, nicht descoped. Die Grammatik IST `docs/specs/sources-v2-spec.md` §1; Audit am HEAD `4a0c7803`: die 3-Token-`field`-Form als §10-Gap registriert (Parser verweigert sie, der Spec war stale), die Header-Referenz `src/main.rs`→`src/archivar/parse.rs` korrigiert, 8 undokumentierte Parser-Arme als §10-Pending benannt. (Schritt: Nr. 11 aus der Operator-Queue entfernen.)
+An bau: PINE64-Dokumentationspflicht — Ox64 ist von Pine64 zugesagt (Hardware beidseitig geschlossen), aber die Presence-Hardware „Mantis-Shrimp" ist ungebaut. (Schritt: Mantis-Shrimp minimal bauen — Spec `docs/specs/mantis-shrimp-bom.md` + BOM liegen —, dann Ox64 dokumentieren; Ergebnis als eigene Handover-Zeile, kein Befund.)
 
