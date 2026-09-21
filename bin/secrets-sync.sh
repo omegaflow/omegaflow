@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
-# secrets-sync.sh — spiegelt die lokalen Provider-Keys von .secrets.local nach
-# GitHub Actions Secrets (repo omegaflow/omegaflow).
+# secrets-sync.sh — spiegelt .secrets.local nach GitHub Actions Secrets
+# (repo omegaflow/omegaflow).
 #
-# Der 0-Kanon: ein leerer Wert in .secrets.local ist `absent`, kein Secret.
-# Absent wird NIE als leerer GitHub-Secret geschrieben — die fünf leeren
-# Platzhalter (RUBIN_*, SUPERMAG_PASS, TOAR_*) bleiben lokal leer und werden
-# übersprungen, statt einen leeren Secret anzulegen.
+# Modell (2026-09-21): GitHub hält
+#   (1) EINEN vollständigen Spiegel `OMEGAFLOW_SECRETS_FILE` = base64(.secrets.local)
+#   (2) nur die von Workflows gelesenen Einzel-Secrets (damit sie sie lesen).
+# Das umgeht das harte 100-Secret-Cap pro Repo: der ganze lokale Bestand liegt
+# in einem Secret, nicht in hundert.
+#
+# Der 0-Kanon: ein leerer Wert in .secrets.local ist `absent`, kein Secret —
+# leere Werte werden übersprungen, nie als leeres Secret geschrieben.
 #
 # Usage:
 #   bin/secrets-sync.sh            — trocken: nur berichten, nichts schreiben
 #   bin/secrets-sync.sh --set      — schreiben (gh secret set)
-#
-# Case-Falle: GitHub-Secret-Namen sind case-sensitiv. Trägt GitHub bereits
-# einen Namen, der sich nur in Groß-/Kleinschreibung vom lokalen Key
-# unterscheidet (tedp_* lokal vs TEDP_* auf GitHub), wird der bestehende Name
-# wiederverwendet statt ein Duplikat anzulegen.
 set -u
 
 REPO="${OMEGAFLOW_SECRETS_REPO:-omegaflow/omegaflow}"
@@ -24,62 +23,30 @@ WRITE=0
 
 [ -f "$SECRETS" ] || { echo "secrets-sync: $SECRETS fehlt" >&2; exit 2; }
 
-# Bestehende GitHub-Secret-Namen (einmal, für die Case-Falle).
-gh_names="$(gh secret list --repo "$REPO" 2>/dev/null | awk '{print $1}')"
-
-existing_case() {
-  # Gibt den exakten GitHub-Namen zurück, falls einer nur in Groß-/Klein-
-  # schreibung abweicht; sonst leer.
-  local key="$1" gh
-  for gh in $gh_names; do
-    [ "${gh,,}" = "${key,,}" ] && { printf '%s\n' "$gh"; return 0; }
-  done
-  return 1
-}
-
-setted=0
-skipped_empty=0
-skipped_unchanged=0
-reused_case=0
-
-while IFS= read -r line; do
-  case "$line" in
-    ''|'#'*) continue ;;
-  esac
-  key="${line%%=*}"
-  key="${key%"${key##*[![:space:]]}"}"
-  [ -n "$key" ] || continue
-  value="${line#*=}"
-  value="${value#"${value%%[![:space:]]*}"}"
-
-  if [ -z "$value" ]; then
-    echo "skip  $key (leer — absent, kein Secret)"
-    skipped_empty=$((skipped_empty + 1))
-    continue
-  fi
-
-  target="$key"
-  if ! printf '%s\n' "$gh_names" | grep -qx "$key"; then
-    if case_name="$(existing_case "$key")"; then
-      echo "reuse $key -> $case_name (nur Case-Abweichung)"
-      target="$case_name"
-      reused_case=$((reused_case + 1))
-    fi
-  fi
-
+set_secret() {
+  local name="$1" value="$2"
   if [ "$WRITE" -eq 1 ]; then
-    if printf '%s' "$value" | gh secret set "$target" --repo "$REPO" >/dev/null 2>&1; then
-      echo "set   $target"
-      setted=$((setted + 1))
+    if printf '%s' "$value" | gh secret set "$name" --repo "$REPO" >/dev/null 2>&1; then
+      echo "set   $name"
     else
-      echo "fail  $target — gh secret set returned void" >&2
+      echo "fail  $name — gh secret set returned void" >&2
     fi
   else
-    echo "would $target"
-    setted=$((setted + 1))
+    echo "would $name"
   fi
-done < "$SECRETS"
+}
+
+# 1. Der vollständige Spiegel (base64, damit Zeilenumbrüche erhalten bleiben).
+set_secret OMEGAFLOW_SECRETS_FILE "$(base64 -w0 "$SECRETS")"
+
+# 2. Die von Workflows gelesenen Einzel-Secrets, aus .secrets.local gespeist.
+used="$(grep -rhoE 'secrets\.[A-Z0-9_]+' .github 2>/dev/null \
+  | sed 's/^secrets\.//' | sort -u | grep -vx 'GITHUB_TOKEN' || true)"
+for name in $used; do
+  value="$(awk -F= -v k="$name" '$1==k {sub(/^[^=]*=/,""); print; exit}' "$SECRETS")"
+  [ -n "$value" ] || continue
+  set_secret "$name" "$value"
+done
 
 echo "---"
-echo "secrets-sync: $setted $( [ "$WRITE" -eq 1 ] && echo gesetzt || echo zu setzen ), $skipped_empty leer übersprungen, $reused_case case-wiederverwendet"
 [ "$WRITE" -eq 0 ] && echo "secrets-sync: Trockenlauf — mit --set schreiben"
