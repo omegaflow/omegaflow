@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run the family FN/FP gates (the family-max null calibration)
-        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate coherent_null_fp_gate
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate coherent_null_fp_gate nominees_round_trip
       - name: Fetch the ds007822 EEG recordings and build the manifest
         run: |
           set -euo pipefail
