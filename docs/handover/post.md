@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 3080787581fd64b25341d9796b86d87455f0f4fe5d3843ff19e5d58d47cd79f0
+  sha256: 2dce39cadbfb531515250e1b5bce919b7013c782b6f68a0ae4cda1b3738286ba
   status: live
   see-also: AGENTS.md
 -->
@@ -20,4 +20,8 @@ An bau: EPA RadNet ERM_RESULT Position (`phi/blocked_sources.φ:74`, Register-Ta
 An bau: GHRC GLM-L2-LCFA-Konsument — die token-freie S3-Route `noaa-goes16/18` trägt nur GLM-L2-LCFA (hdf5, gemessen 200), nicht das L1B-Flash-Produkt; L1B bleibt GHRC-EDL-protected (`phi/sources.φ:8023`). (Schritt: eigenen compiler/format für L2-LCFA bauen — L2-Events-HDF5 ≠ L1B.)
 
 An bau: PINE64-Dokumentationspflicht — Ox64 ist von Pine64 zugesagt (Hardware beidseitig geschlossen), aber die Presence-Hardware „Mantis-Shrimp" ist ungebaut. (Schritt: Mantis-Shrimp minimal bauen — Spec `docs/specs/mantis-shrimp-bom.md` + BOM liegen —, dann Ox64 dokumentieren; Ergebnis als eigene Handover-Zeile, kein Befund.)
+
+An bau: `archive_search --verdict` — auf der nackten Trailing-Slash-URL (z. B. `https://api.alerce.online/alerts/v1/objects/`) druckt `--verdict` „HTTP 0", während `curl` dieselbe URL in derselben Minute mit 200/5740 B JSON misst (2026-09-21, direkt und über Proton). Tool-Inkonsistenz, keine tote Route. (Schritt: den `--verdict`-Direkt-Request gegen curl abgleichen — Redirect-/HEAD-Handling auf Trailing-Slash prüfen.)
+
+An entscheid: SSDC Limadou (`phi/pipeline/ledger.φ:22`) — CAS-Login lädt (`query.php` 200), aber „Permission Denied" für user omegaflow; der Follow-up an den PI `alessandro.sotgiu@roma2.infn.it` ist per-act consent (Operator). (Schritt: Operator-Wort für den Follow-up; sonst bleibt der CSES-Limadou-Kanal `blocked account`.)
 
