@@ -7,9 +7,9 @@
 # summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
 # blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
-verifiziert
+kompiliert
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Compiler fai_kz_compiler.rs + Format fai_kz_obscore (MAGIC FAI1, 57 B/Record) gebaut 2026-09-21 (ernte); obscore sync-QUERY 200, 5048 Zeilen (image 3003/spectrum 2045). CI-Lauf/Asset pending → dann kompiliert. Feld-Klassifikation pending.
+note ivo://fai.kz/tap fai_kz_compiler.rs fai_kz_obscore; obscore sync-QUERY 200, 5048 Zeilen; CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B) fai-kz-cdn Lauf 35591261870 success. Feld-Klassifikation pending.
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
