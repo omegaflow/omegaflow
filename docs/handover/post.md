@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 2dce39cadbfb531515250e1b5bce919b7013c782b6f68a0ae4cda1b3738286ba
+  sha256: 40dceacbaac216291115ae2a4099d79c989c85479ec8c9b327bf9706fef434d1
   status: live
   see-also: AGENTS.md
 -->
@@ -14,8 +14,4 @@ Handover ein und **löscht die Zeile sofort** — eine abgeholte Zeile bleibt ni
 stehen. Ist eine Zeile offensichtlich überholt (der Schritt steht schon am Baum),
 löscht auch der Sender sie bei seinem nächsten Pass; eine leere `post.md` ist der
 richtige Zustand, kein Verlust.
-
-An bau: PINE64-Dokumentationspflicht — Ox64 ist von Pine64 zugesagt (Hardware beidseitig geschlossen), aber die Presence-Hardware „Mantis-Shrimp" ist ungebaut. (Schritt: Mantis-Shrimp minimal bauen — Spec `docs/specs/mantis-shrimp-bom.md` + BOM liegen —, dann Ox64 dokumentieren; Ergebnis als eigene Handover-Zeile, kein Befund.)
-
-An bau: `archive_search --verdict` — auf der nackten Trailing-Slash-URL (z. B. `https://api.alerce.online/alerts/v1/objects/`) druckt `--verdict` „HTTP 0", während `curl` dieselbe URL in derselben Minute mit 200/5740 B JSON misst (2026-09-21, direkt und über Proton). Tool-Inkonsistenz, keine tote Route. (Schritt: den `--verdict`-Direkt-Request gegen curl abgleichen — Redirect-/HEAD-Handling auf Trailing-Slash prüfen.)
 
