@@ -3,7 +3,7 @@
   session: Forschung-Folge 131
   class: handover
   date: 2026-09-21
-  sha256: 02a35061f80f66b8d55959f42459cafac1bd01c9d86e941102369adc993076db
+  sha256: a0208a7aa3ee38bb6480d35941ec68c078b19e69cf7b84d1c120dfe0e9af5a30
   status: live
 -->
 # Handover — Forschung-Folge 131 (Stand 2026-09-21)
@@ -37,7 +37,8 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   `self_null_discriminator`), **`family_fn_gate` rot** (Punkt 1); die Folgesteps
   (Manifest, Screen, Confirmation) fielen wegen fehlendem `manifest.txt`. `te-gate`
   `35578257445` @`2ae4978a` pending (Ghost-Verdacht); `ci-check` `35578412609`
-  @`a476ccfb` pending.
+  @`a476ccfb` pending. Neu dispatcht (diese Session): `hyperscanning-te`
+  `35584758519` @`c7cb201f` queued (trägt `fn_gate_sweep` + `--nocapture`).
 
 ## Punkt 1 — `family_fn_gate` FN: Response-Kurve messen
 
@@ -58,8 +59,8 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   `stochastic-driver`-Arm: AR(1)-Treiber ohne Sinus → vollrangige Wolke) — assertet
   nur Messbarkeit + Seed-Determinismus, druckt die Tafel.
 - **Blockade:** die Kurve ist noch nicht gelaufen (braucht den gepushten Commit).
-- **Braucht:** `/commit` (Commit+Push) → `gh workflow run hyperscanning-te.yml` →
-  `ci_manage log <id>` **einmal**. Verdikt-Regel (nicht assertet): stochastischer
+- **Braucht:** der Lauf ist dispatcht: `hyperscanning-te` `35584758519` @`c7cb201f`
+  queued → `ci_manage log 35584758519` **einmal**. Verdikt-Regel (nicht assertet): stochastischer
   Arm grün + Sheet-Arme rot → Fix = Fixture/Gate (stochastischer Treiber bzw.
   Assert auf die gemessene Wahrheit); τ-fest-2 grün → Fix = τ-Ausrichtung im
   Schätzer-Pfad; Null-Mittel bei n=2400 unter dem beobachteten TE → n-Floor;
