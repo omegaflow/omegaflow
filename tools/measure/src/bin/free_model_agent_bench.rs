@@ -71,7 +71,10 @@ fn resolve_task(task_name: Option<String>, task_file: Option<String>) -> Task {
         let content = match std::fs::read_to_string(&path) {
             Ok(c) => c,
             Err(e) => {
-                eprintln!("free_model_agent_bench: cannot read --task-file {}: {}", path, e);
+                eprintln!(
+                    "free_model_agent_bench: cannot read --task-file {}: {}",
+                    path, e
+                );
                 std::process::exit(2);
             }
         };
@@ -559,7 +562,10 @@ fn emit_opencode_config(path: &str) -> i32 {
     }
     let mut body = String::from("{\n  \"provider\": {\n");
     for (i, head) in providers.iter().enumerate() {
-        let prov_models: Vec<&ModelFull> = models.iter().filter(|m| m.provider == head.provider).collect();
+        let prov_models: Vec<&ModelFull> = models
+            .iter()
+            .filter(|m| m.provider == head.provider)
+            .collect();
         if prov_models.iter().any(|m| m.base != head.base) {
             eprintln!(
                 "free_model_agent_bench: provider {} carries conflicting baseURLs in free_models.tsv",
@@ -602,7 +608,10 @@ fn emit_opencode_config(path: &str) -> i32 {
     body.push_str("  }\n}\n");
     match std::fs::write(path, body.as_bytes()) {
         Ok(()) => {
-            eprintln!("free_model_agent_bench: wrote opencode provider config {}", path);
+            eprintln!(
+                "free_model_agent_bench: wrote opencode provider config {}",
+                path
+            );
             0
         }
         Err(e) => {
@@ -618,14 +627,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration, task: &Task) -> Row 
     let model_arg = format!("{}/{}", m.provider, m.id);
     let mut cmd = Command::new("opencode");
     cmd.args([
-        "run",
-        "--pure",
-        "--format",
-        "json",
-        "--model",
-        &model_arg,
-        "--agent",
-        "plan",
+        "run", "--pure", "--format", "json", "--model", &model_arg, "--agent", "plan",
     ]);
     if let Some(d) = dir {
         cmd.args(["--dir", d]);
@@ -642,7 +644,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration, task: &Task) -> Row 
                 ms: start.elapsed().as_millis(),
                 tool_calls: "pending".into(),
                 answer: String::new(),
-            }
+            };
         }
     };
     let stdout = child.stdout.take();
@@ -844,10 +846,17 @@ fn main() {
             m.provider, m.id, row.status, row.ms, row.tool_calls, answer_chars
         );
         if !row.answer.is_empty() {
-            let name = format!("{}__{}.md", safe_file_part(&m.provider), safe_file_part(&m.id));
+            let name = format!(
+                "{}__{}.md",
+                safe_file_part(&m.provider),
+                safe_file_part(&m.id)
+            );
             let path = format!("{}/{}", answers_dir, name);
             if let Err(e) = std::fs::write(&path, row.answer.as_bytes()) {
-                eprintln!("free_model_agent_bench: cannot write answer {}: {}", path, e);
+                eprintln!(
+                    "free_model_agent_bench: cannot write answer {}: {}",
+                    path, e
+                );
             }
         }
         let _ = writeln!(
