@@ -3297,7 +3297,7 @@ note Weberin-Re-Run 2026-09-14: Google Dataset Search — kein offener maschinen
 
 decline no-measurement
 url https://data.superdarn.ca/
-note Weberin-Re-Run 2026-09-14: DNS-tot (not-published), ersetzt durch superdarn.ca/frdr.
+note Weberin-Re-Run 2026-09-14: DNS-tot (not-published). Korrektur 2026-09-21: superdarn.ca/frdr 404; lebend ist superdarn.ca/ascii-download (200, FITACF→CSV/TXT/JSON) + FRDR www.frdr-dfdr.ca/repo/collection/superdarn (200).
 
 decline presence-catalog
 url https://gsaweb.ast.cam.ac.uk/alerts
@@ -3532,7 +3532,7 @@ url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=1
 note USGS-OGC-API daily; NWIS-iv ist via waterservices.usgs.gov in sources.φ:730 (parameterCd=00060). Gemessen 2026-09-14 HTTP 200.
 
 decline superseded-by-integrated
-url https://www.frdr-dfcr.ca/repo/collection/superdarn
+url https://www.frdr-dfdr.ca/repo/collection/superdarn
 note SuperDARN-RAWACF via FRDR (Repository-Sammlung); die SuperDARN-Los-Geschwindigkeit ist via superdarn_fitacf.bin in sources.φ. Gemessen 2026-09-14 HTTP 200.
 
 decline variant
