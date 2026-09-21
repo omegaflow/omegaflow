@@ -12,6 +12,7 @@ pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_LISOTD: [u8; 4] = *b"LOT1";
 pub const MAGIC_TRMMLIS: [u8; 4] = *b"TRL1";
 pub const MAGIC_GLML1B: [u8; 4] = *b"GLM1";
+pub const MAGIC_GLML2: [u8; 4] = *b"GLM2";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
 pub const MAGIC_GSOD: [u8; 4] = *b"GSD1";
@@ -29,6 +30,7 @@ pub const MAGIC_GDP: [u8; 4] = *b"GDPT";
 pub const MAGIC_CHAMP: [u8; 4] = *b"CHP1";
 pub const MAGIC_LAS: [u8; 4] = *b"LAS1";
 pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
+pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -64,6 +66,9 @@ pub const COMP_TRMMLIS_MAX: u32 = 1;
 
 pub const COMP_GLML1B_FLASH_ENERGY: u32 = 1;
 pub const COMP_GLML1B_MAX: u32 = 1;
+
+pub const COMP_GLML2_FLASH_ENERGY: u32 = 1;
+pub const COMP_GLML2_MAX: u32 = 1;
 
 pub const COMP_ARGO_DOXY: u32 = 1;
 pub const COMP_ARGO_NITRATE: u32 = 2;
@@ -152,6 +157,10 @@ pub const COMP_LAS_MAX: u32 = 5;
 pub const COMP_KYOTO_PRESSURE: u32 = 1;
 pub const COMP_KYOTO_MAX: u32 = 1;
 
+pub const COMP_HFR_U: u32 = 1;
+pub const COMP_HFR_V: u32 = 2;
+pub const COMP_HFR_MAX: u32 = 2;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -184,6 +193,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "lis_otd" => Some(MAGIC_LISOTD),
         "trmm_lis" => Some(MAGIC_TRMMLIS),
         "glm_l1b" => Some(MAGIC_GLML1B),
+        "glm_l2" => Some(MAGIC_GLML2),
         "supermag_1m" => Some(MAGIC_SMG),
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
         "noaa_gsod" => Some(MAGIC_GSOD),
@@ -200,6 +210,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "champ_plpt" => Some(MAGIC_CHAMP),
         "las" => Some(MAGIC_LAS),
         "kyoto_pressure" => Some(MAGIC_KYOTO),
+        "hfrnet_rtv" => Some(MAGIC_HFR),
         _ => None,
     }
 }
@@ -218,6 +229,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "lis_otd" => Some(COMP_LISOTD_MAX),
         "trmm_lis" => Some(COMP_TRMMLIS_MAX),
         "glm_l1b" => Some(COMP_GLML1B_MAX),
+        "glm_l2" => Some(COMP_GLML2_MAX),
         "supermag_1m" => Some(COMP_SMG_MAX),
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
         "noaa_gsod" => Some(COMP_GSOD_MAX),
@@ -234,6 +246,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "champ_plpt" => Some(COMP_CHAMP_DENS),
         "las" => Some(COMP_LAS_MAX),
         "kyoto_pressure" => Some(COMP_KYOTO_MAX),
+        "hfrnet_rtv" => Some(COMP_HFR_MAX),
         _ => None,
     }
 }

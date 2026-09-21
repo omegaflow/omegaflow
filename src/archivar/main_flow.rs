@@ -2556,6 +2556,7 @@ pub fn main_flow() {
                     | "lis_otd"
                     | "trmm_lis"
                     | "glm_l1b"
+                    | "glm_l2"
                     | "supermag_1m"
                     | "noaa_ghcn_d"
                     | "noaa_gsod"
@@ -2565,6 +2566,7 @@ pub fn main_flow() {
                     | "us_crn_hourly"
                     | "copernicus_cdm_obs"
                     | "gdp_drifter"
+                    | "hfrnet_rtv"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
