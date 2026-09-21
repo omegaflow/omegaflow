@@ -8692,6 +8692,16 @@ field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
 field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 note Mariner 10 Venus occultation telemetry signal data (NSSDC NSSD1346), native Serie; Arm src/archivar/mariner_occlt.rs + extract.rs mariner_occlt; Compiler mariner_occlt_compiler.rs; CDN-Asset gemessen 2026-09-17 (run 35204897220, 1375496 B).
 
+url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/hfrnet_rtv.bin
+format hfrnet_rtv
+origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
+compiler tools/harvest/src/bin/hfrnet_compiler.rs
+on earth 0 0 0
+ttl 86400
+field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
+field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
+note CDN-Asset pending (sha256 nach Manifestation); ERDDAP griddap ucsdHfrW1_Lon0360 .csv time,latitude,longitude,water_u,water_v m/s HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml.
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER
