@@ -1,5 +1,5 @@
 ---
-description: Future-Linie (Zukunft — die Ungeborenen, die Registratur für morgen) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Future-Linie — Entscheidungen, Korrespondenz, Consent, Operator-Queue, Übergabe. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
