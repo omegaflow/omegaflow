@@ -1,9 +1,12 @@
 #!/bin/sh
-# The commit gate runs from a prebuilt binary — the build is a CI job, never
-# part of the commit. A red working tree therefore never blocks a commit; a
-# missing gate binary is named, never silent.
+# The commit gate runs from a prebuilt binary — bin/.tools_ensure fetches the
+# release (content-addressed, never a build). A red working tree therefore never
+# blocks a commit; a missing gate binary is named, never silent.
 set -u
 root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+if [ ! -x "$root/target/release/commit_check" ]; then
+    "$root/bin/.tools_ensure" commit_check >/dev/null 2>&1 || true
+fi
 for b in "$root/target/release/commit_check" "$root/target/debug/commit_check"; do
     if [ -x "$b" ]; then
         exec "$b"
