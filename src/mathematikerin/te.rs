@@ -2350,6 +2350,31 @@ pub fn topological_te_estimate(x: &[f32], y: &[f32], dim: usize) -> Option<Topol
     Some(TopologicalEstimate { te, tau_x, tau_y })
 }
 
+pub fn topological_te_estimate_frozen(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    tau_x: usize,
+    tau_y: usize,
+) -> Option<TopologicalEstimate> {
+    let n = x.len();
+    if n < 8 || y.len() != n || dim < 2 || tau_x == 0 || tau_y == 0 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_y = embed_series(&yf, tau_y, dim);
+    if emb_x.is_empty() || emb_y.is_empty() {
+        return None;
+    }
+    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    Some(TopologicalEstimate { te, tau_x, tau_y })
+}
+
 pub fn topological_te_phase(
     x: &[f32],
     y: &[f32],
@@ -3554,6 +3579,22 @@ mod tests {
         let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
         assert_eq!(est.tau_x, find_mi_lag(&af).expect("x carries a lag"));
         assert_eq!(est.tau_y, find_mi_lag(&bf).expect("y carries a lag"));
+    }
+
+    #[test]
+    fn topological_estimate_frozen_matches_searched_tau() {
+        let mut rng = 0x1357_9BDF_2468_ACE0u64;
+        let a = gate_ar1_sine(400, 0.6, 37.0, &mut rng);
+        let b = gate_ar1_sine(400, 0.6, 43.0, &mut rng);
+        let searched = topological_te_estimate(&a, &b, 3).expect("the pair carries an estimate");
+        let frozen = topological_te_estimate_frozen(&a, &b, 3, searched.tau_x, searched.tau_y)
+            .expect("the frozen pair carries an estimate");
+        assert_eq!(
+            frozen.te, searched.te,
+            "A = A: the frozen estimator equals the searched estimator at the searched lags"
+        );
+        assert_eq!(frozen.tau_x, searched.tau_x);
+        assert_eq!(frozen.tau_y, searched.tau_y);
     }
 
     #[test]
