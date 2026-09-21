@@ -71,7 +71,7 @@ pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER ISL (CDPP) — Re-Messung 2026-09-21 (research-max): regards.cnes.fr DNS+Root HTTP 200; rs-order GET 403 = Auth-Gate (Jetty-Backend erreicht), kein F5-ASM-Text; Login 200 access_token present; rs-catalog search HTTP 500. create-POST offen → Re-Dispatch demeter-cdn.
 
-parser-def
+pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet ERM_RESULT (Envirofacts, json): Route 200 2026-09-21. result_in_si=Bq/L (em), epoch result_date. Position fehlt: ERM_LOCATION nur city/state ohne Koordinaten → lat/lon extern (epa.gov/radnet).
+note EPA RadNet historische Precip-/Milch-/Wasser-Stationen ohne Koordinaten (ERM_LOCATION nur city/state; EPA-Koordinatentabelle 404/403 gemessen 2026-09-21). Nur die 140 festen Luftmonitore sind ueber AGOL verortet (sources.φ radnet); Rest position-absent, Record skip. Schritt: EPA-publizierte Koordinatentabelle erneut messen.
 
