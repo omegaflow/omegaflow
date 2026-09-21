@@ -823,6 +823,16 @@ mod tests {
         v
     }
 
+    fn ar1_noise(n: usize, phi: f64, scale: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for _ in 0..n {
+            x = phi * x + scale * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
     fn rich_series(n: usize, rng: &mut u64) -> Vec<f32> {
         let periods = [7.3f64, 13.1, 23.7, 41.9, 67.3];
         let mut v = Vec::with_capacity(n);
@@ -975,20 +985,31 @@ mod tests {
                 + (next_rng(rng) * 0.04 - 0.02);
             b[t] = x as f32;
         }
+        let (c, d) = fn_fixture_quad(n, 0.35, 2, rng);
+        (a, b, c, d)
+    }
+
+    fn fn_fixture_quad(n: usize, s: f64, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
         let c = ar1_sine(n, 0.6, 29.0, 1.1, 0.02, rng);
+        let d = quad_target(&c, s, delay, rng);
+        (c, d)
+    }
+
+    fn quad_target(driver: &[f32], s: f64, delay: usize, rng: &mut u64) -> Vec<f32> {
+        let n = driver.len();
         let mut d = vec![0.0f32; n];
         let mut y = 0.0f64;
         for t in 0..n {
             y = 0.5 * y
-                + if t >= 2 {
-                    0.35 * (c[t - 2] as f64) * (c[t - 2] as f64)
+                + if t >= delay {
+                    s * (driver[t - delay] as f64) * (driver[t - delay] as f64)
                 } else {
                     0.0
                 }
                 + (next_rng(rng) * 0.04 - 0.02);
             d[t] = y as f32;
         }
-        (a, b, c, d)
+        d
     }
 
     #[test]
@@ -1223,6 +1244,189 @@ mod tests {
         assert_eq!(
             k1, k1_again,
             "self_null_discriminator: the K1 arm is not seed-deterministic"
+        );
+    }
+
+    #[derive(Clone, Copy)]
+    enum TauMode {
+        Mi,
+        Fixed1,
+        Fixed2,
+    }
+
+    const SWEEP_SURROGATES: usize = 100;
+    const SWEEP_SURROGATES_LARGE_N: usize = 50;
+    const SWEEP_LARGE_N: usize = 2400;
+    const SWEEP_DELAY: usize = 2;
+    const SWEEP_NULL_SEED: u64 = 0x7A5A_9E3C_1B2D_4F5E;
+
+    fn sweep_surrogate_count(n: usize) -> usize {
+        if n >= SWEEP_LARGE_N {
+            SWEEP_SURROGATES_LARGE_N
+        } else {
+            SWEEP_SURROGATES
+        }
+    }
+
+    fn sweep_fixture_seed(n: usize, s: f64) -> u64 {
+        SEED ^ (n as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ s.to_bits()
+    }
+
+    fn sweep_estimators() -> [(&'static str, fn(&[f32], &[f32], usize, usize) -> Option<f64>); 2] {
+        [("KSG", ksg_te_frozen), ("KDE", kde_te_frozen)]
+    }
+
+    fn tau_name(tau: TauMode) -> &'static str {
+        match tau {
+            TauMode::Mi => "mi",
+            TauMode::Fixed1 => "1",
+            TauMode::Fixed2 => "2",
+        }
+    }
+
+    fn resolve_tau(driver: &[f32], target: &[f32], mode: TauMode) -> Option<(usize, usize)> {
+        match mode {
+            TauMode::Fixed1 => Some((1, 1)),
+            TauMode::Fixed2 => Some((2, 2)),
+            TauMode::Mi => {
+                let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+                let tf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+                match (find_mi_lag(&df), find_mi_lag(&tf)) {
+                    (Some(td), Some(tt)) => Some((td, tt)),
+                    _ => None,
+                }
+            }
+        }
+    }
+
+    fn coherent_null(
+        driver: &[f32],
+        target: &[f32],
+        tau_d: usize,
+        tau_t: usize,
+        n_surr: usize,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+    ) -> Vec<f64> {
+        let mut out = Vec::with_capacity(n_surr);
+        for s in 0..n_surr {
+            let mut rng = SWEEP_NULL_SEED
+                ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
+                ^ 0xA5A5_5A5A;
+            let refs = vec![driver, target];
+            let randomized = coherent_phase_surrogates(&refs, &mut rng);
+            if let Some(te) = est(&randomized[1], &randomized[0], tau_t, tau_d) {
+                out.push(te);
+            }
+        }
+        out.sort_by(f64::total_cmp);
+        out
+    }
+
+    fn sweep_cell_row(
+        arm: &str,
+        n: usize,
+        s: f64,
+        est_name: &str,
+        est: fn(&[f32], &[f32], usize, usize) -> Option<f64>,
+        tau_d: usize,
+        tau_t: usize,
+        tau_label: &str,
+        n_surr: usize,
+        driver: &[f32],
+        target: &[f32],
+    ) {
+        let te = est(target, driver, tau_t, tau_d)
+            .expect("fn_gate_sweep: the observed cell is estimated");
+        let null = coherent_null(driver, target, tau_d, tau_t, n_surr, est);
+        assert_eq!(
+            null.len(),
+            n_surr,
+            "fn_gate_sweep {arm} n={n} s={s} {est_name} tau={tau_label}: {} of {n_surr} surrogates measurable",
+            null.len()
+        );
+        let stats = arm_stats(&null).expect("fn_gate_sweep: the null is degenerate");
+        let excess_sd = (te - stats.mu) / stats.sd;
+        let pass = if te > stats.p95 { 1u8 } else { 0u8 };
+        println!(
+            "{arm} | {n} | {s} | {est_name} | {tau_label} | {te:.6e} | {:.6e} | {:.6e} | {:.6e} | {excess_sd:.6e} | {pass}",
+            stats.mu, stats.sd, stats.p95
+        );
+    }
+
+    fn sweep_quad_arm(arm: &str, n: usize, s: f64, delay: usize) {
+        let n_surr = sweep_surrogate_count(n);
+        let mut rng = sweep_fixture_seed(n, s);
+        let (driver, target) = fn_fixture_quad(n, s, delay, &mut rng);
+        let taus: [(TauMode, Option<(usize, usize)>); 3] = [
+            (TauMode::Mi, resolve_tau(&driver, &target, TauMode::Mi)),
+            (TauMode::Fixed2, Some((2, 2))),
+            (TauMode::Fixed1, Some((1, 1))),
+        ];
+        for (est_name, est) in sweep_estimators() {
+            for (tau_mode, tau) in taus {
+                let Some((tau_d, tau_t)) = tau else {
+                    println!(
+                        "{arm} | {n} | {s} | {est_name} | {} | tau-absent",
+                        tau_name(tau_mode)
+                    );
+                    continue;
+                };
+                sweep_cell_row(
+                    arm, n, s, est_name, est, tau_d, tau_t, tau_name(tau_mode), n_surr, &driver,
+                    &target,
+                );
+            }
+        }
+    }
+
+    fn sweep_stochastic_arm(arm: &str, n: usize, s: f64, delay: usize) {
+        let n_surr = sweep_surrogate_count(n);
+        let mut rng = sweep_fixture_seed(n, s) ^ 0x57A7_CFC0;
+        let driver = ar1_noise(n, 0.6, 1.0, &mut rng);
+        let target = quad_target(&driver, s, delay, &mut rng);
+        for (est_name, est) in sweep_estimators() {
+            sweep_cell_row(arm, n, s, est_name, est, 2, 2, "2", n_surr, &driver, &target);
+        }
+    }
+
+    #[test]
+    fn fn_gate_sweep() {
+        println!(
+            "fn_gate_sweep: coherent per-cell null | dim {DIM} | surrogates {} (n <= 1200), {} (n = {})",
+            SWEEP_SURROGATES, SWEEP_SURROGATES_LARGE_N, SWEEP_LARGE_N
+        );
+        println!("fn_gate_sweep: arm | n | s | est | tau | te | null_mu | null_sd | null_p95 | excess_sd | pass_p95");
+        for &n in &[600usize, 1200, 2400] {
+            sweep_quad_arm("n-sweep", n, 0.35, SWEEP_DELAY);
+        }
+        for &s in &[0.05f64, 0.1, 0.2, 0.35, 0.5] {
+            sweep_quad_arm("s-sweep", 1200, s, SWEEP_DELAY);
+        }
+        sweep_stochastic_arm("stochastic-driver", 600, 0.35, SWEEP_DELAY);
+
+        let mut rng_a = sweep_fixture_seed(600, 0.35);
+        let (ca, da) = fn_fixture_quad(600, 0.35, SWEEP_DELAY, &mut rng_a);
+        let mut rng_b = sweep_fixture_seed(600, 0.35);
+        let (cb, db) = fn_fixture_quad(600, 0.35, SWEEP_DELAY, &mut rng_b);
+        assert_eq!(
+            ca, cb,
+            "fn_gate_sweep: the fixture is not seed-deterministic"
+        );
+        assert_eq!(
+            da, db,
+            "fn_gate_sweep: the fixture is not seed-deterministic"
+        );
+        let na = coherent_null(&ca, &da, 2, 2, SWEEP_SURROGATES, ksg_te_frozen);
+        let nb = coherent_null(&cb, &db, 2, 2, SWEEP_SURROGATES, ksg_te_frozen);
+        assert_eq!(
+            na, nb,
+            "fn_gate_sweep: the KSG coherent null is not seed-deterministic"
+        );
+        let ka = coherent_null(&ca, &da, 2, 2, SWEEP_SURROGATES, kde_te_frozen);
+        let kb = coherent_null(&cb, &db, 2, 2, SWEEP_SURROGATES, kde_te_frozen);
+        assert_eq!(
+            ka, kb,
+            "fn_gate_sweep: the KDE coherent null is not seed-deterministic"
         );
     }
 
