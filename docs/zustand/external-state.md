@@ -2,7 +2,7 @@
   title: Zustand — geteilter externer Zustand
   class: zustand
   date: 2026-09-21
-  sha256: 474fc93254513e91230780377c7a03ace6981a0c18920a1d48e14d304b720167
+  sha256: fbe40ea694d1ba244c59a71b5da2a65d115084554525a8c96726fe9cd5ff5346
   status: live
   see-also: AGENTS.md
 -->
