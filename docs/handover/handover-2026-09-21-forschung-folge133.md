@@ -3,7 +3,7 @@
   session: Forschung-Folge 133
   class: handover
   date: 2026-09-21
-  sha256: 2045d7ed44baad8d105a2eb15b4eae8d209a67a306f4a5035ecd187cc557edc9
+  sha256: 1849aac90aa3dee86eed94d049889a99c857cbd195494abc7e46c3e64f14c414
   status: live
 -->
 # Handover — Forschung-Folge 133 (Stand 2026-09-21)
@@ -48,7 +48,7 @@ die Riss-Regel lief nur gegen W1.
 ## Punkt 1 — `family_fn_gate`: Fix A gesetzt, CI-Nachweis ausstehend
 
 - **Status:** wartend | **Bindung:** eigen
-- **Lage:** Fix A implementiert (uncommittet): Assert
+- **Lage:** Fix A implementiert und committet (`0f8bc1b2`): Assert
   `tools/measure/src/bin/hyperscanning_group_te.rs:1056` auf die gemessene
   Wahrheit geschrieben (`!cell_survivors.iter().any(…)`, „the sheet fixture
   carries no conditional transfer entropy beyond its coherent null"), plus
@@ -56,8 +56,8 @@ die Riss-Regel lief nur gegen W1.
   bias, never a degenerate zero"); der zweite Assert entschärft. `cargo check
   -p omegaflow-measure --all-targets` 0/0. Kein Workflow-Touch nötig.
 - **Blockade:** CI-Nachweis (funktionaler Lauf nur in CI).
-- **Braucht:** nach Commit/Push `gh workflow run hyperscanning-te.yml`; grüner
-  Lauf schließt Punkt 4/5 auf.
+- **Braucht:** Run `35587070232` dispatcht; `ci_manage view 35587070232`
+  einmal — grüner Lauf schließt Punkt 4/5 auf.
 
 ## Punkt 2 — `te-gate` n=1000-FPR-Boden
 
