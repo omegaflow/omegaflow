@@ -144,7 +144,7 @@ pub const PAGE: &str = r##"
     color:#fff;
     font-weight:600;
   }
-  .chip.all{border-color:#4d6085;color:var(--fg);}
+  .chip.all,.chip.none{border-color:#4d6085;color:var(--fg);}
   .bar{
     display:flex;
     align-items:center;
@@ -449,7 +449,13 @@ pub const PAGE: &str = r##"
       setStatus("bereit");
       return;
     }
-    var targets = selected.length ? selected.slice() : ["local"];
+    var targets = selected.slice();
+    if (!targets.length){
+      lastLines = [];
+      resultsEl.innerHTML = "";
+      setStatus("keine Quelle aktiv");
+      return;
+    }
     var limit = currentLimit();
     var t0 = performance.now();
     setStatus("liest… (" + targets.length + ")", "busy");
@@ -507,8 +513,9 @@ pub const PAGE: &str = r##"
     selected = next;
     var all = chipsEl.querySelectorAll(".chip");
     for (var i = 0; i < all.length; i++){
-      var m = all[i].getAttribute("data-mode");
-      all[i].classList.toggle("active", m === "__all__" ? false : selected.indexOf(m) >= 0);
+      var m = all[i].getAttribute("data-mode") || "";
+      var special = m.indexOf("__") === 0;
+      all[i].classList.toggle("active", !special && selected.indexOf(m) >= 0);
     }
     saveState();
   }
@@ -528,11 +535,23 @@ pub const PAGE: &str = r##"
     allBtn.setAttribute("data-mode", "__all__");
     allBtn.textContent = "alle";
     allBtn.addEventListener("click", function(){
-      selected = modes.slice();
+      selected = (selected.length === modes.length) ? [] : modes.slice();
       setSelected(selected);
-      if (inputEl.value.trim()){ run(); }
+      run();
     });
     chipsEl.appendChild(allBtn);
+
+    var noneBtn = document.createElement("button");
+    noneBtn.type = "button";
+    noneBtn.className = "chip none";
+    noneBtn.setAttribute("data-mode", "__none__");
+    noneBtn.textContent = "keine";
+    noneBtn.addEventListener("click", function(){
+      selected = [];
+      setSelected(selected);
+      run();
+    });
+    chipsEl.appendChild(noneBtn);
 
     for (var i = 0; i < modes.length; i++){
       (function(mode){
