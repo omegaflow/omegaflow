@@ -94,8 +94,17 @@ fn main() {
         },
         None => None,
     };
+    let will_send = sends(send_now, dry_run);
+    let verdict = gate(&text);
+    if !will_send || verdict.refuse.is_some() {
+        print_table(&verdict.rows);
+    }
+    if let Some(reason) = verdict.refuse {
+        eprintln!("{}", reason);
+        std::process::exit(2);
+    }
     let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref());
-    if !sends(send_now, dry_run) {
+    if !will_send {
         println!("dry-run — nothing sent (add --send to send)");
         println!("to: {}", to);
         println!("from: {}", from);
@@ -248,6 +257,190 @@ fn send(token: &str, payload: &str) -> String {
     }
 }
 
+struct Claim {
+    claim: String,
+    source: String,
+    resolves: bool,
+}
+
+enum Source {
+    FileLine { file: String, line: u64 },
+    RegisterKey { register: String, key: String },
+    CommandArtifact { artifact: String },
+}
+
+enum Quellen {
+    NoClaims,
+    Claims(Vec<String>),
+}
+
+struct Verdict {
+    rows: Vec<Claim>,
+    refuse: Option<String>,
+}
+
+fn gate(body: &str) -> Verdict {
+    match find_quellen(body) {
+        None => Verdict {
+            rows: vec![Claim {
+                claim: "(no QUELLEN block)".to_string(),
+                source: "absent".to_string(),
+                resolves: false,
+            }],
+            refuse: Some(String::from(
+                "smail: no QUELLEN block in draft — a state claim needs a measured source \
+                 (claim → file:line | register#key | command@timestamp → artifact); \
+                 a mail with no state claims carries QUELLEN: none",
+            )),
+        },
+        Some(Quellen::NoClaims) => Verdict {
+            rows: vec![Claim {
+                claim: "(no state claims)".to_string(),
+                source: "QUELLEN: none".to_string(),
+                resolves: true,
+            }],
+            refuse: None,
+        },
+        Some(Quellen::Claims(lines)) => {
+            let rows: Vec<Claim> = lines.iter().map(|l| resolve_claim(l)).collect();
+            let unresolved: Vec<&str> = rows
+                .iter()
+                .filter(|c| !c.resolves)
+                .map(|c| c.source.as_str())
+                .collect();
+            let refuse = if unresolved.is_empty() {
+                None
+            } else {
+                Some(format!(
+                    "smail: unresolved QUELLEN source: {} — measure before the word, \
+                     or write QUELLEN: none when no state claim stands",
+                    unresolved.join(", ")
+                ))
+            };
+            Verdict { rows, refuse }
+        }
+    }
+}
+
+fn find_quellen(body: &str) -> Option<Quellen> {
+    let mut lines = body.lines();
+    let mut rest: Option<&str> = None;
+    for line in lines.by_ref() {
+        if let Some(r) = line.trim_start().strip_prefix("QUELLEN:") {
+            rest = Some(r.trim());
+            break;
+        }
+    }
+    let rest = rest?;
+    if rest == "none" {
+        return Some(Quellen::NoClaims);
+    }
+    let mut claims: Vec<String> = Vec::new();
+    if !rest.is_empty() {
+        claims.push(rest.to_string());
+    }
+    for line in lines {
+        let t = line.trim();
+        if t.is_empty() {
+            break;
+        }
+        claims.push(t.to_string());
+    }
+    Some(Quellen::Claims(claims))
+}
+
+fn resolve_claim(line: &str) -> Claim {
+    match line.split_once('→') {
+        Some((claim, source)) => {
+            let source = source.trim().to_string();
+            let resolves = match parse_source(&source) {
+                Some(s) => resolve_source(&s),
+                None => false,
+            };
+            Claim {
+                claim: claim.trim().to_string(),
+                source,
+                resolves,
+            }
+        }
+        None => Claim {
+            claim: line.trim().to_string(),
+            source: String::new(),
+            resolves: false,
+        },
+    }
+}
+
+fn parse_source(source: &str) -> Option<Source> {
+    if let Some((cmd_ts, artifact)) = source.split_once('→') {
+        let cmd_ts = cmd_ts.trim();
+        let artifact = artifact.trim();
+        if cmd_ts.contains('@') && !artifact.is_empty() {
+            return Some(Source::CommandArtifact {
+                artifact: artifact.to_string(),
+            });
+        }
+        return None;
+    }
+    if let Some((register, key)) = source.split_once('#') {
+        let register = register.trim();
+        let key = key.trim();
+        if !register.is_empty() && !key.is_empty() {
+            return Some(Source::RegisterKey {
+                register: register.to_string(),
+                key: key.to_string(),
+            });
+        }
+        return None;
+    }
+    if let Some((file, line)) = source.rsplit_once(':') {
+        let file = file.trim();
+        let line = line.trim();
+        if !file.is_empty() && !line.is_empty() && line.chars().all(|c| c.is_ascii_digit()) {
+            if let Ok(n) = line.parse::<u64>() {
+                if n >= 1 {
+                    return Some(Source::FileLine {
+                        file: file.to_string(),
+                        line: n,
+                    });
+                }
+            }
+        }
+        return None;
+    }
+    None
+}
+
+fn resolve_source(source: &Source) -> bool {
+    match source {
+        Source::FileLine { file, line } => match count_lines(file) {
+            Some(n) => n as u64 >= *line,
+            None => false,
+        },
+        Source::RegisterKey { register, key } => match fs::read_to_string(register) {
+            Ok(content) => content.contains(key.as_str()),
+            Err(_) => false,
+        },
+        Source::CommandArtifact { artifact } => std::path::Path::new(artifact).exists(),
+    }
+}
+
+fn count_lines(path: &str) -> Option<usize> {
+    let bytes = fs::read(path).ok()?;
+    if bytes.is_empty() {
+        return Some(0);
+    }
+    let newlines = bytes.iter().filter(|&&b| b == b'\n').count();
+    Some(newlines + usize::from(bytes.last() != Some(&b'\n')))
+}
+
+fn print_table(rows: &[Claim]) {
+    println!("claim | source | resolves");
+    for r in rows {
+        println!("{} | {} | {}", r.claim, r.source, r.resolves);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -317,5 +510,63 @@ mod tests {
         let parts: Vec<&str> = l.trim_end().split('\t').collect();
         assert_eq!(parts.len(), 7);
         assert_eq!(parts[5], "");
+    }
+
+    #[test]
+    fn gate_refuses_a_draft_without_a_quellen_block() {
+        let v = gate("subject line\nbody text\n");
+        assert!(v.refuse.is_some());
+        assert_eq!(v.rows.len(), 1);
+        assert!(!v.rows[0].resolves);
+    }
+
+    #[test]
+    fn gate_passes_quellen_none() {
+        let v = gate("draft\nQUELLEN: none\n");
+        assert!(v.refuse.is_none());
+        assert!(v.rows.iter().all(|r| r.resolves));
+    }
+
+    #[test]
+    fn gate_refuses_an_unresolved_file_line_claim() {
+        let v = gate("QUELLEN:\nThe membrane runs → /no/such/file.rs:1\n");
+        assert!(v.refuse.is_some());
+        assert_eq!(v.rows.len(), 1);
+        assert_eq!(v.rows[0].source, "/no/such/file.rs:1");
+        assert!(!v.rows[0].resolves);
+    }
+
+    #[test]
+    fn parse_source_covers_all_three_forms() {
+        assert!(matches!(
+            parse_source("src/bin/smail.rs:42"),
+            Some(Source::FileLine { .. })
+        ));
+        assert!(matches!(
+            parse_source("phi/sources.φ#vires"),
+            Some(Source::RegisterKey { .. })
+        ));
+        assert!(matches!(
+            parse_source("curl -s -o out.bin https://x @ 1700000000 → /tmp/out.bin"),
+            Some(Source::CommandArtifact { .. })
+        ));
+    }
+
+    #[test]
+    fn file_line_source_resolves_when_the_line_exists() {
+        let resolves = match parse_source("src/bin/smail.rs:1") {
+            Some(s) => resolve_source(&s),
+            None => false,
+        };
+        assert!(resolves);
+    }
+
+    #[test]
+    fn file_line_source_does_not_resolve_past_the_last_line() {
+        let resolves = match parse_source("src/bin/smail.rs:999999") {
+            Some(s) => resolve_source(&s),
+            None => true,
+        };
+        assert!(!resolves);
     }
 }
