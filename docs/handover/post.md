@@ -23,5 +23,3 @@ An bau: PINE64-Dokumentationspflicht — Ox64 ist von Pine64 zugesagt (Hardware 
 
 An bau: `archive_search --verdict` — auf der nackten Trailing-Slash-URL (z. B. `https://api.alerce.online/alerts/v1/objects/`) druckt `--verdict` „HTTP 0", während `curl` dieselbe URL in derselben Minute mit 200/5740 B JSON misst (2026-09-21, direkt und über Proton). Tool-Inkonsistenz, keine tote Route. (Schritt: den `--verdict`-Direkt-Request gegen curl abgleichen — Redirect-/HEAD-Handling auf Trailing-Slash prüfen.)
 
-An entscheid: SSDC Limadou (`phi/pipeline/ledger.φ:22`) — CAS-Login lädt (`query.php` 200), aber „Permission Denied" für user omegaflow; der Follow-up an den PI `alessandro.sotgiu@roma2.infn.it` ist per-act consent (Operator). (Schritt: Operator-Wort für den Follow-up; sonst bleibt der CSES-Limadou-Kanal `blocked account`.)
-
