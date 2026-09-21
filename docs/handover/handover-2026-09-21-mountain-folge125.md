@@ -3,7 +3,7 @@
   session: Mountain-Folge 125
   class: handover
   date: 2026-09-21
-  sha256: 1b3da01d837c93f17463a4be45ed99d3fb017c3136fce75c8382aebad6949d4e
+  sha256: a5c670b6fccde1f38dcd604988b18680326409958a84796be26aa820d12f28b9
   status: live
 -->
 # Handover — Mountain-Folge 125 (2026-09-21)
@@ -74,20 +74,19 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Braucht:** Ankunft abwarten; dann Buildroot/OpenWrt-Bring-up + Kopplung
   messen (die `pending`-Punkte der Doku).
 
-### 5. Service-Toolset (`smail` & Co.) — keine Frische-Kette
-- **Status:** offen | **Bindung:** eigen
-- **Lage:** `~/.local/bin/smail` (und `smail_recv`, `mail_watchdog`,
+### 5. Service-Daemons laufen auf `target/release` — kein Selbst-Refresh
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Lage:** Die 8 Service-Bins (`smail`, `smail_recv`, `mail_watchdog`,
   `mail_digest`, `cds_watchdog`, `job_dashboard`, `job_monitor`,
-  `notes_notify`) sind **bare Binär-Kopien** (kein Wrapper, kein Symlink, kein
-  Manifest); `target/release/smail` 09-17 16:02 < Quelle `smail.rs` 09-21 08:45
-  → stale. `service-build.yml` ist `workflow_dispatch`-only und lädt nur
-  Artifacts hoch, kein Release.
-- **Blockade:** kein `service-latest`-Release; `.tools_ensure` kennt die
-  Service-Bins nicht.
-- **Braucht:** Entscheid + Bau — `smail`/`smail_recv` (und ggf. die übrigen
-  Service-Bins) in `tools-build.yml` aufnehmen (Manifest + Upload) **oder** ein
-  `service-latest`-Release mit eigenem Wrapper-Muster; danach ein `smail`-
-  Wrapper + ein `~/.local/bin/smail`-Symlink statt Kopie.
+  `notes_notify`) sind jetzt in `tools-build.yml` (Manifest + Upload) und haben
+  Wrapper in `bin/` plus PATH-Symlinks statt barer Kopien. Die systemd-User-Units
+  (`cds-watchdog`, `mail-watchdog`, `notes-notify`, `smail-recv`) starten aber
+  `target/release/<bin>` **direkt** — sie rufen `.tools_ensure` nicht; ein
+  laufender Daemon sieht einen neuen Binary erst nach Neustart.
+- **Blockade:** Neustart der Dienste ist ein Vordergrund-Akt (Operator).
+- **Braucht:** Operator-Wort — Units auf `%h/projects/omegaflow/bin/<tool>`
+  umstellen (`systemctl --user daemon-reload` + `restart`) oder nach dem
+  nächsten `tools-build`-Lauf neu starten.
 
 ## Abschluss
 
