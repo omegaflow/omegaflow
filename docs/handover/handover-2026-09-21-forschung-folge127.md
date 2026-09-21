@@ -3,7 +3,7 @@
   session: Forschung-Folge 127
   class: handover
   date: 2026-09-21
-  sha256: 932f71982b978be61fbe5303695d76a77dc6b029ded5ce8806db7b8e133594fd
+  sha256: a538f97d9827e00f04af82737132b763715a6cee8c4ec8d7a78729a4a38f30f0
   status: live
 -->
 # Handover — Forschung-Folge 127 (Stand 2026-09-21)
@@ -73,13 +73,16 @@ Schätzer** auf derselben Takens-Punktwolke.
   lief nur über `topological_te_estimate`; dieses Atom verdrahtet den KSG genau in
   diesen Pfad.
 
-**Offen:** Verdikt des KSG — **dispatcht** `hyperscanning-te` (nach Push), erwartet
-`null mean ~0.00`, `excess` positiv. (Schritt: `ci_manage view <id>` einmal.)
+**Offen:** Verdikt des KSG — **dispatcht** `hyperscanning-te` `35570480672`
+@`ca7aa66d` (post-push), erwartet `null mean ~0.00`, `excess` positiv. (Schritt:
+`ci_manage view 35570480672` einmal.)
 
 ## Punkt 2 — `te-gate` n=1000-FPR-Boden
 
 `te-gate` `35567711055` @`f0ca4026` in_progress (seit 06:15, kein Update) — der
-n=1000-FPR-Boden bleibt ungemessen. (Schritt: `ci_manage view 35567711055` einmal.)
+n=1000-FPR-Boden bleibt ungemessen. Neu **dispatcht** `te-gate` `35570482875`
+@`ca7aa66d` (post-push; misst die Kalibrier-Tests am KSG-Schätzer). (Schritt:
+`ci_manage view 35570482875` einmal.)
 
 ## Punkt 3 — nominees-Tests in den CI-Teststep?
 
@@ -170,3 +173,7 @@ der Boden wird als gemessene Konstante gedruckt, nie durch Lockern versteckt.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
 Consent (Delegation), nie das Commit-Wort.
+
+Commit `ca7aa66d` gepusht (== `origin/main`); dispatcht (post-push):
+`hyperscanning-te` `35570480672`, `te-gate` `35570482875`, `ci-check`
+`35570485286` — je `ci_manage view <id>` einmal, nie pollen.
