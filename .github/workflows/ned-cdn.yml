@@ -33,6 +33,13 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Build cone compiler
         run: cargo build -p omegaflow-harvest --release --bin ned_cone_compiler
+      - name: Ensure the ned.ipac.caltech.edu-ned release exists on the CDN
+        run: |
+          if ! gh release view ned.ipac.caltech.edu-ned --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ned.ipac.caltech.edu-ned --repo omegaflow/sources \
+              --title "ned.ipac.caltech.edu-ned" \
+              --notes "NASA/IPAC Extragalactic Database (NED) cone harvest packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
       - name: Resumable cone harvest (grid of RA/DEC centers, cone shards persist across runs)
         run: |
           set -uo pipefail

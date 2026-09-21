@@ -3139,6 +3139,7 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at earth
 ttl 86400
+note CDN-Asset sha256 07af335bcc0013c1b0a3e8ba51edc915ede2b8b3f9e65b5e403e08743503dc54 (6629784 B); de44-cdn Lauf 35591251300 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_moon.bin
 format ephemeris_de440
@@ -3146,6 +3147,7 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at moon
 ttl 86400
+note CDN-Asset sha256 3c49075fedc7792406763bd13383cd950f7d66f6b2aaf78d508dd069d3634943 (6629784 B); de44-cdn Lauf 35591251300 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_neptune.bin
 format ephemeris_de440
@@ -3153,6 +3155,7 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at neptune
 ttl 86400
+note CDN-Asset pending — sniff 404.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_sun.bin
 format ephemeris_de440
@@ -3160,6 +3163,15 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at sun
 ttl 86400
+note CDN-Asset sha256 346f5af32c5391f25f4fb14f32c35409d94567d1f9ea76983fac9ea159ec41c0 (6629784 B); de44-cdn Lauf 35591251300 success.
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-neptune/ephemeris_de440_neptune.bin
+format ephemeris_de440
+origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
+compiler tools/harvest/src/bin/neptune_ephemeris_compiler.rs
+at neptune
+ttl 86400
+note CDN-Asset sha256 21991403c6ec13ef934fd30bfe13e86414457337f18931bfefdc13128d87d6f1 (1808616 B); de440s.bsp; neptune-de440s-cdn Lauf 35591254999 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin
 format ephemeris_de442
@@ -3167,6 +3179,7 @@ origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at earth
 ttl 86400
+note CDN-Asset sha256 5ce79ab73d95a87de5658fc04d344aff5391a2492f0b0160bf3d21f016817b9d (6629784 B); de44-cdn Lauf 35591251300 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_moon.bin
 format ephemeris_de442
@@ -3174,6 +3187,7 @@ origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at moon
 ttl 86400
+note CDN-Asset sha256 b5bfd57fe791c50d207329a06dd0fff9632ea1e4842b4c345b0c1146f00b9983 (6629784 B); de44-cdn Lauf 35591251300 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_sun.bin
 format ephemeris_de442
@@ -3181,6 +3195,7 @@ origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at sun
 ttl 86400
+note CDN-Asset sha256 ef393e2d272a7aad4ac9a0760b6c7961655d48444292513a68ffa0fe54077419 (6629784 B); de44-cdn Lauf 35591251300 success.
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
 format ephemeris_binary
@@ -14003,7 +14018,7 @@ format sky1
 at sun
 ttl 604800
 field ia2_wgesdss ia2_wgesdss inverse-square em mag 604800 0.0 0.0
-note IA2 TAP INAF/OATS wgesdss.laurino2011 anonym HTTP 200 2026-09-21; sky1 value=psfMag_r; Workflow ia2-cdn.yml; CDN-Asset pending sha256.
+note CDN-Asset sha256 03a15151ef3de77e65352c760a54f6e61cfa5787a8c84975eac3e8bd0aa331a8 (100013 B); IA2 TAP INAF/OATS wgesdss.laurino2011 anonym HTTP 200 2026-09-21; sky1 value=psfMag_r; ia2-cdn.yml Lauf 35591241104 success.
 
 url https://github.com/omegaflow/sources/releases/download/dachs.fai.kz/fai_kz_obscore.bin
 origin https://dachs.fai.kz/tap
@@ -14011,4 +14026,4 @@ compiler tools/harvest/src/bin/fai_kz_compiler.rs
 format fai_kz_obscore
 at sun
 ttl 86400
-note ivo://fai.kz/tap obscore 5048 Zeilen (image 3003/spectrum 2045) sync-QUERY 200 2026-09-21; Compiler fai_kz_compiler.rs; Workflow fai-kz-cdn.yml; CDN-Asset pending sha256.
+note CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B); ivo://fai.kz/tap obscore 5048 Zeilen image 3003/spectrum 2045 sync-QUERY 200 2026-09-21; fai_kz_compiler.rs; fai-kz-cdn.yml Lauf 35591261870 success.

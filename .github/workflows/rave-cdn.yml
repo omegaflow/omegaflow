@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Ensure the rave-survey.org release exists on the CDN
         run: |
           gh release view rave-survey.org --repo omegaflow/sources >/dev/null 2>&1 \
