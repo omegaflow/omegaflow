@@ -1,5 +1,5 @@
 ---
-description: Mountain-Linie (Fundament — was ruht, was bleibt) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: Mountain-Linie — baut Code und Toolchain (Archivar/Mathematikerin), cargo check sauber, Gate-Fixtures. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
