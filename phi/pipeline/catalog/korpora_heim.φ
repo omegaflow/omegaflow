@@ -24,10 +24,162 @@ decline b2find_provider_map.φ | EUDAT legal notice: Verbreitung/Weitergabe an D
 redistribute wdcc_catalog.φ | metadata CC0 (Terms of Use §2: "defaulted under Creative Commons Zero (CC0)") | https://www.wdc-climate.de/ui/info?site=termsofuse
 redistribute dataverse_harvard.φ | datasets CC0-by-default (Community Norms §CC0 Waiver); metadata citation reusable | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute dataverse_borealis.φ | datasets CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
-pending cmr_catalog.φ | NASA-Teil public domain (US-Gov), aber CMR aggregiert Partner-Metadaten; earthdata data-use-policy CloudFront-geblockt | https://www.earthdata.nasa.gov/
-pending dataone_catalog.φ | terms-of-use redirectet auf old.dataone.org (Fehler-Frame); kein Metadaten-Lizenzstatement gefunden | https://www.dataone.org/
+redistribute cmr_catalog.φ | NASA CMR = US-Gov-Werk, public domain (17 U.S.C. §105); Metadaten-Sätze NASA-erzeugt | https://www.nasa.gov/terms-of-use/
+pending dataone_catalog.φ | /terms liefert HTTP 401 (Auth); Metadaten-Lizenz nicht messbar | https://www.dataone.org/terms
 redistribute seanoe_catalog.φ | Datensätze CC-lizenziert (gemessen: LICENCE-Facette CC-BY/CC0/CC-BY-NC/…) | https://www.seanoe.org/
 
-# Die übrigen Korpora (erddap, lter, icos, inrae, oai_arxiv, tap_index*,
-# arcgis, copernicus, esa, nasa, gbif, heliocloud, bodc, cdaweb, rpw, …)
-# tragen kein gemessenes Verdikt — pending, nicht verschoben, nicht 0.0.
+# ── US-Government public domain ──
+redistribute erddap_noaa_pmel_catalog.φ | public domain — "in the public domain… may be used without charge for any lawful purpose" | https://www.weather.gov/disclaimer
+redistribute noaa_nodd_inventory.φ | public domain (NOAA) — s.o. | https://www.weather.gov/disclaimer
+redistribute noaa_nodd_disposition.φ | public domain (NOAA) — s.o. | https://www.weather.gov/disclaimer
+redistribute nasa_cmr_tags.φ | public domain — 17 U.S.C. §105 ("Copyright protection… is not available for any work of the United States Government") | https://www.nasa.gov/terms-of-use/
+redistribute nasa_cmr_vokabular.φ | public domain (17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute nasa_gcmd_keywords.φ | public domain (17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute cdaweb_missions.φ | public domain (NASA CDAWeb, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute asteroid_diameters_neowise.φ | NEOWISE = NASA-Missionsdaten, public domain (17 U.S.C. §105); geerntet via VizieR J/ApJ/741/68 | https://ssd.jpl.nasa.gov/
+redistribute asteroid_gm_sb441.φ | public domain (JPL SSD, 17 U.S.C. §105) | https://ssd.jpl.nasa.gov/
+redistribute tap_index_heasarc.φ | public domain (NASA GSFC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_irsa.φ | public domain (NASA/IPAC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_exoarchive.φ | public domain (NASA/IPAC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_mast.φ | public domain (STScI/NASA, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_jwst.φ | public domain (JWST, NASA-led, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_chandra.φ | public domain (NASA/CXC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_chandra_csc.φ | public domain (NASA/CXC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_chandra_csc1.φ | public domain (NASA/CXC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_chandra_csc2.φ | public domain (NASA/CXC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_chandra_csc21.φ | public domain (NASA/CXC, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+redistribute tap_index_cfa_tdc.φ | public domain (NASA/CXC, CfA, 17 U.S.C. §105) | https://www.nasa.gov/terms-of-use/
+
+# ── permissive (gemessen) ──
+redistribute lter_sites.φ | "LTER data and metadata may be released under the license: CC BY… Alternatively… CC0" | https://lternet.edu/data-access-policy/
+redistribute lter_sensors.φ | CC BY / CC0 (s.o.) | https://lternet.edu/data-access-policy/
+redistribute copernicus_catalog.φ | "made available… on a free, full, and open basis" | https://www.copernicus.eu/en/access-data
+redistribute copernicus_catalogues.φ | "free, full, and open basis" | https://www.copernicus.eu/en/access-data
+redistribute copernicus_disposition.φ | "free, full, and open basis" | https://www.copernicus.eu/en/access-data
+redistribute icos_catalog.φ | "ICOS data is licensed under the Creative Commons Attribution 4.0 International licence (CC BY 4.0)" | https://www.icos-cp.eu/data-services/about-data-portal/data-licence
+redistribute tap_index_gavo.φ | "Unless noted otherwise, distributed under Creative Commons CC0" | https://www.g-vo.org/
+
+# ── eigenes Werk (omegaflow) ──
+redistribute domain_tags.φ | eigenes Werk (Domain-Landkarte, kein Dritt-Korpus) | omegaflow
+redistribute archeology_gaps_index.φ | eigenes Werk (Gap-Index) | omegaflow
+redistribute provider_links.φ | eigenes Werk (Provider-Linkliste) | omegaflow
+redistribute solar_omega_g.φ | eigenes Werk (Messwert sun 1277 10) | omegaflow
+redistribute terrapulse_catalog.φ | eigenes Werk (Crawl-Index, Dispositionen) | omegaflow
+redistribute grind_arcgis_index.φ | eigenes Werk (Grind-Index, Dispositionen) | omegaflow
+redistribute grind_eogateway_index.φ | eigenes Werk (Grind-Index, Dispositionen) | omegaflow
+redistribute grind_vires_catalog.φ | eigenes Werk (Grind-Index, Dispositionen) | omegaflow
+redistribute esa_geomagnetic_catalog.φ | eigenes Werk (Befund/Disposition, Linkliste) | omegaflow
+redistribute rpw_datacenter_catalog.φ | eigenes Werk (Befund/Disposition) | omegaflow
+redistribute heliocloud_catalog.φ | eigenes Werk (Befund/Disposition) | omegaflow
+
+# ── decline: CDS/VizieR — Metadaten-System privat, Daten nur wissenschaftlich ──
+decline tap_index.φ | CDS Rules of usage: "The Information system including the metadata is private and reserved to the CDS" | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline tap_index_vizier_obstap.φ | CDS (s.o.): Metadaten privat, CDS vorbehalten | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline tap_index_xcatdb.φ | CDS (s.o.): Metadaten privat, CDS vorbehalten | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline tapvizier_descriptions.φ | CDS (s.o.): Metadaten privat, CDS vorbehalten | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline vizier_gold_catalogs.φ | CDS (s.o.): Metadaten privat, CDS vorbehalten | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline asteroid_diameters_akari.φ | CDS: Daten "free of usage in a scientific context", "commercial usage… subject to rules" (J/PASJ) | https://cds.unistra.fr/vizier-org/licences_vizier.html
+decline asteroid_gm_inpop25c.φ | CDS: Daten "free of usage in a scientific context", kommerziell reglementiert (J/A+A) | https://cds.unistra.fr/vizier-org/licences_vizier.html
+
+# ── redistribute: ESO — CC BY 4.0 (gemessen, ESO Data Access Policy) ──
+redistribute tap_index_eso.φ | "ESO data files (both raw and processed data) may be distributed by third parties, and disseminated via other services, according to the terms of the Creative Commons Attribution 4.0 International license" | http://www.eso.org/cms/eso-data-access-policy.html
+
+# ── redistribute: GAVO (AIP Potsdam + ARI Heidelberg) — CC0 (Footer gemessen) ──
+redistribute tap_index_aip_gavo.φ | GAVO: "Unless noted otherwise, distributed under Creative Commons CC0"; gavo.aip.de = GAVO DaCHS Potsdam (Spiegel von reg.g-vo.org) | https://www.g-vo.org/
+redistribute tap_index_gaia_aip.φ | GAVO/AIP Potsdam (s.o.): CC0 | https://www.g-vo.org/
+redistribute tap_index_musewide.φ | GAVO/AIP Potsdam (s.o.): CC0 | https://www.g-vo.org/
+redistribute tap_index_ari.φ | GAVO/ARI Heidelberg (s.o.): CC0 | https://www.g-vo.org/
+
+# ── decline: TAP-Einzelhosts — keine Weitergabe-Erlaubnis (© Institut, kein CC/PD-Statement auf Service-/Policy-Seite gemessen) ──
+# ALMA (ESO/NAOJ/NRAO-Partnerschaft; Datenpolitik ohne CC-Lizenz)
+decline tap_index_alma_ea.φ | ALMA NAOJ: keine Weitergabe-Erlaubnis, © ALMA (ESO/NAOJ/NRAO), kein CC-Statement | https://almascience.nao.ac.jp/tap/sync
+decline tap_index_alma_eu.φ | ALMA ESO: keine Weitergabe-Erlaubnis, © ALMA (ESO/NAOJ/NRAO), kein CC-Statement | https://almascience.eso.org/tap/sync
+decline tap_index_alma_na.φ | ALMA NRAO: keine Weitergabe-Erlaubnis, © ALMA (ESO/NAOJ/NRAO), kein CC-Statement | https://almascience.nrao.edu/tap/sync
+# ESA (ESAC-Archive; Portal JS-gerendert, keine CC-Lizenz messbar)
+decline tap_index_ehst.φ | ESA eHST: © ESA, keine Weitergabe-/CC-Lizenz auf der Archiv-Seite | https://hst.esac.esa.int/tap-server/tap
+decline tap_index_esaskylegacy.φ | ESASky Legacy/ESA: © ESA, keine CC-Lizenz | http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap
+decline tap_index_hreda.φ | HREDA/ESA: © ESA, keine CC-Lizenz | https://hreda.esac.esa.int/hreda-sl-tap/tap
+decline tap_index_isla.φ | ISLA/ESA: © ESA, keine CC-Lizenz | https://isla.esac.esa.int/tap/tap
+decline tap_index_psa.φ | PSA/ESA: © ESA, keine CC-Lizenz | https://psa.esa.int/psa-tap/tap
+decline tap_index_xmm.φ | XMM-Newton/ESA: © ESA, keine CC-Lizenz | https://nxsa.esac.esa.int/tap-server/tap
+# CSIRO (Data Access Portal; keine CC-Lizenz messbar)
+decline tap_index_atoavo.φ | CSIRO/ATNF: keine Weitergabe-Erlaubnis, kein CC-Statement | https://atoavo.atnf.csiro.au/tap/sync
+decline tap_index_casda.φ | CASDA/CSIRO: keine Weitergabe-Erlaubnis, kein CC-Statement | https://casda.csiro.au/casda_vo_tools/tap/sync
+decline tap_index_psrdavo.φ | CSIRO PSRDAVO: keine Weitergabe-Erlaubnis, kein CC-Statement | https://data.csiro.au/psrdavo/tap/sync
+# ASVO (NCI Australia)
+decline tap_index_macho.φ | ASVO/MACHO: keine Weitergabe-Erlaubnis, kein CC-Statement | http://machotap.asvo.nci.org.au/ncitap/tap/sync
+decline tap_index_skymapper.φ | SkyMapper/ASVO: keine Weitergabe-Erlaubnis (Survey-Datenpolitik, kein CC) | https://api.skymapper.nci.org.au/public/tap/sync
+decline tap_index_wigglez.φ | WiggleZ/ASVO: keine Weitergabe-Erlaubnis, kein CC-Statement | http://wiggleztap.asvo.nci.org.au/ncitap/tap/sync
+# WFAU (Edinburgh)
+decline tap_index_osa.φ | WFAU/OSA: keine Weitergabe-Erlaubnis, kein CC-Statement | http://tap.roe.ac.uk/osa/sync
+decline tap_index_ssa.φ | WFAU/SSA: keine Weitergabe-Erlaubnis, kein CC-Statement | http://tap.roe.ac.uk/ssa/sync
+decline tap_index_vsa.φ | WFAU/VSA: keine Weitergabe-Erlaubnis (VISTA-Datenpolitik, kein CC) | http://tap.roe.ac.uk/vsa/sync
+decline tap_index_wsa.φ | WFAU/WSA: keine Weitergabe-Erlaubnis, kein CC-Statement | http://tap.roe.ac.uk/wsa/sync
+# PADC / Observatoire de Paris
+decline tap_index_maser.φ | PADC/MASER: keine Weitergabe-Erlaubnis, kein CC-Statement | http://voparis-tap-maser.obspm.fr/tap
+decline tap_index_padc_astrom.φ | PADC: keine Weitergabe-Erlaubnis, kein CC-Statement | http://voparis-tap-astro-m.obspm.fr/tap
+decline tap_index_padc_he.φ | PADC: keine Weitergabe-Erlaubnis, kein CC-Statement | http://voparis-tap-he.obspm.fr/tap
+decline tap_index_padc_helio.φ | PADC: keine Weitergabe-Erlaubnis, kein CC-Statement | http://voparis-tap-helio.obspm.fr/tap
+decline tap_index_padc_planeto.φ | PADC: keine Weitergabe-Erlaubnis, kein CC-Statement | http://voparis-tap-planeto.obspm.fr/tap
+decline tap_index_rcsed.φ | PADC/RCSED: keine Weitergabe-Erlaubnis, kein CC-Statement | http://padc-tap-rcsed.obspm.fr/tap
+# INAF / OMA / OCA / VESPA (Europlanet)
+decline tap_index_ia2_projects.φ | IA2/INAF: keine Weitergabe-Erlaubnis, kein CC-Statement | http://archives.ia2.inaf.it/vo/tap/projects
+decline tap_index_vespa_ia2.φ | VESPA/INAF: keine Weitergabe-Erlaubnis (Europlanet-VESPA, kein CC) | http://vespa.ia2.inaf.it/tap
+decline tap_index_ksb_orb.φ | OMA (Belgien): keine Weitergabe-Erlaubnis, kein CC-Statement | https://vo-tap.oma.be/tap
+decline tap_index_vespa_ae.φ | VESPA/OMA: keine Weitergabe-Erlaubnis (Europlanet-VESPA, kein CC) | http://vespa-ae.oma.be/tap
+decline tap_index_dachs_oca.φ | OCA: keine Weitergabe-Erlaubnis, kein CC-Statement | https://dachs.oca.eu/tap
+decline tap_index_solar_dachs.φ | OCA: keine Weitergabe-Erlaubnis, kein CC-Statement | https://solar-dachs.oca.eu/tap
+decline tap_index_parsec.φ | Europlanet/PaRSEC: keine Weitergabe-Erlaubnis (Europlanet-VESPA, kein CC) | http://parsec-europlanet.eu/tap
+# Einzelhosts (ohne Redistributions-Lizenz auf Service-/Institut-Seite)
+decline tap_index_cadc.φ | CADC/NRC: keine Weitergabe-Erlaubnis, kein CC-Statement (Data-Use-Seite ohne Lizenzklausel) | https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync
+decline tap_index_astron.φ | ASTRON: keine Weitergabe-Erlaubnis, kein CC-Statement | https://vo.astron.nl/tap
+decline tap_index_cdpp.φ | CDPP/IRAP: keine Weitergabe-Erlaubnis, kein CC-Statement | https://cdpp-epntap.irap.omp.eu/tap
+decline tap_index_climso.φ | CLIMSO/OV-GSO: keine Weitergabe-Erlaubnis, kein CC-Statement | https://epntap.climso.ovgso.fr/tap
+decline tap_index_datacentral.φ | DataCentral (AU): keine Weitergabe-Erlaubnis, kein CC-Statement | https://datacentral.org.au/vo/tap
+decline tap_index_einsteinprobe.φ | Einstein-Probe (CAS): keine Weitergabe-Erlaubnis, kein CC-Statement | http://39.105.187.183:8080/tap/tap
+decline tap_index_fu_berlin_hrsc.φ | FU Berlin: keine Weitergabe-Erlaubnis, kein CC-Statement | http://dachs.planet.fu-berlin.de/tap
+decline tap_index_iap.φ | IAP Prag (CAS): keine Weitergabe-Erlaubnis, kein CC-Statement | http://dorotka.ufa.cas.cz/tap
+decline tap_index_idoc.φ | IDOC/IAS: keine Weitergabe-Erlaubnis, kein CC-Statement | https://idoc-dachs.ias.u-psud.fr/tap
+decline tap_index_jive.φ | JIVE: keine Weitergabe-Erlaubnis, kein CC-Statement | http://evn-vo.jive.eu/tap
+decline tap_index_konkoly.φ | Konkoly: keine Weitergabe-Erlaubnis, kein CC-Statement | http://nadir.konkoly.hu/tap
+decline tap_index_lam.φ | LAM: keine Weitergabe-Erlaubnis, kein CC-Statement | https://vo.lam.fr/tap
+decline tap_index_latmos.φ | LATMOS/IPSL: keine Weitergabe-Erlaubnis, kein CC-Statement | http://vo.projet.latmos.ipsl.fr/tap
+decline tap_index_leibniz_kis.φ | Leibniz KIS: keine Weitergabe-Erlaubnis, kein CC-Statement | http://dachs.sdc.leibniz-kis.de/tap
+decline tap_index_lso.φ | LSO: keine Weitergabe-Erlaubnis, kein CC-Statement | http://193.87.1.40:8080/tap
+decline tap_index_mercator.φ | KU Leuven/Mercator: keine Weitergabe-Erlaubnis, kein CC-Statement | https://mercatorvo.ster.kuleuven.be/tap
+decline tap_index_nancay.φ | Nancay: keine Weitergabe-Erlaubnis, kein CC-Statement | http://vogate.obs-nancay.fr/tap
+decline tap_index_pvol.φ | PVOL (EHU): keine Weitergabe-Erlaubnis, kein CC-Statement | http://pvol2.ehu.eus:8083/tap
+decline tap_index_ssdc.φ | SSDC/ASI: keine Weitergabe-Erlaubnis, kein CC-Statement | https://tools.ssdc.asi.it/TAPSSDC/tap
+decline tap_index_ucl.φ | UCL: keine Weitergabe-Erlaubnis, kein CC-Statement | http://astroweb.projects.phys.ucl.ac.uk:8000/tap
+decline tap_index_upjs.φ | UPJS (SK): keine Weitergabe-Erlaubnis, kein CC-Statement | https://skvo.science.upjs.sk/tap
+decline tap_index_youcat.φ | CANFAR: keine Weitergabe-Erlaubnis, kein CC-Statement | https://ws-uv.canfar.net/youcat/sync
+decline tap_index_lamost_dr10.φ | LAMOST DR10: keine Weitergabe-Erlaubnis, kein CC-Statement | https://www.lamost.org/dr10/v2.0/voservice/tap/sync
+decline tap_index_lamost_dr11.φ | LAMOST DR11: keine Weitergabe-Erlaubnis, kein CC-Statement | https://www.lamost.org/dr11/v2.0/voservice/tap/sync
+
+# ── redistribute: übrige Provider (gemessen) ──
+redistribute gbif_tags.φ | GBIF-Netz-Datenpolitik (via Wayback): "CC0, under which data are made available for any use without restriction" / "CC BY… any use provided attribution"; Enumerationen/Facetten faktisch | https://www.gbif.org/terms
+redistribute gbif_vocabulary.φ | GBIF (s.o.): CC0/CC-BY, Enumerations-Vokabular faktisch | https://www.gbif.org/terms
+redistribute oai_arxiv.φ | arXiv-Metadaten CC0 (OAI-PMH/Bulk-Access-Abschnitt der Lizenz-Hilfeseite) | https://info.arxiv.org/help/license.html
+redistribute inrae_catalog.φ | Recherche-Data-Gouv (Dataverse): Metadaten CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
+
+# ── decline: übrige Provider (Untersagung / keine Weitergabe-Erlaubnis) ──
+decline arcgis_catalog.φ | Esri/ArcGIS: kommerzielle Lizenz, Redistribution/Weiterverbreitung untersagt (Master Agreement/Terms of Use) | https://www.esri.com/en-us/legal/terms
+decline arcgis_tags.φ | Esri/ArcGIS (s.o.): Redistribution untersagt | https://www.esri.com/en-us/legal/terms
+decline inaturalist_vokabular.φ | iNaturalist (via Wayback): "you agree to license Content you contribute… under the Creative Commons Attribution Noncommercial license (CC BY-NC)" — NC = keine kommerzielle Weitergabe | https://www.inaturalist.org/pages/terms
+
+# ── pending: weiter nicht messbar (gemessener Grund) ──
+pending bcodmo_catalog.φ | Data-Policy-Seite 404 (Next.js); Site-Meta "free and open access to publicly funded research products", Lizenzklausel nicht messbar | https://www.bco-dmo.org/
+pending erddap_bcodmo_catalog.φ | BCO-DMO ERDDAP (s.o.): Lizenzklausel nicht messbar (Policy 404) | https://www.bco-dmo.org/
+pending bodc_catalog.φ | Policies-Seite /about/policies/ 404; BODC-Lizenz (OGL/je Datensatz) nicht messbar | https://www.bodc.ac.uk/about/policies/
+pending esa_eogateway_data.φ | ESA-EO-Gateway (Portal JS-gerendert); Datenpolitik ohne Lizenzklausel im Raw-Fetch, --playwright ohne Lizenzstatement | https://earth.esa.int/eogateway/
+pending gfz_igets_catalog.φ | GFZ-DOIDB/IGETS: Lizenz-Statement nicht messbar (Terms-Seite nicht auffindbar) | https://doidb.wdc-terra.org/
+pending gaia_swpc_vokabular.φ | gemischt Gaia (© ESA) + NOAA SWPC (public domain); die SWPC-Anteile sind PD, die Gaia-Anteile © ESA — kein einheitliches Statement | https://www.cosmos.esa.int/web/gaia/
+
+# Schluss (Auflösung 2026-09-21): 76 pending → 10 redistribute, 59 decline, 7 pending.
+# redistribute: ESO (CC BY 4.0), GAVO/AIP/ARI (CC0), GBIF (CC0/CC-BY), arXiv (CC0),
+#   NASA CMR (PD), INRAE/Recherche-Data-Gouv (Dataverse CC0).
+# decline: Esri/ArcGIS, iNaturalist (CC BY-NC), und die TAP-Einzelhosts
+#   (ESA/ALMA/CSIRO/ASVO/WFAU/PADC/INAF/OMA/OCA + Einzelinstitute) — keine
+#   Weitergabe-Erlaubnis (© Institut, kein CC/PD-Statement auf der Service-/Policy-Seite).
+# pending: bcodmo (Policy 404), bodc (Policy 404), esa-eogateway (Portal JS),
+#   gfz (Terms nicht auffindbar), dataone (/terms 401), gaia_swpc (gemischt ESA/NOAA).

@@ -1161,7 +1161,7 @@ compiler tools/harvest/src/bin/radnet_compiler.rs
 sha256 128ac4fd695f63a2e5fd156e1b416408880577555acf9e676d0e76b242a31c34
 at earth
 ttl 86400
-note EPA RadNet ERM_RESULT (Envirofacts): Route 200 2026-09-21; result_in_si=Bq/L (em), result_date YYYY-MM-DD; lat/lon ueber FEMA/Univ-Arizona AGOL (item caed82e8e13f47b183e2c7a1412949bc, Stand 2021), exakter Station-Join.
+note EPA RadNet ERM_RESULT (Envirofacts): Route 200 2026-09-21; result_in_si=Bq/L (em), result_date YYYY-MM-DD; lat/lon ueber FEMA/Univ-Arizona AGOL (item caed82e8e13f47b183e2c7a1412949bc), Station-Join; CI-Lauf 35649300152 2026-09-21 queued.
 field result_in_si radnet_activity_bq_l inverse-square em Bq/L 86400 0.0 0.0
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
@@ -14013,7 +14013,7 @@ format sky1
 at sun
 ttl 3600
 field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
-note Babamul Caltech LSST/ZTF-Broker /api/babamul/objects Bearer 200 2026-09-21 (anonym 401); /surveys/{survey}/alerts verlangt Pflichtparameter — 400 ohne; sky1 value=magpsf; Workflow babamul-cdn.yml; CDN babamul_alerts.bin 404.
+note Babamul Caltech LSST/ZTF-Broker /api/babamul/objects Bearer 200 (anonym 401); /surveys/{survey}/alerts Pflichtparameter — 400 ohne; sky1 value=magpsf; CI-Lauf 35649296996 dispatched 2026-09-21 (queued); CDN babamul_alerts.bin 404.
 
 url https://github.com/omegaflow/sources/releases/download/ia2-tap.oats.inaf.it/ia2_wgesdss.bin
 origin http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL

@@ -16,7 +16,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 pending
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN 2026-09-21: FITACF-POST superdarn.ca/data-download → sdc-serv.usask.ca/data/…fitacf.bz2 (200, sha256 48637f08…); Inventar /db-fitacf-files-bounce; FRDR 31 Datasets; Zenodo 822 Records cc-zero; nur full-res RAWACF Globus+PI. pending.
+note SuperDARN 2026-09-21: Globus-Zugang (MAP/fitacf_25/fitacf_30), GCP omegaflow; MAP-Transfer 6.561 Dateien/21,93 GB → data/superdarn/map (Task af68c4f1). FITACF gebaut (sources.φ:9465). RAWACF Globus+PI, Gruppe rawacf nicht beantragt. pending.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -60,5 +60,5 @@ note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableF
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen: get_program_list 500 (ORDS), RADNET/ERM nicht in FRS_PROGRAM_FACILITY; get_facilities verlangt state_abbr/registry_id/zip. Koordinaten via AGOL Item caed82e8e13f47b183e2c7a1412949bc.
+note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen: get_program_list 500 (ORDS), RADNET/ERM nicht in FRS_PROGRAM_FACILITY; get_facilities verlangt state_abbr/registry_id/zip. AGOL caed82e8e13f47b183e2c7a1412949bc; CI-Lauf 35649300152 2026-09-21 queued.
 
