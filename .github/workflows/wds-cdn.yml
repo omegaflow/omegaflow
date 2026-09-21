@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
+      - name: Ensure the vizier.cds.unistra.fr release exists on the CDN
+        run: |
+          gh release view vizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create vizier.cds.unistra.fr --repo omegaflow/sources \
+                 --title "vizier.cds.unistra.fr" --notes "CDN family release"
       - name: Chunk-compile wds (8 RA-slices) and upload to CDN
         run: |
           mkdir -p kernels
@@ -39,7 +44,7 @@ jobs:
             [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
           done
           jq -s 'add' kernels/wds_c*.json > kernels/wds.json
-          gh release upload ssd.jpl.nasa.gov kernels/wds.json --clobber --repo omegaflow/sources \
+          gh release upload vizier.cds.unistra.fr kernels/wds.json --clobber --repo omegaflow/sources \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: wds returned void" \
                  "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

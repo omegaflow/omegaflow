@@ -3,7 +3,7 @@ use omegaflow::amon::{
     PRES_REVISION, PRES_SIGNALNESS, PRES_SOD, PRES_TJD, REC_BYTES, decode_rec, encode_rec,
     parse_header, write_header,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::collections::BTreeSet;
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
@@ -340,7 +340,7 @@ fn run(args: &[String]) -> Result<(), String> {
             );
         }
     }
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("gcn.gsfc.nasa.gov", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

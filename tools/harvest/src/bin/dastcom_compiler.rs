@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::dastcom::{RECORD_STRIDE, encode_record, parse_db_record, state_at};
 use std::collections::HashMap;
 use std::fs::File;
@@ -226,7 +226,10 @@ fn main() {
             }
             "--ci-mode" => ci_mode = true,
             "--probe" => {
-                let no = args.get(i + 1).and_then(|n| n.parse().ok()).unwrap_or(0);
+                let no: u32 = match args.get(i + 1).and_then(|n| n.parse::<u32>().ok()) {
+                    Some(n) => n,
+                    None => 0,
+                };
                 let jd = args
                     .get(i + 2)
                     .and_then(|j| j.parse().ok())
@@ -267,7 +270,7 @@ fn main() {
     }
     eprintln!("dastcom join: {} gm, {} diameters", gm.len(), diam.len());
     compile_catalog(&input, &out_path, &gm, &diam);
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("ssd.jpl.nasa.gov-dastcom", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

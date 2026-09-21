@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage};
 use omegaflow::gong::{parse_bin, write_bin};
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -228,7 +228,10 @@ fn compile_day(
                         "{day_path}: {} of {} FITS parsed, {} modes",
                         i + 1,
                         n_files,
-                        parsed_total.unwrap_or(0)
+                        match parsed_total {
+                            Ok(n) => n,
+                            Err(_) => 0,
+                        }
                     );
                 }
             }
@@ -237,10 +240,10 @@ fn compile_day(
     for w in workers {
         let _ = w.join();
     }
-    let out = Arc::try_unwrap(out)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let out = match Arc::try_unwrap(out).ok().and_then(|m| m.into_inner().ok()) {
+        Some(v) => v,
+        None => Vec::new(),
+    };
     eprintln!("{day_path}: {} FITS parsed, {} modes", n_files, out.len());
     out
 }
@@ -248,7 +251,10 @@ fn compile_day(
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "gong_modes.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "gong_modes.bin".to_string(),
+    };
     let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
         Some(t) => t,
         None => {
@@ -266,9 +272,16 @@ fn main() {
     let paths: Vec<String> = if let Some(day) = arg_value(&args, "--day") {
         let day = day.trim_end_matches('/').to_string();
         let digits = day.strip_prefix("mrvmt").unwrap_or(&day).to_string();
-        let yy: u32 = digits.get(0..2).and_then(|s| s.parse().ok()).unwrap_or(0);
+        let yy: u32 = match digits.get(0..2).and_then(|s| s.parse::<u32>().ok()) {
+            Some(v) => v,
+            None => 0,
+        };
         let century = if yy >= 50 { "19" } else { "20" };
-        let month = format!("{}{}", century, digits.get(0..4).unwrap_or_default());
+        let month_digits = match digits.get(0..4) {
+            Some(s) => s,
+            None => "",
+        };
+        let month = format!("{}{}", century, month_digits);
         vec![format!("{month}/mrvmt{digits}")]
     } else if let Some(month) = arg_value(&args, "--month") {
         match day_dirs(&month) {
@@ -334,7 +347,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("gong2.nso.edu", &out) {
         std::process::exit(1);
     }
 }

@@ -7,21 +7,21 @@
 # summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
 # blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
-ausstehend
+verifiziert
 kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap — Re-Messung 2026-09-20 (research-max): Web/TLS up (Zert 2026-09-08), PostgreSQL localhost:5432 tot → alle DB-Pfade 500; VOSI availability meldet fälschlich up; GAVO-RofR 116 Zeilen, kein Spiegel. Trigger: sync-QUERY 500→200. Backend down.
+note ivo://fai.kz/tap — Re-Messung 2026-09-21 (ernte): /tap/tables 200 (obscore), sync-QUERY 200 mit Daten (TOP 1 obs_id → grb_photometry/GRB200829A-0002_r_b1.fit). PostgreSQL erreichbar; Trigger sync-QUERY 500→200 erfüllt → verifiziert. Nächster Schritt: Compiler/Katalog obscore.
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — Re-Messung 2026-09-20 (research-max): DB localhost:5432 tot → sync-QUERY 200/VOTable ERROR, /tap/tables 500; https-Zert abgelaufen; VOSI availability fälschlich up; RofR 22 Zeilen, kein Spiegel; Operator tomasik@cbk.waw.pl publiziert. Trigger: /tap/tables 500→200. Backend down.
+note ivo://src.pas/tap — Re-Messung 2026-09-21 (ernte): direct + proton-exit HTTP 0 (0 bytes), wayback 503; Route absent, nicht PostgreSQL-500. Trigger /tap/tables 500→200 unerreicht. Backend weiter ausstehend.
 
 ausstehend
 kandidat https://erddap.emodnet-physics.eu/erddap/info/HFRADAR_NADR_Totals/index.json
-note Re-Messung 2026-09-19: maxTime unverändert 2026-07-30T23:30:00Z (griddap time[last]); Familie-Frontier 2026-07-31T00:00:00Z (5 Geschwister), kein lebendes Geschwister. Familie steht; nächste Re-Messung fällig 2026-10-19.
+note Re-Messung 2026-09-21: erddap.emodnet-physics.eu HTTP 0 (ERR_TIMED_OUT, kein .eu-exit, wayback 503); maxTime/Geschwister nicht messbar. Stand 2026-09-19: maxTime 2026-07-30T23:30:00Z, Frontier 2026-07-31T00:00:00Z, 5 Geschw. Trigger: Host erreichbar.
 
 ausstehend
 kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
-note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml, sources.φ-Block pending sha256; Manifestation offen; Geschwister ucsdHfrW2 200; hfrnet-tds tot (dead_sources.φ:519).
+note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml, sources.φ-Block pending sha256; Manifestation offen — Lauf 35581429287 dispatched (Vorgänger 35577618006 Transient-Failure); ucsdHfrW2 200.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
@@ -29,7 +29,7 @@ note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 20
 
 ausstehend
 kandidat https://zenodo.org/api/records/21185812
-note Quaoar (50000) Sternbedeckungs-Astrometrie 14 a, cc-by-4.0, Quaoar_paper.zip 572467032 B, md5 420a1e9435d569a600c195d39d87dce8, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574 (gestreamt 2026-09-16 ernte-folge52, 2026-09-21 bestätigt); Route 200. Compiler offen.
+note Quaoar-Sternbedeckung, cc-by-4.0, Quaoar_paper.zip 572467032 B, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574; Compiler quaoar_occlt_compiler.rs + Arm quaoar_occlt.rs + Workflow quaoar-occlt-cdn.yml gebaut 2026-09-21; Manifestation offen.
 
 disponiert
 queue phi/pipeline/queue/sources_astro_untested_30-astro.φ

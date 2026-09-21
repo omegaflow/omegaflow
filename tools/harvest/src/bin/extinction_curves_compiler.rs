@@ -159,7 +159,7 @@ fn main() {
         out
     );
     if ci {
-        let ok = omegaflow::cdn::upload_asset(&out);
+        let ok = omegaflow::cdn::upload_release("vizier.cds.unistra.fr", &out);
         eprintln!("upload {}: {}", out, ok);
     }
 }

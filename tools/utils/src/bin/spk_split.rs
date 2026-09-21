@@ -4,7 +4,7 @@ use std::io::{BufReader, Read};
 
 use omegaflow::bsp_reader::daf::{DafFile, RECORD_BYTES};
 use omegaflow::bsp_reader::spk::SpkFile;
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::ephemeris::{
     ASTEROID_GRANULE_DAYS, J2000_EPOCH, body_table, chebyshev_polys, extract_granules,
     state_ssb_multi, write_binary,
@@ -617,7 +617,7 @@ impl Splitter {
                 ));
             }
         }
-        if self.ci_mode && !upload_asset(&path) {
+        if self.ci_mode && !upload_release("ssd.jpl.nasa.gov-spk", &path) {
             die(format!("target {}: {} did not reach the CDN", target, path));
         }
         self.processed.insert(target);
@@ -720,7 +720,10 @@ fn run_list(src: &mut dyn Read) {
             rec_no += 1;
             let names = parse_name_record(&rec, name_chars, summary.summaries.len());
             for (i, sum) in summary.summaries.iter().enumerate() {
-                let name = names.get(i).cloned().unwrap_or_default();
+                let name = match names.get(i).cloned() {
+                    Some(n) => n,
+                    None => String::new(),
+                };
                 if let Some(seg) = seg_from_summary(sum, name) {
                     targets.entry(seg.target).or_default().push(seg);
                     total_segments += 1;
@@ -841,7 +844,10 @@ fn main() {
                 i += 1;
             }
             "--dest" => {
-                dest = args.get(i + 1).cloned().unwrap_or_default();
+                dest = match args.get(i + 1).cloned() {
+                    Some(d) => d,
+                    None => String::new(),
+                };
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -997,7 +1003,10 @@ fn main() {
             rec_no += 1;
             let names = parse_name_record(&rec2, name_chars, summary.summaries.len());
             for (i, sum) in summary.summaries.iter().enumerate() {
-                let name = names.get(i).cloned().unwrap_or_default();
+                let name = match names.get(i).cloned() {
+                    Some(n) => n,
+                    None => String::new(),
+                };
                 if let Some(seg) = seg_from_summary(sum, name) {
                     splitter.note_summary(seg);
                 }

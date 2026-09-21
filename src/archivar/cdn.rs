@@ -2,7 +2,8 @@ use std::collections::HashSet;
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 
-pub const CDN_RELEASE: &str = "ssd.jpl.nasa.gov";
+pub const CDN_TAG: &str = "ssd.jpl.nasa.gov";
+pub const CAPPED_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
 pub const PS1_SLAB_BANDS: u32 = 80;
@@ -37,11 +38,14 @@ fn mark_release_verified(tag: &str) {
     }
 }
 
-pub fn upload_asset(path: &str) -> bool {
-    upload_release(CDN_RELEASE, path)
-}
-
 pub fn upload_release(tag: &str, path: &str) -> bool {
+    if tag == CAPPED_RELEASE {
+        eprintln!(
+            "upload {}: release {} is capped (1000 assets) — upload to the family tag \"<host>-<family>\" instead",
+            path, tag
+        );
+        return false;
+    }
     if std::env::var("GH_TOKEN").is_err() {
         eprintln!("upload {}: GH_TOKEN absent", path);
         return false;
@@ -77,7 +81,7 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
 }
 
 pub fn body_url(name: &str) -> String {
-    format!("{}/{}/ephemeris_{}.bin", CDN_BASE, CDN_RELEASE, name)
+    format!("{}/{}/ephemeris_{}.bin", CDN_BASE, CDN_TAG, name)
 }
 
 pub fn ensure_release(tag: &str) -> bool {

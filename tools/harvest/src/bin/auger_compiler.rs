@@ -1,7 +1,7 @@
 use omegaflow::auger::{
     AugerRecord, HEADER_LEN, REC_BYTES, decode_rec, encode_rec, parse_header, write_header,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::json::{jnum, parse_json};
 use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::collections::BTreeSet;
@@ -199,7 +199,7 @@ fn run(args: &[String]) -> Result<(), String> {
             names.len()
         );
     }
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("opendata.auger.org", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

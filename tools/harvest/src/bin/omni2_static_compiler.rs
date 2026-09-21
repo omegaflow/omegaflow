@@ -1,7 +1,7 @@
 use omegaflow::archivar::omni2::{
     COMP_AE, COMP_AL, COMP_AU, COMP_DST, COMP_SYMH, parse_bin, write_bin,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use std::process::Command;
 
@@ -200,7 +200,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release("spdf.gsfc.nasa.gov", &out) {
         std::process::exit(1);
     }
 }

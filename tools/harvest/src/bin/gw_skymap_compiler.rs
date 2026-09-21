@@ -1,4 +1,4 @@
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::healpix::pix2ang_nest;
 use omegaflow::skymap::{
@@ -330,7 +330,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "sky integral of the decoded density: {:.6} sr^-1 * sr (bayestar marginal normalizes to 1)",
         report.integral
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("gracedb.ligo.org", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the vizier.cds.unistra.fr release exists on the CDN
+        run: |
+          gh release view vizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create vizier.cds.unistra.fr --repo omegaflow/sources \
+                 --title "vizier.cds.unistra.fr" --notes "CDN family release"
       - name: Compile the Fitzpatrick & Massa 2007 per-sightline extinction curves and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin extinction_curves_compiler -- \
@@ -28,4 +33,4 @@ jobs:
                  "extinction_curves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           sha256sum extinction_curves.json | tee extinction_curves.json.sha256
-          gh release upload ssd.jpl.nasa.gov extinction_curves.json.sha256 --repo omegaflow/sources --clobber
+          gh release upload vizier.cds.unistra.fr extinction_curves.json.sha256 --repo omegaflow/sources --clobber

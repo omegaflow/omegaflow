@@ -2,7 +2,7 @@ use omegaflow::archivar::footprint::{
     FootprintBand, FootprintRecord, HEADER_LEN, REC_BYTES, band_code, decode_rec, encode_rec,
     parse_header, write_header,
 };
-use omegaflow::cdn::upload_asset;
+use omegaflow::cdn::upload_release;
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
@@ -300,7 +300,7 @@ fn run(args: &[String]) -> Result<(), String> {
         census.dup_exact,
         census.dup_divergent
     );
-    if ci_mode && !upload_asset(&out_path) {
+    if ci_mode && !upload_release("datalab.noirlab.edu", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())

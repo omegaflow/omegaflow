@@ -17,6 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ssd.jpl.nasa.gov-ps1 release exists on the CDN
+        run: |
+          gh release view ssd.jpl.nasa.gov-ps1 --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create ssd.jpl.nasa.gov-ps1 --repo omegaflow/sources \
+                 --title "ssd.jpl.nasa.gov-ps1" --notes "CDN family release"
       - name: Auto-resume chunked PS1 DR2 harvest, slab-sharded by band range
         run: |
           cargo build -p omegaflow-harvest --release --bin ps1_coverage_compiler --bin ps1_coverage_combiner
@@ -125,7 +130,7 @@ jobs:
             has_part "$tag" "ps1_part_${P}.fp01" || { all_present=0; break; }
           done
           if [ "$all_present" = "1" ]; then
-            if ! has_final=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+            if ! has_final=$(gh release view ssd.jpl.nasa.gov-ps1 --repo omegaflow/sources \
                 --json assets --jq '[.assets[]?.name|select(.=="ps1_dr2_coverage.fp01")]|length' 2>/tmp/gh_listing.err); then
               echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
               exit 1
@@ -141,12 +146,12 @@ jobs:
                 --expect-min "$band_min" --expect-max "$band_max"
               # the legacy order-12 chunks on the shared release cannot merge into an
               # order-10 final; free their slots before the final upload (813 + 1 <= 1000)
-              legacy=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets \
+              legacy=$(gh release view ssd.jpl.nasa.gov-ps1 --repo omegaflow/sources --json assets \
                 --jq '.assets[]?|select(.name|startswith("ps1_part_"))|.name' 2>/dev/null || true)
               for name in $legacy; do
-                gh release delete-asset ssd.jpl.nasa.gov "$name" --yes --repo omegaflow/sources || true
+                gh release delete-asset ssd.jpl.nasa.gov-ps1 "$name" --yes --repo omegaflow/sources || true
               done
-              gh release upload ssd.jpl.nasa.gov ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
+              gh release upload ssd.jpl.nasa.gov-ps1 ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
               echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
             fi
           else
