@@ -13928,3 +13928,22 @@ ttl 31536000
 field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
 note FUGIN-12CO-Moment-0-Karte fgn00000807.sky1 (14263493 B); CDN present 2026-09-19.
 
+url https://api.wolfx.jp/cenc_eqlist.json
+ttl 1541
+at earth
+map .
+lat No1.latitude
+lon No1.longitude
+alt No1.depth
+field No1.magnitude cenc_quake_magnitude gaussian-inverse-square seismic-body M 3600 0.0 0.0
+field No1.depth cenc_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0
+
+url https://api.wolfx.jp/jma_eqlist.json
+ttl 300
+at earth
+map .
+lat No1.latitude
+lon No1.longitude
+alt No1.depth
+field No1.magnitude jma_quake_magnitude gaussian-inverse-square seismic-body M 3600 0.0 0.0
+field No1.depth jma_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0

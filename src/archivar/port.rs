@@ -735,6 +735,10 @@ pub fn probe_mode(
     if std::fs::write("phi/pipeline/probe_survivors.φ", &out).is_err() {
         eprintln!("write phi/pipeline/probe_survivors.φ: the register does not remember");
     }
+    let per_input = format!("{}.survivors.φ", path);
+    if std::fs::write(&per_input, &out).is_err() {
+        eprintln!("write {}: the register does not remember", per_input);
+    }
     if std::fs::write("phi/pipeline/probe_void.txt", &dead).is_err() {
         eprintln!("write phi/pipeline/probe_void.txt: the register does not remember");
     }
