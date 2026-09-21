@@ -480,7 +480,7 @@ fn state_d2(s: u32, t: u32, q: u32, tau: u32) -> f32 {
     return d2;
 }
 
-fn te_embedded(tau_x: u32, tau_y: u32, sy: u32, h_f: f32, h_x: f32, h_y: f32, n: u32) -> f32 {
+fn te_embedded_kde(tau_x: u32, tau_y: u32, sy: u32, h_f: f32, h_x: f32, h_y: f32, n: u32) -> f32 {
     let back_x = (DIM - 1u) * tau_x;
     let back_y = (DIM - 1u) * tau_y;
     let t_low = max(back_x, back_y);
@@ -579,7 +579,7 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
                         let h_y = embedded_silverman(tid, u_ty, n) * h_scale;
                         if (h_f > 0.0 && h_x > 0.0 && h_y > 0.0) {
                             tau = f32(u_ty);
-                            te = te_embedded(u_tx, u_ty, tid, h_f, h_x, h_y, n);
+                            te = te_embedded_kde(u_tx, u_ty, tid, h_f, h_x, h_y, n);
                             valid = 1.0;
                         }
                     }
