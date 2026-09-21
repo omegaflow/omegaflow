@@ -40,5 +40,7 @@ jobs:
           fi
       - name: Compile the Babamul alert stream and manifest the bin to the CDN
         if: steps.idempotence.outputs.present == 'false'
+        env:
+          BABAMUL_API_TOKEN: ${{ secrets.BABAMUL_API_TOKEN }}
         run: |
           cargo run --release -p omegaflow-harvest --bin babamul_compiler -- --ci-mode

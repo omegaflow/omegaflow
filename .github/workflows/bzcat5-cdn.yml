@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile BZCAT5 blazar catalog and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
