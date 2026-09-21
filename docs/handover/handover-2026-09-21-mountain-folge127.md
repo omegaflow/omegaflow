@@ -3,7 +3,7 @@
   session: Mountain-Folge 127
   class: handover
   date: 2026-09-21
-  sha256: 363e4c057a1c1289740cd3c9f90f7f634ad9d30743f37f27b0a29c71e2ed779a
+  sha256: 2bb5f50a8f0f794768c49dccbdd98d71ac3eee413b69904ceb82ccd4cbe58314
   status: live
 -->
 # Handover — Mountain-Folge 127 (2026-09-21)
@@ -31,7 +31,8 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
   limit reached", informativ); kein handlungsbedürftiger Fall.
 - **CI** — der geteilte CI-Stand steht in `docs/zustand/external-state.md`
   (Zeile „CI-Status", von river folge2 fortgeschrieben) — hier nicht kopiert.
-  Der eigene Trigger: `esp32-firmware 35615957619` **failure** (Wurzel in Punkt 2).
+  Der eigene Trigger: `esp32-firmware 35625255981` **success** (Host-Tests +
+  esp-Build) — die DS18B20-Verifikation ist geschlossen (Punkt 2 entfernt).
 - **`register_lookup --open`** — 601 offen, 0 Post, kein mountain-getaggter
   Register-Punkt offen.
 - **`git_safety --snapshot`** — Arbeitsbaum == HEAD beim Start, nichts zu sichern.
@@ -54,18 +55,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
   (`GLM-L2-LCFA/2026/001/00/`) → Element-Zahl nach Read; falls die echte Datei
   eine nicht gelistete `nsz`/`tsz`-Kombination trägt, Fix.
 
-### 2. DS18B20 1-Wire + Cutoff — CI-Verifikation
-- **Status:** termin (Lauf) | **Bindung:** eigen
-- **Lage:** Host-Tests **65 pass** im Lauf `35615957619`; der esp-Build scheiterte
-  am **transienten** `espup`-Toolchain-Download (HTTP 504 Gateway Timeout) — kein
-  Code-Fehler. Neulauf `35625255981` auf HEAD dispatcht. Entscheid `unstable`:
-  **behalten** — gemessen (grind-pro): nur `gpio::Flex` ist `#[instability::unstable]`
-  (`one_wire.rs:16–62`, `main.rs:143`); kein stabiler Einzelpin-Bidirektional-
-  Treiber in esp-hal 1.2.1, `ds18b20`/`one-wire-bus` sind embedded-hal-0.2 (2020).
-- **Blockade:** Lauf-Abschluss.
-- **Braucht:** `ci_manage view 35625255981`; bei success Punkt zu.
-
-### 3. `flush_port_block` — CI-Verifikation des Fix
+### 2. `flush_port_block` — CI-Verifikation des Fix
 - **Status:** termin (Lauf) | **Bindung:** eigen
 - **Lage:** `flush_port_block` (`src/archivar/port.rs:360`) prüft den
   `# pending`-Marker jetzt **vor** dem `parsed`-Zweig. Wurzel: der `map`-Extract
@@ -75,7 +65,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** Lauf (ci-check nach Push).
 - **Braucht:** nach Push `ci-check` → Test grün.
 
-### 4. Ox64-Zweitknoten — Hardware/Bring-up
+### 3. Ox64-Zweitknoten — Hardware/Bring-up
 - **Status:** wartend | **Bindung:** dritter
 - **Lage:** PINE64 hat den Ox64 zugesagt; Versanddaten wurden gesendet
   (`docs/zustand/external-state.md`, Postfach-Zeile); Gerät nicht da; Doku
@@ -87,8 +77,9 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 ## Benchmark
 
 - Punkt 1 → `grind-max` (hartes Parser-Atom: Urteil + Schreiben in einem
-  Kontext); Punkt 2 (Entscheid `unstable`) → `grind-pro`; Punkt 3 im
-  `line`-Kontext. Kein Doppel-Lauf auf derselben Aufgabe, kein neuer Sieger.
+  Kontext); der DS18B20-Entscheid `unstable` (behalten, gemessen) → `grind-pro`;
+  der `flush_port_block`-Fix im `line`-Kontext. Kein Doppel-Lauf auf derselben
+  Aufgabe, kein neuer Sieger.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
