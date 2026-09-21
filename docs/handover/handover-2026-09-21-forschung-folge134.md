@@ -3,7 +3,7 @@
   session: Forschung-Folge 134
   class: handover
   date: 2026-09-21
-  sha256: 53848c7bb792b71550eabce8872ef3a61fb8d231453205fe0376b0485b7006b3
+  sha256: da8f339d6f9b3326850a54cc5c8f5f914b006594eb0c5274b366631377a1f0a2
   status: live
 -->
 # Handover — Forschung-Folge 134 (Stand 2026-09-21)
@@ -117,8 +117,11 @@ excess +18.2 sd) trägt ihn getrennt; der rote Assert ist Fixture-/Gate-Frage
   - (5) Stale-Zeile `docs/concepts/archivar-mathematikerin.md:36` auf den
     gemessenen Stand (Header-sha256 `2469e1b6…`).
 - **Blockade:** CI-Nachweis (funktionaler Lauf nur in CI).
-- **Braucht:** `te-gate`-Lauf (der neue Test läuft in der Kalibrier-Batterie);
-  die zwei Fixture-Zahlen aus dem Lauf lesen und in die Riss-Zeile setzen.
+- **Braucht:** `ci-check` (push-getriggert über `src/**`): der neue Test
+  `riss_ksg_kde_estimator_split_is_measured` läuft im `test`-Job
+  (`cargo test --release --features browser_relay`). Die zwei Fixture-Zahlen
+  druckt der Test nicht (silent on green); sie kommen aus einem `te_fn_probe`-Lauf
+  (druckt `te_scal`/`te_topo`) und werden in die Riss-Zeile gesetzt.
 - **Offene Confounder (Council, unverändert):** FN läuft auf dem skalaren KDE,
   kein topologischer Pfad trägt eine topologische FN; der KSG-Kanon speist
   keinen Produktions-Konsumenten (Verdrahtungs-Loch); f32/f64 bleibt ein
@@ -179,7 +182,7 @@ Der KSG/KDE-Split berührt zwei Paper nur am Rand:
 | 3. `--dropped` Baseline | wartend | eigen | Läufe cancelled | Run-Abschluss | nächster ci-check-Lauf → Baseline |
 | 4. confirmation-Test | wartend | eigen | rot am Schätzer | grüner Screen (←1) | Workflow-Zeile |
 | 5. F3/F4 + Takens | wartend | eigen | — | grüner Screen (←1) | getrennte Läufe |
-| 6. Riss 4 KSG↔KDE | wartend | eigen | B gebaut (5 Pflichten + Benennung), check 0/0 | CI-Nachweis | `te-gate`-Lauf; Fixture-Zahlen lesen |
+| 6. Riss 4 KSG↔KDE | wartend | eigen | B gebaut (5 Pflichten + Benennung), check 0/0 | CI-Nachweis | `ci-check`-Test; `te_fn_probe` für die Zahlen |
 | 8. Flyby-Path-2 | termin:2026-09-28 | termin | Auftrag steht | Datum | Zellen ab Perigäum |
 | 9. NSE/Haug | wartend | dritter | Route offen | Dateieingang | Trigger |
 | 10. BepiColombo MORE | termin:2027-04 | termin | Anfrage gesendet | Freigabe | Wissenschaftsphase |
