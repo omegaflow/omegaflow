@@ -4075,3 +4075,506 @@ decline no-physical-force
 url https://gwosc.org/eventapi/jsonfull/allevents/
 note 671 Events; events=Objekt (kein Array). SNR/chi_eff/p_astro/redshift dimensionslos; Massen M_sun, luminosity_distance Mpc, far 1/yr = positionslose Quellparameter. Kein ra/dec. GW-Skymap via GraceDB gw250207_115645.sky1 (sources.φ:9814).
 
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC — gleicher Endpoint, Query-param differiert.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+note AERONET AOD bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline superseded-by-integrated
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+note AERONET SDA bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
+
+decline model-forecast
+url https://api.coral.tsr.lol/stations/gbr_central/current
+note coral.tsr.lol/stations ist decline; current.stress_level (dimensionsloser Bleaching-Index) wurde als advective km/s fehlklassifiziert — Modell-Index, kein Feld.
+
+decline model-forecast
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+note coral.tsr.lol/stations ist decline; current.stress_level dimensionsloser Bleaching-Index, fehlklassifiziert.
+
+decline model-forecast
+url https://api.coral.tsr.lol/stations/gbr_southern/current
+note coral.tsr.lol/stations ist decline; current.stress_level dimensionsloser Bleaching-Index, fehlklassifiziert.
+
+decline presence-catalog
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+note GBIF-Artenbeobachtung (Presence), wie api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true decline presence-catalog.
+
+decline presence-catalog
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+note GBIF-Artenbeobachtung (Presence), decline presence-catalog.
+
+decline no-physical-force
+url https://api.geonet.org.nz/volcano/val
+note Vulkan-Alarmstufe (properties.level, 0–5) — dimensionsloser Index; wurde als advective km/s fehlklassifiziert; kein physikalisches Feld.
+
+decline presence-catalog
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+note OBIS-Artenbeobachtung (Presence), wie api.obis.org/v3 decline presence-catalog.
+
+decline presence-catalog
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+note OBIS-Artenbeobachtung (Presence), decline presence-catalog.
+
+decline presence-catalog
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+note OBIS-Artenbeobachtung (Presence), decline presence-catalog.
+
+decline presence-catalog
+url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
+note OBIS-Artenbeobachtung (Presence), decline presence-catalog.
+
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+note Open-Meteo-Forecast (hourly Mehrhöhen-Modell); api.open-meteo forecast-Varianten, Modell nicht Messung.
+
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=gem_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+note Open-Meteo gem_seamless Modell-Forecast, decline model-forecast.
+
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=jma_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+note Open-Meteo jma_seamless Modell-Forecast, decline model-forecast.
+
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=meteofrance_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+note Open-Meteo meteofrance_seamless Modell-Forecast, decline model-forecast.
+
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&models=metno_seamless&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto
+note Open-Meteo metno_seamless Modell-Forecast, decline model-forecast.
+
+decline superseded-by-integrated
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=air_pressure&units=metric&time_zone=gmt&format=json
+note datagetter-Variante (product=air_pressure, fester Station 9414290); sources.φ trägt datagetter?station={station}&product=water_level.
+
+decline model-forecast
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=predictions&datum=MSL&units=metric&time_zone=gmt&format=json
+note Gezeitenvorhersage (product=predictions) — Modell/Forecast, kein gemessenes Feld.
+
+decline superseded-by-integrated
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
+note datagetter-Variante (fester Station 9414290, datum=MSL); sources.φ trägt datagetter?station={station}&product=water_level&datum=MLLW.
+
+decline superseded-by-integrated
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=wind&units=metric&time_zone=gmt&format=json
+note datagetter-Variante (product=wind, fester Station 9414290); sources.φ trägt datagetter water_level.
+
+decline station-registry
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+note Stationsverzeichnis (mdapi stations.json) — Registry ohne Messwert.
+
+decline station-registry
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric
+note Stationsverzeichnis (mdapi stations.json) — Registry ohne Messwert.
+
+decline station-registry
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric&tz=gmt
+note Stationsverzeichnis (mdapi stations.json) — Registry ohne Messwert.
+
+decline superseded-by-integrated
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+note WAQI (token=demo, AQI-Index aggregiert); api.waqi.info ist decline; geo-Variante desselben.
+
+decline superseded-by-integrated
+url https://api.waqi.info/feed/here/?token=demo
+note WAQI (token=demo, AQI-Index aggregiert); api.waqi.info ist decline.
+
+decline station-registry
+url https://api.weather.gov/points/39.7456,-97.0892
+note NWS grid-point-Metadaten (points) — Registry/position-only, kein Feldwert.
+
+decline kein-feld
+url https://api.weather.gov/stations/KJFK/observations/latest
+note NWS-Stationsmessung (windSpeed/temperature/dewpoint) — Probe klassifizierte kein Feld (nur # uncertain .value-Pfade); physikalisch, Parser-Gap.
+
+decline station-registry
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+note WOUDC-Ozon-Stationsverzeichnis (collections/stations) — Registry ohne Messwert.
+
+decline text-warning
+url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+note AIRMET/SIGMET — Text-Warnung (Unwetter-Advisory), movementDir/Spd abgeleitet; kein Sensormesswert.
+
+decline model-forecast
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+note TAF (Terminal Aerodrome Forecast) — Vorhersage, kein Messwert.
+
+decline model-forecast
+url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+note TAF (Terminal Aerodrome Forecast) — Vorhersage, kein Messwert.
+
+decline station-registry
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e028503.cat&version=current
+note CDMS-Molekülspektroskopie-Katalog (cdmsinfo .cat) — Linien-Registry, kein Feldwert; cdms vamdc/tap ist decline.
+
+decline station-registry
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e044502.cat&version=current
+note CDMS-Molekülspektroskopie-Katalog (cdmsinfo .cat) — Linien-Registry, kein Feldwert.
+
+decline duplicate-eop
+url https://datacenter.iers.org/data/9/finals2000A.all
+note IERS EOP (finals2000A) — datacenter.iers.org/data/csv/bulletina-ex-001.csv ist decline; EOP-Duplikat.
+
+decline duplicate-eop
+url https://datacenter.iers.org/data/csv/finals2000A.data.csv
+note IERS EOP (finals2000A CSV) — decline duplicate-eop.
+
+decline kein-feld
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+note PMEL-ERDDAP CO2-Moorings (pCO2/pH/SST) — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline kein-feld
+url https://data.sensor.community/airrohr/v1/filter/type=SPS30
+note sensor.community Luftgüte (SPS30-Feinstaub) — physikalisch; Probe klassifizierte kein Feld (nur uncertain sensordatavalues.value), Parser-Gap.
+
+decline kein-feld
+url https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/10min/
+note INPE-Queimadas Feuerpunkte — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline text-warning
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+note IceCube-AMON-Alert (HTML-Liste) — Text-/Event-Liste, kein Feldwert.
+
+decline text-warning
+url https://gcn.nasa.gov/circulars/44806.json
+note GCN-Circular (Freitext-JSON, kein ra/dec) — Text-Warnung, kein Feldwert.
+
+decline kein-feld
+url https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq{year2}{yday}.dat
+note NOAA-Solrad Albuquerque (Solarstrahlung) — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline aggregate-index
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+note CO2-Globalmittel (Jahresmittel) — positionsloser Skalar-Index; co2_daily_mlo ist decline.
+
+decline aggregate-index
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+note CO2-Wachstumsrate (global) — positionsloser Skalar-Index.
+
+decline kein-feld
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+note LISIRD SDO/EVE Spektralbestrahlung — physikalisch; Probe klassifizierte kein Feld; lasp fism/eve ist decline.
+
+decline kein-feld
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+note LISIRD TSIS Gesamtbestrahlung — physikalisch; Probe klassifizierte kein Feld; lasp fism/eve ist decline.
+
+decline superseded-by-integrated
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
+note NED-TAP (ra/dec/z Katalog); ned.ipac.caltech.edu/api ist decline; Frame at sun falsch für extragalaktisch.
+
+decline superseded-by-integrated
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,194.9,27.9,3.0))%3D1
+note NED-TAP (ra/dec/z Katalog); ned.ipac.caltech.edu/api ist decline; Frame at sun falsch für extragalaktisch.
+
+decline duplicate-omni
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi?activity=retrieve&res=hour&spacecraft=omni2&start_date={year}{month}{day}&end_date={year}{month}{day}&vars=13,14,15,16,17,18,19,20,21,22,23&format=csv
+note OMNI2-Solarwind — decline duplicate-omni.
+
+decline no-physical-force
+url https://opensky-network.org/api/states/all?lamin={lat_min}&lomin={lon_min}&lamax={lat_max}&lomax={lon_max}
+note OpenSky Flugzeug-Telemetrie (active object) — Aktuator-Kinematik, kein propagierendes Feld; decline no-physical-force.
+
+decline no-physical-force
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+note OpenSky Flugzeug-Telemetrie (active object) — decline no-physical-force.
+
+decline reference-constant
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+note NIST-CODATA-Referenzkonstanten — decline reference-constant.
+
+decline aggregate-index
+url https://psl.noaa.gov/data/correlation/amon.us.data
+note AMO-Index (skalar, positionslos) — decline aggregate-index.
+
+decline aggregate-index
+url https://psl.noaa.gov/data/correlation/ao.data
+note AO-Index (skalar, positionslos) — decline aggregate-index.
+
+decline aggregate-index
+url https://psl.noaa.gov/data/correlation/nao.data
+note NAO-Index (skalar, positionslos) — decline aggregate-index.
+
+decline aggregate-index
+url https://psl.noaa.gov/data/correlation/pdo.data
+note PDO-Index (skalar, positionslos) — decline aggregate-index.
+
+decline model-forecast
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+note RAPID-MOC (Meridional Overturning Circulation) — abgeleitete/Modell-Größe, kein Punktmesswert.
+
+decline station-registry
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+note Meteoriten-Katalog (tidytuesday CSV) — Registry ohne Feldwert.
+
+decline station-registry
+url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=text&nodata=404
+note IRIS-FDSN-Stationsmetadaten (network=IC,AU) — Registry ohne Messwert.
+
+decline station-registry
+url https://service.iris.edu/fdsnws/station/1/query?network=II&level=station&format=text&nodata=404
+note IRIS-FDSN-Stationsmetadaten (network=II) — Registry ohne Messwert.
+
+decline station-registry
+url https://service.iris.edu/fdsnws/station/1/query?network=IU&level=station&format=text&nodata=404
+note IRIS-FDSN-Stationsmetadaten (network=IU) — Registry ohne Messwert.
+
+decline station-registry
+url https://service.iris.edu/fdsnws/station/1/query?network=YT&level=station&format=text&nodata=404
+note IRIS-FDSN-Stationsmetadaten (network=YT) — Registry ohne Messwert.
+
+decline model-forecast
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+note SWPC-OVATION-Aurora-Vorhersage (Modell-Grid) — decline model-forecast.
+
+decline aggregate-index
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+note Kp-Index (geomagnetisch, skalar) — decline aggregate-index.
+
+decline model-forecast
+url https://services.swpc.noaa.gov/json/solar_regions.json
+note SWPC-Solarregions — Flare-Wahrscheinlichkeiten (Modell), kein Feldwert; Probe klassifizierte kein Feld.
+
+decline station-registry
+url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
+note JPL-Spektralkatalog (c018003.cat) — Linien-Registry, kein Feldwert.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,20,23,24'&CAL_FORMAT='BOTH'
+note Horizons-Ephemeride (COMMAND=-125544) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29'
+note Horizons-Ephemeride (COMMAND=-125544) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+note Horizons-Ephemeride (COMMAND=-125544) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (COMMAND=-31) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+note Horizons-Ephemeride (COMMAND=-31) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (COMMAND=-32) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+note Horizons-Ephemeride (COMMAND=-32) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+note Horizons-Ephemeride (COMMAND=499 Mars) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'&SKIP_DAYLT='NO'
+note Horizons-Ephemeride (COMMAND=499 Mars) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+note Horizons-Ephemeride (COMMAND=499 Mars) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+note Horizons-Ephemeride (COMMAND=599 Jupiter) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+note Horizons-Ephemeride (COMMAND=599 Jupiter) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+note Horizons-Ephemeride (COMMAND=699 Saturn) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'
+note Horizons-Ephemeride (COMMAND=699 Saturn) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+note Horizons-Ephemeride (COMMAND=699 Saturn) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (COMMAND=-96) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (99942 Apophis) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
+note Horizons-Ephemeride (99942 Apophis) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3D65803%3BDimorphos'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (65803 Didymos/Dimorphos) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+note Horizons-Ephemeride (C/2023 A3 Tsuchinshan-ATLAS) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
+note Horizons-Ephemeride (C/2023 A3) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+note Horizons-Ephemeride (C/2023 A3) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+note JPL-CAD (Close Approach, Ephemeriden-basiert) — decline superseded-by-ephemeris.
+
+decline superseded-by-ephemeris
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+note JPL-Fireball (Meteor-Events, Ephemeriden-basiert) — decline superseded-by-ephemeris.
+
+decline kein-feld
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+note USGS-NWIS Abfluss (parameterCd=00060) — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline kein-feld
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
+note USGS-NWIS Pegel (parameterCd=00065,00060) — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline kein-feld
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+note USGS-NWIS Pegel (parameterCd=00065) — physikalisch; Probe klassifizierte kein Feld, Parser-Gap.
+
+decline station-registry
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
+note Smithsonian-GVP-Holozän-Vulkankatalog — Registry ohne Messwert.
+
+decline station-registry
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+note Smithsonian-GVP-Holozän-Vulkankatalog (csv) — Registry ohne Messwert.
+
+decline station-registry
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+note Smithsonian-GVP-Pleistozän-Vulkankatalog — Registry ohne Messwert.
+
+decline aggregate-index
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+note ONI (Oceanic Niño Index) — skalar, positionslos.
+
+decline aggregate-index
+url https://www.cpc.ncep.noaa.gov/data/indices/soi
+note SOI (Southern Oscillation Index) — skalar, positionslos.
+
+decline aggregate-index
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+note SST-OI-Indices — skalar, positionslos.
+
+decline aggregate-index
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+note NAO-Monatsindex — skalar, positionslos.
+
+decline station-registry
+url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
+note ENA-Bio-Sample-Suche — Registry, kein physikalischer Messwert.
+
+decline kein-feld
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=1&lmw=5&umw=10&lms=0&ums=10&lmb=0&umb=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&lts=-9999&uts=9999&lpe1=0&upe1=90&lpe2=0&upe2=90&list=6
+note Global-CMT-Moment-Tensor-Katalog — physikalisch (seismisch); Probe klassifizierte kein Feld, Parser-Gap.
+
+decline station-registry
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+note MPC-NEO-Confirmation-Page — Objekt-Katalog, kein Messwert.
+
+decline superseded-by-integrated
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+note IBTrACS v04r00 — ncei ibtracs v04r01 ist im Bestand; Versions-Variante.
+
+decline kein-latlon
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+note WOA-Ozean-Wärmeinhalt — physikalisch; positionslos (Becken-Mittel), kein lat/lon.
+
+decline aggregate-index
+url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+note ERSST-PDO-Index — skalar, positionslos.
+
+decline paleo-catalog
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+note Eisbohrkern-CO2 (WAIS Divide) — Paläo-Rekonstruktion, positionslos.
+
+decline paleo-catalog
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+note Eisbohrkern-CH4/CO2 (EPICA Dome C) — Paläo-Rekonstruktion, positionslos.
+
+decline paleo-catalog
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+note Eisbohrkern-δD (Vostok) — Paläo-Rekonstruktion, positionslos.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+note NDBC latest_obs-Aggregat — ndbc realtime2-Stationen im Bestand; Aggregat-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+note NDBC DART (23401) — ndbc realtime2/.dart-Stationen im Bestand; Station-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+note NDBC DART (32401) — ndbc realtime2/.dart-Stationen im Bestand; Station-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
+note NDBC Spectral (41001.spec) — ndbc 41001.txt im Bestand; Produkt-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+note NDBC DART (41420) — ndbc realtime2/.dart-Stationen im Bestand; Station-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/44065.txt
+note NDBC stdmet (44065) — ndbc realtime2/.txt-Stationen im Bestand; Station-Variante.
+
+decline superseded-by-integrated
+url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+note NDBC DART (51407) — ndbc realtime2/.dart-Stationen im Bestand; Station-Variante.
+
+decline station-registry
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+note NGDC-Hazard-Vulkankatalog — Registry ohne Messwert.
+
+decline station-registry
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+note ORFEUS-FDSN-Stationsmetadaten — Registry ohne Messwert.
+
+decline aggregate-index
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+note Sonnenfleckenrelativzahl (täglich) — skalar, positionslos.
+
+decline aggregate-index
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+note Sonnenfleckenrelativzahl (monatlich) — skalar, positionslos.
