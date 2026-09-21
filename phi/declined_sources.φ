@@ -942,6 +942,10 @@ decline redistribution
 url https://dev.meteostat.net/api/stations/nearby.html
 note Meteostat-Dev-Docs — API verlangt Key. Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
+decline redistribution
+url https://developer.amentum.io/register
+note Amentum Developer (geomagnetisch/aviation-radiation/gravity): register 200 2026-09-21, „14-day free trial"/„Enterprise API access" = kommerzieller Dienst; Trial ist Testzugang, kein Redistributionsrecht. Operator-Wort 2026-09-21.
+
 decline no-physical-force
 url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
 note Patent-Registry.
