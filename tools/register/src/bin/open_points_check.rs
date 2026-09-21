@@ -144,7 +144,7 @@ fn normalize(word: &str) -> Option<String> {
     let cleaned = without_lines.trim_end_matches(|c: char| {
         matches!(
             c,
-            ')' | ']' | '}' | '>' | ',' | ';' | '\'' | '"' | '|' | '*' | '`' | '.'
+            ')' | ']' | '}' | '>' | ',' | ';' | ':' | '\'' | '"' | '|' | '*' | '`' | '.'
         )
     });
     let cleaned = cleaned.strip_prefix("./").unwrap_or(cleaned);
@@ -192,6 +192,14 @@ mod tests {
         assert_eq!(
             normalize("docs/handover/post.md).").as_deref(),
             Some("docs/handover/post.md")
+        );
+        assert_eq!(
+            normalize("`state/mail/mail_ledger.φ`:").as_deref(),
+            Some("state/mail/mail_ledger.φ")
+        );
+        assert_eq!(
+            normalize("`docs/zustand/dropped-baseline.md`.").as_deref(),
+            Some("docs/zustand/dropped-baseline.md")
         );
     }
 

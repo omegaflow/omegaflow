@@ -1,0 +1,211 @@
+<!--
+  title: Handover — Entscheid-Folge 75 (Förderweg von Hardware auf Person/Ideen/Projekte umgestellt: gemessener Katalog + Emergent-Ventures-Entwurf) (Stand 2026-09-21)
+  session: Entscheid-Folge 75
+  class: handover
+  date: 2026-09-21
+  sha256: 266614a27d902643efada571ff16463702c2b7c599fc49074bddf9c4bf4c63c2
+  status: live
+-->
+# Handover — Entscheid-Folge 75 (2026-09-21)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
+geteilten Dateien nur die eigenen Hunks — committet wird nur der eigene Teil,
+fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene
+Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward).
+
+Es gibt keine Rangfolge — die offenen Punkte werden parallel von Agenten
+abgearbeitet. Jeder offene Punkt wird **aufgeschlüsselt** geführt: **Lage**
+(Zustand, gemessen) / **Blockade** (woran es hängt, oder „keine") / **Braucht**
+(was es löst: Werkzeug, Datei, URL, Anfrage, Operator-Wort). Jeder Punkt trägt
+seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
+
+## Stehender Pass (gemessen 2026-09-21, Entscheid-Folge 75)
+
+- **HEAD** `d30f5bd1` (entscheid folge74) — `origin/main` == HEAD. Arbeitsbaum
+  trägt nur fremde, uncommittete Arbeit (`ci-check.yml`,
+  `register_lookup.rs`, `dropped-baseline.md`, `radnet_compiler.rs`) — **nicht
+  eigene**; nicht angefasst.
+- **Postfach** — `state/mail/mail_ledger.φ`: kein neuer Eingang; neuester
+  weiterhin `1789973288` (Tuxedo Ticket#991311279: keine kostenlosen
+  Geräte/Sponsorings an Privatpersonen — Hardware-Punkt beidseitig declined).
+  `external-state.md` Postfach-Zeile nachgezogen.
+- **CI** — `ci_manage view` 2026-09-21: `free-model-bench` `35567266519` +
+  `free-model-agent-bench` `35567268692` weiter **in_progress** (`updated_at`
+  06:09Z, seither kein Update). Watchdog-Snapshot 09:07:02: `ps1-cdn`
+  `35569486280`, `ci-check` `35569256029`, `te-gate` `35567711055`,
+  `demeter-cdn` `35567568429` (queued), `health-check` `35556807317`
+  in_progress; failed: `hyperscanning-te` `35570480672`/`35567708611`,
+  `rpw-cdn` `35569266300`, `ci-check` `35566258372`. Kein Poll.
+  `external-state.md` CI-Zeile auf HEAD `d30f5bd1` nachgezogen.
+- **`register_lookup --open`** — 3 `[entscheid]`-Registerpunkte
+  `phi/blocked_sources.φ:21/60/65` (SuperDARN / solar-system-open-data /
+  Amentum) → Operator-Queue; 2 fremde OPEN
+  (`handover-2026-09-20-pii-llm-budget.md:67/73`).
+- **`git_safety --snapshot`** — `refs/safety/1789975789`.
+
+## Messung dieses Atoms (kein offener Punkt)
+
+- **Förderweg umgestellt** (Operator-Wort 2026-09-21): nicht mehr
+  hardware-gebunden (Mantis-Shrimp), sondern **Förderung der Person, der Ideen
+  und der Projekte**. Der hardware-gebundene Befund (folge73: kein Programm
+  nimmt ein ungebautes Gerät) bleibt gültig, trägt aber nur noch den
+  Hardware-Teil.
+- **Katalog person-bezogener Förderung** (research-max, gemessen via
+  `archive_search --brave/--all/--verdict/--playwright`) gefaltet in
+  `docs/surveys/survey-funding-erkundung.md` (Nachtrag 2026-09-21): 12
+  Programme bewertet. OSI-gated entfallen per Operator-Entscheid 2026-09-20.
+  **A: Emergent Ventures** (rolling, institutionsfrei, kein Grad, non-profit,
+  keine OSI-Bedingung, 3-Fragen-Antrag), **Recurse Center** (in-kind).
+  **B:** Shuttleworth, Foresight. **C:** Mozilla, Coefficient, EA-Funds,
+  Manifund, Weiland, Long Now. **Ungeeignet:** Sloan, DFG/Humboldt/DAAD
+  (institutionsgebunden).
+- **Emergent-Ventures-Entwurf** gebaut: `state/mail/emergent-ventures-application.md`
+  (Wer/Was/Beweis + QUELLEN-Block). Genaue Formularfragen `pending` (vor dem
+  Absenden einmal messen).
+- **`open_points_check` Parser-Rest-Gap geschlossen** (eigene Linie, folge74-Datei):
+  ein backtick-quotierter Pfad mit unmittelbar folgendem `:` (`` `path`: prose ``)
+  wurde mit dem `:` als Pfad getestet → falsches `ABSENT`. Fix: `:` in die
+  `trim_end_matches`-Menge (`normalize`); zwei Testfälle ergänzt. `cargo check
+  -p omegaflow-register` grün, null Warnungen. **Die laufende Binärdatei ist
+  weiterhin der alte Release-Stand** (folge74-Fix + dieser Fix noch nicht in
+  `tools-latest`) — daher meldet `open_points_check` 5 `ABSENT` in diesem
+  Handover, alle **falsch-positiv** (Pfade existieren auf dem Baum: die drei
+  `state/mail/*`, `phi/blocked_sources.φ`, `docs/zustand/dropped-baseline.md`).
+
+## Offen (aufgeschlüsselt)
+
+### Förderung Person/Ideen/Projekte — Emergent Ventures (nächster Schritt)
+- **Status:** `operator-gebunden` | **Bindung:** `dritter`
+- **Lage:** Emergent Ventures ist das einzige gemessene Programm, das alle
+  Randbedingungen trägt (institutionsfrei, kein Grad, weltweit, non-profit,
+  keine OSI-Bedingung, rolling offen, Person+Idee). Entwurf liegt in
+  `state/mail/emergent-ventures-application.md`.
+- **Blockade:** (a) Einreichung ist Dritt-Akt → Operator-Wort; (b) Route
+  `mercatus.org/emergent-ventures` gemessen **HTTP 403** (Cloudflare, direct +
+  Proton, kein Wayback-Snapshot) → Browser-Bridge oder Proton-Exit, ebenfalls
+  Operator-Wort.
+- **Braucht:** Operator-Wort „einreichen" + Route; vorher die genauen
+  3 Formularfragen messen. `smail` ist hier nicht der Weg (Web-Formular).
+
+### Shuttleworth-Frist (Register-Duty)
+- **Status:** `blockiert` | **Bindung:** `eigen`
+- **Lage:** `readme.shuttleworthfoundation.org/for-applicants/` — direct HTTP 0,
+  Proton absent, Wayback 429 (gemessen 2026-09-21); Intakes historisch
+  1.3./1.9., aktueller Schluss `pending`.
+- **Blockade:** Route gesperrt (SOCKS/Cloudflare); kein Snapshot.
+- **Braucht:** Browser-Bridge (Operator-Profil) oder `--playwright --headed`;
+  dann Frist einmal messen. Entscheidet EV-vor-Shuttleworth nicht — EV bleibt
+  der nächste Schritt.
+
+### `open_points_check`-Fix im Release (Register-Duty)
+- **Status:** `wartend` | **Bindung:** `eigen`
+- **Lage:** Der Parser-Fix (folge74: Trailing-Backtick/Klammer; folge75: `:`)
+  liegt im Quellbaum, aber `tools-latest` trägt noch die alte Binärdatei —
+  `open_points_check` meldet weiter falsche `ABSENT`.
+- **Blockade:** Trigger `tools-build`-Lauf → neues `tools-latest`.
+- **Braucht:** nach dem Push `gh workflow run tools-build.yml`; danach
+  `bin/.tools_ensure open_points_check` (sha256-Abgleich). Kein Poll.
+
+### Free-Model-Bench (P13 + P2–P4) — die 105 Modelle
+- **Status:** `wartend` | **Bindung:** `eigen`
+- **Lage:** Input = `tools/measure/free_models.tsv` (**exakt 105 Zeilen**, 10
+  Provider: zai 3, tokenrouter 1, kenari 15, kilo 18, openrouter 19, opencode 7,
+  google 12, groq 4, nvidia 15, cloudflare-workers-ai 11). Läufe `35567266519`
+  (free-model-bench, 7 Tasks × 105 Modelle) + `35567268692`
+  (free-model-agent-bench) seit 06:09Z `in_progress`, `updated_at` 06:09:56
+  eingefroren, **kein Job-Log** (`ci_manage log` → 404, Job 106231471964) —
+  Runner-Queue statt Fehler. Kein Artefakt. Kein früherer erfolgreicher
+  free-model-Lauf in den letzten 100 Läufen → **keine Median-Basis** (Watchdog
+  cancelt nicht).
+- **Blockade:** Trigger „Run-Abschluss" nicht gefeuert; Laufzeit bis 360 min
+  erlaubt (Bench: curl `-m 60`, max 3×429-Retry ≤120 s).
+- **Braucht:** Run-Abschluss abwarten, dann Artefakte **einmal** lesen
+  (`ci_manage view 35567266519` / `35567268692`; `gh run download <id> -n
+  free-model-bench`) und das Ranking oder `pending` als Zeile tragen. Kein Poll.
+
+### PINE64-Dokumentationspflicht (Ox64 / Mantis-Shrimp)
+- **Status:** `blockiert` | **Bindung:** `linie:bau`
+- **Lage:** Ox64 von Pine64 zugesagt (Hardware beidseitig geschlossen); die
+  Presence-Hardware „Mantis-Shrimp" ist ungebaut.
+- **Blockade:** Hardware existiert nicht; Bau gehört zur **bau-Linie**.
+- **Braucht:** bau baut minimalen Mantis-Shrimp (Spec
+  `docs/specs/mantis-shrimp-bom.md` + BOM liegen) und dokumentiert danach den
+  Ox64. Nachricht liegt in `docs/handover/post.md` (`An bau:`).
+
+### Mantis-Shrimp-Bewerbungen (Förderweg)
+- **Status:** `operator-gebunden` | **Bindung:** `operator`
+- **Lage:** Am 21.09. gemessen: Espressif-Developer-Programm existiert nicht,
+  SOCIS läuft nicht, GSoC 2026 geschlossen + omegaflow keine gelistete Org,
+  Crowd Supply verlangt einen funktionierenden Prototyp. Gilt nur noch für den
+  **Hardware**-Teil; die Person-Förderung läuft separat (siehe oben).
+- **Blockade:** Kein Programm nimmt ein ungebautes Gerät an; der Prototyp fehlt.
+- **Braucht:** Operator-Entscheid — Prototyp bauen (dann Crowd Supply, parallel
+  GSoC-2027-Org-Antrag) **oder** descopen.
+
+## Operator-Queue (Stand folge75; einfache Sprache, je Eintrag Lage/Blockade/Braucht, mit Alter)
+
+1. **Förderung Person/Ideen/Projekte** — **Lage:** Katalog gemessen, Emergent
+   Ventures ist der nächste Schritt (Entwurf liegt). **Blockade:** Einreichung +
+   Route brauchen dein Wort. **Braucht:** Operator-Wort „EV einreichen" (Route
+   über Browser-Bridge/Proton)? (Alter: seit 2026-09-21, neu)
+2. **Mantis-Shrimp-Bewerbungen** — **Lage:** kein Hardware-Förderweg für ein
+   ungebautes Gerät (siehe oben). **Blockade:** Prototyp ungebaut. **Braucht:**
+   Operator-Entscheid bauen/descopen. (Alter: seit 2026-09-16)
+3. **Eigenprize / Solitude** — **Lage:** Eigenprize-Runde geschlossen (Deadline
+   31.03.2026, keine nächste Runde datiert); Solitude ~Herbst 2027
+   (`state/mail/solitude-application.md`). **Blockade:** keine offene Runde.
+   **Braucht:** „Remind me" auf `https://eigen.build` setzen und
+   `state/mail/eigenprize-application.md` finalisieren? (Alter: seit 2026-09-20)
+4. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
+   **Lage:** Sicherheitsereignis, App hat Kontozugriff. **Blockade:** offener
+   Zugriff. **Braucht:** App unter
+   `github.com/settings/connections/applications` widerrufen? (Alter: seit 2026-09-20)
+5. **SuperDARN** (`blocked account`, `phi/blocked_sources.φ:21`) — **Lage:**
+   HF-Radar-Ionosphären-Konvektion, Route über Globus + PI-Vereinbarung.
+   **Blockade:** kein Konto, keine PI-Vereinbarung. **Braucht:** Konto +
+   PI-Vereinbarung eingehen? (Alter: seit 2026-09-16)
+6. **solar-system-open-data REST** (`blocked key`, `phi/blocked_sources.φ:60`) —
+   **Lage:** HTTP 401 (Bearer-Token). **Blockade:** kein Token. **Braucht:**
+   Konto/Token anlegen? (Alter: seit 2026-09-20)
+7. **Amentum Developer** (`blocked account`, `phi/blocked_sources.φ:65`) —
+   **Lage:** geomagnetisch/aviation-radiation/gravity (trial). **Blockade:**
+   keine Registrierung. **Braucht:** `developer.amentum.io/register`? (Alter:
+   seit 2026-09-20)
+8. **Split-Routing-Verifikation** — **Lage:** 8 `000`-Hosts ungemessen.
+   **Blockade:** braucht sudo + Netz. **Braucht:** Operator-Wort/Route für
+   `./bin/proton-exit.sh ca` + direct↔tunnel-Nachmessung. (Alter: seit Ernte
+   folge12–17)
+9. **Cookie-Transfer** — **Lage:** `operator-gebunden`, Auslöser „Bedarf".
+   **Blockade:** kein Bedarf. **Braucht:** nichts — wartend. (Alter: seit 2026-09-16)
+10. **Hardware-Sponsoring** — **Lage:** Pine64 zugesagt (Ox64), Framework
+    abgelehnt, Tuxedo Ticket#991311279 declined. **Blockade:** keine.
+    **Braucht:** nichts — geschlossen.
+
+## Benchmark
+
+- **Delegation (Entscheid-Folge 75):** 1 × `research-max` (pro/max) für das
+  harte Recherche-Atom „person-bezogener Förderkatalog" — mehrstufige
+  Netz-Recherche über 16 Quellen, Klasse „harte Recherche" (kein Doppel-Lauf
+  gegen flash, Klasse ist als hart geführt). Ergebnis: 12 Programme gemessen,
+  Emergent Ventures als einziger A-Treffer. Kein flash-Doppel (Kosten).
+
+## Geteilter Baum — eigener Pfad-Satz
+
+- `docs/surveys/survey-funding-erkundung.md` (Nachtrag 2026-09-21)
+- `state/mail/emergent-ventures-application.md` (neu, gitignored)
+- `tools/register/src/bin/open_points_check.rs` (Parser-Fix `:` + 2 Testfälle)
+- `docs/zustand/external-state.md` (Postfach- + CI-Zeile)
+- `docs/handover/handover-2026-09-21-entscheid-folge75.md` (neu)
+- Move `handover-2026-09-21-entscheid-folge74.md` → `archiv/` (eigene Linie, atomar)
+- **nicht** angefasst: fremde `phi/*`, `tools/harvest`, fremde CI-/Zustand-Zeilen,
+  die fremde uncommittete Änderung `tools/register/src/bin/register_lookup.rs`,
+  `.github/workflows/ci-check.yml`, `docs/zustand/dropped-baseline.md`.
+
+## Abschluss
+
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Nach dem Push
+`tools-build.yml` dispatchten (Register-Crate geändert → neues `tools-latest`,
+das den `open_points_check`-Fix trägt) und `ci-check.yml`; kein Poll — Ergebnis
+einmalig lesen (`ci_manage view <id>`). `smail`-Versand ist hier nicht der Weg
+(Web-Formular EV); die Einreichung selbst braucht per-Akt-Consent.
