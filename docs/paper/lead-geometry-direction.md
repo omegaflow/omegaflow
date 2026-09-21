@@ -2,7 +2,7 @@
   title: The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
   class: paper
   date: 2026-08-24
-  sha256: bece8a30dce7d48aa06b956e2245a62832abd0fb9265cd9c3531fa78c92f16e5
+  sha256: 8710bad6caf299f983127265bd0c8fd1fceb111b34247dc5a4e401f225161707
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md
 -->
@@ -78,7 +78,7 @@ false-positive rate fell from 100 % to 6.7 % (`te_rng_fix_probe`), and the
 calibration gate lives as `#[cfg(test)]` in `src/mathematikerin/te.rs`. All verdicts below
 are measured under the corrected machine. The residual bias is named: at
 n = 300 the topological path still finds true coupling only rarely
-(`te_fn_probe`: 0–3/10) — the 3D embedding carries the KDE bias over the
+(`te_fn_probe`: 0–3/10) — the 3D embedding carries the KSG bias over the
 coupling, an open point that does not drive false positives. The arrow count
 survives the corruption because it is not the false-positive rate: the FP rate
 is a null-calibration readout on synthetic independent pairs (a ⊥ b, no true
@@ -162,7 +162,7 @@ the diagnostic sense.
 
 - **The residual bias is named, not drained.** At n = 300 the topological
   path finds true coupling only rarely (0–3/10); the 3D embedding carries the
-  KDE bias over the coupling. The bias does not drive the false-positive rate
+  KSG bias over the coupling. The bias does not drive the false-positive rate
   (6.7 % after the RNG fix), but it caps the power — real couplings may be
   missed.
 - **The envelopes are not AR(1).** The null (phase-randomized surrogates) is

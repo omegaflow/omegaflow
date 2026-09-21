@@ -891,7 +891,7 @@ impl MatrixMachine {
         }
         if excess > 0.0 {
             self.say(format!(
-                "{} n {} te {:.3} thr {:.3} state arrow",
+                "{} n {} te(kde) {:.3} thr {:.3} state arrow",
                 label, n, v.te, v.threshold
             ));
         }
@@ -908,7 +908,7 @@ impl MatrixMachine {
             if stale {
                 self.pending = None;
                 self.pending_since = None;
-                self.say("matrix te readback timeout — cell pending".to_string());
+                self.say("matrix te(kde) readback timeout — cell pending".to_string());
                 return;
             }
             self.te_map = Some(prev);
@@ -1056,7 +1056,7 @@ impl MatrixMachine {
                     "arrow"
                 };
                 let parts = format!(
-                    "matrix sheet {}→{} lag {}d n {} te {:.3} thr {:.3} fam {:.3} p {:.3} M {} h {}/3 state {}",
+                    "matrix sheet {}→{} lag {}d n {} te(kde) {:.3} thr {:.3} fam {:.3} p {:.3} M {} h {}/3 state {}",
                     driver, target, d_star, n_star, te, thr, acc.fam, p_hat, acc.m, robust, state
                 );
                 (state, parts, p_hat, acc.m)
