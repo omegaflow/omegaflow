@@ -47,15 +47,11 @@ fn valid(r: &ObsRecord) -> bool {
     if !mandatory_valid(r) {
         return false;
     }
-    if let Some(band) = &r.em_band_m {
-        if !em_band_valid(band) {
-            return false;
-        }
+    if r.em_band_m.as_ref().is_some_and(|band| !em_band_valid(band)) {
+        return false;
     }
-    if let Some(s) = r.t_exptime_s {
-        if !exptime_valid(s) {
-            return false;
-        }
+    if r.t_exptime_s.is_some_and(|s| !exptime_valid(s)) {
+        return false;
     }
     true
 }
@@ -236,7 +232,7 @@ pub fn parse_obscore_csv(body: &str) -> Option<(Vec<ObsRecord>, ObscoreCsvCounts
         });
         counts.emitted += 1;
     }
-    if records.is_empty() {
+    if counts.rows == 0 {
         return None;
     }
     Some((records, counts))
