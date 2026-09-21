@@ -1,5 +1,5 @@
 ---
-description: River-Linie (Fluss — Bewegung, Phase, was fließt) — Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
+description: River-Linie — die lebendige Membran (ω()-Loop, WebGPU-Feld, Präsenz, Echo, Browser-Brücke). Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
 agent: plan
 ---
 
