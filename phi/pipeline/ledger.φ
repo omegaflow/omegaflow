@@ -7,90 +7,18 @@
 # summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
 # blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
-kompiliert
-kandidat https://dachs.fai.kz/tap
-note ivo://fai.kz/tap; obscore sync-QUERY 200, 5048 Zeilen; CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B) fai-kz-cdn 35591261870 success; em-Beobachtungs-Zeuge S²-Richtung Band em_min/em_max Wert absent.
-
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
 note ivo://src.pas/tap — 2026-09-21 PL-Exit (Operator-Wort): /tap HTTP 200; /tap/tables HTTP 500 (PostgreSQL localhost:5432 refused) — Route offen, Backend down. Tabellen pl610_dynamic_spectra_*, ionosondes, nqmaps, h2tecmaps, iriwarsaw. Trigger: /tap/tables 500→200.
-
-kompiliert
-kandidat https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
-note Compiler gebaut 2026-09-21: emodnet_hfr_compiler.rs + Arm emodnet_hfr.rs (geo HFR1, advective m/s, EWCT/NSCT); CDN-Asset sha256 adb411288302e725ca957d12505e1e4a934b1a34415a08a20c4d07b3e4cce7ac (24248 B), Lauf 35598877845 success.
-
-kompiliert
-kandidat https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
-note Compiler gebaut 2026-09-21: hfrnet_compiler.rs + Arm hfrnet_rtv.rs (geo HFR1, advective m/s), Workflow hfrnet-cdn.yml; Manifestation sha256 6bad8000681201568461adab5db4e4958610e971276ae3fcec4dc2971c5ae657 (480728 B); Lauf 35581429287 success.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 200), aber „Permission Denied" für omegaflow. PI Sotgiu antwortete 2026-09-16: Limadou-Website wird für CSES-02 umgebaut, „recommend waiting a few weeks before proceeding with your access request"; die Linie hat quittiert, Doppel-Anfrage 2026-09-20 (sent_ledger 1789906154/1789906520). Trigger: neue Anleitung auf dem Limadou-Portal. CSES-Limadou (em/electric) accept. DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-kompiliert
-kandidat https://zenodo.org/api/records/21185812
-note Quaoar-Sternbedeckung, cc-by-4.0, Quaoar_paper.zip 572467032 B, sha256 1473129fee9e488dec3587dc5ef83f921cfd9f9b0a945f662fe88b0a75577574; Compiler quaoar_occlt_compiler.rs + Arm quaoar_occlt.rs + Workflow quaoar-occlt-cdn.yml; manifestiert 2026-09-21 quaoar_occlt.bin 2540672 B sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23 (Lauf 35595708241 success).
-
-disponiert
-queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
-note 31 Blöcke; --port 2026-09-20 (force-gate B): 15 parsen, 0 verifiziert / 15 declined. Kein Survivor. 16 nicht-parsende Blöcke werden von port_mode verworfen, ihr `# pending` erreicht den Output nicht (post an bau). Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
-note 4 Blöcke; --port 2026-09-20 (force-gate B): 3 parsen, 1 verifiziert / 2 declined. Survivor earth-search.aws.element84.com — Felder unklassifiziert (STAC-Metadaten), keine physikalische Messung → declined. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
-note 16 Blöcke; --port 2026-09-20 (force-gate B): 0 parsen (alle `on` lat/lon ohne alt → Frame verweigert), 0 verifiziert. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20: 148 verifiziert / 897 declined. Review 2026-09-20: 2 → sources.φ, 94 → declined_sources.φ, 41 skipped (schon im Register). Nächster Schritt: CDN-Manifestation (kernel-flatten).
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
-note 874 Blöcke; --port 2026-09-20: 25 verifiziert / 848 declined. Review 2026-09-20: 0 → sources.φ, 20 → declined_sources.φ, 3 skipped. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
-note 1048 Blöcke; --port 2026-09-20: 156 verifiziert / 813 declined. Review 2026-09-20: 2 → sources.φ, 99 → declined_sources.φ, 41 skipped. Nächster Schritt: CDN-Manifestation (kernel-flatten).
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_183l.φ
-note 19 Blöcke; --port 2026-09-20: 4 verifiziert / 10 declined. Review 2026-09-20: 0 → sources.φ, 2 → declined_sources.φ, 2 skipped. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_2k.φ
-note 177 Blöcke; --port 2026-09-20: 3 verifiziert / 11 declined. Review 2026-09-20: 0 → sources.φ, 0 → declined_sources.φ, 3 skipped. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_7k.φ
-note 425 Blöcke; --port 2026-09-20: 21 verifiziert / 401 declined. Review 2026-09-20: 0 → sources.φ, 16 → declined_sources.φ, 3 skipped. Nächster Schritt: keine.
-
-disponiert
-queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
-note 50 Blöcke; --port 2026-09-20: 11 verifiziert / 38 declined. Review 2026-09-20: 0 → sources.φ, 4 → declined_sources.φ, 7 skipped. Nächster Schritt: keine.
-
-disponiert
-bestand phi/pipeline/catalog/candidates-pools
-note Force-Gate 2026-09-21: Survivor (IERS-EOP/RAPID/e-callisto/Coral/CNEOS) disponiert — maia finals.all + fireball.api in sources.φ. 34 offene candidate = URL-Varianten disponierter Quellen, lokal decline/dead markiert.
+ausstehend
+kandidat https://babamul.caltech.edu/api/
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow babamul-cdn.yml, CI-Lauf 35649296996 dispatched 2026-09-21 (queued); CDN babamul_alerts.bin 404.
 
 parser-gap
 bestand src/archivar/demeter.rs
 note DEMETER (CDPP): demeter.rs:60 verlangt Marker ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST (1144 ISL SURVEY), 289-B-Bloecke sonst identisch (TOULOUSE@26..34, 6 f32@265..289). Schritt: Marker-Pruefung auf ISL SURVEY|ISL BURST erweitern.
-
-kompiliert
-kandidat https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
-note glm_l2-Asset CDN sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213 (126728 B); Lauf 35623731418 success, asset already present (manifest skipped), Fix attr_unsigned _Unsigned-String-Test gruen.
-
-ausstehend
-kandidat https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser babamul.rs + Compiler babamul_compiler.rs gebaut (sky1); Workflow babamul-cdn.yml, CDN babamul_alerts.bin 404.
-
-kompiliert
-kandidat https://data.ghrc.earthdata.nasa.gov/
-note GHRC DAAC: glm_l1b.bin CDN 1050368 B sha256 a7311a53… (200), trmm_lis.bin 30548 B 4df26caf… (200); glm/trmm-Compiler gebaut. Korrektur 2026-09-21: ghrcw-protected anonym 404, mit EDL-Token 404 (nicht 401/200).
-
-kompiliert
-kandidat http://ia2-tap.oats.inaf.it:8080/wgetap
-note IA2 TAP (INAF/OATS): /wgetap/sync -L 200, FORMAT=csv NUL-getrennt (ra,dec_,psfMag_g/i/r/u/z); ia2_wgesdss.bin CDN 200. Parser ia2_tap.rs + Compiler ia2_tap_compiler.rs gebaut (sky1).
