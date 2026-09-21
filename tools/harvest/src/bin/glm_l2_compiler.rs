@@ -251,6 +251,7 @@ fn attr_number(attrs: &[Hdf5Attribute], name: &str) -> Option<f64> {
 
 fn attr_unsigned(attrs: &[Hdf5Attribute]) -> bool {
     attr_int(attrs, "_Unsigned").is_some_and(|v| v != 0)
+        || attr_string(attrs, "_Unsigned").is_some_and(|s| s.eq_ignore_ascii_case("true"))
 }
 
 fn attr_string(attrs: &[Hdf5Attribute], name: &str) -> Option<String> {
@@ -608,6 +609,37 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use omegaflow::hdf5::{Hdf5Dataspace, Hdf5Datatype};
+
+    fn string_attr(name: &str, value: &str) -> Hdf5Attribute {
+        Hdf5Attribute {
+            name: name.to_string(),
+            datatype: Hdf5Datatype {
+                class: 3,
+                size: value.len(),
+                endian: Endian::Le,
+                signed: false,
+                bit_offset: 0,
+                precision: 0,
+                string_pad: 0,
+                string_charset: 0,
+                members: Vec::new(),
+                array_dims: Vec::new(),
+                base: None,
+                reference_type: 0,
+                vlen_is_string: false,
+            },
+            dataspace: Hdf5Dataspace { dims: Vec::new() },
+            data: value.as_bytes().to_vec(),
+        }
+    }
+
+    #[test]
+    fn unsigned_attr_reads_the_string_true_form() {
+        assert!(attr_unsigned(&[string_attr("_Unsigned", "true")]));
+        assert!(!attr_unsigned(&[string_attr("_Unsigned", "false")]));
+        assert!(!attr_unsigned(&[]));
+    }
 
     #[test]
     fn units_epoch_parses_valid_and_rejects_malformed() {
