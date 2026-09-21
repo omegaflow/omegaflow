@@ -1107,19 +1107,8 @@ mod tests {
         drop(kinetic_tx);
         let (sample_tx, sample_rx) = mpsc::channel::<Vec<Sample>>();
         drop(sample_rx);
-        let (presence_tx, presence_rx) = mpsc::channel::<(
-            String,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-        )>();
+        let (presence_tx, presence_rx) =
+            mpsc::channel::<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>();
         drop(presence_rx);
         WsConfig {
             bodies: Arc::new(Vec::new()),

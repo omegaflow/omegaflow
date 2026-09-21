@@ -8436,9 +8436,7 @@ fn hapi_draft_names_register_unit_when_server_unit_is_off_registry() {
         "off-registry note names the register unit: {fields}"
     );
     assert!(
-        fields.contains(
-            "field crosswind crosswind patch-levy advective kg/m3 60 0.0 0.0"
-        ),
+        fields.contains("field crosswind crosswind patch-levy advective kg/m3 60 0.0 0.0"),
         "field line keeps the server unit verbatim: {fields}"
     );
     assert!(
