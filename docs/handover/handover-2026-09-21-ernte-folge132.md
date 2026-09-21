@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 03471f1fa210139e93fcacb8e33c059ae6ed0d688d361a11318caf72600c3a73
+  sha256: 0eb658d48ba0556d3fe5eb8d0b0333c1ed89bab8e8d9fbf7127c36b0bc276974
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -49,19 +49,18 @@ Wartestellungen sind kein Auswahlpunkt.
   `sources.φ`-note → `kompiliert`.
 
 ### Quaoar Sternbedeckung — Manifestation
-- **Status:** wartend | **Bindung:** termin (Run)
-- **Lage:** Arm/Compiler/Workflow stehen; `sources.φ:8706` Block pending sha256;
+- **Status:** wartend | **Bindung:** termin (Run `35595708241`)
+- **Lage:** dispatched 2026-09-21; `sources.φ:8706` Block pending sha256;
   Workflow-Tag `zenodo.org` konsistent.
-- **Blockade:** Lauf.
-- **Braucht:** `gh workflow run quaoar-occlt-cdn.yml` (nach Push); bei success
-  sha256 → `sources.φ:8706` / `ledger.φ:32`.
+- **Blockade:** Lauf-Abschluss.
+- **Braucht:** `ci_manage view 35595708241`; bei success sha256 → `sources.φ:8706` / `ledger.φ:32`.
 
 ### PS1 Order-10-Final
-- **Status:** wartend | **Bindung:** termin
-- **Lage:** `footprints.φ:19` — Asset `ps1_dr2_coverage.fp01` absent;
+- **Status:** wartend | **Bindung:** termin (Run `35595711594`)
+- **Lage:** dispatched 2026-09-21; `footprints.φ:19` — Asset `ps1_dr2_coverage.fp01` absent;
   Workflow-Tag `ssd.jpl.nasa.gov-ps1`; kein `sources.φ`-Eintrag (Footprint).
-- **Blockade:** Lauf.
-- **Braucht:** `gh workflow run ps1-cdn.yml` (nach Push); bei final → `footprints.φ:19`.
+- **Blockade:** Lauf-Abschluss.
+- **Braucht:** `ci_manage view 35595711594`; bei final → `footprints.φ:19`.
 
 ### DEMETER (CDN + ISL)
 - **Status:** wartend / operator-gebunden | **Bindung:** termin + operator
