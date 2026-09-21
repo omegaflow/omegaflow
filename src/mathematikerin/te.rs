@@ -2259,6 +2259,117 @@ pub fn transfer_entropy_embedded_ksg(
     Some(digamma(k_eff as f64) + sum / m as f64)
 }
 
+fn lgamma_lanczos(x: f64) -> f64 {
+    if x < 0.5 {
+        std::f64::consts::PI.ln() - (std::f64::consts::PI * x).sin().ln() - lgamma_lanczos(1.0 - x)
+    } else {
+        const COF: [f64; 6] = [
+            76.18009172947146,
+            -86.50532032941677,
+            24.01409824083091,
+            -1.231739572450155,
+            0.1208650973866179e-2,
+            -0.5395239384953e-5,
+        ];
+        let mut y = x;
+        let mut tmp = x + 5.5;
+        tmp -= (x + 0.5) * tmp.ln();
+        let mut ser = 1.000000000190015;
+        for &cof in &COF {
+            y += 1.0;
+            ser += cof / y;
+        }
+        -tmp + (2.5066282746310005 * ser / x).ln()
+    }
+}
+
+fn log_factorial(n: u64) -> f64 {
+    lgamma_lanczos(n as f64 + 1.0)
+}
+
+fn log_choose(n: u64, k: usize) -> f64 {
+    let n = n as f64;
+    let k = k as f64;
+    lgamma_lanczos(n + 1.0) - lgamma_lanczos(k + 1.0) - lgamma_lanczos(n - k + 1.0)
+}
+
+fn sorted_log_sum(counts: &std::collections::HashMap<u64, u64>, f: impl Fn(u64) -> f64) -> f64 {
+    let mut v: Vec<f64> = counts.values().map(|&n| f(n)).collect();
+    v.sort_by(|a, b| a.total_cmp(b));
+    v.iter().sum()
+}
+
+fn quantile_edges(v: &[f64], c: usize) -> Vec<f64> {
+    let n = v.len();
+    let mut s = v.to_vec();
+    s.sort_by(|a, b| a.total_cmp(b));
+    (1..c).map(|j| s[j * n / c]).collect()
+}
+
+fn bin_of(v: f64, edges: &[f64]) -> usize {
+    edges.iter().filter(|&&e| e < v).count()
+}
+
+pub fn transfer_entropy_reduced(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
+    if c < 2 || k == 0 || l == 0 {
+        return None;
+    }
+    let n = xs.len();
+    if n == 0 || ys.len() != n {
+        return None;
+    }
+    if xs.iter().chain(ys.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    if xs.iter().all(|&v| v == xs[0]) || ys.iter().all(|&v| v == ys[0]) {
+        return None;
+    }
+    let mint = k.max(l);
+    if n <= mint {
+        return None;
+    }
+    let n_pairs = n - mint;
+    let c_l = c.checked_pow(l as u32)?;
+    let c_k = c.checked_pow(k as u32)?;
+    if n_pairs < c_l.checked_mul(c_k)? {
+        return None;
+    }
+    let edges_x = quantile_edges(xs, c);
+    let edges_y = quantile_edges(ys, c);
+    let mut n123: std::collections::HashMap<u64, u64> = std::collections::HashMap::new();
+    let mut n12: std::collections::HashMap<u64, u64> = std::collections::HashMap::new();
+    let mut n23: std::collections::HashMap<u64, u64> = std::collections::HashMap::new();
+    let mut n2: std::collections::HashMap<u64, u64> = std::collections::HashMap::new();
+    for f in mint..n {
+        let q = bin_of(ys[f], &edges_y);
+        let mut r = 0usize;
+        for j in 0..l {
+            r = r * c + bin_of(ys[f - 1 - j], &edges_y);
+        }
+        let mut s = 0usize;
+        for j in 0..k {
+            s = s * c + bin_of(xs[f - 1 - j], &edges_x);
+        }
+        *n123.entry(((q * c_l + r) * c_k + s) as u64).or_insert(0) += 1;
+        *n12.entry((q * c_l + r) as u64).or_insert(0) += 1;
+        *n23.entry((r * c_k + s) as u64).or_insert(0) += 1;
+        *n2.entry(r as u64).or_insert(0) += 1;
+    }
+    let s_full = sorted_log_sum(&n123, log_factorial);
+    let s_y = sorted_log_sum(&n2, log_factorial);
+    let s_fy = sorted_log_sum(&n12, log_factorial);
+    let s_yx = sorted_log_sum(&n23, log_factorial);
+    let multiset = |v: u64| log_choose(v + c as u64 - 1, c - 1);
+    let corr = sorted_log_sum(&n2, multiset) - sorted_log_sum(&n23, multiset);
+    let ln_r = (s_full + s_y - s_fy - s_yx + corr) / n_pairs as f64;
+    Some(ln_r * std::f64::consts::LOG2_E)
+}
+
+pub fn reduced_te_flow(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
+    let r = transfer_entropy_reduced(xs, ys, k, l, c)?;
+    (r.is_finite() && r > 0.0).then_some(r)
+}
+
 fn permutation_entropy_counts(
     series: &[f64],
     order: usize,
@@ -3594,7 +3705,7 @@ mod tests {
     }
 
     #[test]
-    fn riss_ksg_kde_estimator_split_is_measured() {
+    fn split_recording_ksg_kde_reduced_te_all_resolve() {
         let seed = 0x9E37_79B9_7F4A_7C15;
         let mut rng = seed;
         let a = gate_ar1(300, 0.5, &mut rng);
@@ -3625,12 +3736,126 @@ mod tests {
             "KDE estimate must resolve for the AR(1) fixture"
         );
         let kde = kde_estimate.unwrap();
+        let reduced_estimate = transfer_entropy_reduced(&xf, &yf, 1, 1, 4);
         assert!(
-            (ksg.te - kde).abs() > 0.0,
-            "KSG/KDE estimator riss is measured: ksg={} kde={}",
-            ksg.te,
-            kde
+            reduced_estimate.is_some(),
+            "reduced-TE estimate must resolve for the AR(1) fixture"
         );
+        let reduced = reduced_estimate.unwrap();
+        println!(
+            "split recording: ksg={:.6} kde={:.6} reduced_te={:.6}",
+            ksg.te, kde, reduced
+        );
+    }
+
+    #[test]
+    fn gate_fn_reduced_te_mdl_coupled_ar1_flows() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for _ in 0..20 {
+            let a = gate_ar1(300, 0.5, &mut rng);
+            let mut b: Vec<f32> = Vec::with_capacity(a.len());
+            b.push(gate_rng(&mut rng) as f32);
+            for i in 1..a.len() {
+                let v = 0.5 * b[i - 1] as f64 + 0.6 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1);
+                b.push(v as f32);
+            }
+            let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+            if let Some(r) = transfer_entropy_reduced(&xf, &yf, 1, 1, 4) {
+                meas += 1;
+                if r > 0.0 {
+                    found += 1;
+                }
+            }
+        }
+        assert_eq!(
+            meas, 20,
+            "Kalibrier-Gate FN reduced-TE: {} of 20 coupled pairs measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            found as f64 / meas as f64 > 0.5,
+            "Kalibrier-Gate FN reduced-TE MDL: {} of {} coupled pairs show R > 0 — the MDL null rejects the planted coupling",
+            found,
+            meas
+        );
+    }
+
+    #[test]
+    fn gate_fp_reduced_te_mdl_independent_ar1_stays_silent() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for _ in 0..30 {
+            let a = gate_ar1(300, 0.7, &mut rng);
+            let b = gate_ar1(300, 0.7, &mut rng);
+            let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+            if let Some(r) = transfer_entropy_reduced(&xf, &yf, 1, 1, 4) {
+                meas += 1;
+                if r > 0.0 {
+                    fp += 1;
+                }
+            }
+        }
+        assert_eq!(
+            meas, 30,
+            "Kalibrier-Gate FP reduced-TE: {} of 30 independent pairs measurable",
+            meas
+        );
+        assert!(
+            fp <= 8,
+            "Kalibrier-Gate FP reduced-TE MDL: {} of {} independent pairs show R > 0 — the MDL null does not hold",
+            fp,
+            meas
+        );
+    }
+
+    #[test]
+    fn gate_n_floor_reduced_te_table_size() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = gate_ar1(300, 0.7, &mut rng);
+        let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let below = transfer_entropy_reduced(&xf[..255], &yf[..255], 2, 2, 4);
+        assert!(
+            below.is_none(),
+            "Kalibrier-Gate n-Floor reduced-TE: n=255 below the C^l*C^k=256 contingency table carries no verdict"
+        );
+        let boundary = transfer_entropy_reduced(&xf[..258], &yf[..258], 2, 2, 4);
+        assert!(
+            boundary.is_some(),
+            "Kalibrier-Gate n-Floor reduced-TE: n=258 at the C^l*C^k=256 table boundary carries a verdict"
+        );
+        let above = transfer_entropy_reduced(&xf, &yf, 2, 2, 4);
+        assert!(
+            above.is_some(),
+            "Kalibrier-Gate n-Floor reduced-TE: n=300 above the table size carries a verdict"
+        );
+    }
+
+    #[test]
+    fn gate_symmetry_reduced_te_identical_series_measure_equally() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = a.clone();
+        let xf: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let ab = transfer_entropy_reduced(&xf, &yf, 1, 1, 4);
+        let ba = transfer_entropy_reduced(&yf, &xf, 1, 1, 4);
+        match (ab, ba) {
+            (Some(x), Some(y)) => assert!(
+                (x - y).abs() < 1e-12,
+                "Kalibrier-Gate symmetry reduced-TE: a=b measures unequal, {} vs {}",
+                x,
+                y
+            ),
+            (None, None) => {}
+            _ => panic!("Kalibrier-Gate symmetry reduced-TE: one direction measurable, the other not"),
+        }
     }
 
     #[test]
