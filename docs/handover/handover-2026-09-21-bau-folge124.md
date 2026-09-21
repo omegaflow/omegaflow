@@ -3,7 +3,7 @@
   session: Bau-Folge 124
   class: handover
   date: 2026-09-21
-  sha256: da01356056b1106781096a524d75f793010565c81fcbac8a9f90d5913027757a
+  sha256: 1dccef01868710f9f28a7acd555c798a54c80ee3166c455a3041427c847eea37
   status: live
 -->
 # Handover — Bau-Folge 124 (2026-09-21)
@@ -48,31 +48,23 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `attr_unsigned` liest auch `_Unsigned="true"`; +1 Gate-Test.
   `cargo check -p omegaflow-harvest --all-targets` 0/0. Der Fix ging in
   `db708714` (ernte folge133) ein — die ernte-Session committete die
-  uncommittete Arbeit mit; nicht zurückgerollt.
+  uncommittete Arbeit mit; nicht zurückgerollt. **Verifikation:** `glm-l2-cdn`
+  Läufe `35604875117`/`35604858830` **success**; Asset `glm_l2.bin` 126728 B
+  sha256 `1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213`, in
+  `phi/sources.φ` registriert.
 
 ## Offen (aufgeschlüsselt)
 
-### 1. glm_l2.bin CDN-Manifestation — Fix gebaut, Re-Dispatch misst
-- **Status:** `wartend` | **Bindung:** `termin:CI`
-- **Lage:** Energy-Gate-Wurzel gemessen + Fix in HEAD (`db708714`, ernte
-  folge133); Lauf `35599198872` failure.
-- **Blockade:** Re-Dispatch erst nach Commit+Push (der Lauf checkt main aus).
-- **Braucht:** nach `/commit`+Push `gh workflow run glm-l2-cdn`; Log einmal lesen
-  (`ci_manage view <id>`) — N flashes + Gate-Zähler je Granule; bei Asset sha256
-  in `phi/sources.φ`.
-
-### 2. HDF5 layout-v3 Chunk-Read — gemessener Kandidat (core)
+### 1. HDF5 layout-v3 Chunk-Read — unbestätigter Kandidat (core, nicht blockierend)
 - **Status:** `offen` | **Bindung:** `eigen`
-- **Lage:** `grind-max` maß am Granule (chunk_dims=[1], 1 B-Tree-Record), dass
-  der chunked Read evtl. nur Element 0 materialisiert — dann bliebe der Harvest
-  bei ~1 Flash/Granule trotz Gate-Fix. Widerspricht der gemessenen Chunk-Nutzlast
-  (6 int16 im Chunk) — **unbestätigt**.
-- **Blockade:** unbestätigt; braucht eigene Messung.
-- **Braucht:** Re-Dispatch aus Punkt 1 entscheidet (energy-Skip ~5 bei N=1 wäre
-  das Signal); dann `src/archivar/hdf5.rs` chunked-read gegen das Granule messen
-  und Fix oder Entwarnung.
+- **Lage:** `grind-max` maß am Granule (chunk_dims=[1], 1 B-Tree-Record), der
+  chunked Read materialisiere evtl. nur Element 0. Der erfolgreiche glm-l2-cdn-
+  Lauf (Asset 126728 B) spricht gegen eine 1-Flash/Granule-Kappung — **unbestätigt**.
+- **Blockade:** unbestätigt; braucht eine Messung der Element-Zahl.
+- **Braucht:** `src/archivar/hdf5.rs` chunked-read gegen das Granule messen
+  (Element-Zahl nach Read) — Fix oder Entwarnung.
 
-### 3. DS18B20 1-Wire-Firmware-Lesepfad (Safety-Lücke)
+### 2. DS18B20 1-Wire-Firmware-Lesepfad (Safety-Lücke)
 - **Status:** `offen` | **Bindung:** `eigen`
 - **Lage:** `sgrep ds18b20 firmware` leer; der Core bindet GPIO7 nicht.
   Safety-Matrix verlangt Cutoff <80 °C für Heizfolie/Peltier.
@@ -80,7 +72,7 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Braucht:** 1-Wire-GPIO7-Lesepfad im Core `firmware/radiatorium` plus Cutoff;
   `grind-pro`/`build`.
 
-### 4. Ox64-Zweitknoten — Hardware/Bring-up
+### 3. Ox64-Zweitknoten — Hardware/Bring-up
 - **Status:** `wartend` | **Bindung:** `dritter`
 - **Lage:** PINE64 hat den Ox64 zugesagt; Doku (`mantis-shrimp-build.md
   §Zweitknoten`) steht; Gerät noch nicht da.
@@ -100,13 +92,14 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Diese Session:** `docs/specs/mantis-shrimp-build.md` (neu),
   `docs/specs/mantis-shrimp-bom.md` (Header-Re-Stamp), neues
   `docs/handover/handover-2026-09-21-bau-folge124.md`, Move
-  `handover-2026-09-21-bau-folge123.md` → `archiv/`.
+  `handover-2026-09-21-bau-folge123.md` → `archiv/`, `phi/sources.φ`
+  (glm_l2-CDN-sha256-Zeile).
 - **Bereits committet (fremde Nachricht):** `tools/harvest/src/bin/glm_l2_compiler.rs`
   (der Fix aus diesem Atom) ging in `db708714` (ernte folge133) ein — die
   ernte-Session committete die uncommittete Arbeit mit; nicht zurückgerollt.
-- **Fremd (nicht angefasst):** `phi/pipeline/ledger.φ`, `phi/sources.φ`
-  (emodnet-hfr, ernte), `docs/handover/post.md` (fremd-dirty durch
-  konkurrierende Session — nicht editiert, kein fremder Hunk mitcommittet),
+- **Fremd (nicht angefasst):** `phi/pipeline/ledger.φ` (emodnet-hfr, ernte),
+  `docs/handover/post.md` (fremd-dirty durch konkurrierende Session — nicht
+  editiert, kein fremder Hunk mitcommittet),
   `docs/handover/handover-2026-09-21-ernte-folge133.md`, der staged Rename
   `handover-2026-09-21-ernte-folge132.md` → `archiv/`.
 

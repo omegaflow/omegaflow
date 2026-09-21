@@ -8043,6 +8043,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bi
 format glm_l2
 origin https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
 compiler tools/harvest/src/bin/glm_l2_compiler.rs
+sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213
 on earth 0 0 0
 ttl 604800
 field glm_l2_flash_radiant_energy_j glm_l2_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
