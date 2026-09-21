@@ -58,7 +58,7 @@ witness s2-direction
 url https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
 record skydirection
 force em
-note Gaia-DR3-Alerts-Index (2026-09-13 HTTP 200): je Alert RA/Dec + G-Band-Magnitude. S²-Richtung (τ=0), em. Kompiliert als gaia_alerts.bin via gaia_alerts_compiler; Merge in skydirections.bin pending; SKD1-magic absent in zeuge.rs.
+note Gaia-DR3-Alerts-Index (2026-09-21 HTTP 200, 10601266 B sha256 03a5c67d…). S²-Richtung (τ=0), em. gaia_alerts.bin CDN live (1651644 B sha256 73368daf…); Merge skydirections.bin live (Tag ssd.jpl.nasa.gov, 704778 B); SKD1-magic in zeuge.rs:18,101.
 
 witness s2-direction
 url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
