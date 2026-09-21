@@ -1017,7 +1017,10 @@ pub fn brave_lines(query: &str, token: &str, max: usize) -> Vec<String> {
             }
             None => vec!["pending — the Brave response carries no JSON".to_string()],
         },
-        Some(f) => vec![format!("pending — Brave HTTP {}", f.status_text())],
+        Some(f) => vec![format!(
+            "pending — Brave HTTP {} (the keyless path is --mwmbl)",
+            f.status_text()
+        )],
         None => vec!["pending — no network".to_string()],
     }
 }
@@ -1192,7 +1195,6 @@ const QUERY_MODES: &[&str] = &[
     "github",
     "crates",
     "librs",
-    "brave",
     "mwmbl",
     "datacite",
     "zenodo",
@@ -1392,7 +1394,7 @@ mod tests {
     }
 
     #[test]
-    fn query_mode_list_is_the_full_keyword_search_set() {
+    fn query_mode_list_is_the_all_fan_out_set() {
         let mut expected = vec![
             "openalex",
             "arxiv",
@@ -1403,7 +1405,6 @@ mod tests {
             "github",
             "crates",
             "librs",
-            "brave",
             "mwmbl",
             "datacite",
             "zenodo",

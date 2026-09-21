@@ -296,14 +296,16 @@ for source *discovery* the breadth is the answer, not a cost:
    carries no content (JS-rendered).
 3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
    `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
-4. **Unknown source** → `--brave <query>` first (keyword web search), then
-   **`--all <query>`** — every keyword mode at once (35; the canon is the tool's
-   own `--help`). The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
+4. **Unknown source** → `--mwmbl <query>` first (keyless web search;
+   `--brave` carries HTTP 402 until its free quota resets), then
+   **`--all <query>`** — every keyword mode at once (34; `--brave` is excluded
+   from `--all` while its quota is spent — run it explicitly; the canon is the
+   tool's own `--help`). The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
    `--ena`/`--supermag`/`--heasarc`) run individually. It prints the
    top 5 per source inline **and writes the full result to a temp file** (the
    paged sources openalex/zenodo run ~100 deep) — read that file; the inline
    summary is not the whole answer. A diver that draws only `--ads`/`--arxiv`
-   has left 33 modes unasked.
+   has left 32 modes unasked.
 5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
 
 The three measures are distinct: `--verdict` measures reachability, `--sniff`
