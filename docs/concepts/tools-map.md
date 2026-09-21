@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 5bde60e7cd0fcc797d7bedddf1a4a4419836630dc54dd3b78d0a8376d4e5ce9f
+  sha256: 873068c10c4d21359618540f90f34b31bda88444c6319b9d3cd5ac6eb847603a
   status: live
   see-also: AGENTS.md
 -->
@@ -127,10 +127,14 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   es wörtlich).
 - `archive_search --searxng <query>` — Meta-Suche über eine SearXNG-Instanz
   (`<base>/search?q=&format=json&language=all&safesearch=0`); Basis-URL aus
-  `SEARXNG_URL` (`.secrets.local/.env`). Die meisten öffentlichen Instanzen
-  liefern trotz HTTP 200 HTML statt JSON (gemessen 2026-09-21: `searx.be`,
-  `search.inetol.net`) → `pending`; `format=json` in `settings.yml` freischalten
-  oder selbst hosten. Je Treffer `url` + Titel/Engine/Beschreibung.
+  `SEARXNG_URL` (`.secrets.local/.env`). Gemessen 2026-09-21 (Sweep über 101
+  Instanzen aus `searx.space/data/instances.json`): die meisten liefern trotz
+  HTTP 200 HTML statt JSON; die zwei JSON-fähigen (`sx.xo.st`,
+  `search.mectov.my.id`) geben die Query korrekt zurück, aber **irrelevante
+  Fremdtreffer** (Bing-Proxy-Müll) — unbrauchbar. Der tragfähige Weg ist eine
+  **selbst gehostete** Instanz (`format=json` in `settings.yml`); ohne
+  `SEARXNG_URL` bleibt der Modus `pending`. Je Treffer `url` + Titel/Engine/
+  Beschreibung.
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
