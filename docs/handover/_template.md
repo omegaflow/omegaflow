@@ -19,14 +19,15 @@ darf schmutzig sein.
 
 Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
 **parallel** von Agenten abgearbeitet (Operator-Wort 2026-09-21). Jeder offene
-Punkt trägt seinen nächsten Schritt in derselben Zeile — Werkzeug, Datei, URL
-oder Anfrage; „Schritt unbekannt — erste Messung: X" ist ein vollständiger
-Schritt. Kein Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt
-nicht. Der Planungs-Pass legt **alle** eigenen Punkte als Tafel vor und schlägt
-vor, jeden parallel abarbeitbaren zu dispatchen; `operator-gebunden`,
-`blockiert` und `wartend` werden benannt, nie dispatcht. Gibt es keinen
-abarbeitbaren Punkt, sagt die Session das. Jeder Punkt trägt seinen Status-Tag
-(`wartend` | `operator-gebunden` | `blockiert` | `termin`).
+Punkt wird **aufgeschlüsselt** geführt — kein Register-Kürzel: **Lage** (der
+Zustand, gemessen) / **Blockade** (woran es hängt, oder „keine") / **Braucht**
+(was es löst: Werkzeug, Datei, URL, Anfrage, Operator-Wort; „Schritt unbekannt —
+erste Messung: X" ist ein vollständiger Schritt). Kein Dokument wächst ohne
+Messung; die Droh-Sprache ersetzt den Schritt nicht. Der Planungs-Pass legt
+**alle** eigenen Punkte vor und schlägt vor, jeden parallel abarbeitbaren zu
+dispatchen; `operator-gebunden`, `blockiert` und `wartend` werden benannt, nie
+dispatcht. Gibt es keinen abarbeitbaren Punkt, sagt die Session das. Jeder Punkt
+trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der
@@ -62,9 +63,13 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `session_burn` — Burn je Session.
 - `gh` — nur `workflow run`/`run download`.
 
-## <Sektion — parallel abarbeitbare Punkte>
+## Offen (aufgeschlüsselt)
 
-- <offener Punkt — mit nächstem Schritt> (Schritt: <Tool/Datei/URL/Anfrage>)
+### <Punkt>
+- **Status:** <wartend | operator-gebunden | blockiert | termin> | **Bindung:** <eigen | linie:<name> | operator | dritter | termin:<datum>>
+- **Lage:** <der Zustand, gemessen>
+- **Blockade:** <woran es hängt — oder „keine">
+- **Braucht:** <was es löst: Werkzeug/Datei/URL/Anfrage/Operator-Wort>
 
 ## Abschluss
 
