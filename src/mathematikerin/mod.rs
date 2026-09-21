@@ -3,8 +3,8 @@ pub(crate) use crate::archivar::{
     system_now,
 };
 pub(crate) use crate::machines::{
-    MatrixMachine, SolarCell, SolarMachine, TE_SERIES_BYTES, TE_SERIES_STRIDE, le_bytes_f32,
-    te_absence_word, te_read_verdict,
+    MatrixMachine, SolarCell, SolarMachine, TE_KSG_K_PROD, TE_SERIES_BYTES, TE_SERIES_STRIDE,
+    le_bytes_f32, te_absence_word, te_read_verdict, te_verdict_bytes,
 };
 
 pub mod actuators;

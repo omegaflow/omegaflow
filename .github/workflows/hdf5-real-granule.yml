@@ -25,3 +25,8 @@ jobs:
         echo "07caa4325bac5ea25ab35226156b05d98c6f94721eaf54d266d3f20016cffc4e  granule.nc" | sha256sum -c -
     - name: Real-granule read — the name btree materializes every element
       run: GLM_L2_GRANULE=granule.nc cargo test --release -p omegaflow -- --ignored --nocapture real_granule_glm_l2_name_btree_materializes_every_element
+    - name: Real-granule read — the ATL03 v1 chunk index materializes multilevel (range reads)
+      env:
+        EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+        ATL03_GRANULE_URL: "https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL03/007/2026/06/30/ATL03_20260630003802_02443209_007_01.h5"
+      run: cargo test --release -p omegaflow -- --ignored --nocapture real_granule_atl03_v1_chunk_index_materializes_multilevel

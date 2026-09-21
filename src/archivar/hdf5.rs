@@ -4076,9 +4076,183 @@ mod tests {
         let (obj, _ds, _dt) = file.dataset("flash_lat").unwrap();
         println!("flash_lat layout: {:?}", obj.layout);
         assert!(
-            obj.layout.is_some() && !matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })),
-            "flash_lat carries no chunk btree (layout: {:?})",
+            matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })),
+            "flash_lat is a chunked dataset (layout: {:?})",
             obj.layout
+        );
+        if let Some(Hdf5Layout::Chunked {
+            btree,
+            ref chunk_dims,
+            elem_size,
+        }) = obj.layout
+        {
+            assert!(btree != UNDEF, "the chunked flash_lat carries a btree address");
+            assert_eq!(*chunk_dims, vec![256], "flash_lat chunk_dims (measured)");
+            assert_eq!(elem_size, 4, "flash_lat element size (measured)");
+        }
+    }
+
+    fn count_v1_tree_nodes<F: FnMut(u64, u64) -> Option<Vec<u8>>>(
+        r: &mut Hdf5WindowReader<F>,
+        addr: u64,
+        rank: usize,
+        head: &[u8],
+        by_level: &mut [usize; 8],
+        max_level: &mut usize,
+    ) -> Result<(), Hdf5Note> {
+        let off = addr as usize;
+        if head.len() < 24 {
+            return Err(Hdf5Note::EndAtByte {
+                off: off + head.len(),
+            });
+        }
+        if &head[..4] != b"TREE" {
+            let mut found = [0u8; 4];
+            found.copy_from_slice(&head[..4]);
+            return Err(Hdf5Note::BtreeNode { found, off });
+        }
+        let node_type = head[4];
+        let level = head[5] as usize;
+        let nchildren = le_u16(head, 6) as usize;
+        if node_type != 1 {
+            return Err(Hdf5Note::Btree {
+                typ: node_type,
+                off,
+            });
+        }
+        if level >= by_level.len() {
+            return Err(Hdf5Note::Btree {
+                typ: level as u8,
+                off,
+            });
+        }
+        by_level[level] += 1;
+        *max_level = (*max_level).max(level);
+        if nchildren == 0 || level == 0 {
+            return Ok(());
+        }
+        let key_size = 8 + (rank + 1) * 8;
+        let span = 24usize
+            .checked_add(
+                nchildren
+                    .checked_mul(key_size + 8)
+                    .ok_or(Hdf5Note::EndAtByte { off })?,
+            )
+            .ok_or(Hdf5Note::EndAtByte { off })?;
+        let body = r.read(addr + 24, (span - 24) as u64)?;
+        let mut p = 0usize;
+        for _ in 0..nchildren {
+            let child = le_u64(&body, p + key_size);
+            p += key_size + 8;
+            if child == UNDEF {
+                continue;
+            }
+            let child_head = r.read(child, 24)?;
+            count_v1_tree_nodes(r, child, rank, &child_head, by_level, max_level)?;
+        }
+        Ok(())
+    }
+
+    #[test]
+    #[ignore = "reads the measured ICESat-2 ATL03 granule via EDL range reads; the hdf5-real-granule workflow sets ATL03_GRANULE_URL and EARTHDATA_EDL_TOKEN"]
+    fn real_granule_atl03_v1_chunk_index_materializes_multilevel() {
+        let url = std::env::var("ATL03_GRANULE_URL")
+            .expect("ATL03_GRANULE_URL absent — the measured ATL03 granule URL is not set");
+        let token = std::env::var("EARTHDATA_EDL_TOKEN")
+            .expect("EARTHDATA_EDL_TOKEN absent — no Earthdata bearer token");
+        const GRANULE_BYTES: u64 = 771_751_936;
+        const PREFIX_BYTES: u64 = 1 << 22;
+
+        let fetch = |off: u64, len: u64| {
+            crate::archivar::range::fetch_bearer_range(&url, off, len, &token)
+        };
+
+        let prefix =
+            fetch(0, PREFIX_BYTES).expect("the ATL03 granule prefix range read returned void");
+        assert_eq!(prefix.len() as u64, PREFIX_BYTES);
+
+        let mut file = LazyHdf5::open(&prefix, fetch).expect("metadata unread");
+
+        let (obj, ds, _dt) = file
+            .dataset("gt1l/heights/delta_time")
+            .expect("gt1l/heights/delta_time absent");
+        assert_eq!(ds.dims.len(), 1, "delta_time is a 1-D photon-track dataset");
+        let (btree, chunk_dims) = match obj.layout.as_ref() {
+            Some(Hdf5Layout::Chunked {
+                btree, chunk_dims, ..
+            }) => (*btree, chunk_dims.clone()),
+            other => panic!(
+                "gt1l/heights/delta_time carries no chunk layout (layout: {:?})",
+                other
+            ),
+        };
+        assert!(
+            !chunk_dims.is_empty() && chunk_dims[0] > 0,
+            "delta_time carries a positive chunk extent"
+        );
+        let rank = ds.dims.len();
+
+        let no_fetch = |_off: u64, _len: u64| -> Option<Vec<u8>> { None };
+        let mut walker = Hdf5WindowReader::new(&prefix, no_fetch);
+        let head = walker
+            .read(btree, 24)
+            .expect("the chunk index head lies outside the 4 MB prefix");
+        assert_eq!(
+            &head[..4],
+            b"TREE",
+            "the ATL03 chunk index is v1 TREE, not v2 BTHD"
+        );
+        assert_eq!(head[4], 1, "the v1 chunk node type is 01");
+        assert!(
+            head[5] >= 2,
+            "the v1 chunk index is multilevel (depth {})",
+            head[5]
+        );
+
+        let mut by_level = [0usize; 8];
+        let mut max_level = 0usize;
+        count_v1_tree_nodes(&mut walker, btree, rank, &head, &mut by_level, &mut max_level)
+            .expect("the v1 chunk walk returned void");
+        assert!(max_level >= 2, "depth {max_level} is not multilevel");
+        let total: usize = by_level.iter().sum();
+        println!("atl03 v1 chunk index: {total} TREE nodes by level {by_level:?}");
+        assert_eq!(
+            total, 682,
+            "the measured chunk index carries 682 TREE nodes (walked {total})"
+        );
+        assert_eq!(
+            by_level[1], 38,
+            "the measured chunk index carries 38 internal level-1 nodes (walked {})",
+            by_level[1]
+        );
+        assert_eq!(
+            by_level[0], 640,
+            "the measured chunk index carries 640 leaf level-0 nodes (walked {})",
+            by_level[0]
+        );
+
+        let mut materializer = Hdf5WindowReader::new(&prefix, no_fetch);
+        let recs = v1_chunk_records(&mut materializer, btree, rank, &head)
+            .expect("the v1 chunk records returned void");
+        assert!(
+            !recs.is_empty(),
+            "the v1 chunk index materializes no chunk records"
+        );
+        for rec in &recs {
+            assert!(
+                rec.addr != UNDEF && rec.addr < GRANULE_BYTES,
+                "chunk address {} lies outside the {GRANULE_BYTES}-byte granule",
+                rec.addr
+            );
+        }
+
+        let first = file
+            .read_chunk("gt1l/heights/delta_time", &[0], fetch)
+            .expect("the first delta_time chunk returned void");
+        assert!(!first.is_empty(), "the first delta_time chunk decodes empty");
+        assert!(
+            first.iter().any(|v| v.is_finite()),
+            "the first delta_time chunk carries no finite value"
         );
     }
 

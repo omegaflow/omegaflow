@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 478232b47ed164c72838229b689e3d11ff71d10aeef058628995a64a4ce851d8
+  sha256: 537a8dd1d7eb4feb9b6a2c7fe4adbe9378750d92b015f1fa63a9bc2701ae9fd9
   status: live
   see-also: AGENTS.md
 -->
@@ -22,3 +22,5 @@ An ernte: solar-system-open-data (`phi/blocked_sources.φ:47`) — REST 401, Key
 An ernte: Free-Model-Bench (105 Modelle) — Aufbau auf inkrementelles Schreiben je Zeile korrigiert; Lauf-Abschluss offen. (Schritt: `free-model-bench.tsv` lesen, `gemini-2.5-flash` (`free_models.tsv:72`) messen.)
 
 An sensory: F2 — flare-Gate-Power, Probe n∈{400,600,1000} aus. (Schritt: Re-run.)
+
+An sensory: Such-API-Erweiterung (Mountain-Punkt 9) — `archive_search` Web-Suche: `--brave` 100 % von $5 free credits erschöpft (`docs/zustand/external-state.md`, Ledger `1789978555`), keyless nur `--mwmbl`; `--searxng` nicht im Baum (nur archiv `bau-folge121–123`); keine Such-Quelle in `phi/` registriert. Mountains Natur trägt Code, nicht die Wahrnehmung/Recherche. (Schritt: `research-max` — `github.com/prirai/awesome-search-engines` + `reddit.com/r/degoogle/1kun5sp` sichten; Kandidaten Marginalia-API, Stract, YaCy, Mojeek, SearXNG-self-host, Exa/Tavily/Linkup je auf keyless/JSON/IP-Gate/ToS via `archive_search --verdict`/`--sniff`/`--playwright` messen, Verdikt je Kandidat; Key-/Konto-Kandidaten + Geo-Bypass als `An future:` melden; akzeptierte `--<mode>` an Mountain.)

@@ -5763,13 +5763,13 @@ mod tests {
         });
         let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 384,
+            size: crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32),
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
         let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 384,
+            size: crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -5828,7 +5828,13 @@ mod tests {
             pass.set_bind_group(0, &te_bind, &[]);
             pass.dispatch_workgroups(1, 1, 1);
         }
-        enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, 384);
+        enc.copy_buffer_to_buffer(
+            &out_buf,
+            0,
+            &read_buf,
+            0,
+            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32),
+        );
         queue.submit(std::iter::once(enc.finish()));
         let mapped = Arc::new(AtomicBool::new(false));
         let m2 = mapped.clone();
@@ -5845,8 +5851,18 @@ mod tests {
             "wgsl ksg parity readback returned void"
         );
         let mapped_data = slice.get_mapped_range();
-        let mut verdict = [0f32; 96];
-        for k in 0..96 {
+        assert!(
+            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32) >= 384,
+            "the K>0 verdict readback must carry the KSG columns (384 B)"
+        );
+        assert_eq!(
+            mapped_data.len(),
+            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32) as usize,
+            "the readback size must follow te_verdict_bytes"
+        );
+        let mut verdict =
+            [0f32; crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+        for k in 0..verdict.len() {
             let mut b = [0u8; 4];
             b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
             verdict[k] = f32::from_le_bytes(b);
