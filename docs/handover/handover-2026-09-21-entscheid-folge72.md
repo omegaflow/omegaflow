@@ -3,7 +3,7 @@
   session: Entscheid-Folge 72
   class: handover
   date: 2026-09-21
-  sha256: 8c8dba0c30b6a9175b67704c8584edebe36b752b619f6f3a5403b0e695ea141e
+  sha256: d2d256dadbdc87e0c486e70401acae1656c0bf98f0efef6d17cc7baed89153ab
   status: live
 -->
 # Handover — Entscheid-Folge 72 (2026-09-21)
@@ -108,6 +108,7 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 
 ## Abschluss
 
-Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Nach dem Push wird
-`ci-check.yml` dispatcht (frische fmt-Messung der zwei Bench-Dateien); kein Poll —
-die Run-Id steht im Handover, das Ergebnis wird einmalig gelesen.
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Nach dem Push wurde
+`ci-check.yml` dispatcht (`35569577597` @`d4e62c45`, Verifikation der Gate-Tests
+`state_claim`/`serial_priority`); kein Poll — das Ergebnis wird einmalig gelesen
+(`ci_manage view 35569577597`).
