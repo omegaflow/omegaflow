@@ -31,7 +31,10 @@ jobs:
         run: |
           mkdir -p kernels
           caflags=""
-          [ -n "$OMEGAFLOW_CA_BUNDLE" ] && caflags="--cacert $OMEGAFLOW_CA_BUNDLE"
+          if [ -n "$OMEGAFLOW_CA_BUNDLE" ]; then
+            printf '%s' "$OMEGAFLOW_CA_BUNDLE" | base64 -d > /tmp/hawc-ca.pem
+            caflags="--cacert /tmp/hawc-ca.pem"
+          fi
           curl -sSfL $caflags --retry 3 --max-time 600 -o kernels/2HWC.yaml \
             https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
