@@ -3,7 +3,7 @@
   session: Ernte-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: efc4fe7e02f6bca2eb08b2a8c99af75649e6f1053d3945a228f599638f297c26
+  sha256: 1ba6bafcff5e9a80b98d6e06abfe332be0f9129aae93e0e58ba2b9e6038bb287
   status: live
 -->
 # Handover — Ernte-Folge 132 (2026-09-21)
@@ -70,21 +70,26 @@ Wartestellungen sind kein Auswahlpunkt.
 
 ### SSDC Limadou
 - **Status:** wartend | **Bindung:** termin (CSES-02-Umbau)
-- **Lage:** `ledger.φ:26` — PI „wait a few weeks"; kein Follow-up fällig.
+- **Lage:** `ledger.φ:26` — SSDC-Portal rendert (`--playwright`), CSES-Limadou
+  ist eine Mission mit eigener Seite; Datenzugang login/PI-gebunden, PI „wait a few weeks".
 - **Blockade:** PI-Portal.
 - **Braucht:** neue Anleitung auf dem Limadou-Portal.
 
 ### EPA RadNet Koordinaten
 - **Status:** wartend | **Bindung:** termin (FRS)
-- **Lage:** `blocked_sources.φ:74` — FRS `ofmpub get_facilities` 503.
-- **Blockade:** FRS-Maintenance.
-- **Braucht:** FRS-Retry `pgm_sys_acrnm RadNet`.
+- **Lage:** `blocked_sources.φ:74` — RadNet Dashboard (near-real-time Air) offen
+  mit Monitor-Standorten; hist. Precip/Milch/Wasser ohne Koordinaten;
+  FRS `ofmpub get_facilities` 503.
+- **Blockade:** FRS-Maintenance (nur hist. Matrizen).
+- **Braucht:** FRS-Retry `pgm_sys_acrnm RadNet`; Luft-Route via Dashboard nutzbar.
 
 ### EMODnet maxTime
-- **Status:** wartend | **Bindung:** termin (Host)
-- **Lage:** `ledger.φ:18` — `erddap.emodnet-physics.eu` HTTP 0.
-- **Blockade:** Host.
-- **Braucht:** Re-Messung bei Erreichbarkeit.
+- **Status:** wartend | **Bindung:** termin (Compiler/Manifestation)
+- **Lage:** `ledger.φ:18` — Dataset umbenannt `HFRADAR_NADR_Totals` →
+  `EUHFR_NRTcurrent_HFR-NAdr-Total` (56 HFRADAR-Totals live); Host direkt HTTP 200;
+  `time_coverage_end` 2026-09-21T10:00:00Z (PT30M).
+- **Blockade:** keine (Route + Host offen).
+- **Braucht:** Compiler/Manifestation auf die neue Dataset-ID.
 
 ### src.pas TAP
 - **Status:** wartend | **Bindung:** termin (Dienst-Backend)
