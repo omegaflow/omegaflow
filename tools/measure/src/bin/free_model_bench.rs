@@ -395,18 +395,7 @@ fn parse_model(line: &str) -> Option<Model> {
     })
 }
 
-fn write_tsv(path: &str, models: &[Model], rows: &[Row]) {
-    let mut f = match std::fs::File::create(path) {
-        Ok(f) => f,
-        Err(_) => return,
-    };
-    for r in rows {
-        let _ = writeln!(
-            f,
-            "{}\t{}\t{}\t{}\t{}\t{}\t{}",
-            r.provider, r.model, r.task, r.trial, r.status, r.ms, r.note
-        );
-    }
+fn write_summary(f: &mut std::fs::File, models: &[Model], rows: &[Row]) {
     for m in models {
         let mrows: Vec<&Row> = rows
             .iter()
@@ -527,13 +516,29 @@ fn main() {
     let rows: Vec<Row> = std::thread::scope(|scope| {
         let mut handles = Vec::new();
         for g in groups {
+            let path = out.clone();
             handles.push(scope.spawn(move || {
+                let mut sink = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&path)
+                    .ok();
                 let mut local: Vec<Row> = Vec::new();
+                let mut emit = |r: Row| {
+                    if let Some(f) = sink.as_mut() {
+                        let line = format!(
+                            "{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                            r.provider, r.model, r.task, r.trial, r.status, r.ms, r.note
+                        );
+                        let _ = f.write_all(line.as_bytes());
+                    }
+                    local.push(r);
+                };
                 for m in g {
                     let key = match key_for(m) {
                         Some(k) => k,
                         None => {
-                            local.push(Row {
+                            emit(Row {
                                 provider: m.provider.clone(),
                                 model: m.id.clone(),
                                 task: "-".into(),
@@ -555,7 +560,7 @@ fn main() {
                         for trial in 1..=n {
                             let (status, ms, note) = run_trial(t, m, &key);
                             eprintln!("  {} {} {}/{} {}", m.provider, t, trial, n, status);
-                            local.push(Row {
+                            emit(Row {
                                 provider: m.provider.clone(),
                                 model: m.id.clone(),
                                 task: t.into(),
@@ -579,6 +584,12 @@ fn main() {
         all
     });
 
-    write_tsv(&out, &models, &rows);
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&out)
+    {
+        write_summary(&mut f, &models, &rows);
+    }
     eprintln!("wrote {}", out);
 }
