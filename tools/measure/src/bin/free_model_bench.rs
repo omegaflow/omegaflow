@@ -204,9 +204,11 @@ fn build_filler() -> String {
     s
 }
 
-fn body_with(prompt: &str, tools: Option<&str>, max_tokens: u32) -> String {
+fn body_with(prompt: &str, tools: Option<&str>, max_tokens: u32, model: &str) -> String {
     let mut b = String::new();
-    b.push_str("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+    b.push_str("{\"model\":\"");
+    b.push_str(&json_escape(model));
+    b.push_str("\",\"messages\":[{\"role\":\"user\",\"content\":\"");
     b.push_str(&json_escape(prompt));
     b.push_str("\"}]");
     if let Some(t) = tools {
@@ -220,22 +222,23 @@ fn body_with(prompt: &str, tools: Option<&str>, max_tokens: u32) -> String {
     b
 }
 
-fn build_body(task: &str) -> String {
+fn build_body(task: &str, model: &str) -> String {
     match task {
-        "T1" => body_with("Call the get_weather tool for the city Berlin. You must use the tool.", Some(TOOLS1), 256),
-        "T2" => body_with("Get the weather for Berlin, then advise on an umbrella. Use the tools.", Some(TOOLS2), 256),
-        "T2b" => body_with("The get_weather result for Berlin is: rain. Now call the get_umbrella_advice tool with weather=rain.", Some(TOOLS2), 256),
-        "T3" => body_with("Fix this Rust function so it sums 1 through n inclusive:\nfn sum_to(n: u32) -> u32 { let mut s = 0; for i in 1..n { s += i; } s }\nReturn only the corrected function.", None, 512),
-        "T4" => body_with("Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".", None, 256),
-        "T5" => body_with("A train travels 60 km/h for 2.5 hours, then 80 km/h for 1.25 hours. What is the total distance in km? End with: Answer: <number>", None, 256),
+        "T1" => body_with("Call the get_weather tool for the city Berlin. You must use the tool.", Some(TOOLS1), 256, model),
+        "T2" => body_with("Get the weather for Berlin, then advise on an umbrella. Use the tools.", Some(TOOLS2), 256, model),
+        "T2b" => body_with("The get_weather result for Berlin is: rain. Now call the get_umbrella_advice tool with weather=rain.", Some(TOOLS2), 256, model),
+        "T3" => body_with("Fix this Rust function so it sums 1 through n inclusive:\nfn sum_to(n: u32) -> u32 { let mut s = 0; for i in 1..n { s += i; } s }\nReturn only the corrected function.", None, 512, model),
+        "T4" => body_with("Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".", None, 256, model),
+        "T5" => body_with("A train travels 60 km/h for 2.5 hours, then 80 km/h for 1.25 hours. What is the total distance in km? End with: Answer: <number>", None, 256, model),
         "T6" => {
             let p = format!("{} At the very end: what is the access code mentioned in the document? Return only the code.", build_filler());
-            body_with(&p, None, 64)
+            body_with(&p, None, 64, model)
         }
         "T7" => body_with(
             "Classify each funding program by the obligations it imposes on the recipient. Answer with exactly one line per program in the format NAME|LABEL, no spaces around the pipe, nothing else. LABEL is one of: free (no release, publication, or reporting obligations), duty (carries obligations), closed (not currently open). Programs: MacArthur Fellowship, Thiel Fellowship, Emergent Ventures, Astera Residency, Long-Term Future Fund.",
             None,
             256,
+            model,
         ),
         _ => String::new(),
     }
@@ -275,7 +278,7 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
     let mut attempt = 0;
     loop {
         attempt += 1;
-        let body = build_body(task);
+        let body = build_body(task, &m.id);
         let r = call(&url, key, &body);
         total_ms += r.ms;
         if r.timed_out {
@@ -310,7 +313,7 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128) {
             if !first {
                 return ("no_tool".into(), total_ms);
             }
-            let r2 = call(&url, key, &build_body("T2b"));
+            let r2 = call(&url, key, &build_body("T2b", &m.id));
             total_ms += r2.ms;
             return (
                 if r2.body.contains("get_umbrella_advice") {
