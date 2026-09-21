@@ -69,9 +69,9 @@ reg https://developer.amentum.io/register
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER ISL (CDPP) — 2026-09-21: Zugang gemessen — CDPP_USER/CDPP_PASS in .secrets.local, Login ok, Order 18387 (97078 Dateien, 34,71 GB) laeuft; Metallink+Compiler-Weg an ernte (post.md). Schritt: ernte Download→demeter_compiler→CDN.
+note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gap: demeter.rs:60 verlangt ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST. Schritt: Marker auf ISL SURVEY|ISL BURST erweitern.
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet hist. Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (nur loc_num/state/city); RadNet Dashboard (near-real-time Air) offen mit Monitor-Standorten; AGOL EPA_Radiation_Air_Monitors count=140 (nur Luft); FRS ofmpub get_facilities 503. Schritt: FRS-Retry RadNet.
+note EPA RadNet Precip/Milch/Wasser ohne Koordinaten. 2026-09-21: ERM_LOCATION 200 (loc/state/city); AGOL count=140. FRS get_facilities flappt 503/200; pgm_sys_acrnm verworfen, program_name akzeptiert (RadNet leer). Schritt: FRS-Akronym messen.
 
