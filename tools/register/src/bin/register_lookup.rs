@@ -378,16 +378,16 @@ fn scan_markers(
 fn disposition_owner(state: &str) -> Option<&'static str> {
     let mut tokens = state.trim().split_whitespace();
     match tokens.next() {
-        Some("parser-def" | "parser-gap") => Some("bau"),
+        Some("parser-def" | "parser-gap") => Some("mountain"),
         Some("asset") => match tokens.next() {
-            Some("fehlt") => Some("bau"),
+            Some("fehlt") => Some("mountain"),
             _ => None,
         },
-        Some("ausstehend" | "verifiziert" | "kompiliert" | "pending") => Some("ernte"),
+        Some("ausstehend" | "verifiziert" | "kompiliert" | "pending") => Some("mycelium"),
         Some("blocked") => match tokens.next() {
-            Some("account" | "key") => Some("entscheid"),
-            Some("ip-blocked") => Some("ernte"),
-            Some("parser-def") => Some("bau"),
+            Some("account" | "key") => Some("future"),
+            Some("ip-blocked") => Some("mycelium"),
+            Some("parser-def") => Some("mountain"),
             _ => None,
         },
         _ => None,
@@ -404,8 +404,8 @@ enum StateClass {
 fn state_class(state: &str) -> Option<StateClass> {
     match state.trim() {
         "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen" | "absent"
-        | "review" => Some(StateClass::Open("ernte")),
-        "parser-gap" | "asset fehlt" => Some(StateClass::Open("bau")),
+        | "review" => Some(StateClass::Open("mycelium")),
+        "parser-gap" | "asset fehlt" => Some(StateClass::Open("mountain")),
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
         | "refused" => Some(StateClass::Released),
         "asset present" | "index" | "artefakt" | "register" | "infra" | "probe" | "frame"
@@ -795,7 +795,7 @@ fn scan_catalog_candidates(
             continue;
         }
         out.push(format!(
-            "CANDIDATES\t{}\t{} \u{2192} ernte",
+            "CANDIDATES\t{}\t{} \u{2192} mycelium",
             path.to_string_lossy(),
             n
         ));
@@ -2065,7 +2065,7 @@ mod tests {
 
     #[test]
     fn post_line_is_an_address_with_a_step() {
-        assert!(is_post_line("An bau: tree red (step: fix)"));
+        assert!(is_post_line("An mountain: tree red (step: fix)"));
         assert!(is_post_line("  An line: X"));
         assert!(!is_post_line("A note to a line stands here"));
         assert!(!is_post_line("## Post"));
@@ -2151,21 +2151,21 @@ mod tests {
     fn disposition_owner_maps_every_known_state() {
         assert_eq!(
             disposition_owner("blocked parser-def drs-fits"),
-            Some("bau")
+            Some("mountain")
         );
-        assert_eq!(disposition_owner("blocked parser-def odf"), Some("bau"));
-        assert_eq!(disposition_owner("blocked account"), Some("entscheid"));
-        assert_eq!(disposition_owner("blocked key"), Some("entscheid"));
-        assert_eq!(disposition_owner("blocked ip-blocked"), Some("ernte"));
-        assert_eq!(disposition_owner("pending"), Some("ernte"));
+        assert_eq!(disposition_owner("blocked parser-def odf"), Some("mountain"));
+        assert_eq!(disposition_owner("blocked account"), Some("future"));
+        assert_eq!(disposition_owner("blocked key"), Some("future"));
+        assert_eq!(disposition_owner("blocked ip-blocked"), Some("mycelium"));
+        assert_eq!(disposition_owner("pending"), Some("mycelium"));
         assert_eq!(disposition_owner("descoped"), None);
     }
 
     #[test]
     fn status_owner_maps_on_first_token() {
-        assert_eq!(disposition_owner("parser-def cdf"), Some("bau"));
-        assert_eq!(disposition_owner("blocked account"), Some("entscheid"));
-        assert_eq!(disposition_owner("blocked parser-def odf"), Some("bau"));
+        assert_eq!(disposition_owner("parser-def cdf"), Some("mountain"));
+        assert_eq!(disposition_owner("blocked account"), Some("future"));
+        assert_eq!(disposition_owner("blocked parser-def odf"), Some("mountain"));
         assert_eq!(disposition_owner("blocked mystery"), None);
     }
 
@@ -2178,8 +2178,8 @@ mod tests {
         assert_eq!(n, 3);
         assert_eq!(open_out.len(), 2);
         assert_eq!(released_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:3\t[ernte] pending"));
-        assert!(open_out[1].contains("[entscheid] blocked account"));
+        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:3\t[mycelium] pending"));
+        assert!(open_out[1].contains("[future] blocked account"));
         assert!(released_out[0].starts_with("RELEASED\tb.\u{3c6}:7\t"));
         assert!(released_out[0].contains("descoped"));
     }
@@ -2207,24 +2207,24 @@ mod tests {
     #[test]
     fn state_class_maps_every_register_state() {
         let table: &[(&str, Option<StateClass>)] = &[
-            ("ausstehend", Some(StateClass::Open("ernte"))),
-            ("verifiziert", Some(StateClass::Open("ernte"))),
-            ("kompiliert", Some(StateClass::Open("ernte"))),
-            ("parser-gap", Some(StateClass::Open("bau"))),
+            ("ausstehend", Some(StateClass::Open("mycelium"))),
+            ("verifiziert", Some(StateClass::Open("mycelium"))),
+            ("kompiliert", Some(StateClass::Open("mycelium"))),
+            ("parser-gap", Some(StateClass::Open("mountain"))),
             ("void", Some(StateClass::Released)),
             ("disponiert", Some(StateClass::Released)),
-            ("pending", Some(StateClass::Open("ernte"))),
+            ("pending", Some(StateClass::Open("mycelium"))),
             ("erledigt", Some(StateClass::Released)),
             ("ausgelagert", Some(StateClass::Released)),
             ("descoped", Some(StateClass::Released)),
-            ("fehlt", Some(StateClass::Open("ernte"))),
-            ("offen", Some(StateClass::Open("ernte"))),
-            ("absent", Some(StateClass::Open("ernte"))),
+            ("fehlt", Some(StateClass::Open("mycelium"))),
+            ("offen", Some(StateClass::Open("mycelium"))),
+            ("absent", Some(StateClass::Open("mycelium"))),
             ("declined", Some(StateClass::Released)),
             ("refused", Some(StateClass::Released)),
-            ("asset fehlt", Some(StateClass::Open("bau"))),
+            ("asset fehlt", Some(StateClass::Open("mountain"))),
             ("asset present", Some(StateClass::Ignored)),
-            ("review", Some(StateClass::Open("ernte"))),
+            ("review", Some(StateClass::Open("mycelium"))),
             ("index", Some(StateClass::Ignored)),
             ("artefakt", Some(StateClass::Ignored)),
             ("register", Some(StateClass::Ignored)),
@@ -2259,8 +2259,8 @@ mod tests {
         assert_eq!(n, 2);
         assert_eq!(open_out.len(), 3);
         assert_eq!(released_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION\tl.\u{3c6}:1\t[ernte] ausstehend"));
-        assert!(open_out[1].starts_with("DISPOSITION\tl.\u{3c6}:5\t[bau] parser-gap"));
+        assert!(open_out[0].starts_with("DISPOSITION\tl.\u{3c6}:1\t[mycelium] ausstehend"));
+        assert!(open_out[1].starts_with("DISPOSITION\tl.\u{3c6}:5\t[mountain] parser-gap"));
         assert!(open_out[2].starts_with("DISPOSITION_UNMAPPED\tl.\u{3c6}:13\tmystery"));
         assert!(released_out[0].starts_with("RELEASED\tl.\u{3c6}:9\tvoid"));
     }
@@ -2274,7 +2274,7 @@ mod tests {
         assert_eq!(n, 1);
         assert_eq!(open_out.len(), 1);
         assert_eq!(released_out.len(), 0);
-        assert!(open_out[0].starts_with("DISPOSITION\th.\u{3c6}:1\t[bau] asset fehlt"));
+        assert!(open_out[0].starts_with("DISPOSITION\th.\u{3c6}:1\t[mountain] asset fehlt"));
     }
 
     #[test]
@@ -2286,7 +2286,7 @@ mod tests {
         assert_eq!(n, 1);
         assert_eq!(open_out.len(), 2);
         assert_eq!(released_out.len(), 2);
-        assert!(open_out[0].starts_with("DISPOSITION\ti.\u{3c6}:2\t[ernte] ausstehend"));
+        assert!(open_out[0].starts_with("DISPOSITION\ti.\u{3c6}:2\t[mycelium] ausstehend"));
         assert!(open_out[1].starts_with("DISPOSITION_UNMAPPED\ti.\u{3c6}:6\tvermerkt"));
         assert!(released_out[0].starts_with("RELEASED\ti.\u{3c6}:3\terledigt"));
         assert!(released_out[1].starts_with("RELEASED\ti.\u{3c6}:4\tausgelagert"));
@@ -2308,7 +2308,7 @@ mod tests {
         assert_eq!(n, 1);
         assert_eq!(open_out.len(), 1);
         assert_eq!(released_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION\ts.\u{3c6}:5\t[ernte] pending"));
+        assert!(open_out[0].starts_with("DISPOSITION\ts.\u{3c6}:5\t[mycelium] pending"));
         assert!(released_out[0].starts_with("RELEASED\ts.\u{3c6}:2\tdescoped"));
     }
 
@@ -2340,8 +2340,8 @@ mod tests {
         assert_eq!(n, 2);
         assert_eq!(open_out.len(), 2);
         assert_eq!(released_out.len(), 0);
-        assert!(open_out[0].starts_with("DISPOSITION\tp.\u{3c6}:1\t[ernte] review"));
-        assert!(open_out[1].starts_with("DISPOSITION\tp.\u{3c6}:2\t[ernte] pending"));
+        assert!(open_out[0].starts_with("DISPOSITION\tp.\u{3c6}:1\t[mycelium] review"));
+        assert!(open_out[1].starts_with("DISPOSITION\tp.\u{3c6}:2\t[mycelium] pending"));
     }
 
     #[test]
@@ -2366,7 +2366,7 @@ mod tests {
         assert_eq!(skipped, 0);
         assert_eq!(out.len(), 1);
         assert!(out[0].starts_with("CANDIDATES\t"));
-        assert!(out[0].contains("cat_a.\u{3c6}\t2 \u{2192} ernte"));
+        assert!(out[0].contains("cat_a.\u{3c6}\t2 \u{2192} mycelium"));
         let _ = fs::remove_dir_all(&dir);
     }
 
@@ -2397,23 +2397,23 @@ mod tests {
         assert_eq!(n, 2);
         assert_eq!(skipped, 2);
         assert_eq!(out.len(), 1);
-        assert!(out[0].contains("cat_d.\u{3c6}\t2 \u{2192} ernte"));
+        assert!(out[0].contains("cat_d.\u{3c6}\t2 \u{2192} mycelium"));
         let _ = fs::remove_dir_all(&dir);
     }
 
     #[test]
     fn parse_handover_name_reads_folge_and_single_session() {
         assert_eq!(
-            parse_handover_name("handover-2026-09-20-bau-folge113.md"),
-            Some(("bau".to_string(), "2026-09-20".to_string(), Some(113)))
+            parse_handover_name("handover-2026-09-20-mountain-folge113.md"),
+            Some(("mountain".to_string(), "2026-09-20".to_string(), Some(113)))
         );
         assert_eq!(
             parse_handover_name("handover-2026-09-20-pii-llm-budget.md"),
             Some(("pii-llm-budget".to_string(), "2026-09-20".to_string(), None))
         );
         assert_eq!(
-            parse_handover_name("handover-2026-09-15-bau-folge33-p8-gate.md"),
-            Some(("bau".to_string(), "2026-09-15".to_string(), Some(33)))
+            parse_handover_name("handover-2026-09-15-mountain-folge33-p8-gate.md"),
+            Some(("mountain".to_string(), "2026-09-15".to_string(), Some(33)))
         );
         assert_eq!(parse_handover_name("post.md"), None);
         assert_eq!(parse_handover_name("not-a-handover.md"), None);
