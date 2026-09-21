@@ -3,7 +3,7 @@
   session: Bau-Folge 120
   class: handover
   date: 2026-09-21
-  sha256: c2460adb56fae6e38874015391d1b870ef128594327d912e698d164b80aef663
+  sha256: c3a5bc9938c0d2a5c33bcfc41b0e7ae17cd3bc4d1607d3c9b0a360f6f743c299
   status: live
 -->
 # Handover — Bau-Folge 120 (2026-09-21)
@@ -63,9 +63,10 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ### 2. glm_l2.bin CDN-Manifestation
 - **Status:** `wartend` | **Bindung:** `eigen`
-- **Lage:** Compiler + Workflow stehen; das Asset ist noch nicht manifestiert.
-- **Blockade:** Push dieses Commits (dann Dispatch).
-- **Braucht:** nach Push `gh workflow run glm-l2-cdn.yml`; Asset per
+- **Lage:** Compiler + Workflow stehen; dispatcht als Lauf `35576757352` (queued);
+  das Asset ist noch nicht manifestiert.
+- **Blockade:** Run-Abschluss (CI).
+- **Braucht:** `ci_manage view 35576757352` / Watchdog-Snapshot; Asset per
   `archive_search --sniff …/download/noaa-goes18/glm_l2.bin`; danach sha256 in
   `phi/sources.φ`.
 
