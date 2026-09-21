@@ -3,7 +3,7 @@
   session: Bau-Folge 121
   class: handover
   date: 2026-09-21
-  sha256: 3543036ee71c9b8e822b52df8d2f220616f3af08b3e1dfe518521bcc5d6f619b
+  sha256: f2fe839a3f8e5cf00b41019406a685085222e6238798e4ca8e196956aba2f213
   status: live
 -->
 # Handover — Bau-Folge 121 (2026-09-21)
@@ -52,18 +52,33 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `error[E0433] cannot find module hfrnet_rtv` an `src/archivar/extract.rs:350` —
   der rote Parent `0475d67f` (bau folge120 committete die hfrnet_rtv-Referenzen
   ohne `mod.rs`/`hfrnet_rtv.rs`); der Fix landete mit ernte folge129 `2ae4978a`.
-  Am grünen HEAD neu dispatcht: Lauf `35579950220`.
+  Am grünen HEAD neu dispatcht: Lauf `35579950220` — **failure** (siehe offener
+  Punkt 1: der Compiler selbst liest 0 Flashes).
+- **`--searxng`-Modus gebaut** (Meta-Suche als Brave-Alternative):
+  `tools/utils/src/bin/archive_search/net.rs` `searxng_lines`/`searxng_results`
+  (`<base>/search?q=&format=json&language=all&safesearch=0`), Basis-URL aus
+  `SEARXNG_URL`; registriert in `QUERY_MODES`/`run_lines`/`--help`; 2 Gate-Tests;
+  `cargo check -p omegaflow-utils --all-targets` 0 Fehler/0 Warnungen. Gemessen:
+  öffentliche Instanzen (`searx.be`, `search.inetol.net`) liefern HTTP 200 **HTML**
+  statt JSON → `pending`; der Modus braucht eine JSON-fähige/gehostete Instanz.
 
 ## Offen (aufgeschlüsselt)
 
-### 1. glm_l2.bin CDN-Manifestation
-- **Status:** `wartend` | **Bindung:** `eigen`
-- **Lage:** Compiler + Workflow stehen; am grünen HEAD neu dispatcht als Lauf
-  `35579950220`; das Asset ist noch nicht manifestiert (`--sniff` 404).
-- **Blockade:** Run-Abschluss (CI).
-- **Braucht:** `ci_manage view 35579950220` / Watchdog-Snapshot; bei success
-  `archive_search --sniff …/download/noaa-goes18/glm_l2.bin`, sha256 in
-  `phi/sources.φ`.
+### 1. glm_l2.bin CDN-Manifestation — Compiler liest 0 Flashes
+- **Status:** `blockiert` | **Bindung:** `eigen`
+- **Lage:** Am grünen HEAD `a476ccfb` neu dispatcht als Lauf `35579950220` —
+  **failure** (08:51:07Z). Der Compiler lief über die ~30 Granules von
+  `GLM-L2-LCFA/2026/001/00/` und meldete für jede `0 flashes (N quality-degraded
+  skipped)` (N meist 0, selten 1–5) → `exit 1` via
+  `tools/harvest/src/bin/glm_l2_compiler.rs:434` (`no flashes harvested — the bin
+  stays unwritten (0 honored)`); kein Upload. Echte GLM-L2-LCFA-Granules tragen
+  hunderte–tausende Flashes je 2-min-Granule — der Parser liest zu wenige Records.
+  Asset weiter `--sniff` 404.
+- **Blockade:** Parser-Defekt (Record-Zahl/Dimension/Qualitäts-Gate), nicht der
+  Run-Abschluss.
+- **Braucht:** erste Messung — `dataset_load`/Dimension in `glm_l2_compiler.rs`
+  gegen ein echtes Granule messen (Record-Zahl + `flash_quality_flag`-Verteilung);
+  `grind-max` (novel parser). Danach Re-Dispatch + sha256 in `phi/sources.φ`.
 
 ### 2. PINE64 / Mantis-Shrimp (Ox64-Dokumentation)
 - **Status:** `blockiert` | **Bindung:** `linie:entscheid`
@@ -77,13 +92,15 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Benchmark
 
-- **Bau-Folge 121:** `grind-flash` ×1 (archive_search `--verdict`-Fix, ~2 min).
-  Flash-first; keine Eskalation nötig.
+- **Bau-Folge 121:** `grind-flash` ×1 (archive_search `--verdict`-Fix, ~2 min);
+  `--searxng`-Modus im `build`-Kontext. Flash-first; keine Eskalation nötig.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
 - **Dieser Session:** `tools/utils/src/bin/archive_search/net.rs`,
-  `phi/sources.φ` (radnet-sha256), `docs/handover/post.md`, neues
+  `tools/utils/src/bin/archive_search.rs` (`--searxng`-Flag + Hilfe),
+  `docs/concepts/tools-map.md` (`--searxng`), `phi/sources.φ` (radnet-sha256),
+  `docs/handover/post.md`, neues
   `docs/handover/handover-2026-09-21-bau-folge121.md`, Move
   `handover-2026-09-21-bau-folge120.md` → `archiv/`.
 - **Fremd (nicht angefasst):** `docs/surveys/survey-funding-erkundung.md`.
