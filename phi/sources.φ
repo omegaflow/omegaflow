@@ -8029,7 +8029,16 @@ sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
-note NOAA-S3 noaa-goes16 2026-09-21: prefix=GLM → nur GLM-L2-LCFA/ (Objekt 200 hdf5 c42a392b); kein L1B im offenen Bucket, origin bleibt GHRC-EDL-protected. Token-freie L2-Route braucht eigenen compiler/format.
+note NOAA-S3 noaa-goes16 2026-09-21: prefix=GLM → nur GLM-L2-LCFA/ (Objekt 200 hdf5 c42a392b); kein L1B im offenen Bucket, origin bleibt GHRC-EDL-protected. Token-freie L2-Route: eigener glm_l2-compiler gebaut 2026-09-21.
+
+url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bin
+format glm_l2
+origin https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
+compiler tools/harvest/src/bin/glm_l2_compiler.rs
+on earth 0 0 0
+ttl 604800
+field glm_l2_flash_radiant_energy_j glm_l2_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
+note NOAA-S3 noaa-goes18 2026-09-21: GLM-L2-LCFA netCDF-4/HDF5 token-frei (noaa-goes16/17/18/19); flash_lat/lon float32, flash_energy/time_offset int16 _Unsigned mit scale_factor/add_offset, _FillValue 65535. L1B bleibt GHRC-EDL-protected.
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
 format iss_lis
