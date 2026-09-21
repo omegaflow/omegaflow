@@ -4,7 +4,7 @@
 use core::fmt::Write as _;
 
 use esp_backtrace as _;
-use esp_hal::gpio::{DriveMode, Pin};
+use esp_hal::gpio::{DriveMode, Flex, Pin};
 use esp_hal::i2c::master::{Config as I2cConfig, I2c};
 use esp_hal::ledc::{
     channel::{self, ChannelIFace},
@@ -16,15 +16,19 @@ use esp_hal::mcpwm::{operator::PwmPinConfig, timer::PwmWorkingMode, McPwm, Perip
 use esp_hal::time::Rate;
 use esp_hal::usb::usb_serial_jtag::UsbSerialJtag;
 
+use radiatorium_lib::ds18b20;
 use radiatorium_lib::frame::FrameParser;
 use radiatorium_lib::pwm;
 use radiatorium_lib::{max30102, mux, nn};
+
+mod one_wire;
 
 const SERVO_TIMER_PERIOD_TICKS: u16 = 19_999;
 const SERVO_TIMER_PRESCALER: u8 = 159;
 const SAMPLE_RATE_HZ: f64 = 100.0;
 const WINDOW_LEN: usize = 256;
 const FIFO_SAMPLES: usize = 32;
+const TEMP_READ_PERIOD: u32 = 10_000;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
@@ -136,6 +140,10 @@ fn main() -> ! {
 
     let min_gap_samples = (nn::NN_MIN_MS / 1000.0 * SAMPLE_RATE_HZ) as usize;
 
+    let mut one_wire = one_wire::OneWire::new(Flex::new(peripherals.GPIO7));
+    let mut cutoff = ds18b20::Cutoff::new();
+    let mut temp_counter: u32 = 0;
+
     let mut window = [0u32; WINDOW_LEN];
     let mut window_len: usize = 0;
     let mut base_index: usize = 0;
@@ -154,11 +162,15 @@ fn main() -> ! {
             };
             if let Some(intensity) = frame.intensity {
                 if let Some(percent) = pwm::duty_percent(intensity) {
-                    for ch in [
-                        &mut c0, &mut c1, &mut c2, &mut c3, &mut c4, &mut c5, &mut c6, &mut c7,
-                    ] {
-                        ch.set_duty(percent).unwrap();
-                    }
+                    let thermal = if cutoff.is_tripped() { 0 } else { percent };
+                    c0.set_duty(percent).unwrap();
+                    c1.set_duty(thermal).unwrap();
+                    c2.set_duty(percent).unwrap();
+                    c3.set_duty(thermal).unwrap();
+                    c4.set_duty(thermal).unwrap();
+                    c5.set_duty(percent).unwrap();
+                    c6.set_duty(percent).unwrap();
+                    c7.set_duty(percent).unwrap();
                 }
             }
             if let Some(pan_ms) = frame.pan_ms {
@@ -243,6 +255,13 @@ fn main() -> ! {
             let len = write_nn_line(&mut line, value);
             let _ = usb_tx.write(&line[..len]);
             last_emitted = end;
+        }
+
+        temp_counter = temp_counter.wrapping_add(1);
+        if temp_counter >= TEMP_READ_PERIOD {
+            temp_counter = 0;
+            let reading = one_wire.read_temperature();
+            let _ = cutoff.evaluate(reading);
         }
     }
 }
