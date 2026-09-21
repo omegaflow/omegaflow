@@ -347,6 +347,7 @@ pub fn geo_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<crate::geo
 pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "gdp_drifter" => gdp_drifter::component_name(comp),
+        "hfrnet_rtv" => hfrnet_rtv::component_name(comp),
         "bgr_infrasound" => match comp {
             crate::geo::COMP_BGR_AZIM => Some("bgr_infrasound_back_azimuth_deg"),
             crate::geo::COMP_BGR_VAPP => Some("bgr_infrasound_apparent_velocity_ms"),
@@ -398,6 +399,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "glm_l1b" => match comp {
             crate::geo::COMP_GLML1B_FLASH_ENERGY => Some("glm_l1b_flash_radiant_energy_j"),
+            _ => None,
+        },
+        "glm_l2" => match comp {
+            crate::geo::COMP_GLML2_FLASH_ENERGY => Some("glm_l2_flash_radiant_energy_j"),
             _ => None,
         },
         "argo_bgc" => match comp {
