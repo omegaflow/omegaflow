@@ -2210,34 +2210,6 @@ pub fn transfer_entropy_embedded_ksg(
         pts.extend_from_slice(&emb_x[t - back_x]);
         pts.extend_from_slice(&emb_y[t - back_y]);
     }
-    let mut col_mean = vec![0.0f64; jd];
-    for row in 0..m {
-        for d in 0..jd {
-            col_mean[d] += pts[row * jd + d];
-        }
-    }
-    for v in col_mean.iter_mut() {
-        *v /= m as f64;
-    }
-    let mut col_sd = vec![0.0f64; jd];
-    for row in 0..m {
-        for d in 0..jd {
-            let e = pts[row * jd + d] - col_mean[d];
-            col_sd[d] += e * e;
-        }
-    }
-    for d in 0..jd {
-        let var = col_sd[d] / m as f64;
-        if var <= 0.0 || !var.is_finite() {
-            return None;
-        }
-        col_sd[d] = var.sqrt();
-    }
-    for row in 0..m {
-        for d in 0..jd {
-            pts[row * jd + d] = (pts[row * jd + d] - col_mean[d]) / col_sd[d];
-        }
-    }
     let k_eff = k.min(m - 1);
     let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
     let mut sum = 0.0f64;
@@ -3631,6 +3603,55 @@ mod tests {
         assert!(
             ab.is_none() || ba.is_none(),
             "Kalibrier-Gate n-Floor: n=16 carries no verdict"
+        );
+    }
+
+    #[test]
+    fn calibration_self_null_discriminator_white_driver_stays_at_the_floor() {
+        let measure = || -> (Vec<f64>, usize) {
+            let trials = 20usize;
+            let n = 600usize;
+            let mut rng = 0x51A7_E11B_3C0D_9F02u64;
+            let mut excess_sds: Vec<f64> = Vec::with_capacity(trials);
+            let mut meas = 0usize;
+            for t in 0..trials {
+                let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x51A7_E11B_3C0D_9F02);
+                let target: Vec<f32> = (0..n)
+                    .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+                    .collect();
+                let driver: Vec<f32> = (0..n)
+                    .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+                    .collect();
+                if let Some(v) = topological_te_phase(&target, &driver, 3, 3, seed) {
+                    assert!(
+                        v.surrogate_sd > 0.0,
+                        "self-null floor: the white-noise surrogate null collapsed to zero variance"
+                    );
+                    meas += 1;
+                    excess_sds.push((v.te - v.surrogate_mean) / v.surrogate_sd);
+                }
+            }
+            (excess_sds, meas)
+        };
+        let (excess_sds, meas) = measure();
+        let (again, meas_again) = measure();
+        assert_eq!(
+            meas, meas_again,
+            "self-null floor: the measurement is not seed-deterministic"
+        );
+        assert_eq!(
+            excess_sds, again,
+            "self-null floor: the excess series is not seed-deterministic"
+        );
+        assert_eq!(
+            meas, 20,
+            "self-null floor: {} of 20 white-noise pairs measurable — the machine stays silent too often",
+            meas
+        );
+        let mean_excess = excess_sds.iter().sum::<f64>() / excess_sds.len() as f64;
+        let worst = excess_sds.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+        println!(
+            "self-null floor (canonical null): mean excess {mean_excess:+.3} sd over {meas} white-noise pairs, worst |excess| {worst:.3} sd"
         );
     }
 
