@@ -57,7 +57,8 @@ pub fn parse_block(bytes: &[u8]) -> Option<DemeterBlock> {
     if &bytes[26..34] != b"TOULOUSE" {
         return None;
     }
-    if &bytes[204..214] != b"ISL SURVEY" {
+    let marker = &bytes[204..214];
+    if marker != b"ISL SURVEY" && &marker[..9] != b"ISL BURST" {
         return None;
     }
     let f32s = [
@@ -206,6 +207,45 @@ mod tests {
             0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
         ]);
         let b = parse_block(&blk).expect("block parses");
+        assert_eq!(b.year, 2004);
+        assert_eq!(b.month, 8);
+        assert_eq!(b.day, 11);
+        assert_eq!(b.hour, 15);
+        assert_eq!(b.minute, 57);
+        assert_eq!(b.second, 36);
+        assert_eq!(b.orbit, 585.0);
+        assert!((b.ne - 43_708.69).abs() < 0.01);
+        assert!((b.ni - 36_078.2).abs() < 0.01);
+        assert!((b.te - 3125.682).abs() < 0.01);
+        assert!((b.vf - 1.0184).abs() < 0.001);
+        assert!((b.vi0 + 0.12).abs() < 0.001);
+        assert!((b.vs + 0.106).abs() < 0.001);
+    }
+
+    #[test]
+    fn parses_isl_burst_block() {
+        let mut blk = vec![0u8; BLOCK_BYTES];
+        blk[26..34].copy_from_slice(b"TOULOUSE");
+        blk[204..214].copy_from_slice(b"ISL BURST ");
+        blk[8] = 0x07;
+        blk[9] = 0xd4;
+        blk[10] = 0x00;
+        blk[11] = 0x08;
+        blk[12] = 0x00;
+        blk[13] = 0x0b;
+        blk[14] = 0x00;
+        blk[15] = 0x0f;
+        blk[16] = 0x00;
+        blk[17] = 0x39;
+        blk[18] = 0x00;
+        blk[19] = 0x24;
+        blk[22] = 0x02;
+        blk[23] = 0x49;
+        blk[265..289].copy_from_slice(&[
+            0x47, 0x2a, 0xbc, 0xb1, 0x47, 0x0c, 0xee, 0x33, 0x45, 0x43, 0x5a, 0xe9, 0x3f, 0x82,
+            0x5a, 0x97, 0xbd, 0xf5, 0xc2, 0x8e, 0xbd, 0xd9, 0x10, 0xc5,
+        ]);
+        let b = parse_block(&blk).expect("burst block parses");
         assert_eq!(b.year, 2004);
         assert_eq!(b.month, 8);
         assert_eq!(b.day, 11);
