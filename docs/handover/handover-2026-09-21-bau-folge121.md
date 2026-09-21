@@ -3,7 +3,7 @@
   session: Bau-Folge 121
   class: handover
   date: 2026-09-21
-  sha256: f2fe839a3f8e5cf00b41019406a685085222e6238798e4ca8e196956aba2f213
+  sha256: 7355e7be5e893b76d31ea55d940faca81a4ea1d47c9a2f07b7ef5ad06a2e2135
   status: live
 -->
 # Handover — Bau-Folge 121 (2026-09-21)
@@ -61,6 +61,16 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `cargo check -p omegaflow-utils --all-targets` 0 Fehler/0 Warnungen. Gemessen:
   öffentliche Instanzen (`searx.be`, `search.inetol.net`) liefern HTTP 200 **HTML**
   statt JSON → `pending`; der Modus braucht eine JSON-fähige/gehostete Instanz.
+- **SearXNG-Route mit harten Bandagen recherchiert** (Sweep über 101 Instanzen
+  aus `searx.space/data/instances.json`, 2026-09-21): nur **2** liefern JSON —
+  `sx.xo.st` und `search.mectov.my.id` (je 200, `results[]`). Beide live
+  verifiziert: die Query wird korrekt geechot, die Treffer sind aber
+  **irrelevante Fremdseiten** (Microsoft/Gmail/GitHub-Router, `engine: bing`) —
+  unbrauchbar. `SEARXNG_URL=https://sx.xo.st` wurde zum Test gesetzt und wieder
+  entfernt; der Modus steht auf `pending`. **Der tragfähige Weg ist eine selbst
+  gehostete Instanz** (Docker `searxng/searxng`, `search.formats: [html, json]`,
+  Limiter `false`), dann `SEARXNG_URL=http://localhost:8888`. Rezept:
+  `docs.searxng.org/admin/settings/settings_search.html` + `installation-docker.html`.
 
 ## Offen (aufgeschlüsselt)
 
