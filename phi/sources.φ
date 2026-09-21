@@ -1118,7 +1118,7 @@ on earth 0 0 0
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
+url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/goes_xrs.bin
 format goes_xrs
 origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
 compiler tools/harvest/src/bin/goes_xrs_compiler.rs
@@ -3048,14 +3048,14 @@ field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square em V 86400 0.0 0.0
 field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square em V 86400 0.0 0.0
 field wind_waves_tnr wind_waves_tnr gaussian-inverse-square em V 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dastcom_asteroids.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dastcom/dastcom_asteroids.bin
 format catalog_dastcom
 origin https://ssd.jpl.nasa.gov/ftp/xfr/dast5_le.dat
 compiler tools/harvest/src/bin/dastcom_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dcom5/dcom5_comets.bin
 format catalog_dcom5
 origin https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
 compiler tools/harvest/src/bin/dcom5_compiler.rs
@@ -3063,623 +3063,623 @@ at sun
 ttl 86400
 note gm descoped (gemessen 2026-09-16): CometRec trägt kein GM; der Komet propagiert mit GM_SUN_M3_S2 der Sonne (src/archivar/kepler.rs:1) — GM ist die Eigenschaft des Ankers, der Komet ein Testteilchen.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at adrastea
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_amalthea.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at amalthea
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_apophis.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at apophis
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ariel.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ariel
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at atlas
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas_3i.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at atlas_3i
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_bennu.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at bennu
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_callisto.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at callisto
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ceres.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ceres
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_charon.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at charon
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_earth.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_earth.bin
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at earth
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_moon.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_moon.bin
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at moon
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_neptune.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_neptune.bin
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at neptune
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de440_sun.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_sun.bin
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_earth.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin
 format ephemeris_de442
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at earth
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_moon.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_moon.bin
 format ephemeris_de442
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at moon
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_de442_sun.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_sun.bin
 format ephemeris_de442
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_deimos.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at deimos
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_despina.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at despina
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_dione.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at dione
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at earth
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_enceladus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at enceladus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_encke.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at encke
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_epimetheus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at epimetheus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_eris.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at eris
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at europa
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_galatea.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at galatea
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ganymede.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ganymede
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_haumea.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at haumea
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_helene.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at helene
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_himalia.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at himalia
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hydra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at hydra
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hyperion.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at hyperion
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iapetus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iapetus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at io
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iss.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iss
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_janus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at janus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juice.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juice
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juice_cog.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juice_cog
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juno.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juno
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at jupiter
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jwst.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at jwst
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_kerberos.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at kerberos
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_larissa.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at larissa
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_makemake.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at makemake
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mars
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mercury.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mercury
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_metis.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at metis
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mimas.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mimas
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_miranda.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at miranda
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at moon
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_naiad.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at naiad
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at neptune
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at neptune_c
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nereid
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_new_horizons.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_new_horizons.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at new_horizons
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nix.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nix
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_oberon.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at oberon
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pandora.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pandora
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_parker_solar_probe.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at parker_solar_probe
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phobos.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at phobos
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phoebe.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at phoebe
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pioneer10_daily.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer10_daily.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pioneer10_daily
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer11_daily.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pioneer11_daily
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pluto
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_prometheus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at prometheus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_proteus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at proteus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_rhea.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at rhea
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_saturn.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at saturn
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_solar_orbiter.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at solar_orbiter
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_styx.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at styx
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_tethys.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at tethys
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thalassa.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at thalassa
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thebe.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at thebe
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titan.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at titan
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titania.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at titania
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_triton.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at triton
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_umbriel.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at umbriel
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at uranus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at uranus_c
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at venus
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_vesta.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager1.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager1
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager2.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager2
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/eve_lines_2011.bin
+url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu-eve/eve_lines_2011.bin
 format eve
 origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2
 compiler tools/harvest/src/bin/eve_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mpcorb.bin
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcorb.bin
 format catalog_mpcorb
 origin https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
 compiler tools/harvest/src/bin/mpcorb_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mpcorb_distant.bin
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcorb_distant.bin
 format catalog_mpcorb
 origin https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
 compiler tools/harvest/src/bin/mpcorb_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_indices.bin
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_indices.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
 compiler tools/harvest/src/bin/omni2_compiler.rs
@@ -3691,7 +3691,7 @@ field magnetosphere_au_nt magnetosphere_au_nt inverse-square em nT 3600 0.0 0.0
 field magnetosphere_symh_nt magnetosphere_symh_nt inverse-square em nT 60 0.0 0.0
 field magnetosphere_dst_nt magnetosphere_dst_nt inverse-square em nT 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie.bin
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
 compiler tools/harvest/src/bin/omni2_compiler.rs
@@ -3705,7 +3705,7 @@ field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
 compiler tools/harvest/src/bin/omni2_compiler.rs
@@ -3719,7 +3719,7 @@ field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
 format spectral
 origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
@@ -8701,7 +8701,7 @@ on earth 0 0 0
 ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
-note CDN-Asset pending (sha256 nach Manifestation); ERDDAP griddap ucsdHfrW1_Lon0360 .csv time,latitude,longitude,water_u,water_v m/s HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml; Lauf 35581429287 dispatched.
+note CDN-Asset sha256 6bad8000681201568461adab5db4e4958610e971276ae3fcec4dc2971c5ae657 (480728 B); ERDDAP ucsdHfrW1_Lon0360 HTTP 200 gemessen 2026-09-21; Arm hfrnet_rtv + geo HFR1; workflow hfrnet-cdn.yml; Lauf 35581429287 success.
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
@@ -8740,7 +8740,7 @@ field range_part2 voyager_saturn_range_part2 inverse-square em m 604800 0.0 0.0
 field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
 field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/avo_rad.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/avo_rad.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/avo.rad/catalog
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8751,7 +8751,7 @@ dec dec
 z z
 field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bison_pmode.bin
+url https://github.com/omegaflow/sources/releases/download/bison.ph.bham.ac.uk/bison_pmode.bin
 format bison_velocity
 origin https://bison.ph.bham.ac.uk/downloads/data/allsites-alldata-waverage-fill.fits.gz
 compiler tools/harvest/src/bin/bison_compiler.rs
@@ -8760,7 +8760,7 @@ ttl 604800
 field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
 note BiSON p-mode velocity (Sun-as-a-star, 1976-2024), on-disk magic BSV1 (src/archivar/bison_velocity.rs); compiler bison_compiler.rs + bison-cdn.yml; CDN asset measured 2026-09-16 HTTP 200; series wired (extract.rs + main_flow.rs).
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bzcat5.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/bzcat5.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VII/274/bzcat5
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8771,7 +8771,7 @@ dec dec
 z z
 field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbdata.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cbdata.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/cb/cbdata
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8790,7 +8790,7 @@ field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/chandra_csc.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/chandra_csc.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=IX/70/csc21mas
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8801,7 +8801,7 @@ dec dec
 z z
 field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
+url https://github.com/omegaflow/sources/releases/download/www.minorplanetcenter.net/cometels_flat.json
 origin https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
 compiler tools/harvest/src/bin/cometels_compiler.rs
 ttl 604800
@@ -8814,7 +8814,7 @@ dist dist_au
 dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/corot.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/corot.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/corot/Bright_star
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8833,7 +8833,7 @@ field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg corot_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cosmicflows_cf4.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/ApJ/944/94/table2
 compiler tools/harvest/src/bin/cosmicflows_compiler.rs
 ttl 604800
@@ -8845,7 +8845,7 @@ dist dist_mpc
 dist_scale 3.085677581e22
 field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
@@ -8853,7 +8853,7 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dcom5/dcom5_comets.json
 origin https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
 compiler tools/harvest/src/bin/dcom5_compiler.rs
 ttl 604800
@@ -8867,7 +8867,7 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/denis.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/denis.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/denis/denis
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8885,14 +8885,14 @@ dist_scale 3.085677581e16
 field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
+url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/dr3_stars.bin
 format catalog_tycho
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/tycho2_compiler.rs
 at sun
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/exoplanets.json
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync table=pscomppars
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8905,7 +8905,7 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/extinction_curves.json
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/extinction_curves.json
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJ/663/320/stars&-out.all
 compiler tools/harvest/src/bin/extinction_curves_compiler.rs
 ttl 604800
@@ -8918,7 +8918,7 @@ field e_rv extinction_rv_unc inverse-square em 1 604800 0.0 0.0
 field ebv extinction_ebv_mag inverse-square em mag 604800 0.0 0.0
 field e_ebv extinction_ebv_unc_mag inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/first14.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8930,7 +8930,7 @@ z z
 field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frb_a279.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/693/A279/frbs
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8942,7 +8942,7 @@ z z
 field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
 field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_chime_cat1.json
+url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/frb_chime_cat1.json
 origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/257/59/table2.dat
 compiler tools/harvest/src/bin/frb_compiler.rs
 format json
@@ -8955,7 +8955,7 @@ field dm frb_chime_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
 field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frbcat_flat.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8967,7 +8967,7 @@ z z
 field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
 field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gcvs_cat.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/gcvs_cat.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/gcvs/gcvs_cat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -8985,7 +8985,7 @@ dist_scale 3.085677581e16
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gong_modes.bin
+url https://github.com/omegaflow/sources/releases/download/gong2.nso.edu/gong_modes.bin
 format gong_modes
 origin https://gong2.nso.edu/ftp/TSERIES
 compiler tools/harvest/src/bin/gong_compiler.rs
@@ -8993,7 +8993,7 @@ at sun
 ttl 604800
 field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/harps_rvcat.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/harps_rvcat.json
 origin https://archive.eso.org/tap_cat/sync table=safcat.HARPS_RVCAT_V1
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9006,7 +9006,7 @@ radvel rv
 rv_scale 1000.0
 field rv harps_rv_km_s gaussian-inverse-square advective km/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/kbo_elements.json
+url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/kbo_elements.json
 origin https://ssd-api.jpl.nasa.gov/sbdb_query.api ; https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
 compiler tools/harvest/src/bin/kbo_compiler.rs
 ttl 604800
@@ -9019,7 +9019,7 @@ ma ma
 epoch epoch
 field H kbo_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/lmxbdata.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/lmxbdata.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/cb/lmxbdata
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9038,7 +9038,7 @@ field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
+url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/magnetar_flat.json
 origin https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -9051,7 +9051,7 @@ dist_scale 3.085677581e19
 z z
 field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/merlin.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/merlin.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/merlin/merlin
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9068,7 +9068,7 @@ dist_scale 3.085677581e16
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mktypes.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/mktypes.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/mk/mktypes
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9085,7 +9085,7 @@ rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ned.json
+url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-ned/ned.json
 origin https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
 compiler tools/harvest/src/bin/ned_cone_compiler.rs
 ttl 604800
@@ -9096,7 +9096,7 @@ dec dec
 z z
 field z ned_gitter_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9107,7 +9107,7 @@ dec dec
 z z
 field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pangaea_758961.json
+url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 origin https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
 compiler tools/harvest/src/bin/pangaea_harvester.rs
 ttl 604800
@@ -9119,7 +9119,7 @@ field sr_mg_kg pangaea_sr_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0
 field nd_mg_kg pangaea_nd_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0.0 0.0
 field carb_detr pangaea_carb_detr_pct gaussian-inverse-square diffusion pct 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pastel.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/pastel.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/pastel/pastel
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9138,7 +9138,7 @@ field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/polarbase.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/polarbase.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/polarbase/polarbase
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9157,7 +9157,7 @@ field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/psr.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psr.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/psr/psr
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9176,7 +9176,7 @@ field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field dm_unc pulsar_dm_unc_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rave_dr5.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/rave_dr5.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/279/rave_dr5
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9194,7 +9194,7 @@ dist_scale 3.085677581e16
 field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sb9.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/sb9.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/sb9/main
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9212,7 +9212,7 @@ dist_scale 3.085677581e16
 field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sncat.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/sncat.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/sn/sncat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9224,7 +9224,7 @@ dec dec
 z z
 field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/swiftgrb.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/swiftgrb.json
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync table=swiftgrb
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9235,14 +9235,14 @@ dec dec
 z z
 field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tess_lightcurves.bin
+url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync (pscomppars) ; https://mast.stsci.edu/api/v0/invoke
 compiler tools/harvest/src/bin/tess_compiler.rs
 format lightcurve
 ttl 604800
 at sun
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
+url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tevcat_flat.json
 origin https://tevcat2.tevcat.org/api/sources ; https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -9255,7 +9255,7 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vsx.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vsx.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/vsx/vsx
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9274,7 +9274,7 @@ field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field period vsx_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wd.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/wd.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wd/catalog
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9287,7 +9287,7 @@ plx plx
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wds.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/wds.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wds/wds
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -9306,7 +9306,7 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/weberin_verdicts.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts.bin
 format weberin_verdicts
 origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
@@ -9315,7 +9315,7 @@ at sun
 ttl 604800
 note Weberin-Verdikt-Seitenkanal: Placed/Absent/Riss je Körper, encode_weberin_verdicts; CDN-Manifestation via .github/workflows/weberin-verdicts-cdn.yml (--ci-mode), ausstehend.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/xp_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/xp_spectra.bin
 format xp_spectra
 origin https://dc.g-vo.org/tap/sync
 compiler tools/harvest/src/bin/gaia_xp_compiler.rs
@@ -9850,7 +9850,7 @@ ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
 note MAGIC-DL3-Gamma-Skymap (witness phi/witnesses.φ record sky1, kind gamma); run 35268770926, 2026-09-17 (magic_dl3.sky1, 473 B, sha256 0085e395…baa9; FITS door06.pic.es HTTP 200, 328320 B); compiler dl3_skymap_compiler.rs --telescope magic.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/antares_events_2007_2017.sky1
+url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
 origin https://vo.km3net.de/ant20_01/nu/cone/form
 compiler tools/harvest/src/bin/antares_vo_compiler.rs
 format sky1
@@ -9859,7 +9859,7 @@ ttl 31536000
 field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
 note ANTARES-2007-2017-Neutrino-Dichte-Projektion (witness phi/witnesses.φ record sky1, kind neutrino, value 1.0 je Faden); CDN asset measured 2026-09-16 HTTP 200 (175093 B, 13 + 8754·20); compiler tools/harvest/src/bin/antares_vo_compiler.rs.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gw250207_115645.sky1
+url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/gw250207_115645.sky1
 origin https://gracedb.ligo.org/api/superevents/S250207bg/files/bayestar.multiorder.fits
 compiler tools/harvest/src/bin/gw_skymap_compiler.rs
 format sky1
@@ -9868,7 +9868,7 @@ ttl 31536000
 field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
 note GraceDB-Superevent S250207bg Skymap (witness phi/witnesses.φ record sky1, kind gravity, Wahrscheinlichkeitsmasse ∫=1.0); CDN asset measured 2026-09-16 HTTP 200 (384013 B, 13 + 19200·20); compiler tools/harvest/src/bin/gw_skymap_compiler.rs.
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/icecat_sky1.sky1
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-icecat/icecat_sky1.sky1
 origin https://dataverse.harvard.edu/api/access/datafile/7502710
 compiler tools/harvest/src/bin/icecat_compiler.rs
 format sky1
@@ -13986,3 +13986,29 @@ lon No1.longitude
 alt No1.depth
 field No1.magnitude jma_quake_magnitude gaussian-inverse-square seismic-body M 3600 0.0 0.0
 field No1.depth jma_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/babamul.caltech.edu/babamul_alerts.bin
+origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
+compiler tools/harvest/src/bin/babamul_compiler.rs
+format sky1
+at sun
+ttl 3600
+field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
+note Babamul Caltech LSST/ZTF-Broker /surveys/ZTF/alerts Bearer <BABAMUL_API_TOKEN> HTTP 200 2026-09-21; sky1 value=magpsf; Workflow babamul-cdn.yml; CDN-Asset pending sha256.
+
+url https://github.com/omegaflow/sources/releases/download/ia2-tap.oats.inaf.it/ia2_wgesdss.bin
+origin http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL
+compiler tools/harvest/src/bin/ia2_tap_compiler.rs
+format sky1
+at sun
+ttl 604800
+field ia2_wgesdss ia2_wgesdss inverse-square em mag 604800 0.0 0.0
+note IA2 TAP INAF/OATS wgesdss.laurino2011 anonym HTTP 200 2026-09-21; sky1 value=psfMag_r; Workflow ia2-cdn.yml; CDN-Asset pending sha256.
+
+url https://github.com/omegaflow/sources/releases/download/dachs.fai.kz/fai_kz_obscore.bin
+origin https://dachs.fai.kz/tap
+compiler tools/harvest/src/bin/fai_kz_compiler.rs
+format fai_kz_obscore
+at sun
+ttl 86400
+note ivo://fai.kz/tap obscore 5048 Zeilen (image 3003/spectrum 2045) sync-QUERY 200 2026-09-21; Compiler fai_kz_compiler.rs; Workflow fai-kz-cdn.yml; CDN-Asset pending sha256.

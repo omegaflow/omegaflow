@@ -5,7 +5,7 @@ use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::inflate::gunzip;
 use omegaflow::lsk::days_from_civil;
 
-const CDN_TAG: &str = "ssd.jpl.nasa.gov";
+const CDN_TAG: &str = "lasp.colorado.edu-eve";
 
 const BASE: &str = "https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2";
 const MAGIC: [u8; 4] = *b"EVL1";

@@ -23,7 +23,7 @@ on:
         type: string
         default: "130"
       asset:
-        description: output asset name on the CDN (netloc ssd.jpl.nasa.gov)
+        description: output asset name on the CDN (netloc lasp.colorado.edu-eve)
         required: true
         type: string
         default: eve_lines_2011.bin
@@ -42,13 +42,21 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+          if gh release view lasp.colorado.edu-eve --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ${{ inputs.asset }} already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Ensure the lasp.colorado.edu-eve release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view lasp.colorado.edu-eve --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create lasp.colorado.edu-eve --repo omegaflow/sources \
+              --title "lasp.colorado.edu-eve" \
+              --notes "SDO EVE level-2 line irradiance series packaged to omegaflow binary assets (CDN tag = netloc)"
           fi
       - name: Compile and manifest the EVE line series to the CDN
         if: steps.idempotence.outputs.present == 'false'
