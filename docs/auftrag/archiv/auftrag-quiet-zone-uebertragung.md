@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-04
   status: archived
-  sha256: 95e3b7d683b179cc4132a5336c07a40c37dbea17ba5e676583fb7e8504f2ab14
+  sha256: be173d1565f691a75824655edf75150d6f763a2a71cb5e4c14ee0014af8dce3a
   see-also: docs/auftrag/auftrag-subhz-drift-quiet-zone.md docs/paper/probe-front-dark-matter.md docs/reference/woo-armstrong-1979-jgr-abstract.md docs/befund/befund-voyager-roh-doppler-zugang.md docs/auftrag/auftrag-quiet-zone-vorfilter.md docs/TODO.md
 -->
 
@@ -229,10 +229,10 @@ Tracking-Rausch-Charakterisierung >50 AU (stille Cruise-/Hibernations-
 Pässe 2016–2024).
 
 - **An:** PDS Radio Science Subnode (Deep-Space-Tracking-Archive) bzw.
-  PDS Geosciences Node — Adressen befund-dokumentiert
-  (`docs/befund/befund-voyager-roh-doppler-zugang.md`, Prüfschritt 5:
-  `radiosci@att.net` / `geosci@wunder.wustl.edu`); **Erreichbarkeit beim
-  Versand zu prüfen** (Adressen von 2026-09-04, `pending`).
+  PDS Geosciences Node — die jeweilige Knoten-Kontaktadresse ist
+  befund-dokumentiert (`docs/befund/befund-voyager-roh-doppler-zugang.md`,
+  Prüfschritt 5); **Erreichbarkeit beim Versand zu prüfen** (Stand
+  2026-09-04, `pending`).
 - **Anliegen:** (1) sind NH-Nav-Doppler via PDS verfügbar oder nur per
   Anfrage; (2) falls Anfrage — Prozedere und Format; (3) gibt es eine
   Pilot-Epoche, die sofort verfügbar wäre.
