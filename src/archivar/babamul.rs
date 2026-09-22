@@ -54,7 +54,11 @@ pub fn parse_alerts(body: &str) -> BabamulParse {
             magap,
         });
     }
-    if out.is_empty() { BabamulParse::Unplaced } else { BabamulParse::Alerts(out) }
+    if out.is_empty() {
+        BabamulParse::Unplaced
+    } else {
+        BabamulParse::Alerts(out)
+    }
 }
 
 pub fn to_skymap(alerts: &[BabamulAlert]) -> Vec<crate::skymap::SkymapRecord> {
@@ -107,7 +111,10 @@ mod tests {
             BabamulParse::Empty
         );
         assert_eq!(parse_alerts(""), BabamulParse::NotJson);
-        assert_eq!(parse_alerts(r#"{"message":"unauthorized"}"#), BabamulParse::NoData);
+        assert_eq!(
+            parse_alerts(r#"{"message":"unauthorized"}"#),
+            BabamulParse::NoData
+        );
         assert_eq!(
             parse_alerts(r#"{"data":[{"candidate":{"ra":10.0,"dec":5.0}}]}"#),
             BabamulParse::Unplaced
