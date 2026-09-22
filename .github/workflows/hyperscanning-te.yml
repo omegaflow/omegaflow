@@ -114,3 +114,6 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Confirm the stochastic pair and guard the deterministic Riss (p99/p1, 200 surrogates)
         run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- confirmation_stochastic_driver_pair_clears_its_own_null riss_guard_deterministic_pair_measures_below_its_own_null --nocapture
+      - name: Frozen-tau delay sweep for the stochastic confirmation pair (print-only diagnostic)
+        if: always()
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- frozen_tau_delay_sweep_stochastic_pair --ignored --nocapture
