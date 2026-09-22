@@ -1036,6 +1036,18 @@ fn check_line_routing(path: &str, content: &str) -> Option<Verdict> {
     if path.contains("src/gate/") {
         return None;
     }
+    let path_lower = path.to_lowercase();
+    for marker in &vocab().line_routing {
+        if path_lower.contains(marker.as_str()) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "line-routing".to_string(),
+                line: 0,
+                feedback: feedback("line_routing").to_string(),
+                quote: clip(path, 90),
+            });
+        }
+    }
     let lower = content.to_lowercase();
     for marker in &vocab().line_routing {
         if let Some(idx) = lower.find(marker.as_str()) {
@@ -1937,6 +1949,36 @@ mod tests {
             "docs/handover/handover-2026-09-22-x.md",
             "ernte forschung entscheidet gebaut",
         );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_line_routing_old_slug_in_live_path_blocked() {
+        let mut g = test_gate();
+        let marker = vocab()
+            .line_routing
+            .iter()
+            .find(|m| m.starts_with('-'))
+            .unwrap()
+            .clone();
+        let path = format!("docs/handover/handover-2026-09-22{}137.md", marker);
+        let args = tool_args(&path, "the live routing carries the point");
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "line-routing");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_line_routing_old_slug_in_archived_path_pass() {
+        let mut g = test_gate();
+        let marker = vocab()
+            .line_routing
+            .iter()
+            .find(|m| m.starts_with('-'))
+            .unwrap()
+            .clone();
+        let path = format!("docs/handover/archiv/handover-2026-09-18{}74.md", marker);
+        let args = tool_args(&path, "the point rests in the archive");
         assert!(g.check_tool_call("write", &args).is_none());
     }
 

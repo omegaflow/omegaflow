@@ -277,14 +277,14 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
   Bezahlte Solver (Option c) sind ausgeschlossen.
 - **Cookie-Editor** (Moustachauve/cookie-editor, GPL-3.0) ist **manuelles**
   Operator-Werkzeug — Cookie-Transfer Operator-Profil ↔ persistentes Profil nur per Akt
-  mit Operator-Wort (Cookies = Zugangsdaten). Mechanischer Weg (Forschung-Folge 121,
+  mit Operator-Wort (Cookies = Zugangsdaten). Mechanischer Weg (Sensory-Folge 121,
   Operator-Wort „bau B"): der Cookie-Editor-Export wird als `OMEGAFLOW_COOKIES=<json>`
   an `archive_search --playwright` gereicht (`context.addCookies` vor `goto`, headless
   wie headed); unset = keine Cookies (0 geehrt), gesetzt-aber-kaputt = benannter
   Abbruch `exit(2)`. Die Datei bleibt lokal/ungtracked.
 - **Privacy Pass** (Cloudflare) reduziert Challenge-Häufigkeit, löst keine Captcha.
 - Pfad-1-Version: die globale Config (`~/.config/opencode/opencode.jsonc`) pinnt
-  **`@vymalo/opencode-browser@0.17.0`** (gemessen 2026-09-20, Forschung-Folge 115) —
+  **`@vymalo/opencode-browser@0.17.0`** (gemessen 2026-09-20, Sensory-Folge 115) —
   die Versionslücke 0.16.1 → 0.17.0 ist geschlossen, kein Zustand mehr.
 
 ## Profile (aus AGENTS.md) — gemessene Kosten ihres erlaubten Satzes
