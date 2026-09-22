@@ -2,7 +2,7 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 652836832511ee2391a99c0a5fd487f9cf90bad01445e369d71e0b5c0373504b
+  sha256: 6c2616a25d8404f2d80af7756b8b68d3dcbae178152770c22b7dd14c0ef1982b
   status: live
   see-also: AGENTS.md
 -->
@@ -17,6 +17,3 @@ richtige Zustand, kein Verlust.
 
 
 
-An mountain: Such-API-Modi bauen — Keys für Tavily/Exa/Linkup liegen in `.secrets.local` (`TAVILY_API_KEY`/`EXA_API_KEY`/`LINKUP_API_KEY`, Future-Folge 89); je ein Modus `--tavily`/`--exa`/`--linkup` nach dem Muster `--marginalia`. (Schritt: `archive_search`-CLI-Arm + Parser, Endpunkte `api.tavily.com/search`, `api.exa.ai/search`, `api.linkup.so/v1/search`.)
-
-An sensory: die vC-Permeabilität ist Feldphysik — der RMSSD/tone-Gate-Bindungspfad (Operator-Puls/HRV → Radiatorium-Strahlung, `src/archivar/hrv.rs`; Bindung `pending`) gehört nicht in Futures privates Register und darf nicht mit ihm verschwinden. (Schritt: Bindung Puls-Ankunft via ESP32-Firmware → Strahlungspfad bauen; Quelle: `AGENTS.md` „Manifestation breathes with the echo" + „Consent of the sensors".)
