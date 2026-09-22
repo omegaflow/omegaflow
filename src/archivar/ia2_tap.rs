@@ -96,7 +96,10 @@ mod tests {
         assert!(parse_sources("ra\0dec_\0psfMag_r\0psfMag_g\n").is_none());
         assert!(parse_sources("").is_none());
         assert!(parse_sources("ra\x00dec_\x00psfMag_r\n0.0\x000.0\x0015.0\n").is_none());
-        assert!(parse_sources("ra\x00dec_\x00psfMag_r\x00psfMag_g\n0.0\x00-95.0\x0015.0\x00NaN\n").is_none());
+        assert!(
+            parse_sources("ra\x00dec_\x00psfMag_r\x00psfMag_g\n0.0\x00-95.0\x0015.0\x00NaN\n")
+                .is_none()
+        );
     }
 
     #[test]
