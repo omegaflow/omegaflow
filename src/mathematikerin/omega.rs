@@ -456,16 +456,14 @@ impl OmegaLoop {
         ys: &[f32],
         m: usize,
     ) -> Option<crate::te::TopologicalVerdict> {
-        self.te_cpu = match crate::te::topological_te_phase(
+        self.te_cpu = crate::te::topological_te_phase(
             xs,
             ys,
             3,
             3,
             self.ring_gen.wrapping_add(0x9E37_79B9_7F4A_7C15),
-        ) {
-            Some(v) => Some((v.tau_x, v.tau_y, Some(v.te), Some(v.threshold))),
-            None => None,
-        };
+        )
+        .map(|v| (v.tau_x, v.tau_y, Some(v.te), Some(v.threshold)));
         let device = self.device.clone()?;
         let mut carry: Option<crate::te::TopologicalVerdict> = None;
         if let Some(prev) = self.te_map.take() {
