@@ -119,8 +119,6 @@ struct Row {
 }
 
 struct Accum {
-    messages: HashMap<String, String>,
-    message_order: Vec<String>,
     parts: HashMap<String, String>,
     part_order: Vec<String>,
     seen_any_event: bool,
@@ -132,8 +130,6 @@ struct Accum {
 impl Accum {
     fn new() -> Accum {
         Accum {
-            messages: HashMap::new(),
-            message_order: Vec::new(),
             parts: HashMap::new(),
             part_order: Vec::new(),
             seen_any_event: false,
@@ -313,113 +309,61 @@ fn object_after<'a>(hay: &'a str, key: &str) -> Option<&'a str> {
 }
 
 fn string_value_after(hay: &str, key: &str) -> Option<String> {
-    let marker = format!("\"{}\"", key);
+    let marker = format!("\"{}\":", key);
     let pos = hay.find(&marker)?;
-    let rest = &hay[pos + marker.len()..];
-    let colon = rest.find(':')?;
-    if !rest[..colon].trim().is_empty() {
-        return None;
-    }
-    let after = rest[colon + 1..].trim_start();
+    let after = hay[pos + marker.len()..].trim_start();
     if !after.starts_with('"') {
         return None;
     }
     json_string_at(after).map(|(v, _)| v)
 }
 
-fn text_values_in(obj: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut rest = obj;
-    while let Some(pos) = rest.find("\"type\":\"text\"") {
-        let start = match rest[..pos].rfind('{') {
-            Some(s) => s,
-            None => {
-                rest = &rest[pos + 13..];
-                continue;
-            }
-        };
-        let end = match balanced_object(&rest[start..]) {
-            Some(e) => start + e,
-            None => {
-                rest = &rest[pos + 13..];
-                continue;
-            }
-        };
-        let slice = &rest[start..end];
-        if let Some(tpos) = slice.find("\"text\":\"") {
-            if let Some((v, _)) = json_string_at(&slice[tpos + 8..]) {
-                out.push(v);
-            }
-        }
-        rest = &rest[pos + 13..];
-    }
-    out
-}
-
 fn absorb(line: &str, acc: &mut Accum) {
-    if line.contains("\"message.part.updated\"") {
-        acc.seen_any_event = true;
-        let part = match object_after(line, "part") {
-            Some(p) => p,
-            None => return,
+    let etype = match string_value_after(line, "type") {
+        Some(t) => t,
+        None => return,
+    };
+    match etype.as_str() {
+        "step_start" | "text" | "tool_use" | "step_finish" => {}
+        _ => return,
+    }
+    acc.seen_any_event = true;
+    let part = match object_after(line, "part") {
+        Some(p) => p,
+        None => return,
+    };
+    if part.contains("\"type\":\"tool\"") {
+        acc.seen_tool_part = true;
+        let key = string_value_after(part, "callID").or_else(|| string_value_after(part, "id"));
+        let is_bash = match string_value_after(part, "tool") {
+            Some(t) => t == "bash",
+            None => true,
         };
-        if part.contains("\"type\":\"tool\"") {
-            acc.seen_tool_part = true;
-            let key = string_value_after(part, "callID").or_else(|| string_value_after(part, "id"));
-            let is_bash = match string_value_after(part, "tool") {
-                Some(t) => t == "bash",
-                None => true,
-            };
-            let has_archive = match object_after(part, "input") {
-                Some(input) => input.contains("archive_search"),
-                None => false,
-            };
-            if has_archive && is_bash {
-                match key {
-                    Some(k) => {
-                        acc.archive_calls.insert(k);
-                    }
-                    None => {
-                        acc.archive_calls_anon += 1;
-                    }
+        let has_archive = match object_after(part, "input") {
+            Some(input) => input.contains("archive_search"),
+            None => false,
+        };
+        if has_archive && is_bash {
+            match key {
+                Some(k) => {
+                    acc.archive_calls.insert(k);
                 }
-            }
-        } else if part.contains("\"type\":\"text\"") {
-            let texts = text_values_in(part);
-            let pid = string_value_after(part, "id");
-            match (pid, texts.last()) {
-                (Some(id), Some(text)) => {
-                    if !acc.part_order.contains(&id) {
-                        acc.part_order.push(id.clone());
-                    }
-                    acc.parts.insert(id.clone(), text.clone());
+                None => {
+                    acc.archive_calls_anon += 1;
                 }
-                _ => {}
             }
         }
-    } else if line.contains("\"message.updated\"") {
-        acc.seen_any_event = true;
-        let info = match object_after(line, "info") {
-            Some(i) => i,
-            None => return,
-        };
-        if !info.contains("\"role\":\"assistant\"") {
-            return;
-        }
-        let joined = text_values_in(info).join("");
-        match string_value_after(info, "id") {
-            Some(mid) => {
-                if !acc.message_order.contains(&mid) {
-                    acc.message_order.push(mid.clone());
+    } else if part.contains("\"type\":\"text\"") {
+        let pid = string_value_after(part, "id");
+        let text = string_value_after(part, "text");
+        match (pid, text) {
+            (Some(id), Some(t)) => {
+                if !acc.part_order.contains(&id) {
+                    acc.part_order.push(id.clone());
                 }
-                acc.messages.insert(mid, joined);
+                acc.parts.insert(id, t);
             }
-            None => {
-                if !acc.message_order.iter().any(|k| k == "*") {
-                    acc.message_order.push("*".into());
-                }
-                acc.messages.insert("*".into(), joined);
-            }
+            _ => {}
         }
     }
 }
@@ -445,23 +389,13 @@ fn absorb_stream(output: &str, acc: &mut Accum) {
 }
 
 fn answer_text(acc: &Accum) -> String {
-    if acc.messages.is_empty() {
-        let mut s = String::new();
-        for id in &acc.part_order {
-            if let Some(t) = acc.parts.get(id) {
-                s.push_str(t);
-            }
+    let mut s = String::new();
+    for id in &acc.part_order {
+        if let Some(t) = acc.parts.get(id) {
+            s.push_str(t);
         }
-        s
-    } else {
-        let mut s = String::new();
-        for id in &acc.message_order {
-            if let Some(t) = acc.messages.get(id) {
-                s.push_str(t);
-            }
-        }
-        s
     }
+    s
 }
 
 fn score(text: &str) -> bool {
@@ -704,7 +638,7 @@ fn run_one(m: &Model, dir: Option<&str>, timeout: Duration, task: &Task) -> Row 
         };
     }
     let echoed = trimmed == prompt.trim();
-    let no_answer = trimmed.is_empty() || (echoed && (!task.scoring() || acc.messages.is_empty()));
+    let no_answer = trimmed.is_empty() || (echoed && (!task.scoring() || acc.parts.is_empty()));
     if no_answer {
         if trimmed.is_empty() && exit_code != Some(0) {
             let code_str = match exit_code {
@@ -867,4 +801,41 @@ fn main() {
         let _ = file.flush();
     }
     eprintln!("wrote {}", out);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const STREAM_PURE: &str = include_str!("../../fixtures/opencode_pure_stream.jsonl");
+    const STREAM_TOOL: &str = include_str!("../../fixtures/opencode_tool_stream.jsonl");
+
+    #[test]
+    fn parser_extracts_final_answer_from_pure_stream() {
+        let mut acc = Accum::new();
+        absorb_stream(STREAM_PURE, &mut acc);
+        assert_eq!(answer_text(&acc), "OK");
+        assert_eq!(tool_calls_for(&acc), "0");
+    }
+
+    #[test]
+    fn parser_counts_archive_call_and_extracts_final_answer_from_tool_stream() {
+        let mut acc = Accum::new();
+        absorb_stream(STREAM_TOOL, &mut acc);
+        assert_eq!(answer_text(&acc), "DONE");
+        assert_eq!(tool_calls_for(&acc), "1");
+    }
+
+    #[test]
+    fn score_accepts_all_expected_t7_lines() {
+        assert!(score(&T7_EXPECT.join("\n")));
+    }
+
+    #[test]
+    fn unknown_events_leave_the_accumulator_pending() {
+        let mut acc = Accum::new();
+        absorb_stream("{\"type\":\"model_provider_error\",\"error\":{}}", &mut acc);
+        assert_eq!(answer_text(&acc), "");
+        assert_eq!(tool_calls_for(&acc), "pending");
+    }
 }
