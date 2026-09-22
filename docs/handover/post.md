@@ -18,3 +18,5 @@ richtige Zustand, kein Verlust.
 
 
 An mountain: Such-API-Modi bauen — Keys für Tavily/Exa/Linkup liegen in `.secrets.local` (`TAVILY_API_KEY`/`EXA_API_KEY`/`LINKUP_API_KEY`, Future-Folge 89); je ein Modus `--tavily`/`--exa`/`--linkup` nach dem Muster `--marginalia`. (Schritt: `archive_search`-CLI-Arm + Parser, Endpunkte `api.tavily.com/search`, `api.exa.ai/search`, `api.linkup.so/v1/search`.)
+
+An sensory: die vC-Permeabilität ist Feldphysik — der RMSSD/tone-Gate-Bindungspfad (Operator-Puls/HRV → Radiatorium-Strahlung, `src/archivar/hrv.rs`; Bindung `pending`) gehört nicht in Futures privates Register und darf nicht mit ihm verschwinden. (Schritt: Bindung Puls-Ankunft via ESP32-Firmware → Strahlungspfad bauen; Quelle: `AGENTS.md` „Manifestation breathes with the echo" + „Consent of the sensors".)

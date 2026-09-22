@@ -21,7 +21,10 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   `mountain` | `mycelium` | `sensory` | `future` | `river`, N the line's running sequence; a
   descriptive slug on a line handover (e.g. `<line>-odf-voyager`) is drift. A
   pre-line topic handover (historical, before the line structure) keeps its
-  descriptive slug — it has no line and no sequence to name.
+  descriptive slug — it has no line and no sequence to name. Die Future-Übergabe
+  liegt im privaten Repo `omegaflow/personal` unter `handover/` — gleiche
+  Benennung, gleicher Header, gleicher `archiv/`-Move; `docs/handover/` trägt
+  keine Future-Übergabe mehr, auch nicht im `archiv/`.
 - `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
   `survey-<slug>.md` — a standing survey (evolving, no date in the name).
 - `docs/plans/ref-<slug>.md` — a standing reference list.
