@@ -2467,7 +2467,11 @@ mod tests {
         );
         assert_eq!(
             parse_handover_name("handover-2026-09-20-operator-entscheidungen.md"),
-            Some(("operator-entscheidungen".to_string(), "2026-09-20".to_string(), None))
+            Some((
+                "operator-entscheidungen".to_string(),
+                "2026-09-20".to_string(),
+                None
+            ))
         );
         assert_eq!(
             parse_handover_name("handover-2026-09-15-mountain-folge33-p8-gate.md"),

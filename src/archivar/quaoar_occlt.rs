@@ -140,7 +140,13 @@ pub fn date_midnight_unix(yyyymmdd: &str) -> Option<f64> {
     let dim = match month {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
         4 | 6 | 9 | 11 => 30,
-        2 => if leap { 29 } else { 28 },
+        2 => {
+            if leap {
+                29
+            } else {
+                28
+            }
+        }
         _ => return None,
     };
     if day == 0 || day > dim {
