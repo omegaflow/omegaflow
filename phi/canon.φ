@@ -50,17 +50,13 @@ phi/pipeline/catalog/MANIFEST.φ
 phi/pipeline/catalog/asteroid_gm_inpop25c.φ
 phi/pipeline/catalog/asteroid_gm_sb441.φ
 phi/pipeline/catalog/copernicus_disposition.φ
-phi/pipeline/catalog/dataverse_borealis.φ
-phi/pipeline/catalog/dataverse_harvard.φ
 phi/pipeline/catalog/dryad_catalog.φ
 phi/pipeline/catalog/korpora_heim.φ
 phi/pipeline/catalog/noaa_nodd_disposition.φ
 phi/pipeline/catalog/pangaea_catalog.φ
-phi/pipeline/catalog/pangaea_catalog_full.φ
 phi/pipeline/catalog/re3data_catalog.φ
 phi/pipeline/catalog/seanoe_catalog.φ
 phi/pipeline/catalog/solar_omega_g.φ
-phi/pipeline/catalog/tap_index.φ
 phi/pipeline/catalog/tap_index_aip_gavo.φ
 phi/pipeline/catalog/tap_index_alma_ea.φ
 phi/pipeline/catalog/tap_index_alma_eu.φ
@@ -136,5 +132,4 @@ phi/pipeline/catalog/tap_index_wsa.φ
 phi/pipeline/catalog/tap_index_xcatdb.φ
 phi/pipeline/catalog/tap_index_xmm.φ
 phi/pipeline/catalog/tap_index_youcat.φ
-phi/pipeline/catalog/wdcc_catalog.φ
 phi/pipeline/catalog/zenodo_catalog.φ
