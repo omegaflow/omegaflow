@@ -45,14 +45,6 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 
 pending
-url https://api.le-systeme-solaire.net/rest/bodies/
-note 200 mit Bearer (Key gültig); 403 mit rohem GUID — Bearer-Präfix nötig (quoted "Bearer {SOLAR_SYSTEM_OPEN_DATA_KEY}"). Statischer Körper-Katalog (gravity m/s², Masse, Radius). Schritt: Quell-Zeile/Compiler (BodyProperties).
-
-pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gate gebaut 2026-09-22 (demeter.rs:61 akzeptiert ISL SURVEY|ISL BURST). Schritt: Download bei availableFilesCount>0.
-
-pending
-url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen: get_program_list 500 (ORDS), RADNET/ERM nicht in FRS_PROGRAM_FACILITY. AGOL caed82e8e13f47b183e2c7a1412949bc; Lauf 35649300152 success 157180 records, unjoined 153, agol 140 (bad 0).
 

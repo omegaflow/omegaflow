@@ -37,29 +37,29 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn be_i16(b: &[u8], o: usize) -> Option<i16> {
-    Some(i16::from_be_bytes(b.get(o..o + 2)?.try_into().ok()?))
+fn le_i16(b: &[u8], o: usize) -> Option<i16> {
+    Some(i16::from_le_bytes(b.get(o..o + 2)?.try_into().ok()?))
 }
-fn be_u16(b: &[u8], o: usize) -> Option<u16> {
-    Some(u16::from_be_bytes(b.get(o..o + 2)?.try_into().ok()?))
+fn le_u16(b: &[u8], o: usize) -> Option<u16> {
+    Some(u16::from_le_bytes(b.get(o..o + 2)?.try_into().ok()?))
 }
-fn be_i32(b: &[u8], o: usize) -> Option<i32> {
-    Some(i32::from_be_bytes(b.get(o..o + 4)?.try_into().ok()?))
+fn le_i32(b: &[u8], o: usize) -> Option<i32> {
+    Some(i32::from_le_bytes(b.get(o..o + 4)?.try_into().ok()?))
 }
-fn be_u32(b: &[u8], o: usize) -> Option<u32> {
-    Some(u32::from_be_bytes(b.get(o..o + 4)?.try_into().ok()?))
+fn le_u32(b: &[u8], o: usize) -> Option<u32> {
+    Some(u32::from_le_bytes(b.get(o..o + 4)?.try_into().ok()?))
 }
-fn be_i64(b: &[u8], o: usize) -> Option<i64> {
-    Some(i64::from_be_bytes(b.get(o..o + 8)?.try_into().ok()?))
+fn le_i64(b: &[u8], o: usize) -> Option<i64> {
+    Some(i64::from_le_bytes(b.get(o..o + 8)?.try_into().ok()?))
 }
-fn be_u64(b: &[u8], o: usize) -> Option<u64> {
-    Some(u64::from_be_bytes(b.get(o..o + 8)?.try_into().ok()?))
+fn le_u64(b: &[u8], o: usize) -> Option<u64> {
+    Some(u64::from_le_bytes(b.get(o..o + 8)?.try_into().ok()?))
 }
-fn be_f32(b: &[u8], o: usize) -> Option<f32> {
-    Some(f32::from_be_bytes(b.get(o..o + 4)?.try_into().ok()?))
+fn le_f32(b: &[u8], o: usize) -> Option<f32> {
+    Some(f32::from_le_bytes(b.get(o..o + 4)?.try_into().ok()?))
 }
-fn be_f64(b: &[u8], o: usize) -> Option<f64> {
-    Some(f64::from_be_bytes(b.get(o..o + 8)?.try_into().ok()?))
+fn le_f64(b: &[u8], o: usize) -> Option<f64> {
+    Some(f64::from_le_bytes(b.get(o..o + 8)?.try_into().ok()?))
 }
 
 fn read_cstr(bytes: &[u8], off: usize, end: usize) -> Option<(String, usize)> {
@@ -109,20 +109,20 @@ fn scalar_value(bytes: &[u8], off: usize, kind: u8, end: usize) -> Option<(f64, 
     match kind {
         DATACHAR => Some((*bytes.get(off)? as i8 as f64, off + 1)),
         DATAUCHAR => Some((*bytes.get(off)? as f64, off + 1)),
-        DATASHORT => Some((be_i16(bytes, off)? as f64, off + 2)),
-        DATAUSHORT => Some((be_u16(bytes, off)? as f64, off + 2)),
-        DATAINT => Some((be_i32(bytes, off)? as f64, off + 4)),
-        DATAUINT => Some((be_u32(bytes, off)? as f64, off + 4)),
-        DATALONG => Some((be_i64(bytes, off)? as f64, off + 8)),
-        DATAULONG => Some((be_u64(bytes, off)? as f64, off + 8)),
-        DATAFLOAT => Some((be_f32(bytes, off)? as f64, off + 4)),
-        DATADOUBLE => Some((be_f64(bytes, off)?, off + 8)),
+        DATASHORT => Some((le_i16(bytes, off)? as f64, off + 2)),
+        DATAUSHORT => Some((le_u16(bytes, off)? as f64, off + 2)),
+        DATAINT => Some((le_i32(bytes, off)? as f64, off + 4)),
+        DATAUINT => Some((le_u32(bytes, off)? as f64, off + 4)),
+        DATALONG => Some((le_i64(bytes, off)? as f64, off + 8)),
+        DATAULONG => Some((le_u64(bytes, off)? as f64, off + 8)),
+        DATAFLOAT => Some((le_f32(bytes, off)? as f64, off + 4)),
+        DATADOUBLE => Some((le_f64(bytes, off)?, off + 8)),
         DATASTRING => {
             let (_, next) = read_cstr(bytes, off, end)?;
             Some((0.0, next))
         }
         DATAMAP => {
-            let tsze = be_i32(bytes, off)? as usize;
+            let tsze = le_i32(bytes, off)? as usize;
             let next = off.checked_add(4)?.checked_add(tsze)?;
             if next > end {
                 return None;
@@ -134,18 +134,18 @@ fn scalar_value(bytes: &[u8], off: usize, kind: u8, end: usize) -> Option<(f64, 
 }
 
 fn parse_block(bytes: &[u8], start: usize) -> Option<(DmapBlock, usize)> {
-    if be_i32(bytes, start)? != DATACODE {
+    if le_i32(bytes, start)? != DATACODE {
         return None;
     }
-    let sze = be_i32(bytes, start + 4)? as usize;
+    let sze = le_i32(bytes, start + 4)? as usize;
     let end = start.checked_add(sze)?;
     if sze == 0 || end > bytes.len() {
         return None;
     }
     let mut off = start + 8;
-    let sn = be_i32(bytes, off)? as usize;
+    let sn = le_i32(bytes, off)? as usize;
     off += 4;
-    let an = be_i32(bytes, off)? as usize;
+    let an = le_i32(bytes, off)? as usize;
     off += 4;
     if sn > 4096 || an > 4096 {
         return None;
@@ -166,14 +166,14 @@ fn parse_block(bytes: &[u8], start: usize) -> Option<(DmapBlock, usize)> {
         off = next;
         let kind = *bytes.get(off)?;
         off += 1;
-        let dim = be_i32(bytes, off)? as usize;
+        let dim = le_i32(bytes, off)? as usize;
         off += 4;
         if dim == 0 || dim > 999 {
             return None;
         }
         let mut dims = Vec::with_capacity(dim);
         for _ in 0..dim {
-            let d = be_i32(bytes, off)? as usize;
+            let d = le_i32(bytes, off)? as usize;
             off += 4;
             dims.push(d);
         }
@@ -186,32 +186,32 @@ fn parse_block(bytes: &[u8], start: usize) -> Option<(DmapBlock, usize)> {
             DATAFLOAT => {
                 floats.reserve(n);
                 for _ in 0..n {
-                    floats.push(be_f32(bytes, off)? as f64);
+                    floats.push(le_f32(bytes, off)? as f64);
                     off += 4;
                 }
             }
             DATADOUBLE => {
                 floats.reserve(n);
                 for _ in 0..n {
-                    floats.push(be_f64(bytes, off)?);
+                    floats.push(le_f64(bytes, off)?);
                     off += 8;
                 }
             }
             DATASHORT => {
                 for _ in 0..n {
-                    be_i16(bytes, off)?;
+                    le_i16(bytes, off)?;
                     off += 2;
                 }
             }
             DATAINT => {
                 for _ in 0..n {
-                    be_i32(bytes, off)?;
+                    le_i32(bytes, off)?;
                     off += 4;
                 }
             }
             DATALONG => {
                 for _ in 0..n {
-                    be_i64(bytes, off)?;
+                    le_i64(bytes, off)?;
                     off += 8;
                 }
             }
@@ -223,19 +223,19 @@ fn parse_block(bytes: &[u8], start: usize) -> Option<(DmapBlock, usize)> {
             }
             DATAUSHORT => {
                 for _ in 0..n {
-                    be_u16(bytes, off)?;
+                    le_u16(bytes, off)?;
                     off += 2;
                 }
             }
             DATAUINT => {
                 for _ in 0..n {
-                    be_u32(bytes, off)?;
+                    le_u32(bytes, off)?;
                     off += 4;
                 }
             }
             DATAULONG => {
                 for _ in 0..n {
-                    be_u64(bytes, off)?;
+                    le_u64(bytes, off)?;
                     off += 8;
                 }
             }
@@ -694,24 +694,24 @@ mod tests {
 
     fn enc_block(scalars: &[(&str, i32)], array_name: &str, data: &[f32]) -> Vec<u8> {
         let mut payload = Vec::new();
-        payload.extend_from_slice(&(scalars.len() as i32).to_be_bytes());
-        payload.extend_from_slice(&1i32.to_be_bytes());
+        payload.extend_from_slice(&(scalars.len() as i32).to_le_bytes());
+        payload.extend_from_slice(&1i32.to_le_bytes());
         for (name, v) in scalars {
             enc_cstr(&mut payload, name);
             payload.push(DATAINT);
-            payload.extend_from_slice(&v.to_be_bytes());
+            payload.extend_from_slice(&v.to_le_bytes());
         }
         enc_cstr(&mut payload, array_name);
         payload.push(DATAFLOAT);
-        payload.extend_from_slice(&1i32.to_be_bytes());
-        payload.extend_from_slice(&(data.len() as i32).to_be_bytes());
+        payload.extend_from_slice(&1i32.to_le_bytes());
+        payload.extend_from_slice(&(data.len() as i32).to_le_bytes());
         for v in data {
-            payload.extend_from_slice(&v.to_be_bytes());
+            payload.extend_from_slice(&v.to_le_bytes());
         }
         let sze = (8 + payload.len()) as i32;
         let mut out = Vec::new();
-        out.extend_from_slice(&DATACODE.to_be_bytes());
-        out.extend_from_slice(&sze.to_be_bytes());
+        out.extend_from_slice(&DATACODE.to_le_bytes());
+        out.extend_from_slice(&sze.to_le_bytes());
         out.extend_from_slice(&payload);
         out
     }
@@ -753,6 +753,50 @@ mod tests {
         let mut bytes = sample_block();
         bytes[0] = 0x02;
         assert!(dmap_blocks(&bytes).is_empty());
+    }
+
+    fn enc_mixed_block() -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.extend_from_slice(&3i32.to_le_bytes());
+        payload.extend_from_slice(&1i32.to_le_bytes());
+        enc_cstr(&mut payload, "radar.revision.major");
+        payload.push(DATACHAR);
+        payload.push(5u8);
+        enc_cstr(&mut payload, "origin.time");
+        payload.push(DATASTRING);
+        enc_cstr(&mut payload, "Sat Dec 31 23:59:59 2022");
+        enc_cstr(&mut payload, "time.yr");
+        payload.push(DATASHORT);
+        payload.extend_from_slice(&(2022i16).to_le_bytes());
+        enc_cstr(&mut payload, "pwr0");
+        payload.push(DATAFLOAT);
+        payload.extend_from_slice(&1i32.to_le_bytes());
+        payload.extend_from_slice(&3i32.to_le_bytes());
+        for v in [10.0f32, 20.0f32, 30.0f32] {
+            payload.extend_from_slice(&v.to_le_bytes());
+        }
+        let sze = (8 + payload.len()) as i32;
+        let mut out = Vec::new();
+        out.extend_from_slice(&DATACODE.to_le_bytes());
+        out.extend_from_slice(&sze.to_le_bytes());
+        out.extend_from_slice(&payload);
+        out
+    }
+
+    #[test]
+    fn datacode_encodes_little_endian() {
+        assert_eq!(DATACODE.to_le_bytes(), [0x01, 0x00, 0x01, 0x00]);
+    }
+
+    #[test]
+    fn dmap_block_reads_little_endian_scalar_types() {
+        let blocks = dmap_blocks(&enc_mixed_block());
+        assert_eq!(blocks.len(), 1);
+        let b = &blocks[0];
+        assert_eq!(b.scalar_num("radar.revision.major"), Some(5.0));
+        assert_eq!(b.scalar_num("time.yr"), Some(2022.0));
+        let pwr0 = b.array("pwr0").expect("pwr0");
+        assert_eq!(pwr0.floats, vec![10.0, 20.0, 30.0]);
     }
 
     #[test]
