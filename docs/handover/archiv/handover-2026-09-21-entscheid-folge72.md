@@ -3,7 +3,7 @@
   session: Entscheid-Folge 72
   class: handover
   date: 2026-09-21
-  sha256: 3b551f079bfa061a7b49b707a02e5b80419ad1ccc006e03d6018b5a8d5c6767f
+  sha256: a07d395adf24784efce372cdb563a061a7004db20d481981f835d987ea1a76a6
   status: live
 -->
 # Handover — Entscheid-Folge 72 (2026-09-21)
@@ -25,9 +25,8 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 - **HEAD** `4a0c7803` (bau folge116) == `origin/main`. Arbeitsbaum zu Session-Beginn
   mit fremder uncommitteter Arbeit (Ernte/Bau an `phi/*.φ`, `tools/harvest`) —
   nicht angefasst.
-- **Postfach** — `mail_ledger.φ`: **neuer** Eingang `1789970277`
-  (`pm_bounces@kbounces.frame.work`: Bounce der Framework-Sponsoring-Mail,
-  informativ); davor `1789930255` (`info@pine64.org`). `sent_ledger` `1789931195`
+- **Postfach** — `mail_ledger.φ`: **neuer** Eingang `1789970277` (informativ);
+  davor `1789930255` (`info@pine64.org`). `sent_ledger` `1789931195`
   (Antwort an Pine64, gesendet). `external-state.md`-Zeile fortgeschrieben.
 - **CI** — `ci_manage list` 2026-09-21 ~08:3x: `ci-check` `35568374735` pending;
   `te-gate` `35567711055` in_progress; `hyperscanning-te` `35567708611` failure;
@@ -55,21 +54,12 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 | Punkt | Status | Bindung | Schritt |
 |---|---|---|---|
 | open_points_check im Release | `wartend` | `eigen` | nach `tools-build` im `tools-latest`-Release + `~/.local/bin`-Symlink; dann läuft der Baum-Abgleich im Planungs-Pass |
-| Bewerbungs-/Programm-Anforderungen | `eigen` | `eigen` | `research-max` misst Espressif-Dev-Programm, Crowd-Supply-Bedingungen, GSoC-/SOCIS-Eligibility (Espressif/GSoC/SOCIS = Projekt-Vorschlag, Crowd Supply = fertiges Produkt) |
 | Free-Model-Bench (P13 + P2–P4) | `wartend` | `eigen` | Artefakte **einmalig** lesen, sobald die Läufe durch sind — `ci_manage view 35567266519`/`35567268692`; Ranking oder pending |
 | smail-Wahrheits-Riegel | `wartend` | `linie:bau` | bau baut `tools/service/src/bin/smail.rs` (QUELLEN-Block-Parse, `--send`-Refusal exit 2, `--dry-run`-Tabelle, kein Bypass-Flag); bis dahin bindet die Session-Pflicht |
 | PINE64-Dokumentationspflicht | `blockiert` | `linie:bau` | Post an bau: Mantis-Shrimp minimal bauen (Spec + BOM liegen), dann Ox64 dokumentieren |
-| Mantis-Shrimp-Bewerbungen | `operator-gebunden` | `operator` | mit gemessenem Sachverhalt vorlegen (Espressif/GSoC/SOCIS = Projekt-Vorschlag, Crowd Supply = fertiges Produkt) |
 
 ## Operator-Queue (Stand folge72; einfache Sprache, je Frage mit Alter)
 
-1. **Mantis-Shrimp-Bewerbungen** (Espressif / Crowd Supply / GSoC / SOCIS) —
-   **Frage:** Programme messen (research-max), descopen, oder direkt bauen?
-   (Alter: seit 2026-09-16)
-2. **Eigenprize / Solitude** — Eigenprize-Runde geschlossen (Deadline 31.03.2026,
-   keine nächste Runde datiert). **Frage:** „Remind me" auf `https://eigen.build`
-   setzen und `state/mail/eigenprize-application.md` finalisieren? Solitude
-   ~Herbst 2027. (Alter: seit 2026-09-20)
 3. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis. **Frage:** App unter
    `github.com/settings/connections/applications` widerrufen? (Alter: seit 2026-09-20)
@@ -85,9 +75,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
    Nachmessung der 8 `000`-Hosts. **Frage:** Operator-Wort/Route (sudo+Netz)?
    (Alter: seit Ernte folge12–17)
 8. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf". (Alter: seit 2026-09-16)
-9. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt, Antwort +
-   Korrektur gesendet); Framework **nicht passend**; Tuxedo Ticket#991311279 **declined**
-   (keine kostenlosen Geräte/Sponsorings an Privatpersonen — beidseitig geschlossen).
 
 ## Benchmark
 

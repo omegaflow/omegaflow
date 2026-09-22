@@ -3,7 +3,7 @@
   session: Forschung-Folge 132
   class: handover
   date: 2026-09-21
-  sha256: 86c3e9172a42353d7d853a1637e8cc3b942739641abc7e902321a10eefb3b70c
+  sha256: 843ef114e27ddcfe75524f5f86b45d195f8b57426c7171068a7ffe50697d155f
   status: live
 -->
 # Handover — Forschung-Folge 132 (Stand 2026-09-21)
@@ -21,9 +21,8 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
 ## Stehender Pass (gemessen 2026-09-21, Forschung-Folge 132)
 
 - **HEAD** `d78c95cc` == `origin/main`; Arbeitsbaum trägt fremde uncommittete
-  Arbeit: der `upload_asset`→`upload_release(tag, path)`-Umbau (~76 Dateien) und
-  ein fremder Nachtrag in `docs/surveys/survey-funding-erkundung.md` — nicht
-  angefasst, nicht committet.
+  Arbeit: der `upload_asset`→`upload_release(tag, path)`-Umbau (~76 Dateien) —
+  nicht angefasst, nicht committet.
 - **Postfach** — neuester Ledger-Eingang `1789978555` (Brave Search API „usage
   limit reached", 100 % von $5.00 free credits, informativ); kein neuer Eingang,
   kein handlungsbedürftiger Fall.
@@ -177,8 +176,8 @@ Schätzer-Boden (Punkt 1).
 - `docs/handover/post.md` (`An entscheid:`-Zeile)
 - `docs/zustand/external-state.md` (Postfach-/CI-/TE-Gate-Zeile)
 
-Fremde uncommittete Arbeit im selben Baum (`upload_asset`→`upload_release`-Umbau,
-`survey-funding-erkundung.md`-Nachtrag) wird **nicht** angefasst.
+Fremde uncommittete Arbeit im selben Baum (`upload_asset`→`upload_release`-Umbau)
+wird **nicht** angefasst.
 
 ## Abschluss
 

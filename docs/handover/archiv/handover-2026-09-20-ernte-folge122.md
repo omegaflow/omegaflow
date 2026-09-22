@@ -3,7 +3,7 @@
   session: Ernte-Folge 122
   class: handover
   date: 2026-09-20
-  sha256: d3289a0c739c4c75c5b86eb6d02e1f391c94d0567b9cd8b4cd65816d5689c438
+  sha256: f95ca50326e6fe986aebeab4a5a48ffbf617678655b603a9cd269f7cb74cbe7b
   status: live
 -->
 # Handover — Ernte-Folge 122 (2026-09-20)
@@ -26,8 +26,8 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
 
 - **HEAD** `db9f489c` (forschung folge122) beim Start, == `origin/main`; eigener
   Commit folgt. Arbeitsbaum: fremde uncommittete Arbeit der entscheid-Linie
-  (`handover-2026-09-20-entscheid-folge65.md` → `archiv/`, neues folge66) und
-  `docs/surveys/survey-funding-pflichtfrei.md` — nicht anfassen; eigener Pfad:
+  (`handover-2026-09-20-entscheid-folge65.md` → `archiv/`, neues folge66) —
+  nicht anfassen; eigener Pfad:
   `tools/harvest/src/bin/ps1_coverage_compiler.rs`.
 - **Postfach** — letzter Ledger-Eingang `1789930255` (`info@pine64.org`: Ox64
   zugesagt, bittet um Versanddaten + Telefon — operator-gebunden; von
@@ -93,8 +93,8 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
   Plane-Pool `PLANE_WORKERS=4` + curl-Retry + Abort bei `planes_unreadable`),
   neues Handover `handover-2026-09-20-ernte-folge122.md`, Move folge121 →
   `archiv/`.
-- **Fremd (nicht anfassen):** entscheid-Move (`folge65` → `archiv/`, `folge66`)
-  und `docs/surveys/survey-funding-pflichtfrei.md` (uncommittet). Nie ein nacktes
+- **Fremd (nicht anfassen):** entscheid-Move (`folge65` → `archiv/`, `folge66`).
+  Nie ein nacktes
   `git commit`; committet wird pfad-begrenzt.
 
 ## Abschluss

@@ -3,7 +3,7 @@
   session: Ernte-Folge 126
   class: handover
   date: 2026-09-21
-  sha256: 04ea6a65a81e0ec8ae56c8916f6c8da662238d7505bdeae5ed172c0ef98e9d35
+  sha256: f07d1745881d8144b55d4af1fed6ce212c7e25425cee31d6a83bccce5c912262
   status: live
 -->
 # Handover — Ernte-Folge 126 (2026-09-21)
@@ -29,9 +29,7 @@ kein Auswahlpunkt. Das Handover wird **vor allem anderen gegen den Baum gehalten
   fremde uncommittete Arbeit (AGENTS.md, docs/specs, src/gate, external-state.md,
   post.md, fremde Handover-Moves) nicht angefasst.
 - **Postfach** — 1 neuer Mail-Ledger-Eingang seit `1789930255`: `1789970277`
-  Framework (Hardware-Sponsoring **abgelehnt**); davor `1789930255` PINE64
-  (bietet 1× Ox64 SBC, Shipping-Info/Telefon nötig). Beide nicht ernte-eigen
-  (Funding/Hardware, operator-gebunden). Kein neues `An ernte`.
+  (bietet 1× Ox64 SBC, Shipping-Info/Telefon nötig). Nicht ernte-eigen.
 - **CI** — `ci-check` `35567290094` pending / `35566258372` in_progress;
   `tools-build` `35567260047` success; `ps1-cdn` `35563001793` in_progress;
   `demeter-cdn` `35567568429` (dieser Session-Dispatch). Der repo-weite fmt-Rot

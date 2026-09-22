@@ -3,7 +3,7 @@
   session: Entscheid-Folge 63
   class: handover
   date: 2026-09-20
-  sha256: 257d98e83c189ff908d2a55eec59d8c72d06d18ac8433d6520673e81d45dd7d7
+  sha256: 57fa4a11709aa482d919a7f264e1ffa54935ea4d63720e8bc74d2f7f01389b2a
   status: live
 -->
 # Handover — Entscheid-Folge 63 (2026-09-20)
@@ -81,9 +81,6 @@ sonst erscheinen sie nicht. **`mistral` deaktiviert** (`disabled_providers`).
 
 - **Mistral-Disposition** — gemessen kein Free-API-Modell; die 7 Whitelist-Einträge
   sind als „frei" falsch. **`operator-gebunden`** (Operator-Queue 4).
-- **Inception-Disposition** — `mercury-2` per-Token bezahlt; Free-Tier „100 Mio
-  Token" (folge62) ist eine separate Linie (Riss per-Token-Preis ≠ Quota).
-  **`operator-gebunden`** (Operator-Queue 4).
 - **nvidia/zai Free-Status** — nvidia „Free Endpoint" = Preview-Credits (Filter
   clientseitig); zai free nur über die Docs-Pricing-Seite. **`wartend`** (Auslöser:
   Bedarf).
@@ -114,17 +111,8 @@ sonst erscheinen sie nicht. **`mistral` deaktiviert** (`disabled_providers`).
    die Geschichte umschreiben? *Ja:* der Auftrag
    `docs/auftrag/auftrag-pii-history-rewrite.md` läuft (löscht alte Commits, danach
    Force-Push). *Nein:* bleibt. (seit 2026-09-15)
-2. **Förderung/Sponsoring** — *Lage:* Förderung wirkt erst mit Publikum. *Frage:*
-   Sponsoring-Konten (GitHub Sponsors / Open Collective) jetzt aufsetzen? *Ja:*
-   anlegen. *Nein:* erst nach Preprint.
 3. **Mantis-Shrimp-Hardware** — *Lage:* Wege Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS. *Frage:* Bewerbungen/Formulare senden? *Ja:* pro
    Akt. *Nein:* bleibt.
-4. **Mistral + Inception** — *Lage:* live gemessen — Mistral hat **kein**
-   kostenloses API-Modell (nur der Vibe-Plan ist gratis); Inception rechnet pro
-   Token ab (2,5e-7), hat laut früherem Stand aber 100 Mio Gratis-Token. *Frage:*
-   Mistral aus der Liste nehmen (oder kostenpflichtig aktivieren)? Inception als
-   Gratis-Kontingent führen oder entfernen? *Ja/Nein:* entsprechend.
 5. **Chrome-DevTools-Debugger** — *Lage:* für die Fehlersuche im Browser (Membran)
    fehlt ein Debugger-Zugang. *Frage:* `opencode.json` `mcp.chrome-devtools` pinnen
    (npm `chrome-devtools-mcp@1.9.0`, `--no-usage-statistics --no-performance-crux`)?

@@ -3,7 +3,7 @@
   session: Bau-Folge 112
   class: handover
   date: 2026-09-20
-  sha256: 93d71d48523ca8953eb9ea3c4d835367d602e1ea3fbbfd2b9b67841087555869
+  sha256: d271f35890d903c6a968ed9e1e4c79ca23d2f59ab168bc02716f47a5216abaf7
   status: live
 -->
 # Handover — Bau-Folge 112 (2026-09-20)
@@ -37,8 +37,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - **HEAD** `84c1cd76` == `origin/main` → gepusht, Fast-Forward. Arbeitsbaum zu
   Beginn sauber; während der Session erschien fremde uncommittete Arbeit
-  (`handover-…-entscheid-folge66.md`, der `folge65`-Move,
-  `docs/surveys/survey-funding-pflichtfrei.md`) — **nicht angefasst**.
+  (`handover-…-entscheid-folge66.md`, der `folge65`-Move) — **nicht angefasst**.
 - **Postfach** — aus `external-state.md` zitiert (letzter Eingang `1789930255`,
   Pine64 `info@` Ox64-Zusage, bittet um Versanddaten/Telefon — von Forschung-Folge
   123 bereits beantwortet, `sent_ledger 1789931195`; kein bau-relevanter Eingang).
@@ -91,7 +90,7 @@ Der ra/dec-Fix greift: parsen stieg von 39 (Summe vor Fix) auf 3386; 368 Survivo
   `docs/handover/handover-2026-09-20-bau-folge112.md`, Move
   `handover-2026-09-20-bau-folge111.md` → `archiv/`.
 - **Fremd (nicht anfassen):** `handover-…-entscheid-folge66.md`, der
-  `folge65`-Move, `docs/surveys/survey-funding-pflichtfrei.md`. Nie ein nacktes
+  `folge65`-Move. Nie ein nacktes
   `git commit`.
 
 ## Abschluss

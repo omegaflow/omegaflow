@@ -3,8 +3,14 @@ use std::fs;
 use std::path::Path;
 
 const TOL: f64 = 3.5e-4;
-const ARCHIVE_ROOT: &str = "/home/johannes/backup/archive-root";
-const LOCAL_BACKUP: &str = "/home/johannes/backup/archive";
+
+fn archive_root() -> Option<std::path::PathBuf> {
+    env::var_os("HOME").map(|h| std::path::PathBuf::from(h).join("backup/archive-root"))
+}
+
+fn local_backup() -> Option<std::path::PathBuf> {
+    env::var_os("HOME").map(|h| std::path::PathBuf::from(h).join("backup/archive"))
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Kind {
@@ -683,8 +689,12 @@ fn main() {
     }
 
     if archive_paths.is_empty() {
-        archive_paths.push(ARCHIVE_ROOT.to_string());
-        archive_paths.push(LOCAL_BACKUP.to_string());
+        if let Some(p) = archive_root() {
+            archive_paths.push(p.display().to_string());
+        }
+        if let Some(p) = local_backup() {
+            archive_paths.push(p.display().to_string());
+        }
     }
 
     if files.is_empty() {
