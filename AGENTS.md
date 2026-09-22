@@ -243,7 +243,8 @@ Brieftext. Öffentliche Attribution bleibt: Name im Copyright, Papier-Seal,
 zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches Werk
 = bleibt; privater Kanal = geht.** Finanz-/Funding-Inhalte des Operators
 (Förderstrategie, Bewerbungen, finanzielle Lage, persönliche Nutzungs-/
-Kostenmuster) sind ebenso **nie getrackt**; Heimat `state/funding/` (gitignored).
+Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/personal`
+(dort `funding/` + `mail/`; lokal unter `state/`, gitignored).
 Die Sache bleibt: Programm, Frist, Eligibility; die Kosten der Maschine
 (Hardware-BOM, Modell-Benchmark) bleiben Engineering-Daten. Jede neu gefundene Verletzung wird
 Gate-Fixture in `src/gate/commit_gate_vocab.json` und Gate-Test im selben Atom;
