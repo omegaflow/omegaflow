@@ -17,8 +17,4 @@ note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 20
 
 ausstehend
 kandidat https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); Parser+Compiler gebaut (sky1); babamul-cdn.yml CI-Lauf 35649296996 failure (exit 1: 0 honored, bin unwritten); CDN babamul_alerts.bin 404.
-
-parser-gap
-bestand src/archivar/demeter.rs
-note DEMETER (CDPP): demeter.rs:60 verlangt Marker ISL SURVEY @[204..214], DMT_N1_1143 traegt ISL BURST (1144 ISL SURVEY), 289-B-Bloecke sonst identisch (TOULOUSE@26..34, 6 f32@265..289). Schritt: Marker-Pruefung auf ISL SURVEY|ISL BURST erweitern.
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-22 parse_alerts vierwertig: Empty→exit 0 (0 honored), Regression→exit 2. Schritt: Re-Dispatch babamul-cdn, sha256 registrieren.
