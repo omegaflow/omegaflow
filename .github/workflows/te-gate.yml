@@ -36,6 +36,8 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
       - name: Run the n=1000 KSG sweep (the estimator-switch measurement)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_sweep_n1000
+      - name: Run the KSG-k gate (formula vs sweep — the K-flip measurement)
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_k_gate_sweep_and_formula
       - name: Run the n=1000 arx sweep (the arx-null measurement + OLS counter)
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture arx_sweep_n1000
       - name: Run the conditional n=1000 FP/FN gate (the direct-path calibration)
