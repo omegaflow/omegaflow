@@ -2933,9 +2933,9 @@ pub fn gate_fpr_cells(n: usize, p: GateParams) -> Vec<GateCell> {
         (0.0f32, 0usize, 100usize),
         (0.5f32, 0usize, 100usize),
         (0.9f32, 0usize, 100usize),
-        (0.0f32, 4usize, 7usize),
-        (0.5f32, 4usize, 7usize),
-        (0.9f32, 4usize, 7usize),
+        (0.0f32, 4usize, 21usize),
+        (0.5f32, 4usize, 21usize),
+        (0.9f32, 4usize, 21usize),
     ];
     gate_fpr_cells_from(n, &cells, p)
 }
@@ -2943,9 +2943,9 @@ pub fn gate_fpr_cells(n: usize, p: GateParams) -> Vec<GateCell> {
 #[cfg(test)]
 fn gate_fpr_coarse_cells(n: usize, p: GateParams) -> Vec<GateCell> {
     let cells = [
-        (0.0f32, 4usize, 7usize),
-        (0.5f32, 4usize, 7usize),
-        (0.9f32, 4usize, 7usize),
+        (0.0f32, 4usize, 21usize),
+        (0.5f32, 4usize, 21usize),
+        (0.9f32, 4usize, 21usize),
     ];
     gate_fpr_cells_from(n, &cells, p)
 }
