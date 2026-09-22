@@ -47,7 +47,10 @@ fn valid(r: &ObsRecord) -> bool {
     if !mandatory_valid(r) {
         return false;
     }
-    if r.em_band_m.as_ref().is_some_and(|band| !em_band_valid(band)) {
+    if r.em_band_m
+        .as_ref()
+        .is_some_and(|band| !em_band_valid(band))
+    {
         return false;
     }
     if r.t_exptime_s.is_some_and(|s| !exptime_valid(s)) {
