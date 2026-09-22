@@ -1564,30 +1564,34 @@ fn next_rng(rng: &mut u64) -> f64 {
     ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
 }
 
+fn rotate_spectrum(re: &mut [f64], im: &mut [f64], phases: &[f64]) {
+    let n = re.len();
+    for k in 1..n / 2 {
+        let (s, c) = phases[k].sin_cos();
+        let (ar, ai) = (re[k], im[k]);
+        re[k] = ar * c - ai * s;
+        im[k] = ar * s + ai * c;
+        let j = n - k;
+        re[j] = re[k];
+        im[j] = -im[k];
+    }
+}
+
 pub fn phase_randomized_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
     let n = v.len();
     if n < 2 {
         return v.to_vec();
     }
-    let m = n.next_power_of_two();
-    let mut re: Vec<f64> = vec![0.0; m];
-    let mut im: Vec<f64> = vec![0.0; m];
-    for (i, &x) in v.iter().enumerate() {
-        re[i] = x as f64;
+    let mut phases: Vec<f64> = vec![0.0; n];
+    for phase in phases.iter_mut().take(n / 2).skip(1) {
+        *phase = next_rng(rng) * 2.0 * std::f64::consts::PI;
     }
-    fft(&mut re, &mut im, false);
-    for k in 1..m / 2 {
-        let phi = next_rng(rng) * 2.0 * std::f64::consts::PI;
-        let (s, c) = phi.sin_cos();
-        let (ar, ai) = (re[k], im[k]);
-        re[k] = ar * c - ai * s;
-        im[k] = ar * s + ai * c;
-        let j = m - k;
-        re[j] = re[k];
-        im[j] = -im[k];
-    }
-    fft(&mut re, &mut im, true);
-    v.iter().enumerate().map(|(i, _)| re[i] as f32).collect()
+    let mut re: Vec<f64> = v.iter().map(|&x| x as f64).collect();
+    let mut im: Vec<f64> = vec![0.0; n];
+    exact_fft(&mut re, &mut im, false);
+    rotate_spectrum(&mut re, &mut im, &phases);
+    exact_fft(&mut re, &mut im, true);
+    re.iter().map(|&x| x as f32).collect()
 }
 
 pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> {
@@ -1597,30 +1601,18 @@ pub fn coherent_phase_surrogates(vs: &[&[f32]], rng: &mut u64) -> Vec<Vec<f32>> 
     if n < 2 {
         return vs.iter().map(|v| v.to_vec()).collect();
     }
-    let m = n.next_power_of_two();
-    let mut phases: Vec<f64> = vec![0.0; m];
-    for phase in phases.iter_mut().take(m / 2).skip(1) {
+    let mut phases: Vec<f64> = vec![0.0; n];
+    for phase in phases.iter_mut().take(n / 2).skip(1) {
         *phase = next_rng(rng) * 2.0 * std::f64::consts::PI;
     }
     vs.iter()
         .map(|v| {
-            let mut re: Vec<f64> = vec![0.0; m];
-            let mut im: Vec<f64> = vec![0.0; m];
-            for (i, &x) in v.iter().enumerate().take(n) {
-                re[i] = x as f64;
-            }
-            fft(&mut re, &mut im, false);
-            for k in 1..m / 2 {
-                let (s, c) = phases[k].sin_cos();
-                let (ar, ai) = (re[k], im[k]);
-                re[k] = ar * c - ai * s;
-                im[k] = ar * s + ai * c;
-                let j = m - k;
-                re[j] = re[k];
-                im[j] = -im[k];
-            }
-            fft(&mut re, &mut im, true);
-            (0..n).map(|i| re[i] as f32).collect()
+            let mut re: Vec<f64> = v.iter().take(n).map(|&x| x as f64).collect();
+            let mut im: Vec<f64> = vec![0.0; n];
+            exact_fft(&mut re, &mut im, false);
+            rotate_spectrum(&mut re, &mut im, &phases);
+            exact_fft(&mut re, &mut im, true);
+            re.iter().map(|&x| x as f32).collect()
         })
         .collect()
 }
@@ -1786,6 +1778,66 @@ fn fft(re: &mut [f64], im: &mut [f64], inverse: bool) {
         for (a, b) in re.iter_mut().zip(im.iter_mut()) {
             *a *= scale;
             *b *= scale;
+        }
+    }
+}
+
+fn exact_fft(re: &mut [f64], im: &mut [f64], inverse: bool) {
+    let n = re.len();
+    if n < 2 || n.is_power_of_two() {
+        fft(re, im, inverse);
+        return;
+    }
+    let m = (2 * n - 1).next_power_of_two();
+    let mut ar: Vec<f64> = vec![0.0; m];
+    let mut ai: Vec<f64> = vec![0.0; m];
+    let mut cr: Vec<f64> = vec![0.0; m];
+    let mut ci: Vec<f64> = vec![0.0; m];
+    let sign = if inverse { 1.0 } else { -1.0 };
+    let angle = sign * std::f64::consts::PI / n as f64;
+    let mut wr = 1.0f64;
+    let mut wi = 0.0f64;
+    for t in 0..n {
+        ar[t] = re[t] * wr - im[t] * wi;
+        ai[t] = re[t] * wi + im[t] * wr;
+        cr[t] = wr;
+        ci[t] = -wi;
+        let fr = (angle * (2.0 * t as f64 + 1.0)).cos();
+        let fi = (angle * (2.0 * t as f64 + 1.0)).sin();
+        let nr = wr * fr - wi * fi;
+        wi = wr * fi + wi * fr;
+        wr = nr;
+    }
+    for j in 1..n {
+        cr[m - j] = cr[j];
+        ci[m - j] = ci[j];
+    }
+    fft(&mut ar, &mut ai, false);
+    fft(&mut cr, &mut ci, false);
+    for k in 0..m {
+        let (xr, xi) = (ar[k], ai[k]);
+        let (yr, yi) = (cr[k], ci[k]);
+        ar[k] = xr * yr - xi * yi;
+        ai[k] = xr * yi + xi * yr;
+    }
+    fft(&mut ar, &mut ai, true);
+    wr = 1.0;
+    wi = 0.0;
+    for k in 0..n {
+        let (xr, xi) = (ar[k], ai[k]);
+        re[k] = xr * wr - xi * wi;
+        im[k] = xr * wi + xi * wr;
+        let fr = (angle * (2.0 * k as f64 + 1.0)).cos();
+        let fi = (angle * (2.0 * k as f64 + 1.0)).sin();
+        let nr = wr * fr - wi * fi;
+        wi = wr * fi + wi * fr;
+        wr = nr;
+    }
+    if inverse {
+        let scale = 1.0 / n as f64;
+        for k in 0..n {
+            re[k] *= scale;
+            im[k] *= scale;
         }
     }
 }
@@ -3037,27 +3089,39 @@ mod tests {
     }
 
     #[test]
-    fn gate_phase_surrogate_padding_edge() {
-        fn deviation(n: usize) -> f64 {
+    fn gate_phase_surrogate_exact_n_spectrum() {
+        fn max_power_deviation(n: usize) -> f64 {
             let x: Vec<f32> = (0..n)
                 .map(|t| 0.05 * t as f32 + (t as f32 * 0.13).sin())
                 .collect();
             let mut rng = 42u64;
             let s = phase_randomized_surrogate(&x, &mut rng);
-            (1..=8)
-                .map(|lag| (autocorr(&x, lag) - autocorr(&s, lag)).abs())
+            assert_eq!(s.len(), n);
+            let mut xr: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+            let mut xi: Vec<f64> = vec![0.0; n];
+            exact_fft(&mut xr, &mut xi, false);
+            let mut sr: Vec<f64> = s.iter().map(|&v| v as f64).collect();
+            let mut si: Vec<f64> = vec![0.0; n];
+            exact_fft(&mut sr, &mut si, false);
+            let total = (0..n).map(|k| xr[k] * xr[k] + xi[k] * xi[k]).sum::<f64>();
+            (0..n)
+                .map(|k| {
+                    let px = xr[k] * xr[k] + xi[k] * xi[k];
+                    let ps = sr[k] * sr[k] + si[k] * si[k];
+                    (px - ps).abs() / total
+                })
                 .fold(0.0f64, f64::max)
         }
-        let dev_exact = deviation(1024);
-        let dev_pad = deviation(1000);
-        println!(
-            "gate_phase_surrogate_padding_edge: n=1024 deviation {:.4e}, n=1000 deviation {:.4e}",
-            dev_exact, dev_pad
+        let dev_pad = max_power_deviation(1000);
+        let dev_exact = max_power_deviation(1024);
+        assert!(
+            dev_pad < 1e-4,
+            "n=1000 per-bin power deviation {:.3e} of total — padding fingerprint present",
+            dev_pad
         );
         assert!(
-            dev_pad <= dev_exact + 0.15,
-            "padding artifact measured: n=1000 lag-autocorr deviation {:.4e} vs n=1024 {:.4e}",
-            dev_pad,
+            dev_exact < 1e-4,
+            "n=1024 per-bin power deviation {:.3e} of total",
             dev_exact
         );
     }
@@ -3266,6 +3330,58 @@ mod tests {
         let orig = re.clone();
         fft(&mut re, &mut im, false);
         fft(&mut re, &mut im, true);
+        for (a, b) in re.iter().zip(orig.iter()) {
+            assert!((a - b).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn exact_fft_matches_direct_dft_non_pow2() {
+        let n = 17usize;
+        let x: Vec<f64> = (0..n)
+            .map(|t| (t as f64 * 0.7).sin() + 0.3 * (t as f64 * 0.2).cos())
+            .collect();
+        let mut re = x.clone();
+        let mut im = vec![0.0f64; n];
+        exact_fft(&mut re, &mut im, false);
+        let mut dr = vec![0.0f64; n];
+        let mut di = vec![0.0f64; n];
+        for k in 0..n {
+            for t in 0..n {
+                let ang = -2.0 * std::f64::consts::PI * (k * t) as f64 / n as f64;
+                let (s, c) = ang.sin_cos();
+                dr[k] += x[t] * c;
+                di[k] += x[t] * s;
+            }
+        }
+        for k in 0..n {
+            assert!(
+                (re[k] - dr[k]).abs() < 1e-9,
+                "bin {}: re {:.6e} vs {:.6e}",
+                k,
+                re[k],
+                dr[k]
+            );
+            assert!(
+                (im[k] - di[k]).abs() < 1e-9,
+                "bin {}: im {:.6e} vs {:.6e}",
+                k,
+                im[k],
+                di[k]
+            );
+        }
+    }
+
+    #[test]
+    fn exact_fft_roundtrip_is_identity_non_pow2() {
+        let n = 1000usize;
+        let mut re: Vec<f64> = (0..n)
+            .map(|t| (t as f64 * 0.3).sin() + 2.0 * (t as f64 * 0.05).cos())
+            .collect();
+        let mut im = vec![0.0f64; n];
+        let orig = re.clone();
+        exact_fft(&mut re, &mut im, false);
+        exact_fft(&mut re, &mut im, true);
         for (a, b) in re.iter().zip(orig.iter()) {
             assert!((a - b).abs() < 1e-9);
         }
