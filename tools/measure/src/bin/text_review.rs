@@ -77,32 +77,100 @@ fn home() -> String {
     }
 }
 
+fn secrets_value(contents: &str, name: &str) -> Option<String> {
+    for line in contents.lines() {
+        let line = line.trim_end_matches('\r');
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some((k, v)) = line.split_once('=') {
+            if k == name {
+                let v = v.trim();
+                if !v.is_empty() {
+                    return Some(v.to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
+fn balanced_object(s: &str) -> Option<&str> {
+    if !s.starts_with('{') {
+        return None;
+    }
+    let mut depth = 0i32;
+    let mut in_str = false;
+    let mut escaped = false;
+    for (i, c) in s.char_indices() {
+        if in_str {
+            if escaped {
+                escaped = false;
+            } else if c == '\\' {
+                escaped = true;
+            } else if c == '"' {
+                in_str = false;
+            }
+            continue;
+        }
+        match c {
+            '"' => in_str = true,
+            '{' => depth += 1,
+            '}' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(&s[..i + 1]);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+fn json_object_after<'a>(hay: &'a str, key: &str) -> Option<&'a str> {
+    let marker = format!("\"{}\"", key);
+    let mut search = 0;
+    while let Some(rel) = hay[search..].find(&marker) {
+        let pos = search + rel;
+        let rest = &hay[pos + marker.len()..];
+        let after = rest.trim_start();
+        if let Some(colon) = after.strip_prefix(':') {
+            if let Some(block) = balanced_object(colon.trim_start()) {
+                return Some(block);
+            }
+        }
+        search = pos + marker.len();
+    }
+    None
+}
+
+fn provider_field(contents: &str, provider: &str, field: &str) -> Option<String> {
+    let block = json_object_after(contents, provider)?;
+    let value = extract_string_after(block, field)?;
+    if value.is_empty() { None } else { Some(value) }
+}
+
 fn key_for(m: &Model) -> Option<String> {
     if let Ok(v) = env::var(&m.env_var) {
         if !v.is_empty() {
             return Some(v);
         }
     }
-    let auth = std::fs::read_to_string(format!("{}/.local/share/opencode/auth.json", home())).ok();
-    if let Some(a) = auth {
-        if let Some(pos) = a.find(&format!("\"{}\"", m.provider)) {
-            if let Some(k) = extract_string_after(&a[pos..], "key") {
-                if !k.is_empty() {
-                    return Some(k);
-                }
-            }
+    if let Ok(secrets) = std::fs::read_to_string(".secrets.local") {
+        if let Some(v) = secrets_value(&secrets, &m.env_var) {
+            return Some(v);
+        }
+    }
+    if let Ok(auth) = std::fs::read_to_string(format!("{}/.local/share/opencode/auth.json", home()))
+    {
+        if let Some(v) = provider_field(&auth, &m.provider, "key") {
+            return Some(v);
         }
     }
     let cfg =
         std::fs::read_to_string(format!("{}/.config/opencode/opencode.jsonc", home())).ok()?;
-    if let Some(pos) = cfg.find(&format!("\"{}\"", m.provider)) {
-        if let Some(k) = extract_string_after(&cfg[pos..], "apiKey") {
-            if !k.is_empty() {
-                return Some(k);
-            }
-        }
-    }
-    None
+    provider_field(&cfg, &m.provider, "apiKey")
 }
 
 fn call(url: &str, key: &str, body: &str, timeout: u64) -> Resp {
@@ -221,11 +289,19 @@ fn extract_review(body: &str) -> Option<String> {
     let rest = &body[cpos..];
     let mpos = rest.find("\"message\"")?;
     let mrest = &rest[mpos..];
-    let text = extract_string_after(mrest, "content")?;
-    if text.is_empty() {
-        return None;
+    if let Some(text) = extract_string_after(mrest, "content") {
+        if !text.is_empty() {
+            return Some(text);
+        }
     }
-    Some(text)
+    for field in ["reasoning", "reasoning_content"] {
+        if let Some(text) = extract_string_after(mrest, field) {
+            if !text.is_empty() {
+                return Some(format!("[reasoning] {}", text));
+            }
+        }
+    }
+    None
 }
 
 fn classify(code: Option<u16>, timed_out: bool, body: &str) -> String {
@@ -364,7 +440,7 @@ fn main() {
     let mut model_filters: Vec<String> = Vec::new();
     let mut provider_filters: Vec<String> = Vec::new();
     let mut out: Option<String> = None;
-    let mut max_tokens: u32 = 700;
+    let mut max_tokens: u32 = 2000;
     let mut timeout: u64 = 60;
     let mut limit: Option<usize> = None;
     let mut dry_run = false;
@@ -576,6 +652,77 @@ mod tests {
         let body = r#"{"choices":[{"message":{"content":"1. Quote it."}}]}"#;
         assert_eq!(extract_review(body).as_deref(), Some("1. Quote it."));
         assert!(extract_review("{}").is_none());
+        assert!(extract_review(r#"{"choices":[{"message":{"content":""}}]}"#).is_none());
+    }
+
+    #[test]
+    fn secrets_value_matches_exact_env_name() {
+        let secrets = "CLOUDFLARE_WORKERS_TOKEN=tok-abc\nOPENCODE_API_KEY=\nGOOGLE_API_KEY=g-key\n";
+        assert_eq!(
+            secrets_value(secrets, "CLOUDFLARE_WORKERS_TOKEN").as_deref(),
+            Some("tok-abc")
+        );
+        assert_eq!(
+            secrets_value(secrets, "GOOGLE_API_KEY").as_deref(),
+            Some("g-key")
+        );
+        assert_eq!(secrets_value(secrets, "OPENCODE_API_KEY"), None);
+        assert_eq!(secrets_value(secrets, "CLOUDFLARE_WORKERS"), None);
+    }
+
+    #[test]
+    fn provider_field_matches_exact_provider_block() {
+        let cfg = r#"{
+  "provider": {
+    "google": { "options": { "apiKey": "google-key" } },
+    "opencode": { "whitelist": ["big-pickle"] },
+    "cloudflare-workers-ai": { "options": { "apiKey": "cf-key" } }
+  }
+}"#;
+        assert_eq!(
+            provider_field(cfg, "google", "apiKey").as_deref(),
+            Some("google-key")
+        );
+        assert_eq!(
+            provider_field(cfg, "cloudflare-workers-ai", "apiKey").as_deref(),
+            Some("cf-key")
+        );
+        assert_eq!(provider_field(cfg, "opencode", "apiKey"), None);
+        assert_eq!(provider_field(cfg, "absent", "apiKey"), None);
+    }
+
+    #[test]
+    fn provider_field_reads_auth_key_block() {
+        let auth =
+            r#"{"kilo":{"type":"api","key":"kilo-key"},"zai":{"type":"api","key":"zai-key"}}"#;
+        assert_eq!(
+            provider_field(auth, "kilo", "key").as_deref(),
+            Some("kilo-key")
+        );
+        assert_eq!(
+            provider_field(auth, "zai", "key").as_deref(),
+            Some("zai-key")
+        );
+        assert_eq!(provider_field(auth, "opencode", "key"), None);
+    }
+
+    #[test]
+    fn extract_review_falls_back_to_reasoning() {
+        let body = r#"{"choices":[{"message":{"content":"","reasoning":"check the claim"},"finish_reason":"length"}]}"#;
+        match extract_review(body) {
+            Some(t) => {
+                assert!(t.starts_with("[reasoning]"));
+                assert!(t.contains("check the claim"));
+            }
+            None => panic!("reasoning fallback absent"),
+        }
+        assert_eq!(classify(Some(200), false, body), "ok");
+        let body2 =
+            r#"{"choices":[{"message":{"content":"","reasoning_content":"deep thought"}}]}"#;
+        match extract_review(body2) {
+            Some(t) => assert!(t.contains("deep thought")),
+            None => panic!("reasoning_content fallback absent"),
+        }
         assert!(extract_review(r#"{"choices":[{"message":{"content":""}}]}"#).is_none());
     }
 
