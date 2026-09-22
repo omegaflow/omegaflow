@@ -51,9 +51,9 @@ reg https://api.le-systeme-solaire.net/en/generatekey.html
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER ISL Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gate gebaut 2026-09-22 (demeter.rs:61 akzeptiert ISL SURVEY|ISL BURST). Schritt: Download bei availableFilesCount>0.
+note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gate gebaut 2026-09-22 (demeter.rs:61 akzeptiert ISL SURVEY|ISL BURST). Schritt: Download bei availableFilesCount>0.
 
 pending
 url https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
-note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen (get_program_list 500; get_facilities verlangt state_abbr). AGOL caed82e8e13f47b183e2c7a1412949bc; Lauf 35649300152 success, unjoined 153.
+note EPA RadNet ohne Koordinaten. FRS-Weg geschlossen: get_program_list 500 (ORDS), RADNET/ERM nicht in FRS_PROGRAM_FACILITY. AGOL caed82e8e13f47b183e2c7a1412949bc; Lauf 35649300152 success 157180 records, unjoined 153, agol 140 (bad 0).
 
