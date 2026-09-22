@@ -1,6 +1,7 @@
 pub const MAGIC_BGR: [u8; 4] = *b"BGR1";
 pub const MAGIC_NRS: [u8; 4] = *b"NRS1";
 pub const MAGIC_SDARN: [u8; 4] = *b"SDN1";
+pub const MAGIC_SDRAW: [u8; 4] = *b"SDN2";
 pub const MAGIC_ARGO: [u8; 4] = *b"ARG1";
 pub const MAGIC_FDSN: [u8; 4] = *b"FDS1";
 pub const MAGIC_GIC: [u8; 4] = *b"GIC1";
@@ -45,6 +46,7 @@ pub const COMP_BGR_MAX: u32 = 4;
 pub const COMP_NRS_PSD: u32 = 1;
 
 pub const COMP_SDARN_V: u32 = 1;
+pub const COMP_SDARN_POWER: u32 = 2;
 
 pub const COMP_FDSN_BHZ: u32 = 1;
 pub const COMP_FDSN_MAX: u32 = 1;
@@ -184,6 +186,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "bgr_infrasound" => Some(MAGIC_BGR),
         "noaa_nrs_psd" => Some(MAGIC_NRS),
         "superdarn_fitacf" => Some(MAGIC_SDARN),
+        "superdarn_rawacf" => Some(MAGIC_SDRAW),
         "argo_bgc" => Some(MAGIC_ARGO),
         "fdsn_waveform" => Some(MAGIC_FDSN),
         "fmi_gic" => Some(MAGIC_GIC),
@@ -221,6 +224,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "bgr_infrasound" => Some(COMP_BGR_MAX),
         "noaa_nrs_psd" => Some(COMP_NRS_PSD),
         "superdarn_fitacf" => Some(COMP_SDARN_V),
+        "superdarn_rawacf" => Some(COMP_SDARN_POWER),
         "argo_bgc" => Some(COMP_ARGO_MAX),
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),

@@ -2547,6 +2547,7 @@ pub fn main_flow() {
                 "bgr_infrasound"
                     | "noaa_nrs_psd"
                     | "superdarn_fitacf"
+                    | "superdarn_rawacf"
                     | "argo_bgc"
                     | "fdsn_waveform"
                     | "fmi_gic"

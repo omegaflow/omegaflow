@@ -8029,6 +8029,14 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms ga
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdarn_rawacf.bin
+format superdarn_rawacf
+origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
+compiler tools/harvest/src/bin/superdarn_rawacf_compiler.rs
+on earth 0 0 0
+ttl 604800
+field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
 format glm_l1b
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/glml1bflash__1/
@@ -8037,7 +8045,7 @@ sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
-note NOAA-S3 noaa-goes16 2026-09-21: prefix=GLM → nur GLM-L2-LCFA/ (Objekt 200 hdf5 c42a392b); kein L1B im offenen Bucket, origin bleibt GHRC-EDL-protected. Token-freie L2-Route: eigener glm_l2-compiler gebaut 2026-09-21.
+note NOAA-S3 noaa-goes16 2026-09-22: prefix=GLM → nur GLM-L2-LCFA/ (KeyCount 0, kein L1B im offenen Bucket). GHRC-EDL glml1bflash__1 gemessen: Granule GET 200 mit EARTHDATA_EDL_TOKEN, 401 ohne — token-gedeckt.
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bin
 format glm_l2
