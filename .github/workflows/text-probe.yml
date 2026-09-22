@@ -1,0 +1,61 @@
+name: text-probe
+
+concurrency:
+  group: text-probe
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Model id substring filter (empty = all free models)'
+        required: false
+        type: string
+        default: ''
+      judge:
+        description: 'Optional judge model id (empty = objective metrics only)'
+        required: false
+        type: string
+        default: ''
+      timeout:
+        description: 'Per-model timeout in seconds'
+        required: false
+        type: string
+        default: '120'
+
+permissions:
+  contents: read
+
+env:
+  RUSTFLAGS: -D warnings
+
+jobs:
+  text-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build text_probe (release)
+        run: cargo build --release -p omegaflow-measure --bin text_probe
+      - name: Run text probe
+        env:
+          FREE_MODEL_KEYS: ${{ secrets.FREE_MODEL_KEYS }}
+        run: |
+          for k in GOOGLE_API_KEY GROQ_API_KEY OPENROUTER_API_KEY KILO_API_KEY KENARI_API_KEY ZAI_API_KEY TOKENROUTER_API_KEY OPENCODE_API_KEY NVIDIA_API_KEY; do
+            v=$(printf '%s' "$FREE_MODEL_KEYS" | jq -r --arg k "$k" '.[$k] // empty')
+            if [ -n "$v" ]; then export "$k=$v"; fi
+          done
+          args=(--out text-probe.tsv --timeout "${{ inputs.timeout }}")
+          if [ -n "${{ inputs.model }}" ]; then args+=(--model "${{ inputs.model }}"); fi
+          if [ -n "${{ inputs.judge }}" ]; then args+=(--judge "${{ inputs.judge }}"); fi
+          ./target/release/text_probe "${args[@]}"
+      - name: Upload probe artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: text-probe
+          path: |
+            text-probe.tsv
+            text-probe.tsv.answers
+          retention-days: 7
