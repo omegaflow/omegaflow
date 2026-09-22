@@ -3,7 +3,7 @@
   session: Sensory-Folge 145
   class: handover
   date: 2026-09-22
-  sha256: daf36a615fa685f69ff8ffa9ae4c7a54196a7cb5a22ec0749255d2e32c8306b8
+  sha256: ba191858f6c22af84f61bda59178726b05e37d6100ce0c5aabcbe4e26399c724
   status: live
 -->
 # Handover — Sensory-Folge 145 (Stand 2026-09-22)
@@ -71,12 +71,12 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   (`tools/measure/tests/phase_null_blind_band.rs:181`), print-only Step
   `hyperscanning-te.yml:120-122` (grind-max; Produktions-Fixture und beide
   Null-Modelle verbatim gespiegelt, n-Punkt-DFT ohne Zero-Padding).
-  `cargo check --workspace --all-targets` 0/0. Lauf `35682463419` trägt den
-  **pre-probe** Workflow (uncommitted) — keine Blindband-Zeilen.
-- **Blockade:** Commit + Re-Dispatch.
-- **Braucht:** nach `/commit` → `gh workflow run hyperscanning-te.yml` →
-  `ci_manage log <id>` (`blind-band probe:`-Zeilen). Erst danach Heil-Entscheidung
-  (council); Kandidat n-Punkt-DFT-Rotation ohne Zero-Padding.
+  `cargo check --workspace --all-targets` 0/0. Commit `62587160`; Lauf
+  `35683686776` @`62587160` dispatcht (trägt den Probe-Step).
+- **Blockade:** Run-Landung.
+- **Braucht:** `ci_manage log 35683686776` (`blind-band probe:`-Zeilen). Erst
+  danach Heil-Entscheidung (council); Kandidat n-Punkt-DFT-Rotation ohne
+  Zero-Padding.
 
 ### Format-Job (repo-weit, blockiert `ci-check`)
 - **Status:** wartend | **Bindung:** linie:<mehrere>
