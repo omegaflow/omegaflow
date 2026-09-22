@@ -104,11 +104,17 @@ fn main() {
             std::process::exit(2);
         }
         babamul::BabamulParse::NoData => {
-            eprintln!("{url}: the JSON carries no alert data array ({} B)", bytes.len());
+            eprintln!(
+                "{url}: the JSON carries no alert data array ({} B)",
+                bytes.len()
+            );
             std::process::exit(2);
         }
         babamul::BabamulParse::Unplaced => {
-            eprintln!("{url}: candidate rows arrived, none placeable ({} B)", bytes.len());
+            eprintln!(
+                "{url}: candidate rows arrived, none placeable ({} B)",
+                bytes.len()
+            );
             std::process::exit(2);
         }
     };
