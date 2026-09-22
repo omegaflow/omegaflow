@@ -117,3 +117,6 @@ jobs:
       - name: Frozen-tau delay sweep for the stochastic confirmation pair (print-only diagnostic)
         if: always()
         run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- frozen_tau_delay_sweep_stochastic_pair --ignored --nocapture
+      - name: Phase-null blind-band probe for the stochastic confirmation pair (print-only diagnostic)
+        if: always()
+        run: cargo test --release -p omegaflow-measure --test phase_null_blind_band -- phase_null_blind_band_stochastic_pair --ignored --nocapture

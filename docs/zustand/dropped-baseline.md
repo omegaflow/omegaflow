@@ -13,8 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 2647
+dropped-baseline 2665
 commit-resolved 176
 pairs 477
 candidates 3869
-measured 2026-09-22 (Sensory-Folge 144, HEAD 26f3c1b9; delta 361 über 2286 — Baseline im annehmenden Commit nachgezogen; Drops aus den Handover-Archivierungen ernte/future ohne vorherigen Nachzug)
+measured 2026-09-22 (Sensory-Folge 145, HEAD f1962d32; delta 18 über 2647 via register_lookup --dropped --count; Baseline im annehmenden Commit nachgezogen; Drops aus Handover-Archivierungen ohne Baseline-Nachzug; volle DROP-Liste CI-only: register-dropped-Sweep)

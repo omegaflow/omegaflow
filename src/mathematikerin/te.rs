@@ -5692,10 +5692,8 @@ mod tests {
             label: None,
             entries: &[
                 {
-                    let mut e = crate::mathematikerin::storage_entry(
-                        true,
-                        wgpu::ShaderStages::COMPUTE,
-                    );
+                    let mut e =
+                        crate::mathematikerin::storage_entry(true, wgpu::ShaderStages::COMPUTE);
                     e.binding = 0;
                     e
                 },
@@ -5710,10 +5708,8 @@ mod tests {
                     count: None,
                 },
                 {
-                    let mut e = crate::mathematikerin::storage_entry(
-                        false,
-                        wgpu::ShaderStages::COMPUTE,
-                    );
+                    let mut e =
+                        crate::mathematikerin::storage_entry(false, wgpu::ShaderStages::COMPUTE);
                     e.binding = 2;
                     e
                 },
@@ -5853,13 +5849,11 @@ mod tests {
         drop(mapped_data);
         read_buf.unmap();
         assert_eq!(
-            verdict[10],
-            1.0,
+            verdict[10], 1.0,
             "the kde real-pair slot must stay valid alongside the ksg mirror"
         );
         assert_eq!(
-            verdict[75],
-            1.0,
+            verdict[75], 1.0,
             "the wgsl ksg real-pair slot is absent at k={}",
             TE_KSG_K
         );
@@ -5870,14 +5864,7 @@ mod tests {
         let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
         let emb_x = embed_series(&xf, tau_x, 3);
         let emb_y = embed_series(&yf, tau_y, 3);
-        let cpu_opt = transfer_entropy_embedded_ksg(
-            &xf,
-            &emb_x,
-            &emb_y,
-            tau_x,
-            tau_y,
-            TE_KSG_K,
-        );
+        let cpu_opt = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K);
         let cpu_te = cpu_opt.expect("the KSG reference carries a TE at the GPU lags");
         let gap = (gpu_te as f64 - cpu_te).abs();
         assert!(
@@ -5896,14 +5883,8 @@ mod tests {
             let gpu_s = verdict[72 + 2 * s];
             let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
             let emb_s = embed_series(&ysf, tau_s, 3);
-            let cpu_s_opt = transfer_entropy_embedded_ksg(
-                &xf,
-                &emb_x,
-                &emb_s,
-                tau_x,
-                tau_s,
-                TE_KSG_K,
-            );
+            let cpu_s_opt =
+                transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, tau_x, tau_s, TE_KSG_K);
             let cpu_s = cpu_s_opt.expect("the KSG reference carries a surrogate TE at GPU lags");
             let gap_s = (gpu_s as f64 - cpu_s).abs();
             assert!(
