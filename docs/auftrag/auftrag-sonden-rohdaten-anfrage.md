@@ -2,7 +2,7 @@
   title: Auftrag — Roh-Tracking-Anfragen (request-only) — fünf offene Sonden-Daten
   class: auftrag
   date: 2026-09-16
-  sha256: 2d15607e50fe192072166407fd86ea33c6c9b9a4f7a745d0594c2eb25804045d
+  sha256: ba23086e79987af1d6717591881051bf855ab05558019d17b08c62d6960fd7d9
   status: live
   see-also: phi/blocked_sources.φ
 -->
@@ -34,18 +34,15 @@ und `nssdc.gsfc.nasa.gov/about/about_cruso.html` (beide 200).
 
 - **Bestellkanal (CRUSO):** Coordinated Request User Support Office, Code 690.1,
   NASA Space Science Data Coordinated Archive, NASA Goddard Space Flight Center,
-  Greenbelt, Maryland 20771 USA — `gsfc-dl-nssdca-request@mail.nasa.gov`,
-  +1-301-286-6695.
-- **`PSNO-00007` (Voyager):** General Contact Ms. Susan K. LaVoie, NASA JPL —
-  `sue.k.lavoie@jpl.nasa.gov`; Kommentare an Dr. Edwin V. Bell, II.
-- **`PSCM-00009` (Mariner 10):** Data Provider Ms. Amy Hochstettler Culver,
-  NASA JPL — `adc@mip17.jpl.nasa.gov`; General Contact Ms. Susan K. LaVoie,
-  NASA JPL — `sue.k.lavoie@jpl.nasa.gov`.
-- **`PSPG-00011` (Viking Tracking):** General Contact Dr. William H. Michael, Jr.,
-  NASA Langley Research Center (keine E-Mail im Katalog); Kommentare an CRUSO.
-- **`PSPG-00457` (Viking SDDPT):** Data Provider Dr. Francisco Loaiza, NASA JPL —
-  `loaiza@mailhost4.jpl.nasa.gov`; General Contact Ms. Susan K. LaVoie, NASA JPL —
-  `sue.k.lavoie@jpl.nasa.gov`.
+  Greenbelt, Maryland 20771 USA — `gsfc-dl-nssdca-request@mail.nasa.gov`.
+- **`PSNO-00007` (Voyager):** General Contact (der Katalogkontakt für `PSNO-00007`),
+  NASA JPL; Kommentare an den Katalog-Generalkontakt.
+- **`PSCM-00009` (Mariner 10):** Data Provider (der Data Provider, `PSCM-00009`),
+  NASA JPL; General Contact (der Katalogkontakt für `PSCM-00009`), NASA JPL.
+- **`PSPG-00011` (Viking Tracking):** General Contact (keine E-Mail im Katalog),
+  NASA Langley Research Center; Kommentare an CRUSO.
+- **`PSPG-00457` (Viking SDDPT):** Data Provider (der Data Provider, `PSPG-00457`),
+  NASA JPL; General Contact (der Katalogkontakt für `PSPG-00457`), NASA JPL.
 
 Der Katalogtext verlangt je Datensatz den „NSSDC contact person listed"; der
 formale Bestellweg ist CRUSO, der benannte Kontakt ist der Data Provider.
@@ -58,8 +55,8 @@ Operator aus Proton (`<operator-adresse>`) gesendet; Kopien liegen im
 
 ## Vorlage 1a — NSSDC-SDDPT-Antrag: Voyager 1/2 (closed-loop)
 
-> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc Ms. Susan K. LaVoie,
-> NASA JPL `sue.k.lavoie@jpl.nasa.gov`)
+> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc der Katalog-Generalkontakt,
+> NASA JPL — der Katalogkontakt für `PSNO-00007`)
 >
 > **Subject: Data request — Voyager 1/2 raw closed-loop two-way Doppler (NSSDC PSNO-00007)**
 >
@@ -79,8 +76,8 @@ Operator aus Proton (`<operator-adresse>`) gesendet; Kopien liegen im
 
 ## Vorlage 1b — NSSDC-SDDPT-Antrag: Mariner 10 (7-Track)
 
-> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc Ms. Susan K. LaVoie,
-> NASA JPL `sue.k.lavoie@jpl.nasa.gov`)
+> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc der Katalog-Generalkontakt,
+> NASA JPL — der Katalogkontakt für `PSCM-00009`)
 >
 > **Subject: Data request — Mariner 10 raw radio-science/tracking (NSSDC PSCM-00009)**
 >
@@ -97,9 +94,9 @@ Operator aus Proton (`<operator-adresse>`) gesendet; Kopien liegen im
 
 ## Vorlage 1c — NSSDC-SDDPT-Antrag: Viking 1/2 (Tracking)
 
-> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc Ms. Susan K. LaVoie,
-> NASA JPL `sue.k.lavoie@jpl.nasa.gov`; Dr. William H. Michael, Jr., NASA LaRC —
-> für `PSPG-00011`)
+> **To:** CRUSO `gsfc-dl-nssdca-request@mail.nasa.gov` (cc der Katalog-Generalkontakt,
+> NASA JPL — der Katalogkontakt für `PSPG-00457`; der Katalog-Generalkontakt,
+> NASA LaRC — für `PSPG-00011`)
 >
 > **Subject: Data request — Viking 1/2 raw tracking (Doppler+Range) (NSSDC PSPG-00011 / PSPG-00457)**
 >
