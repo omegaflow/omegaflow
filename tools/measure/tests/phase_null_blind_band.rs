@@ -11,25 +11,18 @@ fn next_rng(rng: &mut u64) -> f64 {
     ((*rng >> 33) as f64) / ((u32::MAX >> 1) as f64)
 }
 
-fn ar1_sine(n: usize, phi: f64, period: f64, phase: f64, noise: f64, rng: &mut u64) -> Vec<f32> {
+fn ar1_noise(n: usize, phi: f64, scale: f64, rng: &mut u64) -> Vec<f32> {
     let mut v = Vec::with_capacity(n);
     let mut x = 0.0f64;
-    for t in 0..n {
-        x = phi * x
-            + (2.0 * std::f64::consts::PI * t as f64 / period + phase).sin()
-            + noise * (next_rng(rng) * 2.0 - 1.0);
+    for _ in 0..n {
+        x = phi * x + scale * (next_rng(rng) * 2.0 - 1.0);
         v.push(x as f32);
     }
     v
 }
 
-fn strong_pair_fixture(
-    n: usize,
-    delay: usize,
-    driver_noise: f64,
-    rng: &mut u64,
-) -> (Vec<f32>, Vec<f32>) {
-    let a = ar1_sine(n, 0.6, 36.0, 0.0, driver_noise, rng);
+fn stochastic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+    let a = ar1_noise(n, 0.8, 1.0, rng);
     let mut b = vec![0.0f32; n];
     let mut x = 0.0f64;
     for t in 0..n {
@@ -176,7 +169,7 @@ fn coverage_report(label: &str, obs: &[f64], envelope: &[(f64, f64)], n: usize) 
 #[test]
 fn phase_null_blind_band_stochastic_pair() {
     let mut rng = SEED ^ 0x0C0F_FEE1;
-    let (driver, target) = strong_pair_fixture(800, 8, 0.05, &mut rng);
+    let (driver, target) = stochastic_pair_fixture(800, 8, &mut rng);
     let series: [&[f32]; 2] = [driver.as_slice(), target.as_slice()];
     let n = driver.len();
     let obs_driver = n_point_spectrum(&driver);

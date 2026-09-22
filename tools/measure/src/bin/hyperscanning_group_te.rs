@@ -1602,13 +1602,25 @@ mod tests {
         assert_eq!(n[0].threshold, 0.25);
     }
 
-    fn strong_pair_fixture(
-        n: usize,
-        delay: usize,
-        driver_noise: f64,
-        rng: &mut u64,
-    ) -> (Vec<f32>, Vec<f32>) {
-        let a = ar1_sine(n, 0.6, 36.0, 0.0, driver_noise, rng);
+    fn deterministic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = ar1_sine(n, 0.6, 36.0, 0.0, 0.0, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.9 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.02 - 0.01);
+            b[t] = x as f32;
+        }
+        (a, b)
+    }
+
+    fn stochastic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = ar1_noise(n, 0.8, 1.0, rng);
         let mut b = vec![0.0f32; n];
         let mut x = 0.0f64;
         for t in 0..n {
@@ -1651,7 +1663,7 @@ mod tests {
         (a, b)
     }
 
-    fn strong_pair_cell(a: Vec<f32>, b: Vec<f32>) -> (Vec<f64>, f64) {
+    fn confirmation_pair_cell(a: Vec<f32>, b: Vec<f32>) -> (Vec<f64>, f64) {
         let triads = vec![(
             "G01".to_string(),
             vec![("A".to_string(), a), ("B".to_string(), b)],
@@ -1678,8 +1690,8 @@ mod tests {
     #[test]
     fn confirmation_stochastic_driver_pair_clears_its_own_null() {
         let mut rng = SEED ^ 0x0C0F_FEE1;
-        let (a, b) = strong_pair_fixture(800, 8, 0.05, &mut rng);
-        let (dists, observed) = strong_pair_cell(a, b);
+        let (a, b) = stochastic_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = confirmation_pair_cell(a, b);
         let threshold = percentile(&dists, 99.0).expect("the per-cell null is measurable");
         assert!(
             observed > threshold,
@@ -1692,8 +1704,8 @@ mod tests {
     #[test]
     fn riss_guard_deterministic_pair_measures_below_its_own_null() {
         let mut rng = SEED ^ 0x0C0F_FEE1;
-        let (a, b) = strong_pair_fixture(800, 8, 0.0, &mut rng);
-        let (dists, observed) = strong_pair_cell(a, b);
+        let (a, b) = deterministic_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = confirmation_pair_cell(a, b);
         let floor = percentile(&dists, 1.0).expect("the per-cell null is measurable");
         let p99 = percentile(&dists, 99.0).expect("the per-cell null is measurable");
         assert!(
@@ -1709,8 +1721,8 @@ mod tests {
     #[test]
     fn frozen_tau_delay_sweep_stochastic_pair() {
         let mut rng = SEED ^ 0x0C0F_FEE1;
-        let (a, b) = strong_pair_fixture(800, 8, 0.05, &mut rng);
-        let (mi_dists, mi_te) = strong_pair_cell(a.clone(), b.clone());
+        let (a, b) = stochastic_pair_fixture(800, 8, &mut rng);
+        let (mi_dists, mi_te) = confirmation_pair_cell(a.clone(), b.clone());
         let mi_p99 = percentile(&mi_dists, 99.0);
         let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
         let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
@@ -1756,7 +1768,7 @@ mod tests {
     fn positive_control_rich_aperiodic_driver_pair() {
         let mut rng = SEED ^ 0x0C0F_FEE1;
         let (a, b) = rich_pair_fixture(800, 8, &mut rng);
-        let (dists, observed) = strong_pair_cell(a, b);
+        let (dists, observed) = confirmation_pair_cell(a, b);
         let p99 = percentile(&dists, 99.0);
         println!(
             "positive control: te={} p99={} clears={}",
