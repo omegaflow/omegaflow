@@ -3,26 +3,26 @@
   "instructions": [
     "AGENTS.md"
   ],
-  "model": "deepseek/deepseek-v4-flash",
-  "small_model": "deepseek/deepseek-v4-flash",
+  "model": "deepseek/deepseek-flash",
+  "small_model": "deepseek/deepseek-flash",
   "default_agent": "plan",
   "agent": {
     "build": {
       "mode": "primary",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "permission": { "edit": "allow" }
     },
     "plan": {
       "mode": "primary",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Planungsmodus (read-only) — Übergabe lesen, Planungs-Pass, Auswahl vorschlagen, anhalten. Die Linien-Befehle starten hier; Ausführung via Tab auf `line` + `/consent`.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage log*": "allow", "./bin/ci_manage list*": "allow", "./bin/ci_manage view*": "allow", "./bin/ci_manage log*": "allow", "./target/release/ci_manage list*": "allow", "./target/release/ci_manage view*": "allow", "./target/release/ci_manage log*": "allow", "git ls-files*": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time register_lookup *": "allow", "time git_safety *": "allow", "register_lookup *": "allow", "./target/release/register_lookup *": "allow", "open_points_check *": "allow", "./target/release/open_points_check *": "allow", "git_safety *": "allow", "./target/release/git_safety *": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow" } }
     },
     "general": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
       "prompt": "Für Recherche nutzt du zuerst `./bin/archive_search` (selbsttragend, ein fetch+parse). Modi: `--arxiv --ads --ntrs --wayback --crossref --wiki --github --crates --librs --mwmbl --brave --datacite --zenodo --isc --openalex --supermag --heasarc <query>`; `--all <query>`; `--playwright <url|query>`; `--verdict <url>`/`--sniff <url>`. Kaskade: bekannte URL → `--verdict` → `--sniff` → `--playwright`; bekannte Quelle → der eine Modus; unbekannte Quelle → `--mwmbl` zuerst (keyless; `--brave` ist HTTP 402 bis die Quota zurückkehrt), dann `--all`. Code-Suche: `archive_search <kw> --root <dir>` oder `sgrep`; Fetch: `sfetch <url>`; Lesen `sread`/`read`; Discovery `glob`; Verzeichniswechsel via `workdir`. Werkzeug-Grenzen: kein `grep`/`ls`/`cat`/`rg`/`cd`/`python` (auch nicht als Absolutpfad); webfetch/websearch sind verboten. CI-Läufe: `bin/ci_manage list`/`view` (nie `gh run list`/`gh run view`). Karte: `docs/concepts/tools-map.md`. Login-gatterte Quelle: bis zur Auth-Kante messen — die Auth-Route wird nie `pending`; miss (a) Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte; `~/.netrc`, env), (b) anonymer Zugang, (c) Zugang mit vorhandenem Credential, (d) exakte Download-URL. 401/403 MIT gültigem Token = `blocked key-needed`; Abweisung ohne Konto = `blocked account` (→ future/Operator); 404 = Route nicht exponiert (`pending`), kein Auth-Verdikt.",
@@ -30,7 +30,7 @@
     },
     "explore": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "prompt": "Für Code-Suche nutzt du `archive_search <kw> --root <dir>` oder `sgrep [-i] <pattern> [dir]` (case-sensitiv ohne `-i`); Pfade/Dateinamen: `archive_search --index [<query>] [--path]`; Lesen: `sread <file> [--offset --limit]` oder das `read`-Tool; Discovery: `glob`; Verzeichniswechsel via `workdir`-Parameter. Login-gatterte Quelle: bis zur Auth-Kante messen — die Auth-Route wird nie `pending`; miss (a) Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte; `~/.netrc`, env), (b) anonymer Zugang, (c) Zugang mit vorhandenem Credential, (d) exakte Download-URL. 401/403 MIT gültigem Token = `blocked key-needed`; Abweisung ohne Konto = `blocked account` (→ future/Operator); 404 = Route nicht exponiert (`pending`), kein Auth-Verdikt. Werkzeug-Grenzen: kein `grep`/`ls`/`cat`/`rg`/`cd`/`python` (auch nicht als Absolutpfad) — bash-`grep` ist ein Verstoß; das OpenCode-`Grep`-Tool ist erlaubt. CI-Läufe: `bin/ci_manage list`/`view` (nie `gh run list`/`gh run view`). Karte: `docs/concepts/tools-map.md`.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow" } }
@@ -45,7 +45,7 @@
     },
     "grind-flash": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
       "prompt": "Nutze die lokalen Tools statt langsamer Wege: `archive_search <kw> --root <dir>` oder `sgrep <pattern> <dir>` für Code-Suche, `sfetch [--title|--links] <url>` für Fetch, `./bin/archive_search --<quelle> <query>` für Recherche (`--arxiv --ads --crossref --github --ntrs --heasarc --datacite --zenodo --openalex --mwmbl --brave`; `--sniff <url>`/`--verdict <url>`). Kaskade: bekannte URL → `--verdict` → `--sniff` → `--playwright`; bekannte Quelle → der eine Modus; unbekannte Quelle → `--mwmbl` zuerst (keyless; `--brave` ist HTTP 402 bis die Quota zurückkehrt), dann `--all` (alle 13 Keyword-Datenbanken — Breite ist der Zweck); `--all` schreibt den vollen Output in eine Temp-Datei (`full: <pfad>`) — lies sie; JS-Seite → `--playwright`. webfetch/websearch sind verboten. Werkzeug-Grenzen: kein `grep`/`ls`/`cat`/`rg`/`cd`/`python` (auch nicht als Absolutpfad); Discovery `glob`; Lesen `sread <file>` (bash-Befehl, kein Tool); Verzeichniswechsel via `workdir`-Parameter. Login-gatterte Quelle: bis zur Auth-Kante messen — die Auth-Route wird nie `pending`; miss (a) Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte; `~/.netrc`, env), (b) anonymer Zugang, (c) Zugang mit vorhandenem Credential, (d) exakte Download-URL. 401/403 MIT gültigem Token = `blocked key-needed`; Abweisung ohne Konto = `blocked account` (→ future/Operator); 404 = Route nicht exponiert (`pending`), kein Auth-Verdikt.",
@@ -76,14 +76,14 @@
     },
     "vision": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-flash-vision-exp",
+      "model": "deepseek/deepseek-flash",
       "variant": "high",
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": { "edit": "deny", "task": "deny", "bash": "deny" }
     },
     "line": {
       "mode": "primary",
-      "model": "deepseek/deepseek-v4-flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; smail sendet weiter nur nach Operator-Wort.",
       "permission": {
