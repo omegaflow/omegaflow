@@ -3,7 +3,7 @@
   session: Register-Digest
   class: handover
   date: 2026-09-15
-  sha256: 1323b5945b173ecacab5181895a30599ec249a40c4c299ed83e9eed0b876e0a8
+  sha256: 58654909ac256d5881c21545680dee66097a7f5409a88a74f0f9cbb8b684b933
   status: live
 -->
 # Handover — Register-Digest (2026-09-15)
@@ -46,7 +46,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
   `git log -S`-Modus je Thema.)
 - Legacy-Repo hat 80 archivierte/gelöschte `docs/handover/*.md` ohne Gegenstück
   im aktuellen `docs/handover/archiv/`. (Schritt: `register_lookup --history
-  --legacy /home/johannes/backup/archive/omegaflow/omegaflow-legacy`.)
+  --legacy $HOME/backup/archive/omegaflow/omegaflow-legacy`.)
 - `--live`-Namensstimme (Rat): das Wort „live" reibt an der Quellen-Registerklasse
   `live`. (Schritt: Operator entscheidet Umbenennung `--open` oder bleibt.)
 

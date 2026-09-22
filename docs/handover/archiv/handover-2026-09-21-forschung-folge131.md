@@ -3,7 +3,7 @@
   session: Forschung-Folge 131
   class: handover
   date: 2026-09-21
-  sha256: a0208a7aa3ee38bb6480d35941ec68c078b19e69cf7b84d1c120dfe0e9af5a30
+  sha256: ee8b4a01414e6d6fa572887794c133847f696c0148886229dfb911197706f436
   status: live
 -->
 # Handover — Forschung-Folge 131 (Stand 2026-09-21)
@@ -27,11 +27,8 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   Compiler-Sites + `src/gate/commit_gate_vocab.json`) — nicht angefasst, nicht
   committet.
 - **Postfach** — neuer Eingang `1789978555` (Brave Search API „usage limit
-  reached", 100 % von $5.00 free credits, 2026-09-21, informativ); davor
-  `1789973288` (Tuxedo Ticket#991311279: keine kostenlosen Geräte/Sponsorings an
-  Privatpersonen — Hardware-Punkt beidseitig declined), `1789970277`
-  (Framework-Sponsoring abgelehnt, Ticket NG2HWBZM), `1789930255` (Pine64:
-  Ox64-Hardware zugesagt). Kein handlungsbedürftiger Eingang.
+  reached", 100 % von $5.00 free credits, 2026-09-21, informativ). Kein
+  handlungsbedürftiger Eingang.
 - **CI** — `hyperscanning-te` `35578254642` @`2ae4978a` **failure**: Teststep
   4/5 grün (`nominees_round_trip`, `coherent_null_fp_gate`, `family_fp_gate`,
   `self_null_discriminator`), **`family_fn_gate` rot** (Punkt 1); die Folgesteps

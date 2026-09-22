@@ -3,7 +3,7 @@
   session: Mountain-Folge 129
   class: handover
   date: 2026-09-21
-  sha256: 2559281357a74d98a4c54280300242898da593205845e551198c8fb5399bbe05
+  sha256: ad44f98b8d971cd8dd9b98b06e5d79e864543728d17115fb5d5b77627eca2d0a
   status: live
 -->
 # Handover — Mountain-Folge 129 (2026-09-21)
@@ -31,8 +31,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
   `tools/measure/src/bin/hyperscanning_group_te.rs`, neues
   `handover-2026-09-21-sensory-folge142.md`) — nicht angetastet.
 - **Postfach** — `state/mail/mail_ledger.φ` tail: neueste Eingänge `1790009781`
-  / `1790013926` / `1790013970` (Cloudflare „login verification code", Maschine,
-  informativ); davor `1789978555` (Brave-Quota), `1789973288` (Tuxedo). Die
+  / `1790013926` / `1790013970` (Cloudflare „login verification code", Maschine).
   `external-state.md`-Postfach-Zeile steht bereits auf `1790013970` (fremde
   Zeile, nicht fortgeschrieben). Kein handlungsbedürftiger mountain-Fall.
 - **CI** — der geteilte CI-Stand steht in `docs/zustand/external-state.md`

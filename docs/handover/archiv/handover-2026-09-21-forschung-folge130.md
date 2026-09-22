@@ -3,7 +3,7 @@
   session: Forschung-Folge 130
   class: handover
   date: 2026-09-21
-  sha256: 37065274cceed489f0352e86afde1cffc481ee18de75bd31e199c261092113a7
+  sha256: 105fce7c70487c22c488029b863515613eb18c6579bc710c8994842378a67eb4
   status: live
 -->
 # Handover — Forschung-Folge 130 (Stand 2026-09-21)
@@ -25,8 +25,6 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
   folge120 `0475d67f` committete `hfrnet_rtv`-Referenzen ohne `mod.rs`/
   `hfrnet_rtv.rs`, E0433) ist durch ernte folge129 geschlossen; der Post an ernte
   wurde gefaltet und gelöscht.
-- **Postfach** — kein neuer Eingang; neuester Ledger `1789973288` (Tuxedo-decline),
-  zitiert in `docs/zustand/external-state.md`.
 - **CI** — `hyperscanning-te` `35578254642` @`2ae4978a` queued (neu dispatcht),
   `te-gate` `35578257445` @`2ae4978a` queued (neu dispatcht), `ci-check`
   `35577602067` @`2ae4978a` pending (Auto-Push). Kein Poll.

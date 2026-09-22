@@ -3,7 +3,7 @@
   session: Entscheid-Folge 65
   class: handover
   date: 2026-09-20
-  sha256: 33ebf493a132a0a00308e60a5c98e37a35a3fcad0023bc2e472b30069752f501
+  sha256: 215d1715d6ff6e85df53c204ac583297b0f36a8afcb8b127e008c04d96aefbe3
   status: live
 -->
 # Handover — Entscheid-Folge 65 (2026-09-20)
@@ -30,7 +30,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   (17:57:49Z) → der wartende Benchmark-Trigger ist noch nicht gefeuert; kein Poll.
 - **Postfach** — `state/mail/mail_ledger.φ` neuester Eingang `1789922257`
   (`sales@pine64.org`, Developer-Hardware-Antwort) = die `post.md`-Zeile; kein
-  weiterer Eingang. Die entscheid-Zeile (Hardware-Sponsoring) in die Operator-Queue
   gefaltet, Zeile gelöscht.
 - **opencode.db bereinigt (Operator-Wort)** — `~/.local/share/opencode/opencode.db`
   trug **112 Sessions** (massiv „nur OK"-Test-Sessions); aktive Session
@@ -47,26 +46,13 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
    Adresse; die aktuelle Version ist sauber, die Geschichte nicht. *Frage:* Geschichte
    umschreiben? *Ja:* Auftrag `docs/auftrag/auftrag-pii-history-rewrite.md` läuft
    (löscht alte Commits, Force-Push). *Nein:* bleibt. (seit 2026-09-15)
-2. **Förderung/Sponsoring** — *Lage:* Förderung wirkt erst mit Publikum. *Frage:*
-   Sponsoring-Konten (GitHub Sponsors / Open Collective) jetzt aufsetzen? *Ja:*
-   anlegen. *Nein:* erst nach Preprint.
 3. **Mantis-Shrimp-Hardware** — *Lage:* Wege Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS. *Frage:* Bewerbungen/Formulare senden? *Ja:* pro
    Akt. *Nein:* bleibt.
-4. **Mistral + Inception** — *Lage:* Mistral hat kein kostenloses API-Modell (nur
-   der Vibe-Plan ist gratis); Inception rechnet pro Token ab (2,5e-7), Free-Tier
-   „100 Mio Token" laut früherem Stand. *Frage:* Mistral aus der Liste nehmen (oder
-   kostenpflichtig aktivieren)? Inception als Gratis-Kontingent führen oder
-   entfernen? *Ja/Nein:* entsprechend.
 5. **Queue-Korpora (astro/earth/exotic + 7 parser-gap)** — *Lage:* 49 + 7
    Datenblöcke warten; der Lauf ist blockiert (kein Kraft-Direktiv, Korpora nur
    lokal). *Frage:* Lauf lokal freigeben oder CI-`--port`-Workflow bauen? *Ja:*
    freigeben, dann `--port` + `--probe`. *Nein:* bleibt blockiert. (Ernte-115,
    Bau-108)
-6. **Hardware-Sponsoring (Pine64/Framework/Tuxedo)** — *Lage:* Pine64 (`1789922257`)
-   schlägt RISC-V-Sensor-Node vor; Framework-Ticket `NG2HWBZM` und Tuxedo
-   `#991311279` offen. *Frage:* Antworten/Bewerbungen senden? *Ja:* pro Akt (Dritt-
-   Konsens). *Nein:* bleibt.
 
 ## Offen
 
@@ -76,13 +62,9 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   35527517605` / Watchdog).
 - **Mistral-Disposition** — kein Free-API-Modell; Provider deaktiviert.
   **`operator-gebunden`** (Queue 4).
-- **Inception-Disposition** — `mercury-2` per-Token; Free-Tier separate Linie.
-  **`operator-gebunden`** (Queue 4).
 - **Queue-Korpora Re-Lauf** — 7 `parser-gap`-Korpora + `astro`/`earth`/`exotic`
   brauchen den Release-Binär-Lauf (`--port` + `--probe`); Lauf-Ort ungeklärt.
   **`operator-gebunden`** (Queue 5).
-- **Hardware-Sponsoring** — Pine64/Framework/Tuxedo. **`operator-gebunden`**
-  (Queue 6).
 - **nvidia/zai Free-Status** — nvidia Preview-Credits, zai free nur Docs-Pricing.
   **`wartend`** (Auslöser: Bedarf).
 - **Chrome-DevTools-MCP** — in forschung-116 gepinnt (`@1.9.0`); Verifikation offen

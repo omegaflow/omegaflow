@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 68 (Stehender Pass fortgeschrieben; P13-Funding-Recherche dispatcht, Verdikt ausstehend; Operator-Queue um drei blockierte Quellen erweitert) (Stand 2026-09-20)
+  title: Handover — Entscheid-Folge 68 (Stehender Pass fortgeschrieben; Operator-Queue erweitert) (Stand 2026-09-20)
   session: Entscheid-Folge 68
   class: handover
   date: 2026-09-20
-  sha256: 8690f3a2f4be0ad892677170a902d1ca27497efd90a59b4446d648db5c31a29d
+  sha256: 39b5ef59c1e9b768cfe4024481aaeaa958eba75536bf532aa85f1ee5889643bd
   status: live
 -->
 # Handover — Entscheid-Folge 68 (2026-09-20)
@@ -32,7 +32,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   (`sent_ledger` `1789931195`). `post.md` **leer**.
 - **CI** — Watchdog-Snapshot 21:22; `ci_manage list` ~22:1xZ: **neu**
   `free-model-agent-bench` `35534406541` **pending** @`276034b2` — der nach dem
-  folge67-Commit dispatchte `funding-research`-Lauf (Workflow dispatch-only, kein
   Push-Trigger → der Dispatch ist erfolgt); `ci-check` `35531572974` in_progress /
   `35534406083` pending; `tools-build` `35534406080` in_progress; `te-gate`
   `35531196101` in_progress (>2 h — Watchdog entscheidet); `free-model-bench`
@@ -46,15 +45,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 
 1. **PII-History-Rewrite** — Operator-Wort 2026-09-20: **Nein / ans Ende
    geschoben.** (Alter: seit 2026-09-16)
-2. **Sponsoring-Konten** — Operator-Wort 2026-09-20: **Nein / erst nach dem
-   Preprint.** (Alter: seit 2026-09-17)
-3. **Mantis-Shrimp-Hardware-Bewerbungen** (Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS) — offen. (Alter: seit 2026-09-16)
-4. **Pflichtenfreies Funding** — Eigenprize-Runde geschlossen (Deadline
-   31.03.2026, keine nächste Runde datiert). **Frage:** den „Remind me"-Eintrag
-   auf `https://eigen.build` setzen und den Entwurf
-   `state/mail/eigenprize-application.md` finalisieren? Solitude: nächster Call
-   ~Herbst 2027. (Alter: seit 2026-09-20)
 5. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis (Mail 2026-09-20). **Frage:** App unter
    `github.com/settings/connections/applications` widerrufen? (Alter: seit
@@ -70,33 +60,15 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
    Registrierung `developer.amentum.io/register`? (Alter: seit 2026-09-20)
 9. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf" (Ziel-Site aktiv
    → Cookie-Editor-Export → `state/cookies/<host>.json`). (Alter: seit 2026-09-16)
-10. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt); Framework
-    **nicht passend** (`survey-funding-pflichtfrei.md` §E); Tuxedo Ticket#991311279
-    **wartend**.
 
 ## Offen
 
-- **P13 Free-Model-Funding-Recherche** (härtester undatierter Punkt) — Harness
-  erweitert (`free_model_agent_bench.rs`, `--task funding-research`), Workflow mit
-  `task`-Input + Chromium + `.answers`-Artefakt; **Dispatch erfolgt**
-  (`35534406541` @`276034b2`, pending). `wartend` (Auslöser: Run-Abschluss).
-  (Schritt: `ci_manage view 35534406541` **einmalig**, Artefakt
-  `free-model-agent-bench.tsv.answers/<provider>__<id>.md` lesen, Funde vorlegen;
-  keine Poll-Schleife.)
-- **Eigenprize / Solitude** — `termin`; Eigenprize nächste Runde **ohne Datum**
-  (Reminder auf `eigen.build`), Solitude ~Herbst 2027. Entwürfe existieren
-  (`state/mail/eigenprize-application.md`, `state/mail/solitude-application.md`,
-  gitignored). (Schritt: Reminder setzen + Entwurf finalisieren; per-Akt-Consent
-  vor Absenden.)
 - **P2/P3/P4 Bench-Läufe** — `wartend` (Auslöser: Run-Abschluss `35527517605` /
   `35532890353` / `35532892161`; `ci_manage view` einmalig, Artefakt
   `free-model-bench.tsv` lesen, Ranking eintragen).
 - **ernte-Historie-Analyse** — `register_lookup --dropped` ist gebaut
   (Forschung-Folge 124), das Binär auf `tools-latest` noch stale → liest
   `pending`. (Schritt: nach dem nächsten tools-build `register_lookup --dropped`.)
-- **Mantis-Shrimp-Bewerbungen**, **nvidia/zai Free-Status**, **Chrome-DevTools-MCP**
-  (forschung), **Benchmark-Klassen B–D**, **F2-flare-Gate**, **09-16-Limbo** —
-  `wartend` (Auslöser: Bedarf).
 - `termin` — vC-Permeabilität (Smartwatch + Mantis-Shrimp), Lasair-LSST (API 502),
   BepiColombo MORE (~April 2027), Rubin-Review (Umzug 2026-09-24). `blockiert` —
   TAP-Backends dachs/pithia (extern). `wartend` — adoption-Block, SuperDARN-Globus,
@@ -107,9 +79,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 - **Delegationen (Entscheid-Folge 68):** keine Sub-Agenten — der Stehende Pass und
   die Operator-Queue-Registratur sind eigene, lesende Arbeit (flash-first, kein
   pro/max nötig).
-- **Klasse „pflichtenfreies Funding"** — geschlossen (research-max Sieger, folge66).
-- **Neue Klasse (offen):** „105 freie Modelle als Funding-Rechercheure" — der
-  `funding-research`-Lauf `35534406541`; Sieger nach Anteil verifizierter Wege.
 
 ## Geteilter Baum — eigener Pfad-Satz
 

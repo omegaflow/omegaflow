@@ -3,7 +3,7 @@
   session: Entscheid-Folge 70
   class: handover
   date: 2026-09-20
-  sha256: bc836d1b23867588eddb65d6c45ef7cb376a1ec2880eb51bf4e671a355323058
+  sha256: cfb77acd84c0762a7049b5f8112ecd63a109749f140ab7fc3da2c98eb2f70672
   status: live
 -->
 # Handover — Entscheid-Folge 70 (2026-09-20)
@@ -44,13 +44,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 
 ## Operator-Queue (Stand folge70; einfache Sprache, je Frage mit Alter)
 
-1. **Mantis-Shrimp-Hardware-Bewerbungen** (Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS) — offen. (Alter: seit 2026-09-16)
-2. **Pflichtenfreies Funding** — Eigenprize-Runde geschlossen (Deadline
-   31.03.2026, keine nächste Runde datiert). **Frage:** „Remind me" auf
-   `https://eigen.build` setzen und den Entwurf
-   `state/mail/eigenprize-application.md` finalisieren? Solitude ~Herbst 2027.
-   (Alter: seit 2026-09-20)
 3. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis (Mail 2026-09-20). **Frage:** App unter
    `github.com/settings/connections/applications` widerrufen? (Alter: seit
@@ -69,9 +62,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
    (sudo+Netz, nicht in der Ernte-Session)? (Alter: seit Ernte folge12–17)
 8. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf" (Ziel-Site aktiv
    → Cookie-Editor-Export → `state/cookies/<host>.json`). (Alter: seit 2026-09-16)
-9. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt); Framework
-   **nicht passend** (`survey-funding-pflichtfrei.md` §E); Tuxedo Ticket#991311279
-   **wartend**.
 10. **Strukturierte Feld-Grammatik** (bau, aus `post.md` gefaltet) — Lage: am
     2026-09-18 als Kanon-Akt vertagt, seither in keiner Übergabe; kein Spec, kein
     Code, keine Messung im Baum. **Frage:** soll bau einen Spec-Entwurf für eine
@@ -85,22 +75,9 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 
 ## Offen
 
-- **P13 Free-Model-Funding-Recherche** (härtester undatierter Punkt) — Harness +
-  Workflow gebaut, Dispatch erfolgt (`35534406541` @`276034b2`). `wartend`
-  (Auslöser: Run-Abschluss). (Schritt: `ci_manage view 35534406541` **einmalig**,
-  Artefakt `free-model-agent-bench.tsv.answers/<provider>__<id>.md` lesen, Funde
-  vorlegen; keine Poll-Schleife.)
-- **Eigenprize / Solitude** — `termin`; Eigenprize nächste Runde **ohne Datum**
-  (Reminder auf `eigen.build`), Solitude ~Herbst 2027. Entwürfe existieren
-  (`state/mail/eigenprize-application.md`, `state/mail/solitude-application.md`,
-  gitignored). (Schritt: Reminder setzen + Entwurf finalisieren; per-Akt-Consent
-  vor Absenden.)
 - **P2/P3/P4 Bench-Läufe** — `wartend` (Auslöser: Run-Abschluss `35532890353` /
   `35532892161`; `ci_manage view` einmalig, Artefakt `free-model-bench.tsv` lesen,
   Ranking eintragen).
-- **Mantis-Shrimp-Bewerbungen**, **nvidia/zai Free-Status**, **Chrome-DevTools-MCP**
-  (forschung), **Benchmark-Klassen B–D**, **F2-flare-Gate**, **09-16-Limbo** —
-  `wartend` (Auslöser: Bedarf).
 - `termin` — vC-Permeabilität (Smartwatch + Mantis-Shrimp), Lasair-LSST (API 502),
   BepiColombo MORE (~April 2027), Rubin-Review (Umzug 2026-09-24). `blockiert` —
   TAP-Backends dachs/pithia (extern). `wartend` — adoption-Block, SuperDARN-Globus,
@@ -112,9 +89,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   eigenen Werkzeugs (`free_model_bench.rs`, eine Datei) lief inline über `rustfmt`;
   die Routine-Klasse ist geschlossen (flash-first, kein pro/max). Kein
   Doppel-Lauf.
-- **Klasse „pflichtenfreies Funding"** — geschlossen (research-max Sieger, folge66).
-- **Klasse „105 freie Modelle als Funding-Rechercheure"** — offen, Lauf
-  `35534406541`; Sieger nach Anteil verifizierter Wege.
 
 ## Geteilter Baum — eigener Pfad-Satz
 

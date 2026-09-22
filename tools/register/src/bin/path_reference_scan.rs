@@ -53,9 +53,6 @@ fn scan(root: &Path) -> (usize, usize) {
             }
             if !rel.ends_with(".rs") {
                 for abs in absolute_paths(line) {
-                    if rel == "AGENTS.md" && abs == "/home/johannes/backup/archive-root/" {
-                        continue;
-                    }
                     absolute += 1;
                     println!("ABS  {}:{}  {}", rel, n, abs);
                 }
@@ -199,16 +196,16 @@ mod tests {
 
     #[test]
     fn absolute_path_detection_names_leading_home() {
-        let found = absolute_paths("wohnt in /home/johannes/projects/omegaflow/ dir");
-        assert_eq!(found, vec!["/home/johannes/projects/omegaflow/"]);
+        let found = absolute_paths("wohnt in /home/operator/projects/omegaflow/ dir");
+        assert_eq!(found, vec!["/home/operator/projects/omegaflow/"]);
     }
 
     #[test]
     fn url_contexts_are_not_local_paths() {
         assert!(absolute_paths("served at https://example.com/srv/eng/csw?format=json").is_empty());
         assert_eq!(
-            absolute_paths("see /home/johannes/a then https://x/srv/b"),
-            vec!["/home/johannes/a"]
+            absolute_paths("see /home/operator/a then https://x/srv/b"),
+            vec!["/home/operator/a"]
         );
     }
 }

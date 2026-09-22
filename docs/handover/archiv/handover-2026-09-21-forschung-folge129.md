@@ -3,7 +3,7 @@
   session: Forschung-Folge 129
   class: handover
   date: 2026-09-21
-  sha256: 9cf826bc6f2d939524d4c2ff1168ebb2eb8f42ac8e299d44b437d56de8a27016
+  sha256: d4bf2a985bdf78c7be149bfb41f0ae6587b959dca5742ba69555bb2b5216a65e
   status: live
 -->
 # Handover — Forschung-Folge 129 (Stand 2026-09-21)
@@ -23,8 +23,7 @@ Jeder Punkt trägt **Lage / Blockade / Braucht** und seinen Status-Tag
 - **HEAD** `4ca9a1dd` (== `origin/main`) bei Session-Ende; Session-Beginn
   `ae822fe7` (== `origin/main`), dazwischen `33c124d8` (ernte folge128). Baum
   geteilt: entscheid folge75/76, ernte folge129, bau folge120 parallel.
-- **Postfach** — kein neuer Eingang; neuester Ledger-Eintrag `1789973288`
-  (Tuxedo-decline). Eintrag `docs/zustand/external-state.md` zitiert.
+- **Postfach** — kein neuer Eingang; neuester Ledger-Eintrag `1789973288`.
 - **CI** — `ci_manage view`/`log`: `hyperscanning-te` `35572559304` @`a70d20c7`
   **failure** (`family_fn_gate`); `te-gate` `35572569205` @`a70d20c7` pending.
   Watchdog-Snapshot 09:07: `ci-check` `35569256029`, `ps1-cdn` `35569486280`,

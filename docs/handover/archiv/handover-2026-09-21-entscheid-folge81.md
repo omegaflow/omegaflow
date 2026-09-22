@@ -3,7 +3,7 @@
   session: Entscheid-Folge 81
   class: handover
   date: 2026-09-21
-  sha256: 2c319299387f46dc867408497ee85743e6e18ead9330097b5b88fb924147f062
+  sha256: 523ad7f414ba2cf2f1d13e9285b168c44eec649378488dfa775200c5886242be
   status: live
 -->
 # Handover — Entscheid-Folge 81 (2026-09-21)
@@ -56,22 +56,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 
 ## Offen (aufgeschlüsselt)
 
-### SSI Fellowship (software.ac.uk)
-- **Status:** operator-gebunden | **Bindung:** operator (Video/Submit) / dritter (Hosting)
-- **Lage:** Entwurf vollständig — `state/mail/ssi-fellowship-application.md`: alle 35
-  Felder beantwortet, 6-Min-Screencast-Skript + schriftliche Variante; Frist 05.10.2026.
-- **Blockade:** Screencast aufnehmen + hosten (Q25-Link); PII-Felder.
-- **Braucht:** Operator nimmt auf, hostet (Google Drive/Dropbox), füllt
-  Q5/Q6/Q10/Q16/Q18/Q23/Q24/Q32/Q34, trägt Q25-Link ein; Wort „SSI einreichen".
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** wartend (nur der Einreichungs-Akt operator-gebunden)
-  | **Bindung:** `eigen` bis zur Ausführungsgrenze, der Akt `dritter`
-- **Lage:** Entwurf `state/mail/emergent-ventures-application.md` einreichungsfertig;
-  Platzhalter offen (Vollzeit-Dauer, Budget-Ballpark, private Formularfelder).
-- **Blockade:** keine.
-- **Braucht:** Operator-Wort „EV einreichen".
-
 ### DEMETER ISL (CDPP) — Zugang
 - **Status:** operator-gebunden | **Bindung:** dritter
 - **Lage:** Entwurf fertig — `state/mail/cdpp-demeter-isl-zugang.md` + `…body.txt`,
@@ -99,24 +83,11 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** Operator-Entscheid bauen vs. descopen.
 - **Braucht:** Wort „bauen" → Bau-Atom an bau; bei „nein" → `descoped mit Befund`.
 
-### NLnet Restack / CodeSupply
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** 5.000–50.000 €, Einzelperson, DE erfüllt EU-Dimension; Deadline 03.11.2026;
-  Bedingung FOSS-Lizenz „in its entirety"; NC-Kern erfüllt die OSI-Bedingung nicht.
-- **Blockade:** Lizenz-Entscheid.
-- **Braucht:** Operator-Wort — NC behalten/NLnet descopen oder Dual-Lizenz.
-
 ### PINE64 / Mantis-Shrimp
 - **Status:** blockiert | **Bindung:** `linie:bau`
 - **Lage:** Ox64 zugesagt (PINE64 info@), Versanddaten erbeten; Presence-Hardware ungebaut.
 - **Blockade:** Hardware fehlt.
 - **Braucht:** bau baut den Mantis-Shrimp (Spec `docs/specs/mantis-shrimp-bom.md`).
-
-### Mantis-Shrimp-Bewerbungen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** kein Programm nimmt ein ungebautes Gerät an.
-- **Blockade:** Prototyp fehlt.
-- **Braucht:** Operator-Entscheid bauen/descopen.
 
 ### SuperDARN
 - **Status:** wartend | **Bindung:** dritter (Globus-Gruppe)
@@ -156,18 +127,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** PI-Freigabe/Prozedur-Update ausstehend.
 - **Braucht:** Wiedervorlage (Trigger: Prozedur-Update).
 
-### Eigenprize
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Runde geschlossen; `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`.
-
-### Solitude
-- **Status:** termin | **Bindung:** `termin:~Herbst 2027`
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin fern.
-- **Braucht:** Entwurf tragen.
-
 ### Cookie-Transfer
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Auslöser „Bedarf".
@@ -179,17 +138,13 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 Kein neuer Messwert seit folge80 → die Queue wird **nicht** erneut vorgelegt
 (Reibungs-Regel). Sie steht wie in folge80, mit Alter:
 
-1. **SSI** — Video aufnehmen + hosten, PII-Felder, dann „einreichen". Frist 05.10.2026.
-2. **EV** — „EV einreichen". (seit 2026-09-21)
 3. **DEMETER/CDPP** — „Mail senden" oder „selbst registrieren". (seit 2026-09-21)
 4. **Riss 4** — „bauen"/„descopen". (seit 2026-09-21)
-5. **NLnet** — Lizenz-Entscheid. (seit 2026-09-21)
 6. **Mantis-Shrimp** — bauen/descopen. (seit 2026-09-16)
 7. **ISH Chat** — App widerrufen? (seit 2026-09-20)
 8. **solar-system-open-data** — Konto/Token? (seit 2026-09-20)
 9. **Amentum** — registrieren? (seit 2026-09-20)
 10. **Split-Routing** — Route `./bin/proton-exit.sh ca`? (seit Ernte folge12–17)
-11. **Eigenprize/Solitude** — „Remind me". (seit 2026-09-20)
 12. **Free-Model-Bench** — Cloudflare-Token mit „Workers AI"-Permission? (seit 2026-09-21)
 13. **SSDC** — warten. (seit 2026-09-16)
 14. **SuperDARN** — nur noch Gruppeneinladung annehmen. (seit 2026-09-18)

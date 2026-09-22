@@ -2,7 +2,7 @@
   title: Handover — Operator-Label-Korrektur: keine Operator-Pendings gemessen
   class: handover
   date: 2026-09-09
-  sha256: ffe8af5dacb42b2150b3c37b62898496c31f2b5eb1564d010ea7c0fdb7d1ff85
+  sha256: 0ab229f26300760c5d3d277248896ea7435f91e461f801e43e17c41bc85bdc07
   status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-folge.md,
             docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
@@ -16,7 +16,7 @@ keine der vier Pendings braucht ein Operator-Wort — „Operator-seitig" /
 ## Gemessen
 
 - **abfluss-trishuli** — das archivierte externe CSV des 08-27-Zugs liegt lokal:
-  `/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`
+  `$HOME/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`
   (+ `dhm_bhotekoshi_stage.csv`); der Befund
   `befund-grat-trishuli-konditionierung.md` L50 verwies auf
   `knowledge/archive/data/…` — nicht auflösbar. Die Entsperrung ist
@@ -24,7 +24,7 @@ keine der vier Pendings braucht ein Operator-Wort — „Operator-seitig" /
 - **NOAA-NODD-Bucket-Dispositionen** — Register-Frage (Litmus: url-line /
   Compiler-Lease / Konsument), kein Operator-Wort.
 - **R2** — die Archiv-Zählung als Grundwahrheit ist lokal zählbar (archive-root
-  + `/home/johannes/backup/archive/`).
+  + `$HOME/backup/archive/`).
 - **matrixmachine 769-Suite** — die fremdfreie HEAD-Messung läuft in
   `ci-check.yml` (`cargo test --release` je push, der `src/**`/`phi/**`/
   `tools/register/**`/`docs/**`/`Cargo.toml` berührt; kein branches-Filter);

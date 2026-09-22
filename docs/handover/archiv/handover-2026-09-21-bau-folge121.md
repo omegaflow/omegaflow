@@ -3,7 +3,7 @@
   session: Bau-Folge 121
   class: handover
   date: 2026-09-21
-  sha256: e35b2b70361e0fdb03d4e4183d75575d1c7f021aadf01eee11829a635cb1756f
+  sha256: d995d924565db2640ba6f7aeb81ff92596e64a982ec6eeeb3ee6e807d5edf39e
   status: live
 -->
 # Handover — Bau-Folge 121 (2026-09-21)
@@ -20,10 +20,7 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Stehender Pass (gemessen 2026-09-21, Session-Beginn)
 
-- **HEAD** `a476ccfb` == `origin/main`. Der Baum trägt fremde uncommittete Arbeit
-  (`docs/surveys/survey-funding-erkundung.md`) — nicht angefasst.
-- **Postfach** — kein neuer Ledger-Eingang; `1789973288` (Tuxedo-decline) zitiert
-  (`external-state.md:20`), nicht fällig.
+- **HEAD** `a476ccfb` == `origin/main`.
 - **CI** — Watchdog 10:11:01 + `ci_manage view`: `radnet-cdn 35573513812`
   in_progress; `glm-l2-cdn 35576757352` **failure** (diagnostiziert, siehe Atom);
   `ps1-cdn 35569486280`, `ci-check 35574757717` in_progress. Kein Poll.
@@ -106,8 +103,8 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Lage:** Ox64 von Pine64 zugesagt (Hardware beidseitig geschlossen); die
   Presence-Hardware „Mantis-Shrimp" ist ungebaut; Spec
   `docs/specs/mantis-shrimp-bom.md` + BOM liegen. `entscheid-folge76:97` trägt die
-  Doku-Pflicht als `blockiert | linie:bau`, den Förderweg als `operator-gebunden`.
-- **Blockade:** die Hardware existiert nicht; kein Förderweg (entscheid-folge73/76).
+  Doku-Pflicht als `blockiert | linie:bau`.
+- **Blockade:** die Hardware existiert nicht.
 - **Braucht:** Operator-Wort — Prototyp bauen oder descopen (via entscheid-Linie);
   bis dahin kein Schritt.
 
@@ -144,8 +141,7 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `docs/handover/post.md`, neues
   `docs/handover/handover-2026-09-21-bau-folge121.md`, Move
   `handover-2026-09-21-bau-folge120.md` → `archiv/`.
-- **Fremd (nicht angefasst):** `docs/surveys/survey-funding-erkundung.md`.
-  Nie ein nacktes `git commit`.
+- Nie ein nacktes `git commit`.
 
 ## Abschluss
 

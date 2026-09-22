@@ -2,7 +2,7 @@
   title: Thematisches Handover — mechanische Reste
   class: handover
   date: 2026-09-09
-  sha256: f0877fecdfe6dbdcf4712c01476574615f03934caa6dfc8ddb9b6f6888c684a6
+  sha256: 196e4a23a6177690d393edb3661cef0ae98755d8f18d7a06e29fdd9361061f1d
   status: archived
   see-also: docs/handover/handover-2026-09-10-autonom.md docs/handover/handover-2026-09-10-nicht-autonom.md
 -->
@@ -122,7 +122,7 @@ nach CI, Run 34400114106):
   must-Diagnostik) auf dem Weg durch das Gate liquidiert.
 - **10 bestand-Korpus-Herkunft** — `e197d71`: Befund; der registrierte Pfad zeigte
   auf die alte archive-root-Adresse, die Korpora liegen byte-identisch zweifach
-  unter /home/johannes/backup/archive/; kein Datenverlust.
+  unter $HOME/backup/archive/; kein Datenverlust.
 - **matrixmachine** — Suite 12/12 grün gegen HEAD (Urkunden-Zeile in
   archive-root/vanilla-dateidocs aktualisiert); die Gesamtsuite der Core-Crate
   (769 deklariert) gegen HEAD bleibt offen.
@@ -239,7 +239,7 @@ nach CI, Run 34400114106):
   wurde nicht aufgezeichnet (Sensor-Ausfall erneut gemessen), das Pre-08-25-
   Archiv ist aus dem keyless-Store gerollt (Entsperrung = das archivierte
   externe CSV des 08-27-Zugs — gemessen lokal:
-  `/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`). seen-kollabgebiet: GL085494 −73 % gemessen
+  `$HOME/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`). seen-kollabgebiet: GL085494 −73 % gemessen
   (08-24); das CEMS/S1-Fenster ist NICHT abgelaufen (re-gemessen 2026-09-09):
   S1-Post-Szenen 08-28/08-31/09-05 verfügbar, EMSR927 trägt nur Grading-Produkte
   (AOI01–05), auf keinem AOI ein Delineation-Produkt — die Flutflächen-
@@ -262,7 +262,7 @@ nach CI, Run 34400114106):
   vier Review-Fragen (cddis finals2000A blocked-vs-EOP-Duplikat, supermag, ESO,
   maia-finals2000A-Zweit-Datei). Die 10 `bestand`-Korpus-Dateien: Herkunft
   geklärt und geschlossen (`e197d71`) — die Korpora liegen byte-identisch
-  zweifach unter /home/johannes/backup/archive/.
+  zweifach unter $HOME/backup/archive/.
 - Katalog-Lücken (RAVE DR6, APOGEE/GALAH, HyperLEDA, TGSS ADR, VLASS, AMS-02,
   GLADE+); FITS/Parquet/netCDF-4/OPeNDAP/GRIB-2-Struktur-Reader (FITS +
   netCDF-4 + CDF-1/2 gebaut; Parquet/GRIB-2/OPeNDAP offen).

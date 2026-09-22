@@ -3,7 +3,7 @@
   session: Bau-Folge 122
   class: handover
   date: 2026-09-21
-  sha256: 0700315ff04a4c02d97f84caf569dcf24e8bbf9471da849c1fe03900e4b2b18b
+  sha256: 6ee7a68e09df8877b72451759aaea2dea4077f047f05eaeb53045e27f6072179
   status: live
 -->
 # Handover — Bau-Folge 122 (2026-09-21)
@@ -75,7 +75,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Lage:** Ox64 zugesagt (Hardware beidseitig geschlossen); Presence-Hardware
   ungebaut; Spec `docs/specs/mantis-shrimp-bom.md` + BOM liegen.
   `entscheid-folge76:97` trägt die Doku-Pflicht als `blockiert | linie:bau`.
-- **Blockade:** die Hardware existiert nicht; kein Förderweg.
 - **Braucht:** Operator-Wort via entscheid — Prototyp bauen oder descopen; bis
   dahin kein Schritt.
 
