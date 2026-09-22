@@ -9,6 +9,8 @@ fn main() {
     };
     let mut from_filter: Option<String> = None;
     let mut to_filter: Option<String> = None;
+    let mut last: Option<usize> = None;
+    let mut show_body = false;
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
@@ -30,6 +32,15 @@ fn main() {
                     to_filter = Some(v.clone());
                 }
             }
+            "--last" => {
+                i += 1;
+                if let Some(v) = args.get(i) {
+                    last = v.parse::<usize>().ok();
+                }
+            }
+            "--body" => {
+                show_body = true;
+            }
             _ => {}
         }
         i += 1;
@@ -41,30 +52,35 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let records = records(&text);
-    let mut shown = 0usize;
-    println!("mail_digest | {} records | {path}", records.len());
-    for r in &records {
-        if let Some(f) = &from_filter {
-            if !r.from.contains(f.as_str()) {
-                continue;
-            }
+    let mut msgs = records(&text);
+    if let Some(f) = &from_filter {
+        msgs.retain(|m| m.from.contains(f.as_str()));
+    }
+    if let Some(t) = &to_filter {
+        msgs.retain(|m| m.to.contains(t.as_str()));
+    }
+    if let Some(n) = last {
+        if msgs.len() > n {
+            msgs = msgs.split_off(msgs.len() - n);
         }
-        if let Some(t) = &to_filter {
-            if !r.to.contains(t.as_str()) {
-                continue;
-            }
-        }
-        shown += 1;
+    }
+    println!("mail_digest | {} records | {path}", msgs.len());
+    for m in &msgs {
         println!(
             "  {} | {:<40} -> {:<22} | {}",
-            date(r.epoch),
-            short(&r.from, 40),
-            short(&r.to, 22),
-            short(&r.subject, 60)
+            date(m.epoch),
+            short(&m.from, 40),
+            short(&m.to, 22),
+            short(&m.subject, 60)
         );
+        if show_body {
+            let body = clean_body(&m.body);
+            for line in body.lines() {
+                println!("      {line}");
+            }
+        }
     }
-    println!("  shown {shown}");
+    println!("  shown {}", msgs.len());
 }
 
 struct Mail {
@@ -72,29 +88,73 @@ struct Mail {
     from: String,
     to: String,
     subject: String,
+    body: String,
 }
 
 fn records(text: &str) -> Vec<Mail> {
-    let mut out = Vec::new();
+    let mut out: Vec<Mail> = Vec::new();
+    let mut cur: Option<Mail> = None;
     for line in text.lines() {
-        if !line.starts_with("mail\t") {
-            continue;
+        if let Some(rest) = line.strip_prefix("mail\t") {
+            if let Some(m) = cur.take() {
+                out.push(m);
+            }
+            let f: Vec<&str> = rest.split('\t').collect();
+            if f.len() < 4 {
+                continue;
+            }
+            let Ok(epoch) = f[0].parse::<i64>() else {
+                continue;
+            };
+            cur = Some(Mail {
+                epoch,
+                from: decode_mime(f[1]),
+                to: decode_mime(f[2]),
+                subject: decode_mime(f[3]),
+                body: match f.get(4) {
+                    Some(s) => (*s).to_string(),
+                    None => String::new(),
+                },
+            });
+        } else if let Some(m) = cur.as_mut() {
+            m.body.push('\n');
+            m.body.push_str(line);
         }
-        let f: Vec<&str> = line.split('\t').collect();
-        if f.len() < 5 {
-            continue;
-        }
-        let Ok(epoch) = f[1].parse::<i64>() else {
-            continue;
-        };
-        out.push(Mail {
-            epoch,
-            from: decode_mime(f[2]),
-            to: decode_mime(f[3]),
-            subject: decode_mime(f[4]),
-        });
+    }
+    if let Some(m) = cur.take() {
+        out.push(m);
     }
     out
+}
+
+fn clean_body(s: &str) -> String {
+    let mut text = String::new();
+    let mut in_tag = false;
+    for ch in s.chars() {
+        match ch {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => text.push(ch),
+            _ => {}
+        }
+    }
+    let mut out = String::new();
+    for line in text.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('>') {
+            continue;
+        }
+        if t.starts_with("On ") && t.contains("wrote:") {
+            continue;
+        }
+        out.push_str(t);
+        out.push('\n');
+        if out.len() > 1200 {
+            out.push_str("…\n");
+            break;
+        }
+    }
+    out.trim_end().to_string()
 }
 
 fn decode_mime(s: &str) -> String {
@@ -166,6 +226,26 @@ mod tests {
         assert_eq!(r[0].from, "a@x");
         assert_eq!(r[0].subject, "subj");
         assert_eq!(r[1].epoch, 200);
+    }
+
+    #[test]
+    fn body_spans_continuation_lines() {
+        let t = "mail\t100\ta@x\ts@y\tsubj\tfirst\nsecond\nthird\n";
+        let r = records(t);
+        assert_eq!(r.len(), 1);
+        assert!(r[0].body.contains("first"));
+        assert!(r[0].body.contains("second"));
+        assert!(r[0].body.contains("third"));
+    }
+
+    #[test]
+    fn clean_body_drops_tags_and_quotes() {
+        let s = "<p>Hello</p>\n> quoted\nWorld";
+        let c = clean_body(s);
+        assert!(c.contains("Hello"));
+        assert!(c.contains("World"));
+        assert!(!c.contains("quoted"));
+        assert!(!c.contains('<'));
     }
 
     #[test]
