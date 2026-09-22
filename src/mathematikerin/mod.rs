@@ -14,6 +14,7 @@ pub mod doppler;
 pub mod equilibrium;
 pub mod force;
 pub mod healpix;
+pub mod ksg_k;
 pub mod least_squares;
 pub mod machines;
 pub mod mat;
