@@ -22,6 +22,7 @@ struct Model {
     id: String,
     base: String,
     env_var: String,
+    channel: String,
 }
 
 struct Resp {
@@ -390,7 +391,13 @@ fn parse_model(line: &str) -> Option<Model> {
     let id = it.next()?.to_string();
     let base = it.next()?.to_string();
     let env_var = it.next()?.to_string();
-    if provider.is_empty() || id.is_empty() || base.is_empty() || env_var.is_empty() {
+    let channel = it.next()?.to_string();
+    if provider.is_empty()
+        || id.is_empty()
+        || base.is_empty()
+        || env_var.is_empty()
+        || channel.is_empty()
+    {
         return None;
     }
     Some(Model {
@@ -398,7 +405,12 @@ fn parse_model(line: &str) -> Option<Model> {
         id,
         base,
         env_var,
+        channel,
     })
+}
+
+fn is_http(m: &Model) -> bool {
+    m.channel != "client"
 }
 
 fn write_summary(f: &mut std::fs::File, models: &[Model], rows: &[Row]) {
@@ -497,7 +509,11 @@ fn main() {
         i += 1;
     }
 
-    let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
+    let models: Vec<Model> = MODELS_TSV
+        .lines()
+        .filter_map(parse_model)
+        .filter(is_http)
+        .collect();
     let tasks: [(&str, u32); 7] = [
         ("T1", 10),
         ("T2", 5),
@@ -601,4 +617,43 @@ fn main() {
         write_summary(&mut f, &models, &rows);
     }
     eprintln!("wrote {}", out);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_model_splits_tsv_line() {
+        let m = match parse_model(
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp",
+        ) {
+            Some(m) => m,
+            None => panic!("tsv line carries no model"),
+        };
+        assert_eq!(m.provider, "zai");
+        assert_eq!(m.id, "glm-5.3-flash");
+        assert_eq!(m.base, "https://api.z.ai/api/paas/v4");
+        assert_eq!(m.env_var, "ZAI_API_KEY");
+        assert_eq!(m.channel, "http");
+        assert!(parse_model("bad\tline").is_none());
+    }
+
+    #[test]
+    fn http_path_skips_client_channel_rows() {
+        let client = match parse_model(
+            "opencode\tbig-pickle\thttps://opencode.ai/zen/v1\tOPENCODE_API_KEY\tclient",
+        ) {
+            Some(m) => m,
+            None => panic!("client tsv line carries no model"),
+        };
+        let http = match parse_model(
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp",
+        ) {
+            Some(m) => m,
+            None => panic!("http tsv line carries no model"),
+        };
+        assert!(!is_http(&client));
+        assert!(is_http(&http));
+    }
 }
