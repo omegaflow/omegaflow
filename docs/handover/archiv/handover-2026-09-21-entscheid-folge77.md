@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 77 (text_review-Bin gebaut; Förderwege konsolidiert) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 77 (text_review-Bin gebaut) (Stand 2026-09-21)
   session: Entscheid-Folge 77
   class: handover
   date: 2026-09-21
-  sha256: 7c2ff60315568410244b3831bc46b9422f6b93dab3897b20307d827334f0c6a5
+  sha256: 2b316e719150daf61f6339505bd1840d624cf7337cd936ae9a4189359b1a6ec5
   status: live
 -->
 # Handover — Entscheid-Folge 77 (2026-09-21)
@@ -50,50 +50,8 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   text_review` → 0 Fehler, 0 Warnungen.
 - **Delegation:** 1 × `grind-flash` (Bau), flash-first; Klasse „measure-Bin-Bau",
   kein pro/max-Doppel.
-- **Förder-Entwürfe geschrieben** (gitignored): EV einreichungsfertig (montiertes
-  Proposal + Tweet-Satz, `state/mail/emergent-ventures-application.md`); SSI-Entwurf
-  (`state/mail/ssi-fellowship-application.md`). Gegenlesung pending (Build).
 
 ## Offen (aufgeschlüsselt)
-
-### text_review — Lauf auf den Förder-Entwürfen
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Bin im Baum, `cargo check` 0/0; Release kommt mit `tools-build` →
-  `tools-latest`.
-- **Blockade:** `tools-build` `35586926243` @`3764b5c0` **pending** (queued);
-  lokaler Funktionslauf strukturell CI.
-- **Braucht:** nach success `bin/.tools_ensure text_review`; dann `text_review
-  state/mail/emergent-ventures-application.md --model glm --model gemini --model qwen`
-  (Report gitignored neben dem Entwurf).
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** wartend (Session-Arbeit; nur der Einreichungs-Akt `operator-gebunden`)
-  | **Bindung:** `eigen` bis zur Ausführungsgrenze, der Akt `dritter`
-- **Lage:** EV ist der einzige gemessene A-Treffer (institutionsfrei, kein Grad,
-  weltweit, non-profit, keine OSI-Bedingung, rolling). Formular
-  `https://mercatus.tfaforms.net/5099527` (HTTP 200); Fragen + Feldliste gemessen;
-  Entwurf `state/mail/emergent-ventures-application.md`.
-- **Blockade:** keine.
-- **Braucht:** Operator-Wort „einreichen" auf dem vorgelegten Entwurf — das
-  montierte Proposal + der Tweet-Satz liegen in
-  `state/mail/emergent-ventures-application.md`.
-
-### SSI Fellowship (software.ac.uk)
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** offen bis **05.10.2026**, £4.000, keine Institution; DE nur über max. 3
-  internationale Plätze mit UK-Nutzen-Nachweis (`docs/surveys/survey-funding-quellen.md`).
-- **Blockade:** der UK-Nutzen ist argumentiert, aber dünn (kein UK-Bezug des
-  Projekts).
-- **Braucht:** Entwurf schärfen (`state/mail/ssi-fellowship-application.md` liegt);
-  dann Operator-Wort.
-
-### NLnet Restack / CodeSupply
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** 5.000–50.000 €, Einzelperson, DE erfüllt EU-Dimension; Deadline
-  **03.11.2026**; Bedingung FOSS-Lizenz „in its entirety" (`survey-funding-quellen.md`).
-- **Blockade:** NC-Kern erfüllt die OSI-Bedingung nicht.
-- **Braucht:** Operator-Entscheid — NC behalten und NLnet descopen, **oder**
-  Dual-Lizenz (FOSS + NC) als eigenes Atom.
 
 ### Free-Model-Bench (105 Modelle)
 - **Status:** wartend | **Bindung:** eigen
@@ -109,30 +67,12 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Blockade:** Hardware fehlt; Bau gehört zur bau-Linie.
 - **Braucht:** bau baut den Mantis-Shrimp (Spec `docs/specs/mantis-shrimp-bom.md`).
 
-### Mantis-Shrimp-Bewerbungen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** kein Programm nimmt ein ungebautes Gerät an.
-- **Blockade:** Prototyp fehlt.
-- **Braucht:** Operator-Entscheid bauen/descopen.
-
 ### SSDC Limadou
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Konto existiert, CAS-Login lädt; „Permission Denied" = fehlende
   PI-Freigabe; PI bat um Wartezeit.
 - **Blockade:** PI-Freigabe ausstehend; wir warten.
 - **Braucht:** Wiedervorlage (Trigger: Prozedur-Update).
-
-### Eigenprize
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Runde geschlossen; `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`.
-
-### Solitude
-- **Status:** termin | **Bindung:** termin (~Herbst 2027)
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin fern.
-- **Braucht:** Entwurf tragen.
 
 ### ISH Chat (GitHub-Dritt-OAuth-App)
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -181,10 +121,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Operator-Queue (Stand folge77; einfache Sprache, Lage/Blockade/Braucht, mit Alter)
 
-1. **EV** — Entwurf wird einreichungsfertig gemacht. **Braucht:** Wort „EV
-   einreichen". (seit 2026-09-21)
-2. **NLnet** — **Braucht:** Lizenz-Entscheid (NC behalten/descopen vs.
-   Dual-Lizenz). (neu)
 3. **Riss 4** — **Braucht:** bauen oder KDE lassen + Riss registrieren. (neu,
    `post.md:18`)
 4. **Mantis-Shrimp** — bauen oder descopen. (seit 2026-09-16)
@@ -194,7 +130,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 8. **solar-system-open-data** — Konto/Token? (seit 2026-09-20)
 9. **Amentum** — registrieren? (seit 2026-09-20)
 10. **Split-Routing** — Route `./bin/proton-exit.sh ca`? (seit Ernte folge12–17)
-11. **Eigenprize/Solitude** — „Remind me". (seit 2026-09-20)
 12. **Cookie-Transfer** — nichts. (seit 2026-09-16)
 
 ## Benchmark

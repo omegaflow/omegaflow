@@ -219,7 +219,7 @@ datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
 `cache/`; its durable home is the CDN asset registered as a `url`-line in
 `phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
 unmanifested local file. The external archive root `archive-root` (physisch
-heute `/home/johannes/backup/archive-root/`) holds only legacy material:
+heute `$HOME/backup/archive-root/`) holds only legacy material:
 `handover/` (ein Altfund, keine laufende Praxis), `bundles/`, `concept-history/`,
 `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`,
 `commit_rewrite-2026-09-06/`; it is not the home of current harvests. The one
@@ -241,7 +241,11 @@ für Entwürfe/Briefe, `.secrets.local` für Zugangsdaten und Infrastruktur-IDs
 statt Name, Platzhalter statt Adresse, Verweis (`state/mail/<datei>`) statt
 Brieftext. Öffentliche Attribution bleibt: Name im Copyright, Papier-Seal,
 zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches Werk
-= bleibt; privater Kanal = geht.** Jede neu gefundene Verletzung wird
+= bleibt; privater Kanal = geht.** Finanz-/Funding-Inhalte des Operators
+(Förderstrategie, Bewerbungen, finanzielle Lage, persönliche Nutzungs-/
+Kostenmuster) sind ebenso **nie getrackt**; Heimat `state/funding/` (gitignored).
+Die Sache bleibt: Programm, Frist, Eligibility; die Kosten der Maschine
+(Hardware-BOM, Modell-Benchmark) bleiben Engineering-Daten. Jede neu gefundene Verletzung wird
 Gate-Fixture in `src/gate/commit_gate_vocab.json` und Gate-Test im selben Atom;
 der Befund wird gemessen (`pii_scan`), nicht nur beschrieben.
 

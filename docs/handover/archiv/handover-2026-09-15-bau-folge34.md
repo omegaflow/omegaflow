@@ -3,7 +3,7 @@
   session: Bau-Folge 34
   class: handover
   date: 2026-09-15
-  sha256: 4f5b97b173208c4627f9d10fc07e835ceaf164a6e1e8278e7c7611650dec4a23
+  sha256: 9d75d37e710f5cde30531ba3cf7d74edd66db56797c5755aa32cf116e623729f
   status: live
 -->
 # Handover — Bau & Code (2026-09-15, Bau34)
@@ -74,7 +74,7 @@ Dokument wächst ohne Messung; die Droh-Sprache ersetzt den Schritt nicht.
 - `--live`-Namensstimme (Rat): „live" reibt an der Quellen-Registerklasse `live`.
   (Schritt: Operator entscheidet `--open` oder bleibt.)
 - Legacy-Repo: 80 archivierte/gelöschte `docs/handover/*.md` ohne Gegenstück. (Schritt:
-  `register_lookup --history --legacy /home/johannes/backup/archive/omegaflow/omegaflow-legacy`.)
+  `register_lookup --history --legacy $HOME/backup/archive/omegaflow/omegaflow-legacy`.)
 - Sichtbarer Überseh-Korpus: `--live` meldet 106 Dokumente, ~630 offene Zeilen — die gehören je in
   ihre Linie (Ernte/Forschung), nicht gesammelt hier. (Schritt: je Linie ihr Digestschritt.)
 

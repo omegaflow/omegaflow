@@ -3,7 +3,7 @@
   session: Ernte-Folge 127
   class: handover
   date: 2026-09-21
-  sha256: 70b3b242828f52d6abb3be203782d5bb5e8323db6d675d3829dab5b92cbc0501
+  sha256: 99db1d1fb6f2113eb0e5e978d42e130a6142f8399ae7f5e5e112399a45783d62
   status: live
 -->
 # Handover — Ernte-Folge 127 (2026-09-21)
@@ -25,10 +25,6 @@ wird vor allem anderen gegen den Baum gehalten.
 - **HEAD** `84dffc5d` beim Start (geteilter Baum, fremde Commits laufen
   gleichzeitig); eigener Commit folgt. Arbeitsbaum: eigener Pfad-Satz (unten);
   fremde Arbeit (forschung/entscheid) ist committet und gepusht.
-- **Postfach** — letzter Ledger-Eingang `1789973288` (Tuxedo Ticket#991311279:
-  keine kostenlosen Geräte an Privatpersonen — Hardware-Punkt beidseitig
-  declined); kein neues `An ernte`. Die `An ernte`-CDN-Rotations-Zeile ist
-  abgeholt und aus `post.md` gelöscht.
 - **CI** — `ci_manage list` 2026-09-21 ~09:0x: `ci-check` `35570367312` pending;
   `ps1-cdn` `35569486280` in_progress; `rpw-cdn` `35569266300` @`d6bf1df1`
   **failure** (422 Asset-Cap, Compile grün) — siehe P1; `tools-build`

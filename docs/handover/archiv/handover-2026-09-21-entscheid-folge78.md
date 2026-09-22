@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 78 (Riss 4: Rat empfiehlt Bau; text_review-Release-Pfad als Riss; Förder-Entwürfe gegengelesen) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 78 (Riss 4: Rat empfiehlt Bau; text_review-Release-Pfad als Riss) (Stand 2026-09-21)
   session: Entscheid-Folge 78
   class: handover
   date: 2026-09-21
-  sha256: 9b8897a896d0820872ffb28778e3ffcaa73c3766cdb1094675605fbf69e97f79
+  sha256: 85d0afe9db1911638f6f6f276a16c4de0294877a77f88c1c621535f511a68eb7
   status: live
 -->
 # Handover — Entscheid-Folge 78 (2026-09-21)
@@ -50,13 +50,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   text_review` → `pending — absent from the tools-latest manifest`. Die folge77-Annahme
   „Release kommt mit `tools-build` → `tools-latest`" ist **falsifiziert**; der Schritt
   ist so nicht ausführbar.
-- **Förder-Entwürfe gegengelesen** (`grind-flash`): EV (`emergent-ventures-application.md`)
-  — Zustands-Behauptung korrigiert (16-Pfeil-Kaskade war Null-Artefakt, `fam` = 0
-  Zellen), „no defaults" abgeschwächt, QUELLEN erweitert → **einreichungsfertig**
-  (Operator-Platzhalter offen). SSI (`ssi-fellowship-application.md`) — von deutschem
-  Meta-Text zu englischer Application neu geschrieben, UK-Nutzen vierachsig konkret,
-  Budget £4.000 aufgeschlüsselt → **bedingt einreichungsfertig** (Live-Formularabgleich
-  + Budget-Bestätigung offen). Beide gitignored.
 - **Free-Model-Bench — Artefakt gelesen + Riss diagnostiziert** (`gh run download
   35567266519`, Report `free-model-bench.tsv`, 399 Zeilen): **nur die T7-Klasse lief**
   (294 Zeilen = 98 Modelle × 3; T2–T6 = 0/0) — der Dispatch war auf `task=T7`
@@ -82,41 +75,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   gerechtfertigt; „Text-Gegenlesung" flash-first.
 
 ## Offen (aufgeschlüsselt)
-
-### text_review — Lauf auf den Förder-Entwürfen
-- **Status:** blockiert | **Bindung:** eigen (Werkzeug) / `linie:bau` (Release)
-- **Lage:** Bin gebaut + committet (`197bccf1`), `cargo check` 0/0; **nicht** im
-  `tools-latest`-Manifest, weil `tools-build.yml` keinen measure-Bin trägt.
-- **Blockade:** der Release-Pfad für measure-Bins existiert nicht — `tools-build`
-  ist falsifiziert als Trigger.
-- **Braucht:** bau trägt `text_review` in `tools-build.yml` ein (build-Step +
-  `tools.manifest`-Zeile + `gh release upload`); danach `bin/.tools_ensure text_review`
-  und der Lauf. Post an bau ist gesetzt.
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** wartend (Session-Arbeit; nur der Einreichungs-Akt `operator-gebunden`)
-  | **Bindung:** `eigen` bis zur Ausführungsgrenze, der Akt `dritter`
-- **Lage:** Entwurf gegengelesen, repo-wahr, einreichungsfertig; Platzhalter offen
-  (Vollzeit-Dauer, Budget-Ballpark, private Formularfelder).
-- **Blockade:** keine.
-- **Braucht:** Operator-Wort „EV einreichen" auf dem vorgelegten Entwurf
-  (`state/mail/emergent-ventures-application.md`).
-
-### SSI Fellowship (software.ac.uk)
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** englische Application neu geschrieben, UK-Nutzen vierachsig, Budget
-  £4.000 aufgeschlüsselt; offen bis **05.10.2026**, DE nur über max. 3 internationale
-  Plätze.
-- **Blockade:** Live-Formularwortlaut/Wortlimits + Budget-Split unbestätigt.
-- **Braucht:** Abgleich mit dem echten SSI-Formular; dann Operator-Wort.
-
-### NLnet Restack / CodeSupply
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** 5.000–50.000 €, Einzelperson, DE erfüllt EU-Dimension; Deadline
-  **03.11.2026**; Bedingung FOSS-Lizenz „in its entirety" (`survey-funding-quellen.md`).
-- **Blockade:** NC-Kern erfüllt die OSI-Bedingung nicht.
-- **Braucht:** Operator-Entscheid — NC behalten und NLnet descopen, **oder**
-  Dual-Lizenz (FOSS + NC) als eigenes Atom.
 
 ### Riss 4 — WGSL-KSG-Spiegel off-path
 - **Status:** operator-gebunden | **Bindung:** operator (Bau an `linie:bau`)
@@ -146,30 +104,12 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Blockade:** Hardware fehlt; Bau gehört zur bau-Linie.
 - **Braucht:** bau baut den Mantis-Shrimp (Spec `docs/specs/mantis-shrimp-bom.md`).
 
-### Mantis-Shrimp-Bewerbungen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** kein Programm nimmt ein ungebautes Gerät an.
-- **Blockade:** Prototyp fehlt.
-- **Braucht:** Operator-Entscheid bauen/descopen.
-
 ### SSDC Limadou
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Konto existiert, CAS-Login lädt; Sotgiu-Mail (2026-09-16): CSES-02-Umstellung,
   „wait a few weeks"; Prozedur wird neu.
 - **Blockade:** PI-Freigabe/Prozedur-Update ausstehend.
 - **Braucht:** Wiedervorlage (Trigger: Prozedur-Update).
-
-### Eigenprize
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Runde geschlossen; `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`.
-
-### Solitude
-- **Status:** termin | **Bindung:** termin (~Herbst 2027)
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin fern.
-- **Braucht:** Entwurf tragen.
 
 ### ISH Chat (GitHub-Dritt-OAuth-App)
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -210,14 +150,8 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Operator-Queue (Stand folge78; einfache Sprache, Lage/Blockade/Braucht, mit Alter)
 
-1. **EV** — Entwurf gegengelesen, einreichungsfertig. **Braucht:** Wort „EV
-   einreichen". (seit 2026-09-21)
-2. **SSI** — Entwurf steht, Frist 05.10.2026. **Braucht:** Formularabgleich +
-   Wort. (neu geschärft)
 3. **Riss 4** — Rat empfiehlt **bauen**. **Braucht:** Wort bauen/descopen.
    (neu, `post.md` gefaltet)
-4. **NLnet** — **Braucht:** Lizenz-Entscheid (NC behalten/descopen vs.
-   Dual-Lizenz). (seit 2026-09-21)
 5. **Mantis-Shrimp** — bauen oder descopen. (seit 2026-09-16)
 6. **SSDC** — warten, kein Follow-up. (seit 2026-09-16)
 7. **ISH Chat** — App widerrufen? (seit 2026-09-20)
@@ -225,7 +159,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 9. **solar-system-open-data** — Konto/Token? (seit 2026-09-20)
 10. **Amentum** — registrieren? (seit 2026-09-20)
 11. **Split-Routing** — Route `./bin/proton-exit.sh ca`? (seit Ernte folge12–17)
-12. **Eigenprize/Solitude** — „Remind me". (seit 2026-09-20)
 13. **Cookie-Transfer** — nichts. (seit 2026-09-16)
 
 ## Benchmark

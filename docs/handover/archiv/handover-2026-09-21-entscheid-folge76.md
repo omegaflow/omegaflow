@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 76 (EV-Formularfragen gemessen, Shuttleworth descoped, open_points_check-Fix im Release) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 76 (open_points_check-Fix im Release) (Stand 2026-09-21)
   session: Entscheid-Folge 76
   class: handover
   date: 2026-09-21
-  sha256: 8fc27a6497106e860954c9651846b0d2419084a4f2f01bb377cd2c0a12262f4d
+  sha256: 46970a87daa4d56c5b9bf8825d3b22f452c16ff2640e6c9f533541678b6f70d8
   status: live
 -->
 # Handover — Entscheid-Folge 76 (2026-09-21)
@@ -30,7 +30,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `src/mathematikerin/te.rs`, `tools/measure/hyperscanning_group_te.rs`,
   `tools/register/register_lookup.rs`) — **nicht eigene**; nicht angefasst.
 - **Postfach** — `mail_digest` + `state/mail/mail_ledger.φ`: kein neuer Eingang;
-  neuester weiterhin `1789973288` (Tuxedo Ticket#991311279, Hardware declined).
   `external-state.md` Postfach-Zeile nachgezogen.
 - **CI** — `ci_manage view` 2026-09-21: `tools-build` `35574750913` **success**
   @HEAD `ad06e1c4` (07:52Z); `free-model-bench` `35567266519` +
@@ -48,17 +47,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Messung dieses Atoms (kein offener Punkt)
 
-- **EV-Formularfragen gemessen** (`general`, flash, `archive_search --brave/
-  --playwright`): das Antragsformular liegt auf FormAssembly
-  `https://mercatus.tfaforms.net/5099527` (HTTP 200), nicht auf der
-  Cloudflare-blockierten `mercatus.org`-Seite. Die 3 Fragen im Wortlaut + Feldliste
-  stehen in `state/mail/emergent-ventures-application.md`. Damit ist die Route
-  keine Blockade mehr — Session-Arbeit bis zur Einreichungsgrenze.
-- **Shuttleworth descoped mit Messung**: `readme.shuttleworthfoundation.org`
-  NXDOMAIN (DNS-over-HTTPS Status 3), `www.shuttleworthfoundation.org` HTTP 404
-  (Digiclub), kein Fellowship-Pfad, letzter Bewerbungs-Snapshot 2023. Keine
-  Blockade, sondern eine tote Quelle. Nachtrag 2 in
-  `docs/surveys/survey-funding-erkundung.md`.
 - **`open_points_check`-Fix im Release**: `tools-build` `35574750913` success
   @HEAD `ad06e1c4`; `bin/.tools_ensure open_points_check` + Lauf → `post.md 3 path
   refs | 0 absent`. Die früheren falschen `ABSENT` sind weg.
@@ -68,20 +56,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   und gelöscht.
 
 ## Offen (aufgeschlüsselt)
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** `wartend` (Session-Arbeit jetzt; nur der Einreichungs-Akt
-  `operator-gebunden`) | **Bindung:** `eigen` bis zur Ausführungsgrenze, der
-  Einreichungs-Akt `dritter`
-- **Lage:** EV ist der einzige gemessene A-Treffer (institutionsfrei, kein Grad,
-  weltweit, non-profit, keine OSI-Bedingung, rolling, Person+Idee). Formular
-  `https://mercatus.tfaforms.net/5099527` (HTTP 200); Fragen + Feldliste gemessen;
-  Entwurf `state/mail/emergent-ventures-application.md` trägt Wer/Was/Beweis +
-  Antwortentwurf auf die 3 Fragen.
-- **Blockade:** keine — die Route ist über FormAssembly offen.
-- **Braucht:** Session füllt den Entwurf einreichungsfertig (nur noch die
-  Formularfelder Affected Region, Kontakt, Tweet-Satz); dann Operator-Wort
-  „einreichen" auf dem vorgelegten Entwurf (per-Akt-Consent).
 
 ### Free-Model-Bench (P13 + P2–P4) — die 105 Modelle
 - **Status:** `wartend` | **Bindung:** `eigen`
@@ -102,15 +76,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Braucht:** bau baut minimalen Mantis-Shrimp (Spec
   `docs/specs/mantis-shrimp-bom.md` + BOM liegen) und dokumentiert danach den Ox64.
 
-### Mantis-Shrimp-Bewerbungen (Förderweg)
-- **Status:** `operator-gebunden` | **Bindung:** `operator`
-- **Lage:** 21.09. gemessen: Espressif-Developer-Programm existiert nicht, SOCIS
-  läuft nicht, GSoC 2026 geschlossen + omegaflow keine gelistete Org, Crowd Supply
-  verlangt einen funktionierenden Prototyp. Gilt nur für den **Hardware**-Teil.
-- **Blockade:** kein Programm nimmt ein ungebautes Gerät an; der Prototyp fehlt.
-- **Braucht:** Operator-Entscheid — Prototyp bauen (dann Crowd Supply, parallel
-  GSoC-2027-Org-Antrag) **oder** descopen.
-
 ### SSDC Limadou
 - **Status:** `wartend` | **Bindung:** `eigen`
 - **Lage:** Konto `omegaflow` existiert, CAS-Login lädt (`tools.ssdc.asi.it/cas/
@@ -123,19 +88,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Braucht:** Wiedervorlage — die neue SSDC-Prozedur einmal messen (Trigger:
   Prozedur/Website aktualisiert). Erst wenn der Zugang dann noch verweigert ist,
   wäre ein Follow-up eine Frage (per-Akt-Consent).
-
-### Eigenprize
-- **Status:** `wartend` | **Bindung:** `eigen`
-- **Lage:** Runde geschlossen (Deadline 31.03.2026), keine nächste Runde datiert;
-  `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`; Entwurf finalisieren.
-
-### Solitude
-- **Status:** `termin` | **Bindung:** `termin` (~Herbst 2027)
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin liegt fern.
-- **Braucht:** Entwurf bis dahin tragen.
 
 ### ISH Chat (GitHub-Dritt-OAuth-App)
 - **Status:** `operator-gebunden` | **Bindung:** `operator`
@@ -183,12 +135,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 ## Operator-Queue (Stand folge76; einfache Sprache, je Eintrag Lage/Blockade/Braucht, mit Alter)
 
-1. **Förderung Person/Ideen/Projekte (EV)** — **Lage:** Formular und Fragen sind
-   gemessen, der Entwurf steht. **Blockade:** keine mehr. **Braucht:** Operator-Wort
-   „EV einreichen" auf dem vorgelegten Entwurf. (Alter: seit 2026-09-21)
-2. **Mantis-Shrimp-Bewerbungen** — **Lage:** kein Hardware-Förderweg für ein
-   ungebautes Gerät. **Blockade:** Prototyp ungebaut. **Braucht:** Operator-Entscheid
-   bauen/descopen. (Alter: seit 2026-09-16)
 3. **SSDC Limadou** — **Lage:** Konto lädt, PI-Freigabe fehlt; PI bat um Wartezeit.
    **Blockade:** wir warten (kein Follow-up fällig). **Braucht:** nichts — Wiedervorlage.
    (Alter: seit 2026-09-16)
@@ -203,29 +149,19 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 8. **Split-Routing-Verifikation** — **Lage:** 8 `000`-Hosts ungemessen. **Blockade:**
    sudo + Netz. **Braucht:** Wort/Route für `./bin/proton-exit.sh ca`. (Alter: seit
    Ernte folge12–17)
-9. **Eigenprize / Solitude** — **Lage:** Eigenprize-Runde geschlossen, Solitude
-   ~Herbst 2027. **Blockade:** keine offene Runde. **Braucht:** „Remind me" auf
-   `https://eigen.build`. (Alter: seit 2026-09-20)
 10. **Cookie-Transfer** — **Lage:** `wartend`, Auslöser „Bedarf". **Blockade:** kein
     Bedarf. **Braucht:** nichts. (Alter: seit 2026-09-16)
-11. **Hardware-Sponsoring** — geschlossen: Pine64 zugesagt (Ox64), Framework/Tuxedo
-    declined.
 
 ## Benchmark
 
 - **Delegation (Entscheid-Folge 76):** 2 × `general` (flash) für die zwei
-  Route-/Netz-Messungen (EV-Formularfragen, Shuttleworth-Frist). Klasse
   „Routine-Route-Messung" ist als gemessen geführt (flash gewinnt, 2026-09-16) —
-  kein pro/max-Doppel. Beide Messungen lieferten das Ergebnis (EV: Formular-URL +
-  3 Fragen im Wortlaut; Shuttleworth: tote Quelle gemessen). Kein flash-Fehlschlag.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
 - `docs/handover/handover-2026-09-21-entscheid-folge76.md` (neu)
 - Move `handover-2026-09-21-entscheid-folge75.md` → `archiv/` (eigene Linie, atomar)
 - `docs/zustand/external-state.md` (Postfach- + CI-Zeile)
-- `docs/surveys/survey-funding-erkundung.md` (Shuttleworth descoped + EV-FormAssembly
-  + Nachtrag 2)
 - `docs/handover/post.md` (nur eigener Hunk: SSDC-Zeile `post.md:22` gelöscht)
 - `state/mail/emergent-ventures-application.md` (Formularfragen + Antwortentwurf,
   gitignored)

@@ -3,7 +3,7 @@
   session: Entscheid-Folge 64
   class: handover
   date: 2026-09-20
-  sha256: 67696b17c2c8368684a7281af0f5c04923be5f202acb1172162e3a93b931e1e8
+  sha256: 1770b050dad3350b7d4ae8c40bd305fe32900b38cd1035d1beeb645e632fe532
   status: live
 -->
 # Handover — Entscheid-Folge 64 (2026-09-20)
@@ -84,8 +84,6 @@ live gegen `https://api.unorouter.com/v1`.
   (Auslöser: Run-Abschluss — `ci_manage view 35527517605` / Watchdog).
 - **Mistral-Disposition** — gemessen kein Free-API-Modell; die 7 Whitelist-Einträge
   als „frei" falsch; Provider deaktiviert. **`operator-gebunden`** (Operator-Queue).
-- **Inception-Disposition** — `mercury-2` per-Token bezahlt (2,5e-7); Free-Tier
-  „100 Mio Token" separate Linie (Riss). **`operator-gebunden`** (Operator-Queue).
 - **Queue-Korpora Re-Lauf** (bau folge108, aus `post.md` gefaltet) — die 7
   `parser-gap`-Korpora (`13k`/`14k`/`15k`/`183l`/`2k`/`7k`/`candidate-staging`) nach
   dem `port.rs`-Fix brauchen den lokalen Release-Binär-Lauf (`--port` + `--probe`);
@@ -112,17 +110,8 @@ live gegen `https://api.unorouter.com/v1`.
    Adresse; die aktuelle Version ist sauber, die Geschichte nicht. *Frage:* Geschichte
    umschreiben? *Ja:* Auftrag `docs/auftrag/auftrag-pii-history-rewrite.md` läuft
    (löscht alte Commits, Force-Push). *Nein:* bleibt. (seit 2026-09-15)
-2. **Förderung/Sponsoring** — *Lage:* Förderung wirkt erst mit Publikum. *Frage:*
-   Sponsoring-Konten (GitHub Sponsors / Open Collective) jetzt aufsetzen? *Ja:*
-   anlegen. *Nein:* erst nach Preprint.
 3. **Mantis-Shrimp-Hardware** — *Lage:* Wege Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS. *Frage:* Bewerbungen/Formulare senden? *Ja:* pro
    Akt. *Nein:* bleibt.
-4. **Mistral + Inception** — *Lage:* Mistral hat kein kostenloses API-Modell (nur
-   der Vibe-Plan ist gratis); Inception rechnet pro Token ab (2,5e-7), Free-Tier
-   „100 Mio Token" laut früherem Stand. *Frage:* Mistral aus der Liste nehmen (oder
-   kostenpflichtig aktivieren)? Inception als Gratis-Kontingent führen oder
-   entfernen? *Ja/Nein:* entsprechend.
 5. **Queue-Korpora (astro/earth/exotic + 7 parser-gap)** — *Lage:* 49 + 7
    Datenblöcke warten; der Lauf ist blockiert (kein Kraft-Direktiv, Korpora nur
    lokal). *Frage:* Lauf lokal freigeben oder CI-`--port`-Workflow bauen? *Ja:*

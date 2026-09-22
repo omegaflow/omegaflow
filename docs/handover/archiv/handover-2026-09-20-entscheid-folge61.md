@@ -3,7 +3,7 @@
   session: Entscheid-Folge 61
   class: handover
   date: 2026-09-20
-  sha256: d9e3ab5921200ef4d8255ff7993d132869df804c3b1c685161ec5ecc6601f2b0
+  sha256: bcf0ee3f9ebab7c39055414ef6f9c084aadd3af45f111fe946bd0d9e77d604d3
   status: live
 -->
 # Handover — Entscheid-Folge 61 (2026-09-20)
@@ -37,9 +37,8 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   (per-ref-Concurrency). Kein Rot außerhalb ci-check. Zustand-Ledger
   (`external-state.md`) CI-Zeile auf `7d0a1272` fortgeschrieben.
 - **Postfach** — `state/mail/mail_ledger.φ` (110 Zeilen): neue Eingänge seit dem
-  letzten Stand `1789899110`: `1789900094` (Framework Auto-Reply, Ticket
-  NG2HWBZM), `1789902016` (Tuxedo Ticket#991311279), `1789906306` (Weiterleitung
-  des Sotgiu-Limadou-Threads durch den Operator). Vorher `1789899110` (S2-Key
+  letzten Stand `1789899110`: `1789900094` (Framework Auto-Reply). Vorher
+  `1789899110` (S2-Key
   bewilligt), `1789899008` (CORE-Key), `1789898868` (CORE verify), `1789898286`
   (S2 „received your key request"), `1789898153` (Materials Project welcome).
   Zustand-Ledger-Postfachzeile fortgeschrieben.
@@ -71,13 +70,6 @@ gesetzt, Browser-Brücke verbunden, Limadou gesendet+korrigiert). Es verbleiben:
    (Autor/Committer); HEAD ist redigiert, die Historie nicht. *Frage:* führen wir
    den Rewrite aus? *Ja:* der Auftrag `docs/auftrag/auftrag-pii-history-rewrite.md`
    läuft (destruktiv, Force-Push); *Nein:* bleibt offen.
-2. **Funding/Sponsoring** — *Lage:* Förderung wirkt erst mit Publikum. *Frage:*
-   Sponsoring-Konten jetzt aufsetzen? *Ja:* GitHub Sponsors/Open Collective
-   anlegen; *Nein:* erst nach Preprint. (Entscheid **nicht-kommerziell** steht:
-   kein OSI-Relizenzieren.)
-3. **Mantis-Shrimp-Hardware** — *Lage:* Espressif-Sponsorship + Crowd Supply +
-   GSoC/OpenAstronomy/ESA SOCIS als Wege. *Frage:* Bewerbungen/Formulare senden?
-   *Ja:* pro Akt; *Nein:* bleibt.
 
 ## Quer-Linien (Post)
 

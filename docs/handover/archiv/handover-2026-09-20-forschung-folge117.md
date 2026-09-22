@@ -3,7 +3,7 @@
   session: Forschung-Folge 117
   class: handover
   date: 2026-09-20
-  sha256: e03c5cae1edd15738d412a781fdedaf7a10d5d1c960e199c6c3a88cc22a70472
+  sha256: 8351c91f9baf1fd7c2c4bf44c3233117b88c4983d744e8825b75257dcf11b98a
   status: live
 -->
 # Handover — Forschung-Folge 117 (2026-09-20)
@@ -94,14 +94,6 @@ Survey `docs/surveys/survey-2026-09-20-browser-anbindung.md`.
   `operator-gebunden`.
 - **Playwright-Browser-Extension** — befund-gated (erst bei gemessenem
   Pfad-1-Versagen).
-
-## Hardware-Sponsoring — `operator-gebunden`
-
-Drei offene Threads im Postfach: Pine64 (`1789922257`, Verweis auf
-`info@pine64.org`), Framework (Ticket `NG2HWBZM`), Tuxedo (Ticket `#991311279`).
-Eine Antwort an einen Dritten ist ein consent-pflichtiger Akt → `entscheid`/Operator.
-(Die Post-Zeile konnte diese Session nicht gesetzt werden: `post.md` trägt fremde
-uncommittete Hunks — nicht angefasst.)
 
 ## ernte / termin
 

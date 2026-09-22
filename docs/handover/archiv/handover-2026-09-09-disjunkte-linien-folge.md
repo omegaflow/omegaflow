@@ -2,7 +2,7 @@
   title: Handover — disjunkte Linien Folge: Register-Schluss, Provenienz-Notiz, Step-5 gemessen
   class: handover
   date: 2026-09-09
-  sha256: 8672e46ddb665781db3f734add096155d3a4860c7cc341ed5ad15f161716160f
+  sha256: 6e32399ede2c215c36a867aeea0703c5fdc909aaaa842cfd69ba2dc0cb33e525
   status: archived
   see-also: docs/handover/archiv/handover-2026-09-09-disjunkte-linien-dispatch.md,
             docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
@@ -32,7 +32,7 @@ Die TE-/Tiefenphasen-Linie lief parallel weiter; ihre Dateien blieben unberührt
   Grund in der R2-Ausgabe und im Test
   `z_section_counts_are_not_a_double_count_and_r2_stays_pending`; lauf-log und
   Register stimmen überein. Die Z-Klasse braucht die Archiv-Zählung als
-  Grundwahrheit — lokal zählbar (archive-root + `/home/johannes/backup/archive/`),
+  Grundwahrheit — lokal zählbar (archive-root + `$HOME/backup/archive/`),
   kein Operator-Wort.
 
 ## Gemessen (Step-5, Rat gehört 2026-09-09)
@@ -60,7 +60,7 @@ Die TE-/Tiefenphasen-Linie lief parallel weiter; ihre Dateien blieben unberührt
   berührt; kein branches-Filter); die Urkunden-Zeile gegen den letzten Lauf aktualisieren.
 - **abfluss-trishuli** — der Abfluss-Pfeil bleibt `pending`; Entsperrung = das
   archivierte externe CSV des 08-27-Zugs — gemessen lokal:
-  `/home/johannes/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`
+  `$HOME/backup/archive/data/opencode-tmp-2026-09-01/worktree-aufraeum/dhm_bhotekoshi_stage_1h.csv`
   (+ `dhm_bhotekoshi_stage.csv`); kein Operator-Wort.
 - **NOAA-NODD-Bucket-Dispositionen** je Dataset — Register-Frage (Litmus:
   url-line / Compiler-Lease / Konsument), kein Operator-Wort; bleibt offen.

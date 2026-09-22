@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 73 (Bewerbungs-/Programm-Anforderungen gemessen; Nr. 11 Feld-Grammatik geschlossen; smail-Riegel bei bau erledigt) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 73 (Nr. 11 Feld-Grammatik geschlossen; smail-Riegel bei bau erledigt) (Stand 2026-09-21)
   session: Entscheid-Folge 73
   class: handover
   date: 2026-09-21
-  sha256: 4eccd9451ab7dcb34bd6ff3503f3ccbd31c9a76a7d3d8cda79b46a8aa5082b83
+  sha256: db2ae73b9578d84e16641774d02fa6d9f3658ac7e5750179c0c863cd8fdbf71f
   status: live
 -->
 # Handover — Entscheid-Folge 73 (2026-09-21)
@@ -26,7 +26,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
   trägt fremde uncommittete Arbeit (`docs/handover/handover-2026-09-21-ernte-folge126.md`
   als gestageter Move `D`) — nicht angefasst.
 - **Postfach** — `mail_ledger.φ`: kein neuer Eingang; neuester weiterhin
-  `1789973288` (Tuxedo Ticket#991311279: keine kostenlosen Geräte/Sponsorings an
   Privatpersonen — Hardware-Punkt beidseitig declined). `external-state.md`-Zeile
   nachgemessen.
 - **CI** — `ci_manage list` 2026-09-21 ~09:0x: `tools-build` `35570698807`
@@ -35,22 +34,13 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
   `free-model-bench` `35567266519` + `free-model-agent-bench` `35567268692`
   in_progress; `tools-build` `35570476690` success; `ned-cdn` `35568810102`
   success. Kein Poll. `external-state.md`-Zeile fortgeschrieben.
-- **`register_lookup --open`** — 2 fremde OPEN (`handover-2026-09-20-pii-llm-budget.md:67/73`);
+- **`register_lookup --open`** — 2 fremde OPEN (`handover-2026-09-20-operator-entscheidungen.md`);
   3 `[entscheid]`-Registerpunkte `phi/blocked_sources.φ:21/60/65` (SuperDARN /
   solar-system-open-data / Amentum) → Operator-Queue.
 - **`git_safety --snapshot`** — `refs/safety/1789973940`.
 
 ## Messung dieses Atoms (kein Punkt)
 
-- **Bewerbungs-/Programm-Anforderungen gemessen** (research-max, 2026-09-21):
-  Espressif-Developer-Programm existiert nicht (`espressif.com/en/developer-program`
-  404, Brave-Index leer); SOCIS läuft nicht (`socis.esa.int` DNS absent, letzte
-  messbare Edition 2019); GSoC 2026 geschlossen (Org-Antrag 19.01.–03.02.2026) und
-  omegaflow ist keine gelistete Mentoring-Org (nächster Org-Antrag ~Jan 2027);
-  Crowd Supply verlangt einen funktionierenden Prototyp/EVT (typisch 12 %
-  Kampagnen-Gebühr, kein Equity). **Verdikt: kein Förderweg nimmt ein ungebautes
-  Mantis-Shrimp an — nächster Schritt ist der Prototyp-Bau; danach Crowd Supply,
-  parallel GSoC-2027-Org-Antrag prüfbar.**
 - **`post.md` `An entscheid:` gefaltet** — Nr. 11 „strukturierte Feld-Grammatik":
   Operator-Entscheid gebaut (Grammatik IST `docs/specs/sources-v2-spec.md` §1;
   3-Token-`field`-Form als §10-Gap registriert, Header-Referenz
@@ -67,19 +57,9 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
 | `open_points_check` im Release | `wartend` | `eigen` | Trigger `tools-build` `35570698807` → `tools-latest` + `~/.local/bin`-Symlink; dann läuft der Baum-Abgleich im Planungs-Pass |
 | Free-Model-Bench (P13 + P2–P4) | `wartend` | `eigen` | Artefakte **einmalig** lesen, sobald die Läufe durch sind — `ci_manage view 35567266519`/`35567268692`; Ranking oder pending |
 | PINE64-Dokumentationspflicht | `blockiert` | `linie:bau` | `An bau:`-Zeile in `post.md` (Mantis-Shrimp minimal bauen — Spec `docs/specs/mantis-shrimp-bom.md` + BOM liegen —, dann Ox64 dokumentieren) |
-| Mantis-Shrimp-Bewerbungen | `operator-gebunden` | `operator` | Sachverhalt gemessen (kein Weg offen); in der Operator-Queue |
 
 ## Operator-Queue (Stand folge73; einfache Sprache, je Frage mit Alter)
 
-1. **Mantis-Shrimp-Bewerbungen** — **Lage:** am 21.09. gemessen: kein
-   Förder-/Bewerbungsweg offen (Espressif-Programm existiert nicht, SOCIS läuft
-   nicht, GSoC 2026 geschlossen + omegaflow keine Org, Crowd Supply braucht einen
-   fertigen Prototyp). **Frage:** Prototyp bauen (dann Crowd Supply, parallel
-   GSoC-2027-Org-Antrag) oder descopen? (Alter: seit 2026-09-16)
-2. **Eigenprize / Solitude** — Eigenprize-Runde geschlossen (Deadline 31.03.2026,
-   keine nächste Runde datiert). **Frage:** „Remind me" auf `https://eigen.build`
-   setzen und `state/mail/eigenprize-application.md` finalisieren? Solitude
-   ~Herbst 2027. (Alter: seit 2026-09-20)
 3. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis. **Frage:** App unter
    `github.com/settings/connections/applications` widerrufen? (Alter: seit 2026-09-20)
@@ -95,10 +75,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag (`warte
    Nachmessung der 8 `000`-Hosts. **Frage:** Operator-Wort/Route (sudo+Netz)?
    (Alter: seit Ernte folge12–17)
 8. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf". (Alter: seit 2026-09-16)
-9. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt, Antwort +
-   Korrektur gesendet); Framework **nicht passend**; Tuxedo Ticket#991311279
-   **declined** (keine kostenlosen Geräte/Sponsorings an Privatpersonen —
-   beidseitig geschlossen).
 
 ## Benchmark
 
