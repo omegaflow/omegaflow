@@ -1,0 +1,101 @@
+# text_probe terms — string data (German prompts, function words, marker lists).
+# Format: sections in [name] brackets, one entry per line, '#' starts a comment.
+# [task] <name> opens a task; the following line is its prompt.
+# [judge] holds the multi-line judge template with {task} and {answer} markers.
+
+[de_function]
+der
+die
+das
+und
+nicht
+eine
+ist
+den
+dem
+des
+ein
+ich
+du
+sie
+es
+zu
+von
+mit
+für
+auf
+wird
+sind
+war
+als
+auch
+im
+am
+sich
+nur
+noch
+über
+bei
+
+[speculation]
+vermutlich
+wahrscheinlich
+probably
+likely
+scheinbar
+anscheinend
+ich denke
+ich nehme an
+vielleicht
+möglicherweise
+maybe
+perhaps
+i think
+i assume
+it seems
+
+[slop]
+im rahmen
+in der heutigen
+es ist wichtig
+es ist entscheidend
+eine wichtige rolle
+in vielerlei hinsicht
+nicht zuletzt
+auf der anderen seite
+im endeffekt
+eine reihe von
+spielt eine
+tief verwurzelt
+in der tat
+es ist klar
+wie wir wissen
+von großer bedeutung
+in diesem zusammenhang
+letztendlich
+it is important
+plays a
+in today's
+in conclusion
+at the end of the day
+a testament to
+delve into
+in the realm of
+
+[slop_pair]
+nicht	sondern
+not	but
+
+[task] prosa
+Schreibe einen kurzen Absatz über Abwesenheit als vollwertigen Zustand — ohne Floskeln, ohne Spekulationswörter.
+
+[task] philosophie
+Was heißt es, dass eine Messung die Messung der Sache selbst ist? Antworte in drei Sätzen.
+
+[task] lektorat
+Kürze diesen Satz, ohne Bedeutung zu verlieren: Im Rahmen der heutigen Zeit ist es wichtig zu betonen, dass Abwesenheit eine wichtige Rolle spielt und nicht als Leere, sondern als vollwertiger Zustand verstanden werden muss.
+
+[judge]
+Bewerte die folgende Antwort auf einer 5-Punkte-Rubrik. Antworte ausschließlich mit einem JSON-Objekt mit den ganzzahligen Schlüsseln truth, depth, language, cliche, house (je 1 bis 5). Keine Erklärung.
+{task}
+{answer}
