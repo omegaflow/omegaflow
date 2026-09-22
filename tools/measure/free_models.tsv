@@ -32,7 +32,6 @@ kenari	hy3:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	laguna-s-2-1:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	laguna-xs-2-1:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	mimo-v2-5:free	https://kenari.id/v1	KENARI_API_KEY	http
-kenari	mimo-v2-6-flash:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	mistral-medium-3-5:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	muse-spark-1-3-contributor:free	https://kenari.id/v1	KENARI_API_KEY	http
 kenari	nemotron-3-super-120b-a12b:free	https://kenari.id/v1	KENARI_API_KEY	http
@@ -78,7 +77,6 @@ nvidia	z-ai/glm-5.3-flash	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	htt
 opencode	big-pickle	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
 opencode	jev-1.13-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
 opencode	ling-3.0-flash-fin-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
-opencode	mimo-v2.5-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
 opencode	mimo-v2.6-flash-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
 opencode	muse-spark-1.2-contributor-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
 opencode	muse-spark-1.3-contributor-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client
