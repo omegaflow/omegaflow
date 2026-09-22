@@ -4274,6 +4274,75 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "reads the measured DLS p45-2194.nxs v2 BTHD witness; the hdf5-real-granule workflow sets DLS_NXS_GRANULE"]
+    fn real_granule_dls_v2_bthd_chunk_index_materializes() {
+        let path = std::env::var_os("DLS_NXS_GRANULE")
+            .expect("DLS_NXS_GRANULE absent — the measured DLS witness path is not set");
+        let bytes = match std::fs::read(&path) {
+            Ok(bytes) => bytes,
+            Err(e) => panic!("{} unreadable: {e}", path.to_string_lossy()),
+        };
+        assert_eq!(bytes[8], 2, "the DLS witness superblock is v2");
+
+        let file = Hdf5File::parse(&bytes).unwrap();
+        let fetch = |off: u64, len: u64| {
+            bytes
+                .get(off as usize..(off + len) as usize)
+                .map(|s| s.to_vec())
+        };
+
+        let mut v2_roots = 0usize;
+        for obj in file.objects.values() {
+            let Some(Hdf5Layout::Chunked { btree, .. }) = obj.layout.as_ref() else {
+                continue;
+            };
+            let ds = obj
+                .dataspace
+                .as_ref()
+                .expect("a chunked object carries a dataspace");
+            let rank = ds.dims.len();
+            let filtered = !obj.filters.is_empty();
+
+            let mut reader = Hdf5WindowReader::new(&bytes, fetch);
+            let head = reader
+                .read(*btree, 24)
+                .expect("the chunk index head lies outside the witness");
+            assert_eq!(
+                &head[..4],
+                b"BTHD",
+                "the DLS chunk index is v2 BTHD, not v1 TREE"
+            );
+            let (typ, hdr) =
+                parse_btree_header(&mut reader, *btree).expect("the v2 chunk header unread");
+            assert_eq!(typ, 10, "the DLS v2 chunk index node type is 10");
+            assert!(
+                hdr.total_records > 0,
+                "the DLS v2 chunk index declares no records"
+            );
+            let (recs, v1_index) = chunk_records_with(&mut reader, *btree, rank, filtered)
+                .expect("the v2 chunk records returned void");
+            assert!(!v1_index, "the DLS chunk index walks the v2 record path");
+            assert!(
+                !recs.is_empty(),
+                "the DLS v2 chunk index materializes no chunk records"
+            );
+            for rec in &recs {
+                assert!(
+                    rec.addr != UNDEF && rec.addr < bytes.len() as u64,
+                    "chunk address {} lies outside the {} byte witness",
+                    rec.addr,
+                    bytes.len()
+                );
+            }
+            v2_roots += 1;
+        }
+        assert_eq!(
+            v2_roots, 6,
+            "the DLS witness carries six BTHD type-10 chunk roots"
+        );
+    }
+
+    #[test]
     fn lookup3_matches_reference_vectors() {
         let a = jenkins_lookup3(b"");
         let b = jenkins_lookup3(b"abc");
