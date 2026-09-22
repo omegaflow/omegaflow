@@ -1677,4 +1677,50 @@ mod tests {
             p99
         );
     }
+
+    #[ignore = "print-only frozen-tau delay sweep for the stochastic confirmation pair — runs in hyperscanning-te.yml"]
+    #[test]
+    fn frozen_tau_delay_sweep_stochastic_pair() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = strong_pair_fixture(800, 8, 0.05, &mut rng);
+        let (mi_dists, mi_te) = strong_pair_cell(a.clone(), b.clone());
+        let mi_p99 = percentile(&mi_dists, 99.0);
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        println!(
+            "frozen-tau sweep: mi-path tau_a={} tau_b={} te={} p99={} clears={}",
+            fmt_value(find_mi_lag(&af).map(|t| t as f64)),
+            fmt_value(find_mi_lag(&bf).map(|t| t as f64)),
+            fmt_value(Some(mi_te)),
+            fmt_value(mi_p99),
+            mi_p99.map_or("pending", |thr| if mi_te > thr { "yes" } else { "no" })
+        );
+        let members = vec![("A".to_string(), a), ("B".to_string(), b)];
+        for tau in 1..=12usize {
+            let observed =
+                topological_te_estimate_frozen(&members[1].1, &members[0].1, DIM, tau, tau)
+                    .map(|e| e.te);
+            let mut dists: Vec<f64> = Vec::new();
+            for s in 0..200usize {
+                let randomized = randomized_triad(&members, CONFIRM_SEED, s, 0, false);
+                if let Some(te) =
+                    frozen_estimate(&randomized[1], &randomized[0], DIM, Some(tau), Some(tau))
+                {
+                    dists.push(te);
+                }
+            }
+            dists.sort_by(f64::total_cmp);
+            match (observed, percentile(&dists, 99.0)) {
+                (Some(te), Some(thr)) => println!(
+                    "frozen-tau sweep: tau={tau} te={te:.4e} p99={thr:.4e} clears={}",
+                    if te > thr { "yes" } else { "no" }
+                ),
+                (te, thr) => println!(
+                    "frozen-tau sweep: tau={tau} te={} p99={} clears=pending",
+                    fmt_value(te),
+                    fmt_value(thr)
+                ),
+            }
+        }
+    }
 }
