@@ -276,6 +276,7 @@ fn main() {
             "--librs" => mode = Mode::Net("librs"),
             "--brave" => mode = Mode::Net("brave"),
             "--mwmbl" => mode = Mode::Net("mwmbl"),
+            "--marginalia" => mode = Mode::Net("marginalia"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
             "--zenodo" => mode = Mode::Net("zenodo"),
@@ -562,13 +563,16 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --brave     Brave Search API (X-Subscription-Token); HTTP 402 while the free quota is spent — the keyless path is --mwmbl"
     );
     eprintln!(
         "  --mwmbl     open community meta-search (mwmbl.org), keyless JSON; url + title/source/extract"
+    );
+    eprintln!(
+        "  --marginalia Marginalia public search (api.marginalia-search.com), keyless JSON; url + title/description/quality (CC-BY-NC-SA)"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
