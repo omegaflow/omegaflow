@@ -641,9 +641,7 @@ fn te_probe_keeps_the_cpu_topology_on_a_coupled_pair() {
         x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
     }
     let _ = app.te_probe(&x, &y, n);
-    let (tau_x, tau_y, te, threshold) = app
-        .te_cpu
-        .expect("the coupled pair carries a cpu verdict");
+    let (tau_x, tau_y, te, threshold) = app.te_cpu.expect("the coupled pair carries a cpu verdict");
     assert!(tau_x >= 1 && tau_y >= 1, "tau {} {}", tau_x, tau_y);
     let te_v = te.expect("the cpu verdict carries a te");
     let thr_v = threshold.expect("the cpu verdict carries a threshold");
