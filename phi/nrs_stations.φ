@@ -14,4 +14,4 @@ NRS12 17.79 -64.65 40 40
 NRS13 35.31 -121.59 913 850
 note NRS13/NRS11 Netz-Seite: data-sheets-Attribut traegt Fremdwerte (NRS13 = NRS12 17.79/-64.65; NRS11 -126.44); Referenz sichtbarer Text NRS13 35.31/-121.59, NRS11 -123.44, Wassertiefe NRS11 sichtbar 550 (Attribut 534).
 note Kreuz Netz vs Deployment-SHAPE 2026-09-13: NRS01 Netz -156.55/72.44 innerhalb 0.05 deg jeder der vier Verankerungen (-156.5517..-156.6, 72.443..72.49); NRS11 Netz -123.44/37.88 = Deployment 2019-21 -123.45/37.88 (0.01 deg); Audio 2015-17 -126.435.
-note NRS02-10,12,13 ohne Spektren-Verankerung (SHAPE pending); Bucket noaa-passive-bioacoustic nrs/products traegt SHAPE nur fuer NRS01+NRS11; Deployments ohne Koordinate: NRS04,NRS06,NRS08,NRS09,NRS10.
+note NRS02-10,12,13 ohne Spektren-Verankerung; Bucket nrs/products SHAPE (WKT metadata.json) nur NRS01+NRS11; PSD-netCDF _MinRes_v3.nc/_v3_v3.nc; Parser noaa_nodd_bucket_harvester; Deployments ohne Koordinate: NRS04,NRS06,NRS08,NRS09,NRS10.

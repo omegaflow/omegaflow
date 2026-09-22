@@ -1091,8 +1091,11 @@ fn run_csv_values(path: &str, args: &[String], out: Option<&str>) -> usize {
         Some(v) => v,
         None => 0,
     };
-    let nc_path = format!("{}.nc", &path[..path.len() - 4]);
-    let freq_axis = nc_frequencies(&nc_path);
+    let stem = &path[..path.len() - 4];
+    let mut freq_axis = nc_frequencies(&format!("{}.nc", stem));
+    if freq_axis.is_empty() {
+        freq_axis = nc_frequencies(&format!("{}_v3.nc", stem));
+    }
 
     let mut buf = String::new();
     buf.push_str(&format!("#file={}\n", path));
@@ -1182,6 +1185,11 @@ fn depdir_of_metadata_key(key: &str) -> Option<String> {
     }
 }
 
+fn is_psd_nc(key: &str) -> bool {
+    key.ends_with("_DAILY_MILLIDEC_MinRes_v3.nc")
+        || key.ends_with("_DAILY_MILLIDEC_MinRes_v3_v3.nc")
+}
+
 fn collect_nc_keys(bucket: &str, depdir: &str, out: &mut Vec<String>, days: usize) {
     let mut marker = String::new();
     loop {
@@ -1190,7 +1198,7 @@ fn collect_nc_keys(bucket: &str, depdir: &str, out: &mut Vec<String>, days: usiz
             None => return,
         };
         for o in p.objects {
-            if o.key.ends_with("_DAILY_MILLIDEC_MinRes_v3.nc") {
+            if is_psd_nc(&o.key) {
                 out.push(o.key.clone());
                 if out.len() >= days {
                     return;
@@ -1569,6 +1577,18 @@ NRS11 37.88 -123.44
     fn station_from_metadata_key_yields_the_site_digits() {
         let key = "nrs/products/sound_level_metrics/11/nrs_11_20191023-20211004_hmd_v3/metadata/NRS_11_20191023-20211004_HMD_v3-metadata.json";
         assert_eq!(station_from_key(key).as_deref(), Some("11"));
+    }
+
+    #[test]
+    fn psd_netcdf_carries_both_bucket_suffixes_and_not_the_percentile_file() {
+        let nrs01 = "nrs/products/sound_level_metrics/01/nrs_01_20141015-20150916_hmd_v3/data/NRS01_1415_H4R9B.1.5000_20141016_DAILY_MILLIDEC_MinRes_v3.nc";
+        let nrs11 = "nrs/products/sound_level_metrics/11/nrs_11_20191023-20211004_hmd_v3/data/NRS11_H5R6.1.5000_20191023_DAILY_MILLIDEC_MinRes_v3_v3.nc";
+        let pctl = "nrs/products/sound_level_metrics/11/nrs_11_20191023-20211004_hmd_v3/data/NRS11_H5R6.1.5000_20191023_DAILY_MILLIDEC_MinRes_netCDF_v3.nc";
+        let csv = "nrs/products/sound_level_metrics/11/nrs_11_20191023-20211004_hmd_v3/data/NRS11_H5R6.1.5000_20191023_DAILY_MILLIDEC_MinRes_v3.csv";
+        assert!(is_psd_nc(nrs01));
+        assert!(is_psd_nc(nrs11));
+        assert!(!is_psd_nc(pctl));
+        assert!(!is_psd_nc(csv));
     }
 
     #[test]
