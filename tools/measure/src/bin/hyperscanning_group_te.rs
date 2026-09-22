@@ -1624,10 +1624,7 @@ mod tests {
         (a, b)
     }
 
-    fn strong_pair_cell(
-        a: Vec<f32>,
-        b: Vec<f32>,
-    ) -> (Vec<f64>, f64) {
+    fn strong_pair_cell(a: Vec<f32>, b: Vec<f32>) -> (Vec<f64>, f64) {
         let triads = vec![(
             "G01".to_string(),
             vec![("A".to_string(), a), ("B".to_string(), b)],
@@ -1645,7 +1642,10 @@ mod tests {
         let dists = confirmation_cell_nulls(&triads, &plan, DIM, 200, CONFIRM_SEED, false);
         let observed = topological_te_estimate(&triads[0].1[1].1, &triads[0].1[0].1, DIM)
             .expect("the observed cell is estimated");
-        (dists.into_iter().next().expect("the plan carries one cell"), observed.te)
+        (
+            dists.into_iter().next().expect("the plan carries one cell"),
+            observed.te,
+        )
     }
 
     #[test]
