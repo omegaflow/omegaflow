@@ -46,7 +46,11 @@ mod tests {
 
     #[test]
     fn gate_te_verdict_bytes_follows_k() {
-        assert_eq!(te_verdict_bytes(0), 288, "K=0 carries the base verdict only");
+        assert_eq!(
+            te_verdict_bytes(0),
+            288,
+            "K=0 carries the base verdict only"
+        );
         for k in 1..=8u32 {
             assert!(
                 te_verdict_bytes(k) >= 384,
