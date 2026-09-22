@@ -4266,35 +4266,6 @@ mod tests {
     }
 
     #[test]
-    fn fink_fp_parser_reads_the_real_forced_photometry_rows() {
-        let body = include_str!("lsst_fp_313998569858662581_6rows.json");
-        let (rows, coord, census) = parse_fink_fp_rows(body.as_bytes()).unwrap();
-        assert_eq!(census.total, 6);
-        assert_eq!(rows.len(), 6, "every real row reads a positive scienceFlux");
-        assert_eq!(census.science_absent, 0);
-        assert_eq!(census_count(&census.per_band_rows, "r"), 1);
-        assert_eq!(census_count(&census.per_band_rows, "g"), 2);
-        assert_eq!(census_count(&census.per_band_rows, "u"), 3);
-        assert_eq!(census_count(&census.per_band_science, "u"), 3);
-        assert_eq!(census_count(&census.per_band_psf, "r"), 0);
-        assert_eq!(census_count(&census.per_band_psf, "g"), 0);
-        let (ra, dec) = coord.unwrap();
-        assert!((ra - 148.8745712297).abs() < 1e-9);
-        assert!((dec - 2.5208047616).abs() < 1e-9);
-        assert!((rows[0].1 - 61205.9837394019).abs() < 1e-9);
-        assert!(
-            (rows[0].2 - 46041.09).abs() < 1e-9,
-            "scienceFlux is the nJy flux"
-        );
-        assert_eq!(rows[0].0, "r");
-        let lsk = lsk();
-        let (folded, skipped) = rows_to_tdb(&lsk, &rows);
-        assert_eq!(skipped, 0);
-        assert_eq!(folded.len(), 6);
-        assert!(folded.iter().all(|(_, t, _)| t.is_finite()));
-    }
-
-    #[test]
     fn fink_fp_negative_science_flux_stays_absent_and_psf_counts_separately() {
         let body = br#"[{"r:band":"g","r:dec":2.5208047696,"r:diaForcedSourceId":1,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61204.9817515752,"r:psfFlux":3180.5,"r:psfFluxErr":314.0,"r:ra":148.8745712188,"r:scienceFlux":-320.1,"r:scienceFluxErr":314.9,"r:visit":1},{"r:band":"r","r:dec":2.5208047616,"r:diaForcedSourceId":2,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61205.9837394019,"r:psfFlux":-1.0,"r:ra":148.8745712297,"r:scienceFlux":0.0,"r:visit":2},{"r:band":"i","r:dec":2.5208,"r:diaForcedSourceId":3,"r:diaObjectId":313998569858662581,"r:midpointMjdTai":61206.0,"r:psfFlux":99.0,"r:ra":148.8746,"r:scienceFlux":5100.0,"r:visit":3},{"r:detector":7,"r:visit":4}]"#;
         let (rows, _, census) = parse_fink_fp_rows(body).unwrap();

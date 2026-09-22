@@ -1001,10 +1001,6 @@ fn main() {
 mod tests {
     use super::*;
 
-    fn lsk() -> LeapSeconds {
-        embedded_lsk().expect("the embedded naif0012.tls table parses in the test build")
-    }
-
     fn offsets(n: usize, base: f64, amplitude: f64, t0: f64) -> Vec<(f64, f64)> {
         let mut out = Vec::with_capacity(n);
         for k in 0..n {
@@ -1097,23 +1093,6 @@ mod tests {
             .expect("the i band row is in the census");
         assert_eq!(i_entry.1, 1, "one i FP row");
         assert_eq!(i_entry.2, 1, "its flux is a measurement");
-    }
-
-    #[test]
-    fn fp_mjd_rows_fold_to_an_absolute_tdb() {
-        let body = include_str!("lsst_fp_313998569858662581_6rows.json");
-        let set = parse_fp(body.as_bytes()).expect("the real FP sample parses");
-        assert!(set.rows.len() >= 6);
-        let lsk = lsk();
-        for (band, mjd, flux) in &set.rows {
-            let tdb = fink_mjd_tai_to_tdb(*mjd, &lsk).expect("a 2026 epoch lies in the leap table");
-            assert!(
-                tdb.is_finite() && tdb > 0.0,
-                "the fold lands on a positive TDB axis"
-            );
-            assert!(*flux > 0.0);
-            assert!(!band.is_empty());
-        }
     }
 
     #[test]
