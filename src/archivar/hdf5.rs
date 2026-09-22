@@ -3960,11 +3960,7 @@ mod tests {
         assert!(matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })));
 
         let index = file.chunk_index("d").unwrap();
-        assert_eq!(
-            index.len(),
-            5,
-            "internal-root records and leaf records all surface"
-        );
+        assert_eq!(index.len(), 5, "internal-root records and leaf records all surface");
         let mut coords: Vec<u64> = index.iter().map(|(c, _)| c[0]).collect();
         coords.sort();
         assert_eq!(coords, vec![0, 1, 2, 3, 4], "every chunk coordinate carries one record");
@@ -4000,11 +3996,7 @@ mod tests {
         assert!(matches!(obj.layout, Some(Hdf5Layout::Chunked { .. })));
 
         let index = file.chunk_index("d").unwrap();
-        assert_eq!(
-            index.len(),
-            6,
-            "records from internal nodes and leaf nodes all surface"
-        );
+        assert_eq!(index.len(), 6, "records from internal nodes and leaf nodes all surface");
         let mut coords: Vec<u64> = index.iter().map(|(c, _)| c[0]).collect();
         coords.sort();
         assert_eq!(coords, vec![0, 1, 2, 3, 4, 5], "every chunk coordinate carries one record");

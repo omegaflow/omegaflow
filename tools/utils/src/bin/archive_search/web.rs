@@ -251,7 +251,7 @@ pub const PAGE: &str = r##"
 (function(){
   "use strict";
 
-  var FALLBACK = ["local","leads","index","git","verdict","arxiv","ads","ntrs","wayback","crossref","wiki","github","crates","librs","brave","mwmbl","marginalia","datacite","zenodo","isc","openalex","pubmed","europepmc","semanticscholar","clinicaltrials","openfda","pubchem","uniprot","pdb","chembl","ensembl","entrez","ena","doaj","unpaywall","reactome","interpro","alphafold","supermag","heasarc"];
+  var FALLBACK = ["local","leads","index","git","verdict","arxiv","ads","ntrs","wayback","crossref","wiki","github","crates","librs","brave","mwmbl","marginalia","tavily","exa","linkup","datacite","zenodo","isc","openalex","pubmed","europepmc","semanticscholar","clinicaltrials","openfda","pubchem","uniprot","pdb","chembl","ensembl","entrez","ena","doaj","unpaywall","reactome","interpro","alphafold","supermag","heasarc"];
   var STORE_KEY = "archive_search_modes";
   var LIMIT_KEY = "archive_search_limit";
 
