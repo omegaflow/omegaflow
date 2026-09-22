@@ -30,3 +30,10 @@ jobs:
         EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
         ATL03_GRANULE_URL: "https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL03/007/2026/06/30/ATL03_20260630003802_02443209_007_01.h5"
       run: cargo test --release -p omegaflow -- --ignored --nocapture real_granule_atl03_v1_chunk_index_materializes_multilevel
+    - name: Fetch the measured DLS p45-2194.nxs v2 BTHD witness (keyless)
+      run: |
+        curl -sSfL --retry 3 --max-time 300 -o p45-2194.nxs \
+          "https://raw.githubusercontent.com/nexusformat/exampledata/master/DLS/p45/hdf5/p45-2194.nxs"
+        echo "b5ab7f87a729e85fd4bdd3325ef5d4d36dca6d125b7f08b526defc3ac9b97164  p45-2194.nxs" | sha256sum -c -
+    - name: Real-granule read — the DLS v2 BTHD chunk index materializes (keyless)
+      run: DLS_NXS_GRANULE=p45-2194.nxs cargo test --release -p omegaflow -- --ignored --nocapture real_granule_dls_v2_bthd_chunk_index_materializes
