@@ -91,13 +91,25 @@ fn main() {
     };
     let body = String::from_utf8_lossy(&bytes);
     let alerts = match babamul::parse_alerts(&body) {
-        Some(a) => a,
-        None => {
+        babamul::BabamulParse::Alerts(a) => a,
+        babamul::BabamulParse::Empty => {
             eprintln!(
-                "{survey} {start_jd}: {} B carry no measured candidate — the bin stays unwritten (0 honored)",
+                "{survey} {start_jd}: the alert envelope carries zero candidate rows in {} B — the bin stays unwritten (0 honored)",
                 bytes.len()
             );
-            std::process::exit(1);
+            return;
+        }
+        babamul::BabamulParse::NotJson => {
+            eprintln!("{url}: the body is not JSON ({} B)", bytes.len());
+            std::process::exit(2);
+        }
+        babamul::BabamulParse::NoData => {
+            eprintln!("{url}: the JSON carries no alert data array ({} B)", bytes.len());
+            std::process::exit(2);
+        }
+        babamul::BabamulParse::Unplaced => {
+            eprintln!("{url}: candidate rows arrived, none placeable ({} B)", bytes.len());
+            std::process::exit(2);
         }
     };
     let records = babamul::to_skymap(&alerts);
