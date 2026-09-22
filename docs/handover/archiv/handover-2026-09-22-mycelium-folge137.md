@@ -3,7 +3,7 @@
   session: Mycelium-Folge 137
   class: handover
   date: 2026-09-22
-  sha256: 76e65e54fa5f5a36d413e31ac8fdfa532f795ccaa4c1ebce67649dd1748a3d3c
+  sha256: 3a4f56d3f8643bf3793297d2cf565772b2c8eb3e6ed09b41081f8c68ec918773
   status: live
 -->
 # Handover — Mycelium-Folge 137 (2026-09-22)
@@ -239,8 +239,7 @@ konsumiert und ins Archiv gelegt.
   `handover-2026-09-22-mycelium-folge137.md`, Move
   `handover-2026-09-21-ernte-folge136.md` → `archiv/`
 - **Fremd (nicht angetastet):** `AGENTS.md`, `docs/concepts/4d-membrane.md`,
-  `docs/concepts/die-vier-schilde.md`, `docs/surveys/survey-funding-*.md` (staged
-  `D`), `src/gate/commit_gate.rs`, `src/gate/commit_gate_vocab.json`,
+  `src/gate/commit_gate.rs`, `src/gate/commit_gate_vocab.json`,
   `tools/register/src/bin/{number_audit,open_points_check,path_reference_scan}.rs`,
   diverse `archiv/`-Handover.
 
