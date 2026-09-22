@@ -17,4 +17,4 @@ note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 20
 
 ausstehend
 kandidat https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-22 parse_alerts vierwertig, Empty→exit 0 (0 honored), Regression→exit 2. Schritt: Re-Dispatch babamul-cdn, sha256 registrieren.
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-22 parse_alerts vierwertig, Empty→exit 0 (0 honored), Regression→exit 2. Lauf 35745291297 success, aber Release babamul.caltech.edu traegt kein Asset — babamul_alerts.bin HTTP 404. Schritt: Workflow/Compiler pruefen, Re-Dispatch, sha256 in sources.φ:14016.
