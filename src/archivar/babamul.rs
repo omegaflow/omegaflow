@@ -8,14 +8,28 @@ pub struct BabamulAlert {
     pub magap: Option<f64>,
 }
 
-pub fn parse_alerts(body: &str) -> Option<Vec<BabamulAlert>> {
-    let json = parse_json(body)?;
+#[derive(Clone, Debug, PartialEq)]
+pub enum BabamulParse {
+    Alerts(Vec<BabamulAlert>),
+    Empty,
+    NotJson,
+    NoData,
+    Unplaced,
+}
+
+pub fn parse_alerts(body: &str) -> BabamulParse {
+    let Some(json) = parse_json(body) else {
+        return BabamulParse::NotJson;
+    };
     let JsonVal::Obj(root) = &json else {
-        return None;
+        return BabamulParse::NoData;
     };
     let Some(JsonVal::Arr(data)) = root.get("data") else {
-        return None;
+        return BabamulParse::NoData;
     };
+    if data.is_empty() {
+        return BabamulParse::Empty;
+    }
     let mut out = Vec::new();
     for item in data {
         let JsonVal::Obj(o) = item else { continue };
@@ -40,7 +54,7 @@ pub fn parse_alerts(body: &str) -> Option<Vec<BabamulAlert>> {
             magap,
         });
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() { BabamulParse::Unplaced } else { BabamulParse::Alerts(out) }
 }
 
 pub fn to_skymap(alerts: &[BabamulAlert]) -> Vec<crate::skymap::SkymapRecord> {
@@ -75,7 +89,9 @@ mod tests {
 
     #[test]
     fn parse_alerts_carries_measured_candidates_and_drops_absent_magnitudes() {
-        let rows = parse_alerts(MEASURED_ALERTS).expect("the measured alert JSON parses");
+        let BabamulParse::Alerts(rows) = parse_alerts(MEASURED_ALERTS) else {
+            panic!("the measured alert JSON carries alerts");
+        };
         assert_eq!(rows.len(), 2);
         assert_eq!(rows[0].ra, 219.9366568);
         assert_eq!(rows[0].dec, 16.5589908);
@@ -85,19 +101,28 @@ mod tests {
     }
 
     #[test]
-    fn parse_alerts_rejects_absent_and_void() {
-        assert!(parse_alerts(r#"{"message":"found 0 alerts","data":[]}"#).is_none());
-        assert!(parse_alerts("").is_none());
-        assert!(parse_alerts(r#"{"data":[{"candidate":{"ra":10.0,"dec":5.0}}]}"#).is_none());
-        assert!(
-            parse_alerts(r#"{"data":[{"candidate":{"ra":400.0,"dec":5.0,"magpsf":15.0}}]}"#)
-                .is_none()
+    fn parse_alerts_names_the_truthful_empty_apart_from_the_parse_breaks() {
+        assert_eq!(
+            parse_alerts(r#"{"message":"found 0 alerts","data":[]}"#),
+            BabamulParse::Empty
+        );
+        assert_eq!(parse_alerts(""), BabamulParse::NotJson);
+        assert_eq!(parse_alerts(r#"{"message":"unauthorized"}"#), BabamulParse::NoData);
+        assert_eq!(
+            parse_alerts(r#"{"data":[{"candidate":{"ra":10.0,"dec":5.0}}]}"#),
+            BabamulParse::Unplaced
+        );
+        assert_eq!(
+            parse_alerts(r#"{"data":[{"candidate":{"ra":400.0,"dec":5.0,"magpsf":15.0}}]}"#),
+            BabamulParse::Unplaced
         );
     }
 
     #[test]
     fn to_skymap_places_one_record_per_candidate() {
-        let rows = parse_alerts(MEASURED_ALERTS).unwrap();
+        let BabamulParse::Alerts(rows) = parse_alerts(MEASURED_ALERTS) else {
+            panic!("the measured alert JSON carries alerts");
+        };
         let skymap = to_skymap(&rows);
         assert_eq!(skymap.len(), 2);
         assert_eq!(skymap[0].ra_deg, 219.936_66);

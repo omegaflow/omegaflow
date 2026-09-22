@@ -136,6 +136,16 @@ pub fn date_midnight_unix(yyyymmdd: &str) -> Option<f64> {
     let year = std::str::from_utf8(&b[0..4]).ok()?.parse::<i64>().ok()?;
     let month = std::str::from_utf8(&b[4..6]).ok()?.parse::<u32>().ok()?;
     let day = std::str::from_utf8(&b[6..8]).ok()?.parse::<u32>().ok()?;
+    let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+    let dim = match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 => if leap { 29 } else { 28 },
+        _ => return None,
+    };
+    if day == 0 || day > dim {
+        return None;
+    }
     let days = ymd_to_days(year, month, day)?;
     Some(days as f64 * 86400.0)
 }
