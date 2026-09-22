@@ -27,13 +27,7 @@ fn scan(root: &Path) -> (usize, usize) {
     let mut absolute = 0usize;
     for f in &files {
         let rel = f.to_string_lossy().to_string();
-        if rel.contains("path_reference_scan.rs")
-            || rel.contains("/archiv/")
-            || rel.contains("docs/reference/")
-            || rel.starts_with("gate/")
-            || rel.starts_with("mail/")
-            || rel.starts_with("state/reports/")
-        {
+        if is_skipped(&rel) {
             continue;
         }
         let full = if Path::new(&rel).is_absolute() {
@@ -76,6 +70,9 @@ fn scan(root: &Path) -> (usize, usize) {
                 }
                 let resolved = resolve(root, &full, &cleaned);
                 if !resolved.exists() {
+                    if is_git_ignored(root, &resolved) {
+                        continue;
+                    }
                     missing += 1;
                     println!("MISS {}:{}  {}  ->  {}", rel, n, label, cleaned);
                 }
@@ -162,6 +159,34 @@ fn absolute_paths(line: &str) -> Vec<&str> {
     out
 }
 
+fn is_skipped(rel: &str) -> bool {
+    rel.contains("path_reference_scan.rs")
+        || rel.contains("/archiv/")
+        || rel.contains("docs/reference/")
+        || rel == "src/gate/commit_gate_vocab.json"
+        || rel.starts_with("mail/")
+        || rel.starts_with("state/reports/")
+}
+
+fn is_git_ignored(root: &Path, path: &Path) -> bool {
+    let rel = match path.strip_prefix(root) {
+        Ok(r) => r,
+        Err(_) => return false,
+    };
+    match Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .arg("check-ignore")
+        .arg("-q")
+        .arg("--")
+        .arg(rel)
+        .status()
+    {
+        Ok(s) => s.success(),
+        Err(_) => false,
+    }
+}
+
 fn resolve(root: &Path, file: &Path, target: &str) -> PathBuf {
     let t = target.trim();
     if t.starts_with('/') {
@@ -192,6 +217,19 @@ mod tests {
         let (missing, absolute) = scan(&root);
         assert_eq!(missing, 0, "every committed reference resolves in-repo");
         assert_eq!(absolute, 0, "no absolute path may enter the committed tree");
+    }
+
+    #[test]
+    fn gate_vocab_fixture_is_skipped_but_gate_source_is_scanned() {
+        assert!(is_skipped("src/gate/commit_gate_vocab.json"));
+        assert!(!is_skipped("src/gate/commit_gate.rs"));
+    }
+
+    #[test]
+    fn gitignored_target_is_not_a_broken_reference() {
+        let root = repo_root();
+        let target = root.join("docs/zustand/external-state.md");
+        assert!(is_git_ignored(&root, &target));
     }
 
     #[test]
