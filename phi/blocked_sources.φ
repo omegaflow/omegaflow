@@ -16,7 +16,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 pending
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN 2026-09-21: Globus-Zugang (MAP/fitacf_25/fitacf_30), GCP omegaflow; MAP-Transfer 6.561 Dateien/21,93 GB → data/superdarn/map (Task af68c4f1). FITACF gebaut (sources.φ:9465). RAWACF Globus+PI, Gruppe rawacf nicht beantragt. pending.
+note SuperDARN 2026-09-22: Globus (MAP/fitacf_25/fitacf_30/rawacf); MAP 6.561 Dateien/21,93 GB → data/superdarn/map (Task af68c4f1). FITACF sources.φ:9465. RAWACF gewährt (Mail 1790021001/1790020962), via FRDR kompiliert → sources.φ:8032.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -44,10 +44,9 @@ url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped mit Messung: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
 
 
-blocked key
+pending
 url https://api.le-systeme-solaire.net/rest/bodies/
-note solar-system-open-data REST: HTTP 401 (Bearer) 2026-09-20. Key frei/selbstbedienung: api.le-systeme-solaire.net/en/generatekey.html (200, „Enter your email to get your free API Key"), Token+Zugang kostenlos. E-Mail-Registrierung offen → operator.
-reg https://api.le-systeme-solaire.net/en/generatekey.html
+note 200 mit Bearer (Key gültig); 403 mit rohem GUID — Bearer-Präfix nötig (quoted "Bearer {SOLAR_SYSTEM_OPEN_DATA_KEY}"). Statischer Körper-Katalog (gravity m/s², Masse, Radius). Schritt: Quell-Zeile/Compiler (BodyProperties).
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
