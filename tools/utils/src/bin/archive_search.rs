@@ -583,9 +583,7 @@ fn usage() {
     eprintln!(
         "  --exa       Exa Search API (api.exa.ai), EXA_API_KEY; url + title/author/published/text"
     );
-    eprintln!(
-        "  --linkup    Linkup Search API (api.linkup.so), LINKUP_API_KEY; url + title/text"
-    );
+    eprintln!("  --linkup    Linkup Search API (api.linkup.so), LINKUP_API_KEY; url + title/text");
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
     );

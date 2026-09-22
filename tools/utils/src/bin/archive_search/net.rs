@@ -1286,7 +1286,11 @@ fn exa_results(v: &Json, max: usize) -> Vec<String> {
         if !author.is_empty() {
             line.push_str(&format!("\tauthor: {}", author));
         }
-        let published = flatten(r.get("publishedDate").and_then(|p| p.as_str()).unwrap_or(""));
+        let published = flatten(
+            r.get("publishedDate")
+                .and_then(|p| p.as_str())
+                .unwrap_or(""),
+        );
         if !published.is_empty() {
             line.push_str(&format!("\tpublished: {}", published));
         }
