@@ -105,3 +105,7 @@ url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN000000
 record sky1
 force em
 note FUGIN-12CO-Moment-0 (FUGIN Region 01100+0000): NAXIS=3-VRAD-Cube zu moment-0 (K·m/s je nativem Pixel), kind generic. Negative Rauschpixel sind echte Messungen (signed), nie positiv gegated. Compiler fugin_skymap_compiler.rs.
+
+witness source-riss
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
+note pre-cdn source-Riss (join 2026-09-22): 15 HAPI-Stationen (CLF DLT DUR EBR GUI HRB IPM KOU PHU PPT REU SFS SPT SUA WIC) tragen je zwei source-Namen (zwei Zeugenlinien). Schritt: HAPI info?id=<station>/best-avail/PT1M/xyzf messen, source waehlen.

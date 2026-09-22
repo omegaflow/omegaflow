@@ -14039,3 +14039,154 @@ format fai_kz_obscore
 at sun
 ttl 86400
 note CDN-Asset sha256 65b9e7c8ced57db8dcc683f1c96df3d56cb9acbadb267e663ff27dbc3e5a8d8c (244025 B); ivo://fai.kz/tap obscore 5048 Zeilen image 3003/spectrum 2045 sync-QUERY 200 2026-09-21; em-Beobachtungs-Zeuge S²-Richtung Band em_min/em_max Wert absent
+
+url https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Magnitude va_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.Depth_km va_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag chile_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth chile_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag tohoku_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth tohoku_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+url https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_view/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.LAT
+lon properties.LON
+field properties.Mw_hom sheec_magnitude_mw gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.DEP sheec_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag haiti_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth haiti_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.value pm25_ug_m3 erfc diffusion µg/m3 3600 0.0 0.0
+
+url https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.air_temp air_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
+field properties.press mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
+
+url https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.LATITUDE
+lon properties.LONGITUDE
+field properties.TAVG monthly_tavg_c gaussian-inverse-square thermal C 6.0 0.0 0.0
+
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.mean_intensity geomagnetic_total_field_nt inverse-square em nT 6.0 0.0 0.0
+
+url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.PAW plant_available_water_mm erfc diffusion mm 6.0 0.0 0.0
+field properties.Soil_temp soil_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
+
+url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 60
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.intensity lightning_peak_current_ka inverse-square em kA 6.0 0.0 0.0
+
+url https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.FLOW streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
+field properties.STAGE gage_height_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.discharge1 streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
+
+url https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Temperature sensor_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
+field properties.Reading h2s_ppm erfc diffusion ppm 6.0 0.0 0.0
+
+url https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperature_Sensor/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.temperature sensor_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
+
+url https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.Buoy_lat
+lon properties.Buoy_lon
+field properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square gravity m 6.0 0.0 0.0
+
+url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=champ_magnetic_field_intensity_nt
+field champ_magnetic_field_intensity_nt champ_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/api.le-systeme-solaire.net/solar_system_bodies.bin
+origin https://api.le-systeme-solaire.net/rest/bodies/
+compiler tools/harvest/src/bin/solar_system_open_data_compiler.rs
+format solar_system_bodies
+at earth
+ttl 604800
+note statischer Körper-Katalog (gravity m/s², Masse, Radius, Dichte, Rotation, Achsneigung); gm/omega-Konsument pending (Reader für format ungebaut); Asset magic 0xCF 0x86 0x0A, fixed-stride 232 B/Körper, u64-Präsenzmaske.

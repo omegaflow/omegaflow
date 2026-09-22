@@ -25,7 +25,7 @@ redistribute wdcc_catalog.φ | metadata CC0 (Terms of Use §2: "defaulted under 
 redistribute dataverse_harvard.φ | datasets CC0-by-default (Community Norms §CC0 Waiver); metadata citation reusable | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute dataverse_borealis.φ | datasets CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute cmr_catalog.φ | NASA CMR = US-Gov-Werk, public domain (17 U.S.C. §105); Metadaten-Sätze NASA-erzeugt | https://www.nasa.gov/terms-of-use/
-pending dataone_catalog.φ | /terms → HTTP 401 (Apache Basic Auth), kein Wayback-Snapshot (CDX 0), /about/ + /faq/ ohne Lizenzklausel — Metadaten-Lizenz nicht messbar; Schritt: DataONE-Dokumentation/GitHub | https://www.dataone.org/terms
+pending dataone_catalog.φ | DataONE-Software Apache-2.0 (gemessen 2026-09-22: DataONEorg/d1_common_java LICENSE HTTP 200, 11356 B, "Apache License Version 2.0"; DataONEorg-Repos spdx_id Apache-2.0); /terms + /terms-of-use + /data-policy (www + old) → HTTP 401 "WWW-Authenticate: Basic realm=User Authentication" (Apache), kein Wayback-Snapshot (availability leer, CDX 0), /about/ + /faq/ ohne Lizenzklausel — Metadaten-/Katalog-Lizenz nicht messbar; Schritt: DataONE-CN/Operations-Doku nach Lizenzklausel messen | https://www.dataone.org/terms
 redistribute seanoe_catalog.φ | Datensätze CC-lizenziert (gemessen: LICENCE-Facette CC-BY/CC0/CC-BY-NC/…) | https://www.seanoe.org/
 
 # ── US-Government public domain ──
@@ -173,7 +173,8 @@ redistribute erddap_bcodmo_catalog.φ | CC BY 4.0 (BCO-DMO-Datensätze, s.o. ter
 decline bodc_catalog.φ | "No part of this work may be reproduced or transmitted… without the prior written permission"; "use of BODC digital data set(s) on the World Wide Web/Internet is prohibited"; Weitergabe an Dritte untersagt, Lizenzvertrag erforderlich — © NERC/NOC | https://www.bodc.ac.uk/resources/help_and_hints/using_this_web_site/copyright/
 decline esa_eogateway_data.φ | Portal JS-gerendert; Playwright-Render ohne Lizenz-/Terms-Klausel (2026-09-22), /terms+/legal-notice+/privacy → 404; Datenkatalog © ESA, keine CC/PD-Lizenz | https://earth.esa.int/eogateway/
 decline gfz_igets_catalog.φ | IGETS-Datenbank passwortgeschützt (nur registrierte Nutzer, sftp-only); OAI Identify ohne Rights-Declaration; keine Weitergabe-Lizenz — © GFZ | https://isdc.gfz-potsdam.de/igets-data-base/data-access
-decline gaia_swpc_vokabular.φ | gemischt, ungetrennt: Gaia-Tabellennamen (gea.esac.esa.int) © ESA/DPAC, kein CC → decline; NOAA-SWPC-Produktpfade (services.swpc.noaa.gov) public domain (17 U.S.C. §105, weather.gov/disclaimer) → redistribute; Schritt: Trennung in zwei Dateien | https://gea.esac.esa.int/archive/ (Gaia) / https://www.weather.gov/disclaimer (SWPC)
+decline gaia_swpc_esa_vokabular.φ | Gaia-Tabellennamen (gea.esac.esa.int), © ESA/DPAC, kein CC-Statement → decline | https://gea.esac.esa.int/archive/
+redistribute gaia_swpc_pd_vokabular.φ | NOAA-SWPC-Produktpfade (services.swpc.noaa.gov), public domain (17 U.S.C. §105) | https://www.weather.gov/disclaimer
 
 # Schluss (Auflösung 2026-09-21): 76 pending → 10 redistribute, 59 decline, 7 pending.
 # redistribute: ESO (CC BY 4.0), GAVO/AIP/ARI (CC0), GBIF (CC0/CC-BY), arXiv (CC0),
@@ -184,7 +185,9 @@ decline gaia_swpc_vokabular.φ | gemischt, ungetrennt: Gaia-Tabellennamen (gea.e
 # pending: bcodmo (Policy 404), bodc (Policy 404), esa-eogateway (Portal JS),
 #   gfz (Terms nicht auffindbar), dataone (/terms 401), gaia_swpc (gemischt ESA/NOAA).
 #
-# Folgemessung 2026-09-22: von den 7 pending → 2 redistribute (bcodmo CC BY 4.0,
-#   erddap_bcodmo CC BY 4.0), 4 decline (bodc © NERC/NOC, esa-eogateway © ESA,
-#   gfz_igets © GFZ/Registrierungssperre, gaia_swpc gemischt © ESA + NOAA-SWPC-PD,
-#   ungetrennt), 1 pending (dataone /terms 401 Apache Basic Auth).
+# Folgemessung 2026-09-22: von den 7 pending → 3 redistribute (bcodmo CC BY 4.0,
+#   erddap_bcodmo CC BY 4.0, gaia_swpc_pd NOAA-SWPC PD), 4 decline (bodc © NERC/NOC,
+#   esa-eogateway © ESA, gfz_igets © GFZ/Registrierungssperre, gaia_swpc_esa © ESA),
+#   1 pending (dataone /terms 401 Apache Basic Auth; Software Apache-2.0 gemessen).
+#   gaia_swpc_vokabular.φ 2026-09-22 getrennt in gaia_swpc_esa_vokabular.φ (8 Z.)
+#   + gaia_swpc_pd_vokabular.φ (80 Z.).

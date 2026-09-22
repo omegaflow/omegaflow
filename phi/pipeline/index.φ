@@ -33,7 +33,7 @@
 # ZU PORTIEREN — Queue (die eine Master-Datei + Join-Paar + Drafts)
 # ------------------------------------------------------------------
 pending pipeline/queue/master.φ
-# master.φ am Datenträger ABSENT (2026-09-17) — Re-Derivation offen (13 Alt-Korpora merge).
+# note: absent; Träger archive-root/pipeline-auslese-2026-09-17/stage/master_converted.φ 5206 v6-Blöcke; Legacy-Original omegaflow-legacy/.../queue/master.φ 7603 url; byte-exakte Re-Derivation unnötig (13. Korpus unidentifiziert, Merge one-off)
 verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
 # note: 825 url-Blöcke; Konversion → stage/sources_potential_pre-cdn_9k_richest_converted.φ (776 Blöcke, 6947 Z.); 49 ohne url; pre-cdn_richest_unregistered.txt 729
 verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
@@ -77,25 +77,29 @@ descoped 0 pipeline/catalog/oai_arxiv.φ
 descoped 0 pipeline/catalog/b2find_catalogs_index.φ
 # note: 1082 B2FIND-Datensätze; EUDAT decline (korpora_heim:18); zeigen auf VizieR
 verifiziert 0 pipeline/catalog/b2find_intermagnet_catalog.φ
-# note: 1 Kandidat (BGS HAPI) → stage/b2find_intermagnet_candidates.φ; Fanout-Stationsliste lat/lon fehlt; korpora_heim:19
+# note: 1 Kandidat → stage/b2find_intermagnet_candidates.φ; Probe 2026-09-22: imag-data.bgs.ac.uk GIN hapi/catalog live; Fanout-Stationsliste lat/lon fehlt; korpora_heim:19
 index 0 pipeline/catalog/grind_eogateway_index.φ
 # note: 251 catalog + 68 provider; eigenes Werk (korpora_heim:69); esa_eogateway-Daten decline (korpora_heim:174)
 verifiziert 8 pipeline/catalog/grind_vires_catalog.φ
-# note: 8 Blöcke → stage/grind_vires_catalog_converted.φ; 7 Datensätze bereits in sources.φ, 1 offen (CH_ME_MAG_LR_3)
+# note: 8 Blöcke → stage/grind_vires_catalog_converted.φ; 7 bereits in sources.φ; 1 gemergt 2026-09-22 (CH_ME_MAG_LR_3, ttl 86400)
 verifiziert 17 pipeline/catalog/grind_arcgis_index.φ
-# note: 17 kanonische Blöcke → stage/grind_arcgis_index_converted.φ; Merge in sources.φ offen
+# note: 17 kanonische Blöcke → stage/grind_arcgis_index_converted.φ; 16 gemergt 2026-09-22 (sources.φ +16, ttl 60–86400); 1 Duplikat (Temperature, sources.φ:5986)
 descoped 0 pipeline/catalog/heliocloud_catalog.φ
 # note: CloudCatalog SPA ohne JSON-Route (2026-08-20); S3-Bucket-ID pending; eigenes Werk (korpora_heim:73)
 verifiziert 0 pipeline/catalog/terrapulse_catalog.φ
-# note: 93 Kandidaten → stage/terrapulse_candidates.φ; 373 decline; eigenes Werk (korpora_heim:67)
+# note: 93 Kandidaten → stage/terrapulse_candidates.φ; Probe 2026-09-22: 33 live, 60 dead (404, meist NCEI hourly_precip); 373 decline; eigenes Werk (korpora_heim:67)
 verifiziert 0 pipeline/catalog/esa_geomagnetic_catalog.φ
-# note: 1 Kandidat → stage/esa_geomagnetic_candidates.φ; 14 decline; eigenes Werk (korpora_heim:71)
+# note: 1 Kandidat → stage/esa_geomagnetic_candidates.φ; Probe 2026-09-22: imag-data.bgs.ac.uk GIN_V1 hapi/data live; 14 decline; eigenes Werk (korpora_heim:71)
 verifiziert 0 pipeline/catalog/archeology_gaps_index.φ
-# note: 54 Kandidaten → stage/archeology_gaps_candidates.φ; 22 decline; eigenes Werk (korpora_heim:64)
+# note: 54 Kandidaten → stage/archeology_gaps_candidates.φ; Probe 2026-09-22: 35 live, 18 dead, 1 blocked key (api.le-systeme-solaire.net); 22 decline; eigenes Werk (korpora_heim:64)
 descoped 0 pipeline/catalog/arcgis_catalog.φ
 # note: 3 Kandidaten; Esri commercial decline (korpora_heim:166)
 verifiziert 0 pipeline/catalog/copernicus_catalog.φ
-# note: 3 Kandidaten → stage/copernicus_candidates.φ; 3 decline; Copernicus free/full/open (korpora_heim:56)
+# note: 3 Kandidaten → stage/copernicus_candidates.φ; Probe 2026-09-22: 2 live, 1 dead (catalogue.marine.copernicus.eu); 3 decline; Copernicus free/full/open (korpora_heim:56)
+index 0 pipeline/catalog/gaia_swpc_esa_vokabular.φ
+# note: 7 Gaia-TAP-Tabellen; © ESA/DPAC decline; gaia_swpc_vokabular.φ 2026-09-22 getrennt (korpora_heim:176)
+index 0 pipeline/catalog/gaia_swpc_pd_vokabular.φ
+# note: 78 NOAA-SWPC-Produktpfade; NOAA PD redistribute; gaia_swpc_vokabular.φ 2026-09-22 getrennt (korpora_heim:177)
 index 0 pipeline/catalog/provider_links.φ
 # note: 46 Provider mit Original-Link; eigenes Werk (korpora_heim:65)
 descoped 0 pipeline/catalog/rpw_datacenter_catalog.φ
