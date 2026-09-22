@@ -23,6 +23,7 @@ pub const MODES: &[&str] = &[
     "librs",
     "brave",
     "mwmbl",
+    "marginalia",
     "datacite",
     "zenodo",
     "isc",

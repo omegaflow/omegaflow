@@ -1090,6 +1090,72 @@ fn mwmbl_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+pub fn marginalia_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://api.marginalia-search.com/public/search/{}?count=10",
+        urlencode(query)
+    );
+    let headers = [
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+    ];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = marginalia_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Marginalia carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Marginalia response carries no JSON".to_string()],
+        },
+        Some(f) if f.status == Some(503) => {
+            vec!["pending — Marginalia HTTP 503 (shared rate limit)".to_string()]
+        }
+        Some(f) => vec![format!("pending — Marginalia HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn marginalia_quality(r: &Json) -> String {
+    match r.get("quality") {
+        Some(Json::Str(s)) => s.clone(),
+        Some(Json::Num(n)) if n.is_finite() => format!("{n}"),
+        _ => String::new(),
+    }
+}
+
+fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let description = flatten(r.get("description").and_then(|d| d.as_str()).unwrap_or(""));
+        let quality = marginalia_quality(r);
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if !quality.is_empty() {
+            line.push_str(&format!("\tquality: {}", quality));
+        }
+        if !description.is_empty() {
+            line.push_str(&format!("\tdescription: {}", description));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
 pub fn librs_lines(query: &str) -> Vec<String> {
     let url = format!("https://lib.rs/search?q={}", urlencode(query));
     let headers = [
@@ -1196,6 +1262,7 @@ const QUERY_MODES: &[&str] = &[
     "crates",
     "librs",
     "mwmbl",
+    "marginalia",
     "datacite",
     "zenodo",
     "wayback",
@@ -1320,6 +1387,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
             }
         }
         "mwmbl" => mwmbl_lines(query, max),
+        "marginalia" => marginalia_lines(query, max),
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
@@ -1406,6 +1474,7 @@ mod tests {
             "crates",
             "librs",
             "mwmbl",
+            "marginalia",
             "datacite",
             "zenodo",
             "wayback",
@@ -1457,6 +1526,35 @@ mod tests {
         assert_eq!(
             lines[1],
             "url https://example.org/b\ttitle: B\tdescription: text"
+        );
+    }
+
+    #[test]
+    fn marginalia_results_carry_url_title_description_quality() {
+        let body = r#"{
+            "license":"CC-BY-NC-SA 4.0",
+            "query":"interplanetary scintillation",
+            "page":1,
+            "pages":1,
+            "results":[
+                {"url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+                 "title":"Interplanetary scintillation",
+                 "description":"In astronomy, interplanetary scintillation",
+                 "quality":0.75},
+                {"url":"","title":"no url","description":"x","quality":"0.1"},
+                {"url":"https://example.org/b","title":"B","description":"text","quality":"high"}
+            ]
+        }"#;
+        let v = json::parse(body).expect("json");
+        let lines = marginalia_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tquality: 0.75\tdescription: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(
+            lines[1],
+            "url https://example.org/b\ttitle: B\tquality: high\tdescription: text"
         );
     }
 
