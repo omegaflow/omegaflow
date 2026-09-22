@@ -368,6 +368,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_SDARN_V => Some("superdarn_fitacf_los_velocity_ms"),
             _ => None,
         },
+        "superdarn_rawacf" => match comp {
+            crate::geo::COMP_SDARN_POWER => Some("superdarn_rawacf_lag0_power_db"),
+            _ => None,
+        },
         "fdsn_waveform" => match comp {
             crate::geo::COMP_FDSN_BHZ => Some("fdsn_waveform_bhz_ms"),
             _ => None,

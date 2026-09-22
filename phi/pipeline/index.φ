@@ -9,6 +9,7 @@
 # Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt | index | descoped
 # index = Tür-Katalog: geerntet, ist selbst keine Quelle, bleibt als Adapter-Route zu SI-Daten (2026-08-20).
 # Katalog-Inventare tragen 0 url-Blöcke (Inventar, keine Block-Drafts) — gemessen.
+# Ausnahme: grind_arcgis_index (17) + grind_vires_catalog (8) tragen Block-Drafts.
 # Eine Zeile = eine Datei oder ein Korpus.
 #
 # AUSLAGERUNG 2026-09-17 (Entscheid-Folge 38): nach
@@ -33,41 +34,72 @@
 # ------------------------------------------------------------------
 pending pipeline/queue/master.φ
 # master.φ am Datenträger ABSENT (2026-09-17) — Re-Derivation offen (13 Alt-Korpora merge).
-ausstehend 824 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
-ausstehend 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
+verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
+# note: 825 url-Blöcke; Konversion → stage/sources_potential_pre-cdn_9k_richest_converted.φ (776 Blöcke, 6947 Z.); 49 ohne url; pre-cdn_richest_unregistered.txt 729
+verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
+# note: 63 url-Blöcke → stage/sources_potential_pre-cdn_params_converted.φ (430 Z.); 41 params fehlen in richest (pre-cdn_params_missing_in_richest.txt)
 # richest+params = Join-Quelle der Lost-Blocks.
 
 # ------------------------------------------------------------------
 # RECHERCHE-BESTAND — Katalog-Inventare (Quellen für neue Blöcke; 0 url-Blöcke)
 # ------------------------------------------------------------------
-ausstehend 0 pipeline/catalog/tap_index.φ
-ausstehend 0 pipeline/catalog/tap_index_ari.φ
-ausstehend 0 pipeline/catalog/tap_index_exoarchive.φ
-ausstehend 0 pipeline/catalog/tap_index_gavo.φ
-ausstehend 0 pipeline/catalog/tap_index_heasarc.φ
-ausstehend 0 pipeline/catalog/tap_index_irsa.φ
-ausstehend 0 pipeline/catalog/tap_index_eso.φ
-ausstehend 0 pipeline/catalog/tap_index_cadc.φ
-ausstehend 0 pipeline/catalog/tap_index_mast.φ
-ausstehend 0 pipeline/catalog/tap_index_chandra.φ
-ausstehend 0 pipeline/catalog/erddap_bcodmo_catalog.φ
-ausstehend 0 pipeline/catalog/erddap_noaa_pmel_catalog.φ
-ausstehend 0 pipeline/catalog/dataverse_harvard.φ
-ausstehend 0 pipeline/catalog/dataverse_borealis.φ
-ausstehend 0 pipeline/catalog/oai_arxiv.φ
-ausstehend 0 pipeline/catalog/b2find_catalogs_index.φ
-ausstehend 0 pipeline/catalog/b2find_intermagnet_catalog.φ
-ausstehend 0 pipeline/catalog/grind_eogateway_index.φ
-ausstehend 8 pipeline/catalog/grind_vires_catalog.φ
-ausstehend 17 pipeline/catalog/grind_arcgis_index.φ
-ausstehend 0 pipeline/catalog/heliocloud_catalog.φ
-ausstehend 0 pipeline/catalog/terrapulse_catalog.φ
-ausstehend 0 pipeline/catalog/esa_geomagnetic_catalog.φ
-ausstehend 0 pipeline/catalog/archeology_gaps_index.φ
-ausstehend 0 pipeline/catalog/arcgis_catalog.φ
-ausstehend 0 pipeline/catalog/copernicus_catalog.φ
-ausstehend 0 pipeline/catalog/provider_links.φ
-ausstehend 0 pipeline/catalog/rpw_datacenter_catalog.φ
+# Zustand 2026-09-22: klassifiziert + Extraktion nach stage/ (Block-Drafts/Kandidaten).
+descoped 0 pipeline/catalog/tap_index.φ
+# note: Datei absent am Datenträger (gemessen 2026-09-22); korpora_heim:76 decline CDS/VizieR
+index 0 pipeline/catalog/tap_index_ari.φ
+# note: 203 TAP-Tabellen; GAVO/ARI CC0 (korpora_heim:91); gaia.ari.uni-heidelberg.de/tap/sync
+index 0 pipeline/catalog/tap_index_exoarchive.φ
+# note: 46 TAP-Tabellen; NASA/IPAC PD (korpora_heim:43); exoplanetarchive.ipac.caltech.edu/TAP/sync
+index 0 pipeline/catalog/tap_index_gavo.φ
+# note: 271 TAP-Tabellen; GAVO CC0 (korpora_heim:60); dc.g-vo.org/tap/sync
+descoped 0 pipeline/catalog/tap_index_heasarc.φ
+# note: 1 Zeile, 0 Tabellen — leeres Inventar (gemessen 2026-09-22); korpora_heim:41
+index 0 pipeline/catalog/tap_index_irsa.φ
+# note: 995 TAP-Tabellen; NASA/IPAC PD (korpora_heim:42); irsa.ipac.caltech.edu/TAP/sync
+index 0 pipeline/catalog/tap_index_eso.φ
+# note: 59 TAP-Tabellen; ESO CC-BY-4.0 (korpora_heim:85); archive.eso.org/tap_obs/sync
+descoped 0 pipeline/catalog/tap_index_cadc.φ
+# note: 21 TAP-Tabellen; Lizenz decline CADC/NRC (korpora_heim:134) — kein CDN-Manifest
+index 0 pipeline/catalog/tap_index_mast.φ
+# note: 15 TAP-Tabellen; STScI/NASA PD (korpora_heim:44)
+index 0 pipeline/catalog/tap_index_chandra.φ
+# note: 11 TAP-Tabellen; NASA/CXC PD (korpora_heim:46)
+index 0 pipeline/catalog/erddap_bcodmo_catalog.φ
+# note: 1000 ERDDAP-Datasets; BCO-DMO CC-BY-4.0 (korpora_heim:172); Basis-URL nicht in Datei
+index 0 pipeline/catalog/erddap_noaa_pmel_catalog.φ
+# note: 1000 ERDDAP-Datasets; NOAA PD (korpora_heim:32); Basis-URL nicht in Datei
+descoped 0 pipeline/catalog/dataverse_harvard.φ
+# note: Datei absent am Datenträger (gemessen 2026-09-22); korpora_heim:25 redistribute
+descoped 0 pipeline/catalog/dataverse_borealis.φ
+# note: Datei absent am Datenträger (gemessen 2026-09-22); korpora_heim:26 redistribute
+descoped 0 pipeline/catalog/oai_arxiv.φ
+# note: 1300 arXiv-Metadaten (OAI-Identifier|Titel); kein Feld/URL; arXiv CC0 (korpora_heim:162)
+descoped 0 pipeline/catalog/b2find_catalogs_index.φ
+# note: 1082 B2FIND-Datensätze; EUDAT decline (korpora_heim:18); zeigen auf VizieR
+verifiziert 0 pipeline/catalog/b2find_intermagnet_catalog.φ
+# note: 1 Kandidat (BGS HAPI) → stage/b2find_intermagnet_candidates.φ; Fanout-Stationsliste lat/lon fehlt; korpora_heim:19
+index 0 pipeline/catalog/grind_eogateway_index.φ
+# note: 251 catalog + 68 provider; eigenes Werk (korpora_heim:69); esa_eogateway-Daten decline (korpora_heim:174)
+verifiziert 8 pipeline/catalog/grind_vires_catalog.φ
+# note: 8 Blöcke → stage/grind_vires_catalog_converted.φ; 7 Datensätze bereits in sources.φ, 1 offen (CH_ME_MAG_LR_3)
+verifiziert 17 pipeline/catalog/grind_arcgis_index.φ
+# note: 17 kanonische Blöcke → stage/grind_arcgis_index_converted.φ; Merge in sources.φ offen
+descoped 0 pipeline/catalog/heliocloud_catalog.φ
+# note: CloudCatalog SPA ohne JSON-Route (2026-08-20); S3-Bucket-ID pending; eigenes Werk (korpora_heim:73)
+verifiziert 0 pipeline/catalog/terrapulse_catalog.φ
+# note: 93 Kandidaten → stage/terrapulse_candidates.φ; 373 decline; eigenes Werk (korpora_heim:67)
+verifiziert 0 pipeline/catalog/esa_geomagnetic_catalog.φ
+# note: 1 Kandidat → stage/esa_geomagnetic_candidates.φ; 14 decline; eigenes Werk (korpora_heim:71)
+verifiziert 0 pipeline/catalog/archeology_gaps_index.φ
+# note: 54 Kandidaten → stage/archeology_gaps_candidates.φ; 22 decline; eigenes Werk (korpora_heim:64)
+descoped 0 pipeline/catalog/arcgis_catalog.φ
+# note: 3 Kandidaten; Esri commercial decline (korpora_heim:166)
+verifiziert 0 pipeline/catalog/copernicus_catalog.φ
+# note: 3 Kandidaten → stage/copernicus_candidates.φ; 3 decline; Copernicus free/full/open (korpora_heim:56)
+index 0 pipeline/catalog/provider_links.φ
+# note: 46 Provider mit Original-Link; eigenes Werk (korpora_heim:65)
+descoped 0 pipeline/catalog/rpw_datacenter_catalog.φ
+# note: superseded — RPW-BIA-E-Feld in sources.φ:1139; eigenes Werk (korpora_heim:72)
 # Katalog-Korpus 2026-09-17: 137 .φ-Inventare + 8 Datenverzeichnisse
 # (celestrak_eop, cosmic_wetprf, ncei_goes_xrs, ncei_ssi, noaa_gk2a, noaa_goes16, noaa_wod, twomass).
 
