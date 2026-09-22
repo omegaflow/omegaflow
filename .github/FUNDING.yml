@@ -2,7 +2,7 @@
 # No obligation, no deliverable — support only.
 # Activate by uncommenting once the account exists.
 
-github: [omegaflow]
+# github: [omegaflow]  # measured 2026-09-22: hasSponsorsListing=false — activate once the listing exists
 
 # open_collective: omegaflow
 # patreon: omegaflow
