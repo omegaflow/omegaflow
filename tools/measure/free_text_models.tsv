@@ -1,22 +1,22 @@
-cloudflare-workers-ai	@cf/aisingapore/gemma-sea-lion-v4-27b-it	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/deepseek-ai/deepseek-r1-distill-qwen-32b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/google/gemma-2b-it-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/google/gemma-7b-it-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta-llama/llama-2-7b-chat-hf-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta/llama-3.1-8b-instruct-fp8	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta/llama-3.2-11b-vision-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta/llama-3.2-1b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta/llama-3.2-3b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/meta/llama-guard-3-8b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/mistral/mistral-7b-instruct-v0.2-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/qwen/qwen2.5-coder-32b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-cloudflare-workers-ai	@cf/qwen/qwq-32b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN
-groq	allam-2-7b	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	canopylabs/orpheus-arabic-saudi	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	canopylabs/orpheus-v1-english	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	meta-llama/llama-prompt-guard-2-22m	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	meta-llama/llama-prompt-guard-2-86m	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	whisper-large-v3	https://api.groq.com/openai/v1	GROQ_API_KEY
-groq	whisper-large-v3-turbo	https://api.groq.com/openai/v1	GROQ_API_KEY
-kilo	z-ai/glm-5.2:free	https://api.kilo.ai/api/gateway	KILO_API_KEY
-openrouter	z-ai/glm-5.2:free	https://openrouter.ai/api/v1	OPENROUTER_API_KEY
+cloudflare-workers-ai	@cf/aisingapore/gemma-sea-lion-v4-27b-it	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/deepseek-ai/deepseek-r1-distill-qwen-32b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/google/gemma-2b-it-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/google/gemma-7b-it-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta-llama/llama-2-7b-chat-hf-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta/llama-3.1-8b-instruct-fp8	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta/llama-3.2-11b-vision-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta/llama-3.2-1b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta/llama-3.2-3b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/meta/llama-guard-3-8b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/mistral/mistral-7b-instruct-v0.2-lora	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/qwen/qwen2.5-coder-32b-instruct	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+cloudflare-workers-ai	@cf/qwen/qwq-32b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http
+groq	allam-2-7b	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	canopylabs/orpheus-arabic-saudi	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	canopylabs/orpheus-v1-english	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	meta-llama/llama-prompt-guard-2-22m	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	meta-llama/llama-prompt-guard-2-86m	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	whisper-large-v3	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+groq	whisper-large-v3-turbo	https://api.groq.com/openai/v1	GROQ_API_KEY	http
+kilo	z-ai/glm-5.2:free	https://api.kilo.ai/api/gateway	KILO_API_KEY	http
+openrouter	z-ai/glm-5.2:free	https://openrouter.ai/api/v1	OPENROUTER_API_KEY	http
