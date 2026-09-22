@@ -1624,6 +1624,33 @@ mod tests {
         (a, b)
     }
 
+    fn aperiodic_driver(n: usize, phi: f64, scale: f64, rng: &mut u64) -> Vec<f32> {
+        let mut v = Vec::with_capacity(n);
+        let mut x = 0.0f64;
+        for _ in 0..n {
+            x = phi * x + scale * (next_rng(rng) * 2.0 - 1.0);
+            v.push(x as f32);
+        }
+        v
+    }
+
+    fn rich_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
+        let a = aperiodic_driver(n, 0.9, 1.5, rng);
+        let mut b = vec![0.0f32; n];
+        let mut x = 0.0f64;
+        for t in 0..n {
+            x = 0.5 * x
+                + if t >= delay {
+                    0.9 * a[t - delay] as f64
+                } else {
+                    0.0
+                }
+                + (next_rng(rng) * 0.02 - 0.01);
+            b[t] = x as f32;
+        }
+        (a, b)
+    }
+
     fn strong_pair_cell(a: Vec<f32>, b: Vec<f32>) -> (Vec<f64>, f64) {
         let triads = vec![(
             "G01".to_string(),
@@ -1722,5 +1749,20 @@ mod tests {
                 ),
             }
         }
+    }
+
+    #[ignore = "print-only positive control: rich aperiodic driver through the same 0.9/delay-8 recursion — runs in hyperscanning-te.yml"]
+    #[test]
+    fn positive_control_rich_aperiodic_driver_pair() {
+        let mut rng = SEED ^ 0x0C0F_FEE1;
+        let (a, b) = rich_pair_fixture(800, 8, &mut rng);
+        let (dists, observed) = strong_pair_cell(a, b);
+        let p99 = percentile(&dists, 99.0);
+        println!(
+            "positive control: te={} p99={} clears={}",
+            fmt_value(Some(observed)),
+            fmt_value(p99),
+            p99.map_or("pending", |thr| if observed > thr { "yes" } else { "no" })
+        );
     }
 }
