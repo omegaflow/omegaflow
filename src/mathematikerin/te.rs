@@ -3347,11 +3347,11 @@ mod tests {
         let mut dr = vec![0.0f64; n];
         let mut di = vec![0.0f64; n];
         for k in 0..n {
-            for t in 0..n {
+            for (t, &xt) in x.iter().enumerate() {
                 let ang = -2.0 * std::f64::consts::PI * (k * t) as f64 / n as f64;
                 let (s, c) = ang.sin_cos();
-                dr[k] += x[t] * c;
-                di[k] += x[t] * s;
+                dr[k] += xt * c;
+                di[k] += xt * s;
             }
         }
         for k in 0..n {
@@ -4654,7 +4654,27 @@ mod tests {
 
     #[test]
     fn gate_fpr_autocorrelation_coherent_phase_null_binned_n_surr_200() {
-        gate_fpr_autocorr(TeNull::CoherentPhase, TeEstimator::Binned);
+        let cells = gate_fpr_cells_from(
+            150,
+            &[
+                (0.0f32, 0usize, 100usize),
+                (0.5f32, 0usize, 100usize),
+                (0.9f32, 0usize, 100usize),
+                (0.0f32, 4usize, 21usize),
+                (0.5f32, 4usize, 21usize),
+                (0.9f32, 4usize, 21usize),
+            ],
+            GateParams {
+                null: TeNull::CoherentPhase,
+                est: TeEstimator::Binned,
+                max_lag: 2,
+                null_lag: 12,
+                bins: 4,
+                block: 0,
+                n_surr: 200,
+            },
+        );
+        gate_fpr_autocorr_assert(&cells);
     }
 
     #[test]
