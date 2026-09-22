@@ -4284,14 +4284,26 @@ mod tests {
         };
         assert_eq!(bytes[8], 2, "the DLS witness superblock is v2");
 
-        let file = Hdf5File::parse(&bytes).unwrap();
         let fetch = |off: u64, len: u64| {
             bytes
                 .get(off as usize..(off + len) as usize)
                 .map(|s| s.to_vec())
         };
 
-        let mut v2_roots = 0usize;
+        let mut chunk_headers: Vec<u64> = Vec::new();
+        for (i, w) in bytes.windows(6).enumerate() {
+            if &w[..4] == b"BTHD" && w[5] == 10 {
+                chunk_headers.push(i as u64);
+            }
+        }
+        assert_eq!(
+            chunk_headers.len(),
+            6,
+            "the DLS witness carries six BTHD type-10 chunk-index headers"
+        );
+
+        let file = Hdf5File::parse(&bytes).unwrap();
+        let mut reachable_v2 = 0usize;
         for obj in file.objects.values() {
             let Some(Hdf5Layout::Chunked { btree, .. }) = obj.layout.as_ref() else {
                 continue;
@@ -4299,28 +4311,30 @@ mod tests {
             if *btree == UNDEF {
                 continue;
             }
-            let ds = obj
-                .dataspace
-                .as_ref()
-                .expect("a chunked object carries a dataspace");
-            let rank = ds.dims.len();
-            let filtered = !obj.filters.is_empty();
-
             let mut reader = Hdf5WindowReader::new(&bytes, fetch);
             let head = reader
                 .read(*btree, 24)
                 .expect("the chunk index head lies outside the witness");
-            if head.len() < 4 || &head[..4] != b"BTHD" {
-                continue;
+            if head.len() >= 4 && &head[..4] == b"BTHD" {
+                reachable_v2 += 1;
             }
+        }
+        assert_eq!(
+            reachable_v2, 0,
+            "no reachable dataset indexes its chunks with a v2 BTHD header"
+        );
+
+        for addr in &chunk_headers {
+            let mut reader = Hdf5WindowReader::new(&bytes, fetch);
             let (typ, hdr) =
-                parse_btree_header(&mut reader, *btree).expect("the v2 chunk header unread");
+                parse_btree_header(&mut reader, *addr).expect("the v2 chunk header unread");
             assert_eq!(typ, 10, "the DLS v2 chunk index node type is 10");
             assert!(
                 hdr.total_records > 0,
                 "the DLS v2 chunk index declares no records"
             );
-            let (recs, v1_index) = chunk_records_with(&mut reader, *btree, rank, filtered)
+            let dims = (hdr.record_size - 8) / 8;
+            let (recs, v1_index) = chunk_records_with(&mut reader, *addr, dims, false)
                 .expect("the v2 chunk records returned void");
             assert!(!v1_index, "the DLS chunk index walks the v2 record path");
             assert!(
@@ -4335,12 +4349,7 @@ mod tests {
                     bytes.len()
                 );
             }
-            v2_roots += 1;
         }
-        assert_eq!(
-            v2_roots, 6,
-            "the DLS witness carries six BTHD type-10 chunk roots"
-        );
     }
 
     #[test]

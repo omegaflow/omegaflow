@@ -2114,7 +2114,7 @@ pub fn betti0_persistence(series: &[f64], dim: usize) -> Option<Betti0Verdict> {
     })
 }
 
-const TE_KSG_K: usize = 4;
+pub(crate) const TE_KSG_K: usize = 4;
 
 pub fn transfer_entropy_embedded_kde(
     x: &[f64],
