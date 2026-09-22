@@ -18,7 +18,7 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   Same-day handovers with similar slugs may coexist (in the archive or live) —
   the name carries the day and the line, and the next session reads the one it
   needs. A line handover's slug is uniform: `<line>-folge<N>` — line one of
-  `entscheid` | `bau` | `ernte` | `forschung`, N the line's running sequence; a
+  `mountain` | `mycelium` | `sensory` | `future` | `river`, N the line's running sequence; a
   descriptive slug on a line handover (e.g. `<line>-odf-voyager`) is drift. A
   pre-line topic handover (historical, before the line structure) keeps its
   descriptive slug — it has no line and no sequence to name.
