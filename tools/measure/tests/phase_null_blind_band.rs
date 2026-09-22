@@ -61,10 +61,8 @@ fn phase_null_pair(series: &[&[f32]], seed: u64, s: usize, t: usize) -> Vec<Vec<
 }
 
 fn coherent_null_pair(series: &[&[f32]], seed: u64, s: usize, t: usize) -> Vec<Vec<f32>> {
-    let mut rng = seed
-        ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
-        ^ ((t as u64) << 20)
-        ^ 0xA5A5_5A5A;
+    let mut rng =
+        seed ^ (s as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ ((t as u64) << 20) ^ 0xA5A5_5A5A;
     coherent_phase_surrogates(series, &mut rng)
 }
 
@@ -212,7 +210,17 @@ fn phase_null_blind_band_stochastic_pair() {
                 e.1 = e.1.max(*p);
             }
         }
-        coverage_report(&format!("{label} null driver A"), &obs_driver, &env_driver, n);
-        coverage_report(&format!("{label} null target B"), &obs_target, &env_target, n);
+        coverage_report(
+            &format!("{label} null driver A"),
+            &obs_driver,
+            &env_driver,
+            n,
+        );
+        coverage_report(
+            &format!("{label} null target B"),
+            &obs_target,
+            &env_target,
+            n,
+        );
     }
 }
