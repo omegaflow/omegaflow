@@ -99,6 +99,7 @@ struct Model {
     id: String,
     base: String,
     env_var: String,
+    channel: String,
 }
 
 struct Resp {
@@ -389,7 +390,13 @@ fn parse_model(line: &str) -> Option<Model> {
     let id = it.next()?.to_string();
     let base = it.next()?.to_string();
     let env_var = it.next()?.to_string();
-    if provider.is_empty() || id.is_empty() || base.is_empty() || env_var.is_empty() {
+    let channel = it.next()?.to_string();
+    if provider.is_empty()
+        || id.is_empty()
+        || base.is_empty()
+        || env_var.is_empty()
+        || channel.is_empty()
+    {
         return None;
     }
     Some(Model {
@@ -397,14 +404,23 @@ fn parse_model(line: &str) -> Option<Model> {
         id,
         base,
         env_var,
+        channel,
     })
 }
 
+fn is_http(m: &Model) -> bool {
+    m.channel != "client"
+}
+
 fn load_models() -> Vec<Model> {
-    let mut raw: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
+    let mut raw: Vec<Model> = MODELS_TSV
+        .lines()
+        .filter_map(parse_model)
+        .filter(is_http)
+        .collect();
     let extra_path = format!("{}/free_text_models.tsv", env!("CARGO_MANIFEST_DIR"));
     if let Ok(extra) = std::fs::read_to_string(&extra_path) {
-        for m in extra.lines().filter_map(parse_model) {
+        for m in extra.lines().filter_map(parse_model).filter(is_http) {
             raw.push(m);
         }
     }
@@ -1064,6 +1080,7 @@ mod tests {
             id: "x".into(),
             base: "b".into(),
             env_var: "TEXT_PROBE_TEST_KEY".into(),
+            channel: "http".into(),
         };
         unsafe { env::set_var("TEXT_PROBE_TEST_KEY", "exact-key") };
         assert_eq!(key_for(&m).as_deref(), Some("exact-key"));
@@ -1072,5 +1089,23 @@ mod tests {
             ..m.clone()
         };
         assert_eq!(key_for(&other), None);
+    }
+
+    #[test]
+    fn http_path_skips_client_channel_rows() {
+        let client = match parse_model(
+            "opencode\tbig-pickle\thttps://opencode.ai/zen/v1\tOPENCODE_API_KEY\tclient",
+        ) {
+            Some(m) => m,
+            None => panic!("client tsv line carries no model"),
+        };
+        let http = match parse_model(
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp",
+        ) {
+            Some(m) => m,
+            None => panic!("http tsv line carries no model"),
+        };
+        assert!(!is_http(&client));
+        assert!(is_http(&http));
     }
 }
