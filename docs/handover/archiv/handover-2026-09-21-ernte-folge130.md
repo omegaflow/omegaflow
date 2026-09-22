@@ -3,7 +3,7 @@
   session: Ernte-Folge 130
   class: handover
   date: 2026-09-21
-  sha256: abd596ce773ede444a98dabda8aaa37eecd860ef5dd0db4a9732b371c0de5226
+  sha256: 0e1d27fd99c4b87d62e5fab9a99310594e8e3c793a98ec31776a2b2f49d6625e
   status: live
 -->
 # Handover — Ernte-Folge 130 (2026-09-21)
@@ -23,9 +23,7 @@ Wartestellungen sind kein Auswahlpunkt.
 
 - **HEAD** `65c8cacf` beim Start (geteilter Baum, bau/entscheid/forschung
   committen gleichzeitig); `origin/main` == HEAD. Fremd uncommittet: forschung
-  folge132 (neu), entscheid (`survey-funding-erkundung.md`, `zustand/external-state.md`,
-  `post.md` mit 1× `An entscheid` Riss 4), `register_lookup.rs` (Enumeration-Token-Fix).
-- **Postfach** — kein neues `An ernte`; letzter Eingang `1789973288` (Tuxedo).
+  `post.md` mit 1× `An entscheid` (Riss 4), `register_lookup.rs` (Enumeration-Token-Fix).
 - **CI** — `ps1-cdn 35569486280` success (final combine nicht erreicht);
   `demeter-cdn 35567568429` queued; `radnet-cdn 35573513812`/`ci-check 35574757717`
   in_progress; `hyperscanning-te` failure (Forschung). Watchdog 10:11.
@@ -158,7 +156,6 @@ Wartestellungen sind kein Auswahlpunkt.
   Handover `handover-2026-09-21-ernte-folge130.md`, Move
   `handover-2026-09-21-ernte-folge129.md` → `archiv/`.
 - **Fremd (nicht angetastet):** forschung folge132 (neu), entscheid
-  (`survey-funding-erkundung.md`, `zustand/external-state.md`, `post.md`),
   `tools/register/src/bin/register_lookup.rs`.
 - Nie ein nacktes `git commit`; committet wird pfad-begrenzt.
 

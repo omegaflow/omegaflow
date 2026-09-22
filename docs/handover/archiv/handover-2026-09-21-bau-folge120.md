@@ -3,7 +3,7 @@
   session: Bau-Folge 120
   class: handover
   date: 2026-09-21
-  sha256: c3a5bc9938c0d2a5c33bcfc41b0e7ae17cd3bc4d1607d3c9b0a360f6f743c299
+  sha256: 29711ca2bf13b69fbfd6afef23be7bccf378118d4950a7b71cdbf1def25b890d
   status: live
 -->
 # Handover — Bau-Folge 120 (2026-09-21)
@@ -23,8 +23,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **HEAD** `839746c2` == `origin/main`. Der Baum trägt fremde uncommittete Arbeit
   (HFRNet: `src/archivar/mod.rs` + `hfrnet_rtv.rs` + `hfrnet_compiler.rs` +
   `hfrnet-cdn.yml`; ferner te/hyperscanning/register) — nicht angefasst.
-- **Postfach** — letzter Ledger-Eingang `1789973288` (Tuxedo-decline), zitiert
-  (`external-state.md:20`); kein neuer Eingang, nicht fällig.
 - **CI** — `radnet-cdn` `35573513812` @`ab8ad28c` in_progress (unverändert seit
   07:33:30Z); `te-gate` `35572569205` pending; `hyperscanning-te` failure
   (Forschung-Linie). Watchdog-Snapshot zitiert, kein Poll.
@@ -74,7 +72,6 @@ Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **Status:** `operator-gebunden` | **Bindung:** `operator`
 - **Lage:** Ox64 zugesagt, Presence-Hardware ungebaut; Spec
   `docs/specs/mantis-shrimp-bom.md` + BOM liegen; entscheid-folge73: kein
-  Förderweg offen.
 - **Blockade:** physische Teile / Operator-Wort.
 - **Braucht:** Operator-Entscheid (via entscheid-Linie).
 

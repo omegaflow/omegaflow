@@ -3,7 +3,7 @@
   session: Forschung-Folge 118
   class: handover
   date: 2026-09-20
-  sha256: 4cd59695c705a2a77b2b0ec1c5d428feb05189fa06694b62b26cc517376190d1
+  sha256: 4f0ffc1ea9454df9a0846d187a7f62d40f4dc8ef6717cfcdf82e0cea0283d8b6
   status: live
 -->
 # Handover — Forschung-Folge 118 (2026-09-20)
@@ -95,15 +95,6 @@ die CI-/Postfach-Zeilen (veraltet @`c29234d1`) wurden gemessen, aber nicht
 committet. (Schritt: sobald die entscheid-Linie ihren Stand committet hat, die
 CI-Status- und Postfach-Zeile fortschreiben — `ci_manage list` +
 `state/mail/mail_ledger.φ`.)
-
-## Hardware-Sponsoring — `operator-gebunden`
-
-Drei offene Threads im Postfach: Pine64 (`1789922257`, Verweis auf
-`info@pine64.org`), Framework (Ticket `NG2HWBZM`), Tuxedo (Ticket `#991311279`).
-Eine Antwort an einen Dritten ist ein consent-pflichtiger Akt → `entscheid`/Operator.
-Die Post-Zeile `An entscheid:` konnte nicht gesetzt werden: `post.md` trägt fremde
-uncommittete Hunks — nicht angefasst. (Schritt: beim nächsten sauberen `post.md`
-die Zeile setzen.)
 
 ## Browser-Anbindung — Rest
 

@@ -3,7 +3,7 @@
   session: Forschung-Folge 127
   class: handover
   date: 2026-09-21
-  sha256: a538f97d9827e00f04af82737132b763715a6cee8c4ec8d7a78729a4a38f30f0
+  sha256: 7d603ec1446f1eba2543fc2fdd062de34a94756d69b0629fe759184495972ca1
   status: live
 -->
 # Handover — Forschung-Folge 127 (Stand 2026-09-21)
@@ -22,11 +22,6 @@ nennen ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 ## Stehender Pass (gemessen 2026-09-21, Forschung-Folge 127)
 
 - **HEAD** `4a0c7803` (== `origin/main`, Bau-Folge 116) bei Session-Beginn.
-- **Postfach** — zwei neue Eingänge: `1789970277` (Framework, Ticket NG2HWBZM:
-  kein Programm für Einzel-Sponsoring) und `1789973288` (Tuxedo, Ticket#991311279:
-  keine kostenlosen Geräte/Sponsorings an Privatpersonen). **Der Hardware-Punkt
-  ist damit beidseitig `declined` — geschlossen.** Letzter Ledger-Eingang
-  `1789973288`.
 - **CI** — Watchdog-Snapshot 08:02:55 + `ci_manage`: `hyperscanning-te`
   `35567708611` @`f0ca4026` **failure**; `te-gate` `35567711055` @`f0ca4026`
   in_progress (seit 06:15); `ci-check` `35566258372` @`0fd1c5a9` in_progress

@@ -3,7 +3,7 @@
   session: Bau-Folge 119
   class: handover
   date: 2026-09-21
-  sha256: 48c37cb797832d4163fc63b6530bf64236cf43007797717d53c9db424382a40e
+  sha256: 8104c8e7bf88f3c4793afba7180f62b7f1eaed759040fa1cc37e7fe6a5a40123
   status: live
 -->
 # Handover — Bau-Folge 119 (2026-09-21)
@@ -22,10 +22,6 @@ abgearbeitet (Operator-Wort 2026-09-21). Jeder Punkt trägt seinen Status-Tag
 
 - **HEAD** Session-Beginn `da03beb4` (forschung folge127) == `origin/main`;
   während des Atoms zogen andere Linien weiter (ernte/entscheid/forschung).
-- **Postfach** — letzter Ledger-Eingang `1789973288` (Tuxedo Ticket#991311279:
-  Hardware beidseitig declined); kein neuer Eingang seit forschung folge127 —
-  nicht fällig, zitiert (`external-state.md` Postfach-Zeile). `post.md` trägt
-  keine `An bau`-Zeile.
 - **CI** — `external-state.md` CI-Zeile (Forschung-Folge 128) zitiert:
   `hyperscanning-te` `35570480672` @`ca7aa66d` failure (`family_fn_gate`
   -2.98 sd), `te-gate` `35570482875` @`ca7aa66d` pending; Watchdog-Snapshot

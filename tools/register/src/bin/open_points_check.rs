@@ -226,7 +226,7 @@ mod tests {
     #[test]
     fn ignores_urls_absolute_paths_and_plain_words() {
         assert!(normalize("https://example.org/src/x").is_none());
-        assert!(normalize("/home/johannes/x").is_none());
+        assert!(normalize("/home/operator/x").is_none());
         assert!(normalize("src").is_none());
         assert!(normalize("the").is_none());
     }

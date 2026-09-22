@@ -2,7 +2,7 @@
   title: Handover — disjunkte Linien: schwerer TE-Lauf nach CI, drei Register-Schlüsse
   class: handover
   date: 2026-09-09
-  sha256: 23d66ba64d5aca32644c6283372e08646ae69329b0fc88393360dd0af20de479
+  sha256: 759a5af5eca6de790223a5dcf9f8b5e1729cb016e1440f6e841eeabf6276e65e
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -29,7 +29,7 @@ und nahm die disjunkten Register-Linien.
   (derive(Default)/unwrap_or_default/must-Diagnostik).
 - **10 bestand-Korpus-Herkunft** — `e197d71`: Befund; der registrierte Pfad zeigt
   auf die alte archive-root-Adresse, die Korpora liegen byte-identisch zweifach
-  unter /home/johannes/backup/archive/. Kein Datenverlust; Linie geschlossen.
+  unter $HOME/backup/archive/. Kein Datenverlust; Linie geschlossen.
 
 ## Dispatch (CI)
 
@@ -41,7 +41,7 @@ und nahm die disjunkten Register-Linien.
 ## Gemessen, nicht im Baum (archive-root)
 
 - **matrixmachine** — Suite 12/12 grün gegen HEAD 02a46d3; Urkunden-Zeile in
-  /home/johannes/backup/archive-root/vanilla-dateidocs/handover/handover-2026-08-31-matrixmachine.md
+  $HOME/backup/archive-root/vanilla-dateidocs/handover/handover-2026-08-31-matrixmachine.md
   aktualisiert. Die Gesamtsuite der Core-Crate (769 Tests deklariert) ist gegen
   HEAD noch nicht vollständig nachgemessen (der Parallellauf hielt den
   cargo-test-Lock) — offen.

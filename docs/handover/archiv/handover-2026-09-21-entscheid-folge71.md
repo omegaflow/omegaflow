@@ -3,7 +3,7 @@
   session: Entscheid-Folge 71
   class: handover
   date: 2026-09-21
-  sha256: 0be48a1dfea9cc5db923346149e9b0ad7b286b26eb008d373ab422bfbcdf0929
+  sha256: 1ae6817ebb18a80bc371d6cdee0d748c4d9d5b4686793041e06e8e9400c77152
   status: live
 -->
 # Handover — Entscheid-Folge 71 (2026-09-21)
@@ -29,7 +29,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   operator-gebunden (Dritt-Write). `sent_ledger` `1789931195`. Eintrag
   `external-state.md` (Postfach) fortgeschrieben.
 - **CI** — Watchdog-Snapshot + `ci_manage list` 2026-09-21: die drei Bench-Läufe
-  **completed success** — `35534406541` @`276034b2` (P13 funding-research),
   `35532890353` @`7b4753ef` (free-model-bench T7), `35532892161` @`7b4753ef`
   (agent-bench t7). Rot auf fremden Linien: `ci-check` `35537130867`/`35534657914`/
   `35531572974` failure, `hyperscanning-te` `35537110267`/`35533691654` failure,
@@ -43,13 +42,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 
 1. **Pine64 / Ox64** — Ox64 zugesagt, Pine64 bittet um **Versanddaten +
    Telefonnummer**. **Frage:** soll die Antwort (Adresse/Telefon) gesendet werden?
-   (Alter: seit 2026-09-20)
-2. **Mantis-Shrimp-Hardware-Bewerbungen** (Espressif / Crowd Supply /
-   GSoC-OpenAstronomy-ESA SOCIS) — offen. (Alter: seit 2026-09-16)
-3. **Pflichtenfreies Funding** — Eigenprize-Runde geschlossen (Deadline
-   31.03.2026, keine nächste Runde datiert). **Frage:** „Remind me" auf
-   `https://eigen.build` setzen und den Entwurf
-   `state/mail/eigenprize-application.md` finalisieren? Solitude ~Herbst 2027.
    (Alter: seit 2026-09-20)
 4. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    Sicherheitsereignis (Mail 2026-09-20). **Frage:** App unter
@@ -69,9 +61,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
    (sudo+Netz, nicht in der Ernte-Session)? (Alter: seit Ernte folge12–17)
 9. **Cookie-Transfer** — `operator-gebunden`, Auslöser „Bedarf" (Ziel-Site aktiv
    → Cookie-Editor-Export → `state/cookies/<host>.json`). (Alter: seit 2026-09-16)
-10. **Hardware-Sponsoring** — Pine64 **geschlossen** (Ox64 zugesagt, Antwort
-    offen → Nr. 1); Framework **nicht passend**
-    (`survey-funding-pflichtfrei.md` §E); Tuxedo Ticket#991311279 **wartend**.
 11. **Strukturierte Feld-Grammatik** (bau, aus `post.md` gefaltet) — Lage: am
     2026-09-18 als Kanon-Akt vertagt, seither in keiner Übergabe; kein Spec, kein
     Code, keine Messung im Baum. **Frage:** soll bau einen Spec-Entwurf für eine
@@ -97,16 +86,7 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   (model-Feld ergänzt; `--agent plan` = read-only Primary). `cargo check -p
   omegaflow-measure` clean. Kein Ranking möglich — Klasse bleibt **pending**.
   (Schritt: dispatcht 2026-09-21 nach dem Push — `free-model-bench` `35567266519`
-  (task T7), `free-model-agent-bench` `35567268692` (task funding-research), beide
   queued; kein Poll — `ci_manage view <id>` einmalig, Artefakte einmalig lesen.)
-- **Eigenprize / Solitude** — `termin`; Eigenprize nächste Runde **ohne Datum**
-  (Reminder auf `eigen.build`), Solitude ~Herbst 2027. Entwürfe existieren
-  (`state/mail/eigenprize-application.md`, `state/mail/solitude-application.md`,
-  gitignored). (Schritt: Reminder setzen + Entwurf finalisieren; per-Akt-Consent
-  vor Absenden.)
-- **Mantis-Shrimp-Bewerbungen**, **nvidia/zai Free-Status**, **Chrome-DevTools-MCP**
-  (forschung), **Benchmark-Klassen B–D**, **F2-flare-Gate**, **09-16-Limbo** —
-  `wartend` (Auslöser: Bedarf).
 - `termin` — vC-Permeabilität (Smartwatch + Mantis-Shrimp), Lasair-LSST (API 502),
   BepiColombo MORE (~April 2027), Rubin-Review (Umzug 2026-09-24). `blockiert` —
   TAP-Backends dachs/pithia (extern). `wartend` — adoption-Block, SuperDARN-Globus,
@@ -118,10 +98,6 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
   Bench-Artefakt-Diagnose — lieferte die Ursache in einem Zug (`body_with` ohne
   `model`; `--agent general` = Subagent); keine Eskalation, kein pro/max. Klasse
   „Routine-Bench-Artefakt-Diagnose" flash-first, kein Doppel-Lauf.
-- **Klasse „pflichtenfreies Funding"** — geschlossen (research-max Sieger, folge66).
-- **Klasse „105 freie Modelle als Funding-Rechercheure"** — offen; die drei
-  abgeschlossenen Läufe sind all-null (Harness-Defekt, kein Modell-Verdikt); nach
-  der Heilung neu zu messen.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
