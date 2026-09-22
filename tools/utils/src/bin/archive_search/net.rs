@@ -304,6 +304,14 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     result
 }
 
+pub(crate) fn post(url: &str, body: &str, headers: &[&str], timeout: &str) -> Option<Fetch> {
+    let mut extra: Vec<&str> = vec!["-X", "POST", "-H", "Content-Type: application/json"];
+    extra.extend_from_slice(headers);
+    extra.push("--data");
+    extra.push(body);
+    get(url, &extra, timeout)
+}
+
 pub fn urlencode(s: &str) -> String {
     let mut out = String::new();
     for b in s.bytes() {
@@ -312,6 +320,22 @@ pub fn urlencode(s: &str) -> String {
                 out.push(b as char)
             }
             _ => out.push_str(&format!("%{:02X}", b)),
+        }
+    }
+    out
+}
+
+fn json_escape(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if (c as u32) < 0x20 => out.push_str(&format!("\\u{:04x}", c as u32)),
+            c => out.push(c),
         }
     }
     out
@@ -1156,6 +1180,178 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+pub fn tavily_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — TAVILY_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let body = format!(
+        "{{\"query\":\"{}\",\"max_results\":{},\"api_key\":\"{}\"}}",
+        json_escape(query),
+        max,
+        json_escape(token)
+    );
+    let auth = format!("Authorization: Bearer {}", token);
+    let headers = [auth.as_str()];
+    match post("https://api.tavily.com/search", &body, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = tavily_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Tavily carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Tavily response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Tavily HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn tavily_score(r: &Json) -> Option<String> {
+    match r.get("score") {
+        Some(Json::Num(n)) if n.is_finite() => Some(format!("{n}")),
+        Some(Json::Str(s)) if !s.is_empty() => Some(s.clone()),
+        _ => None,
+    }
+}
+
+fn tavily_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let content = flatten(r.get("content").and_then(|c| c.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if let Some(score) = tavily_score(r) {
+            line.push_str(&format!("\tscore: {}", score));
+        }
+        if !content.is_empty() {
+            line.push_str(&format!("\tdescription: {}", content));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn exa_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — EXA_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let body = format!(
+        "{{\"query\":\"{}\",\"numResults\":{}}}",
+        json_escape(query),
+        max
+    );
+    let auth = format!("x-api-key: {}", token);
+    let headers = [auth.as_str()];
+    match post("https://api.exa.ai/search", &body, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = exa_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Exa carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Exa response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Exa HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn exa_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        let author = flatten(r.get("author").and_then(|a| a.as_str()).unwrap_or(""));
+        if !author.is_empty() {
+            line.push_str(&format!("\tauthor: {}", author));
+        }
+        let published = flatten(r.get("publishedDate").and_then(|p| p.as_str()).unwrap_or(""));
+        if !published.is_empty() {
+            line.push_str(&format!("\tpublished: {}", published));
+        }
+        let text = flatten(r.get("text").and_then(|t| t.as_str()).unwrap_or(""));
+        if !text.is_empty() {
+            line.push_str(&format!("\tdescription: {}", text));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — LINKUP_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let body = format!(
+        "{{\"q\":\"{}\",\"depth\":\"standard\",\"outputType\":\"searchResults\"}}",
+        json_escape(query)
+    );
+    let auth = format!("Authorization: Bearer {}", token);
+    let headers = [auth.as_str()];
+    match post("https://api.linkup.so/v1/search", &body, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = linkup_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Linkup carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Linkup response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Linkup HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn linkup_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("name").and_then(|n| n.as_str()).unwrap_or(""));
+        let content = flatten(r.get("content").and_then(|c| c.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if !content.is_empty() {
+            line.push_str(&format!("\tdescription: {}", content));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
 pub fn librs_lines(query: &str) -> Vec<String> {
     let url = format!("https://lib.rs/search?q={}", urlencode(query));
     let headers = [
@@ -1263,6 +1459,9 @@ const QUERY_MODES: &[&str] = &[
     "librs",
     "mwmbl",
     "marginalia",
+    "tavily",
+    "exa",
+    "linkup",
     "datacite",
     "zenodo",
     "wayback",
@@ -1388,6 +1587,45 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         }
         "mwmbl" => mwmbl_lines(query, max),
         "marginalia" => marginalia_lines(query, max),
+        "tavily" => {
+            let token = resolve_key(
+                env.get("TAVILY_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => tavily_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("TAVILY_API_KEY", marker)
+                )],
+            }
+        }
+        "exa" => {
+            let token = resolve_key(
+                env.get("EXA_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => exa_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("EXA_API_KEY", marker)
+                )],
+            }
+        }
+        "linkup" => {
+            let token = resolve_key(
+                env.get("LINKUP_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => linkup_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("LINKUP_API_KEY", marker)
+                )],
+            }
+        }
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
@@ -1475,6 +1713,9 @@ mod tests {
             "librs",
             "mwmbl",
             "marginalia",
+            "tavily",
+            "exa",
+            "linkup",
             "datacite",
             "zenodo",
             "wayback",
@@ -1556,6 +1797,82 @@ mod tests {
             lines[1],
             "url https://example.org/b\ttitle: B\tquality: high\tdescription: text"
         );
+    }
+
+    #[test]
+    fn tavily_results_carry_url_title_score_description() {
+        let body = r#"{
+            "query":"interplanetary scintillation",
+            "results":[
+                {"title":"Interplanetary scintillation",
+                 "url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+                 "content":"In astronomy, interplanetary scintillation",
+                 "score":0.75},
+                {"title":"no url","url":"","content":"x","score":0.1},
+                {"title":"B","url":"https://example.org/b","content":"text","score":"high"}
+            ]
+        }"#;
+        let v = json::parse(body).expect("json");
+        let lines = tavily_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tscore: 0.75\tdescription: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(
+            lines[1],
+            "url https://example.org/b\ttitle: B\tscore: high\tdescription: text"
+        );
+    }
+
+    #[test]
+    fn exa_results_carry_url_title_author_published_description() {
+        let body = r#"{
+            "requestId":"abc",
+            "results":[
+                {"title":"Interplanetary scintillation",
+                 "url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+                 "author":"A. Reader",
+                 "publishedDate":"2024-01-03",
+                 "text":"In astronomy, interplanetary scintillation"},
+                {"title":"no url","url":"","author":"x","text":"y"},
+                {"title":"B","url":"https://example.org/b","text":""}
+            ]
+        }"#;
+        let v = json::parse(body).expect("json");
+        let lines = exa_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tauthor: A. Reader\tpublished: 2024-01-03\tdescription: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(lines[1], "url https://example.org/b\ttitle: B");
+    }
+
+    #[test]
+    fn linkup_results_carry_url_name_content() {
+        let body = r#"{
+            "results":[
+                {"name":"Interplanetary scintillation",
+                 "url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+                 "content":"In astronomy, interplanetary scintillation"},
+                {"name":"no url","url":"","content":"x"},
+                {"name":"B","url":"https://example.org/b","content":""}
+            ]
+        }"#;
+        let v = json::parse(body).expect("json");
+        let lines = linkup_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tdescription: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(lines[1], "url https://example.org/b\ttitle: B");
+    }
+
+    #[test]
+    fn json_escape_quotes_and_controls() {
+        assert_eq!(json_escape("a\"b\\c\nd"), "a\\\"b\\\\c\\nd");
     }
 
     #[test]
