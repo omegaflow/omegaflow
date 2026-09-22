@@ -2,7 +2,7 @@
   title: Handover — Weberin-Folge: CDN-Dispatch-Fixes, NED-REST-API-Kegel-Tiling, 2MRS-z-Feldwert
   class: handover
   date: 2026-09-09
-  sha256: b8c4c263a3a0679cc6a15025a3abe34fa0b0e5df1632bf91c7191858b3865bef
+  sha256: 763e5a9eefbb1d85a54a883c5e7e6f1f1589741d6bd6d9c3f946fd218cbc3627
   status: archived
   see-also: docs/TODO.md docs/auftrag/auftrag-ned-objdir-zugang.md phi/sources.φ docs/concepts/archivar-mathematikerin.md
 -->
@@ -69,7 +69,7 @@ dienst-begrenzt; die stabile z-Ernte läuft über 2MRS-via-CDS.
   (Dienst-Erholung, Bulk-z, schonende Route) ist versandt; Antwort ausstehend.
   `docs/auftrag/auftrag-ned-objdir-zugang.md` bleibt `status: pending` (Kanal
   IPAC: gesendet). Ergebnis-Datei der Messung liegt lokal:
-  `/home/johannes/Schreibtisch/auftrag-ned-objdir-zugang_results.md`
+  `$HOME/Schreibtisch/auftrag-ned-objdir-zugang_results.md`
   (NED `degradiert`, 2MRS-via-CDS `live`).
 - **`docs/auftrag/auftrag-ned-objdir-zugang.md` ist committet (`6fb7d54`), aber
   noch nicht gepusht** — der Push war zuletzt durch die Fremdlinie blockiert.

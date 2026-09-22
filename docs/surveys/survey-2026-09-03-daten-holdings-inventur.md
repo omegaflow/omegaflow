@@ -2,14 +2,14 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 4bb177d951b5a8f2ba4b9591b2910d1a3b9d583c6bc9396c7ac8734bcca7d227
+  sha256: 8a6c6e1c64fc702fadf03bfafa17302378b6a7ec2c0a000343cc2d389e3cf588
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
 
 # Daten-Holdings-Inventur (Teil B)
 
-Gemessen am 2026-09-03 auf dem Run-Host `johannes`.
+Gemessen am 2026-09-03 auf dem lokalen Run-Host.
 Zweck: vollständige Landschaft der großen Ablagen erfassen, jede nach Herkunft
 und Disposition einordnen, bevor irgendetwas bewegt wird. Regel: nie blind
 Gigabytes verschieben; Mess-/Sitzungs-/Backup-Daten erst nach Freigabe je

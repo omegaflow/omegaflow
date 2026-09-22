@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 80 (SSI-Formular vollständig vorbereitet: alle 35 Felder + 6-Min-Screencast-Skript + schriftliche 800–1000-Wörter-Variante; DEMETER/CDPP-Entwurf + Dry-Run; SuperDARN-Mail-Korrektur) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 80 (DEMETER/CDPP-Entwurf + Dry-Run; SuperDARN-Mail-Korrektur) (Stand 2026-09-21)
   session: Entscheid-Folge 80
   class: handover
   date: 2026-09-21
-  sha256: 8ecb78eef8b2ff0135b5d8188c6d8cd91e996e8038b79d3e12024c3675f2596a
+  sha256: 0d092ac8de63df026f1ee958417556018b756cc3dc9094299988967f0d1b2c7a
   status: live
 -->
 # Handover — Entscheid-Folge 80 (2026-09-21)
@@ -42,19 +42,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 
 ## Messung dieses Atoms (kein offener Punkt)
 
-### SSI Live-Formular (`general`)
-- Alle **10 Seiten** live abgeschritten; Pflichtfelder **Q1–Q35** vollständig erfasst
-  (die frühere Liste war unvollständig — auch Q1–Q6, Q15, Q17, Q19–Q22, Q25, Q28–Q30,
-  Q35 sind Pflicht). Q7/Q13/Q14/Q31–Q33 optional.
-- **Träger:** 6-Min-Screencast (max. 6:00 + 15 s; Voiceover; 1/1/4-Struktur);
-  schriftliche Alternative 800–1000 Wörter + 1–2-Satz-Begründung. **Gehosteter Link
-  Pflicht** (Google Drive/Dropbox, **nicht YouTube**, Download bis Ende Dez 2026),
-  `.mp4`, **kein Upload, keine Anhänge**. Kein Budgetfeld.
-- **Frist** 23:59 GMT+1, **05.10.2026** (Live-Formular S.1 + Apply-Seite); die
-  „7 October"-Angabe auf S.10 ist stale (`unverified` welcher Wert gilt).
-- Formular `https://forms.cloud.microsoft/e/pJdGh0rRSx` (HTTP 200); Preview-PDF +
-  Video-Guide HTTP 200.
-
 ### DEMETER/CDPP Route (`general`)
 - **Selbst-Registrierung existiert** (SPA-Modal, kein `/register`): `cdpp-archive.cnes.fr/user/cdpp/modules/1778`
   → Login → „New user?" → *Request project access*; Pflichtfelder E-Mail, Passwort,
@@ -73,26 +60,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
   — der ist erledigt; die Zeile war stale.
 
 ## Offen (aufgeschlüsselt)
-
-### SSI Fellowship (software.ac.uk)
-- **Status:** operator-gebunden | **Bindung:** operator (Video/Submit) / dritter (Hosting)
-- **Lage:** Entwurf **vollständig vorbereitet** — `state/mail/ssi-fellowship-application.md`:
-  alle 35 Felder beantwortet (offene Operator-Felder Q5/Q6 PII, Q10/Q16/Q18/Q23/Q24/Q32/Q34),
-  **6-Min-Screencast-Skript** (1/1/4) + schriftliche 800–1000-Wörter-Variante + Begründung;
-  Frist 05.10.2026.
-- **Blockade:** Screencast aufnehmen + hosten (Q25-Link); PII-/Zuordnungsfelder.
-- **Braucht:** Operator nimmt das Skript als Screencast auf, hostet bei Google
-  Drive/Dropbox, füllt Q5/Q6/Q10/Q16/Q18/Q23/Q24/Q32/Q34, trägt Q25-Link ein; dann
-  Wort „SSI einreichen".
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** wartend (Session-Arbeit; nur der Einreichungs-Akt `operator-gebunden`)
-  | **Bindung:** `eigen` bis zur Ausführungsgrenze, der Akt `dritter`
-- **Lage:** Entwurf `state/mail/emergent-ventures-application.md` gegengelesen,
-  repo-wahr, einreichungsfertig; Platzhalter offen (Vollzeit-Dauer, Budget-Ballpark,
-  private Formularfelder).
-- **Blockade:** keine.
-- **Braucht:** Operator-Wort „EV einreichen".
 
 ### DEMETER ISL (CDPP) — Zugang
 - **Status:** operator-gebunden | **Bindung:** dritter
@@ -123,24 +90,11 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** Operator-Entscheid bauen vs. descopen.
 - **Braucht:** Wort „bauen" → Bau-Atom an bau; bei „nein" → `descoped mit Befund`.
 
-### NLnet Restack / CodeSupply
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** 5.000–50.000 €, Einzelperson, DE erfüllt EU-Dimension; Deadline 03.11.2026;
-  Bedingung FOSS-Lizenz „in its entirety"; NC-Kern erfüllt die OSI-Bedingung nicht.
-- **Blockade:** Lizenz-Entscheid.
-- **Braucht:** Operator-Wort — NC behalten/NLnet descopen oder Dual-Lizenz.
-
 ### PINE64 / Mantis-Shrimp
 - **Status:** blockiert | **Bindung:** `linie:bau`
 - **Lage:** Ox64 zugesagt (PINE64 info@), Versanddaten erbeten; Presence-Hardware ungebaut.
 - **Blockade:** Hardware fehlt.
 - **Braucht:** bau baut den Mantis-Shrimp (Spec `docs/specs/mantis-shrimp-bom.md`).
-
-### Mantis-Shrimp-Bewerbungen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** kein Programm nimmt ein ungebautes Gerät an.
-- **Blockade:** Prototyp fehlt.
-- **Braucht:** Operator-Entscheid bauen/descopen.
 
 ### SuperDARN
 - **Status:** wartend | **Bindung:** dritter (Globus-Gruppe)
@@ -180,47 +134,22 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** PI-Freigabe/Prozedur-Update ausstehend.
 - **Braucht:** Wiedervorlage (Trigger: Prozedur-Update).
 
-### Eigenprize
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Runde geschlossen; `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`.
-
-### Solitude
-- **Status:** termin | **Bindung:** `termin:~Herbst 2027`
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin fern.
-- **Braucht:** Entwurf tragen.
-
 ### Cookie-Transfer
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Auslöser „Bedarf".
 - **Blockade:** kein Bedarf.
 - **Braucht:** nichts — wartend.
 
-### text_review — Lauf auf den Förder-Entwürfen
-- **Status:** blockiert | **Bindung:** `linie:bau`
-- **Lage:** Bin gebaut + committet (`197bccf1`); `tools-build.yml` trägt keinen
-  measure-Bin; Post steht (`post.md`, `An bau: text_review`).
-- **Blockade:** measure-Bin-Release-Pfad fehlt.
-- **Braucht:** bau trägt `text_review` in `tools-build.yml` ein.
-
 ## Operator-Queue (Stand folge80; einfache Sprache, Lage/Blockade/Braucht, mit Alter)
 
-1. **SSI** — Entwurf fertig (alle Felder + Screencast-Skript). **Braucht:** Video
-   aufnehmen + hosten, PII-Felder ausfüllen, dann Wort „einreichen". Frist 05.10.2026.
-   (folge80 vollständig vorbereitet)
-2. **EV** — Entwurf einreichungsfertig. **Braucht:** Wort „EV einreichen". (seit 2026-09-21)
 3. **DEMETER/CDPP** — Entwurf + Dry-Run fertig. **Braucht:** Wort „Mail senden" oder
    „selbst registrieren". (neu folge80)
 4. **Riss 4** — Rat empfiehlt bauen. **Braucht:** Wort bauen/descopen. (seit 2026-09-21)
-5. **NLnet** — **Braucht:** Lizenz-Entscheid. (seit 2026-09-21)
 6. **Mantis-Shrimp** — bauen oder descopen. (seit 2026-09-16)
 7. **ISH Chat** — App widerrufen? (seit 2026-09-20)
 8. **solar-system-open-data** — Konto/Token? (seit 2026-09-20)
 9. **Amentum** — registrieren? (seit 2026-09-20)
 10. **Split-Routing** — Route `./bin/proton-exit.sh ca`? (seit Ernte folge12–17)
-11. **Eigenprize/Solitude** — „Remind me". (seit 2026-09-20)
 12. **Free-Model-Bench** — Cloudflare-Token mit „Workers AI"-Permission rotieren?
     (seit 2026-09-21)
 13. **SSDC** — warten. (seit 2026-09-16)
@@ -228,14 +157,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 15. **Cookie-Transfer** — nichts. (seit 2026-09-16)
 
 ## Benchmark
-
-- **Delegation (Folge 80):** 2 × `general` (SSI-Live-Formular, DEMETER/CDPP-Route) +
-  1 × `general` (Google-Free-Model-IDs) — Routine-Recherche/Extraktion, flash-first.
-  Die 2 Routinen lieferten vollständig (SSI: 10 Seiten + alle Pflichtfelder + Träger;
-  DEMETER: Selbst-Registrierung + `scope: cdpp`-Korrektur). Die Google-Probe lieferte
-  eine Prämissen-Korrektur (TSV trägt 12 `google`-Zeilen; mein `sgrep "google\|gemini"`
-  war ein Literal-Pipe-Fehler). Klasse „Routine-Recherche" hat einen registrierten
-  Sieger (flash) — kein Doppel nötig.
 
 ## Geteilter Baum — eigener Pfad-Satz
 

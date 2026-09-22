@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW — AGNOSTIC MEMBRANE MANIFESTATION & ARCHAEOLOGY DIRECTIVE
   class: concept
-  sha256: d294547ae01dc169db38fd8f73c94da3208f0de36294b3dff6043ebf53085712
+  sha256: 80641f09174cf49e6d5aaea80c627581c6c146f08dbb738e7e6751cfa3e20a8d
 -->
 Here is the **complete, unabridged, fully agnostic document**.
 
@@ -100,7 +100,7 @@ e93a30f     │    59bdd60   │              be6f7df      34d7d3a   b3546ff    
 
 ---
 
-## 3. The Nebra reference (`/home/johannes/projects/nebra`)
+## 3. The Nebra reference (`$HOME/projects/nebra`)
 
 **Nebra is the ancestor.** `docs/nebra.yaml` (19 lines) is the ur-spec:
 

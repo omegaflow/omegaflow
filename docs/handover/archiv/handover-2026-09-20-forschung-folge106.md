@@ -3,7 +3,7 @@
   session: Forschung-Folge 106
   class: handover
   date: 2026-09-20
-  sha256: cfc59be2e61e0e14da752c775f6a745cb15825eb7d21876994705caa6cc0bccc
+  sha256: 0f4c6df3804d2268775b3f97b64b4444c86c37d0515e54e86fb12425f07937dc
   status: live
 -->
 # Handover — Forschung-Folge 106 (2026-09-20)
@@ -40,9 +40,8 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   Der Baum trug bei Beginn fremde uncommittete Arbeit (ernte `phi/harvest.φ` +
   `handover-…-ernte-folge106.md`) — nicht angefasst; ernte hat sie im Verlauf
   selbst committet.
-- **Postfach** — letzter Ledger-Eingang `1789906306` (Weiterleitung des
-  Sotgiu-Limadou-Threads), davor `1789902016` (Tuxedo Ticket), `1789900094`
-  (Framework), die Key-/Welcome-Eingänge. Keine neue forschung-eigene Post; die
+- **Postfach** — letzter Ledger-Eingang `1789906306` (Weiterleitung), die
+  Key-/Welcome-Eingänge. Keine neue forschung-eigene Post; die
   Zeile steht gemessen in `docs/zustand/external-state.md` (Entscheid-Folge 61).
 - **CI** — `ci_manage list` (2026-09-20 ~14:05Z): **pending** `ci-check`
   `35515221806`; **in_progress** `harvest` `35515194248`, `te-gate` `35513982359`,

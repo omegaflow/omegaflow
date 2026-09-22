@@ -3,7 +3,7 @@
   session: Entscheid-Folge 74
   class: handover
   date: 2026-09-21
-  sha256: 194b7922a06ab6741e285ce715da4cda064518517ebf0dc10c6550aad99a4a3c
+  sha256: 3f6aed9afab34ea06980fa429d7532957ecbe9c104dc3682e9eddc78a126afaf
   status: live
 -->
 # Handover — Entscheid-Folge 74 (2026-09-21)
@@ -25,9 +25,7 @@ seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 - **HEAD** `ae822fe7` (research folge128) — die research-Linie hat während dieser
   Session committet; `origin/main` == HEAD. Arbeitsbaum trägt nur eigenen,
   noch nicht committeten Anteil.
-- **Postfach** — `mail_ledger.φ`: kein neuer Eingang; neuester weiterhin
-  `1789973288` (Tuxedo Ticket#991311279: keine kostenlosen Geräte/Sponsorings an
-  Privatpersonen — Hardware-Punkt beidseitig declined). `external-state.md`
+- **Postfach** — `mail_ledger.φ`: kein neuer Eingang. `external-state.md`
   Postfach-Zeile nachgezogen.
 - **CI** — `external-state.md` CI-Zeile trägt die Messung der research-Linie
   (Forschung-Folge 128 @`da03beb4`); zusätzlich `ci_manage list` 2026-09-21 ~09:2x:
@@ -37,7 +35,7 @@ seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   in_progress; `rpw-cdn` `35571724517` success. Kein Poll.
 - **`register_lookup --open`** — 3 `[entscheid]`-Registerpunkte
   `phi/blocked_sources.φ:21/60/65` (SuperDARN / solar-system-open-data / Amentum)
-  → Operator-Queue; 2 fremde OPEN (`handover-2026-09-20-pii-llm-budget.md:67/73`).
+  → Operator-Queue; 2 fremde OPEN (`handover-2026-09-20-operator-entscheidungen.md`).
 - **`git_safety --snapshot`** — Arbeitsbaum == HEAD, nichts zu sichern.
 
 ## Messung dieses Atoms (kein offener Punkt)
@@ -75,24 +73,8 @@ seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
   `docs/specs/mantis-shrimp-bom.md` + BOM liegen vor) und dokumentiert danach den
   Ox64. Nachricht liegt in `docs/handover/post.md` (`An bau:`).
 
-### Mantis-Shrimp-Bewerbungen (Förderweg)
-- **Status:** `operator-gebunden` | **Bindung:** `operator`
-- **Lage:** Am 21.09. gemessen: Espressif-Developer-Programm existiert nicht,
-  SOCIS läuft nicht, GSoC 2026 geschlossen + omegaflow keine gelistete Org,
-  Crowd Supply verlangt einen funktionierenden Prototyp.
-- **Blockade:** Kein Programm nimmt ein **ungebautes** Gerät an; der Prototyp fehlt.
-- **Braucht:** Operator-Entscheid — Prototyp bauen (dann Crowd Supply, parallel
-  GSoC-2027-Org-Antrag) **oder** descopen. Steht in der Operator-Queue.
-
 ## Operator-Queue (Stand folge74; einfache Sprache, je Eintrag Lage/Blockade/Braucht, mit Alter)
 
-1. **Mantis-Shrimp-Bewerbungen** — **Lage:** kein Förderweg offen (siehe oben).
-   **Blockade:** Prototyp ungebaut. **Braucht:** Operator-Entscheid bauen/descopen.
-   (Alter: seit 2026-09-16)
-2. **Eigenprize / Solitude** — **Lage:** Eigenprize-Runde geschlossen (Deadline
-   31.03.2026, keine nächste Runde datiert); Solitude ~Herbst 2027. **Blockade:**
-   keine offene Runde. **Braucht:** „Remind me" auf `https://eigen.build` setzen und
-   `state/mail/eigenprize-application.md` finalisieren? (Alter: seit 2026-09-20)
 3. **ISH Chat (GitHub-Dritt-OAuth-App, Scopes `read:user`/`user:email`)** —
    **Lage:** Sicherheitsereignis, App hat Kontozugriff. **Blockade:** offener
    Zugriff. **Braucht:** App unter `github.com/settings/connections/applications`
@@ -112,9 +94,6 @@ seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
    `./bin/proton-exit.sh ca` + direct↔tunnel-Nachmessung. (Alter: seit Ernte folge12–17)
 8. **Cookie-Transfer** — **Lage:** `operator-gebunden`, Auslöser „Bedarf".
    **Blockade:** kein Bedarf. **Braucht:** nichts — wartend. (Alter: seit 2026-09-16)
-9. **Hardware-Sponsoring** — **Lage:** Pine64 zugesagt (Ox64), Framework
-   abgelehnt, Tuxedo Ticket#991311279 declined. **Blockade:** keine.
-   **Braucht:** nichts — geschlossen.
 
 ## Benchmark
 

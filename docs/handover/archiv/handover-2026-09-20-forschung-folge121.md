@@ -3,7 +3,7 @@
   session: Forschung-Folge 121
   class: handover
   date: 2026-09-20
-  sha256: 3cc5aab17ffd4ca35d1623a8b215592cbeb364b71591a0c038b5574ebebf833d
+  sha256: f3584101ed079e10ee3fd50c04a6fb93f6b0fbaba711a5b76914c2a7eade337e
   status: live
 -->
 # Handover — Forschung-Folge 121 (2026-09-20)
@@ -109,7 +109,6 @@ clean. Werkzeug-Karte (`docs/concepts/tools-map.md`) fortgeschrieben.
 | 3. TE-Gate-Verdikt `35513982359` @`7d0a1272` | wartend | eigen | `ci_manage view 35513982359` (success → vier `fpr_rise_sigma_test`-Zeilen) |
 | 4. `archive_search`-Rebuild mit `OMEGAFLOW_COOKIES` (cjs `include_str!`) | wartend | eigen | `ci_manage view 35530482159` (tools-build) |
 | 5. Cookie-Editor-Export (JSON für `OMEGAFLOW_COOKIES`) | operator-gebunden | operator | bei Pfad-3-Consent-Wand: Cookie-Editor → Export |
-| 6. Hardware-Sponsoring Framework/Tuxedo/Pine64 | wartend | dritter | Trigger Antwort (Framework `NG2HWBZM`, Tuxedo `#991311279`, Pine64) |
 | 7. Flyby-Path-2-Kette | termin:2026-09-28 | termin | Zellen ab Perigäum füllen |
 | 8. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 9. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

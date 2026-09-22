@@ -3,7 +3,7 @@
   session: Bau-Folge 113
   class: handover
   date: 2026-09-20
-  sha256: 53ea24c34043d01690ad27f118fab985a468d5ae3951fd21105b9d33d1f1c7eb
+  sha256: c8f8260119d1fadda395fc6bacee2d8b1aef6a5574a051106ffdbf7a47feb775
   status: live
 -->
 # Handover — Bau-Folge 113 (2026-09-20)
@@ -37,7 +37,7 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 
 - **HEAD** `8218f46a` == `origin/main` → gepusht, Fast-Forward. Arbeitsbaum trägt
   fremde uncommittete Arbeit (`handover-…-entscheid-folge66.md`, der
-  `folge65`-Move, `docs/surveys/survey-funding-pflichtfrei.md`,
+  `folge65`-Move,
   `.github/workflows/free-model-bench.yml` + `tools/measure/src/bin/free_model_bench.rs`)
   — **nicht angefasst**.
 - **Postfach** — kein bau-relevanter Eingang; `post.md` trägt Zeilen an *ernte* und
@@ -90,7 +90,7 @@ beide Queue-Punkte sind an die Ernte-Linie gebunden.
   `docs/handover/handover-2026-09-20-bau-folge113.md`, Move
   `handover-2026-09-20-bau-folge112.md` → `archiv/`.
 - **Fremd (nicht anfassen):** `handover-…-entscheid-folge66.md`, der
-  `folge65`-Move, `docs/surveys/survey-funding-pflichtfrei.md`,
+  `folge65`-Move,
   `free-model-bench.yml` + `free_model_bench.rs`. Nie ein nacktes `git commit`.
 
 ## Abschluss

@@ -3,7 +3,7 @@
   session: Forschung-Folge 128
   class: handover
   date: 2026-09-21
-  sha256: 72a8de9a44c926d47a32f48eb8bdf6d18bedf8a62d4feb9971188d1c6d64f870
+  sha256: 7de4dff9d1273a6b0b087751dc4cf8c514af879a11d9d01dadc75d1f3c0e7ffa
   status: live
 -->
 # Handover — Forschung-Folge 128 (Stand 2026-09-21)
@@ -22,8 +22,7 @@ nennen ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 ## Stehender Pass (gemessen 2026-09-21, Forschung-Folge 128)
 
 - **HEAD** `da03beb4` (== `origin/main`) bei Session-Beginn.
-- **Postfach** — kein neuer Eingang; letzter Ledger-Eingang `1789973288`
-  (Tuxedo-decline). Eintrag `docs/zustand/external-state.md` zitiert.
+- **Postfach** — kein neuer Eingang; letzter Ledger-Eingang `1789973288`.
 - **CI** — Watchdog-Snapshot 08:02:55 + `ci_manage view`: `hyperscanning-te`
   `35570480672` @`ca7aa66d` **failure**; `te-gate` `35570482875` @`ca7aa66d`
   pending; `ci-check` `35570485286` @`ca7aa66d` cancelled; `ps1-cdn`/`health-check`

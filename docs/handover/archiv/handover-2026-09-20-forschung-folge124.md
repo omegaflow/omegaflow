@@ -3,7 +3,7 @@
   session: Forschung-Folge 124
   class: handover
   date: 2026-09-20
-  sha256: a5790f9f605ca34bfdbacbaa6fb68bdd27f8a5e3359223a43029873cf997284c
+  sha256: c258319760bceed7f11f62a972b80b9588871e33c9dd0d2171710df0741ff7a4
   status: live
 -->
 # Handover — Forschung-Folge 124 (2026-09-20)
@@ -126,7 +126,6 @@ Konstante gedruckt, nie durch Lockern versteckt.
 ## Wartend / operator-gebunden / termin
 
 - Cookie-Editor-Export — `wartend`/`operator` (Host fehlt). (Schritt: Operator nennt Host.)
-- Hardware-Sponsoring Framework/Tuxedo — `wartend`/`dritter` (Trigger Antwort).
 - Flyby-Path-2-Kette — `termin:2026-09-28` (Zellen ab Perigäum füllen).
 - NSE/Haug — `wartend`/`dritter` (Trigger Dateieingang).
 - BepiColombo MORE — `termin:2027-04` (Freigabe Wissenschaftsphase).
@@ -150,7 +149,6 @@ Konstante gedruckt, nie durch Lockern versteckt.
 | 10. `--dropped` als CI-Gate | wartend | eigen | Rat: Gate-Verdrahtung entscheiden |
 | 11. `te-gate`-Verdikt `35531196101` | wartend | eigen | `ci_manage view 35531196101` einmal |
 | 12. Cookie-Editor-Export | wartend | operator | Operator nennt Host |
-| 13. Hardware Framework/Tuxedo | wartend | dritter | Trigger Antwort |
 | 14. Flyby-Path-2 | termin:2026-09-28 | termin | Zellen ab Perigäum |
 | 15. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 16. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

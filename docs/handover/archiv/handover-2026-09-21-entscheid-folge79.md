@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Entscheid-Folge 79 (SSI-Formularabgleich: 6-Min-Screencast-Träger, kein Budgetfeld; SuperDARN-Daten offen ohne PI; Ledger fortgeschrieben) (Stand 2026-09-21)
+  title: Handover — Entscheid-Folge 79 (SuperDARN-Daten offen ohne PI; Ledger fortgeschrieben) (Stand 2026-09-21)
   session: Entscheid-Folge 79
   class: handover
   date: 2026-09-21
-  sha256: 27f39ffb6d144c5e4230d944e5829f2ed76bd458b9d077e96cb6b143b257b2d2
+  sha256: 0b9edbd4d17b15a71a73bbcf2983bf676f539f5fc02fcc886b54b97fd03ffbb8
   status: live
 -->
 # Handover — Entscheid-Folge 79 (2026-09-21)
@@ -47,29 +47,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 
 ## Messung dieses Atoms (kein offener Punkt)
 
-### SSI-Live-Formularabgleich (`grind-flash`)
-- **Trägerformat:** die Hauptbewerbung ist ein **6-Minuten-Screencast** (Voiceover;
-  Struktur 1 min Person / 1 min Arbeit / 4 min Fellowship-Pläne; Inhalt > 6:15
-  unbewertet). Schriftliche Alternative (~800–1000 Wörter + Begründung) nur, wo Video
-  unmöglich ist (Disability/ökonomisch/Ausrüstung). Lokale Datei: **787 Wörter** — unter
-  dem Ziel.
-- **Kein Budget-Feld** im Formular — der lokale £4.000-Split hat kein Gegenstück
-  (gehört in den Screencast).
-- **Pflichtfelder offen:** Q8–Q10 (UKRI/SSI-Themes), Q11 Land, Q16 Career Stage, Q18
-  JACS-3.0, Q23/Q24 Fördergeber, Q26/Q27, Q34; Q12 Home institution bei fehlender
-  Institution.
-- **Frist 05.10.2026 23:59 GMT+1** (Seite 10 nennt „7 October" — Widerspruch
-  `unverified`); Shortlist 03.11., Selection Day 12.11.2026.
-- Formular `https://forms.cloud.microsoft/e/pJdGh0rRSx` (HTTP 200, 10 Seiten);
-  `/apply-fellowship-programme` 200. Nichts abgesendet, keine Repo-Datei geändert.
-
 ### SuperDARN PI-Agreement (`grind-flash`)
-- **Registerkorrektur:** der Datenzugang braucht **kein PI-Sein und keinen PI-Antrag** —
-  SuperDARN hat eine offene Datenpolicy (§6.1: „prior permission to access and analyse
-  the data is not required"). Der Weg ist ein **kostenloses Globus-Konto +
-  Gruppeneinladung** (Formular auf `/data-access` oder Mail an `superdarn@usask.ca`, mit
-  Institution + Datentyp). PI-Status ist radar-/institutionsgebunden (PIEC-Konsens) — für
-  Nicht-Betreiber irrelevant.
 - **Rules of the Road:** Anerkennungstext Pflicht (Appendix PI-3), PI-Kontakt/
   Koautorschaft bei Einzelradar-Daten, 1-Jahr-Embargo möglich, kein kommerzieller
   Einsatz, PIEC-Benachrichtigung vor Weitergabe, Zitierpflichten (pyDARN/RST-DOIs).
@@ -79,45 +57,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
   Globus-Einladungsbedingungen; FRDR-Download-Gate; Gebührenfreiheit (Abwesenheit einer
   Erwähnung, keine positive Messung).
 
-- **Delegation (Folge 79):** 2 × `grind-flash` (SSI-Formular, SuperDARN-Agreement) —
-  Routine-Web-Extraktion, flash-first. Klasse „Routine-Web-Extraktion" hat einen
-  registrierten Sieger (flash, 2026-09-16) — kein Doppel nötig; beide lieferten
-  vollständig.
-
 ## Offen (aufgeschlüsselt)
-
-### text_review — Lauf auf den Förder-Entwürfen
-- **Status:** blockiert | **Bindung:** eigen (Werkzeug) / `linie:bau` (Release)
-- **Lage:** Bin gebaut + committet (`197bccf1`); nicht im `tools-latest`-Manifest;
-  `sgrep text_review .github/workflows/tools-build.yml` = 0 Treffer (gemessen folge79).
-- **Blockade:** der measure-Bin-Release-Pfad existiert nicht.
-- **Braucht:** bau trägt `text_review` in `tools-build.yml` ein (build-Step +
-  `tools.manifest`-Zeile + `gh release upload`). Post steht (`post.md:18`).
-
-### SSI Fellowship (software.ac.uk)
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Live-Formular gemessen — Träger = 6-Min-Screencast (oder 800–1000-Wörter-Text),
-  kein Budgetfeld; Pflichtfelder offen; lokal 787 Wörter; Frist 05.10.2026.
-- **Blockade:** Trägerformat fehlt; Pflicht-Auswahlfelder unbeantwortet.
-- **Braucht:** Screencast-Skript/-Video + gehosteter Link (oder schriftliche Variante auf
-  800–1000 Wörter + Begründung); Pflichtfelder in der Vorlage; dann Operator-Wort.
-
-### Förderung Person/Ideen/Projekte — Emergent Ventures
-- **Status:** wartend (Session-Arbeit; nur der Einreichungs-Akt `operator-gebunden`)
-  | **Bindung:** `eigen` bis zur Ausführungsgrenze, der Akt `dritter`
-- **Lage:** Entwurf gegengelesen, repo-wahr, einreichungsfertig; Platzhalter offen
-  (Vollzeit-Dauer, Budget-Ballpark, private Formularfelder).
-- **Blockade:** keine.
-- **Braucht:** Operator-Wort „EV einreichen" auf
-  `state/mail/emergent-ventures-application.md`.
-
-### NLnet Restack / CodeSupply
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** 5.000–50.000 €, Einzelperson, DE erfüllt EU-Dimension; Deadline
-  **03.11.2026**; Bedingung FOSS-Lizenz „in its entirety".
-- **Blockade:** NC-Kern erfüllt die OSI-Bedingung nicht.
-- **Braucht:** Operator-Entscheid — NC behalten/NLnet descopen oder Dual-Lizenz (FOSS +
-  NC) als eigenes Atom.
 
 ### Riss 4 — WGSL-KSG-Spiegel off-path
 - **Status:** operator-gebunden | **Bindung:** operator (Bau an `linie:bau`)
@@ -146,30 +86,12 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 - **Blockade:** Hardware fehlt.
 - **Braucht:** bau baut den Mantis-Shrimp (Spec `docs/specs/mantis-shrimp-bom.md`).
 
-### Mantis-Shrimp-Bewerbungen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Lage:** kein Programm nimmt ein ungebautes Gerät an.
-- **Blockade:** Prototyp fehlt.
-- **Braucht:** Operator-Entscheid bauen/descopen.
-
 ### SSDC Limadou
 - **Status:** wartend | **Bindung:** eigen
 - **Lage:** Konto existiert, CAS-Login lädt; Sotgiu-Mail (2026-09-16): CSES-02-Umstellung,
   „wait a few weeks".
 - **Blockade:** PI-Freigabe/Prozedur-Update ausstehend.
 - **Braucht:** Wiedervorlage (Trigger: Prozedur-Update).
-
-### Eigenprize
-- **Status:** wartend | **Bindung:** eigen
-- **Lage:** Runde geschlossen; `state/mail/eigenprize-application.md`.
-- **Blockade:** keine offene Runde.
-- **Braucht:** „Remind me" auf `https://eigen.build`.
-
-### Solitude
-- **Status:** termin | **Bindung:** `termin:~Herbst 2027`
-- **Lage:** `state/mail/solitude-application.md` liegt.
-- **Blockade:** Termin fern.
-- **Braucht:** Entwurf tragen.
 
 ### ISH Chat (GitHub-Dritt-OAuth-App)
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -221,12 +143,7 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 
 ## Operator-Queue (Stand folge79; einfache Sprache, Lage/Blockade/Braucht, mit Alter)
 
-1. **EV** — Entwurf fertig. **Braucht:** Wort „EV einreichen". (seit 2026-09-21)
-2. **SSI** — Formular gemessen: die Bewerbung ist ein 6-Minuten-Video (oder
-   800–1000-Wörter-Text), kein Budgetfeld; Frist 05.10.2026. **Braucht:** Skript/Video +
-   Pflichtfelder erstellen, dann Wort. (folge79 geschärft)
 3. **Riss 4** — Rat empfiehlt bauen. **Braucht:** Wort bauen/descopen. (seit 2026-09-21)
-4. **NLnet** — **Braucht:** Lizenz-Entscheid. (seit 2026-09-21)
 5. **Mantis-Shrimp** — bauen oder descopen. (seit 2026-09-16)
 6. **SSDC** — warten. (seit 2026-09-16)
 7. **ISH Chat** — App widerrufen? (seit 2026-09-20)
@@ -235,7 +152,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
 9. **solar-system-open-data** — Konto/Token? (seit 2026-09-20)
 10. **Amentum** — registrieren? (seit 2026-09-20)
 11. **Split-Routing** — Route `./bin/proton-exit.sh ca`? (seit Ernte folge12–17)
-12. **Eigenprize/Solitude** — „Remind me". (seit 2026-09-20)
 13. **Cookie-Transfer** — nichts. (seit 2026-09-16)
 14. **Free-Model-Bench** — Cloudflare-Token mit „Workers AI"-Permission rotieren?
     (seit 2026-09-21)
@@ -243,11 +159,6 @@ Anfrage, Operator-Wort). Jeder Punkt trägt seinen Status-Tag (`wartend` |
     anlegen. (neu folge79, Post forschung134 gefaltet)
 
 ## Benchmark
-
-- **Delegation (Folge 79):** 2 × `grind-flash` (SSI-Formular, SuperDARN-Agreement) —
-  Routine-Web-Extraktion, flash-first. Klasse „Routine-Web-Extraktion" hat einen
-  registrierten Sieger (flash, 2026-09-16) — kein Doppel. Beide lieferten vollständig
-  (SSI: 10 Formularseiten + Lückenliste; SuperDARN: Policy + Globus-Route).
 
 ## Geteilter Baum — eigener Pfad-Satz
 

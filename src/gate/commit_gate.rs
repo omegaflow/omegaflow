@@ -39,6 +39,7 @@ struct Vocab {
     german_function_words: Vec<String>,
     speculation: Vec<String>,
     forbidden: Vec<String>,
+    pii: Vec<String>,
     template_slang: Vec<String>,
     zero_decl: Vec<String>,
     measure_step_markers: Vec<String>,
@@ -141,6 +142,7 @@ fn load_vocab() -> Vocab {
         german_function_words: str_list(&json, "german_function_words"),
         speculation: str_list(&json, "speculation"),
         forbidden: str_list(&json, "forbidden"),
+        pii: str_list(&json, "pii"),
         template_slang: str_list(&json, "template_slang"),
         zero_decl: str_list(&json, "zero_decl"),
         measure_step_markers: str_list(&json, "measure_step_markers"),
@@ -411,7 +413,8 @@ impl Gate {
     }
 
     pub fn check_text(&mut self, text: &str) -> Option<Verdict> {
-        self.find_speculation(text)
+        self.check_pii(text)
+            .or_else(|| self.find_speculation(text))
             .or_else(|| self.check_zero_fabrication(text))
             .or_else(|| self.check_force_unit(text))
             .or_else(|| self.find_learned(text))
@@ -425,6 +428,7 @@ impl Gate {
     pub fn check_input(&mut self, text: &str) -> Vec<Verdict> {
         let mut findings = Vec::new();
         for f in [
+            self.check_pii(text),
             self.find_speculation(text),
             self.check_zero_fabrication(text),
             self.check_force_unit(text),
@@ -650,6 +654,31 @@ impl Gate {
         None
     }
 
+    fn check_pii(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        for marker in &vocab().pii {
+            if lower.contains(marker.as_str()) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "pii".to_string(),
+                    line: 0,
+                    feedback: feedback("pii").to_string(),
+                    quote: clip(text, 90),
+                });
+            }
+        }
+        if let Some((start, end)) = home_path_hit(text) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "pii".to_string(),
+                line: line_of(text, start),
+                feedback: feedback("pii").to_string(),
+                quote: clip(&text[start..end], 90),
+            });
+        }
+        None
+    }
+
     fn check_zero_fabrication(&self, text: &str) -> Option<Verdict> {
         let lower = text.to_lowercase();
         let bytes = text.as_bytes();
@@ -845,6 +874,9 @@ impl Gate {
             return None;
         };
         if let Some(v) = self.check_human_threshold(&content) {
+            return Some(v);
+        }
+        if let Some(v) = self.check_pii(&content) {
             return Some(v);
         }
         let is_code = path.ends_with(".rs")
@@ -1273,6 +1305,58 @@ fn word_present(lower: &str, word: &str) -> bool {
     } else {
         false
     }
+}
+
+const SYSTEM_HOMES: [&str; 13] = [
+    "runner",
+    "ubuntu",
+    "root",
+    "admin",
+    "ec2-user",
+    "codespace",
+    "git",
+    "www-data",
+    "vagrant",
+    "operator",
+    "probe",
+    "omegaflow",
+    "o",
+];
+
+fn is_user_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_' || b == b'-' || b == b'.'
+}
+
+fn home_path_hit(text: &str) -> Option<(usize, usize)> {
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if !bytes[i..].starts_with(b"/home/") {
+            i += 1;
+            continue;
+        }
+        let mut j = i + 6;
+        while j < bytes.len() && is_user_byte(bytes[j]) {
+            j += 1;
+        }
+        if j == i + 6 {
+            i += 6;
+            continue;
+        }
+        let has_slash = j < bytes.len() && bytes[j] == b'/';
+        let at_end = j >= bytes.len();
+        if !has_slash && !at_end {
+            i += 6;
+            continue;
+        }
+        let name = &text[i + 6..j];
+        if SYSTEM_HOMES.iter().any(|h| name.eq_ignore_ascii_case(*h)) {
+            i = j;
+            continue;
+        }
+        return Some((i, j));
+    }
+    None
 }
 
 fn find_unit(window: &str, unit: &str) -> Option<usize> {
@@ -2494,6 +2578,78 @@ mod tests {
         let mut g = test_gate();
         let findings = g.check_input(&fx("human_threshold_with_word"));
         assert!(findings.iter().all(|v| v.rule != "human-threshold"));
+    }
+
+    #[test]
+    fn fp_pii_private_mail_domain_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("pii_mail_domain")).unwrap();
+        assert_eq!(v.rule, "pii");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_pii_home_path_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("pii_home_path")).unwrap();
+        assert_eq!(v.rule, "pii");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_pii_role_address_passes() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("pii_role_address")).is_none());
+    }
+
+    #[test]
+    fn fn_pii_ci_home_passes() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("pii_ci_home")).is_none());
+    }
+
+    #[test]
+    fn fn_pii_clean_text_passes() {
+        let mut g = test_gate();
+        assert!(
+            g.check_text("the field carries the measured series; the gate holds")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn fp_tool_pii_markers_blocked() {
+        let mut g = test_gate();
+        for marker in &vocab().pii {
+            let args = tool_args("src/x.rs", marker);
+            let v = g.check_tool_call("edit", &args).unwrap();
+            assert_eq!(v.rule, "pii", "marker {} not blocked", marker);
+            assert_eq!(v.severity, Severity::Hard);
+        }
+    }
+
+    #[test]
+    fn fp_tool_pii_home_path_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", &fx("pii_home_path"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "pii");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_pii_ci_home_passes() {
+        let mut g = test_gate();
+        let args = tool_args(".github/workflows/x.yml", &fx("pii_ci_home"));
+        assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
+    fn fp_input_pii_collected() {
+        let mut g = test_gate();
+        let findings = g.check_input(&fx("pii_mail_domain"));
+        assert!(findings.iter().any(|v| v.rule == "pii"));
+        assert!(findings.iter().all(|v| v.severity == Severity::Soft));
     }
 
     #[test]

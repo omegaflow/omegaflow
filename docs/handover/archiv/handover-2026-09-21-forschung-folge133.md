@@ -3,7 +3,7 @@
   session: Forschung-Folge 133
   class: handover
   date: 2026-09-21
-  sha256: 1849aac90aa3dee86eed94d049889a99c857cbd195494abc7e46c3e64f14c414
+  sha256: 97ee04f08223aea05650a45984063849fdbe7d5b729689595d01cdd0a873cded
   status: live
 -->
 # Handover — Forschung-Folge 133 (Stand 2026-09-21)
@@ -139,7 +139,7 @@ die Riss-Regel lief nur gegen W1.
 - `docs/zustand/external-state.md` (CI-/Postfach-Zeile)
 
 Fremde uncommittete Arbeit im selben Baum (`upload_asset`→`upload_release`-Umbau,
-`survey-funding-erkundung.md`-Nachtrag, die `phi/*.φ`-Änderungen) wird **nicht**
+die `phi/*.φ`-Änderungen) wird **nicht**
 angefasst.
 
 ## Abschluss

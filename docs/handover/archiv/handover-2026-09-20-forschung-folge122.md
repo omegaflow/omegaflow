@@ -3,7 +3,7 @@
   session: Forschung-Folge 122
   class: handover
   date: 2026-09-20
-  sha256: 4ba76162d14bd41242e6162a9c505a5f2fe1e26df458e33cf4bed7f8911a5d62
+  sha256: 8d3d4770a2c958c9411cd656d09c309f04315b040ecbdcbaa4f8488db4eafdc4
   status: live
 -->
 # Handover — Forschung-Folge 122 (2026-09-20)
@@ -56,19 +56,6 @@ chrome-devtools-MCP hat einen eigenen Browser (`about:blank`); kein CDP-Endpunkt
 `state/cookies/<host>.json` (untracked); dann `OMEGAFLOW_COOKIES=state/cookies/<host>.json
 archive_search --playwright <url>` headless verifizieren)
 
-## Punkt 3 — Pine64 Hardware-Sponsoring (zugesagt, operator-gebunden)
-
-`info@pine64.org` `1789930255`: Ox64 SBC zugesagt, bittet um Versanddaten +
-Telefonnummer. Dritt-Akt (Mail) + PII → per-Akt-Consent des Operators.
-
-(Schritt: `entscheid`-Linie legt dem Operator vor; Antwortentwurf in `state/mail/`
-(gitignored), PII nie getrackt)
-
-## Punkt 4 — Hardware-Sponsoring Framework/Tuxedo (wartend, dritter)
-
-Trigger Antwort (Framework `NG2HWBZM`, Tuxedo `#991311279`).
-(Schritt: Trigger Antwort)
-
 ## Punkt 5 — Flyby-Path-2-Kette (termin:2026-09-28)
 
 Zellen ab Perigäum füllen. (Schritt: ab Datum)
@@ -90,7 +77,6 @@ Freigabe Wissenschaftsphase. (Schritt: ab Datum)
 | 3. TE-Gate-Verdikt `35513982359` @`7d0a1272` | wartend | eigen | `ci_manage view 35513982359` (success → vier `fpr_rise_sigma_test`-Zeilen) |
 | 4. Cookie-Editor-Export | operator-gebunden | operator | Ziel-Site aktiv → Cookie-Editor → Export → `state/cookies/<host>.json` |
 | 5. Pine64 Versanddaten + Telefon | operator-gebunden | operator | `entscheid` legt vor; Antwortentwurf `state/mail/` |
-| 6. Hardware-Sponsoring Framework/Tuxedo | wartend | dritter | Trigger Antwort |
 | 7. Flyby-Path-2-Kette | termin:2026-09-28 | termin | Zellen ab Perigäum füllen |
 | 8. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 9. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

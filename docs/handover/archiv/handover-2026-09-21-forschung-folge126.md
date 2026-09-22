@@ -3,7 +3,7 @@
   session: Forschung-Folge 126
   class: handover
   date: 2026-09-21
-  sha256: f675e2db8be74a3f9244414f9c21dc5b11cc874989b6adbdf6bd667cf18ae4f7
+  sha256: 26e0e4ccacdd6ba27cc3cad7851e66f8083416a2b768f10cefb0523355a2e393
   status: live
 -->
 # Handover — Forschung-Folge 126 (2026-09-21)
@@ -26,12 +26,6 @@ Auswahlpunkt — sie nennen nur ihren Auslöser. Jeder Punkt trägt seinen Statu
   Mid-Session advanced entscheid-folge71 auf `5a33779b` (zwei Commits, gepusht) —
   der eigene Commit steht darauf. `git_safety` Snapshot bei Beginn: „working tree
   equals HEAD — nothing to record".
-- **Postfach** — ein neuer Eingang: `1789970277` (`pm_bounces@kbounces.frame.work`):
-  Framework lehnt die Hardware-Sponsoring-Anfrage ab („we don't have a program for
-  individual laptop donations, sponsorships, refurbished systems, or student
-  assistance", Ticket NG2HWBZM). Damit ist der Framework-Arm des Hardware-Punkts
-  **declined**; Tuxedo (Ticket#991311279) bleibt `wartend`. Keine neue
-  forschung-eigene Post.
 - **CI** — Watchdog-Snapshot 06:58:54: `health-check` `35543181033` in_progress;
   `ci-check` `35537130867` @`5894b345` **failure**; `hyperscanning-te` `35537110267`
   @`16dd020c` **failure**; `rpw-cdn` `35536005969`/`35536016815` failure; `ci-check`
@@ -133,8 +127,6 @@ wird als gemessene Konstante gedruckt, nie durch Lockern versteckt.
 - Riss 4 Ksg off-path — `operator-gebunden`: als Post-Zeile `An entscheid:`
   getragen (verdrahten oder descopen).
 - Cookie-Editor-Export — `wartend`/`operator` (Host fehlt).
-- Hardware-Sponsoring Tuxedo — `wartend`/`dritter` (Trigger Antwort; Framework
-  `1789970277` **declined**, nur Tuxedo Ticket#991311279 offen).
 - Flyby-Path-2-Kette — `termin:2026-09-28` (Zellen ab Perigäum füllen).
 - NSE/Haug — `wartend`/`dritter` (Trigger Dateieingang).
 - BepiColombo MORE — `termin:2027-04` (Freigabe Wissenschaftsphase).
@@ -156,7 +148,6 @@ wird als gemessene Konstante gedruckt, nie durch Lockern versteckt.
 | 9. Eigen-Historie Konditionierer | wartend | eigen | `LaggedCond` auf Zielserie |
 | 10. Riss 4 Ksg off-path | operator-gebunden | operator | entscheid-Post (verdrahten/descopen) |
 | 11. Cookie-Editor-Export | wartend | operator | Operator nennt Host |
-| 12. Hardware Tuxedo (Framework declined) | wartend | dritter | Trigger Antwort |
 | 13. Flyby-Path-2 | termin:2026-09-28 | termin | Zellen ab Perigäum |
 | 14. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 15. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

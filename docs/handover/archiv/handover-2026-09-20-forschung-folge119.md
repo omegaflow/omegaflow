@@ -3,7 +3,7 @@
   session: Forschung-Folge 119
   class: handover
   date: 2026-09-20
-  sha256: e470506d107fdbe2de47d5ab838d261f0714f51dbda44fd674e34cd67f0a1150
+  sha256: 98623c7e9da8aaa929889af3de4f8d11d4388f700df377a613f44bd9b6cef1e7
   status: live
 -->
 # Handover — Forschung-Folge 119 (2026-09-20)
@@ -54,7 +54,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
   auf den gemessenen Stand gesetzt (CI @`0cbc6190`, Postfach `1789922257`); die
   Datei trug fremde entscheid-Hunks (Free-Model-Katalog-Zeile) — mitgefaltet, nicht
   überschrieben. `post.md`: zwei Zeilen gesetzt (`An alle Linien:` Tafel-Regel,
-  `An entscheid:` Hardware-Sponsoring). Beide Register committet (geteilter Baum —
   der Silo-Schutz hätte das Register eingefroren).
 
 ## Planungs-Tafel (offene Punkte)
@@ -64,7 +63,6 @@ eine Session, die nur dem Register glaubt, baut Stehendes neu.
 | 1. `ci-check` HEAD-Verdikt `35526340084` @`84aa5147` | wartend | eigen | `ci_manage view 35526340084` (Lauf pending; success → #1 zu, failure Format → `ci_manage log`-Zeile übernehmen) |
 | 2. TE-Gate-Verdikt `35513982359` @`7d0a1272` | wartend | eigen | `ci_manage view 35513982359`; success → vier `fpr_rise_sigma_test`-Zeilen via `ci_manage log`; cancelled → `gh workflow run te-gate.yml` @HEAD (`5b406e16`) |
 | 3. Chrome-DevTools MCP Membran-Lauf | operator-gebunden | operator | Operator-Wort für sichtbaren Vordergrund-Lauf; danach CDP-Lesen |
-| 4. Hardware-Sponsoring (Pine64/Framework/Tuxedo) | operator-gebunden | operator | Antwort an Dritte = consent-pflichtig; Post-Zeile `An entscheid:` gesetzt 2026-09-20 — Operator-Antwort offen |
 | 5. Browser-Anbindung Rest | operator-gebunden | operator | Cookie-Editor-Transfer Operator-Profil ↔ Playwright; Playwright-Extension befund-gated |
 | 6. Flyby-Path-2-Kette | termin | termin:2026-09-28 | Zellen ab Perigäum füllen (`ernte`/`research-max`) |
 | 7. NSE/Haug | wartend | dritter | Trigger Dateieingang |

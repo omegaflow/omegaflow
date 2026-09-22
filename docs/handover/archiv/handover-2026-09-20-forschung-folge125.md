@@ -3,7 +3,7 @@
   session: Forschung-Folge 125
   class: handover
   date: 2026-09-20
-  sha256: 81741ec0b2b56b221bfe1a730bd27e64401d9f1033b8918f13e329d1bea4aad7
+  sha256: c94b38adfa9ce1b986795cd07e2f98fc6af6c60eb9a9eee4de5e83341e61d2b4
   status: live
 -->
 # Handover — Forschung-Folge 125 (2026-09-20)
@@ -124,7 +124,6 @@ Konstante gedruckt, nie durch Lockern versteckt.
   getragen (verdrahten oder descopen).
 - Cookie-Editor-Export — `wartend`/`operator` (Host fehlt). (Schritt: Operator
   nennt Host.)
-- Hardware-Sponsoring Framework/Tuxedo — `wartend`/`dritter` (Trigger Antwort).
 - Flyby-Path-2-Kette — `termin:2026-09-28` (Zellen ab Perigäum füllen).
 - NSE/Haug — `wartend`/`dritter` (Trigger Dateieingang).
 - BepiColombo MORE — `termin:2027-04` (Freigabe Wissenschaftsphase).
@@ -146,7 +145,6 @@ Konstante gedruckt, nie durch Lockern versteckt.
 | 9. Eigen-Historie Konditionierer | wartend | eigen | `LaggedCond` auf Zielserie |
 | 10. Riss 4 Ksg off-path | operator-gebunden | operator | entscheid-Post (verdrahten/descopen) |
 | 11. Cookie-Editor-Export | wartend | operator | Operator nennt Host |
-| 12. Hardware Framework/Tuxedo | wartend | dritter | Trigger Antwort |
 | 13. Flyby-Path-2 | termin:2026-09-28 | termin | Zellen ab Perigäum |
 | 14. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 15. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

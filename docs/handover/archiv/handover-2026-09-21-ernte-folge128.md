@@ -3,7 +3,7 @@
   session: Ernte-Folge 128
   class: handover
   date: 2026-09-21
-  sha256: 9b828cbee7a561ac146b09a3bf68c8483ec64b32528a60c95fb4742f93b8634a
+  sha256: d34414c3fe4ab8021c6851608bab2ec423d705fa792b30f0c12b0de7c5922b7a
   status: live
 -->
 # Handover — Ernte-Folge 128 (2026-09-21)
@@ -24,11 +24,6 @@ Schritt in derselben Zeile; Status-Tag (`wartend` | `operator-gebunden` |
 - **HEAD** `9cc2b96c` beim Start (geteilter Baum, fremde Commits laufen
   gleichzeitig); eigener Commit folgt. Arbeitsbaum: eigener Pfad-Satz (unten);
   fremde Arbeit (forschung/entscheid) ist uncommittet im Baum.
-- **Postfach** — letzter Ledger-Eingang `1789973288` (Tuxedo Ticket#991311279:
-  keine kostenlosen Geräte an Privatpersonen — Hardware-Punkt beidseitig
-  declined); kein neues `An ernte`. Die 3 offenen `post.md`-Zeilen sind `An bau`
-  (EPA RadNet, GHRC GLM, PINE64) + neu 1× `An bau` (Tool-Gap) + 1× `An entscheid`
-  (SSDC Limadou).
 - **CI** — `rpw-cdn` `35571712600` @`2e7fa73b` **success** (P1-Verifikation,
   siehe unten); `ps1-cdn` `35569486280` in_progress; `demeter-cdn` `35567568429`
   queued; `ci-check` cancelled-Churn; `hyperscanning-te` `35570480672` failure

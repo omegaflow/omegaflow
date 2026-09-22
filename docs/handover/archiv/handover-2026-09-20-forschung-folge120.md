@@ -3,7 +3,7 @@
   session: Forschung-Folge 120
   class: handover
   date: 2026-09-20
-  sha256: 13b6fbdf6174bb3c88aa6f737615f4f961706b36baeb35fdd07af12deb266baa
+  sha256: 9040ebede0f64b39f5622a969d57362947b82e325c36f18ca201129fd426462d
   status: live
 -->
 # Handover — Forschung-Folge 120 (2026-09-20)
@@ -74,7 +74,6 @@ Auswahlpunkt — sie nennen nur ihren Auslöser. Jeder Punkt trägt seinen Statu
 | 2. TE-Gate-Verdikt `35513982359` @`7d0a1272` | wartend | eigen | `ci_manage view 35513982359` (in_progress seit 13:36Z; success → vier `fpr_rise_sigma_test`-Zeilen via `ci_manage log`) |
 | 3. relay `static/*.js`-Fix funktional verifizieren | wartend | eigen | frischer browser_relay-Build + Lauf gegen die vier Module (CI/local); `gh workflow run ci-check.yml` |
 | 4. Browser-Anbindung Rest | operator-gebunden | operator | Extension „OpenCode Browser" (`cabnfapnafjlijmbpmgjkgobhdkbmpci`) im Operator-Profil öffnen, „connected" bestätigen; dann Cookie-Editor-Transfer Operator-Profil ↔ Playwright |
-| 5. Hardware-Sponsoring Framework/Tuxedo | wartend | dritter | Trigger Antwort (Framework Ticket `NG2HWBZM`, Tuxedo `#991311279`); Pine64-Follow-up an `info@pine64.org` gesendet |
 | 6. Flyby-Path-2-Kette | termin:2026-09-28 | termin | Zellen ab Perigäum füllen (`ernte`/`research-max`) |
 | 7. NSE/Haug | wartend | dritter | Trigger Dateieingang |
 | 8. BepiColombo MORE | termin:2027-04 | termin | Freigabe Wissenschaftsphase |

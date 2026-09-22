@@ -99,7 +99,8 @@
     "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
     "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made",
     "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
-    "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends"
+    "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
+    "pii": "a private mail domain or a home path names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -137,6 +138,15 @@
     "must",
     "should",
     "default"
+  ],
+  "pii": [
+    "@proton.me",
+    "@gmail.com",
+    "@gmx.",
+    "@web.de",
+    "@outlook.",
+    "@yahoo.",
+    "@t-online.de"
   ],
   "template_slang": [
     "godmode",
@@ -380,6 +390,10 @@
     "cdn_capped_release_blocked": "if ci_mode && !upload_asset(&out_path) {",
     "human_threshold_send": "smail --send --to role@example.org",
     "human_threshold_dry_run": "smail --dry-run --to role@example.org",
-    "human_threshold_with_word": "smail --send … Wort: Adoptions-Mails senden"
+    "human_threshold_with_word": "smail --send … Wort: Adoptions-Mails senden",
+    "pii_mail_domain": "the private mailbox is user@proton.me",
+    "pii_home_path": "the tree lives at /home/someuser/projects/omegaflow",
+    "pii_ci_home": "the CI checkout is /home/runner/work/omegaflow/omegaflow",
+    "pii_role_address": "smail --dry-run --to role@example.org"
   }
 }

@@ -3,7 +3,7 @@
   session: Entscheid-Folge 62
   class: handover
   date: 2026-09-20
-  sha256: 3ad9e39e3df5e3cd1e24b4de2ddc71158008ccc5d9e841be59604007a48e3a8e
+  sha256: d37639335a5b9665cdbbd5c2f37f567e3eeb397bf6e0d6af9e6dfa27ab17ee09
   status: live
 -->
 # Handover — Entscheid-Folge 62 (2026-09-20)
@@ -36,7 +36,7 @@ sondern nennen nur ihren Auslöser. Jeder Punkt trägt seinen Status-Tag
 
 Gemessen und abgeschlossen; die Ergebnis-Zeile für die Zukunft:
 
-- **Models-Datei** `/home/johannes/.cache/opencode/models.json` (4,7 MB, models.dev,
+- **Models-Datei** `$HOME/.cache/opencode/models.json` (4,7 MB, models.dev,
   ~135 Provider). **62 Free-Modelle** (cost 0 oder `:free`): openrouter 21, kilo 19,
   unorouter 10, kenari 10, bothub 2. Registrierungsschlüssel: `OPENROUTER_API_KEY`,
   `KILO_API_KEY`, `UNOROUTER_API_KEY`, `KENARI_API_KEY`, `BOTHUB_API_KEY`.
@@ -118,14 +118,7 @@ openrouter 446 Modelle (22 free), kilo 380 (21 free), unorouter 261 (138 free), 
    redigiert, die Historie nicht. *Frage:* Rewrite ausführen? *Ja:* der Auftrag
    `docs/auftrag/auftrag-pii-history-rewrite.md` läuft (destruktiv, Force-Push);
    *Nein:* bleibt offen.
-2. **Funding/Sponsoring** — *Lage:* Förderung wirkt erst mit Publikum. *Frage:*
-   Sponsoring-Konten (GitHub Sponsors / Open Collective) jetzt aufsetzen? *Ja:* anlegen;
-   *Nein:* erst nach Preprint.
-3. **Mantis-Shrimp-Hardware** — *Lage:* Espressif-Sponsorship + Crowd Supply +
-   GSoC/OpenAstronomy/ESA SOCIS als Wege. *Frage:* Bewerbungen/Formulare senden?
-   *Ja:* pro Akt; *Nein:* bleibt.
 4. **Mistral** — *Lage:* **Bothub** ist gelöscht und der **UnoRouter-Schlüssel auf
-   `opencode` umbenannt** (Operator, 2026-09-20); UnoRouter + Kenari + Inception + zai
    antworten. **Mistral** meldet „Rate limit exceeded" (Free-Tier streng; Console zeigt
    „Pay-As-You-Go aktivieren"). *Frage:* Mistral Pay-as-you-go aktivieren — oder als
    nicht-nutzbar führen?
