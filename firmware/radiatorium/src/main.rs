@@ -29,6 +29,10 @@ const SAMPLE_RATE_HZ: f64 = 100.0;
 const WINDOW_LEN: usize = 256;
 const FIFO_SAMPLES: usize = 32;
 const TEMP_READ_PERIOD: u32 = 10_000;
+const MUX_WAYS: u8 = 16;
+const MAX30102_WAY: u8 = 0;
+const SPO2_MIN_SAMPLES: usize = 100;
+const SPO2_SAMPLES_PER_EMIT: usize = 100;
 
 esp_bootloader_esp_idf::esp_app_desc!();
 
@@ -111,7 +115,7 @@ fn main() -> ! {
     .with_sda(peripherals.GPIO8)
     .with_scl(peripherals.GPIO9);
 
-    let (mux_addr, control) = mux::select(0).expect("way 0");
+    let (mux_addr, control) = mux::select(MAX30102_WAY).expect("way 0");
     let _ = i2c.write(mux_addr, &[control]);
 
     let _ = i2c.write(
@@ -145,6 +149,7 @@ fn main() -> ! {
     let mut temp_counter: u32 = 0;
 
     let mut window = [0u32; WINDOW_LEN];
+    let mut red_window = [0u32; WINDOW_LEN];
     let mut window_len: usize = 0;
     let mut base_index: usize = 0;
     let mut last_emitted: usize = 0;
@@ -153,6 +158,8 @@ fn main() -> ! {
     let mut peak_buf = [0usize; WINDOW_LEN];
     let mut interval_buf = [0.0f64; WINDOW_LEN];
     let mut line = [0u8; 16];
+    let mut spo2_line = [0u8; 16];
+    let mut spo2_sample_counter: usize = 0;
 
     loop {
         let n = usb_rx.drain_rx_fifo(&mut rx);
@@ -189,46 +196,69 @@ fn main() -> ! {
             }
         }
 
-        let mut rd_buf = [0u8; 1];
-        let mut wr_buf = [0u8; 1];
-        let pointers_ok = i2c
-            .write_read(
-                max30102::I2C_ADDR,
-                &[max30102::REG_FIFO_RD_PTR],
-                &mut rd_buf,
-            )
-            .is_ok()
-            && i2c
+        for way in 0..MUX_WAYS {
+            if let Some((mux_addr, control)) = mux::select(way) {
+                let _ = i2c.write(mux_addr, &[control]);
+            }
+            if way != MAX30102_WAY {
+                continue;
+            }
+
+            let mut rd_buf = [0u8; 1];
+            let mut wr_buf = [0u8; 1];
+            let pointers_ok = i2c
                 .write_read(
                     max30102::I2C_ADDR,
-                    &[max30102::REG_FIFO_WR_PTR],
-                    &mut wr_buf,
+                    &[max30102::REG_FIFO_RD_PTR],
+                    &mut rd_buf,
                 )
-                .is_ok();
-        if pointers_ok {
-            let rd = (rd_buf[0] & 0x1F) as usize;
-            let wr = (wr_buf[0] & 0x1F) as usize;
-            let avail = (wr.wrapping_sub(rd)) & 0x1F;
-            if avail > 0 {
-                let nbytes = avail * max30102::SAMPLE_BYTES;
-                if i2c
+                .is_ok()
+                && i2c
                     .write_read(
                         max30102::I2C_ADDR,
-                        &[max30102::REG_FIFO_DATA],
-                        &mut fifo_buf[..nbytes],
+                        &[max30102::REG_FIFO_WR_PTR],
+                        &mut wr_buf,
                     )
-                    .is_ok()
-                {
-                    for (_red, ir) in max30102::Fifo::new(&fifo_buf[..nbytes]) {
-                        if window_len < WINDOW_LEN {
-                            window[window_len] = ir;
-                            window_len += 1;
-                        } else {
-                            window.copy_within(1.., 0);
-                            window[WINDOW_LEN - 1] = ir;
-                            base_index += 1;
+                    .is_ok();
+            if pointers_ok {
+                let rd = (rd_buf[0] & 0x1F) as usize;
+                let wr = (wr_buf[0] & 0x1F) as usize;
+                let avail = (wr.wrapping_sub(rd)) & 0x1F;
+                if avail > 0 {
+                    let nbytes = avail * max30102::SAMPLE_BYTES;
+                    if i2c
+                        .write_read(
+                            max30102::I2C_ADDR,
+                            &[max30102::REG_FIFO_DATA],
+                            &mut fifo_buf[..nbytes],
+                        )
+                        .is_ok()
+                    {
+                        for (red, ir) in max30102::Fifo::new(&fifo_buf[..nbytes]) {
+                            if window_len < WINDOW_LEN {
+                                window[window_len] = ir;
+                                red_window[window_len] = red;
+                                window_len += 1;
+                            } else {
+                                window.copy_within(1.., 0);
+                                red_window.copy_within(1.., 0);
+                                window[WINDOW_LEN - 1] = ir;
+                                red_window[WINDOW_LEN - 1] = red;
+                                base_index += 1;
+                            }
+                            spo2_sample_counter += 1;
                         }
                     }
+                }
+            }
+
+            if spo2_sample_counter >= SPO2_SAMPLES_PER_EMIT && window_len >= SPO2_MIN_SAMPLES {
+                spo2_sample_counter = 0;
+                if let Some(spo2) =
+                    max30102::spo2_from_samples(&red_window[..window_len], &window[..window_len])
+                {
+                    let len = write_spo2_line(&mut spo2_line, spo2);
+                    let _ = usb_tx.write(&spo2_line[..len]);
                 }
             }
         }
@@ -289,5 +319,14 @@ fn write_nn_line(line: &mut [u8], ms: f64) -> usize {
     let whole = tenths / 10;
     let frac = tenths % 10;
     let _ = write!(w, "nn={}.{}\n", whole, frac);
+    w.len
+}
+
+fn write_spo2_line(line: &mut [u8], pct: f64) -> usize {
+    let mut w = LineWriter { buf: line, len: 0 };
+    let tenths = (pct * 10.0 + 0.5) as i32;
+    let whole = tenths / 10;
+    let frac = tenths % 10;
+    let _ = write!(w, "spo2={}.{}\n", whole, frac);
     w.len
 }

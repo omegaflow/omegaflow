@@ -1,16 +1,23 @@
 use super::*;
 
-
 const MESG_RECORD: u16 = 20;
 const MESG_HR: u16 = 132;
 
 const FIELD_RECORD_TEMPERATURE: u8 = 13;
 const FIELD_HR_EVENT_TIMESTAMP: u8 = 9;
+const FIELD_HR_EVENT_TIMESTAMP_12: u8 = 10;
 
 const BASE_SINT8: u8 = 0x01;
 const BASE_UINT32: u8 = 0x86;
+const BASE_BYTE: u8 = 0x0D;
 
 const EVENT_TIMESTAMP_SCALE: f64 = 1024.0;
+
+const EVENT_TIMESTAMP_12_BITS: u32 = 12;
+const EVENT_TIMESTAMP_12_CARRY_BITS: u32 = 18;
+const EVENT_TIMESTAMP_12_MASK: u32 = (1u32 << EVENT_TIMESTAMP_12_BITS) - 1;
+const EVENT_TIMESTAMP_12_COUNTER_MASK: u32 =
+    (1u32 << (EVENT_TIMESTAMP_12_BITS + EVENT_TIMESTAMP_12_CARRY_BITS)) - 1;
 
 const CRC_TABLE: [u16; 16] = [
     0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401, 0xA001, 0x6C00, 0x7800, 0xB401,
@@ -223,6 +230,12 @@ fn parse_data(
                     emit_nn(&beats, out);
                 }
             }
+            (MESG_HR, FIELD_HR_EVENT_TIMESTAMP_12) => {
+                if field.base_type == BASE_BYTE {
+                    let samples = unpack_timestamp_12(field_bytes);
+                    emit_nn(&cumulative_timestamp_12(&samples), out);
+                }
+            }
             _ => {}
         }
     }
@@ -241,6 +254,29 @@ fn emit_nn(beats: &[u32], out: &mut Vec<(String, f64, Option<f64>)>) {
             out.push(("nn".to_string(), ms, None));
         }
     }
+}
+
+fn unpack_timestamp_12(field_bytes: &[u8]) -> Vec<u16> {
+    let mut samples = Vec::with_capacity(field_bytes.len() / 3 * 2);
+    for chunk in field_bytes.chunks_exact(3) {
+        samples.push((chunk[0] as u16) | (((chunk[1] & 0x0F) as u16) << 8));
+        samples.push(((chunk[1] >> 4) as u16) | ((chunk[2] as u16) << 4));
+    }
+    samples
+}
+
+fn cumulative_timestamp_12(samples: &[u16]) -> Vec<u32> {
+    let mut accumulated: u32 = 0;
+    let mut last: u32 = 0;
+    let mut timestamps = Vec::with_capacity(samples.len());
+    for &sample in samples {
+        let raw = sample as u32 & EVENT_TIMESTAMP_12_MASK;
+        let delta = raw.wrapping_sub(last) & EVENT_TIMESTAMP_12_MASK;
+        accumulated = accumulated.wrapping_add(delta) & EVENT_TIMESTAMP_12_COUNTER_MASK;
+        last = raw;
+        timestamps.push(accumulated);
+    }
+    timestamps
 }
 
 pub fn fit_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
@@ -428,6 +464,26 @@ mod tests {
             .map(|(_, v, _)| *v)
             .collect();
         assert_eq!(nn, vec![1000.0, 1000.0]);
+    }
+
+    #[test]
+    fn hr_event_timestamp_12_unpacks_and_carries_rollover() {
+        let packed = [0x00, 0x0F, 0x30, 0x00, 0x07, 0xB0];
+        assert_eq!(
+            unpack_timestamp_12(&packed),
+            vec![0x0F00, 0x0300, 0x0700, 0x0B00]
+        );
+
+        let mut records = definition(0, MESG_HR, &[(FIELD_HR_EVENT_TIMESTAMP_12, 6, BASE_BYTE)]);
+        records.extend(data(0, &packed));
+
+        let out = parse_fit(&make_fit(&records)).expect("valid fit");
+        let nn: Vec<f64> = out
+            .iter()
+            .filter(|(k, _, _)| k == "nn")
+            .map(|(_, v, _)| *v)
+            .collect();
+        assert_eq!(nn, vec![1000.0, 1000.0, 1000.0]);
     }
 
     #[test]
