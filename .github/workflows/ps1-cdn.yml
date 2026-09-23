@@ -144,12 +144,13 @@ jobs:
               done
               ./target/release/ps1_coverage_combiner --parts-dir parts --out ps1_dr2_coverage.fp01 \
                 --expect-min "$band_min" --expect-max "$band_max"
-              # the legacy order-12 chunks on the shared release cannot merge into an
-              # order-10 final; free their slots before the final upload (813 + 1 <= 1000)
-              legacy=$(gh release view ssd.jpl.nasa.gov-ps1 --repo omegaflow/sources --json assets \
+              # the legacy order-12 chunks sit on the capped ssd.jpl.nasa.gov release
+              # (187 ps1_part_* assets) and cannot merge into an order-10 final; free
+              # their slots there. The family tag carries only the final asset.
+              legacy=$(gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets \
                 --jq '.assets[]?|select(.name|startswith("ps1_part_"))|.name' 2>/dev/null || true)
               for name in $legacy; do
-                gh release delete-asset ssd.jpl.nasa.gov-ps1 "$name" --yes --repo omegaflow/sources || true
+                gh release delete-asset ssd.jpl.nasa.gov "$name" --yes --repo omegaflow/sources || true
               done
               gh release upload ssd.jpl.nasa.gov-ps1 ps1_dr2_coverage.fp01 --clobber --repo omegaflow/sources
               echo "ps1_dr2_coverage.fp01 uploaded: $(stat -c%s ps1_dr2_coverage.fp01) bytes"
