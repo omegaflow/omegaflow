@@ -18,14 +18,14 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FeldIdentitaet> {
         b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" | b"SKD1" | b"VLDE" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung))
         }
-        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" => {
+        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" => {
             Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
         }
         b"ISCB" => Some(FeldIdentitaet::Zeuge(ZeugeArt::Presence)),
         b"FP01" => Some(FeldIdentitaet::Footprint),
         b"NRS1" => Some(FeldIdentitaet::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" | b"MAX1"
-        | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" => Some(FeldIdentitaet::Oszillator),
+        | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" | b"OSM1" => Some(FeldIdentitaet::Oszillator),
         _ => None,
     }
 }
@@ -147,6 +147,18 @@ mod tests {
     }
 
     #[test]
+    fn gmr1_is_gestalt() {
+        assert_eq!(
+            magic_identity(*b"GMR1"),
+            Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+        );
+        assert_eq!(
+            zeugen_gate(Some(*b"GMR1"), Some(ZeugeArt::Gestalt), true),
+            ZeugeVerdict::Holds(ZeugeArt::Gestalt)
+        );
+    }
+
+    #[test]
     fn eri1_is_gestalt() {
         assert_eq!(
             magic_identity(*b"ERI1"),
@@ -201,6 +213,11 @@ mod tests {
     #[test]
     fn unknown_magic_is_none() {
         assert_eq!(magic_identity(*b"XXXX"), None);
+    }
+
+    #[test]
+    fn osm1_is_an_oscillator() {
+        assert_eq!(magic_identity(*b"OSM1"), Some(FeldIdentitaet::Oszillator));
     }
 
     #[test]
