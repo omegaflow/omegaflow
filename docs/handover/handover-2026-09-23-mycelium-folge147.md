@@ -3,7 +3,7 @@
   session: Mycelium-Folge 147
   class: handover
   date: 2026-09-23
-  sha256: 8669ef6b8dc0d65c75b25d82109bd257d2cf99a59498b3efd74a1391e966a3e0
+  sha256: 3a1db110bc8239b280f4b559cfb8b73f4aa25478b749735f5bd61236c9986bcb
   status: live
 -->
 # Handover — Mycelium-Folge 147 (2026-09-23)
@@ -47,6 +47,16 @@ vermessen).
 - **Register/Post:** 24 declines in `phi/declined_sources.φ`; `index.φ:36`-Note
   (13. Korpus) neu; `post.md` 13.-Korpus-Zeile aufgelöst + SuperDARN-Zugangs-
   Korrektur + river-Info.
+- **Pipeline-Rest vermessen (URL-Ebene).** Pool queue+stage = 5743 unique URLs;
+  exakt registriert 134; Rest 5609 = **4049 eigene github-Selbstlinks** + 1560
+  extern (1469 auf bekannten Domains, **91 URLs auf 50 unbekannten Domains**).
+  Die 50 durch das Force-Gate: 24 accept / 2 pending / 24 decline; **14 neue
+  declines registriert**, 10 bereits über eine Subdomain gedeckt.
+- **HAPI-Korrektur (widerlegt).** Der INTERMAGNET-Block trägt
+  `stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities`
+  + **`fanout 154`** (`sources.φ:5988`; Code `fanout_fetch` in `channels.rs:100`).
+  Die frühere „72/154, 82 fehlen"-Zahl maß gepinnte/stage-Artefakte, **nicht** den
+  Fanout — alle 154 BGS-Stationen sind deklariert.
 
 ## Offen (aufgeschlüsselt)
 
@@ -76,6 +86,24 @@ vermessen).
   pending (MIDAS-Produkt entscheidet).
 - **Blockade:** Scope-Wort.
 - **Braucht:** `post.md` an future — **steht**.
+
+### Pipeline-Rest: Feld-Kandidaten der 50 Domains
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Produkt-Probe je Kandidat.
+- **Lage:** Force-Gate (gemessen 2026-09-23, `grind-pro`): **10 neue accept** —
+  `grace.jpl.nasa.gov` (gravity), `retlector.eu` (gravity/TLE),
+  `seismo.ethz.ch` (seismic), `so2.gsfc.nasa.gov` (diffusion),
+  `spaceweather.sansa.org.za` (em), `stereo-ssc.nascom.nasa.gov` (em),
+  `weather.cma.cn` (thermal), `www.gebco.net` + `www.gmrt.org` (gravity/
+  Bathymetrie), `api.opensensemap.org` (thermal); **2 pending** —
+  `sios-svalbard.org`, `usgodae.org`; **6 Grenzfälle** (netloc neu, aber
+  Schwester-Subdomain bereits declined, Pro liest accept): `api.blitzortung.org`,
+  `archive.stsci.edu`, `argo.ucsd.edu`, `darts.isas.jaxa.jp`, `incois.gov.in`,
+  `earthquake.alaska.edu`.
+- **Blockade:** keiner der Kandidaten hat einen register-fähigen konkreten
+  Endpunkt (url/field/unit).
+- **Braucht:** Produkt-Probe je Kandidat (`archive_search --sniff`/`--playwright`);
+  bei Feld + unit → Block in `phi/sources.φ`, sonst `declined_sources.φ`.
 
 ### pre-cdn Stage-Regeneration
 - **Status:** wartend | **Bindung:** eigen

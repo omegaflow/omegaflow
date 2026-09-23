@@ -4698,3 +4698,59 @@ note UNHCR humanitäre Statistik (403) — kein Feld (Force-Gate 2026-09-23).
 decline no-physical-force
 url https://submarinecablemap.com/
 note Submarine Cable Map — Infrastruktur/Geografie (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://aisstream.io/
+note AIS Schiffs-Transpondertelemetrie — aktiv bewegtes Objekt, kein Feld (Force-Gate 2026-09-23).
+
+decline aggregate-index
+url https://api.ember-climate.org/
+note Ember Climate Stromerzeugungs-/Emissions-Aggregate — skalar, positionslos (Force-Gate 2026-09-23).
+
+decline registry
+url https://api.eurobis.org/
+note EurOBIS Art-Occurrence — Presence-Registry (Force-Gate 2026-09-23).
+
+decline registry
+url https://api.fisheries.noaa.gov/
+note NOAA Fisheries Landungen/Bestandsstatistik — bare counts (Force-Gate 2026-09-23).
+
+decline text
+url https://api.reliefweb.int/
+note ReliefWeb humanitäre Berichte/Warnungen — Text (Force-Gate 2026-09-23).
+
+decline infra
+url https://blockchain.info/
+note Bitcoin-Ledger-Explorer — Infrastruktur (Force-Gate 2026-09-23).
+
+decline geographic-infrastructure
+url https://cartocdn-gusc.global.ssl.fastly.net/
+note Carto Kartenkachel-CDN — Infrastruktur (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://ll.thespacedevs.com/
+note Launch/Vehicle-Telemetrie + Registry — kein Feld (Force-Gate 2026-09-23).
+
+decline geographic-infrastructure
+url https://mangrove-atlas.sei.org/
+note Abgeleitete Mangroven-Ausdehnungskarte — Geografie (Force-Gate 2026-09-23).
+
+decline infra
+url https://onionoo.torproject.org/
+note Tor-Netzwerkstatus — Infrastruktur (Force-Gate 2026-09-23).
+
+decline infra
+url https://pypi.org/
+note Python-Paketindex — Infrastruktur (Force-Gate 2026-09-23).
+
+decline registry
+url https://tevcat2.tevcat.org/
+note TeVCat TeV-Quellenkatalog (literatur-kuratiert, keine Beobachtung) — Registry (Force-Gate 2026-09-23).
+
+decline aggregate-index
+url https://web-api.tp.entsoe.eu/
+note ENTSO-E Stromerzeugungs-/Last-Aggregate — skalar (Force-Gate 2026-09-23).
+
+decline registry
+url https://wikimedia.org/
+note Wikimedia Text/Knowledge — Registry (Force-Gate 2026-09-23).
