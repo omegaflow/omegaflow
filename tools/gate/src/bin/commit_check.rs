@@ -1,5 +1,5 @@
 use omegaflow::commit_gate::{
-    Gate, canon_diff, declared_canon, json_write, prose_violation, register_classes,
+    Gate, canon_diff, declared_canon, json_write, prose_violation_for, register_classes,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -57,7 +57,7 @@ fn main() {
             if !t.starts_with('+') || t.starts_with("+++") {
                 continue;
             }
-            if let Some(kind) = prose_violation(&t[1..]) {
+            if let Some(kind) = prose_violation_for(path, &t[1..]) {
                 eprintln!("commit_check: phi-register-prose: {kind}: {path}");
                 fail = true;
             }
