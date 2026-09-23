@@ -68,10 +68,10 @@ pub fn shelf_rows_for_gpu() -> Vec<f32> {
 }
 
 pub fn v_at_f32(force: u8, freq: f32, bin_width: f32) -> Option<f32> {
-    if !(freq > 0.0) {
+    if !(freq.is_finite() && freq > 0.0) {
         return None;
     }
-    for r in shelf_rows_for_gpu().chunks_exact(SHELF_GPU_ROW_FLOATS) {
+    for r in shelf_rows_for_gpu().as_chunks::<SHELF_GPU_ROW_FLOATS>().0 {
         if r[0] != force as f32 {
             continue;
         }
@@ -178,7 +178,7 @@ mod tests {
             .find(|r| r.force == 4)
             .expect("Rayleigh rows exist");
         let mut found = None;
-        for r in gpu.chunks_exact(SHELF_GPU_ROW_FLOATS) {
+        for r in gpu.as_chunks::<SHELF_GPU_ROW_FLOATS>().0 {
             if r[0] == first_rayleigh.force as f32
                 && (r[1] as f64 - first_rayleigh.freq).abs() < 1e-6
             {

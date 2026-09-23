@@ -464,19 +464,34 @@ pub fn presence_gate(
         })
 }
 
+pub struct EnclosureField<'a> {
+    pub config: &'a FieldConfig,
+    pub body_props: Option<&'a BodyProperties>,
+    pub body_radius: Option<f64>,
+}
+
+pub struct AnchorEnvelope {
+    pub vmax: f64,
+    pub amax: f64,
+    pub pad: f64,
+    pub ttl: f64,
+}
+
 pub fn record_in_enclosure(
     presences: &[PresenceSample],
     p_r: Option<[f64; 3]>,
     t_r: f64,
     now: f64,
-    fc: &FieldConfig,
-    body_props: Option<&BodyProperties>,
-    body_radius: Option<f64>,
-    anchor_vmax: f64,
-    anchor_amax: f64,
-    pad: f64,
-    effective_ttl: f64,
+    field: EnclosureField<'_>,
+    env: AnchorEnvelope,
 ) -> bool {
+    let fc = field.config;
+    let body_props = field.body_props;
+    let body_radius = field.body_radius;
+    let anchor_vmax = env.vmax;
+    let anchor_amax = env.amax;
+    let pad = env.pad;
+    let effective_ttl = env.ttl;
     let Some(p_r) = p_r else {
         return true;
     };

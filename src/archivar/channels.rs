@@ -379,13 +379,17 @@ pub fn build_netcdf_channels(
                             body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
                             epoch,
                             now,
-                            fc,
-                            body_props,
-                            body_radius,
-                            anchor_vmax,
-                            anchor_amax,
-                            0.0,
-                            src.ttl as f64,
+                            EnclosureField {
+                                config: fc,
+                                body_props,
+                                body_radius,
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
                         );
                     }
                     if !keep {
@@ -526,13 +530,17 @@ pub fn build_netcdf4_channels(
                             body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
                             epoch,
                             now,
-                            fc,
-                            body_props,
-                            body_radius,
-                            anchor_vmax,
-                            anchor_amax,
-                            0.0,
-                            src.ttl as f64,
+                            EnclosureField {
+                                config: fc,
+                                body_props,
+                                body_radius,
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
                         );
                     }
                     if !keep {
@@ -681,13 +689,17 @@ pub fn build_opendap_channels(
                             body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
                             epoch,
                             now,
-                            fc,
-                            body_props,
-                            body_radius,
-                            anchor_vmax,
-                            anchor_amax,
-                            0.0,
-                            src.ttl as f64,
+                            EnclosureField {
+                                config: fc,
+                                body_props,
+                                body_radius,
+                            },
+                            AnchorEnvelope {
+                                vmax: anchor_vmax,
+                                amax: anchor_amax,
+                                pad: 0.0,
+                                ttl: src.ttl as f64,
+                            },
                         );
                     }
                     if !keep {
