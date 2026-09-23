@@ -459,6 +459,8 @@ pub fn main_flow() {
     thread::spawn(move || battery_ingress(battery_tx));
     let fit_tx = sensor_tx.clone();
     thread::spawn(move || fit_ingress(fit_tx));
+    let ble_tx = sensor_tx.clone();
+    thread::spawn(move || ble_ingress(ble_tx));
     #[cfg(feature = "browser_relay")]
     let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
         Some(p) => p,
