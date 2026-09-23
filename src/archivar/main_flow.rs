@@ -52,6 +52,31 @@ impl Radiator for StderrRadiator {
     }
 }
 
+fn feed_beat_to_hrv(
+    name: &str,
+    value: f64,
+    nn_buf: &mut Vec<f64>,
+    vagus: &mut crate::archivar::hrv::VagusTone,
+    tone_code: &std::sync::atomic::AtomicU8,
+) {
+    if !matches!(name, "nn" | "rr" | "ibi") || !value.is_finite() {
+        return;
+    }
+    nn_buf.push(value);
+    if nn_buf.len() > crate::archivar::hrv::NN_WINDOW {
+        nn_buf.remove(0);
+    }
+    if nn_buf.len() >= 3
+        && let Some(r) = crate::archivar::hrv::rmssd(nn_buf.as_slice())
+        && let Some(tone) = vagus.feed(r)
+    {
+        tone_code.store(
+            crate::archivar::hrv::tone_code(Some(tone)),
+            std::sync::atomic::Ordering::SeqCst,
+        );
+    }
+}
+
 pub type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
 
 pub struct Archive {
@@ -432,6 +457,8 @@ pub fn main_flow() {
     thread::spawn(move || serial_ingress(serial_tx));
     let battery_tx = sensor_tx.clone();
     thread::spawn(move || battery_ingress(battery_tx));
+    let fit_tx = sensor_tx.clone();
+    thread::spawn(move || fit_ingress(fit_tx));
     #[cfg(feature = "browser_relay")]
     let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
         Some(p) => p,
@@ -922,25 +949,20 @@ pub fn main_flow() {
         }
         archive.pending_channels.extend(dropped_channels);
         while let Ok(samples) = sample_rx.try_recv() {
+            for sample in &samples {
+                feed_beat_to_hrv(
+                    sample.name.as_str(),
+                    sample.val,
+                    &mut nn_buf,
+                    &mut vagus,
+                    &tone_code,
+                );
+            }
             fetched_samples.extend(samples);
         }
         while let Ok(samples) = sensor_rx.try_recv() {
             for (name, value, _tau) in &samples {
-                if name == "nn" && value.is_finite() {
-                    nn_buf.push(*value);
-                    if nn_buf.len() > crate::archivar::hrv::NN_WINDOW {
-                        nn_buf.remove(0);
-                    }
-                    if nn_buf.len() >= 3
-                        && let Some(r) = crate::archivar::hrv::rmssd(&nn_buf)
-                        && let Some(tone) = vagus.feed(r)
-                    {
-                        tone_code.store(
-                            crate::archivar::hrv::tone_code(Some(tone)),
-                            std::sync::atomic::Ordering::SeqCst,
-                        );
-                    }
-                }
+                feed_beat_to_hrv(name, *value, &mut nn_buf, &mut vagus, &tone_code);
             }
             if !consent.load(Ordering::SeqCst) {
                 continue;
