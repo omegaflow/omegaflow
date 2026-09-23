@@ -48,3 +48,27 @@ pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gate gebaut 2026-09-22 (demeter.rs:61 akzeptiert ISL SURVEY|ISL BURST). Schritt: Download bei availableFilesCount>0.
 
+parser-def tiff
+url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
+note GMRT-Bathymetrie-GeoTIFF (gravity/Elevation m): GridServer 200, magic tiff (1100202 B) gemessen 2026-09-23. Kein tiff-Compiler-Arm fuer GMRT-Raster (parse_tiff liegt, kein gmrt_compiler); PointServer-json liefert Einzelpunkt-Elevation.
+
+parser-def json
+url https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
+note openSenseMap Temperatur (C, thermal) echt, aber /boxes listet nur lastMeasurement-IDs; Wert erst per /boxes/:id -> sensors[N].value (N variabel). Kein Arm fuer die Sensor-Aufloesung. Gemessen 2026-09-23.
+
+blocked ip-blocked
+url https://spaceweather.sansa.org.za/ionosonde/latest
+note SANSA-Ionosonde (em, Ionosphaeren-Parameter): direkte + Proton-Route "no response" gemessen 2026-09-23 (Geo-Block ZA). Format ungemessen, Feld echt.
+
+blocked ip-blocked
+url https://weather.cma.cn/api/now/54511
+note CMA-Wetter (thermal °C): api/now/54511 HTTP 403 (561 B) direkte + Proton-Route gemessen 2026-09-23 (Bot-/Geo-Block, kein oeffentlicher Key).
+
+blocked ip-blocked
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv
+note INCOIS-ERDDAP (SST thermal °C, ARGO T/S diffusion): erddap.incois.gov.in "no response" direkte + Proton gemessen 2026-09-23; Root incois.gov.in 95 B. Format ERDDAP-CSV lesbar, Route tot.
+
+parser-def html
+url https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson
+note AEC-FDSN: /fdsnws/event/1/query HTTP 404 (HTML-404-Seite 22735 B) gemessen 2026-09-23 — Route umgezogen, kein GeoJSON. Seismisches Feld echt (depth km), Endpunkt absent.
+

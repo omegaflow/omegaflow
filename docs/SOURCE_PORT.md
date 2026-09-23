@@ -36,7 +36,7 @@ registrierten Ort.
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
 | `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `args`, `pattern`, `shard`, `timeout`, `idempotent`, `note`. `args <cli>` trägt die Zusatz-Argumente des Arms — `harvest.yml` liest sie aus dem Block und reicht sie dem Arm weiter; `harvest_reg --check` whitelistet das Feld, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
 | `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
-| `docs/concepts/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
+| `docs/specs/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
 ## 3. Die zwei Register
 
