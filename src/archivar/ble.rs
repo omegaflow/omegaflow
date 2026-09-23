@@ -30,6 +30,8 @@ const FIELD_SIGNATURE: u8 = 8;
 
 const UUID_HR_MEASUREMENT: &str = "00002a37-0000-1000-8000-00805f9b34fb";
 
+const GFDI_UUID_FRAGMENT: &str = "6a4e28";
+
 const RR_UNIT_MS: f64 = 1000.0 / 1024.0;
 
 const MAX_MESSAGE_BYTES: usize = 16 * 1024 * 1024;
@@ -133,7 +135,7 @@ impl Marshal {
     }
 
     fn align(&mut self, a: usize) {
-        while (self.base + self.buf.len()) % a != 0 {
+        while !(self.base + self.buf.len()).is_multiple_of(a) {
             self.buf.push(0);
         }
     }
@@ -299,7 +301,7 @@ fn unmarshal_body(sig: &str, body: &[u8]) -> Option<Vec<DbusValue>> {
 
 fn marshal_message(serial: u32, msg_type: u8, mut fields: Marshal, body: &[u8]) -> Vec<u8> {
     let fields_len = fields.buf.len();
-    while (16 + fields.buf.len()) % 8 != 0 {
+    while !(16 + fields.buf.len()).is_multiple_of(8) {
         fields.buf.push(0);
     }
     let mut msg = Vec::with_capacity(16 + fields.buf.len() + body.len());
@@ -617,10 +619,18 @@ fn device_by_address(args: &[DbusValue], mac: &str) -> Option<(String, bool)> {
     None
 }
 
-fn hr_measurement_path(args: &[DbusValue], device_path: &str) -> Option<String> {
-    let objects = match args.first()? {
-        DbusValue::Dict(entries) => entries,
-        _ => return None,
+fn characteristic_matches(
+    args: &[DbusValue],
+    device_path: &str,
+    uuid_fragment: &str,
+) -> Vec<(String, String)> {
+    let fragment = uuid_fragment.to_ascii_lowercase();
+    let mut matches = Vec::new();
+    let Some(objects) = args.first().and_then(|a| match a {
+        DbusValue::Dict(entries) => Some(entries),
+        _ => None,
+    }) else {
+        return matches;
     };
     for (path, ifaces) in objects {
         let path = match path {
@@ -653,17 +663,42 @@ fn hr_measurement_path(args: &[DbusValue], device_path: &str) -> Option<String> 
                         _ => continue,
                     };
                     if key == "UUID"
-                        && variant_str(value)
-                            .map(|u| u.eq_ignore_ascii_case(UUID_HR_MEASUREMENT))
-                            .unwrap_or(false)
+                        && let Some(uuid) = variant_str(value)
+                        && uuid.to_ascii_lowercase().contains(&fragment)
                     {
-                        return Some(path.clone());
+                        matches.push((path.clone(), uuid.to_string()));
                     }
                 }
             }
         }
     }
-    None
+    matches
+}
+
+fn characteristic_paths(args: &[DbusValue], device_path: &str, uuid_fragment: &str) -> Vec<String> {
+    characteristic_matches(args, device_path, uuid_fragment)
+        .into_iter()
+        .map(|(path, _)| path)
+        .collect()
+}
+
+fn hr_measurement_path(args: &[DbusValue], device_path: &str) -> Option<String> {
+    characteristic_paths(args, device_path, UUID_HR_MEASUREMENT)
+        .into_iter()
+        .next()
+}
+
+fn hex_bytes(bytes: &[u8]) -> String {
+    use std::fmt::Write as _;
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for b in bytes {
+        let _ = write!(out, "{b:02x}");
+    }
+    out
+}
+
+fn gfdi_line(uuid: &str, payload: &[u8]) -> String {
+    format!("ble gfdi {uuid} {}", hex_bytes(payload))
 }
 
 fn plausible(v: f64) -> Option<f64> {
@@ -813,6 +848,24 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
             return;
         }
     }
+    let gfdi_chars = characteristic_matches(&objects, &device_path, GFDI_UUID_FRAGMENT);
+    for (uuid, path) in &gfdi_chars {
+        match bus.call(BLUEZ_NAME, path, GATT_CHAR_IFACE, "StartNotify", "", &[]) {
+            Some(Reply::Return(_)) => {}
+            Some(Reply::Decline(Some(name))) if name.ends_with(".InProgress") => {}
+            Some(Reply::Decline(name)) => {
+                eprintln!(
+                    "ble: GFDI StartNotify on {uuid} declined ({}) — the raw transport stays silent for this characteristic",
+                    name.as_deref().unwrap_or("unnamed")
+                );
+            }
+            None => {
+                eprintln!(
+                    "ble: GFDI StartNotify on {uuid} reply void — the raw transport stays silent for this characteristic"
+                );
+            }
+        }
+    }
     loop {
         let Some(msg) = bus.next_message() else {
             eprintln!("ble: the system bus connection closed — reconnecting");
@@ -833,26 +886,37 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
             }
             continue;
         }
-        if msg.path.as_deref() != Some(char_path.as_str()) {
+        if msg.path.as_deref() == Some(char_path.as_str()) {
+            let Some(value) = properties_changed(&msg.args, "Value").flatten() else {
+                continue;
+            };
+            let Some(payload) = variant_bytes(value) else {
+                continue;
+            };
+            let Some((_, intervals)) = decode_hr_measurement(payload) else {
+                continue;
+            };
+            if intervals.is_empty() {
+                continue;
+            }
+            let batch: Vec<(String, f64, Option<f64>)> = intervals
+                .into_iter()
+                .map(|ms| ("rr".to_string(), ms, None))
+                .collect();
+            let _ = tx.send(batch);
             continue;
         }
-        let Some(value) = properties_changed(&msg.args, "Value").flatten() else {
-            continue;
-        };
-        let Some(payload) = variant_bytes(value) else {
-            continue;
-        };
-        let Some((_, intervals)) = decode_hr_measurement(payload) else {
-            continue;
-        };
-        if intervals.is_empty() {
-            continue;
+        if let Some(path) = msg.path.as_deref()
+            && let Some((uuid, _)) = gfdi_chars.iter().find(|(_, p)| p == path)
+        {
+            let Some(value) = properties_changed(&msg.args, "Value").flatten() else {
+                continue;
+            };
+            let Some(payload) = variant_bytes(value) else {
+                continue;
+            };
+            eprintln!("{}", gfdi_line(uuid, payload));
         }
-        let batch: Vec<(String, f64, Option<f64>)> = intervals
-            .into_iter()
-            .map(|ms| ("rr".to_string(), ms, None))
-            .collect();
-        let _ = tx.send(batch);
     }
 }
 
@@ -1121,5 +1185,47 @@ mod tests {
         let (hr, rr) = decode_hr_measurement(&payload).expect("valid measurement");
         assert_eq!(hr, Some(60.0));
         assert!(rr.is_empty());
+    }
+
+    fn managed_characteristic(path: &str, uuid: &str) -> (DbusValue, DbusValue) {
+        (
+            DbusValue::Str(path.to_string()),
+            DbusValue::Array(vec![DbusValue::Dict(vec![(
+                DbusValue::Str(GATT_CHAR_IFACE.to_string()),
+                DbusValue::Dict(vec![(
+                    DbusValue::Str("UUID".to_string()),
+                    DbusValue::Variant(Box::new(DbusValue::Str(uuid.to_string()))),
+                )]),
+            )])]),
+        )
+    }
+
+    #[test]
+    fn characteristic_paths_match_uuid_fragment() {
+        let gfdi_uuid = "test-6a4e28-char";
+        let args = vec![DbusValue::Dict(vec![
+            managed_characteristic("/org/bluez/hci0/dev_X/service0/char_gfdi", gfdi_uuid),
+            managed_characteristic(
+                "/org/bluez/hci0/dev_X/service0/char_hr",
+                UUID_HR_MEASUREMENT,
+            ),
+        ])];
+        let device = "/org/bluez/hci0/dev_X";
+        assert_eq!(
+            characteristic_paths(&args, device, GFDI_UUID_FRAGMENT),
+            vec!["/org/bluez/hci0/dev_X/service0/char_gfdi".to_string()]
+        );
+        assert_eq!(
+            characteristic_paths(&args, device, "2a37"),
+            vec!["/org/bluez/hci0/dev_X/service0/char_hr".to_string()]
+        );
+    }
+
+    #[test]
+    fn gfdi_line_prints_lowercase_hex() {
+        assert_eq!(
+            gfdi_line("test-6a4e28-char", &[0x0a, 0x00, 0xff, 0x10, 0xa5]),
+            "ble gfdi test-6a4e28-char 0a00ff10a5"
+        );
     }
 }
