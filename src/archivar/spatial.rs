@@ -35,6 +35,7 @@ pub struct Buffer {
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
     pub volumes: Vec<crate::archivar::volume::Volume>,
+    pub bayestar: Option<Arc<crate::archivar::bayestar::BayestarMap>>,
 }
 
 #[derive(Clone)]
@@ -158,6 +159,7 @@ pub fn build_buffer(
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
     volumes: Vec<crate::archivar::volume::Volume>,
+    bayestar: Option<Arc<crate::archivar::bayestar::BayestarMap>>,
 ) -> Buffer {
     Buffer {
         cache: build_spatial_hash(samples, cadence),
@@ -165,6 +167,7 @@ pub fn build_buffer(
         curves,
         spectral,
         volumes,
+        bayestar,
     }
 }
 

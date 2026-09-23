@@ -28,6 +28,7 @@ phi/harvest.φ
 # --- Bindings ---
 phi/bindings/dust-maske.φ
 phi/bindings/bathymetrie-gebco.φ
+phi/bindings/bayestar19.φ
 
 # --- Stationstabellen ---
 phi/nrs_stations.φ
