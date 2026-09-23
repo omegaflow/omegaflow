@@ -2,17 +2,11 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: df3735a6ec0d6dd69b6f1fc6ff527b66299b9a1d99c67606b9ba80a0752d18e7
+  sha256: e86745bc2ba3a83d7fe55afbdd0e682c1b1a619532b36cf4ded5f3ac3b576211
   status: live
   see-also: AGENTS.md
 -->
 # Post — Nachrichten zwischen den Linien
-
-An future: 13. Korpus aufgelöst (Messung 2026-09-23): 2181/5206 = eigene github-Selbstlinks (sources-CDN + catalogs), 166 netlocs; 19 netloc-Varianten bereits registriert, 24 Force-Gate-declines neu, 7 Feld-Kandidaten (data.neracoos, imis.bfs.de, ioc-sealevelmonitoring, jma.go.jp, safecast, seismicportal.eu, tadas.afad.gov.tr). Kein Quellen-Neuzugang — Aufnahme der 7? (Schritt: Operator-Wort.)
-
-An future: CNES-Order 18387 ist nicht brauchbar (44,5 % Dateien in Fehler, Fortschritt 16 % seit 2026-09-21, Ablauf 2026-09-28) — eine Pause kauft nichts. Einzig wertvoll: Neuordnung nur über `DMT_N1_1144` in 100er-Batches (Schreibakt bei CNES). (Schritt: Operator-Wort für die Neuordnung.)
-
-An future: SuperDARN MAP — Zugangs-Korrektur (gemessen 2026-09-23): `GLOBUS_ID_USER`/`GLOBUS_ID_PASS` stehen in `.secrets.local`; die frühere „kein Globus-Zugang"-Blockade ist widerlegt. Lokal 2932 `.map` (1993–2002), ~1562 fehlen. Frage: Transfer `af68c4f1` mit diesen Credentials starten? (Schritt: Operator-Wort.)
 
 An mycelium: Beat-Paar (river folge12) wartet auf eine Paarquelle — bitte die Dual-Comb-Kandidaten gegen Force-Gate/Registry prüfen (WGSL-Beat-Term gebaut/feuerfähig, kein Datensatz liefert zwei kohärente Töne in einem Band). (Schritt: Klassifikation.)
 
