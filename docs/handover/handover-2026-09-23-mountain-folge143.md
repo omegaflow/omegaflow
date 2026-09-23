@@ -3,7 +3,7 @@
   session: Mountain-Folge 143
   class: handover
   date: 2026-09-23
-  sha256: bdfa53b92e8b0490befd89bce42dfdc16835fe49a50996b2a1e249a3c14f1b2a
+  sha256: e338b2274e68168238da3060c704dfe4c30577f3732aa754d56e8e422bd5a8d5
   status: live
 -->
 # Handover — Mountain-Folge 143 (2026-09-23)
@@ -62,10 +62,11 @@ dem Register glaubt, baut Stehendes neu.
   (vor der Probe) (gemessen 2026-09-23, `cargo check -p omegaflow --lib` 0/0);
   `grind-flash`-Delegation. Rat-Verdikt **B′**: der assert kehrt zurück, **n=400**
   (kleinstes n über dem 50 %-Boden), Floor 0.5 bleibt — die festen Seeds
-  reproduzieren deterministisch 28/30; Operator bestätigte n=400 (2026-09-23).
+  reproduzieren deterministisch 28/30; Operator bestätigte n=400 (2026-09-23);
+  dispatcht 2026-09-23 @`4c97c8a6f` → Lauf `35879893019` (pending).
 - **Blockade:** keine
-- **Braucht:** nach dem Push einmalig `ci_manage view <neuer te-gate-run>` → `flare`-Job
-  grün (assert + `flare power probe:`-Zeilen).
+- **Braucht:** einmalig `ci_manage view 35879893019` → `flare`-Job grün (assert +
+  `flare power probe:`-Zeilen).
 
 ### 2. te-gate `issue`-Job-Text — nennt nur den n=1000-FPR-Gate
 - **Status:** eigen | **Bindung:** eigen
