@@ -4754,3 +4754,47 @@ note ENTSO-E Stromerzeugungs-/Last-Aggregate — skalar (Force-Gate 2026-09-23).
 decline registry
 url https://wikimedia.org/
 note Wikimedia Text/Knowledge — Registry (Force-Gate 2026-09-23).
+
+decline no-measurement
+url https://grace.jpl.nasa.gov/data/get-data/
+note GRACE-Gravitation (mascon, gravity) nach PODAAC umgezogen: grace.jpl.nasa.gov liefert nur Landing-Portal; /data/get-data + /media GMSL 404 gemessen 2026-09-23. Domain traegt keinen Datenendpunkt mehr.
+
+decline superseded-by-ephemeris
+url https://retlector.eu/tle/active
+note Retlector.eu TLE (Two-Line-Elements = Orbital-Ephemeriden, position-only): /tle/active HTTP 400 (unterstuetzt csv/json/tle/kvn) gemessen 2026-09-23. TLE = Ephemeride, kein Feldmesswert.
+
+decline no-measurement
+url https://so2.gsfc.nasa.gov/measures/measures_so2.html
+note Global-SO2-Monitoring-Portal: SO2-Saeule (diffusion DU) bei NASA Earthdata GES DISC (netCDF); so2.gsfc.nasa.gov liefert nur Monitoring-Portal, /measures 404 gemessen 2026-09-23.
+
+decline registry
+url https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml
+note STEREO-SSC: Beacon-Tabellen (solar wind em/advective) /beacon/tables.shtml 404 gemessen 2026-09-23; Site ist Missions-Archiv (Bilder/Plots, FITS), kein Live-Feed.
+
+decline superseded-by-integrated
+url https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/wms
+note GEBCO-Bathymetrie integriert via binding bathymetrie-gebco (api.opentopodata.org GEBCO2020, gestalt nicht Kraftfeld); WMS-GetCapabilities 404 gemessen 2026-09-23.
+
+decline registry
+url https://sios-svalbard.org/
+note SIOS (Svalbard Arctic Observing): Drupal-Koordinations-/Metadaten-Portal, 200 gemessen 2026-09-23; Stations-Daten dezentral bei Mitgliedsstationen, Domain traegt Katalog statt Messwert.
+
+decline superseded-by-integrated
+url https://usgodae.org/cgi-bin/datalist.pl
+note US-GODAE-ARGO-GDAC-Spiegel: datalist.pl 404, /pub/outgoing/argo 403 gemessen 2026-09-23; ARGO (thermal T / diffusion S) integriert via argovis-api.colorado.edu (sources.φ).
+
+decline redistribution
+url https://api.blitzortung.org/
+note Blitzortung-Lightning (em, Community-Netz): api.blitzortung.org 000 (Key noetig) gemessen 2026-09-23; Community-Lizenz, Redistribution ausgeschlossen (wie data.blitzortung.org).
+
+decline registry
+url https://archive.stsci.edu/
+note MAST-Missions-Archiv (HST/TESS/K2 FITS-Beobachtungen): Archiv/Registry, kein Live-Feld-Feed; TAP-Katalog bereits tap_index_mast. 200 gemessen 2026-09-23.
+
+decline superseded-by-integrated
+url https://argo.ucsd.edu/data/argo-data-api/
+note ARGO-Programm-Heim (UCSD): argo-data-api 404 gemessen 2026-09-23; ARGO-Profile (thermal T / diffusion S) integriert via argovis-api.colorado.edu (sources.φ).
+
+decline registry
+url https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations
+note DARTS/JAXA XRISM-Observations-Katalog (registry): api/v1/observations?format=json liefert HTML-SPA statt JSON (108 KB) gemessen 2026-09-23; kein Feldmesswert.
