@@ -6184,10 +6184,10 @@ mod tests {
         );
     }
 
-    #[ignore = "power study pending at n=240 (43% vs the 50% floor) — runs in te-gate.yml"]
+    #[ignore = "weekly gate at n=400 (power 0.933 measured by the probe) — runs in te-gate.yml"]
     #[test]
     fn flare_envelope_conditional_keeps_true_coupling() {
-        let n = 240;
+        let n = 400;
         let alpha = 0.90f32;
         let trials = 30usize;
         let mut found = 0usize;

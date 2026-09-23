@@ -123,6 +123,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run flare_envelope_conditional_keeps_true_coupling
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
       - name: Run flare_envelope_power_probe
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
   probe:
