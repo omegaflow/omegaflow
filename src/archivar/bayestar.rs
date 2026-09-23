@@ -332,6 +332,33 @@ pub fn leaf_record(q: &MapQuery, theta: f64, phi: f64) -> Option<u64> {
     best
 }
 
+pub struct BayestarMap {
+    pub query: MapQuery,
+    pub best_fit: Vec<[f32; BE19_BINS]>,
+}
+
+pub fn load_map(bytes: &[u8]) -> Option<BayestarMap> {
+    let head = parse_header(bytes)?;
+    if head.bins as usize != BE19_BINS {
+        return None;
+    }
+    let n = head.n_rows as usize;
+    let body = bytes.get(ASSET_HEADER_LEN..)?;
+    if body.len() != n * REC_BYTES {
+        return None;
+    }
+    let mut query = build_index();
+    let mut best_fit = Vec::with_capacity(n);
+    for (idx, chunk) in body.chunks_exact(REC_BYTES).enumerate() {
+        let rec = decode_rec(chunk)?;
+        let order = rec.nside.trailing_zeros() as u8;
+        index_add(&mut query, idx as u64, order, rec.ipix);
+        best_fit.push(rec.best_fit);
+    }
+    index_sort(&mut query);
+    Some(BayestarMap { query, best_fit })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -398,5 +425,72 @@ mod tests {
         assert_eq!(back.n_rows, 5);
         assert_eq!(back.mu0, 4.0);
         assert_eq!(back.bins, 120);
+    }
+
+    #[test]
+    fn load_map_roundtrips_best_fit() {
+        let nside = 64u32;
+        let mut bf = [0.0f32; BE19_BINS];
+        bf[0] = 0.5;
+        bf[119] = 1.25;
+        let row = Be19Row {
+            nside,
+            ipix: 123,
+            converged: true,
+            dm_min: 4.5,
+            dm_max: 13.25,
+            n_good: 7,
+            best_fit: bf,
+        };
+        let mut rec = [0u8; REC_BYTES];
+        encode_rec(&mut rec, &row);
+        let mut bytes = Vec::new();
+        write_header(
+            &mut bytes,
+            &MapHeader {
+                n_rows: 1,
+                mu0: BE19_MU0,
+                dmu: BE19_DMU,
+                bins: BE19_BINS as u16,
+            },
+        );
+        bytes.extend_from_slice(&rec);
+        let map = load_map(&bytes).expect("load_map reads a single compiled record");
+        assert_eq!(map.best_fit.len(), 1);
+        assert!((map.best_fit[0][0] - 0.5).abs() < 1e-7);
+        assert!((map.best_fit[0][119] - 1.25).abs() < 1e-7);
+    }
+
+    #[test]
+    fn load_map_leaf_record_finds_the_pixel() {
+        let nside = 64u32;
+        let (theta, phi) = crate::mathematikerin::healpix::pix2ang_nest(nside as i64, 123).unwrap();
+        let mut bf = [0.0f32; BE19_BINS];
+        bf[3] = 0.25;
+        let row = Be19Row {
+            nside,
+            ipix: 123,
+            converged: true,
+            dm_min: 0.0,
+            dm_max: 0.0,
+            n_good: 0,
+            best_fit: bf,
+        };
+        let mut rec = [0u8; REC_BYTES];
+        encode_rec(&mut rec, &row);
+        let mut bytes = Vec::new();
+        write_header(
+            &mut bytes,
+            &MapHeader {
+                n_rows: 1,
+                mu0: BE19_MU0,
+                dmu: BE19_DMU,
+                bins: BE19_BINS as u16,
+            },
+        );
+        bytes.extend_from_slice(&rec);
+        let map = load_map(&bytes).unwrap();
+        assert_eq!(leaf_record(&map.query, theta, phi), Some(0));
+        assert!((ebv_at(&map.best_fit[0], 6.0).unwrap() - 0.25).abs() < 1e-6);
     }
 }

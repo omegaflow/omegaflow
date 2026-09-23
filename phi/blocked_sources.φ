@@ -46,7 +46,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER ISL - Order 18387 (34,71 GB) laeuft, Download blockiert (availableFilesCount=0, ZIP 204). Parser-Gate gebaut 2026-09-22 (demeter.rs:61 akzeptiert ISL SURVEY|ISL BURST). Schritt: Download bei availableFilesCount>0.
+note DEMETER Order 18387 RUNNING 55218 Fehler 34% Ablauf 09-28 (09-24). Neuordnung Operator-Wort: demeter_harvest.rs BATCH=100 DMT_N1_1144 57760=578 Orders; Auth oauth/token scope=cdpp 200. Blockade: kein Binary (tools-latest absent), kein CI-Workflow.
 
 pending
 url https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson

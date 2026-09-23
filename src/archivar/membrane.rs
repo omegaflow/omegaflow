@@ -134,8 +134,17 @@ fn sightline_ebv(sh: &SpectralHash, buf: &Buffer) -> Option<f64> {
     let Motion::Spherical { rec } = &sh.motion else {
         return None;
     };
-    let _ = (rec, buf);
-    None
+    let map = buf.bayestar.as_ref()?;
+    let theta = (90.0 - rec.dec_deg).to_radians();
+    let phi = rec.ra_deg.rem_euclid(360.0).to_radians();
+    let idx = crate::bayestar::leaf_record(&map.query, theta, phi)? as usize;
+    let bf = map.best_fit.get(idx)?;
+    if !rec.plx_mas.is_finite() || rec.plx_mas <= 0.0 {
+        return None;
+    }
+    let d_pc = 1000.0 / rec.plx_mas;
+    let mu = crate::bayestar::mu_of_r_pc(d_pc)?;
+    crate::bayestar::ebv_at(bf, mu)
 }
 
 pub struct SurfaceMotionParams<'a> {

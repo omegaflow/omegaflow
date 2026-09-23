@@ -2021,6 +2021,7 @@ fn test_star_samples_diode() {
         None,
         Vec::new(),
         Vec::new(),
+        None,
     );
     let query = |floor: [f64; 9], forward: [f64; 3]| {
         let mut out: Vec<SampleRecord> = Vec::new();
@@ -2169,6 +2170,7 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
         None,
         Vec::new(),
         Vec::new(),
+        None,
     );
     let mut records: Vec<SampleRecord> = Vec::new();
     query_hash(
@@ -4645,6 +4647,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         curves: None,
         spectral: Vec::new(),
         volumes: Vec::new(),
+        bayestar: None,
     };
     let mut records: Vec<super::SampleRecord> = Vec::new();
     super::sense_membrane(

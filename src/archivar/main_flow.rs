@@ -96,6 +96,7 @@ pub struct Archive {
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
     pub volumes: Arc<Mutex<Vec<(String, crate::archivar::volume::Volume)>>>,
+    pub bayestar: Arc<Mutex<Option<Arc<crate::archivar::bayestar::BayestarMap>>>>,
     pub pending_channels: Vec<(Channel, FieldConfig, u32)>,
     pub fetch_durations: [f64; FETCH_DURATION_RING],
     pub fetch_duration_len: usize,
@@ -527,6 +528,7 @@ pub fn main_flow() {
             None,
             Vec::new(),
             Vec::new(),
+            None,
         )),
         presence: HashMap::new(),
         jump_epoch: None,
@@ -541,6 +543,7 @@ pub fn main_flow() {
         curves: None,
         spectral: Vec::new(),
         volumes: Arc::new(Mutex::new(Vec::new())),
+        bayestar: Arc::new(Mutex::new(None)),
         pending_channels: Vec::new(),
         fetch_durations: [0.0; FETCH_DURATION_RING],
         fetch_duration_len: 0,
@@ -2647,6 +2650,70 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "bayestar" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                let held = archive.bayestar.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("bayestar").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_bayestar_{name}"));
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                        write_cdn_stamp(&tmp_path, &url);
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let Some(map) = crate::archivar::bayestar::load_map(&bytes) else {
+                        eprintln!(
+                            "{} {}: bayestar-bin reads void — {} B carry no map contract",
+                            fmt,
+                            url,
+                            bytes.len()
+                        );
+                        let _ = ftx.send(empty(false));
+                        return;
+                    };
+                    if let Ok(mut slot) = held.lock() {
+                        *slot = Some(Arc::new(map));
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if archive.sources[i].format == "volume" {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -4097,6 +4164,10 @@ pub fn main_flow() {
                     .map(|(_, vol)| vol.clone())
                     .collect(),
             };
+            let bayestar = match archive.bayestar.lock() {
+                Ok(s) => s.clone(),
+                Err(poisoned) => poisoned.into_inner().clone(),
+            };
             archive.field = Arc::new(build_buffer(
                 field_samples,
                 cadence,
@@ -4104,6 +4175,7 @@ pub fn main_flow() {
                 archive.curves.clone(),
                 archive.spectral.clone(),
                 volumes,
+                bayestar,
             ));
         }
         let f = archive.field.clone();
