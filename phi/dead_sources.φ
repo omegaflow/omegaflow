@@ -403,6 +403,10 @@ dead 404
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D2026-01-01T00%3A00%3A00Z
 note HTTP 404 — Endpoint weg.
 
+dead unreachable
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv
+note INCOIS-ERDDAP (ARGO T/S, SST): 000 direkt + Proton gemessen 2026-09-23; Root incois.gov.in lebt (95 B), ERDDAP-Route tot. Re-Check.
+
 dead dns-unresolved
 url https://erddap.saeon.ac.za/erddap/
 note curl: curl: (6) Could not resolve host: erddap.saeon.ac.za Browser 2026-09-10: Host tot, Dienst-Nachfolger https://www.saeon.ac.za/.
@@ -802,6 +806,10 @@ note HTTP 404 — Endpoint weg.
 dead 404
 url https://socat.info/api/v1/data?startdate=
 note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url https://spaceweather.sansa.org.za/
+note SANSA-Ionosonde (em): 000 direkt + Proton + UA gemessen 2026-09-23; Geo-Verdacht ZA offen, Re-Check.
 
 dead 404
 url https://stationview.raspberryshake.org/api/stations
