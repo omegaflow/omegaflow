@@ -53,6 +53,7 @@ jobs:
       - name: Write opencode provider config
         env:
           FREE_MODEL_KEYS: ${{ secrets.FREE_MODEL_KEYS }}
+          CLOUDFLARE_WORKERS_TOKEN: ${{ secrets.CLOUDFLARE_WORKERS_TOKEN }}
         run: |
           if [ -z "$FREE_MODEL_KEYS" ]; then
             echo "FREE_MODEL_KEYS secret is not set — expected a JSON object mapping free_models.tsv env_var names to api keys" >&2
