@@ -52,3 +52,7 @@ pending
 url https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson
 note AEC-FDSN: /fdsnws/event/1/query + /version HTTP 404; Root + /earthquakes/recent_list HTTP 200 (HTML/Drupal server-gerendert), kein JSON/API-Endpunkt. Seismisch echt (depth km); Endpunkt-Re-Messung.
 
+blocked parser-def html
+url https://tadas.afad.gov.tr/api/event/list?limit=200
+note 2026-09-23 HTTP 200 (3370 B) Angular-SPA + F5-Bot-Schutz (f5_cspm), kein JSON im Body; seismisch accept-würdig (Starkbeben-Beschleunigung); Parser-Gap HTML-SPA. Schritt: deprem.afad.gov.tr-Route.
+

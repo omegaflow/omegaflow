@@ -4,13 +4,13 @@ witness s2-direction
 url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
 record skydirection
 force em
-note ANTARES-REST anonym offen (2026-09-06 HTTP 200), ZTF-Loci mit alert_magnitude (em-mag, Band absent). S²-Richtung (τ=0). 2026-09-11: meta.count = 10000 Loci; Crossmatch: 15 Gaia-Parallax, 469 NED-z, Rest DirectionOnly (0 honored).
+note ANTARES-REST anonym offen (2026-09-23 HTTP 200, 2023595 B, sha256 44c8bba2…): alert_magnitude-Felder vorhanden, kein band (Band absent); meta.count=10000; 15 Gaia-Parallax, 469 NED-z, Rest DirectionOnly. S²-Richtung (τ=0).
 
 witness s2-direction
 url https://api.lsst.fink-portal.org/api/v1/conesearch
 record skydirection
 force em
-note Fink-LSST cone conesearch (2026-09-06 HTTP 200 anonym; 2026-09-23 HTTP 200): r:band, r:apFlux, r:psFlux (em-Photometrie vorhanden, nJy, TAI→TDB). S²-Richtung (absent, 0 honored). 2026-09-16: SKD1-Flux (band r; fehlend → absent, nie 0.0).
+note Fink-LSST cone conesearch (2026-09-23 HTTP 200): GET ra/dec/radius liefert JSON; r:band, r:apFlux, r:psFlux (em-Photometrie, nJy, TAI→TDB); S²-Richtung absent (0 honored), nie 0.0.
 
 witness s2-direction
 url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
@@ -34,7 +34,7 @@ witness s2-direction
 url https://dataverse.harvard.edu/api/access/datafile/7502710
 record s2e1 sky1
 force em
-note IceCat-1-IceCube-Neutrino-Katalog (2026-09-06 HTTP 303; 2026-09-23 HTTP 200, 66698 B): 348 Ereignisse, TSV-Spalten ENERGY+FAR vorhanden (fehlend → absent, nie 0.0). icecat_events.s2e1 + icecat_sky1.sky1 (icecat_compiler), CDN live.
+note IceCat-1-IceCube-Neutrino-Katalog (2026-09-23 HTTP 200, 66698 B, sha256 c4db13b8…): 348 Ereignisse, TSV ENERGY+FAR vorhanden (fehlend → absent, nie 0.0). icecat_events.s2e1 + icecat_sky1.sky1, CDN live.
 
 witness s2-direction
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
@@ -88,7 +88,7 @@ witness s2-direction
 url https://vo.km3net.de/ant20_01/nu/cone/form
 record s2e1 sky1
 force em
-note ANTARES-2007-2017-Ereignisliste (2026-09-07 HTTP 200): KM3NeT-VO-Konus liefert 8754 Track-Neutrino-Ereignisse als CSV. Energie-Spalte fehlt (absent, nie fabriziert). Kompiliert als antares_events_2007_2017.s2e1 via antares_vo_compiler, CDN live.
+note ANTARES-2007-2017-Ereignisliste (2026-09-23 HTTP 200, 10549 B, sha256 f43308ab…): KM3NeT-VO-Konus-Form; 8754 Track-Neutrino-Ereignisse als CSV, Energie-Spalte fehlt (absent); antares_events_2007_2017.s2e1 CDN live.
 
 witness gestalt
 url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>

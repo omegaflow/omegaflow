@@ -25,7 +25,6 @@ redistribute wdcc_catalog.φ | metadata CC0 (Terms of Use §2: "defaulted under 
 redistribute dataverse_harvard.φ | datasets CC0-by-default (Community Norms §CC0 Waiver); metadata citation reusable | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute dataverse_borealis.φ | datasets CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute cmr_catalog.φ | NASA CMR = US-Gov-Werk, public domain (17 U.S.C. §105); Metadaten-Sätze NASA-erzeugt | https://www.nasa.gov/terms-of-use/
-pending dataone_catalog.φ | per-Record gemessen 2026-09-23: kein Lizenzfeld in SystemMetadata/Solr (400 "undefined field"), EML <intellectualRights> Freitext, schema.org JSON-LD license (CC-URL, kein SPDX); Katalog-/Terms-Lizenz 401; Schritt: Terms via Auth/Operator | https://www.dataone.org/terms
 redistribute seanoe_catalog.φ | Datensätze CC-lizenziert (gemessen: LICENCE-Facette CC-BY/CC0/CC-BY-NC/…) | https://www.seanoe.org/
 
 # ── US-Government public domain ──
