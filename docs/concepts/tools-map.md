@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 69581574fb60a4c54ce6ab5d3991c1823ae1b7d1bb57294ebb7dc1035ffb9292
+  sha256: d2bea5fb51812af033bd434b8d9b9b21c182a506c1104d0d98e58836b4defa08
   status: live
   see-also: AGENTS.md
 -->
@@ -273,16 +273,17 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
 | `curl` | nur wo `sfetch`/`archive_search` nichts trägt | Netz | P3 |
 
-## Browser-Anbindung — die drei Pfade (Rat 2026-09-20: nicht konsolidieren)
+## Browser-Anbindung — die vier Pfade (Rat 2026-09-20: nicht konsolidieren; Pfad 4 registriert 2026-09-23)
 
-Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Verdikte:
-`docs/surveys/survey-2026-09-20-browser-anbindung.md`.
+Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Verdikte:
+`docs/surveys/survey-2026-09-20-browser-anbindung.md`, Messnachtrag 2026-09-23.
 
 | Pfad | Natur | Rolle | Eintritt |
 |---|---|---|---|
 | `@vymalo/opencode-browser` (Plugin, Bridge Port 4517, Extension am Operator-Profil) | UI-Automator am echten Profil | (iii) Registrierung, interaktive Seiten | `browser_open`/`click`/`type`/`snapshot`/`get_text`/`get_html`; Fokus nie erzwungen (`focus:false`), Inhalt statt Pixel |
 | `@playwright/mcp` (globaler MCP, headless) | Kopflos-Automator | (ii) mehrschrittige Flüsse, Cross-Browser/Tests | MCP-Tools; eigene Session |
 | `archive_search --playwright` | Kopflos-Fetcher mit SOCKS/proton + Interstitial-Erkennung; `OMEGAFLOW_COOKIES=<cookie-editor.json>` setzt eine Session vor `goto` | (ii) Recherche, erster Zug | `archive_search --playwright <url> [--headed]` |
+| `opencode-chromium` (npm 1.7.2; Extension `hdljmmpfnhojebplbbgdgejoobmjcbml` + Native-Messaging-Host `com.opencode.browser.plugin`; Operator-Profil) | UI-Automator am echten Profil, Batch | (ii) mehrschrittige Ketten (≤20 Steps/Call), opencode-v2-fähig | `browser_run`/`observe`/`session`/`finalize`; `settle` default `dom-quiet` (langsam) → `waitUntil:load` + `settle:{exists,selector}` |
 
 - **(i) Membran-Debug** → **Chrome DevTools MCP** (Konsole/Netz/Performance via CDP auf
   dem Pfad-1-Chrome) — **noch nicht angebunden**; braucht das Operator-Wort
@@ -303,6 +304,25 @@ Drei Pfade sind drei Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
 - Pfad-1-Version: die globale Config (`~/.config/opencode/opencode.jsonc`) pinnt
   **`@vymalo/opencode-browser@0.17.0`** (gemessen 2026-09-20, Sensory-Folge 115) —
   die Versionslücke 0.16.1 → 0.17.0 ist geschlossen, kein Zustand mehr.
+- **Pfad 4 — `opencode-chromium`** registriert 2026-09-23 (Operator-Wort „beide behalten
+  und registrieren"): npm `opencode-chromium@1.7.2` (MIT, Repo `Quindart-com/opencode-chromium`),
+  Store-Extension `hdljmmpfnhojebplbbgdgejoobmjcbml`, Native-Messaging-Host
+  `com.opencode.browser.plugin` (`~/.config/google-chrome/NativeMessagingHosts/`), Wrapper
+  `~/.config/opencode/browser/opencode-browser-host`. Vier grobe Tools; `find` = semantische
+  Suche (`query`), kein CSS-Selektor (CSS nur über `target.selector` bei `click`/`assert`).
+  Gemessen 2026-09-23 am selben Profil: Transport-Roundtrip ~10–20 ms (gleichauf mit Pfad 1);
+  Navigation default `dom-quiet`-Settle läuft in den Timeout (~2,7 s — spürbar langsam), mit
+  `waitUntil:load` + `settle:{exists,selector}` ~130 ms (schneller als Pfad 1, das ~180–480 ms
+  wartet); Text/Observe ~13–60 ms. Koexistenz beider Brücken am selben Profil gemessen. Der
+  Adapter ist in der OpenCode-1.18.x-`{ id, server() }`-Path-Plugin-Form **und** mit dem
+  V2-Vertrag gebaut → ein opencode-2.0-Umstieg wird von Pfad 4 nicht blockiert (Pfad 1 ist
+  V1-only). CLI-Kante: der globale bin-Symlink triggert `main()` in 1.7.2 nicht — Aufruf über
+  `node …/dist/cli/index.js <cmd>`.
+- **Kopplung (Pfad 4):** geladen über die globale Config
+  (`~/.config/opencode/opencode.jsonc`, `"plugin": [ … , "opencode-chromium" ]`) — beide
+  Brücken laden nebeneinander; **kein** Projekt-`opencode.json`-Eintrag (Merge-Semantik
+  global↔Projekt vermieden). Rückbau: Extension entfernen + `…/NativeMessagingHosts/com.opencode.browser.plugin.json`
+  + `~/.config/opencode/browser/` löschen + `npm uninstall -g opencode-chromium`.
 
 ## Profile (aus AGENTS.md) — gemessene Kosten ihres erlaubten Satzes
 
