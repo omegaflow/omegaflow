@@ -494,7 +494,7 @@ fn gather(blocks: &[DmapBlock], site: &RadarSite, lsk: &LeapSeconds) -> Vec<GeoR
             skipped += 1;
             continue;
         };
-        if frang <= 0.0 || rsep <= 0.0 || nrang < 1.0 {
+        if frang < 0.0 || rsep <= 0.0 || nrang < 1.0 {
             skipped += 1;
             continue;
         }
@@ -837,5 +837,41 @@ mod tests {
         assert_eq!(records[0].val, 10.0);
         assert_eq!(records[0].comp, COMP_SDARN_POWER);
         assert!(records[0].t.is_finite() && records[0].lat.is_finite());
+    }
+
+    fn zero_frang_block() -> Vec<u8> {
+        enc_block(
+            &[
+                ("time.yr", 2023),
+                ("time.mo", 1),
+                ("time.dy", 1),
+                ("time.hr", 0),
+                ("time.mt", 0),
+                ("time.sc", 0),
+                ("time.us", 0),
+                ("frang", 0),
+                ("rsep", 45),
+                ("nrang", 2),
+                ("bmazm", 0),
+            ],
+            "pwr0",
+            &[10.0, 20.0],
+        )
+    }
+
+    #[test]
+    fn gather_keeps_a_zero_frang_record() {
+        let blocks = dmap_blocks(&zero_frang_block());
+        let site = RadarSite {
+            lat_deg: 52.16,
+            lon_deg: -106.53,
+            boresight_deg: 23.1,
+        };
+        let Some(lsk) = embedded_lsk() else {
+            return;
+        };
+        let records = gather(&blocks, &site, &lsk);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].val, 20.0);
     }
 }
