@@ -16,7 +16,7 @@ asset ps1_dr2_binary.fp01
 band g r i z y
 note PS1-Binaer-Asset (2026-09-09): Archiv-Existenz Skycell-Tiles (ps1grid + ps1filenames, ~7900 Probes), frac=1.0; Fehlerrichtung beobachtet - Suedsaum <=1 Tile + 1.6e-3 deg2 Polarloch ueberzeichnet; Compiler ps1_binary_compiler.rs; 35.906.245 B.
 note PS1-Fraktional (2026-09-08): rings.v3.skycell stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; regrid.rs, ps1_coverage_compiler.rs; 389.074.034 Pixel, g(150,2) 0.898. Volles DR2-Asset (Council 2026-09-20): Order 10 (Nside 1024) gegen die 2-GB-Dateigrenze, Slab-Tags ps1-dr2-<lo> à 80 Bänder (26 Tags, Chunks+Band-Parts je Slab, ≤1000 Assets), hierarchischer Combine chunk->band->final; die 187 Order-12-Parts descoped (kein Merge in ein Order-10-Final), Census steht.
-note PS1-DR2-Coverage Order-10-Final (2026-09-22): Ziel-Tag ssd.jpl.nasa.gov-ps1, Release 392860039 assets [] (ps1_dr2_coverage.fp01 absent); Lauf 35670499832 success ohne final-combine (Band 655) — Baender 651-2643 offen.
+note PS1-DR2-Coverage Order-10-Final (2026-09-23): Release 392860039 Asset absent (HTTP 404, Tags ssd.jpl.nasa.gov + ssd.jpl.nasa.gov-ps1); 35805462755 pending, 35802481393 in_progress, Log 404 -> Band-Fortschritt nicht gemessen; Fix ps1-cdn.yml:147-153.
 
 footprint sdss
 url https://skyserver.sdss.org/dr18/
