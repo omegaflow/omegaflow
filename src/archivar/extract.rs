@@ -78,6 +78,56 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
     }
 }
 
+pub fn phase_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<odf::TnfPhaseRow>> {
+    match format {
+        "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_phase_series(bytes),
+        _ => None,
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct SeriesRow {
+    pub t: f64,
+    pub value: f64,
+    pub comp: u32,
+    pub freq: f64,
+    pub bin_width: f64,
+}
+
+pub fn series_rows(format: &str, bytes: &[u8]) -> Option<Vec<SeriesRow>> {
+    if let Some(rows) = phase_series_parse_bin(format, bytes) {
+        return Some(
+            rows.into_iter()
+                .map(|r| SeriesRow {
+                    t: r.t,
+                    value: r.value,
+                    comp: r.comp,
+                    freq: r.freq,
+                    bin_width: r.bin_width,
+                })
+                .collect(),
+        );
+    }
+    series_parse_bin(format, bytes).map(|recs| {
+        recs.into_iter()
+            .map(|(t, value, comp)| SeriesRow {
+                t,
+                value,
+                comp,
+                freq: 0.0,
+                bin_width: 0.0,
+            })
+            .collect()
+    })
+}
+
+pub fn sample_phase(channel: &Channel, sensor: &FieldConfig) -> Option<f64> {
+    if sensor.key != "ul_phase_cycles" {
+        return None;
+    }
+    odf::carrier_phase_rad(channel.value)
+}
+
 pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "rpw_efield" => match comp {
