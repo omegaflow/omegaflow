@@ -132,6 +132,27 @@ fn retry_transient<F: FnMut() -> Option<Fetch>>(mut attempt: F) -> Option<Fetch>
     last.filter(|f| !is_transient(f))
 }
 
+const RATE_LIMIT_ATTEMPTS: usize = 4;
+const RATE_LIMIT_BACKOFF_SECS: u64 = 3;
+
+fn is_rate_limited(f: &Fetch) -> bool {
+    matches!(f.status, Some(406) | Some(429) | Some(503))
+}
+
+fn get_retrying(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
+    let mut last = None;
+    for attempt in 0..RATE_LIMIT_ATTEMPTS {
+        if attempt > 0 {
+            std::thread::sleep(Duration::from_secs(RATE_LIMIT_BACKOFF_SECS));
+        }
+        match get(url, extra, timeout) {
+            Some(f) if !is_rate_limited(&f) => return Some(f),
+            other => last = other,
+        }
+    }
+    last
+}
+
 fn verdict_probe(url: &str, timeout: &str, exit: &Exit) -> Option<Fetch> {
     retry_transient(|| get_once(url, &[], timeout, exit))
 }
@@ -602,7 +623,7 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
         urlencode(query),
         max
     );
-    match get(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
+    match get_retrying(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
         Some(f) if f.status == Some(200) => {
             let entries = parse_atom_entries(&f.body);
             if entries.is_empty() {
