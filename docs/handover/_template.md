@@ -19,10 +19,12 @@ darf schmutzig sein.
 
 Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
 **parallel** von Agenten abgearbeitet (Operator-Wort 2026-09-21). Jeder offene
-Punkt wird **aufgeschlüsselt** geführt — kein Register-Kürzel: **Lage** (der
-Zustand, gemessen) / **Blockade** (woran es hängt, oder „keine") / **Braucht**
-(was es löst: Werkzeug, Datei, URL, Anfrage, Operator-Wort; „Schritt unbekannt —
-erste Messung: X" ist ein vollständiger Schritt). Kein Dokument wächst ohne
+Punkt wird **aufgeschlüsselt** geführt — kein Register-Kürzel: **Trigger** (das
+Ereignis/Datum/Wort/der Lauf, dessen Eintreffen den Punkt kippt — Status =
+f(Trigger)) / **Lage** (der Zustand, gemessen, mit Messstempel) / **Blockade**
+(woran es hängt, oder „keine") / **Braucht** (was es löst: der wörtliche,
+kopierbare Schritt — Werkzeug, Datei, URL, Befehl, Anfrage, Operator-Wort;
+„Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt). Kein Dokument wächst ohne
 Messung; die Droh-Sprache ersetzt den Schritt nicht. Der Planungs-Pass legt
 **alle** eigenen Punkte vor und schlägt vor, jeden parallel abarbeitbaren zu
 dispatchen; `operator-gebunden`, `blockiert` und `wartend` werden benannt, nie
@@ -67,9 +69,10 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 
 ### <Punkt>
 - **Status:** <wartend | operator-gebunden | blockiert | termin> | **Bindung:** <eigen | linie:<name> | operator | dritter | termin:<datum>>
-- **Lage:** <der Zustand, gemessen>
+- **Trigger:** <das externe Ereignis, Datum, Operator-Wort oder der Lauf, dessen Eintreffen den Punkt kippt>
+- **Lage:** <der Zustand, gemessen — mit Messstempel: (gemessen <Datum/Zeit> via <Werkzeug/Quelle>)>
 - **Blockade:** <woran es hängt — oder „keine">
-- **Braucht:** <was es löst: Werkzeug/Datei/URL/Anfrage/Operator-Wort>
+- **Braucht:** <was es löst: der wörtliche, kopierbare Schritt — Werkzeug/Datei/URL/Befehl/Operator-Wort>
 
 ## Abschluss
 
