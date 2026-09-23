@@ -218,23 +218,19 @@ fn parse_data(
                     }
                 }
             }
-            (MESG_HR, FIELD_HR_EVENT_TIMESTAMP) => {
-                if field.base_type == BASE_UINT32 {
-                    let mut beats = Vec::new();
-                    for chunk in field_bytes.chunks_exact(4) {
-                        let v = def.endian.u32(chunk);
-                        if v != 0xFFFF_FFFF {
-                            beats.push(v);
-                        }
+            (MESG_HR, FIELD_HR_EVENT_TIMESTAMP) if field.base_type == BASE_UINT32 => {
+                let mut beats = Vec::new();
+                for chunk in field_bytes.as_chunks::<4>().0 {
+                    let v = def.endian.u32(chunk);
+                    if v != 0xFFFF_FFFF {
+                        beats.push(v);
                     }
-                    emit_nn(&beats, out);
                 }
+                emit_nn(&beats, out);
             }
-            (MESG_HR, FIELD_HR_EVENT_TIMESTAMP_12) => {
-                if field.base_type == BASE_BYTE {
-                    let samples = unpack_timestamp_12(field_bytes);
-                    emit_nn(&cumulative_timestamp_12(&samples), out);
-                }
+            (MESG_HR, FIELD_HR_EVENT_TIMESTAMP_12) if field.base_type == BASE_BYTE => {
+                let samples = unpack_timestamp_12(field_bytes);
+                emit_nn(&cumulative_timestamp_12(&samples), out);
             }
             _ => {}
         }
@@ -258,7 +254,7 @@ fn emit_nn(beats: &[u32], out: &mut Vec<(String, f64, Option<f64>)>) {
 
 fn unpack_timestamp_12(field_bytes: &[u8]) -> Vec<u16> {
     let mut samples = Vec::with_capacity(field_bytes.len() / 3 * 2);
-    for chunk in field_bytes.chunks_exact(3) {
+    for chunk in field_bytes.as_chunks::<3>().0 {
         samples.push((chunk[0] as u16) | (((chunk[1] & 0x0F) as u16) << 8));
         samples.push(((chunk[1] >> 4) as u16) | ((chunk[2] as u16) << 4));
     }
@@ -296,10 +292,10 @@ pub fn fit_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
                 }
                 if let Ok(bytes) = std::fs::read(entry.path()) {
                     seen.insert(name);
-                    if let Some(batch) = parse_fit(&bytes) {
-                        if !batch.is_empty() {
-                            let _ = tx.send(batch);
-                        }
+                    if let Some(batch) = parse_fit(&bytes)
+                        && !batch.is_empty()
+                    {
+                        let _ = tx.send(batch);
                     }
                 }
             }
@@ -342,11 +338,12 @@ mod tests {
     }
 
     fn make_fit(records: &[u8]) -> Vec<u8> {
-        let mut f = Vec::new();
-        f.push(0x0C); // header size 12
-        f.push(0x10); // protocol 1.0
-        f.push(0x00); // profile version low
-        f.push(0x00); // profile version high
+        let mut f = vec![
+            0x0C, // header size 12
+            0x10, // protocol 1.0
+            0x00, // profile version low
+            0x00, // profile version high
+        ];
         f.extend_from_slice(&(records.len() as u32).to_le_bytes());
         f.extend_from_slice(b".FIT");
         f.extend_from_slice(records);
