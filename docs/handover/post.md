@@ -2,13 +2,25 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 9367453b88bf3a75203b5a6809a4d0aa707d14dfcee95b010960bf9c6a487947
+  sha256: 8018e2de93290ed9afba6841c591fac829a2d278a2431d91e696a82295956324
   status: live
   see-also: AGENTS.md
 -->
 # Post — Nachrichten zwischen den Linien
 
-An mycelium: zwei echte `ci-check`-Reds, in `mycelium-folge143` nicht getragen — (a) `register phi/sources.φ holds 11 ttl-order and 466 url-order violations across 1409 blocks` (`ci-check` `35806971846` @`32de9f3d`, `register_sort` `ci-check.yml:63` exit 1); (b) `dropped-gate` baseline 2680 | current 2757 (working tree `629486b77`, `register_lookup --dropped --count`; Lauf `35806971846` maß 2741) — offene Punkte abgeworfen ohne auflösenden Commit. (Schritt: `register_sort --write phi/sources.φ` kanonisieren; für (b) Punkte forttragen oder Baseline `docs/zustand/dropped-baseline.md` im annehmenden Commit heben.)
+An future: Riss-Politik imag-data — 15 pre-cdn-URLs tragen zwei konfligierende `source`-Zeilen (em vs gravity), der 0-Kanon glättet nicht. Frage an den Operator: welche Linie gilt, oder beide als Riss tragen? (Schritt: `phi/pipeline/stage/pre-cdn_params_source_riss.txt`; die Entscheidung erlaubt den letzten Pre-Pass-Schritt.)
+
+An future: Aufnahme des 13. Korpus (5206 Blöcke, `phi/pipeline/index.φ:35`) ins Register — Scope-Frage an Operator/Rat. (Schritt: Träger `archive-root/pipeline-auslese-2026-09-17/stage/master_converted.φ`; als eigene Quelle registrieren oder descoped?)
+
+An future: Free-Model-Bench-Scope — Default (~105 Modelle/Job) ist unter dem CI-Watchdog-Fenster strukturell unvollendbar (Sweep 3069 s > 2× Median 1414 s). Frage: Sharding / begrenzter Default / Watchdog-Ausnahme? (Schritt: Artefakt ID 10721898235.)
+
+An future: DataONE Data-Policy bleibt 401 (`old.dataone.org`), kein `DATAONE_*`-Credential in `.secrets.local`; die per-Record-`accessPolicy` ist anonym lesbar (`cn.dataone.org` HTTP 200). Frage: DataONE-Konto/Token anlegen, oder per-Record-Policy als Lizenzweg annehmen? (Schritt: Konto/Token.)
+
+An future: CNES-Order 18387 ist nicht brauchbar (44,5 % Dateien in Fehler, Fortschritt 16 % seit 2026-09-21, Ablauf 2026-09-28). Frage: Order pausieren (`PUT /user/orders/pause/18387`, Schreibakt bei CNES) und neu nur über `DMT_N1_1144` in 100er-Batches ordnen? (Schritt: Operator-Wort für die Pause.)
+
+An future: Globus-Transfer `af68c4f1` (SuperDARN MAP) ist ohne Globus-Konto/Token nicht messbar; lokal 4999 Dateien/34,1 GB mit 9 Zero-Byte-Dateien. Frage: Globus-Konto/Token bereitstellen oder Transfer per Web-UI bestätigen? (Schritt: Globus-Login.)
+
+An future: Queue-Strukturlag in den pre-cdn-Queue-Dateien — der `source`-Header hinkt dem url-Block eine Position hinterher (Namen/ttl/force falsch zugeordnet, 22 INTERMAGNET-Erstblöcke ohne ttl). Frage: Neuausrichtung als Datenänderung an Kandidaten freigeben? (Schritt: `phi/pipeline/queue/sources_potential_pre-cdn_9k_richest.φ`.)
 
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
