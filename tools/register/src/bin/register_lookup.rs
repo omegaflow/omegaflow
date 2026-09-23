@@ -1363,6 +1363,14 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 const HANDOVER_DIRS: &[&str] = &["docs/handover", "docs/handover/archiv"];
 
+const LINE_ALIASES: &[(&str, &str)] = &[
+    ("bau", "mountain"),
+    ("ernte", "mycelium"),
+    ("forschung", "sensory"),
+];
+
+const PRIVATE_HANDOVER_DIR: &str = "state/funding/handover";
+
 const DROPPED_STATUS_TAGS: &[&str] = &[
     "wartend",
     "wartestell",
@@ -1474,6 +1482,14 @@ fn parse_handover_name(name: &str) -> Option<(String, String, Option<u32>)> {
         return None;
     }
     Some((line, date.to_string(), folge))
+}
+
+fn canonical_line(line: &str) -> &str {
+    LINE_ALIASES
+        .iter()
+        .find(|(from, _)| *from == line)
+        .map(|(_, to)| *to)
+        .unwrap_or(line)
 }
 
 fn normalize_words(text: &str) -> Vec<String> {
@@ -1661,6 +1677,29 @@ fn distinctive_token(tokens: &[String]) -> Option<String> {
     best.cloned()
 }
 
+fn private_successor_exists_in(dir: &str, line: &str, folge: u32) -> bool {
+    let entries = match fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return false,
+    };
+    let wanted = match folge.checked_add(1) {
+        Some(w) => w,
+        None => return false,
+    };
+    for entry in entries.flatten() {
+        let name = file_name_string(&entry.path());
+        let parsed = match parse_handover_name(&name) {
+            Some(p) => p,
+            None => continue,
+        };
+        let (pl, _, pf) = parsed;
+        if pf == Some(wanted) && canonical_line(&pl) == line {
+            return true;
+        }
+    }
+    false
+}
+
 fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
     let mut by_line: BTreeMap<String, Vec<Handover>> = BTreeMap::new();
     let mut seen: Vec<String> = Vec::new();
@@ -1692,6 +1731,7 @@ fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
             };
             seen.push(name);
             let (line, date, folge) = parsed;
+            let line = canonical_line(&line).to_string();
             by_line.entry(line).or_default().push(Handover {
                 date,
                 folge,
@@ -1841,7 +1881,7 @@ fn persist_threshold(args: &[String]) -> usize {
 }
 
 fn run_dropped(args: &[String]) {
-    let filter = dropped_line_filter(args);
+    let filter = dropped_line_filter(args).map(canonical_line);
     let threshold = persist_threshold(args);
     let count_only = count_flag(args);
     let handovers = collect_handovers();
@@ -1927,6 +1967,18 @@ fn run_dropped(args: &[String]) {
                     persist,
                     git_status
                 );
+            }
+        }
+        if !count_only {
+            if let Some(last) = list.last() {
+                if let Some(folge) = last.folge {
+                    if private_successor_exists_in(PRIVATE_HANDOVER_DIR, line, folge) {
+                        println!(
+                            "BOUNDARY\t{}\t{}\t{}\tboundary unmeasured: successor private \u{2014} state/funding/handover/",
+                            line, last.path, folge
+                        );
+                    }
+                }
             }
         }
     }
@@ -2544,5 +2596,33 @@ mod tests {
         assert_eq!(resolution_status(Some(false), Some(true)), "resolved");
         assert_eq!(resolution_status(Some(false), Some(false)), "none");
         assert_eq!(resolution_status(None, None), "none");
+    }
+
+    #[test]
+    fn canonical_line_maps_renamed_lines_to_their_successor() {
+        assert_eq!(canonical_line("bau"), "mountain");
+        assert_eq!(canonical_line("ernte"), "mycelium");
+        assert_eq!(canonical_line("forschung"), "sensory");
+        assert_eq!(canonical_line("mountain"), "mountain");
+        assert_eq!(canonical_line("sensory"), "sensory");
+        assert_eq!(canonical_line("future"), "future");
+    }
+
+    #[test]
+    fn private_successor_exists_names_same_line_next_folge_only() {
+        let dir = env::temp_dir().join(format!("register_lookup_private_{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let file = dir.join("handover-2026-09-23-mountain-folge126.md");
+        fs::write(&file, "<!--\nclass: handover\n-->\n").unwrap();
+        let dir_str = dir.to_str().unwrap().to_string();
+        let absent = dir.join("absent");
+        let absent_str = absent.to_str().unwrap().to_string();
+
+        assert!(private_successor_exists_in(&dir_str, "mountain", 125));
+        assert!(!private_successor_exists_in(&dir_str, "mountain", 124));
+        assert!(!private_successor_exists_in(&dir_str, "sensory", 125));
+        assert!(!private_successor_exists_in(&absent_str, "mountain", 125));
+
+        let _ = fs::remove_dir_all(&dir);
     }
 }
