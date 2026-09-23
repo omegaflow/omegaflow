@@ -1155,6 +1155,14 @@ ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
+format opensensemap_temperatur
+origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
+compiler tools/harvest/src/bin/opensensemap_compiler.rs
+on earth 0 0 0
+ttl 3600
+field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/babamul.caltech.edu/babamul_alerts.bin
 origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
 compiler tools/harvest/src/bin/babamul_compiler.rs
@@ -12472,6 +12480,13 @@ format sky1
 at sun
 ttl 31536000
 field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.gmrt.org/gmrt_bathymetry.bin
+format gmrt_bathymetry
+origin https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
+compiler tools/harvest/src/bin/gmrt_compiler.rs
+at earth
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
 format slab2_depth

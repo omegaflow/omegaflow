@@ -100,6 +100,11 @@ url https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N{lat}_00_
 record gl30
 note Copernicus GLO-30 Land-DEM (2026-09-12 HTTP 200): COG-GeoTIFF, 1 arcsec. Gestalt (Körperfläche), τ = geologische Stabilität, Raster. Socket gl30 gefällt (2026-09-14, Magic GL30). Deckt S1-Layover-Lücke; Konsument nächstes Atom.
 
+witness gestalt
+url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
+record gmrt
+note GMRT-Bathymetrie (2026-09-23 HTTP 200, 1100202 B sha256 f26f41a3…): Elevation m, negativ unter dem Meeresspiegel. Gestalt (Körperfläche), τ = geologische Stabilität, GMR1-Records, nie Oszillator/Kraftfeld. gmrt_compiler.
+
 witness s2-direction
 url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
 record sky1

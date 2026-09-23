@@ -514,6 +514,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_USCRN_TEMP => Some("us_crn_hourly_temp_c"),
             _ => None,
         },
+        "opensensemap_temperatur" => match comp {
+            crate::geo::COMP_OSM_TEMP => Some("opensensemap_temperature_c"),
+            _ => None,
+        },
         "copernicus_cdm_obs" => crate::copernicus::component_name(comp),
         "cosmic_ro" => match comp {
             crate::geo::COMP_COSMIC_REFRACT => Some("cosmic_ro_refractivity_n_units"),

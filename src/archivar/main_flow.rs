@@ -2504,6 +2504,101 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "gmrt_bathymetry" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                let body_name = frame_body_name(&src.frame);
+                let held = archive.stations.clone();
+                let gestalt_held = archive.gestalt_surface_threads.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("gmrt").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                        write_cdn_stamp(&tmp_path, &url);
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let recs = match crate::geo::parse_gmr(&bytes) {
+                        Some(r) => r,
+                        None => {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no GMR1 elevation-thread contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    if body_name.is_empty() {
+                        eprintln!(
+                            "{} {}: frame body absent — elevation threads unheld",
+                            fmt, url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let threads = gbco_threads(&body_name, &recs);
+                    let gestalt = gestalt_surface_threads(&recs, &body_name);
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} elevation threads held as stations (no field radiation)",
+                        fmt,
+                        url,
+                        threads.len()
+                    );
+                    eprint!("{}", station_view(&threads));
+                    eprintln!(
+                        "{} {}: {} gestalt surface threads held for projection (no field radiation)",
+                        fmt,
+                        url,
+                        gestalt.len()
+                    );
+                    if let Ok(mut held) = gestalt_held.lock() {
+                        *held = gestalt;
+                    }
+                    if let Ok(mut held) = held.lock() {
+                        *held = threads;
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if archive.sources[i].format == "volume" {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
