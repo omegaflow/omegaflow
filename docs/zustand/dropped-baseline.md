@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: ce9e7405b9851154798e01038fc2d5db94ea97598f2e51297b70f3c2b2ac6d5d
+  sha256: 9fc3b1658596af3d9b6805e7bc7577ec856b2f083dd333ab5c6642a7e918bec6
   status: live
   see-also: AGENTS.md
 -->
@@ -13,5 +13,5 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 3053
-measured 2026-09-23 (tree @7ded53c; register_lookup --dropped --count = 3053; delta +373 vs 2680; ~95–96 % commit-resolved bzw. umformulierte Unterfeld-Zeilen — kein echter Verlust, gemessen grind-flash; mycelium folge148)
+dropped-baseline 678
+measured 2026-09-23 (tree @48ae5e734; register_lookup --dropped: 3186 dropped, 2508 commit-resolved, N = Z − R = 678; run 35922188109; mycelium folge148-Drops aus note-drop/φ-Commits, kein echter Verlust)
