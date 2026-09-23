@@ -372,11 +372,12 @@ fn passband_at(table: &[(f64, f64, f64)], lam_nm: f64) -> (f64, f64) {
     (b0 + t * (b1 - b0), r0 + t * (r1 - r0))
 }
 
-pub fn sed_to_bp_rp(bins: &[(f64, f64, f64)]) -> Option<f64> {
+pub fn sed_to_bp_rp(bins: &[(f64, f64, f64)], ebv: Option<f64>) -> Option<f64> {
     let table = passband_table();
     if table.len() < 2 {
         return None;
     }
+    let ebv = ebv.filter(|v| v.is_finite() && *v > 0.0);
     let mut num_bp = 0.0f64;
     let mut num_rp = 0.0f64;
     for &(freq, bin_width, val) in bins {
@@ -387,9 +388,16 @@ pub fn sed_to_bp_rp(bins: &[(f64, f64, f64)]) -> Option<f64> {
             continue;
         }
         let lam_nm = C_LIGHT / freq * 1e9;
+        let mut scaled = val;
+        if let Some(ebv) = ebv {
+            let Some(a_over_av) = extinction_at(lam_nm) else {
+                continue;
+            };
+            scaled *= 10.0f64.powf(0.4 * CCM89_RV * ebv * a_over_av);
+        }
         let (sbp, srp) = passband_at(table, lam_nm);
-        num_bp += val * sbp * lam_nm * bin_width;
-        num_rp += val * srp * lam_nm * bin_width;
+        num_bp += scaled * sbp * lam_nm * bin_width;
+        num_rp += scaled * srp * lam_nm * bin_width;
     }
     if !num_bp.is_finite() || !num_rp.is_finite() || num_bp <= 0.0 || num_rp <= 0.0 {
         return None;
@@ -431,6 +439,8 @@ fn extinction_table() -> &'static Vec<(f64, f64)> {
     static TABLE: std::sync::OnceLock<Vec<(f64, f64)>> = std::sync::OnceLock::new();
     TABLE.get_or_init(|| parse_extinction(include_str!("kernels/ccm89_rv31.dat")))
 }
+
+pub const CCM89_RV: f64 = 3.1;
 
 pub fn parse_extinction(raw: &str) -> Vec<(f64, f64)> {
     let mut out = Vec::new();
@@ -600,30 +610,78 @@ mod tests {
 
     #[test]
     fn sed_to_bp_rp_returns_none_for_an_empty_spectrum() {
-        assert!(sed_to_bp_rp(&[]).is_none());
+        assert!(sed_to_bp_rp(&[], None).is_none());
     }
 
     #[test]
     fn sed_to_bp_rp_refuses_a_bin_without_rp_response() {
         let lam_m = 400.0e-9;
         let freq = C_LIGHT / lam_m;
-        assert!(sed_to_bp_rp(&[(freq, 1.0e13, 1.0)]).is_none());
+        assert!(sed_to_bp_rp(&[(freq, 1.0e13, 1.0)], None).is_none());
     }
 
     #[test]
     fn sed_to_bp_rp_rp_dominant_bin_is_positive() {
         let lam_m = 660.0e-9;
         let freq = C_LIGHT / lam_m;
-        let ci = sed_to_bp_rp(&[(freq, 1.0e13, 1.0)]).unwrap();
+        let ci = sed_to_bp_rp(&[(freq, 1.0e13, 1.0)], None).unwrap();
         assert!(ci.is_finite());
         assert!(ci > 0.0, "red band color {ci}");
     }
 
     #[test]
     fn sed_to_bp_rp_hot_blackbody_is_bluer_than_cool() {
-        let hot = sed_to_bp_rp(&blackbody_bins(10_000.0)).unwrap();
-        let cool = sed_to_bp_rp(&blackbody_bins(3_000.0)).unwrap();
+        let hot = sed_to_bp_rp(&blackbody_bins(10_000.0), None).unwrap();
+        let cool = sed_to_bp_rp(&blackbody_bins(3_000.0), None).unwrap();
         assert!(hot < cool, "hot blackbody {hot} vs cool blackbody {cool}");
+    }
+
+    #[test]
+    fn sed_to_bp_rp_none_ebv_keeps_the_observed_color() {
+        let bins = blackbody_bins(6_000.0);
+        let observed = sed_to_bp_rp(&bins, None).unwrap();
+        let zero = sed_to_bp_rp(&bins, Some(0.0)).unwrap();
+        assert_eq!(observed, zero, "E(B-V) = 0 must not deredden");
+    }
+
+    #[test]
+    fn sed_to_bp_rp_dereddening_moves_the_color_blueward() {
+        let bins = blackbody_bins(6_000.0);
+        let observed = sed_to_bp_rp(&bins, None).unwrap();
+        let half = sed_to_bp_rp(&bins, Some(0.5)).unwrap();
+        let full = sed_to_bp_rp(&bins, Some(1.0)).unwrap();
+        assert!(
+            half < observed,
+            "E(B-V)=0.5 color {half} vs observed {observed}"
+        );
+        assert!(
+            full < half,
+            "larger E(B-V) must shift further blue: {full} vs {half}"
+        );
+    }
+
+    #[test]
+    fn sed_to_bp_rp_scales_each_bin_by_the_ccm89_factor() {
+        let lam_blue = 440.0;
+        let lam_red = 700.0;
+        let ebv = 0.25;
+        let bins = [
+            (C_LIGHT / (lam_blue * 1e-9), 1.0e13, 1.0),
+            (C_LIGHT / (lam_red * 1e-9), 1.0e13, 1.0),
+        ];
+        let table = passband_table();
+        let (b_bp, b_rp) = passband_at(&table, lam_blue);
+        let (r_bp, r_rp) = passband_at(&table, lam_red);
+        let f_blue = 10.0f64.powf(0.4 * CCM89_RV * ebv * extinction_at(lam_blue).unwrap());
+        let f_red = 10.0f64.powf(0.4 * CCM89_RV * ebv * extinction_at(lam_red).unwrap());
+        let num_bp = f_blue * b_bp * lam_blue + f_red * r_bp * lam_red;
+        let num_rp = f_blue * b_rp * lam_blue + f_red * r_rp * lam_red;
+        let expected = -2.5 * (num_bp / num_rp).log10();
+        let got = sed_to_bp_rp(&bins, Some(ebv)).unwrap();
+        assert!(
+            (got - expected).abs() < 1e-9,
+            "got {got}, expected {expected}"
+        );
     }
 
     #[test]
