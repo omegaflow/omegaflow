@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: aeec6f9324cf38059b9701d021938dce3e8e9253f7ae334df15cb82f5ab6f64d
+  sha256: 69581574fb60a4c54ce6ab5d3991c1823ae1b7d1bb57294ebb7dc1035ffb9292
   status: live
   see-also: AGENTS.md
 -->
@@ -91,7 +91,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 34 Modi — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 38 Modi — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--mwmbl` | 0,78 s (neu, keyless JSON, kein Gate) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
@@ -133,6 +133,23 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 - `archive_search --brave <query>` — Brave Search API (`BRAVE_API_KEY`);
   gemessen 2026-09-21: **HTTP 402** (free credits erschöpft, Ledger `1789978555`)
   bis zum Monatswechsel — die Kaskade führt darum `--mwmbl` zuerst.
+- `archive_search --marginalia <query>` — Marginalia public search
+  (`api.marginalia-search.com`), **keyless JSON, kein Gate**; `url` +
+  Titel/Beschreibung/`quality`. Gemessen 2026-09-23: relevante Treffer (MPG,
+  ESA/sci.esa.int), 200 — die zweite keyless Engine neben `--mwmbl`.
+- `archive_search --tavily <query>` — Tavily Search API (`TAVILY_API_KEY`); `url`
+  + Titel/`score`/Text.
+- `archive_search --exa <query>` — Exa Search API (`EXA_API_KEY`); `url` +
+  Titel/Autor/Datum/Text.
+- `archive_search --linkup <query>` — Linkup Search API (`LINKUP_API_KEY`); `url`
+  + Titel/Text.
+  Gemessen 2026-09-23: alle drei lasen zunächst `pending` (`--exa`/`--linkup`
+  HTTP 402, `--tavily` „no JSON") — Ursache war `net.rs::post()`, das die
+  Auth-Header **ohne `-H`** als nacktes curl-Argument reichte (curl sah die
+  Header-Zeile als zweite URL): kein Key gesendet → 402, und die `-w`-Ausgabe der
+  Pseudo-URL vor dem JSON → kein Parse. Fix `post_args()` setzt `-H` vor jeden
+  Header (Gate-Test `post_args_prefix_every_header_with_dash_h`); greift nach dem
+  CI-Rebuild.
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,

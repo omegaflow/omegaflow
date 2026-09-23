@@ -304,12 +304,26 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     result
 }
 
+fn post_args(body: &str, headers: &[&str]) -> Vec<String> {
+    let mut extra: Vec<String> = vec![
+        "-X".to_string(),
+        "POST".to_string(),
+        "-H".to_string(),
+        "Content-Type: application/json".to_string(),
+    ];
+    for h in headers {
+        extra.push("-H".to_string());
+        extra.push((*h).to_string());
+    }
+    extra.push("--data".to_string());
+    extra.push(body.to_string());
+    extra
+}
+
 pub(crate) fn post(url: &str, body: &str, headers: &[&str], timeout: &str) -> Option<Fetch> {
-    let mut extra: Vec<&str> = vec!["-X", "POST", "-H", "Content-Type: application/json"];
-    extra.extend_from_slice(headers);
-    extra.push("--data");
-    extra.push(body);
-    get(url, &extra, timeout)
+    let extra = post_args(body, headers);
+    let extra_refs: Vec<&str> = extra.iter().map(String::as_str).collect();
+    get(url, &extra_refs, timeout)
 }
 
 pub fn urlencode(s: &str) -> String {
@@ -2101,6 +2115,24 @@ mod tests {
             !args.iter().any(|a| a == "-I" || a == "--head"),
             "the probe is no HEAD request"
         );
+    }
+
+    #[test]
+    fn post_args_prefix_every_header_with_dash_h() {
+        let args = post_args("{}", &["x-api-key: K", "Authorization: Bearer T"]);
+        for header in ["x-api-key: K", "Authorization: Bearer T"] {
+            let at = match args.iter().position(|a| a == header) {
+                Some(i) => i,
+                None => panic!("{header} missing from the post args"),
+            };
+            assert_eq!(
+                at.checked_sub(1).map(|i| args[i].as_str()),
+                Some("-H"),
+                "{header} must pass through -H, never land as a bare URL argument"
+            );
+        }
+        assert_eq!(args.last().map(String::as_str), Some("{}"));
+        assert!(args.iter().any(|a| a == "--data"));
     }
 
     #[test]
