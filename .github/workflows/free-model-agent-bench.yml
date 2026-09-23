@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: 'Model id substring filter (empty = all 105 free models)'
+        description: 'Model id substring filter (empty = all free models in free_models.tsv)'
         required: false
         type: string
         default: ''
@@ -33,6 +33,10 @@ jobs:
   bench:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -65,15 +69,53 @@ jobs:
           if [ -n "${{ inputs.model }}" ]; then extra+=(--model "${{ inputs.model }}"); fi
           if [ -n "${{ inputs.task }}" ]; then extra+=(--task "${{ inputs.task }}"); fi
           ./target/release/free_model_agent_bench \
-            --out free-model-agent-bench.tsv \
+            --out "free-model-agent-bench-shard-${{ matrix.shard }}.tsv" \
+            --models-shard "${{ matrix.shard }}:16" \
             --timeout "${{ inputs.timeout }}" \
             "${extra[@]}"
       - name: Upload bench artifacts
+        if: always() && hashFiles('free-model-agent-bench-shard-${{ matrix.shard }}.tsv') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: free-model-agent-bench-shard-${{ matrix.shard }}
+          path: |
+            free-model-agent-bench-shard-${{ matrix.shard }}.tsv
+            free-model-agent-bench-shard-${{ matrix.shard }}.tsv.answers
+          retention-days: 7
+
+  merge:
+    needs: bench
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download shard artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: free-model-agent-bench-shard-*
+          path: shards
+          merge-multiple: true
+      - name: Merge shard result tables
+        run: |
+          shopt -s nullglob
+          files=(shards/free-model-agent-bench-shard-*.tsv)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no shard tables were produced" >&2
+            exit 1
+          fi
+          : > free-model-agent-bench.tsv
+          first=1
+          for f in "${files[@]}"; do
+            if [ "$first" -eq 1 ]; then
+              cat "$f" >> free-model-agent-bench.tsv
+              first=0
+            else
+              tail -n +2 "$f" >> free-model-agent-bench.tsv
+            fi
+          done
+      - name: Upload merged table
         if: always() && hashFiles('free-model-agent-bench.tsv') != ''
         uses: actions/upload-artifact@v4
         with:
           name: free-model-agent-bench
-          path: |
-            free-model-agent-bench.tsv
-            free-model-agent-bench.tsv.answers
+          path: free-model-agent-bench.tsv
           retention-days: 7

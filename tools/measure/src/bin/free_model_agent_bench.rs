@@ -99,6 +99,34 @@ fn resolve_task(task_name: Option<String>, task_file: Option<String>) -> Task {
     }
 }
 
+fn parse_models_shard(spec: &str) -> Result<(usize, usize), String> {
+    let (index_str, count_str) = spec
+        .split_once(':')
+        .ok_or_else(|| format!("--models-shard expects i:N, got '{}'", spec))?;
+    let index: usize = index_str.parse().map_err(|_| {
+        format!(
+            "--models-shard index is not a non-negative integer: '{}'",
+            index_str
+        )
+    })?;
+    let count: usize = count_str.parse().map_err(|_| {
+        format!(
+            "--models-shard count is not a non-negative integer: '{}'",
+            count_str
+        )
+    })?;
+    if count < 2 {
+        return Err(format!("--models-shard count must be >= 2, got {}", count));
+    }
+    if index >= count {
+        return Err(format!(
+            "--models-shard index must satisfy 0 <= i < N, got {}:{}",
+            index, count
+        ));
+    }
+    Ok((index, count))
+}
+
 struct Model {
     provider: String,
     id: String,
@@ -690,6 +718,7 @@ fn main() {
     let mut emit_config: Option<String> = None;
     let mut task_name: Option<String> = None;
     let mut task_file: Option<String> = None;
+    let mut shard: Option<(usize, usize)> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -735,6 +764,21 @@ fn main() {
                     i += 1;
                 }
             }
+            "--models-shard" => {
+                if i + 1 < args.len() {
+                    match parse_models_shard(&args[i + 1]) {
+                        Ok(s) => shard = Some(s),
+                        Err(msg) => {
+                            eprintln!("free_model_agent_bench: {}", msg);
+                            std::process::exit(2);
+                        }
+                    }
+                    i += 1;
+                } else {
+                    eprintln!("free_model_agent_bench: --models-shard expects i:N");
+                    std::process::exit(2);
+                }
+            }
             _ => {}
         }
         i += 1;
@@ -744,6 +788,19 @@ fn main() {
     }
     let task = resolve_task(task_name, task_file);
     let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
+    if let Some((shard_index, shard_count)) = shard {
+        eprintln!(
+            "free_model_agent_bench: models shard {}/{} ({} of {} model slots)",
+            shard_index,
+            shard_count,
+            models
+                .iter()
+                .enumerate()
+                .filter(|(idx, _)| idx % shard_count == shard_index)
+                .count(),
+            models.len()
+        );
+    }
     let dir = env::current_dir()
         .ok()
         .map(|p| p.to_string_lossy().into_owned());
@@ -767,7 +824,12 @@ fn main() {
         file,
         "provider\tmodel\tstatus\tms\ttool_calls\tanswer_chars"
     );
-    for m in &models {
+    for (idx, m) in models.iter().enumerate() {
+        if let Some((shard_index, shard_count)) = shard {
+            if idx % shard_count != shard_index {
+                continue;
+            }
+        }
         if let Some(f) = &filter {
             if !m.id.contains(f.as_str()) {
                 continue;
@@ -837,5 +899,20 @@ mod tests {
         absorb_stream("{\"type\":\"model_provider_error\",\"error\":{}}", &mut acc);
         assert_eq!(answer_text(&acc), "");
         assert_eq!(tool_calls_for(&acc), "pending");
+    }
+
+    #[test]
+    fn models_shard_accepts_indices_below_the_shard_count() {
+        assert_eq!(parse_models_shard("0:16"), Ok((0, 16)));
+        assert_eq!(parse_models_shard("15:16"), Ok((15, 16)));
+    }
+
+    #[test]
+    fn models_shard_rejects_out_of_range_and_malformed_specs() {
+        assert!(parse_models_shard("16:16").is_err());
+        assert!(parse_models_shard("1:1").is_err());
+        assert!(parse_models_shard("16").is_err());
+        assert!(parse_models_shard("x:16").is_err());
+        assert!(parse_models_shard("1:x").is_err());
     }
 }
