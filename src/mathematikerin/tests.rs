@@ -1219,6 +1219,7 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
         curves: None,
         spectral: Vec::new(),
         volumes: Vec::new(),
+        bayestar: None,
     };
     let mut app = OmegaLoop {
         ..OmegaLoop::new(
