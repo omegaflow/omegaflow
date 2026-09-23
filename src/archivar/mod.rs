@@ -21,6 +21,7 @@ pub mod bison_basu;
 pub mod bison_shift;
 pub mod bison_velocity;
 pub mod bl_narrowband;
+pub mod ble;
 pub mod bpc;
 pub mod brainvision;
 pub mod bsp_reader;
@@ -169,6 +170,7 @@ pub mod types;
 pub mod units;
 
 pub use astrometry::*;
+pub use ble::*;
 pub use channels::*;
 pub use extract::*;
 pub use fetch::*;

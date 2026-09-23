@@ -130,7 +130,10 @@ mod tests {
     #[test]
     fn negative_temperature_decodes() {
         let crc = crc8(&[0xF8, 0xFF, 0x4B, 0x46, 0x7F, 0xFF, 0x0C, 0x10]);
-        assert_eq!(temperature_from_scratchpad(&scratchpad(-8, crc)), Some(-0.5));
+        assert_eq!(
+            temperature_from_scratchpad(&scratchpad(-8, crc)),
+            Some(-0.5)
+        );
     }
 
     #[test]
