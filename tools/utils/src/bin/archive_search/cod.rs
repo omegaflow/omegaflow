@@ -118,18 +118,16 @@ fn parse_cod(body: &str, fields: &[String], max: usize) -> Option<Vec<String>> {
     let items = v.as_arr()?;
     let mut out = Vec::new();
     for item in items.iter().take(max) {
-        let mut parts: Vec<String> = Vec::new();
-        if let Some(file) = entry_field(fields).and_then(|f| scalar(item, f)) {
-            parts.push(format!("url {}/{}.html", ENTRY, file));
-        }
+        let Some(file) = entry_field(fields).and_then(|f| scalar(item, f)) else {
+            continue;
+        };
+        let mut parts: Vec<String> = vec![format!("url {}/{}.html", ENTRY, file)];
         for field in fields {
             if let Some(value) = scalar(item, field) {
                 parts.push(format!("{field}: {value}"));
             }
         }
-        if !parts.is_empty() {
-            out.push(parts.join("\t"));
-        }
+        out.push(parts.join("\t"));
     }
     Some(out)
 }
