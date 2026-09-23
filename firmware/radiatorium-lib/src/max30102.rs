@@ -62,6 +62,54 @@ impl Iterator for Fifo<'_> {
     }
 }
 
+pub fn spo2_from_samples(red: &[u32], ir: &[u32]) -> Option<f64> {
+    if red.is_empty() || red.len() != ir.len() {
+        return None;
+    }
+    let n = red.len() as f64;
+    let mean_red = red.iter().map(|&v| v as f64).sum::<f64>() / n;
+    let mean_ir = ir.iter().map(|&v| v as f64).sum::<f64>() / n;
+    if mean_red <= 0.0 || mean_ir <= 0.0 {
+        return None;
+    }
+    let ac_red = red
+        .iter()
+        .map(|&v| {
+            let d = v as f64 - mean_red;
+            d * d
+        })
+        .sum::<f64>();
+    let ac_ir = ir
+        .iter()
+        .map(|&v| {
+            let d = v as f64 - mean_ir;
+            d * d
+        })
+        .sum::<f64>();
+    let r2 = (ac_red / (mean_red * mean_red)) / (ac_ir / (mean_ir * mean_ir));
+    if !r2.is_finite() || r2 <= 0.0 {
+        return None;
+    }
+    let r = sqrt(r2);
+    let spo2 = -45.060 * r2 + 30.354 * r + 94.845;
+    if spo2.is_finite() && spo2 > 0.0 && spo2 <= 100.0 {
+        Some(spo2)
+    } else {
+        None
+    }
+}
+
+fn sqrt(x: f64) -> f64 {
+    if x <= 0.0 {
+        return x;
+    }
+    let mut guess = x;
+    for _ in 0..64 {
+        guess = 0.5 * (guess + x / guess);
+    }
+    guess
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -111,5 +159,34 @@ mod tests {
     #[test]
     fn fifo_config_byte_is_avg1_no_rollover() {
         assert_eq!(fifo_config_avg1(), 0x00);
+    }
+
+    #[test]
+    fn the_pulsatile_ratio_maps_to_a_plausible_saturation() {
+        let red = [990u32, 1010, 990, 1010];
+        let ir = [980u32, 1020, 980, 1020];
+        let spo2 = spo2_from_samples(&red, &ir).expect("saturation");
+        assert!(spo2 > 0.0 && spo2 <= 100.0);
+        assert!((spo2 - 98.757).abs() < 0.01, "got {spo2}");
+    }
+
+    #[test]
+    fn the_flat_signal_has_no_pulsatile_ratio() {
+        let red = [1000u32; 4];
+        let ir = [1000u32; 4];
+        assert_eq!(spo2_from_samples(&red, &ir), None);
+    }
+
+    #[test]
+    fn the_mismatched_windows_are_absent() {
+        assert_eq!(spo2_from_samples(&[1u32, 2], &[1u32]), None);
+        assert_eq!(spo2_from_samples(&[], &[]), None);
+    }
+
+    #[test]
+    fn the_implausible_ratio_is_absent() {
+        let red = [0u32, 10000, 0, 10000];
+        let ir = [1000u32, 1001, 1000, 1001];
+        assert_eq!(spo2_from_samples(&red, &ir), None);
     }
 }

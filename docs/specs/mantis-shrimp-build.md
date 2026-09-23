@@ -41,10 +41,12 @@ MAX30102 for SpO2 mode at 100 Hz, and streams over `UsbSerialJtag`. The pure
 logic (frame parse, Σω duty, mux select, MAX30102 FIFO) is
 `firmware/radiatorium-lib/` (`frame`, `max30102`, `mux`, `nn`, `pwm`).
 
-**Measured gap:** the firmware tree carries no DS18B20 / 1-Wire / GPIO7 code
-(`sgrep ds18b20 firmware` → empty). The heater/peltier cutoff is mandatory by
-the safety matrix, so the sensor is part of the minimal wiring while its
-firmware read path is `pending` (a register duty, not a built function).
+**Firmware state:** the DS18B20 read path is tracked — `radiatorium-lib/src/ds18b20.rs`
+(`Cutoff`, CRC8, scratchpad) and `radiatorium/src/one_wire.rs` (1-Wire timing) — and
+`radiatorium/src/main.rs:143` binds `GPIO7`, with the cutoff evaluated in the safety
+path (`main.rs:165`). The heater/peltier cutoff is mandatory by the safety matrix
+while a physical bring-up gap remains: the sensor hardware is LOCKED by the operator,
+so verification against a real device is `pending` (a register duty, not a built function).
 
 ## 2. Wiring & pin map
 
