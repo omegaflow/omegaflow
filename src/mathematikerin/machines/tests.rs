@@ -370,6 +370,7 @@ mod matrix_rebuild_tests {
             curves: None,
             spectral: Vec::new(),
             volumes: Vec::new(),
+            bayestar: None,
         };
         let (_tx, rx) = mpsc::channel();
         let mut m = MatrixMachine::new(rx);
