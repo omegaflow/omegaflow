@@ -8033,9 +8033,11 @@ url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdar
 format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
 compiler tools/harvest/src/bin/superdarn_rawacf_compiler.rs
+sha256 6f60033e51e8bfb21e02e8389988e6e60460b015b91d31b746c6a56bc2d8a0ba
 on earth 0 0 0
 ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
+note SuperDARN RAWACF CDN 2026-09-23: HTTP 200, 215288 B, sha256 == :8036 — manifestiert.
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
 format glm_l1b
@@ -14017,11 +14019,12 @@ field No1.depth jma_quake_depth_km gaussian-inverse-square seismic-body km 10 0.
 url https://github.com/omegaflow/sources/releases/download/babamul.caltech.edu/babamul_alerts.bin
 origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
 compiler tools/harvest/src/bin/babamul_compiler.rs
+sha256 934858db4d70e78b19cd5c2f25b848ac3e716b902442bf3f58cb7b35553403d7
 format sky1
 at sun
 ttl 3600
 field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
-note Babamul LSST/ZTF-Broker /api/babamul/objects Bearer 200 (anonym 401); sky1 value=magpsf. 2026-09-22 Compiler parse_alerts vierwertig, Empty→exit 0 (0 honored), Regression→exit 2; CDN babamul_alerts.bin 404, Re-Dispatch offen.
+note Babamul LSST/ZTF-Broker /api/babamul/objects Bearer 200 (anonym 401); sky1 value=magpsf. 2026-09-22 Compiler parse_alerts Empty→exit 0, Regression→exit 2; CDN babamul_alerts.bin 2026-09-23: HTTP 200, 2000013 B, sha256 == :14022 — manifestiert.
 
 url https://github.com/omegaflow/sources/releases/download/ia2-tap.oats.inaf.it/ia2_wgesdss.bin
 origin http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL
