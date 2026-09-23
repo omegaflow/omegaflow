@@ -3,7 +3,7 @@
   session: Sensory-Folge 152
   class: handover
   date: 2026-09-23
-  sha256: ae68fba44a4996f170e128a92eac8c13516eae4d98e70852fe10e55ba70cc617
+  sha256: 6512141fe6991abde4e022158dbf132e404391ee1cc859d9fb2f543c4fcbf1aa
   status: live
 -->
 # Handover — Sensory-Folge 152 (2026-09-23)
@@ -104,13 +104,6 @@ Zustandsfrische.
   Übergabe-Ref).
 - **Blockade:** kein Dateieingang.
 - **Braucht:** eingehende Datei lesen.
-
-### BepiColombo MORE
-- **Status:** termin | **Bindung:** dritter (`termin:2027-04`)
-- **Trigger:** Freigabe durch psahelp
-- **Lage:** Freigabe-Anfrage 2026-09-18 raus (gemessen 2026-09-23 via Übergabe-Ref).
-- **Blockade:** Freigabe ausstehend.
-- **Braucht:** Freigabe abwarten.
 
 ## Fremd-CI (geroutet, nicht sensory)
 
