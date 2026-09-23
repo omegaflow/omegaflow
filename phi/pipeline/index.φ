@@ -104,6 +104,8 @@ index 0 pipeline/catalog/provider_links.φ
 # note: 46 Provider mit Original-Link; eigenes Werk (korpora_heim:65)
 descoped 0 pipeline/catalog/rpw_datacenter_catalog.φ
 # note: superseded — RPW-BIA-E-Feld in sources.φ:1139; eigenes Werk (korpora_heim:72)
+pending pipeline/catalog/dataone_catalog.φ
+# note: 50002 Metadaten-Aggregator-Zeilen (Member-Nodes KNB/LTER/EDI/TDAR); Tür-Katalog; Metadaten-/Katalog-Lizenz pending (korpora_heim:28) — /terms+/data-policy 401, Doku nur Software Apache-2.0
 # Katalog-Korpus 2026-09-17: 137 .φ-Inventare + 8 Datenverzeichnisse
 # (celestrak_eop, cosmic_wetprf, ncei_goes_xrs, ncei_ssi, noaa_gk2a, noaa_goes16, noaa_wod, twomass).
 

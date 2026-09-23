@@ -75,7 +75,7 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        None => jd_now(),
+        None => jd_now() - JD_WINDOW,
     };
     let url = format!(
         "{BASE}/surveys/{survey}/alerts?start_jd={start_jd}&end_jd={}",
