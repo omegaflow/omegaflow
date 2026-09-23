@@ -2227,7 +2227,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let records = match series_parse_bin(&fmt, &bytes) {
+                    let records = match series_rows(&fmt, &bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
@@ -2258,8 +2258,11 @@ pub fn main_flow() {
                         return;
                     }
                     let mut channels = Vec::with_capacity(records.len());
-                    for (t, val, comp) in records {
-                        let Some(name) = series_component_name(&fmt, comp) else {
+                    for row in records {
+                        if !row.value.is_finite() {
+                            continue;
+                        }
+                        let Some(name) = series_component_name(&fmt, row.comp) else {
                             continue;
                         };
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
@@ -2268,12 +2271,12 @@ pub fn main_flow() {
                         channels.push((
                             Channel {
                                 z: 0.0,
-                                freq: 0.0,
-                                bin_width: 0.0,
-                                epoch: t,
+                                freq: row.freq,
+                                bin_width: row.bin_width,
+                                epoch: row.t,
                                 position: Position::Source,
                                 name: fc.name.clone(),
-                                value: val,
+                                value: row.value,
                             },
                             fc.clone(),
                         ));

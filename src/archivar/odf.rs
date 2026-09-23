@@ -1946,6 +1946,54 @@ pub fn tnf_parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     Some(out)
 }
 
+pub fn carrier_phase_rad(cycles: f64) -> Option<f64> {
+    if cycles.is_finite() {
+        Some((cycles - cycles.floor()) * 2.0 * std::f64::consts::PI)
+    } else {
+        None
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct TnfPhaseRow {
+    pub t: f64,
+    pub value: f64,
+    pub phase: Option<f64>,
+    pub freq: f64,
+    pub bin_width: f64,
+    pub comp: u32,
+}
+
+pub fn tnf_phase_series(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
+    let rows = parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in &rows {
+        if r[TNF_ROW_FORMAT] != 0.0 {
+            continue;
+        }
+        let t = r[PODF_COL_TDB];
+        if !t.is_finite() {
+            continue;
+        }
+        let v = r[PODF_COL_OBSERVABLE];
+        let ramp = r[TNF_ROW_SUPPORT];
+        let freq = if ramp.is_finite() && ramp > 0.0 {
+            ramp
+        } else {
+            0.0
+        };
+        out.push(TnfPhaseRow {
+            t,
+            value: v,
+            phase: carrier_phase_rad(v),
+            freq,
+            bin_width: 0.0,
+            comp: TNF_COMP_UL_PHASE,
+        });
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2269,6 +2317,107 @@ mod tests {
         assert_eq!(rows[0][3], 26.0, "ul_dss_id carries the DT0 field");
         assert_eq!(rows[0][4], 98.0, "scft_id carries the SFDU field");
         assert_eq!(rows[0][5], 0.0, "format_code 0 marks DT0");
+    }
+
+    fn podf_bin(rows: &[[f64; 9]]) -> Vec<u8> {
+        let mut out = Vec::with_capacity(8 + rows.len() * 72);
+        out.extend_from_slice(b"PODF");
+        out.extend_from_slice(&(rows.len() as u32).to_le_bytes());
+        for r in rows {
+            for v in r {
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn tnf_phase_series_reads_phase_and_ramp_freq_from_the_same_podf_row() {
+        let ramp = 7.183_446_125e9;
+        let row = [1.0e9, 42.75, ramp, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        let s = &series[0];
+        assert_eq!(s.t, 1.0e9);
+        assert_eq!(s.value, 42.75, "the raw cycles ride beside the phase");
+        let phase = s.phase.expect("finite cycles carry a phase");
+        assert!((phase - 0.75 * 2.0 * std::f64::consts::PI).abs() < 1e-12);
+        assert_eq!(s.freq, ramp, "ramp_freq rides the row, never a constant");
+        assert_eq!(s.bin_width, 0.0, "a phase counter carries no band");
+        assert_eq!(s.comp, TNF_COMP_UL_PHASE);
+    }
+
+    #[test]
+    fn tnf_phase_series_writes_integer_cycles_as_zero_phase_not_absent() {
+        let row = [1.0e9, 5.0, 7.183_446_125e9, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        let phase = series[0].phase.expect("0 rad is a real angle");
+        assert_eq!(phase, 0.0);
+    }
+
+    #[test]
+    fn tnf_phase_series_absent_phase_is_none_never_a_pad() {
+        let row = [
+            1.0e9,
+            f64::NAN,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert!(series[0].phase.is_none());
+        assert!(
+            series[0].value.is_nan(),
+            "the raw value stays the row's own, the consumer gates it"
+        );
+    }
+
+    #[test]
+    fn tnf_phase_series_absent_ramp_freq_is_no_band() {
+        let row = [1.0e9, 42.75, 0.0, 26.0, 98.0, 0.0, 2.0, 7.0, 0.0];
+        let bytes = podf_bin(&[row]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert!(series[0].phase.is_some());
+        assert_eq!(series[0].freq, 0.0, "no band, not a fabricated carrier");
+    }
+
+    #[test]
+    fn tnf_phase_series_skips_non_ul_rows_and_non_finite_epochs() {
+        let ul = [
+            1.0e9,
+            42.75,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let dl = [2.0e9, 1.0, 7.1e9, 26.0, 98.0, 1.0, 2.0, 7.0, 0.0];
+        let bad = [
+            f64::NAN,
+            42.75,
+            7.183_446_125e9,
+            26.0,
+            98.0,
+            0.0,
+            2.0,
+            7.0,
+            0.0,
+        ];
+        let bytes = podf_bin(&[ul, dl, bad]);
+        let series = tnf_phase_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert_eq!(series[0].t, 1.0e9);
     }
 
     fn put_u16(b: &mut [u8], off: usize, v: u16) {
