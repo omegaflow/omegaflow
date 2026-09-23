@@ -51,7 +51,15 @@ fn main() {
         }
         return;
     }
-    print!("{}", strip_tags(&html));
+    if is_markup(&html) {
+        print!("{}", strip_tags(&html));
+    } else {
+        let _ = std::io::stdout().write_all(&raw);
+    }
+}
+
+fn is_markup(body: &str) -> bool {
+    body.trim_start().starts_with('<')
 }
 
 fn extract_title(html: &str) -> Option<String> {
@@ -123,6 +131,13 @@ mod tests {
         let text = strip_tags(html);
         assert!(text.contains("hi there"));
         assert!(!text.contains('<'));
+    }
+
+    #[test]
+    fn markup_gate() {
+        assert!(is_markup("<!DOCTYPE html><p>x</p>"));
+        assert!(is_markup("  \n<html>"));
+        assert!(!is_markup("/* c */\n#include <stdio.h>\n"));
     }
 
     #[test]
