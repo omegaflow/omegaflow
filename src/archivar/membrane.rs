@@ -382,72 +382,93 @@ pub fn wire_extent(extent: f64) -> f64 {
 
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
-    let (force, kernel, ttl, unit, tau) =
-        if kl.contains("temperature") || kl.contains("temp") || kl == "thermistor" {
-            (5, 3, 60.0, "", Some(3600.0))
-        } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-            (6, 3, 60.0, "", Some(3600.0))
-        } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture"
+    let (force, kernel, ttl, unit, tau) = if kl.contains("temperature")
+        || kl.contains("temp")
+        || kl == "thermistor"
+    {
+        (5, 3, 60.0, "", Some(3600.0))
+    } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
+        (6, 3, 60.0, "", Some(3600.0))
+    } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
+        (5, 3, 300.0, "", Some(3600.0))
+    } else if (kl.contains("wind") && kl.contains("speed"))
+        || kl == "windspeed"
+        || kl == "anemometer"
+        || (kl.contains("wind") && kl.contains("dir"))
+        || kl == "winddirection"
+        || kl == "winddir"
+        || kl == "vane"
+    {
+        (6, 3, 10.0, "", Some(3600.0))
+    } else if kl.contains("mic")
+        || kl.contains("audio")
+        || kl.contains("sound")
+        || kl.contains("noise")
+        || kl == "spl"
+    {
+        (2, 1, 0.01, "", None)
+    } else if kl.contains("light")
+        || kl.contains("lux")
+        || kl.contains("lumin")
+        || kl.contains("irradiance")
+    {
+        (0, 0, 10.0, "", None)
+    } else if kl.contains("battery")
+        && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
+    {
+        (8, 0, 60.0, "%", Some(60.0))
+    } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
+        (8, 0, 60.0, "v", Some(60.0))
+    } else if kl.contains("battery") && kl.contains("current") {
+        (8, 0, 10.0, "a", Some(10.0))
+    } else if kl.contains("co2")
+        || kl.contains("voc")
+        || kl.contains("pm2")
+        || kl.contains("pm10")
+        || kl.contains("gas")
+    {
+        (5, 3, 300.0, "", None)
+    } else if kl.contains("spo2") || kl.contains("oxygen") || kl.contains("sao2") || kl == "o2" {
+        (6, 3, 10.0, "%", None)
+    } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
+        (0, 0, 10.0, "", None)
+    } else if kl.contains("accelerometer")
+        || kl.contains("acc")
+        || kl.contains("vibration")
+        || kl.contains("gyro")
+    {
+        (3, 1, 1.0, "", None)
+    } else if kl.contains("gravity") {
+        (1, 0, 10.0, "", None)
+    } else if kl.contains("camera") || kl.contains("video") {
+        (0, 0, 1.0 / 30.0, "", None)
+    } else if kl.contains("battery") && kl.contains("charging") {
+        (8, 0, 60.0, "1", Some(60.0))
+    } else if kl.contains("gps")
+        || kl.contains("gnss")
+        || kl.contains("speed")
+        || kl.contains("velocity")
+        || kl.contains("track")
+        || kl.contains("heading")
+        || kl.contains("course")
+        || kl.contains("bearing")
+    {
+        if kl.contains("speed") || kl.contains("velocity") {
+            (7, 1, 10.0, "m/s", None)
+        } else if kl.contains("track")
+            || kl.contains("heading")
+            || kl.contains("course")
+            || kl.contains("bearing")
         {
-            (5, 3, 300.0, "", Some(3600.0))
-        } else if (kl.contains("wind") && kl.contains("speed"))
-            || kl == "windspeed"
-            || kl == "anemometer"
-            || (kl.contains("wind") && kl.contains("dir"))
-            || kl == "winddirection"
-            || kl == "winddir"
-            || kl == "vane"
-        {
-            (6, 3, 10.0, "", Some(3600.0))
-        } else if kl.contains("mic")
-            || kl.contains("audio")
-            || kl.contains("sound")
-            || kl.contains("noise")
-            || kl == "spl"
-        {
-            (2, 1, 0.01, "", None)
-        } else if kl.contains("light")
-            || kl.contains("lux")
-            || kl.contains("lumin")
-            || kl.contains("irradiance")
-        {
-            (0, 0, 10.0, "", None)
-        } else if kl.contains("battery")
-            && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
-        {
-            (8, 0, 60.0, "%", Some(60.0))
-        } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-            (8, 0, 60.0, "v", Some(60.0))
-        } else if kl.contains("battery") && kl.contains("current") {
-            (8, 0, 10.0, "a", Some(10.0))
-        } else if kl.contains("co2")
-            || kl.contains("voc")
-            || kl.contains("pm2")
-            || kl.contains("pm10")
-            || kl.contains("gas")
-        {
-            (5, 3, 300.0, "", None)
-        } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
-            (0, 0, 10.0, "", None)
-        } else if kl.contains("accelerometer")
-            || kl.contains("acc")
-            || kl.contains("vibration")
-            || kl.contains("gyro")
-        {
-            (3, 1, 1.0, "", None)
-        } else if kl.contains("gravity") {
-            (1, 0, 10.0, "", None)
-        } else if kl.contains("camera") || kl.contains("video") {
-            (0, 0, 1.0 / 30.0, "", None)
-        } else if kl.contains("battery") && kl.contains("charging") {
-            (8, 0, 60.0, "1", Some(60.0))
-        } else if kl.contains("gps") || kl.contains("gnss") {
-            return None;
-        } else if kl.starts_with("event.") {
-            (0, 0, 10.0, "", None)
+            (0, 0, 10.0, "deg", None)
         } else {
             return None;
-        };
+        }
+    } else if kl.starts_with("event.") {
+        (0, 0, 10.0, "", None)
+    } else {
+        return None;
+    };
     Some(BrowserSensor {
         key: name.into(),
         force,
@@ -532,5 +553,39 @@ mod tests {
     fn the_undeclared_wire_unit_stays_absent() {
         assert_eq!(sensor_config("temperature").expect("sensor").unit, "");
         assert_eq!(sensor_config("wind.speed").expect("sensor").unit, "");
+    }
+
+    #[test]
+    fn the_spo2_sensor_carries_the_diffusion_force_and_percent_unit() {
+        let spo2 = sensor_config("spo2").expect("sensor");
+        assert_eq!(spo2.unit, "%");
+        assert_eq!(spo2.force, 6);
+        assert_eq!(spo2.kernel, 3);
+        assert_eq!(spo2.tau, None);
+    }
+
+    #[test]
+    fn the_gnss_speed_carries_the_advective_force_and_metre_per_second() {
+        let speed = sensor_config("gnss.speed").expect("sensor");
+        assert_eq!(speed.unit, "m/s");
+        assert_eq!(speed.force, 7);
+        assert_eq!(speed.kernel, 1);
+    }
+
+    #[test]
+    fn the_gnss_track_carries_the_em_force_and_degrees() {
+        let track = sensor_config("gnss.track").expect("sensor");
+        assert_eq!(track.unit, "deg");
+        assert_eq!(track.force, 0);
+        assert_eq!(track.kernel, 0);
+    }
+
+    #[test]
+    fn the_gnss_position_and_quality_metrics_stay_absent() {
+        assert!(sensor_config("gnss.lat").is_none());
+        assert!(sensor_config("gnss.lon").is_none());
+        assert!(sensor_config("gnss.alt").is_none());
+        assert!(sensor_config("gnss.hdop").is_none());
+        assert!(sensor_config("gnss.sats").is_none());
     }
 }
