@@ -2,7 +2,7 @@
   title: The spectral oscillator — the frequency axis of the block
   class: concept
   date: 2026-09-08
-  sha256: f03f323c167f986a9807c9f3eb8f9817aa6f4b4035409265754a0d30130ecd16
+  sha256: 6ad00362ccc5c649a41e7f2f0726490a8f78bcb6fcaa56ebbf2281a57f8ff534
   status: live
 -->
 # The spectral oscillator — the frequency axis of the block
@@ -220,12 +220,28 @@ The three rendering claims of the original atom split by measurement:
 
 ### Atom D — the phase
 
-Beats and interference — two stars with slightly different
-redshifts whose spectra strike in the same pixel — need the
-phase. PSD bins do not carry it. The `phase` and `presence` slots ride
-the wire since protocol v9 (the Atom D bit), but nothing reads them into
-a beat: Atom C now stands on the data side, Atom D is unbuilt. Nothing
-gets claimed as oscillating before it is (0 honored).
+Status: pending (measured 2026-09-23). The `phase` and `presence`
+slots ride the wire since protocol v9 and are built on the wire
+side: `spatial.rs:483` writes the pad + presence flag, `relay.rs:838`
+serializes all 26 slots, `constants.js:116` reads both. No producer
+writes a phase — every `Sample` carries `phase: None`
+(`channels.rs:1038`; zero `phase: Some` in `src/`) — and the WGSL reads
+no phase slot (`sgrep phase src/mathematikerin/shaders.rs` = 0 hits; only
+`props[j*4u]` is unpacked, `shaders.rs:133/155/286`; no sin/cos in the
+shader). No held asset carries a phase: LISA Pathfinder is struck, CMB l is
+angular (descoped from the freq axis), NCEI/Gaia XP/RIXS are
+PSD/intensity, GONG is scalar series. PSD bins do not carry phase
+(|FFT|² destroys it), and the 2026-09-08 example is struck as
+physics: two stars do not interfere — thermal spectra are
+incoherent, they add intensity, not phase. A beat needs coherent
+oscillators (radio carriers, waveforms, modulated signals).
+Trigger: the waveform/bins hold form line compiles its first
+samples-basis asset (`fdsn_waveform.bin` / GONG bins) whose
+FFT/Goertzel writes `phase: Some(φ)` per bin — then Atom D is built
+whole (producer + WGSL beat reader + three-layer verification, one
+atom, no split; the wire record stays 26 × f64, unchanged).
+Needs: a phase-carrying source. Nothing else. Nothing gets
+claimed as oscillating before it is (0 honored).
 
 ## V. What the quantum leap is
 
