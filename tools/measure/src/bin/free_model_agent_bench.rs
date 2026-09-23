@@ -499,6 +499,11 @@ fn parse_model(line: &str) -> Option<Model> {
 }
 
 fn key_for(keys_json: &str, env_var: &str) -> Option<String> {
+    if let Ok(v) = env::var(env_var) {
+        if !v.is_empty() {
+            return Some(v);
+        }
+    }
     match string_value_after(keys_json, env_var) {
         Some(v) if !v.is_empty() => Some(v),
         _ => None,
