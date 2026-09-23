@@ -32,8 +32,8 @@
 # ------------------------------------------------------------------
 # ZU PORTIEREN — Queue (die eine Master-Datei + Join-Paar + Drafts)
 # ------------------------------------------------------------------
-pending pipeline/queue/master.φ
-# note: absent; Träger archive-root/.../stage/master_converted.φ 5206 url-Blöcke; gemessen 2026-09-23: 47% github-Selbstlinks (eigene sources-CDN+catalogs), 19 netloc-Varianten bereits registriert, 24 declines neu, 7 Feld-Kandidaten — kein Quellen-Neuzugang.
+descoped 0 pipeline/queue/master.φ
+# note: absent; Träger archive-root/.../stage/master_converted.φ 5206 url-Blöcke; gemessen 2026-09-23: 47% github-Selbstlinks (eigene sources-CDN+catalogs), 19 netloc-Varianten bereits registriert, 24 declines neu, 7 Feld-Kandidaten — kein Quellen-Neuzugang. → descoped 2026-09-24 (Messung als Befund, nie gebaut).
 verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
 # note: 825 url-Blöcke; Konversion → stage/sources_potential_pre-cdn_9k_richest_converted.φ (776 Blöcke, 6947 Z.); 49 ohne url; pre-cdn_richest_unregistered.txt 729
 verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
