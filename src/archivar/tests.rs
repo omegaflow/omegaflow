@@ -4875,7 +4875,10 @@ const ARPANSA_UV_BODY: &str = r#"<?xml version="1.0" encoding="utf-8"?>
 
 #[test]
 fn test_arpansa_uv_xml_emits_station_channels() {
-    let src = source_fixture("arpansa", vec![]);
+    let src = source_fixture(
+        "arpansa",
+        vec![Extract::Field(field_fixture("uv_index", 60.0))],
+    );
     match super::extract(&src, ARPANSA_UV_BODY, 1.7e9, &fixture_lsk()) {
         super::ExtractResult::Measurements(v) => {
             assert_eq!(v.len(), 2);
@@ -5053,7 +5056,10 @@ fn test_extract_fugin_cube_emits_state_vector_channels() {
     let buf = fugin_cube_fixture();
     let path = std::env::temp_dir().join("omegaflow_test_fugin.fits");
     std::fs::write(&path, &buf).unwrap();
-    let src = source_fixture("fugin_cube", vec![]);
+    let src = source_fixture(
+        "fugin_cube",
+        vec![Extract::Field(field_fixture("fugin_moment0", 31536000.0))],
+    );
     match super::extract(&src, &path.to_string_lossy(), 1.7e9, &fixture_lsk()) {
         super::ExtractResult::Measurements(v) => {
             assert_eq!(v.len(), 2);
