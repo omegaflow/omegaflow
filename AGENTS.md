@@ -251,8 +251,13 @@ Brieftext. Öffentliche Attribution bleibt: Name im Copyright, Papier-Seal,
 zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches Werk
 = bleibt; privater Kanal = geht.** Finanz-/Funding-Inhalte des Operators
 (Förderstrategie, Bewerbungen, finanzielle Lage, persönliche Nutzungs-/
-Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/personal`
-(dort `funding/` + `mail/` + `handover/`; lokal unter `state/`, gitignored).
+Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/personal`,
+auf `state/` verwurzelt: `funding/` (Förder-Akte, `handover/`, Register) und `mail/`
+= `state/mail/`, der kanonische Postkorb (gelesen in
+`tools/service/src/bin/smail_recv.rs`, `mail_watchdog.rs`, `mail_digest.rs`,
+`tools/register/src/bin/open_points_check.rs`). Ein zweites Mail-Heim existiert
+nicht: `state/funding/mail/` ist entfernt; Mail-Dateien zwischen zwei Verzeichnissen
+zu kopieren ist verboten.
 Die Sache bleibt: Programm, Frist, Eligibility; die Kosten der Maschine
 (Hardware-BOM, Modell-Benchmark) bleiben Engineering-Daten. Jede neu gefundene Verletzung wird
 Gate-Fixture in `src/gate/commit_gate_vocab.json` und Gate-Test im selben Atom;
