@@ -1,7 +1,7 @@
 <!--
   title: Force System
   class: concept
-  sha256: abef29654612a4e0bc01124767a49f60408ca57e5772ea9bbca24f9f8d67e3e7
+  sha256: cd7ea0b71243cf6a8b0bd03a705cc71addfafc7fe86b9e617af1d5c624a588a2
   status: live
 -->
 # Force System
@@ -93,6 +93,10 @@ The `{body}.radius` channel died in Atom 7 — the form belongs to the anchor,
 not the measurement. A planet is only its mass (GM). Gravity renders as a pure
 field law (no multipole moments); the wire slots pole/j2/j4/r_eq carry 0.0 for
 force_type 1 (0 honored). The occlusion (ephemeris radius barriers) died in
-Atom 8 — replaced by the membrane diode threshold; field absorption is pending.
+Atom 8 — replaced by the membrane diode threshold; the `absorption` slot is
+consumed only by kernel 5 as a core/tail blend (`shaders.rs:52–57`, gradient
+`:90–97`; every other kernel branch ignores the parameter), and a per-medium
+field-absorption law is unbuilt — the per-force constant map named in
+`remove-bias.md:1738` (WP10) has no `absorbs` symbol in the tree.
 Rotation (erfc) and gi_sq channels were killed — NaN singularity
 at the source center and a val=1.0 fabrication.
