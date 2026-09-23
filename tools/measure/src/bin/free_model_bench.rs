@@ -83,6 +83,61 @@ fn extract_string_after(hay: &str, key: &str) -> Option<String> {
     None
 }
 
+fn decode_json_string(after: &str) -> Option<String> {
+    let mut chars = after.chars();
+    if chars.next() != Some('"') {
+        return None;
+    }
+    let mut out = String::new();
+    while let Some(c) = chars.next() {
+        match c {
+            '"' => return Some(out),
+            '\\' => match chars.next()? {
+                'n' => out.push('\n'),
+                'r' => out.push('\r'),
+                't' => out.push('\t'),
+                'b' => out.push('\u{8}'),
+                'f' => out.push('\u{c}'),
+                '"' => out.push('"'),
+                '\\' => out.push('\\'),
+                '/' => out.push('/'),
+                'u' => {
+                    let hex: String = chars.by_ref().take(4).collect();
+                    if hex.len() != 4 {
+                        return None;
+                    }
+                    if let Ok(code) = u32::from_str_radix(&hex, 16) {
+                        if let Some(ch) = char::from_u32(code) {
+                            out.push(ch);
+                        }
+                    }
+                }
+                other => {
+                    out.push('\\');
+                    out.push(other);
+                }
+            },
+            c => out.push(c),
+        }
+    }
+    None
+}
+
+fn assistant_content(body: &str) -> Option<String> {
+    let scope = match body.find("\"message\"") {
+        Some(p) => &body[p..],
+        None => body,
+    };
+    let marker = "\"content\"";
+    let pos = scope.find(marker)?;
+    let after = scope[pos + marker.len()..].trim_start();
+    let after = after.strip_prefix(':')?.trim_start();
+    if !after.starts_with('"') {
+        return None;
+    }
+    decode_json_string(after)
+}
+
 fn home() -> String {
     match env::var("HOME") {
         Ok(v) => v,
@@ -253,7 +308,7 @@ fn build_body(task: &str, model: &str) -> String {
         "T4" => body_with(
             "Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".",
             None,
-            256,
+            2048,
             model,
         ),
         "T5" => body_with(
@@ -272,21 +327,21 @@ fn build_body(task: &str, model: &str) -> String {
         "T7" => body_with(
             "Classify each funding program by the obligations it imposes on the recipient. Answer with exactly one line per program in the format NAME|LABEL, no spaces around the pipe, nothing else. LABEL is one of: free (no release, publication, or reporting obligations), duty (carries obligations), closed (not currently open). Programs: MacArthur Fellowship, Thiel Fellowship, Emergent Ventures, Astera Residency, Long-Term Future Fund.",
             None,
-            256,
+            2048,
             model,
         ),
         _ => String::new(),
     }
 }
 
-fn check(task: &str, body: &str) -> bool {
+fn check(task: &str, body: &str, text: &str) -> bool {
     match task {
         "T1" => {
             body.contains("\"tool_calls\"")
                 && body.contains("get_weather")
                 && body.contains("Berlin")
         }
-        "T3" => body.contains("..=n"),
+        "T3" => text.contains("..=n"),
         "T4" => [
             "\"name\"",
             "\"count\"",
@@ -296,11 +351,11 @@ fn check(task: &str, body: &str) -> bool {
             "\"ok\"",
         ]
         .iter()
-        .all(|k| body.contains(k)),
-        "T5" => body.contains("250"),
-        "T6" => body.contains("QX7-4412"),
+        .all(|k| text.contains(k)),
+        "T5" => text.contains("250"),
+        "T6" => text.contains("QX7-4412"),
         "T7" => {
-            let n = body.replace(" |", "|").replace("| ", "|");
+            let n = text.replace(" |", "|").replace("| ", "|");
             T7_EXPECT.iter().all(|k| n.contains(k)) && !n.contains("Thiel Fellowship|free")
         }
         _ => false,
@@ -373,15 +428,18 @@ fn run_trial(task: &str, m: &Model, key: &str) -> (String, u128, String) {
                 note_of(&r2.body),
             );
         }
-        return (
-            if check(task, &r.body) {
-                "pass".into()
-            } else {
-                "wrong_answer".into()
-            },
-            total_ms,
-            note_of(&r.body),
-        );
+        let content = assistant_content(&r.body);
+        let text = match &content {
+            Some(t) => t.as_str(),
+            None => "",
+        };
+        if check(task, &r.body, text) {
+            return ("pass".into(), total_ms, note_of(&r.body));
+        }
+        if text.trim().is_empty() {
+            return ("no_output".into(), total_ms, note_of(&r.body));
+        }
+        return ("wrong_answer".into(), total_ms, note_of(text));
     }
 }
 
@@ -655,5 +713,46 @@ mod tests {
         };
         assert!(!is_http(&client));
         assert!(is_http(&http));
+    }
+
+    const ESCAPED_T4_BODY: &str = r#"{"choices":[{"finish_reason":"stop","index":0,"message":{"content":"```json\n{\n  \"name\": \"sample\",\n  \"count\": 7,\n  \"mode\": \"fast\",\n  \"meta\": {\n    \"ok\": true\n  }\n}\n```"}}]}"#;
+
+    #[test]
+    fn assistant_content_decodes_the_escaped_message_text() {
+        let content = match assistant_content(ESCAPED_T4_BODY) {
+            Some(c) => c,
+            None => panic!("escaped envelope carries a message content string"),
+        };
+        assert!(content.contains("\"name\""));
+        assert!(content.contains("\"fast\""));
+        assert!(content.starts_with("```json"));
+    }
+
+    #[test]
+    fn t4_scores_the_decoded_content_not_the_raw_envelope() {
+        let content = match assistant_content(ESCAPED_T4_BODY) {
+            Some(c) => c,
+            None => panic!("escaped envelope carries a message content string"),
+        };
+        assert!(!check("T4", ESCAPED_T4_BODY, ""));
+        assert!(check("T4", ESCAPED_T4_BODY, &content));
+    }
+
+    #[test]
+    fn reasoning_only_response_carries_an_empty_content() {
+        let body = r#"{"choices":[{"finish_reason":"length","index":0,"message":{"content":"","reasoning_content":"we might say \"name\""}}]}"#;
+        match assistant_content(body) {
+            Some(content) => assert!(content.trim().is_empty()),
+            None => panic!("the empty content string is present, not absent"),
+        }
+    }
+
+    #[test]
+    fn decode_json_string_restores_escapes() {
+        let decoded = match decode_json_string(r#""a\n\"b\"\t\u00e9""#) {
+            Some(d) => d,
+            None => panic!("escaped string decodes"),
+        };
+        assert_eq!(decoded, "a\n\"b\"\té");
     }
 }
