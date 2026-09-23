@@ -1,14 +1,22 @@
 use super::*;
 
 pub fn serial_ports() -> Vec<String> {
+    serial_ports_with(std::env::var("OMEGAFLOW_SERIAL_IN").ok())
+}
+
+pub fn serial_ports_with(env_in: Option<String>) -> Vec<String> {
     let mut out = Vec::new();
-    let Ok(entries) = std::fs::read_dir("/dev") else {
-        return out;
-    };
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().to_string();
-        if name.starts_with("ttyACM") || name.starts_with("ttyUSB") {
-            out.push(format!("/dev/{}", name));
+    if let Ok(entries) = std::fs::read_dir("/dev") {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("ttyACM") || name.starts_with("ttyUSB") {
+                out.push(format!("/dev/{}", name));
+            }
+        }
+    }
+    if let Some(path) = env_in {
+        if !out.iter().any(|p| p == &path) {
+            out.push(path);
         }
     }
     out
@@ -125,5 +133,17 @@ mod tests {
             parse_serial_sample("  wind.speed = 4.2 \n"),
             Some(("wind.speed".to_string(), 4.2))
         );
+    }
+
+    #[test]
+    fn the_env_in_path_is_appended() {
+        let ports = serial_ports_with(Some("/tmp/omegaflow-pulse".to_string()));
+        assert!(ports.iter().any(|p| p == "/tmp/omegaflow-pulse"));
+    }
+
+    #[test]
+    fn the_env_in_path_is_absent_without_env() {
+        let ports = serial_ports_with(None);
+        assert!(!ports.iter().any(|p| p == "/tmp/omegaflow-pulse"));
     }
 }
