@@ -13888,3 +13888,13 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 neracoos_air_temperature_c exponential-decay thermal C 3600 0.0 0.0
+field 3 neracoos_wind_speed_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
+field 4 neracoos_wind_gust_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
