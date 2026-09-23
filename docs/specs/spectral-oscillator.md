@@ -2,7 +2,7 @@
   title: The spectral oscillator — the frequency axis of the block
   class: concept
   date: 2026-09-08
-  sha256: 6ad00362ccc5c649a41e7f2f0726490a8f78bcb6fcaa56ebbf2281a57f8ff534
+  sha256: 43b795026184f3f7cb6aac2d9d4d7da28c5898754bc81533dfa9d65b620b272d
   status: live
 -->
 # The spectral oscillator — the frequency axis of the block
@@ -220,28 +220,58 @@ The three rendering claims of the original atom split by measurement:
 
 ### Atom D — the phase
 
-Status: pending (measured 2026-09-23). The `phase` and `presence`
-slots ride the wire since protocol v9 and are built on the wire
-side: `spatial.rs:483` writes the pad + presence flag, `relay.rs:838`
+Status: buildable now (measured 2026-09-23). The `phase` and `presence`
+slots ride the wire since protocol v9 and are built on the wire side:
+`spatial.rs:483` writes the pad + presence flag, `relay.rs:838`
 serializes all 26 slots, `constants.js:116` reads both. No producer
-writes a phase — every `Sample` carries `phase: None`
+writes a phase yet — every `Sample` carries `phase: None`
 (`channels.rs:1038`; zero `phase: Some` in `src/`) — and the WGSL reads
-no phase slot (`sgrep phase src/mathematikerin/shaders.rs` = 0 hits; only
-`props[j*4u]` is unpacked, `shaders.rs:133/155/286`; no sin/cos in the
-shader). No held asset carries a phase: LISA Pathfinder is struck, CMB l is
-angular (descoped from the freq axis), NCEI/Gaia XP/RIXS are
-PSD/intensity, GONG is scalar series. PSD bins do not carry phase
-(|FFT|² destroys it), and the 2026-09-08 example is struck as
-physics: two stars do not interfere — thermal spectra are
-incoherent, they add intensity, not phase. A beat needs coherent
-oscillators (radio carriers, waveforms, modulated signals).
-Trigger: the waveform/bins hold form line compiles its first
-samples-basis asset (`fdsn_waveform.bin` / GONG bins) whose
-FFT/Goertzel writes `phase: Some(φ)` per bin — then Atom D is built
-whole (producer + WGSL beat reader + three-layer verification, one
-atom, no split; the wire record stays 26 × f64, unchanged).
-Needs: a phase-carrying source. Nothing else. Nothing gets
-claimed as oscillating before it is (0 honored).
+no phase slot (`sgrep phase src/mathematikerin/shaders.rs` = 0 hits;
+only `props[j*4u]` is unpacked, `shaders.rs:133/155/286`; no sin/cos in
+the shader).
+
+The earlier premise "no held asset carries a phase" is refuted by
+measurement — four phase-carrying classes are in the register and at
+the CDN:
+
+- **cassini_rsr** (`phi/sources.φ:8081`): open-loop RSR I/Q, complex
+  samples per record (`cassini_rsr.rs:22–29`); an FFT over the I/Q
+  yields a bin phase.
+- **cassini_tnf / maven_tnf** (`:8092` / `:8812`): TRK-2-34 TNF DT0
+  uplink carrier phase — `ul_hi/lo/frac_phs_cycles` and the applied
+  `ramp_freq` in the same record (`odf.rs:362–402`); the PODF rows
+  carry both (`odf.rs:1653–1666`, columns 1–2).
+- **fdsn_waveform** (`:110`): BHZ sample series — phase would come
+  from a future FFT bin, not native.
+- **SuperDARN RAWACF**: a complex ACF per lag — the compiler emits
+  power only (`superdarn_rawacf_compiler.rs:3`).
+
+The physics correction stands, refined: a beat is the superposition of
+two coherent oscillators at nearby frequencies — the observable is the
+amplitude modulation at |ν₁ − ν₂|. One oscillator is no beat: a single
+carrier phase is gauge (only phase differences are physical), one RSR
+channel is the hardware beat product already mixed into one waveform,
+thermal spectra add intensity (the 2026-09-08 two-star example stays
+struck). No held asset carries a second, mutually coherent oscillator
+in the same band. The renderable same-band beat pair — one carrier
+recorded by two DSN stations with independent local oscillators — is a
+new acquisition: pending; Trigger: a two-station open-loop recording
+of one carrier (or any asset with two coherent tones in one band).
+
+The atom builds whole — producer + WGSL beat machinery + three-layer
+verification, one atom, no split; the wire record stays 26 × f64,
+unchanged — on the TNF route, the smallest honest cut: the producer
+writes `phase: Some(fract(cycles)·2π)`, `freq = ramp_freq` (Hz, read
+from the row — never hard-coded), `bin_width = 0.0` (null-echt point
+source: a phase counter carries no band; (ν>0, 0) per the wire pair
+rule). The WGSL reads `props[j*4u+2].w` (freq) and
+`props[j*4u+3].y/.z` (phase, presence) and adds the beat term only for
+a pair — two distinct oscillators (DSS/band from the record, not two
+samples of one), temporally coexisting, difference frequency
+resolvable at the probe cadence; no pair → no term (0 honored: a
+single phase changes nothing). The Kalibrier gates run synthetic
+pairs; the held data renders no beat, and that is the measurement.
+Nothing gets claimed as oscillating before it is (0 honored).
 
 ## V. What the quantum leap is
 
