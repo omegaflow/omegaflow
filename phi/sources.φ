@@ -1159,6 +1159,7 @@ url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/
 format opensensemap_temperatur
 origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
 compiler tools/harvest/src/bin/opensensemap_compiler.rs
+sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe
 on earth 0 0 0
 ttl 3600
 field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
@@ -12485,6 +12486,7 @@ url https://github.com/omegaflow/sources/releases/download/www.gmrt.org/gmrt_bat
 format gmrt_bathymetry
 origin https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
 compiler tools/harvest/src/bin/gmrt_compiler.rs
+sha256 0acd52f33ab9ff7d998e85b37a230d8fbf527ab0948c7ce5c69d3b139c83b52e
 at earth
 ttl 31536000
 
