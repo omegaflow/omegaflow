@@ -2678,13 +2678,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([1.0, 0.0, 0.0]),
             now,
             now,
-            &fc,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "a record inside the dilated enclosure materializes"
     );
@@ -2694,13 +2698,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([1.0e6, 0.0, 0.0]),
             now,
             now,
-            &fc,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "a record beyond reach_signal + extent + rho stays raw"
     );
@@ -2714,18 +2722,38 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([1.0e12, 0.0, 0.0]),
             now,
             now,
-            &no_law,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &no_law,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "a field without a propagation law keeps the record"
     );
     assert!(
-        super::record_in_enclosure(&near, None, now, now, &fc, None, None, 0.0, 0.0, 0.0, 60.0),
+        super::record_in_enclosure(
+            &near,
+            None,
+            now,
+            now,
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
+        ),
         "an unresolvable record position keeps the record"
     );
     let jump: Vec<PresenceSample> = vec![(
@@ -2747,13 +2775,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([snap, 0.0, 0.0]),
             now,
             now,
-            &fc,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "the jump snap widens the enclosure to Φ·grid_step"
     );
@@ -2763,13 +2795,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([snap + 1.0, 0.0, 0.0]),
             now,
             now,
-            &fc,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "a record beyond the jump snap stays raw"
     );
@@ -2784,13 +2820,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([12.0, 0.0, 0.0]),
             now + 10.0,
             now,
-            &thermal,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &thermal,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "without anchor motion the thermal enclosure stays tight"
     );
@@ -2800,13 +2840,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([12.0, 0.0, 0.0]),
             now + 10.0,
             now,
-            &thermal,
-            None,
-            None,
-            1.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &thermal,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 1.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "rho widens the enclosure by anchor_vmax·age"
     );
@@ -2816,13 +2860,17 @@ fn test_load_gate_clips_records_outside_enclosure() {
             Some([0.0, 0.0, 0.0]),
             now + 60.0 * 64.0 + 1.0,
             now,
-            &fc,
-            None,
-            None,
-            0.0,
-            0.0,
-            0.0,
-            60.0
+            EnclosureField {
+                config: &fc,
+                body_props: None,
+                body_radius: None,
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
         ),
         "a record older than effective_ttl·2⁶ drops"
     );
@@ -2914,13 +2962,17 @@ fn test_wind_waves_loader_respects_load_gate() {
                     motion.at(t, t, eph_map),
                     t,
                     now,
-                    &fc,
-                    eph_map.get("earth").and_then(|e| e.props.as_ref()),
-                    Some(body_radius),
-                    anchor_vmax,
-                    anchor_amax,
-                    0.0,
-                    604800.0,
+                    EnclosureField {
+                        config: &fc,
+                        body_props: eph_map.get("earth").and_then(|e| e.props.as_ref()),
+                        body_radius: Some(body_radius),
+                    },
+                    AnchorEnvelope {
+                        vmax: anchor_vmax,
+                        amax: anchor_amax,
+                        pad: 0.0,
+                        ttl: 604800.0,
+                    },
                 );
             }
             if keep {
