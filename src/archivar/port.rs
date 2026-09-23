@@ -8,22 +8,80 @@ pub fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     (2.0 * a.sqrt().asin()).to_degrees()
 }
 
+pub struct PortMeasure {
+    pub hapi: bool,
+    pub unit: Option<String>,
+    pub tau: Option<f64>,
+}
+
 pub fn port_field_synth(
     directive: &str,
     force: &str,
     key: &str,
     name: &str,
-    ttl: u64,
+    unit: Option<&str>,
+    tau: Option<f64>,
 ) -> Option<String> {
     let (kernel, f) = default_kernel_for(force)?;
-    let tau = ttl as f64 / 10.0;
-    if tau <= 0.0 {
-        return None;
-    }
+    let unit = unit?;
+    let tau = match tau {
+        Some(t) if t.is_finite() && t > 0.0 => t,
+        _ => return None,
+    };
     Some(format!(
-        "{} {} {} {} {} 1 {} 0.0 0.0\n",
-        directive, key, name, kernel, f, tau
+        "{} {} {} {} {} {} {} 0.0 0.0\n",
+        directive, key, name, kernel, f, unit, tau
     ))
+}
+
+fn port_non_oscillator(name: &str) -> bool {
+    let kl = name.to_lowercase();
+    is_drop_key(name)
+        || kl.ends_with("_id")
+        || kl.ends_with("_name")
+        || kl.ends_with("_title")
+        || kl.ends_with("_doi")
+        || kl.ends_with("_url")
+        || kl.ends_with("_author")
+        || kl.ends_with("_description")
+        || kl.ends_with("_date")
+        || kl.ends_with("_rate")
+        || kl.ends_with("_total")
+        || kl.ends_with("_station")
+}
+
+fn hapi_field_synth(
+    directive: &str,
+    force: &str,
+    key: &str,
+    name: &str,
+    measure: &PortMeasure,
+) -> Option<String> {
+    let unit = match measure.unit.as_deref() {
+        Some(u) if !u.contains(char::is_whitespace) => u,
+        Some(u) => {
+            return Some(format!(
+                "# pending {} {} — unit not representable (multi-token {}), review\n",
+                directive, name, u
+            ));
+        }
+        None => {
+            return Some(format!(
+                "# pending {} {} — unit absent, review\n",
+                directive, name
+            ));
+        }
+    };
+    let tau = match measure.tau {
+        Some(t) if t.is_finite() && t > 0.0 => t,
+        _ => {
+            return Some(format!(
+                "# pending {} {} — cadence absent, review\n",
+                directive, name
+            ));
+        }
+    };
+    port_field_synth(directive, force, key, name, Some(unit), Some(tau))
 }
 
 fn field_or_review(
@@ -31,23 +89,56 @@ fn field_or_review(
     force: &str,
     key: &str,
     name: &str,
-    ttl: u64,
+    measure: &PortMeasure,
 ) -> Option<String> {
-    if default_kernel_for(force).is_none() {
-        let reason = if force.is_empty() {
-            "no force directive".to_string()
-        } else {
-            format!("force {} not in the force registry", force)
-        };
+    let (classified, cunit, ctau) = probe_classify(name);
+    if classified == "DROP" || (classified == "UNCERTAIN" && port_non_oscillator(name)) {
         return Some(format!(
-            "# pending {} {} — {}, review\n",
-            directive, name, reason
+            "# declined {} {} — not an oscillator (no physical force)\n",
+            directive, name
         ));
     }
-    port_field_synth(directive, force, key, name, ttl)
+    if measure.hapi {
+        return match classified {
+            "UNCERTAIN" => Some(format!(
+                "# pending {} {} — force undetermined, review\n",
+                directive, name
+            )),
+            other => hapi_field_synth(directive, other, key, name, measure),
+        };
+    }
+    let block_force = if default_kernel_for(force).is_some() {
+        Some(force)
+    } else {
+        None
+    };
+    let absent_line = Some(format!(
+        "# pending {} {} — unit or cadence absent, review\n",
+        directive, name
+    ));
+    match block_force {
+        None => match classified {
+            "UNCERTAIN" => Some(format!(
+                "# pending {} {} — force undetermined, review\n",
+                directive, name
+            )),
+            other => port_field_synth(directive, other, key, name, Some(cunit), Some(ctau))
+                .or(absent_line),
+        },
+        Some(f) => port_field_synth(directive, f, key, name, None, None).or(absent_line),
+    }
 }
 
 pub fn port_block(block: &str) -> String {
+    let mechanical = PortMeasure {
+        hapi: false,
+        unit: None,
+        tau: None,
+    };
+    port_block_measured(block, &mechanical)
+}
+
+pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
     let mut head: Vec<String> = Vec::new();
     let mut force = String::new();
     let mut ttl: u64 = 0;
@@ -322,13 +413,14 @@ pub fn port_block(block: &str) -> String {
         }
         let s = match parts[0] {
             "field" | "field_in" if parts.len() >= 3 => {
-                field_or_review("field", &force, parts[1], parts[2], ttl)
+                field_or_review("field", &force, parts[1], parts[2], measure)
             }
-            "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                field_or_review(parts[0], &force, parts[1], parts[2], ttl)
+            "count" if parts.len() >= 3 => Some(format!("count {} {}", parts[1], parts[2])),
+            "first" | "last" | "path" | "deep" if parts.len() >= 3 => {
+                field_or_review(parts[0], &force, parts[1], parts[2], measure)
             }
             "last_row" if parts.len() >= 3 => {
-                field_or_review("lastrow", &force, parts[1], parts[2], ttl)
+                field_or_review("lastrow", &force, parts[1], parts[2], measure)
             }
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
@@ -342,7 +434,7 @@ pub fn port_block(block: &str) -> String {
             "regex" if parts.len() >= 3 => {
                 let name = parts[parts.len() - 1];
                 let pat = parts[1..parts.len() - 1].join(" ");
-                field_or_review("regex", &force, &pat, name, ttl)
+                field_or_review("regex", &force, &pat, name, measure)
             }
             _ => None,
         };
@@ -360,9 +452,11 @@ pub fn flush_port_block(
     total: &mut usize,
     parsed: &mut usize,
     pending: &mut usize,
+    declined: &mut usize,
+    measure: &PortMeasure,
 ) {
     *total += 1;
-    let conv = port_block(block);
+    let conv = port_block_measured(block, measure);
     if conv.contains("# pending ") {
         *pending += 1;
         converted.push_str(&conv);
@@ -374,10 +468,92 @@ pub fn flush_port_block(
         *parsed += 1;
         converted.push_str(&conv);
         converted.push('\n');
+        return;
+    }
+    if conv.contains("# declined ") {
+        *declined += 1;
+        converted.push_str(&conv);
+        converted.push('\n');
+        return;
+    }
+    let synthesized_extract = conv.lines().any(|l| {
+        let p: Vec<&str> = l.split_whitespace().collect();
+        matches!(
+            p.first().copied(),
+            Some("field" | "path" | "deep" | "first" | "last" | "lastrow" | "count" | "regex")
+        )
+    });
+    if synthesized_extract {
+        *pending += 1;
+        converted.push_str(&conv);
+        converted.push_str("# pending block — refused at parse (ttl/frame gate), review\n");
+        converted.push('\n');
     }
 }
 
-pub fn port_mode(input: &str, output: &str) -> i32 {
+fn port_measure_for(block: &str, env: &HashMap<String, String>) -> PortMeasure {
+    let url = block.lines().find_map(|l| {
+        let t = l.trim_start();
+        let rest = t.strip_prefix("url ")?;
+        let u = rest.split_whitespace().next().unwrap_or("");
+        if u.is_empty() {
+            None
+        } else {
+            Some(u.to_string())
+        }
+    });
+    match url {
+        Some(u) if u.contains("/hapi/") => hapi_live_measure(&u, env),
+        _ => PortMeasure {
+            hapi: false,
+            unit: None,
+            tau: None,
+        },
+    }
+}
+
+fn hapi_live_measure(url: &str, env: &HashMap<String, String>) -> PortMeasure {
+    let void = PortMeasure {
+        hapi: true,
+        unit: None,
+        tau: None,
+    };
+    let Some(info_url) = hapi_cadence_url(url) else {
+        return void;
+    };
+    let info_url = resolve_secret(&info_url, env);
+    let Some(body) = fetch_raw_probe(&info_url, None, &[]) else {
+        return void;
+    };
+    let Some(parsed) = parse_json(&body) else {
+        return void;
+    };
+    let Some(meta) = hapi_meta_params(&parsed) else {
+        return void;
+    };
+    let tau = find_cadence_seconds(&parsed).map(|s| s as f64);
+    let order = hapi_request_order(url, &meta);
+    let mut units: Vec<&str> = order
+        .iter()
+        .filter_map(|req| meta.iter().find(|m| m.name == *req))
+        .filter(|m| !is_time_key(&m.name))
+        .filter_map(|m| m.unit.as_deref())
+        .filter(|u| !u.trim().is_empty())
+        .collect();
+    units.sort_unstable();
+    units.dedup();
+    let unit = match units.as_slice() {
+        [u] => Some(u.to_string()),
+        _ => None,
+    };
+    PortMeasure {
+        hapi: true,
+        unit,
+        tau,
+    }
+}
+
+pub fn port_mode(input: &str, output: &str, env: &HashMap<String, String>) -> i32 {
     let content = match std::fs::read_to_string(input) {
         Ok(c) => c,
         Err(_) => {
@@ -391,6 +567,7 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
     let mut total = 0usize;
     let mut parsed = 0usize;
     let mut pending = 0usize;
+    let mut declined = 0usize;
     let mut in_source = false;
     for line in content.lines() {
         let t = line.trim_start();
@@ -402,6 +579,8 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
                     &mut total,
                     &mut parsed,
                     &mut pending,
+                    &mut declined,
+                    &port_measure_for(&block, env),
                 );
                 block = String::new();
             }
@@ -418,6 +597,8 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
                     &mut total,
                     &mut parsed,
                     &mut pending,
+                    &mut declined,
+                    &port_measure_for(&block, env),
                 );
                 block = String::new();
             }
@@ -435,6 +616,8 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
             &mut total,
             &mut parsed,
             &mut pending,
+            &mut declined,
+            &port_measure_for(&block, env),
         );
     }
     if std::fs::write(output, &converted).is_err() {
@@ -442,8 +625,8 @@ pub fn port_mode(input: &str, output: &str) -> i32 {
         return 1;
     }
     eprintln!(
-        "--port: {} blocks converted, {} parse in the current parser, {} pending review → {}",
-        total, parsed, pending, output
+        "--port: {} blocks converted, {} parse in the current parser, {} pending review, {} declined → {}",
+        total, parsed, pending, declined, output
     );
     0
 }
@@ -1458,6 +1641,11 @@ pub fn probe_classify(key: &str) -> (&str, &str, f64) {
         || kl == "dst"
         || kl.contains("mag_")
         || kl.contains("_b_")
+        || kl.ends_with("_nt")
+        || kl.starts_with("bx_")
+        || kl.starts_with("by_")
+        || kl.starts_with("bz_")
+        || kl.starts_with("bt_")
     {
         ("em", "nT", 60.0)
     } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
