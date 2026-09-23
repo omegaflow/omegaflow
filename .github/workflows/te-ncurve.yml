@@ -1,0 +1,60 @@
+name: te-ncurve
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      null_model:
+        description: 'null model: phase (canonical) | block | shift | arx'
+        default: 'phase'
+      est:
+        description: 'estimator: ksg | binned'
+        default: 'ksg'
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  ncurve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [400, 450, 500, 550, 600, 650, 700, 800, 900, 1000]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the gate battery (the 0) at gate-n ${{ matrix.n }}
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT n${{ matrix.n }}"
+            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- --anchor --gate --gate-n ${{ matrix.n }} --null ${{ github.event.inputs.null_model }} --est ${{ github.event.inputs.est }}
+          } > "report-n${{ matrix.n }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: point-n${{ matrix.n }}
+          path: report-n${{ matrix.n }}.txt
+  tcurve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the power curve (detection) over T=400..700
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT tcurve"
+            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- --tcurve
+          } > "report-tcurve.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tcurve-sheet
+          path: report-tcurve.txt
