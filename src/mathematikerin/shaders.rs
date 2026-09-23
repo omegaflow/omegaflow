@@ -13,6 +13,8 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     1.0,
     C_VACUUM,
 );
+const TWO_PI: f32 = 6.283185307179586;
+const BEAT_PAIR_CAP: u32 = 64u;
 
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
@@ -271,6 +273,21 @@ fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> f32 {
     return c0 + (c1 - c0) * t2;
 }
 
+fn beat_pair(
+    freq_a: f32, phase_a: f32, pres_a: f32,
+    freq_b: f32, phase_b: f32, pres_b: f32,
+    t: f32, dt: f32, val_a: f32, val_b: f32,
+) -> f32 {
+    if (pres_a < 0.5 || pres_b < 0.5 || freq_a <= 0.0 || freq_b <= 0.0) {
+        return 0.0;
+    }
+    let df = abs(freq_a - freq_b);
+    if (df <= 0.0 || dt <= 0.0 || df * dt >= 0.5) {
+        return 0.0;
+    }
+    return val_a * val_b * cos(TWO_PI * df * t + (phase_a - phase_b));
+}
+
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
@@ -299,6 +316,30 @@ fn presence_probe() {
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
+    }
+    var phase_idx = array<u32, BEAT_PAIR_CAP>();
+    var phase_n: u32 = 0u;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let qj = props[j * 4u + 3u];
+        if (qj.z > 0.5 && props[j * 4u + 2u].w > 0.0 && phase_n < BEAT_PAIR_CAP) {
+            phase_idx[phase_n] = j;
+            phase_n = phase_n + 1u;
+        }
+    }
+    for (var a = 0u; a < phase_n; a = a + 1u) {
+        let ja = phase_idx[a];
+        let fta = u32(field[ja * 3u + 1u].z);
+        for (var b = a + 1u; b < phase_n; b = b + 1u) {
+            let jb = phase_idx[b];
+            let ftb = u32(field[jb * 3u + 1u].z);
+            if (fta == ftb && fta < 9u) {
+                omegas[fta] += beat_pair(
+                    props[ja * 4u + 2u].w, props[ja * 4u + 3u].y, props[ja * 4u + 3u].z,
+                    props[jb * 4u + 2u].w, props[jb * 4u + 3u].y, props[jb * 4u + 3u].z,
+                    vp.presence.w, dt, field[ja * 3u].w, field[jb * 3u].w,
+                );
+            }
+        }
     }
     let vcount = u32(vol_u.count.x);
     if (vol_u.geo.w > 0.5 && vcount > 0u) {
@@ -959,3 +1000,93 @@ fn s2_field(@builtin(global_invocation_id) gid: vec3<u32>) {
     out[pid] = field;
 }
 "#;
+
+#[cfg(test)]
+mod tests {
+    fn beat_pair(
+        freq_a: f32,
+        phase_a: f32,
+        pres_a: f32,
+        freq_b: f32,
+        phase_b: f32,
+        pres_b: f32,
+        t: f32,
+        dt: f32,
+        val_a: f32,
+        val_b: f32,
+    ) -> f32 {
+        if pres_a < 0.5 || pres_b < 0.5 || freq_a <= 0.0 || freq_b <= 0.0 {
+            return 0.0;
+        }
+        let df = (freq_a - freq_b).abs();
+        if df <= 0.0 || dt <= 0.0 || df * dt >= 0.5 {
+            return 0.0;
+        }
+        val_a * val_b * (2.0 * std::f32::consts::PI * df * t + (phase_a - phase_b)).cos()
+    }
+
+    #[test]
+    fn beat_pair_two_phase_slots_contribute_the_interference_term() {
+        let b = beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0);
+        let expected = 2.0 * 3.0 * (1.0f32 - 2.0f32).cos();
+        assert!(
+            (b - expected).abs() < 1e-6,
+            "the pair term is A_a·A_b·cos(Δφ): {b}"
+        );
+    }
+
+    #[test]
+    fn beat_pair_one_slot_is_no_beat() {
+        assert_eq!(
+            beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 0.0, 0.0, 0.01, 2.0, 3.0),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(1.0e6, 1.0, 0.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_without_a_band_is_no_beat() {
+        assert_eq!(
+            beat_pair(0.0, 1.0, 1.0, 1.0e6, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(1.0e6, 1.0, 1.0, 0.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_identical_tone_is_no_beat() {
+        assert_eq!(
+            beat_pair(1.0e6, 1.0, 1.0, 1.0e6, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_outside_the_probe_cadence_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                1.0e6,
+                1.0,
+                1.0,
+                1.0e6 + 100.0,
+                2.0,
+                1.0,
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.0, 2.0, 3.0),
+            0.0
+        );
+    }
+}
