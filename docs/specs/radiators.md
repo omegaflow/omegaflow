@@ -1,7 +1,7 @@
 <!--
   title: radiators
   class: concept
-  sha256: 62f54e5e61d00a773f7237dffaed874d4193827c0ea6759f87996ec57bac8c6b
+  sha256: a84b149b856444dbc4592a498af67967705e3e061d6e5fbf212c144339dd5814
 -->
 **This is the ultimate final line under the architecture.**
 
@@ -108,9 +108,12 @@ blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
    self-series `tanh(v_c/(g+ε))`, `perm_target` `:15-16`, floor
    `PERM_GROUND = f32::EPSILON` `:13`), `aperture = field_permeability *
    tone_scale` (`:345`), `kinetic_sample = Σω * aperture`
-   (`src/mathematikerin/actuators.rs:29`), test
-   `src/mathematikerin/tests.rs:570`. The HRV tone binding (`tone_scale`, read
-   at `omega.rs:345`, written nowhere) is pending.
+   (   `src/mathematikerin/actuators.rs:29`), test
+   `src/mathematikerin/tests.rs:570`. The HRV tone binding is built (`tone_scale`
+   written at `omega.rs:1647-1655` from `tone_code`, read at `omega.rs:347`); it
+   was pending only for its N-N source — since 2026-09-23 the BLE pulse bridge
+   (`tools/service/src/bin/pulse_bridge.rs`) feeds `nn=<ms>` into `serial_ingress`
+   (`OMEGAFLOW_SERIAL_IN`), its R-R presence the first on-device measurement.
 
 Doctrine map: Atom 8 Sensorium, Atom 9 Geräte-Bias, agnostische Benennung,
 Stille-Doktrin, Relay-Floor-Präzedenz. Open radiators: Bluetooth, HID, ESP32,
