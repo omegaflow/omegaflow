@@ -3,7 +3,7 @@
   session: Mountain-Folge 144
   class: handover
   date: 2026-09-23
-  sha256: 9d18430eda0610ed34619ad9daf8f40d503f6da348106553015ecc0d15ff9175
+  sha256: 6d94f2d580c01e3e7e780920345ca64e0fd471c39fd12c911bcb573b2923f382
   status: live
 -->
 # Handover — Mountain-Folge 144 (2026-09-23)
@@ -32,7 +32,9 @@ Punkt trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | 
   `docs/specs/mantis-shrimp-build.md`, `post.md`-Hunk `An sensory:`) — unberührt.
 - **CI** (gemessen via `ci_manage`): `te-gate 35879893019` @`4c97c8a6f` **pending**;
   `free-model-bench 35893010538` + `free-model-agent-bench 35893014541` @`d754ecdf8`
-  **pending** (neu dispatcht 17:03Z). `tools-build`-Reds (14:29/14:34) waren der
+  **pending** (neu dispatcht 17:03Z). Der Push löste `tools-build 35893856586`,
+  `ci-check 35893856529`, `register-dropped 35893856614` aus; folge144 dispatchte
+  `te-gate 35893882101` @`6a68c1901` (queued). `tools-build`-Reds (14:29/14:34) waren der
   `libdbus`/bluer-Pfad — river hat den BLE-Bridge zurückgezogen; kein `bluer`/`dbus`
   mehr in einem `Cargo.toml` (gemessen via `sgrep -i -g "*.toml"`).
 - **Postfach** (gemessen via `state/mail/mail_ledger.φ`) — keine Mountain-Zeile.
@@ -44,12 +46,13 @@ Punkt trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | 
 
 ### 1. flare-Re-Insert green-confirm — nach dem Push
 - **Status:** termin | **Bindung:** eigen
-- **Trigger:** der `te-gate`-Lauf `35879893019` @`4c97c8a6f` (Workflow geändert) — der
-  Lauf selbst ist die Messung
-- **Lage:** `te.rs` n=400 + `te-gate.yml` `flare`-assert committet (`42c2bf060`); Lauf
-  seit 2026-09-23T15:12Z **pending** (gemessen 2026-09-23 via `ci_manage view 35879893019`)
+- **Trigger:** der `te-gate`-Lauf `35893882101` @`6a68c1901` (von folge144 nach dem Push
+  dispatcht; der ältere `35879893019` @`4c97c8a6f` ist superseded) — der Lauf selbst ist
+  die Messung
+- **Lage:** `te.rs` n=400 + `te-gate.yml` `flare`-assert committet (`42c2bf060`); der
+  frische Lauf `35893882101` seit 2026-09-23T17:11Z **queued** (gemessen via `ci_manage list`)
 - **Blockade:** keine
-- **Braucht:** einmalig `ci_manage view 35879893019` → `flare`-Job grün (assert +
+- **Braucht:** einmalig `ci_manage view 35893882101` → `flare`-Job grün (assert +
   `flare power probe:`-Zeilen)
 
 ### 2. Free-Model-Bench Lauf-Ausgang — T4/T7-Verifikation
