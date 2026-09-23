@@ -2,7 +2,7 @@
   title: Auftrag — Flyby-Path-2-Kette vor dem 28.09.2026 (JUICE-Perigäum)
   class: auftrag
   date: 2026-09-20
-  sha256: 644ea7554e9d01e12056a2659778a84b85ed59b8642826b9c386cddee5cc0606
+  sha256: dc1f6f7b64054038aab377a8dc03fe351ad28ba35133a0d405d18884f174e635
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md
 -->
@@ -58,6 +58,24 @@ flyby/rtsw/swarm/kp/omni-Eintrag) — die Kanäle sind Live-`url`-Zeilen, nicht 
    L1-Echtzeit-Solarwind lebt im registrierten RTSW-Feed (multi-source, `source`
    je Messwert). Keine neue `sources.φ`-Zeile — eine DSCOVR-Familie wäre ein
    Duplikat; `where source DSCOVR` bleibt `pending` Parser-Prüfung.
+
+## Retention der lebenden Kanäle (gemessen 2026-09-23)
+
+`archive_search --verdict` + `curl` (Endpunkt-Fenster), read-only, ~13:10 UTC:
+
+| Kanal | Retention (ältestes → neuestes) | Befund |
+|---|---|---|
+| RTSW mag/wind (1 m) | **~24 h** (2026-09-22T13:10 → 09-23T13:10; 3403/2866 Records) | **harte Frist:** der erste Fill-Run muss ≤ 24 h nach der ersten Perigäum-Zelle starten, sonst ist die 1-m-Kette der frühen Stunden nicht mehr messbar (kein Snapshot-Spiegel) |
+| Kp NOAA planetary | ~7,4 d (60 Records, 3-h) | Backfill über **GFZ** (def-Vollarchiv 1932→jetzt, `sources.φ:1496`) |
+| ACE 1 h (mag/swepam) | ~31 d (679/622 Records) | kein Zeitdruck |
+| OMNI2 H0_MRG1HR | stopDate **~6 d** Lag (09-17 bei Messung 09-23) | Auftrag-Annahme „~1–2 d" (`:68`) weicht vom Messwert ab; Verifikationszellen erst ~4–6 d danach |
+| Swarm SW_FAST* | ab 2026-03-22 (`info` startDate) | Perigäum-Fenster liegt im Bereich |
+| WIND | statischer CDN-Snapshot (Orbit/Waves), kein Live-Fenster | keine Plasma-Lücke |
+| DSCOVR | keine eigene Route | L1 lebt im RTSW-Feed (head: `source IMAP`/`ACE`) |
+
+**Vor dem Perigäum:** nichts zu tun außer Bereitschaft (alle Routen stage 1, HTTP
+200). **Nach dem Perigäum:** der **RTSW-24-h-Vorrat** entscheidet den Termin —
+der erste Fill-Run ≤ 24 h nach der ersten Perigäum-Zelle.
 
 ## Frist / Owner / nächster Schritt
 
