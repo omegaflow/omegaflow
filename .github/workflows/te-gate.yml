@@ -15,46 +15,148 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
-  te-gate:
+  shift-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run shift_sweep_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture shift_sweep_n1000
+  fpr-binned:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_fpr_autocorrelation_phase_null_binned_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_phase_null_binned_n_1000
+      - name: Run gate_fpr_autocorrelation_coherent_phase_null_binned_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_coherent_phase_null_binned_n_1000
+      - name: Run gate_fpr_autocorrelation_arx_null_binned_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_arx_null_binned_n_1000
+      - name: Run gate_fpr_autocorrelation_xshift_null_binned_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_xshift_null_binned_n_1000
+      - name: Run gate_fpr_autocorrelation_shift_null_binned_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_binned_n_1000
+  fpr-ksg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_fpr_autocorrelation_arx_null_ksg_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_arx_null_ksg_n_1000
+      - name: Run gate_fpr_autocorrelation_shift_null_ksg_n_1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_ksg_n_1000
+  block-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run block_sweep_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
+  ksg-sweep:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Run the n=1000 shift sweep (the shift-null measurement)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture shift_sweep_n1000
-      - name: Run the n=1000 TE calibration gates (heavy; ignored in the default cargo test)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation
+      - name: Run ksg_sweep_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_sweep_n1000
+  ksg-k-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run ksg_k_gate_sweep_and_formula
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_k_gate_sweep_and_formula
+  arx-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run arx_sweep_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture arx_sweep_n1000
+  conditional-arx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_conditional_arx_fpr_fn_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_n1000
+      - name: Run gate_conditional_arx_fpr_fn_reversed_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_reversed_n1000
+      - name: Run gate_conditional_arx_2_fpr_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_2_fpr_n1000
+  coupling-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run coupling_scan_te_over_thr_n1000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture coupling_scan_te_over_thr_n1000
+  fpr-bins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run fpr_bins_sweep_n2000
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture fpr_bins_sweep_n2000
+  mi-lag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_mi_lag_stability
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_mi_lag_stability
+  flare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run flare_envelope_conditional_keeps_true_coupling
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
+      - name: Run flare_envelope_power_probe
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Print the KSG/KDE estimator split
+        run: cargo run --release -p omegaflow-measure --bin te_fn_probe
+  issue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - shift-sweep
+      - fpr-binned
+      - fpr-ksg
+      - block-sweep
+      - ksg-sweep
+      - ksg-k-gate
+      - arx-sweep
+      - conditional-arx
+      - coupling-scan
+      - fpr-bins
+      - mi-lag
+      - flare
+      - probe
+    if: failure()
+    steps:
       - name: Raise an issue when the n=1000 gate fails
-        if: failure()
         run: |
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "te-gate: the n=1000 FPR gate carries a finding" \
                "The n=1000 TE calibration gate returned void (FPR > 8% or rise > 2pp under autocorrelation). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                health
-      - name: Run the n=1000 block sweep (the block-length fix measurement)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture block_sweep_n1000
-      - name: Run the n=1000 KSG sweep (the estimator-switch measurement)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_sweep_n1000
-      - name: Run the KSG-k gate (formula vs sweep — the K-flip measurement)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture ksg_k_gate_sweep_and_formula
-      - name: Run the n=1000 arx sweep (the arx-null measurement + OLS counter)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture arx_sweep_n1000
-      - name: Run the conditional n=1000 FP/FN gate (the direct-path calibration)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_n1000
-      - name: Run the reversed conditional n=1000 FP/FN gate (the reverse-direction calibration)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_fpr_fn_reversed_n1000
-      - name: Run the two-confounder n=1000 FPR gate (the direct _2 path)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_arx_2_fpr_n1000
-      - name: Run the coupling scan te_c/thr_c (the per-lag calibration curve)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture coupling_scan_te_over_thr_n1000
-      - name: Run the FPR-vs-bins sweep (the restricted-null calibration curve)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture fpr_bins_sweep_n2000
-      - name: Run the MI-lag stability sweep (the tau-instability gate, n up to 4096 x 200 surrogates)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_mi_lag_stability
-      - name: Run the flare-envelope true-coupling gate (the power study; 43% at n=240)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
-      - name: Run the flare-envelope power probe (print-only; n in 400/600/1000)
-        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
-      - name: Print the KSG/KDE estimator split (te_scal/te_topo — the Riss 4 numbers)
-        run: cargo run --release -p omegaflow-measure --bin te_fn_probe
