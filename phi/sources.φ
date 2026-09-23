@@ -8045,7 +8045,7 @@ sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
-note NOAA-S3 noaa-goes16 2026-09-22: prefix=GLM → nur GLM-L2-LCFA/ (KeyCount 0, kein L1B im offenen Bucket). GHRC-EDL glml1bflash__1 gemessen: Granule GET 200 mit EARTHDATA_EDL_TOKEN, 401 ohne — token-gedeckt.
+note NOAA-S3 goes16 2026-09-22: offener Bucket GLM/ traegt nur GLM-L2-LCFA. GHRC-EDL glml1bflash__1 token-gedeckt (Granule 200 mit EARTHDATA_EDL_TOKEN, 401 ohne). CDN glm_l1b.bin 2026-09-23: HTTP 200, 1050368 B, sha256 == :8044 — manifestiert.
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bin
 format glm_l2
