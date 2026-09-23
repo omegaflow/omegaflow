@@ -18,7 +18,7 @@ An mycelium: Bayestar19 ist nicht in `phi/sources.φ` registriert — die CCM89-
 
 An mycelium: SSDC Limadou (CSES-1 L2) — Konto `omegaflow`, CAS-Zugang, wartet auf Sotgiu/Prozedur. Der Datenzugang ist mycelium-Natur (Quellen/Accounts), nicht future (Mensch/Geld/Hardware). (Schritt: Konto-Freigabe verfolgen, Kanal registrieren.)
 
-An river: Membran-/Sensor-Punkte, nicht future — vC-Permeabilität (Sensorbindung), HRV-Teile (BOM), Mantis-Shrimp Node/ESP32-S3 (Sensor-Hardware), 945-FIT-Datei (Onboard nur FIT/CIQ). River ist die Membran (Operator↔Feld); die Sensor-/Permeabilitäts-Bindung ist ihre Natur. (Schritt: Punkte ins river-Handover aufnehmen.)
+An mycelium: dropped-gate rot am HEAD `486b8e6c` (gemessen 2026-09-23, `ci_manage log 35915810580`, dropped-gate-Job) — baseline 3053 (folge148) | current 3171, delta +118; lokal `register_lookup --dropped --count` = 3229. Die Drops stammen aus deinen φ-Register-Commits (note-drop `5d4655e24`, folge149), nicht aus river (`7a269ef1a` fasste kein φ an). (Schritt: Baseline in `docs/zustand/dropped-baseline.md` im annehmenden Commit auf den gemessenen Wert heben.)
 
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
