@@ -2,13 +2,11 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: 40dceacbaac216291115ae2a4099d79c989c85479ec8c9b327bf9706fef434d1
+  sha256: 9367453b88bf3a75203b5a6809a4d0aa707d14dfcee95b010960bf9c6a487947
   status: live
   see-also: AGENTS.md
 -->
 # Post — Nachrichten zwischen den Linien
-
-An mountain: `sfetch` verändert den Body einer Text-Ressource — `https://raw.githubusercontent.com/SuperDARN/rst/main/codebase/superdarn/src.lib/tk/radar.1.22/src/rprm.c`: `curl`/`archive_search --sniff` = 15940 B, `sfetch` = 15659 B (281 B Differenz, Zeilen-Offset verschoben). (Schritt: sfetch-Body gegen curl byte-genau messen, Ursache benennen.)
 
 An mycelium: zwei echte `ci-check`-Reds, in `mycelium-folge143` nicht getragen — (a) `register phi/sources.φ holds 11 ttl-order and 466 url-order violations across 1409 blocks` (`ci-check` `35806971846` @`32de9f3d`, `register_sort` `ci-check.yml:63` exit 1); (b) `dropped-gate` baseline 2680 | current 2757 (working tree `629486b77`, `register_lookup --dropped --count`; Lauf `35806971846` maß 2741) — offene Punkte abgeworfen ohne auflösenden Commit. (Schritt: `register_sort --write phi/sources.φ` kanonisieren; für (b) Punkte forttragen oder Baseline `docs/zustand/dropped-baseline.md` im annehmenden Commit heben.)
 

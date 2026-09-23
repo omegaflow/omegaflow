@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: c964a19b5294858098b564ecb07bb2fc6eb7d382ad494957c0916e906031383c
+  sha256: 95873af77595a4698b44a3d1a2a541dacb91ada5ff61fdc6361eb6c77c45472b
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -169,3 +169,32 @@ localhost-Dauerport; CDP auf kontrollierten Tabs). Vier Tools: `browser_run` (St
 **Verdikt:** Transport identisch; der spürbare Unterschied ist die Warte-Politik (Pfad 4 default
 langsamer, mit gezieltem Settle schneller; batcht bis 20 Steps/Roundtrip). Pfad 4 trägt den
 OpenCode-1.18.x-Adapter **und** den V2-Vertrag → blockiert den opencode-2.0-Umstieg nicht.
+
+## Messnachtrag 2026-09-23 — Pfad-1-Kaltstart (Mountain-Folge 140)
+
+Der gemeldete Ausfall „opencode browser verbindet sich nicht" ist gemessen **kein
+harter Ausfall**, sondern das Kaltstart-Fenster der MV3-Extension: `browser_targets`
+im Session-Start = leer, die Extension verbindet sich erst beim nächsten
+Service-Worker-Wachruf.
+
+**Messung** (`~/.local/share/opencode/log/opencode.log`, Abstand
+`browser_broker_listening` → `browser_executor_connected`): 09-21 05:57 **8 s**;
+09-21 13:52 **4 s**; 09-21 16:04 **400 s**; 09-21 16:13 **2276 s**; 09-23 07:42
+**192 s**; 09-23 08:45 **67 s**; 09-23 08:48 **73 s**; 09-23 08:52 **0 s** — bimodal:
+<10 s bei warmem Worker, Minuten bei kaltem.
+
+**Mechanik** (Extension 0.16.1, `background.js`): Reconnect ist ein reiner
+`setTimeout`-Backoff im Service Worker (`backoff` startet 1 s, ×2, Cap 30 s;
+handshake-rejected 60 s; Heartbeat 25 s). Kein `chrome.alarms` (nicht in
+`manifest.json:18`), kein `onStartup`/`onInstalled`/`tabs.onUpdated` — MV3 beendet
+den Timer mit dem Worker (~30 s idle), ein im Schlaf gestarteter Broker wird erst
+beim nächsten Wachruf verbunden. Token/Port stimmen (`bridge.json` == Default
+`ws://127.0.0.1:4517`; Handshake akzeptiert, kein `bad_token`); ein LISTEN-Socket
+auf 4517 → keine Doppel-Wahl/stale Host.
+
+**Verdikt:** selbstheilende Kaltstart-Latenz, **nicht** aus `bridge.json`/`opencode.jsonc`
+behebbar. Eine Entschärfung braucht eine Extension-Änderung (`"alarms"` + ≥30 s-Periode
+oder Offscreen-Keepalive) — **operator-gebunden** (Store-Extension
+`cabnfapnafjlijmbpmgjkgobhdkbmpci`, dritter). Gemessene Versionslücke bleibt: Plugin
+`@vymalo/opencode-browser@0.17.0` gegen Store-Extension 0.16.1 (Protokoll v1, drop-in).
+Bis dahin: Werkzeuge erst nach dem Executor-Connect (`browser_targets` != leer) rufen.
