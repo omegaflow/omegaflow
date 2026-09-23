@@ -4602,3 +4602,99 @@ note Dual-Comb-Spektrometer 7,5–11,5 µm (Optics Letters OL.515199; 200 gemess
 decline no-physical-force
 url https://zenodo.org/records/15095848
 note Breitband-Nahe-UV-Dual-Comb-Spektroskopie (TU Graz, Optica; 200 gemessen 2026-09-23): Rohdaten — Instrumenten-Signal, kein propagierendes Feld.
+
+decline registry/katalog
+url https://crossref.org/
+note Crossref DOI-/Metadaten-Registry — bibliografisch, kein Messwert-Feld (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://openalex.org/
+note OpenAlex Literatur-Katalog (403) — bibliografisch, kein Feld (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://wikidata.org/
+note Wikidata Knowledge-Graph — Registry, kein Messwert (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://musicbrainz.org/
+note MusicBrainz Musik-Metadaten — Registry (Force-Gate 2026-09-23).
+
+decline presence-catalog
+url https://obis.org/
+note OBIS Biodiversität-Occurrence — Presence-Registry (wie GBIF declined; Force-Gate 2026-09-23).
+
+decline presence-catalog
+url https://inaturalist.org/
+note iNaturalist Beobachtungen — Presence-Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://openbrewerydb.org/
+note OpenBreweryDB Verzeichnis — Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://restcountries.com/
+note REST Countries Länderfakten — Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://neotomadb.org/
+note Neotoma Paläoökologie-Archiv — statische Records (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://crystallography.net/
+note Crystallography Open Database — statische Strukturen, Referenz (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://sciencebase.gov/
+note USGS ScienceBase Katalog — Registry ohne Messwert (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://stac.eoapi.dev/
+note STAC-Asset-Katalog — Metadaten-Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://arcgis.com/
+note ArcGIS GIS-Plattform — Registry, kein Feld (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://govtrack.us/
+note GovTrack Legislative-Daten — Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://fda.gov/
+note FDA Zulassungs-/Regulierungsdaten (404) — Registry (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://glims.org/
+note GLIMS Gletscher-Inventar — Position/Geografie, kein Messwert-Feld (Force-Gate 2026-09-23).
+
+decline reference-constant
+url https://pdgapi.lbl.gov/
+note Particle Data Group Konstanten — Referenz, keine Feldmessung (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://adsb.lol/
+note ADS-B Flugzeug-Transpondertelemetrie — aktiv bewegtes Objekt, kein propagierendes Feld (Force-Gate 2026-09-23).
+
+decline aggregate-index
+url https://carbonintensity.org.uk/
+note UK Carbon Intensity — skalarer Netzindex, positionslos (Force-Gate 2026-09-23).
+
+decline aggregate-index
+url https://energy-charts.info/
+note Energy-Charts Stromerzeugung — aggregierter Index, kein Feld (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://coral.tsr.lol/
+note Coral Watch API (demo) — ökologisch, kein Kraftmedium (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://stackexchange.com/
+note Stack Exchange Q&A — kein Feld (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://unhcr.org/
+note UNHCR humanitäre Statistik (403) — kein Feld (Force-Gate 2026-09-23).
+
+decline no-physical-force
+url https://submarinecablemap.com/
+note Submarine Cable Map — Infrastruktur/Geografie (Force-Gate 2026-09-23).
