@@ -2,7 +2,7 @@
   title: The spectral oscillator — the frequency axis of the block
   class: concept
   date: 2026-09-08
-  sha256: 43b795026184f3f7cb6aac2d9d4d7da28c5898754bc81533dfa9d65b620b272d
+  sha256: f6020c776488a434fba1abde6d05921b8cd8b9a0563ba3e4f9caf89f8161376a
   status: live
 -->
 # The spectral oscillator — the frequency axis of the block
@@ -220,15 +220,26 @@ The three rendering claims of the original atom split by measurement:
 
 ### Atom D — the phase
 
-Status: buildable now (measured 2026-09-23). The `phase` and `presence`
-slots ride the wire since protocol v9 and are built on the wire side:
+Status: built (2026-09-23, one atom). The `phase` and `presence` slots
+ride the wire since protocol v9 and are built on the wire side:
 `spatial.rs:483` writes the pad + presence flag, `relay.rs:838`
-serializes all 26 slots, `constants.js:116` reads both. No producer
-writes a phase yet — every `Sample` carries `phase: None`
-(`channels.rs:1038`; zero `phase: Some` in `src/`) — and the WGSL reads
-no phase slot (`sgrep phase src/mathematikerin/shaders.rs` = 0 hits;
-only `props[j*4u]` is unpacked, `shaders.rs:133/155/286`; no sin/cos in
-the shader).
+serializes all 26 slots, `constants.js` reads both. The producer
+(`odf.rs::tnf_phase_series`) reads the PODF rows and emits
+`phase: Some(fract(cycles)·2π)`, `freq = ramp_freq` (Hz, from the row),
+`bin_width = 0.0`; the phase arm (`extract.rs::sample_phase` +
+`channels.rs:1038`) writes the producer law into the `Sample`; the WGSL
+(`shaders.rs::beat_pair`) reads `props[j*4u+2].w` (freq) and
+`props[j*4u+3].y/.z` (phase, presence) and adds the pair term to the
+probe readout only for a pair. The channel plumbing carries the row
+freq to the live wire: `extract.rs::series_rows` routes the TNF formats
+through `phase_series_parse_bin` (value = raw cycles, freq = ramp_freq,
+bin_width = 0.0) and every other series through the tuple parser with
+the (0, ·) no-band pad; the series build (`main_flow.rs`) writes the
+pair into `Channel.freq`/`Channel.bin_width`. A held TNF row radiates
+(ν > 0, 0) with phase + presence; a row with an absent ramp carries
+(0, ·) = no band (0 honored). The same-band beat pair stays pending
+with its acquisition trigger below (no held asset carries two coherent
+tones in one band).
 
 The earlier premise "no held asset carries a phase" is refuted by
 measurement — four phase-carrying classes are in the register and at
@@ -258,7 +269,7 @@ recorded by two DSN stations with independent local oscillators — is a
 new acquisition: pending; Trigger: a two-station open-loop recording
 of one carrier (or any asset with two coherent tones in one band).
 
-The atom builds whole — producer + WGSL beat machinery + three-layer
+The atom landed whole — producer + WGSL beat machinery + three-layer
 verification, one atom, no split; the wire record stays 26 × f64,
 unchanged — on the TNF route, the smallest honest cut: the producer
 writes `phase: Some(fract(cycles)·2π)`, `freq = ramp_freq` (Hz, read

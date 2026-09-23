@@ -10003,3 +10003,119 @@ field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg
         _ => panic!("expected Measurements"),
     }
 }
+
+#[test]
+fn test_sample_phase_writes_the_producer_law_for_phase_counters() {
+    let mut sensor = field_fixture("cassini_tnf_ul_phase_cycles", 604800.0);
+    sensor.key = "ul_phase_cycles".into();
+    sensor.unit = "cycle".into();
+    let mut channel = Channel {
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        epoch: 1.0e9,
+        position: Position::Source,
+        name: "cassini_tnf_ul_phase_cycles".into(),
+        value: 42.75,
+    };
+    let phase = sample_phase(&channel, &sensor).expect("a phase counter carries a phase");
+    assert!((phase - 0.75 * 2.0 * std::f64::consts::PI).abs() < 1e-12);
+    channel.value = f64::NAN;
+    assert!(sample_phase(&channel, &sensor).is_none());
+    sensor.key = "polar_angle_cycles".into();
+    assert!(
+        sample_phase(&channel, &sensor).is_none(),
+        "the polar angle is an angle, not a carrier phase"
+    );
+}
+
+#[test]
+fn test_sample_phase_matches_the_producer_on_a_podf_row() {
+    let row: [f64; 9] = [
+        1.0e9,
+        42.75,
+        7.183_446_125e9,
+        26.0,
+        98.0,
+        0.0,
+        2.0,
+        7.0,
+        0.0,
+    ];
+    let mut bytes = Vec::with_capacity(8 + 72);
+    bytes.extend_from_slice(b"PODF");
+    bytes.extend_from_slice(&1u32.to_le_bytes());
+    for v in row {
+        bytes.extend_from_slice(&v.to_le_bytes());
+    }
+    let series = super::odf::tnf_phase_series(&bytes).expect("podf parses");
+    let mut sensor = field_fixture("cassini_tnf_ul_phase_cycles", 604800.0);
+    sensor.key = "ul_phase_cycles".into();
+    let channel = Channel {
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        epoch: 1.0e9,
+        position: Position::Source,
+        name: "cassini_tnf_ul_phase_cycles".into(),
+        value: row[super::odf::PODF_COL_OBSERVABLE],
+    };
+    let arm_phase = sample_phase(&channel, &sensor);
+    assert_eq!(arm_phase, series[0].phase, "arm and producer share the law");
+    assert_eq!(series[0].freq, row[super::odf::TNF_ROW_SUPPORT]);
+    assert_eq!(series[0].bin_width, 0.0);
+}
+
+#[test]
+fn test_series_rows_carries_row_freq_value_and_band_for_tnf() {
+    let row: [f64; 9] = [
+        1.0e9,
+        42.75,
+        7.183_446_125e9,
+        26.0,
+        98.0,
+        0.0,
+        2.0,
+        7.0,
+        0.0,
+    ];
+    let mut bytes = Vec::with_capacity(8 + 72);
+    bytes.extend_from_slice(b"PODF");
+    bytes.extend_from_slice(&1u32.to_le_bytes());
+    for v in row {
+        bytes.extend_from_slice(&v.to_le_bytes());
+    }
+    let rows = super::extract::series_rows("maven_tnf", &bytes).expect("tnf rows parse");
+    assert_eq!(rows.len(), 1);
+    let r = rows[0];
+    assert_eq!(r.t, 1.0e9);
+    assert_eq!(
+        r.value, 42.75,
+        "the raw cycles ride, the arm derives the phase"
+    );
+    assert_eq!(r.comp, super::odf::TNF_COMP_UL_PHASE);
+    assert_eq!(
+        r.freq,
+        row[super::odf::TNF_ROW_SUPPORT],
+        "the band rides the row"
+    );
+    assert_eq!(r.bin_width, 0.0, "a phase counter carries no band");
+}
+
+#[test]
+fn test_series_rows_keeps_the_no_band_pad_for_a_bandless_series() {
+    let mut row = [0.0f64; 14];
+    row[0] = 729_777_632.0;
+    row[1] = 2292.0e6 + 1.5e6;
+    let bytes = crate::atdf::write_bin(&[row]);
+    let rows = super::extract::series_rows("atdf", &bytes).expect("atdf series parses");
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0].t, row[0]);
+    assert_eq!(rows[0].value, row[1]);
+    assert_eq!(rows[0].comp, crate::atdf::COMP_SKYFREQ);
+    assert_eq!(
+        rows[0].freq, 0.0,
+        "a bandless series carries the (0, ·) pad"
+    );
+    assert_eq!(rows[0].bin_width, 0.0);
+}
