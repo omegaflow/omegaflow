@@ -15,6 +15,6 @@ ausstehend
 kandidat https://limadou.ssdc.asi.it/
 note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 200), aber „Permission Denied" für omegaflow. PI Sotgiu antwortete 2026-09-16: Limadou-Website wird für CSES-02 umgebaut, „recommend waiting a few weeks before proceeding with your access request"; die Linie hat quittiert, Doppel-Anfrage 2026-09-20 (sent_ledger 1789906154/1789906520). Trigger: neue Anleitung auf dem Limadou-Portal. CSES-Limadou (em/electric) accept. DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
 
-ausstehend
+disponiert
 kandidat https://babamul.caltech.edu/api/
-note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-22 parse_alerts vierwertig, Empty→exit 0 (0 honored), Regression→exit 2. Lauf 35745291297 success, aber Release babamul.caltech.edu traegt kein Asset — babamul_alerts.bin HTTP 404. Schritt: Workflow/Compiler pruefen, Re-Dispatch, sha256 in sources.φ:14016.
+note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-23 CDN babamul_alerts.bin HTTP 200, 2000013 B, sha256 sources.φ:14022; Lauf 35805467066 success. Port kompiliert+manifestiert, Re-Dispatch erledigt.
