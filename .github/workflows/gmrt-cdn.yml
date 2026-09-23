@@ -1,0 +1,71 @@
+name: gmrt-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      minlongitude:
+        description: bbox west bound (degrees)
+        required: true
+        type: string
+        default: "-10"
+      maxlongitude:
+        description: bbox east bound (degrees)
+        required: true
+        type: string
+        default: "-9"
+      minlatitude:
+        description: bbox south bound (degrees)
+        required: true
+        type: string
+        default: "40"
+      maxlatitude:
+        description: bbox north bound (degrees)
+        required: true
+        type: string
+        default: "41"
+      asset:
+        description: output asset name on the CDN (netloc www.gmrt.org)
+        required: true
+        type: string
+        default: gmrt_bathymetry.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gmrt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view www.gmrt.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Compile the GMRT bathymetry grid and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gmrt_compiler -- \
+            --minlongitude "${{ inputs.minlongitude }}" \
+            --maxlongitude "${{ inputs.maxlongitude }}" \
+            --minlatitude "${{ inputs.minlatitude }}" \
+            --maxlatitude "${{ inputs.maxlatitude }}" \
+            --out "${{ inputs.asset }}" \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gmrt-cdn: ${{ inputs.asset }} returned void" \
+                 "gmrt compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
