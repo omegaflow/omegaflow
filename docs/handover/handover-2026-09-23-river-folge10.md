@@ -3,7 +3,7 @@
   session: River-Folge 10
   class: handover
   date: 2026-09-23
-  sha256: da44508cb26e7463ea24007cc5c0a1c9450acd3dab3ffa118e1a58b9cdedfbfc
+  sha256: 43fe443932f83d32505d653877c71e37311cb0fdcdcb1b2068ef37cdf845cb44
   status: live
 -->
 # Handover — River-Folge 10 (2026-09-23)
@@ -53,36 +53,64 @@ abarbeitbaren Punkt, sagt die Session das.
   präzisiert; Survey-Zeile `survey-2026-09-17-verlorene-diskussionen.md:86` nachgezogen
   (ein per-`force_type`-Absorptionsgesetz ungebaut — WP10 `remove-bias.md:1738` ist Plan,
   kein `absorbs`-Symbol im Baum).
-- **Atom D — Rat-Verdikt (pending mit Trigger)**: `docs/specs/spectral-oscillator.md:221–228`
-  umgeschrieben — die Wire-Buchse ist seit v9 gebaut, kein Producer/Konsument;
-  das Sternen-Beispiel 2026-09-08 ist als Physik **gestrichen** (thermische Spektren
-  inkohärent: Intensität addiert sich, nicht Phase). Survey-Zeile (Atom D) nachgezogen.
+- **Atom D — zweimal nachgezogen (Rat)**: `docs/specs/spectral-oscillator.md:221` trägt
+  den gemessenen Endstand. Erst-Verdikt `pending`; dann widerlegte die Nachmessung
+  (Taucher + Rat) die Prämisse „kein Asset trägt Phase": vier phase-tragende Klassen am
+  CDN, Route B (TNF) **bau-fähig**. Das Sternen-Beispiel 2026-09-08 ist als Physik
+  **gestrichen** (thermische Spektren inkohärent). Survey-Zeile nachgezogen. Der Bau
+  selbst bleibt offen (blockiert am fremden `extract.rs`, s. u.).
 
 ## Offen (aufgeschlüsselt)
 
-### Atom D (phase/presence-Konsum) — pending mit Trigger
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** die Waveform-/Bins-Linie kompiliert ihr erstes samples-basis-Asset
-  (`fdsn_waveform.bin` / GONG-Bins), dessen FFT/Goertzel `phase: Some(φ)` je Bin schreibt.
-- **Lage:** Wire-Buchse seit v9 gebaut (`spatial.rs:483`, `relay.rs:838`,
-  `constants.js:116`); kein Producer (`channels.rs:1038`, 0× `phase: Some` in `src/`),
-  kein WGSL-Leser (`sgrep phase src/mathematikerin/shaders.rs` = 0 Treffer);
-  kein gehaltenes Asset trägt Phase (PSD = |FFT|²) (gemessen 2026-09-23).
-- **Blockade:** keine phase-tragende Quelle.
-- **Braucht:** das erste `phase: Some`-Asset; dann Bau als **ein** Atom (Producer +
-  WGSL-Beat-Reader + Drei-Schichten-Verifikation Rust→JS→WGSL), Agentenklasse `grind-max`.
+### Atom D (phase/presence-Konsum) — Route B baubar, blockiert am fremden `extract.rs`
+- **Status:** blockiert | **Bindung:** eigen (Bau)
+- **Trigger:** die fremde uncommittete Arbeit in `src/archivar/extract.rs` committet —
+  dann ist Route Bs Ziel-Datei frei.
+- **Lage:** Rat 2026-09-23: Atom D ist bau-fähig auf der **TNF-Route**; die Prämisse
+  „kein gehaltenes Asset trägt Phase" ist gemessen widerlegt — `cassini_tnf`/`maven_tnf`
+  tragen die Trägerphase (`odf.rs:454–459`) **und** `ramp_freq` in derselben PODF-Zeile
+  (`odf.rs:1653–1666`); `cassini_rsr` trägt I/Q (`sources.φ:8081`), `fdsn_waveform` BHZ
+  (`:110`); der RAWACF-Compiler verwirft die komplexe ACF (nur `pwr0`-Power,
+  `superdarn_rawacf_compiler.rs:502`). Spec-Eintrag `spectral-oscillator.md:221` trägt
+  den neuen Stand (gemessen 2026-09-23).
+- **Blockade:** `src/archivar/extract.rs` trägt **fremde** uncommittete Arbeit
+  (65 Zeilen `field_tau`-Refactor + `probe_classify`-Tau, ebenso `tests.rs`,
+  `demeter_harvest.rs`) — Route B muss genau diese Datei anfassen; ein pfad-begrenzter
+  Commit würde die Fremdarbeit unter Rivers Nachricht mitreißen. Nicht angetastet.
+- **Braucht:** nach dem Fremd-Commit: `grind-max` baut Route B als **ein** Atom —
+  Producer (`odf.rs` Geschwister `tnf_phase_series` + Phase-Arm in `extract.rs`:
+  `Sample.phase = Some(fract(cycles)·2π)`, `freq = ramp_freq` aus der Zeile, nie
+  hartkodiert, `bin_width = 0.0` null-echt), WGSL-Beat-Term (`shaders.rs`, nur für ein
+  Paar), Drei-Schichten-Verifikation Rust→JS→WGSL.
+
+### Beat-Paar (Atom-D-Fortsetzung) — neue Akquisition
+- **Status:** wartend | **Bindung:** dritter (Datenerhebung)
+- **Trigger:** eine Zweistationen-Open-Loop-Aufnahme eines Trägers (oder ein Asset mit
+  zwei kohärenten Tönen in einem Band).
+- **Lage:** kein gehaltenes Asset trägt zwei zueinander kohärente Oszillatoren im selben
+  Band; ein Einzelträger ist Eichfreiheit (gemessen 2026-09-23, Rat).
+- **Blockade:** keine Quelle mit Paar.
+- **Braucht:** `archive_search`-Recherche/Anfrage nach einer Zwei-Stationen-Aufnahme
+  (ein Träger, zwei Stationen mit unabhängigen LOs).
+
+## Benchmark
+
+- **Route-Verifikation** (Asset-Sniff + Compiler-Emission A–D): `grind-flash` —
+  Routine-Klasse („Routine-Extraktion", flash-Sieger 2026-09-16), kein Doppel-Lauf.
+- **Architektur-Verdikt Atom D:** Rat (pro/max) — die benannte harte Klasse
+  (WGSL/4D-Kontrakt), kein flash-Ersatz.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
-- `docs/specs/force-system.md` (eigener Hunk, Zeile 96)
-- `docs/specs/spectral-oscillator.md` (eigener Hunk, Zeilen 221–228)
-- `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` (eigene Hunks, Zeilen 85–86)
-- `docs/handover/handover-2026-09-23-river-folge10.md` (neu)
-- Move mit dem Commit: `handover-2026-09-23-river-folge9.md` → `archiv/`
+- `docs/specs/spectral-oscillator.md` (Atom-D-Eintrag, Zeilen 221–244)
+- `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` (Zeile 85)
+- `docs/handover/handover-2026-09-23-river-folge10.md` (fortgeschrieben)
+- Im ersten Commit `1d23d3522` bereits getragen: `docs/specs/force-system.md` +
+  der Move `handover-2026-09-23-river-folge9.md` → `archiv/`.
 
-Fremd, **nicht angetastet:** `docs/handover/post.md` (mycelium-Hunk), alle staged
-`src/archivar`, `src/gate`, die `phi`-Register `sources`/`witnesses`/`footprints`,
-die mountain-/mycelium-Handover,
+Fremd, **nicht angetastet:** `src/archivar/extract.rs` (65 Zeilen `field_tau`-Refactor),
+`src/archivar/tests.rs`, `tools/harvest/src/bin/demeter_harvest.rs`,
+`docs/handover/post.md`, die mountain-/mycelium-Handover,
 `docs/zustand/external-state.md` (gitignored, Mountain-Folge 141).
 
 ## Abschluss
