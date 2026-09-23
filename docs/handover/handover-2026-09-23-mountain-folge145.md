@@ -3,7 +3,7 @@
   session: Mountain-Folge 145
   class: handover
   date: 2026-09-23
-  sha256: 98e050141cb0ebeb3eada25ab4c0239ac8542aab2c6f05df7246c414eef14dba
+  sha256: 7d28fbf48278e26b86338e6a662d0ea7290d1e86d68859428c837c633a0bcf88
   status: live
 -->
 # Handover — Mountain-Folge 145 (2026-09-23)
@@ -62,18 +62,18 @@ Punkt trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | 
 
 ### 1. GMRT-CDN-Manifestation
 - **Status:** termin | **Bindung:** eigen
-- **Trigger:** Push dieses Atoms → `gh workflow run gmrt-cdn.yml`
-- **Lage:** Arm + Workflow + Register stehen; `phi/harvest.φ` `asset fehlt` (gemessen 19:4xZ)
+- **Trigger:** Manifest-Run `35906126710` (dispatched nach Push, 2026-09-23 ~21:00Z)
+- **Lage:** Arm + Workflow + Register stehen; Run `35906126710` dispatcht (gemessen 2026-09-23 20:58Z); `phi/harvest.φ` `asset fehlt`
 - **Blockade:** keine
-- **Braucht:** nach Push `gh workflow run gmrt-cdn.yml`; bei success sha256 in
+- **Braucht:** `ci_manage view 35906126710` → success, dann sha256 in
   `phi/sources.φ` und `asset present` in `phi/harvest.φ`
 
 ### 2. openSenseMap-CDN-Manifestation
 - **Status:** termin | **Bindung:** eigen
-- **Trigger:** Push dieses Atoms → `gh workflow run opensensemap-cdn.yml`
-- **Lage:** Arm + Workflow + Register stehen; `phi/harvest.φ` `asset fehlt` (gemessen 19:4xZ)
+- **Trigger:** Manifest-Run `35906130561` (dispatched nach Push, 2026-09-23 ~21:00Z)
+- **Lage:** Arm + Workflow + Register stehen; Run `35906130561` dispatcht (gemessen 2026-09-23 20:58Z); `phi/harvest.φ` `asset fehlt`
 - **Blockade:** keine
-- **Braucht:** nach Push `gh workflow run opensensemap-cdn.yml`; bei success sha256 in
+- **Braucht:** `ci_manage view 35906130561` → success, dann sha256 in
   `phi/sources.φ` und `asset present` in `phi/harvest.φ`
 
 ### 3. flare-Re-Insert green-confirm
