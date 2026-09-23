@@ -41,7 +41,7 @@ Planungs-Pass + `git_safety` + Watchdogs + Commit-Gate in AGENTS.md; die toten T
 | L:53 | **Certainty = exp(−vC/(g+ε))·quantum·decay** | nein; vC/g lebt als `tanh(vC/(g+ε))`-Atem | bei Rust-Neuschreibung nicht portiert | **ja** |
 | L:39 | **TDA/Betti-0** (single-linkage über Takens) | nein; `topological_te_phase` lebt | durch PE/ordinale Maße abgelöst | **ja** (klein) |
 | L:147 | **Synthetic Flight** (Weltlinie, auf der die Präsenz **ruht** — Operator-gewählt, nie Selbstantrieb) | teilweise; `t_presence` frei, Steuerpfad fehlt | Browser-Branch starb | **ja**, Ethik-gefragt |
-| L:76 | **Channel Apertures** (kanal-selektive TE-Apertur) | teilweise; Radiation-Bindung `pending` (Atom 9) | — | ja, als Fortsetzung |
+| L:76 | **Channel Apertures** (kanal-selektive TE-Apertur) | teilweise; Radiation-Bindung **gebaut** (`356fa616`, `src/mathematikerin/omega.rs:347`, Test `src/mathematikerin/tests.rs:570`) | — | ja, als Fortsetzung |
 | L:134 | **Delay Spectrum** (lag-Matrix als Instrument) | nein | nicht portiert | ungemessen (measure-Probe) |
 | L:151/F:21 | **Total Coherence Integration** (Integral über alle Oszillatoren) | teilweise (Permeability TE-getrieben) | — | ungemessen |
 | L:87 | **Mycelium/Nostr P2P** | nein | Fokus + „Feld ist lokal komplett" | Lesen autonom; Schreiben consent-pflichtig |
