@@ -7,7 +7,20 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, RwLock, mpsc};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
+pub const RELAY_BIND_ENV: &str = "OMEGAFLOW_RELAY_BIND";
+pub const RELAY_BIND_DEFAULT: &str = "0.0.0.0";
 const KINETIC_TAG: u8 = 10;
+
+fn bind_from(raw: Option<String>) -> String {
+    match raw {
+        Some(v) if !v.trim().is_empty() => v.trim().to_string(),
+        _ => RELAY_BIND_DEFAULT.to_string(),
+    }
+}
+
+pub fn relay_bind_addr() -> String {
+    bind_from(std::env::var(RELAY_BIND_ENV).ok())
+}
 
 fn relay_tau(wire: f64, line: Option<f64>) -> Option<f64> {
     if wire > 0.0 {
@@ -56,13 +69,14 @@ impl TcpRadiator {
         verdicts: Arc<Vec<VerdictLine>>,
     ) -> Self {
         let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
-        let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
+        let bind_addr = relay_bind_addr();
+        let listener = match TcpListener::bind(format!("{}:{}", bind_addr, port)) {
             Ok(l) => {
-                eprintln!("serving on http://127.0.0.1:{}", port);
+                eprintln!("serving on http://{}:{}", bind_addr, port);
                 l
             }
             Err(e) => {
-                eprintln!("TCP bind to 127.0.0.1:{} returned {:?}", port, e.kind());
+                eprintln!("TCP bind to {}:{} returned {:?}", bind_addr, port, e.kind());
                 std::process::exit(1);
             }
         };
@@ -1097,6 +1111,18 @@ mod tests {
         assert_eq!(relay_tau(0.0, None), None);
         assert_eq!(relay_tau(0.0, Some(0.0)), None);
         assert_eq!(relay_tau(0.0, Some(-1.0)), None);
+    }
+
+    #[test]
+    fn the_bind_reaches_the_ether_when_unset() {
+        assert_eq!(bind_from(None), "0.0.0.0");
+        assert_eq!(bind_from(Some("   ".to_string())), "0.0.0.0");
+    }
+
+    #[test]
+    fn the_bind_honours_the_operator_address() {
+        assert_eq!(bind_from(Some("127.0.0.1".to_string())), "127.0.0.1");
+        assert_eq!(bind_from(Some(" 0.0.0.0 ".to_string())), "0.0.0.0");
     }
 
     #[cfg(feature = "browser_relay")]
