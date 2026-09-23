@@ -3,7 +3,7 @@
 Kybernetic field system. Pure Rust, WebGPU point cloud, ICRS block universe.
 `cargo run` → the membrane (ESC closes it);
 `cargo run --features browser_relay` → + WS 127.0.0.1:1618, the browser sensor.
-The 161 tools live in functional crates under `tools/` — `tools/harvest` (74 source compilers, `omegaflow-harvest`), `tools/measure` (55 probes, `omegaflow-measure`), `tools/register` (12 registry checks, `omegaflow-register`), `tools/service` (5 services, `omegaflow-service`; the BLE pulse bridge `pulse_bridge`), `tools/science` (4 paper tools, `omegaflow-science`), `tools/gate` (2 gate bins, `omegaflow-gate`), `tools/utils` (9 readers/utilities, `omegaflow-utils`). Each is `cargo run -p omegaflow-<fkt> --bin <name>`; `cargo build` builds only the core. `src/` is the one core crate (Archivar + Mathematikerin + the gate modules) — Cargo's source-directory convention names it, not a functional label.
+The 161 tools live in functional crates under `tools/` — `tools/harvest` (74 source compilers, `omegaflow-harvest`), `tools/measure` (55 probes, `omegaflow-measure`), `tools/register` (12 registry checks, `omegaflow-register`), `tools/service` (5 services, `omegaflow-service`), `tools/science` (4 paper tools, `omegaflow-science`), `tools/gate` (2 gate bins, `omegaflow-gate`), `tools/utils` (9 readers/utilities, `omegaflow-utils`). Each is `cargo run -p omegaflow-<fkt> --bin <name>`; `cargo build` builds only the core. `src/` is the one core crate (Archivar + Mathematikerin + the gate modules) — Cargo's source-directory convention names it, not a functional label.
 
 ## Rule Index — which rule lives where
 
