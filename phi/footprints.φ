@@ -9,14 +9,14 @@ band g i r y z
 note DES-Bindung: die zwei Katalog-Tafeln II/357/des_dr1 und des_dr2 laufen gegen die fp01-Maske; Fussabdruck-Feld = Zeilen-Richtung ra/dec im hpix_4096-Nside-4096-nest-Raster wie des_dr2.coverage; die Maske ist das Gate, nie ein Feld ihrer Zeilen.
 note DES-DR2 (DECam Y6A2) NOIRLab TAP sync anonym 2026-09-07: 25.239.595 Zeilen ~5171 deg2; frac_det = Flaechen-Coverage je Band; NULL=0, Nullen null-echt; MAX je (pixel,band); Compiler des_coverage_compiler; 10.311.965 Records, 0 invalid; Asset CDN.
 
-note Survey-Plural: PS1+AllWISE per-Pixel-Coverage gefunden; SDSS absent; 2MASS XSC-Fractional-Coverage FITS 24 Quadranten + Depth-Cube max 7/typisch 6, gemessen 2026-09-14, irsa.ipac.caltech.edu/data/2MASS/docs/releases/allsky/doc/figures/secii6ff3.fits.
+note Survey-Plural (2026-09-23): PS1+AllWISE per-Pixel-Coverage gefunden; SDSS absent (TAP 404); 2MASS XSC-FITS irsa.ipac.caltech.edu/data/2MASS/docs/releases/allsky/doc/figures/secii6ff3.fits HTTP 200, 1601280 B, magic fits, Depth-Cube max 7/typisch 6.
 footprint ps1
 url https://ps1images.stsci.edu/rings.v3.skycell/
 asset ps1_dr2_binary.fp01
 band g r i z y
 note PS1-Binaer-Asset (2026-09-09): Archiv-Existenz Skycell-Tiles (ps1grid + ps1filenames, ~7900 Probes), frac=1.0; Fehlerrichtung beobachtet - Suedsaum <=1 Tile + 1.6e-3 deg2 Polarloch ueberzeichnet; Compiler ps1_binary_compiler.rs; 35.906.245 B.
 note PS1-Fraktional (2026-09-08): rings.v3.skycell stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; regrid.rs, ps1_coverage_compiler.rs; 389.074.034 Pixel, g(150,2) 0.898. Volles DR2-Asset (Council 2026-09-20): Order 10 (Nside 1024) gegen die 2-GB-Dateigrenze, Slab-Tags ps1-dr2-<lo> à 80 Bänder (26 Tags, Chunks+Band-Parts je Slab, ≤1000 Assets), hierarchischer Combine chunk->band->final; die 187 Order-12-Parts descoped (kein Merge in ein Order-10-Final), Census steht.
-note PS1-DR2-Coverage Order-10-Final (2026-09-23): 35855330990 success; ps1_dr2_coverage.fp01 absent HTTP 404 (sniff, Tag ssd.jpl.nasa.gov-ps1); Band-Parts 637-671, band_max 2643 -> final combine nicht erreicht.
+note PS1-DR2-Coverage Order-10-Final (2026-09-23): 35855330990 success; ps1_dr2_coverage.fp01 absent HTTP 404, 9 B, sha256 0019dfc4… (Tag ssd.jpl.nasa.gov-ps1); Band-Parts 637-671, band_max 2643, final combine nicht erreicht.
 
 footprint sdss
 url https://skyserver.sdss.org/dr18/
