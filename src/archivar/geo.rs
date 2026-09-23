@@ -9,6 +9,7 @@ pub const MAGIC_IGETS: [u8; 4] = *b"IGT1";
 pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
 pub const MAGIC_SLB2: [u8; 4] = *b"SLB2";
 pub const MAGIC_OCS: [u8; 4] = *b"OCS1";
+pub const MAGIC_GMR: [u8; 4] = *b"GMR1";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_LISOTD: [u8; 4] = *b"LOT1";
 pub const MAGIC_TRMMLIS: [u8; 4] = *b"TRL1";
@@ -32,6 +33,7 @@ pub const MAGIC_CHAMP: [u8; 4] = *b"CHP1";
 pub const MAGIC_LAS: [u8; 4] = *b"LAS1";
 pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
+pub const MAGIC_OSM: [u8; 4] = *b"OSM1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -147,6 +149,9 @@ pub const COMP_NXR_MAX: u32 = 3;
 pub const COMP_USCRN_TEMP: u32 = 1;
 pub const COMP_USCRN_MAX: u32 = 1;
 
+pub const COMP_OSM_TEMP: u32 = 1;
+pub const COMP_OSM_MAX: u32 = 1;
+
 pub const COMP_CHAMP_DENS: u32 = 1;
 
 pub const COMP_LAS_X: u32 = 1;
@@ -215,6 +220,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "kyoto_pressure" => Some(MAGIC_KYOTO),
         "hfrnet_rtv" => Some(MAGIC_HFR),
         "emodnet_hfr" => Some(MAGIC_HFR),
+        "opensensemap_temperatur" => Some(MAGIC_OSM),
         _ => None,
     }
 }
@@ -253,6 +259,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "kyoto_pressure" => Some(COMP_KYOTO_MAX),
         "hfrnet_rtv" => Some(COMP_HFR_MAX),
         "emodnet_hfr" => Some(COMP_HFR_MAX),
+        "opensensemap_temperatur" => Some(COMP_OSM_MAX),
         _ => None,
     }
 }
@@ -518,6 +525,49 @@ pub fn parse_slab2(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(out)
 }
 
+pub fn write_gmr(records: &[GbcoRec]) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(8 + records.len() * GBCO_REC_BYTES);
+    buf.extend_from_slice(&MAGIC_GMR);
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        buf.extend_from_slice(&r.lat.to_le_bytes());
+        buf.extend_from_slice(&r.lon.to_le_bytes());
+        buf.extend_from_slice(&r.elev.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_gmr(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC_GMR {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * GBCO_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let lat = f64_of(off)?;
+        off += 8;
+        let lon = f64_of(off)?;
+        off += 8;
+        let elev = f64_of(off)?;
+        off += 8;
+        if !lat.is_finite() || !lon.is_finite() || !elev.is_finite() {
+            return None;
+        }
+        out.push(GbcoRec { lat, lon, elev });
+    }
+    Some(out)
+}
+
 pub fn write_ocs(records: &[GbcoRec]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * GBCO_REC_BYTES);
     buf.extend_from_slice(&MAGIC_OCS);
@@ -697,6 +747,38 @@ mod tests {
         assert!(parse_ocs(b"X").is_none());
         assert!(parse_ocs(b"OCS1abc").is_none());
         assert!(parse_ocs(&write_gbco(&records)).is_none());
+    }
+
+    #[test]
+    fn gmr_roundtrip_and_rejections() {
+        let records = vec![
+            GbcoRec {
+                lat: 40.5,
+                lon: -9.5,
+                elev: -294.0,
+            },
+            GbcoRec {
+                lat: 41.0,
+                lon: -10.0,
+                elev: -3657.987,
+            },
+        ];
+        let bytes = write_gmr(&records);
+        let parsed = parse_gmr(&bytes).unwrap();
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed[0].lat, 40.5);
+        assert_eq!(parsed[0].lon, -9.5);
+        assert_eq!(parsed[0].elev, -294.0);
+        assert_eq!(parsed[1].elev, -3657.987);
+        assert!(parse_gmr(b"X").is_none());
+        assert!(parse_gmr(b"GMR1abc").is_none());
+        assert!(parse_gmr(&write_ocs(&records)).is_none());
+        let nan = write_gmr(&[GbcoRec {
+            lat: 40.5,
+            lon: -9.5,
+            elev: f64::NAN,
+        }]);
+        assert!(parse_gmr(&nan).is_none());
     }
 
     #[test]

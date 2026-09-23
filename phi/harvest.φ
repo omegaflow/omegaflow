@@ -64,6 +64,16 @@ idempotent true
 timeout 180
 note GEDI02_A v002 RH98 day 2025.07.09. Range-Guard MAX_TRAVERSAL_BYTES=1<<26 (Hdf5Note::TraversalBudget) behob den Hang; CDN --sniff 2026-09-19: 600520 B sha256 11c04ada… (run 35471362190).
 
+asset fehlt
+format gmrt_bathymetry
+tag www.gmrt.org
+arm gmrt_compiler
+workflow gmrt-cdn.yml
+pattern ^gmrt_bathymetry\.bin$
+idempotent true
+timeout 120
+note GMRT GridServer GeoTIFF bathymetry (2026-09-23 HTTP 200, 1100202 B sha256 f26f41a3…): float32 uncompressed geographic 457×601, Elevation m (negativ = unter Meeresspiegel). Arm gmrt_compiler → GMR1 GbcoRec; asset fehlt — erster Manifest-Run ausstehend.
+
 asset present
 format goes16_abi
 tag noaa-goes16.s3.amazonaws.com
@@ -160,6 +170,16 @@ pattern ^sub-101_ses-02_.*_nirs\.bin$
 idempotent true
 timeout 240
 note ds008192 InterGenSynchrony (SNIRF, 122 subj.): asset sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin 3599598 B roundtrip parses (nchan 52 pnts 8484 samples 441168), harvest run 35474615876 success; sources.φ url-Zeile steht.
+
+asset fehlt
+format opensensemap_temperatur
+tag api.opensensemap.org
+arm opensensemap_compiler
+workflow opensensemap-cdn.yml
+pattern ^opensensemap_temperatur\.bin$
+idempotent true
+timeout 120
+note openSenseMap Lufttemperatur (°C, thermal): /boxes listet lastMeasurement-IDs, Wert per /boxes/:id -> sensors[N].value (N variabel, title+unit-Match). Arm opensensemap_compiler → OSM1 GeoRec; asset fehlt — erster Manifest-Run ausstehend.
 
 asset present
 format rosetta_odf
