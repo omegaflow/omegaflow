@@ -599,6 +599,9 @@ Directives that appear in legacy corpora but have **no parser arm** (writing
 them produces nothing): `body`, `pos`, `source`, `lat_key`/`lon_key`/`alt_key`,
 `extent`, `reach_ttl`, `note`, `tau` (as key directive), `force biotic`, and the
 3-token `field <key> <identifier>` annotation form (refused by the τ-Gate).
+`note` is thereby forbidden in `phi/sources.φ` — the gate blocks a new `note`
+there (`phi-sources-note`, `prose_violation_for`); it remains the verdict-evidence
+field only in `phi/dead_sources.φ`/`phi/blocked_sources.φ`.
 `method` is consumed only by the `--gold` port converter (POST → `post_body`).
 
 Parser arms not yet carried in the §1 table (accepted by the parser; table
