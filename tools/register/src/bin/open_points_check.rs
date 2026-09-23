@@ -73,10 +73,42 @@ fn main() {
             }
         }
     }
+    let guardians = mail_home_guardians(&root);
+    for g in &guardians {
+        println!("OFFEN  {}", g);
+    }
     println!(
-        "open_points_check: {}  | {} path refs | {} absent",
-        rel, points, missing
+        "open_points_check: {}  | {} path refs | {} absent | {} guardians",
+        rel,
+        points,
+        missing,
+        guardians.len()
     );
+}
+
+fn mail_home_guardians(root: &Path) -> Vec<String> {
+    let mut out = Vec::new();
+    if !root.join("state").exists() {
+        return out;
+    }
+    if root.join("state/funding/mail").exists() {
+        out.push(
+            "zweites Mail-Heim: state/funding/mail/ existiert (der Postkorb ist state/mail/)"
+                .to_string(),
+        );
+    }
+    if root
+        .join("state/mail")
+        .symlink_metadata()
+        .map(|m| m.file_type().is_symlink())
+        .unwrap_or(false)
+    {
+        out.push(
+            "Mail-Heim ist ein Symlink: state/mail/ muss ein echtes Verzeichnis im Repo sein"
+                .to_string(),
+        );
+    }
+    out
 }
 
 fn newest_live_handover(root: &Path) -> Option<PathBuf> {
@@ -229,5 +261,26 @@ mod tests {
         assert!(normalize("/home/operator/x").is_none());
         assert!(normalize("src").is_none());
         assert!(normalize("the").is_none());
+    }
+
+    #[test]
+    fn flags_second_mail_home() {
+        let base = std::env::temp_dir().join(format!("opc-guard-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("state/funding/mail")).unwrap();
+        let g = mail_home_guardians(&base);
+        assert!(g.iter().any(|s| s.contains("zweites Mail-Heim")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn flags_symlinked_mail_home() {
+        let base = std::env::temp_dir().join(format!("opc-guard-sym-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("state")).unwrap();
+        std::os::unix::fs::symlink(base.join("elsewhere"), base.join("state/mail")).unwrap();
+        let g = mail_home_guardians(&base);
+        assert!(g.iter().any(|s| s.contains("Symlink")));
+        let _ = fs::remove_dir_all(&base);
     }
 }
