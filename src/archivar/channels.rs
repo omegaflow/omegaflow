@@ -1035,7 +1035,7 @@ pub fn anchor(
         freq: channel.freq,
         bin_width: channel.bin_width,
         color_index: 0.0,
-        phase: None,
+        phase: sample_phase(channel, sensor),
     })
 }
 
