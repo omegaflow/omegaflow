@@ -23,6 +23,7 @@ static ANCHOR_ONLY: AtomicBool = AtomicBool::new(false);
 static GATE_ONLY: AtomicBool = AtomicBool::new(false);
 static T600_ONLY: AtomicBool = AtomicBool::new(false);
 static TSCALE_ONLY: AtomicBool = AtomicBool::new(false);
+static TCURVE_ONLY: AtomicBool = AtomicBool::new(false);
 static GATE_N: AtomicUsize = AtomicUsize::new(150);
 
 fn section(n: usize) -> bool {
@@ -705,6 +706,9 @@ fn main() {
     if args.iter().any(|a| a == "--tscale") {
         TSCALE_ONLY.store(true, Ordering::Relaxed);
     }
+    if args.iter().any(|a| a == "--tcurve") {
+        TCURVE_ONLY.store(true, Ordering::Relaxed);
+    }
     let div = |s: usize| if quick { (s / 5).max(2) } else { s };
     let top = |r: usize| if quick { 1 } else { r };
     let bins = BINS.load(Ordering::Relaxed);
@@ -781,6 +785,26 @@ fn main() {
         let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
         println!("    T-scaling (Fig. S8, qualitative):");
         for t in [150usize, 300, 600] {
+            s60_point(
+                10,
+                t,
+                0.2,
+                false,
+                &set1,
+                &format!("N=10 T={t} c=0.2"),
+                top(2),
+                div(10),
+                2,
+                BINS.load(Ordering::Relaxed),
+                SEED,
+            );
+        }
+        return;
+    }
+    if TCURVE_ONLY.load(Ordering::Relaxed) {
+        let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
+        println!("    T-curve (the 400-700 decision band, step 50):");
+        for t in [400usize, 450, 500, 550, 600, 650, 700] {
             s60_point(
                 10,
                 t,
