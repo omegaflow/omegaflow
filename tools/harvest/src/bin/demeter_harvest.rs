@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 use std::fs;
-use std::io::Write;
+use std::io::{BufReader, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -358,33 +358,120 @@ fn jnum_i64(v: &JsonVal, key: &str) -> i64 {
         .unwrap_or(-1)
 }
 
-fn download_zip(token: &str, oid: i64, dest: &Path) -> bool {
+fn status_is_final(st: &str) -> bool {
+    st == "DONE" || st == "DONE_WITH_WARNING"
+}
+
+fn status_has_live_files(st: &str) -> bool {
+    st == "RUNNING"
+}
+
+fn status_is_dead(st: &str) -> bool {
+    st == "ERROR" || st == "FAILED" || st == "EXPIRED"
+}
+
+enum DownloadOutcome {
+    Complete(PathBuf),
+    Incomplete(PathBuf),
+    Void,
+}
+
+fn content_length(headers: &Path) -> Option<u64> {
+    let body = fs::read_to_string(headers).ok()?;
+    let mut last = None;
+    for line in body.lines() {
+        if let Some(rest) = line.to_ascii_lowercase().strip_prefix("content-length:") {
+            if let Ok(n) = rest.trim().parse::<u64>() {
+                last = Some(n);
+            }
+        }
+    }
+    last
+}
+
+fn download_zip(token: &str, oid: i64, dest: &Path) -> DownloadOutcome {
+    let part = dest.with_extension("zip.part");
+    let headers = dest.with_extension("zip.hdr");
     let url = format!("{ORDER}/user/orders/{oid}/download");
     let out = Command::new("curl")
         .arg("-s")
         .arg("-S")
-        .arg("-f")
         .arg("-L")
-        .arg("-m")
-        .arg("600")
+        .arg("--connect-timeout")
+        .arg("20")
+        .arg("--speed-time")
+        .arg("120")
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("-o")
+        .arg(&part)
+        .arg("-D")
+        .arg(&headers)
+        .arg("-w")
+        .arg("%{http_code}")
         .arg("-H")
         .arg(format!("Authorization: Bearer {token}"))
         .arg(url)
         .output();
-    match out {
-        Ok(o) if o.status.success() && !o.stdout.is_empty() => fs::write(dest, &o.stdout).is_ok(),
+    let (exit_ok, code) = match out {
         Ok(o) => {
-            eprintln!(
-                "download {oid} void ({}): {}",
-                o.status,
-                String::from_utf8_lossy(&o.stderr).trim()
-            );
-            false
+            if !o.status.success() {
+                eprintln!(
+                    "download {oid} transport void ({}): {}",
+                    o.status,
+                    String::from_utf8_lossy(&o.stderr).trim()
+                );
+            }
+            (
+                o.status.success(),
+                String::from_utf8_lossy(&o.stdout).trim().to_string(),
+            )
         }
         Err(e) => {
             eprintln!("download {oid} curl absent: {e}");
-            false
+            return DownloadOutcome::Void;
         }
+    };
+    let got = match fs::metadata(&part) {
+        Ok(m) => m.len(),
+        Err(e) => {
+            eprintln!("download {oid} part {} unreadable: {e}", part.display());
+            let _ = fs::remove_file(&part);
+            return DownloadOutcome::Void;
+        }
+    };
+    let declared = content_length(&headers);
+    let _ = fs::remove_file(&headers);
+    let http_ok = exit_ok && (code.is_empty() || code.starts_with('2'));
+    let complete = http_ok
+        && got > 0
+        && match declared {
+            Some(n) => got == n,
+            None => true,
+        };
+    if complete {
+        return match fs::rename(&part, dest) {
+            Ok(()) => DownloadOutcome::Complete(dest.to_path_buf()),
+            Err(e) => {
+                eprintln!("download {oid} rename {} void: {e}", part.display());
+                DownloadOutcome::Void
+            }
+        };
+    }
+    if got > 0 {
+        eprintln!(
+            "download {oid} incomplete stream — {got} bytes of {} at {}",
+            match declared {
+                Some(n) => n.to_string(),
+                None => "an undeclared length".to_string(),
+            },
+            part.display()
+        );
+        DownloadOutcome::Incomplete(part)
+    } else {
+        let _ = fs::remove_file(&part);
+        eprintln!("download {oid} no bytes (transport_ok={exit_ok}, http={code})");
+        DownloadOutcome::Void
     }
 }
 
@@ -399,65 +486,198 @@ fn le32(d: &[u8], off: usize) -> usize {
         | (d[off + 3] as usize) << 24
 }
 
-fn zip_entries(data: &[u8]) -> Vec<(String, usize, usize, usize)> {
-    let mut out = Vec::new();
-    let mut i = 0usize;
-    while i + 46 <= data.len() {
-        if &data[i..i + 4] == b"PK\x01\x02" {
-            let method = le16(data, i + 10);
-            let comp_size = le32(data, i + 20);
-            let name_len = le16(data, i + 28);
-            let extra_len = le16(data, i + 30);
-            let comment_len = le16(data, i + 32);
-            let local_off = le32(data, i + 42);
-            if i + 46 + name_len <= data.len() {
-                let name = String::from_utf8_lossy(&data[i + 46..i + 46 + name_len]).into_owned();
-                out.push((name, method, comp_size, local_off));
-            }
-            i += 46 + name_len + extra_len + comment_len;
-            continue;
-        }
-        i += 1;
-    }
-    out
+struct ExtractReport {
+    extracted: usize,
+    truncated: bool,
 }
 
-fn extract_dat(workdir: &Path, zip_path: &Path) -> usize {
-    let data = match fs::read(zip_path) {
-        Ok(d) => d,
-        Err(_) => return 0,
-    };
-    let entries = zip_entries(&data);
-    let mut count = 0usize;
-    for (name, method, comp_size, local_off) in entries {
-        if !name.ends_with(".DAT") {
-            continue;
-        }
-        if local_off + 30 > data.len() {
-            continue;
-        }
-        let name_len = le16(&data, local_off + 26);
-        let extra_len = le16(&data, local_off + 28);
-        let start = local_off + 30 + name_len + extra_len;
-        if start + comp_size > data.len() {
-            continue;
-        }
-        let body = &data[start..start + comp_size];
-        let uncompressed = match method {
-            0 => Some(body.to_vec()),
-            8 => omegaflow::inflate::inflate(body),
-            _ => None,
-        };
-        let Some(uncompressed) = uncompressed else {
-            continue;
-        };
-        let base = name.rsplit('/').next().unwrap_or(&name);
-        let out = workdir.join(base);
-        if fs::write(&out, &uncompressed).is_ok() {
-            count += 1;
+fn consume_descriptor(reader: &mut BufReader<fs::File>) -> bool {
+    let mut first = [0u8; 4];
+    if reader.read_exact(&mut first).is_err() {
+        return false;
+    }
+    if first == *b"PK\x07\x08" {
+        let mut rest = [0u8; 12];
+        reader.read_exact(&mut rest).is_ok()
+    } else {
+        let mut rest = [0u8; 8];
+        reader.read_exact(&mut rest).is_ok()
+    }
+}
+
+fn skip_bytes(reader: &mut BufReader<fs::File>, len: usize) -> bool {
+    let mut remaining = len as u64;
+    let mut buf = [0u8; 8192];
+    while remaining > 0 {
+        let want = (buf.len() as u64).min(remaining) as usize;
+        match reader.read_exact(&mut buf[..want]) {
+            Ok(()) => remaining -= want as u64,
+            Err(_) => return false,
         }
     }
-    count
+    true
+}
+
+fn copy_stored(reader: &mut BufReader<fs::File>, comp_size: usize, out: &Path) -> Option<bool> {
+    let mut outfile = match fs::File::create(out) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("extract {}: create void: {e}", out.display());
+            return Some(false);
+        }
+    };
+    let mut remaining = comp_size as u64;
+    let mut buf = [0u8; 65536];
+    while remaining > 0 {
+        let want = (buf.len() as u64).min(remaining) as usize;
+        if reader.read_exact(&mut buf[..want]).is_err() {
+            return None;
+        }
+        if let Err(e) = outfile.write_all(&buf[..want]) {
+            eprintln!("extract {}: write void: {e}", out.display());
+            return Some(false);
+        }
+        remaining -= want as u64;
+    }
+    Some(true)
+}
+
+fn read_and_inflate(
+    reader: &mut BufReader<fs::File>,
+    comp_size: usize,
+    out: &Path,
+) -> Option<bool> {
+    let mut body = vec![0u8; comp_size];
+    if reader.read_exact(&mut body).is_err() {
+        return None;
+    }
+    let Some(uncompressed) = omegaflow::inflate::inflate(&body) else {
+        eprintln!("extract {}: deflate payload unreadable", out.display());
+        return Some(false);
+    };
+    match fs::write(out, &uncompressed) {
+        Ok(()) => Some(true),
+        Err(e) => {
+            eprintln!("extract {}: write void: {e}", out.display());
+            Some(false)
+        }
+    }
+}
+
+fn extract_dat(workdir: &Path, zip_path: &Path) -> ExtractReport {
+    let mut report = ExtractReport {
+        extracted: 0,
+        truncated: false,
+    };
+    let file = match fs::File::open(zip_path) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("extract {}: open void: {e}", zip_path.display());
+            return report;
+        }
+    };
+    let mut reader = BufReader::new(file);
+    loop {
+        let mut sig = [0u8; 4];
+        match reader.read_exact(&mut sig) {
+            Ok(()) => {}
+            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => break,
+            Err(e) => {
+                eprintln!("extract {}: read void: {e}", zip_path.display());
+                report.truncated = true;
+                break;
+            }
+        }
+        if sig != *b"PK\x03\x04" {
+            eprintln!(
+                "extract {}: lost the local-file signature {:02x?} — partial named",
+                zip_path.display(),
+                sig
+            );
+            report.truncated = true;
+            break;
+        }
+        let mut fixed = [0u8; 26];
+        if reader.read_exact(&mut fixed).is_err() {
+            report.truncated = true;
+            break;
+        }
+        let flags = le16(&fixed, 2);
+        let method = le16(&fixed, 4);
+        let comp_size = le32(&fixed, 14);
+        let name_len = le16(&fixed, 22);
+        let extra_len = le16(&fixed, 24);
+        let mut name_buf = vec![0u8; name_len];
+        if reader.read_exact(&mut name_buf).is_err() {
+            report.truncated = true;
+            break;
+        }
+        let name = String::from_utf8_lossy(&name_buf).into_owned();
+        if extra_len > 0 {
+            let mut extra = vec![0u8; extra_len];
+            if reader.read_exact(&mut extra).is_err() {
+                report.truncated = true;
+                break;
+            }
+        }
+        let has_descriptor = flags & 0x08 != 0;
+        if has_descriptor && comp_size == 0 {
+            eprintln!(
+                "extract: {name} carries a data descriptor without a local size — partial named"
+            );
+            report.truncated = true;
+            break;
+        }
+        if !name.ends_with(".DAT") {
+            if !skip_bytes(&mut reader, comp_size) {
+                report.truncated = true;
+                break;
+            }
+            if has_descriptor && !consume_descriptor(&mut reader) {
+                report.truncated = true;
+                break;
+            }
+            continue;
+        }
+        let base = name.rsplit('/').next().unwrap_or(&name).to_string();
+        let out = workdir.join(&base);
+        let written = match method {
+            0 => copy_stored(&mut reader, comp_size, &out),
+            8 => read_and_inflate(&mut reader, comp_size, &out),
+            _ => {
+                eprintln!("extract: {name} uses compression method {method} — unported, skipped");
+                if !skip_bytes(&mut reader, comp_size) {
+                    report.truncated = true;
+                    break;
+                }
+                if has_descriptor && !consume_descriptor(&mut reader) {
+                    report.truncated = true;
+                    break;
+                }
+                continue;
+            }
+        };
+        match written {
+            Some(true) => report.extracted += 1,
+            Some(false) => {}
+            None => {
+                report.truncated = true;
+                break;
+            }
+        }
+        if has_descriptor && !consume_descriptor(&mut reader) {
+            report.truncated = true;
+            break;
+        }
+    }
+    report
+}
+
+#[derive(Clone)]
+struct Slot {
+    label: String,
+    oid: i64,
+    pulled_partial: bool,
 }
 
 fn run() -> std::io::Result<()> {
@@ -538,7 +758,7 @@ fn run() -> std::io::Result<()> {
     let urns: Vec<String> = urns.into_iter().take(urn_limit).collect();
 
     let batches: Vec<Vec<String>> = urns.chunks(BATCH).map(|c| c.to_vec()).collect();
-    let mut slots: Vec<(String, i64)> = Vec::new();
+    let mut slots: Vec<Slot> = Vec::new();
     let mut idx = 0usize;
     let mut harvested_files = 0usize;
     let mut last_token_refresh = start;
@@ -573,7 +793,11 @@ fn run() -> std::io::Result<()> {
             }
             match create_order(&token, &batches[idx], &label) {
                 Ok(oid) => {
-                    slots.push((label.clone(), oid));
+                    slots.push(Slot {
+                        label: label.clone(),
+                        oid,
+                        pulled_partial: false,
+                    });
                     println!("harvest: created {oid} {label} (slots {})", slots.len());
                     std::thread::sleep(std::time::Duration::from_secs(CREATE_PAUSE_SECS));
                 }
@@ -628,32 +852,88 @@ fn run() -> std::io::Result<()> {
             }
         }
         let mut progressed = false;
-        for (label, oid) in slots.clone() {
-            let (st, _avail) = order_status(&token, oid);
-            if st == "DONE" || st == "DELIVERED" {
-                let zip = Path::new(&workdir).join(format!("{oid}.zip"));
-                if download_zip(&token, oid, &zip) {
-                    let n = extract_dat(Path::new(&workdir), &zip);
-                    harvested_files += n;
-                    println!("harvest: {label} DONE +{n} files (total {harvested_files})");
-                    let _ = fs::remove_file(&zip);
-                    done.insert(label.clone());
-                    if let Ok(mut f) = fs::OpenOptions::new()
-                        .create(true)
-                        .append(true)
-                        .open(&ledger_path)
-                    {
-                        let _ = writeln!(f, "{label}");
+        let snapshot = slots.clone();
+        let mut remove: Vec<String> = Vec::new();
+        let mut mark_partial: Vec<i64> = Vec::new();
+        for slot in &snapshot {
+            let (st, avail) = order_status(&token, slot.oid);
+            if status_is_dead(&st) {
+                eprintln!("harvest: {} {st} — removed from slots", slot.label);
+                remove.push(slot.label.clone());
+                progressed = true;
+                continue;
+            }
+            let final_order = status_is_final(&st);
+            let live_with_files = status_has_live_files(&st) && avail > 0;
+            let should_download = (final_order) || (live_with_files && !slot.pulled_partial);
+            if !should_download {
+                continue;
+            }
+            let zip = Path::new(&workdir).join(format!("{}.zip", slot.oid));
+            match download_zip(&token, slot.oid, &zip) {
+                DownloadOutcome::Complete(path) => {
+                    let report = extract_dat(Path::new(&workdir), &path);
+                    harvested_files += report.extracted;
+                    let _ = fs::remove_file(&path);
+                    if final_order {
+                        if report.truncated {
+                            eprintln!(
+                                "harvest: {} {st} entry stream truncated after {} files — kept for the next run",
+                                slot.label, report.extracted
+                            );
+                        } else {
+                            println!(
+                                "harvest: {} {st} +{} files (total {harvested_files})",
+                                slot.label, report.extracted
+                            );
+                            done.insert(slot.label.clone());
+                            if let Ok(mut f) = fs::OpenOptions::new()
+                                .create(true)
+                                .append(true)
+                                .open(&ledger_path)
+                            {
+                                let _ = writeln!(f, "{}", slot.label);
+                            }
+                        }
+                        remove.push(slot.label.clone());
+                    } else {
+                        mark_partial.push(slot.oid);
+                        println!(
+                            "harvest: {} RUNNING +{} files (partial, total {harvested_files})",
+                            slot.label, report.extracted
+                        );
                     }
-                } else {
-                    eprintln!("harvest: {label} DONE but zip void — retry");
+                    progressed = true;
                 }
-                slots.retain(|(l, _)| l != &label);
-                progressed = true;
-            } else if st == "ERROR" || st == "FAILED" || st == "EXPIRED" {
-                eprintln!("harvest: {label} {st} — removed from slots");
-                slots.retain(|(l, _)| l != &label);
-                progressed = true;
+                DownloadOutcome::Incomplete(path) => {
+                    let report = extract_dat(Path::new(&workdir), &path);
+                    harvested_files += report.extracted;
+                    let _ = fs::remove_file(&path);
+                    if final_order {
+                        remove.push(slot.label.clone());
+                    } else {
+                        mark_partial.push(slot.oid);
+                    }
+                    eprintln!(
+                        "harvest: {} {st} incomplete stream +{} files named partial (total {harvested_files})",
+                        slot.label, report.extracted
+                    );
+                    progressed = true;
+                }
+                DownloadOutcome::Void => {
+                    eprintln!(
+                        "harvest: {} {st} download void — retry next cycle",
+                        slot.label
+                    );
+                }
+            }
+        }
+        if !remove.is_empty() {
+            slots.retain(|s| !remove.contains(&s.label));
+        }
+        for s in slots.iter_mut() {
+            if mark_partial.contains(&s.oid) {
+                s.pulled_partial = true;
             }
         }
         if !progressed {

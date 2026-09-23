@@ -1810,6 +1810,24 @@ fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
     None
 }
 
+fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
+    if let Some(secs) = derive_ttl(&src.url, body, &HashMap::new()) {
+        return Some(secs as f64);
+    }
+    if let Some(tau) = src.extracts.iter().find_map(|ext| match ext {
+        Extract::Field(fc) if fc.key == key && fc.tau.is_finite() && fc.tau > 0.0 => Some(fc.tau),
+        _ => None,
+    }) {
+        return Some(tau);
+    }
+    let (_, _, tau) = probe_classify(key);
+    if tau.is_finite() && tau > 0.0 {
+        Some(tau)
+    } else {
+        None
+    }
+}
+
 pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary" {
         let mut buf = Vec::new();
@@ -2004,12 +2022,15 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         return ExtractResult::Measurements(channels);
     }
     if src.format == "arpansa" || src.format == "uvxml" {
+        let Some(tau) = field_tau(src, "uv_index", body) else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let fc = FieldConfig {
             key: "uv_index".to_string(),
             name: "uv_index".to_string(),
             kernel: 0,
             force: 0,
-            tau: src.ttl as f64 / 10.0,
+            tau,
             absorption: 0.0,
             advection: 0.0,
             unit: "UVI".to_string(),
@@ -2051,19 +2072,21 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         else {
             return ExtractResult::Measurements(vec![]);
         };
-        let tau = src.ttl as f64 / 10.0;
-        let fcfg = |name: &str, kernel: u8, force: u8, unit: &str| FieldConfig {
-            key: name.to_string(),
-            name: name.to_string(),
-            kernel,
-            force,
-            tau,
-            absorption: 0.0,
-            advection: 0.0,
-            unit: unit.to_string(),
-            freq: 0.0,
-            bin_width: 0.0,
-            fold: None,
+        let fcfg = |name: &str, kernel: u8, force: u8, unit: &str| -> Option<FieldConfig> {
+            let tau = field_tau(src, name, &text)?;
+            Some(FieldConfig {
+                key: name.to_string(),
+                name: name.to_string(),
+                kernel,
+                force,
+                tau,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: unit.to_string(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+            })
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for s in crate::archivar::igra::parse_igra(&text) {
@@ -2077,7 +2100,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     lon: s.lon,
                     alt,
                 };
-                let emitted: [(Option<f64>, FieldConfig); 6] = [
+                let emitted: [(Option<f64>, Option<FieldConfig>); 6] = [
                     (
                         lvl.press_pa.map(|p| p / 100.0),
                         fcfg("igra_air_pressure_hpa", 5, 7, "hPa"),
@@ -2089,7 +2112,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     (lvl.dpdp_c, fcfg("igra_dewpoint_c", 4, 5, "C")),
                 ];
                 for (value, fc) in emitted {
-                    if let Some(v) = value {
+                    if let (Some(v), Some(fc)) = (value, fc) {
                         channels.push((
                             Channel {
                                 z: 0.0,
@@ -2116,12 +2139,15 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Some(pixels) = crate::archivar::fugin::parse_fugin_cube(&buf) else {
             return ExtractResult::Measurements(vec![]);
         };
+        let Some(tau) = field_tau(src, "fugin_moment0", body) else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let fc = FieldConfig {
             key: "fugin_moment0".to_string(),
             name: "fugin_moment0".to_string(),
             kernel: 0,
             force: 0,
-            tau: src.ttl as f64 / 10.0,
+            tau,
             absorption: 0.0,
             advection: 0.0,
             unit: "K m/s".to_string(),
