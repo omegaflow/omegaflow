@@ -15,8 +15,11 @@ fn parameter(query: &str, key: &str) -> Option<String> {
 }
 
 fn term(query: &str) -> String {
-    if let Some(explicit) = parameter(query, "term") {
-        return explicit;
+    if let Some((_, rest)) = query.split_once("term=") {
+        let explicit = rest.trim();
+        if !explicit.is_empty() {
+            return explicit.to_string();
+        }
     }
     query
         .split_whitespace()

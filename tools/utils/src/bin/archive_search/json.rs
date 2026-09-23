@@ -36,6 +36,7 @@ impl Json {
         match self {
             Json::Str(s) => Some(s.clone()),
             Json::Num(n) if n.is_finite() && n.fract() == 0.0 => Some(format!("{}", *n as i64)),
+            Json::Num(n) if n.is_finite() => Some(format!("{n}")),
             _ => None,
         }
     }

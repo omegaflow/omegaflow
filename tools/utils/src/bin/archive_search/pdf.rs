@@ -204,7 +204,7 @@ impl<'a> Pdf<'a> {
             let Some((off, _)) = parse_uint_at(data, i) else {
                 break;
             };
-            entries.push((num, off as usize));
+            entries.push((num, first + off as usize));
         }
         for (idx, (num, _)) in entries.iter().enumerate() {
             self.objects
