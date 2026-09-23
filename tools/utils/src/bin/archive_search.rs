@@ -1479,7 +1479,7 @@ fn line_matches(line: &str, needle: &[String], case_sensitive: bool) -> bool {
         needle.iter().any(|n| line.contains(n.as_str()))
     } else {
         let lower = line.to_lowercase();
-        needle.iter().any(|n| lower.contains(n))
+        needle.iter().any(|n| lower.contains(&n.to_lowercase()))
     }
 }
 
