@@ -1,0 +1,6 @@
+binding bayestar19
+url https://dataverse.harvard.edu/api/access/datafile/3424708
+nside 512
+bins 120
+r_v 3.1
+note Bayestar19 3D-Staubkarte (Green 2019, DOI 10.7910/DVN/2EJ9TX, CC0): BEST_FIT E(B-V) je Pixel über 120 Distanz-Bins; kompiliert als bayestar2019.be19 via bayestar_compiler, CDN dataverse.harvard.edu.
