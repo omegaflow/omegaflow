@@ -1164,6 +1164,13 @@ pub fn prose_violation(line: &str) -> Option<&'static str> {
     None
 }
 
+pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
+    if path == "phi/sources.φ" && (line == "note" || line.starts_with("note ")) {
+        return Some("phi-sources-note");
+    }
+    prose_violation(line)
+}
+
 const REGISTER_SECTIONS: [&str; 6] = [
     "Maschinen-Register",
     "Dispositions-Register",
@@ -2726,6 +2733,16 @@ mod tests {
             prose_violation(&fx("phi_register_comment")),
             Some("phi-register-comment")
         );
+    }
+
+    #[test]
+    fn fp_sources_note_blocked_dead_blocked_kept() {
+        assert_eq!(
+            prose_violation_for("phi/sources.φ", &fx("phi_sources_note")),
+            Some("phi-sources-note")
+        );
+        assert!(prose_violation_for("phi/dead_sources.φ", &fx("phi_sources_note")).is_none());
+        assert!(prose_violation_for("phi/blocked_sources.φ", &fx("phi_sources_note")).is_none());
     }
 
     #[test]
