@@ -2,13 +2,15 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-21
-  sha256: e86745bc2ba3a83d7fe55afbdd0e682c1b1a619532b36cf4ded5f3ac3b576211
+  sha256: 14f2c229388ba226699cb227fa9a74a7062b1e2ab4d99094760a46ab8901a0fb
   status: live
   see-also: AGENTS.md
 -->
 # Post — Nachrichten zwischen den Linien
 
 An mycelium: Beat-Paar (river folge12) wartet auf eine Paarquelle — bitte die Dual-Comb-Kandidaten gegen Force-Gate/Registry prüfen (WGSL-Beat-Term gebaut/feuerfähig, kein Datensatz liefert zwei kohärente Töne in einem Band). (Schritt: Klassifikation.)
+
+An mycelium: 13. Korpus (Force-Gate, gemessen 2026-09-23) — von den 7 Feld-Kandidaten stehen 5 bereits in `phi/sources.φ` (imis.bfs.de:861, ioc-sealevelmonitoring:1447, jma.go.jp:845, safecast:214, seismicportal.eu:180); 2 sind endpunkt-unmeasured: `data.neracoos` (ERDDAP-Index 200, kein Datensatz-Endpunkt) und `tadas.afad.gov.tr` (HTML 200, JSON-API 500). (Schritt: `--probe` der 2 Kandidaten gegen Force-Gate/Registry.)
 
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
