@@ -176,6 +176,17 @@ lat properties.lat
 lon properties.lon
 field properties.intensity lightning_peak_current_ka inverse-square em kA 6.0 0.0 0.0
 
+url https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start={week_ago}&end={today}&minmag=2.5
+ttl 60
+at earth
+map .
+lat latitude
+lon longitude
+epoch date
+mag_type_key type
+field magnitude geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+field depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
 at earth
