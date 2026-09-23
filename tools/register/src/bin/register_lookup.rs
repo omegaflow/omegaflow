@@ -1936,9 +1936,6 @@ fn run_dropped(args: &[String]) {
                     continue;
                 }
                 dropped += 1;
-                if count_only {
-                    continue;
-                }
                 let git_status = match distinctive_token(&tokens) {
                     Some(token) => {
                         let lower = commit_for_path_cached(&n.path, &mut commit_cache);
@@ -1957,16 +1954,18 @@ fn run_dropped(args: &[String]) {
                     }
                     None => "none",
                 };
-                println!(
-                    "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
-                    line,
-                    n.path,
-                    point.lineno,
-                    next.path,
-                    snippet(&point.text, 160),
-                    persist,
-                    git_status
-                );
+                if !count_only {
+                    println!(
+                        "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
+                        line,
+                        n.path,
+                        point.lineno,
+                        next.path,
+                        snippet(&point.text, 160),
+                        persist,
+                        git_status
+                    );
+                }
             }
         }
         if !count_only {
@@ -1983,7 +1982,7 @@ fn run_dropped(args: &[String]) {
         }
     }
     if count_only {
-        println!("{}", dropped);
+        println!("{}", dropped - resolved);
         return;
     }
     let scope = match filter {
@@ -1998,7 +1997,7 @@ fn run_dropped(args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints only the dropped integer)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
