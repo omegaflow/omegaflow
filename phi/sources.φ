@@ -8037,7 +8037,7 @@ sha256 6f60033e51e8bfb21e02e8389988e6e60460b015b91d31b746c6a56bc2d8a0ba
 on earth 0 0 0
 ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
-note SuperDARN RAWACF CDN 2026-09-23: HTTP 200, 215288 B, sha256 == :8036 — manifestiert.
+note SuperDARN RAWACF CDN 2026-09-23: HTTP 200, 215288 B, sha256 == :8036. frang=0 null-echt (lagfr·c/2=Abstand 1. Gate; RST rprm.c DATASHORT ohne Sentinel): raw.githubusercontent.com/SuperDARN/rst/main/codebase/superdarn/src.lib/tk/radar.1.22/src/rprm.c
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
 format glm_l1b
@@ -8047,7 +8047,7 @@ sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
 on earth 0 0 0
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
-note NOAA-S3 goes16 2026-09-22: offener Bucket GLM/ traegt nur GLM-L2-LCFA. GHRC-EDL glml1bflash__1 token-gedeckt (Granule 200 mit EARTHDATA_EDL_TOKEN, 401 ohne). CDN glm_l1b.bin 2026-09-23: HTTP 200, 1050368 B, sha256 == :8044 — manifestiert.
+note NOAA-S3 goes16 2026-09-22: Bucket GLM/ traegt nur GLM-L2-LCFA, token-frei. GHRC-EDL glml1bflash__1 token-gedeckt (Granule 200 mit EARTHDATA_EDL_TOKEN, 401 ohne). CDN glm_l1b.bin 2026-09-23: HTTP 200, 1050368 B, sha256 == :8046 — manifestiert.
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bin
 format glm_l2
