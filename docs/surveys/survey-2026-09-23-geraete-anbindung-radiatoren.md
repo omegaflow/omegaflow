@@ -2,7 +2,7 @@
   title: Survey — Geräte-Anbindung: vollständige Oszillator-/Radiator-/Relais-Inventare (Stand 2026-09-23)
   class: survey
   date: 2026-09-23
-  sha256: cebd287187b48451a36d5475a324ff1d6401d9736d680f0e9ba7b6fb3ea3aef8
+  sha256: 7323015377ec3fdbe1cb69d0fc49a7c2e943c377f7a3baae974958739e58e131
   status: live
   see-also: docs/surveys/survey-2026-09-20-browser-anbindung.md, AGENTS.md, docs/concepts/archivar-mathematikerin.md
 -->
@@ -267,8 +267,10 @@ explizit verbauten Kanäle reduziert.
 
 ## Transport (gemessen)
 
-- Der Relay ist heute **loopback-gebunden** (`relay.rs:59`); ein LAN-Gerät braucht
-  Bind-Erweiterung oder TLS-Reverse-Proxy auf dem Host.
+- Der Relay bindet seit River folge13 **über Loopback hinaus**: `relay_bind_addr()`
+  liest `OMEGAFLOW_RELAY_BIND`, Default `0.0.0.0` (Operator-Wort für die
+  LAN-Exposition, 2026-09-23); die Loopback-Restriktion bleibt über die Env-Variable
+  erreichbar.
 - Wegen Secure-Context (WebXR/`getUserMedia`) und Mixed-Content ist **wss mit
   vertrauenswürdigem Zertifikat** der tragende Pfad; PNA-Preflight beim
   Public→Private-Fall. `WebSocket` selbst: Chrome 5 / Android+Oculus (mirror).
@@ -308,10 +310,18 @@ Knoten sendet und dort die Vibration erregt. Messergebnis: **das Gerät vibriert
 mit Σω** und **sendet N ≥ 2 Oszillatoren**. Erstes Gerät: Pixel (vollster
 Cluster), Quest als Träger desselben Kanals. Consent-Kanten: LAN-Exposition
 (Operator-Wort), Vibration/Strahlung (per-Act-Wort, nie im `OMEGAFLOW_HIDDEN`-Lauf).
+**Gebaut (River folge13, 2026-09-23):** (a) `relay_bind_addr()` (`relay.rs`,
+`OMEGAFLOW_RELAY_BIND`, Default `0.0.0.0` — Operator-Wort für a+c erteilt);
+(b) `static/sensorium.js` (Generic Sensor API, Device-Motion/-Orientation, Mikro,
+Kamera, Battery, Geolocation, Gamepad, XR) und (c) `static/radiator.js`
+Vibrations-Peer über den `KINETIC_TAG`-Pfad in `static/index.html`. Offen bleibt die
+**Gerätemessung**: Pixel über LAN verbinden, `navigator.vibrate` mit Σω und ≥ 2
+Oszillatoren im Sample-Strom.
 
 **Paralleles, unabhängiges Atom — FIT-Brücke:** `fit_compiler` im Archivar liest
 die FIT-Datei (USB-Mount) und speist die ersten echten N-N-Intervalle in den
-gebauten `VagusTone`.
+gebauten `VagusTone`. **Gebaut (sensory-Folge 152, 2026-09-23):** `src/archivar/fit.rs`
++ Verdrahtung `main_flow.rs`; offen die echte 945-FIT-Aktivität.
 
 **Descoped — mit Befund:**
 - **E-Ink-Panel als Radiator (Bigme):** E-Ink-τ (~0,5–10 s, Ghosting) trägt keine
