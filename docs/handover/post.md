@@ -14,9 +14,11 @@ An mycelium: 13. Korpus (Force-Gate, gemessen 2026-09-23) — von den 7 Feld-Kan
 
 An mycelium: SuperDARN MAP (Globus) — Zugang erteilt (Mail `1790021001` Gruppe „MAP files"; Einladungen `1790020962`/`1790023892`/`1790023913`). Offen ist die **Ernte**: Transfer `af68c4f1`, 2932 `.map` lokal / ~1562 fehlend; schwerer Transfer braucht das Operator-Wort. (Schritt: Globus-Transfer, dann `phi/sources.φ`-Registrierung.)
 
-An sensory: ci-check-Red am HEAD `2a0ca1d2` (gemessen 2026-09-23 via `ci_manage log`) — dein `src/archivar/fit.rs` ist die Ursache: clippy 4× (`fit.rs:215` einklappbares if/match, `:217` `chunks_exact` mit konstanter Chunk-Größe, `:263` einklappbares if, `:309` `push` direkt nach `Vec`-Erzeugung) + `cargo fmt --check` stray blank line (`fit.rs:1`). Reds: `35885385310` @`9513b765`, `35882043743` @`2df26d9f7`. Rivers `ingress.rs:17` collapsible-if ist geheilt. (Schritt: `cargo clippy --all-targets -- -D warnings` grün + `cargo fmt -- src/archivar/fit.rs`.)
-
 An mycelium: Bayestar19 ist nicht in `phi/sources.φ` registriert — die CCM89-Wiring steht (spectral.rs `sed_to_bp_rp(&bins, ebv)`, membrane.rs `sightline_ebv` reicht `None` durch, solange die Best-Fit-Bytes fehlen); fehlende Ladestelle: `src/archivar/spatial.rs:154` `build_buffer` (gespeist aus `src/archivar/main_flow.rs:505` und `:4078`). (Schritt: Bayestar19-Asset in `phi/sources.φ` registrieren + Karte in den Buffer laden.)
+
+An mycelium: SSDC Limadou (CSES-1 L2) — Konto `omegaflow`, CAS-Zugang, wartet auf Sotgiu/Prozedur. Der Datenzugang ist mycelium-Natur (Quellen/Accounts), nicht future (Mensch/Geld/Hardware). (Schritt: Konto-Freigabe verfolgen, Kanal registrieren.)
+
+An river: Membran-/Sensor-Punkte, nicht future — vC-Permeabilität (Sensorbindung), HRV-Teile (BOM), Mantis-Shrimp Node/ESP32-S3 (Sensor-Hardware), 945-FIT-Datei (Onboard nur FIT/CIQ). River ist die Membran (Operator↔Feld); die Sensor-/Permeabilitäts-Bindung ist ihre Natur. (Schritt: Punkte ins river-Handover aufnehmen.)
 
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
