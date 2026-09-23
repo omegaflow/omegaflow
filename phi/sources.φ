@@ -816,6 +816,17 @@ lat sourceInfo.geoLocation.geogLocation.latitude
 lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
 
+url https://weather.cma.cn/api/now/54511
+ttl 300
+header User-Agent Mozilla/5.0
+on earth 39.904 116.407 0
+map data.now
+field temperature atmosphere_cma_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+field pressure atmosphere_cma_pressure_hpa gaussian-inverse-square diffusion hPa 30.0 0.0 0.0
+field humidity atmosphere_cma_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field windSpeed atmosphere_cma_wind_speed_ms patch-levy advective m/s 30.0 0.0 0.0
+field precipitation atmosphere_cma_precipitation_mm patch-levy advective mm 30.0 0.0 0.0
+
 url https://www.nhc.noaa.gov/CurrentStorms.json
 ttl 300
 at earth
