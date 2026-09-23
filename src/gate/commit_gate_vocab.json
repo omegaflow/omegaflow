@@ -41,6 +41,8 @@
     ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"],
     ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"],
     ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"],
+    ["ttl as f64 / 10.0", "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"],
+    [" 1 {} 0.0 0.0", "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"],
     ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"]
   ],
   "zero_fabrication": [
@@ -394,6 +396,8 @@
     "pii_mail_domain": "the private mailbox is user@proton.me",
     "pii_home_path": "the tree lives at /home/someuser/projects/omegaflow",
     "pii_ci_home": "the CI checkout is /home/runner/work/omegaflow/omegaflow",
-    "pii_role_address": "smail --dry-run --to role@example.org"
+    "pii_role_address": "smail --dry-run --to role@example.org",
+    "field_unit_literal_1": "Some(format!(\n    \"{} {} {} {} {} 1 {} 0.0 0.0\\n\",\n    directive, key, name, kernel, f, tau\n))",
+    "field_tau_ttl_tenth": "let tau = ttl as f64 / 10.0;"
   }
 }

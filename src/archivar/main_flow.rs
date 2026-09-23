@@ -330,7 +330,7 @@ pub fn main_flow() {
                     std::process::exit(1);
                 }
             };
-            std::process::exit(port_mode(input, output));
+            std::process::exit(port_mode(input, output, &env));
         }
         if args.len() > 1 && args[1] == "--learn-gate" {
             std::process::exit(gate_learn_mode());
