@@ -464,6 +464,49 @@ pub fn presence_gate(
         })
 }
 
+pub fn record_in_enclosure(
+    presences: &[PresenceSample],
+    p_r: Option<[f64; 3]>,
+    t_r: f64,
+    now: f64,
+    fc: &FieldConfig,
+    body_props: Option<&BodyProperties>,
+    body_radius: Option<f64>,
+    anchor_vmax: f64,
+    anchor_amax: f64,
+    pad: f64,
+    effective_ttl: f64,
+) -> bool {
+    let Some(p_r) = p_r else {
+        return true;
+    };
+    let age = (now - t_r).abs();
+    if age > effective_ttl * 64.0 {
+        return false;
+    }
+    let Some(reach_signal) =
+        signal_reach(fc.force as f64, fc.advection, age, fc.freq, fc.bin_width)
+    else {
+        return true;
+    };
+    let extent = kernel_extent(fc.force, fc.kernel, body_props, fc.tau);
+    let rho = anchor_vmax * age + 0.5 * anchor_amax * age * age + pad;
+    presences
+        .iter()
+        .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust, grid_step)| {
+            let v_abs = (vx * vx + vy * vy + vz * vz).sqrt();
+            let body_term = match body_radius {
+                Some(r) => r.max(Φ * grid_step),
+                None => Φ * grid_step,
+            };
+            let limit = reach_signal + extent + rho + v_abs * age + body_term;
+            let dx = p_r[0] - px;
+            let dy = p_r[1] - py;
+            let dz = p_r[2] - pz;
+            (dx * dx + dy * dy + dz * dz).sqrt() <= limit
+        })
+}
+
 pub fn json_has_content(v: &JsonVal) -> bool {
     match v {
         JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),

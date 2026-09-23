@@ -11,8 +11,8 @@ pub struct SpatialHash {
     pub epoch_min: f64,
     pub cell_lo: CellKey,
     pub cell_hi: CellKey,
-    pub cells: HashMap<CellKey, Vec<Sample>>,
-    pub unbounded: Vec<Sample>,
+    pub cells: HashMap<CellKey, Vec<Arc<Sample>>>,
+    pub unbounded: Vec<Arc<Sample>>,
 }
 
 #[derive(Clone)]
@@ -90,7 +90,7 @@ pub fn law_bounds(
     Some((Φ * (v + resid_ema), Φ * a, p0))
 }
 
-pub fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
+pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHash {
     let mut bounded = Vec::new();
     let mut unbounded = Vec::new();
     for s in samples {
@@ -122,7 +122,7 @@ pub fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
         span = span.max(hi - lo);
     }
     let cell_size = motion_cell.max(span / 1024.0);
-    let mut cells: HashMap<CellKey, Vec<Sample>> = HashMap::new();
+    let mut cells: HashMap<CellKey, Vec<Arc<Sample>>> = HashMap::new();
     let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
     for s in bounded {
@@ -152,7 +152,7 @@ pub fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
 }
 
 pub fn build_buffer(
-    samples: Vec<Sample>,
+    samples: Vec<Arc<Sample>>,
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
     curves: Option<Arc<CurveSet>>,
@@ -392,10 +392,23 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
         if age > sample.ttl * 64.0 {
             continue;
         }
-        if signal_reach(sample.force_type, sample.advection, age).is_none() {
+        if signal_reach(
+            sample.force_type,
+            sample.advection,
+            age,
+            sample.freq,
+            sample.bin_width,
+        )
+        .is_none()
+        {
             continue;
         }
-        let v_prop = match propagation_speed(sample.force_type, sample.advection) {
+        let v_prop = match propagation_speed(
+            sample.force_type,
+            sample.advection,
+            sample.freq,
+            sample.bin_width,
+        ) {
             Some(v) => v,
             None => continue,
         };
@@ -515,13 +528,19 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
     let in_box = |ck: &CellKey| {
         ck.0 >= lo.0 && ck.0 <= hi.0 && ck.1 >= lo.1 && ck.1 <= hi.1 && ck.2 >= lo.2 && ck.2 <= hi.2
     };
-    let mut emit = |samples: &Vec<Sample>| {
+    let mut emit = |samples: &Vec<Arc<Sample>>| {
         for sample in samples {
             let age = (t2 - sample.epoch).abs();
             if age > sample.ttl * 64.0 {
                 continue;
             }
-            let reach_signal = match signal_reach(sample.force_type, sample.advection, age) {
+            let reach_signal = match signal_reach(
+                sample.force_type,
+                sample.advection,
+                age,
+                sample.freq,
+                sample.bin_width,
+            ) {
                 Some(r) => r,
                 None => continue,
             };
