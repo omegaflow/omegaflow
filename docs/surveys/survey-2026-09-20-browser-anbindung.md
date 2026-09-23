@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: c272bfcec03c32e515c1fac9baf698cff6a4768c7201cc71a9d2a3c59ab02838
+  sha256: c964a19b5294858098b564ecb07bb2fc6eb7d382ad494957c0916e906031383c
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -147,3 +147,25 @@ Identitäten, je mit gemessener Nutzung; Konsolidierung wäre ein Descope ohne B
 4. Cookie-Editor als **manuelles** Operator-Werkzeug; Transfer nur per Akt mit
    Operator-Wort (Cookies = Zugangsdaten).
 5. Playwright-Browser-Extension **nicht** einbauen — befund-gated im Handover.
+
+## Messnachtrag 2026-09-23 — Pfad 4 registriert (`opencode-chromium`)
+
+Operator-Wort „beide behalten und registrieren". Bau-Schnitt Punkt 5 ist damit überholt: neben
+Pfad 1 wurde `opencode-chromium` (stärkster Kandidat aus Befund A, „bereichernd") installiert,
+vermessen und als vierter Pfad registriert (`docs/concepts/tools-map.md`).
+
+**Mechanik:** npm `opencode-chromium@1.7.2` (MIT, `Quindart-com/opencode-chromium`) + Store-Extension
+`hdljmmpfnhojebplbbgdgejoobmjcbml` + Native-Messaging-Host `com.opencode.browser.plugin` (kein
+localhost-Dauerport; CDP auf kontrollierten Tabs). Vier Tools: `browser_run` (Step-Kette ≤20),
+`browser_observe`, `browser_session`, `browser_finalize`; `find` = semantische Suche (`query`).
+
+**Messung (2026-09-23, gleiche Maschine, gleiches Chrome Profile 1, example.com):**
+- Transport-Roundtrip: Pfad 1 `tabs` 12–20 ms; Pfad 4 echte Host-Roundtrips ~10–20 ms → gleichauf.
+- Navigation: Pfad 1 ~180 ms (warm) / ~475 ms (cache-busted, wartet auf `load`); Pfad 4 default
+  `dom-quiet`-Settle ~2,7 s (Timeout) → mit `waitUntil:load` + `settle:{exists,selector}` ~130 ms.
+- Text/DOM: Pfad 1 `get_text` 9–20 ms; Pfad 4 `observe extract` 13–60 ms.
+- Koexistenz beider Brücken am selben Profil: gemessen, kein Konflikt.
+
+**Verdikt:** Transport identisch; der spürbare Unterschied ist die Warte-Politik (Pfad 4 default
+langsamer, mit gezieltem Settle schneller; batcht bis 20 Steps/Roundtrip). Pfad 4 trägt den
+OpenCode-1.18.x-Adapter **und** den V2-Vertrag → blockiert den opencode-2.0-Umstieg nicht.
