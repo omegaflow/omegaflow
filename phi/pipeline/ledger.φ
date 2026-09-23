@@ -18,3 +18,7 @@ note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 20
 disponiert
 kandidat https://babamul.caltech.edu/api/
 note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-23 CDN babamul_alerts.bin HTTP 200, 2000013 B, sha256 sources.φ:14022; Lauf 35805467066 success. Port kompiliert+manifestiert, Re-Dispatch erledigt.
+
+disponiert
+kandidat https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter
+note 2026-09-23 HTTP 200 JSON, flaches Array von Objekten alle Werte String; Pflichtparameter start/end/minmag (limit wirkungslos); Route in phi/sources.φ eingegangen (map ., lat/lon/epoch/mag_type_key, magnitude+depth).
