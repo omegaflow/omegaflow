@@ -2,7 +2,7 @@
   title: Survey — Verlorene/vergessene Diskussionen über beide Historien (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 830d62253cb5f075b12dbc15f7feade06f137f913e97ee8fc247f93d7e3353c9
+  sha256: d1d1edd21bf7d1de566aacff1a79144e951a74971b1e32cb6514cd9872b67ecd
   status: live
   see-also: docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md docs/handover/post.md
 -->
@@ -82,8 +82,8 @@ diese Karte ergänzt die Diskussions-/Entscheidungs-Nähte, ohne zu duplizieren.
 | gpu-feature-gate | Legacy `8b1c38b5` „als eigenes Atom registriert"; heute 0 Treffer im Baum | nie unter dem Namen gebaut; ersetzt durch „GPU is the membrane" (`archivar-mathematikerin.md:36`) | nein — als descoped mit diesem Beleg zu schließen |
 | Permeability-Radiation-Bindung | `AGENTS.md:116` „pending (the TE machine lives; the binding awaits its own atom)"; `survey-…-legacy-konzepte.md:44` (Channel Apertures) | wartet auf eigenes Atom (Atom 9 strahlt Rohfeld) | **geschlossen mit Beleg (2026-09-23)** — im Baum verifiziert: `src/mathematikerin/omega.rs:347` `aperture = field_permeability * tone_scale`; `src/mathematikerin/actuators.rs:29`; Test `src/mathematikerin/tests.rs:570`; Commit `356fa616` |
 | HRV/ESP32-Puls-Bindung | `AGENTS.md:79` (RMSSD/tone-Gate steht in `src/archivar/hrv.rs`; Bindung pending) | — | ja — pending |
-| Atom D (phase/presence-Konsum) | `docs/specs/spectral-oscillator.md:221–228` „Atom D is unbuilt"; `binary-protocol.md:173` | Slots fahren seit v9 mit, nichts liest sie | ja — benannt ungebaut |
-| field absorption | `docs/specs/force-system.md:96` „field absorption is pending" | — | ja — pending |
+| Atom D (phase/presence-Konsum) | `docs/specs/spectral-oscillator.md:221–228` „Atom D is unbuilt"; `binary-protocol.md:173` | Slots fahren seit v9 mit, nichts liest sie | **pending mit Trigger (Rat, 2026-09-23)** — Wire-Buchse gebaut (`spatial.rs:483`, `relay.rs:838`, `constants.js:116`), kein Producer (`phase: None`, `channels.rs:1038`, 0× `phase: Some`), kein WGSL-Leser (`sgrep phase shaders.rs` = 0); kein gehaltenes Asset trägt Phase; das Sternen-Beispiel 2026-09-08 ist als Physik gestrichen (thermische Spektren inkohärent). Trigger: erstes `phase: Some`-Asset der Waveform-Linie; dann Bau als ein Atom (Producer + WGSL + Drei-Schichten-Verifikation, `grind-max`) |
+| field absorption | `docs/specs/force-system.md:96` „field absorption is pending" | — | **präzisiert mit Beleg (2026-09-23)** — im Baum verifiziert: `src/mathematikerin/shaders.rs:53` `alpha = clamp(absorption, 0.0, 1.0)` blendet nur Kernel 5 (`:52–57`, Gradient `:90–97`), jeder andere Kernel ignoriert den Parameter; `src/archivar/channels.rs:1020` schreibt `sensor.absorption`, `:1061`/`:1088` Pad `0.0`; ein per-force_type-Absorptionsgesetz ist ungebaut — WP10 `docs/concepts/remove-bias.md:1738` ist Plan, kein `absorbs`-Symbol im Baum |
 | row-parallel TE-Re-Shape / WGSL-FFT | `AGENTS.md:116` „Open: … the named alternative" | — | ja — benannte Alternative |
 
 ## (c) Doku-Behauptung ≠ Baum
