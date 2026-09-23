@@ -3,7 +3,7 @@
   session: Mountain-Folge 142
   class: handover
   date: 2026-09-23
-  sha256: fa5753f8c0be128bc322d9a3ee762a2bf7c66107febc951ebea489c0c2829fa7
+  sha256: c32619f6ccf4b8759cc9384a6afd7d15fc531dc835ade87fced5d59f6a1a6079
   status: live
 -->
 # Handover — Mountain-Folge 142 (2026-09-23)
@@ -62,13 +62,12 @@ Punkt wird **aufgeschlüsselt** geführt: **Trigger** / **Lage** (mit Messstempe
 - **Trigger:** te-gate-Dispatch nach dem Push (Workflow geändert) — der Lauf
   selbst ist die Messung
 - **Lage:** `te-gate.yml` geändert (issue-Job +Checkout; flare-Job: assert-step
-  entfernt, probe bleibt), gemessen 2026-09-23; es lief noch **kein** Lauf über
-  die Änderung.
+  entfernt, probe bleibt); dispatcht 2026-09-23 @`122d36ef2` → Lauf
+  `35875025486` (noch keine Ergebnis-Messung).
 - **Blockade:** keine
-- **Braucht:** `gh workflow run te-gate.yml` → run-id registrieren; einmal
-  `ci_manage view <id>`; prüfen: `flare`-Job grün (Log-Zeilen
-  `flare power probe: n=… power=…`), `issue`-Job kein exit-127. Die probe-Kurve
-  ist der Trigger des research-Re-Budgets.
+- **Braucht:** einmalig `ci_manage view 35875025486` (nie pollen); prüfen:
+  `flare`-Job grün (Log-Zeilen `flare power probe: n=… power=…`), `issue`-Job
+  kein exit-127. Die probe-Kurve ist der Trigger des research-Re-Budgets.
 
 ### 2. opencode-Browser Pfad 1 — Kaltstart (gemeldet „verbindet sich nicht")
 - **Status:** operator-gebunden | **Bindung:** dritter
