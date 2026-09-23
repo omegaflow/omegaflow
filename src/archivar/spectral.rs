@@ -670,8 +670,8 @@ mod tests {
             (C_LIGHT / (lam_red * 1e-9), 1.0e13, 1.0),
         ];
         let table = passband_table();
-        let (b_bp, b_rp) = passband_at(&table, lam_blue);
-        let (r_bp, r_rp) = passband_at(&table, lam_red);
+        let (b_bp, b_rp) = passband_at(table, lam_blue);
+        let (r_bp, r_rp) = passband_at(table, lam_red);
         let f_blue = 10.0f64.powf(0.4 * CCM89_RV * ebv * extinction_at(lam_blue).unwrap());
         let f_red = 10.0f64.powf(0.4 * CCM89_RV * ebv * extinction_at(lam_red).unwrap());
         let num_bp = f_blue * b_bp * lam_blue + f_red * r_bp * lam_red;
