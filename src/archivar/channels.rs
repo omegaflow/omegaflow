@@ -246,6 +246,10 @@ pub fn build_netcdf_channels(
     src: &SourceConfig,
     bytes: &[u8],
     lsk: &LeapSeconds,
+    now: f64,
+    presences: &[PresenceSample],
+    body_radius: Option<f64>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Vec<(Channel, FieldConfig)> {
     let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
         match gunzip(bytes) {
@@ -257,7 +261,7 @@ pub fn build_netcdf_channels(
     };
     const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
     if bytes.starts_with(&HDF5_MAGIC) {
-        return build_netcdf4_channels(src, &bytes, lsk);
+        return build_netcdf4_channels(src, &bytes, lsk, now, presences, body_radius, eph);
     }
     let nc = match NetcdfFile::parse(&bytes) {
         Ok(f) => f,
@@ -266,6 +270,8 @@ pub fn build_netcdf_channels(
             return Vec::new();
         }
     };
+    let body_name = frame_body_name(&src.frame);
+    let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -357,11 +363,39 @@ pub fn build_netcdf_channels(
                     {
                         continue;
                     }
-                    let position = Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                    let alt = -(pres as f64) * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
                         lat,
                         lon,
-                        alt: -(pres as f64) * pressure_scale,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            fc,
+                            body_props,
+                            body_radius,
+                            anchor_vmax,
+                            anchor_amax,
+                            0.0,
+                            src.ttl as f64,
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
                     };
                     channels.push((
                         Channel {
@@ -386,6 +420,10 @@ pub fn build_netcdf4_channels(
     src: &SourceConfig,
     bytes: &[u8],
     lsk: &LeapSeconds,
+    now: f64,
+    presences: &[PresenceSample],
+    body_radius: Option<f64>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Vec<(Channel, FieldConfig)> {
     let file = match crate::archivar::hdf5::Hdf5File::parse(bytes) {
         Ok(f) => f,
@@ -394,6 +432,8 @@ pub fn build_netcdf4_channels(
             return Vec::new();
         }
     };
+    let body_name = frame_body_name(&src.frame);
+    let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -470,11 +510,39 @@ pub fn build_netcdf4_channels(
                     {
                         continue;
                     }
-                    let position = Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                    let alt = -pres * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
                         lat,
                         lon,
-                        alt: -pres * pressure_scale,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            fc,
+                            body_props,
+                            body_radius,
+                            anchor_vmax,
+                            anchor_amax,
+                            0.0,
+                            src.ttl as f64,
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
                     };
                     channels.push((
                         Channel {
@@ -499,7 +567,13 @@ pub fn build_opendap_channels(
     src: &SourceConfig,
     file: &crate::archivar::opendap::DapFile,
     lsk: &LeapSeconds,
+    now: f64,
+    presences: &[PresenceSample],
+    body_radius: Option<f64>,
+    eph: &HashMap<String, BodyEphemeris>,
 ) -> Vec<(Channel, FieldConfig)> {
+    let body_name = frame_body_name(&src.frame);
+    let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -591,11 +665,39 @@ pub fn build_opendap_channels(
                     {
                         continue;
                     }
-                    let position = Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                    let alt = -pres * pressure_scale;
+                    let motion = Motion::Surface {
+                        body_name: body_name.clone(),
                         lat,
                         lon,
-                        alt: -pres * pressure_scale,
+                        alt,
+                    };
+                    let mut keep = true;
+                    if let Some((anchor_vmax, anchor_amax, _)) =
+                        law_bounds(&motion, epoch, 0.0, eph)
+                    {
+                        keep = record_in_enclosure(
+                            presences,
+                            body_fixed_to_icrs(&body_name, lat, lon, alt, epoch, eph),
+                            epoch,
+                            now,
+                            fc,
+                            body_props,
+                            body_radius,
+                            anchor_vmax,
+                            anchor_amax,
+                            0.0,
+                            src.ttl as f64,
+                        );
+                    }
+                    if !keep {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: body_name.clone(),
+                        lat,
+                        lon,
+                        alt,
                     };
                     channels.push((
                         Channel {

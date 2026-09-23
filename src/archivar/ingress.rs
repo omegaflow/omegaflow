@@ -14,10 +14,10 @@ pub fn serial_ports_with(env_in: Option<String>) -> Vec<String> {
             }
         }
     }
-    if let Some(path) = env_in {
-        if !out.iter().any(|p| p == &path) {
-            out.push(path);
-        }
+    if let Some(path) = env_in
+        && !out.iter().any(|p| p == &path)
+    {
+        out.push(path);
     }
     out
 }

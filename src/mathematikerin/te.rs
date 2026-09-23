@@ -2408,11 +2408,6 @@ pub fn transfer_entropy_reduced_normalized(
     Some(num / denom)
 }
 
-pub fn reduced_te_flow(xs: &[f64], ys: &[f64], k: usize, l: usize, c: usize) -> Option<f64> {
-    let r = transfer_entropy_reduced_normalized(xs, ys, k, l, c)?;
-    (r.is_finite() && r > 0.0).then_some(r)
-}
-
 fn permutation_entropy_counts(
     series: &[f64],
     order: usize,
@@ -2639,118 +2634,6 @@ pub fn topological_te_phase(
 ) -> Option<TopologicalVerdict> {
     topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
         phase_randomized_surrogate(v, rng)
-    })
-}
-
-pub fn topological_te_block(
-    x: &[f32],
-    y: &[f32],
-    dim: usize,
-    order: usize,
-    block: usize,
-    seed: u64,
-) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, 10, &mut move |v, rng| {
-        block_bootstrap_surrogate(v, block, rng)
-    })
-}
-
-pub fn topological_te_instantaneous_phase(
-    x: &[f32],
-    y: &[f32],
-    dim: usize,
-    order: usize,
-    seed: u64,
-) -> Option<TopologicalVerdict> {
-    topological_te_instantaneous_phase_with(x, y, dim, order, seed, 10)
-}
-
-fn topological_te_instantaneous_phase_with(
-    x: &[f32],
-    y: &[f32],
-    dim: usize,
-    order: usize,
-    seed: u64,
-    n_surr: usize,
-) -> Option<TopologicalVerdict> {
-    let n = x.len();
-    if n < 8 || y.len() != n || dim < 2 {
-        return None;
-    }
-    let px = hilbert_instantaneous_phase(x)?;
-    let py = hilbert_instantaneous_phase(y)?;
-    let xf: Vec<f64> = px.iter().map(|&v| v as f64).collect();
-    let yf: Vec<f64> = py.iter().map(|&v| v as f64).collect();
-    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
-        return None;
-    }
-    let tau_x = find_mi_lag(&xf)?;
-    let tau_y = find_mi_lag(&yf)?;
-    let emb_x = embed_series(&xf, tau_x, dim);
-    let emb_y = embed_series(&yf, tau_y, dim);
-    if emb_x.is_empty() || emb_y.is_empty() {
-        return None;
-    }
-    let te = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
-    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
-    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..n_surr {
-        let ys_amp = phase_randomized_surrogate(y, &mut rng);
-        let Some(ys) = hilbert_instantaneous_phase(&ys_amp) else {
-            continue;
-        };
-        if ys.len() != n {
-            continue;
-        }
-        let ysf: Vec<f64> = ys.iter().map(|&v| v as f64).collect();
-        if ysf.iter().any(|v| !v.is_finite()) {
-            continue;
-        }
-        let tau_s = match find_mi_lag(&ysf) {
-            Some(v) => v,
-            None => continue,
-        };
-        let emb_s = embed_series(&ysf, tau_s, dim);
-        if emb_s.is_empty() {
-            continue;
-        }
-        if let Some(te_s) = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_s, tau_x, tau_s) {
-            vals.push(te_s);
-        }
-    }
-    if vals.len() < 2 {
-        return None;
-    }
-    let mean = vals.iter().sum::<f64>() / vals.len() as f64;
-    let var = vals
-        .iter()
-        .map(|&v| {
-            let d = v - mean;
-            d * d
-        })
-        .sum::<f64>()
-        / vals.len() as f64;
-    let sd = var.sqrt();
-    let (pe_x, motifs_x) = match permutation_entropy_counts(&xf, order, 1) {
-        Some((pe, used, _)) => (Some(pe), used),
-        None => (None, 0),
-    };
-    let (pe_y, motifs_y) = match permutation_entropy_counts(&yf, order, 1) {
-        Some((pe, used, _)) => (Some(pe), used),
-        None => (None, 0),
-    };
-    Some(TopologicalVerdict {
-        tau_x,
-        tau_y,
-        te,
-        threshold: mean + 2.0 * sd,
-        surrogate_mean: mean,
-        surrogate_sd: sd,
-        surrogates_used: vals.len(),
-        pe_x,
-        pe_y,
-        pe_motifs_x: motifs_x,
-        pe_motifs_y: motifs_y,
     })
 }
 
@@ -3546,23 +3429,6 @@ mod tests {
     }
 
     #[test]
-    fn topological_pipeline_block_variant_runs() {
-        let n = 512;
-        let mut x = vec![0f32; n];
-        let mut y = vec![0f32; n];
-        for (t, yt) in y.iter_mut().enumerate() {
-            *yt = (t as f32 * 0.5).sin();
-        }
-        for t in 0..n - 1 {
-            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
-        }
-        let v = topological_te_block(&x, &y, 3, 3, 32, 42).unwrap();
-        assert!(v.surrogates_used >= 2);
-        assert!(v.threshold.is_finite());
-        assert!(v.pe_y.is_some());
-    }
-
-    #[test]
     fn hilbert_phase_of_sinusoid_is_linear_ramp() {
         let n = 128;
         let w = 0.3f64;
@@ -3590,35 +3456,6 @@ mod tests {
             "unwrapped phase slope {} should track the carrier {}",
             slope,
             w
-        );
-    }
-
-    #[test]
-    fn phase_te_kuramoto_recovers_direction() {
-        let n = 512;
-        let dt = 0.05f64;
-        let w1 = 0.6f64;
-        let w2 = 0.6f64;
-        let k12 = 0.8f64;
-        let mut t1 = 0.0f64;
-        let mut t2 = 0.0f64;
-        let mut x = vec![0f32; n];
-        let mut y = vec![0f32; n];
-        for i in 0..n {
-            x[i] = t1.sin() as f32;
-            y[i] = t2.sin() as f32;
-            t1 += w1 * dt;
-            t2 += (w2 + k12 * (t1 - t2).sin()) * dt;
-        }
-        let fwd = topological_te_instantaneous_phase(&x, &y, 3, 3, 42)
-            .expect("phase TE forward must resolve");
-        let rev = topological_te_instantaneous_phase(&y, &x, 3, 3, 42)
-            .expect("phase TE reverse must resolve");
-        assert!(
-            fwd.te > rev.te,
-            "driver → follower phase TE {} must exceed the reverse {}",
-            fwd.te,
-            rev.te
         );
     }
 

@@ -261,7 +261,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             break;
                         };
                         let eph_map = buf.eph.clone();
-                        let mut station_sample: Option<Sample> = None;
+                        let mut station_sample: Option<Arc<Sample>> = None;
                         for v in buf
                             .cache
                             .cells

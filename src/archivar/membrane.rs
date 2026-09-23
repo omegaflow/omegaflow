@@ -93,7 +93,8 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
         let vx = (p2[0] - p[0]) / 1e-3;
         let vy = (p2[1] - p[1]) / 1e-3;
         let vz = (p2[2] - p[2]) / 1e-3;
-        let Some(ci) = crate::spectral::sed_to_bp_rp(&sh.bins) else {
+        let ebv = sightline_ebv(sh, buf);
+        let Some(ci) = crate::spectral::sed_to_bp_rp(&sh.bins, ebv) else {
             continue;
         };
         for &(freq, bin_width, val) in &sh.bins {
@@ -127,6 +128,14 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
             ));
         }
     }
+}
+
+fn sightline_ebv(sh: &SpectralHash, buf: &Buffer) -> Option<f64> {
+    let Motion::Spherical { rec } = &sh.motion else {
+        return None;
+    };
+    let _ = (rec, buf);
+    None
 }
 
 pub struct SurfaceMotionParams<'a> {
@@ -315,18 +324,16 @@ pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
 
 pub const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
 
-pub fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
+pub fn signal_reach(
+    force_type: f64,
+    advection: f64,
+    age: f64,
+    freq: f64,
+    bin_width: f64,
+) -> Option<f64> {
     match force_type as u8 {
-        0 | 1 | 8 => Some(C_LIGHT * age),
-        2 => Some(AUDIO_SPEED_AIR * age),
-        3 => Some(SEISMIC_BODY_SPEED * age),
-        4 => Some(SEISMIC_SURFACE_SPEED * age),
-        7 => {
-            if advection > 0.0 {
-                Some(advection * age)
-            } else {
-                Some(ADVECTIVE_BASE_SPEED * age)
-            }
+        0 | 1 | 2 | 3 | 4 | 7 | 8 => {
+            Some(propagation_speed(force_type, advection, freq, bin_width)? * age)
         }
         5 => Some((2.0 * DIFFUSIVITY_THERMAL * age).sqrt()),
         6 => Some((2.0 * DIFFUSIVITY_MOLECULAR * age).sqrt()),
@@ -337,7 +344,13 @@ pub fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
 pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {
-        if let Some(rr) = signal_reach(fc.force as f64, fc.advection, src_ttl * 64.0) {
+        if let Some(rr) = signal_reach(
+            fc.force as f64,
+            fc.advection,
+            src_ttl * 64.0,
+            fc.freq,
+            fc.bin_width,
+        ) {
             reach = Some(reach.map_or(rr, |prev| prev.max(rr)));
         }
     }
@@ -357,7 +370,7 @@ pub fn anchor_velocity(
     }
 }
 
-pub fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
+pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
         2 => Some(AUDIO_SPEED_AIR),
@@ -374,6 +387,19 @@ pub fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
         }
         _ => None,
     }
+}
+
+pub fn propagation_speed(
+    force_type: f64,
+    advection: f64,
+    freq: f64,
+    bin_width: f64,
+) -> Option<f64> {
+    let flat = flat_propagation_speed(force_type, advection)?;
+    if let Some(v) = crate::mathematikerin::dispersion::v_at(force_type as u8, freq, bin_width) {
+        return Some(v);
+    }
+    Some(flat)
 }
 
 pub fn wire_extent(extent: f64) -> f64 {
@@ -587,5 +613,92 @@ mod tests {
         assert!(sensor_config("gnss.alt").is_none());
         assert!(sensor_config("gnss.hdop").is_none());
         assert!(sensor_config("gnss.sats").is_none());
+    }
+
+    #[test]
+    fn a_shelf_covered_band_answers_the_measured_v_through_the_wiring() {
+        let v = propagation_speed(4.0, 0.0, 0.05, 0.0166667)
+            .expect("the 0.05 Hz Rayleigh band carries a speed");
+        assert!(
+            (v - 2899.8).abs() < 1e-6,
+            "the cone carries the measured 2899.8 m/s, not the flat 3000: {v}"
+        );
+        let reach = signal_reach(4.0, 0.0, 10.0, 0.05, 0.0166667)
+            .expect("the Rayleigh band carries a reach");
+        assert!(
+            (reach - 2899.8 * 10.0).abs() < 1e-6,
+            "the signal cone is v(f)·age: {reach}"
+        );
+    }
+
+    #[test]
+    fn an_uncovered_band_falls_back_to_the_flat_constant() {
+        assert_eq!(
+            propagation_speed(4.0, 0.0, 0.07, 0.0),
+            Some(SEISMIC_SURFACE_SPEED),
+            "0.07 Hz lies above the Rayleigh rows — the measured flat 3000 m/s carries"
+        );
+        assert_eq!(
+            propagation_speed(0.0, 0.0, 5.0e14, 0.0),
+            Some(C_LIGHT),
+            "an em band without a shelf row carries c"
+        );
+        assert_eq!(
+            propagation_speed(2.0, 0.0, 440.0, 0.0),
+            Some(AUDIO_SPEED_AIR)
+        );
+        assert_eq!(
+            propagation_speed(7.0, 12.5, 0.0, 0.0),
+            Some(12.5),
+            "the advective force carries its advection, not the shelf"
+        );
+        assert_eq!(
+            propagation_speed(7.0, 0.0, 0.0, 0.0),
+            Some(ADVECTIVE_BASE_SPEED)
+        );
+        assert_eq!(
+            signal_reach(4.0, 0.0, 10.0, 0.07, 0.0),
+            Some(SEISMIC_SURFACE_SPEED * 10.0),
+            "an uncovered band keeps the flat cone"
+        );
+    }
+
+    #[test]
+    fn the_f32_wgsl_selection_stays_within_tolerance_of_the_f64_wiring() {
+        let flat = |ft: u8, advection: f32| -> Option<f32> {
+            match ft {
+                0 | 1 | 8 => Some(C_LIGHT as f32),
+                2 => Some(AUDIO_SPEED_AIR as f32),
+                3 => Some(SEISMIC_BODY_SPEED as f32),
+                4 => Some(SEISMIC_SURFACE_SPEED as f32),
+                5 => Some(DIFFUSIVITY_THERMAL as f32),
+                6 => Some(DIFFUSIVITY_MOLECULAR as f32),
+                7 => Some(if advection > 0.0 {
+                    advection
+                } else {
+                    ADVECTIVE_BASE_SPEED as f32
+                }),
+                _ => None,
+            }
+        };
+        let fixtures: [(u8, f64, f64, f64); 6] = [
+            (4, 0.0, 0.05, 0.0166667),
+            (4, 0.0, 0.005, 0.0016667),
+            (4, 0.0, 0.07, 0.0),
+            (0, 0.0, 9.861594e15, 0.0),
+            (0, 0.0, 5.0e14, 0.0),
+            (7, 12.5, 0.0, 0.0),
+        ];
+        for (ft, adv, freq, bw) in fixtures {
+            let cpu = propagation_speed(ft as f64, adv, freq, bw).expect("the wiring answers");
+            let gpu = crate::mathematikerin::dispersion::v_at_f32(ft, freq as f32, bw as f32)
+                .or_else(|| flat(ft, adv as f32))
+                .expect("the wgsl selection answers");
+            let rel = ((gpu as f64 - cpu) / cpu).abs();
+            assert!(
+                rel < 1e-4,
+                "cpu/wgsl parity: force {ft} at {freq} Hz — wgsl {gpu} cpu {cpu} rel {rel}"
+            );
+        }
     }
 }

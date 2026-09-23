@@ -2015,7 +2015,7 @@ fn test_star_samples_diode() {
     assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let buf = build_buffer(
-        samples,
+        samples.into_iter().map(Arc::new).collect(),
         1.0,
         Arc::new(eph.clone()),
         None,
@@ -2163,7 +2163,7 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
 
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let buf = build_buffer(
-        samples,
+        samples.into_iter().map(Arc::new).collect(),
         1.0,
         Arc::new(eph.clone()),
         None,
@@ -2462,6 +2462,7 @@ fn test_netcdf_grammar_alt_decibar() {
 
 #[test]
 fn test_build_netcdf_channels() {
+    use std::collections::HashMap;
     let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
     let srcs = super::parse_sources(block);
     let u32b = |x: u32| x.to_be_bytes().to_vec();
@@ -2557,7 +2558,77 @@ fn test_build_netcdf_channels() {
     let expected_epoch = lsk
         .unix_to_tdb((27965.773125022904f64 - 7305.0) * 86400.0)
         .unwrap();
-    let channels = super::build_netcdf_channels(&srcs[0], &b, &lsk);
+    let mut earth_cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+    earth_cx[0] = 1.5e9;
+    let earth_props = super::BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some(0.0033528131084554157),
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let earth_eph = super::BodyEphemeris {
+        granules: vec![super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH + expected_epoch / 86400.0,
+            dt_jd: 1.0,
+            cx: earth_cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        }],
+        rotation_matrices: vec![],
+        props: Some(earth_props),
+        orbit: None,
+        granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
+    };
+    let mut eph_map = HashMap::new();
+    eph_map.insert("earth".to_string(), earth_eph);
+    let presence_p = super::body_fixed_to_icrs(
+        "earth",
+        -15.77751,
+        57.37286,
+        -1.08,
+        expected_epoch,
+        &eph_map,
+    )
+    .expect("the earth fixture resolves the profile position");
+    let presences: Vec<PresenceSample> = vec![(
+        expected_epoch,
+        presence_p[0],
+        presence_p[1],
+        presence_p[2],
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    )];
+    let channels = super::build_netcdf_channels(
+        &srcs[0],
+        &b,
+        &lsk,
+        expected_epoch,
+        &presences,
+        Some(6378136.6),
+        &eph_map,
+    );
     assert_eq!(channels.len(), 3);
     assert_eq!(channels[0].0.name, "argo_dac_temp_c");
     assert_eq!(channels[1].0.name, "argo_dac_salinity_psu");
@@ -2582,6 +2653,303 @@ fn test_build_netcdf_channels() {
     assert!((alts[0] + 1.08).abs() < 1e-2);
     assert!((alts[1] + 1.08).abs() < 1e-2);
     assert!((alts[2] + 2.0).abs() < 1e-2);
+}
+
+#[test]
+fn test_load_gate_clips_records_outside_enclosure() {
+    let fc = FieldConfig {
+        key: "em".into(),
+        name: "em".into(),
+        kernel: 0,
+        force: 0,
+        tau: 60.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    };
+    let now = 8.0e8;
+    let near: Vec<PresenceSample> = vec![(now, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)];
+    assert!(
+        super::record_in_enclosure(
+            &near,
+            Some([1.0, 0.0, 0.0]),
+            now,
+            now,
+            &fc,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "a record inside the dilated enclosure materializes"
+    );
+    assert!(
+        !super::record_in_enclosure(
+            &near,
+            Some([1.0e6, 0.0, 0.0]),
+            now,
+            now,
+            &fc,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "a record beyond reach_signal + extent + rho stays raw"
+    );
+    let no_law = FieldConfig {
+        force: 9,
+        ..fc.clone()
+    };
+    assert!(
+        super::record_in_enclosure(
+            &near,
+            Some([1.0e12, 0.0, 0.0]),
+            now,
+            now,
+            &no_law,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "a field without a propagation law keeps the record"
+    );
+    assert!(
+        super::record_in_enclosure(&near, None, now, now, &fc, None, None, 0.0, 0.0, 0.0, 60.0),
+        "an unresolvable record position keeps the record"
+    );
+    let jump: Vec<PresenceSample> = vec![(
+        now,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        crate::mathematikerin::JUMP_GRID,
+    )];
+    let snap = super::Φ * crate::mathematikerin::JUMP_GRID;
+    assert!(
+        super::record_in_enclosure(
+            &jump,
+            Some([snap, 0.0, 0.0]),
+            now,
+            now,
+            &fc,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "the jump snap widens the enclosure to Φ·grid_step"
+    );
+    assert!(
+        !super::record_in_enclosure(
+            &jump,
+            Some([snap + 1.0, 0.0, 0.0]),
+            now,
+            now,
+            &fc,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "a record beyond the jump snap stays raw"
+    );
+    let thermal = FieldConfig {
+        kernel: 3,
+        force: 5,
+        ..fc.clone()
+    };
+    assert!(
+        !super::record_in_enclosure(
+            &near,
+            Some([12.0, 0.0, 0.0]),
+            now + 10.0,
+            now,
+            &thermal,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "without anchor motion the thermal enclosure stays tight"
+    );
+    assert!(
+        super::record_in_enclosure(
+            &near,
+            Some([12.0, 0.0, 0.0]),
+            now + 10.0,
+            now,
+            &thermal,
+            None,
+            None,
+            1.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "rho widens the enclosure by anchor_vmax·age"
+    );
+    assert!(
+        !super::record_in_enclosure(
+            &near,
+            Some([0.0, 0.0, 0.0]),
+            now + 60.0 * 64.0 + 1.0,
+            now,
+            &fc,
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            60.0
+        ),
+        "a record older than effective_ttl·2⁶ drops"
+    );
+}
+
+#[test]
+fn test_wind_waves_loader_respects_load_gate() {
+    use std::collections::HashMap;
+    let now = 8.0e8;
+    let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+    cx[0] = 1.5e9;
+    let props = super::BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: Some(0.0033528131084554157),
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let eph = super::BodyEphemeris {
+        granules: vec![super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH + now / 86400.0,
+            dt_jd: 1.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        }],
+        rotation_matrices: vec![],
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
+    };
+    let mut map = HashMap::new();
+    map.insert("earth".to_string(), eph);
+    let frame = super::Frame::Barycenter {
+        body_name: "earth".into(),
+        scale: 1.0,
+    };
+    let records = crate::wind::parse_bin(&crate::wind::write_bin(&[(
+        now,
+        1075.0e3,
+        3.0e3,
+        1.2e-4,
+        crate::wind::RECEIVER_RAD1,
+    )]))
+    .expect("the wind_waves fixture carries one record");
+    let fc = FieldConfig {
+        key: "wind_waves_rad1".into(),
+        name: "wind_waves_rad1".into(),
+        kernel: 0,
+        force: 0,
+        tau: 60.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: String::new(),
+        freq: 1075.0e3,
+        bin_width: 3.0e3,
+        fold: None,
+    };
+    let body_radius = 6378136.6;
+    let loader_keep = |presences: &[PresenceSample],
+                       eph_map: &HashMap<String, super::BodyEphemeris>| {
+        let mut kept = 0usize;
+        let mut dropped = 0usize;
+        for &(t, _, _, _, _) in &records {
+            let mut keep = true;
+            if let Some(motion) = super::frame_motion(&frame, None, None, t, eph_map)
+                && let Some((anchor_vmax, anchor_amax, _)) =
+                    super::law_bounds(&motion, t, 0.0, eph_map)
+            {
+                keep = super::record_in_enclosure(
+                    presences,
+                    motion.at(t, t, eph_map),
+                    t,
+                    now,
+                    &fc,
+                    eph_map.get("earth").and_then(|e| e.props.as_ref()),
+                    Some(body_radius),
+                    anchor_vmax,
+                    anchor_amax,
+                    0.0,
+                    604800.0,
+                );
+            }
+            if keep {
+                kept += 1;
+            } else {
+                dropped += 1;
+            }
+        }
+        (kept, dropped)
+    };
+    let near: Vec<PresenceSample> = vec![(now, 1.5e9, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)];
+    assert_eq!(
+        loader_keep(&near, &map),
+        (1, 0),
+        "the presence at the frame body materializes the wind_waves record"
+    );
+    let far: Vec<PresenceSample> =
+        vec![(now, 1.5e9 + 1.0e12, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)];
+    assert_eq!(
+        loader_keep(&far, &map),
+        (0, 1),
+        "the presence far outside the frame enclosure leaves the record raw"
+    );
+    let empty_map = HashMap::new();
+    assert_eq!(
+        loader_keep(&near, &empty_map),
+        (1, 0),
+        "an unresolvable frame keeps the record — never a drop"
+    );
 }
 
 #[test]
@@ -4082,6 +4450,113 @@ fn test_temporal_ring_under_cap_keeps_everything() {
 }
 
 #[test]
+fn test_temporal_ring_shared_matches_owned_ring() {
+    let mk = |epoch: f64| super::Sample {
+        source: super::SampleSource::Source(0),
+        epoch,
+        ttl: 1e10,
+        extent: 0.0,
+        tau: 1e10,
+        kernel_id: 0.0,
+        force_type: 0.0,
+        absorption: 0.0,
+        advection: 0.0,
+        anchor_vmax: 0.0,
+        anchor_amax: 0.0,
+        anchor_p0: [0.0, 0.0, 0.0],
+        motion: super::Motion::Linear {
+            p: [0.0, 0.0, 0.0],
+            v: [0.0, 0.0, 0.0],
+        },
+        val: 1.0,
+        name: "temporal_ring_shared_test".into(),
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        color_index: 0.0,
+        phase: None,
+    };
+    let static_epochs = [0.0f64, 1.0];
+    let temporal_epochs: Vec<f64> = (0..7).map(|i| 2.0 + i as f64).collect();
+    let cap = 4;
+
+    let static_owned: Vec<super::Sample> = static_epochs.iter().map(|&e| mk(e)).collect();
+    let mut temporal_owned: Vec<super::Sample> = temporal_epochs.iter().map(|&e| mk(e)).collect();
+    let owned = super::temporal_ring(&static_owned, &mut temporal_owned, cap);
+
+    let static_shared: Vec<Arc<super::Sample>> =
+        static_epochs.iter().map(|&e| Arc::new(mk(e))).collect();
+    let mut temporal_shared: Vec<Arc<super::Sample>> =
+        temporal_epochs.iter().map(|&e| Arc::new(mk(e))).collect();
+    let shared = super::temporal_ring_shared(&static_shared, &mut temporal_shared, cap);
+
+    assert_eq!(owned.static_in, shared.static_in);
+    assert_eq!(owned.temporal_in, shared.temporal_in);
+    assert_eq!(owned.temporal_kept, shared.temporal_kept);
+    assert_eq!(owned.temporal_dropped, shared.temporal_dropped);
+    let owned_epochs: Vec<f64> = temporal_owned.iter().map(|s| s.epoch).collect();
+    let shared_epochs: Vec<f64> = temporal_shared.iter().map(|s| s.epoch).collect();
+    assert_eq!(owned_epochs, shared_epochs, "kept epochs match in order");
+    assert_eq!(
+        owned_epochs,
+        vec![8.0, 7.0, 6.0, 5.0],
+        "the newest cap survive"
+    );
+
+    let mut under: Vec<Arc<super::Sample>> = temporal_epochs[..3]
+        .iter()
+        .map(|&e| Arc::new(mk(e)))
+        .collect();
+    let under_ring = super::temporal_ring_shared(&static_shared, &mut under, 10);
+    assert_eq!(under_ring.temporal_dropped, 0);
+    assert_eq!(under_ring.temporal_kept, 3);
+    assert_eq!(under.len(), 3, "no sample drops under the cap");
+}
+
+#[test]
+fn test_rebuild_retains_shared_sample_identity() {
+    let mk = |epoch: f64| super::Sample {
+        source: super::SampleSource::Source(0),
+        epoch,
+        ttl: 1e10,
+        extent: 0.0,
+        tau: 1e10,
+        kernel_id: 0.0,
+        force_type: 0.0,
+        absorption: 0.0,
+        advection: 0.0,
+        anchor_vmax: 0.0,
+        anchor_amax: 0.0,
+        anchor_p0: [0.0, 0.0, 0.0],
+        motion: super::Motion::Linear {
+            p: [0.0, 0.0, 0.0],
+            v: [0.0, 0.0, 0.0],
+        },
+        val: 1.0,
+        name: "rebuild_shared_test".into(),
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        color_index: 0.0,
+        phase: None,
+    };
+    let origin = Arc::new(mk(0.0));
+    let first = super::build_spatial_hash(vec![Arc::clone(&origin)], 1.0);
+    let retained: Vec<Arc<super::Sample>> = first
+        .cells
+        .values()
+        .chain(std::iter::once(&first.unbounded))
+        .flat_map(|v| v.iter().cloned())
+        .collect();
+    let second = super::build_spatial_hash(retained, 1.0);
+    let again = &second.cells.values().next().expect("cell present")[0];
+    assert!(
+        Arc::ptr_eq(&origin, again),
+        "a retained sample crosses the rebuild as one allocation, not a deep copy"
+    );
+}
+
+#[test]
 fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
     use std::collections::HashMap;
     let t = 8.0e8;
@@ -4110,7 +4585,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         color_index: 0.0,
         phase: None,
     };
-    let cache = super::build_spatial_hash(vec![sample], 1.0);
+    let cache = super::build_spatial_hash(vec![Arc::new(sample)], 1.0);
     let eph: HashMap<String, super::BodyEphemeris> = HashMap::new();
     let buf = super::Buffer {
         cache,
@@ -5664,7 +6139,7 @@ fn test_query_admits_surface_sample_within_window() {
         &eph_map,
     )
     .expect("argo sample anchors");
-    let hash = super::build_spatial_hash(vec![sample.clone()], 1.0);
+    let hash = super::build_spatial_hash(vec![Arc::new(sample)], 1.0);
     let mut recs = Vec::new();
     super::query_hash(
         &hash,

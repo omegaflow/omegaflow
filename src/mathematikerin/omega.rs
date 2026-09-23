@@ -138,6 +138,7 @@ pub struct OmegaLoop {
     pub vol_axis_buf: Option<wgpu::Buffer>,
     pub vol_cell_buf: Option<wgpu::Buffer>,
     pub vol_u_buf: Option<wgpu::Buffer>,
+    pub shelf_buf: Option<wgpu::Buffer>,
     pub vol_fingerprint: Option<(usize, usize)>,
     pub prep_param_buf: Option<wgpu::Buffer>,
     pub te_pipe: Option<wgpu::ComputePipeline>,
@@ -255,6 +256,7 @@ impl OmegaLoop {
             vol_axis_buf: None,
             vol_cell_buf: None,
             vol_u_buf: None,
+            shelf_buf: None,
             vol_fingerprint: None,
             prep_param_buf: None,
             te_pipe: None,
@@ -636,6 +638,9 @@ impl OmegaLoop {
         let Some(vol_u_buf) = self.vol_u_buf.clone() else {
             return;
         };
+        let Some(shelf_buf) = self.shelf_buf.clone() else {
+            return;
+        };
         for sel in 0..2 {
             let Some(field_buf) = self.field_bufs[sel].clone() else {
                 continue;
@@ -682,6 +687,10 @@ impl OmegaLoop {
                     wgpu::BindGroupEntry {
                         binding: 8,
                         resource: vol_u_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 9,
+                        resource: shelf_buf.as_entire_binding(),
                     },
                 ],
             }));
@@ -1254,6 +1263,11 @@ impl OmegaLoop {
                     },
                     count: None,
                 },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 9;
+                    e
+                },
             ],
         });
         let probe_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -1311,6 +1325,14 @@ impl OmegaLoop {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
+        let shelf_rows = crate::mathematikerin::dispersion::shelf_rows_for_gpu();
+        let shelf_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (shelf_rows.len() * 4).max(4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        queue.write_buffer(&shelf_buf, 0, &le_bytes_f32(&shelf_rows));
         let te_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
@@ -1512,6 +1534,7 @@ impl OmegaLoop {
         self.vol_axis_buf = Some(vol_axis_buf);
         self.vol_cell_buf = Some(vol_cell_buf);
         self.vol_u_buf = Some(vol_u_buf);
+        self.shelf_buf = Some(shelf_buf);
         self.te_pipe = Some(te_pipe.clone());
         self.te_bind = Some(te_bind);
         self.te_series_buf = Some(te_series_buf);

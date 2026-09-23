@@ -25,6 +25,7 @@ const BEAT_PAIR_CAP: u32 = 64u;
 @group(0) @binding(6) var<storage, read> vol_axis: array<f32>;
 @group(0) @binding(7) var<storage, read> vol_cell: array<f32>;
 @group(0) @binding(8) var<uniform> vol_u: VolUniform;
+@group(0) @binding(9) var<storage, read> shelf: array<vec4f>;
 
 struct VolUniform { geo: vec4f, count: vec4f };
 
@@ -117,6 +118,31 @@ fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
     return val;
 }
 
+fn shelf_band_hit(ft: f32, freq: f32, bin_width: f32, row: vec4f) -> bool {
+    if (freq <= 0.0 || row.x != ft) {
+        return false;
+    }
+    let half = abs(bin_width * 0.5);
+    let band_lo = freq - half;
+    let band_hi = freq + half;
+    let rhalf = abs(row.z * 0.5);
+    let rlo = row.y - rhalf;
+    let rhi = row.y + rhalf;
+    return band_hi >= rlo && band_lo <= rhi;
+}
+
+fn propagation_v(ft: u32, advection: f32, freq: f32, bin_width: f32) -> f32 {
+    let flat = select(PROPAGATION_SPEED[ft], advection, ft == 7u && advection > 0.0);
+    let fft = f32(ft);
+    let rows = arrayLength(&shelf);
+    for (var i = 0u; i < rows; i = i + 1u) {
+        if (shelf_band_hit(fft, freq, bin_width, shelf[i])) {
+            return shelf[i].w;
+        }
+    }
+    return flat;
+}
+
 fn val_eff_grad(pre: vec4f, tm: vec4f, v: f32, d_mag: f32) -> f32 {
     if (v <= 0.0 || d_mag <= 0.0) {
         return 0.0;
@@ -141,7 +167,9 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let t_mag = sqrt(t2);
     let ft = u32(tm.z);
     let kid = u32(mt.z);
-    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let mt2 = props[j * 4u + 2u];
+    let mt3 = props[j * 4u + 3u];
+    let v = propagation_v(ft, fm.x, mt2.w, mt3.x);
     var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
     if (ft == 0u && mt.w > 0.0) {
         let z1 = 1.0 + mt.w;
@@ -160,7 +188,9 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let d_mag = sqrt(d2);
     let ft = u32(tm.z);
     let kid = u32(mt.z);
-    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let mt2 = props[j * 4u + 2u];
+    let mt3 = props[j * 4u + 3u];
+    let v = propagation_v(ft, fm.x, mt2.w, mt3.x);
     let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
     let vp_grad = val_eff_grad(pre, tm, v, d_mag);
     let k = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
@@ -859,93 +889,6 @@ fn scalar_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
     let o = tid * 2u;
     verdict[o] = te;
     verdict[o + 1u] = valid;
-}
-"#;
-
-pub const COND_BIN_TE_WGSL: &str = r#"
-const RING_MAX: u32 = 1024u;
-const BINS: u32 = 4u;
-
-@group(0) @binding(0) var<storage, read> series: array<f32>;
-@group(0) @binding(1) var<uniform> params: vec4<u32>;
-@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
-
-fn c_at(s: u32, i: u32) -> f32 {
-    return series[s * RING_MAX + i];
-}
-
-fn c_minmax(s: u32, n: u32) -> vec2f {
-    var mn = c_at(s, 0u);
-    var mx = mn;
-    for (var i = 0u; i < n; i = i + 1u) {
-        let v = c_at(s, i);
-        mn = min(mn, v);
-        mx = max(mx, v);
-    }
-    return vec2f(mn, mx);
-}
-
-fn c_bin(v: f32, mn: f32, range: f32) -> u32 {
-    var b = u32((v - mn) / range * f32(BINS));
-    if (b >= BINS) { b = BINS - 1u; }
-    return b;
-}
-
-@compute @workgroup_size(1)
-fn cond_bin_te_compute(@builtin(global_invocation_id) gid: vec3<u32>) {
-    let n = params.x;
-    let shift = max(params.y, 1u);
-    let m = n - shift;
-    let rx = c_minmax(0u, n);
-    let ry = c_minmax(1u, n);
-    let rz = c_minmax(2u, n);
-    let dx = rx.y - rx.x;
-    let dy = ry.y - ry.x;
-    let dz = rz.y - rz.x;
-    if (m < 8u || dx <= 0.0 || dy <= 0.0 || dz <= 0.0) {
-        verdict[0u] = 0.0;
-        verdict[1u] = 0.0;
-        return;
-    }
-    var full = array<f32, 256>();
-    var xz = array<f32, 16>();
-    var xyz = array<f32, 64>();
-    var fxz = array<f32, 64>();
-    for (var t = 0u; t < m; t = t + 1u) {
-        let bfx = c_bin(c_at(0u, t + shift), rx.x, dx);
-        let bx = c_bin(c_at(0u, t), rx.x, dx);
-        let by = c_bin(c_at(1u, t), ry.x, dy);
-        let bz = c_bin(c_at(2u, t), rz.x, dz);
-        let kf = bfx + 4u * bx + 16u * by + 64u * bz;
-        full[kf] = full[kf] + 1.0;
-        let kfxz = bfx + 4u * bx + 16u * bz;
-        fxz[kfxz] = fxz[kfxz] + 1.0;
-    }
-    for (var t = 0u; t < n; t = t + 1u) {
-        let bx = c_bin(c_at(0u, t), rx.x, dx);
-        let by = c_bin(c_at(1u, t), ry.x, dy);
-        let bz = c_bin(c_at(2u, t), rz.x, dz);
-        let kxz = bx + 4u * bz;
-        xz[kxz] = xz[kxz] + 1.0;
-        let kxyz = bx + 4u * by + 16u * bz;
-        xyz[kxyz] = xyz[kxyz] + 1.0;
-    }
-    var te = 0.0;
-    let mf = f32(m);
-    let nf = f32(n);
-    for (var t = 0u; t < m; t = t + 1u) {
-        let bfx = c_bin(c_at(0u, t + shift), rx.x, dx);
-        let bx = c_bin(c_at(0u, t), rx.x, dx);
-        let by = c_bin(c_at(1u, t), ry.x, dy);
-        let bz = c_bin(c_at(2u, t), rz.x, dz);
-        let p5 = full[bfx + 4u * bx + 16u * by + 64u * bz] / mf;
-        let p3 = xz[bx + 4u * bz] / nf;
-        let p4a = xyz[bx + 4u * by + 16u * bz] / nf;
-        let p4b = fxz[bfx + 4u * bx + 16u * bz] / mf;
-        te = te + log(p5 * p3 / max(p4a * p4b, 1e-30));
-    }
-    verdict[0u] = te / mf;
-    verdict[1u] = 1.0;
 }
 "#;
 
