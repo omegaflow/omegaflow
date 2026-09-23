@@ -2849,13 +2849,17 @@ pub fn main_flow() {
                                 body_fixed_to_icrs(&body_name, r.lat, r.lon, r.alt, r.t, &eph_arc),
                                 r.t,
                                 now,
-                                fc,
-                                body_props,
-                                body_radius,
-                                anchor_vmax,
-                                anchor_amax,
-                                0.0,
-                                src_ttl as f64,
+                                EnclosureField {
+                                    config: fc,
+                                    body_props,
+                                    body_radius,
+                                },
+                                AnchorEnvelope {
+                                    vmax: anchor_vmax,
+                                    amax: anchor_amax,
+                                    pad: 0.0,
+                                    ttl: src_ttl as f64,
+                                },
                             );
                         }
                         if !keep {
@@ -2998,13 +3002,17 @@ pub fn main_flow() {
                                 motion.at(t, t, &eph_arc),
                                 t,
                                 now,
-                                fc,
-                                body_props,
-                                body_radius,
-                                anchor_vmax,
-                                anchor_amax,
-                                0.0,
-                                src_ttl as f64,
+                                EnclosureField {
+                                    config: fc,
+                                    body_props,
+                                    body_radius,
+                                },
+                                AnchorEnvelope {
+                                    vmax: anchor_vmax,
+                                    amax: anchor_amax,
+                                    pad: 0.0,
+                                    ttl: src_ttl as f64,
+                                },
                             );
                         }
                         if !keep {
