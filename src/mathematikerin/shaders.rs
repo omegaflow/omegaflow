@@ -1003,31 +1003,37 @@ fn s2_field(@builtin(global_invocation_id) gid: vec3<u32>) {
 
 #[cfg(test)]
 mod tests {
-    fn beat_pair(
-        freq_a: f32,
-        phase_a: f32,
-        pres_a: f32,
-        freq_b: f32,
-        phase_b: f32,
-        pres_b: f32,
-        t: f32,
-        dt: f32,
-        val_a: f32,
-        val_b: f32,
-    ) -> f32 {
-        if pres_a < 0.5 || pres_b < 0.5 || freq_a <= 0.0 || freq_b <= 0.0 {
+    struct Slot {
+        freq: f32,
+        phase: f32,
+        pres: f32,
+    }
+
+    fn slot(freq: f32, phase: f32, pres: f32) -> Slot {
+        Slot { freq, phase, pres }
+    }
+
+    fn beat_pair(a: Slot, b: Slot, t: f32, dt: f32, val_a: f32, val_b: f32) -> f32 {
+        if a.pres < 0.5 || b.pres < 0.5 || a.freq <= 0.0 || b.freq <= 0.0 {
             return 0.0;
         }
-        let df = (freq_a - freq_b).abs();
+        let df = (a.freq - b.freq).abs();
         if df <= 0.0 || dt <= 0.0 || df * dt >= 0.5 {
             return 0.0;
         }
-        val_a * val_b * (2.0 * std::f32::consts::PI * df * t + (phase_a - phase_b)).cos()
+        val_a * val_b * (2.0 * std::f32::consts::PI * df * t + (a.phase - b.phase)).cos()
     }
 
     #[test]
     fn beat_pair_two_phase_slots_contribute_the_interference_term() {
-        let b = beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0);
+        let b = beat_pair(
+            slot(1.0e6, 1.0, 1.0),
+            slot(1.0e6 + 1.0, 2.0, 1.0),
+            0.0,
+            0.01,
+            2.0,
+            3.0,
+        );
         let expected = 2.0 * 3.0 * (1.0f32 - 2.0f32).cos();
         assert!(
             (b - expected).abs() < 1e-6,
@@ -1038,45 +1044,9 @@ mod tests {
     #[test]
     fn beat_pair_one_slot_is_no_beat() {
         assert_eq!(
-            beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 0.0, 0.0, 0.01, 2.0, 3.0),
-            0.0
-        );
-        assert_eq!(
-            beat_pair(1.0e6, 1.0, 0.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
-            0.0
-        );
-    }
-
-    #[test]
-    fn beat_pair_without_a_band_is_no_beat() {
-        assert_eq!(
-            beat_pair(0.0, 1.0, 1.0, 1.0e6, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
-            0.0
-        );
-        assert_eq!(
-            beat_pair(1.0e6, 1.0, 1.0, 0.0, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
-            0.0
-        );
-    }
-
-    #[test]
-    fn beat_pair_identical_tone_is_no_beat() {
-        assert_eq!(
-            beat_pair(1.0e6, 1.0, 1.0, 1.0e6, 2.0, 1.0, 0.0, 0.01, 2.0, 3.0),
-            0.0
-        );
-    }
-
-    #[test]
-    fn beat_pair_outside_the_probe_cadence_is_no_beat() {
-        assert_eq!(
             beat_pair(
-                1.0e6,
-                1.0,
-                1.0,
-                1.0e6 + 100.0,
-                2.0,
-                1.0,
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 1.0, 2.0, 0.0),
                 0.0,
                 0.01,
                 2.0,
@@ -1085,7 +1055,81 @@ mod tests {
             0.0
         );
         assert_eq!(
-            beat_pair(1.0e6, 1.0, 1.0, 1.0e6 + 1.0, 2.0, 1.0, 0.0, 0.0, 2.0, 3.0),
+            beat_pair(
+                slot(1.0e6, 1.0, 0.0),
+                slot(1.0e6 + 1.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_without_a_band_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(0.0, 1.0, 1.0),
+                slot(1.0e6, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(0.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_identical_tone_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+    }
+
+    #[test]
+    fn beat_pair_outside_the_probe_cadence_is_no_beat() {
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 100.0, 2.0, 1.0),
+                0.0,
+                0.01,
+                2.0,
+                3.0
+            ),
+            0.0
+        );
+        assert_eq!(
+            beat_pair(
+                slot(1.0e6, 1.0, 1.0),
+                slot(1.0e6 + 1.0, 2.0, 1.0),
+                0.0,
+                0.0,
+                2.0,
+                3.0
+            ),
             0.0
         );
     }
