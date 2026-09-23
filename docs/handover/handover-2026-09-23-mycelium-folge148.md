@@ -3,7 +3,7 @@
   session: Mycelium-Folge 148
   class: handover
   date: 2026-09-23
-  sha256: e6d22d498ea20ab681a1cd33cc13be9f169cd86e250190d5880b783796379306
+  sha256: 32b137060bad7828ed2fd69d792f78ff5d08257a7cce8f29fda0ecc6b06cd581
   status: live
 -->
 # Handover — Mycelium-Folge 148 (2026-09-23)
@@ -49,7 +49,12 @@ Diese Session hat `handover-2026-09-23-mycelium-folge147.md` konsumiert.
   (grace/retlector/so2/stereo/gebco/sios/usgodae/blitzortung/stsci/argo/darts —
   Portal/Archiv/Ephemeride/integriert/Redistribution), **6 `blocked_sources.φ`**
   (gmrt+opensensemap `parser-def`, sansa/cma/incois `ip-blocked`, alaska `parser-def`).
-  **0 pending.**
+- **6 `blocked` nachgemessen (curl/UA) und nachdisponiert:** `weather.cma.cn` löst sich
+  (API 200 mit `User-Agent`-Header, ohne UA 403 Bot-Block) → **`sources.φ`**;
+  `spaceweather.sansa.org.za` + `erddap.incois.gov.in` (000 direkt+Proton) →
+  **`dead_sources.φ`** `dead unreachable`; `earthquake.alaska.edu` (FDSN 404, Root
+  HTML) → **`pending`**. Es bleiben **2 `parser-def`** (gmrt GeoTIFF-/opensensemap
+  JSON-Arm). Kein `ip-blocked`, kein Operator-/Geo-Punkt — der 403 war ein Bot-Block.
 - **SOURCE_PORT.md-Drift geheilt:** der Spec-Verweis in `docs/SOURCE_PORT.md`
   zeigte auf den Ordner `concepts` statt `specs`; die Kontroll-Spec liegt unter
   `docs/specs/sources-v2-spec.md` (gemessen 2026-09-23, `open_points_check`).
