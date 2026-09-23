@@ -568,28 +568,9 @@ pub fn port_mode(input: &str, output: &str, env: &HashMap<String, String>) -> i3
     let mut parsed = 0usize;
     let mut pending = 0usize;
     let mut declined = 0usize;
-    let mut in_source = false;
     for line in content.lines() {
         let t = line.trim_start();
-        if t.starts_with("source ") {
-            if !block.is_empty() {
-                flush_port_block(
-                    &block,
-                    &mut converted,
-                    &mut total,
-                    &mut parsed,
-                    &mut pending,
-                    &mut declined,
-                    &port_measure_for(&block, env),
-                );
-                block = String::new();
-            }
-            in_source = true;
-            block.push_str(line);
-            block.push('\n');
-            continue;
-        }
-        if t.starts_with("url ") && !in_source {
+        if t.starts_with("url ") {
             if !block.is_empty() {
                 flush_port_block(
                     &block,

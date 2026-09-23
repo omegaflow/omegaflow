@@ -2616,7 +2616,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 0,
+                super::Extract::Map { fields, .. } => fields.is_empty(),
                 _ => true,
             }))
     );
@@ -2627,7 +2627,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 0,
+                super::Extract::Map { fields, .. } => fields.is_empty(),
                 _ => true,
             }))
     );
@@ -2638,7 +2638,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 0,
+                super::Extract::Map { fields, .. } => fields.is_empty(),
                 _ => true,
             }))
     );
@@ -2650,7 +2650,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 0,
+                super::Extract::Map { fields, .. } => fields.is_empty(),
                 _ => true,
             }))
     );
@@ -6881,7 +6881,7 @@ fn test_port_block_hapi_live_measure_classifies_em() {
     let conv = super::port_block_measured(block, &measure);
     assert!(
         conv.contains(
-            "path 1.0 magnetosphere_intermagnet_clf_x_nt gaussian-inverse-square em nT 60 0.0 0.0\n"
+            "path 1.0 magnetosphere_intermagnet_clf_x_nt inverse-square em nT 60 0.0 0.0\n"
         ),
         "the hapi path measures unit and cadence and classifies the magnetic field as em, not the block's gravity, got: {conv}"
     );
