@@ -89,8 +89,8 @@ pub struct Archive {
     pub origins: HashMap<Origin, OriginState>,
     pub pck_bodies: HashMap<i32, PckBody>,
     pub time: Arc<Mutex<Option<LeapSeconds>>>,
-    pub asteroid_samples: Vec<Sample>,
-    pub star_samples: Vec<Sample>,
+    pub asteroid_samples: Vec<Arc<Sample>>,
+    pub star_samples: Vec<Arc<Sample>>,
     pub stations: Arc<Mutex<Vec<StationThread>>>,
     pub gestalt_surface_threads: Arc<Mutex<Vec<Motion>>>,
     pub curves: Option<Arc<CurveSet>>,
@@ -100,6 +100,24 @@ pub struct Archive {
     pub fetch_durations: [f64; FETCH_DURATION_RING],
     pub fetch_duration_len: usize,
     pub fetch_duration_idx: usize,
+}
+
+pub fn temporal_ring_shared(
+    static_catalog: &[Arc<Sample>],
+    temporal: &mut Vec<Arc<Sample>>,
+    cap: usize,
+) -> TemporalRing {
+    let temporal_in = temporal.len();
+    if temporal.len() > cap {
+        temporal.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
+        temporal.truncate(cap);
+    }
+    TemporalRing {
+        static_in: static_catalog.len(),
+        temporal_in,
+        temporal_kept: temporal.len(),
+        temporal_dropped: temporal_in.saturating_sub(temporal.len()),
+    }
 }
 
 pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String, usize> {
@@ -885,10 +903,10 @@ pub fn main_flow() {
                 archive.body_ephemerides = Arc::new(eph_map);
             }
             if !res.asteroid_samples.is_empty() {
-                archive.asteroid_samples = res.asteroid_samples;
+                archive.asteroid_samples = res.asteroid_samples.into_iter().map(Arc::new).collect();
             }
             if !res.star_samples.is_empty() {
-                archive.star_samples = res.star_samples;
+                archive.star_samples = res.star_samples.into_iter().map(Arc::new).collect();
             }
             if let Some(curves) = res.curves {
                 archive.curves = Some(curves);
@@ -1237,6 +1255,13 @@ pub fn main_flow() {
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
+                let body_radius = archive
+                    .body_ephemerides
+                    .get(frame_body_name(&src_clone.frame).as_str())
+                    .and_then(|e| e.props.as_ref())
+                    .map(|p| p.radius_m);
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let eph_arc = archive.body_ephemerides.clone();
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_netcdf_{name}"));
@@ -1293,7 +1318,15 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let channels = build_netcdf_channels(&src_clone, &bytes, &lsk_c);
+                    let channels = build_netcdf_channels(
+                        &src_clone,
+                        &bytes,
+                        &lsk_c,
+                        now,
+                        &presences,
+                        body_radius,
+                        &eph_arc,
+                    );
                     eprintln!("\r\x1b[Knetcdf {}: {} samples", name, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -1316,6 +1349,13 @@ pub fn main_flow() {
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
+                let body_radius = archive
+                    .body_ephemerides
+                    .get(frame_body_name(&src_clone.frame).as_str())
+                    .and_then(|e| e.props.as_ref())
+                    .map(|p| p.radius_m);
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let eph_arc = archive.body_ephemerides.clone();
                 thread::spawn(move || {
                     let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
@@ -1375,7 +1415,15 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let channels = build_opendap_channels(&src_clone, &file, &lsk_c);
+                    let channels = build_opendap_channels(
+                        &src_clone,
+                        &file,
+                        &lsk_c,
+                        now,
+                        &presences,
+                        body_radius,
+                        &eph_arc,
+                    );
                     eprintln!("\r\x1b[Kopendap {}: {} samples", name, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -2699,6 +2747,13 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let body_radius = archive
+                    .body_ephemerides
+                    .get(frame_body_name(&src.frame).as_str())
+                    .and_then(|e| e.props.as_ref())
+                    .map(|p| p.radius_m);
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let eph_arc = archive.body_ephemerides.clone();
                 thread::spawn(move || {
                     let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
@@ -2768,7 +2823,10 @@ pub fn main_flow() {
                         return;
                     }
                     let body_name = frame_body_name(&src.frame);
-                    let mut channels = Vec::with_capacity(records.len());
+                    let body_props = eph_arc
+                        .get(body_name.as_str())
+                        .and_then(|e| e.props.as_ref());
+                    let mut channels = Vec::new();
                     for r in records {
                         let Some(name) = geo_series_component_name(&fmt, r.comp) else {
                             continue;
@@ -2776,6 +2834,33 @@ pub fn main_flow() {
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
                             continue;
                         };
+                        let motion = Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: r.lat,
+                            lon: r.lon,
+                            alt: r.alt,
+                        };
+                        let mut keep = true;
+                        if let Some((anchor_vmax, anchor_amax, _)) =
+                            law_bounds(&motion, r.t, 0.0, &eph_arc)
+                        {
+                            keep = record_in_enclosure(
+                                &presences,
+                                body_fixed_to_icrs(&body_name, r.lat, r.lon, r.alt, r.t, &eph_arc),
+                                r.t,
+                                now,
+                                fc,
+                                body_props,
+                                body_radius,
+                                anchor_vmax,
+                                anchor_amax,
+                                0.0,
+                                src_ttl as f64,
+                            );
+                        }
+                        if !keep {
+                            continue;
+                        }
                         channels.push((
                             Channel {
                                 z: 0.0,
@@ -2817,6 +2902,13 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let body_radius = archive
+                    .body_ephemerides
+                    .get(frame_body_name(&src.frame).as_str())
+                    .and_then(|e| e.props.as_ref())
+                    .map(|p| p.radius_m);
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let eph_arc = archive.body_ephemerides.clone();
                 thread::spawn(move || {
                     let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
@@ -2883,7 +2975,11 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     }
-                    let mut channels = Vec::with_capacity(records.len());
+                    let body_name = frame_body_name(&src.frame);
+                    let body_props = eph_arc
+                        .get(body_name.as_str())
+                        .and_then(|e| e.props.as_ref());
+                    let mut channels = Vec::new();
                     for (t, freq, binw, val, recv) in records {
                         let name = format!(
                             "wind_waves_{}",
@@ -2892,6 +2988,28 @@ pub fn main_flow() {
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
                             continue;
                         };
+                        let mut keep = true;
+                        if let Some(motion) = frame_motion(&src.frame, None, None, t, &eph_arc)
+                            && let Some((anchor_vmax, anchor_amax, _)) =
+                                law_bounds(&motion, t, 0.0, &eph_arc)
+                        {
+                            keep = record_in_enclosure(
+                                &presences,
+                                motion.at(t, t, &eph_arc),
+                                t,
+                                now,
+                                fc,
+                                body_props,
+                                body_radius,
+                                anchor_vmax,
+                                anchor_amax,
+                                0.0,
+                                src_ttl as f64,
+                            );
+                        }
+                        if !keep {
+                            continue;
+                        }
                         channels.push((
                             Channel {
                                 z: 0.0,
@@ -3884,13 +4002,13 @@ pub fn main_flow() {
             let old = archive.field.clone();
             let retained_estimate: usize = old.cache.cells.values().map(|v| v.len()).sum::<usize>()
                 + old.cache.unbounded.len();
-            let mut all: Vec<Sample> = Vec::with_capacity(
+            let mut all: Vec<Arc<Sample>> = Vec::with_capacity(
                 fetched_samples.len()
                     + retained_estimate
                     + archive.body_ephemerides.len() * 2
                     + archive.asteroid_samples.len(),
             );
-            all.append(&mut fetched_samples);
+            all.extend(fetched_samples.drain(..).map(Arc::new));
             for v in old
                 .cache
                 .cells
@@ -3902,7 +4020,7 @@ pub fn main_flow() {
                         continue;
                     }
                     if (now - s.epoch).abs() <= s.ttl * 64.0 {
-                        all.push(s.clone());
+                        all.push(Arc::clone(s));
                     }
                 }
             }
@@ -3933,15 +4051,15 @@ pub fn main_flow() {
                             &archive.body_ephemerides,
                         ) {
                             sample.source = SampleSource::Ephemeris;
-                            all.push(sample);
+                            all.push(Arc::new(sample));
                         }
                     }
                 }
             }
             all.extend(archive.asteroid_samples.iter().cloned());
             all.extend(archive.star_samples.iter().cloned());
-            let (static_catalog, mut temporal): (Vec<Sample>, Vec<Sample>) =
-                all.into_iter().partition(is_static);
+            let (static_catalog, mut temporal): (Vec<Arc<Sample>>, Vec<Arc<Sample>>) =
+                all.into_iter().partition(|s| is_static(s));
             if static_catalog.len() > MAX_SAMPLES {
                 eprintln!(
                     "static field in {} exceeds the wire budget (cap {}) — the static admission gate is a register duty, the sky is never silently trimmed",
@@ -3950,7 +4068,7 @@ pub fn main_flow() {
                 );
             }
             let temporal_cap = MAX_SAMPLES.saturating_sub(static_catalog.len());
-            let ring = temporal_ring(&static_catalog, &mut temporal, temporal_cap);
+            let ring = temporal_ring_shared(&static_catalog, &mut temporal, temporal_cap);
             if ring.temporal_dropped > 0 {
                 eprintln!(
                     "temporal ring: static in {}, temporal in {}, kept {}, dropped {} (cap {})",
