@@ -10,7 +10,7 @@ witness s2-direction
 url https://api.lsst.fink-portal.org/api/v1/conesearch
 record skydirection
 force em
-note Fink-LSST cone (2026-09-06 HTTP 200, anonym): r:diaObjectId-Zeilen, keine em-Photometrie. S²-Richtung (absent, 0 honored). 2026-09-16: api.lsst.fink-portal.org conesearch HTTP 200; SKD1-Flux (band r, nJy, TAI→TDB; fehlend → absent, nie 0.0).
+note Fink-LSST cone conesearch (2026-09-06 HTTP 200 anonym; 2026-09-23 HTTP 200): r:band, r:apFlux, r:psFlux (em-Photometrie vorhanden, nJy, TAI→TDB). S²-Richtung (absent, 0 honored). 2026-09-16: SKD1-Flux (band r; fehlend → absent, nie 0.0).
 
 witness s2-direction
 url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
@@ -34,7 +34,7 @@ witness s2-direction
 url https://dataverse.harvard.edu/api/access/datafile/7502710
 record s2e1 sky1
 force em
-note IceCat-1-IceCube-Neutrino-Katalog (2026-09-06 HTTP 303): 348 Neutrino-Ereignisse. Energie/FAR nur bei v>0, Signalness bei v>=0 — absent bleibt absent (0 honored). Kompiliert als icecat_events.s2e1 + icecat_sky1.sky1 via icecat_compiler, CDN live.
+note IceCat-1-IceCube-Neutrino-Katalog (2026-09-06 HTTP 303; 2026-09-23 HTTP 200, 66698 B): 348 Ereignisse, TSV-Spalten ENERGY+FAR vorhanden (fehlend → absent, nie 0.0). icecat_events.s2e1 + icecat_sky1.sky1 (icecat_compiler), CDN live.
 
 witness s2-direction
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html

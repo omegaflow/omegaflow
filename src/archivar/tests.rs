@@ -2591,14 +2591,17 @@ fn test_port_convert_celestial_and_post() {
     assert!(conv.contains("ttl 86400\n"));
     assert!(conv.contains("at sun\n"));
     assert!(conv.contains("url https://api.example.org/{target}/\n"));
+    assert!(
+        conv.contains("# declined field name — not an oscillator (no physical force)"),
+        "a nominal name is declined, never fabricated, got: {conv}"
+    );
     let srcs = super::parse_sources(&conv);
     for s in &srcs {
         for e in &s.extracts {
             match e {
                 super::Extract::CelestialMap { fields, .. }
                 | super::Extract::Map { fields, .. } => {
-                    assert_eq!(fields.len(), 1);
-                    assert_eq!(fields[0].name, "name");
+                    assert_eq!(fields.len(), 0);
                 }
                 _ => {}
             }
@@ -2613,7 +2616,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 1,
+                super::Extract::Map { fields, .. } => fields.len() == 0,
                 _ => true,
             }))
     );
@@ -2624,7 +2627,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 1,
+                super::Extract::Map { fields, .. } => fields.len() == 0,
                 _ => true,
             }))
     );
@@ -2635,7 +2638,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 1,
+                super::Extract::Map { fields, .. } => fields.len() == 0,
                 _ => true,
             }))
     );
@@ -2647,7 +2650,7 @@ fn test_port_convert_celestial_and_post() {
     assert!(
         srcs.is_empty()
             || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
-                super::Extract::Map { fields, .. } => fields.len() == 1,
+                super::Extract::Map { fields, .. } => fields.len() == 0,
                 _ => true,
             }))
     );
@@ -6816,29 +6819,165 @@ fn test_keplermap_elements_to_icrs() {
 }
 
 #[test]
-fn test_port_block_without_force_directive_stays_review() {
+fn test_port_block_without_force_classifies_physical() {
     let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
     let conv = super::port_block(block);
     assert!(
-        conv.contains("# pending field quake_depth — no force directive, review"),
-        "missing force directive must stay review, got: {conv}"
+        conv.contains(
+            "field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 0.0 0.0\n"
+        ),
+        "a physical name without a force directive synthesizes the registry line, got: {conv}"
+    );
+}
+
+#[test]
+fn test_port_block_without_force_declines_non_physical() {
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 station_id\n";
+    let conv = super::port_block(block);
+    assert!(
+        conv.contains("# declined field station_id — not an oscillator (no physical force)"),
+        "a non-physical name is declined, never looped as pending, got: {conv}"
+    );
+}
+
+#[test]
+fn test_port_block_without_force_undetermined_stays_pending() {
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 sommerfeld_ratio\n";
+    let conv = super::port_block(block);
+    assert!(
+        conv.contains("# pending field sommerfeld_ratio — force undetermined, review"),
+        "an unclassified name stays pending, got: {conv}"
+    );
+}
+
+#[test]
+fn test_port_block_with_force_and_no_unit_stays_pending() {
+    let block = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
+    let conv = super::port_block(block);
+    assert!(
+        conv.contains("# pending field quake_depth — unit or cadence absent, review"),
+        "a force directive without a measured unit stays pending, never the literal 1, got: {conv}"
+    );
+    assert!(
+        !conv.contains("seismic-body 1 "),
+        "the fabricated unit literal is gone, got: {conv}"
+    );
+}
+
+#[test]
+fn test_port_block_hapi_live_measure_classifies_em() {
+    let block = "url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf\nttl 86400\non earth 48.025 2.26\nforce gravity\npath 1.0 magnetosphere_intermagnet_clf_x_nt\n";
+    let measure = super::PortMeasure {
+        hapi: true,
+        unit: Some("nT".to_string()),
+        tau: Some(60.0),
+    };
+    let conv = super::port_block_measured(block, &measure);
+    assert!(
+        conv.contains(
+            "path 1.0 magnetosphere_intermagnet_clf_x_nt gaussian-inverse-square em nT 60 0.0 0.0\n"
+        ),
+        "the hapi path measures unit and cadence and classifies the magnetic field as em, not the block's gravity, got: {conv}"
     );
 }
 
 #[test]
 fn test_flush_port_block_carries_pending_review_marker() {
-    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 sommerfeld_ratio\n";
     let mut converted = String::new();
     let mut total = 0usize;
     let mut parsed = 0usize;
     let mut pending = 0usize;
-    super::flush_port_block(block, &mut converted, &mut total, &mut parsed, &mut pending);
+    let mut declined = 0usize;
+    let measure = super::PortMeasure {
+        hapi: false,
+        unit: None,
+        tau: None,
+    };
+    super::flush_port_block(
+        block,
+        &mut converted,
+        &mut total,
+        &mut parsed,
+        &mut pending,
+        &mut declined,
+        &measure,
+    );
     assert_eq!(total, 1);
     assert_eq!(parsed, 0);
     assert_eq!(pending, 1, "the review block is counted as pending");
+    assert_eq!(declined, 0);
     assert!(
-        converted.contains("# pending field quake_depth — no force directive, review"),
+        converted.contains("# pending field sommerfeld_ratio — force undetermined, review"),
         "the pending review marker must reach the port output, got: {converted}"
+    );
+}
+
+#[test]
+fn test_flush_port_block_carries_declined_disposition() {
+    let block = "source geosphere\nttl 86400\nurl https://example.org/g\nfield_in geometry.coordinates.2 dataset_title\n";
+    let mut converted = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    let mut pending = 0usize;
+    let mut declined = 0usize;
+    let measure = super::PortMeasure {
+        hapi: false,
+        unit: None,
+        tau: None,
+    };
+    super::flush_port_block(
+        block,
+        &mut converted,
+        &mut total,
+        &mut parsed,
+        &mut pending,
+        &mut declined,
+        &measure,
+    );
+    assert_eq!(total, 1);
+    assert_eq!(pending, 0, "a declined field is not looped as pending");
+    assert_eq!(declined, 1);
+    assert!(
+        converted
+            .contains("# declined field dataset_title — not an oscillator (no physical force)"),
+        "the declined disposition must reach the port output, got: {converted}"
+    );
+}
+
+#[test]
+fn test_flush_port_block_keeps_synthesized_block_refused_at_parse() {
+    let block = "url https://example.org/g\nfield_in geometry.coordinates.2 quake_depth\n";
+    let mut converted = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    let mut pending = 0usize;
+    let mut declined = 0usize;
+    let measure = super::PortMeasure {
+        hapi: false,
+        unit: None,
+        tau: None,
+    };
+    super::flush_port_block(
+        block,
+        &mut converted,
+        &mut total,
+        &mut parsed,
+        &mut pending,
+        &mut declined,
+        &measure,
+    );
+    assert_eq!(total, 1);
+    assert_eq!(parsed, 0);
+    assert_eq!(declined, 0);
+    assert_eq!(pending, 1);
+    assert!(
+        converted.contains("field geometry.coordinates.2 quake_depth"),
+        "the synthesized line stays visible, got: {converted}"
+    );
+    assert!(
+        converted.contains("# pending block — refused at parse (ttl/frame gate), review"),
+        "the block-level refusal reaches the port output, got: {converted}"
     );
 }
 
@@ -6849,10 +6988,25 @@ fn test_flush_port_block_drops_a_block_with_no_recognized_content() {
     let mut total = 0usize;
     let mut parsed = 0usize;
     let mut pending = 0usize;
-    super::flush_port_block(block, &mut converted, &mut total, &mut parsed, &mut pending);
+    let mut declined = 0usize;
+    let measure = super::PortMeasure {
+        hapi: false,
+        unit: None,
+        tau: None,
+    };
+    super::flush_port_block(
+        block,
+        &mut converted,
+        &mut total,
+        &mut parsed,
+        &mut pending,
+        &mut declined,
+        &measure,
+    );
     assert_eq!(total, 1);
     assert_eq!(parsed, 0);
     assert_eq!(pending, 0);
+    assert_eq!(declined, 0);
     assert!(
         converted.is_empty(),
         "a block with nothing to say stays silent, got: {converted}"

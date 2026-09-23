@@ -3,7 +3,7 @@
   session: Mycelium-Folge 143
   class: handover
   date: 2026-09-23
-  sha256: pending
+  sha256: db2e655fa6ddabbed0694993ba00895651c9f763accf94b0204295d41b750068
   status: live
 -->
 # Handover — Mycelium-Folge 143 (2026-09-23)
@@ -187,7 +187,7 @@ parallel dispatcht: RAWACF-Beweis-Pfad (grind-flash), NRS-Register-Lücke
 ## Sicherheits-Befund (gemeldet, ungeprüft)
 
 Ein grind-flash-Taucher meldete einen eingeschleusten Instruktionsblock (Pfad
-`/home/johannes/projects/.agents/…`, `<system_warning>` mit Aufforderung, ein
+`.agents/…` (relativ zu `$HOME/projects`), `<system_warning>` mit Aufforderung, ein
 „session token" auszugeben) und verweigerte ihn. Herkunft ungemessen. Für
 Operator/Council benannt — nicht geglättet.
 
