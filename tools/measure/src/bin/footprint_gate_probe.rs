@@ -2,7 +2,7 @@ use omegaflow::archivar::footprint::{
     FootprintBand, FootprintRecord, FootprintVerdict, HEADER_LEN, REC_BYTES, decode_rec,
     footprint_gate, parse_header,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_TAG};
+use omegaflow::cdn::CDN_BASE;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 
@@ -117,7 +117,7 @@ fn resolve_asset(args: &[String]) -> Result<(String, String), String> {
         if std::path::Path::new(&local).exists() {
             Ok((survey_label(binding, &name), local))
         } else {
-            let url = format!("{CDN_BASE}/{CDN_TAG}/{}", binding.asset);
+            let url = format!("{CDN_BASE}/{}/{}", binding.source_host, binding.asset);
             let bytes = omegaflow::archivar::fetch_raw_bytes(&url, DOWNLOAD_TTL)
                 .ok_or_else(|| format!("survey {name}: {url} stays unread — refused"))?;
             if let Some(parent) = std::path::Path::new(&local).parent() {

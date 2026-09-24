@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     BodyEphemeris, Motion, body_barycenter_position, fetch_raw_bytes, light_time_worldline,
     parse_ephemeris_binary,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_TAG};
+use omegaflow::cdn::{CDN_BASE, EPHEMERIS_TAG};
 
 const DSN_DEFAULT_S1: i64 = 63;
 const DSN_DEFAULT_S2: i64 = 43;
@@ -192,7 +192,8 @@ fn plausible_geodetic(lat: f64, lon: f64, alt: f64) -> bool {
 fn load(name: &str) -> Option<BodyEphemeris> {
     let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     let asset = format!("ephemeris_{name}.bin");
-    ensure_bin(&path, CDN_TAG, &asset, BIN_TTL_S).and_then(|bytes| parse_ephemeris_binary(&bytes))
+    ensure_bin(&path, EPHEMERIS_TAG, &asset, BIN_TTL_S)
+        .and_then(|bytes| parse_ephemeris_binary(&bytes))
 }
 
 fn arg_has(args: &[String], key: &str) -> bool {
