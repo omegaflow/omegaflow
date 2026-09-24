@@ -1,7 +1,7 @@
 use omegaflow::archivar::{
     JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of, ymd_to_days,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_TAG, upload_release};
+use omegaflow::cdn::{CDN_BASE, upload_release};
 use omegaflow::inflate::{gunzip, unzip};
 use omegaflow::lzw::uncompress_z;
 use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag_h};
@@ -9,6 +9,7 @@ use omegaflow_measure::miniseed::decode_body;
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+const LAIC_TAG: &str = "ssd.jpl.nasa.gov-laic";
 const ERA_START_S: f64 = 1388534400.0;
 const WINDOW_S: f64 = 259200.0;
 const MAX_LAG_H: usize = 72;
@@ -3057,7 +3058,7 @@ fn analyze_main(args: &[String]) {
     };
     let bin_path: Option<String> = match arg_value(args, "--cdn") {
         Some(name) => {
-            let url = format!("{}/{}/{}.bin", CDN_BASE, CDN_TAG, name);
+            let url = format!("{}/{}/{}.bin", CDN_BASE, LAIC_TAG, name);
             match fetch_raw_bytes(&url, 86400) {
                 Some(bytes) => {
                     let path = format!("tmp/{name}.bin");

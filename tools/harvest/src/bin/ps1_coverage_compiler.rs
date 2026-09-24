@@ -4,7 +4,7 @@ use omegaflow::archivar::footprint::{
     parse_header, write_header,
 };
 use omegaflow::archivar::regrid::ZenithalRegrid;
-use omegaflow::cdn::{CDN_TAG, ps1_slab_tag, upload_release};
+use omegaflow::cdn::{ps1_slab_tag, upload_release};
 use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
 use std::collections::HashMap;
 use std::f64::consts::PI;
@@ -16,6 +16,7 @@ use std::sync::mpsc;
 const FILENAMES: &str = "https://ps1images.stsci.edu/cgi-bin/ps1filenames.py";
 const PLANE_ROOT: &str = "https://ps1images.stsci.edu/rings.v3.skycell";
 const DEFAULT_ORDER: u32 = 12;
+const PS1_COVERAGE_TAG: &str = "ssd.jpl.nasa.gov-ps1";
 
 const PROBE_WORKERS: u32 = 8;
 const PLANE_WORKERS: usize = 4;
@@ -558,7 +559,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut finished = false;
     let mut chunked = false;
 
-    let mut slab_tag = CDN_TAG.to_string();
+    let mut slab_tag = PS1_COVERAGE_TAG.to_string();
 
     if full_mode {
         let proj_min = match u32_arg(args, "--proj-min") {
