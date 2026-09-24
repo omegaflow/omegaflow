@@ -700,6 +700,391 @@ fn plausible(v: f64) -> Option<f64> {
     }
 }
 
+const GFDI_FRAME_MIN: usize = 6;
+
+const GFDI_TYPE_BASE: u16 = 5000;
+const GFDI_TYPE_PROTOBUF_REQUEST: u16 = 5043;
+const GFDI_TYPE_PROTOBUF_RESPONSE: u16 = 5044;
+
+const GFDI_PROTO_HEADER: usize = 14;
+
+const WIRE_VARINT: u8 = 0;
+const WIRE_FIXED64: u8 = 1;
+const WIRE_LEN: u8 = 2;
+const WIRE_FIXED32: u8 = 5;
+
+const FS_SMART_FILE_SYNC: u32 = 43;
+const FS_FILE_REQUEST: u32 = 1;
+const FS_FILE_RESPONSE: u32 = 2;
+const FS_FILE_LIST_REQUEST: u32 = 9;
+const FS_FILE_LIST_RESPONSE: u32 = 10;
+const FS_NEW_FILE_NOTIFICATION: u32 = 12;
+const FS_FILE_SET_FLAGS: u32 = 15;
+const FS_FILE_UPDATE_NOTIFICATION: u32 = 17;
+
+fn crc16_arc(data: &[u8]) -> u16 {
+    let mut crc: u16 = 0;
+    for &b in data {
+        crc ^= u16::from(b);
+        for _ in 0..8 {
+            crc = if crc & 1 != 0 {
+                (crc >> 1) ^ 0xA001
+            } else {
+                crc >> 1
+            };
+        }
+    }
+    crc
+}
+
+struct GfdiFrame<'a> {
+    msg_type: u16,
+    payload: &'a [u8],
+}
+
+fn split_gfdi_frames(stream: &[u8]) -> Vec<GfdiFrame<'_>> {
+    let mut frames = Vec::new();
+    let mut pos = 0usize;
+    while pos < stream.len() {
+        let rest = &stream[pos..];
+        if rest.len() < GFDI_FRAME_MIN {
+            break;
+        }
+        let size = usize::from(u16::from_le_bytes([rest[0], rest[1]]));
+        if size < GFDI_FRAME_MIN || size > rest.len() {
+            pos += 1;
+            continue;
+        }
+        let frame = &rest[..size];
+        let stored = u16::from_le_bytes([frame[size - 2], frame[size - 1]]);
+        if crc16_arc(&frame[..size - 2]) != stored {
+            pos += 1;
+            continue;
+        }
+        let raw_type = u16::from_le_bytes([frame[2], frame[3]]);
+        let msg_type = if raw_type & 0x8000 != 0 {
+            (raw_type & 0x00FF) + GFDI_TYPE_BASE
+        } else {
+            raw_type
+        };
+        frames.push(GfdiFrame {
+            msg_type,
+            payload: &frame[4..size - 2],
+        });
+        pos += size;
+    }
+    frames
+}
+
+fn protobuf_payload(payload: &[u8]) -> Option<&[u8]> {
+    if payload.len() < GFDI_PROTO_HEADER {
+        return None;
+    }
+    let len = u32::from_le_bytes(payload[10..14].try_into().ok()?);
+    let available = &payload[GFDI_PROTO_HEADER..];
+    let take = usize::try_from(len).ok()?.min(available.len());
+    Some(&available[..take])
+}
+
+struct ProtoReader<'a> {
+    buf: &'a [u8],
+    pos: usize,
+}
+
+impl<'a> ProtoReader<'a> {
+    fn new(buf: &'a [u8]) -> ProtoReader<'a> {
+        ProtoReader { buf, pos: 0 }
+    }
+
+    fn varint(&mut self) -> Option<u64> {
+        let mut value: u64 = 0;
+        for i in 0..10 {
+            let b = *self.buf.get(self.pos)?;
+            self.pos += 1;
+            if i == 9 && b & 0xFE != 0 {
+                return None;
+            }
+            value |= u64::from(b & 0x7F) << (i * 7);
+            if b & 0x80 == 0 {
+                return Some(value);
+            }
+        }
+        None
+    }
+
+    fn fixed64(&mut self) -> Option<u64> {
+        let s = self.take(8)?;
+        Some(u64::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn fixed32(&mut self) -> Option<u64> {
+        let s = self.take(4)?;
+        Some(u64::from(u32::from_le_bytes(s.try_into().ok()?)))
+    }
+
+    fn len_delimited(&mut self) -> Option<&'a [u8]> {
+        let n = self.varint()?;
+        self.take(usize::try_from(n).ok()?)
+    }
+
+    fn take(&mut self, n: usize) -> Option<&'a [u8]> {
+        let end = self.pos.checked_add(n)?;
+        let s = self.buf.get(self.pos..end)?;
+        self.pos = end;
+        Some(s)
+    }
+
+    fn skip_field(&mut self, wire: u8) -> bool {
+        match wire {
+            WIRE_VARINT => self.varint().is_some(),
+            WIRE_FIXED64 => self.fixed64().is_some(),
+            WIRE_LEN => self.len_delimited().is_some(),
+            WIRE_FIXED32 => self.fixed32().is_some(),
+            _ => false,
+        }
+    }
+
+    fn next_field(&mut self) -> Option<(u32, u8)> {
+        let tag = self.varint()?;
+        let field = tag >> 3;
+        if field == 0 || field > u64::from(u32::MAX) {
+            return None;
+        }
+        Some((field as u32, (tag & 0x07) as u8))
+    }
+}
+
+fn push_record(out: &mut Vec<(String, f64, Option<f64>)>, name: &str, raw: u64) {
+    if let Some(v) = plausible(raw as f64) {
+        out.push((name.to_string(), v, None));
+    }
+}
+
+fn gfdi_records(payload: &[u8]) -> Vec<(String, f64, Option<f64>)> {
+    let mut out = Vec::new();
+    for frame in split_gfdi_frames(payload) {
+        if frame.msg_type != GFDI_TYPE_PROTOBUF_REQUEST
+            && frame.msg_type != GFDI_TYPE_PROTOBUF_RESPONSE
+        {
+            continue;
+        }
+        let Some(proto) = protobuf_payload(frame.payload) else {
+            continue;
+        };
+        filesync_records(proto, &mut out);
+    }
+    out
+}
+
+fn filesync_records(proto: &[u8], out: &mut Vec<(String, f64, Option<f64>)>) {
+    let mut r = ProtoReader::new(proto);
+    while let Some((field, wire)) = r.next_field() {
+        if field == FS_SMART_FILE_SYNC
+            && wire == WIRE_LEN
+            && let Some(sub) = r.len_delimited()
+        {
+            filesync_service(out, sub);
+            continue;
+        }
+        if !r.skip_field(wire) {
+            break;
+        }
+    }
+}
+
+fn filesync_service(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (FS_FILE_REQUEST, WIRE_LEN) | (FS_NEW_FILE_NOTIFICATION, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_carrier(out, sub);
+            }
+            (FS_FILE_RESPONSE, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_response(out, sub);
+            }
+            (FS_FILE_LIST_REQUEST, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_list_request(out, sub);
+            }
+            (FS_FILE_LIST_RESPONSE, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_list_response(out, sub);
+            }
+            (FS_FILE_SET_FLAGS, WIRE_LEN) | (FS_FILE_UPDATE_NOTIFICATION, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_id_carrier(out, sub);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_carrier(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (1, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file(out, sub);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_id_carrier(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (1, WIRE_LEN) | (2, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_id(out, sub);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (1, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_id(out, sub);
+            }
+            (2, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file_type(out, sub);
+            }
+            (3, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.file.size", raw);
+            }
+            (5, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.file.page_id", raw);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_type(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (3, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.file.type.code", raw);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_id(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (1, WIRE_FIXED64) => {
+                let Some(raw) = r.fixed64() else { return };
+                push_record(out, "gfdi.file.id1", raw);
+            }
+            (2, WIRE_FIXED64) => {
+                let Some(raw) = r.fixed64() else { return };
+                push_record(out, "gfdi.file.id2", raw);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_response(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (1, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.response.status", raw);
+            }
+            (3, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.response.handle", raw);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_list_request(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (2, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.list_request.start_page_id", raw);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+fn file_list_response(out: &mut Vec<(String, f64, Option<f64>)>, bytes: &[u8]) {
+    let mut r = ProtoReader::new(bytes);
+    while let Some((field, wire)) = r.next_field() {
+        match (field, wire) {
+            (3, WIRE_VARINT) => {
+                let Some(raw) = r.varint() else { return };
+                push_record(out, "gfdi.list_response.next_page_id", raw);
+            }
+            (4, WIRE_LEN) => {
+                let Some(sub) = r.len_delimited() else { return };
+                file(out, sub);
+            }
+            _ => {
+                if !r.skip_field(wire) {
+                    return;
+                }
+            }
+        }
+    }
+}
+
 pub fn decode_hr_measurement(payload: &[u8]) -> Option<(Option<f64>, Vec<f64>)> {
     let (flags, rest) = payload.split_first()?;
     let hr16 = flags & 0x01 != 0;
@@ -907,6 +1292,10 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
                 continue;
             };
             eprintln!("{}", gfdi_line(uuid, payload));
+            let batch = gfdi_records(payload);
+            if !batch.is_empty() {
+                let _ = tx.send(batch);
+            }
         }
     }
 }
@@ -1218,5 +1607,129 @@ mod tests {
             gfdi_line("test-6a4e28-char", &[0x0a, 0x00, 0xff, 0x10, 0xa5]),
             "ble gfdi test-6a4e28-char 0a00ff10a5"
         );
+    }
+
+    fn gfdi_frame(msg_type: u16, payload: &[u8]) -> Vec<u8> {
+        let mut frame = Vec::with_capacity(payload.len() + GFDI_FRAME_MIN);
+        frame.extend_from_slice(&((payload.len() + GFDI_FRAME_MIN) as u16).to_le_bytes());
+        frame.extend_from_slice(&msg_type.to_le_bytes());
+        frame.extend_from_slice(payload);
+        let crc = crc16_arc(&frame);
+        frame.extend_from_slice(&crc.to_le_bytes());
+        frame
+    }
+
+    fn protobuf_frame(msg_type: u16, proto: &[u8]) -> Vec<u8> {
+        let mut payload = Vec::with_capacity(GFDI_PROTO_HEADER + proto.len());
+        payload.extend_from_slice(&0x2Au16.to_le_bytes());
+        payload.extend_from_slice(&0u32.to_le_bytes());
+        payload.extend_from_slice(&(proto.len() as u32).to_le_bytes());
+        payload.extend_from_slice(&(proto.len() as u32).to_le_bytes());
+        payload.extend_from_slice(proto);
+        gfdi_frame(msg_type, &payload)
+    }
+
+    const FILE_LIST_RESPONSE_PROTO: [u8; 18] = [
+        0xDA, 0x02, 0x10, 0x52, 0x0E, 0x18, 0xC9, 0x87, 0x02, 0x22, 0x08, 0x18, 0xB4, 0x24, 0x28,
+        0xF4, 0x86, 0x02,
+    ];
+
+    #[test]
+    fn crc16_arc_matches_the_reference_vectors() {
+        assert_eq!(crc16_arc(b"123456789"), 0xBB3D);
+        assert_eq!(crc16_arc(b""), 0x0000);
+    }
+
+    #[test]
+    fn split_gfdi_frames_extracts_reference_frames_from_the_zig_source() {
+        let ack = [0x09, 0x00, 0x88, 0x13, 0xA0, 0x13, 0x00, 0x70, 0x89];
+        let event = [0x08, 0x00, 0xA6, 0x13, 0x08, 0x00, 0xD5, 0xC5];
+        let types_req = [0x06, 0x00, 0xA7, 0x13, 0x3B, 0x75];
+        let mut stream = Vec::new();
+        stream.extend_from_slice(&ack);
+        stream.extend_from_slice(&event);
+        stream.extend_from_slice(&types_req);
+        let frames = split_gfdi_frames(&stream);
+        assert_eq!(frames.len(), 3);
+        assert_eq!(frames[0].msg_type, 5000);
+        assert_eq!(frames[0].payload, &[0xA0, 0x13, 0x00]);
+        assert_eq!(frames[1].msg_type, 5030);
+        assert_eq!(frames[1].payload, &[0x08, 0x00]);
+        assert_eq!(frames[2].msg_type, 5031);
+        assert!(frames[2].payload.is_empty());
+    }
+
+    #[test]
+    fn split_gfdi_frames_skips_a_frame_with_a_corrupted_crc() {
+        let mut corrupt = [0x09, 0x00, 0x88, 0x13, 0xA0, 0x13, 0x00, 0x70, 0x89];
+        corrupt[8] ^= 0xFF;
+        assert!(split_gfdi_frames(&corrupt).is_empty());
+        let event = [0x08, 0x00, 0xA6, 0x13, 0x08, 0x00, 0xD5, 0xC5];
+        let mut stream = Vec::new();
+        stream.extend_from_slice(&corrupt);
+        stream.extend_from_slice(&event);
+        let frames = split_gfdi_frames(&stream);
+        assert_eq!(frames.len(), 1);
+        assert_eq!(frames[0].msg_type, 5030);
+    }
+
+    #[test]
+    fn split_gfdi_frames_decodes_the_short_type_form() {
+        let frame = gfdi_frame(0x822B, &[0xAA, 0xBB]);
+        let frames = split_gfdi_frames(&frame);
+        assert_eq!(frames.len(), 1);
+        assert_eq!(frames[0].msg_type, 5043);
+        assert_eq!(frames[0].payload, &[0xAA, 0xBB]);
+    }
+
+    #[test]
+    fn gfdi_records_reads_file_list_response_fields() {
+        let records = gfdi_records(&protobuf_frame(5043, &FILE_LIST_RESPONSE_PROTO));
+        assert_eq!(
+            records,
+            vec![
+                ("gfdi.list_response.next_page_id".to_string(), 33737.0, None),
+                ("gfdi.file.size".to_string(), 4660.0, None),
+                ("gfdi.file.page_id".to_string(), 33652.0, None),
+            ]
+        );
+    }
+
+    #[test]
+    fn gfdi_records_reads_a_5044_response_frame() {
+        let records = gfdi_records(&protobuf_frame(5044, &FILE_LIST_RESPONSE_PROTO));
+        assert_eq!(records.len(), 3);
+    }
+
+    #[test]
+    fn gfdi_records_leaves_a_file_type_name_string_absent() {
+        let proto = [
+            0xDA, 0x02, 0x11, 0x52, 0x0F, 0x22, 0x0D, 0x12, 0x0B, 0x18, 0x08, 0x12, 0x07, b'm',
+            b'o', b'n', b'i', b't', b'o', b'r',
+        ];
+        let records = gfdi_records(&protobuf_frame(5043, &proto));
+        assert_eq!(
+            records,
+            vec![("gfdi.file.type.code".to_string(), 8.0, None)]
+        );
+    }
+
+    #[test]
+    fn gfdi_records_skips_a_zero_status_through_the_plausibility_gate() {
+        let proto = [0xDA, 0x02, 0x04, 0x12, 0x02, 0x08, 0x00];
+        assert!(gfdi_records(&protobuf_frame(5043, &proto)).is_empty());
+    }
+
+    #[test]
+    fn gfdi_records_returns_nothing_for_garbage() {
+        assert!(gfdi_records(&[]).is_empty());
+        assert!(gfdi_records(&[0xFF; 64]).is_empty());
+        assert!(gfdi_records(&[0x80]).is_empty());
+    }
+
+    #[test]
+    fn gfdi_records_returns_nothing_for_a_non_protobuf_frame() {
+        let ack = [0x09, 0x00, 0x88, 0x13, 0xA0, 0x13, 0x00, 0x70, 0x89];
+        assert!(gfdi_records(&ack).is_empty());
     }
 }
