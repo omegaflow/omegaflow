@@ -3,7 +3,7 @@
   session: Mycelium-Folge 152
   class: handover
   date: 2026-09-24
-  sha256: 846cfd358f0f9ddecbb96998dc9c7985b05d10e8bd8f9a35c3164f085ad61725
+  sha256: 54a240278dbce7ed3e7c176dbe06f8e35063ed815135d01eb9eecc8ca2cabdae
   status: live
 -->
 # Handover — Mycelium-Folge 152 (2026-09-24)
@@ -49,8 +49,8 @@ Diese Session hat `handover-2026-09-24-mycelium-folge151.md` konsumiert.
   führt das Asset bereits unter `dataverse.harvard.edu`. Der be19-sha256 ist noch
   nicht gemessen (kein Upload) — `pending`, nach dem Lauf nachtragen.
 - **Blockade:** keine.
-- **Braucht:** nach Push `gh workflow run bayestar-cdn.yml`; danach be19-sha256 in
-  `phi/sources.φ:10000` nachtragen.
+- **Braucht:** nach Push `gh workflow run bayestar-cdn.yml` (angestoßen 2026-09-24,
+  run `36062991395`); danach be19-sha256 in `phi/sources.φ:10000` nachtragen.
 
 ### pre-cdn Stage-Regeneration (Merge-Atom)
 - **Status:** autonom | **Bindung:** eigen
