@@ -21,14 +21,16 @@ jobs:
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            cargo run --release -p omegaflow -- --port "phi/sources.φ" /tmp/sources_port.φ
-            echo "--- pending field lines ---"
-            awk '/^# pending/{n++} END{print n+0}' /tmp/sources_port.φ
-            echo "--- pending blocks / total blocks ---"
-            awk '/^url /{if(p>0)c++; b++; p=0} /^# pending/{p++} END{if(p>0)c++; print (c+0) " of " (b+0)}' /tmp/sources_port.φ
+            cargo run --release -p omegaflow -- --port "phi/sources.φ" port-converted.φ
+            awk '/^# pending/{n++} END{print "pending field lines: " (n+0)}' port-converted.φ
+            awk '/^url /{if(p>0)c++; b++; p=0} /^# pending/{p++} END{if(p>0)c++; print "pending blocks: " (c+0) " of " (b+0)}' port-converted.φ
           } > port-count.txt 2>&1
+          awk '/^url /{u=$2} /^# pending/{print u"\t"$0}' port-converted.φ > port-pending.tsv
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: port-count
-          path: port-count.txt
+          path: |
+            port-count.txt
+            port-pending.tsv
+            port-converted.φ
