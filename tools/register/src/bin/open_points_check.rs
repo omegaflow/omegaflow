@@ -77,12 +77,26 @@ fn main() {
     for g in &guardians {
         println!("OFFEN  {}", g);
     }
+    let format_gaps = point_format_gaps(&content);
+    let format_gap_count = match &format_gaps {
+        Some(gaps) => {
+            for gap in gaps {
+                println!("format-gap  {}", gap);
+            }
+            gaps.len()
+        }
+        None => {
+            println!("format-gaps skipped");
+            0
+        }
+    };
     println!(
-        "open_points_check: {}  | {} path refs | {} absent | {} guardians",
+        "open_points_check: {}  | {} path refs | {} absent | {} guardians | {} format-gaps",
         rel,
         points,
         missing,
-        guardians.len()
+        guardians.len(),
+        format_gap_count
     );
 }
 
@@ -216,6 +230,75 @@ fn is_repo_path(token: &str) -> bool {
     PREFIXES.iter().any(|p| token.starts_with(p)) && token.contains('/')
 }
 
+const POINT_FIELDS: [&str; 5] = [
+    "- **Status:**",
+    "- **Trigger:**",
+    "- **Lage:**",
+    "- **Blockade:**",
+    "- **Braucht:**",
+];
+
+fn point_format_gaps(content: &str) -> Option<Vec<String>> {
+    let lines: Vec<&str> = content.lines().collect();
+    let start = lines.iter().position(|l| is_offen_heading(l))?;
+    let end = lines
+        .iter()
+        .enumerate()
+        .skip(start + 1)
+        .find(|(_, l)| is_h2_heading(l))
+        .map(|(i, _)| i)
+        .unwrap_or(lines.len());
+    let section = &lines[start + 1..end];
+    let mut gaps = Vec::new();
+    let mut current: Option<(&str, Vec<&str>)> = None;
+    for line in section {
+        if let Some(name) = line.trim_start().strip_prefix("### ") {
+            if let Some((prior, body)) = current.take() {
+                check_point(prior, &body, &mut gaps);
+            }
+            current = Some((name.trim(), Vec::new()));
+        } else if let Some((_, body)) = current.as_mut() {
+            body.push(line);
+        }
+    }
+    if let Some((name, body)) = current {
+        check_point(name, &body, &mut gaps);
+    }
+    Some(gaps)
+}
+
+fn check_point(name: &str, body: &[&str], gaps: &mut Vec<String>) {
+    let trimmed: Vec<&str> = body.iter().map(|l| l.trim()).collect();
+    for field in POINT_FIELDS {
+        if !trimmed.iter().any(|l| l.starts_with(field)) {
+            gaps.push(format!("{}  missing {}", name, field));
+        }
+    }
+    if let Some(lage) = trimmed.iter().find(|l| l.starts_with("- **Lage:**")) {
+        if !lage.contains("(gemessen") {
+            gaps.push(format!("{}  lage unstamped", name));
+        }
+    }
+}
+
+fn is_offen_heading(line: &str) -> bool {
+    let Some(rest) = line.trim_start().strip_prefix("## ") else {
+        return false;
+    };
+    let rest = rest.trim_start();
+    let low = rest.to_ascii_lowercase();
+    low.starts_with("offen")
+        && low["offen".len()..]
+            .chars()
+            .next()
+            .map(|c| !c.is_alphanumeric())
+            .unwrap_or(true)
+}
+
+fn is_h2_heading(line: &str) -> bool {
+    line.trim_start().starts_with("## ")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -282,5 +365,33 @@ mod tests {
         let g = mail_home_guardians(&base);
         assert!(g.iter().any(|s| s.contains("Symlink")));
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn accepts_well_formed_point() {
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen | **Bindung:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let gaps = point_format_gaps(content).unwrap();
+        assert!(gaps.is_empty(), "{:?}", gaps);
+    }
+
+    #[test]
+    fn flags_missing_braucht() {
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n";
+        let gaps = point_format_gaps(content).unwrap();
+        assert_eq!(gaps.len(), 1);
+        assert!(gaps[0].contains("Braucht"), "{:?}", gaps);
+    }
+
+    #[test]
+    fn flags_unstamped_lage() {
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let gaps = point_format_gaps(content).unwrap();
+        assert_eq!(gaps.len(), 1);
+        assert!(gaps[0].contains("lage unstamped"), "{:?}", gaps);
+    }
+
+    #[test]
+    fn skips_without_offen_section() {
+        assert!(point_format_gaps("# Titel\n\nText ohne Punkte\n").is_none());
     }
 }

@@ -48,8 +48,15 @@ unten; Stufe 2–6 werden benannt, nie dispatcht.
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der
 Baum die Messung; `open_points_check` prüft billig jeden in den offenen Punkten
-genannten Pfad gegen den Arbeitsbaum (absent = stale Punkt); eine Session, die nur
-dem Register glaubt, baut Stehendes neu.
+genannten Pfad gegen den Arbeitsbaum (absent = stale Punkt) und meldet
+`format-gap`, wo eine Punkt-Zeile fehlt oder die `Lage` keinen Messstempel
+`(gemessen …)` trägt; eine Session, die nur dem Register glaubt, baut Stehendes neu.
+
+**Kein Punkt wird dem Operator vorgelegt, bevor er gegen echten Code und git
+gemessen ist.** Eine `Lage` ohne `(gemessen … via <Werkzeug/Quelle>)` ist keine
+Vorlage, sondern eine Registraturpflicht; eine ungemessene Behauptung wird gemessen
+oder als `pending`/`unverified` benannt. Ein bereits mit **Wort** entschiedener
+Punkt wird nicht erneut als Frage vorgelegt — nur eine neue Messung öffnet ihn neu.
 
 ## Stehender Pass (automatisch, keine Auswahl)
 
@@ -87,6 +94,12 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - **Lage:** <der Zustand, gemessen — mit Messstempel: (gemessen <Datum/Zeit> via <Werkzeug/Quelle>)>
 - **Blockade:** <woran es hängt — oder „keine">
 - **Braucht:** <was es löst: der wörtliche, kopierbare Schritt — Werkzeug/Datei/URL/Befehl/Operator-Wort>
+- **Wort:** <das gegebene Operator-Wort> | <Datum> | <Quelle> — nur bei entschiedenen `operator-gebunden`-Punkten; sonst weglassen
+
+Eine gegebene Entscheidung wird als `**Wort:**`-Zeile registriert, **bevor** sie
+ausgeführt wird — ein Punkt mit eingetragenem Wort wird nicht erneut vorgelegt. Der
+Rest einer umgesetzten Entscheidung wird als **eigener offener Punkt** geführt, nie
+weggelassen (der Key-Rotation-Rest: `http_401` nach Rotation bleibt ein Punkt).
 
 ## Abschluss
 
