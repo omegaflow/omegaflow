@@ -5,6 +5,26 @@ type EventTuple<'a> = (f64, f64, f64, f64, Option<f64>, Option<&'a str>);
 
 static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
+#[test]
+fn beat_source_precedence_is_total() {
+    use crate::archivar::main_flow::{BeatSource, select_beat_source};
+    assert_eq!(
+        select_beat_source(true, Some("AA:BB"), Some("/f")),
+        BeatSource::Serial
+    );
+    assert_eq!(
+        select_beat_source(false, Some("AA:BB"), Some("/f")),
+        BeatSource::Ble
+    );
+    assert_eq!(select_beat_source(false, None, Some("/f")), BeatSource::Fit);
+    assert_eq!(select_beat_source(false, None, None), BeatSource::None);
+    assert_eq!(
+        select_beat_source(false, Some("  "), Some("/f")),
+        BeatSource::Fit
+    );
+    assert_eq!(select_beat_source(false, None, Some("")), BeatSource::None);
+}
+
 fn field_fixture(name: &str, tau: f64) -> FieldConfig {
     FieldConfig {
         key: name.into(),
