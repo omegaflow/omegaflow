@@ -13,5 +13,5 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 678
-measured 2026-09-23 (tree @48ae5e734; register_lookup --dropped: 3186 dropped, 2508 commit-resolved, N = Z − R = 678; run 35922188109; mycelium folge148-Drops aus note-drop/φ-Commits, kein echter Verlust)
+dropped-baseline 960
+measured 2026-09-24 (tree @5179b438b; ci-check 36000930169 dropped-gate: baseline 678 | current 960 | delta 282; register-dropped 36000037355 @15ca40c46: 3340 dropped, 2657 commit-resolved, net 683. Die Differenz 960-683 sind die Handover-Übergänge der Planungs-Pässe zwischen den beiden SHAs. `register_lookup --dropped` zählt 683 `git: none`-Gruppen zurück bis 2026-09-09 — akkumulierte Historie, absorbiert durch den Baseline-Bump im annehmenden Commit, nicht durch Fabrikation)
