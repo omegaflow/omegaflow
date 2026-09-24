@@ -1,5 +1,29 @@
 use super::*;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BeatSource {
+    Serial,
+    Ble,
+    Fit,
+    None,
+}
+
+pub fn select_beat_source(
+    serial_present: bool,
+    ble_mac: Option<&str>,
+    fit_dir: Option<&str>,
+) -> BeatSource {
+    if serial_present {
+        BeatSource::Serial
+    } else if ble_mac.is_some_and(|m| !m.trim().is_empty()) {
+        BeatSource::Ble
+    } else if fit_dir.is_some_and(|d| !d.trim().is_empty()) {
+        BeatSource::Fit
+    } else {
+        BeatSource::None
+    }
+}
+
 pub struct StderrRadiator {
     pub last_line: String,
     pub interactive: bool,
@@ -472,14 +496,35 @@ pub fn main_flow() {
     let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, Option<f64>)>>();
     let consent = Arc::new(AtomicBool::new(false));
     eprintln!("record consent: silent until the operator speaks (/consent)");
-    let serial_tx = sensor_tx.clone();
-    thread::spawn(move || serial_ingress(serial_tx));
     let battery_tx = sensor_tx.clone();
     thread::spawn(move || battery_ingress(battery_tx));
-    let fit_tx = sensor_tx.clone();
-    thread::spawn(move || fit_ingress(fit_tx));
-    let ble_tx = sensor_tx.clone();
-    thread::spawn(move || ble_ingress(ble_tx));
+    let serial_present = !serial_ports().is_empty();
+    let ble_mac = std::env::var("OMEGAFLOW_BLE_HR").ok();
+    let fit_dir = std::env::var("FIT_DIR").ok();
+    match select_beat_source(serial_present, ble_mac.as_deref(), fit_dir.as_deref()) {
+        BeatSource::Serial => {
+            eprintln!("beat source: serial — the one beat source; BLE and FIT stand silent");
+            let tx = sensor_tx.clone();
+            thread::spawn(move || serial_ingress(tx));
+        }
+        BeatSource::Ble => {
+            eprintln!("beat source: BLE — the one beat source; serial and FIT stand silent");
+            let tx = sensor_tx.clone();
+            thread::spawn(move || ble_ingress(tx));
+        }
+        BeatSource::Fit => {
+            eprintln!(
+                "beat source: FIT — the one beat source; serial and BLE stand silent; FIT temperature rides with it or is absent (null-echt)"
+            );
+            let tx = sensor_tx.clone();
+            thread::spawn(move || fit_ingress(tx));
+        }
+        BeatSource::None => {
+            eprintln!(
+                "beat source: none — no serial device, no OMEGAFLOW_BLE_HR, no FIT_DIR; the beat channel stays silent"
+            );
+        }
+    }
     #[cfg(feature = "browser_relay")]
     let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
         Some(p) => p,
