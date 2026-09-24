@@ -90,13 +90,23 @@ fn main() {
             0
         }
     };
+    let drifts = owner_drift(&root);
+    for d in &drifts {
+        println!("{}", d);
+    }
+    let post_md = post_md_resurrected(&root);
+    if post_md {
+        println!("post-md-resurrected");
+    }
     println!(
-        "open_points_check: {}  | {} path refs | {} absent | {} guardians | {} format-gaps",
+        "open_points_check: {}  | {} path refs | {} absent | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
         rel,
         points,
         missing,
         guardians.len(),
-        format_gap_count
+        format_gap_count,
+        drifts.len(),
+        post_md as usize
     );
 }
 
@@ -123,6 +133,85 @@ fn mail_home_guardians(root: &Path) -> Vec<String> {
         );
     }
     out
+}
+
+fn handover_line_owner(path: &Path) -> Option<String> {
+    let name = path.file_name()?.to_string_lossy().to_string();
+    let stem = name.strip_suffix(".md")?;
+    let rest = stem.strip_prefix("handover-")?;
+    if rest.len() < 12 {
+        return None;
+    }
+    if rest.as_bytes().get(10) != Some(&b'-') {
+        return None;
+    }
+    let tail = &rest[11..];
+    let folge_at = tail.rfind("-folge")?;
+    let line = &tail[..folge_at];
+    if line.is_empty() {
+        return None;
+    }
+    Some(line.to_string())
+}
+
+fn bindung_linie_owner(line: &str) -> Option<String> {
+    let t = line.trim_start();
+    if !t.starts_with("- **") {
+        return None;
+    }
+    let at = t.find("**Bindung:**")?;
+    let after = t[at + "**Bindung:**".len()..].trim_start();
+    let linie = after.strip_prefix("linie:")?;
+    let owner: String = linie
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .collect();
+    if owner.is_empty() {
+        None
+    } else {
+        Some(owner)
+    }
+}
+
+fn owner_drift(root: &Path) -> Vec<String> {
+    let mut out = Vec::new();
+    let dir = root.join("docs/handover");
+    let entries = match fs::read_dir(&dir) {
+        Ok(e) => e,
+        Err(_) => return out,
+    };
+    let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+    paths.sort();
+    for path in paths {
+        if !path.is_file() {
+            continue;
+        }
+        let Some(owner) = handover_line_owner(&path) else {
+            continue;
+        };
+        let content = match fs::read_to_string(&path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+        for line in content.lines() {
+            let Some(y) = bindung_linie_owner(line) else {
+                continue;
+            };
+            if y != owner {
+                let rel = path
+                    .strip_prefix(root)
+                    .unwrap_or(&path)
+                    .display()
+                    .to_string();
+                out.push(format!("owner-drift  {}  Bindung linie:{}", rel, y));
+            }
+        }
+    }
+    out
+}
+
+fn post_md_resurrected(root: &Path) -> bool {
+    root.join("docs/handover/post.md").exists()
 }
 
 fn newest_live_handover(root: &Path) -> Option<PathBuf> {
@@ -393,5 +482,38 @@ mod tests {
     #[test]
     fn skips_without_offen_section() {
         assert!(point_format_gaps("# Titel\n\nText ohne Punkte\n").is_none());
+    }
+
+    #[test]
+    fn reports_owner_drift_bindung_linie_fremd() {
+        let base = std::env::temp_dir().join(format!("opc-drift-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-24-river-folge5.md"),
+            "- **Bindung:** linie:mountain\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-24-river-folge6.md"),
+            "- **Bindung:** linie:river\n",
+        )
+        .unwrap();
+        let d = owner_drift(&base);
+        assert_eq!(d.len(), 1, "{:?}", d);
+        assert!(d[0].contains("river-folge5"), "{:?}", d);
+        assert!(d[0].contains("linie:mountain"), "{:?}", d);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn reports_post_md_resurrected() {
+        let base = std::env::temp_dir().join(format!("opc-post-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        assert!(!post_md_resurrected(&base));
+        fs::write(base.join("docs/handover/post.md"), "a point travels here").unwrap();
+        assert!(post_md_resurrected(&base));
+        let _ = fs::remove_dir_all(&base);
     }
 }

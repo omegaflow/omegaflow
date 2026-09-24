@@ -902,10 +902,16 @@ impl Gate {
                 quote: clip(&path, 90),
             });
         }
+        if let Some(v) = check_post_md(&path) {
+            return Some(v);
+        }
         if let Some(v) = check_line_routing(&path, &content) {
             return Some(v);
         }
         if let Some(v) = check_routing_act_home(&path, &content) {
+            return Some(v);
+        }
+        if let Some(v) = check_bindung_linie(&path, &content) {
             return Some(v);
         }
         let lower_content = content.to_lowercase();
@@ -1096,10 +1102,7 @@ fn check_line_routing(path: &str, content: &str) -> Option<Verdict> {
 }
 
 fn check_routing_act_home(path: &str, content: &str) -> Option<Verdict> {
-    if !path.starts_with("docs/handover/") {
-        return None;
-    }
-    if path.starts_with("docs/handover/archiv/") || path == "docs/handover/post.md" {
+    if path.contains("docs/") && path.contains("/archiv/") {
         return None;
     }
     for (idx, line) in content.lines().enumerate() {
@@ -1114,6 +1117,84 @@ fn check_routing_act_home(path: &str, content: &str) -> Option<Verdict> {
                     quote: clip(line, 90),
                 });
             }
+        }
+    }
+    None
+}
+
+fn check_post_md(path: &str) -> Option<Verdict> {
+    let trimmed = path.trim_start_matches("./");
+    if trimmed != "docs/handover/post.md" {
+        return None;
+    }
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule: "post-md-resurrected".to_string(),
+        line: 0,
+        feedback: feedback("post-md-resurrected").to_string(),
+        quote: clip(path, 90),
+    })
+}
+
+fn handover_line_owner(path: &str) -> Option<String> {
+    let trimmed = path.trim_start_matches("./");
+    if !trimmed.starts_with("docs/handover/") {
+        return None;
+    }
+    let name = trimmed.rsplit('/').next()?;
+    let stem = name.strip_suffix(".md")?;
+    let rest = stem.strip_prefix("handover-")?;
+    if rest.len() < 12 {
+        return None;
+    }
+    if rest.as_bytes().get(10) != Some(&b'-') {
+        return None;
+    }
+    let tail = &rest[11..];
+    let folge_at = tail.rfind("-folge")?;
+    let line = &tail[..folge_at];
+    if line.is_empty() {
+        return None;
+    }
+    Some(line.to_string())
+}
+
+fn bindung_linie_owner(line: &str) -> Option<String> {
+    let t = line.trim_start();
+    if !t.starts_with("- **") {
+        return None;
+    }
+    let at = t.find("**Bindung:**")?;
+    let after = t[at + "**Bindung:**".len()..].trim_start();
+    let linie = after.strip_prefix("linie:")?;
+    let owner: String = linie
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .collect();
+    if owner.is_empty() {
+        None
+    } else {
+        Some(owner)
+    }
+}
+
+fn check_bindung_linie(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    let owner = handover_line_owner(path)?;
+    for (idx, line) in content.lines().enumerate() {
+        let Some(y) = bindung_linie_owner(line) else {
+            continue;
+        };
+        if y != owner {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "bindung-linie-fremd".to_string(),
+                line: idx + 1,
+                feedback: feedback("bindung-linie-fremd").to_string(),
+                quote: clip(line, 90),
+            });
         }
     }
     None
@@ -2017,7 +2098,6 @@ mod tests {
                 "docs/handover/handover-2026-09-22-future-folge84.md",
                 "the future line carries the point",
             ),
-            ("docs/handover/post.md", "An mountain: tree red (step: fix)"),
             (
                 "docs/handover/handover-2026-09-22-river-folge1.md",
                 "/river_go switches the agent",
@@ -2084,22 +2164,71 @@ mod tests {
             assert_eq!(v.severity, Severity::Hard);
         }
         for marker in &vocab().routing_act_home {
-            let args = tool_args("docs/handover/post.md", marker);
-            assert!(g.check_tool_call("write", &args).is_none());
-        }
-        for marker in &vocab().routing_act_home {
             let args = tool_args("docs/handover/archiv/handover-2026-09-18-x.md", marker);
             assert!(g.check_tool_call("write", &args).is_none());
         }
         let args = tool_args(live, "Post An future steht");
         assert!(g.check_tool_call("write", &args).is_none());
         let args = tool_args("docs/auftrag/auftrag-x.md", "An future:");
-        assert!(g.check_tool_call("write", &args).is_none());
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "routing-act-home");
+        assert_eq!(v.severity, Severity::Hard);
         let args = tool_args(
             "docs/handover/_template.md",
             "the line carries its open points",
         );
         assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_post_md_resurrected_blocked() {
+        let mut g = test_gate();
+        for tool in ["write", "edit", "patch", "multiedit"] {
+            let args = tool_args("docs/handover/post.md", "a point travels here");
+            let v = g.check_tool_call(tool, &args).unwrap();
+            assert_eq!(v.rule, "post-md-resurrected", "tool {tool}");
+            assert_eq!(v.severity, Severity::Hard);
+        }
+        let args = tool_args("docs/handover/handover-2026-09-24-river-folge5.md", "a point");
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_bindung_linie_fremd_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-24-river-folge5.md",
+            "- **Bindung:** linie:mountain",
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "bindung-linie-fremd");
+        assert_eq!(v.severity, Severity::Hard);
+        let args = tool_args(
+            "docs/handover/handover-2026-09-24-river-folge5.md",
+            "- **Status:** eigen | **Bindung:** linie:future",
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "bindung-linie-fremd");
+    }
+
+    #[test]
+    fn fn_tool_bindung_linie_own_and_other_pass() {
+        let mut g = test_gate();
+        let own = tool_args(
+            "docs/handover/handover-2026-09-24-river-folge5.md",
+            "- **Bindung:** linie:river",
+        );
+        assert!(g.check_tool_call("write", &own).is_none());
+        let eigen = tool_args(
+            "docs/handover/handover-2026-09-24-river-folge5.md",
+            "- **Status:** eigen | **Bindung:** eigen",
+        );
+        assert!(g.check_tool_call("write", &eigen).is_none());
+        let archived = tool_args(
+            "docs/handover/archiv/handover-2026-09-18-river-folge1.md",
+            "- **Bindung:** linie:mountain",
+        );
+        assert!(g.check_tool_call("write", &archived).is_none());
     }
 
     #[test]

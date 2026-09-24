@@ -51,10 +51,11 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   external) | due (interval or trigger event) | step. A living register: measured
   once, cited by the sessions; a handover names the entry, never copies it
   (Council 2026-09-16). An expired entry is `pending` with a due, never a copy.
-- `docs/handover/post.md` — the inter-line message channel (`class: post`):
-  `An <line>: … (Schritt: …)`. A message to another line lives here, never in the
-  sender's handover; the recipient folds it into its own handover within the same
-  session and deletes the line (Council 2026-09-16).
+- **Aufenthalt = Eigentum** (Operator-Wort + Rat 2026-09-24): `docs/handover/post.md`
+  is abolished — there is no inter-line message channel. A point lives in the
+  handover of the line whose *next step* touches its nature; a point that moves is
+  moved by direct edit into the owner's handover in the same atom (no router, no
+  `Bindung: linie:<fremd>`).
 - `docs/concepts/<kebab>.md` — concept docs. The filename is kebab-case; the
   concept's proper name in prose stays UPPER_SNAKE (e.g. file
   `sources-v2-spec.md`, prose `SOURCES_V2_SPEC §1` — like `rfc-2616.md` ↔

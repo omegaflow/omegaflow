@@ -4,7 +4,7 @@
   date: 2026-09-24
   sha256: 40b7839f65aebc06624f59ce40bbb620fd283273d2bb0e1cbdafe8c85cd69216
   status: live
-  see-also: docs/paper/flyby-path-2-preregistration.md docs/handover/post.md
+  see-also: docs/paper/flyby-path-2-preregistration.md
 -->
 # Survey — Fremdmodell-Bedienung über den `chrome-devtools`-MCP (2026-09-24)
 

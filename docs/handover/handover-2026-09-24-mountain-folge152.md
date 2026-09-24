@@ -3,7 +3,7 @@
   session: Mountain-Folge 152
   class: handover
   date: 2026-09-24
-  sha256: 820729140372d8b2bbe9bfdf681486749785de71bcda3a46a69efa9c60232beb
+  sha256: 57ebb1dea8cdc1be7469af1abb18a4f27f06b9a21585191b48001d43d1a49a57
   status: live
 -->
 # Handover — Mountain-Folge 152 (2026-09-24)
@@ -47,70 +47,88 @@ Baum die Messung.
 
 ## Stehender Pass (gemessen 2026-09-24, Mountain-Folge 152)
 
-- **HEAD** `0f7a6b0de` (*handover: fold the foreign-model review result and method
-  to mycelium/future…*). Arbeitsbaum trägt fremde uncommittete Arbeit:
-  `docs/handover/_template.md` (neues Gerüst) und `docs/handover/post.md`
-  (Rundruf an fünf Linien) — unberührt gelassen.
+- **HEAD** `57e2ba3c8` (*te-ncurve: raise the tcurve job timeout to 360 min — the
+  300 cap cut the run at 5h0m twice*). Arbeitsbaum sauber (`git status` leer);
+  `origin/main` == HEAD.
 - **Postfach:** `state/mail/mail_ledger.φ` vorhanden; kein Mountain-Eingang.
-  `post.md` trug `An mountain: Vorbereitung ≠ Akt … (Schritt: nächsten
-  Planungs-Pass darauf abgleichen.)` — **gelesen und in diese Übergabe gefaltet**
-  (Gerüst `_template.md` gezogen: Zwei-Zeilen-Trennung, neue Sortier-Liste,
-  Messstempel-Pflicht); die Zeile aus `post.md` **gelöscht**. Kein aktueller
-  Mountain-Punkt ist `operator-gebunden` — die Trennung greift beim nächsten
-  solchen Punkt.
-- **CI** (live `ci_manage list`/`view`, 2026-09-24): `ci-check 36023479649`
-  @`df2b23320` (Mountain-Commit) **in_progress**; `ci-check 36027326789`
-  @`0f7a6b0de` **pending**; `health-check 35990890566` **in_progress** (seit
-  11:04Z); `te-ncurve`/`ps1-cdn` in_progress.
-- **`register_lookup --open`:** 116 Docs, 572 offen — **keine
+- **CI** (live `ci_manage list`/`view`, 2026-09-24): `ci-check 36030755250`
+  @`e05f8a419` **failure** — rote Tests
+  `bayestar::tests::load_map_leaf_record_finds_the_pixel` (bayestar.rs:494) und
+  `ble::tests::managed_objects_reply_resolves_device_and_characteristic`
+  (ble.rs:1116); clippy `bayestar.rs:352` (chunks_exact) + `spectral.rs:752`
+  (needless_range_loop). `register-dropped 36030528745` **success**.
+  `health-check 35990890566` **failure** (Runner-Shutdown 17:59Z).
+  `te-ncurve 36052804297` in_progress; `ps1-cdn 36046155392` in_progress.
+- **`register_lookup --open`:** 117 Docs, 589 offen — **keine
   `[mountain]`-Zustandszeile**; `ledger`/`witnesses` → mycelium.
-- **`open_points_check` folge151:** 13 Pfad-Refs, **1 absent**
-  (`.../mountain-folge150.md:103` — die Move-Zeile; folge150 liegt in `archiv/`,
-  stale Referenz, kein Punkt), 0 guardians, 0 format-gaps.
-- **`git_safety --snapshot`:** Arbeitsbaum == HEAD (sauber vor diesem Atom).
 
 ## Offen (aufgeschlüsselt)
 
-### 1. AFAD-Block-Verifikation
-- **Status:** wartend | **Bindung:** eigen (CI)
-- **Trigger:** Abschluss `health-check 35990890566`
-- **Lage:** **in_progress** seit 11:04Z (gemessen 2026-09-24 via `ci_manage list`); `source-census 35923610972` success.
-- **Blockade:** CI-Runner-Queue.
-- **Braucht:** `ci_manage view 35990890566`; bei rot `ci_manage log 35990890566 --all` (AFAD-Fetch + `--verify phi`).
+#### Stufe 1 — autonom
 
-### 2. Ox64-Zweitknoten
-- **Status:** wartend | **Bindung:** dritter
-- **Trigger:** Geräteankunft (Tracking `LZ473049629CN`)
-- **Lage:** nicht angekommen (gemessen 2026-09-24 via `state/mail/mail_ledger.φ`).
-- **Blockade:** physische Ankunft.
-- **Braucht:** nach Ankunft Bring-up + Kopplung messen.
+### Bayestar-Code-Rot
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner — sofort handlungsfähig (Rot gemessen)
+- **Lage:** (gemessen 2026-09-24 via `ci_manage log 36030755250`)
+  `src/archivar/bayestar.rs:352` chunks_exact (clippy) +
+  `bayestar::tests::load_map_leaf_record_finds_the_pixel` (bayestar.rs:494) rot
+  am `ci-check 36030755250` @`e05f8a419`; parser-def — aus Mycelium hierher verschoben.
+- **Blockade:** keine.
+- **Braucht:** `chunks_exact` → `as_chunks` heilen; `cargo check --tests` 0/0;
+  CI grün.
 
-### 3. dropped-gate am eigenen Commit verifizieren
+### AFAD-Block-Verifikation
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** gefeuert — `health-check 35990890566` **failure**
+  (Runner-Shutdown 17:59Z)
+- **Lage:** (gemessen 2026-09-24 via `ci_manage list`) `health-check 35990890566`
+  **failure** (Runner-Shutdown 17:59Z); `source-census 35923610972` success.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage log 35990890566 --all` (AFAD-Fetch + `--verify phi`) —
+  dann entscheiden.
+
+#### Stufe 2 — operator-gebunden
+
+keiner.
+
+#### Stufe 3 — blockiert
+
+keiner.
+
+#### Stufe 4 — wartend
+
+### dropped-Baseline 960 (Bump bei Drift)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss `ci-check 36023479649` @`df2b23320` (Folge-151-Commit)
-- **Lage:** Baseline 960 (gemessen 2026-09-24 via `docs/zustand/dropped-baseline.md`); der Gate-Wert am eigenen Commit ist noch nicht gemessen — der Lauf ist **in_progress** (gemessen 2026-09-24 via `ci_manage view 36023479649`).
+- **Trigger:** Drift der dropped-Nettozahl gegen die Baseline (Delta > 0) im
+  annehmenden Commit
+- **Lage:** Baseline **960** @`5179b438b`, gebumpt durch `df2b23320` (gemessen
+  2026-09-24 via `docs/zustand/dropped-baseline.md`); das dropped-Gate ist grün
+  (kein Delta); der Sweep-Mechanismus (`register-dropped`) lebt in Mycelium —
+  Mountain hält nur die Baseline + Bump-Pflicht.
 - **Blockade:** keine.
-- **Braucht:** Abschluss `36023479649` lesen; bei `delta > 0` Baseline im annehmenden Commit nachziehen (die `git: none`-Gruppen sind akkumulierte Historie ab 2026-09-09, nicht durch Routing auflösbar).
+- **Braucht:** bei Drift (Delta > 0) im annehmenden Commit die Baseline in
+  `docs/zustand/dropped-baseline.md` nachziehen.
 
-### 4. Vollständiger Drop-Sweep (Diff-Gate über alle Linien)
-- **Status:** wartend | **Bindung:** eigen (CI)
-- **Trigger:** Abschluss `register-dropped 36030238985` (workflow_dispatch 16:51Z; parallel `36029814914` in_progress seit 16:47Z)
-- **Lage:** **queued** (gemessen 2026-09-24 16:51Z via `gh run list --workflow=register-dropped`); ein Voll-Scan dauerte zuvor ~25 min (`36000037355`).
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log 36030238985 --all` → vollständige `DROPPED`-Liste je Linie; die `git: none`-Einträge (stille Drops) der Linie `mountain` (inkl. Vor-Portierungs-Linie `bau`) in folge153 als offene Punkte aufnehmen; Netto-Zahl gegen `docs/zustand/dropped-baseline.md` (960) halten und bei Drift den Baseline-Bump im annehmenden Commit nachziehen.
+#### Stufe 5 — termin
+
+keiner.
+
+#### Stufe 6 — LOCK
+
+keiner.
 
 ## Benchmark
 
-- Kein Doppel: dieser Atom ist Registerarbeit (Post-Fold + Gerüst-Abgleich) und
-  dispatcht keine Sub-Agenten — keine Benchmark-Klasse, kein Lauf. Die
-  `clippy`/`cargo check`-Verifikation der Folge-151-`port.rs`-Arbeit trägt der
-  laufende `ci-check 36023479649`.
+- Kein Doppel: dieser Atom ist Registerarbeit (Stufen-Umbau +
+  Punkt-Reconciliation) und dispatcht keine Sub-Agenten — keine
+  Benchmark-Klasse, kein Lauf.
 
 ## Geteilter Baum — eigener Pfad-Satz
 
 - `docs/handover/handover-2026-09-24-mountain-folge152.md` (neu)
-- `docs/handover/post.md` (eigene `An mountain:`-Zeile gelöscht)
-- Move folge151 nach `docs/handover/archiv/handover-2026-09-24-mountain-folge151.md` (eigene Linie, atomar, git trägt)
+- Move folge151 nach
+  `docs/handover/archiv/handover-2026-09-24-mountain-folge151.md` (eigene Linie,
+  atomar, git trägt)
 
 ## Abschluss
 
