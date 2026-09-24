@@ -349,7 +349,7 @@ pub fn load_map(bytes: &[u8]) -> Option<BayestarMap> {
     }
     let mut query = build_index();
     let mut best_fit = Vec::with_capacity(n);
-    for (idx, chunk) in body.chunks_exact(REC_BYTES).enumerate() {
+    for (idx, chunk) in body.as_chunks::<REC_BYTES>().0.iter().enumerate() {
         let rec = decode_rec(chunk)?;
         let order = rec.nside.trailing_zeros() as u8;
         index_add(&mut query, idx as u64, order, rec.ipix);
@@ -491,6 +491,6 @@ mod tests {
         bytes.extend_from_slice(&rec);
         let map = load_map(&bytes).unwrap();
         assert_eq!(leaf_record(&map.query, theta, phi), Some(0));
-        assert!((ebv_at(&map.best_fit[0], 6.0).unwrap() - 0.25).abs() < 1e-6);
+        assert!((ebv_at(&map.best_fit[0], BE19_MU0 + 3.0 * BE19_DMU).unwrap() - 0.25).abs() < 1e-6);
     }
 }
