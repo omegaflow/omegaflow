@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-13)
   class: ref
   date: 2026-09-13
-  sha256: cbf79a9ae4695de08e31624d2ba83bce3e39aced56af0dead266fca355537420
+  sha256: 8edaf39efb8676ac8bafdfd0beb03a8a96b7d3148bf3886a57b5064bd500b6df
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-13)
 
@@ -50,6 +50,7 @@ DS18B20-Suche: `https://www.aliexpress.com/wholesale?SearchText=DS18B20+waterpro
 | Bass-Exciter (Alternative) | 1005002682778172 | 14,89 |
 | Vibrationsmotor 3V (10×) | 1005009267048597 | 3,79 |
 | Solenoid Push-Pull | 1005002278950915 | 2,59 |
+| 1N4007 Freilaufdiode (Solenoid M8, Pflicht) | — Suche — | pending |
 | Kupferlackdraht 0,5 mm | 33057393544 | 3,95 |
 | SG90-Servo (Bulk) | 1005006219266362 | 35,19 |
 | Mini-Radiallüfter 5V | 1005003595630530 | 1,59 |
@@ -112,3 +113,4 @@ Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
 - Warenkorb erfordert AliExpress-Login (anonyme Session lehnt „In den Warenkorb" ab).
 - Spec-Korrekturen 2026-09-13: SPI-Display `dc` GPIO9 → GPIO13 (Konflikt mit I2C `scl` aufgelöst), DS18B20 ergänzt (Safety-Pflicht).
+- 1N4007 (Freilaufdiode Solenoid M8, Pflicht laut `mantis-shrimp-build.md` §4): kein AliExpress-Treffer am 2026-09-24 gemessen (`archive_search --all "1N4007 diode"` → Alibaba/eBay/Amazon/Distributoren), Preis `pending`, Suche `https://www.aliexpress.com/wholesale?SearchText=1N4007+diode`.
