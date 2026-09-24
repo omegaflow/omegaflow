@@ -749,8 +749,8 @@ mod tests {
     fn max_adjacent_lut_delta(lut: &[[f32; 4]; COLOR_LUT_LEN]) -> f32 {
         let mut m = 0.0f32;
         for i in 0..COLOR_LUT_LEN - 1 {
-            for c in 0..3 {
-                let d = (lut[i + 1][c] - lut[i][c]).abs();
+            for (a, b) in lut[i][..3].iter().zip(lut[i + 1][..3].iter()) {
+                let d = (*b - *a).abs();
                 if d > m {
                     m = d;
                 }

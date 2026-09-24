@@ -2,7 +2,7 @@
   title: Survey — Geräte-Anbindung: vollständige Oszillator-/Radiator-/Relais-Inventare (Stand 2026-09-23)
   class: survey
   date: 2026-09-23
-  sha256: 7323015377ec3fdbe1cb69d0fc49a7c2e943c377f7a3baae974958739e58e131
+  sha256: 9fd178adf077c91b2e8fc5c616d6ff2a17b3d33c96e34eb3ff09e74a53c03334
   status: live
   see-also: docs/surveys/survey-2026-09-20-browser-anbindung.md, AGENTS.md, docs/concepts/archivar-mathematikerin.md
 -->
@@ -49,8 +49,11 @@ steht als `ungemessen`, nie 0.
 - **Radiator-Frame lebt:** `src/archivar/actuators.rs` (`FRAME_TAG 0x02`,
   Σω f32-LE, Maske); serial erregt `KineticRadiator`/`SeismicOscillator`.
 - **Browser-Brücke:** Feature `browser_relay`, `src/archivar/relay.rs:9`
-  `PORT_CONST = 1618`; Zeile 59 `TcpListener::bind("127.0.0.1:{port}")` → **nur
-  Loopback**. Ein separates LAN-Gerät erreicht den Relay im gebauten Stand nicht.
+  `PORT_CONST = 1618`; `relay_bind_addr()` (`relay.rs:21`) bindet
+  `RELAY_BIND_DEFAULT = "0.0.0.0"` (`relay.rs:11`), übersteuerbar per Env
+  `OMEGAFLOW_RELAY_BIND` (`relay.rs:10`); `TcpListener::bind` (`relay.rs:73`,
+  Startzeile `relay.rs:75`). Ein separates LAN-Gerät erreicht den Relay über die
+  `adb reverse`-Route (Gerät `127.0.0.1:1618` → Host).
 
 ## Garmin Forerunner 945 — vollständiges Inventar (gemessen)
 
