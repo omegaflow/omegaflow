@@ -156,6 +156,12 @@ impl Marshal {
         self.buf.extend_from_slice(s.as_bytes());
         self.buf.push(0);
     }
+
+    fn field(&mut self, code: u8, sig: &str) {
+        self.align(8);
+        self.raw(&[code]);
+        self.sig(sig);
+    }
 }
 
 fn complete_type(sig: &str) -> Option<(&str, &str)> {
@@ -330,16 +336,16 @@ fn marshal_method_call(
     body: &[u8],
 ) -> Vec<u8> {
     let mut fields = Marshal::new(16);
-    fields.raw(&[FIELD_PATH, b'o']);
+    fields.field(FIELD_PATH, "o");
     fields.str(path);
-    fields.raw(&[FIELD_INTERFACE, b's']);
+    fields.field(FIELD_INTERFACE, "s");
     fields.str(interface);
-    fields.raw(&[FIELD_MEMBER, b's']);
+    fields.field(FIELD_MEMBER, "s");
     fields.str(member);
-    fields.raw(&[FIELD_DESTINATION, b's']);
+    fields.field(FIELD_DESTINATION, "s");
     fields.str(destination);
     if !body_sig.is_empty() {
-        fields.raw(&[FIELD_SIGNATURE, b'g']);
+        fields.field(FIELD_SIGNATURE, "g");
         fields.sig(body_sig);
     }
     marshal_message(serial, TYPE_METHOD_CALL, fields, body)
@@ -369,6 +375,7 @@ fn parse_message(bytes: &[u8]) -> Option<DbusMessage> {
     };
     let mut r = Reader::new(&bytes[16..fields_end]);
     while r.pos < r.buf.len() {
+        r.align(8)?;
         let code = r.byte()?;
         let sig = r.sig()?;
         let value = unmarshal_one(&mut r, &sig)?;
@@ -545,11 +552,7 @@ fn variant_bytes(value: &DbusValue) -> Option<&[u8]> {
 }
 
 fn properties_changed<'a>(args: &'a [DbusValue], key: &str) -> Option<Option<&'a DbusValue>> {
-    let fields = match args.first()? {
-        DbusValue::Struct(items) => items,
-        _ => return None,
-    };
-    let changed = match fields.get(1)? {
+    let changed = match args.get(1)? {
         DbusValue::Dict(entries) => entries,
         _ => return None,
     };
@@ -713,7 +716,7 @@ pub fn decode_hr_measurement(payload: &[u8]) -> Option<(Option<f64>, Vec<f64>)> 
     let (flags, rest) = payload.split_first()?;
     let hr16 = flags & 0x01 != 0;
     let energy = flags & 0x08 != 0;
-    let rr = flags & 0x04 != 0;
+    let rr = flags & 0x10 != 0;
     let mut pos = 0usize;
     let hr = if hr16 {
         let raw = u16::from_le_bytes([*rest.get(pos)?, *rest.get(pos + 1)?]);
@@ -974,10 +977,10 @@ mod tests {
     #[test]
     fn method_return_carries_reply_serial_and_body() {
         let mut fields = Marshal::new(16);
-        fields.raw(&[FIELD_REPLY_SERIAL, b'u']);
+        fields.field(FIELD_REPLY_SERIAL, "u");
         fields.align(4);
         fields.buf.extend_from_slice(&1u32.to_le_bytes());
-        fields.raw(&[FIELD_SIGNATURE, b'g']);
+        fields.field(FIELD_SIGNATURE, "g");
         fields.sig("s");
         let mut body = Marshal::new(0);
         body.str(":1.42");
@@ -993,10 +996,10 @@ mod tests {
     #[test]
     fn decline_message_parses_decline_name() {
         let mut fields = Marshal::new(16);
-        fields.raw(&[FIELD_REPLY_SERIAL, b'u']);
+        fields.field(FIELD_REPLY_SERIAL, "u");
         fields.align(4);
         fields.buf.extend_from_slice(&1u32.to_le_bytes());
-        fields.raw(&[FIELD_DECLINE_NAME, b's']);
+        fields.field(FIELD_DECLINE_NAME, "s");
         fields.str("org.bluez.NotReady");
         let msg = marshal_message(2, TYPE_DECLINE, fields, &[]);
         let parsed = parse_message(&msg).expect("valid decline");
@@ -1008,15 +1011,15 @@ mod tests {
     #[test]
     fn signal_properties_changed_parses_value_bytes() {
         let mut fields = Marshal::new(16);
-        fields.raw(&[FIELD_PATH, b'o']);
+        fields.field(FIELD_PATH, "o");
         fields.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015");
-        fields.raw(&[FIELD_INTERFACE, b's']);
+        fields.field(FIELD_INTERFACE, "s");
         fields.str(PROPERTIES_IFACE);
-        fields.raw(&[FIELD_MEMBER, b's']);
+        fields.field(FIELD_MEMBER, "s");
         fields.str("PropertiesChanged");
-        fields.raw(&[FIELD_SENDER, b's']);
+        fields.field(FIELD_SENDER, "s");
         fields.str(BLUEZ_NAME);
-        fields.raw(&[FIELD_SIGNATURE, b'g']);
+        fields.field(FIELD_SIGNATURE, "g");
         fields.sig("sa{sv}as");
         let mut body = Marshal::new(0);
         body.align(8);
@@ -1026,7 +1029,7 @@ mod tests {
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
         body.str("Value");
-        body.buf.extend_from_slice(&[1, b'a', b'y', 0]);
+        body.buf.extend_from_slice(&[2, b'a', b'y', 0]);
         body.align(4);
         body.buf.extend_from_slice(&4u32.to_le_bytes());
         body.buf.extend_from_slice(&[0x10, 0x3C, 0x08, 0x00]);
@@ -1102,10 +1105,10 @@ mod tests {
         body.buf[top..top + 4].copy_from_slice(&top_len.to_le_bytes());
 
         let mut fields = Marshal::new(16);
-        fields.raw(&[FIELD_REPLY_SERIAL, b'u']);
+        fields.field(FIELD_REPLY_SERIAL, "u");
         fields.align(4);
         fields.buf.extend_from_slice(&3u32.to_le_bytes());
-        fields.raw(&[FIELD_SIGNATURE, b'g']);
+        fields.field(FIELD_SIGNATURE, "g");
         fields.sig("a{oa{sa{sv}}}");
         let msg = marshal_message(9, TYPE_METHOD_RETURN, fields, &body.buf);
         let parsed = parse_message(&msg).expect("valid reply");
