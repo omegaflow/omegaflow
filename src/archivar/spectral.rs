@@ -435,6 +435,27 @@ pub fn color_for_ci(ci: f64) -> [f32; 4] {
     lut[idx.min(COLOR_LUT_LEN - 1)]
 }
 
+pub fn color_lut_bounds() -> (f32, f32) {
+    (
+        COLOR_LOCUS[0].0 as f32,
+        COLOR_LOCUS[COLOR_LOCUS.len() - 1].0 as f32,
+    )
+}
+
+pub fn color_lut_wire() -> Vec<u8> {
+    let (lo, hi) = color_lut_bounds();
+    let lut = color_lut_rgba();
+    let mut out = Vec::with_capacity(8 + lut.len() * 16);
+    out.extend_from_slice(&lo.to_le_bytes());
+    out.extend_from_slice(&hi.to_le_bytes());
+    for texel in lut.iter() {
+        for c in texel.iter() {
+            out.extend_from_slice(&c.to_le_bytes());
+        }
+    }
+    out
+}
+
 fn extinction_table() -> &'static Vec<(f64, f64)> {
     static TABLE: std::sync::OnceLock<Vec<(f64, f64)>> = std::sync::OnceLock::new();
     TABLE.get_or_init(|| parse_extinction(include_str!("kernels/ccm89_rv31.dat")))
@@ -707,6 +728,85 @@ mod tests {
         let hi = COLOR_LOCUS[COLOR_LOCUS.len() - 1].0;
         assert_eq!(color_for_ci(lo - 1.0), color_lut_rgba()[0]);
         assert_eq!(color_for_ci(hi + 1.0), color_lut_rgba()[COLOR_LUT_LEN - 1]);
+    }
+
+    fn cpu_lut_index(ci: f64, lo: f64, hi: f64) -> usize {
+        if ci <= lo {
+            return 0;
+        }
+        if ci >= hi {
+            return COLOR_LUT_LEN - 1;
+        }
+        (((ci - lo) / (hi - lo) * COLOR_LUT_LEN as f64) as usize).min(COLOR_LUT_LEN - 1)
+    }
+
+    fn gpu_lut_index(ci: f64, lo: f32, hi: f32) -> usize {
+        let ci = ci as f32;
+        let t = (ci - lo) / (hi - lo) * COLOR_LUT_LEN as f32;
+        t.floor().clamp(0.0, (COLOR_LUT_LEN - 1) as f32) as usize
+    }
+
+    fn max_adjacent_lut_delta(lut: &[[f32; 4]; COLOR_LUT_LEN]) -> f32 {
+        let mut m = 0.0f32;
+        for i in 0..COLOR_LUT_LEN - 1 {
+            for c in 0..3 {
+                let d = (lut[i + 1][c] - lut[i][c]).abs();
+                if d > m {
+                    m = d;
+                }
+            }
+        }
+        m
+    }
+
+    #[test]
+    fn color_lut_wire_carries_bounds_and_the_exact_lut() {
+        let wire = color_lut_wire();
+        assert_eq!(wire.len(), 8 + COLOR_LUT_LEN * 16);
+        let (lo, hi) = color_lut_bounds();
+        assert_eq!(f32::from_le_bytes(wire[0..4].try_into().unwrap()), lo);
+        assert_eq!(f32::from_le_bytes(wire[4..8].try_into().unwrap()), hi);
+        let lut = color_lut_rgba();
+        for (i, texel) in lut.iter().enumerate() {
+            for (c, expected) in texel.iter().enumerate() {
+                let o = 8 + (i * 4 + c) * 4;
+                let got = f32::from_le_bytes(wire[o..o + 4].try_into().unwrap());
+                assert_eq!(got, *expected, "wire texel {i} channel {c}");
+            }
+        }
+    }
+
+    #[test]
+    fn gpu_lut_index_mirror_matches_color_for_ci() {
+        let lut = color_lut_rgba();
+        let (lo, hi) = (COLOR_LOCUS[0].0, COLOR_LOCUS[COLOR_LOCUS.len() - 1].0);
+        let (lo32, hi32) = color_lut_bounds();
+        let tolerance = max_adjacent_lut_delta(&lut) + 1e-6;
+
+        assert_eq!(gpu_lut_index(0.0, lo32, hi32), cpu_lut_index(0.0, lo, hi));
+        assert_eq!(gpu_lut_index(lo - 1.0, lo32, hi32), 0);
+        assert_eq!(gpu_lut_index(hi + 1.0, lo32, hi32), COLOR_LUT_LEN - 1);
+
+        for k in 0..=2000 {
+            let ci = -1.0 + k as f64 * (7.0 / 2000.0);
+            let cpu = if ci == 0.0 {
+                [1.0, 1.0, 1.0, 1.0]
+            } else {
+                lut[cpu_lut_index(ci, lo, hi)]
+            };
+            let gpu = if ci == 0.0 {
+                [1.0, 1.0, 1.0, 1.0]
+            } else {
+                lut[gpu_lut_index(ci, lo32, hi32)]
+            };
+            for c in 0..4 {
+                let d = (gpu[c] - cpu[c]).abs();
+                assert!(
+                    d <= tolerance,
+                    "LUT parity at ci={ci} channel {c}: {d} > {tolerance}"
+                );
+            }
+        }
     }
 
     #[test]
