@@ -577,38 +577,32 @@ fn device_by_address(args: &[DbusValue], mac: &str) -> Option<(String, bool)> {
             _ => continue,
         };
         let ifaces = match ifaces {
-            DbusValue::Array(items) => items,
+            DbusValue::Dict(entries) => entries,
             _ => continue,
         };
         let mut address: Option<&str> = None;
         let mut connected: Option<bool> = None;
-        for iface in ifaces {
-            let iface = match iface {
-                DbusValue::Dict(entries) => entries,
+        for (name, props) in ifaces {
+            let (name, props) = match (name, props) {
+                (DbusValue::Str(n), DbusValue::Dict(p)) => (n, p),
                 _ => continue,
             };
-            for (name, props) in iface {
-                let (name, props) = match (name, props) {
-                    (DbusValue::Str(n), DbusValue::Dict(p)) => (n, p),
+            if name != DEVICE_IFACE {
+                continue;
+            }
+            for (key, value) in props {
+                let key = match key {
+                    DbusValue::Str(k) => k,
                     _ => continue,
                 };
-                if name != DEVICE_IFACE {
-                    continue;
-                }
-                for (key, value) in props {
-                    let key = match key {
-                        DbusValue::Str(k) => k,
-                        _ => continue,
-                    };
-                    match key.as_str() {
-                        "Address" => {
-                            address = variant_str(value);
-                        }
-                        "Connected" => {
-                            connected = variant_bool(value);
-                        }
-                        _ => {}
+                match key.as_str() {
+                    "Address" => {
+                        address = variant_str(value);
                     }
+                    "Connected" => {
+                        connected = variant_bool(value);
+                    }
+                    _ => {}
                 }
             }
         }
@@ -644,33 +638,27 @@ fn characteristic_matches(
             continue;
         }
         let ifaces = match ifaces {
-            DbusValue::Array(items) => items,
+            DbusValue::Dict(entries) => entries,
             _ => continue,
         };
-        for iface in ifaces {
-            let iface = match iface {
-                DbusValue::Dict(entries) => entries,
+        for (name, props) in ifaces {
+            let (name, props) = match (name, props) {
+                (DbusValue::Str(n), DbusValue::Dict(p)) => (n, p),
                 _ => continue,
             };
-            for (name, props) in iface {
-                let (name, props) = match (name, props) {
-                    (DbusValue::Str(n), DbusValue::Dict(p)) => (n, p),
+            if name != GATT_CHAR_IFACE {
+                continue;
+            }
+            for (key, value) in props {
+                let key = match key {
+                    DbusValue::Str(k) => k,
                     _ => continue,
                 };
-                if name != GATT_CHAR_IFACE {
-                    continue;
-                }
-                for (key, value) in props {
-                    let key = match key {
-                        DbusValue::Str(k) => k,
-                        _ => continue,
-                    };
-                    if key == "UUID"
-                        && let Some(uuid) = variant_str(value)
-                        && uuid.to_ascii_lowercase().contains(&fragment)
-                    {
-                        matches.push((path.clone(), uuid.to_string()));
-                    }
+                if key == "UUID"
+                    && let Some(uuid) = variant_str(value)
+                    && uuid.to_ascii_lowercase().contains(&fragment)
+                {
+                    matches.push((path.clone(), uuid.to_string()));
                 }
             }
         }
@@ -1193,13 +1181,13 @@ mod tests {
     fn managed_characteristic(path: &str, uuid: &str) -> (DbusValue, DbusValue) {
         (
             DbusValue::Str(path.to_string()),
-            DbusValue::Array(vec![DbusValue::Dict(vec![(
+            DbusValue::Dict(vec![(
                 DbusValue::Str(GATT_CHAR_IFACE.to_string()),
                 DbusValue::Dict(vec![(
                     DbusValue::Str("UUID".to_string()),
                     DbusValue::Variant(Box::new(DbusValue::Str(uuid.to_string()))),
                 )]),
-            )])]),
+            )]),
         )
     }
 
