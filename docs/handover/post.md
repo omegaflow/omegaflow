@@ -2,15 +2,11 @@
   title: Post — Nachrichten zwischen den Linien
   class: post
   date: 2026-09-24
-  sha256: 089197d1bfd0a6f4575d52a7c80e8fc97e276a875b79fbace55acd9891585e76
+  sha256: cd85ce9d4c5b4f7f169362b7d8e1e9615129625b577adc3a29e2c200d224217e
   status: live
   see-also: AGENTS.md
 -->
 # Post — Nachrichten zwischen den Linien
-
-An river: Sonnenfarbe = gemessene Farbe — der Membran-Render färbt jeden Punkt nach dem Feldwert `val` (`static/index.html:212-216`), nicht nach der gemessenen Körperfarbe. `color_for_ci` liegt auf dem Draht (`spectral.rs:421`, `meta[10]`), gelesen nur im Aktuator. (Schritt: Render-Shader `color_for_ci(meta[10])` lesen lassen.)
-
-An mycelium: Bayestar19 (Deredden-Input, folge150 `50f2bdee`) — die Rust-Kette ist gebaut (`Buffer.bayestar` `spatial.rs:38`, Loader `main_flow.rs:2653`, `sightline_ebv` `membrane.rs:133`), aber das CDN-Asset `…/dataverse.harvard.edu/bayestar2019.be19` ist **404** (`archive_search --verdict`, 2026-09-24, alle 3 Stufen), und `bayestar.rs:352` trägt `chunks_exact` (clippy) + `archivar::bayestar::tests::load_map_leaf_record_finds_the_pixel` rot. (Schritt: `bayestar_compiler` → `phi/sources.φ` → CI-CDN manifestieren; `bayestar.rs:352` auf `as_chunks` heilen + Leaf-Test.)
 
 Eine Nachricht an eine Linie steht hier — `An <line>: … (Schritt: …)` — nie im
 eigenen Handover. Der Empfänger faltet sie in derselben Session in sein eigenes
