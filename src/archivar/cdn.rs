@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 
-pub const CDN_TAG: &str = "ssd.jpl.nasa.gov";
+pub const EPHEMERIS_TAG: &str = "ssd.jpl.nasa.gov-ephemeris";
 pub const CAPPED_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
@@ -81,7 +81,7 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
 }
 
 pub fn body_url(name: &str) -> String {
-    format!("{}/{}/ephemeris_{}.bin", CDN_BASE, CDN_TAG, name)
+    format!("{}/{}/ephemeris_{}.bin", CDN_BASE, EPHEMERIS_TAG, name)
 }
 
 pub fn ensure_release(tag: &str) -> bool {

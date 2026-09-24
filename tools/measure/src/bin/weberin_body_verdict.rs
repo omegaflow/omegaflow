@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     BodyEphemeris, ExtractResult, J2000_EPOCH, LeapSeconds, SourceConfig, body_barycenter_position,
     embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
 };
-use omegaflow::cdn::{CDN_BASE, CDN_TAG};
+use omegaflow::cdn::CDN_BASE;
 use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
@@ -16,6 +16,8 @@ use omegaflow::weberin::{
 };
 
 const BIN_TTL_S: u64 = 604800;
+const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
+const DCOM5_TAG: &str = "ssd.jpl.nasa.gov-dcom5";
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
@@ -160,8 +162,12 @@ fn main() {
     };
     let tdb = (jd - J2000_EPOCH) * 86400.0;
 
-    let dastcom_bytes = match ensure_bin(&dastcom_path, CDN_TAG, "dastcom_asteroids.bin", BIN_TTL_S)
-    {
+    let dastcom_bytes = match ensure_bin(
+        &dastcom_path,
+        DASTCOM_TAG,
+        "dastcom_asteroids.bin",
+        BIN_TTL_S,
+    ) {
         Some(b) => b,
         None => {
             eprintln!(
@@ -184,7 +190,7 @@ fn main() {
 
     let comets: Vec<CometRec> = match ensure_bin(
         &dcom5_path,
-        CDN_TAG,
+        DCOM5_TAG,
         "dcom5_comets.bin",
         BIN_TTL_S,
     ) {

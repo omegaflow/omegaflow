@@ -8324,7 +8324,7 @@ on earth 0 0 0
 ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/dr3_stars.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/tycho2_compiler.rs
