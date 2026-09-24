@@ -5,7 +5,7 @@ use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800, COMP_V1800};
 use omegaflow::archivar::{
     BodyEphemeris, C_LIGHT, DIFFUSIVITY_MOLECULAR, body_barycenter_position,
-    parse_ephemeris_binary, signal_reach,
+    parse_ephemeris_binary, signal_reach, spectral::SPECTRAL_NO_BAND,
 };
 use omegaflow::te::{permutation_entropy, phase_randomized_surrogate, transfer_entropy_lag};
 use omegaflow::wind::{self, RECEIVER_RAD1, RECEIVER_RAD2, RECEIVER_TNR};
@@ -252,7 +252,13 @@ fn law_word(force: u8) -> &'static str {
 }
 
 fn cone_reach(force: u8, advection: f64, tau_s: f64) -> Option<f64> {
-    signal_reach(force as f64, advection, tau_s)
+    signal_reach(
+        force as f64,
+        advection,
+        tau_s,
+        SPECTRAL_NO_BAND,
+        SPECTRAL_NO_BAND,
+    )
 }
 
 fn cone_min_tau(force: u8, advection: f64, d: f64) -> Option<f64> {
