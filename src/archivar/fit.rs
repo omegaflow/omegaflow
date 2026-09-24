@@ -499,4 +499,27 @@ mod tests {
         file[8] = b'X';
         assert_eq!(parse_fit(&file), None);
     }
+
+    #[test]
+    #[ignore = "reads the Garmin FR945 FIT named by OMEGAFLOW_FIT_SAMPLE"]
+    fn real_fit_sample_parses() {
+        let path = std::env::var("OMEGAFLOW_FIT_SAMPLE")
+            .expect("OMEGAFLOW_FIT_SAMPLE names a Garmin FR945 .fit on disk");
+        let bytes = std::fs::read(&path).expect("read the FIT sample");
+        let batch = parse_fit(&bytes).expect("the FR945 FIT passes the header and CRC gates");
+        assert!(
+            batch.iter().all(|(_, v, _)| v.is_finite()),
+            "every emitted value is finite"
+        );
+        let nn: Vec<f64> = batch
+            .iter()
+            .filter(|(k, _, _)| k == "nn")
+            .map(|(_, v, _)| *v)
+            .collect();
+        assert!(
+            !nn.is_empty(),
+            "the FR945 hr message carries event timestamps as nn intervals"
+        );
+        assert!(nn.iter().all(|v| *v > 0.0), "every nn interval is positive");
+    }
 }
