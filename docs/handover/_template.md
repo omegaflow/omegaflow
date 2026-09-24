@@ -31,6 +31,20 @@ dispatchen; `operator-gebunden`, `blockiert` und `wartend` werden benannt, nie
 dispatcht. Gibt es keinen abarbeitbaren Punkt, sagt die Session das. Jeder Punkt
 trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
+**Sortierung — von Handlungsfähigkeit zu Nicht-Handlungsfähigkeit.** Keine
+Rangfolge nach Wichtigkeit; die Ordnung ist, wie handlungsfähig die Session am
+Punkt ist:
+
+1. **autonom** — `eigen`; jetzt handlungsfähig, wird dispatcht.
+2. **operator-gebunden** — bedingt; handlungsfähig nach dem Operator-Wort.
+3. **blockiert** — nicht handlungsfähig; harte externe Blockade, kein eigener Schritt.
+4. **wartend** — nicht handlungsfähig; wartet auf ein externes Ereignis.
+5. **termin** — nicht handlungsfähig; wartet auf ein Datum/eine Periode.
+6. **LOCK** — nicht handlungsfähig; Operator-Sperrwort registriert.
+
+Innerhalb einer Stufe nach Trigger. Der Planungs-Pass dispatcht von oben nach
+unten; Stufe 2–6 werden benannt, nie dispatcht.
+
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der
 Baum die Messung; `open_points_check` prüft billig jeden in den offenen Punkten
