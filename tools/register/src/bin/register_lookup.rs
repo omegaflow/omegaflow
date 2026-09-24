@@ -948,7 +948,7 @@ fn run_open() {
     let mut witnesses_released: Vec<String> = Vec::new();
     let witnesses = scan_note_markers(
         Path::new(WITNESSES_PATH),
-        &["pending", "absent"],
+        &["pending"],
         &["declined"],
         &mut witnesses_open,
         &mut witnesses_released,
@@ -2397,6 +2397,26 @@ mod tests {
         assert_eq!(open_out.len(), 0);
         assert_eq!(released_out.len(), 1);
         assert!(released_out[0].contains("descoped"));
+    }
+
+    #[test]
+    fn witness_absent_is_terminal_not_an_open_duty() {
+        let text = "note Band absent, 0 honored\nnote absent; pending (harvest open)\nnote declined by measurement\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_note_markers_text(
+            text,
+            "w.\u{3c6}",
+            &["pending"],
+            &["declined"],
+            &mut open_out,
+            &mut released_out,
+        );
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 1);
+        assert_eq!(released_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\tw.\u{3c6}:2\t[mycelium] pending"));
+        assert!(released_out[0].starts_with("RELEASED\tw.\u{3c6}:3\tdeclined"));
     }
 
     #[test]
