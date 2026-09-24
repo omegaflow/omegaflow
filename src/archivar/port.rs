@@ -1687,9 +1687,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl == "l1"
         || kl == "l2"
         || kl == "l5"
+        || kl.ends_with("_cycle")
     {
-        ("em", "cycle", 604800.0)
-    } else if kl.ends_with("_cycle") {
         ("em", "cycle", 604800.0)
     } else if kl.ends_with("angle_a") || kl.ends_with("angle_b") {
         ("em", "rad", 604800.0)
@@ -1790,9 +1789,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("gravity", "m/s2", 86400.0)
     } else if kl.contains("depth") {
         ("seismic-body", "km", 10.0)
-    } else if kl.contains("flux") {
-        ("em", "W/m2", 3600.0)
-    } else if kl.contains("radiance") {
+    } else if kl.contains("flux") || kl.contains("radiance") {
         ("em", "W/m2", 3600.0)
     } else if kl.contains("radiative_power") {
         ("em", "W", 3600.0)
@@ -1828,9 +1825,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("em", "nT", 60.0)
     } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
         ("diffusion", "%", 86400.0)
-    } else if kl.contains("cloud_cover") {
-        ("diffusion", "%", 300.0)
-    } else if kl.contains("leaf_wetness") {
+    } else if kl.contains("cloud_cover") || kl.contains("leaf_wetness") {
         ("diffusion", "%", 300.0)
     } else if kl.contains("precipitable_water") {
         ("diffusion", "cm", 86400.0)
@@ -1902,9 +1897,11 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("advective", "m3/s", 60.0)
     } else if kl.ends_with("_tec") || kl.contains("_tec_") {
         ("em", "tecu", 7200.0)
-    } else if kl.contains("aod") || kl.contains("aerosol_optical") || kl.contains("cdod") {
-        ("em", "1", 86400.0)
-    } else if kl.contains("redshift") {
+    } else if kl.contains("aod")
+        || kl.contains("aerosol_optical")
+        || kl.contains("cdod")
+        || kl.contains("redshift")
+    {
         ("em", "1", 86400.0)
     } else if kl.contains("extinction_ebv") {
         ("em", "mag", 604800.0)
@@ -3618,10 +3615,7 @@ mod probe_classify_tests {
             probe_classify("magnetosphere_kp_a_running"),
             ("em", "1", 3600.0)
         );
-        assert_eq!(
-            probe_classify("magnetosphere_kp_3h"),
-            ("em", "1", 3600.0)
-        );
+        assert_eq!(probe_classify("magnetosphere_kp_3h"), ("em", "1", 3600.0));
         assert_eq!(probe_classify("safecast_cpm"), ("em", "cpm", 3600.0));
         assert_eq!(
             probe_classify("oulu_neutron_corr_for_eff"),
@@ -3683,10 +3677,7 @@ mod probe_classify_tests {
             probe_classify("exosphere_ace_dens_ncc"),
             ("diffusion", "cm-3", 3600.0)
         );
-        assert_eq!(
-            probe_classify("gps_sv_clock_bias_s"),
-            ("em", "s", 86400.0)
-        );
+        assert_eq!(probe_classify("gps_sv_clock_bias_s"), ("em", "s", 86400.0));
         assert_eq!(
             probe_classify("hfradar_codar_2015_u_cm_s"),
             ("advective", "cm/s", 3600.0)
@@ -3695,22 +3686,10 @@ mod probe_classify_tests {
             probe_classify("hfradar_radial_velocity_USM_SGRV_cm_s"),
             ("advective", "cm/s", 3600.0)
         );
-        assert_eq!(
-            probe_classify("magnetar_period_s"),
-            ("em", "s", 604800.0)
-        );
-        assert_eq!(
-            probe_classify("gcvs_period_d"),
-            ("em", "d", 604800.0)
-        );
-        assert_eq!(
-            probe_classify("pulsar_period_s"),
-            ("em", "s", 604800.0)
-        );
-        assert_eq!(
-            probe_classify("frb_scatter_ms"),
-            ("em", "ms", 604800.0)
-        );
+        assert_eq!(probe_classify("magnetar_period_s"), ("em", "s", 604800.0));
+        assert_eq!(probe_classify("gcvs_period_d"), ("em", "d", 604800.0));
+        assert_eq!(probe_classify("pulsar_period_s"), ("em", "s", 604800.0));
+        assert_eq!(probe_classify("frb_scatter_ms"), ("em", "ms", 604800.0));
         assert_eq!(
             probe_classify("gracefo_kbr_range_rate_m_s"),
             ("gravity", "m/s", 86400.0)
