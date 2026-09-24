@@ -10001,6 +10001,7 @@ url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu
 format bayestar
 origin https://dataverse.harvard.edu/api/access/datafile/3424708
 compiler tools/harvest/src/bin/bayestar_compiler.rs
+sha256 970cd3a2a5f1f66859f93b615d1c203512d430203c2cb73c0476495d3f77b41f
 at sun
 ttl 31536000
 
