@@ -42,7 +42,7 @@ jobs:
           path: report-n${{ matrix.n }}.txt
   tcurve:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
