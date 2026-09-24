@@ -166,11 +166,7 @@ fn bindung_linie_owner(line: &str) -> Option<String> {
         .chars()
         .take_while(|c| c.is_ascii_alphanumeric() || *c == '-')
         .collect();
-    if owner.is_empty() {
-        None
-    } else {
-        Some(owner)
-    }
+    if owner.is_empty() { None } else { Some(owner) }
 }
 
 fn owner_drift(root: &Path) -> Vec<String> {
