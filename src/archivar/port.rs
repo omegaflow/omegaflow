@@ -1597,23 +1597,206 @@ pub fn probe_csv(raw: &str) -> Option<String> {
 }
 
 pub fn probe_classify(key: &str) -> (&str, &str, f64) {
+    if let Some(verdict) = intentional_core(key) {
+        return verdict;
+    }
+    if let Some((force, unit, tau)) = register_field_map().get(key).copied() {
+        return (force, unit, tau);
+    }
+    let (force, unit, tau) = probe_classify_raw(key);
+    if force == "DROP" || force == "UNCERTAIN" {
+        return (force, unit, tau);
+    }
+    let allowed = match force_id_of(force) {
+        Some(fid) => allowed_units_for_force(fid).contains(&normalize_unit(unit).as_str()),
+        None => false,
+    };
+    if allowed {
+        (force, unit, tau)
+    } else {
+        ("UNCERTAIN", "", 0.0)
+    }
+}
+
+fn intentional_core(key: &str) -> Option<(&'static str, &'static str, f64)> {
     let kl = key.to_lowercase();
-    if kl.contains("temp") || kl.contains("atmp") || kl.contains("wtmp") || kl.contains("dewp") {
+    if kl.contains("eop_")
+        || kl.contains("ut1_utc")
+        || kl.contains("polar_motion")
+        || kl == "pmx"
+        || kl == "pmy"
+    {
+        return Some(("UNCERTAIN", "", 0.0));
+    }
+    if kl == "sample" {
+        return Some(("DROP", "", 0.0));
+    }
+    match key {
+        "copernicus_air_pressure_at_sea_level"
+        | "cosmic_ro_pressure_hpa"
+        | "igra_air_pressure_hpa"
+        | "noaa_gsod_slp_hpa"
+        | "noaa_isd_slp_hpa"
+        | "observations.seaLevelPressure"
+        | "omni_solarwind_pressure_npa"
+        | "pressure"
+        | "properties.PRES"
+        | "properties.PTDY"
+        | "soles.0.pressure"
+        | "sols.6.pressure"
+        | "surface_partial_pressure_of_carbon_dioxide_in_sea_water"
+        | "surface_pressure" => return Some(("acoustic", "hPa", 21600.0)),
+        _ => {}
+    }
+    None
+}
+
+fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str, f64)> {
+    static MAP: OnceLock<HashMap<String, (&'static str, &'static str, f64)>> = OnceLock::new();
+    MAP.get_or_init(|| {
+        let mut map: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
+        for line in include_str!("../../phi/sources.φ").lines() {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            match p.first().copied() {
+                Some("field" | "first" | "last" | "lastrow") if p.len() >= 7 => {
+                    if let Ok(tau) = p[6].parse::<f64>()
+                        && tau.is_finite()
+                        && tau > 0.0
+                    {
+                        map.insert(p[1].to_string(), (p[4], p[5], tau));
+                    }
+                }
+                _ => {}
+            }
+        }
+        map
+    })
+}
+
+fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
+    let kl = key.to_lowercase();
+    if kl.contains("sample") || kl.contains("sort") || kl.contains("order") || kl.contains("bbox") {
+        ("DROP", "", 0.0)
+    } else if kl.contains("eop_")
+        || kl.contains("ut1_utc")
+        || kl.contains("polar_motion")
+        || kl == "pmx"
+        || kl == "pmy"
+    {
+        ("UNCERTAIN", "", 0.0)
+    } else if kl.contains("phase_cycle")
+        || kl.ends_with("polar_angle_cycles")
+        || kl == "l1"
+        || kl == "l2"
+        || kl == "l5"
+    {
+        ("em", "cycle", 604800.0)
+    } else if kl.ends_with("angle_a") || kl.ends_with("angle_b") {
+        ("em", "rad", 604800.0)
+    } else if kl.ends_with("x_core_m")
+        || kl.ends_with("y_core_m")
+        || kl.contains("las_x_")
+        || kl.contains("las_y_")
+        || kl.contains("las_z_")
+    {
+        ("em", "m", 604800.0)
+    } else if kl.ends_with("shower_age") {
+        ("em", "1", 604800.0)
+    } else if kl.ends_with("_classification") {
+        ("diffusion", "1", 604800.0)
+    } else if kl.ends_with("_azimuth_deg") || kl.ends_with("_zenith_deg") {
+        ("acoustic", "deg", 300.0)
+    } else if kl.contains("teff") {
+        ("thermal", "K", 604800.0)
+    } else if kl.contains("brightness") {
+        ("thermal", "K", 3600.0)
+    } else if kl.contains("sst") {
+        ("thermal", "K", 360.0)
+    } else if kl.contains("thermal_speed") {
+        ("thermal", "km/s", 3600.0)
+    } else if kl.contains("temp")
+        || kl.contains("atmp")
+        || kl.contains("wtmp")
+        || kl.contains("dewp")
+        || kl.contains("tmax")
+        || kl.contains("tmin")
+        || kl.contains("tavg")
+        || kl.contains("t25")
+        || kl.ends_with("max_c")
+        || kl.ends_with("min_c")
+    {
         ("thermal", "C", 3600.0)
-    } else if kl.contains("pres") || kl.contains("baro") {
-        ("advective", "hPa", 60.0)
+    } else if kl.starts_with("cmb") {
+        ("thermal", "K", 604800.0)
+    } else if kl.contains("ptdy")
+        || kl.contains("pres")
+        || kl.contains("baro")
+        || kl.contains("slp")
+        || kl.contains("altim")
+    {
+        ("acoustic", "hPa", 21600.0)
+    } else if kl.contains("flow_speed") || kl.contains("proton_speed") {
+        ("advective", "km/s", 3600.0)
     } else if kl.contains("spd")
         || kl.contains("gust")
+        || kl.contains("gst")
+        || kl.contains("wdsp")
+        || kl.contains("qbo")
         || (kl.contains("wind") && !kl.contains("dir"))
     {
         ("advective", "m/s", 60.0)
     } else if kl.contains("dir") || kl.contains("heading") {
         ("advective", "deg", 60.0)
+    } else if kl.contains("eastward")
+        || kl.contains("northward")
+        || kl.contains("ucur")
+        || kl.contains("vcur")
+    {
+        ("advective", "m/s", 3600.0)
+    } else if kl.ends_with("u_cm_s") || kl.ends_with("v_cm_s") {
+        ("advective", "cm/s", 3600.0)
+    } else if kl.contains("dpd")
+        || kl.contains("apd")
+        || kl.contains("dominant_period")
+        || kl.contains("avg_period")
+    {
+        ("acoustic", "s", 21600.0)
+    } else if kl.contains("rms_amplitude") {
+        ("acoustic", "pa", 300.0)
+    } else if kl.contains("hydrophone") {
+        ("acoustic", "count", 60.0)
+    } else if kl.contains("gong") {
+        ("acoustic", "m/s", 604800.0)
     } else if kl.contains("wave") || kl.contains("wvht") || kl.contains("swell") {
         ("acoustic", "m", 10.0)
+    } else if kl.contains("tide")
+        || kl.contains("gage_height")
+        || kl.contains("_height")
+        || kl.contains("ssh")
+        || kl.contains("ssha")
+        || kl.contains("_h_ph")
+        || kl.contains("distance")
+    {
+        ("gravity", "m", 3600.0)
     } else if kl.contains("depth") {
         ("seismic-body", "km", 10.0)
     } else if kl.contains("flux") {
+        ("em", "W/m2", 3600.0)
+    } else if kl.contains("radiance") {
+        ("em", "W/m2", 3600.0)
+    } else if kl.contains("radiative_power") {
+        ("em", "W", 3600.0)
+    } else if kl.contains("radiant_energy") {
+        ("em", "J", 3600.0)
+    } else if kl.contains("radiated_energy") {
+        ("em", "e10j", 3600.0)
+    } else if kl.contains("impact_energy") {
+        ("em", "kt_tnt", 3600.0)
+    } else if kl.contains("fluence") {
+        ("em", "erg/cm2", 604800.0)
+    } else if kl.ends_with("_ev") {
+        ("em", "eV", 604800.0)
+    } else if kl.contains("xrs") {
         ("em", "W/m2", 3600.0)
     } else if kl == "bx"
         || kl == "by"
@@ -1631,7 +1814,11 @@ pub fn probe_classify(key: &str) -> (&str, &str, f64) {
         ("em", "nT", 60.0)
     } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
         ("diffusion", "%", 86400.0)
-    } else if kl.contains("rain") || kl.contains("prcp") {
+    } else if kl.contains("precipitable_water") {
+        ("diffusion", "cm", 86400.0)
+    } else if kl.contains("available_water") {
+        ("diffusion", "mm", 86400.0)
+    } else if kl.contains("rain") || kl.contains("prcp") || kl.contains("precip") {
         ("acoustic", "mm", 60.0)
     } else if kl.contains("vis") {
         ("em", "km", 60.0)
@@ -1640,36 +1827,156 @@ pub fn probe_classify(key: &str) -> (&str, &str, f64) {
         || kl.contains("o3")
         || kl.contains("no2")
         || kl.contains("so2")
+        || kl.contains("h2s")
     {
         ("diffusion", "ppm", 86400.0)
-    } else if kl.contains("vel") || kl.contains("vlct") {
+    } else if kl.contains("pm25")
+        || kl.contains("pm10")
+        || kl.contains("pm2_5")
+        || kl.contains("pm1_0")
+        || kl.ends_with("_ugm3")
+        || kl.ends_with("_ug_m3")
+    {
+        ("diffusion", "ug/m3", 3600.0)
+    } else if kl.contains("vel")
+        || kl.contains("vlct")
+        || kl.contains("vpec")
+        || kl.contains("_rv_")
+        || kl.ends_with("cz_kms")
+        || kl.ends_with("_rv_km_s")
+    {
         ("advective", "km/s", 60.0)
+    } else if kl.contains("speed") {
+        ("em", "km/s", 3600.0)
     } else if kl.contains("freq") || kl.ends_with("_hz") {
         ("em", "Hz", 60.0)
     } else if kl.contains("dens") {
         ("diffusion", "p/cm3", 3600.0)
+    } else if kl.contains("doxy") || kl.contains("nitrate") {
+        ("diffusion", "micromole/kg", 604800.0)
+    } else if kl.contains("chla") {
+        ("diffusion", "mg/m3", 604800.0)
+    } else if kl.contains("bbp") {
+        ("diffusion", "m-1", 604800.0)
+    } else if kl.contains("oxygen") {
+        ("diffusion", "ml/l", 604800.0)
+    } else if kl.contains("total_ozone") {
+        ("diffusion", "DU", 86400.0)
+    } else if kl.contains("turbidity") {
+        ("diffusion", "ntu", 3600.0)
+    } else if kl.contains("psal") {
+        ("diffusion", "psu", 86400.0)
+    } else if kl.ends_with("_mg_kg") {
+        ("diffusion", "mg/kg", 604800.0)
     } else if kl.contains("conc") || kl.contains("salinity") {
         ("diffusion", "PSU", 86400.0)
+    } else if kl.contains("streamflow") {
+        ("advective", "cfs", 3600.0)
+    } else if kl.contains("e_rms") {
+        ("electric", "V/m", 3600.0)
+    } else if kl.contains("rpw_e") || kl.contains("efield") {
+        ("electric", "mV/m", 3600.0)
+    } else if kl.contains("gic") {
+        ("electric", "A", 3600.0)
     } else if kl == "db" || kl.ends_with("_db") {
         ("acoustic", "dB", 60.0)
     } else if kl.contains("discharge") {
         ("advective", "m3/s", 60.0)
+    } else if kl.ends_with("_tec") || kl.contains("_tec_") {
+        ("em", "tecu", 7200.0)
+    } else if kl.contains("aod") || kl.contains("aerosol_optical") || kl.contains("cdod") {
+        ("em", "1", 86400.0)
+    } else if kl.contains("redshift") {
+        ("em", "1", 86400.0)
+    } else if kl.contains("extinction_ebv") {
+        ("em", "mag", 604800.0)
+    } else if kl.contains("extinction") {
+        ("em", "1", 604800.0)
+    } else if kl.contains("_dm_") || kl.contains("dispersion") || kl.ends_with("_dm_pccm3") {
+        ("em", "pc/cm3", 604800.0)
+    } else if kl.ends_with("scatter_ms") {
+        ("em", "ms", 604800.0)
+    } else if kl.contains("period_s") {
+        ("em", "s", 604800.0)
+    } else if kl.contains("period_d") {
+        ("em", "d", 604800.0)
+    } else if kl.ends_with("snr") {
+        ("em", "1", 604800.0)
+    } else if kl.ends_with("_mjy") {
+        ("em", "mJy", 604800.0)
+    } else if kl.contains("neutron") {
+        ("em", "%", 3600.0)
+    } else if kl.contains("dose_rate") {
+        ("em", "usv/h", 3600.0)
+    } else if kl.contains("activity") {
+        ("em", "bq/l", 3600.0)
+    } else if kl.contains("refractivity") {
+        ("em", "N-units", 604800.0)
+    } else if kl.contains("logg") {
+        ("gravity", "logg", 604800.0)
+    } else if kl.contains("planet_mass") {
+        ("gravity", "M_earth", 604800.0)
+    } else if kl.contains("mass") {
+        ("gravity", "M_sun", 604800.0)
+    } else if kl.contains("planet_radius") {
+        ("gravity", "R_earth", 604800.0)
+    } else if kl.contains("igets_gravity") {
+        ("gravity", "nm/s2", 86400.0)
+    } else if kl.ends_with("_ms2") {
+        ("gravity", "m/s2", 604800.0)
+    } else if kl.contains("clock_bias") {
+        ("em", "s", 86400.0)
+    } else if kl.contains("storm_intensity") {
+        ("advective", "knot", 300.0)
+    } else if kl.contains("ccor") || kl.contains("las_intensity") {
+        ("em", "1", 86400.0)
+    } else if kl.contains("_c1_m")
+        || kl.contains("_p1_m")
+        || kl.contains("_c2_m")
+        || kl.contains("_p2_m")
+        || kl.contains("_c5_m")
+    {
+        ("em", "m", 86400.0)
+    } else if kl.contains("dbhz") {
+        ("em", "dbhz", 86400.0)
+    } else if kl.ends_with("_count") || kl.contains("_count_") {
+        ("em", "count", 604800.0)
+    } else if kl.contains("occlt") {
+        ("em", "1", 604800.0)
     } else if kl == "v" || kl == "s" {
         ("gravity", "m", 3600.0)
     } else if kl.contains("footprint") {
         ("em", "km", 60.0)
-    } else if kl.contains("volt") || kl.contains("efield") || kl.contains("potential") {
+    } else if kl.contains("volt") || kl.contains("potential") {
         ("electric", "V", 60.0)
     } else if kl.contains("current") && !kl.contains("ocean") {
         ("electric", "A", 60.0)
     } else if kl.contains("conduct") {
         ("electric", "S/m", 3600.0)
-    } else if kl.contains("sample") || kl.contains("sort") || kl.contains("order") {
-        ("DROP", "", 0.0)
-    } else if kl == "mag" || kl.contains("magnitude") {
-        ("seismic-body", "M", 3600.0)
-    } else if kl.contains("bbox") {
-        ("DROP", "", 0.0)
+    } else if kl.starts_with("fugin") {
+        ("em", "k.m/s", 31536000.0)
+    } else if kl.starts_with("gw2") {
+        ("gravity", "1", 31536000.0)
+    } else if kl.contains("sky1")
+        || kl.contains("_dl3")
+        || kl.starts_with("lhaaso")
+        || kl.starts_with("hawc")
+        || kl.starts_with("hess")
+        || kl.starts_with("magic")
+        || kl.starts_with("icecat")
+        || kl.starts_with("antares")
+    {
+        ("em", "1", 31536000.0)
+    } else if kl == "mag" || kl.contains("magnitude") || kl.contains("quake") || kl.ends_with("_mw")
+    {
+        ("seismic-body", "Mw", 3600.0)
+    } else if kl.ends_with("mag")
+        || kl.ends_with("mag1")
+        || kl.ends_with("mag2")
+        || kl.contains("magpsf")
+        || kl.contains("magap")
+    {
+        ("em", "mag", 604800.0)
     } else {
         ("UNCERTAIN", "", 0.0)
     }
@@ -2981,4 +3288,412 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
         total, live, void
     );
     0
+}
+
+#[cfg(test)]
+mod probe_classify_tests {
+    use super::probe_classify;
+
+    #[test]
+    fn ndbc_buoy_fields_classify() {
+        assert_eq!(probe_classify("gst_m_s"), ("advective", "m/s", 60.0));
+        assert_eq!(probe_classify("dpd_s"), ("acoustic", "s", 21600.0));
+        assert_eq!(probe_classify("apd_s"), ("acoustic", "s", 21600.0));
+        assert_eq!(probe_classify("ptdy_hpa"), ("acoustic", "hPa", 21600.0));
+        assert_eq!(probe_classify("tide_ft"), ("gravity", "m", 3600.0));
+        assert_eq!(
+            probe_classify("hydrosphere_ndbc_buoy_dominant_period"),
+            ("acoustic", "s", 21600.0)
+        );
+    }
+
+    #[test]
+    fn argo_biogeochemical_fields_classify() {
+        assert_eq!(
+            probe_classify("argo_dac_bgc_doxy_umol_kg"),
+            ("diffusion", "micromole/kg", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("argo_dac_bgc_nitrate_umol_kg"),
+            ("diffusion", "micromole/kg", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("argo_dac_bgc_chla_mg_m3"),
+            ("diffusion", "mg/m3", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("argo_dac_bgc_bbp700_m1"),
+            ("diffusion", "m-1", 604800.0)
+        );
+    }
+
+    #[test]
+    fn space_weather_fields_classify() {
+        assert_eq!(
+            probe_classify("streamflow_cfs"),
+            ("advective", "cfs", 3600.0)
+        );
+        assert_eq!(probe_classify("rpw_e_y"), ("electric", "mV/m", 3600.0));
+        assert_eq!(
+            probe_classify("solo_rpw_e_rms_vm"),
+            ("electric", "V/m", 3600.0)
+        );
+        assert_eq!(probe_classify("rave_teff_k"), ("thermal", "K", 604800.0));
+        assert_eq!(probe_classify("goes_abi_radiance"), ("em", "W/m2", 3600.0));
+        assert_eq!(
+            probe_classify("magnetosphere_total_field_nt"),
+            ("em", "nT", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("intermagnet_xyz_x_nt"),
+            ("em", "nT", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("hydrosphere_drifter_sst_k"),
+            ("thermal", "K", 360.0)
+        );
+    }
+
+    #[test]
+    fn metrology_anchor_form_pending_or_mirrors_register() {
+        assert_eq!(probe_classify("eop_iers_ut1_utc_s"), ("UNCERTAIN", "", 0.0));
+        assert_eq!(
+            probe_classify("eop_iers_polar_motion_x_arcsec"),
+            ("UNCERTAIN", "", 0.0)
+        );
+        assert_eq!(probe_classify("ut1_utc"), ("UNCERTAIN", "", 0.0));
+        assert_eq!(probe_classify("pmx"), ("UNCERTAIN", "", 0.0));
+        assert_eq!(probe_classify("ul_phase_cycles"), ("em", "cycle", 604800.0));
+        assert_eq!(
+            probe_classify("polar_angle_cycles"),
+            ("em", "cycle", 604800.0)
+        );
+        assert_eq!(probe_classify("l1"), ("em", "cycle", 604800.0));
+        assert_eq!(probe_classify("angle_a"), ("em", "rad", 604800.0));
+        assert_eq!(probe_classify("las_x_icrs_m"), ("em", "m", 86400.0));
+        assert_eq!(probe_classify("las_z_icrs_m"), ("em", "m", 86400.0));
+        assert_eq!(
+            probe_classify("kcdc_grande_x_core_m"),
+            ("em", "m", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("kcdc_grande_shower_age"),
+            ("em", "1", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("las_classification"),
+            ("diffusion", "1", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("cors_rinex_l1_cycle"),
+            ("UNCERTAIN", "", 0.0)
+        );
+        assert_eq!(
+            probe_classify("wds_separation_arcsec"),
+            ("UNCERTAIN", "", 0.0)
+        );
+    }
+
+    #[test]
+    fn arrival_direction_is_acoustic_deg() {
+        assert_eq!(
+            probe_classify("bgr_infrasound_back_azimuth_deg"),
+            ("acoustic", "deg", 300.0)
+        );
+        assert_eq!(
+            probe_classify("kcdc_kascade_zenith_deg"),
+            ("acoustic", "deg", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("kcdc_grande_azimuth_deg"),
+            ("acoustic", "deg", 604800.0)
+        );
+    }
+
+    #[test]
+    fn solar_wind_flow_speed_is_advective() {
+        assert_eq!(
+            probe_classify("omni_solarwind_flow_speed_kms"),
+            ("advective", "km/s", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("psp_solarwind_flow_speed_kms"),
+            ("advective", "km/s", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("cme_plane_of_sky_speed_km_s"),
+            ("UNCERTAIN", "", 0.0)
+        );
+    }
+
+    #[test]
+    fn registry_membership_gate_closes_unit_leaks() {
+        assert_eq!(
+            probe_classify("wod_oxygen_ml_l"),
+            ("diffusion", "ml/l", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("cosmic_ro_refractivity_n_units"),
+            ("em", "N-units", 604800.0)
+        );
+        assert_eq!(probe_classify("0.speed"), ("em", "km/s", 360.0));
+        assert_eq!(
+            probe_classify("cryosat_magnetic_field_intensity_nt"),
+            ("em", "nT", 4.0)
+        );
+        assert_eq!(
+            probe_classify("cme_plane_of_sky_speed_km_s"),
+            ("UNCERTAIN", "", 0.0)
+        );
+        assert_eq!(probe_classify("ptdy_hpa"), ("acoustic", "hPa", 21600.0));
+    }
+
+    #[test]
+    fn infrasound_and_lidar_physical_components_classify() {
+        assert_eq!(
+            probe_classify("bgr_infrasound_back_azimuth_deg"),
+            ("acoustic", "deg", 300.0)
+        );
+        assert_eq!(
+            probe_classify("bgr_infrasound_rms_amplitude_pa"),
+            ("acoustic", "pa", 300.0)
+        );
+        assert_eq!(probe_classify("las_intensity_dn"), ("em", "1", 86400.0));
+    }
+
+    #[test]
+    fn stellar_and_seismic_magnitude_part_ways() {
+        assert_eq!(probe_classify("comet_h_mag"), ("em", "mag", 604800.0));
+        assert_eq!(probe_classify("wd_vmag"), ("em", "mag", 604800.0));
+        assert_eq!(probe_classify("wds_primary_mag"), ("em", "mag", 604800.0));
+        assert_eq!(
+            probe_classify("alerce_ztf_detection_magpsf"),
+            ("em", "mag", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("geosphere_earthquake_mag"),
+            ("seismic-body", "Mw", 3600.0)
+        );
+    }
+
+    #[test]
+    fn sky_maps_and_surveys_classify() {
+        assert_eq!(probe_classify("fugin_moment0"), ("em", "K.m/s", 31536000.0));
+        assert_eq!(
+            probe_classify("lhaaso_sky1"),
+            ("em", "m-2.s-1.tev-1", 31536000.0)
+        );
+        assert_eq!(probe_classify("hess_dl3"), ("em", "tev", 31536000.0));
+        assert_eq!(
+            probe_classify("gw250207_115645"),
+            ("gravity", "1", 31536000.0)
+        );
+    }
+
+    #[test]
+    fn dissolved_constituents_classify() {
+        assert_eq!(
+            probe_classify("woudc_total_ozone_column_du"),
+            ("diffusion", "DU", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("dc_wq_turbidity_ntu"),
+            ("diffusion", "ntu", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("ndbc_dart_21414_height_m"),
+            ("gravity", "m", 3600.0)
+        );
+    }
+
+    #[test]
+    fn unclassified_stays_pending() {
+        assert_eq!(probe_classify("sommerfeld_ratio"), ("UNCERTAIN", "", 0.0));
+    }
+
+    #[test]
+    fn catalog_and_observable_fields_classify() {
+        assert_eq!(
+            probe_classify("bat_fluence_erg_cm2"),
+            ("em", "erg/cm2", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("radnet_activity_bq_l"),
+            ("em", "bq/l", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("kcdc_kascade_energy_ev"),
+            ("em", "eV", 604800.0)
+        );
+        assert_eq!(probe_classify("mars_dust_cdod"), ("em", "1", 86400.0));
+        assert_eq!(probe_classify("extinction_rv"), ("em", "1", 604800.0));
+        assert_eq!(
+            probe_classify("extinction_ebv_mag"),
+            ("em", "mag", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("geosphere_fireball_radiated_energy_e10j"),
+            ("em", "e10j", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("geosphere_fireball_impact_energy_kt"),
+            ("em", "kt_tnt", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("champ_absolute_vertical_tec_tecu"),
+            ("em", "TECU", 10.0)
+        );
+        assert_eq!(probe_classify("ned_redshift_z"), ("em", "1", 86400.0));
+        assert_eq!(
+            probe_classify("pulsar_dm_pccm3"),
+            ("em", "pc/cm3", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("planet_mass"),
+            ("gravity", "M_earth", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("cb_primary_mass"),
+            ("gravity", "M_sun", 604800.0)
+        );
+        assert_eq!(probe_classify("corot_logg"), ("gravity", "logg", 604800.0));
+    }
+
+    #[test]
+    fn water_and_soil_constituents_classify() {
+        assert_eq!(
+            probe_classify("aeronet_precipitable_water_cm"),
+            ("diffusion", "cm", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("plant_available_water_mm"),
+            ("diffusion", "mm", 86400.0)
+        );
+        assert_eq!(
+            probe_classify("icesat2_atl03_h_ph_m"),
+            ("gravity", "m", 3600.0)
+        );
+        assert_eq!(
+            probe_classify("noaa_keo_psal_psu"),
+            ("diffusion", "psu", 86400.0)
+        );
+    }
+
+    #[test]
+    fn register_replay_reproduces_force_unit() {
+        let register = include_str!("../../phi/sources.φ");
+        let mut pairs: std::collections::BTreeMap<
+            String,
+            std::collections::BTreeSet<(String, String)>,
+        > = std::collections::BTreeMap::new();
+        for line in register.lines() {
+            let p: Vec<&str> = line.split_whitespace().collect();
+            match p.first().copied() {
+                Some("field" | "first" | "last" | "lastrow") if p.len() >= 6 => {
+                    pairs
+                        .entry(p[1].to_string())
+                        .or_default()
+                        .insert((p[4].to_string(), p[5].to_string()));
+                }
+                _ => {}
+            }
+        }
+        let allowlist: &[(&str, &str)] = &[
+            (
+                "copernicus_air_pressure_at_sea_level",
+                "pressure unification → acoustic hPa; register acoustic Pa",
+            ),
+            (
+                "cosmic_ro_pressure_hpa",
+                "pressure unification → acoustic hPa; register em hPa",
+            ),
+            (
+                "eop_iers_polar_motion_x_arcsec",
+                "EOP riss: em vs gravity → UNCERTAIN",
+            ),
+            (
+                "eop_iers_polar_motion_y_arcsec",
+                "EOP riss: em vs gravity → UNCERTAIN",
+            ),
+            ("eop_iers_ut1_utc_s", "EOP riss: em vs gravity → UNCERTAIN"),
+            (
+                "igra_air_pressure_hpa",
+                "pressure unification → acoustic hPa; register advective hPa",
+            ),
+            (
+                "noaa_gsod_slp_hpa",
+                "pressure unification → acoustic hPa; register advective hPa",
+            ),
+            (
+                "noaa_isd_slp_hpa",
+                "pressure unification → acoustic hPa; register advective hPa",
+            ),
+            (
+                "observations.seaLevelPressure",
+                "pressure unification → acoustic hPa; register advective hPa",
+            ),
+            (
+                "omni_solarwind_pressure_npa",
+                "pressure unification → acoustic hPa; register advective nPa",
+            ),
+            ("pmx", "EOP riss: em vs gravity → UNCERTAIN"),
+            ("pmy", "EOP riss: em vs gravity → UNCERTAIN"),
+            (
+                "pressure",
+                "pressure riss (advective hPa/mb vs diffusion hPa) → acoustic hPa",
+            ),
+            (
+                "properties.PRES",
+                "pressure unification → acoustic hPa; register advective",
+            ),
+            (
+                "properties.PTDY",
+                "pressure unification → acoustic hPa; register advective",
+            ),
+            ("sample", "metadata DROP; register em/count"),
+            (
+                "soles.0.pressure",
+                "pressure unification → acoustic hPa; register acoustic Pa",
+            ),
+            (
+                "sols.6.pressure",
+                "pressure unification → acoustic hPa; register acoustic Pa",
+            ),
+            (
+                "surface_partial_pressure_of_carbon_dioxide_in_sea_water",
+                "pressure unification → acoustic hPa; register diffusion uatm",
+            ),
+            (
+                "surface_pressure",
+                "pressure unification → acoustic hPa; register advective hPa",
+            ),
+            ("ut1_utc", "EOP riss: em vs gravity → UNCERTAIN"),
+        ];
+        let allow_names: std::collections::HashSet<&str> =
+            allowlist.iter().map(|(n, _)| *n).collect();
+        let mut missing = 0usize;
+        let mut pending = 0usize;
+        for (name, rpairs) in &pairs {
+            let (force, unit, _) = probe_classify(name);
+            if force == "UNCERTAIN" {
+                pending += 1;
+            }
+            let norm = crate::archivar::units::normalize_unit;
+            let reproduced = rpairs
+                .iter()
+                .any(|(rf, ru)| force == rf.as_str() && norm(unit) == norm(ru.as_str()));
+            if !reproduced && !allow_names.contains(name.as_str()) {
+                missing += 1;
+                eprintln!(
+                    "replay mismatch {name}: classify {force}/{unit} vs register {:?}",
+                    rpairs
+                );
+            }
+        }
+        assert_eq!(
+            missing, 0,
+            "register replay: {} names diverged and are not allowlisted; pending {}",
+            missing, pending
+        );
+    }
 }
