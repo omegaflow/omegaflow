@@ -75,6 +75,24 @@ struct DefMessage {
     dev_fields: Vec<FieldDef>,
 }
 
+struct HrStream {
+    last_event_timestamp: Option<u32>,
+    last_accumulated: Option<u32>,
+    accumulated_12: u32,
+    last_sample_12: u32,
+}
+
+impl HrStream {
+    fn new() -> Self {
+        HrStream {
+            last_event_timestamp: None,
+            last_accumulated: None,
+            accumulated_12: 0,
+            last_sample_12: 0,
+        }
+    }
+}
+
 pub fn parse_fit(bytes: &[u8]) -> Option<Vec<(String, f64, Option<f64>)>> {
     if bytes.len() < 12 {
         return None;
@@ -115,6 +133,7 @@ fn decode_records(
     out: &mut Vec<(String, f64, Option<f64>)>,
 ) {
     let mut defs: [Option<DefMessage>; 16] = std::array::from_fn(|_| None);
+    let mut stream = HrStream::new();
     let mut pos = start;
     while pos < end {
         let header = match bytes.get(pos) {
@@ -127,7 +146,7 @@ fn decode_records(
             let Some(def) = defs[local].clone() else {
                 return;
             };
-            parse_data(bytes, &mut pos, &def, out);
+            parse_data(bytes, &mut pos, &def, out, &mut stream);
         } else if header & 0x40 != 0 {
             let local = (header & 0x0F) as usize;
             if let Some(def) = parse_definition(bytes, &mut pos, header) {
@@ -140,7 +159,7 @@ fn decode_records(
             let Some(def) = defs[local].clone() else {
                 return;
             };
-            parse_data(bytes, &mut pos, &def, out);
+            parse_data(bytes, &mut pos, &def, out, &mut stream);
         }
     }
 }
@@ -201,6 +220,7 @@ fn parse_data(
     pos: &mut usize,
     def: &DefMessage,
     out: &mut Vec<(String, f64, Option<f64>)>,
+    stream: &mut HrStream,
 ) {
     for field in &def.fields {
         let size = field.size as usize;
@@ -226,11 +246,12 @@ fn parse_data(
                         beats.push(v);
                     }
                 }
-                emit_nn(&beats, out);
+                emit_nn(&beats, &mut stream.last_event_timestamp, out);
             }
             (MESG_HR, FIELD_HR_EVENT_TIMESTAMP_12) if field.base_type == BASE_BYTE => {
                 let samples = unpack_timestamp_12(field_bytes);
-                emit_nn(&cumulative_timestamp_12(&samples), out);
+                let timestamps = cumulative_timestamp_12(&samples, stream);
+                emit_nn(&timestamps, &mut stream.last_accumulated, out);
             }
             _ => {}
         }
@@ -240,15 +261,17 @@ fn parse_data(
     }
 }
 
-fn emit_nn(beats: &[u32], out: &mut Vec<(String, f64, Option<f64>)>) {
-    for pair in beats.windows(2) {
-        if pair[1] <= pair[0] {
-            continue;
+fn emit_nn(beats: &[u32], last: &mut Option<u32>, out: &mut Vec<(String, f64, Option<f64>)>) {
+    for &beat in beats {
+        if let Some(previous) = *last
+            && beat > previous
+        {
+            let ms = (beat - previous) as f64 * 1000.0 / EVENT_TIMESTAMP_SCALE;
+            if ms.is_finite() && ms > 0.0 {
+                out.push(("nn".to_string(), ms, None));
+            }
         }
-        let ms = (pair[1] - pair[0]) as f64 * 1000.0 / EVENT_TIMESTAMP_SCALE;
-        if ms.is_finite() && ms > 0.0 {
-            out.push(("nn".to_string(), ms, None));
-        }
+        *last = Some(beat);
     }
 }
 
@@ -261,16 +284,15 @@ fn unpack_timestamp_12(field_bytes: &[u8]) -> Vec<u16> {
     samples
 }
 
-fn cumulative_timestamp_12(samples: &[u16]) -> Vec<u32> {
-    let mut accumulated: u32 = 0;
-    let mut last: u32 = 0;
+fn cumulative_timestamp_12(samples: &[u16], stream: &mut HrStream) -> Vec<u32> {
     let mut timestamps = Vec::with_capacity(samples.len());
     for &sample in samples {
         let raw = sample as u32 & EVENT_TIMESTAMP_12_MASK;
-        let delta = raw.wrapping_sub(last) & EVENT_TIMESTAMP_12_MASK;
-        accumulated = accumulated.wrapping_add(delta) & EVENT_TIMESTAMP_12_COUNTER_MASK;
-        last = raw;
-        timestamps.push(accumulated);
+        let delta = raw.wrapping_sub(stream.last_sample_12) & EVENT_TIMESTAMP_12_MASK;
+        stream.accumulated_12 =
+            stream.accumulated_12.wrapping_add(delta) & EVENT_TIMESTAMP_12_COUNTER_MASK;
+        stream.last_sample_12 = raw;
+        timestamps.push(stream.accumulated_12);
     }
     timestamps
 }
@@ -461,6 +483,35 @@ mod tests {
             .map(|(_, v, _)| *v)
             .collect();
         assert_eq!(nn, vec![1000.0, 1000.0]);
+    }
+
+    #[test]
+    fn hr_event_timestamp_links_across_messages() {
+        let mut records = definition(0, MESG_HR, &[(FIELD_HR_EVENT_TIMESTAMP, 4, BASE_UINT32)]);
+        for v in [1024u32, 2048, 3072] {
+            records.extend(data(0, &v.to_le_bytes()));
+        }
+        let out = parse_fit(&make_fit(&records)).expect("valid fit");
+        let nn: Vec<f64> = out
+            .iter()
+            .filter(|(k, _, _)| k == "nn")
+            .map(|(_, v, _)| *v)
+            .collect();
+        assert_eq!(nn, vec![1000.0, 1000.0]);
+    }
+
+    #[test]
+    fn hr_event_timestamp_12_links_across_messages() {
+        let mut records = definition(0, MESG_HR, &[(FIELD_HR_EVENT_TIMESTAMP_12, 3, BASE_BYTE)]);
+        records.extend(data(0, &[0x00, 0x0F, 0x30]));
+        records.extend(data(0, &[0x00, 0x07, 0xB0]));
+        let out = parse_fit(&make_fit(&records)).expect("valid fit");
+        let nn: Vec<f64> = out
+            .iter()
+            .filter(|(k, _, _)| k == "nn")
+            .map(|(_, v, _)| *v)
+            .collect();
+        assert_eq!(nn, vec![1000.0, 1000.0, 1000.0]);
     }
 
     #[test]
