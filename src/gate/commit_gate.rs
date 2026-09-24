@@ -1171,11 +1171,7 @@ fn bindung_linie_owner(line: &str) -> Option<String> {
         .chars()
         .take_while(|c| c.is_ascii_alphanumeric() || *c == '-')
         .collect();
-    if owner.is_empty() {
-        None
-    } else {
-        Some(owner)
-    }
+    if owner.is_empty() { None } else { Some(owner) }
 }
 
 fn check_bindung_linie(path: &str, content: &str) -> Option<Verdict> {
@@ -2189,7 +2185,10 @@ mod tests {
             assert_eq!(v.rule, "post-md-resurrected", "tool {tool}");
             assert_eq!(v.severity, Severity::Hard);
         }
-        let args = tool_args("docs/handover/handover-2026-09-24-river-folge5.md", "a point");
+        let args = tool_args(
+            "docs/handover/handover-2026-09-24-river-folge5.md",
+            "a point",
+        );
         assert!(g.check_tool_call("write", &args).is_none());
     }
 
