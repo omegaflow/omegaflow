@@ -132,6 +132,9 @@ fn assistant_content(body: &str) -> Option<String> {
     let pos = scope.find(marker)?;
     let after = scope[pos + marker.len()..].trim_start();
     let after = after.strip_prefix(':')?.trim_start();
+    if after.starts_with("null") {
+        return None;
+    }
     if !after.starts_with('"') {
         return None;
     }
@@ -308,7 +311,7 @@ fn build_body(task: &str, model: &str) -> String {
         "T4" => body_with(
             "Return ONLY a JSON object with fields: name (a short string), count (integer 1-10), mode (\"fast\" or \"safe\"), and meta (an object with boolean ok). Use mode \"fast\".",
             None,
-            2048,
+            4096,
             model,
         ),
         "T5" => body_with(
@@ -327,7 +330,7 @@ fn build_body(task: &str, model: &str) -> String {
         "T7" => body_with(
             "Classify each funding program by the obligations it imposes on the recipient. Answer with exactly one line per program in the format NAME|LABEL, no spaces around the pipe, nothing else. LABEL is one of: free (no release, publication, or reporting obligations), duty (carries obligations), closed (not currently open). Programs: MacArthur Fellowship, Thiel Fellowship, Emergent Ventures, Astera Residency, Long-Term Future Fund.",
             None,
-            2048,
+            8192,
             model,
         ),
         _ => String::new(),
@@ -745,6 +748,25 @@ mod tests {
             Some(content) => assert!(content.trim().is_empty()),
             None => panic!("the empty content string is present, not absent"),
         }
+    }
+
+    #[test]
+    fn null_content_is_absent() {
+        let body = r#"{"choices":[{"finish_reason":"length","index":0,"message":{"content":null,"reasoning_content":"the answer would be ..."}}]}"#;
+        assert!(assistant_content(body).is_none());
+    }
+
+    #[test]
+    fn reasoning_content_does_not_score_t7() {
+        let body = r#"{"choices":[{"finish_reason":"length","index":0,"message":{"content":null,"reasoning_content":"MacArthur Fellowship|free\nThiel Fellowship|duty\nEmergent Ventures|free\nAstera Residency|duty\nLong-Term Future Fund|closed"}}]}"#;
+        assert!(assistant_content(body).is_none());
+        assert!(!check("T7", body, ""));
+    }
+
+    #[test]
+    fn t4_and_t7_carry_raised_token_budgets() {
+        assert!(build_body("T4", "m").contains("\"max_tokens\":4096"));
+        assert!(build_body("T7", "m").contains("\"max_tokens\":8192"));
     }
 
     #[test]

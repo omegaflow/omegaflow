@@ -32,7 +32,7 @@ jobs:
           FREE_MODEL_KEYS: ${{ secrets.FREE_MODEL_KEYS }}
           CLOUDFLARE_WORKERS_TOKEN: ${{ secrets.CLOUDFLARE_WORKERS_TOKEN }}
         run: |
-          for k in GOOGLE_API_KEY GROQ_API_KEY OPENROUTER_API_KEY KILO_API_KEY KENARI_API_KEY ZAI_API_KEY TOKENROUTER_API_KEY OPENCODE_API_KEY NVIDIA_API_KEY; do
+          for k in GOOGLE_API_KEY GROQ_API_KEY KILO_API_KEY ZAI_API_KEY OPENCODE_API_KEY NVIDIA_API_KEY; do
             v=$(printf '%s' "$FREE_MODEL_KEYS" | jq -r --arg k "$k" '.[$k] // empty')
             if [ -n "$v" ]; then export "$k=$v"; fi
           done
