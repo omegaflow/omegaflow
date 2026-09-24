@@ -47,7 +47,6 @@ const OPEN_MARKERS: &[&str] = &[
 const RELEASED_MARKERS: &[&str] = &["descoped"];
 
 const ZUSTAND_PATH: &str = "docs/zustand/external-state.md";
-const POST_PATH: &str = "docs/handover/post.md";
 
 const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
 const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
@@ -104,11 +103,6 @@ enum ZustandStatus {
     Due,
     NotDue,
     Pending,
-}
-
-fn is_post_line(line: &str) -> bool {
-    let t = line.trim_start();
-    t.starts_with("An ") && t.contains(':')
 }
 
 fn split_table_row(line: &str) -> Option<Vec<String>> {
@@ -265,27 +259,6 @@ fn scan_zustand(
             status,
             snippet(&cells[0], 60),
             snippet(schritt, 120)
-        ));
-        n += 1;
-    }
-    n
-}
-
-fn scan_post(path: &Path, out: &mut Vec<String>) -> usize {
-    let text = match fs::read_to_string(path) {
-        Ok(t) => t,
-        Err(_) => return 0,
-    };
-    let mut n = 0;
-    for (idx, line) in text.lines().enumerate() {
-        if !is_post_line(line) {
-            continue;
-        }
-        out.push(format!(
-            "POST\t{}:{}\t{}",
-            path.display(),
-            idx + 1,
-            snippet(line, 160)
         ));
         n += 1;
     }
@@ -911,14 +884,12 @@ fn run_open() {
     let head = current_head_short();
     let now_min = now_minutes();
     let mut zustand_out: Vec<String> = Vec::new();
-    let mut post_out: Vec<String> = Vec::new();
     let zustand = scan_zustand(
         Path::new(ZUSTAND_PATH),
         head.as_deref(),
         now_min,
         &mut zustand_out,
     );
-    let post = scan_post(Path::new(POST_PATH), &mut post_out);
     let mut dispo_out: Vec<String> = Vec::new();
     let dispo = scan_dispositions(
         Path::new("phi/blocked_sources.\u{3c6}"),
@@ -939,9 +910,6 @@ fn run_open() {
         println!("{}", line);
     }
     for line in &zustand_out {
-        println!("{}", line);
-    }
-    for line in &post_out {
         println!("{}", line);
     }
     for line in &released {
@@ -1044,14 +1012,13 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} post open, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
         docs.len(),
         opens.len(),
         released.len(),
         dups.len(),
         unverifiable.len(),
         zustand,
-        post,
         dispo,
         summary.join(", "),
         ledger,
@@ -1715,7 +1682,7 @@ fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
                 continue;
             }
             let name = file_name_string(&path);
-            if !name.ends_with(".md") || name.starts_with('_') || name == "post.md" {
+            if !name.ends_with(".md") || name.starts_with('_') {
                 continue;
             }
             if seen.iter().any(|s| s == &name) {
@@ -2167,14 +2134,6 @@ mod tests {
     }
 
     #[test]
-    fn post_line_is_an_address_with_a_step() {
-        assert!(is_post_line("An mountain: tree red (step: fix)"));
-        assert!(is_post_line("  An line: X"));
-        assert!(!is_post_line("A note to a line stands here"));
-        assert!(!is_post_line("## Post"));
-    }
-
-    #[test]
     fn table_row_splits_into_cells() {
         let cells = split_table_row("| a | b | c | d | e |").unwrap();
         assert_eq!(cells, vec!["a", "b", "c", "d", "e"]);
@@ -2528,7 +2487,6 @@ mod tests {
             parse_handover_name("handover-2026-09-15-mountain-folge33-p8-gate.md"),
             Some(("mountain".to_string(), "2026-09-15".to_string(), Some(33)))
         );
-        assert_eq!(parse_handover_name("post.md"), None);
         assert_eq!(parse_handover_name("not-a-handover.md"), None);
     }
 
