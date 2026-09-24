@@ -428,6 +428,10 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     json.push(']');
                     emit(&mut s, "200 OK", "application/json", json.as_bytes());
                 }
+                "/color_lut" => {
+                    let wire = spectral::color_lut_wire();
+                    emit(&mut s, "200 OK", "application/octet-stream", &wire);
+                }
                 _ if path.ends_with(".js") && !path.trim_start_matches('/').contains('/') => {
                     let asset = format!("static{}", path);
                     match std::fs::read(resolve_asset(&asset)) {
