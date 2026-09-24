@@ -151,6 +151,47 @@ export function parseRecords(bytes) {
   return { epoch, id, count, field, meta };
 }
 
+// The measured color LUT — the Rust `color_lut_wire()` bytes, served once at
+// /color_lut: [lo:f32][hi:f32] then 256 × [r,g,b,a] f32, little-endian.
+// The values are the Archivar's `color_lut_rgba()`; this module only mirrors
+// the transport parse and the WGSL index, never the color formula.
+export const COLOR_LUT_LEN = 256;
+
+export function parseColorLut(bytes) {
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const lo = dv.getFloat32(0, true);
+  const hi = dv.getFloat32(4, true);
+  const lut = new Float32Array(COLOR_LUT_LEN * 4);
+  for (let i = 0; i < COLOR_LUT_LEN * 4; i++) {
+    lut[i] = dv.getFloat32(8 + i * 4, true);
+  }
+  return { lo, hi, lut };
+}
+
+// The WGSL index mirror (fieldShader, measured mode). `ci == 0` is the white
+// point and carries no index; the caller reads the sentinel -1 and renders
+// white. f32 arithmetic mirrors the GPU; the odd fround chain matches the
+// shader's vec4f math at each binary step.
+export function colorLutIndex(ci, lo, hi) {
+  if (ci === 0.0) {
+    return -1;
+  }
+  const num = Math.fround(ci - lo);
+  const den = Math.fround(hi - lo);
+  const q = Math.fround(num / den);
+  const t = Math.fround(q * COLOR_LUT_LEN);
+  const idx = Math.floor(t);
+  return Math.min(Math.max(idx, 0), COLOR_LUT_LEN - 1);
+}
+
+export function colorForCiLut(ci, lo, hi, lut) {
+  if (ci === 0.0) {
+    return [1.0, 1.0, 1.0];
+  }
+  const idx = colorLutIndex(ci, lo, hi);
+  return [lut[idx * 4], lut[idx * 4 + 1], lut[idx * 4 + 2]];
+}
+
 export function parseKinetic(bytes) {
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const mask = dv.getUint8(3);
