@@ -706,11 +706,11 @@ on earth 0 0 0
 map .
 lat lat
 lon lon
-field temp atmosphere_metar_temp_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
-field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field temp atmosphere_metar_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
+field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square thermal C 30.0 0.0 0.0
 field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
-field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
-field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square advective kt 30.0 0.0 0.0
+field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square advective deg 30.0 0.0 0.0
 
 url https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
 ttl 300
@@ -1313,7 +1313,7 @@ at sun
 map .
 lat cmeAnalyses.0.latitude
 lon cmeAnalyses.0.longitude
-field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square em km/s 3600 0.0 0.0
+field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square advective km/s 3600 0.0 0.0
 
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate={week_ago}&endDate={today}&classType=X
 ttl 3600
@@ -1350,9 +1350,9 @@ field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 ttl 3600
 at earth 0.99
-field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
+field 0.speed exosphere_ace_speed_kms inverse-square advective km/s 360.0 0.0 0.0
 field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
-field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 ttl 3600
@@ -8221,7 +8221,7 @@ sha256 94ad682adbd08edd10a2a127a050fea2287b557a98e74a334cc222c1dcbbe98b
 at earth
 ttl 604800
 field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square em N-units 604800 0.0 0.0
-field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square em K 604800 0.0 0.0
+field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square thermal K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
@@ -9518,7 +9518,7 @@ origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/twomrs_compiler.rs
 ttl 604800
 at sun
-field cz twomrs_cz_kms gaussian-inverse-square em km/s 604800 0.0 0.0
+field cz twomrs_cz_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vsx.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/vsx/vsx
@@ -9664,7 +9664,7 @@ origin https://zenodo.org/api/records/18525142
 compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
 on earth 0 0 0
 ttl 604800
-field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square em m/s 600 0.0 0.0
+field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
 
 url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
 format tap

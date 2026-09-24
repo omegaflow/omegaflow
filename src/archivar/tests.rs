@@ -392,7 +392,64 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"tev"));
     assert!(allowed_units_for_force(0).contains(&"bq/l"));
     assert!(allowed_units_for_force(0).contains(&"bq/m3"));
+    assert!(allowed_units_for_force(0).contains(&"s"));
+    assert!(allowed_units_for_force(0).contains(&"d"));
+    assert!(allowed_units_for_force(0).contains(&"ms"));
+    assert!(allowed_units_for_force(0).contains(&"j"));
+    assert!(allowed_units_for_force(0).contains(&"km/s"));
+    assert!(allowed_units_for_force(0).contains(&"arcsec"));
+    assert!(allowed_units_for_force(0).contains(&"%"));
+    assert!(allowed_units_for_force(1).contains(&"m/s"));
+    assert!(allowed_units_for_force(2).contains(&"npa"));
+    assert!(allowed_units_for_force(5).contains(&"km/s"));
+    assert!(allowed_units_for_force(6).contains(&"cm"));
+    assert!(allowed_units_for_force(6).contains(&"mm"));
+    assert!(allowed_units_for_force(7).contains(&"cm/s"));
+    assert!(allowed_units_for_force(7).contains(&"deg"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
+}
+
+#[test]
+fn test_unit_from_name_suffix() {
+    assert_eq!(unit_from_name_suffix("omni_imf_bx_gse_nt"), Some("nT"));
+    assert_eq!(
+        unit_from_name_suffix("omni_solarwind_flow_speed_kms"),
+        Some("km/s")
+    );
+    assert_eq!(
+        unit_from_name_suffix("omni_solarwind_density_percc"),
+        Some("cm-3")
+    );
+    assert_eq!(
+        unit_from_name_suffix("omni_solarwind_pressure_npa"),
+        Some("nPa")
+    );
+    assert_eq!(unit_from_name_suffix("omni_solarwind_temp_k"), Some("K"));
+    assert_eq!(
+        unit_from_name_suffix("gracefo_kbr_inter_satellite_distance_m"),
+        Some("m")
+    );
+    assert_eq!(
+        unit_from_name_suffix("gracefo_kbr_absolute_electron_density_m3"),
+        Some("1/m3")
+    );
+    assert_eq!(
+        unit_from_name_suffix("swarm_ion_density_cm3"),
+        Some("cm-3")
+    );
+    assert_eq!(
+        unit_from_name_suffix("swarm_spacecraft_potential_v"),
+        Some("V")
+    );
+    assert_eq!(
+        unit_from_name_suffix("gracefo_kbr_range_rate_m_s"),
+        Some("m/s")
+    );
+    assert_eq!(
+        unit_from_name_suffix("gracefo_kbr_range_accl_m_s2"),
+        Some("m/s2")
+    );
+    assert_eq!(unit_from_name_suffix("no_suffix_here"), None);
 }
 
 #[test]
