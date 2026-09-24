@@ -111,9 +111,9 @@ blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
    (   `src/mathematikerin/actuators.rs:29`), test
    `src/mathematikerin/tests.rs:570`. The HRV tone binding is built (`tone_scale`
    written at `omega.rs:1647-1655` from `tone_code`, read at `omega.rs:347`); it
-   is pending only for its N-N source — the Forerunner 945 BLE reader is routed
-   to the sensory line (`docs/handover/post.md`, 2026-09-23; std-only BlueZ over
-   D-Bus), `OMEGAFLOW_SERIAL_IN` (`src/archivar/ingress.rs`) the transport hook.
+    is pending only for its N-N source — the Forerunner 945 BLE reader is routed
+    to the sensory line (2026-09-23; std-only BlueZ over
+    D-Bus), `OMEGAFLOW_SERIAL_IN` (`src/archivar/ingress.rs`) the transport hook.
 
 Doctrine map: Atom 8 Sensorium, Atom 9 Geräte-Bias, agnostische Benennung,
 Stille-Doktrin, Relay-Floor-Präzedenz. Open radiators: Bluetooth, HID, ESP32,
