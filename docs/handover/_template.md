@@ -22,28 +22,46 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 Punkt wird **aufgeschlüsselt** geführt — kein Register-Kürzel: **Trigger** (das
 Ereignis/Datum/Wort/der Lauf, dessen Eintreffen den Punkt kippt — Status =
 f(Trigger)) / **Lage** (der Zustand, gemessen, mit Messstempel) / **Blockade**
-(woran es hängt, oder „keine") / **Braucht** (was es löst: der wörtliche,
+(warum es hängt, oder „keine") / **Braucht** (was es löst: der wörtliche,
 kopierbare Schritt — Werkzeug, Datei, URL, Befehl, Anfrage, Operator-Wort;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt). Kein Dokument wächst ohne
 Messung; die Droh-Sprache ersetzt den Schritt nicht. Der Planungs-Pass legt
 **alle** eigenen Punkte vor und schlägt vor, jeden parallel abarbeitbaren zu
-dispatchen; `operator-gebunden`, `blockiert` und `wartend` werden benannt, nie
-dispatcht. Gibt es keinen abarbeitbaren Punkt, sagt die Session das. Jeder Punkt
-trägt seinen Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
+dispatchen; `blockiert` und `wartend` werden benannt, nie dispatcht. Gibt es
+keinen abarbeitbaren Punkt, sagt die Session das. Jeder Punkt trägt seinen
+Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
+
+**Vorbereitung ≠ Akt (Operator-Wort 2026-09-24).** Ein `operator-gebundener`
+Punkt wird **immer** in zwei Zeilen getrennt geführt, nie in einer: die
+**Vorbereitung** ist autonom (`eigen`), läuft bis zur Kante — Draft, Adresse,
+QUELLEN, `smail --dry-run`, Feldmap, Messung, Kantenzeile (Artefakt |
+Ausführbefehl | Wort erwartet) — und wird dispatcht; `operator-gebunden` ist
+**allein der Akt** (senden/absenden/signieren/urteilen/wählen). Eine
+`operator-gebunden`-Zeile ohne abgetrennte Vorbereitungs-Zeile behauptet den
+ganzen Prozess als gesperrt und droppt die Vorbereitung — ein Registraturfehler.
+Es gibt keinen „kompletten Prozess operator-gebunden". **Benannter Ausnahmefall
+(Rat 2026-09-24):** wo die Vorbereitung selbst operator-gebunden ist — das Urteil,
+die Identitätswahl, kein autonomer Schritt existiert — steht **eine** Zeile mit
+`operator-gebunden` auf der Vorbereitung, Trigger = Operator-Wort; sie wird nicht
+in zwei Zeilen gespalten, weil die Maschine keine Kante hat. Jede Vorbereitungs-
+zeile trägt ihren Lage-Stempel `(gemessen …)` — eine ungemessene Vorbereitungszeile
+driftet wie die alte Sammel-Zeile.
 
 **Sortierung — von Handlungsfähigkeit zu Nicht-Handlungsfähigkeit.** Keine
 Rangfolge nach Wichtigkeit; die Ordnung ist, wie handlungsfähig die Session am
 Punkt ist:
 
 1. **autonom** — `eigen`; jetzt handlungsfähig, wird dispatcht.
-2. **operator-gebunden** — bedingt; handlungsfähig nach dem Operator-Wort.
+2. **operator-gebunden** — bedingt; **nur der Akt** ist handlungsfähig nach dem
+   Operator-Wort. Seine Vorbereitung steht in Stufe 1 und wird dispatcht.
 3. **blockiert** — nicht handlungsfähig; harte externe Blockade, kein eigener Schritt.
 4. **wartend** — nicht handlungsfähig; wartet auf ein externes Ereignis.
 5. **termin** — nicht handlungsfähig; wartet auf ein Datum/eine Periode.
 6. **LOCK** — nicht handlungsfähig; Operator-Sperrwort registriert.
 
 Innerhalb einer Stufe nach Trigger. Der Planungs-Pass dispatcht von oben nach
-unten; Stufe 2–6 werden benannt, nie dispatcht.
+unten; Stufe 2–6 werden benannt, nie dispatcht — ausgenommen die Vorbereitung
+eines operator-gebundenen Punktes, die als Stufe-1-Zeile dispatcht wird.
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der
