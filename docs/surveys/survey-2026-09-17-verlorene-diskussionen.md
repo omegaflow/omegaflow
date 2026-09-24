@@ -4,7 +4,7 @@
   date: 2026-09-17
   sha256: 5bd307268fe2312017aace6da0f46789c98e8d3cdd7dae70663fc230717d580e
   status: live
-  see-also: docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md docs/handover/post.md
+  see-also: docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md
 -->
 # Survey — Verlorene/vergessene Diskussionen über beide Historien (Stand 2026-09-17)
 
