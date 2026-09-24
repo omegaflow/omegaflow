@@ -1620,14 +1620,6 @@ pub fn probe_classify(key: &str) -> (&str, &str, f64) {
 
 fn intentional_core(key: &str) -> Option<(&'static str, &'static str, f64)> {
     let kl = key.to_lowercase();
-    if kl.contains("eop_")
-        || kl.contains("ut1_utc")
-        || kl.contains("polar_motion")
-        || kl == "pmx"
-        || kl == "pmy"
-    {
-        return Some(("UNCERTAIN", "", 0.0));
-    }
     if kl == "sample" {
         return Some(("DROP", "", 0.0));
     }
@@ -3356,13 +3348,16 @@ mod probe_classify_tests {
 
     #[test]
     fn metrology_anchor_form_pending_or_mirrors_register() {
-        assert_eq!(probe_classify("eop_iers_ut1_utc_s"), ("UNCERTAIN", "", 0.0));
+        assert_eq!(
+            probe_classify("eop_iers_ut1_utc_s"),
+            ("gravity", "s", 86400.0)
+        );
         assert_eq!(
             probe_classify("eop_iers_polar_motion_x_arcsec"),
-            ("UNCERTAIN", "", 0.0)
+            ("gravity", "arcsec", 86400.0)
         );
-        assert_eq!(probe_classify("ut1_utc"), ("UNCERTAIN", "", 0.0));
-        assert_eq!(probe_classify("pmx"), ("UNCERTAIN", "", 0.0));
+        assert_eq!(probe_classify("ut1_utc"), ("gravity", "s", 86400.0));
+        assert_eq!(probe_classify("pmx"), ("gravity", "arcsec", 86400.0));
         assert_eq!(probe_classify("ul_phase_cycles"), ("em", "cycle", 604800.0));
         assert_eq!(
             probe_classify("polar_angle_cycles"),
@@ -3608,15 +3603,6 @@ mod probe_classify_tests {
                 "pressure unification → acoustic hPa; register em hPa",
             ),
             (
-                "eop_iers_polar_motion_x_arcsec",
-                "EOP riss: em vs gravity → UNCERTAIN",
-            ),
-            (
-                "eop_iers_polar_motion_y_arcsec",
-                "EOP riss: em vs gravity → UNCERTAIN",
-            ),
-            ("eop_iers_ut1_utc_s", "EOP riss: em vs gravity → UNCERTAIN"),
-            (
                 "igra_air_pressure_hpa",
                 "pressure unification → acoustic hPa; register advective hPa",
             ),
@@ -3636,8 +3622,6 @@ mod probe_classify_tests {
                 "omni_solarwind_pressure_npa",
                 "pressure unification → acoustic hPa; register advective nPa",
             ),
-            ("pmx", "EOP riss: em vs gravity → UNCERTAIN"),
-            ("pmy", "EOP riss: em vs gravity → UNCERTAIN"),
             (
                 "pressure",
                 "pressure riss (advective hPa/mb vs diffusion hPa) → acoustic hPa",
@@ -3667,7 +3651,6 @@ mod probe_classify_tests {
                 "surface_pressure",
                 "pressure unification → acoustic hPa; register advective hPa",
             ),
-            ("ut1_utc", "EOP riss: em vs gravity → UNCERTAIN"),
         ];
         let allow_names: std::collections::HashSet<&str> =
             allowlist.iter().map(|(n, _)| *n).collect();
