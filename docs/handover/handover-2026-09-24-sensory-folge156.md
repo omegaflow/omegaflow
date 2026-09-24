@@ -3,7 +3,7 @@
   session: Sensory-Folge 156
   class: handover
   date: 2026-09-24
-  sha256: f7923cb41ba6cf4cc1d52dd99b9c0f846eb029a1ad69e923825c13fdebc3c6d9
+  sha256: be459b23305cf1652da755495aa09e9f39fe391553a66cdda3b517de39166499
   status: live
 -->
 # Handover — Sensory-Folge 156 (2026-09-24)
@@ -39,7 +39,9 @@ Baum die Messung.
 - **CI** — `ci-check 35920939598` @`48ae5e734` **failure**: 10
   `archivar::ble`-Tests (1567 passed / 10 failed; gemessen 2026-09-23 via
   `ci_manage log`). `te-gate 35893882101` **in_progress** (gemessen 2026-09-24 via
-  `ci_manage view`). Fremd: viele `ci-check`/CDN-Läufe.
+  `ci_manage view`). **Eigener Push** `fdb4f9f27` triggert `ci-check 35971097226`
+  **queued** + `tools-build 35971097502` (gemessen 2026-09-24 via `ci_manage
+  view`). Fremd: viele CDN-Läufe.
 - **`git_safety --snapshot`** → `refs/safety/1790203447` (fremd staged; nichts
   Eigenes zu sichern).
 
@@ -65,11 +67,11 @@ die Punkte werden nicht erneut vorgelegt.
 - **Trigger:** echte 945-FIT-Aktivität + grüner `ci-check` am HEAD
 - **Lage:** Parser gegen Garmin-Fixtures grün; der 10-Test-`ble`-Rot ist im
   Codec geheilt, `cargo check --tests` 0/0 (gemessen 2026-09-24); die
-  Test-Verifikation hängt am push-getriggerten `ci-check` am Commit (Run-ID s.
-  Braucht); 945-spezifische Aktivität unverifiziert.
+  Test-Verifikation hängt am push-getriggerten `ci-check 35971097226` (queued);
+  945-spezifische Aktivität unverifiziert.
 - **Blockade:** keine 945-Datei; ci-check-Ergebnis pending.
-- **Braucht:** `ci_manage log <ci-check-Run-ID>` (der push-getriggerte Lauf am
-  Commit, der `src/` oder `docs/` berührt); echte `GARMIN/Activity/*.FIT`
+- **Braucht:** `ci_manage log 35971097226` (am Commit `fdb4f9f27`; Ergebnis aus
+  dem Watchdog-Snapshot, nicht pollend); echte `GARMIN/Activity/*.FIT`
   (`post.md` → future/Operator).
 
 ### te-gate n=1000 — `fpr-ksg`/`issue`
@@ -136,8 +138,8 @@ die Punkte werden nicht erneut vorgelegt.
 
 - `src/archivar/ble.rs` (DBus-Wire + RR-Bit)
 - `docs/handover/handover-2026-09-24-sensory-folge156.md` (neu)
-- Move `docs/handover/handover-2026-09-23-sensory-folge155.md` → `archiv/`
-  (eigene Linie, atomar)
+- Move folge155 → `docs/handover/archiv/handover-2026-09-23-sensory-folge155.md`
+  (eigene Linie, atomar, in `fdb4f9f27`)
 
 Fremd staged, nicht angefasst: `.github/workflows/te-ncurve.yml`,
 `tools/measure/src/bin/pcmci_class_benchmark.rs`.
