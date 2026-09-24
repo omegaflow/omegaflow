@@ -160,6 +160,39 @@ pub fn normalize_unit(unit: &str) -> String {
         .replace(['\u{b5}', '\u{3bc}'], "u")
 }
 
+pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
+    let kl = name.to_lowercase();
+    if kl.ends_with("_m_s2") {
+        Some("m/s2")
+    } else if kl.ends_with("_m_s") {
+        Some("m/s")
+    } else if kl.ends_with("_percc") {
+        Some("cm-3")
+    } else if kl.ends_with("_kms") {
+        Some("km/s")
+    } else if kl.ends_with("_cm3") {
+        Some("cm-3")
+    } else if kl.ends_with("_m3") {
+        Some("1/m3")
+    } else if kl.ends_with("_npa") {
+        Some("nPa")
+    } else if kl.ends_with("_ncc") {
+        Some("cm-3")
+    } else if kl.ends_with("_nt") {
+        Some("nT")
+    } else if kl.ends_with("_vm") {
+        Some("V/m")
+    } else if kl.ends_with("_v") {
+        Some("V")
+    } else if kl.ends_with("_k") {
+        Some("K")
+    } else if kl.ends_with("_m") {
+        Some("m")
+    } else {
+        None
+    }
+}
+
 pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
@@ -197,6 +230,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "wm2_1au",
             "1e-4w/m2",
             "1",
+            "%",
             "pfu",
             "pfu/mev",
             "w/m^2/nm",
@@ -205,17 +239,23 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "cycle",
             "m-2.s-1.tev-1",
             "tev",
+            "s",
+            "d",
+            "ms",
+            "j",
+            "km/s",
+            "arcsec",
         ],
         1 => &[
-            "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
-            "logg", "1",
+            "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m",
+            "r_earth", "logg", "1",
         ],
         2 => &[
-            "pa", "hpa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count",
+            "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count",
         ],
         3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
-        5 => &["k", "c", "w/m2", "w", "j", "mw", "%"],
+        5 => &["k", "c", "w/m2", "w", "j", "mw", "%", "km/s"],
         6 => &[
             "ppm",
             "ppb",
@@ -234,11 +274,13 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "kg/m3",
             "micromole/kg",
             "m-1",
+            "cm",
+            "mm",
             "1",
         ],
         7 => &[
-            "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
-            "npa",
+            "m/s", "km/h", "km/s", "cm/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m",
+            "decibar", "npa", "deg",
         ],
         8 => &[
             "v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
