@@ -433,10 +433,7 @@ fn test_unit_from_name_suffix() {
         unit_from_name_suffix("gracefo_kbr_absolute_electron_density_m3"),
         Some("1/m3")
     );
-    assert_eq!(
-        unit_from_name_suffix("swarm_ion_density_cm3"),
-        Some("cm-3")
-    );
+    assert_eq!(unit_from_name_suffix("swarm_ion_density_cm3"), Some("cm-3"));
     assert_eq!(
         unit_from_name_suffix("swarm_spacecraft_potential_v"),
         Some("V")
@@ -9745,13 +9742,6 @@ fn voyager_saturn_series_dispatch_and_component_names() {
     assert_eq!(
         super::extract::series_component_name(
             "voyager_saturn",
-            super::voyager_saturn::COMP_RANGE_PART2
-        ),
-        Some("voyager_saturn_range_part2")
-    );
-    assert_eq!(
-        super::extract::series_component_name(
-            "voyager_saturn",
             super::voyager_saturn::COMP_ANGLE_A
         ),
         Some("voyager_saturn_angle_a")
@@ -9782,7 +9772,6 @@ fn voyager_saturn_register_field_names_match_components() {
         vec![
             "voyager_saturn_doppler_count_hp",
             "voyager_saturn_doppler_count_lp",
-            "voyager_saturn_range_part2",
             "voyager_saturn_angle_a",
             "voyager_saturn_angle_b",
         ]

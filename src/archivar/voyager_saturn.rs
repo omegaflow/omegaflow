@@ -15,7 +15,6 @@ pub const VSAT_STRIDE: usize = 19;
 
 pub const COMP_DOPPLER_HP: u32 = 1;
 pub const COMP_DOPPLER_LP: u32 = 2;
-pub const COMP_RANGE_PART2: u32 = 3;
 pub const COMP_ANGLE_A: u32 = 4;
 pub const COMP_ANGLE_B: u32 = 5;
 
@@ -270,7 +269,6 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
                 out.push((t, r[14], COMP_DOPPLER_HP));
                 out.push((t, r[15], COMP_DOPPLER_LP));
             }
-            1 => out.push((t, r[16], COMP_RANGE_PART2)),
             2 => {
                 out.push((t, r[17], COMP_ANGLE_A));
                 out.push((t, r[18], COMP_ANGLE_B));
@@ -431,7 +429,7 @@ mod tests {
     }
 
     #[test]
-    fn series_dispatch_maps_range_and_angle_kinds() {
+    fn series_dispatch_drops_range_and_maps_angle_kinds() {
         let mut range_words = [0u64; WORDS_PER_SUB_RECORD];
         range_words[1] = RECORD_TYPE_LOW_RATE;
         range_words[2] = 80 << 24 | 296 << 8;
@@ -451,12 +449,10 @@ mod tests {
 
         let bytes = write_vsat_bin(&[to_bin_row(&range_rec), to_bin_row(&angle_rec)]);
         let series = parse_series(&bytes).unwrap();
-        assert_eq!(series.len(), 3);
-        assert_eq!(series[0].1, 0x123456789u64 as f64);
-        assert_eq!(series[0].2, COMP_RANGE_PART2);
-        assert_eq!(series[1].1, 111.0);
-        assert_eq!(series[1].2, COMP_ANGLE_A);
-        assert_eq!(series[2].1, 222.0);
-        assert_eq!(series[2].2, COMP_ANGLE_B);
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0].1, 111.0);
+        assert_eq!(series[0].2, COMP_ANGLE_A);
+        assert_eq!(series[1].1, 222.0);
+        assert_eq!(series[1].2, COMP_ANGLE_B);
     }
 }

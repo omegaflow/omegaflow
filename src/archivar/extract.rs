@@ -211,7 +211,6 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "voyager_saturn" => match comp {
             voyager_saturn::COMP_DOPPLER_HP => Some("voyager_saturn_doppler_count_hp"),
             voyager_saturn::COMP_DOPPLER_LP => Some("voyager_saturn_doppler_count_lp"),
-            voyager_saturn::COMP_RANGE_PART2 => Some("voyager_saturn_range_part2"),
             voyager_saturn::COMP_ANGLE_A => Some("voyager_saturn_angle_a"),
             voyager_saturn::COMP_ANGLE_B => Some("voyager_saturn_angle_b"),
             _ => None,
