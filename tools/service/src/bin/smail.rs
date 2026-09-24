@@ -10,6 +10,7 @@ fn main() {
     let mut subject: Option<String> = None;
     let mut body: Option<String> = None;
     let mut html: Option<String> = None;
+    let mut cc: Vec<String> = Vec::new();
     let mut send_now = false;
     let mut dry_run = false;
     let mut i = 1;
@@ -45,6 +46,12 @@ fn main() {
                     html = Some(args[i].clone());
                 }
             }
+            "--cc" => {
+                i += 1;
+                if i < args.len() {
+                    cc.push(args[i].clone());
+                }
+            }
             "--send" => {
                 send_now = true;
             }
@@ -57,10 +64,10 @@ fn main() {
     }
     let Some(to) = to else {
         eprintln!(
-            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--send] [--dry-run]"
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--cc <addr>]... [--send] [--dry-run]"
         );
         eprintln!(
-            "  default is dry-run (prints what would be sent); --send is the operator-consented act; --dry-run forces it"
+            "  default is dry-run (prints what would be sent); --send is the operator-consented act; --dry-run forces it; --cc is repeatable (one address per flag)"
         );
         std::process::exit(2);
     };
@@ -70,7 +77,7 @@ fn main() {
     };
     let Some(subject) = subject else {
         eprintln!(
-            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--send] [--dry-run]"
+            "usage: smail --to <addr> [--from <addr>] --subject <s> [--body <file>] [--html <file>] [--cc <addr>]... [--send] [--dry-run]"
         );
         std::process::exit(2);
     };
@@ -103,12 +110,13 @@ fn main() {
         eprintln!("{}", reason);
         std::process::exit(2);
     }
-    let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref());
+    let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref(), &cc);
     if !will_send {
         println!("dry-run — nothing sent (add --send to send)");
         println!("to: {}", to);
         println!("from: {}", from);
         println!("subject: {}", subject);
+        println!("cc: {}", cc.join(", "));
         println!("text bytes: {}", text.len());
         println!("payload: {}", payload);
         return;
@@ -221,7 +229,14 @@ fn json_escape(s: &str) -> String {
     out
 }
 
-fn build_payload(to: &str, from: &str, subject: &str, text: &str, html: Option<&str>) -> String {
+fn build_payload(
+    to: &str,
+    from: &str,
+    subject: &str,
+    text: &str,
+    html: Option<&str>,
+    cc: &[String],
+) -> String {
     let mut p = format!(
         "{{\"to\":\"{}\",\"from\":\"{}\",\"subject\":\"{}\",\"text\":\"{}\"",
         json_escape(to),
@@ -231,6 +246,13 @@ fn build_payload(to: &str, from: &str, subject: &str, text: &str, html: Option<&
     );
     if let Some(h) = html {
         p.push_str(&format!(",\"html\":\"{}\"", json_escape(h)));
+    }
+    if !cc.is_empty() {
+        let joined: Vec<String> = cc
+            .iter()
+            .map(|a| format!("\"{}\"", json_escape(a)))
+            .collect();
+        p.push_str(&format!(",\"cc\":[{}]", joined.join(",")));
     }
     p.push('}');
     p
@@ -452,7 +474,7 @@ mod tests {
 
     #[test]
     fn payload_roundtrips_fields() {
-        let p = build_payload("to@x.io", "from@x.io", "hi", "body", None);
+        let p = build_payload("to@x.io", "from@x.io", "hi", "body", None, &[]);
         assert!(p.contains("\"to\":\"to@x.io\""));
         assert!(p.contains("\"from\":\"from@x.io\""));
         assert!(p.contains("\"subject\":\"hi\""));
@@ -462,8 +484,21 @@ mod tests {
 
     #[test]
     fn payload_with_html() {
-        let p = build_payload("a", "b", "c", "d", Some("<p>hi</p>"));
+        let p = build_payload("a", "b", "c", "d", Some("<p>hi</p>"), &[]);
         assert!(p.contains("\"html\":\"<p>hi</p>\""));
+    }
+
+    #[test]
+    fn payload_with_cc_carries_the_addresses() {
+        let cc = vec!["c1@x.io".to_string(), "c2@x.io".to_string()];
+        let p = build_payload("a", "b", "c", "d", None, &cc);
+        assert!(p.contains("\"cc\":[\"c1@x.io\",\"c2@x.io\"]"));
+    }
+
+    #[test]
+    fn payload_without_cc_omits_the_key() {
+        let p = build_payload("a", "b", "c", "d", None, &[]);
+        assert!(!p.contains("\"cc\""));
     }
 
     #[test]
