@@ -6017,9 +6017,9 @@ url https://maia.usno.navy.mil/ser7/finals.all
 format finals
 ttl 86400
 at earth
-field ut1_utc eop_iers_ut1_utc_s inverse-square em s 86400 0.0 0.0
-field pmx eop_iers_polar_motion_x_arcsec inverse-square em arcsec 86400 0.0 0.0
-field pmy eop_iers_polar_motion_y_arcsec inverse-square em arcsec 86400 0.0 0.0
+field ut1_utc eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0.0
+field pmx eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
+field pmy eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 ttl 86400
