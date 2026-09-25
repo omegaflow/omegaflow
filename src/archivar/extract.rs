@@ -1240,6 +1240,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             rv_key: rv_key.into(),
             rv_scale: None,
             epoch_key: epoch_key.into(),
+            epoch_mjd: false,
             fields,
             tau_key: String::new(),
         }]
@@ -4246,6 +4247,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 rv_key,
                 rv_scale,
                 epoch_key,
+                epoch_mjd,
                 fields,
                 tau_key,
             } => {
@@ -4372,10 +4374,13 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 + vr.map_or(0.0, |v| v * p_hat[2]),
                         ];
                         let sample_epoch = if !epoch_key.is_empty() {
-                            if let Some(v) = jpath(v, epoch_key) {
-                                v
-                            } else {
-                                continue;
+                            match jpath(v, epoch_key) {
+                                Some(v) if *epoch_mjd => match crate::maxi::mjd_to_tdb(v, lsk) {
+                                    Some(t) => t,
+                                    None => continue,
+                                },
+                                Some(v) => v,
+                                None => continue,
                             }
                         } else {
                             default_epoch
