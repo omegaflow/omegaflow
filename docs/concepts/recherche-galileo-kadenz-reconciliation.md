@@ -77,3 +77,26 @@ Segmentierungs-Artefakt; eine 1-s-Serie kann den 50-mHz-Kamm nicht erzeugen (Nyq
 0.5 Hz, Degeneranz nur bei 60-s-Stützstellen). Die beiden Befunde messen verschiedene
 Epochen desselben Bins; kein Widerspruch. Offen bleibt (wie im Kamm-Befund), welcher
 Reduktions-/Tracking-Schritt die 60-s-Zählintervalle der Dez-1990-Zweiweg-Pässe setzte.*
+
+## Verdikt (2026-09-25, research-max)
+
+Der Schritt ist die **Doppler-Zählzeit („count time" / „compression interval") der
+Tracking-Konfiguration** der Zweiweg-Pässe — ein benutzerspezifizierter Track-Parameter,
+kein Reduktions-/Archivschritt. Die Reduktion kopiert die Zählungen 1:1.
+
+- TRK-2-25 (ATDF) trägt je Record eine eigene Sampler Time (Feld 30, seconds*100); der
+  Reduktionspfad `reduce_resid` (atdf.rs:603) schreibt einen GASR je nativem Record —
+  kein 60-s-Schritt (TRK-2-25-Text, in-volume).
+- TRK-2-18 (ODF, 1988-01-15) definiert den Doppler-Zeittag in der Mitte des
+  Compression-Intervalls; das Intervall steckt in den Counts, nicht in der Reduktion
+  (`of-legacy/docs/reference/dsn_trk-2-18.1988-01-15.txt:691-696`).
+- Pollmeier & Thurman, TDA PR 42-110 (NASA NTRS 19930010226, „Application of
+  High-Precision Two-Way Ranging to Galileo Earth-1 Encounter Navigation") dokumentiert
+  die Earth-1-Kampagnen-Doppler explizit mit „(60-sec count time)".
+- DSMS Services Catalog v7.5 (Wallace S. Tai), zitiert im Pioneer-LRR
+  (`of-legacy/docs/paper/pioneer-anomaly-lrr-2010-4.txt:2730-2734`): die Zählzeit ist ein
+  „user-specified count interval", typisch 10–60 s.
+
+`pending`: ob die 60 s als eigener Track-Parameter der Kampagne gesetzt wurden oder an
+den Ranging-Modus gekoppelt waren. Nächste Suche: DSMS Services Catalog v7.5, Abschnitt
+„Doppler count interval"; alternativ TDA-PR-Band 42-109/42-111 (NTRS 19930010224).
