@@ -1728,9 +1728,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("diffusion", "1", 86400.0)
     } else if kl.contains("albedo") {
         ("em", "1", 604800.0)
-    } else if kl.contains("eccentricity") {
-        ("gravity", "1", 604800.0)
-    } else if kl == "rho_cos_phi" || kl == "rho_sin_phi" {
+    } else if kl.contains("eccentricity") || kl == "rho_cos_phi" || kl == "rho_sin_phi" {
         ("gravity", "1", 604800.0)
     } else if kl.contains("eop_")
         || kl.contains("ut1_utc")
