@@ -537,7 +537,12 @@ fn collect_orphan_candidates_in(text: &str, register: &str) -> Vec<OrphanCandida
         let note = lines
             .iter()
             .find(|(_, l)| l.trim_start().starts_with("note "))
-            .map(|(_, l)| l.trim_start().trim_start_matches("note ").trim().to_string())
+            .map(|(_, l)| {
+                l.trim_start()
+                    .trim_start_matches("note ")
+                    .trim()
+                    .to_string()
+            })
             .unwrap_or(String::new());
         let gap = lines
             .iter()
@@ -1678,6 +1683,7 @@ struct Handover {
 struct OpenPoint {
     lineno: usize,
     text: String,
+    from_heading: bool,
 }
 
 fn is_date_field(s: &str) -> bool {
@@ -1823,6 +1829,8 @@ fn leading_region(body: &str) -> &str {
 fn extract_open_points(text: &str) -> Vec<OpenPoint> {
     let mut points: Vec<OpenPoint> = Vec::new();
     let mut section_open = false;
+    let mut current_heading: Option<(usize, String)> = None;
+    let mut in_point_block = false;
     for (idx, raw) in text.lines().enumerate() {
         let lineno = idx + 1;
         let trimmed = raw.trim_start();
@@ -1834,12 +1842,26 @@ fn extract_open_points(text: &str) -> Vec<OpenPoint> {
                 points.push(OpenPoint {
                     lineno,
                     text: heading.to_string(),
+                    from_heading: false,
                 });
             }
             section_open = open;
+            current_heading = None;
+            in_point_block = false;
+            continue;
+        }
+        if let Some(rest) = trimmed
+            .strip_prefix("### ")
+            .or_else(|| trimmed.strip_prefix("#### "))
+        {
+            current_heading = Some((lineno, rest.trim().to_string()));
+            in_point_block = false;
             continue;
         }
         if let Some(cells) = split_table_row(raw) {
+            if current_heading.is_some() || in_point_block {
+                continue;
+            }
             if cells.len() < 2 || is_table_separator(&cells) {
                 continue;
             }
@@ -1852,20 +1874,39 @@ fn extract_open_points(text: &str) -> Vec<OpenPoint> {
                 points.push(OpenPoint {
                     lineno,
                     text: first.to_string(),
+                    from_heading: false,
                 });
             }
             continue;
         }
         if let Some(body) = strip_bullet_marker(trimmed) {
+            if let Some((hlineno, heading)) = current_heading.take() {
+                let open = section_open
+                    || tag_in_words(&normalize_words(&heading))
+                    || heading.to_lowercase().starts_with("punkt");
+                if open && !is_container_heading(&heading) {
+                    points.push(OpenPoint {
+                        lineno: hlineno,
+                        text: heading,
+                        from_heading: true,
+                    });
+                }
+                in_point_block = true;
+                continue;
+            }
+            if in_point_block {
+                continue;
+            }
             if section_open || tag_in_words(&normalize_words(leading_region(body))) {
                 points.push(OpenPoint {
                     lineno,
                     text: body.to_string(),
+                    from_heading: false,
                 });
             }
         }
     }
-    points.retain(|p| !is_container_text(&p.text));
+    points.retain(|p| p.from_heading || !is_container_text(&p.text));
     points
 }
 
@@ -2833,6 +2874,30 @@ mod tests {
     }
 
     #[test]
+    fn extract_open_points_keys_shared_status_points_by_their_headings() {
+        let text = "## Pending points\n\n### alpha-driver\n- **Status:** pending | **Owner:** self\n- **Need:** alpha\n\n### beta-live-parity\n- **Status:** pending | **Owner:** self\n- **Need:** beta\n";
+        let points = extract_open_points(text);
+        let keys: Vec<String> = points
+            .iter()
+            .filter_map(|p| match_prefix(&point_key_tokens(&p.text)))
+            .collect();
+        let alpha = keys
+            .iter()
+            .find(|k| k.starts_with("alpha-driver"))
+            .expect("alpha-driver heading must be keyed by its title");
+        let beta = keys
+            .iter()
+            .find(|k| k.starts_with("beta-live-parity"))
+            .expect("beta-live-parity heading must be keyed by its title");
+        assert_ne!(alpha, beta);
+        assert!(
+            !keys.iter().any(|k| k.contains("owner")),
+            "the shared Status line must not be a point key: {:?}",
+            keys
+        );
+    }
+
+    #[test]
     fn status_word_matches_tag_but_not_embedded_substring() {
         assert!(tag_in_words(&normalize_words("das ist `wartend`")));
         assert!(tag_in_words(&normalize_words("bleibt offen")));
@@ -2925,7 +2990,11 @@ mod tests {
         assert!(lines.iter().any(|l| l.starts_with(
             "ORPHAN_UNCOMMITTED\tphi/blocked_sources.\u{3c6}:5\t[mountain]\thttps://example.org/lost"
         )));
-        assert!(lines.iter().all(|l| !l.contains("https://example.org/held")));
+        assert!(
+            lines
+                .iter()
+                .all(|l| !l.contains("https://example.org/held"))
+        );
         let _ = fs::remove_dir_all(&base);
     }
 
@@ -2941,12 +3010,18 @@ mod tests {
         )
         .unwrap();
         let (lines, summary) = orphan_report_with(&base, &|_| {
-            Some("parser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n".to_string())
+            Some(
+                "parser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n"
+                    .to_string(),
+            )
         });
         assert_eq!(summary.get("mountain"), Some(&(1usize, 0usize)));
-        assert!(lines
-            .iter()
-            .any(|l| l.starts_with("ORPHAN_COMMITTED\tphi/blocked_sources.\u{3c6}:1\t[mountain]")));
+        assert!(
+            lines
+                .iter()
+                .any(|l| l
+                    .starts_with("ORPHAN_COMMITTED\tphi/blocked_sources.\u{3c6}:1\t[mountain]"))
+        );
         let _ = fs::remove_dir_all(&base);
     }
 
@@ -2974,7 +3049,11 @@ mod tests {
         assert!(lines.iter().any(|l| l.starts_with(
             "ORPHAN_CLASS\tphi/blocked_sources.\u{3c6}::gap:force-undetermined\t[mountain]\t1"
         )));
-        assert!(lines.iter().all(|l| !l.starts_with("CARRIER_DRIFT")), "{:?}", lines);
+        assert!(
+            lines.iter().all(|l| !l.starts_with("CARRIER_DRIFT")),
+            "{:?}",
+            lines
+        );
         let _ = fs::remove_dir_all(&base);
     }
 
@@ -3017,7 +3096,8 @@ mod tests {
     }
 
     #[test]
-    fn distinctive_token_prefers_the_long_word_and_rejects_stopwords() {        let tokens = vec!["am".to_string(), "head".to_string(), "8218f46a".to_string()];
+    fn distinctive_token_prefers_the_long_word_and_rejects_stopwords() {
+        let tokens = vec!["am".to_string(), "head".to_string(), "8218f46a".to_string()];
         assert_eq!(distinctive_token(&tokens), Some("8218f46a".to_string()));
         let words = vec!["der".to_string(), "die".to_string()];
         assert_eq!(distinctive_token(&words), None);
