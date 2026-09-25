@@ -2,11 +2,12 @@ use omegaflow::archivar::{
     Extract, JsonVal, SourceConfig, convert_to_si, fetch_raw, load_sources, parse_json, scalar_of,
 };
 use omegaflow::te::{
-    permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag,
+    permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase_n, transfer_entropy_lag,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const N_SURR: usize = 100;
 const BASE: &str = "https://services.swpc.noaa.gov/json";
 const ABK_HAPI: &str = "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf";
 const KP_URL: &str = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json";
@@ -309,7 +310,7 @@ fn sweep_lags() -> Vec<usize> {
 fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
     let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
     let mut vals = Vec::new();
-    for _ in 0..10 {
+    for _ in 0..N_SURR {
         let ys = phase_randomized_surrogate(from, &mut rng);
         if let Some(te) = transfer_entropy_lag(to, &ys, lag) {
             vals.push(te);
@@ -368,7 +369,7 @@ fn te_sweep(
                 }
             }
             match refined {
-                Some((rl, rt)) => match surrogate_stats_phase(to_series, from_series, rl, SURROGATE_SEED) {
+                Some((rl, rt)) => match surrogate_stats_phase_n(to_series, from_series, rl, SURROGATE_SEED, N_SURR) {
                     Some((mean, sd, thr)) => {
                         let verdict = if rt > thr { "arrow" } else { "silent" };
                         line.push_str(&format!(
@@ -398,7 +399,7 @@ fn threshold_row(
 ) {
     for &lag in lags {
         let te = transfer_entropy_lag(to_series, from_series, lag);
-        let stats = surrogate_stats_phase(to_series, from_series, lag, SURROGATE_SEED);
+        let stats = surrogate_stats_phase_n(to_series, from_series, lag, SURROGATE_SEED, N_SURR);
         match (te, stats) {
             (Some(t), Some((mean, sd, thr))) => {
                 let verdict = if t > thr { "arrow" } else { "silent" };
@@ -488,13 +489,15 @@ fn main() {
     let Some(now) = now_unix() else {
         return;
     };
-    println!("=== Bz Blatt probe — the causal driver of the geomagnetically induced current ===");
+    println!(
+        "=== Bz Blatt probe — the directional driver of the geomagnetically induced current ==="
+    );
     println!("system time: {}", iso_utc(now));
     println!(
         "Estimator: TE(Y→X; τ) = Σ_t ln[ p(x_{{t+τ}}, x_t, y_t) · p(x_t) / (p(x_t, y_t) · p(x_{{t+τ}}, x_t)) ] / m, KDE Silverman, lag in Minuten."
     );
     println!(
-        "Threshold: phase-randomized surrogates (f64 FFT, 10 realizations), mean + 2σ — the null-control record (broken-null-control.md)."
+        "Threshold: phase-randomized surrogates (f64 FFT, {N_SURR} realizations), mean + 2σ — the null-control record (broken-null-control.md)."
     );
     println!(
         "No pre-shift: the sweep 0–120 min IS the L1→Earth travel time (the physics places the arrow at 30–60 min; lag 0 or lag 120 would be an artifact finding)."
@@ -799,21 +802,23 @@ fn main() {
 
     println!();
     println!("=== THE BLATT ===");
-    println!("Title: The causal driver of the geomagnetically induced current.");
+    println!("Title: The directional driver of the geomagnetically induced current.");
     let headline = |from: &str, to_s: &[f32], from_s: &[f32]| -> String {
         let (curve, _) = te_sweep(from, "dB/dt", to_s, from_s, &lags);
         match curve.iter().max_by(|a, b| a.1.total_cmp(&b.1)) {
-            Some((lag, te)) => match surrogate_stats_phase(to_s, from_s, *lag, SURROGATE_SEED) {
-                Some((mean, sd, thr)) => format!(
-                    "TE({from} → dB/dt) = {te:.4e} | threshold {thr:.4e} (mean {mean:.3e}, σ {sd:.3e}) | lag {lag} min | n {} | {}",
-                    to_s.len(),
-                    if te > &thr { "arrow" } else { "still" }
-                ),
-                None => format!(
-                    "TE({from} → dB/dt) = {te:.4e} | threshold absent (surrogates < 2) | lag {lag} min | n {}",
-                    to_s.len()
-                ),
-            },
+            Some((lag, te)) => {
+                match surrogate_stats_phase_n(to_s, from_s, *lag, SURROGATE_SEED, N_SURR) {
+                    Some((mean, sd, thr)) => format!(
+                        "TE({from} → dB/dt) = {te:.4e} | threshold {thr:.4e} (mean {mean:.3e}, σ {sd:.3e}) | lag {lag} min | n {} | {}",
+                        to_s.len(),
+                        if te > &thr { "arrow" } else { "still" }
+                    ),
+                    None => format!(
+                        "TE({from} → dB/dt) = {te:.4e} | threshold absent (surrogates < 2) | lag {lag} min | n {}",
+                        to_s.len()
+                    ),
+                }
+            }
             None => format!("TE({from} → dB/dt) = pending — the series carries no TE"),
         }
     };
@@ -860,7 +865,7 @@ fn main() {
         "Multiple-comparison correction over the pair matrix: open in the thematic handover — the Blatt carries the raw values with threshold."
     );
     println!(
-        "GIC itself (electric): no feed — the Blatt measures dB/dt, the inductive driver, not the grid current."
+        "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/sources.φ:8590, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,56) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."
     );
     println!(
         "Storm presence in the window: what the series carry (Kp row above); a storm-free window is the quiet-time measurement, no artifact."

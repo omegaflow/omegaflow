@@ -1,20 +1,20 @@
 <!--
-  title: The causal driver of geomagnetically induced currents
+  title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-08-22
-  sha256: b3acd367e38337784bfa87ac38d632ae09cc6b290fc3d29fc14c65ffff6421f5
+  sha256: e4cceb3cab06b10c0b17ca09556519820fd305bdeb6cf1a9da56be1fcc4bc5d8
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
 
-# The causal driver of geomagnetically induced currents
+# The directional driver of geomagnetically induced currents
 
 *Omegaflow Working Group — Bz-Blatt Session, 2026-08-22*
 
 ## Abstract
 
-The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, bulk speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates, per-lag thresholds, and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected (post-fix) surrogate null. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The causal driver is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
+The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, bulk speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates, per-lag thresholds, and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected (post-fix) surrogate null. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured direction of information flow — transfer entropy, directional but not an interventional causal proof; a PCMCI cross-check is a named future run (§5) — is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -22,7 +22,8 @@ ground magnetic field changes rapidly; the engineering risk variable is dB/dt,
 its time derivative (Pulkkinen et al., 2017). The upstream driver is the solar
 wind at the L1 point. Which of its measured quantities — the interplanetary
 magnetic field (in particular its southward component Bz in GSM coordinates),
-the bulk speed, or the density — causally drives the ground response, and at
+the bulk speed, or the density — drives the ground response in the directional
+information-flow sense, and at
 what lag, is both a physics question and an operational one: forecasters
 watch the solar-wind monitor 30–90 minutes upstream of the magnetosphere, and
 an identified driver at the correct lag is a warning channel.
@@ -119,7 +120,10 @@ day, named: lag 1 = 3 days; stride 1 is computable but ~9× slower and left
 for future runs). All seeds fixed. The family bounds reported here were
 measured under the corrected (post-fix) surrogate RNG
 (`fam-machine: post-fix`); the pre-fix run is superseded (see the footnote,
-§6).
+§6). The hourly probe has since been hardened — lag sweep 0–6 h, `n_surr =
+100`, a median and a Newell driver statistic — so the numbers above are the
+pre-hardening run and their re-measurement is pending the next
+`bz-retro-probe` dispatch.
 
 ### 3.5 Estimator validation against known ground truth
 
@@ -319,12 +323,17 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   (both auroral zone); a mid-latitude network generalization is not
   measured here. At SOD the reverse channel also clears the bound (§4.4),
   consistent with the estimator's reverse response under coupling (§3.5).
-- **dB/dt is the induction driver, not the network current.** No GIC feed
-  (electric force channel) exists in the system; the paper measures the
-  excitation, not the damage.
+- **dB/dt is the induction driver, not the network current.** The FMI
+  Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
+  `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
+  `src/archivar/geo.rs:7,56`), but it is hourly peak-magnitude buckets over
+  1999–2023 at 60.6° N, 25.2° E, and no co-located magnetogram (Mäntsälä
+  dB/dt) is in the stack; the paper measures the excitation at ABK/SOD, not
+  the current at Mäntsälä.
 - **Minute grain is a single 22-h window.** A storm-ensemble at minute
   resolution would require a minute-resolution retro solar-wind archive,
-  which the stack does not carry (RTSW live holds ~1 day).
+  which the stack does not carry (RTSW live holds ~1 day; the SWPC mirror
+  carries only the rolling 1-day/7-day files, `.github/workflows/swpc-mirror-cdn.yml:30`).
 - **Daily grain uses stride 3** (every third day; lag 1 = 3 days). The
   full-density daily run is 9× costlier and left for a future run; the
   stride is named, not hidden.
@@ -334,8 +343,10 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   null the reverse channel at strong coupling (ground-truth verdict NOT
   PASS for absolute reverse silence; §3.5). The direction in the real data
   is argued from the forward-over-reverse asymmetry and the silent density
-  control, not from an absolute reverse null. The KDE-h sensitivity (h/2, 2h)
-  is partially covered (series scaling invariance) and otherwise open.
+  control, not from an absolute reverse null. A KDE-h bandwidth sweep on
+  Bz→dB/dt (factors 0.5–3.0) is carried by the hourly probe
+  (`tools/measure/src/bin/bz_retro_probe.rs`, `KDE_FACTORS`); its result is
+  pending the next `bz-retro-probe` run, so the limitation stands here.
 - **PE gate not engaged** at these window sizes (3 segments of 360 samples
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
@@ -353,7 +364,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 ## 7. Conclusion
 
 Transfer entropy with a phase-randomized null and a family bound identifies
-the causal driver of the geomagnetic induction excitation: the southward
+the directional driver of the geomagnetic induction excitation: the southward
 interplanetary magnetic field, acting in the hour of the ground response.
 Bz → dB/dt exceeds the corrected family bound in both storm years at Abisko
 and at Sodankylä; the density control stays below the bound throughout; the
