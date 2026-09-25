@@ -1,20 +1,37 @@
 pub const PACK_MAGIC: [u8; 4] = *b"VOCC";
 pub const PACK_ENTRY_BYTES: usize = 84;
 
-pub const MED_HEADER_COMPLEX_WORDS: usize = 88;
-pub const MED_HEADER_BYTES: usize = MED_HEADER_COMPLEX_WORDS * 4;
-pub const MED_RECORD_INT_WORDS: usize = 2528;
-pub const MED_RECORD_BYTES: usize = MED_RECORD_INT_WORDS * 2;
+pub const LEN_PREFIX_BYTES: usize = 2;
+
+pub const MED_PAYLOAD_BYTES: usize = 4800;
+pub const MED_RECORD_BYTES: usize = LEN_PREFIX_BYTES + MED_PAYLOAD_BYTES;
+pub const MED_HEADER_BYTES: usize = 704;
 pub const MED_DATA_VALUES: usize = 512;
-pub const MED_DATA_BYTES: usize = MED_RECORD_BYTES - MED_HEADER_BYTES;
+pub const MED_DATA_BYTES: usize = MED_DATA_VALUES * 8;
 pub const MED_T0_OFFSET: usize = 0;
 pub const MED_T0_BYTES: usize = 8;
 pub const MED_TIMETAGDAYS_OFFSET: usize = 8;
 pub const MED_TIMETAGDAYS_BYTES: usize = 2;
+pub const MED_VALUE_COUNT_OFFSET: usize = 10;
+pub const MED_MAGIC: u32 = 0x6fff_ffff;
 
-pub const NB_HEADER_COMPLEX_WORDS: usize = 15;
-pub const NB_TIME_WORDS_LO: usize = 29;
-pub const NB_TIME_WORDS_HI: usize = 33;
+pub const NB_HEADER_PAYLOAD_BYTES: usize = 120;
+pub const NB_HEADER_RECORD_BYTES: usize = LEN_PREFIX_BYTES + NB_HEADER_PAYLOAD_BYTES;
+pub const NB_DATA_RECORD_PAYLOAD_BYTES: usize = 4096;
+pub const NB_DATA_RECORD_BYTES: usize = LEN_PREFIX_BYTES + NB_DATA_RECORD_PAYLOAD_BYTES;
+pub const NB_DATA_VALUES: usize = 1024;
+
+pub const COMP_AMP_MIN: u32 = 1;
+pub const COMP_AMP_MAX: u32 = 2;
+pub const COMP_AMP_MEAN: u32 = 3;
+
+fn be16(bytes: &[u8]) -> u16 {
+    u16::from_be_bytes([bytes[0], bytes[1]])
+}
+
+fn be32(bytes: &[u8]) -> u32 {
+    u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MediumbandRecord {
@@ -22,45 +39,123 @@ pub struct MediumbandRecord {
     pub data: [u8; MED_DATA_BYTES],
 }
 
-pub fn mediumband_record(bytes: &[u8]) -> Option<MediumbandRecord> {
-    if bytes.len() != MED_RECORD_BYTES {
+pub fn mediumband_record(record: &[u8]) -> Option<MediumbandRecord> {
+    if record.len() != MED_RECORD_BYTES {
+        return None;
+    }
+    if be16(&record[0..LEN_PREFIX_BYTES]) as usize != MED_PAYLOAD_BYTES {
+        return None;
+    }
+    let payload = &record[LEN_PREFIX_BYTES..];
+    if be32(&payload[4..8]) != MED_MAGIC {
+        return None;
+    }
+    if be16(&payload[MED_VALUE_COUNT_OFFSET..MED_VALUE_COUNT_OFFSET + 2]) as usize
+        != MED_DATA_VALUES
+    {
         return None;
     }
     let mut header = [0u8; MED_HEADER_BYTES];
-    header.copy_from_slice(&bytes[..MED_HEADER_BYTES]);
+    header.copy_from_slice(&payload[..MED_HEADER_BYTES]);
     let mut data = [0u8; MED_DATA_BYTES];
-    data.copy_from_slice(&bytes[MED_HEADER_BYTES..]);
+    data.copy_from_slice(&payload[MED_HEADER_BYTES..]);
     Some(MediumbandRecord { header, data })
 }
 
-pub fn t0_bytes(r: &MediumbandRecord) -> &[u8] {
-    &r.header[MED_T0_OFFSET..MED_T0_OFFSET + MED_T0_BYTES]
-}
-
-pub fn timetagdays_bytes(r: &MediumbandRecord) -> &[u8] {
-    &r.header[MED_TIMETAGDAYS_OFFSET..MED_TIMETAGDAYS_OFFSET + MED_TIMETAGDAYS_BYTES]
-}
-
-pub fn split_records(byte_len: usize) -> (usize, usize) {
-    (byte_len / MED_RECORD_BYTES, byte_len % MED_RECORD_BYTES)
-}
-
 pub fn parse_mediumband(bytes: &[u8]) -> Option<Vec<MediumbandRecord>> {
-    let (n, _) = split_records(bytes.len());
-    let mut out = Vec::with_capacity(n);
-    for i in 0..n {
+    let mut out = Vec::new();
+    let mut offset = 0usize;
+    while offset < bytes.len() {
+        if offset + MED_RECORD_BYTES > bytes.len() {
+            return None;
+        }
         out.push(mediumband_record(
-            &bytes[i * MED_RECORD_BYTES..(i + 1) * MED_RECORD_BYTES],
+            &bytes[offset..offset + MED_RECORD_BYTES],
         )?);
+        offset += MED_RECORD_BYTES;
     }
     Some(out)
+}
+
+pub fn t0_ms(r: &MediumbandRecord) -> u32 {
+    be32(&r.header[MED_T0_OFFSET..MED_T0_OFFSET + 4])
+}
+
+pub fn timetagdays(r: &MediumbandRecord) -> u16 {
+    be16(&r.header[MED_TIMETAGDAYS_OFFSET..MED_TIMETAGDAYS_OFFSET + 2])
+}
+
+pub fn mediumband_amps(r: &MediumbandRecord) -> Option<(f64, f64, f64)> {
+    let mut min = f64::INFINITY;
+    let mut max = f64::NEG_INFINITY;
+    let mut sum = 0.0f64;
+    for k in 0..MED_DATA_VALUES {
+        let base = k * 8;
+        let i = f32::from_be_bytes([
+            r.data[base],
+            r.data[base + 1],
+            r.data[base + 2],
+            r.data[base + 3],
+        ]) as f64;
+        let q = f32::from_be_bytes([
+            r.data[base + 4],
+            r.data[base + 5],
+            r.data[base + 6],
+            r.data[base + 7],
+        ]) as f64;
+        let amp = i.hypot(q);
+        if !amp.is_finite() {
+            return None;
+        }
+        if amp < min {
+            min = amp;
+        }
+        if amp > max {
+            max = amp;
+        }
+        sum += amp;
+    }
+    Some((min, max, sum / MED_DATA_VALUES as f64))
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct NarrowbandFile {
+    pub header: [u8; NB_HEADER_PAYLOAD_BYTES],
+    pub records: Vec<[u8; NB_DATA_RECORD_PAYLOAD_BYTES]>,
+}
+
+pub fn parse_narrowband(bytes: &[u8]) -> Option<NarrowbandFile> {
+    if bytes.len() < NB_HEADER_RECORD_BYTES {
+        return None;
+    }
+    if be16(&bytes[0..LEN_PREFIX_BYTES]) as usize != NB_HEADER_PAYLOAD_BYTES {
+        return None;
+    }
+    let mut header = [0u8; NB_HEADER_PAYLOAD_BYTES];
+    header.copy_from_slice(&bytes[LEN_PREFIX_BYTES..NB_HEADER_RECORD_BYTES]);
+    let mut records = Vec::new();
+    let mut offset = NB_HEADER_RECORD_BYTES;
+    while offset < bytes.len() {
+        if offset + NB_DATA_RECORD_BYTES > bytes.len() {
+            return None;
+        }
+        if be16(&bytes[offset..offset + LEN_PREFIX_BYTES]) as usize != NB_DATA_RECORD_PAYLOAD_BYTES
+        {
+            return None;
+        }
+        let mut data = [0u8; NB_DATA_RECORD_PAYLOAD_BYTES];
+        data.copy_from_slice(&bytes[offset + LEN_PREFIX_BYTES..offset + NB_DATA_RECORD_BYTES]);
+        records.push(data);
+        offset += NB_DATA_RECORD_BYTES;
+    }
+    Some(NarrowbandFile { header, records })
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VoccFile {
     pub name: String,
     pub sha256: [u8; 32],
-    pub records: Vec<MediumbandRecord>,
+    pub raw: Vec<u8>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -85,10 +180,8 @@ pub fn pack_many(files: &[(&[u8], &str)]) -> Vec<u8> {
         let n = nameb.len().min(32);
         bin[base..base + n].copy_from_slice(&nameb[..n]);
         bin[base + 32..base + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(raw));
-        bin[base + 64..base + 68]
-            .copy_from_slice(&((raw.len() / MED_RECORD_BYTES) as u32).to_le_bytes());
-        bin[base + 68..base + 76].copy_from_slice(&(offset as u64).to_le_bytes());
-        bin[base + 76..base + 84].copy_from_slice(&(raw.len() as u64).to_le_bytes());
+        bin[base + 64..base + 72].copy_from_slice(&(offset as u64).to_le_bytes());
+        bin[base + 72..base + 80].copy_from_slice(&(raw.len() as u64).to_le_bytes());
         bin[offset..offset + raw.len()].copy_from_slice(raw);
         offset += raw.len();
     }
@@ -110,9 +203,8 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedVocc> {
         let name = String::from_utf8(entry[0..name_end].to_vec()).ok()?;
         let mut sha256 = [0u8; 32];
         sha256.copy_from_slice(&entry[32..64]);
-        let record_count = u32::from_le_bytes(entry[64..68].try_into().ok()?) as usize;
-        let data_offset = u64::from_le_bytes(entry[68..76].try_into().ok()?) as usize;
-        let data_length = u64::from_le_bytes(entry[76..84].try_into().ok()?) as usize;
+        let data_offset = u64::from_le_bytes(entry[64..72].try_into().ok()?) as usize;
+        let data_length = u64::from_le_bytes(entry[72..80].try_into().ok()?) as usize;
         if data_offset + data_length > bytes.len() {
             return None;
         }
@@ -120,93 +212,151 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedVocc> {
         if crate::archivar::sha256::sha256_raw(raw) != sha256 {
             return None;
         }
-        if raw.len() != record_count * MED_RECORD_BYTES {
-            return None;
-        }
-        let records = parse_mediumband(raw)?;
-        if records.len() != record_count {
-            return None;
-        }
         files.push(VoccFile {
             name,
             sha256,
-            records,
+            raw: raw.to_vec(),
         });
     }
     Some(PackedVocc { files })
 }
 
 pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
-    parse_packed(data)?;
-    Some(Vec::new())
+    let packed = parse_packed(data)?;
+    let mut out = Vec::new();
+    for file in &packed.files {
+        if let Some(records) = parse_mediumband(&file.raw) {
+            for r in &records {
+                let t = f64::from(t0_ms(r)) / 1000.0;
+                if t <= 0.0 {
+                    return None;
+                }
+                let (mn, mx, mean) = mediumband_amps(r)?;
+                out.push((t, mn, COMP_AMP_MIN));
+                out.push((t, mx, COMP_AMP_MAX));
+                out.push((t, mean, COMP_AMP_MEAN));
+            }
+            continue;
+        }
+        if parse_narrowband(&file.raw).is_none() {
+            continue;
+        }
+    }
+    Some(out)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn sample_record() -> Vec<u8> {
-        let mut bytes = vec![0u8; MED_RECORD_BYTES];
-        for (i, b) in bytes.iter_mut().enumerate() {
-            *b = (i % 251) as u8;
+    fn sample_mediumband_record() -> Vec<u8> {
+        let mut rec = vec![0u8; MED_RECORD_BYTES];
+        rec[0..2].copy_from_slice(&(MED_PAYLOAD_BYTES as u16).to_be_bytes());
+        rec[LEN_PREFIX_BYTES..LEN_PREFIX_BYTES + 4]
+            .copy_from_slice(&1_231_585_997u32.to_be_bytes());
+        rec[LEN_PREFIX_BYTES + 4..LEN_PREFIX_BYTES + 8].copy_from_slice(&MED_MAGIC.to_be_bytes());
+        rec[LEN_PREFIX_BYTES + 8..LEN_PREFIX_BYTES + 10].copy_from_slice(&317u16.to_be_bytes());
+        rec[LEN_PREFIX_BYTES + MED_VALUE_COUNT_OFFSET
+            ..LEN_PREFIX_BYTES + MED_VALUE_COUNT_OFFSET + 2]
+            .copy_from_slice(&(MED_DATA_VALUES as u16).to_be_bytes());
+        let data_base = LEN_PREFIX_BYTES + MED_HEADER_BYTES;
+        for k in 0..MED_DATA_VALUES {
+            let base = data_base + k * 8;
+            let (i, q) = if k == 0 {
+                (1.0f32, 0.0f32)
+            } else {
+                (0.0f32, 1.0f32)
+            };
+            rec[base..base + 4].copy_from_slice(&i.to_be_bytes());
+            rec[base + 4..base + 8].copy_from_slice(&q.to_be_bytes());
+        }
+        rec
+    }
+
+    fn sample_narrowband_file(records: usize) -> Vec<u8> {
+        let mut bytes = vec![0u8; NB_HEADER_RECORD_BYTES + records * NB_DATA_RECORD_BYTES];
+        bytes[0..2].copy_from_slice(&(NB_HEADER_PAYLOAD_BYTES as u16).to_be_bytes());
+        bytes[LEN_PREFIX_BYTES + 64..LEN_PREFIX_BYTES + 66].copy_from_slice(&318u16.to_be_bytes());
+        for k in 0..records {
+            let base = NB_HEADER_RECORD_BYTES + k * NB_DATA_RECORD_BYTES;
+            bytes[base..base + 2]
+                .copy_from_slice(&(NB_DATA_RECORD_PAYLOAD_BYTES as u16).to_be_bytes());
+            let v = 1.0f32;
+            bytes[base + LEN_PREFIX_BYTES..base + LEN_PREFIX_BYTES + 4]
+                .copy_from_slice(&v.to_be_bytes());
         }
         bytes
     }
 
     #[test]
-    fn mediumband_record_frames_the_measured_record_length() {
-        let bytes = sample_record();
-        let r = mediumband_record(&bytes).unwrap();
+    fn measured_record_totals_hold() {
+        assert_eq!(MED_RECORD_BYTES * 3662, 17_584_924);
+        assert_eq!(
+            NB_HEADER_RECORD_BYTES + 3908 * NB_DATA_RECORD_BYTES,
+            16_015_106
+        );
+        assert_eq!(MED_HEADER_BYTES, 704);
+        assert_eq!(MED_DATA_BYTES, MED_DATA_VALUES * 8);
+        assert_eq!(NB_HEADER_PAYLOAD_BYTES, 120);
+        assert_eq!(NB_DATA_RECORD_PAYLOAD_BYTES / NB_DATA_VALUES, 4);
+    }
+
+    #[test]
+    fn mediumband_record_frames_the_measured_geometry() {
+        let rec = sample_mediumband_record();
+        let r = mediumband_record(&rec).unwrap();
         assert_eq!(r.header.len(), MED_HEADER_BYTES);
         assert_eq!(r.data.len(), MED_DATA_BYTES);
-        assert!(mediumband_record(&bytes[..bytes.len() - 1]).is_none());
+        assert_eq!(t0_ms(&r), 1_231_585_997);
+        assert_eq!(timetagdays(&r), 317);
+        let (mn, mx, mean) = mediumband_amps(&r).unwrap();
+        assert_eq!(mn, 1.0);
+        assert_eq!(mx, 1.0);
+        assert_eq!(mean, 1.0);
     }
 
     #[test]
-    fn t0_and_timetagdays_slots_lie_inside_the_measured_header() {
-        assert!(MED_T0_OFFSET + MED_T0_BYTES <= MED_HEADER_BYTES);
-        assert!(MED_TIMETAGDAYS_OFFSET + MED_TIMETAGDAYS_BYTES <= MED_HEADER_BYTES);
-        let r = mediumband_record(&sample_record()).unwrap();
-        assert_eq!(
-            t0_bytes(&r),
-            &r.header[MED_T0_OFFSET..MED_T0_OFFSET + MED_T0_BYTES]
-        );
-        assert_eq!(
-            timetagdays_bytes(&r),
-            &r.header[MED_TIMETAGDAYS_OFFSET..MED_TIMETAGDAYS_OFFSET + MED_TIMETAGDAYS_BYTES]
-        );
-    }
-
-    #[test]
-    fn mediumband_data_value_stride_stays_unmeasured() {
-        assert_ne!(MED_DATA_BYTES % MED_DATA_VALUES, 0);
-    }
-
-    #[test]
-    fn narrowband_record_header_cannot_carry_the_measured_file_time_words() {
-        assert!(NB_HEADER_COMPLEX_WORDS * 2 < NB_TIME_WORDS_HI);
+    fn mediumband_record_voids_on_little_endian_length_and_bad_magic() {
+        let mut rec = sample_mediumband_record();
+        rec[0] = 0x00;
+        rec[1] = 0x12;
+        assert!(mediumband_record(&rec).is_none());
+        let mut rec = sample_mediumband_record();
+        rec[LEN_PREFIX_BYTES + 4] ^= 0xff;
+        assert!(mediumband_record(&rec).is_none());
+        assert!(mediumband_record(&rec[..rec.len() - 1]).is_none());
     }
 
     #[test]
     fn parse_mediumband_counts_complete_records() {
         let mut bytes = Vec::new();
-        bytes.extend_from_slice(&sample_record());
-        bytes.extend_from_slice(&sample_record());
+        bytes.extend_from_slice(&sample_mediumband_record());
+        bytes.extend_from_slice(&sample_mediumband_record());
         bytes.extend_from_slice(&[0u8; 512]);
-        assert_eq!(split_records(bytes.len()), (2, 512));
-        let recs = parse_mediumband(&bytes).unwrap();
+        assert!(parse_mediumband(&bytes).is_none());
+        let recs = parse_mediumband(&bytes[..bytes.len() - 512]).unwrap();
         assert_eq!(recs.len(), 2);
     }
 
     #[test]
-    fn pack_roundtrips_raw_records_with_sha256() {
-        let raw = sample_record();
-        let records = parse_mediumband(&raw).unwrap();
-        let bin = pack(&raw, "S0A.DAT");
+    fn narrowband_frames_header_and_data_records() {
+        let bytes = sample_narrowband_file(2);
+        let nb = parse_narrowband(&bytes).unwrap();
+        assert_eq!(nb.header.len(), NB_HEADER_PAYLOAD_BYTES);
+        assert_eq!(nb.records.len(), 2);
+        assert_eq!(u16::from_be_bytes([nb.header[64], nb.header[65]]), 318);
+        assert!(parse_narrowband(&bytes[..bytes.len() - 1]).is_none());
+        assert!(parse_narrowband(b"X").is_none());
+    }
+
+    #[test]
+    fn pack_roundtrips_raw_members_with_sha256() {
+        let raw = sample_mediumband_record();
+        let bin = pack(&raw, "DD059817_F1.DAT");
         let parsed = parse_packed(&bin).unwrap();
         assert_eq!(parsed.files.len(), 1);
-        assert_eq!(parsed.files[0].name, "S0A.DAT");
-        assert_eq!(parsed.files[0].records, records);
+        assert_eq!(parsed.files[0].name, "DD059817_F1.DAT");
+        assert_eq!(parsed.files[0].raw, raw);
         assert_eq!(
             parsed.files[0].sha256,
             crate::archivar::sha256::sha256_raw(&raw)
@@ -216,8 +366,8 @@ mod tests {
 
     #[test]
     fn parse_packed_voids_on_wrong_magic_and_corruption() {
-        let raw = sample_record();
-        let bin = pack(&raw, "S0A.DAT");
+        let raw = sample_mediumband_record();
+        let bin = pack(&raw, "DD059817_F1.DAT");
         let mut wrong_magic = bin.clone();
         wrong_magic[0] = b'X';
         assert!(parse_packed(&wrong_magic).is_none());
@@ -228,11 +378,37 @@ mod tests {
     }
 
     #[test]
-    fn parse_series_emits_zero_rows_while_the_sample_decode_is_pending() {
-        let raw = sample_record();
-        let bin = pack(&raw, "S0A.DAT");
+    fn parse_series_emits_measured_amp_rows_for_mediumband() {
+        let raw = sample_mediumband_record();
+        let bin = pack(&raw, "DD059817_F1.DAT");
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 3);
+        assert_eq!(series[0], (1_231_585.997, 1.0, COMP_AMP_MIN));
+        assert_eq!(series[1], (1_231_585.997, 1.0, COMP_AMP_MAX));
+        assert_eq!(series[2], (1_231_585.997, 1.0, COMP_AMP_MEAN));
+        assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn parse_series_keeps_narrowband_rows_pending() {
+        let bytes = sample_narrowband_file(2);
+        let bin = pack(&bytes, "DD059825_F1.DAT");
         let series = parse_series(&bin).unwrap();
         assert!(series.is_empty());
-        assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn parse_series_mixes_bands_and_skips_unframed_files() {
+        let med = sample_mediumband_record();
+        let nb = sample_narrowband_file(1);
+        let zero = vec![0u8; MED_RECORD_BYTES];
+        let bin = pack_many(&[
+            (&med[..], "DD059817_F1.DAT"),
+            (&nb[..], "DD059825_F1.DAT"),
+            (&zero[..], "S0A.DAT"),
+        ]);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 3);
+        assert_eq!(series[2].2, COMP_AMP_MEAN);
     }
 }
