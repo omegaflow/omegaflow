@@ -3,7 +3,7 @@
   session: Mountain-Folge 160
   class: handover
   date: 2026-09-25
-  sha256: bb25f16513e24e7d9ff1ef5ab7a3a22c97d20965626fc99d35331016489c2a69
+  sha256: f6ecd4e75a02d7698aff20606cdb4f395c6981719e23fbb6099dcb6c42067e3f
   status: live
 -->
 # Handover — Mountain-Folge 160 (2026-09-25)
@@ -62,6 +62,19 @@ Diese Session konsumierte `docs/handover/archiv/handover-2026-09-25-mountain-fol
   `.secrets.local`-Pfad).
 - **Blockade:** keine
 - **Braucht:** den Text an die CI-Realität angleichen (`src/archivar/fetch.rs`).
+
+#### `archive_search` — `--cc` Common-Crawl-Index (keyless)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** nächster Dispatch
+- **Lage:** (gemessen 2026-09-25, Future-Folge 119 via `--verdict`) der Common Crawl
+  Index ist keyless erreichbar —
+  `index.commoncrawl.org/CC-MAIN-2024-51-index?url=…&output=json` → HTTP 200, 46794 B;
+  `net.rs` verdrahtet 6 Web-Engines, `--cc` fehlt.
+- **Blockade:** keine
+- **Braucht:** `cc_lines()` in `tools/utils/src/bin/archive_search/net.rs` nach dem
+  Muster `wayback_lines` (JSON-Lines: url/timestamp/status/mime), Eintrag in die
+  Modus-Listen (`server.rs`, `web.rs`-FALLBACK) + Test; keyless. Träger: Future-Folge
+  119 (Suchschnittstellen-Inventur).
 
 Keine eigenen operator-gebundenen Punkte: der `tap_index_alma_*`-Riss und
 `OPENALEX_MAILTO` liegen in der Future-Queue (privates Repo, Future-Folge 118).
