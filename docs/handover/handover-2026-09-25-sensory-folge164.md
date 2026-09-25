@@ -3,7 +3,7 @@
   session: Sensory-Folge 164
   class: handover
   date: 2026-09-25
-  sha256: a1954a229ba1a1fb9dfdb8549c63244158a6874d16476c653977c8c634a23fc7
+  sha256: a539ebeee1a00c2bf3be99c0739c786b68539e6f070e6dd291f965aacdf6a6b4
   status: live
 -->
 # Handover — Sensory-Folge 164 (2026-09-25)
@@ -97,7 +97,7 @@ Die FR945 ist das persönliche Gerät des Operators. Ihre Kennung (MAC) und ihre
 - **Blockade:** Hardware-Bestellung LOCK.
 - **Braucht:** —
 
-**PII (im Auftrag, nicht hier kopiert):** die bereinigte FR945-MAC (lokal in `.secrets.local`) + die offene Gate-Klasse für Geräte-MACs leben in `docs/auftrag/auftrag-pii-history-rewrite.md` (Nachtrag 2026-09-25); 10 archivierte Sensory-Übergaben tragen die MAC in HEAD noch.
+**PII (im Auftrag):** die FR945-MAC ist aus HEAD entfernt (Wert nur lokal in `.secrets.local`); der History-Rewrite (die Historie trägt sie weiter) + die umgesetzte MAC-Gate-Klasse (Platzhalter ausgenommen) leben in `docs/auftrag/auftrag-pii-history-rewrite.md` (Nachtrag 2026-09-25).
 
 ## Abschluss
 

@@ -676,6 +676,15 @@ impl Gate {
                 quote: clip(&text[start..end], 90),
             });
         }
+        if let Some((start, end)) = mac_address_hit(text) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "pii".to_string(),
+                line: line_of(text, start),
+                feedback: feedback("pii").to_string(),
+                quote: clip(&text[start..end], 90),
+            });
+        }
         None
     }
 
@@ -1441,6 +1450,52 @@ fn home_path_hit(text: &str) -> Option<(usize, usize)> {
         return Some((i, j));
     }
     None
+}
+
+fn mac_address_hit(text: &str) -> Option<(usize, usize)> {
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i + 17 <= bytes.len() {
+        let Some(end) = mac_at(bytes, i) else {
+            i += 1;
+            continue;
+        };
+        let token = &text[i..end];
+        if !is_placeholder_mac(token) {
+            return Some((i, end));
+        }
+        i = end;
+    }
+    None
+}
+
+fn mac_at(bytes: &[u8], start: usize) -> Option<usize> {
+    if start + 17 > bytes.len() {
+        return None;
+    }
+    let sep = bytes[start + 2];
+    if sep != b':' && sep != b'_' {
+        return None;
+    }
+    let mut pos = start;
+    for pair in 0..6 {
+        if !bytes[pos].is_ascii_hexdigit() || !bytes[pos + 1].is_ascii_hexdigit() {
+            return None;
+        }
+        pos += 2;
+        if pair < 5 {
+            if bytes[pos] != sep {
+                return None;
+            }
+            pos += 1;
+        }
+    }
+    Some(pos)
+}
+
+fn is_placeholder_mac(token: &str) -> bool {
+    token.eq_ignore_ascii_case("AA:BB:CC:DD:EE:FF")
+        || token.eq_ignore_ascii_case("AA_BB_CC_DD_EE_FF")
 }
 
 fn find_unit(window: &str, unit: &str) -> Option<usize> {
@@ -2759,6 +2814,35 @@ mod tests {
     fn fn_pii_ci_home_passes() {
         let mut g = test_gate();
         assert!(g.check_text(&fx("pii_ci_home")).is_none());
+    }
+
+    #[test]
+    fn fp_pii_device_mac_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("pii_device_mac")).unwrap();
+        assert_eq!(v.rule, "pii");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_pii_device_mac_path_blocked() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("pii_device_mac_path")).is_some());
+    }
+
+    #[test]
+    fn fn_pii_device_mac_placeholder_passes() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("pii_device_mac_placeholder")).is_none());
+    }
+
+    #[test]
+    fn fn_pii_device_mac_underscore_placeholder_passes() {
+        let mut g = test_gate();
+        assert!(
+            g.check_text(&fx("pii_device_mac_underscore_placeholder"))
+                .is_none()
+        );
     }
 
     #[test]
