@@ -3,7 +3,7 @@
   session: Sensory-Folge 169
   class: handover
   date: 2026-09-25
-  sha256: 63d3c7ac8f09eafe58dadb6b780f1b4bf11357e37812d0c32ce2f65e7660f423
+  sha256: 5b96871149031fc9db287b6d570b4adf3015e442a9fbf80ecc72656a9697f9e3
   status: live
 -->
 # Handover — Sensory-Folge 169 (2026-09-25)
@@ -37,10 +37,10 @@ getrackte Baum trägt nur die Rolle „Träger", nie die Kennung.
 
 #### Neu gebaute Artefakte — erste CI-Läufe beobachten
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste `esp32-firmware.yml`-Lauf (zweites Bin `znsp_host`) und der erste `zigbee-host.yml`-Lauf
-- **Lage:** Workflow `zigbee-host.yml` und das zweite Bin `firmware/radiatorium/src/bin/znsp_host.rs` sind gebaut und in HEAD — kein Lauf gestartet (gemessen 2026-09-25 via `git status`: keine Firmware-Datei offen).
+- **Trigger:** Ergebnis der Läufe `36173203539` (`esp32-firmware.yml`) und `36173206910` (`zigbee-host.yml`)
+- **Lage:** die Workflows `zigbee-host.yml`/`esp32-firmware.yml` und das zweite Bin `firmware/radiatorium/src/bin/znsp_host.rs` sind in HEAD; beide Läufe wurden am 2026-09-25 nach dem Push dispatched (`36173203539`, `36173206910`), Ergebnis ausstehend.
 - **Blockade:** keine.
-- **Braucht:** nach `/commit`+Push `gh workflow run esp32-firmware.yml` und `gh workflow run zigbee-host.yml`; Ergebnis aus dem Watchdog-Snapshot `/tmp/opencode/ci_status.md` bzw. `ci_manage view <id>` — nie pollen.
+- **Braucht:** Ergebnis aus dem Watchdog-Snapshot `/tmp/opencode/ci_status.md` bzw. `ci_manage view 36173203539`/`36173206910` lesen — nie pollen; bei success den Punkt schließen, bei rot den Defekt bauen.
 
 #### HRV/Puls→Strahlung — Kette nach dem Live-Lauf beobachten
 - **Status:** wartend | **Bindung:** eigen
