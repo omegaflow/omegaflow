@@ -3,7 +3,7 @@
   session: Mountain-Folge 163
   class: handover
   date: 2026-09-25
-  sha256: a5be0d5ce265c54f4bb668f395cd8d670380842eea9b80a9445acde862e7c14a
+  sha256: f3d8f539c627cf326a8046452c30669ec269d1b8fdfc8311198d1c6770eb934c
   status: live
 -->
 # Handover — Mountain-Folge 163 (2026-09-25)
@@ -236,13 +236,21 @@ Trigger / Lage / Blockade / Braucht.
   und als Pfad in `docs/concepts/tools-map.md` registrieren.
 - **Quelle:** docs/concepts/tools-map.md
 
+#### Messpunkt-Verteilung — Verdikt je Kandidat + Architektur-Empfehlung
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) das Survey fordert ein Verdikt je Verteilungs-Kandidat 1–8, hält Kandidat 9 (fehlende aktuelle Konzepte) offen und stellt §6 fünf Detailfragen (Voronoi-Anzeige vs. bilineare Mischung; Struktur-Radius-Kriterium; Budget-Skalierung; Fovea-Fallback; Silizium-Implementierbarkeit) plus eine Architektur-Empfehlung.
+- **Blockade:** keine.
+- **Braucht:** je Kandidat 1–8 ein Verdikt, Kandidat 9 offen halten, die 5 Detailfragen beantworten und die Architektur empfehlen (wer rechnet was, welche Daten fließen, wie die Dichte skaliert).
+- **Quelle:** docs/surveys/survey-messpunkt-verteilung.md
+
 ### Gelesen — keine offene Arbeit (descoped)
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-09-25 via Dokument-Lesung + `register_lookup --orphan-docs`) die offenen Marker dieser Dokumente sind Prosa, kein handlungsfähiger Punkt.
 - **Blockade:** keine.
 - **Braucht:** — (descoped mit Befund).
-- **Quelle:** `docs/concepts/kybernaut-native-methodology.md`, `docs/concepts/pfeiler-der-architektur.md`, `docs/concepts/the-counter-slope.md`, `docs/surveys/survey-2026-09-02-tools-funktionsstruktur.md`, `docs/surveys/survey-messpunkt-verteilung.md`
+- **Quelle:** `docs/concepts/kybernaut-native-methodology.md`, `docs/concepts/pfeiler-der-architektur.md`, `docs/concepts/the-counter-slope.md`, `docs/surveys/survey-2026-09-02-tools-funktionsstruktur.md`
 
 ## Abschluss
 

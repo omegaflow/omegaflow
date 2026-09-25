@@ -3,7 +3,7 @@
   session: Sensory-Folge 168
   class: handover
   date: 2026-09-25
-  sha256: dd03b6c8baeb7ca952b41bcc1eb1a938e51a7ee5dffd611be212084460dfa950
+  sha256: 9db80edd91454b4219c6a59cd6b7f22b11441022fc5c4339db9714cf17735e57
   status: live
 -->
 # Handover — Sensory-Folge 168 (2026-09-25)
@@ -303,13 +303,37 @@ getrackte Baum trägt nur die Rolle „Träger", nie die Kennung.
 - **Braucht:** MAVEN-TNF ernten und registrieren; den nativen Serien-Arm bauen; Ulysses/BepiColombo/LRO den Registereintrag prüfen.
 - **Quelle:** docs/surveys/survey-2026-09-16-sonden-flotte.md
 
+#### Das eine Instrument — Anomalie offen (zweite Augenklasse fehlt)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** ein zweiter Messkanal (VLBI-Beacon auf einer interstellaren Sonde) existiert.
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) die Pionier-Anomalie ist offen und unter dem einen Instrument nicht entscheidbar; eine zweite Augenklasse (Winkel aus VLBI + Geschwindigkeit aus Doppler) fehlt.
+- **Blockade:** kein Instrument misst den vollen Phasenraum der Pioniere; ohne zweite Augenklasse bleibt die Anomalie unentschieden.
+- **Braucht:** eine zweite Augenklasse — VLBI-Beacon auf der nächsten interstellaren Sonde, von Tag eins zweikanalig getrackt.
+- **Quelle:** docs/concepts/das-eine-instrument.md
+
+#### Axiom-Gate H0-Linien — 75-Quellen-Crossmatch `pending`
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) der 75-Quellen-Crossmatch (per-source identity des Cepheiden-Ankers) ist als `pending` benannt; die 0.2619-mas-Wiegung überzeichnet sich nicht.
+- **Blockade:** keine.
+- **Braucht:** den 75-Quellen-Crossmatch (per-source identity des Cepheiden-Ankers) fahren und die Wiegung gegen die benannte Zählung prüfen.
+- **Quelle:** docs/surveys/axiom-gate-h0-lines-register.md
+
+#### Axiom-Gate Neptun-Bau-Linie — Riss (eingelöst vs. `pending`)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) `axiom-gate-uranus-rift-ephemerides` sagt „die Neptun-Bau-Linie bleibt `pending` benannt", `axiom-gate-neptune-rift-ephemerides` sagt „diese Messung löst das Pending ein" — zwei Zeilen, die sich nicht decken.
+- **Blockade:** keine.
+- **Braucht:** beide Linien gegeneinander messen; die Neptun-Bau-Linie als `pending` oder eingelöst führen, nicht beides.
+- **Quelle:** docs/surveys/axiom-gate-uranus-rift-ephemerides.md, docs/surveys/axiom-gate-neptune-rift-ephemerides.md
+
 #### Gelesen — keine offene Arbeit (descoped)
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) die Dokumente tragen keinen handlungsfähigen offenen Punkt: die Blätter/H0-Register erklären ihre Pendings als geschlossen bzw. als reinen Registerbefund; `die-weberin` und `blatt-kreuz-screening-kollab` haben ihre Stufen beantwortet.
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung) die verbliebenen Dokumente tragen keinen handlungsfähigen offenen Punkt: `die-weberin` und `blatt-kreuz-screening-kollab` haben ihre Stufen beantwortet, `blatt-h0-linien-register`/`h0-lines-register` tragen `pending` als physikalische Abwesenheit (kein Schlichter möglich), die übrigen Marker sind Prosa.
 - **Blockade:** keine.
 - **Braucht:** — (descoped mit Befund)
-- **Quelle:** docs/blatt/blatt-h0-linien-register.md, docs/blatt/blatt-kreuz-screening-kollab.md, docs/concepts/das-eine-instrument.md, docs/concepts/die-weberin.md, docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md, docs/paper/causal-arrow-preregistration.md, docs/paper/h0-lines-register.md, docs/surveys/axiom-gate-cross-screening-tibet.md, docs/surveys/axiom-gate-h0-lines-register.md, docs/surveys/axiom-gate-neptune-rift-ephemerides.md, docs/surveys/axiom-gate-uranus-rift-ephemerides.md
+- **Quelle:** docs/blatt/blatt-h0-linien-register.md, docs/blatt/blatt-kreuz-screening-kollab.md, docs/concepts/die-weberin.md, docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md, docs/paper/causal-arrow-preregistration.md, docs/paper/h0-lines-register.md, docs/surveys/axiom-gate-cross-screening-tibet.md, docs/surveys/axiom-gate-neptune-rift-ephemerides.md
 
 ### Operator handelt
 
