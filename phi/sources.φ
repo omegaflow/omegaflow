@@ -7331,6 +7331,12 @@ url https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__di
 format reference
 ttl 86400
 
+url https://zenodo.org/api/records/21132339/files/data.zip/content
+format reference
+origin https://zenodo.org/api/records/21132339
+compiler tools/harvest/src/bin/zenodo_record_harvester.rs
+ttl 86400
+
 url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
 format reference
 sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
@@ -7539,6 +7545,26 @@ dec dec
 dist sy_dist
 dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+plx parallax
+field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
+format tap
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+plx parallax
+field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/api.le-systeme-solaire.net/solar_system_bodies.bin
 origin https://api.le-systeme-solaire.net/rest/bodies/
@@ -9117,6 +9143,15 @@ field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/toar-data.fz-juelich.de/toar_surface_o3.bin
+format toar_surface_o3
+origin https://toar-data.fz-juelich.de/api/v2/
+compiler tools/harvest/src/bin/toar_timeseries_compiler.rs
+sha256 8fd5522427c65c3818300e6061ad86ab6ed973c9875b6c393099ece8fc0242df
+at earth
+ttl 604800
+field toar_surface_o3_ppb toar_surface_o3_ppb gaussian-inverse-square diffusion ppb 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
 format las
 origin procedure: fetch https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz then las_compiler
@@ -9561,6 +9596,13 @@ format bayestar
 origin https://dataverse.harvard.edu/api/access/datafile/3424708
 compiler tools/harvest/src/bin/bayestar_compiler.rs
 sha256 970cd3a2a5f1f66859f93b615d1c203512d430203c2cb73c0476495d3f77b41f
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/decaps_dr2_stars.bin
+format decaps_dr2_stars
+origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI (110 decaps_stars_batch_*.fits.gz)
+compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
 at sun
 ttl 31536000
 

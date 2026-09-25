@@ -45,6 +45,7 @@ struct Vocab {
     counter_slope: Vec<String>,
     measure_step_markers: Vec<String>,
     measure_step_due: Vec<String>,
+    deferral_markers: Vec<String>,
     consent_acts: Vec<(String, String)>,
     human_threshold: Vec<String>,
     registered_word: String,
@@ -149,6 +150,7 @@ fn load_vocab() -> Vocab {
         counter_slope: str_list(&json, "counter_slope"),
         measure_step_markers: str_list(&json, "measure_step_markers"),
         measure_step_due: str_list(&json, "measure_step_due"),
+        deferral_markers: str_list(&json, "deferral_markers"),
         consent_acts: pair_list(&json, "consent_acts"),
         human_threshold: str_list(&json, "human_threshold"),
         registered_word: str_value(&json, "registered_word"),
@@ -425,6 +427,7 @@ impl Gate {
             .or_else(|| self.check_state_claim(text))
             .or_else(|| self.check_serial_priority(text))
             .or_else(|| self.check_measure_step(text))
+            .or_else(|| self.check_deferral(text))
     }
 
     pub fn check_input(&mut self, text: &str) -> Vec<Verdict> {
@@ -440,6 +443,7 @@ impl Gate {
             self.check_state_claim(text),
             self.check_serial_priority(text),
             self.check_measure_step(text),
+            self.check_deferral(text),
             self.check_consent_act(text),
             self.check_human_threshold(text),
         ]
@@ -606,6 +610,24 @@ impl Gate {
                 }
                 search_from = start + ml.len();
             }
+        }
+        None
+    }
+
+    fn check_deferral(&self, text: &str) -> Option<Verdict> {
+        let lower = text.to_lowercase();
+        for marker in &vocab().deferral_markers {
+            let ml = marker.to_lowercase();
+            if !lower.contains(&ml) {
+                continue;
+            }
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "deferral".to_string(),
+                line: 0,
+                feedback: feedback("deferral").to_string(),
+                quote: clip(text, 90),
+            });
         }
         None
     }
@@ -2800,6 +2822,20 @@ mod tests {
     fn fn_measure_step_with_due_passes() {
         let mut g = test_gate();
         assert!(g.check_text(&fx("measure_step_clean")).is_none());
+    }
+
+    #[test]
+    fn fp_deferral_next_dispatch_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("deferral_next_dispatch")).unwrap();
+        assert_eq!(v.rule, "deferral");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_deferral_sofort_clean() {
+        let mut g = test_gate();
+        assert!(g.check_text(&fx("deferral_sofort_clean")).is_none());
     }
 
     #[test]
