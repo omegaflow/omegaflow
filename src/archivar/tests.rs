@@ -9937,6 +9937,16 @@ fn mariner_occlt_series_dispatch_and_component_names() {
 }
 
 #[test]
+fn voyager_occlt_series_dispatch_frames_and_emits_zero_rows_pending_decode() {
+    let mut raw = vec![0u8; super::voyager_occlt::MED_RECORD_BYTES];
+    raw[0] = 0x01;
+    let bin = super::voyager_occlt::pack(&raw, "S0A.DAT");
+    let parsed =
+        super::extract::series_parse_bin("voyager_occlt", &bin).expect("voyager_occlt pack parses");
+    assert!(parsed.is_empty());
+}
+
+#[test]
 fn drs_fits_series_dispatch_and_component_names() {
     let rows = [[1.0e-9, -2.0e-9, 3.0e-9]];
     let bytes = super::drs_fits::write_bin(&rows, 1.47e9);
