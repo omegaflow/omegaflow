@@ -35,6 +35,7 @@ pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
 pub const MAGIC_OSM: [u8; 4] = *b"OSM1";
 pub const MAGIC_TOAR: [u8; 4] = *b"TOA1";
+pub const MAGIC_DECAPS: [u8; 4] = crate::decaps::MAGIC;
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -226,6 +227,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "emodnet_hfr" => Some(MAGIC_HFR),
         "opensensemap_temperatur" => Some(MAGIC_OSM),
         "toar_surface_o3" => Some(MAGIC_TOAR),
+        "decaps_dr2_stars" => Some(MAGIC_DECAPS),
         _ => None,
     }
 }
@@ -266,6 +268,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "emodnet_hfr" => Some(COMP_HFR_MAX),
         "opensensemap_temperatur" => Some(COMP_OSM_MAX),
         "toar_surface_o3" => Some(COMP_TOAR_MAX),
+        "decaps_dr2_stars" => Some(crate::decaps::COMP_MAX),
         _ => None,
     }
 }
@@ -354,6 +357,9 @@ pub fn write_bin(magic: [u8; 4], records: &[GeoRec]) -> Vec<u8> {
 
 pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
     if bytes.len() < 8 || bytes[0..4] != magic {
+        return None;
+    }
+    if magic == MAGIC_DECAPS {
         return None;
     }
     if magic == MAGIC_GDP {
