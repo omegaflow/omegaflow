@@ -3,7 +3,7 @@
   session: Sensory-Folge 165
   class: handover
   date: 2026-09-25
-  sha256: 438cf53c1a7b4eb14eebf3406943f2e5bc46b26f6676103c2d86b3493da690c5
+  sha256: 60bed93f293b31102251ae65eef225f056aa38c3dc34aad744cb0121b654e481
   status: live
 -->
 # Handover — Sensory-Folge 165 (2026-09-25)
@@ -54,9 +54,9 @@ Die FR945 ist das persönliche Gerät des Operators. Ihre Kennung (MAC) und ihre
 ### ble-Tests grün — CI-Bestätigung
 - **Status:** wartend | **Bindung:** eigen (CI)
 - **Trigger:** Lauf-Ende des `ci-check` auf dem Commit dieses Atoms
-- **Lage:** (gemessen 2026-09-25 via `cargo check --tests`) 0/0; Fixtures gepinnt (`gfdi_match_names_the_path_before_the_uuid`, `error_reply_is_a_decline_for_the_calling_serial`). Der Lauf trägt den Fix erst mit dem neuen Commit.
+- **Lage:** (gemessen 2026-09-25 via `cargo check --tests`) 0/0; Fixtures gepinnt (`gfdi_match_names_the_path_before_the_uuid`, `error_reply_is_a_decline_for_the_calling_serial`). Der Push triggert `ci-check` selbst (`on: push`, Pfade `src/**`/`docs/**`): Lauf `36113209167` auf `d406c597c` (gemessen 2026-09-25 via `ci_manage view`, `pending`).
 - **Blockade:** keine.
-- **Braucht:** nach Commit+Push `ci_manage`-Lauf anstoßen, dann `ci_manage log <id>` einmal lesen; bei Rot derselben Punkt erneut.
+- **Braucht:** `ci_manage log 36113209167` einmal lesen, sobald der Lauf endet; bei Rot derselbe Punkt erneut.
 
 ### HRV/Puls→Strahlung (Träger FR945)
 - **Status:** wartend | **Bindung:** eigen
