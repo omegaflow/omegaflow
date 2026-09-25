@@ -3,7 +3,7 @@
   session: River-Folge 28
   class: handover
   date: 2026-09-25
-  sha256: 1dedfcf0a2ce783bfca28eadb9e17191e593a47e659cad4fd30a4849b4831175
+  sha256: 4995967fd4b87335405d726c1d6ce708f1e89516794d7030cd21ecc485fc932f
   status: live
 -->
 # Handover — River-Folge 28 (2026-09-25)
@@ -169,11 +169,17 @@ getrennt geführt — Vorbereitung (autonom, dispatcht) und Akt (operator-gebund
 
 ### Fremd gemessen (Route an die Eigentümer-Linie)
 
-- **CI-Red `ci-check 36152720260` @`4f90217ed`** (Eigentümer: Future folge119,
-  zuvor Mountain): `clippy` `src/archivar/port.rs:1731` (identische if-Blöcke) +
-  `test` `archivar::tests::test_diagnose_no_samples` (`src/archivar/tests.rs:6839`,
-  „got: data-present (non-JSON body: HTML/XML/text)"). River hat die Ursache
-  isoliert; Fix gehört dem Eigentümer (fremde Dateien, nicht angefasst).
+- **CI-Red `ci-check 36152720260` @`4f90217ed`** — beide Reds gehören **Mountain**
+  (gemessen via `git blame`/`git log -S`): `clippy` `src/archivar/port.rs:1731`
+  (identische if-Blöcke `eccentricity`/`rho_cos_phi` → `("gravity","1",604800.0)`)
+  aus **Mountain folge159** (`c4592e347a`); `test`
+  `archivar::tests::test_diagnose_no_samples` (`src/archivar/tests.rs:6839`,
+  „got: data-present (non-JSON body: HTML/XML/text)") aus **Mountain folge161**
+  (`0881a2751`) — das Fixture `"\u{1f}\u{8b}gzip payload"` kodiert `\u{8b}` als
+  UTF-8 `C2 8B`, die gzip-Magic `[0x1f,0x8b]` (`fetch.rs:590`) matcht nicht.
+  `future folge119` (`d8b2eb4d7`) berührte `tests.rs` nur in Z.404 (`km/s`), nicht
+  diese Reds. River hat die Ursache isoliert; Fix gehört Mountain (fremde Dateien,
+  nicht angefasst).
 - **SuperDARN-Mirror rot** (Operator-Weiterleitung 2026-09-25) → Mirror-Workflow,
   Eigentümer Mycelium.
 - **GitHub-Support PII-GC** „Re: Request to purge/GC unreachable" → Auftrag
