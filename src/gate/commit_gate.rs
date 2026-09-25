@@ -42,6 +42,7 @@ struct Vocab {
     pii: Vec<String>,
     template_slang: Vec<String>,
     zero_decl: Vec<String>,
+    counter_slope: Vec<String>,
     measure_step_markers: Vec<String>,
     measure_step_due: Vec<String>,
     consent_acts: Vec<(String, String)>,
@@ -145,6 +146,7 @@ fn load_vocab() -> Vocab {
         pii: str_list(&json, "pii"),
         template_slang: str_list(&json, "template_slang"),
         zero_decl: str_list(&json, "zero_decl"),
+        counter_slope: str_list(&json, "counter_slope"),
         measure_step_markers: str_list(&json, "measure_step_markers"),
         measure_step_due: str_list(&json, "measure_step_due"),
         consent_acts: pair_list(&json, "consent_acts"),
@@ -471,10 +473,7 @@ impl Gate {
                 severity: Severity::Hard,
                 rule: "speculation".to_string(),
                 line: 0,
-                feedback: format!(
-                    "A = A: the machine does not speculate. \"{}\" is a guess, not a measurement. Name what IS.",
-                    spec
-                ),
+                feedback: feedback("speculation").replacen("{word}", spec, 1),
                 quote: clip(text, 80),
             });
         }
@@ -710,10 +709,13 @@ impl Gate {
             }
             let tail = &lower[start..];
             let window: String = tail.chars().take(80).collect();
-            if vocab()
-                .zero_decl
+            let v = vocab();
+            if v.zero_decl
                 .iter()
                 .any(|d| window.contains(d) || lower.contains(d))
+                || v.counter_slope
+                    .iter()
+                    .any(|d| window.contains(&d.to_lowercase()))
             {
                 continue;
             }
@@ -1733,7 +1735,11 @@ mod tests {
     }
 
     fn tool_args(path: &str, content: &str) -> String {
-        format!(r#"{{"filePath":"{}","newString":"{}"}}"#, path, content)
+        format!(
+            r#"{{"filePath":{},"newString":{}}}"#,
+            json_write(&JsonVal::Str(path.to_string())),
+            json_write(&JsonVal::Str(content.to_string()))
+        )
     }
 
     #[test]
@@ -1922,6 +1928,56 @@ mod tests {
             g.check_text("cargo check gives 0 Fehler, 0 Warnungen")
                 .is_none()
         );
+    }
+
+    fn counter_slope_slug(term: &str) -> String {
+        format!(
+            "counter_slope_clean_{}",
+            term.to_lowercase()
+                .chars()
+                .map(|c| if c.is_alphanumeric() { c } else { '_' })
+                .collect::<String>()
+        )
+    }
+
+    #[test]
+    fn counter_slope_terms_pass_the_negative_arms() {
+        let mut g = test_gate();
+        for term in &vocab().counter_slope {
+            assert!(
+                g.check_text(term).is_none(),
+                "counter_slope term {term} trips a negative arm"
+            );
+        }
+    }
+
+    #[test]
+    fn counter_slope_clean_fixtures_pass() {
+        let mut g = test_gate();
+        for term in &vocab().counter_slope {
+            let key = counter_slope_slug(term);
+            let fixture = fx(&key);
+            assert!(
+                !fixture.is_empty(),
+                "no clean fixture {key} for term {term}"
+            );
+            assert!(
+                g.check_text(&fixture).is_none(),
+                "clean fixture {key} blocked"
+            );
+        }
+    }
+
+    #[test]
+    fn counter_slope_licenses_the_zero_window() {
+        let mut g = test_gate();
+        for term in &vocab().counter_slope {
+            let text = format!("the value is 0.0 — {term}");
+            assert!(
+                g.check_text(&text).is_none(),
+                "counter_slope term {term} does not license the zero window"
+            );
+        }
     }
 
     #[test]
