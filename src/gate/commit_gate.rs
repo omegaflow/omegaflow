@@ -3469,8 +3469,9 @@ mod tests {
     fn status_proof_reports_heading_line() {
         let h = "## Offen\n\n### Point X\n- **Status:** wartend | **Bindung:** eigen\n- **Trigger:** at some point\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
         let v = status_proof_violations(&h);
-        assert!(v
-            .iter()
-            .any(|(l, r, _)| *l == 3 && r == "wartend-ohne-trigger-beleg"));
+        assert!(
+            v.iter()
+                .any(|(l, r, _)| *l == 3 && r == "wartend-ohne-trigger-beleg")
+        );
     }
 }
