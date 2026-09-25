@@ -78,6 +78,7 @@ Schwache Picks: SG90 nur als Bulk-Treffer (Einzelstück ~2 €), Bass-Exciter te
 | PG7 Kabelverschraubung | 1005012013946264 | 2,35 |
 | 12V 5A Netzteil | 1005006759578540 | 12,49 |
 | Jumper-/Breadboard-Kit 120 | 1005007539811930 | 2,15 |
+| ESP32-H2-DevKitM-1-N4 (NCP-Funkmodul, Coordinator-Radio) | 1005008131868631 | 6,25 $ (unverified) · DigiKey 26282483 9,68 $ (gemessen 2026-09-25) |
 
 ## Outdoor-Zusatz (Spec PART 7)
 
@@ -99,7 +100,7 @@ Schwache Picks: SG90 nur als Bulk-Treffer (Einzelstück ~2 €), Bass-Exciter te
 | Merkmal | ESP32-S3 (BOM) | PINE64 Ox64 |
 |---|---|---|
 | Architektur | Xtensa LX7, dual-core 32-bit | RISC-V BL808 (C906 64-bit + E907 + LP) |
-| Funk | WiFi + BLE | WiFi + BLE + **ZigBee** (802.15.4 im BL808-Datasheet; Stack-Weg offen) |
+| Funk | WiFi + BLE | WiFi + BLE + **ZigBee** (802.15.4 im BL808-Datasheet; Stack-Weg: Route 2 Espressif-RCP, Rat 2026-09-25) |
 | Ökosystem | sehr groß (ESP-IDF/Arduino) | kleiner (RISC-V, Buildroot/OpenWrt) |
 | I2C/SPI-Treiber | reichlich | weniger fertig |
 | Rolle | gebauter Mantis-Shrimp-Knoten | Alternative/Zweitknoten: RISC-V + ZigBee-Mesh |
@@ -110,7 +111,9 @@ Sensorknoten erprobt). **Ox64** ist als Zweitknoten spannend — RISC-V-Erfahrun
 und ZigBee-Mesh —, kostet aber Treiber-Arbeit. PINE64 schickt Geräte an
 Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
-**Messung 2026-09-25 (ZigBee-Zeile):** **M1 gemessen — das BL808-Silizium trägt 802.15.4.** Das Bouffalolab-Datasheet (`bl_docs`, `BL808_DS` v1.2, Features: „Zigbee / IEEE 802.15.4" + „Wi-Fi/Bluetooth/Zigbee Coexistence"; PINE64-Ox64-Wiki „Zigbee") belegt ein 802.15.4-Radio im 2,4-GHz-Transceiver (gemessen 2026-09-25 via `general`/flash `archive_search`). Damit ist die Zeile „Funk: WiFi + BLE + ZigBee" für das **Silizium** belegt. Offen bleibt der **Stack-Weg** (Rat): ein öffentliches BL808-ZigBee-SDK/NCP wurde nicht gefunden — `ncp-blz`/`zigpy-blz`/`bl_iot_sdk` sind BL702/BL706-scoped, `bl_mcu_sdk` (BL808) hat 0 Treffer, der BL808-Reference-Manual kein Wireless-Kapitel. Optionen: BL70x-NCP als Koordinator-Dongle oder Espressif-RCP (`esp-zigbee-sdk` `zigbee_gateway`, ESP32-H2/C6 als `ot_rcp`). M2 (nach Ankunft) bleibt: ZigBee-Beispiel für den BL808 bauen.
+**Messung 2026-09-25 (ZigBee-Zeile):** **M1 gemessen — das BL808-Silizium trägt 802.15.4.** Das Bouffalolab-Datasheet (`bl_docs`, `BL808_DS` v1.2, Features: „Zigbee / IEEE 802.15.4" + „Wi-Fi/Bluetooth/Zigbee Coexistence"; PINE64-Ox64-Wiki „Zigbee") belegt ein 802.15.4-Radio im 2,4-GHz-Transceiver (gemessen 2026-09-25 via `general`/flash `archive_search`). Damit ist die Zeile „Funk: WiFi + BLE + ZigBee" für das **Silizium** belegt.
+
+**Rat-Verdikt 2026-09-25 (Stack-Weg — Route 2, Espressif-RCP):** Das H2 ist das **NCP-Funkmodul** (802.15.4), S3/BL808 die **Host-CPU**; der Stack läuft als Vendor-Firmware (`esp_zigbee_ncp`, H2) und spricht ZNSP über UART; der Host wird in Rust selbst gebaut (`std` + `serialport`). Gemessen (2026-09-25 via research-max `archive_search`): `esp-zigbee-sdk` trägt `examples/esp_zigbee_ncp` (Target esp32h2) ↔ `examples/esp_zigbee_host` (Target esp32s3 — die gebaute Topologie), Wrapper Apache-2.0, Kern vorkompiliert (v2.x proprietär / v1.x ZBOSS), `esp-ieee802154` 0.8.0 (Rust-Radio-Treiber, esp-rs) im selben esp-hal-Ökosystem wie die S3-Firmware. Verworfen (gemessen): Route 1 (BL70x-NCP) hängt am Python-Host `zigpy-blz` (projektverboten) ohne Rust-Treiber; Route 3 (eigener Stack auf dem BL808) ist ein Forschungsprojekt — das `bl_iot_sdk` trägt für BL808 kein 802.15.4, der BL808-RM kein Wireless-Kapitel. Das **BL808-eigene 802.15.4-Radio bleibt `pending`** (registrierter Faden, Trigger: öffentlicher Treiber-Fund), das H2 ist das Funkmodul. BOM-Zeile: `ESP32-H2-DevKitM-1-N4` (siehe Live-Sensor-Cluster-BOM).
 
 ## Notizen
 
