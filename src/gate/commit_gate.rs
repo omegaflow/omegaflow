@@ -2439,6 +2439,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_votable_null_empty_array_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/extract.rs", &fx("votable_null_empty_array"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_pcmci_cond_endpoint_series_blocked() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("pcmci_cond_endpoint_series"));

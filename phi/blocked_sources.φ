@@ -1,4 +1,11 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
+note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon: unit-auto-detect, force-undetermined, votable-reader, html-parser-arm, konverter; nicht im Kanon, register-eigen: astrometry-reader, curation.
+note gap-Token unit-auto-detect — Feld ohne Einheit; Einheiten-Erkennung aus Wert/Header fehlt.
+note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium (Astrometrie/Farbindex ohne Kraft-Fit).
+note gap-Token konverter — Feld-Einheit falsch abgebildet (mag als nT); Konverter-Arm fehlt.
+note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten Körpers, kein Skalarfeld; Serien-Arm fehlt.
+note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); Query-Kurations-Arm fehlt.
+note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 
 blocked account
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -144,14 +151,14 @@ url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=
 note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","flux"; Query-Arm fehlt.
 
 parser-def votable
-gap votable-reader
+gap curation
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; votable-reader-Arm fehlt.
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; Anfrage FORMAT=json, Reader-Arm steht (extract.rs votable_to_json).
 
 parser-def votable
-gap votable-reader
+gap curation
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; votable-reader-Arm fehlt.
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; Anfrage FORMAT=json, Reader-Arm steht (extract.rs votable_to_json).
 
 parser-def votable
 gap curation
@@ -1118,33 +1125,27 @@ gap unit-auto-detect
 url https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json
 note GMRT PointServer: field lidar_gmrt_elevation_m force undetermined — unit-auto-detect gap. Bathymetrie echt.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-note VizieR J/A+A/582/A8 ariel_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-note VizieR J/A+A/582/A8 miran_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-note VizieR J/A+A/582/A8 obero_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-note VizieR J/A+A/582/A8 titan_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-note VizieR J/A+A/582/A8 umbri_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-parser-def asu-tsv
-gap astrometry-reader
+descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-note VizieR J/A+A/582/A8 uranu_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
