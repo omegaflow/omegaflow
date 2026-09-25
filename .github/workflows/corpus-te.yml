@@ -26,7 +26,7 @@ jobs:
           {
             echo "SHA $(git rev-parse HEAD)"
             cargo run --release -p omegaflow-measure --bin corpus_te \
-              --a docs/concepts --b docs/specs
+              -- --a docs/concepts --b docs/specs
           } > corpus-te.txt
       - uses: actions/upload-artifact@v4
         if: always()
