@@ -127,6 +127,22 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_conditional_keeps_true_coupling
       - name: Run flare_envelope_power_probe
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture flare_envelope_power_probe
+  lag-sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_lag_sweep_verdict_flips_at_coupling_horizon
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_lag_sweep_verdict_flips_at_coupling_horizon
+  fn-bias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_fn_bias_n300_vs_n500_quantified
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fn_bias_n300_vs_n500_quantified
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -151,6 +167,8 @@ jobs:
       - fpr-bins
       - mi-lag
       - flare
+      - lag-sweep
+      - fn-bias
       - probe
     if: failure()
     steps:
@@ -159,5 +177,5 @@ jobs:
         run: |
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "te-gate: a gate job carries a finding" \
-               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                health
