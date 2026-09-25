@@ -135,6 +135,7 @@ pub mod twomass;
 pub mod twomrs;
 pub mod vlies;
 pub mod volume;
+pub mod voyager_occlt;
 pub mod voyager_odr;
 pub mod voyager_saturn;
 pub mod vtscat;

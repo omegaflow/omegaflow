@@ -67,6 +67,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pathfinder_odf" => odf::parse_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
+        "voyager_occlt" => voyager_occlt::parse_series(bytes),
         "pds3_ring_occ" => pds3_ring_occ::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
