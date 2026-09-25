@@ -52,7 +52,7 @@ fn odl_kv(text: &str) -> Vec<(String, String)> {
     let mut out = Vec::new();
     for line in cleaned.lines() {
         let line = line.trim();
-        if line.is_empty() || line.starts_with("END_OBJECT") {
+        if line.is_empty() {
             continue;
         }
         let Some((key, value)) = line.split_once('=') else {
