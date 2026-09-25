@@ -2,7 +2,7 @@
   title: The Big Bang Echo (Nadel Ⅻ) — does the seed carry the structure?
   class: paper
   date: 2026-08-23
-  sha256: 3d314e18c7cd4bef217068fef1f1dd7c525aeb407a7562369bf3d2401128da1c
+  sha256: e269ada0fa00a56bba8c5ebc5ee4d4012901118b9da6ed7d1f21b17a1a9e74ef
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
@@ -47,8 +47,13 @@ strike here.
   so fam here is a lower bound on the canonical two-direction maximum
   (named, not hidden).
 - **The z series — the depth is the time axis:** 16 depth bins
-  (0–800 Mpc) report the structure across the depth; the vpec means
-  become negative with depth (−2e4 km/s at the edge) — the linear
+  (0–800 Mpc, 50 Mpc each) now carry the pair TE(CMB → density) over
+  the depth axis; the lag is converted to SI lookback seconds (flat
+  ΛCDM, H0 = 70 km/s/Mpc). The measured TEs (1,47e-1 / 2,23e-1 /
+  2,23e-1 at lags 1–3) sit under the family bound (fam 2,75e-1) —
+  silent. A cone gate checks each lag against the light-crossing time
+  of the comoving shell separation (em, c). The vpec means are a
+  byproduct of the depth binning, not the pair — the linear
   subtraction carries the distance uncertainty as an artifact velocity
   (named, as in the register of the structure harvest).
 - **t = 0 refused:** the deepest measurable surface is the CMB
