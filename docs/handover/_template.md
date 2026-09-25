@@ -56,8 +56,8 @@ driftet wie die alte Sammel-Zeile.
 
 **Sortierung — erst logisch, dann chronologisch** (Operator-Wort, 2026-09-25;
 ersetzt die Handlungsfähigkeit-Sortierung). Die Tafel wird erst logisch nach
-**Akteur** gruppiert — **wer handelt**: **Operator** (operator-gebundene Akte +
-LOCK) | **Linie** (eigen, die Maschine) | **Rat** | **Dritter** —, dann je
+**Akteur** gruppiert — **wer handelt**: **Linie** (eigen, die Maschine) |
+**Rat** | **Operator** (operator-gebundene Akte + LOCK) | **Dritter** —, dann je
 Gruppe chronologisch nach dem `Lage`-Messdatum (älteste → jüngste; gleiches
 Datum behält die Fluss-Reihenfolge). Nie nach Thema, nie nach Wichtigkeit, nie
 über eine gemischte Leiter: der Akteur ist die Logik, das Datum die Reihenfolge.
