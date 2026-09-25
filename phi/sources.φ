@@ -836,6 +836,65 @@ field humidity atmosphere_cma_humidity_pct gaussian-inverse-square diffusion % 3
 field windSpeed atmosphere_cma_wind_speed_ms patch-levy advective m/s 30.0 0.0 0.0
 field precipitation atmosphere_cma_precipitation_mm patch-levy advective mm 30.0 0.0 0.0
 
+url https://www.ndbc.noaa.gov/data/realtime2/42003.txt
+ttl 300
+format csv
+lastrow WDIR hydrosphere_buoy_42003_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42003_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42003_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_42003_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_42003_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42003_water_temp exponential-decay thermal C 3600 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42019.txt
+ttl 300
+format csv
+lastrow WDIR hydrosphere_buoy_42019_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42019_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42019_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_42019_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_42019_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42019_water_temp exponential-decay thermal C 3600 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42020.txt
+ttl 300
+format csv
+lastrow WDIR hydrosphere_buoy_42020_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42020_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42020_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_42020_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_42020_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42020_water_temp exponential-decay thermal C 3600 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44004.txt
+ttl 300
+format csv
+lastrow WDIR hydrosphere_buoy_44004_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44004_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44004_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_44004_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_44004_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44004_water_temp exponential-decay thermal C 3600 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
+ttl 300
+format csv
+lastrow WDIR hydrosphere_buoy_51003_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51003_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_51003_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51003_water_temp exponential-decay thermal C 3600 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51005.txt
+ttl 300
+lastrow WDIR hydrosphere_buoy_51005_wind_dir patch-levy advective deg 60 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51005_wind_speed patch-levy advective m/s 60 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51005_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
+lastrow DPD hydrosphere_buoy_51005_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
+lastrow PRES hydrosphere_buoy_51005_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51005_water_temp exponential-decay thermal C 3600 0.0 0.0
+
 url https://www.nhc.noaa.gov/CurrentStorms.json
 ttl 300
 at earth
