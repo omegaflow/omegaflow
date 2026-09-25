@@ -1177,16 +1177,28 @@ fn find_repo_root() -> Option<PathBuf> {
             return None;
         }
     }
-    let mut dir = env::current_dir().ok()?;
-    loop {
-        if dir.join("phi").join("sources.\u{3c6}").is_file() {
-            return Some(dir);
-        }
-        match dir.parent() {
-            Some(parent) => dir = parent.to_path_buf(),
-            None => return None,
+    let mut starts: Vec<PathBuf> = Vec::new();
+    if let Ok(cwd) = env::current_dir() {
+        starts.push(cwd);
+    }
+    if let Ok(exe) = env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            starts.push(dir.to_path_buf());
         }
     }
+    for start in starts {
+        let mut dir = start;
+        loop {
+            if dir.join("phi").join("sources.\u{3c6}").is_file() {
+                return Some(dir);
+            }
+            match dir.parent() {
+                Some(parent) => dir = parent.to_path_buf(),
+                None => break,
+            }
+        }
+    }
+    None
 }
 
 fn optional_text(path: &Path) -> Option<String> {
