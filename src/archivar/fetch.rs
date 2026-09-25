@@ -587,9 +587,6 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
         return "empty-response (empty body)".to_string();
     }
     let bytes = body.as_bytes();
-    if bytes.starts_with(&[0x1f, 0x8b]) {
-        return "format-gap (gzip body)".to_string();
-    }
     if bytes.starts_with(b"PK\x03\x04") {
         return "format-gap (zip archive body)".to_string();
     }
@@ -1058,7 +1055,7 @@ pub fn live_sweep(
                 continue;
             }
         };
-        if body.as_bytes().starts_with(&[0x1f, 0x8b]) || url.ends_with(".gz") {
+        if url.ends_with(".gz") {
             if let Some(raw) = fetch_raw_bytes(&url, s.ttl)
                 && let Some(text) = gunzip(&raw)
             {
