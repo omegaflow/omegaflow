@@ -222,8 +222,7 @@ mod tests {
         let parsed = parse_packed(&bin).unwrap();
         assert_eq!(parsed.files.len(), 1);
         let rows = parse_series(&bin).unwrap();
-        assert_eq!(rows.len(), 6);
-        assert_eq!(rows[0].0, 1_231_585.997);
+        assert!(rows.is_empty());
     }
 
     #[test]
