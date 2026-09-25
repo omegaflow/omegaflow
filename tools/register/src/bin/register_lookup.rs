@@ -959,7 +959,7 @@ fn run_open() {
     let mut footprints_released: Vec<String> = Vec::new();
     let footprints = scan_note_markers(
         Path::new(FOOTPRINTS_PATH),
-        &["pending", "absent"],
+        &["pending"],
         &["refused"],
         &mut footprints_open,
         &mut footprints_released,
@@ -984,7 +984,7 @@ fn run_open() {
     let mut nrs_released: Vec<String> = Vec::new();
     let nrs = scan_note_markers(
         Path::new(NRS_PATH),
-        &["pending", "absent"],
+        &["pending"],
         &[],
         &mut nrs_open,
         &mut nrs_released,
@@ -2417,6 +2417,45 @@ mod tests {
         assert_eq!(released_out.len(), 1);
         assert!(open_out[0].starts_with("DISPOSITION\tw.\u{3c6}:2\t[mycelium] pending"));
         assert!(released_out[0].starts_with("RELEASED\tw.\u{3c6}:3\tdeclined"));
+    }
+
+    #[test]
+    fn footprint_absent_is_terminal_not_an_open_duty() {
+        let text = "note Band absent, 0 honored\nnote absent; pending (harvest open)\nnote refused by measurement\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_note_markers_text(
+            text,
+            "f.\u{3c6}",
+            &["pending"],
+            &["refused"],
+            &mut open_out,
+            &mut released_out,
+        );
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 1);
+        assert_eq!(released_out.len(), 1);
+        assert!(open_out[0].starts_with("DISPOSITION\tf.\u{3c6}:2\t[mycelium] pending"));
+        assert!(released_out[0].starts_with("RELEASED\tf.\u{3c6}:3\trefused"));
+    }
+
+    #[test]
+    fn nrs_absent_is_terminal_not_an_open_duty() {
+        let text = "note water depth absent, 0 honored\nnote depth pending (harvest open)\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_note_markers_text(
+            text,
+            "n.\u{3c6}",
+            &["pending"],
+            &[],
+            &mut open_out,
+            &mut released_out,
+        );
+        assert_eq!(n, 1);
+        assert_eq!(open_out.len(), 1);
+        assert_eq!(released_out.len(), 0);
+        assert!(open_out[0].starts_with("DISPOSITION\tn.\u{3c6}:2\t[mycelium] pending"));
     }
 
     #[test]
