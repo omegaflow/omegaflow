@@ -1281,6 +1281,25 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
     prose_violation(line)
 }
 
+pub const DOC_OPEN_MARKERS: [&str; 11] = [
+    "offen",
+    "pending",
+    "wartet",
+    "ausstehend",
+    "n\u{e4}chster schritt",
+    "n\u{e4}chsten schritt",
+    "naechster schritt",
+    "naechsten schritt",
+    "wiedervorlage",
+    "blocked",
+    "request-only",
+];
+
+pub fn doc_open_marker_line(line: &str) -> bool {
+    let lower = line.to_lowercase();
+    DOC_OPEN_MARKERS.iter().any(|m| lower.contains(m))
+}
+
 const REGISTER_SECTIONS: [&str; 6] = [
     "Maschinen-Register",
     "Dispositions-Register",
@@ -3066,6 +3085,16 @@ mod tests {
         );
         assert!(prose_violation_for("phi/dead_sources.φ", &fx("phi_sources_note")).is_none());
         assert!(prose_violation_for("phi/blocked_sources.φ", &fx("phi_sources_note")).is_none());
+    }
+
+    #[test]
+    fn fp_doc_open_marker_gate_contract() {
+        assert!(doc_open_marker_line("offener Punkt: noch zu bauen"));
+        assert!(doc_open_marker_line("Naechster Schritt: bauen"));
+        assert!(doc_open_marker_line("**Braucht:** pending"));
+        assert!(!doc_open_marker_line("fertig gebaut, gruen"));
+        assert_eq!(DOC_OPEN_MARKERS.len(), 11);
+        assert!(!DOC_OPEN_MARKERS.contains(&"descoped"));
     }
 
     #[test]

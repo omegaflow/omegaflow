@@ -1,9 +1,81 @@
 use omegaflow::commit_gate::{
-    Gate, canon_diff, declared_canon, json_write, prose_violation_for, register_classes,
+    Gate, canon_diff, declared_canon, doc_open_marker_line, json_write, prose_violation_for,
+    register_classes,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
 use std::process::Command;
+
+const DOC_DIRS: [&str; 6] = [
+    "docs/surveys/",
+    "docs/specs/",
+    "docs/auftrag/",
+    "docs/blatt/",
+    "docs/concepts/",
+    "docs/paper/",
+];
+
+fn live_handover_carrier() -> String {
+    let mut out = String::new();
+    for dir in ["docs/handover", "state/funding/handover"] {
+        let entries = match std::fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let name = match path.file_name() {
+                Some(n) => n.to_string_lossy().to_string(),
+                None => continue,
+            };
+            if !name.ends_with(".md") || name.starts_with('_') || !name.starts_with("handover-") {
+                continue;
+            }
+            if let Ok(text) = std::fs::read_to_string(&path) {
+                out.push_str(&text.to_lowercase());
+                out.push('\n');
+            }
+        }
+    }
+    out
+}
+
+fn doc_carried(carrier: &str, path: &str) -> bool {
+    let base = match std::path::Path::new(path).file_name() {
+        Some(f) => f.to_string_lossy().to_lowercase(),
+        None => return false,
+    };
+    let stem = base.strip_suffix(".md").unwrap_or(&base);
+    (base.len() >= 8 && carrier.contains(&base))
+        || (stem.chars().count() >= 8 && carrier.contains(stem))
+}
+
+fn doc_closed(content: &str) -> bool {
+    let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
+        return false;
+    };
+    if close <= open {
+        return false;
+    }
+    for line in content[open..close].lines() {
+        if let Some(v) = line.trim().strip_prefix("status:") {
+            let v = v.trim();
+            return v == "consumed" || v == "archived" || v == "done";
+        }
+    }
+    false
+}
+
+fn doc_has_open_marker(content: &str) -> bool {
+    let start = match content.find("-->") {
+        Some(i) => i + 3,
+        None => 0,
+    };
+    content[start..].lines().any(doc_open_marker_line)
+}
 
 fn main() {
     let out = Command::new("git")
@@ -88,6 +160,25 @@ fn main() {
     for path in declared_not_tracked {
         eprintln!("commit_check: declared-not-tracked: {path}");
         fail = true;
+    }
+    let carrier = live_handover_carrier();
+    for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
+        if !path.ends_with(".md") || !DOC_DIRS.iter().any(|d| path.starts_with(d)) {
+            continue;
+        }
+        let content = match std::fs::read_to_string(path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+        if doc_closed(&content) {
+            continue;
+        }
+        if doc_has_open_marker(&content) && !doc_carried(&carrier, path) {
+            eprintln!(
+                "commit_check: doc-carrier: {path} carries open markers but no live handover names it - carry it in its owner's handover or release it (descoped)"
+            );
+            fail = true;
+        }
     }
     if fail {
         std::process::exit(1);
