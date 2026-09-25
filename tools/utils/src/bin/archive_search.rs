@@ -269,6 +269,8 @@ fn main() {
             "--ads" => mode = Mode::Net("ads"),
             "--ntrs" => mode = Mode::Net("ntrs"),
             "--wayback" => mode = Mode::Net("wayback"),
+            "--wayback-available" => mode = Mode::Net("wayback-available"),
+            "--wayback-timemap" => mode = Mode::Net("wayback-timemap"),
             "--crossref" => mode = Mode::Net("crossref"),
             "--wiki" => mode = Mode::Net("wiki"),
             "--github" => mode = Mode::Net("github"),
@@ -566,7 +568,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --brave     Brave Search API (X-Subscription-Token); HTTP 402 while the free quota is spent — the keyless path is --mwmbl"
@@ -588,6 +590,12 @@ fn usage() {
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
     );
     eprintln!("  --sniff     reports magic bytes + sha256");
+    eprintln!(
+        "  --wayback-available  the Availability API closest snapshot (archive.org/wayback/available?url=<url>)"
+    );
+    eprintln!(
+        "  --wayback-timemap  the Memento timemap JSON (web.archive.org/web/timemap/json/<url>)"
+    );
     eprintln!(
         "  --entrez    key=value: db=<database> <term>   (NCBI E-utilities esearch, e.g. db=nuccore|sra|gds)"
     );

@@ -6,7 +6,14 @@ const ENDPOINT: &str = "https://alphafold.ebi.ac.uk/api/prediction/";
 pub fn alphafold_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("{}{}", ENDPOINT, urlencode(query));
     match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
+        Some(f) => alphafold_from_fetch(&f, query, max),
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn alphafold_from_fetch(f: &crate::net::Fetch, query: &str, max: usize) -> Vec<String> {
+    match f.status {
+        Some(200) => {
             let out = parse_alphafold(&f.body, max);
             if out.is_empty() {
                 vec![format!("absent — alphafold carries no entry: {}", query)]
@@ -14,8 +21,11 @@ pub fn alphafold_lines(query: &str, max: usize) -> Vec<String> {
                 out
             }
         }
-        Some(f) => vec![format!("pending — alphafold HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        Some(400) => vec![format!(
+            "absent — alphafold needs a UniProt accession (e.g. P00533): {}",
+            query
+        )],
+        _ => vec![format!("pending — alphafold HTTP {}", f.status_text())],
     }
 }
 
@@ -105,5 +115,23 @@ mod tests {
     #[test]
     fn an_empty_result_carries_nothing() {
         assert!(parse_alphafold("[]", 10).is_empty());
+    }
+
+    #[test]
+    fn http_400_names_the_accession_requirement() {
+        let f = crate::net::Fetch {
+            status: Some(400),
+            body: String::new(),
+            raw: Vec::new(),
+            retry_after: None,
+            complete: true,
+        };
+        assert_eq!(
+            alphafold_from_fetch(&f, "solar wind", 10),
+            vec![
+                "absent — alphafold needs a UniProt accession (e.g. P00533): solar wind"
+                    .to_string()
+            ]
+        );
     }
 }
