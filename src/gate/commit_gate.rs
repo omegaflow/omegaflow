@@ -2324,6 +2324,16 @@ mod tests {
     }
 
     #[test]
+    fn fp_state_claim_secrets_local_blocked() {
+        let mut g = test_gate();
+        let v = g
+            .check_text("marker {OPENALEX_MAILTO} absent in .secrets.local")
+            .unwrap();
+        assert_eq!(v.rule, "state-claim");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_serial_priority_blocked() {
         let mut g = test_gate();
         for phrase in &vocab().serial_priority {

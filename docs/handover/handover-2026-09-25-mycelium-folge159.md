@@ -3,7 +3,7 @@
   session: Mycelium-Folge 159
   class: handover
   date: 2026-09-25
-  sha256: 93eb4ab0b41269f616cef7329b889027950618a12eba15fad622fd35438d7e00
+  sha256: 5070f641fc5610b53b144c356b7c5b087a952610887efecf599d567cc2e223ea
   status: live
 -->
 # Handover — Mycelium-Folge 159 (2026-09-25)
@@ -100,16 +100,28 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
 #### Port der 187 `gap`-Quellen nach `phi/sources.φ` (von Mountain getragen)
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** nächster Dispatch.
-- **Lage:** (gemessen 2026-09-25 via `sgrep` über `phi/blocked_sources.φ`) die 5
-  Parser-Arme stehen; die `gap`-Direktiven zählen `unit-auto-detect` ×167,
-  `force-undetermined` ×16, `konverter` ×4 = 187. `votable-reader` (ALMA) entfiel mit
-  dem `decline redistribution`-Verdikt (2026-09-25); AEC trägt kein `gap` mehr
-  (`parser-def json`, JSON-API). Unit-Feld-Verdikte: 27 Felder
+- **Lage:** (gemessen 2026-09-25, Mountain-Folge161 via `sgrep` über
+  `phi/blocked_sources.φ`) die 5 Parser-Arme stehen; die `gap`-Direktiven zählen
+  `unit-auto-detect` ×168, `force-undetermined` ×16, `konverter` ×4 = 188, dazu
+  `astrometry-reader` ×6 (VizieR J/A+A/582/A8) und `curation` ×13 + `votable-reader` ×2
+  (reverify-Query-Zustände); AEC trägt `gap unit-auto-detect`. Unit-Feld-Verdikte: 27 Felder
   (`src/archivar/port.rs`/`units.rs`), 9 DROP (Metadatum/String-Enum), 2 außerhalb der
   ~30 (`declination_deg`, `sz_mass_10e14_msun`, Quelle noch nicht portiert).
 - **Blockade:** keine.
 - **Braucht:** Port je Klassen-Träger `phi/blocked_sources.φ::gap:<token> ×N` nach
   `phi/sources.φ` + CDN; die `gap`-Direktive fällt erst mit dem Port.
+
+#### reverify-`pending`-Zugänge (5) — aus Mountain-Folge161
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster reverify-Lauf / Server-Erholung.
+- **Lage:** (gemessen 2026-09-25 via Mountain-Folge161 reverify) 5 `pending`-Einträge in
+  `phi/blocked_sources.φ`: `eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls`
+  HTTP 405 (POST nötig, `post_body absent`); `gavo.aip.de` ravedr4,
+  `padc-tap-rcsed.obspm.fr` rcsed_fibermags, `voparis-tap-astro-m.obspm.fr`
+  hyperleda.galaxies, `skvo.science.upjs.sk` ogle.lightcurves je HTTP 500 (Server).
+- **Blockade:** Server-Seite.
+- **Braucht:** azure `post_body` in der Quelle ergänzen; die 4× 500 beim nächsten
+  reverify erneut messen.
 
 ### Operator
 
