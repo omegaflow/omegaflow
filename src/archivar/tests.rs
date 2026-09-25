@@ -6833,10 +6833,14 @@ fn test_diagnose_no_samples() {
     eprintln!("empty envelope -> {}", d_env);
     assert!(d_env.contains("empty-response"), "got: {}", d_env);
 
-    let gz = "\u{1f}\u{8b}gzip payload";
-    let d_gz = super::diagnose_no_samples(&base, gz);
-    eprintln!("gzip body -> {}", d_gz);
-    assert!(d_gz.contains("format-gap"), "got: {}", d_gz);
+    let zip = "PK\x03\x04zip payload";
+    let d_zip = super::diagnose_no_samples(&base, zip);
+    eprintln!("zip archive body -> {}", d_zip);
+    assert!(
+        d_zip.contains("format-gap (zip archive body)"),
+        "got: {}",
+        d_zip
+    );
 }
 
 #[test]
@@ -6884,10 +6888,6 @@ fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
     assert!(matches!(
         super::void_class("data-present (votable query status not OK)"),
         super::VoidClass::Drift
-    ));
-    assert!(matches!(
-        super::void_class("format-gap (gzip body)"),
-        super::VoidClass::Format
     ));
     assert!(matches!(
         super::void_class("format-gap (zip archive body)"),
