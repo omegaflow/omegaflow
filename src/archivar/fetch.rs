@@ -530,13 +530,87 @@ pub fn json_has_content(v: &JsonVal) -> bool {
     }
 }
 
+fn format_readable(fmt: &str) -> bool {
+    matches!(
+        fmt,
+        "" | "json"
+            | "universal"
+            | "csv"
+            | "csv_zip"
+            | "free text"
+            | "tap"
+            | "votable"
+            | "html"
+            | "fits"
+            | "tar_gz_yaml"
+            | "asu-tsv"
+    )
+}
+
+fn has_text_extract(extracts: &[Extract]) -> bool {
+    extracts.iter().any(|e| {
+        matches!(
+            e,
+            Extract::Rows { .. } | Extract::LastLine(_) | Extract::LastRow(_)
+        )
+    })
+}
+
+fn columnar_envelope(j: &JsonVal) -> Option<&Vec<JsonVal>> {
+    let JsonVal::Obj(m) = j else {
+        return None;
+    };
+    let JsonVal::Arr(data) = m.get("data")? else {
+        return None;
+    };
+    let meta = m
+        .get("metadata")
+        .or_else(|| m.get("columns"))
+        .or_else(|| m.get("parameters"))?;
+    if !matches!(meta, JsonVal::Arr(_)) {
+        return None;
+    }
+    Some(data)
+}
+
+fn json_has_keys(v: &JsonVal) -> bool {
+    match v {
+        JsonVal::Obj(m) => !m.is_empty(),
+        JsonVal::Arr(a) => !a.is_empty(),
+        _ => false,
+    }
+}
+
 pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
+    let trimmed = body.trim();
+    if trimmed.is_empty() {
+        return "empty-response (empty body)".to_string();
+    }
+    let bytes = body.as_bytes();
+    if bytes.starts_with(&[0x1f, 0x8b]) {
+        return "format-gap (gzip body)".to_string();
+    }
+    if bytes.starts_with(b"PK\x03\x04") {
+        return "format-gap (zip archive body)".to_string();
+    }
     let parsed = parse_json(body);
     match parsed {
         None => {
-            let trimmed = body.trim();
-            if trimmed.is_empty() {
-                "empty-response (empty body)".to_string()
+            if body.contains("<VOTABLE") {
+                if body.contains("value=\"ERROR\"") {
+                    "data-present (votable query status not OK)".to_string()
+                } else if !body.contains("<DATA") {
+                    "empty-response (votable region empty)".to_string()
+                } else {
+                    "format-gap (votable rows unread)".to_string()
+                }
+            } else if src.extracts.is_empty() && src.format != "universal" {
+                "format-gap (no extract declared)".to_string()
+            } else if !format_readable(&src.format) && !has_text_extract(&src.extracts) {
+                format!(
+                    "format-gap (declared format {} has no sweep reader)",
+                    src.format
+                )
             } else {
                 "data-present (non-JSON body: HTML/XML/text)".to_string()
             }
@@ -544,6 +618,7 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
         Some(j) => {
             let mut arr_has_rows = false;
             let mut key_found = false;
+            let mut declared_present = false;
             for ext in &src.extracts {
                 match ext {
                     Extract::Map {
@@ -558,9 +633,13 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                                 if !arr.is_empty() {
                                     arr_has_rows = true;
                                 }
+                                declared_present = true;
                                 arr.first()
                             }
-                            Some(obj @ JsonVal::Obj(_)) => Some(obj),
+                            Some(obj @ JsonVal::Obj(_)) => {
+                                declared_present = true;
+                                Some(obj)
+                            }
                             _ => None,
                         };
                         if let Some(row) = first {
@@ -594,6 +673,18 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                     | Extract::ProfileMap {
                         arr_path, fields, ..
                     } => {
+                        match arr_path.as_str() {
+                            "" | "." => {
+                                if matches!(&j, JsonVal::Arr(_)) {
+                                    declared_present = true;
+                                }
+                            }
+                            p => {
+                                if jpath_val(&j, p).is_some() {
+                                    declared_present = true;
+                                }
+                            }
+                        }
                         if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path)
                             && !arr.is_empty()
                         {
@@ -605,14 +696,24 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                             }
                         }
                     }
-                    Extract::Rows { .. }
-                    | Extract::GeojsonEvents { .. }
-                    | Extract::QuakeMlEvents { .. }
-                    | Extract::Hapi(_) => {
+                    Extract::Rows { .. } | Extract::QuakeMlEvents { .. } => {
                         if json_has_content(&j) {
                             arr_has_rows = true;
                         }
                     }
+                    Extract::GeojsonEvents { .. } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, "features") {
+                            declared_present = true;
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                    }
+                    Extract::Hapi(_) => match columnar_envelope(&j) {
+                        Some(data) if !data.is_empty() => arr_has_rows = true,
+                        Some(_) => declared_present = true,
+                        None => {}
+                    },
                     Extract::Field(FieldConfig { key, .. })
                     | Extract::First(FieldConfig { key, .. }, _)
                     | Extract::Last(FieldConfig { key, .. }, _)
@@ -650,12 +751,23 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                     }
                 }
             }
-            if arr_has_rows {
+            if let Some(data) = columnar_envelope(&j) {
+                if !data.is_empty() {
+                    "data-present (container array has rows but extract yielded nothing)"
+                        .to_string()
+                } else {
+                    "empty-response (declared data container present but empty)".to_string()
+                }
+            } else if arr_has_rows {
                 "data-present (container array has rows but extract yielded nothing)".to_string()
             } else if key_found {
                 "data-present (keys exist but no rows extracted)".to_string()
+            } else if declared_present {
+                "empty-response (declared containers present but empty)".to_string()
             } else if json_has_content(&j) {
                 "data-present (JSON has content but declared keys absent)".to_string()
+            } else if json_has_keys(&j) {
+                "data-present (JSON carries keys but none of the declared containers)".to_string()
             } else {
                 "empty-response (JSON parsed but all containers empty)".to_string()
             }
@@ -667,6 +779,7 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
 pub enum VoidClass {
     Key,
     Drift,
+    Format,
     Quiet,
     Refused,
     Broken,
@@ -677,6 +790,7 @@ impl VoidClass {
         match self {
             VoidClass::Key => "key-void",
             VoidClass::Drift => "drift-void",
+            VoidClass::Format => "format-void",
             VoidClass::Quiet => "quiet-void",
             VoidClass::Refused => "refused",
             VoidClass::Broken => "broken",
@@ -691,7 +805,9 @@ pub struct VoidFinding {
 }
 
 pub fn void_class(diag: &str) -> VoidClass {
-    if diag.contains("all containers empty") || diag.contains("empty body") {
+    if diag.starts_with("format-gap") {
+        VoidClass::Format
+    } else if diag.starts_with("empty-response") {
         VoidClass::Quiet
     } else {
         VoidClass::Drift
@@ -897,7 +1013,7 @@ pub fn live_sweep(
             findings.push(VoidFinding {
                 url: s.url.clone(),
                 class: VoidClass::Key,
-                detail: format!("marker {{{}}} absent in .secrets.local", key),
+                detail: format!("marker {{{}}} absent in the environment", key),
             });
             continue;
         }
@@ -912,20 +1028,20 @@ pub fn live_sweep(
             findings.push(VoidFinding {
                 url: s.url.clone(),
                 class: VoidClass::Key,
-                detail: format!("header marker {{{}}} absent in .secrets.local", key),
+                detail: format!("header marker {{{}}} absent in the environment", key),
             });
             continue;
         }
         let url = resolve_secret(&url, env);
         let headers = render_headers(&s.headers, env);
-        let body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
+        let mut body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
             Some(b) => b,
             None => {
                 let (class, detail) = match http_code(&url, &headers) {
                     Some(code) => (
                         VoidClass::Refused,
                         format!(
-                            "host answers http {} but body unusable (fetch void) — refused, not dead",
+                            "host answers http {} — access state (4xx/5xx), body unusable; home phi/blocked_sources.φ",
                             code
                         ),
                     ),
@@ -942,6 +1058,13 @@ pub fn live_sweep(
                 continue;
             }
         };
+        if body.as_bytes().starts_with(&[0x1f, 0x8b]) || url.ends_with(".gz") {
+            if let Some(raw) = fetch_raw_bytes(&url, s.ttl)
+                && let Some(text) = gunzip(&raw)
+            {
+                body = String::from_utf8_lossy(&text).into_owned();
+            }
+        }
         match extract(s, &body, now, lsk) {
             ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
                 if v.is_empty() {
