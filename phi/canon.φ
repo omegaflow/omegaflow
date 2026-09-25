@@ -7,7 +7,7 @@
 # stille Anlage.
 #
 # Quelle der Wahrheit: git -c core.quotePath=false ls-files "phi/*.φ" "phi/**/*.φ"
-# Stand: 2026-09-18 — 112 getrackte φ-Dateien + diese Deklaration.
+# Stand: 2026-09-18 — 108 getrackte φ-Dateien (einschließlich dieser Deklaration).
 
 # --- Kanon ---
 phi/canon.φ

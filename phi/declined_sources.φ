@@ -4798,3 +4798,335 @@ note ARGO-Programm-Heim (UCSD): argo-data-api 404 gemessen 2026-09-23; ARGO-Prof
 decline registry
 url https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations
 note DARTS/JAXA XRISM-Observations-Katalog (registry): api/v1/observations?format=json liefert HTML-SPA statt JSON (108 KB) gemessen 2026-09-23; kein Feldmesswert.
+
+decline no-physical-force
+url https://api.energy-charts.info/ren_share
+note Energy-Charts renewable-share endpoint: scalar percent aggregate, no physical field.
+
+decline registry/katalog
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION
+note GBIF occurrence search: species/family/country/date presence records, no measured field at the point.
+
+decline registry/katalog
+url https://api.geonet.org.nz/gnss/1.0.0/site
+note GNSS site registry: station id/name/network/deployment date, no measurement field.
+
+decline registry/katalog
+url https://api.geonet.org.nz/sensor/type/cgps
+note CGPS sensor registry: site id/name/network/start date, no measurement field.
+
+decline registry/katalog
+url https://api.geonet.org.nz/strong-motion/1.0.0/site
+note Strong-motion site registry: station id/name/network/deployment date, no measurement field.
+
+decline no-physical-force
+url https://api.openaq.org/v2/latest?limit=1
+note OpenAQ latest total: single count of measurement rows, no field value.
+
+decline no-physical-force
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+note StackExchange question total (filter=total): naked count, no physical field.
+
+decline no-physical-force
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+note StackExchange tag total: naked count, no physical field.
+
+decline no-physical-force
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+note WAQI AQI index over a bounds box: scalar aggregate index, station names without measured field.
+
+decline no-physical-force
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+note WAQI AQI index over a bounds box: scalar aggregate index, station names without measured field.
+
+decline no-physical-force
+url https://coastwatch.noaa.gov/erddap/griddap/erdMT1VImonthly.csv?EVI%5Blast%5D%5B(-60.0):(75.0):5%5D%5B(-180.0):(180.0):5%5D
+note ERDDAP EVI (enhanced vegetation index) monthly: derived satellite index, no physical field.
+
+decline no-physical-force
+url https://coastwatch.noaa.gov/erddap/griddap/erdMT1VImonthly.csv?NDVI%5Blast%5D%5B(-60.0):(75.0):5%5D%5B(-180.0):(180.0):5%5D
+note ERDDAP NDVI (normalized difference vegetation index) monthly: derived satellite index, no physical field.
+
+decline no-physical-force
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+note RCSB PDB totalEntries: naked structure count, no field value.
+
+decline no-physical-force
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+note Wikipedia site statistics: article/page count, no physical field.
+
+decline registry/katalog
+url https://giro.uml.edu/didbase/stationlist.php?format=json
+note GIRO DIDBase station list: ionosonde station code only, registry without measurement value.
+
+decline no-physical-force
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+note MusicBrainz artist total: naked count, no physical field.
+
+decline no-physical-force
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+note MusicBrainz recording total: naked count, no physical field.
+
+decline no-physical-force
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+note MusicBrainz release total: naked count, no physical field.
+
+decline registry/katalog
+url https://my.cmems-du.eu/motu-web/services
+note CMEMS MOTU service listing: service/dataset registry, no measurement field.
+
+decline no-physical-force
+url https://openneuro.org/api/v1/datasets
+note OpenNeuro dataset total: naked count, no physical field.
+
+decline no-physical-force
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+note PubChem compound count: naked count, no physical field.
+
+decline no-physical-force
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+note PubChem substance count: naked count, no physical field.
+
+decline no-physical-force
+url https://pypi.org/stats/packages/
+note PyPI package statistics: naked package count, no physical field.
+
+decline no-physical-force
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+note REST Countries population sample: social statistic, no physical field.
+
+decline registry/katalog
+url https://service.iris.edu/fdsnws/station/1/query?format=geojson&level=network&limit=1000
+note IRIS FDSN station service (level=network): seismic network code/name registry, no measurement field.
+
+decline infrastructure
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
+note RIPE BGP update count per hour: network infrastructure counter, no physical field.
+
+decline no-physical-force
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+note US Drought Monitor severity percent by area: scalar aggregate index, no field value.
+
+decline no-physical-force
+url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
+note USGS VHP volcano alert feed: title/description/update-time text warnings, no scalar field.
+
+decline no-physical-force
+url https://www.gdacs.org/xml/rss.xml
+note GDACS RSS disaster alerts: title/description/date text warnings, no scalar field.
+
+decline no-physical-force
+url https://xeno-canto.org/api/2/recordings?query=grp:birds
+note Xeno-canto bird sound recording total: naked count, no physical field.
+
+decline registry/katalog
+url https://zenodo.org/api/records/?q=IODP+DSDP&size=100
+note Zenodo dataset records (IODP/DSDP): DOI/title/author/date publication registry, no measurement field.
+
+decline no-physical-force
+url http://www.bom.gov.au/fwo/marine_warnings.json
+note BOM marine warnings JSON: text warning records (title/summary), no scalar field.
+
+decline registry/katalog
+url https://ads.atmosphere.copernicus.eu/api/v1/collections
+note CAMS-ADS collection listing: dataset registry metadata, no measurement field.
+
+decline no-physical-force
+url https://aisstream.io/api/v1/stream/vessels?latitude={lat}&longitude={lon}&radius=100
+note AIS vessel telemetry: active objects carry the kinematics, no propagating field.
+
+decline registry/katalog
+url https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250
+note BOLD systems specimen geo records: presence catalog, no measured field.
+
+decline registry/katalog
+url https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key}
+note EIA RTO region-sub-ba electricity value: grid market aggregate, no propagating field.
+
+decline registry/katalog
+url https://api.electricitymap.org/v3/power-breakdown/latest?lat={lat}&lon={lon}
+note ElectricityMap power breakdown (generation mix MW): market/grid aggregate, no field.
+
+decline registry/katalog
+url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json
+note Ember electricity-generation (aggregate_by=country): market registry aggregate, no field.
+
+decline registry/katalog
+url https://api.ember-climate.org/v2/electricity-generation/yearly?country=DE&date_from=2000-01-01&date_to={year}-12-31
+note Ember yearly electricity-generation (market registry aggregate), no propagating field.
+
+decline registry/katalog
+url https://api.energy-charts.info/price?country=DE
+note Energy-Charts day-ahead price: market price series, no physical field.
+
+decline registry/katalog
+url https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+note EurOBIS occurrence search: species presence records, no measured field at the point.
+
+decline no-physical-force
+url https://api.geonet.org.nz/volcano/alert/level
+note GeoNet volcano alert level: categorical alert text (level/activity description), no scalar field.
+
+decline no-physical-force
+url https://api.github.com/events?per_page=100
+note GitHub public events count per minute: naked count, no physical field.
+
+decline registry/katalog
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+note Neotoma occurrence records: paleo species presence catalog, no measured field.
+
+decline no-physical-force
+url https://api.npmjs.org/downloads/point/last-day/lodash
+note npm download count (lodash last-day): naked count, no physical field.
+
+decline no-physical-force
+url https://api.weather.gov/alerts/active/region/SA
+note NWS active alerts region SA: text warnings (event/severity/headline), no scalar field.
+
+decline no-physical-force
+url https://api.weather.gov/alerts/active?limit=50
+note NWS active alerts: text warnings (event/severity/headline), no scalar field.
+
+decline no-physical-force
+url https://api.weather.gov/alerts/active?limit=500
+note NWS active alerts: text warnings (event/severity/headline), no scalar field.
+
+decline registry/katalog
+url https://archive.stsci.edu/missions/tess/sector/
+note MAST TESS sector listing: observation product/index registry, no measurement field.
+
+decline registry/katalog
+url https://bhuvan.nrsc.gov.in/geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities&format=json
+note Bhuvan CSW GetCapabilities: geospatial dataset registry, no measurement field.
+
+decline registry/katalog
+url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
+note WRI Powerwatch power-plant registry (capacity_mw, coordinates): asset registry, no live field.
+
+decline registry/katalog
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaHabsosData.csv?latitude,longitude,sample_date,genus,species,cellcount,cellcount_units,hab_category&time%3E=now-30days&orderBy(%22time%22)
+note NOAA HABSOS cell counts (species cellcount): presence/abundance records, no force field.
+
+decline no-physical-force
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json
+note GCN circulars (GRB optical, API v0.1): text notices, no scalar measurement.
+
+decline no-physical-force
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json
+note GCN circulars (IceCube, API v0.1): text notices, no scalar measurement.
+
+decline registry/katalog
+url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
+note world_volcanoes gist: static volcano location registry, no measurement field.
+
+decline no-physical-force
+url https://hub.docker.com/v2/repositories/library/node
+note Docker Hub repository pulls (node): naked count, no physical field.
+
+decline no-physical-force
+url https://hub.docker.com/v2/repositories/library/python
+note Docker Hub repository pulls (python): naked count, no physical field.
+
+decline no-physical-force
+url https://hub.docker.com/v2/repositories/library/ubuntu
+note Docker Hub repository pulls (ubuntu): naked count, no physical field.
+
+decline no-physical-force
+url https://incois.gov.in/portal/osf/json/osf_alert.jsp
+note INCOIS OSF alert JSON: text warning fields, no scalar field.
+
+decline registry/katalog
+url https://landsat.usgs.gov/landsat-api/v1/product?collection=landsat-c2l2&satellite=landsat-8,landsat-9&maxResults=100
+note USGS Landsat product catalog: scene metadata registry, no measurement field.
+
+decline infrastructure
+url https://onionoo.torproject.org/summary?running=true
+note Tor Onionoo relay summary: network infrastructure registry, no physical field.
+
+decline registry/katalog
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+note Planetary Computer STAC collections: dataset catalog, no measurement field.
+
+decline registry/katalog
+url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
+note IAEA PRIS reactor list: reactor registry (status/capacity), no measurement field.
+
+decline registry/katalog
+url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/nuclear_power_plants.csv
+note GeoNuclearData power plants CSV: plant registry (capacity/location), no measurement field.
+
+decline registry/katalog
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+note NBN Atlas Chiroptera occurrence search: species presence records, no measured field.
+
+decline no-physical-force
+url https://retlector.eu/norad/{sat_id}
+note Retlector NORAD satellite lookup: orbital element/metadata, not a field measurement.
+
+decline no-physical-force
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/sedac/GPWv4/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+note SEDAC GPWv4 population density grid: social statistic, no physical field.
+
+decline registry/katalog
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60&format=json&limit=100
+note Terrascope catalogue products (ESA WorldCover): dataset registry, no measurement field.
+
+decline registry/katalog
+url https://sios-svalbard.org/metsis/api/datasets?format=json&limit=200&subject=atmosphere
+note SIOS Svalbard METSIS dataset catalog: dataset registry, no measurement field.
+
+decline registry/katalog
+url https://stac.eoapi.dev/collections
+note EOAPI STAC collections: dataset catalog, no measurement field.
+
+decline infrastructure
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+note RIPE BGP state route count: network infrastructure counter, no physical field.
+
+decline no-physical-force
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+note Smithsonian WeeklyVolcanoRSS: volcano activity text notices, no scalar field.
+
+decline registry/katalog
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+note USGS volcano list (threat_level, elevation): volcano registry, no measurement field.
+
+decline no-physical-force
+url https://weather.cma.cn/api/map/alarm
+note China Meteorological Administration alarm map: text warning records, no scalar field.
+
+decline registry/katalog
+url https://web-api.tp.entsoe.eu/api?documentType=A44&in_Domain=DE_LU&period.start={today}0000&period.end={today}2300&securityToken={entsoe_key}
+note ENTSO-E A44 day-ahead prices: wholesale market registry, no propagating field.
+
+decline no-physical-force
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+note Wikipedia pageviews aggregate: social metric, no physical field.
+
+decline registry/katalog
+url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
+note FAO AQUASTAT water withdrawal statistics: country statistics, no field at a point.
+
+decline registry/katalog
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+note GLIMS glacier inventory WFS: glacier outline registry, no measurement field.
+
+decline infrastructure
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+note INEX IXP traffic grapher: network infrastructure counter, no physical field.
+
+decline registry/katalog
+url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
+note NCEI paleo-search study parameters: dataset registry, no measurement field.
+
+decline registry/katalog
+url https://www.pangaea.de/api/catalog?q=CTD+ocean+oxygen&count=500&type=dataset&maxDate={today}T00:00:00&minDate={year}-01-01T00:00:00
+note PANGAEA dataset catalog: DOI/dataset registry, no measurement field.
+
+decline registry/katalog
+url https://www.pangaea.de/api/datasets?format=json&maxResults=200&query=benthic+foraminifera+Mg+Ca+temperature&topic=PALEOCLIMATE&access=open
+note PANGAEA dataset search: DOI/dataset registry, no measurement field.
+
+decline registry/katalog
+url https://www.pangaea.de/api/datasets?format=json&maxResults=500&query=sediment+core+age+model&topic=PALEOCLIMATE&access=open
+note PANGAEA dataset search: DOI/dataset registry, no measurement field.

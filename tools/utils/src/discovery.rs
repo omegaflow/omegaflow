@@ -9,6 +9,60 @@ pub const CANDIDATES_PATH: &str = "phi/pipeline/probe_url_candidates.txt";
 
 const CANDIDATE_WEIGHT_FLOOR: i32 = 1;
 
+fn strip_scheme(url: &str) -> &str {
+    for scheme in ["https://", "http://"] {
+        if let Some(head) = url.get(..scheme.len()) {
+            if head.eq_ignore_ascii_case(scheme) {
+                return &url[scheme.len()..];
+            }
+        }
+    }
+    url
+}
+
+fn normalize_url(raw: &str) -> String {
+    let bare = strip_scheme(raw.trim());
+    let mut out = bare.replace("/?", "?");
+    while out.ends_with('/') {
+        out.pop();
+    }
+    out
+}
+
+fn fold_placeholders(normalized: &str) -> String {
+    let mut out = String::with_capacity(normalized.len());
+    let mut rest = normalized;
+    while let Some(open) = rest.find('{') {
+        out.push_str(&rest[..open]);
+        match rest[open + 1..].find('}') {
+            Some(close) => {
+                out.push('*');
+                rest = &rest[open + 1 + close + 1..];
+            }
+            None => {
+                out.push('{');
+                rest = &rest[open + 1..];
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
+fn catalog_variant_key(folded: &str) -> String {
+    match folded.find('?') {
+        Some(pos) => folded[..pos].to_string(),
+        None => match folded.rfind('/') {
+            Some(pos) => folded[..=pos].to_string(),
+            None => folded.to_string(),
+        },
+    }
+}
+
+fn fold_key(url: &str) -> String {
+    catalog_variant_key(&fold_placeholders(&normalize_url(url)))
+}
+
 pub fn source_url_candidates_run() -> i32 {
     let library = match std::fs::read_to_string(LIBRARY_PATH) {
         Ok(c) => omegaflow::force::parse_library(&c),
@@ -62,13 +116,28 @@ pub fn source_url_candidates_run() -> i32 {
     }
 
     candidates.sort();
-    candidates.dedup();
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut folded: Vec<String> = Vec::with_capacity(candidates.len());
+    for c in candidates {
+        if seen.insert(fold_key(&c)) {
+            folded.push(c);
+        }
+    }
+    candidates = folded;
 
     let mut known: HashSet<String> = HashSet::new();
     if let Ok(c) = std::fs::read_to_string(MASTER_URLS_PATH) {
-        known = c.lines().map(|l| l.trim().to_string()).collect();
+        for line in c.lines() {
+            let t = line.trim();
+            if !t.is_empty() {
+                known.insert(fold_key(t));
+            }
+        }
     }
-    let known_count = candidates.iter().filter(|u| known.contains(*u)).count();
+    let known_count = candidates
+        .iter()
+        .filter(|u| known.contains(&fold_key(u)))
+        .count();
     let new_count = candidates.len() - known_count;
 
     match write_lines(CANDIDATES_PATH, candidates.iter()) {
@@ -99,4 +168,63 @@ where
         f.write_all(b"\n")?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_strips_scheme_and_trailing_slash() {
+        assert_eq!(normalize_url("https://host/path/"), "host/path");
+        assert_eq!(normalize_url("http://host/path"), "host/path");
+        assert_eq!(normalize_url("HTTPS://Host/A/"), "Host/A");
+    }
+
+    #[test]
+    fn normalize_collapses_slash_question() {
+        assert_eq!(normalize_url("https://host/path/?x=1"), "host/path?x=1");
+        assert_eq!(normalize_url("https://host/path/?"), "host/path?");
+    }
+
+    #[test]
+    fn fold_replaces_placeholder_with_wildcard() {
+        assert_eq!(
+            fold_placeholders("host/data?id={station}"),
+            "host/data?id=*"
+        );
+        assert_eq!(fold_placeholders("host/{a}/b"), "host/*/b");
+        assert_eq!(fold_placeholders("host/{x}y{z}"), "host*y*");
+        assert_eq!(fold_placeholders("host/{unclosed"), "host/{unclosed");
+    }
+
+    #[test]
+    fn catalog_key_strips_query() {
+        assert_eq!(catalog_variant_key("host/path?a=1&b=2"), "host/path");
+        assert_eq!(catalog_variant_key("host/path?"), "host/path");
+    }
+
+    #[test]
+    fn catalog_key_takes_parent_directory() {
+        assert_eq!(catalog_variant_key("host/dir/file.csv"), "host/dir/");
+        assert_eq!(catalog_variant_key("host/file.csv"), "host/");
+        assert_eq!(catalog_variant_key("host"), "host");
+    }
+
+    #[test]
+    fn fold_key_collapses_fanout_template_and_concrete() {
+        let template =
+            "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}&start={week_ago}T00:00:00Z";
+        let concrete =
+            "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK&start=2026-01-01T00:00:00Z";
+        assert_eq!(fold_key(template), fold_key(concrete));
+        assert_eq!(fold_key(template), "imag-data.bgs.ac.uk/GIN_V1/hapi/data");
+    }
+
+    #[test]
+    fn fold_key_collapses_table_as_file_variants() {
+        let a = "https://host/catalog/gaia.csv";
+        let b = "https://host/catalog/hipparcos.csv";
+        assert_eq!(fold_key(a), fold_key(b));
+    }
 }
