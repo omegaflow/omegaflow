@@ -1139,3 +1139,7 @@ descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
 note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
+blocked ip-blocked
+url https://api.sensor.community/v1/data/measurements
+note 2026-09-25 direct 403 / Proton-Exit 403 (lokaler IP-Block). Kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a). Proton-freier CI-Puls via source_latency_census --blocked ausstehend.
+
