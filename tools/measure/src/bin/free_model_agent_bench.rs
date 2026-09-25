@@ -127,6 +127,45 @@ fn parse_models_shard(spec: &str) -> Result<(usize, usize), String> {
     Ok((index, count))
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Disposition {
+    Eligible,
+    Blocked,
+    Struck,
+}
+
+impl Disposition {
+    fn code(self) -> &'static str {
+        match self {
+            Disposition::Eligible => "eligible",
+            Disposition::Blocked => "blocked",
+            Disposition::Struck => "struck",
+        }
+    }
+}
+
+fn parse_disposition(s: &str) -> Option<Disposition> {
+    match s {
+        "eligible" => Some(Disposition::Eligible),
+        "blocked" => Some(Disposition::Blocked),
+        "struck" => Some(Disposition::Struck),
+        _ => None,
+    }
+}
+
+fn is_eligible(m: &ModelFull) -> bool {
+    m.disposition == Disposition::Eligible
+}
+
+fn report_excluded(models: &[ModelFull]) {
+    for m in models
+        .iter()
+        .filter(|m| m.disposition != Disposition::Eligible)
+    {
+        eprintln!("{}\t{}\t{}", m.disposition.code(), m.provider, m.id);
+    }
+}
+
 struct Model {
     provider: String,
     id: String,
@@ -137,6 +176,7 @@ struct ModelFull {
     id: String,
     base: String,
     env_var: String,
+    disposition: Disposition,
 }
 
 struct Row {
@@ -480,6 +520,8 @@ fn parse_model_full(line: &str) -> Option<ModelFull> {
     let id = it.next()?.to_string();
     let base = it.next()?.to_string();
     let env_var = it.next()?.to_string();
+    it.next()?;
+    let disposition = parse_disposition(it.next()?)?;
     if provider.is_empty() || id.is_empty() || base.is_empty() || env_var.is_empty() {
         return None;
     }
@@ -488,13 +530,7 @@ fn parse_model_full(line: &str) -> Option<ModelFull> {
         id,
         base,
         env_var,
-    })
-}
-
-fn parse_model(line: &str) -> Option<Model> {
-    parse_model_full(line).map(|f| Model {
-        provider: f.provider,
-        id: f.id,
+        disposition,
     })
 }
 
@@ -520,7 +556,11 @@ fn emit_opencode_config(path: &str) -> i32 {
             return 2;
         }
     };
-    let models: Vec<ModelFull> = MODELS_TSV.lines().filter_map(parse_model_full).collect();
+    let models: Vec<ModelFull> = MODELS_TSV
+        .lines()
+        .filter_map(parse_model_full)
+        .filter(|m| is_eligible(m))
+        .collect();
     let mut providers: Vec<&ModelFull> = Vec::new();
     for m in &models {
         if !providers.iter().any(|p| p.provider == m.provider) {
@@ -792,7 +832,16 @@ fn main() {
         std::process::exit(emit_opencode_config(&path));
     }
     let task = resolve_task(task_name, task_file);
-    let models: Vec<Model> = MODELS_TSV.lines().filter_map(parse_model).collect();
+    let all: Vec<ModelFull> = MODELS_TSV.lines().filter_map(parse_model_full).collect();
+    report_excluded(&all);
+    let models: Vec<Model> = all
+        .into_iter()
+        .filter(|m| is_eligible(m))
+        .map(|f| Model {
+            provider: f.provider,
+            id: f.id,
+        })
+        .collect();
     if let Some((shard_index, shard_count)) = shard {
         eprintln!(
             "free_model_agent_bench: models shard {}/{} ({} of {} model slots)",
@@ -896,6 +945,26 @@ mod tests {
     #[test]
     fn score_accepts_all_expected_t7_lines() {
         assert!(score(&T7_EXPECT.join("\n")));
+    }
+
+    #[test]
+    fn disposition_gates_eligibility_without_a_default() {
+        assert_eq!(parse_disposition("eligible"), Some(Disposition::Eligible));
+        assert_eq!(parse_disposition("blocked"), Some(Disposition::Blocked));
+        assert_eq!(parse_disposition("struck"), Some(Disposition::Struck));
+        assert_eq!(parse_disposition(""), None);
+        assert_eq!(parse_disposition("unknown"), None);
+        assert!(
+            parse_model_full("zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp")
+                .is_none()
+        );
+        let struck = match parse_model_full(
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp\tstruck",
+        ) {
+            Some(m) => m,
+            None => panic!("struck tsv line carries no model"),
+        };
+        assert!(!is_eligible(&struck));
     }
 
     #[test]

@@ -93,6 +93,32 @@ fn load_terms() -> Terms {
     terms
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Disposition {
+    Eligible,
+    Blocked,
+    Struck,
+}
+
+impl Disposition {
+    fn code(self) -> &'static str {
+        match self {
+            Disposition::Eligible => "eligible",
+            Disposition::Blocked => "blocked",
+            Disposition::Struck => "struck",
+        }
+    }
+}
+
+fn parse_disposition(s: &str) -> Option<Disposition> {
+    match s {
+        "eligible" => Some(Disposition::Eligible),
+        "blocked" => Some(Disposition::Blocked),
+        "struck" => Some(Disposition::Struck),
+        _ => None,
+    }
+}
+
 #[derive(Clone)]
 struct Model {
     provider: String,
@@ -100,6 +126,7 @@ struct Model {
     base: String,
     env_var: String,
     channel: String,
+    disposition: Disposition,
 }
 
 struct Resp {
@@ -391,6 +418,7 @@ fn parse_model(line: &str) -> Option<Model> {
     let base = it.next()?.to_string();
     let env_var = it.next()?.to_string();
     let channel = it.next()?.to_string();
+    let disposition = parse_disposition(it.next()?)?;
     if provider.is_empty()
         || id.is_empty()
         || base.is_empty()
@@ -405,11 +433,25 @@ fn parse_model(line: &str) -> Option<Model> {
         base,
         env_var,
         channel,
+        disposition,
     })
 }
 
 fn is_http(m: &Model) -> bool {
     m.channel != "client"
+}
+
+fn is_eligible(m: &Model) -> bool {
+    m.disposition == Disposition::Eligible
+}
+
+fn report_excluded(models: &[Model]) {
+    for m in models
+        .iter()
+        .filter(|m| m.disposition != Disposition::Eligible)
+    {
+        eprintln!("{}\t{}\t{}", m.disposition.code(), m.provider, m.id);
+    }
 }
 
 fn load_models() -> Vec<Model> {
@@ -504,7 +546,7 @@ fn select(
 ) -> Vec<Model> {
     let mut v: Vec<Model> = models
         .iter()
-        .filter(|m| matches(m, model_filters, provider_filters))
+        .filter(|m| is_eligible(m) && matches(m, model_filters, provider_filters))
         .cloned()
         .collect();
     if let Some(n) = limit {
@@ -516,9 +558,16 @@ fn select(
 fn resolve_judge(models: &[Model], id: &str) -> Option<Model> {
     models
         .iter()
+        .filter(|m| is_eligible(m))
         .find(|m| m.id == id)
         .cloned()
-        .or_else(|| models.iter().find(|m| m.id.contains(id)).cloned())
+        .or_else(|| {
+            models
+                .iter()
+                .filter(|m| is_eligible(m))
+                .find(|m| m.id.contains(id))
+                .cloned()
+        })
 }
 
 fn run_model(m: &Model, key: &str, prompt: &str, max_tokens: u32, timeout: u64) -> Answer {
@@ -917,10 +966,12 @@ fn main() {
 
     if list_models {
         for m in &all_models {
-            println!("{}\t{}", m.provider, m.id);
+            println!("{}\t{}\t{}", m.provider, m.id, m.disposition.code());
         }
         return;
     }
+
+    report_excluded(&all_models);
 
     let selected = select(&all_models, &model_filters, &provider_filters, limit);
 
@@ -1081,6 +1132,7 @@ mod tests {
             base: "b".into(),
             env_var: "TEXT_PROBE_TEST_KEY".into(),
             channel: "http".into(),
+            disposition: Disposition::Eligible,
         };
         unsafe { env::set_var("TEXT_PROBE_TEST_KEY", "exact-key") };
         assert_eq!(key_for(&m).as_deref(), Some("exact-key"));
@@ -1094,18 +1146,38 @@ mod tests {
     #[test]
     fn http_path_skips_client_channel_rows() {
         let client = match parse_model(
-            "opencode\tbig-pickle\thttps://opencode.ai/zen/v1\tOPENCODE_API_KEY\tclient",
+            "opencode\tbig-pickle\thttps://opencode.ai/zen/v1\tOPENCODE_API_KEY\tclient\teligible",
         ) {
             Some(m) => m,
             None => panic!("client tsv line carries no model"),
         };
         let http = match parse_model(
-            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp",
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp\teligible",
         ) {
             Some(m) => m,
             None => panic!("http tsv line carries no model"),
         };
         assert!(!is_http(&client));
         assert!(is_http(&http));
+    }
+
+    #[test]
+    fn disposition_gates_eligibility_without_a_default() {
+        assert_eq!(parse_disposition("eligible"), Some(Disposition::Eligible));
+        assert_eq!(parse_disposition("blocked"), Some(Disposition::Blocked));
+        assert_eq!(parse_disposition("struck"), Some(Disposition::Struck));
+        assert_eq!(parse_disposition(""), None);
+        assert_eq!(parse_disposition("unknown"), None);
+        assert!(
+            parse_model("zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp")
+                .is_none()
+        );
+        let struck = match parse_model(
+            "zai\tglm-5.3-flash\thttps://api.z.ai/api/paas/v4\tZAI_API_KEY\thttp\tstruck",
+        ) {
+            Some(m) => m,
+            None => panic!("struck tsv line carries no model"),
+        };
+        assert!(!is_eligible(&struck));
     }
 }
