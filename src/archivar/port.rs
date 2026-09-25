@@ -2376,7 +2376,13 @@ fn clock_record(clock: &mut HashMap<String, (f64, u32)>, url: &str, ok: bool) {
     clock.insert(url.to_string(), (now, next));
 }
 
-pub fn ci_mode(dir: &str) -> i32 {
+fn shard_bounds(len: usize, idx: usize, n: usize) -> (usize, usize) {
+    let start = (len as u128 * idx as u128 / n as u128) as usize;
+    let end = (len as u128 * (idx + 1) as u128 / n as u128) as usize;
+    (start, end)
+}
+
+pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     let env = load_env();
     let sources = if dir == "phi" {
         match std::fs::read_to_string("phi/sources.φ") {
@@ -2411,7 +2417,12 @@ pub fn ci_mode(dir: &str) -> i32 {
         lsk = crate::lsk::parse(&text);
     }
     let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
-    let total = sources.len();
+    let (shard_start, shard_end) = match shard {
+        Some((idx, n)) => shard_bounds(sources.len(), idx, n),
+        None => (0, sources.len()),
+    };
+    let shard_sources = &sources[shard_start..shard_end];
+    let total = shard_sources.len();
     let mut reachable = 0usize;
     let mut dead = 0usize;
     let mut pending = 0usize;
@@ -2420,7 +2431,7 @@ pub fn ci_mode(dir: &str) -> i32 {
     let mut host_void: HashSet<String> = HashSet::new();
     let clock_path = content_cache("origin_clock.φ");
     let mut clock = load_origin_clock(&clock_path);
-    for src in &sources {
+    for src in shard_sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
             || src.format == "catalog_dastcom"
@@ -3804,5 +3815,35 @@ mod probe_classify_tests {
             "register replay: {} names diverged and are not allowlisted; pending {}",
             missing, pending
         );
+    }
+}
+
+#[cfg(test)]
+mod shard_tests {
+    use super::shard_bounds;
+
+    #[test]
+    fn shards_contiguous_and_covering() {
+        let cases = [
+            (0usize, 1usize),
+            (1, 1),
+            (5, 1),
+            (521, 8),
+            (10, 3),
+            (7, 7),
+            (3, 8),
+            (0, 5),
+        ];
+        for (len, n) in cases {
+            let mut expected = 0usize;
+            for idx in 0..n {
+                let (start, end) = shard_bounds(len, idx, n);
+                assert_eq!(start, expected, "len {} n {} idx {} start", len, n, idx);
+                assert!(start <= end, "len {} n {} idx {} start>end", len, n, idx);
+                assert!(end <= len, "len {} n {} idx {} end>len", len, n, idx);
+                expected = end;
+            }
+            assert_eq!(expected, len, "len {} n {} union must cover 0..len", len, n);
+        }
     }
 }

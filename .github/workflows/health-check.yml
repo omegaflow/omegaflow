@@ -27,26 +27,30 @@ env:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
     - uses: actions/checkout@v7
     - uses: actions/cache@v4
       with:
         path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
-        key: archivar-cache-${{ github.run_id }}
+        key: archivar-cache-${{ matrix.shard }}-${{ github.run_id }}
         restore-keys: |
           archivar-cache-
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo run -- --verify phi
+    - run: cargo run -- --verify phi --shard ${{ matrix.shard }}/8
     - uses: actions/cache@v4
       if: always()
       with:
         path: ${{ env.OMEGAFLOW_STATE }}/archivar_cache
-        key: archivar-cache-${{ github.run_id }}
+        key: archivar-cache-${{ matrix.shard }}-${{ github.run_id }}
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
           "health: verify returned void" \
-          "Verify job failed. Last commit: ${{ github.sha }}" \
+          "Verify job failed (shard ${{ matrix.shard }}/8). Last commit: ${{ github.sha }}" \
           health
 
   reverify:
