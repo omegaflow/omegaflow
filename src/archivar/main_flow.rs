@@ -2309,6 +2309,7 @@ pub fn main_flow() {
                     | "goes_xrs"
                     | "intermagnet_dbdt"
                     | "omni2_serie"
+                    | "omni_hro"
                     | "mitdb"
                     | "circor"
                     | "ltmm"
@@ -2900,6 +2901,7 @@ pub fn main_flow() {
                     | "gdp_drifter"
                     | "hfrnet_rtv"
                     | "emodnet_hfr"
+                    | "toar_surface_o3"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
