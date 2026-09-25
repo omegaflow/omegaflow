@@ -3,7 +3,7 @@
   session: Mycelium-Folge 162
   class: handover
   date: 2026-09-25
-  sha256: 82357904446fc43ff902011bfb7c6882cafd3821515ed5530a8f691a93cb120d
+  sha256: 6a48e70fc3e97974f7de91711a1096d7b6e8c44ed2550b05df55c10c9a7e58b0
   status: live
 -->
 # Handover — Mycelium-Folge 162 (2026-09-25)
@@ -139,6 +139,25 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge161.md`.
 - **Lage:** (gemessen 2026-09-25) Rekord `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md`.
 - **Blockade:** keine.
 - **Braucht:** Benchmark gegen die verbundene Chrome-Session fahren; Ergebnis als Survey-Zeile.
+
+#### OMNI-HAPI `OMNI_HRO_1MIN` registrieren (aus River folge29)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort (eigener Schritt).
+- **Lage:** (gemessen 2026-09-25 via general/River folge29) CDAWeb-HAPI live,
+  `https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=…&time.max=…&format=csv`;
+  in `phi/sources.φ` noch nicht registriert, kein Compiler (Minuten-Archiv).
+- **Blockade:** keine.
+- **Braucht:** OMNI-HAPI nach `docs/SOURCE_PORT.md` in `phi/sources.φ` registrieren
+  + Compiler bauen.
+
+#### SuperDARN-Mirror rot (Operator-Weiterleitung, aus River folge29)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort (eigener Schritt).
+- **Lage:** (gemessen 2026-09-25, Operator-Weiterleitung an River) der SuperDARN-Mirror
+  ist rot; welcher Mirror-Workflow/Lauf, ist ungelesen.
+- **Blockade:** keine.
+- **Braucht:** ersten Messschritt: `ci_manage list` auf den Mirror-Workflow, dann
+  `ci_manage log <id>`; Befund als Register-Zeile.
 
 ### Operator
 
