@@ -9605,6 +9605,13 @@ origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/
 compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
 at sun
 ttl 31536000
+field decaps_dr2_parallax_arcsec decaps_dr2_parallax_arcsec inverse-square gravity arcsec 31536000 0.0 0.0
+field decaps_dr2_r_mag decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
+field decaps_dr2_i_mag decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
+field decaps_dr2_z_mag decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
+field decaps_dr2_extinction_mag decaps_dr2_extinction_mag inverse-square em mag 31536000 0.0 0.0
+field decaps_dr2_rv_km_s decaps_dr2_rv_km_s gaussian-inverse-square advective km/s 31536000 0.0 0.0
+field decaps_dr2_g_mag decaps_dr2_g_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
 origin https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1 ; https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/

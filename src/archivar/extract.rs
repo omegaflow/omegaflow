@@ -404,6 +404,11 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         "gdp_drifter" => gdp_drifter::component_name(comp),
         "hfrnet_rtv" => hfrnet_rtv::component_name(comp),
         "emodnet_hfr" => emodnet_hfr::component_name(comp),
+        "decaps_dr2_stars" => crate::decaps::component_name(comp),
+        "toar_surface_o3" => match comp {
+            crate::geo::COMP_TOAR_O3 => Some("toar_surface_o3_ppb"),
+            _ => None,
+        },
         "bgr_infrasound" => match comp {
             crate::geo::COMP_BGR_AZIM => Some("bgr_infrasound_back_azimuth_deg"),
             crate::geo::COMP_BGR_VAPP => Some("bgr_infrasound_apparent_velocity_ms"),
@@ -2623,6 +2628,69 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         if off != buf.len() {
             return ExtractResult::Measurements(vec![]);
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "decaps_dr2_stars" {
+        let Some(epoch) = src.catalog_epoch else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        if !epoch.is_finite() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(stars) = crate::decaps::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<&FieldConfig> = src
+            .extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for star in &stars {
+            let ra = star.ra_deg.to_radians();
+            let dec = star.dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            for comp in 1..=crate::decaps::COMP_MAX {
+                let Some(name) = crate::decaps::component_name(comp) else {
+                    continue;
+                };
+                let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                    continue;
+                };
+                let Some(value) = crate::decaps::component_value(star, comp) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    (*fc).clone(),
+                ));
+            }
         }
         return ExtractResult::Measurements(channels);
     }

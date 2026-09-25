@@ -37,6 +37,7 @@ pub mod ck;
 pub mod copernicus;
 pub mod cors;
 pub mod dastcom;
+pub mod decaps;
 pub mod demeter;
 pub mod des_y6;
 pub mod dl3;
