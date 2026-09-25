@@ -98,6 +98,7 @@ fn field_or_review(
     key: &str,
     name: &str,
     measure: &PortMeasure,
+    ttl: f64,
 ) -> Option<String> {
     let (classified, cunit, ctau) = probe_classify(name);
     if classified == "DROP" || (classified == "UNCERTAIN" && port_non_oscillator(name)) {
@@ -133,7 +134,15 @@ fn field_or_review(
             other => port_field_synth(directive, other, key, name, Some(cunit), Some(ctau))
                 .or(absent_line),
         },
-        Some(f) => port_field_synth(directive, f, key, name, None, None).or(absent_line),
+        Some(f) => port_field_synth(
+            directive,
+            f,
+            key,
+            name,
+            unit_from_name_suffix(name),
+            Some(ttl),
+        )
+        .or(absent_line),
     }
 }
 
@@ -421,14 +430,14 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
         }
         let s = match parts[0] {
             "field" | "field_in" if parts.len() >= 3 => {
-                field_or_review("field", &force, parts[1], parts[2], measure)
+                field_or_review("field", &force, parts[1], parts[2], measure, ttl as f64)
             }
             "count" if parts.len() >= 3 => Some(format!("count {} {}", parts[1], parts[2])),
             "first" | "last" | "path" | "deep" if parts.len() >= 3 => {
-                field_or_review(parts[0], &force, parts[1], parts[2], measure)
+                field_or_review(parts[0], &force, parts[1], parts[2], measure, ttl as f64)
             }
             "last_row" if parts.len() >= 3 => {
-                field_or_review("lastrow", &force, parts[1], parts[2], measure)
+                field_or_review("lastrow", &force, parts[1], parts[2], measure, ttl as f64)
             }
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
@@ -440,7 +449,7 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
             }
             "geojson" if parts.len() >= 5 => None,
             "regex" if parts.len() >= 3 => {
-                field_or_review("regex", &force, parts[1], parts[2], measure)
+                field_or_review("regex", &force, parts[1], parts[2], measure, ttl as f64)
             }
             _ => None,
         };
