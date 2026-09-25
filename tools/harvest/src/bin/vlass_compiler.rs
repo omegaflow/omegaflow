@@ -346,7 +346,7 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        None => match fetch_raw_bytes(&fetch_url, 604800) {
+        None => match fetch_raw_bytes(&fetch_url) {
             Some(b) => b,
             None => {
                 eprintln!("vlass_compiler: fetch void ({fetch_url})");

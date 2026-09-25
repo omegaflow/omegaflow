@@ -164,7 +164,7 @@ fn main() {
         "{CATALOG_URL}?format=geojson&starttime={SEARCH_START}&endtime={search_end}&minmagnitude={MIN_MAG}&mindepth={min_depth_km}&minlatitude={}&maxlatitude={}&minlongitude={}&maxlongitude={}&orderby=magnitude&limit=100",
         region[0], region[1], region[2], region[3]
     );
-    let Some(body) = fetch_raw(&cat_url, None, &[], 86400) else {
+    let Some(body) = fetch_raw(&cat_url, None, &[]) else {
         eprintln!("catalog carries no body — the channel stays unmeasured (0 honored)");
         return;
     };
@@ -206,7 +206,7 @@ fn main() {
             "{STATION_URL}?format=text&level=channel&latitude={:.4}&longitude={:.4}&minradius={MIN_DIST_DEG}&maxradius={MAX_DIST_DEG}&channel=BHZ&starttime={start}&endtime={end}&includerestricted=false",
             event.lat, event.lon
         );
-        let Some(st_body) = fetch_raw(&st_url, None, &[], 86400) else {
+        let Some(st_body) = fetch_raw(&st_url, None, &[]) else {
             pending_events.push(format!("{} (station query void)", event.id));
             continue;
         };
@@ -516,7 +516,7 @@ fn load_bytes(local: &str, cdn: &str) -> Option<Vec<u8>> {
             println!("{local}: {} bytes read from the local file", bytes.len());
             Some(bytes)
         }
-        _ => match fetch_raw_bytes(cdn, 3600) {
+        _ => match fetch_raw_bytes(cdn) {
             Some(bytes) => {
                 println!(
                     "{local}: absent locally — {} bytes fetched from the CDN",

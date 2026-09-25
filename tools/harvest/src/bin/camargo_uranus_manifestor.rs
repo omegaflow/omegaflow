@@ -1,4 +1,4 @@
-use omegaflow::archivar::{RetryPolicy, curl_base, ttl_transfer_bound};
+use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, curl_base};
 use omegaflow::cdn::upload_release;
 use std::fs::{self, File};
 use std::io::Read;
@@ -7,7 +7,6 @@ use std::process::Stdio;
 const VIZIER_NETLOC: &str = "vizier.cfa.harvard.edu";
 const NAIF_NETLOC: &str = "naif.jpl.nasa.gov";
 const OUT_ROOT: &str = "data";
-const FETCH_TTL_S: u64 = 86400;
 const TSV_TABLES: [&str; 6] = [
     "uranu_j", "ariel_j", "umbri_j", "titan_j", "obero_j", "miran_j",
 ];
@@ -40,7 +39,7 @@ fn curl_file(url: &str, path: &str) -> bool {
             return false;
         }
     };
-    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(FETCH_TTL_S), 0);
+    let mut cmd = curl_base(RetryPolicy::Transient, TRANSFER_BOUND_S, 0);
     cmd.arg(url);
     cmd.stdout(Stdio::from(file));
     match cmd.status() {

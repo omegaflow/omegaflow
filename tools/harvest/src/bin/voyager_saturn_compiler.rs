@@ -8,7 +8,7 @@ const ROUTES: [&str; 2] = [
 ];
 
 fn tars_of(base: &str) -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(base, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(base) else {
         eprintln!("voyager_saturn: dir listing void ({base})");
         return Vec::new();
     };
@@ -74,7 +74,7 @@ fn main() {
         eprintln!("{base}: {} tar files", tars.len());
         for tar in tars {
             let url = format!("{base}{tar}");
-            let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+            let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{tar}: fetch void ({url})");
                 continue;
             };

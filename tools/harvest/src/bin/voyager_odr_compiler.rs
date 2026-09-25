@@ -128,7 +128,7 @@ fn run_index(args: &[String]) {
         let url = format!("{base_trim}{dir_of}/{name}");
         let bytes = match &dir {
             Some(d) => std::fs::read(format!("{d}/{name}")).ok(),
-            None => fetch_raw_bytes(&url, 604800),
+            None => fetch_raw_bytes(&url),
         };
         let Some(bytes) = bytes else {
             eprintln!("{name}: read void at {url}");
@@ -219,7 +219,7 @@ fn main() {
             }
         },
         None => match arg_value(&args, "--url") {
-            Some(url) => match fetch_raw_bytes(&url, 604800) {
+            Some(url) => match fetch_raw_bytes(&url) {
                 Some(b) => (b, url),
                 None => {
                     eprintln!("{url}: fetch void");
@@ -241,7 +241,7 @@ fn main() {
             }
         },
         None => match arg_value(&args, "--label-url") {
-            Some(url) => match fetch_raw_bytes(&url, 604800) {
+            Some(url) => match fetch_raw_bytes(&url) {
                 Some(lb) => match year_of_label(&lb) {
                     Some(v) => v,
                     None => {

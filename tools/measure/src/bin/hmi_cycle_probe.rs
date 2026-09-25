@@ -36,7 +36,7 @@ fn load_bin(args: &[String], arg: &str, cdn: &str) -> Option<Vec<u8>> {
             ""
         })
         .ok()
-        .or_else(|| fetch_raw_bytes(cdn, 3600)),
+        .or_else(|| fetch_raw_bytes(cdn)),
     }
 }
 

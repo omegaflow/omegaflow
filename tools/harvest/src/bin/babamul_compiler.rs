@@ -8,7 +8,6 @@ const NETLOC: &str = "babamul.caltech.edu";
 const BASE: &str = "https://babamul.caltech.edu/api/babamul";
 const DEFAULT_SURVEY: &str = "ZTF";
 const DEFAULT_OUT: &str = "data/babamul.caltech.edu/babamul_alerts.bin";
-const FETCH_TTL: u64 = 3600;
 const JD_WINDOW: f64 = 0.999;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -82,7 +81,7 @@ fn main() {
         start_jd + JD_WINDOW
     );
     let headers = [("Authorization".to_string(), format!("Bearer {token}"))];
-    let bytes = match fetch_raw_bytes_headers(&url, &headers, FETCH_TTL) {
+    let bytes = match fetch_raw_bytes_headers(&url, &headers) {
         Some(b) => b,
         None => {
             eprintln!("{url}: fetch void");

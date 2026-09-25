@@ -197,7 +197,7 @@ fn load_flyby_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool 
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
-        match fetch_raw_bytes(&url, 604800) {
+        match fetch_raw_bytes(&url) {
             Some(bytes) => {
                 if std::fs::write(&path, &bytes).is_err() {
                     eprintln!("{name}: arc bin write void");

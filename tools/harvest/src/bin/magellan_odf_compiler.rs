@@ -6,7 +6,7 @@ const BASE: &str = "https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v
 const UNIX_1950_OFFSET: f64 = 631152000.0;
 
 fn files_of() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(BASE, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(BASE) else {
         eprintln!("odf dir listing fetch void ({BASE})");
         return Vec::new();
     };
@@ -45,7 +45,7 @@ fn main() {
     eprintln!("mgn-v-rss-1-tracking-v1/mg_2601/odf: {} files", rels.len());
     for rel in rels {
         let url = format!("{BASE}{rel}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{rel}: fetch void ({url})");
             continue;
         };

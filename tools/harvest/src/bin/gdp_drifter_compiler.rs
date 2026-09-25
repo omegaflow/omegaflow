@@ -9,7 +9,6 @@ const NETLOC: &str = "noaa-oar-hourly-gdp-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr";
 const MAGIC: [u8; 4] = *b"GDPT";
 const REC_BYTES: usize = 40;
-const FETCH_TTL: u64 = 600;
 
 struct DrifterRecord {
     id: u64,
@@ -152,7 +151,7 @@ fn decompress(bytes: &[u8], url: &str) -> Option<Vec<u8>> {
 }
 
 fn fetch_chunk(url: &str, compressed: bool) -> Option<Vec<u8>> {
-    let bytes = fetch_raw_bytes(url, FETCH_TTL)?;
+    let bytes = fetch_raw_bytes(url)?;
     if compressed {
         decompress(&bytes, url)
     } else {
@@ -267,8 +266,8 @@ enum Outcome {
 
 fn load_arrays(base: &str) -> Result<Arrays, String> {
     let zmeta_url = format!("{base}/.zmetadata");
-    let zmeta_bytes = fetch_raw_bytes(&zmeta_url, FETCH_TTL)
-        .ok_or_else(|| format!("{zmeta_url}: fetch returned void"))?;
+    let zmeta_bytes =
+        fetch_raw_bytes(&zmeta_url).ok_or_else(|| format!("{zmeta_url}: fetch returned void"))?;
     let zmeta_text = String::from_utf8_lossy(&zmeta_bytes).into_owned();
     let zjson =
         parse_json(&zmeta_text).ok_or_else(|| format!("{zmeta_url}: JSON stays unparsed"))?;

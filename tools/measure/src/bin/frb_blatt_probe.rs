@@ -20,7 +20,7 @@ fn load_harvest(path: Option<String>) -> Option<Vec<JsonVal>> {
                 Some(b) => Some(b),
                 None => {
                     let url = format!("{CDN_BASE}/{CDN_RELEASE}/{CDN_ASSET}");
-                    fetch_raw_bytes(&url, 3600)
+                    fetch_raw_bytes(&url)
                 }
             }
         }

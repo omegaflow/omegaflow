@@ -21,7 +21,7 @@ fn main() {
         std::process::exit(2);
     };
     for url in &targets {
-        let Some(bytes) = fetch_raw_bytes(url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void");
             continue;
         };

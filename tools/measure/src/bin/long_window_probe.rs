@@ -29,7 +29,7 @@ fn load_bin(kind: &str, url: &str, path: Option<String>) -> Option<Vec<u8>> {
             }
         }
     }
-    match fetch_raw_bytes(url, 3600) {
+    match fetch_raw_bytes(url) {
         Some(bytes) => Some(bytes),
         None => {
             eprintln!(
@@ -309,7 +309,13 @@ fn main() {
     println!("=== verdict ===");
     let f107_drives = sig("F10.7", "XRSA") || sig("F10.7", "XRSB");
     let xrs_drives = sig("XRSA", "F10.7") || sig("XRSB", "F10.7");
-    let n_min = arrows.iter().map(|p| p.n).min().unwrap_or(0);
+    let n_min = match arrows.iter().map(|p| p.n).min() {
+        Some(n) => n,
+        None => {
+            println!("no arrows measured — no statement possible.");
+            return;
+        }
+    };
     if n_min < MIN_N {
         println!(
             "no statement possible (n = {}) — underdetermination, not physical silence.",

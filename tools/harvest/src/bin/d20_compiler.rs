@@ -46,11 +46,11 @@ fn main() {
             let cw = COASTWATCH_URL
                 .replace("{d_start}", &fmt(d_start))
                 .replace("{d_end}", &fmt(d_end));
-            match omegaflow::archivar::fetch_raw(&url, None, &[], 60) {
+            match omegaflow::archivar::fetch_raw(&url, None, &[]) {
                 Some(b) => b,
                 None => {
                     eprintln!("d20 direct fetch void — falling back to the CoastWatch mirror");
-                    match omegaflow::archivar::fetch_raw(&cw, None, &[], 120) {
+                    match omegaflow::archivar::fetch_raw(&cw, None, &[]) {
                         Some(b) => b,
                         None => {
                             eprintln!("d20 fetch from {} returned void", cw);

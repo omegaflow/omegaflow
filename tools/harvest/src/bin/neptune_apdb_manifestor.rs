@@ -1,4 +1,4 @@
-use omegaflow::archivar::{RetryPolicy, curl_base, ttl_transfer_bound};
+use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, curl_base};
 use omegaflow::cdn::upload_release;
 use std::fs::{self, File};
 use std::process::Stdio;
@@ -6,7 +6,6 @@ use std::process::Stdio;
 const GEOAZUR_NETLOC: &str = "www.geoazur.fr";
 const BASE_URL: &str = "https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/";
 const OUT_ROOT: &str = "data";
-const FETCH_TTL_S: u64 = 86400;
 
 const FILES: [(&str, &str); 23] = [
     ("apdb_format.txt", "format.txt"),
@@ -58,7 +57,7 @@ fn curl_file(url: &str, path: &str) -> bool {
             return false;
         }
     };
-    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(FETCH_TTL_S), 0);
+    let mut cmd = curl_base(RetryPolicy::Transient, TRANSFER_BOUND_S, 0);
     cmd.arg(url);
     cmd.stdout(Stdio::from(file));
     match cmd.status() {

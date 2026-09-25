@@ -1,0 +1,56 @@
+name: wwlln-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  wwlln:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view wwlln.net --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "wwlln_th.csv"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset wwlln_th.csv already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset wwlln_th.csv missing — compiling and manifesting"
+          fi
+      - name: Harvest the WWLLN thunder-hours archive from the runner (curl, netcdf zip)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSL -m 300 -o WWLLN_th_2025.nc.zip \
+            "https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip"
+          test "$(wc -c < WWLLN_th_2025.nc.zip)" -gt 50000000
+          echo "harvest measured: $(wc -c < WWLLN_th_2025.nc.zip) bytes from the runner route"
+      - name: Ensure the wwlln.net release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view wwlln.net --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create wwlln.net --repo omegaflow/sources \
+              --title "wwlln.net" \
+              --notes "WWLLN thunder-hours climatology compiled to CSV assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the WWLLN thunder-hours grid to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin wwlln_compiler -- \
+            --input WWLLN_th_2025.nc.zip \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "wwlln-cdn: wwlln_th compile returned void" \
+                 "wwlln thunder-hours compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

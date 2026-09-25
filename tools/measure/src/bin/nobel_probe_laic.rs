@@ -126,7 +126,7 @@ fn bin_mean(series: &[(f64, f64)], t0: f64, cell: f64, n: usize) -> Vec<Option<f
 
 fn main() {
     println!("=== Nobel-DAG LAIC probe — the common-cause control ===");
-    let Some(bytes) = fetch_raw_bytes(LAIC_CDN, 86400) else {
+    let Some(bytes) = fetch_raw_bytes(LAIC_CDN) else {
         eprintln!("laic.bin carries no asset — the run stays unmeasured");
         return;
     };

@@ -9,7 +9,6 @@ use omegaflow::mathematikerin::{S2_LMAX, S2_OSC_CAP, S2Osc};
 const DAY_S: f64 = 86400.0;
 const AU_M: f64 = 1.495978707e11;
 const PI_OVER_64: f64 = std::f64::consts::PI / 64.0;
-const EPH_TTL_S: u64 = 604800;
 
 fn date_of(tdb: f64) -> String {
     let jd = tdb / DAY_S + J2000_EPOCH;
@@ -26,12 +25,12 @@ fn local_path(url: &str) -> Option<String> {
     Some(format!("data/{netloc}/{asset}"))
 }
 
-fn ensure_bin(url: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(url: &str) -> Option<Vec<u8>> {
     let path = local_path(url)?;
     if let Ok(bytes) = std::fs::read(&path) {
         return Some(bytes);
     }
-    let bytes = fetch_raw_bytes(url, ttl)?;
+    let bytes = fetch_raw_bytes(url)?;
     if let Some(parent) = std::path::Path::new(&path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -125,7 +124,7 @@ fn main() {
             absent_bins.push(name.clone());
             continue;
         };
-        if ensure_bin(&src.url, EPH_TTL_S).is_none() {
+        if ensure_bin(&src.url).is_none() {
             absent_bins.push(name.clone());
             continue;
         }
