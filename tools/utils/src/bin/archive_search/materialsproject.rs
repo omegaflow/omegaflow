@@ -20,7 +20,14 @@ pub fn materialsproject_lines(query: &str, max: usize) -> Vec<String> {
     );
     let header = format!("X-API-KEY: {}", key);
     match get(&url, &["-H", &header], "40") {
-        Some(f) if f.status == Some(200) => {
+        Some(f) => materialsproject_from_fetch(&f, query),
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn materialsproject_from_fetch(f: &crate::net::Fetch, query: &str) -> Vec<String> {
+    match f.status {
+        Some(200) => {
             let out = parse_materialsproject(&f.body);
             if out.is_empty() {
                 vec![format!(
@@ -31,15 +38,18 @@ pub fn materialsproject_lines(query: &str, max: usize) -> Vec<String> {
                 out
             }
         }
-        Some(f) if f.status == Some(401) || f.status == Some(403) => vec![
+        Some(400) => vec![format!(
+            "absent — materialsproject needs a chemical formula (e.g. SiO2): {}",
+            query
+        )],
+        Some(401) | Some(403) => vec![
             "pending — materialsproject refuses the key (HTTP 401/403); check MP_API_KEY"
                 .to_string(),
         ],
-        Some(f) => vec![format!(
+        _ => vec![format!(
             "pending — materialsproject HTTP {}",
             f.status_text()
         )],
-        None => vec!["pending — no network".to_string()],
     }
 }
 
@@ -93,5 +103,23 @@ mod tests {
     #[test]
     fn a_material_without_an_id_carries_nothing() {
         assert!(parse_materialsproject(r#"{"data":[{"formula_pretty":"Si"}]}"#).is_empty());
+    }
+
+    #[test]
+    fn http_400_names_the_formula_requirement() {
+        let f = crate::net::Fetch {
+            status: Some(400),
+            body: String::new(),
+            raw: Vec::new(),
+            retry_after: None,
+            complete: true,
+        };
+        assert_eq!(
+            materialsproject_from_fetch(&f, "solar wind"),
+            vec![
+                "absent — materialsproject needs a chemical formula (e.g. SiO2): solar wind"
+                    .to_string()
+            ]
+        );
     }
 }

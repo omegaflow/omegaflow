@@ -162,7 +162,29 @@ pub fn normalize_unit(unit: &str) -> String {
 
 pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
     let kl = name.to_lowercase();
-    if kl.ends_with("_m_s2") {
+    if kl.ends_with("_umol_kg") || kl.ends_with("_umolkg") {
+        Some("micromole/kg")
+    } else if kl.ends_with("_mg_m3") || kl.ends_with("_mgm3") {
+        Some("mg/m3")
+    } else if kl.ends_with("_ug_m3") || kl.ends_with("_ugm3") {
+        Some("ug/m3")
+    } else if kl.ends_with("_jm2") || kl.ends_with("_j_m2") {
+        Some("J/m2")
+    } else if kl.ends_with("_percent") || kl.ends_with("_pct") {
+        Some("%")
+    } else if kl.ends_with("_ppmv") {
+        Some("ppmv")
+    } else if kl.ends_with("_ppb") {
+        Some("ppb")
+    } else if kl.ends_with("_ppm") {
+        Some("ppm")
+    } else if kl.ends_with("_ppt") {
+        Some("ppt")
+    } else if kl.ends_with("_mhz") {
+        Some("MHz")
+    } else if kl.ends_with("_kelvin") {
+        Some("K")
+    } else if kl.ends_with("_m_s2") {
         Some("m/s2")
     } else if kl.ends_with("_m_s") {
         Some("m/s")
@@ -184,6 +206,14 @@ pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
         Some("V/m")
     } else if kl.ends_with("_v") {
         Some("V")
+    } else if kl.ends_with("_mag") {
+        Some("mag")
+    } else if kl.ends_with("_mm") {
+        Some("mm")
+    } else if kl.ends_with("_cm") {
+        Some("cm")
+    } else if kl.ends_with("_km") {
+        Some("km")
     } else if kl.ends_with("_k") {
         Some("K")
     } else if kl.ends_with("_m") {
@@ -245,6 +275,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "j",
             "km/s",
             "arcsec",
+            "mhz",
+            "ppt",
         ],
         1 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m",
@@ -255,10 +287,11 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         ],
         3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
-        5 => &["k", "c", "w/m2", "w", "j", "mw", "%", "km/s"],
+        5 => &["k", "c", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s"],
         6 => &[
             "ppm",
             "ppb",
+            "ppmv",
             "mg/m3",
             "ug/m3",
             "mg/kg",
