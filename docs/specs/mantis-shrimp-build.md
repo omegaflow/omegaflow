@@ -163,6 +163,9 @@ built platform. Facts below are from the platform comparison in
 - SoC: RISC-V BL808 — C906 64-bit + E907 + LP core.
 - Radio: WiFi + BLE + **ZigBee** (the reason the second node is interesting:
   ZigBee mesh alongside the ESP32-S3 node).
+- Role: **host CPU of the coordinator** — ZNSP over UART to the ESP32-H2 NCP
+  radio (Route 2, Rat 2026-09-25); its own 802.15.4 radio stays unused
+  (`pending`, no public driver).
 - Ecosystem: smaller than ESP32-S3 (RISC-V, Buildroot/OpenWrt).
 - I2C/SPI drivers: less finished than the ESP-IDF/Arduino stack.
 - Procurement: PINE64 (EU: `pine64eu.com`). PINE64 ships devices to developers;
@@ -171,7 +174,9 @@ built platform. Facts below are from the platform comparison in
 `pending` (unmeasured — named, not filled):
 
 - Concrete Buildroot/OpenWrt image path for the Ox64.
-- ZigBee mesh stack/protocol choice and how the ESP32-S3 and Ox64 nodes link.
+- ZigBee mesh stack/protocol choice — **decided 2026-09-25 (Rat, Route 2
+  Espressif-RCP):** ESP32-H2 = NCP radio, S3/Ox64 = host CPU, ZNSP over UART,
+  the Rust host self-built; the BL808's own 802.15.4 radio stays `pending`.
 - Measured I2C/SPI driver readiness on the BL808 (the "less finished" note is
   the BOM's qualitative line, not a per-driver measurement).
 - A radiatorium-core port to the BL808.
