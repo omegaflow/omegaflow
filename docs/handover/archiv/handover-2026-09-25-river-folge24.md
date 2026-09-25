@@ -3,7 +3,7 @@
   session: River-Folge 24
   class: handover
   date: 2026-09-25
-  sha256: 4d246da908aa09269e801cc1bd4c87d110523f93781510b03f8aabf1a5f3a9b7
+  sha256: 8be869d6df33d2e743f9f7870493cdcb2223e1aedaecd57ff42443dfcd2b001c
   status: live
 -->
 # Handover — River-Folge 24 (2026-09-25)
@@ -87,29 +87,6 @@ bestellfertig (siehe Stufe 2). Kein dispatchbarer Punkt in diesem Atom.
 - **Blockade:** keine — wartet auf das Laufende (der Trigger).
 - **Braucht:** `ci_manage view 36102727319` — jedes Matrix-Segment success, kein 180-Cap-Abbruch
   (der Workflow ist bereits dispatcht, kein zweiter Lauf).
-
-### Beat-Arbitrierung: funktionale Verifikation im Betrieb
-- **Status:** wartend | **Bindung:** eigen (hardware/versteckter Lauf)
-- **Trigger:** ein Beat-Quellen-Satz ist am Host gesetzt (Serial-Gerät + `OMEGAFLOW_BLE_HR`/`FIT_DIR`)
-  und ein sichtbarer/hidden Lauf steht.
-- **Lage:** die Spawn-Arbitrierung steht (`main_flow.rs:504`) (gemessen 2026-09-24 via sgrep),
-  aber kein Lauf hat die Verdict-Zeile (`beat source: …`) gemessen erzeugt; `tests.rs` deckt
-  nur die reine Funktion.
-- **Blockade:** Heavy compute (Regel: CI, nie lokal) — eine Live-Messung braucht CI oder Operator-Wort.
-- **Braucht:** `cargo test` in CI (Funktion) bzw. ein versteckter Lauf mit zwei gesetzten Quellen,
-  der genau eine `beat source:`-Zeile zeigt.
-
-### 945-FIT-Datei (Onboard nur FIT/CIQ)
-- **Status:** wartend | **Bindung:** eigen (Ein-Quellen-Regel)
-- **Trigger:** ein Onboard-FIT/CIQ-Auslesepfad wird gemessen nötig.
-- **Lage:** der Host-Reader ist gemessen (gemessen 2026-09-24 via sgrep) — sensory hält
-  `parse_fit` (`src/archivar/fit.rs:78`), verdrahtet in `main_flow.rs`; CIQ hat **keinen**
-  Reader (`sgrep -i ciq src tools` = leer); River arbitriert die Beat-Quellen zentral;
-  `OMEGAFLOW_SERIAL_IN` steht (`src/archivar/ingress.rs:4`, `ble.rs:931`).
-- **Blockade:** keine — bewusst `pending` (Ein-Quellen-Regel).
-- **Braucht:** erste Messung bleibt: wird ein Onboard/CIQ-Pfad gebraucht? Sonst bleibt
-  `FIT_DIR` der FIT-Kanal; BLE (`OMEGAFLOW_BLE_HR`) und Serial sind über die Arbitrierung
-  ausgeschlossen, solange FIT läuft.
 
 ### TLS im Relay für kabellose Sensorik
 - **Status:** wartend | **Bindung:** eigen (Rat/Bau)
