@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: 4ae36aa8d37961a69029729b805bbf5eada8842370e501f2b499a152fb7f36cd
+  sha256: 0e2d4d21559e393d936a5aeea5c9bb5b56354b97419bf3cf2d5c8f275e5bc95d
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
@@ -66,8 +66,7 @@ nicht erledigt.
   als Zahl ausgewiesen (`4802 agree / 912 disagree …`), nie still vereinigt.
 - Kontrolle: Der schwebende `sha256` im Header muss exakt dem Body
   entsprechen (`sed '/^<!--/,/^-->/d' <f> | sha256sum`). Das Exzellenz-Konzept
-  selbst trägt seinen `sha256` erst, wenn sein Body final ist (aktuell
-  `PENDING`).
+  selbst trägt seinen `sha256` im Header; sein Body ist final.
 
 ### 2.2 Die Bahn trägt ihre Adresse (ICRS & TDB)
 
