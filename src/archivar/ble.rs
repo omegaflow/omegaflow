@@ -1357,7 +1357,7 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
         }
     }
     let gfdi_chars = characteristic_matches(&objects, &device_path, GFDI_UUID_FRAGMENT);
-    for (uuid, path) in &gfdi_chars {
+    for (path, uuid) in &gfdi_chars {
         match bus.call(BLUEZ_NAME, path, GATT_CHAR_IFACE, "StartNotify", "", &[]) {
             Some(Reply::Return(_)) => {}
             Some(Reply::Decline(Some(name))) if name.ends_with(".InProgress") => {}
@@ -1415,7 +1415,7 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
             continue;
         }
         if let Some(path) = msg.path.as_deref()
-            && let Some((uuid, _)) = gfdi_chars.iter().find(|(_, p)| p == path)
+            && let Some((_, uuid)) = gfdi_chars.iter().find(|(p, _)| p == path)
         {
             let Some(value) = properties_changed(&msg.args, "Value").flatten() else {
                 continue;
@@ -1746,6 +1746,42 @@ mod tests {
             characteristic_paths(&args, device, "2a37"),
             vec!["/org/bluez/hci0/dev_X/service0/char_hr".to_string()]
         );
+    }
+
+    #[test]
+    fn gfdi_match_names_the_path_before_the_uuid() {
+        let gfdi_uuid = "0000180d-6a4e28-0000-1000-8000-00805f9b34fb";
+        let path = "/org/bluez/hci0/dev_X/service0014/char0015";
+        let args = vec![DbusValue::Dict(vec![managed_characteristic(
+            path, gfdi_uuid,
+        )])];
+        let matches = characteristic_matches(&args, "/org/bluez/hci0/dev_X", GFDI_UUID_FRAGMENT);
+        assert_eq!(matches.len(), 1);
+        assert_eq!(matches[0].0, path);
+        assert_eq!(matches[0].1, gfdi_uuid);
+    }
+
+    #[test]
+    fn error_reply_is_a_decline_for_the_calling_serial() {
+        let mut fields = Marshal::new(16);
+        fields.field(FIELD_DECLINE_NAME, "s");
+        fields.str("org.bluez.Error.NotSupported");
+        fields.field(FIELD_REPLY_SERIAL, "u");
+        fields.align(4);
+        fields.buf.extend_from_slice(&7u32.to_le_bytes());
+        fields.field(FIELD_SIGNATURE, "g");
+        fields.sig("s");
+        let mut body = Marshal::new(0);
+        body.str("Characteristic does not support notifications");
+        let msg = marshal_message(11, TYPE_DECLINE, fields, &body.buf);
+        let parsed = parse_message(&msg).expect("valid error reply");
+        assert_eq!(parsed.msg_type, TYPE_DECLINE);
+        assert_eq!(parsed.reply_serial, Some(7));
+        assert_eq!(
+            parsed.decline_name.as_deref(),
+            Some("org.bluez.Error.NotSupported")
+        );
+        assert!(matches!(&parsed.args[0], DbusValue::Str(s) if s.contains("notifications")));
     }
 
     #[test]
