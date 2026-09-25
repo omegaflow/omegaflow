@@ -335,8 +335,11 @@ Schwarze-Loch-Doppelsterne oder primordial) × B-Moden-Obergrenzen
 Schöpfung heran: TE(CMB-Schwankung → Struktur) über die z-Reihe —
 die Tiefe ist die Zeitachse, der Lag trägt die Wachstumszeit der
 Struktur; TE(Inflation-Gravitation → CMB-Temperatur). Die
-Reihen-Paarung (Winkelserie × z-Reihe) ist eine offene
-Form-Entscheidung — wie die Reihenachse des Kuprat-Blatts.
+Reihen-Achse ist entschieden (Rat, 2026-09-25): die z-Serie trägt
+die Paarung — Tiefe = Lookback-Zeit, Lag in SI-Sekunden,
+cone-gate-fähig; die Winkel-/Pixelring-Paarung ist als
+Wachstums-Paarung gestrichen (Lag = Pixel, keine SI-Zeit) und
+bleibt nur Zellgeometrie.
 
 **Was emergiert:** der kausale Pfeil vom Echo in die heutige
 Struktur — oder die Stille. t = 0 selbst wird verweigert: dort
