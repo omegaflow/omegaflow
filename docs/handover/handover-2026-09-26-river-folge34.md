@@ -3,7 +3,7 @@
   session: River-Folge 34
   class: handover
   date: 2026-09-26
-  sha256: e2206ef48f019083fe2a9286f797172709fbb31912de7257ff7456b2ebb4bf12
+  sha256: b9bd72ab3e6f40307d277f86543029311890e25514d17abf439d36ef3626b5be
   status: live
 -->
 # Handover — River-Folge 34 (2026-09-26)
@@ -30,9 +30,10 @@ Diese Session konsumierte `handover-2026-09-26-river-folge33.md`.
   Mountain-Folge 166): `state/mail/mail_ledger.φ` present (157 Zeilen), jüngste Eingänge
   Registrierung/Verify, keine fällige Korrespondenz. Der `mail_digest`-Befund „ledger
   absent" bleibt das Pfad-Artefakt (`state/` = privates Repo).
-- **CI:** (gemessen 2026-09-26 via `ci_manage list`/`view` + `gh workflow run`) HTTP 403
-  (GitHub-API-Rate-Limit, user `295896184`); kein Run lesbar, `gh workflow run` →
-  `GraphQL: API rate limit already exceeded`.
+- **CI:** (gemessen 2026-09-26 via `ci_manage list`/`view` + `gh workflow run`) beim
+  Session-Start REST HTTP 403 (GitHub-API-Rate-Limit, user `295896184`); gegen Session-Ende
+  antwortet `ci_manage view 36194355313` wieder (REST frei, Lauf `pending`), `gh workflow
+  run` bleibt GraphQL-blockiert (`GraphQL: API rate limit already exceeded`).
 - **Safety-Snapshot:** `refs/safety/1790375657`.
 - **`register_lookup --orphan-docs`:** 40 trägerlose Prosadokumente (folge33: 42 → 2
   getragen). Klassifikation (2026-09-26, `explore`): **1 River-Träger**
@@ -54,19 +55,21 @@ Diese Session konsumierte `handover-2026-09-26-river-folge33.md`.
   folge33-Angabe „uncommitted" ist damit überholt. Das Träger-Papier
   `docs/paper/gic-causal-driver.md` trägt den offenen Marker (PCMCI cross-check +
   full-lag-sweep family bound „results pending", Z. 17). `gh workflow run
-  bz-retro-probe.yml` → GraphQL 403, **kein Run**. Die zwei Zeugen (Jahres-Pfeil vs.
-  gehärteter Quartals-bound) stehen weiter als `Riss`, gebaut-aber-ungemessen.
-- **Blockade:** GitHub-API-Rate-Limit.
+  bz-retro-probe.yml` → GraphQL 403, **kein Dispatch** (REST `ci_manage view` antwortet
+  nach dem Push wieder). Die zwei Zeugen (Jahres-Pfeil vs. gehärteter Quartals-bound)
+  stehen weiter als `Riss`, gebaut-aber-ungemessen.
+- **Blockade:** GitHub-API-GraphQL-Quota (REST frei, `gh workflow run` → 403).
 - **Braucht:** nach Quota-Reset `gh workflow run bz-retro-probe.yml`, Run-ID einmal per
   `ci_manage view <id>` lesen, die zwei Zeugen gegen den einen Bound auswerten.
 
 #### health-check — Verdikt am Fix messen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf `36194355313` ist beendet **und** die API-Quota ist zurück.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage view`) `ci_manage view 36194355313` → HTTP
-  403, Run nicht lesbar. Der neue Tone→Apertur-Gate-Test (`mathematikerin/tests.rs:547`)
-  hängt an der CI-Verifikation des Folge-33-HEAD; lokal `cargo check --tests` grün.
-- **Blockade:** GitHub-API-Rate-Limit.
+- **Lage:** (gemessen 2026-09-26 via `ci_manage view`) Lauf `36194355313` (HEAD
+  `42471cde`, attempt 1) ist `pending`, nicht beendet. Der neue Tone→Apertur-Gate-Test
+  (`mathematikerin/tests.rs:547`) hängt an der CI-Verifikation des Folge-33-HEAD; lokal
+  `cargo check --tests` grün.
+- **Blockade:** keine — wartet auf das Lauf-Ende (REST frei).
 - **Braucht:** `ci_manage view 36194355313`, bei Rot `ci_manage log 36194355313`.
 
 ### Rat handelt
