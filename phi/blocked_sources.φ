@@ -161,38 +161,13 @@ note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX o
 
 parser-def json
 gap unit-auto-detect
-url https://aecdynamicfiles.s3.us-west-2.amazonaws.com/recent_events.json
-note AEC recent_events.json 2026-09-25 HTTP 200 647244 B sha256 cc91725f715a; array [{"event":{lat,lng,depth_km,magnitude,magnitude_type,event_time_epoch}}]; fdsnws event geojson HTTP 404; HTML recent_list ohne lat/lon — "kein JSON-API" überholt.
-
-parser-def json
-gap unit-auto-detect
-url https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
-note BGS-FDSN event: field magnitude/depth_km/reporting_network unit absent — unit-auto-detect (convert_to_si) gap; map features trägt geometry.coordinates lat/lon. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
-note ETH-SED FDSN event: field magnitude/depth_km/event_source unit absent — unit-auto-detect gap; map features trägt geometry lat/lon. Seismisch echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://coastwatch.noaa.gov/erddap/griddap/erdCALIPSOAer532monthly.csv?ext532%5Blast%5D%5B0%5D%5B%28-60.0%29%3A%2875.0%29%3A3%5D%5B%28-180.0%29%3A%28180.0%29%3A3%5D
-note CALIPSO Aerosol: field aerosol_extinction_532nm_km1 unit absent — unit-auto-detect gap; rows latitude/longitude. Em (Aerosol) echt.
-
-parser-def json
-gap unit-auto-detect
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
-note NASA Exoplanet TAP: field planet_mass_MJup/planet_radius_RJup/semimajor_axis_au/rv_semi_amplitude unit absent — unit-auto-detect gap; cmap trägt ra/dec. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_radj,pl_bmassj,pl_trandep,pl_tranmid,pl_orbper,st_teff,st_rad,st_mass,sy_dist+FROM+ps+WHERE+pl_trandep+IS+NOT+NULL+AND+ra+IS+NOT+NULL+ORDER+BY+pl_trandep+DESC&FORMAT=csv
-note NASA Exoplanet TAP (Transit): field planet_radius_rjup/transit_depth_ppt/transit_midpoint_bjd/orbital_period_d unit absent — unit-auto-detect gap; cmap ra/dec.
+note NASA Exoplanet TAP: field planet_mass_MJup/planet_radius_RJup/semimajor_axis_au/rv_semi_amplitude unit absent — unit-auto-detect gap; cmap trägt ra/dec. Em echt. rv_semi_amplitude: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
-note NASA Exoplanet TESS-TOI: field orbital_period_days/earth_radius/earth_mass/transit_duration_hours/stellar_teff_K unit absent — unit-auto-detect gap; cmap ra/dec.
+note NASA Exoplanet TESS-TOI: field orbital_period_days/earth_radius/earth_mass/transit_duration_hours/stellar_teff_K unit absent — unit-auto-detect gap; cmap ra/dec. earth_radius/transit_duration_hours: suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
@@ -206,24 +181,9 @@ descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
-note Gaia DR3: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
 note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27EA%27+OR+best_class_name+=+%27EB%27+OR+best_class_name+=+%27EW%27+ORDER+BY+random_index
-note Gaia DR3 vari_classifier_result: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Veränderlichen-Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27DSCT%27+ORDER+BY+random_index
-note Gaia DR3 DSCT: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
@@ -233,54 +193,9 @@ descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
 note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query ill-formed. descoped (gemessen: kein Query-Arm-Surface — per-entry ADQL-Rewrite; phot_g_mean_mag=em mag).
 
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27BYDra%27+ORDER+BY+random_index
-note Gaia DR3 BY Dra: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27CV%27+ORDER+BY+random_index
-note Gaia DR3 CV: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27Mira%27+ORDER+BY+random_index
-note Gaia DR3 Mira: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27Cepheid%27+ORDER+BY+random_index
-note Gaia DR3 Cepheid: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27SR%27+ORDER+BY+random_index
-note Gaia DR3 SR: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.5+AND+phot_g_mean_mag+<+14+AND+parallax+>+2
 note Gaia DR3: field bp_rp — Farbindex; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.2+AND+phot_g_mean_mag+<+14+AND+parallax+>+5+AND+phot_bp_mean_flux_over_error+>+50+ORDER+BY+random_index
-note Gaia DR3: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
-note Gaia DR3: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+3.5+AND+bp_rp+<+6+AND+phot_g_mean_mag+<+16+AND+parallax+>+1
-note Gaia DR3: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
-note Gaia DR3 (metallarm): field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
@@ -314,70 +229,20 @@ descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap unit-auto-detect
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
-note IRSA SINGS: field distance_mpc/flux_3_6um..8_0um unit absent — unit-auto-detect gap; cmap ra/dec. Em (Galaxien) echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
-note IRSA SAGE-SMC: field mag_j/h/k/ir1/ir2 unit absent — unit-auto-detect gap; cmap ra/dec. Em (Photometrie) echt.
-
 parser-def csv
 gap unit-auto-detect
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
-note IRSA Planck SZ: field sz_signal_to_noise/sz_mass_10e14_msun/angular_radius_arcmin/distance_mpc unit absent — unit-auto-detect gap; cmap RA/DE/z. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
-note IRSA ZTF DR20: field median_mag/mag_rms unit absent — unit-auto-detect gap; cmap ra/dec. Em (Photometrie) echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+ORDER+BY+t_min+DESC
-note MAST CAOM JWST-NIRSpec: field exposure_sec/grating_filter/wavelength_min_m/wavelength_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+dbo.caomobservation+WHERE+collection%3D'HST'+AND+calib_level%3D3+AND+t_exptime%3E3600+ORDER+BY+t_exptime+DESC
-note MAST CAOM HST: field exposure_sec/instrument unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection%3D'TESS'+AND+calib_level%3D2+ORDER+BY+t_min+DESC
-note MAST CAOM TESS: field exposure_sec/tess_sector_start/tess_sector_end unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection+IN+('Kepler','K2')+AND+calib_level%3D2+ORDER+BY+t_min+DESC
-note MAST CAOM Kepler/K2: field exposure_sec/instrument unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
+note IRSA Planck SZ: field sz_signal_to_noise/sz_mass_10e14_msun/angular_radius_arcmin/distance_mpc unit absent — unit-auto-detect gap; cmap RA/DE/z. Em echt. sz_signal_to_noise: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def csv
 gap unit-auto-detect
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+proposal_id%3D'1727'+ORDER+BY+t_exptime+DESC
-note MAST CAOM JWST (1727): field exposure_s/filter/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
+note MAST CAOM JWST (1727): field exposure_s/filter/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt. exposure_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def csv
 gap unit-auto-detect
 url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+AND+(proposal_id%3D'1180'+OR+proposal_id%3D'1286')+ORDER+BY+t_exptime+DESC
-note MAST CAOM JWST-NIRSpec: field target_field/exposure_s/grating/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt.
-
-parser-def votable
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
-note MAST CAOM obscore (votable): field ra_deg/dec_deg/collection/instrument/filters/target/calibration_level unit absent — unit-auto-detect gap; cmap data s_ra/s_dec. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,243.7,-45.3,6.0))%3D1
-note NED TAP: field prefname/redshift unit absent — unit-auto-detect gap; cmap data ra/dec/z. Em (Redshift) echt.
-
-parser-def votable
-gap unit-auto-detect
-url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-note NED TAP (votable): field redshift/velocity_km_s unit absent — unit-auto-detect gap; cmap data ra/dec. Em echt.
+note MAST CAOM JWST-NIRSpec: field target_field/exposure_s/grating/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt. exposure_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
@@ -393,423 +258,133 @@ note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (ge
 
 parser-def json
 gap unit-auto-detect
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27PN%27
-note SIMBAD basic (PN): field redshift/mag_v unit absent — unit-auto-detect gap; cmap data ra/dec/plx/z. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgB%27
-note SIMBAD basic (sgB): field redshift/mag_v unit absent — unit-auto-detect gap; cmap data ra/dec/plx/z. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,plx_value,sp_type,otype,V+FROM+basic+WHERE+plx_value>50+AND+ra+IS+NOT+NULL+ORDER+BY+plx_value+DESC
-note SIMBAD basic (nah): field object_type/spectral_type/v_magnitude unit absent — unit-auto-detect gap; cmap ra/dec/plx. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
-note SDSS DR18 Star: field mag_r/g/u/i/z unit absent — unit-auto-detect gap; cmap ra/dec. Em (Photometrie) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
-note SDSS DR18 SpecObj: field mag_r/g/i unit absent — unit-auto-detect gap; cmap ra/dec/z. Em echt.
-
-parser-def json
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name,RA_ICRS,DE_ICRS,Plx,e_Plx,PM,pmRA,e_pmRA,pmDE,e_pmDE,Gmag,BPmag,RPmag,RadialVelocity+e_RV+FROM+\"I/355/gaiadr3\"+WHERE+RA_ICRS+IS+NOT+NULL+AND+Plx>5+ORDER+BY+Gmag+ASC+LIMIT+3000
-note VizieR I/355/gaiadr3: field parallax_mas/parallax_error_mas/total_proper_motion_mas_yr/g_mag/bp_mag/rp_mag/radial_velocity_error unit absent — unit-auto-detect gap; cmap ra/dec/pmra/pmdec/radvel/plx. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
-note VizieR I/311/hip2: field hipparcos_magnitude/b_minus_v_color/vt_magnitude/num_transits unit absent — unit-auto-detect gap; cmap ra/dec/plx/pm. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
-note VizieR B/gcvs: field variable_type/max_magnitude/min_magnitude/variability_period_days/spectral_type unit absent — unit-auto-detect gap; cmap ra/dec/pm. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
-note VizieR J/ApJS/260/12: field flux_15ghz_jy/apparent_speed_c/source_class unit absent — unit-auto-detect gap; cmap ra/dec/z. Em (Radio) echt.
-
-parser-def json
-gap unit-auto-detect
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
-note VizieR FRBCat: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio/FRB) echt.
+note VizieR FRBCat: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio/FRB) echt. dm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
-note VizieR J/A+A/693/A279 FRB: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio) echt.
-
-parser-def votable
-gap unit-auto-detect
-url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-note CADC ARGUS (votable): field collection unit absent — unit-auto-detect gap; cmap data ra/dec. Em echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv
-note MMS FGM: field bx/by/bz/b_total_nT unit 'nT (all flags)' multi-token nicht repräsentierbar — unit-Parser-Gap; epoch_utc force undetermined. Magnetfeld (em) echt.
+note VizieR J/A+A/693/A279 FRB: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio) echt. dm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def csv
 gap unit-auto-detect
 url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
-note GOES-16 MAG: field Hp/He/Hn/B_total_nT unit absent — unit-auto-detect gap; epoch_utc force undetermined. Magnetfeld (em) echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
-note ACE MFI: field bx/by/bz_gse_nT/b_magnitude_nT unit absent — unit-auto-detect gap; epoch_utc force undetermined. Magnetfeld (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
-note SWPC solar-wind mag: field bx/by/bz_gsm_nT/bt_total_nT/lat_gsm/lon_gsm unit absent — unit-auto-detect gap; map skalar (kein on/at). Magnetfeld (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://services.swpc.noaa.gov/json/tec/tec_global.json
-note SWPC TEC: field tec_tecu_dense/lat/lon unit absent — unit-auto-detect gap; map lat/lon. Ionosphäre (em) echt.
+note GOES-16 MAG: field Hp/He/Hn/B_total_nT unit absent — unit-auto-detect gap; epoch_utc force undetermined. Magnetfeld (em) echt. Hp/He/Hn: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://services.swpc.noaa.gov/products/geospace/auroral-electrojet.json
-note SWPC auroral electrojet: field au/ae/al_index_nt unit absent — unit-auto-detect gap. Geomagnetisch (em) echt.
+note SWPC auroral electrojet: field au/ae/al_index_nt unit absent — unit-auto-detect gap. Geomagnetisch (em) echt. au/ae: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://services.swpc.noaa.gov/products/solar-regions.json
-note SWPC solar regions: field region_number/hale_class/area_millionths/spot_class unit absent — unit-auto-detect gap. Sonne (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flux-1-minute.json
-note GOES xray: field solar_xray_flux_wm2/solar_xray_energy unit absent — unit-auto-detect gap. Sonnen-Röntgen (em) echt.
+note SWPC solar regions: field region_number/hale_class/area_millionths/spot_class unit absent — unit-auto-detect gap. Sonne (em) echt. area_millionths: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv
-note SDO EVE L3: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt.
+note SDO EVE L3: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt. wavelength_nm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://lasp.colorado.edu/data/fism/FISM2_2026_07_27.csv
-note FISM2: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
-note ISWA IRI TEC: field total_electron_content_TECU/peak_height_km/peak_electron_density unit absent — unit-auto-detect gap; map latitude/longitude. Ionosphäre (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gwosc.org/api/v2/events/?format=json&page_size=300
-note GWOSC events: field mass1_solar/mass2_solar/lum_dist_mpc/snr unit absent — unit-auto-detect gap; map results. Gravitation echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gwosc.org/api/v2/events/?catalog=GWTC-4-confident&format=json&page_size=200
-note GWOSC GWTC-4: field mass1_solar/mass2_solar/lum_dist_mpc/chirp_mass_solar unit absent — unit-auto-detect gap; map results. Gravitation echt.
+note FISM2: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt. wavelength_nm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=AMAZON&product=GRACE_TWS&format=json
-note GRACE TWS (Amazonas): field tws_anomaly_cm/tws_uncertainty_cm/linear_trend_cm_yr/seasonal_amp_cm unit absent — unit-auto-detect gap; map timeseries. Gravitation echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=ANTARCTICA&product=GRACE_ICE&format=json
-note GRACE ICE (Antarktis): field mass_anomaly_gt/mass_uncertainty_gt/mass_trend_gt_yr unit absent — unit-auto-detect gap; map timeseries. Gravitation echt.
-
-parser-def json
-gap unit-auto-detect
-url https://mirovaweb.it/api/v1/anomalies?limit=200
-note MIROVA: field max_temp_kelvin/radiative_power_mw unit absent — unit-auto-detect gap; map features geometry. Thermal (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://modvolc.ov.ingv.it/modvolc/feed.json
-note MODVOLC: field hotspot_max_temp_c/radiative_power_mw unit absent — unit-auto-detect gap; map items lat/lon. Thermal (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://afis.meraka.org.za/afis/data/json/
-note AFIS (Südafrika Fire): field fire_radiative_power_mw unit absent — unit-auto-detect gap; map fires lat/lon. Thermal (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://so2.gsfc.nasa.gov/measures/measures_so2.html
-note NASA SO2: field so2_mass_kt unit absent — unit-auto-detect gap; rows latitude/longitude. Atmosphäre (diffusion) echt.
+note GRACE TWS (Amazonas): field tws_anomaly_cm/tws_uncertainty_cm/linear_trend_cm_yr/seasonal_amp_cm unit absent — unit-auto-detect gap; map timeseries. Gravitation echt. linear_trend_cm_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_info_v3?site=all&if_no_site=1
-note AERONET: field aod_440nm/aod_500nm/aerosol_angstrom unit absent — unit-auto-detect gap; map latitude/longitude. Atmosphäre (em) echt.
+note AERONET: field aod_440nm/aod_500nm/aerosol_angstrom unit absent — unit-auto-detect gap; map latitude/longitude. Atmosphäre (em) echt. aerosol_angstrom: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json
-note EPA RadNet: field gamma_dose_uR_h unit absent — unit-auto-detect gap; map stations latitude/longitude. Strahlung (em) echt.
+note EPA RadNet: field gamma_dose_uR_h unit absent — unit-auto-detect gap; map stations latitude/longitude. Strahlung (em) echt. gamma_dose_uR_h: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100
-note OpenAQ latest: field location/parameter/value/unit unit absent — unit-auto-detect gap; map coordinates. Atmosphäre (diffusion) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.temis.nl/airpollution/no2col/data/tropomi/netcdf/no2_{year}{month}{day}.nc
-note TROPOMI NO2 (netCDF): field no2_troposphere_molcm2/no2_precision unit absent — unit-auto-detect gap; rows latitude/longitude. Atmosphäre (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.temis.nl/uvradiation/UVindex/uvief_{year}{month}{day}.nc
-note TEMIS UV index (netCDF): field uv_index_surface/cloud_fraction unit absent — unit-auto-detect gap; rows latitude/longitude. Atmosphäre (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZT.005/{year}/MLS-Aura_L3DM-Temperature_{year}d{day}.nc4.ascii?T[0:1:0][0:1:35][0:1:60]
-note Aura MLS Temperatur: field latitude/longitude/temperature_k unit absent — unit-auto-detect gap; rows. Atmosphäre (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZO3.005/{year}/MLS-Aura_L3DM-O3_{year}d{day}.nc4.ascii?O3[0:1:0][0:1:35][0:1:60]
-note Aura MLS Ozon: field latitude/longitude/ozone_mr_ppmv unit absent — unit-auto-detect gap; rows. Atmosphäre (diffusion) echt.
+note OpenAQ latest: field location/parameter/value/unit unit absent — unit-auto-detect gap; map coordinates. Atmosphäre (diffusion) echt. value: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/MOPITT/MOP03JM.009/{year}/{year}{month:02d}.he5.nc4.ascii?RetrievedCOTotalColumn[0:1:0][0:1:180][0:1:360]
-note MOPITT CO-Säule: field latitude/longitude/co_column_mol_cm2 unit absent — unit-auto-detect gap; rows. Atmosphäre (diffusion) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
-note NCEI GSOD: field mean_temp_f/max_temp_f/min_temp_f/precipitation_inch/wind_speed_kt/sea_level_pressure_mb/visibility_miles unit absent — unit-auto-detect gap; map LATITUDE/LONGITUDE. Wetter (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
-note NCEI global-hourly: field temperature_celsius/dewpoint_celsius/wind_speed_ms/wind_direction_degrees/visibility_m/pressure_hpa unit absent — unit-auto-detect gap; map. Wetter (thermal) echt.
+note MOPITT CO-Säule: field latitude/longitude/co_column_mol_cm2 unit absent — unit-auto-detect gap; rows. Atmosphäre (diffusion) echt. co_column_mol_cm2: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-2p.dat
-note NCEI WOA Heat-Content: field year_quarter/ohc_0_700m_10e22J/ohc_0_2000m_10e22J unit absent — unit-auto-detect gap; rows. Ozean (thermal) echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth&time>={today}T00:00:00Z&orderBy(%22time%22)
-note INCOIS Tsunami BPR: field bottom_pressure_mbar/depth_m unit absent — unit-auto-detect gap; rows latitude/longitude. Ozean (acoustic) echt.
-
-parser-def csv
-gap unit-auto-detect
-url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWD%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D
-note INCOIS NIO Wave-Model: field sig_wave_height_m/mean_wave_period_s/mean_wave_direction_deg unit absent — unit-auto-detect gap; rows latitude/longitude. Ozean (acoustic) echt.
+note NCEI WOA Heat-Content: field year_quarter/ohc_0_700m_10e22J/ohc_0_2000m_10e22J unit absent — unit-auto-detect gap; rows. Ozean (thermal) echt. ohc_0_700m_10e22J: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note INCOIS Tsunami OPR: field wave_height_m/significance unit absent — unit-auto-detect gap; map latitude/longitude. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://api.geonet.org.nz/tsunami/observation
-note GeoNet Tsunami observation: field intensity_class/wave_height_m unit absent — unit-auto-detect gap; map features geometry. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://api.geonet.org.nz/tsunami/dart
-note GeoNet DART: field sensor_type/depth_m unit absent — unit-auto-detect gap; map features geometry. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.pmel.noaa.gov/gt/dart/dart_map.json
-note PMEL DART map: field station_status/water_depth_m unit absent — unit-auto-detect gap; map lat/lon. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
-note NDBC DART 46401: field year/month/day/hour/sea_level_height_m unit absent — unit-auto-detect gap; rows. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750
-note NOAA CO-OPS water level: field water_level_m/data_quality_flag unit absent — unit-auto-detect gap; map data. Ozean (acoustic) echt.
+note INCOIS Tsunami OPR: field wave_height_m/significance unit absent — unit-auto-detect gap; map latitude/longitude. Ozean (acoustic) echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://www.psmsl.org/data/obtaining/slowtrends/slowtrends.txt
-note PSMSL slow trends: field lat/lon/trend_mm_yr/trend_uncertainty_mm_yr/data_years unit absent — unit-auto-detect gap; rows lat/lon. Ozean (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://grace.jpl.nasa.gov/media/documents/GMSL_RLv04_JPL_RL06.3_SLCC.txt
-note JPL GMSL: field decimal_year/gmsl_anomaly_mm/gmsl_uncertainty_mm/trend_removed_mm unit absent — unit-auto-detect gap; rows. Ozean (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.star.nesdis.noaa.gov/sod/lsa/SeaLevelRise/LSA_SLR_timeseries_global.csv
-note NOAA STAR SLR: field year_fraction/gmsl_mm/gmsl_uncertainty_mm unit absent — unit-auto-detect gap; rows. Ozean (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land-ocean/1/7/2026.json
-note NCEI CAG global temp: field decimal_year/temp_anomaly_c/anomaly_rank unit absent — unit-auto-detect gap; map data. Klima (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://climate.copernicus.eu/api/v1/temperature/global-monthly?format=json
-note Copernicus C3S global temp: field land_temp_anomaly_k/reference_period unit absent — unit-auto-detect gap. Klima (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq{year2}{yday}.dat
-note NOAA GML Solrad ABQ: field year..minute/zenith_angle_deg/dw_psp_wm2/direct_wm2/diffuse_wm2/uvb_wm2/uvb_temp_c unit absent — unit-auto-detect gap; rows. Strahlung (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gml.noaa.gov/aftp/data/ccgg/flask/multispecies/multi_station_all.txt
-note NOAA GML Flask: field elevation_m/year/month/co2_ppm/ch4_ppb/n2o_ppb unit absent — unit-auto-detect gap; rows site_latitude/longitude. Atmosphäre (diffusion) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://gml.noaa.gov/aftp/data/trace_gases/co2/flask/surface/co2_surface-flask_ccgg_text.txt
-note NOAA GML CO2 Flask: field year/month/day/co2_ppm/station_lat/station_lon unit absent — unit-auto-detect gap; rows latitude/longitude. Atmosphäre (diffusion) echt.
+note PSMSL slow trends: field lat/lon/trend_mm_yr/trend_uncertainty_mm_yr/data_years unit absent — unit-auto-detect gap; rows lat/lon. Ozean (acoustic) echt. trend_mm_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gml.noaa.gov/aftp/data/uv/monitoring/latest/uv_daily.dat
-note NOAA GML UV daily: field uv_index/erythemally_weighted_uv/ozone_dobson unit absent — unit-auto-detect gap; rows lat/lon. Strahlung (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2023-050423.txt
-note NHC HURDAT2: field obs_count/lat_str/lon_str/max_wind_kt/min_pressure_mb unit absent — unit-auto-detect gap; rows. Hurrikan (advective) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamiEvents?maxRows=2000&startRow=1&orderBy=year&ascending=false
-note NGDC tsunami events: field event_year/earthquake_magnitude/max_wave_height_m/damage_mmusd unit absent — unit-auto-detect gap; map latitude/longitude. Seismisch/ozean echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ngdc.noaa.gov/hazel/hazard/service/earthquake/query?limit=500&offset=0&format=json
-note NGDC earthquake events: field magnitude/depth_km/year unit absent — unit-auto-detect gap; map latitude/longitude. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=json&nodata=404
-note IRIS SPUD GCMT: field depth_km/magnitude unit absent — unit-auto-detect gap; rows evla/evlo. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.txt
-note GCMT catalog: field depth_km/magnitude/year unit absent — unit-auto-detect gap; rows evla/evlo. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://data.raspberryshake.org/api/v2/shake?limit=500
-note RaspberryShake shake: field magnitude/depth_km unit absent — unit-auto-detect gap; map lat/lon. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
-note SCEDC FDSN event: field magnitude/depth_km/mag_type/reporting_network unit absent — unit-auto-detect gap; map features geometry. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://api.geonet.org.nz/quakes?limit=100
-note GeoNet quakes: field magnitude/depth_km/locality/quality unit absent — unit-auto-detect gap; map features geometry. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
-url https://api.geonet.org.nz/quake?limit=200
-note GeoNet quake: field magnitude/depth_km/mag_type unit absent — unit-auto-detect gap; map features geometry. Seismisch echt.
+note NOAA GML UV daily: field uv_index/erythemally_weighted_uv/ozone_dobson unit absent — unit-auto-detect gap; rows lat/lon. Strahlung (em) echt. erythemally_weighted_uv: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://earthquake.usgs.gov/static/lfs/nshm/qfaults/Qfaults_GIS_15.zip
-note USGS Qfaults (zip): field slip_sense/slip_rate_mm_yr/age_yr unit absent — unit-auto-detect gap; rows lat/lon. Seismotektonik echt.
-
-parser-def json
-gap unit-auto-detect
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
-note JPL SBDB NEO: field epoch_jd/absolute_magnitude/estimated_diameter_km/geometric_albedo/orbit_class unit absent — unit-auto-detect gap; map data. Asteroid (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22class%3Aeq%3ATNO%22%5D%7D
-note JPL SBDB TNO: field semi_major_axis_au/orbital_eccentricity/orbital_inclination_deg/absolute_magnitude unit absent — unit-auto-detect gap; map data. TNO (gravity) echt.
+note USGS Qfaults (zip): field slip_sense/slip_rate_mm_yr/age_yr unit absent — unit-auto-detect gap; rows lat/lon. Seismotektonik echt. slip_rate_mm_yr/age_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
-note JPL Horizons Vectors: field epoch_jd/x_au/y_au/z_au/vx_au_day/vy_au_day/vz_au_day unit absent — unit-auto-detect gap; rows. Ephemeride (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
-note JPL Horizons Observer: field epoch_jd/ra_deg/dec_deg/distance_au/solar_distance_au unit absent — unit-auto-detect gap; rows. Ephemeride (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.minorplanetcenter.net/cgi-bin/neocp.cgi?style=json
-note MPC NEOCP: field temporary_designation/neocp_score/uncertainty_arcmin/num_observations/observation_arc_days/abs_magnitude unit absent — unit-auto-detect gap; cmap R.A./Decl. Asteroid (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
-note MPC ObsCodes: field longitude_deg/rho_cos_phi/rho_sin_phi unit absent — unit-auto-detect gap; rows lat/lon. Geodäsie echt.
+note JPL Horizons Vectors: field epoch_jd/x_au/y_au/z_au/vx_au_day/vy_au_day/vz_au_day unit absent — unit-auto-detect gap; rows. Ephemeride (gravity) echt. vx_au_day: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://datacenter.iers.org/data/9/finals2000A.all
-note IERS EOP: field mjd/x_pole/y_pole/ut1_utc/lod/dpsi/deps unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt.
+note IERS EOP: field mjd/x_pole/y_pole/ut1_utc/lod/dpsi/deps unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt. x_pole/y_pole/ut1_utc: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
-note IERS Bulletin B: field mjd/x_pole_mas/y_pole_mas/ut1_utc_ms/dx_celestial_pole_mas/dy_celestial_pole_mas unit absent — unit-auto-detect gap. Erdrotation (gravity) echt.
+note IERS Bulletin B: field mjd/x_pole_mas/y_pole_mas/ut1_utc_ms/dx_celestial_pole_mas/dy_celestial_pole_mas unit absent — unit-auto-detect gap. Erdrotation (gravity) echt. x_pole_mas: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt
-note IERS Bulletin A: field mjd/x_pole_arcsec/y_pole_arcsec/ut1_utc_s unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt.
+note IERS Bulletin A: field mjd/x_pole_arcsec/y_pole_arcsec/ut1_utc_s unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt. ut1_utc_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://maia.usno.navy.mil/ser7/finals2000A.daily
-note USNO MAIA EOP: lastline geosphere_ut1_utc_iers — unit/cadence absent. Erdrotation (gravity) echt.
+note USNO MAIA EOP: lastline geosphere_ut1_utc_iers — unit/cadence absent. Erdrotation (gravity) echt. geosphere_ut1_utc_iers: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created
-note GCN Fermi/GBM events: field ra_deg/dec_deg/sigma unit absent — unit-auto-detect gap; cmap ra/dec. Gamma (em) echt.
+note GCN Fermi/GBM events: field ra_deg/dec_deg/sigma unit absent — unit-auto-detect gap; cmap ra/dec. Gamma (em) echt. sigma: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
-note GCN AMON IceCube: field event_type/ra_deg/dec_deg/energy/signalness unit absent — unit-auto-detect gap; rows. Neutrino (em-Schauer) echt.
+note GCN AMON IceCube: field event_type/ra_deg/dec_deg/energy/signalness unit absent — unit-auto-detect gap; rows. Neutrino (em-Schauer) echt. energy/signalness: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=gold&limit=100
-note GCN IceCube gold: field significance/alert_type unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt.
+note GCN IceCube gold: field significance/alert_type unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
-note GCN IceCube bronze: field significance unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt.
-
-parser-def json
-gap unit-auto-detect
-url https://www.ngdc.noaa.gov/hazel/hazard/service/tsunami/query?limit=500&format=json
-note NGDC tsunami query: field event_year/tsunami_cause/max_wave_height_m unit absent — unit-auto-detect gap; map latitude/longitude. Ozean/seismisch echt.
+note GCN IceCube bronze: field significance unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://weather.cma.cn/api/now/54511
@@ -817,53 +392,28 @@ note CMA now (Station 54511): field temp_c/humidity_pct/pressure_hpa/wind_speed_
 
 parser-def json
 gap unit-auto-detect
-url https://api.weather.bom.gov.au/v1/observations/{lat},{lon}
-note BOM observations: field temp_c/feels_like_c/humidity_pct/wind_speed_kmh/wind_dir unit absent — unit-auto-detect gap. Wetter (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
 url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
-note NOAA CPC AMO: field year/jan..dec unit absent — unit-auto-detect gap; rows. Klimaindex (thermal) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.{year}.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start={year}-{month}-{day}T00:00:00Z&time_end={year}-{month}-{day}T23:59:59Z&timeStride=1&accept=csv
-note NCEP Reanalysis SLP: field sea_level_pressure_pa unit absent — unit-auto-detect gap; rows lat/lon. Atmosphäre (acoustic) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://mrms.ncep.noaa.gov/data/2D/PrecipRate/latest.json
-note NOAA MRMS precip: field precipitation_rate_mmh/precipitation_type unit absent — unit-auto-detect gap; map lat/lon. Wetter (acoustic) echt.
+note NOAA CPC AMO: field year/jan..dec unit absent — unit-auto-detect gap; rows. Klimaindex (thermal) echt. jan..dec: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN,T2M,PRECTOTCORR&community=RE&longitude={lon}&latitude={lat}&start={today_nodashes}&end={today_nodashes}&format=JSON
-note NASA POWER daily: field insolation_kwh_m2 force undetermined (T2M/PRECTOTCORR gesetzt) — unit-auto-detect gap. Solar (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON
-note NASA POWER UV: field uv_index_global force undetermined — unit-auto-detect gap. Solar (em) echt.
+note NASA POWER daily: field insolation_kwh_m2 force undetermined (T2M/PRECTOTCORR gesetzt) — unit-auto-detect gap. Solar (em) echt. insolation_kwh_m2: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://www.sidc.be/silso/datafiles/SN_d_tot_V2.0.txt
-note SILSO sunspot: field year/month/day/decimal_year/sunspot_number/std_dev unit absent — unit-auto-detect gap; rows. Sonne (em) echt.
+note SILSO sunspot: field year/month/day/decimal_year/sunspot_number/std_dev unit absent — unit-auto-detect gap; rows. Sonne (em) echt. sunspot_number/std_dev: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://kp.gfz-potsdam.de/app/files/gfz-hpo-Kp_def-{year}.txt
-note GFZ Kp: field year/month/day/hour/kp_value unit absent — unit-auto-detect gap; rows. Geomagnetisch (em) echt.
+note GFZ Kp: field year/month/day/hour/kp_value unit absent — unit-auto-detect gap; rows. Geomagnetisch (em) echt. kp_value: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 parser-def json
 gap unit-auto-detect
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
-note GFZ SN index: last solar_sunspot_number — unit/cadence absent. Sonne (em) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/{year}{month}/dst{year}{month}{day}.for.request
-note WDC Kyoto Dst: field hour/dst_nT unit absent — unit-auto-detect gap; rows. Geomagnetisch (em) echt.
+note GFZ SN index: last solar_sunspot_number — unit/cadence absent. Sonne (em) echt. solar_sunspot_number: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://www.jma.go.jp/bosai/quake/data/list.json
@@ -871,18 +421,8 @@ note JMA quake list: lastline geosphere_earthquakes_jma_recent_mag. descoped (ge
 
 parser-def json
 gap unit-auto-detect
-url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
-note CENC quake: count lines geosphere_earthquakes_cenc_count — unit/cadence absent. Seismisch echt.
-
-parser-def json
-gap unit-auto-detect
 url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
-note IERS EOP C04: last geosphere_earth_orientation_raw — unit/cadence absent. Erdrotation (gravity) echt.
-
-parser-def json
-gap unit-auto-detect
-url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
-note EMODnet Physics Sound: lastrow hydrosphere_sound_pressure_db — unit/cadence absent. Ozean (acoustic) echt.
+note IERS EOP C04: last geosphere_earth_orientation_raw — unit/cadence absent. Erdrotation (gravity) echt. geosphere_earth_orientation_raw: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
