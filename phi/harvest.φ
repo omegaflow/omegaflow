@@ -97,10 +97,9 @@ format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler
 workflow harvest-long
-args --year 2009
-pattern ^lro_trk_2009(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
+pattern ^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
-timeout 120
+timeout 240
 idempotent true
 note LRO RSS raw tracking — utF, 75-byte records; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series. Run 35425365015 success 2026-09-19: lro_trk_2009.bin 114787240 B sha256 c29af4b4… CDN present; in sources.φ registriert.
 
