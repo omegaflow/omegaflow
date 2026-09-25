@@ -3,7 +3,7 @@
   session: Mycelium-Folge 156
   class: handover
   date: 2026-09-25
-  sha256: 0f818ca6595bdc7db9d4be95371e1bd3e79ddae8471f7ff0f97a6aae293a21ed
+  sha256: c2191e9cb64b4f3bb95e15a7eb4d8d9569d338fd6728c92b26bf0ce73056c136
   status: live
 -->
 # Handover — Mycelium-Folge 156 (2026-09-25)
@@ -56,6 +56,23 @@ Diese Session hat `handover-2026-09-25-mycelium-folge155.md` konsumiert.
 - **Blockade:** keine.
 - **Braucht:** Marker in `index.φ` auf generiert/infra umstellen (Register-Edit,
   SOURCE_PORT-konform).
+
+### Quellen-Routen aus den Future-Tauchern (gemessen 2026-09-25)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** nächster Dispatch.
+- **Lage:** (gemessen 2026-09-25 via Future-Taucher, volle Kaskade) fünf Datenzugänge, die als „gated/wartend" galten, sind offen bzw. eigen-verschuldet:
+  - **D1 Sonden-Derivate:** Voyager-ODR liegt bereits in `phi/sources.φ:8857–8961` (Heimat `pds-ppi.igpp.ucla.edu`); PDS-Rings RSS-raw, NAIF SPK (Voyager/Mariner 10), Atmo-Okkultations-Doppler offen; die NSSDC-Tapes bleiben request-only.
+  - **D3 LPF Δg:** ESA LPF Legacy Archive AIO (`metadata-action`/`data-action`, `ANALYSIS_OBJECT` QUANTITY `Delta-g-x-L1/L2-*`) + MUST-Telemetrie, anonym; Format LTPDA/MATLAB.
+  - **D4 GAVO TAP-Async:** own-side Client-Fehler — DaCHS ignoriert `PHASE=RUN` bei Job-Anlage, nötig ist separater `POST /tap/async/<job>/phase`; kein Konto.
+  - **D6 Astro Data Lab:** `ls_dr10.tractor` + `decaps_dr2.object` über `datalab.noirlab.edu/tap/sync` anonym; LS DR10 NERSC-FITS offen, DECaPS2 Dataverse `10.7910/DVN/K88GFI`.
+  - **D8 TOAR Ozon:** API offen (`toar-data.fz-juelich.de/api/v2/data/timeseries/<id>?format=csv`, kein Login); TOAR-Deposit auf PANGAEA `10.1594/PANGAEA.876108`, Zenodo TOAR Phase II `10.5281/zenodo.21132339`; WOUDC/EBAS/NOAA GML/SHADOZ als Archive.
+- **Blockade:** keine.
+- **Braucht:** je Route Harvest + Quellen-Registrierung in `phi/sources.φ` (CDN-Manifestation über CI); D4 zusätzlich der Async-Client-Fix.
+
+### Benchmark D2/D8 (flash vs pro, gemessen 2026-09-25)
+- **D2 BiSON-Tabelle:** flash `$0.078` (input 125,6 k) vs pro `$0.051` (input 44,4 k) — **Sieger flash** (vollständig: edata1573 + Roh-Reihe 1976–2025; pro blieb bei edata1569/1572), bei 1,5× Kosten.
+- **D8 TOAR:** flash `$0.016` vs pro `$0.013` — **Sieger pro** (entscheidender Fund: PANGAEA-TOAR-Deposit + Zenodo), und günstiger.
+- **Lehre:** die Siegerklasse ist aufgabenabhängig — Referenz-Vollständigkeit → flash, Deposit-Suche → pro; keine pauschale Tier-Regel.
 
 #### Stufe 2 — operator-gebunden
 
