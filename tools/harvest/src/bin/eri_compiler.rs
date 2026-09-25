@@ -389,7 +389,7 @@ fn s3_tiles(listing_url: &str, first_body: &str) -> Vec<String> {
             break;
         }
         let next = continuation_url(listing_url, &token);
-        match fetch_raw_bytes(&next, 600) {
+        match fetch_raw_bytes(&next) {
             Some(b) => body = String::from_utf8_lossy(&b).into_owned(),
             None => {
                 eprintln!("eri_compiler: {next}: listing page returned void");
@@ -401,7 +401,7 @@ fn s3_tiles(listing_url: &str, first_body: &str) -> Vec<String> {
 }
 
 fn discover_index(url: &str) -> Vec<String> {
-    match fetch_raw_bytes(url, 600) {
+    match fetch_raw_bytes(url) {
         Some(b) => {
             let text = String::from_utf8_lossy(&b);
             if text.trim_start().starts_with('<') {
@@ -422,7 +422,7 @@ fn source_bytes(src: &str) -> Option<(Vec<u8>, String)> {
     if let Ok(b) = std::fs::read(src) {
         return Some((b, leaf));
     }
-    fetch_raw_bytes(src, 600).map(|b| (b, leaf))
+    fetch_raw_bytes(src).map(|b| (b, leaf))
 }
 
 fn compile_one(bytes: &[u8], name: &str) -> Option<Vec<EriSample>> {
@@ -552,7 +552,7 @@ fn main() {
         None => match arg_value(&args, "--url") {
             Some(url) => {
                 let leaf = url.rsplit('/').next().unwrap_or(&url).to_string();
-                match fetch_raw_bytes(&url, 600) {
+                match fetch_raw_bytes(&url) {
                     Some(b) => (b, leaf),
                     None => {
                         eprintln!("{url}: fetch returned void");

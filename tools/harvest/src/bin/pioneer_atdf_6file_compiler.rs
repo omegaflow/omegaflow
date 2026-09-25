@@ -28,7 +28,7 @@ fn main() {
     let mut merged: Vec<[f64; 14]> = Vec::new();
     for (fid, rel) in FILES.iter().enumerate() {
         let url = format!("{BASE}/{rel}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{rel}: fetch void ({url})");
             continue;
         };

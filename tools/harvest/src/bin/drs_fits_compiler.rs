@@ -32,7 +32,7 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        (None, Some(route)) => match fetch_raw_bytes(&route, 604800) {
+        (None, Some(route)) => match fetch_raw_bytes(&route) {
             Some(b) => b,
             None => {
                 eprintln!("drs_fits_compiler: fetch void ({route})");

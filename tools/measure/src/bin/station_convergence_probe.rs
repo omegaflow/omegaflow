@@ -672,7 +672,7 @@ fn main() {
 
     let (ground_rows, ground_note) = if live {
         let url = ground_fetch_url(&station, &start, &stop);
-        match fetch_raw(&url, None, &[], 600) {
+        match fetch_raw(&url, None, &[]) {
             Some(text) => {
                 let rows = parse_vector_rows(&text);
                 if rows.is_empty() {
@@ -695,7 +695,7 @@ fn main() {
 
     let (swarm_rows, swarm_note) = if live {
         let url = swarm_fetch_url(&start, &stop);
-        match fetch_raw(&url, None, &[], 600) {
+        match fetch_raw(&url, None, &[]) {
             Some(text) => {
                 let rows = parse_scalar_rows(&text);
                 if rows.is_empty() {

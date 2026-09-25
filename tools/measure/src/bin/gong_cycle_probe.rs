@@ -31,7 +31,7 @@ fn span(days: i64) -> String {
 fn load_bin(args: &[String], arg: &str, cdn: &str) -> Option<Vec<u8>> {
     match arg_value(args, arg) {
         Some(p) => std::fs::read(&p).ok(),
-        None => fetch_raw_bytes(cdn, 3600),
+        None => fetch_raw_bytes(cdn),
     }
 }
 

@@ -7,7 +7,6 @@ use omegaflow::cdn::upload_release;
 const DATA: &str = "https://atmos.nmsu.edu/pdsd/archive/data/";
 const NETLOC: &str = "atmos.nmsu.edu";
 const PREFIX: &str = "cassini_rsr";
-const REQUEST_TTL_S: u64 = 604800;
 const CRAWL_THREADS: usize = 16;
 const CRAWL_DEPTH: u32 = 8;
 
@@ -27,7 +26,7 @@ fn hrefs(text: &str) -> Vec<String> {
 }
 
 fn volumes() -> Option<Vec<String>> {
-    let Some(bytes) = fetch_raw_bytes(DATA, REQUEST_TTL_S) else {
+    let Some(bytes) = fetch_raw_bytes(DATA) else {
         eprintln!("rss volume listing fetch void ({DATA})");
         return None;
     };
@@ -75,7 +74,7 @@ fn crawl_wave(urls: &[String]) -> (Vec<String>, Vec<String>, usize) {
                     let mut failures = 0usize;
                     for url in slice {
                         let in_rsr = url.to_ascii_lowercase().ends_with("/rsr/");
-                        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+                        let Some(bytes) = fetch_raw_bytes(url) else {
                             eprintln!("{url}: listing fetch void");
                             failures += 1;
                             continue;
@@ -188,7 +187,7 @@ fn main() {
 
     let mut rows: Vec<(f64, f64, u32)> = Vec::new();
     for url in &files {
-        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+        let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void");
             failures += 1;
             continue;

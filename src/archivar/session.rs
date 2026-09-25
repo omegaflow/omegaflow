@@ -11,15 +11,14 @@ pub fn fetch_token_form(
     post_body: &str,
     headers: &[(String, String)],
     get_base: &str,
-    ttl: u64,
 ) -> Option<String> {
-    let token_response = fetch_raw(post_url, Some(post_body), headers, ttl)?;
+    let token_response = fetch_raw(post_url, Some(post_body), headers)?;
     let token_path = extract_token_path(&token_response)?;
     let get_url = join_token_path(get_base, &token_path)?;
-    fetch_raw(&get_url, None, &[], ttl)
+    fetch_raw(&get_url, None, &[])
 }
 
-pub fn fetch_superdarn_ascii(post_body: &str, ttl: u64) -> Option<String> {
+pub fn fetch_superdarn_ascii(post_body: &str) -> Option<String> {
     let headers = vec![(
         "Content-Type".to_string(),
         SUPERDARN_ASCII_CONTENT_TYPE.to_string(),
@@ -29,7 +28,6 @@ pub fn fetch_superdarn_ascii(post_body: &str, ttl: u64) -> Option<String> {
         post_body,
         &headers,
         SUPERDARN_ASCII_GET_BASE,
-        ttl,
     )
 }
 

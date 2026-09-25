@@ -20,7 +20,7 @@ fn listing_names(text: &str) -> Vec<String> {
 }
 
 fn volumes() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(DATA, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(DATA) else {
         eprintln!("rss volume listing fetch void ({DATA})");
         return Vec::new();
     };
@@ -49,7 +49,7 @@ fn crawl(url: &str, depth: u32, files: &mut Vec<String>) {
     if depth > 6 {
         return;
     }
-    let Some(bytes) = fetch_raw_bytes(url, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(url) else {
         return;
     };
     let Ok(text) = std::str::from_utf8(&bytes) else {
@@ -94,7 +94,7 @@ fn main() {
     eprintln!("cassini rss tnf files: {}", files.len());
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for url in &files {
-        let Some(bytes) = fetch_raw_bytes(url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void");
             continue;
         };

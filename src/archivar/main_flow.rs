@@ -261,7 +261,6 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     if items.is_empty() {
         return;
     }
-    let ttl = items[0].1.ttl;
     let parts: Vec<String> = items
         .iter()
         .map(|(_, _, p)| format!("{}.part", p))
@@ -285,7 +284,7 @@ pub fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
     if pending.is_empty() {
         return;
     }
-    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(ttl), 8);
+    let mut cmd = curl_base(RetryPolicy::Transient, TRANSFER_BOUND_S, 8);
     for (i, part, _) in &pending {
         cmd.arg("-o").arg(part).arg(&items[*i].1.url);
     }
@@ -1234,7 +1233,7 @@ pub fn main_flow() {
                     let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     let mut fetched = true;
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        fetched = match fetch_raw_bytes(&url, src_ttl) {
+                        fetched = match fetch_raw_bytes(&url) {
                             Some(bytes) => std::fs::write(&tmp_path, &bytes).is_ok(),
                             None => false,
                         };
@@ -1361,7 +1360,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_netcdf_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("netcdf {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -1442,7 +1441,6 @@ pub fn main_flow() {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
-                let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
                 let body_radius = archive
                     .body_ephemerides
@@ -1475,7 +1473,7 @@ pub fn main_flow() {
                     let dds_url = format!("{base}.dds");
                     let das_url = format!("{base}.das");
                     let dods_url = format!("{base}.dods");
-                    let dds = match fetch_raw(&dds_url, None, &[], src_ttl) {
+                    let dds = match fetch_raw(&dds_url, None, &[]) {
                         Some(b) => b,
                         None => {
                             eprintln!("opendap {}: dds fetch void — retry in ttl/Φ·2ⁿ", dds_url);
@@ -1483,7 +1481,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let das_doc = match fetch_raw(&das_url, None, &[], src_ttl) {
+                    let das_doc = match fetch_raw(&das_url, None, &[]) {
                         Some(b) => b,
                         None => {
                             eprintln!(
@@ -1494,7 +1492,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let dods = match fetch_raw_bytes(&dods_url, src_ttl) {
+                    let dods = match fetch_raw_bytes(&dods_url) {
                         Some(b) => b,
                         None => {
                             eprintln!("opendap {}: dods fetch void — retry in ttl/Φ·2ⁿ", dods_url);
@@ -1571,7 +1569,6 @@ pub fn main_flow() {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
-                let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();
                 let now_c = now;
                 let e = env.clone();
@@ -1585,14 +1582,14 @@ pub fn main_flow() {
                         }
                         let mut got = None;
                         for u in &urls {
-                            if let Some(b) = fetch_raw_bytes_post(u, None, &headers, src_ttl) {
+                            if let Some(b) = fetch_raw_bytes_post(u, None, &headers) {
                                 got = Some((u.clone(), b));
                                 break;
                             }
                         }
                         got
                     } else {
-                        fetch_raw_bytes(&urls[0], src_ttl).map(|b| (urls[0].clone(), b))
+                        fetch_raw_bytes(&urls[0]).map(|b| (urls[0].clone(), b))
                     };
                     let (used_url, mut bytes) = match fetched {
                         Some((u, b)) => (u, b),
@@ -1684,7 +1681,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("stars").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -1774,7 +1771,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_spectral_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("spectral {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -1898,7 +1895,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("xp_spectra").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_xp_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("xp_spectra {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -2011,7 +2008,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("jwst_spectra").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_jwst_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("jwst_spectra {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -2127,7 +2124,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("curves").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("lightcurve {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -2222,7 +2219,7 @@ pub fn main_flow() {
                         .to_string();
                     let tmp_path = content_cache(&format!("omegaflow_bl_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2375,7 +2372,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2492,7 +2489,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("gebco").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2584,7 +2581,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("slab2").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2676,7 +2673,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("gmrt").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2769,7 +2766,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("bayestar").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_bayestar_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2833,7 +2830,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("volume").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_volume_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -2932,7 +2929,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("series").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -3091,7 +3088,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("wind_waves").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_series_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
@@ -3231,7 +3228,7 @@ pub fn main_flow() {
                     let name = url.rsplit('/').next().unwrap_or("gong").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_gong_{name}"));
                     if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("gong {}: fetch void — retry in ttl/Φ·2ⁿ", url);
@@ -3370,12 +3367,7 @@ pub fn main_flow() {
                             },
                         )
                         .map(|b| resolve_secret(&b, &e));
-                        let bytes = match fetch_raw_bytes_post(
-                            &url,
-                            body.as_deref(),
-                            &headers,
-                            src_clone.ttl,
-                        ) {
+                        let bytes = match fetch_raw_bytes_post(&url, body.as_deref(), &headers) {
                             Some(b) => b,
                             None => {
                                 eprintln!(
@@ -3469,7 +3461,7 @@ pub fn main_flow() {
                     };
                     let tmp_path = content_cache(&format!("omegaflow_sky1_{src_idx}.sky1"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
-                        let bytes = match fetch_raw_bytes(&src_clone.url, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("sky1 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
@@ -3524,7 +3516,7 @@ pub fn main_flow() {
                     };
                     let tmp_path = content_cache(&format!("omegaflow_decaps_dr2_{src_idx}.bin"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
-                        let bytes = match fetch_raw_bytes(&src_clone.url, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("decaps_dr2 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
@@ -3579,7 +3571,7 @@ pub fn main_flow() {
                     };
                     let tmp_path = content_cache(&format!("omegaflow_vlde_{src_idx}.vlde"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
-                        let bytes = match fetch_raw_bytes(&src_clone.url, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
                             Some(b) => b,
                             None => {
                                 eprintln!("vlde {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
@@ -3656,7 +3648,7 @@ pub fn main_flow() {
                     let tmp_path = content_cache(&format!("omegaflow_fits_{src_idx}.fits"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
-                        let bytes = match fetch_raw_bytes_headers(&url, &headers, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes_headers(&url, &headers) {
                             Some(b) => b,
                             None => {
                                 eprintln!("fits {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
@@ -3763,7 +3755,7 @@ pub fn main_flow() {
                     let tmp_path = content_cache(&format!("omegaflow_tar_gz_{src_idx}.tgz"));
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let headers = render_headers(&src_clone.headers, &e);
-                        let bytes = match fetch_raw_bytes_headers(&url, &headers, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes_headers(&url, &headers) {
                             Some(b) => b,
                             None => {
                                 eprintln!(
@@ -3904,22 +3896,18 @@ pub fn main_flow() {
                             crate::archivar::eea::EEA_AQ_CONTENT_TYPE.to_string(),
                         ));
                     }
-                    let files = match crate::archivar::eea::fetch_eea_aq(
-                        &url,
-                        body.as_str(),
-                        &headers,
-                        src_clone.ttl,
-                    ) {
-                        Some(f) => f,
-                        None => {
-                            eprintln!(
-                                "eea_aq_parquet {}: two-stage fetch void — retry in ttl/Φ·2ⁿ",
-                                src_idx
-                            );
-                            let _ = ftx.send(empty(false));
-                            return;
-                        }
-                    };
+                    let files =
+                        match crate::archivar::eea::fetch_eea_aq(&url, body.as_str(), &headers) {
+                            Some(f) => f,
+                            None => {
+                                eprintln!(
+                                    "eea_aq_parquet {}: two-stage fetch void — retry in ttl/Φ·2ⁿ",
+                                    src_idx
+                                );
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
                     let value_fields: Vec<FieldConfig> = src_clone
                         .extracts
                         .iter()

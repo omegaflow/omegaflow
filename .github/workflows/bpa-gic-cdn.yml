@@ -1,0 +1,57 @@
+name: bpa-gic-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bpa-gic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view transmission.bpa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "bpa_gic.csv"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset bpa_gic.csv already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset bpa_gic.csv missing — compiling and manifesting"
+          fi
+      - name: Harvest the BPA GIC table from the runner (curl)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -sSL -m 120 -o gic.txt \
+            "https://transmission.bpa.gov/business/operations/gic/gic.txt"
+          test "$(wc -c < gic.txt)" -gt 50000
+          grep -q "Date/Time" gic.txt
+          echo "harvest measured: $(wc -c < gic.txt) bytes from the runner route"
+      - name: Ensure the transmission.bpa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view transmission.bpa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create transmission.bpa.gov --repo omegaflow/sources \
+              --title "transmission.bpa.gov" \
+              --notes "BPA transformer geomagnetically induced current compiled to CSV assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the BPA GIC series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin bpa_gic_compiler -- \
+            --input gic.txt \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "bpa-gic-cdn: bpa_gic compile returned void" \
+                 "bpa gic compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

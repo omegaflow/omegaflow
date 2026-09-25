@@ -339,7 +339,7 @@ fn main() {
         None => match arg_value(&args, "--url") {
             Some(url) => {
                 let leaf = url.rsplit('/').next().unwrap_or(&url).to_string();
-                match fetch_raw_bytes(&url, 600) {
+                match fetch_raw_bytes(&url) {
                     Some(b) => (b, leaf),
                     None => {
                         eprintln!("{url}: fetch returned void");
@@ -392,7 +392,7 @@ fn main() {
         "z carried as delivered (height m); the VDatum MLLW->ellipsoid chain is unbuilt (no GTX reader) and measured absent for Hawaii — no HI tidal grid in vdatum_regional_20250917.zip (844 CD entries) nor vdatum_all_20250917.zip (1912 CD entries), CD range-read 2026-09-17 — so a Hawaii z stays as delivered"
     );
 
-    let eph_bytes = match fetch_raw_bytes(&body_url("earth"), 600) {
+    let eph_bytes = match fetch_raw_bytes(&body_url("earth")) {
         Some(b) => b,
         None => {
             eprintln!("earth ephemeris: fetch returned void — the ICRS frame stays unreached");

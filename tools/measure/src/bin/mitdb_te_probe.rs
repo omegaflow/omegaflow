@@ -17,10 +17,13 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let record = arg_value(&args, "--record").unwrap_or_else(|| "100".to_string());
+    let record = match arg_value(&args, "--record") {
+        Some(v) => v,
+        None => "100".to_string(),
+    };
     let hea_url = format!("{}{}.hea", BASE, record);
     let dat_url = format!("{}{}.dat", BASE, record);
-    let Some(hea_bytes) = fetch_raw_bytes(&hea_url, 3600) else {
+    let Some(hea_bytes) = fetch_raw_bytes(&hea_url) else {
         eprintln!("{}.hea absent — the probe stays still (0 honored)", record);
         return;
     };
@@ -39,7 +42,7 @@ fn main() {
         eprintln!("{}: a lead carries a non-212 format", record);
         return;
     }
-    let Some(dat_bytes) = fetch_raw_bytes(&dat_url, 3600) else {
+    let Some(dat_bytes) = fetch_raw_bytes(&dat_url) else {
         eprintln!("{}.dat absent — the probe stays still (0 honored)", record);
         return;
     };

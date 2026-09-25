@@ -6,7 +6,6 @@ use omegaflow::archivar::{
 use omegaflow::cdn::CDN_BASE;
 
 const UNIX_JD_OFFSET: f64 = 2440587.5;
-const BIN_TTL_S: u64 = 604800;
 const TAU: f64 = std::f64::consts::TAU;
 
 const MOON_PERIODS: [(&str, f64); 5] = [
@@ -17,7 +16,7 @@ const MOON_PERIODS: [(&str, f64); 5] = [
     ("oberon", 13.463),
 ];
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -25,7 +24,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{}/{}/{}", CDN_BASE, netloc, asset);
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -42,7 +41,7 @@ fn load(
     eph_dir: &str,
 ) -> Option<HashMap<String, BodyEphemeris>> {
     let path = format!("{eph_dir}/{netloc}/{asset}");
-    let bytes = ensure_bin(&path, netloc, asset, BIN_TTL_S)?;
+    let bytes = ensure_bin(&path, netloc, asset)?;
     let eph = parse_ephemeris_binary(&bytes)?;
     let mut map = HashMap::new();
     map.insert(name.to_string(), eph);

@@ -50,7 +50,7 @@ fn main() {
         }
     };
 
-    let stations_text = match fetch_raw(&format!("{BUCKET}/ghcnd-stations.txt"), None, &[], 3600) {
+    let stations_text = match fetch_raw(&format!("{BUCKET}/ghcnd-stations.txt"), None, &[]) {
         Some(t) => t,
         None => {
             eprintln!("ghcnd-stations.txt fetch void");
@@ -65,12 +65,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let text = match fetch_raw(
-        &format!("{BUCKET}/csv/by_station/{station}.csv"),
-        None,
-        &[],
-        3600,
-    ) {
+    let text = match fetch_raw(&format!("{BUCKET}/csv/by_station/{station}.csv"), None, &[]) {
         Some(t) => t,
         None => {
             eprintln!("{station}: station csv fetch void");

@@ -24,7 +24,7 @@ fn hrefs(text: &str) -> Vec<String> {
 }
 
 fn volumes() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(BASE, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(BASE) else {
         eprintln!("volume listing fetch void ({BASE})");
         return Vec::new();
     };
@@ -51,7 +51,7 @@ fn volumes() -> Vec<String> {
 
 fn files_of(vol: &str) -> Vec<String> {
     let dir = format!("{BASE}{vol}/odf/");
-    let Some(bytes) = fetch_raw_bytes(&dir, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(&dir) else {
         eprintln!("{vol}: odf listing fetch void ({dir})");
         return Vec::new();
     };
@@ -84,7 +84,7 @@ fn main() {
         let mut kept_vol = 0usize;
         for rel in files_of(&vol) {
             let url = format!("{BASE}{vol}/odf/{rel}");
-            let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+            let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{vol}/{rel}: fetch void ({url})");
                 continue;
             };

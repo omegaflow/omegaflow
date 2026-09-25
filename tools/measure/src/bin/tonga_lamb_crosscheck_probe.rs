@@ -30,8 +30,7 @@ struct PressureSample {
 }
 
 fn load_pressure_archive() -> Option<Vec<u8>> {
-    fetch_raw_bytes(ZENODO_ARCHIVE_CDN, 86400)
-        .or_else(|| fetch_raw_bytes(ZENODO_ARCHIVE_LIVE, 86400))
+    fetch_raw_bytes(ZENODO_ARCHIVE_CDN).or_else(|| fetch_raw_bytes(ZENODO_ARCHIVE_LIVE))
 }
 
 fn zip_member(data: &[u8], member: &str) -> Option<Vec<u8>> {
@@ -329,13 +328,12 @@ fn mean_over(series: &[PressureSample], lo: f64, hi: f64) -> Option<f64> {
 }
 
 fn ear_section(station_id: &str, lat: f64, lon: f64, label: &str) {
-    let Some(ap_bytes) = fetch_raw_bytes(&coops_url(station_id, "air_pressure", ""), 86400) else {
+    let Some(ap_bytes) = fetch_raw_bytes(&coops_url(station_id, "air_pressure", "")) else {
         println!("{label} ear: air_pressure route absent — cross-check pending");
         println!();
         return;
     };
-    let Some(wl_bytes) =
-        fetch_raw_bytes(&coops_url(station_id, "water_level", "&datum=MSL"), 86400)
+    let Some(wl_bytes) = fetch_raw_bytes(&coops_url(station_id, "water_level", "&datum=MSL"))
     else {
         println!("{label} ear: water_level route absent — cross-check pending");
         println!();

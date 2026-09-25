@@ -107,7 +107,7 @@ fn main() {
             url.push_str(&net);
         }
     }
-    let bytes = match fetch_raw_bytes(&url, 600) {
+    let bytes = match fetch_raw_bytes(&url) {
         Some(b) => b,
         None => {
             eprintln!(

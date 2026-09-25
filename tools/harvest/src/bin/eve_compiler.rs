@@ -184,7 +184,7 @@ fn main() {
                 let url = format!("{}/{}/{}/{}", BASE, year, format!("{:03}", doy), name);
                 let cache_path = format!("{}/{}", cache_dir, name);
                 if std::fs::metadata(&cache_path).is_err() {
-                    match fetch_raw_bytes(&url, 86400) {
+                    match fetch_raw_bytes(&url) {
                         Some(bytes) => {
                             if std::fs::write(&cache_path, &bytes).is_err() {
                                 voids += 1;

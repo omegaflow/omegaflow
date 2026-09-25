@@ -79,7 +79,7 @@ fn main() {
     ] {
         for tar in tars {
             let url = format!("{base}{tar}");
-            let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+            let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{tar}: fetch void ({url})");
                 continue;
             };

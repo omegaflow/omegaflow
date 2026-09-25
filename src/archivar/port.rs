@@ -734,7 +734,7 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         block.push_str("# fetch returned void\n");
     }
     if params.precise && raw.is_some() {
-        block.push_str(&bruteforce_precision(&url, &src.url, ttl));
+        block.push_str(&bruteforce_precision(&url, &src.url));
     }
     let verdict = match &raw {
         Some(r) => {
@@ -1026,14 +1026,14 @@ pub fn extract_all_template_values(
     values
 }
 
-pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64) -> String {
+pub fn bruteforce_precision(substituted_url: &str, template_url: &str) -> String {
     let spatial: &[&str] = &["{lat}", "{lon}", "{x}", "{y}", "{z}"];
     let has_spatial = spatial.iter().any(|v| template_url.contains(v));
     if !has_spatial {
         return String::new();
     }
     let all_values = extract_all_template_values(substituted_url, template_url);
-    let baseline = fetch_raw(substituted_url, None, &[], ttl);
+    let baseline = fetch_raw(substituted_url, None, &[]);
     let mut effective_dp: usize = 0;
     for dp in 0..=15 {
         let mut test_url = template_url.to_string();
@@ -1052,7 +1052,7 @@ pub fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64)
             };
             test_url = test_url.replace(marker, &replacement);
         }
-        let body = fetch_raw(&test_url, None, &[], ttl);
+        let body = fetch_raw(&test_url, None, &[]);
         if let (Some(b), Some(base)) = (&body, &baseline)
             && b != base
         {
@@ -1502,19 +1502,6 @@ pub fn hapi_draft_fields(
         }
     }
     true
-}
-
-pub fn find_timestamp(val: &JsonVal) -> Option<f64> {
-    if let JsonVal::Obj(map) = val {
-        for (k, v) in map {
-            if is_time_key(k)
-                && let Some(n) = json_num(v)
-            {
-                return Some(n);
-            }
-        }
-    }
-    None
 }
 
 pub fn is_coord_key(key: &str) -> bool {
@@ -2540,7 +2527,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
                 fresh += 1;
                 continue;
             }
-            let bytes = match fetch_raw_bytes(&src.url, src.ttl) {
+            let bytes = match fetch_raw_bytes(&src.url) {
                 Some(b) => b,
                 None => {
                     eprintln!("ci-mode: {} reference fetch returned void", src.url);
@@ -2632,7 +2619,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
         }
         if src.url.contains('{') {
             let resolved = resolve_secret(&src.url, &env);
-            match fetch_raw(&resolved, None, &headers, src.ttl) {
+            match fetch_raw(&resolved, None, &headers) {
                 Some(r) if parse_json(&r).is_some() => {
                     reachable += 1;
                     eprintln!("ci-mode: {} JSON ok (live-only, secret in URL)", src.url);
@@ -2667,7 +2654,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
             fresh += 1;
             continue;
         }
-        let raw = match fetch_raw(&src.url, None, &headers, src.ttl) {
+        let raw = match fetch_raw(&src.url, None, &headers) {
             Some(r) => r,
             None => {
                 eprintln!("ci-mode: fetch returned void for {}", src.url);
@@ -2829,7 +2816,7 @@ pub fn mirror_stations(
     if cache_held {
         return;
     }
-    match fetch_raw(stations_url, None, headers, src.ttl) {
+    match fetch_raw(stations_url, None, headers) {
         Some(raw) => {
             if parse_json(&raw).is_some() {
                 *reachable += 1;
@@ -2893,7 +2880,7 @@ pub fn probe_fanout(
         *pending += 1;
         return;
     }
-    let raw = match fetch_raw(&stations_url, None, headers, 86400) {
+    let raw = match fetch_raw(&stations_url, None, headers) {
         Some(r) => r,
         None => {
             eprintln!("ci-mode: fanout stations void {}", stations_url);
@@ -2913,7 +2900,7 @@ pub fn probe_fanout(
     };
     let probe_url = resolve_secret(&src.url.replace("{station}", &first.id), env)
         .replace("{nearest_station}", &first.id);
-    match fetch_raw(&probe_url, None, headers, src.ttl) {
+    match fetch_raw(&probe_url, None, headers) {
         Some(body) => {
             if parse_json(&body).is_some() {
                 *reachable += 1;
@@ -2945,7 +2932,7 @@ pub fn probe_template(
     if secret_resolves_void(&probe_url, env) {
         return;
     }
-    match fetch_raw(&probe_url, None, headers, src.ttl) {
+    match fetch_raw(&probe_url, None, headers) {
         Some(body) => {
             if parse_json(&body).is_some() {
                 *reachable += 1;

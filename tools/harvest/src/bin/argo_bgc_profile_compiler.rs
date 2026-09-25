@@ -177,7 +177,7 @@ fn load_index_text(args: &[String]) -> Option<String> {
     let path = arg_value(args, "--index");
     let bytes = match path {
         Some(p) => fs::read(&p).ok(),
-        None => fetch_raw_bytes(INDEX_URL, 60),
+        None => fetch_raw_bytes(INDEX_URL),
     }?;
     let raw = if is_gzip(&bytes) {
         gunzip(&bytes)?
@@ -634,7 +634,7 @@ fn run_emit_bin(args: &[String], bgc: &[IndexRow], out_path: &str, ci: bool) {
                     let mut out = Vec::new();
                     for row in chunk {
                         let url = format!("{}/{}", DAC_ROOT, row.file);
-                        let Some(bytes) = fetch_raw_bytes(&url, 60) else {
+                        let Some(bytes) = fetch_raw_bytes(&url) else {
                             eprintln!("argo_bgc: {} fetch void — pending", url);
                             continue;
                         };
@@ -741,7 +741,7 @@ fn main() {
             std::process::exit(1);
         };
         let url = format!("{}/{}", DAC_ROOT, row.file);
-        let Some(bytes) = fetch_raw_bytes(&url, 60) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("argo_bgc: profile fetch void: {}", url);
             std::process::exit(1);
         };

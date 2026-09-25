@@ -11,7 +11,6 @@ const LAT_MIN: f64 = 30.25;
 const LAT_MAX: f64 = 49.99204;
 const LON_MIN: f64 = 229.64;
 const LON_MAX: f64 = 244.19443;
-const FETCH_TTL: u64 = 86400;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -93,7 +92,7 @@ fn main() {
         }
     };
     let url = grid_url(&dataset, &time, stride, lat_min, lat_max, lon_min, lon_max);
-    let bytes = match fetch_raw_bytes(&url, FETCH_TTL) {
+    let bytes = match fetch_raw_bytes(&url) {
         Some(b) => b,
         None => {
             eprintln!("{url}: fetch void");

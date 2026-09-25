@@ -11,7 +11,6 @@ use omegaflow::archivar::{
 };
 
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
-const BIN_TTL_S: u64 = 604800;
 const J2000_UNIX_OFFSET: f64 = 946728000.0;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -435,7 +434,7 @@ fn forward_chain(
     Some(u)
 }
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -443,7 +442,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("https://github.com/omegaflow/sources/releases/download/{netloc}/{asset}");
-    let bytes = omegaflow::archivar::fetch_raw_bytes(&url, ttl)?;
+    let bytes = omegaflow::archivar::fetch_raw_bytes(&url)?;
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -453,8 +452,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
 
 fn load(name: &str) -> Option<BodyEphemeris> {
     let path = format!("data/ssd.jpl.nasa.gov/{name}");
-    ensure_bin(&path, "ssd.jpl.nasa.gov", name, BIN_TTL_S)
-        .and_then(|bytes| parse_ephemeris_binary(&bytes))
+    ensure_bin(&path, "ssd.jpl.nasa.gov", name).and_then(|bytes| parse_ephemeris_binary(&bytes))
 }
 
 struct Series {
@@ -495,7 +493,6 @@ fn main() {
         "data/www.geoazur.fr/apdb_obslist.opt",
         "www.geoazur.fr",
         "apdb_obslist.opt",
-        BIN_TTL_S,
     ) {
         Some(b) => String::from_utf8_lossy(&b).to_string(),
         None => {
@@ -612,7 +609,7 @@ fn main() {
                 continue;
             }
         };
-        let Some(bytes) = ensure_bin(s.path, "www.geoazur.fr", asset, BIN_TTL_S) else {
+        let Some(bytes) = ensure_bin(s.path, "www.geoazur.fr", asset) else {
             println!("{:<18} absent", s.name);
             continue;
         };

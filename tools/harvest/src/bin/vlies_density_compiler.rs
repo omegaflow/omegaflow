@@ -40,8 +40,6 @@ impl Catalog {
     }
 }
 
-const BIN_TTL_S: u64 = 604800;
-
 fn cdn_asset(kind: Catalog) -> (&'static str, &'static str) {
     match kind {
         Catalog::Stars => ("ssd.jpl.nasa.gov", "dr3_stars.bin"),
@@ -49,7 +47,7 @@ fn cdn_asset(kind: Catalog) -> (&'static str, &'static str) {
     }
 }
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -57,7 +55,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{}/{}/{}", CDN_BASE, netloc, asset);
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -285,7 +283,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     return Err(format!("bin void {path}: {e}"));
                 }
                 let (netloc, asset) = cdn_asset(*kind);
-                match ensure_bin(path, netloc, asset, BIN_TTL_S) {
+                match ensure_bin(path, netloc, asset) {
                     Some(b) => b,
                     None => {
                         return Err(format!(

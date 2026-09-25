@@ -25,7 +25,7 @@ fn main() {
 
     let bytes = match arg_value(&args, "--fill") {
         Some(p) => std::fs::read(&p).ok(),
-        None => fetch_raw_bytes(FILL_URL, 3600),
+        None => fetch_raw_bytes(FILL_URL),
     };
     let Some(bytes) = bytes else {
         eprintln!("BiSON-FITS void — the bin stays unwritten (0 honored)");

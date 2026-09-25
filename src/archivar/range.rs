@@ -324,7 +324,7 @@ pub fn fetch_s3_range(
     fetch_range(&https_url, offset, len, &headers)
 }
 
-fn fetch_whole(url: &str, ttl: u64, headers: &[(String, String)]) -> Option<Vec<u8>> {
+fn fetch_whole(url: &str, headers: &[(String, String)]) -> Option<Vec<u8>> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-S")
@@ -336,10 +336,16 @@ fn fetch_whole(url: &str, ttl: u64, headers: &[(String, String)]) -> Option<Vec<
         .arg("--retry-all-errors")
         .arg("--retry-delay")
         .arg("2")
+        .arg("--retry-max-time")
+        .arg(TRANSFER_BOUND_S.to_string())
         .arg("-m")
-        .arg(ttl_transfer_bound(ttl).to_string())
+        .arg(TRANSFER_BOUND_S.to_string())
         .arg("--connect-timeout")
-        .arg(CONNECT_BOUND_S.to_string());
+        .arg(CONNECT_BOUND_S.to_string())
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("--speed-time")
+        .arg("128");
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
@@ -368,7 +374,7 @@ fn public_s3_https_url(bucket: &str, key: &str) -> String {
     )
 }
 
-pub fn fetch_s3_whole(s3_url: &str, ttl: u64) -> Option<Vec<u8>> {
+pub fn fetch_s3_whole(s3_url: &str) -> Option<Vec<u8>> {
     let (bucket, key) = s3_parts(s3_url)?;
     match s3_credential_route(&bucket) {
         Some(S3CredentialRoute::Bearer(url)) => {
@@ -393,10 +399,10 @@ pub fn fetch_s3_whole(s3_url: &str, ttl: u64) -> Option<Vec<u8>> {
                 date_stamp: &date_stamp,
                 session_token: Some(&creds.session_token),
             });
-            fetch_whole(&https_url, ttl, &headers)
+            fetch_whole(&https_url, &headers)
         }
         Some(S3CredentialRoute::OAuth) => None,
-        None => fetch_whole(&public_s3_https_url(&bucket, &key), ttl, &[]),
+        None => fetch_whole(&public_s3_https_url(&bucket, &key), &[]),
     }
 }
 
@@ -521,13 +527,13 @@ fn s3_list_request(bucket: &str, canonical_query: &str) -> Option<(String, Vec<(
     }
 }
 
-pub fn s3_list(bucket: &str, prefix: &str, ttl: u64) -> Option<Vec<S3Object>> {
+pub fn s3_list(bucket: &str, prefix: &str) -> Option<Vec<S3Object>> {
     let mut out: Vec<S3Object> = Vec::new();
     let mut token: Option<String> = None;
     loop {
         let query = list_query(prefix, token.as_deref());
         let (url, headers) = s3_list_request(bucket, &query)?;
-        let bytes = fetch_whole(&url, ttl, &headers)?;
+        let bytes = fetch_whole(&url, &headers)?;
         let page = parse_list_objects(&bytes)?;
         out.extend(page.objects);
         if !page.truncated {

@@ -44,7 +44,7 @@ fn list_keys(prefix: &str, max_files: Option<usize>) -> Vec<String> {
             url.push_str("&continuation-token=");
             url.push_str(&enc(t));
         }
-        let Some(body) = fetch_raw(&url, None, &[], 3600) else {
+        let Some(body) = fetch_raw(&url, None, &[]) else {
             break;
         };
         let mut rest = body.as_str();
@@ -124,7 +124,7 @@ fn main() {
     let mut records = Vec::new();
     let mut files = 0usize;
     for key in &keys {
-        let Some(text) = fetch_raw(&format!("{BUCKET}/{key}"), None, &[], 3600) else {
+        let Some(text) = fetch_raw(&format!("{BUCKET}/{key}"), None, &[]) else {
             eprintln!("{key}: fetch void — the file stays unharvested");
             continue;
         };

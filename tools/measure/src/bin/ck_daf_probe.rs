@@ -598,7 +598,7 @@ fn rotor_main(cks: &[String], tsc: Option<&str>) {
 }
 
 fn harvest_names() -> Vec<String> {
-    let Some(html) = fetch_raw(NAIF_RTR, None, &[], 3600) else {
+    let Some(html) = fetch_raw(NAIF_RTR, None, &[]) else {
         eprintln!("rtr index fetch void: {NAIF_RTR}");
         return Vec::new();
     };
@@ -631,7 +631,7 @@ fn harvest_main(tsc_arg: Option<&str>) {
         let path = dir.join(name);
         if !path.is_file() {
             let url = format!("{NAIF_RTR}{name}");
-            match fetch_raw_bytes(&url, 3600) {
+            match fetch_raw_bytes(&url) {
                 Some(bytes) => {
                     if std::fs::write(&path, &bytes).is_err() {
                         eprintln!("{name}: write void");
@@ -656,7 +656,7 @@ fn harvest_main(tsc_arg: Option<&str>) {
         None => {
             let p = dir.join("mk00062a.tsc");
             if !p.is_file() {
-                match fetch_raw_bytes(NAIF_SCLK, 3600) {
+                match fetch_raw_bytes(NAIF_SCLK) {
                     Some(b) => {
                         if std::fs::write(&p, &b).is_err() {
                             eprintln!("sclk write void");

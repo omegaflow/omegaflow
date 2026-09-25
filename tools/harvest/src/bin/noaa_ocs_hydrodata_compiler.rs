@@ -307,14 +307,14 @@ fn soundings_from_tif(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
 }
 
 fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
-    let item_body = fetch_raw(item_url, None, &[], 3600)?;
+    let item_body = fetch_raw(item_url, None, &[])?;
     let item = parse_json(&item_body)?;
     let mut recs = Vec::new();
     let mut asset_seen = false;
     if let Some(href) = gpkg_asset_href(&item) {
         asset_seen = true;
         let url = resolve(item_url, &href);
-        if let Some(bytes) = fetch_raw_bytes(&url, 3600) {
+        if let Some(bytes) = fetch_raw_bytes(&url) {
             if let Some(r) = soundings_from_gpkg(&bytes) {
                 recs.extend(r);
             }
@@ -323,7 +323,7 @@ fn harvest_survey(item_url: &str) -> Option<Vec<GbcoRec>> {
     if let Some(href) = tif_asset_href(&item) {
         asset_seen = true;
         let url = resolve(item_url, &href);
-        if let Some(bytes) = fetch_raw_bytes(&url, 3600) {
+        if let Some(bytes) = fetch_raw_bytes(&url) {
             if let Some(r) = soundings_from_tif(&bytes) {
                 recs.extend(r);
             }
@@ -386,14 +386,14 @@ fn run(args: &[String]) -> Result<(), String> {
         records.extend(recs);
     } else {
         let catalog_url = format!("{BASE}/catalog.json");
-        let catalog_body = fetch_raw(&catalog_url, None, &[], 3600)
+        let catalog_body = fetch_raw(&catalog_url, None, &[])
             .ok_or_else(|| format!("{catalog_url}: fetch void"))?;
         let catalog =
             parse_json(&catalog_body).ok_or_else(|| format!("{catalog_url}: json void"))?;
         let collection_href = child_qualified_href(&catalog)
             .ok_or_else(|| "catalog carries no Qualified child collection".to_string())?;
         let collection_url = resolve(&catalog_url, &collection_href);
-        let collection_body = fetch_raw(&collection_url, None, &[], 3600)
+        let collection_body = fetch_raw(&collection_url, None, &[])
             .ok_or_else(|| format!("{collection_url}: fetch void"))?;
         let collection =
             parse_json(&collection_body).ok_or_else(|| format!("{collection_url}: json void"))?;

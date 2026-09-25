@@ -63,7 +63,7 @@ fn main() {
     let mut void_years = 0usize;
     for year in FIRST_YEAR..=current_year {
         let url = format!("{}/pent_noontime-flux_{}.txt", BASE, year);
-        let Some(body) = fetch_raw(&url, None, &[], 86400) else {
+        let Some(body) = fetch_raw(&url, None, &[]) else {
             eprintln!("pent_noontime-flux_{}.txt returned void", year);
             void_years += 1;
             continue;

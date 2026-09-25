@@ -5,13 +5,12 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 const BASE: &str = "https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
-const REQUEST_TTL_S: u64 = 1 << 9;
 const WORKERS: usize = 1 << 3;
 const PREFIX: &str = "odyssey_odf";
 
 fn fetch_listing(dir: &str) -> Option<Vec<u8>> {
     match http_code(dir, &[]) {
-        Some(code) if (200..300).contains(&code) => fetch_raw_bytes(dir, REQUEST_TTL_S),
+        Some(code) if (200..300).contains(&code) => fetch_raw_bytes(dir),
         Some(code) => {
             eprintln!("{dir}: http {code} — no listing");
             None
@@ -114,7 +113,7 @@ fn files_by_volume(vols: &[String]) -> Vec<(String, String)> {
 }
 
 fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
-    let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+    let Some(bytes) = fetch_raw_bytes(url) else {
         eprintln!("{url}: fetch void");
         return Vec::new();
     };

@@ -154,7 +154,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let bytes = match fetch_raw_bytes(&url, 3600) {
+    let bytes = match fetch_raw_bytes(&url) {
         Some(b) => b,
         None => {
             eprintln!("{url}: fetch void");

@@ -46,7 +46,7 @@ fn main() {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
-    let Some(csv) = fetch_raw_bytes(COLLECTION, 604800) else {
+    let Some(csv) = fetch_raw_bytes(COLLECTION) else {
         eprintln!("dart tnf collection fetch void ({COLLECTION})");
         return;
     };
@@ -59,7 +59,7 @@ fn main() {
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for (name, year) in &prods {
         let url = format!("{BASE}{year}/{name}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };

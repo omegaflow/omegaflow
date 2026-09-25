@@ -6,7 +6,6 @@ use omegaflow::inflate::unzip;
 use omegaflow::lsk::days_from_civil;
 
 const NETLOC: &str = "psa.esa.int";
-const TTL: u64 = 604800;
 const DAY_S: f64 = 86400.0;
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
@@ -113,7 +112,7 @@ fn main() {
             }
         },
         None => match arg_value(&args, "--url") {
-            Some(url) => match fetch_raw_bytes(&url, TTL) {
+            Some(url) => match fetch_raw_bytes(&url) {
                 Some(b) => (b, url),
                 None => {
                     eprintln!("{url}: fetch void");

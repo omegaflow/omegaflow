@@ -177,7 +177,7 @@ fn main() {
             Ok(b) => b,
             Err(_) => {
                 eprintln!("fetching {url}");
-                match fetch_raw_bytes(&url, 3600) {
+                match fetch_raw_bytes(&url) {
                     Some(b) => {
                         let _ = std::fs::write(&cache_path, &b);
                         b

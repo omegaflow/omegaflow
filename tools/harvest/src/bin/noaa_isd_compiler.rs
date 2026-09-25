@@ -50,7 +50,7 @@ fn main() {
         }
     };
 
-    let text = match fetch_raw(&format!("{BUCKET}/{year}/{station}.csv"), None, &[], 3600) {
+    let text = match fetch_raw(&format!("{BUCKET}/{year}/{station}.csv"), None, &[]) {
         Some(t) => t,
         None => {
             eprintln!("{station} {year}: csv fetch void");

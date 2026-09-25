@@ -190,7 +190,7 @@ pub fn fetch_events(url: &str, ttl: u64) -> Option<Vec<NdkEvent>> {
         let text = std::fs::read_to_string(&path).ok()?;
         return Some(parse_ndk(&text));
     }
-    let bytes = super::fetch_raw_bytes(url, ttl)?;
+    let bytes = super::fetch_raw_bytes(url)?;
     if std::fs::write(&path, &bytes).is_err() {
         eprintln!("cache {path}: write void — refetch next cycle");
     }

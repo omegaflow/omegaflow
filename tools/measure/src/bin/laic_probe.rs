@@ -248,7 +248,7 @@ fn haversine_km(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
 }
 
 fn fetch_text(url: &str) -> Option<String> {
-    fetch_raw(url, None, &[], 86400)
+    fetch_raw(url, None, &[])
 }
 
 fn percent_encode(s: &str) -> String {
@@ -435,7 +435,7 @@ fn harvest_tec(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64)> {
             let url = GIM_TEMPLATE
                 .replace("{year}", &format!("{y:04}"))
                 .replace("{doy}", &format!("{doy:03}"));
-            bytes = fetch_raw_bytes(&url, 86400);
+            bytes = fetch_raw_bytes(&url);
             if let Some(b) = &bytes {
                 let _ = std::fs::write(&path, b);
             }
@@ -454,7 +454,7 @@ fn harvest_tec(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64)> {
                     .replace("{year}", &format!("{y:04}"))
                     .replace("{doy}", &format!("{doy:03}"))
                     .replace("{yy}", &yy);
-                rb = fetch_raw_bytes(&url, 86400);
+                rb = fetch_raw_bytes(&url);
                 if let Some(b) = &rb {
                     let _ = std::fs::write(&rpath, b);
                 }
@@ -597,7 +597,7 @@ fn harvest_champ(dir: &str, t0: f64, lat: f64, lon: f64) -> Vec<(f64, f64, f64, 
             let url = CHAMP_TEMPLATE
                 .replace("{year}", &format!("{y:04}"))
                 .replace("{date}", &date);
-            bytes = fetch_raw_bytes(&url, 86400);
+            bytes = fetch_raw_bytes(&url);
             if let Some(b) = &bytes {
                 let _ = std::fs::write(&path, b);
             }
@@ -681,7 +681,7 @@ fn harvest_mseed(dir: &str, t0: f64, lat: f64, lon: f64) -> (String, Vec<(f64, f
                 .replace("{cha}", cha)
                 .replace("{start}", &start)
                 .replace("{end}", &stop);
-            let Some(bytes) = fetch_raw_bytes(&ds_url, 86400) else {
+            let Some(bytes) = fetch_raw_bytes(&ds_url) else {
                 continue;
             };
             let Some((samples, _)) = decode_body(&bytes) else {
@@ -3059,7 +3059,7 @@ fn analyze_main(args: &[String]) {
     let bin_path: Option<String> = match arg_value(args, "--cdn") {
         Some(name) => {
             let url = format!("{}/{}/{}.bin", CDN_BASE, LAIC_TAG, name);
-            match fetch_raw_bytes(&url, 86400) {
+            match fetch_raw_bytes(&url) {
                 Some(bytes) => {
                     let path = format!("tmp/{name}.bin");
                     std::fs::write(&path, &bytes).ok();

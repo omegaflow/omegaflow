@@ -5,7 +5,6 @@ use omegaflow::json::{JsonVal, parse_json, scalar_of};
 const NETLOC: &str = "erddap.emso.eu";
 const OBSEA_URL: &str = "https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json?time,latitude,longitude,depth,TEMP,PSAL,PRES,CNDC&time%3E=max(time)-7days";
 const DEFAULT_OUT: &str = "emso_obsea_seabed_ts.json";
-const TTL: u64 = 3600;
 const COLUMNS: [&str; 8] = [
     "time",
     "latitude",
@@ -156,7 +155,7 @@ fn main() {
                 Some(v) => v,
                 None => OBSEA_URL.to_string(),
             };
-            match fetch_raw_bytes(&url, TTL) {
+            match fetch_raw_bytes(&url) {
                 Some(b) => match String::from_utf8(b) {
                     Ok(s) => s,
                     Err(_) => {

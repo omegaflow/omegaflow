@@ -55,7 +55,7 @@ fn main() {
     let mut last_clock: Option<(u64, u64, u64)> = None;
     for (file_index, tar) in TARS.iter().enumerate() {
         let url = format!("{BASE}{tar}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{tar}: fetch void ({url})");
             continue;
         };

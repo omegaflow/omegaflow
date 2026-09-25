@@ -44,7 +44,8 @@
     ["ttl as f64 / 10.0", "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"],
     [" 1 {} 0.0 0.0", "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"],
     ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"],
-    ["JsonVal::Arr(Vec::new())", "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"]
+    ["JsonVal::Arr(Vec::new())", "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"],
+    ["ttl_transfer_bound", "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -459,6 +460,7 @@
     "status_proof_termin-ohne-datum": "## Offen\n\n### P\n- **Status:** termin | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
     "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n",
     "blocked_twin_blocked_open": "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote unit absent\n\ndescoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n\npending\nurl https://example.org/c\nnote port duty\n",
-    "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n"
+    "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n",
+    "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }"
   }
 }

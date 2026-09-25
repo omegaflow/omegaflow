@@ -69,7 +69,7 @@ fn main() {
             }
         },
         None => match arg_value(&args, "--url") {
-            Some(url) => match fetch_raw_bytes(&url, 604800) {
+            Some(url) => match fetch_raw_bytes(&url) {
                 Some(b) => (b, url),
                 None => {
                     eprintln!("{url}: fetch void");

@@ -41,7 +41,7 @@ fn load_spin(path: Option<String>) -> Option<SpinBin> {
             }
         }
     }
-    match fetch_raw_bytes(RIXS_SPIN_CDN, 3600) {
+    match fetch_raw_bytes(RIXS_SPIN_CDN) {
         Some(bytes) => match parse_spin_bin(&bytes) {
             Some(bin) => Some(bin),
             None => {
@@ -69,15 +69,17 @@ fn main() {
 
     let spin = load_spin(path);
 
-    let spin_spectra = spin.as_ref().map(|s| s.spectra.len()).unwrap_or(0);
-    let spin_osc: usize = spin
-        .as_ref()
-        .map(|s| s.spectra.iter().map(|sp| sp.oscillators.len()).sum())
-        .unwrap_or(0);
-    let doping_classes: std::collections::BTreeSet<u8> = spin
-        .as_ref()
-        .map(|s| s.spectra.iter().map(|sp| sp.doping).collect())
-        .unwrap_or_default();
+    let (spin_spectra, spin_osc, doping_classes) = match spin.as_ref() {
+        Some(s) => (
+            s.spectra.len(),
+            s.spectra.iter().map(|sp| sp.oscillators.len()).sum::<usize>(),
+            s.spectra
+                .iter()
+                .map(|sp| sp.doping)
+                .collect::<std::collections::BTreeSet<u8>>(),
+        ),
+        None => (0, 0, std::collections::BTreeSet::new()),
+    };
     let lab = spin.as_ref().and_then(|s| s.lab);
 
     println!("rixs_cuprate_probe — the Kuprat Blatt (doping axis)");

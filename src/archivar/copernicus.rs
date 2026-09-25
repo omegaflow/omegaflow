@@ -225,7 +225,7 @@ fn json_string(body: &str, key: &str) -> Option<String> {
     Some(rest[..end].to_string())
 }
 
-pub fn retrieve(dataset: &str, inputs_json: &str, token: &str, ttl: u64) -> Option<Vec<u8>> {
+pub fn retrieve(dataset: &str, inputs_json: &str, token: &str) -> Option<Vec<u8>> {
     let headers = [("PRIVATE-TOKEN".to_string(), token.to_string())];
     let submit_headers = [
         ("PRIVATE-TOKEN".to_string(), token.to_string()),
@@ -235,17 +235,16 @@ pub fn retrieve(dataset: &str, inputs_json: &str, token: &str, ttl: u64) -> Opti
         &format!("{API}/retrieve/v1/processes/{dataset}/execution"),
         Some(inputs_json),
         &submit_headers,
-        ttl,
     )?;
     let job = json_string(&submit, "jobID")?;
     let monitor = format!("{API}/retrieve/v1/jobs/{job}");
     for _ in 0..90 {
-        let status = super::fetch_raw(&monitor, None, &headers, ttl)?;
+        let status = super::fetch_raw(&monitor, None, &headers)?;
         match json_string(&status, "status").as_deref() {
             Some("successful") => {
-                let results = super::fetch_raw(&format!("{monitor}/results"), None, &headers, ttl)?;
+                let results = super::fetch_raw(&format!("{monitor}/results"), None, &headers)?;
                 let href = json_string(&results, "href")?;
-                let archive = super::fetch_raw_bytes_headers(&href, &headers, ttl)?;
+                let archive = super::fetch_raw_bytes_headers(&href, &headers)?;
                 return crate::inflate::unzip(&archive);
             }
             Some("failed") | Some("rejected") => {

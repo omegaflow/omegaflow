@@ -218,7 +218,7 @@ fn main() {
     if let Some(ext) = arg_value(&args, "--extent") {
         stations_url.push_str(&format!("&extent={ext}"));
     }
-    let st_bytes = match fetch_raw_bytes_headers(&stations_url, &headers, 3600) {
+    let st_bytes = match fetch_raw_bytes_headers(&stations_url, &headers) {
         Some(b) => b,
         None => {
             eprintln!("noaa_cdo_compiler: stations fetch void ({stations_url})");
@@ -240,7 +240,7 @@ fn main() {
         let data_url = format!(
             "{DATA_URL}?datasetid=GHCND&startdate={window_start}&enddate={window_end}&datatypeid={DATATYPE}&stationid={id}&limit={limit}&units=metric"
         );
-        let Some(db) = fetch_raw_bytes_headers(&data_url, &headers, 3600) else {
+        let Some(db) = fetch_raw_bytes_headers(&data_url, &headers) else {
             void_stations += 1;
             continue;
         };

@@ -13,7 +13,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 }
 
 fn files_of(base: &str) -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(base, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(base) else {
         eprintln!("odf dir listing fetch void ({base})");
         return Vec::new();
     };
@@ -57,7 +57,7 @@ fn main() {
     eprintln!("{volume}/DATA/ODF: {} files", rels.len());
     for rel in rels {
         let url = format!("{base}{rel}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{rel}: fetch void ({url})");
             continue;
         };

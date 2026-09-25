@@ -49,7 +49,7 @@ fn main() {
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
     let limit: Option<usize> = arg_value(&args, "--limit").and_then(|v| v.parse().ok());
-    let Some(records_text) = fetch_raw_bytes(&format!("{}RECORDS", BASE), 3600) else {
+    let Some(records_text) = fetch_raw_bytes(&format!("{}RECORDS", BASE)) else {
         eprintln!("RECORDS absent — the sweep stays still (0 honored)");
         return;
     };
@@ -86,7 +86,10 @@ fn main() {
                     }
                     let record = &records[i];
                     match measure(record) {
-                        Some(row) => rows.lock().unwrap_or_else(|e| e.into_inner()).push(row),
+                        Some(row) => match rows.lock() {
+                            Ok(mut g) => g.push(row),
+                            Err(e) => e.into_inner().push(row),
+                        },
                         None => {
                             eprintln!("{}: skipped (0 honored)", record);
                             skipped.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
@@ -97,7 +100,10 @@ fn main() {
         }
     });
 
-    let mut rows = rows.into_inner().unwrap_or_else(|e| e.into_inner());
+    let mut rows = match rows.into_inner() {
+        Ok(g) => g,
+        Err(e) => e.into_inner(),
+    };
     rows.sort_by(|x, y| x.record.cmp(&y.record));
 
     println!(
@@ -221,7 +227,6 @@ fn main() {
 
     println!();
     println!("=== breakdown by lead pair (exact lead names) ===");
-    #[derive(Default)]
     struct PairAgg {
         n: usize,
         chest_to_limb: usize,
@@ -229,12 +234,23 @@ fn main() {
         chest_chest: usize,
         limb_limb: usize,
     }
+    impl PairAgg {
+        fn new() -> Self {
+            Self {
+                n: 0,
+                chest_to_limb: 0,
+                limb_to_chest: 0,
+                chest_chest: 0,
+                limb_limb: 0,
+            }
+        }
+    }
     let mut pairs: std::collections::BTreeMap<String, PairAgg> = std::collections::BTreeMap::new();
     for r in &rows {
         let mut names = [r.a.as_str(), r.b.as_str()];
         names.sort_unstable();
         let key = format!("{}↔{}", names[0], names[1]);
-        let agg = pairs.entry(key).or_insert_with(PairAgg::default);
+        let agg = pairs.entry(key).or_insert_with(PairAgg::new);
         agg.n += 1;
         let dirs = [
             (r.a.as_str(), r.b.as_str(), r.te_ab > r.thr_ab),
@@ -278,7 +294,7 @@ fn main() {
 fn measure(record: &str) -> Option<Row> {
     let hea_url = format!("{}{}.hea", BASE, record);
     let dat_url = format!("{}{}.dat", BASE, record);
-    let hea_bytes = fetch_raw_bytes(&hea_url, 3600)?;
+    let hea_bytes = fetch_raw_bytes(&hea_url)?;
     let hea = parse_hea(&String::from_utf8_lossy(&hea_bytes))?;
     if hea.nchan != 2 {
         return None;
@@ -286,7 +302,7 @@ fn measure(record: &str) -> Option<Row> {
     if hea.leads.iter().any(|l| l.format != 212) {
         return None;
     }
-    let dat_bytes = fetch_raw_bytes(&dat_url, 3600)?;
+    let dat_bytes = fetch_raw_bytes(&dat_url)?;
     let expected = hea.nsamp.checked_mul(3)?;
     if dat_bytes.len() != expected {
         return None;

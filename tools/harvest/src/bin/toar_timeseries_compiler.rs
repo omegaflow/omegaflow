@@ -11,7 +11,6 @@ const API_BASE: &str = "https://toar-data.fz-juelich.de/api/v2";
 const O3_VARIABLE_ID: u32 = 5;
 const DEFAULT_START_ID: u64 = 1000;
 const DEFAULT_END_ID: u64 = 2000;
-const FETCH_TTL: u64 = 3600;
 const ALT_MISSING_SENTINEL: f64 = -999.0;
 const ALT_PLAUSIBLE_FLOOR: f64 = -500.0;
 
@@ -251,7 +250,7 @@ fn harvest(
             }
         }
         let meta_url = format!("{API_BASE}/timeseries/id/{id}");
-        let Some(meta_bytes) = fetch_raw_bytes(&meta_url, FETCH_TTL) else {
+        let Some(meta_bytes) = fetch_raw_bytes(&meta_url) else {
             continue;
         };
         let Some(meta_json) = String::from_utf8(meta_bytes)
@@ -271,7 +270,7 @@ fn harvest(
             continue;
         };
         let data_url = format!("{API_BASE}/data/timeseries/id/{id}");
-        let Some(data_bytes) = fetch_raw_bytes(&data_url, FETCH_TTL) else {
+        let Some(data_bytes) = fetch_raw_bytes(&data_url) else {
             h.o3_series_void += 1;
             eprintln!("toar: timeseries {id} data fetch void — series skipped");
             continue;

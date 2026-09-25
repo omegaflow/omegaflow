@@ -16,7 +16,7 @@ fn main() {
         Some(o) => o,
         None => "qbo_30hpa.csv".to_string(),
     };
-    let body = match omegaflow::archivar::fetch_raw_bytes(QBO_URL, 30) {
+    let body = match omegaflow::archivar::fetch_raw_bytes(QBO_URL) {
         Some(b) => String::from_utf8_lossy(&b).into_owned(),
         None => {
             eprintln!("qbo fetch from {} returned void", QBO_URL);
