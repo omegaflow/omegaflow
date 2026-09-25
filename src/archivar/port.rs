@@ -1675,6 +1675,20 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
     let kl = key.to_lowercase();
     if kl.contains("sample") || kl.contains("sort") || kl.contains("order") || kl.contains("bbox") {
         ("DROP", "", 0.0)
+    } else if kl == "par"
+        || kl == "plx"
+        || kl.contains("parallax")
+        || kl.contains("plx_value")
+        || kl.contains("_plx_")
+        || kl.contains("proper_motion")
+    {
+        ("DROP", "", 0.0)
+    } else if kl == "bp_rp"
+        || kl == "bp_minus_rp"
+        || kl == "b_minus_v_color"
+        || kl.contains("color_index")
+    {
+        ("DROP", "", 0.0)
     } else if kl.contains("eop_")
         || kl.contains("ut1_utc")
         || kl.contains("polar_motion")
@@ -1713,6 +1727,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("thermal", "K", 360.0)
     } else if kl.contains("thermal_speed") {
         ("thermal", "km/s", 3600.0)
+    } else if kl.ends_with("_kelvin") || kl.ends_with("_k") {
+        ("thermal", "K", 3600.0)
     } else if kl.contains("temp")
         || kl.contains("atmp")
         || kl.contains("wtmp")
@@ -1787,6 +1803,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("gravity", "m/s", 86400.0)
     } else if kl.contains("range_accl") {
         ("gravity", "m/s2", 86400.0)
+    } else if kl.contains("transit_depth") {
+        ("em", "ppt", 604800.0)
     } else if kl.contains("depth") {
         ("seismic-body", "km", 10.0)
     } else if kl.contains("flux") || kl.contains("radiance") {
@@ -1814,7 +1832,6 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl == "bz"
         || kl == "bt"
         || kl == "dst"
-        || kl.contains("mag_")
         || kl.contains("_b_")
         || kl.ends_with("_nt")
         || kl.starts_with("bx_")
@@ -1823,6 +1840,26 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.starts_with("bt_")
     {
         ("em", "nT", 60.0)
+    } else if kl.ends_with("_ppb") {
+        ("diffusion", "ppb", 86400.0)
+    } else if kl.ends_with("_ppmv") {
+        ("diffusion", "ppmv", 86400.0)
+    } else if kl.ends_with("_ppm") {
+        ("diffusion", "ppm", 86400.0)
+    } else if kl.ends_with("_percent") || kl.ends_with("_pct") {
+        ("diffusion", "%", 86400.0)
+    } else if kl.ends_with("_ppt") {
+        ("em", "ppt", 604800.0)
+    } else if kl.ends_with("_umol_kg") || kl.ends_with("_umolkg") {
+        ("diffusion", "micromole/kg", 604800.0)
+    } else if kl.ends_with("_mg_m3") || kl.ends_with("_mgm3") {
+        ("diffusion", "mg/m3", 604800.0)
+    } else if kl.ends_with("_ug_m3") || kl.ends_with("_ugm3") {
+        ("diffusion", "ug/m3", 3600.0)
+    } else if kl.ends_with("_jm2") || kl.ends_with("_j_m2") {
+        ("thermal", "j/m2", 604800.0)
+    } else if kl.ends_with("_mhz") {
+        ("em", "mhz", 3600.0)
     } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
         ("diffusion", "%", 86400.0)
     } else if kl.contains("cloud_cover") || kl.contains("leaf_wetness") {
@@ -1986,14 +2023,15 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.starts_with("antares")
     {
         ("em", "1", 31536000.0)
-    } else if kl == "mag" || kl.contains("magnitude") || kl.contains("quake") || kl.ends_with("_mw")
-    {
+    } else if kl == "mag" || kl == "magnitude" || kl.contains("quake") || kl.ends_with("_mw") {
         ("seismic-body", "Mw", 3600.0)
     } else if kl.ends_with("mag")
         || kl.ends_with("mag1")
         || kl.ends_with("mag2")
+        || kl.starts_with("mag_")
         || kl.contains("magpsf")
         || kl.contains("magap")
+        || kl.contains("magnitude")
     {
         ("em", "mag", 604800.0)
     } else {
