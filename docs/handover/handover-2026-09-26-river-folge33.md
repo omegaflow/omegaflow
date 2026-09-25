@@ -3,7 +3,7 @@
   session: River-Folge 33
   class: handover
   date: 2026-09-26
-  sha256: cc40e7cd4c96138473f197b94cab328cbfa72223152d9e7393247040f6a37b9b
+  sha256: 377a48befdb87a1a95ceda794419f7723d7a3344be4283c9c7a1a184d203c502
   status: live
 -->
 # Handover — River-Folge 33 (2026-09-26)
@@ -24,16 +24,16 @@ Diese Session konsumierte `handover-2026-09-25-river-folge32.md`.
 **Wort | Datum | Quelle**
 - health-check Variante 2 (erst messen, dann Cap-Wort) | 2026-09-25 | Operator-Wort im Plan-Pass (folge32).
 
-## Stehender Pass (gemessen 2026-09-26, keine Auswahl)
+## Stehender Pass (measured)
 
-- **Postfach:** `pending` — `state/mail/mail_ledger.φ` absent, `mail_digest`-Bau
-  gehört zu CI (tools-build); kein Eingang messbar.
-- **CI am HEAD** `42471cde6` (gemessen via `ci_manage list`): `ci-check 36192645925`
-  in_progress; `health-check 36189444050` in_progress (Alt-Lauf); CDN-Klasse
-  mehrfach `cancelled`/`failed`. Watchdog-Snapshot von 23:12 gelesen.
-- **Safety-Snapshot:** `refs/safety/1790373219`.
-- **`register_lookup --orphan-docs`:** 42 trägerlose Prosadokumente
-  (querschnittlich, nicht River-eigen — Träger je Owner-Übergabe offen).
+- **Postfach:** reachable — `state/mail/mail_ledger.φ` present (158 lines); last
+  entries: GitHub-Support `4761801` (PII-Purge) auto-closed, Globus SuperDARN-Mirror
+  FAILED (4994 files, 34 GB), OpenAlex/Exa notifications.
+- **CI:** `ci_manage list` → HTTP 403 (GitHub API rate limit, `void`); no run
+  readable, watchdog snapshot `/tmp/opencode/ci_status.md` (00:16) void.
+- **Safety-Snapshot:** `refs/safety/1790374908`.
+- **`register_lookup --orphan-docs`:** 42 carrier-less prose documents
+  (cross-cutting, not River-owned — carrier per owner handover open).
 
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
@@ -58,19 +58,10 @@ Diese Session konsumierte `handover-2026-09-25-river-folge32.md`.
 - **Trigger:** Lauf `36194355313` ist beendet.
 - **Lage:** (gemessen 2026-09-26 via `ci_manage list`) frischer Lauf `36194355313` auf
   HEAD `42471cde` dispatcht, beim einmaligen Read `queued`; zweiter Alt-Lauf
-  `36189444050` in_progress.
-- **Blockade:** keine.
+  `36189444050` in_progress. Der neue Tone→Apertur-Gate-Test
+  (`mathematikerin/tests.rs:547`) hängt an der CI-Verifikation des Folge-33-HEAD.
+- **Blockade:** keine (lokal `cargo check --tests` grün).
 - **Braucht:** `ci_manage view 36194355313`, bei Rot `ci_manage log 36194355313`.
-
-#### HRV/ESP32-Puls-Bindung → Radiations-Pfad
-- **Status:** wartend | **Bindung:** eigen/operator
-- **Trigger:** ESP32-Firmware liefert den Puls-Arrival auf dem Pfad.
-- **Lage:** (gemessen 2026-09-17 via `survey-2026-09-17-verlorene-diskussionen.md:84`)
-  das RMSSD/tone-Gate steht (`src/archivar/hrv.rs`); die Bindung Puls-Arrival →
-  Radiations-Pfad ist ungebaut.
-- **Blockade:** die Firmware/Hardware-Bindung ist ungemessen.
-- **Braucht:** Puls-Arrival im Radiations-Pfad verdrahten (HRV-Gate → Apertur/tone-scale
-  in `src/mathematikerin/omega.rs`) und mit angeschlossener Hardware messen.
 
 ### Operator handelt
 
@@ -115,6 +106,20 @@ Je Eintrag: **Lage** (ein Satz) · **Frage** · **bei Ja** · **bei Nein**.
 - **Blockade:** Hardware fehlt.
 - **Braucht:** `OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`, dann
   `perm_target_probe --live <pfad>`.
+
+#### HRV/Puls-Arrival → Radiations-Pfad (Code gebaut, Hardware absent)
+- **Status:** operator-gebunden (Hardware) | **Bindung:** operator
+- **Trigger:** ESP32-Firmware/Watch liefert den Puls-Arrival auf dem Kanal (`nn`/`rr`/`ibi`).
+- **Lage:** (gemessen 2026-09-26 via `sread`+`sgrep`) der Code-Pfad steht:
+  `feed_beat_to_hrv` (`main_flow.rs:79`) speist Beats aus beiden Kanälen
+  (`main_flow.rs:1067/1078`) in das HRV-Gate (`VagusTone` → `tone_code`); der ω-Loop
+  liest `tone_code` und relaxiert `tone_scale` (`omega.rs:1670-1678`), Apertur =
+  `field_permeability * tone_scale` (`omega.rs:349`); Gate-Test
+  `the_tone_code_relaxes_the_aperture_between_floor_and_unity`
+  (`mathematikerin/tests.rs:547`). Absent ist allein der physische Puls-Arrival.
+- **Blockade:** kein Puls-Arrival am Kanal (Firmware/Hardware ungemessen).
+- **Braucht:** Puls-Arrival auf `nn`/`rr`/`ibi` liefern, dann messen, dass `tone_code`
+  in den Stress-Zustand wechselt und `tone_scale` gegen `TONE_FLOOR_SCALE` relaxiert.
 
 #### Akt: LAN-Sensorik adb-reverse-Route (sichtbarer Lauf)
 - **Status:** operator-gebunden | **Bindung:** operator
