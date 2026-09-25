@@ -73,7 +73,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18387 RUNNING Ablauf 09-28 (09-24); demeter-cdn.yml + demeter-aggregate-cdn.yml vorhanden, Secrets gesetzt; Blockade F5 ASM 'Request Rejected' bei rs-order create, Lauf 35851193831 Exit 137; Katalog 57760 URNs.
+note DEMETER Order 18387 DONE_WITH_WARNING; statusDate 2026-09-25T15:08Z; filesInErrorCount 96978; availableFilesCount 0; product GET …/files/<md5> HTTP 500/0 B; online:false
 
 pending
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
