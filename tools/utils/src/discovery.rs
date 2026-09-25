@@ -194,7 +194,7 @@ mod tests {
             "host/data?id=*"
         );
         assert_eq!(fold_placeholders("host/{a}/b"), "host/*/b");
-        assert_eq!(fold_placeholders("host/{x}y{z}"), "host*y*");
+        assert_eq!(fold_placeholders("host/{x}y{z}"), "host/*y*");
         assert_eq!(fold_placeholders("host/{unclosed"), "host/{unclosed");
     }
 
