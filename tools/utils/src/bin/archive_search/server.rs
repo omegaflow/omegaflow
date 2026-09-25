@@ -16,6 +16,8 @@ pub const MODES: &[&str] = &[
     "ads",
     "ntrs",
     "wayback",
+    "wayback-available",
+    "wayback-timemap",
     "crossref",
     "wiki",
     "github",

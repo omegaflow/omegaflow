@@ -466,6 +466,37 @@ fn first_snapshot(body: &str) -> Option<String> {
     Some(format!("https://web.archive.org/web/{}/{}", ts, original))
 }
 
+fn cdx_snapshot_lines(v: &Json) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(rows) = v.as_arr() else {
+        return out;
+    };
+    let header = rows.first().and_then(|r| r.as_arr());
+    let (ti, oi, si) = match header {
+        Some(h) => cdx_indices(h),
+        None => (0, 1, 2),
+    };
+    let start = match header {
+        Some(h) if cdx_is_header(h) => 1,
+        Some(_) | None => 0,
+    };
+    for row in rows.iter().skip(start) {
+        let Some(cells) = row.as_arr() else {
+            continue;
+        };
+        let ts = cells.get(ti).and_then(|c| c.as_str()).unwrap_or("");
+        let original = cells.get(oi).and_then(|c| c.as_str()).unwrap_or("");
+        let code = cells.get(si).and_then(|c| c.as_str()).unwrap_or("");
+        if !ts.is_empty() && !original.is_empty() {
+            out.push(format!(
+                "url https://web.archive.org/web/{}/{} (status {})",
+                ts, original, code
+            ));
+        }
+    }
+    out
+}
+
 pub fn verdict_lines(url: &str) -> Vec<String> {
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — three-stage ladder", url));
@@ -619,11 +650,17 @@ fn parse_atom_entries(xml: &str) -> Vec<AtomEntry> {
 
 pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!(
-        "https://export.arxiv.org/api/query?search_query=all:{}&max_results={}",
+        "https://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}",
         urlencode(query),
         max
     );
-    match get_retrying(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
+    let headers = [
+        "-H",
+        "User-Agent: omegaflow-archive-search (https://github.com/omegaflow/omegaflow)",
+        "-H",
+        "Accept: application/atom+xml",
+    ];
+    match get_retrying(&url, &headers, "40") {
         Some(f) if f.status == Some(200) => {
             let entries = parse_atom_entries(&f.body);
             if entries.is_empty() {
@@ -652,6 +689,9 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
                     })
                     .collect()
             }
+        }
+        Some(f) if f.status == Some(406) => {
+            vec!["pending — arxiv HTTP 406 (rate/UA policy; retry later)".to_string()]
         }
         Some(f) => vec![format!("pending — arxiv HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
@@ -792,33 +832,7 @@ pub fn wayback_lines(query: &str, max: usize) -> Vec<String> {
     match get(&url, &[], "40") {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => {
-                let mut out = Vec::new();
-                if let Some(rows) = v.as_arr() {
-                    let header = rows.first().and_then(|r| r.as_arr());
-                    let (ti, oi, si) = match header {
-                        Some(h) => cdx_indices(h),
-                        None => (0, 1, 2),
-                    };
-                    let start = match header {
-                        Some(h) if cdx_is_header(h) => 1,
-                        Some(_) | None => 0,
-                    };
-                    for row in rows.iter().skip(start) {
-                        let cells = match row.as_arr() {
-                            Some(c) => c,
-                            None => continue,
-                        };
-                        let ts = cells.get(ti).and_then(|c| c.as_str()).unwrap_or("");
-                        let original = cells.get(oi).and_then(|c| c.as_str()).unwrap_or("");
-                        let code = cells.get(si).and_then(|c| c.as_str()).unwrap_or("");
-                        if !ts.is_empty() && !original.is_empty() {
-                            out.push(format!(
-                                "url https://web.archive.org/web/{}/{} (status {})",
-                                ts, original, code
-                            ));
-                        }
-                    }
-                }
+                let out = cdx_snapshot_lines(&v);
                 if out.is_empty() {
                     vec![format!(
                         "absent — the CDX register carries no snapshot: {}",
@@ -832,6 +846,75 @@ pub fn wayback_lines(query: &str, max: usize) -> Vec<String> {
         },
         Some(f) => vec![format!("pending — CDX HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
+    }
+}
+
+pub fn wayback_available_lines(url: &str) -> Vec<String> {
+    let endpoint = format!(
+        "https://archive.org/wayback/available?url={}",
+        urlencode(url)
+    );
+    match get(&endpoint, &[], "40") {
+        Some(f) if f.status == Some(200) => availability_lines_from(&f.body, url),
+        Some(f) => vec![format!("pending — availability HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn availability_lines_from(body: &str, url: &str) -> Vec<String> {
+    match json::parse(body) {
+        Some(v) => {
+            let closest = v.get("archived_snapshots").and_then(|s| s.get("closest"));
+            let (snapshot, ts, status) = match closest {
+                Some(c) => (
+                    c.get("url").and_then(|u| u.as_str()).unwrap_or(""),
+                    c.get("timestamp").and_then(|t| t.as_str()).unwrap_or(""),
+                    c.get("status").and_then(|s| s.as_str()).unwrap_or(""),
+                ),
+                None => ("", "", ""),
+            };
+            if snapshot.is_empty() {
+                vec![format!(
+                    "absent — the availability register carries no snapshot: {}",
+                    url
+                )]
+            } else {
+                vec![format!(
+                    "url {}\ttimestamp: {}\tstatus: {}",
+                    snapshot, ts, status
+                )]
+            }
+        }
+        None => vec!["pending — the availability response carries no JSON".to_string()],
+    }
+}
+
+pub fn wayback_timemap_lines(url: &str) -> Vec<String> {
+    let endpoint = format!("https://web.archive.org/web/timemap/json/{}", url);
+    match get(&endpoint, &[], "120") {
+        Some(f) if f.status == Some(200) && f.complete => timemap_lines_from(&f.body, url),
+        Some(f) if f.status == Some(200) => {
+            vec!["pending — the timemap download is incomplete (truncated)".to_string()]
+        }
+        Some(f) => vec![format!("pending — timemap HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn timemap_lines_from(body: &str, url: &str) -> Vec<String> {
+    match json::parse(body) {
+        Some(v) => {
+            let out = cdx_snapshot_lines(&v);
+            if out.is_empty() {
+                vec![format!(
+                    "absent — the timemap register carries no snapshot: {}",
+                    url
+                )]
+            } else {
+                out
+            }
+        }
+        None => vec!["pending — the timemap response carries no JSON".to_string()],
     }
 }
 
@@ -1707,6 +1790,8 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         "heasarc" => crate::heasarc::heasarc_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
+        "wayback-available" => wayback_available_lines(query),
+        "wayback-timemap" => wayback_timemap_lines(query),
         other => vec![format!("absent — no mode named {}", other)],
     };
     witnessed(mode, lines)
@@ -1952,6 +2037,36 @@ mod tests {
         assert_eq!(
             first_snapshot(default_cols).as_deref(),
             Some("https://web.archive.org/web/20020120142510/http://example.com:80/")
+        );
+    }
+
+    #[test]
+    fn availability_lines_read_the_closest_snapshot() {
+        let body = r#"{"url":"http://example.com","archived_snapshots":{"closest":{"status":"200","available":true,"url":"http://web.archive.org/web/20260925031642/https://example.com/","timestamp":"20260925031642"}}}"#;
+        assert_eq!(
+            availability_lines_from(body, "http://example.com"),
+            vec!["url http://web.archive.org/web/20260925031642/https://example.com/\ttimestamp: 20260925031642\tstatus: 200".to_string()]
+        );
+    }
+
+    #[test]
+    fn availability_lines_report_absent_when_closest_is_empty() {
+        let body = r#"{"url":"example.com","archived_snapshots":{}}"#;
+        assert_eq!(
+            availability_lines_from(body, "example.com"),
+            vec!["absent — the availability register carries no snapshot: example.com".to_string()]
+        );
+    }
+
+    #[test]
+    fn timemap_lines_carry_each_memento() {
+        let body = r#"[["urlkey","timestamp","original","mimetype","statuscode","digest","length"],["com,example)/","20020120142510","http://example.com:80/","text/html","200","X","1792"],["com,example)/","20020328012821","http://www.example.com:80/","text/html","301","Y","481"]]"#;
+        assert_eq!(
+            timemap_lines_from(body, "http://example.com"),
+            vec![
+                "url https://web.archive.org/web/20020120142510/http://example.com:80/ (status 200)".to_string(),
+                "url https://web.archive.org/web/20020328012821/http://www.example.com:80/ (status 301)".to_string(),
+            ]
         );
     }
 

@@ -1661,6 +1661,193 @@ pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
     }
 }
 
+pub fn tap_body_to_json(url: &str, body: &str) -> Option<JsonVal> {
+    match tap_format(url).as_deref() {
+        Some(v) if v.starts_with("votable") => votable_to_json(body),
+        Some("csv") => csv_to_json(body),
+        Some(v) if v.starts_with("json") => parse_json(body).and_then(|j| tap_to_json(&j)),
+        _ => {
+            let trimmed = body.trim_start_matches('\u{feff}').trim_start();
+            if trimmed.starts_with('{') || trimmed.starts_with('[') {
+                parse_json(body).and_then(|j| tap_to_json(&j))
+            } else if body.contains("<VOTABLE") {
+                votable_to_json(body)
+            } else {
+                None
+            }
+        }
+    }
+}
+
+fn find_ci(hay: &str, needle: &str, from: usize) -> Option<usize> {
+    let hb = hay.as_bytes();
+    let nb = needle.as_bytes();
+    if nb.is_empty() || from > hb.len().saturating_sub(nb.len()) {
+        return None;
+    }
+    (from..=hb.len() - nb.len()).find(|&i| {
+        hb[i..i + nb.len()]
+            .iter()
+            .zip(nb)
+            .all(|(a, b)| a.to_ascii_lowercase() == *b)
+    })
+}
+
+fn split_ci<'a>(hay: &'a str, needle: &str) -> Vec<&'a str> {
+    let mut out = Vec::new();
+    let mut rest = hay;
+    while let Some(pos) = find_ci(rest, needle, 0) {
+        out.push(&rest[..pos]);
+        rest = &rest[pos + needle.len()..];
+    }
+    out.push(rest);
+    out
+}
+
+fn html_cell_text(content: &str) -> String {
+    let mut text = String::new();
+    let mut i = 0usize;
+    let bytes = content.as_bytes();
+    while i < bytes.len() {
+        if bytes[i] == b'<' {
+            match content[i..].find('>') {
+                Some(end) => {
+                    let tag = &content[i + 1..i + end];
+                    if tag.trim_end_matches('/').trim().eq_ignore_ascii_case("br") {
+                        text.push('\n');
+                    }
+                    i += end + 1;
+                }
+                None => {
+                    text.push_str(&content[i..]);
+                    break;
+                }
+            }
+        } else {
+            let start = i;
+            while i < bytes.len() && bytes[i] != b'<' {
+                i += 1;
+            }
+            text.push_str(&content[start..i]);
+        }
+    }
+    text.lines()
+        .map(|l| l.split_whitespace().collect::<Vec<_>>().join(" "))
+        .filter(|l| !l.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn html_header_key(text: &str) -> Option<String> {
+    let mut key = String::new();
+    let mut underscore = true;
+    for c in xml_unescape(text).chars() {
+        let mapped = if c.is_ascii_alphanumeric() {
+            c.to_ascii_lowercase()
+        } else {
+            '_'
+        };
+        if mapped == '_' {
+            if !underscore {
+                key.push('_');
+                underscore = true;
+            }
+        } else {
+            underscore = false;
+            key.push(mapped);
+        }
+    }
+    while key.ends_with('_') {
+        key.pop();
+    }
+    if key.is_empty() { None } else { Some(key) }
+}
+
+fn html_table_rows(table: &str) -> Option<JsonVal> {
+    let mut names: Vec<String> = Vec::new();
+    let mut seen: HashMap<String, usize> = HashMap::new();
+    for chunk in split_ci(table, "<th").into_iter().skip(1) {
+        let th_body = match chunk.find('>') {
+            Some(p) => &chunk[p + 1..],
+            None => continue,
+        };
+        let content = match find_ci(th_body, "</th", 0) {
+            Some(e) => &th_body[..e],
+            None => th_body,
+        };
+        let Some(base) = html_header_key(&html_cell_text(content)) else {
+            continue;
+        };
+        let n = seen.entry(base.clone()).or_insert(0);
+        *n += 1;
+        names.push(if *n == 1 {
+            base
+        } else {
+            format!("{base}_{}", *n)
+        });
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let mut rows: Vec<JsonVal> = Vec::new();
+    for tr in split_ci(table, "<tr").into_iter().skip(1) {
+        let row_body = match tr.find('>') {
+            Some(p) => &tr[p + 1..],
+            None => continue,
+        };
+        let row_body = match find_ci(row_body, "</tr", 0) {
+            Some(p) => &row_body[..p],
+            None => row_body,
+        };
+        let mut obj = HashMap::new();
+        for (i, cell) in split_ci(row_body, "<td").into_iter().skip(1).enumerate() {
+            if i >= names.len() {
+                break;
+            }
+            let val = if cell.starts_with('/') {
+                JsonVal::Null
+            } else {
+                match cell.find('>') {
+                    Some(p) => {
+                        let after = &cell[p + 1..];
+                        let content = match find_ci(after, "</td", 0) {
+                            Some(e) => &after[..e],
+                            None => after,
+                        };
+                        votable_cell(&html_cell_text(content))
+                    }
+                    None => JsonVal::Null,
+                }
+            };
+            obj.insert(names[i].clone(), val);
+        }
+        if !obj.is_empty() {
+            rows.push(JsonVal::Obj(obj));
+        }
+    }
+    if rows.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Arr(rows))
+    }
+}
+
+pub fn html_to_json(body: &str) -> Option<JsonVal> {
+    let mut search_from = 0usize;
+    while let Some(table_pos) = find_ci(body, "<table", search_from) {
+        let table_body = &body[table_pos + "<table".len()..];
+        let Some(table_end) = find_ci(table_body, "</table", 0) else {
+            break;
+        };
+        let table = &table_body[..table_end];
+        if let Some(rows) = html_table_rows(table) {
+            return Some(rows);
+        }
+        search_from = table_pos + "<table".len() + table_end + "</table".len();
+    }
+    None
+}
+
 pub fn tdb_to_jd(tdb_secs: f64) -> f64 {
     tdb_secs / 86400.0 + J2000_EPOCH
 }
@@ -2264,21 +2451,11 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     } else if src.format == "free text" {
         text_to_json(body)
     } else if src.format == "tap" {
-        match tap_format(&src.url).as_deref() {
-            Some(v) if v.starts_with("votable") => votable_to_json(body),
-            Some("csv") => csv_to_json(body),
-            Some(v) if v.starts_with("json") => parse_json(body).and_then(|j| tap_to_json(&j)),
-            _ => {
-                let trimmed = body.trim_start_matches('\u{feff}').trim_start();
-                if trimmed.starts_with('{') || trimmed.starts_with('[') {
-                    parse_json(body).and_then(|j| tap_to_json(&j))
-                } else if body.contains("<VOTABLE") {
-                    votable_to_json(body)
-                } else {
-                    None
-                }
-            }
-        }
+        tap_body_to_json(&src.url, body)
+    } else if src.format == "votable" {
+        votable_to_json(body)
+    } else if src.format == "html" {
+        html_to_json(body)
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         let body = body
             .strip_prefix("OK")
@@ -4081,7 +4258,12 @@ pub fn is_time_key(k: &str) -> bool {
 }
 
 pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<(f64, f64)> {
-    let parsed = parse_json(body);
+    let parsed = match src.format.as_str() {
+        "votable" => votable_to_json(body),
+        "html" => html_to_json(body),
+        "tap" => tap_body_to_json(&src.url, body),
+        _ => parse_json(body),
+    };
     let Some(ref j) = parsed else {
         return Vec::new();
     };
@@ -4327,5 +4509,143 @@ mod votable_tests {
             },
             _ => panic!("not an object"),
         }
+    }
+
+    #[test]
+    fn votable_alma_obscore_body_reads() {
+        let body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE xmlns="http://www.ivoa.net/xml/VOTable/v1.3" version="1.4">
+  <RESOURCE type="results">
+    <INFO name="QUERY_STATUS" value="OK" />
+    <TABLE>
+      <FIELD name="s_ra" datatype="double" ucd="pos.eq.ra" unit="deg" utype="obscore:Char.SpatialAxis.Coverage.Location.Coord.Position2D.Value2.C1" xtype="adql:DOUBLE">
+        <DESCRIPTION>RA of central coordinates</DESCRIPTION>
+      </FIELD>
+      <FIELD name="s_dec" datatype="double" ucd="pos.eq.dec" unit="deg" utype="obscore:Char.SpatialAxis.Coverage.Location.Coord.Position2D.Value2.C2" xtype="adql:DOUBLE">
+        <DESCRIPTION>DEC of central coordinates</DESCRIPTION>
+      </FIELD>
+      <FIELD name="target_name" datatype="char" arraysize="256*" ucd="meta.id;src" utype="obscore:Target.Name">
+        <DESCRIPTION>name of intended target</DESCRIPTION>
+      </FIELD>
+      <FIELD name="proposal_id" datatype="char" arraysize="64*" ucd="meta.id;obs.proposal" utype="obscore:Provenance.Proposal.identifier">
+        <DESCRIPTION>Identifier of proposal to which NO observation belongs.</DESCRIPTION>
+      </FIELD>
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD>359.85821666667465</TD>
+            <TD>0.7214125000000109</TD>
+            <TD>RGALX360p01MPAID056552</TD>
+            <TD>2022.1.01515.S</TD>
+          </TR>
+          <TR>
+            <TD>1.5578874999698953</TD>
+            <TD>-6.393148611111178</TD>
+            <TD>J0006-0623</TD>
+            <TD>2025.1.01024.S</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>"#;
+        let json = votable_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 2);
+        assert_eq!(jnum(&rows[0], "s_ra"), Some(359.85821666667465));
+        assert_eq!(jnum(&rows[1], "s_dec"), Some(-6.393148611111178));
+        assert_eq!(
+            jstr(&rows[0], "target_name").as_deref(),
+            Some("RGALX360p01MPAID056552")
+        );
+        assert_eq!(
+            jstr(&rows[1], "proposal_id").as_deref(),
+            Some("2025.1.01024.S")
+        );
+        assert_eq!(jnum(&rows[0], "target_name"), None);
+    }
+}
+
+#[cfg(test)]
+mod html_tests {
+    use super::*;
+
+    const AEC_RECENT_LIST: &str = r#"<div id="block-recentearthquakelist">
+<table class="desktop-centered">
+<thead>
+<tr><th>Mag</th>
+<th>Earthquake Information</th>
+<th>Depth (miles)</th>
+</tr></thead>
+<tbody id="eqTable"><tr class="even"><td><a id="grey-links" href="/event/aka2026sztdqy">1.9</a></td><td><a id="grey-links" href="/event/aka2026sztdqy">September 24 at 11:38 PM AKDT<br>40 mi NW of Cape Yakataga</a></td><td><a id="grey-links" href="/event/aka2026sztdqy">0</a></td></tr><tr class="odd"><td><a id="grey-links" href="/event/aka2026szqcic">1.9</a></td><td><a id="grey-links" href="/event/aka2026szqcic">September 24 at 10:07 PM AKDT<br>10 mi NW of Central</a></td><td><a id="grey-links" href="/event/aka2026szqcic">1</a></td></tr></tbody>
+</table>
+</div>"#;
+
+    #[test]
+    fn html_recent_list_rows_read() {
+        let json = html_to_json(AEC_RECENT_LIST).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 2);
+        assert_eq!(jnum(&rows[0], "mag"), Some(1.9));
+        assert_eq!(jnum(&rows[0], "depth_miles"), Some(0.0));
+        assert_eq!(jnum(&rows[1], "depth_miles"), Some(1.0));
+        assert_eq!(
+            jstr(&rows[1], "earthquake_information").as_deref(),
+            Some("September 24 at 10:07 PM AKDT\n10 mi NW of Central")
+        );
+    }
+
+    #[test]
+    fn html_empty_tbody_is_none() {
+        let body = r#"<table class="desktop-centered"><thead><tr><th>Mag</th><th>Earthquake Information</th><th>Depth (miles)</th></tr></thead><tbody id="eqTable"></tbody></table>"#;
+        assert!(html_to_json(body).is_none());
+    }
+
+    #[test]
+    fn html_without_table_is_none() {
+        assert!(html_to_json("<html><body>no table</body></html>").is_none());
+    }
+
+    #[test]
+    fn html_empty_cell_is_null_not_zero() {
+        let body = r#"<table><thead><tr><th>Mag</th><th>Note</th></tr></thead><tbody><tr><td>2.4</td><td> </td></tr></tbody></table>"#;
+        let json = html_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        match &rows[0] {
+            JsonVal::Obj(m) => match m.get("note") {
+                Some(JsonVal::Null) => {}
+                other => panic!("empty cell is not Null: {other:?}"),
+            },
+            _ => panic!("not an object"),
+        }
+        assert_eq!(jnum(&rows[0], "note"), None);
+    }
+
+    #[test]
+    fn html_headerless_table_is_none() {
+        let body = r#"<table><tbody><tr><td>1.2</td><td>2.3</td></tr></tbody></table>"#;
+        assert!(html_to_json(body).is_none());
+    }
+
+    #[test]
+    fn html_table_after_a_headerless_one_reads() {
+        let body = r#"<table><tbody><tr><td>1.2</td><td>2.3</td></tr></tbody></table>
+<table><thead><tr><th>Mag</th></tr></thead><tbody><tr><td>3.5</td></tr></tbody></table>"#;
+        let json = html_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jnum(&rows[0], "mag"), Some(3.5));
     }
 }
