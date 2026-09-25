@@ -1078,6 +1078,16 @@ at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
 field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
+url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 neracoos_air_temperature_c exponential-decay thermal C 3600 0.0 0.0
+field 3 neracoos_wind_speed_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
+field 4 neracoos_wind_gust_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
+
 url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
 ttl 3600
 format eea_aq_parquet
@@ -8324,13 +8334,6 @@ on earth 0 0 0
 ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
-format catalog_tycho
-origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
-compiler tools/harvest/src/bin/tycho2_compiler.rs
-at sun
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/xp_spectra.bin
 format xp_spectra
 origin https://dc.g-vo.org/tap/sync
@@ -9083,6 +9086,13 @@ format weberin_verdicts
 origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
+at sun
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
+format catalog_tycho
+origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
+compiler tools/harvest/src/bin/tycho2_compiler.rs
 at sun
 ttl 604800
 
@@ -13906,13 +13916,3 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
-ttl 3600
-on earth 0 0 0
-map table.rows
-lat 0
-lon 1
-field 2 neracoos_air_temperature_c exponential-decay thermal C 3600 0.0 0.0
-field 3 neracoos_wind_speed_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
-field 4 neracoos_wind_gust_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
