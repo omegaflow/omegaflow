@@ -85,6 +85,19 @@ pub fn timetagdays(r: &MediumbandRecord) -> u16 {
     be16(&r.header[MED_TIMETAGDAYS_OFFSET..MED_TIMETAGDAYS_OFFSET + 2])
 }
 
+pub fn epoch_anchor() -> Option<f64> {
+    None
+}
+
+pub fn sample_epoch(anchor: f64, r: &MediumbandRecord) -> Option<f64> {
+    let t = anchor + f64::from(timetagdays(r)) * 86_400.0;
+    if t.is_finite() && t > 0.0 {
+        Some(t)
+    } else {
+        None
+    }
+}
+
 pub fn mediumband_amps(r: &MediumbandRecord) -> Option<(f64, f64, f64)> {
     let mut min = f64::INFINITY;
     let mut max = f64::NEG_INFINITY;
@@ -226,11 +239,13 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let mut out = Vec::new();
     for file in &packed.files {
         if let Some(records) = parse_mediumband(&file.raw) {
+            let Some(anchor) = epoch_anchor() else {
+                continue;
+            };
             for r in &records {
-                let t = f64::from(t0_ms(r)) / 1000.0;
-                if t <= 0.0 {
+                let Some(t) = sample_epoch(anchor, r) else {
                     return None;
-                }
+                };
                 let (mn, mx, mean) = mediumband_amps(r)?;
                 out.push((t, mn, COMP_AMP_MIN));
                 out.push((t, mx, COMP_AMP_MAX));
@@ -378,15 +393,23 @@ mod tests {
     }
 
     #[test]
-    fn parse_series_emits_measured_amp_rows_for_mediumband() {
+    fn parse_series_keeps_mediumband_rows_pending_until_epoch_anchor() {
         let raw = sample_mediumband_record();
         let bin = pack(&raw, "DD059817_F1.DAT");
         let series = parse_series(&bin).unwrap();
-        assert_eq!(series.len(), 3);
-        assert_eq!(series[0], (1_231_585.997, 1.0, COMP_AMP_MIN));
-        assert_eq!(series[1], (1_231_585.997, 1.0, COMP_AMP_MAX));
-        assert_eq!(series[2], (1_231_585.997, 1.0, COMP_AMP_MEAN));
+        assert!(series.is_empty());
         assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn epoch_anchor_stays_absent_and_sample_epoch_needs_it() {
+        assert!(epoch_anchor().is_none());
+        let r = mediumband_record(&sample_mediumband_record()).unwrap();
+        assert_eq!(
+            sample_epoch(340_000_000.0, &r),
+            Some(340_000_000.0 + 317.0 * 86_400.0)
+        );
+        assert_eq!(sample_epoch(-1.0e12, &r), None);
     }
 
     #[test]
@@ -408,7 +431,6 @@ mod tests {
             (&zero[..], "S0A.DAT"),
         ]);
         let series = parse_series(&bin).unwrap();
-        assert_eq!(series.len(), 3);
-        assert_eq!(series[2].2, COMP_AMP_MEAN);
+        assert!(series.is_empty());
     }
 }
