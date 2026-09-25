@@ -120,7 +120,7 @@ artefakt 0 pipeline/catalog/ — keine artefakt-Datei mehr im Baum (stage-Artefa
 # ------------------------------------------------------------------
 register sources.φ
 register dead_sources.φ
-register sources_index.φ
+generiert sources_index.φ
 register declined_sources.φ
 register blocked_sources.φ
 infra pipeline/ledger.φ
