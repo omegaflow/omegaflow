@@ -10715,3 +10715,85 @@ fn test_series_rows_keeps_the_no_band_pad_for_a_bandless_series() {
     );
     assert_eq!(rows[0].bin_width, 0.0);
 }
+
+#[test]
+fn port_gap_magnitude_fields_resolve() {
+    assert_eq!(probe_classify("mag_g"), ("em", "mag", 604800.0));
+    assert_eq!(probe_classify("phot_g_mean_mag"), ("em", "mag", 604800.0));
+    assert_eq!(probe_classify("bp_mag"), ("em", "mag", 604800.0));
+    assert_eq!(probe_classify("v_magnitude"), ("em", "mag", 604800.0));
+    assert_eq!(probe_classify("mag_v"), ("em", "mag", 604800.0));
+    assert_eq!(
+        probe_classify("geosphere_earthquake_mag"),
+        ("seismic-body", "Mw", 3600.0)
+    );
+}
+
+#[test]
+fn port_gap_astrometric_fields_drop() {
+    assert_eq!(probe_classify("parallax_mas"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("parallax"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("par"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("plx_value"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("bp_rp"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("bp_minus_rp"), ("DROP", "", 0.0));
+    assert_eq!(
+        probe_classify("total_proper_motion_mas_yr"),
+        ("DROP", "", 0.0)
+    );
+}
+
+#[test]
+fn port_gap_concentration_and_energy_suffixes_resolve() {
+    assert_eq!(
+        probe_classify("dissolved_oxygen_umol_kg"),
+        ("diffusion", "micromole/kg", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("nitrate_umol_kg"),
+        ("diffusion", "micromole/kg", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("chlorophyll_mg_m3"),
+        ("diffusion", "mg/m3", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("chlorophyll_a_mgm3"),
+        ("diffusion", "mg/m3", 604800.0)
+    );
+    assert_eq!(probe_classify("ozone_ppb"), ("diffusion", "ppb", 86400.0));
+    assert_eq!(
+        probe_classify("ozone_mr_ppmv"),
+        ("diffusion", "ppmv", 86400.0)
+    );
+    assert_eq!(
+        probe_classify("heat_content_anomaly_0_700_jm2"),
+        ("thermal", "j/m2", 604800.0)
+    );
+    assert_eq!(probe_classify("foF2_mhz"), ("em", "mhz", 3600.0));
+    assert_eq!(probe_classify("max_temp_kelvin"), ("thermal", "K", 3600.0));
+    assert_eq!(probe_classify("temp_k"), ("thermal", "K", 3600.0));
+    assert_eq!(probe_classify("transit_depth_ppt"), ("em", "ppt", 604800.0));
+}
+
+#[test]
+fn port_gap_unit_from_name_suffix_resolves_new_units() {
+    assert_eq!(
+        unit_from_name_suffix("dissolved_oxygen_umol_kg"),
+        Some("micromole/kg")
+    );
+    assert_eq!(unit_from_name_suffix("chlorophyll_mg_m3"), Some("mg/m3"));
+    assert_eq!(
+        unit_from_name_suffix("heat_content_anomaly_0_700_jm2"),
+        Some("J/m2")
+    );
+    assert_eq!(unit_from_name_suffix("foF2_mhz"), Some("MHz"));
+    assert_eq!(unit_from_name_suffix("phot_g_mean_mag"), Some("mag"));
+    assert_eq!(unit_from_name_suffix("depth_km"), Some("km"));
+}
+
+#[test]
+fn port_gap_non_oscillator_stays_unclassified() {
+    assert_eq!(probe_classify("parallax"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("bogus_not_a_field"), ("UNCERTAIN", "", 0.0));
+}

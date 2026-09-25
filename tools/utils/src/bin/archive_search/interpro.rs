@@ -1,12 +1,19 @@
 use crate::json;
 use crate::net::{get, urlencode};
 
-const ENDPOINT: &str = "https://www.ebi.ac.uk/interpro/api/entry/all/protein/reviewed/";
+const ENDPOINT: &str = "https://www.ebi.ac.uk/interpro/api/entry/interpro/";
 
 pub fn interpro_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!("{}?search={}", ENDPOINT, urlencode(query));
     match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
+        Some(f) => interpro_from_fetch(&f, query, max),
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn interpro_from_fetch(f: &crate::net::Fetch, query: &str, max: usize) -> Vec<String> {
+    match f.status {
+        Some(200) => {
             let out = parse_interpro(&f.body, max);
             if out.is_empty() {
                 vec![format!("absent — interpro carries no entry: {}", query)]
@@ -14,8 +21,8 @@ pub fn interpro_lines(query: &str, max: usize) -> Vec<String> {
                 out
             }
         }
-        Some(f) => vec![format!("pending — interpro HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        Some(204) => vec![format!("absent — interpro carries no entry: {}", query)],
+        _ => vec![format!("pending — interpro HTTP {}", f.status_text())],
     }
 }
 
@@ -96,5 +103,20 @@ mod tests {
     #[test]
     fn an_empty_result_carries_nothing() {
         assert!(parse_interpro(r#"{"count":0,"results":[]}"#, 10).is_empty());
+    }
+
+    #[test]
+    fn http_204_is_an_absent_not_a_pending() {
+        let f = crate::net::Fetch {
+            status: Some(204),
+            body: String::new(),
+            raw: Vec::new(),
+            retry_after: None,
+            complete: true,
+        };
+        assert_eq!(
+            interpro_from_fetch(&f, "kinase", 10),
+            vec!["absent — interpro carries no entry: kinase".to_string()]
+        );
     }
 }
