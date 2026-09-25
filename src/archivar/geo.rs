@@ -34,6 +34,7 @@ pub const MAGIC_LAS: [u8; 4] = *b"LAS1";
 pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
 pub const MAGIC_OSM: [u8; 4] = *b"OSM1";
+pub const MAGIC_TOAR: [u8; 4] = *b"TOA1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -168,6 +169,9 @@ pub const COMP_HFR_U: u32 = 1;
 pub const COMP_HFR_V: u32 = 2;
 pub const COMP_HFR_MAX: u32 = 2;
 
+pub const COMP_TOAR_O3: u32 = 1;
+pub const COMP_TOAR_MAX: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -221,6 +225,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "hfrnet_rtv" => Some(MAGIC_HFR),
         "emodnet_hfr" => Some(MAGIC_HFR),
         "opensensemap_temperatur" => Some(MAGIC_OSM),
+        "toar_surface_o3" => Some(MAGIC_TOAR),
         _ => None,
     }
 }
@@ -260,6 +265,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "hfrnet_rtv" => Some(COMP_HFR_MAX),
         "emodnet_hfr" => Some(COMP_HFR_MAX),
         "opensensemap_temperatur" => Some(COMP_OSM_MAX),
+        "toar_surface_o3" => Some(COMP_TOAR_MAX),
         _ => None,
     }
 }
