@@ -1,14 +1,17 @@
 <!--
-  title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-13)
+  title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-25)
   class: ref
-  date: 2026-09-13
-  sha256: 8edaf39efb8676ac8bafdfd0beb03a8a96b7d3148bf3886a57b5064bd500b6df
+  date: 2026-09-25
+  sha256: e56f395d8df21630fe8f4daaaaa6fc33522a3dae9426ca81bc7cce64eb9e58aa
 -->
-# Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-13)
+# Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 
 Quelle: `docs/specs/omegaflow-sense-hardware.yaml.md` (100% Mantis-Shrimp Observatory).
-Preise = AliExpress-Trefferpreise am 2026-09-13 (können schwanken). Links:
-`https://de.aliexpress.com/item/<id>.html`. Kuratiert per webread (kein Login nötig zum Lesen).
+Preise = AliExpress-Trefferpreise am 2026-09-13, Ergänzungen am 2026-09-25 (können
+schwanken). Links: `https://de.aliexpress.com/item/<id>.html`. Kuratiert per
+`archive_search --playwright` (kein Login nötig zum Lesen). Die 2026-09-25-Session
+rendert die AliExpress-Seiten in **CHF**; ein `*` an einem Preis = EUR abgeleitet aus
+dem gemessenen EZB-Kurs 2026-09-24 (1 CHF = 1,0628 EUR) — nicht direkt gemessen.
 
 ## Sensoren (canSense)
 
@@ -18,7 +21,7 @@ Preise = AliExpress-Trefferpreise am 2026-09-13 (können schwanken). Links:
 | VEML6075 UV | 1005004653958045 | 3,85 |
 | Polarisationsfolie | 1005012049647725 | 3,89 |
 | MLX90614 (GY-906) | 1005004003178158 | 6,03 |
-| DS18B20 (1-Wire, Safety) | — Suche — | 1,50 |
+| DS18B20 (1-Wire, Safety, wasserdicht 1 m) | 1005012179635448 | 0,67 CHF ≈ 0,71 €* |
 | QMC5883L (GY-273) | 1005007182895828 | 2,29 |
 | SGP30 (GY-SGP30) | 1005005470338431 | 7,31 |
 | BME680 (CJMCU-680) | 1005008176567197 | 8,10 |
@@ -32,8 +35,6 @@ Preise = AliExpress-Trefferpreise am 2026-09-13 (können schwanken). Links:
 | MPU6050 (GY-521) | 1005010057794277 | 1,69 |
 | Kapazitiver Bodenfeuchte | 1005009610892245 | 1,99 |
 | MAX30102 Puls | 1005007015407514 | 3,15 |
-
-DS18B20-Suche: `https://www.aliexpress.com/wholesale?SearchText=DS18B20+waterproof+temperature`
 
 ## Aktoren (canRadiate)
 
@@ -50,7 +51,7 @@ DS18B20-Suche: `https://www.aliexpress.com/wholesale?SearchText=DS18B20+waterpro
 | Bass-Exciter (Alternative) | 1005002682778172 | 14,89 |
 | Vibrationsmotor 3V (10×) | 1005009267048597 | 3,79 |
 | Solenoid Push-Pull | 1005002278950915 | 2,59 |
-| 1N4007 Freilaufdiode (Solenoid M8, Pflicht) | — Suche — | pending |
+| 1N4007 Freilaufdiode (Solenoid M8, Pflicht) | 1005006454795578 (100 Stk) · Pollin 140020 | 0,92 CHF/100 ≈ 0,98 €/100* · 0,05 €/Stk (Pollin) |
 | Kupferlackdraht 0,5 mm | 33057393544 | 3,95 |
 | SG90-Servo (Bulk) | 1005006219266362 | 35,19 |
 | Mini-Radiallüfter 5V | 1005003595630530 | 1,59 |
@@ -79,19 +80,18 @@ Schwache Picks: SG90 nur als Bulk-Treffer (Einzelstück ~2 €), Bass-Exciter te
 
 ## Outdoor-Zusatz (Spec PART 7)
 
-| Teil | Suche |
-|---|---|
-| IP67 Gehäuse (PC/ASA, UV-stabil) | `IP67+junction+box+PC` |
-| Quarzglas-Fenster (UV) | `quartz+glass+window+disc` |
-| IR-Fenster (ZnSe) | `IR+transparent+window+ZnSe` |
-| Solarpanel 6V/5W | `solar+panel+6V+5W` |
-| LiFePO4 + TP4056/BMS | `LiFePO4+18650+TP4056+BMS` |
-| Silicagel | `silica+gel+desiccant+pack` |
-| Conformal Coating | `silicone+conformal+coating+pcb` |
-| TVS/ESD | `TVS+diode+ESD+protection` |
-| Erdungslasche | `grounding+lug+stainless` |
-
-Suche: `https://www.aliexpress.com/wholesale?SearchText=<suche>`
+| Teil | Item-ID | Preis |
+|---|---|---|
+| IP67 Gehäuse (PC/ASA, UV-stabil) | 1005007825059822 | 5,22 CHF ≈ 5,55 €* |
+| Quarzglas-Fenster (UV, JGS1) | 1005005957896679 | 2,34 CHF ≈ 2,49 €* |
+| IR-Fenster (ZnSe, CVD) | 1005004498442545 | 18,19 CHF ≈ 19,33 €* |
+| Solarpanel 6V/5W (Waveshare) | 1005009677090192 | 8,45 CHF ≈ 8,98 €* |
+| LiFePO4 18650 (3,2 V, 1800 mAh) | 1005011867942107 | 10,87 CHF ≈ 11,55 €* |
+| BMS/Laderegler 1S 3,2 V (7 A) | 1005004814230753 | 0,71 CHF ≈ 0,75 €* |
+| Silicagel Trockenmittel | 1005006861885143 | 3,05 CHF ≈ 3,24 €* |
+| Conformal Coating (Silikon, Pinsel) | 1005012218197836 | 2,39 CHF ≈ 2,54 €* |
+| TVS/ESD-Diode (50 Stk, SOD-523) | 1005006300625215 | 0,92 CHF ≈ 0,98 €* |
+| Erdungslasche Edelstahl (10 Stk) | 1005009120469685 | 13,47 CHF ≈ 14,32 €* |
 
 ## Plattform-Vergleich — ESP32-S3 (aktuell) vs. PINE64 Ox64
 
@@ -113,4 +113,5 @@ Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
 - Warenkorb erfordert AliExpress-Login (anonyme Session lehnt „In den Warenkorb" ab).
 - Spec-Korrekturen 2026-09-13: SPI-Display `dc` GPIO9 → GPIO13 (Konflikt mit I2C `scl` aufgelöst), DS18B20 ergänzt (Safety-Pflicht).
-- 1N4007 (Freilaufdiode Solenoid M8, Pflicht laut `mantis-shrimp-build.md` §4): kein AliExpress-Treffer am 2026-09-24 gemessen (`archive_search --all "1N4007 diode"` → Alibaba/eBay/Amazon/Distributoren), Preis `pending`, Suche `https://www.aliexpress.com/wholesale?SearchText=1N4007+diode`.
+- 1N4007 (Freilaufdiode Solenoid M8, Pflicht laut `mantis-shrimp-build.md` §4): am 2026-09-25 mit `archive_search --playwright` gefunden (1005006454795578, 100 Stk). Die Notiz „kein AliExpress-Treffer" vom 2026-09-24 ist widerlegt — jene Suche lief über `--all`, das AliExpress nicht abfragt. Günstigste gemessene €-Quelle: Pollin 140020, 0,05 €/Stk.
+- Chemie-Korrektur 2026-09-25: `TP4056` ist ein 4,2-V-Li-Ion-Lader und darf eine 3,2-V-LiFePO4-Zelle (Ladeschluss 3,65 V) **nicht** laden. Der LiFePO4-Pfad braucht ein 3,2-V-BMS (gemessen: 1005004814230753, 1S 7 A mit Temperaturschutz) — die Spec-Zeile „LiFePO4 + TP4056/BMS" ist damit auf BMS korrigiert.
