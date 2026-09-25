@@ -75,7 +75,12 @@ pub fn fetch_raw_with(
     cmd.arg(url);
     let output = cmd.output().ok()?;
     if output.status.success() {
-        Some(String::from_utf8_lossy(&output.stdout).to_string())
+        if output.stdout.starts_with(&[0x1f, 0x8b])
+            && let Some(text) = gunzip(&output.stdout)
+        {
+            return Some(String::from_utf8_lossy(&text).into_owned());
+        }
+        Some(String::from_utf8_lossy(&output.stdout).into_owned())
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
         eprintln!(
@@ -1031,7 +1036,7 @@ pub fn live_sweep(
         }
         let url = resolve_secret(&url, env);
         let headers = render_headers(&s.headers, env);
-        let mut body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
+        let body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
             Some(b) => b,
             None => {
                 let (class, detail) = match http_code(&url, &headers) {
@@ -1055,13 +1060,6 @@ pub fn live_sweep(
                 continue;
             }
         };
-        if url.ends_with(".gz") {
-            if let Some(raw) = fetch_raw_bytes(&url, s.ttl)
-                && let Some(text) = gunzip(&raw)
-            {
-                body = String::from_utf8_lossy(&text).into_owned();
-            }
-        }
         match extract(s, &body, now, lsk) {
             ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
                 if v.is_empty() {

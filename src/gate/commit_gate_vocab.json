@@ -113,7 +113,8 @@
     "blockade-keine": "ein blockiert-Punkt trägt keine oder eine leere Blockade — benenne den Block, der ihn hält",
     "akt-ohne-wort-trigger": "ein operator-gebunden-Punkt trägt weder ein Operator-Wort im Trigger noch ein Wort:-Feld — der Akt hängt am Wort",
     "termin-ohne-datum": "ein termin-Punkt trägt kein ISO-Datum in Trigger oder Bindung — ein Termin ohne Datum ist keiner",
-    "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund"
+    "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund",
+    "blocked-integrated-twin": "eine gap-Klassen-Disposition (parser-def mit gap-Direktive), deren url integriert in phi/sources.φ steht — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ:<zeile> oder entferne den Eintrag"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -456,6 +457,8 @@
     "status_proof_blockade-keine": "## Offen\n\n### P\n- **Status:** blockiert | **Bindung:** eigen\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
     "status_proof_akt-ohne-wort-trigger": "## Offen\n\n### P\n- **Status:** operator-gebunden | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** das Operator-Wort\n- **Braucht:** Operator-Wort\n",
     "status_proof_termin-ohne-datum": "## Offen\n\n### P\n- **Status:** termin | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
-    "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n"
+    "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n",
+    "blocked_twin_blocked_open": "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote unit absent\n\ndescoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n\npending\nurl https://example.org/c\nnote port duty\n",
+    "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n"
   }
 }

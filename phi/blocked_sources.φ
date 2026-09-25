@@ -1,10 +1,10 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
-note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon: unit-auto-detect, force-undetermined, votable-reader, html-parser-arm, konverter; nicht im Kanon, register-eigen: astrometry-reader, curation.
-note gap-Token unit-auto-detect — Feld ohne Einheit; Einheiten-Erkennung aus Wert/Header fehlt.
-note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium (Astrometrie/Farbindex ohne Kraft-Fit).
+note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon: unit-auto-detect, votable-reader, html-parser-arm, konverter; nicht im Kanon, register-eigen: astrometry-reader.
+note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
+note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
 note gap-Token konverter — Feld-Einheit falsch abgebildet (mag als nT); Konverter-Arm fehlt.
 note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten Körpers, kein Skalarfeld; Serien-Arm fehlt.
-note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); Query-Kurations-Arm fehlt.
+note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 
 blocked account
@@ -90,80 +90,65 @@ blocked account
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
 note HTTP 402 mit PURPLEAIR_KEY / 403 ohne Key 2026-09-25 — paid plan/quota gate, key present, kein 401.
 
-parser-def geojson
-gap curation
+descoped
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25 Air_Quality_PM25_Latest_Results: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:356 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
 
-parser-def geojson
-gap curation
+descoped
 url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25 Semptember_Chile_Earthquake: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:923 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
 
-parser-def geojson
-gap curation
+descoped
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25 crowdmag_observations_aggregated: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:949 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
 
-parser-def geojson
-gap curation
+descoped
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25 tohoku_seismicity: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:1001 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
 
-parser-def json
-gap curation
+descoped
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-note HTTP 400 2026-09-25 HAPI 1400: "Unable to parse text as ISO8601 date/time: week_agoT00:00:00Z" — {week_ago} unersetzt; Query-Arm fehlt.
+note HTTP 400 2026-09-25 HAPI 1400: {week_ago} unersetzt. descoped (gemessen: URL integriert → phi/sources.φ:5526 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Template-Fix).
 
-parser-def votable
-gap curation
+descoped
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
-note HTTP 400 2026-09-25 ADQL: table J/A+A/609/A117/table1 not found; 11 unresolved identifiers (_RA,_DE,Karmn,...); Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: table J/A+A/609/A117/table1 not found; 11 unresolved identifiers. descoped (gemessen: URL integriert → phi/sources.φ:5832 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def json
-gap curation
+descoped
 url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
-note HTTP 400 2026-09-25 HAPI 1405: "time outside valid range" — Fenster 2010-09-17 außerhalb Abdeckung; Query-Arm fehlt.
+note HTTP 400 2026-09-25 HAPI 1405: Fenster 2010-09-17 außerhalb Abdeckung. descoped (gemessen: URL integriert → phi/sources.φ:5842 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown column "dec"; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: Unknown column "dec". descoped (gemessen: URL integriert → phi/sources.φ:7365 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","mag_v"; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","mag_v". descoped (gemessen: URL integriert → phi/sources.φ:7374 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra_dr2","dec_dr2"; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra_dr2","dec_dr2". descoped (gemessen: URL integriert → phi/sources.φ:7486 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown column "ep_flux"; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: Unknown column "ep_flux". descoped (gemessen: URL integriert → phi/sources.φ:9289 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+catalogs.mmc_bzcat5th+WHERE+flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","flux"; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","flux". descoped (gemessen: URL integriert → phi/sources.φ:9352 — Stale-Zwilling; kein Query-Arm-Surface).
 
-parser-def votable
-gap curation
+descoped
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; Anfrage FORMAT=json, Reader-Arm steht (extract.rs votable_to_json).
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable. descoped (gemessen: URL integriert → phi/sources.φ:9403 — Stale-Zwilling; Reader-Arm steht extract.rs votable_to_json).
 
-parser-def votable
-gap curation
+descoped
 url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; Anfrage FORMAT=json, Reader-Arm steht (extract.rs votable_to_json).
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable. descoped (gemessen: URL integriert → phi/sources.φ:9413 — Stale-Zwilling; Reader-Arm steht extract.rs votable_to_json).
 
-parser-def votable
-gap curation
+descoped
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted; Query-Arm fehlt.
+note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
 
 pending
 url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
@@ -171,19 +156,19 @@ note HTTP 405 direct+Proton 2026-09-25 — ParquetFile/urls verlangt POST (post_
 
 pending
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
-note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
 
 pending
 url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
-note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
 
 pending
 url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
-note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
 
 pending
 url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
-note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
 
 parser-def json
 gap unit-auto-detect
@@ -245,30 +230,26 @@ gap unit-auto-detect
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
 note NASA Exoplanet TESS-TOI: field orbital_period_days/earth_radius/earth_mass/transit_duration_hours/stellar_teff_K unit absent — unit-auto-detect gap; cmap ra/dec.
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
-note Gaia DR3: field parallax_mas force undetermined — astrometric column, kein 9-Kraft-Fit; cmap plx 3 trägt Entfernung, radvel 4 gesetzt. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3 trägt Entfernung, radvel 4. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
-note Gaia DR3: field parallax_mas/bp_rp force undetermined — Astrometrie/Farbindex, kein 9-Kraft-Fit; cmap plx 3 trägt Entfernung, phot_g_mean_mag=em mag. Astrometrie echt.
+note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
-note Gaia DR3: field parallax_mas/bp_rp force undetermined; cmap plx 3, phot_g_mean_mag=em mag. Astrometrie/Farbindex-Gap.
+note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 parser-def json
 gap unit-auto-detect
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
 note Gaia DR3: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
-note Gaia DR3: field parallax_mas force undetermined — Astrometrie; cmap plx 3. Entfernung bereits via plx.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 parser-def json
 gap unit-auto-detect
@@ -280,15 +261,13 @@ gap unit-auto-detect
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27DSCT%27+ORDER+BY+random_index
 note Gaia DR3 DSCT: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
-parser-def json
-gap curation
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
-note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query-Kuration; phot_g_mean_mag=em mag. Unit-Fix steht.
+note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query ill-formed. descoped (gemessen: kein Query-Arm-Surface — per-entry ADQL-Rewrite; Reader-Arm steht extract.rs votable_to_json).
 
-parser-def json
-gap curation
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query-Kuration; phot_g_mean_mag=em mag. Unit-Fix steht.
+note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query ill-formed. descoped (gemessen: kein Query-Arm-Surface — per-entry ADQL-Rewrite; phot_g_mean_mag=em mag).
 
 parser-def json
 gap unit-auto-detect
@@ -315,10 +294,9 @@ gap unit-auto-detect
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27SR%27+ORDER+BY+random_index
 note Gaia DR3 SR: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.5+AND+phot_g_mean_mag+<+14+AND+parallax+>+2
-note Gaia DR3: field bp_rp force undetermined — Farbindex; cmap plx 3. Photometrie echt.
+note Gaia DR3: field bp_rp — Farbindex; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 parser-def json
 gap unit-auto-detect
@@ -340,45 +318,37 @@ gap unit-auto-detect
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
 note Gaia DR3 (metallarm): field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
-note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
-note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
-note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
-note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
-note Gaia DR3 (ferne): field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3 (ferne): field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
-note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
-note Gaia DR3 (Himmelspatch): field par force undetermined — Astrometrie; cmap plx 2. Entfernung via plx.
+note Gaia DR3 (Himmelspatch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
-note Gaia DR3 (Patch): field par force undetermined — Astrometrie; cmap plx 2. Entfernung via plx.
+note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 parser-def json
 gap unit-auto-detect
@@ -455,20 +425,17 @@ gap unit-auto-detect
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 note NED TAP (votable): field redshift/velocity_km_s unit absent — unit-auto-detect gap; cmap data ra/dec. Em echt.
 
-parser-def json
-gap force-undetermined
+descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
-note SIMBAD basic (EB): field simbad_eclipsing_binary_plx_mas force undetermined — Astrometrie (plx_value); cmap plx 2 trägt Entfernung, radvel 5/redshift 6. Astrometrie echt.
+note SIMBAD basic (EB): field plx_mas — Astrometrie; cmap plx 2 trägt Entfernung, radvel 5/redshift 6. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
-note SIMBAD basic (Pulsar): field simbad_pulsar_plx_mas force undetermined — Astrometrie; cmap plx 2. Astrometrie echt.
+note SIMBAD basic (Pulsar): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap force-undetermined
+descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
-note SIMBAD basic (QSO): field simbad_quasar_plx_mas force undetermined — Astrometrie; cmap plx 2. Astrometrie echt.
+note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 parser-def json
 gap unit-auto-detect
@@ -1015,10 +982,9 @@ gap unit-auto-detect
 url https://www.ngdc.noaa.gov/hazel/hazard/service/tsunami/query?limit=500&format=json
 note NGDC tsunami query: field event_year/tsunami_cause/max_wave_height_m unit absent — unit-auto-detect gap; map latitude/longitude. Ozean/seismisch echt.
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://weather.cma.cn/api/now/54511
-note CMA now (Station 54511): field temp_c/humidity_pct/pressure_hpa/wind_speed_ms/wind_dir/precip_mm/feels_like_c unit absent — unit-auto-detect gap. Wetter (thermal) echt.
+note CMA now (Station 54511): field temp_c/humidity_pct/pressure_hpa/wind_speed_ms/wind_dir/precip_mm/feels_like_c. descoped (gemessen: URL integriert → phi/sources.φ:372 — Stale-Zwilling).
 
 parser-def json
 gap unit-auto-detect
@@ -1080,10 +1046,9 @@ gap unit-auto-detect
 url https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/{year}{month}/dst{year}{month}{day}.for.request
 note WDC Kyoto Dst: field hour/dst_nT unit absent — unit-auto-detect gap; rows. Geomagnetisch (em) echt.
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://www.jma.go.jp/bosai/quake/data/list.json
-note JMA quake list: lastline geosphere_earthquakes_jma_recent_mag — unit/cadence absent. Seismisch echt.
+note JMA quake list: lastline geosphere_earthquakes_jma_recent_mag. descoped (gemessen: URL integriert → phi/sources.φ:423 — Stale-Zwilling).
 
 parser-def json
 gap unit-auto-detect
