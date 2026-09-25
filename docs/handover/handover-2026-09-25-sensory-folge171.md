@@ -3,7 +3,7 @@
   session: Sensory-Folge 171
   class: handover
   date: 2026-09-25
-  sha256: 54051795ed17c39ca9b66cf612ab2a475cb27e1468d37e5521907c77e7e56d31
+  sha256: 677b433ead8e94501d9b822e6de5543bbf323912587f801a47b917ee2cbd6fe0
   status: live
 -->
 # Handover — Sensory-Folge 171 (2026-09-25)
@@ -369,9 +369,47 @@ hier. Karte: `docs/concepts/tools-map.md`.
 ### Survey-Träger — Orphan-Faltung 2026-09-25
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via `register_lookup --orphan-docs`) 15 orphan Surveys ohne Handover-Träger; offene Marker je Dokument: axiom-gate-broken-null-control 1, axiom-gate-cross-screening-tibet 1, axiom-gate-depth-phase-echo-fleet 1, axiom-gate-h0-lines-register 1, axiom-gate-solar-seconds-matrix 1, axiom-gate-neptune-rift-ephemerides 2 (resolved), axiom-gate-uranus-rift-ephemerides 2 (resolved), survey-2026-09-07-weberin-sonnensystem-kette 7, survey-2026-09-07-weberin-thread-matrix 22, survey-2026-09-13-weberin-quellen 42, survey-2026-09-13-weberin-quellen-folge 14, survey-2026-09-13-weberin-quellen-treffer 9, survey-2026-09-14-weberin-quellen-rerun 42, survey-2026-09-16-sonden-flotte 4, survey-ein-blatt-korona-heizung 2.
+- **Lage:** (gemessen 2026-09-25 via `register_lookup --orphan-docs`, Nachlauf) von den 15 orphan Surveys sind 10 nicht mehr als orphan gemessen (durch die Punkte oben getragen); trägerlos bleiben 5: survey-2026-09-06-codestruktur 8, survey-2026-09-17-omegaflow-legacy-konzepte 2, survey-2026-09-17-verlorene-diskussionen 10, survey-fortschritt 1, survey-messpunkt-verteilung 6. Zuvor: 15 orphan Surveys (axiom-gate-* + weberin-* + sonden-flotte + korona).
 - **Blockade:** keine.
 - **Braucht:** die 15 Surveys sind durch die Punkte oben getragen — je Survey die offenen Marker gegen die oben geführten Punkte abgleichen (broken-null-control, cross-screening, depth-phase, h0-lines, solar-matrix, weberin-kette, weberin-thread, weberin-quellen, sonden-flotte, korona); die zwei `resolved`-Linien (neptune/uranus) als descoped schließen.
+
+### Träger-Register — Orphan-Faltung 2026-09-25 (30 blatt/concepts/paper)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-25 via `register_lookup --orphan-docs` + 5 `general`-Taucher) 30 trägerlose blatt/concepts/paper-Dokumente, je offener Marker gegen den Body geprüft; die zwei vollständig erledigten blatt-Dokumente sind per `git mv` nach `docs/blatt/archiv/` (beweist: `blatt-h0-linien-register.md:540` „pending: keine offenen Punkte", `blatt-kreuz-screening-kollab.md:236` „nicht länger offen"). `concepts/` und `paper/` haben keine `archiv/`-Klasse — sie bleiben live und werden durch diese Träger-Zeilen gehalten.
+- **Blockade:** keine.
+- **Braucht:** je Träger-Zeile den genannten Schritt ausführen (die in-body-aufgelösten Marker brauchen keinen Schritt — die Träger-Zeile hält das Dokument).
+- **Träger-Zeilen:**
+  - `docs/blatt/blatt-der-grat.md | offene Marker: 10 | nächster Schritt: ENSO-Pfeil messen — `git log --all -- '*enso*'` lokalisiert die geplante `handover-2026-08-21-enso-kausalpfeil.md`, dann `cross_te_screen``
+  - `docs/blatt/archiv/blatt-h0-linien-register.md | offene Marker: 0 (war 5) | archiviert 2026-09-25 (in-body resolved, Z.540)``
+  - `docs/blatt/blatt-kreuz-screening-gyirong.md | offene Marker: 4 | nächster Schritt: `cross_te_screen` auf `meteo_harvest/tibet-flut-2026`; Bordeaux/Aaretal/Japan mit `meteo_harvest` ernten``
+  - `docs/blatt/archiv/blatt-kreuz-screening-kollab.md | offene Marker: 0 (war 9) | archiviert 2026-09-25 (in-body resolved, Z.236)``
+  - `docs/blatt/blatt-solar-seconds-matrix.md | offene Marker: 2 | nächster Schritt: `corona_conditional_probe` auf das Paar 211A→193A``
+  - `docs/blatt/blatt-thuan-fragesteller.md | offene Marker: 6 | nächster Schritt: `termin: 2026-12-02` (Gaia DR4), dann `docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md``
+  - `docs/concepts/blatt-papier-resultat.md | offene Marker: 1 | nächster Schritt: Blatt-1-Bojen-Matrix-Rotor laufen lassen, Matrix-Zeile Σ p̂·M nachtragen (Z.63–71/84–86)``
+  - `docs/concepts/das-eine-instrument.md | offene Marker: 2 | keiner — Marker in-body aufgelöst (Z.63/65–80); gehalten von Punkt „Das eine Instrument"``
+  - `docs/concepts/der-kausalpfeil.md | offene Marker: 2 | keiner — kanonische Form, in-body aufgelöst (Z.42–46/100–103); Ausführung in drei Handovers``
+  - `docs/concepts/der-paradigmenwechsel.md | offene Marker: 9 | nächster Schritt: JUICE-Erdpassage 28./29.09.2026 — ECM-Magnetfeld + Sonnenwind/IMF-Bz/Kp am Perigäums-ICRS-Punkt messen (Z.371–375)``
+  - `docs/concepts/die-akteure-im-boden-und-wasser.md | offene Marker: 9 | nächster Schritt: `tools/measure/src/bin/depth_phase_fleet_probe.rs` — Streuung gegen das ±10-km-Gate senken (Z.44–47)``
+  - `docs/concepts/exzellenz-konzept.md | offene Marker: 7 | keiner — Marker sind die Definition von pending (§2/§2.5), Body final, sha256 im Header``
+  - `docs/concepts/fuenf-funken-anomalie-suche.md | offene Marker: 4 (davon 3 `wartet`-Substrings) | nächster Schritt: Funke 3 via `tools/measure/src/bin/broker_difference_probe.rs` + Funke 5 (TDB-Koinzidenz-Fenster) bauen``
+  - `docs/concepts/positive-maske.md | offene Marker: 2 | nächster Schritt: Stationsterm II.KIV re-messen (`tools/measure/src/bin/quake_location_probe.rs:48`); `tools/measure/src/bin/usgs_mww_centroid_probe.rs` in die Flotte verdrahten``
+  - `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md | offene Marker: 3 | nächster Schritt: `archive_search --ntrs "Morabito Galileo USO"` bzw. PDS GO-J-RSS-* Datenköpfe (:171–176)``
+  - `docs/concepts/recherche-galileo-kadenz-reconciliation.md | offene Marker: 2 | nächster Schritt: `archive_search --ntrs 19930010224` bzw. DSMS Services Catalog v7.5 §"Doppler count interval" (:100–102)``
+  - `docs/concepts/the-seven-spheres.md | offene Marker: 3 | nächster Schritt: Fresnel-Winkeldurchmesser-Feld (a/λ/D) aus `src/archivar` bauen (:42–43)``
+  - `docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md | offene Marker: 2 | keiner — Treffer sind Substring „depending" (Z.29/35), kein offener Punkt; Paper bleibt live``
+  - `docs/paper/causal-arrow-preregistration.md | offene Marker: 5 | nächster Schritt: `te_pair_probe` (Lag-Sweep {1,3,6,12,24,48}) gegen Rasuwa-Regen auf co-lokaler Abfluss-Serie; DAHITI Koshi via `sfetch` (api_key) oder offener Trishuli-Gauge``
+  - `docs/paper/corona-heating-ladder.md | offene Marker: 2 | nächster Schritt: `cargo run -p omegaflow-measure --bin aia_ladder_probe` über den vollen 613-Event-Korpus``
+  - `docs/paper/flyby-path-2-falsification-metric-addendum.md | offene Marker: 13 | nächster Schritt: nach dem JUICE-Flyby das In-situ-Feld in die Kette füllen + σ-Metrik gegen fam; davor DSCOVR-Parser-Check (`phi/sources.φ:158–169`)``
+  - `docs/paper/flyby-path-2-preregistration.md | offene Marker: 2 | nächster Schritt: Feldzustand aus RTSW/Kp/Swarm auf den Perigäum-Tube füllen, nach 28./29.09.2026 prüfen``
+  - `docs/paper/galileo-rotor-spin-era-floor.md | offene Marker: 1 | nächster Schritt: CK-Kerne jenseits `ck90341a`–`ck90344b` (Frame -77000) von `naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/` mit `sfetch` harvesten``
+  - `docs/paper/jwst-disequilibrium-survey.md | offene Marker: 7 | nächster Schritt: `archive_search --ads "JWST O2 O3 transmission spectroscopy exoplanet atmosphere"` erneut sweepen``
+  - `docs/paper/laic-arrow-direction.md | offene Marker: 3 (2 in-body gelöst) | nächster Schritt: `archive_search --playwright https://leos.ac.cn` (CSES SPA, Z.226)``
+  - `docs/paper/nadel-v-fresh-area-dip-scan.md | offene Marker: 1 | nächster Schritt: `cargo run -p omegaflow-measure --bin lsst_anomaly_probe` auf dem positiven Kontrollkegel (Z.49)``
+  - `docs/paper/planet-nine-kbo-residue.md | offene Marker: 1 | keiner — count exhaustive (Z.66), Familiensumme 7180 = Katalogtotal; Arbeit liegt in Punkt „Planet-Nine/KBO"``
+  - `docs/paper/probe-front-dark-matter.md | offene Marker: 2 | nächster Schritt: `archive_search --ads/--ntrs "Syntonisation 1983" "GPS timing 1982–87"` (Z.331); Deduktion 42 (Z.368) not buildable``
+  - `docs/paper/sturzflut-tibet-pfeil.md | offene Marker: 34 | nächster Schritt: offene Trishuli-Abflussreihe suchen `archive_search --tavily "Trishuli discharge m3/s open data"`, dann `pfeil --a serieA --b serieB --lag-sweep --surrogat 10` (Z.513–516)``
+  - `docs/paper/tonga-lamb-crosscheck.md | offene Marker: 3 | nächster Schritt: vDEC-Auth-Kante — kein vDEC-Key in `.secrets.local` (121 Keys, 0 Treffer), Zugang nötig; Z.224–225 „none before access is granted"``
 
 ## Abschluss
 
