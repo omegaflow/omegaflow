@@ -1,5 +1,7 @@
 use crate::archivar::C_LIGHT;
 use crate::archivar::HUBBLE_H0;
+use crate::archivar::{JsonVal, fetch_raw, jnum, parse_json};
+use std::sync::OnceLock;
 
 pub const MAGIC: [u8; 4] = *b"SKD1";
 pub const HEADER_BYTES: usize = 8;
@@ -62,7 +64,20 @@ impl SkyDirection {
     pub fn distance_m(&self) -> Option<f64> {
         match (self.distance, self.redshift) {
             (Some(d), _) if d.is_finite() && d > 0.0 => Some(d),
-            (None, Some(z)) if z.is_finite() && z > 0.0 => Some(z * C_LIGHT / HUBBLE_H0),
+            (None, Some(z)) if z.is_finite() && z > 0.0 => {
+                self.distance_m_with_vpec(cosmicflows_vpec_m_s(self.ra_deg, self.dec_deg))
+            }
+            _ => None,
+        }
+    }
+
+    pub fn distance_m_with_vpec(&self, vpec_m_s: Option<f64>) -> Option<f64> {
+        match (self.distance, self.redshift) {
+            (Some(d), _) if d.is_finite() && d > 0.0 => Some(d),
+            (None, Some(z)) if z.is_finite() && z > 0.0 => match vpec_m_s {
+                Some(v) => near_flow_distance_m(z, v),
+                None => Some(z * C_LIGHT / HUBBLE_H0),
+            },
             _ => None,
         }
     }
@@ -112,6 +127,84 @@ pub fn far_flow_distance_m(z: f64) -> Option<f64> {
     } else {
         None
     }
+}
+
+pub const COSMICFLOWS_CDN_URL: &str = "https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json";
+
+pub const COSMICFLOWS_MATCH_RADIUS_ARCSEC: f64 = 30.0;
+
+#[derive(Clone, Copy)]
+pub struct Cf4Entry {
+    pub ra_deg: f64,
+    pub dec_deg: f64,
+    pub vpec_m_s: f64,
+}
+
+pub fn parse_cosmicflows_cf4(body: &str) -> Vec<Cf4Entry> {
+    let Some(JsonVal::Arr(rows)) = parse_json(body) else {
+        return Vec::new();
+    };
+    let mut entries = Vec::with_capacity(rows.len());
+    for r in &rows {
+        let (Some(ra), Some(dec), Some(vpec_km_s)) =
+            (jnum(r, "ra"), jnum(r, "dec"), jnum(r, "vpec"))
+        else {
+            continue;
+        };
+        if !ra.is_finite() || !dec.is_finite() || !vpec_km_s.is_finite() {
+            continue;
+        }
+        if !(0.0..360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) {
+            continue;
+        }
+        entries.push(Cf4Entry {
+            ra_deg: ra,
+            dec_deg: dec,
+            vpec_m_s: vpec_km_s * 1000.0,
+        });
+    }
+    entries
+}
+
+pub fn nearest_cf4_vpec_m_s(
+    entries: &[Cf4Entry],
+    ra_deg: f64,
+    dec_deg: f64,
+    tol_arcsec: f64,
+) -> Option<f64> {
+    if !ra_deg.is_finite() || !dec_deg.is_finite() || !tol_arcsec.is_finite() || tol_arcsec <= 0.0 {
+        return None;
+    }
+    let ra = ra_deg.to_radians();
+    let dec = dec_deg.to_radians();
+    let (sa, ca) = ra.sin_cos();
+    let (sd, cd) = dec.sin_cos();
+    let u = [cd * ca, cd * sa, sd];
+    let cos_tol = (tol_arcsec.to_radians() / 3600.0).cos();
+    let mut best_cos = cos_tol;
+    let mut best: Option<f64> = None;
+    for e in entries {
+        let era = e.ra_deg.to_radians();
+        let edec = e.dec_deg.to_radians();
+        let (esa, eca) = era.sin_cos();
+        let (esd, ecd) = edec.sin_cos();
+        let v = [ecd * eca, ecd * esa, esd];
+        let cos = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+        if cos >= best_cos {
+            best_cos = cos;
+            best = Some(e.vpec_m_s);
+        }
+    }
+    best
+}
+
+pub fn cosmicflows_vpec_m_s(ra_deg: f64, dec_deg: f64) -> Option<f64> {
+    static CATALOG: OnceLock<Option<Vec<Cf4Entry>>> = OnceLock::new();
+    let entries = CATALOG
+        .get_or_init(|| fetch_raw(COSMICFLOWS_CDN_URL, None, &[]).map(|body| parse_cosmicflows_cf4(&body)));
+    entries
+        .as_deref()
+        .and_then(|e| nearest_cf4_vpec_m_s(e, ra_deg, dec_deg, COSMICFLOWS_MATCH_RADIUS_ARCSEC))
 }
 
 pub fn write_bin(directions: &[SkyDirection]) -> Option<Vec<u8>> {
@@ -615,11 +708,11 @@ mod tests {
         }
         d.distance = None;
         d.redshift = Some(0.05);
-        let hd = d.distance_m().unwrap();
+        let hd = d.distance_m_with_vpec(None).unwrap();
         let expect_hd = 0.05 * C_LIGHT / HUBBLE_H0;
         assert!((hd - expect_hd).abs() < expect_hd * 1e-12);
-        let pos = d.spatial_position().unwrap();
         let p = d.unit_direction();
+        let pos = [p[0] * hd, p[1] * hd, p[2] * hd];
         for k in 0..3 {
             assert!((pos[k] - p[k] * expect_hd).abs() < expect_hd * 1e-9);
         }
@@ -677,5 +770,78 @@ mod tests {
         assert_eq!(far_flow_distance_m(0.0), None);
         assert_eq!(far_flow_distance_m(-0.1), None);
         assert_eq!(far_flow_distance_m(f64::NAN), None);
+    }
+
+    #[test]
+    fn cosmicflows_asset_parses_the_producer_rows_and_scales_km_s_to_m_s() {
+        let body = r#"[
+            {"ra":44.9736,"dec":1.16,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":45.5982,"dec":0.9793,"dist_mpc":10.0,"vpec":-55.5}
+        ]"#;
+        let entries = parse_cosmicflows_cf4(body);
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].vpec_m_s, 300_000.0);
+        assert_eq!(entries[1].vpec_m_s, -55_500.0);
+        assert_eq!(entries[0].ra_deg, 44.9736);
+        assert_eq!(entries[1].dec_deg, 0.9793);
+    }
+
+    #[test]
+    fn cosmicflows_asset_refuses_rows_without_a_finite_radial_field() {
+        let body = r#"[
+            {"ra":44.9,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":null,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":400.0,"dec":1.1,"dist_mpc":100.0,"vpec":300.0},
+            {"ra":44.9,"dec":1.1,"dist_mpc":100.0}
+        ]"#;
+        let entries = parse_cosmicflows_cf4(body);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].vpec_m_s, 300_000.0);
+    }
+
+    #[test]
+    fn nearest_cf4_vpec_reads_the_match_inside_the_radius_and_absent_outside() {
+        let entries = vec![
+            Cf4Entry {
+                ra_deg: 30.0,
+                dec_deg: 60.0,
+                vpec_m_s: 123_000.0,
+            },
+            Cf4Entry {
+                ra_deg: 90.0,
+                dec_deg: 0.0,
+                vpec_m_s: -456_000.0,
+            },
+        ];
+        assert_eq!(
+            nearest_cf4_vpec_m_s(&entries, 30.0, 60.0, 30.0),
+            Some(123_000.0)
+        );
+        assert_eq!(
+            nearest_cf4_vpec_m_s(&entries, 30.0001, 60.0, 30.0),
+            Some(123_000.0)
+        );
+        assert_eq!(nearest_cf4_vpec_m_s(&entries, 180.0, 0.0, 30.0), None);
+        assert_eq!(nearest_cf4_vpec_m_s(&[], 30.0, 60.0, 30.0), None);
+    }
+
+    #[test]
+    fn distance_m_applies_the_peculiar_velocity_only_when_a_redshift_stands() {
+        let mut d = sample_direction();
+        d.redshift = Some(0.05);
+        let linear = d.distance_m_with_vpec(None).unwrap();
+        let receding = d.distance_m_with_vpec(Some(3.0e5)).unwrap();
+        let infall = d.distance_m_with_vpec(Some(-3.0e5)).unwrap();
+        assert!(receding < linear);
+        assert!(infall > linear);
+        let delivered = SkyDirection {
+            distance: Some(2.0 * PARSEC_M),
+            redshift: Some(0.05),
+            ..sample_direction()
+        };
+        assert_eq!(
+            delivered.distance_m_with_vpec(Some(3.0e5)),
+            Some(2.0 * PARSEC_M)
+        );
     }
 }
