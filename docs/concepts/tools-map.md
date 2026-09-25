@@ -252,6 +252,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `smail --dry-run` | 0,288 s | kein Versand |
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --dropped [<line>] [--persist <n>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle); `--persist <n>` = nur Punkte, die ≥n Übergaben überleben, dann verschwinden |
+| `register_lookup --orphans` | — | owner-getaggte offene Register-Einträge, die keine lebende Übergabe des Owners hält: `ORPHAN_COMMITTED` (in HEAD) / `ORPHAN_UNCOMMITTED` (nur Arbeitsbaum); Klassen-Träger `φ/<register>::gap:<token> ×N` hält die Klasse, Count-Drift wird als `CARRIER_DRIFT` gemeldet; `NO_GAP` = parser-Block ohne erklärte Klasse (lauter Einzel-Orphan). Getrennt von `--dropped` (kein Aufenthalt vs. abgerissener Aufenthalt) |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |

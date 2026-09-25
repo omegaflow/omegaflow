@@ -509,6 +509,269 @@ fn scan_dispositions(
     scan_dispositions_text(&text, &path.to_string_lossy(), open_out, released_out)
 }
 
+struct OrphanCandidate {
+    register: String,
+    lineno: usize,
+    owner: String,
+    url: String,
+    name: String,
+    class_key: String,
+    no_gap: bool,
+}
+
+fn collect_orphan_candidates_in(text: &str, register: &str) -> Vec<OrphanCandidate> {
+    let mut out = Vec::new();
+    for (start_line, lines) in parse_blocks(text) {
+        let state = lines[0].1.trim();
+        if state.is_empty() || state.starts_with("note") || state == "descoped" {
+            continue;
+        }
+        let Some(owner) = disposition_owner(state) else {
+            continue;
+        };
+        let url = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("url "))
+            .map(|(_, l)| l.trim_start().trim_start_matches("url ").trim().to_string())
+            .unwrap_or(String::new());
+        let note = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("note "))
+            .map(|(_, l)| l.trim_start().trim_start_matches("note ").trim().to_string())
+            .unwrap_or(String::new());
+        let gap = lines
+            .iter()
+            .find(|(_, l)| l.trim_start().starts_with("gap "))
+            .map(|(_, l)| l.trim_start().trim_start_matches("gap ").trim().to_string())
+            .unwrap_or(String::new());
+        let name = orphan_key_name(&note, &url);
+        if url.is_empty() && name.is_empty() {
+            continue;
+        }
+        let class_key = if gap.is_empty() {
+            String::new()
+        } else {
+            format!("{}::gap:{}", register, gap)
+        };
+        let no_gap = owner == "mountain"
+            && (state.starts_with("parser-def")
+                || state.starts_with("parser-gap")
+                || state.starts_with("blocked parser-def"))
+            && gap.is_empty();
+        out.push(OrphanCandidate {
+            register: register.to_string(),
+            lineno: start_line,
+            owner: owner.to_string(),
+            url,
+            name,
+            class_key,
+            no_gap,
+        });
+    }
+    out
+}
+
+fn orphan_key_name(note: &str, url: &str) -> String {
+    let leading = leading_region(note).trim();
+    if leading.chars().count() >= 4 {
+        return leading.to_string();
+    }
+    if let Some(token) = distinctive_token(&point_key_tokens(note)) {
+        return token;
+    }
+    url.split("//")
+        .nth(1)
+        .and_then(|rest| rest.split('/').next())
+        .unwrap_or("")
+        .to_string()
+}
+
+fn orphan_held(carrier: &str, url: &str, name: &str) -> bool {
+    let url_l = url.to_lowercase();
+    let name_l = name.to_lowercase();
+    (url_l.len() >= 8 && carrier.contains(&url_l))
+        || (name_l.chars().count() >= 4 && carrier.contains(&name_l))
+}
+
+fn owner_handover_texts(root: &Path) -> BTreeMap<String, String> {
+    let mut map: BTreeMap<String, String> = BTreeMap::new();
+    let mut dirs: Vec<String> = HANDOVER_DIRS.iter().map(|s| s.to_string()).collect();
+    dirs.push(PRIVATE_HANDOVER_DIR.to_string());
+    for dir in dirs {
+        let entries = match fs::read_dir(root.join(&dir)) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let name = file_name_string(&entry.path());
+            if !name.ends_with(".md") || name.starts_with('_') {
+                continue;
+            }
+            let Some((line, _, _)) = parse_handover_name(&name) else {
+                continue;
+            };
+            let Ok(text) = fs::read_to_string(entry.path()) else {
+                continue;
+            };
+            let slot = map.entry(canonical_line(&line).to_string()).or_default();
+            slot.push_str(&text.to_lowercase());
+            slot.push('\n');
+        }
+    }
+    map
+}
+
+fn git_head_text(path: &str) -> Option<String> {
+    let output = Command::new("git")
+        .args(["show", &format!("HEAD:{}", path)])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    Some(String::from_utf8_lossy(&output.stdout).to_string())
+}
+
+fn orphan_report_with(
+    root: &Path,
+    head: &dyn Fn(&str) -> Option<String>,
+) -> (Vec<String>, BTreeMap<String, (usize, usize)>) {
+    let carriers = owner_handover_texts(root);
+    let mut candidates: Vec<OrphanCandidate> = Vec::new();
+    let mut registers_head: BTreeMap<String, String> = BTreeMap::new();
+    for register in DISPOSITION_REGISTER_PATHS {
+        let text = match fs::read_to_string(root.join(register)) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        if let Some(head_text) = head(register) {
+            registers_head.insert(register.to_string(), head_text.to_lowercase());
+        }
+        candidates.extend(collect_orphan_candidates_in(&text, register));
+    }
+
+    let mut class_live: BTreeMap<String, (String, usize)> = BTreeMap::new();
+    for c in &candidates {
+        if !c.class_key.is_empty() {
+            let slot = class_live
+                .entry(c.class_key.clone())
+                .or_insert((c.owner.clone(), 0));
+            slot.1 += 1;
+        }
+    }
+    let mut class_held: BTreeSet<String> = BTreeSet::new();
+    let mut drift: Vec<String> = Vec::new();
+    for (key, (owner, live)) in &class_live {
+        let carrier = carriers.get(owner).cloned().unwrap_or(String::new());
+        let key_l = key.to_lowercase();
+        if let Some(pos) = carrier.find(&key_l) {
+            class_held.insert(key.clone());
+            let after = &carrier[pos + key_l.len()..];
+            let declared = after
+                .trim_start()
+                .strip_prefix('\u{d7}')
+                .map(|rest| {
+                    rest.trim_start()
+                        .chars()
+                        .take_while(|ch| ch.is_ascii_digit())
+                        .collect::<String>()
+                })
+                .and_then(|digits| digits.parse::<usize>().ok());
+            if declared != Some(*live) {
+                drift.push(format!(
+                    "CARRIER_DRIFT\t{}\tcarrier={}\tlive={}",
+                    key,
+                    declared
+                        .map(|n| n.to_string())
+                        .unwrap_or("none".to_string()),
+                    live
+                ));
+            }
+        }
+    }
+
+    let mut lines: Vec<String> = Vec::new();
+    let mut summary: BTreeMap<String, (usize, usize)> = BTreeMap::new();
+    for c in &candidates {
+        let carrier = carriers.get(&c.owner).cloned().unwrap_or(String::new());
+        let held = (!c.class_key.is_empty() && class_held.contains(&c.class_key))
+            || orphan_held(&carrier, &c.url, &c.name);
+        if held {
+            continue;
+        }
+        let committed = registers_head
+            .get(&c.register)
+            .map(|h| {
+                (!c.class_key.is_empty() && h.contains(&c.class_key.to_lowercase()))
+                    || orphan_held(h, &c.url, &c.name)
+            })
+            .unwrap_or(false);
+        let class = if committed {
+            "ORPHAN_COMMITTED"
+        } else {
+            "ORPHAN_UNCOMMITTED"
+        };
+        let key = if c.url.is_empty() {
+            c.name.clone()
+        } else {
+            c.url.clone()
+        };
+        let suffix = if c.no_gap {
+            "\tNO_GAP (gap directive absent)"
+        } else {
+            ""
+        };
+        lines.push(format!(
+            "{}\t{}:{}\t[{}]\t{}{}",
+            class, c.register, c.lineno, c.owner, key, suffix
+        ));
+        let slot = summary.entry(c.owner.clone()).or_insert((0, 0));
+        if committed {
+            slot.0 += 1;
+        } else {
+            slot.1 += 1;
+        }
+    }
+    for (key, (owner, live)) in &class_live {
+        if class_held.contains(key) {
+            continue;
+        }
+        lines.push(format!("ORPHAN_CLASS\t{}\t[{}]\t{}", key, owner, live));
+    }
+    lines.extend(drift);
+    for (owner, (committed, uncommitted)) in &summary {
+        lines.push(format!(
+            "ORPHAN_SUMMARY\t{}\t{} committed {} uncommitted",
+            owner, committed, uncommitted
+        ));
+    }
+    (lines, summary)
+}
+
+fn orphan_report(root: &Path) -> (Vec<String>, BTreeMap<String, (usize, usize)>) {
+    orphan_report_with(root, &git_head_text)
+}
+
+fn orphan_total(summary: &BTreeMap<String, (usize, usize)>) -> usize {
+    summary.values().map(|(c, u)| c + u).sum()
+}
+
+fn run_orphans(root: &Path) {
+    let (lines, summary) = orphan_report(root);
+    for line in &lines {
+        println!("{}", line);
+    }
+    let owners: Vec<String> = summary
+        .iter()
+        .map(|(owner, (c, u))| format!("{} {} committed {} uncommitted", owner, c, u))
+        .collect();
+    println!(
+        "register_lookup --orphans: {} orphan entries [{}]",
+        orphan_total(&summary),
+        owners.join(", ")
+    );
+}
+
 fn parse_blocks(text: &str) -> Vec<(usize, Vec<(usize, &str)>)> {
     let mut blocks: Vec<(usize, Vec<(usize, &str)>)> = Vec::new();
     let mut current: Vec<(usize, &str)> = Vec::new();
@@ -909,6 +1172,10 @@ fn run_open() {
     for line in &dispo_out {
         println!("{}", line);
     }
+    let (orphan_lines, orphan_summary) = orphan_report(Path::new("."));
+    for line in &orphan_lines {
+        println!("{}", line);
+    }
     for line in &zustand_out {
         println!("{}", line);
     }
@@ -1012,13 +1279,14 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
         docs.len(),
         opens.len(),
         released.len(),
         dups.len(),
         unverifiable.len(),
         zustand,
+        orphan_total(&orphan_summary),
         dispo,
         summary.join(", "),
         ledger,
@@ -1964,7 +2232,7 @@ fn run_dropped(args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -1977,6 +2245,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--dropped") {
         run_dropped(&args);
+        return;
+    }
+    if args.iter().any(|a| a == "--orphans") {
+        run_orphans(Path::new("."));
         return;
     }
     if args.iter().any(|a| a == "--history") {
@@ -2598,8 +2870,154 @@ mod tests {
     }
 
     #[test]
-    fn distinctive_token_prefers_the_long_word_and_rejects_stopwords() {
-        let tokens = vec!["am".to_string(), "head".to_string(), "8218f46a".to_string()];
+    fn orphan_candidates_carry_owner_url_and_name() {
+        let text = "note preamble\n\nparser-def json\nurl https://example.org/data.json\nnote BGS-FDSN event: field magnitude unit absent\n\ndescoped\nurl https://x\nnote nie gebaut\n\npending\nurl https://y\nnote Argo BGC cores: field unit absent\n";
+        let cs = collect_orphan_candidates_in(text, "b.\u{3c6}");
+        assert_eq!(cs.len(), 2);
+        assert_eq!(cs[0].owner, "mountain");
+        assert_eq!(cs[0].lineno, 3);
+        assert_eq!(cs[0].url, "https://example.org/data.json");
+        assert_eq!(cs[0].name, "BGS-FDSN event");
+        assert_eq!(cs[1].owner, "mycelium");
+        assert_eq!(cs[1].name, "Argo BGC cores");
+    }
+
+    #[test]
+    fn orphan_key_name_falls_back_to_host_without_note() {
+        assert_eq!(
+            orphan_key_name("", "https://coastwatch.noaa.gov/x.csv"),
+            "coastwatch.noaa.gov"
+        );
+    }
+
+    #[test]
+    fn orphan_held_matches_url_or_leading_name() {
+        let carried = "der punkt giro ionosonde fof2_mhz wartet";
+        assert!(orphan_held(carried, "", "GIRO Ionosonde"));
+        assert!(!orphan_held(carried, "", "SANSA Ionosonde"));
+        assert!(orphan_held(
+            "siehe https://gea.esac.esa.int/tap",
+            "https://gea.esac.esa.int/tap",
+            ""
+        ));
+        assert!(!orphan_held("nichts", "https://a.example.org/x", ""));
+    }
+
+    #[test]
+    fn orphan_report_flags_unheld_entries() {
+        let base = env::temp_dir().join(format!("rl-orphan-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("phi")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
+            "### Carried\n- **Braucht:** fix Argo BGC cores\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("phi/blocked_sources.\u{3c6}"),
+            "parser-def json\nurl https://example.org/held\nnote Argo BGC cores: unit absent\n\nparser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n",
+        )
+        .unwrap();
+        let (lines, summary) = orphan_report_with(&base, &|_| None);
+        assert_eq!(orphan_total(&summary), 1, "{:?}", lines);
+        assert_eq!(summary.get("mountain"), Some(&(0usize, 1usize)));
+        assert!(lines.iter().any(|l| l.starts_with(
+            "ORPHAN_UNCOMMITTED\tphi/blocked_sources.\u{3c6}:5\t[mountain]\thttps://example.org/lost"
+        )));
+        assert!(lines.iter().all(|l| !l.contains("https://example.org/held")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_report_marks_a_head_entry_as_committed() {
+        let base = env::temp_dir().join(format!("rl-orphan-head-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("phi")).unwrap();
+        fs::write(
+            base.join("phi/blocked_sources.\u{3c6}"),
+            "parser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n",
+        )
+        .unwrap();
+        let (lines, summary) = orphan_report_with(&base, &|_| {
+            Some("parser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n".to_string())
+        });
+        assert_eq!(summary.get("mountain"), Some(&(1usize, 0usize)));
+        assert!(lines
+            .iter()
+            .any(|l| l.starts_with("ORPHAN_COMMITTED\tphi/blocked_sources.\u{3c6}:1\t[mountain]")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_class_carrier_holds_entries_and_reports_drift() {
+        let base = env::temp_dir().join(format!("rl-orphan-class-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("phi")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
+            "### Class carrier\n- **Braucht:** fix phi/blocked_sources.\u{3c6}::gap:unit-auto-detect \u{d7}2\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("phi/blocked_sources.\u{3c6}"),
+            "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote Alpha: unit absent\n\nparser-def json\ngap unit-auto-detect\nurl https://example.org/b\nnote Beta: unit absent\n\nparser-def json\ngap force-undetermined\nurl https://example.org/c\nnote Gamma: force undetermined\n",
+        )
+        .unwrap();
+        let (lines, summary) = orphan_report_with(&base, &|_| None);
+        assert_eq!(orphan_total(&summary), 1, "{:?}", lines);
+        assert!(lines.iter().all(|l| !l.contains("https://example.org/a")));
+        assert!(lines.iter().all(|l| !l.contains("https://example.org/b")));
+        assert!(lines.iter().any(|l| l.contains("https://example.org/c")));
+        assert!(lines.iter().any(|l| l.starts_with(
+            "ORPHAN_CLASS\tphi/blocked_sources.\u{3c6}::gap:force-undetermined\t[mountain]\t1"
+        )));
+        assert!(lines.iter().all(|l| !l.starts_with("CARRIER_DRIFT")), "{:?}", lines);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_class_reports_carrier_count_drift() {
+        let base = env::temp_dir().join(format!("rl-orphan-drift-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("phi")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
+            "phi/blocked_sources.\u{3c6}::gap:unit-auto-detect \u{d7}5\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("phi/blocked_sources.\u{3c6}"),
+            "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote Alpha: unit absent\n",
+        )
+        .unwrap();
+        let (lines, _) = orphan_report_with(&base, &|_| None);
+        assert!(
+            lines.iter().any(|l| l.starts_with(
+                "CARRIER_DRIFT\tphi/blocked_sources.\u{3c6}::gap:unit-auto-detect\tcarrier=5\tlive=1"
+            )),
+            "{:?}",
+            lines
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_no_gap_marks_mountain_parser_entries() {
+        let cs = collect_orphan_candidates_in(
+            "parser-def json\nurl https://x\nnote A: unit absent\n",
+            "b.\u{3c6}",
+        );
+        assert_eq!(cs.len(), 1);
+        assert!(cs[0].no_gap);
+        assert!(cs[0].class_key.is_empty());
+    }
+
+    #[test]
+    fn distinctive_token_prefers_the_long_word_and_rejects_stopwords() {        let tokens = vec!["am".to_string(), "head".to_string(), "8218f46a".to_string()];
         assert_eq!(distinctive_token(&tokens), Some("8218f46a".to_string()));
         let words = vec!["der".to_string(), "die".to_string()];
         assert_eq!(distinctive_token(&words), None);
