@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-25
-  sha256: b72a8528f75476512565be78c3ee39141386aa74d31e1ac27456d87ec7881fde
+  sha256: f95e5591f122877367199ba30e74f2b27ce0d3a82e8892f51b3a094df08b1ab0
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window, and the hardened minute file (Bz 0.24001, Speed 0.28942 vs fam 0.34125) stays family bound. At the hourly grain two witnesses refuse to converge. The yearly-round witness (post-fix): Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected surrogate null. The hardened quarterly witness (`bz-retro-probe`, CI run 36176580764, fam per quarterly window, lag sweep 0–6 h, n_surr = 100): all 24 directed rows (Bz→dB/dt and Speed→dB/dt) stay family bound — e.g. ABK 2024-q1 Bz 0.12375 vs fam 0.18016, ABK 2025-q4 Bz 0.14008 vs fam 0.19901, SOD 2024-q1 Bz 0.10531 vs fam 0.18056. The two witnesses are carried as a riss, never averaged. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured information-flow direction is transfer entropy (directional, not interventional): a family-clearing driver at the hourly grain is not established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry; a PCMCI cross-check is the named future run.
+The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window, and the hardened minute file (Bz 0.24001, Speed 0.28942 vs fam 0.34125) stays family bound. At the hourly grain two witnesses refuse to converge. The yearly-round witness (post-fix): Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected surrogate null. The hardened quarterly witness (`bz-retro-probe`, CI run 36176580764, fam per quarterly window, lag sweep 0–6 h, n_surr = 100): all 24 directed rows (Bz→dB/dt and Speed→dB/dt) stay family bound — e.g. ABK 2024-q1 Bz 0.12375 vs fam 0.18016, ABK 2025-q4 Bz 0.14008 vs fam 0.19901, SOD 2024-q1 Bz 0.10531 vs fam 0.18056. The two witnesses are carried as a riss, never averaged. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured information-flow direction is transfer entropy (directional, not interventional): a family-clearing driver at the hourly grain is not established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry; the PCMCI cross-check and the full-lag-sweep family bound are built into `bz-retro-probe` and dispatched (results pending).
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -124,8 +124,9 @@ measured under the corrected (post-fix) surrogate RNG
 100`, a median and a Newell driver statistic, sharded with
 `timeout-minutes: 300` — and the re-measurement has run
 (`bz-retro-probe`, CI run 36176580764, success): one family bound per
-quarterly window across 12 shards (ABK 2024-q1…2025-q4, SOD 2024-q1…q4;
-SOD 2025-q1…q4 absent from the artifact), all 24 directed rows
+quarterly window across 16 shards (ABK 2024-q1…2025-q4, SOD 2024-q1…2025-q4;
+the SOD 2025 shards were added 2026-09-26 — their minute data exists at the
+BGS GIN HAPI, stop 2026-09-25), all 24 directed rows
 (Bz→dB/dt, Speed→dB/dt) family bound. The two witnesses — the yearly
 round here and the hardened quarterly round — are carried as a riss
 (§6), never averaged.
@@ -317,7 +318,8 @@ separately at L1 and contrasted against each other under one family bound,
 so the design does not need a variable-selection step; (iii) the null model
 can be identical for every pair (phase-randomized surrogates and one round
 maximum), which gives the family bound a single, transparent definition.
-A PCMCI run on the same data remains a named future cross-check, not a
+A PCMCI run on the same data is built into the hardened probe
+(`bz-retro-probe`, `pcmci_crosscheck`) and dispatched, not a
 competing claim.
 
 **Relation to the literature.** Johnson & Wing (2005) established that the
@@ -349,11 +351,13 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   fam 0.18016 (lag 0 h, n 2184), ABK 2025-q4 Bz 0.14008 vs 0.19901 (lag 2 h,
   n 2203), SOD 2024-q1 Bz 0.10531 vs fam 0.18056 (lag 4 h, n 2184) — and the
   minute file Bz 0.24001 / Speed 0.28942 vs fam 0.34125 stays family bound;
-  SOD 2025-q1…q4 are absent from the artifact. The two witnesses — yearly
+  SOD 2025-q1…q4 are now in the workflow matrix (their minute data is
+  measured present at the BGS GIN HAPI). The two witnesses — yearly
   round and hardened quarterly round — are carried un-smoothed as a riss
   (`VerdictWord::Riss`), never averaged. The family-clearing claim at the
   hourly grain is withdrawn into this open state, not inverted. Named
-  resolution steps: a PCMCI cross-check on the same data, and the family
+  resolution steps — built and dispatched 2026-09-26, results pending: a
+  PCMCI cross-check on the same data, and the family
   bound over the full lag sweep in the hardened round.
 - **dB/dt is the induction driver, not the network current.** The FMI
   Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,

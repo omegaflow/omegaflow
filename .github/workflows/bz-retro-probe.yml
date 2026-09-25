@@ -61,6 +61,14 @@ jobs:
             args: --hourly --station SOD --hour-start 2024-07-01 --hour-end 2024-10-01
           - point: sod-2024-q4
             args: --hourly --station SOD --hour-start 2024-10-01 --hour-end 2025-01-01
+          - point: sod-2025-q1
+            args: --hourly --station SOD --hour-start 2025-01-01 --hour-end 2025-04-01
+          - point: sod-2025-q2
+            args: --hourly --station SOD --hour-start 2025-04-01 --hour-end 2025-07-01
+          - point: sod-2025-q3
+            args: --hourly --station SOD --hour-start 2025-07-01 --hour-end 2025-10-01
+          - point: sod-2025-q4
+            args: --hourly --station SOD --hour-start 2025-10-01 --hour-end 2026-01-01
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
