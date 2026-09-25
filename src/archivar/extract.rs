@@ -1600,6 +1600,427 @@ fn votable_cell(content: &str) -> JsonVal {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum VotKind {
+    Int,
+    UInt,
+    Float,
+    Char,
+    Unicode,
+    Bool,
+    Bit,
+    Complex,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum VotShape {
+    Scalar,
+    Fixed(usize),
+    Variable,
+}
+
+struct VotField {
+    name: String,
+    kind: VotKind,
+    elem_bytes: usize,
+    shape: VotShape,
+}
+
+struct VotCursor<'a> {
+    data: &'a [u8],
+    pos: usize,
+}
+
+impl<'a> VotCursor<'a> {
+    fn take(&mut self, n: usize) -> Option<&'a [u8]> {
+        if self.pos + n > self.data.len() {
+            return None;
+        }
+        let s = &self.data[self.pos..self.pos + n];
+        self.pos += n;
+        Some(s)
+    }
+
+    fn u32be(&mut self) -> Option<u32> {
+        let b = self.take(4)?;
+        Some(u32::from_be_bytes([b[0], b[1], b[2], b[3]]))
+    }
+}
+
+fn b64_val(b: u8) -> Option<u32> {
+    match b {
+        b'A'..=b'Z' => Some((b - b'A') as u32),
+        b'a'..=b'z' => Some((b - b'a' + 26) as u32),
+        b'0'..=b'9' => Some((b - b'0' + 52) as u32),
+        b'+' => Some(62),
+        b'/' => Some(63),
+        _ => None,
+    }
+}
+
+fn base64_decode(input: &str) -> Option<Vec<u8>> {
+    let mut sextets: Vec<u32> = Vec::with_capacity(input.len());
+    let mut pad = 0usize;
+    for b in input.bytes() {
+        if b.is_ascii_whitespace() {
+            continue;
+        }
+        if b == b'=' {
+            pad += 1;
+            if pad > 2 {
+                return None;
+            }
+            continue;
+        }
+        if pad > 0 {
+            return None;
+        }
+        sextets.push(b64_val(b)?);
+    }
+    let n = sextets.len();
+    let rem = n % 4;
+    let expect_pad = match rem {
+        0 => 0,
+        2 => 2,
+        3 => 1,
+        _ => return None,
+    };
+    if pad != expect_pad {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n / 4 * 3 + 3);
+    let mut i = 0usize;
+    while i + 4 <= n {
+        let v0 = sextets[i];
+        let v1 = sextets[i + 1];
+        let v2 = sextets[i + 2];
+        let v3 = sextets[i + 3];
+        out.push(((v0 << 2) | (v1 >> 4)) as u8);
+        out.push(((v1 << 4) | (v2 >> 2)) as u8);
+        out.push(((v2 << 6) | v3) as u8);
+        i += 4;
+    }
+    if rem == 2 {
+        out.push(((sextets[i] << 2) | (sextets[i + 1] >> 4)) as u8);
+    } else if rem == 3 {
+        out.push(((sextets[i] << 2) | (sextets[i + 1] >> 4)) as u8);
+        out.push(((sextets[i + 1] << 4) | (sextets[i + 2] >> 2)) as u8);
+    }
+    Some(out)
+}
+
+fn votable_field_plan(field_part: &str) -> Option<Vec<VotField>> {
+    let mut fields = Vec::new();
+    for chunk in field_part.split("<FIELD").skip(1) {
+        let first = chunk.as_bytes()[0];
+        if matches!(first, b'r' | b'R' | b's' | b'S') {
+            continue;
+        }
+        let tag = match chunk.find('>') {
+            Some(p) => &chunk[..p],
+            None => return None,
+        };
+        let Some(name) = votable_attr(tag, "name").or_else(|| votable_attr(tag, "ID")) else {
+            return None;
+        };
+        let Some(datatype) = votable_attr(tag, "datatype") else {
+            return None;
+        };
+        let datatype = datatype.to_ascii_lowercase();
+        let (kind, elem_bytes) = match datatype.as_str() {
+            "boolean" | "logical" => (VotKind::Bool, 1),
+            "bit" => (VotKind::Bit, 0),
+            "unsignedbyte" => (VotKind::UInt, 1),
+            "short" => (VotKind::Int, 2),
+            "int" => (VotKind::Int, 4),
+            "long" => (VotKind::Int, 8),
+            "unsignedshort" => (VotKind::UInt, 2),
+            "unsignedint" => (VotKind::UInt, 4),
+            "char" => (VotKind::Char, 1),
+            "unicodechar" => (VotKind::Unicode, 2),
+            "float" => (VotKind::Float, 4),
+            "double" => (VotKind::Float, 8),
+            "floatcomplex" => (VotKind::Complex, 8),
+            "doublecomplex" => (VotKind::Complex, 16),
+            _ => return None,
+        };
+        let shape = match votable_attr(tag, "arraysize").as_deref() {
+            None | Some("") => VotShape::Scalar,
+            Some(a) if a.ends_with('*') => VotShape::Variable,
+            Some(a) => {
+                let mut total = 1usize;
+                for dim in a.split('x') {
+                    match dim.trim().parse::<usize>() {
+                        Ok(n) if n > 0 => total = total.saturating_mul(n),
+                        _ => return None,
+                    }
+                }
+                if total == 1 {
+                    VotShape::Scalar
+                } else {
+                    VotShape::Fixed(total)
+                }
+            }
+        };
+        fields.push(VotField {
+            name: xml_unescape(&name),
+            kind,
+            elem_bytes,
+            shape,
+        });
+    }
+    if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    }
+}
+
+fn votable_cell_bytes(cur: &mut VotCursor, f: &VotField) -> Option<(Vec<u8>, usize)> {
+    if f.kind == VotKind::Bit {
+        let nbits = match f.shape {
+            VotShape::Scalar => 1,
+            VotShape::Fixed(n) => n,
+            VotShape::Variable => cur.u32be()? as usize,
+        };
+        return Some((cur.take((nbits + 7) / 8)?.to_vec(), nbits));
+    }
+    let count = match f.shape {
+        VotShape::Scalar => 1,
+        VotShape::Fixed(n) => n,
+        VotShape::Variable => cur.u32be()? as usize,
+    };
+    let nbytes = f.elem_bytes.saturating_mul(count);
+    Some((cur.take(nbytes)?.to_vec(), count))
+}
+
+fn int_be(bytes: &[u8], n: usize) -> i64 {
+    match n {
+        1 => bytes[0] as i8 as i64,
+        2 => i16::from_be_bytes([bytes[0], bytes[1]]) as i64,
+        4 => i32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]) as i64,
+        _ => i64::from_be_bytes([
+            bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
+        ]),
+    }
+}
+
+fn uint_be(bytes: &[u8], n: usize) -> u64 {
+    match n {
+        1 => bytes[0] as u64,
+        2 => u16::from_be_bytes([bytes[0], bytes[1]]) as u64,
+        4 => u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]) as u64,
+        _ => u64::from_be_bytes([
+            bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
+        ]),
+    }
+}
+
+fn char_string(bytes: &[u8]) -> String {
+    let end = bytes.iter().position(|&b| b == 0).unwrap_or(bytes.len());
+    String::from_utf8_lossy(&bytes[..end]).trim().to_string()
+}
+
+fn votable_value(f: &VotField, bytes: &[u8], count: usize) -> Option<JsonVal> {
+    let scalar = matches!(f.shape, VotShape::Scalar);
+    match f.kind {
+        VotKind::Char => Some(JsonVal::Str(char_string(bytes))),
+        VotKind::Unicode => {
+            let units: Vec<u16> = bytes
+                .chunks_exact(2)
+                .map(|c| u16::from_be_bytes([c[0], c[1]]))
+                .collect();
+            let text = String::from_utf16_lossy(&units);
+            let end = text.find('\0').unwrap_or(text.len());
+            Some(JsonVal::Str(text[..end].trim().to_string()))
+        }
+        VotKind::Bool => {
+            let vals: Vec<JsonVal> = bytes
+                .iter()
+                .map(|b| match b {
+                    b'T' | b't' | 1 => JsonVal::Bool(true),
+                    b'F' | b'f' | 0 => JsonVal::Bool(false),
+                    _ => JsonVal::Null,
+                })
+                .collect();
+            if scalar {
+                match vals.first() {
+                    Some(v @ JsonVal::Bool(_)) => Some(v.clone()),
+                    _ => None,
+                }
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+        VotKind::Bit => {
+            let mut vals = Vec::with_capacity(count);
+            for i in 0..count {
+                let bit = (bytes[i / 8] >> (7 - i % 8)) & 1 == 1;
+                vals.push(JsonVal::Bool(bit));
+            }
+            if scalar {
+                vals.pop()
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+        VotKind::Int => {
+            let mut vals = Vec::with_capacity(count);
+            for chunk in bytes.chunks(f.elem_bytes).take(count) {
+                vals.push(JsonVal::Num(int_be(chunk, f.elem_bytes) as f64));
+            }
+            if scalar {
+                vals.pop()
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+        VotKind::UInt => {
+            let mut vals = Vec::with_capacity(count);
+            for chunk in bytes.chunks(f.elem_bytes).take(count) {
+                vals.push(JsonVal::Num(uint_be(chunk, f.elem_bytes) as f64));
+            }
+            if scalar {
+                vals.pop()
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+        VotKind::Float => {
+            let mut vals = Vec::with_capacity(count);
+            for chunk in bytes.chunks(f.elem_bytes).take(count) {
+                let v = if f.elem_bytes == 4 {
+                    f32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]) as f64
+                } else {
+                    f64::from_be_bytes([
+                        chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6],
+                        chunk[7],
+                    ])
+                };
+                if v.is_finite() {
+                    vals.push(JsonVal::Num(v));
+                } else if scalar {
+                    return None;
+                } else {
+                    vals.push(JsonVal::Null);
+                }
+            }
+            if scalar {
+                vals.pop()
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+        VotKind::Complex => {
+            let half = f.elem_bytes / 2;
+            let mut vals = Vec::with_capacity(count);
+            for chunk in bytes.chunks(f.elem_bytes).take(count) {
+                let (r, i) = (&chunk[..half], &chunk[half..]);
+                let (rv, iv) = if half == 4 {
+                    (
+                        f32::from_be_bytes([r[0], r[1], r[2], r[3]]) as f64,
+                        f32::from_be_bytes([i[0], i[1], i[2], i[3]]) as f64,
+                    )
+                } else {
+                    (
+                        f64::from_be_bytes([r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7]]),
+                        f64::from_be_bytes([i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]]),
+                    )
+                };
+                let re = if rv.is_finite() {
+                    JsonVal::Num(rv)
+                } else {
+                    JsonVal::Null
+                };
+                let im = if iv.is_finite() {
+                    JsonVal::Num(iv)
+                } else {
+                    JsonVal::Null
+                };
+                vals.push(JsonVal::Arr(vec![re, im]));
+            }
+            if scalar {
+                vals.pop()
+            } else {
+                Some(JsonVal::Arr(vals))
+            }
+        }
+    }
+}
+
+fn votable_binary_rows(data: &[u8], fields: &[VotField], binary2: bool) -> Option<JsonVal> {
+    let nflag = if binary2 { (fields.len() + 7) / 8 } else { 0 };
+    let mut rows: Vec<JsonVal> = Vec::new();
+    let mut cur = VotCursor { data, pos: 0 };
+    while cur.pos < cur.data.len() {
+        let mut flags: Vec<u8> = Vec::with_capacity(nflag);
+        if nflag > 0 {
+            let Some(fb) = cur.take(nflag) else { break };
+            flags.extend_from_slice(fb);
+        }
+        let mut map = HashMap::new();
+        let mut broken = false;
+        for (i, f) in fields.iter().enumerate() {
+            let null = binary2 && (flags[i / 8] >> (7 - i % 8)) & 1 == 1;
+            let Some((bytes, count)) = votable_cell_bytes(&mut cur, f) else {
+                broken = true;
+                break;
+            };
+            if null {
+                continue;
+            }
+            if let Some(v) = votable_value(f, &bytes, count) {
+                map.insert(f.name.clone(), v);
+            }
+        }
+        if broken {
+            break;
+        }
+        rows.push(JsonVal::Obj(map));
+    }
+    if rows.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Arr(rows))
+    }
+}
+
+fn votable_binary_from_parts(data_part: &str, field_part: &str) -> Option<JsonVal> {
+    let (start, end_marker, binary2) = if let Some(p) = data_part.find("<BINARY2") {
+        (p, "</BINARY2>", true)
+    } else if let Some(p) = data_part.find("<BINARY") {
+        (p, "</BINARY>", false)
+    } else {
+        return None;
+    };
+    let region_end = data_part[start..]
+        .find(end_marker)
+        .map(|p| start + p)
+        .unwrap_or(data_part.len());
+    let stream_pos = data_part[start..region_end].find("<STREAM")? + start;
+    let after = &data_part[stream_pos..];
+    let tag_end = after.find('>')?;
+    let tag = &after[..tag_end];
+    if tag.ends_with('/') {
+        return None;
+    }
+    let encoding = votable_attr(tag, "encoding").map(|e| e.to_ascii_lowercase());
+    if encoding.as_deref() != Some("base64") {
+        return None;
+    }
+    let content_start = stream_pos + tag_end + 1;
+    let content_end = data_part[content_start..region_end]
+        .find("</STREAM>")
+        .map(|p| content_start + p)
+        .unwrap_or(region_end);
+    let bytes = base64_decode(&data_part[content_start..content_end])?;
+    if bytes.is_empty() {
+        return None;
+    }
+    let fields = votable_field_plan(field_part)?;
+    votable_binary_rows(&bytes, &fields, binary2)
+}
+
 pub fn votable_to_json(body: &str) -> Option<JsonVal> {
     if !body.contains("<VOTABLE") {
         return None;
@@ -1619,10 +2040,10 @@ pub fn votable_to_json(body: &str) -> Option<JsonVal> {
     if names.is_empty() {
         return None;
     }
-    let table = {
-        let p = data_part.find("<TABLEDATA")?;
-        &data_part[p..]
+    let Some(tab_start) = data_part.find("<TABLEDATA") else {
+        return votable_binary_from_parts(data_part, field_part);
     };
+    let table = &data_part[tab_start..];
     let mut rows: Vec<JsonVal> = Vec::new();
     for tr in table.split("<TR").skip(1) {
         let row_body = match tr.find('>') {
@@ -4626,6 +5047,293 @@ mod votable_tests {
             Some("2025.1.01024.S")
         );
         assert_eq!(jnum(&rows[0], "target_name"), None);
+    }
+
+    #[test]
+    fn base64_decoder_reads_rfc4648_vectors() {
+        assert_eq!(base64_decode("").unwrap(), Vec::<u8>::new());
+        assert_eq!(base64_decode("TQ==").unwrap(), b"M".to_vec());
+        assert_eq!(base64_decode("TWE=").unwrap(), b"Ma".to_vec());
+        assert_eq!(base64_decode("TWFu").unwrap(), b"Man".to_vec());
+        assert_eq!(base64_decode("ACo=").unwrap(), vec![0x00, 0x2A]);
+        assert_eq!(base64_decode("Kg==").unwrap(), vec![0x2A]);
+        assert_eq!(base64_decode("TWFu\n").unwrap(), b"Man".to_vec());
+        assert!(base64_decode("TQ=").is_none());
+        assert!(base64_decode("T=Q=").is_none());
+        assert!(base64_decode("TWFu!").is_none());
+        assert!(base64_decode("====").is_none());
+    }
+
+    fn binary_fields() -> Vec<VotField> {
+        vec![
+            VotField {
+                name: "ra".to_string(),
+                kind: VotKind::Float,
+                elem_bytes: 8,
+                shape: VotShape::Scalar,
+            },
+            VotField {
+                name: "mag".to_string(),
+                kind: VotKind::Float,
+                elem_bytes: 4,
+                shape: VotShape::Scalar,
+            },
+            VotField {
+                name: "name".to_string(),
+                kind: VotKind::Char,
+                elem_bytes: 1,
+                shape: VotShape::Fixed(8),
+            },
+            VotField {
+                name: "counts".to_string(),
+                kind: VotKind::Int,
+                elem_bytes: 4,
+                shape: VotShape::Fixed(2),
+            },
+            VotField {
+                name: "band".to_string(),
+                kind: VotKind::Char,
+                elem_bytes: 1,
+                shape: VotShape::Variable,
+            },
+            VotField {
+                name: "ok".to_string(),
+                kind: VotKind::Bool,
+                elem_bytes: 1,
+                shape: VotShape::Scalar,
+            },
+        ]
+    }
+
+    #[test]
+    fn votable_binary2_rows_read_values_and_omit_null_fields() {
+        let fields = binary_fields();
+        let mut bytes: Vec<u8> = Vec::new();
+        bytes.push(0x48);
+        bytes.extend_from_slice(&10.5f64.to_be_bytes());
+        bytes.extend_from_slice(&0u32.to_be_bytes());
+        bytes.extend_from_slice(b"NGC 123\0");
+        bytes.extend_from_slice(&1i32.to_be_bytes());
+        bytes.extend_from_slice(&2i32.to_be_bytes());
+        bytes.extend_from_slice(&0u32.to_be_bytes());
+        bytes.push(b'T');
+        bytes.push(0x00);
+        bytes.extend_from_slice(&(-2.25f64).to_be_bytes());
+        bytes.extend_from_slice(&3.5f32.to_be_bytes());
+        bytes.extend_from_slice(b"ABCDEFGH");
+        bytes.extend_from_slice(&(-7i32).to_be_bytes());
+        bytes.extend_from_slice(&9i32.to_be_bytes());
+        bytes.extend_from_slice(&3u32.to_be_bytes());
+        bytes.extend_from_slice(b"XYZ");
+        bytes.push(b'F');
+        let json = votable_binary_rows(&bytes, &fields, true).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 2);
+        assert_eq!(jnum(&rows[0], "ra"), Some(10.5));
+        assert_eq!(jnum(&rows[1], "ra"), Some(-2.25));
+        assert_eq!(jnum(&rows[1], "mag"), Some(3.5));
+        assert_eq!(jstr(&rows[0], "name").as_deref(), Some("NGC 123"));
+        assert_eq!(jstr(&rows[1], "name").as_deref(), Some("ABCDEFGH"));
+        assert_eq!(jstr(&rows[1], "band").as_deref(), Some("XYZ"));
+        match &rows[0] {
+            JsonVal::Obj(m) => match m.get("ok") {
+                Some(JsonVal::Bool(b)) => assert!(b),
+                other => panic!("ok is not true: {other:?}"),
+            },
+            _ => panic!("not an object"),
+        }
+        match &rows[1] {
+            JsonVal::Obj(m) => match m.get("ok") {
+                Some(JsonVal::Bool(b)) => assert!(!b),
+                other => panic!("ok is not false: {other:?}"),
+            },
+            _ => panic!("not an object"),
+        }
+        match &rows[0] {
+            JsonVal::Obj(m) => {
+                assert!(m.get("mag").is_none());
+                assert!(m.get("band").is_none());
+            }
+            _ => panic!("not an object"),
+        }
+        match &rows[1] {
+            JsonVal::Obj(m) => match m.get("counts") {
+                Some(JsonVal::Arr(v)) => {
+                    assert_eq!(v.len(), 2);
+                    assert_eq!(scalar_of(&v[0]), Some(-7.0));
+                    assert_eq!(scalar_of(&v[1]), Some(9.0));
+                }
+                other => panic!("counts is not a 2-element array: {other:?}"),
+            },
+            _ => panic!("not an object"),
+        }
+    }
+
+    #[test]
+    fn votable_binary_rows_read_without_flag_bytes() {
+        let fields = binary_fields();
+        let mut bytes: Vec<u8> = Vec::new();
+        bytes.extend_from_slice(&10.5f64.to_be_bytes());
+        bytes.extend_from_slice(&3.5f32.to_be_bytes());
+        bytes.extend_from_slice(b"NGC 123\0");
+        bytes.extend_from_slice(&1i32.to_be_bytes());
+        bytes.extend_from_slice(&2i32.to_be_bytes());
+        bytes.extend_from_slice(&3u32.to_be_bytes());
+        bytes.extend_from_slice(b"XYZ");
+        bytes.push(b'F');
+        let json = votable_binary_rows(&bytes, &fields, false).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jnum(&rows[0], "ra"), Some(10.5));
+        assert_eq!(jnum(&rows[0], "mag"), Some(3.5));
+        assert_eq!(jstr(&rows[0], "band").as_deref(), Some("XYZ"));
+    }
+
+    #[test]
+    fn votable_binary2_second_flag_byte_reads() {
+        let mut fields = Vec::new();
+        for i in 0..9 {
+            fields.push(VotField {
+                name: format!("c{i}"),
+                kind: VotKind::UInt,
+                elem_bytes: 1,
+                shape: VotShape::Scalar,
+            });
+        }
+        let mut bytes: Vec<u8> = Vec::new();
+        bytes.push(0x00);
+        bytes.push(0x80);
+        for v in 1u8..=9 {
+            bytes.push(v);
+        }
+        let json = votable_binary_rows(&bytes, &fields, true).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 1);
+        match &rows[0] {
+            JsonVal::Obj(m) => {
+                assert_eq!(m.len(), 8);
+                assert_eq!(scalar_of(m.get("c7").unwrap()), Some(8.0));
+                assert!(m.get("c8").is_none());
+            }
+            _ => panic!("not an object"),
+        }
+    }
+
+    #[test]
+    fn votable_binary_nan_scalar_is_absent_and_nan_array_element_stays_null() {
+        let fields = vec![
+            VotField {
+                name: "a".to_string(),
+                kind: VotKind::Float,
+                elem_bytes: 8,
+                shape: VotShape::Scalar,
+            },
+            VotField {
+                name: "b".to_string(),
+                kind: VotKind::Float,
+                elem_bytes: 8,
+                shape: VotShape::Fixed(2),
+            },
+        ];
+        let mut bytes: Vec<u8> = Vec::new();
+        bytes.extend_from_slice(&f64::NAN.to_be_bytes());
+        bytes.extend_from_slice(&1.0f64.to_be_bytes());
+        bytes.extend_from_slice(&f64::NAN.to_be_bytes());
+        let json = votable_binary_rows(&bytes, &fields, false).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        match &rows[0] {
+            JsonVal::Obj(m) => {
+                assert!(m.get("a").is_none());
+                match m.get("b") {
+                    Some(JsonVal::Arr(v)) => {
+                        assert_eq!(v.len(), 2);
+                        assert_eq!(scalar_of(&v[0]), Some(1.0));
+                        match &v[1] {
+                            JsonVal::Null => {}
+                            other => panic!("nan element is not null: {other:?}"),
+                        }
+                    }
+                    other => panic!("b is not an array: {other:?}"),
+                }
+            }
+            _ => panic!("not an object"),
+        }
+    }
+
+    #[test]
+    fn votable_binary2_stream_base64_block_reads_through_votable_to_json() {
+        let body = r#"<VOTABLE version="1.4"><RESOURCE><TABLE>
+<FIELD name="f0" datatype="unsignedByte"/>
+<FIELD name="f1" datatype="unsignedByte"/>
+<DATA><BINARY2><STREAM encoding="base64">QCoA</STREAM></BINARY2></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        let json = votable_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 1);
+        match &rows[0] {
+            JsonVal::Obj(m) => {
+                assert_eq!(scalar_of(m.get("f0").unwrap()), Some(42.0));
+                assert!(m.get("f1").is_none());
+            }
+            _ => panic!("not an object"),
+        }
+    }
+
+    #[test]
+    fn votable_binary_stream_base64_block_reads_through_votable_to_json() {
+        let body = r#"<VOTABLE version="1.4"><RESOURCE><TABLE>
+<FIELD name="f" datatype="unsignedByte"/>
+<DATA><BINARY><STREAM encoding="base64">Kg==</STREAM></BINARY></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        let json = votable_to_json(body).unwrap();
+        let rows = match &json {
+            JsonVal::Arr(a) => a,
+            _ => panic!("not an array"),
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jnum(&rows[0], "f"), Some(42.0));
+    }
+
+    #[test]
+    fn votable_binary_with_href_stream_is_none() {
+        let body = r#"<VOTABLE version="1.4"><RESOURCE><TABLE>
+<FIELD name="f" datatype="double"/>
+<DATA><BINARY2><STREAM encoding="base64" href="http://x/rows.b64"/></BINARY2></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        assert!(votable_to_json(body).is_none());
+    }
+
+    #[test]
+    fn votable_binary_unknown_datatype_is_none() {
+        let body = r#"<VOTABLE version="1.4"><RESOURCE><TABLE>
+<FIELD name="f" datatype="wibble"/>
+<DATA><BINARY><STREAM encoding="base64">Kg==</STREAM></BINARY></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        assert!(votable_to_json(body).is_none());
+    }
+
+    #[test]
+    fn votable_binary_without_stream_is_none() {
+        let body = r#"<VOTABLE version="1.4"><RESOURCE><TABLE>
+<FIELD name="f" datatype="double"/>
+<DATA><BINARY2/></DATA>
+</TABLE></RESOURCE></VOTABLE>"#;
+        assert!(votable_to_json(body).is_none());
     }
 }
 
