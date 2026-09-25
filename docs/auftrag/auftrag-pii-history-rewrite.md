@@ -2,7 +2,7 @@
   title: Auftrag — PII-History-Rewrite (private Operator-Adresse)
   class: auftrag
   date: 2026-09-20
-  sha256: 72bc6f5659a4f0d533525af90415859b637df09b4bdc8e423b183e52d304220f
+  sha256: 297d9888a398f1a8177f8983525e5e93723ea958b0ca6599e1ed00b2f3ec8d5b
   status: live
   see-also: docs/zustand/external-state.md .gitignore
 -->
@@ -74,7 +74,10 @@ git grep -lI "$FR945_MAC_US" | xargs -r sed -i "s/$FR945_MAC_US/AA_BB_CC_DD_EE_F
 Bis der Lauf steht, ist die archivierte MAC in HEAD weiter öffentlich — gemessen
 und benannt, nicht verdeckt.
 
-Offen (Architektur): eine Geräte-MAC ist eine neue PII-Klasse — das Gate-Vokabular
-(`src/gate/commit_gate_vocab.json` `pii`) kennt nur Mail-Domains und Home-Pfade.
-Ob ein MAC-Muster Gate-Fixture wird (und wie der Platzhalter `AA:BB:CC:DD:EE:FF`
-davon ausgenommen bleibt), braucht das Architektur-Wort.
+Gelöst (2026-09-25, Operator-Wort „platzhalter ausschiessen"): eine Geräte-MAC ist
+eine PII-Klasse. Das Gate (`src/gate/commit_gate.rs` `mac_address_hit`) flaggt
+MAC-Muster (`xx:xx:xx:xx:xx:xx`, Trenner `:` oder `_`) als `pii`; der Platzhalter
+`AA:BB:CC:DD:EE:FF` / `AA_BB_CC_DD_EE_FF` ist ausgenommen. Fixtures
+`pii_device_mac`/`pii_device_mac_path` (blockiert) und
+`pii_device_mac_placeholder`/`pii_device_mac_underscore_placeholder` (passieren),
+Tests im selben Atom; `cargo check --tests` lokal 0/0, Lauf über CI.
