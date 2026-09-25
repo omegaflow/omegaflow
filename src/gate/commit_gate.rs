@@ -1569,9 +1569,45 @@ pub const DOC_OPEN_MARKERS: [&str; 11] = [
     "request-only",
 ];
 
+fn strip_inline_code(line: &str) -> String {
+    let mut out = String::with_capacity(line.len());
+    let mut in_code = false;
+    for ch in line.chars() {
+        if ch == '`' {
+            in_code = !in_code;
+        } else if !in_code {
+            out.push(ch);
+        }
+    }
+    out
+}
+
+fn marker_in_status_context(lower: &str, marker: &str) -> bool {
+    if marker != "blocked" {
+        return lower.contains(marker);
+    }
+    lower.match_indices(marker).any(|(idx, _)| {
+        let before = lower[..idx].trim_end();
+        let after = &lower[idx + marker.len()..];
+        let starts_clean = before.is_empty()
+            || matches!(
+                before.chars().last(),
+                Some(':') | Some('|') | Some('-') | Some('(') | Some('[')
+            );
+        let ends_clean = after.is_empty()
+            || matches!(
+                after.chars().next(),
+                Some(' ') | Some(':') | Some('|') | Some(',') | Some(')') | Some(']')
+            );
+        starts_clean && ends_clean
+    })
+}
+
 pub fn doc_open_marker_line(line: &str) -> bool {
-    let lower = line.to_lowercase();
-    DOC_OPEN_MARKERS.iter().any(|m| lower.contains(m))
+    let lower = strip_inline_code(line).to_lowercase();
+    DOC_OPEN_MARKERS
+        .iter()
+        .any(|m| marker_in_status_context(&lower, m))
 }
 
 const REGISTER_SECTIONS: [&str; 6] = [
@@ -3431,6 +3467,16 @@ mod tests {
         assert!(doc_open_marker_line("Naechster Schritt: bauen"));
         assert!(doc_open_marker_line("**Braucht:** pending"));
         assert!(!doc_open_marker_line("fertig gebaut, gruen"));
+        assert!(!doc_open_marker_line(
+            "this is not `pending`, it is a register duty."
+        ));
+        assert!(!doc_open_marker_line(
+            "An expired entry is `pending` with a due, never a copy."
+        ));
+        assert!(!doc_open_marker_line(
+            "the work is *done or genuinely blocked*, not a substitute"
+        ));
+        assert!(doc_open_marker_line("blocked account: needs a key"));
         assert_eq!(DOC_OPEN_MARKERS.len(), 11);
         assert!(!DOC_OPEN_MARKERS.contains(&"descoped"));
     }

@@ -3,7 +3,7 @@
   session: River-Folge 32
   class: handover
   date: 2026-09-25
-  sha256: 6366317c34325912c7c7e93aafa5e421cdaf8b28347c0c3d42ce02db675228b7
+  sha256: 161c6dc0aeb915477391e96f1b2418d7ee94515d87aa717f585db19f28f66801
   status: live
 -->
 # Handover — River-Folge 32 (2026-09-25)
@@ -67,6 +67,18 @@ Diese Session konsumierte `handover-2026-09-25-river-folge31.md`.
   `36189417759` auf HEAD dispatcht.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36189417759` (einmal lesen, nie pollen).
+
+#### HRV/ESP32-Puls-Bindung → Radiations-Pfad
+- **Status:** wartend | **Bindung:** eigen/operator
+- **Trigger:** ESP32-Firmware liefert den Puls-Arrival auf dem Pfad.
+- **Lage:** (gemessen 2026-09-17 via `survey-2026-09-17-verlorene-diskussionen.md:84`,
+  direkt getragen 2026-09-25 aus dem Mountain-orphan-docs-Fold) das RMSSD/tone-Gate
+  steht (`src/archivar/hrv.rs`); die Bindung (Puls-Arrival via ESP32-Firmware →
+  Radiations-Pfad) ist ungebaut — der Socket hält.
+- **Blockade:** die Firmware/Hardware-Bindung ist ungemessen.
+- **Braucht:** Puls-Arrival im Radiations-Pfad verdrahten (HRV-Gate →
+  Apertur/tone-scale in `src/mathematikerin/omega.rs`) und mit angeschlossener
+  Hardware messen.
 
 ### Operator handelt
 
