@@ -6819,6 +6819,50 @@ fn test_diagnose_no_samples() {
 }
 
 #[test]
+fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
+    assert!(matches!(
+        super::void_class("empty-response (JSON parsed but all containers empty)"),
+        super::VoidClass::Quiet
+    ));
+    assert!(matches!(
+        super::void_class("empty-response (empty body)"),
+        super::VoidClass::Quiet
+    ));
+    assert!(matches!(
+        super::void_class("data-present (keys exist but no rows extracted)"),
+        super::VoidClass::Drift
+    ));
+    assert!(matches!(
+        super::void_class("data-present (container array has rows but extract yielded nothing)"),
+        super::VoidClass::Drift
+    ));
+    assert!(matches!(
+        super::void_class("data-present (JSON has content but declared keys absent)"),
+        super::VoidClass::Drift
+    ));
+    assert!(matches!(
+        super::void_class("data-present (non-JSON body: HTML/XML/text)"),
+        super::VoidClass::Drift
+    ));
+}
+
+#[test]
+fn test_carries_coord_marker_flags_frame_urls_only() {
+    assert!(super::carries_coord_marker(
+        "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
+    ));
+    assert!(super::carries_coord_marker(
+        "https://waterservices.usgs.gov/?bBox={lon_min},{lat_min},{lon_max},{lat_max}"
+    ));
+    assert!(!super::carries_coord_marker(
+        "https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz"
+    ));
+    assert!(!super::carries_coord_marker(
+        "https://example.org/q?token={API_KEY}"
+    ));
+}
+
+#[test]
 fn test_refusal_ledger_dedup_and_reload() {
     let path =
         std::env::temp_dir().join(format!("omegaflow_refusal_ledger_{}.φ", std::process::id()));

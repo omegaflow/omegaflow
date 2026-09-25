@@ -11,21 +11,22 @@ pub struct RenderCtx<'a> {
     pub lsk: &'a LeapSeconds,
 }
 
+pub const COORD_MARKERS: [&str; 8] = [
+    "{lat}",
+    "{lon}",
+    "{lat_int}",
+    "{lon_int}",
+    "{lat_min}",
+    "{lat_max}",
+    "{lon_min}",
+    "{lon_max}",
+];
+
 pub fn ci_probe_render(
     template: &str,
     anchor: Option<(f64, f64)>,
     env: &HashMap<String, String>,
 ) -> Option<String> {
-    const COORD_MARKERS: [&str; 8] = [
-        "{lat}",
-        "{lon}",
-        "{lat_int}",
-        "{lon_int}",
-        "{lat_min}",
-        "{lat_max}",
-        "{lon_min}",
-        "{lon_max}",
-    ];
     let needs_anchor = COORD_MARKERS.iter().any(|m| template.contains(m));
     if needs_anchor && anchor.is_none() {
         return None;
