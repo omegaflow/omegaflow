@@ -3,7 +3,7 @@
   session: Mountain-Folge 157
   class: handover
   date: 2026-09-25
-  sha256: 21768d9d35bb0629bd00a228907c6d7126d6ac53af17873627aed7f782bbea4a
+  sha256: 3db10f312a8274aec6c678c95525558d2918faa4f8ce733da0680f1267e4142e
   status: live
 -->
 # Handover — Mountain-Folge 157 (2026-09-25)
@@ -38,7 +38,7 @@ Diese Session konsumierte `docs/handover/archiv/handover-2026-09-25-mountain-fol
   `unit-auto-detect`, `force-undetermined`, `votable-reader`, `html-parser-arm`,
   `konverter`; eine Klasse existiert nur, wo das Register sie erklärt — A = A;
   mechanisch, `grind-flash`), dann die Mountain-Klassen-Träger in **dieses** Handover
-  in der festen Form `phi/blocked_sources.φ::gap:unit-auto-detect ×N` (N = live count)
+  in der festen Form `phi/blocked_sources.φ::gap:<token> ×N` (N = live count)
   eintragen, dann `register_lookup --orphans` als Nulllinie messen. Die 6 mycelium-
   und 3 future-Orphans trägt jede Linie selbst: der Scanner nennt sie owner-getaggt
   in ihrem nächsten Planungs-Pass (`register_lookup --open`, ORPHAN-Sektion).
