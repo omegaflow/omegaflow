@@ -3,7 +3,7 @@
   session: Sensory-Folge 158
   class: handover
   date: 2026-09-24
-  sha256: 23e1f6192f466e9d33de98e2b3306599f5b3086f6d41f7faf192ec060206d829
+  sha256: dae8acaad8b15d3b105fcbec3ebbce07233706763e57cd36bec6e17cd6ae06fc
   status: live
 -->
 # Handover — Sensory-Folge 158 (2026-09-24)
@@ -75,7 +75,7 @@ die Punkte werden nicht erneut vorgelegt.
 - **Trigger:** — (läuft bis zur Kante)
 - **Lage:** Codec-Wire korrigiert; Session-Logik + GFDI-Transport frame-getestet; Funkstrecke ungemessen (gemessen 2026-09-24 via `ci_manage log`).
 - **Blockade:** keine
-- **Braucht:** den Live-Lauf kantenfertig stellen — Ein-Wort-Befehl mit `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF`, Preflight (Adresse/D-Bus-Pfad) ohne Körperdaten; Kantenzeile (Artefakt | Ausführbefehl | Wort erwartet) an den Akt.
+- **Braucht:** den Live-Lauf kantenfertig stellen — Ein-Wort-Befehl mit `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF`, Preflight (Adresse/D-Bus-Pfad) ohne Körperdaten; Kantenzeile (Artefakt | Ausführbefehl | Wort erwartet) an den Akt.
 
 ### FIT-Verifikation 945 — Vorbereitung
 - **Status:** autonom | **Bindung:** eigen
@@ -98,7 +98,7 @@ die Punkte werden nicht erneut vorgelegt.
 - **Trigger:** Operator-Wort für einen Live-Lauf am gekoppelten Gerät
 - **Lage:** Vorbereitung aus Stufe 1; 945 gekoppelt, Funkstrecke ungemessen (gemessen 2026-09-24 via `ci_manage log`).
 - **Blockade:** Hardware/Operator-Kontext.
-- **Braucht:** Live-Lauf mit `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF` am gekoppelten 945.
+- **Braucht:** Live-Lauf mit `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF` am gekoppelten 945.
 
 **Blockiert**
 

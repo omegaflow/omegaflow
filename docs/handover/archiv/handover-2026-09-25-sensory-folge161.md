@@ -3,7 +3,7 @@
   session: Sensory-Folge 161
   class: handover
   date: 2026-09-25
-  sha256: ae6ba92840ab4e6000aa1a2963294d281d3968a534eeef66e5523f50b430dbee
+  sha256: f0f173971918d1db744ebeaccc81d043d5ce357e29b681e41d8f1900fe0f2074
   status: live
 -->
 # Handover — Sensory-Folge 161 (2026-09-25)
@@ -55,13 +55,13 @@ keiner — GFDI-Reassembly und der Fixture-Heil sind gebaut (`cargo check --test
 - **Status:** operator-gebunden | **Bindung:** operator + Hardware
 - **Trigger:** Operator-Wort für den Live-Lauf
 - **Lage:** Vorbereitung kantenfertig, Preflight gemessen (gemessen 2026-09-24 via
-  `bluetoothctl`/`busctl`): FR945 gekoppelt/gebondet, `F0:99:19:4E:0B:BF`,
+  `bluetoothctl`/`busctl`): FR945 gekoppelt/gebondet, `AA:BB:CC:DD:EE:FF`,
   `00002a37-…`, `notify`. Offen ungemessen: ob die FR945-Notification rohe
   `size|type|payload|crc`-Frames oder COBS+Multi-Link-Handle trägt (beide
   Host-Implementierungen rahmen COBS/MLR; der Splitter findet bei COBS-Wire
   nichts, kein Fabrikat) (gemessen 2026-09-25 via Rat/`grind-max`).
 - **Blockade:** Operator-Kontext.
-- **Braucht:** `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF OMEGAFLOW_HIDDEN=1 cargo run`
+- **Braucht:** `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF OMEGAFLOW_HIDDEN=1 cargo run`
   (hidden = körperlesend, strahlungsstill; sichtbar nur auf ausdrückliches Wort).
   Kantenzeile: `omegaflow-Core-Bin BLE-Beat-Quelle (src/archivar/ble.rs; Auswahl
   src/archivar/main_flow.rs:11) | OMEGAFLOW_BLE_HR=… OMEGAFLOW_HIDDEN=1 cargo run

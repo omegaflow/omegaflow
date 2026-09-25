@@ -3,7 +3,7 @@
   session: Sensory-Folge 153
   class: handover
   date: 2026-09-23
-  sha256: 3acc5c1ca3342f3759aca8929b26a41747019a20f55f41b620d99cbc6e7c990c
+  sha256: 7304ea5ab2df303ac3d909a2f9d673f1a931d86c60405e7912cdde3888849fcf
   status: live
 -->
 # Handover — Sensory-Folge 153 (2026-09-23)
@@ -111,7 +111,7 @@ Baum die Messung.
 - **Trigger:** Operator-Wort für eine Live-Route (CIQ+ANT vs. BLE-Port)
 - **Lage:** gemessen 2026-09-23.
   - *BLE-Sondierung (Operator-Wort „erst B", `bluetoothctl`/`busctl` an `hci0`):* die
-    gekoppelte FR945 (`F0:99:19:4E:0B:BF`) verbindet sich mit dem Linux-BlueZ-Stack
+    gekoppelte FR945 (`AA:BB:CC:DD:EE:FF`) verbindet sich mit dem Linux-BlueZ-Stack
     (`ServicesResolved: yes`) und exponiert HR `0x180D` (char `0x2A37`), RSC `0x1814`,
     Garmin **`6a4e2800`** (GFDI, ~11 Charakteristiken `6a4e28xx`, mehrere notify) +
     Garmin `6a4e8022` (`6a4e4c80`/`6a4ecd28`). → **BLE-Route auf der 945 bestätigt**;

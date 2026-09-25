@@ -3,7 +3,7 @@
   session: Sensory-Folge 154
   class: handover
   date: 2026-09-23
-  sha256: 513b9919deae5345f2db247c128069f8698bd14be3ec940cf52a15e5323f846c
+  sha256: eef861ed3fdf1c16c7783c42b55eb8e26bc37fafcede0b96b7f735414fb9c576
   status: live
 -->
 # Handover — Sensory-Folge 154 (2026-09-23)
@@ -95,7 +95,7 @@ die Punkte werden nicht erneut vorgelegt.
 - **Lage:** Codec + Session-Logik frame-getestet; Funkstrecke ungemessen
   (gemessen 2026-09-23).
 - **Blockade:** Hardware/Operator-Kontext.
-- **Braucht:** Live-Lauf mit `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF` am gekoppelten 945.
+- **Braucht:** Live-Lauf mit `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF` am gekoppelten 945.
 
 ### FIT-Verifikation 945
 - **Status:** wartend | **Bindung:** operator (Datei) / eigen (CI-Lauf)

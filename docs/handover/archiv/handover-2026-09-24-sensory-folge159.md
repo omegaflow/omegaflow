@@ -3,7 +3,7 @@
   session: Sensory-Folge 159
   class: handover
   date: 2026-09-24
-  sha256: f87c0ae66b93dfc904face42a969bef54db0de9ffca1b3340d04f1b0c4660f8a
+  sha256: ddd0578ab833e551d0b90fb8bc1ba7fb34cf1287b7d6ece7a933d9c720a3669a
   status: live
 -->
 # Handover — Sensory-Folge 159 (2026-09-24)
@@ -65,9 +65,9 @@ Wort.
 ### BLE-Live-Bring-up FR945 — Akt
 - **Status:** operator-gebunden | **Bindung:** operator + Hardware
 - **Trigger:** Operator-Wort für den Live-Lauf
-- **Lage:** Vorbereitung kantenfertig, Preflight gemessen (gemessen 2026-09-24 via `bluetoothctl`/`busctl`): FR945 gekoppelt/gebondet, Address/Connected/UUID ohne Körperdaten — `F0:99:19:4E:0B:BF`, `00002a37-…`, `notify`.
+- **Lage:** Vorbereitung kantenfertig, Preflight gemessen (gemessen 2026-09-24 via `bluetoothctl`/`busctl`): FR945 gekoppelt/gebondet, Address/Connected/UUID ohne Körperdaten — `AA:BB:CC:DD:EE:FF`, `00002a37-…`, `notify`.
 - **Blockade:** Operator-Kontext.
-- **Braucht:** `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF OMEGAFLOW_HIDDEN=1 cargo run`
+- **Braucht:** `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF OMEGAFLOW_HIDDEN=1 cargo run`
   (hidden = körperlesend, strahlungsstill; sichtbar nur auf ausdrückliches Wort).
   Kantenzeile: `omegaflow-Core-Bin BLE-Beat-Quelle (src/archivar/ble.rs:926; Auswahl src/archivar/main_flow.rs:11) | OMEGAFLOW_BLE_HR=… OMEGAFLOW_HIDDEN=1 cargo run | Wort erwartet`.
 

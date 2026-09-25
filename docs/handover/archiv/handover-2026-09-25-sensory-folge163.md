@@ -3,7 +3,7 @@
   session: Sensory-Folge 163
   class: handover
   date: 2026-09-25
-  sha256: 2a294dd5b51a67420b5a271a70bd9b200a2c1fb8139b77228280122aac9acacd
+  sha256: ddaceff1045eb28d8b99d65e3b6604a1b98a78d461ddd2c6f61707a6bb53f0db
   status: live
 -->
 # Handover — Sensory-Folge 163 (2026-09-25)
@@ -43,7 +43,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 - **Trigger:** Operator startet den verdeckten Lauf am gekoppelten Gerät
 - **Lage:** (gemessen 2026-09-25 via `cargo check --tests` + Code) der GFDI-Bus-Abriss ist geheilt: `characteristic_matches` liefert `(path, uuid)`, die GFDI-Schleife destrukturierte vertauscht `(uuid, path)` und sandte die UUID als OBJECT_PATH → dbus-daemon verwarf die Verbindung (`src/archivar/ble.rs:1360/1418`); Fix + zwei Fixture-Tests, `cargo check --tests` 0/0. Live-Bestätigung offen (kein BlueZ/Gerät in der Session).
 - **Blockade:** Hardware/Radio — der verdeckte Lauf braucht das Operator-Wort.
-- **Braucht:** `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow` (~45 s); `sensor:`-/`gfdi_line`-Zeilen lesen.
+- **Braucht:** `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow` (~45 s); `sensor:`-/`gfdi_line`-Zeilen lesen.
 
 ### FIT-Verifikation eigene FR945-Datei (lokal-only)
 - **Status:** operator-gebunden (Akt) | **Bindung:** operator

@@ -3,7 +3,7 @@
   session: Sensory-Folge 162
   class: handover
   date: 2026-09-25
-  sha256: 53ac2ad94a366c68dfc43db5f3dc2a934b248a59914458b14374674d73b354dc
+  sha256: ec54742b89df72f6011ddeec90c5b15fda48eae8dbd33259fa00f1a7737e2619
   status: live
 -->
 # Handover — Sensory-Folge 162 (2026-09-25)
@@ -25,7 +25,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 ### BLE GFDI-StartNotify-Schleife reißt die Bus-Verbindung ab
 - **Status:** eigen (autonom) | **Bindung:** eigen
 - **Trigger:** nächste Session (kein externer Trigger)
-- **Lage:** (gemessen 2026-09-25 via `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF
+- **Lage:** (gemessen 2026-09-25 via `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF
   OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow`) Bus-Auth, `Hello`, `AddMatch`,
   `GetManagedObjects`, Geräteauflösung und `StartNotify` auf `0x2a37` laufen jetzt
   fehlerfrei; die anschließende GFDI-Schleife über
@@ -50,7 +50,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
   `0x2a37`-`StartNotify`, empfängt aber keine Notification (`sensor: 0 samples`).
 - **Blockade:** hängt am Punkt oben (GFDI-Schleife reißt die Verbindung).
 - **Braucht:** erst die GFDI-Schleife heilen/überspringen, dann
-  `OMEGAFLOW_BLE_HR=F0:99:19:4E:0B:BF OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow`
+  `OMEGAFLOW_BLE_HR=AA:BB:CC:DD:EE:FF OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow`
   (~45 s) und die `sensor:`-/`gfdi_line`-Zeilen lesen; der funktionale Lauf gehört
   in CI, nicht auf den Operator-Rechner.
 
