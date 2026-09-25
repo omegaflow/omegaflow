@@ -2,9 +2,9 @@
   title: The H₀ lines register — roots instead of witnesses
   class: paper
   date: 2026-09-12
-  sha256: 1ec0218f62ec285e992eb5534fb2ee3333dca9b039492538ac1b056c641180ec
+  sha256: 99397ac2ee009818c16928fc3c49a81477c8b1c352d23e0c1a875f54f947beec
   status: live
-  see-also: docs/blatt/blatt-h0-linien-register.md
+  see-also: docs/blatt/archiv/blatt-h0-linien-register.md
 -->
 # The H₀ lines register — roots instead of witnesses
 
@@ -49,7 +49,7 @@ The register weighs data from NASA missions: the Hubble Space Telescope (HST Key
 
 **The verdict.** Two trees, common root `absent`. No third thread carries ≲1–2%, so no arbiter is possible yet; the young forest's uncertainties (GW sirens ±9–15 km/s, megamaser ±3.0, FRB-DM model spread 51–77) are compatible with both roots. The arbiter is `pending` — the measurement exists, the sharpness does not. The ridge carries the consequence: the tension is not a clean early-vs-late gradient but ladder (72.8) against all others (69.0), KS p = 0.0001.
 
-**The identity that keeps the weigh honest.** The own Gaia-TAP crossmatch of the 75 SH0ES Cepheids stands (2026-09-13): all 74 rows of the 2012.08534 table are resolved through SIMBAD ident→basic into RA/Dec and carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas; 7 rows are `absent` in π_EDR3 and are skipped and counted). The per-source identity lives in the blatt register (`blatt-h0-linien-register.md`, §"Per-Source-Identität — Gaia DR3 source_id"); the weigh does not overstate itself. The DCEP class weigh (N = 1606, 0.2619 ± 0.0004 mas) is the class field, not the ladder H₀; the ladder H₀ is the end-to-end weigh above.
+**The identity that keeps the weigh honest.** The own Gaia-TAP crossmatch of the 75 SH0ES Cepheids stands (2026-09-13): all 74 rows of the 2012.08534 table are resolved through SIMBAD ident→basic into RA/Dec and carry their Gaia DR3 source_id through the 2″ identity gate (offset median +21 μas; 7 rows are `absent` in π_EDR3 and are skipped and counted). The per-source identity lives in the blatt register (`archiv/blatt-h0-linien-register.md`, §"Per-Source-Identität — Gaia DR3 source_id"); the weigh does not overstate itself. The DCEP class weigh (N = 1606, 0.2619 ± 0.0004 mas) is the class field, not the ladder H₀; the ladder H₀ is the end-to-end weigh above.
 
 ## The form
 
