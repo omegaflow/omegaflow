@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — neptune-rift-ephemerides
   class: survey
   date: 2026-09-16
-  sha256: 785896ca32de74fbfce8919bc81a0132e725ed432c4ee7882950fa60ea5e16b2
+  sha256: ce4bd19caf208a7a4cfa4cc24866e2120acad7cc52923f36765bd964b2090393
   status: live
   see-also: docs/paper/neptune-rift-ephemerides.md
 -->
@@ -26,8 +26,13 @@ Export-Gate: `paper-check.yml` prüft Zahlen/sha im Push-Lauf).
 - Modell-gegen-Modell — keine Beobachtung entscheidet; der Uranus-Riss
   (0,36–1,57e6 m = 360–1570 km) bleibt der beobachtungsgestützte Zwilling,
   der Neptun-Riss der größere, rein modellseitige.
-- Der Uranus-Survey benannte „die Neptun-Bau-Linie bleibt `pending`" —
-  diese Messung löst das Pending ein.
+- Der Uranus-Survey benannte am 2026-09-12 „die Neptun-Bau-Linie bleibt
+  `pending`"; der Bau (Compiler `neptune_ephemeris_compiler`, Registrierung
+  `phi/sources.φ:3456` `ephemeris_de440_neptune.bin`/`:3232`
+  `ephemeris_neptune_c.bin`, kernel-flatten `neptune-de440s-cdn.yml`) und
+  diese Messung vom 2026-09-16 lösen es ein — kein Riss, die frühere
+  `pending`-Zeile ist abgelöst (gemessen 2026-09-25 via
+  `sgrep ephemeris_neptune phi/sources.φ`).
 
 ## Pfad
 
