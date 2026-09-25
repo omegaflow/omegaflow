@@ -193,6 +193,7 @@ pub enum Extract {
         rv_key: String,
         rv_scale: Option<f64>,
         epoch_key: String,
+        epoch_mjd: bool,
         fields: Vec<FieldConfig>,
         tau_key: String,
     },
