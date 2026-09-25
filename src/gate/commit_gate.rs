@@ -1511,6 +1511,50 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
     prose_violation(line)
 }
 
+pub fn blocked_integrated_twin(path: &str, content: &str, sources_text: &str) -> Option<Verdict> {
+    if path != "phi/blocked_sources.φ" {
+        return None;
+    }
+    let sources_urls: HashSet<&str> = sources_text
+        .lines()
+        .filter_map(|l| l.strip_prefix("url "))
+        .map(str::trim)
+        .collect();
+    if sources_urls.is_empty() {
+        return None;
+    }
+    let mut state: Option<&str> = None;
+    let mut has_gap = false;
+    for (idx, line) in content.lines().enumerate() {
+        let t = line.trim();
+        if t.is_empty() {
+            state = None;
+            has_gap = false;
+            continue;
+        }
+        if state.is_none() {
+            state = Some(t);
+            continue;
+        }
+        if t.starts_with("gap ") {
+            has_gap = true;
+            continue;
+        }
+        if let Some(u) = t.strip_prefix("url ") {
+            if has_gap && state != Some("descoped") && sources_urls.contains(u.trim()) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "blocked-integrated-twin".to_string(),
+                    line: idx + 1,
+                    feedback: feedback("blocked-integrated-twin").to_string(),
+                    quote: clip(u.trim(), 90),
+                });
+            }
+        }
+    }
+    None
+}
+
 pub const DOC_OPEN_MARKERS: [&str; 11] = [
     "offen",
     "pending",
@@ -3270,6 +3314,58 @@ mod tests {
         let line = format!("note {}", "x".repeat(PHI_NOTE_MAX - "note ".len()));
         assert_eq!(line.chars().count(), PHI_NOTE_MAX);
         assert!(prose_violation(&line).is_none());
+    }
+
+    #[test]
+    fn fp_blocked_integrated_twin_open_state_flagged() {
+        let v = blocked_integrated_twin(
+            "phi/blocked_sources.φ",
+            &fx("blocked_twin_blocked_open"),
+            &fx("blocked_twin_sources"),
+        )
+        .unwrap();
+        assert_eq!(v.rule, "blocked-integrated-twin");
+        assert_eq!(v.severity, Severity::Hard);
+        assert_eq!(v.line, 3, "the url line of the open twin is named");
+    }
+    #[test]
+    fn fn_blocked_integrated_twin_descoped_released_passes() {
+        let blocked = "descoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n";
+        assert!(
+            blocked_integrated_twin(
+                "phi/blocked_sources.φ",
+                blocked,
+                &fx("blocked_twin_sources")
+            )
+            .is_none(),
+            "a descoped twin carries the integration as its Befund, not as a violation"
+        );
+    }
+
+    #[test]
+    fn fn_blocked_integrated_twin_gap_less_entry_passes() {
+        let blocked = "pending\nurl https://example.org/b\nnote HTTP 500 2026-09-25 — server error, retry duty\n";
+        assert!(
+            blocked_integrated_twin(
+                "phi/blocked_sources.φ",
+                blocked,
+                &fx("blocked_twin_sources")
+            )
+            .is_none(),
+            "the twin gate holds only gap-class entries — a pending retry duty is another class"
+        );
+    }
+
+    #[test]
+    fn fn_blocked_integrated_twin_other_register_passes() {
+        assert!(
+            blocked_integrated_twin(
+                "phi/dead_sources.φ",
+                &fx("blocked_twin_blocked_open"),
+                &fx("blocked_twin_sources")
+            )
+            .is_none()
+        );
     }
 
     #[test]

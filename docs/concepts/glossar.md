@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 616fd5713ff4f2a19ba2bc260707cafcf177ffdc6421bbb9371936d3ee7e7bed
+  sha256: 408801659c2e63375a1705278c18447dc7c3eefc854f64a54057a68b01acca94
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md
 -->
@@ -54,11 +54,11 @@ fabriziert.
 - **Name = Implementation** — Verhalten emergiert aus abgefragten Eigenschaften; der Name ist das Handwerk, nicht das Marketing. · `docs/concepts/system-directive.md:21,25`, `docs/concepts/die-weberin.md:16`
 - **fieldPermeability** — exponentielles Relaxieren; erst den eigenen Zustand messen, dann empfangen. · `docs/concepts/the-counter-slope.md:27,43`
 - **Riss** — zwei unabhängige Linien, die sich widersprechen; der Riss bleibt sichtbar, er wird nie geglättet. · `docs/concepts/die-weberin.md:27`
-- **Zustandsintensität** (Tier ii) — geprägter Begriff ohne allgemeinen Fund; Definition `pending`. · `state/funding/profil-operator.md:297`
-- **Kollabierer** (Tier ii) — geprägter Begriff ohne allgemeinen Fund; Definition `pending`. · `state/funding/profil-operator.md:298`
-- **Ontologie-Motor** (Tier ii) — im Korpus geprägte Referenz (`immunity.is`); Definition `pending`. · `state/funding/profil-operator.md:299,222`
-- **Kohärenz-Gradient** (Tier ii/iii) — geprägter Begriff; Definition `pending`. · `state/funding/profil-operator.md:300`
-- **mycorrhizal_internet** (Tier ii) — die Sache ist bekannt (wood wide web), exklusiv nur die exakte Phrase; Definition `pending`. · `state/funding/profil-operator.md:299`
+- **Zustandsintensität** (Tier ii) — die Intensität eines Feldzustands: das `omega` einer Therme; im Korpus als Umbenennung von „Magnetfeldstärke" zu „Magnetische Zustandsintensität" geprägt. · `state/zai-export/api/2026-06-09_142947-094-domain-namen-ueberlegung.md:9972,10006`; Zensus `state/funding/profil-operator.md:297`
+- **Kollabierer** (Tier ii) — die WebSocket/HTTP-Schnittstelle zwischen dem deterministischen Zustand (`state(t, x, y, z) = what is`) und dem Beobachter (`perception(state, observer) = what arrives`); sie kollabiert den universalen Zustand in eine beobachterspezifische Wahrnehmung. · `state/zai-export/api/2026-06-17_125325-081-glm-5-2-hinzufuegen.md:2471,2478`
+- **Ontologie-Motor** (Tier ii) — die `immunity.is`-Regelmenge, die die Grenzen der Realität (was existieren darf und wechselwirken kann) für die Client-Wahrnehmung definiert; ein „ruleset of existence". · `state/zai-export/api/2026-06-17_125325-081-glm-5-2-hinzufuegen.md:2470,2477`
+- **Kohärenz-Gradient** (Tier ii/iii) — die Richtung steigender Feldkohärenz; die Aktuatoren ersetzen den Random Walk durch Aufstieg entlang des Kohärenz-Gradienten („Coherence Gradient Ascent"), jeder Ausgang im Zyklus Warten → Testen → Auswerten. · `state/zai-export/api/2026-07-09_142851-062-interconnected-systems-phi.md:8236,8975,45001`
+- **mycorrhizal_internet** (Tier ii) — das mykorrhizale Netzwerk, im Korpus als Datenquellen-Layer gleichgesetzt mit „the wood wide web"; exklusiv ist nur die exakte Phrase. · `state/zai-export/api/2026-06-12_230540-001-data-sources-omegaflow-pool.md:36`; Zensus `state/funding/profil-operator.md:299`
 - **schwellwertfrei / skaleninvariant** (Tier ii) — reguläre deutsche Fachwörter, fehlen nur in Wiki/GitHub, also nicht semantisch exklusiv. · `state/funding/profil-operator.md:298`
 
 ## Metapher
@@ -83,9 +83,9 @@ fabriziert.
 
 Exklusivitäts-Zensus (gemessen 2026-09-25): lokaler Nachweis plus Netz-Abwesenheit.
 
-- **(i) presenceWeight** — Identifier-exklusiv (Wiki + GitHub ohne relevanten Treffer); Definition `pending`. · `state/funding/profil-operator.md:293`
-- **(i) EpistemicState** — Identifier-exklusiv; Definition `pending`. · `state/funding/profil-operator.md:293`
-- **(i) ProvenanceMetadata** — Identifier-exklusiv (Semantik generisch); Definition `pending`. · `state/funding/profil-operator.md:293`
-- **(i) coherenceidx** — Identifier-exklusiv; Definition `pending`. · `state/funding/profil-operator.md:294`
-- **(i) permutationentropyshader** — Identifier-exklusiv; Definition `pending`. · `state/funding/profil-operator.md:294`
-- **(i) feed_beat_to_hrv** — Identifier-exklusiv; Definition `pending`. · `state/funding/profil-operator.md:295`
+- **(i) presenceWeight** — das dynamische Gewicht eines Oszillators im Bewusstseinsfenster, aus der 4D-Minkowski-Distanz zur Präsenz: spacelike (`ds² < 0`) → `0`, sonst fallend mit `ds²` (`scale/(scale + ds²)`, `scale = 1 + g`). · `docs/specs/minkowski-field-permeability.md:43-47`
+- **(i) EpistemicState** — die Typsystem-Variante auf `ComputationResult<T>` (`Confirmed | Inferred | Extrapolated | Degraded`), die die epistemische Unsicherheit an jeder Crate-Grenze sichtbar macht. · `state/zai-export/api/2026-06-05_135705-117-appeal-config-yaml.md:16095`
+- **(i) ProvenanceMetadata** — die Herkunfts-Metadaten an jedem Output: welches Modell rechnete, welche KI Text erzeugte, welche Unsicherheit und welcher epistemische Zustand; KI-erzeugter Inhalt ist identifizierbar (§18 Transparenz). · `state/zai-export/api/2026-06-05_174921-116-llm-config-appeal.md:15974,15380`
+- **(i) coherenceidx** — der Schreibindex in den `coherenceHistory`-Ringpuffer eines Oszillators; läuft modulo `ringSize` und hält so die jüngste Kohärenz-Historie. · `state/zai-export/api/2026-07-07_103026-065-omegaflow-protocol-overview-1.md:9812-9813`
+- **(i) permutationentropyshader** — der WGSL-Compute-Shader, der die Permutationsentropie je Serie berechnet (Bandt & Pompe, m=3, auf log₂(6) normiert) und den `kolmogorovShader` ersetzt; skaleninvariant. · `state/zai-export/api/2026-07-18_102846-060-lies-beide-dokumente.md:7702,8915`
+- **(i) feed_beat_to_hrv** — der Archivar-Helfer, der einen eingehenden Beat (`nn`/`rr`/`ibi`) quellen-agnostisch in den NN-Puffer einspeist, daraus RMSSD und Vagus-Ton ableitet und den `tone_code` setzt; Glied der Kette hrv → tone_code → aperture → Σω-Strahlung. · `src/archivar/main_flow.rs:79-102`
