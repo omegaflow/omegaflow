@@ -3,7 +3,7 @@
   session: Mycelium-Folge 156
   class: handover
   date: 2026-09-25
-  sha256: 8ff3eea6552dec63dfba8fe1a08b70dbcf9aa7695aae34af84a9d25a981c109d
+  sha256: 0f818ca6595bdc7db9d4be95371e1bd3e79ddae8471f7ff0f97a6aae293a21ed
   status: live
 -->
 # Handover — Mycelium-Folge 156 (2026-09-25)
@@ -21,24 +21,6 @@ Diese Session hat `handover-2026-09-25-mycelium-folge155.md` konsumiert.
 ## Offen (aufgeschlüsselt)
 
 #### Stufe 1 — autonom
-
-### Gate-vs-Bestand — Riss (Ratsverdikt „angleichen", Konsument widerspricht)
-- **Status:** autonom | **Bindung:** eigen (Rats-/Operator-Wort)
-- **Trigger:** Rats-/Operator-Wort zum konsumentengestützten Kohort.
-- **Lage:** (gemessen 2026-09-25 via Rat + Taucher-Inventar) der Rat ist einstimmig
-  „angleichen"; Inventar: **99 disponierbar** (93 model-forecast, 4 aggregated-index,
-  1 no-physical-force, 1 catalog), **43 stehen gelassen** (31 `format reference`, 2 EOP,
-  2 Neutronenmonitor, 2 DONKI, 2 TNO-Kataloge, 1 TNS, 3 global-mean GHG). **Riss:** die
-  90 `archive-api.open-meteo.com`-Blöcke (ERA5-Reanalyse) tragen eine **CDN-Release**
-  (`archive-api.open-meteo.com`, 90 Assets = 30×3) und die Tibet-Flut-Papiere
-  (`docs/blatt/blatt-kreuz-screening-kollab.md:128`, `.github/workflows/trishuli-pfeil.yml:25`);
-  die Taucher-Datensatzprüfung hakte sie fälschlich als „kein Datensatz" ab. Der Austrag
-  wurde **zurückgesetzt** — `phi/sources.φ` trägt die 90 Blöcke weiter (canonical, 1422 Blöcke).
-- **Blockade:** Riss — Gate (Reanalyse ≠ Messung) vs. gebauter Konsument (Papiere + CDN-Release).
-- **Braucht:** Rats-/Operator-Wort: (a) die open-meteo-Kohorte **behalten** (Riss tragen) und
-  die übrigen 9 disponieren, oder (b) die CDN-Release-Assets zuerst sichern/dokumentieren,
-  dann auch die 90 disponieren. Belege: `git show refs/safety/1790320430:phi/sources.φ`
-  (Vor-Zustand), `git log --oneline -1` für den Ausgangs-HEAD.
 
 ### `phi/declined_sources.φ` — Ordnung + Duplikate
 - **Status:** autonom | **Bindung:** eigen
