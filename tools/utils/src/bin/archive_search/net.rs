@@ -136,7 +136,7 @@ const RATE_LIMIT_ATTEMPTS: usize = 4;
 const RATE_LIMIT_BACKOFF_SECS: u64 = 3;
 
 fn is_rate_limited(f: &Fetch) -> bool {
-    matches!(f.status, Some(406) | Some(429) | Some(503))
+    matches!(f.status, Some(429) | Some(503))
 }
 
 fn get_retrying(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
@@ -691,7 +691,7 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
             }
         }
         Some(f) if f.status == Some(406) => {
-            vec!["pending — arxiv HTTP 406 (rate/UA policy; retry later)".to_string()]
+            vec!["pending — arxiv HTTP 406 (empty body, server-side; fresh queries are rejected regardless of User-Agent, cached queries still serve)".to_string()]
         }
         Some(f) => vec![format!("pending — arxiv HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
