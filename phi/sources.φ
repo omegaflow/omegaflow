@@ -12094,6 +12094,13 @@ at earth
 sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
+format reference
+origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
+sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
+at earth
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
 origin MAGIC per-project FITS URL (operator input; portal carries no single TAR)
 compiler tools/harvest/src/bin/dl3_skymap_compiler.rs

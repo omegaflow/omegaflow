@@ -3,6 +3,7 @@ use crate::archivar::HUBBLE_H0;
 
 pub const MAGIC: [u8; 4] = *b"SKD1";
 pub const HEADER_BYTES: usize = 8;
+pub const OMEGA_M: f64 = 0.3153;
 
 #[derive(Clone)]
 pub struct SkySample {
@@ -70,6 +71,46 @@ impl SkyDirection {
         let dist = self.distance_m()?;
         let p = self.unit_direction();
         Some([p[0] * dist, p[1] * dist, p[2] * dist])
+    }
+}
+
+pub fn near_flow_distance_m(z: f64, vpec_m_s: f64) -> Option<f64> {
+    if !z.is_finite() || z <= 0.0 || !vpec_m_s.is_finite() {
+        return None;
+    }
+    let d = (z * C_LIGHT - vpec_m_s) / HUBBLE_H0;
+    if d.is_finite() && d > 0.0 {
+        Some(d)
+    } else {
+        None
+    }
+}
+
+pub fn far_flow_distance_m(z: f64) -> Option<f64> {
+    if !z.is_finite() || z <= 0.0 {
+        return None;
+    }
+    let omega_lambda = 1.0 - OMEGA_M;
+    let n = 256usize;
+    let dz = z / n as f64;
+    let mut sum = 0.0;
+    for i in 0..=n {
+        let zi = i as f64 * dz;
+        let e = (OMEGA_M * (1.0 + zi).powi(3) + omega_lambda).sqrt();
+        let weight = if i == 0 || i == n {
+            1.0
+        } else if i % 2 == 1 {
+            4.0
+        } else {
+            2.0
+        };
+        sum += weight / e;
+    }
+    let d = C_LIGHT / HUBBLE_H0 * sum * dz / 3.0;
+    if d.is_finite() && d > 0.0 {
+        Some(d)
+    } else {
+        None
     }
 }
 
@@ -592,5 +633,49 @@ mod tests {
         let mut d = sample_direction();
         d.sigma_arcsec = Some(-1.0);
         assert!(write_bin(&[d]).is_none());
+    }
+
+    #[test]
+    fn near_flow_without_peculiar_velocity_is_the_linear_circle() {
+        let d = near_flow_distance_m(0.05, 0.0).unwrap();
+        let expect = 0.05 * C_LIGHT / HUBBLE_H0;
+        assert!((d - expect).abs() < expect * 1e-12);
+    }
+
+    #[test]
+    fn a_receding_peculiar_velocity_shortens_the_near_flow_distance() {
+        let rest = near_flow_distance_m(0.05, 0.0).unwrap();
+        let receding = near_flow_distance_m(0.05, 3.0e5).unwrap();
+        let infall = near_flow_distance_m(0.05, -3.0e5).unwrap();
+        assert!(receding < rest);
+        assert!(infall > rest);
+    }
+
+    #[test]
+    fn near_flow_absorbs_a_peculiar_velocity_larger_than_the_hubble_share_as_absent() {
+        assert_eq!(near_flow_distance_m(0.05, 0.05 * C_LIGHT + 1.0), None);
+        assert_eq!(near_flow_distance_m(0.05, f64::NAN), None);
+        assert_eq!(near_flow_distance_m(0.0, 0.0), None);
+    }
+
+    #[test]
+    fn far_flow_comoving_distance_at_redshift_one_matches_the_flat_lcdm_integral() {
+        let d = far_flow_distance_m(1.0).unwrap();
+        let expect = 1.010362670790e26;
+        assert!((d - expect).abs() < expect * 1e-12);
+    }
+
+    #[test]
+    fn far_flow_stays_below_the_linear_circle_and_grows_monotonically() {
+        let d1 = far_flow_distance_m(1.0).unwrap();
+        assert!(d1 < C_LIGHT / HUBBLE_H0);
+        assert!(far_flow_distance_m(0.5).unwrap() < d1);
+    }
+
+    #[test]
+    fn zero_or_negative_redshift_reads_absent_in_the_far_flow() {
+        assert_eq!(far_flow_distance_m(0.0), None);
+        assert_eq!(far_flow_distance_m(-0.1), None);
+        assert_eq!(far_flow_distance_m(f64::NAN), None);
     }
 }
