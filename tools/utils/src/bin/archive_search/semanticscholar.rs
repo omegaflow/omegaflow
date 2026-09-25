@@ -24,10 +24,15 @@ pub fn semanticscholar_lines(query: &str, max: usize) -> Vec<String> {
                 out
             }
         }
-        Some(f) if f.status == Some(429) => vec![
-            "pending — semanticscholar rate limit (keyless shared pool); S2_API_KEY in .secrets.local lifts it"
-                .to_string(),
-        ],
+        Some(f) if f.status == Some(429) => match &header {
+            Some(_) => {
+                vec!["pending — semanticscholar rate limit (HTTP 429) even with S2_API_KEY".to_string()]
+            }
+            None => vec![
+                "pending — semanticscholar rate limit (keyless shared pool); S2_API_KEY in .secrets.local lifts it"
+                    .to_string(),
+            ],
+        },
         Some(f) if f.status == Some(403) => vec![
             "pending — semanticscholar refuses the key (HTTP 403); check S2_API_KEY".to_string(),
         ],
