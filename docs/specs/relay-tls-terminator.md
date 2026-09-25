@@ -2,16 +2,16 @@
   title: Relay-TLS-Terminator — the wireless sensor secure context
   class: concept
   date: 2026-09-25
-  sha256: pending
+  sha256: 54aa1596921eba50e28487edde0e57475fa7d334fbc2a7070e2a8d957f1eebc4
   status: live
   see-also: AGENTS.md, src/archivar/relay.rs, src/archivar/main_flow.rs, static/sensorium.js, bin/relay-tls.stunnel.conf
 -->
 
 # Relay-TLS-Terminator — the wireless sensor secure context
 
-> The `sha256` header field is a placeholder (`pending`) — the owning session
-> computes it with `sed '/^<!--/,/^-->/d' docs/specs/relay-tls-terminator.md |
-> sha256sum` once this body is final. It is not a fabricated hash.
+> The `sha256` header is computed over the body without the header via
+> `omega_sh sha docs/specs/relay-tls-terminator.md` (set 2026-09-25). A later
+> body change recomputes it.
 
 ## The problem
 
