@@ -54,7 +54,10 @@ fn collect_vedur(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, Stri
             continue;
         };
         let iso = if t.abs() > 1.0e10 {
-            iso_from_ms(t).unwrap_or_default()
+            let Some(iso) = iso_from_ms(t) else {
+                continue;
+            };
+            iso
         } else {
             unix_to_iso(t)
         };
@@ -88,7 +91,9 @@ fn collect_arcgis(
         ) else {
             continue;
         };
-        let iso = iso_from_ms(t).unwrap_or_default();
+        let Some(iso) = iso_from_ms(t) else {
+            continue;
+        };
         if iso.is_empty() {
             continue;
         }
@@ -116,9 +121,13 @@ fn collect_romplus(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, St
         ) else {
             continue;
         };
-        let hh = jnum_at(attrs, &["Hour_UTC"]).unwrap_or(0.0);
-        let mi = jnum_at(attrs, &["Minute_UTC"]).unwrap_or(0.0);
-        let ss = jnum_at(attrs, &["Second_UTC"]).unwrap_or(0.0);
+        let (Some(hh), Some(mi), Some(ss)) = (
+            jnum_at(attrs, &["Hour_UTC"]),
+            jnum_at(attrs, &["Minute_UTC"]),
+            jnum_at(attrs, &["Second_UTC"]),
+        ) else {
+            continue;
+        };
         let iso = format!(
             "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}",
             y as i64, mo as i64, dd as i64, hh as i64, mi as i64, ss as i64
@@ -132,7 +141,10 @@ fn collect_romplus(root: &JsonVal, out: &mut Vec<(String, f64, f64, f64, f64, St
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "seismic_quakes.csv".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => "seismic_quakes.csv".to_string(),
+    };
 
     let mut rows: Vec<(String, f64, f64, f64, f64, String)> = Vec::new();
     for (url, kind) in [
@@ -140,7 +152,7 @@ fn main() {
         (WORLDWIDE_URL, "worldwide"),
         (ROMPLUS_URL, "romplus"),
     ] {
-        let body = match fetch_raw_bytes(url, 60) {
+        let body = match fetch_raw_bytes(url) {
             Some(b) => String::from_utf8_lossy(&b).into_owned(),
             None => {
                 eprintln!("seismic: {kind} fetch from {url} returned void");

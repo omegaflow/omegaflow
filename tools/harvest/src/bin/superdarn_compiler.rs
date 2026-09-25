@@ -215,7 +215,7 @@ fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Op
 }
 
 fn gather(body: &str, site: &RadarSite, lsk: &LeapSeconds) -> Result<Vec<GeoRec>, String> {
-    let json = fetch_superdarn_ascii(body, 300)
+    let json = fetch_superdarn_ascii(body)
         .ok_or_else(|| "the ascii-call session stayed void (token or body absent)".to_string())?;
     let parsed = parse_json(&json).ok_or_else(|| "the ascii body parses void".to_string())?;
     let JsonVal::Arr(rows) = parsed else {

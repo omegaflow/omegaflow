@@ -6,7 +6,6 @@ use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "pds-rings.seti.org";
-const FETCH_TTL: u64 = 604800;
 const SHARD_BUDGET: usize = 1 << 30;
 const ROUTES: [&str; 2] = [
     "https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2803/S_RINGS/EDITDATA/",
@@ -199,7 +198,7 @@ fn decode_dat(bytes: &[u8], meta: &SeriesMeta) -> Option<(Vec<RingOccSample>, us
 
 fn fetch_or_read(spec: &str) -> Option<Vec<u8>> {
     if spec.starts_with("http://") || spec.starts_with("https://") {
-        fetch_raw_bytes(spec, FETCH_TTL)
+        fetch_raw_bytes(spec)
     } else {
         std::fs::read(spec).ok()
     }
@@ -311,7 +310,7 @@ fn compile_entry(
 }
 
 fn collect_dir(dir_url: &str, entries: &mut Vec<(Vec<RingOccSample>, String, String)>) {
-    let Some(bytes) = fetch_raw_bytes(dir_url, FETCH_TTL) else {
+    let Some(bytes) = fetch_raw_bytes(dir_url) else {
         eprintln!("{dir_url}: listing fetch void");
         return;
     };

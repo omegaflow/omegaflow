@@ -41,7 +41,7 @@ fn write_headers() -> Option<Vec<(String, String)>> {
 }
 
 fn call(url: &str, body: Option<&str>, h: &[(String, String)]) -> Option<String> {
-    fetch_raw_with(url, body, h, 60, RetryPolicy::Transient, 30)
+    fetch_raw_with(url, body, h, RetryPolicy::Transient, 30)
 }
 
 fn read_call(url: &str) -> Option<String> {

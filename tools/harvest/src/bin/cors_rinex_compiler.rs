@@ -38,8 +38,7 @@ fn hatanaka_marker(text: &str) -> bool {
 
 fn read_rinex(url: Option<&str>, input: Option<&str>) -> Result<String, String> {
     if let Some(url) = url {
-        let bytes =
-            fetch_raw_bytes(url, 86400).ok_or_else(|| format!("{url}: fetch returned void"))?;
+        let bytes = fetch_raw_bytes(url).ok_or_else(|| format!("{url}: fetch returned void"))?;
         decode_body(bytes).ok_or_else(|| format!("{url}: gunzip returned void"))
     } else if let Some(path) = input {
         let bytes = std::fs::read(path).map_err(|e| format!("read {path} returned void: {e}"))?;

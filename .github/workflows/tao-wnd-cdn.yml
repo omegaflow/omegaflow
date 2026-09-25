@@ -1,0 +1,63 @@
+name: tao-wnd-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  tao-wnd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view data.pmel.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "tao_wnd_zonal.csv"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset tao_wnd_zonal.csv already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset tao_wnd_zonal.csv missing — compiling and manifesting"
+          fi
+      - name: Harvest the tao wind source from the runner (curl, pmel with a CoastWatch mirror)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          d_end=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00Z)
+          d_start=$(date -u -d '127 days ago' +%Y-%m-%dT00:00:00Z)
+          direct="https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv?time,longitude,latitude,station,WU_422,QWS_5401&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>=${d_start}&time<=${d_end}"
+          mirror="https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv?time%2Clongitude%2Clatitude%2Cstation%2CWU_422%2CQWS_5401&latitude%3E=-2&latitude%3C=2&longitude%3E=200&longitude%3C=280&time%3E=${d_start}&time%3C=${d_end}"
+          if ! curl -sSL -m 120 -o tao_wnd_zonal_raw.csv "$direct"; then
+            echo "pmel direct route refused from the runner — falling back to the CoastWatch mirror"
+            curl -sSL -m 180 -o tao_wnd_zonal_raw.csv "$mirror"
+          fi
+          test "$(wc -c < tao_wnd_zonal_raw.csv)" -gt 50000
+          head -1 tao_wnd_zonal_raw.csv | grep -qx 'time,longitude,latitude,station,WU_422,QWS_5401'
+          echo "harvest measured: $(wc -c < tao_wnd_zonal_raw.csv) bytes from the runner route"
+      - name: Ensure the data.pmel.noaa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view data.pmel.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.pmel.noaa.gov --repo omegaflow/sources \
+              --title "data.pmel.noaa.gov" \
+              --notes "PMEL ERDDAP TAO/TRITON series compiled to CSV assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the tao wind zonal series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin tao_wnd_compiler -- \
+            --input tao_wnd_zonal_raw.csv \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "tao-wnd-cdn: tao_wnd_zonal compile returned void" \
+                 "tao wind compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

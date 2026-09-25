@@ -135,7 +135,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let list_mode = args.iter().any(|a| a == "--list");
-    let Some(index) = fetch_raw_bytes(LISTING, 86400) else {
+    let Some(index) = fetch_raw_bytes(LISTING) else {
         eprintln!("{LISTING}: fetch void — the series stays unwritten (0 honored)");
         return;
     };
@@ -160,7 +160,7 @@ fn main() {
     let mut seen: HashMap<String, String> = HashMap::new();
     for (fid, name) in files.iter().enumerate() {
         let url = format!("{LISTING}{name}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };

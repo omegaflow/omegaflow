@@ -6,8 +6,6 @@ use omegaflow::cdn::CDN_BASE;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 
-const DOWNLOAD_TTL: u64 = 7200;
-
 #[derive(Debug)]
 struct FootprintBinding {
     survey: &'static str,
@@ -118,7 +116,7 @@ fn resolve_asset(args: &[String]) -> Result<(String, String), String> {
             Ok((survey_label(binding, &name), local))
         } else {
             let url = format!("{CDN_BASE}/{}/{}", binding.source_host, binding.asset);
-            let bytes = omegaflow::archivar::fetch_raw_bytes(&url, DOWNLOAD_TTL)
+            let bytes = omegaflow::archivar::fetch_raw_bytes(&url)
                 .ok_or_else(|| format!("survey {name}: {url} stays unread — refused"))?;
             if let Some(parent) = std::path::Path::new(&local).parent() {
                 std::fs::create_dir_all(parent)

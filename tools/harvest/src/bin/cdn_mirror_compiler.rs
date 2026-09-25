@@ -61,7 +61,7 @@ fn main() {
             voids += 1;
             continue;
         }
-        let Some(body) = fetch_raw_bytes(&resolved, 300) else {
+        let Some(body) = fetch_raw_bytes(&resolved) else {
             eprintln!("cdn_mirror {netloc}/{name}: live body void — asset untouched");
             voids += 1;
             continue;

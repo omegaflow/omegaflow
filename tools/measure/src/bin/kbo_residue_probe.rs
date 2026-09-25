@@ -177,10 +177,7 @@ fn load_kbo_asset(bin: &str) -> Vec<KboRec> {
         let sources = load_sources();
         let block = sources.iter().find(|s| s.url.contains("kbo_elements.json"));
         match block {
-            Some(s) => (
-                fetch_raw(&s.url, None, &[], s.ttl),
-                format!("sources.φ {}", s.url),
-            ),
+            Some(s) => (fetch_raw(&s.url, None, &[]), format!("sources.φ {}", s.url)),
             None => (None, "block absent".to_string()),
         }
     };
@@ -350,10 +347,10 @@ fn family_verdict(
     ws: &[f32],
     lag_max: usize,
     fam: f64,
-) -> (f64, usize, f64) {
+) -> (f64, usize, Option<f64>) {
     if n < 30 {
         println!("{label:<22} n {n:<5} no statement (n < 30)");
-        return (0.0, 0, fam);
+        return (0.0, 0, None);
     }
     let mut best_te = 0.0f64;
     let mut best_lag = 0usize;
@@ -381,19 +378,24 @@ fn family_verdict(
         (rev_te, "ϖ->R")
     };
     let lag = if best_te >= rev_te { best_lag } else { rev_lag };
-    let thr = surrogate_stats_phase(rs, ws, lag, SEED)
-        .map(|(_, _, t)| t)
-        .unwrap_or(0.0);
+    let thr = surrogate_stats_phase(rs, ws, lag, SEED).map(|(_, _, t)| t);
     let word = if forward > fam {
         "fam-carrying"
-    } else if forward > thr {
+    } else if matches!(thr, Some(t) if forward > t) {
         "arrow above own threshold, below family threshold"
-    } else {
+    } else if thr.is_some() {
         "still"
+    } else {
+        "surrogate threshold absent — no verdict"
     };
-    println!(
-        "{label:<22} n {n:<5} te {forward:.4e} ({dir}, lag {lag}) thr {thr:.4e} fam {fam:.4e} | {word}"
-    );
+    match thr {
+        Some(thr) => println!(
+            "{label:<22} n {n:<5} te {forward:.4e} ({dir}, lag {lag}) thr {thr:.4e} fam {fam:.4e} | {word}"
+        ),
+        None => println!(
+            "{label:<22} n {n:<5} te {forward:.4e} ({dir}, lag {lag}) thr absent fam {fam:.4e} | {word}"
+        ),
+    }
     (forward, lag, thr)
 }
 
@@ -473,7 +475,10 @@ fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut planets: Vec<Planet> = Vec::new();
     for (_, s, path) in &items {
-        let name = s.body.clone().unwrap_or_default();
+        let Some(name) = s.body.clone() else {
+            eprintln!("body absent — ephemeris skipped");
+            continue;
+        };
         match std::fs::read(path)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -639,7 +644,7 @@ fn main() {
         if !std::path::Path::new(&path).exists() {
             std::fs::create_dir_all("kernels").ok();
             let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{long}.bin", CDN_BASE);
-            match fetch_raw_bytes(&url, 604800) {
+            match fetch_raw_bytes(&url) {
                 Some(bytes) => {
                     if std::fs::write(&path, &bytes).is_err() {
                         println!("probe {name:<12} long-bin write void");
@@ -732,9 +737,13 @@ fn main() {
 
     for (name, rs, ws, max_r, window_days) in &probes_out {
         let (te, lag, dir) = sweep_te(rs, ws, lag_max);
-        let thr = surrogate_stats_phase(rs, ws, lag, SEED)
-            .map(|(_, _, t)| t)
-            .unwrap_or(0.0);
+        let thr = match surrogate_stats_phase(rs, ws, lag, SEED) {
+            Some((_, _, t)) => t,
+            None => {
+                println!("probe {name:<12} te {te:.4e} ({dir}, lag {lag}) thr absent — surrogate null not computable");
+                continue;
+            }
+        };
         let word = if te > fam {
             "fam-carrying"
         } else if te > thr {
