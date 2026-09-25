@@ -2,7 +2,10 @@ use omegaflow::archivar::{
     Extract, JsonVal, SourceConfig, convert_to_si, extract_series, fetch_raw, is_time_key,
     load_sources, parse_json, scalar_of, ymd_to_days,
 };
-use omegaflow::te::{surrogate_stats, surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::force::force_name_of;
+use omegaflow::te::{
+    phase_randomized_surrogate, surrogate_stats, surrogate_stats_phase, transfer_entropy_lag,
+};
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -302,7 +305,54 @@ fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     (xs, ys)
 }
 
-fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) {
+const FORCE_BLOCK: [(&str, &str); 7] = [
+    ("X-Ray", "noaa_goes_xray_flux_w_m2"),
+    ("EUV-304", "solar_euv_flux_304_wm2"),
+    ("EUV-284", "solar_euv_flux_284_wm2"),
+    ("Bz-RTSW", "magnetosphere_imf_bz_nt"),
+    ("Density-RTSW", "solar_wind_density_cm3"),
+    ("Bz-OMNI", "omni_imf_bz_gsm_nt"),
+    ("Density-OMNI", "omni_solarwind_density_percc"),
+];
+
+fn block_for(label: &str) -> Option<&'static str> {
+    FORCE_BLOCK
+        .iter()
+        .find(|(l, _)| *l == label)
+        .map(|(_, b)| *b)
+}
+
+fn force_of(sources: &[SourceConfig], name: &str) -> Option<u8> {
+    for s in sources {
+        for e in &s.extracts {
+            if let Extract::Field(fc) = e {
+                if fc.name == name {
+                    return Some(fc.force);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn force_label(id: u8) -> String {
+    match force_name_of(id) {
+        Some(n) => n.to_string(),
+        None => format!("unnamed {id}"),
+    }
+}
+
+struct PairCell {
+    from: String,
+    to: String,
+    lag: usize,
+    te: Option<f64>,
+    threshold: Option<f64>,
+    surr_vals: Vec<f64>,
+}
+
+fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) -> Vec<PairCell> {
+    let mut cells = Vec::with_capacity(lags.len());
     if xs.len() < 30 {
         println!(
             "{:>14} → {:<14} | no statement possible (n = {})",
@@ -310,20 +360,63 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
             label_b,
             xs.len()
         );
-        return;
+        return cells;
     }
     for &lag in lags {
         let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
         let te = transfer_entropy_lag(xs, ys, lag);
-        let thr = surrogate_stats_phase(xs, ys, lag, seed).map(|(_, _, t)| t);
-        match (te, thr) {
+        let mut rng = seed.wrapping_add(SURROGATE_SEED);
+        let mut surr_vals: Vec<f64> = Vec::with_capacity(10);
+        for _ in 0..10 {
+            let ys_surr = phase_randomized_surrogate(ys, &mut rng);
+            if let Some(t) = transfer_entropy_lag(xs, &ys_surr, lag) {
+                surr_vals.push(t);
+            }
+        }
+        let threshold = if surr_vals.len() >= 2 {
+            let n = surr_vals.len() as f64;
+            let mean = surr_vals.iter().sum::<f64>() / n;
+            let var = surr_vals
+                .iter()
+                .map(|v| (v - mean) * (v - mean))
+                .sum::<f64>()
+                / n;
+            Some(mean + 2.0 * var.sqrt())
+        } else {
+            None
+        };
+        cells.push(PairCell {
+            from: label_a.to_string(),
+            to: label_b.to_string(),
+            lag,
+            te,
+            threshold,
+            surr_vals,
+        });
+    }
+    cells
+}
+
+fn print_cells(title: Option<&str>, cells: &[PairCell], fam: Option<f64>) {
+    if let Some(t) = title {
+        println!();
+        println!("{t}");
+    }
+    for c in cells {
+        match (c.te, c.threshold) {
             (Some(t), Some(h)) => {
-                let arrow = if t > h { "arrow" } else { "silent" };
+                let over_fam = fam.map_or(false, |f| t > f);
+                let arrow = match (t > h, over_fam) {
+                    (true, true) => "arrow*",
+                    (true, false) => "arrow",
+                    (false, true) => "silent*",
+                    (false, false) => "silent",
+                };
                 println!(
                     "{:>14} → {:<14} | lag {:>2} | TE {:>10.4e} | threshold {:>10.4e} | excess {:>10.4e} | {}",
-                    label_a,
-                    label_b,
-                    lag,
+                    c.from,
+                    c.to,
+                    c.lag,
                     t,
                     h,
                     t - h,
@@ -333,7 +426,7 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
             _ => {
                 println!(
                     "{:>14} → {:<14} | lag {:>2} | TE absent (n < 8) | threshold absent | excess absent | silent",
-                    label_a, label_b, lag
+                    c.from, c.to, c.lag
                 );
             }
         }
@@ -378,7 +471,10 @@ fn main() {
     let sources = load_sources();
     let now = now_unix();
 
-    println!("=== Nobel probe: the measurement protocol of corona heating (Nadel Ⅲ) ===");
+    println!("=== Nobel probe v2: the measurement protocol of corona heating (Nadel Ⅲ) ===");
+    println!(
+        "v2 adds: minutes-fam (the family bound over the 1-min-grid round), multi-force TE (the field's declared force per channel, read live from the register), and the localized active-region path (register state measured)."
+    );
     println!("system time: {}", now_iso());
     println!(
         "TE-Lib: TE(Y→X; τ) = Σ_t ln[ p(x_{{t+τ}}, x_t, y_t) · p(x_t) / (p(x_t, y_t) · p(x_{{t+τ}}, x_t)) ] / m, m = n − τ;"
@@ -388,6 +484,9 @@ fn main() {
     );
     println!(
         "Threshold: phase-randomized surrogates (preserving the spectrum of the driver series, std-only FFT, 10 realizations), mean + 2σ; the naive shuffle threshold stays printed only in the null control for comparison. Arrow ⇔ TE > threshold."
+    );
+    println!(
+        "fam: the strongest surrogate TE of the minutes round (Matrix 1 + Matrix 2); * = over fam. The pool and the per-pair threshold share one null draw per pair."
     );
     println!("Time base: Unix seconds relative — TE is shift-invariant; the TDB constant cancels.");
 
@@ -576,8 +675,9 @@ fn main() {
         ("Bz-RTSW", bz_rtsw.as_slice()),
         ("Density-RTSW", dens_rtsw.as_slice()),
     ];
-    println!();
-    println!("=== Matrix 1 — seconds (lag ∈ {{0, 1, 2}} @ 1 min, common window) ===");
+    let mut fam_pool: Vec<f64> = Vec::new();
+    let mut m1_cells: Vec<PairCell> = Vec::new();
+    let mut m2_cells: Vec<PairCell> = Vec::new();
     match common_window(&seconds_channels) {
         Some((t0, dt, n)) => {
             let binned: Vec<Vec<Option<f32>>> = seconds_channels
@@ -590,21 +690,23 @@ fn main() {
                         continue;
                     }
                     let (xs, ys) = pair_cells(&binned[j], &binned[i]);
-                    te_row(
+                    let cells = te_row(
                         seconds_channels[i].0,
                         seconds_channels[j].0,
                         &xs,
                         &ys,
                         &[0, 1, 2],
                     );
+                    for c in &cells {
+                        fam_pool.extend(c.surr_vals.iter().copied());
+                    }
+                    m1_cells.extend(cells);
                 }
             }
         }
         None => println!("common window empty — matrix absent"),
     }
 
-    println!();
-    println!("=== Matrix 2 — 7-day (lag ∈ {{0, 1, 2}} @ 1 min, n = 10 078) ===");
     {
         let channels = [
             ("X-Ray", xray.as_slice()),
@@ -623,23 +725,55 @@ fn main() {
                             continue;
                         }
                         let (xs, ys) = pair_cells(&binned[j], &binned[i]);
-                        te_row(channels[i].0, channels[j].0, &xs, &ys, &[0, 1, 2]);
+                        let cells = te_row(channels[i].0, channels[j].0, &xs, &ys, &[0, 1, 2]);
+                        for c in &cells {
+                            fam_pool.extend(c.surr_vals.iter().copied());
+                        }
+                        m2_cells.extend(cells);
                     }
                 }
             }
             None => println!("common window empty — matrix absent"),
         }
     }
+    let fam_min: Option<f64> = if fam_pool.is_empty() {
+        None
+    } else {
+        Some(fam_pool.iter().cloned().fold(f64::NEG_INFINITY, f64::max))
+    };
+    print_cells(
+        Some("=== Matrix 1 — seconds (lag ∈ {0, 1, 2} @ 1 min, common window) ==="),
+        &m1_cells,
+        fam_min,
+    );
+    print_cells(
+        Some("=== Matrix 2 — 7-day (lag ∈ {0, 1, 2} @ 1 min, n = 10 078) ==="),
+        &m2_cells,
+        fam_min,
+    );
+    println!();
+    println!("=== Minutes-fam — the family bound over the 1-min-grid round ===");
+    match fam_min {
+        Some(f) => println!(
+            "fam = {:.4e} — the strongest surrogate TE of the minutes round ({} draws, Matrix 1 + Matrix 2); * = over fam.",
+            f,
+            fam_pool.len()
+        ),
+        None => println!("fam absent — the minutes round carries no surrogates (0 honored)."),
+    }
 
     println!();
     println!(
         "=== Matrix 3 — hours (Bz-OMNI ↔ Radio on the radio grid, tolerance 1800 s; Bz-OMNI ↔ density-OMNI hourly) ==="
     );
+    let mut m3_radio: Vec<PairCell> = Vec::new();
+    let mut m3_hourly: Vec<PairCell> = Vec::new();
     {
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
-        te_row("Bz-OMNI", "Radio-2695", &xs, &ys, &[0, 1, 2, 3]);
+        m3_radio.extend(te_row("Bz-OMNI", "Radio-2695", &xs, &ys, &[0, 1, 2, 3]));
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
-        te_row("Radio-2695", "Bz-OMNI", &ys, &xs, &[0, 1, 2, 3]);
+        m3_radio.extend(te_row("Radio-2695", "Bz-OMNI", &ys, &xs, &[0, 1, 2, 3]));
+        print_cells(None, &m3_radio, None);
         println!("  (radio-grid index lag is irregular — named, not concealed)");
         if let (Some(&(bz_lo, _)), Some(&(dens_lo, _)), Some(&(bz_hi, _)), Some(&(dens_hi, _))) = (
             bz_omni.first(),
@@ -656,9 +790,10 @@ fn main() {
                 let bb = bin_mean(&bz_omni, t0, dt, n);
                 let bd = bin_mean(&dens_omni, t0, dt, n);
                 let (xs, ys) = pair_cells(&bd, &bb);
-                te_row("Bz-OMNI", "Density-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+                m3_hourly.extend(te_row("Bz-OMNI", "Density-OMNI", &xs, &ys, &[0, 1, 2, 3]));
                 let (xs, ys) = pair_cells(&bb, &bd);
-                te_row("Density-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+                m3_hourly.extend(te_row("Density-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]));
+                print_cells(None, &m3_hourly, None);
             } else {
                 println!("intersection Bz-OMNI ↔ density-OMNI empty — matrix absent");
             }
@@ -678,8 +813,92 @@ fn main() {
     ] {
         let (xs, ys) = join_nearest(&radio, dense, 1800.0);
         println!("  (Radio ↔ {}: n = {})", label, xs.len());
-        te_row("Radio-2695", label, &xs, &ys, &[0]);
+        let cells = te_row("Radio-2695", label, &xs, &ys, &[0]);
+        print_cells(None, &cells, None);
     }
+
+    println!();
+    println!("=== Multi-force board — the field's own declared force per channel ===");
+    for (label, block) in FORCE_BLOCK {
+        match force_of(&sources, block) {
+            Some(f) => println!(
+                "{:>14} | {:>28} | force {} ({})",
+                label,
+                block,
+                f,
+                force_label(f)
+            ),
+            None => println!(
+                "{:>14} | {:>28} | force absent (no block in the register)",
+                label, block
+            ),
+        }
+    }
+    println!(
+        "{:>14} | {:>28} | force absent — the block left the register (parser-def nested-filter)",
+        "Radio-2695", "no block"
+    );
+
+    println!();
+    println!("=== Multi-force TE — pairs whose declared force differs ===");
+    let mut cross_n = 0usize;
+    let mut cross_arrows: Vec<String> = Vec::new();
+    for c in m1_cells.iter().chain(m3_hourly.iter()) {
+        let (Some(fa), Some(fb)) = (
+            block_for(&c.from).and_then(|b| force_of(&sources, b)),
+            block_for(&c.to).and_then(|b| force_of(&sources, b)),
+        ) else {
+            continue;
+        };
+        if fa == fb {
+            continue;
+        }
+        cross_n += 1;
+        if let (Some(te), Some(thr)) = (c.te, c.threshold) {
+            let arrow = te > thr;
+            let over_fam = fam_min.map_or(false, |f| te > f);
+            if arrow {
+                cross_arrows.push(format!("{}→{}", c.from, c.to));
+            }
+            println!(
+                "{:>14} ({}) → {:<14} ({}) | lag {:>2} | TE {:>10.4e} | threshold {:>10.4e} | excess {:>10.4e} | {}{}",
+                c.from,
+                force_label(fa),
+                c.to,
+                force_label(fb),
+                c.lag,
+                te,
+                thr,
+                te - thr,
+                if arrow { "arrow" } else { "silent" },
+                if over_fam { "*" } else { "" }
+            );
+        }
+    }
+    println!(
+        "cross-force pairs: {}; arrows: {:?}; the photospheric magnetic-flux route stays unregistered (no magnetogram block) — the AR-heating driver band is pending.",
+        cross_n, cross_arrows
+    );
+
+    println!();
+    println!("=== localized active-region path ===");
+    let aia_blocks = sources.iter().filter(|s| s.format == "aia").count();
+    println!(
+        "spatial corpus: {} AIA1 full-disk bins registered (format aia, aia_compiler) — disk-integrated sums",
+        aia_blocks
+    );
+    println!(
+        "region aperture: built in aia_compiler (--region cx,cy,r on --file, crpix-relative pixels) — no region-sum asset produced"
+    );
+    println!(
+        "region catalog: pending — no active-region/sunspot route in phi/sources.φ (measured 2026-09-26 via sgrep: active_region, sunspot, ar_catalog — absent)"
+    );
+    println!(
+        "sub-minute resolution: the 12-s AIA cadence is registered (CI-only corpus); the live SWPC endpoints serve 1-min — sub-minute stays pending"
+    );
+    println!(
+        "next steps: register the region catalog → harvest region-sum bins (aia_compiler --harvest with per-date coordinates) → consume with aia_ladder_probe --aia <region bin>"
+    );
 
     let mut arrows: Vec<Arrow> = Vec::new();
     {

@@ -37,7 +37,7 @@ jobs:
         run: |
           ./target/release/laic_probe --harvest phi/pipeline/laic_harvest \
             --max-events 0 --null 60 --swarm-limit 0 --swarm-null 0 \
-            --tec-events 2000 --tec-null 60
+            --tec-events 2000 --tec-null 60 --global-rate
 
       - name: Harvest MiniSEED envelope (continuous seismic wave) into the window store
         run: |
