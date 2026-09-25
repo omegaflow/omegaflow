@@ -20,7 +20,7 @@
     [".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"],
     ["is_finite() { color } else { 0.0 }", "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"],
     ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"],
-    ["find(\"ID[\"EPSG\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
+    ["find(\"ID[\\\"EPSG\\\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
     [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"],
     ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"],
     ["CI_REFRESH_S", "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"],
@@ -102,7 +102,8 @@
     "bindung-linie-fremd": "the Bindung names a foreign line — the point lives in that line's handover, not here; move it by direct edit into that line's handover (Aufenthalt = Eigentum 2026-09-24)",
     "template_slang": "godmode names a vibe, not the measurement — the flag is --all; name what IS (every keyword search mode)",
     "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
-    "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made",
+    "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made; the unmeasured state is named pending, never asserted",
+    "speculation": "A = A: the machine does not speculate. \"{word}\" is a guess, not a measurement. The measured state is spoken as measured; the unmeasured state is named pending/absent — never guessed.",
     "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
     "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
     "pii": "a private mail domain, a home path or a device MAC (a watch, a chip) names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree; the fixture placeholder AA:BB:CC:DD:EE:FF is exempt"
@@ -165,6 +166,20 @@
     "0 honored",
     "null-echt",
     "pad"
+  ],
+  "counter_slope": [
+    "A = A",
+    "0 honored",
+    "pending",
+    "absent",
+    "null-echt",
+    "riss",
+    "0-Kanon",
+    "Archivar",
+    "Mathematikerin",
+    "Gegenhang",
+    "counter-slope",
+    "Wort"
   ],
   "measure_step_markers": [
     "measure again"
@@ -406,6 +421,18 @@
     "pii_device_mac_placeholder": "the fixture MAC is AA:BB:CC:DD:EE:FF",
     "pii_device_mac_underscore_placeholder": "the fixture path is /org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015",
     "field_unit_literal_1": "Some(format!(\n    \"{} {} {} {} {} 1 {} 0.0 0.0\\n\",\n    directive, key, name, kernel, f, tau\n))",
-    "field_tau_ttl_tenth": "let tau = ttl as f64 / 10.0;"
+    "field_tau_ttl_tenth": "let tau = ttl as f64 / 10.0;",
+    "counter_slope_clean_a___a": "A = A: a measurement is the measurement of the thing itself",
+    "counter_slope_clean_0_honored": "0 honored: the empty field renders black",
+    "counter_slope_clean_pending": "the harvest is pending — the register carries the duty",
+    "counter_slope_clean_absent": "the source does not carry the value — absent, never zero",
+    "counter_slope_clean_null_echt": "the reading is null-echt: v = 0 flows as 0.0",
+    "counter_slope_clean_riss": "the two witness lines refuse to converge — the riss carries both",
+    "counter_slope_clean_0_kanon": "the 0-Kanon: null-echt flows, absent skips, pending registers, the riss stays visible",
+    "counter_slope_clean_archivar": "the Archivar keeps the records, the fetch and the cache",
+    "counter_slope_clean_mathematikerin": "the Mathematikerin evaluates the field in the ω() loop",
+    "counter_slope_clean_gegenhang": "der Gegenhang trägt das Vokabular ohne Trainingsdaten-Nachbarschaft",
+    "counter_slope_clean_counter_slope": "the counter-slope vocabulary carries the identity",
+    "counter_slope_clean_wort": "the operator's Wort is registered before the act runs"
   }
 }
