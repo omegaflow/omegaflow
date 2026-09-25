@@ -289,6 +289,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     rv_key: String::new(),
                     rv_scale: None,
                     epoch_key: String::new(),
+                    epoch_mjd: false,
                     fields: Vec::new(),
                     tau_key: String::new(),
                 });
@@ -1046,6 +1047,16 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
                 Some(Extract::Rows { epoch_cols, .. }) => {
                     *epoch_cols = vec![parts[1].to_string()];
+                }
+                Some(Extract::CelestialMap {
+                    epoch_key,
+                    epoch_mjd,
+                    ..
+                }) => {
+                    *epoch_key = parts[1].to_string();
+                    if parts.len() >= 3 && parts[2] == "mjd" {
+                        *epoch_mjd = true;
+                    }
                 }
                 _ => {}
             },

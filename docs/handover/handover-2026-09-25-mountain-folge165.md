@@ -3,7 +3,7 @@
   session: Mountain-Folge 165
   class: handover
   date: 2026-09-25
-  sha256: d1a71b0dfd77a52574c9cb9b5e0ccc9b414a738d894fcb1984e799ac9734446a
+  sha256: 75de6c59ae1b64acc4a882c5e25be6de50040ab568cdd391e25e0ad4550ed386
   status: live
 -->
 # Handover — Mountain-Folge 165 (2026-09-25)
@@ -29,20 +29,32 @@ Trigger / Lage / Blockade / Braucht.
 - **Sicherheitsnetz:** `git_safety --snapshot` → `refs/safety/1790365538`
   (recover: `git_safety --restore refs/safety/1790365538`).
 
+**Fortschreibung 2026-09-25 (Fold-Session):** Watchdog-Snapshot 22:08Z: 5 aktiv
+(`source-census` in_progress 19:28, `ci-check` 19:01, `bz-retro-probe` 18:56,
+`ps1-cdn` 18:35, `health-check` queued 18:22), 2 failed (`galileo-ionocal-cdn`,
+`ci-check`); Postfach: `state/mail/mail_ledger.φ` absent, `mail_digest` pending
+(Build gehört CI `tools-build`); `git_safety --snapshot` → `refs/safety/1790371511`.
+`register_lookup --orphans`: keine Mountain-Orphans (alle `parser-def`-Einträge
+gehalten; 9 fremde: future 4, mycelium 5).
+
 ## Offen (aufgeschlüsselt)
 
 ### Linie handelt (eigen)
 
-#### `phi/blocked_sources.φ::gap:unit-auto-detect ×327`
+#### `phi/blocked_sources.φ::gap:unit-auto-detect ×129`
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via `sgrep -c`) der Arm steht
-  (`unit_from_name_suffix`, `units.rs:169`); **live 327** Einträge tragen das
-  Token — der Träger nannte ×166 (Count-Drift gemeldet, kein Orphan; die Zahl
-  stammt aus einer älteren Messung).
+- **Lage:** (gemessen 2026-09-25 via `sgrep -c` + grind-flash) der Arm steht
+  (`unit_from_name_suffix`, `src/archivar/units.rs:169`). Korrektur der Vorgabe:
+  **×327 war die Token-Vorkommenszahl** (166 `gap` + 161 `note`), nicht die
+  Eintragszahl — live waren **166** `gap`-Einträge. 37 Einträge wurden disponiert
+  (Block entfernt), **129 verbleibend**. Der volle Klassen-Arm umfasst laut
+  Register-Notiz auch `probe_classify` (`src/archivar/port.rs:1681`; löst u.a.
+  `mag_*`, `magnitude`, `_mpc`, `_mw`, `_kt`, `_f`, `redshift`) — unter dem vollen
+  Arm wäre die Zahl kleiner.
 - **Blockade:** keine
-- **Braucht:** grind-flash: Re-Port der 327 Einträge über den stehenden Arm; das
-  Token fällt pro Eintrag. Trägerform `phi/blocked_sources.φ::gap:unit-auto-detect ×327`.
+- **Braucht:** Re-Port der 129 mit dem **vollen** Arm (`unit_from_name_suffix` +
+  `probe_classify`); Trägerform `phi/blocked_sources.φ::gap:unit-auto-detect ×129`.
 
 #### Klasse-5 offene Routen bauen
 - **Status:** autonom | **Bindung:** eigen
@@ -74,31 +86,26 @@ Trigger / Lage / Blockade / Braucht.
   den stehenden Armen bauen, in `phi/sources.φ` registrieren + `*-cdn`-Workflow,
   dann CI-Dispatch (Asset ist ein CI-Job).
 
-#### TAO/TRITON — Compiler/Workflow committen + CI-Dispatch
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via grind-pro) die Source ist registriert
-  (`phi/sources.φ:783`, `tao_wnd_zonal`, per-row `lat 3`/`lon 2`, `field 4
-  tao_wnd_zonal_m_s patch-levy advective m/s 86400`); Compiler + Workflow liegen
-  als untracked (`tools/harvest/src/bin/tao_wnd_compiler.rs`,
-  `.github/workflows/tao-wnd-cdn.yml`); `phi/harvest.φ:203` trägt den Job.
-- **Blockade:** keine
-- **Braucht:** Compiler + Workflow + `phi/sources.φ`-Eintrag committen (im
-  Session-Commit), dann `tao-wnd-cdn.yml` dispatchen (Asset ist ein CI-Job).
+#### TAO/TRITON — CI-Dispatch
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** GitHub-API-Rate-Limit erholt (nächster Pass).
+- **Lage:** (gemessen 2026-09-25 via git) die Source ist registriert
+  (`phi/sources.φ:783`, `tao_wnd_zonal`); Compiler + Workflow sind bereits
+  committed (`974700848`: `tools/harvest/src/bin/tao_wnd_compiler.rs`,
+  `.github/workflows/tao-wnd-cdn.yml`, auf `origin/main`). Der Dispatch
+  `gh workflow run tao-wnd-cdn.yml` lief in `API rate limit already exceeded`
+  (GraphQL, user 295896184).
+- **Blockade:** rate limit (transient).
+- **Braucht:** `gh workflow run tao-wnd-cdn.yml` (einmal, wenn das Limit erholt ist).
 
-#### DECaPS-DR2 — Epoch-Arm (`epoch`-Direktive ohne `CelestialMap`)
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via grind-pro) die `epoch`-Direktive hat keinen
-  `CelestialMap`-Arm (`src/archivar/parse.rs:1041`: Map/KeplerMap/ProfileMap/Rows);
-  der DECaPS-TAP-Block (`format tap` + `cmap`, `phi/sources.φ:9514`) kann
-  `epoch_key` nicht setzen; der Konsument steht (`extract.rs:4374` →
-  `Channel.epoch`). Register-Eintrag `parser-def tap` / `gap epoch-key` in
-  `phi/blocked_sources.φ`; die TAP-Kolonnen HTTP 200 (`epochmean` MJD,
-  `epochrange` Tage).
-- **Blockade:** keine; `epochrange` hat keinen Wire-Slot, `cmap` kein `epoch_scale`.
-- **Braucht:** `CelestialMap` in den `epoch`-Arm aufnehmen; danach `epoch_key
-  epochmean` im DECaPS-Block und die MJD→TDB-Skala.
+#### `epochrange` — kein Wire-Slot
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator-Wort (neuer Wire-Slot).
+- **Lage:** (gemessen 2026-09-25 via grind-pro) der DECaPS-`epoch`-Arm ist gebaut
+  (`CelestialMap` nimmt `epoch` an, MJD→TDB via `mjd_to_tdb`); `epochrange` (Tage,
+  MJD-Breite der Epoche) hat keinen Slot im 26×f64-Record noch als `Channel`-Feld.
+- **Blockade:** kein Slot; ein neuer Slot ist ein Architektur-Akt.
+- **Braucht:** Rat/Operator-Wort, ob die Epochenbreite je ein Feld wird.
 
 #### NAIF mariner10 — frame_registry-Route
 - **Status:** wartend | **Bindung:** eigen
@@ -109,6 +116,33 @@ Trigger / Lage / Blockade / Braucht.
 - **Blockade:** Register-Route fehlt.
 - **Braucht:** Eintrag `naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
   | at mariner10`.
+
+#### Atom D — phase/presence-Konsum (Route B)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-23 im Rat,
+  `survey-2026-09-17-verlorene-diskussionen.md:85`) die Prämisse „kein Asset trägt
+  Phase" ist widerlegt: vier phase-tragende Klassen am CDN (`cassini_rsr` I/Q
+  `sources.φ:8081`, cassini/maven TNF-Trägerphase `:8099/:8819` inkl. `ramp_freq`
+  `odf.rs:1653-1666`, fdsn BHZ `:110`, RAWACF nur Power); die Slots fahren seit v9
+  mit, nichts liest sie.
+- **Blockade:** keine
+- **Braucht:** Producer schreibt `phase: Some(fract(cycles)·2π)` + `freq=ramp_freq`
+  (nie hartkodiert) auf der TNF-Route, `bin_width=0.0` (null-echt point source);
+  WGSL-Beat-Term nur für ein Paar; ein Atom, `grind-max`. Das Beat-Paar bleibt
+  `pending` mit Trigger.
+
+#### field absorption — per-force_type-Absorptionsgesetz
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-23, `survey-2026-09-17-verlorene-diskussionen.md:86`)
+  verifiziert: `src/mathematikerin/shaders.rs:53` `alpha = clamp(absorption, 0.0, 1.0)`
+  blendet nur Kernel 5 (`:52-57`, Gradient `:90-97`); jeder andere Kernel ignoriert den
+  Parameter; `src/archivar/channels.rs:1020` schreibt `sensor.absorption`,
+  `:1061/:1088` Pad `0.0`; ein per-force_type-Absorptionsgesetz ist ungebaut — WP10
+  `docs/concepts/remove-bias.md:1738` ist Plan, kein `absorbs`-Symbol im Baum.
+- **Blockade:** keine
+- **Braucht:** per-force_type-Absorptionsgesetz in WGSL + Producer je Kraftkanal.
 
 ### Operator handelt
 
@@ -122,6 +156,35 @@ Trigger / Lage / Blockade / Braucht.
 - **Blockade:** das Operator-Wort + Chrome-Start mit den Debug-Flags.
 - **Braucht:** Operator startet Chrome mit den beiden Flags/Remote-Debugging;
   dann MCP anbinden und in `docs/concepts/tools-map.md` registrieren.
+
+## Träger (Prosadokumente) — orphan-docs-Fold (2026-09-25)
+
+Je Zeile ein trägerloses Dokument der Linie: `Pfad | offene Marker: N | nächster
+Schritt: <tool/file/url>`. Der Dateiname in dieser Übergabe ist der Träger
+(`register_lookup --orphan-docs`). `archivar-mathematikerin.md` fiel mit dem
+`pending`-Definitions-Fix aus der Liste (der Marker war ein definierter Begriff).
+Kein `git mv`: alle acht sind lebende Referenzen/offene Messlinien, keine
+abgeschlossenen Dokumente.
+
+**Gemessen 2026-09-25:** `register_lookup --orphan-docs` **53 → 10**; der
+Mountain-Anteil ist 0. Der Rückgang trägt (a) den Präzisions-Fix
+(`strip_inline_code` + `blocked`-Statuskontext in `register_lookup.rs` und
+`commit_gate.rs`: Definitionen in Backticks/Kursiv zählen nicht mehr als offener
+Marker — die vier Identitäts-/Governance-Konzepte `die-weberin.md`,
+`docs-naming.md`, `kybernaut-native-methodology.md`, `the-counter-slope.md` sind
+Falsch-Positive gewesen) und (b) die Träger-Zeilen unten plus die Träger-Folds
+der anderen Linien. Werkzeug-Fix + Tests im selben Atom
+(`inline_code_terms_are_not_open_markers`, `blocked_counts_only_as_a_status_token`,
+`fp_doc_open_marker_gate_contract`); Commit-Wort `/commit`.
+
+- `docs/concepts/arxiv-api.md` | offene Marker: 2 | nächster Schritt: den im Blatt genannten 406-Punkt (`arxiv HTTP 406`) gegen `docs/handover/handover-2026-09-25-mountain-folge165.md` abgleichen — tragen oder als gemessen schließen (`sread`).
+- `docs/concepts/pfeiler-der-architektur.md` | offene Marker: 2 | nächster Schritt: keine — beide Marker Prosa (`seit Jahrzehnten offenes Problem`, `vorgewartet`), Lebend-Referenz ohne offenen Zustand.
+- `docs/concepts/zeugnis.md` | offene Marker: 5 | nächster Schritt: §14-Bau-Linie Stufe 2 (Footprints) → `phi/footprints.φ` (PS1+AllWISE gebaut, SDSS/2MASS refused); Stufe 1/3/4 folgen.
+- `docs/surveys/survey-2026-09-06-codestruktur.md` | offene Marker: 8 | nächster Schritt: `ci_manage view 36172029908` (measure-gates) / `36172034181` (service-build), dann die Deckung der tools-Crates re-messen; tote pub-Fns in `974700848` entfernt.
+- `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` | offene Marker: 2 | nächster Schritt: TDA/Betti-0 + Delay-Spectrum als measure-Probe in tools/measure bauen; Silence-Map (`silence_map_probe`) bereits gebaut, Minkowski-Delta-Probe.
+- `docs/surveys/survey-messpunkt-verteilung.md` | offene Marker: 6 | nächster Schritt: R_struct-Verlauf je Kernel-Form als Fixture (`src/mathematikerin/shaders.rs`), Multipol-Fehler-Fixture.
+- `docs/surveys/survey-fortschritt.md` | offene Marker: 1 | nächster Schritt: §C-Punkte gegen den Baum messen (Relay-Trailer, `deep_dirty`, Rgba8Unorm); bei geschlossenem Befund nach `docs/surveys/archiv/`.
+- `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` | offene Marker: 9 | nächster Schritt: Mountain-Anteile Atom D + field absorption (oben, gebaut-zu-bauen); HRV/ESP32 → `handover-2026-09-25-river-folge32.md`, sources-Repo → `handover-2026-09-25-mycelium-folge165.md` (direkt getragen 2026-09-25).
 
 ## Abschluss
 
