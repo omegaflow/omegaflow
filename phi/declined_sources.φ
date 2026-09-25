@@ -4154,9 +4154,9 @@ decline derived-orbit-fit
 url https://tle.ivanstanojevic.me/api/tle/?page-size=1
 note TLE-Bahnvorhersage.
 
-decline superseded-by-woudc
+decline superseded-by-integrated
 url https://toar-data.fz-juelich.de/api/v2/data/map/
-note TOAR (troposphärisches Ozon, Jülich) ist Forschungs-Aggregation derselben WMO-Stationsdaten wie WOUDC (atmosphere_woudc_total_ozone in master.φ, Z.10813). Registrierung nicht nötig. Verschoben aus blocked_sources.φ 2026-08-19.
+note TOAR map/-Viz (401 anonym) von der timeseries-Route superseded. Korrektur 2026-09-25: superseded-by-woudc war falsch — TOAR misst Oberflächen-O3/NO2/PM2.5 (nmol/mol, diffusion), WOUDC Gesamtsäule (DU).
 
 decline station-registry
 url https://toar-data.fz-juelich.de/api/v2/stationmeta/?limit=100
