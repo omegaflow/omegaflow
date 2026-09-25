@@ -91,6 +91,16 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
 - **Braucht:** Operator: lokale CA + Leaf-Cert (SAN = LAN-IP), `stunnel
   bin/relay-tls.stunnel.conf`, `https://<lan-ip>:1619`.
 
+#### HRV/ESP32-Puls-Bindung → Radiations-Pfad
+- **Status:** wartend | **Bindung:** eigen/operator
+- **Trigger:** ESP32-Firmware liefert den Puls-Arrival auf dem Pfad.
+- **Lage:** (gemessen 2026-09-17 via `survey-2026-09-17-verlorene-diskussionen.md:84`)
+  das RMSSD/tone-Gate steht (`src/archivar/hrv.rs`); die Bindung (Puls-Arrival via
+  ESP32-Firmware → Radiations-Pfad) ist ungebaut — der Socket hält.
+- **Blockade:** die Firmware/Hardware-Bindung ist ungemessen.
+- **Braucht:** Puls-Arrival im Radiations-Pfad verdrahten (HRV-Gate → `omega.rs`-
+  Apertur/tone-scale) und mit der angeschlossenen Hardware messen.
+
 ### Operator handelt
 
 #### Operator-Queue — einfach, ein Akt je Eintrag
