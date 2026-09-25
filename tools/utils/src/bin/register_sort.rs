@@ -58,7 +58,9 @@ fn main() {
 fn usage() {
     eprintln!("usage: register_sort [path] [--write]");
     eprintln!("  sources register (opener 'url', ttl mandatory): sorts (ttl asc, url asc)");
-    eprintln!("  disposition register (opener 'decline'/'dead'/'key-needed'/'parser-def'/'pending'/'descoped',");
+    eprintln!(
+        "  disposition register (opener 'decline'/'dead'/'key-needed'/'parser-def'/'pending'/'descoped',"
+    );
     eprintln!("  sort key url, ttl optional): sorts (ttl asc, url asc), dedupes exact blocks");
     eprintln!("  reports order violations; exit 0 only when canonical");
     eprintln!("  --write re-orders and dedupes exact duplicate blocks into the file");
@@ -282,9 +284,8 @@ fn url_violations(blocks: &[Block]) -> Vec<usize> {
             for k in (i + 1)..=j {
                 if blocks[k].url < *best {
                     out.push(k);
-                } else {
-                    best = &blocks[k].url;
                 }
+                best = &blocks[k].url;
             }
         }
         i = j + 1;
@@ -575,14 +576,7 @@ mod tests {
 
     #[test]
     fn disposition_kind_and_optional_ttl_parse() {
-        let text = [
-            "parser-def",
-            "url https://c.example/x",
-            "ttl 3",
-            "note c",
-        ]
-        .join("\n")
-            + "\n";
+        let text = ["parser-def", "url https://c.example/x", "ttl 3", "note c"].join("\n") + "\n";
         let blocks = split_blocks(&text).expect("disposition parses");
         assert_eq!(blocks.len(), 1);
         assert_eq!(blocks[0].opener, "parser-def");
