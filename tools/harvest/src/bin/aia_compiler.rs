@@ -308,9 +308,64 @@ fn full_disk_verify(bytes: &[u8]) -> Option<(f64, f64, usize)> {
     Some((sum, img.datamean, img.totvals))
 }
 
+fn region_verify(bytes: &[u8], cx: f64, cy: f64, r: f64) -> Option<(f64, usize)> {
+    let (_, off) = FitsHeader::parse(bytes, 0)?;
+    let (img, _) = FitsCompressedImage::parse(bytes, off)?;
+    if img.dims[0] == 0 || img.dims[1] == 0 {
+        return None;
+    }
+    let mut sum = 0.0;
+    let mut n = 0usize;
+    for y in 0..img.dims[1] {
+        let row = img.tile_pixels(bytes, [0, y, 0])?;
+        let dy = y as f64 + 1.0 - img.crpix2 - cy;
+        for x in 0..img.dims[0] {
+            let dx = x as f64 + 1.0 - img.crpix1 - cx;
+            if dx * dx + dy * dy > r * r {
+                continue;
+            }
+            if let Some(v) = img.pixel_value(row[x]) {
+                if v.is_finite() {
+                    sum += v;
+                    n += 1;
+                }
+            }
+        }
+    }
+    if n == 0 {
+        return None;
+    }
+    Some((sum, n))
+}
+
 fn verify_mode(args: &[String], lsk: &LeapSeconds) {
     let bands = parse_bands(args);
     let mut records: Vec<(f64, f64, u32)> = Vec::new();
+    let region = match arg_value(args, "--region") {
+        None => None,
+        Some(spec) => {
+            let mut p = spec.split(',');
+            let (Some(cx), Some(cy), Some(r)) = (p.next(), p.next(), p.next()) else {
+                eprintln!("--region needs cx,cy,r");
+                return;
+            };
+            match (
+                cx.trim().parse::<f64>(),
+                cy.trim().parse::<f64>(),
+                r.trim().parse::<f64>(),
+            ) {
+                (Ok(cx), Ok(cy), Ok(r)) if r > 0.0 => Some((cx, cy, r)),
+                _ => {
+                    eprintln!("--region needs cx,cy,r with r > 0");
+                    return;
+                }
+            }
+        }
+    };
+    if region.is_some() && arg_value(args, "--file").is_none() {
+        eprintln!("--region applies to --file <image_lev1.fits>");
+        return;
+    }
     if let Some(path) = arg_value(args, "--file") {
         let Ok(bytes) = std::fs::read(&path) else {
             eprintln!("{} reads void", path);
@@ -334,6 +389,24 @@ fn verify_mode(args: &[String], lsk: &LeapSeconds) {
             frame_mean,
             frame_mean / datamean
         );
+        if let Some((cx, cy, r)) = region {
+            match region_verify(&bytes, cx, cy, r) {
+                Some((rsum, rn)) => println!(
+                    "{}: region (cx {:.1}, cy {:.1}, r {:.1} px from crpix) sum {:.6e} DN over {} px, mean {:.6} DN",
+                    path,
+                    cx,
+                    cy,
+                    r,
+                    rsum,
+                    rn,
+                    rsum / rn as f64
+                ),
+                None => println!(
+                    "{}: region (cx {:.1}, cy {:.1}, r {:.1} px) sum stays void",
+                    path, cx, cy, r
+                ),
+            }
+        }
         return;
     }
     let Some(spec) = arg_value(args, "--verify") else {
@@ -615,6 +688,6 @@ fn main() {
         return;
     }
     eprintln!(
-        "usage: --harvest --start 2014.03.01 --end 2014.05.30 [--bands 94,131,171,193,211,304,335] [--out aia_lines.bin] | --verify <startTAI/dur> | --file <image_lev1.fits>"
+        "usage: --harvest --start 2014.03.01 --end 2014.05.30 [--bands 94,131,171,193,211,304,335] [--out aia_lines.bin] | --verify <startTAI/dur> | --file <image_lev1.fits> [--region cx,cy,r]"
     );
 }

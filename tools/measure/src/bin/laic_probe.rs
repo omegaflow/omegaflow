@@ -2233,7 +2233,12 @@ fn r_window(c: &mut Cursor, has_env: bool) -> Option<(u8, WindowData)> {
     Some((group, d))
 }
 
-fn pack_bin(windows: &[(u8, WindowData)]) -> Vec<u8> {
+struct BinPayload {
+    windows: Vec<(u8, WindowData)>,
+    global_rate: Vec<(f64, f64)>,
+}
+
+fn pack_bin(windows: &[(u8, WindowData)], global_rate: &[(f64, f64)]) -> Vec<u8> {
     let mut v = Vec::new();
     w_u32(&mut v, BIN_MAGIC);
     w_u32(&mut v, BIN_VERSION);
@@ -2241,10 +2246,15 @@ fn pack_bin(windows: &[(u8, WindowData)]) -> Vec<u8> {
     for (g, d) in windows {
         w_window(&mut v, *g, d);
     }
+    w_u32(&mut v, global_rate.len() as u32);
+    for &(t, x) in global_rate {
+        w_f64(&mut v, t);
+        w_f64(&mut v, x);
+    }
     v
 }
 
-fn unpack_bin(b: &[u8]) -> Option<Vec<(u8, WindowData)>> {
+fn unpack_bin(b: &[u8]) -> Option<BinPayload> {
     let mut c = Cursor { b, p: 0 };
     if c.u32()? != BIN_MAGIC {
         return None;
@@ -2254,11 +2264,24 @@ fn unpack_bin(b: &[u8]) -> Option<Vec<(u8, WindowData)>> {
         return None;
     }
     let n = c.u32()? as usize;
-    let mut out = Vec::with_capacity(n.min(100000));
+    let mut windows = Vec::with_capacity(n.min(100000));
     for _ in 0..n {
-        out.push(r_window(&mut c, ver >= 2)?);
+        windows.push(r_window(&mut c, ver >= 2)?);
     }
-    Some(out)
+    let mut global_rate = Vec::new();
+    if c.p < c.b.len() {
+        let g = c.u32()? as usize;
+        global_rate.reserve(g);
+        for _ in 0..g {
+            let t = c.f64()?;
+            let x = c.f64()?;
+            global_rate.push((t, x));
+        }
+    }
+    Some(BinPayload {
+        windows,
+        global_rate,
+    })
 }
 
 fn compile_main(dir: &str, asset: &str, ci_mode: bool) {
@@ -2295,12 +2318,18 @@ fn compile_main(dir: &str, asset: &str, ci_mode: bool) {
         windows.push((3, d));
         nc += 1;
     }
-    let bytes = pack_bin(&windows);
+    let global_rate: Vec<(f64, f64)> =
+        match std::fs::read_to_string(format!("{dir}/global_rate.json")) {
+            Ok(body) => parse_series_array(&body),
+            Err(_) => Vec::new(),
+        };
+    let bytes = pack_bin(&windows, &global_rate);
     let path = format!("{asset}.bin");
     std::fs::write(&path, &bytes).expect("bin write");
     println!(
-        "compiled {ne} events, {nn} nulls, {nt} tec-nulls, {nc} champ-nulls → {path} ({} bytes)",
-        bytes.len()
+        "compiled {ne} events, {nn} nulls, {nt} tec-nulls, {nc} champ-nulls, {gr} global-rate cells → {path} ({} bytes)",
+        bytes.len(),
+        gr = global_rate.len()
     );
     if ci_mode {
         upload_release("ssd.jpl.nasa.gov-laic", &path);
@@ -3151,9 +3180,15 @@ fn analyze_main(args: &[String]) {
         }
     }
     let mut bin_map: HashMap<(String, usize), WindowData> = HashMap::new();
+    let mut bin_global_rate: Vec<(f64, f64)> = Vec::new();
     if let Some(bp) = &bin_path {
         match std::fs::read(bp).ok().as_deref().and_then(unpack_bin) {
-            Some(all) => {
+            Some(payload) => {
+                let BinPayload {
+                    windows: all,
+                    global_rate,
+                } = payload;
+                bin_global_rate = global_rate;
                 let mut ei = 0usize;
                 let mut ni = 0usize;
                 let mut ti = 0usize;
@@ -3221,7 +3256,7 @@ fn analyze_main(args: &[String]) {
             Err(_) => Vec::new(),
         }
     } else {
-        Vec::new()
+        bin_global_rate
     };
     if global_rate.is_empty() {
         println!(
@@ -4198,17 +4233,19 @@ mod tests {
                 },
             ),
         ];
-        let bytes = pack_bin(&windows);
+        let bytes = pack_bin(&windows, &[(1704067200.0, 2.0), (1704153600.0, 1.0)]);
         let back = unpack_bin(&bytes).expect("unpack");
-        assert_eq!(back.len(), 2);
-        assert_eq!(back[0].0, 0);
-        assert_eq!(back[1].0, 1);
-        assert_eq!(back[0].1.t0, 1704067200.0);
-        assert_eq!(back[0].1.f.len(), 2);
-        assert_eq!(back[0].1.tec.len(), 2);
-        assert_eq!(back[0].1.champ.len(), 1);
-        assert!((back[0].1.champ[0].3 - 153000.0).abs() < 1e-9);
-        assert_eq!(back[1].1.kind, "null");
+        assert_eq!(back.windows.len(), 2);
+        assert_eq!(back.windows[0].0, 0);
+        assert_eq!(back.windows[1].0, 1);
+        assert_eq!(back.windows[0].1.t0, 1704067200.0);
+        assert_eq!(back.windows[0].1.f.len(), 2);
+        assert_eq!(back.windows[0].1.tec.len(), 2);
+        assert_eq!(back.windows[0].1.champ.len(), 1);
+        assert!((back.windows[0].1.champ[0].3 - 153000.0).abs() < 1e-9);
+        assert_eq!(back.windows[1].1.kind, "null");
+        assert_eq!(back.global_rate.len(), 2);
+        assert!((back.global_rate[1].0 - 1704153600.0).abs() < 1e-9);
     }
 
     #[test]

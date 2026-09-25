@@ -7,8 +7,14 @@ use std::process::{Command, Stdio};
 
 const NAIF_NETLOC: &str = "naif.jpl.nasa.gov";
 const OUT_ROOT: &str = "data";
-const RTR_INDEX: &str =
-    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/";
+const RTR_INDEXES: &[&str] = &[
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/",
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/extended_mission/unvalidated/rtr/",
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/GEM/c23/",
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/GEM/c30/",
+    "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/GEM/i24/",
+];
+const CK_ROOT_INDEX: &str = "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/";
 const SCLK_URL: &str = "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/sclk/mk00062a.tsc";
 const SCLK_NAME: &str = "mk00062a.tsc";
 const SCLK_MARKER: &str = "SCLK01_COEFFICIENTS_77";
@@ -24,18 +30,33 @@ fn has_flag(args: &[String], name: &str) -> bool {
     args.iter().any(|a| a == name)
 }
 
-fn index_names(html: &str) -> Vec<String> {
+fn href_names(html: &str) -> Vec<String> {
     let mut names: Vec<String> = Vec::new();
     let mut rest: &str = html;
     while let Some(h) = rest.find("href=\"") {
         rest = &rest[h + 6..];
         let Some(e) = rest.find('"') else { break };
-        let name = &rest[..e];
-        if name.ends_with("_rtr.bc") {
-            names.push(name.to_string());
-        }
+        names.push(rest[..e].to_string());
         rest = &rest[e + 1..];
     }
+    names
+}
+
+fn index_names(html: &str) -> Vec<String> {
+    let mut names: Vec<String> = href_names(html)
+        .into_iter()
+        .filter(|name| name.ends_with("_rtr.bc"))
+        .collect();
+    names.sort();
+    names.dedup();
+    names
+}
+
+fn root_names(html: &str) -> Vec<String> {
+    let mut names: Vec<String> = href_names(html)
+        .into_iter()
+        .filter(|name| name.ends_with(".bc"))
+        .collect();
     names.sort();
     names.dedup();
     names
@@ -161,28 +182,42 @@ fn main() {
         Some(r) => r,
         None => OUT_ROOT.to_string(),
     };
-    let Some(html) = fetch_raw(RTR_INDEX, None, &[]) else {
-        eprintln!("rtr index fetch void: {RTR_INDEX}");
+    let mut entries: Vec<(String, String)> = Vec::new();
+    for index in RTR_INDEXES {
+        let Some(html) = fetch_raw(index, None, &[]) else {
+            eprintln!("rtr index fetch void: {index}");
+            std::process::exit(1);
+        };
+        for name in index_names(&html) {
+            entries.push((index.to_string(), name));
+        }
+    }
+    let Some(root_html) = fetch_raw(CK_ROOT_INDEX, None, &[]) else {
+        eprintln!("ck root index fetch void: {CK_ROOT_INDEX}");
         std::process::exit(1);
     };
-    let names = index_names(&html);
-    if names.is_empty() {
-        eprintln!("rtr index carries no _rtr.bc product — nothing manifestiert (0 honored)");
+    for name in root_names(&root_html) {
+        entries.push((CK_ROOT_INDEX.to_string(), name));
+    }
+    entries.sort_by(|a, b| a.1.cmp(&b.1));
+    entries.dedup_by(|a, b| a.1 == b.1);
+    if entries.is_empty() {
+        eprintln!("ck index carries no rotor product — nothing manifestiert (0 honored)");
         std::process::exit(1);
     }
-    eprintln!("rtr index: {} rotor CK products", names.len());
+    eprintln!("ck indexes: {} rotor CK products", entries.len());
     let present = if ci_mode {
         cdn_asset_names()
     } else {
         HashSet::new()
     };
     let mut staged: Vec<String> = Vec::new();
-    for name in &names {
+    for (index, name) in &entries {
         if present.contains(name) {
             eprintln!("{name}: already on the CDN — fetch skipped");
             continue;
         }
-        let url = format!("{RTR_INDEX}{name}");
+        let url = format!("{index}{name}");
         if let Some(path) = store_asset(&url, &root, name) {
             staged.push(path);
         }
@@ -195,7 +230,7 @@ fn main() {
     if staged.is_empty() {
         eprintln!(
             "manifestor: all {} products already rest on the CDN",
-            names.len()
+            entries.len()
         );
         return;
     }
@@ -225,6 +260,21 @@ mod tests {
                     <a href=\"ck89361a_rtr.xc\">x</a> \
                     <a href=\"?C=N;O=D\">x</a>";
         assert_eq!(index_names(html), vec!["ck90341a_rtr.bc".to_string()]);
+    }
+
+    #[test]
+    fn root_names_collects_root_ck() {
+        let html = "<a href=\"gll_plt_rec_1990_tav_v00.bc\">x</a> \
+                    <a href=\"gll_plt_pre_1990_v00.bc\">x</a> \
+                    <a href=\"prime_mission/\">x</a> \
+                    <a href=\"?C=N;O=D\">x</a>";
+        assert_eq!(
+            root_names(html),
+            vec![
+                "gll_plt_pre_1990_v00.bc".to_string(),
+                "gll_plt_rec_1990_tav_v00.bc".to_string()
+            ]
+        );
     }
 
     #[test]
