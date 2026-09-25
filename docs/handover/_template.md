@@ -54,17 +54,17 @@ in zwei Zeilen gespalten, weil die Maschine keine Kante hat. Jede Vorbereitungs-
 zeile trägt ihren Lage-Stempel `(gemessen …)` — eine ungemessene Vorbereitungszeile
 driftet wie die alte Sammel-Zeile.
 
-**Sortierung — von Handlungsfähigkeit zu Nicht-Handlungsfähigkeit.** Keine
-Rangfolge nach Wichtigkeit; die Ordnung ist, wie handlungsfähig die Session am
-Punkt ist:
-
-1. **autonom** — `eigen`; jetzt handlungsfähig, wird dispatcht.
-2. **operator-gebunden** — bedingt; **nur der Akt** ist handlungsfähig nach dem
-   Operator-Wort. Seine Vorbereitung steht in Stufe 1 und wird dispatcht.
-3. **blockiert** — nicht handlungsfähig; harte externe Blockade, kein eigener Schritt.
-4. **wartend** — nicht handlungsfähig; wartet auf ein externes Ereignis.
-5. **termin** — nicht handlungsfähig; wartet auf ein Datum/eine Periode.
-6. **LOCK** — nicht handlungsfähig; Operator-Sperrwort registriert.
+**Sortierung — erst logisch, dann chronologisch** (Operator-Wort, 2026-09-25;
+ersetzt die Handlungsfähigkeit-Sortierung). Die Tafel wird erst logisch nach
+**Akteur** gruppiert — **wer handelt**: **Operator** (operator-gebundene Akte +
+LOCK) | **Linie** (eigen, die Maschine) | **Rat** | **Dritter** —, dann je
+Gruppe chronologisch nach dem `Lage`-Messdatum (älteste → jüngste; gleiches
+Datum behält die Fluss-Reihenfolge). Nie nach Thema, nie nach Wichtigkeit, nie
+über eine gemischte Leiter: der Akteur ist die Logik, das Datum die Reihenfolge.
+Die Status-Tags bleiben die Dispatch-Achse: `autonom` (`eigen`, wird dispatcht)
+→ `operator-gebunden` (nur der Akt nach dem Operator-Wort) → `blockiert` →
+`wartend` → `termin` → `LOCK`; innerhalb der Gruppe werden die handlungsfähigen
+Punkte dispatcht, die übrigen benannt, nie dispatcht.
 
 Innerhalb einer Stufe nach Trigger. Der Planungs-Pass dispatcht von oben nach
 unten; Stufe 2–6 werden benannt, nie dispatcht — ausgenommen die Vorbereitung
