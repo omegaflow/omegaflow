@@ -6816,6 +6816,27 @@ fn test_diagnose_no_samples() {
     let d_html = super::diagnose_no_samples(&base, html);
     eprintln!("html -> {}", d_html);
     assert!(d_html.contains("non-JSON"), "got: {}", d_html);
+
+    let drifted = r#"{"items":[]}"#;
+    let d_drifted = super::diagnose_no_samples(&base, drifted);
+    eprintln!("drifted keys -> {}", d_drifted);
+    assert!(d_drifted.contains("data-present"), "got: {}", d_drifted);
+    assert!(d_drifted.contains("keys"), "got: {}", d_drifted);
+
+    let bare = "{}";
+    let d_bare = super::diagnose_no_samples(&base, bare);
+    eprintln!("bare object -> {}", d_bare);
+    assert!(d_bare.contains("empty-response"), "got: {}", d_bare);
+
+    let envelope_empty = r#"{"data":[],"columns":[]}"#;
+    let d_env = super::diagnose_no_samples(&base, envelope_empty);
+    eprintln!("empty envelope -> {}", d_env);
+    assert!(d_env.contains("empty-response"), "got: {}", d_env);
+
+    let gz = "\u{1f}\u{8b}gzip payload";
+    let d_gz = super::diagnose_no_samples(&base, gz);
+    eprintln!("gzip body -> {}", d_gz);
+    assert!(d_gz.contains("format-gap"), "got: {}", d_gz);
 }
 
 #[test]
@@ -6826,6 +6847,18 @@ fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
     ));
     assert!(matches!(
         super::void_class("empty-response (empty body)"),
+        super::VoidClass::Quiet
+    ));
+    assert!(matches!(
+        super::void_class("empty-response (declared containers present but empty)"),
+        super::VoidClass::Quiet
+    ));
+    assert!(matches!(
+        super::void_class("empty-response (declared data container present but empty)"),
+        super::VoidClass::Quiet
+    ));
+    assert!(matches!(
+        super::void_class("empty-response (votable region empty)"),
         super::VoidClass::Quiet
     ));
     assert!(matches!(
@@ -6841,8 +6874,36 @@ fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
         super::VoidClass::Drift
     ));
     assert!(matches!(
+        super::void_class("data-present (JSON carries keys but none of the declared containers)"),
+        super::VoidClass::Drift
+    ));
+    assert!(matches!(
         super::void_class("data-present (non-JSON body: HTML/XML/text)"),
         super::VoidClass::Drift
+    ));
+    assert!(matches!(
+        super::void_class("data-present (votable query status not OK)"),
+        super::VoidClass::Drift
+    ));
+    assert!(matches!(
+        super::void_class("format-gap (gzip body)"),
+        super::VoidClass::Format
+    ));
+    assert!(matches!(
+        super::void_class("format-gap (zip archive body)"),
+        super::VoidClass::Format
+    ));
+    assert!(matches!(
+        super::void_class("format-gap (votable rows unread)"),
+        super::VoidClass::Format
+    ));
+    assert!(matches!(
+        super::void_class("format-gap (no extract declared)"),
+        super::VoidClass::Format
+    ));
+    assert!(matches!(
+        super::void_class("format-gap (declared format ndk has no sweep reader)"),
+        super::VoidClass::Format
     ));
 }
 
