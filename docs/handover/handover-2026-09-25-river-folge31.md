@@ -3,7 +3,7 @@
   session: River-Folge 31
   class: handover
   date: 2026-09-25
-  sha256: 029dd84d7a1e5d77f2202ce78c4ac21da673dcc6c976d4bee4197ec92bda549e
+  sha256: 9379eac9c6846764115bf757b0d4e2b2fd8b886812c04266b87043d74ee757c8
   status: live
 -->
 # Handover — River-Folge 31 (2026-09-25)
@@ -29,7 +29,7 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
 
 #### gic-causal-driver — Sub-6h-Shardung, Re-Dispatch
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss der 12 Quartals-Shards des re-dispatchen `bz-retro-probe`-Laufs.
+- **Trigger:** Abschluss des re-dispatchen `bz-retro-probe`-Laufs `36176580764` (12 Quartals-Shards).
 - **Lage:** (gemessen 2026-09-25 via `ci_manage view 36136095463` + `gh run download`)
   der `minute`-Job war success; die Neu-Messung liegt vollständig:
   `TE(Bz→dB/dt)=1.8094e-1 | threshold 1.8286e-1 | lag 115 min | n 741 | still`;
@@ -47,7 +47,7 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
   eigene Null; quartalsweise Fam-Werte sind untereinander nicht identisch mit dem
   Jahres-Fam.
 - **Blockade:** keine.
-- **Braucht:** nach dem Push `gh run download <neuer-Lauf>` → 12 `bz-retro-*-q*.txt`
+- **Braucht:** `gh run download 36176580764` → 12 `bz-retro-*-q*.txt`
   (fam-Zeile je Quartal) + `bz-blatt-minute.txt`.
 
 #### health-check — Root Cause gemessen, Fix hängt am fremden Baum
