@@ -1629,6 +1629,17 @@ fn intentional_core(key: &str) -> Option<(&'static str, &'static str, f64)> {
     if kl == "sample" {
         return Some(("DROP", "", 0.0));
     }
+    if kl == "reporting_network"
+        || kl == "event_source"
+        || kl == "orbit_class"
+        || kl == "source_class"
+        || kl == "spot_class"
+        || kl == "hale_class"
+        || kl.contains("uv_index")
+        || kl.ends_with("_type")
+    {
+        return Some(("DROP", "", 0.0));
+    }
     match key {
         "copernicus_air_pressure_at_sea_level"
         | "cosmic_ro_pressure_hpa"
@@ -1689,6 +1700,38 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.contains("color_index")
     {
         ("DROP", "", 0.0)
+    } else if kl.ends_with("_temp_f") {
+        ("thermal", "f", 86400.0)
+    } else if kl.ends_with("_wind_kt") || kl.ends_with("_speed_kt") {
+        ("advective", "kt", 86400.0)
+    } else if kl.ends_with("_mass_kt") {
+        ("diffusion", "kt_mass", 86400.0)
+    } else if kl.ends_with("_inch") {
+        ("acoustic", "inch", 86400.0)
+    } else if kl.ends_with("_miles") {
+        ("em", "mile", 86400.0)
+    } else if kl.ends_with("_dbar") {
+        ("acoustic", "dbar", 86400.0)
+    } else if kl.ends_with("_mpc") {
+        ("gravity", "mpc", 604800.0)
+    } else if kl.ends_with("_axis_au") {
+        ("gravity", "au", 604800.0)
+    } else if kl.ends_with("orbital_inclination_deg") {
+        ("gravity", "deg", 604800.0)
+    } else if kl.ends_with("_arcmin") {
+        ("em", "arcmin", 604800.0)
+    } else if kl == "lod" {
+        ("gravity", "s", 86400.0)
+    } else if kl == "dpsi" || kl == "deps" {
+        ("gravity", "arcsec", 86400.0)
+    } else if kl.contains("cloud_fraction") {
+        ("diffusion", "1", 86400.0)
+    } else if kl.contains("albedo") {
+        ("em", "1", 604800.0)
+    } else if kl.contains("eccentricity") {
+        ("gravity", "1", 604800.0)
+    } else if kl == "rho_cos_phi" || kl == "rho_sin_phi" {
+        ("gravity", "1", 604800.0)
     } else if kl.contains("eop_")
         || kl.contains("ut1_utc")
         || kl.contains("polar_motion")

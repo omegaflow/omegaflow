@@ -2,6 +2,7 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
+    let mailto = crate::token::secret("OPENALEX_MAILTO");
     let mut cursor: Option<String> = Some("*".to_string());
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
         let mut url = format!(
@@ -9,6 +10,10 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
             urlencode(query),
             max
         );
+        if let Some(mail) = &mailto {
+            url.push_str("&mailto=");
+            url.push_str(&urlencode(mail));
+        }
         if let Some(c) = &cursor {
             url.push_str("&cursor=");
             url.push_str(&urlencode(c));
@@ -32,6 +37,10 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
                     false,
                 ),
             },
+            Some(f) if f.status == Some(429) => (
+                vec!["pending — openalex HTTP 429 (rate limit); the polite pool needs a mailto (OPENALEX_MAILTO in .secrets.local)".to_string()],
+                false,
+            ),
             Some(f) => (
                 vec![format!("pending — openalex HTTP {}", f.status_text())],
                 false,
