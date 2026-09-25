@@ -109,6 +109,7 @@ pub mod openneuro_eeg;
 pub mod ossos;
 pub mod parquet;
 pub mod pck;
+pub mod pds3_ring_occ;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
 pub mod quakeml;
