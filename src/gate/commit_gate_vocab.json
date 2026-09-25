@@ -43,7 +43,8 @@
     ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"],
     ["ttl as f64 / 10.0", "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"],
     [" 1 {} 0.0 0.0", "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"],
-    ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"]
+    ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"],
+    ["JsonVal::Arr(Vec::new())", "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -433,6 +434,7 @@
     "counter_slope_clean_mathematikerin": "the Mathematikerin evaluates the field in the ω() loop",
     "counter_slope_clean_gegenhang": "der Gegenhang trägt das Vokabular ohne Trainingsdaten-Nachbarschaft",
     "counter_slope_clean_counter_slope": "the counter-slope vocabulary carries the identity",
-    "counter_slope_clean_wort": "the operator's Wort is registered before the act runs"
+    "counter_slope_clean_wort": "the operator's Wort is registered before the act runs",
+    "votable_null_empty_array": "if null {\n    map.insert(f.name.clone(), JsonVal::Arr(Vec::new()));\n}"
   }
 }
