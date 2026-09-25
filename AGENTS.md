@@ -327,12 +327,13 @@ for source *discovery* the breadth is the answer, not a cost:
    carries no content (JS-rendered).
 3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
    `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
-4. **Unknown source** → `--mwmbl <query>` first (keyless web search; the six
-   search engines are `--mwmbl`/`--marginalia` keyless and
-   `--brave`/`--tavily`/`--exa`/`--linkup` keyed; `--brave` carries HTTP 402 while
-   its free quota is spent — run it explicitly), then **`--all <query>`** — every
-   keyword mode at once (38; `--brave` is excluded from `--all`; the canon is the
-   tool's own `--help`). The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
+4. **Unknown source** → run the web-search engines directly: `--tavily`, `--exa`,
+   `--linkup` (keyed — read from `.secrets.local`; the wrapper exports
+   `OMEGAFLOW_REPO` and the binary resolves the repo from its own path, so they
+   hold from any cwd), plus `--marginalia`/`--mwmbl` (keyless). `--brave` runs
+   explicitly (HTTP 402 while its free quota is spent). `--all <query>` runs all
+   38 at once (slow — breadth, not the first move; the canon is the tool's own
+   `--help`). The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
    `--ena`/`--supermag`/`--heasarc`) run individually. It prints the
    top 5 per source inline **and writes the full result to a temp file** (the
    paged sources openalex/zenodo run ~100 deep) — read that file; the inline

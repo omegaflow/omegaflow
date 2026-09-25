@@ -311,6 +311,14 @@ fn test_convert_to_si() {
     close(convert_to_si(7.2, "Mw"), 10.0f64.powf(1.5 * 7.2 + 9.1));
     close(convert_to_si(334.0, "cpm"), 1e-6 / 3600.0);
     close(convert_to_si(1.0, "decibar"), 1e4);
+    close(convert_to_si(1.0, "dbar"), 1e4);
+    close(convert_to_si(1.0, "inch"), 0.0254);
+    close(convert_to_si(32.0, "f"), 273.15);
+    close(convert_to_si(212.0, "f"), 373.15);
+    close(convert_to_si(1.0, "mile"), 1609.344);
+    close(convert_to_si(1.0, "mpc"), 3.085677581e22);
+    close(convert_to_si(1.0, "arcmin"), 2.9088820866572e-4);
+    close(convert_to_si(1.0, "kt_mass"), 1e6);
     close(convert_to_si(1.0, "mV/m"), 1e-3);
     close(convert_to_si(1.0, "nPa"), 1e-9);
     close(convert_to_si(1.0, "sfu"), 1e-22);
@@ -10796,4 +10804,74 @@ fn port_gap_unit_from_name_suffix_resolves_new_units() {
 fn port_gap_non_oscillator_stays_unclassified() {
     assert_eq!(probe_classify("parallax"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("bogus_not_a_field"), ("UNCERTAIN", "", 0.0));
+}
+
+#[test]
+fn port_gap_residual_metadata_drops() {
+    assert_eq!(probe_classify("reporting_network"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("event_source"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("mag_type"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("spectral_type"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("object_type"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("orbit_class"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("variable_type"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("source_class"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("uv_index"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("uv_index_surface"), ("DROP", "", 0.0));
+}
+
+#[test]
+fn port_gap_residual_fields_resolve() {
+    assert_eq!(
+        probe_classify("cloud_fraction"),
+        ("diffusion", "1", 86400.0)
+    );
+    assert_eq!(probe_classify("geometric_albedo"), ("em", "1", 604800.0));
+    assert_eq!(
+        probe_classify("orbital_eccentricity"),
+        ("gravity", "1", 604800.0)
+    );
+    assert_eq!(probe_classify("rho_cos_phi"), ("gravity", "1", 604800.0));
+    assert_eq!(probe_classify("rho_sin_phi"), ("gravity", "1", 604800.0));
+    assert_eq!(probe_classify("lod"), ("gravity", "s", 86400.0));
+    assert_eq!(probe_classify("dpsi"), ("gravity", "arcsec", 86400.0));
+    assert_eq!(probe_classify("deps"), ("gravity", "arcsec", 86400.0));
+    assert_eq!(
+        probe_classify("semi_major_axis_au"),
+        ("gravity", "au", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("semimajor_axis_au"),
+        ("gravity", "au", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("orbital_inclination_deg"),
+        ("gravity", "deg", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("uncertainty_arcmin"),
+        ("em", "arcmin", 604800.0)
+    );
+    assert_eq!(
+        probe_classify("precipitation_inch"),
+        ("acoustic", "inch", 86400.0)
+    );
+    assert_eq!(probe_classify("mean_temp_f"), ("thermal", "f", 86400.0));
+    assert_eq!(probe_classify("max_temp_f"), ("thermal", "f", 86400.0));
+    assert_eq!(probe_classify("visibility_miles"), ("em", "mile", 86400.0));
+    assert_eq!(
+        probe_classify("wind_speed_kt"),
+        ("advective", "kt", 86400.0)
+    );
+    assert_eq!(probe_classify("max_wind_kt"), ("advective", "kt", 86400.0));
+    assert_eq!(
+        probe_classify("pressure_dbar"),
+        ("acoustic", "dbar", 86400.0)
+    );
+    assert_eq!(probe_classify("distance_mpc"), ("gravity", "mpc", 604800.0));
+    assert_eq!(probe_classify("lum_dist_mpc"), ("gravity", "mpc", 604800.0));
+    assert_eq!(
+        probe_classify("so2_mass_kt"),
+        ("diffusion", "kt_mass", 86400.0)
+    );
 }

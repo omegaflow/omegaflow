@@ -14,4 +14,5 @@ if [ ! -x "$bin" ]; then
     echo "archive_search: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
 fi
+export OMEGAFLOW_REPO="$root"
 exec "$bin" "$@"
