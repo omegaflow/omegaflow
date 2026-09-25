@@ -51,6 +51,12 @@ fam_state_SOD_2024.txt
 # + Kanon-Deklaration im selben Commit). Die !-Zeilen darunter bleiben
 # Sichtbarkeitsmuster.
 phi/*
+# Meteo-Ereignis-Konfigurationen (phi/meteo/*.json) sind die Eingabe des
+# Korrelations-Screenings (meteo_harvest/cross_te_screen) und die
+# workflow_dispatch-Konfig des meteo-cdn.yml — versioniert wie die Register.
+!phi/meteo/
+phi/meteo/*
+!phi/meteo/*.json
 !phi/canon.φ
 !phi/sources.φ
 !phi/dead_sources.φ
