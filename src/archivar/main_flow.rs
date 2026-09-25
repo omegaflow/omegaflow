@@ -368,6 +368,46 @@ impl RefusalLedger {
     }
 }
 
+fn parse_shard_value(value: &str) -> Result<(usize, usize), String> {
+    let (idx_text, n_text) = match value.split_once('/') {
+        Some(pair) => pair,
+        None => return Err(format!("--shard: value {} carries no / separator", value)),
+    };
+    let idx: usize = match idx_text.parse() {
+        Ok(v) => v,
+        Err(_) => return Err(format!("--shard: index {} is no number", idx_text)),
+    };
+    let n: usize = match n_text.parse() {
+        Ok(v) => v,
+        Err(_) => return Err(format!("--shard: count {} is no number", n_text)),
+    };
+    if n == 0 {
+        return Err("--shard: count 0 carries no shard".to_string());
+    }
+    if idx >= n {
+        return Err(format!("--shard: index {} outside 0..{}", idx, n));
+    }
+    Ok((idx, n))
+}
+
+fn parse_shard(args: &[String]) -> Result<Option<(usize, usize)>, String> {
+    let mut shard = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--shard" {
+            let value = match args.get(i + 1) {
+                Some(v) => v,
+                None => return Err("--shard: value absent".to_string()),
+            };
+            shard = Some(parse_shard_value(value)?);
+            i += 2;
+        } else {
+            return Err(format!("--verify: argument {} is not known", args[i]));
+        }
+    }
+    Ok(shard)
+}
+
 pub fn main_flow() {
     let env = Arc::new(load_env());
     {
@@ -380,8 +420,15 @@ pub fn main_flow() {
                     std::process::exit(1);
                 }
             };
+            let shard = match parse_shard(&args[3..]) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("--verify: {}", e);
+                    std::process::exit(2);
+                }
+            };
             ANOMALY_COLLECT.with(|c| c.set(true));
-            std::process::exit(ci_mode(dir));
+            std::process::exit(ci_mode(dir, shard));
         }
         if args.len() > 1 && args[1] == "--port" {
             let input = match args.get(2) {
