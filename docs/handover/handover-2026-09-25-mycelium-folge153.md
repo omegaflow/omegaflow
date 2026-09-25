@@ -3,7 +3,7 @@
   session: Mycelium-Folge 153
   class: handover
   date: 2026-09-25
-  sha256: 2bf9b5224f2efb8a30b69a1c0f693e82de39e744ef1bb4e6cfefba6847c0817d
+  sha256: 4f9a5fa0ea87ee4156c473b2d638d84f6c1396a1296187b76711230107673db6
   status: live
 -->
 # Handover — Mycelium-Folge 153 (2026-09-25)
@@ -41,6 +41,13 @@ Diese Session hat `handover-2026-09-24-mycelium-folge152.md` konsumiert.
 ## Offen (aufgeschlüsselt)
 
 #### Stufe 1 — autonom
+
+### `phi/sources.φ` register_sort — url-order red
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** — (jetzt handlungsfähig)
+- **Lage:** (gemessen 2026-09-25 via `ci_manage log 36064053750 --all`) `ci-check 36064053750` @`de76fda6a` `test`-Job-Step `cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ` rot: `register phi/sources.φ holds 1 ttl-order and 82 url-order violation(s) across 1416 blocks` (u. a. die `voyager_odr_s*`-Serie); die `cargo test`-Steps davor grün (1599/0). Bei HEAD `0a0ce96d` ungemessen — der `test`-Job brach dort an den ble-Tests ab, der `register_sort`-Step lief nie. (Überbracht von Mountain folge155.)
+- **Blockade:** keine.
+- **Braucht:** die register_sort-Ausgabe gegen `phi/sources.φ` anwenden (Reihenfolge der url/ttl-Blöcke), dann `register_sort` erneut in CI messen; bei Bedarf Gate-Fixture im selben Atom.
 
 ### pre-cdn Merge-Atom (Stage regeneriert, Review offen)
 - **Status:** autonom | **Bindung:** eigen
