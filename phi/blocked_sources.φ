@@ -58,10 +58,6 @@ url https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
 note NAIF SPK M10_archive_1.bsp (51200 B, HTTP 200 anonym 2026-09-25). Anchor at mariner10 fehlt: kein ephemeris_mariner10.bin, kein Eintrag in frame_registry.φ. asset fehlt — ephemeris_compiler.rs + frame_registry-Eintrag.
 
 pending
-url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/
-note Voyager Saturn-Okkultation (PSPA-tar, gleiche Container wie mariner_occlt). RSS-Payload-Record ungemessen → voyager_occlt_compiler.rs erst nach Payload-Messung. asset fehlt.
-
-pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
 note Viking 1/2 Orbiter Radio Science Tracking (Doppler+Range). 2026-09-17: PSPG-00011 „Data Identified but not Received"; NSSDC-FTP anonym nicht bedienbar (→ SPDF 404); PDS-PPI 0. Anfrage 2026-09-16 (:209), Antwort offen.
 
@@ -80,11 +76,7 @@ note DEMETER Order 18387 RUNNING Ablauf 09-28 (09-24); demeter-cdn.yml + demeter
 
 pending
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
-note DECaPS2 Dataverse doi:10.7910/DVN/K88GFI ~280 GB (90 decaps_stars_batch_*.fits.gz à ~3.1 GB). Größen-Verdikt pending: FITS-GZ-Parser fehlt. Anonymer Katalogweg = TAP decaps_dr2.object (sources.φ).
-
-pending
-url https://toar-data.fz-juelich.de/api/v2/data/timeseries_merged/
-note TOAR Oberflächen-O3 (nmol/mol=ppb, diffusion, CC BY 4.0) — Verdikt accept; anonym für Station-IDs 1000-2000. Schritt: toar_timeseries_compiler.rs (JSON-Zeitreihen + Stationen-Fanout) bauen.
+note DECaPS2 Dataverse doi:10.7910/DVN/K88GFI ~280 GB (90 fits.gz à ~3.1 GB). FITS-GZ-Parser gebaut (decaps.rs + decaps_dr2_compiler.rs, sources.φ:9628); Größen-Verdikt 280 GB pending. Anonymer Weg = TAP decaps_dr2.object.
 
 blocked account
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
@@ -149,10 +141,6 @@ note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur 
 descoped
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
 note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
-
-pending
-url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
-note HTTP 405 direct+Proton 2026-09-25 — ParquetFile/urls verlangt POST (post_body absent), kein GET.
 
 pending
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL

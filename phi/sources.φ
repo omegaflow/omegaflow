@@ -742,6 +742,21 @@ at sun
 ttl 3600
 field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni_hro_1min.bin
+format omni_hro
+origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
+compiler tools/harvest/src/bin/omni_hro_compiler.rs
+at sun
+ttl 3600
+field omni_hro_imf_f_nt omni_hro_imf_f_nt inverse-square em nT 3600 0.0 0.0
+field omni_hro_imf_bx_gse_nt omni_hro_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field omni_hro_imf_by_gsm_nt omni_hro_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_hro_imf_bz_gsm_nt omni_hro_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_hro_solarwind_flow_speed_kms omni_hro_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field omni_hro_solarwind_density_percc omni_hro_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field omni_hro_solarwind_temp_k omni_hro_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+field omni_hro_solarwind_pressure_npa omni_hro_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
 origin https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index
 compiler tools/harvest/src/bin/qbo_compiler.rs
@@ -8607,6 +8622,16 @@ ttl 604800
 field amp_min mariner10_occlt_amp_min inverse-square em count 604800 0.0 0.0
 field amp_max mariner10_occlt_amp_max inverse-square em count 604800 0.0 0.0
 field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_occlt.bin
+format voyager_occlt
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/ ; https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/titan_occultation_medium_band/
+compiler tools/harvest/src/bin/voyager_occlt_compiler.rs
+at earth
+ttl 604800
+field amp_min voyager_occlt_amp_min inverse-square em count 604800 0.0 0.0
+field amp_max voyager_occlt_amp_max inverse-square em count 604800 0.0 0.0
+field amp_mean voyager_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
