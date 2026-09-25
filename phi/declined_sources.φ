@@ -2070,9 +2070,41 @@ decline registry/katalog
 url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
 note world_volcanoes gist: static volcano location registry, no measurement field.
 
+decline catalog-register
+url https://github.com/FreeCodeCamp/ProjectReferenceData
+note NASA-Meteoriten-Landungen — statischer Katalog, kein Live-Messwert.
+
+decline infrastructure
+url https://github.com/arijguest/3D-meteorite-viewer
+note gebündelte Natural-Earth-Küsten/Grenzen + statischer Impaktkrater-Katalog — kein Messwert am Ort.
+
+decline catalog-register
+url https://github.com/cossatot/gem-global-active-faults
+note GEM Global Active Faults — statischer Störungslinien-Katalog, kein Feld am Ort.
+
+decline infrastructure
+url https://github.com/cristianst85/GeoNuclearData
+note Kernkraftwerks-Datenbank (Standort/Status/Reaktor) — Infrastruktur-Register, kein Messwert.
+
+decline infrastructure
+url https://github.com/davidmegginson/ourairports-data
+note OurAirports — Flughafen/Startbahn-Register, Infrastruktur, kein Messwert.
+
+decline infrastructure
+url https://github.com/fraxen/tectonicplates
+note PB2002 (Bird 2003) Plattengrenzen/-orogene/-platten — statische Modell-Spuren, position-only, kein propagierendes Feld.
+
 decline infrastructure
 url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
 note Seekabel-Verläufe.
+
+decline infrastructure
+url https://github.com/nvkelso/natural-earth-vector
+note Natural-Earth-Vektor (Küsten, Grenzen, Orte, Seen, Gletscher, Flüsse, Schutzgebiete) — position-only Infrastruktur, kein Feld am Ort (Oszillator-Gate 2026-09-25).
+
+decline infrastructure
+url https://github.com/ofrohn/d3-celestial
+note IAU-Sternbildgrenzen (d3-celestial Sky-Map) — definierte Referenz-Grenzlinien, position-only.
 
 decline aggregate-index
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_indices.bin
@@ -2085,6 +2117,18 @@ note obscore catalog (dachs.fai.kz/tap) — observation metadata, no measurement
 decline no-physical-force
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; aus sources.φ gestrichen (keine ehrliche Kraft), mx/my/mz advective bleiben im Block.
+
+decline catalog-register
+url https://github.com/rfordatascience/tidytuesday
+note Meteoriten-Landungen (Name, Masse, Jahr, lat/lon) — statischer Historien-Katalog, kein Live-Messwert.
+
+decline reference-constant
+url https://github.com/scikit-hep/particle
+note PDG-Teilchentabellen (Masse, Ladung, Lebensdauer) — Referenz-Konstanten; Teilchen ist Abstammung, nicht Kraft (SOURCE_PORT §12).
+
+decline infrastructure
+url https://github.com/wri/global-power-plant-database
+note WRI Global Power Plant Database — Standort/Kapazität/Brennstoff, Infrastruktur-Register, kein Feld am Ort.
 
 decline derived-product
 url https://glade.elte.hu/
@@ -5114,17 +5158,9 @@ decline no-physical-force
 url https://zenodo.org/records/6451876
 note Dual-Comb Swept-Wavelength-Interferometrie (Chalmers, cc-by-4.0; 200 gemessen 2026-09-23): Rohdaten der Technik-Demonstration — Instrumenten-Signal, kein propagierendes Feld.
 
-decline analysis-dataset
-url https://zenodo.org/records/8401262
-note Super-Kamiokande SK I–V (DOI 10.5281/zenodo.8401262): gebinnete Ereignis-Raten/Spektren, Δm²/θ-Konturen ohne Roh-Messkanal; per-Event-S²-Richtung ungemessen. Teilchen-Kanal pending (kein particle-Medium). Zenodo 504 zum Messzeitpunkt.
-
 decline count
 url https://zenodo.org/records/8401262
 note Super-Kamiokande Neutrino-Release 2023 (10.5281/zenodo.8401262, 52,6 MB, CC-BY). bins/ ROOT (Data/MC-Zählwerte) + chi2/ (χ²) — kein Feld am Punkt → decline count. Zenodo 2026-09-16 HTTP 0/Timeout; Record lebt (Wayback).
-
-decline single-event
-url https://zenodo.org/records/8427755
-note Telescope Array — Amaterasu (DOI 10.5281/zenodo.8427755): einzelnes UHE-CR-Ereignis, keine Serie, kein τ — kein Feld. Teilchen-Kanal pending (kein particle-Medium; Teilchen ist Abstammung). Zenodo war 504 zum Messzeitpunkt.
 
 decline event-record
 url https://zenodo.org/records/8427755
