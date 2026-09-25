@@ -1,8 +1,8 @@
 use omegaflow::archivar::omni2::{COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::te::{
-    phase_randomized_surrogate, surrogate_stats_phase_n, transfer_entropy_lag,
-    transfer_entropy_lag_h,
+    PcmciParams, TeEstimator, TeNull, pcmci_links, phase_randomized_surrogate,
+    surrogate_stats_phase_n, transfer_entropy_lag, transfer_entropy_lag_h,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -412,6 +412,93 @@ fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     (xs, ys)
 }
 
+fn align_channels(channels: &[&[Option<f32>]]) -> Vec<Vec<f32>> {
+    let n = match channels.iter().map(|c| c.len()).min() {
+        Some(n) => n,
+        None => return Vec::new(),
+    };
+    let mut out: Vec<Vec<f32>> = vec![Vec::new(); channels.len()];
+    for i in 0..n {
+        if !channels.iter().all(|c| c[i].is_some()) {
+            continue;
+        }
+        for (ci, c) in channels.iter().enumerate() {
+            if let Some(v) = c[i] {
+                out[ci].push(v);
+            }
+        }
+    }
+    out
+}
+
+fn pcmci_crosscheck(
+    dbdt: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+    density: &[Option<f32>],
+) {
+    println!();
+    println!("=== PCMCI cross-check (Bz → dB/dt edge, conditioned on Speed + Density) ===");
+    let aligned = align_channels(&[dbdt, bz, speed, density]);
+    let n = aligned[0].len();
+    if n < 8 {
+        println!("PCMCI absent — the aligned series carries {n} cells (n < 8)");
+        return;
+    }
+    let series: Vec<&[f32]> = aligned.iter().map(|s| s.as_slice()).collect();
+    let params = PcmciParams {
+        max_lag: LAG_MAX_H,
+        null_lag: LAG_MAX_H,
+        bins: 8,
+        seed: SURROGATE_SEED,
+        n_surr: N_SURR,
+        null: TeNull::Phase,
+        block: 0,
+        est: TeEstimator::Binned,
+        k: 4,
+        p_max: 2,
+        alpha: 0.05,
+    };
+    let Some(links) = pcmci_links(&series, params) else {
+        println!("PCMCI absent — the link scan returned no result (null fit void)");
+        return;
+    };
+    const CH: [&str; 4] = ["dB/dt", "Bz", "Speed", "Density"];
+    for l in &links {
+        let (Some(d), Some(t)) = (CH.get(l.driver), CH.get(l.target)) else {
+            continue;
+        };
+        let verdict = if l.te > l.threshold {
+            "survives"
+        } else {
+            "removed"
+        };
+        let fdr = if l.fdr_pass { " | fdr" } else { "" };
+        println!(
+            "{d} → {t} | lag {:>2} h | cond TE {:.4e} | thr {:.4e} | p {:.4e} | {verdict}{fdr}",
+            l.lag, l.te, l.threshold, l.p_value
+        );
+    }
+    let bz_edge: Vec<_> = links
+        .iter()
+        .filter(|l| l.driver == 1 && l.target == 0)
+        .collect();
+    let surviving = bz_edge.iter().filter(|l| l.te > l.threshold).count();
+    match (bz_edge.is_empty(), surviving) {
+        (true, _) => println!(
+            "Bz → dB/dt edge: removed by conditioning — no lag survives; the yearly arrow is not confirmed by PCMCI"
+        ),
+        (false, 0) => println!(
+            "Bz → dB/dt edge: 0 of {} lag(s) survive conditioning — the PCMCI cross-check does not confirm the yearly arrow",
+            bz_edge.len()
+        ),
+        (false, k) => println!(
+            "Bz → dB/dt edge: {k} of {} lag(s) survive conditioning — the PCMCI cross-check confirms a direct Bz edge",
+            bz_edge.len()
+        ),
+    }
+}
+
 fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
     let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
     let mut vals = Vec::new();
@@ -694,6 +781,20 @@ fn run_hourly(
     }
 
     println!();
+    println!(
+        "=== Full lag sweep — Bz → dB/dt vs the round family bound (every lag, fam = {fam:.4e}) ==="
+    );
+    for &lag in &lags {
+        match transfer_entropy_lag(&dbdt_bz, &bz_dbdt, lag) {
+            Some(te) => println!(
+                "Bz → dB/dt | lag {lag:>2} h | TE {te:.4e} | fam {fam:.4e} | {}",
+                if te > fam { "arrow" } else { "family bound" }
+            ),
+            None => println!("Bz → dB/dt | lag {lag:>2} h | TE absent (n < 8)"),
+        }
+    }
+
+    println!();
     println!("=== Bz arrow p-value (surrogate null rank) ===");
     let mut bz_best: Option<(usize, f64)> = None;
     for &lag in &lags {
@@ -743,6 +844,8 @@ fn run_hourly(
             }
         }
     }
+
+    pcmci_crosscheck(&dbdt, &bz, &speed, &density);
 
     println!();
     println!("=== THE BLATT (1-h row) ===");
