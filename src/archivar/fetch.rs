@@ -690,6 +690,18 @@ pub struct VoidFinding {
     pub detail: String,
 }
 
+pub fn void_class(diag: &str) -> VoidClass {
+    if diag.contains("all containers empty") || diag.contains("empty body") {
+        VoidClass::Quiet
+    } else {
+        VoidClass::Drift
+    }
+}
+
+pub fn carries_coord_marker(url: &str) -> bool {
+    COORD_MARKERS.iter().any(|m| url.contains(m))
+}
+
 pub fn civil_date(unix: u64) -> (i64, u32, u32) {
     let days = (unix / 86400) as i64;
     let z = days + 719468;
@@ -870,6 +882,9 @@ pub fn live_sweep(
         ) {
             continue;
         }
+        if carries_coord_marker(&s.url) {
+            continue;
+        }
         if budget == 0 {
             break;
         }
@@ -931,13 +946,7 @@ pub fn live_sweep(
             ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
                 if v.is_empty() {
                     let diag = diagnose_no_samples(s, &body);
-                    let class = if diag.contains("all containers empty")
-                        || diag.contains("no rows extracted")
-                    {
-                        VoidClass::Quiet
-                    } else {
-                        VoidClass::Drift
-                    };
+                    let class = void_class(&diag);
                     findings.push(VoidFinding {
                         url: s.url.clone(),
                         class,

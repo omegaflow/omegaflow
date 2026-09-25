@@ -93,11 +93,6 @@ gap unit-auto-detect
 url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
 note ETH-SED FDSN event: field magnitude/depth_km/event_source unit absent — unit-auto-detect gap; map features trägt geometry lat/lon. Seismisch echt.
 
-parser-def votable
-gap votable-reader
-url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+s_ra,s_dec,target_name,proposal_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-note ALMA TAP EU 2026-09-25: s_ra,s_dec,target_name,proposal_id 200; ra,dec,source_name,project_code 400 validateColumnNonAlias [ra] absent. obscore+source_cone_search ohne dist/plx/z → em, s2-direction (distanzlos, τ=0). VOTable-Reader-Gap.
-
 parser-def json
 gap unit-auto-detect
 url https://argovis-api.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&polygon=%5B-180%2C-60%2C-180%2C90%2C180%2C90%2C180%2C-60%2C-180%2C-60%5D
