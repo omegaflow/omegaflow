@@ -3,7 +3,7 @@
   class: auftrag
   date: 2026-09-16
   sha256: ba23086e79987af1d6717591881051bf855ab05558019d17b08c62d6960fd7d9
-  status: live
+  status: archived
   see-also: phi/blocked_sources.φ
 -->
 # Auftrag: die request-only-Rohdaten der fünf offenen Sonden — Anfrage-Vorlagen
