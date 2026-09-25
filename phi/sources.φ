@@ -746,6 +746,7 @@ url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/
 format omni_hro
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
 compiler tools/harvest/src/bin/omni_hro_compiler.rs
+sha256 d8ced5fb5b7980121285eac7c080aa541e15ac0dbd9b94aa78d7f793ed269705
 at sun
 ttl 3600
 field omni_hro_imf_f_nt omni_hro_imf_f_nt inverse-square em nT 3600 0.0 0.0
@@ -3185,6 +3186,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephe
 format ephemeris_binary
 origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
 compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
+sha256 7ad8b8bf4d5447f54d8712112c7eda23597924574a359fd5d43d56fb7644ef9d
 at mariner10
 ttl 86400
 
@@ -8627,6 +8629,7 @@ url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/vo
 format voyager_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/ ; https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/titan_occultation_medium_band/
 compiler tools/harvest/src/bin/voyager_occlt_compiler.rs
+sha256 860f692727413ee57c75299b72e1b2c6e52c282707461124d0b15c3a9a01cfd9
 at earth
 ttl 604800
 field amp_min voyager_occlt_amp_min inverse-square em count 604800 0.0 0.0
