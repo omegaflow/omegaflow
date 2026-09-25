@@ -104,7 +104,7 @@
     "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made",
     "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
     "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
-    "pii": "a private mail domain or a home path names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree"
+    "pii": "a private mail domain, a home path or a device MAC (a watch, a chip) names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree; the fixture placeholder AA:BB:CC:DD:EE:FF is exempt"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -400,6 +400,10 @@
     "pii_home_path": "the tree lives at /home/someuser/projects/omegaflow",
     "pii_ci_home": "the CI checkout is /home/runner/work/omegaflow/omegaflow",
     "pii_role_address": "smail --dry-run --to role@example.org",
+    "pii_device_mac": "the watch address is 12:34:56:78:9A:BC",
+    "pii_device_mac_path": "the device path is /org/bluez/hci0/dev_12_34_56_78_9A_BC/service0010/char0015",
+    "pii_device_mac_placeholder": "the fixture MAC is AA:BB:CC:DD:EE:FF",
+    "pii_device_mac_underscore_placeholder": "the fixture path is /org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015",
     "field_unit_literal_1": "Some(format!(\n    \"{} {} {} {} {} 1 {} 0.0 0.0\\n\",\n    directive, key, name, kernel, f, tau\n))",
     "field_tau_ttl_tenth": "let tau = ttl as f64 / 10.0;"
   }
