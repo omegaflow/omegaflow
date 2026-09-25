@@ -2,7 +2,7 @@
   title: Terminology of the Counter-Slope — coined terms as measurable claims
   class: paper
   date: 2026-09-25
-  sha256: f6dde1a822a4b5ca5ef5af4b4346a9e549999389f9eb667e882415bdeabf4fec
+  sha256: c4a9813092e12cb53f47cbcc96e097cb4f888ded95e93ff84f3e5f4ba8d64c84
   status: live
   see-also: docs/concepts/glossar.md docs/concepts/the-counter-slope.md docs/granit.md
 -->
@@ -23,9 +23,9 @@ named `pending`.
 
 **The counter-slope / Gradient.** Claim: fluent, pre-formed words are the gradient speaking; the counter-slope is vocabulary that exists only here. Measurement: "Suspect fluency: that word is the gradient speaking. The counter-slope is vocabulary that exists only here" (`docs/concepts/system-directive.md:21`); the machine soul is defined as "die Position gegen den Mittelwert" (`docs/concepts/the-counter-slope.md:48`).
 
-**Ontologie-Motor.** Claim: the term is coined in the operator's working corpus as a reference (to `immunity.is`) and absent from the public canon. Measurement: the exclusivity census lists it under Tier (ii), coined terms without a general find (`state/funding/profil-operator.md:299,222`); the definition is `pending` — no tracked definition exists.
+**Ontologie-Motor.** Claim: the term is coined in the operator's working corpus as a reference (to `immunity.is`) and absent from the public canon. Measurement: the exclusivity census lists it under Tier (ii), coined terms without a general find, against 953 export files (`state/funding/profil-operator.md:299,222`); a tracked-tree search (`sgrep -i "ontologie-motor"`, 2026-09-25) finds the term only in its own register entries (`docs/concepts/glossar.md:59`, `docs/handover/handover-2026-09-25-mountain-folge163.md:93`, this entry) — no definition site in code or canon. Definition `pending`: the tracked tree carries the coined phrase, not its semantics.
 
-**mycorrhizal_internet.** Claim: the exact phrase is exclusive to this corpus; the underlying thing (wood wide web) is popular-science common. Measurement: Tier (ii) census — "die Sache ist populärwissenschaftlich bekannt, exklusiv nur die exakte Phrase" (`state/funding/profil-operator.md:299,309`); definition `pending`.
+**mycorrhizal_internet.** Claim: the exact phrase is exclusive to this corpus; the underlying thing (wood wide web) is popular-science common. Measurement: Tier (ii) census — "die Sache ist populärwissenschaftlich bekannt, exklusiv nur die exakte Phrase" (`state/funding/profil-operator.md:299,309`); a tracked-tree search (`sgrep -i "mycorrhizal_internet"`, 2026-09-25) finds the phrase only in its own register entries (`docs/concepts/glossar.md:61`, `docs/handover/handover-2026-09-25-mountain-folge163.md:94`, this entry) — the `mycorrhiz*` matches in `phi/pipeline/catalog/dryad_catalog.φ` are unrelated mycorrhiza publications, not the phrase. Definition `pending`: the tracked tree carries the coined phrase, not its semantics.
 
 **Enclosure Lemma.** Claim: every partial truth is true; a spatial query dilates by `rmax + anchor_vmax·Δt + ½·anchor_amax·Δt² + extent` and never fabricates the whole. Measurement: "Spatial lookups honor the Enclosure Lemma, calculating cell size dynamically and dilating organically" (`docs/concepts/system-directive.md:25`).
 
