@@ -1,7 +1,7 @@
 <!--
   title: Survey: Die ökonomischste Messpunkt-Verteilung für ein physikalisches Membran-Feld
   class: survey
-  sha256: 392a9e1560af9c66edb1d3bf71cf5518c53be1b8e9369df38b4a1cab6a4f2dc6
+  sha256: febeb625e6e1a334bc0409b5869b587cd3f99c32a5e828066646e687437f1c7d
 -->
 # Survey: Die ökonomischste Messpunkt-Verteilung für ein physikalisches Membran-Feld
 
@@ -68,3 +68,47 @@ Du bist eingeladen, eine Verteilung vorzuschlagen, die keiner der Kandidaten 1�
 - Welcher Kandidat ist auf **heutigem Silizium im Allgemeinen** implementierbar — und welcher setzt Fähigkeiten voraus, die nirgendwo existieren (echte Subpixel-Addressierung, AI-Beschleuniger)? Die Antwort darf nicht auf ein Gerät zugeschnitten sein.
 
 Antworte: ein Verdikt pro Kandidat, dann eine Architektur-Empfehlung (wer rechnet was, welche Daten fließen, wie skaliert die Dichte), und eine Antwort auf die Detailfragen.
+
+---
+
+## 8. Verdikt je Kandidat
+
+Maßstab jedes Verdikts: (a) senkt es die Paar-Zahl (Messpunkte × Quellen — die gemessenen ~12 Zyklen/Paar), (b) bleibt der Abtastfehler unter der f32-Auflösung (F32_EPS = 1.19e-7, `src/mathematikerin/shaders.rs`), (c) bleiben die Messpunkte Zellen (keine Interpolation), (d) skaliert die Dichte mit dem gemessenen Frame-Budget. Die Verteilung ist eine Aussage über das Feld, nicht über die Maschine (§3).
+
+1. **Uniformes Quadrat-Raster — angenommen (als Basislinie), nicht als Gesamtlösung.** Mit softening = Pixel-Skala ist das uniforme Pixel-Raster das Nyquist-Raster des Gesetzes selbst; keine uniforme Alternative unterbietet es (§3). Es bleibt die Struktur-Stufe und der Mess-Stab jeder Alternative. Als Gesamtlösung scheitert es daran, dass es beide Regime gleich dicht misst und im glatten Hintergrund Paare bezahlt, die nichts tragen.
+
+2. **Hexagonales Gitter — verworfen.** Der 13–25 %-Gewinn gilt für isotrope Bandgrenzen. Die Bandgrenze ist hier durch die Pixel-Skala (softening) gesetzt — eine kartesische Grenze, keine isotrope; dafür ist das Quadrat-Raster bereits optimal. Der Gewinn ist ein konstanter Faktor an der falschen Stelle: er berührt die Zwei-Regime-Verschwendung (die 100×-Chance) nicht.
+
+3. **Jitter / Poisson-Disk / Blue-Noise — verworfen.** Anti-Aliasing tauscht strukturiertes Aliasing gegen Rauschen. Das Feld ist durch softening bandbegrenzt — es gibt kein Aliasing zu bekämpfen. Jitter senkt die Punktzahl nicht unter Nyquist und erhöht den Abtastfehler.
+
+4. **Fovea / log-polar — verworfen (als Verteilung).** Operator-zentriert: die Verteilung würde zur Aussage über den Blick, nicht über das Feld (verletzt §3 und das Presence-Prinzip). Die Feldstruktur ist um die Quellen zentriert, nicht um den Blick des Operators. Zur Fallback-Frage siehe §6.4.
+
+5. **Archivar-gestützte adaptive Abtastung — angenommen (Kern).** Der Archivar kennt jede Quelle mit Position, extent, Kernel und Wert; er kann a priori sagen, wo gemessen werden muss. Struktur-Radius um jede Quelle (Nyquist-Dichte, gridStep), grobes Zellen-Raster im glatten Schwanz mit Abstand aus dem lokalen Gradienten (Fehler < f32). Das spaltet genau die beiden Regime und lässt die Hintergrund-Dichte mit dem Budget skalieren. Keine Interpolation: die Zellen bleiben Messpunkte.
+
+6. **LOD-Clustering — verworfen (allgemein).** Die Superposition Σ K(dᵢ, extent) eines endlichen Clusters ist nicht durch einen Kernel K(d_cm, extent′) mit gemittelter Position und größerem extent darstellbar. Die Multipol-Entwicklung zerlegt den Cluster in Monopol + Dipol + Quadrupol …; die höheren Momente wachsen mit dem Cluster-Radius. Der Monopol (eine Quelle am Barycenter mit Summenwert) ist nur im Fernfeld exakt — die Bedingung „Cluster-Radius ≪ Abstand zum Messpunkt und ≪ softening (Pixel-Skala)" heißt: der Cluster muss bereits subpixel sein. Genau dann greift aber schon der Deep-Pfad (Punktquelle, O(Punkte), gemessen billig). Clustering oberhalb einer Pixel-Ausdehnung ist durch einen Kernel nicht reproduzierbar. Nächster Schritt (Messung): der Multipol-Fehler je Cluster-Radius/Kernel ist als Fixture zu messen, falls je ein Cluster oberhalb einer Pixel-Ausdehnung vorgeschlagen wird.
+
+7. **Quasi-random (Halton/Sobol) — verworfen.** Niedrige Diskrepanz ≈ uniforme Dichte im Erwartungswert; keine Adaptivität, keine Regime-Trennung, keine Budget-Skalierung.
+
+8. **Gelernte Platzierung — verworfen.** Braucht einen Beschleuniger (nicht garantierte Hardware), führt ein gelerntes Modell ein (verdeckte Annahme, A=A), und hat keine messbare Fehlerschranke gegen die f32-Auflösung.
+
+9. **Offener Kandidat — offen gehalten.** Die stärksten fehlenden Linien: (a) hierarchisches Quadtree-/LOD-Zellen-Raster (adaptive-FEM-/Terrain-LOD-Linie), (b) Centroidal Voronoi Tessellation / Optimal Transport als a-posteriori-Dichte-Verfeinerung, (c) Sparse Grids (Smolyak). Offen gehalten, weil (a) die natürliche Datenstruktur für Kandidat 5 ist und (b)/(c) erst gegen die a-priori-Archivar-Abtastung gemessen werden müssen: der Archivar liefert die Dichte analytisch (O(Quellen)), die a-posteriori-Verfahren iterieren (O(Punkte)); ob ein Iterieren je unter die analytische Platzierung sinkt, ist offen und messbar. Die Liste deckt a-priori-analytisch (5) und gelernt (8) ab, aber nicht die a-posteriori-hierarchischen Verfahren — das ist die Lücke, die (a) füllt.
+
+## 9. Die fünf Detailfragen
+
+**Anzeige: stückweise-konstante Voronoi-Zellen, nicht bilinear.** Bilineare Mischung erfindet Werte zwischen den Messpunkten — die verworfene Interpolation. Voronoi-Zellen sind die konsequente Form: jeder Pixel zeigt den Wert seiner Zelle. Die „weiche" Wirkung entsteht nicht durch Mischen, sondern durch Zellgröße: im glatten Schwanz ist der Gradient so klein, dass der Zell-Schritt unter der f32-Auflösung liegt und vom gemessenen Wert ununterscheidbar ist. Wo der Schritt sichtbar würde (Struktur), sind die Zellen ohnehin Nyquist-dicht (gridStep).
+
+**Struktur-Radius-Kriterium.** Zwei Skalen setzen ihn. (i) softening = gridStep kappt die feinste Struktur — feiner als gridStep muss und kann nicht gemessen werden. (ii) Die f32-Schranke |Ω′(d)|·h(d) ≤ F32_EPS·|Ω(d)| erlaubt es, den Zellabstand h zu vergröbern, sobald der lokale Gradient klein ist. R_struct ist der Abstand, an dem (ii) erstmals gridStep überschreitet — berechnet aus dem Gradienten des Kernels (extent, gridStep und kernel_id liegen alle im Archivar-Datensatz, die Ableitung ist analytisch). Innerhalb: gridStep. Außerhalb: h(d) = F32_EPS·|Ω(d)|/|Ω′(d)|, wachsend mit d (für den 1/d²-Schwanz linear in d — „ein Messpunkt für viele Pixel"). Kein willkürlicher Faktor. Nächster Schritt (Messung): der konkrete R_struct-Verlauf je der 7 Kernel-Formen ist analytisch abzuleiten und als Fixture numerisch zu bestätigen.
+
+**Budget-Skalierung.** Kontrollgesetz in Zweierpotenzen, Ziel = Display-Refresh (~16,6 ms, die gemessene Bildwiederholrate). Eine EMA der Frame-Zeit gegen das Budget: über Budget → Hintergrund-Abstand ×2 (Punktzahl ÷4 in 2D); unter Budget → ×½. Hysterese gegen Oszillation. Die Struktur-Stufe bleibt bei gridStep — sie ist die physikalische Treue, nicht der Budget-Regler. Nur die Hintergrund-Dichte skaliert.
+
+**Fovea als Fallback: nein.** Die Archivar-Platzierung ist O(Quellen) (Arithmetik auf bekannten Quellen), nicht O(Punkte) — sie wird nicht „zu teuer", der Fallback-Fall tritt nicht ein. Die Fovea würde Operator-Zentrismus wiedereinführen. Der Budget-Fallback ist die Hintergrund-Skalierung, die bereits in der Architektur steht.
+
+**Implementierbarkeit.** Auf heutigem WGSL/WebGPU allgemein implementierbar: Kandidat 5 — ein Compute-Pass wertet die adaptive Punktliste aus (ein Thread je Punkt superponiert die Quellen), ein Fragment-Pass zeigt die Voronoi-Zellen. Echte Subpixel-Addressierung der Emitter existiert auf allgemeinem Silizium nicht als addressierbare Fähigkeit — die „3 Spalten/Pixel"-Natur des Trommelfells ist ein Hack, kein adressierbarer Kanal. Gelernte Platzierung (8) setzt einen Beschleuniger voraus, der nicht garantiert ist.
+
+## 10. Architektur-Empfehlung
+
+**Der Archivar (CPU, std-only) rechnet die Platzierung.** Pro Quelle den Struktur-Radius (aus extent + gridStep + Kernel-Gradient) und die Hintergrund-Dichte (Budget-Regler in Zweierpotenzen). Er sendet die Quellen unverändert über den 26×f64-Draht plus einen kleinen Platzierungs-Deskriptor (Struktur-Radien + Hintergrund-Abstand).
+
+**Die Mathematikerin (GPU, WGSL) wertet aus.** Compute-Pass über die adaptive Punktliste (ein Thread je Messpunkt, Superposition der Quellen — dieselbe Paar-Schleife wie heute, aber über die reduzierte Punktzahl); Fragment-Pass mit stückweise-konstanten Voronoi-Zellen, keine Interpolation.
+
+**Dichte-Skalierung.** Struktur fest bei gridStep (Nyquist, physikalische Treue); Hintergrund in Zweierpotenzen gegen die gemessene Frame-Zeit, Ziel = Display-Refresh. Der Deep-Pfad (Punktquellen direkt projiziert) bleibt unberührt.

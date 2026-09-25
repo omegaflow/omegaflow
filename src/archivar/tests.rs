@@ -7588,6 +7588,24 @@ fn test_port_block_with_force_and_no_unit_stays_pending() {
 }
 
 #[test]
+fn test_port_block_with_force_and_name_unit_synthesizes() {
+    let block = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 omni_bx_gsm_nt\n";
+    let conv = super::port_block(block);
+    assert!(
+        conv.contains(
+            "field geometry.coordinates.2 omni_bx_gsm_nt inverse-square em nT 86400 0.0 0.0\n"
+        ),
+        "a force directive with a name-suffix unit synthesizes the line, got: {conv}"
+    );
+    let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 station_id\n";
+    let conv2 = super::port_block(still_pending);
+    assert!(
+        conv2.contains("# pending field station_id — unit or cadence absent, review"),
+        "a name without a unit suffix stays pending, never the literal 1, got: {conv2}"
+    );
+}
+
+#[test]
 fn test_port_block_hapi_live_measure_classifies_em() {
     let block = "url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf\nttl 86400\non earth 48.025 2.26\nforce gravity\npath 1.0 magnetosphere_intermagnet_clf_x_nt\n";
     let measure = super::PortMeasure {
@@ -10913,6 +10931,31 @@ fn port_gap_unit_from_name_suffix_resolves_new_units() {
     assert_eq!(unit_from_name_suffix("foF2_mhz"), Some("MHz"));
     assert_eq!(unit_from_name_suffix("phot_g_mean_mag"), Some("mag"));
     assert_eq!(unit_from_name_suffix("depth_km"), Some("km"));
+    assert_eq!(unit_from_name_suffix("majaxis_arcsec"), Some("arcsec"));
+    assert_eq!(unit_from_name_suffix("uncertainty_arcmin"), Some("arcmin"));
+    assert_eq!(unit_from_name_suffix("peak_flux_mjy"), Some("mJy"));
+    assert_eq!(unit_from_name_suffix("flux_1400mhz_mjy"), Some("mJy"));
+    assert_eq!(unit_from_name_suffix("peak_jy"), Some("Jy"));
+    assert_eq!(unit_from_name_suffix("declination_deg"), Some("deg"));
+    assert_eq!(unit_from_name_suffix("semi_major_axis_au"), Some("au"));
+    assert_eq!(unit_from_name_suffix("orbital_period_days"), Some("d"));
+    assert_eq!(unit_from_name_suffix("exposure_sec"), Some("s"));
+    assert_eq!(unit_from_name_suffix("mass1_solar"), Some("m_sun"));
+    assert_eq!(unit_from_name_suffix("sz_mass_10e14_msun"), Some("m_sun"));
+    assert_eq!(
+        unit_from_name_suffix("tec_tecu_dense"),
+        Some("tecu"),
+        "the TECU name does not carry the unit as a suffix"
+    );
+    assert_eq!(unit_from_name_suffix("total_ozone_du"), Some("du"));
+    assert_eq!(unit_from_name_suffix("salinity_psu"), Some("psu"));
+    assert_eq!(unit_from_name_suffix("pressure_hpa"), Some("hPa"));
+    assert_eq!(unit_from_name_suffix("pressure_dbar"), Some("dbar"));
+    assert_eq!(unit_from_name_suffix("sea_level_pressure_mb"), Some("mb"));
+    assert_eq!(unit_from_name_suffix("dw_psp_wm2"), Some("W/m2"));
+    assert_eq!(unit_from_name_suffix("irradiance_wm2nm"), Some("w/m^2/nm"));
+    assert_eq!(unit_from_name_suffix("sea_surface_temp_c"), Some("C"));
+    assert_eq!(unit_from_name_suffix("absolute_magnitude"), Some("mag"));
 }
 
 #[test]

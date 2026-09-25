@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 2e68780c8bf2f28d82f9f511d3aee11498a56baae310a4b161bcde4825c3b9a9
+  sha256: e18ca953085ebefd9ca8692d3bbda11635383cab9c848786b10eeb6b9bb06df5
   status: live
   see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
@@ -66,12 +66,37 @@ Verarbeitung fehlt:
   als Faktor in den Permeability-Atem (`omega.rs` `field_permeability`). Schritt 1 ist
   die **vC-Definition** von L:53 im Legacy-Klon zu messen — exp und tanh haben inverse
   Asymptotik; ein Port ohne Lektüre riskiert eine invertierte Formel.
+  **Gemessen (2026-09-25):** L:53 ist die Überschrift `## 3. Certainty, Quantum, and Decay`
+  in `docs/concepts/lost-concepts.md` — im heutigen Baum nicht vorhanden, im Legacy-Klon
+  (`github.com/omegaflow/omegaflow-legacy`) nur in der History, Commit `90436cb7`
+  (`git show 90436cb7:docs/concepts/lost-concepts.md`). Die Formel steht in Zeile 56:
+  `certainty = exp(-vC / (g + ε)) * quantum * decay`; Zeile 58 vC = „Averaged temporal
+  derivative over 8 samples, weighted by presence"; Zeile 59 g = RMS der Feldenergie;
+  Zeile 60 `quantum = exp(-Σ(|takens.spread|·weight)/Σ(weight))`; Zeile 61
+  `decay = 1 / (1 + Σ(complexity·weight)/Σ(weight))`. Heute: `src/mathematikerin/omega.rs:15`
+  `perm_target(g, v_c) = tanh(v_c/(g + ε))`, angewandt als Permeability-Atem in
+  `omega.rs:1655–1657` (`field_permeability += (target − field_permeability)·alpha`).
+  **Kein** `quantum`/`decay`-Faktor: `archive_search "quantum" --root src` → 0 Treffer,
+  `archive_search "decay" --root src` findet nur `exponential_decay` (Kraftfeld, Fremdbegriff);
+  die Legacy-Identifier `takens`/`complexity` erscheinen nicht im Baum (`archive_search` je 0;
+  das Takens-Embedding lebt heute als `topological_te_phase`). Der Konfud ist bestätigt:
+  `exp(-x)` fällt monoton, `tanh(x)` steigt monoton — ein wörtlicher Port der Certainty-Formel
+  als Permeability-Ziel invertiert den Atem.
 - **TDA/Betti-0**: ~100 Zeilen single-linkage über die Takens-Embeddings von `te.rs`
   (Schwelle = Silverman-Bandbreite der Embedding-Streuung).
 - **Synthetic Flight**: die Weltlinien-Infrastruktur + freies `t_presence` stehen; zu
   messen ist, ob `presence_tx` (`relay.rs`) fremdgetriebene Positionen schon annimmt.
   Ethik: die Präsenz **ruht** auf einer vom Operator gewählten Weltlinie — kein
   Selbstantrieb, kein „fliegen".
+  **Gemessen (2026-09-25):** `presence_tx` nimmt fremdgetriebene Positionen an.
+  `src/archivar/relay.rs:590` sendet das vom Browser gelesene Paket
+  `(pt, px, py, pz, pr, vx, vy, vz, tt, gs)` über `presence_tx`; `src/archivar/main_flow.rs:818–839`
+  empfängt es und schreibt `presence_slot.p = [px,py,pz]`, `.v = [vx,vy,vz]`, `.range = pr`,
+  `.t_thrust = tt`, `.grid_step = gs` — die Position wird **direkt gesetzt, nicht integriert**.
+  Damit steht der fremdgetriebene Pfad (Browser als fremde Quelle, Positions-Setzer im Kern);
+  keine Selbstpropulsion im Kern. Ungemessen bleibt, ob eine **Operator-gewählte Weltlinie**
+  (eine Bahn, nicht ein Einzel-Setzpunkt) durch diesen Kanal getragen wird — der Browser-Eingang
+  setzt Position/Velocity je Paket, eine Weltlinien-Auswahl ist am Setz-Site nicht gemessen.
 - **Delay Spectrum**: die Lichtlaufzeit-Faltung existiert (survey-Messpunkt-Verteilung);
   die lag-Matrix als Instrument wäre eine neue measure-Probe.
 

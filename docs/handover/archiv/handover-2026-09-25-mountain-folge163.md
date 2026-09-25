@@ -3,7 +3,7 @@
   session: Mountain-Folge 163
   class: handover
   date: 2026-09-25
-  sha256: f3d8f539c627cf326a8046452c30669ec269d1b8fdfc8311198d1c6770eb934c
+  sha256: 49da3e679e3d180bf409974137924e319f01fd7e83e5365fc71070765f082467
   status: live
 -->
 # Handover — Mountain-Folge 163 (2026-09-25)
@@ -20,38 +20,21 @@ Trigger / Lage / Blockade / Braucht.
 
 ### Linie handelt (eigen)
 
-#### `phi/blocked_sources.φ::gap:unit-auto-detect ×168`
+#### `phi/blocked_sources.φ::gap:unit-auto-detect ×166`
 - **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
+- **Trigger:** sofort
 - **Lage:** (gemessen 2026-09-25 via `sgrep -c "gap unit-auto-detect" phi/blocked_sources.φ`)
-  168 Einträge tragen die Arm-Direktive; die Legend-Zeilen stehen.
+  Arm gebaut: `unit_from_name_suffix` erweitert (units.rs:169 — Suffixe der 166
+  Feldnamen: `_arcsec`/`_arcmin`/`_jy`/`_mjy`/`_deg`/`_au`/`_days`/`_sec`/`_solar`/
+  `_msun`/`tecu`/`_du`/`dobson`/`_psu`/`_hpa`/`_mb`/`_dbar`/`_wm2`/`_w_m2`/`_wm2nm`/
+  `_c`/`_magnitude`) und in den Block-Force-Pfad verdrahtet (port.rs
+  `field_or_review`: Suffix-Einheit + τ=ttl statt pauschal „unit absent");
+  2 Einträge (CMA now 54511, JMA quake list) descoped (URL integriert →
+  phi/sources.φ:372/:423 — Stale-Zwillinge). 166 Einträge tragen das Token.
 - **Blockade:** keine
-- **Braucht:** die Einheiten-Erkennung aus Wert/Header bauen (Arm) **oder** die
-  Einträge mit Messung `descoped` stellen; Trägerform
-  `phi/blocked_sources.φ::gap:unit-auto-detect ×168` (N = live count, Scanner
-  meldet Drift).
-
-#### `phi/blocked_sources.φ::gap:force-undetermined ×16`
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25 via `sgrep -c "gap force-undetermined" phi/blocked_sources.φ`)
-  16 Einträge; das Feld passt in kein 9-Kraft-Medium (Astrometrie/Farbindex
-  ohne Kraft-Fit).
-- **Blockade:** keine
-- **Braucht:** Kraft-Kanal-Zuordnung (Force-Gate, `grind-pro`) **oder** `descoped`
-  mit Messung; Trägerform `…::gap:force-undetermined ×16`.
-
-#### `phi/blocked_sources.φ::gap:curation ×17`
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25 via `sgrep -c "gap curation" phi/blocked_sources.φ`)
-  17 Einträge; ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT/Fenster/Identifier).
-  Hinweis: der Träger in folge162 nannte `curation ×15` und `konverter ×4` —
-  live gemessen ist `curation ×17` und `konverter ×0` (kein Eintrag trägt den
-  Token, nur die Legend-Zeile).
-- **Blockade:** keine
-- **Braucht:** den Query-Kurations-Arm bauen **oder** `descoped` mit Messung;
-  Trägerform `…::gap:curation ×17`.
+- **Braucht:** Re-Port der 166 Einträge über den stehenden Arm (grind); das Token
+  fällt pro Eintrag beim Port. Trägerform `phi/blocked_sources.φ::gap:unit-auto-detect ×166`
+  (N = live count, Scanner meldet Drift).
 
 #### gzip-Body ohne `.gz`-Suffix — kein Erkennungs-/Entpack-Pfad
 - **Status:** autonom | **Bindung:** eigen

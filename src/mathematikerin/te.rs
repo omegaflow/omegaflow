@@ -2114,6 +2114,64 @@ pub fn betti0_persistence(series: &[f64], dim: usize) -> Option<Betti0Verdict> {
     })
 }
 
+pub struct Betti0Silverman {
+    pub tau: Option<usize>,
+    pub threshold: Option<f64>,
+    pub n_points: usize,
+    pub components: usize,
+}
+
+pub fn betti0_silverman(series: &[f64], dim: usize) -> Betti0Silverman {
+    let Some(tau) = find_mi_lag(series) else {
+        return Betti0Silverman {
+            tau: None,
+            threshold: None,
+            n_points: 0,
+            components: 0,
+        };
+    };
+    let emb = embed_series(series, tau, dim);
+    let n = emb.len();
+    if n == 0 {
+        return Betti0Silverman {
+            tau: Some(tau),
+            threshold: None,
+            n_points: 0,
+            components: 0,
+        };
+    }
+    if n == 1 {
+        return Betti0Silverman {
+            tau: Some(tau),
+            threshold: None,
+            n_points: 1,
+            components: 1,
+        };
+    }
+    let Some(threshold) = embedded_silverman(&emb) else {
+        return Betti0Silverman {
+            tau: Some(tau),
+            threshold: None,
+            n_points: n,
+            components: 1,
+        };
+    };
+    let mut uf = UnionFind::new(n);
+    for i in 0..n {
+        for j in (i + 1)..n {
+            if state_distance(&emb[i], &emb[j]) <= threshold {
+                uf.union(i, j);
+            }
+        }
+    }
+    Betti0Silverman {
+        tau: Some(tau),
+        threshold: Some(threshold),
+        n_points: n,
+        components: uf.components,
+    }
+}
+
 pub(crate) const TE_KSG_K: usize = 4;
 
 pub fn transfer_entropy_embedded_kde(
@@ -4119,6 +4177,47 @@ mod tests {
         assert!(
             betti0_persistence(&a, 3).is_none(),
             "betti0-n-floor: n=16 carries a verdict"
+        );
+    }
+
+    #[test]
+    fn betti0_silverman_empty_series_is_zero_components() {
+        let empty: Vec<f64> = Vec::new();
+        let v = betti0_silverman(&empty, 3);
+        assert_eq!(
+            v.components, 0,
+            "betti0-silverman: the empty series must carry 0 components (0 honored)"
+        );
+        assert!(
+            v.tau.is_none() && v.threshold.is_none(),
+            "betti0-silverman: the empty series must carry no lag and no threshold"
+        );
+        assert_eq!(v.n_points, 0);
+    }
+
+    #[test]
+    fn betti0_silverman_constant_series_is_zero_components() {
+        let constant = vec![1.0f64; 64];
+        let v = betti0_silverman(&constant, 3);
+        assert_eq!(
+            v.components, 0,
+            "betti0-silverman: a constant series carries no lag, hence 0 components (0 honored)"
+        );
+    }
+
+    #[test]
+    fn betti0_silverman_two_cluster_splits_at_silverman_threshold() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let s = betti_two_cluster(320, &mut rng);
+        let v = betti0_silverman(&s, 2);
+        assert!(
+            v.threshold.is_some(),
+            "betti0-silverman: the two-cluster series must carry a Silverman threshold"
+        );
+        assert!(
+            v.components >= 2,
+            "betti0-silverman: the two-cluster series must split at the Silverman threshold, got {} component(s)",
+            v.components
         );
     }
 

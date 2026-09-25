@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools (Struktur-Karte + erste Funktions-Messung)
   class: survey
   date: 2026-09-06
-  sha256: bc05578acd885ae4d4aa9de2fd7843f824a3d8d3ef01f9ebc471e62739610bec
+  sha256: 62758fff918d2039fd8e59015eb25d259c045b01665d07cb7341a128cad9b15f
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -68,14 +68,43 @@ register/science/service/gate/utils operieren.
 ## 3. Offen — die restlichen Vermessungs-Dimensionen
 
 Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
-- **tools/ unvermessen:** `cargo check`/`cargo test` deckten nur die
-  Core-Crate. Die 253 `tools/*`-Dateien brauchen je Crate
-  `cargo check -p omegaflow-<fkt>` + Test-Lauf.
-- **Konsument** je pub-Fn: lebendig oder tot (Call-Site-Beweis fehlt).
+- **tools/ je Crate vermessen** (gemessen 2026-09-25, HEAD `f02171e5`): Es gibt
+  **keinen** Workflow, der `cargo check -p omegaflow-<fkt>` fährt — `cargo check`
+  (`ci-check.yml:30`) deckt nur die Core-Crate, und einen ganzen-Crate-`cargo
+  test -p` gibt es nur für `register` (`ci-check.yml:56`) und `utils`
+  (`ci-check.yml:57`). Workflow-Deckung je Crate:
+
+  | Crate | CI-Workflow / Step | Run-ID (2026-09-25) | Stand |
+  |---|---|---|---|
+  | omegaflow-harvest | `ci-check.yml:58-62` (5 Bin-Tests) + je Compiler-Bin in `*-cdn.yml` | `ci-check` 36171288869 | pending CI |
+  | omegaflow-measure | `measure-gates.yml:27` (`--bin silence_map_probe`), `corpus-te.yml:21` (`--bin corpus_te`) | `measure-gates` 36172029908 | pending CI (dispatch 18:13) |
+  | omegaflow-register | `ci-check.yml:56` `cargo test --release -p omegaflow-register` | `ci-check` 36171288869 | pending CI |
+  | omegaflow-service | `service-build.yml:14` `cargo build --release -p omegaflow-service` | `service-build` 36172034181 | pending CI (dispatch 18:13) |
+  | omegaflow-science | `paper-check.yml:37,41` `export_latex --check` | `paper-check` 36169861633 | success |
+  | omegaflow-gate | `tools-build.yml:23` `cargo build --release --bins … -p omegaflow-gate` | `tools-build` 36171288887 | success |
+  | omegaflow-utils | `ci-check.yml:57` `cargo test --release -p omegaflow-utils` | `ci-check` 36171288869 | pending CI |
+
+  `harvest`/`measure` werden nur bin-weise getestet, `service`/`science`/`gate`
+  nur gebaut (`science` zusätzlich `export_latex`-Gate). Neu dispatcht 2026-09-25:
+  `measure-gates` 36172029908, `service-build` 36172034181; die übrigen Run-IDs
+  stammen von den Push-Runs am HEAD `f02171e5`.
+- **Konsument je pub-Fn** (gemessen 2026-09-25 via `sgrep <fn> src`):
+  - `src/archivar/port.rs:1498 pub fn find_timestamp` → **tot**: kein
+    Call-Site im getrackten Baum; die einzigen weiteren Treffer liegen in
+    gitignored `state/zai-export/`.
+  - `src/mathematikerin/te.rs:1867 pub fn find_mi_lag` → **lebendig**: 27
+    Treffer in `src`, darunter Produktions-Call-Sites `te.rs:2058, 2592-2593,
+    3018, 3026` und `ksg_k.rs:82-83, 303`.
+  - Zählung über beide Crates: **1 lebendig / 1 tot**. Ein Scan aller pub-Fns
+    (`sgrep -c <name> .` je Name) findet im getrackten Baum genau zwei tote
+    pub-Fns: `find_timestamp` (`port.rs:1498`) und `number_text`
+    (`mpcorb.rs:33`) — beide `src/archivar`; `src/mathematikerin` trägt keine
+    tote pub-Fn.
 - **Verdrahtung live/offline:** ω-Pfad vs. tools/measure. Die §8-Tabelle in
-  `docs/concepts/die-weberin.md` führt beides flach nebeneinander (z. B.
-  `direction_distance_join`, `nadel_gate`, `deredden_baseline_probe` sind
-  Offline-Bins, keine Membran-Teile) — Aufspaltung ist `pending`.
+  `docs/concepts/die-weberin.md` führt beide getrennt: LIVE/ω-Pfad (`:210-220`)
+  gegen OFFLINE/`tools/measure` (`:222-233`); `direction_distance_join`,
+  `nadel_gate`, `deredden_baseline_probe` stehen in der OFFLINE-Tabelle —
+  Aufspaltung ist `erledigt` (gemessen 2026-09-25, getrennt in `5dcce39c0`).
 - **Datenvertrag** je Format-Modul: 26×f64-Wire / GPU-Pack-Offsets gegen die
   WGSL-Zugriffe (das manuelle Verifikationsprotokoll in
   `docs/concepts/archivar-mathematikerin.md`).

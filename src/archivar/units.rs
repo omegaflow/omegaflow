@@ -208,6 +208,42 @@ pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
         Some("cm-3")
     } else if kl.ends_with("_nt") {
         Some("nT")
+    } else if kl.ends_with("_wm2nm") {
+        Some("w/m^2/nm")
+    } else if kl.ends_with("_wm2") || kl.ends_with("_w_m2") {
+        Some("W/m2")
+    } else if kl.ends_with("_arcsec") {
+        Some("arcsec")
+    } else if kl.ends_with("_arcmin") {
+        Some("arcmin")
+    } else if kl.ends_with("_mjy") {
+        Some("mJy")
+    } else if kl.ends_with("_jy") {
+        Some("Jy")
+    } else if kl.ends_with("_msun") || kl.ends_with("_solar") {
+        Some("m_sun")
+    } else if kl.ends_with("_hpa") {
+        Some("hPa")
+    } else if kl.ends_with("_dbar") {
+        Some("dbar")
+    } else if kl.ends_with("_mb") {
+        Some("mb")
+    } else if kl.ends_with("_au") {
+        Some("au")
+    } else if kl.ends_with("_days") {
+        Some("d")
+    } else if kl.ends_with("_sec") {
+        Some("s")
+    } else if kl.ends_with("_deg") {
+        Some("deg")
+    } else if kl.ends_with("_psu") {
+        Some("psu")
+    } else if kl.ends_with("_magnitude") {
+        Some("mag")
+    } else if kl.contains("tecu") {
+        Some("tecu")
+    } else if kl.ends_with("_du") || kl.contains("dobson") {
+        Some("du")
     } else if kl.ends_with("_vm") {
         Some("V/m")
     } else if kl.ends_with("_v") {
@@ -220,6 +256,8 @@ pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
         Some("cm")
     } else if kl.ends_with("_km") {
         Some("km")
+    } else if kl.ends_with("_c") {
+        Some("C")
     } else if kl.ends_with("_k") {
         Some("K")
     } else if kl.ends_with("_m") {
