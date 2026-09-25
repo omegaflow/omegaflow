@@ -3,7 +3,7 @@
   session: Mountain-Folge 161
   class: handover
   date: 2026-09-25
-  sha256: 8596a6dc0a0aa85b7d2c3abc2dd1bf0cd72c60e61af7dc4e0bf24c65bf5758f1
+  sha256: dba3c6450feb40556c9b838e9a1bd968130a0950b0a83bb66ec69971376b458b
   status: live
 -->
 # Handover — Mountain-Folge 161 (2026-09-25)
@@ -89,6 +89,25 @@ Gemessen 2026-09-25 via `sgrep -c "gap <token>" phi/blocked_sources.φ`:
   Muster `wayback_lines` (JSON-Lines: url/timestamp/status/mime), Eintrag in die
   Modus-Listen (`server.rs`, `web.rs`-FALLBACK) + Test; keyless. Träger: Future-Folge 119
   (Suchschnittstellen-Inventur).
+
+#### `free_models.tsv` — Disposition fehlt, blockierte/gestrichene Modelle bleiben in der Auswahl
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** nächster Dispatch
+- **Lage:** (gemessen 2026-09-25, Future-Folge 119) `tools/measure/free_models.tsv`
+  (Auswahl für `free_model_bench.rs:7`, `text_review.rs:7`, `text_probe.rs:8`,
+  `free_model_agent_bench.rs:8`) trägt fünf Spalten `provider|model|base|env|channel` —
+  **keine** `blocked`/Disposition-Spalte. Kein Tool entfernt eine Zeile; fehlt der Key,
+  emittiert es nur `pending_no_key` (`free_model_bench.rs:632`). Gestrichene/blockierte
+  Modelle stehen darum weiter drin: `kilo cohere/north-mini-code:free` (Z. 27 — das
+  Modell, das am 2026-09-13 `git checkout -- .` lief, AGENTS.md:563),
+  `zai glm-5.3-flash`/`glm-5.3-flashx` (Z. 70–71, `1113 kein Guthaben`),
+  alle `google gemini-*` (Z. 12–22, kein `GOOGLE_API_KEY`).
+- **Blockade:** keine
+- **Braucht:** Entscheidung — (a) Spalte `disposition` (`eligible|blocked|struck`) in das
+  TSV + Filter in den vier Konsumenten, oder (b) die gestrichenen Zeilen entfernen
+  (Fixtures `free_model_bench.rs:687–718`, `text_review.rs:631–653`,
+  `free_model_agent_bench.rs` nutzen `zai glm-5.3-flash` mitziehen). Träger: Future-Folge 119
+  (LLM-Provider-Routen).
 
 ### Wartend
 

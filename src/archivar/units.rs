@@ -279,7 +279,6 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "d",
             "ms",
             "j",
-            "km/s",
             "arcsec",
             "arcmin",
             "mile",

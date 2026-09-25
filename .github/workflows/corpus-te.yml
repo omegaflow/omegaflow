@@ -1,0 +1,35 @@
+name: corpus-te
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  corpus-te:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the corpus TE fixture gates
+        run: cargo test -p omegaflow-measure --bin corpus_te
+      - name: Run the fixture scenarios through the binary
+        run: cargo run --release -p omegaflow-measure --bin corpus_te -- --fixture
+      - name: Run corpus TE on the tracked corpora
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin corpus_te \
+              --a docs/concepts --b docs/specs
+          } > corpus-te.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: corpus-te
+          path: corpus-te.txt

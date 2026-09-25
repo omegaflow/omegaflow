@@ -404,7 +404,7 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"d"));
     assert!(allowed_units_for_force(0).contains(&"ms"));
     assert!(allowed_units_for_force(0).contains(&"j"));
-    assert!(allowed_units_for_force(0).contains(&"km/s"));
+    assert!(!allowed_units_for_force(0).contains(&"km/s"));
     assert!(allowed_units_for_force(0).contains(&"arcsec"));
     assert!(allowed_units_for_force(0).contains(&"%"));
     assert!(allowed_units_for_force(1).contains(&"m/s"));
