@@ -3,7 +3,7 @@
   session: Mountain-Folge 166
   class: handover
   date: 2026-09-26
-  sha256: 4693da33ff7e83b618eec10787ea8eef5d8cb1764d2e828633588e3b1b072007
+  sha256: 09ef976445851b9c92de5febce19a2f20807e68ecc74d900291f431947f750d7
   status: live
 -->
 # Handover — Mountain-Folge 166 (2026-09-26)
@@ -156,10 +156,17 @@ Trigger / Lage / Blockade / Braucht.
 - **Braucht:** Operator startet Chrome mit den beiden Flags/Remote-Debugging;
   dann MCP anbinden und in `docs/concepts/tools-map.md` registrieren.
 
-### Offen nach diesem Atom (CI)
-
-- `gh workflow run gll-rss-odr-cdn.yml` / `gll-rss-tnf-cdn.yml` nach dem Push
-  (Assets sind CI-Jobs; ODR shardet bei 1 GB).
+#### CI-Dispatch gll.rss + Frische (nach dem Push)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** GitHub-API-Rate-Limit erholt.
+- **Lage:** (gemessen 2026-09-26 via `gh workflow run`) Push am HEAD `80e6ab7ca`
+  erfolgt; die Dispatches `gll-rss-odr-cdn.yml`, `gll-rss-tnf-cdn.yml`,
+  `kernel-flatten.yml`, `tools-build.yml` → HTTP 403 `API rate limit already
+  exceeded for user ID 295896184`.
+- **Blockade:** rate limit (transient).
+- **Braucht:** `gh workflow run <workflow> --ref main` je Workflow (einmal, wenn
+  das Limit erholt ist); ODR shardet bei 1 GB → Shard-Blöcke danach in
+  `phi/sources.φ` nachtragen.
 
 ## Abschluss
 
