@@ -783,6 +783,7 @@ field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
 compiler tools/harvest/src/bin/tao_wnd_compiler.rs
+sha256 b7719c89710e0701ccf31ad0c70ebabe0510a845ec707acaa56c521b395bb892
 ttl 3600
 format text
 on earth 0.0 -120.0 0
@@ -8630,6 +8631,7 @@ field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/wwlln.net/wwlln_th.csv
 origin https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
 compiler tools/harvest/src/bin/wwlln_compiler.rs
+sha256 060314032c3d0fe05b9143802b93c606d24d17e75075707031b38c90fef994bc
 ttl 604800
 format text
 on earth 0 0 0
@@ -8641,6 +8643,7 @@ field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.csv
 origin https://transmission.bpa.gov/business/operations/gic/gic.txt
 compiler tools/harvest/src/bin/bpa_gic_compiler.rs
+sha256 8d0ceaa808b0993156abad66d35c516ede7130e30d7a477772aa1bff4907f2b9
 ttl 3600
 format text
 rows .

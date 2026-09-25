@@ -3964,6 +3964,241 @@ mod tests {
         );
     }
 
+    #[test]
+    fn gate_bandwidth_factor_one_is_the_library_path() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = gate_ar1(300, 0.7, &mut rng);
+        for lag in [0usize, 2] {
+            let lib = transfer_entropy_lag(&a, &b, lag);
+            let inline = transfer_entropy_lag_h(&a, &b, lag, 1.0);
+            match (lib, inline) {
+                (Some(l), Some(i)) => assert_eq!(
+                    l, i,
+                    "bandwidth gate: the factor-1.0 h-path diverges from the library estimator at lag {lag}"
+                ),
+                _ => panic!("bandwidth gate: lag {lag} carries no estimate"),
+            }
+        }
+    }
+
+    #[test]
+    fn gate_bandwidth_te_declines_with_h() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let a = gate_ar1(300, 0.5, &mut rng);
+        let mut b: Vec<f32> = Vec::with_capacity(a.len());
+        b.push(gate_rng(&mut rng) as f32);
+        for i in 1..a.len() {
+            let v = 0.9 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1);
+            b.push(v as f32);
+        }
+        let te = |f: f64| transfer_entropy_lag_h(&b, &a, 1, f).expect("carries an estimate");
+        let (t05, t10, t30) = (te(0.5), te(1.0), te(3.0));
+        assert!(
+            t05 > t10 && t10 > t30,
+            "bandwidth gate: TE must decline with h, measured {t05:.4e} > {t10:.4e} > {t30:.4e} fails"
+        );
+    }
+
+    fn gate_fam_null_vals(x: &[f32], y: &[f32], lag: usize, seed: u64) -> Option<(f64, Vec<f64>)> {
+        let te = transfer_entropy_lag(x, y, lag)?;
+        let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+        let mut vals = Vec::with_capacity(10);
+        for _ in 0..10 {
+            let ys = phase_randomized_surrogate(y, &mut rng);
+            vals.push(transfer_entropy_lag(x, &ys, lag)?);
+        }
+        Some((te, vals))
+    }
+
+    #[test]
+    fn gate_fam_max_t_kills_false_positive_keeps_true_coupling() {
+        const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+        const SEED_MUL: u64 = 0x517C_C1B7_2722_0A95;
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let mut cells: Vec<(bool, Vec<f32>, Vec<f32>)> = Vec::new();
+        for _ in 0..3 {
+            let a = gate_ar1(300, 0.7, &mut rng);
+            let b = gate_ar1(300, 0.7, &mut rng);
+            cells.push((false, a.clone(), b.clone()));
+            cells.push((false, b, a));
+        }
+        for _ in 0..2 {
+            let a: Vec<f32> = (0..300)
+                .map(|_| (gate_rng(&mut rng) * 2.0 - 1.0) as f32)
+                .collect();
+            let b: Vec<f32> = (0..a.len())
+                .map(|i| {
+                    if i == 0 {
+                        gate_rng(&mut rng) as f32
+                    } else {
+                        (0.9 * a[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                    }
+                })
+                .collect();
+            cells.push((true, b.clone(), a.clone()));
+            cells.push((false, a, b));
+        }
+        let mut cell = 0u64;
+        let mut fam = f64::NEG_INFINITY;
+        let mut indep_above = 0usize;
+        let mut indep_total = 0usize;
+        let mut true_above = 0usize;
+        let mut true_total = 0usize;
+        for (is_true, x, y) in cells {
+            for lag in [0usize, 1] {
+                let seed = SEED ^ cell.wrapping_mul(SEED_MUL);
+                cell += 1;
+                if let Some((te, vals)) = gate_fam_null_vals(&x, &y, lag, seed) {
+                    for v in vals {
+                        if v > fam {
+                            fam = v;
+                        }
+                    }
+                    if is_true {
+                        true_total += 1;
+                        if te > fam {
+                            true_above += 1;
+                        }
+                    } else {
+                        indep_total += 1;
+                        if te > fam {
+                            indep_above += 1;
+                        }
+                    }
+                }
+            }
+        }
+        assert!(
+            fam.is_finite() && fam > 0.0,
+            "fam gate: the family bound carries no finite value"
+        );
+        assert_eq!(
+            indep_above, 0,
+            "fam gate: {indep_above} of {indep_total} independent cells sit above fam — the max-T correction does not hold"
+        );
+        assert!(
+            true_above >= (true_total + 1) / 2,
+            "fam gate: {true_above} of {true_total} true couplings survive fam — the correction is over-conservative"
+        );
+        println!(
+            "fam = {fam:.4e}; independent cells silent under fam: {indep_total}/{indep_total}; true couplings surviving fam: {true_above}/{true_total}"
+        );
+    }
+
+    fn gate_coupled_henon(n: usize, transient: usize, c: f64) -> (Vec<f32>, Vec<f32>) {
+        let total = n + transient;
+        let mut xs = vec![0.0f64; total];
+        let mut ys = vec![0.0f64; total];
+        xs[0] = 0.1;
+        xs[1] = 0.0;
+        ys[0] = 0.2;
+        ys[1] = 0.1;
+        for t in 1..total - 1 {
+            xs[t + 1] = 1.4 - xs[t] * xs[t] + 0.3 * xs[t - 1];
+            ys[t + 1] = 1.4 - (c * xs[t] * ys[t] + (1.0 - c) * ys[t] * ys[t]) + 0.3 * ys[t - 1];
+        }
+        let to_f32 = |v: &[f64]| {
+            v[transient..]
+                .iter()
+                .map(|&x| x as f32)
+                .collect::<Vec<f32>>()
+        };
+        (to_f32(&xs), to_f32(&ys))
+    }
+
+    #[test]
+    #[ignore = "Hénon n=1000 lag sweep — heavy, runs in te-gate.yml"]
+    fn gate_lag_sweep_verdict_flips_at_coupling_horizon() {
+        const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+        const SEED_MUL: u64 = 0x517C_C1B7_2722_0A95;
+        let (xh, yh) = gate_coupled_henon(1000, 1000, 0.2);
+        let fwd = |lag: usize, seed: u64| {
+            let te = transfer_entropy_lag(&yh, &xh, lag).expect("fwd carries an estimate");
+            let thr = surrogate_stats_phase(&yh, &xh, lag, seed)
+                .map(|(_, _, t)| t)
+                .expect("fwd threshold carries a value");
+            (te, thr)
+        };
+        let rev = |lag: usize, seed: u64| {
+            let te = transfer_entropy_lag(&xh, &yh, lag).expect("rev carries an estimate");
+            let thr = surrogate_stats_phase(&xh, &yh, lag, seed)
+                .map(|(_, _, t)| t)
+                .expect("rev threshold carries a value");
+            (te, thr)
+        };
+        let (f1, f1_thr) = fwd(1, SEED);
+        let (f10, f10_thr) = fwd(10, SEED ^ SEED_MUL.wrapping_mul(1));
+        let (r1, r1_thr) = rev(1, SEED ^ SEED_MUL.wrapping_mul(2));
+        let (r10, r10_thr) = rev(10, SEED ^ SEED_MUL.wrapping_mul(3));
+        println!(
+            "lag sweep Hénon c=0.2: fwd tau=1 TE {f1:.4e} thr {f1_thr:.4e}; fwd tau=10 TE {f10:.4e} thr {f10_thr:.4e}; rev tau=1 TE {r1:.4e} thr {r1_thr:.4e}; rev tau=10 TE {r10:.4e} thr {r10_thr:.4e}"
+        );
+        assert!(
+            f1 > f1_thr,
+            "lag sweep: the true direction must hold the arrow at the coupling lag tau=1"
+        );
+        assert!(
+            f10 <= f10_thr,
+            "lag sweep: the true direction must turn silent past the coupling horizon (tau=10)"
+        );
+        assert!(
+            r10 <= r10_thr,
+            "lag sweep: the reverse must stay silent at tau=10"
+        );
+        assert!(
+            r1 < f1,
+            "lag sweep: the reverse must measure below the forward at the coupling lag — directionality"
+        );
+    }
+
+    #[test]
+    #[ignore = "FN-bias quantification n=300 vs n=500 — heavy, runs in te-gate.yml"]
+    fn gate_fn_bias_n300_vs_n500_quantified() {
+        const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+        let mut rng = SEED;
+        let measure = |n: usize, rng: &mut u64| -> (usize, usize) {
+            let mut found = 0usize;
+            let mut meas = 0usize;
+            for t in 0..10 {
+                let seed = SEED ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+                let a = gate_ar1(n, 0.5, rng);
+                let b: Vec<f32> = (0..a.len())
+                    .map(|i| {
+                        if i == 0 {
+                            gate_rng(rng) as f32
+                        } else {
+                            (0.9 * a[i - 1] as f64 + (gate_rng(rng) * 0.2 - 0.1)) as f32
+                        }
+                    })
+                    .collect();
+                if let (Some(te), Some((_, _, thr))) = (
+                    transfer_entropy_lag(&b, &a, 0),
+                    surrogate_stats_phase(&b, &a, 0, seed),
+                ) {
+                    meas += 1;
+                    if te > thr {
+                        found += 1;
+                    }
+                }
+            }
+            (found, meas)
+        };
+        let (f300, m300) = measure(300, &mut rng);
+        let (f500, m500) = measure(500, &mut rng);
+        assert_eq!(
+            m300, 10,
+            "FN gate: {m300} of 10 measurable at n = 300 — the estimator collapsed"
+        );
+        assert_eq!(
+            m500, 10,
+            "FN gate: {m500} of 10 measurable at n = 500 — the estimator collapsed"
+        );
+        println!(
+            "residual FN bias (scalar estimator, AR(1) phi=0.5 driver, c=0.9, noise 0.1): n = 300 {f300}/10 found, n = 500 {f500}/10 found"
+        );
+    }
+
     fn gate_ar1_sine(n: usize, phi: f64, period: f64, rng: &mut u64) -> Vec<f32> {
         let mut v = Vec::with_capacity(n);
         let mut x = 0.0f64;

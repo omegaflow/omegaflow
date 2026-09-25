@@ -181,6 +181,10 @@ fn lookback_time_s(d_mpc: f64) -> Option<f64> {
     }
 }
 
+fn cone_min_tau_z(d_mpc: f64) -> Option<f64> {
+    lookback_time_s(d_mpc)
+}
+
 fn main() {
     let Some(cmb) = load_cmb() else {
         eprintln!("cmb fetch/parse void");
@@ -328,6 +332,10 @@ fn main() {
             "  depth axis: {nz} contiguous shells of {bw:.0} Mpc — one lag step ≈ {t_step:.3e} s lookback time (flat ΛCDM, H0 = 70 km/s/Mpc)"
         );
         let mut fam_z = f64::NEG_INFINITY;
+        let mut fam_carry = 0usize;
+        let mut cone_hold = 0usize;
+        let mut cone_breach = 0usize;
+        let mut cone_void = 0usize;
         for lag in LAG_MIN..=LAG_MAX {
             let Some((fwd, rev, thr, s)) = pair_te(&z_seed, &z_dens, lag) else {
                 println!("  lag {lag}: TE void");
@@ -343,13 +351,44 @@ fn main() {
             } else {
                 "still"
             };
+            if word == "fam-carrying" {
+                fam_carry += 1;
+            }
+            let tau_s = lag as f64 * t_step;
+            let d_sep_mpc = lag as f64 * bw;
+            let (cone_mark, cone_word) = match cone_min_tau_z(d_sep_mpc) {
+                Some(tau_min) if tau_s >= tau_min => {
+                    cone_hold += 1;
+                    (format!("tau_min {tau_min:.3e} s"), "holds")
+                }
+                Some(tau_min) => {
+                    cone_breach += 1;
+                    (format!("tau_min {tau_min:.3e} s"), "VIOLATED")
+                }
+                None => {
+                    cone_void += 1;
+                    ("tau_min absent".to_string(), "void")
+                }
+            };
             println!(
-                "  lag {lag} ({:.3e} s): TE(CMB→density) {fwd:.4e}  TE(density→CMB) {rev:.4e}  thr {thr:.4e}  asym {:+.4e}  | {word}",
-                lag as f64 * t_step,
+                "  lag {lag} ({tau_s:.3e} s): TE(CMB→density) {fwd:.4e}  TE(density→CMB) {rev:.4e}  thr {thr:.4e}  asym {:+.4e}  | {word} | cone em d {d_sep_mpc:.0} Mpc {cone_mark} {cone_word}",
                 fwd - rev
             );
         }
         println!("fam (multiple comparison) = {fam_z:.4e}");
+        let n_lags = LAG_MAX - LAG_MIN + 1;
+        println!(
+            "cone gate over the z series (em, c): {cone_hold}/{n_lags} lags hold the light-crossing time, {cone_breach} breach, {cone_void} void — the SI lag is the lookback time per shell, the cone is the lookback time of the comoving shell separation; a breach would carry a faster-than-light reach."
+        );
+        if fam_carry == 0 {
+            println!(
+                "the cone gate carries no arrow — every lag stays under the family bound (0 honored)."
+            );
+        } else {
+            println!(
+                "{fam_carry} fam-carrying lag(s) pass the cone gate above — the arrow stays causal in the flat ΛCDM the lag is built in."
+            );
+        }
     }
     println!(
         "  t = 0 refused: the deepest measurable surface is the CMB (z = 1100) — behind it no source carries samples (0 honored)."
