@@ -12,6 +12,24 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
+  minute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the GIC Bz-to-dBdt minute measurement
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT minute"
+            cargo run --release -p omegaflow-measure --bin bz_blatt_probe
+          } > "bz-blatt-minute.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-blatt-minute
+          path: bz-blatt-minute.txt
   hourly:
     runs-on: ubuntu-latest
     timeout-minutes: 420

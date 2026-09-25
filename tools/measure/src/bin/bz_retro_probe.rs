@@ -1,9 +1,15 @@
-use omegaflow::archivar::omni2::{COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
+use omegaflow::archivar::omni2::{COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
-use omegaflow::te::{phase_randomized_surrogate, surrogate_stats_phase, transfer_entropy_lag};
+use omegaflow::te::{
+    phase_randomized_surrogate, surrogate_stats_phase_n, transfer_entropy_lag,
+    transfer_entropy_lag_h,
+};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const N_SURR: usize = 100;
+const LAG_MAX_H: usize = 6;
+const KDE_FACTORS: [f64; 6] = [0.5, 0.75, 1.0, 1.5, 2.0, 3.0];
 const STATION_HAPI: &str =
     "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf";
 const FILL_NT: f64 = 99999.0;
@@ -341,6 +347,59 @@ fn bin_cells(series: &[(f64, f64)], t0: f64, dt: f64, n: usize) -> Vec<Option<f3
         .collect()
 }
 
+fn bin_cells_median(series: &[(f64, f64)], t0: f64, dt: f64, n: usize) -> Vec<Option<f32>> {
+    let mut cells: Vec<Vec<f64>> = vec![Vec::new(); n];
+    for &(t, v) in series {
+        let idx = ((t - t0) / dt).floor();
+        if idx < 0.0 || idx >= n as f64 {
+            continue;
+        }
+        cells[idx as usize].push(v);
+    }
+    cells
+        .into_iter()
+        .map(|mut c| {
+            if c.is_empty() {
+                return None;
+            }
+            c.sort_by(|a, b| a.total_cmp(b));
+            let m = c.len() / 2;
+            let med = if c.len() % 2 == 1 {
+                c[m]
+            } else {
+                0.5 * (c[m - 1] + c[m])
+            };
+            Some(med as f32)
+        })
+        .collect()
+}
+
+fn newell_from_cells(
+    by: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+) -> Vec<Option<f32>> {
+    by.iter()
+        .zip(bz.iter())
+        .zip(speed.iter())
+        .map(|((b, z), s)| match (b, z, s) {
+            (Some(by), Some(bz), Some(v)) => {
+                let bt = ((*by as f64) * (*by as f64) + (*bz as f64) * (*bz as f64)).sqrt();
+                let theta = (*by as f64).atan2(*bz as f64);
+                let val = (*v as f64).powf(4.0 / 3.0)
+                    * bt.powf(2.0 / 3.0)
+                    * (theta / 2.0).sin().abs().powf(8.0 / 3.0);
+                if val.is_finite() {
+                    Some(val as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
 fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     let mut xs = Vec::new();
     let mut ys = Vec::new();
@@ -356,13 +415,36 @@ fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
 fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
     let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
     let mut vals = Vec::new();
-    for _ in 0..10 {
+    for _ in 0..N_SURR {
         let ys = phase_randomized_surrogate(from, &mut rng);
         if let Some(te) = transfer_entropy_lag(to, &ys, lag) {
             vals.push(te);
         }
     }
     vals
+}
+
+fn mean_plus_2sigma(vals: &[f64]) -> Option<f64> {
+    if vals.len() < 2 {
+        return None;
+    }
+    let m = vals.iter().sum::<f64>() / vals.len() as f64;
+    let var = vals.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / vals.len() as f64;
+    Some(m + 2.0 * var.sqrt())
+}
+
+fn te_h_null(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<(f64, f64)> {
+    let te = transfer_entropy_lag_h(x, y, lag, factor)?;
+    let mut rng = SURROGATE_SEED.wrapping_add(0x9e37_79b9_7f4a_7c15);
+    let mut vals = Vec::with_capacity(N_SURR);
+    for _ in 0..N_SURR {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(t) = transfer_entropy_lag_h(x, &ys, lag, factor) {
+            vals.push(t);
+        }
+    }
+    let thr = mean_plus_2sigma(&vals)?;
+    Some((te, thr))
 }
 
 fn family_bound(pairs: &[(&str, &str, &[f32], &[f32])], lags: &[usize]) -> f64 {
@@ -397,7 +479,7 @@ fn row(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &[usize], fam: 
         println!("{from:>12} → {to:<12} | no TE (n < 8)");
         return;
     };
-    match surrogate_stats_phase(to_s, from_s, lag, SURROGATE_SEED) {
+    match surrogate_stats_phase_n(to_s, from_s, lag, SURROGATE_SEED, N_SURR) {
         Some((mean, sd, thr)) => {
             let fam_v = if te > fam { "arrow" } else { "family bound" };
             println!(
@@ -470,6 +552,11 @@ fn run_hourly(
     let omni_bz: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_BZ)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
+    let omni_by: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BY)
         .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     let omni_speed: Vec<(f64, f64)> = omni
@@ -558,24 +645,33 @@ fn run_hourly(
     );
 
     let bz = bin_cells(&omni_bz, t0, HOUR, n_cells);
+    let bz_med = bin_cells_median(&omni_bz, t0, HOUR, n_cells);
+    let by = bin_cells(&omni_by, t0, HOUR, n_cells);
     let speed = bin_cells(&omni_speed, t0, HOUR, n_cells);
     let density = bin_cells(&omni_density, t0, HOUR, n_cells);
+    let newell = newell_from_cells(&by, &bz, &speed);
     let dbdt = bin_cells(&dbdt_1h, t0, HOUR, n_cells);
 
     let (dbdt_bz, bz_dbdt) = pair_cells(&dbdt, &bz);
+    let (dbdt_bz_med, bz_med_dbdt) = pair_cells(&dbdt, &bz_med);
+    let (dbdt_newell, newell_dbdt) = pair_cells(&dbdt, &newell);
     let (dbdt_speed, speed_dbdt) = pair_cells(&dbdt, &speed);
     let (dbdt_density, density_dbdt) = pair_cells(&dbdt, &density);
     println!(
-        "paired hours: Bz {:<6} | Speed {:<6} | Density {:<6}",
+        "paired hours: Bz {:<6} | Bz_med {:<6} | Newell {:<6} | Speed {:<6} | Density {:<6}",
         bz_dbdt.len(),
+        bz_med_dbdt.len(),
+        newell_dbdt.len(),
         speed_dbdt.len(),
         density_dbdt.len()
     );
 
-    let lags: [usize; 2] = [0, 1];
-    let pairs: [(&str, &str, &[f32], &[f32]); 6] = [
+    let lags: Vec<usize> = (0..=LAG_MAX_H).collect();
+    let pairs: [(&str, &str, &[f32], &[f32]); 8] = [
         ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
         ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+        ("Bz_med", "dB/dt", &dbdt_bz_med, &bz_med_dbdt),
+        ("Newell", "dB/dt", &dbdt_newell, &newell_dbdt),
         ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
         ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
         ("Density", "dB/dt", &dbdt_density, &density_dbdt),
@@ -624,6 +720,28 @@ fn run_hourly(
             per_lag.len(),
             pool.len()
         );
+    }
+
+    println!();
+    println!("=== KDE-h sensitivity on Bz → dB/dt (bandwidth factor, n_surr = {N_SURR}) ===");
+    if let Some((lag, _)) = bz_best {
+        println!(
+            " {:>7} | {:>10} | {:>12} | {:>12} | verdict",
+            "factor", "TE(h)", "thr(h)", "excess"
+        );
+        for f in KDE_FACTORS {
+            match te_h_null(&dbdt_bz, &bz_dbdt, lag, f) {
+                Some((te, thr)) => println!(
+                    " {:>7.2} | {:>10.4e} | {:>12.4e} | {:>+12.4e} | {}",
+                    f,
+                    te,
+                    thr,
+                    te - thr,
+                    if te > thr { "arrow" } else { "still" }
+                ),
+                None => println!(" {:>7.2} | absent", f),
+            }
+        }
     }
 
     println!();
@@ -688,7 +806,7 @@ fn main() {
     println!("=== Bz retro probe — the driver over 60 years (storm ensemble) ===");
     println!("system time: {}", iso_utc(now));
     println!(
-        "Estimator: KDE-TE (Silverman), family threshold = max surrogate TE of the round (multiple-comparison correction), phase-randomized surrogates (f64 FFT, 10 realizations)."
+        "Estimator: KDE-TE (Silverman), family threshold = max surrogate TE of the round (multiple-comparison correction), phase-randomized surrogates (f64 FFT, {N_SURR} realizations)."
     );
 
     if hourly {
