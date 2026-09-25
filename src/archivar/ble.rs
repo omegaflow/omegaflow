@@ -776,14 +776,60 @@ fn split_gfdi_frames(stream: &[u8]) -> Vec<GfdiFrame<'_>> {
     frames
 }
 
-fn protobuf_payload(payload: &[u8]) -> Option<&[u8]> {
+fn protobuf_declared_len(payload: &[u8]) -> Option<usize> {
     if payload.len() < GFDI_PROTO_HEADER {
         return None;
     }
-    let len = u32::from_le_bytes(payload[10..14].try_into().ok()?);
-    let available = &payload[GFDI_PROTO_HEADER..];
-    let take = usize::try_from(len).ok()?.min(available.len());
-    Some(&available[..take])
+    usize::try_from(u32::from_le_bytes(payload[10..14].try_into().ok()?)).ok()
+}
+
+fn protobuf_payload(payload: &[u8]) -> Option<&[u8]> {
+    let declared = protobuf_declared_len(payload)?;
+    payload.get(GFDI_PROTO_HEADER..)?.get(..declared)
+}
+
+struct GfdiReassembler {
+    declared: Option<usize>,
+    body: Vec<u8>,
+}
+
+impl GfdiReassembler {
+    fn new() -> GfdiReassembler {
+        GfdiReassembler {
+            declared: None,
+            body: Vec::new(),
+        }
+    }
+
+    fn reset(&mut self) {
+        self.declared = None;
+        self.body.clear();
+    }
+
+    fn push(&mut self, payload: &[u8]) -> Option<Vec<u8>> {
+        match self.declared {
+            None => {
+                if let Some(proto) = protobuf_payload(payload) {
+                    return Some(proto.to_vec());
+                }
+                let declared = protobuf_declared_len(payload)?;
+                self.declared = Some(declared);
+                self.body
+                    .extend_from_slice(payload.get(GFDI_PROTO_HEADER..)?);
+                None
+            }
+            Some(declared) => {
+                self.body
+                    .extend_from_slice(payload.get(GFDI_PROTO_HEADER..)?);
+                if self.body.len() < declared {
+                    return None;
+                }
+                let complete = self.body[..declared].to_vec();
+                self.reset();
+                Some(complete)
+            }
+        }
+    }
 }
 
 struct ProtoReader<'a> {
@@ -862,16 +908,18 @@ fn push_record(out: &mut Vec<(String, f64, Option<f64>)>, name: &str, raw: u64) 
 
 fn gfdi_records(payload: &[u8]) -> Vec<(String, f64, Option<f64>)> {
     let mut out = Vec::new();
+    let mut reassembler = GfdiReassembler::new();
     for frame in split_gfdi_frames(payload) {
         if frame.msg_type != GFDI_TYPE_PROTOBUF_REQUEST
             && frame.msg_type != GFDI_TYPE_PROTOBUF_RESPONSE
         {
+            reassembler.reset();
             continue;
         }
-        let Some(proto) = protobuf_payload(frame.payload) else {
+        let Some(proto) = reassembler.push(frame.payload) else {
             continue;
         };
-        filesync_records(proto, &mut out);
+        filesync_records(&proto, &mut out);
     }
     out
 }
@@ -1629,8 +1677,18 @@ mod tests {
         gfdi_frame(msg_type, &payload)
     }
 
+    fn protobuf_chunk(msg_type: u16, declared: usize, body: &[u8]) -> Vec<u8> {
+        let mut payload = Vec::with_capacity(GFDI_PROTO_HEADER + body.len());
+        payload.extend_from_slice(&0x2Au16.to_le_bytes());
+        payload.extend_from_slice(&0u32.to_le_bytes());
+        payload.extend_from_slice(&(declared as u32).to_le_bytes());
+        payload.extend_from_slice(&(declared as u32).to_le_bytes());
+        payload.extend_from_slice(body);
+        gfdi_frame(msg_type, &payload)
+    }
+
     const FILE_LIST_RESPONSE_PROTO: [u8; 18] = [
-        0xDA, 0x02, 0x10, 0x52, 0x0E, 0x18, 0xC9, 0x87, 0x02, 0x22, 0x08, 0x18, 0xB4, 0x24, 0x28,
+        0xDA, 0x02, 0x0F, 0x52, 0x0D, 0x18, 0xC9, 0x87, 0x02, 0x22, 0x07, 0x18, 0xB4, 0x24, 0x28,
         0xF4, 0x86, 0x02,
     ];
 
@@ -1699,6 +1757,47 @@ mod tests {
     fn gfdi_records_reads_a_5044_response_frame() {
         let records = gfdi_records(&protobuf_frame(5044, &FILE_LIST_RESPONSE_PROTO));
         assert_eq!(records.len(), 3);
+    }
+
+    #[test]
+    fn gfdi_records_reassembles_a_message_split_across_two_frames() {
+        let proto = FILE_LIST_RESPONSE_PROTO;
+        let split = 10usize;
+        let mut stream = protobuf_chunk(5043, proto.len(), &proto[..split]);
+        stream.extend_from_slice(&protobuf_chunk(5043, proto.len(), &proto[split..]));
+        assert_eq!(
+            gfdi_records(&stream),
+            vec![
+                ("gfdi.list_response.next_page_id".to_string(), 33737.0, None),
+                ("gfdi.file.size".to_string(), 4660.0, None),
+                ("gfdi.file.page_id".to_string(), 33652.0, None),
+            ]
+        );
+    }
+
+    #[test]
+    fn gfdi_records_reassembles_a_message_split_across_three_frames() {
+        let proto = FILE_LIST_RESPONSE_PROTO;
+        let mut stream = protobuf_chunk(5044, proto.len(), &proto[..7]);
+        stream.extend_from_slice(&protobuf_chunk(5044, proto.len(), &proto[7..13]));
+        stream.extend_from_slice(&protobuf_chunk(5044, proto.len(), &proto[13..]));
+        assert_eq!(gfdi_records(&stream).len(), 3);
+    }
+
+    #[test]
+    fn gfdi_records_leaves_a_truncated_message_absent() {
+        let proto = FILE_LIST_RESPONSE_PROTO;
+        let stream = protobuf_chunk(5043, proto.len(), &proto[..10]);
+        assert!(gfdi_records(&stream).is_empty());
+    }
+
+    #[test]
+    fn gfdi_records_drops_a_reassembly_broken_by_a_non_protobuf_frame() {
+        let proto = FILE_LIST_RESPONSE_PROTO;
+        let mut stream = protobuf_chunk(5043, proto.len(), &proto[..10]);
+        stream.extend_from_slice(&gfdi_frame(5000, &[0xA0, 0x13, 0x00]));
+        stream.extend_from_slice(&protobuf_chunk(5043, proto.len(), &proto[10..]));
+        assert!(gfdi_records(&stream).is_empty());
     }
 
     #[test]
