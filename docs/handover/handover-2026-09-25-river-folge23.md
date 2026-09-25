@@ -49,7 +49,39 @@ eigenen Pfaden. Beginnt am HEAD `0a0ce96d8`, `origin/main` == HEAD.
 
 #### Stufe 1 — autonom
 
-keiner.
+### gic-causal-driver reifen (Paper-Bau; aus Future-Folge 113 getragen, 2026-09-25)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** — (Bau jetzt handlungsfähig; die schweren Läufe gehen nach CI)
+- **Lage:** (gemessen 2026-09-25 via zwei unabhängige Leser z.ai GLM-5.2/5.3 +
+  claude.ai Sonnet 5, Bedienweg
+  `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md`) — zwei unabhängige
+  Leser wählen `docs/paper/gic-causal-driver.md` und nennen
+  dieselbe schwächste Stelle: der Richtungskern („Bz ist der Treiber, nicht
+  umgekehrt") ruht auf der dünnsten Messung — Pfeil bei Lag 0 (Artefakt-Zone), der
+  korrekte Vorlauf (60 min) aus einem einzelnen, nicht mehr reproduzierbaren
+  22-h-Fenster, Richtung nur über die Asymmetrie-Ratios 1,09–1,20, beim eigenen
+  Benchmark für Rückwärts-Stille „NOT PASS" (gemessen 2026-09-25; Bot-Aussage =
+  Stimme, keine Messung). **Prior-Art** (`archive_search`, 2026-09-25): der
+  physikalische Schluss ist etabliert, nicht neu — Bz/VBs als dominanter sub-tägiger
+  Antrieb von GIC/dB/dt, Dichte ohne Treiberrolle (`10.1029/2007SW000374`,
+  `10.1109/seb-sdg57117.2023.10124640`), TE-Studie Johnson/Wing/Camporeale 2018
+  (`10.5194/angeo-36-945-2018`, Ziel Dst). Neu ist allein der **Messaufbau**
+  (TE → Boden-dB/dt/GIC mit family-wise Schranke); die strikte phasen-randomisierte
+  Null ist nicht neu (CAAFT, Johnson & Wing 2005) → Framing auf Messaufbau/Kanal.
+  `corona-heating-ladder`: Konfundierung seit Viall/Klimchuk + 2016er-Nullmodellen
+  im Feld; der spezifische Befund (Kaskade kollabiert unter Konditionierung, nur
+  304→131 stabil, schätzabhängig) so nicht in den Quellen. Vorbehalt: `--ads`
+  absent, `--arxiv` HTTP 406, openalex 429 — „nicht gefunden" ≠ „existiert nicht".
+- **Blockade:** keine — schwere Läufe gehören nach CI (nie lokal).
+- **Braucht:** die 7 Lücken schließen: (1) Lag-Sweep am Stundenkorn (−3…+6 h) mit
+  berichteten Lag-1-Zahlen, die Lag-0-Artefakt-Spannung mit Daten auflösen; (2)
+  Surrogat-Anzahl `fam` von 10 auf ≥100, Nachweis; (3) Bandbreiten-Robustheit der
+  KDE-h; (4) Treiber-Statistik Bz-Median vs. dB/dt-Maximum, min-Bz/Newell-Kopplung
+  prüfen; (5) Generalisierung mehr Stationen/Breiten (nur 2, beide Aurora-Zone),
+  dB/dt vs. GIC (der Titel verspricht Ströme); (6) Minutenkorn — Sturm-Ensemble aus
+  reproduzierbarem Minuten-Archiv; (7) Sprache — „causal" im Titel vs. nur
+  PCMCI-Kreuzcheck: durchführen oder Titel abschwächen, interne Systemsprache vor
+  Einreichung entfernen. Werkzeuge `archive_search`, `sfetch`, `ci_manage`.
 
 #### Stufe 2 — operator-gebunden
 
