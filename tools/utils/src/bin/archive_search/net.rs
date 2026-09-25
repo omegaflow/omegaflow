@@ -849,6 +849,90 @@ pub fn wayback_lines(query: &str, max: usize) -> Vec<String> {
     }
 }
 
+pub const CC_DEFAULT_INDEX: &str = "CC-MAIN-2024-51";
+
+fn cc_index(query: &str) -> Option<String> {
+    query.split_whitespace().find_map(|token| {
+        let (name, value) = token.split_once('=')?;
+        if name == "index" && !value.is_empty() {
+            Some(value.to_string())
+        } else {
+            None
+        }
+    })
+}
+
+fn cc_target(query: &str) -> String {
+    query
+        .split_whitespace()
+        .filter(|token| !token.starts_with("index="))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn cc_record_lines(body: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    for raw in body.lines() {
+        let line = raw.trim();
+        if line.is_empty() {
+            continue;
+        }
+        let Some(v) = json::parse(line) else {
+            continue;
+        };
+        let Some(url) = v.get("url").and_then(|u| u.as_str()) else {
+            continue;
+        };
+        if url.is_empty() {
+            continue;
+        }
+        let mut line = format!("url {url}");
+        if let Some(ts) = v.get("timestamp").and_then(|t| t.as_scalar_string()) {
+            line.push_str(&format!("\ttimestamp: {ts}"));
+        }
+        if let Some(status) = v.get("status").and_then(|s| s.as_scalar_string()) {
+            line.push_str(&format!("\tstatus: {status}"));
+        }
+        if let Some(mime) = v.get("mime").and_then(|m| m.as_str()) {
+            line.push_str(&format!("\tmime: {mime}"));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn cc_lines(query: &str, max: usize) -> Vec<String> {
+    let target = cc_target(query);
+    let index = match cc_index(query) {
+        Some(index) => index,
+        None => CC_DEFAULT_INDEX.to_string(),
+    };
+    let url = format!(
+        "https://index.commoncrawl.org/{}-index?url={}&output=json&limit={}",
+        index,
+        urlencode(&target),
+        max
+    );
+    match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => {
+            let out = cc_record_lines(&f.body, max);
+            if out.is_empty() {
+                vec![format!(
+                    "absent — the Common Crawl index carries no record: {}",
+                    target
+                )]
+            } else {
+                out
+            }
+        }
+        Some(f) => vec![format!("pending — Common Crawl HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 pub fn wayback_available_lines(url: &str) -> Vec<String> {
     let endpoint = format!(
         "https://archive.org/wayback/available?url={}",
@@ -1587,6 +1671,7 @@ const QUERY_MODES: &[&str] = &[
     "datacite",
     "zenodo",
     "wayback",
+    "cc",
     "pubmed",
     "europepmc",
     "psychporta",
@@ -1673,6 +1758,7 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         }
         "ntrs" => ntrs_lines(query, max),
         "wayback" => wayback_lines(query, max),
+        "cc" => cc_lines(query, max),
         "crossref" => crossref_lines(query, max),
         "wiki" => wiki_lines(query, max),
         "github" => {
@@ -1843,6 +1929,7 @@ mod tests {
             "datacite",
             "zenodo",
             "wayback",
+            "cc",
             "pubmed",
             "europepmc",
             "psychporta",
@@ -1869,6 +1956,56 @@ mod tests {
         let mut actual = QUERY_MODES.to_vec();
         actual.sort_unstable();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn cc_json_lines_carry_url_timestamp_status_mime() {
+        let body = concat!(
+            r#"{"urlkey":"org,example)/a","timestamp":"20241215000000","url":"https://example.org/a","mime":"text/html","status":"200"}"#,
+            "\n",
+            r#"{"urlkey":"org,example)/b","timestamp":"20241216000000","url":"https://example.org/b","mime":"application/pdf","status":200}"#,
+            "\n",
+            "",
+        );
+        assert_eq!(
+            cc_record_lines(body, 10),
+            vec![
+                "url https://example.org/a\ttimestamp: 20241215000000\tstatus: 200\tmime: text/html"
+                    .to_string(),
+                "url https://example.org/b\ttimestamp: 20241216000000\tstatus: 200\tmime: application/pdf"
+                    .to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn cc_json_lines_skip_unparsable_records_and_stop_at_max() {
+        let body = concat!(
+            "not json\n",
+            "{\"mime\":\"text/html\"}\n",
+            r#"{"url":"https://example.org/a"}"#,
+            "\n",
+            r#"{"url":"https://example.org/b"}"#,
+            "\n",
+        );
+        let out = cc_record_lines(body, 1);
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0], "url https://example.org/a");
+    }
+
+    #[test]
+    fn cc_index_token_overrides_the_default_and_leaves_the_target() {
+        assert_eq!(cc_index("example.org/*"), None);
+        assert_eq!(
+            cc_index("example.org/* index=CC-MAIN-2023-06"),
+            Some("CC-MAIN-2023-06".to_string())
+        );
+        assert_eq!(cc_index("example.org/* index="), None);
+        assert_eq!(
+            cc_target("example.org/* index=CC-MAIN-2023-06"),
+            "example.org/*"
+        );
+        assert_eq!(cc_target("example.org/*"), "example.org/*");
     }
 
     #[test]

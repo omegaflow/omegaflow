@@ -269,6 +269,7 @@ fn main() {
             "--ads" => mode = Mode::Net("ads"),
             "--ntrs" => mode = Mode::Net("ntrs"),
             "--wayback" => mode = Mode::Net("wayback"),
+            "--cc" => mode = Mode::Net("cc"),
             "--wayback-available" => mode = Mode::Net("wayback-available"),
             "--wayback-timemap" => mode = Mode::Net("wayback-timemap"),
             "--crossref" => mode = Mode::Net("crossref"),
@@ -568,7 +569,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --brave     Brave Search API (X-Subscription-Token); HTTP 402 while the free quota is spent — the keyless path is --mwmbl"
@@ -590,6 +591,10 @@ fn usage() {
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
     );
     eprintln!("  --sniff     reports magic bytes + sha256");
+    eprintln!(
+        "  --cc        Common Crawl index JSON-lines (index.commoncrawl.org/<index>-index?url=<url>&output=json); keyless, default index {}, override index=<id>",
+        net::CC_DEFAULT_INDEX
+    );
     eprintln!(
         "  --wayback-available  the Availability API closest snapshot (archive.org/wayback/available?url=<url>)"
     );
