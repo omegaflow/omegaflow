@@ -6,3 +6,4 @@ pub mod max30102;
 pub mod mux;
 pub mod nn;
 pub mod pwm;
+pub mod znsp;
