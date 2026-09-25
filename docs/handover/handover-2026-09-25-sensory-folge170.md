@@ -373,6 +373,24 @@ hier. Karte: `docs/concepts/tools-map.md`.
 - **Blockade:** Termin.
 - **Braucht:** am jeweiligen Datum die Epochen-Astrometrie bzw. die EC-Magnetfeld-Messung ernten.
 
+### Survey-Träger — Orphan-Faltung 2026-09-25
+
+- docs/surveys/axiom-gate-broken-null-control.md | offene Marker: 1 | die fünf Spec-Pendings nachziehen (max-T, Lag-Sweep, h, Fenster-Drift, Rest-FN) — `src/mathematikerin/te.rs`
+- docs/surveys/axiom-gate-cross-screening-tibet.md | offene Marker: 1 | dieselben Serien für Bordeaux/Aaretal/Japan ernten + `cross_te_screen`
+- docs/surveys/axiom-gate-depth-phase-echo-fleet.md | offene Marker: 1 | sP-corr-Gate aus der gemessenen Verteilung setzen + sechs Stationsazimute registrieren
+- docs/surveys/axiom-gate-h0-lines-register.md | offene Marker: 1 | 75-Quellen-Crossmatch fahren (`cepheid_parallax_weigh`)
+- docs/surveys/axiom-gate-solar-seconds-matrix.md | offene Marker: 1 | konditionale Sonde auf 211A→193A anwenden
+- docs/surveys/axiom-gate-neptune-rift-ephemerides.md | offene Marker: 2 | resolved — Neptun-Bau-Linie gebaut (`phi/sources.φ:3456`), kein offener Schritt
+- docs/surveys/axiom-gate-uranus-rift-ephemerides.md | offene Marker: 2 | resolved — Neptun-Bau-Linie gebaut, kein offener Schritt
+- docs/surveys/survey-2026-09-07-weberin-sonnensystem-kette.md | offene Marker: 7 | zweite Linie je Körper-Klasse ernten (`pallas`, `juno_asteroid`, `encke`, `dcom5`/`cometels`)
+- docs/surveys/survey-2026-09-07-weberin-thread-matrix.md | offene Marker: 22 | No-Actor-Lücken + Broker-Positionen (Lasair/ANTARES/Fink) kompilieren
+- docs/surveys/survey-2026-09-13-weberin-quellen.md | offene Marker: 42 | WWLLN-netcdf-Compiler + BPA-GIC-TSV-Compiler bauen (CDN-Manifestation)
+- docs/surveys/survey-2026-09-13-weberin-quellen-folge.md | offene Marker: 14 | im Re-Run konsolidiert; Restblockaden (IGETS/vDEC/ONC/TNS) account-/key-gebunden
+- docs/surveys/survey-2026-09-13-weberin-quellen-treffer.md | offene Marker: 9 | LSST-Fink 504 re-messen + HAWC/LHAASO als Quelle registrieren
+- docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md | offene Marker: 42 | YR1-Intermediate in `OMEGAFLOW_CA_BUNDLE` setzen + Fink/ALeRCE-Persistenz re-messen
+- docs/surveys/survey-2026-09-16-sonden-flotte.md | offene Marker: 4 | TNF-Serien-Arm (Codes 1–17) + LRO-Jahresfilter entfernen
+- docs/surveys/survey-ein-blatt-korona-heizung.md | offene Marker: 2 | ortsaufgelöster Aktive-Region-Pfad + Minuten-fam + Multi-Force-TE
+
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
