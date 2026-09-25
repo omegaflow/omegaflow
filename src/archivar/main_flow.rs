@@ -2338,6 +2338,7 @@ pub fn main_flow() {
                     | "dawn_odf"
                     | "pioneer10_odf"
                     | "voyager_odr"
+                    | "voyager_occlt"
                     | "pds3_ring_occ"
                     | "galileo_odr"
                     | "flac"

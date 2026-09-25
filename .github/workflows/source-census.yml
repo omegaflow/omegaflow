@@ -20,7 +20,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run the source latency census
         run: |
-          cargo run -p omegaflow-measure --release --bin source_latency_census
+          cargo run -p omegaflow-measure --release --bin source_latency_census -- --blocked
       - name: Commit the census report
         continue-on-error: true
         run: |
