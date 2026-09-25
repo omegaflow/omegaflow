@@ -3,7 +3,7 @@
   session: Mycelium-Folge 165
   class: handover
   date: 2026-09-25
-  sha256: 288eeb2fbc4d59fbc9b670658436920dcb6dbf2a819131ca62bbda09a82c840e
+  sha256: bd00fefb1c8478d91a26f2ad4eea48c3d374242e4e8f20718c328407abdf5c53
   status: live
 -->
 # Handover — Mycelium-Folge 165 (2026-09-25)
@@ -33,8 +33,16 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge164.md`.
   (Recovery-Konfiguration). Zweiter Riss: `_att` der NB-Dateien nennt Data General
   Eclipse (NSSD1395) vs Mediumband Univac 1108 (NSSD1394). Das NB-Asset liegt auf dem
   CDN (`voyager_occlt.bin`, 198391190 B, sha256 `860f6927…`).
-- **Blockade:** kein erreichbares Format-Dokument NSSD1394/1395; nominale OP2S-Konfiguration
-  (Tab. 3-5/A-6) fehlt; die OP2SF-Figuren sind Scans ohne Textlayer.
+- **Nachzug (2026-09-25 via grind-flash):** NB-Strom ist mit **IEEE-BE f32** konsistent
+  (Range `bytes=1016-5235`, sha256 `d31e532b…`: Längenprefixe `00 78`/`10 00` BE;
+  1024 Samples, min −19.7077 / max 22.9837, 0 NaN, kohärente I/Q-Hüllkurve → kein
+  DG/Eclipse-Exponentenlayout). Die `_att`-Formatdeklaration liegt im Tar und bleibt
+  `pending`. OP2S-Dokument gemessen (sha256 `e38b0481…`): „Sample Rate: 1 kHz" steht
+  **nur** in Tab. 6-4 unter „Maneuver Anomaly Recovery Plan" — die nominalen Tabellen
+  tragen keine NB-Rate → **Riss bleibt** (625/1875 Hz vs. Recovery-1 kHz).
+- **Blockade:** kein erreichbares Format-Dokument NSSD1394/1395; die `_att`-Deklaration
+  im Tar (`PSPA-00217_DD059825_13-NOV-80.tar`) ungemessen; die OP2SF-Figuren sind Scans
+  ohne Textlayer.
 - **Braucht:** die NB-f32-Repräsentation am echten Strom messen (DG-Eclipse vs IEEE-BE)
   und die nominale OP2S-Konfiguration lesen — `archive_search --playwright
   https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/DOCUMENT/OP2S_TXT.ASC`; danach
@@ -78,12 +86,13 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge164.md`.
 
 #### pre-cdn CI-Grün
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ci-check 36181028802` am HEAD.
-- **Lage:** (gemessen 2026-09-25 via ci_manage) `ci-check 36181028802` pending seit
-  19:39Z; die Läufe 36179718053/36179707243/36179902137/36180724745 cancelled
-  (`cancel-in-progress`); `clippy`/`test`-Reds in `2fc953b4a` geheilt.
+- **Trigger:** `ci-check 36188536478` am HEAD.
+- **Lage:** (gemessen 2026-09-25 via ci_manage list) `ci-check 36188536478` pending seit
+  20:54Z; `36181028802` nicht mehr in der Liste (letzte ~20 Läufe, CDN-Batch
+  3618842…/3618855…); `clippy`/`test`-Reds in `2fc953b4a` geheilt. `ci_manage view`
+  antwortet 403 (API-Rate-Limit) — der Watchdog-Snapshot ist der stehende Lesepfad.
 - **Blockade:** CI-Lauf.
-- **Braucht:** `ci_manage view 36181028802`; bei Rot `ci_manage log <id>`.
+- **Braucht:** Watchdog-Snapshot `/tmp/opencode/ci_status.md`; bei Rot `ci_manage log <id>`.
 
 #### Manifestations-Hashes (TOAR · Zenodo)
 - **Status:** wartend | **Bindung:** eigen
@@ -92,6 +101,20 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge164.md`.
   Stream-sha256 (nur md5 `86b37400…`); TOAR sha256 `8fd55224…` nur 5-Serien-Sample.
 - **Blockade:** Manifest-Lauf.
 - **Braucht:** CI-Full-Range-Manifest trägt die Hashes nach.
+
+#### sources-Repo — 5-min-Takt/I02 (Messlage)
+- **Status:** wartend | **Bindung:** dritter (privates `omegaflow/sources`)
+- **Trigger:** das `omegaflow/sources`-Repo ist lokal geklont/zugänglich.
+- **Lage:** (gemessen 2026-09-17 via `survey-2026-09-17-verlorene-diskussionen.md:128-132`)
+  lokal nicht geklont; offen, ob der 5-min-Takt (`refresh.yml`/I02) dort lebt und ob
+  die Python-I02-Behauptung noch stimmt. Betrifft die drei Doku-Stellen
+  `archivar-mathematikerin.md:22`, `pfeiler-der-architektur.md:155-158` und
+  `CI_REFRESH_S` (`src/archivar/fetch.rs:900`).
+- **Blockade:** Zugang zum privaten `omegaflow/sources`-Repo.
+- **Braucht:** `git clone github.com/omegaflow/sources` (shallow), dann im Klon die
+  Workflow-Datei `refresh.yml` mit `sgrep "cron\|refresh\|5"` prüfen + I02-Python;
+  den 5-min-Takt entweder bauen oder die drei Doku-Stellen + `CI_REFRESH_S` auf die
+  gemessene Wahrheit korrigieren.
 
 ### Operator
 
@@ -160,6 +183,24 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge164.md`.
   für CSES-02 umgebaut, Zugriffsprozedur ändert sich — „wait a few weeks".
 - **Blockade:** PI-seitige Prozedur.
 - **Braucht:** `archive_search --verdict https://limadou.ssdc.asi.it/`.
+
+## Träger (Prosadokumente) — orphan-docs-Fold (2026-09-25)
+
+Je Zeile ein trägerloses Dokument der Linie: `Pfad | offene Marker: N | nächster Schritt: <tool/file/url>`.
+Der Dateiname in dieser Übergabe ist der Träger (`register_lookup --orphan-docs`).
+Kein `git mv`: `mirror-research.md` ist abgeschlossene Referenz-Doktrin (Marker = 3×
+Statuswort „blocked" in der Ergebnistabelle); `fremde-parser-sammlungen.md` wird von
+der lebenden `survey-2026-09-16-sonden-flotte.md` referenziert (see-also + `:106`).
+
+- `docs/concepts/mirror-research.md` | offene Marker: 3 | nächster Schritt: keine — 3× Statuswort „blocked" in der Ergebnistabelle, abgeschlossene Messung.
+- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offene Marker: 5 | nächster Schritt: `phi/sources.φ` gegen `abk_dbdt_1h_*`/kegel/GIC/corona prüfen; fehlt → `pending` registrieren.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offene Marker: 10 | nächster Schritt: 55 undocumented `stale_pending` per `docs/SOURCE_PORT.md`   disponieren → Register-Disposition in `phi/sources.φ` oder `phi/dead_sources.φ`.
+- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offene Marker: 8 |   nächster Schritt: NOAA-NODD NRS bioacoustic — Harvest-Compiler in `tools/harvest/` bauen/registrieren.
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | offene Marker: 29 | nächster Schritt: `register_lookup --open` — Registerstand (Nachzug 2026-09-17) abgleichen, dann disponieren.
+- `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | offene Marker: 12 | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
+- `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offene Marker: 3 | nächster Schritt: `archive_search --verdict` für dods.wh.gov · osdr.nasa.gov · pskreporter.info · reversebeacon.net.
+- `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | offene Marker: 4 | nächster Schritt: keine — Verdikt final, „Gegenprobe offen — nicht meßpflichtig"; live referenziert von `survey-2026-09-16-sonden-flotte.md`.
+- `docs/surveys/survey-2026-09-17-sonden-request-only.md` | offene Marker: 15 | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`; Pioneer-ATDF dtype-12 `atdf.rs:503/636`.
 
 ## Abschluss
 
