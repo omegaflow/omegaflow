@@ -17,6 +17,17 @@ const GCMT_NDK_URL: &str =
     "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
 const KM_PER_DEG: f64 = 111.195;
 
+const SP_CORR_GATE: f64 = 0.78;
+
+const PILOT_AZIMUTHS: [(&str, f64); 6] = [
+    ("GE.EIL", 267.3),
+    ("KO.MDUB", 289.5),
+    ("IU.CHTO", 117.5),
+    ("TM.CMMT", 117.5),
+    ("II.PALK", 159.6),
+    ("IC.XAN", 82.9),
+];
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let search_end = match dp::arg_value(&args, "--end") {
@@ -60,9 +71,10 @@ fn main() {
         },
         None => MIN_DEPTH_KM,
     };
-    let sp_gate = dp::arg_value(&args, "--sp-gate")
-        .and_then(|v| v.parse::<f64>().ok())
-        .filter(|g| g.is_finite() && *g > 0.0);
+    let sp_gate = match dp::arg_value(&args, "--sp-gate") {
+        Some(v) => v.parse::<f64>().ok().filter(|g| g.is_finite() && *g > 0.0),
+        None => Some(SP_CORR_GATE),
+    };
     let kalibrier = args.iter().any(|a| a == "--kalibrier");
     let mww = args.iter().any(|a| a == "--mww");
 
@@ -93,6 +105,17 @@ fn main() {
     );
     println!("  never fed into the inversion as an ambiguous pick (660-edge gate untouched)");
     println!("match gate: catalog depth uncertainty ~ +/- {DEPTH_MATCH_GATE_KM} km");
+    let pilot_txt = PILOT_AZIMUTHS
+        .iter()
+        .map(|(name, az)| format!("{name} {az:.1}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    println!(
+        "station register (field pilot us10003re5, 36.5244 N / 70.3676 E, measured 2026-09-16): {pilot_txt} deg — six SNR-passing stations"
+    );
+    println!(
+        "sP corr gate {SP_CORR_GATE:.2} (lower quartile of the measured fleet distribution, n = 30); --sp-gate overrides it"
+    );
     println!();
 
     let cat_url = format!(
@@ -436,7 +459,7 @@ fn main() {
         }
         match sp_gate {
             None => println!(
-                "  dual-phase fit: pending (the sP corr gate is unset — measure the sP |corr| distribution first, then set --sp-gate)"
+                "  dual-phase fit: pending (an explicit --sp-gate carried no finite positive number — the measured default {SP_CORR_GATE:.2} was refused, never silently substituted)"
             ),
             Some(_) if dual_deltas.is_empty() => println!(
                 "  dual-phase fit: pending (no leg carried a weight — sigma absent or below the correlation gates)"

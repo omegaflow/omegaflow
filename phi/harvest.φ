@@ -200,7 +200,7 @@ idempotent true
 timeout 120
 note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; arm swot_l2_lr_ssh_compiler; run 35323857410 (2026-09-18) 7679 records, 307168 B sha256 2e646017…875422; asset present, roundtrip parses.
 
-asset fehlt
+asset present
 format tao_wnd_zonal
 tag data.pmel.noaa.gov
 arm tao_wnd_compiler
@@ -210,7 +210,7 @@ idempotent true
 timeout 120
 note TAO/TRITON pmelTaoDyW zonal wind WU_422 m s-1, QWS_5401<=2.5, daily 12:00Z, 1977-11-06→2026-09-02, direct+CoastWatch mirror.
 
-asset fehlt
+asset present
 format wwlln_th
 tag wwlln.net
 arm wwlln_compiler
@@ -220,7 +220,7 @@ idempotent true
 timeout 1800
 note WWLLN thunder-hours climatology 2025, 0.05° grid, annual sum of monthly thunder_hours (int16, Hours), sparse >0 cells; lat/lon from the netCDF coordinate arrays.
 
-asset fehlt
+asset present
 format bpa_gic
 tag transmission.bpa.gov
 arm bpa_gic_compiler
