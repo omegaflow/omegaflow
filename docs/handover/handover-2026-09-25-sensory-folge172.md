@@ -3,7 +3,7 @@
   session: Sensory-Folge 172
   class: handover
   date: 2026-09-25
-  sha256: 3581bbd9d3a1dde8d52a0dcb700f37a79b410c079af96702ccb36824b9fd36f1
+  sha256: d369b338f1bb794a0c2d87ca99e5e488a9b4e4fbb240a8631ae68a6c07384764
   status: live
 -->
 # Handover — Sensory-Folge 172 (2026-09-25)
@@ -245,6 +245,13 @@ hier. Karte: `docs/concepts/tools-map.md`.
 - **Lage:** (gemessen 2026-09-25 via `grind-pro`/`ci_manage`) `tnf_compiler.rs`/`maven_tnf_compiler.rs` auf Per-Code-PODF-Emission umgebaut; `maven-tnf-cdn 36188553358` **success**; LRO-Jahresfilter in `lro_trk_compiler.rs` entfernt. Der LRO-Register-Block ist stale: `phi/harvest.φ:100-105` trägt `args --year 2009` / `pattern …_2009` / `lro_trk_2009.bin`, `phi/sources.φ:8002-8009` nennt `lro_trk_2009.bin`.
 - **Blockade:** keine.
 - **Braucht:** LRO-Block `harvest.φ:100-105` nachziehen (`--year 2009` raus, `pattern` ohne `_2009`, `shard N`, `timeout 240`, `lro_trk_2009.bin`→`lro_trk.bin` in `sources.φ:8002-8009`); dann `lro-cdn.yml` dispatchen.
+
+#### te-gate-Dispatch — von der GitHub-API-Rate-Limit blockiert
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** das GitHub-API-Budget ist zurückgesetzt (Rate-Limit-Reset)
+- **Lage:** (gemessen 2026-09-25T21:38Z via `gh workflow run te-gate.yml --ref main`) HTTP **403 API rate limit exceeded** (user ID 295896184) — der manuelle Dispatch der neuen `lag-sweep`/`fn-bias`-Jobs ist blockiert; `ci-check` läuft per `on: push` (`src/**`) bereits aus dem Push.
+- **Blockade:** GitHub-API-Rate-Limit (extern).
+- **Braucht:** bei Budget-Reset `gh workflow run te-gate.yml`.
 
 #### Das eine Instrument — Anomalie offen (zweite Augenklasse fehlt)
 - **Status:** blockiert | **Bindung:** eigen
