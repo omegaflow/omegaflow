@@ -184,3 +184,34 @@ built platform. Facts below are from the platform comparison in
 
 No claim of a running Ox64 node is made: there is no separate Ox64
 documentation, and the port is not built.
+
+## ZNSP host skeleton — built 2026-09-25
+
+Measured (Sensory-Folge 168, 2026-09-25 via `research-max` + `grind-flash`):
+
+- The ZNSP host transport lives in `esp-zigbee-sdk` **`examples/esp_zigbee_host/components/`**
+  on branch **`release/v1.0`** — not in `components/esp_zigbee_host/`, and absent on
+  `main` (v2.x). Host log tag `ESP_ZNSP_FRAME`.
+- Wire: SLIP (`END 0xC0`, `ESC 0xDB`) around `[header 7 B][payload len B][CRC16-LE 2 B]`.
+  Header LE: `flags:u16` (`version` bits[3:0], `type` bits[7:4], reserved bits[15:8]),
+  `id:u16`, `sn:u8`, `len:u16`; `type` 0/1/2 = request/response/notify.
+  CRC = reflected poly `0x8408`, init `0x0000`, xorout `0xFFFF` (measured: `esp_rom_crc16_le`
+  wraps init and result in `~`; both upstream README captures confirm — `7×00 → 0xFFFF`).
+- Command IDs (network subset): INIT `0x0000`, START `0x0001`, FORMNETWORK `0x0004`,
+  PERMIT_JOINING `0x0005`, JOINNETWORK `0x0006`; error response id `0xFFFF`; status
+  byte `0x00` = success. FormNetwork notify payload 11 B (extPanId[8] + panId u16 +
+  channel u8), PermitJoining notify 1 B.
+- UART physical layer: 115200 8N1, no flow control. Host TX → H2 GPIO4, host RX → H2 GPIO5.
+
+Built:
+
+- `firmware/radiatorium-lib/src/znsp.rs` — `SlipDecoder`, `crc16_le`, `Frame` parse/encode,
+  `cmd`, `Status`, `NetworkMachine` (`Idle | InitSent | FormNetworkSent | Started |
+  Steering | Joined`), host tests (CRC + parse fixtures drawn from the upstream README
+  captures). Runs in `.github/workflows/esp32-firmware.yml:31`.
+- `firmware/radiatorium/src/bin/znsp_host.rs` — esp-hal UART1 binding; no radio, no hardware.
+- `.github/workflows/zigbee-host.yml` — builds the upstream `examples/esp_zigbee_host`
+  for esp32s3 (measured SHA `c9e2c3e12642c704096dfefe25b62212b47229ba`, ESP-IDF v5.3.2).
+
+`pending`: the `esp_zb_cfg_t` FORMNETWORK request payload is ABI-raw (`sizeof` unmeasured)
+— named as `NetworkMachine::form_network_payload_pending()`, never a guessed struct.

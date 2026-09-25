@@ -1,0 +1,43 @@
+name: zigbee-host
+
+concurrency:
+  group: zigbee-host-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    paths:
+      - '.github/workflows/zigbee-host.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/zigbee-host.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+    - name: Checkout esp-zigbee-sdk release/v1.0 (esp_zigbee_host lives here)
+      uses: actions/checkout@v7
+      with:
+        repository: espressif/esp-zigbee-sdk
+        ref: c9e2c3e12642c704096dfefe25b62212b47229ba
+        path: esp-zigbee-sdk
+    - name: Build esp_zigbee_host for esp32s3 (ESP-IDF v5.3.2)
+      uses: espressif/esp-idf-ci-action@v1
+      with:
+        esp_idf_version: v5.3.2
+        target: esp32s3
+        path: esp-zigbee-sdk/examples/esp_zigbee_host
+        command: idf.py set-target esp32s3 && idf.py build
+    - uses: actions/upload-artifact@v4
+      with:
+        name: zigbee-host-esp32s3
+        path: |
+          esp-zigbee-sdk/examples/esp_zigbee_host/build/esp_zigbee_host.elf
+          esp-zigbee-sdk/examples/esp_zigbee_host/build/esp_zigbee_host.bin
+          esp-zigbee-sdk/examples/esp_zigbee_host/build/bootloader/bootloader.bin
+          esp-zigbee-sdk/examples/esp_zigbee_host/build/partition_table/partition-table.bin
+        if-no-files-found: error
