@@ -1628,7 +1628,7 @@ mod tests {
         let msg = marshal_message(9, TYPE_METHOD_RETURN, fields, &body.buf);
         let parsed = parse_message(&msg).expect("valid reply");
         let (path, connected) =
-            device_by_address(&parsed.args, "AA:BB:CC:DD:EE:FF").expect("device resolved");
+            device_by_address(&parsed.args, "aa:bb:cc:dd:ee:ff").expect("device resolved");
         assert_eq!(path, "/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF");
         assert!(connected);
         let char_path = hr_measurement_path(&parsed.args, &path).expect("characteristic resolved");

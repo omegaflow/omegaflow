@@ -552,11 +552,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "reads the Garmin FR945 FIT named by OMEGAFLOW_FIT_SAMPLE"]
-    fn real_fit_sample_parses() {
+    #[ignore = "reads the operator's own FR945 FIT named by OMEGAFLOW_FIT_SAMPLE; the file stays on this machine, never CI, never CDN"]
+    fn fr945_fit_parses_local_only() {
         let path = std::env::var("OMEGAFLOW_FIT_SAMPLE")
-            .expect("OMEGAFLOW_FIT_SAMPLE names a Garmin FR945 .fit on disk");
-        let bytes = std::fs::read(&path).expect("read the FIT sample");
+            .expect("OMEGAFLOW_FIT_SAMPLE names the operator's own FR945 .fit on this machine");
+        let bytes = std::fs::read(&path).expect("read the FR945 FIT on this machine");
         let batch = parse_fit(&bytes).expect("the FR945 FIT passes the header and CRC gates");
         assert!(
             batch.iter().all(|(_, v, _)| v.is_finite()),
@@ -572,5 +572,18 @@ mod tests {
             "the FR945 hr message carries event timestamps as nn intervals"
         );
         assert!(nn.iter().all(|v| *v > 0.0), "every nn interval is positive");
+    }
+
+    #[test]
+    #[ignore = "reads the shared Garmin SDK sample named by OMEGAFLOW_FIT_FIXTURE; a separate file from the operator's FR945"]
+    fn garmin_sdk_sample_parses() {
+        let path = std::env::var("OMEGAFLOW_FIT_FIXTURE")
+            .expect("OMEGAFLOW_FIT_FIXTURE names the shared Garmin SDK .fit sample");
+        let bytes = std::fs::read(&path).expect("read the Garmin SDK FIT sample");
+        let batch = parse_fit(&bytes).expect("the SDK sample passes the header and CRC gates");
+        assert!(
+            batch.iter().all(|(_, v, _)| v.is_finite()),
+            "every emitted value is finite"
+        );
     }
 }
