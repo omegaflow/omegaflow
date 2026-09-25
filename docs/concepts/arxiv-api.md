@@ -2,7 +2,7 @@
   title: arXiv — Zugriffswege (API, OAI-PMH, Bulk)
   class: concept
   date: 2026-09-25
-  sha256: a621c580ea041b1d5ddc96031f31c7c89c01736145acdf16d141ae5638e7dfbd
+  sha256: 7edd1e65f21988e8e5ee9226795f56e9287460168f858f9bd8c5d26883898362
   status: live
   see-also: docs/concepts/tools-map.md docs/handover/handover-2026-09-25-mountain-folge165.md
 -->
@@ -48,10 +48,18 @@ Dieses Blatt hält die dokumentierten Wege; es behauptet keinen Live-Zustand.
 
 ## Beobachteter Zustand (omegaflow)
 
-- (gemessen 2026-09-25) der ungecachte Query-Pfad `export.arxiv.org/api/query`
-  antwortet mit **HTTP 406, leerem Body**, UA-unabhängig; gecachte Queries 200.
-- Die drei Doku-Seiten nennen **keine API-Migration/Deprecation** — der
-  dokumentierte Endpunkt bleibt bestehen. Der 406 ist damit Edge-/Anti-Crawl-
-  Verhalten, keine angekündigte Ablösung. Der belastbare Zweitkanal für den
-  Massen-Zugriff ist **OAI-PMH**.
-- Der offene Punkt `arxiv HTTP 406` lebt in der Mountain-Übergabe (folge164).
+- (gemessen 2026-09-25) die Query-API `export.arxiv.org/api/query` antwortet
+  **HTTP 406 genau dann, wenn `start + max_results > 2`** — unabhängig von
+  User-Agent, `http`/`https`, `sortBy`; reproduzierbar. `start=0&max_results=2`
+  → 200, `start=0&max_results=3` → 406, `start=2&max_results=2` → 406. Über die
+  Query-API sind also **nur die ersten zwei Treffer** abrufbar; Paging ist nicht
+  möglich.
+- Die drei Doku-Seiten nennen **keine API-Migration/Deprecation**. Der 406 ist
+  ein Edge-/WAF-Fenster, keine angekündigte Ablösung.
+- **OAI-PMH ist der offene Bulk-Weg:** `https://export.arxiv.org/oai2`
+  (`verb=Identify`, `verb=ListMetadataFormats`, `verb=ListRecords&metadataPrefix=arXiv&set=…`)
+  → HTTP 200, keine Fensterkappung.
+- Werkzeug: `archive_search --arxiv` klemmt das Fenster auf `ARXIV_QUERY_WINDOW = 2`
+  (`tools/utils/src/bin/archive_search/net.rs`) und benennt den Zustand; die alte
+  „server-side, fresh queries rejected"-Meldung war ungemessen und ist korrigiert.
+- Der offene Punkt `arxiv HTTP 406` lebt in `handover-2026-09-25-mountain-folge165.md`.

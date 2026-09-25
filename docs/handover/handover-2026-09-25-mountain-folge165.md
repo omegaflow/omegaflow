@@ -3,7 +3,7 @@
   session: Mountain-Folge 165
   class: handover
   date: 2026-09-25
-  sha256: 7aef4647d4cab42f16d78e610bcda1dbd6f416fa0427f05971355bcbef88ba46
+  sha256: 04b5b47010f6ee7ffb5d7ed90c859bb5e9e37ae3b483b41728f4b5f9fabc5089
   status: live
 -->
 # Handover — Mountain-Folge 165 (2026-09-25)
@@ -100,15 +100,20 @@ Trigger / Lage / Blockade / Braucht.
   `ephemeris_mariner10_compiler --ci-mode`, Release-Tag `ssd.jpl.nasa.gov-ephemeris`)
   und dispatchen.
 
-#### `arxiv` HTTP 406 — serverseitig
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** arXiv öffnet den ungecachten Query-Pfad **oder** gibt OAI-PMH als
-  Route frei
-- **Lage:** (gemessen 2026-09-25, dokumentiert in `docs/concepts/arxiv-api.md`)
-  406 leerer Body, UA-unabhängig, ungecacht; keine dokumentierte API-Migration —
-  `export.arxiv.org/api/query` bleibt, **OAI-PMH** ist der bevorzugte Bulk-Weg.
-- **Blockade:** arXiv-Edge
-- **Braucht:** Wiedervorlage beim Trigger; kein Code.
+#### arXiv OAI-PMH-Bulk-Weg bauen
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-25 via curl, dokumentiert in
+  `docs/concepts/arxiv-api.md`) die Query-API ist auf `start+max_results ≤ 2`
+  gekappt (darüber HTTP 406, UA-unabhängig, reproduzierbar); `archive_search
+  --arxiv` ist auf dieses Fenster geklemmt. **OAI-PMH**
+  (`https://export.arxiv.org/oai2`, `ListRecords&metadataPrefix=arXiv`) → HTTP
+  200, keine Kappung; `phi/pipeline/catalog/oai_arxiv.φ` (1300 Einträge) liegt
+  bereits, ist aber in `index.φ` als `descoped 0` geführt (kein Feld/URL).
+- **Blockade:** keine
+- **Braucht:** den OAI-PMH-Leser/-Harvest für arXiv bauen (Reader in
+  `tools/utils`/`archive_search` oder harvest-Compiler) **oder** die Route mit
+  Messung `descoped` stellen.
 
 ### Operator handelt
 
