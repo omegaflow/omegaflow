@@ -19,6 +19,8 @@ static ESTIMATOR: AtomicU8 = AtomicU8::new(1);
 static SECTION: AtomicUsize = AtomicUsize::new(0);
 static R_START: AtomicUsize = AtomicUsize::new(0);
 static R_END: AtomicUsize = AtomicUsize::new(usize::MAX);
+static T_START: AtomicUsize = AtomicUsize::new(0);
+static T_END: AtomicUsize = AtomicUsize::new(usize::MAX);
 static ANCHOR_ONLY: AtomicBool = AtomicBool::new(false);
 static GATE_ONLY: AtomicBool = AtomicBool::new(false);
 static T600_ONLY: AtomicBool = AtomicBool::new(false);
@@ -694,6 +696,27 @@ fn main() {
         R_START.store(a, Ordering::Relaxed);
         R_END.store(b, Ordering::Relaxed);
     }
+    let t_arg = args
+        .iter()
+        .position(|a| a == "--t")
+        .and_then(|p| args.get(p + 1))
+        .cloned();
+    if let Some(v) = t_arg {
+        let Some((a, b)) = v.split_once(':') else {
+            eprintln!("--t carries {v} — the split is written a:b (inclusive)");
+            std::process::exit(1);
+        };
+        let (Ok(a), Ok(b)) = (a.parse::<usize>(), b.parse::<usize>()) else {
+            eprintln!("--t carries {v} — not an a:b range");
+            std::process::exit(1);
+        };
+        if a > b {
+            eprintln!("--t carries {v} — a must not exceed b");
+            std::process::exit(1);
+        }
+        T_START.store(a, Ordering::Relaxed);
+        T_END.store(b, Ordering::Relaxed);
+    }
     if args.iter().any(|a| a == "--anchor") {
         ANCHOR_ONLY.store(true, Ordering::Relaxed);
     }
@@ -716,7 +739,7 @@ fn main() {
     let gate_n = GATE_N.load(Ordering::Relaxed);
     println!("=== PCMCI class benchmark — pcmci_links against the published suite ===");
     println!(
-        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} gate_n {gate_n} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} t600={} tscale={} r={}..={}",
+        "machine operating point: max_lag {max_lag} null_lag {} bins {bins} gate_n {gate_n} n_surr {} null {} block {} est {} knn {KNN} p_max {P_MAX} alpha {ALPHA} seed {SEED:#X} quick={quick} anchor={} gate={} t600={} tscale={} r={}..={} t={}..={}",
         NULL_LAG.load(Ordering::Relaxed),
         N_SURR.load(Ordering::Relaxed),
         match null_model() {
@@ -739,6 +762,8 @@ fn main() {
         TSCALE_ONLY.load(Ordering::Relaxed),
         R_START.load(Ordering::Relaxed),
         R_END.load(Ordering::Relaxed),
+        T_START.load(Ordering::Relaxed),
+        T_END.load(Ordering::Relaxed),
     );
 
     if ANCHOR_ONLY.load(Ordering::Relaxed) {
@@ -803,8 +828,13 @@ fn main() {
     }
     if TCURVE_ONLY.load(Ordering::Relaxed) {
         let set1 = [0.0f32, 0.2, 0.4, 0.6, 0.8, 0.9];
-        println!("    T-curve (the 400-700 decision band, step 50):");
+        let t_lo = T_START.load(Ordering::Relaxed);
+        let t_hi = T_END.load(Ordering::Relaxed);
+        println!("    T-curve (the 400-700 decision band, step 50) — shard T={t_lo}..={t_hi}:");
         for t in [400usize, 450, 500, 550, 600, 650, 700] {
+            if t < t_lo || t > t_hi {
+                continue;
+            }
             s60_point(
                 10,
                 t,
