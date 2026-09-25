@@ -2,6 +2,14 @@ decline no-physical-force
 url http://127.0.0.1:8080/schumann.json
 note Bild-Datei (superDARN-Banner), kein Messwert.
 
+decline aggregate-index
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_indices.bin
+note OMNI2 geomagnetic indices (AE/AL/AU/SYM-H/Dst) — derived aggregate indices, skalar positionslos; omni2_serie.bin keeps the direct solar-wind field.
+
+decline registry/katalog
+url https://github.com/omegaflow/sources/releases/download/dachs.fai.kz/fai_kz_obscore.bin
+note obscore catalog (dachs.fai.kz/tap) — observation metadata, no measurement field.
+
 decline no-physical-force
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; aus sources.φ gestrichen (keine ehrliche Kraft), mx/my/mz advective bleiben im Block.
@@ -632,11 +640,7 @@ note HTTP 404 — Endpoint weg.
 
 decline model-forecast
 url https://archive-api.open-meteo.com/v1/archive
-note open-meteo Archiv = Modell/Reanalyse.
-
-decline model-forecast
-url https://archive-api.open-meteo.com/v1/archive?latitude=
-note open-meteo Archiv = Modell/Reanalyse.
+note ERA5-Reanalyse, keine physikalische Messung (§8); geernteter Datensatz am CDN verwahrt (release archive-api.open-meteo.com, 90 assets) und als format reference registriert; Papiere blatt-kreuz-screening-*.
 
 decline file-inventory
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
@@ -1549,6 +1553,10 @@ note obscore/observation/plane/artifact — CAOM2-Archiv-Metadaten, kein Messwer
 decline no-physical-force
 url https://kp.gfz.de/
 note grind: grind_terrapulse_a.φ
+
+decline aggregate-index
+url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
+note GFZ Kp-Index (3h, geomagnetisch, skalar) — decline aggregate-index.
 
 decline catalog
 url https://ladsweb.modaps.eosdis.nasa.gov/api/v2/content/details
@@ -2861,6 +2869,10 @@ note api/uvindex/realtime is 404; the live successor api/uvlevel/?longitude=..&l
 decline no-physical-force
 url https://uvdata.arpansa.gov.au/api/uvindex/realtime`
 note api/uvindex/realtime is 404; the live successor api/uvlevel/?longitude=..&latitude=..&date=.. returns Measured/Forecast as UV index (dimensionless, §3.1) — no manifesting physical field.
+
+decline no-physical-force
+url https://uvdata.arpansa.gov.au/xml/uvvalues.xml
+note UV-Index (dimensionslos, §3.1) — decline no-physical-force.
 
 decline imagery
 url https://view.eumetsat.int/geoserver/wms
@@ -4351,6 +4363,10 @@ decline station-registry
 url https://service.iris.edu/fdsnws/station/1/query?network=YT&level=station&format=text&nodata=404
 note IRIS-FDSN-Stationsmetadaten (network=YT) — Registry ohne Messwert.
 
+decline aggregate-index
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+note SWPC Dst-Index (geomagnetisch, skalar, positionslos) — decline aggregate-index.
+
 decline model-forecast
 url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
 note SWPC-OVATION-Aurora-Vorhersage (Modell-Grid) — decline model-forecast.
@@ -4362,6 +4378,10 @@ note Kp-Index (geomagnetisch, skalar) — decline aggregate-index.
 decline model-forecast
 url https://services.swpc.noaa.gov/json/solar_regions.json
 note SWPC-Solarregions — Flare-Wahrscheinlichkeiten (Modell), kein Feldwert; Probe klassifizierte kein Feld.
+
+decline aggregate-index
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+note NOAA planetary-K-Index (geomagnetisch, skalar) — decline aggregate-index.
 
 decline station-registry
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
