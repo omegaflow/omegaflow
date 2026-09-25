@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-08-22
-  sha256: e4cceb3cab06b10c0b17ca09556519820fd305bdeb6cf1a9da56be1fcc4bc5d8
+  sha256: 18b6aad96a78173aee4965204f27458d607f8b872c871e197b4a3084ea943ff6
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, bulk speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates, per-lag thresholds, and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected (post-fix) surrogate null. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured direction of information flow — transfer entropy, directional but not an interventional causal proof; a PCMCI cross-check is a named future run (§5) — is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
+The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window. At the hourly grain, Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected surrogate null. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured information-flow direction — transfer entropy, directional not interventional; a PCMCI cross-check is a named future run — is the southward interplanetary field at sub-daily timescales; daily means do not carry it.
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the

@@ -3501,6 +3501,61 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "decaps_dr2_stars" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let tmp_path = content_cache(&format!("omegaflow_decaps_dr2_{src_idx}.bin"));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url, src_clone.ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("decaps_dr2 {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("decaps_dr2 {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    } else {
+                        eprintln!("decaps_dr2 {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(empty(true));
+                    }
+                });
+                continue;
+            }
             if archive.sources[i].format == "vlde" {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
