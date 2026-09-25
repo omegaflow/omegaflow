@@ -155,6 +155,20 @@ fn val_eff_grad(pre: vec4f, tm: vec4f, v: f32, d_mag: f32) -> f32 {
     return pre.w * exp(corr / max(tm.y, 1e-9)) / max(tm.y, 1e-9) / v;
 }
 
+fn force_absorption(ft: u32, alpha: f32, d_mag: f32) -> f32 {
+    if (ft == 1u || alpha <= 0.0) {
+        return 1.0;
+    }
+    return exp(-alpha * d_mag);
+}
+
+fn force_absorption_grad(ft: u32, alpha: f32, kp: f32, k: f32) -> f32 {
+    if (ft == 1u || alpha <= 0.0) {
+        return kp;
+    }
+    return kp - alpha * k;
+}
+
 fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
@@ -176,6 +190,7 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
         val_eff = val_eff / (z1 * z1 * z1 * z1);
     }
     var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    sk = sk * force_absorption(ft, f32(tm.w), d_mag);
     return vec2f(val_eff * sk, f32(ft));
 }
 
@@ -196,8 +211,10 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let k = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     let kp = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     let dhat = delta / max(d_mag, 1e-9);
+    let att = force_absorption(ft, f32(tm.w), d_mag);
+    let kp_damped = force_absorption_grad(ft, f32(tm.w), kp, k);
 
-    var g = -dhat * (vp_grad * k + val_eff * kp);
+    var g = -dhat * (vp_grad * k + val_eff * kp_damped) * att;
     return g;
 }
 
@@ -1075,5 +1092,57 @@ mod tests {
             ),
             0.0
         );
+    }
+
+    fn force_absorption(ft: u32, alpha: f32, d_mag: f32) -> f32 {
+        if ft == 1 || alpha <= 0.0 {
+            return 1.0;
+        }
+        (-alpha * d_mag).exp()
+    }
+
+    fn force_absorption_grad(ft: u32, alpha: f32, kp: f32, k: f32) -> f32 {
+        if ft == 1 || alpha <= 0.0 {
+            return kp;
+        }
+        kp - alpha * k
+    }
+
+    const ABSORBING_FORCES: [u32; 8] = [0, 2, 3, 4, 5, 6, 7, 8];
+
+    #[test]
+    fn force_absorption_gravity_never_absorbs() {
+        assert_eq!(force_absorption(1, 0.5, 1000.0), 1.0);
+        assert_eq!(force_absorption_grad(1, 0.5, 2.0, 3.0), 2.0);
+    }
+
+    #[test]
+    fn force_absorption_null_or_negative_alpha_is_no_damping() {
+        for ft in ABSORBING_FORCES {
+            assert_eq!(force_absorption(ft, 0.0, 1000.0), 1.0);
+            assert_eq!(force_absorption(ft, -0.1, 1000.0), 1.0);
+            assert_eq!(force_absorption_grad(ft, 0.0, 2.0, 3.0), 2.0);
+            assert_eq!(force_absorption_grad(ft, -0.1, 2.0, 3.0), 2.0);
+        }
+    }
+
+    #[test]
+    fn force_absorption_positive_alpha_damps_beer_lambert() {
+        for ft in ABSORBING_FORCES {
+            let att = force_absorption(ft, 0.1, 10.0);
+            assert!((att - (-1.0f32).exp()).abs() < 1e-6, "ft {ft}: {att}");
+            assert!(force_absorption(ft, 0.1, 0.0) - 1.0 < 1e-6);
+        }
+    }
+
+    #[test]
+    fn force_absorption_gradient_follows_the_product_rule() {
+        let kp = -2.0;
+        let k = 3.0;
+        let alpha = 0.1;
+        for ft in ABSORBING_FORCES {
+            let g = force_absorption_grad(ft, alpha, kp, k);
+            assert!((g - (kp - alpha * k)).abs() < 1e-6, "ft {ft}: {g}");
+        }
     }
 }
