@@ -1862,6 +1862,10 @@ decline literature
 url https://essd.copernicus.org/articles/14/4201/2022/
 note Weberin-Re-Run 2026-09-14: Belegpaper (BGR-Infraschall), keine Datenquelle.
 
+decline molecular
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject
+note NCBI E-utilities — Such-API über molekularbiologische Datenbanken (BioProject/GenBank/SRA); esearch liefert count+idlist (Suchresultat), kein physikalisches Feld.
+
 decline derived-model
 url https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
 note GloFAS-Reanalyse (EWDS cems-glofas-historical, 2026-09-16: HTTP 200, CDS-Key) — Modell-Reanalyse, kein gemessener Pegel. Trishuli-Flut-Peak bleibt pending auf der gemessenen Abwesenheit (IRIS/FDSN-Query 28.271/85.515 leer = 0 honored).

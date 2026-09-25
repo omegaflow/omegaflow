@@ -8539,6 +8539,15 @@ at earth
 ttl 604800
 field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/pds3_ring_occ.bin
+format pds3_ring_occ
+origin https://pds-rings.seti.org/holdings/volumes/VG_28xx/VG_2803/S_RINGS/EDITDATA/
+compiler tools/harvest/src/bin/pds3_ring_occ_compiler.rs
+at earth
+ttl 604800
+field signal_re pds3_ring_occ_signal_re inverse-square em count 604800 0.0 0.0
+field signal_im pds3_ring_occ_signal_im inverse-square em count 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/nh_rex_tnf_lunocc2012.csv
 origin https://pdssbn.astro.umd.edu/holdings/pds4-nh_rex:plutocruise_tnf-v1.0/tnf/lunocc2012.tnf
 compiler tools/harvest/src/bin/tnf_compiler.rs
