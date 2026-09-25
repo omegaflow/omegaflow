@@ -3,7 +3,7 @@
   session: Sensory-Folge 164
   class: handover
   date: 2026-09-25
-  sha256: a539ebeee1a00c2bf3be99c0739c786b68539e6f070e6dd291f965aacdf6a6b4
+  sha256: 420c9da8d5ca2ccaf4eb83c1c665821670a151cc0af6f6daa17e2fa0019355a3
   status: live
 -->
 # Handover — Sensory-Folge 164 (2026-09-25)
@@ -79,6 +79,29 @@ Die FR945 ist das persönliche Gerät des Operators. Ihre Kennung (MAC) und ihre
 - **Lage:** BL808-Port ungebaut; kein Wertmaß ohne Protokollwahl (gemessen 2026-09-23).
 - **Blockade:** Ankunft + Protokollwort.
 - **Braucht:** Ankunft abwarten; Rat für ZigBee-Protokoll, dann Daemon-Port.
+
+### Beat-Arbitrierung: funktionale Verifikation im Betrieb
+- **Status:** wartend | **Bindung:** eigen (hardware/versteckter Lauf; Arbitration in River `src/archivar/main_flow.rs`)
+- **Trigger:** ein Beat-Quellen-Satz ist am Host gesetzt (Serial-Gerät + `OMEGAFLOW_BLE_HR`/`FIT_DIR`)
+  und ein sichtbarer/hidden Lauf steht.
+- **Lage:** die Spawn-Arbitrierung steht (`src/archivar/main_flow.rs:504`) (gemessen 2026-09-24 via
+  sgrep), aber kein Lauf hat die Verdict-Zeile (`beat source: …`) gemessen erzeugt; `tests.rs` deckt
+  nur die reine Funktion.
+- **Blockade:** Heavy compute (Regel: CI, nie lokal) — eine Live-Messung braucht CI oder Operator-Wort.
+- **Braucht:** `cargo test` in CI (Funktion) bzw. ein versteckter Lauf mit zwei gesetzten Quellen,
+  der genau eine `beat source:`-Zeile zeigt.
+
+### 945-FIT-Datei (Onboard nur FIT/CIQ)
+- **Status:** wartend | **Bindung:** eigen (Ein-Quellen-Regel)
+- **Trigger:** ein Onboard-FIT/CIQ-Auslesepfad wird gemessen nötig.
+- **Lage:** der Host-Reader ist gemessen (gemessen 2026-09-24 via sgrep) — `parse_fit`
+  (`src/archivar/fit.rs:78`), verdrahtet in `main_flow.rs`; CIQ hat **keinen** Reader
+  (`sgrep -i ciq src tools` = leer); die Beat-Quellen-Arbitrierung liegt in River;
+  `OMEGAFLOW_SERIAL_IN` steht (`src/archivar/ingress.rs:4`, `ble.rs:931`).
+- **Blockade:** keine — bewusst `pending` (Ein-Quellen-Regel).
+- **Braucht:** erste Messung bleibt: wird ein Onboard/CIQ-Pfad gebraucht? Sonst bleibt
+  `FIT_DIR` der FIT-Kanal; BLE (`OMEGAFLOW_BLE_HR`) und Serial sind über die Arbitrierung
+  ausgeschlossen, solange FIT läuft.
 
 **LOCK — Projekt-Hardware**
 
