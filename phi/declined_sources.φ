@@ -326,9 +326,9 @@ decline redundant
 url https://almascience.nrao.edu/tap
 note ALMA NA TAP (ivo://jao.alma/tap_na) — Spiegel von ALMA EU. tap_index_alma_na.φ geerntet.
 
-decline catalog
-url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS
-note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+decline redistribution
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+s_ra,s_dec,target_name,proposal_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+note ALMA TAP obscore — © ALMA (ESO/NAOJ/NRAO), keine Weitergabe-Erlaubnis, kein CC-Statement (korpora_heim.φ:92-96). s_ra,s_dec,target_name,proposal_id 200; ra,dec,source_name,project_code 400 validateColumnNonAlias [ra]. → decline redistribution.
 
 decline aggregated-index
 url https://ams02.space/

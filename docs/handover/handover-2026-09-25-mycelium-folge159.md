@@ -3,7 +3,7 @@
   session: Mycelium-Folge 159
   class: handover
   date: 2026-09-25
-  sha256: 743072323dcc0685a8b22b1053a1bcd17f8240fa4a50c0facd9ceac92f6c79da
+  sha256: 93eb4ab0b41269f616cef7329b889027950618a12eba15fad622fd35438d7e00
   status: live
 -->
 # Handover — Mycelium-Folge 159 (2026-09-25)
@@ -96,6 +96,20 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
   `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md`.
 - **Blockade:** kein Browser-Target.
 - **Braucht:** Browser verbinden, dann Benchmark fahren.
+
+#### Port der 187 `gap`-Quellen nach `phi/sources.φ` (von Mountain getragen)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** nächster Dispatch.
+- **Lage:** (gemessen 2026-09-25 via `sgrep` über `phi/blocked_sources.φ`) die 5
+  Parser-Arme stehen; die `gap`-Direktiven zählen `unit-auto-detect` ×167,
+  `force-undetermined` ×16, `konverter` ×4 = 187. `votable-reader` (ALMA) entfiel mit
+  dem `decline redistribution`-Verdikt (2026-09-25); AEC trägt kein `gap` mehr
+  (`parser-def json`, JSON-API). Unit-Feld-Verdikte: 27 Felder
+  (`src/archivar/port.rs`/`units.rs`), 9 DROP (Metadatum/String-Enum), 2 außerhalb der
+  ~30 (`declination_deg`, `sz_mass_10e14_msun`, Quelle noch nicht portiert).
+- **Blockade:** keine.
+- **Braucht:** Port je Klassen-Träger `phi/blocked_sources.φ::gap:<token> ×N` nach
+  `phi/sources.φ` + CDN; die `gap`-Direktive fällt erst mit dem Port.
 
 ### Operator
 
