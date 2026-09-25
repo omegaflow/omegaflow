@@ -3,7 +3,7 @@
   session: Sensory-Folge 173
   class: handover
   date: 2026-09-25
-  sha256: cec83a9438c230d48e914996f3940fb7ab23cb1ced80707aec7564faa5c29c6e
+  sha256: d8fdfd88ce1f0873bb2a91e67822a1df44769328676883a467ece9603e0d31c6
   status: live
 -->
 # Handover — Sensory-Folge 173 (2026-09-25)
@@ -256,6 +256,13 @@ gemessen; ihr Ausgang steht im Zustand-Ledger, nicht als Kopie hier. Karte:
 - **Lage:** (gemessen 2026-09-25) die Pionier-Anomalie ist unter dem einen Instrument nicht entscheidbar; eine zweite Augenklasse (Winkel aus VLBI + Geschwindigkeit aus Doppler) fehlt.
 - **Blockade:** kein Instrument misst den vollen Phasenraum der Pioniere.
 - **Braucht:** eine zweite Augenklasse — VLBI-Beacon auf der nächsten interstellaren Sonde, von Tag eins zweikanalig.
+
+#### CI-Dispatch der Sensory-Workflows — GitHub-API-Rate-Limit
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** das GitHub-API-Budget ist zurückgesetzt (Rate-Limit-Reset)
+- **Lage:** (gemessen 2026-09-25T22:30Z) `gh workflow run laic-cdn.yml --ref main` → HTTP **403 API rate limit exceeded** (user ID 295896184); `ci_manage list` ebenso 403. Der frühere 21:38Z-Block war kurz frei (te-gate `36194535114` plaziert), das Budget ist erneut erschöpft. Die drei Sub-Workflows dieses Atoms (laic-cdn, gll-ck-cdn, meteo-cdn) sind **nicht** plaziert; die älteren Läufe (corona-conditional, bigbang-echo, depth-phase, cosmicflows, zigbee-host) liefen gegen `origin/main` **vor** diesem Atom.
+- **Blockade:** GitHub-API-Rate-Limit (extern).
+- **Braucht:** bei Budget-Reset `gh workflow run laic-cdn.yml --ref main`, `gll-ck-cdn.yml`, `meteo-cdn.yml`; die Ergebnisse einmalig lesen.
 
 ### Operator handelt
 
