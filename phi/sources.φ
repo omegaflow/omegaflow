@@ -8409,6 +8409,25 @@ at earth
 ttl 604800
 field delay_m galileo_ionocal_delay_m inverse-square em m 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_tnf.bin
+format cassini_tnf
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk234_trknav/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_tnf_compiler.rs
+at earth
+ttl 604800
+field ul_phase_cycles cassini_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/maven_tnf_t509166701_682590741.bin
 format maven_tnf
 origin https://pds-ppi.igpp.ucla.edu/data/maven-rose-raw/data/tnf/
