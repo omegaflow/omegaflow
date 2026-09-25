@@ -8,6 +8,7 @@ pub enum SpkError {
     Daf(DafError),
     NoCoverage { target: i32, center: i32, et: f64 },
     UnsupportedType(i32),
+    BadType1(&'static str),
     BadType2(&'static str),
 }
 
@@ -22,6 +23,7 @@ impl std::fmt::Display for SpkError {
                 )
             }
             SpkError::UnsupportedType(t) => write!(f, "unsupported SPK data type {t}"),
+            SpkError::BadType1(msg) => write!(f, "malformed Type 1 segment: {msg}"),
             SpkError::BadType2(msg) => write!(f, "malformed Type 2 segment: {msg}"),
         }
     }
@@ -51,12 +53,135 @@ pub struct SpkSegment {
 
 #[derive(Clone)]
 enum SpkPayload {
+    Type1(SpkType1),
     Type2(SpkType2),
     Type3(SpkType3),
     Type9(SpkType9),
     Type13(SpkType13),
     Type20(SpkType20),
     Unsupported,
+}
+
+#[derive(Clone)]
+struct SpkType1 {
+    file: DafFile,
+    start_addr: u32,
+    n_records: usize,
+    epochs: Vec<f64>,
+}
+
+impl SpkType1 {
+    fn from_segment(file: &DafFile, start_addr: u32, end_addr: u32) -> Result<Self, SpkError> {
+        let n_raw = file.read_doubles(end_addr, end_addr)?[0];
+        if !n_raw.is_finite() || n_raw < 1.0 {
+            return Err(SpkError::BadType1("record count absent"));
+        }
+        let n_records = n_raw as usize;
+        let expected_end = start_addr as u64 + 72 * n_records as u64 + n_records as u64 / 100;
+        if expected_end != end_addr as u64 {
+            return Err(SpkError::BadType1(
+                "segment size does not match record count",
+            ));
+        }
+        let epochs_start = start_addr + (71 * n_records) as u32;
+        let epochs = file.doubles_native(epochs_start, epochs_start + n_records as u32 - 1)?;
+        Ok(SpkType1 {
+            file: file.clone(),
+            start_addr,
+            n_records,
+            epochs,
+        })
+    }
+
+    fn evaluate(&self, et: f64) -> Result<[f64; 6], SpkError> {
+        let mut idx = self.n_records - 1;
+        for (i, &epoch) in self.epochs.iter().enumerate() {
+            if epoch >= et {
+                idx = i;
+                break;
+            }
+        }
+        let rec_start = self.start_addr + (idx * 71) as u32;
+        let record = self.file.doubles_native(rec_start, rec_start + 70)?;
+        type1_eval(et, &record)
+    }
+}
+
+fn type1_eval(et: f64, record: &[f64]) -> Result<[f64; 6], SpkError> {
+    if record.len() != 71 {
+        return Err(SpkError::BadType1("record is not 71 doubles"));
+    }
+    let tl = record[0];
+    let mut g = [0.0_f64; 15];
+    g.copy_from_slice(&record[1..16]);
+    let refpos = [record[16], record[18], record[20]];
+    let refvel = [record[17], record[19], record[21]];
+    let mda = |j: usize, axis: usize| record[22 + j + 15 * axis];
+
+    let kqmax1_raw = record[67];
+    if !kqmax1_raw.is_finite() || !(2.0..=17.0).contains(&kqmax1_raw) {
+        return Err(SpkError::BadType1("KQMAX1 outside [2, 17]"));
+    }
+    let kqmax1 = kqmax1_raw as usize;
+    let mut kq = [0usize; 3];
+    for (axis, slot) in kq.iter_mut().enumerate() {
+        let raw = record[68 + axis];
+        if !raw.is_finite() || !(0.0..=15.0).contains(&raw) {
+            return Err(SpkError::BadType1("integration order outside [0, 15]"));
+        }
+        *slot = raw as usize;
+    }
+
+    let delta = et - tl;
+    let mut tp = delta;
+    let mq2 = kqmax1 - 2;
+    let mut fc = [0.0_f64; 18];
+    fc[0] = 1.0;
+    let mut wc = [0.0_f64; 18];
+    for j in 1..=mq2 {
+        let gv = g[j - 1];
+        if gv == 0.0 {
+            return Err(SpkError::BadType1("stepsize vector contains zero"));
+        }
+        fc[j] = tp / gv;
+        wc[j - 1] = delta / gv;
+        tp = delta + gv;
+    }
+    let mut w = [0.0_f64; 18];
+    for j in 1..=kqmax1 {
+        w[j - 1] = 1.0 / j as f64;
+    }
+    let mut ks = kqmax1 - 1;
+    let mut ks1 = ks - 1;
+    let mut jx = 0usize;
+    while ks >= 2 {
+        jx += 1;
+        for j in 1..=jx {
+            w[j + ks - 1] = fc[j] * w[j + ks1 - 1] - wc[j - 1] * w[j + ks - 1];
+        }
+        ks = ks1;
+        ks1 -= 1;
+    }
+    let mut state = [0.0_f64; 6];
+    for axis in 0..3 {
+        let mut sum = 0.0;
+        for j in (1..=kq[axis]).rev() {
+            sum += mda(j - 1, axis) * w[j + ks - 1];
+        }
+        state[axis] = refpos[axis] + delta * (refvel[axis] + delta * sum);
+    }
+    for j in 1..=jx {
+        w[j + ks - 1] = fc[j] * w[j + ks1 - 1] - wc[j - 1] * w[j + ks - 1];
+    }
+    ks -= 1;
+    for axis in 0..3 {
+        let mut sum = 0.0;
+        for j in (1..=kq[axis]).rev() {
+            sum += mda(j - 1, axis) * w[j + ks - 1];
+        }
+        state[3 + axis] = refvel[axis] + delta * sum;
+    }
+    Ok(state)
 }
 
 #[derive(Clone)]
@@ -635,6 +760,7 @@ impl SpkFile {
             let end_addr = summary.integers[5] as u32;
 
             let payload = match data_type {
+                1 => SpkPayload::Type1(SpkType1::from_segment(&daf, start_addr, end_addr)?),
                 2 => SpkPayload::Type2(SpkType2::from_segment(&daf, start_addr, end_addr)?),
                 3 => SpkPayload::Type3(SpkType3::from_segment(&daf, start_addr, end_addr)?),
                 9 => SpkPayload::Type9(SpkType9::from_segment(&daf, start_addr, end_addr)?),
@@ -720,6 +846,7 @@ impl SpkFile {
     #[inline]
     fn eval_segment(seg: &SpkSegment, et: f64) -> Result<[f64; 6], SpkError> {
         match &seg.payload {
+            SpkPayload::Type1(t) => t.evaluate(et),
             SpkPayload::Type2(t) => t.evaluate(et),
             SpkPayload::Type3(t) => t.evaluate(et),
             SpkPayload::Type9(t) => t.evaluate(et),
@@ -883,5 +1010,63 @@ mod tests {
         let spk = SpkFile::from_daf(daf).expect("type 9 segment parses");
         assert_eq!(spk.segments().len(), 1);
         assert_eq!(spk.segments()[0].data_type, 9);
+    }
+
+    fn synthetic_type1_daf() -> Vec<u8> {
+        let put = |buf: &mut Vec<u8>, addr: u32, v: f64| {
+            let off = (addr as usize - 1) * DOUBLE_BYTES;
+            buf[off..off + DOUBLE_BYTES].copy_from_slice(&v.to_le_bytes());
+        };
+
+        let start_addr: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;
+        let end_addr: u32 = start_addr + 72;
+        let mut buf = vec![0u8; end_addr as usize * DOUBLE_BYTES];
+
+        buf[0..8].copy_from_slice(b"DAF/SPK ");
+        buf[8..12].copy_from_slice(&2u32.to_le_bytes());
+        buf[12..16].copy_from_slice(&6u32.to_le_bytes());
+        buf[76..80].copy_from_slice(&2u32.to_le_bytes());
+        buf[88..96].copy_from_slice(b"LTL-IEEE");
+
+        let sum_rec = RECORD_BYTES;
+        buf[sum_rec + 16..sum_rec + 24].copy_from_slice(&1.0f64.to_le_bytes());
+        buf[sum_rec + 24..sum_rec + 32].copy_from_slice(&0.0f64.to_le_bytes());
+        buf[sum_rec + 32..sum_rec + 40].copy_from_slice(&10.0f64.to_le_bytes());
+        let ints: [i32; 6] = [-28, 0, 1, 1, start_addr as i32, end_addr as i32];
+        for (k, v) in ints.iter().enumerate() {
+            let off = sum_rec + 24 + 2 * DOUBLE_BYTES + k * 4;
+            buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
+        }
+        let name_rec = 2 * RECORD_BYTES;
+        buf[name_rec..name_rec + 4].copy_from_slice(b"T1");
+
+        put(&mut buf, start_addr, 0.0);
+        for j in 0u32..15 {
+            put(&mut buf, start_addr + 1 + j, 1.0);
+        }
+        put(&mut buf, start_addr + 22, 2.0);
+        put(&mut buf, start_addr + 67, 2.0);
+        put(&mut buf, start_addr + 68, 1.0);
+        put(&mut buf, start_addr + 69, 1.0);
+        put(&mut buf, start_addr + 70, 1.0);
+        put(&mut buf, start_addr + 71, 10.0);
+        put(&mut buf, start_addr + 72, 1.0);
+        buf
+    }
+
+    #[test]
+    fn type1_single_record_taylor_expansion() {
+        let data = synthetic_type1_daf();
+        let daf = DafFile::from_data(data).expect("synthetic DAF parses");
+        let spk = SpkFile::from_daf(daf).expect("type 1 segment parses");
+        assert_eq!(spk.segments().len(), 1);
+        assert_eq!(spk.segments()[0].data_type, 1);
+        let s = spk.state(-28, 0, 3.0).expect("state at et=3");
+        assert!((s[0] - 9.0).abs() < 1e-12);
+        assert!(s[1].abs() < 1e-12);
+        assert!(s[2].abs() < 1e-12);
+        assert!((s[3] - 6.0).abs() < 1e-12);
+        assert!(s[4].abs() < 1e-12);
+        assert!(s[5].abs() < 1e-12);
     }
 }
