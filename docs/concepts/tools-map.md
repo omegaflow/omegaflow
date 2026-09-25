@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: d2bea5fb51812af033bd434b8d9b9b21c182a506c1104d0d98e58836b4defa08
+  sha256: 6193e7aa58a3ee83b8273586f74cf11d5fd98b45ad9dbae292d067721f76e0ea
   status: live
   see-also: AGENTS.md
 -->
@@ -253,6 +253,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `register_lookup --open` | 0,054 s | 659 Zeilen — Planungs-Pass |
 | `register_lookup --dropped [<line>] [--persist <n>]` | — | Diff-Gate: offene Punkte aus Übergabe N, die in N+1 fehlen, je Linie (kein Arg = alle); `--persist <n>` = nur Punkte, die ≥n Übergaben überleben, dann verschwinden |
 | `register_lookup --orphans` | — | owner-getaggte offene Register-Einträge, die keine lebende Übergabe des Owners hält: `ORPHAN_COMMITTED` (in HEAD) / `ORPHAN_UNCOMMITTED` (nur Arbeitsbaum); Klassen-Träger `φ/<register>::gap:<token> ×N` hält die Klasse, Count-Drift wird als `CARRIER_DRIFT` gemeldet; `NO_GAP` = parser-Block ohne erklärte Klasse (lauter Einzel-Orphan). Getrennt von `--dropped` (kein Aufenthalt vs. abgerissener Aufenthalt) |
+| `register_lookup --orphan-docs` | — | lebende Prosadokumente (`docs/{surveys,specs,auftrag,blatt,concepts,paper}`) mit offenen Markern, die keine lebende Übergabe nennt: `ORPHAN_DOC <path> <marker>`; der Commit-Gate `commit_check` (doc-carrier) blockt neue trägerlose Dokumente |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
@@ -271,7 +272,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sgrep` | Zeilensuche über `git ls-files`; `--all` incl. gitignorierter Dateien | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
-| `register_lookup` | `--open`/`--dropped`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff | lokal | P4 |
+| `register_lookup` | `--open`/`--dropped`/`--orphans`/`--orphan-docs`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff, Träger-Checks | lokal | P4 |
 | `open_points_check` | Pfad-Abgleich der offenen Punkte gegen den Arbeitsbaum (stale Punkt = genannter Pfad absent) | lokal | P4 |
 | `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |

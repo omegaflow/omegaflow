@@ -777,6 +777,100 @@ fn run_orphans(root: &Path) {
     );
 }
 
+fn live_handover_carrier_text(root: &Path) -> String {
+    let mut out = String::new();
+    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
+        let entries = match fs::read_dir(root.join(dir)) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !is_doc_name(&name) || parse_handover_name(&name).is_none() {
+                continue;
+            }
+            if let Ok(text) = fs::read_to_string(&path) {
+                out.push_str(&text.to_lowercase());
+                out.push('\n');
+            }
+        }
+    }
+    out
+}
+
+fn doc_carried(carrier: &str, path: &str) -> bool {
+    let base = match Path::new(path).file_name() {
+        Some(f) => f.to_string_lossy().to_lowercase(),
+        None => return false,
+    };
+    let stem = base.strip_suffix(".md").unwrap_or(&base);
+    (base.len() >= 8 && carrier.contains(&base))
+        || (stem.chars().count() >= 8 && carrier.contains(stem))
+}
+
+fn orphan_docs(root: &Path) -> Vec<String> {
+    let carrier = live_handover_carrier_text(root);
+    let mut out: Vec<String> = Vec::new();
+    for (dir, _) in REGISTER_DIRS {
+        if *dir == "docs/handover" {
+            continue;
+        }
+        let entries = match fs::read_dir(root.join(dir)) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+        paths.sort();
+        for path in paths {
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !is_doc_name(&name) {
+                continue;
+            }
+            let Ok(text) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let (_, _, status) = parse_header(&text);
+            if is_closed_status(&status) {
+                continue;
+            }
+            let path_str = path
+                .strip_prefix(root)
+                .unwrap_or(&path)
+                .to_string_lossy()
+                .to_string();
+            let mut opens: Vec<String> = Vec::new();
+            let mut released: Vec<String> = Vec::new();
+            scan_markers(&text, &path_str, "OPEN", &mut opens, &mut released);
+            if opens.is_empty() {
+                continue;
+            }
+            if !doc_carried(&carrier, &path_str) {
+                out.push(format!("ORPHAN_DOC\t{}\t{}", path_str, opens.len()));
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+fn run_orphan_docs(root: &Path) {
+    let lines = orphan_docs(root);
+    for line in &lines {
+        println!("{}", line);
+    }
+    println!(
+        "register_lookup --orphan-docs: {} orphan documents carry open markers and no live handover carrier",
+        lines.len()
+    );
+}
+
 fn parse_blocks(text: &str) -> Vec<(usize, Vec<(usize, &str)>)> {
     let mut blocks: Vec<(usize, Vec<(usize, &str)>)> = Vec::new();
     let mut current: Vec<(usize, &str)> = Vec::new();
@@ -2273,7 +2367,7 @@ fn run_dropped(args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -2290,6 +2384,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--orphans") {
         run_orphans(Path::new("."));
+        return;
+    }
+    if args.iter().any(|a| a == "--orphan-docs") {
+        run_orphan_docs(Path::new("."));
         return;
     }
     if args.iter().any(|a| a == "--history") {
@@ -3023,6 +3121,56 @@ mod tests {
                     .starts_with("ORPHAN_COMMITTED\tphi/blocked_sources.\u{3c6}:1\t[mountain]"))
         );
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn doc_carried_matches_basename_and_stem() {
+        let carrier = "see foo-bar-baz and alpha-beta notes";
+        assert!(doc_carried(carrier, "docs/specs/foo-bar-baz.md"));
+        assert!(doc_carried(carrier, "docs/specs/alpha-beta.md"));
+        assert!(!doc_carried(carrier, "docs/specs/nope.md"));
+    }
+
+    #[test]
+    fn orphan_docs_flags_uncarried_open_document() {
+        let base = env::temp_dir().join(format!("rl-orphandocs-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("docs/specs")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
+            "# h\n- carried: docs/specs/carried.md\n",
+        )
+        .unwrap();
+        let header = "<!--\n  title: t\n  class: ref\n  date: 2026-01-01\n  sha256: x\n-->\n";
+        fs::write(
+            base.join("docs/specs/carried.md"),
+            format!("{header}# c\nOffener Punkt: noch zu bauen\n"),
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/specs/lost.md"),
+            format!("{header}# l\nOffener Punkt: noch zu bauen\n"),
+        )
+        .unwrap();
+        let lines = orphan_docs(&base);
+        assert!(
+            lines
+                .iter()
+                .any(|l| l.starts_with("ORPHAN_DOC\tdocs/specs/lost.md\t")),
+            "{:?}",
+            lines
+        );
+        assert!(lines.iter().all(|l| !l.contains("carried.md")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn open_markers_match_the_gate_contract() {
+        assert_eq!(
+            OPEN_MARKERS.to_vec(),
+            omegaflow::commit_gate::DOC_OPEN_MARKERS.to_vec()
+        );
     }
 
     #[test]
