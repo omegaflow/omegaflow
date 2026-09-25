@@ -1,7 +1,6 @@
 use super::*;
 
 use std::io::{Read, Write};
-use std::os::unix::fs::MetadataExt;
 use std::os::unix::net::UnixStream;
 
 const BUS_SOCKET: &str = "/var/run/dbus/system_bus_socket";
@@ -40,7 +39,13 @@ const MAX_MESSAGE_BYTES: usize = 16 * 1024 * 1024;
 enum DbusValue {
     Byte(u8),
     Bool(bool),
+    I16(i16),
+    U16(u16),
+    I32(i32),
     U32(u32),
+    I64(i64),
+    U64(u64),
+    F64(f64),
     Str(String),
     Bytes(Vec<u8>),
     Array(Vec<DbusValue>),
@@ -100,6 +105,36 @@ impl<'a> Reader<'a> {
     fn u32(&mut self) -> Option<u32> {
         let s = self.take(4)?;
         Some(u32::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn i16(&mut self) -> Option<i16> {
+        let s = self.take(2)?;
+        Some(i16::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn u16(&mut self) -> Option<u16> {
+        let s = self.take(2)?;
+        Some(u16::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn i32(&mut self) -> Option<i32> {
+        let s = self.take(4)?;
+        Some(i32::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn i64(&mut self) -> Option<i64> {
+        let s = self.take(8)?;
+        Some(i64::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn u64(&mut self) -> Option<u64> {
+        let s = self.take(8)?;
+        Some(u64::from_le_bytes(s.try_into().ok()?))
+    }
+
+    fn f64(&mut self) -> Option<f64> {
+        let s = self.take(8)?;
+        Some(f64::from_le_bytes(s.try_into().ok()?))
     }
 
     fn str(&mut self) -> Option<String> {
@@ -164,6 +199,14 @@ impl Marshal {
     }
 }
 
+fn align_of(sig: &str) -> usize {
+    match sig.as_bytes().first() {
+        Some(b'y') | Some(b'g') => 1,
+        Some(b'd') | Some(b'x') | Some(b't') | Some(b'(') | Some(b'{') => 8,
+        _ => 4,
+    }
+}
+
 fn complete_type(sig: &str) -> Option<(&str, &str)> {
     let first = sig.as_bytes().first()?;
     match first {
@@ -208,9 +251,33 @@ fn unmarshal_one(r: &mut Reader<'_>, sig: &str) -> Option<DbusValue> {
             r.align(4)?;
             Some(DbusValue::Bool(r.u32()? != 0))
         }
+        "n" => {
+            r.align(2)?;
+            r.i16().map(DbusValue::I16)
+        }
+        "q" => {
+            r.align(2)?;
+            r.u16().map(DbusValue::U16)
+        }
+        "i" => {
+            r.align(4)?;
+            r.i32().map(DbusValue::I32)
+        }
         "u" => {
             r.align(4)?;
             r.u32().map(DbusValue::U32)
+        }
+        "x" => {
+            r.align(8)?;
+            r.i64().map(DbusValue::I64)
+        }
+        "t" => {
+            r.align(8)?;
+            r.u64().map(DbusValue::U64)
+        }
+        "d" => {
+            r.align(8)?;
+            r.f64().map(DbusValue::F64)
         }
         "s" | "o" => {
             r.align(4)?;
@@ -231,6 +298,7 @@ fn unmarshal_one(r: &mut Reader<'_>, sig: &str) -> Option<DbusValue> {
             r.align(4)?;
             let n = r.u32()? as usize;
             let inner = &sig[2..sig.len() - 1];
+            r.align(8)?;
             let limit = r.pos.checked_add(n)?;
             if limit > r.buf.len() {
                 return None;
@@ -253,6 +321,7 @@ fn unmarshal_one(r: &mut Reader<'_>, sig: &str) -> Option<DbusValue> {
             r.align(4)?;
             let n = r.u32()? as usize;
             let inner = &sig[2..sig.len() - 1];
+            r.align(8)?;
             let limit = r.pos.checked_add(n)?;
             if limit > r.buf.len() {
                 return None;
@@ -268,6 +337,7 @@ fn unmarshal_one(r: &mut Reader<'_>, sig: &str) -> Option<DbusValue> {
             r.align(4)?;
             let n = r.u32()? as usize;
             let inner = &sig[1..];
+            r.align(align_of(inner))?;
             let limit = r.pos.checked_add(n)?;
             if limit > r.buf.len() {
                 return None;
@@ -320,9 +390,6 @@ fn marshal_message(serial: u32, msg_type: u8, mut fields: Marshal, body: &[u8]) 
     msg.extend_from_slice(&(fields_len as u32).to_le_bytes());
     msg.extend_from_slice(&fields.buf);
     msg.extend_from_slice(body);
-    while msg.len() % 8 != 0 {
-        msg.push(0);
-    }
     msg
 }
 
@@ -449,10 +516,27 @@ fn read_auth_line(stream: &mut UnixStream, out: &mut Vec<u8>) -> Option<()> {
 }
 
 fn auth_line(uid: u32) -> Vec<u8> {
+    let identity = uid.to_string();
+    let mut hex = String::with_capacity(identity.len() * 2);
+    for byte in identity.bytes() {
+        hex.push_str(&format!("{byte:02x}"));
+    }
     let mut line = Vec::new();
     line.push(0);
-    line.extend_from_slice(format!("AUTH EXTERNAL {uid:x}\r\n").as_bytes());
+    line.extend_from_slice(format!("AUTH EXTERNAL {hex}\r\n").as_bytes());
     line
+}
+
+fn parse_status_uid(status: &str) -> Option<u32> {
+    status
+        .lines()
+        .find_map(|line| line.strip_prefix("Uid:"))
+        .and_then(|rest| rest.split_whitespace().next())
+        .and_then(|real| real.parse().ok())
+}
+
+fn process_uid() -> Option<u32> {
+    parse_status_uid(&std::fs::read_to_string("/proc/self/status").ok()?)
 }
 
 struct SystemBus {
@@ -463,7 +547,7 @@ struct SystemBus {
 impl SystemBus {
     fn open() -> Option<SystemBus> {
         let mut stream = UnixStream::connect(BUS_SOCKET).ok()?;
-        let uid = std::fs::metadata("/proc/self").ok()?.uid();
+        let uid = process_uid()?;
         stream.write_all(&auth_line(uid)).ok()?;
         let mut line = Vec::new();
         read_auth_line(&mut stream, &mut line)?;
@@ -480,7 +564,7 @@ impl SystemBus {
         let body_len = u32::from_le_bytes(head[4..8].try_into().ok()?) as usize;
         let fields_len = u32::from_le_bytes(head[12..16].try_into().ok()?) as usize;
         let header_end = (16usize + fields_len + 7) & !7usize;
-        let total = header_end.checked_add((body_len + 7) & !7usize)?;
+        let total = header_end.checked_add(body_len)?;
         if total > MAX_MESSAGE_BYTES {
             return None;
         }
@@ -1453,12 +1537,13 @@ mod tests {
         let dict_pos = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let dict_elems = body.buf.len();
         body.str("Value");
         body.buf.extend_from_slice(&[2, b'a', b'y', 0]);
         body.align(4);
         body.buf.extend_from_slice(&4u32.to_le_bytes());
         body.buf.extend_from_slice(&[0x10, 0x3C, 0x08, 0x00]);
-        let dict_len = (body.buf.len() - dict_pos - 4) as u32;
+        let dict_len = (body.buf.len() - dict_elems) as u32;
         body.buf[dict_pos..dict_pos + 4].copy_from_slice(&dict_len.to_le_bytes());
         body.align(4);
         body.buf.extend_from_slice(&0u32.to_le_bytes());
@@ -1486,16 +1571,19 @@ mod tests {
         let top = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let top_elems = body.buf.len();
         body.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF");
         body.align(4);
         let ifs = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let ifs_elems = body.buf.len();
         body.str(DEVICE_IFACE);
         body.align(4);
         let props = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let props_elems = body.buf.len();
         body.str("Address");
         body.buf.extend_from_slice(&[1, b's', 0]);
         body.str("F0:99:19:4E:0B:BF");
@@ -1504,9 +1592,9 @@ mod tests {
         body.buf.extend_from_slice(&[1, b'b', 0]);
         body.align(4);
         body.buf.extend_from_slice(&1u32.to_le_bytes());
-        let props_len = (body.buf.len() - props - 4) as u32;
+        let props_len = (body.buf.len() - props_elems) as u32;
         body.buf[props..props + 4].copy_from_slice(&props_len.to_le_bytes());
-        let ifs_len = (body.buf.len() - ifs - 4) as u32;
+        let ifs_len = (body.buf.len() - ifs_elems) as u32;
         body.buf[ifs..ifs + 4].copy_from_slice(&ifs_len.to_le_bytes());
         body.align(8);
         body.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015");
@@ -1514,19 +1602,21 @@ mod tests {
         let ifs2 = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let ifs2_elems = body.buf.len();
         body.str(GATT_CHAR_IFACE);
         body.align(4);
         let props2 = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
+        let props2_elems = body.buf.len();
         body.str("UUID");
         body.buf.extend_from_slice(&[1, b's', 0]);
         body.str(UUID_HR_MEASUREMENT);
-        let props2_len = (body.buf.len() - props2 - 4) as u32;
+        let props2_len = (body.buf.len() - props2_elems) as u32;
         body.buf[props2..props2 + 4].copy_from_slice(&props2_len.to_le_bytes());
-        let ifs2_len = (body.buf.len() - ifs2 - 4) as u32;
+        let ifs2_len = (body.buf.len() - ifs2_elems) as u32;
         body.buf[ifs2..ifs2 + 4].copy_from_slice(&ifs2_len.to_le_bytes());
-        let top_len = (body.buf.len() - top - 4) as u32;
+        let top_len = (body.buf.len() - top_elems) as u32;
         body.buf[top..top + 4].copy_from_slice(&top_len.to_le_bytes());
 
         let mut fields = Marshal::new(16);
@@ -1558,8 +1648,17 @@ mod tests {
 
     #[test]
     fn auth_line_encodes_the_uid_as_hex() {
-        assert_eq!(auth_line(1000), b"\0AUTH EXTERNAL 3e8\r\n");
-        assert_eq!(auth_line(0), b"\0AUTH EXTERNAL 0\r\n");
+        assert_eq!(auth_line(1000), b"\0AUTH EXTERNAL 31303030\r\n");
+        assert_eq!(auth_line(0), b"\0AUTH EXTERNAL 30\r\n");
+    }
+
+    #[test]
+    fn parse_status_uid_reads_the_real_uid() {
+        assert_eq!(
+            parse_status_uid("Name:\tcat\nUid:\t1000\t1000\t1000\t1000\n"),
+            Some(1000)
+        );
+        assert_eq!(parse_status_uid("Name:\tcat\nGid:\t1000\n"), None);
     }
 
     #[test]
