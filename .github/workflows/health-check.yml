@@ -93,24 +93,11 @@ jobs:
           "Pages health check failed. https://omegaflow.space/ may be down." \
           health
 
-  probe-full:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: |
-        mkdir -p probe-results
-        for f in phi/pipeline/stage/*_converted.φ; do
-          [ -f "$f" ] || continue
-          echo "=== probing $(basename $f) ==="
-          timeout 120 cargo run --release -- --probe "$f" 2>&1 | tail -3
-          fields=$(grep -c '^#.*= ' probe_output.φ 2>/dev/null || echo 0)
-          out="probe-results/$(basename $f .φ)_out.φ"
-          mv probe_output.φ "$out" 2>/dev/null
-          echo "  $fields fields"
-        done
-    - uses: actions/upload-artifact@v4
-      with:
-        name: probe-full-results
-        path: probe-results/
+# probe-full is descoped (2026-09-25). Finding: phi/pipeline/stage/*_converted.φ
+# is gitignored (.gitignore:67) and carries no tracked file — `git ls-files
+# phi/pipeline/stage` is empty, so a CI checkout has no stage/ and the glob
+# matched 0 files, while upload-artifact found no probe-results/ and still
+# reported green. The stage/ corpus chain runs local-only since the 2026-09-17
+# relocation (docs/SOURCE_PORT.md:24; the discovery chain is local,
+# docs/SOURCE_PORT.md:159), so no CI path carries the probe input. Never built,
+# not needed — no silent job.
