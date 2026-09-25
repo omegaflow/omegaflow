@@ -16,19 +16,24 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn --bin open_points_check
-    - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage --bin register_sort
+    # The session/analysis/tool crates are published whole: a session never
+    # builds locally, so every bin it may invoke must be on PATH. The 243
+    # measure/227 harvest probe/compiler bins stay CI-run bodies (not session
+    # tools) and are not published.
+    - run: cargo build --release --bins -p omegaflow-register -p omegaflow-utils -p omegaflow-gate
     - run: cargo build --release -p omegaflow-measure --bin text_review
-    - run: cargo build --release -p omegaflow-gate --bin commit_check
     - run: cargo build --release -p omegaflow-service
     - run: cargo build --release -p omegaflow --bin omegaflow --features browser_relay
+    - name: Tool list
+      run: |
+        echo "TOOLS=cdn_reconcile claim_reader commit_words concurrency_contract doc_audit home_scan number_audit open_points_check path_reference_scan pending_extract pii_exposure reference_verify register_lookup register_verify relations_consistency_probe repo_surveillance session_burn source_url_candidates git_safety bench sfetch probe_sweep hdf5_reader harvest_reg parquet_reader register_sort sread spk_split giveup_scan tdat_reader ci_manage las_reader bucket_litmus sgrep archive_search bloat_scan omega_sh zip_range_extract source_scanner grib2_reader opendap_reader netcdf_reader area_reconcile volume_builder commit_check livefeed_gate text_review omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify" >> "$GITHUB_ENV"
     - name: Write tools.manifest
       env:
         TOOLS_SHA: ${{ github.sha }}
       run: |
         {
           echo "git_sha=${TOOLS_SHA}"
-          for t in register_lookup session_burn open_points_check archive_search sgrep sfetch sread git_safety omega_sh ci_manage register_sort text_review commit_check omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify; do
+          for t in $TOOLS; do
             echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
           done
         } > tools.manifest
@@ -38,28 +43,6 @@ jobs:
       run: |
         gh release view tools-latest --repo omegaflow/omegaflow >/dev/null 2>&1 || \
           gh release create tools-latest --title tools-latest --generate-notes --repo omegaflow/omegaflow
-        gh release upload tools-latest \
-          target/release/register_lookup \
-          target/release/session_burn \
-          target/release/open_points_check \
-          target/release/archive_search \
-          target/release/sgrep \
-          target/release/sfetch \
-          target/release/sread \
-          target/release/git_safety \
-          target/release/omega_sh \
-          target/release/ci_manage \
-          target/release/register_sort \
-          target/release/text_review \
-          target/release/commit_check \
-          target/release/omegaflow \
-          target/release/smail \
-          target/release/smail_recv \
-          target/release/mail_watchdog \
-          target/release/mail_digest \
-          target/release/cds_watchdog \
-          target/release/job_dashboard \
-          target/release/job_monitor \
-          target/release/notes_notify \
-          tools.manifest \
-          --clobber --repo omegaflow/omegaflow
+        ARGS=""
+        for t in $TOOLS; do ARGS="$ARGS target/release/$t"; done
+        gh release upload tools-latest $ARGS tools.manifest --clobber --repo omegaflow/omegaflow
