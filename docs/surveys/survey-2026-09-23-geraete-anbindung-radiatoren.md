@@ -2,7 +2,7 @@
   title: Survey — Geräte-Anbindung: vollständige Oszillator-/Radiator-/Relais-Inventare (Stand 2026-09-23)
   class: survey
   date: 2026-09-23
-  sha256: 9fd178adf077c91b2e8fc5c616d6ff2a17b3d33c96e34eb3ff09e74a53c03334
+  sha256: 676559cd7c13621aec992043e3bdd57cb92ceca1080cbefed3319f192fe398d6
   status: live
   see-also: docs/surveys/survey-2026-09-20-browser-anbindung.md, AGENTS.md, docs/concepts/archivar-mathematikerin.md
 -->
@@ -161,8 +161,13 @@ Browser-/WebGL-/WebGPU-Fähigkeit gerätespezifisch **ungemessen** (nur SoC beka
 
 ## Google Pixel 9 — vollständiges Inventar
 
-Offizielle Google-Spec-Seite ist live retired, Wayback-Playback 429; Primärquelle
-`ungemessen`. Sensorliste aus GSM9/9aSPEC/Mirror-Snippets rekonstruiert.
+Offizielle Google-Spec-Seite ist live retired; die Wayback-Primärquelle ist gemessen
+(2026-09-25, `archive_search --playwright`, HTTP 200):
+`https://web.archive.org/web/20240901140915/https://store.google.com/us/product/pixel_9_specs?hl=en-US`.
+Der frühere 429 traf nur die 302-Weiterleitungs-Captures; der `?hl=en-US`-Zielpfad
+trägt die echten 200er-Snapshots. Die Sensorliste ist damit primär bestätigt
+(„Proximity sensor, Ambient light sensor, Accelerometer, Gyrometer, Magnetometer,
+Barometer").
 
 | Kanal | Typ | Spezifikation | Status |
 |---|---|---|---|
@@ -173,7 +178,7 @@ Offizielle Google-Spec-Seite ist live retired, Wayback-Playback 429; Primärquel
 | GNSS-Empfänger | Sensor/Relais | GPS L1+L5, GLONASS, Galileo, BDS, QZSS, NavIC | gemessen |
 | Kamera wide/ultrawide/front | Sensor | 50 MP OIS / 48 MP / 10,5 MP | gemessen |
 | Laser-AF (LDAF) | Sensor | single-zone | gemessen |
-| Mikrofone | Sensor | Anzahl Basis-P9 ung. | ungemessen |
+| Mikrofone | Sensor | **3** („Stereo speakers / 3 microphones") | gemessen (Primärquelle 2026-09-25) |
 | IR-Thermometer / UWB | Sensor/Relais | absent (nur Pro) | gemessen |
 | Android-`SensorManager`-Typen (Rotation-Vektor, Gravity, Step-Counter, …) | Sensor | derived/virtual | ungemessen |
 | Haptik-Motor | Radiator (kinetisch) | 1 Linear-Vibrator | gemessen |
@@ -186,11 +191,11 @@ Offizielle Google-Spec-Seite ist live retired, Wayback-Playback 429; Primärquel
 | Wi-Fi | Relais | 802.11 a/b/g/n/ac/6e/7 tri-band | gemessen |
 | Bluetooth | Relais | BT 5.3 (A2DP/LE/aptX HD) | gemessen |
 | NFC | Relais | 13,56 MHz | gemessen |
-| UWB | Relais | absent Basis (FCC-Familie: Riss) | Riss |
+| UWB | Relais | absent Basis (FCC-Familie: Riss); Primärquelle still zu UWB | Riss |
 | Cellular | Relais | 5G sub-6 + mmWave, Exynos 5400 | gemessen |
 | Satellit (SOS) | Relais | Notruf | gemessen |
 | USB / eSIM / Nano-SIM | Relais | USB-C 3.2, Dual-SIM | gemessen |
-| Thread / 802.15.4 | Relais | im FCC-Filing vorhanden; Modellzuordnung ung. | ungemessen |
+| Thread / 802.15.4 | Relais | im FCC-Filing vorhanden; Modellzuordnung ung.; Primärquelle still | ungemessen |
 | FM-Radio | Relais | „No" | absent |
 
 ## Dell XPS 13 9350 (Operator-Laptop) — vollständiges Inventar
@@ -342,6 +347,6 @@ gebauten `VagusTone`. **Gebaut (sensory-Folge 152, 2026-09-23):** `src/archivar/
 
 Chip-/FCC-Identitäten (945, Quest), Abtastraten (945-Sensoren), Quest-1-Firmware,
 WebGPU/Generic-Sensor am Quest-Gerät, Bigme-Beschleunigung/Näherung/Licht/Haptik/
-Browser/WebGPU, Pixel-Mikrofonanzahl + vollständige `SensorManager`-Liste +
-Thread-Zuordnung, Pixel-UWB (Riss). Nächste Schritte in den jeweiligen
-Inventar-Notizen (FCC übers E-Label; `dumpsys sensorservice`; Wayback-Playback).
+Browser/WebGPU, Pixel-`SensorManager`-Liste (nur am Gerät) + Thread-Zuordnung,
+Pixel-UWB (Riss). Nächste Schritte in den jeweiligen Inventar-Notizen (FCC übers
+E-Label; `dumpsys sensorservice`).
