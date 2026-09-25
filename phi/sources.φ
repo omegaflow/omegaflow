@@ -9547,13 +9547,14 @@ ra ra
 dec dec
 field jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
 
-url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
+url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
 format tap
 ttl 31536000
 at sun
 cmap .
 ra ra
 dec dec
+epoch epochmean mjd
 field mean_mag_g decaps_dr2_g_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_r decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_i decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
