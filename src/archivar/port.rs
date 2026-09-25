@@ -2519,15 +2519,24 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
             || src.format == "kernel_text"
             || src.format == "opendap"
             || src.format == "tar_gz_yaml"
+            || src
+                .extracts
+                .iter()
+                .any(|e| matches!(e, Extract::Rows { .. }))
         {
             continue;
         }
         if src.format == "reference" {
+            if clock_now_unix().is_some_and(|n| !clock_stale(&clock, &src.url, src.ttl, n)) {
+                fresh += 1;
+                continue;
+            }
             let bytes = match fetch_raw_bytes(&src.url, src.ttl) {
                 Some(b) => b,
                 None => {
                     eprintln!("ci-mode: {} reference fetch returned void", src.url);
                     report_anomaly("API Unreachable", &src.url, "reference fetch returned void");
+                    clock_record(&mut clock, &src.url, false);
                     dead += 1;
                     continue;
                 }
@@ -2544,6 +2553,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
                         &src.url,
                         &format!("measured {measured}, registered {pin}"),
                     );
+                    clock_record(&mut clock, &src.url, false);
                     dead += 1;
                     continue;
                 }
@@ -2560,9 +2570,11 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
             {
                 mirrored += 1;
                 reachable += 1;
+                clock_record(&mut clock, &src.url, true);
                 eprintln!("ci-mode: {} reference ok ({} B)", src.url, bytes.len());
             } else {
                 eprintln!("ci-mode: {} reference upload returned void", src.url);
+                clock_record(&mut clock, &src.url, false);
                 dead += 1;
             }
             let _ = std::fs::remove_file(&tmp_path);
