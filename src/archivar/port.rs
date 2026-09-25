@@ -798,7 +798,7 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
             None => "# recheck-live mechanical re-verification sweep over phi/sources.φ (live sources)"
                 .into(),
         },
-        "# Classes: key-void (key marker without .secrets.local) | drift-void (API drift — curation duty) | quiet-void (empty = truth) | refused (host answers but refuses body — alive, not dead) | broken (fetch void — host unreachable, dead candidate)".into(),
+        "# Classes: key-void (key marker absent in the environment) | drift-void (API drift — curation duty) | format-void (body format the sweep does not read — parser gap) | quiet-void (empty = truth) | refused (host answers 4xx/5xx — access state → phi/blocked_sources.φ ip-blocked/pending) | broken (fetch void — host unreachable, dead candidate)".into(),
     ];
     for f in findings.iter() {
         let line = format!("recheck {} {} — {}", f.url, f.class.as_str(), f.detail);

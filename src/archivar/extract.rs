@@ -1067,6 +1067,52 @@ fn key_or_constant(key: &str, row: &JsonVal) -> Option<f64> {
     }
 }
 
+fn tsv_cell(field: &str) -> JsonVal {
+    let trimmed = field.trim().trim_matches('"');
+    match trimmed.parse::<f64>() {
+        Ok(n) if n.is_finite() => JsonVal::Num(n),
+        _ => JsonVal::Str(trimmed.to_string()),
+    }
+}
+
+pub fn tsv_to_json(text: &str) -> Option<JsonVal> {
+    let lines: Vec<&str> = text
+        .lines()
+        .filter(|l| {
+            let t = l.trim();
+            !t.is_empty() && !t.starts_with('#')
+        })
+        .collect();
+    let header_line = match lines.first() {
+        Some(l) => l,
+        None => return None,
+    };
+    let headers: Vec<String> = header_line.split('\t').map(str::to_string).collect();
+    if headers.len() < 2 {
+        return None;
+    }
+    let data_start = match lines.iter().position(|l| {
+        let cells: Vec<&str> = l.split('\t').collect();
+        !cells.is_empty() && cells.iter().all(|c| c.chars().all(|ch| ch == '-'))
+    }) {
+        Some(p) => p + 1,
+        None => 1,
+    };
+    let mut rows = Vec::new();
+    for line in lines.iter().skip(data_start) {
+        let fields: Vec<&str> = line.split('\t').collect();
+        if fields.len() != headers.len() {
+            continue;
+        }
+        let mut obj = HashMap::new();
+        for (h, f) in headers.iter().zip(fields.iter()) {
+            obj.insert(h.clone(), tsv_cell(f));
+        }
+        rows.push(JsonVal::Obj(obj));
+    }
+    Some(JsonVal::Arr(rows))
+}
+
 pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
     let arr = match jpath_val(j, "data").and_then(|v| {
         if let JsonVal::Arr(a) = v {
@@ -1625,17 +1671,20 @@ pub fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
         JsonVal::Obj(m) => m,
         _ => return None,
     };
-    let metadata = match obj.get("metadata") {
-        Some(JsonVal::Arr(a)) => a,
-        _ => return None,
-    };
     let data = match obj.get("data") {
         Some(JsonVal::Arr(a)) => a,
         _ => return None,
     };
+    let meta = obj
+        .get("metadata")
+        .or_else(|| obj.get("columns"))
+        .or_else(|| obj.get("parameters"));
+    let Some(JsonVal::Arr(cols)) = meta else {
+        return None;
+    };
     let mut names: Vec<String> = Vec::new();
-    for m in metadata {
-        if let JsonVal::Obj(mo) = m
+    for c in cols {
+        if let JsonVal::Obj(mo) = c
             && let Some(JsonVal::Str(name)) = mo.get("name")
         {
             names.push(name.clone());
@@ -2454,6 +2503,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         tap_body_to_json(&src.url, body)
     } else if src.format == "votable" {
         votable_to_json(body)
+    } else if src.format == "asu-tsv" {
+        tsv_to_json(body)
     } else if src.format == "html" {
         html_to_json(body)
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
@@ -2461,7 +2512,16 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             .strip_prefix("OK")
             .and_then(|r| r.strip_prefix('\n').or_else(|| r.strip_prefix("\r\n")))
             .unwrap_or(body);
-        parse_json(body)
+        let parsed = parse_json(body);
+        match parsed {
+            Some(j)
+                if src.format != "universal"
+                    && !src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_))) =>
+            {
+                tap_to_json(&j).or(Some(j))
+            }
+            other => other,
+        }
     } else if src.format == "fits" {
         std::fs::read(body).ok().as_deref().and_then(fits_to_json)
     } else if src.format == "tar_gz_yaml" {
