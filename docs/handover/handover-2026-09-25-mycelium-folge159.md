@@ -3,7 +3,7 @@
   session: Mycelium-Folge 159
   class: handover
   date: 2026-09-25
-  sha256: 2ad27c501d6bbaac23a67aa2f852187838ff38988192ee5fd9a79f20e4318168
+  sha256: 743072323dcc0685a8b22b1053a1bcd17f8240fa4a50c0facd9ceac92f6c79da
   status: live
 -->
 # Handover — Mycelium-Folge 159 (2026-09-25)
@@ -37,25 +37,27 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
 #### Quellen-Routen der Future-Taucher — Rest-Arme
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** nächster Dispatch.
-- **Lage:** (gemessen 2026-09-25 via grind-flash/research-max,
-  `phi/pipeline/stage/future_routes_verdict_2026-09-25.txt`,
-  `d3_d8_route_verdict_2026-09-25.txt`) D4 GAVO TAP-Async und D1 PDS-Rings sind in
-  diesem Atom gebaut; offen:
-  - **D1 NAIF SPK mariner10** (`M10_archive_1.bsp`) → `at mariner10`-Block registrieren
-    (Anchor prüfen); **Voyager-Okkultation** → `voyager_occlt_compiler.rs`.
-  - **D6 decaps_dr2.object** (`datalab.noirlab.edu/tap/sync`, anonym 200) → `tap`-Block
-    registrieren; **DECaPS2** Dataverse 280 GB → Größen-Verdikt vor Registrierung.
-  - **D8 TOAR** lebender Host `toar-data.fz-juelich.de/api/v2/` (IDs 1000–2000 anonym,
-    sonst 401) → `toar_timeseries_compiler.rs`; Konflikt zum bestehenden `decline`
-    (redundant WOUDC) prüfen.
-  - **D8 PANGAEA** 876108 = Link-Container; Datenpfad 876110-Zip (gemessen 2026-09-25
-    via HEAD `content-length` = 347 455 312 B, ~347 MB — **nicht** 88 MB der folge158-Zeile);
-    `pangaea_harvester.rs` ZIP-Arm.
-  - **D8 Zenodo** 21132339 (`.../files/data.zip/content` 200 anonym, `content-length`
-    23 506 041 274 B = 23,5 GB) → `zenodo_record_harvester.rs` + Größen-Verdikt.
+- **Lage:** (gemessen 2026-09-25 via grind-max/grind-pro) D4 GAVO TAP-Async und D1
+  PDS-Rings sind in diesem Atom gebaut **und gemessen lauffähig**: GAVO
+  (`RESPONSEFORMAT=votable/td` + BINARY-`<STREAM>`-Arm) liefert td- und
+  BINARY-Pfad byte-identisch, Exit 0; PDS3 (Spalten-Sammlung gefixt) schreibt
+  375 050 Samples / 9 001 312 B, Roundtrip hält, Exit 0. Offen:
+  - **D8 TOAR** — Verdikt **accept** (diffusion, Oberflächen-O3 nmol/mol = ppb,
+    CC BY 4.0; nicht redundant zu WOUDC, das die Gesamtsäule trägt):
+    `toar_timeseries_compiler.rs` fehlt (`phi/blocked_sources.φ:71`).
+  - **D6 DECaPS** — `tap`-Block `decaps_dr2.object` registriert (`phi/sources.φ:9478`);
+    Dataverse `doi:10.7910/DVN/K88GFI` ~280 GB pending (FITS-GZ-Parser fehlt,
+    `phi/blocked_sources.φ:74`); CDN-Manifestation offen.
+  - **D1 NAIF mariner10** — `M10_archive_1.bsp` 200 (51200 B); Anchor `at mariner10`
+    fehlt (kein `ephemeris_mariner10.bin`, kein `frame_registry.φ`-Eintrag) →
+    `ephemeris_compiler.rs` + Anchor (`phi/blocked_sources.φ:49`).
+  - **D1 Voyager-Okkultation** — PSPA-Katalog 200; RSS-Payload ungemessen →
+    `voyager_occlt_compiler.rs` (`phi/blocked_sources.φ:53`).
+  - **D8 PANGAEA** 876110-Zip (347 455 312 B) ZIP-Arm + **D8 Zenodo** 21132339
+    (`data.zip` 23 506 041 274 B) `zenodo_record_harvester.rs` pending.
 - **Blockade:** keine.
-- **Braucht:** je Route den genannten Compiler bauen/den Block registrieren; die zwei
-  gebauten Arme nach Push über `gh workflow run` manifestieren.
+- **Braucht:** die genannten Compiler/Anchors bauen; die zwei gebauten Arme nach Push
+  über `gh workflow run` manifestieren.
 
 #### mycelium-ORPHANs (6)
 - **Status:** wartend | **Bindung:** eigen
@@ -111,25 +113,28 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
 #### DEMETER Order 18387 (WAF, nicht Workflow)
 - **Status:** blockiert | **Bindung:** dritter
 - **Trigger:** F5-ASM-WAF erholt ODER Order-Ablauf 2026-09-28.
-- **Lage:** (gemessen 2026-09-24 via `demeter_harvest.rs`/`ci_manage log`)
-  `rs-order`-Erzeugung scheitert an `F5 ASM: Request Rejected` → Exit 137.
+- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`/`ci_manage log`)
+  `regards.cnes.fr/api/v1/rs-order` 403 (358 B, Jetty Access Denied), `user/orders/18387`
+  403, POST 403; Lauf `35851193831` failure (8× `F5 ASM: Request Rejected`, Exit 137);
+  Order-Ablauf 2026-09-28 liegt in der Zukunft.
 - **Blockade:** CNES/REGARDS F5-ASM-WAF.
 - **Braucht:** Wiedervorlage; bei Erholung `gh workflow run demeter-cdn.yml`.
 
 #### ESA LPF Legacy Archive AIO (D3)
 - **Status:** blockiert | **Bindung:** dritter
 - **Trigger:** ESA-Helpdesk-Antwort / Backend-Erholung.
-- **Lage:** (gemessen 2026-09-25 via research-max) `lpfsa`-Backend
-  `/lpfsa-sl/data-action` → HTTP 500/600 „Input hibernate session is null"; kein
-  anonymer Datenfluss; `auth_method: cas`.
+- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`) `/lpfsa-sl/data-action`
+  500 (87 B, „Malformed retrieval request: none data identifiers"); Param-Route
+  `?ProductType=…&data=1` 502 Proxy Error; Portal `/lpfsa/` 200; `auth_method: cas`.
 - **Blockade:** Backend-Session-Fehler (ESA).
 - **Braucht:** Anfrage `support.cosmos.esa.int/lpfsa/` (Vorbereitung durch Future/Operator).
 
 #### src.pas TAP
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** `/tap/tables` 200.
-- **Lage:** (gemessen 2026-09-24 via `archive_search --verdict`) `ledger.φ:10`;
-  `/tap/tables` 500 (`http://pithia.cbk.waw.pl/tap`).
+- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`) `/tap` 200 (13342 B);
+  `/tap/tables` 500 (1683 B, `connection to "localhost" (127.0.0.1), port 5432 failed:
+  Connection refused`); `ledger.φ:10`.
 - **Blockade:** Pithia-Backend.
 - **Braucht:** Re-Messung bei Erholung.
 
@@ -148,7 +153,9 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
 #### BepiColombo
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** PSA-Freigabe.
-- **Lage:** (gemessen 2026-09-24) `release_date 2099-01-01`, `data?PRODUCT` 403.
+- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`) TAP 200 (1562 B);
+  `release_date 2099-01-01T00:00:00.0`; `data?PRODUCT` 403 (1121 B, PSA
+  `DataRetrieval forbidden`).
 - **Blockade:** ESA-Freigabe.
 - **Braucht:** Antwort `psahelp`.
 
@@ -167,8 +174,10 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge158.md`.
 #### SSDC Limadou (CSES-L2)
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** neue Zugangsprozedur / Sotgiu-Antwort.
-- **Lage:** (gemessen 2026-09-24) Operator-Wort **nein** (2026-09-23); `ledger.φ:14`
-  „Permission Denied", Host 200.
+- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`) Portal 200 (60804 B);
+  `query.php` anonym 302 → `tools.ssdc.asi.it/cas/login`; „Permission Denied" liegt
+  hinter dem Credential-Login (operator-gebunden). Operator-Wort **nein** (2026-09-23);
+  `ledger.φ:14`.
 - **Blockade:** PI-seitige Prozedur.
 - **Braucht:** wartend lassen.
 
