@@ -32,6 +32,12 @@ pub fn set_ca_bundle(path: &str) {
 const DEFAULT_MIN_INTERVAL_MS: u64 = 1100;
 const DEFAULT_RETRY_AFTER_SECS: u64 = 2;
 
+const ARXIV_QUERY_WINDOW: usize = 2;
+
+fn arxiv_window(max: usize) -> usize {
+    max.clamp(1, ARXIV_QUERY_WINDOW)
+}
+
 fn split_curl_stdout(stdout: &[u8]) -> Option<(&[u8], i32, Option<u64>)> {
     let last = stdout.iter().rposition(|b| *b == b'\n')?;
     let prev = stdout[..last].iter().rposition(|b| *b == b'\n')?;
@@ -652,7 +658,7 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!(
         "https://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}",
         urlencode(query),
-        max
+        arxiv_window(max)
     );
     let headers = [
         "-H",
@@ -691,7 +697,9 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
             }
         }
         Some(f) if f.status == Some(406) => {
-            vec!["pending — arxiv HTTP 406 (empty body, server-side; fresh queries are rejected regardless of User-Agent, cached queries still serve)".to_string()]
+            vec![format!(
+                "pending — arXiv edge caps the query window (start+max_results > {ARXIV_QUERY_WINDOW} → HTTP 406, measured 2026-09-25); OAI-PMH /oai2 is the live bulk route"
+            )]
         }
         Some(f) => vec![format!("pending — arxiv HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
@@ -2160,6 +2168,15 @@ mod tests {
             parsed[0].pdf.as_deref(),
             Some("http://arxiv.org/pdf/2401.01234v1")
         );
+    }
+
+    #[test]
+    fn arxiv_window_stays_under_the_edge_cap() {
+        assert_eq!(arxiv_window(0), 1);
+        assert_eq!(arxiv_window(1), 1);
+        assert_eq!(arxiv_window(2), 2);
+        assert_eq!(arxiv_window(20), ARXIV_QUERY_WINDOW);
+        assert_eq!(arxiv_window(200), ARXIV_QUERY_WINDOW);
     }
 
     #[test]
