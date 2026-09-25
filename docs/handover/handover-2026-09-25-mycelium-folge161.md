@@ -3,7 +3,7 @@
   session: Mycelium-Folge 161
   class: handover
   date: 2026-09-25
-  sha256: 468355e8ceb9ff1b019c4bc6495f0cc5dbcb3b241fe565c6ff39cddb94476ce1
+  sha256: 10a0e10e9553944b7f18763e14e15845c07d9054ee2c30a06fb14811200f59cb
   status: live
 -->
 # Handover — Mycelium-Folge 161 (2026-09-25)
@@ -126,6 +126,150 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge160.md`.
 flash-Messung fand 2 davon als HTTP 400 (Spalte fehlt); Sieger `grind-flash` (billiger,
 fand den Defekt). Die 2 sind als `gap curation` zurückgeführt.
 
+#### Fehlende Mess-Serien (abk_dbdt_1h, kegel, GIC/corona)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-03-daten-holdings-inventur.md) Die Lokalisierung unter allen Holdings ist FEHLGESCHLAGEN — als Datei nirgends vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`); lokal `pending`, dauerhafte Heimat wäre das CDN.
+- **Blockade:** keine.
+- **Braucht:** `register_lookup`/`archive_search --verdict` auf die Serien gegen das CDN; bei Abwesenheit Eintrag in `phi/blocked_sources.φ`.
+- **Quelle:** docs/surveys/survey-2026-09-03-daten-holdings-inventur.md
+
+#### 55 undocumented stale_pending Netlocs
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-03-orphan-verdicts.md) Von 156 Orphan-Releases sind 135 `stale_pending`, davon 55 in keinem Register; Erreichbarkeit ist der Vorfilter, die Disposition je Netloc offen.
+- **Blockade:** keine.
+- **Braucht:** je Netloc Force-Gate nach `docs/SOURCE_PORT.md` → `sources.φ`-Block oder `dead_sources.φ`-Eintrag.
+- **Quelle:** docs/surveys/survey-2026-09-03-orphan-verdicts.md
+
+#### Step-4 CI-Dedupe neu fassen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-03-orphan-verdicts.md) Step 4 (CI-Dedupe) ist gegen die gemessene Job-Zahl (health-check 4, kernel-flatten 18) neu zu fassen.
+- **Blockade:** keine.
+- **Braucht:** Step-4-Plan gegen die gemessenen Job-Zahlen neu fassen.
+- **Quelle:** docs/surveys/survey-2026-09-03-orphan-verdicts.md
+
+#### NOAA-NRS passive-bioacoustic — Quell-Entscheid
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-07-tmp-opencode-scan.md) NOAA-NODD NRS `sound_level_metrics`/`daily.nc` ist unregistriert und trägt keinen eigenen Compiler; Quell-Entscheid `pending`.
+- **Blockade:** keine.
+- **Braucht:** Quell-Entscheid → eigener `tools/harvest`-Compiler, dann `sources.φ`-Registrierung.
+- **Quelle:** docs/surveys/survey-2026-09-07-tmp-opencode-scan.md
+
+#### dead_sources.φ — 157 klassenlose Einträge
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md) In `phi/dead_sources.φ` tragen 157 Keyword-Einträge keine Klasse (Keyword mit trailing space, z. B. `:501` `decline `, `:2561` `dead `) — Parser-Lücke, kein Wert.
+- **Blockade:** keine.
+- **Braucht:** die 157 Einträge klassifizieren bzw. die Parser-Lücke schließen.
+- **Quelle:** docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
+
+#### NOIRLab Astro Data Lab TAP — Wiedervorlage
+- **Status:** termin:2026-12-02 | **Bindung:** termin
+- **Trigger:** 2026-12-02.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md) Reg. abgelehnt, TAP öffentlich; `phi/blocked_sources.φ:32`; Wiedervorlage 2026-12-02.
+- **Blockade:** Termin.
+- **Braucht:** am 2026-12-02 Reg.- und TAP-Stand re-messen.
+- **Quelle:** docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
+
+#### UNIVAC-1108-Parser (Voyager Saturn-TARs)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md) Voyager closed-loop überlebt in den Saturn-Encounter-Daten (UNIVAC-1108-Binär, closed-loop Doppler+Range: V1 `PSPA-00049`, V2 `PSPA-00123`, SPDF 200); der Parser ist offen.
+- **Blockade:** keine.
+- **Braucht:** UNIVAC-1108-Parser für die Saturn-TARs bauen.
+- **Quelle:** docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
+
+#### Force-Kanal Re-Check (remon.jrc, irsn.fr)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-16-dead-sources-relevanz.md) 3 Force-Kanal-Kandidaten behalten (Re-Check-Pflicht): `remon.jrc.ec.europa.eu` (em) und `www.irsn.fr` (×2, em).
+- **Blockade:** keine.
+- **Braucht:** die 3 em-Quellen als `sources.φ`-Blöcke bauen oder das Verdikt belegen.
+- **Quelle:** docs/surveys/survey-2026-09-16-dead-sources-relevanz.md
+
+#### dead_sources Pending-Rest nachmessen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-16-dead-sources-relevanz.md) 4 Pending-Fälle behalten: `dods.wh.gov` (Akustik-Pfad), `osdr.nasa.gov` (ISS-Dosimetrie), `pskreporter.info` + `reversebeacon.net` (Amateurfunk-Propagation).
+- **Blockade:** keine.
+- **Braucht:** `dods.wh.gov` Nachfolger des OPeNDAP-Acoustic-Endpoints suchen; direkten Dosimetrie-Feed in `osdr.nasa.gov` messen; `pskreporter.info`/`reversebeacon.net` gegen die sources.φ-Ionosphären-Abdeckung wiegen.
+- **Quelle:** docs/surveys/survey-2026-09-16-dead-sources-relevanz.md
+
+#### arvo-registry.sci.am — Proton-Eskalation
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-16-dead-sources-relevanz.md) `arvo-registry.sci.am` (×2) ist `dead unreachable` (SOURCE_PORT §16.4); die Proton-Eskalation ist offen.
+- **Blockade:** keine.
+- **Braucht:** `archive_search --verdict <url>` (Proton-Stufe) fahren.
+- **Quelle:** docs/surveys/survey-2026-09-16-dead-sources-relevanz.md
+
+#### sources-Repo klonen und messen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) `omegaflow/sources` (I02/`refresh.yml`) ist lokal nicht geklont; dort entscheidet sich, ob der 5-min-Takt lebt und ob die I02-Python-Behauptung stimmt.
+- **Blockade:** keine.
+- **Braucht:** `omegaflow/sources` klonen und `refresh.yml`/I02 messen.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### Atom D — phase/presence-Konsum
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort (Rat 2026-09-23, Route B).
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) Bau-fähig; vier phase-tragende Klassen am CDN (`cassini_rsr` I/Q `sources.φ:8081`, cassini/maven TNF `:8099/:8819`, fdsn BHZ `:110`); die Slots fahren seit v9 mit, nichts liest sie; das Beat-Paar bleibt pending.
+- **Blockade:** keine.
+- **Braucht:** Producer schreibt `phase: Some(fract(cycles)·2π)` + `freq=ramp_freq` + `bin_width=0.0` auf der TNF-Route; WGSL-Beat-Term für ein Paar; ein Atom, `grind-max`.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### HRV/ESP32-Puls-Bindung
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) Das RMSSD/tone-Gate steht in `src/archivar/hrv.rs`; die Bindung an den Radiation-Pfad ist pending.
+- **Blockade:** keine.
+- **Braucht:** das hrv.rs-RMSSD/tone-Gate an den Radiation-Pfad binden.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### field absorption per force_type
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) `src/mathematikerin/shaders.rs:53` blendet nur Kernel 5; jeder andere Kernel ignoriert `absorption`; ein per-force_type-Absorptionsgesetz ist ungebaut.
+- **Blockade:** keine.
+- **Braucht:** ein per-force_type-Absorptionsgesetz bauen.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### row-parallel TE-Re-Shape / WGSL-FFT
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) Die benannte Alternative ist offen: row-parallel re-shape (ein Thread per t — Ringwachstum) bzw. WGSL-FFT.
+- **Blockade:** keine.
+- **Braucht:** die benannte Alternative bauen.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### Doku-Behauptung ≠ Baum korrigieren
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort (5-min/I02 erst nach der sources-Repo-Messung entscheidbar).
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-17-verlorene-diskussionen.md) „CI Archivar runs every 5 minutes" (3 Live-Doku-Stellen + `fetch.rs:900`), `biotic`-Präsens-Erzählung (`methodology.md:23`), `remove-bias.md`-Plan referenziert totes `warm_cache`, `kernel-curation`-Versionszitat v6 — Doku ≠ Baum.
+- **Blockade:** keine.
+- **Braucht:** die 3 Doku-Stellen + `CI_REFRESH_S` auf die gemessene Wahrheit korrigieren (oder bauen); die `biotic`/`remove-bias`/`kernel-plan`-Zeilen korrigieren oder archivieren.
+- **Quelle:** docs/surveys/survey-2026-09-17-verlorene-diskussionen.md
+
+#### Deep-Sky-Pfad (richtungsbasierte Lieferung, Upload-Stille, Relay-Trailer)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-fortschritt.md) Offene Verbesserungen: Deep-Lieferung richtungsbasiert (Stern über den Sichtkegel statt radius-begrenzt), Deep-Upload-Stille (`deep_dirty` feuert bei jedem Sense — die 29-MB-Sterne werden auch unverändert hochgeladen), Relay-Trailer (gen u64 + 9×Ω f64 für `browser_relay`, ~80 B).
+- **Blockade:** keine.
+- **Braucht:** richtungsbasierte Deep-Lieferung, die `deep_dirty`-Stille und den Relay-Trailer bauen.
+- **Quelle:** docs/surveys/survey-fortschritt.md
+
+#### Membran-Messachse (Zell-Achse, Rgba8Unorm, Fovea-Kappe)
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-fortschritt.md) Offene Verbesserungen: Zell-Achse (Messpunkt-Vergröberung gegen die 8-Bit-Display-Quantisierung; `survey-auswertung.md` §1-2), Rgba8Unorm-Nachmessung mit `intel_gpu_top` gegen die ~200-ms-Baseline, Fovea nur als Budget-Kappe.
+- **Blockade:** keine.
+- **Braucht:** Zell-Achse und Rgba8Unorm nachmessen; Fovea als reine Budget-Kappe führen.
+- **Quelle:** docs/surveys/survey-fortschritt.md
+
 ### Operator
 
 #### api.sensor.community — Operator-Exit-Wort
@@ -136,6 +280,22 @@ fand den Defekt). Die 2 sind als `gap curation` zurückgeführt.
 - **Blockade:** IP-Blockade; ein Exit-Wechsel berührt Terms/§ 95a UrhG.
 - **Braucht:** Operator-Wort; danach `archive_search --verdict` erneut.
 - **Vorbereitung (autonom, erledigt):** `bin/proton-wg.sh suggest api.sensor.community`.
+
+#### Sicherungs-Archiv-Layout (knowledge/ + backups/, ~50 G)
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator-Wort zur Ziel-Layout-Entscheidung.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-03-daten-holdings-inventur.md) `knowledge/` (32 G) und `backups/` (23 G) liegen als Sicherungs-Archive in situ; nichts im Repo referenziert sie; eine Umlagerung dieser irreplacebaren Sicherungsdaten bedarf einer definierten Ziel-Layout-Entscheidung.
+- **Blockade:** keine Ziel-Layout-Entscheidung.
+- **Braucht:** Operator-Wort zur Umlagerung oder zum Verbleib in situ.
+- **Quelle:** docs/surveys/survey-2026-09-03-daten-holdings-inventur.md
+
+#### Lizenz-Entscheidung (PolyForm / CC BY-NC-SA)
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator-Wort.
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md) Die Sammlung steht unter PolyForm/CC BY-NC-SA — non-commercial; jede Monetarisierung beginnt mit einer Lizenz-Entscheidung.
+- **Blockade:** keine Lizenz-Entscheidung.
+- **Braucht:** Operator-Wort zur Lizenz-Entscheidung.
+- **Quelle:** docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 
 ### Dritter
 
@@ -198,6 +358,22 @@ fand den Defekt). Die 2 sind als `gap curation` zurückgeführt.
   `query.php` anonym 302 → CAS-Login; Operator-Wort **nein** (2026-09-23).
 - **Blockade:** PI-seitige Prozedur.
 - **Braucht:** wartend lassen.
+
+#### nse_haug_trisp — TRISP-NSE-Dateien
+- **Status:** wartend | **Bindung:** dritter
+- **Trigger:** Maileingang (MPI-FKF/TRISP sendet die Roh-/reduzierten TRISP-NSE-Dateien, „a few days").
+- **Lage:** (gemessen 2026-09-25 via sread docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md) Die Route ist offen (Mail 2026-09-17, `state/mail/mail_ledger.φ`); MPI-FKF/TRISP sendet die rohen/reduzierten TRISP-NSE-Dateien direkt.
+- **Blockade:** Eingang der Dateien.
+- **Braucht:** bei Maileingang `nse_haug_trisp`-Quelle + Compiler + `sources.φ`.
+- **Quelle:** docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
+
+### Gelesen — keine offene Arbeit (descoped)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-09-25 via Dokument-Lesung + `register_lookup --orphan-docs`) die offenen Marker dieser Dokumente sind Prosa, kein handlungsfähiger Punkt.
+- **Blockade:** keine.
+- **Braucht:** — (descoped mit Befund).
+- **Quelle:** `docs/concepts/docs-naming.md`, `docs/concepts/mirror-research.md`
 
 ## Abschluss
 
