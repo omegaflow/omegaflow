@@ -10,18 +10,18 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (332910 files, 7155384832027 B)
+## Family inventory (332912 files, 7155501234203 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
 | bpc | 6536 | 779673811 | 1790302020
-| ck | 107385 | 3596053286299 | 1790333940
+| ck | 107386 | 3596169678235 | 1790336340
 | dastcom | 7 | 258993 | 1790345640
 | dsk | 1057 | 259142925193 | 1784859060
 | fk | 1376 | 775957851 | 1790248740
 | gm | 14 | 438272 | 1783549920
 | ik | 1338 | 31188460 | 1790248860
 | lsk | 265 | 2622222 | 1784249340
-| misc | 182921 | 2914804846227 | 1790345640
+| misc | 182922 | 2914804856467 | 1790345640
 | mk | 13579 | 489057967 | 1790329200
 | pck-text | 1045 | 220823831 | 1790250360
 | sclk | 4065 | 129450671 | 1790162400
