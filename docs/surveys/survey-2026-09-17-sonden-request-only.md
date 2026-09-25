@@ -4,7 +4,7 @@
   date: 2026-09-17
   sha256: 1bc3d58bbe9396377fc10eaa7cc8a446df9292286aa6ef4df82b7a70c1b20fd6
   status: live
-  see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
+  see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
 # Survey — Sonden request-only: die vier (Stand 2026-09-17)
 
