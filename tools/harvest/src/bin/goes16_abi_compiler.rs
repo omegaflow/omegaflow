@@ -7,7 +7,6 @@ const CDN_TAG: &str = "noaa-goes16.s3.amazonaws.com";
 const BUCKET: &str = "noaa-goes16.s3.amazonaws.com";
 const RADC_PREFIX: &str = "ABI-L1b-RadC/";
 const GSICS_DEFAULT_URL: &str = "https://www.star.nesdis.noaa.gov/GOESCal/images/GSICS/GSICS_Harmonization_release_May2025_current.txt";
-const REQUEST_TTL_S: u64 = 1 << 9;
 const CHANNELS: usize = 16;
 
 fn newest_subdir(prefix: &str) -> Option<String> {
@@ -60,7 +59,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let gsics_text = if ci_mode {
-        fetch_raw_bytes(GSICS_DEFAULT_URL, REQUEST_TTL_S).and_then(|b| String::from_utf8(b).ok())
+        fetch_raw_bytes(GSICS_DEFAULT_URL).and_then(|b| String::from_utf8(b).ok())
     } else {
         None
     };
@@ -87,7 +86,7 @@ fn main() {
     let mut records = Vec::with_capacity(chosen.len());
     for key in &chosen {
         let url = format!("https://{BUCKET}/{}", key.key);
-        let Some(bytes) = fetch_raw_bytes(&url, REQUEST_TTL_S) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{url}: fetch void — granule skipped (0 honored)");
             continue;
         };

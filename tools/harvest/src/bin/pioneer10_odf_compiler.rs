@@ -38,7 +38,7 @@ fn main() {
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for rel in FILES {
         let url = format!("{BASE}/{rel}");
-        let Some(bytes) = fetch_raw_bytes(&url, 31536000) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{rel}: fetch void ({url})");
             continue;
         };

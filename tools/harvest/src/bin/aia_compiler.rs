@@ -155,7 +155,7 @@ fn export_one(ds: &str, lsk: &LeapSeconds, records: &mut Vec<(f64, f64, u32)>) -
         REQUESTOR,
         REQUESTOR
     );
-    let body = fetch_raw_bytes(&url, 300)?;
+    let body = fetch_raw_bytes(&url)?;
     let text = String::from_utf8_lossy(&body).to_string();
     let json = parse_json(&text)?;
     let requestid = match &json {
@@ -173,7 +173,7 @@ fn export_one(ds: &str, lsk: &LeapSeconds, records: &mut Vec<(f64, f64, u32)>) -
             JSOC_FETCH,
             percent_encode(&requestid)
         );
-        let body = fetch_raw_bytes(&status_url, 300)?;
+        let body = fetch_raw_bytes(&status_url)?;
         let text = String::from_utf8_lossy(&body).to_string();
         let json = parse_json(&text)?;
         let status = jnum(&json, "status").unwrap_or(-1.0);
@@ -233,7 +233,7 @@ fn export_one(ds: &str, lsk: &LeapSeconds, records: &mut Vec<(f64, f64, u32)>) -
             continue;
         };
         let dl_url = format!("{}{}/{}", JSOC_DL, dir, fn_);
-        let Some(bytes) = fetch_raw_bytes(&dl_url, 1800) else {
+        let Some(bytes) = fetch_raw_bytes(&dl_url) else {
             skipped_dl += 1;
             continue;
         };
@@ -412,7 +412,7 @@ fn harvest_mode(args: &[String], lsk: &LeapSeconds) {
                     JSOC_INFO,
                     percent_encode(&ds)
                 );
-                let Some(bytes) = fetch_raw_bytes(&url, 600) else {
+                let Some(bytes) = fetch_raw_bytes(&url) else {
                     eprintln!("{}: fetch void", ds);
                     void_chunks += 1;
                     continue;

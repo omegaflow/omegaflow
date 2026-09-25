@@ -36,7 +36,7 @@ fn load_bin(kind: &str, url: &str, path: Option<String>) -> Option<Vec<u8>> {
             }
         }
     }
-    match fetch_raw_bytes(url, 3600) {
+    match fetch_raw_bytes(url) {
         Some(bytes) => Some(bytes),
         None => {
             eprintln!("{kind}: {url} carries no asset — the channel stays unmeasured (0 honored)");

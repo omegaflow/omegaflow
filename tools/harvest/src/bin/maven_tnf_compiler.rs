@@ -52,7 +52,7 @@ fn write_and_verify(records: &[[f64; 9]], out: &str) -> Vec<u8> {
             let d0 = parsed[0];
             let d1 = parsed[parsed.len() - 1];
             eprintln!(
-                "{out}: {} TNF DT0 samples (tdb {}..{}), {} B — roundtrip parses",
+                "{out}: {} TNF samples (tdb {}..{}), {} B — roundtrip parses",
                 parsed.len(),
                 d0[0],
                 d1[0],
@@ -74,7 +74,7 @@ fn main() {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
     };
-    let Some(csv) = fetch_raw_bytes(COLLECTION, 604800) else {
+    let Some(csv) = fetch_raw_bytes(COLLECTION) else {
         eprintln!("maven tnf collection fetch void ({COLLECTION})");
         return;
     };
@@ -87,7 +87,7 @@ fn main() {
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for (name, year, month) in &prods {
         let url = format!("{BASE}{year}/{month}/{name}");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };
@@ -95,13 +95,18 @@ fn main() {
             eprintln!("{name}: tnf scan void — {} B", bytes.len());
             continue;
         };
-        merged.extend(recs.into_iter().filter(|r| r[odf::TNF_ROW_FORMAT] == 0.0));
+        merged.extend(recs);
     }
     if merged.is_empty() {
-        eprintln!("no maven TNF DT0 samples — the series stays unwritten (0 honored)");
+        eprintln!("no maven TNF samples — the series stays unwritten (0 honored)");
         return;
     }
     merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    let mut codes: std::collections::BTreeMap<i64, usize> = std::collections::BTreeMap::new();
+    for r in &merged {
+        *codes.entry(r[odf::TNF_ROW_FORMAT] as i64).or_insert(0) += 1;
+    }
+    eprintln!("maven TNF rows by format code: {codes:?}");
     std::fs::create_dir_all(DIR).ok();
 
     let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
