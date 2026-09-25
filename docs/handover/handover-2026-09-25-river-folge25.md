@@ -3,7 +3,7 @@
   session: River-Folge 25
   class: handover
   date: 2026-09-25
-  sha256: 058bc360b4f312417757d5ac7b457cf45ee4aa1f4a16368949c04b078d3d191d
+  sha256: 03de1d2385785e254394db1f00f623976d01b6a33f000a58ac56b129adfc5760
   status: live
 -->
 # Handover — River-Folge 25 (2026-09-25)
@@ -31,8 +31,9 @@ eine Verantwortlichkeit; `blockiert`/`wartend`/`termin` werden benannt, nie disp
   `shard_tests::shards_contiguous_and_covering`; `health-check.yml` `verify`-Job als
   8er-Matrix, `timeout-minutes: 240`, Cache-Key je Shard.
 - **Blockade:** kein Commit-Wort; die Verifikation lebt nur im CI-Lauf.
-- **Braucht:** nach `/commit`: der 8er-Matrix-Lauf — jede Shard-Leg success, Gesamtdauer
-  < 3 h; dann Cron/Cadence aus der gemessenen Leg-Dauer nachziehen.
+- **Braucht:** `gh run view 36120693487` (dispatch 2026-09-25 am Commit `2bc46bed0`)
+  — jede Shard-Leg success, Gesamtdauer < 3 h; dann Cron/Cadence aus der gemessenen
+  Leg-Dauer nachziehen.
 
 #### TLS im Relay (wireless) — pending
 - **Status:** pending | **Bindung:** eigen
