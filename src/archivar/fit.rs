@@ -267,7 +267,7 @@ fn emit_nn(beats: &[u32], last: &mut Option<u32>, out: &mut Vec<(String, f64, Op
             && beat > previous
         {
             let ms = (beat - previous) as f64 * 1000.0 / EVENT_TIMESTAMP_SCALE;
-            if ms.is_finite() && ms > 0.0 {
+            if (hrv::NN_MIN_MS..=hrv::NN_MAX_MS).contains(&ms) {
                 out.push(("nn".to_string(), ms, None));
             }
         }
@@ -483,6 +483,23 @@ mod tests {
             .map(|(_, v, _)| *v)
             .collect();
         assert_eq!(nn, vec![1000.0, 1000.0]);
+    }
+
+    #[test]
+    fn hr_event_timestamp_discontinuity_is_absent() {
+        let mut records = definition(0, MESG_HR, &[(FIELD_HR_EVENT_TIMESTAMP, 20, BASE_UINT32)]);
+        let mut beats = Vec::new();
+        for v in [0u32, 1024, 2048, 2048 + 1_024_000, 2048 + 1_024_000 + 1024] {
+            beats.extend_from_slice(&v.to_le_bytes());
+        }
+        records.extend(data(0, &beats));
+        let out = parse_fit(&make_fit(&records)).expect("valid fit");
+        let nn: Vec<f64> = out
+            .iter()
+            .filter(|(k, _, _)| k == "nn")
+            .map(|(_, v, _)| *v)
+            .collect();
+        assert_eq!(nn, vec![1000.0, 1000.0, 1000.0]);
     }
 
     #[test]

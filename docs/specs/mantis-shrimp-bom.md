@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-25)
   class: ref
   date: 2026-09-25
-  sha256: e56f395d8df21630fe8f4daaaaa6fc33522a3dae9426ca81bc7cce64eb9e58aa
+  sha256: 66ffc8df485fe5ec42aae1b46272c7a87e488faceb5d0f3270cd213f9329909a
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 
@@ -35,6 +35,7 @@ dem gemessenen EZB-Kurs 2026-09-24 (1 CHF = 1,0628 EUR) — nicht direkt gemesse
 | MPU6050 (GY-521) | 1005010057794277 | 1,69 |
 | Kapazitiver Bodenfeuchte | 1005009610892245 | 1,99 |
 | MAX30102 Puls | 1005007015407514 | 3,15 |
+| ATGM336H GNSS (GPS+BDS, UART, EEPROM) | 1005009361234427 | 3,01 CHF ≈ 3,20 €* |
 
 ## Aktoren (canRadiate)
 
@@ -108,6 +109,8 @@ Verdikt: **ESP32-S3 bleibt die gebaute Plattform** (Bibliotheken, Preis,
 Sensorknoten erprobt). **Ox64** ist als Zweitknoten spannend — RISC-V-Erfahrung
 und ZigBee-Mesh —, kostet aber Treiber-Arbeit. PINE64 schickt Geräte an
 Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
+
+**Messung 2026-09-25 (ZigBee-Zeile):** Die Zeile „Funk: WiFi + BLE + **ZigBee**" ist für den Ox64 ungemessen. `bouffalolab/bl_iot_sdk` trägt ZigBee auf der **BL70X**-Familie (README), für den **BL808** kein Beleg; der ESP32-S3 hat kein 802.15.4-Radio. Ohne Zusatzradio (ESP32-C6/H2 als RCP oder Koordinator-Dongle) trägt die Zeile kein Mesh. Die Protokollwahl bleibt `pending` mit zwei Vorab-Messungen: M1 (ohne Gerät) trägt das BL808-Radio 802.15.4? · M2 (nach Ankunft) kompiliert das BL70X-ZigBee-Beispiel für den BL808?
 
 ## Notizen
 
