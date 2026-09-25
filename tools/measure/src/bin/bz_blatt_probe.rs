@@ -9,7 +9,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 100;
 const BASE: &str = "https://services.swpc.noaa.gov/json";
-const ABK_HAPI: &str = "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf";
+const HAPI_BASE: &str = "https://imag-data.bgs.ac.uk/GIN_V1/hapi/data";
+const GROUND_DRIVER: &str = "ABK";
 const KP_URL: &str = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json";
 const FILL_NT: f64 = 99999.0;
 const MINUTE: f64 = 60.0;
@@ -21,6 +22,36 @@ const QUIET_HOURS: f64 = 6.0;
 const PE_SEGMENT_SAMPLES: usize = 360;
 const PE_RING_MAX: usize = 16;
 const PE_ORDER: usize = 4;
+
+struct GroundStation {
+    code: &'static str,
+    lat: f64,
+    lon: f64,
+    alt: f64,
+}
+
+const GROUND_STATIONS: [GroundStation; 2] = [
+    GroundStation {
+        code: "ABK",
+        lat: 68.358,
+        lon: 18.823,
+        alt: 380.0,
+    },
+    GroundStation {
+        code: "NUR",
+        lat: 60.51,
+        lon: 24.66,
+        alt: 105.0,
+    },
+];
+
+fn ground_station(code: &str) -> Option<&'static GroundStation> {
+    GROUND_STATIONS.iter().find(|s| s.code == code)
+}
+
+fn hapi_url(code: &str) -> String {
+    format!("{HAPI_BASE}?id={code}/best-avail/PT1M/xyzf")
+}
 
 fn now_unix() -> Option<f64> {
     SystemTime::now()
@@ -183,7 +214,10 @@ fn harvest_kp(ttl: u64) -> Vec<(f64, f64)> {
     out
 }
 
-fn harvest_abk(start_unix: f64) -> (Vec<(f64, f64)>, Vec<(f64, f64)>, Vec<(f64, f64)>) {
+fn harvest_ground(
+    hapi: &str,
+    start_unix: f64,
+) -> (Vec<(f64, f64)>, Vec<(f64, f64)>, Vec<(f64, f64)>) {
     let Some(now) = now_unix() else {
         return (Vec::new(), Vec::new(), Vec::new());
     };
@@ -193,7 +227,7 @@ fn harvest_abk(start_unix: f64) -> (Vec<(f64, f64)>, Vec<(f64, f64)>, Vec<(f64, 
         .unwrap_or("?")
         .to_string();
     let url = format!(
-        "{ABK_HAPI}&start={date}T00:00:00Z&stop={}&format=json",
+        "{hapi}&start={date}T00:00:00Z&stop={}&format=json",
         iso_utc(now - 2.0 * HOUR)
     );
     let body = match fetch_raw(&url, None, &[], 300) {
@@ -486,6 +520,22 @@ fn window_report(name: &str, s: &[(f64, f64)]) {
 
 fn main() {
     let sources = load_sources();
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let station_code = match args.iter().position(|a| a == "--station") {
+        Some(i) => match args.get(i + 1) {
+            Some(v) => v.clone(),
+            None => {
+                eprintln!("--station carries no code");
+                std::process::exit(2);
+            }
+        },
+        None => GROUND_DRIVER.to_string(),
+    };
+    let Some(station) = ground_station(&station_code) else {
+        eprintln!("--station {station_code} carries no registered ground station (ABK, NUR)");
+        std::process::exit(2);
+    };
+    let ground_hapi = hapi_url(station.code);
     let Some(now) = now_unix() else {
         return;
     };
@@ -530,11 +580,24 @@ fn main() {
         block_of("solar_wind_density_cm3"),
         wind_url
     );
+    let ground_block = match sources
+        .iter()
+        .find(|s| s.url.contains(&format!("id={}/", station.code)))
+    {
+        Some(s) => s.url.clone(),
+        None => "block absent from the register".to_string(),
+    };
+    let ground_note = if station.code == "NUR" {
+        " | co-located with the FMI MAN (Mantsala) GIC site, ~32 km"
+    } else {
+        " | auroral-zone driver station"
+    };
     println!(
-        "{:<14} | Block {} | {} | X/Y/Z 1-min, fill 99999.0 nT skipped",
-        "ABK ground",
-        block_of("intermagnet_xyz_x_nt"),
-        ABK_HAPI
+        "{:<14} | Block {} | {} | X/Y/Z 1-min, fill 99999.0 nT skipped{}",
+        format!("{}-ground", station.code),
+        ground_block,
+        ground_hapi,
+        ground_note
     );
     println!(
         "{:<14} | Block {} | {} | 3-h grid",
@@ -547,15 +610,15 @@ fn main() {
     let speed_raw = harvest_rtsw_active(&wind_url, 60, "proton_speed", "km/s");
     let density_raw = harvest_rtsw_active(&wind_url, 60, "proton_density", "1/cm3");
     let kp_raw = harvest_kp(180);
-    let (abk_x, abk_y, abk_z) = harvest_abk(now - 2.0 * DAY);
-    let dbdt_raw = dbdt_series(&abk_x, &abk_y, &abk_z);
+    let (ground_x, ground_y, ground_z) = harvest_ground(&ground_hapi, now - 2.0 * DAY);
+    let dbdt_raw = dbdt_series(&ground_x, &ground_y, &ground_z);
 
     println!();
     window_report("Bz-RTSW", &bz_raw);
     window_report("Speed-RTSW", &speed_raw);
     window_report("Density-RTSW", &density_raw);
-    window_report("ABK-X", &abk_x);
-    window_report("ABK-dB/dt", &dbdt_raw);
+    window_report(&format!("{}-X", station.code), &ground_x);
+    window_report(&format!("{}-dB/dt", station.code), &dbdt_raw);
     window_report("Kp", &kp_raw);
 
     let lo = [
@@ -825,9 +888,13 @@ fn main() {
     println!("{}", headline("Bz", &dbdt_bz, &bz_dbdt));
     println!("{}", headline("Speed", &dbdt_speed, &speed_dbdt));
     println!(
-        "Window: {} → {} | 1-min grid | ABK (68.36°N, auroral zone) | RTSW active-only | no pre-shift",
+        "Window: {} → {} | 1-min grid | {} ({:.2}°N {:.2}°E, alt {:.0} m) | RTSW active-only | no pre-shift",
         iso_utc(t0),
-        iso_utc(t0 + n_cells as f64 * MINUTE)
+        iso_utc(t0 + n_cells as f64 * MINUTE),
+        station.code,
+        station.lat,
+        station.lon,
+        station.alt
     );
     let named = |k: &str| pair_verdicts.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
     let bz_best_te = {
@@ -865,7 +932,10 @@ fn main() {
         "Multiple-comparison correction over the pair matrix: open in the thematic handover — the Blatt carries the raw values with threshold."
     );
     println!(
-        "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/sources.φ:8590, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,56) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."
+        "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/sources.φ:8584, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,58) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."
+    );
+    println!(
+        "GIC pairing: the FMI MAN (Mantsala) GIC site is paired by the co-located NUR (Nurmijarvi, 60.51°N 24.66°E, ~32 km) ground dB/dt — run this probe with --station NUR."
     );
     println!(
         "Storm presence in the window: what the series carry (Kp row above); a storm-free window is the quiet-time measurement, no artifact."
