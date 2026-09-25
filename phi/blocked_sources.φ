@@ -256,11 +256,6 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 note Gaia DR3: field parallax_mas/bp_rp force undetermined — Astrometrie/Farbindex, kein 9-Kraft-Fit; cmap plx 3 trägt Entfernung, phot_g_mean_mag=em mag. Astrometrie echt.
 
 parser-def json
-gap konverter
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
-note Gaia DR3: field 2 mag_g mit Einheit nT (Konverter-Fehler, mag erwartet) + parallax_mas/bp_rp force undetermined; cmap plx 3. Unit-Fix + Kraft-Gap.
-
-parser-def json
 gap force-undetermined
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 note Gaia DR3: field parallax_mas/bp_rp force undetermined; cmap plx 3, phot_g_mean_mag=em mag. Astrometrie/Farbindex-Gap.
@@ -276,11 +271,6 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 note Gaia DR3: field parallax_mas force undetermined — Astrometrie; cmap plx 3. Entfernung bereits via plx.
 
 parser-def json
-gap konverter
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
-note Gaia DR3 (nicht-einfach): field 2 mag_g mit Einheit nT (Konverter-Fehler, mag erwartet) + parallax_mas force undetermined; cmap plx 3. Unit-Fix.
-
-parser-def json
 gap unit-auto-detect
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27EA%27+OR+best_class_name+=+%27EB%27+OR+best_class_name+=+%27EW%27+ORDER+BY+random_index
 note Gaia DR3 vari_classifier_result: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Veränderlichen-Photometrie echt.
@@ -291,9 +281,14 @@ url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&forma
 note Gaia DR3 DSCT: field mag_g/bp_minus_rp unit absent — unit-auto-detect gap; cmap plx 3. Photometrie echt.
 
 parser-def json
-gap konverter
+gap curation
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
-note Gaia DR3 RR Lyr: field 2 mag_g Einheit nT (Konverter-Fehler) + field par force undetermined; cmap plx 3. Unit-Fix + Astrometrie-Gap.
+note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query-Kuration; phot_g_mean_mag=em mag. Unit-Fix steht.
+
+parser-def json
+gap curation
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
+note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query-Kuration; phot_g_mean_mag=em mag. Unit-Fix steht.
 
 parser-def json
 gap unit-auto-detect
@@ -374,11 +369,6 @@ parser-def json
 gap force-undetermined
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
 note Gaia DR3: field parallax_mas force undetermined; cmap plx 3. Astrometrie echt.
-
-parser-def json
-gap konverter
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note Gaia DR3 (cluster): field 2 mag_g Einheit nT (Konverter-Fehler) + field par force undetermined; cmap plx 3. Unit-Fix.
 
 parser-def json
 gap force-undetermined

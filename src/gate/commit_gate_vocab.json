@@ -106,6 +106,7 @@
     "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made; the unmeasured state is named pending, never asserted",
     "speculation": "A = A: the machine does not speculate. \"{word}\" is a guess, not a measurement. The measured state is spoken as measured; the unmeasured state is named pending/absent — never guessed.",
     "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
+    "deferral": "a trigger is an external event, date or word, or \"sofort\" — an own step runs inside the running atom; \"nächster Dispatch\" / \"nächste Session\" is a self-deferral: a wartend/autonom point without an external trigger is a registration duty, never a state",
     "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
     "pii": "a private mail domain, a home path or a device MAC (a watch, a chip) names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree; the fixture placeholder AA:BB:CC:DD:EE:FF is exempt"
   },
@@ -191,6 +192,14 @@
     "fällig",
     "wiedervorlage",
     "fired"
+  ],
+  "deferral_markers": [
+    "nächster Dispatch",
+    "nächsten Dispatch",
+    "nächste Session",
+    "nächsten Session",
+    "nächster dispatch",
+    "nächste session"
   ],
   "consent_acts": [
     ["smail --send", "mail send"],
@@ -435,6 +444,8 @@
     "counter_slope_clean_gegenhang": "der Gegenhang trägt das Vokabular ohne Trainingsdaten-Nachbarschaft",
     "counter_slope_clean_counter_slope": "the counter-slope vocabulary carries the identity",
     "counter_slope_clean_wort": "the operator's Wort is registered before the act runs",
+    "deferral_next_dispatch": "Trigger: nächster Dispatch",
+    "deferral_sofort_clean": "Trigger: sofort",
     "votable_null_empty_array": "if null {\n    map.insert(f.name.clone(), JsonVal::Arr(Vec::new()));\n}"
   }
 }
