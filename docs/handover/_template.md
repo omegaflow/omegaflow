@@ -97,12 +97,18 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
   Commit → `ci_manage list` erzwingen. Bei Lücke/Detail
   `ci_manage list` / `ci_manage view <id>`, Fehllog `ci_manage log <id>`.
   **Nie** `gh run list`/`gh run view`; `gh` nur für `workflow run`/`run download`.
-- **Werkzeug-Frische** — der Bin-Satz kommt aus `tools-latest`, nicht aus HEAD:
-  `sread target/release/.tools_manifest --limit 1` (`git_sha=…`) gegen
-  `git rev-parse HEAD` halten. Liegt der Manifest-`git_sha` hinter HEAD, ist die
-  Tool-Semantik **stale** — nicht als aktuell behandeln, im Handover als `pending`
-  benennen. Nach jedem Push `gh workflow run tools-build.yml`; der Wächter
-  `bin/.tools_ensure <tool>` prüft sha256-content-addressed.
+- **Artefakt-Frische (alle erzeugten Klassen)** — nichts Erzeugtes ist HEAD;
+  jede Klasse ist ein CI-/Deploy-Produkt und hinkt: **Session-Tools**
+  (`tools-latest`), der **Core-Bin** (`target/release/omegaflow`), die
+  **CDN-Daten-Assets** (harvest-/measure-Compiler → `omegaflow/sources`), die
+  **WGSL-Kernel** (`kernel-flatten`), die **Firmware**. Für jede Klasse, die
+  diese Session als Verhalten liest, gilt: den Artefakt-Build-Commit gegen
+  `git rev-parse HEAD` halten (`sread target/release/.tools_manifest --limit 1`
+  für die Tools; den jüngsten Workflow-Lauf via `ci_manage list` für die
+  übrigen). Liegt der Build hinter HEAD, ist die Aussage **stale** — `pending`,
+  nie als aktuell. Nach jedem Push `gh workflow run <workflow>` (tools-build,
+  kernel-flatten, der betroffene `*-cdn`); `bin/.tools_ensure <tool>` prüft
+  sha256-content-addressed. Kein Satz über ein Artefakt hinter HEAD.
 
 ## Werkzeuge (gebaut — nutzt sie)
 
