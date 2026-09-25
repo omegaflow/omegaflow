@@ -89,13 +89,49 @@ fn is_doc_name(name: &str) -> bool {
     name.ends_with(".md") && !name.starts_with('_')
 }
 
+fn strip_inline_code(line: &str) -> String {
+    let mut out = String::with_capacity(line.len());
+    let mut in_code = false;
+    for ch in line.chars() {
+        if ch == '`' {
+            in_code = !in_code;
+        } else if !in_code {
+            out.push(ch);
+        }
+    }
+    out
+}
+
+fn marker_in_status_context(lower: &str, marker: &str) -> bool {
+    if marker != "blocked" {
+        return lower.contains(marker);
+    }
+    lower.match_indices(marker).any(|(idx, _)| {
+        let before = lower[..idx].trim_end();
+        let after = &lower[idx + marker.len()..];
+        let starts_clean = before.is_empty()
+            || matches!(
+                before.chars().last(),
+                Some(':') | Some('|') | Some('-') | Some('(') | Some('[')
+            );
+        let ends_clean = after.is_empty()
+            || matches!(
+                after.chars().next(),
+                Some(' ') | Some(':') | Some('|') | Some(',') | Some(')') | Some(']')
+            );
+        starts_clean && ends_clean
+    })
+}
+
 fn open_marker_matches(line: &str) -> bool {
-    let lower = line.to_lowercase();
-    OPEN_MARKERS.iter().any(|m| lower.contains(m))
+    let lower = strip_inline_code(line).to_lowercase();
+    OPEN_MARKERS
+        .iter()
+        .any(|m| marker_in_status_context(&lower, m))
 }
 
 fn released_marker_matches(line: &str) -> bool {
-    let lower = line.to_lowercase();
+    let lower = strip_inline_code(line).to_lowercase();
     RELEASED_MARKERS.iter().any(|m| lower.contains(m))
 }
 
@@ -2949,6 +2985,32 @@ mod tests {
     fn open_marker_matches_open_line_and_rejects_closed() {
         assert!(open_marker_matches("offen: X"));
         assert!(!open_marker_matches("closed and finished"));
+    }
+
+    #[test]
+    fn inline_code_terms_are_not_open_markers() {
+        assert!(!open_marker_matches(
+            "this is not `pending`, it is a register duty."
+        ));
+        assert!(!open_marker_matches(
+            "An expired entry is `pending` with a due, never a copy."
+        ));
+        assert!(!open_marker_matches("no `pending`, no deferral."));
+        assert!(open_marker_matches(
+            "legacy 40-byte bins stay dark, pending recompilation"
+        ));
+    }
+
+    #[test]
+    fn blocked_counts_only_as_a_status_token() {
+        assert!(!open_marker_matches(
+            "the work is *done or genuinely blocked*, not as a substitute"
+        ));
+        assert!(!open_marker_matches(
+            "not machine-readable/blocked (8 cases)"
+        ));
+        assert!(open_marker_matches("blocked account: needs a key"));
+        assert!(open_marker_matches("**Status:** blocked"));
     }
 
     #[test]

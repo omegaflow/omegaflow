@@ -1096,6 +1096,7 @@ fn test_celestial_map_redshift_distance() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
@@ -1190,6 +1191,7 @@ fn test_extract_csv_zip_end_to_end() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
@@ -1296,6 +1298,54 @@ rv_scale 1000.0\n";
     assert_eq!(sources.len(), 1);
     match &sources[0].extracts[0] {
         Extract::CelestialMap { rv_scale, .. } => assert_eq!(*rv_scale, Some(1000.0)),
+        _ => panic!("expected CelestialMap extract"),
+    }
+}
+
+#[test]
+fn test_parse_sources_epoch_mjd_directive() {
+    let phi = "url https://example.com/decaps.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+epoch epochmean mjd\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    match &sources[0].extracts[0] {
+        Extract::CelestialMap {
+            epoch_key,
+            epoch_mjd,
+            ..
+        } => {
+            assert_eq!(epoch_key, "epochmean");
+            assert!(*epoch_mjd);
+        }
+        _ => panic!("expected CelestialMap extract"),
+    }
+}
+
+#[test]
+fn test_parse_sources_epoch_without_mjd_is_raw_tdb() {
+    let phi = "url https://example.com/x.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+epoch t\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    match &sources[0].extracts[0] {
+        Extract::CelestialMap {
+            epoch_key,
+            epoch_mjd,
+            ..
+        } => {
+            assert_eq!(epoch_key, "t");
+            assert!(!*epoch_mjd);
+        }
         _ => panic!("expected CelestialMap extract"),
     }
 }
@@ -1433,6 +1483,7 @@ fn test_extract_cmap_dist_scale_kpc() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1496,6 +1547,90 @@ fn test_extract_cmap_dist_scale_kpc() {
 }
 
 #[test]
+fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
+    let mjd = 59107.72385694459;
+    let json = format!(r#"[{{"ra":0.0,"dec":0.0,"dist_pc":10.0,"epochmean":{mjd},"H":5.5}}]"#);
+    let src = SourceConfig {
+        ttl: 604800,
+        url: "https://example.com/x".into(),
+        frame: Frame::Barycenter {
+            body_name: "sun".into(),
+            scale: 1.0,
+        },
+        format: "json".into(),
+        extracts: vec![Extract::CelestialMap {
+            arr_path: ".".into(),
+            ra_key: "ra".into(),
+            dec_key: "dec".into(),
+            dist_key: "dist_pc".into(),
+            dist_scale: Some(3.085677581e16),
+            plx_key: String::new(),
+            z_key: String::new(),
+            pmra_key: String::new(),
+            pmdec_key: String::new(),
+            rv_key: String::new(),
+            rv_scale: Some(1.0),
+            epoch_key: "epochmean".into(),
+            epoch_mjd: true,
+            fields: vec![FieldConfig {
+                key: "H".into(),
+                name: "comet_h_mag".into(),
+                kernel: 0,
+                force: 0,
+                tau: 604800.0,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+            }],
+            tau_key: String::new(),
+        }],
+        headers: vec![],
+        post_body: None,
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+        hapi_fill: HashMap::new(),
+        window: None,
+        live_only: false,
+    };
+    let fixture_lsk = LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    };
+    let expected = crate::maxi::mjd_to_tdb(mjd, &fixture_lsk).unwrap();
+    match extract(&src, &json, 8.0e8, &fixture_lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert!((channels[0].0.epoch - expected).abs() < 1e-9);
+            assert!(
+                (channels[0].0.epoch - mjd).abs() > 1e6,
+                "epochmean must be converted from MJD to TDB, not carried raw"
+            );
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+}
+
+#[test]
 fn test_extract_cmap_dist_without_scale_is_absent() {
     let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
     let src = SourceConfig {
@@ -1519,6 +1654,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1598,6 +1734,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
             rv_key: "rv".into(),
             rv_scale: None,
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1685,6 +1822,7 @@ fn test_extract_cmap_pm_radvel_plx() {
             rv_key: "rv".into(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1804,6 +1942,7 @@ fn test_extract_cmap_no_distance_skipped() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1880,6 +2019,7 @@ fn test_extract_cmap_null_dist_skipped() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
@@ -1958,6 +2098,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "HIflux".into(),
                 name: "alfalfa_hi_flux".into(),
@@ -7870,6 +8011,7 @@ fn test_flux_from_mag_manifests() {
             rv_key: String::new(),
             rv_scale: Some(1.0),
             epoch_key: String::new(),
+            epoch_mjd: false,
             fields: vec![FieldConfig {
                 key: "mag".into(),
                 name: "cat_vmag".into(),
