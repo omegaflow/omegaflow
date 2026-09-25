@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-25)
   class: ref
   date: 2026-09-25
-  sha256: 66ffc8df485fe5ec42aae1b46272c7a87e488faceb5d0f3270cd213f9329909a
+  sha256: e73ea9851ee526abf7c6d43589188bbf366fe54767422671f50a8e5c9803e527
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 
@@ -99,7 +99,7 @@ Schwache Picks: SG90 nur als Bulk-Treffer (Einzelstück ~2 €), Bass-Exciter te
 | Merkmal | ESP32-S3 (BOM) | PINE64 Ox64 |
 |---|---|---|
 | Architektur | Xtensa LX7, dual-core 32-bit | RISC-V BL808 (C906 64-bit + E907 + LP) |
-| Funk | WiFi + BLE | WiFi + BLE + **ZigBee** |
+| Funk | WiFi + BLE | WiFi + BLE + **ZigBee** (802.15.4 im BL808-Datasheet; Stack-Weg offen) |
 | Ökosystem | sehr groß (ESP-IDF/Arduino) | kleiner (RISC-V, Buildroot/OpenWrt) |
 | I2C/SPI-Treiber | reichlich | weniger fertig |
 | Rolle | gebauter Mantis-Shrimp-Knoten | Alternative/Zweitknoten: RISC-V + ZigBee-Mesh |
@@ -110,7 +110,7 @@ Sensorknoten erprobt). **Ox64** ist als Zweitknoten spannend — RISC-V-Erfahrun
 und ZigBee-Mesh —, kostet aber Treiber-Arbeit. PINE64 schickt Geräte an
 Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
-**Messung 2026-09-25 (ZigBee-Zeile):** Die Zeile „Funk: WiFi + BLE + **ZigBee**" ist für den Ox64 ungemessen. `bouffalolab/bl_iot_sdk` trägt ZigBee auf der **BL70X**-Familie (README), für den **BL808** kein Beleg; der ESP32-S3 hat kein 802.15.4-Radio. Ohne Zusatzradio (ESP32-C6/H2 als RCP oder Koordinator-Dongle) trägt die Zeile kein Mesh. Die Protokollwahl bleibt `pending` mit zwei Vorab-Messungen: M1 (ohne Gerät) trägt das BL808-Radio 802.15.4? · M2 (nach Ankunft) kompiliert das BL70X-ZigBee-Beispiel für den BL808?
+**Messung 2026-09-25 (ZigBee-Zeile):** **M1 gemessen — das BL808-Silizium trägt 802.15.4.** Das Bouffalolab-Datasheet (`bl_docs`, `BL808_DS` v1.2, Features: „Zigbee / IEEE 802.15.4" + „Wi-Fi/Bluetooth/Zigbee Coexistence"; PINE64-Ox64-Wiki „Zigbee") belegt ein 802.15.4-Radio im 2,4-GHz-Transceiver (gemessen 2026-09-25 via `general`/flash `archive_search`). Damit ist die Zeile „Funk: WiFi + BLE + ZigBee" für das **Silizium** belegt. Offen bleibt der **Stack-Weg** (Rat): ein öffentliches BL808-ZigBee-SDK/NCP wurde nicht gefunden — `ncp-blz`/`zigpy-blz`/`bl_iot_sdk` sind BL702/BL706-scoped, `bl_mcu_sdk` (BL808) hat 0 Treffer, der BL808-Reference-Manual kein Wireless-Kapitel. Optionen: BL70x-NCP als Koordinator-Dongle oder Espressif-RCP (`esp-zigbee-sdk` `zigbee_gateway`, ESP32-H2/C6 als `ot_rcp`). M2 (nach Ankunft) bleibt: ZigBee-Beispiel für den BL808 bauen.
 
 ## Notizen
 
