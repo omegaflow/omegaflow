@@ -11179,3 +11179,27 @@ fn port_gap_residual_fields_resolve() {
         ("diffusion", "kt_mass", 86400.0)
     );
 }
+
+#[test]
+fn test_absorption_for_force_gravity_never_absorbs() {
+    assert_eq!(channels::absorption_for_force(1, 0.5), 0.0);
+    assert_eq!(channels::absorption_for_force(1, 0.0), 0.0);
+}
+
+#[test]
+fn test_absorption_for_force_declared_value_rides_the_channel() {
+    for force in [0u8, 2, 3, 4, 5, 6, 7, 8] {
+        assert_eq!(channels::absorption_for_force(force, 0.25), 0.25);
+        assert_eq!(channels::absorption_for_force(force, 1.0), 1.0);
+    }
+}
+
+#[test]
+fn test_absorption_for_force_absent_or_invalid_declaration_is_pad() {
+    for force in [0u8, 2, 3, 4, 5, 6, 7, 8] {
+        assert_eq!(channels::absorption_for_force(force, 0.0), 0.0);
+        assert_eq!(channels::absorption_for_force(force, -0.1), 0.0);
+        assert_eq!(channels::absorption_for_force(force, f64::NAN), 0.0);
+        assert_eq!(channels::absorption_for_force(force, f64::INFINITY), 0.0);
+    }
+}

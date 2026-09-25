@@ -45,7 +45,13 @@
     [" 1 {} 0.0 0.0", "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"],
     ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"],
     ["JsonVal::Arr(Vec::new())", "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"],
-    ["ttl_transfer_bound", "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"]
+    ["ttl_transfer_bound", "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"],
+    ["2 => 0.1,", "a hardcoded per-force absorption constant (WP10 map: acoustic 0.1) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["3 => 0.05,", "a hardcoded per-force absorption constant (WP10 map: seismic-body 0.05) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["4 => 0.08,", "a hardcoded per-force absorption constant (WP10 map: seismic-surface 0.08) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["5 => 0.01,", "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["6 => 0.02,", "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -461,6 +467,8 @@
     "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n",
     "blocked_twin_blocked_open": "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote unit absent\n\ndescoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n\npending\nurl https://example.org/c\nnote port duty\n",
     "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n",
-    "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }"
+    "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }",
+    "force_absorption_constant": "let absorbs = match force {\n    0 | 1 => 0.0,\n    2 => 0.1,\n    3 => 0.05,\n    4 => 0.08,\n    5 => 0.01,\n    6 => 0.02,\n    7 => 0.15,\n};",
+    "force_absorption_law": "absorption: absorption_for_force(sensor.force, sensor.absorption),"
   }
 }
