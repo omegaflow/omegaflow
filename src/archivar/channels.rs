@@ -1011,6 +1011,16 @@ pub fn build_alerce_channels(
     channels
 }
 
+pub fn absorption_for_force(force: u8, declared: f64) -> f64 {
+    if force == 1 {
+        return 0.0;
+    }
+    if declared.is_finite() && declared >= 0.0 {
+        return declared;
+    }
+    0.0
+}
+
 pub fn anchor(
     channel: &Channel,
     sensor: &FieldConfig,
@@ -1131,7 +1141,7 @@ pub fn anchor(
         tau: sensor.tau,
         kernel_id: sensor.kernel as f64,
         force_type: sensor.force as f64,
-        absorption: sensor.absorption,
+        absorption: absorption_for_force(sensor.force, sensor.absorption),
         advection: sensor.advection,
         anchor_vmax,
         anchor_amax,
@@ -1172,7 +1182,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 kernel: 0,
                 force: 1,
                 tau: f64::INFINITY,
-                absorption: 0.0,
+                absorption: absorption_for_force(1, 0.0),
                 advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
@@ -1199,7 +1209,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 kernel: 0,
                 force: 1,
                 tau,
-                absorption: 0.0,
+                absorption: absorption_for_force(1, 0.0),
                 advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
