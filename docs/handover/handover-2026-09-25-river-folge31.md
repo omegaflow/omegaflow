@@ -3,7 +3,7 @@
   session: River-Folge 31
   class: handover
   date: 2026-09-25
-  sha256: 9379eac9c6846764115bf757b0d4e2b2fd8b886812c04266b87043d74ee757c8
+  sha256: f58612a1a9d194fdf2d97fc9a71a9d2acf36e9e7a131dcb96a11bacebf4c351d
   status: live
 -->
 # Handover — River-Folge 31 (2026-09-25)
@@ -22,6 +22,10 @@ Vorbereitung ≠ Akt: wo die Maschine eine Kante hat, läuft die Vorbereitung au
 `operator-gebunden` ist allein der Akt.
 
 Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
+
+**Wort | Datum | Quelle**
+- Sortierung der Tafel nach Umsetzbarkeit | 2026-09-25 | Operator-Wort im Plan-Pass (ersetzt den stehenden Sort Akteur→chronologisch für diese Linie).
+- health-check Variante 2 (erst messen, dann Cap-Wort) | 2026-09-25 | Operator-Wort im Plan-Pass.
 
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
@@ -50,32 +54,57 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
 - **Braucht:** `gh run download 36176580764` → 12 `bz-retro-*-q*.txt`
   (fam-Zeile je Quartal) + `bz-blatt-minute.txt`.
 
-#### health-check — Root Cause gemessen, Fix hängt am fremden Baum
+#### health-check — Rats-Verdikt gebaut, Commit blockiert durch fremde Kaskade
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Mountain-folge163-Commit (gibt `src/archivar/fetch.rs` frei).
-- **Lage:** (gemessen 2026-09-25 via `ci_manage log 36132614446 --all` + `sread`)
-  Job `verify (4)` stirbt reproduzierbar (auch Vorlauf `36140394227`) an einem
-  hängenden Fetch ohne Total-Timeout: `--verify phi --shard 4/16`
-  (`src/archivar/port.rs:2467 shard_bounds`) trifft `phi/sources.φ:7344`
-  (`zenodo.org/api/records/21132339/files/data.zip/content`); `src/archivar/fetch.rs`
-  setzt nur `--connect-timeout`, kein `--max-time`/`--speed-limit` → Transfer hängt
-  bis zum Runner-Kill (kein Assertion-Fehler; Job-Log 404).
-- **Blockade:** `src/archivar/fetch.rs` trägt fremde uncommittete Mountain-folge163-Arbeit
-  (gzip-Body-Fix) — ein pfad-begrenzter Commit würde fremde Hunks sweepen.
-- **Braucht:** `--max-time <N>` (oder `--speed-limit`/`--speed-time`) an die
-  curl-Aufrufe in `src/archivar/fetch.rs`; `phi/sources.φ:7344` als `pending`/`void`
-  belegen; dann `gh workflow run health-check.yml` statt Re-Dispatch der alten Route.
+- **Trigger:** fremde `ttl`-Kaskade landet im Baum (`cargo check` grün) oder wird verworfen.
+- **Lage:** (gemessen 2026-09-25 via `grind-pro` + `git status` + Rat) die Prämisse „kein
+  `--max-time`" ist **widerlegt** — `-m` steht auf allen curl-Pfaden
+  (`fetch.rs:63/122/220/256/1155`, `http_code:1133`), abgeleitet
+  `ttl_transfer_bound(ttl)=ceil(ttl/Φ²)` (`fetch.rs:25`). Quelle zenodo `21132339`
+  (`phi/sources.φ:7359` url, `:7363 ttl 86400`) → Bound **33002 s (≈9,17 h)** gegen
+  `health-check.yml:30 timeout-minutes: 120` (**7200 s**). Riss: Frische (`ttl`) treibt
+  Netz-Geduld; der `-m`-Kill-vor-Verdikt durchtrennt die Messreihe; die Shard-Schleife
+  (`port.rs:2522`) ist seriell. Das Rats-Verdikt ist **gebaut** (Hunks liegen im Baum):
+  `TRANSFER_BOUND_S = 1<<11` (`fetch.rs:19`), `ttl`-Parameter entfernt (Rufer
+  `fetch.rs/range.rs/main_flow.rs` + 3 `tools/harvest`), `--speed-limit 1 --speed-time 128`
+  + `--retry-max-time 2048` (`append_retry:32`), Test `tests.rs:5795` neu, Gate-Fixture
+  `ttl_transfer_bound_regression` (`commit_gate_vocab.json` + `commit_gate.rs`).
+- **Blockade:** eine **fremde, aktive** `ttl`-Entfernungs-Kaskade bewegt dieselben Dateien
+  (`fetch.rs`, `main_flow.rs`, `range.rs`, `tests.rs`, `commit_gate*.{rs,json}`, 3
+  `tools/harvest`-Bins); `cargo check` rot (23 `E0061`, keiner aus unseren Hunks). Ein
+  pfad-begrenzter Commit würde fremde Hunks sweepen — verboten.
+- **Braucht:** fremde Kaskade abwarten (oder verwerfen lassen), dann eigene Hunks erneut
+  anwenden/committen; Snapshot `refs/safety` trägt beide Stände. `phi/sources.φ` fremd-dirty,
+  (c) abgelehnt → `ttl 86400` bleibt. Danach `gh workflow run health-check.yml`.
 
 #### TLS im Relay (wireless) — externer Terminator steht
 - **Status:** wartend | **Bindung:** eigen/operator
 - **Trigger:** kabelloser Sensor wird gebraucht.
 - **Lage:** (gemessen 2026-09-25 via `sgrep`) Spec `docs/specs/relay-tls-terminator.md` +
   `bin/relay-tls.stunnel.conf` gebaut.
+- **Vorbereitet (2026-09-25 gemessen):** die exakten `openssl`-Befehle (CA + Leaf mit
+  SAN `IP:<lan-ip>` + Phone-Trust) stehen bereits in `bin/relay-tls.stunnel.conf:14-35`,
+  auf die Pfade `state/tls/relay-leaf.pem/.key` + `state/tls/ca.pem` abgestimmt — nichts
+  zu ergänzen; offen ist allein der Operator-Akt (Zertifikate erzeugen, `ca.pem`
+  installieren).
 - **Blockade:** geräteseitige CA operator-gebunden.
 - **Braucht:** Operator: lokale CA + Leaf-Cert (SAN = LAN-IP), `stunnel
   bin/relay-tls.stunnel.conf`, `https://<lan-ip>:1619`.
 
 ### Operator handelt
+
+#### Operator-Queue — einfach, ein Akt je Eintrag
+Je Eintrag: **Lage** (ein Satz) · **Frage** · **bei Ja** · **bei Nein**. Die Messlage steht im jeweiligen Block darunter.
+
+1. **Funk-Sensor über HTTPS** — Lage: kabellos braucht Verschlüsselung, sonst sperrt der Browser die Sensoren. Frage: lokale CA + Zertifikat erzeugen und stunnel starten? Ja: `stunnel bin/relay-tls.stunnel.conf`, `ca.pem` am Handy installieren, `https://<lan-ip>:1619/consent?ja`. Nein: bleibt am Kabel (kein TLS nötig).
+2. **Sonnenfarbe sichtbar** — Lage: Farbmodus gebaut, GPU-Ausführung ungemessen. Frage: Lauf mit `color: measured` starten (still oder sichtbar)? Ja: Farbe wird gemessen. Nein: ungemessen.
+3. **Sensor am Kabel** — Lage: Vorbereitung steht. Frage: sichtbaren Lauf starten? Ja: `adb devices && adb reverse tcp:1618 tcp:1618`, dann `bin/omegaflow` ohne `OMEGAFLOW_HIDDEN`. Nein: nichts.
+4. **Chrome-Debugger** — Lage: DevTools-MCP nicht angebunden. Frage: Debugger-Rechte am laufenden Chrome geben? Ja: MCP 1.9.0 pinnen + hängen; Konsole/Netz lesbar. Nein: keine Einsicht.
+5. **Kaltstart der Browser-Extension** — Lage: Kaltstart 0–2276 s; Fix ist eine Extension-Änderung beim Dritten. Frage: Änderung anstoßen (`chrome.alarms`)? Ja: Dritter ändert die Store-Extension. Nein: Werkzeuge erst nach Executor-Connect.
+6. **FIT-Aktivität** — Lage: Brücke gebaut, echte Daten fehlen. Frage: 945-Aktivität aufzeichnen und einlesen? Ja: per USB mounten → `fit_compiler`. Nein: leer.
+7. **Geräte-Inventar** — Lage: 945/Quest/Bigme/Pixel ungemessen. Frage: am Gerät nachmessen? Ja: `dumpsys sensorservice`, E-Label/FCC, WebGPU/Generic-Sensor-Detect. Nein: offen.
+8. **Hardware beschaffen** — Lage: BOM bestellfertig. Frage: BOM bestellen? Ja: AliExpress-Login + Bestellung. Nein: Sensor-Bindung bleibt ohne Hardware.
+9. **Sensor-Bindung vC** — Lage: Pfad + HRV-Reader gebaut, Hardware fehlt. Frage: nach Anschluss messen? Ja: `OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`, dann `perm_target_probe --live <pfad>`. Nein: pending.
 
 #### Sonnenfarbe: erster Lauf `color: measured`
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -119,7 +148,16 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
 - **Blockade:** Debugger-Rechte am live Chrome (Operator-Wort).
 - **Braucht:** Operator-Wort; dann MCP 1.9.0 pinnen, an den Pfad-1-Chrome hängen,
   ein Membran-Lauf mit gelesener Konsole/Netz.
-- **Quelle:** docs/surveys/survey-2026-09-20-browser-anbindung.md
+- **Vorbereitet (2026-09-25 via `grind-flash` + npm-gitHead-Messung):** Block für die
+  globale `~/.config/opencode/opencode.jsonc` als zweite `mcp`-Zeile neben `playwright`
+  (Schema gemessen an der bestehenden `playwright`-Zeile). `--autoConnect` hängt an den
+  laufenden Default-Profil-Chrome (Chrome ≥144, Operator aktiviert
+  `chrome://inspect/#remote-debugging`) — kein Port zu erfinden. Fallback `--browserUrl`
+  braucht einen separaten Chrome mit `--remote-debugging-port=<PORT>` + non-default
+  `--user-data-dir`; `<PORT>` = `pending`.
+  `"chrome-devtools": { "type": "local", "command": ["npx","-y","chrome-devtools-mcp@1.9.0","--autoConnect","--no-usage-statistics","--no-performance-crux"], "enabled": true }`
+- **Quelle:** docs/surveys/survey-2026-09-20-browser-anbindung.md; npm
+  registry.npmjs.org/chrome-devtools-mcp/1.9.0 (gitHead `1cec9cd1`), docs/configuration.md:37-48.
 
 #### MV3-Kaltstart-Latenz der Pfad-1-Extension entschärfen
 - **Status:** operator-gebunden | **Bindung:** dritter
@@ -132,6 +170,13 @@ Diese Session konsumierte `handover-2026-09-25-river-folge30.md`.
 - **Braucht:** `"alarms"` (≥30 s-Periode) oder Offscreen-Keepalive in der
   Extension; bis dahin Werkzeuge erst nach Executor-Connect
   (`browser_targets` != leer) rufen.
+- **Vorbereitet (2026-09-25, Vorschlag an den Dritten; Extension-Quelle nicht im
+  Repo — `**/manifest.json`: 0 Treffer):** in `manifest.json` die Berechtigung
+  `"alarms"` ergänzen und den `setTimeout`-Backoff durch
+  `chrome.alarms.create("keepalive", {periodInMinutes: 0.5})` +
+  `chrome.alarms.onAlarm` ersetzen (30 s = MV3-Mindestperiode); Alternative
+  Offscreen-Document-Keepalive. Die genaue Worker-Stelle ist ungemessen (liegt
+  beim Dritten).
 - **Quelle:** docs/surveys/survey-2026-09-20-browser-anbindung.md
 
 #### FIT-Brücke — echte 945-Aktivität
