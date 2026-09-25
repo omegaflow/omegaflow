@@ -173,6 +173,17 @@ Diese Session konsumierte `handover-2026-09-25-mycelium-folge163.md`.
 - **Blockade:** PI-seitige Prozedur.
 - **Braucht:** `archive_search --verdict https://limadou.ssdc.asi.it/`.
 
+### Survey-Träger — Orphan-Faltung 2026-09-25
+
+- docs/surveys/survey-2026-09-03-daten-holdings-inventur.md | offene Marker: 5 | `abk_dbdt_1h_*`/GIC-/Corona-Serien lokalisieren (pending) + omegaflow-legacy-Umlagerung entscheiden
+- docs/surveys/survey-2026-09-03-orphan-verdicts.md | offene Marker: 10 | 55 undocumented `stale_pending` je Netloc disponieren (SOURCE_PORT Force-Gate → `sources.φ`/`dead_sources.φ`)
+- docs/surveys/survey-2026-09-07-tmp-opencode-scan.md | offene Marker: 8 | NOAA-NRS-Quell-Entscheidung (eigener `tools/harvest`-Compiler) treffen
+- docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md | offene Marker: 29 | `blocked_sources.φ`-Pendings disponieren (`register_lookup --open`, owner-getaggt)
+- docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md | offene Marker: 12 | `nse_haug_trisp`-Compiler bei Maileingang + Voyager closed-loop-Request
+- docs/surveys/survey-2026-09-16-dead-sources-relevanz.md | offene Marker: 3 | 4 pending + 3 Force-Kanal-Re-Checks (`osdr.nasa.gov`, `dods.wh.gov`, `pskreporter.info`)
+- docs/surveys/survey-2026-09-17-sonden-request-only.md | offene Marker: 15 | 4 pending-Einträge in `blocked_sources.φ` + Pioneer-ATDF dtype-12-Arm + Juno-OCRU-Abgleich
+- docs/surveys/survey-2026-09-17-verlorene-diskussionen.md | offene Marker: 10 | sources-Repo (`omegaflow/sources`, I02/refresh.yml) klonen + 5-min-Takt messen
+
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`); `/consent` ist der
