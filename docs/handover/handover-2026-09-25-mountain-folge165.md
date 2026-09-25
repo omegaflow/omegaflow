@@ -3,7 +3,7 @@
   session: Mountain-Folge 165
   class: handover
   date: 2026-09-25
-  sha256: 04b5b47010f6ee7ffb5d7ed90c859bb5e9e37ae3b483b41728f4b5f9fabc5089
+  sha256: e7414a1f42f7b7abdbdb73e4c9e0cc62c79a8bb4bb73481b5eb790f86bd7edea
   status: live
 -->
 # Handover — Mountain-Folge 165 (2026-09-25)
@@ -74,31 +74,6 @@ Trigger / Lage / Blockade / Braucht.
 - **Blockade:** keine
 - **Braucht:** ATDF/ODR/TRK-2-34/RSR über die stehenden Arme registrieren +
   ernten (Compiler/`*-cdn`-Workflow je Sammlung).
-
-#### Voyager Saturn/Titan-Okkultation — tar-Arm + Stride
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via `archive_search --verdict`/`--sniff`) die
-  echte Route ist `saturn_occultation_narrow_band/` (PSPA-00217, 5 Tars, Saturn,
-  13-NOV-80) und `titan_occultation_medium_band/` (PSPA-00189, 8 Tars, Titan,
-  12-NOV-80); `voyager_occlt_compiler.rs` existiert, hat aber **keinen tar-Arm**;
-  der Mediumband-Stride ist ungemessen (`4704 % 512 ≠ 0`), `parse_series` liefert
-  deshalb leer.
-- **Blockade:** keine
-- **Braucht:** tar-Extraktionsarm (Vorlage `mariner_occlt_compiler.rs` `tar_dat`)
-  + Mediumband-Stride/Narrowband-Parser **messen**, dann registrieren/manifestieren.
-
-#### Mariner 10 SPK — Workflow + Manifestation
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25) registriert (`phi/sources.φ:3184`, mycelium
-  `b1dc1e22e`); die CDN-URL ist **HTTP 404** (Asset fehlt); Compiler
-  `ephemeris_mariner10_compiler.rs` existiert, aber kein Workflow dispatcht ihn
-  (`kernel-flatten.yml` führt `mariner10` nicht).
-- **Blockade:** keine
-- **Braucht:** `mariner10-ephemeris-cdn.yml` bauen (Kernel-Download +
-  `ephemeris_mariner10_compiler --ci-mode`, Release-Tag `ssd.jpl.nasa.gov-ephemeris`)
-  und dispatchen.
 
 #### arXiv OAI-PMH-Bulk-Weg bauen
 - **Status:** autonom | **Bindung:** eigen
