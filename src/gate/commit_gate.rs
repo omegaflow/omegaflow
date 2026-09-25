@@ -1229,6 +1229,236 @@ fn check_bindung_linie(path: &str, content: &str) -> Option<Verdict> {
     None
 }
 
+fn is_offen_heading(line: &str) -> bool {
+    let Some(rest) = line.trim_start().strip_prefix("## ") else {
+        return false;
+    };
+    let rest = rest.trim_start();
+    let low = rest.to_ascii_lowercase();
+    low.starts_with("offen")
+        && low["offen".len()..]
+            .chars()
+            .next()
+            .map(|c| !c.is_alphanumeric())
+            .unwrap_or(true)
+}
+
+fn is_h2_heading(line: &str) -> bool {
+    line.trim_start().starts_with("## ")
+}
+
+fn is_point_heading(line: &str) -> bool {
+    let t = line.trim_start();
+    t.starts_with("### ") || t.starts_with("#### ")
+}
+
+fn field_value(block: &[&str], field: &str) -> Option<String> {
+    let marker = format!("**{}:**", field);
+    for line in block {
+        let t = line.trim();
+        if let Some(at) = t.find(&marker) {
+            let after = &t[at + marker.len()..];
+            let end = after.find("**").unwrap_or(after.len());
+            let value = after[..end].trim().trim_end_matches('|').trim();
+            return Some(value.to_string());
+        }
+    }
+    None
+}
+
+fn has_iso_date(text: &str) -> bool {
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i + 10 <= bytes.len() {
+        if bytes[i].is_ascii_digit()
+            && bytes[i + 1].is_ascii_digit()
+            && bytes[i + 2].is_ascii_digit()
+            && bytes[i + 3].is_ascii_digit()
+            && bytes[i + 4] == b'-'
+            && bytes[i + 5].is_ascii_digit()
+            && bytes[i + 6].is_ascii_digit()
+            && bytes[i + 7] == b'-'
+            && bytes[i + 8].is_ascii_digit()
+            && bytes[i + 9].is_ascii_digit()
+        {
+            return true;
+        }
+        i += 1;
+    }
+    false
+}
+
+fn trigger_has_proof(trigger: &str) -> bool {
+    let lower = trigger.to_lowercase();
+    if has_iso_date(trigger) {
+        return true;
+    }
+    if lower.contains("termin:") {
+        return true;
+    }
+    if lower.contains("wort") {
+        return true;
+    }
+    for token in ["mail", "lauf", "run", "asset", "release", "head"] {
+        if word_present(&lower, token) {
+            return true;
+        }
+    }
+    trigger.contains('`')
+}
+
+fn has_register_key(line: &str) -> bool {
+    let chars: Vec<char> = line.chars().collect();
+    for (i, &c) in chars.iter().enumerate() {
+        if c == '#' && i > 0 && i + 1 < chars.len() {
+            if chars[i - 1].is_alphanumeric() && chars[i + 1].is_alphanumeric() {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn has_40hex_sha(line: &str) -> bool {
+    let chars: Vec<char> = line.chars().collect();
+    let mut i = 0;
+    while i < chars.len() {
+        if chars[i].is_ascii_hexdigit() {
+            let start = i;
+            while i < chars.len() && chars[i].is_ascii_hexdigit() {
+                i += 1;
+            }
+            if i - start == 40 {
+                return true;
+            }
+        } else {
+            i += 1;
+        }
+    }
+    false
+}
+
+fn has_befund(block: &[&str]) -> bool {
+    let lower = block.join("\n").to_lowercase();
+    if lower.contains("(gemessen") || lower.contains("descoped mit befund") {
+        return true;
+    }
+    block
+        .iter()
+        .any(|l| l.contains('→') || has_register_key(l) || has_40hex_sha(l))
+}
+
+fn field_text(block: &[&str], name: &str) -> String {
+    match field_value(block, name) {
+        Some(v) => v.to_string(),
+        None => String::new(),
+    }
+}
+
+pub fn status_proof_violations(handover: &str) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    let lines: Vec<&str> = handover.lines().collect();
+    let Some(start) = lines.iter().position(|l| is_offen_heading(l)) else {
+        return out;
+    };
+    let end = lines
+        .iter()
+        .enumerate()
+        .skip(start + 1)
+        .find(|(_, l)| is_h2_heading(l))
+        .map(|(i, _)| i)
+        .unwrap_or(lines.len());
+    let mut i = start + 1;
+    while i < end {
+        if !is_point_heading(lines[i]) {
+            i += 1;
+            continue;
+        }
+        let mut j = i + 1;
+        while j < end && !is_point_heading(lines[j]) {
+            j += 1;
+        }
+        let block = &lines[i + 1..j];
+        if let Some(status) = field_value(block, "Status") {
+            check_status_proof(block, &status, i + 1, &mut out);
+        }
+        i = j;
+    }
+    out
+}
+
+fn check_status_proof(
+    block: &[&str],
+    status: &str,
+    line: usize,
+    out: &mut Vec<(usize, String, String)>,
+) {
+    let lower = status.to_lowercase();
+    if lower.starts_with("wartend") {
+        let trigger = field_text(block, "Trigger");
+        if !trigger_has_proof(&trigger) {
+            out.push((
+                line,
+                "wartend-ohne-trigger-beleg".to_string(),
+                feedback("wartend-ohne-trigger-beleg").to_string(),
+            ));
+        }
+    }
+    if lower == "blockiert" {
+        let blockade = field_text(block, "Blockade");
+        let b = blockade.trim();
+        if b.is_empty() || b.to_lowercase().contains("keine") {
+            out.push((
+                line,
+                "blockade-keine".to_string(),
+                feedback("blockade-keine").to_string(),
+            ));
+        }
+    }
+    if lower.starts_with("operator-gebunden") {
+        let trigger = field_text(block, "Trigger");
+        let has_wort_trigger = trigger.to_lowercase().contains("wort");
+        let has_wort_field = field_value(block, "Wort").is_some();
+        if !has_wort_trigger && !has_wort_field {
+            out.push((
+                line,
+                "akt-ohne-wort-trigger".to_string(),
+                feedback("akt-ohne-wort-trigger").to_string(),
+            ));
+        }
+    }
+    if lower.starts_with("termin") {
+        let trigger = field_text(block, "Trigger");
+        let bindung = field_text(block, "Bindung");
+        if !has_iso_date(&trigger) && !has_iso_date(&bindung) {
+            out.push((
+                line,
+                "termin-ohne-datum".to_string(),
+                feedback("termin-ohne-datum").to_string(),
+            ));
+        }
+    }
+    if lower == "descoped" {
+        if !has_befund(block) {
+            out.push((
+                line,
+                "descoped-ohne-befund".to_string(),
+                feedback("descoped-ohne-befund").to_string(),
+            ));
+        }
+    }
+    if let Some(lage) = field_value(block, "Lage") {
+        if !lage.contains("(gemessen") {
+            out.push((
+                line,
+                "lage-unstamped".to_string(),
+                "the Lage carries no measurement stamp — name (gemessen <date/time> via <tool/source>)"
+                    .to_string(),
+            ));
+        }
+    }
+}
+
 pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<String>) {
     let tracked_set: HashSet<&str> = tracked.iter().map(String::as_str).collect();
     let declared_set: HashSet<&str> = declared.iter().map(String::as_str).collect();
@@ -3105,5 +3335,142 @@ mod tests {
         assert!(!classes.iter().any(|p| p.starts_with("phi/pipeline/")));
         assert!(classes.iter().any(|p| p == "phi/bindings/dust-maske.φ"));
         assert!(classes.iter().any(|p| p == "phi/reports/scan_coverage.φ"));
+    }
+
+    fn point(
+        status: &str,
+        bindung: &str,
+        trigger: &str,
+        lage: &str,
+        blockade: &str,
+        braucht: &str,
+    ) -> String {
+        format!(
+            "## Offen\n\n### P\n- **Status:** {} | **Bindung:** {}\n- **Trigger:** {}\n- **Lage:** {}\n- **Blockade:** {}\n- **Braucht:** {}\n",
+            status, bindung, trigger, lage, blockade, braucht
+        )
+    }
+
+    #[test]
+    fn fp_status_proof_wartend_ohne_trigger_beleg() {
+        let v = status_proof_violations(&fx("status_proof_wartend-ohne-trigger-beleg"));
+        assert!(v.iter().any(|(_, r, _)| r == "wartend-ohne-trigger-beleg"));
+    }
+
+    #[test]
+    fn fp_status_proof_blockade_keine() {
+        let v = status_proof_violations(&fx("status_proof_blockade-keine"));
+        assert!(v.iter().any(|(_, r, _)| r == "blockade-keine"));
+    }
+
+    #[test]
+    fn fp_status_proof_akt_ohne_wort_trigger() {
+        let v = status_proof_violations(&fx("status_proof_akt-ohne-wort-trigger"));
+        assert!(v.iter().any(|(_, r, _)| r == "akt-ohne-wort-trigger"));
+    }
+
+    #[test]
+    fn fp_status_proof_termin_ohne_datum() {
+        let v = status_proof_violations(&fx("status_proof_termin-ohne-datum"));
+        assert!(v.iter().any(|(_, r, _)| r == "termin-ohne-datum"));
+    }
+
+    #[test]
+    fn fp_status_proof_descoped_ohne_befund() {
+        let v = status_proof_violations(&fx("status_proof_descoped-ohne-befund"));
+        assert!(v.iter().any(|(_, r, _)| r == "descoped-ohne-befund"));
+    }
+
+    #[test]
+    fn fp_status_proof_lage_unstamped() {
+        let h = point("eigen", "eigen", "sofort", "offen", "keine", "step");
+        let v = status_proof_violations(&h);
+        assert!(v.iter().any(|(_, r, _)| r == "lage-unstamped"));
+    }
+
+    #[test]
+    fn fn_status_proof_wartend_with_trigger_beleg() {
+        let h = point(
+            "wartend",
+            "eigen",
+            "due on 2026-09-30",
+            "offen (gemessen 2026-09-25 via sgrep)",
+            "keine",
+            "step",
+        );
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_blockiert_with_real_blockade() {
+        let h = point(
+            "blockiert",
+            "eigen",
+            "sofort",
+            "offen (gemessen 2026-09-25 via sgrep)",
+            "arXiv-Edge",
+            "step",
+        );
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_operator_gebunden_with_wort_field() {
+        let h = "## Offen\n\n### P\n- **Status:** operator-gebunden | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** the operator word\n- **Braucht:** operator word\n- **Wort:** send | 2026-09-25 | operator\n";
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_termin_with_datum() {
+        let h = point(
+            "termin",
+            "operator",
+            "deadline 2026-10-01",
+            "offen (gemessen 2026-09-25 via sgrep)",
+            "keine",
+            "step",
+        );
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_descoped_with_befund() {
+        let h = point(
+            "descoped",
+            "eigen",
+            "—",
+            "offen (gemessen 2026-09-25 via sgrep)",
+            "keine",
+            "—",
+        );
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_lage_stamped() {
+        let h = point(
+            "eigen",
+            "eigen",
+            "sofort",
+            "offen (gemessen 2026-09-25 via sgrep)",
+            "keine",
+            "step",
+        );
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn fn_status_proof_skips_actor_headings() {
+        let h = "## Offen\n\n### Line acts\n\n#### P\n- **Status:** eigen | **Bindung:** eigen\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
+        assert!(status_proof_violations(&h).is_empty());
+    }
+
+    #[test]
+    fn status_proof_reports_heading_line() {
+        let h = "## Offen\n\n### Point X\n- **Status:** wartend | **Bindung:** eigen\n- **Trigger:** at some point\n- **Lage:** offen (gemessen 2026-09-25 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let v = status_proof_violations(&h);
+        assert!(v
+            .iter()
+            .any(|(l, r, _)| *l == 3 && r == "wartend-ohne-trigger-beleg"));
     }
 }

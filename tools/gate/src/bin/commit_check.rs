@@ -1,6 +1,6 @@
 use omegaflow::commit_gate::{
     Gate, canon_diff, declared_canon, doc_open_marker_line, json_write, prose_violation_for,
-    register_classes,
+    register_classes, status_proof_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -177,6 +177,22 @@ fn main() {
             eprintln!(
                 "commit_check: doc-carrier: {path} carries open markers but no live handover names it - carry it in its owner's handover or release it (descoped)"
             );
+            fail = true;
+        }
+    }
+    for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
+        if !path.starts_with("docs/handover/")
+            || !path.ends_with(".md")
+            || path.contains("/archiv/")
+        {
+            continue;
+        }
+        let content = match std::fs::read_to_string(path) {
+            Ok(c) => c,
+            Err(_) => continue,
+        };
+        for (line, rule, feedback) in status_proof_violations(&content) {
+            eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
             fail = true;
         }
     }
