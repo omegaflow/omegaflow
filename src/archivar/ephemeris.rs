@@ -158,7 +158,7 @@ fn resolve_to_ssb(
     for spk in kernels {
         for seg in spk.segments() {
             if seg.target == cur
-                && matches!(seg.data_type, 2 | 3 | 9 | 13 | 20)
+                && matches!(seg.data_type, 1 | 2 | 3 | 9 | 13 | 20)
                 && et >= seg.start_et
                 && et <= seg.end_et
                 && !candidates.contains(&seg.center)
@@ -345,7 +345,7 @@ pub fn extract_granules(
     let segments = spk.segments();
     let relevant: Vec<_> = segments
         .iter()
-        .filter(|s| s.target == target && matches!(s.data_type, 2 | 3 | 9 | 13 | 20))
+        .filter(|s| s.target == target && matches!(s.data_type, 1 | 2 | 3 | 9 | 13 | 20))
         .collect();
     if relevant.is_empty() {
         return (granules, rotations, nutation);
