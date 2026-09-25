@@ -79,7 +79,107 @@ pending
 url https://toar-data.fz-juelich.de/api/v2/data/timeseries_merged/
 note TOAR Oberflächen-O3 (nmol/mol=ppb, diffusion, CC BY 4.0) — Verdikt accept; anonym für Station-IDs 1000-2000. Schritt: toar_timeseries_compiler.rs (JSON-Zeitreihen + Stationen-Fanout) bauen.
 
+blocked account
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+note HTTP 402 mit PURPLEAIR_KEY / 403 ohne Key 2026-09-25 — paid plan/quota gate, key present, kein 401.
+
+parser-def geojson
+gap curation
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note HTTP 400 2026-09-25 Air_Quality_PM25_Latest_Results: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+
+parser-def geojson
+gap curation
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note HTTP 400 2026-09-25 Semptember_Chile_Earthquake: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+
+parser-def geojson
+gap curation
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note HTTP 400 2026-09-25 crowdmag_observations_aggregated: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+
+parser-def geojson
+gap curation
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+note HTTP 400 2026-09-25 tohoku_seismicity: /query ohne Layer-ID → 400 "Bad Request"; /0/query → HTTP 200 geojson. Query-Arm fehlt.
+
 parser-def json
+gap curation
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+note HTTP 400 2026-09-25 HAPI 1400: "Unable to parse text as ISO8601 date/time: week_agoT00:00:00Z" — {week_ago} unersetzt; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+note HTTP 400 2026-09-25 ADQL: table J/A+A/609/A117/table1 not found; 11 unresolved identifiers (_RA,_DE,Karmn,...); Query-Arm fehlt.
+
+parser-def json
+gap curation
+url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+note HTTP 400 2026-09-25 HAPI 1405: "time outside valid range" — Fenster 2010-09-17 außerhalb Abdeckung; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: Unknown column "dec"; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","mag_v"; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra_dr2","dec_dr2"; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: Unknown column "ep_flux"; Query-Arm fehlt.
+
+parser-def votable
+gap curation
+url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+catalogs.mmc_bzcat5th+WHERE+flux+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","flux"; Query-Arm fehlt.
+
+parser-def votable
+gap votable-reader
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; votable-reader-Arm fehlt.
+
+parser-def votable
+gap votable-reader
+url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
+note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable; votable-reader-Arm fehlt.
+
+parser-def votable
+gap curation
+url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
+note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted; Query-Arm fehlt.
+
+pending
+url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
+note HTTP 405 direct+Proton 2026-09-25 — ParquetFile/urls verlangt POST (post_body absent), kein GET.
+
+pending
+url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
+note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+
+pending
+url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
+note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+
+pending
+url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
+note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+
+pending
+url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
+note HTTP 500 direct+Proton 2026-09-25 — server error, retry duty.
+
+parser-def json
+gap unit-auto-detect
 url https://aecdynamicfiles.s3.us-west-2.amazonaws.com/recent_events.json
 note AEC recent_events.json 2026-09-25 HTTP 200 647244 B sha256 cc91725f715a; array [{"event":{lat,lng,depth_km,magnitude,magnitude_type,event_time_epoch}}]; fdsnws event geojson HTTP 404; HTML recent_list ohne lat/lon — "kein JSON-API" überholt.
 
@@ -1017,4 +1117,34 @@ parser-def json
 gap unit-auto-detect
 url https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json
 note GMRT PointServer: field lidar_gmrt_elevation_m force undetermined — unit-auto-detect gap. Bathymetrie echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
+note VizieR J/A+A/582/A8 ariel_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
+note VizieR J/A+A/582/A8 miran_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
+note VizieR J/A+A/582/A8 obero_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
+note VizieR J/A+A/582/A8 titan_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
+note VizieR J/A+A/582/A8 umbri_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
+
+parser-def asu-tsv
+gap astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
+note VizieR J/A+A/582/A8 uranu_j (asu-tsv): pos-series JD/RAJ2000/DEJ2000 (+mas err) moving body; no dist, no scalar field, RA/Dec sexagesimal A12 — astrometry-reader gap. Astrometrie (gravity) echt.
 
