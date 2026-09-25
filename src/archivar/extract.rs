@@ -6,6 +6,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "goes_xrs" => goes::parse_bin(bytes),
         "intermagnet_dbdt" => intermagnet::parse_bin(bytes),
         "omni2_serie" => omni2::parse_bin(bytes),
+        "omni_hro" => omni_hro::parse_bin(bytes),
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
         "ltmm" => movement_monitoring::parse_bin(bytes),
@@ -162,6 +163,17 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             omni2::COMP_DST => Some("magnetosphere_dst_nt"),
             _ => None,
         },
+        "omni_hro" => match comp {
+            omni_hro::COMP_IMF_F => Some("omni_hro_imf_f_nt"),
+            omni_hro::COMP_IMF_BX_GSE => Some("omni_hro_imf_bx_gse_nt"),
+            omni_hro::COMP_IMF_BY_GSM => Some("omni_hro_imf_by_gsm_nt"),
+            omni_hro::COMP_IMF_BZ_GSM => Some("omni_hro_imf_bz_gsm_nt"),
+            omni_hro::COMP_SW_FLOW_SPEED => Some("omni_hro_solarwind_flow_speed_kms"),
+            omni_hro::COMP_SW_DENSITY => Some("omni_hro_solarwind_density_percc"),
+            omni_hro::COMP_SW_TEMP => Some("omni_hro_solarwind_temp_k"),
+            omni_hro::COMP_SW_PRESSURE => Some("omni_hro_solarwind_pressure_npa"),
+            _ => None,
+        },
         "mitdb" => match comp {
             mitdb::COMP_MLII => Some("mitdb_mlii"),
             mitdb::COMP_V1 => Some("mitdb_v1"),
@@ -222,6 +234,12 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             mariner_occlt::COMP_AMP_MIN => Some("mariner10_occlt_amp_min"),
             mariner_occlt::COMP_AMP_MAX => Some("mariner10_occlt_amp_max"),
             mariner_occlt::COMP_AMP_MEAN => Some("mariner10_occlt_amp_mean"),
+            _ => None,
+        },
+        "voyager_occlt" => match comp {
+            voyager_occlt::COMP_AMP_MIN => Some("voyager_occlt_amp_min"),
+            voyager_occlt::COMP_AMP_MAX => Some("voyager_occlt_amp_max"),
+            voyager_occlt::COMP_AMP_MEAN => Some("voyager_occlt_amp_mean"),
             _ => None,
         },
         "cors_rinex" => match comp {
