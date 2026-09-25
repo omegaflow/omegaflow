@@ -1,4 +1,4 @@
-use omegaflow::archivar::{RetryPolicy, curl_base, fetch_raw, ttl_transfer_bound};
+use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, curl_base, fetch_raw};
 use omegaflow::cdn::upload_release;
 use std::collections::HashSet;
 use std::fs::{self, File};
@@ -7,7 +7,6 @@ use std::process::{Command, Stdio};
 
 const NAIF_NETLOC: &str = "naif.jpl.nasa.gov";
 const OUT_ROOT: &str = "data";
-const FETCH_TTL_S: u64 = 86400;
 const RTR_INDEX: &str =
     "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/";
 const SCLK_URL: &str = "https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/sclk/mk00062a.tsc";
@@ -53,7 +52,7 @@ fn curl_file(url: &str, path: &str) -> bool {
             return false;
         }
     };
-    let mut cmd = curl_base(RetryPolicy::Transient, ttl_transfer_bound(FETCH_TTL_S), 0);
+    let mut cmd = curl_base(RetryPolicy::Transient, TRANSFER_BOUND_S, 0);
     cmd.arg(url);
     cmd.stdout(Stdio::from(file));
     match cmd.status() {
@@ -162,7 +161,7 @@ fn main() {
         Some(r) => r,
         None => OUT_ROOT.to_string(),
     };
-    let Some(html) = fetch_raw(RTR_INDEX, None, &[], FETCH_TTL_S) else {
+    let Some(html) = fetch_raw(RTR_INDEX, None, &[]) else {
         eprintln!("rtr index fetch void: {RTR_INDEX}");
         std::process::exit(1);
     };

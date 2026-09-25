@@ -50,6 +50,8 @@ mod materialsproject;
 mod net;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
+#[path = "archive_search/oai.rs"]
+mod oai;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
 #[path = "archive_search/openfda.rs"]
@@ -165,6 +167,7 @@ enum Mode {
     PdfImage,
     PdfText,
     ArxivSrc,
+    Oai,
     Net(&'static str),
 }
 
@@ -188,6 +191,8 @@ fn main() {
     let mut pdf_input: Option<String> = None;
     let mut pdf_out: Option<String> = None;
     let mut arxiv_input: Option<String> = None;
+    let mut oai_input: Option<String> = None;
+    let mut oai_pages: Option<usize> = None;
     let mut count_only = false;
     let mut case_sensitive = false;
     let mut path_match = false;
@@ -266,6 +271,21 @@ fn main() {
             "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
             "--arxiv" => mode = Mode::Net("arxiv"),
+            "--arxiv-oai" => {
+                mode = Mode::Oai;
+                if let Some(a) = args.get(i + 1) {
+                    if !a.starts_with('-') {
+                        oai_input = Some(a.clone());
+                        i += 1;
+                    }
+                }
+            }
+            "--pages" => {
+                i += 1;
+                if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
+                    oai_pages = Some(n);
+                }
+            }
             "--ads" => mode = Mode::Net("ads"),
             "--ntrs" => mode = Mode::Net("ntrs"),
             "--wayback" => mode = Mode::Net("wayback"),
@@ -529,6 +549,10 @@ fn main() {
             let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
             print_lines(&lines);
         }
+        Mode::Oai => {
+            let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -569,7 +593,10 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--supermag|--heasarc <query> [--cacert <pem>]"
+    );
+    eprintln!(
+        "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
     );
     eprintln!(
         "  --brave     Brave Search API (X-Subscription-Token); HTTP 402 while the free quota is spent — the keyless path is --mwmbl"

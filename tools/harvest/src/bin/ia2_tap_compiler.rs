@@ -10,7 +10,6 @@ const BASE: &str =
 const SRC_QUERY: &str =
     "SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL";
 const DEFAULT_OUT: &str = "data/ia2-tap.oats.inaf.it/ia2_wgesdss.bin";
-const FETCH_TTL: u64 = 604800;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -56,7 +55,7 @@ fn main() {
         Some(v) => v,
         None => format!("{BASE}{SRC_QUERY}"),
     };
-    let bytes = match fetch_raw_bytes(&url, FETCH_TTL) {
+    let bytes = match fetch_raw_bytes(&url) {
         Some(b) => b,
         None => {
             eprintln!("{url}: fetch void");

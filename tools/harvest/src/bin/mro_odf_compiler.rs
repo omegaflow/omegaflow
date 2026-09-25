@@ -4,13 +4,12 @@ use omegaflow::odf;
 
 const BASE: &str = "https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
-const REQUEST_TTL_S: u64 = 1 << 9;
 const WORKERS: usize = 1 << 3;
 const PREFIX: &str = "mro_odf";
 
 fn fetch_listing(dir: &str) -> Option<Vec<u8>> {
     match http_code(dir, &[]) {
-        Some(code) if (200..300).contains(&code) => fetch_raw_bytes(dir, REQUEST_TTL_S),
+        Some(code) if (200..300).contains(&code) => fetch_raw_bytes(dir),
         Some(code) => {
             eprintln!("{dir}: http {code} — no listing");
             None
@@ -51,7 +50,7 @@ fn files_of() -> Vec<String> {
 }
 
 fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
-    let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+    let Some(bytes) = fetch_raw_bytes(url) else {
         eprintln!("{url}: fetch void");
         return Vec::new();
     };

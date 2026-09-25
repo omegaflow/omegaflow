@@ -53,7 +53,7 @@ fn main() {
         }
     };
 
-    let stations_text = match fetch_raw(STATIONS, None, &[], 3600) {
+    let stations_text = match fetch_raw(STATIONS, None, &[]) {
         Some(t) => t,
         None => {
             eprintln!("stations.tsv fetch void");
@@ -62,7 +62,7 @@ fn main() {
     };
     let anchors = parse_uscrn_stations(&stations_text);
     let url = format!("{BUCKET}/hourly02/{year}/CRNH0203-{year}-{station}.txt");
-    let text = match fetch_raw(&url, None, &[], 3600) {
+    let text = match fetch_raw(&url, None, &[]) {
         Some(t) => t,
         None => {
             eprintln!("{url}: hourly02 fetch void");

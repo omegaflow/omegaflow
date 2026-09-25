@@ -141,7 +141,7 @@ fn run(args: &[String]) -> Result<(), String> {
     };
 
     let list_body =
-        fetch_raw(&boxes_url, None, &[], 3600).ok_or_else(|| format!("{boxes_url}: fetch void"))?;
+        fetch_raw(&boxes_url, None, &[]).ok_or_else(|| format!("{boxes_url}: fetch void"))?;
     let mut ids = box_ids(&list_body);
     ids.sort();
     ids.dedup();
@@ -155,7 +155,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut fetch_void = 0usize;
     for id in &ids {
         let url = format!("https://api.opensensemap.org/boxes/{id}");
-        match fetch_raw(&url, None, &[], 3600) {
+        match fetch_raw(&url, None, &[]) {
             Some(body) => match parse_json(&body) {
                 Some(json) => details.push((id.clone(), json)),
                 None => {

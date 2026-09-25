@@ -5,7 +5,6 @@ use omegaflow_measure::mww::{MwwRecord, NodalPlane, iso_ymd, parse_quakeml};
 
 const GCMT_NDK_URL: &str =
     "https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk";
-const QUERY_TTL_S: u64 = 3600;
 const GCMT_TTL_S: u64 = 86400;
 const KM_PER_DEG: f64 = 111.195;
 
@@ -120,7 +119,7 @@ fn main() {
         return;
     };
     let url = format!("{CATALOG_URL}?eventid={eventid}&format=quakeml&magnitudetype=mww");
-    let Some(xml) = fetch_raw(&url, None, &[], QUERY_TTL_S) else {
+    let Some(xml) = fetch_raw(&url, None, &[]) else {
         println!(
             "usgs_mww_centroid_probe: {url} carries no body — the centroid record stays absent"
         );

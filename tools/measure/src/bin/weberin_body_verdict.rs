@@ -15,11 +15,10 @@ use omegaflow::weberin::{
     classify, separation_m, three_way_fold,
 };
 
-const BIN_TTL_S: u64 = 604800;
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
 const DCOM5_TAG: &str = "ssd.jpl.nasa.gov-dcom5";
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -27,7 +26,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{}/{}/{}", CDN_BASE, netloc, asset);
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -162,12 +161,7 @@ fn main() {
     };
     let tdb = (jd - J2000_EPOCH) * 86400.0;
 
-    let dastcom_bytes = match ensure_bin(
-        &dastcom_path,
-        DASTCOM_TAG,
-        "dastcom_asteroids.bin",
-        BIN_TTL_S,
-    ) {
+    let dastcom_bytes = match ensure_bin(&dastcom_path, DASTCOM_TAG, "dastcom_asteroids.bin") {
         Some(b) => b,
         None => {
             eprintln!(
@@ -188,12 +182,7 @@ fn main() {
         return;
     }
 
-    let comets: Vec<CometRec> = match ensure_bin(
-        &dcom5_path,
-        DCOM5_TAG,
-        "dcom5_comets.bin",
-        BIN_TTL_S,
-    ) {
+    let comets: Vec<CometRec> = match ensure_bin(&dcom5_path, DCOM5_TAG, "dcom5_comets.bin") {
         Some(b) => b
             .chunks_exact(COMET_RECORD_BYTES)
             .filter_map(parse_comet_record)
@@ -256,7 +245,7 @@ fn main() {
             continue;
         };
         let path = format!("{eph_dir}/{netloc}/{asset}");
-        if ensure_bin(&path, &netloc, &asset, BIN_TTL_S).is_none() {
+        if ensure_bin(&path, &netloc, &asset).is_none() {
             println!(
                 "weberin {name} bin void {path} — absent on disk and the CDN fetch returned non-200"
             );
@@ -286,7 +275,7 @@ fn main() {
     for name in INPOP_LINE_BODIES {
         let asset = format!("ephemeris_inpop_{}.bin", name);
         let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
-        let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset, BIN_TTL_S) else {
+        let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset) else {
             println!(
                 "weberin {name} inpop bin void {path} — absent on disk and the CDN fetch returned non-200 — the INPOP line stays unread"
             );
@@ -307,7 +296,7 @@ fn main() {
     for name in EPM_LINE_BODIES {
         let asset = format!("ephemeris_epm_{}.bin", name);
         let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
-        let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset, BIN_TTL_S) else {
+        let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset) else {
             println!(
                 "weberin {name} epm bin void {path} — absent on disk and the CDN fetch returned non-200 — the EPM line stays unread"
             );
@@ -326,7 +315,7 @@ fn main() {
     {
         const SUN_ASSET: &str = "ephemeris_inpop_sun.bin";
         let path = format!("{eph_dir}/{INPOP_NETLOC}/{SUN_ASSET}");
-        match ensure_bin(&path, INPOP_NETLOC, SUN_ASSET, BIN_TTL_S) {
+        match ensure_bin(&path, INPOP_NETLOC, SUN_ASSET) {
             Some(bytes) => match parse_ephemeris_binary(&bytes) {
                 Some(e) => {
                     sun_inpop.insert("sun".to_string(), e);
@@ -342,7 +331,7 @@ fn main() {
     {
         const SUN_ASSET: &str = "ephemeris_epm_sun.bin";
         let path = format!("{eph_dir}/{EPM_NETLOC}/{SUN_ASSET}");
-        match ensure_bin(&path, EPM_NETLOC, SUN_ASSET, BIN_TTL_S) {
+        match ensure_bin(&path, EPM_NETLOC, SUN_ASSET) {
             Some(bytes) => match parse_ephemeris_binary(&bytes) {
                 Some(e) => {
                     sun_epm.insert("sun".to_string(), e);

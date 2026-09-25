@@ -51,7 +51,7 @@ fn load_ephemerides(args: &[String]) -> HashMap<String, BodyEphemeris> {
     ] {
         let bytes = match arg_value(args, arg) {
             Some(p) => std::fs::read(&p).ok(),
-            None => fetch_raw_bytes(url, 3600),
+            None => fetch_raw_bytes(url),
         };
         if let Some(b) = bytes {
             if let Some(e) = parse_ephemeris_binary(&b) {
@@ -81,7 +81,7 @@ fn main() {
     };
     let mut f107 = read_f107(&f107_path);
     if f107.is_empty() {
-        if let Some(bytes) = fetch_raw_bytes(F107_CDN, 3600) {
+        if let Some(bytes) = fetch_raw_bytes(F107_CDN) {
             if bytes.len() >= 8 && bytes[0..4] == *b"F107" {
                 let n = u32::from_le_bytes(bytes[4..8].try_into().unwrap()) as usize;
                 f107 = (0..n)

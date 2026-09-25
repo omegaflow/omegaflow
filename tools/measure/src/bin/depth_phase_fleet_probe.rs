@@ -99,7 +99,7 @@ fn main() {
         "{CATALOG_URL}?format=geojson&starttime={SEARCH_START}&endtime={search_end}&minmagnitude={MIN_MAG}&mindepth={min_depth_km}&minlatitude={}&maxlatitude={}&minlongitude={}&maxlongitude={}&orderby=magnitude&limit=100",
         region[0], region[1], region[2], region[3]
     );
-    let Some(body) = fetch_raw(&cat_url, None, &[], 86400) else {
+    let Some(body) = fetch_raw(&cat_url, None, &[]) else {
         eprintln!("catalog carries no body — the channel stays unmeasured (0 honored)");
         return;
     };
@@ -168,7 +168,7 @@ fn main() {
                 "{CATALOG_URL}?eventid={}&format=quakeml&magnitudetype=mww",
                 event.id
             );
-            fetch_raw(&url, None, &[], 3600).and_then(|xml| mww::parse_quakeml(&xml))
+            fetch_raw(&url, None, &[]).and_then(|xml| mww::parse_quakeml(&xml))
         } else {
             None
         };
@@ -184,7 +184,7 @@ fn main() {
             "{STATION_URL}?format=text&level=channel&latitude={:.4}&longitude={:.4}&minradius={MIN_DIST_DEG}&maxradius={MAX_DIST_DEG}&channel=BHZ&starttime={start}&endtime={end}&includerestricted=false",
             anchor.lat, anchor.lon
         );
-        let Some(st_body) = fetch_raw(&st_url, None, &[], 86400) else {
+        let Some(st_body) = fetch_raw(&st_url, None, &[]) else {
             pending_events.push(format!("{} (station query void)", event.id));
             continue;
         };

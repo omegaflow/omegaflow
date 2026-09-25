@@ -1,4 +1,3 @@
-
 pub const SAMPLES_PER_SPAN: usize = 64;
 pub const PACK_MAGIC: [u8; 4] = *b"GION";
 pub const PACK_ENTRY_BYTES: usize = 96;

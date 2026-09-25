@@ -16,21 +16,21 @@ pub const FETCH_DURATION_RING: usize = 1 << 4;
 
 pub const CONNECT_BOUND_S: u64 = 1 << 5;
 
+pub const TRANSFER_BOUND_S: u64 = 1 << 11;
+
 #[derive(Clone, Copy)]
 pub enum RetryPolicy {
     Transient,
     All,
 }
 
-pub fn ttl_transfer_bound(ttl: u64) -> u64 {
-    ((ttl as f64) / (Φ * Φ)).ceil() as u64
-}
-
 fn append_retry(cmd: &mut Command, retry: RetryPolicy, attempts: u64) {
     cmd.arg("--retry")
         .arg(attempts.to_string())
         .arg("--retry-delay")
-        .arg("2");
+        .arg("2")
+        .arg("--retry-max-time")
+        .arg(TRANSFER_BOUND_S.to_string());
     match retry {
         RetryPolicy::Transient => {
             cmd.arg("--retry-connrefused");
@@ -45,7 +45,6 @@ pub fn fetch_raw_with(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
-    ttl: u64,
     retry: RetryPolicy,
     transfer_bound_s: u64,
 ) -> Option<String> {
@@ -53,8 +52,7 @@ pub fn fetch_raw_with(
         if body.is_some() {
             return None;
         }
-        return super::range::fetch_s3_whole(url, ttl)
-            .map(|b| String::from_utf8_lossy(&b).into_owned());
+        return super::range::fetch_s3_whole(url).map(|b| String::from_utf8_lossy(&b).into_owned());
     }
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
@@ -63,7 +61,11 @@ pub fn fetch_raw_with(
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
-        .arg(connect_t.to_string());
+        .arg(connect_t.to_string())
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("--speed-time")
+        .arg("128");
     if let Some(b) = body {
         cmd.arg("-X").arg("POST");
         cmd.arg("-d").arg(b);
@@ -93,20 +95,8 @@ pub fn fetch_raw_with(
     }
 }
 
-pub fn fetch_raw(
-    url: &str,
-    body: Option<&str>,
-    headers: &[(String, String)],
-    ttl: u64,
-) -> Option<String> {
-    fetch_raw_with(
-        url,
-        body,
-        headers,
-        ttl,
-        RetryPolicy::Transient,
-        ttl_transfer_bound(ttl),
-    )
+pub fn fetch_raw(url: &str, body: Option<&str>, headers: &[(String, String)]) -> Option<String> {
+    fetch_raw_with(url, body, headers, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
 pub fn curl_base(retry: RetryPolicy, transfer_bound_s: u64, parallel_max: u8) -> Command {
@@ -122,19 +112,22 @@ pub fn curl_base(retry: RetryPolicy, transfer_bound_s: u64, parallel_max: u8) ->
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
-        .arg(connect_t.to_string());
+        .arg(connect_t.to_string())
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("--speed-time")
+        .arg("128");
     append_ca(&mut cmd);
     cmd
 }
 
 pub fn fetch_raw_bytes_with(
     url: &str,
-    ttl: u64,
     retry: RetryPolicy,
     transfer_bound_s: u64,
 ) -> Option<Vec<u8>> {
     if url.starts_with("s3://") {
-        return super::range::fetch_s3_whole(url, ttl);
+        return super::range::fetch_s3_whole(url);
     }
     let mut cmd = curl_base(retry, transfer_bound_s, 0);
     cmd.arg(url);
@@ -153,19 +146,18 @@ pub fn fetch_raw_bytes_with(
     }
 }
 
-pub fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
-    fetch_raw_bytes_with(url, ttl, RetryPolicy::Transient, ttl_transfer_bound(ttl))
+pub fn fetch_raw_bytes(url: &str) -> Option<Vec<u8>> {
+    fetch_raw_bytes_with(url, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
 pub fn fetch_raw_bytes_headers_with(
     url: &str,
     headers: &[(String, String)],
-    ttl: u64,
     retry: RetryPolicy,
     transfer_bound_s: u64,
 ) -> Option<Vec<u8>> {
     if url.starts_with("s3://") {
-        return super::range::fetch_s3_whole(url, ttl);
+        return super::range::fetch_s3_whole(url);
     }
     let mut cmd = curl_base(retry, transfer_bound_s, 0);
     for (k, v) in headers {
@@ -187,18 +179,8 @@ pub fn fetch_raw_bytes_headers_with(
     }
 }
 
-pub fn fetch_raw_bytes_headers(
-    url: &str,
-    headers: &[(String, String)],
-    ttl: u64,
-) -> Option<Vec<u8>> {
-    fetch_raw_bytes_headers_with(
-        url,
-        headers,
-        ttl,
-        RetryPolicy::Transient,
-        ttl_transfer_bound(ttl),
-    )
+pub fn fetch_raw_bytes_headers(url: &str, headers: &[(String, String)]) -> Option<Vec<u8>> {
+    fetch_raw_bytes_headers_with(url, headers, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
 pub fn fetch_raw_probe(
@@ -257,6 +239,10 @@ pub fn fetch_raw_bytes_post_with(
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
         .arg(connect_t.to_string())
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("--speed-time")
+        .arg("128")
         .arg("-X")
         .arg("POST");
     if let Some(b) = body {
@@ -289,15 +275,8 @@ pub fn fetch_raw_bytes_post(
     url: &str,
     body: Option<&str>,
     headers: &[(String, String)],
-    ttl: u64,
 ) -> Option<Vec<u8>> {
-    fetch_raw_bytes_post_with(
-        url,
-        body,
-        headers,
-        RetryPolicy::Transient,
-        ttl_transfer_bound(ttl),
-    )
+    fetch_raw_bytes_post_with(url, body, headers, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
 pub type Origin = u32;
@@ -1210,7 +1189,7 @@ pub fn fetch_one_with_age(
     live_only: bool,
 ) -> Option<(String, Option<u64>)> {
     if live_only {
-        return fetch_raw(url, body, headers, ttl).map(|l| (l, None));
+        return fetch_raw(url, body, headers).map(|l| (l, None));
     }
     let manifest = cdn_manifest_map();
     let asset_name = |u: &str| -> String {
@@ -1232,7 +1211,7 @@ pub fn fetch_one_with_age(
             }
             let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
             if let Some(age) = cdn_fresh_age(&cdn_url, ttl)
-                && let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl)
+                && let Some(cdn_body) = fetch_raw(&cdn_url, None, &[])
             {
                 if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                     let _ = std::fs::create_dir_all(parent);
@@ -1251,7 +1230,7 @@ pub fn fetch_one_with_age(
             }
         }
     }
-    let live = fetch_raw(url, body, headers, ttl);
+    let live = fetch_raw(url, body, headers);
     if live.is_none()
         && !url.starts_with("https://github.com/omegaflow/sources")
         && let Some(netloc) = extract_netloc(url)
@@ -1259,7 +1238,7 @@ pub fn fetch_one_with_age(
         let name = asset_name(url);
         if !name.is_empty() {
             let cdn_url = format!("{}/{}/{}.json", crate::cdn::cdn_base(), netloc, name);
-            if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+            if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[]) {
                 return Some((cdn_body, cdn_last_modified_age(&cdn_url)));
             }
         }
