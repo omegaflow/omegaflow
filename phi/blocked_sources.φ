@@ -47,6 +47,14 @@ url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
 note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 2026-09-17: Gesamtkorpus request-only. Teilroute: SPDF red_tele_signal_data_venus_occlt/ — 9 .tar à ~19,5 MB anonym, PSPA-00316. Anfrage 2026-09-16 (:208), Antwort offen.
 
 pending
+url https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
+note NAIF SPK M10_archive_1.bsp (51200 B, HTTP 200 anonym 2026-09-25). Anchor at mariner10 fehlt: kein ephemeris_mariner10.bin, kein Eintrag in frame_registry.φ. asset fehlt — ephemeris_compiler.rs + frame_registry-Eintrag.
+
+pending
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/
+note Voyager Saturn-Okkultation (PSPA-tar, gleiche Container wie mariner_occlt). RSS-Payload-Record ungemessen → voyager_occlt_compiler.rs erst nach Payload-Messung. asset fehlt.
+
+pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
 note Viking 1/2 Orbiter Radio Science Tracking (Doppler+Range). 2026-09-17: PSPG-00011 „Data Identified but not Received"; NSSDC-FTP anonym nicht bedienbar (→ SPDF 404); PDS-PPI 0. Anfrage 2026-09-16 (:209), Antwort offen.
 
@@ -62,6 +70,14 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER Order 18387 RUNNING Ablauf 09-28 (09-24); demeter-cdn.yml + demeter-aggregate-cdn.yml vorhanden, Secrets gesetzt; Blockade F5 ASM 'Request Rejected' bei rs-order create, Lauf 35851193831 Exit 137; Katalog 57760 URNs.
+
+pending
+url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
+note DECaPS2 Dataverse doi:10.7910/DVN/K88GFI ~280 GB (90 decaps_stars_batch_*.fits.gz à ~3.1 GB). Größen-Verdikt pending: FITS-GZ-Parser fehlt. Anonymer Katalogweg = TAP decaps_dr2.object (sources.φ).
+
+pending
+url https://toar-data.fz-juelich.de/api/v2/data/timeseries_merged/
+note TOAR Oberflächen-O3 (nmol/mol=ppb, diffusion, CC BY 4.0) — Verdikt accept; anonym für Station-IDs 1000-2000. Schritt: toar_timeseries_compiler.rs (JSON-Zeitreihen + Stationen-Fanout) bauen.
 
 parser-def html
 gap html-parser-arm
