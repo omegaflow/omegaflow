@@ -42,19 +42,31 @@ jobs:
           path: report-n${{ matrix.n }}.txt
   tcurve:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        segment:
+          - lo: 400
+            hi: 450
+          - lo: 500
+            hi: 550
+          - lo: 600
+            hi: 650
+          - lo: 700
+            hi: 700
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Run the power curve (detection) over T=400..700
+      - name: Run the power curve (detection) over T=${{ matrix.segment.lo }}..${{ matrix.segment.hi }}
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            echo "POINT tcurve"
-            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- --tcurve
-          } > "report-tcurve.txt"
+            echo "POINT tcurve ${{ matrix.segment.lo }}:${{ matrix.segment.hi }}"
+            cargo run --release -p omegaflow-measure --bin pcmci_class_benchmark -- --tcurve --t ${{ matrix.segment.lo }}:${{ matrix.segment.hi }}
+          } > "report-tcurve-${{ matrix.segment.lo }}-${{ matrix.segment.hi }}.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tcurve-sheet
-          path: report-tcurve.txt
+          name: tcurve-sheet-${{ matrix.segment.lo }}-${{ matrix.segment.hi }}
+          path: report-tcurve-${{ matrix.segment.lo }}-${{ matrix.segment.hi }}.txt
