@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 6193e7aa58a3ee83b8273586f74cf11d5fd98b45ad9dbae292d067721f76e0ea
+  sha256: e2a26815d42742ecd84d9227602c4a58f0ff0567d3ad527d389bbd2c2b42c505
   status: live
   see-also: AGENTS.md
 -->
@@ -65,7 +65,7 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `--playwright <url>` | 2,97 s | Browser-Render |
 | `--pdf-image <file\|url>` | — | hebt eingebettete JPEG/PNG/JP2 aus einem PDF (kein Rasterizer); `--out <dir>` sonst Temp-Verzeichnis |
 | `--pdf-text <file\|url>` | — | liest den Textlayer eines PDF (FlateDecode-Content-Streams); bild-only/scanned → `pending` |
-| `--count` / `--case` / `--path` | — | gebaut 2026-09-16; im Binär nach dem nächsten Build |
+| `--count` / `--case` / `--path` | — | im `tools-latest`-Binär (gemessen 2026-09-25, sha `bf4656a6`) |
 
 **Handoff — PDF→Bild→`vision`:** `archive_search --pdf-image <pdf|url> [--out <dir>]`
 hebt die eingebetteten Bilder (`DCTDecode`→`.jpg`, `FlateDecode`→`.png`,
@@ -152,8 +152,8 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   Auth-Header **ohne `-H`** als nacktes curl-Argument reichte (curl sah die
   Header-Zeile als zweite URL): kein Key gesendet → 402, und die `-w`-Ausgabe der
   Pseudo-URL vor dem JSON → kein Parse. Fix `post_args()` setzt `-H` vor jeden
-  Header (Gate-Test `post_args_prefix_every_header_with_dash_h`); greift nach dem
-  CI-Rebuild.
+  Header (Gate-Test `post_args_prefix_every_header_with_dash_h`); im
+  `tools-latest`-Binär (gemessen 2026-09-25: `--tavily` liefert Treffer).
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
@@ -259,7 +259,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
 | `git_safety --close [<own-path>…]` | — | Commit-Abschluss-Check in einem Aufruf |
-| `session_burn` | — | Release-Binär fehlt noch (Baum rot) — bis dahin `cargo run -p omegaflow-register` |
+| `session_burn` | — | Burn je Session (opencode.db); PATH-Symlink `~/.local/bin/session_burn` → `bin/session_burn` (Wrapper über `bin/.tools_ensure`), `tools-latest` sha `97f6c252`, gemessen 2026-09-25 |
 | `./bin/archive_search` (Wrapper) | 0,009 s nach Stempel | execs `bin/.tools_ensure` (Refresh aus `tools-latest`), baut nie |
 | OpenCode-Tools (`read`/`grep`/`glob`) | ein Tool-Round-Trip, kein Prozess | Kosten sind Kontext, nicht CPU |
 
@@ -372,8 +372,3 @@ Der komplette Lauf ist diese Datei selbst: jede Zeile der Tabellen ist ein
 Befehl — `time <befehl>` je Modus, Einzellauf, `src/`-Query `purpleair` bzw.
 die genannten kleinen Queries. Das Skript braucht kein `grep` — nur `time` und
 `wc -l`.
-
-## Offen
-
-- `session_burn` auf PATH nach dem nächsten erfolgreichen Build des
-  `omegaflow-register`-Release-Binärs.

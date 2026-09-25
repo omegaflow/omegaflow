@@ -1,6 +1,6 @@
 use omegaflow::commit_gate::{
-    Gate, canon_diff, declared_canon, doc_open_marker_line, json_write, prose_violation_for,
-    register_classes, status_proof_violations,
+    Gate, blocked_integrated_twin, canon_diff, declared_canon, doc_open_marker_line, json_write,
+    prose_violation_for, register_classes, status_proof_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -115,6 +115,26 @@ fn main() {
         }
     }
     let staged: Vec<&str> = files.lines().map(str::trim).collect();
+    if staged.contains(&"phi/blocked_sources.φ") {
+        let out = Command::new("git")
+            .args(["show", ":phi/blocked_sources.φ"])
+            .output()
+            .expect("git");
+        let blocked = String::from_utf8_lossy(&out.stdout).to_string();
+        let sources = match std::fs::read_to_string("phi/sources.φ") {
+            Ok(s) => s,
+            Err(_) => String::new(),
+        };
+        if let Some(v) = blocked_integrated_twin("phi/blocked_sources.φ", &blocked, &sources) {
+            let loc = if v.line > 0 {
+                format!("phi/blocked_sources.φ:{}", v.line)
+            } else {
+                "phi/blocked_sources.φ".to_string()
+            };
+            eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
+            fail = true;
+        }
+    }
     for path in register_classes()
         .iter()
         .filter(|p| staged.contains(&p.as_str()))
