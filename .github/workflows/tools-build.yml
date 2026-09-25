@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo build --release -p omegaflow-register --bin register_lookup --bin session_burn --bin open_points_check
-    - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage
+    - run: cargo build --release -p omegaflow-utils --bin archive_search --bin sgrep --bin sfetch --bin sread --bin git_safety --bin omega_sh --bin ci_manage --bin register_sort
     - run: cargo build --release -p omegaflow-measure --bin text_review
     - run: cargo build --release -p omegaflow-gate --bin commit_check
     - run: cargo build --release -p omegaflow-service
@@ -28,7 +28,7 @@ jobs:
       run: |
         {
           echo "git_sha=${TOOLS_SHA}"
-          for t in register_lookup session_burn open_points_check archive_search sgrep sfetch sread git_safety omega_sh ci_manage text_review commit_check omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify; do
+          for t in register_lookup session_burn open_points_check archive_search sgrep sfetch sread git_safety omega_sh ci_manage register_sort text_review commit_check omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify; do
             echo "${t} $(sha256sum "target/release/${t}" | awk '{print $1}')"
           done
         } > tools.manifest
@@ -49,6 +49,7 @@ jobs:
           target/release/git_safety \
           target/release/omega_sh \
           target/release/ci_manage \
+          target/release/register_sort \
           target/release/text_review \
           target/release/commit_check \
           target/release/omegaflow \
