@@ -17,6 +17,13 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
 darf schmutzig sein.
 
+**Keine Geschichts-Abschnitte (Operator-Wort 2026-09-25).** Das Handover trägt nur
+Offenes — ein Stehender-Pass-Ergebnis, ein „In diesem Atom geschlossen"-Register,
+ein Benchmark oder ein „Geteilter Baum" sind Historie und gehören nicht hinein:
+git trägt, was gemacht wurde. Geteilter externer Zustand lebt in
+`docs/zustand/external-state.md`, nie als Kopie im Handover; nach dem Löschen der
+Historie bleibt allein die offene Punkt-Liste — ist sie leer, ist das Handover leer.
+
 Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
 **parallel** von Agenten abgearbeitet (Operator-Wort 2026-09-21). Jeder offene
 Punkt wird **aufgeschlüsselt** geführt — kein Register-Kürzel: **Trigger** (das
