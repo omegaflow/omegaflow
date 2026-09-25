@@ -780,6 +780,19 @@ epoch 0
 gate iso_6 0.0 500.0
 field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv
+origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
+compiler tools/harvest/src/bin/tao_wnd_compiler.rs
+ttl 3600
+format text
+on earth 0.0 -120.0 0
+rows .
+epoch 0
+lat 3
+lon 2
+gate wu_422 -50.0 50.0
+field 4 tao_wnd_zonal_m_s patch-levy advective m/s 86400.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
 origin https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
 compiler tools/harvest/src/bin/emso_compiler.rs
@@ -8613,6 +8626,26 @@ compiler tools/harvest/src/bin/fmi_gic_compiler.rs
 on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/wwlln.net/wwlln_th.csv
+origin https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
+compiler tools/harvest/src/bin/wwlln_compiler.rs
+ttl 604800
+format text
+on earth 0 0 0
+rows .
+lat lat
+lon lon
+field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.csv
+origin https://transmission.bpa.gov/business/operations/gic/gic.txt
+compiler tools/harvest/src/bin/bpa_gic_compiler.rs
+ttl 3600
+format text
+rows .
+epoch 0
+field 2 bpa_gic_a inverse-square electric A 300.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt

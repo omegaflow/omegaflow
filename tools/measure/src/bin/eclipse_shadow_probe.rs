@@ -14,7 +14,6 @@ const EVENT_UNIX: f64 = 1503273600.0;
 const EVENT_2024_UNIX: f64 = 1712534400.0;
 const SEARCH_COARSE_S: f64 = 60.0;
 const SEARCH_FINE_S: f64 = 0.01;
-const BIN_TTL_S: u64 = 604800;
 
 struct LineSpec {
     word: &'static str,
@@ -141,7 +140,7 @@ fn vunit(v: [f64; 3]) -> Option<[f64; 3]> {
     Some([v[0] / n, v[1] / n, v[2] / n])
 }
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -149,7 +148,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{CDN_BASE}/{netloc}/{asset}");
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -167,7 +166,7 @@ fn load_line(spec: &LineSpec, eph_dir: &str) -> Option<Line> {
         ("earth", spec.earth_asset),
     ] {
         let path = format!("{eph_dir}/{}/{asset}", spec.netloc);
-        let Some(bytes) = ensure_bin(&path, spec.netloc, asset, BIN_TTL_S) else {
+        let Some(bytes) = ensure_bin(&path, spec.netloc, asset) else {
             println!(
                 "eclipse {}: {path} bin void — absent on disk and the CDN fetch returned non-200 — the line stays unread",
                 spec.word

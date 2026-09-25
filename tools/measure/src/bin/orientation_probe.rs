@@ -13,7 +13,6 @@ use omegaflow::odp::{EARTH, dsn_station};
 const DAY_S: f64 = 86400.0;
 const RAD_DEG: f64 = 180.0 / std::f64::consts::PI;
 const EARTH_MEAN_RADIUS_M: f64 = 6371.0e3;
-const BIN_TTL_S: u64 = 604800;
 const SWEEP_SAMPLES: usize = 9;
 
 const ANCHOR_UNIX: f64 = 1503273600.0 + 18.0 * 3600.0 + 26.0 * 60.0 + 40.0;
@@ -94,7 +93,7 @@ fn bin_path(eph_dir: &str, netloc: &str, asset: &str) -> String {
     format!("{eph_dir}/{netloc}/{asset}")
 }
 
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -102,7 +101,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{CDN_BASE}/{netloc}/{asset}");
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -112,7 +111,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
 
 fn load_body(eph_dir: &str, netloc: &str, asset: &str) -> Result<BodyEphemeris, String> {
     let path = bin_path(eph_dir, netloc, asset);
-    let bytes = ensure_bin(&path, netloc, asset, BIN_TTL_S).ok_or_else(|| {
+    let bytes = ensure_bin(&path, netloc, asset).ok_or_else(|| {
         format!("{path} void — absent on disk and the CDN fetch returned non-200")
     })?;
     parse_ephemeris_binary(&bytes)

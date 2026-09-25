@@ -168,7 +168,7 @@ fn station_list_body() -> Option<String> {
         if attempt > 0 {
             std::thread::sleep(std::time::Duration::from_secs(10));
         }
-        if let Some(text) = fetch_raw(MAGSTID, None, &[], 3600) {
+        if let Some(text) = fetch_raw(MAGSTID, None, &[]) {
             if text.contains("id:\"") {
                 return Some(text);
             }
@@ -239,7 +239,7 @@ fn fetch_chunk(start: &str, extent: f64, station: &str) -> Option<Vec<JsonVal>> 
         if attempt > 0 {
             std::thread::sleep(std::time::Duration::from_secs(15));
         }
-        let Some(text) = fetch_raw(&url, None, &[], 600) else {
+        let Some(text) = fetch_raw(&url, None, &[]) else {
             continue;
         };
         let Some(JsonVal::Arr(records)) = parse_json(&text) else {

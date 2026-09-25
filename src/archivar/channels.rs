@@ -133,7 +133,7 @@ pub fn fanout_fetch(
         None => return channels,
     };
     let headers = render_headers(&src.headers, env);
-    let raw = match fetch_raw(&stations_url, None, &headers, src.ttl) {
+    let raw = match fetch_raw(&stations_url, None, &headers) {
         Some(v) => v,
         None => return channels,
     };
@@ -206,7 +206,7 @@ pub fn fanout_fetch(
                     s.spawn(move || -> Vec<(Channel, FieldConfig)> {
                         let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
                         let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
-                        let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
+                        let raw = match fetch_raw(&url, post.as_deref(), &headers) {
                             Some(v) => v,
                             None => {
                                 eprintln!("station {}: fetch void — retry in ttl/Φ", st.id);
@@ -981,7 +981,7 @@ pub fn build_alerce_channels(
     else {
         return channels;
     };
-    let Some(list_bytes) = fetch_raw_bytes(&src.url, src.ttl) else {
+    let Some(list_bytes) = fetch_raw_bytes(&src.url) else {
         return channels;
     };
     let Some(list_json) = parse_json(&String::from_utf8_lossy(&list_bytes)) else {
@@ -993,7 +993,7 @@ pub fn build_alerce_channels(
             thread::sleep(std::time::Duration::from_secs(delay));
         }
         let url = detail.replace("{oid}", oid);
-        let Some(det_bytes) = fetch_raw_bytes(&url, src.ttl) else {
+        let Some(det_bytes) = fetch_raw_bytes(&url) else {
             continue;
         };
         let Some(det_json) = parse_json(&String::from_utf8_lossy(&det_bytes)) else {

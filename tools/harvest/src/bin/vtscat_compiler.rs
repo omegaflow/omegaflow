@@ -12,7 +12,6 @@ const TREE_URL: &str =
 const RAW_BASE: &str = "https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/";
 const CDN_TAG: &str = "github.com";
 const DEFAULT_OUT: &str = "data/github.com/vtscat_flux.sky1";
-const TTL: u64 = 604800;
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -187,7 +186,7 @@ fn main() {
                 Some(u) => u,
                 None => TREE_URL.to_string(),
             };
-            match fetch_raw_bytes(&url, TTL) {
+            match fetch_raw_bytes(&url) {
                 Some(b) => match String::from_utf8(b) {
                     Ok(s) => s,
                     Err(_) => {
@@ -212,7 +211,7 @@ fn main() {
     let mut skipped = 0usize;
     for path in &paths {
         let ecsv_url = format!("{RAW_BASE}{path}");
-        let Some(ecsv_bytes) = fetch_raw_bytes(&ecsv_url, TTL) else {
+        let Some(ecsv_bytes) = fetch_raw_bytes(&ecsv_url) else {
             eprintln!("{path}: ecsv fetch void ({ecsv_url})");
             skipped += 1;
             continue;
@@ -228,7 +227,7 @@ fn main() {
         };
         let reg_path = source_registry_path(source_id);
         let reg_url = format!("{RAW_BASE}{reg_path}");
-        let Some(reg_bytes) = fetch_raw_bytes(&reg_url, TTL) else {
+        let Some(reg_bytes) = fetch_raw_bytes(&reg_url) else {
             eprintln!("{path}: registry fetch void ({reg_url})");
             skipped += 1;
             continue;

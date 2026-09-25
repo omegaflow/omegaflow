@@ -32,7 +32,7 @@ fn load_solar_wind() -> Option<Vec<(f64, f64, u32)>> {
         Ok(b) => b,
         Err(_) => {
             eprintln!("omni2_serie_1h.bin absent locally — fetching the CDN asset");
-            fetch_raw_bytes(OMNI2_1H_CDN, 3600)?
+            fetch_raw_bytes(OMNI2_1H_CDN)?
         }
     };
     parse_bin(&bytes)
@@ -47,7 +47,7 @@ fn load_indices() -> Option<Vec<(f64, f64, u32)>> {
         Ok(b) => b,
         Err(_) => {
             eprintln!("omni2_indices.bin absent locally — fetching the CDN asset");
-            fetch_raw_bytes(OMNI2_INDICES_CDN, 3600)?
+            fetch_raw_bytes(OMNI2_INDICES_CDN)?
         }
     };
     parse_bin(&bytes)

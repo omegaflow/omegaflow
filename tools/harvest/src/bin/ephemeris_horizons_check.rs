@@ -32,8 +32,7 @@ fn load_ephemeris(name: &str, args: &[String]) -> Option<BodyEphemeris> {
         Some(p) => std::fs::read(&p).ok(),
         None => {
             let url = format!("{}/ephemeris_{}.bin", CDN_BASE, name);
-            fetch_raw_bytes(&url, 3600)
-                .or_else(|| std::fs::read(format!("ephemeris_{}.bin", name)).ok())
+            fetch_raw_bytes(&url).or_else(|| std::fs::read(format!("ephemeris_{}.bin", name)).ok())
         }
     };
     bytes.and_then(|b| parse_ephemeris_binary(&b))
@@ -51,7 +50,7 @@ fn horizons_vectors(
          &REF_PLANE='FRAME'&VEC_TABLE='2'&OUT_UNITS='KM-S'&CSV_FORMAT='YES'",
         HORIZONS_API, command, start_jd, stop_jd, step_days
     );
-    let bytes = fetch_raw_bytes(&url, 1800)?;
+    let bytes = fetch_raw_bytes(&url)?;
     let text = String::from_utf8_lossy(&bytes);
     let mut out = Vec::new();
     let mut in_data = false;

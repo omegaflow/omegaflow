@@ -19,7 +19,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 fn load_wso(args: &[String]) -> Option<Vec<(i64, f64, f64, f64)>> {
     match arg_value(args, "--wso-bin") {
         Some(p) => parse_wso(&std::fs::read(p).ok()?),
-        None => parse_wso(&fetch_raw_bytes(WSO_CDN, 3600)?),
+        None => parse_wso(&fetch_raw_bytes(WSO_CDN)?),
     }
 }
 
@@ -27,7 +27,7 @@ fn load_hmi(args: &[String]) -> Option<Vec<(i64, f64, f64, f64)>> {
     match arg_value(args, "--hmi-bin") {
         Some(p) => parse_hmi(&std::fs::read(p).ok()?),
         None => parse_hmi(&std::fs::read("hmi_polar.bin").ok()?)
-            .or_else(|| parse_hmi(&fetch_raw_bytes(HMI_CDN, 3600)?)),
+            .or_else(|| parse_hmi(&fetch_raw_bytes(HMI_CDN)?)),
     }
 }
 

@@ -9,7 +9,7 @@ const UNIX_1950_OFFSET: f64 = 631152000.0;
 
 fn files_of(volume: &str) -> Vec<String> {
     let dir = format!("{BASE}{volume}{ODF_DIR}");
-    let Some(bytes) = fetch_raw_bytes(&dir, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(&dir) else {
         eprintln!("{volume}: odf dir listing fetch void ({dir})");
         return Vec::new();
     };
@@ -94,7 +94,7 @@ fn main() {
             eprintln!("{volume}/ODF: {} files", rels.len());
             for rel in rels {
                 let url = format!("{BASE}{volume}{ODF_DIR}{rel}");
-                let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+                let Some(bytes) = fetch_raw_bytes(&url) else {
                     eprintln!("{volume}/{rel}: fetch void ({url})");
                     continue;
                 };

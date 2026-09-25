@@ -256,10 +256,7 @@ fn main() {
     for src in SOURCES {
         let bytes = match &dir {
             Some(d) => std::fs::read(format!("{d}/{}", src.name)).ok(),
-            None => fetch_raw_bytes(
-                &format!("{BASE}{}/ODR/{}", src.volume, src.annex_name),
-                604800,
-            ),
+            None => fetch_raw_bytes(&format!("{BASE}{}/ODR/{}", src.volume, src.annex_name)),
         };
         let Some(bytes) = bytes else {
             eprintln!("{}: {} read void", src.name, src.volume);

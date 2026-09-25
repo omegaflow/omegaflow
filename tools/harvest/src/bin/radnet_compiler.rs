@@ -692,12 +692,13 @@ fn run(args: &[String]) -> Result<(), String> {
     })?;
 
     let eph_bytes = match arg_value(args, "--ephemeris") {
-        Some(src) if src.starts_with("http") => fetch_raw_bytes(&src, 604800)
-            .ok_or_else(|| format!("earth ephemeris fetch void ({src})"))?,
+        Some(src) if src.starts_with("http") => {
+            fetch_raw_bytes(&src).ok_or_else(|| format!("earth ephemeris fetch void ({src})"))?
+        }
         Some(path) => {
             std::fs::read(&path).map_err(|e| format!("earth ephemeris read {path}: {e}"))?
         }
-        None => fetch_raw_bytes(&body_url(EARTH), 604800)
+        None => fetch_raw_bytes(&body_url(EARTH))
             .ok_or_else(|| "earth ephemeris fetch void (CDN)".to_string())?,
     };
     let earth = parse_ephemeris_binary(&eph_bytes)

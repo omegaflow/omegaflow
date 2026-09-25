@@ -215,7 +215,7 @@ fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
     if let Ok(b) = std::fs::read(&path) {
         return Some(b);
     }
-    let b = fetch_raw_bytes(url, 3600)?;
+    let b = fetch_raw_bytes(url)?;
     if let Some(parent) = path.parent() {
         let _ = std::fs::create_dir_all(parent);
     }

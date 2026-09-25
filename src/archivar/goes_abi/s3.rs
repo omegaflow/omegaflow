@@ -1,6 +1,5 @@
 use crate::archivar::fetch_raw_bytes;
 
-const REQUEST_TTL_S: u64 = 1 << 9;
 const PAGE_CAP: usize = 1 << 6;
 
 #[derive(Clone, Debug)]
@@ -91,7 +90,7 @@ pub fn list(bucket: &str, prefix: &str) -> Option<S3List> {
             url.push_str("&marker=");
             url.push_str(&marker);
         }
-        let body = fetch_raw_bytes(&url, REQUEST_TTL_S)?;
+        let body = fetch_raw_bytes(&url)?;
         let text = std::str::from_utf8(&body).ok()?;
         let page = parse_list_body(text)?;
         keys.extend(page.keys);

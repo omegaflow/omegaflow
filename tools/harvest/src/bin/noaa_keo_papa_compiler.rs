@@ -332,7 +332,7 @@ fn main() {
         Some(b) => b,
         None => {
             let url = format!("{BUCKET}/{key}");
-            match fetch_raw_bytes(&url, 3600) {
+            match fetch_raw_bytes(&url) {
                 Some(b) => b,
                 None => {
                     eprintln!("{key}: fetch void");

@@ -227,7 +227,7 @@ fn main() {
         None => match arg_value(&args, "--url") {
             Some(url) => {
                 let leaf = url.rsplit('/').next().unwrap_or(&url).to_string();
-                match fetch_raw_bytes(&url, 600) {
+                match fetch_raw_bytes(&url) {
                     Some(b) => (b, leaf),
                     None => {
                         eprintln!("{url}: fetch returned void");

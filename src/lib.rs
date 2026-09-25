@@ -50,6 +50,7 @@ pub use archivar::ifms_agc;
 pub use archivar::inflate;
 pub use archivar::intermagnet;
 pub use archivar::ionex;
+pub use archivar::ionocal;
 pub use archivar::json;
 pub use archivar::jwst;
 pub use archivar::jwst_equilibrium;

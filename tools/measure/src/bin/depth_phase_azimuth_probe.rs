@@ -25,7 +25,7 @@ fn main() {
     let st_url = format!(
         "{STATION_URL}?format=text&level=channel&latitude={PILOT_LAT:.4}&longitude={PILOT_LON:.4}&minradius={MIN_DIST_DEG}&maxradius={MAX_DIST_DEG}&channel=BHZ&starttime={PILOT_START}&endtime={PILOT_END}&includerestricted=false"
     );
-    let Some(st_body) = fetch_raw(&st_url, None, &[], 86400) else {
+    let Some(st_body) = fetch_raw(&st_url, None, &[]) else {
         eprintln!("station query carries no body — the azimuths stay unmeasured (0 honored)");
         return;
     };

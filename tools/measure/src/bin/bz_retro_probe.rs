@@ -140,7 +140,7 @@ fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
         }
     };
     let url = format!("{OMNI2_CDN_BASE}/{name}");
-    let Some(bytes) = fetch_raw_bytes(&url, 3600) else {
+    let Some(bytes) = fetch_raw_bytes(&url) else {
         eprintln!("{url} fetch stays pending — the top series stays unmeasured");
         return Vec::new();
     };
@@ -172,7 +172,7 @@ fn load_cdn_station_dbdt(station: &str) -> Option<Vec<(f64, f64)>> {
     let local = disk_cache(&asset);
     let bytes = std::fs::read(&local).ok().or_else(|| {
         let url = format!("{IMAG_CDN_BASE}/{asset}");
-        match fetch_raw_bytes(&url, 3600) {
+        match fetch_raw_bytes(&url) {
             Some(b) => {
                 let _ = std::fs::write(&local, &b);
                 Some(b)
@@ -240,7 +240,7 @@ fn harvest_station_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<
             if attempt > 0 {
                 std::thread::sleep(std::time::Duration::from_secs(20));
             }
-            match fetch_raw(&url, None, &[], 600).and_then(|b| parse_json(&b)) {
+            match fetch_raw(&url, None, &[]).and_then(|b| parse_json(&b)) {
                 Some(j) => {
                     root_json = Some(j);
                     break;

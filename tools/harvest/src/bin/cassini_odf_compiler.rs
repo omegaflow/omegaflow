@@ -7,7 +7,6 @@ use omegaflow::odf;
 const DATA: &str = "https://atmos.nmsu.edu/pdsd/archive/data/";
 const NETLOC: &str = "atmos.nmsu.edu";
 const UNIX_1950_OFFSET: f64 = 631152000.0;
-const REQUEST_TTL_S: u64 = 604800;
 const CRAWL_THREADS: usize = 16;
 const CRAWL_DEPTH: u32 = 6;
 
@@ -27,7 +26,7 @@ fn hrefs(text: &str) -> Vec<String> {
 }
 
 fn volumes() -> Option<Vec<String>> {
-    let Some(bytes) = fetch_raw_bytes(DATA, REQUEST_TTL_S) else {
+    let Some(bytes) = fetch_raw_bytes(DATA) else {
         eprintln!("rss volume listing fetch void ({DATA})");
         return None;
     };
@@ -86,7 +85,7 @@ fn crawl_wave(urls: &[String]) -> (Vec<String>, Vec<String>, usize) {
                     let mut files: Vec<String> = Vec::new();
                     let mut failures = 0usize;
                     for url in slice {
-                        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+                        let Some(bytes) = fetch_raw_bytes(url) else {
                             eprintln!("{url}: listing fetch void");
                             failures += 1;
                             continue;
@@ -176,7 +175,7 @@ fn main() {
     eprintln!("cassini rss odf files: {}", files.len());
     let mut merged: Vec<[f64; 9]> = Vec::new();
     for url in &files {
-        let Some(bytes) = fetch_raw_bytes(url, REQUEST_TTL_S) else {
+        let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void");
             failures += 1;
             continue;

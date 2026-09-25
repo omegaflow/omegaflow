@@ -5,7 +5,6 @@ use omegaflow::cdn::upload_release;
 const NETLOC: &str = "zenodo.org";
 const ZIP_URL: &str = "https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content";
 const DEFAULT_OUT: &str = "data/zenodo.org/quaoar_occlt.bin";
-const FETCH_TTL: u64 = 86400;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -28,7 +27,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let zip = match fetch_raw_bytes(ZIP_URL, FETCH_TTL) {
+    let zip = match fetch_raw_bytes(ZIP_URL) {
         Some(b) => b,
         None => {
             eprintln!("{ZIP_URL}: fetch void");

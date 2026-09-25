@@ -19,7 +19,7 @@ fn two_fluid_rho0(tc: f64, rho0: f64, t_k: f64) -> f64 {
 }
 
 fn main() {
-    let bytes = match fetch_raw_bytes(SRD62_SUPRASTROM_CDN, 3600) {
+    let bytes = match fetch_raw_bytes(SRD62_SUPRASTROM_CDN) {
         Some(b) => b,
         None => {
             eprintln!(
@@ -48,8 +48,9 @@ fn main() {
             continue;
         }
         pts.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-        let tmax = pts.last().map(|p| p.0).unwrap_or(0.0);
-        let tmin = pts.first().map(|p| p.0).unwrap_or(0.0);
+        let (Some(&(tmax, _)), Some(&(tmin, _))) = (pts.last(), pts.first()) else {
+            continue;
+        };
         let span = tmax - tmin;
         if span <= 0.0 {
             continue;
@@ -80,8 +81,9 @@ fn main() {
 
     let mut best: Option<(String, String, f64, f64, f64)> = None;
     for c in &candidates {
-        let tmin = c.t.first().copied().unwrap_or(0.0);
-        let tmax = c.t.last().copied().unwrap_or(0.0);
+        let (Some(&tmin), Some(&tmax)) = (c.t.first(), c.t.last()) else {
+            continue;
+        };
         let span = tmax - tmin;
         if span <= 0.0 {
             continue;
@@ -147,12 +149,15 @@ fn main() {
 
     match &best {
         Some((id, label, tc, chi, rho0)) => {
-            let n = candidates
+            let Some(c) = candidates
                 .iter()
                 .find(|c| &c.id == id && &c.label == label)
-                .map(|c| c.t.len())
-                .unwrap_or(0);
-            let rms = (chi / n.max(1) as f64).sqrt();
+            else {
+                println!("  verdict: candidate absent from the series set — not computable");
+                return;
+            };
+            let n = c.t.len();
+            let rms = (chi / n as f64).sqrt();
             let rms_rel = rms / rho0;
             println!(
                 "  verdict: the two-fluid form ρ_s ∝ 1−(T/Tc)⁴ is carried — {} [{}], Tc = {:.1} K, {} points, RMS/ρ₀ = {:.3} (literature scatter, no named systematic drift); the single-material count ({}) is below the MIN_N threshold for a cross-material claim",

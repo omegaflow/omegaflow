@@ -135,8 +135,8 @@ fn find_block(sources: &[SourceConfig], field_name: &str) -> Option<SourceConfig
         .cloned()
 }
 
-fn harvest_rtsw_active(url: &str, ttl: u64, key: &str, unit: &str) -> Vec<(f64, f64)> {
-    let body = match fetch_raw(url, None, &[], ttl) {
+fn harvest_rtsw_active(url: &str, key: &str, unit: &str) -> Vec<(f64, f64)> {
+    let body = match fetch_raw(url, None, &[]) {
         Some(b) => b,
         None => return Vec::new(),
     };
@@ -180,8 +180,8 @@ fn harvest_rtsw_active(url: &str, ttl: u64, key: &str, unit: &str) -> Vec<(f64, 
     out
 }
 
-fn harvest_kp(ttl: u64) -> Vec<(f64, f64)> {
-    let body = match fetch_raw(KP_URL, None, &[], ttl) {
+fn harvest_kp() -> Vec<(f64, f64)> {
+    let body = match fetch_raw(KP_URL, None, &[]) {
         Some(b) => b,
         None => return Vec::new(),
     };
@@ -230,7 +230,7 @@ fn harvest_ground(
         "{hapi}&start={date}T00:00:00Z&stop={}&format=json",
         iso_utc(now - 2.0 * HOUR)
     );
-    let body = match fetch_raw(&url, None, &[], 300) {
+    let body = match fetch_raw(&url, None, &[]) {
         Some(b) => b,
         None => return (Vec::new(), Vec::new(), Vec::new()),
     };
@@ -606,10 +606,10 @@ fn main() {
         KP_URL
     );
 
-    let bz_raw = harvest_rtsw_active(&mag_url, 60, "bz_gsm", "nT");
-    let speed_raw = harvest_rtsw_active(&wind_url, 60, "proton_speed", "km/s");
-    let density_raw = harvest_rtsw_active(&wind_url, 60, "proton_density", "1/cm3");
-    let kp_raw = harvest_kp(180);
+    let bz_raw = harvest_rtsw_active(&mag_url, "bz_gsm", "nT");
+    let speed_raw = harvest_rtsw_active(&wind_url, "proton_speed", "km/s");
+    let density_raw = harvest_rtsw_active(&wind_url, "proton_density", "1/cm3");
+    let kp_raw = harvest_kp();
     let (ground_x, ground_y, ground_z) = harvest_ground(&ground_hapi, now - 2.0 * DAY);
     let dbdt_raw = dbdt_series(&ground_x, &ground_y, &ground_z);
 

@@ -123,8 +123,8 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
     let archive = match arg_value(&args, "--url") {
-        Some(u) => fetch_raw_bytes(&u, 86400),
-        None => fetch_raw_bytes(CDN_ZIP, 86400).or_else(|| fetch_raw_bytes(LIVE_ZIP, 86400)),
+        Some(u) => fetch_raw_bytes(&u),
+        None => fetch_raw_bytes(CDN_ZIP).or_else(|| fetch_raw_bytes(LIVE_ZIP)),
     };
     let Some(archive) = archive else {
         eprintln!(

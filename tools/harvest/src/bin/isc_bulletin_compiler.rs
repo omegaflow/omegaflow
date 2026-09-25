@@ -12,7 +12,6 @@ const REC_BYTES: usize = 56;
 const MAG_TYPE_LEN: usize = 8;
 const PRES_MAG: u8 = 0x01;
 const PRES_MAGTYPE: u8 = 0x02;
-const FETCH_TTL: u64 = 3600;
 
 #[derive(Clone, Debug, PartialEq)]
 struct IscEvent {
@@ -205,7 +204,7 @@ fn run(args: &[String]) -> Result<(), String> {
             }
         };
         eprintln!("isc: fetch {url}");
-        match fetch_raw(&url, None, &[], FETCH_TTL) {
+        match fetch_raw(&url, None, &[]) {
             Some(b) if !b.trim().is_empty() => b,
             Some(_) => {
                 return Err(format!(

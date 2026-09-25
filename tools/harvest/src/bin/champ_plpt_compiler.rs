@@ -12,7 +12,6 @@ const TEMPLATE: &str =
     "https://isdc-data.gfz.de/champ/ME/Level2/PLPT/{year}/CH-ME-2-PLPT+{date}_1.zip";
 const CADENCE_S: f64 = 15.0;
 const DAY_S: f64 = 86400.0;
-const TTL: u64 = 86400;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -140,7 +139,7 @@ fn main() {
         }
         fetched = 1;
     } else if let Some(route) = url {
-        let bytes = match fetch_raw_bytes(&route, TTL) {
+        let bytes = match fetch_raw_bytes(&route) {
             Some(b) => b,
             None => {
                 eprintln!("champ_plpt_compiler: fetch void ({route})");
@@ -222,7 +221,7 @@ fn main() {
             let route = TEMPLATE
                 .replace("{year}", &format!("{y:04}"))
                 .replace("{date}", &date);
-            match fetch_raw_bytes(&route, TTL) {
+            match fetch_raw_bytes(&route) {
                 Some(bytes) => {
                     fetched += 1;
                     records.extend(ingest_zip(&bytes));

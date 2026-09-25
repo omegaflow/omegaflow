@@ -5,7 +5,7 @@ const SRD62_SUPRASTROM_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/srd62_suprastrom.bin";
 
 fn main() {
-    let bytes = match fetch_raw_bytes(SRD62_SUPRASTROM_CDN, 3600) {
+    let bytes = match fetch_raw_bytes(SRD62_SUPRASTROM_CDN) {
         Some(b) => b,
         None => {
             eprintln!(

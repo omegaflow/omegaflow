@@ -429,10 +429,10 @@ fn run(args: &[String]) -> Result<(), String> {
     })?;
     let eph_bytes = match arg_value(args, "--ephemeris") {
         Some(src) if src.starts_with("http") => {
-            fetch_raw_bytes(&src, 604800).ok_or_else(|| format!("ephemeris fetch void ({src})"))?
+            fetch_raw_bytes(&src).ok_or_else(|| format!("ephemeris fetch void ({src})"))?
         }
         Some(path) => std::fs::read(&path).map_err(|e| format!("ephemeris read {path}: {e}"))?,
-        None => fetch_raw_bytes(EPH_DEFAULT, 604800)
+        None => fetch_raw_bytes(EPH_DEFAULT)
             .ok_or_else(|| format!("ephemeris fetch void ({EPH_DEFAULT})"))?,
     };
     let eph_body = parse_ephemeris_binary(&eph_bytes)
@@ -455,7 +455,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 .ok_or_else(|| format!("--row {k} is beyond {} rows", rows.len()))?;
             let row = row_from_cells(&fields, cells)
                 .ok_or_else(|| format!("row {k} carries no measured JD anchors"))?;
-            let fits = fetch_raw_bytes(&row.url, 604800)
+            let fits = fetch_raw_bytes(&row.url)
                 .ok_or_else(|| format!("cube fetch void ({})", row.url))?;
             (fits, row)
         }
@@ -467,8 +467,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 .ok_or_else(|| format!("epn_core carries no row for {url}"))?;
             let row = row_from_cells(&fields, cells)
                 .ok_or_else(|| format!("the row for {url} carries no measured JD anchors"))?;
-            let fits =
-                fetch_raw_bytes(&url, 604800).ok_or_else(|| format!("cube fetch void ({url})"))?;
+            let fits = fetch_raw_bytes(&url).ok_or_else(|| format!("cube fetch void ({url})"))?;
             (fits, row)
         }
         (None, None, Some(path)) => {
