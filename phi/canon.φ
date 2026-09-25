@@ -59,9 +59,6 @@ phi/pipeline/catalog/re3data_catalog.φ
 phi/pipeline/catalog/seanoe_catalog.φ
 phi/pipeline/catalog/solar_omega_g.φ
 phi/pipeline/catalog/tap_index_aip_gavo.φ
-phi/pipeline/catalog/tap_index_alma_ea.φ
-phi/pipeline/catalog/tap_index_alma_eu.φ
-phi/pipeline/catalog/tap_index_alma_na.φ
 phi/pipeline/catalog/tap_index_ari.φ
 phi/pipeline/catalog/tap_index_astron.φ
 phi/pipeline/catalog/tap_index_atoavo.φ

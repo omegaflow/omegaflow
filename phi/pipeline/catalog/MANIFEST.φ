@@ -58,9 +58,6 @@ file tap_index_vespa_ia2.φ | tap | live | visible
 file tap_index_vizier_obstap.φ | tap | live | visible
 file tap_index_xcatdb.φ | tap | live | visible
 file tap_index_xmm.φ | tap | live | visible
-file tap_index_alma_ea.φ | tap | live | visible
-file tap_index_alma_eu.φ | tap | live | visible
-file tap_index_alma_na.φ | tap | live | visible
 file tap_index_atoavo.φ | tap | live | visible
 file tap_index_casda.φ | tap | live | visible
 file tap_index_chandra_csc.φ | tap | live | visible
