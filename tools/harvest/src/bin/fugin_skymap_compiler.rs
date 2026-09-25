@@ -113,7 +113,7 @@ fn main() {
                 std::process::exit(1);
             }
         },
-        (None, Some(route)) => match fetch_raw_bytes(&route, 604800) {
+        (None, Some(route)) => match fetch_raw_bytes(&route) {
             Some(b) => b,
             None => {
                 eprintln!("fugin_skymap_compiler: fetch void ({route})");

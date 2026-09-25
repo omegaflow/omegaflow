@@ -124,7 +124,7 @@ fn main() {
         }
     };
     let inputs = build_inputs(&year, month.as_deref(), day.as_deref(), area);
-    let csv = match retrieve(DATASET, &inputs, &token, 3600) {
+    let csv = match retrieve(DATASET, &inputs, &token) {
         Some(b) => b,
         None => {
             eprintln!("{DATASET}: retrieval void — the bin stays unwritten");

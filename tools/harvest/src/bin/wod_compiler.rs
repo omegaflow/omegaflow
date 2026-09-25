@@ -290,7 +290,7 @@ fn load_bytes(args: &[String]) -> Option<(Vec<u8>, String)> {
     }
     let path = arg_value(args, "--input")?;
     let bytes = if path.starts_with("http://") || path.starts_with("https://") {
-        fetch_raw_bytes(&path, 600)
+        fetch_raw_bytes(&path)
     } else {
         std::fs::read(&path).ok()
     };
@@ -356,7 +356,7 @@ fn run_loop(args: &[String]) -> i32 {
         for instrument in &instruments {
             let url =
                 format!("https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc");
-            let Some(bytes) = fetch_raw_bytes(&url, 3600) else {
+            let Some(bytes) = fetch_raw_bytes(&url) else {
                 absent += 1;
                 continue;
             };

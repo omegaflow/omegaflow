@@ -14,10 +14,13 @@ const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const BASE: &str = "https://services.swpc.noaa.gov/json";
 
 fn now_unix() -> f64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs_f64())
-        .unwrap_or(0.0)
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs_f64(),
+        Err(_) => {
+            eprintln!("system clock before UNIX_EPOCH — no corona epoch computable");
+            std::process::exit(1);
+        }
+    }
 }
 
 fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
@@ -111,8 +114,8 @@ fn find_block(sources: &[SourceConfig], field_name: &str) -> Option<SourceConfig
         .cloned()
 }
 
-fn harvest_last(url: &str, ttl: u64, key: &str, unit: &str) -> Vec<(f64, f64)> {
-    let body = match fetch_raw(url, None, &[], ttl) {
+fn harvest_last(url: &str, key: &str, unit: &str) -> Vec<(f64, f64)> {
+    let body = match fetch_raw(url, None, &[]) {
         Some(b) => b,
         None => return Vec::new(),
     };
@@ -146,7 +149,6 @@ fn harvest_last(url: &str, ttl: u64, key: &str, unit: &str) -> Vec<(f64, f64)> {
 
 fn harvest_block(
     url: &str,
-    ttl: u64,
     block_name: &str,
     sources: &[SourceConfig],
     lsk: &omegaflow::lsk::LeapSeconds,
@@ -154,7 +156,7 @@ fn harvest_block(
     let Some(src) = find_block(sources, block_name) else {
         return Vec::new();
     };
-    let Some(body) = fetch_raw(url, None, &src.headers, ttl) else {
+    let Some(body) = fetch_raw(url, None, &src.headers) else {
         return Vec::new();
     };
     let mut series_src = src.clone();
@@ -169,8 +171,8 @@ fn harvest_block(
     extract_series(&series_src, &body, lsk)
 }
 
-fn harvest_radio(url: &str, ttl: u64) -> Vec<(f64, f64)> {
-    let body = match fetch_raw(url, None, &[], ttl) {
+fn harvest_radio(url: &str) -> Vec<(f64, f64)> {
+    let body = match fetch_raw(url, None, &[]) {
         Some(b) => b,
         None => return Vec::new(),
     };
@@ -219,7 +221,7 @@ fn harvest_radio(url: &str, ttl: u64) -> Vec<(f64, f64)> {
 }
 
 fn hapi_one(src: &SourceConfig, url: &str, param: &str, name: &str) -> Vec<(f64, f64)> {
-    let body = match fetch_raw(url, None, &src.headers, src.ttl) {
+    let body = match fetch_raw(url, None, &src.headers) {
         Some(b) => b,
         None => return Vec::new(),
     };
@@ -402,10 +404,9 @@ fn main() {
 
     println!();
     println!("=== channel board ===");
-    let block_of = |name: &str| {
-        find_block(&sources, name)
-            .map(|s| s.url)
-            .unwrap_or_else(|| "block absent from the register".into())
+    let block_of = |name: &str| match find_block(&sources, name) {
+        Some(s) => s.url,
+        None => "block absent from the register".into(),
     };
     println!(
         "{:<14} | Block {} | {} | where energy == 0.05-0.4nm (block grammar) | Sync t_sun = t − {:.3} s",
@@ -464,27 +465,26 @@ fn main() {
         delta_t_a: 946_728_000.0,
         deltas: vec![(0.0, 0.0)],
     };
-    let xray = harvest_block(&xray_url, 300, "noaa_goes_xray_flux_w_m2", &sources, &lsk);
-    let euv304 = harvest_block(&euv_url, 300, "solar_euv_flux_304_wm2", &sources, &lsk);
-    let euv284 = harvest_block(&euv_url, 300, "solar_euv_flux_284_wm2", &sources, &lsk);
-    let radio_raw = harvest_radio(&radio_url, 300);
-    let bz_rtsw_raw = harvest_last(&mag_url, 60, "bz_gsm", "nT");
-    let dens_rtsw_raw = harvest_last(&wind_url, 60, "proton_density", "1/cm3");
-    let wind_rtsw = harvest_last(&wind_url, 60, "proton_speed", "km/s");
+    let xray = harvest_block(&xray_url, "noaa_goes_xray_flux_w_m2", &sources, &lsk);
+    let euv304 = harvest_block(&euv_url, "solar_euv_flux_304_wm2", &sources, &lsk);
+    let euv284 = harvest_block(&euv_url, "solar_euv_flux_284_wm2", &sources, &lsk);
+    let radio_raw = harvest_radio(&radio_url);
+    let bz_rtsw_raw = harvest_last(&mag_url, "bz_gsm", "nT");
+    let dens_rtsw_raw = harvest_last(&wind_url, "proton_density", "1/cm3");
+    let wind_rtsw = harvest_last(&wind_url, "proton_speed", "km/s");
 
     let omni_block = find_block(&sources, "omni_imf_bz_gsm_nt");
-    let bz_omni_raw = omni_block
-        .as_ref()
-        .map(|s| hapi_one(s, &omni_url, "BZ_GSM1800", "omni_imf_bz_gsm_nt"))
-        .unwrap_or_default();
-    let dens_omni_raw = omni_block
-        .as_ref()
-        .map(|s| hapi_one(s, &omni_url, "N1800", "omni_solarwind_density_percc"))
-        .unwrap_or_default();
-    let v1800_raw = omni_block
-        .as_ref()
-        .map(|s| hapi_one(s, &omni_url, "V1800", "omni_solarwind_flow_speed_kms"))
-        .unwrap_or_default();
+    let (bz_omni_raw, dens_omni_raw, v1800_raw) = match omni_block.as_ref() {
+        Some(s) => (
+            hapi_one(s, &omni_url, "BZ_GSM1800", "omni_imf_bz_gsm_nt"),
+            hapi_one(s, &omni_url, "N1800", "omni_solarwind_density_percc"),
+            hapi_one(s, &omni_url, "V1800", "omni_solarwind_flow_speed_kms"),
+        ),
+        None => {
+            eprintln!("OMNI block absent from sources — the OMNI series harvest null");
+            (Vec::new(), Vec::new(), Vec::new())
+        }
+    };
 
     let shift = |v: Vec<(f64, f64)>| -> Vec<(f64, f64)> {
         v.into_iter().map(|(t, x)| (t - GOES_SYNC_S, x)).collect()
@@ -641,28 +641,29 @@ fn main() {
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
         te_row("Radio-2695", "Bz-OMNI", &ys, &xs, &[0, 1, 2, 3]);
         println!("  (radio-grid index lag is irregular — named, not concealed)");
-        let lo = bz_omni
-            .first()
-            .map(|&(t, _)| t)
-            .unwrap_or(0.0)
-            .max(dens_omni.first().map(|&(t, _)| t).unwrap_or(0.0));
-        let hi = bz_omni
-            .last()
-            .map(|&(t, _)| t)
-            .unwrap_or(0.0)
-            .min(dens_omni.last().map(|&(t, _)| t).unwrap_or(0.0));
-        if lo < hi {
-            let dt = 3600.0;
-            let t0 = (lo / dt).floor() * dt;
-            let n = ((hi - t0) / dt).floor() as usize;
-            let bb = bin_mean(&bz_omni, t0, dt, n);
-            let bd = bin_mean(&dens_omni, t0, dt, n);
-            let (xs, ys) = pair_cells(&bd, &bb);
-            te_row("Bz-OMNI", "Density-OMNI", &xs, &ys, &[0, 1, 2, 3]);
-            let (xs, ys) = pair_cells(&bb, &bd);
-            te_row("Density-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+        if let (Some(&(bz_lo, _)), Some(&(dens_lo, _)), Some(&(bz_hi, _)), Some(&(dens_hi, _))) = (
+            bz_omni.first(),
+            dens_omni.first(),
+            bz_omni.last(),
+            dens_omni.last(),
+        ) {
+            let lo = bz_lo.max(dens_lo);
+            let hi = bz_hi.min(dens_hi);
+            if lo < hi {
+                let dt = 3600.0;
+                let t0 = (lo / dt).floor() * dt;
+                let n = ((hi - t0) / dt).floor() as usize;
+                let bb = bin_mean(&bz_omni, t0, dt, n);
+                let bd = bin_mean(&dens_omni, t0, dt, n);
+                let (xs, ys) = pair_cells(&bd, &bb);
+                te_row("Bz-OMNI", "Density-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+                let (xs, ys) = pair_cells(&bb, &bd);
+                te_row("Density-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+            } else {
+                println!("intersection Bz-OMNI ↔ density-OMNI empty — matrix absent");
+            }
         } else {
-            println!("intersection Bz-OMNI ↔ density-OMNI empty — matrix absent");
+            println!("Bz-OMNI or density-OMNI empty — matrix absent");
         }
     }
 

@@ -183,7 +183,7 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            match fetch_raw_bytes(&url, 604800) {
+            match fetch_raw_bytes(&url) {
                 Some(b) => b,
                 None => {
                     eprintln!("{url}: fetch void");

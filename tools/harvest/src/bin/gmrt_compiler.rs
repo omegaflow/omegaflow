@@ -215,7 +215,7 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let url = grid_url(minlon, maxlon, minlat, maxlat);
     eprintln!("gmrt: {url}");
-    let Some(bytes) = fetch_raw_bytes(&url, 600) else {
+    let Some(bytes) = fetch_raw_bytes(&url) else {
         return Err(format!("{url}: fetch returned void"));
     };
     let recs = collect_elevation(&bytes)?;

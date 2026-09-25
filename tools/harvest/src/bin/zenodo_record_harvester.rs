@@ -7,7 +7,6 @@ use std::process::Command;
 const RECORD_API: &str = "https://zenodo.org/api/records";
 const DEFAULT_RECORD: &str = "21132339";
 const DEFAULT_OUT_DIR: &str = "data/zenodo.org";
-const FETCH_TTL: u64 = 3600;
 const WHOLE_BUFFER_CROSSCHECK_BYTES: u64 = 16 * 1024 * 1024;
 
 const SHA256_H: [u32; 8] = [
@@ -276,7 +275,7 @@ fn main() {
     let download_key = arg_value(&args, "--download");
 
     let api_url = format!("{RECORD_API}/{record}");
-    let Some(bytes) = fetch_raw_bytes(&api_url, FETCH_TTL) else {
+    let Some(bytes) = fetch_raw_bytes(&api_url) else {
         eprintln!("{api_url}: fetch void");
         std::process::exit(1);
     };

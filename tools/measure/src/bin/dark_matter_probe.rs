@@ -140,7 +140,7 @@ fn load_probe_daily(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> boo
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{key}.bin", CDN_BASE);
-        match fetch_raw_bytes(&url, 604800) {
+        match fetch_raw_bytes(&url) {
             Some(bytes) => {
                 if std::fs::write(&path, &bytes).is_err() {
                     eprintln!("{name}: daily-bin write void");
@@ -468,7 +468,7 @@ fn load_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
-        match fetch_raw_bytes(&url, 604800) {
+        match fetch_raw_bytes(&url) {
             Some(bytes) => {
                 if std::fs::write(&path, &bytes).is_err() {
                     eprintln!("{name}: arc write void");

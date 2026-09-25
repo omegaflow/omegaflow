@@ -30,14 +30,6 @@ pub fn desig_of(rec: &MpcorbRec) -> &str {
     std::str::from_utf8(&rec.desig[..end]).unwrap_or("")
 }
 
-pub fn number_text(number: u32) -> String {
-    if number == 0 {
-        String::new()
-    } else {
-        format!("{number}")
-    }
-}
-
 pub fn encode_record(rec: &MpcorbRec, out: &mut Vec<u8>) {
     out.extend_from_slice(&rec.number.to_le_bytes());
     out.extend_from_slice(&rec.desig);

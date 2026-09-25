@@ -204,7 +204,7 @@ pub fn solar_harvest(
                 .collect()
         };
         if let Some(block) = solar_find_block(&sources, "noaa_goes_xray_flux_w_m2")
-            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers)
         {
             let raw = solar_series(block, &body, "noaa_goes_xray_flux_w_m2", lsk);
             let shifted = goes_shift(raw);
@@ -224,7 +224,7 @@ pub fn solar_harvest(
             );
         }
         if let Some(block) = solar_find_block(&sources, "solar_euv_flux_304_wm2")
-            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers)
         {
             for (field, channel) in [
                 ("solar_euv_flux_304_wm2", SolarChannel::Euv304),
@@ -237,7 +237,7 @@ pub fn solar_harvest(
             }
         }
         if let Some(block) = solar_find_block(&sources, "solar_f107_flux_sfu")
-            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers)
         {
             let raw = solar_series(block, &body, "solar_f107_flux_sfu", lsk);
             let shifted = goes_shift(raw);
@@ -251,7 +251,7 @@ pub fn solar_harvest(
         }
         let mut wind: Vec<(f64, f64)> = Vec::new();
         if let Some(block) = solar_find_block(&sources, "solar_wind_speed_km_s")
-            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers)
         {
             wind = solar_series(block, &body, "solar_wind_speed_km_s", lsk);
             let dens = solar_series(block, &body, "solar_wind_density_cm3", lsk);
@@ -265,7 +265,7 @@ pub fn solar_harvest(
             );
         }
         if let Some(block) = solar_find_block(&sources, "magnetosphere_imf_bz_nt")
-            && let Some(body) = fetch_raw(&block.url, None, &block.headers, block.ttl)
+            && let Some(body) = fetch_raw(&block.url, None, &block.headers)
         {
             let bz = solar_series(block, &body, "magnetosphere_imf_bz_nt", lsk);
             let synced = solar_l1_sync(&bz, &wind, 60.0);

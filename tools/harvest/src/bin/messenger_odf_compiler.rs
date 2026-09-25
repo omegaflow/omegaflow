@@ -21,7 +21,7 @@ fn hrefs(text: &str) -> Vec<String> {
 }
 
 fn years() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(BASE, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(BASE) else {
         eprintln!("year listing fetch void ({BASE})");
         return Vec::new();
     };
@@ -48,7 +48,7 @@ fn years() -> Vec<String> {
 
 fn files_of(year: &str) -> Vec<String> {
     let dir = format!("{BASE}{year}/");
-    let Some(bytes) = fetch_raw_bytes(&dir, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(&dir) else {
         eprintln!("{year}: odf listing fetch void ({dir})");
         return Vec::new();
     };
@@ -80,7 +80,7 @@ fn main() {
         let mut kept_year = 0usize;
         for rel in files_of(&year) {
             let url = format!("{BASE}{year}/{rel}");
-            let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+            let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{year}/{rel}: fetch void ({url})");
                 continue;
             };

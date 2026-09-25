@@ -179,7 +179,7 @@ fn parse_receiver_bin(data: &[u8]) -> Option<Vec<[f64; 12]>> {
 
 fn files_of(volume: &str) -> Vec<String> {
     let url = format!("{BASE}{volume}/TDF/");
-    let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(&url) else {
         eprintln!("{volume}: dir listing fetch void ({url})");
         return Vec::new();
     };
@@ -251,7 +251,7 @@ fn main() {
                 }
                 fetched += 1;
                 let url = format!("{BASE}{volume}/{rel}");
-                let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+                let Some(bytes) = fetch_raw_bytes(&url) else {
                     eprintln!("{rel}: fetch void ({url})");
                     continue;
                 };

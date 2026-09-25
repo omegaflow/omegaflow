@@ -5793,25 +5793,33 @@ fn test_fetch_void_backoff_grows_power_of_two_and_caps() {
 }
 
 #[test]
-fn test_connect_timeout_is_declared_not_derived_from_ttl() {
+fn test_transfer_bound_is_declared_runner_safe_ttl_independent() {
     assert_eq!(
-        super::CONNECT_BOUND_S,
-        32,
-        "connect bound is a declared power-of-two handshake budget"
+        super::TRANSFER_BOUND_S,
+        1 << 11,
+        "the transfer bound is a declared power-of-two budget, never derived from ttl"
     );
     assert!(
-        super::ttl_transfer_bound(86400) > super::CONNECT_BOUND_S,
-        "the payload transfer budget stays ttl-scaled and exceeds the connect bound"
+        super::TRANSFER_BOUND_S < 7200,
+        "the transfer bound stays inside the health-check job budget (7200 s)"
     );
-    assert_eq!(
-        super::ttl_transfer_bound(86400),
-        ((86400.0) / (super::Φ * super::Φ)).ceil() as u64,
-        "transfer scales with ttl; connect does not"
+    let cmd = super::curl_base(super::RetryPolicy::Transient, super::TRANSFER_BOUND_S, 0);
+    let args: Vec<String> = cmd
+        .get_args()
+        .map(|a| a.to_string_lossy().into_owned())
+        .collect();
+    let pair = |flag: &str, val: &str| args.windows(2).any(|w| w[0] == flag && w[1] == val);
+    assert!(
+        pair("--speed-limit", "1"),
+        "the stall gate carries the physical flow-null (1 B/s)"
     );
-    assert_eq!(
-        super::ttl_transfer_bound(1),
-        ((1.0) / (super::Φ * super::Φ)).ceil() as u64,
-        "a tiny ttl keeps a tiny transfer budget"
+    assert!(
+        pair("--speed-time", "128"),
+        "the stall gate window is the declared 2^7 s"
+    );
+    assert!(
+        pair("--retry-max-time", "2048"),
+        "the retry chain stays inside the transfer budget"
     );
 }
 
@@ -6467,14 +6475,14 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
     assert!(matches!(&dst_src.extracts[0], super::Extract::Map { .. }));
     assert!(matches!(&co2_src.extracts[0], super::Extract::Rows { .. }));
 
-    let dst_body = match super::fetch_raw(&dst_src.url, None, &[], 3600) {
+    let dst_body = match super::fetch_raw(&dst_src.url, None, &[]) {
         Some(b) => b,
         None => {
             eprintln!("dst fetch void — network-dependent, the series stays unread");
             return;
         }
     };
-    let co2_body = match super::fetch_raw(&co2_src.url, None, &[], 3600) {
+    let co2_body = match super::fetch_raw(&co2_src.url, None, &[]) {
         Some(b) => b,
         None => {
             eprintln!("co2 fetch void — network-dependent, the series stays unread");
@@ -6525,7 +6533,6 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
         "https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index",
         None,
         &[],
-        3600,
     ) {
         Some(b) => b,
         None => {
@@ -6571,7 +6578,6 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
         "https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0",
         None,
         &[],
-        3600,
     ) {
         Some(b) => b,
         None => {
@@ -6611,7 +6617,6 @@ field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 0.0 0.0
         "https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv?time,longitude,latitude,station,ISO_6,QI_5006&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>=2026-06-01T00:00:00Z&time<=2026-07-03T00:00:00Z",
         None,
         &[],
-        3600,
     ) {
         Some(b) => b,
         None => {
@@ -6665,7 +6670,6 @@ field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0
         "https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days",
         None,
         &[],
-        3600,
     ) {
         Some(b) => b,
         None => {

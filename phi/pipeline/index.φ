@@ -72,8 +72,8 @@ descoped 0 pipeline/catalog/dataverse_harvard.φ
 # note: Datei absent am Datenträger (gemessen 2026-09-22); korpora_heim:25 redistribute
 descoped 0 pipeline/catalog/dataverse_borealis.φ
 # note: Datei absent am Datenträger (gemessen 2026-09-22); korpora_heim:26 redistribute
-descoped 0 pipeline/catalog/oai_arxiv.φ
-# note: 1300 arXiv-Metadaten (OAI-Identifier|Titel); kein Feld/URL; arXiv CC0 (korpora_heim:162)
+verifiziert 0 pipeline/catalog/oai_arxiv.φ
+# note: 1300 arXiv-OAI-Records (Identifier|Titel), 2026-09-25 aus der Live-Route regeneriert: archive_search --arxiv-oai (ListRecords+resumptionToken, Seite 1 = 1300 Records, Token skip%3D1300, keine Fensterkappung); 69 Titel trugen rohe XML-Entities → dekodiert; arXiv CC0 (korpora_heim:162)
 descoped 0 pipeline/catalog/b2find_catalogs_index.φ
 # note: 1082 B2FIND-Datensätze; EUDAT decline (korpora_heim:18); zeigen auf VizieR
 verifiziert 0 pipeline/catalog/b2find_intermagnet_catalog.φ

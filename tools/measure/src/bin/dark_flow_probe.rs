@@ -25,7 +25,7 @@ fn fetch_cached(name: &str, release: &str) -> Option<Vec<u8>> {
             std::fs::create_dir_all(parent).ok();
         }
         let url = format!("{CDN_BASE}/{release}/{name}");
-        let bytes = fetch_raw_bytes(&url, 604800)?;
+        let bytes = fetch_raw_bytes(&url)?;
         if std::fs::write(&path, &bytes).is_err() {
             return None;
         }

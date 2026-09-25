@@ -326,7 +326,7 @@ fn main() {
                 std::process::exit(2);
             }
         },
-        None => match fetch_raw_bytes(&cdn_url, 3600) {
+        None => match fetch_raw_bytes(&cdn_url) {
             Some(b) => (cdn_url.clone(), b),
             None => {
                 eprintln!("dr3_stars.bin: the CDN release {cdn_url} carried no bytes");

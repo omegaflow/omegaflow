@@ -7,13 +7,12 @@ pub fn fetch_eea_aq(
     post_url: &str,
     post_body: &str,
     headers: &[(String, String)],
-    ttl: u64,
 ) -> Option<Vec<(String, Vec<u8>)>> {
-    let csv = fetch_raw(post_url, Some(post_body), headers, ttl)?;
+    let csv = fetch_raw(post_url, Some(post_body), headers)?;
     let urls = split_parquet_urls(&csv)?;
     let mut files = Vec::new();
     for u in urls {
-        match fetch_raw_bytes(&u, ttl) {
+        match fetch_raw_bytes(&u) {
             Some(b) => files.push((u, b)),
             None => eprintln!("eea_aq {}: parquet fetch void — retry in ttl/Φ", u),
         }

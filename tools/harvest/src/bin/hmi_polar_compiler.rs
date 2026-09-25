@@ -85,7 +85,7 @@ fn parse_tobs(s: &str) -> Option<i64> {
 }
 
 fn fetch_json(url: &str) -> Option<JsonVal> {
-    let bytes = fetch_raw_bytes(url, 600)?;
+    let bytes = fetch_raw_bytes(url)?;
     let text = String::from_utf8_lossy(&bytes).to_string();
     parse_json(&text)
 }
@@ -209,7 +209,7 @@ fn export_chunk(
                         Some(b)
                     } else {
                         let dl_url = format!("{}{}", dl_base, fname);
-                        let got = fetch_raw_bytes(&dl_url, 1800);
+                        let got = fetch_raw_bytes(&dl_url);
                         if let Some(b) = &got {
                             let _ = std::fs::write(&cache_path, b);
                         }

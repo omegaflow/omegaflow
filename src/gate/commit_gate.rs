@@ -2826,6 +2826,18 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_transfer_bound_from_ttl_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/fetch.rs",
+            &fx("transfer_bound_from_ttl_regression"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fn_riss_keeps_its_word_passes() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("riss_kept"));

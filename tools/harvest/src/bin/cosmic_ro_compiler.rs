@@ -33,7 +33,7 @@ fn arg_usize(args: &[String], name: &str) -> Option<usize> {
 }
 
 fn fetch_text(url: &str) -> Option<String> {
-    let bytes = fetch_raw_bytes(url, 60)?;
+    let bytes = fetch_raw_bytes(url)?;
     String::from_utf8(bytes).ok()
 }
 
@@ -172,7 +172,7 @@ fn is_ro_granule(name: &str) -> bool {
 
 fn load_tar(arg: &str) -> Result<Vec<u8>, String> {
     let gz = if arg.starts_with("http://") || arg.starts_with("https://") {
-        fetch_raw_bytes(arg, 3600).ok_or_else(|| format!("{arg}: fetch returned void"))?
+        fetch_raw_bytes(arg).ok_or_else(|| format!("{arg}: fetch returned void"))?
     } else {
         std::fs::read(arg).map_err(|e| format!("read {arg} returned void: {e}"))?
     };

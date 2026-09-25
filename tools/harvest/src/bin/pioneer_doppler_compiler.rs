@@ -68,7 +68,7 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     for (name, sc) in SOURCES {
         let url = format!("{BASE}/{name}/radio/{name}_doppler_tracking_{sc}.asc.gz");
-        let Some(bytes) = fetch_raw_bytes(&url, 604800) else {
+        let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };

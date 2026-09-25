@@ -61,7 +61,7 @@ fn name_span(name: &str) -> Option<(i64, i64)> {
 }
 
 fn files_of() -> Vec<String> {
-    let Some(bytes) = fetch_raw_bytes(BASE, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(BASE) else {
         eprintln!("odf dir listing fetch void ({BASE})");
         return Vec::new();
     };
@@ -392,7 +392,7 @@ fn main() {
         let cache_path = format!("tmp/galileo_odf_cache_{name}");
         let bytes = match std::fs::read(&cache_path) {
             Ok(b) => b,
-            Err(_) => match fetch_raw_bytes(&url, 604800) {
+            Err(_) => match fetch_raw_bytes(&url) {
                 Some(b) => {
                     let _ = std::fs::write(&cache_path, &b);
                     b

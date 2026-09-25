@@ -90,7 +90,7 @@ fn load_bytes(kind: &str, url: &str, cache_name: &str, path: Option<String>) -> 
     if let Ok(bytes) = std::fs::read(&cache_path) {
         return Some(bytes);
     }
-    match fetch_raw_bytes(url, 3600) {
+    match fetch_raw_bytes(url) {
         Some(bytes) => {
             if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                 let _ = std::fs::create_dir_all(parent);

@@ -41,7 +41,7 @@ fn read_bin(data: &[u8]) -> Option<Vec<[f64; 4]>> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let Some(bytes) = fetch_raw_bytes(URL, 604800) else {
+    let Some(bytes) = fetch_raw_bytes(URL) else {
         eprintln!("gll_psc_v32.fit: fetch void ({URL})");
         return;
     };

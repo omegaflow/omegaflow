@@ -221,7 +221,7 @@ pub fn parse_stations_text(body: &str) -> Vec<Station> {
 
 pub fn gebco_elevation(lat: f64, lon: f64) -> Option<f64> {
     let url = format!("{GEBCO_URL}{lat},{lon}");
-    let body = fetch_raw(&url, None, &[], 86400)?;
+    let body = fetch_raw(&url, None, &[])?;
     let json = parse_json(&body)?;
     let v = jpath(&json, "results.0.elevation")?;
     if v.is_finite() { Some(v) } else { None }
@@ -764,7 +764,7 @@ pub fn fetch_station_body(
         "{DATASELECT_ROUTE}?network={}&station={}&channel=BHZ&starttime={}&endtime={}&format=miniseed",
         station.net, station.sta, start, end
     );
-    let body = fetch_raw_bytes(&url, 3600)?;
+    let body = fetch_raw_bytes(&url)?;
     decode_body(&body)
 }
 

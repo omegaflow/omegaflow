@@ -69,9 +69,7 @@ struct StationOutcome {
     fold: Option<Fold>,
 }
 
-const BIN_TTL_S: u64 = 604800;
-
-fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>> {
+fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
         return Some(bytes);
     }
@@ -79,7 +77,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str, ttl: u64) -> Option<Vec<u8>
         return None;
     }
     let url = format!("{}/{}/{}", CDN_BASE, netloc, asset);
-    let bytes = fetch_raw_bytes(&url, ttl)?;
+    let bytes = fetch_raw_bytes(&url)?;
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
@@ -192,8 +190,7 @@ fn plausible_geodetic(lat: f64, lon: f64, alt: f64) -> bool {
 fn load(name: &str) -> Option<BodyEphemeris> {
     let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     let asset = format!("ephemeris_{name}.bin");
-    ensure_bin(&path, EPHEMERIS_TAG, &asset, BIN_TTL_S)
-        .and_then(|bytes| parse_ephemeris_binary(&bytes))
+    ensure_bin(&path, EPHEMERIS_TAG, &asset).and_then(|bytes| parse_ephemeris_binary(&bytes))
 }
 
 fn arg_has(args: &[String], key: &str) -> bool {

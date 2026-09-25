@@ -117,7 +117,7 @@ fn harvest_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<(f64, f6
             if attempt > 0 {
                 std::thread::sleep(std::time::Duration::from_secs(20));
             }
-            match fetch_raw(&url, None, &[], 600).and_then(|b| parse_json(&b)) {
+            match fetch_raw(&url, None, &[]).and_then(|b| parse_json(&b)) {
                 Some(j) => {
                     root_json = Some(j);
                     break;

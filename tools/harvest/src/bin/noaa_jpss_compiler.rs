@@ -311,7 +311,7 @@ fn main() {
                 }
             };
             let name = url.rsplit('/').next().unwrap_or("granule").to_string();
-            match fetch_raw_bytes(&url, 3600) {
+            match fetch_raw_bytes(&url) {
                 Some(b) => (b, name),
                 None => {
                     eprintln!("{url}: fetch void");
