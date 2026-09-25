@@ -67,6 +67,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pathfinder_odf" => odf::parse_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
+        "pds3_ring_occ" => pds3_ring_occ::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
         "flac" => flac::parse_series(bytes),
@@ -348,6 +349,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "voyager_odr" => match comp {
             voyager_odr::COMP_SAMPLE => Some("voyager_odr_sample_count"),
+            _ => None,
+        },
+        "pds3_ring_occ" => match comp {
+            pds3_ring_occ::COMP_SIGNAL_RE => Some("pds3_ring_occ_signal_re"),
+            pds3_ring_occ::COMP_SIGNAL_IM => Some("pds3_ring_occ_signal_im"),
             _ => None,
         },
         "galileo_odr" => match comp {
