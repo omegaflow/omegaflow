@@ -544,6 +544,69 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
 }
 
 #[test]
+fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
+    let tone_code = Arc::new(std::sync::atomic::AtomicU8::new(
+        crate::archivar::hrv::TONE_STRESSED,
+    ));
+    let mut app = OmegaLoop {
+        field_permeability: 0.8,
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: tone_code.clone(),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_tone_scale_state.bin".to_string();
+    app.natural_latency_ticks = 1;
+    app.tone_scale = 1.0;
+    app.probe_omega = [1.0; 9];
+    let alpha = 1.0f32 - (-1.0f32).exp();
+
+    app.tick();
+    let stressed = 1.0 + (TONE_FLOOR_SCALE - 1.0) * alpha;
+    assert!(
+        (app.tone_scale - stressed).abs() < 1e-6,
+        "stressed {stressed} got {}",
+        app.tone_scale
+    );
+    assert_eq!(
+        app.presence_frame().aperture,
+        app.field_permeability * app.tone_scale
+    );
+
+    tone_code.store(
+        crate::archivar::hrv::TONE_CALM,
+        std::sync::atomic::Ordering::SeqCst,
+    );
+    app.tick();
+    let calm = stressed + (1.0 - stressed) * alpha;
+    assert!(
+        (app.tone_scale - calm).abs() < 1e-6,
+        "calm {calm} got {}",
+        app.tone_scale
+    );
+    assert!(app.tone_scale > stressed, "calm relaxes back toward unity");
+}
+
+#[test]
 fn te_probe_keeps_the_cpu_topology_on_a_coupled_pair() {
     let mut app = OmegaLoop {
         ..OmegaLoop::new(
