@@ -1,0 +1,43 @@
+name: galileo-ionocal-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  galileo-ionocal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-rings.seti.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "galileo_ionocal.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset galileo_ionocal.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset galileo_ionocal.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-rings.seti.org release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-rings.seti.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-rings.seti.org --repo omegaflow/sources \
+              --title "pds-rings.seti.org" \
+              --notes "Galileo gll.rss PDS4 IONCAL files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the Galileo TRK-2-23 IONCAL files to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin gll_ionocal_compiler -- --ci-mode

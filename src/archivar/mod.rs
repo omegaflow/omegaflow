@@ -79,6 +79,7 @@ pub mod igra;
 pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
+pub mod ionocal;
 pub mod ir;
 pub mod json;
 pub mod jwst;
