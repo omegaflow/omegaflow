@@ -3,7 +3,7 @@
   session: Mountain-Folge 159
   class: handover
   date: 2026-09-25
-  sha256: b8af3197acc4a570bf3bfab113d37ff7260d690076523d24e22c53c414a31244
+  sha256: f2ad75b54d4c568a925fd5b9b10387343e0d72b9f2365654402ef03f42e21a1e
   status: live
 -->
 # Handover — Mountain-Folge 159 (2026-09-25)
@@ -21,75 +21,81 @@ Diese Session konsumierte `docs/handover/handover-2026-09-25-mountain-folge158.m
 
 #### Stufe 1 — autonom
 
-### gap-Disposition der 189 parser-def-Einträge
+### Port der 189 `gap`-Quellen nach `phi/sources.φ` (M1, geteilt)
+- **Status:** autonom | **Bindung:** linie:mycelium
+- **Trigger:** Mountain-Dispositions-Verdikt (steht)
+- **Lage:** (gemessen 2026-09-25) die 5 Parser-Arme stehen; Klassen-Counts:
+  `unit-auto-detect` ×167, `force-undetermined` ×16, `konverter` ×4,
+  `votable-reader` ×1 (ALMA), `html-parser-arm` ×1 (AEC) = 189. Unit-Feld-Verdikte
+  gefällt: 27 Felder (`port.rs`/`units.rs`), 9 DROP (Metadatum/String-Enum),
+  2 außerhalb der ~30 (`declination_deg`, `sz_mass_10e14_msun`, Quelle noch nicht
+  portiert). `parser-def`+`gap`-Direktive = Mountain (Verdikt steht); die `url`-Zeile
+  = mycelium (Port nach `phi/sources.φ` + CDN).
+- **Blockade:** keine.
+- **Braucht:** Port je Klassen-Träger `phi/blocked_sources.φ::gap:<token> ×N` nach
+  `phi/sources.φ`; die `gap`-Direktive fällt erst mit dem Port.
+
+### health-check void-/empty-Klasse (GitHub-Issues ungelesen)
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25) die Arme sind gebaut — `unit-auto-detect`
-  (units.rs/port.rs), `force-undetermined` (astrometrisch/photometrisch → DROP),
-  `konverter` (mag_g → em/mag statt nT), `votable-reader` + `html-parser-arm`
-  (extract.rs) —, aber `phi/blocked_sources.φ` trägt weiter die 189 `gap`-Direktiven;
-  die Quellen sind noch nicht portiert.
+- **Lage:** (gemessen 2026-09-25 via Browser) 7 offene `health`-Issues
+  (#15/#16/#17/#45/#51/#54/#55), teils Duplikate: `cargo test returned void`,
+  `cargo clippy returned void`, `dropped-gate returned void`,
+  `recheck-live carries drift/broken findings`. Der `reverify`-Job ist grün, aber
+  `reverify.txt` (Run #113) trägt 141 rechecks: 78 drift-void, 35 quiet-void,
+  7 key-void, 21 refused, **0 broken** — der Parser liefert für praktisch jede
+  regeprüfte Quelle nichts. Die CI filed GitHub-Issues, die kein Session-Lesepfad
+  (`register_lookup`/`git_safety`/Handover) liest → stiller Drop. `probe-full` ist
+  im schedule skipped (nur workflow_dispatch), `pages-verify` ein curl.
 - **Blockade:** keine.
-- **Braucht:** `register_lookup --orphans` als Nulllinie, dann je Eintrag Port in
-  `phi/sources.φ` (mycelium) oder Register-Disposition; `phi/blocked_sources.φ::gap:*`
-  fällt erst mit dem Port.
+- **Braucht:** die health-Issues in den stehenden Pass/Register aufnehmen
+  (`ci_manage`-Snapshot erweitern oder Issues ins `external-state`/Handover routen);
+  reverify-Mask neu bewerten (quiet-void/key-void/refused werden nicht geflaggt);
+  Duplikate #15/#54, #16/#51, #17/#55 zusammenführen. Der `register_sort`-Fix schließt
+  die Ursache der test-void-Issues.
 
-### Verbleibende UNCERTAIN-Feldnamen des Unit-Arms
+### ALMA `declined_sources.φ:330` — Duplikat + Policy
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25 via `probe_classify`) ~30 Feldnamen bleiben ohne
-  deterministische Kraft/Einheit, u. a. `reporting_network`, `event_source`,
-  `mag_type`, `spectral_type`, `object_type`, `orbit_class`, `uv_index`,
-  `cloud_fraction`, `precipitation_inch`, `mean_temp_f`, `visibility_miles`,
-  `wind_speed_kt` (kt=kn vs. Kilotonne), `pressure_dbar`, `distance_mpc`,
-  `semi_major_axis_au`, `orbital_eccentricity`, `orbital_inclination_deg`,
-  `geometric_albedo`, `uncertainty_arcmin`, `rho_cos_phi`/`rho_sin_phi`,
-  `lod`/`dpsi`/`deps`, `dm`.
+- **Lage:** (gemessen 2026-09-25) `phi/declined_sources.φ:330` trägt dieselbe falsch
+  verdrahtete ALMA-URL (`ra,dec,source_name,project_code`); der `blocked_sources.φ:98`-
+  Block ist auf `s_ra,s_dec,target_name,proposal_id` korrigiert (TAP Positiv HTTP 200 /
+  Negativ `validateColumnNonAlias`).
 - **Blockade:** keine.
-- **Braucht:** Force-Gate-Urteil je Feld (Einheit + Kraft) oder `descoped` mit
-  Messung; die mehrdeutigen (`kt`, `mpc`, `au`) brauchen einen Konverter-Arm oder
-  ein Verdikt.
+- **Braucht:** Policy-Messung aus `korpora_heim.φ:93–96` (© ALMA, kein CC): trägt
+  `declined` statt `blocked`? Danach Duplikat abgleichen.
 
-### ALMA TAP (votable-reader) — Register-URL + Distanzachse
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25) der VOTable-Arm ist verdrahtet (`format=json|votable`),
-  aber die Register-URL selektiert `ra,dec,source_name,project_code` — real heißen die
-  obscore-Spalten `s_ra,s_dec,target_name,proposal_id` (TAP lehnt sonst mit
-  `validateColumnNonAlias` ab). obscore trägt außerdem keine Distanzachse.
-- **Blockade:** keine.
-- **Braucht:** Register-URL korrigieren; Distanz-Achse (dist/plx/z) ergänzen oder
-  ein Force-Gate-Verdikt für den kanal-emittierenden Port.
+### `arxiv` HTTP 406 — serverseitig
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** arXiv schließt die API-Migration ab
+- **Lage:** (gemessen 2026-09-25) 406 mit leerem Body, UA-unabhängig, für jede
+  ungecachte Query; gecachte Queries liefern 200. Retry für 406 entfernt (~9s/Query
+  gespart); Meldung benennt den gemessenen Zustand.
+- **Blockade:** arXiv-Edge.
+- **Braucht:** Wiedervorlage bei Trigger; kein Code.
 
-### AEC-FDSN Alaska (html-parser-arm) — Register-Notiz überholt
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25 via `archive_search --playwright`) der HTML-Arm steht,
-  aber die `recent_list`-HTML trägt keine lat/lon (nur mag/time/place/depth); die
-  Positionen liegen im JSON `aecdynamicfiles.s3.us-west-2.amazonaws.com/recent_events.json`
-  (646789 B). Die Register-Notiz „kein JSON-API" ist überholt.
-- **Blockade:** keine.
-- **Braucht:** Register-Notiz korrigieren; die Quelle als `format json` portieren.
+#### Stufe 2 — operator-gebunden
 
-### archive_search Rate-Limit-Arme
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** nächster Dispatch
-- **Lage:** (gemessen 2026-09-25 über `archive_search --all "solar wind"`) `arxiv`
-  HTTP 406 (serverseitige Rate-/UA-Politik; kanonisch 200), `openalex` HTTP 429,
-  `semanticscholar` 429 (keyless Pool), `librs` 403 Cloudflare (crates.io-Fallback
-  trägt); `marginalia` und CDX waren transient, jetzt 200.
-- **Blockade:** keine.
-- **Braucht:** Retry/Backoff oder Key-Pool (`S2_API_KEY`, OpenAlex polite pool);
-  `librs`-Cloudflare über die Browser-Bridge oder einen anderen Host.
+### `OPENALEX_MAILTO` (Polite-Pool)
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator setzt einen Kontakt-Mail-Key
+- **Lage:** (gemessen 2026-09-25) `OPENALEX_MAILTO` fehlt in `.secrets.local`; der
+  `mailto`-Param ist verdrahtet, aber inaktiv. `S2_API_KEY` liegt vor und greift
+  (semanticscholar 200).
+- **Blockade:** kein Kontakt-Mail-Key.
+- **Braucht:** Operator-Key.
 
-#### Stufe 3 — blockiert
-
-keiner. / Stufe 4 — wartend: keiner. / Stufe 5 — termin: keiner. / Stufe 6 — LOCK: keiner.
+#### Stufe 3 — blockiert: keiner. / Stufe 4 — wartend: `arxiv` (s. o.). / Stufe 5 — termin: keiner. / Stufe 6 — LOCK: keiner.
 
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`); `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort. Diese Session trägt:
-`src/archivar/{port,units,tests,extract}.rs`, die `archive_search`-Arme
-(net.rs/archive_search.rs/server.rs/web.rs + alphafold/interpro/materialsproject),
-diese Übergabe + der Move der konsumierten folge158 ins `archiv/`.
+die 5 uncommitteten Werkzeug-/Config-Dateien (`AGENTS.md`, `opencode.json`,
+`bin/archive_search`, `tools/utils/src/bin/archive_search.rs`,
+`register_sort.rs` — rustfmt + `url_violations`-Ordnungsfix),
+die Unit-Feld-Verdikte (`src/archivar/{port,units,tests}.rs`), die ALMA-/AEC-Register-
+Korrekturen (`phi/blocked_sources.φ`), die Rate-Limit-Arme
+(`tools/utils/src/bin/archive_search/{net,openalex,semanticscholar}.rs`) und diese
+Übergabe. Die CI-Prüfung im stehenden Pass liest die Job-Ebene direkt (Browser /
+`ci_manage log <id>`), nicht das Run-Ende.

@@ -79,10 +79,9 @@ pending
 url https://toar-data.fz-juelich.de/api/v2/data/timeseries_merged/
 note TOAR Oberflächen-O3 (nmol/mol=ppb, diffusion, CC BY 4.0) — Verdikt accept; anonym für Station-IDs 1000-2000. Schritt: toar_timeseries_compiler.rs (JSON-Zeitreihen + Stationen-Fanout) bauen.
 
-parser-def html
-gap html-parser-arm
-url https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson
-note AEC-FDSN 2026-09-25: /fdsnws/event/1/query?format=geojson|text + /version HTTP 404 direct+socks5 (Wayback ohne Snapshot); / + /earthquakes/recent_list HTTP 200 HTML (Drupal). Kein JSON-API; Gap HTML-Parser-Arm. Seismisch echt (depth km).
+parser-def json
+url https://aecdynamicfiles.s3.us-west-2.amazonaws.com/recent_events.json
+note AEC recent_events.json 2026-09-25 HTTP 200 647244 B sha256 cc91725f715a; array [{"event":{lat,lng,depth_km,magnitude,magnitude_type,event_time_epoch}}]; fdsnws event geojson HTTP 404; HTML recent_list ohne lat/lon — "kein JSON-API" überholt.
 
 parser-def json
 gap unit-auto-detect
@@ -96,8 +95,8 @@ note ETH-SED FDSN event: field magnitude/depth_km/event_source unit absent — u
 
 parser-def votable
 gap votable-reader
-url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
-note ALMA TAP (votable-only, §12): field target/project unit absent — obscore-Metadaten; cmap data ra/dec. VOTable-Reader-Gap bestätigt; Messung (ra/dec) echt.
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+s_ra,s_dec,target_name,proposal_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+note ALMA TAP EU 2026-09-25: s_ra,s_dec,target_name,proposal_id 200; ra,dec,source_name,project_code 400 validateColumnNonAlias [ra] absent. obscore+source_cone_search ohne dist/plx/z → em, s2-direction (distanzlos, τ=0). VOTable-Reader-Gap.
 
 parser-def json
 gap unit-auto-detect
