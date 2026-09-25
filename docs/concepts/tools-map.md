@@ -110,9 +110,13 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 
 ## Interfaces — exakt (damit niemand rät)
 
-- `sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir|file]` — **kein `-n`**; die
+- `sgrep [-i] [-l] [-c] [--all] [-g <glob>] <pattern> [dir|file]` — **kein `-n`**; die
   Standardausgabe ist `pfad:zeile:text`; ohne `-i` case-sensitiv; `-l` nur
-  Dateipfade, `-c` nur der Zähler. Der Dateisatz kommt aus `git ls-files`.
+  Dateipfade, `-c` nur der Zähler. Der Dateisatz kommt aus `git ls-files`
+  (tracked + untracked-not-ignored). `--all` walkt den Arbeitsbaum und schließt
+  **gitignorierte** Dateien ein (`phi/pipeline/queue`, `stage`, `research`, …),
+  überspringt `target`/`data`/`cache`/`.git`/`node_modules` — die Sichtbarkeits-
+  Lücke, durch die `glob` und `git ls-files` Pipeline-Material ausblenden.
 - `archive_search <kws>... [--root <dir>]... [--lines n] [--files n] [--max-mb n]
   [--skip n] [--binary] [--count] [--case] [--include <glob>]` — default
   case-insensitiv; `--count` druckt `n files, m hits for: …`; `--include '*.rs'`
@@ -263,7 +267,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 |---|---|---|---|
 | `archive_search` (PATH, Symlink auf `bin/archive_search`) | Inhalt, Pfade, NTFS, 19 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
 | `bin/archive_search` (Wrapper) | execs `bin/.tools_ensure`, sonst `exec` | lokal | P1–P5 |
-| `sgrep` | Zeilensuche über `git ls-files` | lokal | P1–P5 |
+| `sgrep` | Zeilensuche über `git ls-files`; `--all` incl. gitignorierter Dateien | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
 | `register_lookup` | `--open`/`--dropped`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff | lokal | P4 |

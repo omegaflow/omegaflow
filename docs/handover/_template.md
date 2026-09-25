@@ -76,6 +76,12 @@ Vorlage, sondern eine Registraturpflicht; eine ungemessene Behauptung wird gemes
 oder als `pending`/`unverified` benannt. Ein bereits mit **Wort** entschiedener
 Punkt wird nicht erneut als Frage vorgelegt — nur eine neue Messung öffnet ihn neu.
 
+**CDN-Claims sind Register-Behauptungen.** Eine `Lage`-Aussage über ein CDN-Asset
+(die `url`-Zeile in `phi/sources.φ`) ohne `archive_search --verdict`/`--sniff` im
+selben Atom ist ungemessen: der Start verifiziert nicht alle Assets, nur die
+fälligen (Zustands-Ledger). Ein Asset-Zustand ohne Messung ist `pending`, nie
+geerbt als gültig.
+
 ## Stehender Pass (automatisch, keine Auswahl)
 
 Die fälligen Einträge aus `docs/zustand/external-state.md` werden zu
@@ -85,9 +91,18 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 
 - **Postfach** — `smail` + `state/mail/mail_ledger.φ` (fällig 2⁶ min).
 - **CI-Status am HEAD** — zuerst den Watchdog-Snapshot
-  `/tmp/opencode/ci_status.md` lesen (kein API-Aufruf); bei Lücke/Detail
+  `/tmp/opencode/ci_status.md` lesen (kein API-Aufruf), **aber nur wenn er jünger
+  ist als der letzte HEAD-Wechsel** (`stat -c %y /tmp/opencode/ci_status.md` gegen
+  `git log -1 --format=%cI`); sonst ist der Snapshot eine Aussage von vor dem
+  Commit → `ci_manage list` erzwingen. Bei Lücke/Detail
   `ci_manage list` / `ci_manage view <id>`, Fehllog `ci_manage log <id>`.
   **Nie** `gh run list`/`gh run view`; `gh` nur für `workflow run`/`run download`.
+- **Werkzeug-Frische** — der Bin-Satz kommt aus `tools-latest`, nicht aus HEAD:
+  `sread target/release/.tools_manifest --limit 1` (`git_sha=…`) gegen
+  `git rev-parse HEAD` halten. Liegt der Manifest-`git_sha` hinter HEAD, ist die
+  Tool-Semantik **stale** — nicht als aktuell behandeln, im Handover als `pending`
+  benennen. Nach jedem Push `gh workflow run tools-build.yml`; der Wächter
+  `bin/.tools_ensure <tool>` prüft sha256-content-addressed.
 
 ## Werkzeuge (gebaut — nutzt sie)
 
