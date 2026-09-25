@@ -2365,9 +2365,458 @@ fn run_dropped(args: &[String]) {
     );
 }
 
+fn mode_line_filter<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == flag {
+            return match it.next() {
+                Some(next) if !next.starts_with("--") => Some(next.as_str()),
+                _ => None,
+            };
+        }
+    }
+    None
+}
+
+fn stale_threshold(args: &[String]) -> usize {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == "--persist" {
+            return match it.next() {
+                Some(value) => value
+                    .parse::<usize>()
+                    .ok()
+                    .filter(|n| *n >= 1)
+                    .unwrap_or(3),
+                None => 3,
+            };
+        }
+    }
+    3
+}
+
+fn following_block(text: &str, point_idx0: usize) -> Vec<String> {
+    let lines: Vec<&str> = text.lines().collect();
+    let mut out = Vec::new();
+    let mut i = point_idx0 + 1;
+    while i < lines.len() {
+        let t = lines[i].trim();
+        if t.is_empty()
+            || t.starts_with("## ")
+            || t.starts_with("### ")
+            || t.starts_with("#### ")
+            || t.starts_with("<!--")
+        {
+            break;
+        }
+        out.push(lines[i].to_string());
+        i += 1;
+    }
+    out
+}
+
+fn block_field(block: &[String], label: &str) -> Option<String> {
+    for line in block {
+        let lower = line.to_ascii_lowercase();
+        let pos = match lower.find(label) {
+            Some(p) => p,
+            None => continue,
+        };
+        let rest = &line[pos..];
+        let colon = match rest.find(':') {
+            Some(c) => c,
+            None => continue,
+        };
+        let value = rest[colon + 1..]
+            .trim()
+            .trim_matches(|c: char| c == '*' || c.is_whitespace());
+        if !value.is_empty() {
+            return Some(value.to_string());
+        }
+    }
+    None
+}
+
+fn point_lage(text: &str, lineno: usize) -> Option<String> {
+    let block = following_block(text, lineno.saturating_sub(1));
+    block_field(&block, "lage")
+}
+
+fn stale_points(
+    handovers: &BTreeMap<String, Vec<Handover>>,
+    filter: Option<&str>,
+    n: usize,
+) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut seen: BTreeSet<(String, String)> = BTreeSet::new();
+    if n == 0 {
+        return out;
+    }
+    for (line, list) in handovers {
+        if let Some(wanted) = filter {
+            if wanted != line.as_str() {
+                continue;
+            }
+        }
+        if list.len() < n {
+            continue;
+        }
+        for start in 0..=(list.len() - n) {
+            let window = &list[start..start + n];
+            let mut per_key: BTreeMap<String, Vec<Option<String>>> = BTreeMap::new();
+            for h in window {
+                let mut local: BTreeMap<String, Option<String>> = BTreeMap::new();
+                for point in extract_open_points(&h.text) {
+                    let key = normalize_text(&point.text);
+                    if key.is_empty() {
+                        continue;
+                    }
+                    let lage = point_lage(&h.text, point.lineno).map(|l| normalize_text(&l));
+                    let slot = local.entry(key).or_insert(None);
+                    if slot.is_none() {
+                        *slot = lage;
+                    }
+                }
+                for (key, lage) in local {
+                    per_key.entry(key).or_default().push(lage);
+                }
+            }
+            for (key, vals) in per_key {
+                if vals.len() != n {
+                    continue;
+                }
+                let first = match &vals[0] {
+                    Some(v) if !v.is_empty() => v.clone(),
+                    _ => continue,
+                };
+                if vals.iter().all(|v| v.as_ref() == Some(&first))
+                    && seen.insert((line.clone(), key.clone()))
+                {
+                    out.push(format!("STALE\t{}\t{}\t{}", line, n, key));
+                }
+            }
+        }
+    }
+    out
+}
+
+fn today_days() -> Option<i64> {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_secs();
+    Some((secs / 86400) as i64)
+}
+
+fn current_head_full() -> Option<String> {
+    let output = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let sha = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if sha.is_empty() { None } else { Some(sha) }
+}
+
+fn find_iso_date(text: &str) -> Option<i64> {
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i + 10 <= bytes.len() {
+        if bytes[i].is_ascii_digit() {
+            let seg = &bytes[i..i + 10];
+            if seg[4] == b'-'
+                && seg[7] == b'-'
+                && seg[..4].iter().all(u8::is_ascii_digit)
+                && seg[5..7].iter().all(u8::is_ascii_digit)
+                && seg[8..].iter().all(u8::is_ascii_digit)
+            {
+                let date = std::str::from_utf8(seg).ok()?;
+                let y: i64 = date[..4].parse().ok()?;
+                let m: i64 = date[5..7].parse().ok()?;
+                let d: i64 = date[8..].parse().ok()?;
+                if (1..=12).contains(&m) && (1..=31).contains(&d) {
+                    return Some(days_from_civil(y, m, d));
+                }
+            }
+        }
+        i += 1;
+    }
+    None
+}
+
+fn head_reference(text: &str) -> Option<String> {
+    for token in text.split(|c: char| !c.is_ascii_hexdigit()) {
+        if token.len() == 40 && token.bytes().all(|b| b.is_ascii_hexdigit()) {
+            return Some(token.to_lowercase());
+        }
+    }
+    let lower = text.to_ascii_lowercase();
+    if normalize_words(&lower).iter().any(|w| w == "head") {
+        for token in text.split(|c: char| !c.is_ascii_alphanumeric()) {
+            if token.len() >= 7
+                && token.len() < 40
+                && token.bytes().all(|b| b.is_ascii_hexdigit())
+            {
+                return Some(token.to_lowercase());
+            }
+        }
+    }
+    None
+}
+
+fn source_token_present(text: &str) -> bool {
+    normalize_words(text)
+        .iter()
+        .any(|w| matches!(w.as_str(), "ci" | "mail" | "run" | "lauf"))
+}
+
+fn fired_points(
+    handovers: &BTreeMap<String, Vec<Handover>>,
+    filter: Option<&str>,
+    today: Option<i64>,
+    head: Option<&str>,
+) -> (Vec<String>, usize) {
+    let mut out: Vec<String> = Vec::new();
+    let mut seen: BTreeSet<(String, String)> = BTreeSet::new();
+    let mut fired = 0usize;
+    for (line, list) in handovers {
+        if let Some(wanted) = filter {
+            if wanted != line.as_str() {
+                continue;
+            }
+        }
+        let h = match list.last() {
+            Some(h) => h,
+            None => continue,
+        };
+        for point in extract_open_points(&h.text) {
+            let block = following_block(&h.text, point.lineno.saturating_sub(1));
+            let status_text = match block_field(&block, "status") {
+                Some(s) => format!("{} {}", point.text, s),
+                None => point.text.to_string(),
+            };
+            let status_words = normalize_words(&status_text);
+            let has = |t: &str| status_words.iter().any(|w| w == t);
+            if !(has("operator-gebunden") || has("wartend") || has("wartestell") || has("termin")) {
+                continue;
+            }
+            let key = normalize_text(&point.text);
+            if key.is_empty() || !seen.insert((line.clone(), key.clone())) {
+                continue;
+            }
+            let mut combined = String::new();
+            if let Some(t) = block_field(&block, "trigger") {
+                combined.push_str(&t);
+            }
+            if let Some(b) = block_field(&block, "bindung") {
+                if !combined.is_empty() {
+                    combined.push(' ');
+                }
+                combined.push_str(&b);
+            }
+            if combined.trim().is_empty() {
+                combined = point.text.clone();
+            }
+            let reason = snippet(&combined, 120);
+            if combined.contains("Wort:") || combined.contains("wort:") {
+                out.push(format!("FIRED_MANUAL\t{}\t{}\t{}", line, key, reason));
+                fired += 1;
+                continue;
+            }
+            let lower = combined.to_lowercase();
+            if let Some(days) = find_iso_date(&combined) {
+                match today {
+                    Some(now) if days <= now => {
+                        out.push(format!("FIRED\t{}\t{}\t{}", line, key, reason));
+                        fired += 1;
+                    }
+                    Some(_) => {}
+                    None => {
+                        out.push(format!("FIRED_UNGEMESSEN\t{}\t{}\t{}", line, key, reason));
+                    }
+                }
+                continue;
+            }
+            let reference = head_reference(&combined);
+            let head_word = normalize_words(&lower).iter().any(|w| w == "head");
+            if head_word || reference.is_some() {
+                match reference {
+                    Some(reference) => match head {
+                        Some(current)
+                            if !(current.starts_with(&reference)
+                                || reference.starts_with(current)) =>
+                        {
+                            out.push(format!("FIRED\t{}\t{}\t{}", line, key, reason));
+                            fired += 1;
+                        }
+                        Some(_) => {}
+                        None => {
+                            out.push(format!("FIRED_UNGEMESSEN\t{}\t{}\t{}", line, key, reason));
+                        }
+                    },
+                    None => {
+                        out.push(format!("FIRED_UNGEMESSEN\t{}\t{}\t{}", line, key, reason));
+                    }
+                }
+                continue;
+            }
+            if source_token_present(&lower) {
+                out.push(format!("FIRED_UNGEMESSEN\t{}\t{}\t{}", line, key, reason));
+            }
+        }
+    }
+    (out, fired)
+}
+
+fn live_handover_paths(root: &Path) -> Vec<PathBuf> {
+    let mut out: Vec<PathBuf> = Vec::new();
+    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
+        let entries = match fs::read_dir(root.join(dir)) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+        paths.sort();
+        for path in paths {
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !is_doc_name(&name) || parse_handover_name(&name).is_none() {
+                continue;
+            }
+            out.push(path);
+        }
+    }
+    out
+}
+
+fn collect_live_handovers_in(root: &Path) -> BTreeMap<String, Vec<Handover>> {
+    let mut by_line: BTreeMap<String, Vec<Handover>> = BTreeMap::new();
+    let mut seen: Vec<String> = Vec::new();
+    for path in live_handover_paths(root) {
+        let name = file_name_string(&path);
+        if seen.iter().any(|s| s == &name) {
+            continue;
+        }
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        let (_, _, status) = parse_header(&text);
+        if is_closed_status(&status) {
+            continue;
+        }
+        let Some((line, date, folge)) = parse_handover_name(&name) else {
+            continue;
+        };
+        seen.push(name);
+        by_line
+            .entry(canonical_line(&line).to_string())
+            .or_default()
+            .push(Handover {
+                date,
+                folge,
+                path: path.to_string_lossy().to_string(),
+                text,
+            });
+    }
+    for list in by_line.values_mut() {
+        list.sort_by(|a, b| {
+            a.date
+                .cmp(&b.date)
+                .then(a.folge.cmp(&b.folge))
+                .then(a.path.cmp(&b.path))
+        });
+    }
+    by_line
+}
+
+fn backtick_paths(text: &str) -> Vec<String> {
+    let parts: Vec<&str> = text.split('`').collect();
+    let mut out = Vec::new();
+    let mut i = 1;
+    while i < parts.len() {
+        let token = parts[i].trim();
+        if !token.is_empty() {
+            out.push(token.to_string());
+        }
+        i += 2;
+    }
+    out
+}
+
+fn descoped_widerlegt(root: &Path) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for path in live_handover_paths(root) {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        let lines: Vec<&str> = text.lines().collect();
+        for (idx, line) in lines.iter().enumerate() {
+            let lower = line.to_ascii_lowercase();
+            if !(lower.contains("status") && lower.contains("descoped")) {
+                continue;
+            }
+            let block = following_block(&text, idx);
+            let quelle = match block_field(&block, "quelle") {
+                Some(q) => q,
+                None => continue,
+            };
+            for rel in backtick_paths(&quelle) {
+                let doc_text = match fs::read_to_string(root.join(&rel)) {
+                    Ok(t) => t,
+                    Err(_) => continue,
+                };
+                let mut opens: Vec<String> = Vec::new();
+                let mut released: Vec<String> = Vec::new();
+                scan_markers(&doc_text, &rel, "OPEN", &mut opens, &mut released);
+                if !opens.is_empty() {
+                    out.push(format!("descoped-widerlegt\t{}\t{}", rel, opens.len()));
+                }
+            }
+        }
+    }
+    out.sort();
+    out.dedup();
+    out
+}
+
+fn run_stale(args: &[String]) {
+    let filter = mode_line_filter(args, "--stale").map(canonical_line);
+    let n = stale_threshold(args);
+    let handovers = collect_live_handovers_in(Path::new("."));
+    let lines = stale_points(&handovers, filter, n);
+    for line in &lines {
+        println!("{}", line);
+    }
+    println!("register_lookup --stale: {} stale points", lines.len());
+}
+
+fn run_fired(args: &[String]) {
+    let filter = mode_line_filter(args, "--fired").map(canonical_line);
+    let today = today_days();
+    let head = current_head_full();
+    let handovers = collect_live_handovers_in(Path::new("."));
+    let (lines, fired) = fired_points(&handovers, filter, today, head.as_deref());
+    for line in &lines {
+        println!("{}", line);
+    }
+    println!("register_lookup --fired: {} fired points", fired);
+}
+
+fn run_descoped_check(_args: &[String]) {
+    let lines = descoped_widerlegt(Path::new("."));
+    for line in &lines {
+        println!("{}", line);
+    }
+    println!("register_lookup --descoped-check: {} widerlegt", lines.len());
+}
+
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries open markers: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -2388,6 +2837,18 @@ fn main() {
     }
     if args.iter().any(|a| a == "--orphan-docs") {
         run_orphan_docs(Path::new("."));
+        return;
+    }
+    if args.iter().any(|a| a == "--stale") {
+        run_stale(&args);
+        return;
+    }
+    if args.iter().any(|a| a == "--fired") {
+        run_fired(&args);
+        return;
+    }
+    if args.iter().any(|a| a == "--descoped-check") {
+        run_descoped_check(&args);
         return;
     }
     if args.iter().any(|a| a == "--history") {
@@ -3286,5 +3747,90 @@ mod tests {
         assert!(!private_successor_exists_in(&absent_str, "mountain", 125));
 
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn stale_points_flag_identical_lage_over_three_folgen() {
+        let base = env::temp_dir().join(format!("rl-stale-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n### alpha-driver\n- **Status:** wartend\n- **Lage:** waiting on X\n";
+        for (date, folge) in [("2026-09-01", 1u32), ("2026-09-02", 2), ("2026-09-03", 3)] {
+            fs::write(
+                base.join(format!(
+                    "docs/handover/handover-{}-mountain-folge{}.md",
+                    date, folge
+                )),
+                body,
+            )
+            .unwrap();
+        }
+        let handovers = collect_live_handovers_in(&base);
+        let out = stale_points(&handovers, None, 3);
+        assert!(out.iter().any(|l| l.contains("alpha-driver")), "{:?}", out);
+        assert_eq!(out.len(), 1, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn fired_points_flag_past_date_and_manual_word() {
+        let base = env::temp_dir().join(format!("rl-fired-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n### vergangen\n- **Status:** wartend\n- **Trigger:** 2000-01-01\n\n### zukunft\n- **Status:** termin\n- **Trigger:** 2999-01-01\n\n### wort-punkt\n- **Status:** operator-gebunden\n- **Trigger:** Wort: /consent\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge9.md"),
+            body,
+        )
+        .unwrap();
+        let handovers = collect_live_handovers_in(&base);
+        let head = "a".repeat(40);
+        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("FIRED\t") && l.contains("vergangen")),
+            "{:?}",
+            out
+        );
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("FIRED_MANUAL") && l.contains("wort-punkt")),
+            "{:?}",
+            out
+        );
+        assert!(out.iter().all(|l| !l.contains("zukunft")), "{:?}", out);
+        assert_eq!(fired, 2, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn descoped_check_flags_a_contradicting_open_document() {
+        let base = env::temp_dir().join(format!("rl-descoped-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("docs/specs")).unwrap();
+        let header = "<!--\n  title: t\n  class: handover\n  date: 2026-01-01\n  sha256: x\n-->\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-25-mountain-folge9.md"),
+            format!(
+                "{header}# h\n\n### alt\n- **Status:** descoped\n- **Quelle:** `docs/specs/x.md`\n"
+            ),
+        )
+        .unwrap();
+        let doc_header = "<!--\n  title: t\n  class: ref\n  date: 2026-01-01\n  sha256: x\n-->\n";
+        fs::write(
+            base.join("docs/specs/x.md"),
+            format!("{doc_header}# x\nOffener Punkt: noch zu bauen\n"),
+        )
+        .unwrap();
+        let out = descoped_widerlegt(&base);
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("descoped-widerlegt\tdocs/specs/x.md\t")),
+            "{:?}",
+            out
+        );
+        assert_eq!(out.len(), 1, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
     }
 }
