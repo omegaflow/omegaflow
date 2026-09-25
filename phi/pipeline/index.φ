@@ -91,7 +91,7 @@ verifiziert 0 pipeline/catalog/terrapulse_catalog.φ
 verifiziert 0 pipeline/catalog/esa_geomagnetic_catalog.φ
 # note: 1 Kandidat → stage/esa_geomagnetic_candidates.φ; Probe 2026-09-22: imag-data.bgs.ac.uk GIN_V1 hapi/data live; 14 decline; eigenes Werk (korpora_heim:71)
 verifiziert 0 pipeline/catalog/archeology_gaps_index.φ
-# note: 54 Kandidaten → stage/archeology_gaps_candidates.φ; Probe 2026-09-22: 35 live, 18 dead, 1 blocked key (api.le-systeme-solaire.net); 22 decline; eigenes Werk (korpora_heim:64)
+# note: 54 Kandidaten → stage/archeology_gaps_candidates.φ; Probe 2026-09-22: 35 live, 18 dead, 1 disponiert 2026-09-25 (api.le-systeme-solaire.net bereits live, sources.φ:7586); 22 decline; eigenes Werk (korpora_heim:64)
 descoped 0 pipeline/catalog/arcgis_catalog.φ
 # note: 3 Kandidaten; Esri commercial decline (korpora_heim:166)
 verifiziert 0 pipeline/catalog/copernicus_catalog.φ
