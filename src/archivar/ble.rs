@@ -1521,7 +1521,7 @@ mod tests {
     fn signal_properties_changed_parses_value_bytes() {
         let mut fields = Marshal::new(16);
         fields.field(FIELD_PATH, "o");
-        fields.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015");
+        fields.str("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015");
         fields.field(FIELD_INTERFACE, "s");
         fields.str(PROPERTIES_IFACE);
         fields.field(FIELD_MEMBER, "s");
@@ -1552,7 +1552,7 @@ mod tests {
         assert_eq!(parsed.msg_type, TYPE_SIGNAL);
         assert_eq!(
             parsed.path.as_deref(),
-            Some("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015")
+            Some("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015")
         );
         assert_eq!(parsed.member.as_deref(), Some("PropertiesChanged"));
         let value = properties_changed(&parsed.args, "Value")
@@ -1572,7 +1572,7 @@ mod tests {
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
         body.align(8);
         let top_elems = body.buf.len();
-        body.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF");
+        body.str("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF");
         body.align(4);
         let ifs = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
@@ -1586,7 +1586,7 @@ mod tests {
         let props_elems = body.buf.len();
         body.str("Address");
         body.buf.extend_from_slice(&[1, b's', 0]);
-        body.str("F0:99:19:4E:0B:BF");
+        body.str("AA:BB:CC:DD:EE:FF");
         body.align(8);
         body.str("Connected");
         body.buf.extend_from_slice(&[1, b'b', 0]);
@@ -1597,7 +1597,7 @@ mod tests {
         let ifs_len = (body.buf.len() - ifs_elems) as u32;
         body.buf[ifs..ifs + 4].copy_from_slice(&ifs_len.to_le_bytes());
         body.align(8);
-        body.str("/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015");
+        body.str("/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015");
         body.align(4);
         let ifs2 = body.buf.len();
         body.buf.extend_from_slice(&[0, 0, 0, 0]);
@@ -1628,13 +1628,13 @@ mod tests {
         let msg = marshal_message(9, TYPE_METHOD_RETURN, fields, &body.buf);
         let parsed = parse_message(&msg).expect("valid reply");
         let (path, connected) =
-            device_by_address(&parsed.args, "f0:99:19:4e:0b:bf").expect("device resolved");
-        assert_eq!(path, "/org/bluez/hci0/dev_F0_99_19_4E_0B_BF");
+            device_by_address(&parsed.args, "aa:bb:cc:dd:ee:ff").expect("device resolved");
+        assert_eq!(path, "/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF");
         assert!(connected);
         let char_path = hr_measurement_path(&parsed.args, &path).expect("characteristic resolved");
         assert_eq!(
             char_path,
-            "/org/bluez/hci0/dev_F0_99_19_4E_0B_BF/service0010/char0015"
+            "/org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF/service0010/char0015"
         );
     }
 
