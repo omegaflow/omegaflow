@@ -32,17 +32,35 @@ jobs:
           path: bz-blatt-minute.txt
   hourly:
     runs-on: ubuntu-latest
-    timeout-minutes: 420
+    timeout-minutes: 300
     strategy:
       fail-fast: false
       matrix:
         include:
-          - point: abk-2024
-            args: --hourly --station ABK
-          - point: abk-2025
-            args: --hourly --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31
-          - point: sod-2024
-            args: --hourly --station SOD
+          - point: abk-2024-q1
+            args: --hourly --station ABK --hour-start 2024-01-01 --hour-end 2024-04-01
+          - point: abk-2024-q2
+            args: --hourly --station ABK --hour-start 2024-04-01 --hour-end 2024-07-01
+          - point: abk-2024-q3
+            args: --hourly --station ABK --hour-start 2024-07-01 --hour-end 2024-10-01
+          - point: abk-2024-q4
+            args: --hourly --station ABK --hour-start 2024-10-01 --hour-end 2025-01-01
+          - point: abk-2025-q1
+            args: --hourly --station ABK --hour-start 2025-01-01 --hour-end 2025-04-01
+          - point: abk-2025-q2
+            args: --hourly --station ABK --hour-start 2025-04-01 --hour-end 2025-07-01
+          - point: abk-2025-q3
+            args: --hourly --station ABK --hour-start 2025-07-01 --hour-end 2025-10-01
+          - point: abk-2025-q4
+            args: --hourly --station ABK --hour-start 2025-10-01 --hour-end 2026-01-01
+          - point: sod-2024-q1
+            args: --hourly --station SOD --hour-start 2024-01-01 --hour-end 2024-04-01
+          - point: sod-2024-q2
+            args: --hourly --station SOD --hour-start 2024-04-01 --hour-end 2024-07-01
+          - point: sod-2024-q3
+            args: --hourly --station SOD --hour-start 2024-07-01 --hour-end 2024-10-01
+          - point: sod-2024-q4
+            args: --hourly --station SOD --hour-start 2024-10-01 --hour-end 2025-01-01
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
