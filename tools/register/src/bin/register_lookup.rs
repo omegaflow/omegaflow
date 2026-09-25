@@ -2383,11 +2383,7 @@ fn stale_threshold(args: &[String]) -> usize {
     while let Some(a) = it.next() {
         if a == "--persist" {
             return match it.next() {
-                Some(value) => value
-                    .parse::<usize>()
-                    .ok()
-                    .filter(|n| *n >= 1)
-                    .unwrap_or(3),
+                Some(value) => value.parse::<usize>().ok().filter(|n| *n >= 1).unwrap_or(3),
                 None => 3,
             };
         }
@@ -2555,9 +2551,7 @@ fn head_reference(text: &str) -> Option<String> {
     let lower = text.to_ascii_lowercase();
     if normalize_words(&lower).iter().any(|w| w == "head") {
         for token in text.split(|c: char| !c.is_ascii_alphanumeric()) {
-            if token.len() >= 7
-                && token.len() < 40
-                && token.bytes().all(|b| b.is_ascii_hexdigit())
+            if token.len() >= 7 && token.len() < 40 && token.bytes().all(|b| b.is_ascii_hexdigit())
             {
                 return Some(token.to_lowercase());
             }
@@ -2628,7 +2622,7 @@ fn fired_points(
             let lower = combined.to_lowercase();
             if let Some(days) = find_iso_date(&combined) {
                 match today {
-                    Some(now) if days <= now => {
+                    Some(now) if days <= now && days >= now - 366 => {
                         out.push(format!("FIRED\t{}\t{}\t{}", line, key, reason));
                         fired += 1;
                     }
@@ -2747,6 +2741,33 @@ fn backtick_paths(text: &str) -> Vec<String> {
     out
 }
 
+fn doc_open_task_markers(text: &str) -> usize {
+    let body = match text.find("-->") {
+        Some(i) => &text[i + 3..],
+        None => text,
+    };
+    let mut count = 0usize;
+    for line in body.lines() {
+        let t = line.trim();
+        let low = t.to_lowercase();
+        if t.starts_with("##") && low.contains("offen") && !low.contains("gekl") {
+            count += 1;
+            continue;
+        }
+        if low.contains("n\u{e4}chster schritt")
+            || low.contains("n\u{e4}chste schritte")
+            || low.contains("naechster schritt")
+            || low.contains("naechste schritte")
+            || low.contains("todo")
+            || low.contains("- [ ]")
+            || low.contains("- **braucht:**")
+        {
+            count += 1;
+        }
+    }
+    count
+}
+
 fn descoped_widerlegt(root: &Path) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     for path in live_handover_paths(root) {
@@ -2769,11 +2790,9 @@ fn descoped_widerlegt(root: &Path) -> Vec<String> {
                     Ok(t) => t,
                     Err(_) => continue,
                 };
-                let mut opens: Vec<String> = Vec::new();
-                let mut released: Vec<String> = Vec::new();
-                scan_markers(&doc_text, &rel, "OPEN", &mut opens, &mut released);
-                if !opens.is_empty() {
-                    out.push(format!("descoped-widerlegt\t{}\t{}", rel, opens.len()));
+                let markers = doc_open_task_markers(&doc_text);
+                if markers > 0 {
+                    out.push(format!("descoped-widerlegt\t{}\t{}", rel, markers));
                 }
             }
         }
@@ -2811,12 +2830,15 @@ fn run_descoped_check(_args: &[String]) {
     for line in &lines {
         println!("{}", line);
     }
-    println!("register_lookup --descoped-check: {} widerlegt", lines.len());
+    println!(
+        "register_lookup --descoped-check: {} widerlegt",
+        lines.len()
+    );
 }
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries open markers: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -3777,7 +3799,7 @@ mod tests {
         let base = env::temp_dir().join(format!("rl-fired-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n### vergangen\n- **Status:** wartend\n- **Trigger:** 2000-01-01\n\n### zukunft\n- **Status:** termin\n- **Trigger:** 2999-01-01\n\n### wort-punkt\n- **Status:** operator-gebunden\n- **Trigger:** Wort: /consent\n";
+        let body = "# h\n\n## Offen\n\n### vergangen\n- **Status:** wartend\n- **Trigger:** 2024-01-01\n\n### zukunft\n- **Status:** termin\n- **Trigger:** 2999-01-01\n\n### wort-punkt\n- **Status:** operator-gebunden\n- **Trigger:** Wort: /consent\n";
         fs::write(
             base.join("docs/handover/handover-2026-09-25-mountain-folge9.md"),
             body,
@@ -3820,7 +3842,7 @@ mod tests {
         let doc_header = "<!--\n  title: t\n  class: ref\n  date: 2026-01-01\n  sha256: x\n-->\n";
         fs::write(
             base.join("docs/specs/x.md"),
-            format!("{doc_header}# x\nOffener Punkt: noch zu bauen\n"),
+            format!("{doc_header}# x\n\n- TODO: build it\n"),
         )
         .unwrap();
         let out = descoped_widerlegt(&base);
