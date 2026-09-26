@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 20dfbf2330f8507834cc69bc33d95d705be5d0d0df7a00f14903e39bac934e50
+  sha256: 156c1fa254a074e6f3d88b20b8054ed015b8d9f3d697ba003debc2255bd6b864
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -145,13 +145,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** CDN-Läufe dispatcht/lesen (`volume-cdn.yml`, `isc-ehb-cdn.yml`, `emc-cdn.yml`); der EMC-3D-netCDF-**Katalog**-Arm fehlt (der volume-Arm existiert) — optional.
 
-#### `src/archivar/llnl_g3d.rs` committen — HEAD-E0583 (fremd getragen 2026-09-26)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort (HEAD `fb8017a` ist rot für alle Core-bauenden Jobs).
-- **Lage:** (gemessen 2026-09-26) `src/archivar/mod.rs:96` `pub mod llnl_g3d;` ist committet (`e061cecbc`), die Datei `src/archivar/llnl_g3d.rs` ist **untracked** → `ci-check`/`paper-check`/`tools-build` `error[E0583] file not found for module llnl_g3d` (exit 101; Runs `36240964112`, `36240630953`). Operator-Wort 2026-09-26: Eigentum Sensory.
-- **Blockade:** keine.
-- **Braucht:** `src/archivar/llnl_g3d.rs` pfad-begrenzt committen (deine Arbeit; Mountain committet keine fremde untracked Datei).
-
 #### Positive Maske — ODF-Regel + Slab2-Ersatzroute gemessen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
@@ -271,13 +264,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** kein NTRS-Volltext für 19830011507.
 - **Braucht:** NTRS-19830011507-Volltext ist **measured absent**; ADS hat den Artikel (`1982TDAPR..72..118W` / `1983tdar.nasa..118W`) — Volltext-/Bezugsroute via `archive_search --playwright` auf ADS prüfen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
 
-#### Register-Port-Stau — `phi/sources.φ`/`blocked_sources.φ`/`units.rs` fremd-dirty
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** die fremde Linie committet (Dateien sauber)
-- **Lage:** (gemessen 2026-09-26) drei fertige Register-Blöcke warten im `/tmp/opencode/`: `korona-register-block.φ`, `weberin-register-block.φ`; Slab2-Ersatzroute + LLNL-G3D-JPS + ISC-EHB sind jetzt gemessen (s. Seismik-Flotte/Positive Maske) und nur noch als Block zu schreiben. `sources.φ`, `blocked_sources.φ`, `units.rs` tragen fremde uncommittete Änderungen (RAVE-DR4/RCSED-ADQL-Kuration).
-- **Blockade:** fremde uncommittete Arbeit (nicht überschreiben).
-- **Braucht:** nach dem fremden Commit die Blöcke portieren.
-
 ### Operator handelt
 
 #### JUICE-Erdpassage 28./29.09.2026 — Kanal fertig, Siegel-Wort fehlt (termin-kritisch)
@@ -374,8 +360,8 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geglaubt
 (kein Punkt wird als Wahrheit getragen, was keine Messung hat):
 
-- **Korona:** SWPC-Update-Kadenz ungemessen → `ttl 3600`/`τ 86400` sind Schätzungen;
-  `millionths` fehlt in `convert_to_si` (`src/archivar/units.rs`).
+- **Korona:** SWPC-Update-Kadenz ungemessen → `ttl 3600`/`τ 86400` sind Schätzungen
+  (der `millionths`→SI-Arm ist gebaut, `units.rs`).
 - **Weberin-Quellen:** ALeRCE `/alerts/v1/detections/?oid=` 404 (Routenform nicht
   exponiert) — `pending`; Fink `getSchema` (159 Felder) nur teilweise ausgewertet.
 - **Weberin Faden-Matrix:** die seismischen Stations-Weltlinien-Endpunkte
@@ -385,7 +371,8 @@ In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geg
 - **JUICE:** OMNI2-Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) →
   Verifikationskanal, nicht Füllkanal.
 - **Weberin cometels:** `mpcorb_extended.json.gz` sha nur partiell (74,2 MB);
-  `cometels_flat.json` CDN-Asset 404 (nicht kompiliert).
+  `cometels_flat.json`/`cometels.bin` CDN-Asset noch nicht manifestiert (Lauf
+  dispatcht).
 - **Trishuli:** S1-Post-Szene nicht archiviert (CEMS nur Grading, optisch
   wolkenverdeckt) → räumlicher Footprint bleibt `pending`.
 
