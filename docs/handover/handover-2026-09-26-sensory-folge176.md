@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: bf99f1fd5b5dfc3ea6a29488ce8b1d655351ec0dab652b488fb0b3e184fa70a9
+  sha256: f28ddd730ed65dcebc897039e4594662533d51b50f4688c4c247aa10748ed49f
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -140,7 +140,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Seismik-Flotte — 3D-Modell-Kandidat + Stationsterm gemessen, Registrierung offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `research-max`) W-Phase-M9 gebaut/verdrahtet (`w_phase_bandpass`/`w_phase_energy_ratio`/`w_phase_discriminate`, `tools/measure/src/depthphase.rs`); Flotte unverzerrt (+1,7 km, se 4,7 km), 19/36 km dominieren das ±10-km-Gate; ak135 1D (`positive-maske.md:64`). 3D-Kandidat gemessen: **LLNL-G3D-JPS** (`gs.llnl.gov/.../global-3d-seismic-tomography`, HTTP 200, 70530 B, direct+Proton); IRIS/EarthScope-EMC-Seiten degradiert (identisches 61297-B-Template, `ds.earthscope.org` pending). Stationsterm-Kandidat: **ISC-EHB Bulletin** (`isc.ac.uk/isc-ehb/` 200, 34167 B; DOI 10.31905/py08w6s3 / mppidwhm).
+- **Lage:** (gemessen 2026-09-26 via `research-max`) W-Phase-M9 gebaut/verdrahtet (`w_phase_bandpass`/`w_phase_energy_ratio`/`w_phase_discriminate`, `tools/measure/src/depthphase.rs`); Flotte unverzerrt (+1,7 km, se 4,7 km), 19/36 km dominieren das ±10-km-Gate; ak135 1D (`positive-maske.md:64`). 3D-Kandidat **LLNL-G3D-JPS** (gemessen 2026-09-26 via `general`: Downloads `gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip` 200, 47,17 MB, sha `3bb04377…`; `LLNL-G3D-JPS.e3d.binary` 200, 146,8 MB; `llnl-g3d-jps_tomofilt_1.zip` 200, 166,1 MB; `LLNL-Earth3D.5.4.3.jar` 200, 76,8 MB; **Lizenz gemessen absent**). Stationsterm **ISC-EHB**: Bulk ist **RES/HDF-gz**, nicht CSV — `http://download.isc.ac.uk/isc-ehb/` dir-listing, `1964.res.gz` 200, 10,07 MB; CSV nur per Query (`isc.ac.uk/isc-ehb/search/arrivals/csvoutput/` 200, PHP-Form); Lizenz nur „cite", Nachbar ISC-GEM CC-BY-SA 3.0. IRIS/EarthScope-EMC gemessen: `data.earthscope.org/archive/seismology/products/emc/netcdf/` dir-listing 200 (117652 B), `GLAD-M35.r0.1-n4c.nc` 200, 343,76 MB (`\x89HDF`); EMC-Lizenz measured absent; die frühere 61297-B-Template-Angabe **nicht reproduziert** (`ds.earthscope.org` 000/404) → ungemessen.
 - **Blockade:** `phi/sources.φ` fremd-dirty → keine Registrierung in diesem Atom.
 - **Braucht:** LLNL-G3D-JPS + ISC-EHB als `sources.φ`-Ernte-Kandidaten registrieren (wenn `sources.φ` frei); pP-Residuum sonst `pending` halten.
 
@@ -259,14 +259,14 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Pioneer/Dark-Matter — Sweep nachgetragen, Syntonisation-Routen offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) Rampen-Sweep in `probe-front-dark-matter.md` §5.6 nachgetragen (p10 2399 / p11 1518 Pässe; Median-LS-Steigung 2,257e-1/1,383e-1 Hz/s; Resid-RMS 8,845e2/7,958e3 Hz); ASC byte-exakt verdrahtet (`pioneer_doppler_compiler.rs:7-8,70`); Voyager-2-Route registriert (`blocked_sources.φ:51`).
-- **Blockade:** keine.
-- **Braucht:** Syntonisation-1983- und GPS-1982–87-Routen via `archive_search --ads`/`--ntrs` messen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
+- **Lage:** (gemessen 2026-09-26) Rampen-Sweep in `probe-front-dark-matter.md` §5.6 nachgetragen (p10 2399 / p11 1518 Pässe; Median-LS-Steigung 2,257e-1/1,383e-1 Hz/s; Resid-RMS 8,845e2/7,958e3 Hz); ASC byte-exakt verdrahtet (`pioneer_doppler_compiler.rs:7-8,70`); Voyager-2-Route registriert (`blocked_sources.φ:51`). Syntonisation-Routen gemessen (2026-09-26 via `research-max`): **NTRS 19830011507** „A two-year history of atomic frequency standards syntonization in the DSN" (1983, trägt eine 2-Jahres-Serie, kein NTRS-Volltext-Download); **NTRS 19820012645** (NBS/GPS-Empfänger 1982, Vergleichswerte <10 ns / ≤1e-14), **NTRS 19840011567** (1984), **DOI 10.1109/freq.1982.200599**; arXiv-Route HTTP 406 `pending`.
+- **Blockade:** kein NTRS-Volltext für 19830011507.
+- **Braucht:** die Collected Work 19830011495 / den Volltext via `archive_search --ads`/`--playwright` beschaffen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
 
 #### Register-Port-Stau — `phi/sources.φ`/`blocked_sources.φ`/`units.rs` fremd-dirty
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** die fremde Linie committet (Dateien sauber)
-- **Lage:** (gemessen 2026-09-26) drei fertige Register-Blöcke warten im `/tmp/opencode/`: `korona-register-block.φ`, `weberin-register-block.φ`; Slab2-Ersatzroute + LLNL-G3D-JPS + ISC-EHB noch zu schreiben. `sources.φ`, `blocked_sources.φ`, `units.rs` tragen fremde uncommittete Änderungen (RAVE-DR4/RCSED-ADQL-Kuration).
+- **Lage:** (gemessen 2026-09-26) drei fertige Register-Blöcke warten im `/tmp/opencode/`: `korona-register-block.φ`, `weberin-register-block.φ`; Slab2-Ersatzroute + LLNL-G3D-JPS + ISC-EHB sind jetzt gemessen (s. Seismik-Flotte/Positive Maske) und nur noch als Block zu schreiben. `sources.φ`, `blocked_sources.φ`, `units.rs` tragen fremde uncommittete Änderungen (RAVE-DR4/RCSED-ADQL-Kuration).
 - **Blockade:** fremde uncommittete Arbeit (nicht überschreiben).
 - **Braucht:** nach dem fremden Commit die Blöcke portieren.
 
@@ -366,13 +366,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geglaubt
 (kein Punkt wird als Wahrheit getragen, was keine Messung hat):
 
-- **LLNL-G3D-JPS:** der innere Download-Link der Seite ungemessen (`--playwright`
-  brach ab mit `href.startsWith is not a function`); Lizenzbedingungen ungelesen.
-  Schritt: `archive_search --playwright <url>` erneut, dann `--sniff` auf den Link.
-- **IRIS/EarthScope EMC:** sechs Modulseiten liefern identisches 61297-B-Template
-  (`ds.earthscope.org` pending); Datei-Endpunkte/Lizenzen je Modell ungemessen.
-- **ISC-EHB II.KIV:** exakte CSV-Download-URL + Lizenz der Summary-Ray-Daten
-  ungemessen (`isc.ac.uk/isc-ehb/` nur 200 gemessen).
 - **Korona:** SWPC-Update-Kadenz ungemessen → `ttl 3600`/`τ 86400` sind Schätzungen;
   `millionths` fehlt in `convert_to_si` (`src/archivar/units.rs`).
 - **Weberin-Quellen:** ALeRCE `/alerts/v1/detections/?oid=` 404 (Routenform nicht
