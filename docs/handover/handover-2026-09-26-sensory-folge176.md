@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 598f12f023ee95b745b357c0d71da5a69d6c7e2c3f708bf75e2f7d47b7cc7495
+  sha256: 7265f50333557a45357d64a1af3a611adc1c834cbef7b3fb999ec955467493f4
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -41,10 +41,10 @@ gemessen; ihr Ausgang steht im Zustand-Ledger, nicht als Kopie hier. Karte:
 - **Postfach:** kein Sensory-Treffer; CSES-Limadou (Sotgiu, „wait a few weeks" →
   Wiedervorlage), DSN-Briefe im Ledger, Forum/Alerts. Ledger
   `state/mail/mail_ledger.φ`.
-- **CI am HEAD `85fcd3cf2`:** `zigbee-host` 36235778378 success
+- **CI am HEAD `3b659fbe4`:** `zigbee-host` 36235778378 success
   (`SIZEOF_ESP_ZB_CFG_T=16`, s. ZNSP); `meteo-cdn` alle vier success
-  (tibet/aaretal/japan/bordeaux, s. Kreuz-Screening); `te-gate` 36228804363
-  in_progress (`fpr-ksg-arx`, 2 h+).
+  (s. Kreuz-Screening); `cometels-cdn` 36238538942 dispatched (s. Weberin);
+  `te-gate` 36228804363 in_progress (`fpr-ksg-arx`).
 - **Arbeitsbaum:** fremde uncommittete Arbeit (Mycelium/Mountain an
   `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/skydirection.rs`,
   `kbo_residue_probe.rs`, `rixs_cuprate_probe.rs`, `suprastrom_form_probe.rs`,
@@ -166,12 +166,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** `phi/sources.φ`/`blocked_sources.φ`/`src/archivar/units.rs` fremd-dirty.
 - **Braucht:** den Feldmap-Block nach `sources.φ` portieren; `millionths`→SI-Arm in `units.rs` (×2πR☉²·1e-6 ≈ 3,04e12 m²); `aia_compiler --harvest` (CI-only).
 
-#### Trishuli — Bahrabise-Route entblockt, Ernte + S1 offen
+#### Trishuli — Bahrabise-Ernte + TE-Sweep gemessen, S1-Footprint offen
 - **Status:** offen | **Bindung:** eigen
-- **Trigger:** Ernte-Lauf / Post-Sentinel-1-Szene
-- **Lage:** (gemessen 2026-09-26 via `grind-pro`) Pegel-Route live: DHM Nepal `river-watch` (200, 4,9 MB) trägt Station **113 „Bhote Koshi at Bahrabise"** (27.7868/85.8993, series_id 1640); Flood-Fenster nur im **Wayback-Snapshot `20260901142220`** (2026-08-25…09-01, 1007 pts). Regen: Open-Meteo archive-api (200, keyless). `trishuli_gauge_probe.rs` parameterisiert (`--station-id/--station-name/--precip-name/--precip-coords`); `phi/meteo/tibet-flut-2026.json` trägt `bahrabise`; Doc-sha `03280d51…`.
+- **Trigger:** S1-Post-Szene
+- **Lage:** (gemessen 2026-09-26 via `grind-flash`) DHM-113-Ernte gefahren: **1007 Punkte**, 10-min, 2026-08-25T14:25…2026-09-01T14:15 UTC, Level 1.115–2.763 m (Snapshot `20260901142220`, sha `17b34f91…`); Regen Open-Meteo 312 Zeilen; Alignment n=169. TE-Sweep: **precip→stage signifikant bei lag 3 (TE 0.2275 > threshold 0.1725) und lag 6 (0.2532 > 0.1687)**, lag 1/12/24 kein Fund, stage→precip in keinem lag. `te_pair_probe` bewusst nicht gelaufen (keine Zeit-Alignment → bogus n=min).
 - **Blockade:** S1-Post-Szene nicht archiviert.
-- **Braucht:** Bahrabise-Ernte fahren (`livefeed_gate --dhm 113 …` → `trishuli_gauge_probe`/`te_pair_probe`); S1-Footprint nach Archivierung.
+- **Braucht:** S1-Footprint nach Archivierung.
 
 #### Weberin — cometels-Katalog-Arm + Consumer gebaut, CDN + TNO offen
 - **Status:** offen | **Bindung:** eigen
@@ -373,11 +373,6 @@ In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geg
   exponiert) — `pending`; Fink `getSchema` (159 Felder) nur teilweise ausgewertet.
 - **Weberin Faden-Matrix:** die seismischen Stations-Weltlinien-Endpunkte
   (IRIS/FDSN-Katalog) ungemessen.
-- **Gekürzte Detailreports:** drei `research-max`-Reports kamen nur gekürzt an —
-  Seismik-Flotte (`tool_0dd067430001ov7ekuasCowyjH`), Positive Maske
-  (`tool_0dd137a02001vzDSlrnh9T4ga6`), Faden-Matrix
-  (`tool_0dd1f38a7001hnGZS1Vqbx5I2W`); die nicht gelesenen Ränder sind ungemessen
-  und über `explore` aus den Temp-Dateien nachlesbar.
 - **Galileo Borduhr:** DESCANSO Monograph Vol. 14 (Radio Science, 52 MB) nicht
   OCR'd; 209G rev-G ist ein Scan ohne Text-Layer (OCR offen).
 - **JUICE:** OMNI2-Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) →
