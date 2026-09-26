@@ -21,7 +21,7 @@ darf schmutzig sein.
 Offenes — ein Stehender-Pass-Ergebnis, ein „In diesem Atom geschlossen"-Register,
 ein Benchmark oder ein „Geteilter Baum" sind Historie und gehören nicht hinein:
 git trägt, was gemacht wurde. Geteilter externer Zustand lebt in
-`docs/zustand/external-state.md`, nie als Kopie im Handover; nach dem Löschen der
+`state/zustand/external-state.md`, nie als Kopie im Handover; nach dem Löschen der
 Historie bleibt allein die offene Punkt-Liste — ist sie leer, ist das Handover leer.
 
 Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
@@ -98,7 +98,7 @@ geerbt als gültig.
 
 ## Stehender Pass (automatisch, keine Auswahl)
 
-Die fälligen Einträge aus `docs/zustand/external-state.md` werden zu
+Die fälligen Einträge aus `state/zustand/external-state.md` werden zu
 Session-Beginn gemessen, bevor die Auswahl steht — ihr Ausgang verändert die
 Auswahl, sie sind kein Auswahlpunkt. Ergebnis direkt in dieses Handover + den
 Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--help`.
