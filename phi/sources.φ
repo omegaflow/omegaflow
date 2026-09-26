@@ -9460,9 +9460,9 @@ sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_fitacf.bin
 format superdarn_fitacf
-origin https://zenodo.org/api/records/18525142
+origin procedure: fetch https://sdc-serv.usask.ca/data/{Y}/{M}/{file} then superdarn_fitacf_compiler
 compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
-on earth 0 0 0
+at earth
 ttl 604800
 field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
 
