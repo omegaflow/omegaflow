@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: cc4c34171ec31f36b1b244c51824567557db7411da66b9f2f32e6bddb8c6862d
+  sha256: 172e589e156376eb5e5c75e1b639d6e900723ad1b0fb507c98b5bfa7723e5949
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -86,6 +86,13 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Lage:** (gemessen 2026-09-26) Cookie-Auth (GOSAT_GW_MAIL/PASS); GWT3F_L1B 132 / GWT3W_L1B 434 Dateien; Probe 17 440 691 B HDF5 (sha256 `5f0e7920…`); L2_GHG/NO2 = 0. Kein `gosat*_compiler.rs` im Repo.
 - **Blockade:** Compiler fehlt.
 - **Braucht:** `gosat_tanso3_compiler` bauen + Quelle in `phi/sources.φ`.
+
+#### MODIS LST CMG — Compiler + Asset fehlen
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `tools/harvest` / `modis_lst_cmg_compiler`.
+- **Lage:** (gemessen 2026-09-26) drei Quellen registriert (`phi/sources.φ:15349/15358/15367`, `format modis_lst_cmg`, Cloud-Route 206 mit EDL-Bearer); `blocked_sources.φ` → `released`. Kein `modis*_compiler.rs` im Repo.
+- **Blockade:** Compiler/Reader fehlt.
+- **Braucht:** `modis_lst_cmg_compiler` (CMR-Granule → HDF4-SDS LST_Day/Night_CMG → CDN-`.bin`) bauen.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
