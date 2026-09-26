@@ -3,7 +3,7 @@
   session: Mountain-Folge 166
   class: handover
   date: 2026-09-26
-  sha256: 09ef976445851b9c92de5febce19a2f20807e68ecc74d900291f431947f750d7
+  sha256: 46f8ee04e46846514a69d69f0661d508a907226a3b715edabf9c6d8e4e794a5e
   status: live
 -->
 # Handover — Mountain-Folge 166 (2026-09-26)
@@ -91,17 +91,46 @@ Trigger / Lage / Blockade / Braucht.
 - **Braucht:** `year_full` um 2000er-Jahre erweitern (`src/archivar/galileo_odr.rs`);
   ODR-Shard-Blöcke nach dem ersten CI-Lauf in `phi/sources.φ` nachtragen.
 
-#### Klasse-5 offene Routen bauen
+#### Klasse-5 Routen — Registerzeilen + Workflows + CI-Dispatch
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** GitHub-API-Rate-Limit erholt (und der Commit steht).
+- **Lage:** (gemessen 2026-09-26) Die drei Klasse-5-Routen sind gebaut
+  (uncommittet): `messenger_tnf_compiler` (TRK-2-34-MESSENGER-TNF → PODF,
+  Parser verifiziert am echten File `071550900sc236dss63_tnf.dat`: 120774
+  Zeilen, Formate 0/1/2/3/7/9/16/17), `ams02_tdat_compiler` (HEASARC-TDAT
+  `heasarc_ams02spec.tdat.gz` → PODF, 18340 Zeilen, 23 Spezies, verifiziert),
+  DAP2-Grid-Fix in `opendap.rs` (GROSS/klein-Keywords, Grid-Datenlayout,
+  embedded DDS; verifiziert an live `jplMURSST41mday` griddap `.dds`/`.dods`).
+  Dispatch-Arme `messenger_tnf` + `ams02_spec` in `extract.rs`. Exakte
+  Registerzeilen stehen im Session-Bericht; `phi/sources.φ` + `phi/harvest.φ`
+  tragen sie noch nicht, ebenso fehlen die `*-cdn`-Workflows.
+- **Blockade:** rate limit (transient); Register-/Workflow-Edits sind
+  pfad-begrenzt der nächste Schritt, nie ein Commit hier.
+- **Braucht:** Registerzeilen aus dem Session-Bericht in `phi/sources.φ` +
+  `phi/harvest.φ` einpflegen, `messenger-tnf-cdn.yml` +
+  `ams02-tdat-cdn.yml` bauen, `gh workflow run <wf>` je Workflow (einmal,
+  wenn das Limit erholt ist); MESSENGER-TNF-Ernte ist ~30 GB (2007: 90,
+  2015: 488 Dateien) — CI-Lauf mit `--year`-Filter, Shard-Blöcke danach
+  nachtragen.
+
+#### Parquet-/GRIB-2-Codec-Grenzen (named gap, kein Verdikt)
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-25 via `archive_search`, siehe
-  `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`) vier
-  Stellen offen: S3-Scheme (200 mit Token), ODF TRK-2-34/TNF (offener Korpus,
-  Parser-Arm fehlt), AMS-02 TDAT (HEASARC live, Reader fehlt), Parquet/GRIB-2/
-  OPeNDAP (Reader fehlen). In diesem Atom nicht dispatcht.
+- **Lage:** (gemessen 2026-09-26) Die Survey-Claims „Parquet-Reader fehlen /
+  GRIB-2-Reader fehlen" sind widerlegt — beide Structure-Reader stehen
+  (`parquet.rs`: Thrift-Compact-FileMetaData + PLAIN/Dictionary/SNAPPY-Pages,
+  `grib2.rs`: Envelope + Templates + Packing-Namen). Reale Messung:
+  `cora_ar.parquet` = 868 606 056 B (nicht 90,3 MB wie im Survey), Footer
+  Thrift-Compact, PLAIN, UNCOMPRESSED(+SNAPPY); NOAA-GFS anl = Template 5.3
+  (complex+spatial), ECMWF-IFS = Template 42 (CCITT-G4). Nicht getragen:
+  Parquet zstd/gzip/delta-Encodings, GRIB-2 Section-7-Daten-Decode
+  (complex/JPEG2000/CCITT) — als `Unhandled` benannt, nicht gefälscht.
+  DAP2 `.ascii` descoped gemessen: `jplMURSST41mday.ascii` → 400
+  „fileType=.ascii isn't supported by this dataset"; der `.dods`-Pfad trägt
+  dieselben Daten.
 - **Blockade:** keine
-- **Braucht:** TRK-2-34/TNF-Parser (`odf.rs`), TDAT-Reader, Parquet-/GRIB-2-/
-  DAP2-Reader; AMS-02 als `live` registrieren.
+- **Braucht:** je Codec entscheiden, ob std-Bau tragbar ist (CCITT-G4/SNAPPY
+  liegen nah, JPEG2000/zstd nicht) — bauen oder mit Befund disponieren.
 
 #### NAIF mariner10 — frame_registry-Route
 - **Status:** wartend | **Bindung:** eigen
