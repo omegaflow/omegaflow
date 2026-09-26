@@ -336,18 +336,6 @@ gap curation
 note HTTP 200 2026-09-26 ORA-00904 DIST: yn_snr/yn_mass/theta500/dist fehlen; echte 18 Spalten indx,name,glon,glat,ra,dec,pos_err,snr,ts_min,ts_max,y_min,y_max,x,y,z,spt_ind,htm20,cntr; Quelle irsa_sage_lmc_infrared_catalog falsch.
 
 pending
-url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
-note LLNL-G3D-JPS 3D-Tomografie: interpolated.zip 200 47,17 MB sha 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8; .e3d.binary 146,8 MB; tomofilt_1.zip 166,1 MB; Earth3D.5.4.3.jar 76,8 MB; Lizenz absent; Compiler-Arm fehlt.
-
-pending
-url http://download.isc.ac.uk/isc-ehb/
-note ISC-EHB Stationsterm-Bulk RES/HDF-gz (dir 200); 1964.res.gz 200 10,07 MB; CSV nur Query; Lizenz "cite", Nachbar ISC-GEM CC-BY-SA 3.0; Compiler-Arm fehlt.
-
-pending
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
 note IRIS/EarthScope EMC netCDF (dir 200, 117652 B); HDF5/netCDF-4 only (89 48 44 46; GLAD-M35.r0.1-n4c.nc 343.763.392 B); 3D-Modelle ohne CSV (data/ leer); Volume-Arm 8 Dateien; netcdf-Katalog-Arm fehlt; Lizenz absent.
-
-pending
-url https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
-note Slab2-Ersatzroute (ScienceBase 403 direct+Proton); Wayback 200 140213438 B gzip Slab2Distribute_Mar2018.tar.gz; Compiler-Arm fehlt.
 
