@@ -26,6 +26,11 @@ pub const DEPTH_MATCH_GATE_KM: f64 = 10.0;
 pub const STA_WINDOW_S: f64 = 1.0;
 pub const LTA_WINDOW_S: f64 = 30.0;
 pub const STA_LTA_RATIO: f64 = 4.0;
+pub const W_PHASE_PERIOD_LO_S: f64 = 100.0;
+pub const W_PHASE_PERIOD_HI_S: f64 = 1000.0;
+pub const W_PHASE_NOISE_S: f64 = 200.0;
+pub const W_PHASE_SIGNAL_S: f64 = 600.0;
+pub const W_PHASE_ENERGY_RATIO_GATE: f64 = 8.0;
 
 const INVERSION_DEPTH_MAX_KM: f64 = 700.0;
 const INVERSION_DEPTH_EDGE_KM: f64 = 660.0;
@@ -233,14 +238,14 @@ fn median_abs(xs: &[f64]) -> f64 {
     sorted[sorted.len() / 2]
 }
 
-pub fn bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
+fn rc_bandpass(samples: &[(f64, f64)], rate: f64, hp_hz: f64, lp_hz: f64) -> Vec<f64> {
     let Some(&(_, first)) = samples.first() else {
         return Vec::new();
     };
     let dt = 1.0 / rate;
-    let rc_hp = 1.0 / (2.0 * PI * 0.5);
+    let rc_hp = 1.0 / (2.0 * PI * hp_hz);
     let a_hp = rc_hp / (rc_hp + dt);
-    let rc_lp = 1.0 / (2.0 * PI * 2.0);
+    let rc_lp = 1.0 / (2.0 * PI * lp_hz);
     let a_lp = dt / (rc_lp + dt);
     let mut hp = 0.0;
     let mut lp = 0.0;
@@ -253,6 +258,10 @@ pub fn bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
         out.push(lp);
     }
     out
+}
+
+pub fn bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
+    rc_bandpass(samples, rate, 0.5, 2.0)
 }
 
 fn sta_lta_arrival(samples: &[(f64, f64)], rate: f64) -> Option<f64> {
@@ -893,6 +902,71 @@ pub fn measure_station(
         skip: None,
         branch: PPBranch::Clear,
     }
+}
+
+pub fn w_phase_bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
+    rc_bandpass(
+        samples,
+        rate,
+        1.0 / W_PHASE_PERIOD_HI_S,
+        1.0 / W_PHASE_PERIOD_LO_S,
+    )
+}
+
+fn w_phase_window_rms(
+    bp: &[f64],
+    samples: &[(f64, f64)],
+    rate: f64,
+    t_lo: f64,
+    t_hi: f64,
+) -> Option<f64> {
+    let t0 = samples.first()?.0;
+    let i_lo = ((t_lo - t0) * rate).floor().max(0.0) as usize;
+    let i_hi = (((t_hi - t0) * rate).ceil().max(0.0) as usize).min(bp.len());
+    if i_hi <= i_lo || i_lo >= bp.len() {
+        return None;
+    }
+    let n = (i_hi - i_lo) as f64;
+    let sum_sq = bp[i_lo..i_hi].iter().map(|v| v * v).sum::<f64>();
+    let rms = (sum_sq / n).sqrt();
+    if rms.is_finite() && rms > 0.0 {
+        Some(rms)
+    } else {
+        None
+    }
+}
+
+pub fn w_phase_energy_ratio(samples: &[(f64, f64)], rate: f64, t_p: f64, t_s: f64) -> Option<f64> {
+    if !(rate.is_finite() && rate > 0.0) || samples.is_empty() {
+        return None;
+    }
+    let bp = w_phase_bandpass(samples, rate);
+    if bp.len() != samples.len() || bp.is_empty() {
+        return None;
+    }
+    let noise_rms = w_phase_window_rms(&bp, samples, rate, t_p - W_PHASE_NOISE_S, t_p)?;
+    let signal_rms = w_phase_window_rms(&bp, samples, rate, t_s, t_s + W_PHASE_SIGNAL_S)?;
+    let ratio = signal_rms / noise_rms;
+    if ratio.is_finite() { Some(ratio) } else { None }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct WPhasePick {
+    pub energy_ratio: f64,
+    pub m9: bool,
+}
+
+pub fn w_phase_discriminate(
+    samples: &[(f64, f64)],
+    rate: f64,
+    t_p: f64,
+    t_s: f64,
+) -> Option<WPhasePick> {
+    let energy_ratio = w_phase_energy_ratio(samples, rate, t_p, t_s)?;
+    Some(WPhasePick {
+        energy_ratio,
+        m9: energy_ratio >= W_PHASE_ENERGY_RATIO_GATE,
+    })
 }
 
 #[cfg(test)]
@@ -1662,5 +1736,70 @@ mod tests {
                 "a westward bearing ({lat2},{lon2}) = {got} deg must sit in [0,360)"
             );
         }
+    }
+
+    fn w_trace(rate: f64, dur_s: f64, t_s: f64, w_amp: f64) -> Vec<(f64, f64)> {
+        let n = (dur_s * rate) as usize;
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let t = 1000.0 + i as f64 / rate;
+            let mut v = 0.01 * lcg(0x51A7, i);
+            if t >= t_s {
+                let ph = (t - t_s) * 2.0 * PI / 300.0;
+                let env = (-((t - t_s) / 400.0)).exp();
+                v += w_amp * env * ph.sin();
+            }
+            out.push((t, v));
+        }
+        out
+    }
+
+    #[test]
+    fn a_long_period_burst_after_s_reads_as_m9() {
+        let rate = 20.0;
+        let samples = w_trace(rate, 2500.0, 1700.0, 10.0);
+        let pick = w_phase_discriminate(&samples, rate, 1500.0, 1700.0)
+            .expect("a W-phase trace carries a measurement");
+        assert!(
+            pick.m9,
+            "the 300 s burst after S must clear the gate: ratio {:.2}",
+            pick.energy_ratio
+        );
+        assert!(pick.energy_ratio >= W_PHASE_ENERGY_RATIO_GATE);
+    }
+
+    #[test]
+    fn a_quiet_long_period_trace_reads_below_the_m9_gate() {
+        let rate = 20.0;
+        let samples = w_trace(rate, 2500.0, 1700.0, 0.0);
+        match w_phase_discriminate(&samples, rate, 1500.0, 1700.0) {
+            Some(p) => assert!(
+                !p.m9,
+                "no injected burst must sit below the gate, ratio {:.2}",
+                p.energy_ratio
+            ),
+            None => {}
+        }
+    }
+
+    #[test]
+    fn an_absent_series_carries_no_w_phase_measurement() {
+        let empty: Vec<(f64, f64)> = Vec::new();
+        assert!(w_phase_discriminate(&empty, 20.0, 1500.0, 1700.0).is_none());
+        assert!(w_phase_energy_ratio(&empty, 20.0, 1500.0, 1700.0).is_none());
+    }
+
+    #[test]
+    fn a_noise_floor_of_zero_never_divides_into_a_fabricated_ratio() {
+        let rate = 20.0;
+        let n = (2500.0 * rate) as usize;
+        let mut samples = Vec::with_capacity(n);
+        for i in 0..n {
+            samples.push((1000.0 + i as f64 / rate, 0.0));
+        }
+        assert!(
+            w_phase_energy_ratio(&samples, rate, 1500.0, 1700.0).is_none(),
+            "a silent trace carries no long-period noise floor — absent, never a 0.0 division"
+        );
     }
 }

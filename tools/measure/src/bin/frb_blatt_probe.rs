@@ -265,4 +265,55 @@ fn main() {
         "form: modulated beam — at least one measured burst train carries self-memory (TE > fam)"
     };
     println!("  verdict: {}", verdict);
+
+    if let Some(i) = args.iter().position(|a| a == "--write") {
+        let path = match args.get(i + 1) {
+            Some(p) => p.clone(),
+            None => {
+                eprintln!("frb_blatt_probe: --write carries no path");
+                std::process::exit(2);
+            }
+        };
+        let arrow = verdicts
+            .iter()
+            .filter(|v| v.arrow)
+            .max_by(|a, b| a.te.total_cmp(&b.te));
+        match arrow {
+            Some(v) => match trains.iter().find(|(name, _)| *name == v.name) {
+                Some((_, dts)) => {
+                    let distance = v.best_distance;
+                    let future: Vec<f32> = dts[distance..].iter().map(|&d| d as f32).collect();
+                    let past: Vec<f32> = dts[..dts.len() - distance]
+                        .iter()
+                        .map(|&d| d as f32)
+                        .collect();
+                    let span_s: f64 = dts.iter().sum();
+                    let cadence_s: f64 = dts.iter().sum::<f64>() / dts.len() as f64;
+                    let seed = SEED ^ (distance as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+                    match omegaflow::te::current_commit_sha() {
+                        Some(sha) => {
+                            if let Err(e) = omegaflow::te::write_blatt_pair(
+                                &path, &future, &past, span_s, cadence_s, seed, &sha, N_SURR,
+                            ) {
+                                eprintln!("frb_blatt_probe: pair write refused: {e}");
+                                std::process::exit(2);
+                            }
+                            println!(
+                                "pair written: {path} (xs = future, ys = past, n = {}, repeater {})",
+                                future.len(),
+                                v.name
+                            );
+                        }
+                        None => eprintln!(
+                            "frb_blatt_probe: commit-sha absent — the pair stays unwritten (0 honored)"
+                        ),
+                    }
+                }
+                None => eprintln!(
+                    "frb_blatt_probe: arrow train absent from the harvest — the pair stays unwritten (0 honored)"
+                ),
+            },
+            None => eprintln!("frb_blatt_probe: no arrow — the pair stays unwritten (0 honored)"),
+        }
+    }
 }

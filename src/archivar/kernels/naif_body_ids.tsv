@@ -73,6 +73,8 @@ naif_id	name	parent_id
 905	styx	9
 999	pluto	10
 2000001	ceres	10
+2000002	pallas	10
+2000003	juno_asteroid	10
 2000004	vesta	10
 2136108	haumea	10
 2136199	eris	10

@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — neptune-rift-ephemerides
   class: survey
   date: 2026-09-16
-  sha256: ce4bd19caf208a7a4cfa4cc24866e2120acad7cc52923f36765bd964b2090393
+  sha256: 21c08362c6c5a55d7f381531060e4d3d4505bb494c4c4a9a0ba863f3cfdb6f93
   status: live
   see-also: docs/paper/neptune-rift-ephemerides.md
 -->
@@ -33,6 +33,9 @@ Export-Gate: `paper-check.yml` prüft Zahlen/sha im Push-Lauf).
   diese Messung vom 2026-09-16 lösen es ein — kein Riss, die frühere
   `pending`-Zeile ist abgelöst (gemessen 2026-09-25 via
   `sgrep ephemeris_neptune phi/sources.φ`).
+- Die frühere `resolved`-Linie ist geschlossen (`descoped`): die Neptun-Bau-Linie
+  ist gebaut (`phi/sources.φ:3456` `ephemeris_de440_neptune.bin`, `:3232`
+  `ephemeris_neptune_c.bin`), kein unerledigter Schritt.
 
 ## Pfad
 

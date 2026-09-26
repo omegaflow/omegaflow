@@ -2,11 +2,13 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Re-Run (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 01e00fea2f2a6cd14d5dfe3a469bf92358b5f081d931192573c8ca9c2907e63b
+  sha256: d090c2707c32ea0bb5a4b4d89b318c04a3e705ee8825dfd2249eee7fd748d6f5
   status: live
-  see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
+  see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md
 -->
 # Die Weberin — offene Quellen-Routen, Re-Run (Stand 2026-09-14)
+
+Träger: `docs/concepts/die-weberin.md` (Weberin-Punkte).
 
 Konsolidiertes Einzel-Dokument: die drei Snapshot-Blätter `survey-2026-09-13-weberin-quellen{,-folge,-treffer}.md`
 zusammengeführt und mit dem **Re-Run vom 2026-09-14** nachgezogen. Der Re-Run
