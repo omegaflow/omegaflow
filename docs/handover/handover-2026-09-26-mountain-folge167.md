@@ -3,7 +3,7 @@
   session: Mountain-Folge 167
   class: handover
   date: 2026-09-26
-  sha256: f660e0403fc44facab93a3d8ce81e2267dcbaca3d2e56483b16ef75715756719
+  sha256: 925b224cf02a8aff2b036a0d71fb80d30a222bb8677a095c85f7bfe0a1cb0ac0
   status: live
 -->
 # Handover — Mountain-Folge 167 (2026-09-26)
@@ -24,8 +24,10 @@ Trigger / Lage / Blockade / Braucht.
   „ledger absent" — Pfad-Auflösung des Digest, nicht die Wahrheit. Eintrag:
   `docs/zustand/external-state.md`.
 - **CI-Status:** Rate-Limit **erholt** (`ci_manage list` antwortet wieder; zu
-  Session-Beginn `list void`/403). In diesem Atom neu dispatcht:
-  `tao-wnd-cdn.yml` → run `36225623480`.
+  Session-Beginn `list void`/403). In diesem Atom dispatcht:
+  `tao-wnd-cdn.yml` → `36225623480`; nach Push `e6b92b605`:
+  `gll-rss-odr-cdn.yml` → `36227804843`, `gll-rss-tnf-cdn.yml` → `36227808151`,
+  `messenger-tnf-cdn.yml` → `36227810541`, `ams02-tdat-cdn.yml` → `36227812411`.
 - **Sicherheitsnetz:** `git_safety --snapshot` → `refs/safety/1790375651`
   (recover: `git_safety --restore refs/safety/1790375651`).
 - **`register_lookup --fired`:** 1 fired (`mycelium` pre-cdn), 0 Mountain;
@@ -55,10 +57,10 @@ Trigger / Lage / Blockade / Braucht.
   `.github/workflows/messenger-tnf-cdn.yml` + `ams02-tdat-cdn.yml`. `gll_rss_odr`/
   `gll_rss_tnf` waren bereits registriert.
 - **Blockade:** keine
-- **Braucht:** nach Push `gh workflow run gll-rss-odr-cdn.yml gll-rss-tnf-cdn.yml
-  messenger-tnf-cdn.yml ams02-tdat-cdn.yml` (einzeln); ODR-/TNF-/MESSENGER-
-  Shard-/sha-Blöcke danach in `phi/sources.φ` nachtragen; MESSENGER-TNF ~30 GB
-  → `--year`-Filter.
+- **Braucht:** dispatcht nach Push (s. Stehender Pass, 4 Runs); offen: Shard-/sha-
+  Blöcke nach dem CI-Lauf in `phi/sources.φ` nachtragen (MESSENGER-TNF ~30 GB →
+  `--year`-Filter); ein `gll-rss-atdf-cdn.yml` fehlt noch (Register-Hunk im
+  Gridlock).
 
 #### gll.rss ATDF — Fetch-Dispatch-Liste (`main_flow.rs`)
 - **Status:** blockiert | **Bindung:** eigen
@@ -73,14 +75,16 @@ Trigger / Lage / Blockade / Braucht.
 #### Concurrency-Gridlock — geteilte Dateien (`extract.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** Fremd-Session commit.
-- **Lage:** (gemessen 2026-09-26) `src/archivar/extract.rs` trägt fremde
-  hamqsl-Arme **und** eigene ATDF/TNF/TDAT-Arme; `phi/sources.φ` (`MM`) und
-  `phi/blocked_sources.φ` fremd + own (`gridlock` verhindert pfad-begrenzten
-  Commit ohne Sweep). `cargo check` selbst ist grün (0/0).
-- **Blockade:** fremde uncommittete Arbeit in denselben Dateien (hamqsl/nohrsc/
-  ogimet/eri).
+- **Lage:** (gemessen 2026-09-26) `git diff --cached` trug **fremde** gestagte
+  Arbeit (`extract.rs`→hamqsl/ogimet/nohrsc, `phi/sources.φ`→nohrsc,
+  `phi/blocked_sources.φ`); meine Hunks in denselben Dateien lagen unstaged
+  (`gll_rss_atdf`-Arme, `messenger_tnf`/`ams02_spec`-Arme, 5 Register-Blöcke,
+  unit-auto-detect-Block-Entfernung). Der Commit `e6b92b605` (14 eigene Pfade,
+  `git show --stat HEAD` fremdfrei) hat diese geteilten Hunks **bewusst
+  ausgelassen** — ein pfad-begrenzter Commit hätte die fremden Hunks gesweept.
+- **Blockade:** fremde uncommittete, gestagte Arbeit in denselben Dateien.
 - **Braucht:** `git add -p` (nur eigene Hunks) sobald die Fremd-Session committet,
-  sonst Warten auf Trennung. Dann eigener Commit der eigenen Pfade.
+  dann eigener Folge-Commit der geteilten Hunks.
 
 #### NAIF mariner10 — dauerhafte Route
 - **Status:** wartend | **Bindung:** eigen
