@@ -5606,39 +5606,6 @@ lon 1
 epoch 0
 field 3 hfradar_radial_velocity_WHOI_TLSP_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 68.358 18.823 380
-hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
-hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
-field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
-field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 60.51 24.66 105
-hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
-hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
-field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
-field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
-on earth 52.5 13.4 0
-stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
-fanout 154
-fanout_delay 15
-hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
-hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
-field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
-field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
 url https://irsa.ipac.caltech.edu/data/Planck/release_3/ancillary-data/cosmoparams/COM_CosmoParams_base-plikHM-TTTEEE-lowl-lowE_R3.00.zip
 format reference
 sha256 52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f
@@ -13799,3 +13766,1544 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aae/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 9.035 38.77 2441
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=abg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.638 72.872 7
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=abk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 380
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aia/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -65.245 -64.258 10
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ale/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 82.497 -62.353 60
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ams/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.8 77.57 50
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=api/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -13.8155 -171.7812 2
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=aqu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.38 13.32 682
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ars/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 56.433 58.567 290
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=asc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -7.95 -14.38 177
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=asp/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -23.762 133.883 557
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bdv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.08 14.02 496
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bel/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.836 20.789 180
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bfe/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.625 11.672 80
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bfo/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.331 8.325 641
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=blc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.318 -96.012 30
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bmt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.3 116.2 183
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bng/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 4.33 18.57 395
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bou/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.14 -105.233 1682
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=box/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 58.07 38.23 115
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=brd/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.87 -99.9739 380
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=brw/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 71.32 -156.62 12
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=bsl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 30.35 -89.64 8
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cbb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 69.123 -105.031 20
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cki/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.1875 96.8336 2.7
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=clf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.025 2.26 145
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cmo/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.87 -147.86 197
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cnb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -35.32 149.36 859
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cnh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.08 124.86 187
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cpl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 17.294 78.9192 360
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=csy/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -66.283 110.533 41
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cta/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -20.09 146.264 370
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cyg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.37 126.854 165
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=czt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -46.43 51.86 160
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ded/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 70.36 -148.79 10
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 29.49 -100.917 355
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 11.95 108.48 1583
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dmc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -75.25 124.167 3250
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dou/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.1 4.6 225
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=drv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -66.67 140.01 30
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=dur/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 41.65 14.47 920
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ebr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.957 0.333 531.5
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=esk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.314 -3.206 245
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=eyr/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -43.474 172.393 102
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=fcc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 58.759 -94.088 15
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=frd/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.21 -77.367 69
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=frn/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 37.09 -119.72 331
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=fur/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.17 11.28 572
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gan/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -0.6946 73.15374 2
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gck/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.633 20.767 231
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gdh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 69.252 -53.533 24
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gln/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.645 -97.12 40
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gna/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.78 115.947 60
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gng/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.356 115.715 50
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 13.59 144.87 140
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gui/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 28.321 -16.441 868.2
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=gzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 23.97 112.45 14
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=had/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51 -4.48 95
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hbk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -25.88 27.71 1555
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=her/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -34.43 19.23 26
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hlp/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.6035 18.8107 1
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hon/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.32 -158 4
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hrb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.873 18.19 120
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hrn/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77 15.55 15
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.05 -75.33 3313
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=hyb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 17.42 78.55 500
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ipm/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -27.1713 -109.42 83
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=iqa/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 63.753 -68.518 67
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=irt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.17 104.45 478
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=isk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 41.063 29.062 130
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=izn/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.5 29.72 256
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jai/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 26.92 75.8 394
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=jco/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 70.356 -148.799 20
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kak/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.232 140.186 36
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kdu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.69 132.47 14.6
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kep/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.2821 -36.4929 7
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=khb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.61 134.69 92
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kir/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.8428 20.4201 395
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kiv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.72 30.3 140
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kmh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -26.54 18.11 1065
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kny/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 31.42 130.88 107
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=kou/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 5.21 -52.73 10
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ler/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.138 -1.183 85
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lnp/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 25 121.167 100
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lon/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.4081 16.6592 95
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lov/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.34 17.82 30
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lrm/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 4
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lvv/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.9 23.75 326
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lyc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 270
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=lzh/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.087 103.845 1560
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mab/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 440
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=maw/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -67.6 62.88 12
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 76.315 -119.362 40
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mbo/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 14.39 -16.96 7
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mcq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 4
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mea/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.616 -113.347 700
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mgd/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.051 150.728 226
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mid/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 28.21 -177.38 3
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mlt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 29.515 30.892 120
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mmb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 42
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=mzl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.6 117.4 682
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=naq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 61.167 -45.433 4
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nck/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.63 16.72 153
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=new/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 770
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ngk/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 78
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nur/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.51 24.66 105
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=nvs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.85 83.23 130
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=orc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -60.737 -44.737 3
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ott/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.403 -75.552 75
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=paf/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -49.35 70.26 35
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pag/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 556
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pbq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.277 -77.745 40
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=peg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.1 23.9 380
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pet/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.971 158.248 50
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=phu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 5
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pil/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.667 -63.881 336
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ppt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 357
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=pst/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -51.7 -57.89 135
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=qsb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 33.871 35.644 525
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=res/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 74.69 -94.895 30
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=reu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.205875 55.576478 1580.4
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sba/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -77.829 166.671 130
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sbl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.9321 -60.0095 5
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sfs/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.945 111
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=she/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -15.961 -5.747 586
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=shu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 80
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sit/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 24
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sjg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.15 424
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sod/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.37 26.63 178
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spg/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.542 29.716 46
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=spt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.35 922
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=stj/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.595 -52.677 100
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=stt/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 37.5467 -8.7277 115
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=sua/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 84
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tam/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 22.79 5.53 1373
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tan/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -18.917 47.552 1375
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tdc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.067 -12.316 41
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=thl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77.47 -69.227 57
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=thy/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 46.9 17.89 187
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tik/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 71.58 129 40
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tsu/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -19.202 17.584 1273
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ttb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.513 10
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=tuc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.73 946
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ups/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.903 17.353 50
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=val/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.933 -10.25 14
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vic/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.52 -123.42 197
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vna/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -70.683 -8.282 46
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vos/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -78.464 106.835 3488
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=vss/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.65 457
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wic/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.9305 15.8657 1088
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wmq/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.81 87.71 908
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=wng/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 66
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=yak/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 61.96 129.66 100
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ykc/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 62.48 -114.482 198
+hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
+hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
+field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
+field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
