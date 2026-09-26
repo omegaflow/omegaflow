@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 90b01e7c51aead5174cfd34586c6dc7af3c063ed4f030eff22cea2c6da0a0e08
+  sha256: 1a717e1e759f9dbfba5d6df00f6e12d1934df7e6b84387a4a52cfe7983243853
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -47,21 +47,6 @@ getrackt, nie am CDN.
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-### 1. Funken-Workflow — neu dispatcht nach main-Heilung
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** Probe-Lauf endet
-- **Lage:** (gemessen 2026-09-27) erster Lauf `36276735080` scheiterte am main-Bruch;
-  nach Heilung neu dispatcht → Run `36277987363`.
-- **Blockade:** keine.
-- **Braucht:** Ergebnis via `ci_manage view 36277987363` beim nächsten Pass.
-
-### 2. causal-arrow-Scan — neu dispatcht nach main-Heilung
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** Probe-Lauf endet
-- **Lage:** (gemessen 2026-09-27) Run `36276736870` scheiterte am main-Bruch; neu
-  dispatcht → Run `36277989033`.
-- **Blockade:** keine.
-- **Braucht:** Ergebnis via `ci_manage view 36277989033`; Träger
-  `causal-arrow-preregistration.md:1`, `ein-blatt-papier.md:2`.
-
 ### 3. O1 DEMETER/CDPP — Order nutzbar, Ernte offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort, **Frist 2026-09-28**
 - **Lage:** (gemessen 2026-09-27) Order **18387** `DONE_WITH_WARNING`, aber metalink
@@ -73,14 +58,15 @@ getrackt, nie am CDN.
   regards_order_read` → URLs → Ernte nach `data/` **vor dem 28.09.** (kein CDN, Links
   token-gebunden).
 
-### 5. #4 Seismik-Flotte — Paper-Pendings + CDN-Läufe
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) `volume-cdn`/`isc-ehb-cdn`/`emc-cdn` außerhalb des
-  `ci_manage list`-Fensters (ungemessen); Arme LLNL-G3D-JPS/ISC-EHB/EMC gebaut.
-- **Blockade:** keine.
-- **Braucht:** `depth-phase-echo-fleet.md:35-38` Dual-Phase-Fit,
-  `die-akteure-im-boden-und-wasser.md:85` Gravimeter-SFTP,
-  `axiom-gate-depth-phase-echo-fleet.md:42` CMT/Kalibrier-Gate; `ci_manage list`.
+### 5. #4 Seismik-Flotte — Messläufe dispatcht
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** Messläufe enden
+- **Lage:** (gemessen 2026-09-27) dispatcht: `cmt-ndk-fleet 36278088711`,
+  `depth-phase-fleet 36278125524`, `depth-phase 36278126974`; Träger
+  `depth-phase-echo-fleet.md` — sP-corr-Verteilung (n=30, median 0.82) gemessen, Gate
+  schwellenlos; `die-akteure-im-boden-und-wasser.md:85` Gravimeter-SFTP offen.
+- **Blockade:** Gravimeter-SFTP (Zugang); sonst keine.
+- **Braucht:** Läufe via `ci_manage view` lesen; Dual-Phase-Gate-Schwelle setzen
+  (`depth-phase-echo-fleet.md:35-38`).
 
 ### 6. #5 Blatt-1-Bojen-Matrix — Rotor offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
@@ -88,19 +74,23 @@ getrackt, nie am CDN.
 - **Blockade:** keine.
 - **Braucht:** Bojen-Matrix-Rotor laufen lassen, Σ p̂·M-Zeile nachtragen.
 
-### 7. #7 Kreuz-Screening — räumliche Kopplung offen
+### 7. #7 Kreuz-Screening — Workflow fehlt
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) `meteo-cdn` success; `is_day`/Selbstpaar-Fix in HEAD;
-  Träger `cross-screening-tibet.md:42/:44`, `blatt-kreuz-screening-gyirong.md:71/:201`.
-- **Blockade:** main rot (Messlauf) — bis zum Fix kein Build.
-- **Braucht:** Kopplung mit `cross_te_screen` messen (Rasuwa→Gyirong), Träger nachziehen.
+- **Lage:** (gemessen 2026-09-27) main geheilt (Build frei); `cross_te_screen.rs` lebt,
+  aber es gibt **keinen Workflow** und keine Serien-Datei — der Lauf braucht einen neuen
+  Monitor (Vorlage `causal-arrow-scan.yml`). Träger `cross-screening-tibet.md:42/:44`,
+  `blatt-kreuz-screening-gyirong.md:71/:201`.
+- **Blockade:** kein Workflow/Serien-Input.
+- **Braucht:** `cross_te_screen`-Workflow bauen (Rasuwa↔Gyirong-Serien), dispatchen,
+  Träger nachziehen.
 
-### 8. #9 Trishuli — S1-Footprint
+### 8. #9 Trishuli — S1-Footprint gemessen, Download offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) 6 post-event S1D-IW-GRDH-Frames, Bahrabise im
-  Footprint; Download auth-gated (`EARTHDATA_EDL_TOKEN` da).
-- **Blockade:** Earthdata-OAuth-Session (kein Key-Gap).
-- **Braucht:** Szene über die Session laden, Footprint/Alignment messen.
+- **Lage:** (gemessen 2026-09-27, ASF-Search) 3 Post-Event-Frames schneiden Bahrabise
+  (27.78 N / 85.90 E): `S1D_…_20260828T1221` (ASC t85), `_20260831T0010` (DESC t121),
+  `_20260909T1221` (ASC t85), je ~1 GB; `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`.
+- **Blockade:** der ~1 GB Download + eine GRD-lesende Probe für die Alignment fehlen.
+- **Braucht:** Frames über ASF mit Token laden nach `data/`; Alignment-Probe.
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
@@ -124,6 +114,13 @@ getrackt, nie am CDN.
 
 ## Abgeschlossen / gemessen geschlossen (Befund)
 
+- **#1 Funken-Probe** — gemessen (run `36277987363`): Funke 5 (TDB/Rømer) `separated`
+  (−900.883944 s gg. 60 s); Funke 3 (Broker-Differenz) `pending` (nur fink erreichbar,
+  absent; lasair 401, alerce 404). Eingetragen in `fuenf-funken-anomalie-suche.md`.
+- **#2 causal-arrow-Scan** — gemessen (run `36277989033`): Gyirong↔Rasuwa alle Lags
+  `no finding` (Path-1 trägt nicht, n=241); `kbo_residue_probe` scheiterte am
+  Ephemeriden-Batch **404** (11 Dateien, `bin parse void`) → Quelle `absent`. Eingetragen
+  in `causal-arrow-preregistration.md` + `fuenf-funken-anomalie-suche.md`.
 - **#3 Galileo CK-Kerne `_rtr`** — bereits geerntet (gemessen 2026-09-27): 8 Dateien
   `ck90341a`–`ck90344b_rtr.bc` vollständig in `data/naif.jpl.nasa.gov/`
   (`ck90341a_rtr.bc` = 3 863 552 B = NAIF-Live-Größe); der Punkt wurde als „offen"
@@ -253,4 +250,6 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md`,
 `docs/paper/jwst-disequilibrium-survey.md`,
 `docs/concepts/the-seven-spheres.md`,
-`docs/specs/mantis-shrimp-bom.md`.
+`docs/specs/mantis-shrimp-bom.md`,
+`docs/concepts/fuenf-funken-anomalie-suche.md`,
+`docs/paper/causal-arrow-preregistration.md`.
