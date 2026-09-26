@@ -92,6 +92,16 @@ pattern ^goes16_abi\.bin$
 idempotent true
 note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
 
+asset fehlt
+format hamqsl_solar
+tag www.hamqsl.com
+arm hamqsl_compiler
+workflow hamqsl-cdn.yml
+pattern ^hamqsl_solar\.bin$
+idempotent true
+timeout 120
+note HAMQSL solarxml.php (solarflux sfu, solarwind km/s, magneticfield nT); Arm src/archivar/hamqsl.rs; Compiler hamqsl_compiler.rs (fetch + embedded LSK); CDN über hamqsl-cdn.yml --out hamqsl_solar.bin; kein Asset gemessen.
+
 asset present
 format icesat2_atl03
 tag data.nsidc.earthdatacloud.nasa.gov
@@ -132,6 +142,16 @@ shard 3
 idempotent true
 note run 35205267703 measured 2026-09-17; 3 shard assets present (1073741768 B / 1073741768 B / 194661152 B per the phi/sources.φ maven_tnf notes); sha256 cbdf3ea4… / 0806df61… / 17a69d1c…
 
+asset fehlt
+format nohrsc_snowfall
+tag www.nohrsc.noaa.gov
+arm nohrsc_snowfall_compiler
+workflow nohrsc_snowfall-cdn.yml
+pattern ^nohrsc_snowfall\.bin$
+idempotent true
+timeout 120
+note NOAA NOHRSC snowfall CONUS 24h sfav2 NetCDF (SWE mm, stride 32); Arm src/archivar/geo.rs MAGIC_NOHR; Compiler nohrsc_snowfall_compiler.rs, Pflicht --year/--month/--day; CDN über nohrsc_snowfall-cdn.yml; kein Asset gemessen.
+
 asset present
 format odyssey_odf
 tag pds-geosciences.wustl.edu
@@ -140,6 +160,17 @@ pattern ^odyssey_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 4
 idempotent true
 note Quelle vollständig gemessen 2026-09-18: odrs_0001–0238 tragen odf/ (odrs_0239–0299 HTTP 404, kein odf/); neuestes ODF odrs_0238/7163164b.lbl STOP 2017-06-13T13:15:09 == Register-End-Shard t550631778; kein Re-Harvest.
+
+asset fehlt
+format ogimet_synop
+tag www.ogimet.com
+arm ogimet_compiler
+args --station 72594
+workflow ogimet-cdn.yml
+pattern ^ogimet_synop\.bin$
+idempotent true
+timeout 120
+note OGIMET gsynres SYNOP Station 72594 (Temperatur C, Taupunkt C, Wind m/s, SLP hPa); Arm src/archivar/geo.rs MAGIC_OGM; Compiler ogimet_compiler.rs, Pflicht --station/--year/--month/--day; CDN über ogimet-cdn.yml; kein Asset gemessen.
 
 asset present
 format openneuro_brainvision

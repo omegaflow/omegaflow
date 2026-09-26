@@ -1,0 +1,54 @@
+name: ogimet-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/ogimet_compiler.rs'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ogimet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view www.ogimet.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ogimet_synop.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ogimet_synop.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ogimet_synop.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the www.ogimet.com release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view www.ogimet.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.ogimet.com --repo omegaflow/sources \
+              --title "www.ogimet.com" \
+              --notes "OGIMET decoded SYNOP series compiled to a binary asset (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the OGIMET SYNOP series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          y=$(date -u +%Y); m=$(date -u +%m); d=$(date -u +%d)
+          cargo run --release -p omegaflow-harvest --bin ogimet_compiler -- \
+            --station 72594 --year "$y" --month "$m" --day "$d" \
+            --out ogimet_synop.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "ogimet-cdn: ogimet_synop.bin returned void" \
+                 "ogimet compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

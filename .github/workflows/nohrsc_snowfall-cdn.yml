@@ -1,0 +1,54 @@
+name: nohrsc_snowfall-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/nohrsc_snowfall_compiler.rs'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nohrsc-snowfall:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view www.nohrsc.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "nohrsc_snowfall.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset nohrsc_snowfall.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset nohrsc_snowfall.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the www.nohrsc.noaa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view www.nohrsc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.nohrsc.noaa.gov --repo omegaflow/sources \
+              --title "www.nohrsc.noaa.gov" \
+              --notes "NOAA NOHRSC snowfall CONUS 24h field compiled to a binary asset (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the NOHRSC snowfall field to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          y=$(date -u +%Y); m=$(date -u +%m); d=$(date -u +%d)
+          cargo run --release -p omegaflow-harvest --bin nohrsc_snowfall_compiler -- \
+            --year "$y" --month "$m" --day "$d" \
+            --out nohrsc_snowfall.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "nohrsc_snowfall-cdn: nohrsc_snowfall.bin returned void" \
+                 "nohrsc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
