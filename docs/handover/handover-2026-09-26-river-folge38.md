@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: 935afe3f1e5e398431f03a204bf69d84dd2037ebfcb95b4fab45e2d9a30d0b1e
+  sha256: 977c701d4d73f4e4631a9cf856e78b77a7fcb2b86021a21245c2d3a5fdc5251a
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -75,6 +75,13 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **Blockade:** Messbegriff und Parser fehlen (Sony Camera Remote API / PTP über WLAN/USB).
 - **Braucht:** Messbegriff festlegen, dann Source-Port nach `docs/SOURCE_PORT.md` + `phi/sources.φ`.
 
+#### Quellen-Verwerfung am Start — `#body` fehlt + Shard-Overlaps
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Messung, welche Einträge in `phi/sources.φ` überlappen.
+- **Lage:** (gemessen 2026-09-26 via `bin/omegaflow`-Ausgabe + sread) zwei bewusste Verwerfungs-Pfade: (1) `src/archivar/main_flow.rs:566` „native body undeclared" — ohne `#body=<body>,<lat>,<lon>,<alt>` werden **alle** Stations-Samples verworfen; (2) `refuse_shard_overlaps` (`src/archivar/parse.rs:1529-1558`) — überlappende ODF/PODF-Shards werden pro Format **nicht gemergt**, jeder weitere wird „never merged" verworfen (drei Rosetta-ODF-Shards `[1080341864,1431699247)`, `[1431692248,1464772941)`, `[1464772941,1475187437)`). Der Code ist korrekt; Ursache ist die fehlende `#body`-Deklaration + überlappende Einträge im Register. **Ungemessen:** welche/wie viele Einträge konkret überlappen.
+- **Blockade:** offene Messung (Overlap-Enumeration).
+- **Braucht:** `#body=`-Übergabe prüfen; überlappende Rosetta-ODF-Einträge in `phi/sources.φ` auflisten und im Register entdoppeln (Oder durch Dispatch eines `explore`-Agenten).
+
 ### Rat handelt
 
 #### Akustischer Radiations-Kanal — JBL-Kopfhörer, Bose SoundLink Mini
@@ -136,10 +143,10 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 
 #### TLS im Relay (wireless)
 - **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator installiert `ca.pem` am Handy und startet `stunnel`.
-- **Lage:** (gemessen 2026-09-26 via `openssl`) TLS-Material erzeugt (gitignored): ca.pem/ca.key `CN=omegaflow-relay-ca`, relay-leaf.pem/relay-leaf.key `CN=omegaflow-relay`; `bin/relay-tls.stunnel.conf` zeigt darauf; Spec `docs/specs/relay-tls-terminator.md`.
-- **Blockade:** geräteseitiger CA-Trust + Test-Run (Harte-Läufe-LOCK).
-- **Braucht:** `ca.pem` installieren, `stunnel bin/relay-tls.stunnel.conf`, `bin/omegaflow` ohne `OMEGAFLOW_HIDDEN`, `https://<lan-ip>:1619/consent?ja`.
+- **Trigger:** Operator installiert `ca.pem` am Pixel und startet `stunnel`.
+- **Lage:** (gemessen 2026-09-26 via `openssl`/`ss`/stunnel-Lauf) Material in `state/tls/`; **Leaf mit `openssl x509 -req` neu ausgestellt, SAN = `IP:192.168.178.26`** (war Platzhalter `192.168.0.0`; LAN-IP = `wlp58s0`). `ca.pem` aufs Pixel gepusht (`/sdcard/Download/ca.pem`, 1139 B). **Port 1619 ist doppelt belegt:** `smail_recv` (Mail, pid 1207, `127.0.0.1:1619`) **und** `bin/relay-tls.stunnel.conf` (`0.0.0.0:1619`) → stunnel bindet nicht. Test-Config `/tmp/opencode/relay-tls-1620.conf` (Port 1620) bereit; `/tmp` wird beim Neustart geleert → ggf. neu anlegen. Relay `bin/omegaflow` (1618) muss nach Neustart neu gestartet werden.
+- **Blockade:** Port 1619 doppelt belegt (smail_recv ↔ Relay-TLS); **Chrome/Android vertraut Nutzer-CAs nicht** → HTTPS im Chrome scheitert voraussichtlich (Client mit User-CA-Trust nötig).
+- **Braucht:** freien Port (1620) oder smail_recv-Port trennen; `ca.pem` am Pixel installieren (Einstellungen → Sicherheit → Weitere Sicherheitseinstellungen → Verschlüsselung & Anmeldedaten → Zertifikat installieren → CA-Zertifikat); `stunnel /tmp/opencode/relay-tls-1620.conf`; `https://192.168.178.26:1620/consent?ja`.
 - **Wort:** HTTPS ja | 2026-09-26 | Operator-Wort folge36.
 
 #### Mantis Shrimp — Sensor-Hardware beschaffen (BOM)
