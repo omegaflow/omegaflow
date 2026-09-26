@@ -1,11 +1,21 @@
 use std::env;
 use std::fs;
 
+fn state_dir() -> std::path::PathBuf {
+    if let Ok(dir) = env::var("OMEGAFLOW_STATE") {
+        return std::path::PathBuf::from(dir);
+    }
+    std::path::PathBuf::from("state")
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut path = match env_str("OMEGAFLOW_MAIL_LEDGER") {
         Some(p) => p,
-        None => "state/mail/mail_ledger.φ".to_string(),
+        None => state_dir()
+            .join("mail/mail_ledger.φ")
+            .to_string_lossy()
+            .into_owned(),
     };
     let mut from_filter: Option<String> = None;
     let mut to_filter: Option<String> = None;
