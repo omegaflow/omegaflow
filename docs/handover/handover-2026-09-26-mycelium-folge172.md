@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: a31480a108910b20b283787e386866e4b02e004b8b311eedf6d9247153c1c490
+  sha256: 9f638a92db6145a8197b28db65b37b4bb4f85fde1676138081f10b0e14596475
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -19,10 +19,12 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge171.md`.
 Geschlossen: Postfach-Ledger-Fix (`eb20dad55`); die vier TAP-`parser-def`
 (gavo/padc/voparis/skvo) — Twins nach `phi/sources.φ`, auf `descoped` (live 200
 verifiziert, `f889b29c3`); **DECaPS2 Dataverse** — anonymer noirlab-TAP live 200,
-`blocked_sources.φ:79` descoped (`f805e33ec`); **AllWISE async-UWS-Arm** gebaut
-(`src/archivar/uws.rs` + `allwise.rs` + `allwise_tap_compiler.rs`, `cargo check`
-0/0, live Job 23572491 COMPLETED, 5000 Zeilen → 325 008-B-Bin), Quelle in
-`phi/sources.φ:9717` registriert (`c8e87ab2e`). Die **Pre-CDN-Host-Verdikte waren
+`blocked_sources.φ:79` descoped (`f805e33ec`); **AllWISE async-UWS komplett gebaut** — Arm (`src/archivar/uws.rs` + `allwise.rs`
++ `allwise_tap_compiler.rs`, live Job 23572491 COMPLETED, 5000 Zeilen →
+325 008-B-Bin), Consumer (`extract.rs`-Arm + `main_flow.rs`-Handler + Gate-Test,
+`cargo check` 0/0), Quelle `phi/sources.φ:9717`, CI-Job `allwise-cdn.yml`
+( Dispatch `36238458915` ). **GOES-19 ABI geklärt**: `HEADER_BYTES 12 + REC_BYTES 56
+= 68` B = genau ein gültiger Granule-Record — kein Riss. Die **Pre-CDN-Host-Verdikte waren
 bereits integriert** (alle 9 Kandidaten in `declined_sources.φ:1865-2135`); die
 „kein Treffer"-Zeilen der Verdict-Datei sind überholt.
 
@@ -58,12 +60,12 @@ bereits integriert** (alle 9 Kandidaten in `declined_sources.φ:1865-2135`); die
 - **Blockade:** CI-Lauf (gaia).
 - **Braucht:** `ci_manage view 36236057714`.
 
-#### AllWISE — Extract-Reader + CDN-Manifestation
+#### AllWISE async-UWS — CI-Manifestation
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Reader-Port / `allwise_tap_compiler --ci-mode`-Lauf.
-- **Lage:** (gemessen 2026-09-26) Arm gebaut + live gemessen (Job 23572491 COMPLETED; Bin `data/irsa.ipac.caltech.edu/allwise_psd.bin` 325 008 B); Quelle `phi/sources.φ:9717` (`format catalog_allwise_psd`). Der **Extract-Reader** (`catalog_allwise_psd`) fehlt noch (Nachbar-Formate `catalog_vlass_tap_*` ebenso reader-los).
-- **Blockade:** kein Reader-Arm.
-- **Braucht:** Reader in `extract.rs` bauen (eigener Port-Akt); danach `allwise_tap_compiler --ci-mode` (CI) + `blocked_sources.φ:223` von `pending` → `released` umtragen.
+- **Trigger:** `allwise-cdn 36238458915` (allwise-tap-Job).
+- **Lage:** (gemessen 2026-09-26) Arm + Consumer (`extract.rs`/`main_flow.rs`, `cargo check` 0/0) + Quelle `phi/sources.φ:9717` + CI-Job `allwise-cdn.yml` gebaut; Lauf dispatcht. `blocked_sources.φ:223` noch `pending`.
+- **Blockade:** CI-Lauf.
+- **Braucht:** `ci_manage view 36238458915`; bei success `blocked_sources.φ:223` → `released` umtragen.
 
 #### Pre-CDN params — source-Name-Drift (Riss)
 - **Status:** blockiert | **Bindung:** eigen
@@ -142,13 +144,6 @@ bereits integriert** (alle 9 Kandidaten in `declined_sources.φ:1865-2135`); die
 - **Blockade:** CI-Lauf / lokaler IP-Block.
 - **Braucht:** Proton-freier CI-Puls via `source_latency_census --blocked`.
 
-#### GOES-19 ABI radiance — Asset 68 B (Riss)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Content-Konsistenzmessung `phi/sources.φ:848`.
-- **Lage:** (gemessen 2026-09-26) `goes-cdn 36235688223` success; Record-Note `calib=2` gesetzt; `--sniff` `goes_abi_rad.bin` HTTP 200, **68 B**, sha256 `ef3b3e60…` — ungemessen gegen den Radiance-Umfang.
-- **Blockade:** Content-Konsistenz ungemessen.
-- **Braucht:** `goes_abi_compiler`-Rohlauf gegen eine `ABI-L1b-RadC`-Granule; 68 B als Riss führen.
-
 #### Arbeitsbaum-Formatierung — Autorschaft ungemessen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Pass `git diff`.
@@ -214,7 +209,7 @@ bereits integriert** (alle 9 Kandidaten in `declined_sources.φ:1865-2135`); die
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen committet; Namens-Disposition trägt die Future-Übergabe.
-- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | ausstehend nur GOES GSICS (68-B-Riss) + Wiedervorlage 2026-12-02.
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | ausstehend nur Wiedervorlage 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offen: Re-Check 3 Force-Kanal + 4 pending + `arvo-registry.sci.am` | nächster Schritt: `archive_search --verdict` je Host.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Disposition der 55 undocumented `stale_pending` | nächster Schritt: `docs/specs/cdn_orphan_verdicts.json` je Netloc disponieren.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout `knowledge/`+`backups/` | nächster Schritt: Operator-Wort zum Layout.
