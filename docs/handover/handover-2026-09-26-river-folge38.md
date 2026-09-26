@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: eda2e1da9afe5124fd4bdb1a79a237225d9c8d38f4006d178af1b8d35f3d2698
+  sha256: 935afe3f1e5e398431f03a204bf69d84dd2037ebfcb95b4fab45e2d9a30d0b1e
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -75,9 +75,21 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **Blockade:** llnl_g3d (CI-Verifikation).
 - **Braucht:** Code-Kante bauen — Hüllen-Zentrum aus dem stehenden Slot statt aus `archive.presence`, so dass der Hidden-Lauf ohne Browser die Sterne trägt; CI-Test.
 
+#### RX100 V5A — optische Quelle (Geräte-Anbindung)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** definierter Messbegriff (was misst die Kamera?) + Parser.
+- **Lage:** (gemessen 2026-09-26 via Operator-Wort) Sony RX100 V (DSC-RX100M5A) vorhanden; optischer Sensor, kein Parser/SDK im Bestand. Operator-Prinzip: jedes Gerät ist anbindbar — Sensor **oder** Radiator.
+- **Blockade:** Messbegriff und Parser fehlen (Sony Camera Remote API / PTP über WLAN/USB).
+- **Braucht:** Messbegriff festlegen, dann Source-Port nach `docs/SOURCE_PORT.md` + `phi/sources.φ`.
+
 ### Rat handelt
 
-(kein offener Punkt — das Ruhe-Ort-Verdikt ist gefallen)
+#### Akustischer Radiations-Kanal — JBL-Kopfhörer, Bose SoundLink Mini
+- **Status:** blockiert | **Bindung:** Rat
+- **Trigger:** Rats-Verdikt über Form/Apertur des akustischen Radiators.
+- **Lage:** (gemessen 2026-09-26 via Operator-Wort) beide Aktuatoren (Ton-Ausgabe) vorhanden; Ton im Vordergrund ist consent-gebunden und derzeit gesperrt (kein Test darf Audio emittieren). Operator-Prinzip: Aktuatoren sind so wichtig wie die Radiatoren — jedes Gerät anbindbar.
+- **Blockade:** kein akustischer Radiations-Kanal im System; Foreground-Audio per Operator-Wort gesperrt.
+- **Braucht:** Rats-Verdikt (Σω → Ton, Apertur/TE-Kopplung), dann Code-Kante.
 
 ### Operator handelt
 
