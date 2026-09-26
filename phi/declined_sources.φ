@@ -5164,7 +5164,7 @@ note Dual-Comb Swept-Wavelength-Interferometrie (Chalmers, cc-by-4.0; 200 gemess
 
 decline count
 url https://zenodo.org/records/8401262
-note Super-Kamiokande Neutrino-Release 2023 (10.5281/zenodo.8401262, 52,6 MB, CC-BY). bins/ ROOT (Data/MC-Zählwerte) + chi2/ (χ²) — kein Feld am Punkt → decline count. Zenodo 2026-09-16 HTTP 0/Timeout; Record lebt (Wayback).
+note Super-K-Zenodo-Releases 2021–2026 (8401262; 4724823; 5779986; 12702685; 15081911; 15779744; 19609620; 19702889; cc-by). bins/ROOT+chi2 Zählwerte, kein S²-Katalog → decline count. Live 2026-09-26: HTTP 200 direkt, Proton 200, Wayback 200.
 
 decline event-record
 url https://zenodo.org/records/8427755
