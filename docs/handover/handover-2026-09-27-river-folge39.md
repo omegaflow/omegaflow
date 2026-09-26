@@ -3,7 +3,7 @@
   session: River-Folge 39
   class: handover
   date: 2026-09-27
-  sha256: a979811ece197bf4dd6b94b80b84ef2ecab4328599c6100201315665a755df0f
+  sha256: 68e3f6c6acd628093b3cdf15db516b04dc97eb95177b1485b9a78cf930b1cd66
   status: live
 -->
 # Handover — River-Folge 39 (2026-09-27)
@@ -60,12 +60,12 @@ Diese Session konsumierte `handover-2026-09-26-river-folge38.md` (nach
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36277948083` / `ci_manage view 36277951163` — Ergebnis messen.
 
-#### `#body`-Deklaration — lokale Sensoren
+#### `#body`-Deklaration — Anker der lokalen Sensor-Samples
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** keiner — durch Messung geschlossen (gemessen 2026-09-27).
-- **Lage:** (gemessen 2026-09-27 via `sread`) Die folge38-Behauptung „ohne `#body` werden alle Stations-Samples verworfen, 10 Quellen betroffen" ist **falsch**: `#body=<body>,<lat>,<lon>,<alt>` (`main_flow.rs:800`) gate't allein die **lokalen** Sensor-Samples (`sensor_rx` → `sensor_config`, `membrane.rs:422`: Temperatur/Druck/Feuchte/Wind/Mikro/Licht/Batterie/HR/RSC). Die Remote-Quellen tragen ihre Position selbst (`on earth 35.68 139.69 0`, `phi/sources.φ:446`; `stations_lat`/`stations_lon`) — vom `#body` nicht betroffen. Kein Code-Defekt; `#body` ist der Operator-Standort (PII).
+- **Lage:** (gemessen 2026-09-27 via `sread`) Die folge38-Behauptung „ohne `#body` werden alle Stations-Samples verworfen, 10 Quellen betroffen" ist **falsch**: `#body=<body>,<lat>,<lon>,<alt>` (`main_flow.rs:800`) gate't nur den `sensor_rx`-Kanal (`main_flow.rs:1371-1379`), gespeist von `battery_ingress` und **einer** Beat-Quelle (`serial`|`ble`|`fit`, `main_flow.rs:833-855`). **Nicht** betroffen: die Remote-Quellen (tragen ihre Position selbst: `on earth …`, `phi/sources.φ:446`; `stations_lat`/`stations_lon`) und der Browser-Relay-Kanal `sample_rx` (`main_flow.rs:1359`). `#body` ist allein der **Anker-Körper** der lokalen Samples — **kein** Presence-Bezug; die Presence ruht frei am SSB (`346a2577b`, station-as-presence gestrichen).
 - **Blockade:** keine.
-- **Braucht:** nichts — Betriebsnotiz: `bin/omegaflow '#body=Earth,<lat>,<lon>,<alt>'` für lokale Sensoren.
+- **Braucht:** nichts — Betriebsnotiz: `bin/omegaflow '#body=<body>,<lat>,<lon>,<alt>'` für Batterie + Beat.
 
 #### 945 Puls — HR-bpm-Relaxation
 - **Status:** eigen | **Bindung:** eigen
