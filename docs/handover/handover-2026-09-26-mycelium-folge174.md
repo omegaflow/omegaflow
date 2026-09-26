@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: dc6537317844d03a044288b3d0095a75d8074d2d3618f142b45c308b499e4c91
+  sha256: 0f934300c4fb80eb82423976c6d8f21320b8f753685d96ed91cf789fa82b536a
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -62,12 +62,12 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 - **Blockade:** Parser-Arm fehlt (parser-def); src.pas-Backend dritter.
 - **Braucht:** `epncore-spatial`-Gap in `phi/blocked_sources.φ` → mountain-Linie; MASER-`epn_core`-Sample registrieren; LOFAR LTA (`lta.lofar.eu`, account-gated) als `blocked account`-Kandidat.
 
-#### GOSAT-GW GWT3F_L1B — Arme gebaut, CDN-Manifestation offen
+#### GOSAT-GW GWT3F_L1B — Arme + CDN-Workflow gebaut, Dispatch offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `gosat-cdn`-Lauf (GOSAT-GW-Credentials).
-- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack + alle Arme gebaut und committet: `geo.rs` (`MAGIC_GOSAT`, `COMP_GOSAT_*`, `magic_of`/`comp_max`), `extract.rs`, `main_flow.rs`, `tests.rs`, `phi/sources.φ`-Block; `cargo check` 0/0. comp-Formel `(product−1)·3+band` (1..6). Asset `gosat_tanso3.bin` noch nicht manifestiert (kein sha256).
-- **Blockade:** kein CDN-Workflow für `gosat_tanso3`.
-- **Braucht:** `gosat-cdn.yml` bauen (Muster `gll`/`galileo_odr`) + dispatchen; danach `sha256` in `phi/sources.φ` und `blocked_sources.φ:325` → released.
+- **Trigger:** `gosat-cdn`-Dispatch (Repo-Secrets `GOSAT_GW_MAIL`/`GOSAT_GW_PASS`).
+- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack + alle Arme committet (`fae4a5081`): `geo.rs`, `extract.rs`, `main_flow.rs`, `tests.rs`, `phi/sources.φ`-Block; `cargo check` 0/0. comp-Formel `(product−1)·3+band` (1..6). `gosat-cdn.yml` gebaut (Muster `gll-rss-odr`: idempotent, `--ci-mode`). Asset `gosat_tanso3.bin` nicht manifestiert.
+- **Blockade:** `GOSAT_GW_MAIL`/`GOSAT_GW_PASS` als Repo-Secrets (ungemessen).
+- **Braucht:** `gh workflow run gosat-cdn.yml -f product=GWT3F_L1B -f start=… -f end=…`; danach `sha256` in `phi/sources.φ` und `blocked_sources.φ:325` → released.
 
 #### EMODNET HFRADAR NADR — Termin-Re-Messung
 - **Status:** termin | **Bindung:** termin:2026-10-19
