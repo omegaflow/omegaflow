@@ -18,7 +18,7 @@ use omegaflow::weberin::{
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
 const DCOM5_TAG: &str = "ssd.jpl.nasa.gov-dcom5";
-const COMETELS_TAG: &str = "www.minorplanetcenter.net";
+const COMETELS_TAG: &str = "minorplanetcenter.net";
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {

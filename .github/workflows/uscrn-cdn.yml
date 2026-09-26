@@ -18,11 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the www.ncei.noaa.gov release exists on the CDN
+      - name: Ensure the ncei.noaa.gov release exists on the CDN
         run: |
-          if ! gh release view www.ncei.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.ncei.noaa.gov --repo omegaflow/sources \
-              --title "www.ncei.noaa.gov" \
+          if ! gh release view ncei.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ncei.noaa.gov --repo omegaflow/sources \
+              --title "ncei.noaa.gov" \
               --notes "USCRN hourly02 temperature compiled to a USC1 geo oscillator record (medium em). Record stride 60 B LE: t (f64, unix epoch seconds), lat (f64 deg), lon (f64 deg), alt (f64, station elevation m), freq (f64 Hz), bin_width (f64 Hz), val (f64, deg C), comp (u32; 1=air temperature). Magic USC1."
           fi
       - name: Fetch the leap-second kernel

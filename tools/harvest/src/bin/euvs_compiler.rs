@@ -187,7 +187,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("www.ncei.noaa.gov", &out) {
+    if ci_mode && !upload_release("ncei.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

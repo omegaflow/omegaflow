@@ -449,7 +449,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_release("www.crystallography.net", &path);
+            let _ = upload_release("crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -478,7 +478,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_release("www.crystallography.net", &path);
+            let _ = upload_release("crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -510,7 +510,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_release("www.crystallography.net", &path);
+            let _ = upload_release("crystallography.net", &path);
         }
         compiled += 1;
     }
@@ -540,7 +540,7 @@ fn main() {
             path,
         );
         if ci_mode {
-            let _ = upload_release("www.crystallography.net", &path);
+            let _ = upload_release("crystallography.net", &path);
         }
         compiled += 1;
     }
