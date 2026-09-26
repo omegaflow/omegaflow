@@ -78,6 +78,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "bison_velocity" => crate::bison_velocity::parse_bin(bytes)
             .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
         "las" => crate::las::las_series::parse_series(bytes),
+        "hamqsl_solar" => hamqsl::parse_bin(bytes),
         _ => None,
     }
 }
@@ -172,6 +173,12 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             omni_hro::COMP_SW_DENSITY => Some("omni_hro_solarwind_density_percc"),
             omni_hro::COMP_SW_TEMP => Some("omni_hro_solarwind_temp_k"),
             omni_hro::COMP_SW_PRESSURE => Some("omni_hro_solarwind_pressure_npa"),
+            _ => None,
+        },
+        "hamqsl_solar" => match comp {
+            hamqsl::COMP_SOLARFLUX => Some("hamqsl_solarflux_sfu"),
+            hamqsl::COMP_SOLARWIND => Some("hamqsl_solarwind_kms"),
+            hamqsl::COMP_MAGFIELD => Some("hamqsl_magneticfield_nt"),
             _ => None,
         },
         "mitdb" => match comp {
@@ -557,6 +564,17 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "champ_plpt" => match comp {
             crate::geo::COMP_CHAMP_DENS => Some("champ_plpt_electron_density_cm3"),
+            _ => None,
+        },
+        "ogimet_synop" => match comp {
+            crate::geo::COMP_OGM_TEMP => Some("ogimet_synop_temp_c"),
+            crate::geo::COMP_OGM_DEWP => Some("ogimet_synop_dewp_c"),
+            crate::geo::COMP_OGM_WSPD => Some("ogimet_synop_wspd_ms"),
+            crate::geo::COMP_OGM_SLP => Some("ogimet_synop_slp_hpa"),
+            _ => None,
+        },
+        "nohrsc_snowfall" => match comp {
+            crate::geo::COMP_NOHR_SNOWFALL => Some("nohrsc_snowfall_mm"),
             _ => None,
         },
         _ => None,

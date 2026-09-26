@@ -550,6 +550,27 @@ last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hP
 last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/www.hamqsl.com/hamqsl_solar.bin
+format hamqsl_solar
+origin https://www.hamqsl.com/solarxml.php
+compiler tools/harvest/src/bin/hamqsl_compiler.rs
+at sun
+ttl 3600
+field hamqsl_solarflux_sfu hamqsl_solarflux_sfu inverse-square em sfu 3600 0.0 0.0
+field hamqsl_solarwind_kms hamqsl_solarwind_kms patch-levy advective km/s 3600 0.0 0.0
+field hamqsl_magneticfield_nt hamqsl_magneticfield_nt inverse-square em nT 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.ogimet.com/ogimet_synop.bin
+format ogimet_synop
+origin https://www.ogimet.com/cgi-bin/gsynres
+compiler tools/harvest/src/bin/ogimet_compiler.rs
+at earth
+ttl 3600
+field ogimet_synop_temp_c ogimet_synop_temp_c exponential-decay thermal C 3600 0.0 0.0
+field ogimet_synop_dewp_c ogimet_synop_dewp_c exponential-decay thermal C 3600 0.0 0.0
+field ogimet_synop_wspd_ms ogimet_synop_wspd_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field ogimet_synop_slp_hpa ogimet_synop_slp_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
+
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
 ttl 3600
 on earth 0 0 0
@@ -1123,6 +1144,14 @@ stations_lon coordinates.longitude
 fanout 25
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.nohrsc.noaa.gov/nohrsc_snowfall.bin
+format nohrsc_snowfall
+origin https://www.nohrsc.noaa.gov/snowfall/data
+compiler tools/harvest/src/bin/nohrsc_snowfall_compiler.rs
+at earth
+ttl 86400
+field nohrsc_snowfall_mm nohrsc_snowfall_mm gaussian-inverse-square acoustic mm 86400 0.0 0.0
 
 url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
 ttl 86400
