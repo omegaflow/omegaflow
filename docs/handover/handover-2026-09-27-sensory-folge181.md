@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 1a717e1e759f9dbfba5d6df00f6e12d1934df7e6b84387a4a52cfe7983243853
+  sha256: e16d373d269e2add1107ad512850a4736b58099aa1d951a5b1d4c63b12275c78
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -47,16 +47,18 @@ getrackt, nie am CDN.
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-### 3. O1 DEMETER/CDPP — Order nutzbar, Ernte offen
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort, **Frist 2026-09-28**
-- **Lage:** (gemessen 2026-09-27) Order **18387** `DONE_WITH_WARNING`, aber metalink
-  `…/orders/18387/metalink/download` **befüllt** (`DMT_N1_1144_*.DAT` mit URLs/Größen);
-  Datensätze `DMT_N1_1143` (39318) + `DMT_N1_1144` (57760).
-- **Blockade:** metalink-Abruf groß (Stream-Timeout), SPA-Token-URL; `regards_order_read`
-  nicht auf PATH (Bin ungebaut).
-- **Braucht:** metalink als Datei sichern; `cargo build -p omegaflow-measure --bin
-  regards_order_read` → URLs → Ernte nach `data/` **vor dem 28.09.** (kein CDN, Links
-  token-gebunden).
+### 3. O1 DEMETER/CDPP — metalink gesichert, Bulk-Download WAF-blockiert
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** WAF-Weg (Browser) | **Frist 2026-09-28**
+- **Lage:** (gemessen 2026-09-27) metalink **gesichert**:
+  `regards.cnes.fr/api/v1/rs-order/user/orders/18387/metalink/download` →
+  `data/cdpp-archive.cnes.fr/metalink_18387.xml` (68.9 MB, 776 629 Z.); URLs + Namen
+  extrahiert nach `order_18387_urls.txt`/`order_18387_files.txt` (97 078 je); Ablauf
+  09/28 12:46.
+- **Blockade:** die File-URLs (`/orders/public/files/<id>?orderToken=…`) weist der
+  **F5-WAF** ab (`Request Rejected`) — für curl/sfetch/Proton und auch mit
+  `Authorization: Bearer` + WAF-Cookie; nur der Browser (TLS-Fingerprint) kommt durch.
+- **Braucht:** Download über den Browser (SPA/Download-Manager mit Browser-Integration)
+  **vor 09/28**; oder einen WAF-fähigen Weg.
 
 ### 5. #4 Seismik-Flotte — Messläufe dispatcht
 - **Status:** wartend | **Bindung:** eigen | **Trigger:** Messläufe enden
@@ -68,29 +70,33 @@ getrackt, nie am CDN.
 - **Braucht:** Läufe via `ci_manage view` lesen; Dual-Phase-Gate-Schwelle setzen
   (`depth-phase-echo-fleet.md:35-38`).
 
-### 6. #5 Blatt-1-Bojen-Matrix — Rotor offen
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) Träger `docs/concepts/blatt-papier-resultat.md:63-71`.
+### 6. #5 Blatt-1-Bojen-Matrix — Hintergrundzyklus
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** Rotor-Zyklus (~16 h)
+- **Lage:** (gemessen 2026-09-27) der Bojen-Matrix-Rotor ist ein **Hintergrundzyklus** im
+  laufenden System (136 Paare × 366 Zellen ≈ 55 h/Station, voller Zyklus ≈ 16 h), kein
+  Einmal-Bin; Träger `docs/concepts/blatt-papier-resultat.md:63-71`.
+- **Blockade:** Laufzeit.
+- **Braucht:** Rotor laufen lassen; Σ p̂·M-Zeile nachtragen.
+
+### 7. #7 Kreuz-Screening — Workflow gebaut, Lauf offen
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** Lauf endet
+- **Lage:** (gemessen 2026-09-27) Workflow **`.github/workflows/cross-screening-tibet.yml`**
+  gebaut (Serien aus `phi/meteo/tibet-flut-2026.json`: gyirong/kollab/rasuwa) und
+  dispatcht → Run `36278481962`.
 - **Blockade:** keine.
-- **Braucht:** Bojen-Matrix-Rotor laufen lassen, Σ p̂·M-Zeile nachtragen.
+- **Braucht:** Ergebnis via `ci_manage view 36278481962`; Träger
+  `cross-screening-tibet.md:42/:44`, `blatt-kreuz-screening-gyirong.md:71/:201`.
 
-### 7. #7 Kreuz-Screening — Workflow fehlt
+### 8. #9 Trishuli — Footprint gemessen, S1-Post-Scene-Download hat einen Bug
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27) main geheilt (Build frei); `cross_te_screen.rs` lebt,
-  aber es gibt **keinen Workflow** und keine Serien-Datei — der Lauf braucht einen neuen
-  Monitor (Vorlage `causal-arrow-scan.yml`). Träger `cross-screening-tibet.md:42/:44`,
-  `blatt-kreuz-screening-gyirong.md:71/:201`.
-- **Blockade:** kein Workflow/Serien-Input.
-- **Braucht:** `cross_te_screen`-Workflow bauen (Rasuwa↔Gyirong-Serien), dispatchen,
-  Träger nachziehen.
-
-### 8. #9 Trishuli — S1-Footprint gemessen, Download offen
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27, ASF-Search) 3 Post-Event-Frames schneiden Bahrabise
-  (27.78 N / 85.90 E): `S1D_…_20260828T1221` (ASC t85), `_20260831T0010` (DESC t121),
-  `_20260909T1221` (ASC t85), je ~1 GB; `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`.
-- **Blockade:** der ~1 GB Download + eine GRD-lesende Probe für die Alignment fehlen.
-- **Braucht:** Frames über ASF mit Token laden nach `data/`; Alignment-Probe.
+- **Lage:** (gemessen 2026-09-27) 3 Post-Event-Frames schneiden Bahrabise (ASF);
+  `s1_post_capture` (Planetary Computer STAC, keyless) findet die Szene
+  `S1D_…_20260828T122141` — der COG-Download schreibt aber nur 248 B
+  (`PublicAccessNotPermitted`, Azure 409) trotz gültigem SAS-Token → Bug in der
+  Token-Bindung (`s1_post_capture.rs:89`).
+- **Blockade:** Download-Bug in `s1_post_capture`.
+- **Braucht:** SAS-Token korrekt an den href hängen, Post-Scene laden; dann
+  `s1_raster_diff`/`s1_sar_compiler`.
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
@@ -252,4 +258,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `docs/concepts/the-seven-spheres.md`,
 `docs/specs/mantis-shrimp-bom.md`,
 `docs/concepts/fuenf-funken-anomalie-suche.md`,
-`docs/paper/causal-arrow-preregistration.md`.
+`docs/paper/causal-arrow-preregistration.md`,
+`.github/workflows/cross-screening-tibet.yml` (eigener Commit).
