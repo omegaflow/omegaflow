@@ -452,3 +452,15 @@ blocked ip-blocked
 url https://api.sensor.community/v1/data/measurements
 note 2026-09-25 direct 403 / Proton-Exit 403 (lokaler IP-Block). Kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a). Proton-freier CI-Puls via source_latency_census --blocked ausstehend.
 
+pending
+url https://hamqsl.com/
+note HTTP 200 (50452 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (HF-Propagation SFI/A/K); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
+
+pending
+url https://nohrsc.noaa.gov/
+note HTTP 200 (18000 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (Schnee/SWE NOAA); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
+
+pending
+url https://ogimet.com/
+note HTTP 200 (15196 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (synoptische Wetterbeobachtungen); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
+

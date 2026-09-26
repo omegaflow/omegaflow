@@ -353,7 +353,7 @@ note HTTP 404 — Endpoint weg.
 
 dead dns-unresolved
 url https://dods.wh.gov/opendap/jg/acoustic/aggregated/acoustic.nc.json
-note curl: curl: (6) Could not resolve host: dods.wh.gov Browser 2026-09-10: Host tot, kein Nachfolger gefunden.
+note curl: (6) Could not resolve host: dods.wh.gov (2026-09-10). 2026-09-26 direct/socks5h no response; Wayback 200 ohne CDX-Snapshot.
 
 dead 404
 url https://droughtmonitor.unl.edu/api/drought/briefingmaps/
@@ -713,7 +713,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://osdr.nasa.gov/bio/api
-note NASA OSDR ISS-Dosimetrie — 301 nach science.nasa.gov/biological-physical, /bio/api 404; Endpoint abgelöst. Welle 2026-08-19.
+note NASA OSDR: 301→science.nasa.gov/biological-physical, /bio/api 404 (Welle 2026-08-19). 2026-09-26 Host 200; Repository, kein Dosimetrie-Feed gemessen → decline registry/katalog.
 
 dead 404
 url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long
@@ -729,7 +729,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://pskreporter.info/cgi-bin/lastspots.cgi?last=24
-note HTTP 404 — Endpoint weg.
+note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (sources.φ:1222) gedeckt → decline registry/katalog.
 
 dead 404
 url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.2026.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start=2026-08-08T00%3A00%3A00Z&time_end=2026-08-08T23%3A59%3A59Z&timeStride=1&accept=csv
@@ -945,7 +945,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://www.reversebeacon.net/dxlast24h.json
-note HTTP 404 — Endpoint weg.
+note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (sources.φ:1222) gedeckt → decline registry/katalog.
 
 dead 404
 url https://www.sidc.be/products/bulletins/DAILY_BULLETIN.json
