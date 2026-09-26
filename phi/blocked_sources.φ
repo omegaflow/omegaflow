@@ -328,7 +328,7 @@ note GOSAT-GW: Cookie-Auth (GOSAT_GW_MAIL/PASS) verifiziert 2026-09-26 — CUI-s
 blocked account
 url https://data.lsst.cloud/api/tap/sync
 reg https://data.lsst.cloud
-note Rubin/LSST: data-rights-thread mit H. Shaughnessy (SLAC) 2026-09-14 (mail_ledger.φ:39-41); Independent-Researcher-Route offen; „no current roles" = RSP-Enrollment nicht freigegeben; TAP braucht OAuth. RUBIN_USER/PASS vorhanden.
+note Rubin/LSST: data-rights-petition bei Shaughnessy (SLAC) 2026-09-14-15 (mail_ledger.φ:39-68), „reviewed individually; we'll reach out". Keine Self-Service-Route (rsp.lsst.io). Wiedervorlage 2026-10-10; Brücke Lasair-ZTF. RUBIN_USER/PASS vorhanden.
 
 blocked parser-def json
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
