@@ -67,7 +67,7 @@ jobs:
         SIZE_HEX=$(xtensa-esp32s3-elf-nm -S build/main/libmain.a | awk '/ zb_cfg_size$/{print $2; exit}')
         SIZE_DEC=$((16#$SIZE_HEX))
         printf 'SIZEOF_ESP_ZB_CFG_T=%s\n' "$SIZE_DEC"
-        printf '%s\n' "$SIZE_DEC" > "$GITHUB_WORKSPACE/zb_cfg_size.txt"
+        printf '%s\n' "$SIZE_DEC" > zb_cfg_size.txt
         EOF
     - name: Build sizeof probe for esp32s3 (ESP-IDF v5.3.2)
       uses: espressif/esp-idf-ci-action@v1
@@ -75,14 +75,14 @@ jobs:
         esp_idf_version: v5.3.2
         target: esp32s3
         path: zb_sizeof_probe
-        command: "idf.py set-target esp32s3 && idf.py build && bash size.sh"
+        command: "idf.py set-target esp32s3 && idf.py build && bash size.sh && test -s zb_cfg_size.txt"
     - name: Emit measured sizeof
       run: |
-        SIZE=$(cat zb_cfg_size.txt)
+        SIZE=$(cat zb_sizeof_probe/zb_cfg_size.txt)
         echo "SIZEOF_ESP_ZB_CFG_T=$SIZE"
         echo "SIZEOF_ESP_ZB_CFG_T=$SIZE" >> "$GITHUB_OUTPUT"
     - uses: actions/upload-artifact@v4
       with:
         name: zb-cfg-size-esp32s3
-        path: zb_cfg_size.txt
+        path: zb_sizeof_probe/zb_cfg_size.txt
         if-no-files-found: error
