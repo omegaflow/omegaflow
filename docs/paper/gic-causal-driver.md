@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-25
-  sha256: f95e5591f122877367199ba30e74f2b27ce0d3a82e8892f51b3a094df08b1ab0
+  sha256: 743b21add0775cb7fe22efcaa812841fe266ed4d8bfc00228c7d362281f9fe5e
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window, and the hardened minute file (Bz 0.24001, Speed 0.28942 vs fam 0.34125) stays family bound. At the hourly grain two witnesses refuse to converge. The yearly-round witness (post-fix): Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected surrogate null. The hardened quarterly witness (`bz-retro-probe`, CI run 36176580764, fam per quarterly window, lag sweep 0–6 h, n_surr = 100): all 24 directed rows (Bz→dB/dt and Speed→dB/dt) stay family bound — e.g. ABK 2024-q1 Bz 0.12375 vs fam 0.18016, ABK 2025-q4 Bz 0.14008 vs fam 0.19901, SOD 2024-q1 Bz 0.10531 vs fam 0.18056. The two witnesses are carried as a riss, never averaged. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured information-flow direction is transfer entropy (directional, not interventional): a family-clearing driver at the hourly grain is not established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry; the PCMCI cross-check and the full-lag-sweep family bound are built into `bz-retro-probe` and dispatched (results pending).
+The induction excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open at minute-to-hour scales. We measure transfer entropy (TE) from L1 solar-wind drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain, Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window, and the hardened minute file (Bz 0.24001, Speed 0.28942 vs fam 0.34125) stays family bound. At the hourly grain two witnesses refuse to converge. The yearly-round witness (post-fix): Bz→dB/dt exceeds the family bound in both storm years at Abisko and at Sodankylä (2024: TE 0.12670 vs fam 0.10557; 2025: TE 0.13309 vs fam 0.12136; SOD 2024: TE 0.11695 vs fam 0.10571), all under the corrected surrogate null. The hardened quarterly witness (`bz-retro-probe`, CI run 36176580764, fam per quarterly window, lag sweep 0–6 h, n_surr = 100): all 24 directed rows (Bz→dB/dt and Speed→dB/dt) stay family bound — e.g. ABK 2024-q1 Bz 0.12375 vs fam 0.18016, ABK 2025-q4 Bz 0.14008 vs fam 0.19901, SOD 2024-q1 Bz 0.10531 vs fam 0.18056. The two witnesses are carried as a riss, never averaged. The density control never clears the family bound; the reverse direction dB/dt→Bz stays below the bound at Abisko in both years but marginally clears it at Sodankylä. At the daily grain over 32 years (1994–2026, n ≈ 3900), all six pairs stay below the family bound. The measured information-flow direction is transfer entropy (directional, not interventional): a family-clearing driver at the hourly grain is not established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry; the PCMCI cross-check and the full-lag-sweep family bound are built into `bz-retro-probe`; the dispatch is pending on the GitHub-API quota (results pending).
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -356,7 +356,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   round and hardened quarterly round — are carried un-smoothed as a riss
   (`VerdictWord::Riss`), never averaged. The family-clearing claim at the
   hourly grain is withdrawn into this open state, not inverted. Named
-  resolution steps — built and dispatched 2026-09-26, results pending: a
+  resolution steps — built 2026-09-26; the dispatch is pending on the GitHub-API quota, results pending: a
   PCMCI cross-check on the same data, and the family
   bound over the full lag sweep in the hardened round.
 - **dB/dt is the induction driver, not the network current.** The FMI
