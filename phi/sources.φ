@@ -9834,6 +9834,13 @@ at earth
 sha256 a3fe6dc3a049ed4717bea420f59f781cd238af895d9bd5d729fd7a3cc82587fa
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emc_radial.bin
+format emc_radial
+origin https://data.earthscope.org/archive/seismology/products/emc/data/
+compiler tools/harvest/src/bin/emc_compiler.rs
+at earth
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
 origin https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
 compiler tools/harvest/src/bin/hawc_compiler.rs
