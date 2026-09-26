@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 9f057f4eb2060fd04f8ef0a5b739e11e8d5fb61c8dff607708c6d5e2db0123c3
+  sha256: 883eac029f431eea3b85fb97ff980399d0c63044d5a3480ce931aebd82dcbd13
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -113,36 +113,6 @@ Git-Index fremd-gestagte Arbeit trägt (nur pfad-begrenzte Commits möglich):**
 - **Blockade:** Fälligkeit.
 - **Braucht:** `--sniff` bei Fälligkeit.
 
-### Operator
-
-#### NED ByParams-Harvest — Submit (Operator-Hand)
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** NED-Token-Antwort `state/mail/mail_ledger.φ:295-296` ODER Operator-Submit.
-- **Lage:** (gemessen 2026-09-26) ByParams-Form vermessen (Box, Equatorial J2000, decrange Between, rsrange Available, CSV, Captcha `cortcap_t=7`/`cortnedwic=11`, Ticket via `ticket_monitor`); 180 Bänder 1°; Plan + curl-Vorlage in `state/mail/`/Bericht. Token-Bitte raus, keine Antwort.
-- **Blockade:** per-Akt-Wort (Submit ist ein Formular → dritter).
-- **Braucht:** Operator führt den ByParams-Submit aus (oder Token abwarten).
-
-#### NSSDCA-Parallelantrag — Send (Operator-Hand)
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort.
-- **Lage:** (gemessen 2026-09-26) keine NSSDCA-Antwort; `PSPA-00605` ist eine Dataset-ID, kein offener Send; Juno-Anfrage an JPL-NAV (Asmar). Antrag „Juno pre-EFB merged ODF" formuliert bis Kante. **Operator-Wort 2026-09-26: Komplettheit gewünscht — Lücke wird geschlossen, kein Descope.**
-- **Blockade:** per-Akt-Wort (Send).
-- **Braucht:** Send des Antrags (Operator-Hand) oder Warten auf JPL-NAV/Asmar-Antwort.
-
-#### Fremdmodell-Benchmark — vorbereitet bis zur Kante
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort (per Akt).
-- **Lage:** (gemessen 2026-09-26) Entwurf `state/benchmark/fremdmodell-benchmark-2026-09-26.md` bis zur Kante (Ziel chat.z.ai GLM-5.3).
-- **Blockade:** fehlender per-Akt-Consent.
-- **Braucht:** Operator-Wort: `Fremdmodell-Benchmark Akt 1 (z.ai GLM-5.3) — ausführen.`
-
-#### SSDC NEDC-Registrierung — Entscheidung
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort.
-- **Lage:** (gemessen 2026-09-26) `limadou.ssdc.asi.it/` 200, `query.php` CAS-gated; kein account-freier Weg; NEDC `data.earthquake.cn` gated.
-- **Blockade:** Dritt-Registrierung = Operator-Hand.
-- **Braucht:** Operator entscheidet NEDC-Registrierung oder wartet auf Sotgiu/Portal-Umbau.
-
 ### Dritter
 
 #### BepiColombo bc_mpo_more — Termin
@@ -152,12 +122,12 @@ Git-Index fremd-gestagte Arbeit trägt (nur pfad-begrenzte Commits möglich):**
 - **Blockade:** Peer-Review/ESA.
 - **Braucht:** Wiedervorlage 04/2027, dann MORE-`data_raw`/`calibration_raw` ernten.
 
-#### NSSDC/JPL-Anfragen — Wiedervorlage
+#### SSDC / Limadou — wartend auf die neue CSES-02-Prozedur
 - **Status:** wartend | **Bindung:** dritter
-- **Trigger:** Antwort `gsfc-dl-nssdca-request@mail.nasa.gov` / Asmar.
-- **Lage:** (gemessen 2026-09-26) 4 Anfragen 2026-09-16 raus (Mariner 10/Viking/Voyager/Juno), keine Antwort. Operator-Wort 2026-09-26: komplett — TRK-2-34/ODF-Lücke bleibt Ziel.
-- **Blockade:** Antwort.
-- **Braucht:** Wiedervorlage; Juno-pre-EFB-Lücke offen halten (kein Descope).
+- **Trigger:** neue Zugangsprozedur `limadou.ssdc.asi.it` (Sotgiu 2026-09-16).
+- **Lage:** (gemessen 2026-09-26) Session als `omegaflow` gültig; `query.php` „Permission Denied". Sotgiu (mail_ledger.φ:79): Umbau für CSES-02, „wait a few weeks"; wir warten (:80).
+- **Blockade:** Portal-Umbau (dritter).
+- **Braucht:** neue Prozedur abwarten; beim Trigger `query.php` re-messen.
 
 #### termin-Punkte — re-verdict
 - **Status:** termin | **Bindung:** dritter
@@ -178,5 +148,7 @@ Git-Index fremd-gestagte Arbeit trägt (nur pfad-begrenzte Commits möglich):**
 - `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen: NOAA-NRS passive-bioacoustic Quell-Entscheidung | nächster Schritt: Register-Eintrag + Compiler.
 
 ## Abschluss
+
+Operator-Akte (NSSDCA-Send, NED-Submit, Fremdmodell-Wort) → future-Linie, nicht Mycelium („Aufenthalt = Eigentum").
 
 Commit-Wort (`/commit`) steht aus.
