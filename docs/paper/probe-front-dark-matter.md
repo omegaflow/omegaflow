@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-15
   version: 8
-  sha256: 5f96be5f5190fb6ecc238499d1ce035c46b2ed012de56e8bf983b15fea519d37
+  sha256: f2317eb940330aaafde126849dd57b3fccfb67bb75709984225e1a08137ef485
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -543,6 +543,26 @@ does not thin the drift scatter. The two drift estimates (−1.95× sunward,
 surrogate threshold with contradictory signs: the limit is now measured with the
 signal inside the uncertainty, not buried under the floor. Limit, not failure
 (0 honored).
+
+**The per-pass ramp sweep — the LS slope carries the ramp.** The ASC provenance
+was pinned byte-exact before the sweep: the live NASA/SPDF objects
+`pioneer10_doppler_tracking_SC_23.asc.gz` (19 820 702 B) and
+`pioneer11_doppler_tracking_SC_24.asc.gz` (21 454 162 B) answer live, while the
+P11 `…SC_23` object returns 404 — the pair fed through the compiler as wired
+(`pioneer_doppler_compiler.rs:7-8,70`). On the PNAV series the Ramp deduction
+(Deduction 5) was operationalized at pass scale (`pioneer_ramp_sweep_probe.rs`):
+each pass (split at the 6-h gap, ≥ 16 samples) carries a least-squares slope, and
+a two-stage sweep (41 coarse + 41 fine trial slopes, residual-RMS minimized)
+tests whether that slope is the residual-minimizing one. P10 2399 and P11 1518
+passes clear the ≥ 16-sample gate; the median LS slope is 2.257 × 10⁻¹ Hz/s (P10)
+and 1.383 × 10⁻¹ Hz/s (P11), the median LS-residual RMS 8.845 × 10² Hz (P10) and
+7.958 × 10³ Hz (P11). The two-stage sweep converges on the LS slope in every pass
+(best slope within one fine step of the LS slope,
+`pioneer_ramp_sweep_probe.rs:274`): the pass-scale ramp is the LS slope, and no
+separate ramp arm is carried. The Voyager-2 radio-science route was registered in
+the same pass (`blocked_sources.φ:51`): `radio_science_rss` carries
+`saturn_encounter_data` + `saturn_occultation_medium_band` and no Cruise
+directory — the Voyager Doppler at SPDF stays open, named not claimed.
 
 **5.7 Why the form test cannot decide on this span.** The degeneracy is not the
 noise alone. Over the 27.4-y P10 span the Pu-238 thermal curve falls only 19.5 %

@@ -372,6 +372,49 @@ fn passband_at(table: &[(f64, f64, f64)], lam_nm: f64) -> (f64, f64) {
     (b0 + t * (b1 - b0), r0 + t * (r1 - r0))
 }
 
+const H_PLANCK: f64 = 6.626_070_15e-34;
+const K_BOLTZMANN: f64 = 1.380_649e-23;
+
+fn planck_photon_weight(lam_nm: f64, t: f64) -> f64 {
+    let lam_m = lam_nm * 1e-9;
+    let x = H_PLANCK * C_LIGHT / (lam_m * K_BOLTZMANN * t);
+    if x > 700.0 {
+        return 0.0;
+    }
+    let w = 1.0 / (lam_m * lam_m * lam_m * lam_m * (x.exp() - 1.0));
+    if w.is_finite() { w } else { 0.0 }
+}
+
+pub fn bp_rp_to_lambda_nm(ci: f64) -> Option<f64> {
+    if !ci.is_finite() {
+        return None;
+    }
+    let t = bp_rp_to_teff(ci);
+    if !t.is_finite() || t <= 0.0 {
+        return None;
+    }
+    let mut num = 0.0f64;
+    let mut den = 0.0f64;
+    for &(lam_nm, bp, rp) in passband_table() {
+        let resp = bp + rp;
+        if !lam_nm.is_finite() || lam_nm <= 0.0 || !resp.is_finite() || resp <= 0.0 {
+            continue;
+        }
+        let w = planck_photon_weight(lam_nm, t) * resp;
+        num += lam_nm * w;
+        den += w;
+    }
+    if !num.is_finite() || !den.is_finite() || den <= 0.0 {
+        return None;
+    }
+    let lam = num / den;
+    if lam.is_finite() && lam > 0.0 {
+        Some(lam)
+    } else {
+        None
+    }
+}
+
 pub fn sed_to_bp_rp(bins: &[(f64, f64, f64)], ebv: Option<f64>) -> Option<f64> {
     let table = passband_table();
     if table.len() < 2 {
@@ -715,6 +758,37 @@ mod tests {
             "a point source carries no band"
         );
         assert!(!band_overlap(f64::NAN, 20.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn bp_rp_to_lambda_reads_the_passband_shift() {
+        let hot = bp_rp_to_lambda_nm(-0.1).unwrap();
+        let solar = bp_rp_to_lambda_nm(0.82).unwrap();
+        let cool = bp_rp_to_lambda_nm(2.0).unwrap();
+        assert!(hot > 320.0 && hot < 1100.0, "hot {hot} nm");
+        assert!(solar > 320.0 && solar < 1100.0, "solar {solar} nm");
+        assert!(cool > 320.0 && cool < 1100.0, "cool {cool} nm");
+        assert!(hot < solar, "a hot star is bluer: {hot} vs {solar}");
+        assert!(solar < cool, "a cool star is redder: {solar} vs {cool}");
+    }
+
+    #[test]
+    fn bp_rp_to_lambda_is_monotone_over_the_locus() {
+        let mut prev = f64::NEG_INFINITY;
+        for &(ci, _) in COLOR_LOCUS.iter() {
+            let lam = bp_rp_to_lambda_nm(ci).unwrap();
+            assert!(
+                lam >= prev,
+                "lambda must not fall with color: {ci} -> {lam} after {prev}"
+            );
+            prev = lam;
+        }
+    }
+
+    #[test]
+    fn bp_rp_to_lambda_refuses_nonfinite_color() {
+        assert!(bp_rp_to_lambda_nm(f64::NAN).is_none());
+        assert!(bp_rp_to_lambda_nm(f64::INFINITY).is_none());
     }
 
     #[test]

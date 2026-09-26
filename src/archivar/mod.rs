@@ -55,6 +55,7 @@ pub mod fits;
 pub mod fk;
 pub mod flac;
 pub mod footprint;
+pub mod fresnel;
 pub mod fugin;
 pub mod gaia_sso;
 pub mod galileo_odr;

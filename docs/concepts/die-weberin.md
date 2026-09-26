@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: 35ed50064c75a3bb6d10e09eee9dfd7e7709e58320081a6ff4f86a990c61e2a3
+  sha256: a5ca7c8ff9013348a348eef929714a70b100b6a59ade72c7d33df2cc084466d4
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
 -->
@@ -249,7 +249,16 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    `weberin_body_verdict` (Kern `src/weberin.rs`,
    `BodyOutcome::Riss { knot: [BodyLine; 2] }`), `gaia_sso_weave_probe` —
    der Verdict für Körper (Placed/Absent/DirectionOnly statt der einen
-   Linie), MPC-Bahnen gegen die Ephemeris-Punkte.
+   Linie), MPC-Bahnen gegen die Ephemeris-Punkte. Die Kometen-Keplerlinie
+   ist verdoppelt: neben der dcom5-Linie (`encke` → `2P`,
+   `BodyLine::Dastcom`) steht die cometels-Linie (`encke` → `2P/Encke`),
+   gebaut als `CometelsRec`/`CometelsOutcome`/`CometelsVerdict` in
+   `src/weberin.rs` — dieselbe Faltung (q/(1−e) → a, n·(epoch−tp) → M) wie
+   der `cometels_compiler`. Die breite TNO-Kette (`mpcorb_extended` →
+   `mpcorb.bin`/`mpcorb_distant.bin`) tritt über `small_body_number`
+   (BODY_NUMBER ∪ TNO_NAME) in dieselbe MPC-Zweitlinie ein: jeder TNO
+   trägt sein MPC-Verdict, die SPK-Erstlinie der breiten Kette ist
+   `absent` — eine Registraturpflicht, nie 0.0.
 2. Die Stations-Konvergenz: **gebaut + gemessen** — `station_convergence_probe`
    (Workflow `station-convergence.yml`), der Verdict für Stationen auf den
    schon fließenden fanout-Ringen, ohne neues Netz; erster gemessener Punkt:

@@ -2,7 +2,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::archivar::dastcom::{CometRec, comet_state_at};
-use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec};
+use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec, tno_number};
+use crate::archivar::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
 use crate::archivar::mpcorb::{self, MpcorbRec};
 use crate::archivar::{
     AsteroidRec, BodyEphemeris, J2000_EPOCH, body_barycenter_position, state_at,
@@ -150,6 +151,72 @@ pub struct BodyVerdict {
     pub outcome: BodyOutcome,
 }
 
+#[derive(Clone, Debug)]
+pub struct CometelsRec {
+    pub desig: String,
+    pub epoch_jd: f64,
+    pub e: f64,
+    pub q_au: f64,
+    pub incl_deg: f64,
+    pub node_deg: f64,
+    pub peri_deg: f64,
+    pub tp_jd: f64,
+}
+
+impl CometelsRec {
+    pub fn state_at(&self, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
+        if !self.e.is_finite() || !(0.0..1.0).contains(&self.e) {
+            return None;
+        }
+        if !self.q_au.is_finite() || self.q_au <= 0.0 {
+            return None;
+        }
+        let a_au = self.q_au / (1.0 - self.e);
+        let a_m = a_au * AU_M;
+        let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
+        let ma_deg = ((n * (self.epoch_jd - self.tp_jd) * 86400.0)
+            .rem_euclid(std::f64::consts::TAU))
+        .to_degrees();
+        elements_to_icrs_state(&KeplerElements {
+            a_au,
+            e: self.e,
+            incl_deg: self.incl_deg,
+            node_deg: self.node_deg,
+            peri_deg: self.peri_deg,
+            ma_deg,
+            epoch_jd: self.epoch_jd,
+            t_jd,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CometelsLine {
+    Spk,
+    Cometels,
+}
+
+impl CometelsLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            CometelsLine::Spk => "spk-ephemeris",
+            CometelsLine::Cometels => "cometels-keplerian",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum CometelsOutcome {
+    Placed { sep_m: f64 },
+    Riss { sep_m: f64, knot: [CometelsLine; 2] },
+    Absent { line: CometelsLine },
+}
+
+pub struct CometelsVerdict {
+    pub name: String,
+    pub outcome: CometelsOutcome,
+}
+
 pub struct BodyThread {
     pub name: String,
     pub rec: Option<AsteroidRec>,
@@ -211,10 +278,23 @@ pub fn body_number(name: &str) -> Option<u32> {
         .map(|(_, num)| *num)
 }
 
+pub fn small_body_number(name: &str) -> Option<u32> {
+    body_number(name).or_else(|| tno_number(name))
+}
+
 pub const BODY_COMET: &[(&str, &str)] = &[("encke", "2P")];
 
 pub fn comet_desig(name: &str) -> Option<&str> {
     BODY_COMET
+        .iter()
+        .find(|(n, _)| *n == name)
+        .map(|(_, desig)| *desig)
+}
+
+pub const BODY_COMETELS: &[(&str, &str)] = &[("encke", "2P/Encke")];
+
+pub fn cometels_desig(name: &str) -> Option<&str> {
+    BODY_COMETELS
         .iter()
         .find(|(n, _)| *n == name)
         .map(|(_, desig)| *desig)
@@ -276,7 +356,7 @@ pub fn build_threads(
         let comet = comet_desig(name)
             .and_then(|desig| by_desig.get(desig).copied())
             .cloned();
-        let mpc = body_number(name).and_then(|num| mpc_by_num.get(&num).copied());
+        let mpc = small_body_number(name).and_then(|num| mpc_by_num.get(&num).copied());
         threads.push(BodyThread {
             name: name.clone(),
             rec,
@@ -329,6 +409,11 @@ impl Weberin {
             }
         }
         for (n, _) in BODY_COMET {
+            if !names.iter().any(|k| k == n) {
+                names.push((*n).to_string());
+            }
+        }
+        for (n, _) in TNO_NAME {
             if !names.iter().any(|k| k == n) {
                 names.push((*n).to_string());
             }
@@ -445,7 +530,7 @@ impl Weberin {
                 name: t.name.clone(),
                 outcome,
             });
-            if body_number(&t.name).is_some() {
+            if small_body_number(&t.name).is_some() {
                 let mpc_outcome = match (spk, mpc) {
                     (Some(spk_p), Some((helio, _))) => {
                         let sep_m = separation_m(spk_p, add_sun(helio, sun));
@@ -471,6 +556,52 @@ impl Weberin {
             }
         }
         self.woven = true;
+    }
+
+    pub fn weave_cometels(
+        &self,
+        cometels: &[CometelsRec],
+        tdb: f64,
+        tol_kepler_m: f64,
+    ) -> Vec<CometelsVerdict> {
+        let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
+            return Vec::new();
+        };
+        let Some(sun) = body_barycenter_position("sun", tdb, sun_map) else {
+            return Vec::new();
+        };
+        let jd = tdb / 86400.0 + J2000_EPOCH;
+        let mut verdicts = Vec::new();
+        for (name, desig) in BODY_COMETELS {
+            let spk = body_barycenter_position(name, tdb, eph);
+            let kepler = cometels
+                .iter()
+                .find(|c| c.desig == *desig)
+                .and_then(|c| c.state_at(jd));
+            let outcome = match (spk, kepler) {
+                (Some(spk_p), Some((helio, _))) => {
+                    let sep_m = separation_m(spk_p, add_sun(helio, sun));
+                    match classify(sep_m, tol_kepler_m) {
+                        Agreement::Placed { sep_m } => CometelsOutcome::Placed { sep_m },
+                        Agreement::Riss { sep_m } => CometelsOutcome::Riss {
+                            sep_m,
+                            knot: [CometelsLine::Spk, CometelsLine::Cometels],
+                        },
+                    }
+                }
+                (Some(_), None) => CometelsOutcome::Absent {
+                    line: CometelsLine::Cometels,
+                },
+                (None, _) => CometelsOutcome::Absent {
+                    line: CometelsLine::Spk,
+                },
+            };
+            verdicts.push(CometelsVerdict {
+                name: (*name).to_string(),
+                outcome,
+            });
+        }
+        verdicts
     }
 }
 
@@ -521,6 +652,19 @@ mod tests {
             sbnam: [0; 12],
             desig: *b"2P           ",
             comnam: *b"Encke                        ",
+        }
+    }
+
+    fn cometels_encke() -> CometelsRec {
+        CometelsRec {
+            desig: "2P/Encke".to_string(),
+            epoch_jd: J2000_EPOCH,
+            e: 0.848,
+            q_au: 0.336,
+            incl_deg: 11.8,
+            node_deg: 334.0,
+            peri_deg: 186.0,
+            tp_jd: J2000_EPOCH - 40.0,
         }
     }
 
@@ -640,6 +784,20 @@ mod tests {
         w
     }
 
+    fn cometels_weaver(eph_pairs: &[(&str, [f64; 3])], sun: [f64; 3]) -> Weberin {
+        let mut w = Weberin::new();
+        w.feed(WeberinFeed {
+            eph: map_of(eph_pairs),
+            sun: map_of(&[("sun", sun)]),
+            eph_inpop: map_of(&[]),
+            eph_epm: map_of(&[]),
+            recs: Vec::new(),
+            comets: Vec::new(),
+            mpc_recs: Vec::new(),
+        });
+        w
+    }
+
     fn outcome<'a>(w: &'a Weberin, name: &str) -> Option<&'a BodyOutcome> {
         w.verdicts
             .iter()
@@ -652,6 +810,10 @@ mod tests {
             .iter()
             .find(|v| v.name == name)
             .map(|v| &v.outcome)
+    }
+
+    fn cometels_fold<'a>(v: &'a [CometelsVerdict], name: &str) -> Option<&'a CometelsOutcome> {
+        v.iter().find(|x| x.name == name).map(|x| &x.outcome)
     }
 
     fn triad<'a>(w: &'a Weberin, name: &str) -> Option<&'a ThreeWayVerdict> {
@@ -738,6 +900,110 @@ mod tests {
         assert_eq!(comet_desig("encke"), Some("2P"));
         assert_eq!(comet_desig("ceres"), None);
         assert_eq!(comet_desig("halley"), None);
+    }
+
+    #[test]
+    fn cometels_desig_maps_encke_and_leaves_asteroid_names_void() {
+        assert_eq!(cometels_desig("encke"), Some("2P/Encke"));
+        assert_eq!(cometels_desig("ceres"), None);
+        assert_eq!(cometels_desig("halley"), None);
+    }
+
+    #[test]
+    fn small_body_number_maps_tnos_and_asteroids_alike() {
+        assert_eq!(small_body_number("ceres"), Some(1));
+        assert_eq!(small_body_number("quaoar"), Some(50000));
+        assert_eq!(small_body_number("orcus"), Some(90482));
+        assert_eq!(small_body_number("pluto"), Some(134340));
+        assert_eq!(small_body_number("moon"), None);
+        assert_eq!(small_body_number("charon"), None);
+    }
+
+    #[test]
+    fn cometels_state_at_epoch_matches_two_body_radius() {
+        let rec = cometels_encke();
+        let (p, _) = rec.state_at(rec.epoch_jd).unwrap();
+        let r_au = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt() / AU_M;
+        let a_au = rec.q_au / (1.0 - rec.e);
+        let a_m = a_au * AU_M;
+        let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
+        let ma_rad = (n * (rec.epoch_jd - rec.tp_jd) * 86400.0).rem_euclid(std::f64::consts::TAU);
+        let ecc = crate::archivar::kepler::solve_kepler_ecc(ma_rad, rec.e);
+        let expect = a_au * (1.0 - rec.e * ecc.cos());
+        assert!(
+            (r_au - expect).abs() < 1e-9,
+            "r {r_au} au, expect {expect} au"
+        );
+    }
+
+    #[test]
+    fn cometels_weave_places_the_second_comet_kepler_line_against_spk() {
+        let cometels = cometels_encke();
+        let jd = J2000_EPOCH;
+        let (helio, _) = cometels.state_at(jd).unwrap();
+        let sun = [-helio[0], -helio[1], -helio[2]];
+        let w = cometels_weaver(&[("encke", [0.0; 3])], sun);
+        let v = w.weave_cometels(&[cometels], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Placed { sep_m }) => {
+                assert!(sep_m.is_finite(), "a measured separation stays finite");
+                assert!(*sep_m <= WEBERIN_TOL_M, "sep {sep_m:e}");
+            }
+            other => panic!("the cometels line reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_risses_when_the_two_lines_refuse_to_converge() {
+        let w = cometels_weaver(&[("encke", [0.0; 3])], [0.0; 3]);
+        let v = w.weave_cometels(&[cometels_encke()], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Riss { sep_m, knot }) => {
+                assert!(sep_m.is_finite());
+                assert!(
+                    *sep_m > WEBERIN_TOL_M,
+                    "the refusing lines sit far apart: {sep_m}"
+                );
+                match knot {
+                    [CometelsLine::Spk, CometelsLine::Cometels] => {}
+                    other => panic!("the cometels riss knot reads {other:?}"),
+                }
+            }
+            other => panic!("the refusing cometels lines read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_absent_names_the_cometels_line_when_the_catalog_is_void() {
+        let w = cometels_weaver(&[("encke", [0.0; 3])], [0.0; 3]);
+        let v = w.weave_cometels(&[], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Absent { line }) => {
+                assert!(matches!(line, CometelsLine::Cometels));
+            }
+            other => panic!("the cometels-void weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn cometels_weave_absent_names_the_spk_line_when_only_the_cometels_catalog_lies_in() {
+        let w = cometels_weaver(&[], [0.0; 3]);
+        let v = w.weave_cometels(&[cometels_encke()], 0.0, WEBERIN_TOL_M);
+        match cometels_fold(&v, "encke") {
+            Some(CometelsOutcome::Absent { line }) => {
+                assert!(matches!(line, CometelsLine::Spk));
+            }
+            other => panic!("the cometels-only weave reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn tno_mpc_weave_names_the_missing_spk_line() {
+        let w = woven_mpc(&[], [0.0; 3], vec![mpc_rec(50000, 43.6)], WEBERIN_TOL_M);
+        match mpc_outcome(&w, "quaoar") {
+            Some(BodyOutcome::Absent { line }) => assert!(matches!(line, BodyLine::Spk)),
+            other => panic!("the spk-less TNO reads {other:?}"),
+        }
     }
 
     #[test]

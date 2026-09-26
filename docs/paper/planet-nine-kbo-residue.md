@@ -2,7 +2,7 @@
   title: No Arrow Beyond the Family Bound: Planet Nine limits in the Kuiper Belt
   class: paper
   date: 2026-08-22
-  sha256: c8f16a7797de118756112c782bf7e9777924103ef6ec2bb15a9157ac3e28df7f
+  sha256: f86397b5dff416c2737a0ba34a770e178024ca61d01f834935c1cc3a2f5992d6
   fam-machine: pre-fix
   status: live
 -->
@@ -201,9 +201,15 @@ Limits, stated as such: (i) the residue window (±400 yr) is 10⁻⁶ of the sec
 timescale — the measurement is blind to the slow shepherding the hypothesis
 requires; (ii) no selection-function correction — survey bias is not modeled, only
 cited; (iii) the P9 selection holds n = 44, the classic cluster is six objects;
-(iv) the SPK Type-1 reader (modified difference arrays, JPL memorandum 163) is not
-implemented — the merged Voyager kernels wait, the Horizons long windows are the
-standard rail; (v) the c-light-time map is a transient-source heuristic (§3.5);
+(iv) the SPK Type-1 reader (modified difference arrays, JPL memorandum 163) is
+implemented and tested — `bsp_reader/spk.rs`, with `data_type 1` wired in
+`ephemeris.rs`; the counter-check against the real merged Voyager-2 kernel
+`Voyager_2.m05016u.merged.bsp` (6 447 104 B, 11 Type-1 segments, from
+`naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/`) is
+`tools/measure/src/bin/spk_type1_check.rs`, which reads the 1989-08-25 Neptune
+flyby at 30.19 AU and the 2026 state at 141.7 AU — physically correct. The
+generic and DAWN kernels carry `data_type 2` (Chebyshev), so Type-1 is carried by
+the merged Voyager kernels; the Horizons long windows remain the standard rail; (v) the c-light-time map is a transient-source heuristic (§3.5);
 (vi) the model carries Sun+8 gravity only — solar radiation pressure, thermal
   recoil, the galactic tide, and stellar encounters remain in the residue and are
   named, not subtracted. Absent means unmodeled, never zero; (vii) the KDE
