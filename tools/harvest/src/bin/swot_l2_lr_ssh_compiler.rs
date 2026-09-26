@@ -18,7 +18,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const NETLOC: &str = "archive.podaac.earthdata.nasa.gov";
 const BUCKET_PUBLIC: &str = "podaac-swot-ops-cumulus-public";
 const BUCKET_PROTECTED: &str = "podaac-swot-ops-cumulus-protected";
-const PRODUCT_ROOT: &str = "SWOT_L2_LR_SSH_D/";
 const DEFAULT_OUT: &str = "data/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin";
 const MAGIC: [u8; 4] = *b"SWS1";
 const REC_FIELDS: usize = 5;
@@ -173,7 +172,6 @@ fn uri_encode_query(s: &str) -> String {
 struct Obj {
     key: String,
     size: u64,
-    modified: String,
 }
 
 fn xml_text(doc: &str, tag: &str) -> Option<String> {
@@ -193,12 +191,7 @@ fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>)> {
         let block = &after_open[..end];
         let key = xml_text(block, "Key")?;
         let size = xml_text(block, "Size")?.parse::<u64>().ok()?;
-        let modified = xml_text(block, "LastModified")?;
-        objects.push(Obj {
-            key,
-            size,
-            modified,
-        });
+        objects.push(Obj { key, size });
         rest = &after_open[end + "</Contents>".len()..];
     }
     let mut dirs = Vec::new();
@@ -877,65 +870,6 @@ fn creds_for(token: &str, bucket: &str) -> Option<S3Credentials> {
     Some(c)
 }
 
-fn run_list(args: &[String]) {
-    let prefix = arg_value(args, "--prefix").unwrap_or(PRODUCT_ROOT.to_string());
-    let dirs = args.iter().any(|a| a == "--dirs");
-    let max_keys = arg_usize(args, "--max-keys").unwrap_or(LIST_MAX_KEYS as usize) as u32;
-    let protected = args.iter().any(|a| a == "--protected");
-    let bucket = if protected {
-        BUCKET_PROTECTED
-    } else {
-        BUCKET_PUBLIC
-    };
-    let Some(token) = edl_token() else {
-        eprintln!("EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token");
-        std::process::exit(2);
-    };
-    let Some(creds) = creds_for(&token, bucket) else {
-        eprintln!("{} returned void for s3://{}/", NETLOC, bucket);
-        std::process::exit(2);
-    };
-    let Some((objects, truncated, common)) = list_page(bucket, &prefix, dirs, max_keys, &creds)
-    else {
-        eprintln!("the listing of s3://{bucket}/{prefix} returned void");
-        std::process::exit(1);
-    };
-    if dirs {
-        for d in &common {
-            println!("{d}");
-        }
-        eprintln!(
-            "swot-l2-lr-ssh: {} common prefixes under s3://{}/{}",
-            common.len(),
-            bucket,
-            prefix
-        );
-        if truncated {
-            eprintln!("swot-l2-lr-ssh: the listing is truncated — the page is partial");
-        }
-        if common.is_empty() {
-            std::process::exit(1);
-        }
-        return;
-    }
-    println!("#key|size_bytes|last_modified");
-    for o in &objects {
-        println!("{}|{}|{}", o.key, o.size, o.modified);
-    }
-    eprintln!(
-        "swot-l2-lr-ssh: {} keys under s3://{}/{}",
-        objects.len(),
-        bucket,
-        prefix
-    );
-    if truncated {
-        eprintln!("swot-l2-lr-ssh: the listing is truncated — the page is partial");
-    }
-    if objects.is_empty() {
-        std::process::exit(1);
-    }
-}
-
 fn run_harvest(args: &[String]) {
     let out_path = arg_value(args, "--out").unwrap_or(DEFAULT_OUT.to_string());
     let limit = arg_usize(args, "--limit").unwrap_or(2).clamp(1, 8);
@@ -1036,7 +970,7 @@ fn run_harvest(args: &[String]) {
             Some(p) => p,
             None => {
                 eprintln!(
-                    "usage: swot_l2_lr_ssh_compiler --prefix <p> | --granule <key> [--protected] [--limit N] [--out <path>] [--ci-mode] | --list [--prefix <p>] [--dirs] [--max-keys N] [--protected] — refused"
+                    "usage: swot_l2_lr_ssh_compiler --prefix <p> | --granule <key> [--protected] [--limit N] [--out <path>] [--ci-mode] — refused"
                 );
                 std::process::exit(2);
             }
@@ -1149,11 +1083,7 @@ fn run_harvest(args: &[String]) {
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--list") {
-        run_list(&args);
-    } else {
-        run_harvest(&args);
-    }
+    run_harvest(&args);
 }
 
 #[cfg(test)]
