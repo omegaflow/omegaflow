@@ -3,7 +3,7 @@
   session: Mycelium-Folge 168
   class: handover
   date: 2026-09-26
-  sha256: 1d0c0bc8ccdb2de10239f4ce666a07a9e1a643df974e2f372176c3cb030ae4c5
+  sha256: df0e6a1340d86d833f8eadbbee7a8f0c396ec280d37bf2f964c07acf0960de98
   status: live
 -->
 # Handover — Mycelium-Folge 168 (2026-09-26)
@@ -132,6 +132,23 @@ behoben (--out + Altitude nun Pflicht). Was offen bleibt, steht unten.
 - **Braucht:**   Arm bauen (mountain-Linie) oder die `blocked parser-def`-Registrierung in den Twin-Einträgen
   von phi/sources.φ (gavo:7458, padc:7469, voparis:7480, skvo:9526 — gleiche falsche Spalten)
   mitziehen.
+
+#### Secrets ohne Disposition — welche die Weberin braucht
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Curation-/Weberin-Pass.
+- **Lage:** (gemessen 2026-09-26 via `general`, Homepage) sechs lebende
+  Datenquellen-Credentials in `.secrets.local` ohne `phi`-Disposition:
+  `GFW_PASS` (Global Forest Watch / Global Nature Watch, `data-api.globalforestwatch.org` 200),
+  `GOSAT_GW_MAIL`/`GOSAT_GW_PASS` (GOSAT-GW, NIES/JAXA; Homepage pending),
+  `IGETS2_PASS`/`IGETS2_USER` (IGETS, GFZ ISDC/EOST), `RUBIN_PASS` (Rubin/LSST),
+  `BABAMUL_*` (Babamul Alert-Broker, Caltech/Univ. Minnesota, Kafka),
+  `MOVEBANK_*` (Movebank, Max-Planck Animal-Tracking). Quelle:
+  `docs/surveys/survey-2026-09-26-secrets-inventar.md`.
+- **Blockade:** keine.
+- **Braucht:** je Quelle entscheiden — die Weberin braucht sie → registrieren
+  (`phi/sources.φ` per `docs/SOURCE_PORT.md`) oder `declined`; die Infra-/LLM-Keys
+  (`FLY_API_TOKEN`, `UNOROUTER_*`, `ZAI_*`, `GEMINI_API_KEY`, `CLOUDFLARE_*`) einem
+  Konsumenten zuordnen oder entfernen.
 
 ### Operator
 

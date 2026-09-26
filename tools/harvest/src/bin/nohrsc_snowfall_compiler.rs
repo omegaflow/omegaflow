@@ -65,8 +65,7 @@ fn run(args: &[String]) -> Result<(), String> {
     if stride == 0 {
         return Err("--stride carries no positive sampling step".to_string());
     }
-    let out = arg_value(args, "--out")
-        .ok_or_else(|| "--out (path) required".to_string())?;
+    let out = arg_value(args, "--out").ok_or_else(|| "--out (path) required".to_string())?;
 
     let url = format!("{BASE}/{year}{month:02}/sfav2_CONUS_24h_{year}{month:02}{day:02}12.nc");
     let bytes = fetch(&url).ok_or_else(|| format!("{url}: fetch void"))?;
