@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 9de9eb41e1ee902a8d2a9b83152b49fc5993fdc214b9723cfec2d848d19239ee
+  sha256: ca96e898135ec07ee9ffff47e0901ce436b558c3b425146c508cafc66196d6c9
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -73,5 +73,69 @@ messenger, near, rosetta.
 
 ## Offen / Befunde (Schritt-für-Schritt, je Freigabe)
 
-1. `omegaflow-legacy` (ohne `target/`) nach `projects/archive/omegaflow-legacy` verschoben (Code in Git-Historie). `knowledge/` und `backups/` bleiben als **Sicherungs-Archive in situ** — nichts im Repo referenziert sie; eine Umlagerung dieser ~50 G irreplacebarer Sicherungsdaten bedarf einer eigenen, definierten Ziel-Layout-Entscheidung, kein Blindwurf.
+1. `omegaflow-legacy` (ohne `target/`) nach `projects/archive/omegaflow-legacy` verschoben (Code in Git-Historie). `knowledge/` und `backups/` bleiben als **Sicherungs-Archive in situ** — nichts im Repo referenziert sie; eine Umlagerung dieser ~50 G irreplacebarer Sicherungsdaten bedarf einer eigenen, definierten Ziel-Layout-Entscheidung, kein Blindwurf. Vorlage: „Ziel-Layout — Migrationsplan" unten.
 2. **Lokalisierung der Serien `abk_dbdt_1h_*`, kegel-Log, GIC/corona: `descoped`** — als Datei nirgends unter allen Holdings vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`). Gemessen 2026-09-26: keine eigenen Quellen, sondern lokale Probe-Logs (`signalkegel_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`); `abk_dbdt_1h` ist registriert → phi/sources.φ:1567, GIC ebenso → phi/sources.φ:8642/8762.
+
+## Ziel-Layout — Migrationsplan (Vorlage, 2026-09-26)
+
+Status: **Vorlage** — der Plan stoppt am Operator-Wort. Es wird kein
+Verzeichnis angelegt und keine Datei bewegt, bis das Wort steht. Die Holdings
+liegen außerhalb des Repos (`~/knowledge`, `~/backups`) und bleiben ungetrackt;
+getrackt ist nur diese Vorlage.
+
+### Drei Ziele, ein Satz je Datensatz
+
+- **cache-root** (`~/.local/state/omegaflow/archivar_cache/`): Live-Staging,
+  flache Dateien (AGENTS „The Cache Ablage"). Füllung lazy.
+- **CDN** (`omegaflow/sources`, Netloc-Releases): dauerhaftes Heim; dorthin
+  nur über die Registry — `phi/sources.φ`-`url`-Zeile + CI-Manifestation
+  (AGENTS „CDN-Manifestation"). Lokale Kopie = Sicherung.
+- **archive-root** (`$HOME/backup/archive-root/`): unbewegliches Altgut
+  (Sitzungs-/Nachweis-/Rohdaten ohne CDN-Heim).
+
+### Zielstruktur (Vorschlag)
+
+- `knowledge/` bleibt das lokale Sicherungs-Archiv in situ:
+  - `knowledge/data/` — Staging-Kandidaten (Ephemeriden, `omni2_serie.bin`):
+    zuerst cache-root + CDN-Registrierung; der lokale Rest ist Backup.
+  - `knowledge/archive/data/` — Roh-Ernte (`abk`, `opencode-tmp`,
+    `jwst-harvest`): je Datensatz prüfen — registriert → CDN; sonst
+    archive-root.
+  - `knowledge/sessions/`, `knowledge/provenance/` — Archivgut ohne CDN-Heim:
+    bleiben `knowledge/` (oder archive-root).
+- `backups/` bleibt der lokale Sicherungs-Root, nach Dedup auf die
+  Unique-Bytes geschrumpft:
+  - `backups/omegaflow/` — Repo-Snapshot: dedup gegen Repo + CDN; nur die
+    gitignorierten Messdaten bleiben, die keinen Live-/CDN-Zwilling haben.
+  - `backups/omegaflow-worktrees/` — Worktree-Snapshots: dedup gegen Repo.
+  - `backups/state/omegaflow/` — Live-State-Kopie: dedup gegen Live-State.
+
+### Was wohin — Mapping (heute → Ziel)
+
+| Holding (heute) | Ziel | gitignored | CDN |
+|---|---|---|---|
+| `knowledge/data` (1,5 G: Ephemeriden, `omni2_serie.bin`) | cache-root (gestaged) + CDN-Registrierung | ja | die registrierten |
+| `knowledge/archive/data` (15 G: abk, opencode-tmp, jwst-harvest) | registrierte → CDN; Rest archive-root | ja | teilweise |
+| `knowledge/sessions` (5,1 G) | `knowledge/` / archive-root (kein CDN) | ja | nein |
+| `knowledge/provenance` (2,4 G) | `knowledge/` / archive-root (kein CDN) | ja | nein |
+| `backups/omegaflow` (16 G) | dedup gegen Repo+CDN; Unique-Bytes bleiben Backup | ja | die registrierten |
+| `backups/omegaflow-worktrees` (6,5 G) | dedup gegen Repo | ja | nein |
+| `backups/state/omegaflow` (194 M) | dedup gegen Live-State | ja | nein |
+
+### Schrittfolge (jeder Schritt endet an der Kante)
+
+1. **Operator-Wort** zum Ziel-Layout (dieser Plan) — der einzige Trigger.
+2. **Byte-Messung** je Holding gegen Live-Cache / `phi/sources.φ`+CDN / Repo
+   (vor jedem Move): was ist ein byte-identisches Duplikat, was unique.
+3. **Registry-first** für jeden Mess-Datensatz: `url`-Zeile in
+   `phi/sources.φ` → CI-Manifestation → CDN; erst danach ist die lokale Kopie
+   „Sicherung".
+4. **Move nur der Unique-Bytes** in die Zielwurzel; Dedup-Duplikate erst
+   löschen, wenn Schritt 2/3 sie als ersetzt gemessen haben (`0 honored`:
+   ohne Nachbau-Quelle nichts löschen).
+5. Sitzungs-/Nachweis-Daten (kein CDN-Heim) folgen dem Operator-Wort ins
+   Zielgewölbe; kein Blindwurf über ~50 G.
+
+**Kante:** Der Plan legt nichts an und verschiebt nichts. Er wartet auf das
+Operator-Wort zum Ziel-Layout; danach ist jeder der obigen Schritte ein
+eigener, gemessener Move.

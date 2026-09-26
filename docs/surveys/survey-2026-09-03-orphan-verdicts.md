@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: 7d2302be9e5c07fee3cc5e7f4777ca8d1b3dd239528ce9f8207aa8f82e7a8d75
+  sha256: 5e894a12754f870af63c65aa0894d258089dc6ddabba17c717234140fc047afe
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -93,5 +93,9 @@ bleibt bei unklaren Einzelfällen offen.
 ## Registrierung
 
 Die Disposition der 55 undocumented `stale_pending` ist **erledigt**
-(2026-09-26, siehe oben). Offen bleibt allein Step 4 (CI-Dedupe), gegen die
-gemessene Job-Zahl (health-check 4, kernel-flatten 18) zu fassen.
+(2026-09-26, siehe oben). Step 4 (CI-Dedupe) ist **gefasst** (2026-09-26) als
+Abschnitt „Schritt 4 — CI-Dedupe (konkretisiert 2026-09-26)" in
+`docs/auftrag/archiv/auftrag-saubere-datenbank.md`: die zwei Hauptklassen sind
+gegenüber der Baseline (health-check 4 → 3, kernel-flatten 18 → 5 Jobs)
+verschlankt; offen ist der Klassen-Zensus über die 315 Workflows. Step 5
+(CDN-kanonisch) bleibt offen.
