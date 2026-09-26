@@ -1220,6 +1220,48 @@ fn bump_class(counts: &mut Vec<(String, usize)>, class: &str) {
     counts.push((class.to_string(), 1));
 }
 
+fn scan_funding(dir: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let entries = match fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return out,
+    };
+    let mut paths: Vec<PathBuf> = entries.flatten().map(|e| e.path()).collect();
+    paths.sort();
+    for path in paths {
+        if !path.is_file() {
+            continue;
+        }
+        let name = file_name_string(&path);
+        if !is_doc_name(&name) {
+            continue;
+        }
+        let text = match fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let (class, date, status) = parse_header(&text);
+        let open_count = text.lines().filter(|l| open_marker_matches(l)).count();
+        out.push(format!(
+            "FUNDING\t[future]\t{}\t{}\t{}\t{}\t{}",
+            if class.is_empty() {
+                "-"
+            } else {
+                class.as_str()
+            },
+            if date.is_empty() { "-" } else { date.as_str() },
+            if status.is_empty() {
+                "no-header"
+            } else {
+                status.as_str()
+            },
+            open_count,
+            path.to_string_lossy()
+        ));
+    }
+    out
+}
+
 fn run_open() {
     let archiv = collect_archiv_basenames();
     let mut docs: Vec<String> = Vec::new();
@@ -1279,6 +1321,8 @@ fn run_open() {
         }
     }
 
+    let funding = scan_funding("state/funding");
+
     let head = current_head_short();
     let now_min = now_minutes();
     let mut zustand_out: Vec<String> = Vec::new();
@@ -1296,6 +1340,9 @@ fn run_open() {
     );
 
     for line in &docs {
+        println!("{}", line);
+    }
+    for line in &funding {
         println!("{}", line);
     }
     for line in &unverifiable {
@@ -1414,8 +1461,9 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} funding, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
         docs.len(),
+        funding.len(),
         opens.len(),
         released.len(),
         dups.len(),

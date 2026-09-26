@@ -56,14 +56,14 @@ zeile trägt ihren Lage-Stempel `(gemessen …)` — eine ungemessene Vorbereitu
 driftet wie die alte Sammel-Zeile.
 
 **Sortierung — umsetzbar zuerst; kein Punkt steht über einem Punkt** (Operator-Wort,
-2026-09-26; ersetzt die Akteur-Sortierung). Die Tafel wird nach **Umsetzbarkeit**
-geordnet, das Dispatchbare zuerst: (1) was die Maschine jetzt autonom bis zur Kante
-arbeiten kann (`eigen`, keine Blockade), dann (2) die **operator-gebundene
-Vorbereitung** (Entwurf/Messung bis zur Kante gebaut, nur das Operator-Wort fehlt),
-dann (3) die **blockierten/wartenden** Punkte mit Trigger oder Datum, dann (4) die
-**externen** Akte (Dritter). Der Akteur wird je Punkt als `Bindung` benannt, ist
-aber nicht die Sortier-Achse. Innerhalb eines Rangs steht kein Punkt über einem
-anderen — die Ordnung ist die Umsetzbarkeit, nicht der Wert.
+2026-09-26; der Vier-Rang gestrichen 2026-09-26). Die Tafel listet das Dispatchbare
+zuerst: jeder Punkt wird zu seiner Kante gearbeitet (auch die Kanten-Vorbereitung
+eines `blockiert`/`wartend`-Punkts), dann folgen die Punkte ohne Schritt zur Kante,
+je mit ihrem Trigger oder ihrer Blockade. Es gibt keine Sortierung nach Akteur
+(`eigen`/`operator`/`Dritter`) und keinen Rang unter den nicht-arbeitbaren Punkten —
+die Ordnung ist die Umsetzbarkeit, nie der Wert; ein nicht-arbeitbarer Punkt trägt
+seinen Trigger, keinen Rang. Der Akteur wird je Punkt als `Bindung` benannt, ist
+aber nicht die Sortier-Achse.
 Die Status-Tags sind die Dispatch-Achse: `autonom` (`eigen`, wird dispatcht)
 → `operator-gebunden` (nur der Akt nach dem Operator-Wort) → `blockiert` →
 `wartend` → `termin` → `LOCK`. **Jeder Punkt wird bis zur Kante gearbeitet (Kante =
