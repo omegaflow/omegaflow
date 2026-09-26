@@ -22,3 +22,7 @@ note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 
 disponiert
 kandidat https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter
 note 2026-09-23 HTTP 200 JSON, flaches Array von Objekten alle Werte String; Pflichtparameter start/end/minmag (limit wirkungslos); Route in phi/sources.φ eingegangen (map ., lat/lon/epoch/mag_type_key, magnitude+depth).
+
+disponiert
+nachlauf docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
+note survey 2026-09-14 gemessen 2026-09-26: 26/26 Pendings im Register (sources.φ:869,811,819,843,3494,7821,8122,8207,8763,9343; declined_sources.φ:2270,1391,1407,1011), nur ERI compiler-pending (noaa_nodd_disposition.φ:50)
