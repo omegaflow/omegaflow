@@ -1,4 +1,5 @@
 use omegaflow::cdn::upload_release;
+use omegaflow::cometels::{CometelsRec, DESIG_BYTES, write_catalog};
 use omegaflow::inflate::gunzip;
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
@@ -41,7 +42,15 @@ fn jd_from(y: f64, m: f64, d_frac: f64) -> Option<f64> {
     Some(days + (d_frac - 1.0) + 2440587.5)
 }
 
-fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
+fn evaluate_elements(obj: &HashMap<String, JsonVal>) -> Option<CometelsRec> {
+    let name = get_str(obj, "Designation_and_name")
+        .or_else(|| get_str(obj, "Provisional_packed_desig"))?;
+    let bytes = name.as_bytes();
+    if bytes.is_empty() || bytes.len() >= DESIG_BYTES {
+        return None;
+    }
+    let mut desig = [0u8; DESIG_BYTES];
+    desig[..bytes.len()].copy_from_slice(bytes);
     let e = get_num(obj, "e")?;
     let q = get_num(obj, "Perihelion_dist")?;
     let incl = get_num(obj, "i")?;
@@ -57,22 +66,42 @@ fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
         get_num(obj, "Epoch_month")?,
         get_num(obj, "Epoch_day")?,
     )?;
-    if e >= 1.0 || q <= 0.0 {
+    if !e.is_finite() || !(0.0..1.0).contains(&e) {
         return None;
     }
-    let a = q / (1.0 - e);
-    let a_m = a * AU_M;
-    let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
-    let ma_deg = ((n * (epoch_jd - tp_jd) * 86400.0).rem_euclid(TAU)).to_degrees();
-    let (p, _) = elements_to_icrs_state(&KeplerElements {
-        a_au: a,
+    if !q.is_finite() || q <= 0.0 {
+        return None;
+    }
+    if !incl.is_finite() || !node.is_finite() || !peri.is_finite() {
+        return None;
+    }
+    Some(CometelsRec {
+        desig,
+        epoch_jd,
         e,
+        q_au: q,
         incl_deg: incl,
         node_deg: node,
         peri_deg: peri,
+        tp_jd,
+    })
+}
+
+fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
+    let rec = evaluate_elements(obj)?;
+    let a = rec.q_au / (1.0 - rec.e);
+    let a_m = a * AU_M;
+    let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
+    let ma_deg = ((n * (rec.epoch_jd - rec.tp_jd) * 86400.0).rem_euclid(TAU)).to_degrees();
+    let (p, _) = elements_to_icrs_state(&KeplerElements {
+        a_au: a,
+        e: rec.e,
+        incl_deg: rec.incl_deg,
+        node_deg: rec.node_deg,
+        peri_deg: rec.peri_deg,
         ma_deg,
-        epoch_jd,
-        t_jd: epoch_jd,
+        epoch_jd: rec.epoch_jd,
+        t_jd: rec.epoch_jd,
     })?;
     let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
     if !r.is_finite() || r <= 0.0 {
@@ -107,6 +136,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;
+    let mut catalog: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<String> = None;
     let mut i = 1;
@@ -118,6 +148,10 @@ fn main() {
             }
             "--out" => {
                 out = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--catalog" => {
+                catalog = args.get(i + 1).cloned();
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -200,6 +234,40 @@ fn main() {
             }
         }
         eprintln!("probe: {} not present", name);
+        return;
+    }
+    if let Some(catalog_path) = &catalog {
+        let mut recs: Vec<CometelsRec> = Vec::new();
+        let mut skipped = 0usize;
+        for v in &arr {
+            if let JsonVal::Obj(obj) = v {
+                match evaluate_elements(obj) {
+                    Some(r) => recs.push(r),
+                    None => skipped += 1,
+                }
+            } else {
+                skipped += 1;
+            }
+        }
+        let bytes = write_catalog(&recs);
+        match std::fs::write(catalog_path, &bytes) {
+            Ok(()) => {}
+            Err(err) => {
+                eprintln!("write {}: {}", catalog_path, err);
+                std::process::exit(1);
+            }
+        }
+        eprintln!(
+            "cometels catalog: {} element record(s) written, {} skipped (e>=1 or void fields), {} B → {}",
+            recs.len(),
+            skipped,
+            bytes.len(),
+            catalog_path
+        );
+        if ci_mode && !upload_release("www.minorplanetcenter.net", catalog_path) {
+            eprintln!("upload: {} did not reach the CDN", catalog_path);
+            std::process::exit(1);
+        }
         return;
     }
     let out_path = match out {
