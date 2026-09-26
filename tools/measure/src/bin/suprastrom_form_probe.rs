@@ -149,10 +149,7 @@ fn main() {
 
     match &best {
         Some((id, label, tc, chi, rho0)) => {
-            let Some(c) = candidates
-                .iter()
-                .find(|c| &c.id == id && &c.label == label)
-            else {
+            let Some(c) = candidates.iter().find(|c| &c.id == id && &c.label == label) else {
                 println!("  verdict: candidate absent from the series set — not computable");
                 return;
             };
