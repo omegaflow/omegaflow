@@ -3,7 +3,7 @@
   session: River-Folge 37
   class: handover
   date: 2026-09-26
-  sha256: 7a5c8c9106cd7b83c82798ec5741b881e98d78e4d248f798ca14ea9ce130a93a
+  sha256: af964d40647868b23ac45da52b86095894fef02bac9620b9b90faebffa73cbbf
   status: live
 -->
 # Handover — River-Folge 37 (2026-09-26)
@@ -58,17 +58,19 @@ Diese Session konsumierte `handover-2026-09-26-river-folge36.md` (jetzt in
 #### star-dmax-probe dispatchten + Artefakt falten (RISS-Zeuge)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Commit+Push dieser Session steht, `star-dmax-probe.yml` auf `main`.
-- **Lage:** (gemessen 2026-09-26 via git/sread) Probe-Bin
+- **Lage:** (gemessen 2026-09-26 via git/sread/`gh workflow run`) Probe-Bin
   `tools/measure/src/bin/star_dmax_probe.rs` (399 Zeilen) und Workflow
-  `.github/workflows/star-dmax-probe.yml` (40 Zeilen) gebaut, **uncommitted**;
-  lokaler `--span`-Pass: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21
+  `.github/workflows/star-dmax-probe.yml` (40 Zeilen) sind mit `f9ea3284` auf `main`;
+  der Lauf wurde dispatcht, Run `36240676551`
+  (https://github.com/omegaflow/omegaflow/actions/runs/36240676551). Lokaler
+  `--span`-Pass: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21
   (≈ 58 kpc), EPOCH_MIN = EPOCH_MAX = 0.0; daraus `cell_size_star ≈ 2.57e19 m`
   und heutige Hülle `rho_star ≈ c·8.4e8 s + pad ≈ 8.2 pc` (< eine Zelle). Der volle
   `d_max`/ECDF/`f_excl`-Lauf ist ungemessen; die zwei RISS-Zeugenlinien bleiben
   ungeglättet getragen.
-- **Blockade:** keine — der CI-Dispatch hängt am Commit.
-- **Braucht:** `git commit`+`push`, dann `gh workflow run star-dmax-probe.yml`,
-  `ci_manage list` (Run-id), `ci_manage view <id>`, Artefakt lesen; RISS-Zeile per
+- **Blockade:** keine — der Lauf ist dispatcht, das Artefakt fehlt noch.
+- **Braucht:** Run `36240676551` mit `ci_manage view 36240676551` lesen, Artefakt
+  lesen; RISS-Zeile per
   Schwelle schließen (`f_excl > 0.5` / `f_inc > 0` / interdecile > 10 bei irgendeinem
   Floor → Insert-Fix widerlegt, Query-Seite steht). **Der Harte-Läufe-LOCK fällt erst,
   wenn der Folgelauf die drei Umgehungen (Bootstrap `main_flow.rs:191-241`, Per-Tick-Fetch
