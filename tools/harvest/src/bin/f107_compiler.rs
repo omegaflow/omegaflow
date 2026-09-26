@@ -118,7 +118,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("www.ngdc.noaa.gov", &out) {
+    if ci_mode && !upload_release("ngdc.noaa.gov", &out) {
         std::process::exit(1);
     }
 }

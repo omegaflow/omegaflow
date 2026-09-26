@@ -24,7 +24,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view www.ogimet.com --repo omegaflow/sources \
+          if gh release view ogimet.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ogimet_synop.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ogimet_synop.bin already present — manifest skipped"
@@ -32,12 +32,12 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset ogimet_synop.bin missing — compiling and manifesting"
           fi
-      - name: Ensure the www.ogimet.com release exists on the CDN
+      - name: Ensure the ogimet.com release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          if ! gh release view www.ogimet.com --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.ogimet.com --repo omegaflow/sources \
-              --title "www.ogimet.com" \
+          if ! gh release view ogimet.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ogimet.com --repo omegaflow/sources \
+              --title "ogimet.com" \
               --notes "OGIMET decoded SYNOP series compiled to a binary asset (CDN tag = netloc)"
           fi
       - name: Compile and manifest the OGIMET SYNOP series to the CDN
