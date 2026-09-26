@@ -39,6 +39,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mjy" => Some(value * 1e-29),
         "ujy" => Some(value * 1e-32),
         "sfu" => Some(value * 1e-22),
+        "millionths" => Some(value * 2.0 * std::f64::consts::PI * 6.957e8 * 6.957e8 * 1e-6),
         "au" => Some(value * 1.495978707e11),
         "pc" => Some(value * 3.085677581e16),
         "mpc" => Some(value * 3.085677581e22),

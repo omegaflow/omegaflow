@@ -963,6 +963,15 @@ field 0.speed exosphere_ace_speed_kms inverse-square advective km/s 360.0 0.0 0.
 field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
 field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
+url https://services.swpc.noaa.gov/json/solar_regions.json
+ttl 3600
+at sun
+map .
+lat latitude
+lon carrington_longitude
+field area swpc_solar_region_area_millionths inverse-square em millionths 86400 0.0 0.0
+field extent swpc_solar_region_extent_deg inverse-square em deg 86400 0.0 0.0
+
 url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
 at earth
