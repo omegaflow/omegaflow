@@ -6,7 +6,7 @@ use omegaflow::archivar::hamqsl::{
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 
-const NETLOC: &str = "www.hamqsl.com";
+const NETLOC: &str = "hamqsl.com";
 const URL: &str = "https://www.hamqsl.com/solarxml.php";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {

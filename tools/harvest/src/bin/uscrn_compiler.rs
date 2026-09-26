@@ -6,7 +6,7 @@ use omegaflow::archivar::noaa_nodd::{
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 
-const NETLOC: &str = "www.ncei.noaa.gov";
+const NETLOC: &str = "ncei.noaa.gov";
 const BUCKET: &str = "https://www.ncei.noaa.gov/pub/data/uscrn/products";
 const STATIONS: &str = "https://www.ncei.noaa.gov/pub/data/uscrn/products/stations.tsv";
 

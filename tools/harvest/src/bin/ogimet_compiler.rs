@@ -6,7 +6,7 @@ use omegaflow::archivar::geo::{
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 
-const NETLOC: &str = "www.ogimet.com";
+const NETLOC: &str = "ogimet.com";
 const BASE: &str = "https://www.ogimet.com/cgi-bin/gsynres";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {

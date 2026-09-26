@@ -3,7 +3,7 @@ use omegaflow::cdn::upload_release;
 use std::fs::{self, File};
 use std::process::Stdio;
 
-const GEOAZUR_NETLOC: &str = "www.geoazur.fr";
+const GEOAZUR_NETLOC: &str = "geoazur.fr";
 const BASE_URL: &str = "https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/";
 const OUT_ROOT: &str = "data";
 

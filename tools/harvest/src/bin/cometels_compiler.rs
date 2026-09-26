@@ -264,7 +264,7 @@ fn main() {
             bytes.len(),
             catalog_path
         );
-        if ci_mode && !upload_release("www.minorplanetcenter.net", catalog_path) {
+        if ci_mode && !upload_release("minorplanetcenter.net", catalog_path) {
             eprintln!("upload: {} did not reach the CDN", catalog_path);
             std::process::exit(1);
         }
@@ -329,7 +329,7 @@ fn main() {
         buf.len(),
         out_path
     );
-    if ci_mode && !upload_release("www.minorplanetcenter.net", &out_path) {
+    if ci_mode && !upload_release("minorplanetcenter.net", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }

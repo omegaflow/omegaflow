@@ -490,8 +490,8 @@ fn main() {
     earth_map.insert("earth".to_string(), earth);
 
     let obslist_text = match ensure_bin(
-        "data/www.geoazur.fr/apdb_obslist.opt",
-        "www.geoazur.fr",
+        "data/geoazur.fr/apdb_obslist.opt",
+        "geoazur.fr",
         "apdb_obslist.opt",
     ) {
         Some(b) => String::from_utf8_lossy(&b).to_string(),
@@ -506,87 +506,87 @@ fn main() {
 
     let series: Vec<Series> = vec![
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_usno",
+            path: "data/geoazur.fr/apdb_neptune_transit_usno",
             frame: Frame::AppTopo,
             name: "HILTON USNO",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_besa",
+            path: "data/geoazur.fr/apdb_neptune_transit_besa",
             frame: Frame::AppTopo,
             name: "HILTON BESA",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_camb",
+            path: "data/geoazur.fr/apdb_neptune_transit_camb",
             frame: Frame::AppTopo,
             name: "HILTON CAMB",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_cape",
+            path: "data/geoazur.fr/apdb_neptune_transit_cape",
             frame: Frame::AppTopo,
             name: "HILTON CAPE",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_radc",
+            path: "data/geoazur.fr/apdb_neptune_transit_radc",
             frame: Frame::AppTopo,
             name: "HILTON RADC",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_gren",
+            path: "data/geoazur.fr/apdb_neptune_transit_gren",
             frame: Frame::AppTopo,
             name: "HILTON GREN",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_gtok",
+            path: "data/geoazur.fr/apdb_neptune_transit_gtok",
             frame: Frame::AppTopo,
             name: "HILTON GTOK",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_nice",
+            path: "data/geoazur.fr/apdb_neptune_transit_nice",
             frame: Frame::AppTopo,
             name: "HILTON NICE",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_pari",
+            path: "data/geoazur.fr/apdb_neptune_transit_pari",
             frame: Frame::AppTopo,
             name: "HILTON PARI",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_stra",
+            path: "data/geoazur.fr/apdb_neptune_transit_stra",
             frame: Frame::AppTopo,
             name: "HILTON STRA",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_toul",
+            path: "data/geoazur.fr/apdb_neptune_transit_toul",
             frame: Frame::AppTopo,
             name: "HILTON TOUL",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_uccl",
+            path: "data/geoazur.fr/apdb_neptune_transit_uccl",
             frame: Frame::AppTopo,
             name: "HILTON UCCL",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_usno_urss",
+            path: "data/geoazur.fr/apdb_neptune_transit_usno_urss",
             frame: Frame::AppGeo,
             name: "URSS USNO",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_nik",
+            path: "data/geoazur.fr/apdb_neptune_transit_nik",
             frame: Frame::AppGeo,
             name: "URSS NIK",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_golo",
+            path: "data/geoazur.fr/apdb_neptune_transit_golo",
             frame: Frame::AppGeo,
             name: "URSS GOLO",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_transit_tky",
+            path: "data/geoazur.fr/apdb_neptune_transit_tky",
             frame: Frame::AppGeo,
             name: "URSS TKY",
         },
         Series {
-            path: "data/www.geoazur.fr/apdb_neptune_photo_nik",
+            path: "data/geoazur.fr/apdb_neptune_photo_nik",
             frame: Frame::B1950Geo,
             name: "NIK photo B1950",
         },
@@ -599,7 +599,7 @@ fn main() {
     let mut total_skipped = 0usize;
 
     for s in &series {
-        let asset = match s.path.strip_prefix("data/www.geoazur.fr/") {
+        let asset = match s.path.strip_prefix("data/geoazur.fr/") {
             Some(a) => a,
             None => {
                 eprintln!(
@@ -609,7 +609,7 @@ fn main() {
                 continue;
             }
         };
-        let Some(bytes) = ensure_bin(s.path, "www.geoazur.fr", asset) else {
+        let Some(bytes) = ensure_bin(s.path, "geoazur.fr", asset) else {
             println!("{:<18} absent", s.name);
             continue;
         };

@@ -6,7 +6,7 @@ use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const CDN_TAG: &str = "www.ncdc.noaa.gov";
+const CDN_TAG: &str = "ncdc.noaa.gov";
 const STATIONS_URL: &str = "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations";
 const DATA_URL: &str = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data";
 const DATATYPE: &str = "TMAX";
