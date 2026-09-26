@@ -845,7 +845,9 @@ fn probe_chunks(path: &str, dataset: &str) {
             .get(addr as usize..(addr as usize + 8))
             .map(|s| s.to_vec())
         else {
-            eprintln!("probe-chunks {dataset}: chunk {coords:?} at {addr} head absent (out of bounds)");
+            eprintln!(
+                "probe-chunks {dataset}: chunk {coords:?} at {addr} head absent (out of bounds)"
+            );
             continue;
         };
         eprintln!("probe-chunks {dataset}: chunk {coords:?} at {addr} head={head:02x?}");
