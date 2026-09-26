@@ -3,7 +3,7 @@
   session: Mycelium-Folge 169
   class: handover
   date: 2026-09-26
-  sha256: 7447302e6e58890a19cff0e5821bee3accf9a193a0d10e5b041d0014fc26b66f
+  sha256: f3b5acaddf65be30332e6c202bb8b5c79cfe2150e3b5d916fb9fec9b65328e11
   status: live
 -->
 # Handover — Mycelium-Folge 169 (2026-09-26)
@@ -21,19 +21,12 @@ bestätigten Plan aus (9 Taucher in zwei Wellen).
 
 ### Linie (eigen)
 
-#### Register-Delta `phi/sources.φ` +86 / `phi/blocked_sources.φ` −197 — Mountain
-- **Status:** wartend | **Bindung:** eigen→mountain
-- **Trigger:** Mountain-Pass folge168.
-- **Lage:** (gemessen 2026-09-26 via `git log -S`) `git log -S 'gll_rss_rsr.bin' -- phi/sources.φ` ist leer (nie committet); die Compiler `gll_rss_rsr/atdf`, `messenger_tnf`, `ams02_tdat` kamen aus `e6b92b605` „mountain folge167"; untracked `gll-rss-atdf-cdn.yml` (Mountain); `blocked_sources.φ` −197 = unit-auto-detect-Verdikte (GFZ Kp/SN, IERS EOP, JMA) → `descoped`. Rat-Verdikt 2026-09-26: fremd, nicht committen — eine Pflicht an fremder uncommitteter Arbeit würde die Autorschaft fälschen.
-- **Blockade:** fremde uncommittete Arbeit in Mischdatei; Mycelium kann sie path-scoped nicht committen, ohne Mountains −197 mitzunehmen.
-- **Braucht:** Mountain committet +86 (CDN-Registrierung der eigenen Compiler) + −197 (Verdikt-Umstellung) im eigenen Pass.
-
-#### Secrets-Einträge GOSAT-GW / Rubin — staged in `phi/blocked_sources.φ`
-- **Status:** wartend | **Bindung:** eigen (Mischdatei)
-- **Trigger:** nächster pathspec-Commit der Datei durch den Owner.
-- **Lage:** (gemessen 2026-09-26 via `git apply --cached`) +9 gestaged: `pending` GOSAT-GW (`https://www.gosat-gw.nies.go.jp`, Homepage pending, nur Wayback 2022-09-06), `blocked account` Rubin (`https://data.lsst.cloud/api/tap/sync`, OAuth 401). GFW in `phi/declined_sources.φ` committet (derived-satellite-product); IGETS/BABAMUL bereits registriert, MOVEBANK bereits declined; Infra-/LLM-Keys (`FLY_*`, `UNOROUTER_*`, `ZAI_*`, `GEMINI_API_KEY`, `CLOUDFLARE_*`) = nicht-Datenquelle.
-- **Blockade:** nicht allein committbar (Pathspec zieht Mountains −197, Vollindex zieht Mountains gestagten Rename).
-- **Braucht:** mit dem Mountain-Delta im Owner-Pathspec committen; dann Eintrag als committet führen.
+#### Secrets-Einträge GOSAT-GW / Rubin — staged in `phi/blocked_sources.φ`, entblockt
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `/commit`-Wort.
+- **Lage:** (gemessen 2026-09-26 via `git show --stat` + `git diff --cached --stat`) Mountain hat `cc991b751` gepusht: `phi/sources.φ` +88, `phi/blocked_sources.φ` (−169/+33), 8 eigene Dateien — über temporären Index (HEAD + nur eigene Pfade), die fremden +9 blieben unangetastet gestaged. Jetzt trägt `git diff --cached --stat` **nur** `phi/blocked_sources.φ` +9 (GOSAT-GW `pending`; Rubin/LSST `blocked account`, OAuth 401). Kein fremder Hunk mehr für diese Datei im Index → path-scoped committbar.
+- **Blockade:** keine.
+- **Braucht:** `git commit phi/blocked_sources.φ -m "…"` (genau die eigenen +9); /commit-Wort.
 
 #### Neue Ports hamqsl/ogimet/nohrsc — CDN-Workflows gebaut, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
@@ -122,7 +115,7 @@ Die ersten zwei Träger-Schritte sind aus folge168 übernommen und in diesem Ato
 
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
-- `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen gemessen (GFW declined committet; GOSAT-GW/Rubin staged), nächster Schritt: Committierung mit Mountain-Delta.
+- `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen gemessen (GFW declined committet; GOSAT-GW/Rubin staged), nächster Schritt: Committierung der eigenen +9 path-scoped (Mountain `cc991b751` gepusht).
 
 ## Abschluss
 

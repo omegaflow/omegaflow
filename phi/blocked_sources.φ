@@ -325,3 +325,12 @@ url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 reg https://datadc.ihep.ac.cn/resource/astro/lhaaso
 note LHAASO-Roh-/Rekonstruktionsdaten nur als Kollaborationsmitglied (Politiktext 2026-09-26); API /api/dataset/12/search 200: 18 Datensätze (4 Rohdaten-Klassen gated); Survey-Event-Listen nicht public.
 
+pending
+url https://www.gosat-gw.nies.go.jp
+note GOSAT-GW (NIES/JAXA-Nachfolgemission zu GOSAT-2): Homepage pending (nur Wayback 2022-09-06), kein Daten-Endpoint; Konto-Credential GOSAT_GW_MAIL/PASS vorhanden. Register-Duty bei Datenverfügbarkeit.
+
+blocked account
+url https://data.lsst.cloud/api/tap/sync
+reg https://data.lsst.cloud
+note Rubin/LSST TAP erfordert OAuth (401 Authorization Required, gemessen 2026-09-26); em-Photometrie (echte Messung); Daten-Release pending. RUBIN_USER/RUBIN_PASS vorhanden.
+
