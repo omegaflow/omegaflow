@@ -6,6 +6,7 @@ use omegaflow_measure::depthphase::{
     MIN_MAG, P_WAVELET_S, P_WINDOW_AFTER_ORIGIN_S, REGION, SEARCH_START, SECONDARY_CORR_MIN,
     SNR_GATE, STATION_URL,
 };
+use omegaflow_measure::picker;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -118,11 +119,11 @@ fn main() {
             eprintln!("{key} carries no decodable record — skipped");
             continue;
         };
-        let Some(t_p) = dp::p_onset(&samples, rate) else {
+        let Some(t_p) = picker::p_onset(&samples, rate) else {
             eprintln!("{key} carries no P pick — skipped");
             continue;
         };
-        let bp = dp::bandpass(&samples, rate);
+        let bp = picker::bandpass(&samples, rate);
         let i_p = dp::onset_index(&samples, rate, t_p);
         let Some(snr) = dp::onset_snr(&bp, rate, i_p) else {
             eprintln!("{key} carries no noise floor — skipped");

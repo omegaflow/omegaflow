@@ -1,7 +1,6 @@
-use omegaflow_measure::depthphase::{
-    StationTerm, arc_deg, arg_value, bandpass, median, unix_to_iso,
-};
+use omegaflow_measure::depthphase::{StationTerm, arc_deg, arg_value, median, unix_to_iso};
 use omegaflow_measure::miniseed::decode_body;
+use omegaflow_measure::picker;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -298,7 +297,7 @@ fn main() {
             stations[ref_idx].net, stations[ref_idx].sta
         )) {
             (Some(200), b) => match decode_body(&b) {
-                Some((samples, rate)) => Some((bandpass(&samples, rate), rate)),
+                Some((samples, rate)) => Some((picker::bandpass(&samples, rate), rate)),
                 None => None,
             },
             _ => None,
@@ -341,7 +340,7 @@ fn main() {
                 absent[i] += 1;
                 continue;
             };
-            let bp = bandpass(&samples, rate);
+            let bp = picker::bandpass(&samples, rate);
             if bp.len() < hi {
                 absent[i] += 1;
                 continue;

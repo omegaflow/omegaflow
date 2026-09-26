@@ -1662,8 +1662,17 @@ impl OmegaLoop {
                     self.perm_log_gen = self.ring_gen;
                     let _ = writeln!(
                         f,
-                        "{},{},{},{},{},{},{}",
-                        self.ring_gen, omega_sum, g, v_c, target, alpha, self.field_permeability
+                        "{},{},{},{},{},{},{},{},{},{}",
+                        self.ring_gen,
+                        omega_sum,
+                        g,
+                        v_c,
+                        target,
+                        alpha,
+                        self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
+                        self.tone_scale,
+                        self.field_permeability * self.tone_scale,
+                        self.field_permeability
                     );
                 }
             }
