@@ -2406,6 +2406,10 @@ decline aggregate-index
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 note GFZ Kp-Index (3h, geomagnetisch, skalar) — decline aggregate-index.
 
+decline aggregated-index
+url https://kp.gfz.de/fileadmin/files_for_gfz_cms/Kp_ap_since_1932.txt
+note Kp/ap seit 1932, 30 #-Header, blankgetrennt YYY MM DD hh.h hh._m days days_m Kp ap D, Kp Spalte 7 dimensionslos, CC BY 4.0 — aggregierter positionsloser Index (§8). Gemessen 2026-09-26: HTTP 200, 16610922 B; gfz-hpo-Kp_def-{year}.txt 404.
+
 decline catalog
 url https://ladsweb.modaps.eosdis.nasa.gov/api/v2/content/details
 note LAADS-Produktkatalog.
