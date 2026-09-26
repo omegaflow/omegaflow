@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: ca30b7ea80f66eb2769e362ac811f2447c78b82878ed233819c49f414d4c70db
+  sha256: ba9c1e46daf7e0cadaebd2b780641911133fb92f6dee53b9b6bb50d9945a8d40
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -155,7 +155,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Positive Maske — ODF-Regel + Slab2-Ersatzroute gemessen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) Picker kanonisiert (`picker.rs`); Slab2 ScienceBase 403 direct+Proton `blocked`, **Wayback-Route live** und **Slab2-Arm gebaut** (`slab2_compiler.rs`, `.grd` netCDF-4 → **1,021,034 Records**; `sources.φ`-origin auf die Wayback-Route aktualisiert). Galileo-ODF-Trenner geklärt: **820-013/209G** (nicht 810-005), Separator = **Format-ID Bits 129–131**; 1988er-SIS text-bestätigt (`pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/DOCUMENT/TRK_2_18.TXT`, 60720 B), Format-2 golden-verifiziert (`odf.rs:52–100`), rev-G-Scan ohne Text-Layer (OCR offen).
+- **Lage:** (gemessen 2026-09-26) Picker kanonisiert (`picker.rs`); Slab2 ScienceBase 403 direct+Proton `blocked`, **Wayback-Route live** und **Slab2-Arm gebaut** (`slab2_compiler.rs`, `.grd` netCDF-4 → **1,021,034 Records**; `sources.φ`-origin auf die Wayback-Route aktualisiert). Galileo-ODF-Trenner geklärt: **820-013/209G** (nicht 810-005), Separator = **Format-ID Bits 129–131**; 1988er-SIS text-bestätigt (`pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/DOCUMENT/TRK_2_18.TXT`, 60720 B), Format-2 golden-verifiziert (`odf.rs:52–100`). **OCR (2026-09-26, WUSTL-Mirror `dsn_trk-2-18.1988-10-15.pdf`, da der JPL-Host 429te):** Table 3b bestätigt — Word 5, Bits **129–131**, 3 b, `Format ID`; Format 1 → `= 1`, Format 2 → `= 2` (1996er Rev); Field-Maps unverändert.
 - **Blockade:** keine.
 - **Braucht:** `slab2-cdn.yml` lesen; ODF rev-G OCR (vision) oder die zwei Beine als abgeschlossen tragen.
 
@@ -367,8 +367,8 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geglaubt
 (kein Punkt wird als Wahrheit getragen, was keine Messung hat):
 
-- **Galileo Borduhr:** DESCANSO Monograph Vol. 14 (Radio Science, 52 MB) nicht
-  OCR'd; 209G rev-G ist ein Scan ohne Text-Layer (OCR offen).
+- **Galileo Borduhr:** DESCANSO Monograph Vol. 14 (Radio Science, 52 MB) nicht OCR'd
+  (das TRK-2-18/209G ist OCR'd, s. Positive Maske).
 - **JUICE:** OMNI2-Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) →
   Verifikationskanal, nicht Füllkanal.
 - **Weberin cometels:** `mpcorb_extended.json.gz` sha nur partiell (74,2 MB);
