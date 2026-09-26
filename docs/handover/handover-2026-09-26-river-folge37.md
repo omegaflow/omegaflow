@@ -3,7 +3,7 @@
   session: River-Folge 37
   class: handover
   date: 2026-09-26
-  sha256: af964d40647868b23ac45da52b86095894fef02bac9620b9b90faebffa73cbbf
+  sha256: d0356a932abd4217fce7285398d15db5e56b47235141f06553c790b359c5dfdd
   status: live
 -->
 # Handover — River-Folge 37 (2026-09-26)
@@ -49,7 +49,9 @@ Diese Session konsumierte `handover-2026-09-26-river-folge36.md` (jetzt in
   `36237216821` **pending** (dispatch 10:54:58Z, head `07d4b899`), paralleler
   Schedule-Lauf `36236800246` in_progress; `ci-check` `36239540093` pending;
   `paper-check` jüngster `36235264452` failure (fremde `terminologie-der-gegenstroemung`
-  sha-Mismatch; gic steht mit sha-Match in der Liste, nicht im `->`).
+  sha-Mismatch; gic steht mit sha-Match in der Liste, nicht im `->`). **Der letzte
+  dispatchte Lauf auf `f9ea3284` (`star-dmax-probe`, `36240676551`) ist `failure` —
+  fremder `llnl_g3d`-Modulbruch (`error[E0583]`, `src/archivar/mod.rs:96`).**
 
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
@@ -61,16 +63,24 @@ Diese Session konsumierte `handover-2026-09-26-river-folge36.md` (jetzt in
 - **Lage:** (gemessen 2026-09-26 via git/sread/`gh workflow run`) Probe-Bin
   `tools/measure/src/bin/star_dmax_probe.rs` (399 Zeilen) und Workflow
   `.github/workflows/star-dmax-probe.yml` (40 Zeilen) sind mit `f9ea3284` auf `main`;
-  der Lauf wurde dispatcht, Run `36240676551`
+  der Lauf wurde dispatcht, Run `36240676551` = **failure** (head `f9ea3284`;
+  fremde Modul-Blockade, siehe Blockade)
   (https://github.com/omegaflow/omegaflow/actions/runs/36240676551). Lokaler
   `--span`-Pass: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21
   (≈ 58 kpc), EPOCH_MIN = EPOCH_MAX = 0.0; daraus `cell_size_star ≈ 2.57e19 m`
   und heutige Hülle `rho_star ≈ c·8.4e8 s + pad ≈ 8.2 pc` (< eine Zelle). Der volle
   `d_max`/ECDF/`f_excl`-Lauf ist ungemessen; die zwei RISS-Zeugenlinien bleiben
   ungeglättet getragen.
-- **Blockade:** keine — der Lauf ist dispatcht, das Artefakt fehlt noch.
-- **Braucht:** Run `36240676551` mit `ci_manage view 36240676551` lesen, Artefakt
-  lesen; RISS-Zeile per
+- **Blockade:** fremder Commit-Bruch außerhalb Rivers: `src/archivar/mod.rs:96`
+  deklariert `pub mod llnl_g3d;`, aber `src/archivar/llnl_g3d.rs` ist **untracked**
+  (`git ls-files src/archivar/llnl_g3d.rs` leer; `src/archivar/emc.rs` tracked) —
+  das committete HEAD kompiliert die lib nicht, die Stufe
+  `Run the star d_max distribution measurement` scheitert mit
+  `error[E0583]: file not found for module llnl_g3d` (Run `36240676551`, exit 101).
+- **Braucht:** die fremde Linie committet `src/archivar/llnl_g3d.rs` (oder zieht
+  die Deklaration in `src/archivar/mod.rs:96` zurück), bis das committete HEAD
+  wieder baut; dann `star-dmax-probe` neu dispatchen, Artefakt mit
+  `ci_manage view <neue id>` lesen; RISS-Zeile per
   Schwelle schließen (`f_excl > 0.5` / `f_inc > 0` / interdecile > 10 bei irgendeinem
   Floor → Insert-Fix widerlegt, Query-Seite steht). **Der Harte-Läufe-LOCK fällt erst,
   wenn der Folgelauf die drei Umgehungen (Bootstrap `main_flow.rs:191-241`, Per-Tick-Fetch
