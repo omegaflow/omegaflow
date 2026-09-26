@@ -168,11 +168,17 @@ pub fn parse_odr(bytes: &[u8]) -> Option<Vec<OdrRecord>> {
     Some(out)
 }
 
+const ODR_ARCHIVE_FIRST_YEAR: u16 = 1990;
+const ODR_ARCHIVE_LAST_YEAR: u16 = 2003;
+
 pub fn year_full(year: u8) -> Option<u16> {
-    match year {
-        90..=99 => Some(1900 + u16::from(year)),
-        _ => None,
-    }
+    let two_digit = u16::from(year);
+    [1900u16, 2000u16]
+        .into_iter()
+        .map(|century| century + two_digit)
+        .find(|candidate| {
+            *candidate >= ODR_ARCHIVE_FIRST_YEAR && *candidate <= ODR_ARCHIVE_LAST_YEAR
+        })
 }
 
 pub fn time_tag_unix(year: u16, doy: u16, time_tag_ms: u32) -> Option<f64> {
@@ -392,13 +398,17 @@ mod tests {
     }
 
     #[test]
-    fn year_full_extends_the_measured_decade() {
+    fn year_full_maps_the_measured_mission_span() {
+        assert_eq!(year_full(90), Some(1990));
         assert_eq!(year_full(96), Some(1996));
         assert_eq!(year_full(97), Some(1997));
-        assert_eq!(year_full(90), Some(1990));
         assert_eq!(year_full(99), Some(1999));
-        assert_eq!(year_full(3), None);
-        assert_eq!(year_full(0), None);
+        assert_eq!(year_full(0), Some(2000));
+        assert_eq!(year_full(1), Some(2001));
+        assert_eq!(year_full(2), Some(2002));
+        assert_eq!(year_full(3), Some(2003));
+        assert_eq!(year_full(4), None);
+        assert_eq!(year_full(89), None);
     }
 
     #[test]
