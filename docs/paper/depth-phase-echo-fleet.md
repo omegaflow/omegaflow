@@ -2,7 +2,7 @@
   title: The echo depth — pP/sP depth phases across a 16-event fleet
   class: paper
   date: 2026-09-12
-  sha256: 29a111ab24d05c839a854059bd01cd81147bcca4f649a736fa62bf65cde1f577
+  sha256: 3cdbb22c8db1eacae43be11e4d33e5a0ec8c1bb5e69ff3499837637f6d66bbc4
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -41,6 +41,18 @@ Named limits and pendings:
 - The ambiguous pP branch at Δ ≈ 30° (triplication) and the coda locking of the correlation are the measured bottleneck; the Δ-gate skips branch-unstable stations by name, never feeding an ambiguous pick into the inversion.
 - R_pp/R_sp: R_pp is negative across the pilot band (zero crossing 53.9°, pilot ≈ 27.5° → −0.65), R_sp ≈ −1; derived from the ak135 surface layer with energy conservation.
 - Data provenance, named honestly: USGS FDSN event catalog, IRIS fdsnws/station, EarthScope fdsnws/dataselect, GEOFON fdsnws/event; the flat CDN asset fdsn_waveform.bin. The NASA ADS bibcodes are a literature crosscheck only.
+
+## Fleet re-run with the sP gate set (2026-09-27, run 36278125524)
+
+The dual-phase fit now carries a set gate (the sP |corr| lower quartile, 0.78) and the
+8-event fleet is re-measured. The Δ-gate skipped 63 stations fleet-wide as
+branch-unstable/fold (pP fold band); the after-exclusion mean offset is **+1.5 km** over
+6 events (event-to-event sd 37.6 km, se 15.3 km). The **weighted joint fit** reads mean
+offset **−18.4 km** over 5 events (sd 18.7, se 8.4); the **dual-phase fit** reads mean
+offset **−8.2 km** over 5 events (sd 19.6, se 8.8). sP |corr| distribution (n = 13):
+min 0.75, p25 0.79, median 0.82, p75 0.86, max 0.92. Pending (not smoothed):
+`usp000crt6`, `usp000gs2v` (0 stations inverted a depth, 12 skipped each). The sP gate is
+no longer unset — the dual-phase fit is measured.
 
 ## References
 

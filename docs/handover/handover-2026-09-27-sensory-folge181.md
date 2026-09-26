@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: e16d373d269e2add1107ad512850a4736b58099aa1d951a5b1d4c63b12275c78
+  sha256: ffb9a0288aa17d3b01bc5662203b2a5553bf2b710266acab5a72e70106101081
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -60,15 +60,14 @@ getrackt, nie am CDN.
 - **Braucht:** Download über den Browser (SPA/Download-Manager mit Browser-Integration)
   **vor 09/28**; oder einen WAF-fähigen Weg.
 
-### 5. #4 Seismik-Flotte — Messläufe dispatcht
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** Messläufe enden
-- **Lage:** (gemessen 2026-09-27) dispatcht: `cmt-ndk-fleet 36278088711`,
-  `depth-phase-fleet 36278125524`, `depth-phase 36278126974`; Träger
-  `depth-phase-echo-fleet.md` — sP-corr-Verteilung (n=30, median 0.82) gemessen, Gate
-  schwellenlos; `die-akteure-im-boden-und-wasser.md:85` Gravimeter-SFTP offen.
-- **Blockade:** Gravimeter-SFTP (Zugang); sonst keine.
-- **Braucht:** Läufe via `ci_manage view` lesen; Dual-Phase-Gate-Schwelle setzen
-  (`depth-phase-echo-fleet.md:35-38`).
+### 5. #4 Seismik-Flotte — gemessen (Dual-Phase-Fit mit Gate), Gravimeter offen
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-27) `depth-phase-fleet`/`depth-phase`/`cmt-ndk-fleet` alle
+  **success**; Dual-Phase-Fit mit gesetztem sP-Gate (0.78): mean offset **−8.2 km**
+  (5 Events, se 8.8), weighted joint −18.4 km; eingetragen in
+  `depth-phase-echo-fleet.md` (§Fleet re-run).
+- **Blockade:** keine (Gravimeter-SFTP separat).
+- **Braucht:** offen nur noch `die-akteure-im-boden-und-wasser.md:85` Gravimeter-SFTP.
 
 ### 6. #5 Blatt-1-Bojen-Matrix — Hintergrundzyklus
 - **Status:** wartend | **Bindung:** eigen | **Trigger:** Rotor-Zyklus (~16 h)
