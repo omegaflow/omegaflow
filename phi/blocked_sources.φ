@@ -76,9 +76,9 @@ pending
 url https://regards.cnes.fr/api/v1/rs-order
 note DEMETER Order 18387 DONE_WITH_WARNING; statusDate 2026-09-25T15:08Z; filesInErrorCount 96978; availableFilesCount 0; product GET …/files/<md5> HTTP 500/0 B; online:false
 
-pending
+descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
-note Dataverse doi:10.7910/DVN/K88GFI Größe gemessen 2026-09-26 API: 309865090866 B / 100 fits.gz (größte 3159522164 B); Parser sources.φ:9628; anonymer Weg TAP decaps_dr2.object; Ernte pending.
+note Dataverse doi:10.7910/DVN/K88GFI API 200 (72473 B) 2026-09-26; anonymer TAP-Weg decaps_dr2.object live 200 (443699 B, 5000 rows, FORMAT c=203) → integriert phi/sources.φ:9704-9715 (format tap, ttl 31536000); kein Konto-Gate.
 
 blocked account
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
