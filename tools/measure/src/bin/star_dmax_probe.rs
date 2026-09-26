@@ -1,4 +1,4 @@
-use omegaflow::archivar::{C_LIGHT, NAIF_LSK_EMBEDDED, build_star_samples, lsk};
+use omegaflow::archivar::{C_LIGHT, NAIF_LSK_EMBEDDED, build_star_samples, lsk, parse_sources};
 use std::collections::HashMap;
 
 struct Floor {
@@ -20,6 +20,7 @@ fn arg_parse(v: &str) -> Option<f64> {
 
 fn main() {
     let mut bin_path = String::from("data/ssd.jpl.nasa.gov/dr3_stars.bin");
+    let mut sources_path = String::from("phi/sources.φ");
     let mut floors: Vec<Floor> = Vec::new();
     let mut force_ref = 1.0f64;
     let mut expose_offsets: Vec<i32> = vec![0];
@@ -33,6 +34,11 @@ fn main() {
             "--bin" => {
                 if let Some(v) = args.next() {
                     bin_path = v;
+                }
+            }
+            "--sources" => {
+                if let Some(v) = args.next() {
+                    sources_path = v;
                 }
             }
             "--floor" => {
@@ -112,6 +118,20 @@ fn main() {
             _ => {}
         }
     }
+    let sources = match std::fs::read_to_string(&sources_path) {
+        Ok(c) => parse_sources(&c),
+        Err(_) => {
+            eprintln!(
+                "star_dmax_probe: {} read void — the catalog_epoch stays absent",
+                sources_path
+            );
+            Vec::new()
+        }
+    };
+    let star_epoch = sources
+        .iter()
+        .find(|s| s.format == "catalog_tycho")
+        .and_then(|s| s.catalog_epoch);
     if floors.is_empty() {
         for &off in &expose_offsets {
             for &scale in &softenings {
@@ -152,7 +172,7 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let samples = build_star_samples(&bytes);
+    let samples = build_star_samples(&bytes, star_epoch);
     println!("BIN {} {} bytes", bin_path, bytes.len());
     println!("COUNT {}", samples.len());
     if samples.is_empty() {
