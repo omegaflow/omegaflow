@@ -1,0 +1,36 @@
+name: gll-rss-atdf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gll-rss-atdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if both assets already exist on the CDN
+        id: idempotence
+        run: |
+          present=true
+          for asset in gll_rss_atdf.bin gll_rss_atdf_x.bin; do
+            if ! gh release view pds-rings.seti.org --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$asset"; then
+              present=false
+              echo "asset $asset missing — compiling and manifesting"
+            fi
+          done
+          echo "present=$present" >> "$GITHUB_OUTPUT"
+      - name: Compile and manifest the GLL TRK-2-25 ATDF sky-frequency series to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin gll_rss_atdf_compiler -- --ci-mode
