@@ -129,6 +129,13 @@ pub fn enclosure_presences(
     )]
 }
 
+pub fn source_name(url: &str) -> &str {
+    match url.rsplit('/').next() {
+        Some(name) if !name.is_empty() => name,
+        _ => url,
+    }
+}
+
 pub fn raw_presence_gate(
     i: usize,
     sources: &[SourceConfig],
@@ -147,16 +154,18 @@ pub fn raw_presence_gate(
     let Some(r) = dispatch_reach(&fields, sources[i].ttl as f64) else {
         if fields.is_empty() {
             eprintln!(
-                "source {}: carries no field lines — refused, retry in ttl/Φ",
-                i
+                "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
+                i,
+                sources[i].format
             );
             if let Ok(mut ledger) = refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-field-lines");
             }
         } else {
             eprintln!(
-                "source {}: no field carries a propagation law — refused, retry in ttl/Φ",
-                i
+                "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
+                i,
+                sources[i].format
             );
             if let Ok(mut ledger) = refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-propagation");
@@ -376,7 +385,17 @@ pub fn temporal_ring_shared(
 pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String, usize> {
     let mut uses = std::collections::HashMap::new();
     for s in sources {
-        if s.format == "ephemeris_binary" || s.format == "kernel_text" || s.format == "orbit_bin" {
+        if matches!(
+            s.format.as_str(),
+            "ephemeris_binary"
+                | "kernel_text"
+                | "orbit_bin"
+                | "ephemeris_inpop"
+                | "ephemeris_epm"
+                | "ephemeris_de440"
+                | "ephemeris_de442"
+                | "ephemeris_noe4"
+        ) {
             continue;
         }
         match &s.frame {
@@ -387,6 +406,19 @@ pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String
         }
     }
     uses
+}
+
+pub fn ephemeris_edition_body(url: &str, format: &str) -> Option<String> {
+    let edition = format.strip_prefix("ephemeris_")?;
+    let name = source_name(url);
+    let body = name
+        .strip_prefix(&format!("ephemeris_{edition}_"))?
+        .strip_suffix(".bin")?;
+    if body.is_empty() {
+        None
+    } else {
+        Some(body.to_string())
+    }
 }
 
 pub fn spawn_ephemeris_bootstrap(
@@ -1503,6 +1535,114 @@ pub fn main_flow() {
                         }
                     });
                 }
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "ephemeris_inpop"
+                    | "ephemeris_epm"
+                    | "ephemeris_de440"
+                    | "ephemeris_de442"
+                    | "ephemeris_noe4"
+            ) {
+                let src_idx = i;
+                let src_clone = archive.sources[i].clone();
+                let Some(body) = ephemeris_edition_body(&src_clone.url, &src_clone.format) else {
+                    continue;
+                };
+                let tmp_path =
+                    content_cache(&format!("omegaflow_eph_{}", source_name(&src_clone.url)));
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
+                let in_hull = match archive.body_ephemerides.get(&body) {
+                    Some(eph) => match (body_record_epoch(eph), eph.props.as_ref()) {
+                        (Some(t_r), Some(props)) => {
+                            match body_barycenter_position(&body, t_r, &archive.body_ephemerides) {
+                                Some(pos) => body_in_enclosure(&presences, props, pos, t_r, now),
+                                None => false,
+                            }
+                        }
+                        _ => false,
+                    },
+                    None => false,
+                };
+                if !in_hull {
+                    continue;
+                }
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let lsk_c = lsk.clone();
+                let now_c = now;
+                let tmp_path_c = tmp_path.clone();
+                thread::spawn(move || {
+                    if !cache_fresh(&tmp_path_c, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("ephemeris {}: fetch void — retry in ttl/Φ·2ⁿ", body);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    curves: None,
+                                    spectral: None,
+                                    fetch_ok: false,
+                                    sample_ttl_override: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path_c, &bytes).is_err() {
+                            eprintln!("ephemeris {}: write void — retry in ttl/Φ", body);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                curves: None,
+                                spectral: None,
+                                fetch_ok: true,
+                                sample_ttl_override: None,
+                            });
+                            return;
+                        }
+                    }
+                    if let ExtractResult::WithEphemeris(_, eph) =
+                        extract(&src_clone, &tmp_path_c, now_c, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: Some((body, *eph)),
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    } else {
+                        eprintln!(
+                            "ephemeris {}: extract void — cache dropped, refetch next pass",
+                            body
+                        );
+                        let _ = std::fs::remove_file(&tmp_path_c);
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    }
+                });
                 continue;
             }
             if archive.sources[i].format == "catalog_dastcom" {
@@ -2640,7 +2780,7 @@ pub fn main_flow() {
                     eprintln!(
                         "\r\x1b[K{} {}: {} line oscillators",
                         fmt,
-                        url,
+                        source_name(&url),
                         channels.len()
                     );
                     let _ = ftx.send(FetchResult {
@@ -2713,6 +2853,8 @@ pub fn main_flow() {
                     | "lro_trk"
                     | "hamqsl_solar"
                     | "rx100_luminance"
+                    | "aia"
+                    | "eve"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -2812,7 +2954,12 @@ pub fn main_flow() {
                             fc.clone(),
                         ));
                     }
-                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} oscillators",
+                        fmt,
+                        source_name(&url),
+                        channels.len()
+                    );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -2824,6 +2971,291 @@ pub fn main_flow() {
                         fetch_ok: true,
                         sample_ttl_override: None,
                     });
+                });
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "openneuro_pd_eeg" | "openneuro_brainvision" | "openneuro_eeg" | "openneuro_snirf"
+            ) {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("openneuro").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_openneuro_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    if fmt == "openneuro_snirf" {
+                        let Some(bin) = crate::snirf::parse_bin(&bytes) else {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no SNIR contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        };
+                        eprintln!(
+                            "\r\x1b[K{} {}: {} channels × {} samples over {} wavelengths — parses (no field lines: optode positions carry no body frame)",
+                            fmt,
+                            source_name(&url),
+                            bin.nchan,
+                            bin.pnts,
+                            bin.nwavelengths
+                        );
+                    } else {
+                        let Some(bin) = crate::archivar::openneuro_eeg::parse_bin(&bytes) else {
+                            eprintln!(
+                                "{} {}: bin reads void — {} B carry no EEGB contract",
+                                fmt,
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        };
+                        eprintln!(
+                            "\r\x1b[K{} {}: {} electrodes × {} samples × {} trials — parses (no field lines: electrode positions carry no body frame)",
+                            fmt,
+                            source_name(&url),
+                            bin.nbchan,
+                            bin.pnts,
+                            bin.trials
+                        );
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "catalog_mpcorb"
+                    | "catalog_dcom5"
+                    | "catalog_des_y6"
+                    | "catalog_ossos"
+                    | "catalog_gaia_sso"
+                    | "mpcobs"
+                    | "apdb"
+                    | "solar_system_bodies"
+            ) {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let Some(n) = verify_records(&fmt, &bytes) else {
+                        eprintln!(
+                            "{} {}: bin reads void — {} B carry no {} contract",
+                            fmt,
+                            url,
+                            bytes.len(),
+                            fmt
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} records verified (no field lines: the layout carries no radiative or gravitational scalar)",
+                        fmt,
+                        source_name(&url),
+                        n
+                    );
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
+            if archive.sources[i].format == "spk" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
+                let in_hull = match archive.body_ephemerides.get("sun") {
+                    Some(eph) => match (body_record_epoch(eph), eph.props.as_ref()) {
+                        (Some(t_r), Some(props)) => {
+                            match body_barycenter_position("sun", t_r, &archive.body_ephemerides) {
+                                Some(pos) => body_in_enclosure(&presences, props, pos, t_r, now),
+                                None => false,
+                            }
+                        }
+                        _ => false,
+                    },
+                    None => false,
+                };
+                if !in_hull {
+                    continue;
+                }
+                let pck_bodies = archive.pck_bodies.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("spk").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_spk_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("spk {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("spk {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let Ok(spk) = crate::bsp_reader::spk::SpkFile::open(&tmp_path) else {
+                        eprintln!("spk {}: kernel reads void — retry in ttl/Φ", url);
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
+                    let table = crate::ephemeris::body_table();
+                    let fk = crate::fk::FkFile::parse("");
+                    let mut bodies = 0usize;
+                    for seg in spk.segments() {
+                        let Some(body) = table.get(&seg.target) else {
+                            continue;
+                        };
+                        let wgccre = match pck_bodies
+                            .get(&crate::ephemeris::pck_id_of(seg.target))
+                        {
+                            Some(b) => b.clone(),
+                            None => continue,
+                        };
+                        let (granules, rotations, nutation) = crate::ephemeris::extract_granules(
+                            &spk,
+                            std::slice::from_ref(&spk),
+                            seg.target,
+                            &wgccre,
+                            &[],
+                            &fk,
+                            crate::ephemeris::GRANULE_DAYS,
+                        );
+                        if granules.is_empty() {
+                            continue;
+                        }
+                        let eph_path =
+                            content_cache(&format!("omegaflow_eph_{}_spk.bin", body.name));
+                        if !crate::ephemeris::write_binary(
+                            &eph_path, &body.name, &granules, &rotations, &nutation, &wgccre, None,
+                        ) {
+                            continue;
+                        }
+                        let Ok(bytes) = std::fs::read(&eph_path) else {
+                            continue;
+                        };
+                        let Some(eph) = parse_ephemeris_binary(&bytes) else {
+                            continue;
+                        };
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: Some((body.name.clone(), eph)),
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                        bodies += 1;
+                    }
+                    eprintln!(
+                        "\r\x1b[Kspk {}: {} body line(s) loaded",
+                        source_name(&url),
+                        bodies
+                    );
                 });
                 continue;
             }
@@ -3409,7 +3841,12 @@ pub fn main_flow() {
                             fc.clone(),
                         ));
                     }
-                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} oscillators",
+                        fmt,
+                        source_name(&url),
+                        channels.len()
+                    );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -3557,7 +3994,12 @@ pub fn main_flow() {
                             fc.clone(),
                         ));
                     }
-                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} oscillators",
+                        fmt,
+                        source_name(&url),
+                        channels.len()
+                    );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -4478,16 +4920,18 @@ pub fn main_flow() {
             let Some(r) = dispatch_reach(&fields, archive.sources[i].ttl as f64) else {
                 if fields.is_empty() {
                     eprintln!(
-                        "source {}: carries no field lines — refused, retry in ttl/Φ",
-                        i
+                        "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
+                        i,
+                        archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
                         ledger.register(&archive.sources[i].url, "gate-no-field-lines");
                     }
                 } else {
                     eprintln!(
-                        "source {}: no field carries a propagation law — refused, retry in ttl/Φ",
-                        i
+                        "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
+                        i,
+                        archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
                         ledger.register(&archive.sources[i].url, "gate-no-propagation");

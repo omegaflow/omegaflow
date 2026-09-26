@@ -7,6 +7,7 @@ pub(crate) use std::collections::{HashMap, HashSet};
 pub(crate) use std::process::Command;
 pub(crate) use std::sync::{Arc, OnceLock};
 
+pub mod aia;
 pub mod ak135;
 pub mod allwise;
 pub mod amon;
@@ -51,6 +52,7 @@ pub mod emc;
 pub mod emodnet_hfr;
 pub mod ephemeris;
 pub mod euvs;
+pub mod eve;
 pub mod exclude;
 pub mod f107;
 pub mod fai_kz;
