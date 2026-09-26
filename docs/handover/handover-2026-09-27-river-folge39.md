@@ -3,7 +3,7 @@
   session: River-Folge 39
   class: handover
   date: 2026-09-27
-  sha256: c7418a2ad42609b6d827a3a93a9f01f2991a83ca16af601e1bd20ba60f30eb72
+  sha256: a979811ece197bf4dd6b94b80b84ef2ecab4328599c6100201315665a755df0f
   status: live
 -->
 # Handover — River-Folge 39 (2026-09-27)
@@ -60,12 +60,12 @@ Diese Session konsumierte `handover-2026-09-26-river-folge38.md` (nach
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36277948083` / `ci_manage view 36277951163` — Ergebnis messen.
 
-#### `#body`-Deklaration fehlt — alle Stations-Samples verworfen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** eigen.
-- **Lage:** (gemessen 2026-09-27 via `sread`/`sgrep`) `#body=<body>,<lat>,<lon>,<alt>` ist ein CLI-Arg (`main_flow.rs:800`), kein Registerfeld; `main_flow.rs:1414` baut `Position::Surface` je Station aus dem einen `declared_body`, `main_flow.rs:1418` verwirft ohne `alt` jedes Sample. `phi/` trägt `body=` 0×. Offen ist die Architektur: ein globales `#body` für alle Stationen statt je-Source-Koordinaten.
-- **Blockade:** die Stations-Koordinaten (Operator-Standort = PII) sind nicht im Register.
-- **Braucht:** entscheiden — je-Source-Koordinaten in `phi/sources.φ` (nicht-PII-Stationen) vs. Operator-`#body` zur Laufzeit; erste Messung: `sgrep -i "Surface" phi/sources.φ` + die 10 Stations-Quellen listen.
+#### `#body`-Deklaration — lokale Sensoren
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** keiner — durch Messung geschlossen (gemessen 2026-09-27).
+- **Lage:** (gemessen 2026-09-27 via `sread`) Die folge38-Behauptung „ohne `#body` werden alle Stations-Samples verworfen, 10 Quellen betroffen" ist **falsch**: `#body=<body>,<lat>,<lon>,<alt>` (`main_flow.rs:800`) gate't allein die **lokalen** Sensor-Samples (`sensor_rx` → `sensor_config`, `membrane.rs:422`: Temperatur/Druck/Feuchte/Wind/Mikro/Licht/Batterie/HR/RSC). Die Remote-Quellen tragen ihre Position selbst (`on earth 35.68 139.69 0`, `phi/sources.φ:446`; `stations_lat`/`stations_lon`) — vom `#body` nicht betroffen. Kein Code-Defekt; `#body` ist der Operator-Standort (PII).
+- **Blockade:** keine.
+- **Braucht:** nichts — Betriebsnotiz: `bin/omegaflow '#body=Earth,<lat>,<lon>,<alt>'` für lokale Sensoren.
 
 #### 945 Puls — HR-bpm-Relaxation
 - **Status:** eigen | **Bindung:** eigen
@@ -94,7 +94,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge38.md` (nach
 #### 945-BLE-HR — Puls-Arrival (RR)
 - **Status:** blockiert | **Bindung:** operator
 - **Trigger:** Brustgurt liefert RR.
-- **Lage:** (gemessen 2026-09-26) Bindung gebaut (`ble.rs` HR `0x180d` + RSC `0x1814`); die 945 liefert am Handgelenk HR bpm, kein RR.
+- **Lage:** (gemessen 2026-09-27 via `sgrep`) Bindung gebaut: RSC-Measurement-Char `00002a53` (`ble.rs:31`), `decode_rsc_measurement` (`ble.rs:1267`), HR-Service `0000180d` (`ble.rs:1871`); die 945 liefert am Handgelenk HR bpm, kein RR (sensory folge178, `d766ed9a5`).
 - **Blockade:** RR fehlt am Handgelenk (Hardware).
 - **Braucht:** Brustgurt beschaffen (sensory „RR-Kanal").
 
