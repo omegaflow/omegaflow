@@ -3,7 +3,7 @@
   session: Mycelium-Folge 175
   class: handover
   date: 2026-09-27
-  sha256: aa76ae27fb5809fae4ac5c6027409452fee5ed247d831ee730efc36bff4febe1
+  sha256: 142ec5e678877e6a434b736423b13db33c72bc453d4cef07ae342d1ee1f93c0b
   status: live
 -->
 # Handover — Mycelium-Folge 175 (2026-09-27)
@@ -22,6 +22,7 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge174.md`.
 - Wort | 2026-09-27 | „du machst GOSAT" → GOSAT bleibt Mycelium-Punkt.
 - Wort | 2026-09-27 | „monthly + 8-day als per-Granule-Serie bauen; daily descopen" → modis-cdn per-Granule + Manifest; daily descoped.
 - Wort | 2026-09-27 | „/commit" — Commit-Wort: Eigenarbeit committet + gepusht (`bd8961c2f`).
+- Wort | 2026-09-27 | „lies die secrets local" → `GOSAT_GW_MAIL/PASS` in `.secrets.local` gefunden, als Repo-Secrets gesetzt, `gosat-cdn` dispatcht.
 
 ## Offen (aufgeschlüsselt)
 
@@ -48,12 +49,12 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge174.md`.
 - **Blockade:** Parser-Arm fehlt (mountain); src.pas tot (PostgreSQL `:5432` refused, `/tap/tables` 500).
 - **Braucht:** mountain baut den `epncore-spatial`-Arm; danach Re-Check.
 
-#### GOSAT-GW GWT3F_L1B — Arme + Workflow gebaut, Secrets fehlen
+#### GOSAT-GW GWT3F_L1B — Lauf dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Repo-Secrets `GOSAT_GW_MAIL`/`GOSAT_GW_PASS` gesetzt (externer Akt).
-- **Lage:** (gemessen 2026-09-27 via `gh secret list`) Arme + `gosat-cdn.yml` gebaut (`fae4a5081`), `cargo check` 0/0; die Secrets sind nicht gesetzt (27 Repo-Secrets, kein `GOSAT_GW_*`).
-- **Blockade:** GOSAT-GW-Konto-Zugang (Cookie-Auth) — nur der Operator.
-- **Braucht:** Operator setzt die zwei Repo-Secrets; danach `gh workflow run gosat-cdn.yml -f product=GWT3F_L1B -f start=… -f end=…`, dann `sha256` in `phi/sources.φ` + `blocked_sources.φ` → released.
+- **Trigger:** `gosat-cdn`-Lauf `36280012910` grün.
+- **Lage:** (gemessen 2026-09-27 via `gh secret list`/`gh run list`) Arme + `gosat-cdn.yml` gebaut (`fae4a5081`); Repo-Secrets `GOSAT_GW_MAIL/PASS` gesetzt; Lauf `36280012910` (GWT3F_L1B, 2024-01-01..2026-12-31) queued.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage view 36280012910` bei Abschluss; danach `sha256` in `phi/sources.φ` + `blocked_sources.φ` → released.
 
 #### EMODNET HFRADAR NADR — Termin-Re-Messung
 - **Status:** termin | **Bindung:** termin:2026-10-19
