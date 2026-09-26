@@ -154,10 +154,12 @@ before touching the wire, GPU, or force layers. Core constants that bind every c
 - Lookup: Enclosure Lemma — dilate by `rmax + anchor_vmax·Δt + ½·anchor_amax·Δt² +
   extent`; signal-cone gate; motion laws `Surface`/`Barycenter`/`Linear`; ICRS +
   J2000 (`UNIX_J2000_OFFSET`); embedded leap-second table `naif0012.tls`.
-- Presence-only loading: the Archivar loads only the presence hull, never the whole
-  catalog. The star class (`extent = f64::INFINITY`, `wire_extent` writes 0.0) lives in
-  its own grid with its own `cell_size` — the reach is derived in the query by the
-  transverse gate, never a radial star radius, never a finite star extent (Atom 6/8).
+- Presence-only loading (contract; the star-grid tier is `pending` — the current
+  code still scans the whole star catalog): the Archivar loads only the presence
+  hull, never the whole catalog. The star class (`extent = f64::INFINITY`,
+  `wire_extent` writes 0.0) lives in its own grid with its own `cell_size` — the
+  reach is derived in the query by the transverse gate, never a radial star radius,
+  never a finite star extent (Atom 6/8).
   The diode order: val-gate before `motion.at`, transverse gate after. The jump is
   two-sided (`|dp − |v|·Δt| ≥ Φ·JUMP_GRID`, independent of `v²`); `½·|a|·Δt²` belongs to
   the dilation. One `enclosure_rho`; reader predicate `value >= 0.0`, never `is_finite()`.
