@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: c63f5a1324371e644790cad2150e967b7be4336218f480904c5d7a214f57115f
+  sha256: f4a97ba6c3fd063b32faf8e365df1fdc6918486d63b3a21931e7fb36a45eacc8
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -124,9 +124,9 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 #### Postfach — Ledger-Widerspruch (riss)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Pass / Mail-Eingang.
-- **Lage:** (gemessen 2026-09-26, Future-Folge129) `state/mail/mail_ledger.φ` **existiert** — `wc -l -c` = 164 Zeilen / 1 189 190 B (Einträge mit sehr langen Zeilen); folge168 zitierte `:74-78` (NSSDC). Der Riss ist damit zugunsten „Ledger vorhanden" aufgelöst; nur `mail_digest --last 6` meldet „ledger absent" — der Digest-Pfad ist die Abweichung, nicht der Ledger.
+- **Lage:** (gemessen 2026-09-26, Future-Folge129) `state/mail/mail_ledger.φ` **existiert** — `wc -l -c` = 164 Zeilen / 1 189 190 B (Einträge mit sehr langen Zeilen); folge168 zitierte `:74-78` (NSSDC). Zwei Messungen widersprechen sich: die Datei ist vorhanden, `mail_digest --last 6` meldet „ledger absent". Die **Ursache** des Widerspruchs ist **ungemessen** — kein Arm ist benannt.
 - **Blockade:** keine.
-- **Braucht:** `mail_digest`-Ledgerpfad messen (`tools/service/src/bin/mail_digest.rs`) und den Resolver fixen; bis dahin die Inbox per `smail`/`read` lesen.
+- **Braucht:** erste Messung: `mail_digest`-Ledgerpfad (`tools/service/src/bin/mail_digest.rs`) messen; erst dann den Widerspruch einem Arm zuweisen. Bis dahin die Inbox per `smail`/`read` lesen.
 
 #### NSSDC-Anfragen — Wiedervorlage
 - **Status:** wartend | **Bindung:** dritter
