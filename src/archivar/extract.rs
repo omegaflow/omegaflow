@@ -82,6 +82,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
+        "rx100_luminance" => rx100::parse_bin(bytes),
         _ => None,
     }
 }
@@ -182,6 +183,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             hamqsl::COMP_SOLARFLUX => Some("hamqsl_solarflux_sfu"),
             hamqsl::COMP_SOLARWIND => Some("hamqsl_solarwind_kms"),
             hamqsl::COMP_MAGFIELD => Some("hamqsl_magneticfield_nt"),
+            _ => None,
+        },
+        "rx100_luminance" => match comp {
+            rx100::COMP_LUMINANCE => Some("rx100_luminance_cdm2"),
             _ => None,
         },
         "mitdb" => match comp {

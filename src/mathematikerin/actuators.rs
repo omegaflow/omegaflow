@@ -5,6 +5,11 @@ const MASK_INTENSITY: u8 = 0x01;
 const MASK_PAN: u8 = 0x02;
 const MASK_TILT: u8 = 0x04;
 
+pub const PCM_SAMPLE_RATE_HZ: u32 = 48000;
+pub const PCM_CHANNELS: usize = 2;
+pub const PCM_S16_BOUND: f32 = 32767.0;
+pub const PCM_SAMPLES_PER_TICK: u32 = PCM_SAMPLE_RATE_HZ * LOOP_TICK_MS as u32 / 1000;
+
 pub type Record = SampleRecord;
 
 pub struct PackedWindow {
@@ -19,6 +24,7 @@ pub struct PresenceFrame {
     pub aperture: f32,
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
+    pub tau_ticks: u64,
 }
 
 pub trait KineticRadiator: Send + 'static {
@@ -57,6 +63,41 @@ pub struct AcousticOscillator {
     pub _thread: Option<thread::JoinHandle<()>>,
 }
 
+pub fn tone_hz(tau_ticks: u64) -> f32 {
+    if tau_ticks == 0 {
+        return 0.0;
+    }
+    1000.0 / (tau_ticks as f32 * LOOP_TICK_MS as f32)
+}
+
+pub fn acoustic_amplitude(omega_sum: f32, aperture: f32) -> f32 {
+    (omega_sum * aperture).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
+}
+
+pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
+    let sum: f32 = frame.omega.iter().sum();
+    let amp = acoustic_amplitude(sum, frame.aperture);
+    let f_hz = tone_hz(frame.tau_ticks);
+    let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
+    let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
+    for _ in 0..PCM_SAMPLES_PER_TICK {
+        let s = if f_hz > 0.0 {
+            *phase += step;
+            if *phase >= std::f32::consts::TAU {
+                *phase -= std::f32::consts::TAU;
+            }
+            (*phase).sin() * amp
+        } else {
+            0.0
+        };
+        let left = if sum < 0.0 { s } else { 0.0 };
+        let right = if sum > 0.0 { s } else { 0.0 };
+        pcm.extend_from_slice(&(left as i16).to_le_bytes());
+        pcm.extend_from_slice(&(right as i16).to_le_bytes());
+    }
+    pcm
+}
+
 impl AcousticOscillator {
     pub fn new(
         rx: mpsc::Receiver<PresenceFrame>,
@@ -66,8 +107,9 @@ impl AcousticOscillator {
             let Some(mut out) = writer else {
                 return;
             };
+            let mut phase: f32 = 0.0;
             while let Ok(frame) = rx.recv() {
-                let bytes = frame_bytes(&frame);
+                let bytes = acoustic_pcm(&frame, &mut phase);
                 if std::io::Write::write_all(&mut out, &bytes).is_err()
                     || std::io::Write::flush(&mut out).is_err()
                 {
@@ -369,6 +411,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
+            tau_ticks: 1,
         };
         let base = kinetic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
@@ -379,6 +422,7 @@ mod tests {
                 aperture: 1.0,
                 pan_ms: None,
                 tilt_ms: None,
+                tau_ticks: 1,
             }) as f64;
             let want = base * lambda;
             let rel = (got - want).abs() / want.abs();
@@ -400,6 +444,7 @@ mod tests {
                 aperture,
                 pan_ms: None,
                 tilt_ms: None,
+                tau_ticks: 1,
             });
             assert_eq!(got, raw * aperture, "aperture {aperture}");
         }
@@ -413,6 +458,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
+            tau_ticks: 1,
         };
         assert_eq!(kinetic_sample(&frame), omega.iter().sum::<f32>());
     }
@@ -438,6 +484,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
+            tau_ticks: 1,
         };
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
@@ -448,28 +495,186 @@ mod tests {
         assert_eq!(got, expected);
     }
 
-    #[cfg(unix)]
     #[test]
-    fn the_acoustic_wire_carries_one_raw_sample_per_frame() {
-        let (writer, mut reader) = std::os::unix::net::UnixStream::pair().expect("pipe pair");
-        let (tx, rx) = mpsc::channel::<PresenceFrame>();
-        let _osc = AcousticOscillator::new(rx, Some(Box::new(writer)));
+    fn the_tone_maps_inverse_to_natural_latency_ticks() {
+        let base = tone_hz(1);
+        assert!((base - 62.5).abs() < 1e-3, "τ=1 → 62.5 Hz, got {base}");
+        for tau in [2u64, 3, 4, 8, 16, 64] {
+            let f = tone_hz(tau);
+            assert!(f > 0.0 && f.is_finite());
+            assert!(
+                (62.5 / tau as f32 - f).abs() < 1e-3,
+                "τ={tau} → {} Hz, got {f}",
+                62.5 / tau as f32
+            );
+        }
+        assert_eq!(tone_hz(0), 0.0, "τ = 0: no temporal extent, no tone");
+    }
+
+    #[test]
+    fn the_acoustic_amplitude_clamps_at_the_s16_bound() {
+        assert_eq!(acoustic_amplitude(9.0, 1.0), 9.0);
+        assert_eq!(acoustic_amplitude(-4.0, 2.0), -8.0);
+        assert_eq!(acoustic_amplitude(1.0e9, 1.0), PCM_S16_BOUND);
+        assert_eq!(acoustic_amplitude(-1.0e9, 1.0), -PCM_S16_BOUND);
+        assert_eq!(acoustic_amplitude(0.0, 1.0), 0.0);
+        assert_eq!(acoustic_amplitude(5.0, 0.0), 0.0);
+    }
+
+    #[test]
+    fn the_acoustic_channel_emits_s16_stereo_pcm_with_signed_steering() {
+        let mut phase = 0.0f32;
         let frame = PresenceFrame {
-            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            omega: [100.0; 9],
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
+            tau_ticks: 1,
         };
-        let expected = kinetic_sample(&frame).to_le_bytes();
+        let pcm = acoustic_pcm(&frame, &mut phase);
+        assert_eq!(
+            pcm.len(),
+            PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2,
+            "one tick of interleaved S16 stereo"
+        );
+        let mut max_abs = 0i32;
+        let mut min_r = 0i32;
+        let mut max_r = 0i32;
+        for pair in pcm.chunks_exact(4) {
+            let l = i16::from_le_bytes([pair[0], pair[1]]) as i32;
+            let r = i16::from_le_bytes([pair[2], pair[3]]) as i32;
+            assert_eq!(l, 0, "a positive Σω routes the tone right");
+            max_abs = max_abs.max(r.abs());
+            min_r = min_r.min(r);
+            max_r = max_r.max(r);
+        }
+        assert!(min_r < 0 && max_r > 0, "the tone oscillates");
+        assert!(max_abs <= PCM_S16_BOUND as i32, "the format is the clamp");
+        assert!(max_abs >= 800, "the tone carries the amplitude: {max_abs}");
+    }
+
+    #[test]
+    fn a_negative_sum_routes_the_tone_left() {
+        let mut phase = 0.0f32;
+        let frame = PresenceFrame {
+            omega: [-100.0; 9],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 2,
+        };
+        let pcm = acoustic_pcm(&frame, &mut phase);
+        let mut min_l = 0i32;
+        let mut max_l = 0i32;
+        for pair in pcm.chunks_exact(4) {
+            let l = i16::from_le_bytes([pair[0], pair[1]]) as i32;
+            let r = i16::from_le_bytes([pair[2], pair[3]]) as i32;
+            assert_eq!(r, 0, "a negative Σω routes the tone left");
+            min_l = min_l.min(l);
+            max_l = max_l.max(l);
+        }
+        assert!(min_l < 0 && max_l > 0, "the tone oscillates");
+    }
+
+    #[test]
+    fn a_zero_sum_is_silence_on_both_channels() {
+        let mut phase = 0.0f32;
+        let frame = PresenceFrame {
+            omega: [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 1,
+        };
+        let pcm = acoustic_pcm(&frame, &mut phase);
+        assert_eq!(pcm.len(), PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
+        assert!(
+            pcm.iter().all(|&b| b == 0),
+            "zero Σω → zero amplitude — silence is the response"
+        );
+    }
+
+    #[test]
+    fn the_acoustic_phase_continues_across_frames() {
+        let mut phase = 0.0f32;
+        let frame = PresenceFrame {
+            omega: [100.0; 9],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 3,
+        };
+        let _ = acoustic_pcm(&frame, &mut phase);
+        let second = acoustic_pcm(&frame, &mut phase);
+        let first_of_second = i16::from_le_bytes([second[2], second[3]]) as i32;
+        let expected = ((2.0 * std::f64::consts::PI / 3.0).sin() * 900.0) as i32;
+        assert!(
+            (first_of_second - expected).abs() <= 2,
+            "the phase carries over the frame boundary: got {first_of_second}, expected ≈ {expected}"
+        );
+    }
+
+    #[test]
+    fn a_tau_step_changes_pitch_without_an_edge() {
+        let mut phase = 0.0f32;
+        let fast = PresenceFrame {
+            omega: [100.0; 9],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 1,
+        };
+        let slow = PresenceFrame {
+            omega: [100.0; 9],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 2,
+        };
+        let first = acoustic_pcm(&fast, &mut phase);
+        let last_of_first =
+            i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
+        let second = acoustic_pcm(&slow, &mut phase);
+        let first_of_second = i16::from_le_bytes([second[2], second[3]]) as i32;
+        assert!(
+            (first_of_second - last_of_first).abs() <= 100,
+            "a τ step bends the tone, it does not cut it: {last_of_first} → {first_of_second}"
+        );
+        let negatives = |pcm: &[u8]| -> usize {
+            pcm.chunks_exact(4)
+                .filter(|p| i16::from_le_bytes([p[2], p[3]]) < 0)
+                .count()
+        };
+        assert_ne!(
+            negatives(&first),
+            negatives(&second),
+            "the pitch changed between τ=1 and τ=2"
+        );
+    }
+
+    #[test]
+    fn the_acoustic_oscillator_writes_pcm_into_the_memory_writer() {
+        let bytes = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let (tx, rx) = mpsc::channel::<PresenceFrame>();
+        let osc = AcousticOscillator::new(rx, Some(Box::new(Sink(bytes.clone()))));
+        let frame = PresenceFrame {
+            omega: [100.0; 9],
+            aperture: 1.0,
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 1,
+        };
         tx.send(frame).expect("frame reaches the oscillator");
-        let mut got = [0u8; 6];
-        std::io::Read::read_exact(&mut reader, &mut got).expect("one sample on the wire");
-        let mut want = [0u8; 6];
-        want[0] = 0x02;
-        want[1] = 0x01;
-        want[2..6].copy_from_slice(&expected);
-        assert_eq!(got, want, "one frame is one tagged Σω sample");
         drop(tx);
+        if let Some(h) = osc._thread {
+            let _ = h.join();
+        }
+        let got = bytes.lock().expect("sink lock").clone();
+        assert_eq!(got.len(), PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
+        let l = i16::from_le_bytes([got[0], got[1]]);
+        let r = i16::from_le_bytes([got[2], got[3]]);
+        assert_eq!(l, 0);
+        assert!(r > 0, "the first sample rides the right channel: {r}");
     }
 
     #[test]
@@ -479,6 +684,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
+            tau_ticks: 1,
         };
         let bytes = frame_bytes(&frame);
         assert_eq!(bytes[0], 0x02);
@@ -503,6 +709,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
+            tau_ticks: 1,
         };
         let bytes = frame_bytes(&frame);
         assert_eq!(bytes[1], 0x01, "non-finite pan is absence, not a value");
@@ -516,6 +723,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
+            tau_ticks: 1,
         };
         let bytes = frame_bytes(&frame);
         assert_eq!(bytes[1], 0x01);

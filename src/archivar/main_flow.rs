@@ -103,6 +103,32 @@ fn feed_beat_to_hrv(
 
 pub type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
 
+pub fn enclosure_presences(
+    presence: &HashMap<String, PresenceSample>,
+    slot: &std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
+    now: f64,
+) -> Vec<PresenceSample> {
+    if !presence.is_empty() {
+        return presence.values().cloned().collect();
+    }
+    let state = match slot.read() {
+        Ok(guard) => *guard,
+        Err(_) => return Vec::new(),
+    };
+    vec![(
+        now,
+        state.p[0],
+        state.p[1],
+        state.p[2],
+        state.range,
+        state.v[0],
+        state.v[1],
+        state.v[2],
+        state.t_thrust,
+        state.grid_step,
+    )]
+}
+
 pub fn jump_residual_breached(
     p_new: [f64; 3],
     p_old: [f64; 3],
@@ -1284,10 +1310,8 @@ pub fn main_flow() {
             }
             if archive.sources[i].format == "catalog_dastcom" {
                 let url = archive.sources[i].url.clone();
-                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
-                if presences.is_empty() {
-                    continue;
-                }
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
@@ -1741,10 +1765,8 @@ pub fn main_flow() {
             }
             if archive.sources[i].format == "catalog_tycho" {
                 let url = archive.sources[i].url.clone();
-                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
-                if presences.is_empty() {
-                    continue;
-                }
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
@@ -2432,6 +2454,7 @@ pub fn main_flow() {
                     | "ams02_spec"
                     | "lro_trk"
                     | "hamqsl_solar"
+                    | "rx100_luminance"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

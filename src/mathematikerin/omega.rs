@@ -349,6 +349,7 @@ impl OmegaLoop {
             aperture: self.field_permeability * self.tone_scale,
             pan_ms,
             tilt_ms,
+            tau_ticks: self.natural_latency_ticks,
         }
     }
 
@@ -1662,7 +1663,7 @@ impl OmegaLoop {
                     self.perm_log_gen = self.ring_gen;
                     let _ = writeln!(
                         f,
-                        "{},{},{},{},{},{},{},{},{},{}",
+                        "{},{},{},{},{},{},{},{},{},{},{},{}",
                         self.ring_gen,
                         omega_sum,
                         g,
@@ -1672,6 +1673,8 @@ impl OmegaLoop {
                         self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
                         self.tone_scale,
                         self.field_permeability * self.tone_scale,
+                        tone_hz(self.natural_latency_ticks),
+                        acoustic_amplitude(omega_sum, self.field_permeability * self.tone_scale),
                         self.field_permeability
                     );
                 }
@@ -1689,7 +1692,9 @@ impl OmegaLoop {
             self.verdict_say();
             let frame = self.presence_frame();
             if !self.silent {
-                let _ = self.acoustic_tx.send(frame);
+                if self.consent.load(Ordering::SeqCst) {
+                    let _ = self.acoustic_tx.send(frame);
+                }
                 let _ = self.seismic_tx.send(frame);
                 if let Some(tx) = &self.relay_tx {
                     let _ = tx.send(frame);
