@@ -33,6 +33,7 @@ pub mod cdf;
 pub mod cdf25;
 pub mod cdn;
 pub mod celestrak_eop;
+pub mod charm2;
 pub mod cif;
 pub mod ck;
 pub mod cometels;
