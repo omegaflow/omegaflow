@@ -375,7 +375,9 @@ fn catalog_tiles(body: &str) -> Vec<String> {
 
 fn s3_tiles(listing_url: &str, first_body: &str) -> Vec<String> {
     let Some(base) = s3_base(listing_url) else {
-        eprintln!("eri_compiler: {listing_url}: no scheme/host — the tile URLs stay unresolvable");
+        eprintln!(
+            "noaa_eri_compiler: {listing_url}: no scheme/host — the tile URLs stay unresolvable"
+        );
         return Vec::new();
     };
     let mut out = Vec::new();
@@ -392,7 +394,7 @@ fn s3_tiles(listing_url: &str, first_body: &str) -> Vec<String> {
         match fetch_raw_bytes(&next) {
             Some(b) => body = String::from_utf8_lossy(&b).into_owned(),
             None => {
-                eprintln!("eri_compiler: {next}: listing page returned void");
+                eprintln!("noaa_eri_compiler: {next}: listing page returned void");
                 break;
             }
         }
@@ -411,7 +413,7 @@ fn discover_index(url: &str) -> Vec<String> {
             }
         }
         None => {
-            eprintln!("eri_compiler: {url}: index fetch returned void");
+            eprintln!("noaa_eri_compiler: {url}: index fetch returned void");
             Vec::new()
         }
     }
@@ -438,7 +440,7 @@ fn compile_one(bytes: &[u8], name: &str) -> Option<Vec<EriSample>> {
     match collect(&img, &georef) {
         Ok(samples) => Some(samples),
         Err(e) => {
-            eprintln!("eri_compiler: {name}: {e}");
+            eprintln!("noaa_eri_compiler: {name}: {e}");
             None
         }
     }
@@ -449,7 +451,7 @@ fn compile_many(sources: &[String], out_path: &str, ci_mode: bool) {
     let mut decoded = 0usize;
     for src in sources {
         let Some((bytes, name)) = source_bytes(src) else {
-            eprintln!("eri_compiler: {src}: fetch returned void");
+            eprintln!("noaa_eri_compiler: {src}: fetch returned void");
             continue;
         };
         let Some(tile) = compile_one(&bytes, &name) else {
@@ -461,7 +463,9 @@ fn compile_many(sources: &[String], out_path: &str, ci_mode: bool) {
     }
     eprintln!("eri: {} of {} tiles decoded", decoded, sources.len());
     if samples.is_empty() {
-        eprintln!("eri_compiler: no tile yielded a sample — the bin stays unwritten (0 honored)");
+        eprintln!(
+            "noaa_eri_compiler: no tile yielded a sample — the bin stays unwritten (0 honored)"
+        );
         std::process::exit(1);
     }
     report_value_ranges(&samples);
@@ -470,14 +474,14 @@ fn compile_many(sources: &[String], out_path: &str, ci_mode: bool) {
 
 fn finish(samples: &[EriSample], out_path: &str, ci_mode: bool) {
     if let Err(e) = write_asset(samples, out_path) {
-        eprintln!("eri_compiler: {e}");
+        eprintln!("noaa_eri_compiler: {e}");
         std::process::exit(1);
     }
     let written = match std::fs::read(out_path) {
         Ok(v) => v,
         Err(_) => {
             eprintln!(
-                "eri_compiler: {out_path} read returned void — the roundtrip stays unverified"
+                "noaa_eri_compiler: {out_path} read returned void — the roundtrip stays unverified"
             );
             std::process::exit(1);
         }
@@ -507,8 +511,8 @@ fn finish(samples: &[EriSample], out_path: &str, ci_mode: bool) {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: eri_compiler --input <geotiff> | --url <url> --out <path> [--ci-mode]\n\
-                 usage: eri_compiler --index <list-url|catalog> [--granule <url|path> ...] --out <path> [--ci-mode]";
+    let usage = "usage: noaa_eri_compiler --input <geotiff> | --url <url> --out <path> [--ci-mode]\n\
+                 usage: noaa_eri_compiler --index <list-url|catalog> [--granule <url|path> ...] --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
@@ -530,7 +534,7 @@ fn main() {
         sources.extend(granules);
         if sources.is_empty() {
             eprintln!(
-                "eri_compiler: the enumeration carried no tile — the bin stays unwritten (0 honored)"
+                "noaa_eri_compiler: the enumeration carried no tile — the bin stays unwritten (0 honored)"
             );
             std::process::exit(1);
         }
@@ -579,7 +583,7 @@ fn main() {
     let samples = match collect(&img, &georef) {
         Ok(s) => s,
         Err(e) => {
-            eprintln!("eri_compiler: {e}");
+            eprintln!("noaa_eri_compiler: {e}");
             std::process::exit(1);
         }
     };

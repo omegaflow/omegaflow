@@ -100,7 +100,11 @@ pub fn epoch_anchor(year: u32) -> Option<f64> {
 }
 
 pub fn sample_epoch(anchor: f64, r: &MediumbandRecord) -> Option<f64> {
-    let t = anchor + f64::from(timetagdays(r)) * 86_400.0;
+    let doy = timetagdays(r);
+    if doy == 0 || doy > 366 {
+        return None;
+    }
+    let t = anchor + (f64::from(doy) - 1.0) * 86_400.0;
     if t.is_finite() && t > 0.0 {
         Some(t)
     } else {
@@ -428,7 +432,7 @@ mod tests {
         assert_eq!(parsed.files[0].year, 1980);
         let series = parse_series(&bin).unwrap();
         assert_eq!(series.len(), 3);
-        assert_eq!(series[0].0, 315_532_800.0 + 317.0 * 86_400.0);
+        assert_eq!(series[0].0, 315_532_800.0 + 316.0 * 86_400.0);
         assert_eq!(series[0].2, COMP_AMP_MIN);
         assert_eq!(series[1].2, COMP_AMP_MAX);
         assert_eq!(series[2].2, COMP_AMP_MEAN);
@@ -442,9 +446,17 @@ mod tests {
         let r = mediumband_record(&sample_mediumband_record()).unwrap();
         assert_eq!(
             sample_epoch(315_532_800.0, &r),
-            Some(315_532_800.0 + 317.0 * 86_400.0)
+            Some(315_532_800.0 + 316.0 * 86_400.0)
         );
         assert_eq!(sample_epoch(-1.0e12, &r), None);
+    }
+
+    #[test]
+    fn sample_epoch_voids_on_absent_day_of_year() {
+        let mut rec = sample_mediumband_record();
+        rec[LEN_PREFIX_BYTES + 8..LEN_PREFIX_BYTES + 10].copy_from_slice(&0u16.to_be_bytes());
+        let r = mediumband_record(&rec).unwrap();
+        assert!(sample_epoch(315_532_800.0, &r).is_none());
     }
 
     #[test]

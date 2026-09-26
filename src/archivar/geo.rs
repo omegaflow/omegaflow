@@ -35,6 +35,8 @@ pub const MAGIC_KYOTO: [u8; 4] = *b"KYO1";
 pub const MAGIC_HFR: [u8; 4] = *b"HFR1";
 pub const MAGIC_OSM: [u8; 4] = *b"OSM1";
 pub const MAGIC_TOAR: [u8; 4] = *b"TOA1";
+pub const MAGIC_OGM: [u8; 4] = *b"OGM1";
+pub const MAGIC_NOHR: [u8; 4] = *b"NOH1";
 pub const MAGIC_DECAPS: [u8; 4] = crate::decaps::MAGIC;
 
 pub const REC_BYTES: usize = 60;
@@ -173,6 +175,15 @@ pub const COMP_HFR_MAX: u32 = 2;
 pub const COMP_TOAR_O3: u32 = 1;
 pub const COMP_TOAR_MAX: u32 = 1;
 
+pub const COMP_OGM_TEMP: u32 = 1;
+pub const COMP_OGM_DEWP: u32 = 2;
+pub const COMP_OGM_WSPD: u32 = 3;
+pub const COMP_OGM_SLP: u32 = 4;
+pub const COMP_OGM_MAX: u32 = 4;
+
+pub const COMP_NOHR_SNOWFALL: u32 = 1;
+pub const COMP_NOHR_MAX: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -227,6 +238,8 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "emodnet_hfr" => Some(MAGIC_HFR),
         "opensensemap_temperatur" => Some(MAGIC_OSM),
         "toar_surface_o3" => Some(MAGIC_TOAR),
+        "ogimet_synop" => Some(MAGIC_OGM),
+        "nohrsc_snowfall" => Some(MAGIC_NOHR),
         "decaps_dr2_stars" => Some(MAGIC_DECAPS),
         _ => None,
     }
@@ -268,6 +281,8 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "emodnet_hfr" => Some(COMP_HFR_MAX),
         "opensensemap_temperatur" => Some(COMP_OSM_MAX),
         "toar_surface_o3" => Some(COMP_TOAR_MAX),
+        "ogimet_synop" => Some(COMP_OGM_MAX),
+        "nohrsc_snowfall" => Some(COMP_NOHR_MAX),
         "decaps_dr2_stars" => Some(crate::decaps::COMP_MAX),
         _ => None,
     }
