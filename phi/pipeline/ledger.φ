@@ -13,7 +13,7 @@ note ivo://src.pas/tap — 2026-09-26 Host tot (direct+Proton 000); Ersatz gemes
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note SSDC: Browser-Session als 'omegaflow' gültig (2026-09-26); query.php → „Permission Denied, email alessandro.sotgiu@roma2.infn.it". SSDC_PASS in .secrets.local stale. Braucht: Sotgiu-Berechtigung (Operator-Mail) + Passwort-Rotation.
+note SSDC: Session omegaflow gültig 2026-09-26; query.php „Permission Denied". Sotgiu 2026-09-16 (mail_ledger.φ:79): Limadou-Umbau CSES-02, „wait a few weeks"; neue Prozedur kommt — wir warten (:80). SSDC_PASS stale. Braucht: neue Prozedur (Sotgiu).
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
