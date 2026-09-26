@@ -129,6 +129,80 @@ pub fn enclosure_presences(
     )]
 }
 
+pub fn raw_presence_gate(
+    i: usize,
+    sources: &[SourceConfig],
+    presence: &HashMap<String, PresenceSample>,
+    slot: &std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
+    body_ephemerides: &HashMap<String, BodyEphemeris>,
+    now: f64,
+    median_fetch: Option<f64>,
+    refusal_ledger: &std::sync::Mutex<RefusalLedger>,
+) -> Option<(f64, f64, f64)> {
+    let presences: Vec<PresenceSample> = enclosure_presences(presence, slot, now);
+    let mut fields: Vec<FieldConfig> = Vec::new();
+    for ext in &sources[i].extracts {
+        fields.extend(extract_fields(ext));
+    }
+    let Some(r) = dispatch_reach(&fields, sources[i].ttl as f64) else {
+        if fields.is_empty() {
+            eprintln!(
+                "source {}: carries no field lines — refused, retry in ttl/Φ",
+                i
+            );
+            if let Ok(mut ledger) = refusal_ledger.lock() {
+                ledger.register(&sources[i].url, "gate-no-field-lines");
+            }
+        } else {
+            eprintln!(
+                "source {}: no field carries a propagation law — refused, retry in ttl/Φ",
+                i
+            );
+            if let Ok(mut ledger) = refusal_ledger.lock() {
+                ledger.register(&sources[i].url, "gate-no-propagation");
+            }
+        }
+        return None;
+    };
+    let pos = match &sources[i].frame {
+        Frame::Surface {
+            lat,
+            lon,
+            alt,
+            body_name,
+        } => {
+            if let Some(p) = body_fixed_to_icrs(body_name, *lat, *lon, *alt, now, body_ephemerides)
+            {
+                (p[0], p[1], p[2])
+            } else {
+                return None;
+            }
+        }
+        Frame::Barycenter { body_name, scale } => {
+            if let Some(bp) = body_barycenter_position(body_name, now, body_ephemerides) {
+                (bp[0] * scale, bp[1] * scale, bp[2] * scale)
+            } else {
+                return None;
+            }
+        }
+        Frame::Manifest => return None,
+    };
+    let anchor_body = frame_body_name(&sources[i].frame);
+    let body_props = body_ephemerides
+        .get(anchor_body.as_str())
+        .and_then(|e| e.props.as_ref());
+    let body_radius = match body_props {
+        Some(p) => p.radius_m,
+        None => 0.0,
+    };
+    let v_anchor = anchor_velocity(&sources[i].frame, now, body_ephemerides);
+    if presence_gate(&presences, pos, r, body_radius, v_anchor, median_fetch) {
+        Some(pos)
+    } else {
+        None
+    }
+}
+
 pub fn parse_sink_names(text: &str) -> Vec<String> {
     text.lines()
         .filter_map(|line| line.split('\t').nth(1))
@@ -230,7 +304,8 @@ fn acoustic_sink() -> Option<Box<dyn std::io::Write + Send>> {
         None => return None,
     };
     let args: Vec<String> = parts.map(str::to_string).collect();
-    spawn_acoustic_player(program, &args).map(|stdin| Box::new(stdin) as Box<dyn std::io::Write + Send>)
+    spawn_acoustic_player(program, &args)
+        .map(|stdin| Box::new(stdin) as Box<dyn std::io::Write + Send>)
 }
 
 pub fn jump_residual_breached(
@@ -1506,56 +1581,32 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "netcdf" {
+                let Some((x, y, z)) = raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                ) else {
+                    continue;
+                };
                 let src_clone = archive.sources[i].clone();
-                let pos = match &src_clone.frame {
-                    Frame::Surface {
-                        lat,
-                        lon,
-                        alt,
-                        body_name,
-                    } => body_fixed_to_icrs(
-                        body_name,
-                        *lat,
-                        *lon,
-                        *alt,
-                        now,
-                        &archive.body_ephemerides,
-                    )
-                    .map(|p| (p[0], p[1], p[2])),
-                    Frame::Barycenter { body_name, scale } => {
-                        body_barycenter_position(body_name, now, &archive.body_ephemerides)
-                            .map(|p| (p[0] * scale, p[1] * scale, p[2] * scale))
-                    }
-                    Frame::Manifest => None,
-                };
-                let url = match pos {
-                    Some((x, y, z)) => render_source_url(
-                        &src_clone,
-                        RenderCtx {
-                            x,
-                            y,
-                            z,
-                            tdb: now,
-                            r: 0.0,
-                            eph: &archive.body_ephemerides,
-                            lsk: &lsk,
-                        },
-                        &env,
-                    ),
-                    None => render_source_url(
-                        &src_clone,
-                        RenderCtx {
-                            x: 0.0,
-                            y: 0.0,
-                            z: 0.0,
-                            tdb: now,
-                            r: 0.0,
-                            eph: &archive.body_ephemerides,
-                            lsk: &lsk,
-                        },
-                        &env,
-                    ),
-                };
+                let url = render_source_url(
+                    &src_clone,
+                    RenderCtx {
+                        x,
+                        y,
+                        z,
+                        tdb: now,
+                        r: 0.0,
+                        eph: &archive.body_ephemerides,
+                        lsk: &lsk,
+                    },
+                    &env,
+                );
                 let Some(url) = url else {
                     continue;
                 };
@@ -1652,6 +1703,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "opendap" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let src_clone = archive.sources[i].clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -1951,10 +2016,11 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let star_samples: Vec<Sample> = build_star_samples(&bytes)
-                        .into_iter()
-                        .filter(|s| catalog_sample_in_enclosure(&presences, s, now_c))
-                        .collect();
+                    let star_samples: Vec<Sample> =
+                        build_star_samples(&bytes, src_clone.catalog_epoch)
+                            .into_iter()
+                            .filter(|s| catalog_sample_in_enclosure(&presences, s, now_c))
+                            .collect();
                     eprintln!("\r\x1b[Kcatalog_tycho: {} stars", star_samples.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -1971,6 +2037,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "spectral" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let src = archive.sources[i].clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -2095,6 +2175,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "xp_spectra" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let src = archive.sources[i].clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -2208,6 +2302,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "jwst_spectra" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let src = archive.sources[i].clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -2336,6 +2444,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "lightcurve" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let url = archive.sources[i].url.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
@@ -2414,6 +2536,20 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "bl_narrowband" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    &presence_slot,
+                    &archive.body_ephemerides,
+                    now,
+                    median_fetch,
+                    &refusal_ledger,
+                )
+                .is_none()
+                {
+                    continue;
+                }
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();

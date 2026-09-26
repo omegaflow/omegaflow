@@ -230,11 +230,7 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         star_cells,
         star_lo: StarCellKey(star_lo),
         star_hi: StarCellKey(star_hi),
-        star_epoch_min: if star_epoch_min == f64::MAX {
-            0.0
-        } else {
-            star_epoch_min
-        },
+        star_epoch_min,
     }
 }
 
@@ -402,9 +398,22 @@ pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
     (p, vel)
 }
 
-pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
+pub fn build_star_samples(bytes: &[u8], catalog_epoch_yr: Option<f64>) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut samples: Vec<Sample> = Vec::new();
+    let Some(epoch_yr) = catalog_epoch_yr else {
+        eprintln!(
+            "star bin: the block carries no catalog_epoch — stars stay dark (register duty: catalog_epoch <yr>)"
+        );
+        return samples;
+    };
+    if !epoch_yr.is_finite() {
+        eprintln!(
+            "star bin: catalog_epoch reads non-finite — stars stay dark (register duty: catalog_epoch <yr>)"
+        );
+        return samples;
+    }
+    let epoch = (epoch_yr - 2000.0) * 86400.0 * 365.25;
     let Some(stride) = star_stride(bytes) else {
         eprintln!(
             "star bin {} bytes: no {}-byte records — pending recompilation, stars stay dark",
@@ -423,13 +432,13 @@ pub fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
         let motion = Motion::Spherical {
             rec: Arc::new(rec.clone()),
         };
-        let Some((anchor_vmax, anchor_amax, anchor_p0)) = law_bounds(&motion, 0.0, 0.0, &eph)
+        let Some((anchor_vmax, anchor_amax, anchor_p0)) = law_bounds(&motion, epoch, 0.0, &eph)
         else {
             continue;
         };
         samples.push(Sample {
             source: SampleSource::Ephemeris,
-            epoch: 0.0,
+            epoch,
             ttl: rec.tau,
             extent: f64::INFINITY,
             tau: rec.tau,
