@@ -54,13 +54,6 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36237216821`, bei Rot `ci_manage log 36237216821`.
 
-#### Browser-Extension — CI-Workflow gebaut; Dispatch + Artefakt
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Commit+Push dieses Atoms (`browser-extension.yml` auf `main`).
-- **Lage:** (gemessen 2026-09-26 via git/`ci_manage`) Fork committet (`f9ea3284`, 60 Pfade, `chrome.alarms` in `wxt.config.ts:33` + `bridge-client.ts`); **kein Lockfile** → `.github/workflows/browser-extension.yml` gebaut. Lauf `36242493629` failure: `npm install` stirbt an `npm error Cannot read properties of null (reading 'edgesOut')` (npm 10.9.8, Peer-Resolution ohne Lockfile; `ci_manage log 36242493629`). Fix `--legacy-peer-deps` → Lauf `36242884020`: install+build grün, `npm test` rot **1/85** — `test/bridge-client.test.ts:212` (Keepalive-`resume` öffnet keinen frischen Socket); Ursache: der Test registriert keinen `chrome.alarms.onAlarm`-Listener (die Verdrahtung lebt in `background.ts`, das der Test nicht importiert) → `emitAlarm` ist ein No-op; zudem fehlten dem `FakeWS`-Doppel `readyState`/`OPEN`. Beide Test-Fixes (`1b027479b`, `39cfa06c3`), Lauf `36243288134`.
-- **Blockade:** keine (JS, unabhängig von der cargo-Blockade).
-- **Braucht:** nach Push `gh workflow run browser-extension.yml`, `ci_manage view <id>`; bei Rot die Tests fixen; Artefakt für den Operator-Akt.
-
 #### Sonnenfarbe color:measured — compute-only Renderpfad
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** `main` kompiliert (llnl-Fix) + lavapipe-ICD in CI.
@@ -91,9 +84,9 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 
 #### Browser-Extension unpacked laden
 - **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Build-Artefakt `.output/chrome-mv3/` liegt vor.
-- **Lage:** (gemessen 2026-09-26 via git) Fork committet; Workflow gebaut, Build noch nicht gelaufen.
-- **Blockade:** Build (Linie).
+- **Trigger:** Operator führt den Load aus (Artefakt `chrome-mv3/` liegt vor).
+- **Lage:** (gemessen 2026-09-26 via `ci_manage`) CI-Build grün — Lauf `36243288134` success (npm install --legacy-peer-deps + build + **85/85 Tests**), Artefakt `chrome-mv3/` hochgeladen (`head 39cfa06c3`).
+- **Blockade:** keine.
 - **Braucht:** `chrome://extensions` → Developer mode → „Load unpacked" → Fork-Unpacked-Verzeichnis.
 - **Wort:** Extension forken | 2026-09-26 | Operator-Wort folge36.
 
