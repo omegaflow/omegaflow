@@ -797,20 +797,51 @@ fn orphan_total(summary: &BTreeMap<String, (usize, usize)>) -> usize {
     summary.values().map(|(c, u)| c + u).sum()
 }
 
-fn run_orphans(root: &Path) {
-    let (lines, summary) = orphan_report(root);
+fn owner_arg(args: &[String]) -> Option<String> {
+    mode_line_filter(args, "--owner")
+        .map(canonical_line)
+        .map(str::to_lowercase)
+}
+
+fn orphan_line_for_owner(line: &str, owner: &str) -> bool {
+    let lowered = line.to_lowercase();
+    lowered.contains(&format!("\t[{}]\t", owner))
+        || lowered.starts_with(&format!("orphan_summary\t{}\t", owner))
+}
+
+fn run_orphans(args: &[String]) {
+    let owner = owner_arg(args);
+    let fail = args.iter().any(|a| a == "--fail");
+    let (lines, summary) = orphan_report(Path::new("."));
+    let filtered: BTreeMap<String, (usize, usize)> = match &owner {
+        Some(o) => summary
+            .iter()
+            .filter(|(key, _)| key.as_str() == o.as_str())
+            .map(|(key, value)| (key.clone(), *value))
+            .collect(),
+        None => summary.clone(),
+    };
     for line in &lines {
+        if let Some(o) = &owner {
+            if !orphan_line_for_owner(line, o) {
+                continue;
+            }
+        }
         println!("{}", line);
     }
-    let owners: Vec<String> = summary
+    let owners: Vec<String> = filtered
         .iter()
-        .map(|(owner, (c, u))| format!("{} {} committed {} uncommitted", owner, c, u))
+        .map(|(o, (c, u))| format!("{} {} committed {} uncommitted", o, c, u))
         .collect();
+    let total = orphan_total(&filtered);
     println!(
         "register_lookup --orphans: {} orphan entries [{}]",
-        orphan_total(&summary),
+        total,
         owners.join(", ")
     );
+    if fail && total > 0 {
+        std::process::exit(2);
+    }
 }
 
 fn live_handover_carrier_text(root: &Path) -> String {
@@ -2922,7 +2953,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans          (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only))\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
 }
@@ -2938,7 +2969,7 @@ fn main() {
         return;
     }
     if args.iter().any(|a| a == "--orphans") {
-        run_orphans(Path::new("."));
+        run_orphans(&args);
         return;
     }
     if args.iter().any(|a| a == "--orphan-docs") {
