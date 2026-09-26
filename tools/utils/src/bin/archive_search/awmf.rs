@@ -4,15 +4,8 @@ use crate::net::{get, urlencode};
 const ENDPOINT: &str = "https://leitlinien-api.awmf.org/v1/search";
 const PUBLIC_API_KEY: &str = "MkI5Y1VIOEJ0ZGpoelNBVXRNM1E6WVFld0pBUF9RLVdJa012UHVPTmRQUQ==";
 
-fn api_key() -> String {
-    match crate::token::secret("AWMF_API_KEY") {
-        Some(key) => key,
-        None => PUBLIC_API_KEY.to_string(),
-    }
-}
-
 pub fn awmf_lines(query: &str, max: usize) -> Vec<String> {
-    let key = api_key();
+    let key = PUBLIC_API_KEY;
     let mut offset = 0usize;
     let mut total: Option<u64> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
@@ -48,7 +41,7 @@ pub fn awmf_lines(query: &str, max: usize) -> Vec<String> {
             },
             Some(f) if f.status == Some(401) || f.status == Some(403) => (
                 vec![format!(
-                    "pending — awmf refuses the key (HTTP {}); AWMF_API_KEY in .secrets.local overrides the public register key",
+                    "pending — awmf refuses the public register key (HTTP {})",
                     f.status_text()
                 )],
                 false,
