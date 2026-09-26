@@ -1,0 +1,48 @@
+name: modis-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  modis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.lpdaac.earthdatacloud.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources \
+              --title "data.lpdaac.earthdatacloud.nasa.gov" \
+              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records. Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night)."
+          fi
+      - name: Build the modis_lst_cmg compiler
+        run: cargo build -p omegaflow-harvest --release --bin modis_lst_cmg_compiler
+      - name: Compile MOD11C1 (daily) and upload to CDN
+        run: |
+          ./target/release/modis_lst_cmg_compiler \
+            --cmr --concept-id C2565788888-LPCLOUD \
+            --out modis_lst_cmg_daily.bin \
+            --ci-mode
+      - name: Compile MOD11C2 (8-day) and upload to CDN
+        run: |
+          ./target/release/modis_lst_cmg_compiler \
+            --cmr --concept-id C2565788893-LPCLOUD \
+            --out modis_lst_cmg_8day.bin \
+            --ci-mode
+      - name: Compile MOD11C3 (monthly) and upload to CDN
+        run: |
+          ./target/release/modis_lst_cmg_compiler \
+            --cmr --concept-id C2565788897-LPCLOUD \
+            --out modis_lst_cmg_monthly.bin \
+            --ci-mode
