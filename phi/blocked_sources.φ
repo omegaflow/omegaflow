@@ -48,7 +48,7 @@ note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/895
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-note Voyager 1/2 closed-loop two-way Doppler (TRK-2-34/ODF/ATDF, SDDPT 77-084A-0071). 2026-09-17: kein anonymer Pfad — PDS nur open-loop .ODR, SPDF nur Okkultation, PDS-ATDF nicht Voyager. Anfrage 2026-09-16 (mail_ledger.φ:207), Antwort offen.
+note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (:207).
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009

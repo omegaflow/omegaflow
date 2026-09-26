@@ -5,6 +5,7 @@ use omegaflow_measure::depthphase as dp;
 use omegaflow_measure::depthphase::{
     CATALOG_URL, DEPTH_MATCH_GATE_KM, MAX_DIST_DEG, MAX_STATIONS, MIN_DEPTH_KM, MIN_DIST_DEG,
     MIN_MAG, P_WINDOW_AFTER_ORIGIN_S, REGION, SEARCH_START, SNR_GATE, STATION_URL,
+    W_PHASE_ENERGY_RATIO_GATE, W_PHASE_PERIOD_HI_S, W_PHASE_PERIOD_LO_S,
 };
 use omegaflow_measure::iasp91;
 use omegaflow_measure::mww;
@@ -115,6 +116,9 @@ fn main() {
     );
     println!(
         "sP corr gate {SP_CORR_GATE:.2} (lower quartile of the measured fleet distribution, n = 30); --sp-gate overrides it"
+    );
+    println!(
+        "W-phase M9 gate (registered before the first fetch): ak135 S-P lag added to the measured P onset, RC band {W_PHASE_PERIOD_LO_S}..{W_PHASE_PERIOD_HI_S} s, energy ratio >= {W_PHASE_ENERGY_RATIO_GATE} — a station reads M9 or not; a window outside the record stays absent"
     );
     println!();
 
@@ -331,6 +335,33 @@ fn main() {
         offsets_with_clamp.push(offset_wc);
         if !skips.is_empty() {
             println!("  skipped {}: {}", skips.len(), skips.join("; "));
+        }
+        let mut w_m9 = 0usize;
+        let mut w_below = 0usize;
+        let mut w_pending = 0usize;
+        let mut w_ratios: Vec<String> = Vec::new();
+        for m in &measures {
+            match &m.w_phase {
+                Some(p) => {
+                    w_ratios.push(format!("{:.1}", p.energy_ratio));
+                    if p.m9 {
+                        w_m9 += 1;
+                    } else {
+                        w_below += 1;
+                    }
+                }
+                None => w_pending += 1,
+            }
+        }
+        println!(
+            "  W-phase M9 gate: {w_m9} of {} stations read M9, {w_below} below the gate, {w_pending} carried no W-phase measurement (no P anchor, no S-P lag, or the window lies outside the record)",
+            w_m9 + w_below
+        );
+        if !w_ratios.is_empty() {
+            println!(
+                "    W-phase energy ratio per station (measurement, no gate): {}",
+                w_ratios.join(", ")
+            );
         }
         let mut fit_deltas: Vec<f64> = Vec::new();
         let mut fit_lags: Vec<f64> = Vec::new();
