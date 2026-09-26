@@ -43,7 +43,7 @@ struct VsxRow {
 fn vsx_fetch_text(ra_deg: f64, dec_deg: f64, radius_arcsec: f64, out_max: usize) -> Option<String> {
     let r_deg = radius_arcsec / 3600.0;
     let url = format!(
-        "{VSX_BASE}?-source=B/vsx&-out.max={out_max}&-out=OID,Name,RAJ2000,DEJ2000,Type,Period&-c.ra={ra_deg:.6}&-c.dec={dec_deg:.6}&-c.r={r_deg:.8}"
+        "{VSX_BASE}?-source=B/vsx&-out.max={out_max}&-out=OID,Name,RAJ2000,DEJ2000,Type,Period&-c.ra={ra_deg:.6}&-c.dec={dec_deg:.6}&-c.r={r_deg:.8}&-c.u=deg"
     );
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
@@ -106,9 +106,6 @@ fn vsx_cone(ra_deg: f64, dec_deg: f64, radius_arcsec: f64) -> Option<Vec<VsxRow>
     Some(rows)
 }
 
-// The external witness classes (VSX/GCVS variability types) that are known
-// chromatic periodics: pulsators and eclipsing/rotational variables. The
-// broker's own classifier column never enters this set.
 fn vsx_type_known_chromatic(t: &str) -> bool {
     let t = t.trim();
     if t.is_empty() {
@@ -309,14 +306,6 @@ fn spearman(a: &[f32], b: &[f32]) -> Option<f64> {
     Some(cov / (va * vb).sqrt())
 }
 
-// The periodogram power in the standard normalization (variance-normalized,
-// both quadrature terms, the τ shift that makes the cosine/sine basis
-// orthogonal). The statistic is amplitude-invariant: a uniform rescale of the
-// series moves the data and the variance together, so the FAP measures the
-// significance of the periodicity, not the photometric scale. The form it
-// replaces carried x² inside the denominator, making the power scale ~ n/σ² —
-// quiet fractional photometry (σ ~ 0.02) read FAP 0 on every row and the
-// periodic/aperiodic cell never opened (measured, committed a4b1dcc).
 fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     let n = t.len();
     if n < 8 {
@@ -330,9 +319,12 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
     }
     let tmin = t[0];
     let tmax = t[n - 1];
-    let span = (tmax - tmin).max(1.0);
+    let span = tmax - tmin;
+    if span <= 0.0 {
+        return (0.0, 1.0);
+    }
     let fmin = 1.0 / span;
-    let fmax = 1.0 / (2.0 * (span / n as f64).max(1.0));
+    let fmax = 1.0 / (2.0 * (span / n as f64));
     let mut best_z = 0.0f64;
     let mut nf = 0u32;
     let mut f = fmin;
@@ -366,7 +358,10 @@ fn lomb_scargle_fap(t: &[f64], r: &[f32]) -> (f64, f64) {
         nf += 1;
         f *= 1.05;
     }
-    let n_indep = nf.max(1) as f64;
+    if nf == 0 {
+        return (0.0, 1.0);
+    }
+    let n_indep = nf as f64;
     let fap = 1.0 - (1.0 - (-best_z).exp()).powf(n_indep);
     (best_z, fap)
 }
@@ -687,15 +682,14 @@ fn groups_of(curves: Vec<LsstCurve>) -> Vec<Group> {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let bin = args.get(1).cloned().unwrap_or_default();
     let map = args.get(2).cloned();
-    if bin.is_empty() {
+    let Some(bin) = args.get(1).filter(|b| !b.is_empty()).cloned() else {
         eprintln!(
             "lsst_color_coupling_probe — home-game layer A behind the LSST anomaly scan\n\
              usage: lsst_color_coupling_probe <lsst_lightcurves.bin> [<lsst_cone_object_map.csv>]"
         );
         std::process::exit(2);
-    }
+    };
     let bytes = match std::fs::read(&bin) {
         Ok(b) => b,
         Err(e) => {
@@ -834,9 +828,10 @@ fn main() {
         scanned += 1;
 
         let obj_id = cone_obj(g.ra, g.dec);
-        let id_word = obj_id
-            .map(|(_, _, id, class, simbad)| format!("{id} (class {class} {simbad})"))
-            .unwrap_or_else(|| "no map row".to_string());
+        let id_word = match obj_id {
+            Some((_, _, id, class, simbad)) => format!("{id} (class {class} {simbad})"),
+            None => "no map row".to_string(),
+        };
 
         if !is_periodic {
             println!(
@@ -896,10 +891,10 @@ fn main() {
         match vsx_cone(g.ra, g.dec, 3.0) {
             Some(m) if !m.is_empty() => {
                 vsx_chromatic = vsx_type_known_chromatic(&m[0].otype);
-                let pword = m[0]
-                    .period_d
-                    .map(|p| format!("P {p:.6} d"))
-                    .unwrap_or_else(|| "P absent".to_string());
+                let pword = match m[0].period_d {
+                    Some(p) => format!("P {p:.6} d"),
+                    None => "P absent".to_string(),
+                };
                 println!(
                     "  external witness (VSX B/vsx, cone 3\"): {} (OID {} type {}) {}",
                     m[0].name, m[0].oid, m[0].otype, pword
@@ -984,11 +979,15 @@ fn main() {
         verdicts.push((
             g.ra,
             g.dec,
-            obj_id
-                .map(|(_, _, id, _, _)| id.clone())
-                .unwrap_or_default(),
+            match &obj_id {
+                Some((_, _, id, _, _)) => id.clone(),
+                None => "no map row".to_string(),
+            },
             obj_id.map(|(_, _, _, c, _)| *c).unwrap_or(-1),
-            obj_id.map(|(_, _, _, _, s)| s.clone()).unwrap_or_default(),
+            match &obj_id {
+                Some((_, _, _, _, s)) => s.clone(),
+                None => "no map row".to_string(),
+            },
             pair,
             out.carried,
             out.linear_carried,
@@ -1121,9 +1120,6 @@ fn main() {
 mod tests {
     use super::*;
 
-    // A verbatim slice of the real VizieR B/vsx TSV answer (measured
-    // 2026-09-05, cone around ra 245.8967 dec -26.5252) — the parser must read
-    // the schema as the live server sends it.
     const VSX_SAMPLE: &str = "\
 OID\tName\tRAJ2000\tDEJ2000\tType\tPeriod\n\
   \t \tdeg\tdeg\t \td\n\
@@ -1191,8 +1187,6 @@ OID\tName\tRAJ2000\tDEJ2000\tType\tPeriod\n\
             !vsx_type_known_chromatic("SN"),
             "a supernova is not a periodic witness"
         );
-        // The broker classifier word is not a variability type and must never
-        // be treated as the external witness.
         assert!(!vsx_type_known_chromatic("f:main_label_classifier"));
     }
 }
