@@ -2,7 +2,7 @@
   title: Cross-screening the Kollab window and the Gyirong series
   class: paper
   date: 2026-09-12
-  sha256: c4ffc07e56c33a55aae827e2bea906d6bacc39773df6a464ad6e8b7dd75a23d9
+  sha256: 23c4c3543892ae21263ef5f6d148fe4318c7cb43ee56325110522786033e832c
   status: live
   see-also: docs/blatt/blatt-kreuz-screening-kollab.md docs/blatt/blatt-kreuz-screening-gyirong.md docs/paper/sturzflut-tibet-pfeil.md
 -->
@@ -47,6 +47,17 @@ Limits and pendings, named not assumed:
 - n = 240 for the 10-day Kollab window; longer series harden the surrogate thresholds (n = 1392 in the power update).
 - The Kollab blatt register line is closed (2026-09-12): the three conditioned cTE values are measured (0.1983 > 0.1815, 0.1602 > 0.1568, 0.1584 > 0.1538); the marginal rasuwa→kollab Lag 6 hit of the full-lag re-run (0.2099 > 0.2097) is named.
 - Data are Open-Meteo archive-api model/reanalysis output, not in-situ observations; the co-local Trishuli gauge is the sibling measurement (`docs/paper/sturzflut-tibet-pfeil.md`).
+
+## Re-run mit gesetztem Konditionierungssatz (2026-09-27, Run 36278754294)
+
+Sechs Serien (precipitation + temperature_2m je gyirong/kollab/rasuwa), n = 241, Lags
+{1, 6, 12, 24}, 20 Surrogate, konditioniert auf gyirong temperature_2m. Unkonditional
+tragen viele Zellen; der dominante Träger ist rasuwa temperature_2m (→ gyirong/kollab
+precipitation bei Lag 1/6/12, TE bis 0.0164). Nach der Konditionierung überlebt **eine**
+Zelle marginal: `rasuwa_temperature_2m → gyirong_precipitation` Lag 6 (cTE 0.0027 >
+0.0026). Richtungs-Caveat wie oben: die Bibliothek liest
+`transfer_entropy_lag(x, y) = TE(y → x)`, die gedruckte `TE(a→b)`-Spalte ist gespiegelt;
+die Zeile steht als gemessen, die Orientierung folgt derselben Spiegel-Regel.
 
 ## References
 
