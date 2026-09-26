@@ -3,7 +3,7 @@
   session: River-Folge 37
   class: handover
   date: 2026-09-26
-  sha256: d0356a932abd4217fce7285398d15db5e56b47235141f06553c790b359c5dfdd
+  sha256: c8cc6682e26533831ab30ce4f7da73b08c60e9181e569661a30c7c81af3f03ff
   status: live
 -->
 # Handover — River-Folge 37 (2026-09-26)
@@ -33,6 +33,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge36.md` (jetzt in
 - Browser-Extension: **forken statt Dritten fragen** | 2026-09-26 | Operator-Wort folge36 („7 können wir die extension nicht forken?").
 - vC-Permeabilität: **945 und Mantis Shrimp getrennt führen** | 2026-09-26 | Operator-Wort folge36 („8 TRENNEN!!!!!").
 - Session-Consent (Delegation) | 2026-09-26 | Operator-Wort: den Plan ausführen; Commit trägt `/commit`.
+- Sensory-Eigentum `src/archivar/llnl_g3d.rs`: **ja** — die untracked Datei gehört der Sensory-Linie, die noch daran arbeitet (aktive Fremdarbeit, keine von River zu schließende Lücke) | 2026-09-26 | Operator-Wort.
 
 ## Stehender Pass (measured 2026-09-26)
 
@@ -71,15 +72,16 @@ Diese Session konsumierte `handover-2026-09-26-river-folge36.md` (jetzt in
   und heutige Hülle `rho_star ≈ c·8.4e8 s + pad ≈ 8.2 pc` (< eine Zelle). Der volle
   `d_max`/ECDF/`f_excl`-Lauf ist ungemessen; die zwei RISS-Zeugenlinien bleiben
   ungeglättet getragen.
-- **Blockade:** fremder Commit-Bruch außerhalb Rivers: `src/archivar/mod.rs:96`
-  deklariert `pub mod llnl_g3d;`, aber `src/archivar/llnl_g3d.rs` ist **untracked**
-  (`git ls-files src/archivar/llnl_g3d.rs` leer; `src/archivar/emc.rs` tracked) —
-  das committete HEAD kompiliert die lib nicht, die Stufe
+- **Blockade:** **sensory** — `src/archivar/mod.rs:96` deklariert
+  `pub mod llnl_g3d;` (Commit `e061cecbc` deklarierte das Modul **ohne** die Datei),
+  aber `src/archivar/llnl_g3d.rs` ist **untracked** und sensorys laufende Arbeit
+  (`git ls-files src/archivar/llnl_g3d.rs` leer; `src/archivar/emc.rs` tracked).
+  Quell-Cluster: LLNL-G3D-JPS / EarthScope-EMC / ISC-EHB. Das committete HEAD
+  kompiliert die lib nicht, die Stufe
   `Run the star d_max distribution measurement` scheitert mit
   `error[E0583]: file not found for module llnl_g3d` (Run `36240676551`, exit 101).
-- **Braucht:** die fremde Linie committet `src/archivar/llnl_g3d.rs` (oder zieht
-  die Deklaration in `src/archivar/mod.rs:96` zurück), bis das committete HEAD
-  wieder baut; dann `star-dmax-probe` neu dispatchen, Artefakt mit
+- **Braucht:** sensory committet `src/archivar/llnl_g3d.rs` (seine Arbeit baut
+  `main` wieder), dann `star-dmax-probe` neu dispatchen, Artefakt mit
   `ci_manage view <neue id>` lesen; RISS-Zeile per
   Schwelle schließen (`f_excl > 0.5` / `f_inc > 0` / interdecile > 10 bei irgendeinem
   Floor → Insert-Fix widerlegt, Query-Seite steht). **Der Harte-Läufe-LOCK fällt erst,
