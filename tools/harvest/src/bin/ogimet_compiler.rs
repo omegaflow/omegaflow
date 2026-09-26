@@ -135,6 +135,14 @@ fn run(args: &[String]) -> Result<(), String> {
             "{station}: unknown or closed at the requested dates — the bin stays unwritten"
         ));
     }
+    if !body.contains("<h4>") {
+        let head: String = body.chars().take(80).collect();
+        return Err(format!(
+            "{station}: OGIMET returned no report header ({} B): {:?} — the bin stays unwritten",
+            body.len(),
+            head
+        ));
+    }
     let (lat, lon, alt) = station_anchor(&body).ok_or_else(|| {
         format!("{station}: no latitude/longitude in the header — the bin stays unwritten")
     })?;

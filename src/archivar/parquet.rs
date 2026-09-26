@@ -1076,7 +1076,7 @@ fn delta_binary_packed(data: &[u8]) -> Result<(Vec<i64>, usize), ParquetNote> {
     let total_count = total_count as usize;
     if block_size == 0
         || miniblocks_per_block == 0
-        || block_size % miniblocks_per_block != 0
+        || !block_size.is_multiple_of(miniblocks_per_block)
         || total_count == 0
     {
         return Err(ParquetNote::Truncated { off: pos });
@@ -1177,8 +1177,7 @@ fn decode_delta_byte_array(data: &[u8], count: usize) -> Result<Vec<ParquetValue
     let suffixes = decode_delta_length_byte_array(&data[pos..], count)?;
     let mut out = Vec::with_capacity(count);
     let mut previous: Vec<u8> = Vec::new();
-    for i in 0..count {
-        let plen = prefix_lengths[i];
+    for (i, &plen) in prefix_lengths.iter().enumerate().take(count) {
         if plen < 0 || plen as usize > previous.len() {
             return Err(ParquetNote::Truncated { off: data.len() });
         }

@@ -740,7 +740,9 @@ fn main() {
         let thr = match surrogate_stats_phase(rs, ws, lag, SEED) {
             Some((_, _, t)) => t,
             None => {
-                println!("probe {name:<12} te {te:.4e} ({dir}, lag {lag}) thr absent — surrogate null not computable");
+                println!(
+                    "probe {name:<12} te {te:.4e} ({dir}, lag {lag}) thr absent — surrogate null not computable"
+                );
                 continue;
             }
         };

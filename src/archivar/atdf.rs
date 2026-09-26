@@ -875,13 +875,13 @@ pub fn reduce_uly_skyfreq(
                 Some((_, c)) => *c += 1,
                 None => mode8_hist.push((tr.ground_mode, 1)),
             }
-            if tr.ground_mode == 3 || tr.ground_mode == 4 {
-                if let Some(xmtr_ref) = tr.xmtr_ref {
-                    let khz = (xmtr_ref as f64 / 10_000.0).round() as i64;
-                    match xmtr8_khz_hist.iter_mut().find(|(k, _)| *k == khz) {
-                        Some((_, c)) => *c += 1,
-                        None => xmtr8_khz_hist.push((khz, 1)),
-                    }
+            if (tr.ground_mode == 3 || tr.ground_mode == 4)
+                && let Some(xmtr_ref) = tr.xmtr_ref
+            {
+                let khz = (xmtr_ref as f64 / 10_000.0).round() as i64;
+                match xmtr8_khz_hist.iter_mut().find(|(k, _)| *k == khz) {
+                    Some((_, c)) => *c += 1,
+                    None => xmtr8_khz_hist.push((khz, 1)),
                 }
             }
         }
