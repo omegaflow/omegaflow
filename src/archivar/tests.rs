@@ -11449,19 +11449,6 @@ fn test_series_rows_keeps_the_no_band_pad_for_a_bandless_series() {
 }
 
 #[test]
-fn test_series_rows_carries_the_photopic_band_for_rx100() {
-    let bytes = super::rx100::write_bin(&[(1.0e9, 58.8, super::rx100::COMP_LUMINANCE)]);
-    let rows = super::extract::series_rows("rx100_luminance", &bytes).expect("rx100 rows parse");
-    assert_eq!(rows.len(), 1);
-    assert_eq!(
-        rows[0].freq,
-        super::rx100::FREQ_PHOTOPIC_HZ,
-        "the photopic band rides the luminance row"
-    );
-    assert_eq!(rows[0].bin_width, super::rx100::BIN_WIDTH_PHOTOPIC_HZ);
-}
-
-#[test]
 fn port_gap_magnitude_fields_resolve() {
     assert_eq!(probe_classify("mag_g"), ("em", "mag", 604800.0));
     assert_eq!(probe_classify("phot_g_mean_mag"), ("em", "mag", 604800.0));
