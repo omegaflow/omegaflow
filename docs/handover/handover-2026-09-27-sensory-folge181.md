@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: ffb9a0288aa17d3b01bc5662203b2a5553bf2b710266acab5a72e70106101081
+  sha256: 82b16b0aea5856d90dd76d86a0b17c599966353b8916e7fda6ab1aaa5c0a8bbf
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -47,18 +47,19 @@ getrackt, nie am CDN.
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-### 3. O1 DEMETER/CDPP — metalink gesichert, Bulk-Download WAF-blockiert
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** WAF-Weg (Browser) | **Frist 2026-09-28**
-- **Lage:** (gemessen 2026-09-27) metalink **gesichert**:
-  `regards.cnes.fr/api/v1/rs-order/user/orders/18387/metalink/download` →
-  `data/cdpp-archive.cnes.fr/metalink_18387.xml` (68.9 MB, 776 629 Z.); URLs + Namen
-  extrahiert nach `order_18387_urls.txt`/`order_18387_files.txt` (97 078 je); Ablauf
-  09/28 12:46.
-- **Blockade:** die File-URLs (`/orders/public/files/<id>?orderToken=…`) weist der
-  **F5-WAF** ab (`Request Rejected`) — für curl/sfetch/Proton und auch mit
-  `Authorization: Bearer` + WAF-Cookie; nur der Browser (TLS-Fingerprint) kommt durch.
-- **Braucht:** Download über den Browser (SPA/Download-Manager mit Browser-Integration)
-  **vor 09/28**; oder einen WAF-fähigen Weg.
+### 3. O1 DEMETER/CDPP — Order nicht abholbar (Riss)
+- **Status:** wartend | **Bindung:** operator | **Trigger:** Order neu erzeugen | **Frist 2026-09-28**
+- **Lage:** (gemessen 2026-09-27) metalink gesichert
+  (`data/cdpp-archive.cnes.fr/metalink_18387.xml`, 68.9 MB, 97 078 URLs; Frist-Ablauf
+  09/28 12:46). **Aber:** die File-URLs (`/orders/public/files/<id>?orderToken=…`) weist
+  der **F5-WAF** ab (`Request Rejected`) — curl/sfetch/Proton, mit vollständigem
+  Browser-Header-Satz **und sogar die Browser-Session selbst** (Top-Level-Navigation →
+  „Request Rejected", gemessen). Die Order steht `DONE_WITH_WARNING` mit
+  `availableFilesCount 0`, `filesInErrorCount 96978` → die Dateien sind nicht servierbar.
+- **Blockade:** Order fehlgeschlagen (0 verfügbare Dateien).
+- **Braucht:** Order in der SPA **neu erzeugen** (die neuen Datei-URLs); dann erneut
+  messen. Korrektur zu folge180 — `availableFilesCount 0` war schon da das Signal, der
+  befüllte metalink kein Gegenbeweis.
 
 ### 5. #4 Seismik-Flotte — gemessen (Dual-Phase-Fit mit Gate), Gravimeter offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
@@ -86,16 +87,14 @@ getrackt, nie am CDN.
 - **Braucht:** Ergebnis via `ci_manage view 36278481962`; Träger
   `cross-screening-tibet.md:42/:44`, `blatt-kreuz-screening-gyirong.md:71/:201`.
 
-### 8. #9 Trishuli — Footprint gemessen, S1-Post-Scene-Download hat einen Bug
+### 8. #9 Trishuli — Post-Scene geladen (SAS-Bug gefixt), Alignment offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27) 3 Post-Event-Frames schneiden Bahrabise (ASF);
-  `s1_post_capture` (Planetary Computer STAC, keyless) findet die Szene
-  `S1D_…_20260828T122141` — der COG-Download schreibt aber nur 248 B
-  (`PublicAccessNotPermitted`, Azure 409) trotz gültigem SAS-Token → Bug in der
-  Token-Bindung (`s1_post_capture.rs:89`).
-- **Blockade:** Download-Bug in `s1_post_capture`.
-- **Braucht:** SAS-Token korrekt an den href hängen, Post-Scene laden; dann
-  `s1_raster_diff`/`s1_sar_compiler`.
+- **Lage:** (gemessen 2026-09-27) SAS-Bug in `s1_post_capture`/`s1_sar_compiler` gefixt
+  (JSON-`\u0026` wird entschärft; Commit `046c3ee69`); Post-Event-Szene
+  `S1D_…_20260828T122141` geladen → `tmp/s1post/…_vv.tif` (666 368 744 B).
+- **Blockade:** keine (Pre-Baseline für die Differenz fehlt).
+- **Braucht:** Pre-Event-Szene als `OMEGAFLOW_S1_VOR` setzen → `s1_raster_diff`
+  (Vor/Nach-Differenz).
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
