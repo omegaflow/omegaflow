@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: 1380accd521235b155d9d054f99e5d1e4dbf2ec6038c7ad569700d5ce120daa0
+  sha256: b63e601b087a7e31b1d9bbb79f36a7f5ae552f34dd8bf653ad44c5725ab2bede
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -196,7 +196,7 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 
 #### termin-Punkte — re-verdict 2026-09-26
 - **Status:** termin | **Bindung:** dritter
-- **Trigger:** 2026-09-28 (DEMETER) / 2026-10-02 (übrige).
+- **Trigger:** 2026-09-28 (DEMETER) / 2026-10-02 (übrige) / 2026-12-02 (NOIRLab/Gaia-DR4-Photometrie).
 - **Lage:** (gemessen 2026-09-26 via grind-flash, `archive_search --verdict`):
   `regards.cnes.fr/api/v1/rs-order` 403 direct+Proton (WAF) ·
   `pithia.cbk.waw.pl/tap/tables` direct+Proton no-response (vorher 500) ·
@@ -215,7 +215,7 @@ Die ersten zwei Träger-Schritte sind aus folge168 übernommen und in diesem Ato
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen gemessen (GFW declined, GOSAT-GW `pending`, Rubin `blocked account` committet); die verbleibende Namens-Disposition trägt die Future-Übergabe (`state/funding/handover/handover-2026-09-26-future-folge129.md`).
-- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | **gemessen 2026-09-26: die 26 Pendings sind aufgelöst außer GOES GSICS** — Assets/Origins in `phi/sources.φ` (COSMIC-2, US-CRN, NRS, VLASS, CORS, Himawari, GDP-Drifter, WOD, NEXRAD, SuperDARN, Pioneer-10 `sources.φ:8827`), Compiler gebaut (ONC `onc_hydrophone_compiler.rs`, ERI `noaa_eri_compiler.rs` + `src/archivar/tiff.rs` JpegDecoder, OCS `noaa_ocs_hydrodata_compiler.rs`, GK2A `gk2a-cdn.yml` calib=2 in-granule), WFAU OSA/SSA `dead` (`dead_sources.φ:116,120`), VSA/WSA `declined` (`:171,175`), LASzip `src/archivar/las/laszip.rs` | offen nur GOES GSICS (eigener Punkt).
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | **gemessen 2026-09-26: die 26 Pendings sind aufgelöst außer GOES GSICS** — Assets/Origins in `phi/sources.φ` (COSMIC-2, US-CRN, NRS, VLASS, CORS, Himawari, GDP-Drifter, WOD, NEXRAD, SuperDARN, Pioneer-10 `sources.φ:8827`), Compiler gebaut (ONC `onc_hydrophone_compiler.rs`, ERI `noaa_eri_compiler.rs` + `src/archivar/tiff.rs` JpegDecoder, OCS `noaa_ocs_hydrodata_compiler.rs`, GK2A `gk2a-cdn.yml` calib=2 in-granule), WFAU OSA/SSA `dead` (`dead_sources.φ:116,120`), VSA/WSA `declined` (`:171,175`), MarineCadastre-AIS + GNIP `descoped` (Rat 2026-09-15, kein Konsument), LASzip `src/archivar/las/laszip.rs` | ausstehend nur GOES GSICS (eigener Punkt) + Wiedervorlage 2026-12-02 (NOIRLab/Gaia-DR4-Photometrie).
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offen: Re-Check 3 Force-Kanal (`remon.jrc.ec.europa.eu`, `www.irsn.fr` ×2) + 4 pending (`dods.wh.gov`, `osdr.nasa.gov`, `pskreporter.info`/`reversebeacon.net`) + `arvo-registry.sci.am` Proton-Eskalation | nächster Schritt: `archive_search --verdict` je Host.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Disposition der 55 undocumented `stale_pending` (Force-Gate → `sources.φ`/`dead_sources.φ`) | nächster Schritt: `docs/specs/cdn_orphan_verdicts.json` je Netloc disponieren.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout für `knowledge/`+`backups/` (~50 G in situ, kein Blindwurf) | nächster Schritt: Operator-Wort zum Layout.
