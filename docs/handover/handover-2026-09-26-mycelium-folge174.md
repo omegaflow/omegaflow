@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: 27e747f9c2750fa223c4b27e3dfbd08d91db1ceb3b62a563d6919b4e46d07290
+  sha256: dc6537317844d03a044288b3d0095a75d8074d2d3618f142b45c308b499e4c91
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -62,12 +62,12 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 - **Blockade:** Parser-Arm fehlt (parser-def); src.pas-Backend dritter.
 - **Braucht:** `epncore-spatial`-Gap in `phi/blocked_sources.φ` → mountain-Linie; MASER-`epn_core`-Sample registrieren; LOFAR LTA (`lta.lofar.eu`, account-gated) als `blocked account`-Kandidat.
 
-#### GOSAT-GW GWT3F_L1B — Re-pack gebaut, Rest-Arme offen
+#### GOSAT-GW GWT3F_L1B — Arme gebaut, CDN-Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** fremde Hunks in `main_flow.rs`/`extract.rs` frei ODER Hunk-Staging.
-- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack committet `cb339a5c9` (`tools/harvest/src/bin/gosat_tanso3_compiler.rs`: 60-B GeoRec, `comp_of`, Test). radiance-`units` = `W.m-2.sr-1.um-1` (live 17 440 691 B). comp-Formel durch die 1..6-Randbedingung bestimmt: `(product−1)·3+band` (Fokus 1..3, Wide 4..6).
-- **Blockade:** `main_flow.rs`/`extract.rs` tragen fremde uncommittete Hunks (AIA/EVE-Sonnen-Linie).
-- **Braucht:** Arme in `geo.rs` (`MAGIC_GOSAT`, `COMP_GOSAT_*`, `magic_of:205`, `comp_max:248`), `extract.rs:450`, `main_flow.rs:3253-3282`, `tests.rs`, `phi/sources.φ`; dann `blocked_sources.φ:323-325` → released.
+- **Trigger:** `gosat-cdn`-Lauf (GOSAT-GW-Credentials).
+- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack + alle Arme gebaut und committet: `geo.rs` (`MAGIC_GOSAT`, `COMP_GOSAT_*`, `magic_of`/`comp_max`), `extract.rs`, `main_flow.rs`, `tests.rs`, `phi/sources.φ`-Block; `cargo check` 0/0. comp-Formel `(product−1)·3+band` (1..6). Asset `gosat_tanso3.bin` noch nicht manifestiert (kein sha256).
+- **Blockade:** kein CDN-Workflow für `gosat_tanso3`.
+- **Braucht:** `gosat-cdn.yml` bauen (Muster `gll`/`galileo_odr`) + dispatchen; danach `sha256` in `phi/sources.φ` und `blocked_sources.φ:325` → released.
 
 #### EMODNET HFRADAR NADR — Termin-Re-Messung
 - **Status:** termin | **Bindung:** termin:2026-10-19
