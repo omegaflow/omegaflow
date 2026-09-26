@@ -166,21 +166,52 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let stage_path = flag(&args, "--stage");
     let precip_path = flag(&args, "--precip-csv");
+    let station_id = match flag(&args, "--station-id") {
+        Some(v) => v,
+        None => "4913".to_string(),
+    };
+    let station_name = match flag(&args, "--station-name") {
+        Some(v) => v,
+        None => "Bhotekoshi at Rasuwagadhi".to_string(),
+    };
+    let precip_name = match flag(&args, "--precip-name") {
+        Some(v) => v,
+        None => "rasuwa".to_string(),
+    };
+    let precip_coords = match flag(&args, "--precip-coords") {
+        Some(v) => v,
+        None => "28.25, 85.10".to_string(),
+    };
     let lags: Vec<usize> = match flag(&args, "--lags") {
         Some(v) => v.split(',').filter_map(|s| s.parse().ok()).collect(),
         None => vec![1, 3, 6, 12, 24],
     };
     let (Some(sp), Some(pp)) = (stage_path, precip_path) else {
-        eprintln!("--stage <dhm_4913_stage.csv> --precip-csv <open-meteo.csv> required");
+        eprintln!(
+            "--stage <dhm_{station_id}_stage.csv> --precip-csv <open-meteo.csv> [--station-id N] [--station-name NAME] [--precip-name NAME] [--precip-coords LAT,LON] required"
+        );
         exit(2);
     };
 
-    println!("=== Trishuli co-local precipitation -> stage TE lag sweep ===");
+    println!("=== Trishuli precipitation -> stage TE lag sweep ===");
     println!(
-        "precipitation route : Open-Meteo archive-api, rasuwa (28.25, 85.10), hourly, keyless"
+        "precipitation route : Open-Meteo archive-api, {precip_name} ({precip_coords}), hourly, keyless"
     );
     println!(
-        "stage route         : DHM Nepal river-watch, Bhotekoshi at Rasuwagadhi (id 4913), 10-min, keyless"
+        "stage route         : DHM Nepal river-watch, {station_name} (id {station_id}), 10-min, keyless"
+    );
+    println!(
+        "stage source note   : the live rolling buffer covers only ~4.6 d and ages the flood window out;"
+    );
+    println!("                      the flood-window series is carried by a wayback page snapshot");
+    println!(
+        "                      (livefeed_gate --dhm {station_id} --dhm-page <snapshot.html>);"
+    );
+    println!(
+        "                      measured 2026-09-26: snapshot 20260901142220 -> 2026-08-25 14:25 .."
+    );
+    println!(
+        "                      2026-09-01 14:15 UTC (station 113); station 4913 ends 08-26 02:55 UTC."
     );
     println!("precip file         : {pp}");
     println!("stage file          : {sp}");
@@ -188,18 +219,22 @@ fn main() {
 
     let stage = read_stage_csv(&sp);
     let Some((stage_rows, stage_skipped)) = stage else {
-        println!("stage series: absent — no dhm_4913_stage.csv was written by livefeed_gate --dhm");
-        println!("(measured 2026-09-16: the live DHM river-watch page carries no timeSeries for");
         println!(
-            "station 4913 — telemetry stopped at the flood 2026-08-26 02:55, and the pre-flood"
+            "stage series: absent — no dhm_{station_id}_stage.csv was written by livefeed_gate --dhm"
         );
-        println!("window has aged out of the live rolling buffer. the named source for the");
         println!(
-            "registered n=129 window is the wayback snapshot of the page around 2026-08-27/28.)"
+            "(the live DHM river-watch rolling buffer covers only ~4.6 d and ages the flood window out;"
+        );
+        println!("the flood-window series is recoverable via a wayback snapshot of the page —");
+        println!(
+            "livefeed_gate --dhm {station_id} --dhm-page <snapshot.html>; measured 2026-09-26: snapshot"
+        );
+        println!(
+            "20260901142220 carries the flood window (station 113 full, 4913 to 08-26 02:55 UTC).)"
         );
         println!();
         println!(
-            "verdict: no sweep — the co-local stage series is absent on the fetched source (0 honored)"
+            "verdict: no sweep — the stage series is absent on the fetched source (0 honored)"
         );
         return;
     };
@@ -209,7 +244,7 @@ fn main() {
             "precip series: absent — the file carries no time,value header row (archive-api csv shape)"
         );
         println!();
-        println!("verdict: no sweep — the co-local precipitation series is absent (0 honored)");
+        println!("verdict: no sweep — the precipitation series is absent (0 honored)");
         return;
     };
 
@@ -292,8 +327,8 @@ fn main() {
     println!(
         "TE > threshold (mean+2sigma shuffled surrogates) = significant arrow; else no finding."
     );
-    println!("window note: the registered §3.5 run (n=129) needs the stage window 08-20 18:45 ..");
     println!(
-        "08-26 02:55 UTC — carried only by a page snapshot from 2026-08-27/28, not by the live page."
+        "window note: the flood-window stage series is carried only by a wayback page snapshot,"
     );
+    println!("not by the live rolling buffer (which covers ~4.6 d before the fetch).");
 }

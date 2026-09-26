@@ -1,7 +1,7 @@
 <!--
   title: Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
   class: concept
-  sha256: 06a30cf96f806c10f91d99604c0bee50a9f28509f73d86d5bf5b15c2337118d4
+  sha256: c2488065a40c1497a9db23b74c6a95ec96d6c789ae6e35c19005acfd880832b3
 -->
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 
@@ -39,8 +39,14 @@ Asteroidenkontur und den Winkeldurchmesser des Sterns.
 - **Kreuzung:** Asteroiden-Bahn ∩ Gaia-Farbe ∩ IR-Ø
 - **Emergiert:** das Winkeldurchmesser-Feld aller Sterne, die je
   okkultiert werden — kein Katalog speichert es.
-- **Stand:** die natürliche Fortsetzung des Okkultations-Atoms; die
-  Triade a/λ/D liegt bereits im Archivar. Die Messung ist `ausstehend`.
+- **Stand:** der Rechenpfad ist gebaut — `src/archivar/fresnel.rs`
+  rechnet aus der Triade a/λ/D das Fresnel-Feld am Beobachter:
+  θ = 2a/D (Winkeldurchmesser des Okkluders), F = a²/(λ·D), die
+  Bodensaumskala √(λD/2) — a aus dem dastcom-IR-Radius-Slot, λ aus
+  `bp_rp_to_lambda_nm` (BP−RP → effektive Wellenlänge über die Gaia-
+  Passbänder), D aus `state_at` am Beobachter-Epoch. Der
+  Winkeldurchmesser der okkultierten Sterne selbst — das emergierte
+  Feld — braucht die Okkultations-Lichtkurven: `pending` (live Quelle).
 
 ### Ⅱ. Plasma-Linsen — der Brechungstensor der Heliosphäre
 
@@ -132,9 +138,14 @@ die Reinheit der Null beweist die Reinheit des Vakuums.**
 
 - **Kreuzung:** Asteroid-M ∩ Gaia-z ∩ Kepler-Bahn
 - **Emergiert:** kein Signal — eine Baseline. Die Stille als Messung.
-- **Stand:** Konzept; die Okkultations-Maschinerie rechnet bereits mit
-  GM je Okkluder (Gravitations-Limb), die statistische Aggregation
-  fehlt.
+- **Stand:** gebaut — `src/mathematikerin/doppler.rs` trägt die
+  Linie (Δz = GM/(c²b), b = |d × u| aus der Sichtlinien-Geometrie, GM
+  je Okkluder aus `gm_km3_s2`) und die Aggregation: `prediction_stat`
+  (Mittel + σ der Kepler-Δz-Linien — der Erwartungswert) und
+  `residual_stat` (Mittel + σ der (Messung − Kepler)-Residuen; ohne
+  gemessene Linie `None` — die Reinheit der Null). Die gemessenen Δz
+  je Okkultation (Spektrum/Lichtkurve) sind eine live Quelle:
+  `pending`.
 
 ## Die Schnittmengen-Topologie
 

@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: a68563419e7206c1e8a9bd1c27ff6660353f48675b1247f162547ad932d092e4
+  sha256: 03280d51b5e6994b84182fbc8de56907a06cc5c6ded8625dc5c990ba47be8024
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -370,11 +370,19 @@ Nachfolgepunkt, nicht dieser Befund.
 > = TE(b→a); `cross_te_screen.rs:281` `te_a_to_b = transfer_entropy_lag(bv, av)`
 > = TE(a→b) ebenso. Die Spiegel-Unsicherheit ist damit im Code aufgelöst —
 > die Bahrabise-Spalten sind als Pegel→Regen/Regen→Pegel nicht mehr
-> gespiegelt zu lesen. Die Bahrabise-**Nachmessung** auf den Zeitreihen
-> bleibt `pending` — die Bahrabise-Zeitreihen (DHM-Station 113 Pegel +
-> Regen, n = 169) sind nicht lokal geerntet (`data/` leer, kein
-> `meteo_harvest/`, `phi/meteo/tibet-flut-2026.json` trägt nur
-> gyirong/kollab/rasuwa, keine Bahrabise-Station).
+> gespiegelt zu lesen. Die Bahrabise-**Nachmessung** bleibt `pending`,
+> aber die Ernte-Routen sind gemessen (2026-09-26, 0 honored): der Pegel
+> **113** „Bhote Koshi at Bahrabise" (27.786773/85.899324, series_id 1640)
+> steht auf `river-watch` (HTTP 200), der Live-Rollpuffer deckt aber nur
+> ~4.6 d (2026-09-19 .. 09-24) — die Flutwoche ist gealtert. Der einzige
+> Snapshot nach der Flut im CDX (20260101..20260926) ist **20260901142220**;
+> er trägt Station 113 mit 1007 10-min-Punkten **2026-08-25 14:25 ..
+> 2026-09-01 14:15 UTC** (Flutfenster vollständig; 4913 endet 08-26 02:55).
+> Der Regen läuft über Open-Meteo archive-api an 27.7868/85.8993 (HTTP 200,
+> hourly, keyless); DHM `rainfall-watch` ist 500/absent. Die Reihen sind
+> damit erntbar (`livefeed_gate --dhm 113 --dhm-page <snapshot>` →
+> `te_pair_probe`); die Ernte selbst ist nicht gefahren (`data/` leer);
+> `phi/meteo/tibet-flut-2026.json` trägt bahrabise seit diesem Stand.
 
 ### 3.4 Der Treiber-Niederschlag (gemessen)
 
