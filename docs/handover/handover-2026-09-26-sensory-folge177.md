@@ -3,7 +3,7 @@
   session: Sensory-Folge 177
   class: handover
   date: 2026-09-26
-  sha256: 5cbbc209b9a6a075071e334e81b69c827ddf2a3a7d3096d266ec3c46e44fc474
+  sha256: e064f7eb28ee297953b0babab78bdfcb9237d70143fe9b9c2d3850efb814eef7
   status: live
 -->
 # Handover — Sensory-Folge 177 (2026-09-26)
@@ -91,6 +91,18 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (1) → Träger Punkt „Postfach" (unten): nächster Schritt MPI-FKF/TRISP-Antwort via `smail`; die CSES-Limadou-Antwort (Sotgiu 2026-09-16, „wait a few weeks") ist Wiedervorlage.
 - `docs/concepts/ein-blatt-papier.md` (2) → Lag-Sweep-Träger Punkt „causal-arrow-preregistration" (`te_pair_probe`); KDE-Bandbreiten-Gate descoped.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md`, `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md`, `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md`, `docs/concepts/mirror-research.md` (je 1) → Bestand der Mycelium-Linie (kein eigener Sensory-Schritt).
+- `docs/concepts/exzellenz-konzept.md` (3) → descoped (gemessen 2026-09-26: Marker sind die Definition von pending §2/§2.5; Body final → `docs/concepts/exzellenz-konzept.md:91`).
+- `docs/concepts/kybernetische-astrophysik.md` (10) → descoped (gemessen 2026-09-26: Marker sind Status-Vokabular „offen"/„pending" im Essay-Body → `docs/concepts/kybernetische-astrophysik.md:45`).
+- `docs/concepts/zeugnis.md` (5) → descoped (gemessen 2026-09-26: Marker sind die Disziplin-Prosa des Handover-Abschnitts F → `docs/concepts/zeugnis.md:370`).
+- `docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md` (2) → descoped (gemessen 2026-09-26: Treffer sind der Substring „depending" Z.29/35, kein offener Punkt).
+- `docs/paper/planet-nine-kbo-residue.md` (1) → descoped (gemessen 2026-09-26: §5(iv) auf „implementiert + getestet" nachgezogen, `spk_type1_check.rs`; der Reader ist gebaut).
+- `docs/concepts/terminologie-der-gegenstroemung.md` (1) → descoped (Marker „pending" im Definitions-Kopf → `:22`).
+- `docs/concepts/blatt-papier-beweis.md` (3) → descoped (Membran-Bindung gebaut `src/mathematikerin/omega.rs:349`, Commit `356fa616`; pending-Kanalzellen = Quellen-Port-Stand).
+- `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` (2) → descoped (Substring „wartet" in „erwartete"; Silence-Map-Probe gebaut).
+- `docs/surveys/survey-messpunkt-verteilung.md` (6) → descoped (gemessen 2026-09-26: Kandidaten 1–8 verdiktet; Kandidat 9/§6 Konsultations-Einladung).
+- `docs/concepts/glossar.md` (1) → descoped (Marker sind die `pending`-Definitionen des Glossars → `docs/concepts/glossar.md:24`).
+- `docs/concepts/archivar-mathematikerin.md` (1) → Träger: Archivar-Pending (Bootstrap-all-bodies-Load, Per-Tick-Fetch-Loop, Katalog-Kegel auf dem Kegel — `main_flow.rs`); Bindungslinie Mountain.
+- `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (2) → Träger: §7 offene Punkte der Membran-Ladearchitektur (River-Linie); `archivar-mathematikerin.md` verweist darauf.
 
 - **Alt-Orphans (2026-09-26 gemessen, trägerlos):** `docs/concepts/pfeiler-der-architektur.md` (2), `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` (3), `docs/surveys/survey-fortschritt.md` (1) — Marker = Status-Vokabular; kein eigener Sensory-Schritt. Schritt: beim nächsten Pass je Datei die Marker lesen → descope oder Träger (Aufenthalt Mycelium/Mountain).
 
@@ -135,26 +147,26 @@ Die Reihenfolge ist die Umsetzbarkeit; der Akteur steht pro Punkt in `Bindung`.
 - **Blockade:** keine.
 - **Braucht:** Broker-Compiler-Routen (ANTARES `api.antares.noirlab.edu/v1/loci`, Lasair Key `LASAIR_LSST_TOKEN`) verdrahten; Fink/ALeRCE-Reader-Tests (CI-only).
 
-#### Sieben Sphären — CHARM2 registriert, Winkel-Feld füllbar
+#### Sieben Sphären — Winkel-Feld gebaut, Δz-Okkultation absent
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) CHARM2 `J/A+A/431/773` `Method='LO'` (Lunar Occultation) in `phi/sources.φ:9593` registriert (`format tap`, `cmap .`, `ra/dec/plx`, `field UD/LD mas`); Probe `tools/harvest/src/bin/charm2_occultation_probe.rs` gebaut, 0 Warnungen. Live: 1815 LO-Zeilen, **389 mit Winkel + eingebetteter Hipparcos-Distanz**, 438 mit Gaia-DR3-Cross-Match (`I/355/gaiadr3`, TAPVizieR-JOIN `DISTANCE < 2″`, HTTP 200). **Gaia-Parallax-Compiler gebaut:** `src/archivar/charm2.rs` (`CHM2`, 41-B-Records), `tools/harvest/src/bin/charm2_compiler.rs` (ADQL-JOIN), Dispatch `extract.rs:2811`, `mod.rs:36`, CDN-Block `sources.φ:9581`; live 438 JOIN-Paare → **363 Records**; `cargo check` 0 Warnungen. Der Marker (okkultations-abgeleitetes Winkeldurchmesser-Feld **mit** Distanz) ist damit füllbar.
-- **Blockade:** keine.
-- **Braucht:** der **Fetch-Arm** (`main_flow.rs`: `catalog_charm2`-`.bin` in den `content_cache`, Muster `catalog_allwise_psd` `main_flow.rs:3661`) — `main_flow.rs` ist fremd-dirty, daher nächster Atom; der **CDN-Workflow** `charm2-cdn.yml` (Größen-Gate 14891 B, Spiegel `slab2-cdn.yml`) ist gebaut und dispatcht. Das **Δz-je-Okkultation**-Pending bleibt `absent` (IOTA-Archiv `asteroidoccultation.com/observations/Results/` live, trägt Lichtkurven, kein Δz-Katalog).
+- **Lage:** (gemessen 2026-09-26) CHARM2 `J/A+A/431/773` `Method='LO'` in `phi/sources.φ:9593`; Parser `src/archivar/charm2.rs` (`CHM2`, 41-B-Records), Compiler `tools/harvest/src/bin/charm2_compiler.rs`, Dispatch `extract.rs:2811`, `mod.rs:36`, **Fetch-Arm `main_flow.rs:3726`** (eigener Hunk, `cargo check` 0/0), CDN-Block `sources.φ:9581`, Workflow `charm2-cdn.yml`. Live: 438 JOIN-Paare → **363 Records**; 389 LO-Zeilen mit Hipparcos-Distanz.
+- **Blockade:** keine (Winkel-Feld vollständig gebaut).
+- **Braucht:** die Manifestation (`charm2-cdn`-Lauf) liest der nächste Pass. Das **Δz-je-Okkultation**-Pending bleibt `absent` (IOTA-Archiv `asteroidoccultation.com/observations/Results/` live, trägt Lichtkurven, kein Δz-Katalog).
 
-#### Pioneer/Dark-Matter — Volltextroute gemessen
+#### Pioneer/Dark-Matter — Serie als vision-read Appendix geführt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) NTRS `19830011507` ist `METADATA_ONLY` (kein Download, direkte PDF 404). Der **Elternreport NTRS `19830011495`** („The Telecommunications and Data Acquisition Report", TDA Progress Report 42-72) hat PDF (`ntrs.nasa.gov/api/citations/19830011495/downloads/19830011495.pdf`, HTTP 200, 9.060.137 B) + OCR-Fulltext (`.txt`, 535.679 B) und trägt den Artikel (S. 118–119; title txt-Zeile 12198, Werte `±3×10⁻¹³` Zeilen 12235/12316/12337). ADS-Webseite = 405-Bot-Check; DOI `10.1109/freq.1982.200599` = anderes Paper (Allan & Barnes). NTRS `19820012645`/`19840011567` tragen keine 2-Jahres-Serie. **Die Serie liegt graphisch, nicht tabellarisch** (gemessen 2026-09-26 via Sub-Agent + `vision`): der OCR-Text trägt keine Zeitreihe (nur Prosa-Werte `±3×10⁻¹³` Z.12316/12337 und die statische Table 1); die Serie steckt in Fig. 2–6 (PDF S. 131–134). Vision-gelesen: Fig. 5 (DSS 63↔14 VLBI, S. 133 unten) ~20 Punkte, Δf/f ≈ +7×10⁻¹³ … −1,5×10⁻¹², annotiert `−3.9×10⁻¹³ ±4` / `1.6×10⁻¹³ ±3` / `1.8×10⁻¹³ ±7` / `7×10⁻¹³ ±9`; Fig. 6 (DSS 43↔14 VLBI, S. 134) analog. PDF gerendert unter `/tmp/opencode/pioneer-fig-{132,133,134}.png` (ephemer).
-- **Blockade:** die Serie ist nur graphisch; ein byte-exakter Wert wäre Augen-Digitizer-Fabrikation.
-- **Braucht:** Digitizer-Methodik für Fig. 5/6 (Kurvenpunkte + ±-Grenzen als approximative Vision-Werte, klar als `vision-read` markiert) **oder** die Serie als graphisch-only führen. Kein `sources.φ`-Eintrag ohne extrahierbares Dataset.
+- **Lage:** (gemessen 2026-09-26) NTRS `19830011507` `METADATA_ONLY`; der **Elternreport NTRS `19830011495`** (TDA Progress Report 42-72) trägt den Artikel (PDF 200, OCR-Fulltext 535.679 B). Die Serie liegt **graphisch** (Fig. 2–6, S. 131–134) — der OCR-Text trägt keine Zeitreihe. Ein `vision`-Pass hat Fig. 5/6 pixel-kalibriert gegen die Dekaden-Gitterlinien digitalisiert; die Werte sind in `docs/paper/probe-front-dark-matter.md` **Appendix A** als `vision-read` (approximativ, kein Instrumentenwert) geführt, mit den gedruckten Annotationen (`−3.9×10⁻¹³ ±4` / `1.6×10⁻¹³ ±3` / `1.8×10⁻¹³ ±7` / `7×10⁻¹³ ±9`).
+- **Blockade:** die Serie bleibt graphisch; ein byte-exakter Wert wäre Augen-Digitizer-Fabrikation.
+- **Braucht:** kein weiterer Schritt — die Route ist gemessen, die Serie im Papier als `vision-read` Appendix A geführt; **kein `sources.φ`-Dataset** (eine Kurve ist keine erntbare Datei).
 
-#### Nadel V — AllWISE manifestiert, Probe dispatcht
+#### Nadel V — gemessen: 6 Kandidaten, positive Kontrolle offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) `allwise_psd.bin` **manifestiert** (Tag `irsa.ipac.caltech.edu`, 325.008 B, sha `58446fe9…`, 2026-09-26T14:44:31Z). Lauf `36249453619` bleibt `in_progress` nur wegen des `allwise-coverage`-Chunk-Arms (127/304 `allwise_part_*.fp01`); der `allwise-tap`-Arm ist fertig. Der positive-Kontroll-Lauf ist dispatcht: `.github/workflows/lsst-live-scan.yml` → `36257925460` (`queued`, 90-min-Bound; `lsst_anomaly_probe --cone 148.84,2.55,260,24` + RR-Lyrae/EB-Kontrollschicht).
+- **Lage:** (gemessen 2026-09-26) `allwise_psd.bin` manifestiert (325.008 B, sha `58446fe9…`). Lauf `lsst-live-scan 36257925460` **success** (Artefakt `10911805196`): Cone `148.84,2.55,260″` → 494 Objekte, 31 Lichtkurven (3067 Zeilen), **6 Kandidaten-Dips**, 0 ausgeschlossen, 6 `pending` (natürliche-Klassen-Crossmatch offen). Layer A (Farbkopplung/VSX): 1 periodischer Kandidat koppelt an die Farb-Helligkeits-Signatur; **positive-Kontroll-Zeilen = 0** (RR-Lyrae/EB-Schicht im Artefakt nicht ausgeübt).
 - **Blockade:** keine.
-- **Braucht:** Lauf `36257925460` lesen (`ci_manage view/log`, Artefakt `lsst-live-scan.txt`) — die positive-Kontroll-Rückgewinnung.
+- **Braucht:** die RR-Lyrae/EB-positive-Kontroll-Schicht ausüben (im Artefakt 0 Zeilen); dann die 6 `pending`-Kandidaten gegen die natürliche Klasse auflösen.
 
 #### Korona-Heizung — Feldmap + `millionths`-Arm live
 - **Status:** eigen | **Bindung:** eigen
@@ -353,6 +365,8 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `tools/harvest/src/bin/charm2_occultation_probe.rs`,
 `tools/harvest/src/bin/charm2_compiler.rs`,
 `src/archivar/charm2.rs`,
+`src/archivar/main_flow.rs` (nur der eigene Fetch-Arm `:3726`),
+`docs/paper/probe-front-dark-matter.md`,
 `firmware/radiatorium-lib/src/znsp.rs`.
 
 Geteilte Dateien — **nur die eigenen Hunks** committen: `phi/sources.φ`
