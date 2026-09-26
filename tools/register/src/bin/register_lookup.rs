@@ -66,6 +66,12 @@ const DISPOSITION_REGISTER_PATHS: &[&str] = &[
     "phi/dead_sources.\u{3c6}",
     "phi/blocked_sources.\u{3c6}",
     "phi/sources.\u{3c6}",
+    "phi/pipeline/ledger.\u{3c6}",
+    "phi/pipeline/index.\u{3c6}",
+    "phi/harvest.\u{3c6}",
+    "phi/witnesses.\u{3c6}",
+    "phi/footprints.\u{3c6}",
+    "phi/nrs_stations.\u{3c6}",
 ];
 
 fn snippet(line: &str, max: usize) -> String {
