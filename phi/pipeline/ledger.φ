@@ -13,7 +13,7 @@ note ivo://src.pas/tap — 2026-09-26 Host tot (direct+Proton 000); Ersatz gemes
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note SSDC CAS-Login mit SSDC_USER/PASS 2026-09-26 → „invalid username or password" (Credentials falsch/abgelaufen, nicht nur Permission). Sotgiu 2026-09-16: Portal-Umbau für CSES-02, warten. Braucht: Key-Rotation/Konto-Klärung (Operator). CSES-Limadou (em/electric) accept.
+note SSDC: User 2026-09-26 im Browser eingeloggt; automatisierte Credentials (SSDC_PASS) weiter invalid (CAS: „invalid username or password"). Braucht: Passwort-Rotation für den omegaflow-Account. Sotgiu 2026-09-16: Portal-Umbau CSES-02.
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
