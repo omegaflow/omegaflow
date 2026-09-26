@@ -3006,6 +3006,36 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_star_epoch_bare_zero_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/spatial.rs", &fx("star_epoch_bare_zero"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_star_epoch_max_zero_fold_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/spatial.rs", &fx("star_epoch_max_zero_fold"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_netcdf_origin_render_fallback_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/main_flow.rs",
+            &fx("netcdf_origin_render_fallback"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_hardcoded_force_absorption_constant_blocked() {
         let mut g = test_gate();
         let args = tool_args("src/archivar/channels.rs", &fx("force_absorption_constant"));
