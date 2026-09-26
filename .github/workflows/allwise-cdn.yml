@@ -75,3 +75,19 @@ jobs:
             gh release upload irsa.ipac.caltech.edu allwise_coverage.fp01 --clobber --repo omegaflow/sources
             echo "allwise_coverage.fp01 uploaded: $(stat -c%s allwise_coverage.fp01) bytes"
           fi
+
+  allwise-tap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the irsa.ipac.caltech.edu release exists on the CDN
+        run: |
+          gh release view irsa.ipac.caltech.edu --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create irsa.ipac.caltech.edu --repo omegaflow/sources \
+                 --title "irsa.ipac.caltech.edu" --notes "CDN family release"
+      - name: Harvest the AllWISE PSD through the async-UWS arm
+        run: |
+          cargo build -p omegaflow-harvest --release --bin allwise_tap_compiler
+          ./target/release/allwise_tap_compiler --out allwise_psd.bin --ci-mode
