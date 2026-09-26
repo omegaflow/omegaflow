@@ -3,7 +3,7 @@
   session: Mountain-Folge 169
   class: handover
   date: 2026-09-26
-  sha256: 7087d10e7db25ddb8c4640bdbc4cf681d370fa932ae33be4278a8827dd17feb1
+  sha256: fe1497716338564de1dc5d349cfad177d1082b9ee333b9a3ca240b16602d8f2b
   status: live
 -->
 # Handover — Mountain-Folge 169 (2026-09-26)
@@ -20,14 +20,15 @@ Trigger / Lage / Blockade / Braucht.
 
 ### Linie handelt (eigen)
 
-#### gll_rss_rsr — Workflow gebaut, Commit + Dispatch offen
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort.
+#### gll_rss_rsr — Workflow gebaut + dispatcht, Run-Ergebnis offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Lauf-Ende `36240229845`.
 - **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/gll-rss-rsr-cdn.yml`
   neu gebaut (35 Zeilen, Muster `galileo-atdf-cdn.yml`); Compiler
   `tools/harvest/src/bin/gll_rss_rsr_compiler.rs` (`--ci-mode`), Release
   `pds-rings.seti.org`, Asset `gll_rss_rsr.bin`, Idempotenz-Guard `grep -qx`.
-  Noch nicht committet/gepusht. **Ungemessen (vom Taucher benannt, nicht still
+  **Committet `0eacaec2b`, gepusht, dispatcht `36240229845`** (Ergebnis
+  ungemessen). **Ungemessen (vom Taucher benannt, nicht still
   übernommen):** `timeout-minutes: 180` ist Analogie (kein Lauf); der Guard prüft
   nur `gll_rss_rsr.bin` — shardet der erste Lauf (`gll_rss_rsr_s<N>.bin`), greift
   er nicht; kein Release-Create-Step (Tag `pds-rings.seti.org` vorausgesetzt).
@@ -35,9 +36,9 @@ Trigger / Lage / Blockade / Braucht.
   Baum; sie ist strukturell Zeile für Zeile `galileo-atdf-cdn.yml` (nur Release/
   Asset/Compiler/Jobname differieren), das läuft.
 - **Blockade:** keine.
-- **Braucht:** commit + push, dann `gh workflow run gll-rss-rsr-cdn.yml`; nach
-  Erfolg sha256 in den `gll_rss_rsr`-Block `phi/sources.φ` nachtragen; Shard-Zahl
-  am ersten Lauf messen und den Guard ggf. weiten.
+- **Braucht:** `ci_manage view 36240229845`; nach Erfolg sha256 in den
+  `gll_rss_rsr`-Block `phi/sources.φ` nachtragen; Shard-Zahl am ersten Lauf
+  messen und den Guard ggf. weiten.
 
 #### TAP-Quellen — 4 Query-Fixes gebaut, CI-Verify offen
 - **Status:** autonom | **Bindung:** eigen
@@ -62,24 +63,25 @@ Trigger / Lage / Blockade / Braucht.
   lokal gemessen ist nur, dass der Test-Code kompiliert (`cargo check --tests`
   grün).
 
-#### Frame-Registry — CI-Pfad gebaut, Commit + Dispatch offen
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort.
+#### Frame-Registry — CI-Pfad gebaut + dispatcht, Run-Ergebnis offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Lauf-Ende `36240231729`.
 - **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/frame-registry.yml`
   (40 Zeilen, Muster `source-census.yml`) + `tools/utils/src/bin/frame_registry.rs`
   (50 Zeilen, ruft `build_frame_registry()`, schreibt `phi/pipeline/frame_registry.φ`,
   `git add -f` wegen `.gitignore:73`); `cargo check -p omegaflow-utils --bin
   frame_registry` 0/0. Der Generator liest nur getrackte Register (kein Netz).
-  Noch nicht committet/gepusht.
+  **Committet `0eacaec2b`, gepusht, dispatcht `36240231729`** — Ergebnis
+  ungemessen.
 - **Blockade:** keine. **Ungemessen:** das `OMEGAFLOW_TOKEN`-Secret (Voraussetzung
   wie in `source-census.yml`) und die generierte `frame_registry.φ` (erst nach dem
   Lauf lesbar).
-- **Braucht:** commit + push + `gh workflow run frame-registry.yml`; dann prüfen,
-  ob `frame_registry.φ` die `at mariner10`-Route trägt (Punkt NAIF schließt damit).
+- **Braucht:** `ci_manage view 36240231729`; dann prüfen, ob `frame_registry.φ`
+  die `at mariner10`-Route trägt (Punkt NAIF schließt damit).
 
-#### Parquet-Codec — Arme gebaut, Commit + CI-Tests offen
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort.
+#### Parquet-Codec — Arme gebaut, CI-Tests offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ci-check am HEAD `0eacaec2b`.
 - **Lage:** (gemessen 2026-09-26 via grind-max) `src/archivar/parquet.rs`:
   gzip (codec 2 via `inflate::gunzip`), LZ4 (codec 5, Hadoop-Framing), **LZ4_RAW
   (codec 7** — `PageHeaderInfo.uncompressed_page_size` neu gelesen),
@@ -89,13 +91,13 @@ Trigger / Lage / Blockade / Braucht.
   omegaflow` und `--tests` **0/0**. **Pending (benannt):** delta für
   INT96/FIXED_LEN_BYTE_ARRAY; BSS für Nicht-FLOAT/DOUBLE.
 - **Blockade:** keine.
-- **Braucht:** commit + push + `gh workflow run ci-check.yml`. **Test-Grünheit =
-  CI** (lokale Ausführung strukturell verweigert); lokal gemessen ist nur die
+- **Braucht:** committet `0eacaec2b` + gepusht; **Test-Grünheit = CI** am Push
+  (lokale Ausführung strukturell verweigert); lokal gemessen ist nur die
   Kompilation.
 
-#### GRIB-2-Codec — 5.0/5.2/5.3/CCITT-G4 gebaut, Commit + CI-Tests offen
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort.
+#### GRIB-2-Codec — 5.0/5.2/5.3/CCITT-G4 gebaut, CI-Tests offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ci-check am HEAD `0eacaec2b`.
 - **Lage:** (gemessen 2026-09-26) `src/archivar/grib2.rs`: Template 5.0
   (`decode_simple_packing`, `MsbBitReader`) + complex 5.2 (`decode_complex_packing`,
   Test `complex_packing_two_groups`) + complex+spatial 5.3
@@ -112,8 +114,8 @@ Trigger / Lage / Blockade / Braucht.
   Profil-Anteil (flash vs. max) ist damit **nicht isoliert** — die frühere
   „flash-first"-Zuschreibung war konfundiert.
 - **Blockade:** keine. (2D-Fax-Modus bleibt benannt offen — `None`, kein Silent.)
-- **Braucht:** commit + push + `gh workflow run ci-check.yml`. **Test-Grünheit =
-  CI** (lokal verweigert); lokal gemessen ist nur die Kompilation.
+- **Braucht:** committet `0eacaec2b` + gepusht; **Test-Grünheit = CI** am Push
+  (lokal verweigert); lokal gemessen ist nur die Kompilation.
 
 #### gll.rss + Klasse-5 — Register-Nachtrag
 - **Status:** wartend | **Bindung:** eigen
