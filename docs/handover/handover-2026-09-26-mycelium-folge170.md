@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: c1f4f1f39d976cd02d382142805dc98d7cc8a0278a1eece3aeddbd4d5115311c
+  sha256: a3c4b12949fbc0a66cd65e4851d0323b210df634b897f49c264fa0d1ad605a62
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -26,23 +26,23 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 #### Neue Ports hamqsl/ogimet/nohrsc — CDN-Workflows gebaut, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Post-Push-CI (`harvest-dispatch`).
-- **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/hamqsl-cdn.yml`, `.github/workflows/ogimet-cdn.yml`, `.github/workflows/nohrsc_snowfall-cdn.yml` neu; `phi/harvest.φ` +3 Blöcke; `harvest_reg --check` → 29 block(s) in order (exit 0); `cargo check -p omegaflow-harvest` grün; `eri-cdn.yml:39` `eri_compiler`→`noaa_eri_compiler`. Die drei Workflows wurden nach dem Push dispatcht (Run-IDs folgen im Nachtrag). `eri-cdn.yml` lief bereits (`36232783435`).
+- **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/hamqsl-cdn.yml`, `.github/workflows/ogimet-cdn.yml`, `.github/workflows/nohrsc_snowfall-cdn.yml` neu; `phi/harvest.φ` +3 Blöcke; `harvest_reg --check` → 29 block(s) in order (exit 0); `cargo check -p omegaflow-harvest` grün; `eri-cdn.yml:39` `eri_compiler`→`noaa_eri_compiler`. Die drei Workflows wurden nach dem Push dispatcht: `hamqsl-cdn` → `36233766455`, `ogimet-cdn` → `36233768757`, `nohrsc_snowfall-cdn` → `36233772273`. `eri-cdn.yml` lief bereits (`36232783435`).
 - **Blockade:** CI-Lauf.
 - **Braucht:** `ci_manage view <id>` der drei Läufe; bei Rot `ci_manage log <id>`. Ungemessen: YAML-/Lauf-Validität der drei neuen Workflows (nie gelaufen).
 
 #### CI am HEAD + Artefakt-Frische
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf am HEAD `b1b1195d`.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage list` + Watchdog-Snapshot) kein roter Lauf am HEAD; `tools-latest` Manifest `304bf81a` < HEAD (stale); 08:33-Roten (`zigbee-host 36230138135`, `paper-check 36230128388`) stehen auf Parent `b30323da`, nicht am HEAD.
+- **Trigger:** CI-Lauf am HEAD `97b75797a`.
+- **Lage:** (gemessen 2026-09-26 via `ci_manage list` + Watchdog-Snapshot) kein roter Lauf am HEAD; `tools-latest` Manifest `304bf81a` < HEAD (stale); 08:33-Roten (`zigbee-host 36230138135`, `paper-check 36230128388`) stehen auf Parent `b30323da`, nicht am HEAD. Nach Push `tools-build` → `36233776812` dispatcht.
 - **Blockade:** CI-Lauf.
-- **Braucht:** `ci_manage view <id>`, bei Rot `ci_manage log <id>`; nach Push `gh workflow run tools-build.yml`.
+- **Braucht:** `ci_manage view <id>`, bei Rot `ci_manage log <id>`.
 
 #### kernel-flatten — `--retry` 2→3 + Rerun; de441-Carrier
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** kernel-flatten-Lauf.
-- **Lage:** (gemessen 2026-09-26 via research-max/grind-flash) Alt-Rot `36224127426`: `de441 base absent` (`select_system("planets")`), Crawl 5m20s unvollständig; gemessene Ursache: Root-Listings `naid.jpl.nasa.gov`/`ssd.jpl.nasa.gov` returned void; `fetch_text` trägt jetzt `--retry 3`. `phi/sources_index.φ` ist gitignored (Crawl-Output). de441-CDN-Assets nie manifestiert; `de441-cdn-watch.yml` wartet auf die ≥183-MB-Generation.
+- **Trigger:** kernel-flatten-Lauf `36233774828`.
+- **Lage:** (gemessen 2026-09-26 via research-max/grind-flash) Alt-Rot `36224127426`: `de441 base absent` (`select_system("planets")`), Crawl 5m20s unvollständig; gemessene Ursache: Root-Listings `naid.jpl.nasa.gov`/`ssd.jpl.nasa.gov` returned void; `fetch_text` trägt jetzt `--retry 3`. Nach Push dispatcht (`36233774828`). `phi/sources_index.φ` ist gitignored (Crawl-Output). de441-CDN-Assets nie manifestiert; `de441-cdn-watch.yml` wartet auf die ≥183-MB-Generation.
 - **Blockade:** CI-Lauf + fehlendes Asset.
-- **Braucht:** `gh workflow run kernel-flatten.yml`; nach grünem Flatten de441-Bins + `url/format/origin`-Zeilen nach de440-Muster (`ephemeris_de441_{sun,earth,moon}.bin`) in `phi/sources.φ` — vor Asset-Existenz wäre ein Eintrag Fabrication.
+- **Braucht:** `ci_manage view 36233774828`; nach grünem Flatten de441-Bins + `url/format/origin`-Zeilen nach de440-Muster (`ephemeris_de441_{sun,earth,moon}.bin`) in `phi/sources.φ` — vor Asset-Existenz wäre ein Eintrag Fabrication.
 
 #### gap-Orphans 4× TAP + Register-Aufenthalt
 - **Status:** wartend | **Bindung:** eigen→mountain
