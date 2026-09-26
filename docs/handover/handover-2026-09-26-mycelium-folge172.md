@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 977a7ad150503f2a41c2d90eb298f64815f55c1786c52bef3c93cded600781c8
+  sha256: 024e4702a699a91c498519c0f179507522dfe663edae832b77fbbdcdc9da2648
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -31,12 +31,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 ### Linie (eigen)
 
-#### SuperDARN FITACF — Quellenblock + CI
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/sources.φ` / `superdarn-cdn.yml`.
-- **Lage:** (gemessen 2026-09-26) DMAP-Parser + bz2 + hdw.dat-Geolokation gebaut (`8d59bb153`/`e96807753`); live rkn 14 841 GeoRecords / 890 468 B, Roundtrip; Radarposition 62.8280°/−92.1130°, Gate 63.9980°/−93.0132°; MAP-Globus `20e8a751…` `ACTIVE`.
-- **Blockade:** keine.
-- **Braucht:** FITACF-/MAP-Quellenblock in `phi/sources.φ` + `superdarn-cdn.yml`-Job.
+#### SuperDARN FITACF — CI-Manifestation
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `superdarn-cdn 36268001985`.
+- **Lage:** (gemessen 2026-09-26) Quellenblock registriert (`phi/sources.φ:9461`, `format superdarn_fitacf`, compiler-Verweis), `blocked_sources.φ:39` → `released`; Workflow `superdarn-cdn.yml` rewrite + Dispatch. DMAP-Parser + hdw.dat-Geolokation live (rkn 14 841 GeoRecords). MAP-Globus `20e8a751…` `ACTIVE`.
+- **Blockade:** CI-Lauf.
+- **Braucht:** `ci_manage view 36268001985`; MAP-Quellenblock (Zenodo netCDF) als Folgeschritt.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
@@ -89,10 +89,10 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 #### MODIS LST CMG — CI-Manifestation + Reader
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `modis-cdn 36265129017`.
-- **Lage:** (gemessen 2026-09-26) SD-Reader + DD-Kette + Workflow gebaut (`e16fd9cd5`/`e96807753`); Quellen in compiled-asset-Form (`phi/sources.φ:15385/15394/15403`); Lauf dispatcht. Offen: `format modis_lst_cmg`-Reader in `extract.rs` fehlt; NBIT/SKPHUFF/SZIP-Coder pending.
+- **Trigger:** `modis-cdn 36267998951`.
+- **Lage:** (gemessen 2026-09-26) erster Lauf `36265129017` **failure** — nur 1-MiB-Probe, DD-Kette der 42-MB-Granule reicht weiter; `bearer_probe` → **Voll-Fetch** geheilt (`2df078304`, lokal 1 541 913 Records / 61 676 528 B). Re-Dispatch `36267998951`. Offen: `format modis_lst_cmg`-Reader in `extract.rs`; NBIT/SKPHUFF/SZIP-Coder pending.
 - **Blockade:** CI-Lauf + Reader.
-- **Braucht:** `ci_manage view 36265129017`; Reader-Arm `modis_lst_cmg`.
+- **Braucht:** `ci_manage view 36267998951`; Reader-Arm `modis_lst_cmg`.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
