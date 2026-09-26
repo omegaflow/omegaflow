@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the pre-registration (Operation Ⅵ)
   class: paper
   date: 2026-08-22
-  sha256: 6f24f98a01decc82025652ec0302afd75a06e53bc14743fec79d5ca0ef44b2d0
+  sha256: 502e06c3d9b0b66652552973e612d514dc82fac293d0453beae7e27933be2f01
   status: live
   see-also: docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -40,6 +40,14 @@ channels, as soon as the measurement (transit-time corrected) is present.
 Every cell that is not yet measurable stays `pending` — never 0,0. The
 seal stands with the method and the trajectory hash; the field values
 join as soon as they exist.
+
+Readiness measured 2026-09-26 (two days before the flyby): the prediction
+channel stands — RTSW mag/wind, the Kp NOAA URL, Swarm and OMNI2 are all
+reachable HTTP 200 (stage 1 direct). Every cell remains `pending`: the
+perigee tube lies in the future, and the field state is a function of the
+measured plasma with its transit time, never a postdicted value. The
+operator seal word is operator-bound and not yet set; route drift and the
+Kp-route removal are carried in the addendum §"Chain readiness".
 
 ## What arrives after the flyby
 
