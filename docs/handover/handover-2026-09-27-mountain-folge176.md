@@ -3,7 +3,7 @@
   session: Mountain-Folge 176
   class: handover
   date: 2026-09-27
-  sha256: 2db0619520acfbcd1ab8871de58dc0a04419c301f19c7cfcd7ddaf44b5a94068
+  sha256: 0884a1110e4e31d212e44070618f36424e6c2f45cfebc880cf2f62dcbdf4c6b9
   status: live
 -->
 # Handover — Mountain-Folge 176 (2026-09-27)
@@ -47,9 +47,9 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
 ### www→bare Netloc — φ-Registry-Flip + CDN-Migration + Cleanup offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** die bare-Releases sind manifestiert (die 10 `X-cdn`-Läufe dieser Session).
-- **Lage:** (gemessen 2026-09-27 via `cdn_reconcile` + `sgrep`) der Code der Aufzeichnung emittiert jetzt bare Netloc — 17 harvest-Compiler (`const NETLOC`/`CDN_TAG`/`GEOAZUR_NETLOC` + `upload_release`), `neptune_apdb_manifestor`, 4 `measure`-Bins, 10 `X-cdn.yml`; die Herkunfts-URLs (`origin`, `https://…`) bleiben unverändert. `cdn_reconcile` meldet die Drift nun als `www_prefixed_release_tags` (12 live: atnf.csiro.au, crystallography.net, geoazur.fr, gmrt.org, hamqsl.com, isc.ac.uk, minorplanetcenter.net, ncdc.noaa.gov, ncei.noaa.gov, nohrsc.noaa.gov, ogimet.com, sciencebase.gov). Noch prefixiert: `phi/sources.φ` (33 `url`-Zeilen) + `phi/pipeline/frame_registry.φ` (33 Zeilen, generiert aus sources.φ). `phi/sources.φ` ist seit dem mycelium-Commit (gosat/arvo-`register_sort`) wieder sauber. Die 10 `X-cdn`-Läufe dispatcht 2026-09-27: gmrt `36278846125`, hamqsl `36278848344`, isc `36278850654`, neptune-apdb `36278852993`, noaa-cdo `36278855632`, nohrsc_snowfall `36278858393`, ogimet `36278860392`, psr `36278862339`, slab2 `36278864243`, uscrn `36278865940`.
+- **Lage:** (gemessen 2026-09-27 via `cdn_reconcile` + `sgrep`) der Code der Aufzeichnung emittiert jetzt bare Netloc — 17 harvest-Compiler (`const NETLOC`/`CDN_TAG`/`GEOAZUR_NETLOC` + `upload_release`), `neptune_apdb_manifestor`, 4 `measure`-Bins, 10 `X-cdn.yml`; die Herkunfts-URLs (`origin`, `https://…`) bleiben unverändert. `cdn_reconcile` meldet die Drift nun als `www_prefixed_release_tags` (12 live: atnf.csiro.au, crystallography.net, geoazur.fr, gmrt.org, hamqsl.com, isc.ac.uk, minorplanetcenter.net, ncdc.noaa.gov, ncei.noaa.gov, nohrsc.noaa.gov, ogimet.com, sciencebase.gov). Noch prefixiert: `phi/sources.φ` (33 `url`-Zeilen) + `phi/pipeline/frame_registry.φ` (33 Zeilen, generiert aus sources.φ). `phi/sources.φ` ist seit dem mycelium-Commit (gosat/arvo-`register_sort`) wieder sauber. Die 10 `X-cdn`-Läufe dispatcht 2026-09-27: gmrt `36278846125`, hamqsl `36278848344`, isc `36278850654`, neptune-apdb `36278852993`, noaa-cdo `36278855632`, nohrsc_snowfall `36278858393`, ogimet `36278860392`, psr `36278862339`, slab2 `36278864243`, uscrn `36278865940`. Flip 2026-09-27: `phi/sources.φ` + `phi/pipeline/frame_registry.φ` auf bare gesetzt (0 prefixierte Pfade); `www.geoazur.fr` + `www.nohrsc.noaa.gov` gelöscht — bare-Twin zuvor asset-verifiziert (23/23 bzw. `nohrsc_snowfall.bin` 1/1).
 - **Blockade:** keine.
-- **Braucht:** `phi/sources.φ` 33 `url`-Zeilen auf bare `releases/download/<host>/`; `frame_registry.φ` regenerieren (`cargo run -p omegaflow-utils --bin frame_registry`); nach bestätigter bare-Manifestation die 12 www-Releases entfernen (§4: nie letzte Kopie).
+- **Braucht:** die restlichen 10 www-Releases erst **nach** bestätigtem bare-Twin löschen (§4) — `atnf.csiro.au` + `ncdc.noaa.gov` haben bare-Releases mit 0 Assets (Läufe laufen), die übrigen (crystallography.net, gmrt.org, hamqsl.com, isc.ac.uk, minorplanetcenter.net, ncei.noaa.gov, ogimet.com, sciencebase.gov) noch kein bare. Je: `gh release view <bare> --repo omegaflow/sources --json assets --jq '.assets|length'` gegen den www-Bestand halten, dann `gh release delete <www> --repo omegaflow/sources --yes`.
 
 ### CDN-Reconcile-Drift-Zahlen — offen, nachmessen
 - **Status:** wartend | **Bindung:** eigen
