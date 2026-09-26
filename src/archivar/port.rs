@@ -2553,6 +2553,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     for src in shard_sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
+            || src.format == "spk"
             || src.format == "catalog_dastcom"
             || src.format == "csv_zip"
             || src.format == "igra_zip"
