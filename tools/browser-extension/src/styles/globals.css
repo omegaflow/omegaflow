@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/*
+ * daisyUI drives the whole look — we keep zero custom palette tokens here so the
+ * UI stays light and consistent. Two stock themes, switched by the OS setting:
+ * "nord" (calm light) by default, "aqua" (teal-on-navy) when the OS prefers dark.
+ * No data-theme attribute on the HTML, so daisyUI's prefers-color-scheme media
+ * query is what selects between them. Components use daisyUI semantic classes
+ * (base-100/200/300, base-content, primary, success, warning, error).
+ */
+@plugin "daisyui" {
+  themes: nord --default, aqua --prefersdark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}

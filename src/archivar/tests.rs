@@ -2343,7 +2343,7 @@ fn test_star_samples_diode() {
             MembraneCtx {
                 center: [0.0, 0.0, 0.0],
                 t2: 0.0,
-                pad: 1.0,
+                pad: 10.0 * PARSEC_M + 1.0,
                 delta_t_cache: 0.0,
                 floor: &floor,
                 softening: 1.0,
@@ -2368,6 +2368,154 @@ fn test_star_samples_diode() {
     assert_eq!(on_axis[0].8, 0.0);
     assert_eq!(on_axis[0].9, 0.0);
     assert!((on_axis[0].21 - 1.2).abs() < 1e-4);
+}
+
+#[test]
+fn test_star_grid_hull_refuses_distant_star() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0.5f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    let samples = build_star_samples(&bin);
+    assert_eq!(samples.len(), 1);
+    let d = (1000.0 / 0.5) * PARSEC_M;
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let buf = build_buffer(
+        samples.into_iter().map(Arc::new).collect(),
+        1.0,
+        Arc::new(eph.clone()),
+        None,
+        Vec::new(),
+        Vec::new(),
+        None,
+    );
+    let query = |pad: f64| {
+        let mut out: Vec<SampleRecord> = Vec::new();
+        query_hash(
+            &buf.cache,
+            MembraneCtx {
+                center: [0.0, 0.0, 0.0],
+                t2: 0.0,
+                pad,
+                delta_t_cache: 0.0,
+                floor: &[1e-40; 9],
+                softening: 1.0,
+                forward: [1.0, 0.0, 0.0],
+                eph: &eph,
+            },
+            &mut out,
+        );
+        out
+    };
+    let refused = query(1.0);
+    assert_eq!(
+        refused.len(),
+        0,
+        "a star outside the presence hull stays unloaded — the membrane loads the hull, not the catalog"
+    );
+    let reached = query(d + 1.0);
+    assert_eq!(
+        reached.len(),
+        1,
+        "the same star inside the hull reaches the membrane — the diode itself passes it at this floor"
+    );
+    assert!((reached[0].0 - d).abs() / d < 1e-6);
+}
+
+#[test]
+fn test_star_reader_predicate_refuses_nan_val() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&f32::NAN.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    let samples = build_star_samples(&bin);
+    assert_eq!(
+        samples.len(),
+        1,
+        "the parser carries the NaN flux, the reader refuses it"
+    );
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let buf = build_buffer(
+        samples.into_iter().map(Arc::new).collect(),
+        1.0,
+        Arc::new(eph.clone()),
+        None,
+        Vec::new(),
+        Vec::new(),
+        None,
+    );
+    let mut out: Vec<SampleRecord> = Vec::new();
+    query_hash(
+        &buf.cache,
+        MembraneCtx {
+            center: [0.0, 0.0, 0.0],
+            t2: 0.0,
+            pad: 10.0 * PARSEC_M + 1.0,
+            delta_t_cache: 0.0,
+            floor: &[1e-9; 9],
+            softening: 1.0,
+            forward: [1.0, 0.0, 0.0],
+            eph: &eph,
+        },
+        &mut out,
+    );
+    assert_eq!(
+        out.len(),
+        0,
+        "the reader predicate value >= 0.0 is deaf to NaN — NaN never crosses the wire"
+    );
+}
+
+#[test]
+fn test_jump_residual_vector_form() {
+    let jump = super::jump_residual_breached;
+    assert!(jump(
+        [1.0e10, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        1.0
+    ));
+    assert!(!jump(
+        [1.0e3, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [100.0, 0.0, 0.0],
+        [100.0, 0.0, 0.0],
+        10.0
+    ));
+    assert!(!jump(
+        [5.0e2, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [100.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        10.0
+    ));
+    assert!(jump(
+        [0.0, 0.0, 0.0],
+        [1.0e10, 0.0, 0.0],
+        [100.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        1.0e8
+    ));
+    assert!(!jump(
+        [1.0e10, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        0.0
+    ));
 }
 
 fn kepler_rec_fixture() -> AsteroidRec {
@@ -4912,7 +5060,7 @@ fn test_rebuild_retains_shared_sample_identity() {
     let retained: Vec<Arc<super::Sample>> = first
         .cells
         .values()
-        .chain(std::iter::once(&first.unbounded))
+        .chain(first.star_cells.values())
         .flat_map(|v| v.iter().cloned())
         .collect();
     let second = super::build_spatial_hash(retained, 1.0);

@@ -489,7 +489,7 @@ pub fn record_in_enclosure(
         return true;
     };
     let extent = kernel_extent(fc.force, fc.kernel, body_props, fc.tau);
-    let rho = anchor_vmax * age + 0.5 * anchor_amax * age * age + pad;
+    let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);
     presences
         .iter()
         .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust, grid_step)| {
@@ -504,6 +504,81 @@ pub fn record_in_enclosure(
             let dz = p_r[2] - pz;
             (dx * dx + dy * dy + dz * dz).sqrt() <= limit
         })
+}
+
+pub fn catalog_sample_in_enclosure(
+    presences: &[PresenceSample],
+    sample: &Sample,
+    now: f64,
+) -> bool {
+    let fc = FieldConfig {
+        key: sample.name.clone(),
+        name: sample.name.clone(),
+        kernel: sample.kernel_id as u8,
+        force: sample.force_type as u8,
+        tau: sample.tau,
+        absorption: sample.absorption,
+        advection: sample.advection,
+        unit: String::new(),
+        freq: sample.freq,
+        bin_width: sample.bin_width,
+        fold: None,
+    };
+    record_in_enclosure(
+        presences,
+        Some(sample.anchor_p0),
+        sample.epoch,
+        now,
+        EnclosureField {
+            config: &fc,
+            body_props: None,
+            body_radius: None,
+        },
+        AnchorEnvelope {
+            vmax: sample.anchor_vmax,
+            amax: sample.anchor_amax,
+            pad: 0.0,
+            ttl: sample.tau,
+        },
+    )
+}
+
+pub fn body_in_enclosure(
+    presences: &[PresenceSample],
+    props: &BodyProperties,
+    pos: [f64; 3],
+    now: f64,
+) -> bool {
+    let fc = FieldConfig {
+        key: String::new(),
+        name: String::new(),
+        kernel: 0,
+        force: 1,
+        tau: f64::INFINITY,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: String::new(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    };
+    record_in_enclosure(
+        presences,
+        Some(pos),
+        now,
+        now,
+        EnclosureField {
+            config: &fc,
+            body_props: Some(props),
+            body_radius: Some(props.radius_m),
+        },
+        AnchorEnvelope {
+            vmax: 0.0,
+            amax: 0.0,
+            pad: 0.0,
+            ttl: f64::INFINITY,
+        },
+    )
 }
 
 pub fn json_has_content(v: &JsonVal) -> bool {
