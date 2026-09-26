@@ -3,7 +3,7 @@
   session: River-Folge 39
   class: handover
   date: 2026-09-27
-  sha256: a721b46a83a4d7a50ffa4fcf225680773488e75d48a2366fb741add0c7a627bc
+  sha256: c7418a2ad42609b6d827a3a93a9f01f2991a83ca16af601e1bd20ba60f30eb72
   status: live
 -->
 # Handover — River-Folge 39 (2026-09-27)
@@ -55,10 +55,10 @@ Diese Session konsumierte `handover-2026-09-26-river-folge38.md` (nach
 
 #### `6659f9366`-Quellen — CI register-coverage
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** CI-Lauf für `6659f9366` vorhanden.
-- **Lage:** (gemessen 2026-09-27 via `git show`) `6659f9366` baute 11 Parser-Arme (aia, eve, ephemeris_epm/inpop/de440/de442/noe4, spk, openneuro, catalog, mpcobs, apdb) + 293 Zeilen `phi/sources.φ`; kein CI-Lauf für den Commit gemessen.
+- **Trigger:** Läufe `36277948083`/`36277951163` abgeschlossen.
+- **Lage:** (gemessen 2026-09-27 via `git show` + `gh`) `6659f9366` baute 11 Parser-Arme (aia, eve, ephemeris_epm/inpop/de440/de442/noe4, spk, openneuro, catalog, mpcobs, apdb) + 293 Zeilen `phi/sources.φ`; Läufe dispatcht: `ci-check 36277948083`, `register-coverage 36277951163`.
 - **Blockade:** keine.
-- **Braucht:** `gh workflow run ci-check` + `gh workflow run register-coverage`, Lauf-IDs registrieren (`ci_manage list`).
+- **Braucht:** `ci_manage view 36277948083` / `ci_manage view 36277951163` — Ergebnis messen.
 
 #### `#body`-Deklaration fehlt — alle Stations-Samples verworfen
 - **Status:** eigen | **Bindung:** eigen
