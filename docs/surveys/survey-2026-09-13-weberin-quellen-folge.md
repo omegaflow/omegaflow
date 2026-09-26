@@ -2,12 +2,14 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Folge (Stand 2026-09-13)
   class: survey
   date: 2026-09-13
-  sha256: 306cef41bc62861cc0380982cf824fd82eb33daf2d4037de239cfd206a7f0e67
+  sha256: c3147b277093a8edd565f3be376100f5d2b3b623df3291644eeb64e607db92a1
   status: live
-  see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md
+  see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-13-weberin-quellen.md
 -->
 
 # Die Weberin — offene Quellen-Routen, Folge (Stand 2026-09-13)
+
+Träger: `docs/concepts/die-weberin.md` (Weberin-Punkte).
 
 Zweiter Durchgang: Vier GLM-Free-Taucher (read-only) haben die Rohausgaben
 des Recherche-Werkzeugs `archive_search` zu den im ersten Snapshot

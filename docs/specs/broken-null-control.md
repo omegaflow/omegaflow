@@ -1,7 +1,7 @@
 <!--
   title: The Broken Null Control
   class: concept
-   sha256: 0d982ba5a4d3a181a70b8ca95d7748d242b1dd7ee2ed9eab133c94e76675e3c1
+   sha256: 63b7e8b704bcb510e724bd9b61969b30b08339fe397af714880b32387124efb6
   status: live
 -->
 # The Broken Null Control
@@ -122,24 +122,45 @@ phase threshold. The naive threshold was the artifact.
    arrow is fam-significant only above this maximum. All blades carry
    the same definition: fam is a single TE number, never a threshold.
 
-## 6. Open limits
+## 6. Limits — measured and gated
 
-- **Multiple comparison (measured 2026-09-15, `te_null_limits_probe`):**
-  fam over the 20 directed pairs × lags {0, 1, 2} (60 cells) = 2.18e-1;
-  the per-cell μ+2σ threshold names 5 arrows, **0 survive fam**. A
-  synthetic matrix (fam = 2.26e-1) kills the one per-cell false positive
-  and keeps all 8 true couplings.
-- **Lag sweep (measured 2026-09-15):** τ 0–360 s — the live control
-  pairs stay silent at every lag; the Hénon forward arrow sits at
-  τ ∈ {0, 1, 5} (optimum τ = 1) and dies from τ = 10 onward.
-- **Bandwidth sensitivity (measured 2026-09-15):** Silverman factor
-  0.5–3.0, threshold recomputed under the same h — the verdicts are
-  stable; one marginal arrow on Density-RTSW → EUV-304 at factor 3.0
-  (excess +4.3e-4, dies under fam).
-- **Window drift:** the naive and phase runs are not on identical data
-  (the RTSW window rolls ~2 h between runs); n drifts accordingly. The
-  finding is about the method, demonstrated by the control both times.
-  A fixed-window re-run on archived data stays pending.
+Each limit the earlier record left open is now measured; the four
+quantitative limits are regression gates in `src/mathematikerin/te.rs`,
+the two heavy sweeps run as jobs in `.github/workflows/te-gate.yml`.
+
+- **Multiple comparison (measured 2026-09-15, `te_null_limits_probe`; gate
+  `gate_fam_max_t_kills_false_positive_keeps_true_coupling`):** fam over the
+  20 directed pairs × lags {0, 1, 2} (60 cells) = 2.18e-1; the per-cell μ+2σ
+  threshold names 5 arrows, **0 survive fam**. A synthetic matrix
+  (fam = 2.26e-1) kills the one per-cell false positive and keeps all 8 true
+  couplings.
+- **Lag sweep (measured 2026-09-15; gate
+  `gate_lag_sweep_verdict_flips_at_coupling_horizon`, te-gate job
+  `lag-sweep`):** τ 0–360 s — the live control pairs stay silent at every lag;
+  the Hénon forward arrow sits at τ ∈ {0, 1, 5} (optimum τ = 1) and dies from
+  τ = 10 onward. The gate pins the forward arrow at τ = 1 and its silence at
+  τ = 10, and at τ = 1 the reverse below the forward (`r1 < f1`) — the reverse's
+  absolute silence is asserted only at τ = 10, not at the coupling lag. The
+  thin margin is held as measured directionality, never claimed as silence.
+- **Bandwidth sensitivity (measured 2026-09-15; gates
+  `gate_bandwidth_factor_one_is_the_library_path` and
+  `gate_bandwidth_te_declines_with_h`):** Silverman factor 0.5–3.0, threshold
+  recomputed under the same h — the verdicts are stable; one marginal arrow on
+  Density-RTSW → EUV-304 at factor 3.0 (excess +4.3e-4, dies under fam). The
+  factor-1.0 inline h-path reproduces the library estimator identically; TE
+  declines monotonically with h.
+- **Residual FN bias (measured 2026-09-15, `te_fn_probe`; gate
+  `gate_fn_bias_n300_vs_n500_quantified`, te-gate job `fn-bias`):** the
+  estimator carries a residual false-negative bias at n = 300 (0–3/10 true
+  couplings found); it is named, and it does not drive false positives.
+- **Window drift — closed (measured 2026-09-16, `te_null_limits_probe`):**
+  the naive and phase thresholds are computed in one process on one binning —
+  both nulls see the identical arrays and the same seed per pair, so no window
+  rolls between them. On the fixed window the phase gate holds all four control
+  pairs silent; the naive gate breaks only Dichte-RTSW → Bz. The 2026-09-12
+  all-four-naive breach was a different window — the fixed-window re-run is
+  measured, not pending. The fixed-window table lives in the paper
+  (`docs/paper/broken-null-control.md`, §The form).
 
 The honest scientific content of this result is a **negative**: the
 pretty cascade was an artifact of the test, and fixing the test leaves
