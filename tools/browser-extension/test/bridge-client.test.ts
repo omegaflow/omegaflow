@@ -84,6 +84,13 @@ afterEach(() => {
 async function connected(deps = makeDeps()) {
   const client = new BridgeClient(deps);
   await client.connect();
+  // Mirror background.ts: the keepalive alarm wakes the worker and asks the
+  // client to re-dial — without this wiring emitAlarm() would be a no-op.
+  chromeState.alarmListeners.add((alarm) => {
+    if (alarm.name === "keepalive") {
+      void client.resume();
+    }
+  });
   const ws = FakeWS.last as FakeWS;
   ws.emit("open");
   return { client, ws, deps };
