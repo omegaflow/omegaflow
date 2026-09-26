@@ -6,7 +6,8 @@
   "stations": [
     {"id": "gyirong", "lat": 28.8559, "lon": 85.2950},
     {"id": "kollab", "lat": 28.2710, "lon": 85.5150},
-    {"id": "rasuwa", "lat": 28.2500, "lon": 85.1000}
+    {"id": "rasuwa", "lat": 28.2500, "lon": 85.1000},
+    {"id": "bahrabise", "lat": 27.7868, "lon": 85.8993}
   ],
   "variables": [
     "apparent_temperature",
