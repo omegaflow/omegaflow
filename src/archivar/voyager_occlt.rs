@@ -1,5 +1,6 @@
 pub const PACK_MAGIC: [u8; 4] = *b"VOCC";
 pub const PACK_ENTRY_BYTES: usize = 84;
+pub const PACK_YEAR_OFFSET: usize = 80;
 
 pub const LEN_PREFIX_BYTES: usize = 2;
 
@@ -85,8 +86,17 @@ pub fn timetagdays(r: &MediumbandRecord) -> u16 {
     be16(&r.header[MED_TIMETAGDAYS_OFFSET..MED_TIMETAGDAYS_OFFSET + 2])
 }
 
-pub fn epoch_anchor() -> Option<f64> {
-    None
+pub fn epoch_anchor(year: u32) -> Option<f64> {
+    if year == 0 {
+        return None;
+    }
+    let days = crate::lsk::days_from_civil(year as i64, 1, 1)?;
+    let t = days as f64 * 86_400.0;
+    if t.is_finite() && t > 0.0 {
+        Some(t)
+    } else {
+        None
+    }
 }
 
 pub fn sample_epoch(anchor: f64, r: &MediumbandRecord) -> Option<f64> {
@@ -168,6 +178,7 @@ pub fn parse_narrowband(bytes: &[u8]) -> Option<NarrowbandFile> {
 pub struct VoccFile {
     pub name: String,
     pub sha256: [u8; 32],
+    pub year: u32,
     pub raw: Vec<u8>,
 }
 
@@ -177,17 +188,17 @@ pub struct PackedVocc {
 }
 
 pub fn pack(raw: &[u8], name: &str) -> Vec<u8> {
-    pack_many(&[(raw, name)])
+    pack_many(&[(raw, name, 0)])
 }
 
-pub fn pack_many(files: &[(&[u8], &str)]) -> Vec<u8> {
+pub fn pack_many(files: &[(&[u8], &str, u32)]) -> Vec<u8> {
     let data_start = 8 + files.len() * PACK_ENTRY_BYTES;
-    let data_bytes: usize = files.iter().map(|(raw, _)| raw.len()).sum();
+    let data_bytes: usize = files.iter().map(|(raw, _, _)| raw.len()).sum();
     let mut bin = vec![0u8; data_start + data_bytes];
     bin[0..4].copy_from_slice(&PACK_MAGIC);
     bin[4..8].copy_from_slice(&(files.len() as u32).to_le_bytes());
     let mut offset = data_start;
-    for (i, (raw, name)) in files.iter().enumerate() {
+    for (i, (raw, name, year)) in files.iter().enumerate() {
         let base = 8 + i * PACK_ENTRY_BYTES;
         let nameb = name.as_bytes();
         let n = nameb.len().min(32);
@@ -195,6 +206,8 @@ pub fn pack_many(files: &[(&[u8], &str)]) -> Vec<u8> {
         bin[base + 32..base + 64].copy_from_slice(&crate::archivar::sha256::sha256_raw(raw));
         bin[base + 64..base + 72].copy_from_slice(&(offset as u64).to_le_bytes());
         bin[base + 72..base + 80].copy_from_slice(&(raw.len() as u64).to_le_bytes());
+        bin[base + PACK_YEAR_OFFSET..base + PACK_YEAR_OFFSET + 4]
+            .copy_from_slice(&year.to_le_bytes());
         bin[offset..offset + raw.len()].copy_from_slice(raw);
         offset += raw.len();
     }
@@ -218,6 +231,11 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedVocc> {
         sha256.copy_from_slice(&entry[32..64]);
         let data_offset = u64::from_le_bytes(entry[64..72].try_into().ok()?) as usize;
         let data_length = u64::from_le_bytes(entry[72..80].try_into().ok()?) as usize;
+        let year = u32::from_le_bytes(
+            entry[PACK_YEAR_OFFSET..PACK_YEAR_OFFSET + 4]
+                .try_into()
+                .ok()?,
+        );
         if data_offset + data_length > bytes.len() {
             return None;
         }
@@ -228,6 +246,7 @@ pub fn parse_packed(bytes: &[u8]) -> Option<PackedVocc> {
         files.push(VoccFile {
             name,
             sha256,
+            year,
             raw: raw.to_vec(),
         });
     }
@@ -239,7 +258,7 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let mut out = Vec::new();
     for file in &packed.files {
         if let Some(records) = parse_mediumband(&file.raw) {
-            let Some(anchor) = epoch_anchor() else {
+            let Some(anchor) = epoch_anchor(file.year) else {
                 continue;
             };
             for r in &records {
@@ -402,12 +421,28 @@ mod tests {
     }
 
     #[test]
-    fn epoch_anchor_stays_absent_and_sample_epoch_needs_it() {
-        assert!(epoch_anchor().is_none());
+    fn parse_series_builds_epoch_from_packed_year() {
+        let raw = sample_mediumband_record();
+        let bin = pack_many(&[(&raw[..], "DD059817_F1.DAT", 1980)]);
+        let parsed = parse_packed(&bin).unwrap();
+        assert_eq!(parsed.files[0].year, 1980);
+        let series = parse_series(&bin).unwrap();
+        assert_eq!(series.len(), 3);
+        assert_eq!(series[0].0, 315_532_800.0 + 317.0 * 86_400.0);
+        assert_eq!(series[0].2, COMP_AMP_MIN);
+        assert_eq!(series[1].2, COMP_AMP_MAX);
+        assert_eq!(series[2].2, COMP_AMP_MEAN);
+    }
+
+    #[test]
+    fn epoch_anchor_builds_year_start_and_sample_epoch_needs_it() {
+        assert!(epoch_anchor(0).is_none());
+        assert_eq!(epoch_anchor(1980), Some(315_532_800.0));
+        assert!(epoch_anchor(1899).is_none());
         let r = mediumband_record(&sample_mediumband_record()).unwrap();
         assert_eq!(
-            sample_epoch(340_000_000.0, &r),
-            Some(340_000_000.0 + 317.0 * 86_400.0)
+            sample_epoch(315_532_800.0, &r),
+            Some(315_532_800.0 + 317.0 * 86_400.0)
         );
         assert_eq!(sample_epoch(-1.0e12, &r), None);
     }
@@ -426,9 +461,9 @@ mod tests {
         let nb = sample_narrowband_file(1);
         let zero = vec![0u8; MED_RECORD_BYTES];
         let bin = pack_many(&[
-            (&med[..], "DD059817_F1.DAT"),
-            (&nb[..], "DD059825_F1.DAT"),
-            (&zero[..], "S0A.DAT"),
+            (&med[..], "DD059817_F1.DAT", 0),
+            (&nb[..], "DD059825_F1.DAT", 0),
+            (&zero[..], "S0A.DAT", 0),
         ]);
         let series = parse_series(&bin).unwrap();
         assert!(series.is_empty());
