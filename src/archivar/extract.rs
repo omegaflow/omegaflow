@@ -27,6 +27,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "atdf" => atdf::parse_series(bytes),
         "ulysses_atdf" => atdf::parse_uly_series(bytes),
         "ulysses_atdf_x" => atdf::parse_uly_series_x(bytes),
+        "gll_rss_atdf" => atdf::parse_gll_series(bytes),
+        "gll_rss_atdf_x" => atdf::parse_gll_series_x(bytes),
         "lro_trk" => lro_utf::parse_series(bytes),
         "himawari_hsd" => hsd::parse_series(bytes),
         "maxi" => crate::maxi::parse_bin(bytes).map(|curves| {
@@ -66,7 +68,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "cassini_odf" => odf::parse_series(bytes),
         "pioneer10_odf" => odf::parse_series(bytes),
         "pathfinder_odf" => odf::parse_series(bytes),
-        "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_parse_series(bytes),
+        "cassini_tnf" | "maven_tnf" | "dart_tnf" | "messenger_tnf" => odf::tnf_parse_series(bytes),
+        "ams02_spec" => tdat::ams02_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "voyager_occlt" => voyager_occlt::parse_series(bytes),
         "pds3_ring_occ" => pds3_ring_occ::parse_series(bytes),
@@ -85,7 +88,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
 
 pub fn phase_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<odf::TnfPhaseRow>> {
     match format {
-        "cassini_tnf" | "maven_tnf" | "dart_tnf" => odf::tnf_phase_series(bytes),
+        "cassini_tnf" | "maven_tnf" | "dart_tnf" | "messenger_tnf" => odf::tnf_phase_series(bytes),
         _ => None,
     }
 }
@@ -221,6 +224,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "atdf" => atdf::component_name(comp),
         "ulysses_atdf" => atdf::uly_component_name(comp),
         "ulysses_atdf_x" => atdf::uly_component_name(comp),
+        "gll_rss_atdf" => atdf::gll_component_name(comp),
+        "gll_rss_atdf_x" => atdf::gll_component_name(comp),
         "lro_trk" => lro_utf::component_name(comp),
         "himawari_hsd" => hsd::component_name(comp),
         "maxi" => match comp {
@@ -374,6 +379,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             odf::TNF_COMP_UL_PHASE => Some("dart_tnf_ul_phase_cycles"),
             _ => None,
         },
+        "messenger_tnf" => match comp {
+            odf::TNF_COMP_UL_PHASE => Some("messenger_tnf_ul_phase_cycles"),
+            _ => None,
+        },
+        "ams02_spec" => tdat::ams02_component_name(comp),
         "voyager_odr" => match comp {
             voyager_odr::COMP_SAMPLE => Some("voyager_odr_sample_count"),
             _ => None,
