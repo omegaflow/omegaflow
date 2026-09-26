@@ -3,7 +3,7 @@
   session: River-Folge 35
   class: handover
   date: 2026-09-26
-  sha256: e188f292ab6565c9f82fc9153f07bced6a1fa475ba34de4d10950ba88bf8ccff
+  sha256: ba102b87b7ad8bf79428dc9d36853601dca3a845d75e734a56dfc9b2e07534d3
   status: live
 -->
 # Handover — River-Folge 35 (2026-09-26)
@@ -25,25 +25,29 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 - GIC-Papier hat Priorität 1 | 2026-09-26 | Operator-Wort im River-Pass (folge35).
 - Hardware-Inventar | 2026-09-26 | Operator-Wort (folge35): vorhanden sind Laptop, Hibreak Pro (Bigme), Pixel 9, Forerunner 945, Meta Quest 1 (?); alles andere nicht vorhanden.
 - Session-Consent (Delegation) | 2026-09-26 | Operator-Wort: den Plan ausführen (`/river_go`); Commit trägt `/commit`.
+- Consent „alles bis zur Kante" | 2026-09-26 | Operator-Wort (folge35-Fortsetzung): „DU KANNST ALLES BIS ZUR KANTE MACHEN" — Ausführung des Plans bis zur Kante.
 
 ## Stehender Pass (measured)
 
 - **Postfach:** `state/mail/mail_ledger.φ` = privates Repo (`state/`) — hier absent;
   `mail_digest` „ledger absent" ist das Pfad-Artefakt. `docs/zustand/external-state.md`
   (2026-09-26, Mountain-Folge 166): keine fällige Korrespondenz.
-- **CI-Status:** (gemessen 2026-09-26 via `ci_manage view`/`log`) `health-check 36194355313`
-  = `completed / failure`, **transient**: `403` Rate-Limit (user `295896184`) + Zenodo
-  `curl (28)` Timeout + `runner shutdown` → *cancelled* — kein Assertion-Rot. Rerun
-  dispatcht (`gh run rerun 36194355313`), Status `queued`. `bz-retro-probe 36224176888`
-  (gic) = `in_progress` (08:36-Snapshot).
-- **Kanten-Arbeit (diese Session):** TLS-Material erzeugt — `state/tls/ca.pem` und
-  `state/tls/ca.key` (`CN=omegaflow-relay-ca`), `state/tls/relay-leaf.pem` und
-  `state/tls/relay-leaf.key` (Leaf `CN=omegaflow-relay`, SAN `IP:<lan-ip>`, von der CA
-  signiert), OpenSSL 3.0.13; `state/tls/` ist gitignored.
-- **Safety-Snapshot:** `refs/safety/1790404589`.
+- **CI-Status:** (gemessen 2026-09-26 via `ci_manage view`/`log`) `bz-retro-probe 36224176888`
+  (gic) = `in_progress` (06:34 gestartet, noch offen) — gic-Verdikt noch nicht am Lauf.
+  `health-check 36194355313` attempt 2 = `queued` (06:57) — Rerun noch nicht beendet.
+  **`paper-check` rot** (`36224168579`, `36224203710`): `export_latex --check` nennt zwei
+  Papiere — `gic-causal-driver` (abstract=302w > 200) und `big-bang-echo-sheet-12`
+  (Header-sha `e269ada0…` ≠ Body `0a5f2c78…`).
+- **Kanten-Arbeit (diese Session):** gic-Abstract von 302 W auf 194 W gekürzt
+  (`docs/paper/gic-causal-driver.md:17`, ≤200-Gate), alle Messwerte/der Riss erhalten;
+  Header-`sha256` neu gesetzt (`83015db8…` → `1aada7d3…`, via `omega_sh sha`). Der
+  `big-bang-echo-sheet-12`-Header-sha-Punkt ist **Sensory**-Eigentum (letzter Touch
+  `82178d0e8 sensory`) — als Punkt in `handover-2026-09-26-sensory-folge174.md` getragen.
+- **Safety-Snapshot:** `refs/safety/1790406586`.
 - **`register_lookup --orphan-docs`:** 38 trägerlose Prosadokumente — alle Owner-assigniert
   (mountain/mycelium/sensory/science), **keine** River-Trägerpflicht mehr. `--stale --persist 3`
-  = 0, `--descoped-check` = 0, `--orphans` = 9 (nur future/mycelium).
+  = 0, `--descoped-check` = 0, `--orphans` = 9 (nur future/mycelium). `open_points_check`
+  folge35: 33 Pfad-Refs, 0 absent.
 
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
@@ -55,7 +59,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 - **Lage:** (gemessen 2026-09-26 via `gh workflow run` + `ci_manage view` + `git log`) die
   Instrumente sind committet und gepusht (`f916093ee river: build gic PCMCI cross-check +
   full-lag family bound, add SOD-2025 shards`). `gh workflow run bz-retro-probe.yml` gelang
-  (Run `36224176888`, HEAD `5eeb76a`); Stand 2026-09-26 (08:36) `in_progress`. Das
+  (Run `36224176888`, HEAD `5eeb76a`); Stand 2026-09-26 (07:04, via `ci_manage view`) `in_progress`. Das
   Träger-Papier `docs/paper/gic-causal-driver.md` ist auf „built and dispatched 2026-09-26
   (run 36224176888); results pending" gesetzt (Abstract Z.17 + Offene-Punkte Z.359). Die zwei
   Zeugen (Jahres-Pfeil vs. gehärteter Quartals-bound) stehen ungeglättet als `Riss`,
@@ -75,6 +79,15 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
   hängt an dieser CI-Verifikation; lokal `cargo check --tests` grün.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36194355313` nach Rerun-Ende, bei Rot `ci_manage log 36194355313`.
+
+#### paper-check — gic-Abstract behoben, Gate bleibt bis Sensory-Fix rot
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der Push dieses Commits löst `paper-check` aus; der `big-bang-echo-sheet-12`-Fix liegt in `handover-2026-09-26-sensory-folge174.md`.
+- **Lage:** (gemessen 2026-09-26 via `ci_manage log 36224203710` + `omega_sh sha`) gic-Abstract 302→194 W
+  (`docs/paper/gic-causal-driver.md:17`), Header-sha `1aada7d3…` deckt; `big-bang-echo-sheet-12`
+  Header `e269ada0…` ≠ Body `0a5f2c78…` bleibt offen (Sensory).
+- **Blockade:** `big-bang-echo-sheet-12` (fremde Linie) — ohne deren Sha-Fix kein grüner `paper-check`.
+- **Braucht:** nach Push `ci_manage list` → jüngster `paper-check`-Lauf; der gic-Eintrag muss aus der `->`-Liste fallen.
 
 ### Operator handelt
 
