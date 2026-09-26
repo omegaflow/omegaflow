@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: 0f934300c4fb80eb82423976c6d8f21320b8f753685d96ed91cf789fa82b536a
+  sha256: 987684b9664431df39c5e0a881b61acf4cce8c235d5989636d3d856f14534808
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -20,18 +20,19 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 - Wort | 2026-09-26 | „all" — session-weiter Consent (`mycelium_go`), Delegation an alle Taucher.
 - Wort | 2026-09-27 | „DEMETER ist Sensory" → DEMETER aus der Mycelium-Übergabe entfernt (Sensory führt ihn).
 - Wort | 2026-09-27 | „du machst GOSAT" → GOSAT bleibt Mycelium-Punkt; Re-pack committet `cb339a5c9`, Rest-Arme offen.
-- Frage | 2026-09-27 | „wofür brauchen wir modis?" — LST-Thermalfeld gemessen (`sources.φ:15847-15872`); `modis-cdn`-Dispatch wartet auf Entscheidung (Grenze RAM/2-GiB).
+- Frage | 2026-09-27 | „wofür brauchen wir modis?" — LST-Thermalfeld gemessen (`sources.φ:15847-15872`).
+- Wort | 2026-09-27 | „monthly + 8-day als per-Granule-Serie bauen; daily descopen (Befund = RAM/Cap)" → `modis-cdn.yml` per-Granule + Manifest; `modis_lst_cmg_daily.bin` aus `phi/sources.φ` + `blocked_sources.φ:14` descoped.
 
 ## Offen (aufgeschlüsselt)
 
 ### Linie (eigen)
 
-#### modis-cdn — Sharding gebaut, RAM-/2-GiB-Cap-Riss
-- **Status:** operator-gebunden | **Bindung:** eigen
-- **Trigger:** Operator-Wort (feinerer Granule-Batch-Split vs. begrenztes Zeitfenster).
-- **Lage:** (gemessen 2026-09-27 via grind-flash) `modis-cdn.yml` geshardet: 3 Produkte × 27 Jahre = 81 Shard-Jobs (`max-parallel 8`, `timeout-minutes 350`, Resume je Shard), actionlint 0 Fehler, CMR-Pfad live (daily 2000 = 266 Granule). Riss: Compiler akkumuliert alle Records im RAM (`modis_lst_cmg_compiler.rs:505`), 1 Granule = 688 MB, daily-Jahr ≈ 252 GB gegen 16 GB Runner-RAM und 2-GiB-Release-Asset-Limit (`modis_lst_cmg_daily.bin` schon 1,72 GiB).
-- **Blockade:** RAM-/Asset-Grenze; Entscheidung fehlt.
-- **Braucht:** Operator-Entscheidung; zudem Shard-Asset-Registrierung bzw. Descope der kanonischen `modis_lst_cmg_{daily,8day,monthly}.bin` (`phi/sources.φ:15565/15574/15583`).
+#### modis-cdn — per-Granule-Serie (monthly + 8-day), daily descoped
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `modis-cdn`-Lauf grün.
+- **Lage:** (gemessen 2026-09-27 via grind-flash/`ci_manage log 36267998951`; Operator-Wort 2026-09-27) monthly (MOD11C3) + 8-day (MOD11C2) als per-Granule-Serie (je Asset ≈688 MB < 2 GiB); daily descoped (RAM/Cap: ~250 GB/Jahr, ~6,7 TB für 2000–2026 — kein gemessener Bedarf). Compiler akkumuliert im RAM (`modis_lst_cmg_compiler.rs:505`) → ein Granule je Asset.
+- **Blockade:** kein per-Granule-Shard+Manifest-Workflow.
+- **Braucht:** `modis-cdn.yml` auf per-Granule-Serie + Manifest umbauen (Muster `gll-rss-odr`); `modis_lst_cmg_daily.bin` aus `phi/sources.φ` + `blocked_sources.φ:14` descopen (Befund = RAM/Cap).
 
 #### Pre-CDN params — TIRM/TLON-Koordinaten-Riss (MCQG gelöst)
 - **Status:** wartend | **Bindung:** eigen
