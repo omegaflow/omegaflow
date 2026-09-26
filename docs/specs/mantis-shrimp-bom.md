@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-25)
   class: ref
   date: 2026-09-25
-  sha256: e73ea9851ee526abf7c6d43589188bbf366fe54767422671f50a8e5c9803e527
+  sha256: 361964a3adb74aa220d18ba0911584bcbfafa19fe4c029e5422d98b5a6b5c685
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 
@@ -113,7 +113,7 @@ Entwickler; Anfrage 2026-09-20 an `sales@pine64.org` + `info@pine64eu.com`.
 
 **Messung 2026-09-25 (ZigBee-Zeile):** **M1 gemessen — das BL808-Silizium trägt 802.15.4.** Das Bouffalolab-Datasheet (`bl_docs`, `BL808_DS` v1.2, Features: „Zigbee / IEEE 802.15.4" + „Wi-Fi/Bluetooth/Zigbee Coexistence"; PINE64-Ox64-Wiki „Zigbee") belegt ein 802.15.4-Radio im 2,4-GHz-Transceiver (gemessen 2026-09-25 via `general`/flash `archive_search`). Damit ist die Zeile „Funk: WiFi + BLE + ZigBee" für das **Silizium** belegt.
 
-**Rat-Verdikt 2026-09-25 (Stack-Weg — Route 2, Espressif-RCP):** Das H2 ist das **NCP-Funkmodul** (802.15.4), S3/BL808 die **Host-CPU**; der Stack läuft als Vendor-Firmware (`esp_zigbee_ncp`, H2) und spricht ZNSP über UART; der Host wird in Rust selbst gebaut (`std` + `serialport`). Gemessen (2026-09-25 via research-max `archive_search`): `esp-zigbee-sdk` trägt `examples/esp_zigbee_ncp` (Target esp32h2) ↔ `examples/esp_zigbee_host` (Target esp32s3 — die gebaute Topologie), Wrapper Apache-2.0, Kern vorkompiliert (v2.x proprietär / v1.x ZBOSS), `esp-ieee802154` 0.8.0 (Rust-Radio-Treiber, esp-rs) im selben esp-hal-Ökosystem wie die S3-Firmware. Verworfen (gemessen): Route 1 (BL70x-NCP) hängt am Python-Host `zigpy-blz` (projektverboten) ohne Rust-Treiber; Route 3 (eigener Stack auf dem BL808) ist ein Forschungsprojekt — das `bl_iot_sdk` trägt für BL808 kein 802.15.4, der BL808-RM kein Wireless-Kapitel. Das **BL808-eigene 802.15.4-Radio bleibt `pending`** (registrierter Faden, Trigger: öffentlicher Treiber-Fund), das H2 ist das Funkmodul. BOM-Zeile: `ESP32-H2-DevKitM-1-N4` (siehe Live-Sensor-Cluster-BOM).
+**Rat-Verdikt 2026-09-25 (Stack-Weg — Route 2, Espressif-RCP):** Das H2 ist das **NCP-Funkmodul** (802.15.4), S3/BL808 die **Host-CPU**; der Stack läuft als Vendor-Firmware (`esp_zigbee_ncp`, H2) und spricht ZNSP über UART; der Host wird in Rust selbst gebaut (`std` + `serialport`). Gemessen (2026-09-25 via research-max `archive_search`): `esp-zigbee-sdk` trägt `examples/esp_zigbee_ncp` (Target esp32h2) ↔ `examples/esp_zigbee_host` (Target esp32s3 — die gebaute Topologie), Wrapper Apache-2.0, Kern vorkompiliert (v2.x proprietär / v1.x ZBOSS), `esp-ieee802154` 0.8.0 (Rust-Radio-Treiber, esp-rs) im selben esp-hal-Ökosystem wie die S3-Firmware. Verworfen (gemessen): Route 1 (BL70x-NCP) hängt am Python-Host `zigpy-blz` (projektverboten) ohne Rust-Treiber; Route 3 (eigener Stack auf dem BL808) ist ein Forschungsprojekt — das `bl_iot_sdk` trägt für BL808 kein 802.15.4, der BL808-RM kein Wireless-Kapitel. Das **BL808-eigene 802.15.4-Radio ist gemessen `absent`** (2026-09-27, flash: kein öffentlicher 802.15.4-Stack für BL808 — Bouffalo Issue #148 „All wireless doc in NDA", `bouffalo_sdk_bl808` README ZIGBEE ×, Zephyr-PR #112921 ohne BL808; der registrierte Faden ist damit geschlossen), das H2 ist das Funkmodul. BOM-Zeile: `ESP32-H2-DevKitM-1-N4` (siehe Live-Sensor-Cluster-BOM).
 
 ## Notizen
 
