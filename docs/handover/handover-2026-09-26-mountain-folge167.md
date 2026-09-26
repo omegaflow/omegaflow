@@ -3,7 +3,7 @@
   session: Mountain-Folge 167
   class: handover
   date: 2026-09-26
-  sha256: 1fcbec3a257d01f67e39334e3c2fc2d6453bfccdafc8e2606c1caf983a37f861
+  sha256: 24bd82449c73e6e7223ba90b99404e9c966d3f95b15d9b34d5a588eeb53b3d35
   status: live
 -->
 # Handover — Mountain-Folge 167 (2026-09-26)
@@ -44,7 +44,8 @@ Trigger / Lage / Blockade / Braucht.
 #### gll.rss + Klasse-5 — Register + Workflows + CI-Dispatch (nach Commit/Push)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** eigener Commit steht + `origin/main` Vorfahr (dann `gh workflow run`).
-- **Lage:** (gemessen 2026-09-26) Gebaut (uncommittet): `atdf.rs`
+- **Lage:** (gemessen 2026-09-26) Gebaut (committet `e6b92b605`/`bc1d87643`/
+  `f1bd268b2`): `atdf.rs`
   SFOC-NAV-2-25-Format-8 + GLL-Dispatch-/Component-Arme (am echten F8-File
   `gll_rss_2002308t0717_dssmm_tdf.dat` verifiziert; Fabrikations-Fix
   `ref_sky`/`xmtr_ref` → `Option`), `cassini_rsr.rs` Recordlänge aus Label
@@ -52,8 +53,9 @@ Trigger / Lage / Blockade / Braucht.
   Spanne 1990..=2003), `opendap.rs` DAP2-Grid-Fix (live verifiziert),
   `tdat.rs` AMS-02 (18340 Zeilen/23 Spezies), neu `messenger_tnf_compiler.rs`
   (am echten TRK-2-34-File verifiziert: 120774 Zeilen) + `ams02_tdat_compiler.rs`.
-  Registriert in `phi/sources.φ`: `gll_rss_rsr`, `gll_rss_atdf`, `gll_rss_atdf_x`,
-  `messenger_tnf`, `ams02_spec` (Blocks 8445–8564). Neu:
+  Register-Blöcke in `phi/sources.φ` (`gll_rss_rsr`, `gll_rss_atdf`,
+  `gll_rss_atdf_x`, `messenger_tnf`, `ams02_spec`, 8445–8564) geschrieben, aber
+  im Gridlock **uncommittet**. Neu:
   `.github/workflows/messenger-tnf-cdn.yml` + `ams02-tdat-cdn.yml`. `gll_rss_odr`/
   `gll_rss_tnf` waren bereits registriert.
 - **Blockade:** keine
@@ -61,6 +63,32 @@ Trigger / Lage / Blockade / Braucht.
   Blöcke nach dem CI-Lauf in `phi/sources.φ` nachtragen (MESSENGER-TNF ~30 GB →
   `--year`-Filter); ein `gll-rss-atdf-cdn.yml` fehlt noch (Register-Hunk im
   Gridlock).
+
+#### Benannt — ungemessen (offene Messungen aus diesem Atom)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (benannt 2026-09-26, **ungemessen**) Die Taucher haben diese Punkte
+  als offen markiert; sie gehören gemessen, nicht geglaubt:
+  - `atdf.rs` F8-Item-20 **Doppler-Bias-Einheit** (`/1000`): Report „ließ sich
+    aus den Quellen nicht abschließend belegen".
+  - `cassini_rsr.rs` **SFDU-Magic `NJPL`/`C997`** (Byte 0/8): „falls das
+    GLL-Label andere IDs trägt, wäre `read_record` eine eigene Messung".
+  - `units.rs` `allowed_units_for_force(0)` ohne `gev`/`gv`: `report_physics_mismatch`
+    **kann** für die 46 AMS-02-Felder eine Anomalie melden (blockt nicht) — ob
+    real, ungemessen.
+  - **Präzedenz-Zuordnungen** unit-auto-detect: `sz_signal_to_noise`/`kp_value`
+    → em 1, Wolf-Zahl/σ → descoped „Statistik" — per Präzedenz/Statistik
+    zugeordnet, nicht am Feld gemessen.
+  - `main_flow.rs` **Fetch-Liste** `gll_rss_atdf[_x]`/`messenger_tnf`/`ams02_spec`:
+    per Analogie eingetragen (`cargo check` grün); Lauf fetch→parse→Samples fehlt.
+  - **Workflow-Ergebnisse** `messenger-tnf-cdn`/`ams02-tdat-cdn`: dispatcht,
+    Ergebnis ungemessen (nicht gepollt).
+  - **mariner10-Regeneration**: dass der Eintrag `at mariner10` die Route
+    wirklich erzeugt, ist nicht gemessen.
+- **Blockade:** keine
+- **Braucht:** je ein realer Record/Lauf wie oben (`atdf.rs`-F8-Record mit
+  bekanntem Bias; echtes `gll.rss_rsr`-Label; AMS-02-Parse-Lauf; ein
+  `gll_rss_atdf`-Bin-Lauf; `gh run view <id>` einmalig).
 
 #### Concurrency-Gridlock — geteilte `phi`-Register (`phi/sources.φ`, `phi/blocked_sources.φ`)
 - **Status:** blockiert | **Bindung:** eigen
