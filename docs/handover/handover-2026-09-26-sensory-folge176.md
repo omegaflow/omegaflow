@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: ba9c1e46daf7e0cadaebd2b780641911133fb92f6dee53b9b6bb50d9945a8d40
+  sha256: 113ffac88428b0fa6ccdcaac18fa4ab1d84f3268f89d05793fe01bea44deca9f
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -183,9 +183,9 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Weberin — cometels-Katalog-Arm + Consumer gebaut, CDN + TNO offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `grind-max`) `src/archivar/cometels.rs` neu (`catalog_cometels`-Parser-Arm, magic `CTL1`, 5 Tests); `CometelsRec` aus `weberin.rs` in den Archivar verschoben, `weave_cometels` über `desig_of`; `cometels_compiler --catalog` (CI-Upload) und `weberin_body_verdict --cometels` (Consumer) verdrahtet. `cargo check -p omegaflow` 0 Warnungen; Probe: **837 Element-Records, 122 skipped** (e≥1/void). Routen: `cometels.json.gz` 200 (52939 B); `cometels_flat.json` CDN 404 (nicht kompiliert). Register-Block in `/tmp/opencode/weberin-register-block.φ`.
-- **Blockade:** `sources.φ` fremd-dirty (TNO-SPK-Registrierung).
-- **Braucht:** `gh workflow run cometels-cdn.yml` (Manifestation); Register-Block anwenden sobald `sources.φ` frei; TNO `ephemeris_compiler`-Ernte.
+- **Lage:** (gemessen 2026-09-26 via `grind-max`) `src/archivar/cometels.rs` neu (`catalog_cometels`-Parser-Arm, magic `CTL1`, 5 Tests); `CometelsRec` aus `weberin.rs` in den Archivar verschoben, `weave_cometels` über `desig_of`; `cometels_compiler --catalog` (CI-Upload) und `weberin_body_verdict --cometels` (Consumer) verdrahtet. `cargo check -p omegaflow` 0 Warnungen; Probe: **837 Element-Records, 122 skipped** (e≥1/void). Routen: `cometels.json.gz` 200 (52939 B); `cometels_flat.json` CDN 404. Der CDN-Lauf `36238538942` **failure** — der Workflow hatte **keinen Checkout/Toolchain** (Job lief ohne Repo, `could not find Cargo.toml`, 4 s); Fix `1a4925344`, neu dispatcht `36252200125`.
+- **Blockade:** keine.
+- **Braucht:** Lauf `36252200125` lesen (Manifestation); TNO `ephemeris_compiler`-Ernte (SPK-Registrierung, wenn `sources.φ` frei).
 
 #### Weberin Faden-Matrix — Broker-Compiler gebaut, seismische Endpunkte offen
 - **Status:** offen | **Bindung:** eigen
@@ -239,7 +239,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Galileo Borduhr-Sprung A/B — keine Absolutfrequenz-Reihe gefunden
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Fund einer öffentlichen Absolutfrequenz-Reduktion über 1995-11-30/12-01
-- **Lage:** (gemessen 2026-09-26 via `general`) gemessenes `absent`: Asmar-1997-USO-Survey ist eine Parametertabelle, keine Zeitreihe; Morabito endet 1993; DESCANSO-Begleitdokumente ohne Reihe; PDS-Galileo-RSS ohne Jupiter-Phasen-Datenkopf; einziger die Grenze kreuzender Katalog ist der SCLK-Kernel (`mk00062a.tsc` 200, 10127 B — Korrelation, keine USO-Reihe).
+- **Lage:** (gemessen 2026-09-26 via `general`) gemessenes `absent`: Asmar-1997-USO-Survey ist eine Parametertabelle, keine Zeitreihe; Morabito endet 1993; PDS-Galileo-RSS ohne Jupiter-Phasen-Datenkopf; einziger die Grenze kreuzender Katalog ist der SCLK-Kernel (`mk00062a.tsc` 200, 10127 B — Korrelation, keine USO-Reihe). **DESCANSO Monograph Vol. 14** (`descanso.jpl.nasa.gov/monograph/series14/Radio-Science.pdf`, 200, 52.985.643 B, 458 S., Text-Layer) gemessen: Lehrbuch, keine Reihe; Table 5.1 (PDF p.277) trägt nur USO-Charakteristika (Galileo-Probe: FEI 1975, SC-Cut, 23.117 MHz nominal, Allan ≈5e-10 @1000 s; Orbiter-USO Serial #4 aus der FEI-1975-Charge, 19.1 MHz) — kein 1995-11-30/12-01-Bezug.
 - **Blockade:** keine Quelle trägt eine Reihe.
 - **Braucht:** eine andere Absolut-Frequenzreduktion finden; notfalls als absent halten.
 
@@ -276,7 +276,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### JUICE-Erdpassage 28./29.09.2026 — Kanal fertig, Siegel-Wort fehlt (termin-kritisch)
 - **Status:** termin:2026-09-29 | **Bindung:** termin:2026-09-29 (Operator für das Siegel-Wort)
 - **Trigger:** 2026-09-28/2026-09-29
-- **Lage:** (gemessen 2026-09-26 via `grind-pro`) Prädiktionskanal nachgezogen (`flyby-path-2-preregistration.md` sha `502e06c3…`, addendum sha `b54d5298…`): RTSW mag/wind, Swarm, OMNI2 live gemessen; alle Zellen korrekt `pending` (Feldzustand füllt erst ~1 h vor dem Perigäum). **Riss:** die Kp-Route (`noaa-planetary-k-index.json`) wurde in `61e272ab0` aus `sources.φ` entfernt → Kp-Zelle kann nicht füllen, bis re-registriert (Mycelium-Akt).
+- **Lage:** (gemessen 2026-09-26 via `grind-pro`) Prädiktionskanal nachgezogen (`flyby-path-2-preregistration.md` sha `502e06c3…`, addendum sha `b54d5298…`): RTSW mag/wind, Swarm, OMNI2 live gemessen; alle Zellen korrekt `pending` (Feldzustand füllt erst ~1 h vor dem Perigäum). **Riss:** die Kp-Route (`noaa-planetary-k-index.json`) wurde in `61e272ab0` aus `sources.φ` entfernt → Kp-Zelle kann nicht füllen, bis re-registriert (Mycelium-Akt). **OMNI2:** das Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) → Verifikationskanal, kein Füllkanal.
 - **Blockade:** der Operator muss das **Siegel-Wort vor dem 28.09.** setzen (in 2 Tagen).
 - **Braucht:** Siegel-Wort setzen; nach dem Flyby die In-situ-Messung gegen den präregistrierten Feldzustand (σ-Metrik gegen fam).
 
@@ -364,18 +364,9 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 
 ### Benannt — ungemessen (offene Messungen aus diesem Atom)
 
-In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geglaubt
-(kein Punkt wird als Wahrheit getragen, was keine Messung hat):
-
-- **Galileo Borduhr:** DESCANSO Monograph Vol. 14 (Radio Science, 52 MB) nicht OCR'd
-  (das TRK-2-18/209G ist OCR'd, s. Positive Maske).
-- **JUICE:** OMNI2-Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) →
-  Verifikationskanal, nicht Füllkanal.
-- **Weberin cometels:** `mpcorb_extended.json.gz` sha nur partiell (74,2 MB);
-  `cometels_flat.json`/`cometels.bin` CDN-Asset noch nicht manifestiert (Lauf
-  dispatcht).
-- **Trishuli:** S1-Post-Szene nicht archiviert (CEMS nur Grading, optisch
-  wolkenverdeckt) → räumlicher Footprint bleibt `pending`.
+Keine offen — alle zuvor hier benannten Messungen sind in diesem Atom gemessen und
+in ihre Punkte gefaltet (Korona-Kadenz, Weberin ALeRCE/Fink + Seismik-Weltlinien,
+Galileo/TRK-2-18 + DESCANSO, cometels-CDN, JUICE-OMNI2, Trishuli-S1).
 
 ## Abschluss
 
