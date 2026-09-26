@@ -230,6 +230,15 @@ idempotent true
 timeout 350
 note Rosetta RSI IFMS AGC; compiler rosetta_odf_compiler.rs; 6 Shards im release archives.esac.esa.int (4×1073741816 B, 295640096 B, 289151480 B), URLs+sha256 in sources.φ gemessen 2026-09-19; run 35351411938 success 2026-09-18.
 
+asset fehlt
+format rx100_luminance
+tag sony-camera-remote
+arm rx100_compiler
+pattern ^rx100_luminance\.bin$
+idempotent true
+timeout 120
+note Sony RX100 V (DSC-RX100M5A) mean scene luminance L_v=K·N²/(t·S) cd/m²; arm src/archivar/rx100.rs; compiler rx100_compiler.rs (SSDP + Sony Camera Remote API); lokal, kein CDN; K-Kalibrierung+Spectral-Proxy pending.
+
 asset present
 format swot_l2_lr_ssh
 tag archive.podaac.earthdata.nasa.gov

@@ -15,8 +15,7 @@ fn field_wgsl_validates_offline() {
     }
 }
 
-#[test]
-fn browser_fieldshader_validates_and_carries_the_measured_branch() {
+fn browser_field_shader() -> String {
     let html = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/static/index.html"))
         .expect("static/index.html carries the browser fieldShader");
     let marker = "const fieldShader = `";
@@ -25,18 +24,23 @@ fn browser_fieldshader_validates_and_carries_the_measured_branch() {
         .find('`')
         .expect("fieldShader closing backtick absent")
         + start;
-    let wgsl = &html[start..end];
+    html[start..end].to_string()
+}
 
-    let module = match naga::front::wgsl::parse_str(wgsl) {
+#[test]
+fn browser_fieldshader_validates_and_carries_the_measured_branch() {
+    let wgsl = browser_field_shader();
+
+    let module = match naga::front::wgsl::parse_str(&wgsl) {
         Ok(m) => m,
-        Err(e) => panic!("browser fieldShader parse: {}", e.emit_to_string(wgsl)),
+        Err(e) => panic!("browser fieldShader parse: {}", e.emit_to_string(&wgsl)),
     };
     let mut validator = naga::valid::Validator::new(
         naga::valid::ValidationFlags::all(),
         naga::valid::Capabilities::all(),
     );
     if let Err(e) = validator.validate(&module) {
-        panic!("browser fieldShader validate: {}", e.emit_to_string(wgsl));
+        panic!("browser fieldShader validate: {}", e.emit_to_string(&wgsl));
     }
 
     assert!(
@@ -546,9 +550,10 @@ fn force_ref_snaps_on_first_sight() {
 }
 
 #[test]
-fn the_frame_carries_the_field_permeability_as_aperture() {
+fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
     let mut app = OmegaLoop {
         field_permeability: 0.42,
+        natural_latency_ticks: 7,
         ..OmegaLoop::new(
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
@@ -579,6 +584,7 @@ fn the_frame_carries_the_field_permeability_as_aperture() {
     let frame = app.presence_frame();
     assert_eq!(frame.aperture, 0.42);
     assert_eq!(frame.omega, app.probe_omega);
+    assert_eq!(frame.tau_ticks, 7);
 }
 
 #[test]
@@ -1674,4 +1680,292 @@ fn scalar_gpu_parity_surrogate_slots_match_cpu() {
         "scalar gpu surrogate-slot gate: {} grid mismatches",
         viol
     );
+}
+
+#[test]
+#[ignore]
+fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
+    let wgsl = browser_field_shader();
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — offscreen pipeline skipped");
+            return;
+        }
+    };
+    let (device, queue) = match pollster::block_on(
+        adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+    ) {
+        Ok(dq) => dq,
+        Err(e) => {
+            eprintln!("device request returned: {}", e);
+            return;
+        }
+    };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(wgsl.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 1;
+                e
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::VERTEX,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            },
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX);
+                e.binding = 3;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let blend = wgpu::BlendState {
+        color: wgpu::BlendComponent {
+            src_factor: wgpu::BlendFactor::One,
+            dst_factor: wgpu::BlendFactor::One,
+            operation: wgpu::BlendOperation::Add,
+        },
+        alpha: wgpu::BlendComponent {
+            src_factor: wgpu::BlendFactor::One,
+            dst_factor: wgpu::BlendFactor::One,
+            operation: wgpu::BlendOperation::Add,
+        },
+    };
+    let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        vertex: wgpu::VertexState {
+            module: &module,
+            entry_point: Some("vs"),
+            compilation_options: Default::default(),
+            buffers: &[],
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: &module,
+            entry_point: Some("fs"),
+            compilation_options: Default::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: wgpu::TextureFormat::Rgba8Unorm,
+                blend: Some(blend),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            ..Default::default()
+        },
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState::default(),
+        multiview: None,
+        cache: None,
+    });
+
+    let field_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 16,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let props_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 48,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 64,
+        usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let lut_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 256 * 16,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let lut_rgb = [0.5f32, 0.25f32, 0.125f32];
+    let mut lut = vec![0f32; 256 * 4];
+    for entry in lut.chunks_exact_mut(4) {
+        entry[0] = lut_rgb[0];
+        entry[1] = lut_rgb[1];
+        entry[2] = lut_rgb[2];
+        entry[3] = 1.0;
+    }
+    queue.write_buffer(&lut_buf, 0, &le_bytes_f32(&lut));
+    queue.write_buffer(&field_buf, 0, &le_bytes_f32(&[0.0, 0.0, 0.0, 1.0]));
+    let extent = 32.0f32;
+    let color_index = 1.0f32;
+    let mut props = vec![0.0f32; 12];
+    props[0] = extent;
+    props[2 * 4 + 2] = color_index;
+    queue.write_buffer(&props_buf, 0, &le_bytes_f32(&props));
+    let surface = [64.0f32, 64.0, 1.0, 1.0];
+    let right = [1.0f32, 0.0, 0.0, 0.0];
+    let up = [0.0f32, 1.0, 0.0, 0.0];
+    let expose = [2.0f32.powi(-16), 1.0, 0.0, 1.0];
+    let mut vp = Vec::with_capacity(16);
+    vp.extend_from_slice(&surface);
+    vp.extend_from_slice(&right);
+    vp.extend_from_slice(&up);
+    vp.extend_from_slice(&expose);
+    queue.write_buffer(&vp_buf, 0, &le_bytes_f32(&vp));
+    let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: field_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: props_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: vp_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: lut_buf.as_entire_binding(),
+            },
+        ],
+    });
+
+    const SIZE: u32 = 64;
+    let target = device.create_texture(&wgpu::TextureDescriptor {
+        label: None,
+        size: wgpu::Extent3d {
+            width: SIZE,
+            height: SIZE,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba8Unorm,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+        view_formats: &[],
+    });
+    let view = target.create_view(&wgpu::TextureViewDescriptor::default());
+    let row_bytes = SIZE * 4;
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: (row_bytes * SIZE) as u64,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: None,
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                    store: wgpu::StoreOp::Store,
+                },
+            })],
+            depth_stencil_attachment: None,
+            timestamp_writes: None,
+            occlusion_query_set: None,
+        });
+        pass.set_pipeline(&pipeline);
+        pass.set_bind_group(0, &bind_group, &[]);
+        pass.draw(0..6, 0..1);
+    }
+    enc.copy_texture_to_buffer(
+        wgpu::TexelCopyTextureInfo {
+            texture: &target,
+            mip_level: 0,
+            origin: wgpu::Origin3d::ZERO,
+            aspect: wgpu::TextureAspect::All,
+        },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &read_buf,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(row_bytes),
+                rows_per_image: None,
+            },
+        },
+        wgpu::Extent3d {
+            width: SIZE,
+            height: SIZE,
+            depth_or_array_layers: 1,
+        },
+    );
+    queue.submit(std::iter::once(enc.finish()));
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "offscreen fieldShader readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut max_alpha = 0.0f32;
+    let mut best_rgb = [0.0f32; 3];
+    for px in mapped_data.chunks_exact(4) {
+        let a = px[3] as f32 / 255.0;
+        if a > max_alpha {
+            max_alpha = a;
+            best_rgb = [
+                px[0] as f32 / 255.0,
+                px[1] as f32 / 255.0,
+                px[2] as f32 / 255.0,
+            ];
+        }
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+    assert!(
+        max_alpha > 0.9,
+        "offscreen fieldShader center pixel absent (max alpha {})",
+        max_alpha
+    );
+    for (got, want) in best_rgb.iter().zip(lut_rgb.iter()) {
+        assert!(
+            (got - want).abs() < 0.05,
+            "measured LUT branch: got {} want {} — the lut[idx].rgb read did not land",
+            got,
+            want
+        );
+    }
 }

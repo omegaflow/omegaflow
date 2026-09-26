@@ -2429,6 +2429,44 @@ fn test_star_grid_hull_refuses_distant_star() {
 }
 
 #[test]
+fn test_hidden_run_rest_presence_carries_stars() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    let star = build_star_samples(&bin).remove(0);
+    let now = 2.0e9;
+    assert!(
+        !super::catalog_sample_in_enclosure(&[], &star, now),
+        "no presence at all drops the star — the hidden-run state the verdict fixes"
+    );
+    let slot = std::sync::Arc::new(std::sync::RwLock::new(
+        crate::mathematikerin::PresenceState::rest(),
+    ));
+    let presences = super::enclosure_presences(&HashMap::new(), &slot, now);
+    assert_eq!(
+        presences.len(),
+        1,
+        "the resting presence slot supplies the envelope center when archive.presence is empty"
+    );
+    assert_eq!(
+        [presences[0].1, presences[0].2, presences[0].3],
+        [0.0, 0.0, 0.0],
+        "the center reads from the resting presence slot — the SSB origin, never a hardcoded triple"
+    );
+    assert!(
+        super::catalog_sample_in_enclosure(&presences, &star, now),
+        "the resting presence at the SSB origin carries the star"
+    );
+}
+
+#[test]
 fn test_star_reader_predicate_refuses_nan_val() {
     let mut bin = Vec::new();
     bin.extend_from_slice(&0f64.to_le_bytes());
