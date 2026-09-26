@@ -37,17 +37,19 @@ jobs:
             rm -f "series/${name}_raw.csv"
             test -s "series/${name}.csv"
           }
-          fetch gyirong_precip          28.8559 85.2950 precipitation
-          fetch kollab_precip           28.2710 85.5150 precipitation
-          fetch rasuwa_precip           28.2500 85.1000 precipitation
-          fetch gyirong_temperature_2m  28.8559 85.2950 temperature_2m
+          fetch gyirong_open-meteo_precipitation  28.8559 85.2950 precipitation
+          fetch kollab_open-meteo_precipitation   28.2710 85.5150 precipitation
+          fetch rasuwa_open-meteo_precipitation   28.2500 85.1000 precipitation
+          fetch gyirong_open-meteo_temperature_2m 28.8559 85.2950 temperature_2m
+          fetch kollab_open-meteo_temperature_2m  28.2710 85.5150 temperature_2m
+          fetch rasuwa_open-meteo_temperature_2m  28.2500 85.1000 temperature_2m
       - name: Run the cross-screening (conditioned on the gyirong diurnal driver)
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            echo "protocol: cross-screening-tibet.md — gyirong/kollab/rasuwa precip, cond gyirong temperature_2m"
+            echo "protocol: cross-screening-tibet.md — gyirong/kollab/rasuwa precip+temperature, cond gyirong temperature_2m"
             cargo run --release -p omegaflow-measure --bin cross_te_screen -- \
-              --dir series --cond gyirong_temperature_2m --lags 1,6,12,24 --surrogate 20
+              --dir series --cond gyirong_open-meteo_temperature_2m --lags 1,6,12,24 --surrogate 20
           } > cross-screening-tibet.txt 2>&1
       - uses: actions/upload-artifact@v4
         if: always()
