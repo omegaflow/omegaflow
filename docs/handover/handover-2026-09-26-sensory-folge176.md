@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 113ffac88428b0fa6ccdcaac18fa4ab1d84f3268f89d05793fe01bea44deca9f
+  sha256: 97eea119085221bfff57b414c8647ee30d12d41cb7fbfd57d0b216f48a6ba7d9
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -150,7 +150,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Trigger:** die CDN-Läufe
 - **Lage:** (gemessen 2026-09-26) **LLNL-G3D-JPS-Arm gebaut** (`src/archivar/llnl_g3d.rs`, `tools/harvest/src/bin/llnl_g3d_jps_compiler.rs`, magic `G3D1`; **3,855,119 Records**, 93,046,104 B, sha `3a1b4c63…`; `volume-cdn.yml`), **ISC-EHB-Arm gebaut** (`isc_ehb_compiler.rs`, `EHB1`; **153,959 arrivals**, 12,316,733 B), **EMC-Arm gebaut** (`src/archivar/emc.rs`, `emc_compiler.rs`, `emc_radial.bin`; der netCDF-4/HDF5-Reader `hdf5.rs` existiert bereits). Quellen in `sources.φ` registriert (LLNL/ISC-EHB/Slab2 live; EMC radial). Der frühere ISC-EHB-Bulk ist RES (Text), die `.grd`/`.nc` sind netCDF-4 (`\x89HDF`), nicht classic.
 - **Blockade:** keine.
-- **Braucht:** CDN-Läufe dispatcht/lesen (`volume-cdn.yml`, `isc-ehb-cdn.yml`, `emc-cdn.yml`); der EMC-3D-netCDF-**Katalog**-Arm fehlt (der volume-Arm existiert) — optional.
+- **Braucht:** CDN-Läufe dispatcht/lesen (`volume-cdn.yml`, `isc-ehb-cdn.yml`, `emc-cdn.yml`). Der EMC-3D-netCDF-**Katalog**-Arm ist **`descoped`** (gemessen 2026-09-26: der volume-Arm `tools/utils/src/bin/volume_builder.rs` + `volume-cdn.yml` + `src/archivar/hdf5.rs`/`nc4.rs` + 8 `*.volume.bin`-Assets tragen die 3D-Modelle bereits — ein separater netcdf-Katalog-Arm ist nicht nötig).
 
 #### Positive Maske — ODF-Regel + Slab2-Ersatzroute gemessen
 - **Status:** offen | **Bindung:** eigen
@@ -164,7 +164,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Trigger:** eine Live-Quelle (Stern-Winkeldurchmesser / gemessenes Δz je Okkultation)
 - **Lage:** (gemessen 2026-09-26 via `grind-max`) Sphäre I gebaut: `src/archivar/fresnel.rs` (`fresnel_line`, FRS1; θ=2a/D, F=a²/(λD), √(λD/2)); Gaia-Farbe→λ über `spectral.rs::bp_rp_to_lambda_nm` (Planck-SED, photon-gewichtet durch den eingebetteten Passband); Sphäre VII in `src/mathematikerin/doppler.rs` (`doppler_dz`=GM/(c²b), Kreuzprodukt-Impactparameter, `prediction_stat`/`residual_stat`, DGZ1). `cargo check`/`--tests` 0 Warnungen; 19 neue Tests (CI-only). Carrier `the-seven-spheres.md` trägt jetzt genau 2 `pending`.
 - **Blockade:** kein Katalog trägt das Stern-Winkeldurchmesser-Feld; kein gemessenes Δz je Okkultation.
-- **Braucht:** Stern-Winkeldurchmesser-Feld: **Quelle gemessen** — VizieR II/346 `jsdc_v2` (JMMC Stellar Diameters Catalogue v2, 465877 rows; Spalte LDD in mas; ASU `https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2`) → registrieren, 1 `pending` füllen. Δz-Okkultation: kein Live-Katalog (Gaia-Archiv-TAP `gea.esac.esa.int` 401 anonym) → bleibt `pending`.
+- **Braucht:** JSDC II/346 registriert (`02e09dbbc`: `jsdc_ldd_mas`, `asu-tsv`, `at sun`; `convert_to_si mas` vorhanden) — **noch kein `pending` gefüllt**: der Marker nennt ein *okkultations-abgeleitetes* Winkeldurchmesser-Feld, nicht den JSDC-Interferometrie-Katalog, und dem JSDC fehlt die Distanzspalte (Cross-Match nötig). Schritt: Gaia-Parallaxe cross-mappen ODER die Okkultations-Lichtkurven beschaffen. Δz-Okkultation: kein Live-Katalog (Gaia-Archiv-TAP `gea.esac.esa.int` 401 anonym) → beide pendings bleiben.
 
 #### Korona-Heizung — Feldmap + `millionths`-Arm live registriert
 - **Status:** offen | **Bindung:** eigen
@@ -257,12 +257,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** kein Instrument misst den vollen Phasenraum der Pioniere.
 - **Braucht:** VLBI-Beacon auf der nächsten interstellaren Sonde, von Tag eins zweikanalig.
 
-#### Nadel V — Positive-Control-Konus gemessen, IR-Routen-Registrierung offen
+#### Nadel V — AllWISE-Arm gebaut (Mycelium), Probe offen
 - **Status:** offen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `research-max`, aus folge174 getragen) AllWISE-Job `23542882` **COMPLETED**; genau 1 Zeile `J122906.70+020308.6` (w1 8.369 / w2 7.407 / w3 5.147 / w4 2.944, W1−W2 = +0.962). IRAS-PSC `iraspsc` live registriert (`sources.φ:12335-12345`). **AllWISE bleibt `pending`** (`blocked_sources.φ:232-234`) — async-UWS-Arm fehlt; Rat: UWS ist Transport, kein Parser-Gap → **Mountain-Arbeit** (`tap_body_to_json` parst TAP-JSON bereits).
-- **Blockade:** AllWISE sync-Stall → async-UWS-Arm nötig (Querlinie Mountain).
-- **Braucht:** AllWISE async-UWS-Arm (POST→Poll phase→GET Result); dann `lsst_anomaly_probe` auf dem positiven Kontrollkegel.
+- **Trigger:** der `allwise-cdn`-Lauf `36249453619`
+- **Lage:** (gemessen 2026-09-26) AllWISE-Job `23542882` COMPLETED (genau 1 Zeile `J122906.70+020308.6`, w1 8.369 / w2 7.407 / w3 5.147 / w4 2.944, W1−W2 = +0.962); IRAS-PSC `iraspsc` live (`sources.φ:12335-12345`). **Entblockt:** Mycelium hat den async-UWS-Arm gebaut (`c8e87ab2e`: `src/archivar/uws.rs` + `src/archivar/allwise.rs` + `tools/harvest/src/bin/allwise_tap_compiler.rs`) und die Quelle registriert (`sources.φ:9697` `catalog_allwise_psd`, Felder `w1mpro..w4mpro`/`w3snr`/`w4snr`); `allwise-cdn` `36249453619` in_progress auf `0e09a3e81`.
+- **Blockade:** keine.
+- **Braucht:** Lauf `36249453619` lesen (Manifestation `allwise_psd.bin`); dann `lsst_anomaly_probe` auf dem positiven Kontrollkegel.
 
 #### Pioneer/Dark-Matter — Sweep nachgetragen, Syntonisation-Routen offen
 - **Status:** offen | **Bindung:** eigen
