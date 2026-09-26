@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: 3a5a6198c81124d434b6954d1c26aa7192644ca94afa0751b66653a4a98c7392
+  sha256: 73b0664e206c1423e4d4752ef7998cb0d71a94406189472ab05b9a08c6049bc4
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -32,7 +32,7 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 - **Trigger:** `modis-cdn`-Lauf grün (per-Granule-Serie).
 - **Lage:** (gemessen 2026-09-27 via grind-max; Operator-Wort 2026-09-27) Compiler um `--shard-dir/--manifest`-Modus erweitert: ein Granule = ein Asset ≈688 MB, RAM-bounded, Roundtrip-geprüft, Resume über CDN-Digests, Manifest (`name sha` je Zeile) erst bei 0 pending. `modis-cdn.yml`: `raster`-Job (CMR-Hits je Produkt-Jahr) + `compile`-Matrix ein Job je Produkt-Jahr (`max-parallel 8`, `timeout 350`, actionlint grün). monthly+8day in `phi/sources.φ` auf `*.manifest` (Shard-Konvention) umgestellt; daily descoped (`blocked_sources.φ:11-14` + Block aus `sources.φ` entfernt). `cargo check` 0/0.
 - **Blockade:** keine.
-- **Braucht:** `gh workflow run modis-cdn.yml` (Produkt-Jahre via `start_year`/`end_year`); danach die Jahres-Manifeste ins Register nachziehen (offener Rest: das jahrlose Serien-Manifest wird noch nicht erzeugt).
+- **Braucht:** Lauf `36277648527` dispatcht (2026-09-27); Ergebnis via `ci_manage view 36277648527` lesen; danach die Jahres-Manifeste ins Register nachziehen (offener Rest: das jahrlose Serien-Manifest wird noch nicht erzeugt).
 
 #### Pre-CDN params — TIRM/TLON-Koordinaten-Riss (MCQG gelöst)
 - **Status:** wartend | **Bindung:** eigen
