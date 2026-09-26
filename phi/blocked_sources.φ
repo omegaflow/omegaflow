@@ -36,10 +36,10 @@ descoped
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
 note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — normal optical depth τ(r)-Profile, binned+rekonstruiert (Marouf 1986). 2026-09-19 tar.gz HTTP 200 (5.7G+v1 397M), offen. Raw RSS NICHT im Bundle → atmos.nmsu.edu (cassini_tnf).
 
-pending
+released
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN: Globus MAP 20e8a751… ACTIVE. FITACF-Liste POST superdarn.ca/db-fitacf-files-bounce (JSON date/radars); Datei sdc-serv.usask.ca/data/{Y}/{M} 200 (Probe 665 238 B, sha256 2c705acd…). fitacf-Compiler: bz2-Arm fehlt.
+note SuperDARN FITACF released 2026-09-26: bz2-Arm steht, → phi/sources.φ:9461; workflow .github/workflows/superdarn-cdn.yml (sdc-serv.usask.ca/data/{Y}/{M}/{file} 200). MAP-Grid läuft über Globus 20e8a751… (ACTIVE).
 
 pending
 url https://psa.esa.int/psa-tap/tap/
