@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: d60f326b9ad320a56a6ea7796cd04bafadf619a543721e79238e90d141cd8c1c
+  sha256: a31480a108910b20b283787e386866e4b02e004b8b311eedf6d9247153c1c490
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -16,9 +16,15 @@ wurde. Keine Rangfolge. Sortierung: erst Akteur (**Linie** | **Rat** | **Operato
 
 Diese Session konsumierte `handover-2026-09-26-mycelium-folge171.md`.
 
-Geschlossen in dieser Folge: Postfach-Ledger-Fix (committet `eb20dad55`); die vier
-TAP-`parser-def` (gavo/padc/voparis/skvo) — Twin-URLs nach `phi/sources.φ`
-gezogen, in `phi/blocked_sources.φ` auf `descoped` gestellt (dieser Commit).
+Geschlossen: Postfach-Ledger-Fix (`eb20dad55`); die vier TAP-`parser-def`
+(gavo/padc/voparis/skvo) — Twins nach `phi/sources.φ`, auf `descoped` (live 200
+verifiziert, `f889b29c3`); **DECaPS2 Dataverse** — anonymer noirlab-TAP live 200,
+`blocked_sources.φ:79` descoped (`f805e33ec`); **AllWISE async-UWS-Arm** gebaut
+(`src/archivar/uws.rs` + `allwise.rs` + `allwise_tap_compiler.rs`, `cargo check`
+0/0, live Job 23572491 COMPLETED, 5000 Zeilen → 325 008-B-Bin), Quelle in
+`phi/sources.φ:9717` registriert (`c8e87ab2e`). Die **Pre-CDN-Host-Verdikte waren
+bereits integriert** (alle 9 Kandidaten in `declined_sources.φ:1865-2135`); die
+„kein Treffer"-Zeilen der Verdict-Datei sind überholt.
 
 ## Offen (aufgeschlüsselt)
 
@@ -26,157 +32,150 @@ gezogen, in `phi/blocked_sources.φ` auf `descoped` gestellt (dieser Commit).
 
 #### CDN-Workflows hamqsl/ogimet/nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Neu-Dispatch `ogimet-cdn.yml` / `nohrsc_snowfall-cdn.yml` / `eri-cdn.yml`.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage list` + lokaler Compiler) `ogimet_compiler --station 72594 --year 2026 --month 09 --day 25` läuft lokal **36 synop records (9 rows), roundtrip parses**; die gsynres-Rohantwort trägt `Latitude: 40-47-59N / Longitude: 124-10-00W / Altitude: 13 m` im `<h4>` — der CI-Fehler `36233768757` „no latitude/longitude" war **transient** (Header zum Messzeitpunkt abwesend), **kein parser-gap**. Re-Dispatch `ogimet-cdn 36236220099`, `nohrsc_snowfall-cdn 36236054115`, `eri-cdn 36236056155`.
+- **Trigger:** Re-Dispatch `ogimet-cdn.yml` / `nohrsc_snowfall-cdn.yml` / `eri-cdn.yml`.
+- **Lage:** (gemessen 2026-09-26) `ogimet_compiler` lokal **36 synop records (9 rows), roundtrip parses**; gsynres-H `<h4>` trägt `Latitude: 40-47-59N / Longitude: 124-10-00W / Altitude: 13 m` — der CI-Fehler `36233768757` war **transient, kein parser-gap**. Re-Dispatch `ogimet-cdn 36236220099`, `nohrsc 36236054115`, `eri 36236056155`.
 - **Blockade:** CI-Lauf.
 - **Braucht:** `ci_manage view 36236220099` / `36236054115` / `36236056155`.
 
 #### kernel-flatten — de441-Carrier
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** kernel-flatten-Lauf.
-- **Lage:** (gemessen 2026-09-26 via `git log`) Alt-Rot `36224127426` (`de441 base absent`); `phi/sources_index.φ` + `phi/pipeline/frame_registry.φ` gitignored (`.gitignore:73`).
+- **Lage:** (gemessen 2026-09-26) Alt-Rot `36224127426` (`de441 base absent`); `phi/sources_index.φ` + `phi/pipeline/frame_registry.φ` gitignored (`.gitignore:73`).
 - **Blockade:** CI-Lauf + fehlendes de441-Asset.
-- **Braucht:** `ci_manage list` filter kernel-flatten; nach grünem Flatten de441-Bins + `url/format/origin`-Zeilen nach de440-Muster in `phi/sources.φ`.
+- **Braucht:** `ci_manage list` filter kernel-flatten; nach grünem Flatten de441-Bins + Zeilen nach de440-Muster in `phi/sources.φ`.
 
 #### Artefakt-Frische (tools-latest) — stale
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** neuer `tools-build`-Lauf am HEAD `6bdd646`.
-- **Lage:** (gemessen 2026-09-26 via `sread target/release/.tools_manifest`) `git_sha=4dc366472` ist **Vorfahr** von HEAD `6bdd646` → der gepullte Bin-Satz ist stale (geerbte Tool-Semantik). Jüngster `tools-build 36235676159` success.
-- **Blockade:** CI-Lauf / HEAD-Wechsel.
-- **Braucht:** `sread target/release/.tools_manifest --limit 1` vs `git rev-parse HEAD` beim nächsten Pass.
+- **Trigger:** neuer `tools-build`-Lauf am HEAD.
+- **Lage:** (gemessen 2026-09-26 via `sread target/release/.tools_manifest`) `git_sha=4dc366472` ist Vorfahr von HEAD → stale; jüngster `tools-build 36235676159` success.
+- **Blockade:** CI-Lauf.
+- **Braucht:** `sread target/release/.tools_manifest --limit 1` vs `git rev-parse HEAD`.
 
 #### Zustand-due (Mycelium-Klasse) — CDN-Assets
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** due im `docs/zustand/external-state.md`.
-- **Lage:** (gemessen 2026-09-26) `dr3_stars.bin` `--sniff` HTTP 200, 75 001 828 B — Re-Dispatch `gaia-cdn 36236057714`; `rpw_efield.bin` `--sniff` 200, 2 931 048 B, sha256 `f87c77ec…` **identisch**; `voyager_odr` Shards 200 (Lauf `35143340703` success); Rosetta ODF geschlossen (`:33`).
+- **Trigger:** due in `docs/zustand/external-state.md`.
+- **Lage:** (gemessen 2026-09-26) `dr3_stars.bin` 200 (75 001 828 B) — Re-Dispatch `gaia-cdn 36236057714`; `rpw_efield.bin` 200 (2 931 048 B, sha256 `f87c77ec…` identisch); `voyager_odr` Shards 200; Rosetta ODF geschlossen.
 - **Blockade:** CI-Lauf (gaia).
-- **Braucht:** `ci_manage view 36236057714`; bei Erfolg notiert.
+- **Braucht:** `ci_manage view 36236057714`.
 
-#### SuperDARN Ernte + Globus-Mirror-Transfer FAILED
+#### AllWISE — Extract-Reader + CDN-Manifestation
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Re-Transfer nach Globus-Task `af68c4f1-b601-11f1-b9a2-0affd5e180af` (FAILED 2026-09-25).
-- **Lage:** (gemessen 2026-09-26) `superdarn.ca/data-download` `--verdict` direct 200 / proton 200; Globus-Task `af68c4f1` ohne anonymen Statuskanal (OAuth2) → kein Re-Trigger ohne Token. MAP 6.561 Dateien/21,93 GB → `data/superdarn/map`; FITACF `phi/sources.φ:9465`; RAWACF `phi/sources.φ:8032`.
-- **Blockade:** Globus-Transfer-OAuth-Token.
-- **Braucht:** Globus-Transfer-Token (Operator/Globus); danach Transfer neu anstoßen + Ziel-Asset `--sniff` + in `phi/sources.φ` registrieren.
+- **Trigger:** Reader-Port / `allwise_tap_compiler --ci-mode`-Lauf.
+- **Lage:** (gemessen 2026-09-26) Arm gebaut + live gemessen (Job 23572491 COMPLETED; Bin `data/irsa.ipac.caltech.edu/allwise_psd.bin` 325 008 B); Quelle `phi/sources.φ:9717` (`format catalog_allwise_psd`). Der **Extract-Reader** (`catalog_allwise_psd`) fehlt noch (Nachbar-Formate `catalog_vlass_tap_*` ebenso reader-los).
+- **Blockade:** kein Reader-Arm.
+- **Braucht:** Reader in `extract.rs` bauen (eigener Port-Akt); danach `allwise_tap_compiler --ci-mode` (CI) + `blocked_sources.φ:223` von `pending` → `released` umtragen.
 
-#### DECaPS2 Dataverse — Ernte offen
+#### Pre-CDN params — source-Name-Drift (Riss)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Auflösung der source-Name-Drift `phi/pipeline/index.φ:39`.
+- **Lage:** (gemessen 2026-09-26, grind-pro) die 41 als „fehlend" gemessenen params-Direktiven sind überwiegend `source`-Namen, die **systemisch driften** (`irail→biosphere_ripe_bgp_default_route`, `copernicus→geosphere_usgs_earthquakes_ingv`, `dsn→astro_orbital_fireballs` …); ein verbatim-Merge schriebe falsche Namen ein = Fabrication. Die 15er-`imag-data.bgs.ac.uk`-HAPI-Linien tragen je 2–3 widersprechende Namen (CLF: `cmo` vs `clf_hapi`) — Riss, nicht geglättet.
+- **Blockade:** source-Name-Drift (Riss).
+- **Braucht:** Drift-Ursache im Scanner/Generator auflösen; erst dann Direktiven ziehen. Den 15er-Riss als Riss führen.
+
+#### Pre-CDN pool-lose Blöcke — Extraktion
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Harvest-Pass `phi/blocked_sources.φ:79`.
-- **Lage:** (gemessen 2026-09-26) Dataverse-API `doi:10.7910/DVN/K88GFI` `--verdict` HTTP 200 (72 473 B); 309 865 090 866 B / 100 `fits.gz`; Parser `phi/sources.φ:9628`; anonymer TAP-Weg `decaps_dr2.object`.
+- **Trigger:** Extraktions-Pass `stage/pre-cdn_join_report.txt`.
+- **Lage:** (gemessen 2026-09-26) 4 877 pool-lose Blöcke (eigene Extraktion, blockade); 729 richest-URLs ohne Register.
 - **Blockade:** keine.
-- **Braucht:** anonymen TAP-Weg ernten + in `phi/sources.φ` registrieren.
+- **Braucht:** 4 877 Blöcke klassifizieren + disponieren.
 
-#### Pre-CDN Lost-Blocks — Host-Verdikte nicht integriert
+#### b2find intermagnet — Fanout lat/lon
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/pipeline/index.φ:37/39`.
-- **Lage:** (gemessen 2026-09-26 `stage/pre-cdn_join_report.txt`) 729 richest-URLs ohne Register, 37 params unregistriert, 4 877 pool-lose Blöcke; `stage/pre_cdn_host_verdict_2026-09-25.txt` (75 Z.) trägt Host-Verdikte.
-- **Blockade:** keine.
-- **Braucht:** Host-Verdikte in `phi/sources.φ`/`declined_sources.φ`/`blocked_sources.φ` integrieren; 4 877 pool-lose Blöcke (eigene Extraktion).
-
-#### Pre-CDN params — 41 Direktiven + 15 Riss
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/pipeline/index.φ:39`.
-- **Lage:** (gemessen 2026-09-26 `stage/pre-cdn_join_report.txt`) 41 params-Direktiven fehlen; 15 params-URLs mit konfliktierender Quelle (Riss: `imag-data.bgs.ac.uk` HAPI source drift).
-- **Blockade:** HAPI-Source-Drift (Riss).
-- **Braucht:** 41 Direktiven nachziehen; den 15er-Riss als Riss führen, nie glätten.
-
-#### b2find intermagnet — Fanout-Stationsliste
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Harvest-Pass `stage/b2find_intermagnet_candidates.φ`.
-- **Lage:** (gemessen 2026-09-26) HAPI-Catalog `https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog` 200 (1 398 859 B); **154 Stationen** extrahiert → `phi/pipeline/stage/b2find_intermagnet_stations.φ` (gitignored).
-- **Blockade:** lat/lon fehlen im HAPI-Catalog (nur Stationscodes).
-- **Braucht:** lat/lon je Station aus der INTERMAGNET-Registry nachziehen, Fanout-Einträge bauen.
+- **Trigger:** Koordinaten-Quelle `stage/b2find_intermagnet_candidates.φ`.
+- **Lage:** (gemessen 2026-09-26) HAPI-Catalog 200 (1 398 859 B), **154 Stationen** extrahiert → `phi/pipeline/stage/b2find_intermagnet_stations.φ`; HAPI-`info` trägt **keine** lat/lon; bestehende INTERMAGNET-Arm e in `phi/sources.φ:1597/5603`.
+- **Blockade:** INTERMAGNET-Stationskoordinaten-Quelle nicht lokalisiert.
+- **Braucht:** Koordinaten-Registry lokalisieren (`archive_search --github intermagnet`), lat/lon je Station nachziehen.
 
 #### pipeline/index.φ verifiziert-Pools
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Register-Pass `phi/pipeline/index.φ:75-97`.
-- **Lage:** (gemessen 2026-09-26 via `register_lookup --open`) acht `[mycelium] verifiziert`-Pools: `oai_arxiv`, `b2find_intermagnet_catalog`, `terrapulse_catalog`, `esa_geomagnetic_catalog`, `archeology_gaps_index`, `copernicus_catalog` (je 0), `grind_vires_catalog` (8), `grind_arcgis_index` (17).
+- **Lage:** (gemessen 2026-09-26) `grind_vires_catalog` 7/8 + `grind_arcgis_index` 16/17 bereits in `sources.φ` gemergt; offen nur die 0-count-Pools (`oai_arxiv`, `b2find_intermagnet_catalog`, `terrapulse`, `esa_geomagnetic`, `archeology_gaps`, `copernicus`).
 - **Blockade:** keine.
-- **Braucht:** Pools in den Harvest aufnehmen oder als leer/disponiert führen.
+- **Braucht:** 0-count-Pools als leer/disponiert führen oder Kandidaten ernten.
 
-#### GOES-19 ABI radiance — Asset-Größe 68 B
+#### SuperDARN Ernte + Globus-Mirror-Transfer FAILED
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `goes-cdn.yml`-Lauf / Content-Konsistenzmessung.
-- **Lage:** (gemessen 2026-09-26) `goes-cdn 36235688223` **success**; Record-Note `goes-cdn.yml:26` auf `calib=2` gezogen; `--sniff` `goes_abi_rad.bin` HTTP 200, **68 B**, sha256 `ef3b3e60…` — die 68 B sind ungemessen gegen den erwarteten Radiance-Umfang.
-- **Blockade:** Content-Konsistenz ungemessen.
-- **Braucht:** `goes_abi_compiler`-Rohlauf / Asset gegen `ABI-L1b-RadC`-Granule prüfen; 68 B als riss/pending führen, nie als gültigen Radiance-Umfang.
-
-#### AllWISE — async-UWS Arm fehlt
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Arm `phi/blocked_sources.φ:223`.
-- **Lage:** (gemessen 2026-09-26, Register-note) `allsky_4band_p3as_psd` sync-Stall; async-UWS Job 23542882 COMPLETED (1 Zeile, VOTable 1.3); Arm fehlt.
-- **Blockade:** keine.
-- **Braucht:** async-UWS-Arm für AllWISE bauen/messen.
+- **Trigger:** Re-Transfer nach Globus-Task `af68c4f1-b601-11f1-b9a2-0affd5e180af` (FAILED 2026-09-25).
+- **Lage:** (gemessen 2026-09-26) `superdarn.ca/data-download` direct 200 / proton 200; Globus-Task ohne anonymen Statuskanal (OAuth2). MAP 6 561 Dateien/21,93 GB → `data/superdarn/map`.
+- **Blockade:** Globus-Transfer-OAuth-Token.
+- **Braucht:** Token; danach Transfer neu anstoßen + Asset `--sniff` + registrieren.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Register-Pass `phi/blocked_sources.φ:49`.
-- **Lage:** (gemessen 2026-09-26) V2 `radio_science_rss=2` dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise-ODF; TRK-2-34/ODF/ATDF request-only.
+- **Lage:** (gemessen 2026-09-26) PDS-Rings `voyager_rss_raw/` `--verdict` **wieder 200** (1 584 B; war 504); V2 `radio_science_rss=2` dirs kein Cruise-ODF; TRK-2-34/ODF/ATDF request-only.
 - **Blockade:** kein offener ODF-Endpunkt.
 - **Braucht:** `--verdict` auf die V2-`radio_science_rss`-Verzeichnisse; ODF-Weg oder `request-only`-Verdikt.
 
 #### ivo://src.pas — 500
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Backend-Erholung `src.pas` (`phi/pipeline/ledger.φ:10`).
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) `http://pithia.cbk.waw.pl/tap/tables` direct 500 / proton 500 (PostgreSQL), kein Wayback.
+- **Trigger:** Backend-Erholung `phi/pipeline/ledger.φ:10`.
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) `pithia.cbk.waw.pl/tap/tables` direct 500 / proton 500, kein Wayback.
 - **Blockade:** Backend-Fehler.
-- **Braucht:** `--verdict /tap/tables` beim nächsten Pass; Termin 2026-10-02.
+- **Braucht:** `--verdict` beim nächsten Pass; Termin 2026-10-02.
 
 #### GOSAT-GW — pending
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Datenverfügbarkeit `https://www.gosat-gw.nies.go.jp`.
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct absent / proton absent; nur Wayback 2022-09-06, kein Daten-Endpoint; Credential vorhanden.
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct absent / proton absent; nur Wayback 2022-09-06.
 - **Blockade:** kein offener Endpoint.
-- **Braucht:** `--verdict` beim nächsten Pass; bis dahin `pending`.
+- **Braucht:** `--verdict` beim nächsten Pass.
 
 #### Lasair-LSST Broker
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Backend-Erholung `api.lasair.lsst.ac.uk`.
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct keine Antwort / proton HTTP 404 (179 B) / kein Wayback; Frontend 200; Token vorhanden.
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct keine Antwort / proton 404 / kein Wayback; Frontend 200; Token vorhanden.
 - **Blockade:** Upstream-Backend.
-- **Braucht:** `--verdict https://api.lasair.lsst.ac.uk/api/` beim nächsten Pass.
+- **Braucht:** `--verdict` beim nächsten Pass.
 
 #### DEMETER Order 18387 — Product-GET 500
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Backend `regards.cnes.fr`.
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) `https://regards.cnes.fr/api/v1/rs-order` direct 403 / proton 403 (358 B) — WAF; `DONE_WITH_WARNING`, filesInError 96978, available 0.
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) `regards.cnes.fr/api/v1/rs-order` direct 403 / proton 403 (WAF); `DONE_WITH_WARNING`, filesInError 96978.
 - **Blockade:** CNES-Backend (WAF).
 - **Braucht:** `--verdict` beim nächsten Pass; Termin 2026-09-28.
 
 #### api.sensor.community — ip-blocked
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `source-census`-Lauf.
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct 403 (229 B) / proton 403 (229 B) / kein Wayback — ip-blocked; kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a).
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) direct 403 / proton 403 / kein Wayback — ip-blocked; kein Exit-Wechsel (Operator-Wort 2026-09-25).
 - **Blockade:** CI-Lauf / lokaler IP-Block.
 - **Braucht:** Proton-freier CI-Puls via `source_latency_census --blocked`.
+
+#### GOES-19 ABI radiance — Asset 68 B (Riss)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Content-Konsistenzmessung `phi/sources.φ:848`.
+- **Lage:** (gemessen 2026-09-26) `goes-cdn 36235688223` success; Record-Note `calib=2` gesetzt; `--sniff` `goes_abi_rad.bin` HTTP 200, **68 B**, sha256 `ef3b3e60…` — ungemessen gegen den Radiance-Umfang.
+- **Blockade:** Content-Konsistenz ungemessen.
+- **Braucht:** `goes_abi_compiler`-Rohlauf gegen eine `ABI-L1b-RadC`-Granule; 68 B als Riss führen.
 
 #### Arbeitsbaum-Formatierung — Autorschaft ungemessen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Pass `git diff`.
-- **Lage:** (gemessen 2026-09-26 via `git status`) reine `cargo fmt`-Umbauten in `skydirection.rs`/`kbo_residue_probe.rs`/`rixs_cuprate_probe.rs`/`suprastrom_form_probe.rs` (fremd, unangetastet); Zuordnung „eigene Ports vs. fremd" ungemessen.
+- **Lage:** (gemessen 2026-09-26) reine `cargo fmt`-Umbauten in `skydirection.rs`/`kbo_residue_probe.rs`/`rixs_cuprate_probe.rs`/`suprastrom_form_probe.rs` (fremd, unangetastet).
 - **Blockade:** keine.
 - **Braucht:** beim nächsten Pass zuordnen (eigene behalten, fremde unangetastet).
 
 #### EMODNET HFRADAR NADR — Termin-Re-Messung (`phi/sources.φ:1830`)
 - **Status:** termin | **Bindung:** eigen
 - **Trigger:** 2026-10-19.
-- **Lage:** (gemessen 2026-09-24, Zustands-Ledger `:43`) Asset `emodnet_hfr_nadr.bin` registriert; Re-Messung offen.
+- **Lage:** (gemessen 2026-09-24, `docs/zustand/external-state.md:43`) Asset registriert; Re-Messung offen.
 - **Blockade:** Fälligkeit.
 - **Braucht:** `--sniff` bei Fälligkeit.
 
 #### NED ByParams-Harvest — Token-Wiedervorlage
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** NED-Token-Antwort (`state/mail/mail_ledger.φ:295-296`).
-- **Lage:** (gemessen 2026-09-26) NED-Helpdesk (Dave Cook) antwortet: kein FTP-Bulk; `https://ned.ipac.caltech.edu/byparams` `--verdict` 200 (42 118 B) mit 90-min-Limit; ByParams in Declination-Bänder splitten; **Token-Angebot** für Verlängerung — unsere Token-Bitte ist raus (`mail_ledger.φ:296`). Ziel `NEDTAP.objdir` ~11–19 Mio rows.
+- **Trigger:** NED-Token-Antwort `state/mail/mail_ledger.φ:295-296`.
+- **Lage:** (gemessen 2026-09-26) `ned.ipac.caltech.edu/byparams` 200 (42 118 B), 90-min-Limit; Token-Bitte raus; Ziel `NEDTAP.objdir` ~11–19 Mio rows.
 - **Blockade:** NED-Token-Antwort.
-- **Braucht:** Token-Antwort abwarten; dann Declination-Band-Harvest bauen.
+- **Braucht:** Token-Antwort; dann Declination-Band-Harvest bauen.
 
 ### Operator
 
 #### Fremdmodell-Benchmark — vorbereitet bis zur Kante
 - **Status:** operator-gebunden | **Bindung:** operator
 - **Trigger:** Operator-Wort (per Akt).
-- **Lage:** (gemessen 2026-09-26) Entwurf `state/benchmark/fremdmodell-benchmark-2026-09-26.md` liegt bis zur Kante (Prompt, Antwortschlüssel, Metrik, Ziel chat.z.ai GLM-5.3, Sekundär claude.ai).
+- **Lage:** (gemessen 2026-09-26) Entwurf `state/benchmark/fremdmodell-benchmark-2026-09-26.md` bis zur Kante (Ziel chat.z.ai GLM-5.3).
 - **Blockade:** fehlender per-Akt-Consent.
 - **Braucht:** Operator-Wort: `Fremdmodell-Benchmark Akt 1 (z.ai GLM-5.3) — ausführen.`
 
@@ -185,37 +184,37 @@ gezogen, in `phi/blocked_sources.φ` auf `descoped` gestellt (dieser Commit).
 #### BepiColombo bc_mpo_more — Freigabe-Anfrage
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** Antwort `psahelp@cosmos.esa.int`.
-- **Lage:** (gemessen 2026-09-18, Register-note `phi/blocked_sources.φ:44`) `release_date 2099-01-01` (89434/89517 proprietär), `data?PRODUCT` 403; Anfrage raus; `bc_mpo_mag` anonym offen.
+- **Lage:** (gemessen 2026-09-18, Register-note `phi/blocked_sources.φ:44`) `release_date 2099-01-01`, `data?PRODUCT` 403; Anfrage raus; `bc_mpo_mag` anonym offen.
 - **Blockade:** ESA-Freigabe.
 - **Braucht:** Wiedervorlage Antwort.
 
 #### NSSDC-Anfragen — Wiedervorlage
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** NSSDCA-Antwort `state/mail/mail_ledger.φ`.
-- **Lage:** (gemessen 2026-09-26) vier Anfragen 2026-09-16 raus (PSNO-00007, PSCM-00009, PSPG-00011/00457, Juno/Cassini); letzte Eingänge 2026-09-26 (NED, OpenAlex) — keine NSSDCA-Antwort; `PSPA-00605` ungesendet.
+- **Lage:** (gemessen 2026-09-26) vier Anfragen 2026-09-16 raus; keine NSSDCA-Antwort; `PSPA-00605` ungesendet.
 - **Blockade:** Antwort des NSSDCA.
 - **Braucht:** Wiedervorlage-Frist; `PSPA-00605` (Send = Operator-Hand).
 
 #### termin-Punkte — re-verdict
 - **Status:** termin | **Bindung:** dritter
 - **Trigger:** 2026-09-28 (DEMETER) / 2026-10-02 (übrige) / 2026-12-02 (NOIRLab/Gaia-DR4).
-- **Lage:** (gemessen 2026-09-26 via `--verdict`) keine Erholung bei `regards.cnes.fr` (403) / `pithia.cbk.waw.pl` (500) / `lpf.esac.esa.int` / `api.lasair.lsst.ac.uk` (404); `psa.esa.int/psa-tap/tap/`, `superdarn.ca/data-download` 200 offen.
+- **Lage:** (gemessen 2026-09-26 via `--verdict`) keine Erholung bei `regards.cnes.fr` (403) / `pithia.cbk.waw.pl` (500) / `api.lasair.lsst.ac.uk` (404); `psa.esa.int/psa-tap/tap/`, `superdarn.ca/data-download` 200 offen.
 - **Blockade:** WAF/Backend bzw. offene Produktfreigabe.
 - **Braucht:** `--verdict <url>`; bei Erholung den jeweiligen `*-cdn.yml`-Lauf dispatchen.
 
 #### SSDC / Limadou (`phi/pipeline/ledger.φ:14`)
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** Berechtigungs-Akt/Klärung `phi/pipeline/ledger.φ:14` (dritter).
-- **Lage:** (gemessen 2026-09-26) `limadou.ssdc.asi.it/` 200; Portal + CAS-Login funktionieren mit `SSDC_USER`/`SSDC_PASS`, aber „Permission Denied" für den omegaflow-Account.
+- **Lage:** (gemessen 2026-09-26) `limadou.ssdc.asi.it/` 200; Login ok, aber „Permission Denied" für omegaflow-Account.
 - **Blockade:** SSDC-Berechtigung.
-- **Braucht:** Berechtigungs-Akt / Account-Klärung mit SSDC (Operator-Hand) oder Descope mit Messung.
+- **Braucht:** Berechtigungs-Akt / Account-Klärung (Operator-Hand) oder Descope mit Messung.
 
 ## Träger (Prosadokumente)
 
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen committet; Namens-Disposition trägt die Future-Übergabe.
-- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | ausstehend nur GOES GSICS (`calib=2` gesetzt; 68-B-Asset offen) + Wiedervorlage 2026-12-02.
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | ausstehend nur GOES GSICS (68-B-Riss) + Wiedervorlage 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offen: Re-Check 3 Force-Kanal + 4 pending + `arvo-registry.sci.am` | nächster Schritt: `archive_search --verdict` je Host.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Disposition der 55 undocumented `stale_pending` | nächster Schritt: `docs/specs/cdn_orphan_verdicts.json` je Netloc disponieren.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout `knowledge/`+`backups/` | nächster Schritt: Operator-Wort zum Layout.
