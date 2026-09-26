@@ -9561,6 +9561,15 @@ ra ra
 dec dec
 field flux bzcat5th_flux inverse-square em mJy 604800 0.0 0.0
 
+url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
+ttl 604800
+format asu-tsv
+at sun
+cmap .
+ra _RAJ2000
+dec _DEJ2000
+field LDD jsdc_ldd_mas inverse-square gravity mas 604800 0.0 0.0
+
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 ttl 604800
 format asu-tsv
