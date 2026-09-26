@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: 1be549c81271334fb68b3a1e524cdc5c5167d4950dee8c1bb35688620d832281
+  sha256: a77f933147462d36e862c9365f604e70efb5d586f093d794e0c8cbf89692d9f2
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -23,61 +23,48 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 
 ### Linie (eigen)
 
-#### GOSAT-GW GWT3F_L1B — format-Arm (GeoRec re-pack)
+#### GOSAT-GW GWT3F_L1B — Re-pack gebaut, comp-Formel-Riss
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** `src/archivar/main_flow.rs` frei von fremden Hunks.
-- **Lage:** (gemessen 2026-09-26 via grind-pro + Rat) Compiler `gosat_tanso3` packt 6×f64 (48 B) `[t,lat,lon,val,band,product]`, GeoRec erwartet 60 B `[t,lat,lon,alt,freq,bin_width,val,comp]`; Rat: Option 1 re-pack, `comp = product·3 + (band−1)` ∈ 1..6, `(freq,bin_width)=(0,0)` (Band nie in Hz); radiance-`units`-Attribut ungelesen.
-- **Blockade:** `main_flow.rs` trägt einen fremden, uncommitteten fmt-Hunk (catalog_charm2, `:4013-4040`) — ein Commit würde ihn mitschleppen.
-- **Braucht:** Re-pack `pack()` (`tools/harvest/src/bin/gosat_tanso3_compiler.rs:711`) auf GeoRec; `MAGIC_GOSAT`+`COMP_GOSAT_*` (`geo.rs`), `magic_of`/`comp_max` (`:205`/`:248`), `geo_series_component_name` (`extract.rs:450`), `"gosat_tanso3"` in `main_flow.rs:3238`; radiance-`units` messen (Accessor wie Compiler `:541`); dann `blocked_sources.φ:323-325` → released.
+- **Trigger:** `src/archivar/main_flow.rs`/`extract.rs` frei von fremden Hunks (AIA/EVE-Linie aktiv).
+- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack in `tools/harvest/src/bin/gosat_tanso3_compiler.rs` implementiert: `REC_BYTES=60`, `pack()`/`unpack()` auf `[t,lat,lon,alt,freq,bin_width,val,comp]`, Test `comp_mapping_spans_one_through_six`; radiance-`units` gemessen `W.m-2.sr-1.um-1` (live 17 440 691 B, sha256 5f0e7920…). Riss: Rat-Formel `product·3+(band−1)` ergibt 3..8, nicht 1..6 — auf `comp=(product−1)·3+band` (Fokus 1..3, Wide 4..6) aufgelöst; Rat-Bestätigung offen.
+- **Blockade:** fremde uncommittete Hunks in `main_flow.rs` (AIA/EVE) und `extract.rs`.
+- **Braucht:** Rat-Bestätigung comp-Reihenfolge; nach Freiheit: `MAGIC_GOSAT`/`COMP_GOSAT_*`+`magic_of`/`comp_max` (`geo.rs:205`/`:248`), `geo_series_component_name` (`extract.rs:450`), `"gosat_tanso3"`-Arm in `main_flow.rs:3253-3282`, Tests (`tests.rs`), `phi/sources.φ`-Block; dann `blocked_sources.φ:323-325` → released.
 
-#### modis-cdn — Hosted-Runner-Shutdown
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `modis-cdn`-Lauf grün (geshardet).
-- **Lage:** (gemessen 2026-09-26 via grind-flash/`ci_manage log 36267998951`) MYD11C3/MOD11C2 nutzt **nur** coder 4 (DEFLATE) über alle 17 SDS — kein NBIT-Arm nötig (Handover-Prämisse widerlegt); Abbruch `The runner has received a shutdown signal` mitten im Harvest (17 M Records je Granule × Serie).
-- **Blockade:** Lauf-Zeitbudget des Hosted-Runners.
-- **Braucht:** `modis-cdn.yml` sharden (Jahr/Produkt-Split), dann `gh workflow run modis-cdn.yml`.
+#### modis-cdn — Sharding gebaut, RAM-/2-GiB-Cap-Riss
+- **Status:** operator-gebunden | **Bindung:** eigen
+- **Trigger:** Operator-Wort (feinerer Granule-Batch-Split vs. begrenztes Zeitfenster).
+- **Lage:** (gemessen 2026-09-27 via grind-flash) `modis-cdn.yml` geshardet: 3 Produkte × 27 Jahre = 81 Shard-Jobs (`max-parallel 8`, `timeout-minutes 350`, Resume je Shard), actionlint 0 Fehler, CMR-Pfad live (daily 2000 = 266 Granule). Riss: Compiler akkumuliert alle Records im RAM (`modis_lst_cmg_compiler.rs:505`), 1 Granule = 688 MB, daily-Jahr ≈ 252 GB gegen 16 GB Runner-RAM und 2-GiB-Release-Asset-Limit (`modis_lst_cmg_daily.bin` schon 1,72 GiB).
+- **Blockade:** RAM-/Asset-Grenze; Entscheidung fehlt.
+- **Braucht:** Operator-Entscheidung; zudem Shard-Asset-Registrierung bzw. Descope der kanonischen `modis_lst_cmg_{daily,8day,monthly}.bin` (`phi/sources.φ:15565/15574/15583`).
 
-#### Pre-CDN params — Keyer-Re-Run über korrigierte Queue
+#### Pre-CDN params — TIRM/TLON-Koordinaten-Riss (MCQG gelöst)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `source_keyer`-Re-Run grün (keine Riss-Wiederholung).
-- **Lage:** (gemessen 2026-09-26 via grind-flash) MCQG-Riss = Koordinaten-Kollision: MCG-Block (`queue/sources_potential_pre-cdn_9k_richest.φ:6030`) trug MCQ-Koordinate −54.5/158.95; SuperMAG MCG = 72.599998/−38.350006 (`phi/supermag_stations.φ:329`), MCQ = −54.5/158.949997 (`:332`); Korrektur gesetzt.
+- **Trigger:** `source_keyer`-Re-Run grün (keine MCQG-Riss-Wiederholung).
+- **Lage:** (gemessen 2026-09-26 via `source_keyer`-Re-Run) MCQG-Riss gelöst → `source magnetosphere_mcq_hapi` (keine Kollision); VALL no-op. Neu: TIRM `coords unresolved` (`on earth -22.22 114.1` vs supermag LRM `-21 115`, >0.05) und TLON `coords unresolved` (`on earth 45.408 16.659` matcht LON `45.4081 16.659201` UND P01 `45.41 16.66`).
 - **Blockade:** keine.
-- **Braucht:** `cargo run -p omegaflow-utils --bin source_keyer` über die korrigierte Queue; MCQG-Direktive bestätigen.
+- **Braucht:** TIRM/TLON-`on earth` gegen die echte Station messen (supermag_stations.φ oder Queue-Koordinate korrigieren).
 
-#### arvo-registry.sci.am — erholt (http)
+#### IRIS/EarthScope EMC netCDF-4 — volume-Extract (Rat-Vorlage steht)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `archive_search --verdict http://arvo-registry.sci.am/tap` 200 (2026-09-26).
-- **Lage:** (gemessen 2026-09-26 via grind-flash `--verdict`) `http://arvo-registry.sci.am/tap` stage 1 **200 (9 337 B)** (recovered); `https://` tot; 8 übrige Hosts der Relevanz-Liste weiter tot (5×404, 1×503, dns.wh.gov no-response).
-- **Blockade:** keine.
-- **Braucht:** `archive_search --verdict http://arvo-registry.sci.am/tap/tables`; bei Samples Quelle registrieren.
+- **Trigger:** Architektur-Wort `volume`.
+- **Lage:** (gemessen 2026-09-26 via `sread`/`sgrep`) netCDF-4 ist HDF5 (`0x89 48 44 46`). Der `Volume`-Container steht bereits (`src/archivar/volume.rs:151` — dims `[d,la,lo]` u32, Achsen `Axis::{Uniform,Explicit}`, `data: Vec<f32>`, Trilinear `sample_at:167`, `cell:162` Zeilen-Major, Bin `write_bin:191`/`read_bin:233`, Magic `0xCF 0x86 0x0D 0x01`), der Konsument steht (`format "volume"` `main_flow.rs:3187` → `archive.volumes:359` → `Buffer.volumes` `spatial.rs:48` → GPU `ensure_volumes`/`upload_volumes` `omega.rs:749`/`:813`). Der GPU-Sample ist presence-geodätisch `(lat_deg, lon_deg, depth_km)` mit `depth_km = -h/1000.0` (`motion.rs:425`, positiv nach unten) — EMC-Tiefe km-positiv-unten passt mit `depth_scale 1.0`. Was fehlt: `Extract` (`types.rs:136`) ohne `Volume`-Variante; `build_netcdf4_channels` (`channels.rs:423`) kennt nur `ProfileMap`; `FetchResult` (`fetch.rs:1138`) ohne Volumes-Slot; Grammatik-Arm `"volume"` fehlt (`parse.rs:297` = `profile`-Muster, `"format"` frei `:1318`). EarthScope-ToS: Attribution + Non-human-Visitor (Fetch bleibt Browser-Brücke/Operator-Profil; hier nur der Extrakt).
+- **Blockade:** Architektur-Akt (neue `volume`-Direktive) — Rat/Operator-Wort `volume`.
+- **Braucht:** Wort `volume`; danach bauen: (1) `Extract::Volume { value_key, lat_key, lon_key, depth_key, depth_scale, name }` in `types.rs` nach `ProfileMap:208` (kein `fields`-Vec — s. Vertrags-Frage d); (2) Grammatik-Arm `"volume"` in `parse.rs` neben `"profile":297`; (3) `build_netcdf4_volume(src, bytes) -> Option<(String, Volume)>` in `channels.rs` — liest `read_f64_dataset`/`read_f32_dataset` (`hdf5.rs:2787`), `dims` (`:2820`), `_FillValue` (`attr_f64:2816`), Achsen-Re-Order auf `[depth,lat,lon]` + Monotonie-Gate (`volume.rs:70`); (4) Arm `format "volume_netcdf"` neben `main_flow.rs:3187` (CDN-Stamp + `held.push((name, volume))`), kein `FetchResult`-Umbau.
+  - Rat-Fragen (das Wort entscheidet): (a) Achsen-Ordnung kanonisch `[depth,lat,lon]` vs. Quelle `(lat,lon,depth)` — `cell:162`/GPU `upload_volumes:838` nehmen `[depth,lat,lon]`, Re-Order im Bau-Schritt; (b) statisches Gitter (ein `Volume`/Quelle) vs. Serie (4D — eigener späterer Arm); (c) `read_f32_dataset` nativ vs. `read_f64`→cast; (d) **Vertrag:** GPU-Head trägt nur `[data_off,dims×3,kinds×3,offs×3]` (10 u32, `omega.rs:780`), Uniform `[depth,lat,lon,valid,count,pad,pad,pad]` (`:838`) — kein `force`/`kernel`/`tau`; deklariert-aber-unverbraucht wäre Fabrikation → bare Gitter (`pending`) oder Head-/Uniform-Vertrag erweitern (Atom); (e) `_FillValue`/NaN im Gitter vs. `read_bin` lehnt non-finite ab (`volume.rs:325`) — Fill-Maske oder Domänen-Maskierung.
 
-#### kernel-flatten de441-cdn — Asset-Größe
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `de441-cdn`-Lauf (≥183 MB `ephemeris_{sun,earth}.bin`).
-- **Lage:** (gemessen 2026-09-26 via `ci_manage`) `kernel-flatten` success, `spk_split` lief; `de441-cdn` wartet auf ≥183 MB Bins.
-- **Blockade:** Asset-Größe.
-- **Braucht:** `ci_manage list` filter de441-cdn; Bins prüfen.
+#### Voyager 1/2 closed-loop Doppler — descoped (kein öffentlicher Cruise-Endpunkt)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** — (abgeschlossen; neu nur bei neuer Fundstelle).
+- **Lage:** (gemessen 2026-09-27 via research-max/`archive_search`) kein öffentlicher Cruise-ODF/ATDF: PDS/SPDF `cruise/` 404, `radio_science_rss` nur Okkultation; NSSDC nur Encounter (PSCM-00003/4 „ready for offline distribution", UNIVAC-Binär); Wayback-nssdcftp nie Tracking; `--all`/openalex/zenodo/datacite ohne Datensatz; ODR→ODF nicht konvertierbar.
+- **Blockade:** keine (befundet).
+- **Braucht:** descope-Eintrag `phi/blocked_sources.φ`/`dead_sources.φ` (Register-Duty); keine weitere Suche.
 
-#### IRIS/EarthScope EMC netCDF-4 — volume-Extract
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Architektur-Wort `volume`-Extract.
-- **Lage:** (gemessen 2026-09-26 via grind-pro) `src/archivar/hdf5.rs` liest netCDF-4; Gap `volume`-Extract (`types.rs:136`) + Kanalarm; Lizenz keine, EarthScope-ToS (Attribution + Non-human-Visitor).
-- **Blockade:** Architektur-Akt (neue `volume`-Direktive).
-- **Braucht:** Rat/Operator-Wort `volume` + `parse.rs`/`channels.rs`/`main_flow.rs`.
-
-#### Voyager 1/2 closed-loop Doppler — request-only
+#### src.pas / esc.pithia.eu — MASER-Route + `epncore-spatial`-Gap
 - **Status:** wartend | **Bindung:** dritter
-- **Trigger:** NSSDC-Antwort (Anfrage `:207`).
-- **Lage:** (gemessen 2026-09-26 via `archive_search`) PDS V2 nur open-loop `.ODR`; `radio_science_rss=2` dirs kein Cruise ODF/ATDF; SPDF `cruise/` 404.
-- **Blockade:** kein offener ODF/ATDF-Endpunkt.
-- **Braucht:** NSSDC-Antwort; sonst descope.
-
-#### src.pas → esc.pithia.eu — Backend down
-- **Status:** wartend | **Bindung:** dritter
-- **Trigger:** TAP-Backend erholt (`/tap/tables` 500→200).
-- **Lage:** (gemessen 2026-09-26 via grind-flash) Host lebt (TAP 200); PostgreSQL `:5432` refused; 11 `epn_core`-Tabellen; `access_url`→`:8081/data/*` 404; Gap `epncore-spatial`.
-- **Blockade:** Server-Backend (dritter).
-- **Braucht:** `archive_search --verdict http://pithia.cbk.waw.pl/tap/tables` bei Trigger.
+- **Trigger:** `epncore-spatial`-Parser-Arm (parser-def→mountain) ODER src.pas-Backend erholt.
+- **Lage:** (gemessen 2026-09-27 via research-max) src.pas tot (PostgreSQL `:5432` refused, `/tap/tables` 500, `:8081/data/*` 404, kein Wayback). Ersatzroute nutzbar: `voparis-tap-maser.obspm.fr/tap` 200, `epn_core`-Klasse mit echtem H5-Sample (72 225 925 B, magic hdf5) — nicht dieselben Dateien, aber dieselbe Datenklasse. Parser-Gap `epncore-spatial`: `c1min/c1max/c2min/c2max/c3min/c3max`, `s_region` (STC-S), `c1/c2/c3_resol` — Region, kein lat/lon-Skalar; Anker `types.rs:136`/`Sample:41`.
+- **Blockade:** Parser-Arm fehlt (parser-def); src.pas-Backend dritter.
+- **Braucht:** `epncore-spatial`-Gap in `phi/blocked_sources.φ` → mountain-Linie; MASER-`epn_core`-Sample registrieren; LOFAR LTA (`lta.lofar.eu`, account-gated) als `blocked account`-Kandidat.
 
 #### DEMETER — Download serverseitig zu
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -115,14 +102,14 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 
 ## Träger (Prosadokumente)
 
-- `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `mariner-occlt-cdn` Lauf `36272916043` lesen (`ci_manage view 36272916043`).
-- `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/LAB_A-Antwort (`smail`).
+- `docs/surveys/survey-2026-09-17-sonden-request-only.md` | `mariner-occlt-cdn` Lauf `36272916043` gelesen: `mariner_occlt.bin` liegt (1 375 496 B, sha256 4aa487cb…) | nächster Schritt: verbleibende Survey-Marker prüfen.
+- `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | Thomas SAMPLE_CONTACT (MPI-FKF/LAB_A) sagte am 2026-09-17 LAB_A-`I(q,t)`-Daten zu („few days"), danach kein Eingang | wartend auf Mail-Eingang (kein Nachfassen).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen committet; Namens-Disposition trägt die Future-Übergabe.
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | ausstehend nur Wiedervorlage 2026-12-02.
-- `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending weiter tot; `arvo-registry.sci.am` http erholt → Quellenpunkt oben; nächster Schritt: `--verdict` je Host beim Trigger.
-- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | 55-disposition erledigt (2026-09-26); offen nur Step 4 (CI-Dedupe) + Step 5 (CDN-kanonisch) | nächster Schritt: Step 4 in `docs/auftrag/archiv/auftrag-saubere-datenbank.md` fassen.
-- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout `knowledge/`+`backups/` | nächster Schritt: Operator-Wort zum Layout.
-- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen: NOAA-NRS passive-bioacoustic Quell-Entscheidung | nächster Schritt: Register-Eintrag + Compiler.
+- `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending weiter tot; nächster Schritt: `--verdict` je Host beim Trigger.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | Step 4 (CI-Dedupe) konkretisiert in `docs/auftrag/archiv/auftrag-saubere-datenbank.md:71-105` (Klassen-Zensus über 315 Workflows, Duplikat-Messung); offen: Step 5 (CDN-kanonisch, destruktiv → Operator-Wort) | nächster Schritt: Klassen-Zensus messen.
+- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | Migrationsplan-Vorlage steht (`:79-141`); stoppt am Operator-Wort | nächster Schritt: Operator-Wort zum Layout `knowledge/`+`backups/`.
+- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | NOAA-NRS passive-bioacoustic entschieden (2026-09-27: Roh-Audio registriert `phi/sources.φ:9051`, Produkte `decline spectral-series` `phi/declined_sources.φ:4017`) | offen nur §7 Roh-Korpora/Scratch-Disposition | nächster Schritt: Operator-Wort.
 
 ## Abschluss
 
