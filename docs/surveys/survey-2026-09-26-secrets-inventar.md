@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 74ca7f6628d64f0aad365cdd5d89b3dba68c43c87a8dbbabddd61f2a96a3f76f
+  sha256: 577f543e076ef856ca08de0d05f59cb1ace439a936c11af2ad524dab13ca86ac
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)
@@ -38,14 +38,25 @@ MOVEBANK_TOKEN  NCBI_PASSWORD  RUBIN_PASS  tedp_gtfs_rt  tedp_ojp20
 tedp_siri_et  tedp_siri_pt  UNOROUTER_PASS  UNOROUTER_USER
 ```
 
-**Herkunft (gemessen):** Die Quellen-Präfixe der 27 stehen überwiegend in
-`phi/declined_sources.φ` (`BOREALIS`, `CEDA`, `CLOUDFLARE`, `DAHITI`, `EUMETSAT`,
-`FROST`, `IGETS`, `METEOFRANCE`, `MOVEBANK`, `NCBI`, `tedp`) bzw. `phi/dead_sources.φ`
-(`CEDA`, `EUMETSAT`) — released; einzelne (`BABAMUL`, `CEDA`, `FROST`, `IGETS`) stehen
-auch in `phi/sources.φ`. `GFW`, `GOSAT`, `RUBIN`, `UNOROUTER` haben **keine** phi-Quelle.
-Die **Secret-Namen selbst** stehen in keinem Register. Die 27 sind also Residuen
-erklärter Quellen (declined/dead), kein Zeuge; ein interner Konsument existiert in
-keinem der beiden Bäume.
+## Herkunft der 27 — an der Homepage gemessen (2026-09-26)
+
+**Datenquellen-Credentials ohne Disposition** (brauchen einen `phi`-Eintrag — Quelle oder `declined`):
+- `GFW_PASS` → Global Forest Watch / Global Nature Watch (WRI), Daten-API `data-api.globalforestwatch.org` (200).
+- `GOSAT_GW_MAIL`/`GOSAT_GW_PASS` → **GOSAT-GW** (NIES/JAXA Nachfolgemission); Homepage derzeit `pending` (nur Wayback 2022-09-06), nicht tot.
+- `IGETS2_PASS`/`IGETS2_USER` → IGETS (International Geodynamics and Earth Tide Service; GFZ ISDC / EOST) — kein zweiter Dienst „IGETS2".
+- `RUBIN_PASS` → Rubin Observatory / LSST.
+- `BABAMUL_*` → Babamul Alert-Broker (Caltech / Univ. Minnesota; ZTF+LSST, Kafka) — Datenquelle, keine generic-Infra.
+- `MOVEBANK_*` → Movebank (Max-Planck, Animal-Tracking-Datenbank) — Datenquelle, keine Bank-API.
+
+**Keine Datenquelle (Infrastruktur / API-Dienst):** `FLY_API_TOKEN` → Fly.io (PaaS);
+`UNOROUTER_*` → UnoRouter (LLM-Modell-Router); `ZAI_TOKEN`/`ZAI_COOKIE`/`GEMINI_API_KEY`/
+`CLOUDFLARE_*` → LLM/Infra.
+
+**Korrektur der ersten Fassung:** Die Aussage „überwiegend declined/dead" war falsch.
+`GFW`, `GOSAT-GW`, `IGETS2`, `BABAMUL`, `MOVEBANK` sind lebende Datenquellen ohne
+Disposition; `RUBIN` gehört in den Bestand (termin 2026-12-02, `folge129`). Die
+Quellen-Präfixe sind nur ein unscharfes Signal — die Identität wurde an der Homepage
+gemessen, nicht aus dem Namen geraten. Die **Secret-Namen selbst** stehen in keinem Register.
 
 ## Vorbehalte
 
