@@ -2349,6 +2349,7 @@ pub fn main_flow() {
                     | "ulysses_atdf"
                     | "ulysses_atdf_x"
                     | "lro_trk"
+                    | "hamqsl_solar"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -2899,6 +2900,8 @@ pub fn main_flow() {
                     | "hfrnet_rtv"
                     | "emodnet_hfr"
                     | "toar_surface_o3"
+                    | "ogimet_synop"
+                    | "nohrsc_snowfall"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

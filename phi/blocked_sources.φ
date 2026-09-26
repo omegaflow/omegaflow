@@ -77,7 +77,7 @@ note DEMETER Order 18387 DONE_WITH_WARNING; statusDate 2026-09-25T15:08Z; filesI
 
 pending
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
-note DECaPS2 Dataverse doi:10.7910/DVN/K88GFI ~280 GB (90 fits.gz à ~3.1 GB). FITS-GZ-Parser gebaut (decaps.rs + decaps_dr2_compiler.rs, sources.φ:9628); Größen-Verdikt 280 GB pending. Anonymer Weg = TAP decaps_dr2.object.
+note Dataverse doi:10.7910/DVN/K88GFI Größe gemessen 2026-09-26 API: 309865090866 B / 100 fits.gz (größte 3159522164 B); Parser sources.φ:9628; anonymer Weg TAP decaps_dr2.object; Ernte pending.
 
 blocked account
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
@@ -143,21 +143,21 @@ descoped
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
 note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
 
-pending
-url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
-note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
+blocked parser-def json
+url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM=ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
+note HTTP 500 2026-09-26 ADQL: plx unbekannt in ravedr4.rave_dr4; echt RAdeg,DEdeg,HRV,Teff_K.
 
-pending
-url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
-note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
+blocked parser-def json
+url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM=specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
+note HTTP 500 2026-09-26 ADQL: ra/dec/z unbekannt in specphot.rcsed_fibermags; echt objid,corrfibmag_u,corrfibmag_g,corrfibmag_r.
 
-pending
-url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
-note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
+blocked parser-def json
+url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM=hyperleda.galaxies+WHERE+v+IS+NOT+NULL
+note HTTP 500 2026-09-26 ADQL: al2000/de2000/v/bmag unbekannt in hyperleda.galaxies; echt ra,dec,mag,vr.
 
-pending
-url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
-note archive_search --verdict 2026-09-25: HTTP 500 direct+socks5h, Wayback CDX ohne Snapshot — server error, retry duty.
+blocked parser-def json
+url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM=ogle.lightcurves+WHERE+mag+IS+NOT+NULL
+note HTTP 500 2026-09-26 ADQL: ra/dec/mag unbekannt in ogle.lightcurves; echt object_id,passband,obs_time,magnitude.
 
 parser-def json
 gap unit-auto-detect
@@ -452,15 +452,4 @@ blocked ip-blocked
 url https://api.sensor.community/v1/data/measurements
 note 2026-09-25 direct 403 / Proton-Exit 403 (lokaler IP-Block). Kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a). Proton-freier CI-Puls via source_latency_census --blocked ausstehend.
 
-pending
-url https://hamqsl.com/
-note HTTP 200 (50452 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (HF-Propagation SFI/A/K); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
-
-pending
-url https://nohrsc.noaa.gov/
-note HTTP 200 (18000 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (Schnee/SWE NOAA); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
-
-pending
-url https://ogimet.com/
-note HTTP 200 (15196 B) 2026-09-26 via archive_search --verdict — physikalischer Messwert (synoptische Wetterbeobachtungen); ohne Register-Heim, sources.φ-Block offen (Fremd-Taucher).
 
