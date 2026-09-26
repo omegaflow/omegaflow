@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 06f55dab0163c1fe69bbc2c6c14c144c02284f18673a9a23b25eceeffbb1afbb
+  sha256: ca30b7ea80f66eb2769e362ac811f2447c78b82878ed233819c49f414d4c70db
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -169,9 +169,9 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Korona-Heizung — Feldmap + `millionths`-Arm live registriert
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) Feldmap in `sources.φ` registriert (`at sun`, `map .` → Surface→ICRS, area=„millionths", extent=deg, `lon carrington_longitude`); `millionths`→SI-Arm in `src/archivar/units.rs` (×2πR☉²·1e-6 ≈ 3,04e12 m²), `cargo check -p omegaflow` 0 Warnungen.
+- **Lage:** (gemessen 2026-09-26) Feldmap in `sources.φ` registriert (`at sun`, `map .` → Surface→ICRS, area=„millionths", extent=deg, `lon carrington_longitude`); `millionths`→SI-Arm in `src/archivar/units.rs` (×2πR☉²·1e-6 ≈ 3,04e12 m²), `cargo check -p omegaflow` 0 Warnungen. **Kadenz gemessen:** rollierendes 31-Tage-Tagesfenster (`observed_date` 2026-08-27…09-26), Last-Modified 2026-09-26T14:04:31Z; CDX-Proof intraday-Rewrite (2 Captures 4 h 22 m auseinander, 2026-01-02) → `ttl 3600` OK, `τ 86400` gilt auf Tagesebene.
 - **Blockade:** keine.
-- **Braucht:** `aia_compiler --harvest` (CI-only); `ttl 3600`/`τ 86400` bleiben Schätzung, bis die SWPC-Kadenz gemessen ist.
+- **Braucht:** `aia_compiler --harvest` (CI-only).
 
 #### Trishuli — Bahrabise-Ernte + TE-Sweep gemessen, S1-Footprint offen
 - **Status:** offen | **Bindung:** eigen
@@ -190,9 +190,9 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 #### Weberin Faden-Matrix — Broker-Compiler gebaut, seismische Endpunkte offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `grind-flash`) `antares_loci_compiler.rs` + `lasair_ztf_compiler.rs` gebaut (`cargo build -p omegaflow-harvest --bin …` 0 Warnungen). **Korrigierte Route:** ANTARES-JSON-API = `https://api.antares.noirlab.edu/v1/loci` (die Vorhandover-URL `antares.noirlab.edu/api/v1/loci` ist die HTML-Frontend, 974 B); `meta.count` 10000, Pagination `page[limit]/page[offset]`, Felder `attributes.ra/dec/htm16`, `properties.ztf_object_id`. Lasair `api.lasair.lsst.ac.uk/api/query/` 401 anonym (Key `LASAIR_LSST_TOKEN`), POST `selected/tables/conditions/limit/offset`.
+- **Lage:** (gemessen 2026-09-26 via `grind-flash`) `antares_loci_compiler.rs` + `lasair_ztf_compiler.rs` gebaut (`cargo build -p omegaflow-harvest --bin …` 0 Warnungen). **Korrigierte Route:** ANTARES-JSON-API = `https://api.antares.noirlab.edu/v1/loci` (die Vorhandover-URL `antares.noirlab.edu/api/v1/loci` ist die HTML-Frontend, 974 B); `meta.count` 10000, Pagination `page[limit]/page[offset]`, Felder `attributes.ra/dec/htm16`, `properties.ztf_object_id`. Lasair `api.lasair.lsst.ac.uk/api/query/` 401 anonym (Key `LASAIR_LSST_TOKEN`), POST `selected/tables/conditions/limit/offset`. **ALeRCE korrigiert:** Basis `api.alerce.online/ztf/v1/` (`/objects/{id}/detections` 200, `swagger.json` 19653 B; `/alerts/v1/…` 404 bestätigt). **Fink:** `/api/v1/schema` 200 (4 Gruppen, 169 Tokens; Felder u. a. `magpsf/sigmapsf/magdiff/rb/drb/roid/…`). **Seismik-Weltlinien gemessen:** EarthScope-FDSN `service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404` (Spalten `Network|Station|Latitude|Longitude|Elevation|SiteName|StartTime|EndTime`; v1.1.57); ISC `station.zip` 2.144.159 B.
 - **Blockade:** keine.
-- **Braucht:** seismische Stations-Weltlinien-Endpunkte (IRIS/FDSN) registrieren.
+- **Braucht:** den FDSN-Station-Endpunkt in `sources.φ` registrieren.
 
 #### Weberin-Quellen — HAWC-Bundle reproduziert + Reader gebaut, CI-Secret beim Operator
 - **Status:** offen | **Bindung:** eigen
@@ -367,12 +367,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 In diesem Atom benannt, aber nicht gemessen — sie gehören gemessen, nicht geglaubt
 (kein Punkt wird als Wahrheit getragen, was keine Messung hat):
 
-- **Korona:** SWPC-Update-Kadenz ungemessen → `ttl 3600`/`τ 86400` sind Schätzungen
-  (der `millionths`→SI-Arm ist gebaut, `units.rs`).
-- **Weberin-Quellen:** ALeRCE `/alerts/v1/detections/?oid=` 404 (Routenform nicht
-  exponiert) — `pending`; Fink `getSchema` (159 Felder) nur teilweise ausgewertet.
-- **Weberin Faden-Matrix:** die seismischen Stations-Weltlinien-Endpunkte
-  (IRIS/FDSN-Katalog) ungemessen.
 - **Galileo Borduhr:** DESCANSO Monograph Vol. 14 (Radio Science, 52 MB) nicht
   OCR'd; 209G rev-G ist ein Scan ohne Text-Layer (OCR offen).
 - **JUICE:** OMNI2-Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) →
