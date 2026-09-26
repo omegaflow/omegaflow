@@ -1681,17 +1681,17 @@ fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str,
 
 fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
     let kl = key.to_lowercase();
-    if kl.contains("sample") || kl.contains("sort") || kl.contains("order") || kl.contains("bbox") {
-        ("DROP", "", 0.0)
-    } else if kl == "par"
+    if kl.contains("sample")
+        || kl.contains("sort")
+        || kl.contains("order")
+        || kl.contains("bbox")
+        || kl == "par"
         || kl == "plx"
         || kl.contains("parallax")
         || kl.contains("plx_value")
         || kl.contains("_plx_")
         || kl.contains("proper_motion")
-    {
-        ("DROP", "", 0.0)
-    } else if kl == "bp_rp"
+        || kl == "bp_rp"
         || kl == "bp_minus_rp"
         || kl == "b_minus_v_color"
         || kl.contains("color_index")
@@ -2013,9 +2013,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("em", "N-units", 604800.0)
     } else if kl.contains("logg") {
         ("gravity", "logg", 604800.0)
-    } else if kl.contains("planet_mass") {
-        ("gravity", "M_earth", 604800.0)
-    } else if kl.contains("earth_mass") {
+    } else if kl.contains("planet_mass") || kl.contains("earth_mass") {
         ("gravity", "M_earth", 604800.0)
     } else if kl.contains("mass") {
         ("gravity", "M_sun", 604800.0)
@@ -2091,9 +2089,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("em", "s", 604800.0)
     } else if kl == "dm" {
         ("em", "pc/cm3", 604800.0)
-    } else if kl == "hp" || kl == "he" || kl == "hn" {
-        ("em", "nT", 60.0)
-    } else if kl == "au" || kl == "ae" {
+    } else if kl == "hp" || kl == "he" || kl == "hn" || kl == "au" || kl == "ae" {
         ("em", "nT", 60.0)
     } else if kl.contains("angstrom") {
         ("em", "1", 86400.0)
