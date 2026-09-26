@@ -129,6 +129,110 @@ pub fn enclosure_presences(
     )]
 }
 
+pub fn parse_sink_names(text: &str) -> Vec<String> {
+    text.lines()
+        .filter_map(|line| line.split('\t').nth(1))
+        .map(str::trim)
+        .filter(|name| !name.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
+struct AcousticFanout(Vec<std::process::ChildStdin>);
+
+impl std::io::Write for AcousticFanout {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        let mut accepted = 0usize;
+        for sink in &mut self.0 {
+            if std::io::Write::write_all(sink, buf).is_ok() {
+                accepted += 1;
+            }
+        }
+        if accepted == 0 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::BrokenPipe,
+                "no acoustic sink accepted the frame",
+            ));
+        }
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        for sink in &mut self.0 {
+            let _ = std::io::Write::flush(sink);
+        }
+        Ok(())
+    }
+}
+
+fn spawn_acoustic_player(program: &str, args: &[String]) -> Option<std::process::ChildStdin> {
+    let mut child = std::process::Command::new(program)
+        .args(args)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .ok()?;
+    let stdin = child.stdin.take()?;
+    std::thread::spawn(move || {
+        let _ = child.wait();
+    });
+    Some(stdin)
+}
+
+fn live_acoustic_sinks() -> Vec<String> {
+    let output = match std::process::Command::new("pactl")
+        .args(["list", "short", "sinks"])
+        .output()
+    {
+        Ok(o) => o,
+        Err(_) => return Vec::new(),
+    };
+    match String::from_utf8(output.stdout) {
+        Ok(text) => parse_sink_names(&text),
+        Err(_) => Vec::new(),
+    }
+}
+
+fn acoustic_sink() -> Option<Box<dyn std::io::Write + Send>> {
+    let value = match std::env::var("OMEGAFLOW_ACOUSTIC") {
+        Ok(v) => v,
+        Err(_) => return None,
+    };
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    if trimmed == "-" || trimmed == "stdout" {
+        return Some(Box::new(std::io::stdout()));
+    }
+    if trimmed == "auto" {
+        let mut sinks = Vec::new();
+        for name in live_acoustic_sinks() {
+            let args = vec![
+                "--rate=48000".to_string(),
+                "--channels=2".to_string(),
+                "--format=s16le".to_string(),
+                format!("--device={name}"),
+            ];
+            if let Some(stdin) = spawn_acoustic_player("pacat", &args) {
+                sinks.push(stdin);
+            }
+        }
+        if sinks.is_empty() {
+            return None;
+        }
+        return Some(Box::new(AcousticFanout(sinks)));
+    }
+    let mut parts = trimmed.split_whitespace();
+    let program = match parts.next() {
+        Some(p) => p,
+        None => return None,
+    };
+    let args: Vec<String> = parts.map(str::to_string).collect();
+    spawn_acoustic_player(program, &args).map(|stdin| Box::new(stdin) as Box<dyn std::io::Write + Send>)
+}
+
 pub fn jump_residual_breached(
     p_new: [f64; 3],
     p_old: [f64; 3],
@@ -240,15 +344,30 @@ pub fn spawn_ephemeris_bootstrap(
         let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
         if cache_fresh_cdn(&tmp_path, s.ttl, &s.url) {
             fresh_items.push((i, s.clone(), tmp_path));
-        } else if anchor_uses.contains_key(body) || declared_body == Some(body.as_str()) {
+            continue;
+        }
+        if declared_body == Some(body.as_str()) {
             anchor_items.push((i, s.clone(), tmp_path));
-        } else if let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body))
-            && let (Some(props), Some(pos)) = (
-                eph.props.as_ref(),
-                body_barycenter_position(body, now, body_ephemerides),
-            )
-            && body_in_enclosure(presences, props, pos, now)
-        {
+            continue;
+        }
+        let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body)) else {
+            continue;
+        };
+        let Some(t_r) = body_record_epoch(eph) else {
+            continue;
+        };
+        let (Some(props), Some(pos)) = (
+            eph.props.as_ref(),
+            body_barycenter_position(body, t_r, body_ephemerides),
+        ) else {
+            continue;
+        };
+        if !body_in_enclosure(presences, props, pos, t_r, now) {
+            continue;
+        }
+        if anchor_uses.contains_key(body) {
+            anchor_items.push((i, s.clone(), tmp_path));
+        } else {
             rest_items.push((i, s.clone(), tmp_path));
         }
     }
@@ -842,12 +961,8 @@ pub fn main_flow() {
         }
     }
     if !hidden {
-        let writer = if std::io::stdout().is_terminal() {
-            None
-        } else {
-            Some(Box::new(std::io::stdout()) as Box<dyn std::io::Write + Send>)
-        };
-        let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx, writer);
+        let _acoustic =
+            crate::mathematikerin::AcousticOscillator::new(acoustic_rx, acoustic_sink());
     }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
@@ -858,15 +973,18 @@ pub fn main_flow() {
     let mut pck_text: Option<String> = None;
     let bootstrap_running: std::sync::Arc<std::sync::atomic::AtomicBool> =
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
-    spawn_ephemeris_bootstrap(
-        &archive.sources,
-        &bootstrap_running,
-        fetch_tx.clone(),
-        archive.time.clone(),
-        &[],
-        &archive.body_ephemerides,
-        archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
-    );
+    if let Some(now) = system_now(&archive.time) {
+        let presences = enclosure_presences(&archive.presence, &presence_slot, now);
+        spawn_ephemeris_bootstrap(
+            &archive.sources,
+            &bootstrap_running,
+            fetch_tx.clone(),
+            archive.time.clone(),
+            &presences,
+            &archive.body_ephemerides,
+            archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
+        );
+    }
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
     let mut vagus = crate::archivar::hrv::VagusTone::new();
@@ -997,7 +1115,8 @@ pub fn main_flow() {
                 && now - last_bootstrap >= ttl / (Φ * Φ)
             {
                 last_bootstrap = now;
-                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
                 spawn_ephemeris_bootstrap(
                     &archive.sources,
                     &bootstrap_running,
@@ -1251,16 +1370,19 @@ pub fn main_flow() {
                 let Some(body) = src_clone.body.as_deref() else {
                     continue;
                 };
-                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let presences: Vec<PresenceSample> =
+                    enclosure_presences(&archive.presence, &presence_slot, now);
                 let in_hull = match archive.body_ephemerides.get(body) {
-                    Some(eph) => match (
-                        eph.props.as_ref(),
-                        body_barycenter_position(body, now, &archive.body_ephemerides),
-                    ) {
-                        (Some(props), Some(pos)) => body_in_enclosure(&presences, props, pos, now),
-                        _ => true,
+                    Some(eph) => match (body_record_epoch(eph), eph.props.as_ref()) {
+                        (Some(t_r), Some(props)) => {
+                            match body_barycenter_position(body, t_r, &archive.body_ephemerides) {
+                                Some(pos) => body_in_enclosure(&presences, props, pos, t_r, now),
+                                None => false,
+                            }
+                        }
+                        _ => false,
                     },
-                    None => true,
+                    None => false,
                 };
                 if !in_hull {
                     continue;
@@ -4569,5 +4691,28 @@ pub fn main_flow() {
         if elapsed < cadence {
             thread::sleep(std::time::Duration::from_secs_f64(cadence - elapsed));
         }
+    }
+}
+
+#[cfg(test)]
+mod acoustic_sink_tests {
+    use super::parse_sink_names;
+
+    #[test]
+    fn parse_sink_names_reads_the_live_sink_list() {
+        let text = "51\talsa_output.example.analog-stereo\tPipeWire\ts32le 2ch 48000Hz\tSUSPENDED\n662\tbluez_output.example_sink.1\tPipeWire\ts16le 2ch 48000Hz\tRUNNING\n";
+        assert_eq!(
+            parse_sink_names(text),
+            vec![
+                "alsa_output.example.analog-stereo".to_string(),
+                "bluez_output.example_sink.1".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn parse_sink_names_refuses_a_fieldless_line() {
+        assert!(parse_sink_names("").is_empty());
+        assert!(parse_sink_names("only-one-field\n").is_empty());
     }
 }
