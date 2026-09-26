@@ -963,6 +963,7 @@ pub fn live_sweep(
                 | "cors_rinex"
                 | "alerce"
                 | "catalog_tycho"
+                | "catalog_allwise_psd"
                 | "spectral"
                 | "xp_spectra"
                 | "jwst_spectra"

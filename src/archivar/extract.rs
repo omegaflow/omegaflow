@@ -2743,6 +2743,60 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "catalog_allwise_psd" {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(sources) = allwise::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for s in &sources {
+            let ra = s.ra.to_radians();
+            let dec = s.dec.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            for comp in 1..=allwise::COMP_MAX {
+                let Some(name) = allwise::component_name(comp) else {
+                    continue;
+                };
+                let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                    continue;
+                };
+                let Some(value) = allwise::component_value(s, comp) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    (*fc).clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
     if src.format == "exofop_toi" {
         const MAGIC: [u8; 4] = *b"EXF1";
         const VERSION: u8 = 1;
