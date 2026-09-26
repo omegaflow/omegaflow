@@ -39,7 +39,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 pending
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN Task af68c4f1 FAILED 2026-09-25. OAuth-frei: FITACF sdc-serv.usask.ca/data/{Y}/{M} 200 + Liste POST superdarn.ca/data-download; MAP via Zenodo Grid netCDF (340 CC0). FITACF sources.φ:9465; RAWACF via FRDR → sources.φ:8032.
+note SuperDARN: Globus MAP af68c4f1 FAILED → neu 20e8a751-b9aa-11f1-97cb-0affd5e180af ACTIVE 2026-09-26 (Ziel data/superdarn/map). FITACF OAuth-frei sdc-serv.usask.ca/data/{Y}/{M} 200 (867 123 B); MAP via Zenodo netCDF.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -74,7 +74,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18387 DONE_WITH_WARNING; statusDate 2026-09-25T15:08Z; filesInErrorCount 96978; availableFilesCount 0; product GET …/files/<md5> HTTP 500/0 B; online:false
+note DEMETER Order 18387: CDPP-Auth OK 2026-09-26 (Bearer via Query-String-OAuth, CDPP_USER/PASS); Order GET 200, availableFilesCount 0 / filesInErrorCount 96978, product GET 500/0 B — kein WAF-Problem. Braucht: Order-Retry.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
@@ -323,7 +323,7 @@ note LHAASO-Roh-/Rekonstruktionsdaten nur als Kollaborationsmitglied (Politiktex
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Route+Credential verifiziert 2026-09-26 — gosat-gw.nies.go.jp/en/ 200; Login success (GOSAT_GW_MAIL/PASS); product.gosat-gw.nies.go.jp CUI search/download 200 (TANSO3_*.h5, 17 MB). Harvest pending.
+note GOSAT-GW: Cookie-Auth (GOSAT_GW_MAIL/PASS) verifiziert 2026-09-26 — CUI-search 200 (423 959 B), Probe TANSO3_…h5 75 957 569 B HDF5 (sha256 6d064395…). Harvest pending.
 
 blocked account
 url https://data.lsst.cloud/api/tap/sync
