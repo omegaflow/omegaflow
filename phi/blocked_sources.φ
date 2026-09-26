@@ -144,25 +144,21 @@ descoped
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
 note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
 
-blocked parser-def json
-url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
-gap curation
-note HTTP 500 2026-09-26 ADQL: plx unbekannt in ravedr4.rave_dr4; echt RAdeg,DEdeg,HRV,Teff_K.
+descoped
+url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
+note HTTP 200 2026-09-26 (254541 B) — plx entfernt; RAdeg,DEdeg,HRV,Teff_K integriert → phi/sources.φ (gavo.aip.de ravedr4).
 
-blocked parser-def json
-url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
-gap curation
-note HTTP 500 2026-09-26 ADQL: ra/dec/z unbekannt in specphot.rcsed_fibermags; echt objid,corrfibmag_u,corrfibmag_g,corrfibmag_r.
+descoped
+url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+r.ra,r.dec,r.z,f.objid,f.corrfibmag_u,f.corrfibmag_g,f.corrfibmag_r+FROM+specphot.rcsed+AS+r+JOIN+specphot.rcsed_fibermags+AS+f+ON+r.objid=f.objid+WHERE+f.corrfibmag_g+IS+NOT+NULL
+note HTTP 200 2026-09-26 (454247 B) — ra/dec/z via JOIN specphot.rcsed; corrfibmag_u/g/r integriert → phi/sources.φ (padc-tap-rcsed.obspm.fr).
 
-blocked parser-def json
-url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
-gap curation
-note HTTP 500 2026-09-26 ADQL: al2000/de2000/v/bmag unbekannt in hyperleda.galaxies; echt ra,dec,mag,vr.
+descoped
+url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag,vr+FROM+hyperleda.galaxies+WHERE+vr+IS+NOT+NULL
+note HTTP 200 2026-09-26 (201877 B) — al2000/de2000/v/bmag ersetzt durch ra,dec,mag,vr; integriert → phi/sources.φ (voparis-tap-astro-m.obspm.fr hyperleda).
 
-blocked parser-def json
-url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
-gap curation
-note HTTP 500 2026-09-26 ADQL: ra/dec/mag unbekannt in ogle.lightcurves; echt object_id,passband,obs_time,magnitude.
+descoped
+url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
+note HTTP 200 2026-09-26 (442297 B) — Position via JOIN ogle.objects_all (raj2000/dej2000); obs_time,magnitude integriert → phi/sources.φ (skvo.science.upjs.sk ogle).
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
