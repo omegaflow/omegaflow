@@ -1,0 +1,58 @@
+name: gosat-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: 'GOSAT-GW product code (e.g. GWT3F_L1B or GWT3W_L1B)'
+        required: true
+      start:
+        description: 'window start (YYYY-MM-DD)'
+        required: true
+      end:
+        description: 'window end (YYYY-MM-DD)'
+        required: true
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  GOSAT_GW_MAIL: ${{ secrets.GOSAT_GW_MAIL }}
+  GOSAT_GW_PASS: ${{ secrets.GOSAT_GW_PASS }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gosat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view product.gosat-gw.nies.go.jp --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qF "gosat_tanso3.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "gosat_tanso3.bin present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "gosat_tanso3.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the product.gosat-gw.nies.go.jp release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view product.gosat-gw.nies.go.jp --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create product.gosat-gw.nies.go.jp --repo omegaflow/sources \
+              --title "product.gosat-gw.nies.go.jp" \
+              --notes "GOSAT-GW TANSO-3 L1B radiance (GWT3F/GWT3W bands) packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the GOSAT-GW TANSO-3 radiance to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin gosat_tanso3_compiler -- \
+            --search --product "${{ inputs.product }}" \
+            --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
+            --out gosat_tanso3.bin --ci-mode
