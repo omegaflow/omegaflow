@@ -25,8 +25,12 @@ fn run(args: &[String]) -> Result<(), String> {
         None => format!("data/{NETLOC}/rx100_luminance.bin"),
     };
 
-    let loc = ssdp_discover(Duration::from_secs(3))
-        .ok_or_else(|| "SSDP discovery void — no camera answered M-SEARCH".to_string())?;
+    let Some(loc) = ssdp_discover(Duration::from_secs(3)) else {
+        eprintln!(
+            "{NETLOC}: no camera answered M-SEARCH — the luminance reading is absent (0 honored, no record written)"
+        );
+        return Ok(());
+    };
     let xml = fetch_raw(&loc, None, &[])
         .ok_or_else(|| format!("{loc}: device description fetch void"))?;
     let svc = camera_service_url(&xml).ok_or_else(|| {

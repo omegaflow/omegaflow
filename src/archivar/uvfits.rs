@@ -224,7 +224,7 @@ pub fn fringe_rate_hz(rows: &[UvRow]) -> Option<f64> {
             continue;
         };
         let dt = pair[1].t_tdb - pair[0].t_tdb;
-        if !(dt > 0.0) || !dt.is_finite() {
+        if !dt.is_finite() || dt <= 0.0 {
             continue;
         }
         acc += wrap_pi(p1 - p0) / dt / TAU;
@@ -264,7 +264,7 @@ pub fn beat_rows(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
     } else {
         amps.iter().sum::<f64>() / amps.len() as f64
     };
-    if !(amp > 0.0) || !amp.is_finite() {
+    if !amp.is_finite() || amp <= 0.0 {
         return None;
     }
     let phase_mean = {
@@ -319,7 +319,7 @@ mod tests {
 
     fn push_end(out: &mut Vec<u8>) {
         push_card(out, "END");
-        while out.len() % 2880 != 0 {
+        while !out.len().is_multiple_of(2880) {
             out.push(b' ');
         }
     }

@@ -3,9 +3,39 @@ use std::fs;
 
 fn state_dir() -> std::path::PathBuf {
     if let Ok(dir) = env::var("OMEGAFLOW_STATE") {
-        return std::path::PathBuf::from(dir);
+        if !dir.is_empty() {
+            return std::path::PathBuf::from(dir);
+        }
+    }
+    if let Some(root) = repo_root() {
+        return root.join("state");
     }
     std::path::PathBuf::from("state")
+}
+
+fn repo_root() -> Option<std::path::PathBuf> {
+    let mut starts: Vec<std::path::PathBuf> = Vec::new();
+    if let Ok(exe) = env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            starts.push(dir.to_path_buf());
+        }
+    }
+    if let Ok(cwd) = env::current_dir() {
+        starts.push(cwd);
+    }
+    for start in starts {
+        let mut dir = start;
+        loop {
+            if dir.join("phi").join("sources.φ").is_file() {
+                return Some(dir);
+            }
+            match dir.parent() {
+                Some(parent) => dir = parent.to_path_buf(),
+                None => break,
+            }
+        }
+    }
+    None
 }
 
 fn main() {
