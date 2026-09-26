@@ -40,6 +40,13 @@ jobs:
             --bin /tmp/laic/laic.bin > laic_arrow_verdict.log 2>&1 || true
           tail -n 25 laic_arrow_verdict.log
 
+      - name: Re-derive the LAIC direction verdict at KDE bandwidth factor 2 (h-sensitivity)
+        continue-on-error: true
+        run: |
+          ./target/release/laic_probe --analyze /tmp/laic \
+            --bin /tmp/laic/laic.bin --kde-scale 2.0 > laic_arrow_kde2.log 2>&1 || true
+          tail -n 25 laic_arrow_kde2.log
+
       - name: Ensure the ssd.jpl.nasa.gov-laic release exists on the CDN
         run: |
           gh release view ssd.jpl.nasa.gov-laic --repo omegaflow/sources >/dev/null 2>&1 \
@@ -50,5 +57,5 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          gh release upload ssd.jpl.nasa.gov-laic laic_arrow_verdict.log --clobber --repo omegaflow/sources \
+          gh release upload ssd.jpl.nasa.gov-laic laic_arrow_verdict.log laic_arrow_kde2.log --clobber --repo omegaflow/sources \
             || { echo "log upload void — the local log is the artifact"; exit 0; }

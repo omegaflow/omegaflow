@@ -39,7 +39,7 @@ jobs:
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_xshift_null_binned_n_1000
       - name: Run gate_fpr_autocorrelation_shift_null_binned_n_1000
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_binned_n_1000
-  fpr-ksg:
+  fpr-ksg-arx:
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
@@ -47,6 +47,12 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run gate_fpr_autocorrelation_arx_null_ksg_n_1000
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_arx_null_ksg_n_1000
+  fpr-ksg-shift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run gate_fpr_autocorrelation_shift_null_ksg_n_1000
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_ksg_n_1000
   block-sweep:
@@ -157,7 +163,8 @@ jobs:
     needs:
       - shift-sweep
       - fpr-binned
-      - fpr-ksg
+      - fpr-ksg-arx
+      - fpr-ksg-shift
       - block-sweep
       - ksg-sweep
       - ksg-k-gate
@@ -177,5 +184,5 @@ jobs:
         run: |
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "te-gate: a gate job carries a finding" \
-               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg-arx, fpr-ksg-shift, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                health
