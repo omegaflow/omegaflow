@@ -2,7 +2,7 @@
   title: Survey — Scan: /tmp/opencode (was ist kanonisch zu behalten)
   class: survey
   date: 2026-09-07
-  sha256: 340aa4b3066ddee1b08deb13456683627bf14a0e4765c81d4f0daf7396251e3e
+  sha256: aae8760a2342029c877fdc5c2474d4d195a48b7bf23de33b73a97f23eb4206b2
   status: live
   see-also: docs/concepts/docs-naming.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
@@ -93,11 +93,14 @@ Geprüft und verworfen (A = A, keine verwaisten Dateien):
 | Logs, `ant_*.out`, `f/g/p/q/z.out`, Test-I/O | transient | Wegwerf |
 | `sources_new.φ` | Register-Kopie | byte-identisch mit committetem `phi/sources.φ` → löschen |
 
-## 6. Pending-Quellen aus dem Scan
+## 6. Quellen-Kandidaten aus dem Scan
 
 - NOAA-NODD passive-bioacoustic (NRS `sound_level_metrics`, `daily.nc`):
   unregistriert, kein eigener Compiler → Register-Eintrag in `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`
-  (2026-09-07).
+  (2026-09-07). Stand 2026-09-07 — erledigt 2026-09-27 (Nachsatz): Roh-Audio
+  registriert `phi/sources.φ:9051` + `flac_compiler.rs`; Produkte-Compiler
+  `noaa_nodd_bucket_harvester.rs` gebaut, Spektrum `decline spectral-series`
+  (`phi/declined_sources.φ:4017`).
 - SuperDARN-FITACF: Compiler existiert; Quelle in `phi/sources.φ` nicht unter
   den Scan-Keywords gemessen — nicht als pending behauptet.
 - Transiente blocked-Quellen: in `phi/blocked_sources.φ` gemessen und notiert
@@ -109,7 +112,8 @@ Geprüft und verworfen (A = A, keine verwaisten Dateien):
   `data/`/`cache/` (§2a), dauerhaft registriert via CDN + `phi/sources.φ`.
 - Roh-Korpora der blocked-Quellen (falls aufbewahrt): kompilierte Assets als
   CDN-Assets registrieren; Rohdaten nach `data/<netloc>/`.
-- Quell-Entscheid NOAA-NRS (→ eigener `tools/harvest`-Compiler) — `pending`.
+- Quell-Entscheid NOAA-NRS (→ eigener `tools/harvest`-Compiler) — erledigt
+  (Nachsatz 2026-09-27): Roh-Audio registriert, Produkte `decline spectral-series`.
 - Scratch-/Literaturdateien nach Sicherung nach `data/`/`docs/reference/` oder
   Löschen, sobald der Operator entscheidet.
 
@@ -119,3 +123,22 @@ Die Klasse Befund ist abgeschafft (operator word, AGENTS.md) — `docs/befund/`
 ist leer, die Befund-Migration ist committet. Die Zeilen dieses Scans, die
 `docs/befund/` als Heimat nennen, sind die Wahrheit ihres Datums, keine
 Anweisung an die Folgesession.
+
+## Nachsatz (2026-09-27)
+
+Der in §6/§7 offen geführte Quell-Entscheid NOAA-NRS passive-bioacoustic ist
+gemessen und entschieden — Register-Eintrag und Compiler sind beide vorhanden,
+kein neuer Eintrag wird geschrieben:
+
+- Roh-Audio (`nrs/audio/`, FLAC-WAV): registriert — `phi/sources.φ:9051`
+  (`nrs_audio_series.bin`, compiler `tools/harvest/src/bin/flac_compiler.rs`,
+  field `pcm nrs_hydrophone_pcm`), Workflow `.github/workflows/flac-cdn.yml`.
+- Produkte (`nrs/products/sound_level_metrics/`, HMD/PSD `daily.nc`): Compiler
+  gebaut `tools/harvest/src/bin/noaa_nodd_bucket_harvester.rs`, Workflow
+  `.github/workflows/noaa-nrs-psd-cdn.yml`, Output `noaa_nrs_psd.bin`
+  (214433228 B) — als 1195-Bin-Spektrum `decline spectral-series`
+  (`phi/declined_sources.φ:4017-4019`, Zeuge `phi/witnesses.φ:1`), keine
+  `sources.φ`-url-Zeile; das CDN-Asset bleibt Spektral-Record.
+- Stationen: `phi/nrs_stations.φ` (13 Zeilen, canon).
+
+Träger-Punkt #7 ist damit erledigt.
