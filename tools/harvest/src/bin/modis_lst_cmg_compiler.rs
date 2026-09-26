@@ -2,7 +2,7 @@ use omegaflow::archivar::json::{JsonVal, jpath_val, parse_json};
 use omegaflow::archivar::range::fetch_bearer_range;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb};
 use omegaflow::cdn::upload_release;
-use omegaflow::hdf4::Hdf4;
+use omegaflow::hdf4::{Hdf4, read_num, type_size};
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -20,8 +20,8 @@ const REC_FIELDS: usize = 5;
 const REC_BYTES: usize = REC_FIELDS * 8;
 const COMP_DAY: f64 = 1.0;
 const COMP_NIGHT: f64 = 2.0;
-const DFTAG_NDG: u16 = 720;
 const HDF4_MAGIC: [u8; 4] = [0x0e, 0x03, 0x13, 0x01];
+const CMG_CELL: f64 = 0.05;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -190,9 +190,46 @@ fn hdf4_magic(bytes: &[u8]) -> bool {
     bytes.get(0..4) == Some(&HDF4_MAGIC[..])
 }
 
-fn ndg_count(bytes: &[u8]) -> Option<usize> {
-    let hdf = Hdf4::parse(bytes)?;
-    Some(hdf.dds().iter().filter(|dd| dd.tag == DFTAG_NDG).count())
+fn granule_day_midpoint(url: &str, lsk: &LeapSeconds) -> Option<f64> {
+    let base = url.rsplit('/').next()?;
+    let a = base.find(".A")?;
+    let rest = base.get(a + 2..)?;
+    let year = rest.get(0..4)?.parse::<i64>().ok()?;
+    let doy = rest.get(4..7)?.parse::<i64>().ok()?;
+    if !(year >= 1 && doy >= 1 && doy <= 366) {
+        return None;
+    }
+    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    let mut day = doy;
+    let mut month = 0i64;
+    for (i, days) in [
+        31,
+        if leap { 29 } else { 28 },
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ]
+    .iter()
+    .enumerate()
+    {
+        if day <= *days {
+            month = i as i64 + 1;
+            break;
+        }
+        day -= *days;
+    }
+    if month == 0 {
+        return None;
+    }
+    let iso = format!("{year:04}-{month:02}-{day:02}T12:00:00.000Z");
+    parse_iso_tdb(&iso, lsk)
 }
 
 fn bearer_probe(url: &str, token: &str) -> Option<Vec<u8>> {
@@ -209,7 +246,7 @@ fn bearer_probe(url: &str, token: &str) -> Option<Vec<u8>> {
     }
 }
 
-fn harvest_granule(url: &str, token: &str) -> Vec<[f64; REC_FIELDS]> {
+fn harvest_granule(url: &str, t: Option<f64>, token: &str) -> Vec<[f64; REC_FIELDS]> {
     let bytes = match fs::read(url) {
         Ok(b) => b,
         Err(_) => match bearer_probe(url, token) {
@@ -230,22 +267,110 @@ fn harvest_granule(url: &str, token: &str) -> Vec<[f64; REC_FIELDS]> {
         );
         return Vec::new();
     }
-    match ndg_count(&bytes) {
-        Some(ndg) => {
+    let Some(hdf) = Hdf4::parse(&bytes) else {
+        eprintln!(
+            "modis_lst_cmg: {} the DD-chain walk returned void within {} B — the container does not parse",
+            url,
+            bytes.len()
+        );
+        return Vec::new();
+    };
+    let Some(t) = t else {
+        eprintln!(
+            "modis_lst_cmg: {} carries no temporal anchor — granule stays pending",
+            url
+        );
+        return Vec::new();
+    };
+    let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
+    for sds in hdf.sds() {
+        let Some(name) = sds.name.as_deref() else {
+            continue;
+        };
+        let comp = match name {
+            "LST_Day_CMG" => COMP_DAY,
+            "LST_Night_CMG" => COMP_NIGHT,
+            _ => continue,
+        };
+        if sds.dims.len() != 2 {
             eprintln!(
-                "modis_lst_cmg: {} HDF4 container parses with {} NDG data descriptors — the HDF4 SD-API reader (SDstart/SDselect/SDread over DFTAG_NDG 720) is unbuilt in src/archivar/hdf4.rs; LST_Day_CMG/LST_Night_CMG stay pending — no LST values synthesized (0 honored)",
-                url, ndg
-            );
-        }
-        None => {
-            eprintln!(
-                "modis_lst_cmg: {} HDF4 magic present, the DD-chain walk returned void within {} B — the container layer (src/archivar/hdf4.rs) does not cover this EOS DD-list continuation; the HDF4 SD-API reader (SDstart/SDselect/SDread over DFTAG_NDG 720) is the missing block — no LST values synthesized (0 honored)",
+                "modis_lst_cmg: {} {name} carries {} dims — the CMG grid expects 2",
                 url,
-                bytes.len()
+                sds.dims.len()
             );
+            continue;
         }
+        let rows = sds.dims[0] as usize;
+        let cols = sds.dims[1] as usize;
+        let Some(esize) = type_size(sds.typ) else {
+            eprintln!(
+                "modis_lst_cmg: {} {name} type {} carries no byte size",
+                url, sds.typ
+            );
+            continue;
+        };
+        let Some(expected) = rows.checked_mul(cols).and_then(|n| n.checked_mul(esize)) else {
+            eprintln!("modis_lst_cmg: {} {name} dims overflow the data size", url);
+            continue;
+        };
+        if sds.data.len() != expected {
+            eprintln!(
+                "modis_lst_cmg: {} {name} data {} B vs dims {}x{}x{} = {} B — records stay absent",
+                url,
+                sds.data.len(),
+                rows,
+                cols,
+                esize,
+                expected
+            );
+            continue;
+        }
+        let before = recs.len();
+        for r in 0..rows {
+            let lat = 90.0 - CMG_CELL * (r as f64 + 0.5);
+            let row_off = r * cols * esize;
+            for c in 0..cols {
+                let idx = row_off + c * esize;
+                let Some(raw) = read_num(&sds.data, idx, sds.typ) else {
+                    continue;
+                };
+                if let Some(f) = sds.fill {
+                    if raw == f {
+                        continue;
+                    }
+                }
+                if let Some((lo, hi)) = sds.range {
+                    if raw < lo || raw > hi {
+                        continue;
+                    }
+                }
+                let val = match (sds.scale, sds.offset) {
+                    (Some(s), Some(o)) => raw * s + o,
+                    (Some(s), None) => raw * s,
+                    (None, Some(o)) => raw + o,
+                    (None, None) => raw,
+                };
+                if !val.is_finite() || val <= 0.0 {
+                    continue;
+                }
+                let lon = -180.0 + CMG_CELL * (c as f64 + 0.5);
+                recs.push([t, lat, lon, val, comp]);
+            }
+        }
+        eprintln!(
+            "modis_lst_cmg: {} {name} type {} dims {}x{} scale {:?} offset {:?} fill {:?} range {:?} → {} records",
+            url,
+            sds.typ,
+            rows,
+            cols,
+            sds.scale,
+            sds.offset,
+            sds.fill,
+            sds.range,
+            recs.len() - before
+        );
     }
-    Vec::new()
+    recs
 }
 
 fn pack(recs: &[[f64; REC_FIELDS]]) -> Vec<u8> {
@@ -383,8 +508,9 @@ fn run(args: &[String]) {
                 g.url
             ),
         }
+        let t = g.anchor.or_else(|| granule_day_midpoint(&g.url, &lsk));
         let before = recs.len();
-        recs.extend(harvest_granule(&g.url, &token));
+        recs.extend(harvest_granule(&g.url, t, &token));
         eprintln!("modis_lst_cmg: {} → {} records", g.url, recs.len() - before);
     }
     recs.sort_by(|a, b| a[0].total_cmp(&b[0]));
@@ -529,8 +655,10 @@ mod tests {
         file.extend_from_slice(&[1, 2, 3, 4]);
         file.extend_from_slice(&[5, 6, 7, 8]);
         assert!(hdf4_magic(&file));
-        assert_eq!(ndg_count(&file), Some(2));
-        assert!(ndg_count(b"not hdf4").is_none());
+        let hdf = Hdf4::parse(&file).expect("the synthetic chain parses");
+        assert_eq!(hdf.dds().len(), 2);
+        assert_eq!(hdf.dds().iter().filter(|dd| dd.tag == 720).count(), 2);
+        assert!(Hdf4::parse(b"not hdf4").is_none());
     }
 
     #[test]
@@ -541,6 +669,23 @@ mod tests {
         file.extend_from_slice(&0i32.to_be_bytes());
         file.extend_from_slice(&[0u8; 32]);
         assert!(hdf4_magic(&file));
-        assert!(ndg_count(&file).is_none());
+        assert!(Hdf4::parse(&file).is_none());
+    }
+
+    #[test]
+    fn granule_name_midday_folds() {
+        let lsk = embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let t = granule_day_midpoint(
+            "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/MOD11C1.A2000058.061.2020058191556/MOD11C1.A2000058.061.2020058191556.hdf",
+            &lsk,
+        )
+        .expect("the granule name folds");
+        let day_start = parse_iso_tdb("2000-02-27T00:00:00.000Z", &lsk).expect("start folds");
+        let day_end = parse_iso_tdb("2000-02-27T23:59:59.000Z", &lsk).expect("end folds");
+        assert!(t > day_start && t < day_end);
+        assert!(granule_day_midpoint("https://example.com/no-name.hdf", &lsk).is_none());
+        assert!(
+            granule_day_midpoint("https://example.com/MOD11C1.A2000001.061.hdf", &lsk).is_none()
+        );
     }
 }
