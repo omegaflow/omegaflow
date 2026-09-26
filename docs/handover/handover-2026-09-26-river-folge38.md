@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: 282852ed8c30a01092a71586e75cc076666856bfed21e85588b7ec85fcb3680b
+  sha256: a66a118b4ef1d995ad547dc8b394c6c27a7b96b2927e9db5fe9d53c64427e2dc
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -37,6 +37,13 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - vC-Permeabilität: **945 und Mantis Shrimp getrennt führen** | 2026-09-26 | Operator-Wort folge36.
 - Session-Consent (Delegation) | 2026-09-26 | Operator-Wort: alles außer Harte Läufe; Commit trägt `/commit`.
 - Sensory-Eigentum `src/archivar/llnl_g3d.rs`: **ja** — die untracked Datei gehört der Sensory-Linie | 2026-09-26 | Operator-Wort.
+- Feld über **alle Radiatoren gleichberechtigt** ausgegeben | 2026-09-26 | Operator-Wort.
+- Radiator-Transportmedien (Code-Archäologie, hier + legacy): **acoustic** (`AcousticOscillator`) | **visual** (`TcpRadiator`/`StderrRadiator`) | **serial** (`SeismicOscillator`/`KineticRadiator`, `frame_bytes 0x02`); physikalische Feintaxonomie = 9 Kräfte (legacy `docs/specs/omegaflow-sense-hardware.yaml.md`); jeder Radiator und Sensor gleichberechtigt | 2026-09-26 | Operator-Wort + Archäologie.
+- **Keine Kraft→Kraft-Mappung:** jeder Radiator erhält **alle neun Kräfte** (Σω kanonisch, `frame.omega.iter().sum()`); das Transportmedium (acoustic/visual/serial) ist nur Transport, keine Kraft-Zuordnung — die verlorene Kanal-Zuweisung (audio→2, haptics→4) kehrt nicht zurück | 2026-09-26 | Operator-Wort (Doktrin `docs/specs/radiators.md`, Satz 2).
+- Membran: **natürlich fixen** (die Defaults + tycho-Divergenz) | 2026-09-26 | Operator-Wort.
+- BT-Geräte (Box + Kopfhörer) **angeschlossen** | 2026-09-26 | Operator-Akt.
+- Quest 2 autorisiert (`1WMHHB685V1462`) | 2026-09-26 | Operator-Akt.
+- Geräte-Zugriff: **vor jedem Zugriff fragen** (adb/BT), damit der Operator zulassen kann | 2026-09-26 | Operator-Wort.
 
 ## Stehender Pass (gemessen 2026-09-26)
 
@@ -46,19 +53,43 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **`open_points_check`:** 0 format-gaps (Stand folge37-Tafel).
 - **`register_lookup`:** keine register-eigenen River-Einträge; Orphans/`--orphan-docs` fremd (mycelium, `positive-maske`).
 - **Postfach:** `state/mail/mail_ledger.φ` absent (privates `state/`, CI-Build zuständig) — Lücke benannt.
-- **CI (diese Session dispatched):** `membrane-hull-probe 36260828234`, `ci-check 36260830080`; gefaltet `star-dmax-probe 36252229964` = success (keine Widerlegung).
+- **CI (diese Session dispatched):** `star-dmax-probe 36252229964` = success (keine Widerlegung); `membrane-hull-probe 36260828234` = success (Prozess), Artefakt misst **3 von 4 Pfaden REFUTED**; `ci-check 36260830080` = cancelled (überholt).
+- **Geräte (gemessen):** Quest 2 (Oculus, Android 12, `1WMHHB685V1462`) autorisiert — Syncboss IMU `ICM42688`, Accel/Gyro 20–100 Hz, Fusion 200 Hz; BT-Box/Kopfhörer angeschlossen.
 - Shared external state: `docs/zustand/external-state.md` (nicht kopiert).
 
 ## Offen
 
 ### Umsetzbar (jetzt, autonom bis zur Kante)
 
-#### membrane-hull-probe — LOCK-Gate lesen
+#### membrane-hull-probe — Fix verifizieren (LOCK-Gate)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Run `36260828234` (membrane-hull-probe) beendet.
-- **Lage:** (gemessen 2026-09-26 via `gh workflow run`) Bin `tools/measure/src/bin/membrane_hull_probe.rs` + Workflow `membrane-hull-probe.yml` gebaut + gepusht (`7e2cefd9f`), Run `36260828234` dispatched. star-dmax-Artefakt `36252229964` gefaltet: f_excl 0, f_inc 0, interdecile 2.823739 (< 10) → keine Widerlegung, Query-Seite steht, RISS-Zeile geschlossen.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage view 36260828234`; bei grün (drei Umgehungen auf derselben Hülle) dem Operator das Harte-Läufe-LOCK zur Aufhebung vorlegen.
+- **Trigger:** Run `36263190452` (nach Commit neu dispatched) liefert das grüne Artefakt.
+- **Lage:** (gemessen 2026-09-26 via Artefakt `36260828234`) `3 von 4` Pfaden divergent: bootstrap `anchor_items 10/82` ohne Gate (`main_flow.rs:243`), per-tick `in_hull` defaultet `true` (75/82, `main_flow.rs:1261,1263`), catalog_tycho `f_excl 0.999940`. Fix gebaut (noch uncommittet): `spatial.rs law_bounds` analytische Schranke, `fetch.rs body_in_enclosure` mit Record-Epoche, per-tick `_ => false`; lokal **0 von 4** divergent; 4 Gate-Fixtures.
+- **Blockade:** Fix uncommittet → Lauf `36263190452` trägt den alten Stand.
+- **Braucht:** nach `/commit` `gh workflow run membrane-hull-probe.yml`; bei grün dem Operator das Harte-Läufe-LOCK zur Aufhebung vorlegen.
+
+#### Akustik-Sink `OMEGAFLOW_ACOUSTIC` — BT-Radiatoren
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Run `36263190452` grün (nach Commit) + Operator-Wort zum LOCK-Aufheben.
+- **Lage:** (gemessen 2026-09-26) Sink in `main_flow.rs` gebaut (`acoustic_sink()`): `-`/`stdout`, freies Player-Kommando, oder **`auto`** — liest die live Sinks (`pactl list short sinks`, keine hartkodierten Namen) und fächert den Frame via `AcousticFanout` gleichberechtigt auf alle; `cargo check` 0/0, Test `parse_sink_names_reads_the_live_sink_list`; noch uncommittet.
+- **Blockade:** Harte-Läufe-LOCK.
+- **Braucht:** `OMEGAFLOW_ACOUSTIC=auto bin/omegaflow` — Box + JBL + jeder weitere Sink empfangen denselben Frame.
+
+#### Geräte-Inventar — alle Wege je Gerät
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator paart/verbindet (Kopfhörer, Quest-Browser).
+- **Lage:** (gemessen 2026-09-26 via `adb`/`bluetoothctl`/`lsusb -t`/`pactl`)
+  - **RX100M5A** (`054c:0cb0`) — USB **Mass Storage** (Karte lesbar) + WiFi **Camera Remote API**.
+  - **Forerunner 945** (`091e:4c29`) — USB **Vendor/`usbfs`** (FIT) + BLE **Heart Rate `0x180d` + RSC `0x1814`** (live RR/HR) + Garmin-vendor.
+  - **Quest 2 #1** (`1WMHHB685V1462`) — USB adb (Syncboss IMU `ICM42688`, Accel/Gyro 20–100 Hz) + WiFi Relay-Display (`adb` aktuell leer).
+  - **Quest 2 #2** (BLE ManufacturerData `1WMHHB60SN1463`) — BLE (Facebook `0xfeb8`) + WiFi Relay.
+  - **Pixel 10a** (BT verbunden) — A2DP/Audio-Source + **PAN/NAP** (Tethering) + BLE GATT + MAP/Phonebook.
+  - **HiBreak pro** — A2DP + PAN/NAP + HFP.
+  - **Bose Mini II** (BT verbunden, Default-Sink, Batterie 50 %) — A2DP Audio-Sink + HFP.
+  - **JBL TUNE500BT** (`b8:f6:53:5f:27:18`, BT verbunden) — A2DP-Sink `bluez_output.B8_F6_53_5F_27_18.1` (Card 661).
+- **Blockade:** keines.
+- **Braucht:** `OMEGAFLOW_ACOUSTIC=auto` (live fan-out auf alle Sinks, kein hartkodierter Sink); 945 **BLE-HR** verbinden (Puls-Arrival); Quest-Browser `http://<host>:1618`; RX100 MSC mounten (USB) oder WiFi-Remote.
+- **Wort:** Geräte-Zugriff vorher fragen | 2026-09-26 | Operator-Wort.
 
 #### `#body`-Deklaration fehlt — alle Stations-Samples verworfen
 - **Status:** eigen | **Bindung:** eigen
