@@ -40,7 +40,7 @@ impl Radiator for StderrRadiator {
             .cache
             .cells
             .values()
-            .chain(std::iter::once(&field.cache.unbounded))
+            .chain(field.cache.star_cells.values())
         {
             for sample in cell {
                 match sample.source {
@@ -103,12 +103,35 @@ fn feed_beat_to_hrv(
 
 pub type PresenceSample = (f64, f64, f64, f64, f64, f64, f64, f64, f64, f64);
 
+pub fn jump_residual_breached(
+    p_new: [f64; 3],
+    p_old: [f64; 3],
+    v_old: [f64; 3],
+    v_new: [f64; 3],
+    dt: f64,
+) -> bool {
+    if !dt.is_finite() || dt <= 0.0 {
+        return false;
+    }
+    let dv = ((v_new[0] - v_old[0]) * (v_new[0] - v_old[0])
+        + (v_new[1] - v_old[1]) * (v_new[1] - v_old[1])
+        + (v_new[2] - v_old[2]) * (v_new[2] - v_old[2]))
+        .sqrt();
+    let amax = dv / dt;
+    let rx = p_new[0] - (p_old[0] + v_old[0] * dt);
+    let ry = p_new[1] - (p_old[1] + v_old[1] * dt);
+    let rz = p_new[2] - (p_old[2] + v_old[2] * dt);
+    (rx * rx + ry * ry + rz * rz).sqrt()
+        >= Φ * crate::mathematikerin::JUMP_GRID + 0.5 * amax * dt * dt
+}
+
 pub struct Archive {
     pub sources: Vec<SourceConfig>,
     pub body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
     pub field: Arc<Buffer>,
     pub presence: HashMap<String, PresenceSample>,
     pub jump_epoch: Option<f64>,
+    pub prev_presence_epoch: Option<f64>,
     pub declared_body: Option<DeclaredBody>,
     pub origins: HashMap<Origin, OriginState>,
     pub pck_bodies: HashMap<i32, PckBody>,
@@ -166,6 +189,9 @@ pub fn spawn_ephemeris_bootstrap(
     guard: &std::sync::Arc<std::sync::atomic::AtomicBool>,
     fetch_tx: mpsc::Sender<FetchResult>,
     time: std::sync::Arc<std::sync::Mutex<Option<LeapSeconds>>>,
+    presences: &[PresenceSample],
+    body_ephemerides: &HashMap<String, BodyEphemeris>,
+    declared_body: Option<&str>,
 ) {
     if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
         return;
@@ -177,6 +203,7 @@ pub fn spawn_ephemeris_bootstrap(
     let mut fresh_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
+    let now_gate = system_now(&time);
     for (i, s) in sources.iter().enumerate() {
         if s.format != "ephemeris_binary" && s.format != "orbit_bin" {
             continue;
@@ -187,10 +214,16 @@ pub fn spawn_ephemeris_bootstrap(
         let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
         if cache_fresh_cdn(&tmp_path, s.ttl, &s.url) {
             fresh_items.push((i, s.clone(), tmp_path));
-        } else if anchor_uses.contains_key(body) {
+        } else if anchor_uses.contains_key(body) || declared_body == Some(body.as_str()) {
             anchor_items.push((i, s.clone(), tmp_path));
-        } else {
-            rest_items.push((i, s.clone(), tmp_path));
+        } else if let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body)) {
+            if let (Some(props), Some(pos)) = (
+                eph.props.as_ref(),
+                body_barycenter_position(body, now, body_ephemerides),
+            ) && body_in_enclosure(presences, props, pos, now)
+            {
+                rest_items.push((i, s.clone(), tmp_path));
+            }
         }
     }
     fresh_items.sort_by_key(|(_, s, _)| anchor_order(s));
@@ -623,6 +656,7 @@ pub fn main_flow() {
         )),
         presence: HashMap::new(),
         jump_epoch: None,
+        prev_presence_epoch: None,
         declared_body,
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
@@ -803,6 +837,9 @@ pub fn main_flow() {
         &bootstrap_running,
         fetch_tx.clone(),
         archive.time.clone(),
+        &[],
+        &archive.body_ephemerides,
+        archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
     );
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
@@ -816,17 +853,21 @@ pub fn main_flow() {
         }
         while let Ok((name, pt, px, py, pz, pr, vx, vy, vz, tt, gs)) = presence_rx.try_recv() {
             if name == "browser" {
-                if let Some(&(_, opx, opy, opz, ..)) = archive.presence.get("browser") {
-                    let dx = px - opx;
-                    let dy = py - opy;
-                    let dz = pz - opz;
-                    let dp = (dx * dx + dy * dy + dz * dz).sqrt();
-                    if dp >= 4.0 * crate::mathematikerin::JUMP_GRID
-                        && vx * vx + vy * vy + vz * vz == 0.0
-                    {
+                let prev_t = archive.prev_presence_epoch;
+                if let (Some(prev_t), Some(&(_, opx, opy, opz, _, ovx, ovy, ovz, _, _))) =
+                    (prev_t, archive.presence.get("browser"))
+                {
+                    if jump_residual_breached(
+                        [px, py, pz],
+                        [opx, opy, opz],
+                        [ovx, ovy, ovz],
+                        [vx, vy, vz],
+                        pt - prev_t,
+                    ) {
                         archive.jump_epoch = Some(pt);
                     }
                 }
+                archive.prev_presence_epoch = Some(pt);
                 if let Ok(mut slot) = presence_slot.write() {
                     slot.p = [px, py, pz];
                     slot.v = [vx, vy, vz];
@@ -931,11 +972,15 @@ pub fn main_flow() {
                 && now - last_bootstrap >= ttl / (Φ * Φ)
             {
                 last_bootstrap = now;
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
                 spawn_ephemeris_bootstrap(
                     &archive.sources,
                     &bootstrap_running,
                     fetch_tx.clone(),
                     archive.time.clone(),
+                    &presences,
+                    &archive.body_ephemerides,
+                    archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
                 );
             }
         }
@@ -1178,6 +1223,23 @@ pub fn main_flow() {
                     Some(b) => content_cache(&format!("omegaflow_eph_{b}.bin")),
                     None => continue,
                 };
+                let Some(body) = src_clone.body.as_deref() else {
+                    continue;
+                };
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let in_hull = match archive.body_ephemerides.get(body) {
+                    Some(eph) => match (
+                        eph.props.as_ref(),
+                        body_barycenter_position(body, now, &archive.body_ephemerides),
+                    ) {
+                        (Some(props), Some(pos)) => body_in_enclosure(&presences, props, pos, now),
+                        _ => true,
+                    },
+                    None => true,
+                };
+                if !in_hull {
+                    continue;
+                }
                 if cache_fresh(&tmp_path, src_clone.ttl) {
                     begin_fetch(&mut archive.origins, i as u32, now);
                     let ftx = fetch_tx.clone();
@@ -1223,11 +1285,16 @@ pub fn main_flow() {
             }
             if archive.sources[i].format == "catalog_dastcom" {
                 let url = archive.sources[i].url.clone();
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                if presences.is_empty() {
+                    continue;
+                }
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
+                let now_c = now;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
@@ -1274,7 +1341,10 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let samples = build_asteroid_samples(&bytes, src_ttl);
+                    let samples: Vec<Sample> = build_asteroid_samples(&bytes, src_ttl)
+                        .into_iter()
+                        .filter(|s| catalog_sample_in_enclosure(&presences, s, now_c))
+                        .collect();
                     eprintln!("\r\x1b[Kcatalog_dastcom: {} samples", samples.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -1672,11 +1742,16 @@ pub fn main_flow() {
             }
             if archive.sources[i].format == "catalog_tycho" {
                 let url = archive.sources[i].url.clone();
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                if presences.is_empty() {
+                    continue;
+                }
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
+                let now_c = now;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("stars").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_catalog_{name}"));
@@ -1733,7 +1808,10 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let star_samples = build_star_samples(&bytes);
+                    let star_samples: Vec<Sample> = build_star_samples(&bytes)
+                        .into_iter()
+                        .filter(|s| catalog_sample_in_enclosure(&presences, s, now_c))
+                        .collect();
                     eprintln!("\r\x1b[Kcatalog_tycho: {} stars", star_samples.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
@@ -4287,7 +4365,12 @@ pub fn main_flow() {
         {
             let old = archive.field.clone();
             let retained_estimate: usize = old.cache.cells.values().map(|v| v.len()).sum::<usize>()
-                + old.cache.unbounded.len();
+                + old
+                    .cache
+                    .star_cells
+                    .values()
+                    .map(|v| v.len())
+                    .sum::<usize>();
             let mut all: Vec<Arc<Sample>> = Vec::with_capacity(
                 fetched_samples.len()
                     + retained_estimate
@@ -4299,7 +4382,7 @@ pub fn main_flow() {
                 .cache
                 .cells
                 .values()
-                .chain(std::iter::once(&old.cache.unbounded))
+                .chain(old.cache.star_cells.values())
             {
                 for s in v {
                     if matches!(s.source, SampleSource::Ephemeris) {
