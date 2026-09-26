@@ -2,7 +2,7 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: 153169bd3ea00ce225d5f0518f11f9ed27922794cde7ac3d13d435655fed92d0
+  sha256: cbb2f1e7e5f32d940b9e7f79acb67b8bf8c5ea59133ae8098ac3aca876a59f0f
   status: live
   see-also: 
 -->
@@ -130,3 +130,13 @@ hot-Jupiter thermal/chemical response, not a biosignature. The two branches'
 absence is now measured like the O2/O3 branch: no
 detection and no spectrum; the channels stay pending. The XUV photochemistry
 re-explanation of the SO2/CO2 hits stays pending as a non-equilibrium model.
+
+**DMS channel — measured absent (2026-09-27, flash).** The citation that first
+raised the channel, `10.1073/pnas.2416188122` (Seager et al., PNAS 2025), is a
+perspective/model, not a detection. The measured JWST detections in the record
+are WASP-39 b CO2 `10.1038/s41586-022-05269-w` and photochemical SO2
+`10.1038/s41586-023-05902-2`, and K2-18 b CH4 (5 sigma) / CO2 (3 sigma)
+`10.3847/2041-8213/acf577`. A biosignature gas (DMS) is absent: the reported
+"potential signs" remain tentative and read `insufficient evidence`
+(`10.1051/0004-6361/202555580`, `10.3847/2041-8213/adc1c8`). The channel stays
+`absent` until a DMS detection and its spectrum enter the registry.
