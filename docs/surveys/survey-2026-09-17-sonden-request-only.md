@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 1bc3d58bbe9396377fc10eaa7cc8a446df9292286aa6ef4df82b7a70c1b20fd6
+  sha256: a767a742e88c1403433c287b1bd97f0d7ddcb67bc1d5799b3469600f102bc63a
   status: live
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -42,10 +42,11 @@ kein Wert abgeleitet, keine Zahl re-deriviert.
   `juno_ocru_odf.bin` + `sources.φ`-Block liegt bei der ernte-Linie
   (`handover-2026-09-17-ernte-folge66.md:99`).
 - **Pioneer 10 — ATDF (Kontrast, nicht eines der vier):**
-  `spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/`
-  — `pioneer10_doppler_tracking_SC_23.asc` (63 MB, ASCII-Kopf `ORBIT DATA DUMP`,
-  DTYPE 12 = two-way / 13 = three-way) anonym offen. Belegt, dass die SPDF-ATDF-
-  Route als solche existiert.
+  `spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/pioneer10_doppler_tracking_SC_23.asc.gz`
+  (19 820 702 B, ASCII-Kopf `ORBIT DATA DUMP`, DTYPE 12 = two-way / 13 = three-way)
+  anonym offen — das DTYPE 12/13 ist der ASC/NAVIO-Code-Raum
+  (`pioneer_doppler_compiler.rs`), nicht der ATDF-Wert (TRK-2-25 `DATA_TYPE` = 1|2).
+  Belegt, dass die SPDF-ATDF-Route als solche existiert.
 
 ## Postfach (gemessen)
 
@@ -73,8 +74,9 @@ Referenz-Parser `NASA-PDS/PyTrk234` (`.tmp-trk234-components.txt`).
   `voyager_saturn`, PSPA-00049, UNIVAC-1108); die 17-Code-Lücke berührt ihn nicht.
   Nachzug 2026-09-17: Arm + Workflow gebaut (`src/archivar/mariner_occlt.rs`,
   `.github/workflows/mariner-occlt-cdn.yml`) — CDN-Dispatch offen.
-- Pioneer-ATDF dtype-12-Arm (`atdf.rs:503/636` hält nur dtype 1|2) und der
-  Juno-OCRU-Abgleich sind Ernte-/Bau-Arbeit, kein Gate.
+- Pioneer-ATDF dtype-12/13 — kein Parser-Gap (gemessen 2026-09-17, folge63): der
+  ATDF-Wert ist TRK-2-25 `DATA_TYPE` = 1|2; „DTYPE 12/13" ist der ASC/NAVIO-Raum.
+  Der Juno-OCRU-Abgleich ist Ernte-/Bau-Arbeit, kein Gate.
 
 ## Vision-Befund (gemessen)
 
