@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 1add53b9adb4e2ccab0f780ccb36684179ca0f7ef9006843eeb84de2f960201d
+  sha256: 90b01e7c51aead5174cfd34586c6dc7af3c063ed4f030eff22cea2c6da0a0e08
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -25,48 +25,42 @@ getrackt, nie am CDN.
 
 - **HEAD** `c1fae4bb8`, `origin/main == HEAD` (folge180 trug noch `517d587e9`; main ist
   um 4 Commits vorangeschritten).
-- **main ist ROT** — `src/archivar/main_flow.rs:5299` trägt eine hängende Zeile
-  `| "gosat_tanso3"` (`expected item, found |`) aus dem Commit `fae4a5081 gosat_tanso3`
-  (mycelium); dazu `channels.rs` (`PresenceSample` inaccessibel) und `mod.rs`
-  (unused imports, `-D warnings`). Die ganze `omegaflow`-lib kompiliert nicht.
+- **main GEHEILT** — `src/archivar/main_flow.rs` trägt den `| "gosat_tanso3"`-Arm aus
+  `fae4a5081` (der am Dateiende statt im Match landete) jetzt korrekt im geo-series-Match;
+  `cargo check` clean, Commit `cff336062`. Der Build ist für alle Linien frei.
 - **Postfach** — `state/mail/mail_ledger.φ` absent → `pending` (Aufbau gehört CI);
   letzte 6 Eingänge im Snapshot (NED-Antwort, OpenAlex-Login, Meta-Codes).
-- **CI:** die zwei sensory-Dispatches aus folge180 (`funken-probe 36276735080`,
-  `causal-arrow-scan 36276736870`) laufen auf `head_sha fae4a5081` und
-  **scheitern am main-Bruch** (`could not compile omegaflow (lib) due to 8 previous
-  errors`) — die Probe-Bins wurden nie erreicht. Weitere Rot-Läufe derselben Ursache:
-  `tools-build`, `harvest-dispatch`, `register-coverage`, `ci-check` (gemessen 2026-09-27
-  via `ci_manage list`/`view`/`log`).
+- **CI:** die zwei folge180-Dispatches (`funken-probe 36276735080`,
+  `causal-arrow-scan 36276736870`) scheiterten am main-Bruch. Nach Heilung neu dispatcht
+  → `funken-probe 36277987363`, `causal-arrow-scan 36277989033` (gemessen 2026-09-27).
 - **Geteilter Baum ist LIVE:** eine fremde Linie (mycelium/mountain) arbeitet gerade
   uncommittet an `.github/workflows/*-cdn.yml`, `phi/sources.φ`,
   `phi/blocked_sources.φ`, `src/archivar/main_flow.rs`, `src/archivar/skydirection.rs`,
   `tools/harvest/.../modis_lst_cmg_compiler.rs` u. a. → nicht anfassen.
 
-## Flaschenhals (fremd, blockiert die Linie)
+## Flaschenhals — geheilt
 
-- **main rot an `main_flow.rs:5299`** | **Bindung:** linie:mycelium | **Trigger:**
-  mycelium committet den Fix | **Lage** (gemessen 2026-09-27): HEAD rot; der Arbeitsbaum
-  trägt den Fix bereits (Zeile `| "gosat_tanso3"` korrekt bei Z. 3697) | **Blockade:**
-  fremder, uncommitteter Hunk im geteilten Baum | **Braucht:** mycelium committet
-  `src/archivar/main_flow.rs` (+ `channels.rs`/`mod.rs`); dann main grün → #1/#2 neu
-  dispatchen. Kein Sensorik-Hunk.
+- **main war rot an `main_flow.rs:5299`** (fremder Commit `fae4a5081`: die Zeile landete
+  am Dateiende statt im geo-series-Match). Geheilt in `cff336062` (der eine Satz in den
+  Match gesetzt; `cargo check` clean). mycelium hatte keine offene Session; der Hunk war
+  strandet. Kein offener fremder Blocker.
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-### 1. Funken-Workflow — am main-Bruch gescheitert
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** main-Fix committet (mycelium)
-- **Lage:** (gemessen 2026-09-27) Run `36276735080` **failure** — `could not compile
-  omegaflow (lib) due to 8 previous errors` (`main_flow.rs:5299`).
-- **Blockade:** main rot (fremd).
-- **Braucht:** nach main-Fix neu dispatchen (`gh workflow run funken-probe.yml`),
-  Ergebnis via `ci_manage view <id>`.
+### 1. Funken-Workflow — neu dispatcht nach main-Heilung
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** Probe-Lauf endet
+- **Lage:** (gemessen 2026-09-27) erster Lauf `36276735080` scheiterte am main-Bruch;
+  nach Heilung neu dispatcht → Run `36277987363`.
+- **Blockade:** keine.
+- **Braucht:** Ergebnis via `ci_manage view 36277987363` beim nächsten Pass.
 
-### 2. causal-arrow-Scan — am main-Bruch gescheitert
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** main-Fix committet
-- **Lage:** (gemessen 2026-09-27) Run `36276736870` **failure** — derselbe Compile-Bruch.
-- **Blockade:** main rot (fremd).
-- **Braucht:** nach main-Fix neu dispatchen (`gh workflow run causal-arrow-scan.yml`);
-  Träger `causal-arrow-preregistration.md:1`, `ein-blatt-papier.md:2`.
+### 2. causal-arrow-Scan — neu dispatcht nach main-Heilung
+- **Status:** wartend | **Bindung:** eigen | **Trigger:** Probe-Lauf endet
+- **Lage:** (gemessen 2026-09-27) Run `36276736870` scheiterte am main-Bruch; neu
+  dispatcht → Run `36277989033`.
+- **Blockade:** keine.
+- **Braucht:** Ergebnis via `ci_manage view 36277989033`; Träger
+  `causal-arrow-preregistration.md:1`, `ein-blatt-papier.md:2`.
 
 ### 3. O1 DEMETER/CDPP — Order nutzbar, Ernte offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort, **Frist 2026-09-28**
@@ -78,14 +72,6 @@ getrackt, nie am CDN.
 - **Braucht:** metalink als Datei sichern; `cargo build -p omegaflow-measure --bin
   regards_order_read` → URLs → Ernte nach `data/` **vor dem 28.09.** (kein CDN, Links
   token-gebunden).
-
-### 4. #3 Galileo CK-Kerne `_rtr` — Harvest offen
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26, research-max) 8 CK-Kerne `ck90341a`–`ck90344b` unter
-  `…/GLL/kernels/ck/prime_mission/unvalidated/rtr/` (HTTP 200).
-- **Blockade:** keine.
-- **Braucht:** die 8 `_rtr.bc` per `sfetch`/Compiler harvesten;
-  `galileo-rotor-spin-era-floor.md:1` nachziehen.
 
 ### 5. #4 Seismik-Flotte — Paper-Pendings + CDN-Läufe
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
@@ -138,6 +124,12 @@ getrackt, nie am CDN.
 
 ## Abgeschlossen / gemessen geschlossen (Befund)
 
+- **#3 Galileo CK-Kerne `_rtr`** — bereits geerntet (gemessen 2026-09-27): 8 Dateien
+  `ck90341a`–`ck90344b_rtr.bc` vollständig in `data/naif.jpl.nasa.gov/`
+  (`ck90341a_rtr.bc` = 3 863 552 B = NAIF-Live-Größe); der Punkt wurde als „offen"
+  getragen. `galileo-rotor-spin-era-floor.md` trägt die lokalen Holdings bereits.
+- **LLNL-G3D-JPS (Seismik-Rohdaten)** — bereits geerntet: `data/LLNL_G3D_JPS.volume.bin`
+  + `data/gs.llnl.gov/llnl_g3d_jps.interpolated.zip` liegen lokal.
 - **B1 Galileo Borduhr** — `absent`. Befund eingetragen in
   `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md` (§Nachtrag
   2026-09-27): keine absolute Frequenz-Reduktion über 1995-11-30/12-01 (arXiv 406,
@@ -255,6 +247,7 @@ Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort.
 
 Eigene Pfade dieses Atoms (pfad-begrenzt committen):
+`src/archivar/main_flow.rs` (main-Heilung, `cff336062`),
 `docs/handover/handover-2026-09-27-sensory-folge181.md`,
 `docs/handover/archiv/handover-2026-09-27-sensory-folge180.md` (Move),
 `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md`,
