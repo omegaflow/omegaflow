@@ -8,20 +8,20 @@ note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fe
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
 
-descoped
+released
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
 reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Daily CMG V061. 2026-09-26: App 'LP DAAC Data Pool' autorisiert; cloud-Route data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/<granule-ur>/<granule-ur>.hdf 303→206 mit EDL-Token. URL-Port nötig.
+note MODIS/Terra LST Daily CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15349. Compiler modis_lst_cmg fehlt.
 
-descoped
+released
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C2.061/
 reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST 8-day CMG V061. 2026-09-26: App 'LP DAAC Data Pool' autorisiert; cloud-Route data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/<granule-ur>/<granule-ur>.hdf 303→206 mit EDL-Token. URL-Port nötig.
+note MODIS/Terra LST 8-day CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15358. Compiler modis_lst_cmg fehlt.
 
-descoped
+released
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C3.061/
 reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Monthly CMG V061. 2026-09-26: App 'LP DAAC Data Pool' autorisiert; cloud-Route data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/<granule-ur>/<granule-ur>.hdf 303→206 mit EDL-Token. URL-Port nötig.
+note MODIS/Terra LST Monthly CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15367. Compiler modis_lst_cmg fehlt.
 
 descoped
 url https://api.lasair.lsst.ac.uk/api

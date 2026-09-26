@@ -416,7 +416,7 @@ fn state_class(state: &str) -> Option<StateClass> {
         | "review" => Some(StateClass::Open("mycelium")),
         "parser-gap" | "asset fehlt" => Some(StateClass::Open("mountain")),
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
-        | "refused" => Some(StateClass::Released),
+        | "refused" | "released" => Some(StateClass::Released),
         "asset present" | "index" | "artefakt" | "register" | "infra" | "probe" | "frame"
         | "listen" | "research" | "generiert" => Some(StateClass::Ignored),
         _ => None,
@@ -503,7 +503,7 @@ fn scan_dispositions_text(
         } else {
             snippet(note, 160)
         };
-        if state == "descoped" {
+        if state == "descoped" || state == "released" {
             released_out.push(format!(
                 "RELEASED\t{}:{}\t{} | {}",
                 path, start_line, state, step
@@ -3209,6 +3209,18 @@ mod tests {
     }
 
     #[test]
+    fn scan_dispositions_tags_released_as_released() {
+        let text = "released\nurl https://x\nnote → phi/sources.φ:15349\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 1);
+        assert!(open_out.is_empty());
+        assert!(released_out[0].starts_with("RELEASED\tb.\u{3c6}:1\t"));
+        assert!(released_out[0].contains("released"));
+    }
+
+    #[test]
     fn scan_dispositions_flags_an_unmapped_state() {
         let text = "blocked mystery\nurl https://x\nnote y\n";
         let mut open_out = Vec::new();
@@ -3241,6 +3253,7 @@ mod tests {
             ("erledigt", Some(StateClass::Released)),
             ("ausgelagert", Some(StateClass::Released)),
             ("descoped", Some(StateClass::Released)),
+            ("released", Some(StateClass::Released)),
             ("fehlt", Some(StateClass::Open("mycelium"))),
             ("offen", Some(StateClass::Open("mycelium"))),
             ("absent", Some(StateClass::Open("mycelium"))),
