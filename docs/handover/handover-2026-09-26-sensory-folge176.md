@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 7265f50333557a45357d64a1af3a611adc1c834cbef7b3fb999ec955467493f4
+  sha256: 20dfbf2330f8507834cc69bc33d95d705be5d0d0df7a00f14903e39bac934e50
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -138,19 +138,26 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** Re-Run mit ereignisspezifischer Zielgröße ohne `is_day`.
 
-#### Seismik-Flotte — 3D-Modell-Kandidat + Stationsterm gemessen, Registrierung offen
+#### Seismik-Flotte — Compiler-Arme gebaut, CDN-Läufe + 3D-Katalog-Arm offen
 - **Status:** offen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `research-max`) W-Phase-M9 gebaut/verdrahtet (`w_phase_bandpass`/`w_phase_energy_ratio`/`w_phase_discriminate`, `tools/measure/src/depthphase.rs`); Flotte unverzerrt (+1,7 km, se 4,7 km), 19/36 km dominieren das ±10-km-Gate; ak135 1D (`positive-maske.md:64`). 3D-Kandidat **LLNL-G3D-JPS** (gemessen 2026-09-26 via `general`: Downloads `gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip` 200, 47,17 MB, sha `3bb04377…`; `LLNL-G3D-JPS.e3d.binary` 200, 146,8 MB; `llnl-g3d-jps_tomofilt_1.zip` 200, 166,1 MB; `LLNL-Earth3D.5.4.3.jar` 200, 76,8 MB; **Lizenz gemessen absent**). Stationsterm **ISC-EHB**: Bulk ist **RES/HDF-gz**, nicht CSV — `http://download.isc.ac.uk/isc-ehb/` dir-listing, `1964.res.gz` 200, 10,07 MB; CSV nur per Query (`isc.ac.uk/isc-ehb/search/arrivals/csvoutput/` 200, PHP-Form); Lizenz nur „cite", Nachbar ISC-GEM CC-BY-SA 3.0. IRIS/EarthScope-EMC gemessen: `data.earthscope.org/archive/seismology/products/emc/netcdf/` dir-listing 200 (117652 B), `GLAD-M35.r0.1-n4c.nc` 200, 343,76 MB (`\x89HDF`); EMC-Lizenz measured absent; die frühere 61297-B-Template-Angabe **nicht reproduziert** (`ds.earthscope.org` 000/404) → ungemessen.
-- **Blockade:** `phi/sources.φ` fremd-dirty → keine Registrierung in diesem Atom.
-- **Braucht:** LLNL-G3D-JPS + ISC-EHB als `sources.φ`-Ernte-Kandidaten registrieren (wenn `sources.φ` frei); pP-Residuum sonst `pending` halten.
+- **Trigger:** die CDN-Läufe
+- **Lage:** (gemessen 2026-09-26) **LLNL-G3D-JPS-Arm gebaut** (`src/archivar/llnl_g3d.rs`, `tools/harvest/src/bin/llnl_g3d_jps_compiler.rs`, magic `G3D1`; **3,855,119 Records**, 93,046,104 B, sha `3a1b4c63…`; `volume-cdn.yml`), **ISC-EHB-Arm gebaut** (`isc_ehb_compiler.rs`, `EHB1`; **153,959 arrivals**, 12,316,733 B), **EMC-Arm gebaut** (`src/archivar/emc.rs`, `emc_compiler.rs`, `emc_radial.bin`; der netCDF-4/HDF5-Reader `hdf5.rs` existiert bereits). Quellen in `sources.φ` registriert (LLNL/ISC-EHB/Slab2 live; EMC radial). Der frühere ISC-EHB-Bulk ist RES (Text), die `.grd`/`.nc` sind netCDF-4 (`\x89HDF`), nicht classic.
+- **Blockade:** keine.
+- **Braucht:** CDN-Läufe dispatcht/lesen (`volume-cdn.yml`, `isc-ehb-cdn.yml`, `emc-cdn.yml`); der EMC-3D-netCDF-**Katalog**-Arm fehlt (der volume-Arm existiert) — optional.
+
+#### `src/archivar/llnl_g3d.rs` committen — HEAD-E0583 (fremd getragen 2026-09-26)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort (HEAD `fb8017a` ist rot für alle Core-bauenden Jobs).
+- **Lage:** (gemessen 2026-09-26) `src/archivar/mod.rs:96` `pub mod llnl_g3d;` ist committet (`e061cecbc`), die Datei `src/archivar/llnl_g3d.rs` ist **untracked** → `ci-check`/`paper-check`/`tools-build` `error[E0583] file not found for module llnl_g3d` (exit 101; Runs `36240964112`, `36240630953`). Operator-Wort 2026-09-26: Eigentum Sensory.
+- **Blockade:** keine.
+- **Braucht:** `src/archivar/llnl_g3d.rs` pfad-begrenzt committen (deine Arbeit; Mountain committet keine fremde untracked Datei).
 
 #### Positive Maske — ODF-Regel + Slab2-Ersatzroute gemessen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `research-max`) Picker kanonisiert (`picker.rs`); Slab2 ScienceBase 403 direct+Proton `blocked`, **Wayback-Route trivial**: `web.archive.org/web/20250309001257if_/…sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__…` (gemessen). Galileo-ODF-Trenner geklärt: **820-013/209G** (nicht 810-005), Separator = **Format-ID Bits 129–131**; 1988er-SIS text-bestätigt (`pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/DOCUMENT/TRK_2_18.TXT`, 60720 B), Format-2 golden-verifiziert (`odf.rs:52–100`), rev-G-Scan ohne Text-Layer (OCR offen).
-- **Blockade:** `sources.φ`/`blocked_sources.φ` fremd-dirty.
-- **Braucht:** Slab2-Ersatzroute + LLNL-Tomografie registrieren; ODF rev-G OCR (vision) oder die zwei Beine als abgeschlossen tragen.
+- **Lage:** (gemessen 2026-09-26) Picker kanonisiert (`picker.rs`); Slab2 ScienceBase 403 direct+Proton `blocked`, **Wayback-Route live** und **Slab2-Arm gebaut** (`slab2_compiler.rs`, `.grd` netCDF-4 → **1,021,034 Records**; `sources.φ`-origin auf die Wayback-Route aktualisiert). Galileo-ODF-Trenner geklärt: **820-013/209G** (nicht 810-005), Separator = **Format-ID Bits 129–131**; 1988er-SIS text-bestätigt (`pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/DOCUMENT/TRK_2_18.TXT`, 60720 B), Format-2 golden-verifiziert (`odf.rs:52–100`), rev-G-Scan ohne Text-Layer (OCR offen).
+- **Blockade:** keine.
+- **Braucht:** `slab2-cdn.yml` lesen; ODF rev-G OCR (vision) oder die zwei Beine als abgeschlossen tragen.
 
 #### Sieben Sphären — Feld + Aggregation gebaut, zwei Live-Quellen pending
 - **Status:** offen | **Bindung:** eigen
@@ -159,12 +166,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** kein Katalog trägt das Stern-Winkeldurchmesser-Feld; kein gemessenes Δz je Okkultation.
 - **Braucht:** Stern-Winkeldurchmesser-Feld: **Quelle gemessen** — VizieR II/346 `jsdc_v2` (JMMC Stellar Diameters Catalogue v2, 465877 rows; Spalte LDD in mas; ASU `https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2`) → registrieren, 1 `pending` füllen. Δz-Okkultation: kein Live-Katalog (Gaia-Archiv-TAP `gea.esac.esa.int` 401 anonym) → bleibt `pending`.
 
-#### Korona-Heizung — Feldmap fertig, Port durch fremde Dirty-Datei blockiert
+#### Korona-Heizung — Feldmap + `millionths`-Arm live registriert
 - **Status:** offen | **Bindung:** eigen
-- **Trigger:** `sources.φ` frei
-- **Lage:** (gemessen 2026-09-26 via `grind-pro`) Route lebt (`services.swpc.noaa.gov/json/solar_regions.json`, 139854 B heute, sha `008d3294…`); Feldmap-Block fertig in `/tmp/opencode/korona-register-block.φ` (units: area=millionths, extent=deg, `lon carrington_longitude`; `at sun` + `map .` → Surface→ICRS über WGCCRE; kein Compiler nötig — `extract.rs:3228–3357` löst das). Riss: `blocked_sources.φ` trägt den Eintrag heute als `descoped` (Z.244, uncommitted Batch-Bereinigung).
-- **Blockade:** `phi/sources.φ`/`blocked_sources.φ`/`src/archivar/units.rs` fremd-dirty.
-- **Braucht:** den Feldmap-Block nach `sources.φ` portieren; `millionths`→SI-Arm in `units.rs` (×2πR☉²·1e-6 ≈ 3,04e12 m²); `aia_compiler --harvest` (CI-only).
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-26) Feldmap in `sources.φ` registriert (`at sun`, `map .` → Surface→ICRS, area=„millionths", extent=deg, `lon carrington_longitude`); `millionths`→SI-Arm in `src/archivar/units.rs` (×2πR☉²·1e-6 ≈ 3,04e12 m²), `cargo check -p omegaflow` 0 Warnungen.
+- **Blockade:** keine.
+- **Braucht:** `aia_compiler --harvest` (CI-only); `ttl 3600`/`τ 86400` bleiben Schätzung, bis die SWPC-Kadenz gemessen ist.
 
 #### Trishuli — Bahrabise-Ernte + TE-Sweep gemessen, S1-Footprint offen
 - **Status:** offen | **Bindung:** eigen
@@ -397,8 +404,17 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `tools/measure/src/bin/weberin_body_verdict.rs`,
 `.github/workflows/cometels-cdn.yml`,
 `tools/harvest/src/bin/antares_loci_compiler.rs`,
-`tools/harvest/src/bin/lasair_ztf_compiler.rs`.
-Nicht committen (fremd): `phi/sources.φ`, `phi/blocked_sources.φ`,
+`tools/harvest/src/bin/lasair_ztf_compiler.rs`,
+`src/archivar/llnl_g3d.rs`, `src/archivar/emc.rs`, `src/archivar/zeuge.rs`,
+`src/archivar/units.rs`,
+`tools/harvest/src/bin/llnl_g3d_jps_compiler.rs`,
+`tools/harvest/src/bin/isc_ehb_compiler.rs`,
+`tools/harvest/src/bin/slab2_compiler.rs`,
+`tools/harvest/src/bin/emc_compiler.rs`,
+`.github/workflows/volume-cdn.yml`, `.github/workflows/emc-cdn.yml`,
+`.github/workflows/isc-ehb-cdn.yml`, `phi/sources.φ`.
+Nicht committen (fremde Hunks in geteilten Dateien): `phi/blocked_sources.φ`
+(Planck-SZ-Eintrag), `phi/declined_sources.φ` (Kp),
 `src/archivar/skydirection.rs`, `tools/measure/src/bin/kbo_residue_probe.rs`,
 `tools/measure/src/bin/rixs_cuprate_probe.rs`,
 `tools/measure/src/bin/suprastrom_form_probe.rs`, River-Handover,
