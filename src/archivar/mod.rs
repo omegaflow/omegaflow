@@ -35,6 +35,7 @@ pub mod cdn;
 pub mod celestrak_eop;
 pub mod cif;
 pub mod ck;
+pub mod cometels;
 pub mod copernicus;
 pub mod cors;
 pub mod dastcom;

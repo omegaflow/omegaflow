@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use crate::archivar::cometels::CometelsRec;
 use crate::archivar::dastcom::{CometRec, comet_state_at};
 use crate::archivar::gaia_sso::{GaiaBody, TNO_NAME, ang_sep_arcsec, predicted_radec, tno_number};
-use crate::archivar::kepler::{AU_M, GM_SUN_M3_S2, KeplerElements, elements_to_icrs_state};
+#[cfg(test)]
+use crate::archivar::kepler::{AU_M, GM_SUN_M3_S2};
 use crate::archivar::mpcorb::{self, MpcorbRec};
 use crate::archivar::{
     AsteroidRec, BodyEphemeris, J2000_EPOCH, body_barycenter_position, state_at,
@@ -149,45 +151,6 @@ impl BodyOutcome {
 pub struct BodyVerdict {
     pub name: String,
     pub outcome: BodyOutcome,
-}
-
-#[derive(Clone, Debug)]
-pub struct CometelsRec {
-    pub desig: String,
-    pub epoch_jd: f64,
-    pub e: f64,
-    pub q_au: f64,
-    pub incl_deg: f64,
-    pub node_deg: f64,
-    pub peri_deg: f64,
-    pub tp_jd: f64,
-}
-
-impl CometelsRec {
-    pub fn state_at(&self, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
-        if !self.e.is_finite() || !(0.0..1.0).contains(&self.e) {
-            return None;
-        }
-        if !self.q_au.is_finite() || self.q_au <= 0.0 {
-            return None;
-        }
-        let a_au = self.q_au / (1.0 - self.e);
-        let a_m = a_au * AU_M;
-        let n = (GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
-        let ma_deg = ((n * (self.epoch_jd - self.tp_jd) * 86400.0)
-            .rem_euclid(std::f64::consts::TAU))
-        .to_degrees();
-        elements_to_icrs_state(&KeplerElements {
-            a_au,
-            e: self.e,
-            incl_deg: self.incl_deg,
-            node_deg: self.node_deg,
-            peri_deg: self.peri_deg,
-            ma_deg,
-            epoch_jd: self.epoch_jd,
-            t_jd,
-        })
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -576,7 +539,7 @@ impl Weberin {
             let spk = body_barycenter_position(name, tdb, eph);
             let kepler = cometels
                 .iter()
-                .find(|c| c.desig == *desig)
+                .find(|c| crate::archivar::cometels::desig_of(c) == *desig)
                 .and_then(|c| c.state_at(jd));
             let outcome = match (spk, kepler) {
                 (Some(spk_p), Some((helio, _))) => {
@@ -656,8 +619,10 @@ mod tests {
     }
 
     fn cometels_encke() -> CometelsRec {
+        let mut desig = [0u8; crate::archivar::cometels::DESIG_BYTES];
+        desig[..8].copy_from_slice(b"2P/Encke");
         CometelsRec {
-            desig: "2P/Encke".to_string(),
+            desig,
             epoch_jd: J2000_EPOCH,
             e: 0.848,
             q_au: 0.336,

@@ -24,6 +24,7 @@ pub use archivar::cdf;
 pub use archivar::cdf25;
 pub use archivar::cdn;
 pub use archivar::cif;
+pub use archivar::cometels;
 pub use archivar::copernicus;
 pub use archivar::cors;
 pub use archivar::dastcom;
