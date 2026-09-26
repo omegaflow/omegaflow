@@ -8,10 +8,10 @@ note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fe
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
 
-released
+descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
 reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Daily CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15349. Compiler steht; Arm-Gap hdf4 NBIT/SKPHUFF/SZIP.
+note MODIS/Terra LST Daily CMG V061 descoped (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB; Jahr ≈ 250 GB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM. 8-day/monthly leben als per-Granule-Serie.
 
 released
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C2.061/

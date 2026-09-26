@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: 987684b9664431df39c5e0a881b61acf4cce8c235d5989636d3d856f14534808
+  sha256: 3a5a6198c81124d434b6954d1c26aa7192644ca94afa0751b66653a4a98c7392
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -29,10 +29,10 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 
 #### modis-cdn — per-Granule-Serie (monthly + 8-day), daily descoped
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `modis-cdn`-Lauf grün.
-- **Lage:** (gemessen 2026-09-27 via grind-flash/`ci_manage log 36267998951`; Operator-Wort 2026-09-27) monthly (MOD11C3) + 8-day (MOD11C2) als per-Granule-Serie (je Asset ≈688 MB < 2 GiB); daily descoped (RAM/Cap: ~250 GB/Jahr, ~6,7 TB für 2000–2026 — kein gemessener Bedarf). Compiler akkumuliert im RAM (`modis_lst_cmg_compiler.rs:505`) → ein Granule je Asset.
-- **Blockade:** kein per-Granule-Shard+Manifest-Workflow.
-- **Braucht:** `modis-cdn.yml` auf per-Granule-Serie + Manifest umbauen (Muster `gll-rss-odr`); `modis_lst_cmg_daily.bin` aus `phi/sources.φ` + `blocked_sources.φ:14` descopen (Befund = RAM/Cap).
+- **Trigger:** `modis-cdn`-Lauf grün (per-Granule-Serie).
+- **Lage:** (gemessen 2026-09-27 via grind-max; Operator-Wort 2026-09-27) Compiler um `--shard-dir/--manifest`-Modus erweitert: ein Granule = ein Asset ≈688 MB, RAM-bounded, Roundtrip-geprüft, Resume über CDN-Digests, Manifest (`name sha` je Zeile) erst bei 0 pending. `modis-cdn.yml`: `raster`-Job (CMR-Hits je Produkt-Jahr) + `compile`-Matrix ein Job je Produkt-Jahr (`max-parallel 8`, `timeout 350`, actionlint grün). monthly+8day in `phi/sources.φ` auf `*.manifest` (Shard-Konvention) umgestellt; daily descoped (`blocked_sources.φ:11-14` + Block aus `sources.φ` entfernt). `cargo check` 0/0.
+- **Blockade:** keine.
+- **Braucht:** `gh workflow run modis-cdn.yml` (Produkt-Jahre via `start_year`/`end_year`); danach die Jahres-Manifeste ins Register nachziehen (offener Rest: das jahrlose Serien-Manifest wird noch nicht erzeugt).
 
 #### Pre-CDN params — TIRM/TLON-Koordinaten-Riss (MCQG gelöst)
 - **Status:** wartend | **Bindung:** eigen

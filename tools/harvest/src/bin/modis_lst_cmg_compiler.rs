@@ -1,9 +1,15 @@
 use omegaflow::archivar::json::{JsonVal, jpath_val, parse_json};
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb};
-use omegaflow::cdn::upload_release;
+use omegaflow::cdn::{CDN_REPO, upload_release};
 use omegaflow::hdf4::{Hdf4, read_num, type_size};
+use omegaflow::odf::PODF_SHARD_LIMIT;
+use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom, Write};
+use std::path::Path;
 use std::process::Command;
 
 const NETLOC: &str = "data.lpdaac.earthdatacloud.nasa.gov";
@@ -412,22 +418,88 @@ fn unpack(bytes: &[u8]) -> Option<Vec<[f64; REC_FIELDS]>> {
     Some(out)
 }
 
+fn shard_stem(url: &str) -> Option<String> {
+    let base = url.rsplit('/').next()?;
+    let stem = base.strip_suffix(".hdf").unwrap_or(base);
+    if stem.is_empty() {
+        return None;
+    }
+    Some(stem.to_string())
+}
+
+fn cdn_digests(tag: &str) -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    let out = match Command::new("gh")
+        .arg("release")
+        .arg("view")
+        .arg(tag)
+        .arg("--repo")
+        .arg(CDN_REPO)
+        .arg("--json")
+        .arg("assets")
+        .arg("--jq")
+        .arg(".assets[] | \"\\(.name) \\(.digest)\"")
+        .output()
+    {
+        Ok(o) if o.status.success() => o,
+        _ => {
+            eprintln!(
+                "modis_lst_cmg: gh release view {tag} returned void — the resume digest map stays empty"
+            );
+            return map;
+        }
+    };
+    for line in String::from_utf8_lossy(&out.stdout).lines() {
+        let Some((name, digest)) = line.split_once(' ') else {
+            continue;
+        };
+        let Some(hex) = digest.strip_prefix("sha256:") else {
+            continue;
+        };
+        if hex.len() == 64 && hex.bytes().all(|b| b.is_ascii_hexdigit()) {
+            map.insert(name.to_string(), hex.to_string());
+        }
+    }
+    map
+}
+
+fn verify_bin_file(path: &str) -> Option<usize> {
+    let mut file = File::open(path).ok()?;
+    let len = file.metadata().ok()?.len();
+    if len < 8 {
+        return None;
+    }
+    let mut head = [0u8; 8];
+    file.read_exact(&mut head).ok()?;
+    if head[..4] != MAGIC {
+        return None;
+    }
+    let n = u32::from_le_bytes(head[4..8].try_into().ok()?) as usize;
+    if len != (8 + n * REC_BYTES) as u64 {
+        return None;
+    }
+    let mut buf = vec![0u8; REC_BYTES * 8192];
+    let mut remaining = n * REC_BYTES;
+    while remaining > 0 {
+        let want = remaining.min(buf.len());
+        file.read_exact(&mut buf[..want]).ok()?;
+        for chunk in buf[..want].chunks_exact(REC_BYTES) {
+            let comp = f64::from_le_bytes(chunk[32..40].try_into().ok()?);
+            if !(comp == COMP_DAY || comp == COMP_NIGHT) {
+                return None;
+            }
+        }
+        remaining -= want;
+    }
+    Some(n)
+}
+
 struct Granule {
     url: String,
     anchor: Option<f64>,
 }
 
-fn run(args: &[String]) {
-    let out_path = match arg_value(args, "--out") {
-        Some(p) => p,
-        None => {
-            eprintln!(
-                "modis_lst_cmg_compiler: --out <file.bin> absent — the output path is never silent"
-            );
-            std::process::exit(2);
-        }
-    };
-    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+fn boot() -> (String, LeapSeconds) {
     let Some(token) = edl_token() else {
         eprintln!(
             "modis_lst_cmg_compiler: EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token"
@@ -440,7 +512,11 @@ fn run(args: &[String]) {
         );
         std::process::exit(1);
     };
-    let granules: Vec<Granule> = if args.iter().any(|a| a == "--cmr") {
+    (token, lsk)
+}
+
+fn collect_granules(args: &[String], lsk: &LeapSeconds) -> Vec<Granule> {
+    if args.iter().any(|a| a == "--cmr") {
         let Some(concept_id) = arg_value(args, "--concept-id") else {
             eprintln!("modis_lst_cmg_compiler: --cmr carries no --concept-id — refused");
             std::process::exit(2);
@@ -477,7 +553,7 @@ fn run(args: &[String]) {
             .into_iter()
             .map(|g| {
                 let anchor = match (&g.begin, &g.end) {
-                    (Some(b), Some(e)) => granule_anchor(b, e, &lsk),
+                    (Some(b), Some(e)) => granule_anchor(b, e, lsk),
                     _ => None,
                 };
                 Granule { url: g.url, anchor }
@@ -493,7 +569,7 @@ fn run(args: &[String]) {
             .collect();
         if direct.is_empty() {
             eprintln!(
-                "usage: modis_lst_cmg_compiler (--cmr --concept-id <id> [--temporal <start>,<end>] [--limit N] | --granule <url|path> [...]) --out <file.bin> [--ci-mode] — refused"
+                "usage: modis_lst_cmg_compiler (--cmr --concept-id <id> [--temporal <start>,<end>] [--limit N] | --granule <url|path> [...]) (--out <file.bin> | --shard-dir <dir> --manifest <file>) [--series <name>] [--ci-mode] — refused"
             );
             std::process::exit(2);
         }
@@ -501,9 +577,57 @@ fn run(args: &[String]) {
             .into_iter()
             .map(|url| Granule { url, anchor: None })
             .collect()
+    }
+}
+
+fn run_series(
+    granules: &[Granule],
+    shard_dir: &str,
+    manifest: &str,
+    series: &str,
+    ci_mode: bool,
+    token: &str,
+    lsk: &LeapSeconds,
+) {
+    if fs::create_dir_all(shard_dir).is_err() {
+        eprintln!("modis_lst_cmg_compiler: create_dir_all for {shard_dir} returned void");
+        std::process::exit(1);
+    }
+    let digests = if ci_mode {
+        cdn_digests(NETLOC)
+    } else {
+        HashMap::new()
     };
-    let mut recs: Vec<[f64; REC_FIELDS]> = Vec::new();
-    for g in &granules {
+    let mut lines: Vec<(String, String)> = Vec::new();
+    let mut pending = 0usize;
+    for g in granules {
+        let Some(stem) = shard_stem(&g.url) else {
+            eprintln!(
+                "modis_lst_cmg: {} carries no shard stem — granule stays pending",
+                g.url
+            );
+            pending += 1;
+            continue;
+        };
+        let name = format!("{series}_{stem}.bin");
+        let path = format!("{shard_dir}/{name}");
+        if Path::new(&path).exists() {
+            match fs::read(&path) {
+                Ok(bytes) if !bytes.is_empty() => {
+                    lines.push((name.clone(), sha256_hex(&bytes)));
+                    eprintln!("modis_lst_cmg: {name} present on disk — resumed");
+                    continue;
+                }
+                _ => {}
+            }
+        }
+        if ci_mode {
+            if let Some(hex) = digests.get(&name) {
+                lines.push((name.clone(), hex.clone()));
+                eprintln!("modis_lst_cmg: {name} present on the CDN — resumed");
+                continue;
+            }
+        }
         match g.anchor {
             Some(a) => eprintln!("modis_lst_cmg: {} temporal midpoint TDB {a:.6}", g.url),
             None => eprintln!(
@@ -511,18 +635,87 @@ fn run(args: &[String]) {
                 g.url
             ),
         }
-        let t = g.anchor.or_else(|| granule_day_midpoint(&g.url, &lsk));
-        let before = recs.len();
-        recs.extend(harvest_granule(&g.url, t, &token));
-        eprintln!("modis_lst_cmg: {} → {} records", g.url, recs.len() - before);
+        let t = g.anchor.or_else(|| granule_day_midpoint(&g.url, lsk));
+        let recs = harvest_granule(&g.url, t, token);
+        if recs.is_empty() {
+            eprintln!(
+                "modis_lst_cmg: {} → no records — shard stays unwritten (0 honored)",
+                g.url
+            );
+            pending += 1;
+            continue;
+        }
+        let bytes = pack(&recs);
+        drop(recs);
+        if bytes.len() > PODF_SHARD_LIMIT {
+            eprintln!(
+                "modis_lst_cmg: {name} {} B exceed the {PODF_SHARD_LIMIT}-byte CDN asset limit — shard stays unwritten (0 honored)",
+                bytes.len()
+            );
+            pending += 1;
+            continue;
+        }
+        match unpack(&bytes) {
+            Some(parsed) => eprintln!(
+                "modis_lst_cmg: {name} {} records, {} B, roundtrip parses",
+                parsed.len(),
+                bytes.len()
+            ),
+            None => {
+                eprintln!("modis_lst_cmg: {name} roundtrip parse void — shard stays pending");
+                pending += 1;
+                continue;
+            }
+        }
+        let sha = sha256_hex(&bytes);
+        if fs::write(&path, &bytes).is_err() {
+            eprintln!("modis_lst_cmg: write {path} returned void");
+            pending += 1;
+            continue;
+        }
+        lines.push((name.clone(), sha));
+        if ci_mode {
+            if !upload_release(NETLOC, &path) {
+                pending += 1;
+                continue;
+            }
+            if fs::remove_file(&path).is_err() {
+                eprintln!("modis_lst_cmg: {path} local shard stays (remove void)");
+            }
+        }
     }
-    recs.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    if recs.is_empty() {
-        eprintln!("modis_lst_cmg_compiler: no records — the bin stays unwritten (0 honored)");
+    if lines.is_empty() {
+        eprintln!("modis_lst_cmg_compiler: no shards — the series stays unwritten (0 honored)");
         std::process::exit(1);
     }
-    let bytes = pack(&recs);
-    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+    let manifest_path = format!("{shard_dir}/{manifest}");
+    let mut text = String::new();
+    for (name, sha) in &lines {
+        text.push_str(&format!("{name} {sha}\n"));
+    }
+    if fs::write(&manifest_path, &text).is_err() {
+        eprintln!("modis_lst_cmg: write {manifest_path} returned void");
+        std::process::exit(1);
+    }
+    eprintln!("modis_lst_cmg: {manifest} lists {} shards", lines.len());
+    if ci_mode {
+        if pending > 0 {
+            eprintln!(
+                "modis_lst_cmg: {pending} granules pending — {manifest} stays unuploaded, the resume keeps the series honest"
+            );
+            std::process::exit(1);
+        }
+        if !upload_release(NETLOC, &manifest_path) {
+            std::process::exit(1);
+        }
+        if fs::remove_file(&manifest_path).is_err() {
+            eprintln!("modis_lst_cmg: {manifest_path} local manifest stays (remove void)");
+        }
+    }
+}
+
+fn run_out(granules: &[Granule], out_path: &str, ci_mode: bool, token: &str, lsk: &LeapSeconds) {
+    if let Some(parent) = Path::new(out_path).parent() {
         if !parent.as_os_str().is_empty() && fs::create_dir_all(parent).is_err() {
             eprintln!(
                 "modis_lst_cmg_compiler: create_dir_all for {} returned void",
@@ -531,25 +724,115 @@ fn run(args: &[String]) {
             std::process::exit(1);
         }
     }
-    if fs::write(&out_path, &bytes).is_err() {
-        eprintln!("modis_lst_cmg_compiler: write {} returned void", out_path);
+    let mut file = match File::create(out_path) {
+        Ok(f) => f,
+        Err(_) => {
+            eprintln!("modis_lst_cmg_compiler: create {out_path} returned void");
+            std::process::exit(1);
+        }
+    };
+    if file.write_all(&MAGIC).is_err() || file.write_all(&0u32.to_le_bytes()).is_err() {
+        eprintln!("modis_lst_cmg_compiler: header write {out_path} returned void");
         std::process::exit(1);
     }
-    match unpack(&bytes) {
-        Some(parsed) => eprintln!(
-            "modis_lst_cmg_compiler: {} {} records, {} B, roundtrip parses",
-            out_path,
-            parsed.len(),
-            bytes.len()
+    let mut total = 0usize;
+    for g in granules {
+        match g.anchor {
+            Some(a) => eprintln!("modis_lst_cmg: {} temporal midpoint TDB {a:.6}", g.url),
+            None => eprintln!(
+                "modis_lst_cmg: {} carries no temporal extent — anchor pending",
+                g.url
+            ),
+        }
+        let t = g.anchor.or_else(|| granule_day_midpoint(&g.url, lsk));
+        let recs = harvest_granule(&g.url, t, token);
+        let before = total;
+        if !recs.is_empty() {
+            let bytes = pack(&recs);
+            if file.write_all(&bytes[8..]).is_err() {
+                eprintln!("modis_lst_cmg_compiler: append {out_path} returned void");
+                std::process::exit(1);
+            }
+        }
+        total += recs.len();
+        eprintln!("modis_lst_cmg: {} → {} records", g.url, total - before);
+    }
+    if total == 0 {
+        drop(file);
+        if fs::remove_file(out_path).is_err() {
+            eprintln!("modis_lst_cmg_compiler: {out_path} removal void");
+        }
+        eprintln!("modis_lst_cmg_compiler: no records — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+    let Ok(count) = u32::try_from(total) else {
+        eprintln!(
+            "modis_lst_cmg_compiler: {total} records exceed the u32 count slot — {out_path} stays unfinished"
+        );
+        std::process::exit(1);
+    };
+    if file.seek(SeekFrom::Start(4)).is_err() || file.write_all(&count.to_le_bytes()).is_err() {
+        eprintln!("modis_lst_cmg_compiler: count patch {out_path} returned void");
+        std::process::exit(1);
+    }
+    drop(file);
+    let total_bytes = 8 + total * REC_BYTES;
+    match verify_bin_file(out_path) {
+        Some(n) if n == total => eprintln!(
+            "modis_lst_cmg_compiler: {out_path} {total} records, {total_bytes} B, roundtrip parses"
         ),
-        None => {
-            eprintln!("modis_lst_cmg_compiler: {} roundtrip parse void", out_path);
+        _ => {
+            eprintln!("modis_lst_cmg_compiler: {out_path} roundtrip parse void");
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release(NETLOC, &out_path) {
-        std::process::exit(1);
+    if ci_mode {
+        if (total_bytes as u64) > (PODF_SHARD_LIMIT as u64) {
+            eprintln!(
+                "modis_lst_cmg_compiler: {out_path} {total_bytes} B exceed the {PODF_SHARD_LIMIT}-byte CDN asset limit — the asset stays unuploaded"
+            );
+            std::process::exit(1);
+        }
+        if !upload_release(NETLOC, out_path) {
+            std::process::exit(1);
+        }
     }
+}
+
+fn run(args: &[String]) {
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let shard_dir = arg_value(args, "--shard-dir");
+    let manifest = arg_value(args, "--manifest");
+    let out_path = arg_value(args, "--out");
+    if shard_dir.is_some() || manifest.is_some() {
+        let (Some(dir), Some(man)) = (shard_dir.as_deref(), manifest.as_deref()) else {
+            eprintln!(
+                "usage: modis_lst_cmg_compiler (--cmr --concept-id <id> [--temporal <start>,<end>] [--limit N] | --granule <url|path> [...]) --shard-dir <dir> --manifest <file> [--series <name>] [--ci-mode] — the shard dir and the manifest are never split"
+            );
+            std::process::exit(2);
+        };
+        if out_path.is_some() {
+            eprintln!("modis_lst_cmg_compiler: --out and --shard-dir exclude each other — refused");
+            std::process::exit(2);
+        }
+        let Some(series) = arg_value(args, "--series") else {
+            eprintln!("modis_lst_cmg_compiler: --series <name> absent — the shard stem carries no series name");
+            std::process::exit(2);
+        };
+        let (token, lsk) = boot();
+        let granules = collect_granules(args, &lsk);
+        run_series(&granules, dir, man, &series, ci_mode, &token, &lsk);
+        return;
+    }
+    let Some(out) = out_path.as_deref() else {
+        eprintln!(
+            "modis_lst_cmg_compiler: --out <file.bin> absent — the output path is never silent"
+        );
+        std::process::exit(2);
+    };
+    let (token, lsk) = boot();
+    let granules = collect_granules(args, &lsk);
+    run_out(&granules, out, ci_mode, &token, &lsk);
 }
 
 fn main() {
@@ -690,5 +973,45 @@ mod tests {
         assert!(
             granule_day_midpoint("https://example.com/MOD11C1.A2000001.061.hdf", &lsk).is_none()
         );
+    }
+
+    #[test]
+    fn shard_stem_names_the_granule_file() {
+        assert_eq!(
+            shard_stem("https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/MOD11C2.A2000049.061.2020330085614/MOD11C2.A2000049.061.2020330085614.hdf").as_deref(),
+            Some("MOD11C2.A2000049.061.2020330085614")
+        );
+        assert_eq!(
+            shard_stem("data/MOD11C3.A2000061.061.2020182060603.hdf").as_deref(),
+            Some("MOD11C3.A2000061.061.2020182060603")
+        );
+        assert_eq!(
+            shard_stem("plain.granule").as_deref(),
+            Some("plain.granule")
+        );
+        assert!(shard_stem("").is_none());
+    }
+
+    #[test]
+    fn verify_bin_file_accepts_pack_and_names_corruption() {
+        let recs = vec![
+            [750_000_000.0, -30.5, 10.25, 288.4, COMP_DAY],
+            [750_000_001.0, -30.5, 10.25, 280.1, COMP_NIGHT],
+        ];
+        let bytes = pack(&recs);
+        let path =
+            std::env::temp_dir().join(format!("modis_lst_cmg_verify_{}.bin", std::process::id()));
+        let path_s = path.to_str().expect("the temp path is utf8");
+        fs::write(&path, &bytes).expect("the temp bin writes");
+        assert_eq!(verify_bin_file(path_s), Some(2));
+        let mut foreign = bytes.clone();
+        foreign[8 + 32] ^= 0xFF;
+        fs::write(&path, &foreign).expect("the temp bin rewrites");
+        assert!(verify_bin_file(path_s).is_none());
+        let mut short = bytes.clone();
+        short.truncate(8 + REC_BYTES - 1);
+        fs::write(&path, &short).expect("the temp bin rewrites");
+        assert!(verify_bin_file(path_s).is_none());
+        fs::remove_file(&path).ok();
     }
 }
