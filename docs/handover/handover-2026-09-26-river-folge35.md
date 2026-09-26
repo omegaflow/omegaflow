@@ -3,7 +3,7 @@
   session: River-Folge 35
   class: handover
   date: 2026-09-26
-  sha256: e255ccb65a71dfde767545788230b015f3f5d7c5e0df8338fa98df2e736031e6
+  sha256: e857151a609cc6f35aa97a6962b8767b07c39b98e5bad958b864d7990a2dd21f
   status: live
 -->
 # Handover — River-Folge 35 (2026-09-26)
@@ -29,11 +29,10 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 - **Postfach:** `state/mail/mail_ledger.φ` = privates Repo (`state/`) — hier absent;
   `mail_digest` „ledger absent" ist das Pfad-Artefakt. `docs/zustand/external-state.md`
   (2026-09-26, Mountain-Folge 166): keine fällige Korrespondenz.
-- **CI-Status am HEAD:** (gemessen 2026-09-26 via `ci_manage` + `curl /rate_limit`)
-  GitHub-API-Quota erschöpft — `ci_manage view` und `gh workflow run` antworten beide
-  `HTTP 403 rate limit exceeded` (user `295896184`); `graphql` reset 2026-09-26 00:06 UTC
-  (02:06 lokal), `core` 23:45 UTC. `gh workflow run bz-retro-probe.yml` erneut versucht →
-  403, **kein Dispatch**.
+- **CI-Status am HEAD:** (gemessen 2026-09-26 via `ci_manage` + `curl /rate_limit` +
+  `gh workflow run`) zu Session-Beginn war die GitHub-API-Quota erschöpft (`403`, user
+  `295896184`); nach dem Reset ging `gh workflow run bz-retro-probe.yml` durch (Run
+  `36224176888`, HEAD `5eeb76a`). health-check `36194355313` war zuletzt `queued`.
 - **Safety-Snapshot:** `refs/safety/1790377361`.
 - **`register_lookup --orphan-docs`:** 38 trägerlose Prosadokumente — alle Owner-assigniert
   (mountain/mycelium/sensory/science), **keine** River-Trägerpflicht mehr. `--stale --persist 3`
@@ -43,21 +42,21 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 
 ### Linie handelt (eigen)
 
-#### gic — Papier-Wort korrigiert, Dispatch an API-Quota blockiert
+#### gic — dispatcht, Ergebnis am Lauf messen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** GitHub-API-Quota-Reset (`graphql` 2026-09-26 00:06 UTC).
-- **Lage:** (gemessen 2026-09-26 via `gh workflow run` + `curl /rate_limit` + `git log`) die
+- **Trigger:** Lauf `36224176888` ist beendet.
+- **Lage:** (gemessen 2026-09-26 via `gh workflow run` + `ci_manage view` + `git log`) die
   Instrumente sind committet und gepusht (`f916093ee river: build gic PCMCI cross-check +
-  full-lag family bound, add SOD-2025 shards`). Das Träger-Papier
-  `docs/paper/gic-causal-driver.md` behauptete „built and dispatched 2026-09-26" — gegen die
-  Messung widerlegt (kein Dispatch); in diesem Atom korrigiert auf „dispatch pending on the
-  GitHub-API quota" (Abstract Z.17 + Offene-Punkte Z.359). `gh workflow run bz-retro-probe.yml`
-  erneut → HTTP 403, kein Dispatch. Die zwei Zeugen (Jahres-Pfeil vs. gehärteter
-  Quartals-bound) stehen weiter ungeglättet als `Riss`, gebaut-aber-ungemessen.
-- **Blockade:** GitHub-API-Quota (REST + GraphQL, user `295896184`).
-- **Braucht:** nach Quota-Reset `gh workflow run bz-retro-probe.yml`, Run-ID einmal per
-  `ci_manage view <id>` lesen, PCMCI-Zeile + full-lag-Bound gegen die zwei Zeugen auswerten,
-  dann `docs/paper/gic-causal-driver.md` auf das Ergebnis setzen.
+  full-lag family bound, add SOD-2025 shards`). `gh workflow run bz-retro-probe.yml` gelang
+  (Run `36224176888`, HEAD `5eeb76a`, `queued`), nachdem die GitHub-API-Quota zurückkam. Das
+  Träger-Papier `docs/paper/gic-causal-driver.md` ist auf „built and dispatched 2026-09-26
+  (run 36224176888); results pending" gesetzt (Abstract Z.17 + Offene-Punkte Z.359). Die zwei
+  Zeugen (Jahres-Pfeil vs. gehärteter Quartals-bound) stehen ungeglättet als `Riss`,
+  dispatcht-aber-ungemessen.
+- **Blockade:** keine — wartet auf das Lauf-Ende.
+- **Braucht:** `ci_manage view 36224176888` (bei Rot `ci_manage log 36224176888`), PCMCI-Zeile +
+  full-lag-Bound gegen die zwei Zeugen auswerten, dann `docs/paper/gic-causal-driver.md` auf das
+  Ergebnis setzen.
 
 #### health-check — Verdikt am Fix messen
 - **Status:** wartend | **Bindung:** eigen
