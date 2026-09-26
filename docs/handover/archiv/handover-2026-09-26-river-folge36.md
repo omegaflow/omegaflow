@@ -3,7 +3,7 @@
   session: River-Folge 36
   class: handover
   date: 2026-09-26
-  sha256: 111810bf873cdc72067182fbf66bd75c7b53b70ed5228adfc9823979f3fc7072
+  sha256: 083ffb7d2ddf7a99c2089a2f5be1f40cd3e2e850500d3f14f61853684565e22f
   status: live
 -->
 # Handover — River-Folge 36 (2026-09-26)
@@ -48,8 +48,10 @@ Diese Session konsumierte `handover-2026-09-26-river-folge35.md`.
 - **`register_lookup --open`:** 26 zustand-due (Mountain/geteilt), 5 orphan
   (future 4 / mycelium 1), orphan-docs 38 — alle fremd-owner-assigniert, keine River-Trägerpflicht.
 - **CI (Watchdog 2026-09-26):** in_progress register-dropped/ci-check/allwise-cdn;
-  `paper-check` rot (`big-bang-echo-sheet-12` = Sensory), gic-Abstract behoben;
-  gic-Lauf `36224176888` / health-check-Rerun `36194355313` am Lauf messen.
+  `paper-check` rot (jüngster Lauf `36235264452`: `terminologie-der-gegenstroemung`
+  sha-Mismatch; gic fällt aus der `->`-Liste, `big-bang-echo-sheet-12` steht in der
+  Liste = Sensory); gic-Lauf `36224176888` gemessen (PCMCI 13/16 removed, full-lag
+  alle family bound), health-check-Rerun `36194355313` offen.
 
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
@@ -99,17 +101,6 @@ Diese Session konsumierte `handover-2026-09-26-river-folge35.md`.
   Voll-Doku: `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md`. Kandidat
   `grind-max`/`grind-pro`. Danach fällt der Harte-Läufe-LOCK.
 
-#### gic — Ergebnis am Lauf messen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `36224176888` ist beendet.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage view`) Instrumente committet und gepusht
-  (`f916093ee`), Lauf `36224176888` gestartet; die zwei Zeugen (Jahres-Pfeil vs.
-  gehärteter Quartals-bound) stehen ungeglättet als `Riss`. Träger-Papier
-  `docs/paper/gic-causal-driver.md` auf „built and dispatched … results pending".
-- **Blockade:** keine — wartet auf das Lauf-Ende.
-- **Braucht:** `ci_manage view 36224176888` (bei Rot `ci_manage log 36224176888`),
-  PCMCI-Zeile + full-lag-Bound gegen die zwei Zeugen, dann Paper auf das Ergebnis setzen.
-
 #### health-check — Verdikt am Rerun messen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Rerun `36194355313` ist beendet.
@@ -118,16 +109,6 @@ Diese Session konsumierte `handover-2026-09-26-river-folge35.md`.
   Tone→Apertur-Gate-Test (`mathematikerin/tests.rs:547`) hängt daran.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 36194355313`, bei Rot `ci_manage log 36194355313`.
-
-#### paper-check — gic fällt aus der `->`-Liste
-- **Status:** wartend | **Bindung:** eigen (Rest fremd: Sensory)
-- **Trigger:** jüngster `paper-check`-Lauf nach Push.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage log`) gic-Abstract 302→194 W,
-  Header-sha `1aada7d3…` deckt; `big-bang-echo-sheet-12` Header ≠ Body bleibt
-  Sensory-Eigentum (`handover-2026-09-26-sensory-folge174.md`).
-- **Blockade:** `big-bang-echo-sheet-12` (fremde Linie).
-- **Braucht:** `ci_manage list` → jüngster `paper-check`; der gic-Eintrag muss aus der
-  `->`-Liste fallen.
 
 #### Browser-Extension forken (MV3-Kaltstart)
 - **Status:** eigen | **Bindung:** eigen
