@@ -29,3 +29,11 @@ jobs:
                  "flatten: cometels_flat returned void" \
                  "cometels_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin cometels_compiler -- \
+            --input kernels/cometels.json.gz \
+            --catalog cometels.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: cometels.bin returned void" \
+                 "cometels elements compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

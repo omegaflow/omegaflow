@@ -6,17 +6,19 @@ use omegaflow::archivar::{
     embedded_lsk, extract, fetch_raw_bytes, load_sources, parse_ephemeris_binary, system_now,
 };
 use omegaflow::cdn::CDN_BASE;
+use omegaflow::cometels::parse_catalog;
 use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES,
-    PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed,
-    classify, separation_m, three_way_fold,
+    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, CometelsLine, CometelsOutcome,
+    EPM_LINE_BODIES, INPOP_LINE_BODIES, PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold,
+    WEBERIN_TOL_M, Weberin, WeberinFeed, classify, separation_m, three_way_fold,
 };
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
 const DCOM5_TAG: &str = "ssd.jpl.nasa.gov-dcom5";
+const COMETELS_TAG: &str = "www.minorplanetcenter.net";
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
     if let Ok(bytes) = std::fs::read(path) {
@@ -45,7 +47,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     println!(
-        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--epoch <jd>] [--tol <m>]"
+        "usage: weberin_body_verdict [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--dcom5 <dcom5_comets.bin>] [--cometels <cometels.bin>] [--epoch <jd>] [--tol <m>]"
     );
 }
 
@@ -68,6 +70,32 @@ fn verdict_line(name: &str, outcome: &BodyOutcome) -> String {
             "weberin {name} state riss sep {sep_m:e} knot {}+{}",
             knot[0].word(),
             knot[1].word()
+        ),
+    }
+}
+
+fn cometels_line(name: &str, outcome: &CometelsOutcome) -> String {
+    match outcome {
+        CometelsOutcome::Placed { sep_m } => {
+            format!("weberin-cometels {name} state placed sep {sep_m:e}")
+        }
+        CometelsOutcome::Absent { line } => format!(
+            "weberin-cometels {name} state absent sep absent missing {}",
+            match line {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            }
+        ),
+        CometelsOutcome::Riss { sep_m, knot } => format!(
+            "weberin-cometels {name} state riss sep {sep_m:e} knot {}+{}",
+            match knot[0] {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            },
+            match knot[1] {
+                CometelsLine::Spk => "spk-ephemeris",
+                CometelsLine::Cometels => "cometels-keplerian",
+            }
         ),
     }
 }
@@ -131,6 +159,10 @@ fn main() {
     let dcom5_path = match arg_value(&args, "--dcom5") {
         Some(d) => d,
         None => "data/ssd.jpl.nasa.gov/dcom5_comets.bin".to_string(),
+    };
+    let cometels_path = match arg_value(&args, "--cometels") {
+        Some(d) => d,
+        None => "data/www.minorplanetcenter.net/cometels.bin".to_string(),
     };
     let tol_m = match arg_value(&args, "--tol").and_then(|w| w.parse::<f64>().ok()) {
         Some(t) if t.is_finite() && t > 0.0 => t,
@@ -199,6 +231,23 @@ fn main() {
             "weberin: {dcom5_path} carries no {}-byte comet record",
             COMET_RECORD_BYTES
         );
+    }
+
+    let cometels: Vec<omegaflow::cometels::CometelsRec> = match ensure_bin(
+        &cometels_path,
+        COMETELS_TAG,
+        "cometels.bin",
+    ) {
+        Some(b) => parse_catalog(&b),
+        None => {
+            println!(
+                "weberin: {cometels_path} bin void — absent on disk and the CDN fetch returned non-200 — the cometels second line stays unread"
+            );
+            Vec::new()
+        }
+    };
+    if cometels.is_empty() {
+        println!("weberin: {cometels_path} carries no cometels element record (magic CTL1)");
     }
 
     println!(
@@ -404,12 +453,25 @@ fn main() {
     for t in &w.triads {
         println!("{}", triad_line(t));
     }
+    let cometels_verdicts = w.weave_cometels(&cometels, tdb, tol_m);
+    let mut cometels_placed = 0usize;
+    let mut cometels_absent = 0usize;
+    let mut cometels_riss = 0usize;
+    for v in &cometels_verdicts {
+        match &v.outcome {
+            CometelsOutcome::Placed { .. } => cometels_placed += 1,
+            CometelsOutcome::Absent { .. } => cometels_absent += 1,
+            CometelsOutcome::Riss { .. } => cometels_riss += 1,
+        }
+        println!("{}", cometels_line(&v.name, &v.outcome));
+    }
     println!(
-        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {opened_epm}/{} EPM body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss}",
+        "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {opened_epm}/{} EPM body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss} | cometels {cometels_placed} placed {cometels_absent} absent {cometels_riss} riss of {} line(s)",
         bodies.len(),
         INPOP_LINE_BODIES.len(),
         EPM_LINE_BODIES.len(),
         w.verdicts.len(),
+        cometels_verdicts.len(),
     );
 }
 
@@ -509,5 +571,29 @@ mod tests {
             fold: TriadFold::United,
         };
         assert!(triad_line(&t).ends_with("| fold united all-three"));
+    }
+
+    #[test]
+    fn cometels_line_names_each_cometels_outcome() {
+        let placed = CometelsOutcome::Placed { sep_m: 2.5e4 };
+        assert_eq!(
+            cometels_line("encke", &placed),
+            "weberin-cometels encke state placed sep 2.5e4"
+        );
+        let absent = CometelsOutcome::Absent {
+            line: CometelsLine::Cometels,
+        };
+        assert_eq!(
+            cometels_line("encke", &absent),
+            "weberin-cometels encke state absent sep absent missing cometels-keplerian"
+        );
+        let riss = CometelsOutcome::Riss {
+            sep_m: 3.1e6,
+            knot: [CometelsLine::Spk, CometelsLine::Cometels],
+        };
+        assert_eq!(
+            cometels_line("encke", &riss),
+            "weberin-cometels encke state riss sep 3.1e6 knot spk-ephemeris+cometels-keplerian"
+        );
     }
 }
