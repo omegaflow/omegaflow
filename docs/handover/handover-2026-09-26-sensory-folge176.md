@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: a2b977e32491093a24cbbcb36fd30bb01787fbf510f91fe51f20e87e79fdbaa6
+  sha256: 1647b4eba59add8e9f7bfa9f0c6d8b3af8e5bec9c36f46b375d9479e94a1a1c3
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -373,6 +373,19 @@ Die Reihenfolge ist die Umsetzbarkeit; der Akteur steht pro Punkt in `Bindung`.
 Keine offen — alle zuvor hier benannten Messungen sind in diesem Atom gemessen und
 in ihre Punkte gefaltet (Korona-Kadenz, Weberin ALeRCE/Fink + Seismik-Weltlinien,
 Galileo/TRK-2-18 + DESCANSO, cometels-CDN, JUICE-OMNI2, Trishuli-S1).
+
+## Operator-Wort-Register (dieses Atom, 2026-09-26)
+
+Jedes gegebene Operator-Wort steht als `Wort | Datum | Quelle`. Der nächste Pass liest
+es hier und legt den Punkt **nie erneut vor** — nur eine neue Messung öffnet ihn. Ein
+operator-gebundener Punkt ohne Wort-Zeile ist unvollständig.
+
+- **Wort:** „ändere die agents — das Handover nach umsetzbar/nicht umsetzbar sortieren" | 2026-09-26 | Operator (Session) → ausgeführt: AGENTS.md `3672968d3`, folge176-Ranking `91724646f`.
+- **Wort:** „alles Offene bis zur Kante abarbeiten, gemessen abschließen — nicht verschleppen" | 2026-09-26 | Operator (Session).
+- **Wort:** „die Compiler-Arme durch Agenten bauen lassen" | 2026-09-26 | Operator (Session) → ausgeführt: LLNL-G3D-JPS, ISC-EHB, Slab2, EMC, cometels.
+- **Wort:** „alles Offene und Benannt-Ungemessene wird übernommen" | 2026-09-26 | Operator (Session).
+- **Wort:** „jedes Operator-Wort steht im Handover; keine Session kaut es neu durch" | 2026-09-26 | Operator (Session) — Regel: jeder operator-gebundene Punkt trägt seine Wort-Zeile; der nächste Pass legt ihn nicht erneut vor.
+- **Wort:** „deine Daten/Datei verlassen das Gerät nie" | 2026-09-25 | Operator (Session) — gilt für FR945/DEMETER (`Wort:`-Zeilen dort).
 
 ## Abschluss
 
