@@ -16,6 +16,44 @@ fn field_wgsl_validates_offline() {
 }
 
 #[test]
+fn browser_fieldshader_validates_and_carries_the_measured_branch() {
+    let html = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/static/index.html"))
+        .expect("static/index.html carries the browser fieldShader");
+    let marker = "const fieldShader = `";
+    let start = html.find(marker).expect("fieldShader marker absent") + marker.len();
+    let end = html[start..]
+        .find('`')
+        .expect("fieldShader closing backtick absent")
+        + start;
+    let wgsl = &html[start..end];
+
+    let module = match naga::front::wgsl::parse_str(wgsl) {
+        Ok(m) => m,
+        Err(e) => panic!("browser fieldShader parse: {}", e.emit_to_string(wgsl)),
+    };
+    let mut validator = naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    );
+    if let Err(e) = validator.validate(&module) {
+        panic!("browser fieldShader validate: {}", e.emit_to_string(wgsl));
+    }
+
+    assert!(
+        wgsl.contains("@group(0) @binding(3) var<storage, read> lut: array<vec4f>;"),
+        "the browser fieldShader carries no lut binding"
+    );
+    assert!(
+        wgsl.contains("if (vp.expose.y >= 0.5)"),
+        "the measured-color branch (vp.expose.y >= 0.5) is absent"
+    );
+    assert!(
+        wgsl.contains("rgb = lut[idx].rgb;"),
+        "the measured LUT read (lut[idx].rgb) is absent"
+    );
+}
+
+#[test]
 fn te_wgsl_validates_offline() {
     let module = match naga::front::wgsl::parse_str(TE_WGSL) {
         Ok(m) => m,

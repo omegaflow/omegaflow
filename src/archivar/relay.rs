@@ -266,7 +266,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             .cache
                             .cells
                             .values()
-                            .chain(std::iter::once(&buf.cache.unbounded))
+                            .chain(buf.cache.star_cells.values())
                         {
                             for sample in v {
                                 if matches!(sample.source, SampleSource::Sensor) {
@@ -344,7 +344,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             std::collections::HashSet::new();
                         let mut src_ids: std::collections::HashSet<u32> =
                             std::collections::HashSet::new();
-                        for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
+                        for v in hash.cells.values().chain(hash.star_cells.values()) {
                             for sample in v {
                                 n += 1;
                                 field_names.insert(sample.name.as_str());
@@ -357,11 +357,11 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             }
                         }
                         report.push_str(&format!(
-                            "{} samples={} cells={} unbounded={} anchor_vmax={:.3e} epoch_min={:.1} origins={}\n",
+                            "{} samples={} cells={} star_cells={} anchor_vmax={:.3e} epoch_min={:.1} origins={}\n",
                             fname,
                             n,
                             hash.cells.len(),
-                            hash.unbounded.len(),
+                            hash.star_cells.len(),
                             hash.anchor_vmax,
                             hash.epoch_min,
                             src_ids.len()
