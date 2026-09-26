@@ -9,11 +9,11 @@
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — 2026-09-26 Host tot (direct+Proton 000); Ersatz gemessen: esc.pithia.eu/data-collections/ 200 anonym. Tabellen pl610_dynamic_spectra_*, ionosondes, nqmaps, h2tecmaps, iriwarsaw. Trigger: /tap/tables 500→200 oder esc.pithia.eu-Ernte.
+note ivo://src.pas/tap — 2026-09-26 Host lebt (TAP 200); PostgreSQL :5432 refused, /tap/tables 500 → kein Sample. 11 epn_core-Tabellen. esc.pithia.eu = Metadaten-Katalog, access_url→:8081/data/* 404. Gap epncore-spatial (s_region STC-S, kein lat/lon-Skalar). pending bis Backend.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note SSDC: Session omegaflow gültig 2026-09-26; query.php „Permission Denied". Sotgiu 2026-09-16 (mail_ledger.φ:79): Limadou-Umbau CSES-02, „wait a few weeks"; neue Prozedur kommt — wir warten (:80). SSDC_PASS stale. Braucht: neue Prozedur (Sotgiu).
+note SSDC: 2026-09-26 query.php → SSDC-CAS-Login (Auth-Redirect), neue CSES-02-Prozedur noch nicht live. Sotgiu 2026-09-16 (mail_ledger.φ:79): Umbau, „wait a few weeks". Warten. SSDC_PASS stale.
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
