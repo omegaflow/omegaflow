@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: b2ad57135b10122f3a869e9c033ab68af5afa1fd5975d68c60ddf1c70832c30b
+  sha256: 7a4f1710bb70a6197d1d4c2d81bc0efeb98ab07e001abd6e6adae355b34a0d9a
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -57,7 +57,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 #### Browser-Extension — CI-Workflow gebaut; Dispatch + Artefakt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Commit+Push dieses Atoms (`browser-extension.yml` auf `main`).
-- **Lage:** (gemessen 2026-09-26 via git/write) Fork committet (`f9ea3284`, 60 Pfade, `chrome.alarms` in `wxt.config.ts:33` + `bridge-client.ts`); kein Lockfile → `.github/workflows/browser-extension.yml` gebaut (npm install → `npm run build` → `npm test` → Artefakt `chrome-mv3/`). Die Testsuite ist **nicht gelaufen** — unverified.
+- **Lage:** (gemessen 2026-09-26 via git/`ci_manage`) Fork committet (`f9ea3284`, 60 Pfade, `chrome.alarms` in `wxt.config.ts:33` + `bridge-client.ts`); **kein Lockfile** → `.github/workflows/browser-extension.yml` gebaut. Erster Lauf `36242493629` = failure: `npm install` stirbt an `npm error Cannot read properties of null (reading 'edgesOut')` (npm 10.9.8, Peer-Resolution ohne Lockfile; `ci_manage log 36242493629`). Fix `--legacy-peer-deps` gepusht (`502a515ed`), neuer Lauf `36242884020`. Die Testsuite ist **nicht gelaufen** — unverified.
 - **Blockade:** keine (JS, unabhängig von der cargo-Blockade).
 - **Braucht:** nach Push `gh workflow run browser-extension.yml`, `ci_manage view <id>`; bei Rot die Tests fixen; Artefakt für den Operator-Akt.
 
