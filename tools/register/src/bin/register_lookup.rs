@@ -418,7 +418,7 @@ fn state_class(state: &str) -> Option<StateClass> {
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
         | "refused" => Some(StateClass::Released),
         "asset present" | "index" | "artefakt" | "register" | "infra" | "probe" | "frame"
-        | "listen" | "research" => Some(StateClass::Ignored),
+        | "listen" | "research" | "generiert" => Some(StateClass::Ignored),
         _ => None,
     }
 }
@@ -3303,7 +3303,7 @@ mod tests {
 
     #[test]
     fn scan_index_text_tags_owner_and_splits_released_and_unmapped() {
-        let text = "# header\nausstehend 10 pipeline/queue/x.φ\nerledigt 3 archive/y\nausgelagert 2 archive-root/z\nindex 1 pipeline/catalog/\nvermerkt 9 weird\n";
+        let text = "# header\nausstehend 10 pipeline/queue/x.φ\nerledigt 3 archive/y\nausgelagert 2 archive-root/z\nindex 1 pipeline/catalog/\nvermerkt 9 weird\ngeneriert sources_index.φ\n";
         let mut open_out = Vec::new();
         let mut released_out = Vec::new();
         let n = scan_index_text(text, "i.\u{3c6}", &mut open_out, &mut released_out);
