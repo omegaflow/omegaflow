@@ -90,6 +90,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
 pub fn phase_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<odf::TnfPhaseRow>> {
     match format {
         "cassini_tnf" | "maven_tnf" | "dart_tnf" | "messenger_tnf" => odf::tnf_phase_series(bytes),
+        "eht_uvfits" => uvfits::beat_rows(bytes),
         _ => None,
     }
 }
@@ -386,6 +387,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "messenger_tnf" => match comp {
             odf::TNF_COMP_UL_PHASE => Some("messenger_tnf_ul_phase_cycles"),
+            _ => None,
+        },
+        "eht_uvfits" => match comp {
+            uvfits::COMP_EHT_AA => Some("eht_uvfits_alma_aa_phase"),
+            uvfits::COMP_EHT_AP => Some("eht_uvfits_apex_ap_phase"),
             _ => None,
         },
         "ams02_spec" => tdat::ams02_component_name(comp),

@@ -181,6 +181,7 @@ pub mod spectral;
 mod tests;
 pub mod types;
 pub mod units;
+pub mod uvfits;
 pub mod uws;
 
 pub use astrometry::*;

@@ -142,6 +142,14 @@ fn parse_tform(tform: &str) -> Option<(char, usize, Option<char>)> {
 
 impl FitsTable {
     pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        Self::parse_mode(buf, hdu_start, true)
+    }
+
+    pub fn parse_lenient(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        Self::parse_mode(buf, hdu_start, false)
+    }
+
+    fn parse_mode(buf: &[u8], hdu_start: usize, require_full: bool) -> Option<(Self, usize)> {
         let (header, data_start) = FitsHeader::parse(buf, hdu_start)?;
         if header.value("XTENSION") != Some("'BINTABLE'") {
             return None;
@@ -206,7 +214,7 @@ impl FitsTable {
             return None;
         }
         let table_bytes = row_bytes * n_rows;
-        if data_start + table_bytes > buf.len() {
+        if require_full && data_start + table_bytes > buf.len() {
             return None;
         }
         let next = data_start + table_bytes + heap_bytes;
