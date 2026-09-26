@@ -25,7 +25,7 @@ fn sas_token(collection: &str) -> Option<String> {
     let body = String::from_utf8(curl(&url)?).ok()?;
     let key = "\"token\":\"";
     let i = body.find(key)? + key.len();
-    let tok = body[i..].split('"').next()?.to_string();
+    let tok = body[i..].split('"').next()?.replace("\\u0026", "&");
     if tok.is_empty() { None } else { Some(tok) }
 }
 
