@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 172e589e156376eb5e5c75e1b639d6e900723ad1b0fb507c98b5bfa7723e5949
+  sha256: 50cc95860749e184ff328dee14bdf438b22f3e7411732c7b16cd3d33cbbbdf6b
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -31,12 +31,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 ### Linie (eigen)
 
-#### SuperDARN FITACF+MAP — bz2-Arm + Quellen
+#### SuperDARN FITACF — FITACF-Text-Parser + Quellenblock
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** Register-Pass `phi/sources.φ` / `superdarn_fitacf_compiler`.
-- **Lage:** (gemessen 2026-09-26) MAP-Globus `20e8a751…` `ACTIVE`; FITACF-Liste `POST superdarn.ca/db-fitacf-files-bounce` (JSON date/radars), Datei `sdc-serv.usask.ca/data/{Y}/{M}` 200 (Probe 665 238 B, sha256 `2c705acd…`). `superdarn_fitacf_compiler` hat keinen bz2-Arm.
-- **Blockade:** bz2-Arm fehlt.
-- **Braucht:** bz2-`decompress`-Arm aus `superdarn_rawacf_compiler` übernehmen; dann FITACF-/MAP-Block in `phi/sources.φ`.
+- **Lage:** (gemessen 2026-09-26) bz2-Arm gebaut (`3de575af0`, `--input <*.fitacf.bz2>`); MAP-Globus `20e8a751…` `ACTIVE`; Liste `POST superdarn.ca/db-fitacf-files-bounce`. Offen: sdc-serv-`.fitacf.bz2` decompressiert zu FITACF-**Text**, kein netCDF — die `process_bytes`-Kette liest nur netCDF/HDF5.
+- **Blockade:** FITACF-Text-Parser + JSON-Reader fehlen.
+- **Braucht:** FITACF-Text-Parser + db-fitacf-Liste in den Compiler; dann Quellenblock.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
@@ -80,19 +80,19 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Blockade:** CDPP-seitiges `online:false`.
 - **Braucht:** `restart`-Befehl (Operator) oder Wiedervorlage, wenn CNES die Dateien bereitstellt.
 
-#### GOSAT-GW — Compiler fehlt
+#### GOSAT-GW — Wide/L2 + Quellenblock
 - **Status:** autonom | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/sources.φ` / `gosat_*_compiler.rs`.
-- **Lage:** (gemessen 2026-09-26) Cookie-Auth (GOSAT_GW_MAIL/PASS); GWT3F_L1B 132 / GWT3W_L1B 434 Dateien; Probe 17 440 691 B HDF5 (sha256 `5f0e7920…`); L2_GHG/NO2 = 0. Kein `gosat*_compiler.rs` im Repo.
-- **Blockade:** Compiler fehlt.
-- **Braucht:** `gosat_tanso3_compiler` bauen + Quelle in `phi/sources.φ`.
+- **Trigger:** Register-Pass `phi/sources.φ`.
+- **Lage:** (gemessen 2026-09-26) Compiler gebaut (`1e3aeebc7`, L1B Fokus B1-3 median → `G3L1`, live 3648 Records, `cargo check` 0/0, 8 Tests). Offen: GWT3W_L1B (1,1 GB/Datei > Leseschranke), L2_GHG/NO2 (Search 0 Dateien), Band3-Artefakt-Ursache (pending).
+- **Blockade:** Wide/L2 ungemessen.
+- **Braucht:** GWT3F_L1B-Quellenblock in `phi/sources.φ`; Wide/L2 als eigene Punkte.
 
-#### MODIS LST CMG — Compiler + Asset fehlen
+#### MODIS LST CMG — HDF4 SD-Reader fehlt
 - **Status:** autonom | **Bindung:** eigen
-- **Trigger:** Register-Pass `tools/harvest` / `modis_lst_cmg_compiler`.
-- **Lage:** (gemessen 2026-09-26) drei Quellen registriert (`phi/sources.φ:15349/15358/15367`, `format modis_lst_cmg`, Cloud-Route 206 mit EDL-Bearer); `blocked_sources.φ` → `released`. Kein `modis*_compiler.rs` im Repo.
-- **Blockade:** Compiler/Reader fehlt.
-- **Braucht:** `modis_lst_cmg_compiler` (CMR-Granule → HDF4-SDS LST_Day/Night_CMG → CDN-`.bin`) bauen.
+- **Trigger:** `src/archivar/hdf4.rs` SD-API.
+- **Lage:** (gemessen 2026-09-26) Compiler-Gerüst gebaut (`3de575af0`, CMR+EDL+CDN-Write, `cargo check` 0/0); CMR 9596 hits, Cloud-Route 206, HDF4-Magic + DD-Kette live gemessen. Fehlt: HDF4 SD-API-Reader (SDstart/SDselect/SDread über DFTAG_NDG 720) + EOS-DD-Listen-Fortsetzung.
+- **Blockade:** HDF4 SD-Reader fehlt.
+- **Braucht:** `src/archivar/hdf4.rs` SD-API-Reader; dann LST_Day/Night_CMG (scale 0.02) → bin.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
