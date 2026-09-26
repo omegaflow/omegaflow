@@ -816,7 +816,9 @@ fn run(args: &[String]) {
             std::process::exit(2);
         }
         let Some(series) = arg_value(args, "--series") else {
-            eprintln!("modis_lst_cmg_compiler: --series <name> absent — the shard stem carries no series name");
+            eprintln!(
+                "modis_lst_cmg_compiler: --series <name> absent — the shard stem carries no series name"
+            );
             std::process::exit(2);
         };
         let (token, lsk) = boot();
