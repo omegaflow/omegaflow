@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: c2fdab4edee3e5e3e9fc1118088bf55dd2159c7e18c295eab6ab1c1d1db87a92
+  sha256: 282852ed8c30a01092a71586e75cc076666856bfed21e85588b7ec85fcb3680b
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -40,60 +40,46 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 
 ## Stehender Pass (gemessen 2026-09-26)
 
-- **HEAD:** `a8b54964` == `origin/main` (fast-forward); folge38 gepusht.
-- **Safety-Snapshot:** `refs/safety/1790439260`.
-- **Arbeitsbaum:** `D docs/handover/…folge37.md` (eigener Archiv-Move, noch nicht committet); `M phi/sources.φ` (fremd/laufend); `M src/archivar/skydirection.rs` (fremd — nicht angefasst).
-- **`open_points_check` folge38:** 22 Pfad-Refs, 1 „absent" = Parse-Artefakt `bin/omegaflow`-Ausgabe (kein stale Punkt), 0 format-gaps.
-- **`register_lookup --open`:** keine register-eigenen River-Einträge; 1 `ORPHAN_COMMITTED` [mycelium] + `CARRIER_DRIFT phi/blocked_sources.φ::gap:curation` (fremd). `--orphan-docs`: 1 (`docs/concepts/positive-maske.md`, fremd). `--stale river`: 0. `--fired river`: 2.
-- **Postfach:** `state/mail/mail_ledger.φ` absent (privates `state/`, CI-Build zuständig) — Lücke bleibt benannt.
-- **CI (via `ci_manage view`):** aktiv `health-check 36252943250`, `ci-check 36250412521`, `allwise-cdn 36249453619`; 7 rote `ci-check`-attempts (13:xx, Folge-runs aktiv). Getriggert: `star-dmax-probe 36252229964` = success (15:32Z), `health-check 36237216821` = success (13:09Z).
+- **HEAD:** `7e2cefd9f` == `origin/main` (fast-forward); dieser Atom gepusht.
+- **Safety-Snapshot:** `refs/safety/1790443358`.
+- **Arbeitsbaum:** nur Fremdarbeit (andere Linien: `AGENTS.md`, `_template.md`, mountain-Rename, `fits.rs`/`hdf4.rs`/`uvfits.rs`, `blocked_sources.φ`, planck-psz2, `skydirection.rs`) — nichts Eigenes offen.
+- **`open_points_check`:** 0 format-gaps (Stand folge37-Tafel).
+- **`register_lookup`:** keine register-eigenen River-Einträge; Orphans/`--orphan-docs` fremd (mycelium, `positive-maske`).
+- **Postfach:** `state/mail/mail_ledger.φ` absent (privates `state/`, CI-Build zuständig) — Lücke benannt.
+- **CI (diese Session dispatched):** `membrane-hull-probe 36260828234`, `ci-check 36260830080`; gefaltet `star-dmax-probe 36252229964` = success (keine Widerlegung).
 - Shared external state: `docs/zustand/external-state.md` (nicht kopiert).
 
 ## Offen
 
 ### Umsetzbar (jetzt, autonom bis zur Kante)
 
-#### star-dmax-Artefakt falten + Folgelauf (RISS-Zeuge)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Run `36252229964` = success (gefeuert).
-- **Lage:** (gemessen 2026-09-26 via `ci_manage view`) Run `36252229964` **success/completed** (head `1a492534`, 15:32Z), Artefakt vorhanden; lokaler `--span`-Pass: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21; der `d_max`/ECDF/`f_excl`-Lauf liegt im Run-Log/Artefakt.
+#### membrane-hull-probe — LOCK-Gate lesen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Run `36260828234` (membrane-hull-probe) beendet.
+- **Lage:** (gemessen 2026-09-26 via `gh workflow run`) Bin `tools/measure/src/bin/membrane_hull_probe.rs` + Workflow `membrane-hull-probe.yml` gebaut + gepusht (`7e2cefd9f`), Run `36260828234` dispatched. star-dmax-Artefakt `36252229964` gefaltet: f_excl 0, f_inc 0, interdecile 2.823739 (< 10) → keine Widerlegung, Query-Seite steht, RISS-Zeile geschlossen.
 - **Blockade:** keine.
-- **Braucht:** Artefakt/Log falten, RISS-Zeile per Schwelle schließen (`f_excl > 0.5` / `f_inc > 0` / interdecile > 10 → Insert-Fix widerlegt); dann den verifizierenden Folgelauf für die drei Umgehungen (`main_flow.rs:191-241`, `:1227-1258`, `:1299-1364/1758-1833`) dispatchen.
+- **Braucht:** `ci_manage view 36260828234`; bei grün (drei Umgehungen auf derselben Hülle) dem Operator das Harte-Läufe-LOCK zur Aufhebung vorlegen.
 
-#### Ruhe-Ort als Hüllen-Zentrum — Lese-Kante bauen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Rat-Verdikt liegt (Ja).
-- **Lage:** (gemessen 2026-09-26 via `council`) Rat einmütig **Ja** — der Ruhe-Ort (SSB-Origin) zählt als Hüllen-Zentrum; der Wert muss aus dem stehenden Slot kommen (`presence_slot`, `main_flow.rs:693-696`), nie hartkodiert `[0,0,0]`.
-- **Blockade:** keine (`llnl_g3d` getrackt).
-- **Braucht:** Code-Kante bauen — Hüllen-Zentrum aus dem stehenden Slot statt aus `archive.presence`, so dass der Hidden-Lauf ohne Browser die Sterne trägt; CI-Test.
-
-#### Sonnenfarbe color:measured — compute-only Renderpfad
+#### `#body`-Deklaration fehlt — alle Stations-Samples verworfen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** eigen.
-- **Lage:** (gemessen 2026-09-26 via `general`) Route (A) gescopt: Extraktor `browser_field_shader()` in `src/mathematikerin/tests.rs` herausziehen, neuer `#[ignore]`-Test, Pipeline `static/index.html:285-313` offscreen rekonstruieren (`Rgba8Unorm`, `compatible_surface: None`, Bind-Layout `:285-289`, Blend `one/one`+`add` `:299-313`).
-- **Blockade:** lavapipe-ICD fehlt auf ubuntu-latest (Crosscheck-Tests skippen, `tests.rs:110-113`).
-- **Braucht:** `mesa-vulkan-drivers`/lavapipe apt-Zeile + Test in `tests.rs` bauen; verifizieren, dass der measured-Zweig (LUT-Sampling) ausgeführt wird.
+- **Lage:** (gemessen 2026-09-26 via explore) `#body=<body>,<lat>,<lon>,<alt>` ist ein CLI-Arg (`main_flow.rs:550-565`), kein Registerfeld; es steht in `phi/` 0×, `main_flow.rs:566` verwirft ohne es alle Stations-Samples. 10 Stations-Quellen betroffen (u. a. `phi/sources.φ:428`, `:583`, `:715`).
+- **Blockade:** keine.
+- **Braucht:** `#body`-Übergabe im Lauf sicherstellen (CLI/Doku).
 
-#### Quellen-Verwerfung — `#body` fehlt + Shard-Overlaps
+#### Sonnenfarbe — `#[ignore]`-Test in CI ausführen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** eigen (Overlap-Enumeration).
-- **Lage:** (gemessen 2026-09-26 via `bin/omegaflow`-Ausgabe + `sread`) zwei Verwerfungs-Pfade: (1) `src/archivar/main_flow.rs:566` „native body undeclared" — ohne `#body=<body>,<lat>,<lon>,<alt>` werden alle Stations-Samples verworfen; (2) `refuse_shard_overlaps` (`src/archivar/parse.rs:1529-1558`) — überlappende ODF/PODF-Shards werden pro Format nicht gemergt (drei Rosetta-ODF-Shards `[1080341864,1431699247)`, `[1431692248,1464772941)`, `[1464772941,1475187437)`). Der Code ist korrekt; Ursache ist fehlende `#body`-Deklaration + überlappende Register-Einträge. **Ungemessen:** welche/wie viele Einträge konkret überlappen.
-- **Blockade:** offene Messung.
-- **Braucht:** `#body=`-Übergabe prüfen; überlappende Rosetta-ODF-Einträge in `phi/sources.φ` auflisten und entdoppeln (explore-Dispatch).
+- **Trigger:** `--ignored`-Dispatch vorhanden.
+- **Lage:** (gemessen 2026-09-26) Test `browser_field_pipeline_offscreen_runs_the_measured_branch` + `mesa-vulkan-drivers`-apt in `ci-check.yml` (committed `7e2cefd9f`); `#[ignore]` → läuft nicht im plain `cargo test`.
+- **Blockade:** kein `--ignored`-Dispatch.
+- **Braucht:** CI-Schritt `cargo test --release --features browser_relay -- --ignored browser_field_pipeline_offscreen_runs_the_measured_branch` (Muster `te-gate.yml`).
 
-#### Akustischer Radiations-Kanal — JBL / Bose SoundLink Mini
-- **Status:** blockiert | **Bindung:** Rat
-- **Trigger:** Rats-Verdikt über Form/Apertur des akustischen Radiators.
-- **Lage:** (gemessen 2026-09-26 via Operator-Wort) beide Aktuatoren vorhanden; Ton im Vordergrund consent-gebunden und gesperrt (kein Test darf Audio emittieren).
-- **Blockade:** kein akustischer Radiations-Kanal; Foreground-Audio gesperrt.
-- **Braucht:** Rats-Verdikt (Σω → Ton, Apertur/TE-Kopplung), dann Code-Kante.
-
-#### RX100 V5A — optische Quelle (Messbegriff + Parser)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** definierter Messbegriff (was misst die Kamera?) + Parser.
-- **Lage:** (gemessen 2026-09-26 via Operator-Wort) Sony RX100 V (DSC-RX100M5A) vorhanden; optischer Sensor, kein Parser/SDK im Bestand.
-- **Blockade:** Messbegriff und Parser fehlen (Sony Camera Remote API / PTP über WLAN/USB).
-- **Braucht:** Messbegriff festlegen, dann Source-Port nach `docs/SOURCE_PORT.md` + `phi/sources.φ`.
+#### RX100 — Restmessungen (Kalibrierung, Band, Live-Zugang)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Kamera im Smart-Remote-LAN; Messung via `rx100_compiler`.
+- **Lage:** (gemessen 2026-09-26) Parser/Compiler/Register gebaut (`7e2cefd9f`; `src/archivar/rx100.rs`, `phi/sources.φ`); `L_v = K·N²/(t·S)`, K=12.5 (ISO 2720, ungemessen); Band `freq`/`bin_width` noch nicht in die Wire-Slots verdrahtet.
+- **Blockade:** physische Kamera + Referenzmessung.
+- **Braucht:** K gegen ein kalibriertes Luminanzmeter messen; Kamera in Smart-Remote ins LAN, `cargo run -p omegaflow-harvest --bin rx100_compiler`.
 
 ### Nicht umsetzbar (wartet)
 
