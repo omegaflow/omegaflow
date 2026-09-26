@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 7b659b1e6086b39680465ae87c1c006ed09b211d6058c910c9af20a355b4da90
+  sha256: 977a7ad150503f2a41c2d90eb298f64815f55c1786c52bef3c93cded600781c8
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -31,12 +31,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 ### Linie (eigen)
 
-#### SuperDARN FITACF — Geolokation + Quellenblock
-- **Status:** aktiv | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/sources.φ`.
-- **Lage:** (gemessen 2026-09-26) bz2-Arm + DMAP-Binär-Parser + `--url` + db-fitacf-Liste gebaut (`8d59bb153`); Probe 1920 Records / 3580 Range-Zeilen, Byte-Gegenprobe + Live (`--url`, bounce) verifiziert; MAP-Globus `20e8a751…` `ACTIVE`. Offen: lat/lon-Geolokation fehlt (das Record trägt sie nicht) → Zellen absent.
-- **Blockade:** Geo-Mathematik (hdw.dat-Radarpositionen) fehlt.
-- **Braucht:** lat/lon je Radar aus `hdw.dat`; dann FITACF-/MAP-Block in `phi/sources.φ`.
+#### SuperDARN FITACF — Quellenblock + CI
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/sources.φ` / `superdarn-cdn.yml`.
+- **Lage:** (gemessen 2026-09-26) DMAP-Parser + bz2 + hdw.dat-Geolokation gebaut (`8d59bb153`/`e96807753`); live rkn 14 841 GeoRecords / 890 468 B, Roundtrip; Radarposition 62.8280°/−92.1130°, Gate 63.9980°/−93.0132°; MAP-Globus `20e8a751…` `ACTIVE`.
+- **Blockade:** keine.
+- **Braucht:** FITACF-/MAP-Quellenblock in `phi/sources.φ` + `superdarn-cdn.yml`-Job.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
@@ -87,12 +87,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Blockade:** Wide/L2 ungemessen.
 - **Braucht:** GWT3F_L1B-Quellenblock in `phi/sources.φ`; Wide/L2 als eigene Punkte.
 
-#### MODIS LST CMG — CDN-Manifestation
+#### MODIS LST CMG — CI-Manifestation + Reader
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Job `modis-cdn.yml` / `modis_lst_cmg_compiler --ci-mode`.
-- **Lage:** (gemessen 2026-09-26) SD-Reader + DD-Kette gebaut (`e16fd9cd5`); an MOD11C1.A2000058 verifiziert: 21 NDGs, LST_Day/Night `[3600,7200]` UINT16 scale 0.02 → 1 541 913 Records / 61 676 528 B Bin, Roundtrip parses. `cargo check` 0/0.
-- **Blockade:** CI-/Workflow-Akt.
-- **Braucht:** Manifestations-Job (`modis_lst_cmg_compiler --ci-mode`) + `phi/sources.φ`-Assets; NBIT/SKPHUFF/SZIP-Coder pending.
+- **Trigger:** `modis-cdn 36265129017`.
+- **Lage:** (gemessen 2026-09-26) SD-Reader + DD-Kette + Workflow gebaut (`e16fd9cd5`/`e96807753`); Quellen in compiled-asset-Form (`phi/sources.φ:15385/15394/15403`); Lauf dispatcht. Offen: `format modis_lst_cmg`-Reader in `extract.rs` fehlt; NBIT/SKPHUFF/SZIP-Coder pending.
+- **Blockade:** CI-Lauf + Reader.
+- **Braucht:** `ci_manage view 36265129017`; Reader-Arm `modis_lst_cmg`.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
