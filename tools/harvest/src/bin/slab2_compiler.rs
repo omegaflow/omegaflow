@@ -554,6 +554,12 @@ fn run(args: &[String]) -> Result<(), String> {
             None => format!("data/{NETLOC}/Slab2Distribute_Mar2018.tar.gz"),
         };
         if !std::path::Path::new(&tar_gz).exists() {
+            if let Some(parent) = std::path::Path::new(&tar_gz).parent() {
+                if !parent.as_os_str().is_empty() {
+                    std::fs::create_dir_all(parent)
+                        .map_err(|e| format!("create {} returned void: {e}", parent.display()))?;
+                }
+            }
             download(TAR_URL, &tar_gz)?;
         }
         let gz = std::fs::read(&tar_gz).map_err(|e| format!("read {tar_gz} returned void: {e}"))?;

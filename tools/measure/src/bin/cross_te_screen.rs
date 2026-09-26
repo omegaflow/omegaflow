@@ -126,11 +126,14 @@ fn main() {
         .iter()
         .position(|a| a == "--dir")
         .and_then(|i| args.get(i + 1));
-    let lags: Vec<usize> =
-        match args.iter().position(|a| a == "--lags").and_then(|i| args.get(i + 1)) {
-            Some(v) => v.split(',').filter_map(|s| s.parse().ok()).collect(),
-            None => vec![1, 3, 6, 12, 24],
-        };
+    let lags: Vec<usize> = match args
+        .iter()
+        .position(|a| a == "--lags")
+        .and_then(|i| args.get(i + 1))
+    {
+        Some(v) => v.split(',').filter_map(|s| s.parse().ok()).collect(),
+        None => vec![1, 3, 6, 12, 24],
+    };
     let n_surr: u64 = args
         .iter()
         .position(|a| a == "--surrogate")
@@ -148,7 +151,11 @@ fn main() {
         .position(|a| a == "--cond")
         .and_then(|i| args.get(i + 1))
         .map(|s| s.to_string());
-    let jobs: usize = match args.iter().position(|a| a == "--jobs").and_then(|i| args.get(i + 1)) {
+    let jobs: usize = match args
+        .iter()
+        .position(|a| a == "--jobs")
+        .and_then(|i| args.get(i + 1))
+    {
         Some(v) => match v.parse::<usize>() {
             Ok(j) if j >= 1 => j,
             _ => {
@@ -209,10 +216,7 @@ fn main() {
             Some(c) => name != c.as_str(),
             None => true,
         };
-        if !filters.is_empty()
-            && cond_ok
-            && !filters.iter().any(|f| name.contains(f.as_str()))
-        {
+        if !filters.is_empty() && cond_ok && !filters.iter().any(|f| name.contains(f.as_str())) {
             continue;
         }
         series.push(Series {
