@@ -2968,19 +2968,31 @@ pub fn blatt_pair_json(
     s
 }
 
+pub struct BlattPairSpec<'a> {
+    pub span_s: f64,
+    pub cadence_s: f64,
+    pub seed: u64,
+    pub commit_sha: &'a str,
+    pub n_surr: usize,
+}
+
 pub fn write_blatt_pair(
     path: &str,
     xs: &[f32],
     ys: &[f32],
-    span_s: f64,
-    cadence_s: f64,
-    seed: u64,
-    commit_sha: &str,
-    n_surr: usize,
+    spec: &BlattPairSpec,
 ) -> std::io::Result<()> {
     std::fs::write(
         path,
-        blatt_pair_json(xs, ys, span_s, cadence_s, seed, commit_sha, n_surr),
+        blatt_pair_json(
+            xs,
+            ys,
+            spec.span_s,
+            spec.cadence_s,
+            spec.seed,
+            spec.commit_sha,
+            spec.n_surr,
+        ),
     )
 }
 
@@ -3043,7 +3055,7 @@ fn parse_blatt_pair(text: &str) -> Result<BlattPair, BlattLoadError> {
     let n = usize_field(header, "n").ok_or(BlattLoadError::MissingField)?;
     let span_s = f64_field(header, "span_s").ok_or(BlattLoadError::MissingField)?;
     let cadence_s = f64_field(header, "cadence_s").ok_or(BlattLoadError::MissingField)?;
-    if !(span_s > 0.0) || !(cadence_s > 0.0) {
+    if span_s <= 0.0 || !span_s.is_finite() || cadence_s <= 0.0 || !cadence_s.is_finite() {
         return Err(BlattLoadError::MissingField);
     }
     let seed = u64_field(header, "seed").ok_or(BlattLoadError::MissingField)?;
