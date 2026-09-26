@@ -5296,3 +5296,4 @@ mod acoustic_sink_tests {
         assert!(parse_sink_names("only-one-field\n").is_empty());
     }
 }
+                    | "gosat_tanso3"
