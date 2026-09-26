@@ -52,7 +52,8 @@
     ["5 => 0.01,", "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["6 => 0.02,", "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["0.5 * anchor_amax *", "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"]
+    ["0.5 * anchor_amax *", "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"],
+    [".cell_str(bytes, r, name_col).map(|s| s.trim()", "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
