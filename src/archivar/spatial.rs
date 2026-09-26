@@ -499,7 +499,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             };
             let val_max = sample.val.abs() * tolman;
             let scale2 = softening * softening;
-            if !(val_max >= 0.0) || val_max < floor_ft * scale2 {
+            let plausible = val_max >= 0.0;
+            if !plausible || val_max < floor_ft * scale2 {
                 continue;
             }
             let p = match sample.motion.at(t2, sample.epoch, eph) {
