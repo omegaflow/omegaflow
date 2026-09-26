@@ -1,7 +1,7 @@
 name: meteo-cdn
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ inputs.event }}
   cancel-in-progress: false
 
 on:
@@ -36,8 +36,27 @@ jobs:
       - name: Build meteo_cache_manifest
         run: cargo build -p omegaflow-harvest --release --bin meteo_cache_manifest
 
+      - name: Build meteo_harvest and cross_te_screen
+        run: |
+          cargo build -p omegaflow-harvest --release --bin meteo_harvest
+          cargo build -p omegaflow-measure --release --bin cross_te_screen
+
       - name: Fetch origin and upload cache assets to CDN
         run: |
           ./target/release/meteo_cache_manifest \
             --event phi/meteo/${{ github.event.inputs.event }} \
             --out phi/pipeline/meteo_harvest --ci-mode
+
+      - name: Harvest series (cross_te_screen format)
+        run: |
+          EVENT_ID="${{ github.event.inputs.event }}"
+          ./target/release/meteo_harvest \
+            --event "phi/meteo/${EVENT_ID}" \
+            --out "phi/pipeline/meteo_harvest/${EVENT_ID%.json}"
+
+      - name: Cross-screen harvested series
+        run: |
+          EVENT_ID="${{ github.event.inputs.event }}"
+          ./target/release/cross_te_screen \
+            --dir "phi/pipeline/meteo_harvest/${EVENT_ID%.json}" \
+            --lags 1,6,12,24 --surrogate 20 --min-n 100
