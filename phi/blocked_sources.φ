@@ -328,10 +328,9 @@ descoped
 url https://data.lsst.cloud/api/tap/sync
 note Rubin/LSST descoped 2026-09-26: data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); Survey off-sky, jetzt kein Bedarf. Bei Survey-Daten wieder aufnehmen.
 
-blocked parser-def json
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
-gap curation
-note HTTP 200 2026-09-26 ORA-00904 DIST: yn_snr/yn_mass/theta500/dist fehlen; echte 18 Spalten indx,name,glon,glat,ra,dec,pos_err,snr,ts_min,ts_max,y_min,y_max,x,y,z,spt_ind,htm20,cntr; Quelle irsa_sage_lmc_infrared_catalog falsch.
+released
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,snr+FROM+planck.com_pccs2_sz_mmf3
+note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen; registriert in phi/sources.φ:8078 (planck_psz2_compiler, redshift-Crossmatch com_pccs2_sz_union 925/1271).
 
 pending
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
