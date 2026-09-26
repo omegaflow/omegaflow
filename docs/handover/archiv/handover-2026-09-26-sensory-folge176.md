@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 1647b4eba59add8e9f7bfa9f0c6d8b3af8e5bec9c36f46b375d9479e94a1a1c3
+  sha256: 859df78252e93638166dcc46aa60c4ea2e45e413764d323b3e49c1f03daa9576
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -184,12 +184,12 @@ Die Reihenfolge ist die Umsetzbarkeit; der Akteur steht pro Punkt in `Bindung`.
 - **Blockade:** keine.
 - **Braucht:** den FDSN-Station-Endpunkt in `sources.φ` registrieren.
 
-#### ZNSP FORMNETWORK — sizeof gemessen (16), Encoder-Site nicht im Baum
+#### ZNSP FORMNETWORK — sizeof gemessen (16), Encoder-Stub gefunden (`firmware/`), Feld-Layout offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) sizeof-Probe-Pfad gefixt (`85fcd3cf2`); Lauf `36235778378` @ `85fcd3cf2` **success**, **`SIZEOF_ESP_ZB_CFG_T=16`** gemessen. Aber `sgrep --all -i "form_network|formnetwork|znsp|zigbee" .` findet **keine Encoder-Site** im Baum — die im Vorhandover genannte `form_network_payload_pending()` ist nicht auffindbar; einzig `.github/workflows/zigbee-host.yml` existiert.
-- **Blockade:** die Encoder-Site fehlt (Handover-Claim ohne Read-Site).
-- **Braucht:** Encoder-Site lokalisieren, sonst den Claim streichen und `16` als Register-Wert führen (`phi/…`).
+- **Lage:** (gemessen 2026-09-26) sizeof-Probe-Pfad gefixt (`85fcd3cf2`); Lauf `36235778378` @ `85fcd3cf2` **success**, **`SIZEOF_ESP_ZB_CFG_T=16`** gemessen. Die Vorhandover-Notiz, die Encoder-Site fehle, war ein Messfehler: `form_network_payload_pending()` existiert (`firmware/radiatorium-lib/src/znsp.rs:318`, gibt `None` zurück). Zwei Ursachen des falschen Nullbefunds: der `sgrep` lief über `src tools .github` ohne `firmware/`, und `sgrep` wertet `|` literal, nicht als Alternation (`sgrep -i "zigbee|znsp" docs/specs` → 0, `sgrep -i zigbee docs/specs` → 11). Der Wert `16` ist in `docs/specs/mantis-shrimp-build.md` §ZNSP registriert (Feld-Layout bleibt ungemessen).
+- **Blockade:** das Feld-Layout in den 16 B ist ungemessen; ohne es kein byte-exakter Payload.
+- **Braucht:** `esp_zb_cfg_t`-Feld-Layout messen (Upstream-`esp_zigbee_host`-Header / sizeof-Probe je Offset), dann `form_network_payload_pending()` zu einem 16-B-Encoder bauen.
 
 #### Nadel V — AllWISE-Arm gebaut (Mycelium), Probe offen
 - **Status:** offen | **Bindung:** eigen
