@@ -3,7 +3,7 @@
   session: Mountain-Folge 176
   class: handover
   date: 2026-09-27
-  sha256: 3981ad7f505d3b1c8627fdaa17f2efb04a4ec4b8268821751262a98be3e770d6
+  sha256: 2db0619520acfbcd1ab8871de58dc0a04419c301f19c7cfcd7ddaf44b5a94068
   status: live
 -->
 # Handover — Mountain-Folge 176 (2026-09-27)
@@ -47,7 +47,7 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
 ### www→bare Netloc — φ-Registry-Flip + CDN-Migration + Cleanup offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** die bare-Releases sind manifestiert (die 10 `X-cdn`-Läufe dieser Session).
-- **Lage:** (gemessen 2026-09-27 via `cdn_reconcile` + `sgrep`) der Code der Aufzeichnung emittiert jetzt bare Netloc — 17 harvest-Compiler (`const NETLOC`/`CDN_TAG`/`GEOAZUR_NETLOC` + `upload_release`), `neptune_apdb_manifestor`, 4 `measure`-Bins, 10 `X-cdn.yml`; die Herkunfts-URLs (`origin`, `https://…`) bleiben unverändert. `cdn_reconcile` meldet die Drift nun als `www_prefixed_release_tags` (12 live: atnf.csiro.au, crystallography.net, geoazur.fr, gmrt.org, hamqsl.com, isc.ac.uk, minorplanetcenter.net, ncdc.noaa.gov, ncei.noaa.gov, nohrsc.noaa.gov, ogimet.com, sciencebase.gov). Noch prefixiert: `phi/sources.φ` (33 `url`-Zeilen) + `phi/pipeline/frame_registry.φ` (33 Zeilen, generiert aus sources.φ). `phi/sources.φ` ist seit dem mycelium-Commit (gosat/arvo-`register_sort`) wieder sauber.
+- **Lage:** (gemessen 2026-09-27 via `cdn_reconcile` + `sgrep`) der Code der Aufzeichnung emittiert jetzt bare Netloc — 17 harvest-Compiler (`const NETLOC`/`CDN_TAG`/`GEOAZUR_NETLOC` + `upload_release`), `neptune_apdb_manifestor`, 4 `measure`-Bins, 10 `X-cdn.yml`; die Herkunfts-URLs (`origin`, `https://…`) bleiben unverändert. `cdn_reconcile` meldet die Drift nun als `www_prefixed_release_tags` (12 live: atnf.csiro.au, crystallography.net, geoazur.fr, gmrt.org, hamqsl.com, isc.ac.uk, minorplanetcenter.net, ncdc.noaa.gov, ncei.noaa.gov, nohrsc.noaa.gov, ogimet.com, sciencebase.gov). Noch prefixiert: `phi/sources.φ` (33 `url`-Zeilen) + `phi/pipeline/frame_registry.φ` (33 Zeilen, generiert aus sources.φ). `phi/sources.φ` ist seit dem mycelium-Commit (gosat/arvo-`register_sort`) wieder sauber. Die 10 `X-cdn`-Läufe dispatcht 2026-09-27: gmrt `36278846125`, hamqsl `36278848344`, isc `36278850654`, neptune-apdb `36278852993`, noaa-cdo `36278855632`, nohrsc_snowfall `36278858393`, ogimet `36278860392`, psr `36278862339`, slab2 `36278864243`, uscrn `36278865940`.
 - **Blockade:** keine.
 - **Braucht:** `phi/sources.φ` 33 `url`-Zeilen auf bare `releases/download/<host>/`; `frame_registry.φ` regenerieren (`cargo run -p omegaflow-utils --bin frame_registry`); nach bestätigter bare-Manifestation die 12 www-Releases entfernen (§4: nie letzte Kopie).
 
