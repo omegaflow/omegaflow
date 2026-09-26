@@ -3,7 +3,7 @@
   session: Mountain-Folge 177
   class: handover
   date: 2026-09-27
-  sha256: 522f9cdcc00f8e122dd9196be51ddfd1366d0675983aa3df27b866e56719fb18
+  sha256: 9cc7f149fe1fcd441d8eeca9b53165768f088425cc0202f918f7475b4a088fe4
   status: live
 -->
 # Handover — Mountain-Folge 177 (2026-09-27)
@@ -18,7 +18,7 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
 ### P2 EHT uvfits — reduzierter Writer gebaut, Lauf-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `eht-uvfits-cdn`-Lauf am HEAD success (schreibt jetzt das reduzierte Bin).
-- **Lage:** (gemessen 2026-09-27) der Writer ist gebaut: `write_beat_bin`/`parse_beat_bin` in `src/archivar/uvfits.rs` (MAGIC `CF 86 0B 00`, 45-B-Zeile, `beat_rows` erkennt das Bin), der Compiler schreibt das reduzierte 2-Zeilen-Bin statt der 4,26-GiB-Roh-FITS; `cargo check` 0/0 + `beat_bin_roundtrips_the_two_tones`-Test. Der sgra-Lauf 36276702701 failure ist damit an der Wurzel geheilt (4,26 GiB → 2 Zeilen ≪ 2 GiB).
+- **Lage:** (gemessen 2026-09-27) der Writer ist gebaut: `write_beat_bin`/`parse_beat_bin` in `src/archivar/uvfits.rs` (MAGIC `CF 86 0B 00`, 45-B-Zeile, `beat_rows` erkennt das Bin), der Compiler schreibt das reduzierte 2-Zeilen-Bin statt der 4,26-GiB-Roh-FITS; `cargo check` 0/0 + `beat_bin_roundtrips_the_two_tones`-Test. Der sgra-Lauf 36276702701 failure ist damit an der Wurzel geheilt (4,26 GiB → 2 Zeilen ≪ 2 GiB). `eht-uvfits-cdn 36280390959` dispatcht (2026-09-27); `tools-build 36280394283`.
 - **Blockade:** keine.
 - **Braucht:** `gh workflow run eht-uvfits-cdn.yml`; bei success die Archiv-sha256 (`ed95566f…`) + echte AA–AP-`df` in `phi/sources.φ` (~:7952) nachtragen.
 
