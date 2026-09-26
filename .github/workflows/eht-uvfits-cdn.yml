@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 5400 -o kernels/e17a10-7-hi-na-1921-293-fits.tgz \
-            https://almascience.org/almadata/ec/eht/2016.1.01404.V/e17a10-7-hi-na-1921-293-fits.tgz
+            https://almascience.org/almadata/ec/eht/2016.1.01404.V/group.uid___A001_X11b3_X30.ec_eht.e17a10-7-hi-na-1921-293-fits.tgz
           cargo run -p omegaflow-harvest --release --bin eht_uvfits_compiler -- \
             --verify kernels/e17a10-7-hi-na-1921-293-fits.tgz
       - name: Select the ALMA–APEX baseline member, write eht_uvfits.bin, and manifest it to the CDN

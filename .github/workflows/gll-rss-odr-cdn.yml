@@ -2,7 +2,7 @@ name: gll-rss-odr-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   workflow_dispatch:
@@ -22,12 +22,12 @@ jobs:
         id: idempotence
         run: |
           if gh release view pds-rings.seti.org --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "gll_rss_odr"; then
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qF "gll_rss_odr.manifest"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "gll_rss_odr asset already present — manifest skipped"
+            echo "gll_rss_odr.manifest present — the sharded series is complete, manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "gll_rss_odr asset missing — compiling and manifesting"
+            echo "gll_rss_odr.manifest missing — compiling and manifesting"
           fi
       - name: Ensure the pds-rings.seti.org release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'

@@ -1,7 +1,37 @@
 pub const SAMPLES_PER_SPAN: usize = 64;
-pub const PACK_MAGIC: [u8; 4] = *b"GION";
-pub const PACK_ENTRY_BYTES: usize = 96;
+pub const PACK_MAGIC: [u8; 4] = *b"GIO2";
+pub const PACK_ENTRY_BYTES: usize = 120;
 pub const COMP_DELAY: u32 = 1;
+
+const PACK_MAGIC_LEGACY: [u8; 4] = *b"GION";
+const PACK_ENTRY_BYTES_LEGACY: usize = 96;
+
+struct EntryLayout {
+    entry_bytes: usize,
+    name_bytes: usize,
+    sha256_off: usize,
+    record_count_off: usize,
+    data_offset_off: usize,
+    data_length_off: usize,
+}
+
+const LAYOUT_V2: EntryLayout = EntryLayout {
+    entry_bytes: PACK_ENTRY_BYTES,
+    name_bytes: 64,
+    sha256_off: 64,
+    record_count_off: 96,
+    data_offset_off: 104,
+    data_length_off: 112,
+};
+
+const LAYOUT_LEGACY: EntryLayout = EntryLayout {
+    entry_bytes: PACK_ENTRY_BYTES_LEGACY,
+    name_bytes: 32,
+    sha256_off: 32,
+    record_count_off: 64,
+    data_offset_off: 72,
+    data_length_off: 80,
+};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IonocalRecord {
@@ -29,7 +59,7 @@ pub struct PackedIonocalFile {
 }
 
 pub fn full_year(two: i64) -> i64 {
-    if two < 70 { 2000 + two } else { 1900 + two }
+    if two < 69 { 2000 + two } else { 1900 + two }
 }
 
 fn find_sub(hay: &[u8], needle: &[u8]) -> Option<usize> {
@@ -285,12 +315,16 @@ pub fn write_bin(files: &[PackedIonocalFile]) -> Vec<u8> {
     for (i, f) in files.iter().enumerate() {
         let base = 8 + i * PACK_ENTRY_BYTES;
         let nameb = f.name.as_bytes();
-        let n = nameb.len().min(32);
+        let n = nameb.len().min(LAYOUT_V2.name_bytes);
         bin[base..base + n].copy_from_slice(&nameb[..n]);
-        bin[base + 32..base + 64].copy_from_slice(&f.sha256);
-        bin[base + 64..base + 68].copy_from_slice(&f.record_count.to_le_bytes());
-        bin[base + 72..base + 80].copy_from_slice(&offset.to_le_bytes());
-        bin[base + 80..base + 88].copy_from_slice(&(f.bytes.len() as u64).to_le_bytes());
+        bin[base + LAYOUT_V2.sha256_off..base + LAYOUT_V2.sha256_off + 32]
+            .copy_from_slice(&f.sha256);
+        bin[base + LAYOUT_V2.record_count_off..base + LAYOUT_V2.record_count_off + 4]
+            .copy_from_slice(&f.record_count.to_le_bytes());
+        bin[base + LAYOUT_V2.data_offset_off..base + LAYOUT_V2.data_offset_off + 8]
+            .copy_from_slice(&offset.to_le_bytes());
+        bin[base + LAYOUT_V2.data_length_off..base + LAYOUT_V2.data_length_off + 8]
+            .copy_from_slice(&(f.bytes.len() as u64).to_le_bytes());
         offset += f.bytes.len() as u64;
     }
     for f in files {
@@ -300,26 +334,46 @@ pub fn write_bin(files: &[PackedIonocalFile]) -> Vec<u8> {
 }
 
 pub fn parse_bin(data: &[u8]) -> Option<Vec<PackedIonocalFile>> {
-    if data.len() < 8 || data[0..4] != PACK_MAGIC {
+    if data.len() < 8 {
         return None;
     }
+    let layout = if data[0..4] == PACK_MAGIC {
+        &LAYOUT_V2
+    } else if data[0..4] == PACK_MAGIC_LEGACY {
+        &LAYOUT_LEGACY
+    } else {
+        return None;
+    };
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
-    if data.len() < 8 + count * PACK_ENTRY_BYTES {
+    if data.len() < 8 + count * layout.entry_bytes {
         return None;
     }
     let mut out = Vec::with_capacity(count);
     for i in 0..count {
-        let base = 8 + i * PACK_ENTRY_BYTES;
-        let name_end = data[base..base + 32]
+        let base = 8 + i * layout.entry_bytes;
+        let name_field = &data[base..base + layout.name_bytes];
+        let name_end = name_field
             .iter()
             .position(|b| *b == 0)
-            .unwrap_or(32);
+            .unwrap_or(layout.name_bytes);
         let name = String::from_utf8(data[base..base + name_end].to_vec()).ok()?;
         let mut sha256 = [0u8; 32];
-        sha256.copy_from_slice(&data[base + 32..base + 64]);
-        let record_count = u32::from_le_bytes(data[base + 64..base + 68].try_into().ok()?);
-        let data_offset = u64::from_le_bytes(data[base + 72..base + 80].try_into().ok()?) as usize;
-        let data_length = u64::from_le_bytes(data[base + 80..base + 88].try_into().ok()?) as usize;
+        sha256.copy_from_slice(&data[base + layout.sha256_off..base + layout.sha256_off + 32]);
+        let record_count = u32::from_le_bytes(
+            data[base + layout.record_count_off..base + layout.record_count_off + 4]
+                .try_into()
+                .ok()?,
+        );
+        let data_offset = u64::from_le_bytes(
+            data[base + layout.data_offset_off..base + layout.data_offset_off + 8]
+                .try_into()
+                .ok()?,
+        ) as usize;
+        let data_length = u64::from_le_bytes(
+            data[base + layout.data_length_off..base + layout.data_length_off + 8]
+                .try_into()
+                .ok()?,
+        ) as usize;
         if data_offset + data_length > data.len() {
             return None;
         }
@@ -455,7 +509,7 @@ mod tests {
     }
 
     #[test]
-    fn gion_bin_roundtrips() {
+    fn gio2_bin_roundtrips_full_name() {
         let file = PackedIonocalFile {
             name: "gll_rss_2003032t0121_dssmm_ion.txt".to_string(),
             sha256: [7u8; 32],
@@ -470,8 +524,39 @@ mod tests {
         assert_eq!(parsed[0].sha256, [7u8; 32]);
         assert_eq!(parsed[0].bytes, MEASURED_2003032);
         assert!(parse_bin(&bin[..bin.len() - 1]).is_none());
-        assert!(parse_bin(b"GION").is_none());
+        assert!(parse_bin(b"GIO2").is_none());
         assert!(parse_bin(b"XXXX").is_none());
+    }
+
+    #[test]
+    fn gion_legacy_bin_parses_truncated_name() {
+        let name = "gll_rss_2003032t0121_dssmm_ion.txt";
+        let nameb = name.as_bytes();
+        assert_eq!(nameb.len(), 34);
+        let mut entry = vec![0u8; PACK_ENTRY_BYTES_LEGACY];
+        let n = nameb.len().min(LAYOUT_LEGACY.name_bytes);
+        entry[..n].copy_from_slice(&nameb[..n]);
+        entry[LAYOUT_LEGACY.sha256_off..LAYOUT_LEGACY.sha256_off + 32].copy_from_slice(&[7u8; 32]);
+        entry[LAYOUT_LEGACY.record_count_off..LAYOUT_LEGACY.record_count_off + 4]
+            .copy_from_slice(&85u32.to_le_bytes());
+        let data_offset = 8 + PACK_ENTRY_BYTES_LEGACY;
+        entry[LAYOUT_LEGACY.data_offset_off..LAYOUT_LEGACY.data_offset_off + 8]
+            .copy_from_slice(&(data_offset as u64).to_le_bytes());
+        entry[LAYOUT_LEGACY.data_length_off..LAYOUT_LEGACY.data_length_off + 8]
+            .copy_from_slice(&(MEASURED_2003032.len() as u64).to_le_bytes());
+
+        let mut bin = Vec::new();
+        bin.extend_from_slice(&PACK_MAGIC_LEGACY);
+        bin.extend_from_slice(&1u32.to_le_bytes());
+        bin.extend_from_slice(&entry);
+        bin.extend_from_slice(MEASURED_2003032);
+
+        let parsed = parse_bin(&bin).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].name.as_bytes(), &nameb[..32]);
+        assert_eq!(parsed[0].sha256, [7u8; 32]);
+        assert_eq!(parsed[0].record_count, 85);
+        assert_eq!(parsed[0].bytes, MEASURED_2003032);
     }
 
     #[test]
