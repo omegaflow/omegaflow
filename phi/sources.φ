@@ -571,7 +571,7 @@ last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hP
 last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.hamqsl.com/hamqsl_solar.bin
+url https://github.com/omegaflow/sources/releases/download/hamqsl.com/hamqsl_solar.bin
 format hamqsl_solar
 origin https://www.hamqsl.com/solarxml.php
 compiler tools/harvest/src/bin/hamqsl_compiler.rs
@@ -581,7 +581,7 @@ field hamqsl_solarflux_sfu hamqsl_solarflux_sfu inverse-square em sfu 3600 0.0 0
 field hamqsl_solarwind_kms hamqsl_solarwind_kms patch-levy advective km/s 3600 0.0 0.0
 field hamqsl_magneticfield_nt hamqsl_magneticfield_nt inverse-square em nT 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.ogimet.com/ogimet_synop.bin
+url https://github.com/omegaflow/sources/releases/download/ogimet.com/ogimet_synop.bin
 format ogimet_synop
 origin https://www.ogimet.com/cgi-bin/gsynres
 compiler tools/harvest/src/bin/ogimet_compiler.rs
@@ -899,7 +899,7 @@ ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/goes_xrs.bin
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_xrs.bin
 format goes_xrs
 origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
 compiler tools/harvest/src/bin/goes_xrs_compiler.rs
@@ -908,7 +908,7 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/uscrn_hourly.bin
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
 origin https://www.ncei.noaa.gov/pub/data/uscrn/products
 compiler tools/harvest/src/bin/uscrn_compiler.rs
@@ -1175,7 +1175,7 @@ fanout 25
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.nohrsc.noaa.gov/nohrsc_snowfall.bin
+url https://github.com/omegaflow/sources/releases/download/nohrsc.noaa.gov/nohrsc_snowfall.bin
 format nohrsc_snowfall
 origin https://www.nohrsc.noaa.gov/snowfall/data
 compiler tools/harvest/src/bin/nohrsc_snowfall_compiler.rs
@@ -3867,168 +3867,168 @@ field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_format.txt
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_format.txt
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_hilton_type.instr
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_hilton_type.instr
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_ccd_flgs
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_ccd_flgs
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_jpl_nptsobs
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_jpl_nptsobs
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_photo_nik
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_photo_nik
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_besa
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_besa
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_camb
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_camb
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_cape
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_cape
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_golo
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_golo
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_gren
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_gren
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_gtok
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_gtok
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_nice
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_nice
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_nik
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_nik
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_pari
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_pari
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_radc
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_radc
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_stra
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_stra
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_tky
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_tky
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_toul
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_toul
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_uccl
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_uccl
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_usno
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_usno
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_neptune_transit_usno_urss
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_usno_urss
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_obslist.opt
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_obslist.opt
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.geoazur.fr/apdb_ref_opt.txt
+url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_ref_opt.txt
 format apdb
 origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/www.ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
+url https://github.com/omegaflow/sources/releases/download/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
 format noaa_cdo_ghcnd_tmax
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data
 compiler tools/harvest/src/bin/noaa_cdo_compiler.rs
@@ -9894,7 +9894,7 @@ dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.isc.ac.uk/isc_bulletin.iscb
+url https://github.com/omegaflow/sources/releases/download/isc.ac.uk/isc_bulletin.iscb
 format iscb
 origin https://www.isc.ac.uk/fdsnws/event/1/query
 compiler tools/harvest/src/bin/isc_bulletin_compiler.rs
@@ -9902,7 +9902,7 @@ sha256 a20da758359e15a4a20483b8f88d2072bc7f5edfae685e35283680329c21b334
 at earth
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/www.minorplanetcenter.net/cometels_flat.json
+url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/cometels_flat.json
 origin https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
 compiler tools/harvest/src/bin/cometels_compiler.rs
 ttl 604800
@@ -12878,7 +12878,7 @@ compiler tools/harvest/src/bin/isc_ehb_compiler.rs
 at earth
 ttl 31536000
 
-url https://github.com/omegaflow/sources/releases/download/www.gmrt.org/gmrt_bathymetry.bin
+url https://github.com/omegaflow/sources/releases/download/gmrt.org/gmrt_bathymetry.bin
 format gmrt_bathymetry
 origin https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
 compiler tools/harvest/src/bin/gmrt_compiler.rs
@@ -12886,7 +12886,7 @@ sha256 0acd52f33ab9ff7d998e85b37a230d8fbf527ab0948c7ce5c69d3b139c83b52e
 at earth
 ttl 31536000
 
-url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
+url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
 format slab2_depth
 origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
 compiler tools/harvest/src/bin/slab2_compiler.rs
