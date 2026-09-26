@@ -3,7 +3,7 @@
   session: Mycelium-Folge 174
   class: handover
   date: 2026-09-26
-  sha256: a77f933147462d36e862c9365f604e70efb5d586f093d794e0c8cbf89692d9f2
+  sha256: 4b1ad87b8ed63cd9ae6f343730002acb11385a2c6140e5c94b67926b84eaaeae
   status: live
 -->
 # Handover — Mycelium-Folge 174 (2026-09-26)
@@ -18,17 +18,13 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge173.md`.
 ## Operator-Wort-Register
 
 - Wort | 2026-09-26 | „all" — session-weiter Consent (`mycelium_go`), Delegation an alle Taucher.
+- Wort | 2026-09-27 | „GOSAT … lass es sein, Sensory kümmert sich" → GOSAT-Punkt an Sensory-Linie übergeben (`handover-2026-09-26-sensory-folge179.md` Punkt 10).
+- Wort | 2026-09-27 | DEMETER bleibt `operator-gebunden` (Operator: `PUT /orders/18387/restart`).
+- Frage | 2026-09-27 | „wofür brauchen wir modis?" — LST-Thermalfeld gemessen (`sources.φ:15847-15872`); `modis-cdn`-Dispatch wartet auf Entscheidung (Grenze RAM/2-GiB).
 
 ## Offen (aufgeschlüsselt)
 
 ### Linie (eigen)
-
-#### GOSAT-GW GWT3F_L1B — Re-pack gebaut, comp-Formel-Riss
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** `src/archivar/main_flow.rs`/`extract.rs` frei von fremden Hunks (AIA/EVE-Linie aktiv).
-- **Lage:** (gemessen 2026-09-27 via grind-pro) Re-pack in `tools/harvest/src/bin/gosat_tanso3_compiler.rs` implementiert: `REC_BYTES=60`, `pack()`/`unpack()` auf `[t,lat,lon,alt,freq,bin_width,val,comp]`, Test `comp_mapping_spans_one_through_six`; radiance-`units` gemessen `W.m-2.sr-1.um-1` (live 17 440 691 B, sha256 5f0e7920…). Riss: Rat-Formel `product·3+(band−1)` ergibt 3..8, nicht 1..6 — auf `comp=(product−1)·3+band` (Fokus 1..3, Wide 4..6) aufgelöst; Rat-Bestätigung offen.
-- **Blockade:** fremde uncommittete Hunks in `main_flow.rs` (AIA/EVE) und `extract.rs`.
-- **Braucht:** Rat-Bestätigung comp-Reihenfolge; nach Freiheit: `MAGIC_GOSAT`/`COMP_GOSAT_*`+`magic_of`/`comp_max` (`geo.rs:205`/`:248`), `geo_series_component_name` (`extract.rs:450`), `"gosat_tanso3"`-Arm in `main_flow.rs:3253-3282`, Tests (`tests.rs`), `phi/sources.φ`-Block; dann `blocked_sources.φ:323-325` → released.
 
 #### modis-cdn — Sharding gebaut, RAM-/2-GiB-Cap-Riss
 - **Status:** operator-gebunden | **Bindung:** eigen
