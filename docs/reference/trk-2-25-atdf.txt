@@ -443,5 +443,12 @@ E.      EXPLANATORY NOTES
 |  116   |2125-2160|  5/31  | Transmitter/Exciter Frequency (Hz*10)          |
 |  117   |2161-2304|  144   | 0 (not used)                                   |
 |============================================================================|
-                                                                              
-                                                                              
+
+Format 8 (ATDF Record Format 8) -- Item 20, measured 2026-09-26:
+  Source: SFOC-NAV-TRK-2-25, 1996-07-31, Table 3-3 "Tracking Data Logical
+  Records", page 3-5 (scan, no text layer; OCR via pdftoppm + vision):
+  https://pds-geosciences.wustl.edu/radiosciencedocs/urn-nasa-pds-radiosci_documentation/DSN_TRK-2-25/dsn_trk-2-25.1996-07-31.pdf
+  Item 20 "Doppler Bias": Pack Format S18 (signed 18-bit, two's complement),
+  Data Units kHz.  Format 4 (this file, Item 20, octets 224-227) states MHz.
+  The F8 -> MHz conversion is therefore /1000 (src/archivar/atdf.rs:383).
+
