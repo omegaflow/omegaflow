@@ -146,23 +146,6 @@ fn abstract_text(body: &str) -> String {
     lines.join(" ")
 }
 
-fn read_token() -> Option<String> {
-    if let Ok(t) = env::var("ARXIV_TOKEN") {
-        if !t.is_empty() {
-            return Some(t);
-        }
-    }
-    let body = fs::read_to_string(".secrets.local").ok()?;
-    for line in body.lines() {
-        if let Some((k, v)) = line.split_once('=') {
-            if k.trim() == "ARXIV_TOKEN" && !v.trim().is_empty() {
-                return Some(v.trim().to_string());
-            }
-        }
-    }
-    None
-}
-
 fn main() {
     let slug = match env::args().nth(1) {
         Some(s) if !s.is_empty() => s,
@@ -202,30 +185,14 @@ fn main() {
     let abstract_words = abstract_text(&body).split_whitespace().count();
     let body_sha = sha256_hex(body.as_bytes());
 
-    match read_token() {
-        None => {
-            eprintln!("pending — no ARXIV_TOKEN (env or .secrets.local)");
-            eprintln!(
-                "the arXiv account, the endorsement and the submission token are Leitstelle work; no token is fabricated."
-            );
-            println!("ready payload (not sent):");
-            println!("  slug:     {}", slug);
-            println!("  title:    {}", title);
-            println!("  abstract: {} words", abstract_words);
-            println!("  body sha: {}", body_sha);
-            std::process::exit(2);
-        }
-        Some(_token) => {
-            println!("ready payload (not sent):");
-            println!("  slug:     {}", slug);
-            println!("  title:    {}", title);
-            println!("  abstract: {} words", abstract_words);
-            println!("  tex:      docs/paper/export/{}.tex", slug);
-            println!("  body sha: {}", body_sha);
-            eprintln!(
-                "pending — the submission endpoint is not carried by the public arXiv API docs (info.arxiv.org/help/api/submission.html carries no entry); the named path is the web UI (Submit TeX/LaTeX) or arXiv third-party submission. The endpoint is named by the Leitstelle when the account exists."
-            );
-            std::process::exit(1);
-        }
-    }
+    println!("ready payload (not sent):");
+    println!("  slug:     {}", slug);
+    println!("  title:    {}", title);
+    println!("  abstract: {} words", abstract_words);
+    println!("  tex:      docs/paper/export/{}.tex", slug);
+    println!("  body sha: {}", body_sha);
+    eprintln!(
+        "pending — arXiv carries no submission token; submission is the web UI (arxiv.org/user, Submit TeX/LaTeX) or the SWORD/APP deposit over HTTP Basic Auth (permission-gated). The submission path is set when the account exists."
+    );
+    std::process::exit(2);
 }
