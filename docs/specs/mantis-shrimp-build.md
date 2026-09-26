@@ -2,7 +2,7 @@
   title: Mantis-Shrimp minimal — build & assembly (CORE BUILT)
   class: ref
   date: 2026-09-21
-  sha256: d098ee2afc9f078b7b40e383ea16da70a4f6716585264bd1b6ab8dc646efb1b6
+  sha256: b927281e22215420793a028ad05a57dc8cea6b05e127ed86ee2fba3c37db9dd8
   status: live
   see-also: docs/specs/omegaflow-sense-hardware.yaml.md, docs/specs/mantis-shrimp-bom.md
 -->
@@ -213,5 +213,12 @@ Built:
 - `.github/workflows/zigbee-host.yml` — builds the upstream `examples/esp_zigbee_host`
   for esp32s3 (measured SHA `c9e2c3e12642c704096dfefe25b62212b47229ba`, ESP-IDF v5.3.2).
 
-`pending`: the `esp_zb_cfg_t` FORMNETWORK request payload is ABI-raw (`sizeof` unmeasured)
-— named as `NetworkMachine::form_network_payload_pending()`, never a guessed struct.
+`pending`: the `esp_zb_cfg_t` FORMNETWORK request payload is ABI-raw (field layout
+unmeasured) — named as `NetworkMachine::form_network_payload_pending()`, never a guessed struct.
+
+Measured (Sensory-Folge 177, 2026-09-26, CI run `36235778378` @ `85fcd3cf2`):
+`SIZEOF_ESP_ZB_CFG_T = 16` — the FORMNETWORK request payload is 16 B. The field
+layout inside those 16 B stays unmeasured, so `form_network_payload_pending()`
+(`firmware/radiatorium-lib/src/znsp.rs:318`) returns `None`; the encoder site
+exists in the tree (the 2026-09-26 claim "not in the tree" searched only
+`src tools .github` and missed `firmware/`).
