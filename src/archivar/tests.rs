@@ -9340,6 +9340,91 @@ fn iss_lis_register_field_matches_component_name() {
 }
 
 #[test]
+fn gosat_tanso3_geo_series_roundtrip_and_component_name() {
+    let comps = [
+        crate::geo::COMP_GOSAT_FOCUS_BAND1,
+        crate::geo::COMP_GOSAT_FOCUS_BAND2,
+        crate::geo::COMP_GOSAT_FOCUS_BAND3,
+        crate::geo::COMP_GOSAT_WIDE_BAND1,
+        crate::geo::COMP_GOSAT_WIDE_BAND2,
+        crate::geo::COMP_GOSAT_WIDE_BAND3,
+    ];
+    let names = [
+        "gosat_tanso3_radiance_focus_band1_w_m2_sr_um",
+        "gosat_tanso3_radiance_focus_band2_w_m2_sr_um",
+        "gosat_tanso3_radiance_focus_band3_w_m2_sr_um",
+        "gosat_tanso3_radiance_wide_band1_w_m2_sr_um",
+        "gosat_tanso3_radiance_wide_band2_w_m2_sr_um",
+        "gosat_tanso3_radiance_wide_band3_w_m2_sr_um",
+    ];
+    let recs: Vec<crate::geo::GeoRec> = comps
+        .iter()
+        .enumerate()
+        .map(|(i, &c)| crate::geo::GeoRec {
+            t: 753_440_000.0 + i as f64,
+            lat: 35.41,
+            lon: 139.41,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 1.5 * (i as f64 + 1.0),
+            comp: c,
+            station: 0,
+        })
+        .collect();
+    let magic =
+        crate::geo::magic_of("gosat_tanso3").expect("the gosat_tanso3 format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("gosat_tanso3", &bytes)
+        .expect("gosat_tanso3 bin parses");
+    assert_eq!(parsed.len(), 6);
+    for (i, r) in parsed.iter().enumerate() {
+        assert_eq!(r.comp, comps[i]);
+        assert_eq!(r.val, 1.5 * (i as f64 + 1.0));
+        assert_eq!(
+            super::extract::geo_series_component_name("gosat_tanso3", r.comp),
+            Some(names[i])
+        );
+    }
+    assert_eq!(
+        crate::geo::comp_max("gosat_tanso3"),
+        Some(crate::geo::COMP_GOSAT_MAX)
+    );
+}
+
+#[test]
+fn gosat_tanso3_register_field_matches_component_name() {
+    let srcs = super::load_sources();
+    let src = srcs
+        .iter()
+        .find(|s| s.format == "gosat_tanso3")
+        .expect("phi/sources.φ registers the gosat_tanso3 source");
+    let names: Vec<&str> = src
+        .extracts
+        .iter()
+        .filter_map(|e| match e {
+            Extract::Field(fc) => Some(fc.name.as_str()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        names,
+        vec![
+            "gosat_tanso3_radiance_focus_band1_w_m2_sr_um",
+            "gosat_tanso3_radiance_focus_band2_w_m2_sr_um",
+            "gosat_tanso3_radiance_focus_band3_w_m2_sr_um",
+            "gosat_tanso3_radiance_wide_band1_w_m2_sr_um",
+            "gosat_tanso3_radiance_wide_band2_w_m2_sr_um",
+            "gosat_tanso3_radiance_wide_band3_w_m2_sr_um",
+        ]
+    );
+    let Some(Extract::Field(fc)) = src.extracts.first() else {
+        panic!("the gosat_tanso3 block carries a field line");
+    };
+    assert_eq!(fc.force, 0);
+}
+
+#[test]
 fn lis_otd_geo_series_roundtrip_and_component_name() {
     let recs = vec![crate::geo::GeoRec {
         t: -148_800_000.0,

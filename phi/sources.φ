@@ -15871,3 +15871,16 @@ dec dec
 field magb dfbs_spectra_magb inverse-square em mag 31536000 0.0 0.0
 field magr dfbs_spectra_magr inverse-square em mag 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.bin
+format gosat_tanso3
+origin https://product.gosat-gw.nies.go.jp
+compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
+on earth 0 0 0
+ttl 604800
+field gosat_tanso3_radiance_focus_band1_w_m2_sr_um gosat_tanso3_radiance_focus_band1_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+field gosat_tanso3_radiance_focus_band2_w_m2_sr_um gosat_tanso3_radiance_focus_band2_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+field gosat_tanso3_radiance_focus_band3_w_m2_sr_um gosat_tanso3_radiance_focus_band3_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+field gosat_tanso3_radiance_wide_band1_w_m2_sr_um gosat_tanso3_radiance_wide_band1_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+field gosat_tanso3_radiance_wide_band2_w_m2_sr_um gosat_tanso3_radiance_wide_band2_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+field gosat_tanso3_radiance_wide_band3_w_m2_sr_um gosat_tanso3_radiance_wide_band3_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
+
