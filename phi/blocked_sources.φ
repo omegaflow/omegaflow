@@ -330,6 +330,11 @@ url https://data.lsst.cloud/api/tap/sync
 reg https://data.lsst.cloud
 note Rubin/LSST TAP erfordert OAuth (401 Authorization Required, gemessen 2026-09-26); em-Photometrie (echte Messung); Daten-Release pending. RUBIN_USER/RUBIN_PASS vorhanden.
 
+blocked parser-def json
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+gap curation
+note HTTP 200 2026-09-26 ORA-00904 DIST: yn_snr/yn_mass/theta500/dist fehlen; echte 18 Spalten indx,name,glon,glat,ra,dec,pos_err,snr,ts_min,ts_max,y_min,y_max,x,y,z,spt_ind,htm20,cntr; Quelle irsa_sage_lmc_infrared_catalog falsch.
+
 pending
 url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
 note LLNL-G3D-JPS 3D-Tomografie: interpolated.zip 200 47,17 MB sha 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8; .e3d.binary 146,8 MB; tomofilt_1.zip 166,1 MB; Earth3D.5.4.3.jar 76,8 MB; Lizenz absent; Compiler-Arm fehlt.

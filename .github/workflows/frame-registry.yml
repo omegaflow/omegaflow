@@ -1,0 +1,39 @@
+name: frame-registry
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the frame registry
+        run: |
+          cargo run -p omegaflow-utils --release --bin frame_registry
+      - name: Commit the frame registry
+        continue-on-error: true
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add -f phi/pipeline/frame_registry.φ
+          git diff --staged --quiet || git commit -m "frame registry $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git pull --rebase --autostash origin main
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            sleep 20
+            git pull --rebase --autostash origin main
+          done
+          exit 1
