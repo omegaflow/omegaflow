@@ -3,7 +3,7 @@
   session: Mountain-Folge 167
   class: handover
   date: 2026-09-26
-  sha256: 24bd82449c73e6e7223ba90b99404e9c966d3f95b15d9b34d5a588eeb53b3d35
+  sha256: 6f4023b22b987f95efe5e8891cff0e09795ae767e61858e1dead08a315f6a52a
   status: live
 -->
 # Handover — Mountain-Folge 167 (2026-09-26)
@@ -93,16 +93,22 @@ Trigger / Lage / Blockade / Braucht.
 #### Concurrency-Gridlock — geteilte `phi`-Register (`phi/sources.φ`, `phi/blocked_sources.φ`)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** Fremd-Session commit.
-- **Lage:** (gemessen 2026-09-26) Die Code-Seite ist committet
-  (`e6b92b605`, `bc1d87643` extract.rs, `f1bd268b2` main_flow.rs). Geteilt
-  verflochten bleiben nur die `phi`-Register-Hunks: `phi/sources.φ` trägt meine
-  5 Blöcke (`gll_rss_rsr/atdf/atdf_x/messenger_tnf/ams02_spec`) **und** einen
-  fremden `iras_psc`-TAP-Block unstaged; `phi/blocked_sources.φ` trägt meine
-  unit-auto-detect-Block-Entfernungen **und** fremde Query-URL-Fixes
-  (mycelium) unstaged.
-- **Blockade:** fremde uncommittete Arbeit in denselben Dateien.
-- **Braucht:** `git add -p` (nur eigene Hunks) sobald die Fremd-Session
-  committet, dann eigener Folge-Commit der `phi`-Hunks.
+- **Lage:** (gemessen 2026-09-26, Attribution korrigiert 2026-09-26) Die
+  Code-Seite ist committet (`e6b92b605`, `bc1d87643` extract.rs, `f1bd268b2`
+  main_flow.rs). `phi/blocked_sources.φ` trägt **eigene** Arbeit: die
+  unit-auto-detect-Block-Entfernungen **und** die Query-URL-Fixes sind
+  **dieselbe Mountain-Batch** (Klassen-Träger
+  `phi/blocked_sources.φ::gap:unit-auto-detect ×37`,
+  `archiv/handover-2026-09-26-mountain-folge166.md:38`; Präzedenz-Zuordnungen und
+  Block-Entfernungen `:79`/`:101`) — **nicht** mycelium. Fremd bleibt nur
+  `phi/sources.φ`: eigener 5-Block-Anteil
+  (`gll_rss_rsr/atdf/atdf_x/messenger_tnf/ams02_spec`) **und** ein fremder
+  `iras_psc`-TAP-Block unstaged.
+- **Blockade:** fremde uncommittete Arbeit nur noch in `phi/sources.φ`
+  (`iras_psc`).
+- **Braucht:** `phi/blocked_sources.φ`-Hunk als eigene Arbeit committen
+  (Attribution gemessen: eigene Batch); `phi/sources.φ` `git add -p` (nur eigene
+  Hunks) sobald die Fremd-Session committet, dann eigener Folge-Commit.
 
 #### NAIF mariner10 — dauerhafte Route
 - **Status:** wartend | **Bindung:** eigen
