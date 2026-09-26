@@ -28,10 +28,12 @@ const FIELD_DESTINATION: u8 = 6;
 const FIELD_SIGNATURE: u8 = 8;
 
 const UUID_HR_MEASUREMENT: &str = "00002a37-0000-1000-8000-00805f9b34fb";
+const UUID_RSC_MEASUREMENT: &str = "00002a53-0000-1000-8000-00805f9b34fb";
 
 const GFDI_UUID_FRAGMENT: &str = "6a4e28";
 
 const RR_UNIT_MS: f64 = 1000.0 / 1024.0;
+const RSC_SPEED_RES: f64 = 1.0 / 256.0;
 
 const MAX_MESSAGE_BYTES: usize = 16 * 1024 * 1024;
 
@@ -763,6 +765,12 @@ fn hr_measurement_path(args: &[DbusValue], device_path: &str) -> Option<String> 
         .next()
 }
 
+fn rsc_measurement_path(args: &[DbusValue], device_path: &str) -> Option<String> {
+    characteristic_paths(args, device_path, UUID_RSC_MEASUREMENT)
+        .into_iter()
+        .next()
+}
+
 fn hex_bytes(bytes: &[u8]) -> String {
     use std::fmt::Write as _;
     let mut out = String::with_capacity(bytes.len() * 2);
@@ -1256,6 +1264,32 @@ pub fn decode_hr_measurement(payload: &[u8]) -> Option<(Option<f64>, Vec<f64>)> 
     Some((hr, intervals))
 }
 
+pub fn decode_rsc_measurement(payload: &[u8]) -> Option<Vec<(String, f64, Option<f64>)>> {
+    let (flags, rest) = payload.split_first()?;
+    let stride_present = flags & 0x01 != 0;
+    let distance_present = flags & 0x02 != 0;
+    let speed_raw = u16::from_le_bytes([*rest.get(0)?, *rest.get(1)?]);
+    let cadence_raw = *rest.get(2)?;
+    let mut tail = 3usize;
+    if stride_present {
+        tail = tail.checked_add(2)?;
+    }
+    if distance_present {
+        tail = tail.checked_add(4)?;
+    }
+    if rest.len() < tail {
+        return None;
+    }
+    let mut out = Vec::new();
+    if let Some(v) = plausible(speed_raw as f64 * RSC_SPEED_RES) {
+        out.push(("rsc.speed".to_string(), v, None));
+    }
+    if let Some(v) = plausible(cadence_raw as f64) {
+        out.push(("rsc.cadence".to_string(), v, None));
+    }
+    Some(out)
+}
+
 fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
     let mut bus = match SystemBus::open() {
         Some(b) => b,
@@ -1357,6 +1391,31 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
         }
     }
     let gfdi_chars = characteristic_matches(&objects, &device_path, GFDI_UUID_FRAGMENT);
+    let rsc_char_path = rsc_measurement_path(&objects, &device_path);
+    if let Some(rsc_path) = &rsc_char_path {
+        match bus.call(
+            BLUEZ_NAME,
+            rsc_path,
+            GATT_CHAR_IFACE,
+            "StartNotify",
+            "",
+            &[],
+        ) {
+            Some(Reply::Return(_)) => {}
+            Some(Reply::Decline(Some(name))) if name.ends_with(".InProgress") => {}
+            Some(Reply::Decline(name)) => {
+                eprintln!(
+                    "ble: RSC StartNotify declined ({}) — the cadence/speed source stays silent",
+                    name.as_deref().unwrap_or("unnamed")
+                );
+            }
+            None => {
+                eprintln!(
+                    "ble: RSC StartNotify reply void — the cadence/speed source stays silent"
+                );
+            }
+        }
+    }
     for (path, uuid) in &gfdi_chars {
         match bus.call(BLUEZ_NAME, path, GATT_CHAR_IFACE, "StartNotify", "", &[]) {
             Some(Reply::Return(_)) => {}
@@ -1401,17 +1460,37 @@ fn ble_session(tx: &mpsc::Sender<Vec<(String, f64, Option<f64>)>>, mac: &str) {
             let Some(payload) = variant_bytes(value) else {
                 continue;
             };
-            let Some((_, intervals)) = decode_hr_measurement(payload) else {
+            let Some((hr, intervals)) = decode_hr_measurement(payload) else {
                 continue;
             };
-            if intervals.is_empty() {
-                continue;
-            }
-            let batch: Vec<(String, f64, Option<f64>)> = intervals
+            let mut batch: Vec<(String, f64, Option<f64>)> = intervals
                 .into_iter()
                 .map(|ms| ("rr".to_string(), ms, None))
                 .collect();
+            if let Some(bpm) = hr {
+                batch.push(("hr".to_string(), bpm, None));
+            }
+            if batch.is_empty() {
+                continue;
+            }
             let _ = tx.send(batch);
+            continue;
+        }
+        if let Some(rsc_path) = rsc_char_path.as_deref()
+            && msg.path.as_deref() == Some(rsc_path)
+        {
+            let Some(value) = properties_changed(&msg.args, "Value").flatten() else {
+                continue;
+            };
+            let Some(payload) = variant_bytes(value) else {
+                continue;
+            };
+            let Some(batch) = decode_rsc_measurement(payload) else {
+                continue;
+            };
+            if !batch.is_empty() {
+                let _ = tx.send(batch);
+            }
             continue;
         }
         if let Some(path) = msg.path.as_deref()
@@ -1712,6 +1791,45 @@ mod tests {
         let (hr, rr) = decode_hr_measurement(&payload).expect("valid measurement");
         assert_eq!(hr, Some(60.0));
         assert!(rr.is_empty());
+    }
+
+    #[test]
+    fn rsc_measurement_decodes_speed_and_cadence() {
+        let payload = [0x00, 0x00, 0x01, 0x3C];
+        let records = decode_rsc_measurement(&payload).expect("valid measurement");
+        assert_eq!(
+            records,
+            vec![
+                ("rsc.speed".to_string(), 1.0, None),
+                ("rsc.cadence".to_string(), 60.0, None),
+            ]
+        );
+    }
+
+    #[test]
+    fn rsc_measurement_zero_speed_and_cadence_are_absent() {
+        let payload = [0x00, 0x00, 0x00, 0x00];
+        let records = decode_rsc_measurement(&payload).expect("valid measurement");
+        assert!(records.is_empty());
+    }
+
+    #[test]
+    fn rsc_measurement_truncated_optional_fields_are_absent() {
+        let payload = [0x03, 0x00, 0x01, 0x3C];
+        assert_eq!(decode_rsc_measurement(&payload), None);
+    }
+
+    #[test]
+    fn rsc_measurement_ignores_present_optional_fields() {
+        let payload = [0x03, 0x00, 0x01, 0x3C, 0x64, 0x00, 0x0A, 0x00, 0x00, 0x00];
+        let records = decode_rsc_measurement(&payload).expect("valid measurement");
+        assert_eq!(
+            records,
+            vec![
+                ("rsc.speed".to_string(), 1.0, None),
+                ("rsc.cadence".to_string(), 60.0, None),
+            ]
+        );
     }
 
     fn managed_characteristic(path: &str, uuid: &str) -> (DbusValue, DbusValue) {
