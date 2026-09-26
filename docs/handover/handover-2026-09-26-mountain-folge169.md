@@ -3,7 +3,7 @@
   session: Mountain-Folge 169
   class: handover
   date: 2026-09-26
-  sha256: bd0bb1c4871919e3e129a71d0d2898e6a693f04d74be28eb5dab8174484cffa0
+  sha256: b13d7d8757aa91e8aadbdb684d822a393b83d83d4ca30a902337cf04633d1985
   status: live
 -->
 # Handover — Mountain-Folge 169 (2026-09-26)
@@ -95,6 +95,32 @@ Trigger / Lage / Blockade / Braucht.
 - **Blockade:** keine. (2D-Fax-Modus bleibt benannt offen — `None`, kein Silent.)
 - **Braucht:** committet `0eacaec2b` + gepusht; **Test-Grünheit = CI** am Push
   (lokal verweigert); lokal gemessen ist nur die Kompilation.
+
+#### Harvest-Assets HAMQSL/NOHRSC/OGIMET — `asset fehlt`
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Lauf `hamqsl-cdn` / `nohrsc_snowfall-cdn` / `ogimet-cdn`.
+- **Lage:** (gemessen 2026-09-26) `phi/harvest.φ:95/145/164` `asset fehlt`
+  (Register-Owner mountain); Parser-Arme stehen (`src/archivar/hamqsl.rs`,
+  `geo.rs` `MAGIC_NOHR`/`MAGIC_OGM`); die CDN-Assets laufen in
+  Mycelium-Dispatches — `hamqsl-cdn` success, `nohrsc_snowfall-cdn`/`ogimet-cdn`
+  in_progress (Vorläufe failed). **Kein Live-Handover hielt diese drei** — der
+  owner-eigene Träger fehlte.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage list` / `gh workflow run nohrsc_snowfall-cdn.yml`
+  (`ogimet-cdn.yml`); nach Manifestation die drei `asset fehlt`-Zeilen in
+  `phi/harvest.φ` schließen.
+
+#### Planck-SZ-Query — `blocked parser-def json`
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26) `phi/blocked_sources.φ:333` (aus diesem Atom,
+  +5): `planck.com_pccs2_sz_mmf3` liefert HTTP 200 VOTable `ORA-00904`; echte 18
+  Spalten (`snr`,`name`,`ra`,`dec`, …); Block-Quelle `irsa_sage_lmc_infrared_catalog`
+  falsch.
+- **Blockade:** keine.
+- **Braucht:** Query gegen die echten Spalten neu schreiben
+  (`SELECT TOP 5000 name,ra,dec,snr FROM planck.com_pccs2_sz_mmf3`),
+  `archive_search --verdict`, dann registrieren oder descopen.
 
 #### gll.rss + Klasse-5 — Register-Nachtrag
 - **Status:** wartend | **Bindung:** eigen
