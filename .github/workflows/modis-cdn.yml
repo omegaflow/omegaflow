@@ -6,6 +6,17 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      start_year:
+        description: first harvest year of the shard matrix
+        required: false
+        type: string
+        default: "2000"
+      end_year:
+        description: last harvest year (blank = the current UTC year)
+        required: false
+        type: string
+        default: ""
 permissions:
   contents: write
 env:
@@ -13,12 +24,51 @@ env:
   EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
-  modis:
+  raster:
     runs-on: ubuntu-latest
-    timeout-minutes: 720
+    outputs:
+      shards: ${{ steps.gen.outputs.shards }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compute the missing year x product shards
+        id: gen
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start_year }}"
+          END="${{ inputs.end_year }}"
+          if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
+          RELEASE="data.lpdaac.earthdatacloud.nasa.gov"
+          REPO="omegaflow/sources"
+          CMR="https://cmr.earthdata.nasa.gov/search/granules.umm_json"
+          present="$(gh release view "$RELEASE" --repo "$REPO" \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          shards=""
+          for product in daily 8day monthly; do
+            case "$product" in
+              daily)   cid=C2565788888-LPCLOUD ;;
+              8day)    cid=C2565788893-LPCLOUD ;;
+              monthly) cid=C2565788897-LPCLOUD ;;
+            esac
+            for year in $(seq "$START" "$END"); do
+              asset="modis_lst_cmg_${product}_${year}.bin"
+              if printf '%s\n' "$present" | grep -qx "$asset"; then
+                echo "$asset already manifested — skipped"
+                continue
+              fi
+              hits="$(curl -sSfL --retry 3 --retry-all-errors --max-time 90 \
+                "$CMR?concept_id=${cid}&temporal=${year}-01-01T00:00:00Z,${year}-12-31T23:59:59Z&page_size=1" \
+                | jq -r '.hits // 0')"
+              if [ "$hits" = "0" ]; then
+                echo "${product} ${year}: CMR carries no granule — skipped"
+                continue
+              fi
+              shards="${shards:+$shards,}{\"product\":\"${product}\",\"concept_id\":\"${cid}\",\"year\":\"${year}\",\"asset\":\"${asset}\"}"
+            done
+          done
+          echo "shards=[${shards}]" >> "$GITHUB_OUTPUT"
+  release:
+    runs-on: ubuntu-latest
+    steps:
       - name: Ensure the data.lpdaac.earthdatacloud.nasa.gov release exists on the CDN
         run: |
           if ! gh release view data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
@@ -26,23 +76,28 @@ jobs:
               --title "data.lpdaac.earthdatacloud.nasa.gov" \
               --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records. Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night)."
           fi
+  compile:
+    needs: [raster, release]
+    if: needs.raster.outputs.shards != '[]'
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.product }}-${{ matrix.year }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include: ${{ fromJSON(needs.raster.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Build the modis_lst_cmg compiler
         run: cargo build -p omegaflow-harvest --release --bin modis_lst_cmg_compiler
-      - name: Compile MOD11C1 (daily) and upload to CDN
+      - name: Compile ${{ matrix.asset }} and upload to CDN
         run: |
           ./target/release/modis_lst_cmg_compiler \
-            --cmr --concept-id C2565788888-LPCLOUD \
-            --out modis_lst_cmg_daily.bin \
-            --ci-mode
-      - name: Compile MOD11C2 (8-day) and upload to CDN
-        run: |
-          ./target/release/modis_lst_cmg_compiler \
-            --cmr --concept-id C2565788893-LPCLOUD \
-            --out modis_lst_cmg_8day.bin \
-            --ci-mode
-      - name: Compile MOD11C3 (monthly) and upload to CDN
-        run: |
-          ./target/release/modis_lst_cmg_compiler \
-            --cmr --concept-id C2565788897-LPCLOUD \
-            --out modis_lst_cmg_monthly.bin \
+            --cmr --concept-id ${{ matrix.concept_id }} \
+            --temporal ${{ matrix.year }}-01-01T00:00:00Z,${{ matrix.year }}-12-31T23:59:59Z \
+            --out ${{ matrix.asset }} \
             --ci-mode

@@ -4,7 +4,7 @@
   date: 2026-09-03
   status: archived
   version: 1
-  sha256: 654386bc8af89e964dbcde001a4ead1c48a28fdcb04faec2b57b04714fa2e473
+  sha256: f483b03f95fd8156745bd668c416d287e99c4a995ebf82ab59e9012d98053f9a
   see-also: docs/surveys/survey-2026-09-03-daten-holdings-inventur.md,
             docs/auftrag/auftrag-verify-references-regelrunde.md, AGENTS.md
 -->
@@ -57,15 +57,52 @@ committet. Die Reihenfolge ist verbindlich.
 3. **Registry zuerst aufräumen.** `phi/sources.φ` zur einzigen, abgeglichenen
    Wahrheit machen; Duplikate/Fehlbenennungen dort beheben (Registry ändern,
    nicht Assets raten).
-4. **CI deduplizieren/schlanken.** `health-check.yml` (20) und
-   `kernel-flatten.yml` (24) zerlegen oder verschlanken; Job-Kategorien
-   vereinheitlichen; jede manifestierende Workflow-Klasse speist genau die
-   Releases aus der Registry.
+4. **CI deduplizieren/schlanken.** `health-check.yml` (2026-09-03: 4 Jobs) und
+   `kernel-flatten.yml` (2026-09-03: 18 Jobs) zerlegen oder verschlanken;
+   Job-Kategorien vereinheitlichen; jede manifestierende Workflow-Klasse
+   speist genau die Releases aus der Registry. Konkretisierung: „Schritt 4 —
+   CI-Dedupe (konkretisiert 2026-09-26)" unten.
 5. **CDN-Assets kanonisch machen — NUR mit Nachbau-/Sicherungsquelle.** Ein
    umzubenennendes/gelöschtes Asset wird erst angefasst, wenn die Quelle es
    nachbaut (Compiler/`--ci-mode`) oder der Inhalt anderweitig gesichert ist.
    Müll-Zwillinge (`x.json.json`) und Orphans nur dann entfernen. Kein
    Blindwurf über die 2904 Assets.
+
+## Schritt 4 — CI-Dedupe (konkretisiert 2026-09-26)
+
+Gemessen (2026-09-26): `.github/workflows/` trägt 315 `*.yml`-Klassen. Die
+zwei manifestierenden Hauptklassen sind gegenüber der Ausgangsmessung
+(2026-09-03: health-check 4 Jobs, kernel-flatten 18 Jobs) verschlankt:
+
+- `health-check.yml` — **3 Jobs**: `verify` (16-Shard-Matrix), `reverify`,
+  `pages-verify`. Baseline 4; `probe-full` ist descoped (2026-09-25, Grund im
+  Datei-Kommentar).
+- `kernel-flatten.yml` — **5 Jobs**: `index`, `bodies`, `jwst-spectra`, `eve`,
+  `aia`. Baseline 18; `catalogs`, `twomass_bulk`, `chunk_catalogs`,
+  `ned_chunks`, `sun`, `solar_xrs`, `goes_r_xrs`, `euvs`, `cmb`,
+  `long_window_probe`, `solar_causal_graph`, `wso_hmi_consistency`,
+  `pioneer_telemetry` liegen in eigenen `*-cdn.yml`.
+
+Der erste Teil (die zwei Hauptklassen verschlanken) ist damit erledigt. Offen
+ist der zweite Teil: über alle Klassen zu messen, dass keine Klasse eine
+andere dupliziert und jede manifestierende Klasse ihre Release-Menge aus der
+Registry liest (CDN_ZIEL_SCHEMA §3).
+
+**Auftrag:**
+
+1. **CI-Klassen-Zensus** (Maschinentabelle, nicht Prosa): je
+   `.github/workflows/*.yml` — Datei | Klasse
+   (`manifest`/`probe`/`build`/`register`) | Job-Namen | erzeugte
+   Release-Menge (Netlocs, aus dem Compiler/`--ci-mode`-Aufruf) |
+   Registry-Zeile. Nur `manifest`-Klassen unterliegen §3
+   (`X-cdn`/`X-cdn-watch`).
+2. **Duplikat-Messung:** zwei `manifest`-Klassen mit demselben Netloc =
+   Duplikat (§1: ein Netloc = eine Release) → in eine `X-cdn`-Klasse führen.
+3. **Registry-Bindung:** je `manifest`-Klasse prüfen, dass die erzeugten
+   Releases als `url`-Zeile in `phi/sources.φ` stehen (registry-first) und
+   die Klasse den Netloc aus der Registry liest, nie einen eigenen Tag-Satz.
+4. **Abnahme:** 0 Netloc von ≥2 Klassen erzeugt; jede `manifest`-Klasse liest
+   aus der Registry; Benennung `X-cdn`/`X-cdn-watch`.
 
 ## Regeln (verbindlich)
 
