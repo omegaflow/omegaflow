@@ -296,13 +296,18 @@ fn decompress_if_needed(raw: Vec<u8>) -> Option<Vec<u8>> {
         .stdout(Stdio::piped())
         .spawn()
         .ok()?;
-    {
-        let mut stdin = child.stdin.take()?;
-        stdin.write_all(&raw).ok()?;
-    }
-    let out = child.wait_with_output().ok()?;
-    if out.status.success() {
-        Some(out.stdout)
+    let mut stdin = child.stdin.take()?;
+    let mut stdout = child.stdout.take()?;
+    let writer = std::thread::spawn(move || {
+        let _ = stdin.write_all(&raw);
+        let _ = stdin.flush();
+    });
+    let mut out = Vec::new();
+    let copied = std::io::copy(&mut stdout, &mut out).is_ok();
+    let status = child.wait().ok()?;
+    let _ = writer.join();
+    if status.success() && copied {
+        Some(out)
     } else {
         None
     }
