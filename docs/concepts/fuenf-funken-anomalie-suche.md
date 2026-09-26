@@ -2,7 +2,7 @@
   title: Fünf Funken der Anomalie-Suche
   class: concept
   date: 2026-09-05
-  sha256: 14988b667876ca17fc55550a2030ac4288f45e8ad46dd6541e057a02533d59cc
+  sha256: 161681275f380540d91b05936d62d306078264762f439524ab2176c6fac55642
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
 -->
@@ -118,3 +118,19 @@ die Stimmung der Pipeline.
 Die einzige Zahl, die jetzt zählt: Kegel gefahren / Roh-Kandidaten vor der
 Gate / danach — das Verhältnis ist die erste echte Karte, wie dicht der
 bekannte Himmel die unbekannten Senken zustellt.
+
+## Gemessen (2026-09-27, runs 36277987363 / 36277989033)
+
+Zwei der fünf Funken sind nicht mehr Idee, sondern gebaut und gemessen:
+
+- **Funke 5 (TDB-Uhr, `tdb_coincidence_probe`):** das Gegenrichtungs-Paar
+  (ra 0° / ra 180°) trennt mit Rømer-Faltung mit **−900.883944 s** emittierter
+  Differenz gegen ein 60.000-s-Koinzidenzfenster → `separated`. Term-Budget:
+  Ein-Sichtlinien-Rømer-Amplitude 499.0 s (±8 min), Gegenrichtungspaar
+  2 AU/c = 998.0 s, Erdsichtlinien-Drift 60.1 s/Woche; Beobachter = Geozentrum
+  (der diurnale Stations-Swing ≤ 21.3 ms bleibt benannte Schranke).
+- **Funke 3 (Broker-Differenz, `broker_difference_probe`):** am Position p1
+  (ra 148.84°, dec 2.55°, 2-arcsec-Kegel) — fink **absent** (HTTP 200, keine
+  diaObject-Zeile), lasair **401** (Token fehlt → ausgeschlossen), alerce
+  **404** (retired Direct-DB). Verdikt **`pending`** — nur ein erreichbarer
+  Broker mit sauberem Membership-Read, 0 present. Kein fabrizierter Himmel.
