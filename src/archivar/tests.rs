@@ -398,6 +398,8 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"dbhz"));
     assert!(allowed_units_for_force(0).contains(&"m-2.s-1.tev-1"));
     assert!(allowed_units_for_force(0).contains(&"tev"));
+    assert!(allowed_units_for_force(0).contains(&"gev"));
+    assert!(allowed_units_for_force(0).contains(&"gv"));
     assert!(allowed_units_for_force(0).contains(&"bq/l"));
     assert!(allowed_units_for_force(0).contains(&"bq/m3"));
     assert!(allowed_units_for_force(0).contains(&"s"));
