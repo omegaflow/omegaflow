@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: e18ca953085ebefd9ca8692d3bbda11635383cab9c848786b10eeb6b9bb06df5
+  sha256: 3dca84168ec1f5ccbd078abb85c3ce2d7a7e993841e600d2994116970b30d9ad
   status: live
   see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
@@ -94,9 +94,13 @@ Verarbeitung fehlt:
   empfängt es und schreibt `presence_slot.p = [px,py,pz]`, `.v = [vx,vy,vz]`, `.range = pr`,
   `.t_thrust = tt`, `.grid_step = gs` — die Position wird **direkt gesetzt, nicht integriert**.
   Damit steht der fremdgetriebene Pfad (Browser als fremde Quelle, Positions-Setzer im Kern);
-  keine Selbstpropulsion im Kern. Ungemessen bleibt, ob eine **Operator-gewählte Weltlinie**
-  (eine Bahn, nicht ein Einzel-Setzpunkt) durch diesen Kanal getragen wird — der Browser-Eingang
-  setzt Position/Velocity je Paket, eine Weltlinien-Auswahl ist am Setz-Site nicht gemessen.
+  keine Selbstpropulsion im Kern.
+  **Gemessen (2026-09-26, Rat):** eine **Operator-gewählte Weltlinie** (eine Bahn, nicht ein
+  Einzel-Setzpunkt) wird von diesem Kanal **nicht getragen** — und das ist der korrekte Zustand.
+  Der Kanal trägt Akte (ein Setzpunkt-Paket je Akt), keine Routen; die Weltlinie ist ein
+  Operator-/Session-Objekt (die Reihe der Tuning-Akte), kein Draht-Format. Ein Weltlinien-Objekt
+  im Kanal würde den Schub vom Operator in die Maschine verlegen — Selbstpropulsion, die der
+  Ethik-Rahmen verbietet. **Nicht gebaut, nicht nötig.**
 - **Delay Spectrum**: die Lichtlaufzeit-Faltung existiert (survey-Messpunkt-Verteilung);
   die lag-Matrix als Instrument wäre eine neue measure-Probe.
 
