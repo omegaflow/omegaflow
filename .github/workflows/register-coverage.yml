@@ -1,0 +1,23 @@
+name: register-coverage
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/handover/**'
+      - 'phi/**'
+      - 'tools/register/**'
+concurrency:
+  group: register-coverage-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  orphans:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo build --release -p omegaflow-register --bin register_lookup
+    - name: Orphan-Gate — jede Linie trägt ihre offenen Register-Einträge
+      run: target/release/register_lookup --orphans --fail

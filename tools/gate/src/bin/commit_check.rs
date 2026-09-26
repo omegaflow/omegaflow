@@ -77,6 +77,34 @@ fn doc_has_open_marker(content: &str) -> bool {
     content[start..].lines().any(doc_open_marker_line)
 }
 
+fn handover_line_of(path: &str) -> Option<String> {
+    let rel = path.strip_prefix("docs/handover/")?;
+    if rel.contains('/') {
+        return None;
+    }
+    let stem = rel.strip_suffix(".md")?;
+    let rest = stem.strip_prefix("handover-")?;
+    if rest.len() < 12 {
+        return None;
+    }
+    let date = &rest[..10];
+    let date_field = date.len() == 10
+        && date.as_bytes()[4] == b'-'
+        && date.as_bytes()[7] == b'-'
+        && date.bytes().all(|b| b.is_ascii_digit() || b == b'-');
+    if !date_field || rest.as_bytes()[10] != b'-' {
+        return None;
+    }
+    let tail = &rest[11..];
+    let at = tail.rfind("-folge")?;
+    let line = &tail[..at];
+    let digits = &tail[at + 6..];
+    if line.is_empty() || digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    Some(line.to_lowercase())
+}
+
 fn main() {
     let out = Command::new("git")
         .args([
@@ -215,6 +243,50 @@ fn main() {
             eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
             fail = true;
         }
+    }
+    let mut handover_lines: Vec<String> = Vec::new();
+    for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
+        if let Some(line) = handover_line_of(path) {
+            if !handover_lines.contains(&line) {
+                handover_lines.push(line);
+            }
+        }
+    }
+    for line in handover_lines {
+        let out = Command::new("register_lookup")
+            .args(["--orphans", "--owner", &line, "--fail"])
+            .output();
+        let output = match out {
+            Ok(o) => o,
+            Err(_) => {
+                eprintln!(
+                    "commit_check: register_lookup absent from PATH - the handover orphan gate did not run for {line}"
+                );
+                continue;
+            }
+        };
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        let reported = stdout.contains("register_lookup --orphans:");
+        if output.status.success() {
+            continue;
+        }
+        if !reported {
+            let code = match output.status.code() {
+                Some(c) => c.to_string(),
+                None => "signal".to_string(),
+            };
+            eprintln!(
+                "commit_check: register_lookup exited {code} without an orphan report - the handover orphan gate did not run for {line}"
+            );
+            continue;
+        }
+        eprintln!(
+            "commit_check: handover-orphan-gate: {line}: staged handover, open register entries without a carrier remain"
+        );
+        for report_line in stdout.lines() {
+            eprintln!("commit_check: {report_line}");
+        }
+        fail = true;
     }
     if fail {
         std::process::exit(1);
