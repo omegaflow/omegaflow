@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: 4826f992e1bad24ddc416cdadf025e35d98b03fe8216aa070ab018f06868c4b0
+  sha256: 1c8cb25ffe126f79d34c41f03522488cc8ccfd5d4a13bc2b4ba917abd1a2311c
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -208,6 +208,13 @@ Die ersten zwei Träger-Schritte sind aus folge168 übernommen und in diesem Ato
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen gemessen (GFW declined, GOSAT-GW `pending`, Rubin `blocked account` committet); die verbleibende Namens-Disposition trägt die Future-Übergabe (`state/funding/handover/handover-2026-09-26-future-folge129.md`).
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | offen: Pendings-Tafel (Compiler gebaut, Kalibrierung/Ernte offen) u.a. COSMIC-2 `.tar` (`:37`), NOAA-ERI JPEG-in-TIFF (`:49`), GK2A GSICS (`:50`), Himawari HSD-Block 5 (`:52`), GDP-Drifer `.zarr` (`:53`), OCS `.tif`-LZW (`:54`), WOD SOHM (`:55`), NEXRAD Feld-Reader+CI (`:56`), SuperDARN-FITACF CI-Manifest (`:57`), LASzip `:74/:75` | nächster Schritt: je Zeile Decoder/Ernte bauen.
+- `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offen: Re-Check 3 Force-Kanal (`remon.jrc.ec.europa.eu`, `www.irsn.fr` ×2) + 4 pending (`dods.wh.gov`, `osdr.nasa.gov`, `pskreporter.info`/`reversebeacon.net`) + `arvo-registry.sci.am` Proton-Eskalation | nächster Schritt: `archive_search --verdict` je Host.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Disposition der 55 undocumented `stale_pending` (Force-Gate → `sources.φ`/`dead_sources.φ`) | nächster Schritt: `docs/specs/cdn_orphan_verdicts.json` je Netloc disponieren.
+- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout für `knowledge/`+`backups/` (~50 G in situ, kein Blindwurf) | nächster Schritt: Operator-Wort zum Layout.
+- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen: NOAA-NRS passive-bioacoustic Quell-Entscheidung (eigener `tools/harvest`-Compiler) | nächster Schritt: Register-Eintrag + Compiler.
+- `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | Finding, kein offener Schritt (Gegenprobe explizit „nicht meßpflichtig").
+- `docs/concepts/pfeiler-der-architektur.md` | kein offener Marker — `--orphan-docs`-Treffer ist Prosa („offenes Problem"), false positive.
 
 ## Abschluss
 
