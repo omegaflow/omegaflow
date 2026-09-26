@@ -5197,3 +5197,7 @@ note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe
 decline derived-satellite-product
 url https://data-api.globalforestwatch.org
 note Global Forest Watch (WRI): abgeleitete Waldprodukte (tree-cover-loss, GLAD/RADD-Entwaldungs-Alerts, Kohlenstoff) aus Landsat/Sentinel — derived satellite products, kein Punkt-Feldwert. Gemessen 2026-09-26: data-api HTTP 200 (82015 B).
+
+decline commercial
+url https://api.purpleair.com/v1/sensors
+note paid plan (HTTP 402 mit PURPLEAIR_KEY, 403 ohne), kommerzielle Quelle — declined 2026-09-26 (Operator-Wort: commercial).
