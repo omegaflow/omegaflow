@@ -8452,6 +8452,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gl
 format cassini_rsr
 origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/ (Live-Listing subdirectories)
 compiler tools/harvest/src/bin/gll_rss_rsr_compiler.rs
+sha256 baee1a81dd52124fb8d72edb74c8d84ab8ef7fe0e3a8713d895de3ca9ae3a480
 at earth
 ttl 604800
 field i_count cassini_rsr_i_count inverse-square em count 604800 0.0 0.0
@@ -8461,6 +8462,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gl
 format gll_rss_atdf
 origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/ (Live-Listing subdirectories)
 compiler tools/harvest/src/bin/gll_rss_atdf_compiler.rs
+sha256 b762373c76ff4d125eadd46ba07da9d86802beff3a61af3ebcf83bc0100b8d0a
 at earth
 ttl 604800
 field sky_frequency_hz gll_rss_atdf_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
@@ -8469,6 +8471,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gl
 format gll_rss_atdf_x
 origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/ (Live-Listing subdirectories)
 compiler tools/harvest/src/bin/gll_rss_atdf_compiler.rs
+sha256 e63bc3ea412eadc37250a5342a569fc452f72c6b05754eba3420a2d3f18c0459
 at earth
 ttl 604800
 field sky_frequency_hz gll_rss_atdf_x_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
@@ -8512,6 +8515,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu
 format messenger_tnf
 origin https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-tnf/
 compiler tools/harvest/src/bin/messenger_tnf_compiler.rs
+sha256 04211c8edd92d3a6a5daf56aaebb0cadd10fe559929fd111393997a7fb239e3c
 at earth
 ttl 604800
 field ul_phase_cycles messenger_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
@@ -9862,6 +9866,14 @@ format sky1
 at sun
 ttl 31536000
 field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gs.llnl.gov/LLNL_G3D_JPS.interpolated.g3d1
+format g3d1
+origin https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
+compiler tools/harvest/src/bin/llnl_g3d_jps_compiler.rs
+sha256 3a1b4c6396fc32eea8ffbb5a1828c8d38d55a9ca74659a5a4c8b21ebb36b3a80
+at earth
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
 origin https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
@@ -12348,6 +12360,13 @@ at sun
 ttl 31536000
 field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/download.isc.ac.uk/isc_ehb.bin
+format isc_ehb
+origin http://download.isc.ac.uk/isc-ehb/
+compiler tools/harvest/src/bin/isc_ehb_compiler.rs
+at earth
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/www.gmrt.org/gmrt_bathymetry.bin
 format gmrt_bathymetry
 origin https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
@@ -12358,9 +12377,29 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin
 format slab2_depth
-origin https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467
+origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
 compiler tools/harvest/src/bin/slab2_compiler.rs
 at earth
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
+format reference
+sha256 e9e26fd79ef1399003035ecdcc58db0465c2cf6bf8558257bb0167bf7f4b53ed
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-G3D-JPS.e3d.binary
+format reference
+sha256 7c6e8fd3ccbba4329abe37de44711dec0554884a9bbb316f97c8aa73231b2b4f
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/llnl-g3d-jps_tomofilt_1.zip
+format reference
+sha256 76aa5860791855d7c52bfab3724ad11ec4af7595741f7243f262e77bdda67908
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
+format reference
+sha256 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8
 ttl 31536000
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
