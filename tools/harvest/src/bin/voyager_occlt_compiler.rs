@@ -59,6 +59,19 @@ fn tar_members(bytes: &[u8]) -> Option<Vec<(String, Vec<u8>)>> {
     Some(out)
 }
 
+fn tar_year(tar: &str) -> Option<u32> {
+    let stem = tar.strip_suffix(".tar")?;
+    let date = stem.rsplit('_').next()?;
+    let yy: u32 = date.rsplit('-').next()?.parse().ok()?;
+    if (70..=99).contains(&yy) {
+        Some(1900 + yy)
+    } else if yy <= 69 {
+        Some(2000 + yy)
+    } else {
+        None
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -70,7 +83,7 @@ fn main() {
         Some(path) => path.clone(),
         None => "data/spdf.gsfc.nasa.gov/voyager_occlt.bin".to_string(),
     };
-    let mut files: Vec<(Vec<u8>, String)> = Vec::new();
+    let mut files: Vec<(Vec<u8>, String, u32)> = Vec::new();
     let mut medium_records = 0usize;
     let mut narrow_records = 0usize;
     for (base, tars) in [
@@ -78,6 +91,13 @@ fn main() {
         (MEDIUMBAND_BASE, &MEDIUMBAND_TARS[..]),
     ] {
         for tar in tars {
+            let year = match tar_year(tar) {
+                Some(y) => y,
+                None => {
+                    eprintln!("{tar}: tar year void — rows stay pending (0 honored)");
+                    0
+                }
+            };
             let url = format!("{base}{tar}");
             let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{tar}: fetch void ({url})");
@@ -90,10 +110,10 @@ fn main() {
             for (name, dat) in members {
                 if let Some(recs) = parse_mediumband(&dat) {
                     medium_records += recs.len();
-                    files.push((dat, name));
+                    files.push((dat, name, year));
                 } else if let Some(nb) = parse_narrowband(&dat) {
                     narrow_records += nb.records.len();
-                    files.push((dat, name));
+                    files.push((dat, name, year));
                 } else {
                     eprintln!("{name} ({tar}): framing void — member skipped");
                 }
@@ -104,9 +124,9 @@ fn main() {
         eprintln!("voyager_occlt: no framed .DAT members — the series stays unwritten (0 honored)");
         std::process::exit(1);
     }
-    let refs: Vec<(&[u8], &str)> = files
+    let refs: Vec<(&[u8], &str, u32)> = files
         .iter()
-        .map(|(bytes, name)| (bytes.as_slice(), name.as_str()))
+        .map(|(bytes, name, year)| (bytes.as_slice(), name.as_str(), *year))
         .collect();
     let bin = pack_many(&refs);
     if let Some(parent) = std::path::Path::new(&out).parent() {
@@ -217,12 +237,22 @@ mod tests {
     #[test]
     fn pack_and_parse_series_hold_for_measured_members() {
         let med = sample_mediumband_dat(2);
-        let refs: Vec<(&[u8], &str)> = vec![(&med[..], "DD059817_F1.DAT")];
+        let refs: Vec<(&[u8], &str, u32)> = vec![(&med[..], "DD059817_F1.DAT", 1980)];
         let bin = pack_many(&refs);
         let parsed = parse_packed(&bin).unwrap();
         assert_eq!(parsed.files.len(), 1);
+        assert_eq!(parsed.files[0].year, 1980);
         let rows = parse_series(&bin).unwrap();
-        assert!(rows.is_empty());
+        assert_eq!(rows.len(), 6);
+        assert_eq!(rows[0].0, 315_532_800.0);
+    }
+
+    #[test]
+    fn tar_year_reads_two_digit_year() {
+        assert_eq!(tar_year("PSPA-00189_DD059817_12-NOV-80.tar"), Some(1980));
+        assert_eq!(tar_year("PSPA-00217_DD059825_13-NOV-80.tar"), Some(1980));
+        assert_eq!(tar_year("S0A.tar"), None);
+        assert_eq!(tar_year("S0A"), None);
     }
 
     #[test]
