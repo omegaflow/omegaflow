@@ -312,9 +312,9 @@ descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
 note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-pending
+released
 url https://maps.sensor.community/data/v2/data.json
-note 2026-09-26 api 403 (direct+Proton); kein Exit (Wort 2026-09-25). Spiegel 200: maps…data.json 8 612 211 B sha256 8cf2dc8c…; archive…/2026-09-25_bme280_sensor_141.csv 36 743 B sha256 1f64cb94… (.csv.gz 404). Port-Gap: v2 value_type-Keyed-Selector.
+note 2026-09-26 Spiegel 200 8 572 935 B (17 773 Records, value_type je Eintrag); Keyed-Selector gebaut (json.rs `key=value`); registriert phi/sources.φ (5 Felder, pressure→acoustic); Daten DbCL 1.0; api-403 bleibt.
 
 descoped
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso

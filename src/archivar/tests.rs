@@ -4527,6 +4527,29 @@ fn test_rotation_matrix_empty_props() {
 }
 
 #[test]
+fn test_jpath_keyed_selector() {
+    let j = super::parse_json(
+        r#"{"sensordatavalues":[{"value":"100.00","value_type":"humidity"},{"value":"13.79","value_type":"temperature"}]}"#,
+    )
+    .unwrap();
+    assert_eq!(
+        super::jpath(&j, "sensordatavalues.value_type=temperature.value"),
+        Some(13.79)
+    );
+    assert_eq!(
+        super::jpath(&j, "sensordatavalues.value_type=humidity.value"),
+        Some(100.0)
+    );
+    assert_eq!(
+        super::jpath(&j, "sensordatavalues.value_type=pressure.value"),
+        None
+    );
+    let n = super::parse_json(r#"{"s":[{"id":17,"v":1.5},{"id":42,"v":2.5}]}"#).unwrap();
+    assert_eq!(super::jpath(&n, "s.id=42.v"), Some(2.5));
+    assert_eq!(super::jpath(&n, "s.99.v"), None);
+}
+
+#[test]
 fn test_restored_extract_variants() {
     let j =
         super::parse_json(r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#)

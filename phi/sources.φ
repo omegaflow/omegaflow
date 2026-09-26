@@ -272,6 +272,20 @@ lon location.longitude
 field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
 field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
 
+url https://maps.sensor.community/data/v2/data.json
+ttl 3600
+on earth 0 0 0
+map .
+lat location.latitude
+lon location.longitude
+alt location.altitude
+epoch timestamp
+field sensordatavalues.value_type=P1.value sensorcommunity_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
+field sensordatavalues.value_type=P2.value sensorcommunity_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
+field sensordatavalues.value_type=temperature.value sensorcommunity_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
+field sensordatavalues.value_type=humidity.value sensorcommunity_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+field sensordatavalues.value_type=pressure.value sensorcommunity_pressure_pa gaussian-inverse-square acoustic Pa 3600 0.0 0.0
+
 url https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 300
 at earth

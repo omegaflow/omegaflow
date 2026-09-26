@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: e1b4131f6b89c60d816dbb10bcd375dd12b147c9528a86aeaf4c3598e4358590
+  sha256: 7d2302be9e5c07fee3cc5e7f4777ca8d1b3dd239528ce9f8207aa8f82e7a8d75
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -71,14 +71,14 @@ fortgeschrieben, bis sie verlässlich nachgemessen ist.
   sentinel1euwest…, service.iris.edu, archive-api.open-meteo.com):
   Compiler-/Mess-Datensatz-Netlocs, **nie löschen**. 3 in dead_sources.φ.
 
-## Registry-Urteile (Step 3, was die nächste Session tut)
+## Registry-Urteile (Step 3)
 
 - **80 dead_documented `stale_pending`** → kein Registry-Urteil offen; Release
   ist Rest, Verbleib entscheidet Step 5 (mit Nachweis, nie die letzte Kopie).
-- **55 undocumented `stale_pending`** → die eine offene Disposition, je Netloc
-  nach SOURCE_PORT.md (Force-Gate → `sources.φ`-Block oder
-  `dead_sources.φ`-Eintrag). Erreichbarkeit ist der Vorfilter. Nicht
-  entschieden → bleibt `pending` (0 honored), nie am CDN geraten.
+- **55 undocumented `stale_pending`** → **disponiert (2026-09-26)**: je Netloc
+  gegen die Register gemessen (`sources.φ`/`dead_sources.φ`/`declined_sources.φ`/
+  `blocked_sources.φ`), Ergebnis im Maschinenform `cdn_orphan_verdicts.json`
+  (`disposition`: 42 declined, 11 released, 2 descoped; 0 pending).
 - **14 undocumented `repo_tag`** → §1 kein Registry-Heim; das Verdikt ist
   CDN-seitig (Step 5, nach Sicherung), kein sources.φ-Urteil.
 - **3 undocumented `dataset_host`** → Compiler-Lease, behalten.
@@ -92,7 +92,6 @@ bleibt bei unklaren Einzelfällen offen.
 
 ## Registrierung
 
-Die Disposition der 55 undocumented `stale_pending` ist eine offene Pflicht in
-`docs/handover/archiv/handover-2026-09-09-mechanische-reste.md` (Auftrags-Programm, Pflege & Struktur →
-`auftrag-saubere-datenbank.md`). Step 4 (CI-Dedupe) ist gegen die gemessene
-Job-Zahl (health-check 4, kernel-flatten 18) neu zu fassen.
+Die Disposition der 55 undocumented `stale_pending` ist **erledigt**
+(2026-09-26, siehe oben). Offen bleibt allein Step 4 (CI-Dedupe), gegen die
+gemessene Job-Zahl (health-check 4, kernel-flatten 18) zu fassen.
