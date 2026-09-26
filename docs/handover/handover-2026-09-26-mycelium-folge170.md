@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: a3c4b12949fbc0a66cd65e4851d0323b210df634b897f49c264fa0d1ad605a62
+  sha256: ff8b2c91f31887cdfca9d18ddb1a4c22a39a9d01a8fd6c9ee976b5d4c388b33d
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -50,6 +50,13 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 - **Lage:** (gemessen 2026-09-26) vier `pending`-TAP als `blocked parser-def json` registriert (`phi/blocked_sources.φ:146,150,154,158`), echte Spalten im `note`; `register_lookup --orphans` nennt `phi/blocked_sources.φ:222` `[mycelium]` (irsa TAP) ohne Aufenthalt; `phi/pipeline/ledger.φ:14` SSDC `ausstehend` `[mycelium]` ohne Handover-Platz.
 - **Blockade:** kein Parser-Arm (unit-auto-detect) für die vier TAP-JSON-Formen.
 - **Braucht:** Arm bauen (mountain) oder Twin-Einträge `phi/sources.φ` (`gavo:7458`, `padc:7469`, `voparis:7480`, `skvo:9526`) mitziehen; `:222`/`ledger:14` Aufenthalt prüfen.
+
+#### Register-Aufenthalt: GOSAT-GW (`phi/blocked_sources.φ:328`) + AllWISE (`:227`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Register-/Harvest-Pass.
+- **Lage:** (gemessen 2026-09-26 via `register_lookup --orphans`) beide `[mycelium]` `pending` und ohne Handover-Aufenthalt (orphan). GOSAT-GW (`https://www.gosat-gw.nies.go.jp`) in diesem Atom +9 committet: Homepage absent (nur Wayback 2022-09-06), kein Daten-Endpoint. AllWISE (`https://irsa.ipac.caltech.edu/TAP`) allsky_4band_p3as_psd: sync-Stall; async-UWS Job 23542882 COMPLETED (1 Zeile, VOTable 1.3).
+- **Blockade:** keine.
+- **Braucht:** GOSAT-GW bleibt `pending` bis Datenverfügbarkeit (Register-Duty); AllWISE async-UWS-Arm messen und Eintrag führen.
 
 #### CARRIER_DRIFT `phi/blocked_sources.φ::gap:curation` carrier=13 live=4
 - **Status:** wartend | **Bindung:** eigen→mountain
