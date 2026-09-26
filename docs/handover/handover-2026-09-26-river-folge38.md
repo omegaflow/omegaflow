@@ -100,9 +100,9 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 #### Geräte-Inventar — Einzelbefehle ausführen
 - **Status:** operator-gebunden | **Bindung:** operator
 - **Trigger:** Operator führt die Befehle am Gerät aus.
-- **Lage:** (gemessen 2026-09-26 via Operator-Wort) vorhanden: Laptop, Hibreak Pro (Bigme), Pixel 9, Forerunner 945, Meta Quest 1 (Existenz unklar); Pixel-Mikrofonanzahl = 3. Offen: 945-Sample-Raten + Chip/FCC, Quest-1-Firmware + WebGPU/Generic-Sensor, Bigme-Näherung/Licht/Haptik/WebGPU, Pixel-`SensorManager`-Liste.
-- **Blockade:** Messung nur am physischen Gerät.
-- **Braucht:** `adb shell dumpsys sensorservice`; `chrome://gpu`; 945 → Einstellungen → System → Info + `.FIT`-Header (`data/garmin-945/2026-09-26/`); Quest `adb devices` + `dumpsys sensorservice`.
+- **Lage:** (gemessen 2026-09-26 via `adb`) **Bigme HiBreak, Android 14**, adb-`unauthorized` → autorisiert, `dumpsys sensorservice` gelesen: 21 Sensoren — ACCELEROMETER 12,5–400 Hz, GYROSCOPE (UNCALI_GYRO 12,5–400 Hz), MAGNETOMETER 5–50 Hz, LIGHT (on-change, 1 Hz), PROXIMITY (on-change, 1 Hz, wakeUp), GRAVITY/LINEARACCEL/ROTATION_VECTOR/GEOMAG 50–200 Hz, STEP_DETECTOR/COUNTER, TILT, WAKE_GESTURE, SIGNIFICANT_MOTION, DEVICE_ORIENTATION. Haptik gemessen (`dumpsys vibrator_manager`, mId=1): Prebaked CLICK/DOUBLE_CLICK/TICK/HEAVY_CLICK/TEXTURE_TICK, **keine** Amplitude/Frequenz-Steuerung. WebGPU (Bigme) ungemessen. Aus Operator-Wort vorhanden: Laptop, Pixel 9, Forerunner 945, Meta Quest 1 (Existenz unklar); Pixel-Mikrofonanzahl = 3. Offen: 945-Sample-Raten + Chip/FCC, Quest-1-Firmware + WebGPU/Generic-Sensor, Pixel-`SensorManager`-Liste, Bigme-WebGPU.
+- **Blockade:** Restmessungen nur am physischen Gerät.
+- **Braucht:** Pixel 9 `adb shell dumpsys sensorservice`; Bigme/Pixel `chrome://gpu`; 945 → Einstellungen → System → Info + `.FIT`-Header (`data/garmin-945/2026-09-26/`); Quest `adb devices` + `dumpsys sensorservice`.
 - **Wort:** Einzelbefehle liefern | 2026-09-26 | Operator-Wort folge36.
 
 #### Puls-Pfad 945 — Weg (b): Live-BLE-HR nach dem Membran-Fix
