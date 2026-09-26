@@ -15382,28 +15382,28 @@ field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0
 field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
 field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_daily.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788888-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 86400
 field daytime_lst_k daytime_lst_k gaussian-inverse-square thermal K 86400 0.0 0.0
 field nighttime_lst_k nighttime_lst_k gaussian-inverse-square thermal K 86400 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_8day.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788893-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 691200
 field daytime_lst_8day_k daytime_lst_8day_k gaussian-inverse-square thermal K 691200 0.0 0.0
 field nighttime_lst_8day_k nighttime_lst_8day_k gaussian-inverse-square thermal K 691200 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_monthly.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788897-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 2592000
 field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
