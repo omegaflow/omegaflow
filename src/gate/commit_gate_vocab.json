@@ -60,7 +60,8 @@
     ["star_position_at(rec, epoch + 1.0)", "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"],
     ["SampleSource::Ephemeris,\n            epoch: 0.0,", "a star sample epoch written as a bare 0.0 fabricates a reference epoch the bin does not carry — the star epoch is the catalog reference epoch (the catalog_epoch register directive folded onto the TDB clock), never 0.0"],
     ["star_epoch_min: if star_epoch_min == f64::MAX {", "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"],
-    ["None => render_source_url(", "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"]
+    ["None => render_source_url(", "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"],
+    ["sensordatavalues.0.value sensorcommunity", "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",

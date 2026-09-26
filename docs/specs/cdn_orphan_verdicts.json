@@ -195,7 +195,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "amsmeteors.org",
@@ -227,7 +228,8 @@
    "documentation": "undocumented",
    "reachability": "400 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.coral.tsr.lol",
@@ -235,7 +237,8 @@
    "documentation": "undocumented",
    "reachability": "404 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.drand.sh",
@@ -243,7 +246,8 @@
    "documentation": "undocumented",
    "reachability": "403 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.energy-charts.info",
@@ -251,7 +255,8 @@
    "documentation": "undocumented",
    "reachability": "405 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.exchangerate-api.com",
@@ -275,7 +280,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "api.inaturalist.org",
@@ -299,7 +305,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.met.no",
@@ -307,7 +314,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.neotomadb.org",
@@ -331,7 +339,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.rainviewer.com",
@@ -339,7 +348,8 @@
    "documentation": "undocumented",
    "reachability": "403 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.stackexchange.com",
@@ -347,7 +357,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.sunrise-sunset.org",
@@ -355,7 +366,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.waqi.info",
@@ -363,7 +375,8 @@
    "documentation": "undocumented",
    "reachability": "timeout",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "api.weather.gov",
@@ -395,7 +408,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "beacon.nist.gov",
@@ -419,7 +433,8 @@
    "documentation": "undocumented",
    "reachability": "403 (root, BigIP)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "cddis.nasa.gov",
@@ -427,7 +442,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "cdms.astro.uni-koeln.de",
@@ -443,7 +459,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "celestrak.org",
@@ -459,7 +476,8 @@
    "documentation": "undocumented",
    "reachability": "conn-refused",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "climate-api.open-meteo.com",
@@ -475,7 +493,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "coastwatch.noaa.gov",
@@ -499,7 +518,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "dap.oceannetworks.ca",
@@ -515,7 +535,8 @@
    "documentation": "undocumented",
    "reachability": "tls-err (expired cert)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "data-gis.unep-wcmc.org",
@@ -539,7 +560,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "data.gdeltproject.org",
@@ -579,7 +601,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "dataserver-coids.inpe.br",
@@ -587,7 +610,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "db.satnogs.org",
@@ -603,7 +627,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "earth-search.aws.element84.com",
@@ -619,7 +644,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "ensemble-api.open-meteo.com",
@@ -675,7 +701,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "esgf.ceda.ac.uk",
@@ -683,7 +710,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "eyes.nasa.gov",
@@ -699,7 +727,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "flood-api.open-meteo.com",
@@ -715,7 +744,8 @@
    "documentation": "undocumented",
    "reachability": "403",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "gcn.nasa.gov",
@@ -755,7 +785,8 @@
    "documentation": "undocumented",
    "reachability": "301-empty",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "gis.ngdc.noaa.gov",
@@ -779,7 +810,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "globalfloods.eu",
@@ -795,7 +827,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "hamqsl.com",
@@ -803,7 +836,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "heasarc.gsfc.nasa.gov",
@@ -819,7 +853,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "descoped"
   },
   {
    "netloc": "hydro1.gesdisc.eosdis.nasa.gov",
@@ -835,7 +870,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "imis.bfs.de",
@@ -843,7 +879,8 @@
    "documentation": "undocumented",
    "reachability": "404 (root)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "impc.dlr.de",
@@ -859,7 +896,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "ionosonde.iap-kborn.de",
@@ -867,7 +905,8 @@
    "documentation": "undocumented",
    "reachability": "dns-fail",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "isc.ac.uk",
@@ -875,7 +914,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "landsatlook.usgs.gov",
@@ -947,7 +987,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "my.cmems-du.eu",
@@ -1011,7 +1052,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "nrt.cmems-du.eu",
@@ -1043,7 +1085,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "ogimet.com",
@@ -1051,7 +1094,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "omniweb.gsfc.nasa.gov",
@@ -1059,7 +1103,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "opendap.nccs.nasa.gov",
@@ -1067,7 +1112,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "opendata.dwd.de",
@@ -1115,7 +1161,8 @@
    "documentation": "undocumented",
    "reachability": "dns-fail",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "planetarycomputer.microsoft.com",
@@ -1155,7 +1202,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "records-ws.nbnatlas.org",
@@ -1163,7 +1211,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "rest.isric.org",
@@ -1171,7 +1220,8 @@
    "documentation": "undocumented",
    "reachability": "405 (root, data routes answer)",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "sciencebase.gov",
@@ -1187,7 +1237,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "service.earthscope.org",
@@ -1195,7 +1246,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "released"
   },
   {
    "netloc": "service.scedc.caltech.edu",
@@ -1203,7 +1255,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   },
   {
    "netloc": "services.terrascope.be",
@@ -1251,7 +1304,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "descoped"
   },
   {
    "netloc": "wienerlinien.at",
@@ -1259,7 +1313,8 @@
    "documentation": "undocumented",
    "reachability": "200",
    "registry_verdict": "pending (Force-Gate disposition via SOURCE_PORT); not in any register",
-   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)"
+   "cdn_verdict": "keep (Step 5 only with rebuild source / content disposition)",
+   "disposition": "declined"
   }
  ]
 }
