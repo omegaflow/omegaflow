@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: 9dbbd1169a988872c2fbd2bb85f2b56da74cb779ded14e998c4e492b989da2ce
+  sha256: 1ce204591fc42b447ae8535c0a3bedaf7fed99639dbd9d698db69fd0b81e7669
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -57,7 +57,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 #### Browser-Extension — CI-Workflow gebaut; Dispatch + Artefakt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Commit+Push dieses Atoms (`browser-extension.yml` auf `main`).
-- **Lage:** (gemessen 2026-09-26 via git/`ci_manage`) Fork committet (`f9ea3284`, 60 Pfade, `chrome.alarms` in `wxt.config.ts:33` + `bridge-client.ts`); **kein Lockfile** → `.github/workflows/browser-extension.yml` gebaut. Lauf `36242493629` failure: `npm install` stirbt an `npm error Cannot read properties of null (reading 'edgesOut')` (npm 10.9.8, Peer-Resolution ohne Lockfile; `ci_manage log 36242493629`). Fix `--legacy-peer-deps` → Lauf `36242884020`: install+build grün, `npm test` rot **1/85** — `test/bridge-client.test.ts:212` (Keepalive-`resume` öffnet keinen frischen Socket); Ursache: `FakeWS`-Doppel ohne `readyState`/`OPEN` → `resume()` vergleicht `undefined === undefined` und kehrt früh zurück. Test-Doppel treu gemacht (`1b027479b`), Lauf `36243233660` queued.
+- **Lage:** (gemessen 2026-09-26 via git/`ci_manage`) Fork committet (`f9ea3284`, 60 Pfade, `chrome.alarms` in `wxt.config.ts:33` + `bridge-client.ts`); **kein Lockfile** → `.github/workflows/browser-extension.yml` gebaut. Lauf `36242493629` failure: `npm install` stirbt an `npm error Cannot read properties of null (reading 'edgesOut')` (npm 10.9.8, Peer-Resolution ohne Lockfile; `ci_manage log 36242493629`). Fix `--legacy-peer-deps` → Lauf `36242884020`: install+build grün, `npm test` rot **1/85** — `test/bridge-client.test.ts:212` (Keepalive-`resume` öffnet keinen frischen Socket); Ursache: der Test registriert keinen `chrome.alarms.onAlarm`-Listener (die Verdrahtung lebt in `background.ts`, das der Test nicht importiert) → `emitAlarm` ist ein No-op; zudem fehlten dem `FakeWS`-Doppel `readyState`/`OPEN`. Beide Test-Fixes (`1b027479b`, `39cfa06c3`), Lauf `36243288134`.
 - **Blockade:** keine (JS, unabhängig von der cargo-Blockade).
 - **Braucht:** nach Push `gh workflow run browser-extension.yml`, `ci_manage view <id>`; bei Rot die Tests fixen; Artefakt für den Operator-Akt.
 
