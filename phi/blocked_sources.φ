@@ -39,7 +39,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 pending
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN: Globus MAP af68c4f1 FAILED → neu 20e8a751-b9aa-11f1-97cb-0affd5e180af ACTIVE 2026-09-26 (Ziel data/superdarn/map). FITACF OAuth-frei sdc-serv.usask.ca/data/{Y}/{M} 200 (867 123 B); MAP via Zenodo netCDF.
+note SuperDARN: Globus MAP 20e8a751… ACTIVE. FITACF-Liste POST superdarn.ca/db-fitacf-files-bounce (JSON date/radars); Datei sdc-serv.usask.ca/data/{Y}/{M} 200 (Probe 665 238 B, sha256 2c705acd…). fitacf-Compiler: bz2-Arm fehlt.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -74,7 +74,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18387: CDPP-Auth OK 2026-09-26 (Bearer via Query-String-OAuth, CDPP_USER/PASS); Order GET 200, availableFilesCount 0 / filesInErrorCount 96978, product GET 500/0 B — kein WAF-Problem. Braucht: Order-Retry.
+note DEMETER Order 18387: CDPP-Auth OK; PUT /orders/18387/retry 200 (autonom, wirkungslos), Status unverändert DONE_WITH_WARNING, 0 verfügbar / 96978 Fehler, alle Dateien online:false, Download 500/0 B. restart (Neuanlage) = operator-gebunden.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
@@ -322,7 +322,7 @@ note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement n�
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth (GOSAT_GW_MAIL/PASS) verifiziert 2026-09-26 — CUI-search 200 (423 959 B), Probe TANSO3_…h5 75 957 569 B HDF5 (sha256 6d064395…). Harvest pending.
+note GOSAT-GW: Cookie-Auth verifiziert; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5 (sha256 5f0e7920…); L2_GHG/NO2 = 0. gosat-Compiler fehlt.
 
 descoped
 url https://data.lsst.cloud/api/tap/sync

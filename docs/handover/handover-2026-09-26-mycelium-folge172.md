@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: b0637b99e1161044cedbf9f771c622218b5f50df3b71404e777e2d88868e0f56
+  sha256: cc4c34171ec31f36b1b244c51824567557db7411da66b9f2f32e6bddb8c6862d
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -31,12 +31,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 ### Linie (eigen)
 
-#### SuperDARN FITACF+MAP als Quellen registrieren
+#### SuperDARN FITACF+MAP — bz2-Arm + Quellen
 - **Status:** autonom | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/sources.φ`.
-- **Lage:** (gemessen 2026-09-26) FITACF `sdc-serv.usask.ca/data/{Y}/{M}` 200 (Probe 867 123 B); MAP-Globus-Transfer `20e8a751…` `ACTIVE`; MAP anonym via Zenodo netCDF.
-- **Blockade:** keine.
-- **Braucht:** FITACF-/MAP-Block in `phi/sources.φ` + Format-/Compiler-Arm.
+- **Trigger:** Register-Pass `phi/sources.φ` / `superdarn_fitacf_compiler`.
+- **Lage:** (gemessen 2026-09-26) MAP-Globus `20e8a751…` `ACTIVE`; FITACF-Liste `POST superdarn.ca/db-fitacf-files-bounce` (JSON date/radars), Datei `sdc-serv.usask.ca/data/{Y}/{M}` 200 (Probe 665 238 B, sha256 `2c705acd…`). `superdarn_fitacf_compiler` hat keinen bz2-Arm.
+- **Blockade:** bz2-Arm fehlt.
+- **Braucht:** bz2-`decompress`-Arm aus `superdarn_rawacf_compiler` übernehmen; dann FITACF-/MAP-Block in `phi/sources.φ`.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
@@ -73,12 +73,19 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Blockade:** keine.
 - **Braucht:** Keyer-Output gegenprüfen + MCQG-Riss führen.
 
-#### DEMETER — Order-Retry
+#### DEMETER — Download serverseitig zu
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Order-Status `regards.cnes.fr` (`phi/blocked_sources.φ:76`).
-- **Lage:** (gemessen 2026-09-26) CDPP-Auth OK (Bearer, Query-String-OAuth); Order 18387 `availableFilesCount 0` / `filesInErrorCount 96978`, Product-GET 500/0 B. Kein WAF-Problem.
-- **Blockade:** Order-Staging.
-- **Braucht:** Order-Retry/`restart`; danach `demeter-cdn.yml`.
+- **Trigger:** CDPP-Dateistatus `online` (`phi/blocked_sources.φ:76`).
+- **Lage:** (gemessen 2026-09-26) `PUT /orders/18387/retry` 200 (autonom, wirkungslos); Status unverändert `DONE_WITH_WARNING`, 0 verfügbar / 96978 Fehler, alle Dateien `online:false`, Download 500/0 B. `restart` (Neuanlage) = operator-gebunden.
+- **Blockade:** CDPP-seitiges `online:false`.
+- **Braucht:** `restart`-Befehl (Operator) oder Wiedervorlage, wenn CNES die Dateien bereitstellt.
+
+#### GOSAT-GW — Compiler fehlt
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/sources.φ` / `gosat_*_compiler.rs`.
+- **Lage:** (gemessen 2026-09-26) Cookie-Auth (GOSAT_GW_MAIL/PASS); GWT3F_L1B 132 / GWT3W_L1B 434 Dateien; Probe 17 440 691 B HDF5 (sha256 `5f0e7920…`); L2_GHG/NO2 = 0. Kein `gosat*_compiler.rs` im Repo.
+- **Blockade:** Compiler fehlt.
+- **Braucht:** `gosat_tanso3_compiler` bauen + Quelle in `phi/sources.φ`.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
