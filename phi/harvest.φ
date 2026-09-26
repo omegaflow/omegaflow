@@ -8,6 +8,16 @@ timeout 60
 note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B (sha256 nicht-deterministisch); .tab 4828824 B sha256 8d7e6007…; CDN-Asset 1733432 B sha256 8f83ec79… gemessen 2026-09-18.
 
 asset present
+format bpa_gic
+tag transmission.bpa.gov
+arm bpa_gic_compiler
+workflow bpa-gic-cdn.yml
+pattern ^bpa_gic\.csv$
+idempotent true
+timeout 120
+note BPA transformer GIC 5-min Ampere, 11 cities (names only, no lat/lon — absent), rolling 4 days; Pacific Time wall clock carried as-is.
+
+asset present
 format cassini_odf
 tag atmos.nmsu.edu
 arm cassini_odf_compiler
@@ -210,26 +220,6 @@ timeout 120
 note TAO/TRITON pmelTaoDyW zonal wind WU_422 m s-1, QWS_5401<=2.5, daily 12:00Z, 1977-11-06→2026-09-02, direct+CoastWatch mirror.
 
 asset present
-format wwlln_th
-tag wwlln.net
-arm wwlln_compiler
-workflow wwlln-cdn.yml
-pattern ^wwlln_th\.csv$
-idempotent true
-timeout 1800
-note WWLLN thunder-hours climatology 2025, 0.05° grid, annual sum of monthly thunder_hours (int16, Hours), sparse >0 cells; lat/lon from the netCDF coordinate arrays.
-
-asset present
-format bpa_gic
-tag transmission.bpa.gov
-arm bpa_gic_compiler
-workflow bpa-gic-cdn.yml
-pattern ^bpa_gic\.csv$
-idempotent true
-timeout 120
-note BPA transformer GIC 5-min Ampere, 11 cities (names only, no lat/lon — absent), rolling 4 days; Pacific Time wall clock carried as-is.
-
-asset present
 format ulysses_atdf
 tag pds-ppi.igpp.ucla.edu
 arm ulysses_atdf_compiler
@@ -246,3 +236,13 @@ pattern ^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
 note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
+
+asset present
+format wwlln_th
+tag wwlln.net
+arm wwlln_compiler
+workflow wwlln-cdn.yml
+pattern ^wwlln_th\.csv$
+idempotent true
+timeout 1800
+note WWLLN thunder-hours climatology 2025, 0.05° grid, annual sum of monthly thunder_hours (int16, Hours), sparse >0 cells; lat/lon from the netCDF coordinate arrays.
