@@ -2,9 +2,9 @@
   title: arXiv — Zugriffswege (API, OAI-PMH, Bulk)
   class: concept
   date: 2026-09-25
-  sha256: 7edd1e65f21988e8e5ee9226795f56e9287460168f858f9bd8c5d26883898362
+  sha256: ec3262c5a3809af7ad90dcd6cc9671fa40b824b7a2f9b1f8c8e82107e060bc49
   status: live
-  see-also: docs/concepts/tools-map.md docs/handover/handover-2026-09-25-mountain-folge165.md
+  see-also: docs/concepts/tools-map.md
 -->
 # arXiv — Zugriffswege (API, OAI-PMH, Bulk)
 
@@ -62,4 +62,6 @@ Dieses Blatt hält die dokumentierten Wege; es behauptet keinen Live-Zustand.
 - Werkzeug: `archive_search --arxiv` klemmt das Fenster auf `ARXIV_QUERY_WINDOW = 2`
   (`tools/utils/src/bin/archive_search/net.rs`) und benennt den Zustand; die alte
   „server-side, fresh queries rejected"-Meldung war ungemessen und ist korrigiert.
-- Der offene Punkt `arxiv HTTP 406` lebt in `handover-2026-09-25-mountain-folge165.md`.
+- **Erledigt (gemessen 2026-09-26):** der 406-Befund ist gemessen und im Werkzeug
+  geklemmt (`ARXIV_QUERY_WINDOW = 2`, Bau `766f2ed28`); OAI-PMH trägt den Bulk-Weg.
+  Kein offener Punkt.
