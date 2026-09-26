@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 82b16b0aea5856d90dd76d86a0b17c599966353b8916e7fda6ab1aaa5c0a8bbf
+  sha256: 4590b56db31af365ea6867fafd84712ed89b53ce2bcb9bcfd69b0f7965c706b8
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -78,14 +78,15 @@ getrackt, nie am CDN.
 - **Blockade:** Laufzeit.
 - **Braucht:** Rotor laufen lassen; Σ p̂·M-Zeile nachtragen.
 
-### 7. #7 Kreuz-Screening — Workflow gebaut, Lauf offen
-- **Status:** wartend | **Bindung:** eigen | **Trigger:** Lauf endet
-- **Lage:** (gemessen 2026-09-27) Workflow **`.github/workflows/cross-screening-tibet.yml`**
-  gebaut (Serien aus `phi/meteo/tibet-flut-2026.json`: gyirong/kollab/rasuwa) und
-  dispatcht → Run `36278481962`.
+### 7. #7 Kreuz-Screening — gemessen (Run success)
+- **Status:** geschlossen | **Bindung:** eigen | **Trigger:** —
+- **Lage:** (gemessen 2026-09-27) Workflow `.github/workflows/cross-screening-tibet.yml`
+  gebaut, Run `36278754294` **success**: 6 Serien/6 Paare, konditioniert auf gyirong
+  temperature_2m; eine Zelle überlebt marginal (`rasuwa_temperature_2m →
+  gyirong_precipitation` Lag 6, cTE 0.0027 > 0.0026). Eingetragen in
+  `cross-screening-tibet.md`.
 - **Blockade:** keine.
-- **Braucht:** Ergebnis via `ci_manage view 36278481962`; Träger
-  `cross-screening-tibet.md:42/:44`, `blatt-kreuz-screening-gyirong.md:71/:201`.
+- **Braucht:** Träger `blatt-kreuz-screening-gyirong.md:71/:201` nachziehen.
 
 ### 8. #9 Trishuli — Post-Scene geladen (SAS-Bug gefixt), Alignment offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
