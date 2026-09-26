@@ -6,7 +6,8 @@ use omegaflow::jwst::mjd_to_unix;
 use omegaflow::lsk::parse as parse_lsk;
 use std::env;
 use std::fs;
-use std::process::Command;
+use std::io::Write;
+use std::process::{Command, Stdio};
 
 const NETLOC: &str = "zenodo.org";
 
@@ -83,6 +84,28 @@ fn http_size(url: &str) -> Option<u64> {
         }
     }
     None
+}
+
+fn decompress_if_needed(raw: Vec<u8>) -> Option<Vec<u8>> {
+    if !raw.starts_with(b"BZh") {
+        return Some(raw);
+    }
+    let mut child = Command::new("bzip2")
+        .arg("-dc")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .ok()?;
+    {
+        let mut stdin = child.stdin.take()?;
+        stdin.write_all(&raw).ok()?;
+    }
+    let out = child.wait_with_output().ok()?;
+    if out.status.success() {
+        Some(out.stdout)
+    } else {
+        None
+    }
 }
 
 fn le16(b: &[u8]) -> u16 {
@@ -820,10 +843,17 @@ fn main() {
     }
 
     if let Some(input) = arg_value(&args, "--input") {
-        let bytes = match fs::read(&input) {
+        let raw = match fs::read(&input) {
             Ok(b) => b,
             Err(_) => {
                 eprintln!("read {} returned void", input);
+                std::process::exit(1);
+            }
+        };
+        let bytes = match decompress_if_needed(raw) {
+            Some(b) => b,
+            None => {
+                eprintln!("{}: the bz2 stream stays unreadable — pending", input);
                 std::process::exit(1);
             }
         };
