@@ -72,7 +72,10 @@ fn main() {
     let (spin_spectra, spin_osc, doping_classes) = match spin.as_ref() {
         Some(s) => (
             s.spectra.len(),
-            s.spectra.iter().map(|sp| sp.oscillators.len()).sum::<usize>(),
+            s.spectra
+                .iter()
+                .map(|sp| sp.oscillators.len())
+                .sum::<usize>(),
             s.spectra
                 .iter()
                 .map(|sp| sp.doping)
