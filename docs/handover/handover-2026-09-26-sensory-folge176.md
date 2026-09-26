@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 1e5624d6609fc20b2bc5ece8a7f2351967039ff22d8bbc951dc971536f5042f4
+  sha256: bf99f1fd5b5dfc3ea6a29488ce8b1d655351ec0dab652b488fb0b3e184fa70a9
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -41,10 +41,9 @@ gemessen; ihr Ausgang steht im Zustand-Ledger, nicht als Kopie hier. Karte:
 - **Postfach:** kein Sensory-Treffer; CSES-Limadou (Sotgiu, „wait a few weeks" →
   Wiedervorlage), DSN-Briefe im Ledger, Forum/Alerts. Ledger
   `state/mail/mail_ledger.φ`.
-- **CI am HEAD `75bf3131f`:** `zigbee-host` 36235266918 failure gemessen (Fix,
-  siehe ZNSP); `meteo-cdn` tibet 36234656173 + aaretal 36234657686 success
-  (Ergebnisse gelesen, s. Kreuz-Screening); japan 36234658873 + bordeaux
-  36234660015 in_progress; `te-gate` 36228804363 in_progress @ `c6edfbe45`.
+- **CI am HEAD `85fcd3cf2`:** `zigbee-host` 36235538625 success (sizeof leer →
+  Fix, s. ZNSP); `meteo-cdn` alle vier success (tibet/aaretal/japan/bordeaux,
+  s. Kreuz-Screening); `te-gate` 36228804363 in_progress (`fpr-ksg-arx`, 2 h+).
 - **Arbeitsbaum:** fremde uncommittete Arbeit (Mycelium/Mountain an
   `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/skydirection.rs`,
   `kbo_residue_probe.rs`, `rixs_cuprate_probe.rs`, `suprastrom_form_probe.rs`,
@@ -131,12 +130,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine (der Commit steht; kein Rückbau erlaubt).
 - **Braucht:** im Abschluss-Check sichtbar tragen.
 
-#### Kreuz-Screening auf weitere Ereignisse — 2/4 gelesen, `is_day`-Konfundierung
+#### Kreuz-Screening — 4/4 gelesen, Screen misst den Diurnal-Zyklus
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** japan `36234658873` + bordeaux `36234660015` (noch `in_progress`)
-- **Lage:** (gemessen 2026-09-26) tibet `36234656173` + aaretal `36234657686` success; `cross_te_screen`-Logs gelesen. **Befund:** fast alle starken Paare zielen auf das Ziel `is_day` (tibet: `rasuwa_cloud_cover_low`→`is_day` TE 0.0184; aaretal: `beatenberg_leaf_wetness`→`is_day` TE 0.0093) — der Screen ist vom Tag/Nacht-Zyklus dominiert, kein ereignisspezifisches Signal. Riss-Stand: Bordeaux=Waldbrand, Japan=Kumamoto-Beben, Aaretal-2026=Habkern/Beatenberg.
-- **Blockade:** keine — CI.
-- **Braucht:** japan/bordeaux-Ergebnisse lesen; Re-Run ohne `is_day` bzw. mit ereignisspezifischer Zielgröße (sonst misst der Screen den Diurnal-Zyklus).
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-26) alle vier `meteo-cdn`-Läufe success (tibet `36234656173`, aaretal `36234657686`, japan `36234658873`, bordeaux `36234660015`); `cross_te_screen`-Logs gelesen. **Befund:** die stärksten Paare zielen durchweg auf `is_day` — tibet `rasuwa_cloud_cover_low`→`is_day` 0.0184; aaretal `beatenberg_leaf_wetness`→`is_day` 0.0093; japan `kumamoto_pressure_msl`→`is_day` 0.0090; bordeaux `landiras_leaf_wetness`→`is_day` 0.0082 — plus gleichvariable Raumkopplung (`weather_code`→`weather_code`). Kein ereignisspezifisches Signal.
+- **Blockade:** keine.
+- **Braucht:** Re-Run mit ereignisspezifischer Zielgröße ohne `is_day`.
 
 #### Seismik-Flotte — 3D-Modell-Kandidat + Stationsterm gemessen, Registrierung offen
 - **Status:** offen | **Bindung:** eigen
@@ -201,12 +200,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** den `te-gate`-Lauf lesen (`ci_manage view`/`log 36228804363`).
 
-#### ZNSP FORMNETWORK — `zigbee-host`-Pfad-Bug gefixt, Zahl beim nächsten Lauf
+#### ZNSP FORMNETWORK — sizeof-Probe-Pfad gefixt, Zahl beim Lauf `36235778378`
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `zigbee-host`-Lauf `36235538625`
-- **Lage:** (gemessen 2026-09-26 via `gh run view --log-failed`) Lauf `36235266918` @ `4dc36647` **failure**: `size.sh` schrieb `zb_cfg_size.txt` nach `$GITHUB_WORKSPACE`, das im `esp-idf-ci-action`-Container unset ist → Datei ausserhalb des gemounteten Workspace; `Emit measured sizeof`: `cat: zb_cfg_size.txt: No such file or directory`. Fix `75bf3131f`: relativ in den Projektordner schreiben, `Emit`/`upload-artifact` lesen `zb_sizeof_probe/zb_cfg_size.txt`, Build-Schritt prüft `test -s`. Neu dispatcht: `36235538625`. `form_network_payload_pending()` liefert weiter `None`.
-- **Blockade:** keine — die Zahl kommt mit dem nächsten (grünen) Lauf.
-- **Braucht:** den nächsten Lauf lesen (`SIZEOF_ESP_ZB_CFG_T`), dann den FORMNETWORK-Encoder mit der gemessenen Größe setzen.
+- **Trigger:** der `zigbee-host`-Lauf `36235778378`
+- **Lage:** (gemessen 2026-09-26) Lauf `36235538625` @ `75bf3131f` success, aber `SIZEOF_ESP_ZB_CFG_T=` **leer**: `size.sh` las `build/main/libmain.a`, das unter ESP-IDF 5.3 `build/esp-idf/main/libmain.a` heisst → `nm` fand `zb_cfg_size` nicht (stille Leerzahl, kein Fehler). Fix `85fcd3cf2`: `find build -name libmain.a`, `test -n "$SIZE_HEX"` (lautes Scheitern statt stillem Leerwert). Neu dispatcht `36235778378`. `form_network_payload_pending()` liefert weiter `None`.
+- **Blockade:** keine.
+- **Braucht:** Lauf `36235778378` lesen (`SIZEOF_ESP_ZB_CFG_T`), dann den FORMNETWORK-Encoder mit der gemessenen Größe setzen.
 
 #### HRV/Puls→Strahlung — Leser gebaut, Live-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
