@@ -3,6 +3,7 @@ use crate::net::{get, urlencode};
 
 pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
     let mailto = crate::token::secret("OPENALEX_MAILTO");
+    let api_key = crate::token::secret("OPENALEX_API_KEY");
     let mut cursor: Option<String> = Some("*".to_string());
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
         let mut url = format!(
@@ -13,6 +14,10 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
         if let Some(mail) = &mailto {
             url.push_str("&mailto=");
             url.push_str(&urlencode(mail));
+        }
+        if let Some(key) = &api_key {
+            url.push_str("&api_key=");
+            url.push_str(&urlencode(key));
         }
         if let Some(c) = &cursor {
             url.push_str("&cursor=");
