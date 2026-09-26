@@ -3,7 +3,7 @@
   session: Sensory-Folge 177
   class: handover
   date: 2026-09-26
-  sha256: 32994247dcdac9ae79e88c3249182354bd6a6687a6b56283dd8ab55955cfd356
+  sha256: 5cbbc209b9a6a075071e334e81b69c827ddf2a3a7d3096d266ec3c46e44fc474
   status: live
 -->
 # Handover — Sensory-Folge 177 (2026-09-26)
@@ -140,7 +140,7 @@ Die Reihenfolge ist die Umsetzbarkeit; der Akteur steht pro Punkt in `Bindung`.
 - **Trigger:** sofort
 - **Lage:** (gemessen 2026-09-26) CHARM2 `J/A+A/431/773` `Method='LO'` (Lunar Occultation) in `phi/sources.φ:9593` registriert (`format tap`, `cmap .`, `ra/dec/plx`, `field UD/LD mas`); Probe `tools/harvest/src/bin/charm2_occultation_probe.rs` gebaut, 0 Warnungen. Live: 1815 LO-Zeilen, **389 mit Winkel + eingebetteter Hipparcos-Distanz**, 438 mit Gaia-DR3-Cross-Match (`I/355/gaiadr3`, TAPVizieR-JOIN `DISTANCE < 2″`, HTTP 200). **Gaia-Parallax-Compiler gebaut:** `src/archivar/charm2.rs` (`CHM2`, 41-B-Records), `tools/harvest/src/bin/charm2_compiler.rs` (ADQL-JOIN), Dispatch `extract.rs:2811`, `mod.rs:36`, CDN-Block `sources.φ:9581`; live 438 JOIN-Paare → **363 Records**; `cargo check` 0 Warnungen. Der Marker (okkultations-abgeleitetes Winkeldurchmesser-Feld **mit** Distanz) ist damit füllbar.
 - **Blockade:** keine.
-- **Braucht:** der **Fetch-Arm** (`main_flow.rs`: `catalog_charm2`-`.bin` in den `content_cache`, Muster `catalog_allwise_psd` `main_flow.rs:3661`) — `main_flow.rs` ist fremd-dirty, daher nächster Atom. Das **Δz-je-Okkultation**-Pending bleibt `absent` (IOTA-Archiv `asteroidoccultation.com/observations/Results/` live, trägt Lichtkurven, kein Δz-Katalog).
+- **Braucht:** der **Fetch-Arm** (`main_flow.rs`: `catalog_charm2`-`.bin` in den `content_cache`, Muster `catalog_allwise_psd` `main_flow.rs:3661`) — `main_flow.rs` ist fremd-dirty, daher nächster Atom; der **CDN-Workflow** `charm2-cdn.yml` (Größen-Gate 14891 B, Spiegel `slab2-cdn.yml`) ist gebaut und dispatcht. Das **Δz-je-Okkultation**-Pending bleibt `absent` (IOTA-Archiv `asteroidoccultation.com/observations/Results/` live, trägt Lichtkurven, kein Δz-Katalog).
 
 #### Pioneer/Dark-Matter — Volltextroute gemessen
 - **Status:** eigen | **Bindung:** eigen
@@ -348,6 +348,7 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `docs/handover/archiv/handover-2026-09-26-sensory-folge176.md`,
 `docs/specs/mantis-shrimp-build.md`,
 `.github/workflows/slab2-cdn.yml`,
+`.github/workflows/charm2-cdn.yml`,
 `tools/measure/src/bin/cross_te_screen.rs`,
 `tools/harvest/src/bin/charm2_occultation_probe.rs`,
 `tools/harvest/src/bin/charm2_compiler.rs`,
