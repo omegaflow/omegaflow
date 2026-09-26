@@ -452,4 +452,8 @@ blocked ip-blocked
 url https://api.sensor.community/v1/data/measurements
 note 2026-09-25 direct 403 / Proton-Exit 403 (lokaler IP-Block). Kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a). Proton-freier CI-Puls via source_latency_census --blocked ausstehend.
 
+blocked account
+url https://datadc.ihep.ac.cn/resource/astro/lhaaso
+reg https://datadc.ihep.ac.cn/resource/astro/lhaaso
+note LHAASO-Roh-/Rekonstruktionsdaten nur als Kollaborationsmitglied (Politiktext 2026-09-26); API /api/dataset/12/search 200: 18 Datensätze (4 Rohdaten-Klassen gated); Survey-Event-Listen nicht public.
 
