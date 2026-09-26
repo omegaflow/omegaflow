@@ -2881,6 +2881,219 @@ pub fn gate_fpr_cells(n: usize, p: GateParams) -> Vec<GateCell> {
     gate_fpr_cells_from(n, &cells, p)
 }
 
+pub const BLATT_N_FLOOR: usize = 8;
+
+#[derive(Debug)]
+pub struct BlattPair {
+    pub xs: Vec<f32>,
+    pub ys: Vec<f32>,
+    pub n: usize,
+    pub span_s: f64,
+    pub cadence_s: f64,
+    pub seed: u64,
+    pub commit_sha: String,
+    pub n_surr: usize,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum BlattLoadError {
+    NoHeader,
+    MissingField,
+    LengthMismatch,
+    NonFinite,
+    BelowFloor,
+    CommitNotInTree,
+}
+
+pub fn current_commit_sha() -> Option<String> {
+    let out = std::process::Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if s.is_empty() { None } else { Some(s) }
+}
+
+fn commit_in_tree(sha: &str) -> bool {
+    if sha.len() < 4 || !sha.chars().all(|c| c.is_ascii_hexdigit()) {
+        return false;
+    }
+    let spec = format!("{sha}^{{commit}}");
+    std::process::Command::new("git")
+        .args(["rev-parse", "--verify", &spec])
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
+}
+
+fn push_f32_array(s: &mut String, v: &[f32]) {
+    for (i, x) in v.iter().enumerate() {
+        if i > 0 {
+            s.push(',');
+        }
+        s.push_str(&x.to_string());
+    }
+}
+
+pub fn blatt_pair_json(
+    xs: &[f32],
+    ys: &[f32],
+    span_s: f64,
+    cadence_s: f64,
+    seed: u64,
+    commit_sha: &str,
+    n_surr: usize,
+) -> String {
+    let mut s = String::with_capacity(128 + (xs.len() + ys.len()) * 12);
+    s.push_str("{\"blatt\":{\"n\":");
+    s.push_str(&xs.len().to_string());
+    s.push_str(",\"span_s\":");
+    s.push_str(&span_s.to_string());
+    s.push_str(",\"cadence_s\":");
+    s.push_str(&cadence_s.to_string());
+    s.push_str(",\"seed\":\"");
+    s.push_str(&seed.to_string());
+    s.push_str("\",\"commit_sha\":\"");
+    s.push_str(commit_sha);
+    s.push_str("\",\"n_surr\":");
+    s.push_str(&n_surr.to_string());
+    s.push_str("},\"xs\":[");
+    push_f32_array(&mut s, xs);
+    s.push_str("],\"ys\":[");
+    push_f32_array(&mut s, ys);
+    s.push_str("]}");
+    s
+}
+
+pub fn write_blatt_pair(
+    path: &str,
+    xs: &[f32],
+    ys: &[f32],
+    span_s: f64,
+    cadence_s: f64,
+    seed: u64,
+    commit_sha: &str,
+    n_surr: usize,
+) -> std::io::Result<()> {
+    std::fs::write(
+        path,
+        blatt_pair_json(xs, ys, span_s, cadence_s, seed, commit_sha, n_surr),
+    )
+}
+
+pub fn load_blatt_pair(path: &str) -> Result<BlattPair, BlattLoadError> {
+    let text = std::fs::read_to_string(path).map_err(|_| BlattLoadError::NoHeader)?;
+    parse_blatt_pair(&text)
+}
+
+fn parse_blatt_pair(text: &str) -> Result<BlattPair, BlattLoadError> {
+    use crate::archivar::json::{JsonVal, parse_json, scalar_of};
+
+    fn usize_field(m: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<usize> {
+        match m.get(k)? {
+            JsonVal::Num(n) => {
+                if n.is_finite() && *n >= 0.0 && n.fract() == 0.0 && *n <= usize::MAX as f64 {
+                    Some(*n as usize)
+                } else {
+                    None
+                }
+            }
+            JsonVal::Str(s) => s.parse().ok(),
+            _ => None,
+        }
+    }
+    fn f64_field(m: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<f64> {
+        match m.get(k)? {
+            JsonVal::Num(n) if n.is_finite() => Some(*n),
+            JsonVal::Str(s) => s.parse::<f64>().ok().filter(|v| v.is_finite()),
+            _ => None,
+        }
+    }
+    fn u64_field(m: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<u64> {
+        match m.get(k)? {
+            JsonVal::Str(s) => s.parse().ok(),
+            JsonVal::Num(n) => {
+                if n.is_finite() && *n >= 0.0 && n.fract() == 0.0 && *n <= u64::MAX as f64 {
+                    Some(*n as u64)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
+    }
+    fn str_field(m: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<String> {
+        match m.get(k)? {
+            JsonVal::Str(s) => Some(s.clone()),
+            _ => None,
+        }
+    }
+
+    let root = parse_json(text).ok_or(BlattLoadError::NoHeader)?;
+    let JsonVal::Obj(map) = root else {
+        return Err(BlattLoadError::NoHeader);
+    };
+    let header = match map.get("blatt") {
+        Some(JsonVal::Obj(h)) => h,
+        _ => return Err(BlattLoadError::NoHeader),
+    };
+    let n = usize_field(header, "n").ok_or(BlattLoadError::MissingField)?;
+    let span_s = f64_field(header, "span_s").ok_or(BlattLoadError::MissingField)?;
+    let cadence_s = f64_field(header, "cadence_s").ok_or(BlattLoadError::MissingField)?;
+    if !(span_s > 0.0) || !(cadence_s > 0.0) {
+        return Err(BlattLoadError::MissingField);
+    }
+    let seed = u64_field(header, "seed").ok_or(BlattLoadError::MissingField)?;
+    let commit_sha = str_field(header, "commit_sha").ok_or(BlattLoadError::MissingField)?;
+    let n_surr = usize_field(header, "n_surr").ok_or(BlattLoadError::MissingField)?;
+    let xs_raw = match map.get("xs") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => return Err(BlattLoadError::MissingField),
+    };
+    let ys_raw = match map.get("ys") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => return Err(BlattLoadError::MissingField),
+    };
+    if n != xs_raw.len() || n != ys_raw.len() {
+        return Err(BlattLoadError::LengthMismatch);
+    }
+    if n < BLATT_N_FLOOR {
+        return Err(BlattLoadError::BelowFloor);
+    }
+    let mut xs = Vec::with_capacity(n);
+    for v in xs_raw {
+        let f = scalar_of(v).ok_or(BlattLoadError::NonFinite)? as f32;
+        if !f.is_finite() {
+            return Err(BlattLoadError::NonFinite);
+        }
+        xs.push(f);
+    }
+    let mut ys = Vec::with_capacity(n);
+    for v in ys_raw {
+        let f = scalar_of(v).ok_or(BlattLoadError::NonFinite)? as f32;
+        if !f.is_finite() {
+            return Err(BlattLoadError::NonFinite);
+        }
+        ys.push(f);
+    }
+    if !commit_in_tree(&commit_sha) {
+        return Err(BlattLoadError::CommitNotInTree);
+    }
+    Ok(BlattPair {
+        xs,
+        ys,
+        n,
+        span_s,
+        cadence_s,
+        seed,
+        commit_sha,
+        n_surr,
+    })
+}
+
 #[cfg(test)]
 fn gate_fpr_coarse_cells(n: usize, p: GateParams) -> Vec<GateCell> {
     let cells = [
@@ -7027,5 +7240,88 @@ mod tests {
             (cutoff - 0.02).abs() < 1e-12,
             "BH cutoff must be the largest qualifying p (0.02), got {cutoff}"
         );
+    }
+
+    fn head_sha() -> String {
+        let out = std::process::Command::new("git")
+            .args(["rev-parse", "HEAD"])
+            .output()
+            .expect("git runs inside the repo");
+        assert!(out.status.success(), "git rev-parse HEAD must resolve");
+        let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        assert!(!s.is_empty(), "HEAD sha must not be empty");
+        s
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_series_without_header() {
+        let json = "{\"xs\":[1,2,3,4,5,6,7,8],\"ys\":[1,2,3,4,5,6,7,8]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::NoHeader
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_missing_mandatory_field() {
+        let json = "{\"blatt\":{\"n\":8,\"span_s\":480.0,\"cadence_s\":60.0,\"commit_sha\":\"deadbeef\",\"n_surr\":10},\"xs\":[1,2,3,4,5,6,7,8],\"ys\":[1,2,3,4,5,6,7,8]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::MissingField
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_length_mismatch() {
+        let json = "{\"blatt\":{\"n\":8,\"span_s\":480.0,\"cadence_s\":60.0,\"seed\":\"42\",\"commit_sha\":\"deadbeef\",\"n_surr\":10},\"xs\":[1,2,3,4,5,6,7,8,9],\"ys\":[1,2,3,4,5,6,7,8]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::LengthMismatch
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_non_finite_value() {
+        let json = "{\"blatt\":{\"n\":8,\"span_s\":480.0,\"cadence_s\":60.0,\"seed\":\"42\",\"commit_sha\":\"deadbeef\",\"n_surr\":10},\"xs\":[1,2,3,4,5,6,7,NaN],\"ys\":[1,2,3,4,5,6,7,8]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::NonFinite
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_below_estimator_floor() {
+        let json = "{\"blatt\":{\"n\":7,\"span_s\":420.0,\"cadence_s\":60.0,\"seed\":\"42\",\"commit_sha\":\"deadbeef\",\"n_surr\":10},\"xs\":[1,2,3,4,5,6,7],\"ys\":[1,2,3,4,5,6,7]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::BelowFloor
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_refuses_commit_not_in_tree() {
+        let json = "{\"blatt\":{\"n\":8,\"span_s\":480.0,\"cadence_s\":60.0,\"seed\":\"42\",\"commit_sha\":\"0000000000000000000000000000000000000000\",\"n_surr\":10},\"xs\":[1,2,3,4,5,6,7,8],\"ys\":[1,2,3,4,5,6,7,8]}";
+        assert_eq!(
+            parse_blatt_pair(json).unwrap_err(),
+            BlattLoadError::CommitNotInTree
+        );
+    }
+
+    #[test]
+    fn load_blatt_pair_happy_path() {
+        let sha = head_sha();
+        let xs: Vec<f32> = (0..8).map(|i| i as f32 + 0.5).collect();
+        let ys: Vec<f32> = (0..8).map(|i| i as f32 * 2.0 + 0.25).collect();
+        let seed = 0x9E37_79B9_7F4A_7C15u64;
+        let json = blatt_pair_json(&xs, &ys, 480.0, 60.0, seed, &sha, 10);
+        let pair = parse_blatt_pair(&json).expect("the pair loads");
+        assert_eq!(pair.n, 8);
+        assert_eq!(pair.xs, xs);
+        assert_eq!(pair.ys, ys);
+        assert_eq!(pair.span_s, 480.0);
+        assert_eq!(pair.cadence_s, 60.0);
+        assert_eq!(pair.seed, seed);
+        assert_eq!(pair.commit_sha, sha);
+        assert_eq!(pair.n_surr, 10);
     }
 }

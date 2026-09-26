@@ -2,11 +2,13 @@
   title: Survey — Die Weberin: offene Quellen-Routen, Treffer (Stand 2026-09-13)
   class: survey
   date: 2026-09-13
-  sha256: 2803fce3d12d3c97d03aca15fb47253cd068ae364706390e62110bc7dc87ae97
+  sha256: 31ee5337a573343afeac5d4191a12dff1ad3f958367cbdc3fbd5e4239dbf9358
   status: live
-  see-also: docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-13-weberin-quellen-folge.md
+  see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-13-weberin-quellen-folge.md
 -->
 # Die Weberin — offene Quellen-Routen, Treffer (Stand 2026-09-13)
+
+Träger: `docs/concepts/die-weberin.md` (Weberin-Punkte).
 
 Dritter Durchgang. Die Taucher haben die im ersten Snapshot
 (`survey-2026-09-13-weberin-quellen.md`) und der Folge (`-folge.md`) offenen
