@@ -114,6 +114,13 @@ on earth 0 0 0
 ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/sony-camera-remote/rx100_luminance.bin
+format rx100_luminance
+compiler tools/harvest/src/bin/rx100_compiler.rs
+at earth
+ttl 60
+field rx100_luminance_cdm2 rx100_luminance_cdm2 inverse-square em cd/m2 60 0.0 0.0
+
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 ttl 60
 at earth
@@ -7660,16 +7667,6 @@ ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1080341864_1431699247.bin
-format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
-compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
-sha256 3d1cf8e1e2268857e2e36de8584b008dc109b1ade0efd18caa43cccbe89386d6
-at earth
-ttl 604800
-field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
-field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431499728_1464565518.bin
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
@@ -7680,31 +7677,11 @@ ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431699248_1464772941.bin
-format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
-compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
-sha256 24a53c78ad02f5ad3491b224cf16c9d559e500b9012fd6b5b82ae4ef89185174
-at earth
-ttl 604800
-field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
-field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464565518_1475187437.bin
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
 sha256 a95ca2002beb9c198c884b80ed31e29edf1da2bc95c72c9dbcebe1bcad28f32e
-at earth
-ttl 604800
-field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
-field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464772941_1475187437.bin
-format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
-compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
-sha256 810d120f339cd604f031770e33553c8cd1c6386df5487fd22d4aea5286d6ca0b
 at earth
 ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
