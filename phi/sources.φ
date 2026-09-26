@@ -8449,10 +8449,155 @@ at earth
 ttl 604800
 field delay_m galileo_ionocal_delay_m inverse-square em m 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.000
 format galileo_odr
 origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 776929d9cea53ace51e0e41c23a4056cdfe07729a4ba2caf4c53af903320e7a8
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.001
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 72480c0ae1c5f962bb89fcf5b6e98c9f031102ddc3df4b525de1f5f99a72175c
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.002
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 4632aab8c7cb4ecf2b8dad2d84bdeb2a673b0ec486099dee18b623d57449548a
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.003
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 49d27f24df5a9daec1494ada57f0c6faf661c0a20f8558ea709e1a7295e93950
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.004
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 ea9483fd77647a7e781f5f5ad35a8a7b6e75dbea20997e59985ddf2673937b2b
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.005
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 7db9e670f452d9b548342ff8adcf8c0712a52b5e2f6682ed59fa186992a1723a
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.006
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 22421a02a4d6c0e8003af760201b7d5890350e034e2835e768802357d80462f7
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.007
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 acb84af30237ab94dff5e05508eb815d0a3f36af20ab7ec5e8761e7b91253ad0
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.008
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 0c29303d95cec32fb7c2903f1b3d7a94d1b364b9d820cb0b97b625c80a3dcaac
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.009
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 04e99a5ee1afd81b811b955ca95f7aee3337aa2a25daf2520c190d0172d92500
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.010
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 fe0a6c60f88c06c8b053c56a40e2e2ba52ad9e2a886edd6a50e4573d3e972c57
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.011
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 e4d1f9eca0a2e401de2bd688a51a80fea6c342e2b8d206730dbbd4bdf8385e2e
+at earth
+ttl 604800
+field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
+field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0
+field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0
+field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.012
+format galileo_odr
+origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
+sha256 8326bb80a0064038a6a7a4f643a82e71cbd5b451052c045bee58dc2b488cc404
 at earth
 ttl 604800
 field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0
