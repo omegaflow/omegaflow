@@ -26,7 +26,7 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge172.md`.
 #### sensor.community-Spiegel — Port-Gap
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `value_type`-Keyed-Selector-Arm gebaut.
-- **Lage:** (gemessen 2026-09-26 via `archive_search`) api 403 (direct+Proton); Spiegel `maps.sensor.community/data/v2/data.json` 8 612 211 B sha256 `8cf2dc8c…`; `archive…/2026-09-25_bme280_sensor_141.csv` 36 743 B sha256 `1f64cb94…`; `.csv.gz` 404. JSON `value_type`-Reihenfolge variiert; CSV braucht Station/Tag-Crawl.
+- **Lage:** (gemessen 2026-09-26 via `archive_search`) api 403 (direct+Proton); Spiegel `https://maps.sensor.community/data/v2/data.json` 8 612 211 B sha256 `8cf2dc8c…`; `archive…/2026-09-25_bme280_sensor_141.csv` 36 743 B sha256 `1f64cb94…`; `.csv.gz` 404. JSON `value_type`-Reihenfolge variiert; CSV braucht Station/Tag-Crawl.
 - **Blockade:** kein korrekter Eintrag in `phi/sources.φ` (Keyed-Selector/Crawl fehlen).
 - **Braucht:** Keyed-Selector-Arm (Feld-Dot-Pfad `.0.value` ist positional → mislabelt interleaved Sensortypen).
 

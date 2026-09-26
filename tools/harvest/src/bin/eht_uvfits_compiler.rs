@@ -4,7 +4,7 @@ use omegaflow::sha256::sha256_hex;
 use std::process::exit;
 
 const NETLOC: &str = "almascience.org";
-const USAGE: &str = "eht_uvfits_compiler: modes: --inspect <file.tgz> | --cat <file.tgz> <member> | --verify <file.tgz> | --run <file.tgz> [--pair <a> <b>] [--out <bin>] [--ci-mode] | --runfits <file.FITS> [--pair <a> <b>]";
+const USAGE: &str = "eht_uvfits_compiler: modes: --inspect <file.tgz> | --cat <file.tgz> <member> | --verify <file.tgz> [--sha <hex>] | --run <file.tgz> [--pair <a> <b>] [--out <bin>] [--ci-mode] | --runfits <file.FITS> [--pair <a> <b>]";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -179,8 +179,10 @@ fn cat_member(path: &str, want_name: &str) {
     }
 }
 
-fn verify(path: &str) {
+fn verify(path: &str, expected_sha: Option<&str>) {
     let bytes = read_file(path);
+    let archive_sha = sha256_hex(&bytes);
+    println!("{path}: archive sha256 {archive_sha} size {}", bytes.len());
     let tar = gunzip_tolerant(&bytes);
     let members = match tar_partial(&tar) {
         Some(m) => m,
@@ -189,45 +191,57 @@ fn verify(path: &str) {
             exit(1);
         }
     };
-    let Some((_, sums_start, sums_end)) =
-        members.iter().find(|(n, _, _)| n.ends_with(".sha256sums"))
-    else {
-        eprintln!("eht_uvfits_compiler: {path}: no .sha256sums member");
-        exit(1);
-    };
-    let sums_text = String::from_utf8_lossy(&tar[*sums_start..*sums_end]);
-    let mut checked = 0usize;
-    let mut ok = 0usize;
-    let mut missing = 0usize;
-    for line in sums_text.lines() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        let mut parts = line.split_whitespace();
-        let (Some(hash), Some(name)) = (parts.next(), parts.next()) else {
-            eprintln!("eht_uvfits_compiler: .sha256sums line carries no hash-name pair: {line}");
-            exit(1);
-        };
-        match members.iter().find(|(n, _, _)| n == name) {
-            Some((_, start, end)) => {
-                checked += 1;
-                let computed = sha256_hex(&tar[*start..*end]);
-                if computed == hash {
-                    ok += 1;
-                } else {
-                    eprintln!("eht_uvfits_compiler: {name}: {computed} != {hash}");
+    match members.iter().find(|(n, _, _)| n.ends_with(".sha256sums")) {
+        Some((_, sums_start, sums_end)) => {
+            let sums_text = String::from_utf8_lossy(&tar[*sums_start..*sums_end]);
+            let mut checked = 0usize;
+            let mut ok = 0usize;
+            let mut missing = 0usize;
+            for line in sums_text.lines() {
+                let line = line.trim();
+                if line.is_empty() {
+                    continue;
+                }
+                let mut parts = line.split_whitespace();
+                let (Some(hash), Some(name)) = (parts.next(), parts.next()) else {
+                    eprintln!(
+                        "eht_uvfits_compiler: .sha256sums line carries no hash-name pair: {line}"
+                    );
+                    exit(1);
+                };
+                match members.iter().find(|(n, _, _)| n == name) {
+                    Some((_, start, end)) => {
+                        checked += 1;
+                        let computed = sha256_hex(&tar[*start..*end]);
+                        if computed == hash {
+                            ok += 1;
+                        } else {
+                            eprintln!("eht_uvfits_compiler: {name}: {computed} != {hash}");
+                        }
+                    }
+                    None => {
+                        missing += 1;
+                        eprintln!("eht_uvfits_compiler: {name}: member absent");
+                    }
                 }
             }
-            None => {
-                missing += 1;
-                eprintln!("eht_uvfits_compiler: {name}: member absent");
+            println!("{path}: {ok}/{checked} members verified, {missing} absent");
+            if missing > 0 || ok != checked {
+                exit(1);
             }
         }
+        None => {
+            println!(
+                "eht_uvfits_compiler: {path}: no .sha256sums member — member checksums absent"
+            );
+        }
     }
-    println!("{path}: {ok}/{checked} members verified, {missing} absent");
-    if missing > 0 || ok != checked {
-        exit(1);
+    if let Some(expected) = expected_sha {
+        if archive_sha != expected {
+            eprintln!("eht_uvfits_compiler: {path}: archive sha256 {archive_sha} != {expected}");
+            exit(1);
+        }
+        println!("{path}: archive sha256 matches {expected}");
     }
 }
 
@@ -374,7 +388,7 @@ fn main() {
             }
         },
         Some("--verify") => match arg_value(&args, "--verify") {
-            Some(p) => verify(&p),
+            Some(p) => verify(&p, arg_value(&args, "--sha").as_deref()),
             None => {
                 eprintln!("eht_uvfits_compiler: {USAGE}");
                 exit(2);
