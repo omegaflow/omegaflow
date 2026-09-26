@@ -8,6 +8,13 @@ use std::process::Command;
 
 const CDN_REPO: &str = "omegaflow/sources";
 
+fn release_tag_netloc(tag: &str) -> (&str, bool) {
+    match tag.strip_prefix("www.") {
+        Some(bare) => (bare, true),
+        None => (tag, false),
+    }
+}
+
 fn gh_api_releases() -> Option<String> {
     let out = Command::new("gh")
         .arg("api")
@@ -220,12 +227,15 @@ fn main() {
     let releases = collect_releases(&body);
 
     let mut tag_netloc: BTreeMap<String, String> = BTreeMap::new();
+    let mut www_prefixed_tags: Vec<String> = Vec::new();
     for (tag, _) in &releases {
-        tag_netloc.insert(
-            tag.clone(),
-            tag.strip_prefix("www.").unwrap_or(tag).to_string(),
-        );
+        let (netloc, www_prefixed) = release_tag_netloc(tag);
+        if www_prefixed {
+            www_prefixed_tags.push(tag.clone());
+        }
+        tag_netloc.insert(tag.clone(), netloc.to_string());
     }
+    www_prefixed_tags.sort();
 
     let source_netlocs: BTreeSet<String> = netloc_of_source.keys().cloned().collect();
     let release_netlocs: BTreeSet<String> = tag_netloc.values().cloned().collect();
@@ -368,6 +378,10 @@ fn main() {
         "duplicate_netloc_tags".into(),
         dupe_list(&duplicate_netloc_tags),
     ));
+    report.push((
+        "www_prefixed_release_tags".into(),
+        str_list(&www_prefixed_tags),
+    ));
     report.push(("asset_name_divergence".into(), row_list(&divergence)));
     report.push(("missing_assets".into(), row_list(&missing_assets)));
     report.push((
@@ -395,17 +409,33 @@ fn main() {
     }
     match std::fs::write(&out_full, &out_text) {
         Ok(()) => eprintln!(
-            "cdn_reconcile: {} written (orphan {} unmanifest {} divergence {} missing {} dupegroups {})",
+            "cdn_reconcile: {} written (orphan {} unmanifest {} divergence {} missing {} dupegroups {} www {})",
             out_full,
             orphan_releases.len(),
             unmanifested_sources.len(),
             divergence.len(),
             missing_assets.len(),
-            byte_dupes.len()
+            byte_dupes.len(),
+            www_prefixed_tags.len()
         ),
         Err(e) => {
             eprintln!("cdn_reconcile: write {} void: {}", out_full, e);
             std::process::exit(1);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn release_tag_netloc_flags_www_prefix() {
+        assert_eq!(release_tag_netloc("www.gmrt.org"), ("gmrt.org", true));
+        assert_eq!(release_tag_netloc("gmrt.org"), ("gmrt.org", false));
+        assert_eq!(
+            release_tag_netloc("ssd.jpl.nasa.gov"),
+            ("ssd.jpl.nasa.gov", false)
+        );
     }
 }
