@@ -3,6 +3,7 @@ use omegaflow_measure::depthphase as dp;
 use omegaflow_measure::depthphase::{
     MAX_DIST_DEG, MAX_STATIONS, MIN_DIST_DEG, SNR_GATE, STATION_URL,
 };
+use omegaflow_measure::picker;
 
 const PILOT_LAT: f64 = 36.5244;
 const PILOT_LON: f64 = 70.3676;
@@ -54,9 +55,9 @@ fn main() {
         let delta = dp::arc_deg(PILOT_LAT, PILOT_LON, st.lat, st.lon);
         let azimuth = dp::azimuth_deg(PILOT_LAT, PILOT_LON, st.lat, st.lon);
         let (snr_txt, gate_txt) = match dp::fetch_station_body(st, PILOT_START, PILOT_END) {
-            Some((samples, rate)) => match dp::p_onset(&samples, rate) {
+            Some((samples, rate)) => match picker::p_onset(&samples, rate) {
                 Some(t_p) => {
-                    let bp = dp::bandpass(&samples, rate);
+                    let bp = picker::bandpass(&samples, rate);
                     let i_p = dp::onset_index(&samples, rate, t_p);
                     match dp::onset_snr(&bp, rate, i_p) {
                         Some(snr) if snr >= SNR_GATE => {

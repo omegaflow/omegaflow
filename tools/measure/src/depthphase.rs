@@ -1,5 +1,6 @@
 use crate::miniseed::decode_body;
-use omegaflow::ak135::{p_p_travel, p_travel_depth, s_p_travel};
+use crate::picker::{bandpass, median_abs, p_onset};
+use omegaflow::ak135::{p_p_travel, p_travel, p_travel_depth, s_p_travel, s_travel};
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::json::jpath;
 
@@ -23,9 +24,6 @@ pub const WINDOW_HI: f64 = 1.3;
 pub const EDGE_FRAC: f64 = 0.15;
 pub const SECONDARY_CORR_MIN: f64 = 0.30;
 pub const DEPTH_MATCH_GATE_KM: f64 = 10.0;
-pub const STA_WINDOW_S: f64 = 1.0;
-pub const LTA_WINDOW_S: f64 = 30.0;
-pub const STA_LTA_RATIO: f64 = 4.0;
 pub const W_PHASE_PERIOD_LO_S: f64 = 100.0;
 pub const W_PHASE_PERIOD_HI_S: f64 = 1000.0;
 pub const W_PHASE_NOISE_S: f64 = 200.0;
@@ -232,12 +230,6 @@ pub fn gebco_elevation(lat: f64, lon: f64) -> Option<f64> {
     if v.is_finite() { Some(v) } else { None }
 }
 
-fn median_abs(xs: &[f64]) -> f64 {
-    let mut sorted: Vec<f64> = xs.iter().map(|v| v.abs()).collect();
-    sorted.sort_by(|a, b| a.total_cmp(b));
-    sorted[sorted.len() / 2]
-}
-
 fn rc_bandpass(samples: &[(f64, f64)], rate: f64, hp_hz: f64, lp_hz: f64) -> Vec<f64> {
     let Some(&(_, first)) = samples.first() else {
         return Vec::new();
@@ -258,67 +250,6 @@ fn rc_bandpass(samples: &[(f64, f64)], rate: f64, hp_hz: f64, lp_hz: f64) -> Vec
         out.push(lp);
     }
     out
-}
-
-pub fn bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
-    rc_bandpass(samples, rate, 0.5, 2.0)
-}
-
-fn sta_lta_arrival(samples: &[(f64, f64)], rate: f64) -> Option<f64> {
-    let n_sta = (STA_WINDOW_S * rate).round() as usize;
-    let n_lta = (LTA_WINDOW_S * rate).round() as usize;
-    if n_sta == 0 || n_lta == 0 || samples.len() < n_lta + 1 {
-        return None;
-    }
-    let n = samples.len();
-    let mut prefix = Vec::with_capacity(n + 1);
-    let mut acc = 0.0;
-    prefix.push(0.0);
-    for (_, v) in samples.iter() {
-        acc += v.abs();
-        prefix.push(acc);
-    }
-    for i in (n_lta - 1)..n {
-        let sta = (prefix[i + 1] - prefix[i + 1 - n_sta]) / n_sta as f64;
-        let lta = (prefix[i + 1] - prefix[i + 1 - n_lta]) / n_lta as f64;
-        if lta > 1e-12 && sta / lta >= STA_LTA_RATIO {
-            return Some(samples[i].0);
-        }
-    }
-    None
-}
-
-fn first_break_arrival(samples: &[(f64, f64)], rate: f64) -> Option<f64> {
-    let vals = bandpass(samples, rate);
-    let noise_len = ((20.0 * rate).round() as usize).min(vals.len() / 2);
-    if noise_len == 0 {
-        return None;
-    }
-    let floor = median_abs(&vals[..noise_len]);
-    if floor <= 1e-12 {
-        return None;
-    }
-    let threshold = 5.0 * floor;
-    let sustain = (1.0 * rate).round() as usize;
-    if sustain == 0 {
-        return None;
-    }
-    let mut count = 0usize;
-    for i in noise_len..vals.len() {
-        if vals[i].abs() > threshold {
-            count += 1;
-            if count >= sustain {
-                return Some(samples[i - sustain + 1].0);
-            }
-        } else {
-            count = 0;
-        }
-    }
-    None
-}
-
-pub fn p_onset(samples: &[(f64, f64)], rate: f64) -> Option<f64> {
-    first_break_arrival(samples, rate).or_else(|| sta_lta_arrival(samples, rate))
 }
 
 pub fn onset_index(samples: &[(f64, f64)], rate: f64, t_p: f64) -> usize {
@@ -804,6 +735,7 @@ pub struct StationMeasure {
     pub s_p_sigma_s: Option<f64>,
     pub p_p_lag_pred: f64,
     pub s_p_lag_pred: Option<f64>,
+    pub w_phase: Option<WPhasePick>,
     pub station_term: Option<StationTerm>,
     pub p_p_lag_corrected: Option<f64>,
     pub skip: Option<String>,
@@ -822,6 +754,7 @@ fn skipped(key: String, delta_deg: f64, reason: &str) -> StationMeasure {
         s_p_sigma_s: None,
         p_p_lag_pred: 0.0,
         s_p_lag_pred: None,
+        w_phase: None,
         station_term: None,
         p_p_lag_corrected: None,
         skip: Some(reason.to_string()),
@@ -865,6 +798,7 @@ pub fn measure_station(
     if snr < SNR_GATE {
         return skipped(key, delta, "SNR below gate");
     }
+    let w_phase = w_phase_pick(&samples, rate, t_p, delta);
     let nw = (P_WAVELET_S * rate).round() as usize;
     if nw == 0 {
         return skipped(key, delta, "degenerate rate");
@@ -897,11 +831,20 @@ pub fn measure_station(
         s_p_sigma_s,
         p_p_lag_pred,
         s_p_lag_pred,
+        w_phase,
         station_term: term.cloned(),
         p_p_lag_corrected,
         skip: None,
         branch: PPBranch::Clear,
     }
+}
+
+fn direct_s_p_lag(delta_deg: f64) -> Option<f64> {
+    Some(s_travel(delta_deg)? - p_travel(delta_deg)?)
+}
+
+fn w_phase_pick(samples: &[(f64, f64)], rate: f64, t_p: f64, delta_deg: f64) -> Option<WPhasePick> {
+    w_phase_discriminate(samples, rate, t_p, t_p + direct_s_p_lag(delta_deg)?)
 }
 
 pub fn w_phase_bandpass(samples: &[(f64, f64)], rate: f64) -> Vec<f64> {
@@ -1800,6 +1743,33 @@ mod tests {
         assert!(
             w_phase_energy_ratio(&samples, rate, 1500.0, 1700.0).is_none(),
             "a silent trace carries no long-period noise floor — absent, never a 0.0 division"
+        );
+    }
+
+    #[test]
+    fn the_direct_s_p_lag_anchors_the_w_phase_signal_window() {
+        let l30 = direct_s_p_lag(30.0).unwrap();
+        let l60 = direct_s_p_lag(60.0).unwrap();
+        let l90 = direct_s_p_lag(90.0).unwrap();
+        assert!(
+            l30 > 0.0 && l60 > l30 && l90 > l60,
+            "the ak135 S-P lag grows with distance: {l30}, {l60}, {l90} s"
+        );
+    }
+
+    #[test]
+    fn the_station_w_phase_pick_reads_m9_from_the_s_anchor() {
+        let rate = 20.0;
+        let t_p = 1500.0;
+        let delta = 60.0;
+        let t_s = t_p + direct_s_p_lag(delta).unwrap();
+        let samples = w_trace(rate, 3500.0, t_s, 10.0);
+        let pick = w_phase_pick(&samples, rate, t_p, delta)
+            .expect("a W-phase burst at the ak135 S anchor carries a measurement");
+        assert!(
+            pick.m9,
+            "the 300 s burst at the S anchor must read M9, ratio {:.2}",
+            pick.energy_ratio
         );
     }
 }
