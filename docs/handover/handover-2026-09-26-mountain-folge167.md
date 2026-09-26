@@ -3,7 +3,7 @@
   session: Mountain-Folge 167
   class: handover
   date: 2026-09-26
-  sha256: 925b224cf02a8aff2b036a0d71fb80d30a222bb8677a095c85f7bfe0a1cb0ac0
+  sha256: 1fcbec3a257d01f67e39334e3c2fc2d6453bfccdafc8e2606c1caf983a37f861
   status: live
 -->
 # Handover — Mountain-Folge 167 (2026-09-26)
@@ -62,29 +62,19 @@ Trigger / Lage / Blockade / Braucht.
   `--year`-Filter); ein `gll-rss-atdf-cdn.yml` fehlt noch (Register-Hunk im
   Gridlock).
 
-#### gll.rss ATDF — Fetch-Dispatch-Liste (`main_flow.rs`)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** fremde Session committet `main_flow.rs`.
-- **Lage:** (gemessen 2026-09-26) `atdf.rs`/`extract.rs`-Arme für
-  `gll_rss_atdf[_x]` stehen; die Fetch-Dispatch-Liste `main_flow.rs:2303–2352`
-  führt nur `ulysses_atdf[_x]`; `series_rows` wird nur dort gerufen.
-- **Blockade:** `main_flow.rs` ist fremd-uncommittet beschrieben — eigener Hunk
-  nicht sauber trennbar.
-- **Braucht:** `gll_rss_atdf`/`gll_rss_atdf_x` in die Liste, sobald die Datei frei ist.
-
-#### Concurrency-Gridlock — geteilte Dateien (`extract.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`)
+#### Concurrency-Gridlock — geteilte `phi`-Register (`phi/sources.φ`, `phi/blocked_sources.φ`)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** Fremd-Session commit.
-- **Lage:** (gemessen 2026-09-26) `git diff --cached` trug **fremde** gestagte
-  Arbeit (`extract.rs`→hamqsl/ogimet/nohrsc, `phi/sources.φ`→nohrsc,
-  `phi/blocked_sources.φ`); meine Hunks in denselben Dateien lagen unstaged
-  (`gll_rss_atdf`-Arme, `messenger_tnf`/`ams02_spec`-Arme, 5 Register-Blöcke,
-  unit-auto-detect-Block-Entfernung). Der Commit `e6b92b605` (14 eigene Pfade,
-  `git show --stat HEAD` fremdfrei) hat diese geteilten Hunks **bewusst
-  ausgelassen** — ein pfad-begrenzter Commit hätte die fremden Hunks gesweept.
-- **Blockade:** fremde uncommittete, gestagte Arbeit in denselben Dateien.
-- **Braucht:** `git add -p` (nur eigene Hunks) sobald die Fremd-Session committet,
-  dann eigener Folge-Commit der geteilten Hunks.
+- **Lage:** (gemessen 2026-09-26) Die Code-Seite ist committet
+  (`e6b92b605`, `bc1d87643` extract.rs, `f1bd268b2` main_flow.rs). Geteilt
+  verflochten bleiben nur die `phi`-Register-Hunks: `phi/sources.φ` trägt meine
+  5 Blöcke (`gll_rss_rsr/atdf/atdf_x/messenger_tnf/ams02_spec`) **und** einen
+  fremden `iras_psc`-TAP-Block unstaged; `phi/blocked_sources.φ` trägt meine
+  unit-auto-detect-Block-Entfernungen **und** fremde Query-URL-Fixes
+  (mycelium) unstaged.
+- **Blockade:** fremde uncommittete Arbeit in denselben Dateien.
+- **Braucht:** `git add -p` (nur eigene Hunks) sobald die Fremd-Session
+  committet, dann eigener Folge-Commit der `phi`-Hunks.
 
 #### NAIF mariner10 — dauerhafte Route
 - **Status:** wartend | **Bindung:** eigen
