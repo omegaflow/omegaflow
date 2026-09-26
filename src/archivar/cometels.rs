@@ -122,9 +122,8 @@ pub fn parse_catalog(bytes: &[u8]) -> Vec<CometelsRec> {
     let mut out = Vec::with_capacity(n);
     let mut off = 8usize;
     for _ in 0..n {
-        match bytes.get(off..off + RECORD_STRIDE).and_then(parse_record) {
-            Some(r) => out.push(r),
-            None => {}
+        if let Some(r) = bytes.get(off..off + RECORD_STRIDE).and_then(parse_record) {
+            out.push(r);
         }
         off += RECORD_STRIDE;
     }

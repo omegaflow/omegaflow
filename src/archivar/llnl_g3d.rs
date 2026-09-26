@@ -428,7 +428,8 @@ mod tests {
 
     #[test]
     fn coordinates_refuse_a_short_file() {
-        let mut lines: Vec<&str> = coordinates_text().lines().collect();
+        let body = coordinates_text();
+        let mut lines: Vec<&str> = body.lines().collect();
         lines.pop();
         let text = lines.join("\n");
         assert!(parse_coordinates(&text).is_none());
