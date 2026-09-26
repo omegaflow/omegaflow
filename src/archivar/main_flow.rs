@@ -2343,6 +2343,7 @@ pub fn main_flow() {
                     | "bidsleep"
                     | "bison_velocity"
                     | "cassini_tnf"
+                    | "cassini_rsr"
                     | "maven_tnf"
                     | "mariner_occlt"
                     | "dart_tnf"
