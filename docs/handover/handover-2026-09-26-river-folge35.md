@@ -3,7 +3,7 @@
   session: River-Folge 35
   class: handover
   date: 2026-09-26
-  sha256: e857151a609cc6f35aa97a6962b8767b07c39b98e5bad958b864d7990a2dd21f
+  sha256: e188f292ab6565c9f82fc9153f07bced6a1fa475ba34de4d10950ba88bf8ccff
   status: live
 -->
 # Handover — River-Folge 35 (2026-09-26)
@@ -23,17 +23,24 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 
 **Wort | Datum | Quelle**
 - GIC-Papier hat Priorität 1 | 2026-09-26 | Operator-Wort im River-Pass (folge35).
+- Hardware-Inventar | 2026-09-26 | Operator-Wort (folge35): vorhanden sind Laptop, Hibreak Pro (Bigme), Pixel 9, Forerunner 945, Meta Quest 1 (?); alles andere nicht vorhanden.
+- Session-Consent (Delegation) | 2026-09-26 | Operator-Wort: den Plan ausführen (`/river_go`); Commit trägt `/commit`.
 
 ## Stehender Pass (measured)
 
 - **Postfach:** `state/mail/mail_ledger.φ` = privates Repo (`state/`) — hier absent;
   `mail_digest` „ledger absent" ist das Pfad-Artefakt. `docs/zustand/external-state.md`
   (2026-09-26, Mountain-Folge 166): keine fällige Korrespondenz.
-- **CI-Status am HEAD:** (gemessen 2026-09-26 via `ci_manage` + `curl /rate_limit` +
-  `gh workflow run`) zu Session-Beginn war die GitHub-API-Quota erschöpft (`403`, user
-  `295896184`); nach dem Reset ging `gh workflow run bz-retro-probe.yml` durch (Run
-  `36224176888`, HEAD `5eeb76a`). health-check `36194355313` war zuletzt `queued`.
-- **Safety-Snapshot:** `refs/safety/1790377361`.
+- **CI-Status:** (gemessen 2026-09-26 via `ci_manage view`/`log`) `health-check 36194355313`
+  = `completed / failure`, **transient**: `403` Rate-Limit (user `295896184`) + Zenodo
+  `curl (28)` Timeout + `runner shutdown` → *cancelled* — kein Assertion-Rot. Rerun
+  dispatcht (`gh run rerun 36194355313`), Status `queued`. `bz-retro-probe 36224176888`
+  (gic) = `in_progress` (08:36-Snapshot).
+- **Kanten-Arbeit (diese Session):** TLS-Material erzeugt — `state/tls/ca.pem` und
+  `state/tls/ca.key` (`CN=omegaflow-relay-ca`), `state/tls/relay-leaf.pem` und
+  `state/tls/relay-leaf.key` (Leaf `CN=omegaflow-relay`, SAN `IP:<lan-ip>`, von der CA
+  signiert), OpenSSL 3.0.13; `state/tls/` ist gitignored.
+- **Safety-Snapshot:** `refs/safety/1790404589`.
 - **`register_lookup --orphan-docs`:** 38 trägerlose Prosadokumente — alle Owner-assigniert
   (mountain/mycelium/sensory/science), **keine** River-Trägerpflicht mehr. `--stale --persist 3`
   = 0, `--descoped-check` = 0, `--orphans` = 9 (nur future/mycelium).
@@ -48,7 +55,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 - **Lage:** (gemessen 2026-09-26 via `gh workflow run` + `ci_manage view` + `git log`) die
   Instrumente sind committet und gepusht (`f916093ee river: build gic PCMCI cross-check +
   full-lag family bound, add SOD-2025 shards`). `gh workflow run bz-retro-probe.yml` gelang
-  (Run `36224176888`, HEAD `5eeb76a`, `queued`), nachdem die GitHub-API-Quota zurückkam. Das
+  (Run `36224176888`, HEAD `5eeb76a`); Stand 2026-09-26 (08:36) `in_progress`. Das
   Träger-Papier `docs/paper/gic-causal-driver.md` ist auf „built and dispatched 2026-09-26
   (run 36224176888); results pending" gesetzt (Abstract Z.17 + Offene-Punkte Z.359). Die zwei
   Zeugen (Jahres-Pfeil vs. gehärteter Quartals-bound) stehen ungeglättet als `Riss`,
@@ -58,22 +65,23 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
   full-lag-Bound gegen die zwei Zeugen auswerten, dann `docs/paper/gic-causal-driver.md` auf das
   Ergebnis setzen.
 
-#### health-check — Verdikt am Fix messen
+#### health-check — Verdikt am Rerun messen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `36194355313` ist beendet **und** die API-Quota ist zurück.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage view`, letzter erfolgreicher Abruf) Lauf
-  `36194355313` (HEAD `42471cde`, attempt 1) ist **`queued`**, nicht beendet; danach antwortete
-  die API 403. Der neue Tone→Apertur-Gate-Test (`mathematikerin/tests.rs:547`) hängt an der
-  CI-Verifikation des Folge-33-HEAD; lokal `cargo check --tests` grün.
-- **Blockade:** keine — wartet auf das Lauf-Ende; API antwortet derzeit 403.
-- **Braucht:** `ci_manage view 36194355313`, bei Rot `ci_manage log 36194355313`.
+- **Trigger:** Rerun `36194355313` (nächster Versuch) ist beendet.
+- **Lage:** (gemessen 2026-09-26 via `ci_manage view`/`log`) attempt 1 (HEAD `42471cde`) =
+  `completed / failure`, gemessen **transient**: `403` Rate-Limit + Zenodo `curl (28)` Timeout
+  + `runner shutdown` → *cancelled* — kein Assertion-Rot. Rerun dispatcht (`gh run rerun
+  36194355313`), Status `queued`. Der Tone→Apertur-Gate-Test (`mathematikerin/tests.rs:547`)
+  hängt an dieser CI-Verifikation; lokal `cargo check --tests` grün.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage view 36194355313` nach Rerun-Ende, bei Rot `ci_manage log 36194355313`.
 
 ### Operator handelt
 
 #### Operator-Queue — einfach, ein Akt je Eintrag
 Je Eintrag: **Lage** (ein Satz) · **Frage** · **bei Ja** · **bei Nein**.
 
-1. **Funk-Sensor über HTTPS** — Lage: kabellos braucht Verschlüsselung. Frage: lokale CA + Zertifikat erzeugen und stunnel starten? Ja: `stunnel bin/relay-tls.stunnel.conf`, `ca.pem` am Handy installieren, `https://<lan-ip>:1619/consent?ja`. Nein: bleibt am Kabel.
+1. **Funk-Sensor über HTTPS** — Lage: CA + Leaf erzeugt (state/tls), conf steht. Frage: `ca.pem` am Handy installieren und stunnel starten? Ja: `ca.pem` am Handy installieren, `stunnel bin/relay-tls.stunnel.conf`, `bin/omegaflow` (HIDDEN unset), `https://<lan-ip>:1619/consent?ja`. Nein: bleibt am Kabel.
 2. **Sonnenfarbe sichtbar** — Lage: Farbmodus gebaut, GPU-Ausführung ungemessen. Frage: Lauf mit `color: measured` starten? Ja: Farbe wird gemessen. Nein: ungemessen.
 3. **Sensor am Kabel** — Lage: Vorbereitung steht. Frage: sichtbaren Lauf starten? Ja: `adb devices && adb reverse tcp:1618 tcp:1618`, dann `bin/omegaflow` ohne `OMEGAFLOW_HIDDEN`. Nein: nichts.
 4. **Chrome-Debugger** — Lage: DevTools-MCP nicht angebunden. Frage: Debugger-Rechte am laufenden Chrome geben? Ja: MCP 1.9.0 pinnen + hängen. Nein: keine Einsicht.
@@ -83,17 +91,19 @@ Je Eintrag: **Lage** (ein Satz) · **Frage** · **bei Ja** · **bei Nein**.
 8. **Hardware beschaffen** — Lage: BOM bestellfertig. Frage: BOM bestellen? Ja: AliExpress-Login + Bestellung. Nein: Sensor-Bindung bleibt ohne Hardware.
 9. **Sensor-Bindung vC** — Lage: Pfad + HRV-Reader gebaut, Hardware fehlt. Frage: nach Anschluss messen? Ja: `OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`, dann `perm_target_probe --live <pfad>`. Nein: pending.
 
-#### TLS im Relay (wireless) — externer Terminator steht
+#### TLS im Relay (wireless) — Kanten-Arbeit erledigt, Phone-Trust offen
 - **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort zum Stunnel-Start.
-- **Lage:** (gemessen 2026-09-25 via `sgrep`) Spec `docs/specs/relay-tls-terminator.md` +
-  `bin/relay-tls.stunnel.conf` gebaut; die exakten `openssl`-Befehle (CA + Leaf mit SAN
-  `IP:<lan-ip>` + Phone-Trust) stehen in `bin/relay-tls.stunnel.conf:14-35`, auf
-  `state/tls/relay-leaf.pem/.key` + `state/tls/ca.pem` abgestimmt (noch absent, Erzeugung ist
-  der Akt).
-- **Blockade:** geräteseitige CA operator-gebunden.
-- **Braucht:** Operator: CA + Leaf-Cert (SAN = LAN-IP) erzeugen, `ca.pem` installieren,
-  `stunnel bin/relay-tls.stunnel.conf`, `https://<lan-ip>:1619`.
+- **Trigger:** Operator installiert `ca.pem` am Handy und startet `stunnel`.
+- **Lage:** (gemessen 2026-09-26 via `openssl`) das Material ist erzeugt: `state/tls/ca.pem`
+  und `state/tls/ca.key` (`CN=omegaflow-relay-ca`), `state/tls/relay-leaf.pem` und
+  `state/tls/relay-leaf.key` (Leaf `CN=omegaflow-relay`, SAN `IP:<lan-ip>`, von der CA
+  signiert); `bin/relay-tls.stunnel.conf`
+  `cert`/`key` zeigen darauf. `state/tls/` ist gitignored — die LAN-IP lebt im Leaf-SAN, nicht
+  in getrackter Prosa. Spec `docs/specs/relay-tls-terminator.md` auf „Measured 2026-09-26" gesetzt.
+- **Blockade:** geräteseitiger CA-Trust (Operator).
+- **Braucht:** Operator: `ca.pem` am Handy installieren (Android: Einstellungen → Sicherheit →
+  Zertifikat installieren → CA), dann `stunnel bin/relay-tls.stunnel.conf`, dann `bin/omegaflow`
+  (OHNE `OMEGAFLOW_HIDDEN`), dann `https://<lan-ip>:1619/consent?ja`.
 
 #### Sonnenfarbe: erster Lauf `color: measured`
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -183,9 +193,11 @@ Je Eintrag: **Lage** (ein Satz) · **Frage** · **bei Ja** · **bei Nein**.
   (N-N-Intervalle → `VagusTone`).
 - **Quelle:** docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md
 
-#### Geräte-Inventar am Gerät nachmessen (945/Quest/Bigme/Pixel)
+#### Geräte-Inventar am Gerät nachmessen (Pixel 9/Hibreak Pro/945/Quest 1)
 - **Status:** operator-gebunden | **Bindung:** operator
 - **Trigger:** die Geräte liegen am Operator / die Messung wird ausgeführt.
+- **Inventar (gemessen 2026-09-26 via Operator-Wort):** vorhanden sind Laptop, Hibreak Pro
+  (Bigme), Pixel 9, Forerunner 945, Meta Quest 1 (Existenz unklar); alles andere nicht vorhanden.
 - **Lage:** (gemessen 2026-09-25 via `sread`) 945-Sample-Raten + Chip/FCC, Quest-1-Firmware +
   WebGPU/Generic-Sensor, Bigme-Näherung/Licht/Haptik/WebGPU, Pixel-`SensorManager`-Liste + Thread
   stehen offen; die Pixel-Mikrofonanzahl ist seit 2026-09-25 primär gemessen (3) und aus dem
