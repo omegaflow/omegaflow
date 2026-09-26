@@ -296,6 +296,17 @@ pub fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
         if let JsonVal::Obj(map) = current {
             current = map.get(part)?;
         } else if let JsonVal::Arr(arr) = current {
+            if let Some((sel_key, sel_val)) = part.split_once('=') {
+                current = arr.iter().find(|el| match el {
+                    JsonVal::Obj(m) => match m.get(sel_key) {
+                        Some(JsonVal::Str(s)) => s == sel_val,
+                        Some(JsonVal::Num(n)) => sel_val.parse::<f64>().is_ok_and(|x| x == *n),
+                        _ => false,
+                    },
+                    _ => false,
+                })?;
+                continue;
+            }
             let raw_idx: i64 = part.parse().ok()?;
             let len = arr.len() as i64;
             let idx = if raw_idx < 0 {
