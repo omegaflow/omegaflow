@@ -64,7 +64,9 @@ jobs:
         EOF
         cat > zb_sizeof_probe/size.sh << 'EOF'
         set -e
-        SIZE_HEX=$(xtensa-esp32s3-elf-nm -S build/main/libmain.a | awk '/ zb_cfg_size$/{print $2; exit}')
+        LIB=$(find build -name libmain.a | head -1)
+        SIZE_HEX=$(xtensa-esp32s3-elf-nm -S "$LIB" | awk '/ zb_cfg_size$/{print $2; exit}')
+        test -n "$SIZE_HEX"
         SIZE_DEC=$((16#$SIZE_HEX))
         printf 'SIZEOF_ESP_ZB_CFG_T=%s\n' "$SIZE_DEC"
         printf '%s\n' "$SIZE_DEC" > zb_cfg_size.txt
