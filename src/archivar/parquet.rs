@@ -617,6 +617,7 @@ pub struct ParquetColumn {
 
 struct PageHeaderInfo {
     page_type: i32,
+    uncompressed_page_size: i32,
     compressed_page_size: i32,
     num_values: Option<i32>,
     data_encoding: Option<i32>,
@@ -627,6 +628,7 @@ struct PageHeaderInfo {
 impl<'a> Compact<'a> {
     fn page_header(&mut self) -> Result<PageHeaderInfo, ParquetNote> {
         let mut page_type = None;
+        let mut uncompressed = None;
         let mut compressed = None;
         let mut num_values = None;
         let mut data_encoding = None;
@@ -641,7 +643,8 @@ impl<'a> Compact<'a> {
             last = id;
             match id {
                 1 => page_type = Some(self.i32()?),
-                2 | 4 => self.skip(ctype)?,
+                2 => uncompressed = Some(self.i32()?),
+                4 => self.skip(ctype)?,
                 3 => compressed = Some(self.i32()?),
                 5 => {
                     let mut l = 0i16;
@@ -684,6 +687,7 @@ impl<'a> Compact<'a> {
         }
         Ok(PageHeaderInfo {
             page_type: page_type.ok_or(ParquetNote::AbsentField { id: 1 })?,
+            uncompressed_page_size: uncompressed.ok_or(ParquetNote::AbsentField { id: 2 })?,
             compressed_page_size: compressed.ok_or(ParquetNote::AbsentField { id: 3 })?,
             num_values,
             data_encoding,
@@ -976,6 +980,247 @@ fn snappy_decode(data: &[u8]) -> Option<Vec<u8>> {
     (out.len() as u64 == ulen).then_some(out)
 }
 
+fn zigzag_decode(n: u64) -> i64 {
+    ((n >> 1) as i64) ^ -((n & 1) as i64)
+}
+
+fn lz4_block(data: &[u8], expected: usize) -> Option<(Vec<u8>, usize)> {
+    let mut out: Vec<u8> = Vec::with_capacity(expected.min(1 << 20));
+    let mut pos = 0usize;
+    while pos < data.len() {
+        let token = *data.get(pos)?;
+        pos += 1;
+        let mut lit_len = (token >> 4) as usize;
+        if lit_len == 15 {
+            loop {
+                let b = *data.get(pos)? as usize;
+                pos += 1;
+                lit_len += b;
+                if b != 255 {
+                    break;
+                }
+            }
+        }
+        let lit_end = pos.checked_add(lit_len)?;
+        let lit = data.get(pos..lit_end)?;
+        pos = lit_end;
+        out.extend_from_slice(lit);
+        if pos == data.len() {
+            if token & 0x0f != 0 {
+                return None;
+            }
+            return (out.len() == expected).then_some((out, pos));
+        }
+        let ob = data.get(pos..pos + 2)?;
+        pos += 2;
+        let off = u16::from_le_bytes([ob[0], ob[1]]) as usize;
+        if off == 0 || off > out.len() {
+            return None;
+        }
+        let mut match_len = (token & 0x0f) as usize + 4;
+        if token & 0x0f == 15 {
+            loop {
+                let b = *data.get(pos)? as usize;
+                pos += 1;
+                match_len += b;
+                if b != 255 {
+                    break;
+                }
+            }
+        }
+        if out.len() > expected || match_len > expected - out.len() {
+            return None;
+        }
+        let start = out.len() - off;
+        for i in 0..match_len {
+            let b = *out.get(start + i)?;
+            out.push(b);
+        }
+    }
+    (out.len() == expected).then_some((out, pos))
+}
+
+fn lz4_hadoop_decode(data: &[u8]) -> Option<Vec<u8>> {
+    let mut out = Vec::new();
+    let mut pos = 0usize;
+    while pos < data.len() {
+        let b = data.get(pos..pos + 4)?;
+        pos += 4;
+        let ulen = u32::from_be_bytes([b[0], b[1], b[2], b[3]]) as usize;
+        if ulen == 0 {
+            return None;
+        }
+        let (chunk, used) = lz4_block(&data[pos..], ulen)?;
+        pos += used;
+        out.extend_from_slice(&chunk);
+    }
+    Some(out)
+}
+
+fn lz4_raw_decode(data: &[u8], expected: i32) -> Option<Vec<u8>> {
+    let ulen = usize::try_from(expected).ok()?;
+    let (out, _) = lz4_block(data, ulen)?;
+    Some(out)
+}
+
+fn delta_binary_packed(data: &[u8]) -> Result<(Vec<i64>, usize), ParquetNote> {
+    let (block_size, mut pos) = uvarint_at(data, 0)?;
+    let (miniblocks_per_block, used) = uvarint_at(data, pos)?;
+    pos += used;
+    let (total_count, used) = uvarint_at(data, pos)?;
+    pos += used;
+    let (first_raw, used) = uvarint_at(data, pos)?;
+    pos += used;
+    let block_size = block_size as usize;
+    let miniblocks_per_block = miniblocks_per_block as usize;
+    let total_count = total_count as usize;
+    if block_size == 0
+        || miniblocks_per_block == 0
+        || block_size % miniblocks_per_block != 0
+        || total_count == 0
+    {
+        return Err(ParquetNote::Truncated { off: pos });
+    }
+    let values_per_miniblock = block_size / miniblocks_per_block;
+    let num_miniblocks = (total_count - 1).div_ceil(values_per_miniblock);
+    let mut min_deltas = Vec::with_capacity(num_miniblocks);
+    for _ in 0..num_miniblocks {
+        let (v, used) = uvarint_at(data, pos)?;
+        pos += used;
+        min_deltas.push(zigzag_decode(v));
+    }
+    let mut bit_widths = Vec::with_capacity(num_miniblocks);
+    for _ in 0..num_miniblocks {
+        bit_widths.push(*data.get(pos).ok_or(ParquetNote::Truncated { off: pos })?);
+        pos += 1;
+    }
+    let mut values = Vec::with_capacity(total_count.min(1 << 20));
+    let mut previous = zigzag_decode(first_raw);
+    values.push(previous);
+    let mut deltas_left = total_count - 1;
+    for mb in 0..num_miniblocks {
+        let count = deltas_left.min(values_per_miniblock);
+        let bit_width = bit_widths[mb];
+        let bits_needed = count
+            .checked_mul(bit_width as usize)
+            .ok_or(ParquetNote::Truncated { off: pos })?;
+        let bytes_needed = bits_needed.div_ceil(8);
+        let body = slice_at(data, pos, bytes_needed)?;
+        pos += bytes_needed;
+        let mut bits = Bits {
+            data: body,
+            bit_pos: 0,
+        };
+        for _ in 0..count {
+            let packed = bits.read(bit_width)?;
+            previous += min_deltas[mb] + zigzag_decode(packed as u64);
+            values.push(previous);
+        }
+        deltas_left -= count;
+    }
+    Ok((values, pos))
+}
+
+fn decode_delta_binary_packed(
+    data: &[u8],
+    type_tag: i32,
+    count: usize,
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    if !matches!(type_tag, 1 | 2) {
+        return Ok(vec![ParquetValue::Unhandled(format!(
+            "delta type {}",
+            type_tag
+        ))]);
+    }
+    let (values, _) = delta_binary_packed(data)?;
+    if values.len() < count {
+        return Err(ParquetNote::Truncated { off: data.len() });
+    }
+    let mut out = Vec::with_capacity(count);
+    for v in values.into_iter().take(count) {
+        out.push(match type_tag {
+            1 => ParquetValue::I32(v as i32),
+            _ => ParquetValue::I64(v),
+        });
+    }
+    Ok(out)
+}
+
+fn decode_delta_length_byte_array(
+    data: &[u8],
+    count: usize,
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    let (lengths, pos) = delta_binary_packed(data)?;
+    if lengths.len() < count {
+        return Err(ParquetNote::Truncated { off: data.len() });
+    }
+    let payload = &data[pos..];
+    let mut out = Vec::with_capacity(count);
+    let mut offset = 0usize;
+    for len in lengths.into_iter().take(count) {
+        if len < 0 {
+            return Err(ParquetNote::Truncated { off: data.len() });
+        }
+        let len = len as usize;
+        let body = slice_at(payload, offset, len)?;
+        offset += len;
+        out.push(ParquetValue::Bytes(body.to_vec()));
+    }
+    Ok(out)
+}
+
+fn decode_delta_byte_array(data: &[u8], count: usize) -> Result<Vec<ParquetValue>, ParquetNote> {
+    let (prefix_lengths, pos) = delta_binary_packed(data)?;
+    if prefix_lengths.len() < count {
+        return Err(ParquetNote::Truncated { off: data.len() });
+    }
+    let suffixes = decode_delta_length_byte_array(&data[pos..], count)?;
+    let mut out = Vec::with_capacity(count);
+    let mut previous: Vec<u8> = Vec::new();
+    for i in 0..count {
+        let plen = prefix_lengths[i];
+        if plen < 0 || plen as usize > previous.len() {
+            return Err(ParquetNote::Truncated { off: data.len() });
+        }
+        let plen = plen as usize;
+        let suffix = match suffixes.get(i) {
+            Some(ParquetValue::Bytes(b)) => b,
+            _ => return Err(ParquetNote::Truncated { off: data.len() }),
+        };
+        let mut value = Vec::with_capacity(plen + suffix.len());
+        value.extend_from_slice(&previous[..plen]);
+        value.extend_from_slice(suffix);
+        previous = value.clone();
+        out.push(ParquetValue::Bytes(value));
+    }
+    Ok(out)
+}
+
+fn decode_byte_stream_split(
+    data: &[u8],
+    type_tag: i32,
+    count: usize,
+) -> Result<Vec<ParquetValue>, ParquetNote> {
+    let width = match type_tag {
+        4 => 4usize,
+        5 => 8usize,
+        tag => {
+            return Ok(vec![ParquetValue::Unhandled(format!("split type {}", tag))]);
+        }
+    };
+    let total = count
+        .checked_mul(width)
+        .ok_or(ParquetNote::Truncated { off: 0 })?;
+    let body = slice_at(data, 0, total)?;
+    let mut unsplit = Vec::with_capacity(total);
+    for v in 0..count {
+        for s in 0..width {
+            unsplit.push(body[s * count + v]);
+        }
+    }
+    decode_plain(&unsplit, type_tag, None, count)
+}
+
 fn read_page_header(data: &[u8], off: usize) -> Result<(PageHeaderInfo, usize), ParquetNote> {
     if off >= data.len() {
         return Err(ParquetNote::Truncated { off });
@@ -1000,10 +1245,13 @@ fn skip_levels(body: &[u8], max_rep: usize, max_def: usize) -> Result<&[u8], Par
     Ok(&body[pos..])
 }
 
-fn page_body(codec: i32, raw: &[u8]) -> Option<Vec<u8>> {
+fn page_body(codec: i32, raw: &[u8], header: &PageHeaderInfo) -> Option<Vec<u8>> {
     match codec {
         0 => Some(raw.to_vec()),
         1 => snappy_decode(raw),
+        2 => super::inflate::gunzip(raw),
+        5 => lz4_hadoop_decode(raw),
+        7 => lz4_raw_decode(raw, header.uncompressed_page_size),
         _ => None,
     }
 }
@@ -1013,7 +1261,7 @@ fn decode_column(
     leaf: &SchemaElement,
     data: &[u8],
 ) -> Result<Vec<ParquetValue>, ParquetNote> {
-    if !matches!(cm.codec, 0 | 1) {
+    if !matches!(cm.codec, 0 | 1 | 2 | 5 | 7) {
         return Ok(vec![ParquetValue::Unhandled(format!("codec {}", cm.codec))]);
     }
     let type_tag = leaf.type_tag.ok_or(ParquetNote::AbsentField { id: 1 })?;
@@ -1035,7 +1283,7 @@ fn decode_column(
             dict_off as usize + hlen,
             hdr.compressed_page_size as usize,
         )?;
-        let Some(plain) = page_body(cm.codec, body) else {
+        let Some(plain) = page_body(cm.codec, body, &hdr) else {
             return Ok(vec![ParquetValue::Unhandled(format!(
                 "codec {} page",
                 cm.codec
@@ -1053,7 +1301,7 @@ fn decode_column(
             let n = hdr
                 .dict_num_values
                 .ok_or(ParquetNote::AbsentField { id: 1 })? as usize;
-            let Some(plain) = page_body(cm.codec, body) else {
+            let Some(plain) = page_body(cm.codec, body, &hdr) else {
                 out.push(ParquetValue::Unhandled(format!("codec {} page", cm.codec)));
                 break;
             };
@@ -1080,7 +1328,7 @@ fn decode_column(
         let enc = hdr
             .data_encoding
             .ok_or(ParquetNote::AbsentField { id: 2 })?;
-        let Some(plain) = page_body(cm.codec, body) else {
+        let Some(plain) = page_body(cm.codec, body, &hdr) else {
             out.push(ParquetValue::Unhandled(format!("codec {} page", cm.codec)));
             break;
         };
@@ -1088,6 +1336,10 @@ fn decode_column(
         let vals = match enc {
             0 => decode_plain(values_body, type_tag, type_length, n)?,
             2 | 8 => decode_dict(values_body, &dictionary, n)?,
+            5 => decode_delta_binary_packed(values_body, type_tag, n)?,
+            6 => decode_delta_length_byte_array(values_body, n)?,
+            7 => decode_delta_byte_array(values_body, n)?,
+            9 => decode_byte_stream_split(values_body, type_tag, n)?,
             e => vec![ParquetValue::Unhandled(format!("encoding {}", e))],
         };
         out.extend(vals);
@@ -1520,6 +1772,107 @@ pub(crate) mod testkit {
         out
     }
 
+    fn crc32(bytes: &[u8]) -> u32 {
+        let mut crc = 0xffff_ffffu32;
+        for &b in bytes {
+            crc ^= b as u32;
+            for _ in 0..8 {
+                crc = (crc >> 1) ^ (0xedb8_8320u32 & (0u32.wrapping_sub(crc & 1)));
+            }
+        }
+        !crc
+    }
+
+    fn gzip_stored(bytes: &[u8]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend([0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff]);
+        let len = bytes.len() as u32;
+        out.push(0x01);
+        out.extend((len as u16).to_le_bytes());
+        out.extend((!(len as u16)).to_le_bytes());
+        out.extend_from_slice(bytes);
+        out.extend(crc32(bytes).to_le_bytes());
+        out.extend(len.to_le_bytes());
+        out
+    }
+
+    fn lz4_literal_block(bytes: &[u8]) -> Option<Vec<u8>> {
+        if bytes.len() >= 15 {
+            return None;
+        }
+        let mut out = Vec::with_capacity(bytes.len() + 1);
+        out.push((bytes.len() << 4) as u8);
+        out.extend_from_slice(bytes);
+        Some(out)
+    }
+
+    fn lz4_framed(chunks: &[&[u8]]) -> Vec<u8> {
+        let mut out = Vec::new();
+        for chunk in chunks {
+            out.extend((chunk.len() as u32).to_be_bytes());
+            out.extend(lz4_literal_block(chunk).expect("small literal block"));
+        }
+        out
+    }
+
+    fn zigzag_u64(n: i64) -> u64 {
+        ((n << 1) ^ (n >> 63)) as u64
+    }
+
+    fn bit_pack(values: &[u64], width: u8) -> Vec<u8> {
+        let mut out = Vec::new();
+        let mut acc = 0u64;
+        let mut bits = 0u32;
+        for &v in values {
+            acc |= v << bits;
+            bits += width as u32;
+            while bits >= 8 {
+                out.push((acc & 0xff) as u8);
+                acc >>= 8;
+                bits -= 8;
+            }
+        }
+        if bits > 0 {
+            out.push((acc & 0xff) as u8);
+        }
+        out
+    }
+
+    fn delta_stream(values: &[i64], block_size: u64, miniblocks: u64) -> Vec<u8> {
+        let vpm = (block_size / miniblocks) as usize;
+        let deltas: Vec<i64> = values.windows(2).map(|w| w[1] - w[0]).collect();
+        let num_miniblocks = deltas.len().div_ceil(vpm);
+        let mut min_deltas = Vec::with_capacity(num_miniblocks);
+        let mut widths = Vec::with_capacity(num_miniblocks);
+        let mut packed = Vec::new();
+        for chunk in deltas.chunks(vpm) {
+            let min = *chunk.iter().min().expect("non-empty miniblock chunk");
+            min_deltas.push(min);
+            let mut max_z = 0u64;
+            for &d in chunk {
+                max_z = max_z.max(zigzag_u64(d - min));
+            }
+            let mut width = 0u32;
+            while width < 64 && max_z >= (1u64 << width) {
+                width += 1;
+            }
+            widths.push(width as u8);
+            let vals: Vec<u64> = chunk.iter().map(|&d| zigzag_u64(d - min)).collect();
+            packed.extend(bit_pack(&vals, width as u8));
+        }
+        let mut out = Vec::new();
+        out.extend(uvarint(block_size));
+        out.extend(uvarint(miniblocks));
+        out.extend(uvarint(values.len() as u64));
+        out.extend(zigzag(values[0]));
+        for &md in &min_deltas {
+            out.extend(zigzag(md));
+        }
+        out.extend(widths);
+        out.extend(packed);
+        out
+    }
+
     fn dictionary_byte_array_file(codec: i32) -> Vec<u8> {
         dictionary_byte_array_file_layout(codec, false)
     }
@@ -1757,5 +2110,221 @@ pub(crate) mod testkit {
         s.push((4 << 2) as u8);
         s.extend(b"hi");
         assert_eq!(snappy_decode(&s), None);
+    }
+
+    #[test]
+    fn parquet_reads_gzip_dictionary_byte_array_column() {
+        let bytes = dictionary_byte_array_file(2);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"aa".to_vec()),
+            ]
+        );
+    }
+
+    #[test]
+    fn parquet_reads_lz4_dictionary_byte_array_column() {
+        let bytes = dictionary_byte_array_file(5);
+        let cols = parse_parquet(&bytes).expect("columns");
+        assert_eq!(cols.len(), 1);
+        assert_eq!(cols[0].name, "col");
+        assert_eq!(
+            cols[0].values,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"aa".to_vec()),
+            ]
+        );
+    }
+
+    fn header_with(uncompressed: i32) -> PageHeaderInfo {
+        PageHeaderInfo {
+            page_type: 0,
+            uncompressed_page_size: uncompressed,
+            compressed_page_size: uncompressed,
+            num_values: None,
+            data_encoding: None,
+            dict_num_values: None,
+            data_page_v2: false,
+        }
+    }
+
+    #[test]
+    fn page_body_gunzips_stored_block() {
+        let compressed = gzip_stored(b"hello");
+        assert_eq!(
+            page_body(2, &compressed, &header_with(5)),
+            Some(b"hello".to_vec())
+        );
+    }
+
+    #[test]
+    fn page_body_decodes_lz4() {
+        let framed = lz4_framed(&[b"abc"]);
+        assert_eq!(
+            page_body(5, &framed, &header_with(3)),
+            Some(b"abc".to_vec())
+        );
+    }
+
+    #[test]
+    fn page_body_decodes_lz4_raw() {
+        let block = lz4_literal_block(b"hello world").expect("small literal block");
+        assert_eq!(
+            page_body(7, &block, &header_with(11)),
+            Some(b"hello world".to_vec())
+        );
+    }
+
+    #[test]
+    fn lz4_block_decodes_literals_only() {
+        let block = lz4_literal_block(b"hello world").expect("small literal block");
+        let (out, used) = lz4_block(&block, 11).expect("decoded");
+        assert_eq!(out, b"hello world");
+        assert_eq!(used, block.len());
+    }
+
+    #[test]
+    fn lz4_block_decodes_match_copy() {
+        let mut block = vec![0x41u8];
+        block.extend(b"abcd");
+        block.extend(4u16.to_le_bytes());
+        let (out, used) = lz4_block(&block, 9).expect("decoded");
+        assert_eq!(out, b"abcdabcda");
+        assert_eq!(used, block.len());
+    }
+
+    #[test]
+    fn lz4_block_decodes_literal_length_extension() {
+        let mut block = vec![0xF1u8, 0x01];
+        block.extend(b"abcdefghijklmnop");
+        block.extend(16u16.to_le_bytes());
+        let (out, used) = lz4_block(&block, 21).expect("decoded");
+        assert_eq!(out, b"abcdefghijklmnopabcde");
+        assert_eq!(used, block.len());
+    }
+
+    #[test]
+    fn lz4_block_refuses_zero_offset() {
+        let mut block = vec![0x40u8];
+        block.extend(b"abcd");
+        block.extend(0u16.to_le_bytes());
+        assert_eq!(lz4_block(&block, 4), None);
+    }
+
+    #[test]
+    fn lz4_block_refuses_oversized_output() {
+        let mut block = vec![0x43u8];
+        block.extend(b"abcd");
+        block.extend(1u16.to_le_bytes());
+        assert_eq!(lz4_block(&block, 5), None);
+    }
+
+    #[test]
+    fn lz4_hadoop_decode_concatenates_chunks() {
+        let framed = lz4_framed(&[b"abc", b"defgh"]);
+        let out = lz4_hadoop_decode(&framed).expect("decoded");
+        assert_eq!(out, b"abcdefgh");
+    }
+
+    #[test]
+    fn delta_binary_packed_decodes_hand_built_stream() {
+        let mut body = Vec::new();
+        body.extend(uvarint(8));
+        body.extend(uvarint(2));
+        body.extend(uvarint(4));
+        body.extend(zigzag(10));
+        body.extend(zigzag(2));
+        body.push(2);
+        body.push(0x08);
+        let (values, used) = delta_binary_packed(&body).expect("delta values");
+        assert_eq!(values, vec![10, 12, 15, 17]);
+        assert_eq!(used, body.len());
+    }
+
+    #[test]
+    fn delta_binary_packed_decodes_two_miniblocks() {
+        let values = [1i64, 5, 2, 9, 3, 1];
+        let body = delta_stream(&values, 8, 2);
+        let (out, used) = delta_binary_packed(&body).expect("delta values");
+        assert_eq!(out, values.to_vec());
+        assert_eq!(used, body.len());
+    }
+
+    #[test]
+    fn delta_binary_packed_refuses_zero_block_size() {
+        let mut body = Vec::new();
+        body.extend(uvarint(0));
+        assert!(delta_binary_packed(&body).is_err());
+    }
+
+    #[test]
+    fn delta_binary_packed_refuses_truncated_body() {
+        let values = [1i64, 5, 2, 9, 3, 1];
+        let mut body = delta_stream(&values, 8, 2);
+        body.pop();
+        assert!(delta_binary_packed(&body).is_err());
+    }
+
+    #[test]
+    fn delta_length_byte_array_decodes() {
+        let lengths = [2i64, 3, 2];
+        let mut body = delta_stream(&lengths, 8, 2);
+        body.extend(b"aabbbcc");
+        let vals = decode_delta_length_byte_array(&body, 3).expect("values");
+        assert_eq!(
+            vals,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"bbb".to_vec()),
+                ParquetValue::Bytes(b"cc".to_vec()),
+            ]
+        );
+    }
+
+    #[test]
+    fn delta_byte_array_decodes_prefixes() {
+        let prefix_lengths = [0i64, 2, 0];
+        let suffix_lengths = [2i64, 1, 2];
+        let mut body = delta_stream(&prefix_lengths, 8, 2);
+        body.extend(delta_stream(&suffix_lengths, 8, 2));
+        body.extend(b"aaxzz");
+        let vals = decode_delta_byte_array(&body, 3).expect("values");
+        assert_eq!(
+            vals,
+            vec![
+                ParquetValue::Bytes(b"aa".to_vec()),
+                ParquetValue::Bytes(b"aax".to_vec()),
+                ParquetValue::Bytes(b"zz".to_vec()),
+            ]
+        );
+    }
+
+    #[test]
+    fn byte_stream_split_decodes_floats() {
+        let floats = [1.0f32, 2.5f32, -3.25f32];
+        let plain: Vec<u8> = floats.iter().flat_map(|f| f.to_le_bytes()).collect();
+        let mut split = vec![0u8; plain.len()];
+        for (v, chunk) in plain.chunks(4).enumerate() {
+            for (s, b) in chunk.iter().enumerate() {
+                split[s * 3 + v] = *b;
+            }
+        }
+        let vals = decode_byte_stream_split(&split, 4, 3).expect("values");
+        assert_eq!(
+            vals,
+            vec![
+                ParquetValue::Float(1.0),
+                ParquetValue::Float(2.5),
+                ParquetValue::Float(-3.25),
+            ]
+        );
     }
 }
