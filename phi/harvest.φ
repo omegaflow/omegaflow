@@ -92,7 +92,7 @@ pattern ^goes16_abi\.bin$
 idempotent true
 note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
 
-asset fehlt
+asset present
 format hamqsl_solar
 tag www.hamqsl.com
 arm hamqsl_compiler
@@ -100,7 +100,7 @@ workflow hamqsl-cdn.yml
 pattern ^hamqsl_solar\.bin$
 idempotent true
 timeout 120
-note HAMQSL solarxml.php (solarflux sfu, solarwind km/s, magneticfield nT); Arm src/archivar/hamqsl.rs; Compiler hamqsl_compiler.rs (fetch + embedded LSK); CDN über hamqsl-cdn.yml --out hamqsl_solar.bin; kein Asset gemessen.
+note HAMQSL solarxml.php (solarflux sfu, solarwind km/s, magneticfield nT); Arm src/archivar/hamqsl.rs; Compiler hamqsl_compiler.rs; CDN-Asset 68 B sha256 872bcbd8… measured 2026-09-26 via --sniff (magic HSL1).
 
 asset present
 format icesat2_atl03
@@ -161,7 +161,7 @@ shard 4
 idempotent true
 note Quelle vollständig gemessen 2026-09-18: odrs_0001–0238 tragen odf/ (odrs_0239–0299 HTTP 404, kein odf/); neuestes ODF odrs_0238/7163164b.lbl STOP 2017-06-13T13:15:09 == Register-End-Shard t550631778; kein Re-Harvest.
 
-asset fehlt
+asset present
 format ogimet_synop
 tag www.ogimet.com
 arm ogimet_compiler
@@ -170,7 +170,7 @@ workflow ogimet-cdn.yml
 pattern ^ogimet_synop\.bin$
 idempotent true
 timeout 120
-note OGIMET gsynres SYNOP Station 72594 (Temperatur C, Taupunkt C, Wind m/s, SLP hPa); Arm src/archivar/geo.rs MAGIC_OGM; Compiler ogimet_compiler.rs, Pflicht --station/--year/--month/--day; CDN über ogimet-cdn.yml; kein Asset gemessen.
+note OGIMET gsynres SYNOP Station 72594 (Temperatur C, Taupunkt C, Wind m/s, SLP hPa); Arm src/archivar/geo.rs MAGIC_OGM; Compiler ogimet_compiler.rs; CDN-Asset 1688 B sha256 c66e905e… (--sniff 2026-09-26); Run 36246913114 success.
 
 asset present
 format openneuro_brainvision

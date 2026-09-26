@@ -8052,6 +8052,17 @@ dist dist
 dist_scale 3.085677581e16
 field av_rq planck_dust_av_rq_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_psz2_sz_mmf3.json
+origin https://irsa.ipac.caltech.edu/TAP/sync (ADQL planck.com_pccs2_sz_mmf3 name,ra,dec,snr; redshift crossmatch planck.com_pccs2_sz_union)
+compiler tools/harvest/src/bin/planck_psz2_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field snr planck_psz2_snr inverse-square em 1 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves.bin
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (Katalog dr3_stars.bin)
 compiler tools/harvest/src/bin/ztf_lightcurves_compiler.rs
