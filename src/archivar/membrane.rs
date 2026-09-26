@@ -503,6 +503,10 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         } else {
             return None;
         }
+    } else if kl == "hr" || kl.contains("heart") || kl.contains("bpm") {
+        (6, 3, 10.0, "bpm", None)
+    } else if kl.contains("cadence") {
+        (7, 1, 10.0, "1/min", None)
     } else if kl.starts_with("event.") {
         (0, 0, 10.0, "", None)
     } else {

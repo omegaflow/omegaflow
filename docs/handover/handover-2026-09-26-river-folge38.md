@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: a66a118b4ef1d995ad547dc8b394c6c27a7b96b2927e9db5fe9d53c64427e2dc
+  sha256: 7929f6ca1f76f253551cde43e89d08bf1aef7d4a0fc3b0eb259c868be291be99
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -44,36 +44,37 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - BT-Geräte (Box + Kopfhörer) **angeschlossen** | 2026-09-26 | Operator-Akt.
 - Quest 2 autorisiert (`1WMHHB685V1462`) | 2026-09-26 | Operator-Akt.
 - Geräte-Zugriff: **vor jedem Zugriff fragen** (adb/BT), damit der Operator zulassen kann | 2026-09-26 | Operator-Wort.
+- **Harte-Läufe-LOCK aufgehoben** — Membran verifiziert (`membrane-hull-probe 36264567801` = 0/4) | 2026-09-26 | Operator-Wort („ok du kannst").
+- 945-BLE-HR-Bindung gebaut (HR bpm in den Beat-Pfad; RR braucht Brustgurt) | 2026-09-26 | Linie.
 
 ## Stehender Pass (gemessen 2026-09-26)
 
-- **HEAD:** `7e2cefd9f` == `origin/main` (fast-forward); dieser Atom gepusht.
-- **Safety-Snapshot:** `refs/safety/1790443358`.
-- **Arbeitsbaum:** nur Fremdarbeit (andere Linien: `AGENTS.md`, `_template.md`, mountain-Rename, `fits.rs`/`hdf4.rs`/`uvfits.rs`, `blocked_sources.φ`, planck-psz2, `skydirection.rs`) — nichts Eigenes offen.
-- **`open_points_check`:** 0 format-gaps (Stand folge37-Tafel).
+- **HEAD:** `a6f84db01` == `origin/main` (fast-forward); dieser Atom gepusht.
+- **Safety-Snapshot:** `refs/safety/1790443358` (älter) — neuer Snapshot am Sessionende.
+- **Arbeitsbaum:** nur Fremdarbeit (andere Linien: `AGENTS.md`, `_template.md`, mountain-handover, `fits.rs`/`uvfits.rs`, `phi/sources.φ`, `register_lookup.rs`, `cross_te_screen.rs`, `main_flow.rs`-charm2-Fmt) — nichts Eigenes offen.
 - **`register_lookup`:** keine register-eigenen River-Einträge; Orphans/`--orphan-docs` fremd (mycelium, `positive-maske`).
 - **Postfach:** `state/mail/mail_ledger.φ` absent (privates `state/`, CI-Build zuständig) — Lücke benannt.
-- **CI (diese Session dispatched):** `star-dmax-probe 36252229964` = success (keine Widerlegung); `membrane-hull-probe 36260828234` = success (Prozess), Artefakt misst **3 von 4 Pfaden REFUTED**; `ci-check 36260830080` = cancelled (überholt).
-- **Geräte (gemessen):** Quest 2 (Oculus, Android 12, `1WMHHB685V1462`) autorisiert — Syncboss IMU `ICM42688`, Accel/Gyro 20–100 Hz, Fusion 200 Hz; BT-Box/Kopfhörer angeschlossen.
+- **CI:** `star-dmax-probe 36252229964` = success (keine Widerlegung); `membrane-hull-probe 36260828234` = 3/4 REFUTED → Fix (`a6f84db01`) → `membrane-hull-probe 36264567801` = **0/4 divergent** (grün).
+- **Geräte (gemessen):** Quest 2 #1/#2, Forerunner 945 (BLE HR `0x180d`+RSC), Bose, JBL, Pixel 10a — Inventar unten.
 - Shared external state: `docs/zustand/external-state.md` (nicht kopiert).
 
 ## Offen
 
 ### Umsetzbar (jetzt, autonom bis zur Kante)
 
-#### membrane-hull-probe — Fix verifizieren (LOCK-Gate)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Run `36263190452` (nach Commit neu dispatched) liefert das grüne Artefakt.
-- **Lage:** (gemessen 2026-09-26 via Artefakt `36260828234`) `3 von 4` Pfaden divergent: bootstrap `anchor_items 10/82` ohne Gate (`main_flow.rs:243`), per-tick `in_hull` defaultet `true` (75/82, `main_flow.rs:1261,1263`), catalog_tycho `f_excl 0.999940`. Fix gebaut (noch uncommittet): `spatial.rs law_bounds` analytische Schranke, `fetch.rs body_in_enclosure` mit Record-Epoche, per-tick `_ => false`; lokal **0 von 4** divergent; 4 Gate-Fixtures.
-- **Blockade:** Fix uncommittet → Lauf `36263190452` trägt den alten Stand.
-- **Braucht:** nach `/commit` `gh workflow run membrane-hull-probe.yml`; bei grün dem Operator das Harte-Läufe-LOCK zur Aufhebung vorlegen.
-
 #### Akustik-Sink `OMEGAFLOW_ACOUSTIC` — BT-Radiatoren
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Run `36263190452` grün (nach Commit) + Operator-Wort zum LOCK-Aufheben.
-- **Lage:** (gemessen 2026-09-26) Sink in `main_flow.rs` gebaut (`acoustic_sink()`): `-`/`stdout`, freies Player-Kommando, oder **`auto`** — liest die live Sinks (`pactl list short sinks`, keine hartkodierten Namen) und fächert den Frame via `AcousticFanout` gleichberechtigt auf alle; `cargo check` 0/0, Test `parse_sink_names_reads_the_live_sink_list`; noch uncommittet.
-- **Blockade:** Harte-Läufe-LOCK.
-- **Braucht:** `OMEGAFLOW_ACOUSTIC=auto bin/omegaflow` — Box + JBL + jeder weitere Sink empfangen denselben Frame.
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** LOCK aufgehoben (`36264567801` grün).
+- **Lage:** (gemessen 2026-09-26) Sink in `main_flow.rs` gebaut (`acoustic_sink()`): `-`/`stdout`, freies Player-Kommando, oder **`auto`** — liest die live Sinks (`pactl list short sinks`, keine hartkodierten Namen) und fächert via `AcousticFanout` gleichberechtigt auf alle; committed `a6f84db01`, Test `parse_sink_names_reads_the_live_sink_list`.
+- **Blockade:** keine.
+- **Braucht:** `OMEGAFLOW_ACOUSTIC=auto bin/omegaflow` — Bose + JBL + jeder weitere Sink empfangen denselben Frame; Operator-Akt (sichtbarer Lauf).
+
+#### 945-BLE-HR — Puls-Arrival
+- **Status:** wartend | **Bindung:** operator
+- **Trigger:** 945 über BLE verbunden (`OMEGAFLOW_BLE_HR=[redacted]`).
+- **Lage:** (gemessen 2026-09-26) Bindung gebaut: `ble.rs` HR `0x180d` (RR + bpm) + RSC `0x1814` (`decode_rsc_measurement`), `membrane.rs sensor_config` hr/bpm/cadence; HR bpm speist den Beat-Pfad (`feed_beat_to_hrv`). **Riss:** die 945 liefert am Handgelenk **HR bpm, kein RR** — der RR→Beat-Pfad bleibt stumm bis ein Brustgurt (Polar H10 / HRM-Dual) RR liefert.
+- **Blockade:** RR fehlt am Handgelenk (Hardware).
+- **Braucht:** Brustgurt beschaffen (sensory-Handover „RR-Kanal"); sonst HR-bpm-Relaxation (`tone_scale` aus bpm) messen.
 
 #### Geräte-Inventar — alle Wege je Gerät
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -151,24 +152,8 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **Trigger:** 945 liefert den Puls-Arrival.
 - **Lage:** (gemessen 2026-09-26 via `sread`/`sgrep`) Pfad steht (`src/mathematikerin/omega.rs:200/349`), HRV-Reader gebaut (`src/archivar/ble.rs:715/926`); absent ist der Puls-Arrival.
 - **Blockade:** kein Puls-Arrival.
-- **Braucht:** `OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`, dann `perm_target_probe --live <pfad>` — unter dem Harte-Läufe-LOCK.
+- **Braucht:** `OMEGAFLOW_HIDDEN=1 OMEGAFLOW_PERM_LOG=<pfad> cargo run --release`, dann `perm_target_probe --live <pfad>` (LOCK aufgehoben).
 - **Wort:** vC 945 von Mantis Shrimp getrennt | 2026-09-26 | Operator-Wort folge36.
-
-#### Puls-Pfad 945 — Weg (b): Live-BLE-HR nach dem Membran-Fix
-- **Status:** wartend | **Bindung:** operator
-- **Trigger:** Harte-Läufe-LOCK gefallen (verifiziertes `star-dmax-probe`-Artefakt + Folgelauf).
-- **Lage:** (gemessen 2026-09-26 via `bin/omegaflow` + Backup) 945 gesichert (`data/garmin-945/2026-09-26/`, 36 MB); alle `.fit`/`.FIT` tragen `nn: 0` (RR nur live über BLE; `decode_hr_measurement`, `src/archivar/ble.rs:1220`).
-- **Blockade:** Harte-Läufe-LOCK.
-- **Braucht:** `OMEGAFLOW_HIDDEN=1 bin/omegaflow` mit 945-BLE-HR; `tone_code`-Stresswechsel + `tone_scale`-Relaxation messen.
-- **Wort:** Puls-Weg (b) | 2026-09-26 | Operator-Wort folge36.
-
-#### HRV/Puls-Arrival → Radiations-Pfad (Quelle 945 per BLE)
-- **Status:** wartend | **Bindung:** operator
-- **Trigger:** der Puls-Arrival liegt am Kanal (nach verifiziertem `star-dmax-probe`-Lauf).
-- **Lage:** (gemessen 2026-09-26 via `sread`/`sgrep`) Code-Pfad steht: `feed_beat_to_hrv` (`main_flow.rs:79`), ω-Loop `tone_scale` (`omega.rs:1670-1678`), Apertur = `field_permeability * tone_scale` (`omega.rs:349`); Test `tests.rs:547`. Absent ist der physische Puls-Arrival.
-- **Blockade:** kein Puls-Arrival am Kanal.
-- **Braucht:** Puls-Arrival auf `nn`/`rr`/`ibi` liefern, dann `tone_code`-Stresswechsel + `tone_scale`-Relaxation messen.
-- **Wort:** Puls-Weg (b) | 2026-09-26 | Operator-Wort folge36.
 
 #### Mantis Shrimp — Sensor-Hardware beschaffen (BOM)
 - **Status:** LOCK | **Bindung:** operator
@@ -177,14 +162,6 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 - **Blockade:** LOCK.
 - **Braucht:** Operator-Wort; dann BOM bestellen.
 - **Wort:** Mantis Shrimp LOCK | 2026-09-26 | Operator-Wort folge36.
-
-#### Harte Läufe (sichtbar/hidden) — LOCK
-- **Status:** LOCK | **Bindung:** operator
-- **Trigger:** Membran verifiziert (star-dmax-probe-Artefakt + verifizierender Folgelauf).
-- **Lage:** (gemessen 2026-09-26 via `sgrep`/git) Stern-Gitter (`StarCellKey`), `enclosure_rho`, Sprung-Vektor `jump_residual_breached` und die drei Umgehungen sind gebaut; die Verifikation fehlt.
-- **Blockade:** Verifikation (siehe Linie-Punkt star-dmax).
-- **Braucht:** Probe-Artefakt lesen + verifizierenden Folgelauf; dann LOCK aufheben (Operator-Wort).
-- **Wort:** Harte Läufe LOCK | 2026-09-26 | Operator-Wort folge36.
 
 #### Flyby-Path-2-Kette
 - **Status:** termin:2026-09-28 | **Bindung:** termin

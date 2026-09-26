@@ -2263,14 +2263,18 @@ fn test_star_samples_build_tau() {
     bin.extend_from_slice(&1f32.to_le_bytes());
     bin.extend_from_slice(&1.2f32.to_le_bytes());
     bin.extend_from_slice(&30000f32.to_le_bytes());
-    let samples = build_star_samples(&bin);
+    let samples = build_star_samples(&bin, Some(2015.0));
     assert_eq!(samples.len(), 1);
     assert!(samples[0].tau > 0.0);
     assert_eq!(samples[0].val, 1.0);
     assert_eq!(samples[0].force_type, 0.0);
     assert_eq!(samples[0].kernel_id, 0.0);
     assert_eq!(samples[0].ttl, samples[0].tau);
-    assert_eq!(samples[0].epoch, 0.0);
+    assert_eq!(
+        samples[0].epoch,
+        (2015.0 - 2000.0) * 86400.0 * 365.25,
+        "the catalog reference epoch year folds onto the TDB clock"
+    );
     assert!(samples[0].extent.is_infinite());
     assert!((samples[0].color_index - 1.2).abs() < 1e-4);
     let Motion::Spherical { rec } = &samples[0].motion else {
@@ -2283,11 +2287,15 @@ fn test_star_samples_build_tau() {
     let d = 10.0 * PARSEC_M;
     assert!((p[0] - d).abs() / d < 1e-9);
     assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
+    assert!(
+        build_star_samples(&bin, None).is_empty(),
+        "the block without catalog_epoch builds no stars — the epoch is a register duty, never a fabricated zero"
+    );
     let short = [0u8; 36];
     assert!(parse_star_record(&short).is_none());
     let legacy = [0u8; 40];
     assert!(parse_star_record(&legacy).is_none());
-    assert_eq!(build_star_samples(&bin[..40]).len(), 0);
+    assert_eq!(build_star_samples(&bin[..40], Some(2000.0)).len(), 0);
 }
 
 #[test]
@@ -2322,7 +2330,7 @@ fn test_star_samples_diode() {
     bin.extend_from_slice(&1f32.to_le_bytes());
     bin.extend_from_slice(&1.2f32.to_le_bytes());
     bin.extend_from_slice(&12000f32.to_le_bytes());
-    let samples = build_star_samples(&bin);
+    let samples = build_star_samples(&bin, Some(2000.0));
     assert_eq!(samples.len(), 1);
     let d = 10.0 * PARSEC_M;
     assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
@@ -2382,7 +2390,7 @@ fn test_star_grid_hull_refuses_distant_star() {
     bin.extend_from_slice(&1f32.to_le_bytes());
     bin.extend_from_slice(&1.2f32.to_le_bytes());
     bin.extend_from_slice(&12000f32.to_le_bytes());
-    let samples = build_star_samples(&bin);
+    let samples = build_star_samples(&bin, Some(2000.0));
     assert_eq!(samples.len(), 1);
     let d = (1000.0 / 0.5) * PARSEC_M;
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -2440,7 +2448,7 @@ fn test_hidden_run_rest_presence_carries_stars() {
     bin.extend_from_slice(&1f32.to_le_bytes());
     bin.extend_from_slice(&1.2f32.to_le_bytes());
     bin.extend_from_slice(&12000f32.to_le_bytes());
-    let star = build_star_samples(&bin).remove(0);
+    let star = build_star_samples(&bin, Some(2000.0)).remove(0);
     let now = 2.0e9;
     assert!(
         !super::catalog_sample_in_enclosure(&[], &star, now),
@@ -2467,6 +2475,59 @@ fn test_hidden_run_rest_presence_carries_stars() {
 }
 
 #[test]
+fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
+    let ledger_path = std::env::temp_dir().join(format!(
+        "omegaflow_raw_presence_gate_{}.φ",
+        std::process::id()
+    ));
+    let ledger = std::sync::Mutex::new(super::RefusalLedger::new(ledger_path.to_str().unwrap()));
+    let now = 8.0e8;
+    let slot = std::sync::Arc::new(std::sync::RwLock::new(
+        crate::mathematikerin::PresenceState::rest(),
+    ));
+    let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+    cx[0] = 0.0;
+    let eph = super::BodyEphemeris {
+        granules: vec![super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH + now / 86400.0,
+            dt_jd: 1.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        }],
+        rotation_matrices: vec![],
+        props: None,
+        orbit: None,
+        granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
+    };
+    let mut eph_map: HashMap<String, BodyEphemeris> = HashMap::new();
+    eph_map.insert("sun".to_string(), eph);
+    let src = source_fixture("netcdf", vec![Extract::Field(field_fixture("x", 60.0))]);
+    let sources = vec![src];
+    let empty: HashMap<String, PresenceSample> = HashMap::new();
+    assert_eq!(
+        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_map, now, None, &ledger),
+        Some((0.0, 0.0, 0.0)),
+        "the resting presence admits the sun-barycenter source at the SSB — the cone carries the fetch"
+    );
+    let fieldless = source_fixture("lightcurve", vec![]);
+    let sources = vec![fieldless];
+    assert!(
+        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_map, now, None, &ledger)
+            .is_none(),
+        "a source without field lines stays refused even with a presence — no reach, no fetch"
+    );
+    let netcdf_src = source_fixture("netcdf", vec![Extract::Field(field_fixture("x", 60.0))]);
+    let sources = vec![netcdf_src];
+    let eph_empty: HashMap<String, BodyEphemeris> = HashMap::new();
+    assert!(
+        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_empty, now, None, &ledger)
+            .is_none(),
+        "the resting presence stands, but the sun barycenter is unresolvable without an ephemeris — no position, no fetch"
+    );
+}
+
+#[test]
 fn test_star_reader_predicate_refuses_nan_val() {
     let mut bin = Vec::new();
     bin.extend_from_slice(&0f64.to_le_bytes());
@@ -2478,7 +2539,7 @@ fn test_star_reader_predicate_refuses_nan_val() {
     bin.extend_from_slice(&f32::NAN.to_le_bytes());
     bin.extend_from_slice(&1.2f32.to_le_bytes());
     bin.extend_from_slice(&12000f32.to_le_bytes());
-    let samples = build_star_samples(&bin);
+    let samples = build_star_samples(&bin, Some(2000.0));
     assert_eq!(
         samples.len(),
         1,

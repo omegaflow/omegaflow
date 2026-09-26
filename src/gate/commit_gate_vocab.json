@@ -57,7 +57,10 @@
     ["anchor_uses.contains_key(body) || declared_body", "the bootstrap anchor class merged with the declared body admits every frame-referenced body without the enclosure gate — only the operator-declared body is the unconditional admission; the anchor class passes body_in_enclosure like the rest class, no source passes by default"],
     ["body_in_enclosure(&presences, props, pos, now)", "the body enclosure gate called without the record epoch reads age = now − now = 0, reach = 0 and refuses every body the resting cone admits — the gate carries the body's record epoch (body_record_epoch: first granule t0_jd / orbit first sample) as t_r"],
     ["_ => true,\n                    },\n                    None => true,", "the in_hull fetch gate defaults to true when the corpus ephemeris, properties or position is absent — absence is not a value; the gate refuses (false) on absence, never admits on a fabricated default"],
-    ["star_position_at(rec, epoch + 1.0)", "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"]
+    ["star_position_at(rec, epoch + 1.0)", "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"],
+    ["SampleSource::Ephemeris,\n            epoch: 0.0,", "a star sample epoch written as a bare 0.0 fabricates a reference epoch the bin does not carry — the star epoch is the catalog reference epoch (the catalog_epoch register directive folded onto the TDB clock), never 0.0"],
+    ["star_epoch_min: if star_epoch_min == f64::MAX {", "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"],
+    ["None => render_source_url(", "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -483,6 +486,9 @@
     "bootstrap_anchor_unconditional": "} else if anchor_uses.contains_key(body) || declared_body == Some(body.as_str()) {\n            anchor_items.push((i, s.clone(), tmp_path));\n        }",
     "body_gate_without_record_epoch": "let admitted = body_in_enclosure(&presences, props, pos, now);",
     "in_hull_absence_default": "        (Some(props), Some(pos)) => body_in_enclosure(&presences, props, pos, now),\n                        _ => true,\n                    },\n                    None => true,",
-    "star_finite_difference_bounds": "let p1 = star_position_at(rec, epoch + 1.0).0;"
+    "star_finite_difference_bounds": "let p1 = star_position_at(rec, epoch + 1.0).0;",
+    "star_epoch_bare_zero": "        samples.push(Sample {\n            source: SampleSource::Ephemeris,\n            epoch: 0.0,",
+    "star_epoch_max_zero_fold": "        star_epoch_min: if star_epoch_min == f64::MAX {\n            0.0\n        } else {\n            star_epoch_min\n        },",
+    "netcdf_origin_render_fallback": "                    None => render_source_url(\n                        &src_clone,\n                        RenderCtx {\n                            x: 0.0,\n                            y: 0.0,\n                            z: 0.0,"
   }
 }
