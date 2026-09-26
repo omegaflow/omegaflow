@@ -627,6 +627,27 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_GLML2_FLASH_ENERGY => Some("glm_l2_flash_radiant_energy_j"),
             _ => None,
         },
+        "gosat_tanso3" => match comp {
+            crate::geo::COMP_GOSAT_FOCUS_BAND1 => {
+                Some("gosat_tanso3_radiance_focus_band1_w_m2_sr_um")
+            }
+            crate::geo::COMP_GOSAT_FOCUS_BAND2 => {
+                Some("gosat_tanso3_radiance_focus_band2_w_m2_sr_um")
+            }
+            crate::geo::COMP_GOSAT_FOCUS_BAND3 => {
+                Some("gosat_tanso3_radiance_focus_band3_w_m2_sr_um")
+            }
+            crate::geo::COMP_GOSAT_WIDE_BAND1 => {
+                Some("gosat_tanso3_radiance_wide_band1_w_m2_sr_um")
+            }
+            crate::geo::COMP_GOSAT_WIDE_BAND2 => {
+                Some("gosat_tanso3_radiance_wide_band2_w_m2_sr_um")
+            }
+            crate::geo::COMP_GOSAT_WIDE_BAND3 => {
+                Some("gosat_tanso3_radiance_wide_band3_w_m2_sr_um")
+            }
+            _ => None,
+        },
         "argo_bgc" => match comp {
             crate::geo::COMP_ARGO_DOXY => Some("argo_dac_bgc_doxy_umol_kg"),
             crate::geo::COMP_ARGO_NITRATE => Some("argo_dac_bgc_nitrate_umol_kg"),
