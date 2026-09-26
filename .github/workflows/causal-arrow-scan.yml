@@ -1,0 +1,67 @@
+name: causal-arrow-scan
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  causal-arrow-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build both probes (CI mode, one crate)
+        run: cargo build --release -p omegaflow-measure --bin te_pair_probe --bin kbo_residue_probe
+      - name: Fetch the two co-located precipitation series (Open-Meteo archive-api, keyless)
+        run: |
+          for attempt in 1 2 3; do
+            curl -sSfL --retry 3 --max-time 120 \
+              -o precip_gyirong_raw.csv \
+              "https://archive-api.open-meteo.com/v1/archive?latitude=28.8559&longitude=85.2950&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation&timezone=UTC&format=csv" \
+              && curl -sSfL --retry 3 --max-time 120 \
+              -o precip_rasuwa_raw.csv \
+              "https://archive-api.open-meteo.com/v1/archive?latitude=28.25&longitude=85.10&start_date=2026-08-18&end_date=2026-08-27&hourly=precipitation&timezone=UTC&format=csv" \
+              && break
+            echo "precipitation fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s precip_gyirong_raw.csv
+          test -s precip_rasuwa_raw.csv
+          awk -F, 'NR>1 && $2 != "" {print $2}' precip_gyirong_raw.csv > precip_gyirong.csv
+          awk -F, 'NR>1 && $2 != "" {print $2}' precip_rasuwa_raw.csv > precip_rasuwa.csv
+          test -s precip_gyirong.csv
+          test -s precip_rasuwa.csv
+      - name: Run the pre-registered causal-arrow lag sweep (te_pair_probe)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "protocol: causal-arrow-preregistration.md — Gyirong -> Rasuwa, lags {1,3,6,12,24,48}, surrogate mean+2sigma"
+            cargo run --release -p omegaflow-measure --bin te_pair_probe -- \
+              --a precip_gyirong.csv --b precip_rasuwa.csv \
+              --name-a Gyirong --name-b Rasuwa \
+              --lags 1,3,6,12,24,48
+          } > causal-arrow-scan.txt
+      - name: Fetch the ephemeris bins and verify the KBO model inputs (--check-bins)
+        run: |
+          cargo run --release -p omegaflow-measure --bin kbo_residue_probe -- --check-bins \
+            >> causal-arrow-scan.txt 2>&1
+      - name: Run the direct ϖ-clustering test (Rayleigh, 1000 nulls)
+        run: |
+          cargo run --release -p omegaflow-measure --bin kbo_residue_probe -- --cluster-only \
+            >> causal-arrow-scan.txt 2>&1
+      - name: Run the residue-flow TE sweep (KBO families + probes)
+        run: |
+          cargo run --release -p omegaflow-measure --bin kbo_residue_probe \
+            >> causal-arrow-scan.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: causal-arrow-scan
+          path: causal-arrow-scan.txt
