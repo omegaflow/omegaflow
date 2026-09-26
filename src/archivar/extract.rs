@@ -83,9 +83,94 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
         "rx100_luminance" => rx100::parse_bin(bytes),
+        "aia" => aia::parse_bin(bytes),
+        "eve" => eve::parse_bin(bytes),
         _ => None,
     }
 }
+
+pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
+    match format {
+        "catalog_mpcorb" => {
+            let (chunks, _) = bytes.as_chunks::<{ crate::mpcorb::RECORD_STRIDE }>();
+            Some(
+                chunks
+                    .iter()
+                    .filter(|c| crate::mpcorb::parse_record(*c).is_some())
+                    .count(),
+            )
+        }
+        "catalog_dcom5" => {
+            let (chunks, _) = bytes.as_chunks::<{ crate::dastcom::COMET_RECORD_BYTES }>();
+            Some(
+                chunks
+                    .iter()
+                    .filter(|c| crate::dastcom::parse_comet_record(*c).is_some())
+                    .count(),
+            )
+        }
+        "catalog_des_y6" => {
+            let (chunks, _) = bytes.as_chunks::<{ crate::des_y6::DES_Y6_RECORD_STRIDE }>();
+            Some(
+                chunks
+                    .iter()
+                    .filter(|c| crate::des_y6::parse_record(*c).is_some())
+                    .count(),
+            )
+        }
+        "catalog_ossos" => {
+            let (chunks, _) = bytes.as_chunks::<{ crate::ossos::OSSOS_RECORD_STRIDE }>();
+            Some(
+                chunks
+                    .iter()
+                    .filter(|c| crate::ossos::parse_record(*c).is_some())
+                    .count(),
+            )
+        }
+        "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
+        "mpcobs" => {
+            if bytes.len() % MPCOBS_RECORD_STRIDE != 0 {
+                return None;
+            }
+            let mut n = 0usize;
+            for c in bytes.chunks_exact(MPCOBS_RECORD_STRIDE) {
+                let epoch = f64::from_le_bytes(c[0..8].try_into().ok()?);
+                let ra = f64::from_le_bytes(c[8..16].try_into().ok()?);
+                let dec = f64::from_le_bytes(c[16..24].try_into().ok()?);
+                if epoch.is_finite() && ra.is_finite() && dec.is_finite() {
+                    n += 1;
+                }
+            }
+            Some(n)
+        }
+        "apdb" => {
+            if bytes.is_empty() {
+                return None;
+            }
+            Some(
+                String::from_utf8_lossy(bytes)
+                    .lines()
+                    .filter(|l| !l.trim().is_empty())
+                    .count(),
+            )
+        }
+        "solar_system_bodies" => {
+            if bytes.len() < 8 || bytes[0..4] != SOLAR_BODIES_MAGIC {
+                return None;
+            }
+            let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+            let stride = 64 + 64 + 8 + 8 + 11 * 8;
+            if bytes.len() != 8 + n * stride {
+                return None;
+            }
+            Some(n)
+        }
+        _ => None,
+    }
+}
+
+const MPCOBS_RECORD_STRIDE: usize = 50;
+const SOLAR_BODIES_MAGIC: [u8; 4] = [0xCF, 0x86, 0x0A, 0x00];
 
 pub fn phase_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<odf::TnfPhaseRow>> {
     match format {
@@ -217,6 +302,30 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "noaa_ccor" => match comp {
             ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
+            _ => None,
+        },
+        "aia" => match comp {
+            aia::COMP_94 => Some("aia_94_dn"),
+            aia::COMP_131 => Some("aia_131_dn"),
+            aia::COMP_171 => Some("aia_171_dn"),
+            aia::COMP_193 => Some("aia_193_dn"),
+            aia::COMP_211 => Some("aia_211_dn"),
+            aia::COMP_304 => Some("aia_304_dn"),
+            aia::COMP_335 => Some("aia_335_dn"),
+            _ => None,
+        },
+        "eve" => match comp {
+            eve::COMP_94 => Some("eve_94_line_irradiance"),
+            eve::COMP_131 => Some("eve_131_line_irradiance"),
+            eve::COMP_171 => Some("eve_171_line_irradiance"),
+            eve::COMP_195 => Some("eve_195_line_irradiance"),
+            eve::COMP_211 => Some("eve_211_line_irradiance"),
+            eve::COMP_284 => Some("eve_284_line_irradiance"),
+            eve::COMP_304 => Some("eve_304_line_irradiance"),
+            eve::COMP_335 => Some("eve_335_line_irradiance"),
+            eve::COMP_584 => Some("eve_584_line_irradiance"),
+            eve::COMP_977 => Some("eve_977_line_irradiance"),
+            eve::COMP_1032 => Some("eve_1032_line_irradiance"),
             _ => None,
         },
         "celestrak_eop" => match comp {
@@ -2610,7 +2719,16 @@ fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
 }
 
 pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
-    if src.format == "ephemeris_binary" {
+    if src.format == "ephemeris_binary"
+        || matches!(
+            src.format.as_str(),
+            "ephemeris_inpop"
+                | "ephemeris_epm"
+                | "ephemeris_de440"
+                | "ephemeris_de442"
+                | "ephemeris_noe4"
+        )
+    {
         let mut buf = Vec::new();
         if let Ok(mut f) = std::fs::File::open(body) {
             use std::io::Read;
