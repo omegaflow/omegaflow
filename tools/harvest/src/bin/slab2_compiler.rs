@@ -1,12 +1,15 @@
 use omegaflow::cdn::upload_release;
+use omegaflow::hdf5::Hdf5File;
+use omegaflow::netcdf::{NetcdfFile, NetcdfFormat, NetcdfType, nc4_group};
 use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
 const NETLOC: &str = "www.sciencebase.gov";
-const TAR_URL: &str = "https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba";
+const TAR_URL: &str = "https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba";
 const MAGIC: [u8; 4] = *b"SLB2";
 const REC_BYTES: usize = 24;
+const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
 
 const REGIONS: [&str; 27] = [
     "alu", "cal", "cam", "car", "cas", "cot", "hal", "hel", "him", "hin", "izu", "ker", "kur",
@@ -168,6 +171,83 @@ fn parse_xyz(data: &[u8]) -> Vec<(f64, f64, f64)> {
     out
 }
 
+fn grd_cell(lat: f64, lon_raw: f64, z_km: f64) -> Option<(f64, f64, f64)> {
+    if !lat.is_finite() || !lon_raw.is_finite() || !z_km.is_finite() {
+        return None;
+    }
+    if !(-90.0..=90.0).contains(&lat) {
+        return None;
+    }
+    let mut lon = lon_raw;
+    if lon > 180.0 {
+        lon -= 360.0;
+    }
+    if !(-180.0..=180.0).contains(&lon) {
+        return None;
+    }
+    Some((lat, lon, z_km * 1000.0))
+}
+
+fn parse_grd(bytes: &[u8]) -> Vec<(f64, f64, f64)> {
+    let Ok(mut file) = Hdf5File::parse(bytes) else {
+        return Vec::new();
+    };
+    let Ok(group) = nc4_group(&mut file, "") else {
+        return Vec::new();
+    };
+    let has = |n: &str| group.variables.iter().any(|v| v.name == n);
+    if !(has("x") && has("y") && has("z")) {
+        return Vec::new();
+    }
+    let Ok(x) = file.read_f64_dataset("x") else {
+        return Vec::new();
+    };
+    let Ok(y) = file.read_f64_dataset("y") else {
+        return Vec::new();
+    };
+    let Ok(z) = file.read_f64_dataset("z") else {
+        return Vec::new();
+    };
+    let nx = x.len();
+    let ny = y.len();
+    if nx == 0 || ny == 0 || nx.checked_mul(ny) != Some(z.len()) {
+        return Vec::new();
+    }
+    let mut out = Vec::with_capacity(z.len());
+    for i in 0..ny {
+        let lat = y[i];
+        for j in 0..nx {
+            if let Some(cell) = grd_cell(lat, x[j], z[i * nx + j]) {
+                out.push(cell);
+            }
+        }
+    }
+    out
+}
+
+fn is_slab_dep_grd(name: &str, region: &str) -> bool {
+    name.ends_with(".grd")
+        && name
+            .rsplit('/')
+            .next()
+            .is_some_and(|f| f.contains(&format!("{region}_slab2_dep_")))
+}
+
+fn collect_grd(tar: &[u8], regions: &[&str]) -> Vec<Vec<u8>> {
+    let mut found = vec![Vec::new(); regions.len()];
+    let members = tar_members(tar);
+    for m in &members {
+        for (i, region) in regions.iter().enumerate() {
+            if found[i].is_empty() && is_slab_dep_grd(&m.name, region) {
+                if let Some(data) = tar.get(m.start..m.end) {
+                    found[i] = data.to_vec();
+                }
+            }
+        }
+    }
+    found
+}
+
 fn write_asset(path: &str, records: &[(f64, f64, f64)]) -> Result<(), String> {
     if let Some(parent) = std::path::Path::new(path).parent() {
         if !parent.as_os_str().is_empty() {
@@ -221,7 +301,225 @@ fn verify_asset(path: &str, count: usize) -> Result<(), String> {
     Ok(())
 }
 
+struct TarMember {
+    name: String,
+    start: usize,
+    end: usize,
+}
+
+fn tar_members(tar: &[u8]) -> Vec<TarMember> {
+    let mut out = Vec::new();
+    let mut off = 0usize;
+    let mut long_name: Option<String> = None;
+    while off + 512 <= tar.len() {
+        let header = &tar[off..off + 512];
+        if header.iter().all(|&b| b == 0) {
+            break;
+        }
+        let name = match &long_name {
+            Some(n) => n.clone(),
+            None => tar_name(header),
+        };
+        let Some(size) = tar_octal(&header[124..136]) else {
+            break;
+        };
+        let typeflag = header[156];
+        let data_off = off + 512;
+        let data_end = data_off.saturating_add(size);
+        if typeflag == b'L' {
+            long_name = tar.get(data_off..data_end).map(|d| {
+                let e = d.iter().position(|&b| b == 0).unwrap_or(d.len());
+                String::from_utf8_lossy(&d[..e]).to_string()
+            });
+        } else {
+            long_name = None;
+            if typeflag == b'0' || typeflag == 0 {
+                out.push(TarMember {
+                    name,
+                    start: data_off,
+                    end: data_end,
+                });
+            }
+        }
+        off = data_end + ((512 - size % 512) % 512);
+    }
+    out
+}
+
+fn hex4(bytes: &[u8]) -> String {
+    bytes
+        .iter()
+        .take(4)
+        .map(|b| format!("{b:02X}"))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn probe_grd(bytes: &[u8], name: &str) {
+    eprintln!("    {name}: magic {}", hex4(bytes));
+    match NetcdfFile::parse(bytes) {
+        Ok(nc) => {
+            let fmt = match nc.format {
+                NetcdfFormat::Cdf1 => "CDF-1",
+                NetcdfFormat::Cdf2 => "CDF-2",
+            };
+            eprintln!(
+                "    {name}: netCDF {fmt}, {} dims, {} vars",
+                nc.dims.len(),
+                nc.vars.len()
+            );
+            for d in &nc.dims {
+                eprintln!("      dim {} = {}", d.name, d.len);
+            }
+            for v in &nc.vars {
+                let shape: Vec<String> = v
+                    .dim_ids
+                    .iter()
+                    .map(|&id| match nc.dims.get(id) {
+                        Some(d) => d.name.clone(),
+                        None => id.to_string(),
+                    })
+                    .collect();
+                let units = match v.attrs.iter().find(|a| a.name == "units") {
+                    Some(a) => String::from_utf8_lossy(&a.raw).trim().to_string(),
+                    None => String::new(),
+                };
+                eprintln!(
+                    "      var {} {} ({}) [{}]",
+                    v.name,
+                    v.nc_type.name(),
+                    shape.join(","),
+                    units
+                );
+            }
+            for name in ["z", "depth", "slab"] {
+                if let Some(zv) = nc.var(name) {
+                    let vals = match zv.nc_type {
+                        NetcdfType::Float => nc
+                            .values_f32(bytes, name)
+                            .map(|v| v.iter().map(|x| *x as f64).collect()),
+                        NetcdfType::Double => nc.values_f64(bytes, name),
+                        NetcdfType::Short => nc
+                            .values_i16(bytes, name)
+                            .map(|v| v.iter().map(|x| *x as f64).collect()),
+                        NetcdfType::Int => nc
+                            .values_i32(bytes, name)
+                            .map(|v| v.iter().map(|x| *x as f64).collect()),
+                        _ => None,
+                    };
+                    if let Some(vals) = vals {
+                        let finite: Vec<f64> =
+                            vals.iter().copied().filter(|x| x.is_finite()).collect();
+                        let (mn, mx) = finite
+                            .iter()
+                            .fold((f64::INFINITY, f64::NEG_INFINITY), |(a, b), &x| {
+                                (a.min(x), b.max(x))
+                            });
+                        eprintln!(
+                            "      z[{name}]: {} values, finite {}, min {mn:.2} max {mx:.2}",
+                            vals.len(),
+                            finite.len()
+                        );
+                    }
+                    break;
+                }
+            }
+        }
+        Err(n) => eprintln!("    {name}: netCDF parse void: {:?}", n),
+    }
+    if bytes.starts_with(&HDF5_MAGIC) {
+        match Hdf5File::parse(bytes) {
+            Ok(mut file) => match nc4_group(&mut file, "") {
+                Ok(group) => {
+                    eprintln!(
+                        "    {name}: netCDF-4 (HDF5), {} variables",
+                        group.variables.len()
+                    );
+                    for v in group.variables.iter().take(12) {
+                        eprintln!(
+                            "      var {} dims {:?} type-class {:?} type-size {:?}",
+                            v.name, v.dims, v.datatype_class, v.datatype_size
+                        );
+                    }
+                    for vn in ["z", "x", "y"] {
+                        match file.read_f64_dataset(vn) {
+                            Ok(vals) => {
+                                let finite: Vec<f64> =
+                                    vals.iter().copied().filter(|x| x.is_finite()).collect();
+                                let (mn, mx) = finite
+                                    .iter()
+                                    .fold((f64::INFINITY, f64::NEG_INFINITY), |(a, b), &x| {
+                                        (a.min(x), b.max(x))
+                                    });
+                                eprintln!(
+                                    "      dataset[{vn}]: {} values, finite {}, min {mn:.3} max {mx:.3}",
+                                    vals.len(),
+                                    finite.len()
+                                );
+                            }
+                            Err(e) => eprintln!("      dataset[{vn}] read void: {:?}", e),
+                        }
+                    }
+                }
+                Err(e) => eprintln!("    {name}: netCDF-4 group read void: {:?}", e),
+            },
+            Err(e) => eprintln!("    {name}: HDF5 parse void: {:?}", e),
+        }
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
+    if args.iter().any(|a| a == "--probe") {
+        let tar_gz = match arg_value(args, "--tarball") {
+            Some(p) => p,
+            None => format!("data/{NETLOC}/Slab2Distribute_Mar2018.tar.gz"),
+        };
+        let gz = if tar_gz.starts_with("http://") || tar_gz.starts_with("https://") {
+            omegaflow::archivar::fetch_raw_bytes(&tar_gz)
+                .ok_or_else(|| format!("{tar_gz}: fetch returned void"))?
+        } else {
+            std::fs::read(&tar_gz).map_err(|e| format!("read {tar_gz} returned void: {e}"))?
+        };
+        let mut tar = Vec::new();
+        omegaflow::inflate::gunzip_stream(&gz[..], |chunk| tar.extend_from_slice(chunk))
+            .map_err(|e| format!("gunzip returned void: {e}"))?;
+        let members = tar_members(&tar);
+        let mut grd = 0usize;
+        let mut xyz = 0usize;
+        for m in &members {
+            if m.name.ends_with(".grd") {
+                grd += 1;
+            } else if m.name.ends_with(".xyz") {
+                xyz += 1;
+            }
+        }
+        eprintln!(
+            "{tar_gz}: {} tar members, {} .grd, {} .xyz",
+            members.len(),
+            grd,
+            xyz
+        );
+        let max_grd = arg_value(args, "--max-grd")
+            .and_then(|v| v.parse::<usize>().ok())
+            .unwrap_or(2);
+        let mut shown = 0usize;
+        for m in &members {
+            if m.name.ends_with(".grd") {
+                eprintln!("  grd {} ({} B)", m.name, m.end - m.start);
+                if shown < max_grd {
+                    probe_grd(&tar[m.start..m.end], &m.name);
+                    shown += 1;
+                }
+            }
+        }
+        for m in &members {
+            if m.name.ends_with(".xyz") {
+                eprintln!("  xyz {} ({} B)", m.name, m.end - m.start);
+            }
+        }
+        return Ok(());
+    }
+
     witness_gestalt_identity(MAGIC)?;
     let out_path = match arg_value(args, "--out") {
         Some(p) => p,
@@ -251,11 +549,10 @@ fn run(args: &[String]) -> Result<(), String> {
             }
             None => REGIONS.to_vec(),
         };
-        let tar_gz = format!("data/{NETLOC}/Slab2Distribute_Mar2018.tar.gz");
-        if let Some(parent) = std::path::Path::new(&tar_gz).parent() {
-            std::fs::create_dir_all(parent)
-                .map_err(|e| format!("create {} returned void: {e}", parent.display()))?;
-        }
+        let tar_gz = match arg_value(args, "--tarball") {
+            Some(p) => p,
+            None => format!("data/{NETLOC}/Slab2Distribute_Mar2018.tar.gz"),
+        };
         if !std::path::Path::new(&tar_gz).exists() {
             download(TAR_URL, &tar_gz)?;
         }
@@ -263,14 +560,23 @@ fn run(args: &[String]) -> Result<(), String> {
         let mut tar = Vec::new();
         omegaflow::inflate::gunzip_stream(&gz[..], |chunk| tar.extend_from_slice(chunk))
             .map_err(|e| format!("gunzip returned void: {e}"))?;
-        let members = collect_xyz(&tar, &regions);
+        let grd_members = collect_grd(&tar, &regions);
+        let xyz_members = collect_xyz(&tar, &regions);
         for (i, region) in regions.iter().enumerate() {
-            if members[i].is_empty() {
+            let recs = if !grd_members[i].is_empty() {
+                parse_grd(&grd_members[i])
+            } else if !xyz_members[i].is_empty() {
+                parse_xyz(&xyz_members[i])
+            } else {
                 return Err(format!(
                     "{region}: the depth grid member stayed unfound in the volume"
                 ));
+            };
+            if recs.is_empty() {
+                return Err(format!(
+                    "{region}: no slab depth measured — the asset stays unwritten"
+                ));
             }
-            let recs = parse_xyz(&members[i]);
             eprintln!("{region}: {} slab depth records", recs.len());
             records.extend(recs);
         }
@@ -393,5 +699,64 @@ mod tests {
     fn region_code_membership() {
         assert!(REGIONS.contains(&"alu"));
         assert!(!REGIONS.contains(&"foo"));
+    }
+
+    #[test]
+    fn grd_cell_converts_km_to_meters_and_wraps_longitude() {
+        assert_eq!(
+            grd_cell(68.0, 161.05, -10.5),
+            Some((68.0, 161.05, -10500.0))
+        );
+        assert_eq!(
+            grd_cell(-33.0, 226.0, -265.974),
+            Some((-33.0, -134.0, -265974.0))
+        );
+        assert_eq!(grd_cell(45.0, 180.0, -1.4), Some((45.0, 180.0, -1400.0)));
+        assert_eq!(grd_cell(f64::NAN, 161.0, -10.0), None);
+        assert_eq!(grd_cell(95.0, 161.0, -10.0), None);
+        assert_eq!(grd_cell(68.0, 161.0, f64::INFINITY), None);
+    }
+
+    #[test]
+    fn is_slab_dep_grd_matches_dep_grids_only() {
+        assert!(is_slab_dep_grd(
+            "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dep_02.23.18.grd",
+            "alu"
+        ));
+        assert!(!is_slab_dep_grd(
+            "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dip_02.23.18.grd",
+            "alu"
+        ));
+        assert!(!is_slab_dep_grd(
+            "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dep_02.23.18.xyz",
+            "alu"
+        ));
+        assert!(!is_slab_dep_grd(
+            "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dep_02.23.18.grd",
+            "cal"
+        ));
+    }
+
+    #[test]
+    fn collect_grd_finds_dep_members_only() {
+        let tar = build_tar(&[
+            (
+                "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dep_02.23.18.grd",
+                "DEPGRD",
+            ),
+            (
+                "Slab2Distribute_Mar2018/Slab2_GRD/alu_slab2_dip_02.23.18.grd",
+                "DIPGRD",
+            ),
+        ]);
+        let members = collect_grd(&tar, &["alu"]);
+        assert_eq!(members.len(), 1);
+        assert_eq!(&members[0], b"DEPGRD");
+    }
+
+    #[test]
+    fn parse_grd_refuses_non_hdf5_bytes() {
+        assert!(parse_grd(b"CDF\x01").is_empty());
+        assert!(parse_grd(b"not a netcdf-4 file").is_empty());
     }
 }
