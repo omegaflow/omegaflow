@@ -46,7 +46,7 @@ const OPEN_MARKERS: &[&str] = &[
 
 const RELEASED_MARKERS: &[&str] = &["descoped"];
 
-const ZUSTAND_PATH: &str = "docs/zustand/external-state.md";
+const ZUSTAND_PATH: &str = "state/zustand/external-state.md";
 
 const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
 const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
