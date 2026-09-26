@@ -204,16 +204,31 @@ pub fn series_rows(format: &str, bytes: &[u8]) -> Option<Vec<SeriesRow>> {
         );
     }
     series_parse_bin(format, bytes).map(|recs| {
+        let band = series_band(format);
         recs.into_iter()
-            .map(|(t, value, comp)| SeriesRow {
-                t,
-                value,
-                comp,
-                freq: 0.0,
-                bin_width: 0.0,
+            .map(|(t, value, comp)| {
+                let mut row = SeriesRow {
+                    t,
+                    value,
+                    comp,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                };
+                if let Some((freq, bin_width)) = band {
+                    row.freq = freq;
+                    row.bin_width = bin_width;
+                }
+                row
             })
             .collect()
     })
+}
+
+fn series_band(format: &str) -> Option<(f64, f64)> {
+    match format {
+        "rx100_luminance" => Some((rx100::FREQ_PHOTOPIC_HZ, rx100::BIN_WIDTH_PHOTOPIC_HZ)),
+        _ => None,
+    }
 }
 
 pub fn sample_phase(channel: &Channel, sensor: &FieldConfig) -> Option<f64> {
