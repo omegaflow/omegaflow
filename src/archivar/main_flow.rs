@@ -2346,8 +2346,12 @@ pub fn main_flow() {
                     | "maven_tnf"
                     | "mariner_occlt"
                     | "dart_tnf"
+                    | "messenger_tnf"
                     | "ulysses_atdf"
                     | "ulysses_atdf_x"
+                    | "gll_rss_atdf"
+                    | "gll_rss_atdf_x"
+                    | "ams02_spec"
                     | "lro_trk"
                     | "hamqsl_solar"
             ) {
