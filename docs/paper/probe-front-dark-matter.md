@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-15
   version: 8
-  sha256: f2317eb940330aaafde126849dd57b3fccfb67bb75709984225e1a08137ef485
+  sha256: 6ed12ed252440982cdc0f1a041058928a60d3d05a98c106035a5e3d7a6775e44
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -327,8 +327,10 @@ superseded by the full-class census); the DSN Frequency and Timing documentation
 [10]; the coherent reference generator phase stability, TDA PR 42-64 [11]) describes
 the reference chain as distribution + validation — maser offsets known to ±3 × 10⁻¹³
 against USNO/NBS, CRG synthesizing 0.1–55 MHz with constant phase relations — and
-carries no periodic steering loop on any second scale; the steering-practice articles
-(Syntonisation 1983, GPS timing 1982–87) remain scan-missing (pending); the sliding-
+carries no periodic steering loop on any second scale; the steering-practice articles —
+the Syntonisation 1983 series (TDA PR 42-72 [12]) is located but graphical-only
+(vision-read in Appendix A, not instrument data); the GPS timing 1982–87 articles
+remain scan-missing (pending); the sliding-
 window track (Deduktion 29, 3000-sample windows) resolves the per-station lines into
 a dense complex — the window peaks scatter across 44–56 mHz with comparable ratios
 (station 63: 44.05–55.50 mHz, 2.3–10.2×; station 43: 44.25–55.60 mHz, 2.7–11.9×) —
@@ -666,3 +668,96 @@ failure (0 honored).
     Report 42-82, 113.
 11. Korwar V. N., 1981, Coherent Reference Generator Phase Stability, JPL TDA Progress
     Report 42-64, 222.
+12. The Telecommunications and Data Acquisition Report, 1983, JPL TDA Progress Report
+    42-72, NTRS 19830011495.
+
+## Appendix A — the 1983 DSN syntonization series, vision-read record
+
+The Syntonisation 1983 series (§5.4) — the two-year Δf/f history of the DSN station
+hydrogen-maser references against UTC(USNO/NBS) — exists **only as plotted figures** in
+NTRS 19830011495 (TDA Progress Report 42-72 [12], Fig. 2–6, PDF pp. 132–134); the OCR
+full-text carries no time series, only the prose `±3 × 10⁻¹³` values and a static
+Table 1. This appendix records a vision/algorithmic pixel read of the two VLBI
+syntonization figures — Fig. 5 (DSS 63 ↔ DSS 14, PDF p. 133 bottom) and Fig. 6
+(DSS 43 ↔ DSS 14, PDF p. 134) — the figures that carry the `±3 × 10⁻¹³` syntonization.
+
+**These values are approximate, not instrument data.** Each dot centroid was located
+programmatically on the rendered 1983 scan; the y-axis was converted by logarithmic
+(one-decade-per-gridline) interpolation between the printed decade labels, calibrated
+against the printed gridlines; the x-axis month-letter sequence is the reliable anchor,
+with tick 1 read as Jun 1980 (inferred). No value here is good to better than ~±10 %;
+any value needed tighter must be re-measured from the original document. Legend markers
+(● VLBI, ▲ VOYAGER ΔDOR) and annotation glyphs are excluded where resolved; merged pairs
+and annotation-adjacent candidates are flagged in the notes.
+
+**Fig. 5 — DSS 63 ↔ DSS 14, VLBI (NTRS 19830011495, PDF p. 133, bottom).**
+Δf/f in units of 10⁻¹³:
+
+| month | Δf/f (×10⁻¹³) |
+|---|---|
+| Jun 1980 | −29.0 |
+| Jul 1980 | +1.3 |
+| Aug 1980 | +1.3, +2.6 |
+| Sep 1980 | +2.2 |
+| Oct 1980 | +2.8 |
+| Dec 1980 | +3.9, +7.6 |
+| Jan 1981 | +2.2 |
+| Feb 1981 | +3.2 |
+| Mar 1981 | +0.2, +1.1 |
+| Apr 1981 | −0.6, +0.1 |
+| May 1981 | +1.4 |
+| Jun 1981 | −0.4 |
+| Jul 1981 | +1.2 |
+| Aug 1981 | −1.5, −2.4, −1.3 |
+| Sep 1981 | +4.8, +3.8, +0.2 |
+| Jan 1982 | +1.9, +6.6 |
+| Feb 1982 | −4.4 |
+| Mar 1982 | +4.8, +16.2, −7.0, −11.5 |
+| Apr 1982 | +8.3, +1.6 |
+| May 1982 | +16.5, +13.2 |
+
+Printed annotations (as printed): `7 × 10⁻¹³ ±9 (Δf/T DERIVED)` · `1.6 × 10⁻¹³ ±3
+(Δl/T DERIVED)` · `1.8 × 10⁻¹³ ±7 (Δf/F DERIVED)` · `−3.9 × 10⁻¹³ ±4 (Δf/f DERIVED)`.
+Notes: no error bars on this figure; the Sep-1980 circle may be two merged dots; one
+Jul-1980 merged pair carries a second centroid ≈ −7.3 × 10⁻¹³ (counted once above);
+the mid/late-1981 month labels are the least certain (trust the x-pixel).
+
+**Fig. 6 — DSS 43 ↔ DSS 14, VLBI (NTRS 19830011495, PDF p. 134).**
+Δf/f in units of 10⁻¹³:
+
+| month | Δf/f (×10⁻¹³) |
+|---|---|
+| Jul 1980 | +8.1 |
+| Aug 1980 | −0.2, +15.0 |
+| Sep 1980 | +5.0 |
+| Oct 1980 | −0.9 |
+| Dec 1980 | −4.0 |
+| Feb 1981 | +4.2, +5.6 |
+| Mar 1981 | +4.8 |
+| Apr 1981 | −8.5 |
+| May 1981 | +7.1, +5.1 |
+| Jun 1981 | +5.5, +4.2 |
+| Aug 1981 | +6.2 |
+| Jan 1982 | +4.6 |
+| Feb 1982 | −4.1, +7.5, +5.3, +15.0 |
+| Mar 1982 | +1.7, +13.2 |
+| Apr 1982 | −1.6, +7.8 |
+| May 1982 | +10.2 |
+| Jun 1982 | +8.4, +2.4 |
+
+Printed annotations (as printed): `5.7 × 10⁻¹³ ±5 (Δf/T DERIVED)` and
+`5.8 × 10⁻¹³ ±8 (Δf/F DERIVED)`; the leading sign glyph is unreadable/ambiguous in
+the scan. Notes: no error bars; the top row is dense and two or three candidates in the
+annotation-arrow region (x≈780–1020) may be glyphs rather than data; six
+clearly-separated sub-zero points are unambiguous.
+
+**Confidence (both figures).** The tick gridlines, month-letter x-positions and
+y-decade spacing are solid (verified against the printed Fig.-5 fit-line values: the
+model predicts −3.88 × 10⁻¹³ and +1.55 × 10⁻¹³ where the printed lines read
+−3.9 × 10⁻¹³ and +1.6 × 10⁻¹³). The main uncertainties are (a) the exact calendar
+anchoring, (b) merged VOYAGER ΔDOR-triangle clusters in Figs 5–6, and (c) a few
+annotation-adjacent candidates in Fig. 6.
+
+**No dataset entry.** A plotted graph is not a harvestable dataset: the series remains
+graphical-only, with this digitized record carried here as a vision-read approximate.
+No `phi/sources.φ` entry and no CDN dataset are made from this record.
