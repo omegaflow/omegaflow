@@ -3,7 +3,7 @@
   session: Mycelium-Folge 168
   class: handover
   date: 2026-09-26
-  sha256: 6678ca93b399eb25ac60b02a824b242da80a48b5104638a28f86122263dbf837
+  sha256: 1d0c0bc8ccdb2de10239f4ce666a07a9e1a643df974e2f372176c3cb030ae4c5
   status: live
 -->
 # Handover — Mycelium-Folge 168 (2026-09-26)
@@ -16,31 +16,46 @@ wurde. Keine Rangfolge. Sortierung: erst Akteur (**Linie** | **Rat** | **Operato
 
 Diese Session konsumierte `handover-2026-09-26-mycelium-folge167.md` und führte den
 bestätigten Plan aus (9 Taucher + 3 Folge-Taucher). Gemessen in dieser Sitzung
-(HEAD-Start `fa398b1f`, HEAD-Ende `6de8fa3ff`): ceic/TAP/K88GFI lebendig bzw.
-query-def, kegel/corona `descoped`, Pioneer-ATDF-Phantom aufgelöst, Voyager-Rat-Verdikt
+(HEAD-Start `fa398b1f`, HEAD-Ende `b3ea42294` nach Commit+Push): ceic/TAP/K88GFI lebendig
+bzw. query-def, kegel/corona `descoped`, Pioneer-ATDF-Phantom aufgelöst, Voyager-Rat-Verdikt
 umgesetzt, harvest_reg-Ordnung repariert, hamqsl/ogimet/nohrsc-Port + NOAA-ERI-Umbenennung
-gebaut. Was davon offen bleibt, steht unten.
+gebaut; der pre-commit-Gate fand zwei Fabrikationsmuster in den neuen Compilern, beide
+behoben (--out + Altitude nun Pflicht). Was offen bleibt, steht unten.
 
 ## Offen (aufgeschlüsselt)
 
 ### Linie (eigen)
+
+#### CI-Zustand am gepushten `b3ea42294` — ungelesen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Lauf am HEAD `b3ea42294` (ci-check, harvest-dispatch, kernel-flatten).
+- **Lage:** (gemessen 2026-09-26 via `git rev-parse`) `HEAD == origin/main == b3ea42294`
+  (17 eigene Pfade, Push erfolgt). Der CI-Ausgang am neuen HEAD ist **ungelesen** — kein
+  Poll (Regel), der Watchdog-Snapshot ist älter als der Push.
+- **Blockade:** CI-Lauf + Snapshot-Alter.
+- **Braucht:** `/tmp/opencode/ci_status.md` bzw. `ci_manage list` beim nächsten Pass; bei Rot
+  `ci_manage log <id>`.
 
 #### Neue Quellen-Ports — CDN-Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Schritt.
 - **Lage:** (gemessen 2026-09-26 via grind-pro) `hamqsl`/`ogimet`/`nohrsc_snowfall`
   Compiler gebaut (`tools/harvest/src/bin/`), `sources.φ`-Blöcke geschrieben, pending-Zeilen
-  aus `phi/blocked_sources.φ` entfernt; `eri_compiler` → `noaa_eri_compiler` umbenannt
-  (JPEG-in-TIFF-Dekoder war bereits gebaut, `src/archivar/tiff.rs`). Alle targeted-Builds grün.
-- **Blockade:** kein `*-cdn.yml`-Workflow; kein erster Manifest-Lauf.
-- **Braucht:** je Quelle einen CDN-Workflow analog bestehender `*-cdn.yml` + ersten
-  Manifest-Lauf dispatchen; prüfen, ob eine Workflow-Referenz den alten Namen
-  `eri_compiler` trägt und mitgezogen werden muss.
+  aus `phi/blocked_sources.φ` entfernt; `eri_compiler` → `noaa_eri_compiler` umbenannt.
+  Gemessen ist nur die Kompilierung (`cargo check` grün); **kein Compiler-Lauf gegen die
+  Live-Quelle** — kein Asset geschrieben, keine Manifestation. Der TIFF-JPEG-Dekoder-Vorbau
+  (`src/archivar/tiff.rs`) ist grind-pro-Behauptung, nicht selbst nachgemessen.
+- **Blockade:** die Workflow-Lage ist **ungemessen** (das `glob` auf `.github/workflows`
+  greift ins Leere — verstecktes Verzeichnis); offen, ob ein `*-cdn.yml` je Quelle existiert
+  und wie kernel-flatten eine Quelle manifestiert.
+- **Braucht:** die Workflow-Lage zuerst messen (`sgrep <format> .github/workflows`), dann je
+  Quelle einen CDN-Workflow + ersten Manifest-Lauf dispatchen; prüfen, ob eine Workflow-Referenz
+  den alten Namen `eri_compiler` trägt.
 
 #### tools-latest stale
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** GitHub-API-Rate-Limit-Erholung / nächster Push.
-- **Lage:** (gemessen 2026-09-26 via `sread target/release/.tools_manifest`) `git_sha=617f6183a2fe72915b7a36cf91b3d3e76740b187` < HEAD `6de8fa3ff` → Bin-Satz stale.
+- **Lage:** (gemessen 2026-09-26 via `sread target/release/.tools_manifest`) `git_sha=617f6183a2fe72915b7a36cf91b3d3e76740b187` < HEAD (damals `6de8fa3ff`; nach dem Push `b3ea42294` — **nicht** neu gemessen) → Bin-Satz stale.
 - **Blockade:** gepulltes Artefakt hinkt dem Tree nach.
 - **Braucht:** `gh workflow run tools-build.yml`; danach Manifest gegen `git rev-parse HEAD`.
 
@@ -56,9 +71,9 @@ gebaut. Was davon offen bleibt, steht unten.
 
 #### pre-cdn ci-check
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf am HEAD `6de8fa3ff`.
-- **Lage:** (gemessen 2026-09-26 via Watchdog) ci-check `36224018458` in_progress;
-  die alte Kennung `36192645925` ist überholt.
+- **Trigger:** CI-Lauf am HEAD `b3ea42294`.
+- **Lage:** (gemessen 2026-09-26 via Watchdog, vor dem Push) ci-check `36224018458`
+  in_progress; die alte Kennung `36192645925` ist überholt.
 - **Blockade:** CI-Lauf.
 - **Braucht:** `/tmp/opencode/ci_status.md`; bei Rot `ci_manage log <id>`.
 
@@ -73,7 +88,7 @@ gebaut. Was davon offen bleibt, steht unten.
 
 #### api.sensor.community — CI-Puls
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `source-census`-Lauf.
+- **Trigger:** `source-census`-Lauf (in dieser Sitzung **nicht** gemessen — aus folge167 übernommen).
 - **Lage:** (gemessen 2026-09-26) direct 403 / Proton 403 (ip-blocked);
   `phi/blocked_sources.φ` `blocked ip-blocked`; Report `source_latency_census.φ`.
 - **Blockade:** CI-Lauf.
@@ -85,8 +100,9 @@ gebaut. Was davon offen bleibt, steht unten.
 - **Lage:** (gemessen 2026-09-26 via grind-flash) `omegaflow/sources` ist **öffentlich**
   (Klon + unauthentifizierter API-200); `refresh.yml` läuft `cron: '17 */6 * * *'`
   (6 h) und ist **Python** (`scripts/refresh_all.py`); I02 = der Katalog-Mirror. `CI_REFRESH_S`
-  existiert nicht im Code — der Name ist bereits eine Gate-Fixture gegen eine fabrizierte
-  5-min-Untergrenze (`src/gate/commit_gate_vocab.json:26`). `archivar-mathematikerin.md:22`
+  existiert nicht im Code (grind-flash-Messung; die Fixture-Zeile `commit_gate_vocab.json:26`
+  selbst nicht verifiziert) — der Name ist eine Gate-Fixture gegen eine fabrizierte
+  5-min-Untergrenze. `archivar-mathematikerin.md:22`
   und `pfeiler-der-architektur.md:155-158` nennen 3 h (`health-check.yml` `0 */3 * * *`).
 - **Blockade:** Widerspruch 3 h (Doku, omegaflow-eigen) vs. 6 h (sources-Repo-Mirror).
 - **Braucht:** die zwei Takte explizit trennen (health-check 3 h vs. sources-refresh 6 h)
@@ -154,9 +170,11 @@ gebaut. Was davon offen bleibt, steht unten.
 
 ## Abschluss
 
-Vor Commit/Push: das Commit-Wort des Operators (`/commit`). **Pfad-Hazard:** die
-geteilten Dateien (phi/sources.φ, phi/blocked_sources.φ, phi/harvest.φ sowie die vier
-archivar-Module mod/extract/geo/main_flow) tragen neben den Mycelium-Hunks fremde
-uncommittete Arbeit anderer Linien — der Commit muss hunk-genau nur die eigenen
-Beiträge stagen (hamqsl/ogimet/nohrsc-Blöcke, TAP/K88GFI-Zeilen, harvest.φ-Moves,
-Voyager, die zwei Surveys).
+Commit `b3ea42294` ist gepusht (17 eigene Pfade, `HEAD == origin/main`). **Pfad-Hazard
+(erledigt, gemessen):** von den geteilten Dateien war nur `src/archivar/extract.rs` gemischt
+(fremde `messenger_tnf`/`ams02`/`gll_rss`-Hunks); `phi/sources.φ` und `phi/blocked_sources.φ`
+wurden hunk-genau gestaged, `phi/harvest.φ` sowie geo/main_flow/mod/voyager waren
+vollständig eigen. Ein fremder gestageter Rename (`mountain-folge166 → archiv/`) wurde aus
+dem Index auf HEAD zurückgesetzt.
+**Benchmark:** die Routine-Recherche-Klasse ist geschlossen (gemessen 2026-09-16, flash siegt)
+— zitiert, in dieser Sitzung kein Doppel-Lauf.
