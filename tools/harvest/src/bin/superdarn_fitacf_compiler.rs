@@ -1,3 +1,4 @@
+use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::geo::{COMP_SDARN_V, GeoRec, MAGIC_SDARN, parse_bin, write_bin};
 use omegaflow::archivar::json::{JsonVal, jstr, parse_json};
 use omegaflow::cdn::upload_release;
@@ -18,6 +19,11 @@ const GRID_ZENODO: &str = "8274510";
 const GRID_FILE: &str = "20160711.sto.v3.0.grid.nc";
 const RST_HDW_RAW: &str =
     "https://raw.githubusercontent.com/SuperDARN/rst/main/tables/superdarn/hdw/hdw.dat.";
+
+const EARTH_RADIUS_KM: f64 = 6371.0;
+const CHISHAM_A: [f64; 3] = [108.974, 384.416, 1098.28];
+const CHISHAM_B: [f64; 3] = [0.0191271, -0.178640, -0.354557];
+const CHISHAM_C: [f64; 3] = [6.68283e-5, 1.81405e-4, 9.39961e-5];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -536,6 +542,8 @@ fn fitacf_mjd(rec: &DmapRecord) -> Option<f64> {
 
 struct FitGateRow {
     mjd: Option<f64>,
+    lat: Option<f64>,
+    lon: Option<f64>,
     v: Option<f64>,
     v_e: Option<f64>,
     w_l: Option<f64>,
@@ -554,8 +562,8 @@ impl FitGateRow {
     fn cell(&self, name: &str) -> Option<f64> {
         match name {
             "mjd" => self.mjd,
-            "lat" => None,
-            "lon" => None,
+            "lat" => self.lat,
+            "lon" => self.lon,
             "v" => self.v,
             "v_e" => self.v_e,
             "w_l" => self.w_l,
@@ -582,7 +590,7 @@ impl FitGateRow {
     }
 }
 
-fn fitacf_record_rows(rec: &DmapRecord) -> Option<Vec<FitGateRow>> {
+fn fitacf_record_rows(rec: &DmapRecord, site: Option<&HdwSite>) -> Option<Vec<FitGateRow>> {
     let mjd = fitacf_mjd(rec)?;
     let Some(slist) = rec_array(rec, "slist") else {
         return Some(Vec::new());
@@ -591,6 +599,8 @@ fn fitacf_record_rows(rec: &DmapRecord) -> Option<Vec<FitGateRow>> {
     let qflg = rec_array(rec, "qflg");
     let elv = rec_array(rec, "elv");
     let beam = rec_f64(rec, "bmnum");
+    let frang = rec_f64(rec, "frang");
+    let rsep = rec_f64(rec, "rsep");
     let tfreq = rec_f64(rec, "tfreq");
     let cp = rec_f64(rec, "cp");
     let noise_sky = rec_f64(rec, "noise.sky");
@@ -623,8 +633,17 @@ fn fitacf_record_rows(rec: &DmapRecord) -> Option<Vec<FitGateRow>> {
                 .and_then(|v| if v.is_finite() { Some(v) } else { None }),
             None => None,
         };
+        let (lat, lon) = match (site, frang, rsep, beam) {
+            (Some(s), Some(fr), Some(rs), Some(bm)) => match gate_position(s, bm, fr, rs, gate) {
+                Some((la, lo)) => (Some(la), Some(lo)),
+                None => (None, None),
+            },
+            _ => (None, None),
+        };
         rows.push(FitGateRow {
             mjd: Some(mjd),
+            lat,
+            lon,
             v: at("v", i),
             v_e: at("v_e", i),
             w_l: at("w_l", i),
@@ -642,11 +661,16 @@ fn fitacf_record_rows(rec: &DmapRecord) -> Option<Vec<FitGateRow>> {
     Some(rows)
 }
 
-fn dmap_fitacf_rows(recs: &[DmapRecord], cols: &[Col], source: &str) -> Vec<Vec<String>> {
+fn dmap_fitacf_rows(
+    recs: &[DmapRecord],
+    cols: &[Col],
+    source: &str,
+    site: Option<&HdwSite>,
+) -> Vec<Vec<String>> {
     let mut rows = Vec::new();
     let mut void_records = 0usize;
     for rec in recs {
-        match fitacf_record_rows(rec) {
+        match fitacf_record_rows(rec, site) {
             Some(rs) => rows.extend(rs),
             None => void_records += 1,
         }
@@ -1162,7 +1186,8 @@ fn process_bytes(bytes: Vec<u8>, cols: Vec<Col>, source: &str, out: Option<&str>
                 std::process::exit(1);
             }
         };
-        let rows = dmap_fitacf_rows(&recs, &cols, source);
+        let site = site_for(source, None);
+        let rows = dmap_fitacf_rows(&recs, &cols, source, site.as_ref());
         let rs = RowSet {
             header: cols.clone(),
             data: rows,
@@ -1318,6 +1343,344 @@ fn run_stations(args: &[String], out: Option<&str>, limit: usize) {
     emit_rows(header, &rows, &[], out, limit, &url);
 }
 
+#[derive(Clone)]
+struct HdwSite {
+    stid: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+    alt_m: f64,
+    boresight_deg: f64,
+    bmoff_deg: f64,
+    bmsep_deg: f64,
+    maxbeam: f64,
+}
+
+fn parse_hdw(text: &str, start_yyyymmdd: Option<&str>) -> Option<HdwSite> {
+    let mut best_date: Option<String> = None;
+    let mut best_site: Option<HdwSite> = None;
+    let mut last_site: Option<HdwSite> = None;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let t: Vec<&str> = line.split_whitespace().collect();
+        if t.len() < 22 {
+            continue;
+        }
+        let date = t[2];
+        if date.len() != 8 || !date.bytes().all(|b| b.is_ascii_digit()) {
+            continue;
+        }
+        let (
+            Some(stid),
+            Some(lat),
+            Some(lon),
+            Some(alt),
+            Some(boresight),
+            Some(bmoff),
+            Some(bmsep),
+            Some(maxbeam),
+        ) = (
+            t[0].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[4].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[5].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[6].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[7].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[8].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[9].parse::<f64>().ok().filter(|v| v.is_finite()),
+            t[21].parse::<f64>().ok().filter(|v| v.is_finite()),
+        )
+        else {
+            continue;
+        };
+        let site = HdwSite {
+            stid,
+            lat_deg: lat,
+            lon_deg: lon,
+            alt_m: alt,
+            boresight_deg: boresight,
+            bmoff_deg: bmoff,
+            bmsep_deg: bmsep,
+            maxbeam,
+        };
+        last_site = Some(site.clone());
+        if let Some(start) = start_yyyymmdd {
+            if date <= start && best_date.as_ref().is_none_or(|b| date > b.as_str()) {
+                best_date = Some(date.to_string());
+                best_site = Some(site);
+            }
+        }
+    }
+    best_site.or(last_site)
+}
+
+fn beam_azimuth(site: &HdwSite, bmnum: f64) -> Option<f64> {
+    if !bmnum.is_finite() || site.maxbeam < 1.0 {
+        return None;
+    }
+    let offset = site.maxbeam / 2.0 - 0.5;
+    let psi = site.bmsep_deg * (bmnum - offset) + site.bmoff_deg;
+    let azi = site.boresight_deg + psi;
+    if azi.is_finite() { Some(azi) } else { None }
+}
+
+fn chisham_virtual_height_km(slant_km: f64) -> Option<f64> {
+    if !slant_km.is_finite() || slant_km <= 0.0 {
+        return None;
+    }
+    let h = if slant_km < 115.0 {
+        (slant_km / 115.0) * 112.0
+    } else if slant_km < 787.5 {
+        CHISHAM_A[0] + CHISHAM_B[0] * slant_km + CHISHAM_C[0] * slant_km * slant_km
+    } else if slant_km <= 2137.5 {
+        CHISHAM_A[1] + CHISHAM_B[1] * slant_km + CHISHAM_C[1] * slant_km * slant_km
+    } else {
+        CHISHAM_A[2] + CHISHAM_B[2] * slant_km + CHISHAM_C[2] * slant_km * slant_km
+    };
+    if h.is_finite() && h > 0.0 {
+        Some(h)
+    } else {
+        None
+    }
+}
+
+fn chisham_ground_km(slant_km: f64) -> Option<f64> {
+    let h = chisham_virtual_height_km(slant_km)?;
+    let re = EARTH_RADIUS_KM;
+    let rp = re + h;
+    let cos_theta = (re * re + rp * rp - slant_km * slant_km) / (2.0 * re * rp);
+    if !cos_theta.is_finite() || !(-1.0..=1.0).contains(&cos_theta) {
+        return None;
+    }
+    let ground = re * cos_theta.acos();
+    if ground.is_finite() && ground >= 0.0 {
+        Some(ground)
+    } else {
+        None
+    }
+}
+
+fn destination(lat_deg: f64, lon_deg: f64, bearing_deg: f64, dist_km: f64) -> Option<(f64, f64)> {
+    if !lat_deg.is_finite()
+        || !lon_deg.is_finite()
+        || !bearing_deg.is_finite()
+        || !dist_km.is_finite()
+        || dist_km < 0.0
+    {
+        return None;
+    }
+    let lat1 = lat_deg.to_radians();
+    let lon1 = lon_deg.to_radians();
+    let bearing = bearing_deg.to_radians();
+    let delta = dist_km / EARTH_RADIUS_KM;
+    let lat2 = (lat1.sin() * delta.cos() + lat1.cos() * delta.sin() * bearing.cos()).asin();
+    let lon2 = lon1
+        + (bearing.sin() * delta.sin() * lat1.cos()).atan2(delta.cos() - lat1.sin() * lat2.sin());
+    Some((lat2.to_degrees(), lon2.to_degrees()))
+}
+
+fn gate_position(
+    site: &HdwSite,
+    bmnum: f64,
+    frang: f64,
+    rsep: f64,
+    gate: f64,
+) -> Option<(f64, f64)> {
+    let bearing = beam_azimuth(site, bmnum)?;
+    let slant_km = frang + gate * rsep;
+    let ground_km = chisham_ground_km(slant_km)?;
+    destination(site.lat_deg, site.lon_deg, bearing, ground_km)
+}
+
+fn code_from_path(path: &str) -> Option<String> {
+    let base = match path.rsplit('/').next() {
+        Some(b) => b,
+        None => return None,
+    };
+    for part in base.split('.') {
+        if part.len() == 3 && part.bytes().all(|b| b.is_ascii_alphabetic()) {
+            return Some(part.to_ascii_lowercase());
+        }
+    }
+    None
+}
+
+fn date_from_path(path: &str) -> Option<String> {
+    let base = match path.rsplit('/').next() {
+        Some(b) => b,
+        None => return None,
+    };
+    let first = base.split('.').next()?;
+    if first.len() == 8 && first.bytes().all(|b| b.is_ascii_digit()) {
+        Some(first.to_string())
+    } else {
+        None
+    }
+}
+
+fn site_for(source: &str, radar: Option<&str>) -> Option<HdwSite> {
+    let code = match radar {
+        Some(c) => Some(c.to_string()),
+        None => code_from_path(source),
+    }?;
+    let bytes = fetch_hdw(&code)?;
+    let text = String::from_utf8_lossy(&bytes).into_owned();
+    parse_hdw(&text, date_from_path(source).as_deref())
+}
+
+fn dmap_fitacf_georecords(
+    recs: &[DmapRecord],
+    site: &HdwSite,
+    lsk: &omegaflow::lsk::LeapSeconds,
+) -> Vec<GeoRec> {
+    let mut out = Vec::new();
+    for rec in recs {
+        let Some(mjd) = fitacf_mjd(rec) else {
+            continue;
+        };
+        let unix = mjd_to_unix(mjd);
+        let Some(tdb) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        let (Some(frang), Some(rsep), Some(bmnum)) = (
+            rec_f64(rec, "frang"),
+            rec_f64(rec, "rsep"),
+            rec_f64(rec, "bmnum"),
+        ) else {
+            continue;
+        };
+        if frang < 0.0 || rsep <= 0.0 {
+            continue;
+        }
+        let Some(slist) = rec_array(rec, "slist") else {
+            continue;
+        };
+        let nrang = rec_f64(rec, "nrang");
+        let qflg = rec_array(rec, "qflg");
+        let v_arr = rec_array(rec, "v");
+        for i in 0..slist.nums.len() {
+            let Some(gate) = slist.nums.get(i).copied() else {
+                continue;
+            };
+            if nrang.is_some_and(|n| gate < 0.0 || gate >= n || gate.fract() != 0.0) {
+                continue;
+            }
+            let q_ok = match qflg {
+                Some(a) => match a.nums.get(i) {
+                    Some(v) => *v == 1.0,
+                    None => continue,
+                },
+                None => true,
+            };
+            if !q_ok {
+                continue;
+            }
+            let Some(val) = v_arr
+                .and_then(|a| a.nums.get(i).copied())
+                .filter(|x| x.is_finite())
+            else {
+                continue;
+            };
+            let Some((lat, lon)) = gate_position(site, bmnum, frang, rsep, gate) else {
+                continue;
+            };
+            if !(-90.0..=90.0).contains(&lat) || !(-360.0..=360.0).contains(&lon) {
+                continue;
+            }
+            out.push(GeoRec {
+                t: tdb,
+                lat,
+                lon,
+                alt: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                val,
+                comp: COMP_SDARN_V,
+                station: 0,
+            });
+        }
+    }
+    out
+}
+
+fn emit_dmap_fitacf_bin(bytes: &[u8], source: &str, radar: Option<&str>, bin_path: &str, ci: bool) {
+    if le_u32_at(bytes, 0) != Some(DMAP_CODE) {
+        eprintln!(
+            "superdarn: {} carries no dmap fitacf body — the bin stays unwritten",
+            source
+        );
+        std::process::exit(1);
+    }
+    let recs = match dmap_parse(bytes) {
+        Some(r) => r,
+        None => {
+            eprintln!("superdarn: {} parses void", source);
+            std::process::exit(1);
+        }
+    };
+    let code = match radar
+        .map(|s| s.to_string())
+        .or_else(|| code_from_path(source))
+    {
+        Some(c) => c,
+        None => {
+            eprintln!(
+                "superdarn: {} carries no radar code — the position stays absent",
+                source
+            );
+            std::process::exit(1);
+        }
+    };
+    let site = match site_for(source, Some(&code)) {
+        Some(s) => s,
+        None => {
+            eprintln!(
+                "superdarn: hdw.dat.{} carries no site geometry — the position stays absent",
+                code
+            );
+            std::process::exit(1);
+        }
+    };
+    eprintln!(
+        "superdarn: {} site stid {} lat {:.4} lon {:.4} alt {:.1} boresight {:.2}",
+        code, site.stid, site.lat_deg, site.lon_deg, site.alt_m, site.boresight_deg
+    );
+    let lsk = match embedded_lsk() {
+        Some(l) => l,
+        None => {
+            eprintln!("superdarn: the embedded naif0012 table parses void — TDB stays unread");
+            std::process::exit(1);
+        }
+    };
+    let mut records = dmap_fitacf_georecords(&recs, &site, &lsk);
+    if records.is_empty() {
+        eprintln!("superdarn: no cell rows — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+    records.sort_by(|a, b| a.t.total_cmp(&b.t).then(a.lat.total_cmp(&b.lat)));
+    let bytes_out = write_bin(MAGIC_SDARN, &records);
+    if fs::write(bin_path, &bytes_out).is_err() {
+        eprintln!("write {} returned void", bin_path);
+        std::process::exit(1);
+    }
+    match parse_bin(MAGIC_SDARN, &bytes_out) {
+        Some(parsed) => eprintln!(
+            "{}: {} geo records, {} B, roundtrip parses",
+            bin_path,
+            parsed.len(),
+            bytes_out.len()
+        ),
+        None => {
+            eprintln!("{}: roundtrip parse void", bin_path);
+            std::process::exit(1);
+        }
+    }
+    if ci && !upload_release(NETLOC, bin_path) {
+        std::process::exit(1);
+    }
+}
+
 fn bounce_date(raw: &str) -> String {
     let b = raw.as_bytes();
     if b.len() == 10 && b.get(4) == Some(&b'-') && b.get(7) == Some(&b'-') {
@@ -1400,6 +1763,7 @@ fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usi
         std::process::exit(1);
     }
     let cols = fitacf_cols();
+    let site = site_for(radar, Some(radar));
     let mut all_rows = Vec::new();
     for name in &files {
         let (Some(y), Some(m)) = (name.get(0..4), name.get(4..6)) else {
@@ -1431,7 +1795,7 @@ fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usi
                 continue;
             }
         };
-        let rows = dmap_fitacf_rows(&recs, &cols, &url);
+        let rows = dmap_fitacf_rows(&recs, &cols, &url, site.as_ref());
         eprintln!("superdarn fitacf: {} → {} range rows", name, rows.len());
         all_rows.extend(rows);
     }
@@ -1478,6 +1842,24 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        if let Some(bin_path) = arg_value(&args, "--out-bin") {
+            if mode != "fitacf" {
+                eprintln!(
+                    "superdarn: --out-bin runs in fitacf mode, the mode is {}",
+                    mode
+                );
+                std::process::exit(1);
+            }
+            let ci = args.iter().any(|a| a == "--ci-mode");
+            emit_dmap_fitacf_bin(
+                &bytes,
+                &input,
+                arg_value(&args, "--radar").as_deref(),
+                &bin_path,
+                ci,
+            );
+            return;
+        }
         let cols = if mode == "grid" {
             grid_cols()
         } else {
@@ -1502,6 +1884,24 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        if let Some(bin_path) = arg_value(&args, "--out-bin") {
+            if mode != "fitacf" {
+                eprintln!(
+                    "superdarn: --out-bin runs in fitacf mode, the mode is {}",
+                    mode
+                );
+                std::process::exit(1);
+            }
+            let ci = args.iter().any(|a| a == "--ci-mode");
+            emit_dmap_fitacf_bin(
+                &bytes,
+                &url,
+                arg_value(&args, "--radar").as_deref(),
+                &bin_path,
+                ci,
+            );
+            return;
+        }
         let cols = if mode == "grid" {
             grid_cols()
         } else {
