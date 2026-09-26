@@ -229,6 +229,10 @@ descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
+pending
+url https://irsa.ipac.caltech.edu/TAP
+note AllWISE allsky_4band_p3as_psd (w1mpro..w4mpro,w3snr,w4snr): sync-Stall gemessen, async-UWS der Weg (Job 23542882 COMPLETED, 1 Zeile, VOTable 1.3). async-UWS-Parser-Arm fehlt.
+
 parser-def csv
 gap unit-auto-detect
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
