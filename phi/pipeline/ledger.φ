@@ -13,7 +13,7 @@ note ivo://src.pas/tap — 2026-09-26 Host tot (direct+Proton 000); Ersatz gemes
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
-note SSDC-Portal + CAS-Login funktionieren mit SSDC_USER/SSDC_PASS (query.php 200), aber „Permission Denied" für omegaflow. PI Sotgiu antwortete 2026-09-16: Limadou-Website wird für CSES-02 umgebaut, „recommend waiting a few weeks before proceeding with your access request"; die Linie hat quittiert, Doppel-Anfrage 2026-09-20 (sent_ledger 1789906154/1789906520). Trigger: neue Anleitung auf dem Limadou-Portal. CSES-Limadou (em/electric) accept. DAHITI_API_KEY liegt lokal (livefeed_gate.rs:223).
+note SSDC CAS-Login mit SSDC_USER/PASS 2026-09-26 → „invalid username or password" (Credentials falsch/abgelaufen, nicht nur Permission). Sotgiu 2026-09-16: Portal-Umbau für CSES-02, warten. Braucht: Key-Rotation/Konto-Klärung (Operator). CSES-Limadou (em/electric) accept.
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
