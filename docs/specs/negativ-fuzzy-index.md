@@ -2,7 +2,7 @@
   title: DER NEGATIVE FUZZY-INDEX — das Unvorhersagbare ist die Wahrheit
   class: concept
   date: 2026-08-24
-  sha256: 0794d2c48ec12a1fc0b05dc88081e7ff70de62461a36a1e7b38b6ba8e555147e
+  sha256: 71f17338c85a8a8c9ba77fb646c788287996c2a689fb271f63a3698c1f6ffdd6
   status: live
   see-also: docs/paper/twenty-second-band-ground-chain.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front)
 -->
@@ -60,5 +60,8 @@ zum schärfsten Instrument, das diese Maschine je gebaut hat.
 
 ## Name = Implementation
 
-DER NEGATIVE FUZZY-INDEX (Prosa) — `negativ-fuzzy-index` (Datei). Der Auftrag
-für die Pioneers trägt die Maschine: `docs/handover/handover-2026-08-24-pioneer-negativ-fuzzy-auftrag.md`.
+**ozzy** ist die Bibliothek, die den Negativen Fuzzy-Index umsetzt (Operator-Wort
+2026-09-26) — der Name der Bibliothek ist `ozzy`; die Methode behält ihren Namen.
+Prosa: DER NEGATIVE FUZZY-INDEX — Datei `negativ-fuzzy-index`. Der Auftrag für die
+Pioneers trägt die Maschine:
+`docs/handover/handover-2026-08-24-pioneer-negativ-fuzzy-auftrag.md`.
