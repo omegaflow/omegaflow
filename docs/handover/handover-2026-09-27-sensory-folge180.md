@@ -3,7 +3,7 @@
   session: Sensory-Folge 180
   class: handover
   date: 2026-09-27
-  sha256: 23ef007ab38dba344c7a784ad3c09d9644eb502a5e01f9658a2731dc838b85ea
+  sha256: 46247d493f79226cadbb8cf13ba2b764c0bafe10f60e3153ab0f6cb53272a8f2
   status: live
 -->
 # Handover — Sensory-Folge 180 (2026-09-27)
@@ -43,8 +43,8 @@ getrackt, nie am CDN.
   `broker_difference_probe` (Funke 3), `tdb_coincidence_probe` (Funke 5); Workflow
   dispatcht beide.
 - **Blockade:** keine.
-- **Braucht:** committen+pushen, dann `gh workflow run funken-probe.yml`; Ergebnis via
-  `ci_manage view <id>`.
+- **Lage (Nachtrag):** dispatched 2026-09-27 → Run `36276735080` (queued).
+- **Braucht:** Ergebnis via `ci_manage view 36276735080` einmalig lesen (nächster Pass).
 
 ### 2. causal-arrow-Scan — Workflow gebaut, Dispatch offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
@@ -52,7 +52,8 @@ getrackt, nie am CDN.
   angelegt (67 Z.); `te_pair_probe` (Lag-Sweep {1,3,6,12,24,48}, Gyirong→Rasuwa) +
   `kbo_residue_probe` (--check-bins/--cluster-only/Sweep), beide `tools/measure`.
 - **Blockade:** keine.
-- **Braucht:** committen+pushen, `gh workflow run causal-arrow-scan.yml`; Träger
+- **Lage (Nachtrag):** dispatched 2026-09-27 → Run `36276736870` (in_progress).
+- **Braucht:** Ergebnis via `ci_manage view 36276736870` lesen; Träger
   `causal-arrow-preregistration.md:1`, `ein-blatt-papier.md:2`.
 
 ### 3. O1 DEMETER/CDPP — Order nutzbar, Ernte offen
