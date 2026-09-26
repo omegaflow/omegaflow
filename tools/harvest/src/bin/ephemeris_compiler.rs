@@ -130,7 +130,7 @@ fn fetch_text(url: &str) -> Option<String> {
         .arg("--max-time")
         .arg("90")
         .arg("--retry")
-        .arg("2")
+        .arg("3")
         .arg(url)
         .output()
         .ok()?;
