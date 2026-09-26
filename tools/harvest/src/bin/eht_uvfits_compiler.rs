@@ -1,14 +1,54 @@
+use omegaflow::cdn::upload_release;
 use omegaflow::inflate::{gunzip, gunzip_stream, gunzip_tar_members};
 use omegaflow::sha256::sha256_hex;
 use std::process::exit;
 
-const USAGE: &str = "eht_uvfits_compiler: modes: --inspect <file.tgz> | --cat <file.tgz> <member> | --verify <file.tgz> | --run <file.tgz> | --runfits <file.FITS>";
+const NETLOC: &str = "almascience.org";
+const USAGE: &str = "eht_uvfits_compiler: modes: --inspect <file.tgz> | --cat <file.tgz> <member> | --verify <file.tgz> | --run <file.tgz> [--pair <a> <b>] [--out <bin>] [--ci-mode] | --runfits <file.FITS> [--pair <a> <b>]";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
+}
+
+fn pair_arg(args: &[String]) -> (String, String) {
+    let Some(i) = args.iter().position(|a| a == "--pair") else {
+        return (
+            omegaflow::uvfits::STATION_ALMA.to_string(),
+            omegaflow::uvfits::STATION_APEX.to_string(),
+        );
+    };
+    let (Some(a), Some(b)) = (args.get(i + 1), args.get(i + 2)) else {
+        eprintln!("eht_uvfits_compiler: --pair <a> <b>");
+        exit(2);
+    };
+    (a.clone(), b.clone())
+}
+
+fn pair_beat_open(f: &omegaflow::uvfits::UvFits, pair: (&str, &str)) -> bool {
+    let pair_rows = omegaflow::uvfits::baseline_rows(f, pair.0, pair.1);
+    if pair_rows.is_empty() {
+        return false;
+    }
+    match omegaflow::uvfits::fringe_rate_hz(&pair_rows) {
+        Some(df) => {
+            let dt_s = pair_rows.iter().map(|r| r.inttim_s).sum::<f64>() / pair_rows.len() as f64;
+            omegaflow::uvfits::beat_open(df, dt_s)
+        }
+        None => false,
+    }
+}
+
+fn pair_readable(bytes: &[u8], pair: (&str, &str)) -> bool {
+    if pair.0 == omegaflow::uvfits::STATION_ALMA && pair.1 == omegaflow::uvfits::STATION_APEX {
+        return omegaflow::uvfits::beat_rows(bytes).is_some();
+    }
+    match omegaflow::uvfits::parse_uvfits(bytes) {
+        Some(f) => pair_beat_open(&f, pair),
+        None => false,
+    }
 }
 
 fn read_file(path: &str) -> Vec<u8> {
@@ -244,7 +284,7 @@ fn report_member(name: &str, bytes: &[u8], pair: (&str, &str)) {
     }
 }
 
-fn run(path: &str) {
+fn run(path: &str, pair: (&str, &str), out: Option<&str>, ci_mode: bool) {
     let file = match std::fs::File::open(path) {
         Ok(f) => f,
         Err(e) => {
@@ -253,27 +293,67 @@ fn run(path: &str) {
         }
     };
     let mut members_seen = 0usize;
+    let mut written = false;
     let result = gunzip_tar_members(
         file,
         |name| name.ends_with(".FITS"),
         |name, bytes| {
             members_seen += 1;
-            report_member(
-                name,
-                bytes,
-                (
-                    omegaflow::uvfits::STATION_ALMA,
-                    omegaflow::uvfits::STATION_APEX,
-                ),
-            );
+            match out {
+                Some(out_path) => {
+                    if written {
+                        return;
+                    }
+                    if !pair_readable(bytes, pair) {
+                        return;
+                    }
+                    match std::fs::write(out_path, bytes) {
+                        Ok(()) => {
+                            written = true;
+                            eprintln!(
+                                "{name}: {}-{} beat open, {} B -> {out_path}",
+                                pair.0,
+                                pair.1,
+                                bytes.len()
+                            );
+                        }
+                        Err(e) => eprintln!("{out_path}: write returned void: {e}"),
+                    }
+                }
+                None => report_member(name, bytes, pair),
+            }
         },
     );
-    println!("{path}: {members_seen} .FITS members walked");
     if members_seen == 0 {
         match result {
             Ok(_) => eprintln!("eht_uvfits_compiler: {path}: no .FITS member"),
             Err(e) => eprintln!("eht_uvfits_compiler: {path}: gzip walk void: {e}"),
         }
+        exit(1);
+    }
+    let Some(out_path) = out else {
+        println!("{path}: {members_seen} .FITS members walked");
+        return;
+    };
+    if !written {
+        eprintln!(
+            "eht_uvfits_compiler: {path}: no {}-{} beat member — {out_path} stays unwritten",
+            pair.0, pair.1
+        );
+        exit(1);
+    }
+    let bytes = read_file(out_path);
+    if !pair_readable(&bytes, pair) {
+        eprintln!("eht_uvfits_compiler: {out_path}: roundtrip pair gate void");
+        exit(1);
+    }
+    println!(
+        "{out_path}: {} B, {}-{} beat open — roundtrip parses",
+        bytes.len(),
+        pair.0,
+        pair.1
+    );
+    if ci_mode && !upload_release(NETLOC, out_path) {
         exit(1);
     }
 }
@@ -308,7 +388,17 @@ fn main() {
             }
         },
         Some("--run") => match arg_value(&args, "--run") {
-            Some(p) => run(&p),
+            Some(p) => {
+                let pair = pair_arg(&args);
+                let out = arg_value(&args, "--out");
+                let ci_mode = args.iter().any(|a| a == "--ci-mode");
+                run(
+                    &p,
+                    (pair.0.as_str(), pair.1.as_str()),
+                    out.as_deref(),
+                    ci_mode,
+                );
+            }
             None => {
                 eprintln!("eht_uvfits_compiler: {USAGE}");
                 exit(2);
@@ -316,22 +406,7 @@ fn main() {
         },
         Some("--runfits") => match arg_value(&args, "--runfits") {
             Some(p) => {
-                let pair = match (
-                    arg_value(&args, "--pair"),
-                    args.iter().position(|a| a == "--pair"),
-                ) {
-                    (Some(a), Some(i)) => match args.get(i + 2) {
-                        Some(b) => (a, b.clone()),
-                        None => {
-                            eprintln!("eht_uvfits_compiler: --pair <a> <b>");
-                            exit(2);
-                        }
-                    },
-                    _ => (
-                        omegaflow::uvfits::STATION_ALMA.to_string(),
-                        omegaflow::uvfits::STATION_APEX.to_string(),
-                    ),
-                };
+                let pair = pair_arg(&args);
                 run_fits(&p, (pair.0.as_str(), pair.1.as_str()));
             }
             None => {

@@ -7642,6 +7642,15 @@ dec dec
 plx parallax
 field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/almascience.org/eht_uvfits.bin
+format eht_uvfits
+origin https://almascience.org/almadata/ec/eht/2016.1.01404.V/
+compiler tools/harvest/src/bin/eht_uvfits_compiler.rs
+at earth
+ttl 604800
+field alma_aa_phase eht_uvfits_alma_aa_phase inverse-square em cycle 604800 0.0 0.0
+field apex_ap_phase eht_uvfits_apex_ap_phase inverse-square em cycle 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/api.le-systeme-solaire.net/solar_system_bodies.bin
 origin https://api.le-systeme-solaire.net/rest/bodies/
 compiler tools/harvest/src/bin/solar_system_open_data_compiler.rs
@@ -8055,6 +8064,7 @@ field av_rq planck_dust_av_rq_mag gaussian-inverse-square em mag 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_psz2_sz_mmf3.json
 origin https://irsa.ipac.caltech.edu/TAP/sync (ADQL planck.com_pccs2_sz_mmf3 name,ra,dec,snr; redshift crossmatch planck.com_pccs2_sz_union)
 compiler tools/harvest/src/bin/planck_psz2_compiler.rs
+sha256 12fb5a1d079b6bc7af617336de2070da55f5e2e1af033383358c3310aed12c49
 ttl 604800
 at sun
 cmap .
@@ -15372,28 +15382,28 @@ field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0
 field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
 field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_daily.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788888-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C1.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 86400
 field daytime_lst_k daytime_lst_k gaussian-inverse-square thermal K 86400 0.0 0.0
 field nighttime_lst_k nighttime_lst_k gaussian-inverse-square thermal K 86400 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_8day.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788893-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 691200
 field daytime_lst_8day_k daytime_lst_8day_k gaussian-inverse-square thermal K 691200 0.0 0.0
 field nighttime_lst_8day_k nighttime_lst_8day_k gaussian-inverse-square thermal K 691200 0.0 0.0
 
-url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
+url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/modis_lst_cmg_monthly.bin
 format modis_lst_cmg
-origin https://cmr.earthdata.nasa.gov/search/granules.umm_json?concept_id=C2565788897-LPCLOUD
-header Authorization "Bearer {EARTHDATA_EDL_TOKEN}"
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler
+compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 2592000
 field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
