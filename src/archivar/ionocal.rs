@@ -300,7 +300,7 @@ pub fn write_bin(files: &[PackedIonocalFile]) -> Vec<u8> {
 }
 
 pub fn parse_bin(data: &[u8]) -> Option<Vec<PackedIonocalFile>> {
-    if data.len() < 8 || &data[0..4] != PACK_MAGIC {
+    if data.len() < 8 || data[0..4] != PACK_MAGIC {
         return None;
     }
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
@@ -408,7 +408,7 @@ mod tests {
     #[test]
     fn full_year_maps_two_digit_years() {
         assert_eq!(full_year(89), 1989);
-        assert_eq!(full_year(03), 2003);
+        assert_eq!(full_year(3), 2003);
         assert_eq!(full_year(68), 2068);
         assert_eq!(full_year(69), 1969);
     }

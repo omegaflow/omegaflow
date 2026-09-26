@@ -266,9 +266,7 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
                 continue;
             };
             for r in &records {
-                let Some(t) = sample_epoch(anchor, r) else {
-                    return None;
-                };
+                let t = sample_epoch(anchor, r)?;
                 let (mn, mx, mean) = mediumband_amps(r)?;
                 out.push((t, mn, COMP_AMP_MIN));
                 out.push((t, mx, COMP_AMP_MAX));
