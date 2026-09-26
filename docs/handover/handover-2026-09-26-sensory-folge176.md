@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: f28ddd730ed65dcebc897039e4594662533d51b50f4688c4c247aa10748ed49f
+  sha256: 4abbfa0b5540be10610fa472b8bbcb87c0d79efc61ebf613e0069bb9c74189c2
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -41,9 +41,10 @@ gemessen; ihr Ausgang steht im Zustand-Ledger, nicht als Kopie hier. Karte:
 - **Postfach:** kein Sensory-Treffer; CSES-Limadou (Sotgiu, „wait a few weeks" →
   Wiedervorlage), DSN-Briefe im Ledger, Forum/Alerts. Ledger
   `state/mail/mail_ledger.φ`.
-- **CI am HEAD `85fcd3cf2`:** `zigbee-host` 36235538625 success (sizeof leer →
-  Fix, s. ZNSP); `meteo-cdn` alle vier success (tibet/aaretal/japan/bordeaux,
-  s. Kreuz-Screening); `te-gate` 36228804363 in_progress (`fpr-ksg-arx`, 2 h+).
+- **CI am HEAD `85fcd3cf2`:** `zigbee-host` 36235778378 success
+  (`SIZEOF_ESP_ZB_CFG_T=16`, s. ZNSP); `meteo-cdn` alle vier success
+  (tibet/aaretal/japan/bordeaux, s. Kreuz-Screening); `te-gate` 36228804363
+  in_progress (`fpr-ksg-arx`, 2 h+).
 - **Arbeitsbaum:** fremde uncommittete Arbeit (Mycelium/Mountain an
   `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/skydirection.rs`,
   `kbo_residue_probe.rs`, `rixs_cuprate_probe.rs`, `suprastrom_form_probe.rs`,
@@ -200,12 +201,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** den `te-gate`-Lauf lesen (`ci_manage view`/`log 36228804363`).
 
-#### ZNSP FORMNETWORK — sizeof-Probe-Pfad gefixt, Zahl beim Lauf `36235778378`
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `zigbee-host`-Lauf `36235778378`
-- **Lage:** (gemessen 2026-09-26) Lauf `36235538625` @ `75bf3131f` success, aber `SIZEOF_ESP_ZB_CFG_T=` **leer**: `size.sh` las `build/main/libmain.a`, das unter ESP-IDF 5.3 `build/esp-idf/main/libmain.a` heisst → `nm` fand `zb_cfg_size` nicht (stille Leerzahl, kein Fehler). Fix `85fcd3cf2`: `find build -name libmain.a`, `test -n "$SIZE_HEX"` (lautes Scheitern statt stillem Leerwert). Neu dispatcht `36235778378`. `form_network_payload_pending()` liefert weiter `None`.
-- **Blockade:** keine.
-- **Braucht:** Lauf `36235778378` lesen (`SIZEOF_ESP_ZB_CFG_T`), dann den FORMNETWORK-Encoder mit der gemessenen Größe setzen.
+#### ZNSP FORMNETWORK — sizeof gemessen (16), Encoder-Site nicht im Baum
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-26) sizeof-Probe-Pfad gefixt (`85fcd3cf2`); Lauf `36235778378` @ `85fcd3cf2` **success**, **`SIZEOF_ESP_ZB_CFG_T=16`** gemessen. Aber `sgrep --all -i "form_network|formnetwork|znsp|zigbee" .` findet **keine Encoder-Site** im Baum — die im Vorhandover genannte `form_network_payload_pending()` ist nicht auffindbar; einzig `.github/workflows/zigbee-host.yml` existiert.
+- **Blockade:** die Encoder-Site fehlt (Handover-Claim ohne Read-Site).
+- **Braucht:** Encoder-Site lokalisieren, sonst den Claim streichen und `16` als Register-Wert führen (`phi/…`).
 
 #### HRV/Puls→Strahlung — Leser gebaut, Live-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
