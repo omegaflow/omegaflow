@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 024e4702a699a91c498519c0f179507522dfe663edae832b77fbbdcdc9da2648
+  sha256: edce1e5747e6109294daa8569da39287febca7da234b2604240bf568dfd516b4
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -37,6 +37,34 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Lage:** (gemessen 2026-09-26) Quellenblock registriert (`phi/sources.φ:9461`, `format superdarn_fitacf`, compiler-Verweis), `blocked_sources.φ:39` → `released`; Workflow `superdarn-cdn.yml` rewrite + Dispatch. DMAP-Parser + hdw.dat-Geolokation live (rkn 14 841 GeoRecords). MAP-Globus `20e8a751…` `ACTIVE`.
 - **Blockade:** CI-Lauf.
 - **Braucht:** `ci_manage view 36268001985`; MAP-Quellenblock (Zenodo netCDF) als Folgeschritt.
+
+#### sensor.community-Spiegel ernten
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/sources.φ`.
+- **Lage:** (gemessen 2026-09-26) `api.sensor.community` ip-blocked; Proton-freie Spiegel `maps.sensor.community/data/v2/data.json` 200 (8 620 890 B, sha256 `5dd31cd2…`) + `archive.sensor.community/` (`{YYYY}/{YYYY-MM-DD}_{typ}_sensor_{id}.csv.gz`).
+- **Blockade:** keine.
+- **Braucht:** Spiegel als Quelle registrieren + Compiler/Arm.
+
+#### IRIS/EarthScope EMC — netCDF-4-Arm + Lizenz
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/blocked_sources.φ:335` (ORPHAN → dieser Träger).
+- **Lage:** (gemessen 2026-09-26) EMC-Verzeichnis 200 (117 652 B); HDF5/netCDF-4 only (`GLAD-M35.r0.1-n4c.nc` 343 763 392 B); 3D-Modelle ohne CSV; Volume-Arm 8 Dateien; netcdf-Katalog-Arm fehlt; **Lizenz absent**.
+- **Blockade:** netCDF-4-Arm + Lizenzmessung.
+- **Braucht:** netCDF-4-Arm (`src/archivar/hdf5.rs`) + Lizenz messen.
+
+#### src.pas → esc.pithia.eu ernten
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/pipeline/ledger.φ:10`.
+- **Lage:** (gemessen 2026-09-26) `pithia.cbk.waw.pl` Host tot (direct+Proton 000); Ersatz `esc.pithia.eu/data-collections/` 200 anonym.
+- **Blockade:** keine.
+- **Braucht:** esc.pithia.eu-Detailseiten je Collection ernten + Quellenblock.
+
+#### Mariner 10 NAIF SPK — Eintrag prüfen (`phi/blocked_sources.φ:57`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/blocked_sources.φ:57`.
+- **Lage:** (gemessen 2026-09-25) `M10_archive_1.bsp` (51 200 B, HTTP 200); `ephemeris_mariner10.bin` gebaut (`mariner10-ephemeris-cdn 36181036369`, 648 B, sha256 `7a…`).
+- **Blockade:** keine — möglicherweise bereits geschlossen.
+- **Braucht:** Eintrag gegen das gebaute Asset prüfen; bei geschlossen → `released`.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
