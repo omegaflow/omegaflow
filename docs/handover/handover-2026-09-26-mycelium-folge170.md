@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: f4a97ba6c3fd063b32faf8e365df1fdc6918486d63b3a21931e7fb36a45eacc8
+  sha256: 4826f992e1bad24ddc416cdadf025e35d98b03fe8216aa070ab018f06868c4b0
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -106,6 +106,27 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 - **Lage:** (gemessen 2026-09-21, Register-note) PL-Exit (Operator-Wort): `/tap` HTTP 200; `/tap/tables` HTTP 500 (PostgreSQL localhost:5…).
 - **Blockade:** Backend-Fehler.
 - **Braucht:** `archive_search --verdict` auf `/tap/tables` beim nächsten Pass.
+
+#### Pre-CDN Lost-Blocks — Host-Verdikte nicht integriert (`index.φ:37/39`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Register-Pass.
+- **Lage:** (gemessen 2026-09-26 `stage/pre-cdn_join_report.txt`) 729 richest-URLs in keinem Register (`stage/pre-cdn_richest_unregistered.txt` = 729 Z.), 37 params unregistriert, **4877** lost blocks ohne Pool-Eintrag (eigene Extraktion). `stage/pre_cdn_host_verdict_2026-09-25.txt` (75 Z.) trägt Host-Verdikte: 1 pending-echt (`eutils.ncbi.nlm.nih.gov`), 8 externe GitHub-Repos (18 Blöcke), 4 pre-CDN-Asset (ndbc, tidesandcurrents, open-meteo, ncei), 12 declined, 2 blocked (api.sensor.community, www.temis.nl), 12 disponiert — mit dem Vermerk „NO EDITS to shared phi/*.φ registers — main session integrates".
+- **Blockade:** keine.
+- **Braucht:** Host-Verdikte in `phi/sources.φ`/`declined_sources.φ`/`blocked_sources.φ` integrieren; die 4877 pool-losen Blöcke sind eigene Extraktion (blockade).
+
+#### Pre-CDN params — 41 fehlende Direktiven + 15 Riss (`index.φ:39`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Register-Pass.
+- **Lage:** (gemessen 2026-09-26 `stage/pre-cdn_join_report.txt`) 41 params-Direktiven fehlen in richest (`pre-cdn_params_missing_in_richest.txt` = 41 Z.); 15 params-URLs mit konfliktender Quelle (Riss: `imag-data.bgs.ac.uk` HAPI source drift, nicht gemergt); fehlende Direktiven-Arten source 43, path 20, on 13, at 6, count 2, lon 1, force 1, ~=3res 1; 623 Direktiven ohne nutzbare force bleiben `# pending … review`.
+- **Blockade:** HAPI-Source-Drift (Riss).
+- **Braucht:** 41 Direktiven nachziehen; den 15er-Riss als Riss führen, nie glätten.
+
+#### b2find intermagnet — Fanout-Stationsliste fehlt (`index.φ:79`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Harvest-Pass.
+- **Lage:** (gemessen 2026-09-26) `stage/b2find_intermagnet_candidates.φ` = 1 Kandidat (`https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog`, Probe 2026-09-22 live); Fanout-Stationsliste lat/lon fehlt.
+- **Blockade:** keine.
+- **Braucht:** HAPI-Catalog nach Stationen (lat/lon) abfragen, Fanout-Liste bauen.
 
 #### CARRIER_DRIFT `phi/blocked_sources.φ::gap:curation` carrier=13 live=4
 - **Status:** wartend | **Bindung:** eigen→mountain
