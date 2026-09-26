@@ -2,7 +2,7 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: c7bc368038b83d1ef23124245addaa73d5163e266d49e3593980106fcf6c3b46
+  sha256: 0455d237267f4800d97154b27bf926e7ec07d5672b07f994a6d40391466656de
   see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
@@ -31,12 +31,12 @@ Fehlschlag.
 
 ## 1. Das Instrument
 
-- `tools/work/src/bin/nobel_probe_corona.rs` — das Muster des Blatt-Probes:
+- `tools/measure/src/bin/nobel_probe_corona.rs` — das Muster des Blatt-Probes:
   `extract_series` erntet die Reihen, `transfer_entropy_lag` misst,
   `surrogate_stats_phase` baut die Nullkontrolle. Ein Blatt-Probe ist
   eine Schwester dieses Musters — kein neuer Weg.
-- `src/te.rs` — die kanonische CPU-Referenz: `transfer_entropy_lag`
-  (:92, lag 0 = kanonisch), `topological_te_phase` (:712, Takens
+- `src/mathematikerin/te.rs` — die kanonische CPU-Referenz: `transfer_entropy_lag`
+  (:96, lag 0 = kanonisch), `topological_te_phase` (:2686, Takens
   dim 3 order 3, MI-lag, Silverman, PE-Gate), Surrogate im f64-FFT.
   Die WGSL-Maschine `te_compute` läuft in der Membran; das Blatt
   entsteht im Probe (Offline). Die Membran-Bindung bleibt pending.

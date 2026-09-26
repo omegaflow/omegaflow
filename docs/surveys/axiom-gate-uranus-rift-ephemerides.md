@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — uranus-rift-ephemerides
   class: survey
   date: 2026-09-12
-  sha256: 10d90ff3220fe411bbb42b5f467f418e027b0ae6d2225c5972efddbdd14bdacf
+  sha256: 944d65a2adad285b244dfd90da82cbd7f8af97d93427ee9becace9fb87962463
   status: live
   see-also: docs/paper/uranus-rift-ephemerides.md
 -->
@@ -28,6 +28,8 @@ Abstract 130/200, 119 Zahlen ok, sha ok — Export-Gate grün).
   `ephemeris_neptune_c.bin`, kernel-flatten `neptune-de440s-cdn.yml`) — das
   `pending` ist eingelöst, kein Riss (gemessen 2026-09-25 via
   `sgrep ephemeris_neptune phi/sources.φ`).
+- Die frühere `resolved`-Linie ist geschlossen (`descoped`): die Neptun-Bau-Linie
+  ist gebaut (`phi/sources.φ:3456`), kein unerledigter Schritt.
 
 ## Pfad
 

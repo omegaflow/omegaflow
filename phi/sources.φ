@@ -3161,6 +3161,13 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juno
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juno_asteroid
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -3293,6 +3300,13 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at oberon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pallas
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
