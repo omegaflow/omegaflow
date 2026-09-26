@@ -212,6 +212,28 @@ jobs:
             LLNL_G3D_JPS.nc \
             --out LLNL_G3D_JPS.volume.bin --ci-mode --tag media.githubusercontent.com
 
+  llnl_g3d_jps_interp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view gs.llnl.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "LLNL_G3D_JPS.interpolated.g3d1"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset LLNL_G3D_JPS.interpolated.g3d1 already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset LLNL_G3D_JPS.interpolated.g3d1 missing — compiling and manifesting"
+          fi
+      - name: Compile LLNL_G3D_JPS.interpolated.g3d1 and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin llnl_g3d_jps_compiler -- --ci-mode
+
   afrp20:
     runs-on: ubuntu-latest
     timeout-minutes: 240
