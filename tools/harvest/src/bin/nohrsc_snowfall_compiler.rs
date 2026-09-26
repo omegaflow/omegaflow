@@ -70,18 +70,17 @@ fn run(args: &[String]) -> Result<(), String> {
     let url = format!("{BASE}/{year}{month:02}/sfav2_CONUS_24h_{year}{month:02}{day:02}12.nc");
     let bytes = fetch(&url).ok_or_else(|| format!("{url}: fetch void"))?;
     let file = Hdf5File::parse(&bytes).map_err(|e| format!("{url}: hdf5 parses void ({e:?})"))?;
-    let lat_raw = file
-        .read_dataset("latitude")
-        .map_err(|e| format!("latitude: read void ({e:?})"))?;
-    let lon_raw = file
-        .read_dataset("longitude")
-        .map_err(|e| format!("longitude: read void ({e:?})"))?;
-    let data_raw = file
-        .read_dataset("data")
-        .map_err(|e| format!("data: read void ({e:?})"))?;
-
-    let (n_lat, n_lon, elem) = infer_grid(&lat_raw, &lon_raw, &data_raw)
-        .ok_or_else(|| "the grid shape reads void — the bin stays unwritten".to_string())?;
+    let (lat_raw, lat_elem, n_lat) = read_axis(&file, "lat")?;
+    let (lon_raw, lon_elem, n_lon) = read_axis(&file, "lon")?;
+    let (data_raw, data_elem, n_data) = read_axis(&file, "Data")?;
+    let n_grid = n_lat
+        .checked_mul(n_lon)
+        .ok_or_else(|| "the grid shape overflows — the bin stays unwritten".to_string())?;
+    if n_data != n_grid {
+        return Err(format!(
+            "the grid shape reads void — {n_lat} lat, {n_lon} lon, {n_data} Data cells; the bin stays unwritten"
+        ));
+    }
 
     let tdb = days_from_civil(year, month, day)
         .and_then(|d| lsk.unix_to_tdb(d as f64 * 86400.0 + 12.0 * 3600.0))
@@ -92,15 +91,15 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut kept = 0usize;
     let mut i = 0usize;
     while i < n_lat {
-        let Some(lat) = decode_series(&lat_raw, elem, i) else {
+        let Some(lat) = decode_series(&lat_raw, lat_elem, i) else {
             break;
         };
         let mut j = 0usize;
         while j < n_lon {
-            let Some(lon) = decode_series(&lon_raw, elem, j) else {
+            let Some(lon) = decode_series(&lon_raw, lon_elem, j) else {
                 break;
             };
-            let Some(val) = decode_series(&data_raw, elem, i * n_lon + j) else {
+            let Some(val) = decode_series(&data_raw, data_elem, i * n_lon + j) else {
                 break;
             };
             sampled += 1;
@@ -158,18 +157,29 @@ fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-fn infer_grid(lat: &[u8], lon: &[u8], data: &[u8]) -> Option<(usize, usize, usize)> {
-    for elem in [4usize, 8usize] {
-        if lat.len() % elem != 0 || lon.len() % elem != 0 || data.len() % elem != 0 {
-            continue;
-        }
-        let n_lat = lat.len() / elem;
-        let n_lon = lon.len() / elem;
-        if n_lat.checked_mul(n_lon)? == data.len() / elem {
-            return Some((n_lat, n_lon, elem));
-        }
+fn read_axis(file: &Hdf5File, name: &str) -> Result<(Vec<u8>, usize, usize), String> {
+    let (_, ds, dt) = file
+        .dataset(name)
+        .map_err(|e| format!("{name}: dataset reads void ({e:?})"))?;
+    if dt.size == 0 {
+        return Err(format!("{name}: datatype size reads void"));
     }
-    None
+    let count = ds
+        .dims
+        .iter()
+        .try_fold(1usize, |a, d| a.checked_mul(*d as usize))
+        .ok_or_else(|| format!("{name}: dataspace overflows"))?;
+    let raw = file
+        .read_dataset(name)
+        .map_err(|e| format!("{name}: read void ({e:?})"))?;
+    if raw.len() != count * dt.size {
+        return Err(format!(
+            "{name}: {} B read against {count} cells x {} B",
+            raw.len(),
+            dt.size
+        ));
+    }
+    Ok((raw, dt.size, count))
 }
 
 fn main() {
@@ -185,20 +195,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn grid_inference_reads_the_shape() {
-        let lat = vec![0u8; 3 * 4];
-        let lon = vec![0u8; 5 * 4];
-        let data = vec![0u8; 3 * 5 * 4];
-        assert_eq!(infer_grid(&lat, &lon, &data), Some((3, 5, 4)));
-        let data_bad = vec![0u8; 3 * 5 * 4 - 1];
-        assert_eq!(infer_grid(&lat, &lon, &data_bad), None);
-    }
-
-    #[test]
-    fn grid_inference_prefers_f32() {
-        let lat = vec![0u8; 2 * 8];
-        let lon = vec![0u8; 3 * 8];
-        let data = vec![0u8; 2 * 3 * 8];
-        assert_eq!(infer_grid(&lat, &lon, &data), Some((2, 3, 8)));
+    fn series_decode_follows_the_element_size() {
+        let f32_le = 2.0f32.to_le_bytes();
+        let f64_le = 2.0f64.to_le_bytes();
+        assert_eq!(decode_series(&f32_le, 4, 0), Some(2.0));
+        assert_eq!(decode_series(&f64_le, 8, 0), Some(2.0));
+        assert_eq!(decode_series(&f32_le, 8, 0), None);
     }
 }
