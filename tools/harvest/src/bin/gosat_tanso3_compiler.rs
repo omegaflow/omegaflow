@@ -13,7 +13,7 @@ const SEARCH_URL: &str = "https://product.gosat-gw.nies.go.jp/product_search/api
 const DOWNLOAD_URL: &str = "https://product.gosat-gw.nies.go.jp/product_search/api/cui-download/";
 const MAGIC: [u8; 4] = *b"G3L1";
 const REC_FIELDS: usize = 6;
-const REC_BYTES: usize = REC_FIELDS * 8;
+const REC_BYTES: usize = 60;
 const SEARCH_BOUND_S: u64 = 1 << 7;
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const DOWNLOAD_BOUND_S: u64 = 1 << 12;
@@ -708,14 +708,23 @@ fn harvest_hdf5(
     recs
 }
 
+fn comp_of(product: f64, band: f64) -> u32 {
+    (product as u32 - 1) * 3 + band as u32
+}
+
 fn pack(recs: &[[f64; REC_FIELDS]]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + recs.len() * REC_BYTES);
     buf.extend_from_slice(&MAGIC);
     buf.extend_from_slice(&(recs.len() as u32).to_le_bytes());
     for r in recs {
-        for v in r {
-            buf.extend_from_slice(&v.to_le_bytes());
-        }
+        buf.extend_from_slice(&r[0].to_le_bytes());
+        buf.extend_from_slice(&r[1].to_le_bytes());
+        buf.extend_from_slice(&r[2].to_le_bytes());
+        buf.extend_from_slice(&0.0f64.to_le_bytes());
+        buf.extend_from_slice(&0.0f64.to_le_bytes());
+        buf.extend_from_slice(&0.0f64.to_le_bytes());
+        buf.extend_from_slice(&r[3].to_le_bytes());
+        buf.extend_from_slice(&comp_of(r[5], r[4]).to_le_bytes());
     }
     buf
 }
@@ -731,18 +740,29 @@ fn unpack(bytes: &[u8]) -> Option<Vec<[f64; REC_FIELDS]>> {
     let mut out = Vec::with_capacity(n);
     let mut off = 8usize;
     for _ in 0..n {
-        let mut r = [0f64; REC_FIELDS];
-        for slot in r.iter_mut() {
-            *slot = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
-            off += 8;
-        }
-        if !(r[4] == BAND1 || r[4] == BAND2 || r[4] == BAND3) {
+        let f64_of = |o: usize| {
+            bytes
+                .get(o..o + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let t = f64_of(off)?;
+        let lat = f64_of(off + 8)?;
+        let lon = f64_of(off + 16)?;
+        let val = f64_of(off + 48)?;
+        let comp = u32::from_le_bytes(bytes.get(off + 56..off + 60)?.try_into().ok()?);
+        off += REC_BYTES;
+        if !(1..=6).contains(&comp) {
             return None;
         }
-        if !(r[5] == PROD_FOCUS || r[5] == PROD_WIDE) {
-            return None;
-        }
-        out.push(r);
+        out.push([
+            t,
+            lat,
+            lon,
+            val,
+            ((comp - 1) % 3 + 1) as f64,
+            ((comp - 1) / 3 + 1) as f64,
+        ]);
     }
     Some(out)
 }
@@ -1331,6 +1351,20 @@ mod tests {
         assert!(unpack(&foreign_band).is_none());
         let foreign_prod = pack(&[[1.0, 2.0, 3.0, 4.0, BAND1, 7.0]]);
         assert!(unpack(&foreign_prod).is_none());
+    }
+
+    #[test]
+    fn comp_mapping_spans_one_through_six() {
+        let mut seen = [false; 6];
+        for product in [PROD_FOCUS, PROD_WIDE] {
+            for band in [BAND1, BAND2, BAND3] {
+                let c = comp_of(product, band) as usize;
+                assert!((1..=6).contains(&c), "comp {c} out of 1..6");
+                assert!(!seen[c - 1], "comp {c} collides");
+                seen[c - 1] = true;
+            }
+        }
+        assert!(seen.iter().all(|&s| s));
     }
 
     #[test]
