@@ -51,7 +51,8 @@
     ["4 => 0.08,", "a hardcoded per-force absorption constant (WP10 map: seismic-surface 0.08) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["5 => 0.01,", "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["6 => 0.02,", "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"]
+    ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
+    ["0.5 * anchor_amax *", "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -471,6 +472,8 @@
     "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n",
     "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }",
     "force_absorption_constant": "let absorbs = match force {\n    0 | 1 => 0.0,\n    2 => 0.1,\n    3 => 0.05,\n    4 => 0.08,\n    5 => 0.01,\n    6 => 0.02,\n    7 => 0.15,\n};",
-    "force_absorption_law": "absorption: absorption_for_force(sensor.force, sensor.absorption),"
+    "force_absorption_law": "absorption: absorption_for_force(sensor.force, sensor.absorption),",
+    "enclosure_rho_fourth_copy": "let rho = anchor_vmax * age + 0.5 * anchor_amax * age * age + pad;",
+    "enclosure_rho_call": "let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);"
   }
 }

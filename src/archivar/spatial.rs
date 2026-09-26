@@ -4,6 +4,13 @@ pub type CellKey = (i64, i64, i64);
 
 const PHASE_PAD: f64 = 0.0;
 
+pub const STAR_SPAN_M: f64 = 1.798012e21;
+pub const STAR_CATALOG_COUNT: usize = 1_704_587;
+const STAR_OCCUPANCY_TARGET: f64 = 5.0;
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub struct StarCellKey(pub (i64, i64, i64));
+
 pub struct SpatialHash {
     pub cell_size: f64,
     pub anchor_vmax: f64,
@@ -12,7 +19,11 @@ pub struct SpatialHash {
     pub cell_lo: CellKey,
     pub cell_hi: CellKey,
     pub cells: HashMap<CellKey, Vec<Arc<Sample>>>,
-    pub unbounded: Vec<Arc<Sample>>,
+    pub cell_size_star: f64,
+    pub star_cells: HashMap<StarCellKey, Vec<Arc<Sample>>>,
+    pub star_lo: StarCellKey,
+    pub star_hi: StarCellKey,
+    pub star_epoch_min: f64,
 }
 
 #[derive(Clone)]
@@ -74,6 +85,39 @@ pub fn cell_of(p: [f64; 3], s: f64) -> CellKey {
     )
 }
 
+pub fn star_cell_of(p: [f64; 3], s: f64) -> StarCellKey {
+    StarCellKey((
+        (p[0] / s).floor() as i64,
+        (p[1] / s).floor() as i64,
+        (p[2] / s).floor() as i64,
+    ))
+}
+
+pub fn star_cell_size(stars: &[Arc<Sample>]) -> f64 {
+    let committed = STAR_SPAN_M * (STAR_OCCUPANCY_TARGET / STAR_CATALOG_COUNT as f64).cbrt();
+    if stars.is_empty() {
+        return committed;
+    }
+    let mut span = 0.0f64;
+    for k in 0..3 {
+        let mut lo = f64::INFINITY;
+        let mut hi = f64::NEG_INFINITY;
+        for s in stars {
+            lo = lo.min(s.anchor_p0[k]);
+            hi = hi.max(s.anchor_p0[k]);
+        }
+        span = span.max(hi - lo);
+    }
+    if span <= 2.0 * STAR_SPAN_M {
+        return committed;
+    }
+    eprintln!(
+        "star grid rehash: the live span {:.3e} m exceeds 2× the committed {:.3e} m — cell_size_star follows the live span for this build; the register carries a new catalog generation",
+        span, STAR_SPAN_M
+    );
+    span * (STAR_OCCUPANCY_TARGET / stars.len() as f64).cbrt()
+}
+
 pub fn law_bounds(
     motion: &Motion,
     epoch: f64,
@@ -93,12 +137,12 @@ pub fn law_bounds(
 
 pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHash {
     let mut bounded = Vec::new();
-    let mut unbounded = Vec::new();
+    let mut stars = Vec::new();
     for s in samples {
         if s.extent.is_finite() {
             bounded.push(s);
         } else {
-            unbounded.push(s);
+            stars.push(s);
         }
     }
     let mut anchor_vmax = 0.0f64;
@@ -109,7 +153,7 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         anchor_amax = anchor_amax.max(s.anchor_amax);
         epoch_min = epoch_min.min(s.epoch);
     }
-    let rho_cad = anchor_vmax * cadence + 0.5 * anchor_amax * cadence * cadence;
+    let rho_cad = enclosure_rho(anchor_vmax, anchor_amax, cadence, 0.0);
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
     let motion_cell = 2f64.powi(shift);
     let mut span = 1.0f64;
@@ -136,6 +180,24 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         cell_hi.2 = cell_hi.2.max(c.2);
         cells.entry(c).or_default().push(s);
     }
+    let mut star_epoch_min = f64::MAX;
+    for s in &stars {
+        star_epoch_min = star_epoch_min.min(s.epoch);
+    }
+    let cell_size_star = star_cell_size(&stars);
+    let mut star_cells: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
+    let mut star_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut star_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for s in stars {
+        let c = star_cell_of(s.anchor_p0, cell_size_star).0;
+        star_lo.0 = star_lo.0.min(c.0);
+        star_lo.1 = star_lo.1.min(c.1);
+        star_lo.2 = star_lo.2.min(c.2);
+        star_hi.0 = star_hi.0.max(c.0);
+        star_hi.1 = star_hi.1.max(c.1);
+        star_hi.2 = star_hi.2.max(c.2);
+        star_cells.entry(StarCellKey(c)).or_default().push(s);
+    }
     SpatialHash {
         cell_size,
         anchor_vmax,
@@ -148,7 +210,15 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         cell_lo,
         cell_hi,
         cells,
-        unbounded,
+        cell_size_star,
+        star_cells,
+        star_lo: StarCellKey(star_lo),
+        star_hi: StarCellKey(star_hi),
+        star_epoch_min: if star_epoch_min == f64::MAX {
+            0.0
+        } else {
+            star_epoch_min
+        },
     }
 }
 
@@ -390,125 +460,178 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
         forward,
         eph,
     } = ctx;
-    for sample in &hash.unbounded {
-        let age = (t2 - sample.epoch).abs();
-        if age > sample.ttl * 64.0 {
-            continue;
-        }
-        if signal_reach(
-            sample.force_type,
-            sample.advection,
-            age,
-            sample.freq,
-            sample.bin_width,
-        )
-        .is_none()
-        {
-            continue;
-        }
-        let v_prop = match propagation_speed(
-            sample.force_type,
-            sample.advection,
-            sample.freq,
-            sample.bin_width,
-        ) {
-            Some(v) => v,
-            None => continue,
-        };
-        let ft = sample.force_type as u8;
-        let floor_ft = if ft < 9 { floor[ft as usize] } else { f64::NAN };
-        if !(floor_ft.is_finite() && floor_ft > 0.0) {
-            continue;
-        }
-        let tolman = if sample.force_type == 0.0 && sample.z > 0.0 {
-            let z1 = 1.0 + sample.z;
-            1.0 / (z1 * z1 * z1 * z1)
-        } else {
-            1.0
-        };
-        let val_max = sample.val.abs() * tolman;
-        let scale2 = softening * softening;
-        if !val_max.is_finite() || val_max < floor_ft * scale2 {
-            continue;
-        }
-        let p = match sample.motion.at(t2, sample.epoch, eph) {
-            Some(p) => p,
-            None => continue,
-        };
-        let ddx = p[0] - center[0];
-        let ddy = p[1] - center[1];
-        let ddz = p[2] - center[2];
-        let d2 = ddx * ddx + ddy * ddy + ddz * ddz;
-        let d = d2.sqrt();
-        let sd = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
-        let transverse2 = (d2 - sd * sd).max(0.0);
-        if sample.ttl <= 0.0 || sample.ttl.is_nan() {
-            continue;
-        }
-        let retarded = if v_prop > 0.0 && d > 0.0 {
-            (age - d / v_prop).max(0.0)
-        } else {
-            age
-        };
-        let val_eff = sample.val * (-retarded / sample.ttl).exp() * tolman;
-        if val_eff.abs() / (transverse2 + scale2) < floor_ft {
-            continue;
-        }
-        let v = if let Motion::Linear { v, .. } = &sample.motion {
-            [v[0], v[1], v[2]]
-        } else {
-            let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
-                Some(pd) => pd,
+    let mut emit_star = |samples: &Vec<Arc<Sample>>| {
+        for sample in samples {
+            let age = (t2 - sample.epoch).abs();
+            if age > sample.ttl * 64.0 {
+                continue;
+            }
+            if signal_reach(
+                sample.force_type,
+                sample.advection,
+                age,
+                sample.freq,
+                sample.bin_width,
+            )
+            .is_none()
+            {
+                continue;
+            }
+            let v_prop = match propagation_speed(
+                sample.force_type,
+                sample.advection,
+                sample.freq,
+                sample.bin_width,
+            ) {
+                Some(v) => v,
                 None => continue,
             };
-            [
-                (p_dt[0] - p[0]) / 1e-3,
-                (p_dt[1] - p[1]) / 1e-3,
-                (p_dt[2] - p[2]) / 1e-3,
-            ]
-        };
-        records.push((
-            p[0],
-            p[1],
-            p[2],
-            sample.val,
-            sample.epoch,
-            sample.ttl,
-            sample.tau,
-            wire_extent(sample.extent),
-            sample.kernel_id,
-            sample.force_type,
-            sample.absorption,
-            sample.advection,
-            v[0],
-            v[1],
-            v[2],
-            if sample.force_type == 0.0 {
-                sample.z
+            let ft = sample.force_type as u8;
+            let floor_ft = if ft < 9 { floor[ft as usize] } else { f64::NAN };
+            if !(floor_ft.is_finite() && floor_ft > 0.0) {
+                continue;
+            }
+            let tolman = if sample.force_type == 0.0 && sample.z > 0.0 {
+                let z1 = 1.0 + sample.z;
+                1.0 / (z1 * z1 * z1 * z1)
             } else {
-                0.0
-            },
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            sample.color_index,
-            sample.freq,
-            sample.bin_width,
-            sample.phase.unwrap_or(PHASE_PAD),
-            match sample.phase {
-                Some(_) => 1.0,
-                None => 0.0,
-            },
-        ));
+                1.0
+            };
+            let val_max = sample.val.abs() * tolman;
+            let scale2 = softening * softening;
+            if !(val_max >= 0.0) || val_max < floor_ft * scale2 {
+                continue;
+            }
+            let p = match sample.motion.at(t2, sample.epoch, eph) {
+                Some(p) => p,
+                None => continue,
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let d2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            let d = d2.sqrt();
+            let sd = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
+            let transverse2 = (d2 - sd * sd).max(0.0);
+            if sample.ttl <= 0.0 || sample.ttl.is_nan() {
+                continue;
+            }
+            let retarded = if v_prop > 0.0 && d > 0.0 {
+                (age - d / v_prop).max(0.0)
+            } else {
+                age
+            };
+            let val_eff = sample.val * (-retarded / sample.ttl).exp() * tolman;
+            if val_eff.abs() / (transverse2 + scale2) < floor_ft {
+                continue;
+            }
+            let v = if let Motion::Linear { v, .. } = &sample.motion {
+                [v[0], v[1], v[2]]
+            } else {
+                let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
+                    Some(pd) => pd,
+                    None => continue,
+                };
+                [
+                    (p_dt[0] - p[0]) / 1e-3,
+                    (p_dt[1] - p[1]) / 1e-3,
+                    (p_dt[2] - p[2]) / 1e-3,
+                ]
+            };
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                sample.val,
+                sample.epoch,
+                sample.ttl,
+                sample.tau,
+                wire_extent(sample.extent),
+                sample.kernel_id,
+                sample.force_type,
+                sample.absorption,
+                sample.advection,
+                v[0],
+                v[1],
+                v[2],
+                if sample.force_type == 0.0 {
+                    sample.z
+                } else {
+                    0.0
+                },
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                sample.color_index,
+                sample.freq,
+                sample.bin_width,
+                sample.phase.unwrap_or(PHASE_PAD),
+                match sample.phase {
+                    Some(_) => 1.0,
+                    None => 0.0,
+                },
+            ));
+        }
+    };
+    if !hash.star_cells.is_empty() {
+        let qf = center;
+        let dt_star = (t2 - hash.star_epoch_min).abs() + delta_t_cache;
+        let rho_star = C_LIGHT * dt_star + pad;
+        let s = hash.cell_size_star;
+        let qlo = star_cell_of([qf[0] - rho_star, qf[1] - rho_star, qf[2] - rho_star], s).0;
+        let qhi = star_cell_of([qf[0] + rho_star, qf[1] + rho_star, qf[2] + rho_star], s).0;
+        let star_lo = hash.star_lo.0;
+        let star_hi = hash.star_hi.0;
+        let lo = (
+            qlo.0.max(star_lo.0),
+            qlo.1.max(star_lo.1),
+            qlo.2.max(star_lo.2),
+        );
+        let hi = (
+            qhi.0.min(star_hi.0),
+            qhi.1.min(star_hi.1),
+            qhi.2.min(star_hi.2),
+        );
+        if lo.0 <= hi.0 && lo.1 <= hi.1 && lo.2 <= hi.2 {
+            let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+                .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+                .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
+            let in_box = |ck: &StarCellKey| {
+                let c = ck.0;
+                c.0 >= lo.0
+                    && c.0 <= hi.0
+                    && c.1 >= lo.1
+                    && c.1 <= hi.1
+                    && c.2 >= lo.2
+                    && c.2 <= hi.2
+            };
+            if span > hash.star_cells.len() as u64 * 4 {
+                for (ck, v) in &hash.star_cells {
+                    if in_box(ck) {
+                        emit_star(v);
+                    }
+                }
+            } else {
+                for cx in lo.0..=hi.0 {
+                    for cy in lo.1..=hi.1 {
+                        for cz in lo.2..=hi.2 {
+                            if let Some(v) = hash.star_cells.get(&StarCellKey((cx, cy, cz))) {
+                                emit_star(v);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     if hash.cells.is_empty() {
         return;
     }
     let qf = center;
     let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
-    let rho = hash.anchor_vmax * dt + 0.5 * hash.anchor_amax * dt * dt + pad;
+    let rho = enclosure_rho(hash.anchor_vmax, hash.anchor_amax, dt, pad);
     let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
@@ -550,9 +673,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             let future_age = age + delta_t_cache;
             let reach = reach_signal
                 + sample.extent
-                + sample.anchor_vmax * future_age
-                + 0.5 * sample.anchor_amax * future_age * future_age
-                + pad;
+                + enclosure_rho(sample.anchor_vmax, sample.anchor_amax, future_age, pad);
             let dx = sample.anchor_p0[0] - qf[0];
             let dy = sample.anchor_p0[1] - qf[1];
             let dz = sample.anchor_p0[2] - qf[2];
