@@ -136,8 +136,8 @@ cloudflare/cloudflared-config.yml
 # Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
 /state/
 
-# Geteilter Zustand-Ledger (Postfach-Zeile trägt Mail-/PII-Inhalte) — nie ins Repo; lokal erhalten.
-docs/zustand/external-state.md
+# Geteilter Zustand-Ledger → privater Baum `state/zustand/external-state.md` (PII-Zeile);
+# im öffentlichen Baum steht nur der getrackte Zeiger `docs/zustand/external-state.md`.
 
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv
