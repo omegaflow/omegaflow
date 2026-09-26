@@ -78,6 +78,23 @@ pub const XPFORM: &[Field] = &[
     f(18, 289, 324, 0, 32, "SC_XPON_LP"),
 ];
 
+pub const XPFORM8: &[Field] = &[
+    f(1, 1, 32, 0, 32, "RECORD_FORMAT"),
+    f(4, 73, 84, 0, 8, "XPON_ON_YEAR"),
+    f(5, 85, 100, 0, 16, "XPON_ON_DOY"),
+    f(6, 101, 108, 0, 8, "XPON_ON_HOUR"),
+    f(7, 109, 120, 0, 8, "XPON_ON_MINUTE"),
+    f(8, 121, 128, 0, 8, "XPON_ON_SECOND"),
+    f(10, 141, 156, 0, 16, "SPACECRAFT"),
+    f(14, 181, 192, 0, 8, "XPON_OFF_YEAR"),
+    f(15, 193, 208, 0, 16, "XPON_OFF_DOY"),
+    f(16, 209, 216, 0, 8, "XPON_OFF_HOUR"),
+    f(17, 217, 228, 0, 8, "XPON_OFF_MINUTE"),
+    f(18, 229, 236, 0, 8, "XPON_OFF_SECOND"),
+    f(21, 265, 288, 0, 24, "SC_XPON_HP"),
+    f(23, 301, 324, 0, 24, "SC_XPON_LP"),
+];
+
 pub const TKFORM: &[Field] = &[
     f(1, 1, 36, 29, 32, "DATA_LENGTH"),
     f(2, 37, 72, 29, 32, "RECORD_TYPE"),
@@ -197,6 +214,49 @@ pub const TKFORM: &[Field] = &[
     f(116, 2125, 2160, 0, 32, "XMTR_FREQ"),
 ];
 
+pub const FMT_TRK_225: u8 = 4;
+pub const FMT_SFOC_NAV_225: u8 = 8;
+
+const FMT_BITS: Field = f(1, 1, 32, 0, 32, "RECORD_FORMAT");
+
+pub fn record_format(rec: &[u8]) -> Option<u8> {
+    match extract(rec, &FMT_BITS) {
+        v if v == FMT_TRK_225 as i64 => Some(FMT_TRK_225),
+        v if v == FMT_SFOC_NAV_225 as i64 => Some(FMT_SFOC_NAV_225),
+        _ => None,
+    }
+}
+
+pub const TKFORM8: &[Field] = &[
+    f(1, 1, 32, 0, 32, "RECORD_FORMAT"),
+    f(3, 41, 72, 0, 32, "RECORD_TYPE"),
+    f(4, 73, 84, 0, 8, "SAMPLE_YEAR"),
+    f(5, 85, 100, 0, 16, "SAMPLE_DOY"),
+    f(6, 101, 108, 0, 8, "SAMPLE_HOUR"),
+    f(7, 109, 116, 0, 8, "SAMPLE_MINUTE"),
+    f(8, 117, 124, 0, 8, "SAMPLE_SECOND"),
+    f(10, 145, 154, 0, 32, "RECEIVING_STATION"),
+    f(11, 155, 162, 0, 8, "DOWNLINK_BAND"),
+    f(12, 163, 168, 0, 8, "DATA_TYPE"),
+    f(14, 173, 176, 0, 8, "GROUND_MODE"),
+    f(15, 177, 192, 0, 16, "SPACECRAFT"),
+    f(20, 218, 235, -1, 32, "DOPPLER_BIAS"),
+    f(29, 257, 288, 0, 32, "SAMPLE_INTERVAL"),
+    f(30, 289, 312, 0, 24, "DOPPLER_CNT_HP"),
+    f(31, 313, 336, 0, 24, "DOPPLER_CNT_IP"),
+    f(32, 337, 360, 0, 24, "DOPPLER_CNT_LP"),
+    f(43, 589, 620, 0, 32, "DOPPLER_REF_HP"),
+    f(44, 621, 652, 0, 32, "DOPPLER_REF_LP"),
+    f(74, 1337, 1368, 0, 32, "DOPPLER_RESID"),
+    f(87, 1467, 1476, 0, 32, "SLIPPED_CYCLE"),
+    f(89, 1495, 1512, -1, 32, "SIGNAL_STRENGTH"),
+    f(120, 1809, 1840, 0, 32, "RAMP_RATE_HP"),
+    f(121, 1841, 1872, 0, 32, "RAMP_RATE_LP"),
+    f(22, 237, 237, 0, 8, "FREQ_LEVEL"),
+    f(140, 1959, 1986, 0, 32, "XMTR_REF_HP"),
+    f(141, 1987, 2016, 0, 32, "XMTR_REF_LP"),
+];
+
 pub fn field_of(table: &[Field], item: u32) -> Option<&Field> {
     table.iter().find(|x| x.item == item)
 }
@@ -271,6 +331,8 @@ pub struct Tracking {
     pub ramp_rate: i64,
     pub slipped_cycle: i64,
     pub signal_strength: i64,
+    pub ref_sky: Option<bool>,
+    pub xmtr_ref: Option<i64>,
 }
 
 pub fn tracking_record(rec: &[u8]) -> Tracking {
@@ -293,6 +355,42 @@ pub fn tracking_record(rec: &[u8]) -> Tracking {
         ramp_rate: extract(rec, &TKFORM[111]),
         slipped_cycle: extract(rec, &TKFORM[75]),
         signal_strength: extract(rec, &TKFORM[77]),
+        ref_sky: None,
+        xmtr_ref: None,
+    }
+}
+
+pub fn tracking_record_f8(rec: &[u8]) -> Tracking {
+    let cnt_hp = extract(rec, &TKFORM8[14]);
+    let cnt_ip = extract(rec, &TKFORM8[15]);
+    let cnt_lp = extract(rec, &TKFORM8[16]);
+    let ref_hp = extract(rec, &TKFORM8[17]);
+    let ref_lp = extract(rec, &TKFORM8[18]);
+    let ramp_hp = extract(rec, &TKFORM8[22]);
+    let ramp_lp = extract(rec, &TKFORM8[23]);
+    let xmtr_hp = extract(rec, &TKFORM8[25]);
+    let xmtr_lp = extract(rec, &TKFORM8[26]);
+    Tracking {
+        year: extract(rec, &TKFORM8[2]),
+        day: extract(rec, &TKFORM8[3]),
+        hour: extract(rec, &TKFORM8[4]),
+        minute: extract(rec, &TKFORM8[5]),
+        second: extract(rec, &TKFORM8[6]),
+        spacecraft: extract(rec, &TKFORM8[11]),
+        data_type: extract(rec, &TKFORM8[9]),
+        ground_mode: extract(rec, &TKFORM8[10]),
+        station: extract(rec, &TKFORM8[7]),
+        doppler_bias: extract(rec, &TKFORM8[12]) / 1000,
+        sampler_time: extract(rec, &TKFORM8[13]),
+        doppler_cnt_hp: cnt_hp * 10_000 + cnt_ip / 1_000,
+        doppler_cnt_lp: (cnt_ip % 1_000) * 10_000 + (cnt_lp + 500) / 1_000,
+        doppler_ref: ref_hp * 10_000 + (ref_lp + 50_000) / 100_000,
+        doppler_resid: extract(rec, &TKFORM8[19]),
+        ramp_rate: ramp_hp * 1_000_000_000 + ramp_lp,
+        slipped_cycle: extract(rec, &TKFORM8[20]),
+        signal_strength: extract(rec, &TKFORM8[21]),
+        ref_sky: Some(extract(rec, &TKFORM8[24]) == 1),
+        xmtr_ref: Some(xmtr_hp * 10_000 + (xmtr_lp + 50_000) / 100_000),
     }
 }
 
@@ -378,6 +476,17 @@ pub fn uly_component_name(comp: u32) -> Option<&'static str> {
     }
 }
 
+pub const COMP_GLL_SKYFREQ: u32 = 3;
+pub const COMP_GLL_SKYFREQ_X: u32 = 4;
+
+pub fn gll_component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_GLL_SKYFREQ => Some("gll_rss_atdf_sky_frequency_hz"),
+        COMP_GLL_SKYFREQ_X => Some("gll_rss_atdf_x_sky_frequency_hz"),
+        _ => None,
+    }
+}
+
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let rows = parse_bin(bytes)?;
     let out: Vec<(f64, f64, u32)> = rows
@@ -408,10 +517,36 @@ pub fn parse_uly_series_x(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     if out.is_empty() { None } else { Some(out) }
 }
 
+pub fn parse_gll_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_bin(bytes)?;
+    let out: Vec<(f64, f64, u32)> = rows
+        .into_iter()
+        .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
+        .map(|r| (r[0], r[1], COMP_GLL_SKYFREQ))
+        .collect();
+    if out.is_empty() { None } else { Some(out) }
+}
+
+pub fn parse_gll_series_x(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_bin(bytes)?;
+    let out: Vec<(f64, f64, u32)> = rows
+        .into_iter()
+        .filter(|r| r[0].is_finite() && r[1].is_finite() && r[1] > 0.0)
+        .map(|r| (r[0], r[1], COMP_GLL_SKYFREQ_X))
+        .collect();
+    if out.is_empty() { None } else { Some(out) }
+}
+
 pub const S_BAND_RATIO: f64 = 96.0 * 240.0 / 221.0;
 pub const RATE_OFFSET: f64 = 1e6;
 pub const FSKY_MED_HALF_WIDTH: f64 = 0.6e6;
 pub const GAP_DAY: f64 = 0.1;
+
+pub const S_BAND_TURNAROUND: f64 = 240.0 / 221.0;
+pub const S_UPLINK_REF_LO: f64 = 2110e6;
+pub const S_UPLINK_REF_HI: f64 = 2120e6;
+pub const F8_DOPPLER_RATE_HALF_WIDTH: f64 = 524_288.0;
+pub const F8_FSKY_MED_HALF_WIDTH: f64 = 2_097_152.0;
 
 pub const X_BAND_RATIO: f64 = 96.0 * 880.0 / 221.0;
 pub const X_FSKY_BASE_HZ: f64 = 8408.209876e6;
@@ -432,14 +567,24 @@ fn tdb_of(tr: &Tracking, lsk: &crate::lsk::LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix)
 }
 
-fn header_of(stripped: &[u8]) -> (i64, f64, f64) {
+fn header_of(stripped: &[u8], fmt: u8) -> (i64, f64, f64) {
     let rec0 = &stripped[0..LOGICAL_RECORD];
     let rec1 = &stripped[LOGICAL_RECORD..2 * LOGICAL_RECORD];
-    let year = extract(rec0, field_of(IDFORM, 3).unwrap());
-    let day = extract(rec0, field_of(IDFORM, 4).unwrap());
-    let sc = extract(rec1, field_of(XPFORM, 9).unwrap());
-    let xpon_hp = extract(rec1, field_of(XPFORM, 17).unwrap());
-    let xpon_lp = extract(rec1, field_of(XPFORM, 18).unwrap());
+    let year = extract(rec0, &IDFORM[2]);
+    let day = extract(rec0, &IDFORM[3]);
+    let (sc, xpon_hp, xpon_lp) = if fmt == FMT_SFOC_NAV_225 {
+        (
+            extract(rec1, &XPFORM8[6]),
+            extract(rec1, &XPFORM8[12]),
+            extract(rec1, &XPFORM8[13]),
+        )
+    } else {
+        (
+            extract(rec1, &XPFORM[7]),
+            extract(rec1, &XPFORM[13]),
+            extract(rec1, &XPFORM[14]),
+        )
+    };
     let xpon = xpon_hp as f64 * 1e4 + xpon_lp as f64 / 1e3;
     (sc, full_year(year) as f64 + (day - 1) as f64 / 366.0, xpon)
 }
@@ -466,7 +611,7 @@ pub fn reduce_skyfreq(
         eprintln!("{name}: {nlog} logical records — too short");
         return None;
     }
-    let (sc, file_year, xpon) = header_of(&stripped);
+    let (sc, file_year, xpon) = header_of(&stripped, FMT_TRK_225);
     let mut recs: Vec<Tracking> = Vec::with_capacity(nlog - 2);
     let mut skipped_zero = 0usize;
     for i in 2..nlog {
@@ -636,6 +781,7 @@ pub struct UlySkyFreq {
     pub ref_rejected: usize,
     pub gap_rejected: usize,
     pub wrap_rejected: usize,
+    pub rate_rejected: usize,
     pub med_rejected: usize,
 }
 
@@ -651,31 +797,47 @@ pub fn reduce_uly_skyfreq(
         eprintln!("{name}: {nlog} logical records — too short");
         return None;
     }
-    let (sc, file_year, xpon) = header_of(&stripped);
-    let band_field = field_of(TKFORM, 11).unwrap();
-    let mut recs: Vec<(Tracking, i64)> = Vec::with_capacity(nlog - 2);
+    let band_field4 = &TKFORM[10];
+    let band_field8 = &TKFORM8[8];
+    let mut file_fmt: Option<u8> = None;
+    let mut recs: Vec<(Tracking, i64, u8)> = Vec::with_capacity(nlog - 2);
     let mut skipped_zero = 0usize;
+    let mut skipped_unknown = 0usize;
+    let mut n_fmt4 = 0usize;
+    let mut n_fmt8 = 0usize;
     let mut n_sband = 0usize;
     let mut n_xband = 0usize;
     for i in 2..nlog {
         let rec = &stripped[i * LOGICAL_RECORD..(i + 1) * LOGICAL_RECORD];
-        let tr = tracking_record(rec);
+        let Some(fmt) = record_format(rec) else {
+            skipped_unknown += 1;
+            continue;
+        };
+        file_fmt.get_or_insert(fmt);
+        let (tr, band) = if fmt == FMT_SFOC_NAV_225 {
+            n_fmt8 += 1;
+            (tracking_record_f8(rec), extract(rec, band_field8))
+        } else {
+            n_fmt4 += 1;
+            (tracking_record(rec), extract(rec, band_field4))
+        };
         if tr.day == 0 {
             skipped_zero += 1;
             continue;
         }
-        let band = extract(rec, band_field);
         match band {
             ULY_BAND_S => n_sband += 1,
             ULY_BAND_X => n_xband += 1,
             _ => {}
         }
-        recs.push((tr, band));
+        recs.push((tr, band, fmt));
     }
     if recs.len() < 2 {
         eprintln!("{name}: {} tracking records — too short", recs.len());
         return None;
     }
+    let fmt = file_fmt?;
+    let (sc, file_year, xpon) = header_of(&stripped, fmt);
     let mut n = recs.len();
     let mut t = vec![0.0f64; n];
     let mut dcnt = vec![0.0f64; n];
@@ -690,12 +852,54 @@ pub fn reduce_uly_skyfreq(
     let mut strength = vec![0i64; n];
     let mut ramp = vec![0i64; n];
     let mut bands = vec![0i64; n];
+    let mut fmts = vec![0u8; n];
+    let mut uplink_ref = vec![false; n];
     let mut kept = 0usize;
-    for (tr, band) in recs.iter() {
+    let mut bias8_hist: Vec<(i64, usize)> = Vec::new();
+    let mut ref8_khz_hist: Vec<(i64, usize)> = Vec::new();
+    let mut mode8_hist: Vec<(i64, usize)> = Vec::new();
+    let mut xmtr8_khz_hist: Vec<(i64, usize)> = Vec::new();
+    for (tr, band, fmt) in recs.iter() {
         let Some(tdb) = tdb_of(tr, lsk) else {
             continue;
         };
-        let r = tr.doppler_ref as f64 / 10.0;
+        let threeway = *fmt == FMT_SFOC_NAV_225 && (tr.ground_mode == 3 || tr.ground_mode == 4);
+        if *fmt == FMT_SFOC_NAV_225
+            && (tr.data_type == DTYPE_ONEWAY_DOPPLER || tr.data_type == DTYPE_TWOWAY_DOPPLER)
+        {
+            match bias8_hist.iter_mut().find(|(b, _)| *b == tr.doppler_bias) {
+                Some((_, c)) => *c += 1,
+                None => bias8_hist.push((tr.doppler_bias, 1)),
+            }
+            match mode8_hist.iter_mut().find(|(m, _)| *m == tr.ground_mode) {
+                Some((_, c)) => *c += 1,
+                None => mode8_hist.push((tr.ground_mode, 1)),
+            }
+            if tr.ground_mode == 3 || tr.ground_mode == 4 {
+                if let Some(xmtr_ref) = tr.xmtr_ref {
+                    let khz = (xmtr_ref as f64 / 10_000.0).round() as i64;
+                    match xmtr8_khz_hist.iter_mut().find(|(k, _)| *k == khz) {
+                        Some((_, c)) => *c += 1,
+                        None => xmtr8_khz_hist.push((khz, 1)),
+                    }
+                }
+            }
+        }
+        if *fmt == FMT_SFOC_NAV_225
+            && (tr.data_type == DTYPE_ONEWAY_DOPPLER || tr.data_type == DTYPE_TWOWAY_DOPPLER)
+            && tr.ref_sky == Some(true)
+        {
+            let khz = (tr.doppler_ref as f64 / 10_000.0).round() as i64;
+            match ref8_khz_hist.iter_mut().find(|(k, _)| *k == khz) {
+                Some((_, c)) => *c += 1,
+                None => ref8_khz_hist.push((khz, 1)),
+            }
+        }
+        let r = match (threeway, tr.xmtr_ref) {
+            (true, Some(x)) => x as f64 / 10.0,
+            (true, None) => continue,
+            (false, _) => tr.doppler_ref as f64 / 10.0,
+        };
         let s = tr.sampler_time as f64 / 100.0;
         t[kept] = tdb;
         dcnt[kept] = tr.doppler_cnt_hp as f64 * 1e4 + tr.doppler_cnt_lp as f64 / 1e3;
@@ -710,6 +914,8 @@ pub fn reduce_uly_skyfreq(
         strength[kept] = tr.signal_strength;
         ramp[kept] = tr.ramp_rate;
         bands[kept] = *band;
+        fmts[kept] = *fmt;
+        uplink_ref[kept] = *fmt == FMT_SFOC_NAV_225 && (tr.ref_sky == Some(true) || threeway);
         kept += 1;
     }
     n = kept;
@@ -730,9 +936,32 @@ pub fn reduce_uly_skyfreq(
     strength.truncate(n);
     ramp.truncate(n);
     bands.truncate(n);
+    fmts.truncate(n);
+    uplink_ref.truncate(n);
 
-    let ref_min = ref_hz.iter().copied().fold(f64::INFINITY, f64::min);
-    let ref_max = ref_hz.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    let (ref4_min, ref4_max, ref8_min, ref8_max) = ref_hz.iter().zip(fmts.iter()).fold(
+        (
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+        ),
+        |(r4lo, r4hi, r8lo, r8hi), (&r, &f)| {
+            if f == FMT_SFOC_NAV_225 {
+                (r4lo, r4hi, r8lo.min(r), r8hi.max(r))
+            } else {
+                (r4lo.min(r), r4hi.max(r), r8lo, r8hi)
+            }
+        },
+    );
+    bias8_hist.sort_by_key(|(_, c)| std::cmp::Reverse(*c));
+    bias8_hist.truncate(8);
+    ref8_khz_hist.sort_by_key(|(_, c)| std::cmp::Reverse(*c));
+    ref8_khz_hist.truncate(8);
+    mode8_hist.sort_by_key(|(_, c)| std::cmp::Reverse(*c));
+    mode8_hist.truncate(8);
+    xmtr8_khz_hist.sort_by_key(|(_, c)| std::cmp::Reverse(*c));
+    xmtr8_khz_hist.truncate(8);
     let mut next_same = vec![n; n];
     let mut last_s = n;
     let mut last_x = n;
@@ -773,6 +1002,8 @@ pub fn reduce_uly_skyfreq(
         let sdoppler = if bias[i] >= 0 { 1.0 } else { -1.0 };
         let ratio = if bands[i] == ULY_BAND_X {
             X_BAND_RATIO
+        } else if uplink_ref[i] {
+            S_BAND_TURNAROUND
         } else {
             S_BAND_RATIO
         };
@@ -802,7 +1033,9 @@ pub fn reduce_uly_skyfreq(
     let mut ref_rejected = 0usize;
     let mut gap_rejected = 0usize;
     let mut wrap_rejected = 0usize;
+    let mut rate_rejected = 0usize;
     let mut med_rejected = 0usize;
+    let mut unpaired_mode8_hist: Vec<(i64, usize)> = Vec::new();
     for i in 0..n {
         if !good[i] {
             if dtype[i] == DTYPE_RAMP {
@@ -810,6 +1043,10 @@ pub fn reduce_uly_skyfreq(
             }
             if dtype[i] == DTYPE_ONEWAY_DOPPLER || dtype[i] == DTYPE_TWOWAY_DOPPLER {
                 no_pair += 1;
+                match unpaired_mode8_hist.iter_mut().find(|(m, _)| *m == mode[i]) {
+                    Some((_, c)) => *c += 1,
+                    None => unpaired_mode8_hist.push((mode[i], 1)),
+                }
             } else {
                 no_doppler += 1;
             }
@@ -823,6 +1060,8 @@ pub fn reduce_uly_skyfreq(
         let is_x = bands[i] == ULY_BAND_X;
         let (ref_lo, ref_hi) = if is_x {
             (X_BAND_REF_LO, X_BAND_REF_HI)
+        } else if uplink_ref[i] {
+            (S_UPLINK_REF_LO, S_UPLINK_REF_HI)
         } else {
             (S_BAND_REF_LO, S_BAND_REF_HI)
         };
@@ -839,11 +1078,21 @@ pub fn reduce_uly_skyfreq(
             wrap_rejected += 1;
             continue;
         }
-        let (fmed, half_width) = if is_x {
-            (fmed_x, X_FSKY_MED_HALF_WIDTH)
+        if fmts[i] == FMT_SFOC_NAV_225 {
+            let drate = (dcnt[j] - dcnt[i]) / (t[j] - t[i]);
+            if (drate - RATE_OFFSET).abs() > F8_DOPPLER_RATE_HALF_WIDTH {
+                rate_rejected += 1;
+                continue;
+            }
+        }
+        let half_width = if is_x {
+            X_FSKY_MED_HALF_WIDTH
+        } else if fmts[i] == FMT_SFOC_NAV_225 {
+            F8_FSKY_MED_HALF_WIDTH
         } else {
-            (fmed_s, FSKY_MED_HALF_WIDTH)
+            FSKY_MED_HALF_WIDTH
         };
+        let fmed = if is_x { fmed_x } else { fmed_s };
         if (fsky[i] - fmed).abs() >= half_width {
             med_rejected += 1;
             continue;
@@ -885,8 +1134,10 @@ pub fn reduce_uly_skyfreq(
     stations.sort_unstable();
     stations.dedup();
     dtype_hist.sort_by_key(|(d, _)| *d);
+    unpaired_mode8_hist.sort_by_key(|(_, c)| std::cmp::Reverse(*c));
+    unpaired_mode8_hist.truncate(8);
     eprintln!(
-        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null records), bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_sband_out} S-band / {n_xband_out} X-band fsky samples (median S {fmed_s:.6e} / X {fmed_x:.6e} Hz), ref {ref_min:.3e}..{ref_max:.3e} Hz, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {med_rejected} median, {no_pair} unpaired"
+        "{name}: SC {sc}, file year {file_year:.1}, Xponder {xpon:.3e} Hz, {n} tracking records ({skipped_zero} null, {skipped_unknown} unknown-format), fmt4 {n_fmt4} / fmt8 {n_fmt8}, bands S {n_sband} / X {n_xband}, dtype {dtype_hist:?}, {n_sband_out} S-band / {n_xband_out} X-band fsky samples (median S {fmed_s:.6e} / X {fmed_x:.6e} Hz), ref4 {ref4_min:.3e}..{ref4_max:.3e} / ref8 {ref8_min:.3e}..{ref8_max:.3e} Hz, ref8kHz {ref8_khz_hist:?}, mode8 {mode8_hist:?}, xmtr8kHz {xmtr8_khz_hist:?}, bias8 {bias8_hist:?}, {n_slipped} with slipped cycle, stations {stations:?} — separated: {ramp_records} ramp, {bias_rejected} bias, {ref_rejected} ref, {gap_rejected} gap, {wrap_rejected} wrap, {rate_rejected} rate, {med_rejected} median, {no_pair} unpaired {unpaired_mode8_hist:?}"
     );
     if out_s.is_empty() && out_x.is_empty() {
         None
@@ -901,6 +1152,7 @@ pub fn reduce_uly_skyfreq(
             ref_rejected,
             gap_rejected,
             wrap_rejected,
+            rate_rejected,
             med_rejected,
         })
     }
@@ -1151,6 +1403,7 @@ mod tests {
     }
 
     fn set_tk(rec: &mut [u8], band: i64, second: i64, cnt_hp: i64) {
+        set_field(rec, field_of(TKFORM, 1).unwrap(), 64);
         set_field(rec, field_of(TKFORM, 3).unwrap(), 90);
         set_field(rec, field_of(TKFORM, 4).unwrap(), 1);
         set_field(rec, field_of(TKFORM, 7).unwrap(), second);
@@ -1231,6 +1484,7 @@ mod tests {
             ref_rejected,
             gap_rejected,
             wrap_rejected,
+            rate_rejected,
             med_rejected,
         } = res;
         assert_eq!(out_s.len(), 1);
@@ -1244,6 +1498,7 @@ mod tests {
                 + ref_rejected
                 + gap_rejected
                 + wrap_rejected
+                + rate_rejected
                 + med_rejected
                 + no_doppler,
             n
@@ -1272,6 +1527,7 @@ mod tests {
             ref_rejected,
             gap_rejected,
             wrap_rejected,
+            rate_rejected,
             med_rejected,
         } = res;
         assert_eq!(out_s.len(), 2, "S records pair with the next S record");
@@ -1285,6 +1541,7 @@ mod tests {
                 + ref_rejected
                 + gap_rejected
                 + wrap_rejected
+                + rate_rejected
                 + med_rejected
                 + no_doppler,
             n
@@ -1325,6 +1582,7 @@ mod tests {
             ref_rejected,
             gap_rejected,
             wrap_rejected,
+            rate_rejected,
             med_rejected,
         } = res;
         assert!(out_s.is_empty(), "a contiguous X block carries no S record");
@@ -1338,6 +1596,7 @@ mod tests {
                 + ref_rejected
                 + gap_rejected
                 + wrap_rejected
+                + rate_rejected
                 + med_rejected
                 + no_doppler,
             n
@@ -1359,5 +1618,152 @@ mod tests {
         assert_eq!(field_of(TKFORM, 11).map(|f| f.name), Some("DOWNLINK_BAND"));
         assert_eq!(ULY_BAND_S, 1);
         assert_eq!(ULY_BAND_X, 2);
+    }
+
+    #[test]
+    fn record_format_discriminates_trk_and_sfoc() {
+        let mut rec4 = [0u8; LOGICAL_RECORD];
+        set_field(&mut rec4, field_of(TKFORM, 1).unwrap(), 64);
+        assert_eq!(record_format(&rec4), Some(FMT_TRK_225));
+        let mut rec8 = [0u8; LOGICAL_RECORD];
+        set_field(&mut rec8, field_of(TKFORM8, 1).unwrap(), 8);
+        assert_eq!(record_format(&rec8), Some(FMT_SFOC_NAV_225));
+        let mut recx = [0u8; LOGICAL_RECORD];
+        set_field(&mut recx, field_of(TKFORM8, 1).unwrap(), 3);
+        assert_eq!(record_format(&recx), None);
+        assert_eq!(record_format(&[0u8; LOGICAL_RECORD]), None);
+    }
+
+    #[test]
+    fn tracking_record_leaves_f8_only_fields_absent() {
+        let mut rec = [0u8; LOGICAL_RECORD];
+        set_tk(&mut rec, ULY_BAND_S, 0, 100);
+        let tr = tracking_record(&rec);
+        assert_eq!(
+            tr.ref_sky, None,
+            "the format-4 record carries no frequency level"
+        );
+        assert_eq!(
+            tr.xmtr_ref, None,
+            "the format-4 record carries no transmitter reference"
+        );
+    }
+
+    #[test]
+    fn tracking_record_f8_maps_sfoc_fields() {
+        let mut rec = [0u8; LOGICAL_RECORD];
+        set_field(&mut rec, field_of(TKFORM8, 1).unwrap(), 8);
+        set_field(&mut rec, field_of(TKFORM8, 4).unwrap(), 102);
+        set_field(&mut rec, field_of(TKFORM8, 5).unwrap(), 100);
+        set_field(&mut rec, field_of(TKFORM8, 6).unwrap(), 9);
+        set_field(&mut rec, field_of(TKFORM8, 7).unwrap(), 30);
+        set_field(&mut rec, field_of(TKFORM8, 8).unwrap(), 15);
+        set_field(&mut rec, field_of(TKFORM8, 10).unwrap(), 43);
+        set_field(
+            &mut rec,
+            field_of(TKFORM8, 12).unwrap(),
+            DTYPE_TWOWAY_DOPPLER,
+        );
+        set_field(&mut rec, field_of(TKFORM8, 14).unwrap(), 2);
+        set_field(&mut rec, field_of(TKFORM8, 15).unwrap(), 77);
+        set_field(&mut rec, field_of(TKFORM8, 20).unwrap(), -1000);
+        set_field(&mut rec, field_of(TKFORM8, 22).unwrap(), 0);
+        set_field(&mut rec, field_of(TKFORM8, 29).unwrap(), 6000);
+        set_field(&mut rec, field_of(TKFORM8, 30).unwrap(), 1000);
+        set_field(&mut rec, field_of(TKFORM8, 31).unwrap(), 2000);
+        set_field(&mut rec, field_of(TKFORM8, 32).unwrap(), 3000);
+        set_field(&mut rec, field_of(TKFORM8, 43).unwrap(), 22000);
+        set_field(&mut rec, field_of(TKFORM8, 44).unwrap(), 1234);
+        set_field(&mut rec, field_of(TKFORM8, 74).unwrap(), -123);
+        set_field(&mut rec, field_of(TKFORM8, 87).unwrap(), 5);
+        set_field(&mut rec, field_of(TKFORM8, 89).unwrap(), -7);
+        set_field(&mut rec, field_of(TKFORM8, 120).unwrap(), 7);
+        set_field(&mut rec, field_of(TKFORM8, 121).unwrap(), 1234);
+        let tr = tracking_record_f8(&rec);
+        assert_eq!(tr.year, 102);
+        assert_eq!(tr.day, 100);
+        assert_eq!(tr.hour, 9);
+        assert_eq!(tr.minute, 30);
+        assert_eq!(tr.second, 15);
+        assert_eq!(tr.station, 43);
+        assert_eq!(tr.data_type, DTYPE_TWOWAY_DOPPLER);
+        assert_eq!(tr.ground_mode, 2);
+        assert_eq!(tr.spacecraft, 77);
+        assert_eq!(tr.doppler_bias, -1);
+        assert_eq!(tr.sampler_time, 6000);
+        assert_eq!(tr.doppler_cnt_hp, 10_000_002);
+        assert_eq!(tr.doppler_cnt_lp, 3);
+        assert_eq!(tr.doppler_ref, 220_000_000);
+        assert_eq!(tr.doppler_resid, -123);
+        assert_eq!(tr.slipped_cycle, 5);
+        assert_eq!(tr.signal_strength, -7);
+        assert_eq!(tr.ramp_rate, 7_000_001_234);
+        assert_eq!(
+            tr.ref_sky,
+            Some(false),
+            "item 22 = 0 names the DCO reference level"
+        );
+        assert_eq!(
+            tr.xmtr_ref,
+            Some(0),
+            "items 140/141 unset carry a zero xmtr reference"
+        );
+    }
+
+    fn set_f8(rec: &mut [u8], day: i64, second: i64, cnt_ip: i64) {
+        set_field(rec, field_of(TKFORM8, 1).unwrap(), 8);
+        set_field(rec, field_of(TKFORM8, 4).unwrap(), 102);
+        set_field(rec, field_of(TKFORM8, 5).unwrap(), day);
+        set_field(rec, field_of(TKFORM8, 8).unwrap(), second);
+        set_field(rec, field_of(TKFORM8, 10).unwrap(), 43);
+        set_field(rec, field_of(TKFORM8, 11).unwrap(), ULY_BAND_S);
+        set_field(rec, field_of(TKFORM8, 12).unwrap(), DTYPE_ONEWAY_DOPPLER);
+        set_field(rec, field_of(TKFORM8, 14).unwrap(), 1);
+        set_field(rec, field_of(TKFORM8, 22).unwrap(), 1);
+        set_field(rec, field_of(TKFORM8, 29).unwrap(), 6000);
+        set_field(rec, field_of(TKFORM8, 30).unwrap(), 1000);
+        set_field(rec, field_of(TKFORM8, 31).unwrap(), cnt_ip * 100_000);
+        set_field(rec, field_of(TKFORM8, 43).unwrap(), 2113312);
+    }
+
+    fn sfoc_file(days: &[i64]) -> Vec<u8> {
+        let mut file = vec![0u8; PHYSICAL_RECORD];
+        set_field(
+            &mut file[0..LOGICAL_RECORD],
+            field_of(IDFORM, 3).unwrap(),
+            90,
+        );
+        set_field(
+            &mut file[0..LOGICAL_RECORD],
+            field_of(IDFORM, 4).unwrap(),
+            1,
+        );
+        for (idx, &day) in days.iter().enumerate() {
+            let lo = (2 + idx) * LOGICAL_RECORD;
+            let hi = (3 + idx) * LOGICAL_RECORD;
+            set_f8(&mut file[lo..hi], day, idx as i64 * 100, idx as i64 * 100);
+        }
+        file
+    }
+
+    #[test]
+    fn reduce_uly_skyfreq_parses_sfoc_format_8_file() {
+        let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+        let file = sfoc_file(&[1, 1]);
+        let res = reduce_uly_skyfreq("sfoc_f8", 1.0, &file, &lsk).expect("reduce returns samples");
+        assert_eq!(
+            res.sband.len(),
+            1,
+            "the format-8 S-band pair yields one sample"
+        );
+        assert!(res.xband.is_empty(), "no X-band records in the fixture");
+        let expected = S_BAND_TURNAROUND * 2_113_312_000.0 - (1_000_000.0 - RATE_OFFSET);
+        assert!(
+            (res.sband[0][1] - expected).abs() < 1e-3,
+            "S fsky {} != {}",
+            res.sband[0][1],
+            expected
+        );
+        assert_eq!(res.sband[0][6] as i64, 43, "station carried from item 10");
     }
 }

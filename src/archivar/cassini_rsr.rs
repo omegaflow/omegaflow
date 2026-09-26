@@ -7,6 +7,7 @@ pub const DOY_OFFSET: usize = 78;
 pub const SECOND_OFFSET: usize = 80;
 pub const DATA_CHDO_OFFSET: usize = 256;
 pub const DATA_CHDO_TYPE: u16 = 10;
+pub const DATA_CHDO_LENGTH_OFFSET: usize = 258;
 pub const SAMPLE_WORDS_OFFSET: usize = 260;
 pub const DATA_WORDS: usize = 1000;
 pub const SFDU_CONTROL_AUTHORITY: [u8; 4] = *b"NJPL";
@@ -36,8 +37,24 @@ fn be32(bytes: &[u8], i: usize) -> u32 {
     u32::from_be_bytes([bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3]])
 }
 
+pub fn label_data_bytes(rec: &[u8]) -> Option<usize> {
+    if rec.len() < SAMPLE_WORDS_OFFSET {
+        return None;
+    }
+    let data_bytes = be16(rec, DATA_CHDO_LENGTH_OFFSET) as usize;
+    if data_bytes < 4 || !data_bytes.is_multiple_of(4) {
+        return None;
+    }
+    Some(data_bytes)
+}
+
+pub fn record_bytes(rec: &[u8]) -> Option<usize> {
+    SAMPLE_WORDS_OFFSET.checked_add(label_data_bytes(rec)?)
+}
+
 pub fn read_record(rec: &[u8]) -> Option<RsrRecord> {
-    if rec.len() < RECORD_BYTES {
+    let data_bytes = label_data_bytes(rec)?;
+    if rec.len() < SAMPLE_WORDS_OFFSET.checked_add(data_bytes)? {
         return None;
     }
     if rec[0..4] != SFDU_CONTROL_AUTHORITY {
@@ -60,8 +77,9 @@ pub fn read_record(rec: &[u8]) -> Option<RsrRecord> {
     if !(1..=366).contains(&doy) || !second.is_finite() {
         return None;
     }
-    let mut samples = Vec::with_capacity(DATA_WORDS);
-    for w in 0..DATA_WORDS {
+    let words = data_bytes / 4;
+    let mut samples = Vec::with_capacity(words);
+    for w in 0..words {
         let word = be32(rec, SAMPLE_WORDS_OFFSET + w * 4);
         let q = (word >> 16) as u16 as i16;
         let i = (word & 0xFFFF) as u16 as i16;
@@ -78,15 +96,14 @@ pub fn read_record(rec: &[u8]) -> Option<RsrRecord> {
 }
 
 pub fn parse_records(bytes: &[u8]) -> Option<Vec<RsrRecord>> {
-    if !bytes.len().is_multiple_of(RECORD_BYTES) {
+    let stride = record_bytes(bytes)?;
+    if !bytes.len().is_multiple_of(stride) {
         return None;
     }
-    let n = bytes.len() / RECORD_BYTES;
+    let n = bytes.len() / stride;
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
-        out.push(read_record(
-            &bytes[i * RECORD_BYTES..(i + 1) * RECORD_BYTES],
-        )?);
+        out.push(read_record(&bytes[i * stride..(i + 1) * stride])?);
     }
     Some(out)
 }
@@ -193,6 +210,16 @@ mod tests {
         r
     }
 
+    fn gll_record() -> Vec<u8> {
+        let data_bytes = 8000usize;
+        let mut r = vec![0u8; SAMPLE_WORDS_OFFSET + data_bytes];
+        r[..88].copy_from_slice(&measured_header());
+        r[DATA_CHDO_OFFSET..DATA_CHDO_OFFSET + 2].copy_from_slice(&DATA_CHDO_TYPE.to_be_bytes());
+        r[DATA_CHDO_LENGTH_OFFSET..DATA_CHDO_LENGTH_OFFSET + 2]
+            .copy_from_slice(&(data_bytes as u16).to_be_bytes());
+        r
+    }
+
     #[test]
     fn decodes_measured_record_one() {
         let rec = read_record(&sample_record()).unwrap();
@@ -248,5 +275,40 @@ mod tests {
         let bytes = write_series(&rows);
         assert_eq!(parse_series(&bytes).unwrap(), rows);
         assert!(parse_series(b"X").is_none());
+    }
+
+    #[test]
+    fn record_bytes_come_from_the_label() {
+        assert_eq!(record_bytes(&sample_record()), Some(RECORD_BYTES));
+        assert_eq!(record_bytes(&gll_record()), Some(8260));
+    }
+
+    #[test]
+    fn gll_sized_record_decodes_two_thousand_samples() {
+        let rec = read_record(&gll_record()).unwrap();
+        assert_eq!(rec.samples.len(), 2000);
+    }
+
+    #[test]
+    fn parse_records_counts_gll_sized_records() {
+        let mut bytes = gll_record();
+        bytes.extend_from_slice(&gll_record());
+        let recs = parse_records(&bytes).unwrap();
+        assert_eq!(recs.len(), 2);
+    }
+
+    #[test]
+    fn absent_data_length_reads_none() {
+        let mut r = sample_record();
+        r[DATA_CHDO_LENGTH_OFFSET..DATA_CHDO_LENGTH_OFFSET + 2]
+            .copy_from_slice(&0u16.to_be_bytes());
+        assert!(label_data_bytes(&r).is_none());
+        assert!(record_bytes(&r).is_none());
+        assert!(read_record(&r).is_none());
+
+        r[DATA_CHDO_LENGTH_OFFSET..DATA_CHDO_LENGTH_OFFSET + 2]
+            .copy_from_slice(&4002u16.to_be_bytes());
+        assert!(label_data_bytes(&r).is_none());
+        assert!(read_record(&r).is_none());
     }
 }

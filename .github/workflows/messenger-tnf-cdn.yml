@@ -1,0 +1,52 @@
+name: messenger-tnf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'TNF year subdirectory (empty = full corpus, ~30 GB)'
+        required: false
+        default: '2007'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  messenger-tnf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "messenger_tnf"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "messenger_tnf asset already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "messenger_tnf asset missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "MESSENGER PDS3 TRK-2-34 TNF files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the MESSENGER TRK-2-34 TNF files to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          args=""
+          if [ -n "${{ github.event.inputs.year }}" ]; then
+            args="--year ${{ github.event.inputs.year }}"
+          fi
+          cargo run --release -p omegaflow-harvest --bin messenger_tnf_compiler -- $args --ci-mode

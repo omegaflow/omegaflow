@@ -1632,6 +1632,7 @@ fn intentional_core(key: &str) -> Option<(&'static str, &'static str, f64)> {
         || kl == "spot_class"
         || kl == "hale_class"
         || kl.contains("uv_index")
+        || kl == "data_years"
         || kl.ends_with("_type")
     {
         return Some(("DROP", "", 0.0));
@@ -1696,6 +1697,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.contains("color_index")
     {
         ("DROP", "", 0.0)
+    } else if kl.ends_with("_nm") {
+        ("em", "nm", 604800.0)
     } else if kl.ends_with("_temp_f") {
         ("thermal", "f", 86400.0)
     } else if kl.ends_with("_wind_kt") || kl.ends_with("_speed_kt") {
@@ -1726,12 +1729,15 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("em", "1", 604800.0)
     } else if kl.contains("eccentricity") || kl == "rho_cos_phi" || kl == "rho_sin_phi" {
         ("gravity", "1", 604800.0)
-    } else if kl.contains("eop_")
-        || kl.contains("ut1_utc")
-        || kl.contains("polar_motion")
-        || kl == "pmx"
-        || kl == "pmy"
-    {
+    } else if kl.contains("ut1_utc_ms") {
+        ("gravity", "ms", 86400.0)
+    } else if kl.contains("ut1_utc") {
+        ("gravity", "s", 86400.0)
+    } else if kl == "x_pole" || kl == "y_pole" || kl == "pmx" || kl == "pmy" {
+        ("gravity", "arcsec", 86400.0)
+    } else if kl.ends_with("_mas") {
+        ("gravity", "mas", 86400.0)
+    } else if kl.contains("eop_") || kl.contains("polar_motion") {
         ("UNCERTAIN", "", 0.0)
     } else if kl.contains("phase_cycle")
         || kl.ends_with("polar_angle_cycles")
@@ -2009,6 +2015,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("gravity", "logg", 604800.0)
     } else if kl.contains("planet_mass") {
         ("gravity", "M_earth", 604800.0)
+    } else if kl.contains("earth_mass") {
+        ("gravity", "M_earth", 604800.0)
     } else if kl.contains("mass") {
         ("gravity", "M_sun", 604800.0)
     } else if kl.contains("planet_radius") {
@@ -2071,6 +2079,46 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.contains("magnitude")
     {
         ("em", "mag", 604800.0)
+    } else if kl.ends_with("signal_to_noise") {
+        ("em", "1", 604800.0)
+    } else if kl.contains("semi_amplitude") {
+        ("gravity", "m/s", 604800.0)
+    } else if kl.contains("earth_radius") {
+        ("gravity", "r_earth", 604800.0)
+    } else if kl.contains("transit_duration") {
+        ("em", "h", 604800.0)
+    } else if kl.contains("exposure") {
+        ("em", "s", 604800.0)
+    } else if kl == "dm" {
+        ("em", "pc/cm3", 604800.0)
+    } else if kl == "hp" || kl == "he" || kl == "hn" {
+        ("em", "nT", 60.0)
+    } else if kl == "au" || kl == "ae" {
+        ("em", "nT", 60.0)
+    } else if kl.contains("angstrom") {
+        ("em", "1", 86400.0)
+    } else if kl.contains("_ur_h") {
+        ("em", "ur/h", 3600.0)
+    } else if kl.ends_with("_mol_cm2") {
+        ("diffusion", "mol/cm2", 86400.0)
+    } else if kl.ends_with("_10e22j") {
+        ("thermal", "e22j", 604800.0)
+    } else if kl.contains("linear_trend") {
+        ("gravity", "cm/yr", 31536000.0)
+    } else if kl.contains("slip_rate") {
+        ("seismic-body", "mm/yr", 31536000.0)
+    } else if kl.contains("trend") {
+        ("acoustic", "mm/yr", 31536000.0)
+    } else if kl.ends_with("age_yr") {
+        ("em", "yr", 31536000.0)
+    } else if kl.ends_with("_au_day") {
+        ("gravity", "au/d", 604800.0)
+    } else if kl.ends_with("_kwh_m2") {
+        ("em", "kwh/m2", 86400.0)
+    } else if kl.contains("kp_value") {
+        ("em", "1", 10800.0)
+    } else if kl.contains("erythemally_weighted") {
+        ("em", "mw/m2", 86400.0)
     } else {
         ("UNCERTAIN", "", 0.0)
     }
