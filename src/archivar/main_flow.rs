@@ -155,8 +155,7 @@ pub fn raw_presence_gate(
         if fields.is_empty() {
             eprintln!(
                 "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
-                i,
-                sources[i].format
+                i, sources[i].format
             );
             if let Ok(mut ledger) = refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-field-lines");
@@ -164,8 +163,7 @@ pub fn raw_presence_gate(
         } else {
             eprintln!(
                 "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
-                i,
-                sources[i].format
+                i, sources[i].format
             );
             if let Ok(mut ledger) = refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-propagation");
@@ -3207,8 +3205,7 @@ pub fn main_flow() {
                         let Some(body) = table.get(&seg.target) else {
                             continue;
                         };
-                        let wgccre = match pck_bodies
-                            .get(&crate::ephemeris::pck_id_of(seg.target))
+                        let wgccre = match pck_bodies.get(&crate::ephemeris::pck_id_of(seg.target))
                         {
                             Some(b) => b.clone(),
                             None => continue,
@@ -3697,6 +3694,7 @@ pub fn main_flow() {
                     | "toar_surface_o3"
                     | "ogimet_synop"
                     | "nohrsc_snowfall"
+                    | "gosat_tanso3"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -4455,10 +4453,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!(
-                                "catalog_charm2 {}: write void — retry in ttl/Φ",
-                                src_idx
-                            );
+                            eprintln!("catalog_charm2 {}: write void — retry in ttl/Φ", src_idx);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -4478,10 +4473,7 @@ pub fn main_flow() {
                             sample_ttl_override: None,
                         });
                     } else {
-                        eprintln!(
-                            "catalog_charm2 {}: extract void — retry in ttl/Φ",
-                            src_idx
-                        );
+                        eprintln!("catalog_charm2 {}: extract void — retry in ttl/Φ", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
@@ -4921,8 +4913,7 @@ pub fn main_flow() {
                 if fields.is_empty() {
                     eprintln!(
                         "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
-                        i,
-                        archive.sources[i].format
+                        i, archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
                         ledger.register(&archive.sources[i].url, "gate-no-field-lines");
@@ -4930,8 +4921,7 @@ pub fn main_flow() {
                 } else {
                     eprintln!(
                         "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
-                        i,
-                        archive.sources[i].format
+                        i, archive.sources[i].format
                     );
                     if let Ok(mut ledger) = refusal_ledger.lock() {
                         ledger.register(&archive.sources[i].url, "gate-no-propagation");
@@ -5296,4 +5286,3 @@ mod acoustic_sink_tests {
         assert!(parse_sink_names("only-one-field\n").is_empty());
     }
 }
-                    | "gosat_tanso3"
