@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: a7be2b1acdb96f91e38635659662f65626f3737343ab2dd954071daf7dfbbf59
+  sha256: a68563419e7206c1e8a9bd1c27ff6660353f48675b1247f162547ad932d092e4
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -360,6 +360,21 @@ die frühere Netzwerk-Lesart (klarer Oberlauf-Pfeil, der sich abwärts
 verdünnt) ist durch die Stille am co-lokalen Gauge nicht mehr getragen;
 eine Richtungs-Verifikation der Bahrabise-Spalten ist ein offener
 Nachfolgepunkt, nicht dieser Befund.
+
+> **Richtungs-Verifikation der Methode (gemessen 2026-09-26, 0 honored):**
+> die Bibliothek und beide Sonden sind richtungs-verifiziert —
+> `transfer_entropy_lag(x, y) = TE(y → x)` (zweites Argument = Quelle,
+> `src/mathematikerin/te.rs:96`); `te_pair_probe.rs:89` setzt `te_ab =
+> transfer_entropy_lag(b, a)` = TE(a→b) und beschriftet die Spalte
+> „TE(a→b)" korrekt, `te_pair_probe.rs:91` `te_ba = transfer_entropy_lag(a, b)`
+> = TE(b→a); `cross_te_screen.rs:281` `te_a_to_b = transfer_entropy_lag(bv, av)`
+> = TE(a→b) ebenso. Die Spiegel-Unsicherheit ist damit im Code aufgelöst —
+> die Bahrabise-Spalten sind als Pegel→Regen/Regen→Pegel nicht mehr
+> gespiegelt zu lesen. Die Bahrabise-**Nachmessung** auf den Zeitreihen
+> bleibt `pending` — die Bahrabise-Zeitreihen (DHM-Station 113 Pegel +
+> Regen, n = 169) sind nicht lokal geerntet (`data/` leer, kein
+> `meteo_harvest/`, `phi/meteo/tibet-flut-2026.json` trägt nur
+> gyirong/kollab/rasuwa, keine Bahrabise-Station).
 
 ### 3.4 Der Treiber-Niederschlag (gemessen)
 

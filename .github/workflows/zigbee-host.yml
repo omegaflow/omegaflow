@@ -41,3 +41,41 @@ jobs:
           esp-zigbee-sdk/examples/esp_zigbee_host/build/bootloader/bootloader.bin
           esp-zigbee-sdk/examples/esp_zigbee_host/build/partition_table/partition-table.bin
         if-no-files-found: error
+    - name: Write sizeof probe project
+      run: |
+        mkdir -p zb_sizeof_probe/main
+        cat > zb_sizeof_probe/CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.16)
+        include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+        project(zb_sizeof_probe)
+        EOF
+        cat > zb_sizeof_probe/main/CMakeLists.txt << 'EOF'
+        idf_component_register(SRCS "zb_probe_main.c"
+                               REQUIRES esp_common)
+        target_include_directories(${COMPONENT_LIB} PRIVATE
+            "${CMAKE_CURRENT_LIST_DIR}/../../esp-zigbee-sdk/examples/esp_zigbee_host/components/include")
+        EOF
+        cat > zb_sizeof_probe/main/zb_probe_main.c << 'EOF'
+        #include "esp_zigbee_core.h"
+
+        char zb_cfg_size[sizeof(esp_zb_cfg_t)];
+
+        void app_main(void) {}
+        EOF
+    - name: Build sizeof probe for esp32s3 (ESP-IDF v5.3.2)
+      uses: espressif/esp-idf-ci-action@v1
+      with:
+        esp_idf_version: v5.3.2
+        target: esp32s3
+        path: zb_sizeof_probe
+        command: "idf.py set-target esp32s3 && idf.py build && SIZE_HEX=$(xtensa-esp32s3-elf-nm -S build/main/libmain.a | awk '/ zb_cfg_size$/{print $2; exit}') && SIZE_DEC=$((16#$SIZE_HEX)) && printf 'SIZEOF_ESP_ZB_CFG_T=%s\n' \"$SIZE_DEC\" && printf '%s\n' \"$SIZE_DEC\" > \"$GITHUB_WORKSPACE/zb_cfg_size.txt\""
+    - name: Emit measured sizeof
+      run: |
+        SIZE=$(cat zb_cfg_size.txt)
+        echo "SIZEOF_ESP_ZB_CFG_T=$SIZE"
+        echo "SIZEOF_ESP_ZB_CFG_T=$SIZE" >> "$GITHUB_OUTPUT"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: zb-cfg-size-esp32s3
+        path: zb_cfg_size.txt
+        if-no-files-found: error

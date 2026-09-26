@@ -12275,6 +12275,18 @@ compiler tools/harvest/src/bin/slab2_compiler.rs
 at earth
 ttl 31536000
 
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field fnu_12 iras_psc_fnu_12_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
+
 url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
 format tap
 ttl 31536000
