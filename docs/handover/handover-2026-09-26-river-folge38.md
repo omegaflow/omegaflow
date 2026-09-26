@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: e9b1f88f1b57acab23ec3a31eb7e57c002a3bf36cd6de45e02f10ea905c65eba
+  sha256: 21537a93731aa7825c7926edb0f0a34b1c4f03348c2a813eeb326cdfa6838114
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -39,6 +39,13 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 ## Offen
 
 ### Linie handelt (eigen)
+
+#### clippy-Lints in eigenen Dateien — CI `-D warnings` rot (getragen 2026-09-26 von Mountain)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26 am HEAD `3eaa60de7` via `ci_manage log 36244460936`, von Mountain getragen) river-eigene Dateien rot: `src/archivar/spatial.rs:502`, `src/archivar/main_flow.rs:219` + `:857`.
+- **Blockade:** keine.
+- **Braucht:** die drei Stellen gegen den aktuellen CI-Log fixen, `cargo check` 0/0, dann `gh workflow run ci-check.yml`.
 
 #### star-dmax-probe dispatchten + Artefakt falten (RISS-Zeuge)
 - **Status:** wartend | **Bindung:** eigen

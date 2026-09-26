@@ -591,11 +591,7 @@ fn decode_ccitt_g4(rep: &Grib2DataRepresentation, data: &[u8]) -> Option<Vec<f32
     let mut values = Vec::new();
     let mut black = false;
     let mut eols = 0u32;
-    loop {
-        let first = match rdr.read_bit() {
-            Some(bit) => bit,
-            None => break,
-        };
+    while let Some(first) = rdr.read_bit() {
         let mut code = first as u16;
         let mut bits = 1u8;
         let mut run = None;
@@ -758,10 +754,7 @@ fn read_sign_magnitude(b: &[u8]) -> i64 {
     }
 }
 
-fn decode_complex_spatial_packing(
-    rep: &Grib2DataRepresentation,
-    data: &[u8],
-) -> Option<Vec<f32>> {
+fn decode_complex_spatial_packing(rep: &Grib2DataRepresentation, data: &[u8]) -> Option<Vec<f32>> {
     if rep.template_number != 3 || rep.template.len() < 38 {
         return None;
     }
