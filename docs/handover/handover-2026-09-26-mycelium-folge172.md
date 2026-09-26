@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: f9fa5f7868f7551f8dd713746567b40b104e4aad1f92261510c3422f5b95f14d
+  sha256: 9d66b05a54cdfb03743f504b35ac822073b6c4b2c786237afaa06bf97901f4dc
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -48,7 +48,7 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 #### IRIS/EarthScope EMC — netCDF-4-Arm + Lizenz
 - **Status:** autonom | **Bindung:** eigen
 - **Trigger:** Register-Pass `phi/blocked_sources.φ:335` (ORPHAN → dieser Träger).
-- **Lage:** (gemessen 2026-09-26) `data.earthscope.org/archive/seismology/products/emc/netcdf/` 200 (117 652 B); HDF5/netCDF-4 only (`GLAD-M35.r0.1-n4c.nc` 343 763 392 B); 3D-Modelle ohne CSV; Volume-Arm 8 Dateien; netcdf-Katalog-Arm fehlt; **Lizenz absent**.
+- **Lage:** (gemessen 2026-09-26) `https://data.earthscope.org/archive/seismology/products/emc/netcdf/` 200 (117 652 B); HDF5/netCDF-4 only (`GLAD-M35.r0.1-n4c.nc` 343 763 392 B); 3D-Modelle ohne CSV; Volume-Arm 8 Dateien; netcdf-Katalog-Arm fehlt; **Lizenz absent**.
 - **Blockade:** netCDF-4-Arm + Lizenzmessung.
 - **Braucht:** netCDF-4-Arm (`src/archivar/hdf5.rs`) + Lizenz messen.
 
