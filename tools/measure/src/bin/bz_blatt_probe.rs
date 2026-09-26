@@ -941,4 +941,43 @@ fn main() {
         "Storm presence in the window: what the series carry (Kp row above); a storm-free window is the quiet-time measurement, no artifact."
     );
     println!("Silent lines are findings. Exit 0.");
+
+    if let Some(i) = args.iter().position(|a| a == "--write") {
+        let path = match args.get(i + 1) {
+            Some(p) => p.clone(),
+            None => {
+                eprintln!("bz_blatt_probe: --write carries no path");
+                std::process::exit(2);
+            }
+        };
+        let n = dbdt_bz.len();
+        if n < omegaflow::te::BLATT_N_FLOOR {
+            eprintln!(
+                "bz_blatt_probe: paired n = {n} < {} — the pair stays unwritten (0 honored)",
+                omegaflow::te::BLATT_N_FLOOR
+            );
+        } else {
+            match omegaflow::te::current_commit_sha() {
+                Some(sha) => {
+                    if let Err(e) = omegaflow::te::write_blatt_pair(
+                        &path,
+                        &dbdt_bz,
+                        &bz_dbdt,
+                        n_cells as f64 * MINUTE,
+                        MINUTE,
+                        SURROGATE_SEED,
+                        &sha,
+                        N_SURR,
+                    ) {
+                        eprintln!("bz_blatt_probe: pair write refused: {e}");
+                        std::process::exit(2);
+                    }
+                    println!("pair written: {path} (xs = dB/dt, ys = Bz, n = {n})");
+                }
+                None => eprintln!(
+                    "bz_blatt_probe: commit-sha absent — the pair stays unwritten (0 honored)"
+                ),
+            }
+        }
+    }
 }
