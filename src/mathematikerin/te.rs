@@ -4303,7 +4303,7 @@ mod tests {
             "fam gate: {indep_above} of {indep_total} independent cells sit above fam — the max-T correction does not hold"
         );
         assert!(
-            true_above >= (true_total + 1) / 2,
+            true_above >= true_total.div_ceil(2),
             "fam gate: {true_above} of {true_total} true couplings survive fam — the correction is over-conservative"
         );
         println!(
