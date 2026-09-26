@@ -8465,6 +8465,17 @@ dec dec
 z z
 field z ned_gitter_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-byparams/ned_byparams_redshift.json
+origin https://ned.ipac.caltech.edu/byparams
+compiler tools/harvest/src/bin/ned_byparams_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field z ned_byparams_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
 format cors_rinex
 origin https://noaa-cors-pds.s3.amazonaws.com/rinex/<year>/<doy>/<station>/

@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools (Struktur-Karte + erste Funktions-Messung)
   class: survey
   date: 2026-09-06
-  sha256: 62758fff918d2039fd8e59015eb25d259c045b01665d07cb7341a128cad9b15f
+  sha256: 1632c3d0d3d7cbb32926041ba4530a5f052bf24b4ebdc8b8add5c28d6005569c
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -76,18 +76,21 @@ Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
 
   | Crate | CI-Workflow / Step | Run-ID (2026-09-25) | Stand |
   |---|---|---|---|
-  | omegaflow-harvest | `ci-check.yml:58-62` (5 Bin-Tests) + je Compiler-Bin in `*-cdn.yml` | `ci-check` 36171288869 | pending CI |
-  | omegaflow-measure | `measure-gates.yml:27` (`--bin silence_map_probe`), `corpus-te.yml:21` (`--bin corpus_te`) | `measure-gates` 36172029908 | pending CI (dispatch 18:13) |
-  | omegaflow-register | `ci-check.yml:56` `cargo test --release -p omegaflow-register` | `ci-check` 36171288869 | pending CI |
-  | omegaflow-service | `service-build.yml:14` `cargo build --release -p omegaflow-service` | `service-build` 36172034181 | pending CI (dispatch 18:13) |
+  | omegaflow-harvest | `ci-check.yml:58-62` (5 Bin-Tests) + je Compiler-Bin in `*-cdn.yml` | `ci-check` 36171288869 | cancelled (gemessen 2026-09-27) |
+  | omegaflow-measure | `measure-gates.yml:27` (`--bin silence_map_probe`), `corpus-te.yml:21` (`--bin corpus_te`) | `measure-gates` 36172029908 | success (gemessen 2026-09-27) |
+  | omegaflow-register | `ci-check.yml:56` `cargo test --release -p omegaflow-register` | `ci-check` 36171288869 | cancelled (gemessen 2026-09-27) |
+  | omegaflow-service | `service-build.yml:14` `cargo build --release -p omegaflow-service` | `service-build` 36172034181 | success (gemessen 2026-09-27) |
   | omegaflow-science | `paper-check.yml:37,41` `export_latex --check` | `paper-check` 36169861633 | success |
   | omegaflow-gate | `tools-build.yml:23` `cargo build --release --bins … -p omegaflow-gate` | `tools-build` 36171288887 | success |
-  | omegaflow-utils | `ci-check.yml:57` `cargo test --release -p omegaflow-utils` | `ci-check` 36171288869 | pending CI |
+  | omegaflow-utils | `ci-check.yml:57` `cargo test --release -p omegaflow-utils` | `ci-check` 36171288869 | cancelled (gemessen 2026-09-27) |
 
   `harvest`/`measure` werden nur bin-weise getestet, `service`/`science`/`gate`
   nur gebaut (`science` zusätzlich `export_latex`-Gate). Neu dispatcht 2026-09-25:
   `measure-gates` 36172029908, `service-build` 36172034181; die übrigen Run-IDs
-  stammen von den Push-Runs am HEAD `f02171e5`.
+  stammen von den Push-Runs am HEAD `f02171e5`. Nachmessung 2026-09-27:
+  `ci-check` 36171288869 endet `cancelled` (an diesem HEAD kein grüner
+  `ci-check`-Lauf), `measure-gates` 36172029908 und `service-build` 36172034181
+  enden `success`.
 - **Konsument je pub-Fn** (gemessen 2026-09-25 via `sgrep <fn> src`):
   - `src/archivar/port.rs:1498 pub fn find_timestamp` → **tot**: kein
     Call-Site im getrackten Baum; die einzigen weiteren Treffer liegen in
