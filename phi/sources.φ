@@ -9714,6 +9714,22 @@ field mean_mag_r decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_i decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_z decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin
+format catalog_allwise_psd
+origin https://irsa.ipac.caltech.edu/TAP/async (ADQL allsky_4band_p3as_psd, TOP 5000)
+compiler tools/harvest/src/bin/allwise_tap_compiler.rs
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field w1mpro allwise_w1_mag inverse-square em mag 31536000 0.0 0.0
+field w2mpro allwise_w2_mag inverse-square em mag 31536000 0.0 0.0
+field w3mpro allwise_w3_mag inverse-square em mag 31536000 0.0 0.0
+field w4mpro allwise_w4_mag inverse-square em mag 31536000 0.0 0.0
+field w3snr allwise_w3_snr inverse-square em 1 31536000 0.0 0.0
+field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0
+
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
 format tap
 ttl 31536000

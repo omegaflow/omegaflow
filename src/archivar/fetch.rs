@@ -1,6 +1,6 @@
 use super::*;
 
-fn append_ca(cmd: &mut Command) {
+pub(crate) fn append_ca(cmd: &mut Command) {
     let path = match std::env::var("OMEGAFLOW_CA_BUNDLE") {
         Ok(p) if !p.is_empty() && std::path::Path::new(&p).is_file() => p,
         _ => return,
