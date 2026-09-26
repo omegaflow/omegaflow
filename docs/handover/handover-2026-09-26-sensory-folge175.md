@@ -3,7 +3,7 @@
   session: Sensory-Folge 175
   class: handover
   date: 2026-09-26
-  sha256: 9c4c0a8934f7eb20706d8fe750a580ab905d67e69ddb3a6d5c8f40952b3d2cac
+  sha256: 5725c94099d176090171bf421f1180872de441bfe506ae514f7d2b6b43fb9663
   status: live
 -->
 # Handover — Sensory-Folge 175 (2026-09-26)
@@ -202,8 +202,8 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 
 #### ZNSP FORMNETWORK — `zigbee-host`-Shell-Bug gefixt, Zahl beim nächsten Lauf
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste `zigbee-host`-Lauf (paths-Trigger beim Push dieses Atoms)
-- **Lage:** (gemessen 2026-09-26) Lauf `36230138135` @ `b30323daa` **failure**: die `sizeof`-Probe-Zeile (`zb_cfg_size$/{print`) starb an einer bash-only Arithmetik (`$((16#$SIZE_HEX))`) unter `sh` → „unexpected EOF". Fix in `.github/workflows/zigbee-host.yml`: Parse-Logik in `zb_sizeof_probe/size.sh` ausgelagert, Aufruf `bash size.sh`. `form_network_payload_pending()` liefert weiter `None`.
+- **Trigger:** der `zigbee-host`-Lauf `36235266918`
+- **Lage:** (gemessen 2026-09-26) Lauf `36230138135` @ `b30323daa` **failure**: die `sizeof`-Probe-Zeile (`zb_cfg_size$/{print`) starb an einer bash-only Arithmetik (`$((16#$SIZE_HEX))`) unter `sh` → „unexpected EOF". Fix in `.github/workflows/zigbee-host.yml`: Parse-Logik in `zb_sizeof_probe/size.sh` ausgelagert, Aufruf `bash size.sh`. Der Atom hat ihn committet/gepusht und dispatcht: Lauf `36235266918`. `form_network_payload_pending()` liefert weiter `None`.
 - **Blockade:** keine — die Zahl kommt mit dem nächsten (grünen) Lauf.
 - **Braucht:** den nächsten Lauf lesen (`SIZEOF_ESP_ZB_CFG_T`), dann den FORMNETWORK-Encoder mit der gemessenen Größe setzen.
 
