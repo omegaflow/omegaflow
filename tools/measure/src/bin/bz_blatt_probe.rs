@@ -963,11 +963,13 @@ fn main() {
                         &path,
                         &dbdt_bz,
                         &bz_dbdt,
-                        n_cells as f64 * MINUTE,
-                        MINUTE,
-                        SURROGATE_SEED,
-                        &sha,
-                        N_SURR,
+                        &omegaflow::te::BlattPairSpec {
+                            span_s: n_cells as f64 * MINUTE,
+                            cadence_s: MINUTE,
+                            seed: SURROGATE_SEED,
+                            commit_sha: &sha,
+                            n_surr: N_SURR,
+                        },
                     ) {
                         eprintln!("bz_blatt_probe: pair write refused: {e}");
                         std::process::exit(2);
