@@ -242,7 +242,11 @@ fn main() {
             std::process::exit(2);
         }
     };
-    let star_samples = build_star_samples(&star_bytes);
+    let star_epoch = sources
+        .iter()
+        .find(|s| s.format == "catalog_tycho")
+        .and_then(|s| s.catalog_epoch);
+    let star_samples = build_star_samples(&star_bytes, star_epoch);
     if star_samples.is_empty() {
         eprintln!(
             "membrane_hull_probe: {} yields no star samples — the measurement is absent, not zero",
