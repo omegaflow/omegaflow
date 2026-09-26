@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 0ddee383c9a84f1f892ad5402dfca8af34a1b712540978f861a3456106c0c031
+  sha256: 4ad4286292f86835ee9c6df4e9667f6b3a6355f374fce90a98ebd52259afb316
   status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/concepts/der-kausalpfeil.md
 -->
@@ -103,6 +103,26 @@ is delivered (Grading only; collapse point outside — no flood footprint).
 
 The first pre-registered causal-arrow experiment whose verdict is fixed
 before the response series exists.
+
+## Reproduktion des Paar-Blattes (2026-09-27, Run 36277989033)
+
+Die vor-registrierte Paar-Probe Gyirong ↔ Rasuwa lief über die Open-Meteo-
+Niederschlags-Reihen (n = 241, Lags {1, 3, 6, 12, 24, 48}, 10
+phasenrandomisierte Surrogate, `te_pair_probe`). Ergebnis: **kein Pfeil** — in
+keiner Richtung und keinem Lag überschreitet TE die Surrogat-Schwelle
+(mean + 2σ). Die Path-1-Reproduktion (Gyirong → Rasuwa bei Lag 12–24 h) trägt
+unter demselben Protokoll **nicht**; die Zelle bleibt `no finding`, nicht 0.0.
+
+> **Ehrliche Einordnung:** die 2026-08-27 gemessene Path-1-Zelle (TE 0.162/0.151
+> > 0.133/0.131) reproduziert unter demselben vor-registrierten Protokoll auf
+> der n = 241-Reihe **nicht**. Der Befund steht damit als gemessenes `no finding`
+> (die frühere Signifikanz trug nicht), nicht als gelöschte Zahl.
+
+**KBO-Residuum-Arm:** die `kbo_residue_probe` desselben Laufs konnte nicht
+messen — der Ephemeriden-Batch lieferte für alle 11 Dateien HTTP 404
+(`bin parse void`, `model incomplete: 0 of 8 planets`). Die Ephemeriden-Quelle
+des `kbo_residue_probe` ist gemessen **absent** (neuer Punkt, Träger
+`ein-blatt-papier.md`).
 
 ---
 *Sealed 2026-08-27. Verdikt-Ordnung
