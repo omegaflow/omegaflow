@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: a7685a1ce5c94f32134676430b7d262fa2ed1f37689bcd8dc6b897e3c3c740be
+  sha256: 9f057f4eb2060fd04f8ef0a5b739e11e8d5fb61c8dff607708c6d5e2db0123c3
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -125,9 +125,9 @@ Git-Index fremd-gestagte Arbeit trägt (nur pfad-begrenzte Commits möglich):**
 #### NSSDCA-Parallelantrag — Send (Operator-Hand)
 - **Status:** operator-gebunden | **Bindung:** operator
 - **Trigger:** Operator-Wort.
-- **Lage:** (gemessen 2026-09-26) keine NSSDCA-Antwort; `PSPA-00605` ist eine Dataset-ID, kein offener Send; Juno-Anfrage an JPL-NAV (Asmar). Antrag „Juno pre-EFB merged ODF" formuliert bis Kante.
-- **Blockade:** per-Akt-Wort.
-- **Braucht:** Operator entscheidet den NSSDCA-Parallelantrag (Send = Operator-Hand).
+- **Lage:** (gemessen 2026-09-26) keine NSSDCA-Antwort; `PSPA-00605` ist eine Dataset-ID, kein offener Send; Juno-Anfrage an JPL-NAV (Asmar). Antrag „Juno pre-EFB merged ODF" formuliert bis Kante. **Operator-Wort 2026-09-26: Komplettheit gewünscht — Lücke wird geschlossen, kein Descope.**
+- **Blockade:** per-Akt-Wort (Send).
+- **Braucht:** Send des Antrags (Operator-Hand) oder Warten auf JPL-NAV/Asmar-Antwort.
 
 #### Fremdmodell-Benchmark — vorbereitet bis zur Kante
 - **Status:** operator-gebunden | **Bindung:** operator
@@ -155,9 +155,9 @@ Git-Index fremd-gestagte Arbeit trägt (nur pfad-begrenzte Commits möglich):**
 #### NSSDC/JPL-Anfragen — Wiedervorlage
 - **Status:** wartend | **Bindung:** dritter
 - **Trigger:** Antwort `gsfc-dl-nssdca-request@mail.nasa.gov` / Asmar.
-- **Lage:** (gemessen 2026-09-26) 4 Anfragen 2026-09-16 raus, keine Antwort.
+- **Lage:** (gemessen 2026-09-26) 4 Anfragen 2026-09-16 raus (Mariner 10/Viking/Voyager/Juno), keine Antwort. Operator-Wort 2026-09-26: komplett — TRK-2-34/ODF-Lücke bleibt Ziel.
 - **Blockade:** Antwort.
-- **Braucht:** Wiedervorlage.
+- **Braucht:** Wiedervorlage; Juno-pre-EFB-Lücke offen halten (kein Descope).
 
 #### termin-Punkte — re-verdict
 - **Status:** termin | **Bindung:** dritter
