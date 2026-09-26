@@ -3,7 +3,7 @@
   session: Mountain-Folge 171
   class: handover
   date: 2026-09-26
-  sha256: 7980dc1c33db8249db16a878b6de897b7db58eafe4a0ed2586bed772c0801faa
+  sha256: 476bf427e1fe06a0af5674a1a0a04d3f5b8d7e037fa16e207189f0b87676e855
   status: live
 -->
 # Handover — Mountain-Folge 171 (2026-09-26)
@@ -20,49 +20,69 @@ Braucht.
 - **Postfach:** (gemessen 2026-09-26) `state/mail/mail_ledger.φ` existiert jetzt
   (jüngster Eintrag 2026-09-14, kein neuer Mountain-Eingang) — folge170s „absent"
   war stale.
-- **CI-Status am HEAD:** (gemessen 2026-09-26 via `ci_manage`) letzter
-  abgeschlossener `ci-check` `36250412521` (HEAD `0b182a7a`) **failure**; neuer
-  Lauf `36256060965` in_progress. Vor `/commit`+Push ungemessen für den neuen HEAD.
+- **CI-Status am HEAD:** (gemessen 2026-09-26 via `ci_manage`) `ci-check`
+  `36261666671` (HEAD `ee64c10f6`) **pending**; letzter abgeschlossener roter
+  `36250412521`. Der HEAD läuft weiter (fremde Linien); am jeweils neuen HEAD
+  einmal neu lesen.
 - **Artefakt-Frische (`DUE`):** mit dem Push neu zu messen; `gh workflow run`
   für die betroffenen `*-cdn` + `tools-build` erst nach dem Commit (neue Workflows
   404en vor dem Push).
 
 ## Offen (aufgeschlüsselt)
 
-### P2 Atom D — uvfits-Reader gebaut, Aa–Ap-Vollauf + CDN offen
+### P2 Atom D — Reader + Compiler + CDN-Weg gebaut, erste Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `eht-uvfits-cdn`-Lauf (Workflow neu, braucht Commit+Push).
-- **Lage:** (gemessen 2026-09-26 via grind-max) uvfits-Reader gebaut:
+- **Lage:** (gemessen 2026-09-26 via grind-max/grind-pro/grind-flash) Reader
   `src/archivar/uvfits.rs` (FITS-IDI: `baseline_rows` ANNAME-Setmatch,
   `fringe_rate_hz`, `beat_open` Gate `df·dt<0.5`, `beat_rows`→`TnfPhaseRow`),
-  `tools/harvest/src/bin/eht_uvfits_compiler.rs`, `extract.rs`-Arm `eht_uvfits`,
-  `fits.rs::parse_lenient`, vocab-Fixture; `cargo check` 0/0. Real gemessen:
-  BINTABLE, INTTIM 0.4 s, REF_FREQ 228.16 GHz, CHAN_BW 500 kHz; **AP–AZ
-  df = 3.242e-1 Hz, Gate OPEN (df·dt = 0.1297)**. ALMA (`Aa`) liegt in einem
-  späteren `.FITS`-Member (Reader iteriert alle Member).
-- **Blockade:** keine.
-- **Braucht:** CI-Workflow `eht-uvfits-cdn.yml` bauen (Download + `--verify`
-  sha `ebff01cc…` + `--run`), Quelle in `phi/sources.φ` registrieren, dann
-  `gh workflow run eht-uvfits-cdn.yml`; danach die `Aa`–`Ap`-df aus dem Vollauf.
-  (Eigener Hunk im geteilten `phi/sources.φ`.)
+  Compiler `tools/harvest/src/bin/eht_uvfits_compiler.rs` (`--verify`/`--run`/
+  `--runfits`/`--pair`/`--out`/`--ci-mode` + `upload_release`), `extract.rs`-Arm
+  `eht_uvfits`, `fits.rs::parse_lenient`, vocab-Fixture, Workflow
+  `.github/workflows/eht-uvfits-cdn.yml`; Quelle in `phi/sources.φ` registriert
+  (`format eht_uvfits`, zwei `field`-Komponenten, `at earth`). `cargo check` 0/0.
+  Real gemessen: BINTABLE, INTTIM 0.4 s, REF_FREQ 228.16 GHz, CHAN_BW 500 kHz;
+  **AP–AZ df = 3.242e-1 Hz, Gate OPEN (df·dt = 0.1297)**. ALMA (`Aa`) liegt in
+  einem späteren `.FITS`-Member.
+- **Blockade:** erste Manifestation braucht Commit+Push (Workflow noch nicht auf
+  dem default branch).
+- **Braucht:** nach `/commit`+Push `gh workflow run eht-uvfits-cdn.yml`; danach
+  Asset-Größe/sha256 in `phi/sources.φ` nachtragen und die `Aa`–`Ap`-df aus dem
+  Vollauf ablesen.
 
 ### P3 Harvest-Assets — HAMQSL + OGIMET geschlossen, NOHRSC offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `nohrsc_snowfall-cdn` `36259470458`.
-- **Lage:** (gemessen 2026-09-26 via grind-flash) HAMQSL Asset 200
+- **Trigger:** `nohrsc_snowfall-cdn` `36262592887`.
+- **Lage:** (gemessen 2026-09-26 via grind-flash + ci_manage) HAMQSL Asset 200
   (`sha256 872bcbd8…`, magic `HSL1`) → `phi/harvest.φ:95` geschlossen; OGIMET
   Asset 200 (1688 B, `sha256 c66e905e…`) → `phi/harvest.φ:164` geschlossen.
-  NOHRSC Lauf `36242617755` failure (E0583, vor dem Fix); Asset
-  `nohrsc_snowfall.bin` 404; neu dispatcht `36259470458`.
+  NOHRSC `36242617755` failure (E0583, vor dem Fix); `36259470458` failure (HEAD
+  `a0a6a548`, vor dem Push); neu dispatcht `36262592887` (nach `ee64c10f6`).
 - **Blockade:** keine.
-- **Braucht:** Lauf `36259470458` lesen; bei success `phi/harvest.φ:145`
+- **Braucht:** Lauf `36262592887` lesen; bei success `phi/harvest.φ:145`
   schließen.
+
+### P3b RX100-Luminanz — `asset fehlt`-Tag trägt „lokal, kein CDN"
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `rx100_compiler`-CDN-Lauf (keiner existiert).
+- **Lage:** (gemessen 2026-09-26 via `register_lookup --open`) `phi/harvest.φ:233`
+  ist `[mountain] asset fehlt` (`format rx100_luminance`, Sony RX100 V,
+  `src/archivar/rx100.rs`, `rx100_compiler.rs`), doch die eigene note sagt
+  „lokal, kein CDN; K-Kalibrierung+Spectral-Proxy pending" — ein Register-Riss
+  (der Tag setzt ein CDN-Asset voraus, die note schließt es aus). Der Bau liegt
+  bei River (`handover-2026-09-26-river-folge38.md:110`: `K=12.5` ungemessen,
+  Band `freq`/`bin_width` nicht verdrahtet).
+- **Blockade:** keiner — der Riss ist die Frage: lokale Gerätequelle ohne
+  CDN-Asset.
+- **Braucht:** `phi/harvest.φ:233`-Status klären — lokale Quelle → Status ≠
+  `asset fehlt` (bzw. Eintrag aus dem CDN-Harvest-Register); die Substanz trägt
+  River.
 
 ### P4 gll.rss ODR-Shard
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `gll-rss-odr-cdn`.
+- **Trigger:** `gll-rss-odr-cdn` `36260734404`.
 - **Lage:** (gemessen 2026-09-26 via grind-flash) Lauf `36242358527` failure
-  (E0583); `gll_rss_odr.bin` = 404.
+  (E0583); `gll_rss_odr.bin` = 404. Neu dispatcht `36260734404` → **in_progress**.
 - **Blockade:** keine.
 - **Braucht:** Lauf `36260734404` lesen; nach Manifestation den sha in den Block
   `phi/sources.φ:8431` nachtragen.
@@ -70,47 +90,17 @@ Braucht.
 ### P5 CI-Verify TAP/Parquet/GRIB
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** grüner `ci-check` am HEAD.
-- **Lage:** (gemessen 2026-09-26 via `ci_manage`) `ci-check` `36250412521`
-  (HEAD `0b182a7a`) failure an **fremden** Lints (format `skydirection.rs:200`;
+- **Lage:** (gemessen 2026-09-26 via `ci_manage`) jüngster `ci-check` `36261666671`
+  (HEAD `ee64c10f6`) **pending**. Der letzte abgeschlossene rote `36250412521`
+  (HEAD `0b182a7a`) scheiterte an **fremden** Lints (format `skydirection.rs:200`;
   clippy `extract.rs`×4, `main_flow.rs`×2, `spatial.rs`, `uws.rs`, `te.rs:4306`,
-  `archivar/tests.rs:6181`) + Mountain-Tests am Vor-Fix-SHA
-  (`grib2::complex_packing_two_groups`, `ionocal::*`, `parquet::testkit::*`).
+  `archivar/tests.rs:6181`) + Mountain-Tests am Vor-Fix-SHA.
   `epoch obs_time mjd` (ogle) vorhanden `phi/sources.φ:9524`.
 - **Blockade:** fremde format/clippy-Lints (sensory `skydirection.rs`/`te.rs`;
   mycelium `extract.rs`/`uws.rs`/`archivar/tests.rs`; river
   `main_flow.rs`/`spatial.rs`).
-- **Braucht:** nach `/commit`+Push den `ci-check` lesen; Mountain-Tests erneut
-  prüfen (die lokalen Lint-Fixes sind noch uncommittet).
-
-### P1 Planck-SZ — Register-Akt angewendet, Manifestation offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `planck-psz2-cdn`-Lauf (Workflow neu, braucht Commit+Push).
-- **Lage:** (gemessen 2026-09-26 via grind-flash) die Block-Datei
-  `/tmp/opencode/planck-register-block.φ` ist **absent** → Block aus gemessenen
-  Fakten + Parser-Vertrag rekonstruiert. `cmap`-Vertrag in `src/archivar/parse.rs`
-  verifiziert (`at sun`, `cmap .`, `z z` gültig); **Korrektur:** ohne `field`
-  null Kanäle → `field snr planck_psz2_snr inverse-square em 1 604800 0.0 0.0`
-  ergänzt. Neuer Block `phi/sources.φ` @ ~8078; `phi/blocked_sources.φ:331-333`
-  → `released`. CI-Workflow `.github/workflows/planck-psz2-cdn.yml` gebaut;
-  `url`/Dateiname `planck_psz2_sz_mmf3.json` stimmt mit dem Compiler-`--out`.
-- **Blockade:** Workflow nicht auf dem default branch (`gh workflow run` → 404).
-- **Braucht:** nach `/commit`+Push `gh workflow run planck-psz2-cdn.yml`; dann
-  das Asset `--sniff`/sha256 messen und in den Block nachtragen (die abgeleiteten
-  Werte CDN-Zielname/ttl sind erst dann gemessen).
-
-### P8 S3-Scheme — lp-prod gemessen frei
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** sofort.
-- **Lage:** (gemessen 2026-09-26 via grind-flash) kein Register-Eintrag. Die
-  SigV4+STS-Route (`src/archivar/range.rs:236/255`) mit `EARTHDATA_EDL_TOKEN`
-  (`.secrets.local`) gemessen: `gedi_l2a_compiler --cmr …` → Range-GET auf
-  `s3://lp-prod-protected` **freigeschaltet** (Granule 263 MB → 2473 records,
-  158280 B, roundtrip parses). Der alte 401 ist abgelöst. ListBucket bleibt 403
-  (Temp-Creds scoped auf GetObject).
-- **Blockade:** keine.
-- **Braucht:** `nsidc-cumulus-prod-protected` (ICESat-2) und den SWOT/PODAAC-Bucket
-  je mit einem Range-GET über denselben Compiler-`--cmr`-Pfad messen und als frei
-  bestätigen; der `declined_sources.φ:2455`-Note-Wortlaut bleibt unberührt.
+- **Braucht:** `ci-check` `36261666671` (oder den Lauf am neuen HEAD) **einmal**
+  lesen; Mountain-Tests (grib2/ionocal/parquet) am neuen HEAD verifizieren.
 
 ### P6 `epochrange` Wire-Slot — descoped (Rat)
 - **Status:** descoped | **Bindung:** eigen
@@ -122,25 +112,50 @@ Braucht.
   „gemessener Punkt"/„nie gemessen" (Kontrakt verbietet). Der Entwurf zitierte
   einen falschen Pfad (mathematikerin statt archivar) — die Drahtschreiber-Datei
   ist `src/archivar/spatial.rs`, `relay.rs`, Tuple `types.rs:342`. **Externe
-  Stimmen bestätigen** (gemessen 2026-09-26, API-Voice-Runner): `glm-4.5-flash`
-  + `gemini-2.5-flash` tragen das `descoped`, keine nennt eine gemessene
-  Gegendquelle; Rohantworten `state/stimmen/2026-09-26_1959*_prompt-epochrange-p6.json`;
-  mistral + `glm-4.7-flash` = 429 (Quota).
+  Stimmen bestätigen** (gemessen 2026-09-26): `glm-4.5-flash`, `gemini-2.5-flash`
+  (API-Voice-Runner) und die UI-Stimme `chat.z.ai` (GLM-5.3-Flash) tragen das
+  `descoped`, keine nennt eine gemessene Gegendquelle; Rohantworten
+  `state/stimmen/2026-09-26_1959*_prompt-epochrange-p6.json` +
+  `state/stimmen/2026-09-26_zai_ui_epochrange-p6.json`; mistral + `glm-4.7-flash`
+  = 429 (Quota).
 - **Blockade:** keine.
 - **Braucht:** kein Bau. Sobald eine Ernte eine Start/Stopp-MJD trägt, wird der
   Slot im selben Atom wie der Parser geboren (Wire v10, mit Presence-Bit).
 
-### P7 DevTools-MCP — Brücke steht, MCP-Timeout ungemessen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `chrome-devtools_list_pages` erneut prüfen.
-- **Lage:** (gemessen 2026-09-26) der Extension-Token ist gesetzt; der
-  `bad_token`-Riss (`opencode.log:721848`: Broker erwartete 48 Hex, Extension
-  sandte 34) ist gelöst — `browser_targets` liefert **1 Ziel**
-  (`d5c512d7-c66a-4ef4-916f-146da21ec8a8`). Das MCP `-32001` blieb in diesem
-  Zustand **ungemessen** → `pending`.
-- **Blockade:** keine.
-- **Braucht:** `chrome-devtools_list_pages` / eine `--autoConnect`-Prüfung; bei
-  Timeout ist die MCP-Seite (`npx chrome-devtools-mcp@1.9.0`) der Rest.
+### P7 DevTools-MCP — Riss gemessen, Config-Hebel gesetzt
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator-Wort (opencode-Neustart; die MCP-Config wird beim Prozessstart gelesen).
+- **Wort:** „Token ist gesetzt" (Bridge steht); der Neustart-Akt steht beim Operator | 2026-09-26 | Operator (Session).
+- **Lage:** (gemessen 2026-09-26 via general) die Brücke steht (Extension-Token
+  gesetzt, `browser_targets` liefert 1 Ziel). Der `-32001`-Riss ist **nicht** die
+  Ausgabegröße, sondern ein **60 000 ms Wall-Clock-Timeout** (30/55/59,5 s ok;
+  60,5 s → `-32001`); Quelle `chrome-devtools-mcp/build/src/third_party/index.js:23985`
+  (`DEFAULT_REQUEST_TIMEOUT_MSEC = 60000`); `opencode.json` trug kein `timeout`.
+  Hebel gesetzt: `mcp.chrome-devtools.timeout = 180000`.
+- **Blockade:** der laufende opencode-Prozess lädt die MCP-Config nicht neu.
+- **Braucht:** opencode neu starten, dann die Grenze erneut messen
+  (`chrome-devtools_evaluate_script` mit 90-s-Busy-Wait) — läuft er durch, ist
+  der Riss zu; sonst nächster Hebel `experimental.mcp_timeout`.
+
+## Benannt — ungemessen (offene Messungen aus diesem Atom)
+
+- **Vier der fünf UI-Chat-Stimmen zum `epochrange`-Befund** — `claude.ai`,
+  `arena.ai`, `chat.deepseek.com`, `kimi.ai`. (gemessen 2026-09-26 via general +
+  `chrome-devtools`) **`chat.z.ai` (GLM-5.3-Flash) lief** und trägt `descoped`
+  (`state/stimmen/2026-09-26_zai_ui_epochrange-p6.json`); die vier anderen stehen
+  im `chrome-devtools`-Browser an **Login-/Consent-Wänden**
+  (`claude.ai`/new → `/logout?involuntary=1`; `chat.deepseek.com` → `/sign_in`;
+  `kimi.ai` Anmelde-Modal; `arena.ai` ToS-Gate Zweit-AGB) — nicht umgangen.
+  Braucht: die vier Sessions im `chrome-devtools`-Browser neu anmelden (oder die
+  eingeloggten Tabs aus der OpenCode-Bridge-Gruppe, die `chrome-devtools_*`
+  nicht adressiert) — Operator-Akt.
+- **EHT `Aa`–`Ap`-df** — der Vollauf der 2,1-GB-Module ist ungemessen; gemessen
+  ist nur AP–AZ (`df = 3.242e-1 Hz`). Führt P2 (erster `eht-uvfits-cdn`-Lauf).
+- **`eht_uvfits`-Registrierung gegen den Lauf** — der Registrierblock `phi/sources.φ`
+  (`format eht_uvfits`, zwei `field`, `at earth`) ist bis zur ersten Manifestation
+  unbestätigt. Führt P2.
+- **P7-Fix-Wirkung** — `mcp.chrome-devtools.timeout = 180000` ist gesetzt; ob die
+  Grenze damit über 60 s liegt, ist bis zum opencode-Neustart ungemessen. Führt P7.
 
 ## Operator-Wort-Register
 
@@ -150,6 +165,7 @@ Braucht.
 - **Wort:** P7 — „Token ist gesetzt" | 2026-09-26 | Operator (Session).
 - **Wort:** P6 — externe Stimmen über den Voice-Runner fragen (nicht chatgpt.com; die Reviewer stehen in `state/zai-export/freie-llm-zugaenge-2026-09-25.md`) | 2026-09-26 | Operator (Session).
 - **Wort:** Session-Consent „alles bis zur Kante nicht verschleppen" (Delegation, nicht Commit-Wort) | 2026-09-26 | Operator (Session).
+- **Wort:** „können das nicht Agenten machen?" (die Reste P1/P2/P3/P4/P5/P7/P8 an Agenten dispatcht) | 2026-09-26 | Operator (Session).
 
 ## Abschluss
 

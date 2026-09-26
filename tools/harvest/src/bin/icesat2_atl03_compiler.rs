@@ -24,7 +24,6 @@ const REC_FIELDS: usize = 7;
 const REC_BYTES: usize = REC_FIELDS * 8;
 const PREFIX_WINDOW: u64 = 1 << 9;
 const REC_CAP: usize = 1 << 13;
-const LIST_MAX_KEYS: u32 = 20;
 const HARVEST_WINDOW_MAX: usize = 1 << 9;
 const CMR_PAGE_MAX: usize = 1 << 7;
 const S3_PAGE_MAX: u32 = 1 << 7;
@@ -160,7 +159,6 @@ fn uri_encode_query(s: &str) -> String {
 struct Obj {
     key: String,
     size: u64,
-    modified: String,
 }
 
 fn xml_text(doc: &str, tag: &str) -> Option<String> {
@@ -180,12 +178,7 @@ fn parse_page(body: &str) -> Option<(Vec<Obj>, bool, Vec<String>, Option<String>
         let block = &after_open[..end];
         let key = xml_text(block, "Key")?;
         let size = xml_text(block, "Size")?.parse::<u64>().ok()?;
-        let modified = xml_text(block, "LastModified")?;
-        objects.push(Obj {
-            key,
-            size,
-            modified,
-        });
+        objects.push(Obj { key, size });
         rest = &after_open[end + "</Contents>".len()..];
     }
     let mut dirs = Vec::new();
@@ -752,60 +745,6 @@ fn unpack(bytes: &[u8]) -> Option<Vec<[f64; REC_FIELDS]>> {
     Some(out)
 }
 
-fn run_list(args: &[String]) {
-    let prefix = arg_value(args, "--prefix").unwrap_or(PRODUCT_ROOT.to_string());
-    let dirs = args.iter().any(|a| a == "--dirs");
-    let max_keys = arg_usize(args, "--max-keys").unwrap_or(LIST_MAX_KEYS as usize) as u32;
-    let Some(token) = edl_token() else {
-        eprintln!("EARTHDATA_EDL_TOKEN absent — the environment and .secrets.local carry no token");
-        std::process::exit(2);
-    };
-    let Some(creds) = edl_s3_credentials_for(BUCKET, &token) else {
-        eprintln!("{} returned void for s3://{}/", NETLOC, BUCKET);
-        std::process::exit(2);
-    };
-    let Some((objects, truncated, common, _token)) =
-        list_page(BUCKET, &prefix, dirs, max_keys, None, &creds)
-    else {
-        eprintln!("the listing of s3://{BUCKET}/{prefix} returned void");
-        std::process::exit(1);
-    };
-    if dirs {
-        for d in &common {
-            println!("{d}");
-        }
-        eprintln!(
-            "icesat2-atl03: {} common prefixes under s3://{}/{}",
-            common.len(),
-            BUCKET,
-            prefix
-        );
-        if truncated {
-            eprintln!("icesat2-atl03: the listing is truncated — the page is partial");
-        }
-        if common.is_empty() {
-            std::process::exit(1);
-        }
-        return;
-    }
-    println!("#key|size_bytes|last_modified");
-    for o in &objects {
-        println!("{}|{}|{}", o.key, o.size, o.modified);
-    }
-    eprintln!(
-        "icesat2-atl03: {} keys under s3://{}/{}",
-        objects.len(),
-        BUCKET,
-        prefix
-    );
-    if truncated {
-        eprintln!("icesat2-atl03: the listing is truncated — the page is partial");
-    }
-    if objects.is_empty() {
-        std::process::exit(1);
-    }
-}
-
 struct Chosen {
     fetch: GranuleFetch,
     key: String,
@@ -917,7 +856,7 @@ fn run_harvest(args: &[String]) {
                 Some(p) => p,
                 None => {
                     eprintln!(
-                        "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--skip K] [--beams N] [--out <path>] [--ci-mode] | --cmr --day <YYYY.MM.DD> [--version 007] | --list [--prefix <p>] [--dirs] [--max-keys N] — refused"
+                        "usage: icesat2_atl03_compiler --day <YYYY.MM.DD> [--limit N] [--skip K] [--beams N] [--out <path>] [--ci-mode] | --cmr --day <YYYY.MM.DD> [--version 007] — refused"
                     );
                     std::process::exit(2);
                 }
@@ -1048,11 +987,7 @@ fn run_harvest(args: &[String]) {
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.iter().any(|a| a == "--list") {
-        run_list(&args);
-    } else {
-        run_harvest(&args);
-    }
+    run_harvest(&args);
 }
 
 #[cfg(test)]
