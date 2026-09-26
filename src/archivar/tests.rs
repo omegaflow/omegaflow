@@ -2075,6 +2075,94 @@ fn test_extract_cmap_null_dist_skipped() {
 }
 
 #[test]
+fn test_extract_catalog_allwise_psd_binds_the_six_field_channels() {
+    let records = vec![
+        allwise::AllwisePsd {
+            ra: 189.5907715,
+            dec: -50.3575314,
+            w1mpro: Some(13.615),
+            w2mpro: Some(13.666),
+            w3mpro: Some(12.826),
+            w4mpro: Some(9.617),
+            w3snr: Some(0.7),
+            w4snr: Some(0.0),
+        },
+        allwise::AllwisePsd {
+            ra: 1.5,
+            dec: 2.5,
+            w1mpro: Some(16.2),
+            w2mpro: None,
+            w3mpro: None,
+            w4mpro: None,
+            w3snr: None,
+            w4snr: None,
+        },
+    ];
+    let bin = allwise::write_bin(&records);
+    let path = std::env::temp_dir().join("omegaflow_allwise_consumer_test.bin");
+    std::fs::write(&path, &bin).unwrap();
+    let phi = "url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin\n\
+format catalog_allwise_psd\n\
+ttl 31536000\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+field w1mpro allwise_w1_mag inverse-square em mag 31536000 0.0 0.0\n\
+field w2mpro allwise_w2_mag inverse-square em mag 31536000 0.0 0.0\n\
+field w3mpro allwise_w3_mag inverse-square em mag 31536000 0.0 0.0\n\
+field w4mpro allwise_w4_mag inverse-square em mag 31536000 0.0 0.0\n\
+field w3snr allwise_w3_snr inverse-square em 1 31536000 0.0 0.0\n\
+field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0\n";
+    let sources = parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].format, "catalog_allwise_psd");
+    let fixture_lsk = LeapSeconds {
+        delta_t_a: 32.184,
+        deltas: vec![(37.0, 1483228800.0)],
+    };
+    let body = path.to_string_lossy().into_owned();
+    match extract(&sources[0], &body, 8.0e8, &fixture_lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(
+                channels.len(),
+                7,
+                "row 1 carries six channels, row 2 only w1"
+            );
+            let w1 = channels
+                .iter()
+                .find(|(c, _)| c.name == "allwise_w1_mag")
+                .expect("the w1 channel binds");
+            assert_eq!(w1.0.value, 13.615);
+            assert_eq!(w1.1.unit, "mag");
+            let w2_count = channels
+                .iter()
+                .filter(|(c, _)| c.name == "allwise_w2_mag")
+                .count();
+            assert_eq!(w2_count, 1, "the absent w2 of row 2 stays unbound");
+            let w4snr = channels
+                .iter()
+                .find(|(c, _)| c.name == "allwise_w4_snr")
+                .expect("the w4snr channel binds");
+            assert_eq!(w4snr.0.value, 0.0);
+            match &channels[0].0.position {
+                Position::StateVector { p, v, .. } => {
+                    let norm = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                    assert!(
+                        (norm - 1.0).abs() < 1e-12,
+                        "ra/dec become the unit direction"
+                    );
+                    assert_eq!(*v, [0.0, 0.0, 0.0]);
+                }
+                other => panic!("expected StateVector, found {other:?}"),
+            }
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+    }
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
 fn test_extract_cmap_csv_dist_scale_mpc() {
     let csv = "AGCNr,Name,RAdeg_HI,Decdeg_HI,RAdeg_OC,DECdeg_OC,Vhelio,W50,errW50,HIflux,errflux,SNR,RMS,Dist,logMsun,HIcode,OCcode,NoteFlag\n\
 331061,456-013,0.01042,15.87222,0.00875,15.88167,6007,260,45,1.13,0.09,6.5,2.40,85.2,9.29,1,I,\"\"\n\
