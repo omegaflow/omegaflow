@@ -70,7 +70,9 @@
     "härtesten Punkt",
     "hardest undated point",
     "hardest point",
-    "der erste ist der härteste"
+    "der erste ist der härteste",
+    "nie dispatcht",
+    "named, never dispatched"
   ],
   "unstable_pointer": [
     "mail_ledger.φ:"
@@ -112,7 +114,7 @@
     "consent_act": "writing at a third party changes state there — it needs the operator's per-act consent; reading and the own domain stay autonomous",
     "state_claim": "a build-status claim asserts a state the tree may not carry — every state claim leaves the house only with a measured source (a path, a register entry, or a command@timestamp → artifact); an unbacked claim is measured before it is made, or it is not made; the unmeasured state is named pending, never asserted",
     "speculation": "A = A: the machine does not speculate. \"{word}\" is a guess, not a measurement. The measured state is spoken as measured; the unmeasured state is named pending/absent — never guessed.",
-    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank",
+    "serial_priority": "there is no \"hardest point\" and no priority ladder — the open points are worked in parallel by agents (operator word, 2026-09-21); a point is workable now or it carries its trigger/block, never a rank; no point is merely named where a step to its edge exists (operator word, 2026-09-26)",
     "deferral": "a trigger is an external event, date or word, or \"sofort\" — an own step runs inside the running atom; \"nächster Dispatch\" / \"nächste Session\" is a self-deferral: a wartend/autonom point without an external trigger is a registration duty, never a state",
     "human_threshold": "a machine mail send carries no registered operator word — the counterpart is a human, so the send carries the operator's word (wort:), never a bare consent; the machine prepares, the word sends",
     "pii": "a private mail domain, a home path or a device MAC (a watch, a chip) names a person — never tracked; its home is state/mail/ (drafts) or .secrets.local (credentials), never the tree; the fixture placeholder AA:BB:CC:DD:EE:FF is exempt",
