@@ -13,16 +13,16 @@ pub enum DapType {
 
 impl DapType {
     fn from_keyword(kw: &str) -> Option<DapType> {
-        match kw {
-            "Byte" => Some(DapType::Byte),
-            "Int16" => Some(DapType::Int16),
-            "UInt16" => Some(DapType::UInt16),
-            "Int32" => Some(DapType::Int32),
-            "UInt32" => Some(DapType::UInt32),
-            "Float32" => Some(DapType::Float32),
-            "Float64" => Some(DapType::Float64),
-            "String" => Some(DapType::Str),
-            "Url" => Some(DapType::Url),
+        match kw.to_ascii_uppercase().as_str() {
+            "BYTE" => Some(DapType::Byte),
+            "INT16" => Some(DapType::Int16),
+            "UINT16" => Some(DapType::UInt16),
+            "INT32" => Some(DapType::Int32),
+            "UINT32" => Some(DapType::UInt32),
+            "FLOAT32" => Some(DapType::Float32),
+            "FLOAT64" => Some(DapType::Float64),
+            "STRING" => Some(DapType::Str),
+            "URL" => Some(DapType::Url),
             _ => None,
         }
     }
@@ -49,10 +49,17 @@ pub struct DapVarDecl {
 }
 
 #[derive(Clone, Debug)]
+pub struct DapGrid {
+    pub array: usize,
+    pub maps: Vec<usize>,
+}
+
+#[derive(Clone, Debug)]
 pub struct DapSchema {
     pub name: String,
     pub dims: Vec<DapDim>,
     pub vars: Vec<DapVarDecl>,
+    pub grids: Vec<DapGrid>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -137,6 +144,7 @@ struct DdsCursor {
     pos: usize,
     dims: Vec<DapDim>,
     vars: Vec<DapVarDecl>,
+    grids: Vec<DapGrid>,
 }
 
 impl DdsCursor {
@@ -169,6 +177,21 @@ impl DdsCursor {
         }
     }
 
+    fn expect_ci(&mut self, s: &str) -> Result<(), DapNote> {
+        if self
+            .toks
+            .get(self.pos)
+            .is_some_and(|x| x.eq_ignore_ascii_case(s))
+        {
+            self.pos += 1;
+            Ok(())
+        } else {
+            Err(DapNote::Keyword {
+                word: s.to_string(),
+            })
+        }
+    }
+
     fn register_dim(&mut self, name: &str, len: u32) {
         if !self.dims.iter().any(|d| d.name == name) {
             self.dims.push(DapDim {
@@ -191,9 +214,14 @@ impl DdsCursor {
         let kw = self.take_word().ok_or(DapNote::Keyword {
             word: "".to_string(),
         })?;
-        match kw.as_str() {
-            "Grid" | "Structure" => {
+        let kw_up = kw.to_ascii_uppercase();
+        match kw_up.as_str() {
+            "GRID" | "STRUCTURE" => {
+                let is_grid = kw_up == "GRID";
                 self.expect("{")?;
+                let mut arrays = Vec::new();
+                let mut maps = Vec::new();
+                let mut section_is_maps = false;
                 loop {
                     match self.peek() {
                         Some("}") => {
@@ -202,25 +230,52 @@ impl DdsCursor {
                             })?;
                             break;
                         }
-                        Some("ARRAY:") | Some("MAPS:") => {
-                            self.take_word().ok_or(DapNote::Keyword {
+                        None => {
+                            return Err(DapNote::Keyword {
                                 word: "}".to_string(),
-                            })?;
+                            });
                         }
-                        Some("ARRAY") | Some("MAPS") => {
-                            self.take_word().ok_or(DapNote::Keyword {
-                                word: "}".to_string(),
-                            })?;
-                            let _ = self.take_if(":");
+                        Some(_) => {
+                            let marker = self.peek().map(|w| {
+                                w.eq_ignore_ascii_case("ARRAY:")
+                                    || w.eq_ignore_ascii_case("MAPS:")
+                                    || w.eq_ignore_ascii_case("ARRAY")
+                                    || w.eq_ignore_ascii_case("MAPS")
+                            });
+                            if marker == Some(true) {
+                                let word = self.take_word().ok_or(DapNote::Keyword {
+                                    word: "}".to_string(),
+                                })?;
+                                section_is_maps = word.eq_ignore_ascii_case("MAPS:")
+                                    || word.eq_ignore_ascii_case("MAPS");
+                                let _ = self.take_if(":");
+                            } else {
+                                let before = self.vars.len();
+                                self.parse_decl()?;
+                                if self.vars.len() == before + 1 {
+                                    if section_is_maps {
+                                        maps.push(before);
+                                    } else {
+                                        arrays.push(before);
+                                    }
+                                }
+                            }
                         }
-                        _ => self.parse_decl()?,
                     }
                 }
                 let _ = self.take_word();
                 let _ = self.take_if(";");
+                if is_grid {
+                    for a in arrays {
+                        self.grids.push(DapGrid {
+                            array: a,
+                            maps: maps.clone(),
+                        });
+                    }
+                }
                 Ok(())
             }
-            "Sequence" => {
+            "SEQUENCE" => {
                 let mut depth = 0usize;
                 loop {
                     match self.peek() {
@@ -297,8 +352,9 @@ pub fn parse_dds(text: &str) -> Result<DapSchema, DapNote> {
         pos: 0,
         dims: Vec::new(),
         vars: Vec::new(),
+        grids: Vec::new(),
     };
-    cur.expect("Dataset")?;
+    cur.expect_ci("Dataset")?;
     cur.expect("{")?;
     cur.parse_decls()?;
     cur.expect("}")?;
@@ -315,6 +371,7 @@ pub fn parse_dds(text: &str) -> Result<DapSchema, DapNote> {
         name,
         dims: cur.dims,
         vars: cur.vars,
+        grids: cur.grids,
     })
 }
 
@@ -393,6 +450,21 @@ impl DasCursor {
 
     fn expect(&mut self, s: &str) -> Result<(), DapNote> {
         if self.take_if(s) {
+            Ok(())
+        } else {
+            Err(DapNote::Keyword {
+                word: s.to_string(),
+            })
+        }
+    }
+
+    fn expect_ci(&mut self, s: &str) -> Result<(), DapNote> {
+        if self
+            .toks
+            .get(self.pos)
+            .is_some_and(|x| x.eq_ignore_ascii_case(s))
+        {
+            self.pos += 1;
             Ok(())
         } else {
             Err(DapNote::Keyword {
@@ -505,7 +577,7 @@ pub fn parse_das(text: &str) -> Result<DapAttrs, DapNote> {
         toks: tokenize_das(text),
         pos: 0,
     };
-    cur.expect("Attributes")?;
+    cur.expect_ci("Attributes")?;
     cur.expect("{")?;
     let mut global = Vec::new();
     let mut per_var = Vec::new();
@@ -703,11 +775,30 @@ fn decode_var(cur: &mut Xdr, v: &DapVarDecl, schema: &DapSchema) -> Result<DapDa
 
 pub fn decode_dods(schema: &DapSchema, data: &[u8]) -> Result<Vec<DapData>, DapNote> {
     let mut cur = Xdr::new(data);
-    let mut out = Vec::with_capacity(schema.vars.len());
-    for v in &schema.vars {
-        out.push(decode_var(&mut cur, v, schema)?);
+    let mut out: Vec<Option<DapData>> = schema.vars.iter().map(|_| None).collect();
+    let mut done = vec![false; schema.vars.len()];
+    for i in 0..schema.vars.len() {
+        if done[i] {
+            continue;
+        }
+        let value = decode_var(&mut cur, &schema.vars[i], schema)?;
+        out[i] = Some(value);
+        done[i] = true;
+        let name = schema.vars[i].name.clone();
+        for (j, v) in schema.vars.iter().enumerate() {
+            if !done[j] && v.name == name {
+                out[j] = out[i].clone();
+                done[j] = true;
+            }
+        }
     }
-    Ok(out)
+    out.into_iter()
+        .map(|v| {
+            v.ok_or(DapNote::Shape {
+                var: "".to_string(),
+            })
+        })
+        .collect()
 }
 
 fn strip_header(bytes: &[u8]) -> &[u8] {
@@ -722,6 +813,13 @@ fn strip_header(bytes: &[u8]) -> &[u8] {
     bytes
 }
 
+fn embedded_dds(bytes: &[u8]) -> Option<String> {
+    let needle = b"\nData:\n";
+    let pos = bytes.windows(needle.len()).position(|w| w == needle)?;
+    let head = &bytes[..pos];
+    String::from_utf8(head.to_vec()).ok()
+}
+
 fn lookup_attrs(attrs: &DapAttrs, name: &str) -> Vec<DapAttr> {
     for (k, v) in &attrs.per_var {
         let suffix = k.strip_suffix(name).is_some_and(|p| p.ends_with('.'));
@@ -733,7 +831,13 @@ fn lookup_attrs(attrs: &DapAttrs, name: &str) -> Vec<DapAttr> {
 }
 
 pub fn decode(dds_text: &str, das_text: &str, dods_bytes: &[u8]) -> Result<DapFile, DapNote> {
-    let schema = parse_dds(dds_text)?;
+    let schema = match embedded_dds(dods_bytes)
+        .as_deref()
+        .and_then(|t| parse_dds(t).ok())
+    {
+        Some(s) => s,
+        None => parse_dds(dds_text)?,
+    };
     let attrs = parse_das(das_text)?;
     let data = strip_header(dods_bytes);
     let values = decode_dods(&schema, data)?;
@@ -975,5 +1079,97 @@ mod tests {
             .find(|a| a.name == "Grib2_Parameter")
             .unwrap();
         assert_eq!(file.attr_num(param), Some(0.0));
+    }
+
+    #[test]
+    fn parses_uppercase_grid_dds_like_erddap() {
+        let dds = "Dataset {\n  Float64 time[time = 2];\n  Float32 latitude[latitude = 3];\n  GRID {\n    ARRAY:\n      Float32 sst[time = 2][latitude = 3];\n    MAPS:\n      Float64 time[time = 2];\n      Float32 latitude[latitude = 3];\n  } sst;\n} mursst;\n";
+        let s = parse_dds(dds).unwrap();
+        assert_eq!(s.name, "mursst");
+        assert_eq!(s.dims.len(), 2);
+        assert_eq!(s.grids.len(), 1);
+        assert_eq!(s.grids[0].array, 3);
+        assert_eq!(s.grids[0].maps, vec![4, 5]);
+        assert_eq!(s.vars.len(), 6);
+        assert_eq!(s.vars[3].name, "sst");
+        assert_eq!(s.vars[3].dap_type, DapType::Float32);
+    }
+
+    #[test]
+    fn decodes_grid_data_with_shared_maps() {
+        let dds = "Dataset {\n  Float64 time[time = 2];\n  Float32 latitude[latitude = 3];\n  GRID {\n    ARRAY:\n      Float32 sst[time = 2][latitude = 3];\n    MAPS:\n      Float64 time[time = 2];\n      Float32 latitude[latitude = 3];\n  } sst;\n} mursst;\n";
+        let mut data = Vec::new();
+        data.extend(u32b(2));
+        data.extend(u32b(2));
+        data.extend(f64b(1.0));
+        data.extend(f64b(2.0));
+        data.extend(u32b(3));
+        data.extend(u32b(3));
+        data.extend(f32b(10.0));
+        data.extend(f32b(11.0));
+        data.extend(f32b(12.0));
+        data.extend(u32b(6));
+        data.extend(u32b(6));
+        for v in [1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0] {
+            data.extend(f32b(v));
+        }
+        let file = decode(dds, "Attributes {\n}\n", &data).unwrap();
+        assert_eq!(file.values_numeric("time").unwrap(), vec![1.0, 2.0]);
+        assert_eq!(
+            file.values_numeric("latitude").unwrap(),
+            vec![10.0, 11.0, 12.0]
+        );
+        assert_eq!(
+            file.values_numeric("sst").unwrap(),
+            vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+        );
+        assert_eq!(file.vars.len(), 6);
+    }
+
+    #[test]
+    fn decodes_grid_whose_maps_live_only_inside_the_grid() {
+        let dds = "Dataset {\n  GRID {\n    ARRAY:\n      Float32 g[a = 2][b = 3];\n    MAPS:\n      Float32 a[a = 2];\n      Float32 b[b = 3];\n  } g;\n} demo;\n";
+        let mut data = Vec::new();
+        data.extend(u32b(6));
+        data.extend(u32b(6));
+        for v in [1.0f32, 2.0, 3.0, 4.0, 5.0, 6.0] {
+            data.extend(f32b(v));
+        }
+        data.extend(u32b(2));
+        data.extend(u32b(2));
+        data.extend(f32b(7.0));
+        data.extend(f32b(8.0));
+        data.extend(u32b(3));
+        data.extend(u32b(3));
+        data.extend(f32b(9.0));
+        data.extend(f32b(10.0));
+        data.extend(f32b(11.0));
+        let file = decode(dds, "Attributes {\n}\n", &data).unwrap();
+        assert_eq!(file.values_numeric("g").unwrap().len(), 6);
+        assert_eq!(file.values_numeric("a").unwrap(), vec![7.0, 8.0]);
+        assert_eq!(file.values_numeric("b").unwrap(), vec![9.0, 10.0, 11.0]);
+    }
+
+    #[test]
+    fn prefers_the_embedded_constrained_dds_over_the_passed_one() {
+        let full = "Dataset {\n    Float32 lat[lat = 4];\n} demo;\n";
+        let constrained = "Dataset {\n    Float32 lat[lat = 2];\n} demo;\n";
+        let mut data = Vec::new();
+        data.extend_from_slice(constrained.as_bytes());
+        data.extend_from_slice(b"\nData:\n");
+        data.extend(u32b(2));
+        data.extend(u32b(2));
+        data.extend(f32b(1.0));
+        data.extend(f32b(2.0));
+        let file = decode(full, "Attributes {\n}\n", &data).unwrap();
+        assert_eq!(file.values_numeric("lat").unwrap(), vec![1.0, 2.0]);
+    }
+
+    #[test]
+    fn parses_uppercase_dataset_keyword() {
+        let dds = "DATASET {\n    Float32 lat[lat = 1];\n} demo;\n";
+        let s = parse_dds(dds).unwrap();
+        assert_eq!(s.name, "demo");
+        assert_eq!(s.vars[0].name, "lat");
     }
 }

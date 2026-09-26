@@ -44,6 +44,8 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mpc" => Some(value * 3.085677581e22),
         "pc/cm3" => Some(value * 3.085677581e22),
         "ev" => Some(value * 1.602176634e-19),
+        "gev" => Some(value * 1.602176634e-10),
+        "gv" => Some(value * 1e9),
         "ft" => Some(value * 0.3048),
         "inch" => Some(value * 0.0254),
         "mile" | "miles" => Some(value * 1609.344),
@@ -70,6 +72,18 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "dbhz" => Some(10.0f64.powf(value / 10.0)),
         "cpm" => Some(value * 1.0e-6 / (334.0 * 3600.0)),
         "usv/h" => Some(value * 1.0e-6 / 3600.0),
+        "h" => Some(value * 3600.0),
+        "nm" => Some(value * 1e-9),
+        "mas" => Some(value * 4.84813681109536e-9),
+        "au/d" => Some(value * 1.731456e6),
+        "e22j" => Some(value * 1e22),
+        "kwh/m2" => Some(value * 3.6e6),
+        "ur/h" => Some(value * 2.4344e-12),
+        "mol/cm2" => Some(value * 1e4),
+        "mm/yr" => Some(value * 3.16881e-11),
+        "cm/yr" => Some(value * 3.16881e-10),
+        "yr" => Some(value * 3.15576e7),
+        "mw/m2" => Some(value * 1e-3),
         "e10j" => Some(value * 1.0e10),
         "kt_tnt" => Some(value * 4.184e12),
         "kt_mass" => Some(value * 1e6),
@@ -260,6 +274,36 @@ pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
         Some("C")
     } else if kl.ends_with("_k") {
         Some("K")
+    } else if kl.ends_with("_au_day") {
+        Some("au/d")
+    } else if kl.ends_with("_hours") {
+        Some("h")
+    } else if kl.ends_with("_angstrom") {
+        Some("1")
+    } else if kl.ends_with("earth_radius") {
+        Some("r_earth")
+    } else if kl.ends_with("signal_to_noise") {
+        Some("1")
+    } else if kl.ends_with("semi_amplitude") {
+        Some("m/s")
+    } else if kl.ends_with("_10e22j") {
+        Some("e22j")
+    } else if kl.ends_with("_kwh_m2") {
+        Some("kwh/m2")
+    } else if kl.ends_with("_ur_h") {
+        Some("ur/h")
+    } else if kl.ends_with("_mol_cm2") {
+        Some("mol/cm2")
+    } else if kl.ends_with("_mm_yr") {
+        Some("mm/yr")
+    } else if kl.ends_with("_cm_yr") {
+        Some("cm/yr")
+    } else if kl.ends_with("_yr") {
+        Some("yr")
+    } else if kl.ends_with("_nm") {
+        Some("nm")
+    } else if kl.ends_with("_mas") {
+        Some("mas")
     } else if kl.ends_with("_m") {
         Some("m")
     } else {
@@ -322,18 +366,26 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "mile",
             "mhz",
             "ppt",
+            "nm",
+            "h",
+            "yr",
+            "ur/h",
+            "kwh/m2",
+            "mw/m2",
         ],
         1 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "mpc", "t", "nt",
-            "m", "r_earth", "logg", "deg", "arcsec", "s", "1",
+            "m", "r_earth", "logg", "deg", "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1",
         ],
         2 => &[
             "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
-            "inch",
+            "inch", "mm/yr",
         ],
-        3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
+        3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw", "mm/yr"],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
-        5 => &["k", "c", "f", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s"],
+        5 => &[
+            "k", "c", "f", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s", "e22j",
+        ],
         6 => &[
             "ppm",
             "ppb",
@@ -356,6 +408,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "cm",
             "mm",
             "kt_mass",
+            "mol/cm2",
             "1",
         ],
         7 => &[

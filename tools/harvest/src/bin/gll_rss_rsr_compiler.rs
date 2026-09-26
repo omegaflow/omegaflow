@@ -5,6 +5,7 @@ use omegaflow::cdn::upload_release;
 const BASE: &str = "https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/";
 const NETLOC: &str = "pds-rings.seti.org";
 const PREFIX: &str = "gll_rss_rsr";
+const FORMAT: &str = "cassini_rsr";
 const DIR: &str = "data/pds-rings.seti.org";
 const SUFFIX: &str = "_rsr.dat";
 const MAX_DEPTH: u32 = 3;
@@ -152,13 +153,13 @@ fn main() {
     if multi {
         for name in &names {
             println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
-            println!("format {PREFIX}");
+            println!("format {FORMAT}");
             println!("origin procedure: {BASE} (Live-Listing data_0159_sci subdirectories)");
             println!("compiler tools/harvest/src/bin/gll_rss_rsr_compiler.rs");
             println!("at earth");
             println!("ttl 604800");
-            println!("field i_count {PREFIX}_i_count inverse-square em count 604800 0.0 0.0");
-            println!("field q_count {PREFIX}_q_count inverse-square em count 604800 0.0 0.0");
+            println!("field i_count {FORMAT}_i_count inverse-square em count 604800 0.0 0.0");
+            println!("field q_count {FORMAT}_q_count inverse-square em count 604800 0.0 0.0");
             println!();
         }
     }

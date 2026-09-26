@@ -156,6 +156,125 @@ pub fn parse_tdat(bytes: &[u8]) -> Option<TdatTable> {
     })
 }
 
+pub const AMS02_SPECIES: [&str; 23] = [
+    "aluminum",
+    "antiproton",
+    "beryllium",
+    "boron",
+    "carbon",
+    "electron",
+    "electron_positron",
+    "fluorine",
+    "helium",
+    "helium3",
+    "helium4",
+    "hydrogen",
+    "iron",
+    "lithium",
+    "magnesium",
+    "neon",
+    "nitrogen",
+    "oxygen",
+    "positron",
+    "proton",
+    "silicon",
+    "sodium",
+    "sulfur",
+];
+
+pub const AMS02_KIND_ENERGY: u32 = 0;
+pub const AMS02_KIND_RIGIDITY: u32 = 1;
+
+pub fn ams02_species_id(name: &str) -> Option<u32> {
+    AMS02_SPECIES
+        .iter()
+        .position(|s| *s == name)
+        .map(|i| i as u32)
+}
+
+pub fn ams02_comp(species_id: u32, kind: u32) -> u32 {
+    species_id * 2 + kind
+}
+
+pub const AMS02_ROW_TDB: usize = 0;
+pub const AMS02_ROW_LOW: usize = 1;
+pub const AMS02_ROW_HIGH: usize = 2;
+pub const AMS02_ROW_SPECIES: usize = 3;
+pub const AMS02_ROW_KIND: usize = 5;
+pub const AMS02_ROW_TDB_END: usize = 7;
+
+pub fn ams02_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = crate::archivar::odf::parse_podf_bin(bytes)?;
+    let mut out = Vec::with_capacity(rows.len());
+    for r in rows {
+        let t = r[AMS02_ROW_TDB];
+        let v = r[AMS02_ROW_LOW];
+        if !t.is_finite() || !v.is_finite() {
+            continue;
+        }
+        let species = r[AMS02_ROW_SPECIES];
+        let kind = r[AMS02_ROW_KIND];
+        if !species.is_finite() || !kind.is_finite() {
+            continue;
+        }
+        out.push((t, v, ams02_comp(species as u32, kind as u32)));
+    }
+    Some(out)
+}
+
+pub const AMS02_COMP_NAMES: [&str; 46] = [
+    "ams02_aluminum_energy_min_gev",
+    "ams02_aluminum_rigidity_min_gv",
+    "ams02_antiproton_energy_min_gev",
+    "ams02_antiproton_rigidity_min_gv",
+    "ams02_beryllium_energy_min_gev",
+    "ams02_beryllium_rigidity_min_gv",
+    "ams02_boron_energy_min_gev",
+    "ams02_boron_rigidity_min_gv",
+    "ams02_carbon_energy_min_gev",
+    "ams02_carbon_rigidity_min_gv",
+    "ams02_electron_energy_min_gev",
+    "ams02_electron_rigidity_min_gv",
+    "ams02_electron_positron_energy_min_gev",
+    "ams02_electron_positron_rigidity_min_gv",
+    "ams02_fluorine_energy_min_gev",
+    "ams02_fluorine_rigidity_min_gv",
+    "ams02_helium_energy_min_gev",
+    "ams02_helium_rigidity_min_gv",
+    "ams02_helium3_energy_min_gev",
+    "ams02_helium3_rigidity_min_gv",
+    "ams02_helium4_energy_min_gev",
+    "ams02_helium4_rigidity_min_gv",
+    "ams02_hydrogen_energy_min_gev",
+    "ams02_hydrogen_rigidity_min_gv",
+    "ams02_iron_energy_min_gev",
+    "ams02_iron_rigidity_min_gv",
+    "ams02_lithium_energy_min_gev",
+    "ams02_lithium_rigidity_min_gv",
+    "ams02_magnesium_energy_min_gev",
+    "ams02_magnesium_rigidity_min_gv",
+    "ams02_neon_energy_min_gev",
+    "ams02_neon_rigidity_min_gv",
+    "ams02_nitrogen_energy_min_gev",
+    "ams02_nitrogen_rigidity_min_gv",
+    "ams02_oxygen_energy_min_gev",
+    "ams02_oxygen_rigidity_min_gv",
+    "ams02_positron_energy_min_gev",
+    "ams02_positron_rigidity_min_gv",
+    "ams02_proton_energy_min_gev",
+    "ams02_proton_rigidity_min_gv",
+    "ams02_silicon_energy_min_gev",
+    "ams02_silicon_rigidity_min_gv",
+    "ams02_sodium_energy_min_gev",
+    "ams02_sodium_rigidity_min_gv",
+    "ams02_sulfur_energy_min_gev",
+    "ams02_sulfur_rigidity_min_gv",
+];
+
+pub fn ams02_component_name(comp: u32) -> Option<&'static str> {
+    AMS02_COMP_NAMES.get(comp as usize).copied()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -231,5 +350,51 @@ line[1] = record_id time species energy_min data_file\n\
     fn rejects_foreign_bytes() {
         assert!(parse_tdat(b"not a tdat file").is_none());
         assert!(parse_tdat(b"\xff\xfe\xfd").is_none());
+    }
+
+    #[test]
+    fn ams02_species_table_covers_the_catalog_species() {
+        assert_eq!(ams02_species_id("proton"), Some(19));
+        assert_eq!(ams02_species_id("electron"), Some(5));
+        assert_eq!(ams02_species_id("helium3"), Some(9));
+        assert_eq!(ams02_species_id("absent"), None);
+        assert_eq!(ams02_comp(19, AMS02_KIND_ENERGY), 38);
+        assert_eq!(ams02_comp(19, AMS02_KIND_RIGIDITY), 39);
+        assert_eq!(
+            ams02_component_name(38),
+            Some("ams02_proton_energy_min_gev")
+        );
+        assert_eq!(
+            ams02_component_name(39),
+            Some("ams02_proton_rigidity_min_gv")
+        );
+        assert_eq!(ams02_component_name(46), None);
+    }
+
+    #[test]
+    fn ams02_series_reads_podf_rows_into_wire_triples() {
+        let rows = [
+            [1.0e9, 0.433, 1799.0, 19.0, 0.0, 0.0, 0.0, 1.1e9, 0.0],
+            [2.0e9, 1.0, 1800.0, 19.0, 0.0, 1.0, 0.0, 2.2e9, 0.0],
+        ];
+        let bytes = crate::archivar::odf::write_podf_bin(&rows);
+        let series = ams02_series(&bytes).unwrap();
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0], (1.0e9, 0.433, ams02_comp(19, AMS02_KIND_ENERGY)));
+        assert_eq!(series[1], (2.0e9, 1.0, ams02_comp(19, AMS02_KIND_RIGIDITY)));
+        assert!(ams02_series(b"X").is_none());
+    }
+
+    #[test]
+    fn ams02_series_skips_non_finite_or_absent_slots() {
+        let rows = [
+            [1.0e9, 0.433, 1799.0, 19.0, 0.0, 0.0, 0.0, 1.1e9, 0.0],
+            [f64::NAN, 0.5, 1.0, 19.0, 0.0, 0.0, 0.0, 1.1e9, 0.0],
+            [3.0e9, 0.5, 1.0, f64::NAN, 0.0, 0.0, 0.0, 1.1e9, 0.0],
+        ];
+        let bytes = crate::archivar::odf::write_podf_bin(&rows);
+        let series = ams02_series(&bytes).unwrap();
+        assert_eq!(series.len(), 1);
+        assert_eq!(series[0].0, 1.0e9);
     }
 }
