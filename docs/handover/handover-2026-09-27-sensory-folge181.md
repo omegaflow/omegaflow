@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 4590b56db31af365ea6867fafd84712ed89b53ce2bcb9bcfd69b0f7965c706b8
+  sha256: bd0e952db20748616a9ece10b3f5aa30ca668cbc4000d496bf5d21131ec5b277
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -33,10 +33,12 @@ getrackt, nie am CDN.
 - **CI:** die zwei folge180-Dispatches (`funken-probe 36276735080`,
   `causal-arrow-scan 36276736870`) scheiterten am main-Bruch. Nach Heilung neu dispatcht
   → `funken-probe 36277987363`, `causal-arrow-scan 36277989033` (gemessen 2026-09-27).
-- **Geteilter Baum ist LIVE:** eine fremde Linie (mycelium/mountain) arbeitet gerade
-  uncommittet an `.github/workflows/*-cdn.yml`, `phi/sources.φ`,
-  `phi/blocked_sources.φ`, `src/archivar/main_flow.rs`, `src/archivar/skydirection.rs`,
-  `tools/harvest/.../modis_lst_cmg_compiler.rs` u. a. → nicht anfassen.
+- **Geteilter Baum ist LIVE und erneut rot:** eine fremde Linie (mountain/mycelium)
+  arbeitet uncommittet an `src/mathematikerin/omega.rs`, `src/archivar/{channels,extract,
+  fetch,hdf5,main_flow,parse,skydirection,types,volume}.rs` u. a. → die `omegaflow`-lib
+  kompiliert nicht (12 Fehler, `omega.rs:809` vol_fingerprint-Tupel). HEAD ist inzwischen
+  `2aec28f22 mountain 177` (meine Commits sind Vorfahren). Nicht anfassen; Gravimeter/#5
+  sind build-blockiert.
 
 ## Flaschenhals — geheilt
 
@@ -47,19 +49,19 @@ getrackt, nie am CDN.
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-### 3. O1 DEMETER/CDPP — Order nicht abholbar (Riss)
-- **Status:** wartend | **Bindung:** operator | **Trigger:** Order neu erzeugen | **Frist 2026-09-28**
+### 3. O1 DEMETER/CDPP — Quelle scheitert (Riss)
+- **Status:** blockiert | **Bindung:** dritter | **Trigger:** CDPP-DEMETER-Pipeline erholt sich
 - **Lage:** (gemessen 2026-09-27) metalink gesichert
-  (`data/cdpp-archive.cnes.fr/metalink_18387.xml`, 68.9 MB, 97 078 URLs; Frist-Ablauf
-  09/28 12:46). **Aber:** die File-URLs (`/orders/public/files/<id>?orderToken=…`) weist
-  der **F5-WAF** ab (`Request Rejected`) — curl/sfetch/Proton, mit vollständigem
-  Browser-Header-Satz **und sogar die Browser-Session selbst** (Top-Level-Navigation →
-  „Request Rejected", gemessen). Die Order steht `DONE_WITH_WARNING` mit
-  `availableFilesCount 0`, `filesInErrorCount 96978` → die Dateien sind nicht servierbar.
-- **Blockade:** Order fehlgeschlagen (0 verfügbare Dateien).
-- **Braucht:** Order in der SPA **neu erzeugen** (die neuen Datei-URLs); dann erneut
-  messen. Korrektur zu folge180 — `availableFilesCount 0` war schon da das Signal, der
-  befüllte metalink kein Gegenbeweis.
+  (`data/cdpp-archive.cnes.fr/metalink_18387.xml`, 97 078 URLs). **Aber:** die File-URLs
+  weist der F5-WAF ab — curl/sfetch/Proton, mit vollem Browser-Header-Satz **und die
+  Browser-Navigation selbst** (`Request Rejected`). Die SPA zeigt **fünf** DEMETER-Orders,
+  **alle `Failed`/`Expired`** (`demeter_0011`, `_probe`, `_repro_3`, `_0012`, `_0013`);
+  der große Order `DONE_WITH_WARNING`, `availableFilesCount 0`, `filesInErrorCount 96978`.
+  Die DEMETER-Erzeugung scheitert seitens CDPP.
+- **Blockade:** Quellenseite (CDPP-DEMETER-Pipeline).
+- **Braucht:** CDPP-Kontakt; ein neuer Order wiederholt nur den fehlschlagenden Lauf.
+  Korrektur zu folge180: `availableFilesCount 0` war das Signal, der befüllte metalink
+  kein Gegenbeweis.
 
 ### 5. #4 Seismik-Flotte — gemessen (Dual-Phase-Fit mit Gate), Gravimeter offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
@@ -88,14 +90,16 @@ getrackt, nie am CDN.
 - **Blockade:** keine.
 - **Braucht:** Träger `blatt-kreuz-screening-gyirong.md:71/:201` nachziehen.
 
-### 8. #9 Trishuli — Post-Scene geladen (SAS-Bug gefixt), Alignment offen
-- **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27) SAS-Bug in `s1_post_capture`/`s1_sar_compiler` gefixt
-  (JSON-`\u0026` wird entschärft; Commit `046c3ee69`); Post-Event-Szene
-  `S1D_…_20260828T122141` geladen → `tmp/s1post/…_vv.tif` (666 368 744 B).
-- **Blockade:** keine (Pre-Baseline für die Differenz fehlt).
-- **Braucht:** Pre-Event-Szene als `OMEGAFLOW_S1_VOR` setzen → `s1_raster_diff`
-  (Vor/Nach-Differenz).
+### 8. #9 Trishuli — SAR-Differenz gemessen (geschlossen)
+- **Status:** geschlossen | **Bindung:** eigen | **Trigger:** —
+- **Lage:** (gemessen 2026-09-27) `s1_sar_compiler` holte Post (`S1D_…_20260828`) + Pre
+  (`S1D_…_20260824`) über Planetary Computer und rechnete die Amplitude-Differenz:
+  22 512 Pixel (100 % Fenster), mittlere dB-Änderung +0.71; **Abdunklung (dB < −4)
+  6661 Pixel, davon 220 am Kollabpunkt (±0.02°)**; Aufhellung 7898; `s1_sar_diff.bin`
+  geschrieben (roundtrip parses). SAS-Bug in `s1_post_capture`/`s1_sar_compiler` gefixt
+  (`046c3ee69`).
+- **Blockade:** keine.
+- **Braucht:** Träger `sturzflut-tibet-pfeil.md` nachziehen.
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
