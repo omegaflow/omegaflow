@@ -9,7 +9,13 @@ use omegaflow::te::{
 };
 
 fn read_series(path: &Path) -> Vec<f32> {
-    let body = std::fs::read_to_string(path).unwrap_or_default();
+    let body = match std::fs::read_to_string(path) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("{}: {e}", path.display());
+            return Vec::new();
+        }
+    };
     if path.extension().and_then(|s| s.to_str()) == Some("json") {
         return json_values(&body);
     }
@@ -71,7 +77,22 @@ fn stem(path: &Path) -> String {
 #[derive(Clone)]
 struct Series {
     name: String,
+    variable: String,
     vals: Vec<f32>,
+}
+
+fn variable_of(name: &str) -> Option<String> {
+    name.rsplit_once("open-meteo_").map(|(_, v)| v.to_string())
+}
+
+fn pair_admitted(a: &Series, b: &Series, cond: Option<&str>) -> bool {
+    if a.variable == b.variable {
+        return false;
+    }
+    match cond {
+        Some(c) => a.name != c && b.name != c,
+        None => true,
+    }
 }
 
 fn physical_cores() -> usize {
@@ -97,7 +118,6 @@ fn physical_cores() -> usize {
     std::thread::available_parallelism()
         .map(|n| n.get())
         .unwrap_or(1)
-        .max(1)
 }
 
 fn main() {
@@ -106,12 +126,11 @@ fn main() {
         .iter()
         .position(|a| a == "--dir")
         .and_then(|i| args.get(i + 1));
-    let lags: Vec<usize> = args
-        .iter()
-        .position(|a| a == "--lags")
-        .and_then(|i| args.get(i + 1))
-        .map(|v| v.split(',').filter_map(|s| s.parse().ok()).collect())
-        .unwrap_or_else(|| vec![1, 3, 6, 12, 24]);
+    let lags: Vec<usize> =
+        match args.iter().position(|a| a == "--lags").and_then(|i| args.get(i + 1)) {
+            Some(v) => v.split(',').filter_map(|s| s.parse().ok()).collect(),
+            None => vec![1, 3, 6, 12, 24],
+        };
     let n_surr: u64 = args
         .iter()
         .position(|a| a == "--surrogate")
@@ -129,12 +148,16 @@ fn main() {
         .position(|a| a == "--cond")
         .and_then(|i| args.get(i + 1))
         .map(|s| s.to_string());
-    let jobs: usize = args
-        .iter()
-        .position(|a| a == "--jobs")
-        .and_then(|i| args.get(i + 1))
-        .and_then(|v| v.parse().ok())
-        .unwrap_or_else(physical_cores);
+    let jobs: usize = match args.iter().position(|a| a == "--jobs").and_then(|i| args.get(i + 1)) {
+        Some(v) => match v.parse::<usize>() {
+            Ok(j) if j >= 1 => j,
+            _ => {
+                eprintln!("--jobs expects a positive thread count, got {v}");
+                std::process::exit(2);
+            }
+        },
+        None => physical_cores(),
+    };
     let filters: Vec<String> = args
         .iter()
         .enumerate()
@@ -165,26 +188,36 @@ fn main() {
             Some("csv") | Some("txt") | Some("json") => {}
             _ => continue,
         }
+        let name = stem(p);
+        let Some(variable) = variable_of(&name) else {
+            eprintln!("{name}: no open-meteo variable in the name -> skipped");
+            continue;
+        };
+        if variable == "is_day" {
+            eprintln!("{name}: is_day is the diurnal driver -> excluded from the screen");
+            continue;
+        }
         let vals = read_series(p);
         if vals.len() < min_n {
             eprintln!(
-                "{}: n = {} < {min_n} -> skipped (underdetermined, no finding)",
-                stem(p),
+                "{name}: n = {} < {min_n} -> skipped (underdetermined, no finding)",
                 vals.len()
             );
             continue;
         }
+        let cond_ok = match cond_name.as_ref() {
+            Some(c) => name != c.as_str(),
+            None => true,
+        };
         if !filters.is_empty()
-            && cond_name
-                .as_ref()
-                .map(|c| stem(p) != c.as_str())
-                .unwrap_or(true)
-            && !filters.iter().any(|f| stem(p).contains(f.as_str()))
+            && cond_ok
+            && !filters.iter().any(|f| name.contains(f.as_str()))
         {
             continue;
         }
         series.push(Series {
-            name: stem(p),
+            name,
+            variable,
             vals,
         });
     }
@@ -194,21 +227,27 @@ fn main() {
         std::process::exit(0);
     }
 
-    let cond_series: Option<Series> = cond_name.as_ref().map(|name| {
-        series
-            .iter()
-            .find(|s| &s.name == name)
-            .cloned()
-            .unwrap_or_else(|| {
+    let cond_series: Option<Series> = match cond_name.as_ref() {
+        Some(name) => match series.iter().find(|s| &s.name == name).cloned() {
+            Some(s) => Some(s),
+            None => {
                 eprintln!("--cond series '{name}' not found among loaded series");
                 std::process::exit(2);
-            })
-    });
+            }
+        },
+        None => None,
+    };
 
+    let n_pairs: usize = (0..series.len())
+        .map(|i| {
+            ((i + 1)..series.len())
+                .filter(|&j| pair_admitted(&series[i], &series[j], cond_name.as_deref()))
+                .count()
+        })
+        .sum();
     println!(
-        "=== cross-screening: {} series, {} pairs, lags = {:?}, surrogate = {}, min-n = {min_n}, jobs = {jobs} ===",
+        "=== cross-screening: {} series, {n_pairs} pairs, lags = {:?}, surrogate = {}, min-n = {min_n}, jobs = {jobs} ===",
         series.len(),
-        series.len() * (series.len() - 1) / 2,
         lags,
         n_surr
     );
@@ -239,10 +278,8 @@ fn main() {
     let mut tasks: Vec<(usize, usize, usize)> = Vec::new();
     for i in 0..series.len() {
         for j in (i + 1)..series.len() {
-            if let Some(c) = &cond_series {
-                if series[i].name == c.name || series[j].name == c.name {
-                    continue;
-                }
+            if !pair_admitted(&series[i], &series[j], cond_name.as_deref()) {
+                continue;
             }
             for li in 0..lags.len() {
                 tasks.push((i, j, li));
@@ -253,7 +290,7 @@ fn main() {
     let counter = AtomicUsize::new(0);
 
     std::thread::scope(|s| {
-        for _ in 0..jobs.max(1) {
+        for _ in 0..jobs {
             s.spawn(|| {
                 let mut local_out: Vec<String> = Vec::new();
                 let mut local_findings: Vec<(usize, usize, usize, f64, f64)> = Vec::new();

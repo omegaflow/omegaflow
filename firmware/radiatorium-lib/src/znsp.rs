@@ -302,6 +302,59 @@ pub enum State {
     Joined,
 }
 
+pub const ESP_ZB_CFG_SIZE: usize = 16;
+pub const ESP_ZB_CFG_ROLE_OFFSET: usize = 0;
+pub const ESP_ZB_CFG_INSTALL_CODE_OFFSET: usize = 4;
+pub const ESP_ZB_CFG_NWK_OFFSET: usize = 8;
+pub const ESP_ZB_CFG_ZCZR_MAX_CHILDREN_OFFSET: usize = 8;
+pub const ESP_ZB_CFG_ZED_ED_TIMEOUT_OFFSET: usize = 8;
+pub const ESP_ZB_CFG_ZED_KEEP_ALIVE_OFFSET: usize = 12;
+
+pub const ESP_ZB_DEVICE_TYPE_COORDINATOR: u32 = 0x0;
+pub const ESP_ZB_DEVICE_TYPE_ROUTER: u32 = 0x1;
+pub const ESP_ZB_DEVICE_TYPE_ED: u32 = 0x2;
+
+pub const fn form_network_payload_zczr(
+    role: u32,
+    install_code_policy: bool,
+    max_children: u8,
+) -> [u8; ESP_ZB_CFG_SIZE] {
+    let mut out = [0u8; ESP_ZB_CFG_SIZE];
+    let role_bytes = role.to_le_bytes();
+    out[ESP_ZB_CFG_ROLE_OFFSET] = role_bytes[0];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 1] = role_bytes[1];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 2] = role_bytes[2];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 3] = role_bytes[3];
+    out[ESP_ZB_CFG_INSTALL_CODE_OFFSET] = install_code_policy as u8;
+    out[ESP_ZB_CFG_ZCZR_MAX_CHILDREN_OFFSET] = max_children;
+    out
+}
+
+pub const fn form_network_payload_zed(
+    role: u32,
+    install_code_policy: bool,
+    ed_timeout: u8,
+    keep_alive: u32,
+) -> [u8; ESP_ZB_CFG_SIZE] {
+    let mut out = [0u8; ESP_ZB_CFG_SIZE];
+    let role_bytes = role.to_le_bytes();
+    out[ESP_ZB_CFG_ROLE_OFFSET] = role_bytes[0];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 1] = role_bytes[1];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 2] = role_bytes[2];
+    out[ESP_ZB_CFG_ROLE_OFFSET + 3] = role_bytes[3];
+    out[ESP_ZB_CFG_INSTALL_CODE_OFFSET] = install_code_policy as u8;
+    out[ESP_ZB_CFG_ZED_ED_TIMEOUT_OFFSET] = ed_timeout;
+    let keep_alive_bytes = keep_alive.to_le_bytes();
+    out[ESP_ZB_CFG_ZED_KEEP_ALIVE_OFFSET] = keep_alive_bytes[0];
+    out[ESP_ZB_CFG_ZED_KEEP_ALIVE_OFFSET + 1] = keep_alive_bytes[1];
+    out[ESP_ZB_CFG_ZED_KEEP_ALIVE_OFFSET + 2] = keep_alive_bytes[2];
+    out[ESP_ZB_CFG_ZED_KEEP_ALIVE_OFFSET + 3] = keep_alive_bytes[3];
+    out
+}
+
+pub const ESP_ZB_ZC_FORM_NETWORK_PAYLOAD: [u8; ESP_ZB_CFG_SIZE] =
+    form_network_payload_zczr(ESP_ZB_DEVICE_TYPE_COORDINATOR, false, 10);
+
 pub struct NetworkMachine {
     state: State,
 }
@@ -316,7 +369,7 @@ impl NetworkMachine {
     }
 
     pub const fn form_network_payload_pending(&self) -> Option<&'static [u8]> {
-        None
+        Some(&ESP_ZB_ZC_FORM_NETWORK_PAYLOAD)
     }
 
     pub fn init_request(&mut self) -> Option<&'static [u8]> {
@@ -514,7 +567,10 @@ mod tests {
         let mut host = NetworkMachine::new();
         assert_eq!(host.state(), State::Idle);
         assert_eq!(host.start_request(), None);
-        assert_eq!(host.form_network_payload_pending(), None);
+        assert_eq!(
+            host.form_network_payload_pending(),
+            Some(&ESP_ZB_ZC_FORM_NETWORK_PAYLOAD[..])
+        );
         let init_payload = host.init_request().expect("init payload");
         assert_eq!(init_payload.len(), 0);
         assert_eq!(host.state(), State::InitSent);
@@ -551,5 +607,32 @@ mod tests {
         };
         assert!(host.on_notify(&join));
         assert_eq!(host.state(), State::Joined);
+    }
+
+    #[test]
+    fn form_network_payload_zczr_is_byte_exact() {
+        let payload = ESP_ZB_ZC_FORM_NETWORK_PAYLOAD;
+        assert_eq!(payload.len(), ESP_ZB_CFG_SIZE);
+        assert_eq!(&payload[0..4], &[0x00, 0x00, 0x00, 0x00]);
+        assert_eq!(payload[4], 0x00);
+        assert_eq!(&payload[5..8], &[0x00, 0x00, 0x00]);
+        assert_eq!(payload[8], 10);
+        assert_eq!(&payload[9..16], &[0x00; 7]);
+
+        let router = form_network_payload_zczr(ESP_ZB_DEVICE_TYPE_ROUTER, true, 0xfe);
+        assert_eq!(&router[0..4], &[0x01, 0x00, 0x00, 0x00]);
+        assert_eq!(router[4], 0x01);
+        assert_eq!(router[8], 0xfe);
+    }
+
+    #[test]
+    fn form_network_payload_zed_is_byte_exact() {
+        let payload = form_network_payload_zed(ESP_ZB_DEVICE_TYPE_ED, true, 0x03, 0x01020304);
+        assert_eq!(payload.len(), ESP_ZB_CFG_SIZE);
+        assert_eq!(&payload[0..4], &[0x02, 0x00, 0x00, 0x00]);
+        assert_eq!(payload[4], 0x01);
+        assert_eq!(payload[8], 0x03);
+        assert_eq!(&payload[9..12], &[0x00, 0x00, 0x00]);
+        assert_eq!(&payload[12..16], &[0x04, 0x03, 0x02, 0x01]);
     }
 }

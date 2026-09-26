@@ -5737,6 +5737,15 @@ format reference
 sha256 299454de329124f941688b67d59aee456a6e4118fd83a194c58fec8fcb322b19
 ttl 86400
 
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+lat 2
+lon 3
+field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 86400
 on earth 0 0 0
@@ -9569,6 +9578,26 @@ cmap .
 ra _RAJ2000
 dec _DEJ2000
 field LDD jsdc_ldd_mas inverse-square gravity mas 604800 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+RAJ2000,DEJ2000,UD,LD,Plx+FROM+%22J/A%2BA/431/773/charm2%22+WHERE+Method=%27LO%27
+ttl 604800
+format tap
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+plx Plx
+field UD charm2_ud_mas inverse-square gravity mas 604800 0.0 0.0
+field LD charm2_ld_mas inverse-square gravity mas 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
+format catalog_charm2
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
+compiler tools/harvest/src/bin/charm2_compiler.rs
+at sun
+ttl 31536000
+field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
+field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 ttl 604800

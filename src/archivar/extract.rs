@@ -2797,6 +2797,61 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "catalog_charm2" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(stars) = charm2::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for s in &stars {
+            let plx = match s.plx_mas {
+                Some(p) if p.is_finite() && p > 0.0 => p,
+                _ => continue,
+            };
+            let d = PARSEC_M * 1000.0 / plx;
+            let ra = s.ra.to_radians();
+            let dec = s.dec.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca * d, cd * sa * d, sd * d];
+            for comp in 1..=charm2::COMP_MAX {
+                let Some(name) = charm2::component_name(comp) else {
+                    continue;
+                };
+                let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                    continue;
+                };
+                let Some(value) = charm2::component_value(s, comp) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch: now,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    (*fc).clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
     if src.format == "exofop_toi" {
         const MAGIC: [u8; 4] = *b"EXF1";
         const VERSION: u8 = 1;
