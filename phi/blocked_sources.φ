@@ -23,9 +23,9 @@ url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C3.061/
 reg https://urs.earthdata.nasa.gov/users/new
 note MODIS/Terra LST Monthly CMG V061 (mean_daytime_lst_k/mean_nighttime_lst_k, thermal K). e4ftl01 404 direct+Proton; CMR LPCLOUD cloud_hosted → Earthdata-Login (Cloud).
 
-pending
+descoped
 url https://api.lasair.lsst.ac.uk/api
-note Lasair-LSST Broker: 2026-09-20 api.lasair.lsst.ac.uk/api 502 über Proton-Exit (direct 000); Frontend 200; ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/objects 401; LASAIR_LSST_TOKEN vorhanden (.secrets.local, 41 Z.) → kein Key-Gap; Token unmessbar bis Upstream erholt. Schritt: Backend-Trigger.
+note LSST-Twin tot gemessen 2026-09-26 (direct kein Response / Proton 404); ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/query/ + LASAIR_TOKEN 200 (echte Objekte). LSST descoped; ZTF-Kanal lebt. Braucht: ZTF-Quelle nach sources.φ.
 reg https://lasair.lsst.ac.uk/
 
 descoped
@@ -39,7 +39,7 @@ note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — nor
 pending
 url https://superdarn.ca/data-download
 reg https://superdarn.ca/piagreement
-note SuperDARN 2026-09-22: Globus (MAP/fitacf_25/fitacf_30/rawacf); MAP 6.561 Dateien/21,93 GB → data/superdarn/map (Task af68c4f1). FITACF sources.φ:9465. RAWACF gewährt (Mail 1790021001/1790020962), via FRDR kompiliert → sources.φ:8032.
+note SuperDARN Task af68c4f1 FAILED 2026-09-25. OAuth-frei: FITACF sdc-serv.usask.ca/data/{Y}/{M} 200 + Liste POST superdarn.ca/data-download; MAP via Zenodo Grid netCDF (340 CC0). FITACF sources.φ:9465; RAWACF via FRDR → sources.φ:8032.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -314,7 +314,7 @@ note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein I
 
 blocked ip-blocked
 url https://api.sensor.community/v1/data/measurements
-note 2026-09-25 direct 403 / Proton-Exit 403 (lokaler IP-Block). Kein Exit-Wechsel (Operator-Wort 2026-09-25: Terms/§ 95a). Proton-freier CI-Puls via source_latency_census --blocked ausstehend.
+note 2026-09-26 direct 403 / Proton 403 (ip-blocked). Kein Exit-Wechsel (Operator-Wort 2026-09-25). Proton-freie Spiegel gemessen: maps.sensor.community/data/v2/data.json 200 (8 620 890 B, sha256 5dd31cd2…) + archive.sensor.community/ 200.
 
 blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
@@ -323,7 +323,7 @@ note LHAASO-Roh-/Rekonstruktionsdaten nur als Kollaborationsmitglied (Politiktex
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW (NIES/JAXA-Nachfolgemission zu GOSAT-2): Homepage pending (nur Wayback 2022-09-06), kein Daten-Endpoint; Konto-Credential GOSAT_GW_MAIL/PASS vorhanden. Register-Duty bei Datenverfügbarkeit.
+note GOSAT-GW: Route+Credential verifiziert 2026-09-26 — gosat-gw.nies.go.jp/en/ 200; Login success (GOSAT_GW_MAIL/PASS); product.gosat-gw.nies.go.jp CUI search/download 200 (TANSO3_*.h5, 17 MB). Harvest pending.
 
 blocked account
 url https://data.lsst.cloud/api/tap/sync
