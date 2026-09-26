@@ -11,8 +11,13 @@ type Handler = (e: { data?: string }) => void;
 
 class FakeWS {
   static last: FakeWS | null = null;
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSING = 2;
+  static readonly CLOSED = 3;
   sent: string[] = [];
   closed = false;
+  readyState: number = FakeWS.CONNECTING;
   private readonly handlers: Record<string, Handler[]> = {};
   constructor(public url: string) {
     FakeWS.last = this;
@@ -25,8 +30,15 @@ class FakeWS {
   }
   close(): void {
     this.closed = true;
+    this.readyState = FakeWS.CLOSED;
   }
   emit(type: string, data?: string): void {
+    if (type === "open") {
+      this.readyState = FakeWS.OPEN;
+    }
+    if (type === "close") {
+      this.readyState = FakeWS.CLOSED;
+    }
     for (const fn of this.handlers[type] ?? []) {
       fn({ data });
     }
