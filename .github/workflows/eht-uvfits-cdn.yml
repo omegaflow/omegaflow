@@ -21,12 +21,12 @@ jobs:
       - name: Download the EHT 2017 full-array uvfits module and verify its sha256sums
         run: |
           mkdir -p kernels
-          curl -sSfL --retry 3 --max-time 5400 -o kernels/e17a10-7-hi-na-1921-293-fits.tgz \
-            https://almascience.org/almadata/ec/eht/2016.1.01404.V/group.uid___A001_X11b3_X30.ec_eht.e17a10-7-hi-na-1921-293-fits.tgz
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/e17b06-7-hi-sgra-J1924-2914-fits.tgz \
+            https://almascience.org/almadata/ec/eht/2016.1.01404.V/group.uid___A001_X11b3_X30.ec_eht.e17b06-7-hi-sgra-J1924-2914-fits.tgz
           cargo run -p omegaflow-harvest --release --bin eht_uvfits_compiler -- \
-            --verify kernels/e17a10-7-hi-na-1921-293-fits.tgz
+            --verify kernels/e17b06-7-hi-sgra-J1924-2914-fits.tgz
       - name: Select the ALMA–APEX baseline member, write eht_uvfits.bin, and manifest it to the CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin eht_uvfits_compiler -- \
-            --run kernels/e17a10-7-hi-na-1921-293-fits.tgz \
+            --run kernels/e17b06-7-hi-sgra-J1924-2914-fits.tgz \
             --pair AA AP --out eht_uvfits.bin --ci-mode
