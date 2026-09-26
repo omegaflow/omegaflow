@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 4abbfa0b5540be10610fa472b8bbcb87c0d79efc61ebf613e0069bb9c74189c2
+  sha256: 598f12f023ee95b745b357c0d71da5a69d6c7e2c3f708bf75e2f7d47b7cc7495
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -157,7 +157,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Trigger:** eine Live-Quelle (Stern-Winkeldurchmesser / gemessenes Δz je Okkultation)
 - **Lage:** (gemessen 2026-09-26 via `grind-max`) Sphäre I gebaut: `src/archivar/fresnel.rs` (`fresnel_line`, FRS1; θ=2a/D, F=a²/(λD), √(λD/2)); Gaia-Farbe→λ über `spectral.rs::bp_rp_to_lambda_nm` (Planck-SED, photon-gewichtet durch den eingebetteten Passband); Sphäre VII in `src/mathematikerin/doppler.rs` (`doppler_dz`=GM/(c²b), Kreuzprodukt-Impactparameter, `prediction_stat`/`residual_stat`, DGZ1). `cargo check`/`--tests` 0 Warnungen; 19 neue Tests (CI-only). Carrier `the-seven-spheres.md` trägt jetzt genau 2 `pending`.
 - **Blockade:** kein Katalog trägt das Stern-Winkeldurchmesser-Feld; kein gemessenes Δz je Okkultation.
-- **Braucht:** Okkultations-Lichtkurven-Katalog / gemessenes Δz je Okkultation als Quelle; dann die 2 pending-Marker füllen.
+- **Braucht:** Stern-Winkeldurchmesser-Feld: **Quelle gemessen** — VizieR II/346 `jsdc_v2` (JMMC Stellar Diameters Catalogue v2, 465877 rows; Spalte LDD in mas; ASU `https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2`) → registrieren, 1 `pending` füllen. Δz-Okkultation: kein Live-Katalog (Gaia-Archiv-TAP `gea.esac.esa.int` 401 anonym) → bleibt `pending`.
 
 #### Korona-Heizung — Feldmap fertig, Port durch fremde Dirty-Datei blockiert
 - **Status:** offen | **Bindung:** eigen
@@ -173,19 +173,19 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** S1-Post-Szene nicht archiviert.
 - **Braucht:** Bahrabise-Ernte fahren (`livefeed_gate --dhm 113 …` → `trishuli_gauge_probe`/`te_pair_probe`); S1-Footprint nach Archivierung.
 
-#### Weberin — cometels/mpcorb gebaut, Datenpfad + Consumer offen
+#### Weberin — cometels-Katalog-Arm + Consumer gebaut, CDN + TNO offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `grind-pro`) `src/weberin.rs` +284: `CometelsLine`/`CometelsRec::state_at` + `Weberin::weave_cometels` (8 Tests); TNO-Zweitlinie über `small_body_number`→`weberin_mpc_spk_verdict` (TNOs lesen `absent spk` bis SPK registriert). Routen: `cometels.json.gz` 200 (52939 B), `mpcorb_extended.json.gz` 200 (74,2 MB), CDN `cometels_flat.json` 404 (nicht kompiliert). Register-Block in `/tmp/opencode/weberin-register-block.φ`. Carrier `die-weberin.md`-sha `a5ca7c8f…`.
-- **Blockade:** `cometels_compiler` `--catalog`-Modus + `catalog_cometels`-Parser-Arm fehlen; `sources.φ` fremd-dirty.
-- **Braucht:** cometels-Katalog-Arm bauen; `weberin_body_verdict` auf `weave_cometels` verdrahten; Register-Block anwenden; TNO `ephemeris_compiler`-Ernte.
+- **Lage:** (gemessen 2026-09-26 via `grind-max`) `src/archivar/cometels.rs` neu (`catalog_cometels`-Parser-Arm, magic `CTL1`, 5 Tests); `CometelsRec` aus `weberin.rs` in den Archivar verschoben, `weave_cometels` über `desig_of`; `cometels_compiler --catalog` (CI-Upload) und `weberin_body_verdict --cometels` (Consumer) verdrahtet. `cargo check -p omegaflow` 0 Warnungen; Probe: **837 Element-Records, 122 skipped** (e≥1/void). Routen: `cometels.json.gz` 200 (52939 B); `cometels_flat.json` CDN 404 (nicht kompiliert). Register-Block in `/tmp/opencode/weberin-register-block.φ`.
+- **Blockade:** `sources.φ` fremd-dirty (TNO-SPK-Registrierung).
+- **Braucht:** `gh workflow run cometels-cdn.yml` (Manifestation); Register-Block anwenden sobald `sources.φ` frei; TNO `ephemeris_compiler`-Ernte.
 
-#### Weberin Faden-Matrix — Broker-Feldmaps gemessen, Compiler-Bau offen
+#### Weberin Faden-Matrix — Broker-Compiler gebaut, seismische Endpunkte offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26 via `research-max`) ANTARES `v1/loci` 200, `meta.count`=10000, `page[limit]`/`page[offset]`, Felder `attributes.ra/dec/htm16/properties.ztf_object_id`; kein Server-Filter (clientseitig über htm16). Lasair-ZTF `api/query/` keyed (401 anonym; `Authorization: Token`), POST-Body `selected`/`tables`(nicht-leer)/`conditions`/`limit`/`offset`. Fink `api.ztf.fink-portal.org/api/v1/conesearch` 200 (default-Spalten gemessen); ALeRCE `api.alerce.online/alerts/v1/objects` 200. Seismische Weltlinien: IRIS/FDSN-Katalog als Kandidat.
-- **Blockade:** keine (Bau).
-- **Braucht:** `antares_loci_compiler.rs` + `lasair_ztf_compiler.rs` bauen; seismische Stations-Weltlinien registrieren.
+- **Lage:** (gemessen 2026-09-26 via `grind-flash`) `antares_loci_compiler.rs` + `lasair_ztf_compiler.rs` gebaut (`cargo build -p omegaflow-harvest --bin …` 0 Warnungen). **Korrigierte Route:** ANTARES-JSON-API = `https://api.antares.noirlab.edu/v1/loci` (die Vorhandover-URL `antares.noirlab.edu/api/v1/loci` ist die HTML-Frontend, 974 B); `meta.count` 10000, Pagination `page[limit]/page[offset]`, Felder `attributes.ra/dec/htm16`, `properties.ztf_object_id`. Lasair `api.lasair.lsst.ac.uk/api/query/` 401 anonym (Key `LASAIR_LSST_TOKEN`), POST `selected/tables/conditions/limit/offset`.
+- **Blockade:** keine.
+- **Braucht:** seismische Stations-Weltlinien-Endpunkte (IRIS/FDSN) registrieren.
 
 #### Weberin-Quellen — HAWC-Bundle reproduziert + Reader gebaut, CI-Secret beim Operator
 - **Status:** offen | **Bindung:** eigen
@@ -262,7 +262,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Trigger:** sofort
 - **Lage:** (gemessen 2026-09-26) Rampen-Sweep in `probe-front-dark-matter.md` §5.6 nachgetragen (p10 2399 / p11 1518 Pässe; Median-LS-Steigung 2,257e-1/1,383e-1 Hz/s; Resid-RMS 8,845e2/7,958e3 Hz); ASC byte-exakt verdrahtet (`pioneer_doppler_compiler.rs:7-8,70`); Voyager-2-Route registriert (`blocked_sources.φ:51`). Syntonisation-Routen gemessen (2026-09-26 via `research-max`): **NTRS 19830011507** „A two-year history of atomic frequency standards syntonization in the DSN" (1983, trägt eine 2-Jahres-Serie, kein NTRS-Volltext-Download); **NTRS 19820012645** (NBS/GPS-Empfänger 1982, Vergleichswerte <10 ns / ≤1e-14), **NTRS 19840011567** (1984), **DOI 10.1109/freq.1982.200599**; arXiv-Route HTTP 406 `pending`.
 - **Blockade:** kein NTRS-Volltext für 19830011507.
-- **Braucht:** die Collected Work 19830011495 / den Volltext via `archive_search --ads`/`--playwright` beschaffen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
+- **Braucht:** NTRS-19830011507-Volltext ist **measured absent**; ADS hat den Artikel (`1982TDAPR..72..118W` / `1983tdar.nasa..118W`) — Volltext-/Bezugsroute via `archive_search --playwright` auf ADS prüfen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
 
 #### Register-Port-Stau — `phi/sources.φ`/`blocked_sources.φ`/`units.rs` fremd-dirty
 - **Status:** offen | **Bindung:** eigen
@@ -396,7 +396,13 @@ Consent (Delegation), nie das Commit-Wort.
 Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 `docs/handover/handover-2026-09-26-sensory-folge176.md`,
 `docs/handover/archiv/handover-2026-09-26-sensory-folge175.md`,
-`.github/workflows/zigbee-host.yml`.
+`.github/workflows/zigbee-host.yml`,
+`src/archivar/cometels.rs`, `src/archivar/mod.rs`, `src/lib.rs`, `src/weberin.rs`,
+`tools/harvest/src/bin/cometels_compiler.rs`,
+`tools/measure/src/bin/weberin_body_verdict.rs`,
+`.github/workflows/cometels-cdn.yml`,
+`tools/harvest/src/bin/antares_loci_compiler.rs`,
+`tools/harvest/src/bin/lasair_ztf_compiler.rs`.
 Nicht committen (fremd): `phi/sources.φ`, `phi/blocked_sources.φ`,
 `src/archivar/skydirection.rs`, `tools/measure/src/bin/kbo_residue_probe.rs`,
 `tools/measure/src/bin/rixs_cuprate_probe.rs`,
