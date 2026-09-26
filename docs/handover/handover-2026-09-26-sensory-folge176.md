@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 156c1fa254a074e6f3d88b20b8054ed015b8d9f3d697ba003debc2255bd6b864
+  sha256: 06f55dab0163c1fe69bbc2c6c14c144c02284f18673a9a23b25eceeffbb1afbb
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -123,6 +123,13 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 ## Offen (erst logisch nach Akteur, dann chronologisch)
 
 ### Linie handelt (eigen)
+
+#### clippy-Lints in eigenen Dateien — gefixt; `skydirection.rs` fremd
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26 am HEAD `3eaa60de7` via `ci_manage log 36244460936`, von Mountain getragen) `src/archivar/cometels.rs:125` (`match`→`if let`) und `src/archivar/llnl_g3d.rs:431` (`E0716`) **gefixt**; `src/mathematikerin/te.rs:2971` (`too_many_arguments 8/7`) → `BlattPairSpec`-Struct + zwei Aufrufer, `te.rs:3046` (`neg_cmp_op_on_partial_ord`) **gefixt**; `cargo check -p omegaflow` + `-p omegaflow-measure --bin bz_blatt_probe --bin frb_blatt_probe` 0 Warnungen. `skydirection.rs:200` (rustfmt) ist fremd-dirty (skydirection-cdn-Linie), nicht angefasst.
+- **Blockade:** keine (die eigenen Stellen sind gefixt).
+- **Braucht:** `gh workflow run ci-check.yml`; die fremden roten Dateien (`extract.rs`, `main_flow.rs`, `port.rs`, `spatial.rs`, `uws.rs`, `skydirection.rs`) bleiben fremde Linien.
 
 #### Commit ohne Operator-Wort — `c6edfbe45` (Riss, 2026-09-26)
 - **Status:** eigen | **Bindung:** eigen

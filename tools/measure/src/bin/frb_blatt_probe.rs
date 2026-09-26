@@ -293,7 +293,16 @@ fn main() {
                     match omegaflow::te::current_commit_sha() {
                         Some(sha) => {
                             if let Err(e) = omegaflow::te::write_blatt_pair(
-                                &path, &future, &past, span_s, cadence_s, seed, &sha, N_SURR,
+                                &path,
+                                &future,
+                                &past,
+                                &omegaflow::te::BlattPairSpec {
+                                    span_s,
+                                    cadence_s,
+                                    seed,
+                                    commit_sha: &sha,
+                                    n_surr: N_SURR,
+                                },
                             ) {
                                 eprintln!("frb_blatt_probe: pair write refused: {e}");
                                 std::process::exit(2);
