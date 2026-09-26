@@ -228,7 +228,7 @@ mod tests {
     #[test]
     fn gitignored_target_is_not_a_broken_reference() {
         let root = repo_root();
-        let target = root.join("docs/zustand/external-state.md");
+        let target = root.join("state/zustand/external-state.md");
         assert!(is_git_ignored(&root, &target));
     }
 
