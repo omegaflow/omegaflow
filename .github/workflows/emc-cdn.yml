@@ -1,0 +1,27 @@
+name: emc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  emc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Crawl the EMC data tree, compile the radial CSV catalog and upload to the CDN
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin emc_compiler -- --out . --ci-mode

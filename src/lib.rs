@@ -31,6 +31,7 @@ pub use archivar::dastcom;
 pub use archivar::decaps;
 pub use archivar::demeter;
 pub use archivar::des_y6;
+pub use archivar::emc;
 pub use archivar::ephemeris;
 pub use archivar::fits;
 pub use archivar::fk;
