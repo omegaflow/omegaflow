@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: dab898b3a3f5d731abff5665a2a6c16beb1fe552ce9c47056276ab9d2371dad0
+  sha256: b2ad57135b10122f3a869e9c033ab68af5afa1fd5975d68c60ddf1c70832c30b
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -100,9 +100,9 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 #### Geräte-Inventar — Einzelbefehle ausführen
 - **Status:** operator-gebunden | **Bindung:** operator
 - **Trigger:** Operator führt die Befehle am Gerät aus.
-- **Lage:** (gemessen 2026-09-26 via `adb`) **Bigme HiBreak, Android 14**, adb-`unauthorized` → autorisiert, `dumpsys sensorservice` gelesen: 21 Sensoren — ACCELEROMETER 12,5–400 Hz, GYROSCOPE (UNCALI_GYRO 12,5–400 Hz), MAGNETOMETER 5–50 Hz, LIGHT (on-change, 1 Hz), PROXIMITY (on-change, 1 Hz, wakeUp), GRAVITY/LINEARACCEL/ROTATION_VECTOR/GEOMAG 50–200 Hz, STEP_DETECTOR/COUNTER, TILT, WAKE_GESTURE, SIGNIFICANT_MOTION, DEVICE_ORIENTATION. Haptik gemessen (`dumpsys vibrator_manager`, mId=1): Prebaked CLICK/DOUBLE_CLICK/TICK/HEAVY_CLICK/TEXTURE_TICK, **keine** Amplitude/Frequenz-Steuerung. WebGPU (Bigme) ungemessen. Aus Operator-Wort vorhanden: Laptop, Pixel 9, Forerunner 945, Meta Quest 1 (Existenz unklar); Pixel-Mikrofonanzahl = 3. Offen: 945-Sample-Raten + Chip/FCC, Quest-1-Firmware + WebGPU/Generic-Sensor, Pixel-`SensorManager`-Liste, Bigme-WebGPU.
+- **Lage:** (gemessen 2026-09-26 via `adb` + `chrome://gpu`) **Bigme HiBreak, Android 14**, adb autorisiert, `dumpsys sensorservice`: 21 Sensoren — ACCELEROMETER 12,5–400 Hz, GYROSCOPE (UNCALI_GYRO 12,5–400 Hz), MAGNETOMETER 5–50 Hz, LIGHT (on-change, 1 Hz), PROXIMITY (on-change, 1 Hz, wakeUp), GRAVITY/LINEARACCEL/ROTATION_VECTOR/GEOMAG 50–200 Hz, STEP_DETECTOR/COUNTER, TILT, WAKE_GESTURE, SIGNIFICANT_MOTION, DEVICE_ORIENTATION. Haptik (`vibrator_manager`, mId=1): Prebaked CLICK/DOUBLE_CLICK/TICK/HEAVY_CLICK/TEXTURE_TICK, **keine** Amplitude/Frequenz-Steuerung. **WebGPU: verfügbar** (`chrome://gpu` Chrome 153: „WebGPU: Hardware accelerated", Dawn-Vulkan-Backend Mali-G68 MC4 + ANGLE-OpenGLES beide „Available"; Features u. a. `core-features-and-limits`, `timestamp-query`, `shader-f16`, `subgroups`, `bgra8unorm-storage`). Display 440×879, sRGB, 8-bit, SDR-Weiß 203 nits. Aus Operator-Wort vorhanden: Laptop, Pixel 9, Forerunner 945, Meta Quest 1 (Existenz unklar); Pixel-Mikrofonanzahl = 3. Offen: 945-Sample-Raten + Chip/FCC, Quest-1-Firmware + WebGPU/Generic-Sensor, Pixel-`SensorManager`-Liste.
 - **Blockade:** Restmessungen nur am physischen Gerät.
-- **Braucht:** Pixel 9 `adb shell dumpsys sensorservice`; Bigme/Pixel `chrome://gpu`; 945 → Einstellungen → System → Info + `.FIT`-Header (`data/garmin-945/2026-09-26/`); Quest `adb devices` + `dumpsys sensorservice`.
+- **Braucht:** Pixel 9 `adb shell dumpsys sensorservice`; Pixel `chrome://gpu`; 945 → Einstellungen → System → Info + `.FIT`-Header (`data/garmin-945/2026-09-26/`); Quest `adb devices` + `dumpsys sensorservice`.
 - **Wort:** Einzelbefehle liefern | 2026-09-26 | Operator-Wort folge36.
 
 #### Puls-Pfad 945 — Weg (b): Live-BLE-HR nach dem Membran-Fix
