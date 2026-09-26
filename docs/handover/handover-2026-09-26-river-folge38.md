@@ -40,19 +40,12 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 
 ### Linie handelt (eigen)
 
-#### clippy-Lints in eigenen Dateien — CI `-D warnings` rot (getragen 2026-09-26 von Mountain)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort.
-- **Lage:** (gemessen 2026-09-26 am HEAD `3eaa60de7` via `ci_manage log 36244460936`, von Mountain getragen) river-eigene Dateien rot: `src/archivar/spatial.rs:502`, `src/archivar/main_flow.rs:219` + `:857`.
-- **Blockade:** keine.
-- **Braucht:** die drei Stellen gegen den aktuellen CI-Log fixen, `cargo check` 0/0, dann `gh workflow run ci-check.yml`.
-
 #### star-dmax-probe dispatchten + Artefakt falten (RISS-Zeuge)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** sensory committet `src/archivar/llnl_g3d.rs` (baut `main`).
-- **Lage:** (gemessen 2026-09-26 via git/SHA/`cargo check`) Probe-Bin `star_dmax_probe.rs` + Workflow `star-dmax-probe.yml` auf `main` (`f9ea3284`); Run `36240676551` = failure. Ursache gemessen: `HEAD:src/archivar/mod.rs:96` = `pub mod llnl_g3d;`, aber `git ls-tree HEAD src/archivar/llnl_g3d.rs` **leer** → CI-Checkout ohne Datei, `cargo check` rot (`error[E0583]`); lokal grün (Datei untracked auf Platte). Dieselbe Wurzel färbt `ci-check` rot (Job `build`, z. B. `36241316497`, head `fb8017ace`). Angelegt, aber noch nicht dispatcht: `.github/workflows/browser-extension.yml`. Lokaler `--span`-Pass steht: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21, EPOCH_MIN=EPOCH_MAX=0.0; `cell_size_star ≈ 2.57e19 m`, `rho_star ≈ 8.2 pc`.
-- **Blockade:** sensory — committet die Datei noch nicht (aktive Fremdarbeit; neue untracked Compiler `isc_ehb_compiler.rs`, `llnl_g3d_jps_compiler.rs`).
-- **Braucht:** sensory committet `src/archivar/llnl_g3d.rs`; dann `gh workflow run star-dmax-probe.yml`, `ci_manage view <id>`, Artefakt falten (RISS-Zeile per Schwelle schließen). Der Harte-Läufe-LOCK fällt erst, wenn der Folgelauf die drei Umgehungen (`main_flow.rs:191-241`, `:1227-1258`, `:1299-1364/1758-1833`) auf derselben Hülle verifiziert hat.
+- **Trigger:** Run `36252229964` liefert das Artefakt.
+- **Lage:** (gemessen 2026-09-26 via git/SHA/`cargo check`) Probe-Bin `star_dmax_probe.rs` + Workflow `star-dmax-probe.yml` auf `main` (`f9ea3284`); alter Run `36240676551` = failure an der inzwischen **gefallenen** Blockade. `src/archivar/llnl_g3d.rs` ist jetzt **getrackt** (HEAD, blob `7d3fab1f`, sensory folge176), `main` kompiliert; `ci-check`-clippy-River-Lints (`spatial.rs:502`, `main_flow.rs:219/:857`) gefixt (`3b4c08d22`). Neu dispatcht: `36252229964`. Lokaler `--span`-Pass steht: `dr3_stars.bin` → COUNT 1.704.587, SPAN_M 1.798012e21, EPOCH_MIN=EPOCH_MAX=0.0; `cell_size_star ≈ 2.57e19 m`, `rho_star ≈ 8.2 pc`.
+- **Blockade:** keine — `llnl_g3d` getrackt.
+- **Braucht:** `ci_manage view 36252229964`, Artefakt falten (RISS-Zeile per Schwelle schließen). Der Harte-Läufe-LOCK fällt erst, wenn der Folgelauf die drei Umgehungen (`main_flow.rs:191-241`, `:1227-1258`, `:1299-1364/1758-1833`) auf derselben Hülle verifiziert hat.
 
 #### health-check — Verdikt am Lauf 36237216821
 - **Status:** wartend | **Bindung:** eigen
@@ -63,16 +56,16 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 
 #### Sonnenfarbe color:measured — compute-only Renderpfad
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** `main` kompiliert (llnl-Fix) + lavapipe-ICD in CI.
+- **Trigger:** lavapipe-ICD in CI vorhanden.
 - **Lage:** (gemessen 2026-09-26 via `general`) Route (A) gescopt: Extraktor `browser_field_shader()` in `src/mathematikerin/tests.rs` herausziehen, neuer `#[ignore]`-Test, Pipeline `static/index.html:285-313` offscreen rekonstruieren (`Rgba8Unorm`, `compatible_surface: None`, Bind-Layout `:285-289`, Blend `one/one`+`add` `:299-313`).
-- **Blockade:** llnl_g3d (cargo-CI rot) + lavapipe-ICD fehlt auf ubuntu-latest (Crosscheck-Tests skippen, `tests.rs:110-113`).
+- **Blockade:** lavapipe-ICD fehlt auf ubuntu-latest (Crosscheck-Tests skippen, `tests.rs:110-113`); `llnl_g3d` getrackt → cargo-CI grün.
 - **Braucht:** nach llnl-Fix `mesa-vulkan-drivers`/lavapipe apt-Zeile + Test in `tests.rs` bauen; Verifikation, dass der measured-Zweig (LUT-Sampling) ausgeführt wird.
 
 #### Ruhe-Ort als Hüllen-Zentrum — Lese-Kante bauen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** `main` kompiliert (CI-Verifikation).
+- **Trigger:** Code-Kante gebaut.
 - **Lage:** (gemessen 2026-09-26 via `council`) Rat einmütig **Ja** — der Ruhe-Ort (SSB-Origin) zählt als Hüllen-Zentrum; die ruhende Presence ist ein voll realisierter Zustand, keine Abwesenheit. Der Wert muss aus dem stehenden Slot gelesen werden (`presence_slot`, `main_flow.rs:693-696`), nie hartkodiert `[0,0,0]`.
-- **Blockade:** llnl_g3d (CI-Verifikation).
+- **Blockade:** keine (`llnl_g3d` getrackt).
 - **Braucht:** Code-Kante bauen — Hüllen-Zentrum aus dem stehenden Slot statt aus `archive.presence`, so dass der Hidden-Lauf ohne Browser die Sterne trägt; CI-Test.
 
 #### RX100 V5A — optische Quelle (Geräte-Anbindung)
