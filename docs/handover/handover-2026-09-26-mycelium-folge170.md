@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: 1c8cb25ffe126f79d34c41f03522488cc8ccfd5d4a13bc2b4ba917abd1a2311c
+  sha256: 1380accd521235b155d9d054f99e5d1e4dbf2ec6038c7ad569700d5ce120daa0
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -128,6 +128,13 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 - **Blockade:** keine.
 - **Braucht:** HAPI-Catalog nach Stationen (lat/lon) abfragen, Fanout-Liste bauen.
 
+#### GOES-19 ABI — GSICS-Kalibrierung pending (`goes-cdn.yml:26`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster GOES-Pass.
+- **Lage:** (gemessen 2026-09-26) `goes-cdn.yml:26` schreibt `calib (u8, 1 = L1b operational radiance, GSICS pending)`; `phi/sources.φ:840/848` tragen `goes16_abi.bin`/`goes19_abi_rad.bin`, Compiler `goes_abi_compiler.rs`. Gegenprobe GK2A: `gk2a-cdn.yml` führt GSICS in-granule (`calib=2`).
+- **Blockade:** GSICS-Koeffizienten für GOES-ABI — die L1b-Rad-Granule tragen sie nicht.
+- **Braucht:** messen, ob die GOES-19-ABI-Granule `gsics_coeff_*` tragen; sonst die GSICS-Quelle benennen; dann `calib=2` setzen.
+
 #### CARRIER_DRIFT `phi/blocked_sources.φ::gap:curation` carrier=13 live=4
 - **Status:** wartend | **Bindung:** eigen→mountain
 - **Trigger:** nächster Register-Pass.
@@ -208,7 +215,7 @@ Die ersten zwei Träger-Schritte sind aus folge168 übernommen und in diesem Ato
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | nächster Schritt: `gh workflow run mariner-occlt-cdn.yml`.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | nächster Schritt: `state/mail/mail_ledger.φ` auf MPI-FKF/TRISP-Antwort (`smail`).
 - `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Dispositionen gemessen (GFW declined, GOSAT-GW `pending`, Rubin `blocked account` committet); die verbleibende Namens-Disposition trägt die Future-Übergabe (`state/funding/handover/handover-2026-09-26-future-folge129.md`).
-- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | offen: Pendings-Tafel (Compiler gebaut, Kalibrierung/Ernte offen) u.a. COSMIC-2 `.tar` (`:37`), NOAA-ERI JPEG-in-TIFF (`:49`), GK2A GSICS (`:50`), Himawari HSD-Block 5 (`:52`), GDP-Drifer `.zarr` (`:53`), OCS `.tif`-LZW (`:54`), WOD SOHM (`:55`), NEXRAD Feld-Reader+CI (`:56`), SuperDARN-FITACF CI-Manifest (`:57`), LASzip `:74/:75` | nächster Schritt: je Zeile Decoder/Ernte bauen.
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | **gemessen 2026-09-26: die 26 Pendings sind aufgelöst außer GOES GSICS** — Assets/Origins in `phi/sources.φ` (COSMIC-2, US-CRN, NRS, VLASS, CORS, Himawari, GDP-Drifter, WOD, NEXRAD, SuperDARN, Pioneer-10 `sources.φ:8827`), Compiler gebaut (ONC `onc_hydrophone_compiler.rs`, ERI `noaa_eri_compiler.rs` + `src/archivar/tiff.rs` JpegDecoder, OCS `noaa_ocs_hydrodata_compiler.rs`, GK2A `gk2a-cdn.yml` calib=2 in-granule), WFAU OSA/SSA `dead` (`dead_sources.φ:116,120`), VSA/WSA `declined` (`:171,175`), LASzip `src/archivar/las/laszip.rs` | offen nur GOES GSICS (eigener Punkt).
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | offen: Re-Check 3 Force-Kanal (`remon.jrc.ec.europa.eu`, `www.irsn.fr` ×2) + 4 pending (`dods.wh.gov`, `osdr.nasa.gov`, `pskreporter.info`/`reversebeacon.net`) + `arvo-registry.sci.am` Proton-Eskalation | nächster Schritt: `archive_search --verdict` je Host.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Disposition der 55 undocumented `stale_pending` (Force-Gate → `sources.φ`/`dead_sources.φ`) | nächster Schritt: `docs/specs/cdn_orphan_verdicts.json` je Netloc disponieren.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | offen: Ziel-Layout für `knowledge/`+`backups/` (~50 G in situ, kein Blindwurf) | nächster Schritt: Operator-Wort zum Layout.
