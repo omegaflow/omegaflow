@@ -3,7 +3,7 @@
   session: River-Folge 38
   class: handover
   date: 2026-09-26
-  sha256: 49222eaa31d7e1b848c517a923bfd7f69ee6b8e2d2270f874d2e73846f852ca1
+  sha256: c2fdab4edee3e5e3e9fc1118088bf55dd2159c7e18c295eab6ab1c1d1db87a92
   status: live
 -->
 # Handover — River-Folge 38 (2026-09-26)
@@ -24,7 +24,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 `docs/handover/archiv/`).
 
 **Wort | Datum | Quelle**
-- Sortierung der Tafel: **umsetzbar → nicht umsetzbar** | 2026-09-26 | Operator-Wort (diese Session) — ersetzt die Akteur-Sortierung; `AGENTS.md` + `docs/handover/_template.md` tragen noch den überholten Akteur-Stand.
+- Sortierung der Tafel: **umsetzbar → nicht umsetzbar** | 2026-09-26 | Operator-Wort — `AGENTS.md` trägt sie bereits (Zeile 206, „umsetzbar zuerst"); `docs/handover/_template.md` war der stale Träger (Akteur) und ist in diesem Atom korrigiert.
 - Punkt 1 Chrome-Debugger aktivieren: **ja** | 2026-09-26 | Operator-Wort (diese Session).
 - Funk-Sensor über HTTPS: **ja** | 2026-09-26 | Operator-Wort folge36.
 - FIT-Brücke 945: **ja** — Garmin liefert .FIT-Dateien | 2026-09-26 | Operator-Wort folge36.
@@ -52,13 +52,6 @@ Diese Session konsumierte `handover-2026-09-26-river-folge37.md` (nach
 ## Offen
 
 ### Umsetzbar (jetzt, autonom bis zur Kante)
-
-#### Sortierregel korrigieren — Akteur → umsetzbar
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operator-Wort (diese Session).
-- **Lage:** (gemessen 2026-09-26 via `sread`/`sgrep`) `AGENTS.md` (Friction-Block) und `docs/handover/_template.md:58` tragen „Sortierung — logisch nach Akteur (Operator-Wort 2026-09-26)"; die 09-25-Umsetzbarkeits-Regel wurde laut `archiv/handover-2026-09-25-river-folge32.md:27` davon überholt.
-- **Blockade:** keine.
-- **Braucht:** `AGENTS.md` + `_template.md` auf „umsetzbar → nicht umsetzbar" umschreiben, Operator-Wort mit Datum/Quelle eintragen.
 
 #### star-dmax-Artefakt falten + Folgelauf (RISS-Zeuge)
 - **Status:** eigen | **Bindung:** eigen
