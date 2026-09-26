@@ -2,7 +2,7 @@
   title: The Big Bang Echo (Nadel Ⅻ) — does the seed carry the structure?
   class: paper
   date: 2026-08-23
-  sha256: e269ada0fa00a56bba8c5ebc5ee4d4012901118b9da6ed7d1f21b17a1a9e74ef
+  sha256: 0a5f2c7860eb2f35584e4233dbbd0284831a329058a0dc34278dc220bfd40914
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
