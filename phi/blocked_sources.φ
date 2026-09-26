@@ -278,8 +278,8 @@ note SWPC auroral electrojet: field au/ae/al_index_nt unit absent — unit-auto-
 
 parser-def json
 gap unit-auto-detect
-url https://services.swpc.noaa.gov/products/solar-regions.json
-note SWPC solar regions: field region_number/hale_class/area_millionths/spot_class unit absent — unit-auto-detect gap. Sonne (em) echt. area_millionths: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+url https://services.swpc.noaa.gov/json/solar_regions.json
+note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. Fields region/area/spot_class/mag_class/number_spots unit absent — unit-auto-detect gap. Sonne (em) echt.
 
 parser-def json
 gap unit-auto-detect
