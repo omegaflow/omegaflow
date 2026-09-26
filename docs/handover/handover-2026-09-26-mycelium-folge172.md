@@ -3,7 +3,7 @@
   session: Mycelium-Folge 172
   class: handover
   date: 2026-09-26
-  sha256: 50cc95860749e184ff328dee14bdf438b22f3e7411732c7b16cd3d33cbbbdf6b
+  sha256: 7b659b1e6086b39680465ae87c1c006ed09b211d6058c910c9af20a355b4da90
   status: live
 -->
 # Handover — Mycelium-Folge 172 (2026-09-26)
@@ -31,12 +31,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 
 ### Linie (eigen)
 
-#### SuperDARN FITACF — FITACF-Text-Parser + Quellenblock
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** Register-Pass `phi/sources.φ` / `superdarn_fitacf_compiler`.
-- **Lage:** (gemessen 2026-09-26) bz2-Arm gebaut (`3de575af0`, `--input <*.fitacf.bz2>`); MAP-Globus `20e8a751…` `ACTIVE`; Liste `POST superdarn.ca/db-fitacf-files-bounce`. Offen: sdc-serv-`.fitacf.bz2` decompressiert zu FITACF-**Text**, kein netCDF — die `process_bytes`-Kette liest nur netCDF/HDF5.
-- **Blockade:** FITACF-Text-Parser + JSON-Reader fehlen.
-- **Braucht:** FITACF-Text-Parser + db-fitacf-Liste in den Compiler; dann Quellenblock.
+#### SuperDARN FITACF — Geolokation + Quellenblock
+- **Status:** aktiv | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/sources.φ`.
+- **Lage:** (gemessen 2026-09-26) bz2-Arm + DMAP-Binär-Parser + `--url` + db-fitacf-Liste gebaut (`8d59bb153`); Probe 1920 Records / 3580 Range-Zeilen, Byte-Gegenprobe + Live (`--url`, bounce) verifiziert; MAP-Globus `20e8a751…` `ACTIVE`. Offen: lat/lon-Geolokation fehlt (das Record trägt sie nicht) → Zellen absent.
+- **Blockade:** Geo-Mathematik (hdw.dat-Radarpositionen) fehlt.
+- **Braucht:** lat/lon je Radar aus `hdw.dat`; dann FITACF-/MAP-Block in `phi/sources.φ`.
 
 #### CDN-Workflows nohrsc/eri — Lauf-Stand
 - **Status:** wartend | **Bindung:** eigen
@@ -87,12 +87,12 @@ und Rubin/LHAASO/NED `descoped` (`8c6d5af95`).
 - **Blockade:** Wide/L2 ungemessen.
 - **Braucht:** GWT3F_L1B-Quellenblock in `phi/sources.φ`; Wide/L2 als eigene Punkte.
 
-#### MODIS LST CMG — HDF4 SD-Reader fehlt
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** `src/archivar/hdf4.rs` SD-API.
-- **Lage:** (gemessen 2026-09-26) Compiler-Gerüst gebaut (`3de575af0`, CMR+EDL+CDN-Write, `cargo check` 0/0); CMR 9596 hits, Cloud-Route 206, HDF4-Magic + DD-Kette live gemessen. Fehlt: HDF4 SD-API-Reader (SDstart/SDselect/SDread über DFTAG_NDG 720) + EOS-DD-Listen-Fortsetzung.
-- **Blockade:** HDF4 SD-Reader fehlt.
-- **Braucht:** `src/archivar/hdf4.rs` SD-API-Reader; dann LST_Day/Night_CMG (scale 0.02) → bin.
+#### MODIS LST CMG — CDN-Manifestation
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Job `modis-cdn.yml` / `modis_lst_cmg_compiler --ci-mode`.
+- **Lage:** (gemessen 2026-09-26) SD-Reader + DD-Kette gebaut (`e16fd9cd5`); an MOD11C1.A2000058 verifiziert: 21 NDGs, LST_Day/Night `[3600,7200]` UINT16 scale 0.02 → 1 541 913 Records / 61 676 528 B Bin, Roundtrip parses. `cargo check` 0/0.
+- **Blockade:** CI-/Workflow-Akt.
+- **Braucht:** Manifestations-Job (`modis_lst_cmg_compiler --ci-mode`) + `phi/sources.φ`-Assets; NBIT/SKPHUFF/SZIP-Coder pending.
 
 #### Voyager 1/2 — closed-loop Doppler (`phi/blocked_sources.φ:49`)
 - **Status:** wartend | **Bindung:** eigen
