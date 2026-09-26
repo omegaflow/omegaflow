@@ -3,7 +3,7 @@
   session: Mountain-Folge 169
   class: handover
   date: 2026-09-26
-  sha256: fe1497716338564de1dc5d349cfad177d1082b9ee333b9a3ca240b16602d8f2b
+  sha256: bd0bb1c4871919e3e129a71d0d2898e6a693f04d74be28eb5dab8174484cffa0
   status: live
 -->
 # Handover — Mountain-Folge 169 (2026-09-26)
@@ -20,25 +20,20 @@ Trigger / Lage / Blockade / Braucht.
 
 ### Linie handelt (eigen)
 
-#### gll_rss_rsr — Workflow gebaut + dispatcht, Run-Ergebnis offen
+#### gll_rss_rsr — Workflow + Asset manifestiert, sha offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf-Ende `36240229845`.
-- **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/gll-rss-rsr-cdn.yml`
-  neu gebaut (35 Zeilen, Muster `galileo-atdf-cdn.yml`); Compiler
-  `tools/harvest/src/bin/gll_rss_rsr_compiler.rs` (`--ci-mode`), Release
-  `pds-rings.seti.org`, Asset `gll_rss_rsr.bin`, Idempotenz-Guard `grep -qx`.
-  **Committet `0eacaec2b`, gepusht, dispatcht `36240229845`** (Ergebnis
-  ungemessen). **Ungemessen (vom Taucher benannt, nicht still
-  übernommen):** `timeout-minutes: 180` ist Analogie (kein Lauf); der Guard prüft
-  nur `gll_rss_rsr.bin` — shardet der erste Lauf (`gll_rss_rsr_s<N>.bin`), greift
-  er nicht; kein Release-Create-Step (Tag `pds-rings.seti.org` vorausgesetzt).
-  **Die YAML ist nicht maschinell validiert** — kein `actionlint`/`js-yaml` im
-  Baum; sie ist strukturell Zeile für Zeile `galileo-atdf-cdn.yml` (nur Release/
-  Asset/Compiler/Jobname differieren), das läuft.
+- **Trigger:** Volldownload des Assets (`archive_search --sniff …/gll_rss_rsr.bin`).
+- **Lage:** (gemessen 2026-09-26) `.github/workflows/gll-rss-rsr-cdn.yml` gebaut
+  (Muster `galileo-atdf-cdn.yml`), committet `0eacaec2b`, gepusht, dispatcht
+  `36240229845` → **success** (head `d88c8fd5f`). Asset `gll_rss_rsr.bin` auf der
+  CDN: `--sniff` HTTP **200**, **85 956 014 B**, kein Shard — **sha256 nur
+  partial** (`618b5b6c…`, Download unvollständig) → **ungemessen**. YAML nicht
+  maschinell validiert (kein `actionlint`/`js-yaml`) — strukturell Zeile für
+  Zeile `galileo-atdf-cdn.yml`; die Annahmen (`timeout: 180`, Shard-Guard,
+  Release-Tag vorausgesetzt) bleiben benannt.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage view 36240229845`; nach Erfolg sha256 in den
-  `gll_rss_rsr`-Block `phi/sources.φ` nachtragen; Shard-Zahl am ersten Lauf
-  messen und den Guard ggf. weiten.
+- **Braucht:** vollständigen `gll_rss_rsr.bin`-Download + sha256, dann in den
+  `gll_rss_rsr`-Block `phi/sources.φ` nachtragen.
 
 #### TAP-Quellen — 4 Query-Fixes gebaut, CI-Verify offen
 - **Status:** autonom | **Bindung:** eigen
@@ -62,22 +57,6 @@ Trigger / Lage / Blockade / Braucht.
   entscheidet der CI-Lauf** — lokale Testausführung ist strukturell verweigert;
   lokal gemessen ist nur, dass der Test-Code kompiliert (`cargo check --tests`
   grün).
-
-#### Frame-Registry — CI-Pfad gebaut + dispatcht, Run-Ergebnis offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf-Ende `36240231729`.
-- **Lage:** (gemessen 2026-09-26 via grind-flash) `.github/workflows/frame-registry.yml`
-  (40 Zeilen, Muster `source-census.yml`) + `tools/utils/src/bin/frame_registry.rs`
-  (50 Zeilen, ruft `build_frame_registry()`, schreibt `phi/pipeline/frame_registry.φ`,
-  `git add -f` wegen `.gitignore:73`); `cargo check -p omegaflow-utils --bin
-  frame_registry` 0/0. Der Generator liest nur getrackte Register (kein Netz).
-  **Committet `0eacaec2b`, gepusht, dispatcht `36240231729`** — Ergebnis
-  ungemessen.
-- **Blockade:** keine. **Ungemessen:** das `OMEGAFLOW_TOKEN`-Secret (Voraussetzung
-  wie in `source-census.yml`) und die generierte `frame_registry.φ` (erst nach dem
-  Lauf lesbar).
-- **Braucht:** `ci_manage view 36240231729`; dann prüfen, ob `frame_registry.φ`
-  die `at mariner10`-Route trägt (Punkt NAIF schließt damit).
 
 #### Parquet-Codec — Arme gebaut, CI-Tests offen
 - **Status:** wartend | **Bindung:** eigen
