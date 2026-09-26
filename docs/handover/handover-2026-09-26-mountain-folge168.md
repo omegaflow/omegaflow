@@ -3,7 +3,7 @@
   session: Mountain-Folge 168
   class: handover
   date: 2026-09-26
-  sha256: c4998e9ed2e9035daa8de261b807aac892d7b3057aa2fa86d7d4304686bf8678
+  sha256: 324c5bd2727711297c422d82981d52340ea544cc78ceffc77a92e6ace43960c1
   status: live
 -->
 # Handover — Mountain-Folge 168 (2026-09-26)
@@ -22,8 +22,10 @@ Trigger / Lage / Blockade / Braucht.
 
 #### gll.rss + Klasse-5 — Commit/Push + Dispatch + Register-Nachtrag
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Commit-Wort `/commit` (dann Commit + Push + `gh workflow run`).
-- **Lage:** (gemessen 2026-09-26) Eigene Arbeit steht uncommittet im Baum:
+- **Trigger:** CI-Lauf-Ende der dispatchten Runs.
+- **Lage:** (gemessen 2026-09-26) Committet `cc991b751` + gepusht (HEAD ==
+  `origin/main`); dispatcht `gll-rss-atdf-cdn 36233487657`, `tools-build
+  36233489263` — Ergebnis ungemessen. Eigene Arbeit:
   `phi/sources.φ` (gll_rss_rsr/atdf/atdf_x/messenger_tnf/ams02_spec + 46
   ams02-Felder, `+86`), `phi/blocked_sources.φ` (unit-auto-detect-Batch `-169`
   + Query-Fixes), `src/archivar/units.rs` und `src/archivar/tests.rs` (`gev`/`gv` in
@@ -40,11 +42,9 @@ Trigger / Lage / Blockade / Braucht.
   `phi/sources.φ` eingetragen; `messenger_tnf.bin` 200/≥93 634 469 B (sha
   pending — Teildownload).
 - **Blockade:** keine.
-- **Braucht:** `/commit` → `git commit <eigene Pfade> -m "…"` + Push, dann
-  `gh workflow run gll-rss-atdf-cdn.yml`, `gh workflow run gll-rss-odr-cdn.yml`
-  (nach Lauf-Ende), `gh workflow run tools-build.yml`; danach nur noch
-  `messenger_tnf.bin`-sha (Teildownload) und die Shards von `gll-rss-odr`/
-  `gll-rss-atdf` nachtragen.
+- **Braucht:** `ci_manage view 36233487657` / `ci_manage view 36233489263`
+  (einmalig); dann `messenger_tnf.bin`-sha, die Shards von `gll-rss-odr`/
+  `gll-rss-atdf` und `gll-rss-rsr-cdn.yml` nachtragen.
 
 #### gll_rss_rsr — Workflow fehlt
 - **Status:** autonom | **Bindung:** eigen
