@@ -23,7 +23,7 @@ jobs:
           if ! gh release view noaa-goes19.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create noaa-goes19.s3.amazonaws.com --repo omegaflow/sources \
               --title "noaa-goes19.s3.amazonaws.com" \
-              --notes "GOES-19 ABI L1b Rad (CONUS, band 1) compiled to a per-granule radiance record. Record stride 56 B LE: t (f64, J2000 s), band_id (u8), calib (u8, 1 = L1b operational radiance, GSICS pending), pad (2), band_wavelength (f32, um), esun (f32, W m-2 um-1), kappa0 (f32, (W m-2 um-1)-1), sub_lon (f32, deg), persp_h (f32, m), rad_mean (f32), rad_std (f32), rad_min (f32), rad_max (f32, W m-2 sr-1 um-1), valid (u32), total (u32)."
+              --notes "GOES-19 ABI L1b Rad (CONUS, band 1) compiled to a per-granule radiance record. Record stride 56 B LE: t (f64, J2000 s), band_id (u8), calib (u8, 1 = L1b operational radiance, 2 = GSICS-harmonized), pad (2), band_wavelength (f32, um), esun (f32, W m-2 um-1), kappa0 (f32, (W m-2 um-1)-1), sub_lon (f32, deg), persp_h (f32, m), rad_mean (f32), rad_std (f32), rad_min (f32), rad_max (f32, W m-2 sr-1 um-1), valid (u32), total (u32)."
           fi
       - name: Fetch one GOES-19 ABI L1b Rad granule
         run: |
