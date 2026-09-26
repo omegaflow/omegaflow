@@ -8,6 +8,7 @@ pub(crate) use std::process::Command;
 pub(crate) use std::sync::{Arc, OnceLock};
 
 pub mod ak135;
+pub mod allwise;
 pub mod amon;
 pub mod arpansa;
 pub mod astrometry;
@@ -175,6 +176,7 @@ pub mod spectral;
 mod tests;
 pub mod types;
 pub mod units;
+pub mod uws;
 
 pub use astrometry::*;
 pub use ble::*;
