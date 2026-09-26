@@ -240,7 +240,80 @@ pub fn beat_open(df_hz: f64, dt_s: f64) -> bool {
     df_hz > 0.0 && dt_s > 0.0 && df_hz * dt_s < 0.5
 }
 
+pub const BEAT_BIN_MAGIC: [u8; 4] = [0xCF, 0x86, 0x0B, 0x00];
+const BEAT_BIN_ROW: usize = 45;
+
+fn rd_f64(b: &[u8], o: usize) -> f64 {
+    f64::from_le_bytes([b[o], b[o + 1], b[o + 2], b[o + 3], b[o + 4], b[o + 5], b[o + 6], b[o + 7]])
+}
+
+pub fn write_beat_bin(rows: &[TnfPhaseRow]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(8 + rows.len() * BEAT_BIN_ROW);
+    out.extend_from_slice(&BEAT_BIN_MAGIC);
+    out.extend_from_slice(&(rows.len() as u32).to_le_bytes());
+    for r in rows {
+        out.extend_from_slice(&r.t.to_le_bytes());
+        out.extend_from_slice(&r.value.to_le_bytes());
+        match r.phase {
+            Some(p) => {
+                out.push(1);
+                out.extend_from_slice(&p.to_le_bytes());
+            }
+            None => {
+                out.push(0);
+                out.extend_from_slice(&0.0f64.to_le_bytes());
+            }
+        }
+        out.extend_from_slice(&r.freq.to_le_bytes());
+        out.extend_from_slice(&r.bin_width.to_le_bytes());
+        out.extend_from_slice(&r.comp.to_le_bytes());
+    }
+    out
+}
+
+pub fn parse_beat_bin(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
+    if bytes.len() < 8 || bytes[0..4] != BEAT_BIN_MAGIC {
+        return None;
+    }
+    let n = u32::from_le_bytes([bytes[4], bytes[5], bytes[6], bytes[7]]) as usize;
+    let mut out = Vec::with_capacity(n);
+    let mut o = 8usize;
+    for _ in 0..n {
+        if o + BEAT_BIN_ROW > bytes.len() {
+            return None;
+        }
+        let t = rd_f64(bytes, o);
+        let value = rd_f64(bytes, o + 8);
+        let has = bytes[o + 16];
+        let phase = rd_f64(bytes, o + 17);
+        let freq = rd_f64(bytes, o + 25);
+        let bin_width = rd_f64(bytes, o + 33);
+        let comp = u32::from_le_bytes([
+            bytes[o + 41],
+            bytes[o + 42],
+            bytes[o + 43],
+            bytes[o + 44],
+        ]);
+        o += BEAT_BIN_ROW;
+        if !t.is_finite() || !value.is_finite() {
+            return None;
+        }
+        out.push(TnfPhaseRow {
+            t,
+            value,
+            phase: if has != 0 { Some(phase) } else { None },
+            freq,
+            bin_width,
+            comp,
+        });
+    }
+    Some(out)
+}
+
 pub fn beat_rows(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
+    if let Some(rows) = parse_beat_bin(bytes) {
+        return Some(rows);
+    }
     let f = parse_uvfits(bytes)?;
     let pair = baseline_rows(&f, STATION_ALMA, STATION_APEX);
     if pair.is_empty() {
@@ -515,5 +588,28 @@ mod tests {
         let f = parse_uvfits(&solo).unwrap();
         assert!(baseline_rows(&f, STATION_ALMA, STATION_APEX).is_empty());
         assert!(beat_rows(&solo).is_none());
+    }
+
+    #[test]
+    fn beat_bin_roundtrips_the_two_tones() {
+        let bytes = fixture_uvfits_with("AP");
+        let rows = beat_rows(&bytes).unwrap();
+        let packed = write_beat_bin(&rows);
+        let back = parse_beat_bin(&packed).unwrap();
+        assert_eq!(back.len(), 2);
+        assert!((back[0].t - rows[0].t).abs() < 1.0e-9);
+        assert!((back[0].value - rows[0].value).abs() < 1.0e-12);
+        assert_eq!(back[0].phase, Some(0.0));
+        assert_eq!(back[1].phase, rows[1].phase);
+        assert!((back[1].freq - rows[1].freq).abs() < 1.0e-9);
+        assert_eq!(back[0].comp, COMP_EHT_AA);
+        assert_eq!(back[1].comp, COMP_EHT_AP);
+        assert_eq!(beat_rows(&packed).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn beat_bin_absent_without_the_magic() {
+        assert!(parse_beat_bin(b"not a beat bin").is_none());
+        assert!(parse_beat_bin(&[]).is_none());
     }
 }

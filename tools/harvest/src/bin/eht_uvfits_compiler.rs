@@ -321,14 +321,25 @@ fn run(path: &str, pair: (&str, &str), out: Option<&str>, ci_mode: bool) {
                     if !pair_readable(bytes, pair) {
                         return;
                     }
-                    match std::fs::write(out_path, bytes) {
+                    let is_beat = pair.0 == omegaflow::uvfits::STATION_ALMA
+                        && pair.1 == omegaflow::uvfits::STATION_APEX;
+                    let (payload, note) = if is_beat {
+                        match omegaflow::uvfits::beat_rows(bytes) {
+                            Some(rows) => (
+                                omegaflow::uvfits::write_beat_bin(&rows),
+                                format!("{} beat rows", rows.len()),
+                            ),
+                            None => return,
+                        }
+                    } else {
+                        (bytes.to_vec(), format!("{} B raw", bytes.len()))
+                    };
+                    match std::fs::write(out_path, &payload) {
                         Ok(()) => {
                             written = true;
                             eprintln!(
-                                "{name}: {}-{} beat open, {} B -> {out_path}",
-                                pair.0,
-                                pair.1,
-                                bytes.len()
+                                "{name}: {}-{} beat open, {note} -> {out_path}",
+                                pair.0, pair.1
                             );
                         }
                         Err(e) => eprintln!("{out_path}: write returned void: {e}"),
