@@ -24,7 +24,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view www.hamqsl.com --repo omegaflow/sources \
+          if gh release view hamqsl.com --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "hamqsl_solar.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset hamqsl_solar.bin already present — manifest skipped"
@@ -32,12 +32,12 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset hamqsl_solar.bin missing — compiling and manifesting"
           fi
-      - name: Ensure the www.hamqsl.com release exists on the CDN
+      - name: Ensure the hamqsl.com release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          if ! gh release view www.hamqsl.com --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.hamqsl.com --repo omegaflow/sources \
-              --title "www.hamqsl.com" \
+          if ! gh release view hamqsl.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create hamqsl.com --repo omegaflow/sources \
+              --title "hamqsl.com" \
               --notes "HAMQSL solar-terrestrial indices compiled to a binary asset (CDN tag = netloc)"
           fi
       - name: Compile and manifest the HAMQSL solar series to the CDN

@@ -15,7 +15,7 @@ use std::thread;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 const SLAB2_CDN_URL: &str =
-    "https://github.com/omegaflow/sources/releases/download/www.sciencebase.gov/slab2_depth.bin";
+    "https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin";
 const SLAB2_LOCAL_PATH: &str = "data/www.sciencebase.gov/slab2_depth.bin";
 const VOLUME_CDN_URL: &str = "https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin";
 const VOLUME_LOCAL_PATH: &str = "data/LLNL_G3D_JPS.volume.bin";

@@ -18,11 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the www.isc.ac.uk release exists on the CDN
+      - name: Ensure the isc.ac.uk release exists on the CDN
         run: |
-          if ! gh release view www.isc.ac.uk --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.isc.ac.uk --repo omegaflow/sources \
-              --title "www.isc.ac.uk" \
+          if ! gh release view isc.ac.uk --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create isc.ac.uk --repo omegaflow/sources \
+              --title "isc.ac.uk" \
               --notes "ISC event bulletin (QuakeML 1.2) compiled to a fixed-stride event record. Record stride: present (u8) + pad (7), time (f64 LE, unix s), lat (f64 LE, deg), lon (f64 LE, deg), depth (f64 LE, km), magnitude (f64 LE, pad 0.0 when absent), mag_type (8 ASCII bytes, NUL pad)."
           fi
       - name: Harvest the ISC event bulletin once and upload to CDN

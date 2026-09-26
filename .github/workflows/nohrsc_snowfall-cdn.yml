@@ -24,7 +24,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view www.nohrsc.noaa.gov --repo omegaflow/sources \
+          if gh release view nohrsc.noaa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "nohrsc_snowfall.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset nohrsc_snowfall.bin already present — manifest skipped"
@@ -32,12 +32,12 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset nohrsc_snowfall.bin missing — compiling and manifesting"
           fi
-      - name: Ensure the www.nohrsc.noaa.gov release exists on the CDN
+      - name: Ensure the nohrsc.noaa.gov release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          if ! gh release view www.nohrsc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.nohrsc.noaa.gov --repo omegaflow/sources \
-              --title "www.nohrsc.noaa.gov" \
+          if ! gh release view nohrsc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create nohrsc.noaa.gov --repo omegaflow/sources \
+              --title "nohrsc.noaa.gov" \
               --notes "NOAA NOHRSC snowfall CONUS 24h field compiled to a binary asset (CDN tag = netloc)"
           fi
       - name: Compile and manifest the NOHRSC snowfall field to the CDN

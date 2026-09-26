@@ -133,7 +133,7 @@ fn run(out_path: &str, candidates: &[(f64, f64)], radius: f64, ci: bool) -> Resu
     std::fs::write(out_path, &bytes).map_err(|e| format!("{out_path}: {e}"))?;
     println!("tns.bin: {} objects, {} B", objs.len(), bytes.len());
     if ci {
-        if !upload_release("www.wis-tns.org", out_path) {
+        if !upload_release("wis-tns.org", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("tns.bin: uploaded to the CDN");
