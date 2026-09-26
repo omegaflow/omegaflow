@@ -1044,14 +1044,19 @@ fn lz4_hadoop_decode(data: &[u8]) -> Option<Vec<u8>> {
     let mut out = Vec::new();
     let mut pos = 0usize;
     while pos < data.len() {
-        let b = data.get(pos..pos + 4)?;
-        pos += 4;
-        let ulen = u32::from_be_bytes([b[0], b[1], b[2], b[3]]) as usize;
+        let head = data.get(pos..pos + 8)?;
+        pos += 8;
+        let ulen = u32::from_be_bytes([head[0], head[1], head[2], head[3]]) as usize;
+        let clen = u32::from_be_bytes([head[4], head[5], head[6], head[7]]) as usize;
         if ulen == 0 {
             return None;
         }
-        let (chunk, used) = lz4_block(&data[pos..], ulen)?;
-        pos += used;
+        let block = data.get(pos..pos + clen)?;
+        pos += clen;
+        let (chunk, used) = lz4_block(block, ulen)?;
+        if used != block.len() {
+            return None;
+        }
         out.extend_from_slice(&chunk);
     }
     Some(out)
@@ -1808,8 +1813,10 @@ pub(crate) mod testkit {
     fn lz4_framed(chunks: &[&[u8]]) -> Vec<u8> {
         let mut out = Vec::new();
         for chunk in chunks {
+            let block = lz4_literal_block(chunk).expect("small literal block");
             out.extend((chunk.len() as u32).to_be_bytes());
-            out.extend(lz4_literal_block(chunk).expect("small literal block"));
+            out.extend((block.len() as u32).to_be_bytes());
+            out.extend(block);
         }
         out
     }
@@ -1881,7 +1888,14 @@ pub(crate) mod testkit {
     }
 
     fn dictionary_byte_array_file_layout(codec: i32, net_layout: bool) -> Vec<u8> {
-        let wrap = |b: Vec<u8>| -> Vec<u8> { if codec == 1 { snappy_literal(&b) } else { b } };
+        let wrap = |b: Vec<u8>| -> Vec<u8> {
+            match codec {
+                1 => snappy_literal(&b),
+                2 => gzip_stored(&b),
+                5 => lz4_framed(&[&b]),
+                _ => b,
+            }
+        };
         let mut plain_dict = Vec::new();
         plain_dict.extend(2u32.to_le_bytes());
         plain_dict.extend(b"aa");

@@ -2,6 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::galileo_odr::{header, record_stride};
+use omegaflow::odf::{PODF_SHARD_BUDGET, PODF_SHARD_LIMIT};
 
 const BASE: &str =
     "https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/";
@@ -9,6 +10,7 @@ const NETLOC: &str = "pds-rings.seti.org";
 const PREFIX: &str = "gll_rss_odr";
 const FORMAT: &str = "galileo_odr";
 const DIR: &str = "data/pds-rings.seti.org";
+const MANIFEST: &str = "gll_rss_odr.manifest";
 const SUFFIX: &str = "_odr.dat";
 const MAX_DEPTH: u32 = 3;
 const ENTRY: usize = 96;
@@ -19,6 +21,14 @@ struct FileBytes {
     record_count: u32,
     sample_rate: u16,
     sha256: [u8; 32],
+}
+
+struct FileMeta {
+    name: String,
+    sha256: [u8; 32],
+    record_count: u32,
+    sample_rate: u16,
+    data_len: u64,
 }
 
 fn listing_names(text: &str) -> Vec<String> {
@@ -86,14 +96,14 @@ fn hex_string(b: &[u8; 32]) -> String {
     s
 }
 
-fn write_odr_bin(files: &[FileBytes]) -> Vec<u8> {
-    let count = files.len();
+fn write_odr_bin(metas: &[FileMeta], data: &[u8]) -> Vec<u8> {
+    let count = metas.len();
     let data_start = 8 + count * ENTRY;
     let mut bin = vec![0u8; data_start];
     bin[0..4].copy_from_slice(b"GODR");
     bin[4..8].copy_from_slice(&(count as u32).to_le_bytes());
     let mut offset = data_start as u64;
-    for (i, f) in files.iter().enumerate() {
+    for (i, f) in metas.iter().enumerate() {
         let base = 8 + i * ENTRY;
         let nameb = f.name.as_bytes();
         let n = nameb.len().min(32);
@@ -102,12 +112,10 @@ fn write_odr_bin(files: &[FileBytes]) -> Vec<u8> {
         bin[base + 64..base + 68].copy_from_slice(&f.record_count.to_le_bytes());
         bin[base + 68..base + 70].copy_from_slice(&f.sample_rate.to_le_bytes());
         bin[base + 72..base + 80].copy_from_slice(&offset.to_le_bytes());
-        bin[base + 80..base + 88].copy_from_slice(&(f.bytes.len() as u64).to_le_bytes());
-        offset += f.bytes.len() as u64;
+        bin[base + 80..base + 88].copy_from_slice(&f.data_len.to_le_bytes());
+        offset += f.data_len;
     }
-    for f in files {
-        bin.extend_from_slice(&f.bytes);
-    }
+    bin.extend_from_slice(data);
     bin
 }
 
@@ -206,8 +214,17 @@ fn main() {
         }
         return;
     }
-    let mut packed: Vec<FileBytes> = Vec::new();
+    if std::fs::create_dir_all(DIR).is_err() {
+        eprintln!("create {DIR} void");
+        std::process::exit(1);
+    }
     let mut seen: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+    let mut metas: Vec<FileMeta> = Vec::new();
+    let mut data: Vec<u8> = Vec::new();
+    let mut names: Vec<String> = Vec::new();
+    let mut shas: Vec<String> = Vec::new();
+    let mut ord = 0usize;
+    let mut flushed = 0usize;
     for url in files.iter().take(files_limit) {
         let name = url.rsplit('/').next().unwrap_or("odr").to_string();
         let Some(bytes) = fetch_raw_bytes(url) else {
@@ -219,102 +236,135 @@ fn main() {
             eprintln!("{name}: sha256 {digest} — alias of {first} (counted once)");
             continue;
         }
+        let Some(f) = gate(&bytes, &name) else {
+            eprintln!("{name}: ODR gate void — {} B", bytes.len());
+            continue;
+        };
         seen.insert(digest, name.clone());
-        match gate(&bytes, &name) {
-            Some(f) => {
-                eprintln!(
-                    "{}: {} records, {} sps, {} bytes",
-                    f.name,
-                    f.record_count,
-                    f.sample_rate,
-                    f.bytes.len()
-                );
-                packed.push(f);
+        if !metas.is_empty() && data.len() + f.bytes.len() > PODF_SHARD_BUDGET {
+            if !flush_shard(ord, true, &metas, &data, ci_mode, &mut names, &mut shas) {
+                std::process::exit(1);
             }
-            None => eprintln!("{name}: ODR gate void — {} B", bytes.len()),
+            ord += 1;
+            flushed += 1;
+            metas.clear();
+            data.clear();
         }
+        eprintln!(
+            "{}: {} records, {} sps, {} bytes",
+            f.name,
+            f.record_count,
+            f.sample_rate,
+            f.bytes.len()
+        );
+        data.extend_from_slice(&f.bytes);
+        metas.push(FileMeta {
+            name: f.name,
+            sha256: f.sha256,
+            record_count: f.record_count,
+            sample_rate: f.sample_rate,
+            data_len: f.bytes.len() as u64,
+        });
     }
-    if packed.is_empty() {
+    if metas.is_empty() {
         eprintln!("no ODR files gated — the series stays unwritten (0 honored)");
         return;
     }
-    let groups = shard_groups(&packed);
-    std::fs::create_dir_all(DIR).ok();
-    let multi = groups.len() > 1;
-    let mut names: Vec<String> = Vec::new();
-    let mut paths: Vec<String> = Vec::new();
-    for (ord, group) in groups.iter().enumerate() {
-        let name = if multi {
-            format!("{PREFIX}_s{ord}.bin")
-        } else {
-            format!("{PREFIX}.bin")
-        };
-        let bin = write_odr_bin(group);
-        if !roundtrip_holds(&bin) {
-            eprintln!("{name}: roundtrip void — the asset stays unwritten (0 honored)");
-            std::process::exit(1);
-        }
-        let path = format!("{DIR}/{name}");
-        if std::fs::write(&path, &bin).is_err() {
-            eprintln!("write {path} void");
-            std::process::exit(1);
-        }
-        let group_bytes: usize = group.iter().map(|f| f.bytes.len()).sum();
-        eprintln!(
-            "{name}: {} ODR files packaged ({} bytes), roundtrip holds",
-            group.len(),
-            group_bytes
-        );
-        names.push(name);
-        paths.push(path);
+    if !flush_shard(
+        ord,
+        flushed > 0,
+        &metas,
+        &data,
+        ci_mode,
+        &mut names,
+        &mut shas,
+    ) {
+        std::process::exit(1);
     }
-    if multi {
-        for name in &names {
-            println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
-            println!("format {FORMAT}");
-            println!("origin procedure: {BASE} (Live-Listing subdirectories)");
-            println!("compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs");
-            println!("at earth");
-            println!("ttl 604800");
-            println!("field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0");
-            println!("field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0");
-            println!("field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0");
-            println!("field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0");
-            println!();
+    let mut manifest = String::new();
+    for (i, name) in names.iter().enumerate() {
+        if let Some(sha) = shas.get(i) {
+            manifest.push_str(&format!("{name} {sha}\n"));
         }
+    }
+    let manifest_path = format!("{DIR}/{MANIFEST}");
+    if std::fs::write(&manifest_path, &manifest).is_err() {
+        eprintln!("write {manifest_path} void");
+        std::process::exit(1);
     }
     if ci_mode {
-        for path in &paths {
-            if !upload_release(NETLOC, path) {
-                std::process::exit(1);
-            }
+        if !upload_release(NETLOC, &manifest_path) {
+            std::process::exit(1);
         }
+        if std::fs::remove_file(&manifest_path).is_err() {
+            eprintln!("{manifest_path}: local manifest stays (remove void)");
+        }
+    }
+    if names.len() > 1 {
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{PREFIX}.bin"
+        );
+        println!("format {FORMAT}");
+        println!("origin procedure: {BASE} (Live-Listing subdirectories)");
+        println!("compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs");
+        println!("at earth");
+        println!("ttl 604800");
+        println!("field ad1 galileo_odr_ad1_count inverse-square em count 604800 0.0 0.0");
+        println!("field ad2 galileo_odr_ad2_count inverse-square em count 604800 0.0 0.0");
+        println!("field ad3 galileo_odr_ad3_count inverse-square em count 604800 0.0 0.0");
+        println!("field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0");
+        println!();
     }
 }
 
-fn shard_groups(files: &[FileBytes]) -> Vec<Vec<FileBytes>> {
-    const SHARD_BUDGET: usize = 1 << 30;
-    let mut groups: Vec<Vec<FileBytes>> = Vec::new();
-    let mut current: Vec<FileBytes> = Vec::new();
-    let mut current_bytes = 0usize;
-    for f in files {
-        if !current.is_empty() && current_bytes + f.bytes.len() > SHARD_BUDGET {
-            groups.push(std::mem::take(&mut current));
-            current_bytes = 0;
+fn flush_shard(
+    ord: usize,
+    use_shard: bool,
+    metas: &[FileMeta],
+    data: &[u8],
+    ci_mode: bool,
+    names: &mut Vec<String>,
+    shas: &mut Vec<String>,
+) -> bool {
+    let name = if use_shard {
+        format!("{PREFIX}.bin.{ord:03}")
+    } else {
+        format!("{PREFIX}.bin")
+    };
+    let bin = write_odr_bin(metas, data);
+    if bin.len() > PODF_SHARD_LIMIT {
+        eprintln!(
+            "{name}: {} bytes exceed the {PODF_SHARD_LIMIT}-byte CDN asset limit — the asset stays unwritten (0 honored)",
+            bin.len()
+        );
+        return false;
+    }
+    if !roundtrip_holds(&bin) {
+        eprintln!("{name}: roundtrip void — the asset stays unwritten (0 honored)");
+        return false;
+    }
+    let path = format!("{DIR}/{name}");
+    if std::fs::write(&path, &bin).is_err() {
+        eprintln!("write {path} void");
+        return false;
+    }
+    let group_bytes: usize = metas.iter().map(|f| f.data_len as usize).sum();
+    eprintln!(
+        "{name}: {} ODR files packaged ({} bytes), roundtrip holds",
+        metas.len(),
+        group_bytes
+    );
+    shas.push(sha256_hex(&bin));
+    names.push(name.clone());
+    if ci_mode {
+        if !upload_release(NETLOC, &path) {
+            return false;
         }
-        current_bytes += f.bytes.len();
-        current.push(FileBytes {
-            name: f.name.clone(),
-            bytes: f.bytes.clone(),
-            record_count: f.record_count,
-            sample_rate: f.sample_rate,
-            sha256: f.sha256,
-        });
+        if std::fs::remove_file(&path).is_err() {
+            eprintln!("{path}: local shard stays (remove void)");
+        }
     }
-    if !current.is_empty() {
-        groups.push(current);
-    }
-    groups
+    true
 }
 
 #[cfg(test)]
@@ -337,6 +387,24 @@ mod tests {
         }
     }
 
+    fn pack(files: &[FileBytes]) -> Vec<u8> {
+        let metas: Vec<FileMeta> = files
+            .iter()
+            .map(|f| FileMeta {
+                name: f.name.clone(),
+                sha256: f.sha256,
+                record_count: f.record_count,
+                sample_rate: f.sample_rate,
+                data_len: f.bytes.len() as u64,
+            })
+            .collect();
+        let mut data = Vec::new();
+        for f in files {
+            data.extend_from_slice(&f.bytes);
+        }
+        write_odr_bin(&metas, &data)
+    }
+
     #[test]
     fn hex32_roundtrips_via_hex_string() {
         let h = sha256_hex(b"gll rss odr provenance");
@@ -349,7 +417,7 @@ mod tests {
     fn odr_bin_roundtrips() {
         let a = sample_file("63131033.ODR", 3);
         let b = sample_file("70571407.ODR", 2);
-        let bin = write_odr_bin(&[a, b]);
+        let bin = pack(&[a, b]);
         let parsed = parse_odr_bin(&bin).unwrap();
         assert_eq!(parsed.len(), 2);
         assert_eq!(parsed[0].name, "63131033.ODR");
@@ -362,7 +430,7 @@ mod tests {
     #[test]
     fn roundtrip_holds_for_valid_bin() {
         let a = sample_file("63131033.ODR", 3);
-        let bin = write_odr_bin(&[a]);
+        let bin = pack(&[a]);
         assert!(roundtrip_holds(&bin));
     }
 }

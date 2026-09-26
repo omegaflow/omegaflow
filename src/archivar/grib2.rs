@@ -697,15 +697,19 @@ fn decode_complex_groups(template: &[u8], num_points: u32, data: &[u8]) -> Optio
     let mut rdr = MsbBitReader::new(data);
 
     let mut group_refs = Vec::with_capacity(ng as usize);
-    let mut group_widths = Vec::with_capacity(ng as usize);
-    let mut group_lengths = Vec::with_capacity(ng as usize);
     for _ in 0..ng {
         group_refs.push(rdr.read_bits(bits_group_refs)?);
+    }
+    let mut group_widths = Vec::with_capacity(ng as usize);
+    for _ in 0..ng {
         let width = ref_group_widths + rdr.read_bits(bits_group_widths)?;
         if width > 31 {
             return None;
         }
         group_widths.push(width);
+    }
+    let mut group_lengths = Vec::with_capacity(ng as usize);
+    for _ in 0..ng {
         let scaled = ref_group_lengths + rdr.read_bits(bits_scaled_group_lengths)?;
         group_lengths.push(scaled.saturating_mul(increment));
     }
