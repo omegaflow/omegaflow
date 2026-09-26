@@ -101,8 +101,7 @@ fn station_anchor(body: &str) -> Option<(f64, f64, f64)> {
     let text = strip_tags(&body[h4_start..h4_end]);
     let lat = after(&text, "Latitude:").and_then(|t| parse_dms(&t))?;
     let lon = after(&text, "Longitude:").and_then(|t| parse_dms(&t))?;
-    let alt = after(&text, "Altitude:")
-        .and_then(|t| t.parse::<f64>().ok())?;
+    let alt = after(&text, "Altitude:").and_then(|t| t.parse::<f64>().ok())?;
     Some((lat, lon, alt))
 }
 
@@ -125,8 +124,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let ndays = arg_value(args, "--ndays")
         .and_then(|v| v.parse::<i64>().ok())
         .unwrap_or(1);
-    let out = arg_value(args, "--out")
-        .ok_or_else(|| "--out (path) required".to_string())?;
+    let out = arg_value(args, "--out").ok_or_else(|| "--out (path) required".to_string())?;
 
     let url = format!(
         "{BASE}?ind={station}&lang=en&decoded=yes&ndays={ndays}&ano={year}&mes={month:02}&day={day:02}&hora=12"
