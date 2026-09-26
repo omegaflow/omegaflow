@@ -3,7 +3,7 @@
   session: Sensory-Folge 179
   class: handover
   date: 2026-09-26
-  sha256: bf7e65113386b8d42481cebe17348b2c0ac2d35eaf9c2c3485bf983fac19788d
+  sha256: 8dcf73fada6bff5292ba02d4de6e1843b9211fed82933b6cef34e91b499c5842
   status: live
 -->
 # Handover — Sensory-Folge 179 (2026-09-26)
@@ -132,12 +132,6 @@ Der offene Schritt dieser Punkte ist damit allein der **Workflow-Lauf**, nicht d
 - **Blockade:** Earthdata-OAuth-Session (kein Key-Gap).
 - **Braucht:** Szene über die Session laden, Footprint/Alignment messen.
 
-### 10. GOSAT-GW GWT3F_L1B — Re-pack gebaut, comp-Formel offen (von Mycelium übernommen)
-- **Status:** blockiert | **Bindung:** eigen | **Trigger:** `src/archivar/main_flow.rs`/`extract.rs` frei von fremden Hunks.
-- **Lage:** (gemessen 2026-09-27, Mycelium/grind-pro) Re-pack in `tools/harvest/src/bin/gosat_tanso3_compiler.rs` committet (`cb339a5c9`): 60-B-GeoRec-Layout, `comp_of`; radiance-`units` = `W.m-2.sr-1.um-1`. Riss: Rat-Formel `product·3+(band−1)` ergibt 3..8, implementiert als `(product−1)·3+band` (Fokus 1..3, Wide 4..6) — unbestätigt.
-- **Blockade:** fremde Hunks `main_flow.rs`/`extract.rs`; comp-Reihenfolge offen.
-- **Braucht:** comp-Reihenfolge entscheiden; danach `MAGIC_GOSAT`/`COMP_GOSAT_*` (`geo.rs:205`/`:248`), `geo_series_component_name` (`extract.rs:450`), `"gosat_tanso3"`-Arm (`main_flow.rs:3253-3282`), Tests (`tests.rs`), `phi/sources.φ`-Block; dann `blocked_sources.φ:323-325` → released.
-
 ## Operator-gebunden (Vorbereitung an der Kante)
 
 - **RR-Kanal / Beat-to-beat** | operator | Trigger: Förderung gewährt (2026-09-26) | Lage: Live-BLE HR aber `NotSupported` → keine RR; FIT `nn=0` bei 25 Aktivitäten | Braucht: Brustgurt (Polar H10 / HRM-Dual) → `perm_tone_probe`.
@@ -227,7 +221,7 @@ Dokument: `Pfad` (offene Marker) → Trägerpunkt oder descoped-Befund.
 - **Wort:** „deine Daten/Datei verlassen das Gerät nie" | 2026-09-25 | Operator (Session) — [redacted]/DEMETER.
 - **Wort:** „beides" (BLE-Live + FIT-Probe) | 2026-09-26 | Operator (Session) → ausgeführt.
 - **Wort:** „das mache ich erst, wenn ich gefördert werde" (Gurt-Beschaffung) | 2026-09-26 | Operator (Session).
-- **Wort:** „GOSAT-comp-Formel kann ich nicht bestätigen — lass es sein, Sensory kümmert sich" | 2026-09-27 | Operator (Session) → GOSAT-Punkt aus Mycelium-Übergabe folge174 übernommen (Punkt 10).
+- **Wort:** „DEMETER ist Sensory" | 2026-09-27 | Operator (Session) → DEMETER gehört zur Sensory-Linie (hier bereits geführt); GOSAT zurück an die Mycelium-Linie.
 
 ## Abschluss
 
