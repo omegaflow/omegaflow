@@ -216,14 +216,14 @@ pub fn spawn_ephemeris_bootstrap(
             fresh_items.push((i, s.clone(), tmp_path));
         } else if anchor_uses.contains_key(body) || declared_body == Some(body.as_str()) {
             anchor_items.push((i, s.clone(), tmp_path));
-        } else if let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body)) {
-            if let (Some(props), Some(pos)) = (
+        } else if let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body))
+            && let (Some(props), Some(pos)) = (
                 eph.props.as_ref(),
                 body_barycenter_position(body, now, body_ephemerides),
-            ) && body_in_enclosure(presences, props, pos, now)
-            {
-                rest_items.push((i, s.clone(), tmp_path));
-            }
+            )
+            && body_in_enclosure(presences, props, pos, now)
+        {
+            rest_items.push((i, s.clone(), tmp_path));
         }
     }
     fresh_items.sort_by_key(|(_, s, _)| anchor_order(s));
@@ -856,16 +856,15 @@ pub fn main_flow() {
                 let prev_t = archive.prev_presence_epoch;
                 if let (Some(prev_t), Some(&(_, opx, opy, opz, _, ovx, ovy, ovz, _, _))) =
                     (prev_t, archive.presence.get("browser"))
-                {
-                    if jump_residual_breached(
+                    && jump_residual_breached(
                         [px, py, pz],
                         [opx, opy, opz],
                         [ovx, ovy, ovz],
                         [vx, vy, vz],
                         pt - prev_t,
-                    ) {
-                        archive.jump_epoch = Some(pt);
-                    }
+                    )
+                {
+                    archive.jump_epoch = Some(pt);
                 }
                 archive.prev_presence_epoch = Some(pt);
                 if let Ok(mut slot) = presence_slot.write() {
