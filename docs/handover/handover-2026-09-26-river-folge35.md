@@ -3,7 +3,7 @@
   session: River-Folge 35
   class: handover
   date: 2026-09-26
-  sha256: ba102b87b7ad8bf79428dc9d36853601dca3a845d75e734a56dfc9b2e07534d3
+  sha256: f1c73a1d1a2edd19a0c10aa9b64f02f39badbab3414d96186ce071218f1737ca
   status: live
 -->
 # Handover — River-Folge 35 (2026-09-26)
@@ -85,7 +85,8 @@ Diese Session konsumierte `handover-2026-09-26-river-folge34.md`.
 - **Trigger:** der Push dieses Commits löst `paper-check` aus; der `big-bang-echo-sheet-12`-Fix liegt in `handover-2026-09-26-sensory-folge174.md`.
 - **Lage:** (gemessen 2026-09-26 via `ci_manage log 36224203710` + `omega_sh sha`) gic-Abstract 302→194 W
   (`docs/paper/gic-causal-driver.md:17`), Header-sha `1aada7d3…` deckt; `big-bang-echo-sheet-12`
-  Header `e269ada0…` ≠ Body `0a5f2c78…` bleibt offen (Sensory).
+  Header `e269ada0…` ≠ Body `0a5f2c78…` bleibt offen (Sensory). Push `37b968e76` löste
+  `paper-check 36226294749` aus (`queued`).
 - **Blockade:** `big-bang-echo-sheet-12` (fremde Linie) — ohne deren Sha-Fix kein grüner `paper-check`.
 - **Braucht:** nach Push `ci_manage list` → jüngster `paper-check`-Lauf; der gic-Eintrag muss aus der `->`-Liste fallen.
 
