@@ -2961,6 +2961,51 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_bootstrap_anchor_unconditional_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/main_flow.rs",
+            &fx("bootstrap_anchor_unconditional"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_body_gate_without_record_epoch_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/fetch.rs",
+            &fx("body_gate_without_record_epoch"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_in_hull_absence_default_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/main_flow.rs", &fx("in_hull_absence_default"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_star_finite_difference_bounds_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/spatial.rs",
+            &fx("star_finite_difference_bounds"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_hardcoded_force_absorption_constant_blocked() {
         let mut g = test_gate();
         let args = tool_args("src/archivar/channels.rs", &fx("force_absorption_constant"));

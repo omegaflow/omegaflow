@@ -53,7 +53,11 @@
     ["6 => 0.02,", "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
     ["0.5 * anchor_amax *", "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"],
-    [".cell_str(bytes, r, name_col).map(|s| s.trim()", "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"]
+    [".cell_str(bytes, r, name_col).map(|s| s.trim()", "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"],
+    ["anchor_uses.contains_key(body) || declared_body", "the bootstrap anchor class merged with the declared body admits every frame-referenced body without the enclosure gate — only the operator-declared body is the unconditional admission; the anchor class passes body_in_enclosure like the rest class, no source passes by default"],
+    ["body_in_enclosure(&presences, props, pos, now)", "the body enclosure gate called without the record epoch reads age = now − now = 0, reach = 0 and refuses every body the resting cone admits — the gate carries the body's record epoch (body_record_epoch: first granule t0_jd / orbit first sample) as t_r"],
+    ["_ => true,\n                    },\n                    None => true,", "the in_hull fetch gate defaults to true when the corpus ephemeris, properties or position is absent — absence is not a value; the gate refuses (false) on absence, never admits on a fabricated default"],
+    ["star_position_at(rec, epoch + 1.0)", "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -475,6 +479,10 @@
     "force_absorption_constant": "let absorbs = match force {\n    0 | 1 => 0.0,\n    2 => 0.1,\n    3 => 0.05,\n    4 => 0.08,\n    5 => 0.01,\n    6 => 0.02,\n    7 => 0.15,\n};",
     "force_absorption_law": "absorption: absorption_for_force(sensor.force, sensor.absorption),",
     "enclosure_rho_fourth_copy": "let rho = anchor_vmax * age + 0.5 * anchor_amax * age * age + pad;",
-    "enclosure_rho_call": "let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);"
+    "enclosure_rho_call": "let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);",
+    "bootstrap_anchor_unconditional": "} else if anchor_uses.contains_key(body) || declared_body == Some(body.as_str()) {\n            anchor_items.push((i, s.clone(), tmp_path));\n        }",
+    "body_gate_without_record_epoch": "let admitted = body_in_enclosure(&presences, props, pos, now);",
+    "in_hull_absence_default": "        (Some(props), Some(pos)) => body_in_enclosure(&presences, props, pos, now),\n                        _ => true,\n                    },\n                    None => true,",
+    "star_finite_difference_bounds": "let p1 = star_position_at(rec, epoch + 1.0).0;"
   }
 }

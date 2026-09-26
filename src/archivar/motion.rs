@@ -106,6 +106,14 @@ pub fn granule_lo(e: &BodyEphemeris, jd: f64) -> Option<usize> {
     Some(idx)
 }
 
+pub fn body_record_epoch(e: &BodyEphemeris) -> Option<f64> {
+    if let Some(orbit) = &e.orbit {
+        return orbit.times.first().copied();
+    }
+    let g = e.granules.first()?;
+    Some((g.t0_jd - J2000_EPOCH) * 86400.0)
+}
+
 pub fn body_barycenter_position(
     name: &str,
     tdb: f64,

@@ -3,9 +3,9 @@ use std::sync::Arc;
 use std::sync::RwLock;
 
 use omegaflow::archivar::{
-    C_LIGHT, anchor_uses, body_barycenter_position, body_in_enclosure, build_asteroid_samples,
-    build_star_samples, cache_fresh_cdn, catalog_sample_in_enclosure, content_cache, embedded_lsk,
-    enclosure_presences, parse_ephemeris_binary, parse_sources,
+    C_LIGHT, anchor_uses, body_barycenter_position, body_in_enclosure, body_record_epoch,
+    build_asteroid_samples, build_star_samples, cache_fresh_cdn, catalog_sample_in_enclosure,
+    content_cache, embedded_lsk, enclosure_presences, parse_ephemeris_binary, parse_sources,
 };
 use omegaflow::mathematikerin::PresenceState;
 
@@ -288,22 +288,17 @@ fn main() {
     let anchor_uses = anchor_uses(&sources);
     let mut bootstrap = PathStats::new();
     let mut boot_fresh = 0usize;
-    let mut boot_anchor = 0usize;
     let mut boot_unloaded = 0usize;
     for s in &eph_sources {
         let body = s.body.as_deref().unwrap_or("");
         let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
         if cache_fresh_cdn(&tmp_path, s.ttl, &s.url) {
             boot_fresh += 1;
-        } else if anchor_uses.contains_key(body) {
-            boot_anchor += 1;
         } else if let Some(e) = eph_map.get(body)
-            && let (Some(props), Some(pos)) = (
-                e.props.as_ref(),
-                body_barycenter_position(body, now, &eph_map),
-            )
+            && let (Some(t_r), Some(props)) = (body_record_epoch(e), e.props.as_ref())
+            && let Some(pos) = body_barycenter_position(body, t_r, &eph_map)
         {
-            let admitted = body_in_enclosure(&presences, props, pos, now);
+            let admitted = body_in_enclosure(&presences, props, pos, t_r, now);
             bootstrap.record(admitted, pos, center, rho_star);
         } else {
             boot_unloaded += 1;
@@ -311,23 +306,21 @@ fn main() {
     }
 
     let mut tick = PathStats::new();
-    let mut tick_default = 0usize;
+    let mut tick_absent = 0usize;
     for s in &eph_sources {
         let body = s.body.as_deref().unwrap_or("");
         match eph_map.get(body) {
-            None => tick_default += 1,
-            Some(e) => {
-                match (
-                    e.props.as_ref(),
-                    body_barycenter_position(body, now, &eph_map),
-                ) {
-                    (Some(props), Some(pos)) => {
-                        let admitted = body_in_enclosure(&presences, props, pos, now);
+            None => tick_absent += 1,
+            Some(e) => match (body_record_epoch(e), e.props.as_ref()) {
+                (Some(t_r), Some(props)) => match body_barycenter_position(body, t_r, &eph_map) {
+                    Some(pos) => {
+                        let admitted = body_in_enclosure(&presences, props, pos, t_r, now);
                         tick.record(admitted, pos, center, rho_star);
                     }
-                    _ => tick_default += 1,
-                }
-            }
+                    None => tick_absent += 1,
+                },
+                _ => tick_absent += 1,
+            },
         }
     }
 
@@ -375,16 +368,15 @@ fn main() {
     print_path(
         "bootstrap",
         &bootstrap,
-        &format!("fresh {boot_fresh} anchor {boot_anchor} declared 0 unloaded {boot_unloaded}"),
+        &format!("fresh {boot_fresh} unloaded {boot_unloaded} declared 0"),
     );
     println!(
-        "BOOTSTRAP unconditional admission (measured): anchor_items {boot_anchor} of {} ephemeris sources load without the hull gate (main_flow.rs:243) — the enclosure gate (main_flow.rs:250) guards the rest class only; declared_body 0 in the probe; fresh {boot_fresh} by the cache classification",
-        eph_sources.len()
+        "BOOTSTRAP anchor admission (measured): the anchor class passes the same enclosure gate as the rest class — no source may pass by default; declared_body 0 in the probe (a main-flow state, not carried by the probe corpus); fresh {boot_fresh} by the cache classification"
     );
 
-    print_path("per-tick", &tick, &format!("default_admit {tick_default}"));
+    print_path("per-tick", &tick, &format!("absent_refused {tick_absent}"));
     println!(
-        "PER-TICK default admission (measured): in_hull defaults to true for {tick_default} of {} sources whose corpus ephemeris, properties or position is absent (main_flow.rs:1261,1263)",
+        "PER-TICK absent refusal (measured): in_hull refuses {tick_absent} of {} sources whose corpus ephemeris, properties or position is absent — absence is not a value, no fabricated default",
         eph_sources.len()
     );
 
