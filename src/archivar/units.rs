@@ -319,6 +319,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "t",
             "nt",
             "ev",
+            "gev",
+            "gv",
             "jy",
             "mjy",
             "ujy",

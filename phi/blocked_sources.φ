@@ -56,6 +56,7 @@ note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 
 
 pending
 url https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
+at mariner10
 note NAIF SPK M10_archive_1.bsp (51200 B, HTTP 200 2026-09-25). ephemeris_mariner10.bin gebaut 2026-09-25 (mariner10-ephemeris-cdn 36181036369; 648 B, sha256 7ad8b8bf, sources.φ). Offen: keine mariner10-Route in frame_registry.φ.
 
 pending
@@ -144,30 +145,24 @@ url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&
 note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
 
 blocked parser-def json
-url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM=ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
+url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+radeg,dedeg,hrv,teff,plx+FROM+ravedr4.rave_dr4+WHERE+plx+IS+NOT+NULL
+gap curation
 note HTTP 500 2026-09-26 ADQL: plx unbekannt in ravedr4.rave_dr4; echt RAdeg,DEdeg,HRV,Teff_K.
 
 blocked parser-def json
-url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM=specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
+url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,z,umag,gmag,rmag+FROM+specphot.rcsed_fibermags+WHERE+z+IS+NOT+NULL
+gap curation
 note HTTP 500 2026-09-26 ADQL: ra/dec/z unbekannt in specphot.rcsed_fibermags; echt objid,corrfibmag_u,corrfibmag_g,corrfibmag_r.
 
 blocked parser-def json
-url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM=hyperleda.galaxies+WHERE+v+IS+NOT+NULL
+url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+al2000,de2000,v,bmag+FROM+hyperleda.galaxies+WHERE+v+IS+NOT+NULL
+gap curation
 note HTTP 500 2026-09-26 ADQL: al2000/de2000/v/bmag unbekannt in hyperleda.galaxies; echt ra,dec,mag,vr.
 
 blocked parser-def json
-url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM=ogle.lightcurves+WHERE+mag+IS+NOT+NULL
+url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag+FROM+ogle.lightcurves+WHERE+mag+IS+NOT+NULL
+gap curation
 note HTTP 500 2026-09-26 ADQL: ra/dec/mag unbekannt in ogle.lightcurves; echt object_id,passband,obs_time,magnitude.
-
-parser-def json
-gap unit-auto-detect
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?QUERY=SELECT+TOP+500+pl_name,ra,dec,pl_massj,pl_radj,pl_orbsmax,pl_orbeccen,pl_orbincl,pl_rvamp,st_teff,sy_dist,disc_year+FROM+ps+WHERE+discoverymethod%3D'Radial+Velocity'+AND+ra+IS+NOT+NULL+ORDER+BY+pl_massj+ASC&FORMAT=csv
-note NASA Exoplanet TAP: field planet_mass_MJup/planet_radius_RJup/semimajor_axis_au/rv_semi_amplitude unit absent — unit-auto-detect gap; cmap trägt ra/dec. Em echt. rv_semi_amplitude: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
-note NASA Exoplanet TESS-TOI: field orbital_period_days/earth_radius/earth_mass/transit_duration_hours/stellar_teff_K unit absent — unit-auto-detect gap; cmap ra/dec. earth_radius/transit_duration_hours: suffix->None; probe_classify_raw->(UNCERTAIN,)
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
@@ -233,21 +228,6 @@ pending
 url https://irsa.ipac.caltech.edu/TAP
 note AllWISE allsky_4band_p3as_psd (w1mpro..w4mpro,w3snr,w4snr): sync-Stall gemessen, async-UWS der Weg (Job 23542882 COMPLETED, 1 Zeile, VOTable 1.3). async-UWS-Parser-Arm fehlt.
 
-parser-def csv
-gap unit-auto-detect
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
-note IRSA Planck SZ: field sz_signal_to_noise/sz_mass_10e14_msun/angular_radius_arcmin/distance_mpc unit absent — unit-auto-detect gap; cmap RA/DE/z. Em echt. sz_signal_to_noise: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+proposal_id%3D'1727'+ORDER+BY+t_exptime+DESC
-note MAST CAOM JWST (1727): field exposure_s/filter/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt. exposure_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def csv
-gap unit-auto-detect
-url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+AND+(proposal_id%3D'1180'+OR+proposal_id%3D'1286')+ORDER+BY+t_exptime+DESC
-note MAST CAOM JWST-NIRSpec: field target_field/exposure_s/grating/wl_min_m/wl_max_m unit absent — unit-auto-detect gap; cmap s_ra/s_dec. Em echt. exposure_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
 descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
 note SIMBAD basic (EB): field plx_mas — Astrometrie; cmap plx 2 trägt Entfernung, radvel 5/redshift 6. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
@@ -260,173 +240,57 @@ descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
 note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-parser-def json
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
-note VizieR FRBCat: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio/FRB) echt. dm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
-note VizieR J/A+A/693/A279 FRB: field dm unit absent — unit-auto-detect gap; cmap data ra/dec. Em (Radio) echt. dm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def csv
-gap unit-auto-detect
-url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
-note GOES-16 MAG: field Hp/He/Hn/B_total_nT unit absent — unit-auto-detect gap; epoch_utc force undetermined. Magnetfeld (em) echt. Hp/He/Hn: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://services.swpc.noaa.gov/products/geospace/auroral-electrojet.json
-note SWPC auroral electrojet: field au/ae/al_index_nt unit absent — unit-auto-detect gap. Geomagnetisch (em) echt. au/ae: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://services.swpc.noaa.gov/json/solar_regions.json
-note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. Fields region/area/spot_class/mag_class/number_spots unit absent — unit-auto-detect gap. Sonne (em) echt.
+note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. area ohne Token (Millionstel), spot_class=McIntosh kategorisch, number_spots/region DROP. descoped (gemessen: keine namensbestimmbare Einheit).
 
-parser-def json
-gap unit-auto-detect
-url https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv
-note SDO EVE L3: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt. wavelength_nm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://lasp.colorado.edu/data/fism/FISM2_2026_07_27.csv
-note FISM2: field wavelength_nm/irradiance_wm2nm unit absent — unit-auto-detect gap; rows. Sonnen-EUV (em) echt. wavelength_nm: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=AMAZON&product=GRACE_TWS&format=json
-note GRACE TWS (Amazonas): field tws_anomaly_cm/tws_uncertainty_cm/linear_trend_cm_yr/seasonal_amp_cm unit absent — unit-auto-detect gap; map timeseries. Gravitation echt. linear_trend_cm_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_info_v3?site=all&if_no_site=1
-note AERONET: field aod_440nm/aod_500nm/aerosol_angstrom unit absent — unit-auto-detect gap; map latitude/longitude. Atmosphäre (em) echt. aerosol_angstrom: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json
-note EPA RadNet: field gamma_dose_uR_h unit absent — unit-auto-detect gap; map stations latitude/longitude. Strahlung (em) echt. gamma_dose_uR_h: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100
-note OpenAQ latest: field location/parameter/value/unit unit absent — unit-auto-detect gap; map coordinates. Atmosphäre (diffusion) echt. value: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note OpenAQ latest: value trägt die Einheit je Zeile in der Spalte unit (parameter-abhängig: µg/m³, ppm, ppb) — namensbasiert nicht bestimmbar; location/parameter strukturell. descoped (gemessen: unit-auto-detect ohne Namens-Token unmöglich).
 
-parser-def json
-gap unit-auto-detect
-url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/MOPITT/MOP03JM.009/{year}/{year}{month:02d}.he5.nc4.ascii?RetrievedCOTotalColumn[0:1:0][0:1:180][0:1:360]
-note MOPITT CO-Säule: field latitude/longitude/co_column_mol_cm2 unit absent — unit-auto-detect gap; rows. Atmosphäre (diffusion) echt. co_column_mol_cm2: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-2p.dat
-note NCEI WOA Heat-Content: field year_quarter/ohc_0_700m_10e22J/ohc_0_2000m_10e22J unit absent — unit-auto-detect gap; rows. Ozean (thermal) echt. ohc_0_700m_10e22J: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note INCOIS Tsunami OPR: field wave_height_m/significance unit absent — unit-auto-detect gap; map latitude/longitude. Ozean (acoustic) echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note INCOIS Tsunami OPR: wave_height_m löst auf (acoustic m); significance = Detektions-Statistik (einheitenlos), keine Feldmessung. descoped (gemessen: significance ohne physikalische Einheit).
 
-parser-def json
-gap unit-auto-detect
-url https://www.psmsl.org/data/obtaining/slowtrends/slowtrends.txt
-note PSMSL slow trends: field lat/lon/trend_mm_yr/trend_uncertainty_mm_yr/data_years unit absent — unit-auto-detect gap; rows lat/lon. Ozean (acoustic) echt. trend_mm_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://gml.noaa.gov/aftp/data/uv/monitoring/latest/uv_daily.dat
-note NOAA GML UV daily: field uv_index/erythemally_weighted_uv/ozone_dobson unit absent — unit-auto-detect gap; rows lat/lon. Strahlung (em) echt. erythemally_weighted_uv: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://earthquake.usgs.gov/static/lfs/nshm/qfaults/Qfaults_GIS_15.zip
-note USGS Qfaults (zip): field slip_sense/slip_rate_mm_yr/age_yr unit absent — unit-auto-detect gap; rows lat/lon. Seismotektonik echt. slip_rate_mm_yr/age_yr: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
-note JPL Horizons Vectors: field epoch_jd/x_au/y_au/z_au/vx_au_day/vy_au_day/vz_au_day unit absent — unit-auto-detect gap; rows. Ephemeride (gravity) echt. vx_au_day: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://datacenter.iers.org/data/9/finals2000A.all
-note IERS EOP: field mjd/x_pole/y_pole/ut1_utc/lod/dpsi/deps unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt. x_pole/y_pole/ut1_utc: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
-note IERS Bulletin B: field mjd/x_pole_mas/y_pole_mas/ut1_utc_ms/dx_celestial_pole_mas/dy_celestial_pole_mas unit absent — unit-auto-detect gap. Erdrotation (gravity) echt. x_pole_mas: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt
-note IERS Bulletin A: field mjd/x_pole_arcsec/y_pole_arcsec/ut1_utc_s unit absent — unit-auto-detect gap; rows. Erdrotation (gravity) echt. ut1_utc_s: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
-url https://maia.usno.navy.mil/ser7/finals2000A.daily
-note USNO MAIA EOP: lastline geosphere_ut1_utc_iers — unit/cadence absent. Erdrotation (gravity) echt. geosphere_ut1_utc_iers: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created
-note GCN Fermi/GBM events: field ra_deg/dec_deg/sigma unit absent — unit-auto-detect gap; cmap ra/dec. Gamma (em) echt. sigma: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note GCN Fermi/GBM events: ra_deg/dec_deg cmap; sigma = Lokalisierungsfehler (deg laut GCN-Doku) — der Name trägt kein Einheiten-Token, Metadatum der Detektion. descoped (gemessen: sigma nicht namensbestimmbar, keine Feldmessung).
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
-note GCN AMON IceCube: field event_type/ra_deg/dec_deg/energy/signalness unit absent — unit-auto-detect gap; rows. Neutrino (em-Schauer) echt. energy/signalness: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note GCN AMON IceCube: signalness = Klassifikator-Score (0-1, Statistik); energy ohne Einheiten-Token im Namen (TeV laut AMON-Doku, nicht namensbestimmbar). descoped (gemessen: kein Feld mit namensbestimmbarer Einheit).
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=gold&limit=100
-note GCN IceCube gold: field significance/alert_type unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note GCN IceCube gold: ra/dec cmap; significance = Detektions-Statistik (einheitenlos). descoped (gemessen: significance ohne physikalische Einheit).
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
-note GCN IceCube bronze: field significance unit absent — unit-auto-detect gap; cmap ra/dec. Neutrino echt. significance: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note GCN IceCube bronze: significance = Detektions-Statistik (einheitenlos). descoped (gemessen: significance ohne physikalische Einheit).
 
 descoped
 url https://weather.cma.cn/api/now/54511
 note CMA now (Station 54511): field temp_c/humidity_pct/pressure_hpa/wind_speed_ms/wind_dir/precip_mm/feels_like_c. descoped (gemessen: URL integriert → phi/sources.φ:372 — Stale-Zwilling).
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
-note NOAA CPC AMO: field year/jan..dec unit absent — unit-auto-detect gap; rows. Klimaindex (thermal) echt. jan..dec: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note NOAA CPC AMO: Monats-Spalten jan..dec tragen kein Einheiten-Token (Anomalie °C) — namensbasiert nicht bestimmbar. descoped (gemessen: Spaltennamen jan..dec ohne Einheit).
 
-parser-def json
-gap unit-auto-detect
-url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_SW_DWN,T2M,PRECTOTCORR&community=RE&longitude={lon}&latitude={lat}&start={today_nodashes}&end={today_nodashes}&format=JSON
-note NASA POWER daily: field insolation_kwh_m2 force undetermined (T2M/PRECTOTCORR gesetzt) — unit-auto-detect gap. Solar (em) echt. insolation_kwh_m2: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://www.sidc.be/silso/datafiles/SN_d_tot_V2.0.txt
-note SILSO sunspot: field year/month/day/decimal_year/sunspot_number/std_dev unit absent — unit-auto-detect gap; rows. Sonne (em) echt. sunspot_number/std_dev: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note SILSO sunspot: sunspot_number = Wolf-Zahl (Index; Hausposition: ssn/number_spots DROP), std_dev = Statistik. descoped (gemessen: kein Feld mit physikalischer Einheit).
 
-parser-def json
-gap unit-auto-detect
-url https://kp.gfz-potsdam.de/app/files/gfz-hpo-Kp_def-{year}.txt
-note GFZ Kp: field year/month/day/hour/kp_value unit absent — unit-auto-detect gap; rows. Geomagnetisch (em) echt. kp_value: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
-
-parser-def json
-gap unit-auto-detect
+descoped
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
-note GFZ SN index: last solar_sunspot_number — unit/cadence absent. Sonne (em) echt. solar_sunspot_number: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note GFZ SN index: solar_sunspot_number = Wolf-Zahl (Index; Hausposition ssn DROP). descoped (gemessen: Index, keine Feldmessung mit Einheit).
 
 descoped
 url https://www.jma.go.jp/bosai/quake/data/list.json
 note JMA quake list: lastline geosphere_earthquakes_jma_recent_mag. descoped (gemessen: URL integriert → phi/sources.φ:423 — Stale-Zwilling).
 
-parser-def json
-gap unit-auto-detect
+descoped
 url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
-note IERS EOP C04: last geosphere_earth_orientation_raw — unit/cadence absent. Erdrotation (gravity) echt. geosphere_earth_orientation_raw: unit_from_name_suffix->None; probe_classify_raw->(UNCERTAIN,)
+note IERS EOP C04: geosphere_earth_orientation_raw = Komposit-Datensatz (x/y_pole, UT1-UTC, LOD, dPsi/dEps in einer Zeile) — kein Skalarfeld. descoped (gemessen: Komposit ohne Einheit eines Skalars; Komponenten einzeln auto-detektierbar).
 
 descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
