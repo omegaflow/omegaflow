@@ -9340,6 +9340,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_
 format catalog_tycho
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/tycho2_compiler.rs
+catalog_epoch 2000.0
 at sun
 ttl 604800
 
