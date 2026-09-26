@@ -319,7 +319,7 @@ note 2026-09-26 direct 403 / Proton 403 (ip-blocked). Kein Exit-Wechsel (Operato
 blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 reg https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO-Roh-/Rekonstruktionsdaten nur als Kollaborationsmitglied (Politiktext 2026-09-26); API /api/dataset/12/search 200: 18 Datensätze (4 Rohdaten-Klassen gated); Survey-Event-Listen nicht public.
+note LHAASO: Kollaborations-Mitgliedschaft (Review+Agreement) nötig; IHEP-Konto verlangt CSTNET-ID (nicht vorhanden) → kein Self-Signup. API /api/dataset/12/search 200 (18 Datensätze, 4 Rohklassen gated).
 
 pending
 url https://www.gosat-gw.nies.go.jp
@@ -328,7 +328,7 @@ note GOSAT-GW: Cookie-Auth (GOSAT_GW_MAIL/PASS) verifiziert 2026-09-26 — CUI-s
 blocked account
 url https://data.lsst.cloud/api/tap/sync
 reg https://data.lsst.cloud
-note Rubin/LSST RSP-Enrollment pending („you do not have any current roles", seit Tagen); TAP braucht OAuth (401). RUBIN_USER/PASS vorhanden. Braucht: LSST-Admin-Freigabe.
+note Rubin/LSST: data-rights-thread mit H. Shaughnessy (SLAC) 2026-09-14 (mail_ledger.φ:39-41); Independent-Researcher-Route offen; „no current roles" = RSP-Enrollment nicht freigegeben; TAP braucht OAuth. RUBIN_USER/PASS vorhanden.
 
 blocked parser-def json
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
