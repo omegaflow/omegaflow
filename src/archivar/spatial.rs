@@ -125,6 +125,22 @@ pub fn law_bounds(
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<(f64, f64, [f64; 3])> {
     let p0 = motion.at(epoch, epoch, eph)?;
+    if let Motion::Spherical { rec } = motion {
+        if !(rec.plx_mas.is_finite() && rec.plx_mas > 0.0) {
+            return None;
+        }
+        let d = ((1000.0 / rec.plx_mas) * PARSEC_M).abs();
+        let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+        let mu_dec = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+        let speed = (d * d * (mu_a * mu_a + mu_dec * mu_dec) + rec.rv_m_s * rec.rv_m_s).sqrt();
+        let year_s = 86400.0 * 365.25;
+        let cos_dec = rec.dec_deg.to_radians().cos().max(1e-6);
+        let om_ra = rec.pm_ra_masyr * std::f64::consts::PI / (180.0 * 3.6e6 * cos_dec * year_s);
+        let om_dec = rec.pm_de_masyr * std::f64::consts::PI / (180.0 * 3.6e6 * year_s);
+        let om = om_ra.abs() + om_dec.abs();
+        let accel = 2.0 * rec.rv_m_s.abs() * om + d * om * om;
+        return Some((Φ * (speed + resid_ema), Φ * accel, p0));
+    }
     let p1 = motion.at(epoch + 1.0, epoch, eph)?;
     let p2 = motion.at(epoch + 2.0, epoch, eph)?;
     let v = ((p1[0] - p0[0]).powi(2) + (p1[1] - p0[1]).powi(2) + (p1[2] - p0[2]).powi(2)).sqrt();

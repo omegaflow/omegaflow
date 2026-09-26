@@ -547,6 +547,7 @@ pub fn body_in_enclosure(
     presences: &[PresenceSample],
     props: &BodyProperties,
     pos: [f64; 3],
+    t_r: f64,
     now: f64,
 ) -> bool {
     let fc = FieldConfig {
@@ -565,7 +566,7 @@ pub fn body_in_enclosure(
     record_in_enclosure(
         presences,
         Some(pos),
-        now,
+        t_r,
         now,
         EnclosureField {
             config: &fc,
