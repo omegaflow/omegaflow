@@ -2,7 +2,7 @@
   title: Relay-TLS-Terminator — the wireless sensor secure context
   class: concept
   date: 2026-09-25
-  sha256: 54aa1596921eba50e28487edde0e57475fa7d334fbc2a7070e2a8d957f1eebc4
+  sha256: 01ed85c855fe03706957492bfeefc8c1da1c8e4d3fee59ba429e1579c7b05828
   status: live
   see-also: AGENTS.md, src/archivar/relay.rs, src/archivar/main_flow.rs, static/sensorium.js, bin/relay-tls.stunnel.conf
 -->
@@ -76,8 +76,18 @@ future LAN certificate — one trust step, never per-cert.
   the terminator serves.
 - `archive_search --verdict https://<lan-ip>:1619/consent?ja` — the consent route.
 
+## Measured
+
+- The certificate material is generated under `state/tls/` (gitignored), once, with
+  OpenSSL 3.0.13 (2026-09-26): `ca.pem`/`ca.key` (root `CN=omegaflow-relay-ca`,
+  valid to 2036-09) and `relay-leaf.pem`/`relay-leaf.key` (leaf `CN=omegaflow-relay`,
+  SAN `IP:<lan-ip>`, signed by the CA, valid to 2028-12). `bin/relay-tls.stunnel.conf`
+  points its `cert`/`key` at this material.
+- The LAN IP is measured; it lives in the leaf SAN (gitignored material), never in
+  tracked prose. The TLS port 1619 is the chosen convention, adjacent to 1618.
+
 ## pending
 
-- The LAN IP, the TLS port (1619 is the chosen convention, adjacent to 1618), and
-  the generated certificate material under `state/tls/` (gitignored) are
-  unmeasured here — `pending`. No installation, no live run was performed.
+- The operator's act: install `ca.pem` on the phone, start `stunnel`, start the relay
+  with `OMEGAFLOW_HIDDEN` unset, verify `https://<lan-ip>:1619/consent?ja`. No
+  installation, no live run was performed.
