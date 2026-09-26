@@ -1,0 +1,28 @@
+name: browser-extension
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/browser-extension/**'
+      - '.github/workflows/browser-extension.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: tools/browser-extension
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - run: npm install
+    - run: npm run build
+    - run: npm test
+    - uses: actions/upload-artifact@v4
+      with:
+        name: chrome-mv3
+        path: tools/browser-extension/.output/chrome-mv3/
