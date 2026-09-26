@@ -35,11 +35,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the www.ncdc.noaa.gov release exists on the CDN
+      - name: Ensure the ncdc.noaa.gov release exists on the CDN
         run: |
-          if ! gh release view www.ncdc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.ncdc.noaa.gov --repo omegaflow/sources \
-              --title "www.ncdc.noaa.gov" \
+          if ! gh release view ncdc.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ncdc.noaa.gov --repo omegaflow/sources \
+              --title "ncdc.noaa.gov" \
               --notes "NOAA CDO GHCND TMAX observations compiled to a geo oscillator record (medium em). Header 8 B: magic NCDO (4), count (u32 LE). Record stride 32 B = 4 x f64 LE: lat_deg (deg), lon_deg (deg), date_tdb (TDB seconds since J2000), value_c (deg C)."
           fi
       - name: Compile the GHCND TMAX window and upload to CDN
@@ -51,7 +51,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin noaa_cdo_compiler -- \
             --window-start "$window_start" --window-end "$window_end" \
             --stations "${{ inputs.stations }}" --limit "${{ inputs.limit }}" \
-            "${extra[@]}" --out data/www.ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin --ci-mode \
+            "${extra[@]}" --out data/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "noaa-cdo-cdn: noaa_cdo_ghcnd_tmax.bin returned void" \
                  "noaa_cdo_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

@@ -20,11 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the www.geoazur.fr release exists on the CDN
+      - name: Ensure the geoazur.fr release exists on the CDN
         run: |
-          if ! gh release view www.geoazur.fr --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create www.geoazur.fr --repo omegaflow/sources \
-              --title "www.geoazur.fr" \
+          if ! gh release view geoazur.fr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create geoazur.fr --repo omegaflow/sources \
+              --title "geoazur.fr" \
               --notes "raw INPOP Astrometric Planetary Data Base (APDB) Neptune observations mirrored for omegaflow measure tools (CDN tag = netloc)"
           fi
       - name: Manifest the GeoAzur APDB Neptune astrometry (23 fixed-width text files) to the CDN

@@ -3,7 +3,7 @@ use omegaflow::archivar::quakeml::{QuakeMlEvent, parse_quakeml};
 use omegaflow::cdn::upload_release;
 
 const ROUTE: &str = "https://www.isc.ac.uk/fdsnws/event/1/query";
-const NETLOC: &str = "www.isc.ac.uk";
+const NETLOC: &str = "isc.ac.uk";
 
 const MAGIC: [u8; 4] = *b"ISCB";
 const VERSION: u8 = 1;

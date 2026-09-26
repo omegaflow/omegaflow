@@ -118,7 +118,7 @@ fn run(
     println!("radio.bin: {} sources, {} B", sources.len(), bytes.len());
 
     if ci {
-        if !upload_release("www.ncei.noaa.gov", out_path) {
+        if !upload_release("ncei.noaa.gov", out_path) {
             return Err(format!("{out_path}: CDN upload returned void"));
         }
         println!("radio.bin: uploaded to the CDN");

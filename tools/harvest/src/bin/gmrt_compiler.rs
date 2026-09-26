@@ -4,7 +4,7 @@ use omegaflow::archivar::tiff::parse_tiff;
 use omegaflow::cdn::upload_release;
 use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 
-const NETLOC: &str = "www.gmrt.org";
+const NETLOC: &str = "gmrt.org";
 const GRIDSERVER: &str = "https://www.gmrt.org/services/GridServer";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {

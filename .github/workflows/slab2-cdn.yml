@@ -23,7 +23,7 @@ jobs:
         run: |
           # the .grd netCDF-4 arm yields 1_021_034 records * 24 B + 8 B header
           expected_size=24504824
-          size=$(gh release view www.sciencebase.gov --repo omegaflow/sources \
+          size=$(gh release view sciencebase.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?|select(.name=="slab2_depth.bin")|.size' 2>/dev/null)
           if [ "$size" = "$expected_size" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"

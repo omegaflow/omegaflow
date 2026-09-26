@@ -28,7 +28,7 @@ on:
         type: string
         default: "41"
       asset:
-        description: output asset name on the CDN (netloc www.gmrt.org)
+        description: output asset name on the CDN (netloc gmrt.org)
         required: true
         type: string
         default: gmrt_bathymetry.bin
@@ -47,7 +47,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view www.gmrt.org --repo omegaflow/sources \
+          if gh release view gmrt.org --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ${{ inputs.asset }} already present — manifest skipped"

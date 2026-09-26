@@ -5,7 +5,7 @@ use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::lsk::days_from_civil;
 use std::process::Command;
 
-const NETLOC: &str = "www.nohrsc.noaa.gov";
+const NETLOC: &str = "nohrsc.noaa.gov";
 const BASE: &str = "https://www.nohrsc.noaa.gov/snowfall/data";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {

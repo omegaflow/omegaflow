@@ -5,7 +5,7 @@ use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
-const NETLOC: &str = "www.sciencebase.gov";
+const NETLOC: &str = "sciencebase.gov";
 const TAR_URL: &str = "https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba";
 const MAGIC: [u8; 4] = *b"SLB2";
 const REC_BYTES: usize = 24;
