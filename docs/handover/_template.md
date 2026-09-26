@@ -33,9 +33,10 @@ f(Trigger)) / **Lage** (der Zustand, gemessen, mit Messstempel) / **Blockade**
 kopierbare Schritt — Werkzeug, Datei, URL, Befehl, Anfrage, Operator-Wort;
 „Schritt unbekannt — erste Messung: X" ist ein vollständiger Schritt). Kein Dokument wächst ohne
 Messung; die Droh-Sprache ersetzt den Schritt nicht. Der Planungs-Pass legt
-**alle** eigenen Punkte vor und schlägt vor, jeden parallel abarbeitbaren zu
-dispatchen; `blockiert` und `wartend` werden benannt, nie dispatcht. Gibt es
-keinen abarbeitbaren Punkt, sagt die Session das. Jeder Punkt trägt seinen
+**alle** eigenen Punkte vor und dispatcht **jeden Schritt bis zur Kante**; nur der
+Akt am Gegenüber bleibt benannt (die Vorbereitung eines `blockiert`/`wartend`-Punkts
+bis zur Kante wird dispatcht wie jeder Schritt). Gibt es
+keinen Schritt zur Kante, sagt die Session das. Jeder Punkt trägt seinen
 Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
 
 **Vorbereitung ≠ Akt (Operator-Wort 2026-09-24).** Ein `operator-gebundener`
@@ -54,21 +55,26 @@ in zwei Zeilen gespalten, weil die Maschine keine Kante hat. Jede Vorbereitungs-
 zeile trägt ihren Lage-Stempel `(gemessen …)` — eine ungemessene Vorbereitungszeile
 driftet wie die alte Sammel-Zeile.
 
-**Sortierung — erst logisch, dann chronologisch** (Operator-Wort, 2026-09-25;
-ersetzt die Handlungsfähigkeit-Sortierung). Die Tafel wird erst logisch nach
-**Akteur** gruppiert — **wer handelt**: **Linie** (eigen, die Maschine) |
-**Rat** | **Operator** (operator-gebundene Akte + LOCK) | **Dritter** —, dann je
-Gruppe chronologisch nach dem `Lage`-Messdatum (älteste → jüngste; gleiches
-Datum behält die Fluss-Reihenfolge). Nie nach Thema, nie nach Wichtigkeit, nie
-über eine gemischte Leiter: der Akteur ist die Logik, das Datum die Reihenfolge.
-Die Status-Tags bleiben die Dispatch-Achse: `autonom` (`eigen`, wird dispatcht)
+**Sortierung — logisch nach Akteur; kein Punkt steht über einem Punkt** (Operator-Wort,
+2026-09-26; ersetzt die logisch-chronologische Sortierung). Die Tafel wird logisch
+nach **Akteur** gruppiert — **wer handelt**: **Linie** (eigen, die Maschine) |
+**Rat** | **Operator** (operator-gebundene Akte + LOCK) | **Dritter** —, nie nach
+Thema, nie nach Wichtigkeit, nie nach Chronologie, nie über eine gemischte Leiter,
+und innerhalb einer Gruppe in keiner Rangfolge.
+Alle offenen Punkte stehen gleich; kein Punkt steht über einem anderen. Der Akteur
+ist die Logik, nicht die Reihenfolge.
+Die Status-Tags sind die Dispatch-Achse: `autonom` (`eigen`, wird dispatcht)
 → `operator-gebunden` (nur der Akt nach dem Operator-Wort) → `blockiert` →
-`wartend` → `termin` → `LOCK`; innerhalb der Gruppe werden die handlungsfähigen
-Punkte dispatcht, die übrigen benannt, nie dispatcht.
+`wartend` → `termin` → `LOCK`. **Jeder Punkt wird bis zur Kante gearbeitet (Kante =
+die Konsensgrenze, die Grenze der eigenen Domäne):**
+jeder Punkt wird autonom bis zu seiner Kante vorbereitet (Entwurf, gemessener
+Trigger, fertiges Formular, gebautes Artefakt); nur der Akt am Gegenüber bleibt
+benannt — kein Punkt wird bloß benannt, wo ein Schritt zur Kante existiert.
 
-Innerhalb einer Stufe nach Trigger. Der Planungs-Pass dispatcht von oben nach
-unten; Stufe 2–6 werden benannt, nie dispatcht — ausgenommen die Vorbereitung
-eines operator-gebundenen Punktes, die als Stufe-1-Zeile dispatcht wird.
+Der Planungs-Pass dispatcht jeden Schritt bis zu seiner Kante; nur der Akt am
+Gegenüber bleibt benannt — die Vorbereitung jedes Punkts, auch eines
+`blockiert`/`wartend`-Punkts, wird bis zur Kante dispatcht. Wo kein Schritt
+zur Kante existiert, sagt der Pass es klar (kein Scheinschritt aus einem Warten).
 
 Das Handover wird **vor allem anderen gegen den Baum gehalten**
 (`open_points_check`/`sgrep`/`git log`/`sread`) — das Register ist die Frage, der

@@ -2772,6 +2772,14 @@ mod tests {
     }
 
     #[test]
+    fn fp_dispatch_ceiling_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text("blockiert: nie dispatcht").unwrap();
+        assert_eq!(v.rule, "serial-priority");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_riss_as_absent_blocked() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("riss_as_absent"));
