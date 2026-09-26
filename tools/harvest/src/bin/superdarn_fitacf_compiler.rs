@@ -1,4 +1,5 @@
 use omegaflow::archivar::geo::{COMP_SDARN_V, GeoRec, MAGIC_SDARN, parse_bin, write_bin};
+use omegaflow::archivar::json::{JsonVal, jstr, parse_json};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File};
 use omegaflow::inflate::inflate;
@@ -96,13 +97,18 @@ fn decompress_if_needed(raw: Vec<u8>) -> Option<Vec<u8>> {
         .stdout(Stdio::piped())
         .spawn()
         .ok()?;
-    {
-        let mut stdin = child.stdin.take()?;
-        stdin.write_all(&raw).ok()?;
-    }
-    let out = child.wait_with_output().ok()?;
-    if out.status.success() {
-        Some(out.stdout)
+    let mut stdin = child.stdin.take()?;
+    let mut stdout = child.stdout.take()?;
+    let writer = std::thread::spawn(move || {
+        let _ = stdin.write_all(&raw);
+        let _ = stdin.flush();
+    });
+    let mut out = Vec::new();
+    let copied = std::io::copy(&mut stdout, &mut out).is_ok();
+    let status = child.wait().ok()?;
+    let _ = writer.join();
+    if status.success() && copied {
+        Some(out)
     } else {
         None
     }
@@ -200,6 +206,459 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
     let d = doy - (153 * mp + 2) / 5 + 1;
     let m = if mp < 10 { mp + 3 } else { mp - 9 };
     (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
+fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
+    let y_adj = if m <= 2 { y - 1 } else { y };
+    let era = y_adj.div_euclid(400);
+    let yoe = y_adj - era * 400;
+    let mp = if m > 2 { m - 3 } else { m + 9 };
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    era * 146097 + doe - 719468
+}
+
+const DMAP_CODE: u32 = 0x0001_0001;
+const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
+const BOUNCE_URL: &str = "https://superdarn.ca/db-fitacf-files-bounce";
+const SDC_BASE: &str = "https://sdc-serv.usask.ca/data";
+
+enum ScalarValue {
+    I8(i8),
+    I16(i16),
+    I32(i32),
+    I64(i64),
+    F32(f32),
+    F64(f64),
+    Str,
+}
+
+impl ScalarValue {
+    fn as_f64(&self) -> Option<f64> {
+        match self {
+            ScalarValue::I8(v) => Some(*v as f64),
+            ScalarValue::I16(v) => Some(*v as f64),
+            ScalarValue::I32(v) => Some(*v as f64),
+            ScalarValue::I64(v) => Some(*v as f64),
+            ScalarValue::F32(v) => Some(*v as f64),
+            ScalarValue::F64(v) => Some(*v),
+            ScalarValue::Str => None,
+        }
+    }
+}
+
+struct DmapScalar {
+    name: String,
+    value: ScalarValue,
+}
+
+struct DmapArray {
+    name: String,
+    nums: Vec<f64>,
+}
+
+struct DmapRecord {
+    scalars: Vec<DmapScalar>,
+    arrays: Vec<DmapArray>,
+}
+
+fn rec_scalar<'a>(rec: &'a DmapRecord, name: &str) -> Option<&'a ScalarValue> {
+    rec.scalars
+        .iter()
+        .find(|s| s.name == name)
+        .map(|s| &s.value)
+}
+
+fn rec_f64(rec: &DmapRecord, name: &str) -> Option<f64> {
+    rec_scalar(rec, name).and_then(ScalarValue::as_f64)
+}
+
+fn rec_array<'a>(rec: &'a DmapRecord, name: &str) -> Option<&'a DmapArray> {
+    rec.arrays.iter().find(|a| a.name == name)
+}
+
+fn le_u16_at(b: &[u8], p: usize) -> Option<u16> {
+    let s = b.get(p..p + 2)?;
+    let arr: [u8; 2] = s.try_into().ok()?;
+    Some(u16::from_le_bytes(arr))
+}
+
+fn le_u32_at(b: &[u8], p: usize) -> Option<u32> {
+    let s = b.get(p..p + 4)?;
+    let arr: [u8; 4] = s.try_into().ok()?;
+    Some(u32::from_le_bytes(arr))
+}
+
+fn le_i32_at(b: &[u8], p: usize) -> Option<i32> {
+    let s = b.get(p..p + 4)?;
+    let arr: [u8; 4] = s.try_into().ok()?;
+    Some(i32::from_le_bytes(arr))
+}
+
+fn le_i64_at(b: &[u8], p: usize) -> Option<i64> {
+    let s = b.get(p..p + 8)?;
+    let arr: [u8; 8] = s.try_into().ok()?;
+    Some(i64::from_le_bytes(arr))
+}
+
+fn le_f32_at(b: &[u8], p: usize) -> Option<f32> {
+    let s = b.get(p..p + 4)?;
+    let arr: [u8; 4] = s.try_into().ok()?;
+    Some(f32::from_le_bytes(arr))
+}
+
+fn le_f64_at(b: &[u8], p: usize) -> Option<f64> {
+    let s = b.get(p..p + 8)?;
+    let arr: [u8; 8] = s.try_into().ok()?;
+    Some(f64::from_le_bytes(arr))
+}
+
+fn cstring_at(b: &[u8], p: usize) -> Option<String> {
+    let mut end = p;
+    while end < b.len() && b[end] != 0 {
+        end += 1;
+    }
+    if end >= b.len() {
+        return None;
+    }
+    Some(String::from_utf8_lossy(&b[p..end]).into_owned())
+}
+
+fn scalar_at(b: &[u8], p: usize, t: u8) -> Option<(ScalarValue, usize)> {
+    match t {
+        1 => Some((ScalarValue::I8(*b.get(p)? as i8), 1)),
+        2 => Some((ScalarValue::I16(le_u16_at(b, p)? as i16), 2)),
+        3 => Some((ScalarValue::I32(le_i32_at(b, p)?), 4)),
+        4 => Some((ScalarValue::F32(le_f32_at(b, p)?), 4)),
+        8 => Some((ScalarValue::F64(le_f64_at(b, p)?), 8)),
+        9 => {
+            let s = cstring_at(b, p)?;
+            let adv = s.len() + 1;
+            Some((ScalarValue::Str, adv))
+        }
+        10 => Some((ScalarValue::I64(le_i64_at(b, p)?), 8)),
+        16 => Some((ScalarValue::I8(*b.get(p)? as i8), 1)),
+        17 => Some((ScalarValue::I32(le_u16_at(b, p)? as i32), 2)),
+        18 => Some((ScalarValue::I64(le_u32_at(b, p)? as i64), 4)),
+        19 => {
+            let s = b.get(p..p + 8)?;
+            let arr: [u8; 8] = s.try_into().ok()?;
+            let v = u64::from_le_bytes(arr);
+            Some((ScalarValue::I64(i64::try_from(v).ok()?), 8))
+        }
+        255 => {
+            let len = le_u32_at(b, p)? as usize;
+            if p + 4 + len > b.len() {
+                return None;
+            }
+            Some((ScalarValue::Str, 4 + len))
+        }
+        _ => None,
+    }
+}
+
+fn array_at(b: &[u8], p: usize, t: u8, n: usize, name: String) -> Option<(DmapArray, usize)> {
+    let mut nums = Vec::new();
+    let mut q = p;
+    match t {
+        9 => {
+            for _ in 0..n {
+                let s = cstring_at(b, q)?;
+                q += s.len() + 1;
+            }
+        }
+        1 | 16 => {
+            for _ in 0..n {
+                let v = *b.get(q)?;
+                q += 1;
+                nums.push(v as f64);
+            }
+        }
+        2 | 17 => {
+            for _ in 0..n {
+                let v = le_u16_at(b, q)?;
+                q += 2;
+                nums.push(v as f64);
+            }
+        }
+        3 => {
+            for _ in 0..n {
+                let v = le_i32_at(b, q)?;
+                q += 4;
+                nums.push(v as f64);
+            }
+        }
+        18 => {
+            for _ in 0..n {
+                let v = le_u32_at(b, q)?;
+                q += 4;
+                nums.push(v as f64);
+            }
+        }
+        4 => {
+            for _ in 0..n {
+                let v = le_f32_at(b, q)?;
+                q += 4;
+                nums.push(v as f64);
+            }
+        }
+        8 => {
+            for _ in 0..n {
+                let v = le_f64_at(b, q)?;
+                q += 8;
+                nums.push(v);
+            }
+        }
+        10 => {
+            for _ in 0..n {
+                let v = le_i64_at(b, q)?;
+                q += 8;
+                nums.push(v as f64);
+            }
+        }
+        19 => {
+            for _ in 0..n {
+                let s = b.get(q..q + 8)?;
+                let arr: [u8; 8] = s.try_into().ok()?;
+                q += 8;
+                nums.push(u64::from_le_bytes(arr) as f64);
+            }
+        }
+        _ => return None,
+    }
+    Some((DmapArray { name, nums }, q - p))
+}
+
+fn dmap_record_at(bytes: &[u8], p: usize) -> Option<(DmapRecord, usize)> {
+    let code = le_u32_at(bytes, p)?;
+    let sze = le_u32_at(bytes, p + 4)? as usize;
+    if code != DMAP_CODE || sze < 16 || p + sze > bytes.len() {
+        return None;
+    }
+    let rec = &bytes[p..p + sze];
+    let sn = le_u32_at(rec, 8)? as usize;
+    let an = le_u32_at(rec, 12)? as usize;
+    if sn > 4096 || an > 4096 {
+        return None;
+    }
+    let mut q = 16usize;
+    let mut scalars = Vec::new();
+    for _ in 0..sn {
+        let name = cstring_at(rec, q)?;
+        q += name.len() + 1;
+        let t = *rec.get(q)?;
+        q += 1;
+        let (value, adv) = scalar_at(rec, q, t)?;
+        q += adv;
+        scalars.push(DmapScalar { name, value });
+    }
+    let mut arrays = Vec::new();
+    for _ in 0..an {
+        let name = cstring_at(rec, q)?;
+        q += name.len() + 1;
+        let t = *rec.get(q)?;
+        q += 1;
+        let dim = le_u32_at(rec, q)?;
+        q += 4;
+        if dim < 1 || dim > 8 {
+            return None;
+        }
+        let mut n: usize = 1;
+        for _ in 0..dim as usize {
+            let r = le_u32_at(rec, q)?;
+            q += 4;
+            n = match n.checked_mul(r as usize) {
+                Some(v) => v,
+                None => return None,
+            };
+        }
+        if n > 200_000_000 {
+            return None;
+        }
+        let (arr, adv) = array_at(rec, q, t, n, name)?;
+        q += adv;
+        arrays.push(arr);
+    }
+    if q != rec.len() {
+        return None;
+    }
+    Some((DmapRecord { scalars, arrays }, p + sze))
+}
+
+fn dmap_parse(bytes: &[u8]) -> Option<Vec<DmapRecord>> {
+    let mut p = 0usize;
+    let mut recs = Vec::new();
+    while p < bytes.len() {
+        if p + 8 > bytes.len() {
+            return None;
+        }
+        let (rec, next) = dmap_record_at(bytes, p)?;
+        recs.push(rec);
+        p = next;
+    }
+    if recs.is_empty() {
+        return None;
+    }
+    Some(recs)
+}
+
+fn fitacf_mjd(rec: &DmapRecord) -> Option<f64> {
+    let yr = rec_f64(rec, "time.yr")?;
+    let mo = rec_f64(rec, "time.mo")?;
+    let dy = rec_f64(rec, "time.dy")?;
+    let hr = rec_f64(rec, "time.hr")?;
+    let mt = rec_f64(rec, "time.mt")?;
+    let sc = rec_f64(rec, "time.sc")?;
+    if !(yr >= 1900.0
+        && yr <= 2100.0
+        && mo >= 1.0
+        && mo <= 12.0
+        && dy >= 1.0
+        && dy <= 31.0
+        && hr >= 0.0
+        && hr <= 23.0
+        && mt >= 0.0
+        && mt <= 59.0
+        && sc >= 0.0
+        && sc <= 60.0)
+    {
+        return None;
+    }
+    let us = match rec_f64(rec, "time.us") {
+        Some(v) if v >= 0.0 && v < 1_000_000.0 => v,
+        Some(_) => return None,
+        None => 0.0,
+    };
+    let days = days_from_civil(yr as i64, mo as i64, dy as i64) as f64;
+    let frac = ((hr * 60.0 + mt) * 60.0 + sc + us * 1.0e-6) / 86400.0;
+    Some(days + 40587.0 + frac)
+}
+
+struct FitGateRow {
+    mjd: Option<f64>,
+    v: Option<f64>,
+    v_e: Option<f64>,
+    w_l: Option<f64>,
+    w_l_e: Option<f64>,
+    p_l: Option<f64>,
+    beam: Option<f64>,
+    range: Option<f64>,
+    tfreq: Option<f64>,
+    cp: Option<f64>,
+    gflg: Option<f64>,
+    elv: Option<f64>,
+    noise_sky: Option<f64>,
+}
+
+impl FitGateRow {
+    fn cell(&self, name: &str) -> Option<f64> {
+        match name {
+            "mjd" => self.mjd,
+            "lat" => None,
+            "lon" => None,
+            "v" => self.v,
+            "v_e" => self.v_e,
+            "w_l" => self.w_l,
+            "w_l_e" => self.w_l_e,
+            "p_l" => self.p_l,
+            "beam" => self.beam,
+            "range" => self.range,
+            "tfreq" => self.tfreq,
+            "cp" => self.cp,
+            "gflg" => self.gflg,
+            "elv" => self.elv,
+            "noise.sky" => self.noise_sky,
+            _ => None,
+        }
+    }
+
+    fn to_cells(&self, cols: &[Col]) -> Vec<String> {
+        cols.iter()
+            .map(|c| match c.kind {
+                ColKind::Mjd => iso_cell(self.cell(c.name).map(mjd_to_unix)),
+                ColKind::F64 => cell(self.cell(c.name)),
+            })
+            .collect()
+    }
+}
+
+fn fitacf_record_rows(rec: &DmapRecord) -> Option<Vec<FitGateRow>> {
+    let mjd = fitacf_mjd(rec)?;
+    let Some(slist) = rec_array(rec, "slist") else {
+        return Some(Vec::new());
+    };
+    let nrang = rec_f64(rec, "nrang")?;
+    let qflg = rec_array(rec, "qflg");
+    let elv = rec_array(rec, "elv");
+    let beam = rec_f64(rec, "bmnum");
+    let tfreq = rec_f64(rec, "tfreq");
+    let cp = rec_f64(rec, "cp");
+    let noise_sky = rec_f64(rec, "noise.sky");
+    let at = |name: &str, i: usize| -> Option<f64> {
+        rec_array(rec, name)
+            .and_then(|a| a.nums.get(i).copied())
+            .and_then(|v| if v.is_finite() { Some(v) } else { None })
+    };
+    let mut rows = Vec::new();
+    for i in 0..slist.nums.len() {
+        let gate = slist.nums.get(i).copied()?;
+        if gate < 0.0 || gate >= nrang || gate.fract() != 0.0 {
+            continue;
+        }
+        let q_ok = match qflg {
+            Some(a) => match a.nums.get(i) {
+                Some(v) => *v == 1.0,
+                None => continue,
+            },
+            None => true,
+        };
+        if !q_ok {
+            continue;
+        }
+        let elv_i = match elv {
+            Some(a) => a
+                .nums
+                .get(i)
+                .copied()
+                .and_then(|v| if v.is_finite() { Some(v) } else { None }),
+            None => None,
+        };
+        rows.push(FitGateRow {
+            mjd: Some(mjd),
+            v: at("v", i),
+            v_e: at("v_e", i),
+            w_l: at("w_l", i),
+            w_l_e: at("w_l_e", i),
+            p_l: at("p_l", i),
+            beam,
+            range: Some(gate),
+            tfreq,
+            cp,
+            gflg: at("gflg", i),
+            elv: elv_i,
+            noise_sky,
+        });
+    }
+    Some(rows)
+}
+
+fn dmap_fitacf_rows(recs: &[DmapRecord], cols: &[Col], source: &str) -> Vec<Vec<String>> {
+    let mut rows = Vec::new();
+    let mut void_records = 0usize;
+    for rec in recs {
+        match fitacf_record_rows(rec) {
+            Some(rs) => rows.extend(rs),
+            None => void_records += 1,
+        }
+    }
+    eprintln!(
+        "{}: {} dmap records, {} fitted range rows, {} records without a valid time/slist frame",
+        source,
+        recs.len(),
+        rows.len(),
+        void_records
+    );
+    rows.iter().map(|r| r.to_cells(cols)).collect()
 }
 
 fn elem_f64(raw: &[u8], idx: usize, class: u8, size: usize, endian: Endian) -> Option<f64> {
@@ -676,22 +1135,53 @@ fn grid_cols() -> Vec<Col> {
 }
 
 fn process_bytes(bytes: Vec<u8>, cols: Vec<Col>, source: &str, out: Option<&str>, limit: usize) {
-    let file = match Hdf5File::parse(&bytes) {
-        Ok(f) => f,
-        Err(note) => {
-            eprintln!("{}: the container parses void ({:?})", source, note);
+    if bytes.len() >= 8 && bytes[..8] == HDF5_MAGIC {
+        let file = match Hdf5File::parse(&bytes) {
+            Ok(f) => f,
+            Err(note) => {
+                eprintln!("{}: the container parses void ({:?})", source, note);
+                std::process::exit(1);
+            }
+        };
+        let notes = coordinate_notes(&file, &cols);
+        let rs = match read_rows(&file, &cols) {
+            Ok(rs) => rs,
+            Err(e) => {
+                eprintln!("{}: {}", source, e);
+                std::process::exit(1);
+            }
+        };
+        emit(&rs, &notes, out, limit, source);
+        return;
+    }
+    if le_u32_at(&bytes, 0) == Some(DMAP_CODE) {
+        let recs = match dmap_parse(&bytes) {
+            Some(r) => r,
+            None => {
+                eprintln!("{}: the dmap fitacf stream parses void", source);
+                std::process::exit(1);
+            }
+        };
+        let rows = dmap_fitacf_rows(&recs, &cols, source);
+        let rs = RowSet {
+            header: cols.clone(),
+            data: rows,
+        };
+        if rs.data.is_empty() {
+            eprintln!(
+                "{}: the dmap stream carried no fitted range rows — nothing fabricated",
+                source
+            );
             std::process::exit(1);
         }
-    };
-    let notes = coordinate_notes(&file, &cols);
-    let rs = match read_rows(&file, &cols) {
-        Ok(rs) => rs,
-        Err(e) => {
-            eprintln!("{}: {}", source, e);
-            std::process::exit(1);
-        }
-    };
-    emit(&rs, &notes, out, limit, source);
+        emit(&rs, &[], out, limit, source);
+        return;
+    }
+    eprintln!(
+        "{}: carries neither the HDF5/netCDF magic nor the dmap code — the text arm stays pending (no verified text sample)",
+        source
+    );
+    std::process::exit(1);
 }
 
 fn fetch_hdw(code: &str) -> Option<Vec<u8>> {
@@ -828,6 +1318,137 @@ fn run_stations(args: &[String], out: Option<&str>, limit: usize) {
     emit_rows(header, &rows, &[], out, limit, &url);
 }
 
+fn bounce_date(raw: &str) -> String {
+    let b = raw.as_bytes();
+    if b.len() == 10 && b.get(4) == Some(&b'-') && b.get(7) == Some(&b'-') {
+        let mut d = String::with_capacity(8);
+        for (i, c) in b.iter().enumerate() {
+            if i != 4 && i != 7 {
+                d.push(*c as char);
+            }
+        }
+        return format!("{} 00:00:00", d);
+    }
+    raw.to_string()
+}
+
+fn bounce_files(start: &str, end: &str, radar: &str) -> Option<Vec<String>> {
+    let body = format!(
+        r#"{{"date_start":"{}","date_end":"{}","radars":"{}"}}"#,
+        start, end, radar
+    );
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-m")
+        .arg("180")
+        .arg("-X")
+        .arg("POST")
+        .arg("-H")
+        .arg("Content-Type: application/json")
+        .arg("-d")
+        .arg(&body)
+        .arg(BOUNCE_URL)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let text = String::from_utf8_lossy(&out.stdout);
+    let root = parse_json(&text)?;
+    match &root {
+        JsonVal::Obj(map) => {
+            if !matches!(map.get("db_error"), Some(JsonVal::Null) | None) {
+                return None;
+            }
+        }
+        _ => return None,
+    }
+    let resp = jstr(&root, "db_response")?;
+    let cleaned = resp.replace('\'', "\"");
+    let list = parse_json(&cleaned)?;
+    let JsonVal::Arr(items) = list else {
+        return None;
+    };
+    let mut names: Vec<String> = items
+        .iter()
+        .filter_map(|i| jstr(i, "filename"))
+        .filter(|n| !n.is_empty())
+        .collect();
+    names.sort();
+    names.dedup();
+    Some(names)
+}
+
+fn run_bounce(start: &str, end: &str, radar: &str, out: Option<&str>, limit: usize) {
+    let start_norm = bounce_date(start);
+    let end_norm = bounce_date(end);
+    let files = match bounce_files(&start_norm, &end_norm, radar) {
+        Some(f) => f,
+        None => {
+            eprintln!(
+                "superdarn fitacf: {} {} {} carried no file list — pending",
+                start, end, radar
+            );
+            std::process::exit(1);
+        }
+    };
+    if files.is_empty() {
+        eprintln!(
+            "superdarn fitacf: {} {} {} names no files in the db — pending",
+            start, end, radar
+        );
+        std::process::exit(1);
+    }
+    let cols = fitacf_cols();
+    let mut all_rows = Vec::new();
+    for name in &files {
+        let (Some(y), Some(m)) = (name.get(0..4), name.get(4..6)) else {
+            eprintln!(
+                "superdarn fitacf: {} carries no YYYYMM prefix — pending",
+                name
+            );
+            continue;
+        };
+        let url = format!("{}/{}/{}/{}", SDC_BASE, y, m, name);
+        let raw = match curl_bytes(&url) {
+            Some(b) => b,
+            None => {
+                eprintln!("superdarn fitacf: {} stayed unreadable — pending", url);
+                continue;
+            }
+        };
+        let bytes = match decompress_if_needed(raw) {
+            Some(b) => b,
+            None => {
+                eprintln!("superdarn fitacf: {} stays bz2-void — pending", url);
+                continue;
+            }
+        };
+        let recs = match dmap_parse(&bytes) {
+            Some(r) => r,
+            None => {
+                eprintln!("superdarn fitacf: {} parses void", url);
+                continue;
+            }
+        };
+        let rows = dmap_fitacf_rows(&recs, &cols, &url);
+        eprintln!("superdarn fitacf: {} → {} range rows", name, rows.len());
+        all_rows.extend(rows);
+    }
+    if all_rows.is_empty() {
+        eprintln!("superdarn fitacf: no cell rows — nothing fabricated (0 honored)");
+        std::process::exit(1);
+    }
+    emit_rows(
+        cols.iter().map(|c| c.name.to_string()).collect(),
+        &all_rows,
+        &[],
+        out,
+        limit,
+        &format!("db-fitacf {} {} {}", start, end, radar),
+    );
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let out = arg_value(&args, "--out");
@@ -863,6 +1484,56 @@ fn main() {
             fitacf_cols()
         };
         process_bytes(bytes, cols, &input, out.as_deref(), limit);
+        return;
+    }
+
+    if let Some(url) = arg_value(&args, "--url") {
+        let raw = match curl_bytes(&url) {
+            Some(b) => b,
+            None => {
+                eprintln!("superdarn fitacf: {} carried no body — pending", url);
+                std::process::exit(1);
+            }
+        };
+        let bytes = match decompress_if_needed(raw) {
+            Some(b) => b,
+            None => {
+                eprintln!("{}: the bz2 stream stays unreadable — pending", url);
+                std::process::exit(1);
+            }
+        };
+        let cols = if mode == "grid" {
+            grid_cols()
+        } else {
+            fitacf_cols()
+        };
+        process_bytes(bytes, cols, &url, out.as_deref(), limit);
+        return;
+    }
+
+    if let Some(start) = arg_value(&args, "--date-start") {
+        if mode != "fitacf" {
+            eprintln!(
+                "superdarn: --date-start/--date-end run in fitacf mode, the mode is {}",
+                mode
+            );
+            std::process::exit(1);
+        }
+        let end = match arg_value(&args, "--date-end") {
+            Some(v) => v,
+            None => {
+                eprintln!("superdarn: --date-start carries --date-end <YYYYMMDD HH:MM:SS>");
+                std::process::exit(1);
+            }
+        };
+        let radar = match arg_value(&args, "--radar") {
+            Some(v) => v,
+            None => {
+                eprintln!("superdarn: --date-start carries --radar <code>");
+                std::process::exit(1);
+            }
+        };
+        run_bounce(&start, &end, &radar, out.as_deref(), limit);
         return;
     }
 
