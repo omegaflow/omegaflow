@@ -3,7 +3,7 @@
   session: Mycelium-Folge 171
   class: handover
   date: 2026-09-26
-  sha256: e93190718448e5ed8cf4ef3e8921397e5e6121fc1960cd5afce36306f4bdd6d4
+  sha256: e7fbbd75b0713a4811a45c6d3c62ed8dc4c26851d105a5299baadae77113c378
   status: live
 -->
 # Handover — Mycelium-Folge 171 (2026-09-26)
@@ -166,6 +166,20 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge170.md`.
 - **Lage:** (gemessen 2026-09-26 via `git diff`) reine `cargo fmt`-Umbauten in `skydirection.rs`/`kbo_residue_probe.rs`/`rixs_cuprate_probe.rs`/`suprastrom_form_probe.rs` (fremd, unangetastet); Zuordnung „eigene Ports vs. fremd" ungemessen.
 - **Blockade:** keine.
 - **Braucht:** beim nächsten Pass zuordnen (eigene behalten, fremde unangetastet).
+
+#### EMODNET HFRADAR NADR — Termin-Re-Messung (`phi/sources.φ:1830`)
+- **Status:** termin | **Bindung:** eigen
+- **Trigger:** 2026-10-19.
+- **Lage:** (gemessen 2026-09-24, Zustands-Ledger `docs/zustand/external-state.md:43`) Asset `emodnet_hfr_nadr.bin` registriert (Compiler `emodnet_hfr_compiler.rs`, Origin `erddap.emodnet-physics.eu/…/EUHFR_NRTcurrent_HFR-NAdr-Total`); Re-Messung offen.
+- **Blockade:** Fälligkeit.
+- **Braucht:** `archive_search --sniff https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin` bei Fälligkeit; Ernte/Route prüfen.
+
+#### pipeline/index.φ verifiziert-Pools
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Register-Pass `phi/pipeline/index.φ:75-97`.
+- **Lage:** (gemessen 2026-09-26 via `register_lookup --open`) acht `[mycelium] verifiziert`-Pools: `oai_arxiv`, `b2find_intermagnet_catalog`, `terrapulse_catalog`, `esa_geomagnetic_catalog`, `archeology_gaps_index`, `copernicus_catalog` (je 0), `grind_vires_catalog` (8), `grind_arcgis_index` (17).
+- **Blockade:** keine.
+- **Braucht:** Pools in den Harvest aufnehmen oder als leer/disponiert führen.
 
 ### Operator
 
