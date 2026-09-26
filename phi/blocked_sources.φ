@@ -316,19 +316,17 @@ blocked ip-blocked
 url https://api.sensor.community/v1/data/measurements
 note 2026-09-26 direct 403 / Proton 403 (ip-blocked). Kein Exit-Wechsel (Operator-Wort 2026-09-25). Proton-freie Spiegel gemessen: maps.sensor.community/data/v2/data.json 200 (8 620 890 B, sha256 5dd31cd2…) + archive.sensor.community/ 200.
 
-blocked account
+descoped
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
-reg https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO: Kollaborations-Mitgliedschaft (Review+Agreement) nötig; IHEP-Konto verlangt CSTNET-ID (nicht vorhanden) → kein Self-Signup. API /api/dataset/12/search 200 (18 Datensätze, 4 Rohklassen gated).
+note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement nötig, IHEP-Konto verlangt CSTNET-ID (nicht vorhanden). API 200 (18 Datensätze, 4 Rohklassen gated).
 
 pending
 url https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth (GOSAT_GW_MAIL/PASS) verifiziert 2026-09-26 — CUI-search 200 (423 959 B), Probe TANSO3_…h5 75 957 569 B HDF5 (sha256 6d064395…). Harvest pending.
 
-blocked account
+descoped
 url https://data.lsst.cloud/api/tap/sync
-reg https://data.lsst.cloud
-note Rubin/LSST: data-rights-petition bei Shaughnessy (SLAC) 2026-09-14-15 (mail_ledger.φ:39-68), „reviewed individually; we'll reach out". Keine Self-Service-Route (rsp.lsst.io). Wiedervorlage 2026-10-10; Brücke Lasair-ZTF. RUBIN_USER/PASS vorhanden.
+note Rubin/LSST descoped 2026-09-26: data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); Survey off-sky, jetzt kein Bedarf. Bei Survey-Daten wieder aufnehmen.
 
 blocked parser-def json
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
