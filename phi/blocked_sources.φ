@@ -7,6 +7,7 @@ note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten K�
 note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
+note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1min/c1max/c2min/c2max/c3min/c3max, s_region STC-S, c1/c2/c3_resol); Arm fehlt (Extract types.rs:136 / Sample:41).
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -31,6 +32,10 @@ reg https://lasair.lsst.ac.uk/
 descoped
 url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
 note Voyager open-loop ODR (PDS-Rings, 2026-09-14 anonym 200, jetzt 504/Cloudflare). Bau31: unitless ADC-Zählwerte, Doppler/Opazitäts-Produkt NICHT im Bundle → descoped. PPI-Basisband als voyager_odr in sources.φ; Reihen-Leser-Arm offen.
+
+descoped
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/cruise/
+note Voyager 1/2 closed-loop Doppler descoped (gemessen 2026-09-26 via archive_search --verdict): SPDF/PDS cruise/ 404 (direct + Proton), Wayback ohne Snapshot; radio_science_rss nur Okkultation; NSSDC nur Encounter; ODR→ODF nicht konvertierbar.
 
 descoped
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
@@ -322,7 +327,7 @@ note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement n�
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5 (sha256 5f0e7920…); L2_GHG/NO2=0. Compiler gosat_tanso3 gebaut (1e3aeebc7, G3L1); offen: format-Arm gosat_tanso3 + Quellenblock.
+note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5; L2_GHG/NO2=0. Arme + gosat-cdn.yml gebaut (fae4a5081). Blockade: Repo-Secrets GOSAT_GW_MAIL/PASS fehlen (gemessen 2026-09-27 via gh secret list).
 
 descoped
 url https://data.lsst.cloud/api/tap/sync
@@ -335,4 +340,9 @@ note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen
 pending
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
 note IRIS/EMC netCDF-4 (dir 200, HDF5 89 48 44 46); 3D ohne CSV; hdf5.rs liest netCDF-4 — Gap volume-Extract (types.rs:136) + Kanalarm; Lizenz keine, EarthScope-ToS /terms-of-service/ (Attribution + Non-human-Visitor).
+
+parser-def epncore
+gap epncore-spatial
+url http://pithia.cbk.waw.pl/tap
+note EPN-core Klasse (src.pas tot: PostgreSQL :5432 refused, /tap/tables 500; esc.pithia.eu nur Metadaten, :8081/data/* 404) — Region c1/c2/c3 min/max/resol + s_region STC-S, kein lat/lon-Skalar. Ersatz voparis-tap-maser declined (declined_sources.φ).
 
