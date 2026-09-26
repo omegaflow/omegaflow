@@ -350,6 +350,10 @@ pub fn signal_reach(
     }
 }
 
+pub fn enclosure_rho(vmax: f64, amax: f64, dt: f64, pad: f64) -> f64 {
+    vmax * dt + 0.5 * amax * dt * dt + pad
+}
+
 pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {

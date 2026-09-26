@@ -1,8 +1,8 @@
 <!--
   title: The directional driver of geomagnetically induced currents
   class: paper
-  date: 2026-09-25
-  sha256: 1aada7d38a8b1acf110540971bfee755f32fb0e6f78b68ca9d36ebe706bbdeef
+  date: 2026-09-26
+  sha256: ab466b0bfcaa6c18124920ba97d2fe00b96971c507ccfaddd914cde3c9fe569c
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in both storm years at Abisko and Sodankylä (2024: 0.12670 vs 0.10557; 2025: 0.13309 vs 0.12136; SOD 2024: 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all 24 rows family bound. The two witnesses are carried as a riss. The density control never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry. The PCMCI cross-check and full-lag bound are built into `bz-retro-probe`, dispatched 2026-09-26; results pending.
+The excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in both storm years at Abisko and Sodankylä (2024: 0.12670 vs 0.10557; 2025: 0.13309 vs 0.12136; SOD 2024: 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all 24 rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry. PCMCI and the full-lag bound have run (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards; the riss stands.
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -127,7 +127,15 @@ measured under the corrected (post-fix) surrogate RNG
 quarterly window across 16 shards (ABK 2024-q1…2025-q4, SOD 2024-q1…2025-q4;
 the SOD 2025 shards were added 2026-09-26 — their minute data exists at the
 BGS GIN HAPI, stop 2026-09-25), all 24 directed rows
-(Bz→dB/dt, Speed→dB/dt) family bound. The two witnesses — the yearly
+(Bz→dB/dt, Speed→dB/dt) family bound. A second dispatch of the same
+workflow (`bz-retro-probe`, CI run 36224176888, success; 17 jobs — the
+minute job plus the 16 quarterly shards) added the PCMCI cross-check and
+the full lag sweep (0–6 h): no Bz→dB/dt lag clears its quarterly family
+bound in any of the 16 shards (fam 0.172–0.210, Bz best-lag TE 0.105–0.166;
+artifacts `bz-retro-<station>-<quarter>.txt`), and the conditioned PCMCI
+edge is removed at all six lags in 13 of 16 shards while ABK 2025-q2,
+SOD 2025-q2 and SOD 2025-q3 confirm a direct Bz edge (5/6, 6/6 and 1/6
+lags). The two witnesses — the yearly
 round here and the hardened quarterly round — are carried as a riss
 (§6), never averaged.
 
@@ -318,9 +326,13 @@ separately at L1 and contrasted against each other under one family bound,
 so the design does not need a variable-selection step; (iii) the null model
 can be identical for every pair (phase-randomized surrogates and one round
 maximum), which gives the family bound a single, transparent definition.
-A PCMCI run on the same data is built into the hardened probe
-(`bz-retro-probe`, `pcmci_crosscheck`) and dispatched, not a
-competing claim.
+The PCMCI run on the same data has since completed
+(`bz-retro-probe`, `pcmci_crosscheck`, CI 36224176888): conditioning
+Bz→dB/dt on Speed and Density removes the edge at all six lags in 13 of
+the 16 quarterly shards, but confirms a direct Bz edge in three (ABK
+2025-q2 5/6 lags, SOD 2025-q2 6/6, SOD 2025-q3 1/6). The cross-check
+therefore does not uniformly dissolve the yearly arrow; it sharpens the
+round-dependence the riss already names.
 
 **Relation to the literature.** Johnson & Wing (2005) established that the
 solar-wind–magnetosphere transfer is nonlinear and solar-cycle dependent;
@@ -356,9 +368,15 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   round and hardened quarterly round — are carried un-smoothed as a riss
   (`VerdictWord::Riss`), never averaged. The family-clearing claim at the
   hourly grain is withdrawn into this open state, not inverted. Named
-  resolution steps — built and dispatched 2026-09-26 (run 36224176888), results pending: a
-  PCMCI cross-check on the same data, and the family
-  bound over the full lag sweep in the hardened round.
+  resolution steps — measured 2026-09-26 (`bz-retro-probe`, CI 36224176888,
+  success): the family bound over the full lag sweep (0–6 h) finds no
+  Bz→dB/dt lag above fam in any of the 16 quarterly shards (fam
+  0.172–0.210, Bz best-lag TE 0.105–0.166; artifact `bz-retro-abk-2024-q1.txt`),
+  and the PCMCI cross-check removes the conditioned Bz→dB/dt edge at all
+  six lags in 13 of 16 shards while confirming a direct edge in three (ABK
+  2025-q2 5/6, SOD 2025-q2 6/6, SOD 2025-q3 1/6). The riss remains: the
+  yearly arrow is not reproduced by the hardened quarterly null, and the
+  PCMCI verdict is itself round-dependent.
 - **dB/dt is the induction driver, not the network current.** The FMI
   Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
   `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
@@ -381,9 +399,12 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   is argued from the forward-over-reverse asymmetry and the silent density
   control, not from an absolute reverse null. A KDE-h bandwidth sweep on
   Bz→dB/dt (factors 0.5–3.0) is carried by the hourly probe
-  (`tools/measure/src/bin/bz_retro_probe.rs`, `KDE_FACTORS`); its result is
-  pending an artifact read of the completed run (CI 36176580764), so the
-  limitation stands here.
+  (`tools/measure/src/bin/bz_retro_probe.rs`, `KDE_FACTORS`); it has run
+  (CI 36224176888): in the representative shard ABK 2024-q1 Bz→dB/dt
+  clears its per-lag threshold at every factor (1.00: 1.2375e-1 vs
+  9.534e-2; 3.00: 4.249e-2 vs 1.308e-2), so the per-lag excess is not a
+  bandwidth artefact, but at factor 0.50 one of 16 shards (ABK 2025-q4,
+  3.7033e-1 vs 3.8862e-1) is still — the sweep is not uniformly an arrow.
 - **PE gate not engaged** at these window sizes (3 segments of 360 samples
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
