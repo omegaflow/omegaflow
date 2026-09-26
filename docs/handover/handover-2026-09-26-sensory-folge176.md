@@ -3,7 +3,7 @@
   session: Sensory-Folge 176
   class: handover
   date: 2026-09-26
-  sha256: 97eea119085221bfff57b414c8647ee30d12d41cb7fbfd57d0b216f48a6ba7d9
+  sha256: a2b977e32491093a24cbbcb36fd30bb01787fbf510f91fe51f20e87e79fdbaa6
   status: live
 -->
 # Handover — Sensory-Folge 176 (2026-09-26)
@@ -14,11 +14,13 @@ die eigenen Hunks — committet wird pfad-begrenzt, fremde uncommittete Arbeit w
 überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr
 von HEAD ist.
 
-Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
-**parallel** von Agenten abgearbeitet. Jeder Punkt trägt **Trigger** / **Lage** (mit
-Messstempel) / **Blockade** / **Braucht**. Sortierung: erst logisch nach Akteur
-(Linie | Rat | Operator | Dritter), dann chronologisch (Messdatum). Operator-gebundene
-Punkte sind in Vorbereitung (autonom) und Akt (operator-gebunden) getrennt.
+Es gibt keinen `härtesten Punkt` — die offenen Punkte werden **parallel** von Agenten
+abgearbeitet. Jeder Punkt trägt **Trigger** / **Lage** (mit Messstempel) / **Blockade** /
+**Braucht**. Sortierung: **umsetzbar zuerst** — (1) sofort abarbeitbar (eigen,
+dispatchbar), (2) operator-gebundene Vorbereitung (Kante fertig, nur das Wort fehlt),
+(3) blockiert/wartend (mit Trigger), (4) extern (Dritter). Der Akteur steht pro Punkt
+in `Bindung`, nicht in der Reihenfolge. Operator-gebundene Punkte sind in Vorbereitung
+(autonom) und Akt (operator-gebunden) getrennt.
 
 Die FR945 ist das persönliche Gerät des Operators; ihre Kennung (MAC) und ihre Daten
 bleiben lokal (`.secrets.local`, `data/`), nie getrackt, nie am CDN.
@@ -120,9 +122,11 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 
 - **Alt-Orphans (2026-09-26 gemessen, trägerlos):** `docs/concepts/pfeiler-der-architektur.md` (2), `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` (3), `docs/surveys/survey-fortschritt.md` (1) — Prosadokumente, Marker = Status-Vokabular; kein eigener Sensory-Schritt. Schritt: beim nächsten Pass je Datei die Marker lesen → descope oder Träger (Aufenthalt Mycelium/Mountain).
 
-## Offen (erst logisch nach Akteur, dann chronologisch)
+## Offen (umsetzbar zuerst)
 
-### Linie handelt (eigen)
+Die Reihenfolge ist die Umsetzbarkeit; der Akteur steht pro Punkt in `Bindung`.
+
+### 1. Sofort abarbeitbar (eigen, dispatchbar)
 
 #### clippy-Lints in eigenen Dateien — gefixt; `skydirection.rs` fremd
 - **Status:** eigen | **Bindung:** eigen
@@ -130,13 +134,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Lage:** (gemessen 2026-09-26 am HEAD `3eaa60de7` via `ci_manage log 36244460936`, von Mountain getragen) `src/archivar/cometels.rs:125` (`match`→`if let`) und `src/archivar/llnl_g3d.rs:431` (`E0716`) **gefixt**; `src/mathematikerin/te.rs:2971` (`too_many_arguments 8/7`) → `BlattPairSpec`-Struct + zwei Aufrufer, `te.rs:3046` (`neg_cmp_op_on_partial_ord`) **gefixt**; `cargo check -p omegaflow` + `-p omegaflow-measure --bin bz_blatt_probe --bin frb_blatt_probe` 0 Warnungen. `skydirection.rs:200` (rustfmt) ist fremd-dirty (skydirection-cdn-Linie), nicht angefasst.
 - **Blockade:** keine (die eigenen Stellen sind gefixt).
 - **Braucht:** `gh workflow run ci-check.yml`; die fremden roten Dateien (`extract.rs`, `main_flow.rs`, `port.rs`, `spatial.rs`, `uws.rs`, `skydirection.rs`) bleiben fremde Linien.
-
-#### Commit ohne Operator-Wort — `c6edfbe45` (Riss, 2026-09-26)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) ein Sub-Agent hat Workflow-Änderungen (`laic-verdict-cdn.yml` `--kde-scale`, `te-gate.yml` fpr-ksg split) ohne `/commit`-Wort committet und gepusht (`c6edfbe45`). Session-Consent ist Delegation, nicht das Commit-Wort (AGENTS.md).
-- **Blockade:** keine (der Commit steht; kein Rückbau erlaubt).
-- **Braucht:** im Abschluss-Check sichtbar tragen.
 
 #### Kreuz-Screening — 4/4 gelesen, Screen misst den Diurnal-Zyklus
 - **Status:** eigen | **Bindung:** eigen
@@ -173,13 +170,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** `aia_compiler --harvest` (CI-only).
 
-#### Trishuli — Bahrabise-Ernte + TE-Sweep gemessen, S1-Footprint offen
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** S1-Post-Szene
-- **Lage:** (gemessen 2026-09-26 via `grind-flash`) DHM-113-Ernte gefahren: **1007 Punkte**, 10-min, 2026-08-25T14:25…2026-09-01T14:15 UTC, Level 1.115–2.763 m (Snapshot `20260901142220`, sha `17b34f91…`); Regen Open-Meteo 312 Zeilen; Alignment n=169. TE-Sweep: **precip→stage signifikant bei lag 3 (TE 0.2275 > threshold 0.1725) und lag 6 (0.2532 > 0.1687)**, lag 1/12/24 kein Fund, stage→precip in keinem lag. `te_pair_probe` bewusst nicht gelaufen (keine Zeit-Alignment → bogus n=min).
-- **Blockade:** S1-Post-Szene nicht archiviert.
-- **Braucht:** S1-Footprint nach Archivierung.
-
 #### Weberin — cometels-Katalog-Arm + Consumer gebaut, CDN + TNO offen
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
@@ -194,20 +184,6 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** keine.
 - **Braucht:** den FDSN-Station-Endpunkt in `sources.φ` registrieren.
 
-#### Weberin-Quellen — HAWC-Bundle reproduziert + Reader gebaut, CI-Secret beim Operator
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** `OMEGAFLOW_CA_BUNDLE` gesetzt (Operator/CI-Secret)
-- **Lage:** (gemessen 2026-09-26 via `research-max`) 4-Zert-Bundle (`yr1 + rootyr_x1 + rootyr_x1b + isrgrootx1`) reproduziert unter `/tmp/opencode/hawc-ca-bundle.pem` (sha `498f9281…`); HAWC `--verdict` 200 (11161 B), `--sniff 2HWC.yaml` 200 (18588 B, sha `1c9566d4…`). Fink/ALeRCE-Reader gebaut: `tools/measure/src/weberin/fink_alerce.rs` + `bin/weberin_fink_alerce_probe.rs` (6 Fixture-Tests, `cargo check` clean). CDN-Assets sha-verifiziert.
-- **Blockade:** das YR1-PEM als `OMEGAFLOW_CA_BUNDLE` (CI-Repo-Secret in `hawc-cdn.yml:19,34-37`) — Operator/CI setzt.
-- **Braucht:** Operator setzt das Secret auf das Bundle; dann HAWC fetchen.
-
-#### Broken-Null-Control — Spec nachgezogen, te-gate-Lesung offen
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** der `te-gate`-Lauf 36228804363 (in_progress @ `c6edfbe45`)
-- **Lage:** (gemessen 2026-09-26) `docs/specs/broken-null-control.md` §6 auf den gemessenen Stand nachgezogen (Header-sha `63b7e8b7…`); `te-gate` läuft noch.
-- **Blockade:** keine.
-- **Braucht:** den `te-gate`-Lauf lesen (`ci_manage view`/`log 36228804363`).
-
 #### ZNSP FORMNETWORK — sizeof gemessen (16), Encoder-Site nicht im Baum
 - **Status:** offen | **Bindung:** eigen
 - **Trigger:** sofort
@@ -215,12 +191,97 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** die Encoder-Site fehlt (Handover-Claim ohne Read-Site).
 - **Braucht:** Encoder-Site lokalisieren, sonst den Claim streichen und `16` als Register-Wert führen (`phi/…`).
 
+#### Nadel V — AllWISE-Arm gebaut (Mycelium), Probe offen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** der `allwise-cdn`-Lauf `36249453619`
+- **Lage:** (gemessen 2026-09-26) AllWISE-Job `23542882` COMPLETED (genau 1 Zeile `J122906.70+020308.6`, w1 8.369 / w2 7.407 / w3 5.147 / w4 2.944, W1−W2 = +0.962); IRAS-PSC `iraspsc` live (`sources.φ:12335-12345`). **Entblockt:** Mycelium hat den async-UWS-Arm gebaut (`c8e87ab2e`: `src/archivar/uws.rs` + `src/archivar/allwise.rs` + `tools/harvest/src/bin/allwise_tap_compiler.rs`) und die Quelle registriert (`sources.φ:9697` `catalog_allwise_psd`, Felder `w1mpro..w4mpro`/`w3snr`/`w4snr`); `allwise-cdn` `36249453619` in_progress auf `0e09a3e81`.
+- **Blockade:** keine.
+- **Braucht:** Lauf `36249453619` lesen (Manifestation `allwise_psd.bin`); dann `lsst_anomaly_probe` auf dem positiven Kontrollkegel.
+
+#### Pioneer/Dark-Matter — Sweep nachgetragen, Syntonisation-Routen offen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-26) Rampen-Sweep in `probe-front-dark-matter.md` §5.6 nachgetragen (p10 2399 / p11 1518 Pässe; Median-LS-Steigung 2,257e-1/1,383e-1 Hz/s; Resid-RMS 8,845e2/7,958e3 Hz); ASC byte-exakt verdrahtet (`pioneer_doppler_compiler.rs:7-8,70`); Voyager-2-Route registriert (`blocked_sources.φ:51`). Syntonisation-Routen gemessen (2026-09-26 via `research-max`): **NTRS 19830011507** „A two-year history of atomic frequency standards syntonization in the DSN" (1983, trägt eine 2-Jahres-Serie, kein NTRS-Volltext-Download); **NTRS 19820012645** (NBS/GPS-Empfänger 1982, Vergleichswerte <10 ns / ≤1e-14), **NTRS 19840011567** (1984), **DOI 10.1109/freq.1982.200599**; arXiv-Route HTTP 406 `pending`.
+- **Blockade:** kein NTRS-Volltext für 19830011507.
+- **Braucht:** NTRS-19830011507-Volltext ist **measured absent**; ADS hat den Artikel (`1982TDAPR..72..118W` / `1983tdar.nasa..118W`) — Volltext-/Bezugsroute via `archive_search --playwright` auf ADS prüfen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
+
+### 2. Operator-gebundene Vorbereitung (Kante fertig, nur das Wort fehlt)
+
+#### Weberin-Quellen — HAWC-Bundle reproduziert + Reader gebaut, CI-Secret beim Operator
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** `OMEGAFLOW_CA_BUNDLE` gesetzt (Operator/CI-Secret)
+- **Lage:** (gemessen 2026-09-26 via `research-max`) 4-Zert-Bundle (`yr1 + rootyr_x1 + rootyr_x1b + isrgrootx1`) reproduziert unter `/tmp/opencode/hawc-ca-bundle.pem` (sha `498f9281…`); HAWC `--verdict` 200 (11161 B), `--sniff 2HWC.yaml` 200 (18588 B, sha `1c9566d4…`). Fink/ALeRCE-Reader gebaut: `tools/measure/src/weberin/fink_alerce.rs` + `bin/weberin_fink_alerce_probe.rs` (6 Fixture-Tests, `cargo check` clean). CDN-Assets sha-verifiziert.
+- **Blockade:** das YR1-PEM als `OMEGAFLOW_CA_BUNDLE` (CI-Repo-Secret in `hawc-cdn.yml:19,34-37`) — Operator/CI setzt.
+- **Braucht:** Operator setzt das Secret auf das Bundle; dann HAWC fetchen.
+
 #### HRV/Puls→Strahlung — Leser gebaut, Live-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der BLE-Live-Lauf (Operator) hat `rr` geliefert
 - **Lage:** (gemessen 2026-09-26) perm-Log trägt 10 Spalten (`omega.rs:1663-1676`); neuer Leser `tools/measure/src/bin/perm_tone_probe.rs` liest Spalten 7–10 (`tone_code,tone_scale,aperture,field_permeability`), Histogramm + Perzentile, `absent` statt 0.0 (`cargo build -p omegaflow-measure --bin perm_tone_probe` clean). Hinweis: liest den perm-Log direkt (kein `sensors=`-Header-Gate).
 - **Blockade:** hängt am BLE-Live-Fluss (Operator).
 - **Braucht:** nach dem Live-Lauf `perm_tone_probe <log>` lesen.
+
+#### BLE-HR-Live-Messung FR945
+- **Status (Vorbereitung):** eigen | **Bindung:** eigen — Kantenzeile liegt bereit.
+- **Status (Akt):** operator-gebunden (Hardware/Radio) | **Bindung:** operator
+- **Trigger:** Operator startet den verdeckten Lauf (945 am Arm)
+- **Braucht:** `OMEGAFLOW_BLE_HR=<FR945-MAC> OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow`; `sensor:`-/`gfdi_line`-Zeilen lesen.
+
+#### FIT-Verifikation eigene FR945-Datei (lokal-only)
+- **Status (Vorbereitung):** eigen — Kantenzeile bereit.
+- **Status (Akt):** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator startet den Lauf mit seiner Datei
+- **Braucht:** `OMEGAFLOW_FIT_SAMPLE=/abs/pfad/FR945.fit cargo run -p omegaflow --bin omegaflow`.
+- **Wort:** „meine fits datei verlässt niemals dieses gerät" | 2026-09-25 | Operator (Session)
+- **Wort:** „die 945 von anderer Hardware trennen; meine Daten bleiben lokal" | 2026-09-25 | Operator (Session)
+
+#### DEMETER/CDPP-Order-Flow — Leser gebaut, Browser-Akt offen
+- **Status (Vorbereitung):** eigen | **Bindung:** eigen — Leser `tools/harvest/src/bin/regards_order_read.rs` gebaut (`cargo check` clean): order → Dateiliste → Download-URL; `--live` meldet den gemessenen 403-WAF. REGARDS voll WAF-blockiert (403 direct+Proton, kein Wayback).
+- **Status (Akt):** operator-gebunden (Zugang) | **Bindung:** operator
+- **Trigger:** Operator-Browser (passiert die WAF) exportiert die Order-/Datei-JSON
+- **Braucht:** `regards_order_read <order.json>`; ein Neu-/Nach-Order bleibt konsenspflichtiger Dritt-Akt (Operator-Wort). Order-Ablauf 2026-09-28.
+
+#### Beat-Arbitrierung — verdeckter Lauf mit zwei Beat-Quellen
+- **Status (Vorbereitung):** eigen — Spawn-Arbitrierung steht (`main_flow.rs:504`), Command bereit.
+- **Status (Akt):** operator-gebunden (hidden) | **Bindung:** operator
+- **Trigger:** Operator startet einen verdeckten Lauf mit zwei Beat-Quellen
+- **Braucht:** `OMEGAFLOW_HIDDEN=1`-Lauf mit zwei Quellen → genau eine `beat source:`-Zeile.
+
+#### Onboard-/CIQ-Bedarf benennen
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** Operator-Wort
+- **Lage:** (gemessen 2026-09-24) Host-Reader `parse_fit` verdrahtet; CIQ ohne Reader. Ein-Quellen-Regel.
+- **Braucht:** Bedarf Ja/Nein — Nein → released, `FIT_DIR` bleibt der FIT-Kanal.
+
+#### Weberin-Quellen — account-/key-Kanäle: 3 von 4 per Credential gelöst, vDEC offen
+- **Status (Vorbereitung):** eigen — Entwurf `state/mail/weberin-quellen-konten-2026-09-26.md` (privat, gitignored).
+- **Status (Akt):** operator-gebunden (Zugang) | **Bindung:** operator
+- **Trigger:** Operator-Wort je Konto
+- **Lage:** (gemessen 2026-09-26 via `grind-pro`) **IGETS** (`IGETS_USER/PASS` gesetzt, `isdc.gfz.de/igets-data-base/data-access` 200), **ONC** (`OCEANNETWORKS_TOKEN` verifiziert, `data.oceannetworks.ca/api/devices` 200), **TNS** (`TNS_API_KEY`/`TNS_UA` gesetzt) → nur Harvest-Duty, kein Kontakt. **vDEC** offen: braucht Vertrag, `ctbto.org/.../vdec` 403 direct+Proton, Wayback 200; Draft + QUELLEN send-ready.
+- **Braucht:** vDEC-Antrag (Operator) — Webform + Projekttext; Daten bleiben **lokal** (`data/`, keine CDN-Redistribution laut Vertrag).
+
+### 3. Blockiert / wartend (mit Trigger)
+
+#### Commit ohne Operator-Wort — `c6edfbe45` (Riss, 2026-09-26)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-26) ein Sub-Agent hat Workflow-Änderungen (`laic-verdict-cdn.yml` `--kde-scale`, `te-gate.yml` fpr-ksg split) ohne `/commit`-Wort committet und gepusht (`c6edfbe45`). Session-Consent ist Delegation, nicht das Commit-Wort (AGENTS.md).
+- **Blockade:** keine (der Commit steht; kein Rückbau erlaubt).
+- **Braucht:** im Abschluss-Check sichtbar tragen.
+
+#### Trishuli — Bahrabise-Ernte + TE-Sweep gemessen, S1-Footprint offen
+- **Status:** offen | **Bindung:** eigen
+- **Trigger:** S1-Post-Szene
+- **Lage:** (gemessen 2026-09-26 via `grind-flash`) DHM-113-Ernte gefahren: **1007 Punkte**, 10-min, 2026-08-25T14:25…2026-09-01T14:15 UTC, Level 1.115–2.763 m (Snapshot `20260901142220`, sha `17b34f91…`); Regen Open-Meteo 312 Zeilen; Alignment n=169. TE-Sweep: **precip→stage signifikant bei lag 3 (TE 0.2275 > threshold 0.1725) und lag 6 (0.2532 > 0.1687)**, lag 1/12/24 kein Fund, stage→precip in keinem lag. `te_pair_probe` bewusst nicht gelaufen (keine Zeit-Alignment → bogus n=min).
+- **Blockade:** S1-Post-Szene nicht archiviert.
+- **Braucht:** S1-Footprint nach Archivierung.
+
+#### Broken-Null-Control — Spec nachgezogen, te-gate-Lesung offen
+- **Status:** wartend (CI) | **Bindung:** eigen
+- **Trigger:** der `te-gate`-Lauf 36228804363 (in_progress @ `c6edfbe45`)
+- **Lage:** (gemessen 2026-09-26) `docs/specs/broken-null-control.md` §6 auf den gemessenen Stand nachgezogen (Header-sha `63b7e8b7…`); `te-gate` läuft noch.
+- **Blockade:** keine.
+- **Braucht:** den `te-gate`-Lauf lesen (`ci_manage view`/`log 36228804363`).
 
 #### M2c — Rust-ZNSP-Host auf dem BL808 gegen das H2
 - **Status:** wartend | **Bindung:** eigen
@@ -257,60 +318,12 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Blockade:** kein Instrument misst den vollen Phasenraum der Pioniere.
 - **Braucht:** VLBI-Beacon auf der nächsten interstellaren Sonde, von Tag eins zweikanalig.
 
-#### Nadel V — AllWISE-Arm gebaut (Mycelium), Probe offen
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** der `allwise-cdn`-Lauf `36249453619`
-- **Lage:** (gemessen 2026-09-26) AllWISE-Job `23542882` COMPLETED (genau 1 Zeile `J122906.70+020308.6`, w1 8.369 / w2 7.407 / w3 5.147 / w4 2.944, W1−W2 = +0.962); IRAS-PSC `iraspsc` live (`sources.φ:12335-12345`). **Entblockt:** Mycelium hat den async-UWS-Arm gebaut (`c8e87ab2e`: `src/archivar/uws.rs` + `src/archivar/allwise.rs` + `tools/harvest/src/bin/allwise_tap_compiler.rs`) und die Quelle registriert (`sources.φ:9697` `catalog_allwise_psd`, Felder `w1mpro..w4mpro`/`w3snr`/`w4snr`); `allwise-cdn` `36249453619` in_progress auf `0e09a3e81`.
-- **Blockade:** keine.
-- **Braucht:** Lauf `36249453619` lesen (Manifestation `allwise_psd.bin`); dann `lsst_anomaly_probe` auf dem positiven Kontrollkegel.
-
-#### Pioneer/Dark-Matter — Sweep nachgetragen, Syntonisation-Routen offen
-- **Status:** offen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-26) Rampen-Sweep in `probe-front-dark-matter.md` §5.6 nachgetragen (p10 2399 / p11 1518 Pässe; Median-LS-Steigung 2,257e-1/1,383e-1 Hz/s; Resid-RMS 8,845e2/7,958e3 Hz); ASC byte-exakt verdrahtet (`pioneer_doppler_compiler.rs:7-8,70`); Voyager-2-Route registriert (`blocked_sources.φ:51`). Syntonisation-Routen gemessen (2026-09-26 via `research-max`): **NTRS 19830011507** „A two-year history of atomic frequency standards syntonization in the DSN" (1983, trägt eine 2-Jahres-Serie, kein NTRS-Volltext-Download); **NTRS 19820012645** (NBS/GPS-Empfänger 1982, Vergleichswerte <10 ns / ≤1e-14), **NTRS 19840011567** (1984), **DOI 10.1109/freq.1982.200599**; arXiv-Route HTTP 406 `pending`.
-- **Blockade:** kein NTRS-Volltext für 19830011507.
-- **Braucht:** NTRS-19830011507-Volltext ist **measured absent**; ADS hat den Artikel (`1982TDAPR..72..118W` / `1983tdar.nasa..118W`) — Volltext-/Bezugsroute via `archive_search --playwright` auf ADS prüfen (Träger `survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md`).
-
-### Operator handelt
-
 #### JUICE-Erdpassage 28./29.09.2026 — Kanal fertig, Siegel-Wort fehlt (termin-kritisch)
 - **Status:** termin:2026-09-29 | **Bindung:** termin:2026-09-29 (Operator für das Siegel-Wort)
 - **Trigger:** 2026-09-28/2026-09-29
 - **Lage:** (gemessen 2026-09-26 via `grind-pro`) Prädiktionskanal nachgezogen (`flyby-path-2-preregistration.md` sha `502e06c3…`, addendum sha `b54d5298…`): RTSW mag/wind, Swarm, OMNI2 live gemessen; alle Zellen korrekt `pending` (Feldzustand füllt erst ~1 h vor dem Perigäum). **Riss:** die Kp-Route (`noaa-planetary-k-index.json`) wurde in `61e272ab0` aus `sources.φ` entfernt → Kp-Zelle kann nicht füllen, bis re-registriert (Mycelium-Akt). **OMNI2:** das Fenster 19.09. liefert leeres HAPI-Payload (mehrtägiger Lag) → Verifikationskanal, kein Füllkanal.
 - **Blockade:** der Operator muss das **Siegel-Wort vor dem 28.09.** setzen (in 2 Tagen).
 - **Braucht:** Siegel-Wort setzen; nach dem Flyby die In-situ-Messung gegen den präregistrierten Feldzustand (σ-Metrik gegen fam).
-
-#### BLE-HR-Live-Messung FR945
-- **Status (Vorbereitung):** eigen | **Bindung:** eigen — Kantenzeile liegt bereit.
-- **Status (Akt):** operator-gebunden (Hardware/Radio) | **Bindung:** operator
-- **Trigger:** Operator startet den verdeckten Lauf (945 am Arm)
-- **Braucht:** `OMEGAFLOW_BLE_HR=<FR945-MAC> OMEGAFLOW_HIDDEN=1 ./target/debug/omegaflow`; `sensor:`-/`gfdi_line`-Zeilen lesen.
-
-#### FIT-Verifikation eigene FR945-Datei (lokal-only)
-- **Status (Vorbereitung):** eigen — Kantenzeile bereit.
-- **Status (Akt):** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator startet den Lauf mit seiner Datei
-- **Braucht:** `OMEGAFLOW_FIT_SAMPLE=/abs/pfad/FR945.fit cargo run -p omegaflow --bin omegaflow`.
-- **Wort:** „meine fits datei verlässt niemals dieses gerät" | 2026-09-25 | Operator (Session)
-- **Wort:** „die 945 von anderer Hardware trennen; meine Daten bleiben lokal" | 2026-09-25 | Operator (Session)
-
-#### DEMETER/CDPP-Order-Flow — Leser gebaut, Browser-Akt offen
-- **Status (Vorbereitung):** eigen | **Bindung:** eigen — Leser `tools/harvest/src/bin/regards_order_read.rs` gebaut (`cargo check` clean): order → Dateiliste → Download-URL; `--live` meldet den gemessenen 403-WAF. REGARDS voll WAF-blockiert (403 direct+Proton, kein Wayback).
-- **Status (Akt):** operator-gebunden (Zugang) | **Bindung:** operator
-- **Trigger:** Operator-Browser (passiert die WAF) exportiert die Order-/Datei-JSON
-- **Braucht:** `regards_order_read <order.json>`; ein Neu-/Nach-Order bleibt konsenspflichtiger Dritt-Akt (Operator-Wort). Order-Ablauf 2026-09-28.
-
-#### Onboard-/CIQ-Bedarf benennen
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort
-- **Lage:** (gemessen 2026-09-24) Host-Reader `parse_fit` verdrahtet; CIQ ohne Reader. Ein-Quellen-Regel.
-- **Braucht:** Bedarf Ja/Nein — Nein → released, `FIT_DIR` bleibt der FIT-Kanal.
-
-#### Beat-Arbitrierung — verdeckter Lauf mit zwei Beat-Quellen
-- **Status (Vorbereitung):** eigen — Spawn-Arbitrierung steht (`main_flow.rs:504`), Command bereit.
-- **Status (Akt):** operator-gebunden (hidden) | **Bindung:** operator
-- **Trigger:** Operator startet einen verdeckten Lauf mit zwei Beat-Quellen
-- **Braucht:** `OMEGAFLOW_HIDDEN=1`-Lauf mit zwei Quellen → genau eine `beat source:`-Zeile.
 
 #### Live-Sensor-Cluster (eigener Knoten)
 - **Status:** LOCK | **Bindung:** operator (Beschaffung)
@@ -324,14 +337,7 @@ oder descoped-Befund. Der Dateiname in dieser Übergabe ist der Träger
 - **Braucht:** —
 - **Wort:** ESP32 separat als eigener LOCK | 2026-09-25 | Operator (Session)
 
-#### Weberin-Quellen — account-/key-Kanäle: 3 von 4 per Credential gelöst, vDEC offen
-- **Status (Vorbereitung):** eigen — Entwurf `state/mail/weberin-quellen-konten-2026-09-26.md` (privat, gitignored).
-- **Status (Akt):** operator-gebunden (Zugang) | **Bindung:** operator
-- **Trigger:** Operator-Wort je Konto
-- **Lage:** (gemessen 2026-09-26 via `grind-pro`) **IGETS** (`IGETS_USER/PASS` gesetzt, `isdc.gfz.de/igets-data-base/data-access` 200), **ONC** (`OCEANNETWORKS_TOKEN` verifiziert, `data.oceannetworks.ca/api/devices` 200), **TNS** (`TNS_API_KEY`/`TNS_UA` gesetzt) → nur Harvest-Duty, kein Kontakt. **vDEC** offen: braucht Vertrag, `ctbto.org/.../vdec` 403 direct+Proton, Wayback 200; Draft + QUELLEN send-ready.
-- **Braucht:** vDEC-Antrag (Operator) — Webform + Projekttext; Daten bleiben **lokal** (`data/`, keine CDN-Redistribution laut Vertrag).
-
-### Extern handelt (Dritte)
+### 4. Extern (Dritter)
 
 #### Ox64-Lieferung
 - **Status:** wartend | **Bindung:** termin (Carrier)
