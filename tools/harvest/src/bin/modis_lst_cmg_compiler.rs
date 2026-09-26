@@ -1,5 +1,4 @@
 use omegaflow::archivar::json::{JsonVal, jpath_val, parse_json};
-use omegaflow::archivar::range::fetch_bearer_range;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf4::{Hdf4, read_num, type_size};
@@ -10,8 +9,6 @@ use std::process::Command;
 const NETLOC: &str = "data.lpdaac.earthdatacloud.nasa.gov";
 const CMR_UMM_GRANULES_URL: &str = "https://cmr.earthdata.nasa.gov/search/granules.umm_json";
 const LP_PROD_PREFIX: &str = "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/";
-const PROBE_WINDOW: u64 = 1 << 20;
-const ESCALATION_WINDOW: u64 = 1 << 24;
 const CMR_PAGE_SIZE: usize = 1 << 5;
 const CMR_MAX_TIME_S: u64 = 1 << 7;
 const CONNECT_BOUND_S: u64 = 1 << 5;
@@ -233,16 +230,22 @@ fn granule_day_midpoint(url: &str, lsk: &LeapSeconds) -> Option<f64> {
 }
 
 fn bearer_probe(url: &str, token: &str) -> Option<Vec<u8>> {
-    match fetch_bearer_range(url, 0, PROBE_WINDOW, token) {
-        Some(b) if hdf4_magic(&b) => Some(b),
-        Some(_) => {
-            eprintln!(
-                "modis_lst_cmg: {} the {} B probe carries no HDF4 magic — escalating once",
-                url, PROBE_WINDOW
-            );
-            fetch_bearer_range(url, 0, ESCALATION_WINDOW, token)
-        }
-        None => None,
+    let out = Command::new("curl")
+        .arg("-sSfL")
+        .arg("--retry")
+        .arg("2")
+        .arg("--max-time")
+        .arg("600")
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {token}"))
+        .arg(url)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        Some(out.stdout)
+    } else {
+        eprintln!("modis_lst_cmg: {} whole fetch returned {}", url, out.status);
+        None
     }
 }
 

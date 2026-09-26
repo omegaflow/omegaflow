@@ -18,25 +18,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the superdarn.ca release exists on the CDN
+      - name: Ensure the zenodo.org release exists on the CDN
         run: |
-          if ! gh release view superdarn.ca --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create superdarn.ca --repo omegaflow/sources \
-              --title "superdarn.ca" \
-              --notes "SuperDARN FITACF line-of-sight velocity compiled from the ascii-call direct route to a geo-series (superdarn_fitacf). Record: t (f64 TDB s, LE), lat (f64 deg), lon (f64 deg), alt (f64 km), freq (f64), bin_width (f64), val (f64 m/s), comp (u32 = 1)."
+          if ! gh release view zenodo.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create zenodo.org --repo omegaflow/sources \
+              --title "zenodo.org" \
+              --notes "SuperDARN FITACF line-of-sight velocity compiled from the sdc-serv.usask.ca DMAP route to a geo-series (superdarn_fitacf). Record stride 60 B LE: t (f64, TDB s), lat (f64, deg), lon (f64, deg), alt (f64, km), freq (f64), bin_width (f64), val (f64, m/s), comp (u32, 1 = v)."
           fi
-      - name: Fetch and compile the FITACF window, then upload to CDN
+      - name: Compile the FITACF DMAP file and upload to CDN
         run: |
-          cargo run -p omegaflow-harvest --release --bin superdarn_compiler -- \
-            --radar sas \
-            --start 2026-08-20 \
-            --start-time 18:00 \
-            --end 2026-08-20 \
-            --end-time 20:00 \
-            --beam all \
-            --out superdarn_fitacf.bin \
+          cargo run -p omegaflow-harvest --release --bin superdarn_fitacf_compiler -- \
+            --url https://sdc-serv.usask.ca/data/2026/08/20260820.1630.41.rkn.a.fitacf.bz2 \
+            --radar rkn \
+            --out-bin superdarn_fitacf.bin \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "superdarn-cdn: superdarn_fitacf.bin returned void" \
-                 "superdarn compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 "superdarn_fitacf compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
