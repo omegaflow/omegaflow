@@ -36,7 +36,7 @@ jobs:
                  health; exit 1; }
       - name: Compile the ERI per-pixel field and upload to CDN
         run: |
-          cargo run -p omegaflow-harvest --release --bin eri_compiler -- \
+          cargo run -p omegaflow-harvest --release --bin noaa_eri_compiler -- \
             --input kernels/eri_sample.tif \
             --out eri_imagery.bin \
             --ci-mode \

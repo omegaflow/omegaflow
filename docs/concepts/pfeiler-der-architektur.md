@@ -2,7 +2,7 @@
   title: Dreizehn Pfeiler — die Architektur als System
   class: concept
   date: 2026-09-01
-  sha256: cfdce3c0ea9ebc6c77da41551dacbb0910c3e5fa257fb8156797522adc906115
+  sha256: 3e4454273a75d61f07dd563bac4918621222a8fc8edc97311f27f33dca65e18c
   status: live
 -->
 
@@ -153,9 +153,11 @@ ist eine dreistufige Kathedrale:
    hält nicht Rohdaten, sondern die von der CI vorverarbeiteten, von
    Lügen befreiten Binaries.
 3. **Die CI als Auth-Gateway:** Die API-Keys für authentifizierte
-   Open-Data-Quellen liegen in den CI Secrets. Der CI-Archivar nutzt sie,
-   lädt die Daten im 3-Stunden-Takt (`health-check.yml`, `0 */3 * * *`),
-   transformiert sie und pusht sie auf das CDN.
+   Open-Data-Quellen liegen in den CI Secrets. Zwei Takte, zwei Heimaten:
+   der omegaflow-eigene `health-check.yml` prüft die Quelle alle 3 Stunden
+   (`0 */3 * * *`); der öffentliche Mirror `omegaflow/sources` lädt die
+   Rohdaten alle 6 Stunden (`refresh.yml`, `17 */6 * * *`, Python
+   `scripts/refresh_all.py`), transformiert sie und pusht sie auf das CDN.
 4. **Der API-Fallback (Lebenserhaltung):** Nur wenn das CDN komplett down
    ist (oder das CDN-Asset älter ist als die deklarierte TTL der Quelle),
    fällt die Runtime auf die direkte Live-API zurück, mit Template-Caches
