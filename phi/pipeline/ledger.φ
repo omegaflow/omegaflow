@@ -9,7 +9,7 @@
 
 ausstehend
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — 2026-09-21 PL-Exit (Operator-Wort): /tap HTTP 200; /tap/tables HTTP 500 (PostgreSQL localhost:5432 refused) — Route offen, Backend down. Tabellen pl610_dynamic_spectra_*, ionosondes, nqmaps, h2tecmaps, iriwarsaw. Trigger: /tap/tables 500→200.
+note ivo://src.pas/tap — 2026-09-26 Host tot (direct+Proton 000); Ersatz gemessen: esc.pithia.eu/data-collections/ 200 anonym. Tabellen pl610_dynamic_spectra_*, ionosondes, nqmaps, h2tecmaps, iriwarsaw. Trigger: /tap/tables 500→200 oder esc.pithia.eu-Ernte.
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
