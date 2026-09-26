@@ -3,7 +3,7 @@
   session: Mycelium-Folge 170
   class: handover
   date: 2026-09-26
-  sha256: ff8b2c91f31887cdfca9d18ddb1a4c22a39a9d01a8fd6c9ee976b5d4c388b33d
+  sha256: 818cd2c58428e8ed85a8206c77bbb692573403f0740d9c62f09a192cbd2fcef4
   status: live
 -->
 # Handover — Mycelium-Folge 170 (2026-09-26)
@@ -58,6 +58,55 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 - **Blockade:** keine.
 - **Braucht:** GOSAT-GW bleibt `pending` bis Datenverfügbarkeit (Register-Duty); AllWISE async-UWS-Arm messen und Eintrag führen.
 
+#### Lasair-LSST Broker — offen (`phi/blocked_sources.φ:26`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Backend-Erholung api.lasair.lsst.ac.uk (502).
+- **Lage:** (gemessen 2026-09-20, Register-note) `api.lasair.lsst.ac.uk/api` 502 über Proton-Exit (direct 000); Frontend 200; ZTF-Zwilling `lasair-ztf.lsst.ac.uk/api/objects` 401; `LASAIR_LSST_TOKEN` vorhanden (41 Z.) → kein Key-Gap; Token unmessbar bis Upstream erholt.
+- **Blockade:** Upstream-Backend.
+- **Braucht:** `archive_search --verdict https://api.lasair.lsst.ac.uk/api` beim nächsten Pass.
+
+#### SuperDARN — Ernte offen (`phi/blocked_sources.φ:39`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Globus-Transfer.
+- **Lage:** (gemessen 2026-09-22, Register-note) Globus (MAP/fitacf_25/fitacf_30/rawacf); MAP 6.561 Dateien/21,93 GB → `data/superdarn/map` (Task af68c4f1). FITACF `phi/sources.φ:9465`. RAWACF gewährt (Mail 1790021001/1790020962), via FRDR kompiliert → `phi/sources.φ:8032`; Endpoint 200 offen.
+- **Blockade:** keine.
+- **Braucht:** MAP-Ernte abschließen + in `phi/sources.φ` registrieren.
+
+#### BepiColombo bc_mpo_more — Freigabe-Anfrage (`phi/blocked_sources.φ:44`)
+- **Status:** wartend | **Bindung:** dritter
+- **Trigger:** Antwort psahelp@cosmos.esa.int.
+- **Lage:** (gemessen 2026-09-18, Register-note) `release_date 2099-01-01` (89434/89517 proprietär), `data?PRODUCT` → 403, kein Konto-Gate; Freigabe-Anfrage raus. `bc_mpo_mag` anonym offen (5020 Zeilen seit 2024-03-12).
+- **Blockade:** ESA-Freigabe.
+- **Braucht:** Wiedervorlage Antwort; `bc_mpo_mag` bei Bedarf in `phi/sources.φ`.
+
+#### NAIF M10 — frame_registry-Route offen (`phi/blocked_sources.φ:57`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Register-Pass.
+- **Lage:** (gemessen 2026-09-25, Register-note) `M10_archive_1.bsp` 51200 B HTTP 200; `ephemeris_mariner10.bin` gebaut (mariner10-ephemeris-cdn 36181036369; 648 B, sha256 `7ad8b8bf`). Offen: **keine mariner10-Route in `frame_registry.φ`**.
+- **Blockade:** keine.
+- **Braucht:** mariner10-Route in `frame_registry.φ` eintragen.
+
+#### DEMETER Order 18387 — Product-GET 500 (`phi/blocked_sources.φ:75`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** regards.cnes.fr Backend/Order-Freigabe.
+- **Lage:** (gemessen 2026-09-25, Register-note) Order `DONE_WITH_WARNING`; `statusDate 2026-09-25T15:08Z`; `filesInErrorCount 96978`; `availableFilesCount 0`; product GET `…/files/<md5>` HTTP 500 / 0 B; `online:false`.
+- **Blockade:** CNES-Backend (WAF).
+- **Braucht:** `archive_search --verdict https://regards.cnes.fr/api/v1/rs-order` beim nächsten Pass.
+
+#### DECaPS2 Dataverse — Ernte offen (`phi/blocked_sources.φ:79`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster Harvest-Pass.
+- **Lage:** (gemessen 2026-09-26, Register-note) `doi:10.7910/DVN/K88GFI` Größe 309865090866 B / 100 `fits.gz` (größte 3159522164 B); Parser `phi/sources.φ:9628`; anonymer TAP-Weg `decaps_dr2.object`; Ernte pending.
+- **Blockade:** keine.
+- **Braucht:** anonymen TAP-Weg ernten + in `phi/sources.φ` registrieren.
+
+#### ivo://src.pas/tap — 500 (`phi/pipeline/ledger.φ:10`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Backend-Erholung src.pas.
+- **Lage:** (gemessen 2026-09-21, Register-note) PL-Exit (Operator-Wort): `/tap` HTTP 200; `/tap/tables` HTTP 500 (PostgreSQL localhost:5…).
+- **Blockade:** Backend-Fehler.
+- **Braucht:** `archive_search --verdict` auf `/tap/tables` beim nächsten Pass.
+
 #### CARRIER_DRIFT `phi/blocked_sources.φ::gap:curation` carrier=13 live=4
 - **Status:** wartend | **Bindung:** eigen→mountain
 - **Trigger:** nächster Register-Pass.
@@ -75,9 +124,9 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 #### Postfach — Ledger-Widerspruch (riss)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Pass / Mail-Eingang.
-- **Lage:** (gemessen 2026-09-26 via `mail_digest --last 6` + `glob`) `state/mail/mail_ledger.φ` ist absent; folge168 zitierte dieselbe Datei mit `:74-78` (NSSDC) — der Riss bleibt in diesem Atom unaufgelöst (die Mailbox wurde nicht geöffnet).
-- **Blockade:** `mail_digest`-Ledgerpfad ungemessen.
-- **Braucht:** erste Messung: `smail`-Inbox lesen, Ledgerpfad klären.
+- **Lage:** (gemessen 2026-09-26, Future-Folge129) `state/mail/mail_ledger.φ` **existiert** — `wc -l -c` = 164 Zeilen / 1 189 190 B (Einträge mit sehr langen Zeilen); folge168 zitierte `:74-78` (NSSDC). Der Riss ist damit zugunsten „Ledger vorhanden" aufgelöst; nur `mail_digest --last 6` meldet „ledger absent" — der Digest-Pfad ist die Abweichung, nicht der Ledger.
+- **Blockade:** keine.
+- **Braucht:** `mail_digest`-Ledgerpfad messen (`tools/service/src/bin/mail_digest.rs`) und den Resolver fixen; bis dahin die Inbox per `smail`/`read` lesen.
 
 #### NSSDC-Anfragen — Wiedervorlage
 - **Status:** wartend | **Bindung:** dritter
@@ -92,6 +141,19 @@ folge169 ins Archiv. Mountain `cc991b751` (gemessen: `phi/sources.φ` +88,
 - **Lage:** (gemessen 2026-09-26, aus folge167/168 übernommen — in diesem Atom **nicht** neu gemessen) direct 403 / Proton 403 (ip-blocked); `phi/blocked_sources.φ` `blocked ip-blocked`.
 - **Blockade:** CI-Lauf.
 - **Braucht:** `ci_manage view <id>`.
+
+#### SuperDARN-Mirror — Globus-Transfer FAILED, Neustart
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26 via `state/mail/mail_ledger.φ:288`) Globus-Transfer
+  `af68c4f1-b601-11f1-b9a2-0affd5e180af` „SuperDARN Mirror to omegaflow": 4994 Dateien /
+  34 126 266 995 B übertragen, dann **FAILED** (Completion 2026-09-25 10:23 UTC); die
+  Benachrichtigung trägt „do not reply" — kein Send nötig. Aufgenommen aus
+  Future-Folge 129: die Korrespondenz-/Consent-Linie führt keine Asset-/Transfer-Akte.
+- **Blockade:** keine.
+- **Braucht:** den abgebrochenen Globus-Mirror-Transfer neu anstoßen; das Ziel-Asset
+  anschließend per `archive_search --sniff`/`--verdict` messen und in `phi/sources.φ`
+  registrieren.
 
 ### Operator
 

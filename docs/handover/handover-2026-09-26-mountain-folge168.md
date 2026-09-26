@@ -3,7 +3,7 @@
   session: Mountain-Folge 168
   class: handover
   date: 2026-09-26
-  sha256: 324c5bd2727711297c422d82981d52340ea544cc78ceffc77a92e6ace43960c1
+  sha256: 2e6aa87eb963632edef607f52c5a92f608876e67e787e54d6839213290a0f74f
   status: live
 -->
 # Handover — Mountain-Folge 168 (2026-09-26)
@@ -125,6 +125,39 @@ Trigger / Lage / Blockade / Braucht.
   WGSL `beat_pair` hinter presence-/ν-Gates); das Paar selbst absent.
 - **Blockade:** keine Messdaten für ein kohärentes Paar.
 - **Braucht:** dual-comb-/two-station-Kandidat an Mycelium; bis dahin `wartend`.
+
+#### ci-check Gate-Fixture `fp_dispatch_ceiling_blocked` — Wirkung ungemessen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ci-check-Lauf am HEAD.
+- **Lage:** (gemessen 2026-09-26, Future-Nebenbefund) `fp_dispatch_ceiling_blocked` +
+  Fixtures `nie dispatcht`/`named, never dispatched` nur per `cargo check` + JSON-Gültigkeit
+  (`commit_check` lädt das Vocab) geprüft; `cargo test` läuft nur in CI. Aufgenommen aus
+  Future-Folge 129 (die Korrespondenz-/Consent-Linie führt keine Bau-/CI-Akte).
+- **Blockade:** CI-Lauf.
+- **Braucht:** `ci_manage view <id>` / `ci_manage log <id>` des ci-check am HEAD.
+
+#### MODIS/Terra LST CMG ×3 — CMR-LPCLOUD-Route messen
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26) `phi/blocked_sources.φ:11/16/21`; Endpoint mit und ohne
+  `EARTHDATA_EDL_TOKEN` je **404** — kein 401, also kein belegter Key-Gap; die Datenroute
+  ist CMR LPCLOUD. Aufgenommen aus Future-Folge 129 (Quellen-Akt).
+- **Blockade:** keine.
+- **Braucht:** die CMR-LPCLOUD-Route messen; Ergebnis im Register
+  (`phi/blocked_sources.φ`) nachtragen oder `descoped` mit Befund.
+
+#### Secrets-Disposition — 3 Datenquellen-Namen in `phi` registrieren
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-26 via `docs/surveys/survey-2026-09-26-secrets-inventar.md`)
+  die Credentials `IGETS2_USER/PASS` (GFZ ISDC/EOST), `BABAMUL_*` (Caltech/UMN,
+  Kafka-Alert-Broker), `MOVEBANK_*` (Max-Planck, Animal-Tracking) sind lebende
+  Datenquellen **ohne** `phi`-Eintrag; `GFW` ist `declined`, `GOSAT-GW` `pending`,
+  `RUBIN` `blocked account` (von Mycelium committet). Aufgenommen aus Future-Folge 129
+  (Register-Akt).
+- **Blockade:** keine.
+- **Braucht:** IGETS2/BABAMUL/MOVEBANK je in `phi/sources.φ` registrieren (mit `url`) oder
+  in `phi/declined_sources.φ` als `declined` mit Befund führen.
 
 ### Operator handelt
 
