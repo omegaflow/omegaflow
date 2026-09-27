@@ -951,8 +951,8 @@ impl OmegaLoop {
                 self.ring_filled += 1;
             }
             self.ring_gen += 1;
-            probe_read.unmap();
         }
+        probe_read.unmap();
     }
 
     pub fn sky_say(&mut self, word: &str) {
@@ -1177,6 +1177,7 @@ impl OmegaLoop {
             device.poll(wgpu::Maintain::Poll);
         }
         if !mapped.load(Ordering::SeqCst) {
+            read_buf.unmap();
             self.sky_say("s2 readback pending");
             return None;
         }
