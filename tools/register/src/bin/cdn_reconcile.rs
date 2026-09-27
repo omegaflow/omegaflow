@@ -15,6 +15,12 @@ fn release_tag_netloc(tag: &str) -> (&str, bool) {
     }
 }
 
+fn cdn_tag_from_url(url: &str) -> Option<&str> {
+    let rest = url.strip_prefix("https://github.com/omegaflow/sources/releases/download/")?;
+    let tag = rest.split('/').next()?;
+    if tag.is_empty() { None } else { Some(tag) }
+}
+
 fn origin_netlocs(raw: &str) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
@@ -176,12 +182,20 @@ fn group_list(groups: &[Vec<String>]) -> String {
     format!("[{}]", objs.join(", "))
 }
 
-fn shard_base(name: &str) -> Option<&str> {
-    let (base, ordinal) = name.rsplit_once('.')?;
-    if ordinal.is_empty() || !ordinal.bytes().all(|b| b.is_ascii_digit()) {
-        return None;
+fn shard_base(name: &str) -> Option<String> {
+    if let Some((base, ordinal)) = name.rsplit_once('.') {
+        if !ordinal.is_empty() && ordinal.bytes().all(|b| b.is_ascii_digit()) {
+            return Some(base.to_string());
+        }
     }
-    Some(base)
+    if let Some((stem, ext)) = name.rsplit_once('.') {
+        if let Some((base, shard)) = stem.rsplit_once('_') {
+            if !shard.is_empty() && shard.bytes().all(|b| b.is_ascii_digit()) {
+                return Some(format!("{}.{}", base, ext));
+            }
+        }
+    }
+    None
 }
 
 fn is_manifest(name: &str) -> bool {
@@ -226,7 +240,10 @@ fn main() {
     let manifest = cdn_manifest_map();
     let mut canonical_map: HashMap<String, String> = HashMap::new();
     for s in &sources {
-        let name = if s.format == "reference" {
+        let is_cdn = s
+            .url
+            .starts_with("https://github.com/omegaflow/sources/releases/download/");
+        let name = if s.format == "reference" || is_cdn {
             reference_name_from_url(&s.url)
         } else {
             match manifest.get(&s.url) {
@@ -245,18 +262,28 @@ fn main() {
 
     let mut netloc_of_source: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     for s in &sources {
-        if let Some(netloc) = extract_netloc(&s.url) {
-            netloc_of_source
-                .entry(netloc.to_string())
-                .or_default()
-                .insert(s.url.clone());
-        }
-        if let Some(origin) = &s.origin {
-            for netloc in origin_netlocs(origin) {
+        match cdn_tag_from_url(&s.url) {
+            Some(tag) => {
                 netloc_of_source
-                    .entry(netloc)
+                    .entry(tag.to_string())
                     .or_default()
                     .insert(s.url.clone());
+            }
+            None => {
+                if let Some(netloc) = extract_netloc(&s.url) {
+                    netloc_of_source
+                        .entry(netloc.to_string())
+                        .or_default()
+                        .insert(s.url.clone());
+                }
+                if let Some(origin) = &s.origin {
+                    for netloc in origin_netlocs(origin) {
+                        netloc_of_source
+                            .entry(netloc)
+                            .or_default()
+                            .insert(s.url.clone());
+                    }
+                }
             }
         }
     }
@@ -364,7 +391,9 @@ fn main() {
             .iter()
             .filter(|exp| {
                 !actual.contains(exp.as_str())
-                    && actual.iter().any(|a| shard_base(a) == Some(exp.as_str()))
+                    && actual
+                        .iter()
+                        .any(|a| shard_base(a).as_deref() == Some(exp.as_str()))
             })
             .cloned()
             .collect();
@@ -380,7 +409,7 @@ fn main() {
         }
         for act in &actual {
             let explained = canonical.contains(act)
-                || shard_base(act).is_some_and(|b| canonical.contains(b))
+                || shard_base(act).is_some_and(|b| canonical.contains(b.as_str()))
                 || (is_manifest(act) && !sharded.is_empty());
             if !explained {
                 let mut row = BTreeMap::new();
@@ -480,6 +509,34 @@ mod tests {
         assert_eq!(
             release_tag_netloc("ssd.jpl.nasa.gov"),
             ("ssd.jpl.nasa.gov", false)
+        );
+    }
+
+    #[test]
+    fn cdn_tag_from_url_extracts_the_release_tag() {
+        assert_eq!(
+            cdn_tag_from_url(
+                "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de440_earth.bin"
+            ),
+            Some("ssd.jpl.nasa.gov-de")
+        );
+        assert_eq!(
+            cdn_tag_from_url(
+                "https://github.com/omegaflow/sources/releases/download/noaa-goes18/glm_l2.bin"
+            ),
+            Some("noaa-goes18")
+        );
+    }
+
+    #[test]
+    fn cdn_tag_from_url_ignores_direct_urls() {
+        assert_eq!(
+            cdn_tag_from_url("https://api.open-meteo.com/v1/forecast"),
+            None
+        );
+        assert_eq!(
+            cdn_tag_from_url("https://github.com/omegaflow/sources/releases/download//x.bin"),
+            None
         );
     }
 }
