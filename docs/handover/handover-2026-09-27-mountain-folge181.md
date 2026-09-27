@@ -3,7 +3,7 @@
   session: Mountain-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 5a7a31cdbbbdd4d6e269d979842ced23c08d4dca7a2ea9b872adc399f024c8ab
+  sha256: b85217457301303cec5bbd69bc9009d16b6756975a3d46148e11b03392518c90
   status: live
 -->
 # Handover — Mountain-Folge 181 (2026-09-27)
@@ -31,7 +31,8 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
   fehlenden Releases entscheiden — `ssd.jpl.nasa.gov-dcom5` (dcom5-Blöcke),
   `ssd.jpl.nasa.gov-icecat`, `ssd.jpl.nasa.gov-weberin`,
   `ned.ipac.caltech.edu-byparams`, `noaa-nos-coastal-lidar-pds.s3.amazonaws.com`
-  — Manifestation (CI-Lauf) oder Verdikt; (c) 20 Residue-Tags entscheiden:
+  — Manifestation oder Verdikt (der Manifestations-Dispatch je `accept` liegt
+  bei Mycelium, `mycelium-folge179`); (c) 20 Residue-Tags entscheiden:
   `ps1-dr2-{560…2400}` (11, in `phi/footprints.φ:18` benannt, keine
   Register-Zeile), `ssd.jpl.nasa.gov-{horizons,korpora,laic,ps1,signal-cone,
   sky-crossmatch,spk}` (7), `rave-survey.org`, `srdata.nist.gov`.
@@ -65,10 +66,11 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
   Spiegel, nicht dem Block-`url`. Riss: `phi/declined_sources.φ` declinet
   denselben PADC-Host (keine Weitergabe-Erlaubnis).
 - **Blockade:** keine.
-- **Braucht:** Verdikt — Block auf das CDN-Muster umbauen (`url` = Asset,
-  `origin` = Live-TAP, `compiler`, `sha256`; Manifestations-Direktiven =
-  Mycelium-Domäne) **oder** gemäß `declined_sources.φ` disposal; `format tap`
-  konsumiert `sha256` heute nicht (port.rs prüft nur `format reference`).
+- **Braucht:** Verdikt — den Block gemäß `declined_sources.φ` disposal **oder**
+  als `source` zulassen; die **Manifestations-Direktiven** (`url` = Asset,
+  `origin` = Live-TAP, `compiler`, `sha256`) trägt **Mycelium**
+  (`mycelium-folge179`, getragen 2026-09-27). `format tap` konsumiert `sha256`
+  heute nicht (port.rs prüft nur `format reference`).
 
 ### clippy `-D warnings`-Wand (ci-check am HEAD)
 - **Status:** wartend | **Bindung:** eigen
@@ -77,15 +79,17 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
   Pass nennt Mountain als Träger der clippy-Wand (`aia.rs`, `ble.rs`, `eve.rs`,
   `hdf4.rs`, `channels.rs`, `extract.rs`).
 - **Blockade:** Log noch nicht lesbar (Lauf pending).
-- **Braucht:** `ci_manage log 36310976945` am HEAD lesen; je Datei-Owner heilen
-  (kein lokales clippy).
+- **Braucht:** `ci_manage log 36310976945` am HEAD lesen; **je Datei-Owner**
+  heilen (kein lokales clippy) — gemessen fremd: `src/archivar/extract.rs`
+  → Mycelium (`mycelium-folge179`), `src/archivar/ble.rs` → Sensory
+  (`sensory-folge183`); `aia.rs`/`eve.rs`/`hdf4.rs`/`channels.rs` bleiben Mountain.
 
 ## Operator-Wort-Register
 
 Wort | Datum | Quelle
 --- | --- | ---
-Sony RX100 V (P6) auf `LOCK` — K-Beschaffung erst nach Förderung | 2026-09-27 | Operator (Session)
 UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | 2026-09-27 | Operator (Session)
+(Beschaffungs-LOCKs RX100/Mantis/ESP32-Brustgurt liegen allein in Future's Operator-Queue — als Kopie hier entfernt 2026-09-27.)
 D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session)
 
 ## Abschluss
