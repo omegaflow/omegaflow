@@ -239,10 +239,7 @@ pub fn uws_poll(
         let spent = waited + step_s;
         if spent > budget_s {
             let last = uws_phase(job, headers);
-            let last_name = match last.as_deref() {
-                Some(p) => p,
-                None => "void",
-            };
+            let last_name = last.as_deref().unwrap_or("void");
             eprintln!("uws poll: phase {last_name} after {spent} s — the job stays unharvested");
             return None;
         }
