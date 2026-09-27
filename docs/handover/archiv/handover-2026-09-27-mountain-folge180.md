@@ -73,6 +73,18 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
 - **Blockade:** keine.
 - **Braucht:** Asset-`sha256` in `phi/sources.φ:10212` nachtragen.
 
+### Archivar-Doku — `force_type`-Offset widersprüchlich (Riss, getragen von Sensory 2026-09-27)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner — Doku-Riss im eigenen Konzept.
+- **Lage:** (gemessen 2026-09-27 via `sread`/`sgrep`) `docs/concepts/archivar-mathematikerin.md:74`
+  verortet `force_type` im „JS `meta` packer at offset 2"; gemessen liegt es in
+  `static/constants.js:126` (`field[f+6]`) = `field[id*3+1].z`
+  (`src/mathematikerin/shaders.rs:182`); meta-Offset 2 ist `kernelId`
+  (`static/constants.js:136`). `:74` widerspricht `:53`/`:60` desselben Dokuments.
+- **Blockade:** keine.
+- **Braucht:** `:74` auf den gemessenen Ort ziehen (`field`-Offset 6) oder als
+  Verweis auf `:53`/`:60` formulieren.
+
 ## Operator-Wort-Register
 
 Wort | Datum | Quelle
