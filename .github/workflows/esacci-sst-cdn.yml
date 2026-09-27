@@ -1,0 +1,40 @@
+name: esacci-sst-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: civil day to compile (YYYY-MM-DD)
+        required: true
+        type: string
+        default: "2000-01-01"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  esacci-sst:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.ceda.ac.uk-eocis-sst release exists on the CDN
+        run: |
+          gh release view data.ceda.ac.uk-eocis-sst --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create data.ceda.ac.uk-eocis-sst --repo omegaflow/sources \
+                 --title "data.ceda.ac.uk-eocis-sst" \
+                 --notes "ESA CCI SST L4 CDR v3.0.1 (OSTIA) compiled to global SST cells. Record stride 64 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), alt/freq/bin_width (pad), val (f64, K), comp (u32, 1 = esacci_sst_l4_cdr3). Source: dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1."
+      - name: Build the esacci_sst compiler
+        run: cargo build -p omegaflow-harvest --release --bin esacci_sst_compiler
+      - name: Compile the SST day and manifest it to the CDN
+        run: |
+          ./target/release/esacci_sst_compiler \
+            --date "${{ inputs.date }}" \
+            --out esacci_sst.bin \
+            --ci-mode
