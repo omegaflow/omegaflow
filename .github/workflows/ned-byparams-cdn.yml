@@ -1,0 +1,126 @@
+name: ned-byparams-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      dec_step:
+        description: declination band step in degrees (180 / step bands)
+        required: false
+        default: '1.0'
+  schedule:
+    - cron: '37 * * * *'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - name: Gate on the timeout token
+        id: check
+        env:
+          TOKEN: ${{ secrets.NED_BYPARAMS_TIMEOUT_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  sweep:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      NED_BYPARAMS_TIMEOUT_TOKEN: ${{ secrets.NED_BYPARAMS_TIMEOUT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the ByParams compiler
+        run: cargo build -p omegaflow-harvest --release --bin ned_byparams_compiler
+      - name: Ensure the ned.ipac.caltech.edu-byparams release exists on the CDN
+        run: |
+          if ! gh release view ned.ipac.caltech.edu-byparams --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ned.ipac.caltech.edu-byparams --repo omegaflow/sources \
+              --title "ned.ipac.caltech.edu-byparams" \
+              --notes "NED ByParams declination-band redshift harvest (VOTable/TD) packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Resumable declination-band sweep
+        run: |
+          set -uo pipefail
+          STEP="${NED_DEC_STEP:-1.0}"
+          RELEASE="ned.ipac.caltech.edu-byparams"
+          REPO="omegaflow/sources"
+          BIN="$(pwd)/target/release/ned_byparams_compiler"
+          if ! TOTAL="$("$BIN" --count --dec-step "$STEP")"; then
+            echo "band count void — the run stays open"
+            exit 1
+          fi
+          echo "band total=${TOTAL} (dec-step ${STEP} deg)"
+          deadline=$(( $(date +%s) + 2600 ))
+          mkdir -p parts
+
+          list_assets() {
+            gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '.assets[].name' 2>/tmp/gh_listing.err
+          }
+
+          if ! assets=$(list_assets); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+
+          i=0
+          while [ "$i" -lt "$TOTAL" ]; do
+            remaining=$(( deadline - $(date +%s) ))
+            [ "$remaining" -le 60 ] && break
+            part=$(printf 'ned_byparams_band_%03d.json' "$i")
+            if printf '%s\n' "$assets" | grep -qx "$part"; then
+              i=$(( i + 1 ))
+              continue
+            fi
+            echo "=== harvesting band ${i} ==="
+            if ! "$BIN" --index "$i" --dec-step "$STEP" --lattice 1024 \
+                --max-poll "$remaining" --out "$part" --ci-mode; then
+              echo "band ${i} void — the next run retries it"
+              break
+            fi
+            assets="${assets}"$'\n'"${part}"
+            i=$(( i + 1 ))
+          done
+
+          if ! present=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(startswith("ned_byparams_band_"))] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          if ! has_final=$(gh release view "$RELEASE" --repo "$REPO" --json assets \
+              --jq '[.assets[].name | select(.=="ned_byparams_redshift.json")] | length' 2>/tmp/gh_listing.err); then
+            echo "release listing void: $(cat /tmp/gh_listing.err 2>/dev/null)"
+            exit 1
+          fi
+          echo "bands present: ${present}/${TOTAL}, ned_byparams_redshift.json present: ${has_final}"
+          if [ "${present:-0}" -eq "$TOTAL" ] && [ "${has_final:-0}" = 0 ]; then
+            echo "=== combining ==="
+            mkdir -p parts
+            gh release download "$RELEASE" --repo "$REPO" \
+              --pattern 'ned_byparams_band_*.json' --dir parts --clobber
+            jq -s 'add | unique_by([.cell, .rank])' parts/ned_byparams_band_*.json \
+              > ned_byparams_redshift.json
+            gh release upload "$RELEASE" ned_byparams_redshift.json --clobber --repo "$REPO"
+            echo "ned_byparams_redshift.json uploaded: $(jq 'length' ned_byparams_redshift.json) objects"
+          fi
+        env:
+          NED_DEC_STEP: ${{ inputs.dec_step || '1.0' }}

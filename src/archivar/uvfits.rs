@@ -244,7 +244,16 @@ pub const BEAT_BIN_MAGIC: [u8; 4] = [0xCF, 0x86, 0x0B, 0x00];
 const BEAT_BIN_ROW: usize = 45;
 
 fn rd_f64(b: &[u8], o: usize) -> f64 {
-    f64::from_le_bytes([b[o], b[o + 1], b[o + 2], b[o + 3], b[o + 4], b[o + 5], b[o + 6], b[o + 7]])
+    f64::from_le_bytes([
+        b[o],
+        b[o + 1],
+        b[o + 2],
+        b[o + 3],
+        b[o + 4],
+        b[o + 5],
+        b[o + 6],
+        b[o + 7],
+    ])
 }
 
 pub fn write_beat_bin(rows: &[TnfPhaseRow]) -> Vec<u8> {
@@ -288,12 +297,7 @@ pub fn parse_beat_bin(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
         let phase = rd_f64(bytes, o + 17);
         let freq = rd_f64(bytes, o + 25);
         let bin_width = rd_f64(bytes, o + 33);
-        let comp = u32::from_le_bytes([
-            bytes[o + 41],
-            bytes[o + 42],
-            bytes[o + 43],
-            bytes[o + 44],
-        ]);
+        let comp = u32::from_le_bytes([bytes[o + 41], bytes[o + 42], bytes[o + 43], bytes[o + 44]]);
         o += BEAT_BIN_ROW;
         if !t.is_finite() || !value.is_finite() {
             return None;

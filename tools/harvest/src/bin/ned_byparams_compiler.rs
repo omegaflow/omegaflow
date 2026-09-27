@@ -644,10 +644,7 @@ fn main() {
                 i += 1;
             }
             "--output-format" => {
-                output_options = args
-                    .get(i + 1)
-                    .cloned()
-                    .unwrap_or("VOTABLE/TD".to_string());
+                output_options = args.get(i + 1).cloned().unwrap_or("VOTABLE/TD".to_string());
                 i += 1;
             }
             "--max-poll" => {
