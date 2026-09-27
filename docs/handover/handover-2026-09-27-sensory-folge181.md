@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 59082e38d61f7ce352a02740f805da8df37b03cd20f9d90285aef0f96f087b6a
+  sha256: 7e583319afb02adf78b285d6b34d65053e14694ca4174ed59a69177a2c54ee9b
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -50,7 +50,7 @@ getrackt, nie am CDN.
 ## Abarbeitbar (eigen, dispatchbar)
 
 ### 3. O1 DEMETER/CDPP — Quelle scheitert (Riss)
-- **Status:** blockiert | **Bindung:** dritter | **Trigger:** CDPP-DEMETER-Pipeline erholt sich
+- **Status:** wartend | **Bindung:** dritter | **Trigger:** CDPP-Antwort auf die Mail (2026-09-27)
 - **Lage:** (gemessen 2026-09-27) metalink gesichert
   (`data/cdpp-archive.cnes.fr/metalink_18387.xml`, 97 078 URLs). **Aber:** die File-URLs
   weist der F5-WAF ab — curl/sfetch/Proton, mit vollem Browser-Header-Satz **und die
@@ -103,11 +103,6 @@ getrackt, nie am CDN.
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
-- **CDPP-Mail DEMETER** | operator (Mensch) | Trigger: Operator-Wort | Lage: Entwurf
-  bereit — `state/mail/cdpp-demeter-order-18387.md` + Body
-  `state/mail/cdpp-demeter-order-18387.body.txt` (`smail --dry-run` grün, 4/4 QUELLEN
-  resolvieren) | Braucht: Operator liest den Entwurf und sendet selbst (kein
-  `smail --send`; Human-Threshold).
 - **RR-Kanal / Beat-to-beat** | operator | Trigger: Förderung gewährt (2026-09-26) |
   Lage: BLE-HR ohne RR; FIT `nn=0` | Braucht: Brustgurt (Polar H10/HRM-Dual) →
   `perm_tone_probe`.
@@ -125,6 +120,9 @@ getrackt, nie am CDN.
 
 ## Abgeschlossen / gemessen geschlossen (Befund)
 
+- **CDPP-Mail DEMETER** — gesendet (2026-09-27, Operator aus `code@omegaflow.space`);
+  Entwurf `state/mail/cdpp-demeter-order-18387.md`, Ledger `state/mail/mail_ledger.φ`
+  (Mail 4/4 QUELLEN resolviert). Antwort ist ein Wiedervorlage-Trigger, kein Ping.
 - **#1 Funken-Probe** — gemessen (run `36277987363`): Funke 5 (TDB/Rømer) `separated`
   (−900.883944 s gg. 60 s); Funke 3 (Broker-Differenz) `pending` (nur fink erreichbar,
   absent; lasair 401, alerce 404). Eingetragen in `fuenf-funken-anomalie-suche.md`.
