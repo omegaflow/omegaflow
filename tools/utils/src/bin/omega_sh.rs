@@ -1,3 +1,5 @@
+use omegaflow::json::{JsonVal, jpath_val, parse_json};
+use std::collections::BTreeSet;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -20,6 +22,7 @@ fn main() {
             None => usage(),
         },
         "check" => check(),
+        "perms" => perms(args.get(2).map(|s| s.as_str())),
         "help" | "-h" | "--help" => usage(),
         other => {
             eprintln!("omega_sh: unknown subcommand '{}'", other);
@@ -37,6 +40,7 @@ fn usage() {
     eprintln!("  jwst     the jwst_spectra.bin CDN watch");
     eprintln!("  sha <f>  sha256 over the body without the <!-- … --> header");
     eprintln!("  check    cargo check, summarised as error/warning counts");
+    eprintln!("  perms [<agent>]  forbidden leading form → canonical replacement (from opencode.json)");
 }
 
 fn sha(path: &str) {
@@ -313,6 +317,154 @@ fn jwst_verdict(status: &str) -> &'static str {
     if status == "200" { "DA" } else { "absent" }
 }
 
+fn repo_root() -> PathBuf {
+    if let Ok(r) = env::var("OMEGAFLOW_REPO") {
+        if !r.is_empty() {
+            return PathBuf::from(r);
+        }
+    }
+    let mut dir = match env::current_dir() {
+        Ok(d) => d,
+        Err(_) => return PathBuf::from("."),
+    };
+    loop {
+        if dir.join("opencode.json").is_file() {
+            return dir;
+        }
+        match dir.parent() {
+            Some(p) => dir = p.to_path_buf(),
+            None => return PathBuf::from("."),
+        }
+    }
+}
+
+fn load_config() -> Option<JsonVal> {
+    let text = fs::read_to_string(repo_root().join("opencode.json")).ok()?;
+    parse_json(&text)
+}
+
+fn norm_pattern(p: &str) -> String {
+    let s: String = p.chars().filter(|c| !c.is_whitespace() && *c != '`').collect();
+    let s = match s.strip_prefix("*/") {
+        Some(rest) => rest.to_string(),
+        None => s.trim_start_matches('*').to_string(),
+    };
+    s.chars().filter(|c| *c != '*').collect()
+}
+
+const DENY_REPLACEMENTS: &[(&str, &str)] = &[
+    ("ls", "glob <pattern>"),
+    ("grep", "sgrep [-i] [-l] [-c] <pattern> [dir] | archive_search <kw> --root <dir>"),
+    ("rg", "sgrep"),
+    ("cat", "sread <file> [--offset N --limit M] | the read tool"),
+    ("cd", "the bash workdir parameter"),
+    ("python", "Rust (no Python in this repo)"),
+    ("python3", "Rust (no Python in this repo)"),
+    ("sed-i", "the edit tool"),
+    ("rustc", "build via cargo"),
+    ("cargo", "cargo check | cargo fmt -- <path> | cargo build -p <crate> --bin <name> | cargo run -p <crate> --bin <name>"),
+    ("ghrunlist", "ci_manage list"),
+    ("ghrunview", "ci_manage view <id> | ci_manage log <id>"),
+    ("ghrundelete", "never — a deleted run takes the measurement series"),
+    ("ghrunwatch", "no polling — ci_manage view <id> once"),
+    ("gitreset", "never (destructive)"),
+    ("gitcheckout", "never (destructive)"),
+    ("gitclean", "never (destructive)"),
+    ("gitrebase", "never (destructive)"),
+    ("gitstash", "never (destructive)"),
+    ("gitrestore", "never (destructive)"),
+    ("gitswitch", "never (destructive)"),
+    ("gitpush--force", "never (force)"),
+    ("gitpush-f", "never (force)"),
+    ("watch", "no polling"),
+    ("sleep", "no polling"),
+    ("inotifywait", "no polling"),
+    ("entr", "no polling"),
+    ("while", "no polling"),
+    ("until", "no polling"),
+    ("tail-f", "no polling — tail without -f is read-only"),
+    ("journalctl-f", "no polling"),
+    ("--watch", "no polling"),
+    ("smail--send", "never from the machine — the send is the operator's hand"),
+];
+
+fn replacement_for(pattern: &str) -> &'static str {
+    let n = norm_pattern(pattern);
+    let mut best: Option<(&'static str, usize)> = None;
+    for (tok, repl) in DENY_REPLACEMENTS {
+        let t = norm_pattern(tok);
+        if n == t || (n.starts_with(&t) && t.len() > 1) {
+            if best.map(|(_, l)| t.len() > l).unwrap_or(true) {
+                best = Some((repl, t.len()));
+            }
+        }
+    }
+    best.map(|(r, _)| r).unwrap_or("—")
+}
+
+fn add_bash_deny(v: Option<&JsonVal>, out: &mut BTreeSet<String>) {
+    if let Some(JsonVal::Obj(map)) = v {
+        for (pat, act) in map {
+            if matches!(act, JsonVal::Str(s) if s == "deny") {
+                out.insert(pat.clone());
+            }
+        }
+    }
+}
+
+fn all_deny(cfg: &JsonVal) -> BTreeSet<String> {
+    let mut out = BTreeSet::new();
+    add_bash_deny(jpath_val(cfg, "permission.bash"), &mut out);
+    if let Some(JsonVal::Obj(agents)) = jpath_val(cfg, "agent") {
+        for (_name, a) in agents {
+            add_bash_deny(jpath_val(a, "permission.bash"), &mut out);
+        }
+    }
+    out
+}
+
+fn print_bash_layer(name: &str, v: Option<&JsonVal>) {
+    let mut pats: Vec<String> = Vec::new();
+    if let Some(JsonVal::Obj(map)) = v {
+        for (pat, act) in map {
+            if matches!(act, JsonVal::Str(s) if s == "deny") {
+                pats.push(pat.clone());
+            }
+        }
+    }
+    pats.sort();
+    println!("\n## {}  ({} deny)", name, pats.len());
+    for p in &pats {
+        println!("  {:<22} → {}", p, replacement_for(p));
+    }
+}
+
+fn perms(agent: Option<&str>) {
+    let cfg = match load_config() {
+        Some(c) => c,
+        None => {
+            eprintln!("omega_sh: opencode.json absent — pending (no silent zero)");
+            std::process::exit(2);
+        }
+    };
+    let union = all_deny(&cfg);
+    let scope = match agent {
+        Some(a) => format!("agent {}", a),
+        None => String::from("global"),
+    };
+    println!("opencode.json — forbidden leading form → canonical replacement ({scope})");
+    println!("distinct deny patterns (global + all agents): {}", union.len());
+    print_bash_layer("global permission.bash", jpath_val(&cfg, "permission.bash"));
+    if let Some(a) = agent {
+        let path = format!("agent.{}.permission.bash", a);
+        print_bash_layer(&format!("agent {} permission.bash", a), jpath_val(&cfg, &path));
+    }
+    println!("\n## Ersatz-Karte");
+    for (tok, repl) in DENY_REPLACEMENTS {
+        println!("  {:<16} → {}", tok, repl);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -354,6 +506,55 @@ mod tests {
         assert_eq!(check_counts(text), (1, 0));
         let text =
             "warning: unused import\n --> src/x.rs\nwarning: `c` (bin \"x\") generated 1 warning\n";
-        assert_eq!(check_counts(text), (0, 1));
+        assert_eq!(check_counts(&text), (0, 1));
+    }
+
+    #[test]
+    fn gate_perms_matches_config() {
+        let cfg = load_config().expect("opencode.json parses");
+        let denied = all_deny(&cfg);
+        for tok in [
+            "ls", "grep", "cat", "rg", "cd", "python", "python3", "sed -i", "rustc", "cargo",
+            "gh run list", "gh run view", "git reset", "watch", "sleep",
+        ] {
+            let t = norm_pattern(tok);
+            assert!(
+                denied.iter().any(|p| norm_pattern(p) == t),
+                "opencode.json must deny `{}`",
+                tok
+            );
+        }
+        let doc = fs::read_to_string(repo_root().join("docs/concepts/tool-forms.md"))
+            .expect("docs/concepts/tool-forms.md");
+        for t in doc_forbidden_tokens(&doc) {
+            assert!(
+                denied.iter().any(|p| norm_pattern(p) == t),
+                "tool-forms.md token `{}` is not denied in opencode.json",
+                t
+            );
+        }
+    }
+
+    fn doc_forbidden_tokens(doc: &str) -> BTreeSet<String> {
+        let mut out = BTreeSet::new();
+        for line in doc.lines() {
+            let line = line.trim();
+            if !line.starts_with("| `") {
+                continue;
+            }
+            let cell = line.trim_matches('|').split('|').next().unwrap_or("");
+            let mut rest = cell;
+            while let Some(a) = rest.find('`') {
+                let after = &rest[a + 1..];
+                match after.find('`') {
+                    Some(b) => {
+                        out.insert(norm_pattern(&after[..b]));
+                        rest = &after[b + 1..];
+                    }
+                    None => break,
+                }
+            }
+        }
+        out
     }
 }

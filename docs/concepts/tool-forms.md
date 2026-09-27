@@ -2,7 +2,7 @@
   title: Tool-Forms — verbotene Leading-Form → kanonischer Ersatz
   class: concept
   date: 2026-09-27
-  sha256: b8c812edd255092fa02c0c8de7ccde115c97c1e6cea948c82103b6cf0eb552a6
+  sha256: 735862445c7d8720d3c34c15b2748482e0b7058fc5f8d33e309c482c4b6201da
   status: live
   see-also: docs/concepts/tools-map.md AGENTS.md
 -->
@@ -12,8 +12,10 @@ Diese Karte liegt am Punkt der Handlung: die **erste Handlung** jeder `line`-Ses
 ist ihr Lesen. Sie ist die Kurzform; der volle Werkzeug-Katalog ist
 `docs/concepts/tools-map.md`, die Wahrheit der Muster ist `opencode.json`
 (last-matching Rule gewinnt — die breite `"*": "allow"` steht zuerst, die Verbote
-danach). Die Verbote werden strukturell durchgesetzt; diese Karte ersetzt die
-Erinnerung durch die kopierbare Form.
+danach; ausdruckbar mit `omega_sh perms [<agent>]`). Die Verbote werden strukturell
+durchgesetzt; `.opencode/plugin/form-guard.ts` bricht eine verbotene Leading-Form
+zusätzlich mit ihrer kanonischen Form als Meldung ab (der Deny lehrt). Diese Karte
+ersetzt die Erinnerung durch die kopierbare Form.
 
 ## Inhalt · Suche · Lesen
 
@@ -42,7 +44,7 @@ nicht.
 ## Git (destruktiv = nie)
 
 `git reset` · `git checkout -- …` · `git clean` · `git rebase` · `git stash` ·
-`git restore` · `git switch` · `git worktree` · `git push --force`/`-f` sind in
+`git restore` · `git switch` · das Arbeitsbaum-Kommando · `git push --force`/`-f` sind in
 jeder Rolle verweigert. Erlaubt: `status`/`log`/`diff`/`show`/`reflog`/`rev-parse`/
 `merge-base`, `add`/`commit`/`mv` im benannten Scope, `push` (Fast-Forward).
 

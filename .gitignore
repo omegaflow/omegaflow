@@ -19,6 +19,10 @@ omegaflow.wasm
 !.opencode/tui/
 .opencode/tui/*
 !.opencode/tui/line-new.ts
+# Server-Plugin: der Deny lehrt (verbotene Leading-Form → kanonische Form als Meldung).
+!.opencode/plugin/
+.opencode/plugin/*
+!.opencode/plugin/form-guard.ts
 *.pdb
 phi/health.json
 phi/kernels/
