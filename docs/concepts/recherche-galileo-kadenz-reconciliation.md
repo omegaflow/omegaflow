@@ -89,14 +89,21 @@ kein Reduktions-/Archivschritt. Die Reduktion kopiert die Zählungen 1:1.
   kein 60-s-Schritt (TRK-2-25-Text, in-volume).
 - TRK-2-18 (ODF, 1988-01-15) definiert den Doppler-Zeittag in der Mitte des
   Compression-Intervalls; das Intervall steckt in den Counts, nicht in der Reduktion
-  (`of-legacy/docs/reference/dsn_trk-2-18.1988-01-15.txt:691-696`).
+  (`docs/reference/dsn_trk-2-18.1988-01-15.txt:691-696`).
 - Pollmeier & Thurman, TDA PR 42-110 (NASA NTRS 19930010226, „Application of
-  High-Precision Two-Way Ranging to Galileo Earth-1 Encounter Navigation") dokumentiert
-  die Earth-1-Kampagnen-Doppler explizit mit „(60-sec count time)".
-- DSMS Services Catalog v7.5 (Wallace S. Tai), zitiert im Pioneer-LRR
-  (`of-legacy/docs/paper/pioneer-anomaly-lrr-2010-4.txt:2730-2734`): die Zählzeit ist ein
-  „user-specified count interval", typisch 10–60 s.
+  High-Precision Two-Way Ranging to Galileo Earth-1 Encounter Navigation") nennt zwei
+  Zählzeiten derselben Kampagne: die akquirierten Earth-1-Doppler-Punkte mit
+  600-s-count-time, die Gewichte der Navigationslösungen referenziert auf
+  60-s-count-time (`docs/reference/19930010226.txt:1232`, `:1347-1352`).
+- DSMS Services Catalog v7.5 (Wallace S. Tai, JPL D-19002), zitiert im Pioneer-LRR
+  (`docs/paper/pioneer-anomaly-lrr-2010-4.txt:2983-2987`): die Zählzeit ist ein
+  „user-specified count interval", der Nutzer setzt sie (0,1 s bis Minuten), „10 to
+  60 seconds are typical"; die Ranging-Modulation wird nur „if ranging data are
+  required" zugesetzt — die Doppler-Zählkette läuft unabhängig vom Ranging-Modus.
 
-`pending`: ob die 60 s als eigener Track-Parameter der Kampagne gesetzt wurden oder an
-den Ranging-Modus gekoppelt waren. Nächste Suche: DSMS Services Catalog v7.5, Abschnitt
-„Doppler count interval"; alternativ TDA-PR-Band 42-109/42-111 (NTRS 19930010224).
+Aufgelöst (gemessen 2026-09-27): die Zählzeit ist ein eigener, benutzerspezifizierter
+Track-Parameter des Doppler-Datenstroms, nicht an den Ranging-Modus gekoppelt
+(DSMS-Katalog via Pioneer-LRR; zwei verschiedene Zählzeiten in derselben
+Earth-1-Kampagne sind der direkte Gegenbeweis). Das DSMS-Katalog-Original selbst ist
+öffentlich nicht erreichbar (NTRS absent); der Wortlaut läuft über die
+`[88]`-Zitierung im LRR.
