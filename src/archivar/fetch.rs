@@ -806,6 +806,7 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                             key_found = true;
                         }
                     }
+                    Extract::Volume { .. } => {}
                 }
             }
             if let Some(data) = columnar_envelope(&j) {

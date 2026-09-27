@@ -206,6 +206,14 @@ pub enum Extract {
         pressure_scale: f64,
         fields: Vec<FieldConfig>,
     },
+    Volume {
+        value_key: String,
+        lat_key: String,
+        lon_key: String,
+        depth_key: String,
+        depth_scale: f64,
+        name: String,
+    },
     Rows {
         last_line: bool,
         lat_key: String,

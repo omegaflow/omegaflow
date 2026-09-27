@@ -139,7 +139,7 @@ pub struct OmegaLoop {
     pub vol_cell_buf: Option<wgpu::Buffer>,
     pub vol_u_buf: Option<wgpu::Buffer>,
     pub shelf_buf: Option<wgpu::Buffer>,
-    pub vol_fingerprint: Option<(usize, usize)>,
+    pub vol_fingerprint: Option<(usize, usize, usize, usize)>,
     pub prep_param_buf: Option<wgpu::Buffer>,
     pub te_pipe: Option<wgpu::ComputePipeline>,
     pub te_bind: Option<wgpu::BindGroup>,
@@ -750,6 +750,16 @@ impl OmegaLoop {
         let fp = (
             volumes.len(),
             volumes.iter().map(|v| v.data.len()).sum::<usize>(),
+            volumes.iter().map(|v| v.mask.len()).sum::<usize>(),
+            volumes
+                .iter()
+                .map(|v| {
+                    v.mask
+                        .iter()
+                        .map(|b| b.count_ones() as usize)
+                        .sum::<usize>()
+                })
+                .sum::<usize>(),
         );
         if self.vol_fingerprint == Some(fp) {
             return;
@@ -760,9 +770,10 @@ impl OmegaLoop {
         let Some(queue) = self.queue.clone() else {
             return;
         };
-        let mut head: Vec<u32> = Vec::with_capacity(volumes.len() * 10);
+        let mut head: Vec<u32> = Vec::with_capacity(volumes.len() * 11);
         let mut axis: Vec<f32> = Vec::new();
         let mut cell: Vec<f32> = Vec::new();
+        let mut mask: Vec<u32> = Vec::new();
         for v in volumes {
             let data_off = cell.len() as u32;
             let mut kinds = [0u32; 3];
@@ -777,14 +788,23 @@ impl OmegaLoop {
                     axis.push(val as f32);
                 }
             }
+            let mask_off = mask.len() as u32;
+            for w in v.mask.chunks(4) {
+                let mut x = [0u8; 4];
+                x[..w.len()].copy_from_slice(w);
+                mask.push(u32::from_le_bytes(x));
+            }
             head.extend_from_slice(&[
                 data_off, v.dims[0], v.dims[1], v.dims[2], kinds[0], kinds[1], kinds[2], offs[0],
-                offs[1], offs[2],
+                offs[1], offs[2], mask_off,
             ]);
             cell.extend_from_slice(&v.data);
         }
-        let mut head_bytes = Vec::with_capacity(head.len() * 4);
+        let mut head_bytes = Vec::with_capacity(head.len() * 4 + mask.len() * 4);
         for &w in &head {
+            head_bytes.extend_from_slice(&w.to_le_bytes());
+        }
+        for &w in &mask {
             head_bytes.extend_from_slice(&w.to_le_bytes());
         }
         let axis_bytes = le_bytes_f32(&axis);
