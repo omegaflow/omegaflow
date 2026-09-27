@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the pre-registration (Operation Ⅵ)
   class: paper
   date: 2026-08-22
-  sha256: 502e06c3d9b0b66652552973e612d514dc82fac293d0453beae7e27933be2f01
+  sha256: 0ed15f81d839c5710954e803354d4d29aa2f48b94c803094ea4ca1887a327002
   status: live
   see-also: docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
@@ -54,3 +54,17 @@ Kp-route removal are carried in the addendum §"Chain readiness".
 The Doppler residuals. The verdict: the agreement of the measured
 field state with the pre-registered one — the first pre-registered
 astrophysical experiment whose prediction is a field state.
+
+## Addendum — the renewed trajectory (named 2026-09-27)
+
+The flattener renewed the JUICE orbit before the flight. The CDN
+`ephemeris_juice.bin` now carries sha256
+`eee376effcb4def668a61d47ab7ea2e6f7b0b7cc3f884ea6634997349d4389b5`
+(538 696 B); the seal registered
+`aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a`
+(§"The seal"). The renewed version is named here, as the seal clause
+requires. Reason: the prediction was propagated after tracking data up
+to 2026-09-16 (measured 2026-09-27). The riss between the sealed hash
+and the CDN hash is carried, never averaged: `flyby_path2_fill`
+prints both hashes and builds no tube from the unsealed arc until the
+operator names the renewed orbit as the trajectory.
