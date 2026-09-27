@@ -3,7 +3,7 @@
   session: Mountain-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: 1312d55fbe19f96455cd28b39dbd6d182541991e64454cad84f6e17c57ef7daa
+  sha256: d4a3a71a5953340bc7db511012e5c5bf4a65abb471f68287626d3196b8b009ad
   status: live
 -->
 # Handover — Mountain-Folge 184 (2026-09-27)
@@ -23,6 +23,7 @@ D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abar
 „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session)
 ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session)
 RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session)
+Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session)
 
 ## Offen (aufgeschlüsselt)
 
@@ -42,9 +43,13 @@ RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXI
 ### rx100_luminance — CDN-Manifestation (`asset fehlt`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein reales RX100-JPEG + `rx100_compiler --jpeg`-Lauf.
-- **Lage:** (gemessen 2026-09-27 via `sgrep`/`sread`) `phi/harvest.φ:233` `asset fehlt`;
-  die Band-Deklaration steht (`phi/sources.φ:122` → `… 60 0.0 0.0 5.45e14 3.2e14`),
-  der EXIF-Compiler-Pfad ist gebaut (River `c04e00871`). K=12.5 bleibt ISO-2720-Vorgabe, ungemessen.
+- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict` + GitHub-API + `sread`)
+  der Asset-URL `…/sony-camera-remote/rx100_luminance.bin` liefert live HTTP 404 (Stufen 1–3),
+  das Release-Tag `sony-camera-remote` existiert nicht (API 404) — `phi/harvest.φ:233`
+  `asset fehlt` ist echt und erwartet; `harvest.yml` klassifiziert die CI-Abwesenheit
+  (`absent=true`, run `36323640789` success). Band-Deklaration steht (`phi/sources.φ:122` →
+  `… 60 0.0 0.0 5.45e14 3.2e14`), EXIF-Compiler-Pfad gebaut (River `c04e00871`).
+  K=12.5 bleibt ISO-2720-Vorgabe, ungemessen.
 - **Blockade:** kein reales Capture (Operator-/Sensor-Hand); kein Referenz-Luminanzmeter.
 - **Braucht:** bei Capture den Compiler-Lauf + CDN-Manifestation (die `url`-Zeile `phi/sources.φ:117` steht).
 
