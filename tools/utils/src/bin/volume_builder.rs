@@ -1,7 +1,9 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
+use omegaflow::archivar::channels::build_netcdf4_volume;
+use omegaflow::archivar::types::{Extract, Frame, SourceConfig};
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::volume::{Axis, AxisKind, Volume};
 
@@ -16,6 +18,47 @@ fn axis_slot(name: &str) -> Option<usize> {
     } else {
         None
     }
+}
+
+fn compare_volumes(offline: &Volume, live: &Volume) -> Result<f32, String> {
+    if offline.dims != live.dims {
+        return Err(format!("dims {:?} vs {:?}", offline.dims, live.dims));
+    }
+    for a in 0..3 {
+        let ax_off = &offline.axes[a];
+        let ax_live = &live.axes[a];
+        if ax_off.values.len() != ax_live.values.len() {
+            return Err(format!(
+                "axis {a} length {} vs {}",
+                ax_off.values.len(),
+                ax_live.values.len()
+            ));
+        }
+        for (i, (vo, vl)) in ax_off.values.iter().zip(ax_live.values.iter()).enumerate() {
+            if vo != vl {
+                return Err(format!("axis {a} value {i}: {vo} vs {vl}"));
+            }
+        }
+    }
+    if offline.data.len() != live.data.len() {
+        return Err(format!(
+            "data length {} vs {}",
+            offline.data.len(),
+            live.data.len()
+        ));
+    }
+    let mut max_abs = 0.0f32;
+    for (i, (a, b)) in offline.data.iter().zip(live.data.iter()).enumerate() {
+        let d = (a - b).abs();
+        if d > max_abs {
+            max_abs = d;
+        }
+        let tol = 1e-6f32 * a.abs().max(b.abs()).max(1.0);
+        if d > tol {
+            return Err(format!("data cell {i}: {a} vs {b} (Δ {d})"));
+        }
+    }
+    Ok(max_abs)
 }
 
 fn collect_paths(file: &Hdf5File) -> Vec<String> {
@@ -50,6 +93,7 @@ fn main() {
     let mut out_override: Option<String> = None;
     let mut ci_mode = false;
     let mut tag: Option<String> = None;
+    let mut verify_live: Option<[String; 4]> = None;
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
@@ -73,6 +117,22 @@ fn main() {
                         return;
                     }
                 }
+            }
+            "--verify-live" => {
+                let mut keys = [String::new(), String::new(), String::new(), String::new()];
+                for slot in keys.iter_mut() {
+                    i += 1;
+                    match args.get(i) {
+                        Some(v) => *slot = v.clone(),
+                        None => {
+                            eprintln!(
+                                "volume_builder: --verify-live needs <value_key> <lat_key> <lon_key> <depth_key>"
+                            );
+                            return;
+                        }
+                    }
+                }
+                verify_live = Some(keys);
             }
             other => {
                 if path.is_none() {
@@ -281,6 +341,68 @@ fn main() {
         mask_dims[2],
         bin.len()
     );
+    if let Some([value_key, lat_key, lon_key, depth_key]) = verify_live {
+        let src = SourceConfig {
+            ttl: 0,
+            url: path.clone(),
+            origin: None,
+            frame: Frame::Manifest,
+            format: "volume_netcdf".to_string(),
+            extracts: vec![Extract::Volume {
+                value_key,
+                lat_key,
+                lon_key,
+                depth_key,
+                depth_scale: 1.0,
+                name: stem.to_string(),
+            }],
+            headers: Vec::new(),
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            hapi_fill: HashMap::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+            sha256: None,
+            window: None,
+            live_only: false,
+        };
+        match build_netcdf4_volume(&src, &bytes) {
+            Some((live_name, live)) => match compare_volumes(&volume, &live) {
+                Ok(max_d) => {
+                    println!(
+                        "volume_builder: live parity holds — {live_name} {}x{}x{} max|Δ|={max_d:e}",
+                        live.dims[0], live.dims[1], live.dims[2]
+                    );
+                }
+                Err(field) => {
+                    eprintln!("volume_builder: live parity holds not — {field}");
+                    std::process::exit(1);
+                }
+            },
+            None => {
+                eprintln!(
+                    "volume_builder: live arm reads void — {} B carry no grid contract for the live parser",
+                    bytes.len()
+                );
+                std::process::exit(1);
+            }
+        }
+    }
     if ci_mode {
         let Some(tag) = tag else {
             eprintln!("volume_builder: --ci-mode needs --tag <netloc>");

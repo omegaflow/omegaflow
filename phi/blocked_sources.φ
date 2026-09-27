@@ -53,7 +53,7 @@ note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/895
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (:207).
+note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (mail_ledger.φ:74) → Antwort offen.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
@@ -327,7 +327,7 @@ note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement n�
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml gebaut (fae4a5081); Secrets 2026-09-27. Lauf 36280012910 rot: Fenster >3000-Server-Cap; Sharding+Diagnose gebaut, Re-Dispatch offen.
+note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml (fae4a5081). 36283215548 rot: Leerfenster als Overflow fehlklassifiziert; Empty/Overflow getrennt (2026-09-27); Re-Dispatch offen.
 
 descoped
 url https://data.lsst.cloud/api/tap/sync
@@ -337,9 +337,9 @@ released
 url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,snr+FROM+planck.com_pccs2_sz_mmf3
 note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen; registriert in phi/sources.φ:8078 (planck_psz2_compiler, redshift-Crossmatch com_pccs2_sz_union 925/1271).
 
-pending
+descoped
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
-note Earth Model Collaboration (nicht MT): dir+nc 200 HDF5 anonym; Lizenz CC BY 4.0. Roh-nc als format reference registriert (sources.φ:1298+), volume.bin auf CDN. Ingest-Arm gebaut (88fb49209). Offen: Live volume_netcdf — value_key ungemessen.
+note EMC (nicht MT): CC BY 4.0, nc 200 HDF5 anonym; Roh-nc reference sources.φ:1298+; 8 volume.bin CDN sha256-verankert. volume_netcdf descoped (2026-09-27): statisch, kein Frische-Gewinn, LITHO1.0 ohne Rang-3-Var; Arm bleibt fuer aendernde 3D-Gitter.
 
 released
 url http://pithia.cbk.waw.pl/tap
