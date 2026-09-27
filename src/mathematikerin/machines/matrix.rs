@@ -906,6 +906,9 @@ impl MatrixMachine {
                 .pending_since
                 .is_some_and(|i| i.elapsed().as_secs_f64() > 30.0);
             if stale {
+                if let Some(read_buf) = self.te_read_buf.as_ref() {
+                    read_buf.unmap();
+                }
                 self.pending = None;
                 self.pending_since = None;
                 self.say("matrix te(kde) readback timeout — cell pending".to_string());
