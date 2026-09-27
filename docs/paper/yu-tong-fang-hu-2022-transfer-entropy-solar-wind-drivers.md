@@ -1,13 +1,13 @@
 <!--
-  title: Yu, Tong, Fang & Hu 2022 — transfer entropy ranking of solar wind drivers to geomagnetic storm
+  title: Yu, Tong, Fang & Hu 2022 — TE ranking of solar wind drivers
   class: paper
   date: 2026-09-27
-  sha256: 07395a7d2d15c7224d4caf7332fc24844d61b172dc9cc0bf787445902d9c9688
+  sha256: 68c258354b01f1186e4efa6656d971e36cad412cd6d466e0691ec2f75616531f
   status: full-text (CJSS, open access, CC BY 3.0)
   see-also: docs/paper/gic-causal-driver.md
 -->
 
-# Yu, Tong, Fang & Hu 2022 — transfer entropy ranking of solar wind drivers to geomagnetic storm
+# Yu, Tong, Fang & Hu 2022 — TE ranking of solar wind drivers
 
 - **Authors:** YU Jiabin (1,2), TONG Jizhou (1), FANG Shaofeng (1), HU Xiaoyan (1).
   1 National Space Science Center, Chinese Academy of Sciences, Beijing 100190;
