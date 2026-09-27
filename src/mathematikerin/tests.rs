@@ -1407,6 +1407,168 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
     );
 }
 
+#[test]
+fn volume_probe_parity_masked_corner_and_plain() {
+    use crate::archivar::volume::{Axis, AxisKind, Volume};
+    use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
+    let t = 8.4e8;
+    let orbit_body = |pos: [f64; 3], props: Option<BodyProperties>| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let earth_props = BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 0.0,
+        dw_dt_deg_per_day: 360.0,
+        radius_m: 6371000.0,
+        flattening: Some(0.0),
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let earth_pos = [0.0, 0.0, 1.0e9];
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert(
+        "earth".to_string(),
+        orbit_body(earth_pos, Some(earth_props)),
+    );
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.p = [earth_pos[0], earth_pos[1], earth_pos[2] + 100_000.0];
+    app.init_gpu();
+    if app.device.is_none() {
+        eprintln!("volume parity skipped: no adapter");
+        return;
+    }
+    let probe_pos = app.pos();
+    let Some((lat, lon, depth)) = crate::archivar::icrs_to_body_geodetic(
+        probe_pos[0],
+        probe_pos[1],
+        probe_pos[2],
+        t,
+        "earth",
+        &eph,
+    ) else {
+        eprintln!("volume parity skipped: geodetic absent");
+        return;
+    };
+    let axes = [
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![depth - 10.0, depth + 10.0],
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![lat - 10.0, lat + 10.0],
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: vec![lon - 10.0, lon + 10.0],
+        },
+    ];
+    let plain_data: Vec<f32> = vec![2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
+    let volume_of = |masked: bool| {
+        let mut data = plain_data.clone();
+        let mut mask = vec![0u8; 1];
+        if masked {
+            mask[0] = 1;
+            data[0] = f32::NAN;
+        }
+        Volume {
+            dims: [2, 2, 2],
+            axes: axes.clone(),
+            data,
+            mask,
+        }
+    };
+    let plain = volume_of(false);
+    let masked = volume_of(true);
+    let probe = [depth, lat, lon];
+    let cpu_plain = plain.sample_at(probe).unwrap();
+    assert_eq!(
+        masked.sample_at(probe),
+        None,
+        "the masked corner makes the whole probe absent on the cpu"
+    );
+    let buf_of = |v: Volume| Buffer {
+        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph.clone()),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: vec![v],
+        bayestar: None,
+    };
+    app.latest_field = Some(Arc::new(buf_of(plain)));
+    app.upload_volumes();
+    app.probe();
+    app.probe_readback();
+    let gpu_plain = app.probe_omega[3] as f64;
+    let tol = 1e-3 * (cpu_plain.abs() + 1e-3);
+    assert!(
+        (gpu_plain - cpu_plain).abs() < tol,
+        "volume parity: gpu {gpu_plain} cpu {cpu_plain}"
+    );
+    app.latest_field = Some(Arc::new(buf_of(masked)));
+    app.upload_volumes();
+    app.probe();
+    app.probe_readback();
+    let gpu_masked = app.probe_omega[3] as f64;
+    assert!(
+        gpu_masked.abs() < 1e-6,
+        "the masked corner makes the whole probe absent on the gpu: {gpu_masked}"
+    );
+}
+
 const SCALAR_PARITY_TOL: f64 = 1e-3;
 
 fn sg_gate_rng(rng: &mut u64) -> f64 {
