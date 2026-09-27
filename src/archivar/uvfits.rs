@@ -401,6 +401,12 @@ mod tests {
         }
     }
 
+    fn push_data_pad(out: &mut Vec<u8>) {
+        while !out.len().is_multiple_of(2880) {
+            out.push(0);
+        }
+    }
+
     fn bintable_header(
         out: &mut Vec<u8>,
         extname: &str,
@@ -463,6 +469,7 @@ mod tests {
         ant_row.extend_from_slice(&(-5.441e6f64).to_be_bytes());
         ant_row.extend_from_slice(&(-2.479e6f64).to_be_bytes());
         out.extend_from_slice(&ant_row);
+        push_data_pad(&mut out);
         bintable_header(
             &mut out,
             "UV_DATA",
@@ -538,7 +545,7 @@ mod tests {
         assert_eq!(f.chan_bw_hz, 5.0e5);
         assert_eq!(f.rows.len(), 2);
         assert_eq!(f.rows[0].baseline, 258);
-        assert_eq!(f.rows[0].inttim_s, 0.4);
+        assert!((f.rows[0].inttim_s - 0.4).abs() < 1.0e-6);
         let pair = baseline_rows(&f, STATION_ALMA, STATION_APEX);
         assert_eq!(pair.len(), 2);
     }

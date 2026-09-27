@@ -8156,10 +8156,10 @@ fn test_port_block_with_force_and_name_unit_synthesizes() {
         ),
         "a force directive with a name-suffix unit synthesizes the line, got: {conv}"
     );
-    let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 station_id\n";
+    let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 geomagnetic_index\n";
     let conv2 = super::port_block(still_pending);
     assert!(
-        conv2.contains("# pending field station_id — unit or cadence absent, review"),
+        conv2.contains("# pending field geomagnetic_index — unit or cadence absent, review"),
         "a name without a unit suffix stays pending, never the literal 1, got: {conv2}"
     );
 }
@@ -11756,7 +11756,7 @@ fn epncore_stcs_centroid_refuses_malformed_regions() {
 
 #[test]
 fn epncore_extract_places_the_measured_crater_region() {
-    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let src = source_fixture("json", vec![epncore_extract_fixture()]);
     let body = r#"[
         {"target_name": "Mars", "c1min": 5.888, "c1max": 5.888,
          "c2min": 75.082, "c2max": 75.082, "diameter": 1.83}
@@ -11787,7 +11787,7 @@ fn epncore_extract_places_the_measured_crater_region() {
 
 #[test]
 fn epncore_extract_falls_back_to_the_stcs_polygon() {
-    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let src = source_fixture("json", vec![epncore_extract_fixture()]);
     let body = r#"[
         {"target_name": "Mars",
          "s_region": "Polygon UNKNOWNFrame 5.888 75.0 5.888 75.1 5.912 75.1 5.912 75.0",
@@ -11808,7 +11808,7 @@ fn epncore_extract_falls_back_to_the_stcs_polygon() {
 
 #[test]
 fn epncore_extract_unwraps_a_seam_crossing_lon_region() {
-    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let src = source_fixture("json", vec![epncore_extract_fixture()]);
     let body = r#"[
         {"target_name": "Mars", "c1min": 359.9, "c1max": 0.1,
          "c2min": -4.0, "c2max": -4.0, "diameter": 0.5}
@@ -11825,7 +11825,7 @@ fn epncore_extract_unwraps_a_seam_crossing_lon_region() {
 
 #[test]
 fn epncore_extract_skips_rows_without_a_measured_region() {
-    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let src = source_fixture("json", vec![epncore_extract_fixture()]);
     let body = r#"[
         {"target_name": "Mars", "diameter": 1.83},
         {"target_name": "Mars", "c1min": 5.0, "c1max": 5.0, "c2min": 95.0,
