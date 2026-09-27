@@ -9,15 +9,21 @@ Name (leer = neueste): $ARGUMENTS
 
 Neueste offene Übergabe:
 
-!`for f in $(git ls-tree --name-only HEAD docs/handover/ | grep handover-); do printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f"; done | sort -rn | head -1 | cut -d' ' -f2`
+!`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in handover-*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
-Stehender Pass — beim Start gemessen (kein Auswahlpunkt):
+**Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
+`sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
+(eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
+was der eigene Trigger für fällig erklärt.
 
-!`printf 'HEAD: %s\n' "$(git rev-parse --short HEAD)"; printf '## CI-Status (Watchdog-Snapshot)\n'; tail -n 30 /tmp/opencode/ci_status.md 2>/dev/null || printf 'snapshot absent — line-Agent: bin/ci_manage list\n'; printf '\n## Postfach — letzte 6 Eingänge (mail_digest --last 6)\n'; mail_digest --last 6 2>&1 || printf "mail_digest pending — build belongs to CI (tools-build); fallback smail + state/mail/mail_ledger.φ\n"`
+**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
+Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Nenne alle
+offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel
+abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit,
+keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht
+schreiben, das ist die Grenze. **Halte dann an.**
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe. Planungs-Pass: `register_lookup --open` (offene Punkte über alle lebenden Dokumente) + `register_lookup --orphan-docs` (Prosadokumente ohne Übergabe-Träger) + `git_safety --snapshot` (Arbeitsbaum-Sicherheitsnetz) + `open_points_check <übergabe>` (billiger Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Der stehende Pass steht oben bereits gemessen — **kein** Auswahlpunkt; die Session schreibt Ledger + Übergabe fort. Bei Lücke: Postfach via `smail` + `state/mail/mail_ledger.φ`, CI-Status via `ci_manage list`/`view`. Nenne **alle** offenen Punkte der eigenen Linie als Tafel und schlage vor, jeden parallel abarbeitbaren zu dispatchen (welche Punkte, welche Delegation, welche Bindung) — keine Rangfolge, kein `härtester Punkt`. Kein edit/write/commit, keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht schreiben, das ist die Grenze. **Halte dann an.**
-
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn führt er den stehenden Pass aus: die fälligen Zustand-Einträge messen — Postfach (`smail` + `state/mail/mail_ledger.φ`), CI-Status (Watchdog-Snapshot `/tmp/opencode/ci_status.md`; bei Lücke/Detail `ci_manage list`/`ci_manage view`, **nie** `gh run list`/`gh run view`) — und Ledger + Übergabe fortschreiben; Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
+**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass. Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
 
 **Sofort-Prinzip.** Dispatcht wird **sofort** im nennenden Atom — kein besprechbarer Punkt wandert als „nächster Dispatch"/„nächste Session" weiter; besprochene Entscheidungen (ein Wort, eine Architektur, ein Verdikt) gehen im Moment ihrer Entstehung als Zeile ins Handover, nie am Sessionende gesammelt. Der Commit-Gate `commit_check` (status-proof) blockt den unbelegten Status-Tag, `register_lookup --fired`/`--stale` messen Feuer und Stehen.
 

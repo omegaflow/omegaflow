@@ -24,7 +24,7 @@ der session-weite Consent (Delegation) und deckt Commit/Push nicht.
    `git rev-parse origin/main`.
 7. Nach dem Push: dispatch **jeden** Workflow, den diese Session angelegt oder
    geändert hat — `gh workflow run <workflow>` — damit der Lauf ohne Anstoß des
-   Operators startet. Nie pollen: das Ergebnis liest `gh run view <id>` einmalig.
+    Operators startet. Nie pollen: das Ergebnis liest `ci_manage view <id>` einmalig.
 
 Der pre-commit-Gate (`commit_check`) läuft vor jedem Commit. Blockiert fremde
 nicht-kompilierende Arbeit den Gate-Bau, melde es dem Operator — `--no-verify`

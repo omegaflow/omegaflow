@@ -135,7 +135,9 @@
     "akt-ohne-wort-trigger": "ein operator-gebunden-Punkt trägt weder ein Operator-Wort im Trigger noch ein Wort:-Feld — der Akt hängt am Wort",
     "termin-ohne-datum": "ein termin-Punkt trägt kein ISO-Datum in Trigger oder Bindung — ein Termin ohne Datum ist keiner",
     "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund",
-    "blocked-integrated-twin": "eine gap-Klassen-Disposition (parser-def mit gap-Direktive), deren url integriert in phi/sources.φ steht — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ:<zeile> oder entferne den Eintrag"
+    "blocked-integrated-twin": "eine gap-Klassen-Disposition (parser-def mit gap-Direktive), deren url integriert in phi/sources.φ steht — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ:<zeile> oder entferne den Eintrag",
+    "pass-copy": "a living handover line copies the standing pass — the Stehender Pass lives in state/zustand/standing-pass.md and is cited (sread state/zustand/standing-pass.md), never copied; a copied HEAD value is a stale copy the moment main moves",
+    "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/zustand/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -493,6 +495,16 @@
     "star_epoch_bare_zero": "        samples.push(Sample {\n            source: SampleSource::Ephemeris,\n            epoch: 0.0,",
     "star_epoch_max_zero_fold": "        star_epoch_min: if star_epoch_min == f64::MAX {\n            0.0\n        } else {\n            star_epoch_min\n        },",
     "netcdf_origin_render_fallback": "                    None => render_source_url(\n                        &src_clone,\n                        RenderCtx {\n                            x: 0.0,\n                            y: 0.0,\n                            z: 0.0,",
-    "epncore_centroid_raw_mean": "Some((lon_sum_normalized / n, lat_sum / n)),"
+    "epncore_centroid_raw_mean": "Some((lon_sum_normalized / n, lat_sum / n)),",
+    "pass_copy_head_colon_sha": "- **HEAD:** `4a9d1fefe`",
+    "pass_copy_head_space_full_sha": "am HEAD `6de8fa3ff70721cb6300e135bdcb221080dedb5f`",
+    "pass_copy_head_sha7": "- **HEAD:** `1234567`",
+    "pass_copy_head_sha6": "am HEAD `123456`",
+    "pass_copy_git_show_head": "- **Lage:** (gemessen 2026-09-27 via `git show HEAD:phi/sources.φ`) vier Verstöße",
+    "pass_copy_head_end_of_line": "- **Lage:** gepusht, sobald `origin/main` Vorfahr von HEAD ist",
+    "foreign_binding_operator": "- **Status:** operator-gebunden | **Bindung:** operator",
+    "foreign_binding_dritter": "- **Status:** wartend | **Bindung:** dritter (vDEC)",
+    "foreign_binding_eigen": "- **Status:** eigen | **Bindung:** eigen",
+    "foreign_binding_termin": "- **Status:** termin | **Bindung:** termin:2026-10-02"
   }
 }

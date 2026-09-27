@@ -698,7 +698,7 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
         }
         Some(f) if f.status == Some(406) => {
             vec![format!(
-                "pending — arXiv edge caps the query window (start+max_results > {ARXIV_QUERY_WINDOW} → HTTP 406, measured 2026-09-25); OAI-PMH /oai2 is the live bulk route"
+                "pending — the arXiv /api/query edge answers HTTP 406 to every window (measured 2026-09-27: max_results=1 and no max_results both 406); the live route is `--arxiv-oai` (OAI-PMH)"
             )]
         }
         Some(f) => vec![format!("pending — arxiv HTTP {}", f.status_text())],
@@ -873,7 +873,7 @@ fn cc_index(query: &str) -> Option<String> {
 fn cc_target(query: &str) -> String {
     query
         .split_whitespace()
-        .filter(|token| !token.starts_with("index="))
+        .filter(|token| !token.starts_with("index=") && !token.starts_with("url="))
         .collect::<Vec<_>>()
         .join(" ")
 }
@@ -2014,6 +2014,7 @@ mod tests {
             "example.org/*"
         );
         assert_eq!(cc_target("example.org/*"), "example.org/*");
+        assert_eq!(cc_target("url=example.org/*"), "example.org/*");
     }
 
     #[test]

@@ -4,6 +4,19 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::process::Command;
 
+macro_rules! out {
+    ($($t:tt)*) => {{
+        use std::io::Write;
+        let _ = writeln!(std::io::stdout(), $($t)*);
+    }};
+}
+
+macro_rules! epr {
+    ($($t:tt)*) => {{
+        eprintln!($($t)*);
+    }};
+}
+
 struct Options {
     case_insensitive: bool,
     files_only: bool,
@@ -98,7 +111,7 @@ fn main() {
         }
         Ok(Parsed::Run(o)) => o,
         Err(e) => {
-            eprintln!("sgrep: {e}");
+            epr!("sgrep: {e}");
             usage();
             std::process::exit(2);
         }
@@ -120,27 +133,27 @@ fn main() {
         &mut matches,
     );
     if opts.count_only {
-        println!("{}", matches);
+        out!("{}", matches);
     }
 }
 
 fn usage() {
-    eprintln!(
+    epr!(
         "sgrep — content search over the live tree (git ls-files; --all walks the tree incl. gitignored)"
     );
-    eprintln!("usage: sgrep [-i] [-l] [-c] [--all] [-g <glob>] <pattern> [dir|file]");
-    eprintln!("flags:");
-    eprintln!("  -i        case-insensitive (default is case-sensitive)");
-    eprintln!("  -l        file paths only, one per file with a match");
-    eprintln!("  -c        print only the total match count");
-    eprintln!(
+    epr!("usage: sgrep [-i] [-l] [-c] [--all] [-g <glob>] <pattern> [dir|file]");
+    epr!("flags:");
+    epr!("  -i        case-insensitive (default is case-sensitive)");
+    epr!("  -l        file paths only, one per file with a match");
+    epr!("  -c        print only the total match count");
+    epr!(
         "  --all     walk the working tree incl. gitignored files (phi/pipeline, queue, stage); skips target/data/cache/.git"
     );
-    eprintln!("  -g <glob> restrict to filenames matching the glob (e.g. '*.rs')");
-    eprintln!("  -h|--help this text");
-    eprintln!("  --        end of flags (a <pattern> starting with '-' needs this)");
-    eprintln!("output: `path:line:text` — line numbers are in the output (there is no -n flag).");
-    eprintln!("an unknown flag or a second [dir|file] is rejected, never a silent empty result.");
+    epr!("  -g <glob> restrict to filenames matching the glob (e.g. '*.rs')");
+    epr!("  -h|--help this text");
+    epr!("  --        end of flags (a <pattern> starting with '-' needs this)");
+    epr!("output: `path:line:text` — line numbers are in the output (there is no -n flag).");
+    epr!("an unknown flag or a second [dir|file] is rejected, never a silent empty result.");
 }
 
 fn grep_root(
@@ -252,11 +265,11 @@ fn grep_file(
         file_matches += 1;
         *matches += 1;
         if !count_only && !files_only {
-            println!("{}:{}:{}", path, idx + 1, line);
+            out!("{}:{}:{}", path, idx + 1, line);
         }
     }
     if files_only && file_matches > 0 {
-        println!("{}", path);
+        out!("{}", path);
     }
 }
 
