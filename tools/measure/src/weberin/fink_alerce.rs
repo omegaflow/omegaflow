@@ -10,6 +10,8 @@ pub const FINK_ZTF_SCHEMA: &str = "https://api.ztf.fink-portal.org/api/v1/schema
 
 pub const ALERCE_OBJECTS: &str = "https://api.alerce.online/alerts/v1/objects";
 
+pub const FINK_LSST_SOURCES: &str = "https://api.lsst.fink-portal.org/api/v1/sources";
+
 pub struct FinkAlert {
     pub object_id: Option<String>,
     pub ra_deg: Option<f64>,
@@ -40,6 +42,23 @@ pub struct AlerceObject {
     pub stellar: Option<bool>,
     pub class: Option<String>,
     pub probability: Option<f64>,
+}
+
+pub struct FinkObjectSource {
+    pub midpoint_mjd_tai: Option<f64>,
+    pub band: Option<String>,
+    pub psf_flux: Option<f64>,
+    pub psf_flux_err: Option<f64>,
+    pub ap_flux: Option<f64>,
+    pub science_flux: Option<f64>,
+    pub snr: Option<f64>,
+    pub ra_deg: Option<f64>,
+    pub dec_deg: Option<f64>,
+    pub ra_err: Option<f64>,
+    pub dec_err: Option<f64>,
+    pub extendedness: Option<f64>,
+    pub reliability: Option<f64>,
+    pub is_dipole: Option<bool>,
 }
 
 fn obj_str(m: &HashMap<String, omegaflow::json::JsonVal>, key: &str) -> Option<String> {
@@ -165,6 +184,34 @@ pub fn parse_fink_cone(body: &[u8]) -> Option<Vec<FinkAlert>> {
     })
 }
 
+pub fn fink_object_sources_body(dia_object_id: &str) -> Option<(String, Vec<u8>)> {
+    let url = format!("{FINK_LSST_SOURCES}?diaObjectId={dia_object_id}");
+    curl_get(&url)
+}
+
+pub fn parse_fink_object_sources(body: &[u8]) -> Option<Vec<FinkObjectSource>> {
+    row_maps(body).map(|rows| {
+        rows.iter()
+            .map(|m| FinkObjectSource {
+                midpoint_mjd_tai: obj_f64(m, "r:midpointMjdTai"),
+                band: obj_str(m, "r:band"),
+                psf_flux: obj_f64(m, "r:psfFlux"),
+                psf_flux_err: obj_f64(m, "r:psfFluxErr"),
+                ap_flux: obj_f64(m, "r:apFlux"),
+                science_flux: obj_f64(m, "r:scienceFlux"),
+                snr: obj_f64(m, "r:snr"),
+                ra_deg: obj_f64(m, "r:ra"),
+                dec_deg: obj_f64(m, "r:dec"),
+                ra_err: obj_f64(m, "r:raErr"),
+                dec_err: obj_f64(m, "r:decErr"),
+                extendedness: obj_f64(m, "r:extendedness"),
+                reliability: obj_f64(m, "r:reliability"),
+                is_dipole: obj_bool(m, "r:isDipole"),
+            })
+            .collect()
+    })
+}
+
 pub fn parse_alerce_objects(body: &[u8]) -> Option<Vec<AlerceObject>> {
     let text = std::str::from_utf8(body).ok()?;
     let root = omegaflow::json::parse_json(text)?;
@@ -263,5 +310,35 @@ mod tests {
     fn alerce_non_object_bodies_stay_unparsed() {
         assert!(parse_alerce_objects(b"[]").is_none());
         assert!(parse_alerce_objects(b"{}").is_none());
+    }
+
+    const FINK_OBJECT_SOURCES_BODY: &[u8] = include_bytes!("fink_object_sources.json");
+
+    #[test]
+    fn fink_object_sources_parses_the_measured_row() {
+        let rows = parse_fink_object_sources(FINK_OBJECT_SOURCES_BODY).unwrap();
+        assert_eq!(rows.len(), 1);
+        let r = &rows[0];
+        assert_eq!(r.band.as_deref(), Some("r"));
+        assert!((r.midpoint_mjd_tai.unwrap() - 61058.0826902019).abs() < 1e-9);
+        assert!((r.psf_flux.unwrap() - 763.55914).abs() < 1e-6);
+        assert!((r.psf_flux_err.unwrap() - 150.5558).abs() < 1e-6);
+        assert!((r.snr.unwrap() - 5.016104).abs() < 1e-9);
+        assert!((r.ra_deg.unwrap() - 54.4145363293).abs() < 1e-9);
+        assert!((r.dec_deg.unwrap() + 29.5128706656).abs() < 1e-9);
+        assert!((r.ra_err.unwrap() - 0.0000326964).abs() < 1e-15);
+        assert_eq!(r.is_dipole, Some(false));
+    }
+
+    #[test]
+    fn fink_object_sources_empty_is_a_realized_empty() {
+        let rows = parse_fink_object_sources(b"[]").unwrap();
+        assert!(rows.is_empty());
+    }
+
+    #[test]
+    fn fink_object_sources_non_row_bodies_stay_unparsed() {
+        assert!(parse_fink_object_sources(b"{}").is_none());
+        assert!(parse_fink_object_sources(b"not json").is_none());
     }
 }
