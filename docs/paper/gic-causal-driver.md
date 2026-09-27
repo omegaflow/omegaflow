@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-26
-  sha256: 45a20a0990c4a72e412b430d5096418a448a716805f4d84f828f8b534642ae61
+  sha256: 45143e1228f0e7a00ebb2d0d21a604ac4ba0a613d81bf5e576f31181860a5c28
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -15,6 +15,33 @@
 ## Abstract
 
 The excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in both storm years at Abisko and Sodankylä (2024: 0.12670 vs 0.10557; 2025: 0.13309 vs 0.12136; SOD 2024: 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all 24 rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry. PCMCI and the full-lag bound have run (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards; the riss stands.
+
+## Key Points
+
+- Transfer entropy measures how much information flows from solar-wind drivers to rapid ground magnetic-field changes at two observatories.
+- The southward interplanetary magnetic field leads the yearly response but does not clear the family bound at the quarterly grain.
+- The particle-density control never clears the bound, and the daily grain is empty: no family-clearing hourly driver is established.
+
+## Plain Language Summary
+
+When Earth's magnetic field changes rapidly, electric currents can flow in power
+grids and pipelines. The Sun's wind carries a magnetic field and streams of
+particles that meet Earth's magnetic shield. Which measured property of that
+wind causes the fastest ground changes is not settled for time spans shorter
+than a day. We measured how much information flows from each candidate property
+to the fastest ground changes at two northern observatories. The measure follows
+the direction of influence, so it can tell a driver from a response. The
+southward part of the Sun's magnetic field leads the ground changes in
+comparisons over full storm years at both stations, and a co-varying control,
+the particle density, never shows an effect. When the same comparison is
+tightened to single seasons, the signal no longer separates from the random
+background, so we report the hourly result as open rather than settled.
+Averaged over a day, and over three decades of storms, the effect disappears,
+because a daily average washes out the short, sharp magnetic swings. The
+practical reading is to watch the southward field upstream of Earth as the
+leading sub-daily candidate, while treating the hourly case as an open
+measurement.
+
 ## 1. Introduction
 
 Geomagnetically induced currents flow in power grids and pipelines when the
@@ -455,10 +482,30 @@ hourly-grain family-clearing as an open measurement, not a settled finding.
 - Wing, S., Johnson, J. R., Camporeale, E., & Reeves, G. D. (2016). Information theoretical approach to discovering solar wind drivers of the outer radiation belt. *Journal of Geophysical Research: Space Physics* 121, 9378–9399, doi:10.1002/2016JA022711.
 - Yu, J., Tong, J., Fang, S., & Hu, X. (2022). Transfer entropy approach to discovering the ranking of solar wind drivers to geomagnetic storm. *Chinese Journal of Space Science* 42(3), 346–356, doi:10.11728/cjss2022.03.210406045.
 
----
+## Open Research
 
-*Data and code:* the instrument, probes and register live in the omegaflow
-repository (`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
+### Data Availability
+
+The solar-wind and ground series used in this study are public third-party
+products, retrieved from their providers: the solar wind at L1 is SWPC RTSW
+one-minute data (minute grain) and OMNI2 (`OMNI2_H0_MRG1HR`, hourly and daily
+grains, via CDAWeb HAPI); the ground magnetic field is INTERMAGNET one-minute
+X/Y/Z at Abisko and Sodankylä, served by the BGS GIN HAPI. Archived harvested
+working copies and their repository DOI: pending.
+
+### Software Availability
+
+The instrument, probes and register live in the omegaflow repository
+(`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
 `tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/bz_blatt_probe.rs`).
-All reported values are machine-measured. All bibliographic entries above were
-checked against the Crossref registry on 2026-08-22.
+The software repository URL and DOI are pending. All reported values are
+machine-measured. All bibliographic entries above were checked against the
+Crossref registry on 2026-08-22.
+
+## Conflict of Interest
+
+The authors declare there are no conflicts of interest for this manuscript.
+
+## Acknowledgements
+
+Funding: none. This work received no external funding.

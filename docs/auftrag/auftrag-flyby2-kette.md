@@ -2,7 +2,7 @@
   title: Auftrag — Flyby-Path-2-Kette vor dem 28.09.2026 (JUICE-Perigäum)
   class: auftrag
   date: 2026-09-20
-  sha256: dc1f6f7b64054038aab377a8dc03fe351ad28ba35133a0d405d18884f174e635
+  sha256: dab2f7a8c2f2a9039467045d322b5dc0f23079a80e35c90f26e54b8e3a6226b3
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md
 -->
@@ -76,6 +76,33 @@ flyby/rtsw/swarm/kp/omni-Eintrag) — die Kanäle sind Live-`url`-Zeilen, nicht 
 **Vor dem Perigäum:** nichts zu tun außer Bereitschaft (alle Routen stage 1, HTTP
 200). **Nach dem Perigäum:** der **RTSW-24-h-Vorrat** entscheidet den Termin —
 der erste Fill-Run ≤ 24 h nach der ersten Perigäum-Zelle.
+
+## Trigger / Fill-Run (gemessen 2026-09-27)
+
+- **Trigger:** die erste Perigäum-Zelle **2026-09-28** (JUICE im Tubus; Fenster
+  registriert als 28./29.09.2026, `flyby-path-2-preregistration.md:13`; der
+  Compiler-Arc steht `tools/harvest/src/bin/horizons_compiler.rs:21`).
+- **Harte Frist:** der erste Fill-Run startet **≤ 24 h** nach der ersten
+  Perigäum-Zelle (RTSW 1 m, §Retention) — sonst ist die 1-m-Kette der frühen
+  Stunden verloren.
+- **Exakter Fill-Run — kritischer Pfad (RTSW 1 m, rohdatiert vor dem
+  Fensterverfall):**
+
+  ```
+  mkdir -p data/services.swpc.noaa.gov
+  curl -sSfL https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json  -o data/services.swpc.noaa.gov/rtsw_mag_1m-$(date -u +%Y%m%dT%H%M)Z.json
+  curl -sSfL https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json -o data/services.swpc.noaa.gov/rtsw_wind_1m-$(date -u +%Y%m%dT%H%M)Z.json
+  ```
+
+- **Compute:** ein Bin, das die Tubus-Kette füllt, existiert nicht —
+  `flyby_probe` trägt kein JUICE (`FLYBYS` endet bei `juno`,
+  `tools/measure/src/bin/flyby_probe.rs:35-43`); gemessen 2026-09-27 via
+  `sgrep` nennt kein Harvester/Probe/Workflow in `tools/` oder
+  `.github/workflows/` die Path-2-Kette. Der Fill selbst ist ein
+  `research-max`-Akt: die RTSW-Reihe transitzkorrigiert (`d/v_sw`,
+  `phi/sources.φ:174`) auf den Tubus legen, Kp GFZ (`phi/sources.φ:1163-1166`),
+  Swarm HAPI (`phi/sources.φ:6229-6244`), OMNI2 nur Verifikation; je Messwert
+  `source`+`active` mitprotokollieren.
 
 ## Frist / Owner / nächster Schritt
 
