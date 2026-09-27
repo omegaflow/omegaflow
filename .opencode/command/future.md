@@ -7,7 +7,7 @@ Starte die Future-Linie im **Planungsmodus** (Agent `plan`, read-only). Ist ein 
 
 Name (leer = neueste): $ARGUMENTS
 
-Neueste offene Future-Übergabe (privat): state/funding/handover/ — neueste handover-*-future-*.md
+Neueste offene Future-Übergabe (privat): state/future/handover/ — neueste handover-*-future-*.md
 
 **Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
 `sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
