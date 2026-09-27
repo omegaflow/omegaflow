@@ -3,7 +3,7 @@
   session: Mycelium-Folge 180
   class: handover
   date: 2026-09-27
-  sha256: cf93430026ef7404ab95936838bbeda044337e0d3d97754fa3a23d970ae82198
+  sha256: ef24a707f6fb06085ad8f9440de6d89ac9237dc214aa2ff2e6a3f116ea0b30ed
   status: live
 -->
 # Handover — Mycelium-Folge 180 (2026-09-27)
@@ -20,6 +20,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge179.md`.
 - Wort | 2026-09-27 | „nein bitte so festschreiben" — Rundenordnung (Mycelium→Sensory→Mountain→River→Future) + Spirale in `docs/concepts/kybernaut-native-methodology.md`, mechanik-only.
 - Wort | 2026-09-27 | „bitte ausführen" — Ownership-Audit (Aufenthalt = Eigentum): planeto-epncore-Direktiven + CDN-Reconcile-Dispatch → Mycelium, clippy-Owner je Linie, Beschaffungs-LOCKs aus Mountain/River entfernt (kanonisch Future).
 - Wort | 2026-09-27 | Secrets-Inventar-Träger prüfen: direkter Edit in die Owner-Übergabe (Messung ergab keinen Register-Akt) — erledigt (Verdict, Survey geschlossen).
+- Wort | 2026-09-27 | **Myceliums eigener Job umfasst CI-Workflows, die `sources.φ`-Manifestations-Direktiven und das CDN-/Release-Management** — matrix-rotor-Instrumentierung, planeto-Direktiven und die modis-Asset-Brücke sind NICHT an Sensory/Mountain/Operator abzugeben; der „Träger" im Pass meint die Sache, nicht das Handwerk.
 
 ## Offen (aufgeschlüsselt)
 
@@ -40,9 +41,9 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge179.md`.
 ### clippy `-D warnings` — extract.rs
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `ci-check`-Lauf am HEAD `ab0a1faa` (`36315178308`, pending) lesbar.
-- **Lage:** (gemessen 2026-09-27 via `ci_manage log 36310976945`, HEAD `452d406`) 11 extract.rs-Warnungen: `manual_is_multiple_of` ×2 (`:132`,`:1317`), `chunks_exact_to_as_chunks` ×2 (`:136`,`:2101`), `question_mark` ×5 (`:1356`,`:1990`,`:1994`,`:1997`,`:2262`), `manual_div_ceil` ×2 (`:2057`,`:2223`).
-- **Blockade:** HEAD-Lauf pending (kein lokales clippy).
-- **Braucht:** `ci_manage log 36315178308` → die genannten Zeilen heilen.
+- **Lage:** (gemessen 2026-09-27 via `ci_manage log 36310976945`, HEAD `452d406`) 11 extract.rs-Warnungen: `manual_is_multiple_of` ×2 (`:132`,`:1317`), `chunks_exact_to_as_chunks` ×2 (`:136`,`:2101`), `question_mark` ×5 (`:1356`,`:1990`,`:1994`,`:1997`,`:2262`), `manual_div_ceil` ×2 (`:2057`,`:2223`). **Fix an allen 11 Stellen im Arbeitsbaum geschrieben** (uncommittet); Verifikation durch den nächsten `ci-check`-Lauf am Fix-Commit.
+- **Blockade:** keiner mehr — der Fix steht; nur die CI-Verifikation fehlt.
+- **Braucht:** `/commit` + Push, dann `ci_manage log` des neuen `ci-check`.
 
 ### SECRETS-CLEANUP — 7 ungenutzte Namen entfernen
 - **Status:** eigen | **Bindung:** eigen
