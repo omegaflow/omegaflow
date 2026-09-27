@@ -15,6 +15,42 @@ fn release_tag_netloc(tag: &str) -> (&str, bool) {
     }
 }
 
+fn origin_netlocs(raw: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let b = raw.as_bytes();
+    let mut i = 0usize;
+    while i < b.len() {
+        let scheme_len = if b[i..].starts_with(b"https://") {
+            8
+        } else if b[i..].starts_with(b"http://") {
+            7
+        } else {
+            i += 1;
+            continue;
+        };
+        let start = i + scheme_len;
+        let mut end = start;
+        while end < b.len()
+            && !matches!(
+                b[end],
+                b'/' | b' ' | b'\t' | b'\r' | b'\n' | b';' | b'?' | b'#' | b','
+            )
+        {
+            end += 1;
+        }
+        if end > start {
+            let host = &raw[start..end];
+            let bare = host.strip_prefix("www.").unwrap_or(host);
+            if !bare.is_empty() && seen.insert(bare.to_string()) {
+                out.push(bare.to_string());
+            }
+        }
+        i = start;
+    }
+    out
+}
+
 fn gh_api_releases() -> Option<String> {
     let out = Command::new("gh")
         .arg("api")
@@ -214,6 +250,14 @@ fn main() {
                 .entry(netloc.to_string())
                 .or_default()
                 .insert(s.url.clone());
+        }
+        if let Some(origin) = &s.origin {
+            for netloc in origin_netlocs(origin) {
+                netloc_of_source
+                    .entry(netloc)
+                    .or_default()
+                    .insert(s.url.clone());
+            }
         }
     }
 

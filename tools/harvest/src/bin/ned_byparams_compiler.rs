@@ -7,6 +7,8 @@ use omegaflow::json::{JsonVal, parse_json};
 const BYPARAMS_ENDPOINT: &str = "https://ned.ipac.caltech.edu/byparams";
 const TICKET_CALLBACK: &str = "https://ned.ipac.caltech.edu/ticket/refresh/callback";
 const CDN_TAG: &str = "ned.ipac.caltech.edu-byparams";
+const TIMEOUT_TOKEN_ENV: &str = "NED_BYPARAMS_TIMEOUT_TOKEN";
+const TIMEOUT_TOKEN_HEADER: &str = "X-NED-Timeout-Token";
 
 fn splitmix64(mut x: u64) -> u64 {
     x = x.wrapping_add(0x9E37_79B9_7F4A_7C15);
@@ -64,6 +66,28 @@ fn cookie_jar() -> std::path::PathBuf {
     std::env::temp_dir().join(format!("ned_byparams_{}.cookies", std::process::id()))
 }
 
+fn parse_secret(text: &str, key: &str) -> Option<String> {
+    let mut found = None;
+    for line in text.lines() {
+        if let Some((k, v)) = line.split_once('=') {
+            if k.trim() == key && !v.trim().is_empty() {
+                found = Some(v.trim().to_string());
+            }
+        }
+    }
+    found
+}
+
+fn timeout_token() -> Option<String> {
+    if let Ok(v) = std::env::var(TIMEOUT_TOKEN_ENV) {
+        if !v.is_empty() {
+            return Some(v);
+        }
+    }
+    let body = std::fs::read_to_string(".secrets.local").ok()?;
+    parse_secret(&body, TIMEOUT_TOKEN_ENV)
+}
+
 fn http_get(url: &str) -> Option<String> {
     let jar = cookie_jar();
     let out = Command::new("curl")
@@ -89,12 +113,14 @@ fn http_get(url: &str) -> Option<String> {
     }
 }
 
-fn http_post_form(url: &str, fields: &[(String, String)]) -> Option<String> {
+fn http_post_form(url: &str, fields: &[(String, String)], token: &str) -> Option<String> {
     let jar = cookie_jar();
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("-m")
         .arg("120")
+        .arg("-H")
+        .arg(format!("{}: {}", TIMEOUT_TOKEN_HEADER, token))
         .arg("-b")
         .arg(&jar)
         .arg("-c")
@@ -175,7 +201,7 @@ fn captcha_answer(body: &str) -> Option<(String, String)> {
     Some((format!("{}", a + b), cap))
 }
 
-fn submit_query(dec1: f64, dec2: f64, output_options: &str) -> Option<String> {
+fn submit_query(dec1: f64, dec2: f64, output_options: &str, token: &str) -> Option<String> {
     let form = http_get(BYPARAMS_ENDPOINT)?;
     let build_id = hidden_value(&form, "form_build_id")?;
     let (cap_answer, cap_nedwic) = captcha_answer(&form)?;
@@ -197,7 +223,7 @@ fn submit_query(dec1: f64, dec2: f64, output_options: &str) -> Option<String> {
         ("form_build_id".into(), build_id),
         ("form_id".into(), "byparams".into()),
     ];
-    http_post_form(BYPARAMS_ENDPOINT, &fields).map(|b| b.trim().to_string())
+    http_post_form(BYPARAMS_ENDPOINT, &fields, token).map(|b| b.trim().to_string())
 }
 
 fn poll_status(body: &str) -> Option<(i64, String)> {
@@ -665,6 +691,16 @@ fn main() {
         println!("{}", band_count(step_deg));
         return;
     }
+    let token = match timeout_token() {
+        Some(t) => t,
+        None => {
+            eprintln!(
+                "ned_byparams: {} absent — the queue timeout grant is not present; no query is sent",
+                TIMEOUT_TOKEN_ENV
+            );
+            std::process::exit(2);
+        }
+    };
     let (dec1, dec2) = match (dec1_dir, dec2_dir) {
         (Some(a), Some(b)) => (a, b),
         _ => {
@@ -695,7 +731,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let ticket = match submit_query(dec1, dec2, &output_options) {
+    let ticket = match submit_query(dec1, dec2, &output_options, &token) {
         Some(t) if !t.is_empty() => t,
         other => {
             eprintln!(
@@ -804,6 +840,19 @@ mod tests {
         assert_eq!(
             hidden_value(form, "form_build_id").as_deref(),
             Some("form-9_CkB8PwrLTSl6RsexTOKpI7lMJ6KT9E1pCRocLHQ8A")
+        );
+    }
+
+    #[test]
+    fn parse_secret_carries_no_empty_default() {
+        assert_eq!(
+            parse_secret("NED_BYPARAMS_TIMEOUT_TOKEN=\n", TIMEOUT_TOKEN_ENV),
+            None
+        );
+        assert_eq!(parse_secret("OTHER=1\n", TIMEOUT_TOKEN_ENV), None);
+        assert_eq!(
+            parse_secret("NED_BYPARAMS_TIMEOUT_TOKEN=xyz\n", TIMEOUT_TOKEN_ENV).as_deref(),
+            Some("xyz")
         );
     }
 
