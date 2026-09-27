@@ -3,7 +3,7 @@
   session: Mountain-Folge 185
   class: handover
   date: 2026-09-27
-  sha256: 23870b4fb23f1f1eff912e2c9bb223889d21f6af645885c5d964ff407bf77998
+  sha256: 0f8c65b7656861e45cc6064937c3845db82df8da5be3d5069bf1d045817f6b78
   status: live
 -->
 # Handover — Mountain-Folge 185 (2026-09-27)
@@ -25,6 +25,7 @@ RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXI
 Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session)
 kein Foto des Operators im CDN — RX100-Capture nicht manifestieren | 2026-09-27 | Operator (Session)
 „Du kannst" — Ausführung des Phase-1-Plans (line-Agent) | 2026-09-27 | Operator (Session, Delegations-Consent)
+Orphan-Doc-Reconciliation (D5): C — die reconciled Docs bleiben unverändert; kein Träger, keine Freigabe, kein Nachzug-Commit (Diff verwahrt: `state/mountain-185-orphan-doc-nachzug.patch`) | 2026-09-27 | Operator (Session)
 
 ## Offen (aufgeschlüsselt)
 
