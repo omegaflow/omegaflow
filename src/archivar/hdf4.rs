@@ -824,10 +824,10 @@ mod tests {
     #[test]
     fn rle_decode_expands_runs_and_mixes() {
         assert_eq!(
-            rle_decode(&[0x83, 0x41, 0x02, 0x42, 0x43], 5).as_deref(),
+            rle_decode(&[0x80, 0x41, 0x01, 0x42, 0x43], 5).as_deref(),
             Some(&b"AAABC"[..])
         );
-        assert!(rle_decode(&[0x83, 0x41], 5).is_none());
+        assert!(rle_decode(&[0x80, 0x41], 5).is_none());
     }
 
     #[test]
@@ -875,7 +875,6 @@ mod tests {
         }
         rec.extend_from_slice(&2i32.to_be_bytes());
         rec.extend_from_slice(&0u16.to_be_bytes());
-        rec.push(0);
         rec.extend_from_slice(&SP_COMP.to_be_bytes());
         rec.extend_from_slice(&6i32.to_be_bytes());
         rec.extend_from_slice(&0u16.to_be_bytes());
