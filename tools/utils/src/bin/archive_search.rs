@@ -98,6 +98,13 @@ use std::io::{BufRead, IsTerminal};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 
+macro_rules! out {
+    ($($t:tt)*) => {{
+        use std::io::Write;
+        let _ = writeln!(std::io::stdout(), $($t)*);
+    }};
+}
+
 const SKIP_DIRS: &[&str] = &[
     ".git",
     "target",
@@ -675,7 +682,7 @@ fn usage() {
 
 fn print_lines(lines: &[String]) {
     for line in lines {
-        println!("{}", line);
+        out!("{}", line);
     }
 }
 
@@ -870,7 +877,7 @@ fn run_plain(
         include,
     );
     if count_only {
-        println!(
+        out!(
             "archive_search: {} files, {} hits for: {}",
             result.matched,
             result.hits,
@@ -879,7 +886,7 @@ fn run_plain(
         return;
     }
     for line in &result.lines {
-        println!("{}", line);
+        out!("{}", line);
     }
     let shown = result.lines.iter().filter(|l| !l.starts_with("  ")).count();
     eprintln!(
@@ -1016,7 +1023,7 @@ fn run_leads(
     ) {
         Ok((lines, summary)) => {
             for line in &lines {
-                println!("{}", line);
+                out!("{}", line);
             }
             if summary.scanned == 0 {
                 eprintln!("archive_search --leads: no files found under the lead roots");

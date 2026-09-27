@@ -8297,9 +8297,9 @@ on earth 0 0 0
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.bin
+url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 format gosat_tanso3
-origin https://product.gosat-gw.nies.go.jp
+origin procedure: fetch https://product.gosat-gw.nies.go.jp then gosat_tanso3_compiler (per-year shards gosat_tanso3_<year>.bin; the manifest lists the shards)
 compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
 on earth 0 0 0
 ttl 604800

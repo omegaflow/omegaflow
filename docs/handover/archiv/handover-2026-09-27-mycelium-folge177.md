@@ -4,7 +4,7 @@
   class: handover
   date: 2026-09-27
   sha256: 320997f43f2e006d738fc9ea2c3c89fedde9d8fc209680c057e4534d6d76b0d3
-  status: live
+  status: archivist
 -->
 # Handover — Mycelium-Folge 177 (2026-09-27)
 

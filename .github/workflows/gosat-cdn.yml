@@ -9,13 +9,19 @@ on:
     inputs:
       product:
         description: 'GOSAT-GW product code (e.g. GWT3F_L1B or GWT3W_L1B)'
-        required: true
-      start:
-        description: 'window start (YYYY-MM-DD)'
-        required: true
-      end:
-        description: 'window end (YYYY-MM-DD)'
-        required: true
+        required: false
+        type: string
+        default: 'GWT3F_L1B'
+      start_year:
+        description: 'first harvest year of the per-year shard series'
+        required: false
+        type: string
+        default: "2024"
+      end_year:
+        description: 'last harvest year (blank = the current UTC year)'
+        required: false
+        type: string
+        default: ""
 permissions:
   contents: write
 env:
@@ -24,35 +30,84 @@ env:
   GOSAT_GW_PASS: ${{ secrets.GOSAT_GW_PASS }}
   RUSTFLAGS: -D warnings
 jobs:
-  gosat:
+  raster:
     runs-on: ubuntu-latest
-    timeout-minutes: 720
+    outputs:
+      years: ${{ steps.gen.outputs.years }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Idempotence — skip if the asset already exists on the CDN
-        id: idempotence
+      - name: Compute the missing per-year shards
+        id: gen
         run: |
-          if gh release view product.gosat-gw.nies.go.jp --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qF "gosat_tanso3.bin"; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "gosat_tanso3.bin present — manifest skipped"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "gosat_tanso3.bin missing — compiling and manifesting"
-          fi
+          set -euo pipefail
+          START="${{ inputs.start_year }}"
+          END="${{ inputs.end_year }}"
+          if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
+          RELEASE="product.gosat-gw.nies.go.jp"
+          REPO="omegaflow/sources"
+          present="$(gh release view "$RELEASE" --repo "$REPO" \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          years=""
+          for year in $(seq "$START" "$END"); do
+            asset="gosat_tanso3_${year}.bin"
+            if printf '%s\n' "$present" | grep -qx "$asset"; then
+              echo "$asset already manifested — skipped"
+              continue
+            fi
+            years="${years:+$years,}\"${year}\""
+          done
+          echo "years=[${years}]" >> "$GITHUB_OUTPUT"
+  release:
+    runs-on: ubuntu-latest
+    steps:
       - name: Ensure the product.gosat-gw.nies.go.jp release exists on the CDN
-        if: steps.idempotence.outputs.present == 'false'
         run: |
           if ! gh release view product.gosat-gw.nies.go.jp --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create product.gosat-gw.nies.go.jp --repo omegaflow/sources \
               --title "product.gosat-gw.nies.go.jp" \
-              --notes "GOSAT-GW TANSO-3 L1B radiance (GWT3F/GWT3W bands) packaged to omegaflow binary assets (CDN tag = netloc)"
+              --notes "GOSAT-GW TANSO-3 L1B radiance (GWT3F/GWT3W bands) packaged to omegaflow binary assets, one asset per year (series gosat_tanso3_<year>.bin, one manifest over the year shards)."
           fi
-      - name: Compile and manifest the GOSAT-GW TANSO-3 radiance to the CDN
-        if: steps.idempotence.outputs.present == 'false'
+  compile:
+    needs: [raster, release]
+    if: needs.raster.outputs.years != '[]'
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.year }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 720
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        year: ${{ fromJSON(needs.raster.outputs.years) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the ${{ matrix.year }} GOSAT-GW TANSO-3 radiance shard to the CDN
         run: |
           cargo run --release -p omegaflow-harvest --bin gosat_tanso3_compiler -- \
             --search --product "${{ inputs.product }}" \
-            --start "${{ inputs.start }}" --end "${{ inputs.end }}" \
-            --out gosat_tanso3.bin --ci-mode
+            --start "${{ matrix.year }}-01-01" --end "${{ matrix.year }}-12-31" \
+            --out "gosat_tanso3_${{ matrix.year }}.bin" --ci-mode
+  series-manifest:
+    needs: [raster, compile]
+    if: always() && needs.raster.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fold every year shard on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          TAG="product.gosat-gw.nies.go.jp"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh release view "$TAG" --repo "$REPO" \
+            --json assets --jq '.assets[] | "\(.name) \(.digest)"' > "$tmp/assets"
+          sed -n "s/^\(gosat_tanso3_[0-9]*\.bin\) sha256:\([0-9a-f]\{64\}\)$/\1 \2/p" \
+            "$tmp/assets" | sort > "$tmp/gosat_tanso3.manifest"
+          if [ ! -s "$tmp/gosat_tanso3.manifest" ]; then
+            echo "no gosat_tanso3 year shards on the CDN — the series manifest stays unwritten (0 honored)"
+            exit 0
+          fi
+          echo "gosat_tanso3.manifest lists $(wc -l < "$tmp/gosat_tanso3.manifest") shards"
+          gh release upload "$TAG" "$tmp/gosat_tanso3.manifest" \
+            --clobber --repo "$REPO"
