@@ -346,13 +346,23 @@ released
 url http://pithia.cbk.waw.pl/tap
 note epncore released 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
 
-parser-def iaga-text
-gap iaga-text
+released
 url https://zenodo.org/records/10594301
-note Zenodo Alberta-GIC 2023 Mag_Data.zip (nT) — IAGA-2002-Text, Messung echt, Reader-Arm fehlt; der Modell-Teil (MT_Data/Network.xlsx) ist decline model (declined_sources.φ:5143).
+note iaga-text released 2026-09-27: IAGA-2002-Reader steht (src/archivar/iaga.rs:55); Mag_Data.zip, 16 .sec-Dateien 1-Hz XYZF, Fill 88888.00/99999.00 = absent; Modell-Teil (MT_Data/Network.xlsx) bleibt decline model (declined_sources.φ:5143).
 
-parser-def html
-gap html-parser-arm
+released
 url https://superdarn.ca/radar-info
-note SuperDARN Radar-Positionen (HTML-Tabelle): 200 gemessen 2026-09-27 via archive_search --verdict (247 907 B); kein Positions-Reader-Arm. FITACF/RAWACF stehen (sources.φ:11487/:9814).
+note html released 2026-09-27: Radar-Positionen maschinenlesbar via github.com/vtsuperdarn/hdw.dat (41 hdw.dat.<code>, lat Feld 4/lon Feld 5, raw 200); HTML-Arm nicht nötig. FITACF/RAWACF stehen (sources.φ:11487/:9814).
+
+pending
+url https://github.com/vtsuperdarn/hdw.dat
+note SuperDARN Radar-Positionen (41 hdw.dat.<code>, lat Feld 4/lon Feld 5): 200 gemessen 2026-09-27 (raw.githubusercontent.com/hdw.dat.<code> 200); superdarn.ca/radar-info 200 Cloudflare. FITACF/RAWACF stehen (sources.φ:11487/:9814).
+
+pending
+url https://planet.physics.uiowa.edu/das/das2Server/hapi
+note DAS2 Iowa (HAPI 1.1, CSV): 200 gemessen 2026-09-27; HAPI-Klasse steht (sources.φ:584/:720/:7784); native das2.2 jupiter.physics.uiowa.edu/das/server 551 Datasets (Galileo/Juno/Cassini MAG nT), Coverage-Frage offen.
+
+pending
+url http://occultations.ct.utfpr.edu.br/
+note Occultation-DB UTFPR (SOSB/Lucky Star): 200 gemessen 2026-09-27; JSON-API /api/objects+/api/events; radius/albedo/density/oblateness/atmosphere/Δ/JD+RA/DEC; keine Stations-lat/lon (gemessene Abwesenheit); kein Überlapp RSS-Okkultation/TNO-Katalog.
 
