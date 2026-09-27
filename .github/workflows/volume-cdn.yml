@@ -61,6 +61,12 @@ jobs:
           cargo run -p omegaflow-utils --release --bin volume_builder -- \
             GYPSUMP_kmps.r0.0-n4c.nc \
             --out GYPSUMP_kmps.r0.0-n4c.volume.bin --ci-mode --tag data.earthscope.org
+      - name: Verify live arm parity — GYPSUMP_kmps vp
+        run: |
+          curl -sSfL https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMP_kmps.r0.0-n4c.nc -o GYPSUMP_kmps.r0.0-n4c.nc
+          cargo run -p omegaflow-utils --release --bin volume_builder -- \
+            GYPSUMP_kmps.r0.0-n4c.nc \
+            --verify-live vp latitude longitude depth --out /tmp/gypsump.volume.bin
 
   gypsums:
     runs-on: ubuntu-latest
