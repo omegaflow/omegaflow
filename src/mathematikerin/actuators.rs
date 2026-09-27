@@ -561,7 +561,7 @@ mod tests {
             aperture: 1.0,
             pan_ms: None,
             tilt_ms: None,
-            tau_ticks: 2,
+            tau_ticks: 1,
         };
         let pcm = acoustic_pcm(&frame, &mut phase);
         let mut min_l = 0i32;
