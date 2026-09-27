@@ -169,6 +169,7 @@ impl ScalarTeGpu {
             self.device.poll(wgpu::Maintain::Poll);
         }
         if !mapped.load(Ordering::SeqCst) {
+            self.read_buf.unmap();
             return Vec::new();
         }
         let data = slice.get_mapped_range();
