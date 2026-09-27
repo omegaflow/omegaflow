@@ -3,6 +3,7 @@ use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Hdf5Attribute, Hdf5File, Hdf5Layout, decode_f32, decode_f64};
 use omegaflow::lsk::days_from_civil;
+use omegaflow::spectral::civil_from_days;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
@@ -135,12 +136,20 @@ fn search_fetch(url: &str, cookie: &str) -> Option<String> {
     Some(String::from_utf8_lossy(&out.stdout).into_owned())
 }
 
-fn search_parse(body: &str) -> Option<Vec<Granule>> {
-    let json = parse_json(body)?;
-    let JsonVal::Obj(root) = &json else {
-        return None;
+enum SearchParse {
+    Granules(Vec<Granule>),
+    Overflow(String),
+    Void,
+}
+
+fn search_parse(body: &str) -> SearchParse {
+    let Some(json) = parse_json(body) else {
+        return SearchParse::Void;
     };
-    let JsonVal::Arr(items) = root.get("result")? else {
+    let JsonVal::Obj(root) = &json else {
+        return SearchParse::Void;
+    };
+    let Some(entry) = root.get("result") else {
         let summary = match root.get("messages") {
             Some(JsonVal::Obj(m)) => match m.get("summary") {
                 Some(JsonVal::Str(s)) => s.clone(),
@@ -148,8 +157,10 @@ fn search_parse(body: &str) -> Option<Vec<Granule>> {
             },
             _ => String::new(),
         };
-        eprintln!("gosat search: no result array — server: {summary}");
-        return None;
+        return SearchParse::Overflow(summary);
+    };
+    let JsonVal::Arr(items) = entry else {
+        return SearchParse::Void;
     };
     let mut out = Vec::new();
     for item in items {
@@ -172,12 +183,53 @@ fn search_parse(body: &str) -> Option<Vec<Granule>> {
             end,
         });
     }
-    Some(out)
+    SearchParse::Granules(out)
+}
+
+fn ymd_days(date: &str) -> Option<i64> {
+    let mut p = date.split('-');
+    let y: i64 = p.next()?.parse().ok()?;
+    let m: i64 = p.next()?.parse().ok()?;
+    let d: i64 = p.next()?.parse().ok()?;
+    days_from_civil(y, m, d)
+}
+
+fn split_window(start: &str, end: &str) -> Option<(String, String)> {
+    let a = ymd_days(start)?;
+    let b = ymd_days(end)?;
+    if b <= a {
+        return None;
+    }
+    let mid = a + (b - a) / 2;
+    let (my, mm, md) = civil_from_days(mid)?;
+    let (ny, nm, nd) = civil_from_days(mid + 1)?;
+    Some((
+        format!("{my:04}-{mm:02}-{md:02}"),
+        format!("{ny:04}-{nm:02}-{nd:02}"),
+    ))
 }
 
 fn search_granules(product: &str, start: &str, end: &str, cookie: &str) -> Option<Vec<Granule>> {
     let url = search_url(product, start, end);
-    search_parse(&search_fetch(&url, cookie)?)
+    match search_parse(&search_fetch(&url, cookie)?) {
+        SearchParse::Granules(granules) => Some(granules),
+        SearchParse::Void => None,
+        SearchParse::Overflow(summary) => {
+            let Some((mid, next)) = split_window(start, end) else {
+                eprintln!(
+                    "gosat search: {start}..{end} over the server bound and unsplittable — server: {summary}"
+                );
+                return None;
+            };
+            eprintln!(
+                "gosat search: {start}..{end} over the server bound — split at {mid}; server: {summary}"
+            );
+            let mut left = search_granules(product, start, &mid, cookie)?;
+            let right = search_granules(product, &next, end, cookie)?;
+            left.extend(right);
+            Some(left)
+        }
+    }
 }
 
 fn download_fetch(filename: &str, cookie: &str, out_path: &str) -> bool {
@@ -1268,7 +1320,11 @@ mod tests {
              "version": "101101", "path_no": "", "filesize": "17276783",
              "product_quality": "Good"}
         ]}"#;
-        let granules = search_parse(body).expect("the result feed parses");
+        let granules = match search_parse(body) {
+            SearchParse::Granules(g) => g,
+            SearchParse::Overflow(s) => panic!("the result feed reads as overflow: {s}"),
+            SearchParse::Void => panic!("the result feed reads as void"),
+        };
         assert_eq!(granules.len(), 2);
         assert_eq!(
             granules[0].filename,
@@ -1286,7 +1342,24 @@ mod tests {
     fn search_parse_names_the_server_overflow_message() {
         let body = r#"{"status": "success", "results": {}, "messages": {"level": "info",
             "summary": "The number of search results exceeds the maximum number (3000). Please change your search conditions and try again.", "details": ""}}"#;
-        assert!(search_parse(body).is_none());
+        match search_parse(body) {
+            SearchParse::Overflow(summary) => {
+                assert!(summary.contains("exceeds the maximum number (3000)"));
+            }
+            _ => panic!("the overflow shape reads as Overflow, not granule/void"),
+        }
+    }
+
+    #[test]
+    fn split_window_halves_a_span() {
+        let (mid, next) = split_window("2024-01-01", "2024-01-05").expect("the span halves");
+        assert_eq!(mid, "2024-01-03");
+        assert_eq!(next, "2024-01-04");
+        assert!(split_window("2024-01-05", "2024-01-05").is_none());
+        assert_eq!(
+            split_window("2025-01-01", "2026-01-01").map(|(m, _)| m),
+            Some("2025-07-02".to_string())
+        );
     }
 
     #[test]
