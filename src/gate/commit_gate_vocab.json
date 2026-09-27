@@ -62,7 +62,8 @@
     ["star_epoch_min: if star_epoch_min == f64::MAX {", "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"],
     ["None => render_source_url(", "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"],
     ["sensordatavalues.0.value sensorcommunity", "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"],
-    ["releases/download/www.", "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"]
+    ["releases/download/www.", "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"],
+    ["(lon_sum_normalized / n, lat_sum / n)", "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -491,6 +492,7 @@
     "star_finite_difference_bounds": "let p1 = star_position_at(rec, epoch + 1.0).0;",
     "star_epoch_bare_zero": "        samples.push(Sample {\n            source: SampleSource::Ephemeris,\n            epoch: 0.0,",
     "star_epoch_max_zero_fold": "        star_epoch_min: if star_epoch_min == f64::MAX {\n            0.0\n        } else {\n            star_epoch_min\n        },",
-    "netcdf_origin_render_fallback": "                    None => render_source_url(\n                        &src_clone,\n                        RenderCtx {\n                            x: 0.0,\n                            y: 0.0,\n                            z: 0.0,"
+    "netcdf_origin_render_fallback": "                    None => render_source_url(\n                        &src_clone,\n                        RenderCtx {\n                            x: 0.0,\n                            y: 0.0,\n                            z: 0.0,",
+    "epncore_centroid_raw_mean": "Some((lon_sum_normalized / n, lat_sum / n)),"
   }
 }

@@ -1085,7 +1085,8 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
         | Extract::CmrPolygon { fields, .. }
         | Extract::CelestialPolygon { fields, .. }
         | Extract::KeplerMap { fields, .. }
-        | Extract::ProfileMap { fields, .. } => fields.clone(),
+        | Extract::ProfileMap { fields, .. }
+        | Extract::EpnCore { fields, .. } => fields.clone(),
         Extract::Volume { .. } => Vec::new(),
         Extract::Field(fc)
         | Extract::First(fc, _)
@@ -1260,6 +1261,80 @@ fn key_or_constant(key: &str, row: &JsonVal) -> Option<f64> {
         Ok(c) if c.is_finite() => Some(c),
         _ => None,
     }
+}
+
+fn region_midpoint(
+    row: &JsonVal,
+    min_key: &str,
+    max_key: &str,
+    s_region_key: &str,
+    axis: usize,
+) -> Option<f64> {
+    let mn = if min_key.is_empty() {
+        None
+    } else {
+        jpath(row, min_key)
+    };
+    let mx = if max_key.is_empty() {
+        None
+    } else {
+        jpath(row, max_key)
+    };
+    if let (Some(a), Some(b)) = (mn, mx)
+        && a.is_finite()
+        && b.is_finite()
+    {
+        if axis == 0 {
+            return Some((0.5 * (a + unwrap_lon(b, a))).rem_euclid(360.0));
+        }
+        return Some(0.5 * (a + b));
+    }
+    if s_region_key.is_empty() || axis > 1 {
+        return None;
+    }
+    let (lon, lat) = stc_s_polygon_centroid(&jstr(row, s_region_key)?)?;
+    match axis {
+        0 => Some(lon),
+        1 => Some(lat),
+        _ => None,
+    }
+}
+
+fn unwrap_lon(b: f64, a: f64) -> f64 {
+    let mut w = b;
+    while w - a > 180.0 {
+        w -= 360.0;
+    }
+    while w - a < -180.0 {
+        w += 360.0;
+    }
+    w
+}
+
+pub fn stc_s_polygon_centroid(s_region: &str) -> Option<(f64, f64)> {
+    let body = s_region.strip_prefix("Polygon")?.trim_start();
+    let tokens: Vec<&str> = body.split_whitespace().skip(1).collect();
+    if tokens.len() < 4 || tokens.len() % 2 != 0 {
+        return None;
+    }
+    let mut lat_sum = 0.0f64;
+    let mut lons: Vec<f64> = Vec::with_capacity(tokens.len() / 2);
+    for pair in tokens.chunks(2) {
+        let lon: f64 = pair[0].parse().ok()?;
+        let lat: f64 = pair[1].parse().ok()?;
+        if !(lon.is_finite() && lat.is_finite() && (-90.0..=90.0).contains(&lat)) {
+            return None;
+        }
+        lons.push(lon);
+        lat_sum += lat;
+    }
+    let anchor = lons[0];
+    let mut lon_sum_normalized = 0.0f64;
+    for lon in &lons {
+        lon_sum_normalized += unwrap_lon(*lon, anchor);
+    }
+    let n = lons.len() as f64;
+    Some(((lon_sum_normalized / n).rem_euclid(360.0), lat_sum / n))
 }
 
 fn tsv_cell(field: &str) -> JsonVal {
@@ -3778,6 +3853,107 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     ));
                                 }
                             }
+                        }
+                    }
+                }
+            }
+            Extract::EpnCore {
+                arr_path,
+                body_key,
+                lon_min_key,
+                lon_max_key,
+                lat_min_key,
+                lat_max_key,
+                alt_min_key,
+                alt_max_key,
+                s_region_key,
+                epoch_key,
+                epoch_mjd,
+                val_key,
+                fields,
+            } => {
+                if let Some(ref j) = parsed_json {
+                    let rows: Vec<&JsonVal> = match jpath_val(j, arr_path) {
+                        Some(JsonVal::Arr(arr)) => arr.iter().collect(),
+                        Some(obj @ JsonVal::Obj(_)) => vec![obj],
+                        _ => Vec::new(),
+                    };
+                    for v in rows {
+                        let body_name = if body_key.is_empty() {
+                            frame_body_name(&src.frame)
+                        } else {
+                            match jstr(v, body_key) {
+                                Some(s) if !s.trim().is_empty() => s.trim().to_ascii_lowercase(),
+                                _ => frame_body_name(&src.frame),
+                            }
+                        };
+                        let lon = region_midpoint(v, lon_min_key, lon_max_key, s_region_key, 0);
+                        let lat = region_midpoint(v, lat_min_key, lat_max_key, s_region_key, 1);
+                        let (Some(lon), Some(lat)) = (lon, lat) else {
+                            continue;
+                        };
+                        if !(lat.is_finite() && (-90.0..=90.0).contains(&lat) && lon.is_finite()) {
+                            continue;
+                        }
+                        let alt = if alt_min_key.is_empty() && alt_max_key.is_empty() {
+                            0.0
+                        } else {
+                            match region_midpoint(v, alt_min_key, alt_max_key, "", 2) {
+                                Some(a) if a.is_finite() => a,
+                                _ => continue,
+                            }
+                        };
+                        let epoch = if epoch_key.is_empty() {
+                            now
+                        } else if let Some(ev) = jpath_val(v, epoch_key) {
+                            match ev {
+                                JsonVal::Str(s) => match parse_iso_tdb(s, lsk) {
+                                    Some(t) => t,
+                                    None => continue,
+                                },
+                                JsonVal::Num(n) if *epoch_mjd => {
+                                    match crate::maxi::mjd_to_tdb(*n, lsk) {
+                                        Some(t) => t,
+                                        None => continue,
+                                    }
+                                }
+                                JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
+                                    Some(t) => t,
+                                    None => continue,
+                                },
+                                _ => continue,
+                            }
+                        } else {
+                            continue;
+                        };
+                        for fc in fields {
+                            if !val_key.is_empty() && fc.name != *val_key {
+                                continue;
+                            }
+                            let val = match jpath(v, &fc.key) {
+                                Some(vv) => vv,
+                                None => continue,
+                            };
+                            if !val.is_finite() {
+                                continue;
+                            }
+                            channels.push((
+                                Channel {
+                                    z: 0.0,
+                                    freq: 0.0,
+                                    bin_width: 0.0,
+                                    epoch,
+                                    position: Position::Surface {
+                                        body_name: body_name.clone(),
+                                        lat,
+                                        lon,
+                                        alt,
+                                    },
+                                    name: fc.name.clone(),
+                                    value: val,
+                                },
+                                fc.clone(),
+                            ));
                         }
                     }
                 }
