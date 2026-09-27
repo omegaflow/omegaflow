@@ -53,6 +53,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
     let mut cur_post_body: Option<String> = None;
+    let mut cur_origin: Option<String> = None;
 
     let mut cur_stations_url: Option<String> = None;
     let mut cur_stations_path = String::from("stations");
@@ -100,6 +101,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             headers: std::mem::take(&mut cur_headers),
                             post_body: cur_post_body.clone(),
                             target: cur_target.clone(),
+                            origin: cur_origin.clone(),
                             catalog: cur_catalog.clone(),
                             max_freq: cur_max_freq,
                             min_freq: cur_min_freq,
@@ -152,6 +154,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_min_freq = None;
                 cur_body = None;
                 cur_post_body = None;
+                cur_origin = None;
                 cur_stations_url = None;
                 cur_stations_path = String::from("stations");
                 cur_stations_lat = String::from("lat");
@@ -171,6 +174,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_window = None;
                 cur_live_only = false;
                 active = true;
+            }
+            "origin" => {
+                let rest = line.strip_prefix("origin").unwrap_or("").trim();
+                cur_origin = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
             }
             "ttl" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u64>() {
@@ -1592,6 +1603,7 @@ mod tests {
         SourceConfig {
             ttl: 604800,
             url: url.into(),
+            origin: None,
             frame: Frame::Manifest,
             format: format.into(),
             extracts: Vec::new(),
