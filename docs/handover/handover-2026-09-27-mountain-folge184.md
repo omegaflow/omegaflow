@@ -3,7 +3,7 @@
   session: Mountain-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: b658f2e442cd8f7a075738c2cf10422b41d728e2c65357cf3adf6d65682d23db
+  sha256: 1312d55fbe19f96455cd28b39dbd6d182541991e64454cad84f6e17c57ef7daa
   status: live
 -->
 # Handover — Mountain-Folge 184 (2026-09-27)
@@ -38,6 +38,15 @@ RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXI
 - **Braucht:** mit dem Token den echten ByParams-Job fahren und messen, ob
   Poll/Fetch ohne Header scheitern; falls ja, Token an `http_get`-Signatur und
   `fetch_body` (Header + Cookie-Jar) ergänzen.
+
+### rx100_luminance — CDN-Manifestation (`asset fehlt`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ein reales RX100-JPEG + `rx100_compiler --jpeg`-Lauf.
+- **Lage:** (gemessen 2026-09-27 via `sgrep`/`sread`) `phi/harvest.φ:233` `asset fehlt`;
+  die Band-Deklaration steht (`phi/sources.φ:122` → `… 60 0.0 0.0 5.45e14 3.2e14`),
+  der EXIF-Compiler-Pfad ist gebaut (River `c04e00871`). K=12.5 bleibt ISO-2720-Vorgabe, ungemessen.
+- **Blockade:** kein reales Capture (Operator-/Sensor-Hand); kein Referenz-Luminanzmeter.
+- **Braucht:** bei Capture den Compiler-Lauf + CDN-Manifestation (die `url`-Zeile `phi/sources.φ:117` steht).
 
 ## Abschluss
 
