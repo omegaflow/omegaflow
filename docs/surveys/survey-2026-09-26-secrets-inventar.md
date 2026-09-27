@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: fd9b2c1d149ad335378d617cb3772a8697e8ed86485e1dcefda33e43bd626f1b
+  sha256: b125e04813ab756fe0cf5fbbe6c3a0991a91ca3cefb098d9285186c6e52a2e21
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)
@@ -72,5 +72,9 @@ gemessen, nicht aus dem Namen geraten. Die **Secret-Namen selbst** stehen in kei
 
 ## Offen
 
-Je unreferenziertem Namen die Quelle benennen (behalten als Vorrat mit Träger) oder
-entfernen. Träger: Future-Übergabe (`state/funding/handover/handover-2026-09-27-future-folge137.md`).
+Die 6 Lebendquellen sind disponiert (gemessen 2026-09-27 via `sgrep`): GOSAT-GW
+`phi/sources.φ:8300`, IGETS `phi/sources.φ:8349`, Babamul `phi/sources.φ:778` —
+registriert; GFW `phi/declined_sources.φ:5198`, Movebank `phi/declined_sources.φ:4594`
+— declined; Rubin/LSST `phi/blocked_sources.φ:334` — descoped. Offen bleibt der
+Verdict über die 6 ungenutzten Secret-Namen (behalten als Vorrat mit Träger oder
+entfernen). Träger: Mycelium (`docs/handover/handover-2026-09-27-mycelium-folge179.md`).
