@@ -112,17 +112,17 @@ jobs:
           rc=$?
           set -e
           cat compile.log
-          if [ "$rc" -ne 0 ]; then
-            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "harvest: $FORMAT returned void" \
-              "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-              health
-            exit 1
-          fi
-          if [ "$FORMAT" = "rx100_luminance" ] && grep -q "no camera answered M-SEARCH" compile.log; then
+          if [ "$FORMAT" = "rx100_luminance" ] && grep -q "no record written without it" compile.log; then
             echo "absent=true" >> "$GITHUB_OUTPUT"
-            echo "rx100_luminance: absent (no camera in CI) — no asset expected"
+            echo "rx100_luminance: absent (no local capture in CI) — no asset expected"
           else
+            if [ "$rc" -ne 0 ]; then
+              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                "harvest: $FORMAT returned void" \
+                "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                health
+              exit 1
+            fi
             echo "absent=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Second witness — the asset stands after the compile
