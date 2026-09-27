@@ -950,8 +950,8 @@ impl OmegaLoop {
                 self.ring_filled += 1;
             }
             self.ring_gen += 1;
+            probe_read.unmap();
         }
-        probe_read.unmap();
     }
 
     pub fn sky_say(&mut self, word: &str) {
@@ -1775,40 +1775,42 @@ impl OmegaLoop {
                     "-".to_string()
                 }
             };
-            eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
-                self.t_presence,
-                rec,
-                self.ring_gen,
-                self.probe_flow[0],
-                self.probe_flow[1],
-                self.probe_flow[2],
-                force_tokens,
-                self.field_permeability,
-                self.expose_offset,
-                self.force_ref[0],
-                self.force_ref[1],
-                self.force_ref[2],
-                self.force_ref[3],
-                self.force_ref[4],
-                self.force_ref[5],
-                self.force_ref[6],
-                self.force_ref[7],
-                self.force_ref[8],
-                te_s,
-                thr_s,
-                te_cpu_s,
-                tau_s,
-                pe_s,
-                te_word,
-                em_word,
-                skyrep.osc_count,
-                skyrep.live_count,
-                skyrep.shell,
-                skyrep.forward_field,
-                skyrep.permeability,
-                self.sky.points.len(),
-            );
+            if std::io::IsTerminal::is_terminal(&std::io::stderr()) {
+                eprintln!(
+                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
+                    self.t_presence,
+                    rec,
+                    self.ring_gen,
+                    self.probe_flow[0],
+                    self.probe_flow[1],
+                    self.probe_flow[2],
+                    force_tokens,
+                    self.field_permeability,
+                    self.expose_offset,
+                    self.force_ref[0],
+                    self.force_ref[1],
+                    self.force_ref[2],
+                    self.force_ref[3],
+                    self.force_ref[4],
+                    self.force_ref[5],
+                    self.force_ref[6],
+                    self.force_ref[7],
+                    self.force_ref[8],
+                    te_s,
+                    thr_s,
+                    te_cpu_s,
+                    tau_s,
+                    pe_s,
+                    te_word,
+                    em_word,
+                    skyrep.osc_count,
+                    skyrep.live_count,
+                    skyrep.shell,
+                    skyrep.forward_field,
+                    skyrep.permeability,
+                    self.sky.points.len(),
+                );
+            }
         }
     }
 }

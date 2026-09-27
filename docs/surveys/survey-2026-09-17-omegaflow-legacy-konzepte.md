@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 3dca84168ec1f5ccbd078abb85c3ce2d7a7e993841e600d2994116970b30d9ad
+  sha256: f4d92d7bc50f14d445140c501e47e4f78525575d75e412ba2b3cf3d077b94a67
   status: live
   see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
@@ -62,6 +62,10 @@ Verarbeitung fehlt:
   Achtung: der Cone-Gate ist Archivar-Seite (`membrane.rs`), ein ω-Loop-Faktor ist
   Mathematikerin/WGSL — „keine Quelle nötig" heißt nicht „keine Schicht-Frage"; sein
   Zusatzwert ist ungemessen (erst eine Delta-Probe mit/ohne ds²).
+  **Gemessen (2026-09-27, River-Folge 47):** `tools/measure/src/bin/minkowski_ds2_delta_probe.rs`
+  gebaut (0 Warnungen), Lauf grün: `weight = exposure/(exposure+ds²)`, `ds² < 0 → 0`. Außerhalb
+  des Lichtkegels nullt das Feld (Δ_rel −100 %), lightlike und gemischt bleiben unverändert
+  (Δ_rel 0 %) — ds² wirkt als Kegel-Gewicht, kein Zusatzwert im Inneren.
 - **Certainty quantum/decay**: Takens-Spread + PE sind aus der TE-Maschine ableitbar;
   als Faktor in den Permeability-Atem (`omega.rs` `field_permeability`). Schritt 1 ist
   die **vC-Definition** von L:53 im Legacy-Klon zu messen — exp und tanh haben inverse
@@ -101,15 +105,29 @@ Verarbeitung fehlt:
   Operator-/Session-Objekt (die Reihe der Tuning-Akte), kein Draht-Format. Ein Weltlinien-Objekt
   im Kanal würde den Schub vom Operator in die Maschine verlegen — Selbstpropulsion, die der
   Ethik-Rahmen verbietet. **Nicht gebaut, nicht nötig.**
-- **Delay Spectrum**: die Lichtlaufzeit-Faltung existiert (survey-Messpunkt-Verteilung);
-  die lag-Matrix als Instrument wäre eine neue measure-Probe.
+- **Delay Spectrum**: die Lichtlaufzeit-Faltung existiert (survey-Messpunkt-Verteilung).
+  **Gemessen (2026-09-27, River-Folge 47):** `tools/measure/src/bin/delay_spectrum_probe.rs`
+  gebaut (0 Warnungen): Lag-Sweep über `transfer_entropy_binned` mit Surrogat-Null rekonstruiert
+  einen gepflanzten Delay 5 exakt — TE(5)=1.29 gegen Schwelle 5.85e-2, die Gegenrichtung bleibt still.
+- **Total Coherence Integration**: **Gemessen (2026-09-27, River-Folge 47):**
+  `tools/measure/src/bin/total_coherence_probe.rs` gebaut (0 Warnungen):
+  Σ_i perm_target(|ω_i|,|Δω_i|) = 0.924 auf dem 9-Medien-Fixture gegen leeres Feld 0.0; die
+  gebaute Permeability (ein Skalar über die Summe) kollabiert auf 0.0 — der per-Oszillator-Integral-
+  und der Complexity-Term bleiben offen (Live-Pfad ist ein TE-Skalar).
 
 ## Klein, entblockt
 
 - **⌘K-Block-Suche** (`search-command-palette.md`): `static/palette.js` halb gebaut;
   der einzige Blocker war die offene Client-Frage (Handover 2026-09-12: M07 descoped).
 - **SI-Wahrheits-Konsole** (`wetterstation.md`): `force_type`→Einheit statt kryptischer
-  Debug-Werte (Name = Implementation im Anzeigepfad); klein, unblockiert.
+  Debug-Werte (Name = Implementation im Anzeigepfad). **Gemessen (2026-09-27, River-Folge 47):**
+  die force→Einheiten-Tabelle **existiert** — `src/archivar/units.rs:315 allowed_units_for_force`
+  (force 0–8 → akzeptierte Quell-Einheiten), durchgesetzt vom `force-unit-gate`
+  (`src/gate/commit_gate.rs:781`, `:1818 canonical_pairs`); `units.rs:3 convert_to_si` normalisiert
+  jede auf den SI-**Wert** (f64). Was fehlt, ist ein **einzelnes Anzeige-Symbol je Force**: jede Force
+  trägt viele Einheiten (em: W, W/m², T, nT, eV, Jy …), der Draht führt keinen Unit-Slot — die Konsole
+  braucht ein repräsentatives Symbol je Force (verlustbehaftet) oder einen per-Sample-Unit-Träger
+  (Draht-/Architekturschritt). Ort `static/index.html` = Fenster-Pfad → **operator-gebunden**.
 - **wgsl-shader — last-adaptive Messknoten**: die eine echte technische Idee, die nur
   als Archiv-Spec schläft; entblockbar erst mit gemessener Rückkehr des Per-Pixel-
   Feld-Pfads (derzeit descoped, Befund liegt vor).
