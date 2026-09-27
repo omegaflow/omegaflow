@@ -37,7 +37,7 @@ jobs:
           START="${{ inputs.start_year }}"
           END="${{ inputs.end_year }}"
           if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
-          RELEASE="data.lpdaac.earthdatacloud.nasa.gov"
+          RELEASE="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
           REPO="omegaflow/sources"
           CMR="https://cmr.earthdata.nasa.gov/search/granules.umm_json"
           present="$(gh release view "$RELEASE" --repo "$REPO" \
@@ -68,12 +68,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure the data.lpdaac.earthdatacloud.nasa.gov release exists on the CDN
+      - name: Ensure the data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg family release exists on the CDN
         run: |
-          if ! gh release view data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create data.lpdaac.earthdatacloud.nasa.gov --repo omegaflow/sources \
-              --title "data.lpdaac.earthdatacloud.nasa.gov" \
-              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night)."
+          if ! gh release view data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources \
+              --title "data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg" \
+              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night). Family tag: the bare host release holds 1000 assets; the shards live here." 
           fi
   compile:
     needs: [raster, release]
@@ -94,6 +94,8 @@ jobs:
       - name: Build the modis_lst_cmg compiler
         run: cargo build -p omegaflow-harvest --release --bin modis_lst_cmg_compiler
       - name: Compile the ${{ matrix.product }} ${{ matrix.year }} granule shards to the CDN
+        env:
+          MODIS_CDN_TAG: data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg
         run: |
           ./target/release/modis_lst_cmg_compiler \
             --cmr --concept-id ${{ matrix.concept_id }} \
@@ -110,7 +112,7 @@ jobs:
       - name: Fold every shard asset on the CDN into the year-less series manifest
         run: |
           set -euo pipefail
-          TAG="data.lpdaac.earthdatacloud.nasa.gov"
+          TAG="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
           REPO="omegaflow/sources"
           tmp="$(mktemp -d)"
           gh release view "$TAG" --repo "$REPO" \

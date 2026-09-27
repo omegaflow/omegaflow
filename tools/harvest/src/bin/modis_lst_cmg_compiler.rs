@@ -12,7 +12,14 @@ use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 use std::process::Command;
 
-const NETLOC: &str = "data.lpdaac.earthdatacloud.nasa.gov";
+const NETLOC: &str = "data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg";
+
+fn netloc() -> String {
+    match std::env::var("MODIS_CDN_TAG") {
+        Ok(tag) if !tag.is_empty() => tag,
+        _ => NETLOC.to_string(),
+    }
+}
 const CMR_UMM_GRANULES_URL: &str = "https://cmr.earthdata.nasa.gov/search/granules.umm_json";
 const LP_PROD_PREFIX: &str = "https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/";
 const CMR_PAGE_SIZE: usize = 1 << 5;
@@ -593,8 +600,9 @@ fn run_series(
         eprintln!("modis_lst_cmg_compiler: create_dir_all for {shard_dir} returned void");
         std::process::exit(1);
     }
+    let tag = netloc();
     let digests = if ci_mode {
-        cdn_digests(NETLOC)
+        cdn_digests(&tag)
     } else {
         HashMap::new()
     };
@@ -675,7 +683,7 @@ fn run_series(
         }
         lines.push((name.clone(), sha));
         if ci_mode {
-            if !upload_release(NETLOC, &path) {
+            if !upload_release(&tag, &path) {
                 pending += 1;
                 continue;
             }
@@ -705,7 +713,7 @@ fn run_series(
             );
             std::process::exit(1);
         }
-        if !upload_release(NETLOC, &manifest_path) {
+        if !upload_release(&tag, &manifest_path) {
             std::process::exit(1);
         }
         if fs::remove_file(&manifest_path).is_err() {
@@ -793,7 +801,7 @@ fn run_out(granules: &[Granule], out_path: &str, ci_mode: bool, token: &str, lsk
             );
             std::process::exit(1);
         }
-        if !upload_release(NETLOC, out_path) {
+        if !upload_release(&netloc(), out_path) {
             std::process::exit(1);
         }
     }
