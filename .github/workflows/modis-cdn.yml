@@ -102,3 +102,27 @@ jobs:
             --shard-dir shards \
             --manifest ${{ matrix.manifest }} \
             --ci-mode
+  series-manifest:
+    needs: [raster, compile]
+    if: always() && needs.raster.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fold every shard asset on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          TAG="data.lpdaac.earthdatacloud.nasa.gov"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh release view "$TAG" --repo "$REPO" \
+            --json assets --jq '.assets[] | "\(.name) \(.digest)"' > "$tmp/assets"
+          for product in 8day monthly; do
+            sed -n "s/^\(modis_lst_cmg_${product}_[^ ]*\.bin\) sha256:\([0-9a-f]\{64\}\)$/\1 \2/p" \
+              "$tmp/assets" | sort > "$tmp/modis_lst_cmg_${product}.manifest"
+            if [ ! -s "$tmp/modis_lst_cmg_${product}.manifest" ]; then
+              echo "no ${product} shards on the CDN — the series manifest stays unwritten (0 honored)"
+              continue
+            fi
+            echo "modis_lst_cmg_${product}.manifest lists $(wc -l < "$tmp/modis_lst_cmg_${product}.manifest") shards"
+            gh release upload "$TAG" "$tmp/modis_lst_cmg_${product}.manifest" \
+              --clobber --repo "$REPO"
+          done
