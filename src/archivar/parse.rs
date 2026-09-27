@@ -305,6 +305,16 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
+            "volume" if parts.len() >= 3 => {
+                cur_extracts.push(Extract::Volume {
+                    value_key: parts[2].to_string(),
+                    lat_key: String::new(),
+                    lon_key: String::new(),
+                    depth_key: String::new(),
+                    depth_scale: 1.0,
+                    name: parts[1].to_string(),
+                });
+            }
             "rows" => {
                 cur_extracts.push(Extract::Rows {
                     last_line: false,
@@ -980,7 +990,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "lat" if parts.len() >= 2 => match cur_extracts.last_mut() {
                 Some(Extract::Map { lat_key, .. })
                 | Some(Extract::ProfileMap { lat_key, .. })
-                | Some(Extract::Rows { lat_key, .. }) => {
+                | Some(Extract::Rows { lat_key, .. })
+                | Some(Extract::Volume { lat_key, .. }) => {
                     *lat_key = parts[1].to_string();
                 }
                 _ => {}
@@ -988,11 +999,27 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "lon" if parts.len() >= 2 => match cur_extracts.last_mut() {
                 Some(Extract::Map { lon_key, .. })
                 | Some(Extract::ProfileMap { lon_key, .. })
-                | Some(Extract::Rows { lon_key, .. }) => {
+                | Some(Extract::Rows { lon_key, .. })
+                | Some(Extract::Volume { lon_key, .. }) => {
                     *lon_key = parts[1].to_string();
                 }
                 _ => {}
             },
+            "depth" if parts.len() >= 2 => {
+                if let Some(Extract::Volume {
+                    depth_key,
+                    depth_scale,
+                    ..
+                }) = cur_extracts.last_mut()
+                {
+                    *depth_key = parts[1].to_string();
+                    if parts.len() >= 3
+                        && let Ok(s) = parts[2].parse::<f64>()
+                    {
+                        *depth_scale = s;
+                    }
+                }
+            }
             "lat_sign" if parts.len() >= 2 => {
                 if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
                     *lat_sign = Some(parts[1].to_string());
