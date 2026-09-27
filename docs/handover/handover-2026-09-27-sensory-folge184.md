@@ -3,7 +3,7 @@
   session: Sensory-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: d66bfd6932bf046c7d918ad4046ab69d73a8eae7ccde4cd52b18c4fbbe88a0c0
+  sha256: 9fb5d25c8169747e746f655d82ce92ecddf7f88fe91f66a7736e29adc545194f
   status: live
 -->
 # Handover — Sensory-Folge 184 (2026-09-27)
@@ -131,6 +131,8 @@ verschiebt einen Send auf die Maschine. DEMETER metalink ist Operator-Hand.
 - **Wort:** „ich kanns echt nicht mehr hören seit wie vielen sessions schleppst du die offenen punkte durch" — die B-Befunde sind geschlossen | 2026-09-27 | Operator (Session).
 - **Wort:** „kümmer dich drum" (Sensory-Folge 182: alle eigenen offenen Punkte abarbeiten) | 2026-09-27 | Operator (Session).
 - **Wort:** „Du kannst" (`/consent`) — session-weiter Delegations-Consent, nicht das Commit-Wort | 2026-09-27 | Operator (Session).
+- **Wort:** „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session).
+- **Wort:** ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session).
 
 ## Abschluss
 
