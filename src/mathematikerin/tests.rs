@@ -1975,7 +1975,7 @@ fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
     });
     let lut_rgb = [0.5f32, 0.25f32, 0.125f32];
     let mut lut = vec![0f32; 256 * 4];
-    for entry in lut.chunks_exact_mut(4) {
+    for entry in lut.as_chunks_mut::<4>().0 {
         entry[0] = lut_rgb[0];
         entry[1] = lut_rgb[1];
         entry[2] = lut_rgb[2];
@@ -2104,7 +2104,7 @@ fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
     let mapped_data = slice.get_mapped_range();
     let mut max_alpha = 0.0f32;
     let mut best_rgb = [0.0f32; 3];
-    for px in mapped_data.chunks_exact(4) {
+    for px in mapped_data.as_chunks::<4>().0 {
         let a = px[3] as f32 / 255.0;
         if a > max_alpha {
             max_alpha = a;

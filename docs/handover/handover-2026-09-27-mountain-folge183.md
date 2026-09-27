@@ -3,7 +3,7 @@
   session: Mountain-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: 7c6c38c5fe0044e9b359ff1c0bcda7b4730c165694a40a96813443814edc4010
+  sha256: e63d62ae9aa890e3271b87e9d773335c9aa09a28b95da77389ca1b50237de981
   status: live
 -->
 # Handover — Mountain-Folge 183 (2026-09-27)
@@ -53,17 +53,23 @@ RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXI
 - **Braucht:** `ci_manage log 36320549136` am HEAD lesen; die test-Target-Zeilen
   (`src/archivar/tests.rs`) verifizieren.
 
-### RX100 Luminanz — Kamera-EXIF-Weg (Kalibrierer descoped)
+### RX100 Luminanz — Kamera-EXIF-Weg (Kalibrierer descoped; Bau an River)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** sofort.
-- **Lage:** (gemessen 2026-09-27 via `sgrep`/`sread`) `harvest.φ:233` `asset fehlt`
-  (`format rx100_luminance`, `arm rx100_compiler`, `pattern ^rx100_luminance\.bin$`);
-  die Note trägt den Operator-Weg (Luminanz über Kamera-EXIF, K=12.5, kein
-  Hardware-Asset). `sources.φ`/`declined_sources.φ` tragen keinen rx100-Eintrag.
-- **Blockade:** keine.
-- **Braucht:** `rx100_compiler` auf den EXIF-Weg bauen (Luminanz aus Kamera-EXIF,
-  K=12.5), CDN-Manifest-Pfad + Spectral-Proxy; danach Quellenblock/Feld-Deklaration
-  in `phi/sources.φ`.
+- **Lage:** (gemessen 2026-09-27 via `git diff`/`sgrep`/`sread`) der EXIF-Weg ist
+  von River gebaut (River-Atom 2026-09-27: `src/archivar/rx100.rs` `exif_exposure`,
+  `rx100_compiler --jpeg`, Band in `extract.rs` `series_rows`) — der Compiler-Teil
+  dieser Zeile ist damit erledigt, nicht doppelt bauen. Offen in Mountain-Recht:
+  `phi/sources.φ:117-122` (`field rx100_luminance_cdm2 … inverse-square em cd/m2
+  60 0.0 0.0`) hat die Band-Slots `freq`/`bin_width` **absent** (0.0), während der
+  Record-Schreiber jetzt `5.45e14`/`3.2e14` trägt — Deklaration und Draht
+  widersprechen sich. `harvest.φ:233` `asset fehlt` bleibt (kein reales Capture).
+  K=12.5 bleibt ISO-2720-Vorgabe, ungemessen (kein Referenz-Luminanzmeter).
+- **Blockade:** kein reales Capture für die CDN-Manifestation.
+- **Braucht:** `phi/sources.φ:122` Feld-Deklaration auf `… 60 0.0 0.0 5.45e14 3.2e14`
+  setzen (bzw. messen, ob `series_rows` die einzige Band-Quelle bleibt; dann die
+  Feld-Slots als bewusst latent benennen), `register_sort` canonical; CDN-Manifest,
+  sobald ein reales JPEG + Compiler-Lauf steht.
 
 ## Abschluss
 
