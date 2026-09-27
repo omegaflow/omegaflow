@@ -339,7 +339,7 @@ note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen
 
 pending
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
-note IRIS/EMC netCDF-4 (dir 200, HDF5 89 48 44 46); 3D ohne CSV; hdf5.rs liest netCDF-4 — Gap volume-Extract (types.rs:136) + Kanalarm; Lizenz keine, EarthScope-ToS /terms-of-service/ (Attribution + Non-human-Visitor).
+note IRIS/EMC netCDF-4 (dir 200, HDF5); Ingest-Arm gebaut (88fb49209: Extract::Volume, build_netcdf4_volume, format volume_netcdf, GPU-Maske). Offen: Manifestation — EarthScope-ToS (Attribution + Non-human-Visitor), Browser-Brücke.
 
 parser-def epncore
 gap epncore-spatial

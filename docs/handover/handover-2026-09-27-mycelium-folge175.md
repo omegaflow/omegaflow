@@ -3,7 +3,7 @@
   session: Mycelium-Folge 175
   class: handover
   date: 2026-09-27
-  sha256: 142ec5e678877e6a434b736423b13db33c72bc453d4cef07ae342d1ee1f93c0b
+  sha256: 6274b2fb7e743f867ed2cf89b4745b0696420a9ea5e13b6bdf0b7e85a43fffc9
   status: live
 -->
 # Handover — Mycelium-Folge 175 (2026-09-27)
@@ -23,6 +23,7 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge174.md`.
 - Wort | 2026-09-27 | „monthly + 8-day als per-Granule-Serie bauen; daily descopen" → modis-cdn per-Granule + Manifest; daily descoped.
 - Wort | 2026-09-27 | „/commit" — Commit-Wort: Eigenarbeit committet + gepusht (`bd8961c2f`).
 - Wort | 2026-09-27 | „lies die secrets local" → `GOSAT_GW_MAIL/PASS` in `.secrets.local` gefunden, als Repo-Secrets gesetzt, `gosat-cdn` dispatcht.
+- Wort | 2026-09-27 | „volume" — gibt die φ-Direktive `volume` (3D-Gitter-Ingest) frei; Ingest-Arm gebaut (`88fb49209`).
 
 ## Offen (aufgeschlüsselt)
 
@@ -35,12 +36,12 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge174.md`.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view <id>` bei Abschluss; danach die Jahres-Manifeste ins Register nachziehen + das jahrlose Serien-Manifest bauen.
 
-#### IRIS/EarthScope EMC netCDF-4 — volume-Extract
+#### IRIS/EarthScope EMC netCDF-4 — volume-Arm gebaut, Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Architektur-Wort `volume`.
-- **Lage:** (gemessen 2026-09-26 via `sread`/`sgrep`) Der `Volume`-Container steht (`src/archivar/volume.rs:151`, Magic `0xCF 0x86 0x0D 0x01`, GPU-Sample presence-geodätisch), der Konsument steht (`main_flow.rs:3187` → `omega.rs:749/813`). Fehlt: `Extract::Volume` (`types.rs:136`), Grammatik-Arm `"volume"` (`parse.rs:297`), `build_netcdf4_volume` (`channels.rs:423`), Arm `format "volume_netcdf"`. Eintrag `pending` in `phi/blocked_sources.φ`.
-- **Blockade:** Rat/Operator-Wort `volume` (Achsenordnung, statisch vs. Serie, `_FillValue`-Maske, GPU-Head-Vertrag).
-- **Braucht:** Wort `volume`; danach Bau (1)–(4) aus folge174 §EMC.
+- **Trigger:** EMC-Asset-Manifestation (Fetch-Route geklärt) ODER Operator-Wort zur Browser-Brücke.
+- **Lage:** (gemessen 2026-09-27) Wort `volume` gegeben und umgesetzt (`88fb49209`): maskenbewusster Container (`volume.rs`, Magic `…0x02`, Probe über maskierter Ecke = absent), `Extract::Volume` + Grammatik-Arm `volume`/`depth` (`types.rs`/`parse.rs`), `build_netcdf4_volume` (`channels.rs`, f32 nativ, namensbasierte Re-Order `[depth,lat,lon]`, `_FillValue`→Maske, 4D-refuse), Arm `format volume_netcdf` (`main_flow.rs`), GPU-Head 10→11 (`mask_off`), Tests + CPU/GPU-Parität; `cargo check` 0/0, `ci-check` läuft auf `88fb49209`.
+- **Blockade:** EarthScope-ToS (Attribution + Non-human-Visitor) — der Maschinen-Fetch ist nicht gedeckt (Browser-Brücke/Operator-Profil).
+- **Braucht:** Fetch-Route (Operator-Wort oder `--playwright`-Brücke) → netCDF auf CDN → `phi/sources.φ`-Eintrag `format volume_netcdf` (Attribution benannt) → CI-Manifestation.
 
 #### EPN-core — `epncore-spatial`-Gap registriert
 - **Status:** wartend | **Bindung:** dritter
