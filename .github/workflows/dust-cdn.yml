@@ -9,8 +9,9 @@ on:
     inputs:
       screen_pc:
         description: foreground shell distance in pc (the dust screen, <= 1000)
-        required: true
+        required: false
         type: string
+        default: '205'
 permissions:
   contents: write
 env:

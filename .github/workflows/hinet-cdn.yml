@@ -4,8 +4,9 @@ on:
     inputs:
       start:
         description: 'waveform window start, YYYY-MM-DDTHH:MM (UTC)'
-        required: true
+        required: false
         type: string
+        default: '2025-01-15T00:00'
       span:
         description: 'window span in minutes'
         required: false
