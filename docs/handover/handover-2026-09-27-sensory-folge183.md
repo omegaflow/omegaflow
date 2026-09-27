@@ -3,7 +3,7 @@
   session: Sensory-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: a3f4598448c1e327de47b67582fbd45053d4e9f4093992ec91f574e0b5a38c27
+  sha256: 5b68f5f94cfb8ff4ab2a263495db644bc6dcf3afc5f150da7675c94b4115eda8
   status: live
 -->
 # Handover — Sensory-Folge 183 (2026-09-27)
@@ -140,8 +140,9 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/blatt/blatt-kreuz-screening-gyirong.md` (Header-sha `205e3152…`),
 - `docs/paper/probe-front-dark-matter.md` (Header-sha `d67cdafb…`),
 - `docs/surveys/survey-2026-09-06-codestruktur.md` (Header-sha `de35e451…`, Titel gekürzt),
-- `docs/concepts/tool-forms.md` (neu, Header-sha `b8c812ed…`),
+- `docs/concepts/tool-forms.md` (neu, Header-sha `73586244…`),
 - `opencode.json` (`line`-Prompt), `.opencode/command/consent.md`, `.opencode/command/start.md`,
+- `.opencode/plugin/form-guard.ts` (neu), `tools/utils/src/bin/omega_sh.rs` (`perms`), `.gitignore` (Whitelist),
 - `docs/handover/handover-2026-09-27-sensory-folge183.md`.
 
 Getragen (Fremd-Übergabe, **nicht** in diesem Commit — fremde uncommittete Arbeit):
@@ -152,7 +153,9 @@ Der `force_type`-Offset-Riss (`archivar-mathematikerin.md:74`) wurde von Mountai
 `9d4f61c49` (folge181) **unabhängig geheilt** — mein getragener Punkt ist erledigt.
 
 Infra-Atom (diese Session): die Form-Karte `docs/concepts/tool-forms.md` + der `line`-Prompt +
-die Command-Verdrahtung wirken erst nach einem **opencode-Neustart** (Config lädt einmal beim Start).
+die Command-Verdrahtung + das Plugin `.opencode/plugin/form-guard.ts` wirken erst nach einem
+**opencode-Neustart** (Config/Plugins laden einmal beim Start). `omega_sh perms [<agent>]` ist der
+konfigurationsgestützte Druck der Deny→Ersatz-Karte; sein Test `gate_perms_matches_config` läuft in CI.
 
 Der Zustand-Ledger `state/zustand/external-state.md` (CI-Status- + Postfach-Zeile)
 ist gitignored (`.gitignore:137 /state/`) — lokal fortgeschrieben, nicht committet.
