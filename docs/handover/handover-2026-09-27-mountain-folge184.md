@@ -3,7 +3,7 @@
   session: Mountain-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: 17299434312acd5ce85caf98b944639e258b0c10f614640e3f2ee382356be7d6
+  sha256: c703c0850e960301979491edd3da8ddeba6561ad08f736494d5e1335e4aa9d1c
   status: live
 -->
 # Handover — Mountain-Folge 184 (2026-09-27)
@@ -40,13 +40,6 @@ kein Foto des Operators im CDN — RX100-Capture nicht manifestieren | 2026-09-2
 - **Braucht:** mit dem Token den echten ByParams-Job fahren und messen, ob
   Poll/Fetch ohne Header scheitern; falls ja, Token an `http_get`-Signatur und
   `fetch_body` (Header + Cookie-Jar) ergänzen.
-
-### rx100_luminance — CDN-Asset (descoped)
-- **Status:** descoped | **Bindung:** eigen
-- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict`) der CDN-Asset-URL
-  liefert HTTP 404 — kein Asset; `phi/harvest.φ:233` `asset fehlt`. Operator-Wort:
-  kein Foto des Operators im CDN → die RX100-Quelle bleibt ohne CDN-Daten.
-- **Befund:** `phi/harvest.φ:233` `asset fehlt` (Quelle deklariert, Asset bewusst nicht manifestiert).
 
 ## Abschluss
 
