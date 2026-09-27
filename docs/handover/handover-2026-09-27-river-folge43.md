@@ -3,7 +3,7 @@
   session: River-Folge 43
   class: handover
   date: 2026-09-27
-  sha256: 47050c3764a6ca70b2259a9b53b74d852f0349ddb1785b512e1b911761df98c4
+  sha256: 532c45b006e6fa088917ed4d7f91219a74b2ace0389ac00dd6233a7e5ea81ebd
   status: live
 -->
 # Handover — River-Folge 43 (2026-09-27)
@@ -20,13 +20,11 @@ Diese Session konsumierte `handover-2026-09-27-river-folge42.md` (nach `archiv/`
 ## Operator-Wort-Register
 
 - gic-Paper-Einreichung: höchste Priorität | 2026-09-27 | Operator-Wort.
-- RX100-K-Beschaffung: kein Kauf vor Förderung | 2026-09-27 | Operator-Wort (Träger `mountain-folge176.md:32`).
 - Geräte-Zugriff: vor jedem Zugriff fragen (adb/BT) | 2026-09-26 | Operator-Wort.
 - Harte-Läufe-LOCK aufgehoben | 2026-09-26 | Operator-Wort.
 - HTTPS ja | 2026-09-26 | Operator-Wort folge36.
 - vC 945 von Mantis Shrimp getrennt | 2026-09-26 | Operator-Wort folge36.
 - Einzelbefehle liefern | 2026-09-26 | Operator-Wort folge36.
-- Mantis Shrimp LOCK | 2026-09-26 | Operator-Wort folge36.
 - „Du kannst" River-Folge 43 | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort.
 
 ## Verweise (Prosa mit offenen Markern)
