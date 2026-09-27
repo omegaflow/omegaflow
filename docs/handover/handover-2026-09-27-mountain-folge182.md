@@ -3,7 +3,7 @@
   session: Mountain-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: 9b6bdd78daf0ff2529f508a0094c665f2ba7c0bd6a13ad77efc97e76aa72252a
+  sha256: df66b3ad348bdac2386e5c08a23f698c11915d17cc101d97938e5e5d85aae782
   status: live
 -->
 # Handover — Mountain-Folge 182 (2026-09-27)
@@ -38,7 +38,7 @@ D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abar
 
 ### clippy `-D warnings` — Mountain-Dateien (Verifikation am HEAD)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ci-check`-Lauf am HEAD nach Commit+Push (der Lauf `36315178308` @`ab0a1faa` liegt vor den Fixes).
+- **Trigger:** `ci-check` `36316466564` am HEAD `73f35156f` (Push 2026-09-27; der Lauf `36315178308` @`ab0a1faa` liegt vor den Fixes).
 - **Lage:** (gemessen 2026-09-27 via `cargo check` + `cargo fmt`) geheilt:
   `aia.rs:41`/`eve.rs:49` (`question_mark`), `hdf4.rs:303` (`type_complexity`),
   `:435` (`needless_range_loop`), `:802` (`unnecessary_cast`), `channels.rs:580`
