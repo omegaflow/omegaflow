@@ -540,7 +540,7 @@ mod tests {
         let mut max_abs = 0i32;
         let mut min_r = 0i32;
         let mut max_r = 0i32;
-        for pair in pcm.chunks_exact(4) {
+        for pair in pcm.as_chunks::<4>().0 {
             let l = i16::from_le_bytes([pair[0], pair[1]]) as i32;
             let r = i16::from_le_bytes([pair[2], pair[3]]) as i32;
             assert_eq!(l, 0, "a positive Σω routes the tone right");
@@ -566,7 +566,7 @@ mod tests {
         let pcm = acoustic_pcm(&frame, &mut phase);
         let mut min_l = 0i32;
         let mut max_l = 0i32;
-        for pair in pcm.chunks_exact(4) {
+        for pair in pcm.as_chunks::<4>().0 {
             let l = i16::from_le_bytes([pair[0], pair[1]]) as i32;
             let r = i16::from_le_bytes([pair[2], pair[3]]) as i32;
             assert_eq!(r, 0, "a negative Σω routes the tone left");
@@ -641,7 +641,9 @@ mod tests {
             "a τ step bends the tone, it does not cut it: {last_of_first} → {first_of_second}"
         );
         let negatives = |pcm: &[u8]| -> usize {
-            pcm.chunks_exact(4)
+            pcm.as_chunks::<4>()
+                .0
+                .iter()
                 .filter(|p| i16::from_le_bytes([p[2], p[3]]) < 0)
                 .count()
         };
