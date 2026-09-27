@@ -237,7 +237,7 @@ arm rx100_compiler
 pattern ^rx100_luminance\.bin$
 idempotent true
 timeout 120
-note Sony RX100 V Luminanz: DSC-RX100M5A, L_v=K·N²/(t·S) cd/m²; arm src/archivar/rx100.rs; compiler rx100_compiler.rs; Quelle lokal (Kamera), aus CI unerreichbar; CDN-Asset fehlt bis Manifest-Pfad und K (12.5 ungemessen, River) und Spectral-Proxy.
+note Sony RX100 V Luminanz: DSC-RX100M5A, L_v=K·N²/(t·S) cd/m²; arm src/archivar/rx100.rs; compiler rx100_compiler.rs; Wort 2026-09-27: Kalibrierer descoped — Kamera-EXIF-Weg (K=12.5); CDN-Asset fehlt bis Manifest+Spectral-Proxy.
 
 asset present
 format swot_l2_lr_ssh
