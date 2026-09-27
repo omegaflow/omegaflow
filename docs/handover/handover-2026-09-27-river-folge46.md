@@ -3,7 +3,7 @@
   session: River-Folge 46
   class: handover
   date: 2026-09-27
-  sha256: af5ef505563f8df0d79995e7c286296a63b719c6e61d582a4eb9dab003496e05
+  sha256: 282c1facf53704d48d055b60bba07892853a09bca861722f99ca5f1cb96bafdc
   status: live
 -->
 # Handover — River-Folge 46 (2026-09-27)
@@ -75,7 +75,20 @@ Diese Session konsumierte `handover-2026-09-27-river-folge45.md` (nach `archiv/`
 - **Lage:** (gemessen 2026-09-27 via `cargo build` + Bin-Lauf) `flyby_ephemeris_gate` gebaut; beide Zeugen lesen `placed`; **δ = 0,1684732 km** (168 m, DE441 vs DE442; `phi/sources.φ:3448`/`:3469`). Δ/σ_recon `pending` — die Post-Flyby-Daten fehlen.
 - **Blockade:** keine.
 - **Braucht:** nach dem Flyby `--recon` (Post-Flyby-Arc) + `--sigma-recon` (veröffentlichte 1-σ) → `cargo run -p omegaflow-measure --bin flyby_ephemeris_gate -- --recon <arc> --sigma-recon <km>`; Riß gegen **beide** Hashes (`aeb3c82f…` sealed, `eee376ef…` CDN) tragen.
+## D5-Orphan-Residuum (gefaltet 2026-09-27, Mycelium)
+
+Genuin-offene Punkte trägerloser Docs mit Rivers Natur (Messproben/Rendering).
+Quelle: `state/mountain-185-orphan-doc-nachzug.patch` + `register_lookup --orphan-docs`.
+
+- `survey-2026-09-17-omegaflow-legacy-konzepte.md:40,60-64` — Minkowski-4D-Gewichtung (ds²): kein `minkowski` in `src` → Δ-Probe mit/ohne ds².
+- `…-legacy-konzepte.md:45,104` — Delay Spectrum (lag-Matrix): nicht portiert → measure-Probe bauen.
+- `…-legacy-konzepte.md:46` — Total Coherence Integration: teilweise (Permeability TE-getrieben) → Integral messen.
+- `…-legacy-konzepte.md:111` — SI-Wahrheits-Konsole: `force_type` → Einheit statt Debug-Werte → im Anzeigepfad bauen.
+- `survey-messpunkt-verteilung.md:88` — Multipol-Fehler je Cluster-Radius/Kernel: Kandidat 6 verworfen → Fixture messen.
+- `survey-messpunkt-verteilung.md:100` — R_struct-Verlauf je 7 Kernel-Formen → numerisch bestätigen.
+- `survey-messpunkt-verteilung.md:94` — a-posteriori hierarchisch (Quadtree/CVT/Sparse Grids) → Messung gegen analytische Platzierung.
 
 ## Abschluss
 
-Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der session-weite Consent (Delegation), nie das Commit-Wort.
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
+session-weite Consent (Delegation), nie das Commit-Wort.
