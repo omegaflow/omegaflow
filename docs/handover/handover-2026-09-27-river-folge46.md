@@ -3,7 +3,7 @@
   session: River-Folge 46
   class: handover
   date: 2026-09-27
-  sha256: d5e87b99ef37e5602dcfa5102438817fbafdbe7462a185cd8ee74c0bb160996d
+  sha256: 9cb28770f84bdb79970ea7bb9ea2cbdc043157679ea3b910e464f10c5fb181d6
   status: live
 -->
 # Handover — River-Folge 46 (2026-09-27)
@@ -32,6 +32,7 @@ Diese Session konsumierte `handover-2026-09-27-river-folge45.md` (nach `archiv/`
 - Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session).
 - D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session, Mountain).
 - „Du kannst" River-Folge 46 — Plan ausführen, an die Taucher delegieren; flash-first, kein Pro-Solo | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort.
+- RX100 war nur ein Gedanke — Quelle zurückgezogen, Code-Entfernung offen | 2026-09-27 | Operator (Session, Mountain).
 
 ## Verweise (Prosa mit offenen Markern)
 
@@ -61,12 +62,12 @@ Diese Session konsumierte `handover-2026-09-27-river-folge45.md` (nach `archiv/`
 - **Blockade:** kein lokales clippy; der Lauf läuft/queued.
 - **Braucht:** `ci_manage log 36324738298` — clippy-Block grün, sonst die Reststellen heilen.
 
-### RX100-Luminanz — EXIF-Weg gebaut, CI-Bestätigung + K-Vorbehalt
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ci-check`-Lauf am HEAD (Test-Target `cargo test --lib rx100`) lesbar.
-- **Lage:** (gemessen 2026-09-27 via `cargo check` + Bin-Lauf) EXIF-Weg gebaut (`src/archivar/rx100.rs` `exif_exposure`, absent → `None`); `rx100_compiler --jpeg <path>`, Bin-Zeit aus `DateTimeOriginal`; Band `(5.45e14, 3.2e14)` am Schreibort `src/archivar/extract.rs:207`; Reziprozitäts-Tor + 8 Tests; Bin-Lauf auf Fixture → 58.8 cd/m². **K=12.5 bleibt ISO-2720-Vorgabe, ungemessen** — ohne Referenz-Luminanzmeter nicht messbar.
-- **Blockade:** `cargo test` lokal verweigert; Tests laufen erst im CI-Testlauf.
-- **Braucht:** `ci_manage log <id>` (Test-Target); ein reales RX100-JPEG ist Operator-Hand (Future-Queue #7).
+### RX100-Code entfernen (Quelle zurückgezogen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-27 via `git log -1 -- <f>`) Operator-Wort: RX100 war nur ein Gedanke. Die Quelle ist aus `phi/sources.φ`/`phi/harvest.φ` entfernt und als `decline operator-withdrawn` in `phi/declined_sources.φ` registriert; das CDN-Asset ist gelöscht. Der Code steht noch: `src/archivar/rx100.rs`, `tools/harvest/src/bin/rx100_compiler.rs`, Referenzen in `src/archivar/extract.rs` (`series_rows`, `series_component_name`), `src/archivar/main_flow.rs`, `src/archivar/mod.rs`, Tests.
+- **Blockade:** keine.
+- **Braucht:** `src/archivar/rx100.rs` + `tools/harvest/src/bin/rx100_compiler.rs` löschen, die `mod.rs`-Deklaration + die extract/main_flow-Referenzen + die rx100-Tests entfernen; `cargo check` 0/0.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
