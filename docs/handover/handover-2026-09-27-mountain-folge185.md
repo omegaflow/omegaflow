@@ -3,7 +3,7 @@
   session: Mountain-Folge 185
   class: handover
   date: 2026-09-27
-  sha256: 0f8c65b7656861e45cc6064937c3845db82df8da5be3d5069bf1d045817f6b78
+  sha256: f02ded8cef13ac575787e967eae2ddacf1e5a93fd6ae23b272c76e0e7661faf3
   status: live
 -->
 # Handover — Mountain-Folge 185 (2026-09-27)
@@ -54,6 +54,29 @@ Orphan-Doc-Reconciliation (D5): C — die reconciled Docs bleiben unverändert; 
 - **Braucht:** zuerst `archive_search --verdict https://zenodo.org/records/10594301`
   (Route messen); dann `pack_iaga` um den IAGA-2002-Zeilenleser erweitern — oder
   die Route als `declined` disponieren, falls die Datei nicht erreichbar ist.
+
+### SuperDARN-Radar-Positionen — HTML-Parser-Arm
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Port-/Ernte-Lauf der Radar-Stationskoordinaten.
+- **Lage:** (gemessen 2026-09-27) `phi/blocked_sources.φ::gap:html-parser-arm`
+  (`https://superdarn.ca/radar-info` HTTP 200, 247 907 B, HTML-Tabelle); kein
+  Positions-Reader-Arm. FITACF/RAWACF-Compiler stehen (`sources.φ:11487/:9814`).
+- **Blockade:** kein HTML-Extraktor-Arm für die Radar-Tabelle.
+- **Braucht:** `parser-def html`-Arm bauen (Tabelle → Radar-ID/lat/lon), oder die
+  Route als `declined` disponieren, falls die Positionen anders beschaffbar sind.
+
+### Fink-Per-Objekt-Lichtkurven — Reader-Arm
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Erweiterung des Fink-Zeugen auf Per-Objekt-Serien.
+- **Lage:** (gemessen 2026-09-27) `https://api.lsst.fink-portal.org/api/v1/sources`
+  HTTP 200 (45 B); der Konus lebt als Zeuge (`witnesses.φ:10`,
+  `/api/v1/conesearch`), die Per-Objekt-Endpunkte (`/api/v1/sources`,
+  `/api/v1/fp`) tragen keinen Reader. Alt-Host `dead` (`dead_sources.φ:143`).
+- **Blockade:** kein Per-Objekt-Lichtkurven-Leser; Antwort-Inhalt ungemessen
+  (200 mit 45 B).
+- **Braucht:** Antwort messen (`curl`/`archive_search --sniff`), dann den
+  `skydirection`/Fink-Reader um die Per-Objekt-Route erweitern — oder als
+  Reader-Lücke (parser-def) registrieren, falls die Route bestehen bleibt.
 
 ## Abschluss
 
