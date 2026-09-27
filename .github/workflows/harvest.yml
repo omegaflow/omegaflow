@@ -112,26 +112,16 @@ jobs:
           rc=$?
           set -e
           cat compile.log
-          if [ "$FORMAT" = "rx100_luminance" ] && grep -q "no record written without it" compile.log; then
-            echo "absent=true" >> "$GITHUB_OUTPUT"
-            echo "rx100_luminance: absent (no local capture in CI) — no asset expected"
-          else
-            if [ "$rc" -ne 0 ]; then
-              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                "harvest: $FORMAT returned void" \
-                "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                health
-              exit 1
-            fi
-            echo "absent=false" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT returned void" \
+              "The $FORMAT compiler returned void with --ci-mode. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health
+            exit 1
           fi
       - name: Second witness — the asset stands after the compile
         if: needs.register.outputs.idem == 'true'
         run: |
-          if [ "${{ steps.compile.outputs.absent }}" = "true" ]; then
-            echo "rx100_luminance: absent (no camera in CI) — no asset expected"
-            exit 0
-          fi
           assets=$(gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
                --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ needs.register.outputs.pattern }}" || true)
           shard="${{ needs.register.outputs.shard }}"
