@@ -9,14 +9,27 @@ Name (leer = neueste): $ARGUMENTS
 
 Neueste offene Mountain-Übergabe:
 
-!`for f in $(git ls-tree --name-only HEAD docs/handover/ | grep -E 'handover-.*mountain'); do printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f"; done | sort -rn | head -1 | cut -d' ' -f2`
+!`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mountain*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
-Stehender Pass — beim Start gemessen (kein Auswahlpunkt):
+**Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
+`sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
+(eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
+was der eigene Trigger für fällig erklärt.
 
-!`printf 'HEAD: %s\n' "$(git rev-parse --short HEAD)"; printf '## CI-Status (Watchdog-Snapshot)\n'; tail -n 30 /tmp/opencode/ci_status.md 2>/dev/null || printf 'snapshot absent — line-Agent: bin/ci_manage list\n'; printf '\n## Postfach — letzte 6 Eingänge (mail_digest --last 6)\n'; mail_digest --last 6 2>&1 || printf "mail_digest pending — build belongs to CI (tools-build); fallback smail + state/mail/mail_ledger.φ\n"`
+**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
+Baum-Abgleich). Nenne alle offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage
+vor, jeden parallel abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt".
+Kein edit/write/commit. **Halte dann an.**
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe. Planungs-Pass: `register_lookup --open` (offene Punkte über alle lebenden Dokumente) + `git_safety --snapshot` (Arbeitsbaum-Sicherheitsnetz) + `open_points_check <übergabe>` (billiger Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Der stehende Pass steht oben bereits gemessen — **kein** Auswahlpunkt; die Session schreibt Ledger + Übergabe fort. Bei Lücke: Postfach via `smail` + `state/mail/mail_ledger.φ`, CI-Status via `ci_manage list`/`view`. Nenne **alle** offenen Punkte der eigenen Linie als Tafel und schlage vor, jeden parallel abarbeitbaren zu dispatchen (welche Punkte, welche Delegation, welche Bindung) — keine Rangfolge, kein `härtester Punkt`. Kein edit/write/commit, keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht schreiben, das ist die Grenze. **Halte dann an.**
+**Phase 2 — Ausführung.** Nach `/consent` (oder `/mountain_go`) → `line`-Agent. Arbeite die
+eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Waits →
+`state/zustand/wartend.φ` (Trigger + Aufnehmer). Werkzeuge statt Rohbefehle
+(`docs/concepts/tools-map.md`); Header-sha256 via `omega_sh sha <datei>`; vor dem Commit
+`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision);
+pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
+Mountain trägt die Register-Verdikte: alleiniger Schreiber der Verdikt-Zeilen (`phi/sources.φ`/`declined`/`dead`); Register-Ordnung (`register_sort`); Datenkontrakt 26 × f64; kein Verdikt ohne Messung.
 
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/mountain_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn führt er den stehenden Pass aus: die fälligen Zustand-Einträge messen — Postfach (`smail` + `state/mail/mail_ledger.φ`), CI-Status (Watchdog-Snapshot `/tmp/opencode/ci_status.md`; bei Lücke/Detail `ci_manage list`/`ci_manage view`, **nie** `gh run list`/`gh run view`) — und Ledger + Übergabe fortschreiben; Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Mountain trägt Code: `cargo check` muss null Fehler UND null Warnungen liefern; neue Quellen-Dateien bauen auf `src/archivar` und `src/mathematikerin` als Struktur-Vorlage; jede gefundene Fabrikation wird Gate-Fixture + Gate-Test im selben Atom. Delegiere: grind-flash für Mechanik, grind-pro für Urteil/Force-Gate, grind-max für die härtesten Atome (Urteil UND Schreiben in einem Kontext), vision für Figuren/OCR. `/commit` schließt.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird pfad-begrenzt (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`), nur der eigene Teil; fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
+Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
+(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
+Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist.
