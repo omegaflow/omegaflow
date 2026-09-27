@@ -1,0 +1,59 @@
+name: modis-asset-bridge
+
+# Einmal-Brücke: die modis_lst_cmg-Assets vom vollen bare-Release
+# (data.lpdaac.earthdatacloud.nasa.gov, 1000-Asset-Cap) auf das Familien-Release
+# (data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg) heben. GitHub bietet keinen
+# Server-Copy: download → sha256 prüfen → upload. Kein `delete` der bare Slots —
+# das bleibt ein eigener, destruktiver Schritt nach der Verifikation.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Copy every modis_lst_cmg asset to the family release
+        run: |
+          set -euo pipefail
+          SRC="data.lpdaac.earthdatacloud.nasa.gov"
+          DST="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/dl"
+          gh release view "$DST" --repo "$REPO" >/dev/null 2>&1 \
+            || gh release create "$DST" --repo "$REPO" --title "$DST" \
+                 --notes "modis_lst_cmg family release (the host release is capped at 1000 assets)"
+          gh release view "$SRC" --repo "$REPO" --json assets \
+            --jq '.assets[] | select(.name|startswith("modis_lst_cmg")) | "\(.name)\t\(.digest)"' > "$tmp/src"
+          gh release view "$DST" --repo "$REPO" --json assets \
+            --jq '.assets[] | select(.name|startswith("modis_lst_cmg")) | "\(.name)\t\(.digest)"' > "$tmp/dst"
+          copied=0; skipped=0; failed=0
+          while IFS=$'\t' read -r name digest; do
+            [ -n "$name" ] || continue
+            if grep -qxF "${name}${digest}" "$tmp/dst" 2>/dev/null; then
+              skipped=$((skipped+1)); continue
+            fi
+            gh release download "$SRC" --repo "$REPO" --pattern "$name" --dir "$tmp/dl" --clobber
+            got="sha256:$(sha256sum "$tmp/dl/$name" | cut -d' ' -f1)"
+            if [ -n "$digest" ] && [ "$got" != "$digest" ]; then
+              echo "sha256 mismatch $name: $got != $digest — not uploaded"
+              failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
+            fi
+            if gh release upload "$DST" "$tmp/dl/$name" --clobber --repo "$REPO"; then
+              copied=$((copied+1))
+            else
+              failed=$((failed+1))
+            fi
+            rm -f "$tmp/dl/$name"
+          done < "$tmp/src"
+          echo "modis-asset-bridge: copied=$copied skipped=$skipped failed=$failed"
+          test "$failed" -eq 0
