@@ -1434,18 +1434,28 @@ pub fn write_cdn_stamp(path: &str, url: &str) {
 }
 
 pub fn cache_fresh_cdn(path: &str, ttl: u64, url: &str) -> bool {
-    if !cache_fresh(path, ttl) {
-        return false;
-    }
     if !url.contains("/releases/download/") {
+        return cache_fresh(path, ttl);
+    }
+    if cache_fresh(path, ttl) {
         return true;
     }
     let Some(current) = cdn_last_modified(url) else {
-        return true;
+        return false;
     };
-    match std::fs::read_to_string(cdn_stamp_path(path)) {
-        Ok(stamp) => stamp.trim() == current.trim(),
-        Err(_) => false,
+    if std::fs::read_to_string(cdn_stamp_path(path))
+        .map(|stamp| stamp.trim() == current.trim())
+        .unwrap_or(false)
+    {
+        touch_mtime(path);
+        return true;
+    }
+    false
+}
+
+fn touch_mtime(path: &str) {
+    if let Ok(file) = std::fs::File::options().write(true).open(path) {
+        let _ = file.set_modified(std::time::SystemTime::now());
     }
 }
 
