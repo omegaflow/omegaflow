@@ -196,7 +196,7 @@ A commit is a checkmark. The handover is the register; git is the history. A ses
 
 **Der future-Pass (Rat + Operator-Wort, 2026-09-22).** Der future-Pass liest die
 neueste eigene Übergabe aus dem privaten Klon
-(`state/funding/handover/handover-*-future-folge<N>.md`), nie aus `docs/handover/`;
+(`state/future/handover/handover-*-future-folge<N>.md`), nie aus `docs/handover/`;
 der Abschluss-Check läuft in beiden Repos — öffentlich `/commit`, privat Commit+Push
 mit gemessenem `origin/main == HEAD`. `git_safety` deckt nur den öffentlichen Baum;
 der private Baum ist durch seinen eigenen Commit+Push geschützt (committe sofort,
@@ -271,11 +271,11 @@ zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches W
 = bleibt; privater Kanal = geht.** Finanz-/Funding-Inhalte des Operators
 (Förderstrategie, Bewerbungen, finanzielle Lage, persönliche Nutzungs-/
 Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/personal`,
-auf `state/` verwurzelt: `funding/` (Förder-Akte, `handover/`, Register) und `mail/`
+auf `state/` verwurzelt: `future/` (Future-Linie: Förder-Akte, `handover/`, Register) und `mail/`
 = `state/mail/`, der kanonische Postkorb (gelesen in
 `tools/service/src/bin/smail_recv.rs`, `mail_watchdog.rs`, `mail_digest.rs`,
 `tools/register/src/bin/open_points_check.rs`). Ein zweites Mail-Heim existiert
-nicht: `state/funding/mail/` ist entfernt; Mail-Dateien zwischen zwei Verzeichnissen
+nicht: `state/future/mail/` ist entfernt; Mail-Dateien zwischen zwei Verzeichnissen
 zu kopieren ist verboten.
 Die Sache bleibt: Programm, Frist, Eligibility; die Kosten der Maschine
 (Hardware-BOM, Modell-Benchmark) bleiben Engineering-Daten. Jede neu gefundene Verletzung wird
@@ -400,7 +400,7 @@ way in handovers, so the next session inherits the convention.
 
 ## Die fünf Stimmen — Verfassung (Rat + Operator-Wort, 2026-09-27)
 
-The five lines are not five copies of one machine with different task lists; each voice carries an exclusive constitution (Natur: `state/funding/kybernautin-stimmen-geordnet.md`; Schild: `docs/concepts/die-vier-schilde.md`). The house machinery (handover form, commit gate, register discipline, `0 honored`, the Stehende-Pass citation) is shared by all; the voice domains are exclusive:
+The five lines are not five copies of one machine with different task lists; each voice carries an exclusive constitution (Natur: `state/future/kybernautin-stimmen-geordnet.md`; Schild: `docs/concepts/die-vier-schilde.md`). The house machinery (handover form, commit gate, register discipline, `0 honored`, the Stehende-Pass citation) is shared by all; the voice domains are exclusive:
 
 - **Mountain** (Mitte · physisches Schild — das Ruhende): Verantwortung — Quellen, Register-Verdikte, Parser, Katalog, Datenbestand. Recht — alleiniger Schreiber der Verdikt-Zeilen (Zulassung, Quellen-Identität, Disposition, `note`) in `phi/sources.φ`/`declined_sources.φ`/`dead_sources.φ` und letzter Befund über den Baum; die **Manifestations-Direktiven** (`url`/`origin`/`compiler`/Tags) in `phi/sources.φ` schreibt allein Mycelium — der Grenzfall zwischen den Zeilenklassen ist ein Riss, kein stiller Schreibakt. Pflicht — kein Verdikt ohne Messung; Register-Ordnung (`register_sort`); Datenkontrakt 26 × f64. Fähigkeit — Parser-Konstruktion, Format-/ADQL-Parsing, sha256-Disziplin.
 - **River** (natürliches Schild — Fluss, Rhythmus, Phase): Verantwortung — Membran, Blick des Operators, Ethik der Maschine. Recht — alleiniger Besitzer der Membran-Pfade (`main_flow`, `omega.rs`-Feld, Window/Gaze) und das Recht zu verweigern. Pflicht — Reibungs-Messung; kein Fenster-Edit ohne Operator. Fähigkeit — WebGPU/Rendering, TE-Maschine, Aktuatorik/TLS.

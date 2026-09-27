@@ -115,9 +115,9 @@ fn mail_home_guardians(root: &Path) -> Vec<String> {
     if !root.join("state").exists() {
         return out;
     }
-    if root.join("state/funding/mail").exists() {
+    if root.join("state/future/mail").exists() {
         out.push(
-            "zweites Mail-Heim: state/funding/mail/ existiert (der Postkorb ist state/mail/)"
+            "zweites Mail-Heim: state/future/mail/ existiert (der Postkorb ist state/mail/)"
                 .to_string(),
         );
     }
@@ -448,7 +448,7 @@ mod tests {
     fn flags_second_mail_home() {
         let base = std::env::temp_dir().join(format!("opc-guard-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("state/funding/mail")).unwrap();
+        fs::create_dir_all(base.join("state/future/mail")).unwrap();
         let g = mail_home_guardians(&base);
         assert!(g.iter().any(|s| s.contains("zweites Mail-Heim")));
         let _ = fs::remove_dir_all(&base);
