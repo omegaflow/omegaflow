@@ -46,9 +46,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         off += 8;
         let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
         off += 4;
-        if line_name(comp).is_none() {
-            return None;
-        }
+        line_name(comp)?;
         out.push((t, val, comp));
     }
     Some(out)

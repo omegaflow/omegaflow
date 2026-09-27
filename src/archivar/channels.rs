@@ -577,10 +577,7 @@ pub fn build_netcdf4_volume(
 ) -> Option<(String, crate::archivar::volume::Volume)> {
     use crate::archivar::volume::{Axis, AxisKind, Volume};
     let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
-        match gunzip(bytes) {
-            Some(b) => b,
-            None => return None,
-        }
+        gunzip(bytes)?
     } else {
         bytes.to_vec()
     };
@@ -642,7 +639,7 @@ pub fn build_netcdf4_volume(
         ds.dims[1] as usize,
         ds.dims[2] as usize,
     ];
-    if sd.iter().any(|&d| d == 0) {
+    if sd.contains(&0) {
         eprintln!(
             "netcdf4 volume {} {}: a dim carries zero cells",
             src.url, value_key
