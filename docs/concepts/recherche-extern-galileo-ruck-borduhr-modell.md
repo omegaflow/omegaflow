@@ -2,7 +2,7 @@
   title: Recherche-Befund (extern) — Galileo-S-Band-Residualsprung 1995-11-30/12-01: Borduhr-Sprung (A) oder Bodenseite (B)?
   class: concept
   date: 2026-09-06
-  sha256: 2dbe671af7b653a1fff83fb1816e548233b9e393e688c54612223c78051a928f
+  sha256: 37058eb2ad3f654a1ae4d2286f07f27b19fb049fe71c733839166b016a73f779
   status: live
   see-also: tools/measure/src/bin/galileo_floor_sustained_lock_state.rs tools/measure/src/bin/galileo_floor_basis_ruck.rs tools/measure/src/bin/galileo_ruck_zeugen.rs tools/measure/src/bin/galileo_ruck_nachmessen_f3.rs
 -->
@@ -147,7 +147,7 @@ https://ipnpr.jpl.nasa.gov/progress_report/42-XXX/title.htm). Ergebnis (gemessen
 
 ## 3. Verdikt
 
-**Das öffentliche Material ist unzureichend, um (A) gegen (B) zu trennen — Befund: `pending`.**
+**Das öffentliche Material ist unzureichend, um (A) gegen (B) zu trennen — Befund: `pending`.** Das Verdikt ist im Nachtrag (2026-09-27, unten) auf **`absent`** geschärft: der SPICE-SCLK-Kernel trägt keine Frequenzänderung.
 
 Begründung (je eine Messung):
 1. Die einzige öffentliche Absolutfrequenz-Zeitreihe der Galileo-Sendefrequenz
@@ -173,8 +173,7 @@ Reduktion, die die Sonden-Sendefrequenz (USO-referenziert, S-Band, Einweg) als
 Absolutwert über die Grenze 1995-11-30/12-01 hinweg führt — z. B. eine
 Fortsetzung der Morabito-42-113/114-Linie, die Pass-Schätzung der RSS-Datenköpfe
 der PDS-Sätze (GO-J-RSS-*), oder ein Einweg-Doppler-Residual-Datensatz, der beide
-Seiten der Grenze mit derselben Reduktion enthält. Bis dahin bleibt die Trenn-Frage
-`pending`.
+Seiten der Grenze mit derselben Reduktion enthält. Bis dahin bleibt die Trenn-Frage ohne öffentlichen Beleg — `absent` (Nachtrag 2026-09-27).
 
 ## Nachtrag (2026-09-27, research-max) — Verdikt auf `absent` geschärft
 
@@ -186,7 +185,7 @@ early`), ADS/NTRS tragen nur Vor-Sprung-Stücke (1993). Entscheidend: der
 Frequenzänderung — die Borduhr stufte nicht. Ist-Zustand: kein Borduhr-Sprung im
 Record.
 
-Damit ist die 2026-09-06 offene Trenn-Frage (A)/(B) für den Borduhr-Arm
+Damit ist die 2026-09-06 gestellte Trenn-Frage (A)/(B) für den Borduhr-Arm
 **gemessen `absent`**, nicht mehr `pending`. Der Befund bleibt an die Route
 gebunden (arXiv 406, OAI-PMH `start date too early`, NTRS/ADS nur 1993); ein
 künftiger Beleg müsste eine Absolutfrequenz-Zeitreihe über die Grenze führen
