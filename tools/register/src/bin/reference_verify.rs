@@ -154,6 +154,7 @@ fn extract_dois(body: &str) -> Vec<String> {
                         || c == '('
                         || c == ')'
                         || c == '/'
+                        || c == ':'
                     {
                         suffix.push(c);
                         k += 1;
@@ -362,5 +363,15 @@ mod tests {
     #[test]
     fn doi_yields_no_arxiv_id() {
         assert!(extract_arxiv_ids("10.1093/mnras/staf700").is_empty());
+    }
+
+    #[test]
+    fn doi_with_colon_in_suffix() {
+        assert_eq!(
+            extract_dois(
+                "24. 吴迎燕. 地球物理学报, 2007. doi:10.3321/j.issn:0001-5733.2007.01.001."
+            ),
+            vec!["10.3321/j.issn:0001-5733.2007.01.001"]
+        );
     }
 }
