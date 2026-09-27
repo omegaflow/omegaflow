@@ -3,7 +3,7 @@
   session: Sensory-Folge 185
   class: handover
   date: 2026-09-27
-  sha256: 4b7470b33e0fbe28114e23cd345d29154b75b249619392b1ef7b9ab125fd8d33
+  sha256: c7e2762b7d85f441c528f3f953685b30ff668e632a4893c4dec10b6cef9b32d7
   status: live
 -->
 # Handover — Sensory-Folge 185 (2026-09-27)
@@ -166,6 +166,8 @@ NTRS Document-Inquiry ist Operator-Hand.
 - **Wort:** ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session).
 - **Wort:** RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session).
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus" (`/consent`, Sensory-Folge 185) | 2026-09-27 | Operator (Session).
+- **Wort:** UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | 2026-09-27 | Operator (Session, Mountain).
+- **Wort:** D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session, Mountain).
 
 ## Abschluss
 
