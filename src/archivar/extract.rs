@@ -204,13 +204,17 @@ pub fn series_rows(format: &str, bytes: &[u8]) -> Option<Vec<SeriesRow>> {
         );
     }
     series_parse_bin(format, bytes).map(|recs| {
+        let (freq, bin_width) = match format {
+            "rx100_luminance" => (rx100::FREQ_PHOTOPIC_HZ, rx100::BIN_WIDTH_PHOTOPIC_HZ),
+            _ => (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND),
+        };
         recs.into_iter()
             .map(|(t, value, comp)| SeriesRow {
                 t,
                 value,
                 comp,
-                freq: 0.0,
-                bin_width: 0.0,
+                freq,
+                bin_width,
             })
             .collect()
     })
