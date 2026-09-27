@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet (Trishuli, 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 03280d51b5e6994b84182fbc8de56907a06cc5c6ded8625dc5c990ba47be8024
+  sha256: cf7195a2dbeadc75a8ef19f2d3f3d958a49482cb822989b965294b37374893db
   status: pending
   see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
 -->
@@ -273,10 +273,15 @@ punkt + Lhende-Seen gemessen:** Vor-Ereignis-Szenen 08-11…08-24 (cloud
 78.5 % Bewölkung** (Monsun). Damit ist die **optische** Kollapsnarbe/See-
 Ausdehnung **nicht zuverlässig messbar** (Wolken verdecken das Ziel).
 
-**Sentinel-1 (SAR, wetterfest):** Post-Ereignis-Szene **noch nicht
-archiviert** (nächster Pass ~08-28/29) — die SAR-Flutfläche/-Narbe ist
-danach messbar. Der räumliche Footprint bleibt `pending`, 0 honored, bis
-(a) CEMS-EMSR927-Produkt ausgeliefert oder (b) Post-Sentinel-1 da ist.
+**Sentinel-1 (SAR, wetterfest) — gemessen (2026-09-27):** Post-Ereignis-Szene
+**20260828** gegen Vor-Szene **20260824** über Planetary Computer gerechnet
+(`s1_sar_compiler`, Amplitude-Differenz, `s1_sar_diff.bin`, Roundtrip parses).
+22 512 Pixel im 100-%-Fenster, mittlere dB-Änderung **+0,71 dB**; **Abdunklung
+(dB < −4) 6 661 Pixel, davon 220 am Kollabpunkt (±0,02°)**; Aufhellung 7 898
+Pixel. Die **SAR-Narbe am Kollabpunkt ist damit gemessen** — die Abdunklung
+sitzt am Kollapsort. Der vollständige Flut-Footprint bleibt `pending`, 0 honored,
+bis (a) das CEMS-EMSR927-Delineation-Produkt ausgeliefert ist oder (b) eine
+wolkenfreie Post-Szene die Ausdehnung direkt trägt.
 
 **Alternative ohne Bild — Kollaps-Volumen aus gemessener Magnitude
 (magnitude-gebunden):** Das Quellereignis ist gemessen als USGS
