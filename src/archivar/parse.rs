@@ -316,6 +316,23 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
+            "epncore" if parts.len() >= 2 => {
+                cur_extracts.push(Extract::EpnCore {
+                    arr_path: parts[1].to_string(),
+                    body_key: String::new(),
+                    lon_min_key: String::new(),
+                    lon_max_key: String::new(),
+                    lat_min_key: String::new(),
+                    lat_max_key: String::new(),
+                    alt_min_key: String::new(),
+                    alt_max_key: String::new(),
+                    s_region_key: String::new(),
+                    epoch_key: String::new(),
+                    epoch_mjd: false,
+                    val_key: String::new(),
+                    fields: Vec::new(),
+                });
+            }
             "volume" if parts.len() >= 3 => {
                 cur_extracts.push(Extract::Volume {
                     value_key: parts[2].to_string(),
@@ -807,6 +824,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         Extract::CmrPolygon { fields, .. } => Some(fields),
                         Extract::CelestialPolygon { fields, .. } => Some(fields),
                         Extract::KeplerMap { fields, .. } => Some(fields),
+                        Extract::EpnCore { fields, .. } => Some(fields),
                         Extract::ProfileMap { .. } => {
                             eprintln!(
                                 "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
@@ -867,6 +885,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         Extract::CmrPolygon { fields, .. } => Some(fields),
                         Extract::CelestialPolygon { fields, .. } => Some(fields),
                         Extract::KeplerMap { fields, .. } => Some(fields),
+                        Extract::EpnCore { fields, .. } => Some(fields),
                         Extract::ProfileMap { .. } => {
                             eprintln!(
                                 "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
@@ -987,6 +1006,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     fields.push(fc);
                 } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
                     fields.push(fc);
+                } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
                 } else {
                     cur_extracts.push(Extract::Field(fc.clone()));
                 }
@@ -1096,8 +1117,58 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         *epoch_mjd = true;
                     }
                 }
+                Some(Extract::EpnCore {
+                    epoch_key,
+                    epoch_mjd,
+                    ..
+                }) => {
+                    *epoch_key = parts[1].to_string();
+                    if parts.len() >= 3 && parts[2] == "mjd" {
+                        *epoch_mjd = true;
+                    }
+                }
                 _ => {}
             },
+            "target_name" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { body_key, .. }) = cur_extracts.last_mut() {
+                    *body_key = parts[1].to_string();
+                }
+            }
+            "lonmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lon_min_key, .. }) = cur_extracts.last_mut() {
+                    *lon_min_key = parts[1].to_string();
+                }
+            }
+            "lonmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lon_max_key, .. }) = cur_extracts.last_mut() {
+                    *lon_max_key = parts[1].to_string();
+                }
+            }
+            "latmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lat_min_key, .. }) = cur_extracts.last_mut() {
+                    *lat_min_key = parts[1].to_string();
+                }
+            }
+            "latmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { lat_max_key, .. }) = cur_extracts.last_mut() {
+                    *lat_max_key = parts[1].to_string();
+                }
+            }
+            "altmin" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { alt_min_key, .. }) = cur_extracts.last_mut() {
+                    *alt_min_key = parts[1].to_string();
+                }
+            }
+            "altmax" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { alt_max_key, .. }) = cur_extracts.last_mut() {
+                    *alt_max_key = parts[1].to_string();
+                }
+            }
+            "region" if parts.len() >= 2 => {
+                if let Some(Extract::EpnCore { s_region_key, .. }) = cur_extracts.last_mut() {
+                    *s_region_key = parts[1].to_string();
+                }
+            }
             "pressure" if parts.len() >= 2 => {
                 if let Some(Extract::ProfileMap {
                     pressure_var,
@@ -1283,6 +1354,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             }
             "val" if parts.len() >= 2 => {
                 if let Some(Extract::Map { val_key, .. }) = cur_extracts.last_mut() {
+                    *val_key = parts[1].to_string();
+                } else if let Some(Extract::EpnCore { val_key, .. }) = cur_extracts.last_mut() {
                     *val_key = parts[1].to_string();
                 }
             }

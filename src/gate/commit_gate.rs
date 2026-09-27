@@ -2928,6 +2928,15 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_epncore_centroid_raw_mean_blocked() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/extract.rs", &fx("epncore_centroid_raw_mean"));
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_wkt_first_id_find_blocked() {
         let mut g = test_gate();
         let args = tool_args(
