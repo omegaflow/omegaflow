@@ -1,5 +1,5 @@
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::archivar::geo::{GeoRec, parse_bin, write_bin};
+use omegaflow::archivar::geo::{COMP_ESACCI_SST, GeoRec, MAGIC_ESACCI_SST, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5Attribute, Hdf5Datatype, Hdf5File, decode_f32, decode_f64};
 use omegaflow::lsk::days_from_civil;
@@ -7,8 +7,6 @@ use std::process::Command;
 
 const NETLOC: &str = "data.ceda.ac.uk-eocis-sst";
 const BASE: &str = "https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1";
-const MAGIC: [u8; 4] = *b"ESS1";
-const COMP_ESACCI_SST: u32 = 1;
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -284,12 +282,12 @@ fn run(args: &[String]) -> Result<(), String> {
             "{url}: no measured cell left the harvest ({sampled} sampled, {kept} kept) — the bin stays unwritten (0 honored)"
         ));
     }
-    let bytes = write_bin(MAGIC, &records);
+    let bytes = write_bin(MAGIC_ESACCI_SST, &records);
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
     std::fs::write(&out, &bytes).map_err(|e| format!("write {out} returned void: {e}"))?;
-    match parse_bin(MAGIC, &bytes) {
+    match parse_bin(MAGIC_ESACCI_SST, &bytes) {
         Some(parsed) if parsed.len() == records.len() => {
             eprintln!(
                 "{out}: {} SST cells ({} sampled, {} kept, grid {n_lat}x{n_lon} stride {stride}), roundtrip parses",
@@ -409,8 +407,8 @@ mod tests {
                 station: 0,
             },
         ];
-        let bytes = write_bin(MAGIC, &records);
-        let parsed = parse_bin(MAGIC, &bytes).expect("the packed bin parses");
+        let bytes = write_bin(MAGIC_ESACCI_SST, &records);
+        let parsed = parse_bin(MAGIC_ESACCI_SST, &bytes).expect("the packed bin parses");
         assert_eq!(parsed.len(), 2);
         assert_eq!(parsed[0].val, 291.4);
         assert_eq!(parsed[1].lat, 45.0);
