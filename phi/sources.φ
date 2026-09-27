@@ -114,13 +114,6 @@ on earth 0 0 0
 ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/sony-camera-remote/rx100_luminance.bin
-format rx100_luminance
-compiler tools/harvest/src/bin/rx100_compiler.rs
-at earth
-ttl 60
-field rx100_luminance_cdm2 rx100_luminance_cdm2 inverse-square em cd/m2 60 0.0 0.0 5.45e14 3.2e14
-
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 ttl 60
 at earth
