@@ -1,10 +1,6 @@
 use omegaflow::archivar::embedded_lsk;
-use omegaflow::archivar::fetch_raw;
-use omegaflow::archivar::rx100::{
-    COMP_LUMINANCE, camera_service_url, parse_bin, scene_luminance, ssdp_discover, write_bin,
-};
+use omegaflow::archivar::rx100::{COMP_LUMINANCE, exif_exposure, luminance, parse_bin, write_bin};
 use omegaflow::cdn::upload_release;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 const NETLOC: &str = "sony-camera-remote";
 
@@ -20,33 +16,24 @@ fn run(args: &[String]) -> Result<(), String> {
         "the embedded naif0012.tls stays unread — the date→TDB step is unavailable".to_string()
     })?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let jpeg = arg_value(args, "--jpeg").ok_or_else(|| {
+        format!("{NETLOC}: --jpeg <path> names the capture — no record written without it")
+    })?;
     let out = match arg_value(args, "--out") {
         Some(v) => v,
         None => format!("data/{NETLOC}/rx100_luminance.bin"),
     };
 
-    let Some(loc) = ssdp_discover(Duration::from_secs(3)) else {
-        eprintln!(
-            "{NETLOC}: no camera answered M-SEARCH — the luminance reading is absent (0 honored, no record written)"
-        );
-        return Ok(());
-    };
-    let xml = fetch_raw(&loc, None, &[])
-        .ok_or_else(|| format!("{loc}: device description fetch void"))?;
-    let svc = camera_service_url(&xml).ok_or_else(|| {
-        "the camera service URL stays unread in the device description".to_string()
+    let jpeg_bytes = std::fs::read(&jpeg).map_err(|e| format!("{jpeg}: read void: {e}"))?;
+    let (n, t, s, epoch) = exif_exposure(&jpeg_bytes).ok_or_else(|| {
+        format!("{jpeg}: EXIF exposure absent — the luminance record is absent (0 honored)")
     })?;
-    let lv = scene_luminance(&svc).ok_or_else(|| {
-        "scene luminance void — absent or implausible readback (0 honored)".to_string()
+    let lv = luminance(n, t, s).ok_or_else(|| {
+        "scene luminance void — absent or implausible exposure (0 honored)".to_string()
     })?;
-
-    let unix = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_err(|e| format!("system clock precedes the epoch: {e}"))?
-        .as_secs_f64();
     let tdb = lsk
-        .unix_to_tdb(unix)
-        .ok_or_else(|| "unix→TDB reads void — the bin stays unwritten".to_string())?;
+        .unix_to_tdb(epoch)
+        .ok_or_else(|| "capture time→TDB reads void — the bin stays unwritten".to_string())?;
 
     let records = vec![(tdb, lv, COMP_LUMINANCE)];
     let bytes = write_bin(&records);

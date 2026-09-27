@@ -136,17 +136,21 @@ pub fn source_name(url: &str) -> &str {
     }
 }
 
+pub struct PresenceGateCtx<'a> {
+    pub slot: &'a std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
+    pub body_ephemerides: &'a HashMap<String, BodyEphemeris>,
+    pub now: f64,
+    pub median_fetch: Option<f64>,
+    pub refusal_ledger: &'a std::sync::Mutex<RefusalLedger>,
+}
+
 pub fn raw_presence_gate(
     i: usize,
     sources: &[SourceConfig],
     presence: &HashMap<String, PresenceSample>,
-    slot: &std::sync::Arc<std::sync::RwLock<crate::mathematikerin::PresenceState>>,
-    body_ephemerides: &HashMap<String, BodyEphemeris>,
-    now: f64,
-    median_fetch: Option<f64>,
-    refusal_ledger: &std::sync::Mutex<RefusalLedger>,
+    ctx: PresenceGateCtx<'_>,
 ) -> Option<(f64, f64, f64)> {
-    let presences: Vec<PresenceSample> = enclosure_presences(presence, slot, now);
+    let presences: Vec<PresenceSample> = enclosure_presences(presence, ctx.slot, ctx.now);
     let mut fields: Vec<FieldConfig> = Vec::new();
     for ext in &sources[i].extracts {
         fields.extend(extract_fields(ext));
@@ -157,7 +161,7 @@ pub fn raw_presence_gate(
                 "source {} [{}]: carries no field lines — refused, retry in ttl/Φ",
                 i, sources[i].format
             );
-            if let Ok(mut ledger) = refusal_ledger.lock() {
+            if let Ok(mut ledger) = ctx.refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-field-lines");
             }
         } else {
@@ -165,7 +169,7 @@ pub fn raw_presence_gate(
                 "source {} [{}]: no field carries a propagation law — refused, retry in ttl/Φ",
                 i, sources[i].format
             );
-            if let Ok(mut ledger) = refusal_ledger.lock() {
+            if let Ok(mut ledger) = ctx.refusal_ledger.lock() {
                 ledger.register(&sources[i].url, "gate-no-propagation");
             }
         }
@@ -178,32 +182,26 @@ pub fn raw_presence_gate(
             alt,
             body_name,
         } => {
-            if let Some(p) = body_fixed_to_icrs(body_name, *lat, *lon, *alt, now, body_ephemerides)
-            {
-                (p[0], p[1], p[2])
-            } else {
-                return None;
-            }
+            let p = body_fixed_to_icrs(body_name, *lat, *lon, *alt, ctx.now, ctx.body_ephemerides)?;
+            (p[0], p[1], p[2])
         }
         Frame::Barycenter { body_name, scale } => {
-            if let Some(bp) = body_barycenter_position(body_name, now, body_ephemerides) {
-                (bp[0] * scale, bp[1] * scale, bp[2] * scale)
-            } else {
-                return None;
-            }
+            let bp = body_barycenter_position(body_name, ctx.now, ctx.body_ephemerides)?;
+            (bp[0] * scale, bp[1] * scale, bp[2] * scale)
         }
         Frame::Manifest => return None,
     };
     let anchor_body = frame_body_name(&sources[i].frame);
-    let body_props = body_ephemerides
+    let body_props = ctx
+        .body_ephemerides
         .get(anchor_body.as_str())
         .and_then(|e| e.props.as_ref());
     let body_radius = match body_props {
         Some(p) => p.radius_m,
         None => 0.0,
     };
-    let v_anchor = anchor_velocity(&sources[i].frame, now, body_ephemerides);
-    if presence_gate(&presences, pos, r, body_radius, v_anchor, median_fetch) {
+    let v_anchor = anchor_velocity(&sources[i].frame, ctx.now, ctx.body_ephemerides);
+    if presence_gate(&presences, pos, r, body_radius, v_anchor, ctx.median_fetch) {
         Some(pos)
     } else {
         None
@@ -306,10 +304,7 @@ fn acoustic_sink() -> Option<Box<dyn std::io::Write + Send>> {
         return Some(Box::new(AcousticFanout(sinks)));
     }
     let mut parts = trimmed.split_whitespace();
-    let program = match parts.next() {
-        Some(p) => p,
-        None => return None,
-    };
+    let program = parts.next()?;
     let args: Vec<String> = parts.map(str::to_string).collect();
     spawn_acoustic_player(program, &args)
         .map(|stdin| Box::new(stdin) as Box<dyn std::io::Write + Send>)
@@ -1723,11 +1718,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 ) else {
                     continue;
                 };
@@ -1845,11 +1842,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
@@ -2179,11 +2178,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
@@ -2317,11 +2318,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
@@ -2444,11 +2447,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
@@ -2586,11 +2591,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
@@ -2678,11 +2685,13 @@ pub fn main_flow() {
                     i,
                     &archive.sources,
                     &archive.presence,
-                    &presence_slot,
-                    &archive.body_ephemerides,
-                    now,
-                    median_fetch,
-                    &refusal_ledger,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
                 )
                 .is_none()
                 {
