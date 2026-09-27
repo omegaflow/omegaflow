@@ -3,7 +3,7 @@
   session: Mycelium-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: 971fbc2154c9d5a3329c54601642cad0675936f59ebd19c6a3fa77fc469d2e57
+  sha256: d26fcb63e243fb38a1f5ded81ec32af82a74ca8d8ab4e9098357c58cfdb52b43
   status: live
 -->
 # Handover — Mycelium-Folge 182 (2026-09-27)
@@ -106,9 +106,9 @@ HEAD `36b559852`, gemessen nach Folge 181) — zitiert, nie in dieses Register k
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | SAMPLE_CONTACT (MPI-FKF/LAB_A) sagte zu, danach kein Eingang (gemessen 2026-09-27 via mail_ledger) | wartend auf Mail-Eingang (kein Nachfassen).
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | nur `Wiedervorlage 2026-12-02` bindet | nächster Schritt: 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending weiter tot | nächster Schritt: `--verdict` je Host beim Trigger.
-- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Step 5 (CDN-kanonisch, destruktiv → Operator-Wort) | nächster Schritt: Klassen-Zensus messen.
-- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | Migrationsplan-Vorlage steht; stoppt am Operator-Wort | nächster Schritt: Operator-Wort zum Layout `knowledge/`+`backups/`.
-- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen nur §7 Roh-Korpora/Scratch-Disposition | nächster Schritt: Operator-Wort.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Step 5 (CDN-kanonisch, destruktiv); der Akt liegt in Future's Operator-Queue | nächster Schritt (eigen): Klassen-Zensus messen.
+- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | Migrationsplan-Vorlage steht; das Layout-Wort liegt in Future's Operator-Queue | nächster Schritt: Migration nach Wort.
+- `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen nur §7 Roh-Korpora-Disposition; der Akt liegt in Future's Operator-Queue | nächster Schritt: Disposition nach Wort.
 
 ## Abschluss
 

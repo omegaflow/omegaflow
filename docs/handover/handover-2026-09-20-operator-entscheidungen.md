@@ -3,16 +3,16 @@
   session: Operator-Entscheidungen (2026-09-20)
   class: handover
   date: 2026-09-20
-  sha256: 13def2441a34a800bf361f29df91526dc658efc2583b7d396d8128e9a270e6e6
+  sha256: e832c15fd7dd03a30ee893d902b949f7504122507c6a9d4ef8a4fdc5863431f5
   status: live
 -->
 # Handover — Operator-Entscheidungen (2026-09-20)
 
 ## LLM-Nutzung
 
-- `operator-gebunden` — **`pro` nur für die harten Atome**, Session beim
-  Atom-Wechsel schließen (die 15-h-Session ist das Gegenbeispiel). (Schritt:
-  Dispatch-Praxis der Linien-Session.)
+- **`pro` nur für die harten Atome** — Session beim Atom-Wechsel schließen
+  (die 15-h-Session ist das Gegenbeispiel). (Schritt: Dispatch-Praxis der
+  Linien-Session.)
 
 ## Operator-Entscheidungen (2026-09-20)
 
