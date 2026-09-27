@@ -3,7 +3,7 @@
   session: Mycelium-Folge 176
   class: handover
   date: 2026-09-27
-  sha256: 0d22c79916d2f88c9a9bf1b41134654eff5a7c9b1a0ea1d2b58f35a3708c9461
+  sha256: bfec91c590c28a8c26eaffada858c14cb31ad3fe86a57531e1306d3165d6fbcb
   status: live
 -->
 # Handover — Mycelium-Folge 176 (2026-09-27)
@@ -68,6 +68,13 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge175.md`.
 - **Lage:** (gemessen 2026-09-27 via `archive_search --verdict`) `regards.cnes.fr/api/v1/rs-order` weiter 403 direct+proton (Host-Root 200); `pithia.cbk.waw.pl/tap` **200** (erholt); `api.lasair.lsst.ac.uk/api` direct absent / **proton 200** (erholt via Exit).
 - **Braucht:** `archive_search --verdict <url>`; bei Erholung den `*-cdn.yml`-Lauf dispatchen (pithia: `epncore`; lasair: Proton-Route prüfen).
 
+#### Secrets-Inventar — 6 Lebendquellen ohne `phi`-Disposition
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `phi/sources.φ` Eintrag je Quelle.
+- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict`) 6 in `.secrets.local` benannte, im getrackten Baum nirgends registrierte Lebendquellen: GFW `https://data-api.globalforestwatch.org` direct 200 · GOSAT-GW `https://gosat-gw.nies.go.jp/en/` direct 200 (Homepage gefunden, Survey-`pending` gelöst) · IGETS `http://igets.u-strasbg.fr` direct 200 (https pending — nur Port 80) · Rubin `https://rubinobservatory.org` direct 200 · Babamul `https://api.babamul.dev` pending (health/docs kein Response; Basis `babamul.dev` pending) · Movebank `https://www.movebank.org` direct 200. Survey: `docs/surveys/survey-2026-09-26-secrets-inventar.md`; Träger: Future `handover-2026-09-27-future-folge137.md`.
+- **Blockade:** keine.
+- **Braucht:** je Quelle eine `phi/sources.φ` Zeile (IGETS-URL auf `http` korrigieren) oder `declined_sources.φ`; Babamul `pending` belassen.
+
 ### Dritter
 
 #### BepiColombo bc_mpo_more — Termin
@@ -87,7 +94,6 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge175.md`.
 
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` | `mariner-occlt` Asset liegt | nächster Schritt: verbleibende Survey-Marker + `mariner-occlt`-CDN-Dispatch.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | SAMPLE_CONTACT (MPI-FKF/LAB_A) sagte LAB_A-`I(q,t)`-Daten zu, danach kein Eingang | wartend auf Mail-Eingang (kein Nachfassen).
-- `docs/surveys/survey-2026-09-26-secrets-inventar.md` | Namens-Disposition — **Owner Future** (Aufenthalt = Eigentum); Träger gehört in die Future-Übergabe | nächster Schritt: Future.
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | nur `Wiedervorlage 2026-12-02` bindet; übrige Body-Marker sind Nachzug-Staleness | nächster Schritt: 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending weiter tot | nächster Schritt: `--verdict` je Host beim Trigger.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | Step 4 (CI-Dedupe) in `docs/auftrag/archiv/auftrag-saubere-datenbank.md`; offen: Step 5 (CDN-kanonisch, destruktiv → Operator-Wort) | nächster Schritt: Klassen-Zensus messen.
