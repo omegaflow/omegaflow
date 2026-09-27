@@ -3445,6 +3445,27 @@ compiler tools/harvest/src/bin/de_compiler.rs
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin
+format ephemeris_de441
+origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
+compiler tools/harvest/src/bin/de_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_moon.bin
+format ephemeris_de441
+origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
+compiler tools/harvest/src/bin/de_compiler.rs
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_sun.bin
+format ephemeris_de441
+origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
+compiler tools/harvest/src/bin/de_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin
 format ephemeris_de442
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
@@ -9942,6 +9963,7 @@ url https://github.com/omegaflow/sources/releases/download/igetsftp.gfz.de/igets
 format igets
 origin igetsftp.gfz.de
 compiler tools/harvest/src/bin/igets_compiler.rs
+sha256 852ec68215eb7e8e385f3ce537c93e634e231b6ff7ff9c87bbacbe6eeccdc096
 at earth
 ttl 604800
 field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0

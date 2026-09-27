@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: b125e04813ab756fe0cf5fbbe6c3a0991a91ca3cefb098d9285186c6e52a2e21
+  sha256: 9bbaa6a9676f5c283f7348a83aa817ca8dfa9b7cc8c3db62420e572f73ca1a66
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)
@@ -70,11 +70,20 @@ gemessen, nicht aus dem Namen geraten. Die **Secret-Namen selbst** stehen in kei
 - Der Abgleich ist eine statische Messung; dynamisch gebildete Namen sind als
   Sonderfall benannt, nicht geraten.
 
-## Offen
+## Geschlossen (2026-09-27)
 
-Die 6 Lebendquellen sind disponiert (gemessen 2026-09-27 via `sgrep`): GOSAT-GW
-`phi/sources.φ:8300`, IGETS `phi/sources.φ:8349`, Babamul `phi/sources.φ:778` —
-registriert; GFW `phi/declined_sources.φ:5198`, Movebank `phi/declined_sources.φ:4594`
-— declined; Rubin/LSST `phi/blocked_sources.φ:334` — descoped. Offen bleibt der
-Verdict über die 6 ungenutzten Secret-Namen (behalten als Vorrat mit Träger oder
-entfernen). Träger: Mycelium (`docs/handover/handover-2026-09-27-mycelium-folge179.md`).
+Der Verdict über die Namen ist gefällt (gemessen 2026-09-27 via `sgrep` + GH-API;
+die „6" zählten die Lebendquellen, nicht die Namen). Die Quellen sind disponiert
+(GOSAT-GW `phi/sources.φ` `gosat_tanso3`, IGETS `phi/sources.φ` `igets`, Babamul
+`phi/sources.φ` `babamul` — registriert; GFW `phi/declined_sources.φ`, Movebank
+`phi/declined_sources.φ` — declined; Rubin/LSST `phi/blocked_sources.φ` — descoped).
+
+- **behalten — in Benutzung:** `GOSAT_GW_MAIL`/`GOSAT_GW_PASS`
+  (`.github/workflows/gosat-cdn.yml:29-30`; `gosat_tanso3_compiler.rs`).
+- **behalten als Vorrat — Quelle registriert, kein Code-Leser:** `IGETS2_USER`/
+  `IGETS2_PASS` (`phi/sources.φ` `igets`, anonymer Bezug).
+- **entfernen — Quelle declined/descoped oder überholt:** `GFW_PASS`, `MOVEBANK_PASS`,
+  `MOVEBANK_TOKEN`, `RUBIN_PASS`, sowie `BABAMUL_KAFKA_PASSWORD`/
+  `BABAMUL_KAFKA_USERNAME`/`BABAMUL_PASSWORD` (überholt durch `BABAMUL_API_TOKEN`,
+  `babamul_compiler.rs:65`). Vollzug (`gh secret delete` im Repo-Setting) ist der
+  Konto-Akt, nicht diese Messung.

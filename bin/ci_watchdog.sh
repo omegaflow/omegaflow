@@ -94,7 +94,7 @@ poll_once() {
     [ -n "$id" ] || continue
     seen "$id" && continue
     local txt
-    txt=$(gh run view "$id" --log-failed 2>/dev/null)
+    txt=$($CI log "$id" 2>/dev/null)
     if printf '%s' "$txt" | grep -qiE 'assertion|panicked at|test failed|test result: FAILED'; then
       log "no rerun $id ($wf): assertion-red"
       mark "$id"
