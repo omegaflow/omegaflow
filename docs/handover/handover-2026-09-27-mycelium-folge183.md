@@ -3,7 +3,7 @@
   session: Mycelium-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: e4bf4ff082d7cb6a4c320d45b47bdad3b1a47b76a8d8c65cf6071324ad195d0e
+  sha256: 33749de6b39525c344c2ebaf1da0a09ccbdb037e1b0dbfe98d33c150dac12a7b
   status: live
 -->
 # Handover — Mycelium-Folge 183 (2026-09-27)
@@ -29,6 +29,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - Wort | 2026-09-27 | UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | Operator (Session, Mountain).
 - Wort | 2026-09-27 | D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | Operator (Session, Mountain).
 - Wort | 2026-09-27 | „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent" — session-weiter Consent der Folge 183 (Delegation), nicht das Commit-Wort | Operator (Mycelium-Session 183).
+- Wort | 2026-09-27 | RX100 war nur ein Gedanke — Quelle zurückgezogen, Workflow-Zweige entfernen | Operator (Session, Mountain).
 
 ## Offen (aufgeschlüsselt)
 
@@ -94,6 +95,13 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ`) MORE-Cruise nicht öffentlich, Freigabe April 2027; Ticket `YYM-342-97327`; Freigabe-Anfrage `phi/blocked_sources.φ:53`.
 - **Blockade:** Freigabe (dritter).
 - **Braucht:** Wiedervorlage 04/2027.
+
+### RX100-Workflow-Zweige entfernen (Quelle zurückgezogen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-27 via `sgrep rx100`) Operator-Wort: RX100 war nur ein Gedanke; die Quelle ist aus `phi/sources.φ`/`phi/harvest.φ` entfernt (`decline operator-withdrawn`), das CDN-Asset gelöscht. Die rx100-Zweige stehen noch in `.github/workflows/harvest.yml` (`FORMAT = rx100_luminance`-Branches) und `.github/workflows/harvest-long.yml`; ohne Register-Block liefert `harvest_reg --lookup rx100_luminance` jetzt void → ein Dispatch des Formats erzeugte ein falsches Health-Issue.
+- **Blockade:** keine.
+- **Braucht:** die rx100-Branches aus beiden Workflows entfernen; die übrigen Formate unberührt lassen.
 
 ## Träger (Prosadokumente)
 
