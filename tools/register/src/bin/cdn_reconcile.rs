@@ -202,6 +202,13 @@ fn is_manifest(name: &str) -> bool {
     name.ends_with(".manifest")
 }
 
+fn is_shard_of(name: &str, stems: &[String]) -> bool {
+    stems.iter().any(|stem| {
+        name.strip_prefix(stem.as_str())
+            .is_some_and(|rest| rest.starts_with('_'))
+    })
+}
+
 fn main() {
     let mut root = String::from(".");
     let mut out_path = String::from("docs/specs/cdn_reconciliation.json");
@@ -387,13 +394,23 @@ fn main() {
                 }
             }
         }
+        let stems: Vec<String> = canonical
+            .iter()
+            .filter_map(|n| n.strip_suffix(".manifest").map(|s| s.to_string()))
+            .collect();
         let sharded: BTreeSet<String> = canonical
             .iter()
             .filter(|exp| {
-                !actual.contains(exp.as_str())
-                    && actual
-                        .iter()
-                        .any(|a| shard_base(a).as_deref() == Some(exp.as_str()))
+                if actual.contains(exp.as_str()) {
+                    return false;
+                }
+                let shard_stems: Vec<String> = match exp.strip_suffix(".manifest") {
+                    Some(s) => vec![s.to_string()],
+                    None => Vec::new(),
+                };
+                actual.iter().any(|a| {
+                    shard_base(a).as_deref() == Some(exp.as_str()) || is_shard_of(a, &shard_stems)
+                })
             })
             .cloned()
             .collect();
@@ -410,6 +427,7 @@ fn main() {
         for act in &actual {
             let explained = canonical.contains(act)
                 || shard_base(act).is_some_and(|b| canonical.contains(b.as_str()))
+                || is_shard_of(act, &stems)
                 || (is_manifest(act) && !sharded.is_empty());
             if !explained {
                 let mut row = BTreeMap::new();
