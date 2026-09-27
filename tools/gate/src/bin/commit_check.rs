@@ -17,7 +17,7 @@ const DOC_DIRS: [&str; 6] = [
 
 fn live_handover_carrier() -> String {
     let mut out = String::new();
-    for dir in ["docs/handover", "state/funding/handover"] {
+    for dir in ["docs/handover", "state/future/handover"] {
         let entries = match std::fs::read_dir(dir) {
             Ok(e) => e,
             Err(_) => continue,
