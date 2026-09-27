@@ -724,6 +724,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_NOHR_SNOWFALL => Some("nohrsc_snowfall_mm"),
             _ => None,
         },
+        "esacci_sst_l4_cdr3" => match comp {
+            crate::geo::COMP_ESACCI_SST => Some("esacci_sst_l4_cdr3"),
+            _ => None,
+        },
         _ => None,
     }
 }
