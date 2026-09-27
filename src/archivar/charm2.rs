@@ -70,6 +70,7 @@ pub fn parse_crossmatch_tsv(body: &str) -> Option<Vec<Charm2Gaia>> {
     }
 
     let mut by_recno: HashMap<u64, Vec<Cand>> = HashMap::new();
+    let mut recno_order: Vec<u64> = Vec::new();
     for line in lines {
         if line.trim().is_empty() {
             continue;
@@ -89,6 +90,9 @@ pub fn parse_crossmatch_tsv(body: &str) -> Option<Vec<Charm2Gaia>> {
         if !(0.0..=360.0).contains(&cra) || !(-90.0..=90.0).contains(&cdec) {
             continue;
         }
+        if !by_recno.contains_key(&recno) {
+            recno_order.push(recno);
+        }
         by_recno.entry(recno).or_default().push(Cand {
             cra,
             cdec,
@@ -105,7 +109,10 @@ pub fn parse_crossmatch_tsv(body: &str) -> Option<Vec<Charm2Gaia>> {
     }
 
     let mut out = Vec::new();
-    for cands in by_recno.into_values() {
+    for recno in recno_order {
+        let Some(cands) = by_recno.remove(&recno) else {
+            continue;
+        };
         let mut best: Option<(f64, f64, Cand)> = None;
         for cand in cands {
             if cand.gplx.is_none() {
