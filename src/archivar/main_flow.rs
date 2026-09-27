@@ -2859,7 +2859,6 @@ pub fn main_flow() {
                     | "ams02_spec"
                     | "lro_trk"
                     | "hamqsl_solar"
-                    | "rx100_luminance"
                     | "aia"
                     | "eve"
             ) {
