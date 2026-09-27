@@ -6319,10 +6319,7 @@ fn test_transfer_bound_is_declared_runner_safe_ttl_independent() {
         1 << 11,
         "the transfer bound is a declared power-of-two budget, never derived from ttl"
     );
-    assert!(
-        super::TRANSFER_BOUND_S < 7200,
-        "the transfer bound stays inside the health-check job budget (7200 s)"
-    );
+    const _: () = assert!(super::TRANSFER_BOUND_S < 7200);
     let cmd = super::curl_base(super::RetryPolicy::Transient, super::TRANSFER_BOUND_S, 0);
     let args: Vec<String> = cmd
         .get_args()

@@ -88,6 +88,8 @@ pub struct VHeader {
     pub vsclass: String,
 }
 
+type VGroup = (Vec<(u16, u16)>, String, String);
+
 pub struct Hdf4<'a> {
     bytes: &'a [u8],
     dds: Vec<Dd>,
@@ -300,7 +302,7 @@ impl<'a> Hdf4<'a> {
         self.special_element(tag, ref_)
     }
 
-    fn vgroup(&self, ref_: u16) -> Option<(Vec<(u16, u16)>, String, String)> {
+    fn vgroup(&self, ref_: u16) -> Option<VGroup> {
         let buf = self.normal(DFTAG_VG, ref_)?;
         let n = be_u16(buf, 0)? as usize;
         let mut p = 2usize;
@@ -432,13 +434,13 @@ impl<'a> Hdf4<'a> {
             let chunk = self.chunk_bytes(chk_tag, chk_ref, coder, want)?;
             let mut idx = 0u64;
             let mut ok = true;
-            for d in 0..ndims {
+            for (d, &stride) in strides.iter().enumerate() {
                 let origin = be_i32(rec, d * 4)?;
                 if origin < 0 {
                     ok = false;
                     break;
                 }
-                idx += origin as u64 * strides[d];
+                idx += origin as u64 * stride;
             }
             if !ok {
                 continue;
@@ -799,7 +801,7 @@ mod tests {
         file.extend_from_slice(&MAGIC);
         file.extend_from_slice(&2u16.to_be_bytes());
         file.extend_from_slice(&0i32.to_be_bytes());
-        file.extend_from_slice(&wrap(DFTAG_NT, 1, data_off as i32, 4));
+        file.extend_from_slice(&wrap(DFTAG_NT, 1, data_off, 4));
         file.extend_from_slice(&wrap(DFTAG_VS, 2, -1, -1));
         file.extend_from_slice(&[1u8, 23, 16, 1]);
         let hdf = Hdf4::parse(&file).expect("the chain parses past the deleted slot");
