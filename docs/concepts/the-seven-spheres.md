@@ -1,7 +1,7 @@
 <!--
   title: Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
   class: concept
-  sha256: 5f9f72e7c13a5be607f02acf36af509f15c468006fcf1fe67003004bea1c827e
+  sha256: 810ed744d47e5ef425a47d7850dd7d5796c8524203f37aaf03395048f9e51731
 -->
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 
@@ -144,14 +144,14 @@ die Reinheit der Null beweist die Reinheit des Vakuums.**
   (Mittel + σ der Kepler-Δz-Linien — der Erwartungswert) und
   `residual_stat` (Mittel + σ der (Messung − Kepler)-Residuen; ohne
   gemessene Linie `None` — die Reinheit der Null). Die gemessenen Δz
-  je Okkultation (Spektrum/Lichtkurve) sind eine live Quelle:
-  `pending`.
+  je Okkultation (Spektrum/Lichtkurve) wären eine live Quelle — `absent`
+  (Befund unten: kein Katalog trägt Δz).
 
   Befund (gemessen 2026-09-27, flash): der PDS-Okkultations-Katalog
   `EAR-A-3-RDR-OCCULTATIONS-V12.0` (`data/occlist.lbl`, 58 Spalten) trägt
   **keine** Δz-/vertical-/altitude-Spalte — nur X/Y-Koordinaten; auch der
   Nachfolger `smallbodiesoccultations 4.0` trägt kein Δz. Die Δz-Linie ist aus
-  diesem Katalog **absent**, nicht nur `pending`; sie braucht eine
+  diesem Katalog **absent**; sie braucht eine
   Spektrum-/Lichtkurven-Quelle.
 
 ## Die Schnittmengen-Topologie
