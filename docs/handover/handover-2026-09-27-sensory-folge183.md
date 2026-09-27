@@ -3,7 +3,7 @@
   session: Sensory-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: 5b68f5f94cfb8ff4ab2a263495db644bc6dcf3afc5f150da7675c94b4115eda8
+  sha256: f3d667ce153a4c19604e7f792d766579a0a98fc30c2b6f7f1606ba5141e056b6
   status: live
 -->
 # Handover — Sensory-Folge 183 (2026-09-27)
@@ -59,6 +59,13 @@ Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kop
 - **Blockade:** `archivar-mathematikerin.md:78` confirm-rendering ist kein read-only-Lauf.
 - **Braucht:** der Hidden-Run (Fenster/HUD) gehört in CI bzw. einen benannten Hidden-Lauf —
   hier als `pending` benannt, nicht gefälscht.
+
+### clippy `-D warnings` — ble.rs (eigener Datei-Owner)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** `ci-check`-Lauf am HEAD lesbar.
+- **Lage:** (gemessen 2026-09-25 via Stehender Pass, external-state.md:23) `src/archivar/ble.rs` ist der BLE-Reader (Sensory-Domäne); der clippy-Lauf (`mountain-folge181`) nennt ble.rs in der Wand.
+- **Blockade:** Log noch pending.
+- **Braucht:** `ci_manage log <id>` lesen; die ble.rs-Warnungen heilen (kein lokales clippy).
 
 ## Termin
 
