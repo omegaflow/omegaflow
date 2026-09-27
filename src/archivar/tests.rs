@@ -8156,10 +8156,10 @@ fn test_port_block_with_force_and_name_unit_synthesizes() {
         ),
         "a force directive with a name-suffix unit synthesizes the line, got: {conv}"
     );
-    let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 geomagnetic_index\n";
+    let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 omni_bx_gsm\n";
     let conv2 = super::port_block(still_pending);
     assert!(
-        conv2.contains("# pending field geomagnetic_index — unit or cadence absent, review"),
+        conv2.contains("# pending field omni_bx_gsm — unit or cadence absent, review"),
         "a name without a unit suffix stays pending, never the literal 1, got: {conv2}"
     );
 }
