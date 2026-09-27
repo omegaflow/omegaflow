@@ -8,6 +8,7 @@ note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fe
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
 note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
+note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; kein Extraktor-Arm gebaut.
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -349,4 +350,9 @@ parser-def iaga-text
 gap iaga-text
 url https://zenodo.org/records/10594301
 note Zenodo Alberta-GIC 2023 Mag_Data.zip (nT) — IAGA-2002-Text, Messung echt, Reader-Arm fehlt; der Modell-Teil (MT_Data/Network.xlsx) ist decline model (declined_sources.φ:5143).
+
+parser-def html
+gap html-parser-arm
+url https://superdarn.ca/radar-info
+note SuperDARN Radar-Positionen (HTML-Tabelle): 200 gemessen 2026-09-27 via archive_search --verdict (247 907 B); kein Positions-Reader-Arm. FITACF/RAWACF stehen (sources.φ:11487/:9814).
 
