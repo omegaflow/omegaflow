@@ -31,7 +31,7 @@ jobs:
           fail=0
           for path in $changed; do
             stem=$(basename "$path" .rs)
-            mapfile -t wfs < <(grep -rl -- "--bin $stem" .github/workflows --include='*.yml' | sed 's#^\.github/workflows/##' || true)
+            mapfile -t wfs < <(grep -rl --include='*.yml' -- "--bin $stem" .github/workflows | sed 's#^\.github/workflows/##' || true)
             if [ "${#wfs[@]}" = "0" ]; then
               echo "compiler $stem changed — no workflow invokes it, nothing to dispatch"
               continue
