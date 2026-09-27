@@ -2131,3 +2131,176 @@ fn browser_field_pipeline_offscreen_runs_the_measured_branch() {
         );
     }
 }
+
+const F32_EPS_REF: f64 = 1.19e-7;
+
+fn erfc_approx(x: f64) -> f64 {
+    let xa = x.abs();
+    let t = 1.0 / (1.0 + 0.3275911 * xa);
+    let poly = t
+        * (0.254829592
+            + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+    let y = poly * (-xa * xa).exp();
+    if x < 0.0 { 2.0 - y } else { y }
+}
+
+fn kernel_omega(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f64) -> f64 {
+    let perceptual_extent = extent.max(global_scale);
+    let e2 = (perceptual_extent * perceptual_extent).max(1e-30);
+    let s2 = (global_scale * global_scale).max(1e-30);
+    let d2 = d * d;
+    match kernel_id {
+        0 => 1.0 / (d2 + e2),
+        1 => (-d2 / (2.0 * e2)).exp() / (d2 + e2),
+        2 => (-d2 / (2.0 * e2.max(s2))).exp() / (d + s2.sqrt()),
+        3 => erfc_approx(d / (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale)),
+        4 => (-d / perceptual_extent.max(global_scale)).exp(),
+        5 => {
+            let alpha = absorption.clamp(0.0, 1.0);
+            let beta = 1.6;
+            let e = e2.max(s2);
+            let core = (-d2 / (2.0 * e)).exp();
+            let tail = e.powf(beta * 0.5) / (d2 + s2).max(s2).powf(beta * 0.5);
+            (1.0 - alpha) * core + alpha * tail
+        }
+        6 => 1.0 / (d + perceptual_extent),
+        _ => (-d2 / (2.0 * e2.max(s2))).exp() / (d2 + s2).max(s2),
+    }
+}
+
+fn kernel_omega_grad(
+    kernel_id: u8,
+    d: f64,
+    extent: f64,
+    global_scale: f64,
+    absorption: f64,
+) -> f64 {
+    if d > 1e13 {
+        return 0.0;
+    }
+    let perceptual_extent = extent.max(global_scale);
+    let e2 = (perceptual_extent * perceptual_extent).max(1e-30);
+    let s2 = (global_scale * global_scale).max(1e-30);
+    let d2 = d * d;
+    match kernel_id {
+        0 => {
+            let denom = d2 + e2;
+            -2.0 * d / (denom * denom)
+        }
+        1 => {
+            let denom = d2 + e2;
+            -(-d2 / (2.0 * e2)).exp() * d * (denom / e2 + 2.0) / (denom * denom)
+        }
+        2 => {
+            let e = e2.max(s2);
+            let denom = d + s2.sqrt();
+            -(-d2 / (2.0 * e)).exp() * (d / e * denom + 1.0) / (denom * denom)
+        }
+        3 => {
+            let scale = (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale);
+            -2.0 / std::f64::consts::PI.sqrt() * (-d2 / (scale * scale)).exp() / scale
+        }
+        4 => {
+            let scale = perceptual_extent.max(global_scale);
+            -(-d / scale).exp() / scale
+        }
+        5 => {
+            let alpha = absorption.clamp(0.0, 1.0);
+            let beta = 1.6;
+            let e = e2.max(s2);
+            let core_grad = -d / e * (-d2 / (2.0 * e)).exp();
+            let denom = (d2 + s2).max(s2);
+            let tail_grad = -beta * d * e.powf(beta * 0.5) / denom.powf(beta * 0.5 + 1.0);
+            (1.0 - alpha) * core_grad + alpha * tail_grad
+        }
+        6 => {
+            let denom = d + perceptual_extent;
+            -1.0 / (denom * denom)
+        }
+        _ => {
+            let e = e2.max(s2);
+            let denom = (d2 + s2).max(s2);
+            -(-d2 / (2.0 * e)).exp() * (d / e * denom + 2.0 * d) / (denom * denom)
+        }
+    }
+}
+
+fn r_struct(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f64) -> Option<f64> {
+    let omega = kernel_omega(kernel_id, d, extent, global_scale, absorption);
+    let grad = kernel_omega_grad(kernel_id, d, extent, global_scale, absorption);
+    if grad == 0.0 {
+        return None;
+    }
+    Some(F32_EPS_REF * omega.abs() / grad.abs())
+}
+
+#[test]
+fn r_struct_is_finite_and_positive_for_every_kernel_form() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let absorption = 0.5;
+    for kernel_id in 0..=6u8 {
+        for d in [2.0_f64, 4.0, 8.0] {
+            let r = r_struct(kernel_id, d, extent, global_scale, absorption)
+                .expect("R_struct is defined for d > 0");
+            assert!(
+                r.is_finite() && r > 0.0,
+                "kernel {} R_struct({}) = {} is not finite-positive",
+                kernel_id,
+                d,
+                r
+            );
+        }
+    }
+}
+
+#[test]
+fn r_struct_inverse_square_grows_linearly_in_the_tail() {
+    let extent = 1.0;
+    let global_scale = 1e-2;
+    let mut prev = 0.0;
+    for d in [8.0_f64, 16.0, 32.0, 64.0] {
+        let r = r_struct(0, d, extent, global_scale, 0.0).expect("defined for d > 0");
+        assert!(
+            r > prev,
+            "inverse-square R_struct did not grow with d: {} then {}",
+            prev,
+            r
+        );
+        let analytic = F32_EPS_REF * d / 2.0;
+        let rel = (r - analytic).abs() / analytic;
+        assert!(
+            rel < 0.02,
+            "inverse-square R_struct({}) = {} diverges from F32_EPS·d/2 = {}",
+            d,
+            r,
+            analytic
+        );
+        prev = r;
+    }
+}
+
+#[test]
+fn multipole_error_cluster_vs_barycenter() {
+    let r = 1.0;
+    let val = 1.0;
+    let point = |d: f64| val / (d * d);
+    let cluster = |d: f64| 0.5 * point(d - r) + 0.5 * point(d + r);
+    let barycenter = |d: f64| kernel_omega(0, d, r, 0.0, 0.0);
+
+    let d_far = 2e4;
+    let err_far = (cluster(d_far) - barycenter(d_far)).abs() / cluster(d_far).abs();
+    assert!(
+        err_far < F32_EPS_REF,
+        "far-field multipole error {} is above F32_EPS",
+        err_far
+    );
+
+    let d_near = 2.0 * r;
+    let err_near = (cluster(d_near) - barycenter(d_near)).abs() / cluster(d_near).abs();
+    assert!(
+        err_near > F32_EPS_REF,
+        "near-field multipole error {} is below F32_EPS (cluster collapsed to a monopole)",
+        err_near
+    );
+}
