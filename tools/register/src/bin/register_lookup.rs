@@ -1257,7 +1257,7 @@ fn bump_class(counts: &mut Vec<(String, usize)>, class: &str) {
     counts.push((class.to_string(), 1));
 }
 
-fn scan_funding(dir: &str) -> Vec<String> {
+fn scan_future(dir: &str) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     let entries = match fs::read_dir(dir) {
         Ok(e) => e,
@@ -1358,7 +1358,7 @@ fn run_open() {
         }
     }
 
-    let funding = scan_funding("state/funding");
+    let future_lines = scan_future("state/future");
 
     let head = current_head_short();
     let now_min = now_minutes();
@@ -1379,7 +1379,7 @@ fn run_open() {
     for line in &docs {
         println!("{}", line);
     }
-    for line in &funding {
+    for line in &future_lines {
         println!("{}", line);
     }
     for line in &unverifiable {
@@ -1498,9 +1498,9 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} funding, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
         docs.len(),
-        funding.len(),
+        future_lines.len(),
         opens.len(),
         released.len(),
         dups.len(),
@@ -1824,7 +1824,7 @@ const LINE_ALIASES: &[(&str, &str)] = &[
     ("forschung", "sensory"),
 ];
 
-const PRIVATE_HANDOVER_DIR: &str = "state/funding/handover";
+const PRIVATE_HANDOVER_DIR: &str = "state/future/handover";
 
 const DROPPED_STATUS_TAGS: &[&str] = &[
     "wartend",
@@ -2464,7 +2464,7 @@ fn run_dropped(args: &[String]) {
                 if let Some(folge) = last.folge {
                     if private_successor_exists_in(PRIVATE_HANDOVER_DIR, line, folge) {
                         println!(
-                            "BOUNDARY\t{}\t{}\t{}\tboundary unmeasured: successor private \u{2014} state/funding/handover/",
+                            "BOUNDARY\t{}\t{}\t{}\tboundary unmeasured: successor private \u{2014} state/future/handover/",
                             line, last.path, folge
                         );
                     }
