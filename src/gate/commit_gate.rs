@@ -947,6 +947,12 @@ impl Gate {
         if let Some(v) = check_bindung_linie(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_pass_copy(&path, &content) {
+            return Some(v);
+        }
+        if let Some(v) = check_bindung_foreign(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -1222,6 +1228,96 @@ fn check_bindung_linie(path: &str, content: &str) -> Option<Verdict> {
                 rule: "bindung-linie-fremd".to_string(),
                 line: idx + 1,
                 feedback: feedback("bindung-linie-fremd").to_string(),
+                quote: clip(line, 90),
+            });
+        }
+    }
+    None
+}
+
+fn head_sha_copy(line: &str) -> bool {
+    let bytes = line.as_bytes();
+    let mut i = 0;
+    while i + 4 <= bytes.len() {
+        if &bytes[i..i + 4] != b"HEAD" {
+            i += 1;
+            continue;
+        }
+        let before_ok = i == 0 || !(bytes[i - 1] as char).is_ascii_alphanumeric();
+        if !before_ok {
+            i += 4;
+            continue;
+        }
+        let mut j = i + 4;
+        if j >= bytes.len() || (bytes[j] != b':' && bytes[j] != b' ') {
+            i += 4;
+            continue;
+        }
+        j += 1;
+        while j < bytes.len() && !(bytes[j] as char).is_ascii_alphanumeric() {
+            j += 1;
+        }
+        let start = j;
+        while j < bytes.len() && (bytes[j] as char).is_ascii_hexdigit() {
+            j += 1;
+        }
+        if (7..=40).contains(&(j - start)) {
+            return true;
+        }
+        i += 4;
+    }
+    false
+}
+
+fn check_pass_copy(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    for (idx, line) in content.lines().enumerate() {
+        if head_sha_copy(line) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "pass-copy".to_string(),
+                line: idx + 1,
+                feedback: feedback("pass-copy").to_string(),
+                quote: clip(line, 90),
+            });
+        }
+    }
+    None
+}
+
+fn bindung_foreign_value(line: &str) -> Option<&'static str> {
+    let t = line.trim_start();
+    if !t.starts_with("- **") {
+        return None;
+    }
+    let at = t.find("**Bindung:**")?;
+    let after = t[at + "**Bindung:**".len()..].trim_start();
+    let value: String = after
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == ':')
+        .collect();
+    match value.as_str() {
+        "operator" => Some("operator"),
+        "dritter" => Some("dritter"),
+        _ => None,
+    }
+}
+
+fn check_bindung_foreign(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    for (idx, line) in content.lines().enumerate() {
+        if bindung_foreign_value(line).is_some() {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "foreign-binding".to_string(),
+                line: idx + 1,
+                feedback: feedback("foreign-binding").to_string(),
                 quote: clip(line, 90),
             });
         }
@@ -2690,6 +2786,147 @@ mod tests {
             "- **Bindung:** linie:mountain",
         );
         assert!(g.check_tool_call("write", &archived).is_none());
+    }
+
+    #[test]
+    fn fp_tool_pass_copy_head_colon_sha_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_head_colon_sha"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "pass-copy");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_pass_copy_head_space_full_sha_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_head_space_full_sha"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "pass-copy");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_pass_copy_head_sha7_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_head_sha7"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "pass-copy");
+    }
+
+    #[test]
+    fn fn_tool_pass_copy_six_hex_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_head_sha6"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_pass_copy_git_show_head_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_git_show_head"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_pass_copy_head_end_of_line_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("pass_copy_head_end_of_line"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_pass_copy_archived_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/archiv/handover-2026-09-26-river-folge36.md",
+            &fx("pass_copy_head_colon_sha"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_pass_copy_non_line_handover_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-20-operator-entscheidungen.md",
+            &fx("pass_copy_head_colon_sha"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_foreign_binding_operator_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("foreign_binding_operator"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "foreign-binding");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_foreign_binding_dritter_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-27-river-folge42.md",
+            &fx("foreign_binding_dritter"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "foreign-binding");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_foreign_binding_eigen_termin_passes() {
+        let mut g = test_gate();
+        for ok in [fx("foreign_binding_eigen"), fx("foreign_binding_termin")] {
+            let args = tool_args("docs/handover/handover-2026-09-27-river-folge42.md", &ok);
+            assert!(
+                g.check_tool_call("write", &args).is_none(),
+                "clean fixture: {ok}"
+            );
+        }
+    }
+
+    #[test]
+    fn fn_tool_foreign_binding_archived_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/archiv/handover-2026-09-27-sensory-folge182.md",
+            &fx("foreign_binding_dritter"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_foreign_binding_non_line_handover_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-20-operator-entscheidungen.md",
+            &fx("foreign_binding_operator"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]
