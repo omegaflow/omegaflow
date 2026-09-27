@@ -11692,7 +11692,7 @@ field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
 format modis_lst_cmg
-origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_8day_<granuleUR>.bin; the manifest lists the shards)
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_8day_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-<year>; the series manifest lists the shards)
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 691200
@@ -11709,7 +11709,7 @@ last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
 format modis_lst_cmg
-origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_monthly_<granuleUR>.bin; the manifest lists the shards)
+origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_monthly_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-<year>; the series manifest lists the shards)
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 2592000

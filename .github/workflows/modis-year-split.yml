@@ -1,0 +1,96 @@
+name: modis-year-split
+
+# Einmal-Migration: die modis_lst_cmg-Assets vom vollen Familien-Release
+# (data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg, 1000-Asset-Cap) in die
+# Jahr-Tags data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-<product>-<year>
+# heben. Die Jahr-Aufteilung ist die Tag-Funktion modis_lst_cmg_tag_of aus
+# src/archivar/cdn.rs (hier gespiegelt — die Serie ohne Produkt_Jahr-Struktur,
+# also modis_lst_cmg_<product>.manifest, bleibt im Familien-Tag). GitHub bietet
+# keinen Server-Copy: download → sha256 prüfen → upload. Nach der verifizierten
+# Verschiebung wird der Slot aus dem Familien-Tag gelöscht (Pflicht — das
+# Familien-Tag behält nur die zwei Serien-Manifeste).
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Lift every family shard into its year tag, then delete the verified-moved slot
+        run: |
+          set -euo pipefail
+          SRC="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          FAMILY="${SRC}"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/dl"
+          gh release view "$SRC" --repo "$REPO" --json assets \
+            --jq '.assets[] | select(.name|startswith("modis_lst_cmg")) | "\(.name)\t\(.digest)"' > "$tmp/src"
+          moved=0; kept=0; failed=0
+          while IFS=$'\t' read -r name digest; do
+            [ -n "$name" ] || continue
+            rest="${name#modis_lst_cmg_}"
+            product="${rest%%_*}"
+            tail="${rest#*_}"
+            if [ -z "$product" ] || [ "$product" = "$rest" ]; then
+              echo "$name: no product_year structure — stays in the family tag"
+              kept=$((kept+1)); continue
+            fi
+            case "$tail" in
+              *.manifest) year="${tail%.manifest}" ;;
+              *.bin)
+                granule="${tail%.bin}"
+                a="${granule#*.A}"
+                if [ "$a" = "$granule" ]; then
+                  echo "$name: no .A year marker — stays in the family tag"
+                  kept=$((kept+1)); continue
+                fi
+                year="${a:0:4}"
+                ;;
+              *)
+                echo "$name: neither .bin nor .manifest — stays in the family tag"
+                kept=$((kept+1)); continue
+                ;;
+            esac
+            case "$year" in
+              [0-9][0-9][0-9][0-9]) ;;
+              *)
+                echo "$name: year \"$year\" is not four digits — stays in the family tag"
+                kept=$((kept+1)); continue
+                ;;
+            esac
+            tag="${FAMILY}-${product}-${year}"
+            gh release view "$tag" --repo "$REPO" >/dev/null 2>&1 \
+              || gh release create "$tag" --repo "$REPO" --title "$tag" \
+                   --notes "modis_lst_cmg ${product} ${year} year release (the family release is capped at 1000 assets)"
+            if ! gh release download "$SRC" --repo "$REPO" --pattern "$name" --dir "$tmp/dl" --clobber; then
+              echo "$name: download returned void — not moved"
+              failed=$((failed+1)); continue
+            fi
+            got="sha256:$(sha256sum "$tmp/dl/$name" | cut -d' ' -f1)"
+            if [ -n "$digest" ] && [ "$got" != "$digest" ]; then
+              echo "sha256 mismatch $name: $got != $digest — not moved"
+              failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
+            fi
+            if ! gh release upload "$tag" "$tmp/dl/$name" --clobber --repo "$REPO"; then
+              echo "$name: upload to $tag returned void — not moved"
+              failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
+            fi
+            if ! gh release delete-asset "$SRC" "$name" --repo "$REPO" --yes; then
+              echo "$name: uploaded to $tag but the family delete returned void — slot stays"
+              failed=$((failed+1)); rm -f "$tmp/dl/$name"; continue
+            fi
+            moved=$((moved+1))
+            rm -f "$tmp/dl/$name"
+          done < "$tmp/src"
+          echo "modis-year-split: moved=$moved kept=$kept failed=$failed"
+          test "$failed" -eq 0
