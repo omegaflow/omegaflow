@@ -79,19 +79,12 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge179.md`.
 - **Blockade:** keine.
 - **Braucht:** Trigger in `state/zustand/wartend.φ` (voyager-nssdca).
 
-### planeto-epncore — Manifestations-Direktiven (getragen von Mountain)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains Verdikt (accept/decline) zum `voparis-tap-planeto.obspm.fr`-Block.
-- **Lage:** (gemessen 2026-09-27 via `sgrep`) der `sources.φ`-Block (Arm `epncore`) trägt `url` = Live-TAP, `format tap`, keine `origin`/`compiler`, kein `sha256`; `phi/declined_sources.φ` declinet denselben PADC-Host.
-- **Blockade:** Mountains Verdikt.
-- **Braucht:** bei `accept` die Manifestations-Direktiven (`url`=Asset, `origin`=Live-TAP, `compiler`, `sha256`); bei `decline` keine.
-
 ### CDN-Reconcile — Manifestations-Dispatch (getragen von Mountain)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains Verdikt über die fehlenden Releases (`handover-2026-09-27-mountain-folge181.md`).
-- **Lage:** (gemessen 2026-09-27 via Mountain-Übergabe) `cdn_reconcile.rs` meldet fehlende Releases (`ssd.jpl.nasa.gov-{dcom5,icecat,weberin}`, `ned.ipac.caltech.edu-byparams`, `noaa-nos-coastal-lidar-pds.s3.amazonaws.com`).
-- **Blockade:** Mountains Verdikt über Manifestation vs. Disposal.
-- **Braucht:** je `accept` den `*-cdn.yml`-Lauf dispatchen (`gh workflow run <wf>`).
+- **Trigger:** `cdn-reconcile` `36311386072` success — Mountains Verdikt liegt vor (2026-09-27).
+- **Lage:** (gemessen 2026-09-27 via `cdn_reconciliation.json` + Mountain-Verdikt) 4 akzeptiert: `ssd.jpl.nasa.gov-dcom5` → `dcom5-cdn.yml`, `ssd.jpl.nasa.gov-icecat` → `icecat-cdn.yml`, `ssd.jpl.nasa.gov-weberin` → `weberin-verdicts-cdn.yml`, `ned.ipac.caltech.edu-byparams` → `ned-byparams-cdn.yml`; `noaa-nos-coastal-lidar-pds.s3.amazonaws.com` disponiert (Mountain löschte die Quelle, `decline terrain`).
+- **Blockade:** keine.
+- **Braucht:** die 4 `*-cdn.yml` dispatchen (`gh workflow run <wf>`); danach `cdn-reconcile.yml` und prüfen, dass die 4 aus `unmanifested_source_netlocs`/`missing_assets` fallen. Die verwaisten coastal-lidar-Referenzen in `phi/pipeline/frame_registry.φ:508`/`noaa_nodd_disposition.φ:40` prunen.
 
 ### termin-Punkte — re-verdict
 - **Status:** termin | **Bindung:** termin:2026-10-02 / 2026-12-02

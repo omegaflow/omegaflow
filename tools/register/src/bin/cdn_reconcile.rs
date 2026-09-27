@@ -333,9 +333,16 @@ fn main() {
     .map(|s| s.to_string())
     .collect();
 
+    let non_source_tags: BTreeSet<&str> =
+        ["srdata.nist.gov", "rave-survey.org"].into_iter().collect();
+
     let classify = |nl: &str| -> &'static str {
         if dataset_hosts.contains(nl) {
             "dataset_host"
+        } else if non_source_tags.contains(nl) {
+            "non_source"
+        } else if nl.starts_with("ps1-dr2-") || nl.starts_with("ssd.jpl.nasa.gov-") {
+            "internal"
         } else if nl.starts_with("github.com")
             || nl.starts_with("raw.githubusercontent.com")
             || nl.starts_with("github.com-")
