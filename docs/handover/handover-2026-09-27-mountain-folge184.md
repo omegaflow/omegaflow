@@ -3,7 +3,7 @@
   session: Mountain-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: 3c3a9b7ed14004383be74679a41138f65ebe9e4a50ef3366f5456d5ac6a66db0
+  sha256: 17299434312acd5ce85caf98b944639e258b0c10f614640e3f2ee382356be7d6
   status: live
 -->
 # Handover — Mountain-Folge 184 (2026-09-27)
@@ -24,6 +24,7 @@ D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abar
 ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session)
 RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session)
 Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session)
+kein Foto des Operators im CDN — RX100-Capture nicht manifestieren | 2026-09-27 | Operator (Session)
 
 ## Offen (aufgeschlüsselt)
 
@@ -39,6 +40,13 @@ Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilf
 - **Braucht:** mit dem Token den echten ByParams-Job fahren und messen, ob
   Poll/Fetch ohne Header scheitern; falls ja, Token an `http_get`-Signatur und
   `fetch_body` (Header + Cookie-Jar) ergänzen.
+
+### rx100_luminance — CDN-Asset (descoped)
+- **Status:** descoped | **Bindung:** eigen
+- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict`) der CDN-Asset-URL
+  liefert HTTP 404 — kein Asset; `phi/harvest.φ:233` `asset fehlt`. Operator-Wort:
+  kein Foto des Operators im CDN → die RX100-Quelle bleibt ohne CDN-Daten.
+- **Befund:** `phi/harvest.φ:233` `asset fehlt` (Quelle deklariert, Asset bewusst nicht manifestiert).
 
 ## Abschluss
 
