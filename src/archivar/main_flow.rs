@@ -3664,6 +3664,77 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "volume_netcdf" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                let held = archive.volumes.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url
+                        .rsplit('/')
+                        .next()
+                        .unwrap_or("volume_netcdf")
+                        .to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_volume_netcdf_{name}"));
+                    if !cache_fresh_cdn(&tmp_path, src_ttl, &url) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                        write_cdn_stamp(&tmp_path, &url);
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let Some((name, volume)) =
+                        crate::archivar::channels::build_netcdf4_volume(&src, &bytes)
+                    else {
+                        eprintln!(
+                            "{} {}: netcdf4 volume reads void — {} B carry no grid contract",
+                            fmt,
+                            url,
+                            bytes.len()
+                        );
+                        let _ = ftx.send(empty(false));
+                        return;
+                    };
+                    if let Ok(mut held) = held.lock() {
+                        held.retain(|(n, _)| n != &name);
+                        held.push((name, volume));
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if matches!(
                 archive.sources[i].format.as_str(),
                 "bgr_infrasound"

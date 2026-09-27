@@ -1086,6 +1086,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
         | Extract::CelestialPolygon { fields, .. }
         | Extract::KeplerMap { fields, .. }
         | Extract::ProfileMap { fields, .. } => fields.clone(),
+        Extract::Volume { .. } => Vec::new(),
         Extract::Field(fc)
         | Extract::First(fc, _)
         | Extract::Last(fc, _)
@@ -5003,6 +5004,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 }
             }
             Extract::Alerce(_) => {}
+            Extract::Volume { .. } => {}
         }
     }
     if !extracted.is_empty() {
