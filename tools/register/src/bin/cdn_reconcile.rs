@@ -2,6 +2,7 @@ use omegaflow::archivar::{
     JsonVal, SourceConfig, cdn_manifest_map, extract_netloc, jstr, load_sources_from, parse_json,
     reference_name_from_url, source_name_from_url,
 };
+use omegaflow::cdn::MODIS_LST_CMG_FAMILY;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::process::Command;
@@ -336,12 +337,16 @@ fn main() {
     let non_source_tags: BTreeSet<&str> =
         ["srdata.nist.gov", "rave-survey.org"].into_iter().collect();
 
+    let modis_year_prefix = format!("{MODIS_LST_CMG_FAMILY}-");
     let classify = |nl: &str| -> &'static str {
         if dataset_hosts.contains(nl) {
             "dataset_host"
         } else if non_source_tags.contains(nl) {
             "non_source"
-        } else if nl.starts_with("ps1-dr2-") || nl.starts_with("ssd.jpl.nasa.gov-") {
+        } else if nl.starts_with("ps1-dr2-")
+            || nl.starts_with("ssd.jpl.nasa.gov-")
+            || nl.starts_with(modis_year_prefix.as_str())
+        {
             "internal"
         } else if nl.starts_with("github.com")
             || nl.starts_with("raw.githubusercontent.com")
