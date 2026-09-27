@@ -2,7 +2,7 @@
   title: Terminology of the Counter-Slope — coined terms as measurable claims
   class: paper
   date: 2026-09-25
-  sha256: c4a9813092e12cb53f47cbcc96e097cb4f888ded95e93ff84f3e5f4ba8d64c84
+  sha256: 68c76aba905b97be986ac99225051373d120c8aaf7d123d25bc00cf27ae1aa40
   status: live
   see-also: docs/concepts/glossar.md docs/concepts/the-counter-slope.md docs/granit.md
 -->
