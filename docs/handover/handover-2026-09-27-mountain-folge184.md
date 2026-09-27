@@ -3,7 +3,7 @@
   session: Mountain-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: d4a3a71a5953340bc7db511012e5c5bf4a65abb471f68287626d3196b8b009ad
+  sha256: 3c3a9b7ed14004383be74679a41138f65ebe9e4a50ef3366f5456d5ac6a66db0
   status: live
 -->
 # Handover — Mountain-Folge 184 (2026-09-27)
@@ -39,19 +39,6 @@ Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilf
 - **Braucht:** mit dem Token den echten ByParams-Job fahren und messen, ob
   Poll/Fetch ohne Header scheitern; falls ja, Token an `http_get`-Signatur und
   `fetch_body` (Header + Cookie-Jar) ergänzen.
-
-### rx100_luminance — CDN-Manifestation (`asset fehlt`)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein reales RX100-JPEG + `rx100_compiler --jpeg`-Lauf.
-- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict` + GitHub-API + `sread`)
-  der Asset-URL `…/sony-camera-remote/rx100_luminance.bin` liefert live HTTP 404 (Stufen 1–3),
-  das Release-Tag `sony-camera-remote` existiert nicht (API 404) — `phi/harvest.φ:233`
-  `asset fehlt` ist echt und erwartet; `harvest.yml` klassifiziert die CI-Abwesenheit
-  (`absent=true`, run `36323640789` success). Band-Deklaration steht (`phi/sources.φ:122` →
-  `… 60 0.0 0.0 5.45e14 3.2e14`), EXIF-Compiler-Pfad gebaut (River `c04e00871`).
-  K=12.5 bleibt ISO-2720-Vorgabe, ungemessen.
-- **Blockade:** kein reales Capture (Operator-/Sensor-Hand); kein Referenz-Luminanzmeter.
-- **Braucht:** bei Capture den Compiler-Lauf + CDN-Manifestation (die `url`-Zeile `phi/sources.φ:117` steht).
 
 ## Abschluss
 
