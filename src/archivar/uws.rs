@@ -27,12 +27,18 @@ pub fn uws_resolve(async_base: &str, location: &str) -> Option<String> {
         return Some(location.to_string());
     }
     let (scheme, after) = async_base.split_once("://")?;
-    let host = after.split('/').next()?;
+    let (host, path) = match after.split_once('/') {
+        Some((h, p)) => (h, p),
+        None => (after, ""),
+    };
     if location.starts_with('/') {
         return Some(format!("{scheme}://{host}{location}"));
     }
-    let dir = after.rsplit_once('/').map(|(d, _)| d).unwrap_or(after);
-    Some(format!("{scheme}://{host}{dir}/{location}"))
+    if path.is_empty() {
+        Some(format!("{scheme}://{host}/{location}"))
+    } else {
+        Some(format!("{scheme}://{host}/{path}/{location}"))
+    }
 }
 
 pub fn uws_submit(

@@ -148,21 +148,25 @@ fn decode_rec(data: &[u8]) -> Option<AllwisePsd> {
         return None;
     }
     let mask = data[64];
-    let cell = |off: usize, bit: u8| -> Option<f64> {
+    let cell = |off: usize, bit: u8| -> Result<Option<f64>, ()> {
         if mask & bit == 0 {
-            return None;
+            return Ok(None);
         }
-        f64_at(data, off).filter(|v| v.is_finite())
+        let v = f64_at(data, off).ok_or(())?;
+        if !v.is_finite() {
+            return Err(());
+        }
+        Ok(Some(v))
     };
     Some(AllwisePsd {
         ra,
         dec,
-        w1mpro: cell(16, MASK_W1),
-        w2mpro: cell(24, MASK_W2),
-        w3mpro: cell(32, MASK_W3),
-        w4mpro: cell(40, MASK_W4),
-        w3snr: cell(48, MASK_W3SNR),
-        w4snr: cell(56, MASK_W4SNR),
+        w1mpro: cell(16, MASK_W1).ok()?,
+        w2mpro: cell(24, MASK_W2).ok()?,
+        w3mpro: cell(32, MASK_W3).ok()?,
+        w4mpro: cell(40, MASK_W4).ok()?,
+        w3snr: cell(48, MASK_W3SNR).ok()?,
+        w4snr: cell(56, MASK_W4SNR).ok()?,
     })
 }
 

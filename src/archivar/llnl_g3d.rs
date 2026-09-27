@@ -386,7 +386,7 @@ mod tests {
             let lon = LON0 + (i % NLON) as f64;
             let line = format!(
                 "{lat:.4} {lon:.4} {:.4} {:.4}\n",
-                lat - lat.abs() * 0.002,
+                lat - lat * 0.002,
                 6356.72 + (i % 100) as f64 * 0.0001
             );
             out.push_str(&line);

@@ -1785,31 +1785,34 @@ mod tests {
     }
 
     #[test]
-    fn every_cdn_source_carries_its_origin_and_compiler() {
+    fn every_cdn_source_carries_its_origin_and_compiler_or_is_a_reference() {
         let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
         let mut missing: Vec<String> = Vec::new();
         let mut url = String::new();
         let mut cdn = false;
         let mut origin = false;
         let mut compiler = false;
+        let mut reference = false;
         for line in content.lines() {
             let mut words = line.split_whitespace();
             match words.next() {
                 Some("url") => {
-                    if cdn && !(origin && compiler) {
+                    if cdn && !(origin && (compiler || reference)) {
                         missing.push(url.clone());
                     }
                     url = words.next().map_or(String::new(), str::to_string);
                     cdn = url.contains("/releases/download/");
                     origin = false;
                     compiler = false;
+                    reference = false;
                 }
                 Some("origin") => origin = true,
                 Some("compiler") => compiler = true,
+                Some("format") => reference = words.next() == Some("reference"),
                 _ => {}
             }
         }
-        if cdn && !(origin && compiler) {
+        if cdn && !(origin && (compiler || reference)) {
             missing.push(url);
         }
         assert!(

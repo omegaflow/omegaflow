@@ -184,18 +184,19 @@ fn decode_rec(data: &[u8]) -> Option<Charm2Gaia> {
         return None;
     }
     let mask = data[40];
-    let cell = |off: usize, bit: u8| -> Option<f64> {
+    let cell = |off: usize, bit: u8| -> Option<Option<f64>> {
         if mask & bit == 0 {
-            return None;
+            return Some(None);
         }
-        f64_at(data, off).filter(|v| v.is_finite())
+        let v = f64_at(data, off)?;
+        if v.is_finite() { Some(Some(v)) } else { None }
     };
     Some(Charm2Gaia {
         ra,
         dec,
-        ud_mas: cell(16, MASK_UD),
-        ld_mas: cell(24, MASK_LD),
-        plx_mas: cell(32, MASK_PLX),
+        ud_mas: cell(16, MASK_UD)?,
+        ld_mas: cell(24, MASK_LD)?,
+        plx_mas: cell(32, MASK_PLX)?,
     })
 }
 
@@ -249,8 +250,8 @@ mod tests {
     #[test]
     fn parse_tsv_picks_nearest_and_magnitude_prior() {
         let body = "crecno\tcra\tcdec\tcud\tcld\tgra\tgdec\tgplx\tgmag\n\
-7\t10.0\t5.0\t2.0\t\t10.001\t5.0\t5.0\t9.0\n\
-7\t10.0\t5.0\t2.0\t\t10.0\t5.001\t5.5\t6.0\n";
+7\t10.0\t5.0\t2.0\t\t10.0\t5.0\t5.0\t9.0\n\
+7\t10.0\t5.0\t2.0\t\t10.0\t5.0\t5.5\t6.0\n";
         let rows = parse_crossmatch_tsv(body).expect("one recno with two candidates");
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].plx_mas, Some(5.5));

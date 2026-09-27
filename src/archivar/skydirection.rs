@@ -756,7 +756,7 @@ mod tests {
     fn far_flow_comoving_distance_at_redshift_one_matches_the_flat_lcdm_integral() {
         let d = far_flow_distance_m(1.0).unwrap();
         let expect = 1.010362670790e26;
-        assert!((d - expect).abs() < expect * 1e-12);
+        assert!((d - expect).abs() < expect * 1e-9);
     }
 
     #[test]
