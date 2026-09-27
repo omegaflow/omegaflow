@@ -3,7 +3,7 @@
   session: Mountain-Folge 189
   class: handover
   date: 2026-09-27
-  sha256: 2a860cffdc4bcade2d3c86de9be3452ae653e15f7da0b4ecb15b745410a4f6db
+  sha256: 5380a5f0c0d25df749092d812e604d1f0b2912c6bd9142b976beeffdf3c2e3fe
   status: live
 -->
 # Handover — Mountain-Folge 189 (2026-09-27)
@@ -83,15 +83,6 @@ Wort | Datum | Quelle
 - **Braucht:** die Präzisierung „ttl = Verdikt-Zeile" in `AGENTS.md` nachtragen,
   sobald der fremde Hunk committet ist; das no-cadence-Sprachloch als `pending`
   registrieren.
-
-## An Mycelium (gemessen, fremde Feder)
-
-- **DAS2 Iowa** (`phi/blocked_sources.φ:357`) und **Occultation-DB UTFPR**
-  (`phi/blocked_sources.φ:361`): Mountain-Arme gebaut (`b4106e69a`:
-  `src/archivar/port.rs:1360` `hapi_draft_fields_csv`;
-  `tools/harvest/src/bin/occultation_compiler.rs`). Beide Einträge sind
-  `[mycelium]` getaggt (`pending`); die Residual-`sources.φ`-Zeile
-  (url/origin/compiler/Tags) ist Myceliums Feder.
 
 ## Abschluss
 
