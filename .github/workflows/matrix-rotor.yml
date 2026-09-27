@@ -1,0 +1,81 @@
+name: matrix-rotor
+
+# Der Blatt-1-Bojen-Matrix-Rotor in CI.
+#
+# Der Rotor ist die verborgene Membrane (`#station=41001`, `OMEGAFLOW_HIDDEN=1`);
+# er läuft auf dem Software-Vulkan-Adapter (lavapipe, wie ci-check), braucht also
+# keine GPU-Hardware und kein Display — `LoopRadiator` ist reines Compute
+# (`sense_membrane`/`pack_window`, kein Surface).
+#
+# Warum der Warm-Speicher das eigentliche Bau-Stück ist: `MatrixMachine` schreibt
+# `omegaflow_matrix_state.bin` alle 120 s (`src/mathematikerin/machines/matrix.rs:1114`)
+# und lädt ihn beim Start (`omega.rs:1567`); ein Round ≈ 16 h. Ein GitHub-Job ist
+# ephemer und gedeckelt, also läuft je Aufruf genau **ein begrenzter Slice**, und
+# der State wird danach auf das Release `matrix-state` geschrieben und beim nächsten
+# Lauf wieder geladen — die Akkumulation lebt im Asset, nicht im Job.
+#
+# Der lokale Wächter `bin/matrix_watchdog.sh` bleibt die zweite (dauerhafte)
+# Betriebsart; beide dürfen nicht zugleich denselben State schreiben.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 */6 * * *"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  rotor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Software-Vulkan-Adapter (lavapipe) — die Membrane fragt compute-only
+        run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers
+      - name: Warmen Matrix-State vom matrix-state-Release laden
+        run: |
+          mkdir -p data
+          gh release download matrix-state --repo omegaflow/omegaflow \
+            --pattern omegaflow_matrix_state.bin --dir data --clobber \
+            || echo "matrix-state absent — Kaltstart (der Round beginnt bei null)"
+          test -s data/omegaflow_matrix_state.bin \
+            && echo "Warm-Boot: $(stat -c %s data/omegaflow_matrix_state.bin) B geladen" \
+            || echo "Kaltstart: kein Warm-Speicher"
+      - name: Die Membrane bauen (release)
+        run: cargo build --release --bin omegaflow
+      - name: Den verborgenen Rotor für einen begrenzten Slice fahren
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "state vorher: $(stat -c %s data/omegaflow_matrix_state.bin 2>/dev/null || echo absent) B"
+            set +e
+            OMEGAFLOW_STATE=data OMEGAFLOW_HIDDEN=1 \
+              timeout --signal=TERM --kill-after=180 18000 \
+              ./target/release/omegaflow "#station=41001"
+            echo "rotor slice ended rc=$? (124 = der Slice-Deckel; der State wurde alle 120 s geschrieben)"
+          } > matrix-rotor.txt 2>&1 || true
+      - name: Warmen Matrix-State auf das matrix-state-Release schreiben
+        run: |
+          test -s data/omegaflow_matrix_state.bin
+          echo "state nachher: $(stat -c %s data/omegaflow_matrix_state.bin) B"
+          gh release view matrix-state --repo omegaflow/omegaflow >/dev/null 2>&1 \
+            || gh release create matrix-state --repo omegaflow/omegaflow \
+                 --title "matrix-rotor state" \
+                 --notes "Warm-Boot-Speicher des Blatt-1-Bojen-Matrix-Rotors (omegaflow_matrix_state.bin); gelesen/geschrieben allein von matrix-rotor.yml."
+          gh release upload matrix-state data/omegaflow_matrix_state.bin \
+            --repo omegaflow/omegaflow --clobber
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matrix-rotor
+          path: matrix-rotor.txt
