@@ -3,7 +3,7 @@
   session: Mountain-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: aa9b365312398e2b8da0f8b1d012688df901f7e49b91da115497d2e008630b76
+  sha256: 15063a4e83791ec1084b7388d712d5c7557c6c6ca1dd0698c22c74508b87c92c
   status: live
 -->
 # Handover — Mountain-Folge 182 (2026-09-27)
@@ -53,6 +53,13 @@ RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXI
   (`src/archivar/tests.rs`) verifizieren; die Fremd-Dateien liegen bei ihren Ownern
   (extract.rs → Mycelium, `main_flow.rs`/`mathematikerin/actuators.rs`/
   `mathematikerin/tests.rs` → River, `ble.rs` → Sensory).
+
+### planeto/epncore — Disposition ohne Register-Eintrag (Riss, getragen von Mycelium 2026-09-27)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort — das Verdikt am Register festziehen.
+- **Lage:** (gemessen 2026-09-27 via `sgrep`/`git show 73f35156f`) `blocked_sources.φ:346` sagt *„epncore released 2026-09-27 … portiert → `phi/sources.φ:10212`"*; `sources.φ` trägt den Block **nicht** mehr (Commit `73f35156f` löschte ihn als „declined source block"), und `phi/declined_sources.φ` hat **keinen** `decline`-Eintrag. Register/Blocked sagen *released*, der Baum *gelöscht*, declined: leer — drei Aussagen, kein Verdikt. (`extract.rs`-Arm `epncore-spatial` steht weiter.)
+- **Blockade:** die Verdikt-Zeile (Zulassung/Disposition) ist Mountains exklusives Recht; Mycelium darf nur bei `accept` die Manifestations-Direktiven schreiben.
+- **Braucht:** ein `decline`-Block (oder Restore) in `phi/declined_sources.φ`/`phi/sources.φ` + die stale `blocked_sources.φ:346`-Note bereinigen.
 
 ## Abschluss
 
