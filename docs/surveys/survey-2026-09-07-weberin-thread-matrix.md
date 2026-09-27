@@ -2,7 +2,7 @@
   title: Survey — Die Weberin Faden-Matrix (thread matrix)
   class: survey
   date: 2026-09-07
-  sha256: 41f89123515b1d479cefd748de7685a9898d195607d8729922113d87434a0751
+  sha256: 0bcaec965c5b3f31dcfa6634bfa995123044830945b14f3518966c5362e64dea
   status: live
   see-also: docs/concepts/die-weberin.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -24,7 +24,7 @@
 | **Spacecraft** — ISS, Juno, JWST, New Horizons, Parker Solar Probe, Solar Orbiter, Voyager 1/2 | body | in-register + built | 8 |
 | **Wind** (L1 solar wind + orbit) | body | in-register + built | 1 × `orbit_bin` + `wind_waves` |
 | **Small-body elements** (DASTCOM asteroid/comet catalog) | body-elements | in-register + built | `catalog_dastcom`, `dastcom_compiler` |
-| **MPC orbits / observations** (independent second body-line) | body | pending (route live) | `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`, `mpcobs_compiler` built |
+| **MPC orbits / observations** (independent second body-line) | body | in-register + built (Nachzug 2026-09-27: `mpcobs`/`mpcorb`, `phi/sources.φ`:2381/2395, `mpcobs_compiler`) | `docs/handover/archiv/handover-2026-09-09-mechanische-reste.md`, `mpcobs_compiler` built |
 
 72 × `ephemeris_binary` + 1 `orbit_bin` = **73 registered body worldlines** (all `at <body>`, ttl 86400, CDN JPL-SPK, compiled by `ephemeris_compiler`/`wind_orbit_compiler`).
 
@@ -103,7 +103,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | GW scalar alerts (GraceDB `superevents.far`) | in-register | `gravity_wave_far` |
 | **GW sky maps — LIGO/Virgo/KAGRA bayestar** | built (SKY1 kind gravity) | `gw_skymap_compiler`, `bayestar_compiler` (.be19); per-superevent asset, positions-pending |
 | Tide/sea-level/stage gauges (ocean loading) | in-register | NOAA fanout 40, IOC, UK fanout 40, NDBC TIDE |
-| Ground gravimeters (superconducting/relative networks) | pending — no actor | harvester leads |
+| Ground gravimeters (superconducting/relative networks) | in-register + built (Nachzug 2026-09-27: IGETS, `igets.bin`, `phi/sources.φ`:9955, `igets_compiler`) | harvester leads |
 | Astrophysical gravity (sb9 orbits, exoplanet hosts, CBET, corot, pastel/polarbase) | in-register | at sun |
 | INPOP25c asteroid masses (gravity catalog route) | pending | die-weberin §1 |
 
@@ -115,7 +115,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Mars atmospheric pressure (Mars2020/MSL) | in-register | on mars |
 | Solar p-modes (GONG, BiSON) | built | gong_compiler/gong_series, bison/basu/shift |
 | Air pressure fields (register acoustic label: METAR/OM pressure) | in-register | weather stations |
-| **Infrasound (CTBTO IMS)** | pending — restricted route (vDEC) | harvester-leads; no actor in register |
+| **Infrasound (CTBTO IMS)** | BGR-Netz in-register + built (Nachzug 2026-09-27: `bgr_infrasound.bin`, `phi/sources.φ`:9751); die CTBTO-IMS-Route bleibt blocked account (vDEC) | harvester-leads |
 | **Hydroacoustics / ocean noise (NOAA PMEL hydrophones, NCEI)** | pending — no actor | harvester-leads |
 
 ### seismic (3 body / 4 surface)
@@ -143,7 +143,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Trace gases (CO2/CH4/N2O/SF6 NOAA GML, ozone WOUDC) | in-register | Mauna Loa anchors |
 | Aerosol AOD (AERONET), total column | in-register | GSFC |
 | Ocean salinity / pCO2 / DO (WQP, ocean ArcGIS, PMEL CO2, OOI) | in-register | diffusion (salinity/CO2) |
-| **BGC-Argo (O₂/pH/nitrate/chlorophyll)** | pending — no actor | harvester-leads |
+| **BGC-Argo (O₂/pH/nitrate/chlorophyll)** | in-register (Nachzug 2026-09-27: Argovis `bgcargoplus`, `phi/sources.φ`:1250) | harvester-leads |
 
 ### advective (7)
 
@@ -154,7 +154,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Ocean currents (drifters ve/vn), river discharge (USGS) | in-register | erddap / bbox |
 | Aircraft ADS-B groundspeed | in-register | adsb |
 | Stellar radial velocities (HECATE, RAVE/SDSS cz) | in-register | at sun, km/s |
-| **HF-radar surface-current grids (IOOS HFRNet)** | pending — no actor | harvester-leads |
+| **HF-radar surface-current grids (IOOS HFRNet)** | in-register + built (Nachzug 2026-09-27: `hfrnet_rtv.bin`, `phi/sources.φ`:1428, `hfrnet_compiler`) | harvester-leads |
 
 ### electric (8)
 
@@ -165,8 +165,8 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Solar Orbiter RPW e-field | in-register + built | live hapi + rpw_efield.bin |
 | Heart/physiology channel (BIDSleep HRV — register electric label) | in-register | human sensor |
 | **Geomagnetically induced currents (GIC)** | in-register + built — `fmi_gic.bin` (`sources.φ`:6907); Nachzug 2026-09-17 | leads |
-| **Lightning networks (WWLLN / ground)** | pending — only GLM bolides (em) in-register | leads |
-| **SuperDARN polar radar** | pending — no actor | leads |
+| **Lightning networks (WWLLN / ground)** | in-register + built (Nachzug 2026-09-27: `wwlln_th.csv`, `phi/sources.φ`:11467, `wwlln_compiler`) | leads |
+| **SuperDARN polar radar** | in-register + built (Nachzug 2026-09-27: `superdarn_rawacf.bin`/`superdarn_fitacf.bin`, `phi/sources.φ`:9814/11487, `superdarn_*_compiler`) | leads |
 | INTERMAGNET dB/dt (induction driver for GIC) | built (2 stations) | abk/sod 1-h bins |
 
-**Gaps — thread categories with NO actor yet:** ground **gravimeters** (gravity); **infrasound** and **hydrophone/ocean-noise** networks (acoustic, both restricted/pending routes); **seismic station network** worldlines (only event threads); **GIC**, **lightning** ground networks and **SuperDARN** (electric, only the swarm/spacecraft e-field live); **HF-radar ocean-current** grids and **BGC-Argo** chemistry (advective/diffusion); plus the individual VHE/neutrino/CR telescopes without open routes (HAWC 2HWC, TA, Super-K, JUNO, LHAASO, KASCADE-Grande) — all `pending`/`not-published`, never zero-fabricated.
+**Gaps — thread categories with NO actor yet:** **hydrophone/ocean-noise** networks (acoustic; NOAA-NRS live, no compiler); **seismic station network** worldlines (only event threads); die restricted **CTBTO-IMS** route (acoustic/vDEC, blocked account); plus the individual VHE/neutrino/CR telescopes without open routes (HAWC 2HWC, TA, Super-K, JUNO, LHAASO, KASCADE-Grande) — all `pending`/`not-published`, never zero-fabricated. **Geschlossen (Nachzug 2026-09-27):** ground **gravimeters** (IGETS), **infrasound** (BGR), **GIC**, **lightning** (WWLLN), **SuperDARN**, **HF-radar** (HFRNet), **BGC-Argo** (Argovis).
