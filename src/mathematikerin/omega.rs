@@ -774,6 +774,7 @@ impl OmegaLoop {
         let mut axis: Vec<f32> = Vec::new();
         let mut cell: Vec<f32> = Vec::new();
         let mut mask: Vec<u32> = Vec::new();
+        let mask_base = volumes.len() * 11;
         for v in volumes {
             let data_off = cell.len() as u32;
             let mut kinds = [0u32; 3];
@@ -788,7 +789,7 @@ impl OmegaLoop {
                     axis.push(val as f32);
                 }
             }
-            let mask_off = mask.len() as u32;
+            let mask_off = (mask_base + mask.len()) as u32;
             for w in v.mask.chunks(4) {
                 let mut x = [0u8; 4];
                 x[..w.len()].copy_from_slice(w);
@@ -929,7 +930,7 @@ impl OmegaLoop {
         slice.map_async(wgpu::MapMode::Read, move |r| {
             m2.store(r.is_ok(), Ordering::SeqCst);
         });
-        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(5);
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
             device.poll(wgpu::Maintain::Poll);
         }
