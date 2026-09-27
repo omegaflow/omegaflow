@@ -3,7 +3,7 @@
   session: Mycelium-Folge 179
   class: handover
   date: 2026-09-27
-  sha256: ccd583ac1c70174bcad06468871e790c920671918d9d0c7e05b6d613c7306654
+  sha256: 1f96a4d42fde819a4f3652a199f2e29431ae900f370fe07a505c859a05621953
   status: live
 -->
 # Handover — Mycelium-Folge 179 (2026-09-27)
@@ -20,6 +20,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge178.md`.
 - Wort | 2026-09-27 | „Du kannst" (`/consent`/`mycelium_go`) — session-weiter Delegations-Consent; nicht das Commit-Wort.
 - Wort | 2026-09-27 | Secrets-Inventar-Träger prüfen: direkter Edit in die Owner-Übergabe statt Operator-Queue (Aufenthalt = Eigentum) — Messung ergab keinen Register-Akt.
 - Wort | 2026-09-27 | „nein bitte so festschreiben" — Rundenordnung (Mycelium→Sensory→Mountain→River→Future) + Spirale in `docs/concepts/kybernaut-native-methodology.md` festschreiben, **mechanik-only** (keine Spiritualität ins öffentliche Repo).
+- Wort | 2026-09-27 | „bitte ausführen" — Ownership-Audit-Kanten ziehen (Aufenthalt = Eigentum): planeto-epncore-Direktiven + CDN-Reconcile-Dispatch → Mycelium, clippy-Owner je Linie, Beschaffungs-LOCKs aus Mountain/River entfernt (kanonisch Future).
 
 ## Offen (aufgeschlüsselt)
 
@@ -66,6 +67,27 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge178.md`.
 - **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ:7`) Anfrage 2026-09-16 13:47 UTC gesandt; kein Eingang im Mail-Ledger (169 Zeilen).
 - **Blockade:** keine.
 - **Braucht:** Trigger in `state/zustand/wartend.φ` (voyager-nssdca).
+
+#### planeto-epncore — Manifestations-Direktiven (getragen von Mountain 2026-09-27)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountains Verdikt (accept/decline) zum `voparis-tap-planeto.obspm.fr`-Block.
+- **Lage:** (gemessen 2026-09-27 via `sread`/`sgrep`) der `sources.φ`-Block (Arm `epncore`) trägt `url` = Live-TAP, `format tap`, keine `origin`/`compiler`, kein `sha256`; `phi/declined_sources.φ` declinet denselben PADC-Host.
+- **Blockade:** Mountains Verdikt steht aus (dessen Übergabe).
+- **Braucht:** bei `accept` die Manifestations-Direktiven schreiben (`url` = Asset, `origin` = Live-TAP, `compiler`, `sha256`); bei `decline` keine.
+
+#### CDN-Reconcile — Manifestations-Dispatch (getragen von Mountain 2026-09-27)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountains Verdikt über die fehlenden Releases (`handover-2026-09-27-mountain-folge181.md`, Punkt CDN-Reconcile).
+- **Lage:** (gemessen 2026-09-27 via Mountain-Übergabe `handover-2026-09-27-mountain-folge181.md`) `cdn_reconcile.rs` meldet fehlende Releases (`ssd.jpl.nasa.gov-{dcom5,icecat,weberin}`, `ned.ipac.caltech.edu-byparams`, `noaa-nos-coastal-lidar-pds.s3.amazonaws.com`).
+- **Blockade:** Mountains Verdikt über Manifestation vs. Disposal.
+- **Braucht:** je `accept` den `*-cdn.yml`-Lauf dispatchen (`gh workflow run <wf>`); die Residue-Tags bleiben Mountains Verdikt.
+
+#### clippy `-D warnings` — extract.rs (eigener Datei-Owner)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** `ci-check`-Lauf am HEAD lesbar.
+- **Lage:** (gemessen 2026-09-25 via Stehender Pass, external-state.md:23) `src/archivar/extract.rs` gehört Mycelium; der clippy-Lauf (`mountain-folge181`) nennt extract.rs in der Wand.
+- **Blockade:** Log noch pending.
+- **Braucht:** `ci_manage log <id>` lesen; die extract.rs-Warnungen heilen (kein lokales clippy).
 
 #### IGETS — sha256 in den igets-Block (getragen von Sensory 2026-09-27)
 - **Status:** eigen | **Bindung:** eigen
