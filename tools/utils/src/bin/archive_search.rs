@@ -632,7 +632,7 @@ fn usage() {
         "  --entrez    key=value: db=<database> <term>   (NCBI E-utilities esearch, e.g. db=nuccore|sra|gds)"
     );
     eprintln!(
-        "  --ena       key=value: result=<type> fields=<comma-list> <query>   (EBI ENA portal API, e.g. result=read_run fields=run_accession,country)"
+        "  --ena       key=value: result=<type> fields=<comma-list> <query>   (EBI ENA portal API, e.g. result=read_run fields=run_accession,country; query fields in ENA syntax — tax_eq(9606), not tax_eq=9606)"
     );
     eprintln!(
         "  --cod       key=value: text=<free text> [el1=.. el2=.. nel=..] [fields=<comma-list>] [max=<n>]   (Crystallography Open Database, e.g. text=quartz)"

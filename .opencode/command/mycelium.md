@@ -9,14 +9,31 @@ Name (leer = neueste): $ARGUMENTS
 
 Neueste offene Mycelium-Übergabe:
 
-!`for f in $(git ls-tree --name-only HEAD docs/handover/ | grep -E 'handover-.*mycelium'); do printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f"; done | sort -rn | head -1 | cut -d' ' -f2`
+!`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mycelium*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
-Stehender Pass — beim Start gemessen (kein Auswahlpunkt):
+**Meta-Pass (nur diese Linie, einmal pro Runde, vor den anderen Linien).** Miss einmal und
+schreibe `state/zustand/standing-pass.md` (Form: `external-state.md`):
+- HEAD · CI-Tafel — rote Läufe: `run-id | workflow | gemessener Grund | Träger-Linie | Braucht`;
+  den Grund aus dem Log lesen (Browser/GH-API/`ci_manage log`), nie raten; unread = benannt.
+- Postfach-Stand + ungetragene Operator-Akte (Faktenebene, nie Mail-Bodies) · Orphan-Zensus
+  (`register_lookup --orphan-docs`) · Mehrfach-Träger-Scan (abgeleitet, nie gespeichert) ·
+  `git_safety --snapshot` · ein `.tools_ensure`-Sweep.
+Schließe den Pass, **bevor** die anderen Linien öffnen.
 
-!`printf 'HEAD: %s\n' "$(git rev-parse --short HEAD)"; printf '## CI-Status (Watchdog-Snapshot)\n'; tail -n 30 /tmp/opencode/ci_status.md 2>/dev/null || printf 'snapshot absent — line-Agent: bin/ci_manage list\n'; printf '\n## Postfach — letzte 6 Eingänge (mail_digest --last 6)\n'; mail_digest --last 6 2>&1 || printf "mail_digest pending — build belongs to CI (tools-build); fallback smail + state/mail/mail_ledger.φ\n"`
+**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
+Baum-Abgleich). Nenne alle offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage
+vor, jeden parallel abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt".
+Kein edit/write/commit. **Halte dann an.**
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe. Planungs-Pass: `register_lookup --open` (offene Punkte über alle lebenden Dokumente) + `git_safety --snapshot` (Arbeitsbaum-Sicherheitsnetz) + `open_points_check <übergabe>` (billiger Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Der stehende Pass steht oben bereits gemessen — **kein** Auswahlpunkt; die Session schreibt Ledger + Übergabe fort. Bei Lücke: Postfach via `smail` + `state/mail/mail_ledger.φ`, CI-Status via `ci_manage list`/`view`. Nenne **alle** offenen Punkte der eigenen Linie als Tafel und schlage vor, jeden parallel abarbeitbaren zu dispatchen (welche Punkte, welche Delegation, welche Bindung) — keine Rangfolge, kein `härtester Punkt`. Kein edit/write/commit, keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht schreiben, das ist die Grenze. **Halte dann an.**
+**Phase 2 — Ausführung.** Nach `/consent` (oder `/mycelium_go`) → `line`-Agent. Arbeite die
+eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Waits →
+`state/zustand/wartend.φ` (Trigger + Aufnehmer). Werkzeuge statt Rohbefehle
+(`docs/concepts/tools-map.md`); Header-sha256 via `omega_sh sha <datei>`; vor dem Commit
+`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision);
+pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
+Mycelium trägt Quellen: Arbeit über `docs/SOURCE_PORT.md`; eine neue/geänderte Ernte erst schließen, wenn sie in `phi/sources.φ` für die CDN-Manifestation registriert ist.
 
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/mycelium_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn führt er den stehenden Pass aus: die fälligen Zustand-Einträge messen — Postfach (`smail` + `state/mail/mail_ledger.φ`), CI-Status (Watchdog-Snapshot `/tmp/opencode/ci_status.md`; bei Lücke/Detail `ci_manage list`/`ci_manage view`, **nie** `gh run list`/`gh run view`) — und Ledger + Übergabe fortschreiben; Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Mycelium trägt Quellen: Arbeit läuft über `docs/SOURCE_PORT.md`; die Notwendigkeit einer Quelle entscheidet das Register (`phi/sources.φ` / `blocked_sources.φ` / `dead_sources.φ`), nicht die Korrespondenz. Eine neue/geänderte Ernte wird erst geschlossen, wenn sie in `phi/sources.φ` für die CDN-Manifestation registriert ist. Delegiere: grind-flash für Harvest/Verify/Recheck, grind-pro für Force-Gate/Parser-Gap/Route, research-max für die härtesten Routen, vision für figure-only-Daten (Figur → Tabelle). `/commit` schließt.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird pfad-begrenzt (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`), nur der eigene Teil; fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
+Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
+(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
+Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist.

@@ -7,16 +7,27 @@ Starte die Future-Linie im **Planungsmodus** (Agent `plan`, read-only). Ist ein 
 
 Name (leer = neueste): $ARGUMENTS
 
-Neueste offene Future-Übergabe:
+Neueste offene Future-Übergabe (privat): state/funding/handover/ — neueste handover-*-future-*.md
 
-!`find state/funding/handover -maxdepth 1 -name 'handover-*future-folge*.md' 2>/dev/null | sort | tail -1`
+**Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
+`sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
+(eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
+was der eigene Trigger für fällig erklärt.
 
-Stehender Pass — beim Start gemessen (kein Auswahlpunkt):
+**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
+Baum-Abgleich). Nenne alle offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage
+vor, jeden parallel abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt".
+Kein edit/write/commit. **Halte dann an.**
 
-!`printf 'HEAD: %s\n' "$(git rev-parse --short HEAD)"; printf '## CI-Status (Watchdog-Snapshot)\n'; tail -n 30 /tmp/opencode/ci_status.md 2>/dev/null || printf 'snapshot absent — line-Agent: bin/ci_manage list\n'; printf '\n## Postfach — letzte 6 Eingänge (mail_digest --last 6)\n'; mail_digest --last 6 2>&1 || printf "mail_digest pending — build belongs to CI (tools-build); fallback smail + state/mail/mail_ledger.φ\n"`
+**Phase 2 — Ausführung.** Nach `/consent` (oder `/future_go`) → `line`-Agent. Arbeite die
+eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Waits →
+`state/zustand/wartend.φ` (Trigger + Aufnehmer). Werkzeuge statt Rohbefehle
+(`docs/concepts/tools-map.md`); Header-sha256 via `omega_sh sha <datei>`; vor dem Commit
+`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision);
+pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
+Future ist die Operator-Adresse: jede Entscheidung wird in DIESER Linie gesammelt — dem Operator-Queue-Abschnitt der Übergabe (eine Liste, ein Eintrag je Frage, einfache Sprache: Lage · Frage · bei Ja/bei Nein). Der Send bleibt die Operator-Hand (nie `smail --send`).
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe. Planungs-Pass: `register_lookup --open` (offene Punkte über alle lebenden Dokumente) + `git_safety --snapshot` (Arbeitsbaum-Sicherheitsnetz) + `open_points_check <übergabe>` (billiger Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Der stehende Pass steht oben bereits gemessen — **kein** Auswahlpunkt; die Session schreibt Ledger + Übergabe fort. Bei Lücke: Postfach via `smail` + `state/mail/mail_ledger.φ`, CI-Status via `ci_manage list`/`view`. Nenne **alle** offenen Punkte der eigenen Linie als Tafel und schlage vor, jeden parallel abarbeitbaren zu dispatchen (welche Punkte, welche Delegation, welche Bindung) — keine Rangfolge, kein `härtester Punkt`. Kein edit/write/commit, keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht schreiben, das ist die Grenze. **Halte dann an.**
-
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/future_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn führt er den stehenden Pass aus: die fälligen Zustand-Einträge messen — Postfach (`smail` + `state/mail/mail_ledger.φ`), CI-Status (Watchdog-Snapshot `/tmp/opencode/ci_status.md`; bei Lücke/Detail `ci_manage list`/`ci_manage view`, **nie** `gh run list`/`gh run view`) — und Ledger + Übergabe fortschreiben (die Future-Übergabe liegt privat unter `state/funding/handover/`; Abschluss: öffentlich `/commit`, privat Commit+Push mit gemessenem `origin/main == HEAD`); Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt. Diese Linie trägt autonom nur Entscheidungen, Korrespondenz und Consent; Quellen-/Bau-Punkte reisen als Nachricht an ihre Linie (nie in ein fremdes Handover). Delegiere: Rat für Architektur, research-max für harte Recherche, vision für Figuren/OCR, grind-* für Bau.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird pfad-begrenzt (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`), nur der eigene Teil; fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
+Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
+(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
+Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
+Vorfahr von HEAD ist.
