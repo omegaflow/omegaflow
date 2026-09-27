@@ -40,7 +40,9 @@ fn usage() {
     eprintln!("  jwst     the jwst_spectra.bin CDN watch");
     eprintln!("  sha <f>  sha256 over the body without the <!-- … --> header");
     eprintln!("  check    cargo check, summarised as error/warning counts");
-    eprintln!("  perms [<agent>]  forbidden leading form → canonical replacement (from opencode.json)");
+    eprintln!(
+        "  perms [<agent>]  forbidden leading form → canonical replacement (from opencode.json)"
+    );
 }
 
 fn sha(path: &str) {
@@ -344,7 +346,10 @@ fn load_config() -> Option<JsonVal> {
 }
 
 fn norm_pattern(p: &str) -> String {
-    let s: String = p.chars().filter(|c| !c.is_whitespace() && *c != '`').collect();
+    let s: String = p
+        .chars()
+        .filter(|c| !c.is_whitespace() && *c != '`')
+        .collect();
     let s = match s.strip_prefix("*/") {
         Some(rest) => rest.to_string(),
         None => s.trim_start_matches('*').to_string(),
@@ -354,7 +359,10 @@ fn norm_pattern(p: &str) -> String {
 
 const DENY_REPLACEMENTS: &[(&str, &str)] = &[
     ("ls", "glob <pattern>"),
-    ("grep", "sgrep [-i] [-l] [-c] <pattern> [dir] | archive_search <kw> --root <dir>"),
+    (
+        "grep",
+        "sgrep [-i] [-l] [-c] <pattern> [dir] | archive_search <kw> --root <dir>",
+    ),
     ("rg", "sgrep"),
     ("cat", "sread <file> [--offset N --limit M] | the read tool"),
     ("cd", "the bash workdir parameter"),
@@ -362,10 +370,16 @@ const DENY_REPLACEMENTS: &[(&str, &str)] = &[
     ("python3", "Rust (no Python in this repo)"),
     ("sed-i", "the edit tool"),
     ("rustc", "build via cargo"),
-    ("cargo", "cargo check | cargo fmt -- <path> | cargo build -p <crate> --bin <name> | cargo run -p <crate> --bin <name>"),
+    (
+        "cargo",
+        "cargo check | cargo fmt -- <path> | cargo build -p <crate> --bin <name> | cargo run -p <crate> --bin <name>",
+    ),
     ("ghrunlist", "ci_manage list"),
     ("ghrunview", "ci_manage view <id> | ci_manage log <id>"),
-    ("ghrundelete", "never — a deleted run takes the measurement series"),
+    (
+        "ghrundelete",
+        "never — a deleted run takes the measurement series",
+    ),
     ("ghrunwatch", "no polling — ci_manage view <id> once"),
     ("gitreset", "never (destructive)"),
     ("gitcheckout", "never (destructive)"),
@@ -385,7 +399,10 @@ const DENY_REPLACEMENTS: &[(&str, &str)] = &[
     ("tail-f", "no polling — tail without -f is read-only"),
     ("journalctl-f", "no polling"),
     ("--watch", "no polling"),
-    ("smail--send", "never from the machine — the send is the operator's hand"),
+    (
+        "smail--send",
+        "never from the machine — the send is the operator's hand",
+    ),
 ];
 
 fn replacement_for(pattern: &str) -> &'static str {
@@ -453,11 +470,17 @@ fn perms(agent: Option<&str>) {
         None => String::from("global"),
     };
     println!("opencode.json — forbidden leading form → canonical replacement ({scope})");
-    println!("distinct deny patterns (global + all agents): {}", union.len());
+    println!(
+        "distinct deny patterns (global + all agents): {}",
+        union.len()
+    );
     print_bash_layer("global permission.bash", jpath_val(&cfg, "permission.bash"));
     if let Some(a) = agent {
         let path = format!("agent.{}.permission.bash", a);
-        print_bash_layer(&format!("agent {} permission.bash", a), jpath_val(&cfg, &path));
+        print_bash_layer(
+            &format!("agent {} permission.bash", a),
+            jpath_val(&cfg, &path),
+        );
     }
     println!("\n## Ersatz-Karte");
     for (tok, repl) in DENY_REPLACEMENTS {
@@ -514,8 +537,21 @@ mod tests {
         let cfg = load_config().expect("opencode.json parses");
         let denied = all_deny(&cfg);
         for tok in [
-            "ls", "grep", "cat", "rg", "cd", "python", "python3", "sed -i", "rustc", "cargo",
-            "gh run list", "gh run view", "git reset", "watch", "sleep",
+            "ls",
+            "grep",
+            "cat",
+            "rg",
+            "cd",
+            "python",
+            "python3",
+            "sed -i",
+            "rustc",
+            "cargo",
+            "gh run list",
+            "gh run view",
+            "git reset",
+            "watch",
+            "sleep",
         ] {
             let t = norm_pattern(tok);
             assert!(
