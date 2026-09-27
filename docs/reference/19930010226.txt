@@ -1,0 +1,2534 @@
+P
+
+August15,1992
+
+TDA ProgressReport42-110
+
+93-T94,5
+
+Application of High-Precision
+Two-Way Ranging
+Galileo Earth-1 Encounter Navigation
+
+to
+
+V. M. Pollrneier and S. W. Thurrnan
+NavigationSystemsSection
+
+The application
+of precision
+two-way ranging to orbit determination
+with relatively short data arcs is investigated
+for the Galileo spacecraft's
+approach
+to its
+first Earth encounter
+(December
+8, 1990). Analysis
+of previous
+S-band (2.3-Gttz)
+ranging dat_ acquired from Galileo indicated
+that under good signal conditions submeter precision
+and 10-m ranging accuracy
+were achieved.
+It is shown that ranging
+data of suflicient
+accuracy,
+when acquired from multiple
+stations,
+can sense the geocentric angular position
+of a distant spacecraft.
+A range data filtering technique,
+in
+which explicit modeling of range measurement
+bias parameters
+for each station pass
+is utilized,
+is shown to largely remove systematic
+ground system
+calibration
+errors
+and transmission
+media effects from the Galileo range measurements,
+which would
+otherwise
+corrupt the angle-finding
+capabilities
+of the data.
+The accuracy
+of the
+Galileo orbit solutions
+obtained
+with S-band Doppler
+and precision
+ranging were
+found to be consistent
+with simple theoretical
+calculations,
+which predicted
+that
+angular
+accuracies
+of 0.26-0.34
+IJrad were achievable.
+In addition,
+the navigation
+accuracy achieved with precision ranging
+was marginally
+better than that obtaJned
+using delta-differenced
+one-way
+range (A DOR),
+the principal
+data
+previously
+used to obtain spacecraft
+angular position
+measurements
+
+I. Introduction
+The approach
+phase leading up to the Galileo spacecraft's first Earth encounter (designated
+Earth-l) provided
+a good opportunity
+to test the viability
+of high-precision
+two-way ranging
+as an operational
+radio metric data type.
+Two-way
+ranging
+data acquired
+by Deep Space Network
+(DSN) stations
+have been accurate
+to 15 m or better for
+nearly 20 years, depending
+upon the frequency
+band and
+station-spacecraft
+radio link characteristics.
+Such data
+have typically
+been utilized for orbit determination
+at assumed
+accuracies
+Of 100-1000
+m, due to the effects of
+station
+
+delay
+
+and
+
+transmission
+
+media
+
+calibration
+
+errors,
+
+type that was
+operationally.
+
+and the influence of small, poorly modeled
+spacecraft nongravitational
+forces.
+Since the early 1970s, evolutionary
+improvements
+in the accuracy
+and stability
+of timing systems, station
+delay calibration
+procedures,
+and transmission media calibration
+techniques,
+coupled with more sophisticated
+orbit determination
+software, now make it possible to reconsider
+the use of precision
+ranging
+for interplanetary
+spacecraft
+navigation.
+
+In a recent experiment
+conducted
+with radio metric
+data acquired
+from the Ulysses
+spacecraft,
+two-way ranging data
+
+were
+
+processed
+
+with
+
+a new
+
+rahge
+
+data-filtering
+
+21
+
+techn](ttie
+-that made it possible to successfully
+utilize the
+data at an assumed
+accuracy
+of 10 m for the first time [1].
+Tl_s -filtering technique
+utilized
+estimated
+parameters
+to
+explicitly
+account
+for and remove residual ground system
+calibration
+errors and solar plasma-induced
+delays from
+
+Venus encounter
+orbit solutions.
+During
+Galileo's
+approach
+to Venus and its subsequent
+flyby, good signal
+strength
+was obtained
+from the spacecraft's
+two low-gain
+S-band
+(2.3-GHz)
+antennas,
+yielding
+point-to-point
+twoway range noise (indicative
+of the precision
+of the data)
+of under 1 m and an apparent
+accuracy
+of 10 m or better [2]. In addition,
+the station
+delay calibrations
+during
+this time period appeared
+to be of good consistency,
+showing little variation
+over the month prior to the encounter.
+This
+
+article
+...... describes
+
+an investigation
+
+which
+
+reexamined
+
+(1)
+
+/_ "_ ÷ ÷ wr, cos 6 sin H
+
+(2)
+
+where
+
+the 'ranging data.
+Other factors that contributed
+to the
+success of the Ulysses experiment
+were the accuracy
+and
+consistency
+of the DSN station
+delay calibrations
+and the
+utilization
+of a new DSN station location set developed
+by
+Folkner and Dewey. z
+The use of Galileo
+ranging for a second test of the
+range data-filtering
+technique
+used to process the Ulysses
+data was motivated
+by the earlier results of the Galileo
+
+p _. r - (r° cos $ cos H ÷ z, sin 6)
+
+r,
+
+= station
+dius)
+
+distance
+
+from
+
+Earth's
+
+spin axis
+
+z,
+
+= station
+
+height
+
+above
+
+Earth's
+
+equator
+
+w
+
+= Earth
+
+rotation
+
+rate
+
+(7.3
+
+H
+
+=
+
+%
+
+= right
+
+ascension
+
+), = station
+
+east
+
+x 10 -s
+
+(spin
+
+ra-
+
+(z-height)
+
+tad/see)
+
+ag+A-a
+
+and
+
+of Greenwich
+
+meridian
+
+longitude
+
+From Eqs. (1) and (2), it can be seen that four of the
+six components
+of the geocentric
+spacecraft
+trajectory
+(r, ÷, 6, and a) can be sensed by range and range-rate
+measurements.
+Over the time period of interest,
+_, 6, and
+a are nearly constant.
+A determination
+of the remaining
+two coordinates
+the com-lete
+tra"ec
+, 6 and & , and hence
+P
+j_-
+
+the orb,t determination
+that was utdlzed
+for the desrgIF_:::-_ory,
+norm_y-requlres
+the _qulsi_nofmUkiple
+passes Of
+of the last targeting
+maneuver
+prior to the Earth-1
+endata over a period of several days. The accumulated
+inforcounter.
+A brief discussion
+of the theoretical
+basis for the
+mation in each ranging and Doppler pass can be thought
+ability of high-accuracy
+ranging
+data to sense spacecraft
+angular
+position
+is presented,
+as well as comparisons
+of
+different solutions
+obtained
+using combinations
+of various
+data types, including
+two-way
+Doppler
+and ranging,
+and
+ADOR.
+
+II. Theoretical Background
+A simple investigation
+of the ability
+of ganging
+and
+Doppler
+data to determine
+the trajectory
+of a distant
+spacecraft
+can be conducted
+by analyzing
+the theoretical
+precision
+with which the geocentric
+spacecraft
+motion can
+be sensed from one or two passes of data.
+Similar analyses have been performed
+previously
+for range and Doppler
+data separately
+[1,3,4].
+The station-spacecraft
+tracking
+geometry
+is illustrated
+in Fig. 1. The topocentric
+range,
+p, and range-rate,
+_, can be accurately
+approximated
+over
+short periods of time (up to roughly
+24 hr) in terms of the
+geocentric
+spacecraft
+range (r), range rate (b), declination
+(6), and right
+
+ascension
+
+(a),
+
+A simple least-squareserror analysis of estimates of
+r, ÷, 6, and a, derived from a single pass of range and
+Doppler data, can be formulated analytically(referto the
+paper by Hamilton and Melbourne [3]for more details).
+For the purposes of thisanalysis,it isassumed that _, 6,
+and a are constants,and that r varieslinearlywith time.
+The information matrix, J, for these coordinates,assuming a trackingpass in which the station-spacecrafthour
+angle H varies as -¢ < H < +¢, can be expressed
+as
+
+J
+
+_,
+
+[(9p1(9
+
+(r,
+
+r, 6, ot)] T
+
+¢
+x [Op/a (r, i', 6, a)] dH
+
+as follows:
+
+1 W. M. Fo]kner
+and R. J. Dewey,
+"Radio
+Source
+Catalog
+tion Location
+Set for Ulysses,"
+JPL InterofBce
+Memorandum
+90-048,
+Jet Propulsion
+Laboratory,
+Pasadena,
+California,
+ber 13, 1990.
+
+22
+
+of as a multidimensional
+measurement
+of the spacecraft
+trajectory,
+with the statistical
+combination
+of several such
+measurements
+yielding
+a complete
+determination
+of the
+trajectory.
+
+and
+
+Sta335.1Septem-
+
+1
+
+)
+
++¢ [81_l_9(r,_,6,a)]
+
+x [Sp/_) (r, b, 6, a)] dH
+
+r
+
+(3)
+
+one-
+
+from Eq. (8) to be proportional
+to 1/cos 6, which h_s little
+(5=10 percent) variation
+over the declination
+range spanned
+by the ecliptic plane (-t-24 deg), in which most interplanetary spacecraft
+trajectories
+lie.
+Although
+formulas
+for
+_ and a÷ are not explicitly
+given, Eq. (6) predicts
+that
+these quantities
+are determined
+with a precision
+limited
+only by the precision
+of the range and Doppler
+measurements and the number
+of measurements
+acquired.
+Thus,
+
+In Eq. (3), it is assumed
+that the time between
+measurements,
+At, is the same for both the range and Doppler
+measurements.
+The partial
+derivatives
+appearing
+in Eq.
+
+for the case of single-station
+tracking,
+the ability of ranging
+and Doppler data to determine
+the spacecraft
+declination
+depends heavily on the tracking
+geometry.
+
+(3) at some time t, with respect
+to the geocentric
+coordinates
+at time to, where to is assumed
+to be the time
+at which the spacecraft
+crosses the local meridian
+of the
+tracking
+station, are as follows:
+
+The situation
+described
+above changes
+dramatically
+when an additional
+pass of ranging and Doppler data from
+a properly
+chosen second station
+is added into the infor-
+
+where
+_'p --- range measurement
+
+noise one-sigma
+
+er_ = range-rate
+(Doppler)
+sigma uncertainty
+
+measurement
+
+At = time interval
+
+measurements
+
+0p
+
+0(r:
+
+between
+
+uncertainty
+noise
+
+=
+
+[1,t- o,r.sin6cosY-
+
+......
+
+ZoCos
+6,
+
+(4)
+
+- r° cos 6 sin H/
+
+ob
+O(r, ÷,6,_)
+
+[0, 1, -wr°
+
+sin 6 sin H, -wr°
+
+cos 6 cos H/
+
+(_)
+The error
+simply
+
+covariance,
+
+A, for r, ÷, 6, and
+
+0
+
+a_
+
+a at time
+
+2
+
+0
+
+0
+
+2
+O'_a
+
+to is
+
+mation :matrix..
+Consider
+a scenar!o .i_nwhiyh_ a tracking
+pass is acquired
+from a station
+with z-height,
+z°, and spin
+radius,
+r°, followed immediately
+by another
+pass from a
+second station,
+with z-height,
+-z,,
+and spin radius,
+r°.
+This choice of station
+coordinates
+is not arbitrary;
+stations located at the DSN complexes
+at Goldstone
+and near
+Canberra
+have spin radii that are nearly equal (to within
+about 5 km) and z-heights
+that are nearly
+equal in magnitude but have opposite
+signs. Applying
+the assumptions
+used in the single-pass
+analysis to this case yields an error
+covariance
+matrix,
+A, that incorporates
+the information
+matrix
+obtained
+from the first pass, designated
+J1, and
+the information
+matrix from the second pass, J2:
+
+h
+
+=
+
+[ffl"4- _2] -I
+
+(9)
+
+(6)
+
+A=j-I=
+
+2
+O'r6
+
+o
+
+0
+
+a_
+
+0
+
+For the
+
+case
+
+of 6 = 0, the
+
+Eq. (9) reduces
+
+o
+
+formula
+
+to a simple
+
+where
+
+for a6 obtained
+
+(rp 0 _
+wAr
+0"_ =
+
+(r°
+
+2
+O" °
+
+Sill
+
+6) 2 fl
+
+2
+
+2
+
+(_b, o'p,
+
+o'b)
+
+a6=2z,
+
+(r. cos0
+
+(8)
+
+Equations
+(7) and (8) are similar to expressions
+derived
+by Anderson
+[4] in an earlier analysis
+of this same problem (the functions
+fl and f2 are not shown explicitly,
+as
+they are rather
+complex).
+As noted by Anderson,
+at is
+proportional
+to 1/sin 6, and will theoretically
+become infinite for spacecraft
+located on the celestial equator
+(6 = 0).
+tIamilton
+and Melbourne
+a single pass of Doppler
+
+[3] found an equivalent
+data only. In contrast,
+
+(10)
+
+V ¢
+
+(7)
+
+war
+--
+
+from
+
+form
+
+result for
+¢_ is seen
+
+From Eq. (10), it can be seen that the z-height
+component
+of the baseline
+formed by the two stations
+enables
+a determination
+of 6, and that this determination
+is provided
+solely by the ranging
+data.
+The result for a_ obtained
+in Eq. (10) is simply equal to the expression
+for (re from
+Eq. (8) multiplied
+by a factor of 1/V_.
+A simplified
+
+illustration
+
+of the
+
+result
+
+obtained
+
+in Eq.
+
+(10) is shown in Fig. 2, for a spacecraft
+at near-zero
+declination
+(i.e., sin 6 _ 6) being tracked
+by two stations
+located on a two-dimensional
+Earth.
+In Fig. 2, the two stations shown have z-heights
+equal in magnitude
+but opposite in sign, as was assumed
+in developing
+Eqs. (9) and
+
+23
+
+(10).
+_r]_spacecraft
+declination
+is sensed through the
+difference between
+the range measured
+from the two different stations.
+As explained
+by Taylor et al. [5], the
+greatest
+accuracy in determining
+this range difference
+is
+achieved
+by explicitly
+differencing
+simultaneous
+or nearsimultaneous
+range measurements
+obtained
+during
+periods of mutual
+visibility.
+If the spacecraft
+dynamics
+and
+
+curacies that are, in an angular
+theoretical
+angie-finding
+capability
+
+the range measurements
+can be modeled
+with sufficient
+accuracy,'thou=_-gh, this explicit differencing
+is not required;
+the two-way ranging data from the different station passes
+implicitly
+contain
+the information
+needed to determine
+8,
+as shown in Eq. (10) above.
+
+errors, principally
+station delay calibration errors, will not
+n ecessarly
+be redUced through
+statlstlcal
+averagifig,
+as
+w]II the effects of random errors.
+These systematic
+_9_rs
+must be accounted
+for in some way, or reduced a priori
+
+Using Eq. (10), the angular
+precision that can theoretically be achieved by using two passes of S-band (2.3-GHz)
+ranging
+annd-D0ppler
+data for 6 = 0 was computed
+and
+plotted
+in Fig. 3, as a function
+of the combined
+tracking
+time from the two stations,
+which were assumed
+to have
+r, and za coordinates
+corresponding
+to the DSN Goldstone and Canberra
+complexes.
+The assumed ranging and
+Doppler measurement
+accuracies
+used to construct
+Fig. 3
+(ap = 10 m and ab = 1 mm/sec)
+are based on previous experience
+with Galileo S-band
+ranging and Doppler
+data [2]. In Fig_3, the total tracking
+time is assumed
+to
+be divided equally between
+the two participating
+stations.
+During the Galileo spacecraft's
+approach
+to the Earth-I
+encounter,
+typical tracking
+pass lengths were 9 to 10 hr;
+Fig. 3 indicates
+that for two 10-hr passes, the theoretical
+angular
+precision
+achieved
+is about 0.26/Jrad
+in declination and about 0.34 grad in right ascension.
+Subsequent
+calculations
+using Eq. (10) for nonzero
+values of 6 ranging from -24 to +24 deg (not shown here) yielded
+resuits that were within
+10 percent
+of the data shown in
+Fig. 3. In comparison,
+the angular
+precision
+of Galileo
+S-band ADOR,
+the principal
+data type used to obtain angular measurements
+during actual Earth-1 encounter
+navigation operations,
+was about 0.04-0.08
+/Jrad, depending
+upon the tracking
+geometry
+[6].
+Although
+
+not as accurate
+
+as ADOR
+
+in this experiment,
+
+two-way ranging
+is a much simpler
+data type to employ
+operationally,
+in that the data are easier to acquire
+and
+process.
+In addition,
+it will be shown subsequently
+that
+the superior
+angular
+precision
+of ADOR does not always
+translate
+into an equivalent
+level of navigation
+accuracy.
+In
+a typical
+mission operations
+environment,
+the scheduling
+and postprocessing
+requirements
+associated
+with ADOR
+result in data acquisitions
+every 1 to 2 days at best, and
+more often at intervals
+of 3 to 7 days instead
+(e.g., 19
+ADOR measurements
+were acquired
+over the 44-day data
+arc used _thisTexperiment[
+2750 two-way
+range measurements
+were acquired during
+the same period).
+This
+sparsity of ADOR data sometimes
+leads to navigation
+ac-
+
+24
+
+sense, poorer
+of the data.
+
+than
+
+the
+
+While the theoretical
+results above show that ranging
+can overcome
+the dependence
+of Doppler-based
+angle determination
+on the tracking
+geometry,
+it must be recognized that the effects of systematic
+range measurement
+
+through
+
+the use of very accurate
+
+III. Station
+To account
+
+calibrations.
+
+Delay Calibrations
+for the
+
+effects
+
+of systematic
+
+bias
+
+errors
+
+on
+
+the ranging data, pass-specific
+bias parameters
+were estimated for each Deep Space Station
+(DSS) used to acquire
+ranging from Galileo.
+In addition
+to station
+delay calibration errors, which generally
+do not change very much over
+the duration
+of a single pass, these bias parameters
+were
+intended
+to represent
+slowly varying
+range delays due to
+the solar plasma, which are often the largest nongeometric
+component
+of range measurements
+acquired
+with S-band
+uplink and downlink
+frequencies
+[1]. The data were divided into batches
+so that no two ranging passes from the
+same station were included
+in a single batch.
+Stochastic
+range bias parameters
+were then estimated
+for each station
+during each successive
+batch by using a batch-sequential
+filter algorithm.
+An
+
+examination
+
+of the
+
+station
+
+obtained
+during the Earth-1
+approach
+for the 60 days prior to the encounter,
+
+delay
+
+calibration
+
+data
+
+phase indicated
+that
+the values of station
+
+delay calibrations
+for the DSN 70-meter
+subnet (most of
+the Galileo Earth-1
+approach
+radio metric data were acquired from this subnet)
+were very consistent
+and showed
+little day-to-day
+variation.
+Great effort was made on the
+part of DSN station personnel
+to maintain
+the consistency
+of the 70-m
+the mission.
+lay calibrations
+
+station
+configurations
+during
+this phase of
+The standard
+deviation
+of the station dewas observed
+
+to be just
+
+55 cm,
+
+with
+
+the
+
+largest variations
+being on the order of 1.5 m. Since tracking passes were obtained
+infrequently
+from the 34-m standard (STD) subnet,
+the sparsity
+of station
+delay calibration data from this subnet prevented
+any similar analysis.
+The Sun-Earth-spacecraft
+angle was quite large within the
+data arc (greater
+than 150 deg); therefore,
+the anticipated
+magnitude
+of solar plasma-induced
+delays in the S-band
+range measurements
+was 1 m or less, assuming
+an average
+level of solar activity [7]. Based on these-considerations,
+the stochastic
+range biases associated
+with the 70-m stations were assigned
+a priori uncertainties
+of 2 m, and the
+
+rangebiases
+assigned
+
+associated
+with
+a priori uncertainties
+
+the 34-m STD
+of 10 m.
+
+stations
+
+were
+
+IV. Analysis
+The
+
+Earth-1
+
+orbit
+
+determination
+
+analysis
+
+for this
+
+ex-
+
+periment
+consisted
+of recomputing
+the orbit determination delivery
+that was used for the design of the final
+Earth-targeting
+maneuver
+and used several different data
+sets and assumed
+data accuracies.
+The data arc used for
+the solutions
+extended
+from October
+10, 1990 (59 days
+prior to encounter)
+to November
+23, 1990 (15 days prior
+to encounter).
+This time period
+corresponds
+to Earthspacecraft
+distances
+ranging from 50-12.5 million km, and
+a geocentric
+spacecraft
+declination
+of 15-13 deg. The radio
+metric data acquired
+included
+3740 Doppler points (600sec count time) and 2750 range points.
+Additionally,
+19
+ADOR observations
+were obtained,
+including
+11 observations from the DSN Goldstone-Canberra
+baseline,
+and 8
+observations
+from the Goldstone-Madrid
+baseline.
+Table
+1 summarizes
+the parameters
+used in the orbit determination
+
+and assumptions
+filter model.
+
+that were
+In Table 1,
+
+the estimated
+parameters
+are those that were explicitly
+solved for in the estimation
+process;
+the consider parameters were not estimated,
+but the effects of uncertainty
+in these quantities
+was accounted
+for (i.e., "considered")
+when calculating
+the error covariance
+associated
+With the
+solution
+for the estimated
+parameters.
+Also in Table 1,
+the radial and transverse
+components
+of the solar radiation pressure
+model refer to the direction
+parallel
+to the
+Sun-spacecraft
+line, and the two directions
+orthogonal
+to
+that line, respectively.
+For the set of solutions that was computed,
+several different choices of data set and data weighting
+(i.e., specification of the assumed
+measurement
+noise level for each
+data type) were exercised
+in order to determine
+the effect
+of each variation
+on the predicted
+aim point for the encounter.
+These solutions
+were then compared
+with a highly
+accurate (50:m) post-flyby
+reconstruction
+of the trajectory
+that was computed
+using both pre- and post-encounter
+radio metric data. For the precision ranging analysis, a range
+data weight of 10 meters was used.
+Although
+the noise
+level previously
+observed
+in Galileo ranging
+data was at
+the submeter
+level, a weight of 10 m was chosen in light of
+the presence
+of 1- to 2-meter-level
+systematic
+ionospheric
+calibration
+errors that could affect data acquired at S-band
+frequencies.
+For comparison
+purposes,
+a range data weight
+of 1 km was used in several solutions,
+as this value is representative
+of more traditional
+methods
+of utilizing
+ranging
+(1 km was, in fact, the range weight used operationally
+for the Earth-1
+encounter).
+Two sets of solutions
+were
+
+calculated;
+
+in the first
+
+set
+
+a Doppler
+
+weight
+
+of 1 fnmJsec
+
+(60-sec count time) was used for all solutions,
+and in the
+second set a Doppler
+weight of 2 mm/sec
+(60-sec count
+time) was employed.
+The Doppler data weight used during
+actual Earth-1
+encounter
+operations
+was 1 mm/sec,
+which
+is commensurate
+with the inherent
+accuracy
+of the data.
+In each set, solutions
+were constructed
+using Doppler data
+only; Doppler
+plus 1-km range; Doppler,
+1-km range and
+50-cm ADOR;
+and Doppler plus 10-m range.
+A final solution was constructed
+using only 10-m range for comparison
+purposes.
+The stochastic
+range bias filter
+ployed in all cases involving
+10-m range.
+
+model
+
+was em-
+
+V. Results
+The results of the analysis are shown in Figs. 4 and 5,
+and are summarized
+in Table 2. Figures
+4 and 5 portray
+the two sets of solutions
+obtained
+with Doppler
+weights
+of 1 mm/sec
+and 2 mm/sec,
+respectively,
+in an Earthcentered aiming plane coordinate
+system. 2 The one-sigma
+dispersion
+ellipses associated
+with each solution
+(representing a 39-percent confidence
+interval)
+are also shown in
+Figs. 4 and 5. For the Earth-1
+encounter,
+the aiming plane
+was nearly coincident
+with the plane of the sky, that plane
+which is normal to the Earth-spacecraft
+line-of-sight,
+over
+the entire data arc. Therefore,
+the ability of different radio metric data types to determine
+the aim point for the
+encounter
+was very closely related
+to their ability to measure the geocentric
+spacecraft
+angular position over the
+time span of the data arc. Thus, this encounter
+represents
+a fairly direct test of the angle-finding
+capability
+of S-band
+precision ranging data.
+The solution
+utilizing
+1-mm/sec
+Doppler
+and highprecision
+ranging,
+shown in Fig. 4, resulted
+in the closest agreement
+with the post-flyby
+reconstruction
+of all
+the solutions
+performed,
+with an error of 4.2 km in the
+aiming plane. This error translates
+into an angular
+error
+of 0.34 prad, a value that is in good agreement
+with the
+theoretical
+precision
+of two Northern
+and Southern
+Hemisphere 9- or 10-hr DSN tracking
+passes, shown in Fig. 3.
+This precision range result compares
+quite favorably
+with
+the 1-mm/sec
+Doppler,
+1-km range, 50-cm ADOR
+solution (also shown in Fig. 4), which had an error of 7.8 km
+2 The aiming plane or "B-plane" coordinates system is defined by
+three unit vectors, S, T, and It; S is parallel to the incoming
+asymptotic velocity vector, T is parallel to the ecliptic plane (mean
+plane of the Earth's orbit), and B. completes an orthogonal triad
+with S and T. The aim point for a planetary flyby is defined by the
+miss vector, B, which lles in the T-R plane, and can be thought
+of as specifying where the point of closest approach would be if the
+target planet had no mass and d]dn0t deltect the flight path.
+
+25
+
+(equiv_ent-tO0.62 prad); thissolutionwas the best solutionobtained during actualEarth-1 encounter operations.
+The relativelypoor performance of ADOR
+is attributed
+tothe nu_er
+of velocitychanges (due to attltu_eup_ate
+maneuvers and propellant linefiushings)that had to be
+estimated by the orbit determination filter,
+and the sparsityof the ADOR
+data set (19 ADOR
+points versus 2750
+range p0ints_. Operational complexitiesassociated with
+the scheduling of ADOR
+and the sequencing procedures
+used by Galileomade itdifficult
+to acquire a largedata set
+forthe Eartl_-iencounter. In_addition,ADORsche_idl]ng
+difficulties
+during the Earth-1 approach resultedin a somewhat irregulardistributionof ADOR
+pointsover the data
+arc, which is also believedto have contributed to the relativelypoor performance that was obtained. This aspect
+of Earth-1 navigation operations is described in greater
+detailby Gray [6].AS_is:ev_dentin both Figs. 4 and 5,
+the ranging data, when utilizedat a 1-kin weight, have
+little
+effecton the Doppler-plus-rangesolutionsversus the
+Doppler-only solutions,
+indicatingthatat I kilometermost
+of the information content of the ranging data isbeing effectivelydiscarded,except for the directmeasurement of
+the Earth-spacecraftdistance,r.
+In
+
+the
+
+solutions
+
+obtained
+
+with
+
+a 2-mm/sec
+
+Doppler
+
+weight(Fig.
+5)_, the _)op_pl-er-0nly and D0ppier/i-_mrange
+solutions
+_ml_roved noticeably
+in terms of the error relative
+to the post-flyby
+reconstruction.
+Additionally,
+the dispersion ellipses for these two cases were more commensurate
+with the actual orbit determination
+errors than in the 1mm/sec
+Doppler cases. This indicates
+that with a weight
+of 1 mm/sec,
+the Doppler data were being affected by some
+modeling
+error that was not adequately
+accounted
+for by
+either the assumed
+level of random
+measurement
+noise or
+with the estimated
+and consider parameter
+set described in
+Table 1. It is believed that the principal
+error source causing this behavior
+was the solar plasma effect (larger than
+expected
+ionospheric
+calibration
+errors may have also been
+a contributing
+factor), which was not explicitly
+accounted
+for by the Doppler measurement
+error model used in the
+
+orbit
+
+determination
+
+filter,
+
+but
+
+was
+
+accounted
+
+ca_t-i_at
+navigatiofi
+accuracies
+of 0.08-0.10
+/_rad may
+be achieved with two-way X-band
+(8.4-GHz)
+ranging and
+Doppler data, provided
+that accurate
+(1 m or better)
+station delay and transmission
+media calibrations
+are available [1].
+
+Vl. Conclusions
+The results of the analysis
+indicate
+that for Galileo
+Earth-1
+approach
+navigation,
+precision
+ranging
+data
+yielded orbit solutions
+which, although
+not in theory as
+accurate
+as those obtainable
+with ADOR
+data, were in
+fact somewhat
+better
+in this particular
+case.
+The relatively poor navigation
+performance
+of ADOR is primarily
+attributed
+to the sparslty
+of the ADOR data set and the_irregular distribution
+of these measurements
+within the data
+arc. In addition,
+it was found that the orbit determination errors obtained
+in the Doppler
+and precision
+ranging
+solutions
+were consistent
+with simple theoretical
+predictions of the angle-finding
+capability
+of S-band ranging and
+Doppler
+data. The relative
+ease of ranging
+data schedul:
+ing and processing
+procedures
+makes ranging an attractive
+alternative
+to ADOR,
+when the nominally
+higher performance of ADOR
+is not required.
+Further
+improvements
+(factors of 3 to 5) in the navigation
+accuracy
+obtainable
+with precision
+ranging may be achieved through
+the use of
+X-band (8.4-Gttz)
+frequencies,
+as opposed
+to S-band (2.3Gttz) frequencies,
+and through
+improved
+station delay and
+transmission
+media calibration
+accuracies.
+
+Acknowledgments
+The authors
+gratefully
+acknowledge
+the many valuable
+comments
+and suggestions received from H. W. Baugh, J. K. Campbell,
+G. S. Johnson,
+J. R. Smith, and
+A. H. Taylor. Special thanks are due to R. A. Jacobson,
+who helped develop some
+of the concepts
+that were ultimately
+used in this analysis,
+and to S. P. Synnott,
+for
+his careful review of the manuscript
+for this article.
+
+26
+
+for in the
+
+precision
+range error model by the stochastic
+bias parameters (hence, the good agreement
+between the aiming plane
+error for the 10-m range-only
+solution
+and the dispersion
+ellipse associated
+with this solution).
+As in the solution set
+with 1-mm/sec
+Doppler, the accuracy of the Doppler/l:km
+range/ADOR
+solution
+with 2-mm/sec
+Doppler
+was found
+to be poor (0.43 Arad) relative
+to the theoretical
+anglefinding capability
+of the ADOR data (0.04-0.08/_rad).
+It
+should be noted here that theoretical
+studies
+have indi-;
+
+References
+[1] S.W. Thurman, T. P. McElrath, and V. M. Pollmeier,"Short-Arc Orbit Determination Using Coherent X-Band Ranging Data," paper AAS-92-109, AAS/AIAA
+SpaceflightMechanics Meeting, Colorado Springs,Colorado, February 24-26,
+1992.
+[2]V. M. Pollmeierand P. H. Kallemeyn, "GalileoOrbit Determination from Launch
+Through
+the First Earth Flyby," Proceedings
+of the ,STth Annual Meeting
+of the
+Institute
+of Navigation,
+Williamsburg,
+Virginia, pp. 9-16, June 10-12, 1991.
+[3] T. W. Hamilton and W. G. Melbourne,
+"Information
+Content of a Single
+Doppler Data from a Distant Spacecraft,"JP£ Space Programs Summary
+vol.3, pp. 18-23, March-April 1966.
+
+Pass of
+37-39,
+
+[4]J. D. Anderson, "The Introductionof Range Data Into the Data Compression
+Scheme," JPL Space Programs Summary
+37-$3, vol.3, pp. 18-24, NovemberDecember 1966.
+[5]A. H. Taylor, J. K. Campbell, R. A. Jacobsen, B. Moultrie,R. A. Nichols,Jr.,
+and J. E. Riedel, "Performance of Differenced Range Data Types in Voyager
+Navigation," Journal of Guidance, Control,and Dynamics, vol.7,no. 3, pp. 301306, May-June 1984.
+[6] D. L. Gray, "AVLBI
+Data Performance in the GalileoSpacecraft Earth Flyby
+of December 1990," The TDA Progress Report $_-106, vol.April-June 1991,
+pp. 335-352, August 15, 1991.
+[7] L. Efron and R. J. Lisowski, "Charged ParticleEffectsto Radio Ranging and
+Doppler Tracking Signalsin a Radially Outflowing SolarWind," JPL Space Programs Summary
+3%56, vol. 2, pp. 61-69, January-February
+1969.
+
+=
+
+i
+
+27
+
+Table
+
+Model
+
+1, Galileo
+
+parameters
+
+orbit
+
+determination
+
+A priori
+uncertainty,
+
+model
+
+assumptions.
+
+Remarks
+la
+
+Estimated
+Spacecraft
+
+state
+
+vector
+
+10skm
+
+Epoch
+pos|t|on
+Velocity
+Solar radiation
+Radial
+
+5 percent
+1 percent
+
+update
+
+Propellant
+Magnitude
+Direction
+Quasar
+
+information
+
+pressure
+
+_r_verse
+
+Attitude
+
+No
+
+l0 s km/sec
+
+llne
+
+maneuvers
+
+of nominal
+of nominal
+
+0.5 mm/sec
+
+About
+
+1 every
+
+2 weeks
+
+0.5 mm/sec
+15 mrad
+
+About
+
+1 every
+
+3 weeks
+
+flushings
+
+location,
+
+for
+
+ADOR
+
+Range
+bias parameters
+DSN 70 m
+DSN 34 m STD
+
+100
+
+(1 per
+
+nrad
+
+Conservative
+
+2.0 m
+10.0 m
+
+Conservative
+
+0.24
+0.24
+0.30
+
+Relative
+uncertainty
+between
+stations
+is
+approximately
+5 cm
+
+statlon-pass)
+
+Con__ide___gr
+DSN
+station
+Spin radius
+Longitude
+
+locations
+
+(correlated
+
+covarlance),
+
+m
+
+" _z-hdglit
+Troposphere
+Wet
+
+zenith
+
+delay
+
+calibration
+
+error,
+
+cm
+4.0
+1.0
+
+Dry
+Ionospherezenith
+Daytime
+Nighttime
+
+delay
+
+error,
+
+km/sec
+2
+spin axis)
+
+S-band
+
+Earth
+ephemeris
+Radial--
+
+(heliocentric),
+
+(conservative)
+
+km
+0.2
+30.0
+15.0
+
+track
+
+Out-of-P!ane
+Earth
+mass,
+
+values
+
+3 X I0 -_
+1 X I0 -12
+
+Bd[lS verse
+
+Along
+
+cm
+75.0
+15.0
+
+Acceleration
+biases,
+Radial
+(spacecraft
+Tr
+
+calibration
+
+GM
+
+0.15
+
+km3/sec
+
+A priori
+
+2
+
+covariance,
+
+JPL
+
+DE
+
+125
+
+ephemeris
+
+DE
+
+125
+
+Table
+
+2. Comparison
+
+of orbit
+
+solutions
+
+and
+
+reconstructed
+
+trajectory.
+
+case
+
+_A;mlng
+error,
+
+1-mm/sec
+Doppler
+(no range)
+(no ADOR)
+
+ply.he
+km
+
+Equivalent
+angular
+error,
+
+27.7
+
+2.22
+
+27.8
+
+2.22
+
+4.2 a
+
+0.34 _
+
+1-mm/sec
+Doppler,
+1-kin range,
+50-cm
+ADOR
+
+7.8
+
+0.62
+
+2-mm/sec
+
+15.1
+
+1.21
+
+2-mm/sec
+Doppler,
+1-kin range
+(no ADOR)
+
+12.1
+
+0.97
+
+2-mm/sec
+Doppler,
+lO-m range
+(no ADOR)
+
+6,5 a
+
+O.5T L
+
+5.4
+
+0.43
+
+7.3 _
+
+0.58 _
+
+l-mm/sec
+1-kin
+(no
+
+Doppler,
+range
+ADOR)
+
+1-mm/sec
+Doppler,
+10-m range
+(no
+
+no
+no
+
+ADOR)
+
+Doppler
+
+range)
+ADOR)
+
+2-rnm/sec
+Doppler,
+l-kin range,
+50-cm
+ADOR
+10-m range
+(no Doppler)
+(no ADOR)
+
+"Precision
+
+#tad
+
+ranging
+
+solutions.
+
+29
+
+z
+
+SPACECRAFT
+
+DSN
+RIGHT ASCENSION
+
+/%
+
+I
+
+i01
+8
+
+STATION
+
+I
+
+1
+
+I
+
+I
+
+l
+
+\
+
+o h = 1 0 mm/sec
+&t = 600 sac
+
+\
+/_
+J /
+
+_
+
+z
+""
+
+I
+
+op = 10.0 m
+
+\
+
+EARTH'S
+EQUATOR
+
+I
+
+\
+
+!
+
+_ _ ,/
+
+k
+\
+\
+
+2
+
+\
+
+z
+0
+
+\
+%
+%
+100
+
+n
+STATION COORDINATES:
+¢T*
+
+SPACECRAFT COORDINATES:
+
+r, _, c_,r, _,
+
+1, StatioHpacecraft
+
+S
+
+tracking
+
+STATION
+
+%
+%
+
+o
+_
+
+Fig.
+
+8
+
+rs, zs , Z
+
+4
+
+geometry.
+
+1
+10 -1
+6
+
+I
+8
+
+1
+"f0
+
+I
+I2
+
+I
+14
+
+I
+16
+
+TOTAL TRACKING
+Z_s
+
+--
+
+t _-_---
+
+EQUATOR-IAL
+
+Fig. 3. Declination
+from
+
+PLANE
+
+2
+
+A(p2 - Pl) "2Zs
+_(_)
+
+A(6)
+
+_
+
+J
+Fig.
+
+i
+
+30
+
+2. S-band
+
+I
+20
+
+I
+22
+
+TIME, hr
+
+SPACECRAFT
+
+P2
+
+STATION
+
+1
+18
+
+ranging
+
+and
+
+Doppler
+
+theoretical
+
+angular
+
+precision.
+
+determination
+using
+two widely
+separated
+
+range measurements
+=tationL
+
+24
+
+--6730
+
+t
+
+--6725
+
+-
+
+-.6720
+
+-
+
+-6715
+
+-
+
+-6710
+
+-
+
+-6705
+
+-
+
+_" -6700
+
+-
+
+-6695
+
+-
+
+-6690
+
+-
+
+I
+
+1
+
+I
+
+I
+
+1
+
+t
+
+I
+
+t
+-9035
+
+I
+-9030
+
+DOPPLER = 1 mm/s
+RANGE = N/A
+
+DOPPLER = 1
+RANGE = 1 km
+ADOR = N/A
+
+i
+
+RECONSTRUCTION
+
+DOPPLER = 1 mm/s
+RANGE = 10 m
+ADOR = N/A
+
+DOPPLER = 1 mm/s
+RANGE = 1 km
+&DOR = 50 cm
+-6685
+
+-
+
+-6680
+
+-
+
+DOPPLER = N/A
+RANGE = 10 m
+Z_DOR = N/A
+
+-6875
+
+-6670
+-9070
+
+I
+-9085
+
+I
+-9060
+
+I
+-9055
+
+[
+-9050
+
+1
+-9045
+B.
+
+Fig.
+
+4. Earth-1
+
+aiming
+
+plane
+
+(solutions
+
+I
+-9040
+
+-9025
+
+T, km
+with
+
+1-mm/sec
+
+Doppler
+
+weight).
+
+j
+
+:
+
+31
+
+-6730
+
+-6725
+
+-6720
+
+-
+
+-6715
+
+-
+
+DOPPLER = 2 mm/s
+RANGE = N/A
+ADOR = N/A
+
+-6710
+
+-6705
+
+2 mm/s
+RANGE = 1 km
+&DOR = N/A
+
+J
+¢" -6700
+POST-FLYBY
+RECONSTRUCTION
+-669,=
+
+-6_0
+
+DOPPLER = 2 mm/s
+RANGE = 1 km
+&DOR = 50 cm
+
+-6685
+
+-6680
+
+DOPPLER = 2 mm/s
+RANGE = 10 m
+ADOR = N/A
+
+-6675
+
+DOPPLER = N/A
+RANGE = I0 m
+&DOR = N/A
+
+-6670
+--9070
+
+I
+-9065
+
+t
+-9060
+
+I
+-9055
+
+J
+-9050
+
+I
+-9045
+B.
+
+Fig.
+
+32
+
+5. Earth-1
+
+aiming
+
+plane
+
+(solutions
+
+I
+-9040
+
+I
+-9035
+
+]
+-9030
+
+-.902_
+
+T, km
+with
+
+2-mm/sec
+
+Doppler
+
+weight).
+
+=
+
+
