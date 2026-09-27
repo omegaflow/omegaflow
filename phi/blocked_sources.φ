@@ -1,5 +1,5 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
-note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon: unit-auto-detect, votable-reader, html-parser-arm, konverter; nicht im Kanon, register-eigen: astrometry-reader.
+note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon: unit-auto-detect, votable-reader, html-parser-arm, konverter; nicht im Kanon, register-eigen: astrometry-reader, iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
 note gap-Token konverter — Feld-Einheit falsch abgebildet (mag als nT); Konverter-Arm fehlt.
@@ -344,4 +344,9 @@ note EMC (nicht MT): CC BY 4.0, nc 200 HDF5 anonym; Roh-nc reference sources.φ:
 released
 url http://pithia.cbk.waw.pl/tap
 note epncore released 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
+
+parser-def iaga-text
+gap iaga-text
+url https://zenodo.org/records/10594301
+note Zenodo Alberta-GIC 2023 Mag_Data.zip (nT) — IAGA-2002-Text, Messung echt, Reader-Arm fehlt; der Modell-Teil (MT_Data/Network.xlsx) ist decline model (declined_sources.φ:5143).
 
