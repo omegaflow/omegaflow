@@ -82,7 +82,6 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
-        "rx100_luminance" => rx100::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         _ => None,
@@ -204,10 +203,7 @@ pub fn series_rows(format: &str, bytes: &[u8]) -> Option<Vec<SeriesRow>> {
         );
     }
     series_parse_bin(format, bytes).map(|recs| {
-        let (freq, bin_width) = match format {
-            "rx100_luminance" => (rx100::FREQ_PHOTOPIC_HZ, rx100::BIN_WIDTH_PHOTOPIC_HZ),
-            _ => (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND),
-        };
+        let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
         recs.into_iter()
             .map(|(t, value, comp)| SeriesRow {
                 t,
@@ -273,10 +269,6 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             hamqsl::COMP_SOLARFLUX => Some("hamqsl_solarflux_sfu"),
             hamqsl::COMP_SOLARWIND => Some("hamqsl_solarwind_kms"),
             hamqsl::COMP_MAGFIELD => Some("hamqsl_magneticfield_nt"),
-            _ => None,
-        },
-        "rx100_luminance" => match comp {
-            rx100::COMP_LUMINANCE => Some("rx100_luminance_cdm2"),
             _ => None,
         },
         "mitdb" => match comp {
