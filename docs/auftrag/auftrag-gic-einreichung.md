@@ -2,7 +2,7 @@
   title: Auftrag — GIC-Paper einreichen (Ziel: Space Weather)
   class: auftrag
   date: 2026-09-27
-  sha256: 7d899c0aa308141c33c7af22cc0fd61c93e0470722f3079dc24d6820d0442db0
+  sha256: d2ecfbac3f16eb87a2a67286e7115101a25911cc6d03f7143a5108c9ea28b838
   status: live
   see-also: docs/paper/gic-causal-driver.md
 -->
@@ -213,21 +213,24 @@ Gesamtgröße aller Dateien ≤ 1 GB.
   `0009-0007-5565-6348`; getrackt bleibt `*Omegaflow Working Group*`).
 - **ESSOAr-Preprint** zum Einreichzeitpunkt posten (Schritte im Abschnitt ESS Open
   Archive oben).
-- **Submission-Lücken gegen die AGU-Checkliste (gemessen 2026-09-27):** dem
-  Manuskript fehlen (a) **Key Points** (1–3, je ≤ 140 Zeichen), (b) **Plain
-  Language Summary** (≤ 200 Wörter, Pflicht für SWE), (c) **Open
-  Research**-Abschnitt (Data- + Software-Availability-Statement; der „Data and
-  code"-Absatz `gic-causal-driver.md:460` ist noch kein AGU-konformer Abschnitt),
-  (d) **Conflict-of-Interest**-Erklärung („The authors declare there are no
-  conflicts of interest for this manuscript."), (e) **Acknowledgements**
-  (Förderquellen; derzeit unabhängig → „none"). (f) **3+ Suggested Reviewers**
-  (Namen/E-Mail/Affiliation) müssen im GEMS-Formular stehen. Alle autonom bis zur
-  Kante (das Manuskript ist die eigene Datei); kein Sende-Akt.
+- **Submission-Lücken gegen die AGU-Checkliste (nachgemessen 2026-09-27 am
+  Manuskript `5ab33d20…`, `sha` via `omega_sh sha`):** vorhanden sind (a) **Key
+  Points** (`gic-causal-driver.md:19`, 3 Punkte), (b) **Plain Language Summary**
+  (`:25`), (c) **Open Research** mit Data- + Software-Availability-Statement
+  (`:485`), (d) **Conflict-of-Interest**-Erklärung (`:505`), (e) **Acknowledgements**
+  (`:509`). Die frühere „FEHLT"-Liste war ungemessen und ist widerlegt. Offen:
+  (c-rest) die Provider-URLs (SWPC/CDAWeb/INTERMAGNET, je HTTP 200 gemessen) und die
+  Software-Repo-URL (`https://github.com/omegaflow/omegaflow`) sind eingetragen; ein
+  zitierbarer **DOI** (Zenodo o. ä.) fehlt noch — `pending`, nicht Sende-Blocker
+  (AGU akzeptiert DOI *oder* URL); (f) **3+ Suggested Reviewers** — 6 Kandidaten mit
+  Affiliation/E-Mail/ORCID vorbereitet in `state/paper/gic-gutachter-2026-09-27.md`
+  (privat), ins GEMS-Formular zu übertragen. Manuskriptlücken autonom gefüllt; der
+  Sende-Akt bleibt Operator-Hand.
 
 ## Kante (Operator-Hand)
 
 - **Artefakt:** dieses Doc + `docs/paper/gic-causal-driver.md` (Gate grün,
-  title 58 / abstract 199 / nums 712 / sha `45a20a09…`).
+  title 58 / abstract 199 / nums 712 / sha `5ab33d20…`).
 - **Ausführbefehl (nur Operator-Hand):** GEMS-Portal
   `https://spaceweather-submit.agu.org/` → Universal-Login → „Submit" →
   Formularfelder 1–14 (Abschnitt GEMS oben) ausfüllen → „Verify & Submit".
