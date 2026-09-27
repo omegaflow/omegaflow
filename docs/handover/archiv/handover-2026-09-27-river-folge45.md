@@ -3,7 +3,7 @@
   session: River-Folge 45
   class: handover
   date: 2026-09-27
-  sha256: 385c51cf0dedeb0a009e08acb7b99a55ed1621cbf0011d588e68577851494a45
+  sha256: 319eef8225e7e1d28e2cbed031bd00543402e51e380b7f0001019fa92cbb3bfe
   status: live
 -->
 # Handover — River-Folge 45 (2026-09-27)
@@ -29,6 +29,7 @@ Diese Session konsumierte `handover-2026-09-27-river-folge44.md` (nach `archiv/`
 - vC 945 von Mantis Shrimp getrennt | 2026-09-26 | Operator-Wort folge36.
 - Einzelbefehle liefern | 2026-09-26 | Operator-Wort folge36.
 - „Du kannst" River-Folge 45 — Plan ausführen, an die Taucher delegieren | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort.
+- Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session).
 - UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | 2026-09-27 | Operator (Session, Mountain).
 - D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session, Mountain).
 
