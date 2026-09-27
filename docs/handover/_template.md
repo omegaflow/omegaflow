@@ -110,8 +110,10 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
   `/tmp/opencode/ci_status.md` lesen (kein API-Aufruf), **aber nur wenn er jünger
   ist als der letzte HEAD-Wechsel** (`stat -c %y /tmp/opencode/ci_status.md` gegen
   `git log -1 --format=%cI`); sonst ist der Snapshot eine Aussage von vor dem
-  Commit → `ci_manage list` erzwingen. Bei Lücke/Detail
-  `ci_manage list` / `ci_manage view <id>`, Fehllog `ci_manage log <id>`.
+  Commit → live messen. Die laufenden Runs live lesen mit
+  `ci_manage status` (Übersicht + aktueller Schritt je laufendem Run) und
+  `ci_manage jobs <id>...` (Schritt-Detail), Fehllog `ci_manage log <id>`; der
+  Run-`updated_at` von `ci_manage list` ist grob, der Schritt ist die Messung.
   **Nie** `gh run list`/`gh run view`; `gh` nur für `workflow run`/`run download`.
 - **Artefakt-Frische (alle erzeugten Klassen)** — nichts Erzeugtes ist HEAD;
   jede Klasse ist ein CI-/Deploy-Produkt und hinkt: **Session-Tools**
