@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-15
-  version: 9
-  sha256: fba9c3af9294908d977755997f8d4f44a9dc99049a0b5914e4dd0de478e7d239
+  version: 10
+  sha256: 6447b059c32ed64ce8a824b49ca4a0db327ee6a3f3e8f60b2ded50cd5c901c51
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -331,7 +331,8 @@ carries no periodic steering loop on any second scale; the steering-practice art
 the Syntonisation 1983 series (TDA PR 42-72 [12]) is located but graphical-only
 (vision-read in Appendix A, not instrument data); the GPS timing articles 1983–85
 are located in NTRS (six, 19830027104 with a text layer naming the DSN 1985
-timing requirement; the 1985 items image-only, their embedded image not liftable
+timing requirement; the 1985 items image-only — the NTRS API declares them `METADATA_ONLY` with `downloads: []`
+(`--playwright`, 2026-09-27) — their embedded image not liftable
 (`--pdf-image` → pending); 19860018816 carries an NTRS API text layer, its full
 text searched and naming no MDA/resolver term; 1982/1986/87 carry no NTRS entry); the sliding-
 window track (Deduktion 29, 3000-sample windows) resolves the per-station lines into
@@ -367,7 +368,8 @@ the archived 202 Rev. A) and carries no MDA-resolver frequency — the MDA/resol
 description was sought in the Mark IV-A Tracking System 1986 (TDA PR 42-85, NTRS
 19860018816): the NTRS API rendering carries a text layer (`--pdf-text`,
 2026-09-27) whose full text names neither `MDA` nor `resolver`; the legacy scan
-and the 1985 PTTI scans are image-only and lift no embedded image
+and the 1985 PTTI scans are image-only — declared `METADATA_ONLY` with empty `downloads` in the
+NTRS API (`--playwright`, 2026-09-27) — and lift no embedded image
 (`--pdf-image` → pending); the origin stays open (0 honored).
 
 **The numbered deduction map (complete).** The §5.4 narrative above steps through the deduction chain only partially by number (0/0b and 7–10, 16–20, 22–24, 26, 27, 29–31 individually); this map enumerates every Deduktion head that the historical `link_deduction_probe` tool-comment documents (0, 0b, and 1–40), in numerical order, as the complete chain per that tool's own documentation. The numbers 11–15, 21, 25, and 28 carry no head in the tool comment and are not narrated individually in this paper; they are not fabricated here (0 honored). Deduction 16 is not a head in the tool comment but is narrated individually in §5.4 above; it is repeated here, marked, from this paper's own narration. Each line states what that step measures or excludes.
