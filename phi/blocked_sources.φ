@@ -327,7 +327,7 @@ note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement n�
 
 pending
 url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5; L2_GHG/NO2=0. Arme + gosat-cdn.yml gebaut (fae4a5081); Repo-Secrets gesetzt 2026-09-27, Lauf 36280012910.
+note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml gebaut (fae4a5081); Secrets 2026-09-27. Lauf 36280012910 rot: Fenster >3000-Server-Cap; Sharding+Diagnose gebaut, Re-Dispatch offen.
 
 descoped
 url https://data.lsst.cloud/api/tap/sync
@@ -339,10 +339,10 @@ note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen
 
 pending
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
-note IRIS/EMC netCDF-4 (dir 200, HDF5); Ingest-Arm gebaut (88fb49209: Extract::Volume, build_netcdf4_volume, format volume_netcdf, GPU-Maske). Offen: Manifestation — EarthScope-ToS (Attribution + Non-human-Visitor), Browser-Brücke.
+note Earth Model Collaboration (nicht MT): dir+nc 200 HDF5 anonym; Lizenz CC BY 4.0. Roh-nc als format reference registriert (sources.φ:1298+), volume.bin auf CDN. Ingest-Arm gebaut (88fb49209). Offen: Live volume_netcdf — value_key ungemessen.
 
 parser-def epncore
 gap epncore-spatial
 url http://pithia.cbk.waw.pl/tap
-note EPN-core Klasse (src.pas tot: PostgreSQL :5432 refused, /tap/tables 500; esc.pithia.eu nur Metadaten, :8081/data/* 404) — Region c1/c2/c3 min/max/resol + s_region STC-S, kein lat/lon-Skalar. Ersatz voparis-tap-maser declined (declined_sources.φ).
+note EPN-core Klasse (TAP 200 gemessen 2026-09-27, 13 342 B; /tap/tables 500 — PostgreSQL-Backend) — Region c1/c2/c3 min/max/resol + s_region STC-S, kein lat/lon-Skalar. Parser-Arm epncore-spatial fehlt (mountain); Ersatz voparis-tap-maser declined.
 
