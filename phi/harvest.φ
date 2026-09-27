@@ -230,14 +230,14 @@ idempotent true
 timeout 350
 note Rosetta RSI IFMS AGC; compiler rosetta_odf_compiler.rs; 6 Shards im release archives.esac.esa.int (4×1073741816 B, 295640096 B, 289151480 B), URLs+sha256 in sources.φ gemessen 2026-09-19; run 35351411938 success 2026-09-18.
 
-asset present
+asset fehlt
 format rx100_luminance
 tag sony-camera-remote
 arm rx100_compiler
 pattern ^rx100_luminance\.bin$
 idempotent true
 timeout 120
-note Sony RX100 V Luminanz DSC-RX100M5A, L_v=K·N²/(t·S); arm src/archivar/rx100.rs; K=12.5 (EXIF-Weg, ISO-2720 ungemessen); Manifest 2026-09-27 5.859 cd/m2 sha256 e7e85199c4bb70a5cb908109d107ddc97ae9bf40645342bfe8b7eaa80eb39e2d; Band sources.φ:122.
+note Sony RX100 V Luminanz DSC-RX100M5A, L_v=K·N²/(t·S); arm src/archivar/rx100.rs; K=12.5 (EXIF-Weg, ISO-2720 ungemessen); kein Operator-Capture im CDN (Wort 2026-09-27) — Asset bewusst nicht manifestiert; Band sources.φ:122.
 
 asset present
 format swot_l2_lr_ssh
