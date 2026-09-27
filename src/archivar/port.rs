@@ -726,7 +726,10 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
             block.push_str(&fields);
         }
     } else if let Some(ref r) = raw {
-        if let Some(csv) = probe_csv(r) {
+        let mut hapi_fields = String::new();
+        if hapi_draft_fields_csv(&url, r, params.env, &mut hapi_fields) {
+            block.push_str(&hapi_fields);
+        } else if let Some(csv) = probe_csv(r) {
             block.push_str("format free text\n");
             block.push_str(&csv);
         }
@@ -1346,6 +1349,70 @@ pub fn register_hapi_units_of(sources: &[SourceConfig]) -> HashMap<(String, Stri
 
 fn register_hapi_units() -> HashMap<(String, String), String> {
     register_hapi_units_of(&load_sources())
+}
+
+fn hapi_csv_time_like(cell: &str) -> bool {
+    cell.as_bytes().first().is_some_and(u8::is_ascii_digit)
+        && cell.contains('T')
+        && cell.contains(':')
+}
+
+pub fn hapi_draft_fields_csv(
+    url: &str,
+    raw: &str,
+    env: &HashMap<String, String>,
+    fields: &mut String,
+) -> bool {
+    if !url.contains("/hapi/") {
+        return false;
+    }
+    let mut width = 0usize;
+    let mut finite: Vec<bool> = Vec::new();
+    let mut rows: Vec<JsonVal> = Vec::new();
+    for line in raw.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cells: Vec<&str> = t.split(',').map(str::trim).collect();
+        if cells.iter().any(|c| c.is_empty()) {
+            break;
+        }
+        if width == 0 {
+            if cells.len() < 2 || !hapi_csv_time_like(cells[0]) {
+                return false;
+            }
+            width = cells.len();
+            finite = vec![false; width];
+        }
+        if cells.len() != width {
+            break;
+        }
+        let row: Vec<JsonVal> = cells
+            .iter()
+            .map(|c| match c.parse::<f64>() {
+                Ok(v) => JsonVal::Num(v),
+                Err(_) => JsonVal::Str(c.to_string()),
+            })
+            .collect();
+        for (i, cell) in row.iter().enumerate().skip(1) {
+            if let JsonVal::Num(v) = cell
+                && v.is_finite()
+            {
+                finite[i] = true;
+            }
+        }
+        rows.push(JsonVal::Arr(row));
+        if finite.iter().skip(1).all(|f| *f) || rows.len() >= 4096 {
+            break;
+        }
+    }
+    if rows.is_empty() {
+        return false;
+    }
+    let mut root = HashMap::new();
+    root.insert("data".to_string(), JsonVal::Arr(rows));
+    hapi_draft_fields(url, &JsonVal::Obj(root), env, fields)
 }
 
 pub fn hapi_draft_fields(
