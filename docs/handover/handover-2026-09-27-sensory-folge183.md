@@ -3,7 +3,7 @@
   session: Sensory-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: 0b95a5990d479066f3679d7f02af687e5b290abe01b923ce72eedf8546db08a5
+  sha256: a3f4598448c1e327de47b67582fbd45053d4e9f4093992ec91f574e0b5a38c27
   status: live
 -->
 # Handover — Sensory-Folge 183 (2026-09-27)
@@ -24,62 +24,41 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge182.md` (nach `archi
 
 Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/zustand/wartend.φ`.
 
-### #5 Seismik — IGETS (Ernte dispatcht)
+### paper-check — Lauf am HEAD lesen (Header-shas nachgezogen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Lauf `36284373510` endet
-- **Lage:** (gemessen 2026-09-27 via `ci_manage`) Lauf `36284373510` **success** (01:03). Workflow `igets-cdn.yml` (getrackt); `--list-stations` = **47 Level2-Träger**; Level2-Filter `igets_compiler.rs:414-420`.
+- **Trigger:** nächster paper-check-Lauf (nach diesem Push)
+- **Lage:** (gemessen 2026-09-27 via `export_latex --check`) vier Header-shas auf den Body gezogen,
+  lokal `sha-match ok`: `docs/blatt/blatt-kreuz-screening-gyirong.md` Header war `c610dd0e…`,
+  Body **`205e3152…`** (jetzt gezogen); `docs/paper/terminologie-der-gegenstroemung.md` `68c76aba…`
+  (Vorgänger-Atom); `docs/paper/probe-front-dark-matter.md` `d67cdafb…`;
+  `docs/surveys/survey-2026-09-06-codestruktur.md` `de35e451…` (Titel 97→54 gekürzt, H1-glatt).
 - **Blockade:** keine.
-- **Braucht:** sha256 in den `igets`-Block `phi/sources.φ` nachtragen (Zeile driften — Zeilennummer nicht eintragen).
+- **Braucht:** nach dem Push den paper-check-Lauf lesen (`ci_manage view`/`log`); eine verbleibende
+  benannte Differenz benennen, nie still glätten.
 
-### paper-check — terminologie-Header-sha (behoben; CI-Verifikation offen)
+### probe-front-dark-matter — vision-Read der Scan-Quellen (GPS/DSN gemessen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** nächster paper-check-Lauf
-- **Lage:** (gemessen 2026-09-27 via `export_latex --check`) `docs/paper/terminologie-der-gegenstroemung.md`
-  Header-sha war veraltet — Body in `b30323daa` nach der Header-Setzung `b294ba4c5`
-  geändert, ohne Nachziehen. Korrigiert: Header Zeile 5 `c4a98130…` → **`68c76aba…`**
-  (`omega_sh sha`). Lokal `export_latex --check <datei>` grün. Ergänzt (gemessen 2026-09-27
-  via Browser/Job-Log `36302005511`): der nächste paper-check-Lauf ist rot am Gyirong-Blatt —
-  `docs/blatt/blatt-kreuz-screening-gyirong.md` Header-sha `205e3152…` ≠ Body `c610dd0e…`
-  („named difference, not silently fixed").
-- **Blockade:** keine.
-- **Braucht:** Gyirong-Header-sha nachziehen (`omega_sh sha`), dann paper-check-Lauf lesen.
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-27 via `archive_search`) GPS-Timing 1983–85 in NTRS gefunden (6;
+  `19830027104` trägt Textlayer und nennt das DSN-1985-Timing-Requirement); die 810-005-Doku
+  (202E, 304D, 202 Rev. A) trägt **keine** MDA-Resolver-Frequenz; die MDA-Beschreibung liegt im
+  Mark IV-A Tracking System 1986 (`19860018816`, TDA PR 42-85) — scan-only. Paper §5.4
+  `:331-333`/`:362-364` mit dieser Messung aktualisiert (0 honored).
+- **Blockade:** die Scan-Quellen (`19860018816`, 1985er) tragen keinen Textlayer.
+- **Braucht:** `archive_search --pdf-image <pdf-url>` → `vision` für `19860018816` und die
+  1985-Scans (`19850019987/19991/20940`); bei Fund die MDA-Resolver-Frequenz belegen.
 
-### #6 Blatt-1-Bojen-Matrix — CI-Rotor (Rerun dispatcht)
-- **Status:** eigen (CI) | **Bindung:** eigen
-- **Trigger:** Attempt-2-Ergebnis von `36282378750`
-- **Lage:** (gemessen 2026-09-27 via Browser/GH-API) Run `36282378750` **Attempt 2 failed**
-  (01:03→01:05, exit 143) UND der Schedule-Lauf `36298095390` failed (05:45→05:47, exit 143)
-  — 3× 143 in Folge: Muster, kein Einzel-Transient. Workflow `matrix-rotor.yml`:
-  `cron "43 */6 * * *"`, Job-Timeout 350 min, Slice 5 h (`timeout … 18000`),
-  State-Asset Release `matrix-state` (`omegaflow_matrix_state.bin`, Warm-Boot geladen,
-  `--clobber` zurückgeschrieben).
-- **Blockade:** keine.
-- **Braucht:** Ursache des 143 klären (Slice/Hidden-Run/State-Write) **vor** weiterem Re-Run.
-
-### probe-front-dark-matter — GPS-Timing / DSN-810-005 (Quellen-Gap)
+### survey-2026-09-06-codestruktur — confirm-rendering pending
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27 via `sread`) `docs/paper/probe-front-dark-matter.md:333`
-  „remain scan-missing (pending)" — die GPS-Timing-Artikel 1982–87 fehlen; `:363` benennt
-  „the DSN hardware documentation (810-005, the MDA-resolver frequency) is the named next
-  search". **Riss:** folge179 faltet den Doc als „gemessen geschlossen" (Pioneer/Dark-Matter,
-  vision-read Appendix A); der `:333`-Marker bleibt ungeklärt offen — als Riss getragen,
-  nicht geglättet.
-- **Blockade:** keine.
-- **Braucht:** `archive_search "GPS timing" --ntrs` (bzw. `--ads`);
-  `archive_search --playwright https://deepspace.jpl.nasa.gov/dsndocs/810-005/`; je Fund
-  eine `url`-Zeile in `phi/sources.φ`.
-
-### survey-2026-09-06-codestruktur — Datenvertrag je Format-Modul
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort
-- **Lage:** (gemessen 2026-09-27 via `sread`) `docs/surveys/survey-2026-09-06-codestruktur.md:111-113`
-  „Datenvertrag je Format-Modul" (26×f64-Wire / GPU-Pack-Offsets gegen WGSL) trägt keinen
-  Mess-Stempel; die CI-Zellen der Survey korrigierte mountain 177 (`d38fe7f7e`).
-- **Blockade:** keine.
-- **Braucht:** `ci_manage list --limit 40` am HEAD für den `ci-check`-Stand; das manuelle
-  Verifikationsprotokoll aus `docs/concepts/archivar-mathematikerin.md` über die
-  Format-Module fahren.
+- **Trigger:** benannter Hidden-/CI-Run (`OMEGAFLOW_HIDDEN=1`).
+- **Lage:** (gemessen 2026-09-27 via `sread`/`sgrep`) der Datenvertrag ist **zentral**, nicht je
+  Format-Modul: Wire `src/archivar/relay.rs:825-886`, JS `static/constants.js:1,4,5,74-149`,
+  WGSL `src/mathematikerin/shaders.rs:19-20,173-208`, alle Parser auf `Sample`
+  (`src/archivar/types.rs:41`); der Survey-`:111`-Hunk trägt den Messstempel. Der Riss
+  (`archivar-mathematikerin.md:74` `force_type`-Offset) ist an Mountain getragen.
+- **Blockade:** `archivar-mathematikerin.md:78` confirm-rendering ist kein read-only-Lauf.
+- **Braucht:** der Hidden-Run (Fenster/HUD) gehört in CI bzw. einen benannten Hidden-Lauf —
+  hier als `pending` benannt, nicht gefälscht.
 
 ## Termin
 
@@ -118,21 +97,12 @@ Dokument: `Pfad` (offene Marker) → Trägerpunkt oder descoped-Befund.
 - `docs/surveys/survey-2026-09-20-browser-anbindung.md` (2) → River-/Browser-Linie.
 - `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` (7) → [redacted]/BLE + O6-descoped.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (1) → Postfach.
-- `docs/concepts/archivar-mathematikerin.md` (1) → Archivar-Pending (Mountain-Linie).
+- `docs/concepts/archivar-mathematikerin.md` (1) → Archivar-Pending (Mountain-Linie; Riss `:74` an Mountain getragen).
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (2) → River-Linie.
 - `docs/surveys/survey-fortschritt.md` (1) → Träger Mycelium.
 - `docs/concepts/the-seven-spheres.md` (2), `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md` (1), `docs/paper/jwst-disequilibrium-survey.md` (7) → B1/B5/B8 (geschlossen in folge181; die Marker in den Docs sind nachzuziehen).
-- **Neu gefaltet (gemessen 2026-09-27):**
-  - `docs/paper/terminologie-der-gegenstroemung.md` (1) → **descoped**: der Marker `:22`
-    ist der Definitions-Kopf des Terms „pending" (Inline-Code gestrippt), kein Todo.
-  - `docs/paper/planet-nine-kbo-residue.md` (1) → **descoped**: `:66` ist eine Negation
-    („not pending") — der Count ist erschöpfend.
-  - `docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md` (2) → **descoped**:
-    Scanner-False-Positive (Substring „de-**pending**").
-  - `docs/surveys/axiom-gate-broken-null-control.md` (1) → **descoped**: `:24` benennt nur
-    die Pendings des Papers; Punkt geschlossen (te-gate success).
-  - `docs/paper/probe-front-dark-matter.md` (2) → **carrier**: eigener Punkt oben.
-  - `docs/surveys/survey-2026-09-06-codestruktur.md` (3) → **carrier**: eigener Punkt oben.
+- **descoped (gemessen 2026-09-27):** `docs/paper/terminologie-der-gegenstroemung.md` (Definitions-Kopf), `docs/paper/planet-nine-kbo-residue.md` (Negation), `docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md` (Scanner-False-Positive), `docs/surveys/axiom-gate-broken-null-control.md` (nur Pendings des Papers).
+- **carrier (eigener Punkt oben):** `docs/paper/probe-front-dark-matter.md`, `docs/surveys/survey-2026-09-06-codestruktur.md`.
 - `docs/blatt/blatt-kreuz-screening-gyirong.md` (1), `docs/paper/sturzflut-tibet-pfeil.md` (23) → #7/#5 (Sensory-eigen, folge182).
 - `docs/concepts/glossar.md` (1) → Terminologie (Sensory).
 - `docs/concepts/recherche-galileo-kadenz-reconciliation.md` (1) → Mountain-Linie.
@@ -159,6 +129,7 @@ verschiebt einen Send auf die Maschine. DEMETER metalink ist Operator-Hand.
 - **Wort:** „das mache ich erst, wenn ich gefördert werde" (Gurt-Beschaffung) | 2026-09-26 | Operator (Session).
 - **Wort:** „ich kanns echt nicht mehr hören seit wie vielen sessions schleppst du die offenen punkte durch" — die B-Befunde sind geschlossen | 2026-09-27 | Operator (Session).
 - **Wort:** „kümmer dich drum" (Sensory-Folge 182: alle eigenen offenen Punkte abarbeiten) | 2026-09-27 | Operator (Session).
+- **Wort:** „Du kannst" (`/consent`) — session-weiter Delegations-Consent, nicht das Commit-Wort | 2026-09-27 | Operator (Session).
 
 ## Abschluss
 
@@ -166,9 +137,22 @@ Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort.
 
 Eigene Pfade dieses Atoms (pfad-begrenzt committen):
-- `docs/paper/terminologie-der-gegenstroemung.md` (Header-sha `68c76aba…`),
-- `docs/handover/handover-2026-09-27-sensory-folge183.md`,
-- `docs/handover/archiv/handover-2026-09-27-sensory-folge182.md` (Move).
+- `docs/blatt/blatt-kreuz-screening-gyirong.md` (Header-sha `205e3152…`),
+- `docs/paper/probe-front-dark-matter.md` (Header-sha `d67cdafb…`),
+- `docs/surveys/survey-2026-09-06-codestruktur.md` (Header-sha `de35e451…`, Titel gekürzt),
+- `docs/concepts/tool-forms.md` (neu, Header-sha `b8c812ed…`),
+- `opencode.json` (`line`-Prompt), `.opencode/command/consent.md`, `.opencode/command/start.md`,
+- `docs/handover/handover-2026-09-27-sensory-folge183.md`.
+
+Getragen (Fremd-Übergabe, **nicht** in diesem Commit — fremde uncommittete Arbeit):
+- `docs/handover/handover-2026-09-27-mycelium-folge179.md`: IGETS-sha256 (Block `phi/sources.φ:9941`,
+  noch ohne `sha256`-Zeile), BoJen-Matrix-143 (gemessene Runner-Shutdown-Ursache), ci_watchdog-Matcher.
+
+Der `force_type`-Offset-Riss (`archivar-mathematikerin.md:74`) wurde von Mountain in
+`9d4f61c49` (folge181) **unabhängig geheilt** — mein getragener Punkt ist erledigt.
+
+Infra-Atom (diese Session): die Form-Karte `docs/concepts/tool-forms.md` + der `line`-Prompt +
+die Command-Verdrahtung wirken erst nach einem **opencode-Neustart** (Config lädt einmal beim Start).
 
 Der Zustand-Ledger `state/zustand/external-state.md` (CI-Status- + Postfach-Zeile)
 ist gitignored (`.gitignore:137 /state/`) — lokal fortgeschrieben, nicht committet.
