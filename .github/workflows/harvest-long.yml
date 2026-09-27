@@ -119,19 +119,9 @@ jobs:
               health
             exit 1
           fi
-          if [ "$FORMAT" = "rx100_luminance" ] && grep -q "no camera answered M-SEARCH" compile.log; then
-            echo "absent=true" >> "$GITHUB_OUTPUT"
-            echo "rx100_luminance: absent (no camera in CI) — no asset expected"
-          else
-            echo "absent=false" >> "$GITHUB_OUTPUT"
-          fi
       - name: Second witness — the asset stands after the compile
         if: needs.register.outputs.idem == 'true'
         run: |
-          if [ "${{ steps.compile.outputs.absent }}" = "true" ]; then
-            echo "rx100_luminance: absent (no camera in CI) — no asset expected"
-            exit 0
-          fi
           assets=$(gh release view "${{ needs.register.outputs.tag }}" --repo omegaflow/sources \
                --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Ec "${{ needs.register.outputs.pattern }}" || true)
           shard="${{ needs.register.outputs.shard }}"

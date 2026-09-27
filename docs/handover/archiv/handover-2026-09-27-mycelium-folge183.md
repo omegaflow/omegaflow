@@ -3,7 +3,7 @@
   session: Mycelium-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: 33749de6b39525c344c2ebaf1da0a09ccbdb037e1b0dbfe98d33c150dac12a7b
+  sha256: 424a0ef7d45597a79a076479490ce90cab75b05eb30b05f2693fb62390f53e2d
   status: live
 -->
 # Handover — Mycelium-Folge 183 (2026-09-27)
@@ -64,9 +64,23 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 ### modis-cdn / modis-asset-bridge — Release-Cap (Verifikation)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `36320551698` (bridge) und `36320557426` (cdn) abgeschlossen (am HEAD `edfcedad`).
-- **Lage:** (gemessen 2026-09-27 via `ci_manage view` + `SGrep`) bridge in_progress, cdn queued, beide am `edfcedad`; die destruktive `delete`-Stufe ist **nicht** Teil dieser Läufe — sie lebt als Operator-Akt in Future's Operator-Queue (Aufenthalt = Eigentum).
+- **Lage:** (gemessen 2026-09-27 via `ci_manage view` + `SGrep`) bridge in_progress, cdn queued, beide am `edfcedad`; die destruktive `delete`-Stufe ist **nicht** Teil dieser Läufe. **Operator-Wort 2026-09-27: „löschen"** (aus Future-Queue 18) — nach grüner Verifikation die bare Slots löschen (`modis-asset-bridge.yml:6`).
 - **Blockade:** keine (CI läuft/queued).
 - **Braucht:** `ci_manage view 36320551698` / `36320557426`; bei success CDN_TAG-Wechsel + `modis-cdn.yml` + `phi/sources.φ`.
+
+### ncdc-CDN-`www.`-Orphan löschen (Operator-Wort 2026-09-27)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen Future 142, 2026-09-27) `…/www.ncdc.noaa.gov/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin` = 8392 B, sha `0071dcc0…c21e4a8c`, 262 Records, **kein Register-/Compiler-Eintrag** (Orphan; `docs/specs/cdn_reconciliation.json:9` führt beide als `duplicate_netloc_tags`). Bare `…/ncdc.noaa.gov/…` = 7912 B, sha `1f7b4dcb…c4f314f3`, 247 Records — kanonisch (`phi/sources.φ:2416`, Compiler `noaa_cdo_compiler.rs` schreibt nur das bare Tag). Operator-Wort: „löschen" (`www.` bleibt entfernt, bare kanonisch).
+- **Blockade:** keine.
+- **Braucht:** den `www.`-Zwilling im CDN entfernen (destruktive Stufe), danach `cdn-reconcile` messen.
+
+### solar-system-open-data Key als GitHub-Secret (Operator-Wort 2026-09-27)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-27) lokaler Key gültig (HTTP 200); Operator-Wort „natürlich eintragen".
+- **Blockade:** keine.
+- **Braucht:** `SOLAR_SYSTEM_OPEN_DATA_KEY` als GitHub-Secret für `.github/workflows/solar-system-open-data-cdn.yml` setzen; den CDN-Auto-Abgleich (`cdn-reconcile`) nutzen.
 
 ### dropped-gate — 34 offene Punkte ohne auflösenden Commit
 - **Status:** wartend | **Bindung:** eigen
@@ -109,7 +123,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | SAMPLE_CONTACT (MPI-FKF/LAB_A) sagte zu, danach kein Eingang (gemessen 2026-09-27 via mail_ledger) | wartend auf Mail-Eingang (kein Nachfassen).
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | nur `Wiedervorlage 2026-12-02` bindet | nächster Schritt: 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending weiter tot | nächster Schritt: `--verdict` je Host beim Trigger.
-- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Step 5 (CDN-kanonisch, destruktiv); der Akt liegt in Future's Operator-Queue | nächster Schritt (eigen): Klassen-Zensus messen.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | offen: Step 5 (CDN-kanonisch); **Operator-Wort 2026-09-27: „umschreiben"** (aus Future-Queue 19) | nächster Schritt (eigen): Klassen-Zensus messen, dann den kanonischen Schritt ausführen.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | Migrationsplan-Vorlage steht; das Layout-Wort liegt in Future's Operator-Queue | nächster Schritt: Migration nach Wort.
 - `docs/surveys/survey-2026-09-07-tmp-opencode-scan.md` | offen nur §7 Roh-Korpora-Disposition; der Akt liegt in Future's Operator-Queue | nächster Schritt: Disposition nach Wort.
 - `docs/concepts/tools-map.md` | CI-Werkzeug-Detail (`ci_manage status`/`jobs`) ergänzt; übrige offene Marker unverändert | nächster Schritt: `register_lookup --orphan-docs` beim nächsten Pass; Owner-Klärung offen.

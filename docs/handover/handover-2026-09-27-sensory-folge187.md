@@ -3,7 +3,7 @@
   session: Sensory-Folge 187
   class: handover
   date: 2026-09-27
-  sha256: a8809bb569288dff2322d12d7522402c6364231108cb2fafc07579936b35988e
+  sha256: 1af765ac20fdc5010ff175c62a54b157171fca60fd408c341f4b55989a7b471c
   status: live
 -->
 # Handover — Sensory-Folge 187 (2026-09-27)
@@ -64,6 +64,10 @@ runner-seitig"); die Sensory-Kopie ist gelöscht (Aufenthalt = Eigentum).
 - **Braucht:** beim Artefakt eines completed matrix-rotor-Laufs
   `gh run download <id> -n matrix-rotor -D /tmp/opencode/mr-art` →
   `sgrep "window:" /tmp/opencode/mr-art/matrix-rotor.txt` — die `φ window:`-Zeile ist der Beleg.
+
+## D5-Orphan-Residuum (gefaltet 2026-09-27, Mycelium)
+
+- `survey-2026-09-07-weberin-thread-matrix.md:L53` — Physiologie-/Operator-Sensoren (human-channel): pending, Konsens/Hardware-Pfad, keine Quellroute → Sensor-Konsens + Hardware-Route messen.
 
 ## Termin
 
