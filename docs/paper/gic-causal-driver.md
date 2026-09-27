@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-26
-  sha256: 6e31b556771b33693b08369d5ac98232aaa9f675389678a88c21b0c9c8ebb637
+  sha256: 45a20a0990c4a72e412b430d5096418a448a716805f4d84f828f8b534642ae61
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -33,8 +33,8 @@ co-vary through their common origin. Transfer entropy (Schreiber, 2000) is
 the natural instrument: a directional, model-free measure of information flow
 between time series, closely related to Granger causality but nonlinear and
 nonparametric. TE has been applied to solar-wind–magnetosphere coupling
-(Johnson & Wing, 2005; Wing & Johnson, 2016) and to climate causality at
-large scale (Runge et al., 2019), but the GIC driver chain — L1 Bz to ground
+(Johnson & Wing, 2005; Wing & Johnson, 2016; Yu et al., 2022) and to climate
+causality at large scale (Runge et al., 2019), but the GIC driver chain — L1 Bz to ground
 dB/dt at an auroral-zone station, measured with a strict phase-randomized
 null and a family-wise correction — has not, to our knowledge, been settled.
 
@@ -338,6 +338,11 @@ solar-wind–magnetosphere transfer is nonlinear and solar-cycle dependent;
 their information-theoretic driver search (Wing & Johnson, 2016) identified
 solar-wind field and speed variables as the informative inputs to the
 radiation belt, consistent with our Bz arrow and our Speed per-lag excess.
+At the geomagnetic-index level, Yu et al. (2022) rank the solar-wind drivers
+to the Sym-H index by transfer entropy — E and Bz dominant at a 60-minute
+delay, consistent with our Bz arrow and our 60-minute per-lag peak — with a
+source-shuffled permutation null and no family-wise correction; their target is
+the storm index, not ground dB/dt.
 Coupling-function studies (Newell et al., 2007; Borovsky, 2008) place
 southward Bz at the center of dayside reconnection — the physical mechanism
 of the chain Bz → magnetosphere–ionosphere currents → ground dB/dt. Our
@@ -448,6 +453,7 @@ hourly-grain family-clearing as an open measurement, not a settled finding.
 - Schreiber, T. (2000). Measuring information transfer. *Physical Review Letters* 85, 461–464, doi:10.1103/PhysRevLett.85.461.
 - Staniek, M., & Lehnertz, K. (2008). Symbolic transfer entropy. *Physical Review Letters* 100, 158101, doi:10.1103/PhysRevLett.100.158101.
 - Wing, S., Johnson, J. R., Camporeale, E., & Reeves, G. D. (2016). Information theoretical approach to discovering solar wind drivers of the outer radiation belt. *Journal of Geophysical Research: Space Physics* 121, 9378–9399, doi:10.1002/2016JA022711.
+- Yu, J., Tong, J., Fang, S., & Hu, X. (2022). Transfer entropy approach to discovering the ranking of solar wind drivers to geomagnetic storm. *Chinese Journal of Space Science* 42(3), 346–356, doi:10.11728/cjss2022.03.210406045.
 
 ---
 

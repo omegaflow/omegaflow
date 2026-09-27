@@ -2,7 +2,7 @@
   title: Auftrag — GIC-Paper einreichen (Ziel: Space Weather)
   class: auftrag
   date: 2026-09-27
-  sha256: d7a5fee512f96738a132482488f226a904bc8a04a5866d954d6e4c1f9dbbaeea
+  sha256: e9a97e4b1b0458ba1830ba86beb8ab17ea4b6ebcbb1ea9f79e1e77ad178866a5
   status: live
   see-also: docs/paper/gic-causal-driver.md
 -->
@@ -43,9 +43,15 @@ family-wise Schranke** misst. Nächste Nachbarn: Manshour et al. 2021
 GIC-Indices, kein TE); Johnson, Wing & Camporeale 2018
 (`10.5194/angeo-36-945-2018`, Ziel Dst). **Novelty = Kanal (TE → Ground-dB/dt) +
 Schranke (family-wise round-maximum)**, nicht die phasen-randomisierte Null allein.
-**Offener Vorbereitungsschritt:** die CJSS-2022-Arbeit
-(`10.11728/cjss2022.03.210406045`, „Ranking of Solar Wind Drivers", Ziel
-geomagnetische Sturm-Indices) im Volltext lesen, bevor die Novelty-Zeile final ist.
+**CJSS 2022 gelesen — Volltext, gemessen 2026-09-27:** Yu, Tong, Fang & Hu
+(`10.11728/cjss2022.03.210406045`) ranken Solarwind-Treiber zum Sym-H-Index per TE
+(93 Stürme, 2010–2018); E und Bz dominieren bei 60 min (E 0.200, Bz 0.196 nats); der
+Null ist ein Quell-Shuffle (100 Resamples, 95 %), **keine** family-wise Korrektur. Ziel
+ist der Sturm-Index, nicht Ground-dB/dt → unsere Novelty-Zeile wird **nicht
+vorweggenommen**, in der Richtung **gestützt**; als Zitat im Papier aufgenommen
+(Related Work + Referenz). Volltext/Referenzen:
+`docs/paper/yu-tong-fang-hu-2022-transfer-entropy-solar-wind-drivers.md`; PDF
+`data/cjss.ac.cn/210406045.pdf`.
 
 ## Cover Letter (Entwurf, 8 Sätze)
 
@@ -67,14 +73,12 @@ geomagnetische Sturm-Indices) im Volltext lesen, bevor die Novelty-Zeile final i
 - **Autorenblock (angelegt 2026-09-27):** nicht-anonyme Form privat in
   `state/paper/gic-autoren-2026-09-27.md` (Johannes Tyroller, ORCID
   `0009-0007-5565-6348`; getrackt bleibt `*Omegaflow Working Group*`).
-- **CJSS-2022-Volltext** lesen (`10.11728/cjss2022.03.210406045`, „Ranking of Solar
-  Wind Drivers", Ziel geomagnetische Sturm-Indices) — bestätigt die Novelty-Zeile.
 - **ESSOAr-Preprint** zum Einreichzeitpunkt posten.
 
 ## Kante (Operator-Hand)
 
 - **Artefakt:** dieses Doc + `docs/paper/gic-causal-driver.md` (Gate grün,
-  title 58 / abstract 199 / nums 700 / sha `6e31b556…`).
+  title 58 / abstract 199 / nums 712 / sha `45a20a09…`).
 - **Ausführbefehl:** GEMS-Einreichung (AGU-Portal, Zugang über
   `agupubs.onlinelibrary.wiley.com/journal/15427390`) → Space Weather;
   ESSOAr-Preprint parallel.
