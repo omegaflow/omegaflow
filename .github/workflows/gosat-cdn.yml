@@ -16,7 +16,7 @@ on:
         description: 'first harvest year of the per-year shard series'
         required: false
         type: string
-        default: "2024"
+        default: "2025"
       end_year:
         description: 'last harvest year (blank = the current UTC year)'
         required: false
