@@ -3,7 +3,7 @@
   session: Mycelium-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: 892e0e19296af0b4f57732328b317d45892fdf1c7c7db046ba105d7e2c514eea
+  sha256: 3e204f232717b99711fa2c85019f3b3dddfa4f47335055f9fd63365cb57e2720
   status: live
 -->
 # Handover — Mycelium-Folge 182 (2026-09-27)
@@ -22,6 +22,11 @@ HEAD `36b559852`, gemessen nach Folge 181) — zitiert, nie in dieses Register k
 
 - Wort | 2026-09-27 | „kümmer dich drum" — der verwaiste rustfmt-Fix `tools/utils/src/bin/omega_sh.rs` fällt Mycelium zu (Aufenthalt = Eigentum); Commit trägt `/commit`.
 - Wort | 2026-09-27 | „Du kannst. Führe den … Plan aus — als `line`-Agent" — session-weiter Consent (Delegation), **nicht** das Commit-Wort.
+- Wort | 2026-09-27 | „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | Operator (Future-Session).
+- Wort | 2026-09-27 | ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | Operator (Future-Session).
+- Wort | 2026-09-27 | RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | Operator (Future-Session).
+- Wort | 2026-09-27 | UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | Operator (Session, Mountain).
+- Wort | 2026-09-27 | D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | Operator (Session, Mountain).
 
 ## Offen (aufgeschlüsselt)
 
