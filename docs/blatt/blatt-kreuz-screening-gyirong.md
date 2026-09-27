@@ -10,7 +10,7 @@
   surrogate: 20
   min-n: 100
   cond: gyirong_open-meteo_temperature_2m (Tagesgang-Proxi)
-  sha256: c610dd0ec353c5bd45476a0d4bc6f7723739cea9934addd5362eabc013e6deba
+  sha256: 205e31528715f3f1a424602d1ff5a7a2bbb62a746b737426cfe7b455527d9a1d
   status: live
 -->
 

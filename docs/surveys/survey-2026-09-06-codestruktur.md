@@ -1,8 +1,8 @@
 <!--
-  title: Survey — Codestruktur: Archivar, Mathematikerin, Tools (Struktur-Karte + erste Funktions-Messung)
+  title: Survey — Codestruktur: Archivar, Mathematikerin, Tools
   class: survey
   date: 2026-09-06
-  sha256: 1632c3d0d3d7cbb32926041ba4530a5f052bf24b4ebdc8b8add5c28d6005569c
+  sha256: de35e451e65b31f117af6a7fec646e9a2e6adf24c5e9e76e042db1078437b9ba
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -110,4 +110,12 @@ Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
   Aufspaltung ist `erledigt` (gemessen 2026-09-25, getrennt in `5dcce39c0`).
 - **Datenvertrag** je Format-Modul: 26×f64-Wire / GPU-Pack-Offsets gegen die
   WGSL-Zugriffe (das manuelle Verifikationsprotokoll in
-  `docs/concepts/archivar-mathematikerin.md`).
+  `docs/concepts/archivar-mathematikerin.md`). **Gemessen 2026-09-27 via
+  `sread`/`sgrep`:** der Vertrag ist zentral, nicht je Format-Modul — Wire-Write
+  `src/archivar/relay.rs:825-886` (`19+n·208`, magic `0xCF 0x86 0x09`), JS-Read
+  `static/constants.js:1,4,5,74-149` (208 Byte, 26 Offsets), WGSL-Unpack
+  `src/mathematikerin/shaders.rs:19-20,173-208`; alle Format-Parser konvergieren
+  auf `Sample` (`src/archivar/types.rs:41`). **Kein** Format-Modul trägt einen
+  eigenen Datenvertrag (`sgrep -i "data contract" src` = 0). Der
+  `confirm-rendering`-Schritt (`archivar-mathematikerin.md:78`) bleibt `pending`
+  (kein read-only-Lauf).
