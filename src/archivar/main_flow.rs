@@ -421,7 +421,6 @@ pub fn spawn_ephemeris_bootstrap(
     time: std::sync::Arc<std::sync::Mutex<Option<LeapSeconds>>>,
     presences: &[PresenceSample],
     body_ephemerides: &HashMap<String, BodyEphemeris>,
-    declared_body: Option<&str>,
 ) {
     if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
         return;
@@ -446,7 +445,7 @@ pub fn spawn_ephemeris_bootstrap(
             fresh_items.push((i, s.clone(), tmp_path));
             continue;
         }
-        if declared_body == Some(body.as_str()) {
+        if anchor_uses.contains_key(body) {
             anchor_items.push((i, s.clone(), tmp_path));
             continue;
         }
@@ -465,11 +464,7 @@ pub fn spawn_ephemeris_bootstrap(
         if !body_in_enclosure(presences, props, pos, t_r, now) {
             continue;
         }
-        if anchor_uses.contains_key(body) {
-            anchor_items.push((i, s.clone(), tmp_path));
-        } else {
-            rest_items.push((i, s.clone(), tmp_path));
-        }
+        rest_items.push((i, s.clone(), tmp_path));
     }
     fresh_items.sort_by_key(|(_, s, _)| anchor_order(s));
     anchor_items.sort_by_key(|(_, s, _)| anchor_order(s));
@@ -498,9 +493,23 @@ pub fn spawn_ephemeris_bootstrap(
         }
         let mut stale = anchor_items;
         stale.extend(rest_items);
-        download_ephemeris_batch(&stale);
+        let mut present: Vec<(usize, SourceConfig, String)> = Vec::new();
+        let mut missing: Vec<(usize, SourceConfig, String)> = Vec::new();
         for (i, s, p) in stale {
-            load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
+            if std::path::Path::new(&p).exists() {
+                present.push((i, s, p));
+            } else {
+                missing.push((i, s, p));
+            }
+        }
+        for (i, s, p) in &present {
+            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk);
+        }
+        let mut refresh = present;
+        refresh.extend(missing.iter().cloned());
+        download_ephemeris_batch(&refresh);
+        for (i, s, p) in &missing {
+            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk);
         }
         guard.store(false, std::sync::atomic::Ordering::SeqCst);
     });
@@ -1082,7 +1091,6 @@ pub fn main_flow() {
             archive.time.clone(),
             &presences,
             &archive.body_ephemerides,
-            archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
         );
     }
     let mut last_bootstrap: f64 = 0.0;
@@ -1224,7 +1232,6 @@ pub fn main_flow() {
                     archive.time.clone(),
                     &presences,
                     &archive.body_ephemerides,
-                    archive.declared_body.as_ref().map(|d| d.body_name.as_str()),
                 );
             }
         }
@@ -1246,7 +1253,7 @@ pub fn main_flow() {
                     None => still_pending.push((channel, sensor, idx)),
                 }
             }
-            if !still_pending.is_empty() {
+            if !still_pending.is_empty() && std::io::stderr().is_terminal() {
                 eprintln!(
                     "{} channels waiting for body ephemerides — anchored on arrival",
                     still_pending.len()
