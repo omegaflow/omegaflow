@@ -876,6 +876,14 @@ on earth 0 0 0
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis-sst/esacci_sst.bin
+format esacci_sst_l4_cdr3
+origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
+compiler tools/harvest/src/bin/esacci_sst_compiler.rs
+on earth 0 0 0
+ttl 86400
+field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ogimet.com/ogimet_synop.bin
 format ogimet_synop
 origin https://www.ogimet.com/cgi-bin/gsynres
