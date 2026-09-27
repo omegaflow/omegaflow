@@ -59,8 +59,9 @@ jobs:
             echo "SHA $(git rev-parse HEAD)"
             echo "state vorher: $(stat -c %s data/omegaflow_matrix_state.bin 2>/dev/null || echo absent) B"
             set +e
+            trap 'echo "step shell: SIGTERM $(date -u +%T) (kill -l $(kill -l 143))"' TERM INT
             OMEGAFLOW_STATE=data OMEGAFLOW_HIDDEN=1 \
-              timeout --signal=TERM --kill-after=180 18000 \
+              timeout --verbose --signal=TERM --kill-after=180 18000 \
               ./target/release/omegaflow "#station=41001"
             echo "rotor slice ended rc=$? (124 = der Slice-Deckel; der State wurde alle 120 s geschrieben)"
           } > matrix-rotor.txt 2>&1 || true

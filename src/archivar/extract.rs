@@ -129,11 +129,11 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
         }
         "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
         "mpcobs" => {
-            if bytes.len() % MPCOBS_RECORD_STRIDE != 0 {
+            if !bytes.len().is_multiple_of(MPCOBS_RECORD_STRIDE) {
                 return None;
             }
             let mut n = 0usize;
-            for c in bytes.chunks_exact(MPCOBS_RECORD_STRIDE) {
+            for c in bytes.as_chunks::<MPCOBS_RECORD_STRIDE>().0 {
                 let epoch = f64::from_le_bytes(c[0..8].try_into().ok()?);
                 let ra = f64::from_le_bytes(c[8..16].try_into().ok()?);
                 let dec = f64::from_le_bytes(c[16..24].try_into().ok()?);
@@ -1314,7 +1314,7 @@ fn unwrap_lon(b: f64, a: f64) -> f64 {
 pub fn stc_s_polygon_centroid(s_region: &str) -> Option<(f64, f64)> {
     let body = s_region.strip_prefix("Polygon")?.trim_start();
     let tokens: Vec<&str> = body.split_whitespace().skip(1).collect();
-    if tokens.len() < 4 || tokens.len() % 2 != 0 {
+    if tokens.len() < 4 || !tokens.len().is_multiple_of(2) {
         return None;
     }
     let mut lat_sum = 0.0f64;
@@ -1353,10 +1353,7 @@ pub fn tsv_to_json(text: &str) -> Option<JsonVal> {
             !t.is_empty() && !t.starts_with('#')
         })
         .collect();
-    let header_line = match lines.first() {
-        Some(l) => l,
-        None => return None,
-    };
+    let header_line = lines.first()?;
     let headers: Vec<String> = header_line.split('\t').map(str::to_string).collect();
     if headers.len() < 2 {
         return None;
@@ -1987,16 +1984,9 @@ fn votable_field_plan(field_part: &str) -> Option<Vec<VotField>> {
         if matches!(first, b'r' | b'R' | b's' | b'S') {
             continue;
         }
-        let tag = match chunk.find('>') {
-            Some(p) => &chunk[..p],
-            None => return None,
-        };
-        let Some(name) = votable_attr(tag, "name").or_else(|| votable_attr(tag, "ID")) else {
-            return None;
-        };
-        let Some(datatype) = votable_attr(tag, "datatype") else {
-            return None;
-        };
+        let tag = &chunk[..chunk.find('>')?];
+        let name = votable_attr(tag, "name").or_else(|| votable_attr(tag, "ID"))?;
+        let datatype = votable_attr(tag, "datatype")?;
         let datatype = datatype.to_ascii_lowercase();
         let (kind, elem_bytes) = match datatype.as_str() {
             "boolean" | "logical" => (VotKind::Bool, 1),
@@ -2054,7 +2044,7 @@ fn votable_cell_bytes(cur: &mut VotCursor, f: &VotField) -> Option<(Vec<u8>, usi
             VotShape::Fixed(n) => n,
             VotShape::Variable => cur.u32be()? as usize,
         };
-        return Some((cur.take((nbits + 7) / 8)?.to_vec(), nbits));
+        return Some((cur.take(nbits.div_ceil(8))?.to_vec(), nbits));
     }
     let count = match f.shape {
         VotShape::Scalar => 1,
@@ -2098,7 +2088,9 @@ fn votable_value(f: &VotField, bytes: &[u8], count: usize) -> Option<JsonVal> {
         VotKind::Char => Some(JsonVal::Str(char_string(bytes))),
         VotKind::Unicode => {
             let units: Vec<u16> = bytes
-                .chunks_exact(2)
+                .as_chunks::<2>()
+                .0
+                .iter()
                 .map(|c| u16::from_be_bytes([c[0], c[1]]))
                 .collect();
             let text = String::from_utf16_lossy(&units);
@@ -2220,7 +2212,7 @@ fn votable_value(f: &VotField, bytes: &[u8], count: usize) -> Option<JsonVal> {
 }
 
 fn votable_binary_rows(data: &[u8], fields: &[VotField], binary2: bool) -> Option<JsonVal> {
-    let nflag = if binary2 { (fields.len() + 7) / 8 } else { 0 };
+    let nflag = if binary2 { fields.len().div_ceil(8) } else { 0 };
     let mut rows: Vec<JsonVal> = Vec::new();
     let mut cur = VotCursor { data, pos: 0 };
     while cur.pos < cur.data.len() {
@@ -2259,10 +2251,9 @@ fn votable_binary_rows(data: &[u8], fields: &[VotField], binary2: bool) -> Optio
 fn votable_binary_from_parts(data_part: &str, field_part: &str) -> Option<JsonVal> {
     let (start, end_marker, binary2) = if let Some(p) = data_part.find("<BINARY2") {
         (p, "</BINARY2>", true)
-    } else if let Some(p) = data_part.find("<BINARY") {
-        (p, "</BINARY>", false)
     } else {
-        return None;
+        let p = data_part.find("<BINARY")?;
+        (p, "</BINARY>", false)
     };
     let region_end = data_part[start..]
         .find(end_marker)
