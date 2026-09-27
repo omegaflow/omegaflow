@@ -1,0 +1,160 @@
+<!--
+  title: Handover — Sensory-Folge 186 (2026-09-27)
+  session: Sensory-Folge 186
+  class: handover
+  date: 2026-09-27
+  sha256: 336dbd4bab0a4fcd94190da9d661367e559d4e360ee5a4a871812dee4576de2b
+  status: live
+-->
+# Handover — Sensory-Folge 186 (2026-09-27)
+
+Dieses Register trägt nur Offenes — Erledigtes ist gelöscht, nicht erklärt; git trägt,
+was gemacht wurde. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks —
+committet wird pfad-begrenzt, fremde uncommittete Arbeit wird nie überschrieben;
+gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
+
+Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
+**parallel** von Agenten abgearbeitet. Jeder Punkt trägt **Trigger** / **Lage** (mit
+Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der Akteur
+steht pro Punkt in `Bindung`.
+
+Diese Session konsumierte `handover-2026-09-27-sensory-folge185.md` (nach `archiv/`).
+
+## Operator-Wort-Register (Stand 2026-09-27)
+
+- **Wort:** „nein dann passt es nicht" (vDEC descoped) | 2026-09-26 | Operator (Session).
+- **Wort:** „kein onboard ciq" | 2026-09-26 | Operator (Session).
+- **Wort:** „natürlich" (Kp-Route wieder aufnehmen — Siegel-Wort) | 2026-09-26 | Operator (Session).
+- **Wort:** „du kannst die mail abschicken" → Maschine sendet nie (AGENTS.md); vDEC descoped | 2026-09-26 | Operator (Session).
+- **Wort:** „ändere die agents — das Handover nach umsetzbar/nicht umsetzbar sortieren" | 2026-09-26 | Operator (Session) → ausgeführt: AGENTS.md `3672968d3`.
+- **Wort:** „alles Offene bis zur Kante abarbeiten, gemessen abschließen — nicht verschleppen" | 2026-09-26 | Operator (Session).
+- **Wort:** „alles Offene und Benannt-Ungemessene wird übernommen" | 2026-09-26 | Operator (Session).
+- **Wort:** „jedes Operator-Wort steht im Handover; keine Session kaut es neu durch" | 2026-09-26 | Operator (Session).
+- **Wort:** „deine Daten/Datei verlassen das Gerät nie" | 2026-09-25 | Operator (Session) — [redacted]/DEMETER.
+- **Wort:** „das mache ich erst, wenn ich gefördert werde" (Gurt-Beschaffung) | 2026-09-26 | Operator (Session).
+- **Wort:** „ich kanns echt nicht mehr hören seit wie vielen sessions schleppst du die offenen punkte durch" — die B-Befunde sind geschlossen | 2026-09-27 | Operator (Session).
+- **Wort:** „kümmer dich drum" (Sensory-Folge 182: alle eigenen offenen Punkte abarbeiten) | 2026-09-27 | Operator (Session).
+- **Wort:** „Du kannst" (`/consent`) — session-weiter Delegations-Consent, nicht das Commit-Wort | 2026-09-27 | Operator (Session).
+- **Wort:** „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session).
+- **Wort:** ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session).
+- **Wort:** RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session).
+- **Wort:** Entscheidungen nie als Liste vorlegen — eine Liste ist keine Entscheidungshilfe; jede Entscheidung braucht eine aussagekräftige Erklärung | 2026-09-27 | Operator (Future-Session).
+- **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus" (`/consent`, Sensory-Folge 185) | 2026-09-27 | Operator (Session).
+- **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus" (`/consent`, Sensory-Folge 186) | 2026-09-27 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort.
+- **Wort:** UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | 2026-09-27 | Operator (Session, Mountain).
+- **Wort:** D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session, Mountain).
+
+## Offen (aufgeschlüsselt)
+
+### survey-2026-09-06-codestruktur — confirm-rendering ist headless verifizierbar
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster **completed** matrix-rotor-Lauf mit Artefakt `matrix-rotor`.
+- **Lage:** (gemessen 2026-09-27 via `ci_manage list --limit 150` + `gh run download`)
+  im Fenster nur zwei matrix-rotor-Läufe (`36320306259` attempt 2, `36318994937`), beide
+  failure — **kein** Artefakt (`no valid artifacts found to download`); kein vorgebautes
+  Core-Bin lokal (`target/*/omegaflow` absent), ein lokaler headless-Lauf bräuchte einen
+  verweigerten Whole-Crate-Build → der Weg ist CI-gebunden. **Frischer Lauf dispatcht:
+  `36325674566`** (2026-09-27). Der Weg selbst ist gemessen: `OMEGAFLOW_HIDDEN=1` fährt
+  den vollen ω-Loop, die `φ window:`-stderr-Zeile (`src/mathematikerin/omega.rs:1779`)
+  ist der maschinenlesbare HUD-Zwilling.
+- **Blockade:** keine; es fehlt der completed Lauf mit Artefakt.
+- **Braucht:** beim Artefakt von `36325674566`
+  `gh run download 36325674566 -n matrix-rotor -D /tmp/opencode/mr-art` →
+  `sgrep "window:" /tmp/opencode/mr-art/matrix-rotor.txt` — die `φ window:`-Zeile ist der Beleg.
+
+### matrix-rotor — Muster (externer Runner-Shutdown)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster matrix-rotor-Schedule-Lauf (`43 */6 * * *`) rot.
+- **Lage:** (gemessen 2026-09-27 via `ci_manage log 36318994937`/`36298095390`/`36282378750`)
+  exit 143 ×3 = externes Runner-Shutdown-Signal (`The runner has received a shutdown
+  signal`), Slice 43/52 s — **nicht** Timeout (18000-s-Deckel), **nicht** OOM; der Rotor
+  lief still (`OMEGAFLOW_HIDDEN=1`). Instrumentierung steht (`matrix-rotor.yml:62` trap +
+  `timeout --verbose`).
+- **Blockade:** keine.
+- **Braucht:** bei Rot `ci_manage log <id>` — der gemessene Shutdown-Grund liegt vor.
+
+## Termin
+
+- **JUICE-Erdpassage 28./29.09.2026** | termin:2026-09-29 | Trigger: 28./29.09. | Lage
+  (gemessen 2026-09-27): die Kp-Route ist in `phi/sources.φ` **wiederhergestellt** (folge182) |
+  Braucht: Epoche ernten.
+- **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen 2026-09-27):
+  Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
+
+## Träger (Orphan-Faltung)
+
+Der Dateiname in dieser Übergabe ist der Träger. Je Zeile ein zuletzt trägerloses
+Dokument: `Pfad` (offene Marker) → Trägerpunkt oder descoped-Befund. Die Marker in den
+Punkten #1–#7 sind **echte Messgrenzen** (konditionale Prüfung, Remessungen), keine
+stale Reste — sie werden getragen, nie geglättet (0 honored).
+
+- **#1 corona (success):** `docs/blatt/blatt-solar-seconds-matrix.md` (1),
+  `docs/paper/solar-seconds-matrix.md` (3), `docs/paper/corona-heating-ladder.md` (2),
+  `docs/surveys/survey-ein-blatt-korona-heizung.md` (1).
+- **#1 lsst (success):** `docs/paper/nadel-v-fresh-area-dip-scan.md` (1).
+- **#2 causal-arrow:** `docs/concepts/fuenf-funken-anomalie-suche.md` (4),
+  `docs/paper/causal-arrow-preregistration.md` (1), `docs/concepts/ein-blatt-papier.md` (2).
+- **#4 galileo:** `docs/paper/galileo-rotor-spin-era-floor.md` (1).
+- **#5 Seismik:** `docs/concepts/die-akteure-im-boden-und-wasser.md` (7),
+  `docs/paper/depth-phase-echo-fleet.md` (5),
+  `docs/surveys/axiom-gate-depth-phase-echo-fleet.md` (1),
+  `docs/paper/sturzflut-tibet-pfeil.md` (23).
+- **#6 Bojen-Matrix:** `docs/concepts/blatt-papier-resultat.md` (1).
+- **#7 Kreuz-Screening:** `docs/blatt/blatt-der-grat.md` (2),
+  `docs/paper/cross-screening-tibet.md` (1),
+  `docs/blatt/blatt-kreuz-screening-gyirong.md` (1).
+- **LAIC/Causal-Arrow:** `docs/paper/laic-arrow-direction.md` (3).
+- **BGR/vDEC:** `docs/paper/tonga-lamb-crosscheck.md` (3).
+- **DSN-Briefe:** `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md` (17),
+  `docs/surveys/survey-2026-09-16-sonden-flotte.md` (4).
+- **HRV/Puls (wartend):** `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` (9).
+- **[redacted]/BLE + O6-descoped:** `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` (7).
+- **Postfach:** `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (1).
+- **Terminologie (Sensory):** `docs/concepts/glossar.md` (1).
+- **JUICE:** `docs/concepts/der-paradigmenwechsel.md` (9),
+  `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4),
+  `docs/paper/flyby-path-2-preregistration.md` (1).
+- **Das eine Instrument:** `docs/concepts/das-eine-instrument.md` (2).
+- **termin:2026-12-02:** `docs/blatt/blatt-thuan-fragesteller.md` (4).
+- **B1/B5/B8 (Befunde geschlossen in folge181; Marker nachgezogen 2026-09-27, Sensory-Folge 186):**
+  `docs/concepts/the-seven-spheres.md` (B8-Marker nachgezogen; Restmarker echt),
+  `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md` (B1 §3-Verdikt auf
+  `absent` geschärft, bare „offene" entfernt),
+  `docs/paper/jwst-disequilibrium-survey.md` (B5-Schließung steht bereits, kein stale Marker;
+  Rest-pendings = echte ungemessene Kanäle).
+- **descoped (gemessen 2026-09-27):** `docs/paper/terminologie-der-gegenstroemung.md`
+  (Definitions-Kopf), `docs/paper/planet-nine-kbo-residue.md` (Negation),
+  `docs/paper/asmar-2005-spacecraft-doppler-tracking-noise-budget.md` (Scanner-False-Positive),
+  `docs/surveys/axiom-gate-broken-null-control.md` (nur Pendings des Papers).
+- **carrier:** `docs/surveys/survey-2026-09-06-codestruktur.md` (eigener Punkt oben),
+  `docs/paper/probe-front-dark-matter.md` (v11; die MDA/resolver-Herkunft bleibt im
+  Paper offen, 0 honored — der NTRS-/PTTI-Volltext ist gemessen: der DTIC-Band
+  `ADA149163` trägt kein `MDA`/`resolver`/`Mark IV`).
+- **fremde Linien (nicht in dieser Übergabe getragen — Aufenthalt = Eigentum):**
+  `docs/concepts/arxiv-api.md`, `docs/concepts/archivar-mathematikerin.md`,
+  `docs/concepts/recherche-galileo-kadenz-reconciliation.md` → Mountain;
+  `docs/surveys/survey-2026-09-20-browser-anbindung.md`,
+  `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` → River;
+  `docs/surveys/survey-fortschritt.md` → Mycelium. `register_lookup --orphan-docs`
+  nennt sie als trägerlos; jede Linie faltet ihre eigene.
+
+## Wer nicht senden darf
+
+`smail --send` und jeder Formular-Absand bleiben die Hand des Operators; kein Consent
+verschiebt einen Send auf die Maschine. DEMETER metalink ist Operator-Hand. Die
+NTRS Document-Inquiry ist Operator-Hand.
+
+## Abschluss
+
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
+session-weite Consent (Delegation), nie das Commit-Wort.
+
+Eigene Pfade dieses Atoms (pfad-begrenzt committen):
+- `docs/concepts/the-seven-spheres.md` (B8-Marker nachgezogen, Header-sha `810ed744…`),
+- `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md` (B1-Marker nachgezogen, Header-sha `37058eb2…`),
+- `docs/paper/probe-front-dark-matter.md` (v11, DTIC-Volltext-Beleg, Header-sha `e9788694…`),
+- `docs/handover/handover-2026-09-27-sensory-folge186.md`,
+- `docs/handover/archiv/handover-2026-09-27-sensory-folge185.md` (Move).
+
+Der Zustand-Ledger `state/zustand/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
+lokal fortgeschrieben, nicht committet.

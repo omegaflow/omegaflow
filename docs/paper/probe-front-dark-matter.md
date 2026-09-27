@@ -2,8 +2,8 @@
   title: Zero Flags on the Net: no dark-matter clump in the outer solar system
   class: paper
   date: 2026-09-15
-  version: 10
-  sha256: 6447b059c32ed64ce8a824b49ca4a0db327ee6a3f3e8f60b2ded50cd5c901c51
+  version: 11
+  sha256: e9788694360931a50750ec9c55c542c003aa6e346002d20a0ed80ac84809d868
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -331,9 +331,11 @@ carries no periodic steering loop on any second scale; the steering-practice art
 the Syntonisation 1983 series (TDA PR 42-72 [12]) is located but graphical-only
 (vision-read in Appendix A, not instrument data); the GPS timing articles 1983–85
 are located in NTRS (six, 19830027104 with a text layer naming the DSN 1985
-timing requirement; the 1985 items image-only — the NTRS API declares them `METADATA_ONLY` with `downloads: []`
-(`--playwright`, 2026-09-27) — their embedded image not liftable
-(`--pdf-image` → pending); 19860018816 carries an NTRS API text layer, its full
+timing requirement; the 1985 items are image-only in NTRS — the API declares them `METADATA_ONLY` with `downloads: []`
+(`--playwright`, 2026-09-27) — and their embedded image is not liftable
+(`--pdf-image` → pending); their full text is reachable as the DTIC proceedings scan
+`ADA149163` (archive.org, OCR text layer, `--sniff`/`--pdf-text`, 2026-09-27) whose
+full text names neither `MDA` nor `resolver` nor `Mark IV`; 19860018816 carries an NTRS API text layer, its full
 text searched and naming no MDA/resolver term; 1982/1986/87 carry no NTRS entry); the sliding-
 window track (Deduktion 29, 3000-sample windows) resolves the per-station lines into
 a dense complex — the window peaks scatter across 44–56 mHz with comparable ratios
