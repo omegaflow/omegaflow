@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-26
-  sha256: 45143e1228f0e7a00ebb2d0d21a604ac4ba0a613d81bf5e576f31181860a5c28
+  sha256: 5ab33d20c2978efc088fa533145736d883d9750449dd820b2744c632dc169573
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -488,19 +488,21 @@ hourly-grain family-clearing as an open measurement, not a settled finding.
 
 The solar-wind and ground series used in this study are public third-party
 products, retrieved from their providers: the solar wind at L1 is SWPC RTSW
-one-minute data (minute grain) and OMNI2 (`OMNI2_H0_MRG1HR`, hourly and daily
-grains, via CDAWeb HAPI); the ground magnetic field is INTERMAGNET one-minute
-X/Y/Z at Abisko and Sodankylä, served by the BGS GIN HAPI. Archived harvested
-working copies and their repository DOI: pending.
+one-minute data (minute grain, https://services.swpc.noaa.gov/) and OMNI2
+(`OMNI2_H0_MRG1HR`, hourly and daily grains, via CDAWeb HAPI,
+https://cdaweb.gsfc.nasa.gov/); the ground magnetic field is INTERMAGNET
+one-minute X/Y/Z at Abisko and Sodankylä, served by the BGS GIN HAPI
+(https://imag-data.bgs.ac.uk/). The harvested working copies used here are
+archived in the omegaflow repository; a citable repository DOI is pending.
 
 ### Software Availability
 
 The instrument, probes and register live in the omegaflow repository
-(`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
-`tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/bz_blatt_probe.rs`).
-The software repository URL and DOI are pending. All reported values are
-machine-measured. All bibliographic entries above were checked against the
-Crossref registry on 2026-08-22.
+(https://github.com/omegaflow/omegaflow; `src/mathematikerin/te.rs` — canonical
+scalar estimator, untouched; `tools/measure/src/bin/bz_retro_probe.rs`,
+`tools/measure/src/bin/bz_blatt_probe.rs`). A citable software DOI is pending.
+All reported values are machine-measured. All bibliographic entries above were
+checked against the Crossref registry on 2026-08-22.
 
 ## Conflict of Interest
 
