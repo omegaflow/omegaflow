@@ -3,7 +3,7 @@
   session: Sensory-Folge 185
   class: handover
   date: 2026-09-27
-  sha256: c7e2762b7d85f441c528f3f953685b30ff668e632a4893c4dec10b6cef9b32d7
+  sha256: 5e029d51c98e219e29be833fd7d0a579a2c02304b81fa7e54821ae6e3fb8c319
   status: live
 -->
 # Handover — Sensory-Folge 185 (2026-09-27)
@@ -66,9 +66,9 @@ Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kop
   (`--root` matched 0); Tavily 0 relevant. Paper §5.4 auf **v10** nachgezogen
   (`docs/paper/probe-front-dark-matter.md`, Header-sha `6447b059…`, `version: 10`).
 - **Blockade:** kein Rasterizer in `archive_search --pdf-image`; kein API-PDF der 1985er.
-- **Braucht:** Rasterizer-Modus in `archive_search --pdf-image` **oder** NTRS Document-Inquiry
-  (`sti.nasa.gov/doc-inquiry/?DocID=19850019987`, im Citation-HTML verlinkt) — Dritt-Akt,
-  Operator-Hand.
+- **Braucht:** Rasterizer-Modus in `archive_search --pdf-image` (eigener Weg) **oder** NTRS
+  Document-Inquiry (`sti.nasa.gov/doc-inquiry/?DocID=19850019987`, im Citation-HTML
+  verlinkt) — der Dritt-Akt liegt in Future's Operator-Queue.
 
 ### matrix-rotor — Muster (externer Runner-Shutdown)
 - **Status:** wartend | **Bindung:** eigen
