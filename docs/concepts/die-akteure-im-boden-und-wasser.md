@@ -2,7 +2,7 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: 3bfb0c7a98918635421ce12a72e5bcda9ac8cb7453ac9d79b8171f065e542b65
+  sha256: 5d6464cd5e555eb5fff4e0426809b45657010bc6e65426b1a894ace78159a7ce
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
@@ -82,7 +82,7 @@ auf die Erde.
 | Grundwasser-Brunnen (poröelastisch) | Wasser im Boden | offen (USGS) |
 | GNSS-Station (Bodenversatz) | em | RINEX steht |
 | Hydrophon (NRS) | akustisch im Wasser | gehalten |
-| Gravimeter | gravity | pending (SFTP) |
+| Gravimeter | gravity | pending (IGETS-SFTP `igetsftp.gfz.de`, Zugang `IGETS_USER`/`IGETS_PASS`; Quelle+Compiler registriert) |
 | Radon / Geochemie (Vorläufer) | Luft im Boden | kontestiert, `pending` |
 
 ## Die Matrix quer über die Domänen

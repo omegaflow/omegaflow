@@ -200,8 +200,9 @@ pub fn nearest_cf4_vpec_m_s(
 
 pub fn cosmicflows_vpec_m_s(ra_deg: f64, dec_deg: f64) -> Option<f64> {
     static CATALOG: OnceLock<Option<Vec<Cf4Entry>>> = OnceLock::new();
-    let entries = CATALOG
-        .get_or_init(|| fetch_raw(COSMICFLOWS_CDN_URL, None, &[]).map(|body| parse_cosmicflows_cf4(&body)));
+    let entries = CATALOG.get_or_init(|| {
+        fetch_raw(COSMICFLOWS_CDN_URL, None, &[]).map(|body| parse_cosmicflows_cf4(&body))
+    });
     entries
         .as_deref()
         .and_then(|e| nearest_cf4_vpec_m_s(e, ra_deg, dec_deg, COSMICFLOWS_MATCH_RADIUS_ARCSEC))
