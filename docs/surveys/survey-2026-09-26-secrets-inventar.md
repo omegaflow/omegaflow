@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 9bbaa6a9676f5c283f7348a83aa817ca8dfa9b7cc8c3db62420e572f73ca1a66
+  sha256: 474f0e8b78434c1613c1f18b71e54ea25bb4a438960402aaaf3805e61c1746e5
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)
@@ -82,8 +82,9 @@ die „6" zählten die Lebendquellen, nicht die Namen). Die Quellen sind disponi
   (`.github/workflows/gosat-cdn.yml:29-30`; `gosat_tanso3_compiler.rs`).
 - **behalten als Vorrat — Quelle registriert, kein Code-Leser:** `IGETS2_USER`/
   `IGETS2_PASS` (`phi/sources.φ` `igets`, anonymer Bezug).
-- **entfernen — Quelle declined/descoped oder überholt:** `GFW_PASS`, `MOVEBANK_PASS`,
-  `MOVEBANK_TOKEN`, `RUBIN_PASS`, sowie `BABAMUL_KAFKA_PASSWORD`/
+- **entfernt (2026-09-27) — Quelle declined/descoped oder überholt:** `GFW_PASS`,
+  `MOVEBANK_PASS`, `MOVEBANK_TOKEN`, `RUBIN_PASS`, sowie `BABAMUL_KAFKA_PASSWORD`/
   `BABAMUL_KAFKA_USERNAME`/`BABAMUL_PASSWORD` (überholt durch `BABAMUL_API_TOKEN`,
-  `babamul_compiler.rs:65`). Vollzug (`gh secret delete` im Repo-Setting) ist der
-  Konto-Akt, nicht diese Messung.
+  `babamul_compiler.rs:65`) aus `.secrets.local` gelöscht (Mycelium-Folge 181;
+  `sgrep` belegt keinen Code-Leser). Die entsprechenden GH-Repo-Secrets
+  (`gh secret delete`) bleiben der Konto-Akt des Operators.
