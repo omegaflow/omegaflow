@@ -3781,6 +3781,7 @@ pub fn main_flow() {
                     | "ogimet_synop"
                     | "nohrsc_snowfall"
                     | "gosat_tanso3"
+                    | "esacci_sst_l4_cdr3"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

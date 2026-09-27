@@ -9483,6 +9483,53 @@ fn gosat_tanso3_register_field_matches_component_name() {
 }
 
 #[test]
+fn esacci_sst_geo_series_roundtrip_and_component_name() {
+    let recs = vec![
+        crate::geo::GeoRec {
+            t: 946_728_000.0,
+            lat: 45.0,
+            lon: 10.0,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 291.4,
+            comp: crate::geo::COMP_ESACCI_SST,
+            station: 0,
+        },
+        crate::geo::GeoRec {
+            t: 946_728_100.0,
+            lat: -30.0,
+            lon: 120.0,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 273.15,
+            comp: crate::geo::COMP_ESACCI_SST,
+            station: 0,
+        },
+    ];
+    let magic = crate::geo::magic_of("esacci_sst_l4_cdr3")
+        .expect("the esacci_sst_l4_cdr3 format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("esacci_sst_l4_cdr3", &bytes)
+        .expect("esacci_sst_l4_cdr3 bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].val, 291.4);
+    assert_eq!(parsed[1].lat, -30.0);
+    assert_eq!(
+        super::extract::geo_series_component_name(
+            "esacci_sst_l4_cdr3",
+            crate::geo::COMP_ESACCI_SST
+        ),
+        Some("esacci_sst_l4_cdr3")
+    );
+    assert_eq!(
+        crate::geo::comp_max("esacci_sst_l4_cdr3"),
+        Some(crate::geo::COMP_ESACCI_SST)
+    );
+}
+
+#[test]
 fn lis_otd_geo_series_roundtrip_and_component_name() {
     let recs = vec![crate::geo::GeoRec {
         t: -148_800_000.0,
