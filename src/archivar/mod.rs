@@ -132,7 +132,6 @@ pub mod regrid;
 pub mod rinex;
 pub mod rixs;
 pub mod rpw;
-pub mod rx100;
 pub mod s2event;
 pub mod session;
 pub mod sexagesimal;

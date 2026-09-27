@@ -3,7 +3,7 @@
   session: River-Folge 46
   class: handover
   date: 2026-09-27
-  sha256: 9cb28770f84bdb79970ea7bb9ea2cbdc043157679ea3b910e464f10c5fb181d6
+  sha256: af5ef505563f8df0d79995e7c286296a63b719c6e61d582a4eb9dab003496e05
   status: live
 -->
 # Handover — River-Folge 46 (2026-09-27)
@@ -54,20 +54,6 @@ Diese Session konsumierte `handover-2026-09-27-river-folge45.md` (nach `archiv/`
 - **Lage:** (gemessen 2026-09-27 via `sread` + `omega_sh sha` + `cargo run … export_latex -- --check`) die sechs AGU-Lücken sind **geschlossen**: Key Points (`gic-causal-driver.md:19`), Plain Language Summary (`:25`), Open Research mit Data- + Software-Availability (`:485`), COI (`:505`), Acknowledgements (`:509`); die frühere „FEHLT"-Liste im Auftrag war ungemessen und widerlegt. Provider-URLs (SWPC/CDAWeb/INTERMAGNET, je HTTP 200 via `archive_search --verdict`) + Software-Repo-URL (`github.com/omegaflow/omegaflow`) eingetragen; 6 Gutachter-Kandidaten mit Affiliation/E-Mail/ORCID vorbereitet (`state/paper/gic-gutachter-2026-09-27.md`, privat); Auftrag auf den gemessenen Stand gezogen (`auftrag-gic-einreichung.md`, sha `d2ecfbac…`); `export_latex --check` für `gic-causal-driver` grün.
 - **Blockade:** keine (autonome Vorbereitung abgeschlossen).
 - **Braucht:** Operator-Wort; Reihenfolge steht in Future-Queue #10 (anonymisierte Gegenlesung) → #11 (GEMS-Einreichung + ESSOAr, Operator-Hand). Kein Send durch die Maschine.
-
-### clippy `-D warnings` — River-Dateien (geheilt, CI-Bestätigung offen)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ci-check`-Lauf `36324738298` am HEAD `e376f73b0` lesbar.
-- **Lage:** (gemessen 2026-09-27 via `cargo check` + `ci_manage view 36324738298`) neun Stellen geheilt; `cargo check` 0 Fehler/0 Warnungen; der Lauf steht `pending` (created 14:06:46Z, noch keine conclusion).
-- **Blockade:** kein lokales clippy; der Lauf läuft/queued.
-- **Braucht:** `ci_manage log 36324738298` — clippy-Block grün, sonst die Reststellen heilen.
-
-### RX100-Code entfernen (Quelle zurückgezogen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** sofort.
-- **Lage:** (gemessen 2026-09-27 via `git log -1 -- <f>`) Operator-Wort: RX100 war nur ein Gedanke. Die Quelle ist aus `phi/sources.φ`/`phi/harvest.φ` entfernt und als `decline operator-withdrawn` in `phi/declined_sources.φ` registriert; das CDN-Asset ist gelöscht. Der Code steht noch: `src/archivar/rx100.rs`, `tools/harvest/src/bin/rx100_compiler.rs`, Referenzen in `src/archivar/extract.rs` (`series_rows`, `series_component_name`), `src/archivar/main_flow.rs`, `src/archivar/mod.rs`, Tests.
-- **Blockade:** keine.
-- **Braucht:** `src/archivar/rx100.rs` + `tools/harvest/src/bin/rx100_compiler.rs` löschen, die `mod.rs`-Deklaration + die extract/main_flow-Referenzen + die rx100-Tests entfernen; `cargo check` 0/0.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
