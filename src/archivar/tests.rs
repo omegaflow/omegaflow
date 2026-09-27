@@ -2520,23 +2520,56 @@ fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
     let sources = vec![src];
     let empty: HashMap<String, PresenceSample> = HashMap::new();
     assert_eq!(
-        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_map, now, None, &ledger),
+        super::raw_presence_gate(
+            0,
+            &sources,
+            &empty,
+            super::PresenceGateCtx {
+                slot: &slot,
+                body_ephemerides: &eph_map,
+                now,
+                median_fetch: None,
+                refusal_ledger: &ledger,
+            }
+        ),
         Some((0.0, 0.0, 0.0)),
         "the resting presence admits the sun-barycenter source at the SSB — the cone carries the fetch"
     );
     let fieldless = source_fixture("lightcurve", vec![]);
     let sources = vec![fieldless];
     assert!(
-        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_map, now, None, &ledger)
-            .is_none(),
+        super::raw_presence_gate(
+            0,
+            &sources,
+            &empty,
+            super::PresenceGateCtx {
+                slot: &slot,
+                body_ephemerides: &eph_map,
+                now,
+                median_fetch: None,
+                refusal_ledger: &ledger,
+            }
+        )
+        .is_none(),
         "a source without field lines stays refused even with a presence — no reach, no fetch"
     );
     let netcdf_src = source_fixture("netcdf", vec![Extract::Field(field_fixture("x", 60.0))]);
     let sources = vec![netcdf_src];
     let eph_empty: HashMap<String, BodyEphemeris> = HashMap::new();
     assert!(
-        super::raw_presence_gate(0, &sources, &empty, &slot, &eph_empty, now, None, &ledger)
-            .is_none(),
+        super::raw_presence_gate(
+            0,
+            &sources,
+            &empty,
+            super::PresenceGateCtx {
+                slot: &slot,
+                body_ephemerides: &eph_empty,
+                now,
+                median_fetch: None,
+                refusal_ledger: &ledger,
+            }
+        )
+        .is_none(),
         "the resting presence stands, but the sun barycenter is unresolvable without an ephemeris — no position, no fetch"
     );
 }
