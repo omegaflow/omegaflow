@@ -37,7 +37,9 @@ Messung; die Droh-Sprache ersetzt den Schritt nicht. Der Planungs-Pass legt
 Akt am Gegenüber bleibt benannt (die Vorbereitung eines `blockiert`/`wartend`-Punkts
 bis zur Kante wird dispatcht wie jeder Schritt). Gibt es
 keinen Schritt zur Kante, sagt die Session das. Jeder Punkt trägt seinen
-Status-Tag (`wartend` | `operator-gebunden` | `blockiert` | `termin`).
+Status-Tag (`wartend` | `blockiert` | `termin`); ein Operator-Akt trägt in einer
+Linien-Übergabe keinen Status — er lebt in Futures Operator-Queue
+(No-referral, Aufenthalt = Eigentum).
 
 **Vorbereitung ≠ Akt (Operator-Wort 2026-09-24).** Ein `operator-gebundener`
 Punkt wird **immer** in zwei Zeilen getrennt geführt, nie in einer: die
@@ -142,7 +144,7 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 ## Offen (aufgeschlüsselt)
 
 ### <Punkt>
-- **Status:** <wartend | operator-gebunden | blockiert | termin> | **Bindung:** <eigen | linie:<name> | operator | dritter | termin:<datum>>
+- **Status:** <wartend | blockiert | termin> | **Bindung:** <eigen | termin:<datum>>
 - **Trigger:** <das externe Ereignis, Datum, Operator-Wort oder der Lauf, dessen Eintreffen den Punkt kippt>
 - **Lage:** <der Zustand, gemessen — mit Messstempel: (gemessen <Datum/Zeit> via <Werkzeug/Quelle>)>
 - **Blockade:** <woran es hängt — oder „keine">
