@@ -45,6 +45,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
     SourceConfig {
         ttl: 3600,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -631,6 +632,7 @@ fn test_render_source_url_substitutions() {
     let src = SourceConfig {
         ttl: 100,
         url: "https://example.com?sstr={target}&from={catalog}".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "body_test".into(),
             lat: 0.0,
@@ -904,6 +906,7 @@ fn test_post_body_rendering() {
     let src = SourceConfig {
         ttl: 100,
         url: "https://earth-search.aws.element84.com/v0/search".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "body_test".into(),
             lat: 0.0,
@@ -969,6 +972,7 @@ fn test_csv_zip_post_body_resolves_secret() {
         ttl: 100,
         url: "https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip"
             .into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "body_test".into(),
             lat: 0.0,
@@ -1080,6 +1084,7 @@ fn test_celestial_map_redshift_distance() {
     let src = SourceConfig {
         ttl: 100,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1175,6 +1180,7 @@ fn test_extract_csv_zip_end_to_end() {
     let src = SourceConfig {
         ttl: 100,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1467,6 +1473,7 @@ fn test_extract_cmap_dist_scale_kpc() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1555,6 +1562,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1638,6 +1646,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1718,6 +1727,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1806,6 +1816,7 @@ fn test_extract_cmap_pm_radvel_plx() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -1926,6 +1937,7 @@ fn test_extract_cmap_no_distance_skipped() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -2003,6 +2015,7 @@ fn test_extract_cmap_null_dist_skipped() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -2170,6 +2183,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -2833,6 +2847,7 @@ fn test_parse_station_entries() {
     let src = SourceConfig {
         ttl: 300,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -2884,6 +2899,7 @@ fn test_parse_station_entries_flatten_filter() {
     let src = SourceConfig {
         ttl: 300,
         url: "https://example.com/x".into(),
+        origin: None,
         frame: Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -3910,6 +3926,7 @@ fn test_erddap_argo_map_extract() {
     let src = SourceConfig {
         ttl: 43200,
         url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "body_test".into(),
             lat: 0.0,
@@ -4673,6 +4690,7 @@ fn test_anchor_body_agnostic() {
     let src = super::SourceConfig {
         ttl: 3600,
         url: "https://example.com".into(),
+        origin: None,
         frame,
         format: "json".into(),
         extracts: vec![Extract::Field(FieldConfig {
@@ -4828,6 +4846,7 @@ fn test_anchor_applies_declared_unit() {
     let src = super::SourceConfig {
         ttl: 3600,
         url: "https://example.com".into(),
+        origin: None,
         frame,
         format: "json".into(),
         extracts: vec![],
@@ -7243,6 +7262,7 @@ fn test_diagnose_no_samples() {
     let base = super::SourceConfig {
         ttl: 60,
         url: "https://example.com/q".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -7461,6 +7481,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
     let src = super::SourceConfig {
         ttl: 10,
         url: "https://api.wheretheiss.at/v1/satellites/25544".into(),
+        origin: None,
         frame: super::Frame::Barycenter {
             body_name: "earth".into(),
             scale: 1.0,
@@ -7553,6 +7574,7 @@ fn test_map_vel_unit_and_tau_key_override() {
     let src = super::SourceConfig {
         ttl: 10,
         url: "https://example.org/flow".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -7808,6 +7830,7 @@ fn test_fold_directive_parse_and_extract() {
     let src = super::SourceConfig {
         ttl: 10,
         url: "https://example.org/f".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -7943,6 +7966,7 @@ fn test_keplermap_elements_to_icrs() {
     let mk_src = |a_key: &str, ma_key: &str, q_key: &str, tp_key: &str| super::SourceConfig {
         ttl: 10,
         url: "https://example.org/k".into(),
+        origin: None,
         frame: super::Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -8269,6 +8293,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
     let src = super::SourceConfig {
         ttl: 10,
         url: "https://example.org/f".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -8353,6 +8378,7 @@ fn test_flux_from_mag_manifests() {
     let src = super::SourceConfig {
         ttl: 10,
         url: "https://example.org/cat".into(),
+        origin: None,
         frame: super::Frame::Barycenter {
             body_name: "sun".into(),
             scale: 1.0,
@@ -8434,6 +8460,7 @@ fn test_map_lat_sign_lon_sign() {
     let src = SourceConfig {
         ttl: 3600,
         url: "https://example.com/fireball".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -8541,6 +8568,7 @@ fn test_mag_type_gating() {
     let src = super::SourceConfig {
         ttl: 60,
         url: "https://example.org/quake".into(),
+        origin: None,
         frame: super::Frame::Surface {
             body_name: "earth".into(),
             lat: 0.0,
@@ -10074,6 +10102,7 @@ fn fits_format_extracts_last_row() {
     let src = SourceConfig {
         ttl: 604800,
         url: "https://example.com/x.fits".into(),
+        origin: None,
         frame: Frame::Manifest,
         format: "fits".into(),
         extracts: vec![Extract::Last(fc, None)],
