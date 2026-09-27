@@ -3,7 +3,7 @@
   session: River-Folge 44
   class: handover
   date: 2026-09-27
-  sha256: 5df892a2e8f5d29610035b81fea9051a9c81490ec01c59db6063e4d24bea69b4
+  sha256: ef7b4ad1cdf5c886788b0691ba0cfc7b982e105f986bcd8ba0af1e7f09f60e99
   status: live
 -->
 # Handover — River-Folge 44 (2026-09-27)
@@ -23,6 +23,8 @@ Diese Session konsumierte `handover-2026-09-27-river-folge43.md` (nach `archiv/`
 - Geräte-Zugriff: vor jedem Zugriff fragen (adb/BT) | 2026-09-26 | Operator-Wort.
 - Harte-Läufe-LOCK aufgehoben | 2026-09-26 | Operator-Wort.
 - HTTPS ja | 2026-09-26 | Operator-Wort folge36.
+- „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session).
+- ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session).
 - vC 945 von Mantis Shrimp getrennt | 2026-09-26 | Operator-Wort folge36.
 - Einzelbefehle liefern | 2026-09-26 | Operator-Wort folge36.
 - „Du kannst" River-Folge 44 | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort.
