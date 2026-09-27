@@ -3,6 +3,9 @@ description: Consent + Ausführung — wechselt auf den line-Agenten (auto-best�
 agent: line
 ---
 
+Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
+damit die erlaubte Form am Punkt der Handlung steht.
+
 Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als
 `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die
 Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom.
