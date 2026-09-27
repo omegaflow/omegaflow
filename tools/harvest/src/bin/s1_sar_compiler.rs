@@ -639,8 +639,14 @@ fn write_bin(pixels: &[Pixel]) -> Vec<u8> {
     out.extend_from_slice(&(pixels.len() as u32).to_le_bytes());
     for p in pixels {
         let inc_meas = p.inc.filter(|v| v.is_finite() && *v > 0.0);
-        let inc = match inc_meas { Some(v) => v, None => 0.0 };
-        let present = match inc_meas { Some(_) => 1.0, None => 0.0 };
+        let inc = match inc_meas {
+            Some(v) => v,
+            None => 0.0,
+        };
+        let present = match inc_meas {
+            Some(_) => 1.0,
+            None => 0.0,
+        };
         for v in [p.lon, p.lat, p.post, p.vor, p.db, inc, present] {
             out.extend_from_slice(&v.to_le_bytes());
         }

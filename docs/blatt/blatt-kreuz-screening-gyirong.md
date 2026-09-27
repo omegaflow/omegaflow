@@ -68,8 +68,10 @@ bedingte Pfeile (cTE > mean+2σ), getragen von Druck/Feuchte/Strahlung
 (Wasserdampf- und Druckkanäle — der synoptische Zyklus jenseits des Tagesgangs).
 Für die Flutfrage ist das Verdikt `gemessen`: **kein lokaler Kanal treibt den
 Niederschlag direkt**; der Niederschlag folgt dem gemeinsamen Zyklus. Die
-Richtungskorrektur ist eingearbeitet; ein offener Baustein bleibt die
-räumliche Kopplung (Rasuwa→Gyirong, siehe Kollab-Blatt).
+Richtungskorrektur ist eingearbeitet. Die räumliche Kopplung (Rasuwa→Gyirong)
+ist gemessen (2026-09-27, Run 36278754294): nach Konditionierung auf den
+geteilten Tagesgang (gyirong temperature_2m) überlebt **eine** Zelle marginal —
+`rasuwa_temperature_2m → gyirong_precipitation` Lag 6 (cTE 0.0027 > 0.0026).
 
 ## 1. Methode
 
@@ -198,6 +200,8 @@ Tagesgang/synoptischen Zyklus hinaus** (0 bedingte Pfeile in
 `precipitation`/`rain`). Umgekehrt ist Regen als Quelle auf die
 Einstrahlungs-Kanäle (Blockierung) `gemessen` (cTE 0.081–0.089). Ein
 residualer synoptischer Moisture-/Druck-Kanal bleibt nach Tagesgang-
-Konditionierung bestehen (§3.4). Offener Baustein: räumliche Kopplung
-(Rasuwa→Gyirong) — im Blatt `blatt-kreuz-screening-kollab.md`, dessen Pfeile
-noch die invertierte Richtungskonvention tragen und zu korrigieren sind.
+Konditionierung bestehen (§3.4). Die räumliche Kopplung (Rasuwa→Gyirong) ist
+gemessen (2026-09-27, Run 36278754294, 6 Serien/6 Paare, konditioniert auf
+gyirong temperature_2m): eine Zelle überlebt marginal —
+`rasuwa_temperature_2m → gyirong_precipitation` Lag 6 (cTE 0.0027 > 0.0026);
+Richtungs-Caveat wie im Kollab-Blatt (gespiegelte `TE(a→b)`-Spalte).
