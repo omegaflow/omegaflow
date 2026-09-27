@@ -3,7 +3,7 @@
   session: Mountain-Folge 186
   class: handover
   date: 2026-09-27
-  sha256: 8594e899c483573898c43567569d9ae975f7a351fe2c48e125b86224b40d9fec
+  sha256: 450566b039fdf12778538e149027f30b5dd4f351a3d61f708f6e33690b8d0d9d
   status: live
 -->
 # Handover — Mountain-Folge 186 (2026-09-27)
@@ -32,17 +32,6 @@ Wort | Datum | Quelle
 - **Blockade:** Token fehlt.
 - **Braucht:** mit dem Token den echten ByParams-Job fahren; scheitern Poll/Fetch,
   Token an `http_get`/`fetch_body` ergänzen.
-
-### Fink-Per-Objekt-Lichtkurven — Reader-Erweiterung
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** nächster Bau-Augenblick (Schema gemessen).
-- **Lage:** (gemessen 2026-09-27 via `archive_search`/`sfetch`) Konus lebt als Zeuge
-  (`phi/witnesses.φ:10`); echter `diaObjectId` 314002968168367863 via conesearch
-  (ra 55.0, dec −30.0, r 3600); `GET /api/v1/sources?diaObjectId=…` HTTP 200, 3602 B,
-  135 Keys (`r:`/`f:`/`xm:`); `GET /api/v1/fp?diaObjectId=…` HTTP 200, `[]`.
-- **Blockade:** keine.
-- **Braucht:** `tools/measure/src/weberin/fink_alerce.rs` um die Per-Objekt-Route
-  erweitern (Schema liegt vor); Alt-Host `dead` (`phi/dead_sources.φ:143`).
 
 ## An Mycelium (Register-pending, aus Mountain-Feder)
 
