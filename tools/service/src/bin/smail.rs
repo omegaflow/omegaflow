@@ -110,14 +110,15 @@ fn main() {
         eprintln!("{}", reason);
         std::process::exit(2);
     }
-    let payload = build_payload(&to, &from, &subject, &text, html_body.as_deref(), &cc);
+    let sent_text = strip_quellen(&text);
+    let payload = build_payload(&to, &from, &subject, &sent_text, html_body.as_deref(), &cc);
     if !will_send {
         println!("dry-run — nothing sent (add --send to send)");
         println!("to: {}", to);
         println!("from: {}", from);
         println!("subject: {}", subject);
         println!("cc: {}", cc.join(", "));
-        println!("text bytes: {}", text.len());
+        println!("text bytes: {}", sent_text.len());
         println!("payload: {}", payload);
         return;
     }
@@ -129,7 +130,7 @@ fn main() {
         }
     };
     let resp = send(&token, &payload);
-    record_sent(&from, &to, &subject, &resp, text.len());
+    record_sent(&from, &to, &subject, &resp, sent_text.len());
     println!("{}", resp);
 }
 
@@ -342,6 +343,18 @@ fn gate(body: &str) -> Verdict {
             Verdict { rows, refuse }
         }
     }
+}
+
+fn strip_quellen(body: &str) -> String {
+    let mut out = String::new();
+    for line in body.lines() {
+        if line.trim_start().starts_with("QUELLEN:") {
+            break;
+        }
+        out.push_str(line);
+        out.push('\n');
+    }
+    out.trim_end().to_string()
 }
 
 fn find_quellen(body: &str) -> Option<Quellen> {
@@ -569,6 +582,18 @@ mod tests {
         assert_eq!(v.rows.len(), 1);
         assert_eq!(v.rows[0].source, "/no/such/file.rs:1");
         assert!(!v.rows[0].resolves);
+    }
+
+    #[test]
+    fn strip_removes_the_quellen_block_from_the_sent_text() {
+        let body = "Dear team,\n\nbody text.\n\nQUELLEN:\nclaim → src/bin/smail.rs:1\n";
+        assert_eq!(strip_quellen(body), "Dear team,\n\nbody text.");
+    }
+
+    #[test]
+    fn strip_removes_a_quellen_none_marker() {
+        let body = "hello\nQUELLEN: none\n";
+        assert_eq!(strip_quellen(body), "hello");
     }
 
     #[test]
