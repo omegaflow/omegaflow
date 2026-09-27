@@ -173,6 +173,13 @@ pub const COMP_HFR_U: u32 = 1;
 pub const COMP_HFR_V: u32 = 2;
 pub const COMP_HFR_MAX: u32 = 2;
 
+pub const COMP_IAGA_X: u32 = 1;
+pub const COMP_IAGA_Y: u32 = 2;
+pub const COMP_IAGA_Z: u32 = 3;
+pub const COMP_IAGA_F: u32 = 4;
+pub const COMP_IAGA_H: u32 = 5;
+pub const COMP_IAGA_D: u32 = 6;
+
 pub const COMP_TOAR_O3: u32 = 1;
 pub const COMP_TOAR_MAX: u32 = 1;
 
