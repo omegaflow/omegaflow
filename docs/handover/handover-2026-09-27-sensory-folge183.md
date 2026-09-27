@@ -3,7 +3,7 @@
   session: Sensory-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: 4eee62a827f036da60c09bc6ced7ce9687ed30a3ff2d857ba118f7a07db714f8
+  sha256: 0b95a5990d479066f3679d7f02af687e5b290abe01b923ce72eedf8546db08a5
   status: live
 -->
 # Handover — Sensory-Folge 183 (2026-09-27)
@@ -22,19 +22,14 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge182.md` (nach `archi
 
 ## Abarbeitbar (eigen, dispatchbar)
 
+Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/zustand/wartend.φ`.
+
 ### #5 Seismik — IGETS (Ernte dispatcht)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Lauf `36284373510` endet
-- **Lage:** (gemessen 2026-09-27) Workflow `igets-cdn.yml` (getrackt) dispatcht →
-  Lauf `36284373510` **queued** (2026-09-27T01:03:32Z); ein früherer Lauf
-  `36282004600` war success @`8f0251ab`, nicht am HEAD. Lokaler Compiler targetiert
-  gebaut, SFTP-Zugang grün: `--list-stations` = **47 Level2-Träger** (Brussels, Conrad,
-  … Syowa). Die in folge182 genannten **56** sind die rohen SFTP-Verzeichnisse — die
-  Differenz ist der Level2-Filter (`igets_compiler.rs:414-420`); `--level` ∈ {1,2,3},
-  Default = kein Filter (alle Level).
+- **Lage:** (gemessen 2026-09-27 via `ci_manage`) Lauf `36284373510` **success** (01:03). Workflow `igets-cdn.yml` (getrackt); `--list-stations` = **47 Level2-Träger**; Level2-Filter `igets_compiler.rs:414-420`.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage view 36284373510`; bei success sha256 in den `igets`-Block
-  `phi/sources.φ` (Zeile driften — Zeilennummer nicht eintragen).
+- **Braucht:** sha256 in den `igets`-Block `phi/sources.φ` nachtragen (Zeile driften — Zeilennummer nicht eintragen).
 
 ### paper-check — terminologie-Header-sha (behoben; CI-Verifikation offen)
 - **Status:** eigen | **Bindung:** eigen
@@ -42,24 +37,24 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge182.md` (nach `archi
 - **Lage:** (gemessen 2026-09-27 via `export_latex --check`) `docs/paper/terminologie-der-gegenstroemung.md`
   Header-sha war veraltet — Body in `b30323daa` nach der Header-Setzung `b294ba4c5`
   geändert, ohne Nachziehen. Korrigiert: Header Zeile 5 `c4a98130…` → **`68c76aba…`**
-  (`omega_sh sha`). Lokal `export_latex --check <datei>` grün.
+  (`omega_sh sha`). Lokal `export_latex --check <datei>` grün. Ergänzt (gemessen 2026-09-27
+  via Browser/Job-Log `36302005511`): der nächste paper-check-Lauf ist rot am Gyirong-Blatt —
+  `docs/blatt/blatt-kreuz-screening-gyirong.md` Header-sha `205e3152…` ≠ Body `c610dd0e…`
+  („named difference, not silently fixed").
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log <run>` am nächsten paper-check-Lauf; grün = geschlossen.
+- **Braucht:** Gyirong-Header-sha nachziehen (`omega_sh sha`), dann paper-check-Lauf lesen.
 
 ### #6 Blatt-1-Bojen-Matrix — CI-Rotor (Rerun dispatcht)
 - **Status:** eigen (CI) | **Bindung:** eigen
 - **Trigger:** Attempt-2-Ergebnis von `36282378750`
-- **Lage:** (gemessen 2026-09-27) Run `36282378750` Attempt 1 rot = **exit 143
-  Runner-Shutdown** (transient, kein Assertion-Rot) → Rerun, **Attempt 2 queued**
-  (2026-09-27T01:03:31Z). Workflow `matrix-rotor.yml`: `cron "43 */6 * * *"`, Job-Timeout
-  350 min, Slice 5 h (`timeout … 18000`), State-Asset Release `matrix-state`
-  (`omegaflow_matrix_state.bin`, Warm-Boot geladen, `--clobber` zurückgeschrieben).
-  Der lokale Rotor läuft nicht (kein `omegaflow`-Prozess); `data/omegaflow_matrix_state.bin`
-  355 460 B (mtime 2026-09-26 23:33).
+- **Lage:** (gemessen 2026-09-27 via Browser/GH-API) Run `36282378750` **Attempt 2 failed**
+  (01:03→01:05, exit 143) UND der Schedule-Lauf `36298095390` failed (05:45→05:47, exit 143)
+  — 3× 143 in Folge: Muster, kein Einzel-Transient. Workflow `matrix-rotor.yml`:
+  `cron "43 */6 * * *"`, Job-Timeout 350 min, Slice 5 h (`timeout … 18000`),
+  State-Asset Release `matrix-state` (`omegaflow_matrix_state.bin`, Warm-Boot geladen,
+  `--clobber` zurückgeschrieben).
 - **Blockade:** keine.
-- **Braucht:** `ci_manage view 36282378750` (Attempt 2). Lokaler Rotor bleibt
-  Operator-Hand (`setsid ./bin/matrix_watchdog.sh &`); beide Betriebsarten dürfen den
-  State nicht zugleich schreiben.
+- **Braucht:** Ursache des 143 klären (Slice/Hidden-Run/State-Write) **vor** weiterem Re-Run.
 
 ### probe-front-dark-matter — GPS-Timing / DSN-810-005 (Quellen-Gap)
 - **Status:** eigen | **Bindung:** eigen
@@ -86,52 +81,13 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge182.md` (nach `archi
   Verifikationsprotokoll aus `docs/concepts/archivar-mathematikerin.md` über die
   Format-Module fahren.
 
-## operator-gebunden (nur der Akt; Vorbereitung an der Kante)
-
-- **RR-Kanal / Beat-to-beat** | operator | Trigger: Förderung gewährt | Lage: BLE-HR ohne
-  RR; FIT `nn=0` | Braucht: Brustgurt (Polar H10/HRM-Dual) → `perm_tone_probe`.
-- **Weberin-Quellen HAWC** | operator | Trigger: `OMEGAFLOW_CA_BUNDLE` gesetzt |
-  Braucht: HAWC-Fetch mit lokalem 4-Zert-Bundle; CI-Secret separat.
-- **Beat-Arbitrierung** | operator | Trigger: zweiter Beat-Kanal (Gurt) | Braucht:
-  `OMEGAFLOW_HIDDEN=1`-Lauf → genau eine `beat source:`-Zeile.
-- **Live-Sensor-Cluster** | LOCK | Trigger: Operator-Wort hebt LOCK | Braucht: BOM
-  bestellen (inkl. H2).
-- **ESP32-Puls-Knoten** | LOCK | Trigger: Operator-Wort hebt LOCK | Wort: ESP32 separat
-  als eigener LOCK | 2026-09-25 | Operator (Session).
-
 ## Termin
 
 - **JUICE-Erdpassage 28./29.09.2026** | termin:2026-09-29 | Trigger: 28./29.09. | Lage
   (gemessen 2026-09-27): die Kp-Route ist in `phi/sources.φ` **wiederhergestellt**
   (folge182) — der frühere Riss ist aufgelöst | Braucht: Epoche ernten.
-- **Gaia DR4 + Europa-Clipper** | termin:2026-12-02 | Trigger: 02./03.12. | Braucht:
+- **Europa-Clipper** | termin:2026-12-02 | Trigger: 02./03.12. | Braucht:
   Epoche ernten.
-
-## Wartend / blockiert (mit Trigger)
-
-- **#3 O1 DEMETER/CDPP** | wartend | dritter | Trigger: CDPP-Antwort auf die Mail
-  (2026-09-27) | Lage: Mail in Flug (`code@omegaflow.space` → `cdpp@cnes.fr`, DEMETER
-  Order 18387); metalink gesichert (`data/cdpp-archive.cnes.fr/metalink_18387.xml`,
-  97 078 URLs); die File-URLs weist der F5-WAF ab | Blockade: Quellenseite | Braucht:
-  CDPP-Kontakt (ein neuer Order wiederholt nur den fehlschlagenden Lauf).
-- **M2c — Rust-ZNSP-Host BL808/H2** | wartend | dritter | Trigger: Ox64 angekommen
-  (`LZ473049629CN`) | Blockade: Carrier.
-- **Das eine Instrument — Anomalie** | blockiert | dritter | Trigger: zweiter Messkanal
-  (VLBI-Beacon) | Blockade: kein Instrument misst den vollen Pionier-Phasenraum.
-- **LAIC/Causal-Arrow (CSES)** | wartend | dritter | Trigger: 2026-10-02 | Lage:
-  ASI-SSDC-Weg gemessen, PI-Berechtigung offen.
-
-## Extern (Dritter)
-
-- **Postfach** | wartend | Trigger: neuer Eingang | Lage: `state/mail/mail_ledger.φ`
-  **169 Zeilen** (gemessen 2026-09-27, `wc`); jüngster Eingang = DEMETER-Send in Flug,
-  davor 5× Meta-Login-Codes + OpenAlex magic-link (2026-09-26) | Braucht: `smail_recv`/Ledger
-  bei Trigger.
-- **Ox64-Lieferung** | termin (Carrier) | Trigger: Ankunft (`LZ473049629CN`) | Braucht:
-  quittieren → M2c.
-- **BGR-Matched-Filter (Tonga)** | dritter (vDEC) | Trigger: vDEC-Zugang | Lage: vDEC
-  descoped → BGR-Weg neu bewerten | Braucht: Arrival messen.
-- **DSN-Briefe in Flug** | dritter | Trigger: DSN-Antwort | Braucht: quittieren.
 
 ## Träger-Zeilen (Orphan-Faltung)
 
@@ -217,9 +173,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 Der Zustand-Ledger `state/zustand/external-state.md` (CI-Status- + Postfach-Zeile)
 ist gitignored (`.gitignore:137 /state/`) — lokal fortgeschrieben, nicht committet.
 
-Fremd (nicht committen, nicht überschreiben): `docs/auftrag/auftrag-flyby2-kette.md`
-(uncommittete River-Arbeit), `docs/handover/handover-2026-09-27-river-folge41.md`
-(Träger-Eintrag des yu-tong-Punkts, s. u.), `bin/relay-tls-1620.stunnel.conf`.
-
-Der `paper-check`-Riss `yu-tong-fang-hu-2022-…` (title=94 > 75) ist **River-Werk**
-(Commit `314fea2b5`); als Punkt in River-Folge 41 getragen, nicht in Sensory gefixt.
+Der frühere `yu-tong`-Riss (title=94 > 75, River-Werk `314fea2b5`) ist im aktuellen
+paper-check-Lauf nicht mehr rot (gemessen 2026-09-27: nur Gyirong) — kein offener Punkt.

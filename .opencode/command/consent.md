@@ -10,8 +10,8 @@ Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschl
 Dispatch flash-first — den billigsten Vertreter, dessen Profil den Job trägt; ein
 `max`-Agent nur für die harten Atome, nie für Routine. Benenne die lokalen Tools
 (`archive_search`, `sgrep`, `sfetch`) in der Delegation — nicht curl oder webfetch.
-Jede aktive Aufgabe ist zugleich ein Benchmark (flash gegen pro/max, der Sieger als
-Handover-Zeile).
+Benchmarks nur mit Operator-Wort oder gemessen falschem/unvollständigem flash-Ergebnis —
+Klassen mit gemessenem Sieger werden zitiert, nie verdoppelt (Modell-Politik, AGENTS.md).
 
 Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort — Commit und
 Push trägt `/commit`.
