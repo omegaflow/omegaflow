@@ -729,6 +729,9 @@ pub fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                     }
                     | Extract::ProfileMap {
                         arr_path, fields, ..
+                    }
+                    | Extract::EpnCore {
+                        arr_path, fields, ..
                     } => {
                         match arr_path.as_str() {
                             "" | "." => {
