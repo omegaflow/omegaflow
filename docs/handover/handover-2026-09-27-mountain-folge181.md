@@ -3,7 +3,7 @@
   session: Mountain-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: 589f731d715ffed1e2dea2e811714dd3124e9bcee6d5a6bcb65fa04acce23dbb
+  sha256: 5a7a31cdbbbdd4d6e269d979842ced23c08d4dca7a2ea9b872adc399f024c8ab
   status: live
 -->
 # Handover — Mountain-Folge 181 (2026-09-27)
@@ -17,7 +17,7 @@ aufgeschlüsselt: Status | Bindung / Trigger / Lage / Blockade / Braucht.
 
 ### CDN-Reconcile — Shard-Fix gebaut, Divergenz-Rest offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster `cdn-reconcile.yml`-Lauf (dispatcht) schreibt `docs/specs/cdn_reconciliation.json` neu.
+- **Trigger:** `cdn-reconcile.yml`-Lauf `36311386072` (dispatcht 2026-09-27) schreibt `docs/specs/cdn_reconciliation.json` neu.
 - **Lage:** (gemessen 2026-09-27 via `cargo check` + `gh api`) zweistufige
   MODIS-Shard-Hierarchie in `tools/register/src/bin/cdn_reconcile.rs`
   (`is_shard_of` + `sharded` über Manifest-Stem-Präfix) gebaut — Granule
