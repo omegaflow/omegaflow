@@ -571,6 +571,218 @@ pub fn build_netcdf4_channels(
     channels
 }
 
+pub fn build_netcdf4_volume(
+    src: &SourceConfig,
+    bytes: &[u8],
+) -> Option<(String, crate::archivar::volume::Volume)> {
+    use crate::archivar::volume::{Axis, AxisKind, Volume};
+    let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
+        match gunzip(bytes) {
+            Some(b) => b,
+            None => return None,
+        }
+    } else {
+        bytes.to_vec()
+    };
+    let file = match crate::archivar::hdf5::Hdf5File::parse(&bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf4 volume {}: {:?}", src.url, note);
+            return None;
+        }
+    };
+    let Some((value_key, lat_key, lon_key, depth_key, depth_scale, name)) =
+        src.extracts.iter().find_map(|e| match e {
+            Extract::Volume {
+                value_key,
+                lat_key,
+                lon_key,
+                depth_key,
+                depth_scale,
+                name,
+            } => Some((
+                value_key.clone(),
+                lat_key.clone(),
+                lon_key.clone(),
+                depth_key.clone(),
+                *depth_scale,
+                name.clone(),
+            )),
+            _ => None,
+        })
+    else {
+        eprintln!("netcdf4 volume {}: no volume extract declared", src.url);
+        return None;
+    };
+    let (_, ds, dt) = match file.dataset(&value_key) {
+        Ok(t) => t,
+        Err(note) => {
+            eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+            return None;
+        }
+    };
+    if ds.dims.len() == 4 {
+        eprintln!(
+            "netcdf4 volume {} {}: carries a time axis — the 4D series arm is pending",
+            src.url, value_key
+        );
+        return None;
+    }
+    if ds.dims.len() != 3 {
+        eprintln!(
+            "netcdf4 volume {} {}: {} dims — a static grid carries exactly three",
+            src.url,
+            value_key,
+            ds.dims.len()
+        );
+        return None;
+    }
+    let sd = [
+        ds.dims[0] as usize,
+        ds.dims[1] as usize,
+        ds.dims[2] as usize,
+    ];
+    if sd.iter().any(|&d| d == 0) {
+        eprintln!(
+            "netcdf4 volume {} {}: a dim carries zero cells",
+            src.url, value_key
+        );
+        return None;
+    }
+    let data_src: Vec<f32> = if dt.class == 1 && dt.size == 4 {
+        match file.read_f32_dataset(&value_key) {
+            Ok(v) => v,
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+                return None;
+            }
+        }
+    } else {
+        match file.read_f64_dataset(&value_key) {
+            Ok(v) => v.into_iter().map(|x| x as f32).collect(),
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, value_key, note);
+                return None;
+            }
+        }
+    };
+    if data_src.len() != sd[0] * sd[1] * sd[2] {
+        eprintln!(
+            "netcdf4 volume {} {}: {} cells declared, {} read",
+            src.url,
+            value_key,
+            sd[0] * sd[1] * sd[2],
+            data_src.len()
+        );
+        return None;
+    }
+    let read_axis = |key: &str, scale: f64| -> Option<(usize, Vec<f64>)> {
+        let dims = file.dims(key)?;
+        if dims.len() != 1 {
+            eprintln!(
+                "netcdf4 volume {} {}: the axis carries {} dims",
+                src.url,
+                key,
+                dims.len()
+            );
+            return None;
+        }
+        let len = dims[0] as usize;
+        let vals = match file.read_f64_dataset(key) {
+            Ok(v) => v,
+            Err(note) => {
+                eprintln!("netcdf4 volume {} {}: {:?}", src.url, key, note);
+                return None;
+            }
+        };
+        if vals.len() != len {
+            return None;
+        }
+        let scaled: Vec<f64> = vals.into_iter().map(|v| v * scale).collect();
+        if scaled.iter().any(|v| !v.is_finite()) {
+            eprintln!(
+                "netcdf4 volume {} {}: the axis carries a non-finite value",
+                src.url, key
+            );
+            return None;
+        }
+        Some((len, scaled))
+    };
+    let (depth_len, depth_vals) = read_axis(&depth_key, depth_scale)?;
+    let (lat_len, lat_vals) = read_axis(&lat_key, 1.0)?;
+    let (lon_len, lon_vals) = read_axis(&lon_key, 1.0)?;
+    let dim_of = |len: usize| -> Vec<usize> { (0..3).filter(|&i| sd[i] == len).collect() };
+    let (depth_cand, lat_cand, lon_cand) = (dim_of(depth_len), dim_of(lat_len), dim_of(lon_len));
+    if depth_cand.len() != 1 || lat_cand.len() != 1 || lon_cand.len() != 1 {
+        eprintln!(
+            "netcdf4 volume {}: axis lengths do not resolve one-to-one against the grid dims — refused",
+            src.url
+        );
+        return None;
+    }
+    let (depth_dim, lat_dim, lon_dim) = (depth_cand[0], lat_cand[0], lon_cand[0]);
+    if depth_dim == lat_dim || depth_dim == lon_dim || lat_dim == lon_dim {
+        eprintln!(
+            "netcdf4 volume {}: two named axes claim one grid dim — refused",
+            src.url
+        );
+        return None;
+    }
+    let axes = [
+        Axis {
+            kind: AxisKind::Explicit,
+            values: depth_vals,
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: lat_vals,
+        },
+        Axis {
+            kind: AxisKind::Explicit,
+            values: lon_vals,
+        },
+    ];
+    if !axes.iter().all(|a| a.is_strictly_monotonic()) {
+        eprintln!(
+            "netcdf4 volume {}: an axis is not strictly monotonic — refused",
+            src.url
+        );
+        return None;
+    }
+    let (nd, nla, nlo) = (sd[depth_dim], sd[lat_dim], sd[lon_dim]);
+    let cells = nd * nla * nlo;
+    let fill = file.attr_f64(&value_key, "_FillValue");
+    let mut data = Vec::with_capacity(cells);
+    let mut mask = vec![0u8; cells.div_ceil(8)];
+    let mut canon = [0usize; 3];
+    for dd in 0..nd {
+        canon[depth_dim] = dd;
+        for la in 0..nla {
+            canon[lat_dim] = la;
+            for lo in 0..nlo {
+                canon[lon_dim] = lo;
+                let si = (canon[0] * sd[1] + canon[1]) * sd[2] + canon[2];
+                let v = data_src[si];
+                let masked = !v.is_finite() || fill.is_some_and(|f| v == f as f32);
+                if masked {
+                    let ci = (dd * nla + la) * nlo + lo;
+                    mask[ci / 8] |= 1 << (ci % 8);
+                }
+                data.push(v);
+            }
+        }
+    }
+    Some((
+        name.clone(),
+        Volume {
+            dims: [nd as u32, nla as u32, nlo as u32],
+            axes,
+            data,
+            mask,
+        },
+    ))
+}
+
 pub fn build_opendap_channels(
     src: &SourceConfig,
     file: &crate::archivar::opendap::DapFile,

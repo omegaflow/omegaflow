@@ -1,4 +1,4 @@
-const MAGIC: [u8; 4] = [0xCF, 0x86, 0x0D, 0x01];
+const MAGIC: [u8; 4] = [0xCF, 0x86, 0x0D, 0x02];
 const HEADER_LEN: usize = 0x40;
 
 fn align16(p: usize) -> usize {
@@ -67,7 +67,7 @@ impl Axis {
         self.value_count(n) * 8
     }
 
-    fn is_strictly_monotonic(&self) -> bool {
+    pub fn is_strictly_monotonic(&self) -> bool {
         if self.values.len() <= 1 {
             return true;
         }
@@ -75,7 +75,6 @@ impl Axis {
         let desc = self.values.windows(2).all(|w| w[0] > w[1]);
         asc || desc
     }
-
     fn value_at(&self, i: usize) -> f64 {
         match self.kind {
             AxisKind::Uniform => self.values[0] + i as f64 * self.values[1],
@@ -152,6 +151,7 @@ pub struct Volume {
     pub dims: [u32; 3],
     pub axes: [Axis; 3],
     pub data: Vec<f32>,
+    pub mask: Vec<u8>,
 }
 
 impl Volume {
@@ -159,9 +159,20 @@ impl Volume {
         self.dims[0] as usize * self.dims[1] as usize * self.dims[2] as usize
     }
 
+    fn mask_len(&self) -> usize {
+        self.cells().div_ceil(8)
+    }
+
+    fn mask_bit(&self, idx: usize) -> bool {
+        self.mask[idx / 8] & (1 << (idx % 8)) != 0
+    }
+
+    fn cell_index(&self, d: usize, la: usize, lo: usize) -> usize {
+        (d * self.dims[1] as usize + la) * self.dims[2] as usize + lo
+    }
+
     fn cell(&self, d: usize, la: usize, lo: usize) -> f64 {
-        let idx = (d * self.dims[1] as usize + la) * self.dims[2] as usize + lo;
-        self.data[idx] as f64
+        self.data[self.cell_index(d, la, lo)] as f64
     }
 
     pub fn sample_at(&self, coord: [f64; 3]) -> Option<f64> {
@@ -171,6 +182,19 @@ impl Volume {
         let (i0, i1, t0) = bracket(f0, self.dims[0] as usize);
         let (j0, j1, t1) = bracket(f1, self.dims[1] as usize);
         let (k0, k1, t2) = bracket(f2, self.dims[2] as usize);
+        let corner = [
+            self.cell_index(i0, j0, k0),
+            self.cell_index(i0, j0, k1),
+            self.cell_index(i0, j1, k0),
+            self.cell_index(i0, j1, k1),
+            self.cell_index(i1, j0, k0),
+            self.cell_index(i1, j0, k1),
+            self.cell_index(i1, j1, k0),
+            self.cell_index(i1, j1, k1),
+        ];
+        if corner.iter().any(|&i| self.mask_bit(i)) {
+            return None;
+        }
         let c000 = self.cell(i0, j0, k0);
         let c001 = self.cell(i0, j0, k1);
         let c010 = self.cell(i0, j1, k0);
@@ -195,7 +219,9 @@ impl Volume {
         let axis_len =
             self.axes[0].byte_len(nd) + self.axes[1].byte_len(nla) + self.axes[2].byte_len(nlo);
         let data_offset = align16(HEADER_LEN + axis_len);
-        let mut buf = vec![0u8; data_offset + self.cells() * 4];
+        let mask_offset = align16(data_offset + self.cells() * 4);
+        let mask_len = self.mask_len();
+        let mut buf = vec![0u8; mask_offset + mask_len];
         buf[0..4].copy_from_slice(&MAGIC);
         buf[6] = self.axes[0].kind.to_u8();
         buf[7] = self.axes[1].kind.to_u8();
@@ -225,6 +251,8 @@ impl Volume {
             buf[p..p + 4].copy_from_slice(&v.to_le_bytes());
             p += 4;
         }
+        let n = self.mask.len().min(mask_len);
+        buf[mask_offset..mask_offset + n].copy_from_slice(&self.mask[..n]);
         let digest = crate::archivar::sha256::sha256_raw(&buf[HEADER_LEN..]);
         buf[0x18..0x38].copy_from_slice(&digest);
         buf
@@ -268,7 +296,9 @@ impl Volume {
         let cells = (nd as u64)
             .checked_mul(nla as u64)?
             .checked_mul(nlo as u64)?;
-        let expected = (data_offset as u64).checked_add(cells.checked_mul(4)?)?;
+        let mask_len = (cells as usize).div_ceil(8);
+        let mask_offset = align16(data_offset + (cells as usize).checked_mul(4)?);
+        let expected = (mask_offset as u64).checked_add(mask_len as u64)?;
         if bytes.len() as u64 != expected {
             return None;
         }
@@ -317,13 +347,17 @@ impl Volume {
             axes[i] = Some(axis);
         }
 
+        let mask = bytes[mask_offset..mask_offset + mask_len].to_vec();
         let mut data = Vec::with_capacity(cells as usize);
         let mut q = data_offset;
-        for _ in 0..cells {
+        for i in 0..cells as usize {
             let v = le_f32(bytes, q);
             q += 4;
             if !v.is_finite() {
-                return None;
+                let m = mask[i / 8] & (1 << (i % 8)) != 0;
+                if !m {
+                    return None;
+                }
             }
             data.push(v);
         }
@@ -336,6 +370,7 @@ impl Volume {
                 axes[2].take().unwrap(),
             ],
             data,
+            mask,
         })
     }
 }
@@ -371,6 +406,7 @@ mod tests {
             dims: [3, 2, 2],
             axes,
             data,
+            mask: vec![0; 2],
         }
     }
 
@@ -384,6 +420,7 @@ mod tests {
         for i in 0..12 {
             assert_eq!(back.data[i], v.data[i]);
         }
+        assert_eq!(back.mask, vec![0, 0]);
     }
 
     #[test]
@@ -437,5 +474,123 @@ mod tests {
         let mut bin = test_volume().write_bin();
         bin.push(0);
         assert!(Volume::read_bin(&bin).is_none());
+    }
+
+    #[test]
+    fn mask_round_trips_with_padded_cell() {
+        let mut v = test_volume();
+        v.data[5] = f32::NAN;
+        v.mask[0] |= 1 << 5;
+        let bin = v.write_bin();
+        let back = Volume::read_bin(&bin).unwrap();
+        assert!(back.data[5].is_nan());
+        assert!(back.mask_bit(5));
+        assert!(!back.mask_bit(4));
+        for i in 0..12 {
+            if i != 5 {
+                assert_eq!(back.data[i], v.data[i]);
+            }
+        }
+    }
+
+    #[test]
+    fn refuses_unmasked_non_finite() {
+        let mut v = test_volume();
+        v.data[7] = f32::INFINITY;
+        let bin = v.write_bin();
+        assert!(Volume::read_bin(&bin).is_none());
+    }
+
+    #[test]
+    fn refuses_old_magic() {
+        let mut bin = test_volume().write_bin();
+        bin[3] = 0x01;
+        assert!(Volume::read_bin(&bin).is_none());
+    }
+
+    #[test]
+    fn probe_over_a_masked_corner_is_absent() {
+        let mut v = test_volume();
+        v.mask[0] |= 1 << 0;
+        v.data[0] = f32::NAN;
+        assert!(v.sample_at([50.0, 0.5, 10.5]).is_none());
+        assert_eq!(
+            v.sample_at([100.0, 1.0, 10.0]).unwrap(),
+            v.cell(1, 1, 0),
+            "a node probe whose corners do not touch the masked cell stays present"
+        );
+    }
+
+    #[test]
+    fn masked_finite_fill_value_stays_absent_at_any_probe_distance() {
+        let mut v = test_volume();
+        v.mask[0] |= 1 << 3;
+        assert!(v.sample_at([50.0, 0.5, 10.5]).is_none());
+        assert!(v.sample_at([0.0, 0.0, 10.0]).is_none());
+    }
+
+    #[test]
+    fn axis_monotonicity_accepts_ascending_and_descending() {
+        assert!(
+            Axis {
+                kind: AxisKind::Explicit,
+                values: vec![0.0, 1.0, 2.0],
+            }
+            .is_strictly_monotonic()
+        );
+        assert!(
+            Axis {
+                kind: AxisKind::Explicit,
+                values: vec![200.0, 100.0, 0.0],
+            }
+            .is_strictly_monotonic()
+        );
+        assert!(
+            !Axis {
+                kind: AxisKind::Explicit,
+                values: vec![0.0, 0.0, 2.0],
+            }
+            .is_strictly_monotonic()
+        );
+        assert!(
+            !Axis {
+                kind: AxisKind::Explicit,
+                values: vec![0.0, 2.0, 1.0],
+            }
+            .is_strictly_monotonic()
+        );
+    }
+
+    #[test]
+    fn descending_axis_probe_matches_its_cell() {
+        let axes = [
+            Axis {
+                kind: AxisKind::Explicit,
+                values: vec![200.0, 100.0, 0.0],
+            },
+            Axis {
+                kind: AxisKind::Uniform,
+                values: vec![0.0, 1.0],
+            },
+            Axis {
+                kind: AxisKind::Uniform,
+                values: vec![10.0, 1.0],
+            },
+        ];
+        let mut data = Vec::new();
+        for d in 0..3 {
+            for la in 0..2 {
+                for lo in 0..2 {
+                    data.push((d * 100 + la * 10 + lo) as f32);
+                }
+            }
+        }
+        let v = Volume {
+            dims: [3, 2, 2],
+            axes,
+            data,
+            mask: vec![0; 2],
+        };
+        assert_eq!(v.sample_at([100.0, 1.0, 10.0]).unwrap(), v.cell(1, 1, 0));
     }
 }

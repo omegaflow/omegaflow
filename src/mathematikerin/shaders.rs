@@ -273,23 +273,29 @@ fn vol_bracket3(f: f32, n: u32) -> vec3f {
     return vec3f(f32(i), f32(i + 1u), fc - f32(i));
 }
 
-fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> f32 {
-    let h0 = vol * 10u;
+fn vol_mask_bit(mask_off: u32, idx: u32) -> bool {
+    let w = vol_head[mask_off + idx / 32u];
+    return (w & (1u << (idx % 32u))) != 0u;
+}
+
+fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> vec2f {
+    let h0 = vol * 11u;
     let data_off = vol_head[h0];
     let nd = vol_head[h0 + 1u];
     let nlat = vol_head[h0 + 2u];
     let nlon = vol_head[h0 + 3u];
+    let mask_off = vol_head[h0 + 10u];
     let f0 = vol_frac(vol_head[h0 + 4u], vol_head[h0 + 7u], nd, depth);
     if (f0 < 0.0) {
-        return 0.0;
+        return vec2f(0.0, 0.0);
     }
     let f1 = vol_frac(vol_head[h0 + 5u], vol_head[h0 + 8u], nlat, lat);
     if (f1 < 0.0) {
-        return 0.0;
+        return vec2f(0.0, 0.0);
     }
     let f2 = vol_frac(vol_head[h0 + 6u], vol_head[h0 + 9u], nlon, lon);
     if (f2 < 0.0) {
-        return 0.0;
+        return vec2f(0.0, 0.0);
     }
     let b0 = vol_bracket3(f0, nd);
     let b1 = vol_bracket3(f1, nlat);
@@ -303,21 +309,32 @@ fn sample_volume(vol: u32, depth: f32, lat: f32, lon: f32) -> f32 {
     let k0 = u32(b2.x);
     let k1 = u32(b2.y);
     let t2 = b2.z;
-    let c000 = vol_cell[data_off + (i0 * nlat + j0) * nlon + k0];
-    let c001 = vol_cell[data_off + (i0 * nlat + j0) * nlon + k1];
-    let c010 = vol_cell[data_off + (i0 * nlat + j1) * nlon + k0];
-    let c011 = vol_cell[data_off + (i0 * nlat + j1) * nlon + k1];
-    let c100 = vol_cell[data_off + (i1 * nlat + j0) * nlon + k0];
-    let c101 = vol_cell[data_off + (i1 * nlat + j0) * nlon + k1];
-    let c110 = vol_cell[data_off + (i1 * nlat + j1) * nlon + k0];
-    let c111 = vol_cell[data_off + (i1 * nlat + j1) * nlon + k1];
+    let n000 = (i0 * nlat + j0) * nlon + k0;
+    let n001 = (i0 * nlat + j0) * nlon + k1;
+    let n010 = (i0 * nlat + j1) * nlon + k0;
+    let n011 = (i0 * nlat + j1) * nlon + k1;
+    let n100 = (i1 * nlat + j0) * nlon + k0;
+    let n101 = (i1 * nlat + j0) * nlon + k1;
+    let n110 = (i1 * nlat + j1) * nlon + k0;
+    let n111 = (i1 * nlat + j1) * nlon + k1;
+    if (vol_mask_bit(mask_off, n000) || vol_mask_bit(mask_off, n001) || vol_mask_bit(mask_off, n010) || vol_mask_bit(mask_off, n011) || vol_mask_bit(mask_off, n100) || vol_mask_bit(mask_off, n101) || vol_mask_bit(mask_off, n110) || vol_mask_bit(mask_off, n111)) {
+        return vec2f(0.0, 0.0);
+    }
+    let c000 = vol_cell[data_off + n000];
+    let c001 = vol_cell[data_off + n001];
+    let c010 = vol_cell[data_off + n010];
+    let c011 = vol_cell[data_off + n011];
+    let c100 = vol_cell[data_off + n100];
+    let c101 = vol_cell[data_off + n101];
+    let c110 = vol_cell[data_off + n110];
+    let c111 = vol_cell[data_off + n111];
     let c00 = c000 + (c100 - c000) * t0;
     let c01 = c001 + (c101 - c001) * t0;
     let c10 = c010 + (c110 - c010) * t0;
     let c11 = c011 + (c111 - c011) * t0;
     let c0 = c00 + (c10 - c00) * t1;
     let c1 = c01 + (c11 - c01) * t1;
-    return c0 + (c1 - c0) * t2;
+    return vec2f(c0 + (c1 - c0) * t2, 1.0);
 }
 
 fn beat_pair(
@@ -394,7 +411,10 @@ fn presence_probe() {
         let lat = vol_u.geo.y;
         let lon = vol_u.geo.z;
         for (var v = 0u; v < vcount; v = v + 1u) {
-            omegas[3] += sample_volume(v, depth, lat, lon);
+            let sv = sample_volume(v, depth, lat, lon);
+            if (sv.y > 0.5) {
+                omegas[3] += sv.x;
+            }
         }
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }

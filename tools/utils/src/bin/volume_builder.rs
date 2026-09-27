@@ -255,6 +255,7 @@ fn main() {
         ],
         axes,
         data: out_data,
+        mask: vec![0u8; cells.div_ceil(8)],
     };
     let bin = volume.write_bin();
 

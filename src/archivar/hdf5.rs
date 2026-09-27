@@ -2817,6 +2817,43 @@ impl<'a> Hdf5File<'a> {
         self.attribute(name, attr).and_then(attr_number)
     }
 
+    pub fn read_f32_dataset(&self, name: &str) -> Result<Vec<f32>, Hdf5Note> {
+        let (obj, ds, dt) = self.dataset(name)?;
+        if dt.class != 1 || dt.size != 4 {
+            return Err(Hdf5Note::Datatype {
+                class: dt.class,
+                off: 0,
+            });
+        }
+        let raw = self.read_dataset(name)?;
+        let count: usize = ds.dims.iter().fold(1usize, |a, d| a * (*d as usize));
+        let mut out = Vec::with_capacity(count);
+        for i in 0..count {
+            out.push(decode_f32(&raw, i * 4, dt.endian).ok_or(Hdf5Note::EndAtByte { off: i * 4 })?);
+        }
+        let scale = obj
+            .attrs
+            .iter()
+            .find(|a| a.name == "scale_factor")
+            .and_then(attr_number)
+            .map(|v| v as f32);
+        if let Some(scale) = scale {
+            let offset = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "add_offset")
+                .and_then(attr_number)
+                .map(|v| v as f32);
+            for v in out.iter_mut() {
+                *v = match offset {
+                    Some(o) => *v * scale + o,
+                    None => *v * scale,
+                };
+            }
+        }
+        Ok(out)
+    }
+
     pub fn dims(&self, name: &str) -> Option<Vec<u64>> {
         self.dataset(name).ok().map(|(_, ds, _)| ds.dims.clone())
     }
