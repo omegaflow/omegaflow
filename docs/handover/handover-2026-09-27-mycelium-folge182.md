@@ -3,15 +3,15 @@
   session: Mycelium-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: 3e204f232717b99711fa2c85019f3b3dddfa4f47335055f9fd63365cb57e2720
+  sha256: 971fbc2154c9d5a3329c54601642cad0675936f59ebd19c6a3fa77fc469d2e57
   status: live
 -->
 # Handover — Mycelium-Folge 182 (2026-09-27)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
-**Lage** / **Blockade** / **Braucht**. Status-Tag: `wartend` | `operator-gebunden` |
-`blockiert` | `termin`.
+**Lage** / **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` |
+`termin`; Operator-Akte leben in Futures Operator-Queue, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-27-mycelium-folge181.md`.
 
