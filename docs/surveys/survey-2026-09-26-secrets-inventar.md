@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 577f543e076ef856ca08de0d05f59cb1ace439a936c11af2ad524dab13ca86ac
+  sha256: fd9b2c1d149ad335378d617cb3772a8697e8ed86485e1dcefda33e43bd626f1b
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)
@@ -73,4 +73,4 @@ gemessen, nicht aus dem Namen geraten. Die **Secret-Namen selbst** stehen in kei
 ## Offen
 
 Je unreferenziertem Namen die Quelle benennen (behalten als Vorrat mit Träger) oder
-entfernen. Träger: Future-Übergabe (`state/funding/handover/handover-2026-09-26-future-folge129.md`).
+entfernen. Träger: Future-Übergabe (`state/funding/handover/handover-2026-09-27-future-folge137.md`).
