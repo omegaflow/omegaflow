@@ -5201,3 +5201,7 @@ note Global Forest Watch (WRI): abgeleitete Waldprodukte (tree-cover-loss, GLAD/
 decline commercial
 url https://api.purpleair.com/v1/sensors
 note paid plan (HTTP 402 mit PURPLEAIR_KEY, 403 ohne), kommerzielle Quelle — declined 2026-09-26 (Operator-Wort: commercial).
+
+decline operator-withdrawn
+url https://github.com/omegaflow/sources/releases/download/sony-camera-remote/rx100_luminance.bin
+note Operator-Wort 2026-09-27: RX100 war nur ein Gedanke — Quelle zurückgezogen, kein Capture im CDN; Kalibrierer descoped.
