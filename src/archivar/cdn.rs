@@ -7,9 +7,38 @@ pub const CAPPED_RELEASE: &str = "ssd.jpl.nasa.gov";
 pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
 pub const PS1_SLAB_BANDS: u32 = 80;
+pub const MODIS_LST_CMG_FAMILY: &str = "data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg";
 
 pub fn ps1_slab_tag(proj: u32) -> String {
     format!("ps1-dr2-{}", (proj / PS1_SLAB_BANDS) * PS1_SLAB_BANDS)
+}
+
+pub fn modis_lst_cmg_tag_of(name: &str) -> Option<String> {
+    let rest = name.strip_prefix("modis_lst_cmg_")?;
+    let (product, tail) = rest.split_once('_')?;
+    if product.is_empty() {
+        return None;
+    }
+    let year = modis_lst_cmg_year(tail)?;
+    Some(format!("{MODIS_LST_CMG_FAMILY}-{product}-{year}"))
+}
+
+fn modis_lst_cmg_year(tail: &str) -> Option<&str> {
+    if let Some(y) = tail.strip_suffix(".manifest") {
+        return ascii_year(y);
+    }
+    let granule = tail.strip_suffix(".bin")?;
+    let a = granule.find(".A")?;
+    ascii_year(granule.get(a + 2..)?)
+}
+
+fn ascii_year(s: &str) -> Option<&str> {
+    let y = s.get(0..4)?;
+    if y.bytes().all(|b| b.is_ascii_digit()) {
+        Some(y)
+    } else {
+        None
+    }
 }
 
 pub fn cdn_base() -> String {
@@ -141,5 +170,46 @@ pub fn ensure_release(tag: &str) -> bool {
             eprintln!("ensure release {}: gh absent: {}", tag, e);
             false
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn modis_lst_cmg_tag_parses_the_granule_shard() {
+        assert_eq!(
+            modis_lst_cmg_tag_of("modis_lst_cmg_8day_MOD11C2.A2000049.061.2020330085614.bin")
+                .as_deref(),
+            Some("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-2000")
+        );
+        assert_eq!(
+            modis_lst_cmg_tag_of("modis_lst_cmg_monthly_MOD11C3.A2026348.061.2026182060603.bin")
+                .as_deref(),
+            Some("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-2026")
+        );
+    }
+
+    #[test]
+    fn modis_lst_cmg_tag_parses_the_year_manifest() {
+        assert_eq!(
+            modis_lst_cmg_tag_of("modis_lst_cmg_8day_2000.manifest").as_deref(),
+            Some("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-2000")
+        );
+        assert_eq!(
+            modis_lst_cmg_tag_of("modis_lst_cmg_monthly_2026.manifest").as_deref(),
+            Some("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-2026")
+        );
+    }
+
+    #[test]
+    fn modis_lst_cmg_tag_returns_void_for_series_manifests_and_foreign_names() {
+        assert_eq!(modis_lst_cmg_tag_of("modis_lst_cmg_8day.manifest"), None);
+        assert_eq!(modis_lst_cmg_tag_of("modis_lst_cmg_monthly.manifest"), None);
+        assert_eq!(modis_lst_cmg_tag_of("modis_lst_cmg_8day_garbage.bin"), None);
+        assert_eq!(modis_lst_cmg_tag_of("modis_lst_cmg__2000.manifest"), None);
+        assert_eq!(modis_lst_cmg_tag_of("ps1-dr2-0"), None);
+        assert_eq!(modis_lst_cmg_tag_of(""), None);
     }
 }

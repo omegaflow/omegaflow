@@ -37,11 +37,9 @@ jobs:
           START="${{ inputs.start_year }}"
           END="${{ inputs.end_year }}"
           if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
-          RELEASE="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          FAMILY="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
           REPO="omegaflow/sources"
           CMR="https://cmr.earthdata.nasa.gov/search/granules.umm_json"
-          present="$(gh release view "$RELEASE" --repo "$REPO" \
-            --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
           shards=""
           for product in 8day monthly; do
             case "$product" in
@@ -49,7 +47,10 @@ jobs:
               monthly) cid=C2565788897-LPCLOUD ;;
             esac
             for year in $(seq "$START" "$END"); do
+              tag="${FAMILY}-${product}-${year}"
               manifest="modis_lst_cmg_${product}_${year}.manifest"
+              present="$(gh release view "$tag" --repo "$REPO" \
+                --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
               if printf '%s\n' "$present" | grep -qx "$manifest"; then
                 echo "$manifest already manifested — skipped"
                 continue
@@ -61,7 +62,7 @@ jobs:
                 echo "${product} ${year}: CMR carries no granule — skipped"
                 continue
               fi
-              shards="${shards:+$shards,}{\"product\":\"${product}\",\"concept_id\":\"${cid}\",\"year\":\"${year}\",\"manifest\":\"${manifest}\"}"
+              shards="${shards:+$shards,}{\"product\":\"${product}\",\"concept_id\":\"${cid}\",\"year\":\"${year}\",\"manifest\":\"${manifest}\",\"tag\":\"${tag}\"}"
             done
           done
           echo "shards=[${shards}]" >> "$GITHUB_OUTPUT"
@@ -73,7 +74,7 @@ jobs:
           if ! gh release view data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources \
               --title "data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg" \
-              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night). Family tag: the bare host release holds 1000 assets; the shards live here." 
+              --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night). The shards and per-year manifests live in the year tags data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-<product>-<year> (the 1000-asset cap splits the family); this family tag holds only the two year-less series manifests (modis_lst_cmg_8day.manifest, modis_lst_cmg_monthly.manifest)."
           fi
   compile:
     needs: [raster, release]
@@ -95,7 +96,7 @@ jobs:
         run: cargo build -p omegaflow-harvest --release --bin modis_lst_cmg_compiler
       - name: Compile the ${{ matrix.product }} ${{ matrix.year }} granule shards to the CDN
         env:
-          MODIS_CDN_TAG: data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg
+          MODIS_CDN_TAG: ${{ matrix.tag }}
         run: |
           ./target/release/modis_lst_cmg_compiler \
             --cmr --concept-id ${{ matrix.concept_id }} \
@@ -109,22 +110,32 @@ jobs:
     if: always() && needs.raster.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Fold every shard asset on the CDN into the year-less series manifest
+      - name: Fold every year-tag shard asset on the CDN into the year-less series manifest
         run: |
           set -euo pipefail
-          TAG="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          FAMILY="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
           REPO="omegaflow/sources"
           tmp="$(mktemp -d)"
-          gh release view "$TAG" --repo "$REPO" \
-            --json assets --jq '.assets[] | "\(.name) \(.digest)"' > "$tmp/assets"
+          gh api --paginate "repos/$REPO/releases?per_page=100" \
+            | jq -r '.[].tag_name' > "$tmp/tags"
           for product in 8day monthly; do
-            sed -n "s/^\(modis_lst_cmg_${product}_[^ ]*\.bin\) sha256:\([0-9a-f]\{64\}\)$/\1 \2/p" \
-              "$tmp/assets" | sort > "$tmp/modis_lst_cmg_${product}.manifest"
+            : > "$tmp/modis_lst_cmg_${product}.manifest"
+            while IFS= read -r tag; do
+              case "$tag" in
+                "${FAMILY}-${product}-"*) ;;
+                *) continue ;;
+              esac
+              gh release view "$tag" --repo "$REPO" \
+                --json assets \
+                --jq '.assets[] | select(.name|endswith(".bin")) | "\(.name) \(.digest)"' \
+                >> "$tmp/modis_lst_cmg_${product}.manifest"
+            done < "$tmp/tags"
+            sort -u -o "$tmp/modis_lst_cmg_${product}.manifest" "$tmp/modis_lst_cmg_${product}.manifest"
             if [ ! -s "$tmp/modis_lst_cmg_${product}.manifest" ]; then
               echo "no ${product} shards on the CDN — the series manifest stays unwritten (0 honored)"
               continue
             fi
             echo "modis_lst_cmg_${product}.manifest lists $(wc -l < "$tmp/modis_lst_cmg_${product}.manifest") shards"
-            gh release upload "$TAG" "$tmp/modis_lst_cmg_${product}.manifest" \
+            gh release upload "$FAMILY" "$tmp/modis_lst_cmg_${product}.manifest" \
               --clobber --repo "$REPO"
           done
