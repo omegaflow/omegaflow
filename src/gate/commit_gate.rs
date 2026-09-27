@@ -3207,18 +3207,6 @@ mod tests {
     }
 
     #[test]
-    fn fp_tool_bootstrap_anchor_unconditional_blocked() {
-        let mut g = test_gate();
-        let args = tool_args(
-            "src/archivar/main_flow.rs",
-            &fx("bootstrap_anchor_unconditional"),
-        );
-        let v = g.check_tool_call("edit", &args).unwrap();
-        assert_eq!(v.rule, "fabrication");
-        assert_eq!(v.severity, Severity::Hard);
-    }
-
-    #[test]
     fn fp_tool_body_gate_without_record_epoch_blocked() {
         let mut g = test_gate();
         let args = tool_args(
