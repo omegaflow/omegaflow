@@ -3,7 +3,7 @@
   session: Mountain-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: f28d044446b0d88be596ecfa321b1d6043debc3aca7a7296397e1bc9da531d59
+  sha256: aa9b365312398e2b8da0f8b1d012688df901f7e49b91da115497d2e008630b76
   status: live
 -->
 # Handover — Mountain-Folge 182 (2026-09-27)
@@ -22,6 +22,7 @@ D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abar
 „Du kannst" Mountain-Folge 182 | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort
 „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session)
 ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session)
+RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session)
 
 ## Offen (aufgeschlüsselt)
 
