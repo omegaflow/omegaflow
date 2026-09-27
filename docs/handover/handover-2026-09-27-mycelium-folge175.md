@@ -3,7 +3,7 @@
   session: Mycelium-Folge 175
   class: handover
   date: 2026-09-27
-  sha256: 6274b2fb7e743f867ed2cf89b4745b0696420a9ea5e13b6bdf0b7e85a43fffc9
+  sha256: 9789f2408c346c1c61c36c6203800a10a487035144e4867cc0dda3e372e4bf7c
   status: live
 -->
 # Handover — Mycelium-Folge 175 (2026-09-27)
@@ -41,7 +41,7 @@ Diese Session konsumierte `handover-2026-09-26-mycelium-folge174.md`.
 - **Trigger:** EMC-Asset-Manifestation (Fetch-Route geklärt) ODER Operator-Wort zur Browser-Brücke.
 - **Lage:** (gemessen 2026-09-27) Wort `volume` gegeben und umgesetzt (`88fb49209`): maskenbewusster Container (`volume.rs`, Magic `…0x02`, Probe über maskierter Ecke = absent), `Extract::Volume` + Grammatik-Arm `volume`/`depth` (`types.rs`/`parse.rs`), `build_netcdf4_volume` (`channels.rs`, f32 nativ, namensbasierte Re-Order `[depth,lat,lon]`, `_FillValue`→Maske, 4D-refuse), Arm `format volume_netcdf` (`main_flow.rs`), GPU-Head 10→11 (`mask_off`), Tests + CPU/GPU-Parität; `cargo check` 0/0, `ci-check` läuft auf `88fb49209`.
 - **Blockade:** EarthScope-ToS (Attribution + Non-human-Visitor) — der Maschinen-Fetch ist nicht gedeckt (Browser-Brücke/Operator-Profil).
-- **Braucht:** Fetch-Route (Operator-Wort oder `--playwright`-Brücke) → netCDF auf CDN → `phi/sources.φ`-Eintrag `format volume_netcdf` (Attribution benannt) → CI-Manifestation.
+- **Braucht:** Fetch-Route (Operator-Wort oder `--playwright`-Brücke) → netCDF auf CDN, dann `phi/sources.φ` Eintrag `format volume_netcdf` (Attribution benannt) → CI-Manifestation.
 
 #### EPN-core — `epncore-spatial`-Gap registriert
 - **Status:** wartend | **Bindung:** dritter
