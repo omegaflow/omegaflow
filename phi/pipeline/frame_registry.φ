@@ -505,7 +505,6 @@ github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes
 github.com/omegaflow/sources/releases/download/noaa-gsod-pds.s3.amazonaws.com/gsod_01001099999_2025-03.bin | at earth
 github.com/omegaflow/sources/releases/download/noaa-himawari9.s3.amazonaws.com/himawari_ahi_counts.bin | on earth
 github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin | at sun
-github.com/omegaflow/sources/releases/download/noaa-nos-coastal-lidar-pds.s3.amazonaws.com/las_oahu_bathy_1999.bin | at earth
 github.com/omegaflow/sources/releases/download/noaa-oar-hourly-gdp-pds.s3.amazonaws.com/gdp_drifter.bin | on earth
 github.com/omegaflow/sources/releases/download/noaa-oar-keo-papa-pds.s3.amazonaws.com/keo_OS_KEO_200406_M_TSVMBP_32N145E_dy.bin | at earth
 github.com/omegaflow/sources/releases/download/noaa-wod-pds.s3.amazonaws.com/noaa_wod_2000_drb.bin | on earth
