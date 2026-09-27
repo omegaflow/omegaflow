@@ -86,6 +86,7 @@
       "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; `smail` sendet nie durch die Maschine — nur `--dry-run` ist erlaubt, den Send führt der Operator (Wort + Akt).",
+      "prompt": "Erste Handlung jeder Session: `sread docs/concepts/tool-forms.md` — die Form-Karte (verbotene Leading-Form → kanonischer Ersatz). Werkzeuge statt Rohwege (`docs/concepts/tools-map.md`). Inhalt im Baum: `archive_search <kw> --root <dir>` oder `sgrep [-i]`; Pfade: `archive_search --index`; Discovery: `glob`; Lesen: `sread <f> [--offset --limit]`. Strukturell verboten: ls/grep/cat/rg/cd/python*/sed -i. `cd` → bash-`workdir`; `cargo *` → exakt `cargo check` · `cargo fmt -- <pfad>` · `cargo build -p <crate> --bin <name>` · `cargo run -p <crate> --bin <name>` (kein Zusatzflag); `gh run list/view` → `ci_manage list/view/log`; destruktives git nie. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close [<eigene Pfade>]`. Kein webfetch/websearch; `smail` sendet nie durch die Maschine.",
       "permission": {
         "edit": "allow",
         "webfetch": "deny",

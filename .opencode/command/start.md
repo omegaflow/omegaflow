@@ -23,7 +23,7 @@ abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt". Kein
 keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht
 schreiben, das ist die Grenze. **Halte dann an.**
 
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass. Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
+**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass — und liest die Form-Karte (`sread docs/concepts/tool-forms.md`). Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
 
 **Sofort-Prinzip.** Dispatcht wird **sofort** im nennenden Atom — kein besprechbarer Punkt wandert als „nächster Dispatch"/„nächste Session" weiter; besprochene Entscheidungen (ein Wort, eine Architektur, ein Verdikt) gehen im Moment ihrer Entstehung als Zeile ins Handover, nie am Sessionende gesammelt. Der Commit-Gate `commit_check` (status-proof) blockt den unbelegten Status-Tag, `register_lookup --fired`/`--stale` messen Feuer und Stehen.
 
