@@ -3,7 +3,7 @@
   session: Mycelium-Folge 180
   class: handover
   date: 2026-09-27
-  sha256: ef24a707f6fb06085ad8f9440de6d89ac9237dc214aa2ff2e6a3f116ea0b30ed
+  sha256: abc9a02fb6b41d6456671b6c21d02ffcf7790ed59d26b8e60d780fd4adfe8419
   status: live
 -->
 # Handover — Mycelium-Folge 180 (2026-09-27)
@@ -21,6 +21,9 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge179.md`.
 - Wort | 2026-09-27 | „bitte ausführen" — Ownership-Audit (Aufenthalt = Eigentum): planeto-epncore-Direktiven + CDN-Reconcile-Dispatch → Mycelium, clippy-Owner je Linie, Beschaffungs-LOCKs aus Mountain/River entfernt (kanonisch Future).
 - Wort | 2026-09-27 | Secrets-Inventar-Träger prüfen: direkter Edit in die Owner-Übergabe (Messung ergab keinen Register-Akt) — erledigt (Verdict, Survey geschlossen).
 - Wort | 2026-09-27 | **Myceliums eigener Job umfasst CI-Workflows, die `sources.φ`-Manifestations-Direktiven und das CDN-/Release-Management** — matrix-rotor-Instrumentierung, planeto-Direktiven und die modis-Asset-Brücke sind NICHT an Sensory/Mountain/Operator abzugeben; der „Träger" im Pass meint die Sache, nicht das Handwerk.
+- Wort | 2026-09-27 | „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand (Operator, Future-Session).
+- Wort | 2026-09-27 | ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom (Operator, Future-Session).
+- Wort | 2026-09-27 | RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) (Operator, Future-Session).
 
 ## Offen (aufgeschlüsselt)
 
@@ -93,6 +96,13 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge179.md`.
 - **Lage:** (gemessen 2026-09-27) `pithia.cbk.waw.pl/tap` 200 (external-state.md); `api.lasair.lsst.ac.uk/api` direct absent / proton 200.
 - **Blockade:** keine (Wiedervorlage).
 - **Braucht:** `archive_search --verdict <url>`; bei Erholung `*-cdn.yml` dispatchen.
+
+### planeto-epncore — declined Quelle, CDN-/Katalog-Rest
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort.
+- **Lage:** (gemessen 2026-09-27 via `sgrep`/`archive_search`) die portierte planeto-Quelle stammt vom declined Host `voparis-tap-planeto.obspm.fr` (`declined_sources.φ:213`, `registry/katalog`, keine Weitergabe-Erlaubnis); Mountain hat den `sources.φ`-Block revertiert (`73f35156f`) und das Verdikt `released` in `blocked_sources.φ:346` festgezogen (Arm `epncore-spatial` steht). Residuen: `.github/workflows/planeto-epncore-cdn.yml` spiegelt den declined Host 1:1 (Lauf `36302017453` success) und publiziert ein CDN-Asset eines declined Hosts; `phi/pipeline/catalog/MANIFEST.φ:47` listet `tap_index_padc_planeto.φ | tap | live | visible` gegen `korpora_heim.φ:122` `decline`; `phi/canon.φ:113` trägt die Datei.
+- **Blockade:** keine.
+- **Braucht:** `planeto-epncore-cdn.yml` entfernen (der Host ist declined — kein Mirror); das manifestierte CDN-Asset des declined Hosts reconciliieren; `MANIFEST.φ:47` auf `declined`/unsichtbar setzen (`tap_index_padc_planeto.φ` aus `canon.φ:113` prüfen); `phi/pipeline/ledger.φ:10-12` auf `disponiert` (Mountain-Verdikt vollzogen: pithia backend-tot, Arm steht).
 
 ### BepiColombo bc_mpo_more — Termin 2027-04-01
 - **Status:** termin | **Bindung:** termin:2027-04-01
