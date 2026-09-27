@@ -640,6 +640,7 @@ fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
         crate::archivar::hrv::TONE_CALM,
         std::sync::atomic::Ordering::SeqCst,
     );
+    app.last_hud = None;
     app.tick();
     let calm = stressed + (1.0 - stressed) * alpha;
     assert!(
@@ -854,7 +855,7 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
         .split(',')
         .map(|s| s.parse::<f32>().unwrap())
         .collect();
-    assert_eq!(fields.len(), 10);
+    assert_eq!(fields.len(), 12);
     assert_eq!(fields[0], 1.0);
     assert_eq!(fields[1], sum1);
     assert_eq!(fields[2], g1);
@@ -864,7 +865,12 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     assert_eq!(fields[6], crate::archivar::hrv::TONE_ABSENT as f32);
     assert_eq!(fields[7], app.tone_scale);
     assert_eq!(fields[8], app.field_permeability * app.tone_scale);
-    assert_eq!(fields[9], app.field_permeability);
+    assert_eq!(fields[9], tone_hz(app.natural_latency_ticks));
+    assert_eq!(
+        fields[10],
+        acoustic_amplitude(sum1, app.field_permeability * app.tone_scale)
+    );
+    assert_eq!(fields[11], app.field_permeability);
 
     app.last_hud = None;
     app.tick();
