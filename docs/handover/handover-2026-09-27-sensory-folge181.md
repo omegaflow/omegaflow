@@ -3,7 +3,7 @@
   session: Sensory-Folge 181
   class: handover
   date: 2026-09-27
-  sha256: bd0e952db20748616a9ece10b3f5aa30ca668cbc4000d496bf5d21131ec5b277
+  sha256: 59082e38d61f7ce352a02740f805da8df37b03cd20f9d90285aef0f96f087b6a
   status: live
 -->
 # Handover — Sensory-Folge 181 (2026-09-27)
@@ -103,9 +103,11 @@ getrackt, nie am CDN.
 
 ## Operator-gebunden (Vorbereitung an der Kante)
 
-- **DEMETER/CDPP Order-Export** | operator | Trigger: sofort, Frist 2026-09-28 | Lage:
-  metalink-Link in der SPA (geprüft, befüllt) | Braucht: SPA-Login → metalink
-  herunterladen (oder der Maschine die Session zugänglich machen).
+- **CDPP-Mail DEMETER** | operator (Mensch) | Trigger: Operator-Wort | Lage: Entwurf
+  bereit — `state/mail/cdpp-demeter-order-18387.md` + Body
+  `state/mail/cdpp-demeter-order-18387.body.txt` (`smail --dry-run` grün, 4/4 QUELLEN
+  resolvieren) | Braucht: Operator liest den Entwurf und sendet selbst (kein
+  `smail --send`; Human-Threshold).
 - **RR-Kanal / Beat-to-beat** | operator | Trigger: Förderung gewährt (2026-09-26) |
   Lage: BLE-HR ohne RR; FIT `nn=0` | Braucht: Brustgurt (Polar H10/HRM-Dual) →
   `perm_tone_probe`.
