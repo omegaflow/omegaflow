@@ -7,7 +7,7 @@ note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten K�
 note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
-note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1min/c1max/c2min/c2max/c3min/c3max, s_region STC-S, c1/c2/c3_resol); Arm steht (extract.rs EpnCore + parse.rs epncore-Direktive, tests.rs), Quelle planeto → phi/sources.φ:10212.
+note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -343,5 +343,5 @@ note EMC (nicht MT): CC BY 4.0, nc 200 HDF5 anonym; Roh-nc reference sources.φ:
 
 released
 url http://pithia.cbk.waw.pl/tap
-note epncore released 2026-09-27: src.pas backend-tot (500, PG refused); Ersatz PADC VESPA planeto portiert → phi/sources.φ:10212 (mars_craters.epn_core, Arm epncore-spatial src/archivar/extract.rs).
+note epncore released 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
 
