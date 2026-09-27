@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: e2a26815d42742ecd84d9227602c4a58f0ff0567d3ad527d389bbd2c2b42c505
+  sha256: 8c07db942e509c0f8d24733da9b0df84cc49915c40e676577f476c3e949c7ea6
   status: live
   see-also: AGENTS.md
 -->
@@ -255,6 +255,8 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `register_lookup --orphans` | — | owner-getaggte offene Register-Einträge, die keine lebende Übergabe des Owners hält: `ORPHAN_COMMITTED` (in HEAD) / `ORPHAN_UNCOMMITTED` (nur Arbeitsbaum); Klassen-Träger `φ/<register>::gap:<token> ×N` hält die Klasse, Count-Drift wird als `CARRIER_DRIFT` gemeldet; `NO_GAP` = parser-Block ohne erklärte Klasse (lauter Einzel-Orphan). Getrennt von `--dropped` (kein Aufenthalt vs. abgerissener Aufenthalt) |
 | `register_lookup --orphan-docs` | — | lebende Prosadokumente (`docs/{surveys,specs,auftrag,blatt,concepts,paper}`) mit offenen Markern, die keine lebende Übergabe nennt: `ORPHAN_DOC <path> <marker>`; der Commit-Gate `commit_check` (doc-carrier) blockt neue trägerlose Dokumente |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
+| `ci_manage status [--limit N]` | — | Live-Übersicht + aktueller Schritt je laufendem Run (ein Listen-Call + je laufendem Run ein Jobs-Call) |
+| `ci_manage jobs <run-id>...` | — | Job-Status + aktueller Schritt je Run (GH-API `/runs/<id>/jobs`); der `updated_at` von `list` ist grob |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
 | `git_safety --snapshot` | 1,20 s | Planungs-Pass |
 | `git_safety --list` | 0,017 s | |
@@ -273,6 +275,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
 | `register_lookup` | `--open`/`--dropped`/`--orphans`/`--orphan-docs`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff, Träger-Checks | lokal | P4 |
+| `ci_manage` | `status`/`list`/`view`/`jobs`/`log`/`cancel`/`rerun` — CI-Läufe mit Schritt-Detail und Fehllogs; nie `gh run` | Netz | P1–P5 |
 | `open_points_check` | Pfad-Abgleich der offenen Punkte gegen den Arbeitsbaum (stale Punkt = genannter Pfad absent) | lokal | P4 |
 | `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |

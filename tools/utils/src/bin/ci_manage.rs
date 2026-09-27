@@ -164,6 +164,101 @@ fn log(id: &str, all: bool) -> Option<()> {
     Some(())
 }
 
+fn step_state(j: &JsonVal) -> String {
+    let Some(JsonVal::Arr(steps)) = jpath_val(j, "steps") else {
+        return "—".to_string();
+    };
+    let mut last_done: Option<String> = None;
+    let mut first_pending: Option<String> = None;
+    for s in steps {
+        let Some(name) = jstr(s, "name") else {
+            continue;
+        };
+        let Some(status) = jstr(s, "status") else {
+            continue;
+        };
+        match status.as_str() {
+            "in_progress" => return format!("→ {name}"),
+            "completed" => last_done = Some(name),
+            "pending" | "queued" => {
+                if first_pending.is_none() {
+                    first_pending = Some(name);
+                }
+            }
+            _ => {}
+        }
+    }
+    match (last_done, first_pending) {
+        (Some(n), _) => format!("✓ {n}"),
+        (None, Some(n)) => format!("· {n}"),
+        (None, None) => "—".to_string(),
+    }
+}
+
+fn jobs(id: &str) -> Option<()> {
+    let url = format!("{API}/repos/{REPO}/actions/runs/{id}/jobs?per_page=100");
+    let body = read_call(&url)?;
+    let json = parse_json(&body)?;
+    let Some(JsonVal::Arr(arr)) = jpath_val(&json, "jobs") else {
+        return None;
+    };
+    println!("run {id}");
+    for j in arr {
+        println!(
+            "{}\t{}\t{}\t{}",
+            field(j, "name"),
+            field(j, "status"),
+            field(j, "conclusion"),
+            step_state(j)
+        );
+    }
+    Some(())
+}
+
+fn current_step(id: &str) -> String {
+    let url = format!("{API}/repos/{REPO}/actions/runs/{id}/jobs?per_page=100");
+    let Some(body) = read_call(&url) else {
+        return "?".to_string();
+    };
+    let Some(json) = parse_json(&body) else {
+        return "?".to_string();
+    };
+    let Some(JsonVal::Arr(arr)) = jpath_val(&json, "jobs") else {
+        return "?".to_string();
+    };
+    for j in arr {
+        if jstr(j, "status").as_deref() == Some("in_progress") {
+            return format!("{} {}", field(j, "name"), step_state(j));
+        }
+    }
+    "—".to_string()
+}
+
+fn status(limit: usize) -> Option<()> {
+    let url = format!("{API}/repos/{REPO}/actions/runs?per_page={limit}");
+    let body = read_call(&url)?;
+    let json = parse_json(&body)?;
+    let Some(JsonVal::Arr(runs)) = jpath_val(&json, "workflow_runs") else {
+        return None;
+    };
+    for r in runs {
+        let id = num_field(r, "id");
+        let st = field(r, "status");
+        let step = if st == "completed" {
+            "—".to_string()
+        } else {
+            current_step(&id)
+        };
+        println!(
+            "{id}\t{}\t{st}\t{}\t{}\t{step}",
+            field(r, "name"),
+            field(r, "conclusion"),
+            field(r, "updated_at")
+        );
+    }
+    Some(())
+}
+
 fn act(id: &str, action: &str) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs/{id}/{action}");
     let h = write_headers()?;
@@ -176,7 +271,9 @@ fn usage() {
     eprintln!(
         "ci_manage — GitHub Actions runs (repo {REPO})\n\
          usage: ci_manage list [--limit N]   id/status/conclusion/attempt/workflow/started/updated\n\
+         \x20      ci_manage status [--limit N] overview + current step of every running run\n\
          \x20      ci_manage view <run-id>    status/conclusion/attempt/sha/branch/times/url\n\
+         \x20      ci_manage jobs <run-id>... job status + current step (what is happening now)\n\
          \x20      ci_manage log <run-id> [--all]  job logs (default: the red jobs)\n\
          \x20      ci_manage cancel <run-id>  request cancellation (keeps the log)\n\
          \x20      ci_manage rerun <run-id>   request a rerun (attempt +1)"
@@ -206,6 +303,15 @@ fn main() {
             }
             list(limit).is_some()
         }
+        "status" => {
+            let mut limit = 20usize;
+            if let Some(pos) = args.iter().position(|a| a == "--limit") {
+                if let Some(v) = args.get(pos + 1).and_then(|s| s.parse::<usize>().ok()) {
+                    limit = v;
+                }
+            }
+            status(limit).is_some()
+        }
         "view" => match args.get(1) {
             Some(id) => view(id).is_some(),
             None => {
@@ -223,6 +329,19 @@ fn main() {
                 false
             }
         },
+        "jobs" => {
+            let ids: Vec<String> = args.iter().skip(1).cloned().collect();
+            if ids.is_empty() {
+                usage();
+                false
+            } else {
+                let mut ok = true;
+                for id in &ids {
+                    ok &= jobs(id).is_some();
+                }
+                ok
+            }
+        }
         "cancel" => match args.get(1) {
             Some(id) => act(id, "cancel").is_some(),
             None => {
@@ -279,5 +398,23 @@ mod tests {
     fn jobs_of_skips_a_job_without_id() {
         let json = parse_json(r#"{"jobs":[{"name":"x","conclusion":"failure"}]}"#).unwrap();
         assert!(jobs_of(&json).is_empty());
+    }
+
+    #[test]
+    fn step_state_names_the_current_position() {
+        let json = parse_json(
+            r#"{"jobs":[
+                {"name":"a","steps":[{"name":"s1","status":"completed"},{"name":"s2","status":"in_progress"},{"name":"s3","status":"pending"}]},
+                {"name":"b","steps":[{"name":"t1","status":"completed"},{"name":"t2","status":"completed"}]},
+                {"name":"c","steps":[{"name":"u1","status":"pending"}]}
+            ]}"#,
+        )
+        .unwrap();
+        let JsonVal::Arr(arr) = jpath_val(&json, "jobs").unwrap() else {
+            panic!("jobs array");
+        };
+        assert_eq!(step_state(&arr[0]), "→ s2");
+        assert_eq!(step_state(&arr[1]), "✓ t2");
+        assert_eq!(step_state(&arr[2]), "· u1");
     }
 }
