@@ -3,7 +3,7 @@
   session: Sensory-Folge 184
   class: handover
   date: 2026-09-27
-  sha256: 9fb5d25c8169747e746f655d82ce92ecddf7f88fe91f66a7736e29adc545194f
+  sha256: 0b9c504a763f9670f5de38be3436326ff46d35869d5f99048fb85b1d7ddd9c48
   status: live
 -->
 # Handover — Sensory-Folge 184 (2026-09-27)
@@ -133,6 +133,7 @@ verschiebt einen Send auf die Maschine. DEMETER metalink ist Operator-Hand.
 - **Wort:** „Du kannst" (`/consent`) — session-weiter Delegations-Consent, nicht das Commit-Wort | 2026-09-27 | Operator (Session).
 - **Wort:** „die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session).
 - **Wort:** ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session).
+- **Wort:** RX100-Kalibrierer descoped — „über exif weg": Luminanz über den Kamera-EXIF-Weg (K=12.5) | 2026-09-27 | Operator (Future-Session).
 
 ## Abschluss
 
