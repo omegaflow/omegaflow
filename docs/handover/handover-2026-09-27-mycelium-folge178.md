@@ -1,19 +1,19 @@
 <!--
-  title: Handover — Mycelium-Folge 177 (2026-09-27)
-  session: Mycelium-Folge 177
+  title: Handover — Mycelium-Folge 178 (2026-09-27)
+  session: Mycelium-Folge 178
   class: handover
   date: 2026-09-27
-  sha256: 320997f43f2e006d738fc9ea2c3c89fedde9d8fc209680c057e4534d6d76b0d3
+  sha256: 87eff17cb06aab8fb8bde6f31228ffb5dee5bfb1aabf5cc1303ada3afc75d458
   status: live
 -->
-# Handover — Mycelium-Folge 177 (2026-09-27)
+# Handover — Mycelium-Folge 178 (2026-09-27)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
 **Lage** / **Blockade** / **Braucht**. Status-Tag: `wartend` | `operator-gebunden` |
 `blockiert` | `termin`.
 
-Diese Session konsumierte `handover-2026-09-27-mycelium-folge176.md`.
+Diese Session konsumierte `handover-2026-09-27-mycelium-folge177.md`.
 
 ## Operator-Wort-Register
 
@@ -23,48 +23,69 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge176.md`.
 - Wort | 2026-09-27 | „monthly + 8-day als per-Granule-Serie bauen; daily descopen" → modis-cdn per-Granule + Manifest; daily descoped.
 - Wort | 2026-09-27 | „volume" — gibt die φ-Direktive `volume` (3D-Gitter-Ingest) frei.
 - Wort | 2026-09-27 | „Du kannst" (Phase-2-Ausführung bestätigt) — session-weiter Delegations-Consent; nicht das Commit-Wort.
+- Wort | 2026-09-27 | „Committe und pushe jetzt" (`/commit`) — Commit-Wort (Doppel-Ask) für diese Session.
 
 ## Offen (aufgeschlüsselt)
 
 ### Linie (eigen)
 
-#### GOSAT-GW GWT3F_L1B — 4096-Granule-Gate reißt (Empty/Overflow-Fix wirkt)
+#### GOSAT-GW GWT3F_L1B — 4096-Granule-Gate reißt (Jahres-Sharding gebaut)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `gosat-cdn`-Lauf grün (nach Re-Dispatch am Fix).
-- **Lage:** (gemessen 2026-09-27 via Browser/Job-Log `36302098032`) der
-  Empty/Overflow/Void-Fix wirkt (Bisektion läuft sauber); der Lauf reißt am neuen
-  Gate: `gosat_tanso3_compiler: GWT3F_L1B 2024-01-01..2026-12-31 carries 10313
-  granules — over the 4096 granule bound` (`MAX_SEARCH_RESULTS = 1 << 12`,
-  `gosat_tanso3_compiler.rs:21`, Gate `:1186`).
+- **Lage:** (gemessen 2026-09-27 via Job-Log `36302098032`) Server-Split gegen die
+  3000-Grenze läuft (`split at 2025-07-01 …`); der Lauf reißt am **lokalen** Gate:
+  `GWT3F_L1B 2024-01-01..2026-12-31 carries 10313 granules — over the 4096 granule
+  bound` (`MAX_SEARCH_RESULTS = 1 << 12`, `gosat_tanso3_compiler.rs:21`, Gate `:1186`).
 - **Blockade:** keine.
-- **Braucht:** Fenster-Jahres-Sharding (Compiler oder Workflow), dann Re-Dispatch;
-  bei success sha256 in `phi/sources.φ` bzw. `phi/blocked_sources.φ`.
+- **Braucht:** Re-Dispatch `gosat-cdn` (Jahres-Sharding gebaut: `gosat-cdn.yml`-Matrix
+  `--start <year>-01-01 --end <year>-12-31` → `gosat_tanso3_<year>.bin` + `series-manifest`;
+  URL in `phi/sources.φ` auf `gosat_tanso3.manifest`); bei success Manifest/sha256 verifizieren.
 
-#### modis-cdn — Release-Cap (1000 Assets) erreicht, Serien-Manifeste fehlen
+#### auto-dispatch — Workflow-Dispatch reißt (`--`-Flag + fehlende Inputs)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `auto-dispatch`-Lauf grün (nach Fix).
+- **Lage:** (gemessen 2026-09-27 via Job-Log `36302092969`) `grep -rl -- "--bin $stem"
+  .github/workflows --include='*.yml'` — `--` beendet die Optionen, `--include=*.yml` wird als
+  **Pfad** gelesen (`grep: --include=*.yml: No such file or directory`) → `mapfile` leer; dann
+  `gh workflow run gosat-cdn.yml` ohne Pflicht-Inputs → `HTTP 422: Required input 'product' not
+  provided`.
+- **Blockade:** keine.
+- **Braucht:** Re-Dispatch (Fix gebaut: `--include` **vor** `--`; `gosat-cdn.yml`/`dust-cdn.yml`/
+  `hinet-cdn.yml`-Inputs mit `default` + `required: false`) — Lauf grün abwarten.
+
+#### modis-cdn — Release-Cap (1000 Assets) erreicht, Asset-Brücke offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `modis-cdn`-Lauf `36283216818` failed.
-- **Lage:** (gemessen 2026-09-27 via Browser/Job-Logs + GH-API) Lauf `36283216818`
-  **failed**: das CDN-Release `data.lpdaac.earthdatacloud.nasa.gov` hat exakt 1000
-  Assets erreicht → jeder weitere Upload `HTTP 422: file_count limited to 1000
-  assets per release`; monthly 2017–2022 gemessen rot, `series-manifest` nie
-  gestartet; `modis_lst_cmg_8day.manifest`/`_monthly.manifest` existieren am CDN
-  nicht.
+- **Lage:** (gemessen 2026-09-27 via Job-Logs + GH-API) das CDN-Release
+  `data.lpdaac.earthdatacloud.nasa.gov` hat exakt 1000 Assets erreicht → weiterer Upload
+  `HTTP 422: file_count limited to 1000 assets per release`; `modis_lst_cmg_8day.manifest`/
+  `_monthly.manifest` fehlen am CDN. Familien-Tag `…-modis_lst_cmg` entworfen.
 - **Blockade:** keine.
-- **Braucht:** Release-Sharding / zweites Release, dann Re-Dispatch.
+- **Braucht:** Erst die **Asset-Brücke** (Council 2026-09-27: kein Re-Harvest) — einmaliger
+  Transfer der modis-Shards vom Bare-Tag `data.lpdaac.earthdatacloud.nasa.gov` auf das
+  Familien-Release `...-modis_lst_cmg` (Rust std + curl/GH-API, Digest-treu tragen, dann die
+  Bare-Tag-Slots freigeben); dann Re-Dispatch. **Noch NICHT committet:** ein Compiler-Wechsel
+  löst via `auto-dispatch` (Pfad `tools/harvest/src/bin/**`) sofort `modis-cdn` aus → den
+  verbotenen Re-Harvest. Entwurf: `modis_lst_cmg_compiler.rs` `CDN_TAG` (NETLOC→Familien-Tag),
+  `modis-cdn.yml` Release/Tag, URL in `phi/sources.φ` — erst die Brücke bauen, dann anwenden.
 
 #### secrets-inventar — Prosa-Träger, 6 Lebendquellen-Disposition
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** `phi/sources.φ` bzw. `phi/declined_sources.φ` Disposition der 6 Lebendquellen gesetzt.
 - **Lage:** (gemessen 2026-09-27) kanonischer Träger ist DIESE Linie; der `§Offen`-Marker des Surveys `docs/surveys/survey-2026-09-26-secrets-inventar.md` ist offen.
 - **Blockade:** keine.
-- **Braucht:** `archive_search --verdict` je der 6 Quellen (GFW, GOSAT-GW, IGETS, Rubin, Babamul, Movebank); danach Disposition in `phi/sources.φ` bzw. `phi/declined_sources.φ`; dann `docs/surveys/survey-2026-09-26-secrets-inventar.md` §Offen schließen.
+- **Braucht:** Disposition (gemessen 2026-09-27 via `--verdict`: alle 6 direct **HTTP 200** —
+  GFW, GOSAT-GW, IGETS, Rubin, Babamul, Movebank): GFW/Rubin/Movebank neu als `source` in
+  `phi/sources.φ`; GOSAT-GW (`:8300`)/IGETS (`:8349`)/Babamul (`:778`) bereits registriert →
+  Register-Schreibakt ist Mountain-Domäne; dann `survey-2026-09-26-secrets-inventar.md` §Offen schließen.
 
 #### archive_search-Arme — Live-Befund (Rest: EPIPE-Fläche)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Live-Test 2026-09-27 (general-Lauf, jeder Arm des `--help` einmal gemessen).
 - **Lage:** (gemessen 2026-09-27) 50+ Arme OK; in diesem Atom direkt gefixt: `--cc` `url=`-Form (`net.rs` `cc_target` + Test), `--ena`-Syntax-Hinweis (help), `--arxiv`-Botschaft (frische 406-Messung — auch ohne `max_results`; live ist `--arxiv-oai`); `--supermag` server-seitig (`external-state.md`-Zeile); `--librs` 403-Fallback greift; `--brave` 402 Quota. `sgrep`-EPIPE-Panik gefixt (`out!`-Makro).
 - **Blockade:** keine.
-- **Braucht:** die EPIPE-Sicherung der `archive_search`-println-Fläche (`--git | head` panikt, gemessen) — dasselbe `out!`-Muster über die archive_search-Bins; `cargo check -p omegaflow-utils` 0/0; Re-Test via CI.
+- **Braucht:** CI-`tools-build` grün (Fix gebaut: `out!`-Makro in `archive_search.rs`, 4 `println!`
+  ersetzt; `cargo check -p omegaflow-utils` 0/0 gemessen).
 
 #### Voyager 1/2 closed-loop Doppler — Anfrage läuft, Register-Note korrigiert
 - **Status:** wartend | **Bindung:** eigen
@@ -102,4 +123,4 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge176.md`.
 
 ## Abschluss
 
-Commit-Wort (`/commit`) offen — Phase 1/2 lief unter `/consent`/„Du kannst" (Delegation).
+Commit-Wort (`/commit`) erteilt (2026-09-27) — Commit + Push dieser Session.
