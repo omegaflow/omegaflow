@@ -3,7 +3,7 @@
   session: Mountain-Folge 182
   class: handover
   date: 2026-09-27
-  sha256: df66b3ad348bdac2386e5c08a23f698c11915d17cc101d97938e5e5d85aae782
+  sha256: f28d044446b0d88be596ecfa321b1d6043debc3aca7a7296397e1bc9da531d59
   status: live
 -->
 # Handover — Mountain-Folge 182 (2026-09-27)
@@ -20,6 +20,8 @@ Wort | Datum | Quelle
 UI-Chat-Stimmen derzeit nicht gebraucht → `LOCK` | 2026-09-27 | Operator (Session)
 D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | 2026-09-27 | Operator (Session)
 „Du kannst" Mountain-Folge 182 | 2026-09-27 | session-weiter Delegations-Consent (`/consent`), nicht das Commit-Wort
+„die Kante bin ich" — jede Linie arbeitet bis zur Kante des Operators; Wert, Wort, Dritt-Akt und Send bleiben seine Hand | 2026-09-27 | Operator (Future-Session)
+ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben — Verbreitung im selben Atom | 2026-09-27 | Operator (Future-Session)
 
 ## Offen (aufgeschlüsselt)
 
