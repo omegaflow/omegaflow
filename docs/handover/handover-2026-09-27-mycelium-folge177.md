@@ -3,7 +3,7 @@
   session: Mycelium-Folge 177
   class: handover
   date: 2026-09-27
-  sha256: fc737792625b59b3ca570043c81e9f9cff160843d353a1d9b59ec11a1a4d4da1
+  sha256: 320997f43f2e006d738fc9ea2c3c89fedde9d8fc209680c057e4534d6d76b0d3
   status: live
 -->
 # Handover — Mycelium-Folge 177 (2026-09-27)
@@ -28,7 +28,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge176.md`.
 
 ### Linie (eigen)
 
-#### GOSAT-GW GWT3F_L1B — Void/Overflow-Fix gebaut, Re-Dispatch nach Push
+#### GOSAT-GW GWT3F_L1B — 4096-Granule-Gate reißt (Empty/Overflow-Fix wirkt)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `gosat-cdn`-Lauf grün (nach Re-Dispatch am Fix).
 - **Lage:** (gemessen 2026-09-27 via Browser/Job-Log `36302098032`) der
@@ -40,7 +40,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge176.md`.
 - **Braucht:** Fenster-Jahres-Sharding (Compiler oder Workflow), dann Re-Dispatch;
   bei success sha256 in `phi/sources.φ` bzw. `phi/blocked_sources.φ`.
 
-#### modis-cdn — Serien-Manifest-Job, Lauf läuft
+#### modis-cdn — Release-Cap (1000 Assets) erreicht, Serien-Manifeste fehlen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `modis-cdn`-Lauf `36283216818` failed.
 - **Lage:** (gemessen 2026-09-27 via Browser/Job-Logs + GH-API) Lauf `36283216818`
