@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-26
-  sha256: 5ab33d20c2978efc088fa533145736d883d9750449dd820b2744c632dc169573
+  sha256: 55c079405b5f6e6df44f8b8fc3e8154ea079e3c5e41e10100d809d197a897499
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-The excitation of geomagnetically induced currents (GIC) is dB/dt. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in both storm years at Abisko and Sodankylä (2024: 0.12670 vs 0.10557; 2025: 0.13309 vs 0.12136; SOD 2024: 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all 24 rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry. PCMCI and the full-lag bound have run (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards; the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field, for which dB/dt is the engineering proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to the hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in both storm years at Abisko and Sodankylä (2024: 0.12670 vs 0.10557; 2025: 0.13309 vs 0.12136; SOD 2024: 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all 24 rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate via the yearly-round arrow and the asymmetry. PCMCI and the full-lag bound have run (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards; the riss stands.
 
 ## Key Points
 
@@ -63,7 +63,7 @@ nonparametric. TE has been applied to solar-wind–magnetosphere coupling
 (Johnson & Wing, 2005; Wing & Johnson, 2016; Yu et al., 2022) and to climate
 causality at large scale (Runge et al., 2019), but the GIC driver chain — L1 Bz to ground
 dB/dt at an auroral-zone station, measured with a strict phase-randomized
-null and a family-wise correction — has not, to our knowledge, been settled.
+null and a round-maximum family bound — has not, to our knowledge, been settled.
 
 This paper reports a measurement series at three time grains: minutes
 (one 22-hour live window), hours (two full storm years, 2024 and 2025), and
@@ -124,7 +124,11 @@ addition, the **family bound** fam = the maximum surrogate TE over *all*
 pairs × lags of the measurement round — the multiple-comparison control:
 with 12 tested pair-lag combinations per grain, a per-lag excess is expected
 by chance; an arrow requires TE > fam (and therefore exceeds every null TE
-of the round). Verdicts: **arrow** (TE > fam), **family bound** (TE > own
+of the round). fam is an empirical plug-in maximum — the largest surrogate
+TE actually drawn in this round — not a quantile of a calibrated maximum
+distribution; it names no fixed α, and its own sampling variability is not
+quantified here (n_surr = 10 in the yearly round; §6 carries this limit).
+Verdicts: **arrow** (TE > fam), **family bound** (TE > own
 threshold, < fam — directed, not round-significant), **silent** (TE < own
 threshold).
 
@@ -144,7 +148,9 @@ it is not applied (this manuscript reports its absence, not its outcome).
 Three grains: minute (22-h live window, 1-min grid), hourly (2024 and 2025
 full years, 1-h grid, lag 0/1 h), daily (1994–2026, stride 3 — every third
 day, named: lag 1 = 3 days; stride 1 is computable but ~9× slower and left
-for future runs). All seeds fixed. The family bounds reported here were
+for future runs). All seeds fixed: the surrogate seed is the constant
+`SURROGATE_SEED = 0x9E37_79B9_7F4A_7C15` (`tools/measure/src/bin/bz_blatt_probe.rs:9`,
+`bz_retro_probe.rs:9`). The family bounds reported here were
 measured under the corrected (post-fix) surrogate RNG
 (`fam-machine: post-fix`); the pre-fix run is superseded (see the footnote,
 §6). The hourly probe has since been hardened — lag sweep 0–6 h, `n_surr =
@@ -194,7 +200,7 @@ n it clears it from c ≈ 0.2. The reverse arrow is therefore n-dependent and
 not a stable asymmetry property: it is the estimator's expected response
 under strong bidirectional coupling and finite samples, and the direction is
 carried by the asymmetry (dominance of the known direction), not by an
-absolute reverse silence. This is the honest reading the paper takes for the
+absolute reverse silence. This is the reading the paper takes for the
 real data (§4.4, §6): a marginal reverse arrow at the second station is
 consistent with a weak reverse coupling, not a null failure.
 
@@ -294,7 +300,11 @@ reverse directions (dB/dt → Speed, dB/dt → Density) stay below the bound lik
 the hourly grains and are not separately tabulated. The daily mean of Bz
 carries no information about the
 daily maximum of dB/dt — the southward excursions that drive storms average
-out at this grain.
+out at this grain. This is also a design asymmetry, carried as a named
+confound rather than a result: the driver enters as a daily mean while the
+target enters as a daily maximum, and a daily-maximum Bz driver was not
+measured, so the emptiness of this grain is not yet separated from the
+mean-versus-maximum mismatch.
 
 ## 5. Discussion
 
@@ -326,19 +336,25 @@ grain; the expected lag-0/edge artefact zones are clean (the one edge excess,
 the quiet-window Speed arrow at 120 min, is named and outside the travel
 window).
 
-**The corrected null sharpens, not weakens, the finding — and the hardening
-moves the bound itself.** The family bound is the strongest null TE of the
-round. Under the corrected (post-fix) surrogate RNG the bounds fall (2024:
-0.12480 → 0.10557; 2025: 0.14256 → 0.12136) because the pre-fix half-circle
-RNG had inflated the surrogate distribution. The Bz arrow, which pre-fix
-cleared the bound only in 2024, now clears it in both storm years at both
-observatories. What the pre-fix reading took for year-dependence of
-round-significance was partly an artefact of the inflated null; the corrected
-bound makes the sub-daily Bz driver a consistent, replicating statement
-rather than a single-storm event. The hardened quarterly null widens the
-bound itself — the per-quarter family bounds run 0.18–0.20 against the
-yearly 0.106–0.121 — so the yearly arrow does not survive the hardened
-quarterly null; the riss is this round-dependence, named, not resolved.
+**The corrected null lowers the bound — and the hardening raises it.** The
+family bound is the strongest null TE of the round. Under the corrected
+(post-fix) surrogate RNG the bounds fall (2024: 0.12480 → 0.10557; 2025:
+0.14256 → 0.12136) because the pre-fix half-circle RNG had inflated the
+surrogate distribution. A lower bound enlarges, by construction, the set of
+values that clear it, so the correction raises the arrow rate mechanically;
+what it establishes is that the pre-fix bound was an instrument artefact, not
+that the physical evidence strengthened. The Bz arrow, which pre-fix cleared
+the bound only in 2024, now clears it in both measured storm years at both
+observatories. This is consistency across 2024 and 2025 at two auroral-zone
+stations, both near solar-cycle maximum; it is not replication across the
+solar cycle, and the solar-cycle dependence of the coupling (Johnson & Wing,
+2005) remains unmeasured here. The hardened quarterly null widens the bound
+itself — the per-quarter family bounds run 0.18–0.20 against the yearly
+0.106–0.121 — but the two witnesses also differ in surrogate count (10
+against 100) and window (whole year against single quarter), and a maximum
+over more draws and more pair-lag cells is larger by construction; the
+divergence therefore mixes the grain with the power of the null, and the
+riss is this round-dependence, named, not resolved.
 
 **Why TE rather than PCMCI.** Runge et al. (2019) give the modern
 conditional-independence route to causal discovery (PCMCI), with linear or
@@ -373,8 +389,8 @@ the storm index, not ground dB/dt.
 Coupling-function studies (Newell et al., 2007; Borovsky, 2008) place
 southward Bz at the center of dayside reconnection — the physical mechanism
 of the chain Bz → magnetosphere–ionosphere currents → ground dB/dt. Our
-measurement is the direct TE confirmation at the ground end of that chain,
-with a strictly corrected null. Methodologically, our family bound is a
+measurement is a direct TE detection at the ground end of that chain,
+under a strictly phase-randomized null and a round-maximum family bound. Methodologically, our family bound is a
 conservative multiple-comparison control in the spirit of Runge et al.
 (2019); the surrogate design follows the phase-randomization practice of
 Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
@@ -406,7 +422,10 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   six lags in 13 of 16 shards while confirming a direct edge in three (ABK
   2025-q2 5/6, SOD 2025-q2 6/6, SOD 2025-q3 1/6). The riss remains: the
   yearly arrow is not reproduced by the hardened quarterly null, and the
-  PCMCI verdict is itself round-dependent.
+  PCMCI verdict is itself round-dependent. The two bounds are not directly
+  comparable — the hardened round draws 100 surrogates over a larger
+  pair-lag family than the yearly round's 10, so a higher bound is expected
+  by construction.
 - **dB/dt is the induction driver, not the network current.** The FMI
   Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
   `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
@@ -439,8 +458,23 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
   of the data.
-- **fam is conservative but not exhaustive.** It corrects for the round's
-  multiplicity; it does not model dependence between surrogate draws.
+- **fam is a plug-in round maximum, not a calibrated test.** It corrects for
+  the round's multiplicity by taking the largest surrogate TE actually drawn;
+  it is not a quantile of a calibrated maximum distribution, names no fixed α,
+  and carries no reported sampling variance — at n_surr = 10 in the yearly
+  round the maximum of ten mutually dependent draws is high-variance. It does
+  not model dependence between surrogate draws (they share the driver's
+  autocorrelation and the same seed family). No confidence interval is
+  reported on fam or on the TE values themselves.
+- **Estimator bias at the operating n.** The KDE/Silverman estimator carries a
+  bias in the three-dimensional conditional density (x_{t+τ}, x_t, y_t) at the
+  operating sample sizes (n ≈ 1260–2200 per round); no explicit small-sample
+  bias correction is applied. The Hénon benchmark validates the direction at
+  n = 10 000 and does not bound the bias at the smaller n where the verdicts
+  are taken.
+- **No storm-only sub-analysis.** The yearly round pools storm and quiet hours
+  into one TE; whether the Bz arrow is carried by a few storm days is not yet
+  separated. A storm-selective or block-resampled sub-analysis is an open step.
 - **Surrogate-machine generation.** The family bounds in this version were
   measured under the corrected (post-fix) surrogate RNG
   (`fam-machine: post-fix`, §3.4). The pre-fix run (fam 2024 = 0.12480) is
@@ -460,7 +494,8 @@ Abisko and at Sodankylä (§4.2–4.4). The hardened quarterly round (n_surr =
 directed rows stay family bound (§3.4, §6) — and the two witnesses are
 carried un-smoothed as a riss, never averaged. What survives the riss: the
 density control stays below the bound throughout; the forward direction
-dominates the reverse in every yearly round; the daily grain is empty because
+exceeds the reverse in every yearly round (ratios 1.20 and 1.14 at ABK
+2024/2025, 1.09 at SOD 2024); the daily grain is empty because
 daily means wash the driver out; and the reverse channel shows a weak,
 expected response under strong coupling (§3.5), which tempers a strictly
 one-way reading at the second station. A family-clearing driver at the hourly
