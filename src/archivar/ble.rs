@@ -1268,7 +1268,7 @@ pub fn decode_rsc_measurement(payload: &[u8]) -> Option<Vec<(String, f64, Option
     let (flags, rest) = payload.split_first()?;
     let stride_present = flags & 0x01 != 0;
     let distance_present = flags & 0x02 != 0;
-    let speed_raw = u16::from_le_bytes([*rest.get(0)?, *rest.get(1)?]);
+    let speed_raw = u16::from_le_bytes([*rest.first()?, *rest.get(1)?]);
     let cadence_raw = *rest.get(2)?;
     let mut tail = 3usize;
     if stride_present {
