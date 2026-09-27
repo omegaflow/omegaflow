@@ -1038,7 +1038,7 @@ mod tests {
             buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
         }
         let name_rec = 2 * RECORD_BYTES;
-        buf[name_rec..name_rec + 4].copy_from_slice(b"T1");
+        buf[name_rec..name_rec + 4].copy_from_slice(b"T1  ");
 
         put(&mut buf, start_addr, 0.0);
         for j in 0u32..15 {

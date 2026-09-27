@@ -1088,11 +1088,11 @@ mod tests {
         assert_eq!(s.name, "mursst");
         assert_eq!(s.dims.len(), 2);
         assert_eq!(s.grids.len(), 1);
-        assert_eq!(s.grids[0].array, 3);
-        assert_eq!(s.grids[0].maps, vec![4, 5]);
-        assert_eq!(s.vars.len(), 6);
-        assert_eq!(s.vars[3].name, "sst");
-        assert_eq!(s.vars[3].dap_type, DapType::Float32);
+        assert_eq!(s.grids[0].array, 2);
+        assert_eq!(s.grids[0].maps, vec![3, 4]);
+        assert_eq!(s.vars.len(), 5);
+        assert_eq!(s.vars[2].name, "sst");
+        assert_eq!(s.vars[2].dap_type, DapType::Float32);
     }
 
     #[test]
@@ -1123,7 +1123,7 @@ mod tests {
             file.values_numeric("sst").unwrap(),
             vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
         );
-        assert_eq!(file.vars.len(), 6);
+        assert_eq!(file.vars.len(), 5);
     }
 
     #[test]
