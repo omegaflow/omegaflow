@@ -209,7 +209,7 @@ DATE       TIME         DOY     FCCX      FCCY      FCCZ      FCCF   |
         let file = parse_text(MEASURED_FCC, &lsk).expect("the measured IAGA-2002 text parses");
         assert_eq!(file.station, crate::geo::pack_iaga("FCC").unwrap());
         assert_eq!(file.lat, 58.759);
-        assert_eq!(file.lon, -94.088);
+        assert!((file.lon + 94.088).abs() < 1e-9, "lon {}", file.lon);
         assert_eq!(file.alt, 15.0);
         assert_eq!(
             file.comps,
@@ -260,7 +260,7 @@ DATE       TIME         DOY     FCCX      FCCY      FCCZ      FCCF   |
         assert_eq!(rows[9].val, 57177.39);
         assert_eq!(rows[0].station, file.station);
         assert_eq!(rows[0].lat, 58.759);
-        assert_eq!(rows[0].lon, -94.088);
+        assert!((rows[0].lon + 94.088).abs() < 1e-9, "lon {}", rows[0].lon);
         assert_eq!(rows[0].alt, 15.0);
         assert_eq!(rows[0].freq, crate::spectral::SPECTRAL_NO_BAND);
         assert_eq!(rows[0].bin_width, crate::spectral::SPECTRAL_NO_BAND);
