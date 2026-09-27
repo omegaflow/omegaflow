@@ -138,6 +138,7 @@ fn search_fetch(url: &str, cookie: &str) -> Option<String> {
 
 enum SearchParse {
     Granules(Vec<Granule>),
+    Empty,
     Overflow(String),
     Void,
 }
@@ -157,7 +158,13 @@ fn search_parse(body: &str) -> SearchParse {
             },
             _ => String::new(),
         };
-        return SearchParse::Overflow(summary);
+        if summary.contains("exceeds the maximum number") {
+            return SearchParse::Overflow(summary);
+        }
+        if summary.contains("search result is 0") {
+            return SearchParse::Empty;
+        }
+        return SearchParse::Void;
     };
     let JsonVal::Arr(items) = entry else {
         return SearchParse::Void;
@@ -213,6 +220,7 @@ fn search_granules(product: &str, start: &str, end: &str, cookie: &str) -> Optio
     let url = search_url(product, start, end);
     match search_parse(&search_fetch(&url, cookie)?) {
         SearchParse::Granules(granules) => Some(granules),
+        SearchParse::Empty => Some(Vec::new()),
         SearchParse::Void => None,
         SearchParse::Overflow(summary) => {
             let Some((mid, next)) = split_window(start, end) else {
@@ -1322,6 +1330,7 @@ mod tests {
         ]}"#;
         let granules = match search_parse(body) {
             SearchParse::Granules(g) => g,
+            SearchParse::Empty => panic!("the result feed reads as empty"),
             SearchParse::Overflow(s) => panic!("the result feed reads as overflow: {s}"),
             SearchParse::Void => panic!("the result feed reads as void"),
         };
@@ -1347,6 +1356,16 @@ mod tests {
                 assert!(summary.contains("exceeds the maximum number (3000)"));
             }
             _ => panic!("the overflow shape reads as Overflow, not granule/void"),
+        }
+    }
+
+    #[test]
+    fn search_parse_reads_the_zero_result_as_empty() {
+        let body = r#"{"status": "success", "results": {}, "messages": {"level": "info",
+            "summary": "The search result is 0, please change the search contents and search again.", "details": ""}}"#;
+        match search_parse(body) {
+            SearchParse::Empty => {}
+            _ => panic!("the zero-result shape reads as Empty, not overflow/void"),
         }
     }
 

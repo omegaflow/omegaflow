@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: a767a742e88c1403433c287b1bd97f0d7ddcb67bc1d5799b3469600f102bc63a
+  sha256: 21a43332aa4d69bc6cc45d11f78e20d3749355c12531442315d9e5a2e0e5c59f
   status: live
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -73,7 +73,9 @@ Referenz-Parser `NASA-PDS/PyTrk234` (`.tmp-trk234-components.txt`).
 - Mariner `PSPA-00316` als akzeptierte Ernte-Duty (Geschwister-Format
   `voyager_saturn`, PSPA-00049, UNIVAC-1108); die 17-Code-Lücke berührt ihn nicht.
   Nachzug 2026-09-17: Arm + Workflow gebaut (`src/archivar/mariner_occlt.rs`,
-  `.github/workflows/mariner-occlt-cdn.yml`) — CDN-Dispatch offen.
+  `.github/workflows/mariner-occlt-cdn.yml`). CDN-Dispatch geschlossen (gemessen
+  2026-09-27 via `archive_search --sniff`): `spdf.gsfc.nasa.gov/mariner_occlt.bin`
+  200, sha256 `4aa487cb…` = `phi/sources.φ:9271`.
 - Pioneer-ATDF dtype-12/13 — kein Parser-Gap (gemessen 2026-09-17, folge63): der
   ATDF-Wert ist TRK-2-25 `DATA_TYPE` = 1|2; „DTYPE 12/13" ist der ASC/NAVIO-Raum.
   Der Juno-OCRU-Abgleich ist Ernte-/Bau-Arbeit, kein Gate.
