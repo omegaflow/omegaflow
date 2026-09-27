@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-26
-  sha256: ab466b0bfcaa6c18124920ba97d2fe00b96971c507ccfaddd914cde3c9fe569c
+  sha256: 6e31b556771b33693b08369d5ac98232aaa9f675389678a88c21b0c9c8ebb637
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -10,7 +10,7 @@
 
 # The directional driver of geomagnetically induced currents
 
-*Omegaflow Working Group — Bz-Blatt Session, 2026-08-22*
+*Omegaflow Working Group*
 
 ## Abstract
 
@@ -43,7 +43,7 @@ This paper reports a measurement series at three time grains: minutes
 days (32 years, 1994–2026). The instrument is the untouched scalar TE
 estimator of the omegaflow field system; the null model and the family bound
 are those of its broken-null-control record. All verdicts below are reported
-exactly as the machine measured them, including the silent ones.
+exactly as measured, including the silent ones.
 
 ## 2. Data
 
@@ -108,7 +108,7 @@ Three structural null controls: (i) the density channel must be silent
 the instrument, not the physics); (ii) the reverse direction dB/dt→driver
 must not beat its threshold; (iii) in the minute grain, the quietest 6-hour
 sub-window must stay silent. The PE gate (a 2⁴-ring of the driver's own
-permutation entropy, jump ⇔ |pe − mean| > 2σ) is part of the machine but
+permutation entropy, jump ⇔ |pe − mean| > 2σ) is part of the pipeline but
 requires ≥ 8 segments: at 22 h it has 3 — no verdict; at the yearly grains
 it is not applied (this manuscript reports its absence, not its outcome).
 
@@ -282,8 +282,7 @@ forward-over-reverse asymmetry, not on a per-quarter clearing. The daily
 grain is empty — not for lack of data (n ≈ 3900, 32 years, all storms
 included) but because the daily mean destroys the physical signal: a storm
 is a multi-hour southward excursion, and its daily average is diluted toward
-zero. The absence at the daily grain is itself the physical finding (0
-honored in the system's vocabulary).
+zero. The absence at the daily grain is itself the physical finding.
 
 **Direction and asymmetry.** The forward direction Bz → dB/dt exceeds the
 bound in every yearly hourly round (and stays below the bound in every
@@ -365,8 +364,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   minute file Bz 0.24001 / Speed 0.28942 vs fam 0.34125 stays family bound;
   SOD 2025-q1…q4 are now in the workflow matrix (their minute data is
   measured present at the BGS GIN HAPI). The two witnesses — yearly
-  round and hardened quarterly round — are carried un-smoothed as a riss
-  (`VerdictWord::Riss`), never averaged. The family-clearing claim at the
+  round and hardened quarterly round — are carried un-smoothed as a riss, never averaged. The family-clearing claim at the
   hourly grain is withdrawn into this open state, not inverted. Named
   resolution steps — measured 2026-09-26 (`bz-retro-probe`, CI 36224176888,
   success): the family bound over the full lag sweep (0–6 h) finds no
@@ -456,7 +454,5 @@ hourly-grain family-clearing as an open measurement, not a settled finding.
 *Data and code:* the instrument, probes and register live in the omegaflow
 repository (`src/mathematikerin/te.rs` — canonical scalar estimator, untouched;
 `tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/bz_blatt_probe.rs`).
-All verdicts are
-machine-measured; the register language of the system is German, this
-manuscript is its English face. All bibliographic entries above were
+All reported values are machine-measured. All bibliographic entries above were
 checked against the Crossref registry on 2026-08-22.
