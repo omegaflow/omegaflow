@@ -89,6 +89,20 @@ Diese Session konsumierte `handover-2026-09-27-river-folge40.md` (nach `archiv/`
 - **Braucht:** Operator-Wort; dann BOM bestellen.
 - **Wort:** Mantis Shrimp LOCK | 2026-09-26 | Operator-Wort folge36.
 
+### paper-check — yu-tong-Label >75
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort
+- **Lage:** (gemessen 2026-09-27 via `ci_manage log 36283676047`) der CI-Job `paper-check`
+  ist rot: `docs/paper/yu-tong-fang-hu-2022-transfer-entropy-solar-wind-drivers.md` trägt
+  **title=94 > 75** (`export_latex --check`, `MAX_TITLE = 75`,
+  `tools/science/src/bin/export_latex.rs:9`); der Body-sha stimmt (`07395a7d…`). Die
+  terminologie-sha-Abweichung (Sensory) ist in Sensory-Folge 183 behoben.
+- **Blockade:** keine.
+- **Braucht:** H1 (Zeile 10) **und** Header-`title:` auf ≤75 kürzen (z. B. „Yu, Tong, Fang
+  & Hu 2022 — TE ranking of solar wind drivers"), danach
+  `omega_sh sha docs/paper/yu-tong-fang-hu-2022-transfer-entropy-solar-wind-drivers.md` in
+  den Header (die H1-Kürzung ändert den Body-sha).
+
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der session-weite Consent, nie das Commit-Wort.
