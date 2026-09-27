@@ -11677,3 +11677,132 @@ fn test_absorption_for_force_absent_or_invalid_declaration_is_pad() {
         assert_eq!(channels::absorption_for_force(force, f64::INFINITY), 0.0);
     }
 }
+
+fn epncore_extract_fixture() -> Extract {
+    let mut fc = field_fixture("diameter", 31536000.0);
+    fc.key = "diameter".into();
+    fc.name = "planeto_mars_crater_diameter_km".into();
+    Extract::EpnCore {
+        arr_path: ".".into(),
+        body_key: "target_name".into(),
+        lon_min_key: "c1min".into(),
+        lon_max_key: "c1max".into(),
+        lat_min_key: "c2min".into(),
+        lat_max_key: "c2max".into(),
+        alt_min_key: String::new(),
+        alt_max_key: String::new(),
+        s_region_key: "s_region".into(),
+        epoch_key: String::new(),
+        epoch_mjd: false,
+        val_key: String::new(),
+        fields: vec![fc],
+    }
+}
+
+#[test]
+fn epncore_stcs_centroid_reads_the_measured_gmap_polygon() {
+    let s = "Polygon UNKNOWNFrame 331.5306188258 -13.1698412142 331.5306188258 -12.9809494022 331.7580785802 -12.9809494022 331.7580785802 -13.1698412142";
+    let (lon, lat) = stc_s_polygon_centroid(s).unwrap();
+    assert!((lon - 331.644348703).abs() < 1e-9, "lon {lon}");
+    assert!((lat - (-13.0753953082)).abs() < 1e-9, "lat {lat}");
+}
+
+#[test]
+fn epncore_stcs_centroid_normalizes_the_seam() {
+    let s = "Polygon UNKNOWNFrame 359.9 -1.0 359.9 1.0 0.1 1.0 0.1 -1.0";
+    let (lon, lat) = stc_s_polygon_centroid(s).unwrap();
+    assert!((lon - 0.0).abs() < 1e-9, "lon {lon}");
+    assert!((lat - 0.0).abs() < 1e-9, "lat {lat}");
+}
+
+#[test]
+fn epncore_stcs_centroid_refuses_malformed_regions() {
+    assert!(stc_s_polygon_centroid("Circle UNKNOWNFrame 5.0 75.0 0.01").is_none());
+    assert!(stc_s_polygon_centroid("Polygon UNKNOWNFrame 5.0").is_none());
+    assert!(stc_s_polygon_centroid("Polygon UNKNOWNFrame 5.0 95.0 6.0 95.0").is_none());
+    assert!(stc_s_polygon_centroid("Polygon UNKNOWNFrame 5.0 75.0 x 76.0").is_none());
+    assert!(stc_s_polygon_centroid("5.0 75.0 6.0 76.0").is_none());
+}
+
+#[test]
+fn epncore_extract_places_the_measured_crater_region() {
+    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let body = r#"[
+        {"target_name": "Mars", "c1min": 5.888, "c1max": 5.888,
+         "c2min": 75.082, "c2max": 75.082, "diameter": 1.83}
+    ]"#;
+    let ExtractResult::Measurements(channels) = extract(&src, body, 8.0e8, &fixture_lsk()) else {
+        panic!("epncore extract returned no measurements");
+    };
+    assert_eq!(channels.len(), 1);
+    let (ch, fc) = &channels[0];
+    assert_eq!(ch.value, 1.83);
+    assert_eq!(ch.epoch, 8.0e8);
+    assert_eq!(fc.name, "planeto_mars_crater_diameter_km");
+    match &ch.position {
+        Position::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            assert_eq!(body_name, "mars");
+            assert!((lat - 75.082).abs() < 1e-9, "lat {lat}");
+            assert!((lon - 5.888).abs() < 1e-9, "lon {lon}");
+            assert_eq!(*alt, 0.0);
+        }
+        other => panic!("crater row placed as {other:?}, not a mars surface position"),
+    }
+}
+
+#[test]
+fn epncore_extract_falls_back_to_the_stcs_polygon() {
+    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let body = r#"[
+        {"target_name": "Mars",
+         "s_region": "Polygon UNKNOWNFrame 5.888 75.0 5.888 75.1 5.912 75.1 5.912 75.0",
+         "diameter": 2.1}
+    ]"#;
+    let ExtractResult::Measurements(channels) = extract(&src, body, 8.0e8, &fixture_lsk()) else {
+        panic!("epncore extract returned no measurements");
+    };
+    assert_eq!(channels.len(), 1);
+    match &channels[0].0.position {
+        Position::Surface { lat, lon, .. } => {
+            assert!((lat - 75.05).abs() < 1e-9, "lat {lat}");
+            assert!((lon - 5.9).abs() < 1e-9, "lon {lon}");
+        }
+        other => panic!("polygon row placed as {other:?}"),
+    }
+}
+
+#[test]
+fn epncore_extract_unwraps_a_seam_crossing_lon_region() {
+    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let body = r#"[
+        {"target_name": "Mars", "c1min": 359.9, "c1max": 0.1,
+         "c2min": -4.0, "c2max": -4.0, "diameter": 0.5}
+    ]"#;
+    let ExtractResult::Measurements(channels) = extract(&src, body, 8.0e8, &fixture_lsk()) else {
+        panic!("epncore extract returned no measurements");
+    };
+    assert_eq!(channels.len(), 1);
+    match &channels[0].0.position {
+        Position::Surface { lon, .. } => assert!((lon - 0.0).abs() < 1e-9, "lon {lon}"),
+        other => panic!("seam row placed as {other:?}"),
+    }
+}
+
+#[test]
+fn epncore_extract_skips_rows_without_a_measured_region() {
+    let src = source_fixture("tap", vec![epncore_extract_fixture()]);
+    let body = r#"[
+        {"target_name": "Mars", "diameter": 1.83},
+        {"target_name": "Mars", "c1min": 5.0, "c1max": 5.0, "c2min": 95.0,
+         "c2max": 95.0, "diameter": 1.83}
+    ]"#;
+    let ExtractResult::Measurements(channels) = extract(&src, body, 8.0e8, &fixture_lsk()) else {
+        panic!("epncore extract returned no measurements");
+    };
+    assert!(channels.is_empty(), "{:?}", channels.len());
+}
