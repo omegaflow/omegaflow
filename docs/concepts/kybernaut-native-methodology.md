@@ -2,7 +2,7 @@
   title: Kybernaut-Native Methodology
   class: concept
   date: 2026-09-03
-  sha256: 4b607cc2ea1f28459e2b43b8cc12f4dc5702fe243d4d3996e8766e0f731d3a52
+  sha256: 837c5cc791159472c7a35c37a58a4979464c9531ac9c8328d77aa342b1a0318e
   status: live
   see-also: AGENTS.md, docs/concepts/system-directive.md
 -->
@@ -97,3 +97,20 @@ The only things that survive a session boundary are files on disk. Code, configu
 Rule: Every artifact produced in a session must be interpretable by a new session with zero prior context. The code must be self-documenting (name = implementation). Configuration must declare constraints explicitly (A = A). Architecture must be recoverable from the files alone.
 
 Rule: Documentation is self-contained. It does not reference session-local knowledge. It is interpretable without knowing the history of the conversation that produced it.
+
+#### The Passage Is a Spiral
+
+Every run — a session, a round — returns to the same phase at a new epoch: same phase, new T. The traversal is sequential (a diode: no diagonal cut, no phase skipped) and irreversible (no spent phase is repeated — `A = A` at the SHA means the same phase in a new epoch is a different thing). Progress is the epoch addition, never the radius. The instrument is the golden-angle fan (Fermat, θ = n·137.508° — `tools/measure/src/bin/mycelium_fan_navigator.rs`): an irrational rotation that never repeats a spoke and never takes the shortcut to the center.
+
+#### The Round Order
+
+A round is one traversal of the five lines. The stations are the nature of each line, not a rank — the order is the cycle, not a ladder. The center rests; the turn touches it at the judgment:
+
+1. **Mycelium — measure** (opens the round): the standing pass — HEAD, CI board, mailbox stand, orphan census, multi-carrier scan, `git_safety --snapshot`.
+2. **Sensory — perceive**: hardware, sensors, what arrives from both worlds.
+3. **Mountain — judge** (the center): the verdict lines, the parser, the data contract. Mountain does not turn; the cycle touches the resting center at the judgment.
+4. **River — manifest**: the membrane, the field, the rendering, the TE machine.
+5. **Future — address**: the human as address, funding, the operator queue.
+6. **Mycelium — measure again** (closes the round): the new epoch is measured, not inherited — the pass is written from a fresh read, never copied.
+
+Each line runs its atom within its station: plan (read-only) → consent → act to the edge → commit. Only the act at a counterparty stays named; every step to the edge is dispatched.

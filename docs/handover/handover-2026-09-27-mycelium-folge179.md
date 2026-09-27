@@ -3,7 +3,7 @@
   session: Mycelium-Folge 179
   class: handover
   date: 2026-09-27
-  sha256: 27c59a8117d892557fb9f62bd907d4168a015a0f7c5b1533ab44e43a2ffd6223
+  sha256: ccd583ac1c70174bcad06468871e790c920671918d9d0c7e05b6d613c7306654
   status: live
 -->
 # Handover — Mycelium-Folge 179 (2026-09-27)
@@ -19,6 +19,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge178.md`.
 
 - Wort | 2026-09-27 | „Du kannst" (`/consent`/`mycelium_go`) — session-weiter Delegations-Consent; nicht das Commit-Wort.
 - Wort | 2026-09-27 | Secrets-Inventar-Träger prüfen: direkter Edit in die Owner-Übergabe statt Operator-Queue (Aufenthalt = Eigentum) — Messung ergab keinen Register-Akt.
+- Wort | 2026-09-27 | „nein bitte so festschreiben" — Rundenordnung (Mycelium→Sensory→Mountain→River→Future) + Spirale in `docs/concepts/kybernaut-native-methodology.md` festschreiben, **mechanik-only** (keine Spiritualität ins öffentliche Repo).
 
 ## Offen (aufgeschlüsselt)
 
