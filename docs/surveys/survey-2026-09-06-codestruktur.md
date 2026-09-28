@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools
   class: survey
   date: 2026-09-06
-  sha256: de35e451e65b31f117af6a7fec646e9a2e6adf24c5e9e76e042db1078437b9ba
+  sha256: 83c4f91ec3bc620e873db5c15f357fa9db3e1993a8914b5ace30da4209de49eb
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -117,5 +117,12 @@ Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
   `src/mathematikerin/shaders.rs:19-20,173-208`; alle Format-Parser konvergieren
   auf `Sample` (`src/archivar/types.rs:41`). **Kein** Format-Modul trägt einen
   eigenen Datenvertrag (`sgrep -i "data contract" src` = 0). Der
-  `confirm-rendering`-Schritt (`archivar-mathematikerin.md:78`) bleibt `pending`
-  (kein read-only-Lauf).
+  `confirm-rendering`-Schritt (`archivar-mathematikerin.md:78`): **gemessen
+  2026-09-28** — das Release-Asset `matrix-state/matrix-rotor.txt` (15 310 B,
+  158 Zeilen, HEAD-SHA `ccfd1021c`) liegt vor und trägt **keine** `φ window:`-Zeile
+  (`sgrep -c "window:"` = 0). Ursache: die HUD-Zeile ist in
+  `src/mathematikerin/omega.rs:1788` auf `std::io::stderr().is_terminal()` gated,
+  CI leitet stderr in die Artefakt-Datei. Der CI-Artefakt-Weg ist damit
+  **strukturell unmöglich**; die headless-Verifikation braucht ein TTY (lokaler
+  `OMEGAFLOW_HIDDEN=1`-Lauf) oder die Freigabe der Zeile unter `OMEGAFLOW_HIDDEN`
+  (Rivers Feder, `omega.rs:1788`). `pending`.
