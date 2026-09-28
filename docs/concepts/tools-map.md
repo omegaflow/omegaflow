@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-20
-  sha256: 8c07db942e509c0f8d24733da9b0df84cc49915c40e676577f476c3e949c7ea6
+  sha256: 7308beab01784edbbe65f295c520aebcb594bca6364b986a6916c152c08db6fb
   status: live
   see-also: AGENTS.md
 -->
@@ -61,7 +61,7 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 | `--leads <kw>` | 0,85 s | Kandidaten-Homes abzüglich Registern |
 | `--mft <device>` | 0,003 s | benannter Exit ohne NTFS-Device |
 | `--sniff <url>` | 0,16 s | magic bytes + sha256 |
-| `--verdict <url>` | 24,2 s | Reichweiten-Leiter mit Fallbacks — nur für Reichweite |
+| `--verdict <url>` | 20,5 s | Reichweiten-Leiter mit Fallbacks — nur für Reichweite; Stufe 1/2 seit 2026-09-28 als 1-Byte-`--range` (erreichbares Asset in ms, vorher 3×30 s Timeout), die Gesamtzeit dominiert Stufe 3/CDX |
 | `--playwright <url>` | 2,97 s | Browser-Render |
 | `--pdf-image <file\|url>` | — | hebt eingebettete JPEG/PNG/JP2 aus einem PDF (kein Rasterizer); `--out <dir>` sonst Temp-Verzeichnis |
 | `--pdf-text <file\|url>` | — | liest den Textlayer eines PDF (FlateDecode-Content-Streams); bild-only/scanned → `pending` |

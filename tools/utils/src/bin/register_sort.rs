@@ -4,6 +4,8 @@ use std::fs;
 
 const DEFAULT_REGISTER: &str = "phi/sources.φ";
 
+const NO_CADENCE: u64 = 1 << 25;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut path = String::from(DEFAULT_REGISTER);
@@ -154,6 +156,10 @@ fn build_sources_block(lines: &[String]) -> Result<Block, String> {
     let mut ttl: Option<u64> = None;
     for line in lines.iter().skip(1) {
         let trimmed = line.trim();
+        if trimmed == "no-cadence" {
+            ttl = Some(NO_CADENCE);
+            break;
+        }
         if let Some(rest) = trimmed.strip_prefix("ttl ") {
             let value = rest.trim();
             match value.parse::<u64>() {
@@ -443,6 +449,19 @@ mod tests {
         assert_eq!(blocks[1].url, "https://a.example/data");
         assert_eq!(blocks[1].ttl, Some(5));
         assert_eq!(blocks[1].lines[2], "at earth");
+    }
+
+    #[test]
+    fn no_cadence_carries_the_reserved_guard() {
+        let text = [
+            "url https://example.com/static.bin",
+            "format ephemeris_binary",
+            "no-cadence",
+        ]
+        .join("\n")
+            + "\n";
+        let blocks = split_blocks(&text).expect("no-cadence block parses");
+        assert_eq!(blocks[0].ttl, Some(NO_CADENCE));
     }
 
     #[test]

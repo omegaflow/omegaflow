@@ -43,8 +43,11 @@ registrierten Ort.
 `phi/sources.φ`: kanonisches Format nach SOURCES_V2_SPEC §1.0 — Blöcke
 sortiert nach `ttl` (aufsteigend), dann nach `url`; keine Kommentare; eine
 Leerzeile zwischen Blöcken; Direktivenreihenfolge: `url`, Blockzustand
-(`ttl`, `format`, `header`, `post_body`, `at`/`on`), Fanout-Familie, dann
-Extracts in Abhängigkeitsreihenfolge.
+(`ttl`/`no-cadence`, `format`, `header`, `post_body`, `at`/`on`), Fanout-Familie, dann
+Extracts in Abhängigkeitsreihenfolge. `no-cadence` trägt eine Quelle ohne
+natürliche Kadenz (ein statisches Archiv): der Parser setzt den Guard 2²⁵ s ≈ 388 d
+(reservierter Wert), das Wort überlebt den Round-trip; eine explizite `ttl` dieses
+Werts liest sich als `no-cadence`.
 
 `phi/dead_sources.φ`: Einträge sortiert nach `url`; eine Dispositionszeile,
 eine `url`-Zeile, eine `note`-Zeile; Leerzeile zwischen Einträgen; keine
@@ -338,7 +341,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   Provider-Namen, (5) Proton-Exit für Netzwerk-Blocks. Nur wenn all das leer
   bleibt → `dead` mit `note`, die den Recherche-Stand nennt.
 - Der `--port`-Konverter übernimmt: `url/format/header/target/catalog/
-  flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
+  flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`/`no-cadence`; `on/at`;
   numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
   `lat_key/lon_key/alt_key/epoch_key` → `lat/lon/alt/epoch`; `field/field_in/
   first/last/count/path/deep` → 9-Token-`field`; `last_row`→`lastrow`,
