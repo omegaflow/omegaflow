@@ -3,7 +3,7 @@
   session: Mycelium-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: dd6b54b08e36ae0af9382c068c064a2165054be86ac4a29eb915cd3f1bbc74b9
+  sha256: b9801c5bf9f35b4ba1e5cc906a4e9a08271445a7255fb5ad7830eed529b57487
   status: live
 -->
 # Handover — Mycelium-Folge 195 (2026-09-28)
@@ -84,11 +84,11 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
-- **5 parser-def-Reader-Arme** (gemessen 2026-09-28): `phi/blocked_sources.φ` trägt die neuen Klassen `pds3-fixed-width`/`pds3-img`/`pds3-binary`/`pds4-fixed-width`/`pds4-binary` für ExoMars, Akatsuki, Kaguya, Chandrayaan, Phobos, Vega, Hayabusa, Danuri — die Reader-Arme fehlen. Ziel: **Mountain** (`tools/harvest`/`src/archivar`). Quelle: Mycelium 195.
+- **5 parser-def-Reader-Arme** (gemessen 2026-09-28): `phi/blocked_sources.φ` trägt die neuen Klassen `pds3-fixed-width`/`pds3-img`/`pds3-binary`/`pds4-fixed-width`/`pds4-binary` für ExoMars, Akatsuki, Kaguya, Chandrayaan, Phobos, Vega, Hayabusa, Danuri — die Reader-Arme fehlen. Ziel: **Mountain** (`tools/harvest`, `src/archivar`). Quelle: Mycelium 195.
 - **public_audit (Ganz-Baum, Credit/Egress)** (gemessen 2026-09-28): der scoped Lauf `docs/concepts/*` steht (1,38 Cr), der Ganz-Baum-Lauf ist ungemessen; er braucht das Operator-Wort (Credit-Deckel). Ziel: **Future** (Operator-Queue, eine Zeile in einfacher Sprache). Quelle: Mycelium 195.
 - **dropped-gate-Baseline** (gemessen 2026-09-28 via `ci_triage 36409581203`): `dropped-gate: delta 6 > 0`; `--dropped --count` läuft in die >120-s-Last. Braucht das Operator-Wort zum `--dropped --count`-Baseline-Bump. Ziel: **Future** (Operator-Queue). Quelle: Stehender Pass 2026-09-28.
 - **PII in der Git-Historie** (gemessen 2026-09-28 via `house_audit`): die private Adresse/Mail stand in getrackten Docs; HEAD ist redigiert, die Historie trägt sie weiter → GitHub-GC-Ticket #4761801. Ziel: **Future** (Operator-Akt History-Rewrite). Quelle: Mycelium 194.
-- **Copilot-Streichung an die Linien**: `docs/handover/handover-2026-09-28-river-folge55.md` und `…mountain-folge194.md` nennen Copilot als Stimme; die Cloud-Grenze (private Daten nie) + public-CI-Ausnahme (`bin/ci_triage`) gilt für alle. Ziel: **river**, **mountain** (per Absender-Zeile). Quelle: Mycelium 194.
+- **Copilot-Streichung an die Linien**: die River- und die Mountain-Übergabe nannten Copilot als Stimme; die Cloud-Grenze (private Daten nie) + public-CI-Ausnahme (`bin/ci_triage`) gilt für alle. Ziel: **river**, **mountain** (per Absender-Zeile). Quelle: Mycelium 194.
 
 ## Abschluss
 
