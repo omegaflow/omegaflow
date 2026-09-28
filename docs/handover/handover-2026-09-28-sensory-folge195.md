@@ -3,7 +3,7 @@
   session: Sensory-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: 8c2bbfd8d7bfdeccd71046f4ee7af13c3e4acb405416a939dd0ce9ab8f203b66
+  sha256: 6a38ad8e1e86035943aee2035cdbfa20a118959403161e663505d508a1aa94f9
   status: live
 -->
 # Handover — Sensory-Folge 195 (2026-09-28)
@@ -173,6 +173,41 @@ werden getragen, nie geglättet (0 honored).
   die WAF-Route-Klasse `blocked ip-blocked` (CDPP) fehlt. Myceliums Feder: den
   `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/zustand/wartend.φ:4`
   (Aufnehmer sensory). Origin: sensory-folge194/195.
+
+## An Mountain (gemessen, fremde Feder)
+
+**Sonden-Flotten-Erweiterung — Asien/Russland, anonym offen** (gemessen 2026-09-28,
+`research-max`, harte Bandagen; Details + Belege in
+`docs/surveys/survey-2026-09-16-sonden-flotte.md` `## Nachtrag 2026-09-28`).
+Alle Routen 200 anonym; Vorprüfung: keine dieser Missionen steht bisher in
+`phi/sources.φ`, `phi/blocked_sources.φ`, `phi/declined_sources.φ` (Grünland). Mountains Feder:
+die `url`/`origin`/`compiler`-Zeilen (Mycelium: Quellen-Aufnahme/Compiler) — je Route
+ein Port-Schritt nach `docs/SOURCE_PORT.md`.
+
+- **Akatsuki Radio Science (JAXA/ISAS)** — `https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/` — PDS4-Bundle `urn:jaxa:darts:vco_rs`, SIS `…/vco_rs/document/vco_rs_sis_v13.pdf`. Einziges asiatisches Radio-Science-Roh mit offener Tür.
+- **Hayabusa PDS4 (JAXA/ISAS)** — `https://sbnarchive.psi.edu/pds4/hayabusa/` (AMICA/LIDAR/NIRS/Mission/SPICE).
+- **Kaguya/SELENE LRS (JAXA/ISAS)** — `https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm`; DARTS-SLN `darts:sln-l-rise-5-traj-rstar-v1.0`.
+- **Chandrayaan-1 PDS3 (ISRO)** — `https://pds-geosciences.wustl.edu/missions/chandrayaan1/` (+ SPICE `spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/`).
+- **Venera 15/16 (UdSSR, PDS-Spiegel)** — `pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat` (10 398 160 B) + `…/mpi-radiometry.dat` (5 949 650 B).
+- **Vega 1/2 Halley + Ballons (UdSSR)** — `pds-smallbodies.astro.umd.edu/holdings/vega2-c-{tvs,ducma,sp1,sp2,puma,pm1,mischa}-*` + `atmos.nmsu.edu/PDS/data/vega_5001/`.
+- **Phobos 2 (UdSSR)** — `pds-smallbodies.astro.umd.edu/holdings/phb2-m-{krfm-3-photometry,vsk-2-edr}-v1.0/`.
+- **ExoMars TGO (russ. Instrumente ACS/FREND)** — `archives.esac.esa.int/psa/ftp/ExoMars2016/`.
+- **Danuri/KPLO (KASI)** — `pda.kasi.re.kr/` + `shadowcam.im-ldi.com/`.
+
+Origin: sensory-folge195.
+
+## An Future (operator-gebunden)
+
+**Account-gated Sonden-Quellen — Konto/Antrag = Operator-Hand** (gemessen 2026-09-28,
+`research-max`; Details im Flotten-Nachtrag). Die Daten existieren; Zugang nur per Konto.
+Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher Sprache vor.
+
+- **CNSA Chang'e 1–6** — `moon.bao.ac.cn` (GRAS): Portal 200, Download Konto-gated (Gate nicht end-to-end gemessen).
+- **CNSA Tianwen-1** — `nssdc.ac.cn`: Portal 200, Antrag/Konto.
+- **ISRO Chandrayaan-2/3, MOM, Aditya-L1** — `pradan.issdc.gov.in` / `mrbrowse.issdc.gov.in`: account nötig.
+- **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
+
+Origin: sensory-folge195.
 
 ## Wer nicht senden darf
 
