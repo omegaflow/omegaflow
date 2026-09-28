@@ -10,9 +10,15 @@ name: matrix-rotor
 # Warum der Warm-Speicher das eigentliche Bau-Stück ist: `MatrixMachine` schreibt
 # `omegaflow_matrix_state.bin` alle 120 s (`src/mathematikerin/machines/matrix.rs:1114`)
 # und lädt ihn beim Start (`omega.rs:1567`); ein Round ≈ 16 h. Ein GitHub-Job ist
-# ephemer und gedeckelt, also läuft je Aufruf genau **ein begrenzter Slice**, und
-# der State wird danach auf das Release `matrix-state` geschrieben und beim nächsten
-# Lauf wieder geladen — die Akkumulation lebt im Asset, nicht im Job.
+# ephemer und gedeckelt — gehostete Runner werden zudem jederzeit präemptiert
+# (`The runner has received a shutdown signal`, gemessen 2026-09-28 an 8 Läufen,
+# kein Haus-Akteur cancelt). Deshalb läuft je Aufruf genau **ein begrenzter Slice**,
+# und der State wird **im Lauf** alle 120 s auf das Release `matrix-state`
+# checkpointet (sha256-benannte Assets + `latest.txt`-Pointer, die zwei jüngsten
+# bleiben) — eine Präemption verliert höchstens das letzte Intervall, und der
+# nächste Lauf lädt genau das jüngste sha256-gültige Asset. Der Job-Start-Loader
+# verweigert ein Asset, dessen Name nicht seine sha256 ist (`A = A`), und fällt auf
+# das nächste zurück statt still kalt zu starten.
 #
 # Der lokale Wächter `bin/matrix_watchdog.sh` bleibt die zweite (dauerhafte)
 # Betriebsart; beide dürfen nicht zugleich denselben State schreiben.
@@ -42,39 +48,107 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Software-Vulkan-Adapter (lavapipe) — die Membrane fragt compute-only
         run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers
-      - name: Warmen Matrix-State vom matrix-state-Release laden
+      - name: Warmen Matrix-State vom matrix-state-Release laden (sha256-verifiziert)
         run: |
+          set +e
           mkdir -p data
-          gh release download matrix-state --repo omegaflow/omegaflow \
-            --pattern omegaflow_matrix_state.bin --dir data --clobber \
-            || echo "matrix-state absent — Kaltstart (der Round beginnt bei null)"
-          test -s data/omegaflow_matrix_state.bin \
-            && echo "Warm-Boot: $(stat -c %s data/omegaflow_matrix_state.bin) B geladen" \
-            || echo "Kaltstart: kein Warm-Speicher"
+          REL=matrix-state; REPO=omegaflow/omegaflow
+          if ! gh release view "$REL" --repo "$REPO" >/dev/null 2>&1; then
+            echo "matrix-state absent — Kaltstart (der Round beginnt bei null)"
+            exit 0
+          fi
+          gh release download "$REL" --repo "$REPO" \
+            --pattern 'matrix-state-*.bin' --dir data --clobber || true
+          gh release download "$REL" --repo "$REPO" \
+            --pattern 'latest.txt' --dir data --clobber || true
+          # A = A: an asset whose name is not its sha256 is refused.
+          valid() {
+            [ -f "$1" ] || return 1
+            local want got
+            want="$(basename "$1" .bin)"; want="${want#matrix-state-}"
+            got="$(sha256sum "$1" | cut -d' ' -f1)"
+            [ "$want" = "$got" ]
+          }
+          chosen=""
+          if [ -f data/latest.txt ]; then
+            n="$(cat data/latest.txt)"
+            if valid "data/$n"; then chosen="data/$n"; fi
+          fi
+          if [ -z "$chosen" ]; then
+            for f in $(ls -1t data/matrix-state-*.bin 2>/dev/null); do
+              if valid "$f"; then chosen="$f"; break; fi
+              echo "state asset $(basename "$f") fails its sha256 — next candidate"
+            done
+          fi
+          if [ -n "$chosen" ]; then
+            cp "$chosen" data/omegaflow_matrix_state.bin
+            echo "Warm-Boot: $(stat -c %s data/omegaflow_matrix_state.bin) B geladen ($(basename "$chosen"))"
+          else
+            echo "kein sha256-gültiger State — Kaltstart"
+          fi
       - name: Die Membrane bauen (release)
         run: cargo build --release --bin omegaflow
-      - name: Den verborgenen Rotor für einen begrenzten Slice fahren
+      - name: Den verborgenen Rotor fahren — Checkpoint (State + Log) alle 120 s
         run: |
+          set +e
+          REL=matrix-state; REPO=omegaflow/omegaflow
+          gh release view "$REL" --repo "$REPO" >/dev/null 2>&1 \
+            || gh release create "$REL" --repo "$REPO" --title "matrix-rotor state" \
+                 --notes "Warm-Boot-Speicher des Blatt-1-Bojen-Matrix-Rotors. Assets sind sha256-benannt (matrix-state-<sha256>.bin); latest.txt nennt das jüngste. Geschrieben allein von matrix-rotor.yml."
+          checkpoint() {
+            if [ -s data/omegaflow_matrix_state.bin ]; then
+              local sum; sum="$(sha256sum data/omegaflow_matrix_state.bin | cut -d' ' -f1)"
+              cp -f data/omegaflow_matrix_state.bin "data/matrix-state-${sum}.bin"
+              gh release upload "$REL" "data/matrix-state-${sum}.bin" --clobber --repo "$REPO" 2>/dev/null || true
+              printf '%s\n' "matrix-state-${sum}.bin" > data/latest.txt
+              gh release upload "$REL" data/latest.txt --clobber --repo "$REPO" 2>/dev/null || true
+              # keep only the two newest state assets, delete the older ones
+              gh release view "$REL" --repo "$REPO" --json assets \
+                --jq '[.assets[]|select(.name|startswith("matrix-state-"))]|sort_by(.created_at)|.[].name' 2>/dev/null \
+                | head -n -2 \
+                | while IFS= read -r old; do
+                    gh release delete-asset "$REL" "$old" --yes --repo "$REPO" >/dev/null 2>&1 || true
+                  done
+            fi
+            # the last visibility window survives a hard kill on the release, too
+            [ -s matrix-rotor.txt ] && gh release upload "$REL" matrix-rotor.txt --clobber --repo "$REPO" 2>/dev/null || true
+          }
           {
             echo "SHA $(git rev-parse HEAD)"
             echo "state vorher: $(stat -c %s data/omegaflow_matrix_state.bin 2>/dev/null || echo absent) B"
             set +e
-            trap 'echo "step shell: SIGTERM $(date -u +%T) (kill -l $(kill -l 143))"' TERM INT
-            OMEGAFLOW_STATE=data OMEGAFLOW_HIDDEN=1 \
-              timeout --verbose --signal=TERM --kill-after=180 18000 \
-              ./target/release/omegaflow "#station=41001"
-            echo "rotor slice ended rc=$? (124 = der Slice-Deckel; der State wurde alle 120 s geschrieben)"
-          } > matrix-rotor.txt 2>&1 || true
-      - name: Warmen Matrix-State auf das matrix-state-Release schreiben
+            trap 't="step shell: SIGTERM $(date -u +%T)"; echo "$t"; echo "$t" >> matrix-rotor.txt' TERM INT
+          } > matrix-rotor.txt 2>&1
+          OMEGAFLOW_STATE=data OMEGAFLOW_HIDDEN=1 \
+            timeout --verbose --signal=TERM --kill-after=180 18000 \
+            ./target/release/omegaflow "#station=41001" > >(tee -a matrix-rotor.txt) 2>&1 &
+          rotor=$!
+          while kill -0 "$rotor" 2>/dev/null; do
+            sleep 120
+            checkpoint
+          done
+          wait "$rotor"; rc=$?
+          echo "rotor slice ended rc=$rc (124 = der Slice-Deckel; der State wurde alle 120 s geschrieben)" | tee -a matrix-rotor.txt
+          checkpoint
+          exit 0
+      - name: State + Log auf das matrix-state-Release sichern (Regelfall)
+        if: always()
         run: |
-          test -s data/omegaflow_matrix_state.bin
-          echo "state nachher: $(stat -c %s data/omegaflow_matrix_state.bin) B"
-          gh release view matrix-state --repo omegaflow/omegaflow >/dev/null 2>&1 \
-            || gh release create matrix-state --repo omegaflow/omegaflow \
-                 --title "matrix-rotor state" \
-                 --notes "Warm-Boot-Speicher des Blatt-1-Bojen-Matrix-Rotors (omegaflow_matrix_state.bin); gelesen/geschrieben allein von matrix-rotor.yml."
-          gh release upload matrix-state data/omegaflow_matrix_state.bin \
-            --repo omegaflow/omegaflow --clobber
+          set +e
+          REL=matrix-state; REPO=omegaflow/omegaflow
+          gh release view "$REL" --repo "$REPO" >/dev/null 2>&1 \
+            || gh release create "$REL" --repo "$REPO" --title "matrix-rotor state" \
+                 --notes "Warm-Boot-Speicher des Blatt-1-Bojen-Matrix-Rotors. Assets sind sha256-benannt (matrix-state-<sha256>.bin); latest.txt nennt das jüngste. Geschrieben allein von matrix-rotor.yml."
+          if [ -s data/omegaflow_matrix_state.bin ]; then
+            sum="$(sha256sum data/omegaflow_matrix_state.bin | cut -d' ' -f1)"
+            cp -f data/omegaflow_matrix_state.bin "data/matrix-state-${sum}.bin"
+            gh release upload "$REL" "data/matrix-state-${sum}.bin" --clobber --repo "$REPO" || true
+            printf '%s\n' "matrix-state-${sum}.bin" > data/latest.txt
+            gh release upload "$REL" data/latest.txt --clobber --repo "$REPO" || true
+            echo "state nachher: $(stat -c %s data/omegaflow_matrix_state.bin) B (matrix-state-${sum}.bin)"
+          fi
+          [ -s matrix-rotor.txt ] && gh release upload "$REL" matrix-rotor.txt --clobber --repo "$REPO" || true
+          exit 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:

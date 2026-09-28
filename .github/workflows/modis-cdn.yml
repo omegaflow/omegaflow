@@ -37,7 +37,7 @@ jobs:
           START="${{ inputs.start_year }}"
           END="${{ inputs.end_year }}"
           if [ -z "$END" ]; then END="$(date -u +%Y)"; fi
-          FAMILY="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
           REPO="omegaflow/sources"
           CMR="https://cmr.earthdata.nasa.gov/search/granules.umm_json"
           shards=""
@@ -69,11 +69,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure the data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg family release exists on the CDN
+      - uses: actions/checkout@v7
+      - name: Ensure the modis_lst_cmg family release exists on the CDN
         run: |
-          if ! gh release view data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg --repo omegaflow/sources \
-              --title "data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg" \
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
+          if ! gh release view "$FAMILY" --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create "$FAMILY" --repo omegaflow/sources \
+              --title "$FAMILY" \
               --notes "MODIS/Terra LST CMG V061 compiled to per-cell LST records, one asset per granule (series modis_lst_cmg_<product>_<granuleUR>.bin, one manifest per product-year). Record stride 40 B LE: t (f64, J2000 TDB s), lat (f64, deg), lon (f64, deg), val (f64, K), comp (f64, 1.0 = day, 2.0 = night). The shards and per-year manifests live in the year tags data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-<product>-<year> (the 1000-asset cap splits the family); this family tag holds only the two year-less series manifests (modis_lst_cmg_8day.manifest, modis_lst_cmg_monthly.manifest)."
           fi
   compile:
@@ -110,10 +112,11 @@ jobs:
     if: always() && needs.raster.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
       - name: Fold every year-tag shard asset on the CDN into the year-less series manifest
         run: |
           set -euo pipefail
-          FAMILY="data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg"
+          FAMILY="$(grep -oE 'releases/download/[^/]+/modis_lst_cmg_8day\.manifest' phi/sources.φ | head -n1 | cut -d/ -f3)"
           REPO="omegaflow/sources"
           tmp="$(mktemp -d)"
           gh api --paginate "repos/$REPO/releases?per_page=100" \
