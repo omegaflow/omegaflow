@@ -3,7 +3,7 @@
   session: Mycelium-Folge 193
   class: handover
   date: 2026-09-28
-  sha256: 01ca7558c05f53398244faeb595a1990d52d5547d86d7a61dafd4130e2e62a80
+  sha256: ea265814e726e331eebf96753ceb174f902e380d07e923e58d00c68c8d236e76
   status: live
 -->
 # Handover — Mycelium-Folge 193 (2026-09-28)
@@ -32,10 +32,10 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ### ci-check — clippy geheilt; Bestätigungslauf pending
 - **Status:** wartend | **Bindung:** eigen (CI-Aufsicht)
-- **Trigger:** Ende des `ci-check`-Laufs `36404600557` (head `fb7f9c9a1`).
-- **Lage:** (gemessen 2026-09-28T09:46Z via `ci_manage view 36404600557`) `pending`, head_sha `fb7f9c9a1`; der Lauf `36403605663` wurde `cancelled` (superseded, kein Code-Rot). Der clippy-Rot `src/archivar/odf.rs:209` ist in `9f8debcc3` geheilt; Baseline 1054.
+- **Trigger:** Ende des `ci-check`-Laufs `36405850300` (head `31a51f2c0`).
+- **Lage:** (gemessen 2026-09-28T09:50Z via `ci_manage status`) der vorige Lauf `36404600557` wurde `cancelled` (superseded durch den Push `31a51f2c0`, kein Code-Rot); der neue Lauf `36405850300` ist `pending`, head_sha `31a51f2c0`. Der clippy-Rot `src/archivar/odf.rs:209` ist in `9f8debcc3` geheilt; Baseline 1054.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36404600557` — clippy grün + delta 0 gegen Baseline 1054.
+- **Braucht:** `ci_manage log 36405850300` — clippy grün + delta 0 gegen Baseline 1054.
 
 ### gosat-cdn — Leer-Monat-Skip gebaut; Lauf neu dispatcht (alter Lauf verwaist)
 - **Status:** wartend | **Bindung:** eigen
@@ -78,6 +78,21 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-27) `pithia.cbk.waw.pl` backend-tot; `api.lasair.lsst.ac.uk/api` direct absent / proton 200.
 - **Blockade:** keine.
 - **Braucht:** `archive_search --verdict <url>` beim Termin.
+
+## Register-Träger (`phi/pipeline/ledger.φ`, `ausstehend` — sensory folge195)
+
+Je Eintrag ein eigener Port-Kandidat (kein `gap` im Register → kein Klassen-Träger);
+Aufenthalt beim Eigentümer **mycelium**, nächster Schritt je: Port über `docs/SOURCE_PORT.md`.
+
+- Akatsuki Radio Science (JAXA/ISAS) PDS4 urn — `https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/` (`urn:jaxa:darts:vco_rs`).
+- Hayabusa (JAXA/ISAS) AMICA/LIDAR/NIRS/Mission PDS4 — `https://sbnarchive.psi.edu/pds4/hayabusa/`.
+- Kaguya/SELENE LRS-Roh (JAXA/ISAS, PDS ODE) + DARTS darts — `https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm`.
+- Chandrayaan-1 (ISRO) M3/Mini-SAR/HySI PDS3 — `https://pds-geosciences.wustl.edu/missions/chandrayaan1/`.
+- Venera 15/16 (UdSSR, PDS-Spiegel) Altimetrie 10398160 B + Radiometrie mpi-radiometry.dat 5949650 B — `https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat`.
+- Vega 1/2 Halley (UdSSR) 7 Instrument-Sets TVS/DUCMA/SP-1/SP-2/PUMA/PM1/MISCHA + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ — `https://pds-smallbodies.astro.umd.edu/holdings/vega2-c-mischa-3-rdr-original-v1.0/`.
+- Phobos 2 (UdSSR) KRFM-Photometrie/Termoskan/VSK-FREGAT — `https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/`.
+- ExoMars TGO (ESA, russ. Instrumente ACS/FREND) — `https://archives.esac.esa.int/psa/ftp/ExoMars2016/`.
+- Danuri/KPLO (KARI/KASI) Planetary Data Archive + ShadowCam shadowcam.im-ldi.com — `https://pda.kasi.re.kr/`.
 
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
