@@ -3,7 +3,7 @@
   session: Mycelium-Folge 190
   class: handover
   date: 2026-09-28
-  sha256: ff5acb9680b281a6af0303ec9c770b76c11be1d23d96cfa3742ad60db8075f9c
+  sha256: 50f8618c6ed6e689849594acc27ef785cc6b7c85e955412e508eae474b6b37b2
   status: live
 -->
 # Handover — Mycelium-Folge 190 (2026-09-28)
@@ -97,6 +97,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ## An Mountain (gemessen, fremde Feder)
 
+- **Trägerloses Doc** (gemessen 2026-09-28 via `register_lookup --orphan-docs`): `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` (3 offene Marker, kein Träger in einer live Übergabe) → Träger in Mountains Übergabe falten; Ziel-Übergabe: Mountain, nächste Folge.
 - **Zwei `format`-Findings** (gemessen 2026-09-28 via `ci_manage log 36359297755`): `vizier.cfa.harvard.edu` `/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000` (TSV als JSON geparst) und `www.ldeo.columbia.edu` `/~gcmt/projects/CMT/catalog/jan76_dec25.ndk` (.ndk als JSON geparst) → `JSON parse void`; Disposition/`format` in `phi/` (Mountain-Feder). Ziel-Übergabe: Mountain, nächste Folge.
 
 ## An Future (gemessen, fremde Feder)
@@ -104,6 +105,9 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **`matrix-rotor` rot** (gemessen 2026-09-28 via `ci_manage log 36352357801`): Job `rotor` rot — externer Runner-Shutdown nach ~2 min, kein Rotor-Defekt. Ziel: Futures Linie/Queue.
 
 ## Träger (Prosadokumente, eigene)
+- `docs/concepts/arxiv-api.md` | offene Marker (2) | nächster Schritt: `register_lookup --orphan-docs` beim nächsten Pass.
+- `docs/concepts/exzellenz-konzept.md` | offene Marker (3) | nächster Schritt: `register_lookup --orphan-docs` beim nächsten Pass.
+- `docs/surveys/survey-2026-09-20-browser-anbindung.md` | offene Marker (2), Browser-Anbindung jetzt über Fork/Pin geschlossen | nächster Schritt: Marker auf den Stand 2026-09-28 ziehen.
 - `docs/surveys/survey-2026-09-03-orphan-verdicts.md` | Step 5 Plan geschrieben (sha `bbf5512f…`) | nächster Schritt: Bau je Netloc (Punkt oben).
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | wartend Mail-Eingang | Trigger Mail.
 - `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` | Layout-Wort in Future-Queue | Migration nach Wort.
