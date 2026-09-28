@@ -1,7 +1,7 @@
 <!--
   title: Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
   class: concept
-  sha256: a2af1606ca60c01f42d716c0a2dd25e2a4c001968b8f085cc366151e389022aa
+  sha256: 5c84f5009135ced481e4e840170793c427fa8f75fa2ff31d545fd05a427a17dc
 -->
 # Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
 
@@ -420,8 +420,10 @@ Messung tragen. Zwei Gänge der Maschine sind die Tür:
   Paar-EEG — durchläuft die Doyle-Treppe. Erst die Surrogate: bricht
   der Pfeil die fam-Schwelle nicht, war er Zufall, und die Stille
   ist der Befund. Dann die gemeinsamen Auslöser: die bedingte TE
-  (TE(A→B | Umwelt-Kanäle)) ist ein pending-Instrument, kein
-  vorhandenes — kein Ausschluss ohne gemessenen Kanal (0 honored).
+  (TE(A→B | Umwelt-Kanäle)) ist gebaut (2026-09-28, River 59:
+  `transfer_entropy_embedded_ksg_conditional`, `te.rs:2514`, Z-Phase-Surrogat
+  `:2704`, Gate-Tests `:8055+`) — kein Ausschluss ohne gemessenen Kanal
+  (0 honored).
   Dann der Lag gegen d/c: ein fam-Pfeil mit τ < d/c ist die
   Signatur des Kegelbruchs (§Ⅶ), kein Telepathie-Beweis. Was übrig
   bleibt, benennt die Maschine nach der Form — bekannter Kanal,
