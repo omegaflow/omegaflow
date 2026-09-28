@@ -3,7 +3,7 @@
   session: Mycelium-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: 1711ed5d8cb18e1d90db815359024906f371be7481ace6ee15a6b9574baaa52c
+  sha256: dd6b54b08e36ae0af9382c068c064a2165054be86ac4a29eb915cd3f1bbc74b9
   status: live
 -->
 # Handover — Mycelium-Folge 195 (2026-09-28)
@@ -39,13 +39,6 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-28) die Verfassung (2026-09-27) gibt die Verdikt-/Dispositions-Zeilen Mountain; der Port setzte 8 `parser-def`-Blöcke + 5 gap-Klassen-Deklarationen in `phi/blocked_sources.φ` (Mycelium), statt die Route zu verschleppen. Beide Enden genannt, kein stiller Schreibakt. Die 5 Reader-Arme fehlen.
 - **Blockade:** Pen-Grenze Mountain/Mycelium (Riss).
 - **Braucht:** Mountains Ratifikation; die 5 Reader-Arme (PDS3/PDS4/HTML) als `gap`-Arme.
-
-### register-coverage — mycelium Feder (Workflow-Verifikation)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountain committet den Arm `UNVERIFIABLE_PRIVATE`.
-- **Lage:** (gemessen 2026-09-28 via `git diff --stat` + `sread`) der Arm steht **fremd uncommittet** im Arbeitsbaum (`tools/register/src/bin/register_lookup.rs`, +52 Zeilen; Test `orphan_report_marks_absent_private_carrier_as_unverifiable`, Z.3787); CI `register-coverage` rot (`36417886014` 11:49) weil HEAD ihn nicht trägt. Nach dem Commit läuft `target/release/register_lookup --orphans --fail` (Workflow Z.23) grün.
-- **Blockade:** Mountain-Commit (fremde uncommittete Arbeit — nicht angefasst).
-- **Braucht:** nach dem Arm-Commit `.github/workflows/register-coverage.yml:23` + ein Lauf verifizieren.
 
 ### ci-check — clippy geheilt; Bestätigungslauf läuft
 - **Status:** wartend | **Bindung:** eigen
@@ -92,7 +85,6 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
 - **5 parser-def-Reader-Arme** (gemessen 2026-09-28): `phi/blocked_sources.φ` trägt die neuen Klassen `pds3-fixed-width`/`pds3-img`/`pds3-binary`/`pds4-fixed-width`/`pds4-binary` für ExoMars, Akatsuki, Kaguya, Chandrayaan, Phobos, Vega, Hayabusa, Danuri — die Reader-Arme fehlen. Ziel: **Mountain** (`tools/harvest`/`src/archivar`). Quelle: Mycelium 195.
-- **register-coverage-Arm** (gemessen 2026-09-28 via `git diff --stat`): der `UNVERIFIABLE_PRIVATE`-Arm steht uncommittet in `tools/register/src/bin/register_lookup.rs` (+52 Zeilen). Ziel: **Mountain** — committen, dann ist CI `register-coverage` grün. Quelle: Mycelium 195.
 - **public_audit (Ganz-Baum, Credit/Egress)** (gemessen 2026-09-28): der scoped Lauf `docs/concepts/*` steht (1,38 Cr), der Ganz-Baum-Lauf ist ungemessen; er braucht das Operator-Wort (Credit-Deckel). Ziel: **Future** (Operator-Queue, eine Zeile in einfacher Sprache). Quelle: Mycelium 195.
 - **dropped-gate-Baseline** (gemessen 2026-09-28 via `ci_triage 36409581203`): `dropped-gate: delta 6 > 0`; `--dropped --count` läuft in die >120-s-Last. Braucht das Operator-Wort zum `--dropped --count`-Baseline-Bump. Ziel: **Future** (Operator-Queue). Quelle: Stehender Pass 2026-09-28.
 - **PII in der Git-Historie** (gemessen 2026-09-28 via `house_audit`): die private Adresse/Mail stand in getrackten Docs; HEAD ist redigiert, die Historie trägt sie weiter → GitHub-GC-Ticket #4761801. Ziel: **Future** (Operator-Akt History-Rewrite). Quelle: Mycelium 194.
