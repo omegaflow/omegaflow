@@ -2,7 +2,7 @@
   title: Survey — fremde Parser-/Compiler-Sammlungen (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 82d6c010522e8904c334d56362664186870b2982d46afeea8b44d467fec239d5
+  sha256: 3a4908972c3f6f7696488c92ed8fa1a103c0d4e0da6e8f663369dd7253aed944
   status: live
   see-also: phi/sources.φ phi/declined_sources.φ phi/blocked_sources.φ phi/dead_sources.φ
 -->
@@ -124,3 +124,18 @@ Zeile.
 **Standards statt Sammlung:** Wo eine Quelle einen Standard anbietet
 (HAPI/VO/STAC/OAI-PMH/OPeNDAP/ERDDAP), nutzen wir ihn — das ersetzt die
 Fremd-SDKs.
+
+## Lizenz
+
+Gemessen am 2026-09-28, eine Zeile je Sammlung (`archive_search --playwright`,
+Quelle = die gemessene Lizenz-/Repo-Seite):
+
+- **astroquery** (`astropy/astroquery`) — BSD-3-Clause (https://api.github.com/repos/astropy/astroquery/license, 2026-09-28)
+- **SunPy / Fido** (`sunpy/sunpy`) — BSD-2-Clause (https://api.github.com/repos/sunpy/sunpy/license, 2026-09-28)
+- **pyvo** (`astropy/pyvo`) — BSD-3-Clause (https://raw.githubusercontent.com/astropy/pyvo/HEAD/LICENSE.rst, 2026-09-28)
+- **HAPI** (`hapi-server/data-specification`) — unverified — kein Lizenz-File: `LICENSE` und `LICENSE.md` → HTTP 404 (https://raw.githubusercontent.com/hapi-server/data-specification/HEAD/LICENSE, 2026-09-28)
+- **GDAL/OGR** (`OSGeo/gdal`) — MIT (X11-Stil) (https://raw.githubusercontent.com/OSGeo/gdal/HEAD/LICENSE.TXT, 2026-09-28)
+- **Airbyte** (`airbytehq/airbyte`) — Elastic License 2.0 (ELv2) (https://raw.githubusercontent.com/airbytehq/airbyte/HEAD/LICENSE, 2026-09-28)
+- **Meltano / Singer** (`meltano/meltano`) — MIT (https://raw.githubusercontent.com/meltano/meltano/HEAD/LICENSE, 2026-09-28)
+- **Frictionless Data** (`frictionlessdata/frictionless-py`) — MIT (https://raw.githubusercontent.com/frictionlessdata/frictionless-py/HEAD/LICENSE.md, 2026-09-28)
+- **pySPEDAS** (`spedas/pyspedas`, im Text als ungemessene Ergänzung genannt) — MIT (https://raw.githubusercontent.com/spedas/pyspedas/HEAD/LICENSE.txt, 2026-09-28)
