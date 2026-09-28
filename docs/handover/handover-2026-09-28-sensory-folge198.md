@@ -3,7 +3,7 @@
   session: Sensory-Folge 198
   class: handover
   date: 2026-09-28
-  sha256: 92c8bf98f1f845f1ca1387d9be68875e9588bfd450b70c9b0d6e84767a226c09
+  sha256: 709361c1af76509462f8db2885adf07f1b4268f52264a848765e5125f9a6a3bc
   status: live
 -->
 # Handover — Sensory-Folge 198 (2026-09-28)
@@ -107,9 +107,9 @@ folge197 erledigt: der Arm ist committet (`0da70c65d`).
 ### survey-2026-09-06-codestruktur — confirm-rendering headless: HUD freigegeben, CI-Artefakt-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein `matrix-rotor`-Lauf auf einem HEAD, der `8748a39cd` trägt (nachdem der Fix auf `origin/main` ist), schließt ab.
-- **Lage:** (gemessen 2026-09-28 via `sread src/mathematikerin/omega.rs:1788`) **Trigger gefeuert** — River-Folge 57 (`8748a39cd`, „release the window HUD under hidden") hat die Zeile auf `if self.silent || std::io::stderr().is_terminal()` erweitert; `self.silent` = `OMEGAFLOW_HIDDEN` (`omega.rs:234`), gesetzt in `matrix-rotor.yml:122`. Der nächste Rotor-Lauf trägt damit `φ window:` in `matrix-rotor.txt`. Der Fix liegt lokal als HEAD `8748a39`, ist aber **noch nicht auf `origin/main`** (`git_safety --close`: `pushed no`). Marker `archivar-mathematikerin.md:78`; Survey-Marker nachgezogen.
-- **Blockade:** der Fix ist unpushed — ein jetzt dispatchter Rotor liefe auf dem alten Code (`4ce2f1823`).
-- **Braucht:** sobald `8748a39cd` auf `origin/main` ist, `gh workflow run matrix-rotor.yml`; dann `sgrep "window:" matrix-rotor.txt` (Run-Artefakt / `matrix-state`-Release-Asset; erwartet ≥ 1).
+- **Lage:** (gemessen 2026-09-28 via `sread src/mathematikerin/omega.rs:1788`) **Trigger gefeuert** — River-Folge 57 (`8748a39cd`, „release the window HUD under hidden") hat die Zeile auf `if self.silent || std::io::stderr().is_terminal()` erweitert; `self.silent` = `OMEGAFLOW_HIDDEN` (`omega.rs:234`), gesetzt in `matrix-rotor.yml:122`. Der nächste Rotor-Lauf trägt damit `φ window:` in `matrix-rotor.txt`. Der Fix ist seit dem Push `cd50474c5` auf `origin/main`. Marker `archivar-mathematikerin.md:78`; Survey-Marker nachgezogen.
+- **Blockade:** keine — der Lauf ist dispatcht.
+- **Braucht:** Lauf **`36430550956`** (dispatcht 2026-09-28T13:42:44Z, matrix-rotor) schließt ab; dann `sgrep "window:" matrix-rotor.txt` (Run-Artefakt / `matrix-state`-Release-Asset; erwartet ≥ 1), Ergebnis einmalig via `ci_manage view 36430550956`.
 
 ## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/zustand/wartend.φ`)
 
