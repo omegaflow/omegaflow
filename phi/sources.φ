@@ -867,14 +867,6 @@ on earth 0 0 0
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis-sst/esacci_sst.bin
-format esacci_sst_l4_cdr3
-origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
-compiler tools/harvest/src/bin/esacci_sst_compiler.rs
-on earth 0 0 0
-ttl 86400
-field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/ogimet.com/ogimet_synop.bin
 format ogimet_synop
 origin https://www.ogimet.com/cgi-bin/gsynres
@@ -1432,6 +1424,14 @@ on earth 0 0 0
 ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis-sst/esacci_sst.bin
+format esacci_sst_l4_cdr3
+origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
+compiler tools/harvest/src/bin/esacci_sst_compiler.rs
+on earth 0 0 0
+ttl 86400
+field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.epa.gov/radnet.bin
 format radnet
@@ -3477,574 +3477,6 @@ format ephemeris_de442
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at adrastea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at amalthea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at apophis
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ariel
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas_3i
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at bennu
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at callisto
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ceres
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at charon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at deimos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at despina
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at dione
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at earth
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at enceladus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at encke
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at epimetheus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at eris
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at europa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at galatea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ganymede
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at haumea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at helene
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at himalia
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hydra
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hyperion
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iapetus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at io
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iss
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at janus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juice
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juice_cog
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno_asteroid
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jupiter
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jwst
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at kerberos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at larissa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at makemake
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mariner10.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
-compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
-sha256 7ad8b8bf4d5447f54d8712112c7eda23597924574a359fd5d43d56fb7644ef9d
-at mariner10
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mars
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mercury
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at metis
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mimas
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at miranda
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at moon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at naiad
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune_c
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nereid
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_new_horizons.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at new_horizons
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nix
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at oberon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pallas
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pandora
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at parker_solar_probe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phobos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phoebe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer10_daily.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pioneer10_daily
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer11_daily.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pioneer11_daily
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pluto
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at prometheus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at proteus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at rhea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at saturn
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at solar_orbiter
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at styx
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at tethys
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thalassa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thebe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titan
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titania
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at triton
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at umbriel
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus_c
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at venus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at vesta
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at voyager1
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at voyager2
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-neptune/ephemeris_de440_neptune.bin
@@ -15864,3 +15296,571 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at adrastea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at amalthea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at apophis
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ariel
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at atlas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at atlas_3i
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at bennu
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at callisto
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ceres
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at charon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at deimos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at despina
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at dione
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at enceladus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at encke
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at epimetheus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at eris
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at europa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at galatea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ganymede
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at haumea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at helene
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at himalia
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at hydra
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at hyperion
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at iapetus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at io
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at iss
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at janus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juice
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juice_cog
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juno
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juno_asteroid
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at jupiter
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at jwst
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at kerberos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at larissa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at makemake
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mariner10.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
+compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
+sha256 7ad8b8bf4d5447f54d8712112c7eda23597924574a359fd5d43d56fb7644ef9d
+at mariner10
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mars
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mercury
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at metis
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mimas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at miranda
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at moon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at naiad
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at neptune
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at neptune_c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at nereid
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_new_horizons.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at new_horizons
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at nix
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at oberon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pallas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pandora
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at parker_solar_probe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at phobos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at phoebe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer10_daily.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pioneer10_daily
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pioneer11_daily.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pioneer11_daily
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pluto
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at prometheus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at proteus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at rhea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at saturn
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at solar_orbiter
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at styx
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at tethys
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at thalassa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at thebe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at titan
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at titania
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at triton
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at umbriel
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at uranus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at uranus_c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at venus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at vesta
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at voyager1
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at voyager2
+no-cadence

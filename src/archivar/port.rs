@@ -205,6 +205,9 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
                     ttl = v;
                 }
             }
+            "no-cadence" => {
+                ttl = NO_CADENCE;
+            }
             "on" | "at" => frame_line = Some(t.to_string()),
             "lat" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<f64>() {
@@ -281,7 +284,9 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
         out.push_str(h);
         out.push('\n');
     }
-    if ttl > 0 {
+    if ttl == NO_CADENCE {
+        out.push_str("no-cadence\n");
+    } else if ttl > 0 {
         out.push_str(&format!("ttl {}\n", ttl));
     }
     for h in head.iter().filter(|h| !h.starts_with("url ")) {
@@ -676,7 +681,11 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         Some(t) => t,
         None => src.ttl,
     };
-    block.push_str(&format!("ttl {}\n", ttl));
+    if ttl == NO_CADENCE {
+        block.push_str("no-cadence\n");
+    } else {
+        block.push_str(&format!("ttl {}\n", ttl));
+    }
     match &src.frame {
         Frame::Surface {
             body_name,
@@ -3332,7 +3341,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
                 continue;
             }
             lines.push(l.to_string());
-            if l.starts_with("ttl ") {
+            if l.starts_with("ttl ") || l == "no-cadence" {
                 lines.push(frame.trim_end().to_string());
             }
         }

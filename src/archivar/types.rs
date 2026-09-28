@@ -355,6 +355,8 @@ pub const J2000_EPOCH: f64 = 2451545.0;
 
 pub const PARSEC_M: f64 = 3.085677581e16;
 
+pub const NO_CADENCE: u64 = 1 << 25;
+
 pub const C_LIGHT: f64 = 299792458.0;
 
 pub const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
