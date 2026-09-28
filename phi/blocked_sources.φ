@@ -244,7 +244,7 @@ note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (ge
 
 descoped
 url https://services.swpc.noaa.gov/json/solar_regions.json
-note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. area ohne Token (Millionstel), spot_class=McIntosh kategorisch, number_spots/region DROP. descoped (gemessen: keine namensbestimmbare Einheit).
+note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. area Millionstel, spot_class McIntosh, number_spots/region DROP; Einheit gefunden → integriert phi/sources.φ:998.
 
 descoped
 url https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100

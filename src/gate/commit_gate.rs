@@ -1607,6 +1607,19 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
     prose_violation(line)
 }
 
+fn entry_carries_move_note(content: &str, url_idx: usize) -> bool {
+    for line in content.lines().skip(url_idx + 1) {
+        let t = line.trim();
+        if t.is_empty() {
+            break;
+        }
+        if let Some(n) = t.strip_prefix("note ") {
+            return n.contains("integriert") || n.contains("phi/sources.φ");
+        }
+    }
+    false
+}
+
 pub fn blocked_integrated_twin(path: &str, content: &str, sources_text: &str) -> Option<Verdict> {
     if path != "phi/blocked_sources.φ" {
         return None;
@@ -1637,7 +1650,11 @@ pub fn blocked_integrated_twin(path: &str, content: &str, sources_text: &str) ->
             continue;
         }
         if let Some(u) = t.strip_prefix("url ") {
-            if has_gap && state != Some("descoped") && sources_urls.contains(u.trim()) {
+            let twin = sources_urls.contains(u.trim());
+            let open_gap = has_gap && state != Some("descoped") && twin;
+            let descoped_without_move =
+                state == Some("descoped") && twin && !entry_carries_move_note(content, idx);
+            if open_gap || descoped_without_move {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "blocked-integrated-twin".to_string(),
@@ -3738,6 +3755,20 @@ mod tests {
         assert_eq!(v.rule, "blocked-integrated-twin");
         assert_eq!(v.severity, Severity::Hard);
         assert_eq!(v.line, 3, "the url line of the open twin is named");
+    }
+
+    #[test]
+    fn fp_blocked_integrated_twin_descoped_without_move_flagged() {
+        let blocked =
+            "descoped\nurl https://example.org/b\nnote descoped (gemessen: keine Einheit)\n";
+        let v = blocked_integrated_twin(
+            "phi/blocked_sources.φ",
+            blocked,
+            &fx("blocked_twin_sources"),
+        )
+        .unwrap();
+        assert_eq!(v.rule, "blocked-integrated-twin");
+        assert_eq!(v.line, 2, "the url line of the descoped twin is named");
     }
     #[test]
     fn fn_blocked_integrated_twin_descoped_released_passes() {
