@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 3d7bf0eaab934c8da7fd37cd5ef09d68a2ccb82ca441f06ee8b05e3b4fe2d3db
+  sha256: f8cc800b352d24c7d0c0e6bd386b5357ae5849a78786281fbb8d8ac5e5066818
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -200,11 +200,23 @@ der am Insert als endliches `extent` gesetzt wird. Der Legacy-Baum widerlegt bei
 
 ## 7. Offene Punkte (pending, jeder mit Schritt)
 
-- **ω-Loop-Verdict-Term:** `weberin_verdicts` im Loop lesen und als Query-Term ableiten.
-- **Prosa-Heimat:** Abschnitt „Presence-only loading and the jump" in
-  `docs/concepts/archivar-mathematikerin.md` + Pointer in AGENTS.md; `presence_gate`/
-  `jump_epoch`/`record_in_enclosure`/Dispersion haben keine Live-Prosa.
-- **Bootstrap/fetch-Loop/Katalog-Branches** auf denselben Ausschnitt.
+**Nachtrag 2026-09-28 (Mountain 196, gemessen):** Die Enclosure-Vereinheitlichung
+(Verdikt 2, §6) ist gebaut — `src/archivar/membrane.rs:353` `enclosure_rho(vmax, amax,
+dt, pad)`, alle Ladepfade rufen sie (`spatial.rs:172/664/709`, `fetch.rs:492`); die
+drei Kopien `spatial.rs:511/:554`/`fetch.rs:492` existieren nicht mehr (Commit
+`f9ea3284c`, river folge37, 2026-09-26); Gate-Fixture `enclosure_rho_fourth_copy`
+(`commit_gate_vocab.json:495`). Die im Verdikt genannten „drei Kopien" waren der
+Vor-Commit-Stand. `main_flow.rs:332` (`jump_residual_breached`) ist die
+Sprung-Detektion (`Φ·JUMP_GRID + ½·amax·Δt²`), keine Enclosure-Kopie — offen als
+river-Punkt. **Damit ist der Punkt „Bootstrap/fetch-Loop/Katalog-Branches auf denselben
+Ausschnitt" für die Enclosure-Formel erledigt; was bleibt, ist die Jump-Detektion.**
+
+- **ω-Loop-Verdict-Term:** `weberin_verdicts` im Loop lesen und als Query-Term ableiten. (river)
+- **Prosa-Heimat — geschrieben (2026-09-28).** Abschnitt „Presence-only loading and the
+  jump (contract)" `docs/concepts/archivar-mathematikerin.md:31` (`presence_gate`,
+  `record_in_enclosure`, Dispersion-Gesetz `signal_reach`, Jump-Radius, 0-Kanon); `:29`
+  trug Star-Grid + Jump bereits. Ein AGENTS-Pointer war nicht nötig — `AGENTS.md`
+  beschreibt presence-only loading schon im Architektur-Block.
 - **Sprung-Radius: versöhnt (2026-09-28).** `grid_step = GRID_INIT·2ⁿ = JUMP_GRID·2^(n+3)`, also `Φ·grid_step = Φ·JUMP_GRID·2^(n+3)` — beide Formen sind **eine** Formel; der Legacy-`·2ⁿ` ist als Browser-Zoom-Faktor (`state.scale`) absorbiert. `JUMP_GRID=2²⁸` lebt als Detektions-Schwelle (`main_flow.rs:332`), `Φ·grid_step` als Enclosure-Radius (`fetch.rs:423`).
 - **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht (der Reader-Pfad
   `vlies.rs` steht; die `format vlde`-Quelle fehlt).

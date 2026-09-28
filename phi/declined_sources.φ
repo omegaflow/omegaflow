@@ -2156,7 +2156,7 @@ note GLIMS Gletscher-Inventar — Position/Geografie, kein Messwert-Feld (Force-
 
 decline duplicate
 url https://globalcmt.org/
-note GCMT-Zentroid-Moment-Tensoren — dieselbe Messung liegt als NDK-Katalog www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk (sources.φ:4785); globalcmt.org ist der Portal-Alias.
+note GCMT-Zentroid-Moment-Tensoren — dieselbe Messung liegt als NDK-Katalog www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk (sources.φ:7256); globalcmt.org ist der Portal-Alias.
 
 decline presence
 url https://globalplasticwatch.org/api/
