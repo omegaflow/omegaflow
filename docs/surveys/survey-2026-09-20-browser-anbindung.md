@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: 95873af77595a4698b44a3d1a2a541dacb91ada5ff61fdc6361eb6c77c45472b
+  sha256: 5ce1dc1e513c4043961e9831d69b99c8e8f11eb2fbebc78cf5f993f209048555
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -198,3 +198,20 @@ oder Offscreen-Keepalive) — **operator-gebunden** (Store-Extension
 `cabnfapnafjlijmbpmgjkgobhdkbmpci`, dritter). Gemessene Versionslücke bleibt: Plugin
 `@vymalo/opencode-browser@0.17.0` gegen Store-Extension 0.16.1 (Protokoll v1, drop-in).
 Bis dahin: Werkzeuge erst nach dem Executor-Connect (`browser_targets` != leer) rufen.
+
+## Messnachtrag 2026-09-28 — Store-Review descoped; MCP-Pin + Fork
+
+Die offenen Marker des Bau-Schnitts sind auf den Stand 2026-09-28 gezogen (gemessen
+2026-09-28, Mycelium-Folge 190/191):
+
+- **Bau-Schnitt 1 (Chrome DevTools MCP pinnen):** erledigt. `opencode.json:158-163`
+  pinnt `chrome-devtools-mcp@1.9.0` mit `--no-usage-statistics --no-performance-crux
+  --autoConnect`, `enabled: true` — das Silence-Gebot (Telemetrie-Flags) ist erfüllt.
+- **Bau-Schnitt 5 / Store-Review:** überholt und **descoped mit Befund**. Der Weg läuft
+  nicht mehr über den Store-Review einer Fremd-Extension, sondern über den eigenen Fork
+  `tools/browser-extension/` (chrome.alarms-Keepalive gegen die oben gemessene
+  MV3-Kaltstart-Latenz) plus `.github/workflows/browser-extension.yml`
+  (build/test/artifact `.output/chrome-mv3/`); der Operator lädt unpacked.
+- **Kaltstart-Verdikt (zuletzt operator-gebunden, Store-Extension
+  `cabnfapnafjlijmbpmgjkgobhdkbmpci`):** vom Fork abgelöst — die Entschärfung liegt
+  jetzt im eigenen Baum (Keepalive), nicht in einer Fremd-Store-Änderung.
