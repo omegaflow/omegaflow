@@ -7,9 +7,9 @@
 # summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
 # blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
-ausstehend
+disponiert
 kandidat http://pithia.cbk.waw.pl/tap
-note ivo://src.pas/tap — 2026-09-26 Host lebt (TAP 200); PostgreSQL :5432 refused, /tap/tables 500 → kein Sample. 11 epn_core-Tabellen. esc.pithia.eu = Metadaten-Katalog, access_url→:8081/data/* 404. Gap epncore-spatial (s_region STC-S, kein lat/lon-Skalar). pending bis Backend.
+note 2026-09-27 released in phi/blocked_sources.φ (Backend tot: PG refused, /tap/tables 500; Arm epncore-spatial steht parse.rs:319); planeto decline registry/katalog (declined_sources.φ:213).
 
 ausstehend
 kandidat https://limadou.ssdc.asi.it/
@@ -27,38 +27,38 @@ disponiert
 nachlauf docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
 note survey 2026-09-14 gemessen 2026-09-26: 26/26 Pendings im Register (sources.φ:869,811,819,843,3494,7821,8122,8207,8763,9343; declined_sources.φ:2270,1391,1407,1011), nur ERI compiler-pending (noaa_nodd_disposition.φ:50)
 
-ausstehend
+disponiert
 kandidat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki Radio Science (JAXA/ISAS) PDS4 urn:jaxa:darts:vco_rs — 2026-09-28 200 anonym; SIS vco_rs_sis_v13.pdf; einziges offenes asiatisches Radio-Science-Roh. sensory-folge195.
+note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); SIS v13 PDF dokumentiert binäre Doppler-/Open-Loop-Produkte. → phi/blocked_sources.φ parser-def gap pds4-binary.
 
-ausstehend
+disponiert
 kandidat https://sbnarchive.psi.edu/pds4/hayabusa/
-note Hayabusa (JAXA/ISAS) AMICA/LIDAR/NIRS/Mission PDS4 — 2026-09-28 200 anonym; NAIF HAYABUSA/-SPICE schon im Index. sensory-folge195.
+note Hayabusa (JAXA/ISAS) PDS4 — 2026-09-28 HTTP 206; LIDAR cdr_*.tab fixed-width ~30 Spalten (MET/UTC/Range), kein In-File-Header, Einheiten im XML-Label, 43–177 MB. → phi/blocked_sources.φ parser-def gap pds4-fixed-width.
 
-ausstehend
+disponiert
 kandidat https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
-note Kaguya/SELENE LRS-Roh (JAXA/ISAS, PDS ODE) + DARTS darts:sln-l-rise-5-traj-rstar-v1.0 — 2026-09-28 200 anonym; NAIF SELENE/ im Index. sensory-folge195.
+note Kaguya/SELENE LRS-Roh (JAXA/ISAS, PDS ODE) — 2026-09-28 HTTP 206; Lunar Radar Sounder binäre .dat hinter ODE-Portal, kein Einzeldatei-Endpoint gefunden. → phi/blocked_sources.φ parser-def gap pds3-binary.
 
-ausstehend
+disponiert
 kandidat https://pds-geosciences.wustl.edu/missions/chandrayaan1/
-note Chandrayaan-1 (ISRO) M3/Mini-SAR/HySI PDS3 — 2026-09-28 200 anonym; SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/. sensory-folge195.
+note Chandrayaan-1 (ISRO) PDS3 — 2026-09-28 HTTP 206; Mini-RF .img (PDS3-Raster) + M3 ENVI-Cube binär. → phi/blocked_sources.φ parser-def gap pds3-img.
 
-ausstehend
+disponiert
 kandidat https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
-note Venera 15/16 (UdSSR, PDS-Spiegel) Altimetrie 10398160 B + Radiometrie mpi-radiometry.dat 5949650 B — 2026-09-28 200 anonym; abgeleitete Tabellen, kein Raw. sensory-folge195.
+note Venera 15/16 (UdSSR, PDS-Spiegel) — 2026-09-28 200 anonym; Altimetrie 10398160 B ASCII (lat/lon/radius km) + Radiometrie 5949650 B (lat/lon/brightness-temp K). → phi/sources.φ (2 no-cadence, rows, at venus; gravity km / thermal K).
 
-ausstehend
+disponiert
 kandidat https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ — 2026-09-28 200 anonym. Pfad korrigiert 2026-09-28 (--verdict): alte Form `vega2-c-mischa-…` 404, real `vega2-c_sw-mischa-…` 206. sensory-folge195.
+note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. → phi/blocked_sources.φ parser-def gap pds3-fixed-width.
 
-ausstehend
+disponiert
 kandidat https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 (UdSSR) KRFM-Photometrie/Termoskan/VSK-FREGAT — 2026-09-28 200 anonym (SBN); PWS via CDPP regards account. sensory-folge195.
+note Phobos 2 (UdSSR) PDS3 — 2026-09-28 HTTP 206; krfm.dat fixed-width, Spalten ohne In-File-Einheiten. → phi/blocked_sources.φ parser-def gap pds3-fixed-width (unit-auto-detect gilt zusätzlich).
 
-ausstehend
+disponiert
 kandidat https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO (ESA, russ. Instrumente ACS/FREND) — 2026-09-28 200 anonym; NAIF EXOMARS2016/ im Index. sensory-folge195.
+note ExoMars TGO (ESA/Roskosmos, ACS/FREND) — 2026-09-28 HTTP 200 (2124 B FTP-Listing); ACS-NIR-Okkultation PDS4 binär. → phi/blocked_sources.φ parser-def gap pds4-binary.
 
-ausstehend
+disponiert
 kandidat https://pda.kasi.re.kr/
-note Danuri/KPLO (KARI/KASI) Planetary Data Archive + ShadowCam shadowcam.im-ldi.com — 2026-09-28 200 anonym. sensory-folge195.
+note Danuri/KPLO (KARI/KASI) PDA + ShadowCam shadowcam.im-ldi.com — 2026-09-28 beide HTTP 200 HTML-Portal; kein maschinenlesbarer Daten-Endpoint. → phi/blocked_sources.φ parser-def gap html-parser-arm.

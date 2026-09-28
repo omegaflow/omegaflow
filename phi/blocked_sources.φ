@@ -9,6 +9,11 @@ note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.r
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
 note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
 note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; kein Extraktor-Arm gebaut.
+note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Reader-Arm fehlt.
+note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Reader-Arm fehlt.
+note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm fehlt.
+note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Reader-Arm fehlt.
+note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm fehlt.
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -381,4 +386,44 @@ note Hope/Al-Amal EMM (MBRSC VAE) — 2026-09-28 200, kostenloses Konto. sensory
 blocked account
 url https://superdarn.ca/data-download
 note MAP-Grid RST DataMap halten (2026-09-28): fit.order=6, pot_drop, HMB, IMF, combine_grid. Globus-only 8e844226-2eea-479c-b5e4-bac908b725bc /local_data/map/ 55690F 281,72GB. Operator: Globus-Transfer→externe 3,2-TB-Platte. Pending: RST-Byte-Offsets.
+
+parser-def binary
+gap pds4-binary
+url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
+note ExoMars TGO (ESA/Roskosmos) ACS-NIR-Okkultations-Spektrum — 2026-09-28 HTTP 200 (2124 B FTP-Listing); PDS4 binäre Spektren, kein ASCII-Sample. NAIF EXOMARS2016/ im Index.
+
+parser-def binary
+gap pds4-binary
+url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
+note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); SIS vco_rs_sis_v13.pdf dokumentiert binäre Doppler-/Open-Loop-Produkte, kein ASCII-Sample.
+
+parser-def binary
+gap pds3-binary
+url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
+note Kaguya/SELENE LRS-Roh (JAXA, PDS ODE) — 2026-09-28 HTTP 206; Lunar Radar Sounder binäre .dat-Rohdaten hinter ODE-Portal, kein Einzeldatei-Endpoint gefunden. DARTS darts:sln-l-rise-5-traj-rstar-v1.0.
+
+parser-def html
+gap html-parser-arm
+url https://pda.kasi.re.kr/
+note Danuri/KPLO (KARI/KASI) PDA + ShadowCam shadowcam.im-ldi.com — 2026-09-28 beide HTTP 200 HTML-Portal (16331/8742 B); kein maschinenlesbarer Daten-Endpoint gefunden, Zugang über JS-Portal.
+
+parser-def img
+gap pds3-img
+url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
+note Chandrayaan-1 (ISRO) Mini-RF .img (PDS3-Raster) + M3 ENVI-Cube — 2026-09-28 HTTP 206; binäre Raster, kein ASCII-Sample. SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/.
+
+parser-def pds3
+gap pds3-fixed-width
+url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
+note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Spalten ohne In-File-Einheiten (im .lbl), 2026-09-28 HTTP 206. Termoskan/VSK-FREGAT ebenso PDS3; unit-auto-detect gilt zusätzlich.
+
+parser-def pds3
+gap pds3-fixed-width
+url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
+note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. Ballons atmos.nmsu.edu/PDS/data/vega_5001/.
+
+parser-def tab
+gap pds4-fixed-width
+url https://sbnarchive.psi.edu/pds4/hayabusa/
+note Hayabusa LIDAR (JAXA/ISAS) cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten (MET/UTC/Range/…), kein In-File-Header, Einheiten im XML-Label, 43–177 MB je .tab. Range = em.
 

@@ -80,9 +80,9 @@ verifiziert 0 pipeline/catalog/b2find_intermagnet_catalog.φ
 # note: 1 Kandidat → stage/b2find_intermagnet_candidates.φ; Probe 2026-09-22: imag-data.bgs.ac.uk GIN hapi/catalog live; Fanout-Stationsliste lat/lon fehlt; korpora_heim:19
 index 0 pipeline/catalog/grind_eogateway_index.φ
 # note: 251 catalog + 68 provider; eigenes Werk (korpora_heim:69); esa_eogateway-Daten decline (korpora_heim:174)
-verifiziert 8 pipeline/catalog/grind_vires_catalog.φ
+erledigt 8 pipeline/catalog/grind_vires_catalog.φ
 # note: 8 Blöcke → stage/grind_vires_catalog_converted.φ; 7 bereits in sources.φ; 1 gemergt 2026-09-22 (CH_ME_MAG_LR_3, ttl 86400)
-verifiziert 17 pipeline/catalog/grind_arcgis_index.φ
+erledigt 17 pipeline/catalog/grind_arcgis_index.φ
 # note: 17 kanonische Blöcke → stage/grind_arcgis_index_converted.φ; 16 gemergt 2026-09-22 (sources.φ +16, ttl 60–86400); 1 Duplikat (Temperature, sources.φ:5986)
 descoped 0 pipeline/catalog/heliocloud_catalog.φ
 # note: CloudCatalog SPA ohne JSON-Route (2026-08-20); S3-Bucket-ID pending; eigenes Werk (korpora_heim:73)
