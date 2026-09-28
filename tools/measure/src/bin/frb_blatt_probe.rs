@@ -3,7 +3,7 @@ use omegaflow::cdn::CDN_BASE;
 use omegaflow::json::{JsonVal, jnum, jstr, parse_json};
 use omegaflow::te::{phase_randomized_surrogate, silverman, transfer_entropy_lag};
 
-const CDN_RELEASE: &str = "ssd.jpl.nasa.gov";
+const CDN_RELEASE: &str = "cdsarc.cds.unistra.fr";
 const CDN_ASSET: &str = "frb_chime_cat1.json";
 const LOCAL_HARVEST: &str = "phi/frb_harvest/frb_chime_cat1.json";
 const MIN_N: usize = 30;
