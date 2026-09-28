@@ -2,7 +2,7 @@ use omegaflow::archivar::{
     Extract, JsonVal, SourceConfig, convert_to_si, fetch_raw, load_sources, parse_json, scalar_of,
 };
 use omegaflow::te::{
-    permutation_entropy, phase_randomized_surrogate, surrogate_stats_phase_n, transfer_entropy_lag,
+    TeFamily, permutation_entropy, surrogate_p_value, surrogate_stats_phase_n, transfer_entropy_lag,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -341,30 +341,31 @@ fn sweep_lags() -> Vec<usize> {
     (0..=SWEEP_MAX_MIN).step_by(SWEEP_STEP_MIN).collect()
 }
 
-fn surrogate_te_values(to: &[f32], from: &[f32], lag: usize, seed: u64) -> Vec<f64> {
-    let mut rng = seed.wrapping_add(0x9e37_79b9_7f4a_7c15);
-    let mut vals = Vec::new();
-    for _ in 0..N_SURR {
-        let ys = phase_randomized_surrogate(from, &mut rng);
-        if let Some(te) = transfer_entropy_lag(to, &ys, lag) {
-            vals.push(te);
-        }
-    }
-    vals
-}
-
-fn family_bound(pairs: &[(&str, &str, &[f32], &[f32])], lags: &[usize]) -> f64 {
-    let mut fam = f64::NEG_INFINITY;
+fn pair_family(
+    pairs: &[(&str, &str, &[f32], &[f32])],
+    lags: &[usize],
+) -> (TeFamily, Vec<Option<usize>>) {
+    let mut family = TeFamily::new("the tested directed pair set of the sweep round");
+    let mut index_by_pair: Vec<Option<usize>> = Vec::with_capacity(pairs.len());
     for (_, _, to, from) in pairs {
+        let mut best: Option<(usize, f64)> = None;
         for &lag in lags {
-            for te in surrogate_te_values(to, from, lag, SURROGATE_SEED) {
-                if te > fam {
-                    fam = te;
+            if let Some(te) = transfer_entropy_lag(to, from, lag) {
+                if best.is_none_or(|(_, b)| te > b) {
+                    best = Some((lag, te));
                 }
             }
         }
+        let index = match best {
+            Some((lag, te)) => {
+                surrogate_p_value(to, from, lag, SURROGATE_SEED, N_SURR).map(|p| family.push(te, p))
+            }
+            None => None,
+        };
+        index_by_pair.push(index);
     }
-    fam
+    family.correct(0.05);
+    (family, index_by_pair)
 }
 
 fn te_sweep(
@@ -725,18 +726,19 @@ fn main() {
     }
 
     println!();
-    println!("=== Family threshold (fam = max surrogate TE of the round, ENSO pattern) ===");
-    let fam = family_bound(&pairs, &lags);
+    println!("=== Family correction (Benjamini-Hochberg over the tested directed pair set) ===");
+    let (family, index_by_pair) = pair_family(&pairs, &lags);
     println!(
-        "fam = {fam:.4e} — an arrow holds only when its TE beats the strongest surrogate TE of the whole round (multiple-comparison correction)."
+        "family '{}': {} tested pairs, BH-FDR level 0.05 — an arrow holds only when its pair passes the family correction.",
+        family.name,
+        family.len()
     );
-    for (from, to, to_s, from_s) in pairs.iter() {
+    for (idx, (from, to, to_s, from_s)) in pairs.iter().enumerate() {
         let (curve, _) = te_sweep(from, to, to_s, from_s, &lags);
         if let Some((lag, te)) = curve.iter().max_by(|a, b| a.1.total_cmp(&b.1)) {
-            let verdict = if te > &fam { "arrow" } else { "family bound" };
-            println!(
-                "{from:>16} → {to:<16} | lag {lag:>3} min | TE {te:>10.4e} | fam {fam:.4e} | {verdict}"
-            );
+            let pass = index_by_pair[idx].is_some_and(|i| family.pass(i));
+            let verdict = if pass { "fdr-pass" } else { "fdr-fall" };
+            println!("{from:>16} → {to:<16} | lag {lag:>3} min | TE {te:>10.4e} | {verdict}");
         }
     }
 
@@ -897,27 +899,21 @@ fn main() {
         station.alt
     );
     let named = |k: &str| pair_verdicts.iter().find(|(n, _)| n == k).map(|(_, v)| *v);
-    let bz_best_te = {
-        let (c, _) = te_sweep("Bz", "dB/dt", &dbdt_bz, &bz_dbdt, &lags);
-        c.iter()
-            .max_by(|a, b| a.1.total_cmp(&b.1))
-            .map(|(l, te)| (*l, *te))
-    };
-    let bz_family_arrow = bz_best_te.map(|(_, te)| te > fam).unwrap_or(false);
+    let bz_family_pass = index_by_pair[0].is_some_and(|i| family.pass(i));
     let sentence = match (
         named("Bz→dB/dt"),
-        bz_family_arrow,
+        bz_family_pass,
         named("Speed→dB/dt"),
         named("Density→dB/dt"),
     ) {
         (Some(true), true, Some(false), Some(false)) => {
-            "Bz carries the arrow at lag 60 min over the surrogate threshold AND over the family threshold; Speed and Density still. The arrow is identified."
+            "Bz carries the arrow at lag 60 min over the surrogate threshold AND over the BH-FDR family correction; Speed and Density still. The arrow is identified."
         }
         (Some(true), false, Some(false), Some(false)) => {
-            "Bz carries an arrow at lag 60 min over the surrogate threshold but stays under the family threshold — the arrow is directed, not fam-significant; more 1-min windows decide."
+            "Bz carries an arrow at lag 60 min over the surrogate threshold but falls under the BH-FDR family correction — the arrow is directed, not family-significant; more 1-min windows decide."
         }
         _ => {
-            "No fam-cleaned arrow — the measured values stand above; still is a finding (0 honored)."
+            "No family-cleaned arrow — the measured values stand above; still is a finding (0 honored)."
         }
     };
     println!("The sentence: {sentence}");
@@ -929,7 +925,7 @@ fn main() {
         "Retro window (years, 1-h grid): the OMNI2 series lives as omni2_serie.bin; the retro row of the Blatt is its own atom."
     );
     println!(
-        "Multiple-comparison correction over the pair matrix: open in the thematic handover — the Blatt carries the raw values with threshold."
+        "Multiple-comparison correction over the pair set: Benjamini-Hochberg FDR over the tested directed pair set (the family), applied in the row above."
     );
     println!(
         "GIC itself (electric): the FMI Mantsala asset (fmi_gic.bin, phi/sources.φ:8584, parsed as MAGIC_GIC/COMP_GIC_A in src/archivar/geo.rs:7,58) is paired by no probe — the Blatt measures dB/dt, the inductive driver, not the grid current."

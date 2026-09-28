@@ -1,7 +1,9 @@
 use std::env;
 
 use omegaflow::archivar::{C_LIGHT, PARSEC_M};
-use omegaflow::te::{phase_randomized_surrogate, transfer_entropy_lag};
+use omegaflow::te::{
+    TeFamily, phase_randomized_surrogate, surrogate_rank_p_value, transfer_entropy_lag,
+};
 
 const PHI: f64 = 1.618033988749895;
 const LOW_BAND: usize = 3;
@@ -60,6 +62,7 @@ struct MeasCell {
     sd: f64,
     z: f64,
     zs: Vec<f64>,
+    family_index: Option<usize>,
 }
 
 struct ScreenReport {
@@ -67,7 +70,8 @@ struct ScreenReport {
     n_cells: usize,
     n_surr: usize,
     alpha: f64,
-    z_threshold: f64,
+    family_len: usize,
+    family_pass: usize,
 }
 
 fn icrs_pos_m(ra_deg: f64, dec_deg: f64, dist_pc: f64) -> [f64; 3] {
@@ -167,15 +171,6 @@ fn surrogate_zs(
     Some((te, mean, sd, zs))
 }
 
-fn fabric_z_threshold(null_max: &[f64], alpha: f64) -> f64 {
-    let mut sorted = null_max.to_vec();
-    sorted.sort_by(|a, b| a.total_cmp(b));
-    let n = sorted.len();
-    let m = (alpha * n as f64).floor() as usize;
-    let m = m.min(n.saturating_sub(1));
-    sorted[n - 1 - m]
-}
-
 fn screen_set(
     sources: &[Source],
     cadence_s: Option<f64>,
@@ -216,6 +211,7 @@ fn screen_set(
                             sd,
                             z,
                             zs,
+                            family_index: None,
                         });
                     }
                 }
@@ -224,19 +220,13 @@ fn screen_set(
     }
 
     let n_cells = cells.len();
-    let z_threshold = if n_cells == 0 {
-        0.0
-    } else {
-        let mut null_max = vec![f64::NEG_INFINITY; n_surr];
-        for c in &cells {
-            for (r, &val) in c.zs.iter().enumerate() {
-                if val > null_max[r] {
-                    null_max[r] = val;
-                }
-            }
+    let mut family = TeFamily::new("the tested pair set of the screen (all directed pair cells)");
+    for c in &mut cells {
+        if let Some(p) = surrogate_rank_p_value(c.z, &c.zs) {
+            c.family_index = Some(family.push(c.z, p));
         }
-        fabric_z_threshold(&null_max, alpha)
-    };
+    }
+    family.correct(alpha);
 
     let mut directed = Vec::new();
     for (driver, target, window, sep) in directed_windows {
@@ -250,7 +240,8 @@ fn screen_set(
             .iter()
             .filter(|c| c.driver == driver && c.target == target)
         {
-            if c.z > z_threshold {
+            let pass = c.family_index.is_some_and(|i| family.pass(i));
+            if pass {
                 any_significant = true;
                 if window.map_or(false, |(lo, hi)| c.lag >= lo && c.lag <= hi) {
                     window_significant = true;
@@ -260,7 +251,7 @@ fn screen_set(
                 best_z = c.z;
                 best_lag = Some(c.lag);
                 best_te = Some(c.te);
-                best_threshold = Some(c.mean + z_threshold * c.sd);
+                best_threshold = Some(c.mean + 2.0 * c.sd);
             }
         }
         let verdict = if n_cells == 0 {
@@ -290,7 +281,8 @@ fn screen_set(
         n_cells,
         n_surr,
         alpha,
-        z_threshold,
+        family_len: family.len(),
+        family_pass: family.members.iter().filter(|m| m.pass).count(),
     }
 }
 
@@ -527,8 +519,8 @@ fn main() {
         tol_frac * 100.0
     );
     println!(
-        "surrogate fabric-max null: {} surrogates per cell, familywise alpha = {:.3}, corrected z threshold = {:.3}",
-        report.n_surr, report.alpha, report.z_threshold
+        "surrogate-rank BH-FDR family correction: {} surrogates per cell, family 'the tested pair set of the screen' ({} cells, {} pass), level = {:.3}",
+        report.n_surr, report.family_len, report.family_pass, report.alpha
     );
     println!();
     println!(
