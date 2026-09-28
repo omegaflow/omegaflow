@@ -2872,6 +2872,8 @@ pub fn main_flow() {
                     | "pds4_fixed_width"
                     | "pds3_binary"
                     | "pds4_binary"
+                    | "pds4_fits"
+                    | "gras_2c"
                     | "galileo_odr"
                     | "flac"
                     | "bidsleep"
