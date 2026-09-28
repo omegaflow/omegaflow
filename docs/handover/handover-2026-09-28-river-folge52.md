@@ -3,7 +3,7 @@
   session: River-Folge 52
   class: handover
   date: 2026-09-28
-  sha256: 88a486a458630e19ea75945feafb237c95284a2e53f28f1b187c39eff9b3a730
+  sha256: 7959069e51aa845915becdfdf7e69721b74ce5703238e65c43cac41859a6744d
   status: live
 -->
 # Handover — River-Folge 52 (2026-09-28)
@@ -60,9 +60,9 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ### GPU-Readback map/unmap + Lade-Membran — CI-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein ci-check-Lauf auf einem HEAD ≥ Readback-Fix, der **abschließt**.
-- **Lage:** (gemessen 2026-09-28 via `ci_manage view 36377277112` + `ci_manage status`) `36377277112` läuft noch (alter HEAD `97474363b`, Schritt `test`); die abgeschlossenen ci-check-Läufe im Fenster sind `cancelled` (HEAD-Vorlauf, kein Code-Rot); auf dem aktuellen HEAD `72db8efea` läuft `36380327273` ci-check (pending). Kein abgeschlossener grüner Nachweis. Die Lade-Membran ist lokal headless grün (folge50).
+- **Lage:** (gemessen 2026-09-28 ~06:10Z via `ci_manage status`) `36377277112`/`36380327273` sind `cancelled` (HEAD-Vorlauf, kein Code-Rot); der Push dieses Atoms (`39ba46b13`) startete `36385116484` ci-check (pending). Kein abgeschlossener grüner Nachweis im Fenster. Die Lade-Membran ist lokal headless grün (folge50).
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36380327273` **einmal** nach Laufende (kein Polling) — grün = Punkt geschlossen; rot = `ci_manage log <id>` auswerten.
+- **Braucht:** `ci_manage log 36385116484` **einmal** nach Laufende (kein Polling) — grün = Punkt geschlossen; rot = `ci_manage log <id>` auswerten.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
