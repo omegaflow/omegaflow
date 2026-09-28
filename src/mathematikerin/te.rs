@@ -2019,6 +2019,88 @@ pub fn find_mi_lag(series: &[f64]) -> Option<usize> {
     None
 }
 
+pub fn find_cross_mi_lag(target: &[f64], driver: &[f64], max_lag: usize) -> Option<usize> {
+    let n = target.len();
+    if n < 8 || driver.len() != n || max_lag < 1 || max_lag >= n {
+        return None;
+    }
+    if target.iter().chain(driver.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let eps = f64::EPSILON;
+    let mut best: Option<(usize, f64)> = None;
+    for lag in 1..=max_lag {
+        let w = n - lag;
+        let mut mn_t = f64::INFINITY;
+        let mut mx_t = f64::NEG_INFINITY;
+        let mut mn_d = f64::INFINITY;
+        let mut mx_d = f64::NEG_INFINITY;
+        for i in 0..w {
+            let vd = driver[i];
+            let vt = target[i + lag];
+            if vd < mn_d {
+                mn_d = vd;
+            }
+            if vd > mx_d {
+                mx_d = vd;
+            }
+            if vt < mn_t {
+                mn_t = vt;
+            }
+            if vt > mx_t {
+                mx_t = vt;
+            }
+        }
+        let range_t = mx_t - mn_t;
+        let range_d = mx_d - mn_d;
+        if range_t <= 0.0 || range_d <= 0.0 {
+            continue;
+        }
+        let mid_t = mn_t + range_t * 0.5;
+        let mid_d = mn_d + range_d * 0.5;
+        let mut h00 = 0usize;
+        let mut h01 = 0usize;
+        let mut h10 = 0usize;
+        let mut h11 = 0usize;
+        for i in 0..w {
+            let bd = driver[i] > mid_d;
+            let bt = target[i + lag] > mid_t;
+            match (bd, bt) {
+                (false, false) => h00 += 1,
+                (false, true) => h01 += 1,
+                (true, false) => h10 += 1,
+                (true, true) => h11 += 1,
+            }
+        }
+        let total = w as f64;
+        let p0 = (h00 + h01) as f64 / total;
+        let p1 = (h10 + h11) as f64 / total;
+        let q0 = (h00 + h10) as f64 / total;
+        let q1 = (h01 + h11) as f64 / total;
+        let mut mi = 0.0;
+        if h00 > 0 {
+            let p = h00 as f64 / total;
+            mi += p * (p / (p0 * q0 + eps) + eps).log2();
+        }
+        if h01 > 0 {
+            let p = h01 as f64 / total;
+            mi += p * (p / (p0 * q1 + eps) + eps).log2();
+        }
+        if h10 > 0 {
+            let p = h10 as f64 / total;
+            mi += p * (p / (p1 * q0 + eps) + eps).log2();
+        }
+        if h11 > 0 {
+            let p = h11 as f64 / total;
+            mi += p * (p / (p1 * q1 + eps) + eps).log2();
+        }
+        if best.is_none_or(|(_, b)| mi > b) {
+            best = Some((lag, mi));
+        }
+    }
+    best.map(|(lag, _)| lag)
+}
+
 pub fn embed_series(series: &[f64], tau: usize, dim: usize) -> Vec<Vec<f64>> {
     if tau == 0 || dim == 0 {
         return Vec::new();
@@ -2587,7 +2669,11 @@ pub fn transfer_entropy_embedded_ksg_conditional(
             pts.extend_from_slice(&emb_z[t - back_z]);
         }
     }
-    let k_eff = k.min(m - 1);
+    let k_eff = if dim_z > 0 {
+        conditional_ksg_k_fit(m, jd).min(m - 1)
+    } else {
+        k.min(m - 1)
+    };
     let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
     let mut sum = 0.0f64;
     for i in 0..m {
@@ -2739,9 +2825,9 @@ pub fn conditional_embedded_te_phase(
     let zf: Vec<f64> = z.iter().map(|&v| v as f64).collect();
     let emb_x = embed_series(&xf, estimate.tau_x, dim);
     let emb_z = embed_series(&zf, estimate.tau_z, dim);
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut vals: Vec<f64> = Vec::with_capacity(100);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..100 {
         let ys = match z_phase_surrogate(y, z, &mut rng) {
             Some(v) => v,
             None => continue,
@@ -2989,7 +3075,7 @@ pub fn permutation_entropy(series: &[f64], order: usize, delay: usize) -> Option
 }
 
 pub struct TopologicalVerdict {
-    pub tau_x: usize,
+    pub tau_c: usize,
     pub tau_y: usize,
     pub te: f64,
     pub threshold: f64,
@@ -3006,6 +3092,7 @@ pub struct TopologicalEstimate {
     pub te: f64,
     pub tau_x: usize,
     pub tau_y: usize,
+    pub tau_c: usize,
 }
 
 fn topological_te_with(
@@ -3024,7 +3111,7 @@ fn topological_te_with(
     let estimate = topological_te_estimate(x, y, dim)?;
     let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
     let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
-    let emb_x = embed_series(&xf, estimate.tau_x, dim);
+    let emb_x = embed_series(&xf, estimate.tau_c, dim);
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
@@ -3045,7 +3132,7 @@ fn topological_te_with(
             continue;
         }
         if let Some(te_s) =
-            transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, estimate.tau_x, tau_s, TE_KSG_K)
+            transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, estimate.tau_c, tau_s, TE_KSG_K)
         {
             vals.push(te_s);
         }
@@ -3072,7 +3159,7 @@ fn topological_te_with(
         None => (None, 0),
     };
     Some(TopologicalVerdict {
-        tau_x: estimate.tau_x,
+        tau_c: estimate.tau_c,
         tau_y: estimate.tau_y,
         te: estimate.te,
         threshold: mean + 2.0 * sd,
@@ -3098,13 +3185,19 @@ pub fn topological_te_estimate(x: &[f32], y: &[f32], dim: usize) -> Option<Topol
     }
     let tau_x = find_mi_lag(&xf)?;
     let tau_y = find_mi_lag(&yf)?;
-    let emb_x = embed_series(&xf, tau_x, dim);
+    let tau_c = find_cross_mi_lag(&xf, &yf, tau_y)?;
+    let emb_x = embed_series(&xf, tau_c, dim);
     let emb_y = embed_series(&yf, tau_y, dim);
     if emb_x.is_empty() || emb_y.is_empty() {
         return None;
     }
-    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K)?;
-    Some(TopologicalEstimate { te, tau_x, tau_y })
+    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, TE_KSG_K)?;
+    Some(TopologicalEstimate {
+        te,
+        tau_x,
+        tau_y,
+        tau_c,
+    })
 }
 
 pub fn topological_te_estimate_frozen(
@@ -3112,10 +3205,11 @@ pub fn topological_te_estimate_frozen(
     y: &[f32],
     dim: usize,
     tau_x: usize,
+    tau_c: usize,
     tau_y: usize,
 ) -> Option<TopologicalEstimate> {
     let n = x.len();
-    if n < 8 || y.len() != n || dim < 2 || tau_x == 0 || tau_y == 0 {
+    if n < 8 || y.len() != n || dim < 2 || tau_x == 0 || tau_c == 0 || tau_y == 0 {
         return None;
     }
     let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
@@ -3123,13 +3217,18 @@ pub fn topological_te_estimate_frozen(
     if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
         return None;
     }
-    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_x = embed_series(&xf, tau_c, dim);
     let emb_y = embed_series(&yf, tau_y, dim);
     if emb_x.is_empty() || emb_y.is_empty() {
         return None;
     }
-    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K)?;
-    Some(TopologicalEstimate { te, tau_x, tau_y })
+    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, TE_KSG_K)?;
+    Some(TopologicalEstimate {
+        te,
+        tau_x,
+        tau_y,
+        tau_c,
+    })
 }
 
 pub fn topological_te_phase(
@@ -3207,7 +3306,7 @@ pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVe
     if !valid_real {
         return None;
     }
-    let tau_x = verdict[0] as usize;
+    let tau_c = verdict[0] as usize;
     let tau_y = verdict[6] as usize;
     let te = verdict[7] as f64;
     let mut vals: Vec<f64> = Vec::with_capacity(10);
@@ -3234,7 +3333,7 @@ pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVe
         None
     };
     Some(TopologicalVerdict {
-        tau_x,
+        tau_c,
         tau_y,
         te,
         threshold: mean + 2.0 * sd,
@@ -4291,6 +4390,65 @@ mod tests {
     }
 
     #[test]
+    fn gate_find_cross_mi_lag_pins_argmax_ties_and_bounds() {
+        let n = 512usize;
+        let yf: Vec<f64> = (0..n).map(|t| (t as f64 * 0.9).sin()).collect();
+        let mut xf = vec![0.0f64; n];
+        for t in 3..n {
+            xf[t] = yf[t - 3];
+        }
+        assert_eq!(
+            find_cross_mi_lag(&xf, &yf, 6),
+            Some(3),
+            "the cross-lag is the coupling lag 3"
+        );
+
+        let per: Vec<f64> = (0..64).map(|t| (t % 4) as f64 + 1.0).collect();
+        assert_eq!(
+            find_cross_mi_lag(&per, &per, 4),
+            Some(2),
+            "the first of the tied maxima (lags 2 and 4) wins"
+        );
+
+        let z: Vec<f64> = (0..64).map(|t| (t as f64 * 0.3).sin()).collect();
+        assert!(
+            find_cross_mi_lag(&z, &z, 0).is_none(),
+            "max_lag=0 is refused"
+        );
+        assert!(
+            find_cross_mi_lag(&z, &z, 64).is_none(),
+            "max_lag>=n is refused"
+        );
+        assert!(
+            find_cross_mi_lag(&z[..7], &z[..7], 3).is_none(),
+            "n<8 is refused"
+        );
+        assert!(
+            find_cross_mi_lag(&z, &z[..63], 4).is_none(),
+            "a length mismatch is refused"
+        );
+        let flat: Vec<f64> = vec![1.5; 64];
+        assert!(
+            find_cross_mi_lag(&z, &flat, 4).is_none(),
+            "a constant driver carries no cross-structure"
+        );
+        assert!(
+            find_cross_mi_lag(&flat, &z, 4).is_none(),
+            "a constant target carries no cross-structure"
+        );
+        let mut nan = z.clone();
+        nan[10] = f64::NAN;
+        assert!(
+            find_cross_mi_lag(&nan, &z, 4).is_none(),
+            "a non-finite target is refused"
+        );
+        assert!(
+            find_cross_mi_lag(&z, &nan, 4).is_none(),
+            "a non-finite driver is refused"
+        );
+    }
+
+    #[test]
     fn embed_series_forward_states() {
         let x: Vec<f64> = (0..10).map(|t| t as f64).collect();
         let emb = embed_series(&x, 2, 3);
@@ -4411,7 +4569,7 @@ mod tests {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
         }
         let v = topological_te_phase(&x, &y, 3, 3, 42).unwrap();
-        assert!(v.tau_x >= 1 && v.tau_y >= 1);
+        assert!(v.tau_c >= 1 && v.tau_y >= 1);
         assert!(
             (2..=10).contains(&v.surrogates_used),
             "surrogates used {}",
@@ -4500,7 +4658,7 @@ mod tests {
         v[4 * 6 + 4] = 1.0;
         v[4 * 6 + 1] = 0.5;
         let r = topological_verdict_from_gpu(&v).unwrap();
-        assert_eq!(r.tau_x, 4);
+        assert_eq!(r.tau_c, 4);
         assert_eq!(r.tau_y, 3);
         assert_eq!(r.surrogates_used, 3);
         assert!((r.te - 0.5).abs() < 1e-12);
@@ -5220,14 +5378,22 @@ mod tests {
         let a = gate_ar1_sine(400, 0.6, 37.0, &mut rng);
         let b = gate_ar1_sine(400, 0.6, 43.0, &mut rng);
         let searched = topological_te_estimate(&a, &b, 3).expect("the pair carries an estimate");
-        let frozen = topological_te_estimate_frozen(&a, &b, 3, searched.tau_x, searched.tau_y)
-            .expect("the frozen pair carries an estimate");
+        let frozen = topological_te_estimate_frozen(
+            &a,
+            &b,
+            3,
+            searched.tau_x,
+            searched.tau_c,
+            searched.tau_y,
+        )
+        .expect("the frozen pair carries an estimate");
         assert_eq!(
             frozen.te, searched.te,
-            "A = A: the frozen estimator equals the searched estimator at the searched lags"
+            "A = A: the frozen estimator equals the searched estimator at the searched horizon"
         );
         assert_eq!(frozen.tau_x, searched.tau_x);
         assert_eq!(frozen.tau_y, searched.tau_y);
+        assert_eq!(frozen.tau_c, searched.tau_c);
     }
 
     #[test]

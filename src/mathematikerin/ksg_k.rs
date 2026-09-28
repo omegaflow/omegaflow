@@ -2,8 +2,8 @@
 
 use crate::mathematikerin::machines::TE_KSG_K_PROD;
 use crate::mathematikerin::te::{
-    TE_KSG_K, embed_series, find_mi_lag, phase_randomized_surrogate, topological_te_phase,
-    transfer_entropy_embedded_ksg,
+    TE_KSG_K, embed_series, find_cross_mi_lag, find_mi_lag, phase_randomized_surrogate,
+    topological_te_phase, transfer_entropy_embedded_ksg,
 };
 
 const K_VARIANCE_FLOOR: usize = 4;
@@ -79,11 +79,11 @@ fn ksg_te_phase_null(
     if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
         return None;
     }
-    let tau_x = find_mi_lag(&xf)?;
     let tau_y = find_mi_lag(&yf)?;
-    let emb_x = embed_series(&xf, tau_x, dim);
+    let tau_c = find_cross_mi_lag(&xf, &yf, tau_y)?;
+    let emb_x = embed_series(&xf, tau_c, dim);
     let emb_y = embed_series(&yf, tau_y, dim);
-    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, k)?;
+    let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, k)?;
     let mut vals: Vec<f64> = Vec::with_capacity(10);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..10 {
@@ -103,7 +103,7 @@ fn ksg_te_phase_null(
         if emb_s.is_empty() {
             continue;
         }
-        if let Some(te_s) = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, tau_x, tau_s, k) {
+        if let Some(te_s) = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, tau_c, tau_s, k) {
             vals.push(te_s);
         }
     }
