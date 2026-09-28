@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1060
+dropped-baseline 1082
+measured 2026-09-28 (Mountain-Folge 199, ci-gate 36482049012 dropped-gate @11c90ff9a: baseline 1060 | current 1082 | delta 22. Der lokale `register_lookup --dropped`-Scan brach nach 900 s ab — die Baseline-Datei nennt bereits >30 min; die 22 sind der aufgelaufene Netto der Planungs-Pässe nach dem River-57-Bump, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)
 measured 2026-09-28 (Operator-Wort, River-Folge 57: baseline 1054 | current 1060 | delta 6 @4ce2f1823. Die 6 sind der aufgelaufene Netto der Planungs-Pässe seit Bump @9f8debcc3; die `git: none`-Klasse zählt nachweislich **getragene** Punkte (z. B. `Europa-Clipper` → `state/zustand/wartend.φ:15`), also keine 6 verlorenen Obligationen. Absorbiert durch diesen Bump; der Gate-Umbau auf selbst-messend/träger-bewusst läuft als Absender-Zeile an Mycelium.)
 measured 2026-09-28 (ci-check 36377277112 dropped-gate @97474363b: baseline 1052 | current 1054 | delta 2; die 2 sind der aufgelaufene Netto der Planungs-Pässe nach @a457ed8c9, absorbiert durch den Bump im annehmenden Commit Mycelium folge190)
 measured 2026-09-25 (tree @0a0ce96d; ci-check 36064053750 dropped-gate @de76fda6a: baseline 960 | current 984 | delta 24; ci-check 36065950583 dropped-gate @0a0ce96d: baseline 960 | current 989 | delta 29. Die 29 sind der aufgelaufene Drop-Netto der Planungs-Pässe zwischen @5179b438b und @0a0ce96d — absorbiert durch den Baseline-Bump im annehmenden Commit (Mountain folge155), nicht durch Fabrikation)
