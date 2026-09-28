@@ -1,0 +1,9 @@
+#!/bin/sh
+# copilot_ask — die Copilot-CLI als read-only Recherche-Stimme.
+# Plan-Modus: Copilot liest/denkt/antwortet, editiert nichts und führt nichts aus
+# (`Changes +0 -0`); die eingebauten MCP-Server (u. a. der GitHub-MCP-Server mit
+# Schreib-Tools) sind abgeschaltet; ein Credit-Deckel begrenzt den Verbrauch.
+# Der volle Katalog: `copilot --help`. Copilot ist kein Schreib-Agent
+# (Only DeepSeek writes) — die Antwort ist Recherche, kein Commit.
+set -u
+exec copilot -p "$*" --mode plan --disable-builtin-mcps --max-ai-credits 30
