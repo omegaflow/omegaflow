@@ -229,7 +229,7 @@ workflow pds3-fixed-width-cdn.yml
 pattern ^pds3_fixed_width_.+\.bin$
 idempotent true
 timeout 240
-note Arm pds3_table.rs + extract.rs series_named; PDS3 fixed-width (KRFM, Vega 2, target HALLEY); run 36447656801 success 2026-09-28: pds3_fixed_width_<stem>.bin 14608–16192 B sha256 6c7d602c…, roundtrip holds, asset present.
+note Arm pds3_table.rs + extract.rs series_named; PDS3 fixed-width (KRFM=Phobos2/Mars, Vega2/HALLEY); run 36447656801 success 2026-09-28: pds3_fixed_width_<stem>.bin 14608–16192 B sha256 6c7d602c…, roundtrip holds, asset present.
 
 asset present
 format pds4_fixed_width

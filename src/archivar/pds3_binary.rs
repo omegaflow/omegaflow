@@ -114,13 +114,12 @@ pub fn parse_label(text: &str) -> Option<BinMeta> {
                 }
             }
             "END_OBJECT" => {
-                if value == "COLUMN" {
-                    if let Some(c) = column.take()
-                        && c.start_byte > 0
-                        && c.bytes > 0
-                    {
-                        meta.columns.push(c);
-                    }
+                if value == "COLUMN"
+                    && let Some(c) = column.take()
+                    && c.start_byte > 0
+                    && c.bytes > 0
+                {
+                    meta.columns.push(c);
                 }
             }
             "RECORD_TYPE" => meta.record_type = Some(value),

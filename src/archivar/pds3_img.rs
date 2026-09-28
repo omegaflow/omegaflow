@@ -189,7 +189,7 @@ fn byte_order_of(sample_type: &str) -> Result<ByteOrder, ImgReject> {
 
 fn sample_width(sample_type: &str, sample_bits: u32) -> Result<usize, ImgReject> {
     byte_order_of(sample_type)?;
-    if sample_bits == 0 || sample_bits % 8 != 0 {
+    if sample_bits == 0 || !sample_bits.is_multiple_of(8) {
         return Err(ImgReject::SampleBitsNotByteAligned(sample_bits));
     }
     Ok((sample_bits / 8) as usize)
@@ -279,14 +279,8 @@ pub fn decode_raster(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgRejec
         return Err(ImgReject::MissingField("LINES/LINE_SAMPLES/BANDS"));
     }
     let width = sample_width(sample_type, sample_bits)?;
-    let prefix = match meta.line_prefix_bytes {
-        Some(p) => p,
-        None => 0,
-    };
-    let offset = match meta.offset {
-        Some(o) => o,
-        None => 0,
-    };
+    let prefix = meta.line_prefix_bytes.unwrap_or(0usize);
+    let offset = meta.offset.unwrap_or(0usize);
     let data_bytes_per_line = match samples.checked_mul(width) {
         Some(v) => v,
         None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
@@ -459,10 +453,7 @@ pub fn decode_envi(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgReject>
         Some(s) => interleave_of(s)?,
         None => Interleave::Bsq,
     };
-    let header_offset = match meta.header_offset {
-        Some(h) => h,
-        None => 0,
-    };
+    let header_offset = meta.header_offset.unwrap_or(0usize);
     let per_band = match samples.checked_mul(lines) {
         Some(v) => v,
         None => return Err(ImgReject::SampleBitsNotByteAligned(0)),
