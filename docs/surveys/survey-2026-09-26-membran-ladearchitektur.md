@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 381ef5d488aaa654b9d10103dc47395b2e246e9936a5817233c14d1c7df6f3eb
+  sha256: 5fcd7d48bba0d4487c2f31fca25a7feff776b696bfc6d2793779b37b635a8415
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -200,11 +200,6 @@ der am Insert als endliches `extent` gesetzt wird. Der Legacy-Baum widerlegt bei
 
 ## 7. Offene Punkte (pending, jeder mit Schritt)
 
-- **Stern-Gitter:** `build_spatial_hash` um ein stern-eigenes Grid erweitern
-  (`CellKey`, `cell_size` aus dem lebenden Stern-Span, Hülle `c·age + pad`).
-- **`enclosure_rho`:** drei Kopien → eine Funktion, Rollen-Terme als Parameter.
-- **Zweiseitiger Sprung:** das Maß in `presence_gate` symmetrisieren; Trigger-Test
-  für die Erkennungs-Branch (`main_flow.rs:824-828`), der heute fehlt.
 - **ω-Loop-Verdict-Term:** `weberin_verdicts` im Loop lesen und als Query-Term ableiten.
 - **Prosa-Heimat:** Abschnitt „Presence-only loading and the jump" in
   `docs/concepts/archivar-mathematikerin.md` + Pointer in AGENTS.md; `presence_gate`/
