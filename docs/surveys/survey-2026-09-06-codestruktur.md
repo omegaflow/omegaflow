@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools
   class: survey
   date: 2026-09-06
-  sha256: 83c4f91ec3bc620e873db5c15f357fa9db3e1993a8914b5ace30da4209de49eb
+  sha256: 6076126ceb762773f24eafe8fefc7aeb85656a8d2b6d7df95b0b3c37016591f5
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -119,10 +119,13 @@ Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
   eigenen Datenvertrag (`sgrep -i "data contract" src` = 0). Der
   `confirm-rendering`-Schritt (`archivar-mathematikerin.md:78`): **gemessen
   2026-09-28** — das Release-Asset `matrix-state/matrix-rotor.txt` (15 310 B,
-  158 Zeilen, HEAD-SHA `ccfd1021c`) liegt vor und trägt **keine** `φ window:`-Zeile
-  (`sgrep -c "window:"` = 0). Ursache: die HUD-Zeile ist in
+  158 Zeilen, HEAD-SHA `ccfd1021c`) lag vor und trug **keine** `φ window:`-Zeile
+  (`sgrep -c "window:"` = 0). Ursache war: die HUD-Zeile ist in
   `src/mathematikerin/omega.rs:1788` auf `std::io::stderr().is_terminal()` gated,
-  CI leitet stderr in die Artefakt-Datei. Der CI-Artefakt-Weg ist damit
-  **strukturell unmöglich**; die headless-Verifikation braucht ein TTY (lokaler
-  `OMEGAFLOW_HIDDEN=1`-Lauf) oder die Freigabe der Zeile unter `OMEGAFLOW_HIDDEN`
-  (Rivers Feder, `omega.rs:1788`). `pending`.
+  CI leitet stderr in die Artefakt-Datei. **Nachtrag (gemessen 2026-09-28 via
+  `sread`):** River-Folge 57 (`8748a39cd`, „release the window HUD under hidden")
+  hat die Zeile auf `if self.silent || std::io::stderr().is_terminal()` erweitert;
+  `self.silent` = `OMEGAFLOW_HIDDEN` (`omega.rs:234`), das `matrix-rotor.yml:122`
+  setzt. Der Weg ist damit **gebaut**; die Messung folgt dem nächsten
+  `matrix-rotor`-Lauf auf einem HEAD mit `8748a39` (`sgrep "window:"` im
+  `matrix-rotor.txt`-Asset erwartet ≥ 1). `pending` (Verifikation).
