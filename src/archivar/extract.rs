@@ -76,8 +76,14 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds3_ring_occ" => pds3_ring_occ::parse_series(bytes),
         "pds3_fixed_width" => pds3_table::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "pds3_binary" => pds3_binary::parse_table(bytes)
+            .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "pds3_img" => pds3_img::parse_series(bytes),
         "pds4_fixed_width" => pds4::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "pds4_binary" => pds4_binary::parse_table(bytes)
+            .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "lab_reader" => lab_reader::parse_bin(bytes).and_then(|t| t.series()),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
@@ -254,10 +260,34 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
             (names, rows)
         }
+        "pds3_binary" => {
+            let table = pds3_binary::parse_table(bytes)?;
+            let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
+            let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        "pds3_img" => {
+            let raster = pds3_img::parse_image(bytes)?;
+            let names: Vec<String> = raster.band_names.clone();
+            let rows = pds3_img::band_means(&raster)?;
+            (names, rows)
+        }
         "pds4_fixed_width" => {
             let table = pds4::parse_table(bytes)?;
             let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
             let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        "pds4_binary" => {
+            let table = pds4_binary::parse_table(bytes)?;
+            let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
+            let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        "lab_reader" => {
+            let table = lab_reader::parse_bin(bytes)?;
+            let names = vec!["Pol".to_string(), "PolC".to_string()];
+            let rows = table.series()?;
             (names, rows)
         }
         _ => return None,
@@ -360,6 +390,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "noaa_ccor" => match comp {
             ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
+            _ => None,
+        },
+        "lab_reader" => match comp {
+            lab_reader::COMP_POL => Some("lab_reader_pol"),
+            lab_reader::COMP_POLC => Some("lab_reader_polc"),
             _ => None,
         },
         "aia" => match comp {
@@ -6073,6 +6108,21 @@ mod fixed_width_series_tests {
         }
     }
 
+    fn pds4_binary_column(name: &str) -> pds4_binary::Pds4BinaryColumn {
+        pds4_binary::Pds4BinaryColumn {
+            name: name.to_string(),
+            unit: None,
+            data_type: Some("IEEE754LSBDouble".to_string()),
+            missing_constant: None,
+            sampling_name: String::new(),
+            sampling_unit: String::new(),
+            sampling_min: None,
+            sampling_max: None,
+            start_byte: None,
+            bytes: None,
+        }
+    }
+
     #[test]
     fn pds3_fixed_width_series_reads_axis_and_columns() {
         let table = pds3_table::Pds3Table {
@@ -6119,6 +6169,7 @@ mod fixed_width_series_tests {
     fn fixed_width_series_rejects_foreign_bytes() {
         assert!(series_parse_bin("pds3_fixed_width", b"XXXX").is_none());
         assert!(series_parse_bin("pds4_fixed_width", b"XXXX").is_none());
+        assert!(series_parse_bin("pds4_binary", b"XXXX").is_none());
     }
 
     #[test]
@@ -6172,8 +6223,48 @@ mod fixed_width_series_tests {
     }
 
     #[test]
+    fn pds4_binary_series_reads_axis_and_columns() {
+        let table = pds4_binary::Pds4BinaryTable {
+            columns: vec![pds4_binary_column("TIME"), pds4_binary_column("DOPPLER")],
+            rows: vec![
+                pds4_binary::Pds4BinaryRow {
+                    values: vec![Some(1.0), Some(9.0)],
+                },
+                pds4_binary::Pds4BinaryRow {
+                    values: vec![Some(2.0), Some(8.0)],
+                },
+            ],
+        };
+        let bin = pds4_binary::pack(&table);
+        let series = series_parse_bin("pds4_binary", &bin).expect("series parses");
+        assert_eq!(series, vec![(1.0, 9.0, 1), (2.0, 8.0, 1)]);
+    }
+
+    #[test]
+    fn pds4_binary_named_series_excludes_axis_and_maps_comp_to_name() {
+        let table = pds4_binary::Pds4BinaryTable {
+            columns: vec![pds4_binary_column("TIME"), pds4_binary_column("DOPPLER")],
+            rows: vec![pds4_binary::Pds4BinaryRow {
+                values: vec![Some(2.0), Some(8.0)],
+            }],
+        };
+        let bin = pds4_binary::pack(&table);
+        let named = series_named("pds4_binary", &bin).expect("named series parses");
+        assert_eq!(named.names, vec!["TIME", "DOPPLER"]);
+        assert_eq!(named.rows.len(), 1);
+        let row = named.rows[0];
+        assert_eq!(row.t, 2.0);
+        assert_eq!(row.comp, 1);
+        assert_eq!(
+            named.names.get(row.comp as usize),
+            Some(&"DOPPLER".to_string())
+        );
+    }
+
+    #[test]
     fn named_series_is_none_for_foreign_formats() {
         assert!(series_named("drs_fits", b"XXXX").is_none());
         assert!(series_named("pds3_fixed_width", b"XXXX").is_none());
+        assert!(series_named("pds4_binary", b"XXXX").is_none());
     }
 }
