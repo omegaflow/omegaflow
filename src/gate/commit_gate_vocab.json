@@ -136,7 +136,9 @@
     "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund",
     "integrated-twin": "eine Dispositions-Zeile (descoped in phi/blocked_sources.φ, decline in phi/declined_sources.φ), deren url noch in phi/sources.φ registriert ist und deren note keinen Integrations-Vermerk trägt (integriert / phi/sources.φ) — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ oder entferne den Eintrag",
     "pass-copy": "a living handover line copies the standing pass — the Stehender Pass lives in state/zustand/standing-pass.md and is cited (sread state/zustand/standing-pass.md), never copied; a copied HEAD value is a stale copy the moment main moves",
-    "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/zustand/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)"
+    "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/zustand/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)",
+    "word-register-origin": "a word line in the Operator-Wort-Register carries no origin tag — the origin is the source segment after the word and the date (Wort | Datum | Quelle); a word is registered with its origin, never bare (Rat 2026-09-27: the pen is the owner's)",
+    "handover-dupe-entry": "a duplicate entry stands in a handover's Operator-Queue or Operator-Wort-Register — the same line twice (a foreign word or point folded twice); one entry per word/point (Rat 2026-09-27: one writer per handover)"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -505,6 +507,11 @@
     "foreign_binding_operator": "- **Status:** operator-gebunden | **Bindung:** operator",
     "foreign_binding_dritter": "- **Status:** wartend | **Bindung:** dritter (vDEC)",
     "foreign_binding_eigen": "- **Status:** eigen | **Bindung:** eigen",
-    "foreign_binding_termin": "- **Status:** termin | **Bindung:** termin:2026-10-02"
+    "foreign_binding_termin": "- **Status:** termin | **Bindung:** termin:2026-10-02",
+    "word_register_origin_missing": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort ohne Quelle“ | 2026-09-28\n",
+    "word_register_origin_clean": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n",
+    "word_register_origin_bullet_clean": "## Operator-Wort-Register\n\n- **Wort:** ein Wort | 2026-09-28 | Operator (Future-Session).\n",
+    "handover_dupe_register": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n",
+    "handover_dupe_clean": "## Operator-Wort-Register\n\nWort | Datum | Quelle\n--- | --- | ---\n„ein Wort“ | 2026-09-28 | Operator (Session, Mountain 193)\n„ein anderes“ | 2026-09-28 | Operator (Future-Session)\n"
   }
 }

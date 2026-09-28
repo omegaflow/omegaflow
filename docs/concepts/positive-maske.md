@@ -2,7 +2,7 @@
   title: Die positive Maske — Treiber hinzufügen statt Rauschen abziehen
   class: concept
   date: 2026-09-12
-  sha256: c734b5653d5c33f5964be4821128af9d85c4da2cfc01bd0317be5f9f9cc8f293
+  sha256: 3ddd9b321d0f7d8eeac26c324798a30cf2e9008727e4cadc841052742eddf708
   status: live
   see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
 -->
@@ -53,18 +53,26 @@ irrelevant. Keine Deutung, nur Messung. Kein Anspruch, nur der Riss.
 - **Magnetfeld** — INTERMAGNET/Swarm/GOCE/CryoSat (in `sources.φ` registriert):
   Stellvertreter-Kandidat für die Mantel-/Kerntemperatur (heißes Gestein leitet
   langsamer). Ein Kandidat, keine Behauptung.
-- **Plattentektonik** — Slab-Geometrie (USGS Slab2): nicht registriert,
-  Ernte-Kandidat.
-- **3D-Geschwindigkeitsmodelle** (Tomografie) — nicht registriert, heavy Fetch
-  (CI).
+- **Plattentektonik** — Slab-Geometrie USGS Slab2: registriert (2026-09-28
+  gemessen) — `phi/sources.φ:14412` (`slab2_depth`, Wayback-Route), Compiler
+  `tools/harvest/src/bin/slab2_compiler.rs`.
+- **3D-Geschwindigkeitsmodelle** (Tomografie) — registriert (2026-09-28
+  gemessen): LLNL-G3D-JPS `phi/sources.φ:7520` (`LLNL_G3D_JPS.nc`) und S40RTS
+  `:7525`, die `volume.bin`-Assets `:14381`/`:14389`, Manifestation
+  `.github/workflows/volume-cdn.yml`.
 
 ## Der Audit — wo wir noch nicht so exakt sind (Stand 2026-09-12)
 
 - Echo-Tiefe: σ 19 km (Ereignisse) / 36 km (Stationen) dominiert das
-  ±10-km-Gate; ak135 ist 1D (kein 3D-Modell registriert); der Stationsterm ist
-  offen (II.KIV +5,69 s); pP-Mehrdeutigkeit bei Δ≈30°.
-- M9.1-Picker: die Streuung bleibt — der USGS-Mww-Zentroid-Nachfolger ist
-  gebaut, die Verdrahtung in die Flotte offen.
+  ±10-km-Gate; ak135 ist 1D (ein 3D-Modell — LLNL-G3D-JPS — ist registriert,
+  im pP-Residuum noch nicht gefahren); pP-Mehrdeutigkeit bei Δ≈30°. Der
+  Stationsterm (II.KIV +5,69 s) wird in
+  `docs/concepts/die-akteure-im-boden-und-wasser.md:56–58` getragen, hier nicht
+  mehr geführt (2026-09-28).
+- M9.1-Picker: geschlossen (2026-09-28 gemessen) — der USGS-Mww-Zentroid-
+  Nachfolger steht (`tools/measure/src/picker.rs`, `pub mod picker`
+  `tools/measure/src/lib.rs:11`); die Flotte nutzt `p_onset`
+  (`tools/measure/src/depthphase.rs:790`).
 - Ephemeriden: geschlossen (2026-09-13). Der `body_fixed_to_icrs`-Matrixpfad
   trägt die IAU-Produktform Rz(90+α)·Rx(90−δ)·Rz(W) mit dem Pol aus Spalte 2
   (`src/archivar/motion.rs`, Fix `0f79b1ce`; de441 mars Anker Δ 0,0 km, die
