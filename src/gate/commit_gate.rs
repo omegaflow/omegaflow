@@ -3636,6 +3636,28 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_jump_residual_acceleration_term_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "src/archivar/main_flow.rs",
+            &fx("jump_residual_acceleration_term"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_jump_residual_segment_threshold_passes() {
+        let mut g = test_gate();
+        let args = tool_args("src/archivar/main_flow.rs", &fx("jump_residual_segment"));
+        assert!(
+            g.check_tool_call("edit", &args).is_none(),
+            "the pure grid threshold is the built jump detector path"
+        );
+    }
+
+    #[test]
     fn fp_tool_bare_or_swallow_gh_issue_blocked() {
         let mut g = test_gate();
         let args = tool_args(".github/workflows/x.yml", &fx("or_swallow_gh_issue"));
