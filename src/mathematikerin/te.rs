@@ -3417,16 +3417,33 @@ mod tests {
         (effect, cause)
     }
 
+    fn causal_pair_at_mi_lag(n: usize, seed: u64) -> (Vec<f32>, Vec<f32>, usize) {
+        let mut rng = seed;
+        let cause = gate_ar1(n, 0.5, &mut rng);
+        let cf: Vec<f64> = cause.iter().map(|&v| v as f64).collect();
+        let tau = find_mi_lag(&cf).expect("the driver carries an MI lag for the parity pair");
+        let effect: Vec<f32> = (0..n)
+            .map(|i| {
+                if i < tau {
+                    gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * cause[i - tau] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        (effect, cause, tau)
+    }
+
     #[test]
     fn gate_scalar_probe_path_parity_with_topological_membrane() {
         let seed = 0x9E37_79B9_7F4A_7C15u64;
-        let (x, y) = causal_pair_ar(300, seed);
+        let (x, y, tau) = causal_pair_at_mi_lag(300, seed);
 
         let scalar_forward =
-            transfer_entropy_lag(&x, &y, 0).expect("the scalar probe path carries TE(y -> x)");
+            transfer_entropy_lag(&x, &y, tau).expect("the scalar probe path carries TE(y -> x)");
         let scalar_reverse =
-            transfer_entropy_lag(&y, &x, 0).expect("the scalar probe path carries TE(x -> y)");
-        let (_, _, scalar_threshold) = surrogate_stats_phase_n(&x, &y, 0, seed, 100)
+            transfer_entropy_lag(&y, &x, tau).expect("the scalar probe path carries TE(x -> y)");
+        let (_, _, scalar_threshold) = surrogate_stats_phase_n(&x, &y, tau, seed, 100)
             .expect("the scalar probe path carries a phase-surrogate threshold");
         assert!(
             scalar_forward > scalar_reverse,
