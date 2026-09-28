@@ -221,7 +221,7 @@ idempotent true
 timeout 120
 note opensensemap_temperatur.bin 2888 B sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe CDN 200 measured 2026-09-23 (run 35906130561 success); arm opensensemap_compiler → OSM1
 
-asset fehlt
+asset present
 format pds3_fixed_width
 tag pds-smallbodies.astro.umd.edu
 arm pds3_fixed_width_compiler
@@ -229,9 +229,9 @@ workflow pds3-fixed-width-cdn.yml
 pattern ^pds3_fixed_width_.+\.bin$
 idempotent true
 timeout 240
-note Arm src/archivar/pds3_table.rs; Compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs; PDS3 fixed-width (KRFM krfm.dat, Vega 2 .tab); Asset pds3_fixed_width_<stem>.bin; CDN fehlt 2026-09-28 (gh release view).
+note Arm pds3_table.rs + extract.rs series_named; PDS3 fixed-width (KRFM, Vega 2, target HALLEY); run 36447656801 success 2026-09-28: pds3_fixed_width_<stem>.bin 14608–16192 B sha256 6c7d602c…, roundtrip holds, asset present.
 
-asset fehlt
+asset present
 format pds4_fixed_width
 tag sbnarchive.psi.edu
 arm pds4_fixed_width_compiler
@@ -239,7 +239,7 @@ workflow pds4-fixed-width-cdn.yml
 pattern ^pds4_fixed_width_.+\.bin$
 idempotent true
 timeout 240
-note Arm src/archivar/pds4.rs; Compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs; PDS4 Table_Character (Hayabusa cdr_*.tab, 683 MB); Asset pds4_fixed_width_<stem>.bin; CDN fehlt 2026-09-28 (gh release view).
+note Arm src/archivar/pds4.rs; Hayabusa LIDAR cdr_{f,opt,uf}; run 36447660819 success 2026-09-28: 9 shards 39'610'348–163'682'284 B, cdr_f 154708 Z./31 Spalten, roundtrip holds, sha256 c426b30d…, asset present.
 
 asset present
 format rosetta_odf
