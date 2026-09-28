@@ -14380,7 +14380,7 @@ field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 59dedd86e22721f9c5e2845560acbc16e6ccbc77f9d3159be836ef5591990092
@@ -14388,7 +14388,7 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/S40RTS.volume.bin
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
