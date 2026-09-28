@@ -83,6 +83,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
         "pds4_binary" => pds4_binary::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "pds4_fits" => pds4_fits::parse_series(bytes),
+        "gras_2c" => gras_2c::parse_series(bytes),
         "lab_reader" => lab_reader::parse_bin(bytes).and_then(|t| t.series()),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
@@ -282,6 +284,12 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let table = pds4_binary::parse_table(bytes)?;
             let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
             let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        "pds4_fits" => {
+            let raster = pds4_fits::parse_image(bytes)?;
+            let names: Vec<String> = raster.band_names.clone();
+            let rows = pds4_fits::band_means(&raster)?;
             (names, rows)
         }
         "lab_reader" => {
@@ -6261,10 +6269,91 @@ mod fixed_width_series_tests {
         );
     }
 
+    fn pad_card(kw: &str, value: &str) -> [u8; 80] {
+        let mut card = [b' '; 80];
+        let k = kw.as_bytes();
+        card[..k.len().min(8)].copy_from_slice(&k[..k.len().min(8)]);
+        card[8] = b'=';
+        let v = value.as_bytes();
+        card[10..10 + v.len().min(20)].copy_from_slice(&v[..v.len().min(20)]);
+        card
+    }
+
+    fn fits_image(cards: &[(&str, &str)], raw: &[u8]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        for (k, v) in cards {
+            header.extend_from_slice(&pad_card(k, v));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(raw);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn pds4_fits_series_reads_band_mean() {
+        let mut raw = Vec::new();
+        for v in [1.0f32, 2.0, 3.0, 4.0] {
+            raw.extend_from_slice(&v.to_be_bytes());
+        }
+        let buf = fits_image(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "2"),
+                ("BUNIT", "'K'"),
+            ],
+            &raw,
+        );
+        let series = series_parse_bin("pds4_fits", &buf).expect("series parses");
+        assert_eq!(series, vec![(0.0, 2.5, 0)]);
+    }
+
+    #[test]
+    fn pds4_fits_named_series_carries_bunit_name() {
+        let mut raw = Vec::new();
+        for v in [1.0f32, 2.0, 3.0, 4.0] {
+            raw.extend_from_slice(&v.to_be_bytes());
+        }
+        let buf = fits_image(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "2"),
+                ("BUNIT", "'K'"),
+            ],
+            &raw,
+        );
+        let named = series_named("pds4_fits", &buf).expect("named series parses");
+        assert_eq!(named.names, vec!["K"]);
+        assert_eq!(named.rows.len(), 1);
+        assert_eq!(named.rows[0].comp, 0);
+        assert_eq!(named.rows[0].value, 2.5);
+    }
+
+    #[test]
+    fn gras_2c_series_reads_records() {
+        let bin = gras_2c::write_bin(&[(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 1)]);
+        let series = series_parse_bin("gras_2c", &bin).expect("series parses");
+        assert_eq!(series, vec![(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 1)]);
+    }
+
     #[test]
     fn named_series_is_none_for_foreign_formats() {
         assert!(series_named("drs_fits", b"XXXX").is_none());
         assert!(series_named("pds3_fixed_width", b"XXXX").is_none());
         assert!(series_named("pds4_binary", b"XXXX").is_none());
+        assert!(series_named("pds4_fits", b"XXXX").is_none());
+        assert!(series_named("gras_2c", b"XXXX").is_none());
     }
 }
