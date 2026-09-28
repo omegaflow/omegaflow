@@ -1620,8 +1620,10 @@ fn entry_carries_move_note(content: &str, url_idx: usize) -> bool {
     false
 }
 
-pub fn blocked_integrated_twin(path: &str, content: &str, sources_text: &str) -> Option<Verdict> {
-    if path != "phi/blocked_sources.φ" {
+pub fn integrated_twin(path: &str, content: &str, sources_text: &str) -> Option<Verdict> {
+    let closed = path == "phi/blocked_sources.φ";
+    let declined = path == "phi/declined_sources.φ";
+    if !closed && !declined {
         return None;
     }
     let sources_urls: HashSet<&str> = sources_text
@@ -1651,15 +1653,21 @@ pub fn blocked_integrated_twin(path: &str, content: &str, sources_text: &str) ->
         }
         if let Some(u) = t.strip_prefix("url ") {
             let twin = sources_urls.contains(u.trim());
-            let open_gap = has_gap && state != Some("descoped") && twin;
-            let descoped_without_move =
-                state == Some("descoped") && twin && !entry_carries_move_note(content, idx);
-            if open_gap || descoped_without_move {
+            let open_gap = closed && has_gap && state != Some("descoped") && twin;
+            let descoped_without_move = closed
+                && state == Some("descoped")
+                && twin
+                && !entry_carries_move_note(content, idx);
+            let declined_without_move = declined
+                && matches!(state, Some(s) if s.starts_with("decline"))
+                && twin
+                && !entry_carries_move_note(content, idx);
+            if open_gap || descoped_without_move || declined_without_move {
                 return Some(Verdict {
                     severity: Severity::Hard,
-                    rule: "blocked-integrated-twin".to_string(),
+                    rule: "integrated-twin".to_string(),
                     line: idx + 1,
-                    feedback: feedback("blocked-integrated-twin").to_string(),
+                    feedback: feedback("integrated-twin").to_string(),
                     quote: clip(u.trim(), 90),
                 });
             }
@@ -3745,36 +3753,37 @@ mod tests {
     }
 
     #[test]
-    fn fp_blocked_integrated_twin_open_state_flagged() {
-        let v = blocked_integrated_twin(
+    fn fp_integrated_twin_open_state_flagged() {
+        let v = integrated_twin(
             "phi/blocked_sources.φ",
             &fx("blocked_twin_blocked_open"),
             &fx("blocked_twin_sources"),
         )
         .unwrap();
-        assert_eq!(v.rule, "blocked-integrated-twin");
+        assert_eq!(v.rule, "integrated-twin");
         assert_eq!(v.severity, Severity::Hard);
         assert_eq!(v.line, 3, "the url line of the open twin is named");
     }
 
     #[test]
-    fn fp_blocked_integrated_twin_descoped_without_move_flagged() {
+    fn fp_integrated_twin_descoped_without_move_flagged() {
         let blocked =
             "descoped\nurl https://example.org/b\nnote descoped (gemessen: keine Einheit)\n";
-        let v = blocked_integrated_twin(
+        let v = integrated_twin(
             "phi/blocked_sources.φ",
             blocked,
             &fx("blocked_twin_sources"),
         )
         .unwrap();
-        assert_eq!(v.rule, "blocked-integrated-twin");
+        assert_eq!(v.rule, "integrated-twin");
         assert_eq!(v.line, 2, "the url line of the descoped twin is named");
     }
+
     #[test]
-    fn fn_blocked_integrated_twin_descoped_released_passes() {
+    fn fn_integrated_twin_descoped_released_passes() {
         let blocked = "descoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n";
         assert!(
-            blocked_integrated_twin(
+            integrated_twin(
                 "phi/blocked_sources.φ",
                 blocked,
                 &fx("blocked_twin_sources")
@@ -3785,10 +3794,10 @@ mod tests {
     }
 
     #[test]
-    fn fn_blocked_integrated_twin_gap_less_entry_passes() {
+    fn fn_integrated_twin_gap_less_entry_passes() {
         let blocked = "pending\nurl https://example.org/b\nnote HTTP 500 2026-09-25 — server error, retry duty\n";
         assert!(
-            blocked_integrated_twin(
+            integrated_twin(
                 "phi/blocked_sources.φ",
                 blocked,
                 &fx("blocked_twin_sources")
@@ -3799,14 +3808,45 @@ mod tests {
     }
 
     #[test]
-    fn fn_blocked_integrated_twin_other_register_passes() {
+    fn fn_integrated_twin_other_register_passes() {
         assert!(
-            blocked_integrated_twin(
+            integrated_twin(
                 "phi/dead_sources.φ",
                 &fx("blocked_twin_blocked_open"),
                 &fx("blocked_twin_sources")
             )
             .is_none()
+        );
+    }
+
+    #[test]
+    fn fp_integrated_twin_declined_without_move_flagged() {
+        let declined = "decline model-forecast\nurl https://example.org/b\nnote Flare-Wahrscheinlichkeiten, kein Feldwert\n";
+        let v = integrated_twin(
+            "phi/declined_sources.φ",
+            declined,
+            &fx("blocked_twin_sources"),
+        )
+        .unwrap();
+        assert_eq!(v.rule, "integrated-twin");
+        assert_eq!(v.severity, Severity::Hard);
+        assert_eq!(
+            v.line, 2,
+            "the url line of the stale declined twin is named"
+        );
+    }
+
+    #[test]
+    fn fn_integrated_twin_declined_with_move_passes() {
+        let declined = "decline superseded-by-integrated\nurl https://example.org/b\nnote integriert in phi/sources.φ (Beispiel)\n";
+        assert!(
+            integrated_twin(
+                "phi/declined_sources.φ",
+                declined,
+                &fx("blocked_twin_sources")
+            )
+            .is_none(),
+            "a declined twin carries the integration as its Befund, not as a violation"
         );
     }
 

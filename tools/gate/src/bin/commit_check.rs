@@ -1,5 +1,5 @@
 use omegaflow::commit_gate::{
-    Gate, blocked_integrated_twin, canon_diff, declared_canon, doc_open_marker_line, json_write,
+    Gate, canon_diff, declared_canon, doc_open_marker_line, integrated_twin, json_write,
     prose_violation_for, register_classes, status_proof_violations,
 };
 use omegaflow::json::JsonVal;
@@ -143,21 +143,24 @@ fn main() {
         }
     }
     let staged: Vec<&str> = files.lines().map(str::trim).collect();
-    if staged.contains(&"phi/blocked_sources.φ") {
+    let sources = match std::fs::read_to_string("phi/sources.φ") {
+        Ok(s) => s,
+        Err(_) => String::new(),
+    };
+    for register in ["phi/blocked_sources.φ", "phi/declined_sources.φ"] {
+        if !staged.contains(&register) {
+            continue;
+        }
         let out = Command::new("git")
-            .args(["show", ":phi/blocked_sources.φ"])
+            .args(["show", &format!(":{register}")])
             .output()
             .expect("git");
-        let blocked = String::from_utf8_lossy(&out.stdout).to_string();
-        let sources = match std::fs::read_to_string("phi/sources.φ") {
-            Ok(s) => s,
-            Err(_) => String::new(),
-        };
-        if let Some(v) = blocked_integrated_twin("phi/blocked_sources.φ", &blocked, &sources) {
+        let content = String::from_utf8_lossy(&out.stdout).to_string();
+        if let Some(v) = integrated_twin(register, &content, &sources) {
             let loc = if v.line > 0 {
-                format!("phi/blocked_sources.φ:{}", v.line)
+                format!("{register}:{}", v.line)
             } else {
-                "phi/blocked_sources.φ".to_string()
+                register.to_string()
             };
             eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
             fail = true;
