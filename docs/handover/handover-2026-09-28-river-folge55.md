@@ -3,7 +3,7 @@
   session: River-Folge 55
   class: handover
   date: 2026-09-28
-  sha256: dc44cf1bedb5ac895b4b074ffa9a432c190ce4e6b5c826143a59e4db5361ff87
+  sha256: 97e34e5c5cd24b28fde268b8c2eec4fee95fc8106a40770b66d4b1695ffd50d1
   status: live
 -->
 # Handover — River-Folge 55 (2026-09-28)
@@ -75,7 +75,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
 - **Trigger:** Perigäum 2026-09-28 **11:45:12 UTC ± 10 s** (JUICE, Horizons `-28`); Snapshots 28.09. 12:00 + 29.09. 00:00 UTC.
-- **Lage:** (gemessen 2026-09-28 via CI-Timestamps ~10:30Z und `sread .github/workflows/flyby-path2-fill.yml`) Termin noch nicht fällig; Fill-Bin `tools/measure/src/bin/flyby_path2_fill.rs` gebaut (0 Warnungen), Tube ±12 h, Perigäum-Zelle 13, alle Zellen `pending`. Der Workflow `flyby-path2-fill.yml` ist registriert: spiegelt RTSW mag/wind nach `data/services.swpc.noaa.gov/` (`rtsw_{mag,wind}_1m-*.json`), ruft `flyby_path2_fill --flyby juice`, lädt Tube + Snapshots als Artefakt.
+- **Lage:** (gemessen 2026-09-28 via CI-Timestamps ~10:30Z und `sread .github/workflows/flyby-path2-fill.yml`) Termin noch nicht fällig; Fill-Bin `tools/measure/src/bin/flyby_path2_fill.rs` gebaut (0 Warnungen), Tube ±12 h, Perigäum-Zelle 13, alle Zellen `pending`. Der Workflow `flyby-path2-fill.yml` ist registriert: spiegelt RTSW mag/wind nach `data/services.swpc.noaa.gov/` (`rtsw_{mag,wind}_1m-*.json`), ruft `flyby_path2_fill --flyby juice`, lädt Tube + Snapshots als Artefakt. Erster Lauf **`36412462588`** (dispatch 2026-09-28 10:54Z auf `74c110078`) validiert die Kette und nimmt einen frühen RTSW-Snapshot; der volle Füll-Lauf folgt nach dem 29.09.-Snapshot.
 - **Blockade:** 29.09.-Snapshot fehlt (liegt nach dem Termin).
 - **Braucht:** nach 29.09. 00:00 UTC `gh workflow run flyby-path2-fill.yml` dispatchen (spiegelt RTSW + füllt die Zellen); Ergebnis via `ci_manage view <id>` + Artefakt `flyby-path2-fill` (Tube `data/flyby2/tube-juice-2026-09-28.json`).
 
