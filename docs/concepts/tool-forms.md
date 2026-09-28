@@ -1,8 +1,8 @@
 <!--
   title: Tool-Forms — verbotene Leading-Form → kanonischer Ersatz
   class: concept
-  date: 2026-09-27
-  sha256: 735862445c7d8720d3c34c15b2748482e0b7058fc5f8d33e309c482c4b6201da
+  date: 2026-09-28
+  sha256: 168d10ac3df89656c097cfa2ce46fb12833907c1ca2aeee2b0f435bb9e838eff
   status: live
   see-also: docs/concepts/tools-map.md AGENTS.md
 -->
@@ -25,6 +25,7 @@ ersetzt die Erinnerung durch die kopierbare Form.
 | `grep *`, `*/grep *` | `sgrep [-i] [-l] [-c] [-g <glob>] <pattern> [dir]` oder `archive_search <kw> --root <dir>` |
 | `rg *` | `sgrep` |
 | `cat *`, `*/cat *` | `sread <datei> [--offset N --limit M]` oder das `read`-Tool |
+| `head *`, `tail *`, `*/head *`, `*/tail *` | `sread <datei> --offset N --limit M` oder `read` (offset/limit) — **Fenster ja, Kastration nein**; einen vom Harness gekappten Tool-Output vollständig aus der Spill-Datei (`full: <pfad>`) lesen |
 | `cd *` | bash-`workdir`-Parameter |
 | `python *` / `python3 *` / `*/python*` | Rust (kein Python im oder für das Repo) |
 
@@ -54,3 +55,9 @@ jeder Rolle verweigert. Erlaubt: `status`/`log`/`diff`/`show`/`reflog`/`rev-pars
 die kanonischen Werkzeuge laufen über die `bin/`-Wrapper (Freshness via
 `bin/.tools_ensure`). Kein `webfetch`/`websearch` — das Netz läuft über
 `archive_search`. `smail` sendet nie durch die Maschine (nur `--dry-run`).
+
+**Lesen ist Fenstern, nicht Kastrieren.** Ein Ergebnis wird nie mit `head`/`tail`
+angeschnitten; gelesen wird in bewussten Fenstern (`sread --offset/--limit`, `read`
+mit offset/limit), die den vollständigen Text des Fensters tragen. Kappt der Harness
+einen Tool-Output (`tool_output`-Cap), liegt der volle Text in der Spill-Datei
+(`full: <pfad>`) — die wird gelesen, nicht ihr Anfang.

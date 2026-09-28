@@ -18,7 +18,7 @@
       "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Planungsmodus (read-only) — Übergabe lesen, Planungs-Pass, Auswahl vorschlagen, anhalten. Die Linien-Befehle starten hier; Ausführung via Tab auf `line` + `/consent`.",
-      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "./bin/ci_manage status*": "allow", "./bin/ci_manage list*": "allow", "./bin/ci_manage view*": "allow", "./bin/ci_manage jobs*": "allow", "./bin/ci_manage log*": "allow", "./target/release/ci_manage status*": "allow", "./target/release/ci_manage list*": "allow", "./target/release/ci_manage view*": "allow", "./target/release/ci_manage jobs*": "allow", "./target/release/ci_manage log*": "allow", "git ls-files*": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time register_lookup *": "allow", "time git_safety *": "allow", "register_lookup *": "allow", "./target/release/register_lookup *": "allow", "open_points_check *": "allow", "./target/release/open_points_check *": "allow", "git_safety *": "allow", "./target/release/git_safety *": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "mail_digest *": "allow", "bin/.tools_ensure *": "allow", "session_burn *": "allow" } }
+      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "./bin/ci_manage status*": "allow", "./bin/ci_manage list*": "allow", "./bin/ci_manage view*": "allow", "./bin/ci_manage jobs*": "allow", "./bin/ci_manage log*": "allow", "./target/release/ci_manage status*": "allow", "./target/release/ci_manage list*": "allow", "./target/release/ci_manage view*": "allow", "./target/release/ci_manage jobs*": "allow", "./target/release/ci_manage log*": "allow", "git ls-files*": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time register_lookup *": "allow", "time git_safety *": "allow", "register_lookup *": "allow", "./target/release/register_lookup *": "allow", "open_points_check *": "allow", "./target/release/open_points_check *": "allow", "git_safety *": "allow", "./target/release/git_safety *": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "mail_digest *": "allow", "bin/.tools_ensure *": "allow", "session_burn *": "allow" } }
     },
     "general": {
       "mode": "subagent",
@@ -26,14 +26,14 @@
       "variant": "low",
       "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
       "prompt": "Routine-Recherche/Verify: `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--all` ist Breite — 39 Aufrufe, der volle Output liegt in der Temp-Datei `full: <pfad>`, lies sie). Lokal: `sgrep`/`sread`/`sfetch`/`omega_sh`; CI: `ci_manage list/view/log` (nie `gh run`); kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen: Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte), anonym, mit Credential, exakte Download-URL; 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account (→ future/Operator), 404 = pending. Karte `docs/concepts/tools-map.md`; `archive_search --help` ist der Kanon.",
-      "permission": { "edit": "deny", "task": "deny", "playwright_*": "allow", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time sfetch *": "allow", "./bin/archive_search *": "allow", "bin/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow", "./target/release/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow", "curl *": "allow", "bin/proton-wg.sh *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow", "sfetch *": "allow", "omega_sh *": "allow" } }
+      "permission": { "edit": "deny", "task": "deny", "playwright_*": "allow", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time sfetch *": "allow", "./bin/archive_search *": "allow", "bin/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow", "./target/release/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow", "curl *": "allow", "bin/proton-wg.sh *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow", "sfetch *": "allow", "omega_sh *": "allow" } }
     },
     "explore": {
       "mode": "subagent",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
       "prompt": "Code-Suche: `archive_search <kw> --root <dir>` oder `sgrep [-i] <pattern> [dir]`; Pfade: `archive_search --index`; Lesen: `sread <file> [--offset --limit]` oder read-Tool; Discovery: `glob`; kein bash-grep/ls/cat (das Grep-Tool ist erlaubt). CI: `ci_manage list/view/log`. Login-gatterte Quelle: Auth-Kante messen (Credential lokal? `.secrets.local`-Schlüsselnamen, nie Werte; anonym; mit Credential; exakte URL); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account; 404 = pending. Karte `docs/concepts/tools-map.md`.",
-      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow" } }
+      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow" } }
     },
     "research-max": {
       "mode": "subagent",
@@ -41,7 +41,7 @@
       "variant": "max",
       "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (`./bin/archive_search`, curl) + proton-wg.",
       "prompt": "Harte Recherche: `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--leads`, `--git`, `--pdf-text`/`--pdf-image`; `--all` ist Breite (39 Aufrufe), der volle Output liegt in der Temp-Datei `full: <pfad>` — lies sie). Lokal `sgrep`/`sread`/`sfetch`/`omega_sh`; kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen (Credential lokal? `.secrets.local`-Schlüsselnamen, nie Werte; anonym; mit Credential; exakte URL); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account; 404 = pending. `archive_search --help` ist der Kanon.",
-      "permission": { "edit": "deny", "task": "deny", "playwright_*": "allow", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time sfetch *": "allow", "./bin/archive_search *": "allow", "bin/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow", "./target/release/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow", "curl *": "allow", "bin/proton-wg.sh *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "sgrep *": "allow", "sfetch *": "allow", "omega_sh *": "allow" } }
+      "permission": { "edit": "deny", "task": "deny", "playwright_*": "allow", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time sfetch *": "allow", "./bin/archive_search *": "allow", "bin/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./bin/archive_search *": "allow", "./target/release/archive_search *": "allow", "ALL_PROXY=socks5h://127.0.0.1:25344 ./target/release/archive_search *": "allow", "curl *": "allow", "bin/proton-wg.sh *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "sgrep *": "allow", "sfetch *": "allow", "omega_sh *": "allow" } }
     },
     "grind-flash": {
       "mode": "subagent",
@@ -72,7 +72,7 @@
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
-      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "head *": "allow", "tail *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "register_lookup *": "allow", "time register_lookup *": "allow" } }
+      "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "register_lookup *": "allow", "time register_lookup *": "allow" } }
     },
     "vision": {
       "mode": "subagent",
@@ -85,8 +85,8 @@
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
-      "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; `smail` sendet nie durch die Maschine — nur `--dry-run` ist erlaubt, den Send führt der Operator (Wort + Akt).",
-      "prompt": "Erste Handlung jeder Session: `sread docs/concepts/tool-forms.md` — die Form-Karte (verbotene Leading-Form → kanonischer Ersatz). Werkzeuge statt Rohwege (`docs/concepts/tools-map.md`). Inhalt im Baum: `archive_search <kw> --root <dir>` oder `sgrep [-i]`; Pfade: `archive_search --index`; Discovery: `glob`; Lesen: `sread <f> [--offset --limit]`. Strukturell verboten: ls/grep/cat/rg/cd/python*/sed -i. `cd` → bash-`workdir`; `cargo *` → exakt `cargo check` · `cargo fmt -- <pfad>` · `cargo build -p <crate> --bin <name>` · `cargo run -p <crate> --bin <name>` (kein Zusatzflag); `gh run list/view` → `ci_manage list/view/log`; destruktives git nie. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close [<eigene Pfade>]`. Kein webfetch/websearch; `smail` sendet nie durch die Maschine.",
+      "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/head/tail/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; `smail` sendet nie durch die Maschine — nur `--dry-run` ist erlaubt, den Send führt der Operator (Wort + Akt).",
+      "prompt": "Erste Handlung jeder Session: `sread docs/concepts/tool-forms.md` — die Form-Karte (verbotene Leading-Form → kanonischer Ersatz). Werkzeuge statt Rohwege (`docs/concepts/tools-map.md`). Inhalt im Baum: `archive_search <kw> --root <dir>` oder `sgrep [-i]`; Pfade: `archive_search --index`; Discovery: `glob`; Lesen: `sread <f> [--offset --limit]`. Strukturell verboten: ls/grep/cat/rg/head/tail/cd/python*/sed -i (head/tail kastrieren ein Ergebnis — Fenster via --offset/--limit, gekappten Output aus der Spill-Datei lesen). `cd` → bash-`workdir`; `cargo *` → exakt `cargo check` · `cargo fmt -- <pfad>` · `cargo build -p <crate> --bin <name>` · `cargo run -p <crate> --bin <name>` (kein Zusatzflag); `gh run list/view` → `ci_manage list/view/log`; destruktives git nie. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close [<eigene Pfade>]`. Kein webfetch/websearch; `smail` sendet nie durch die Maschine.",
       "permission": {
         "edit": "allow",
         "webfetch": "deny",
@@ -108,6 +108,21 @@
           "*/rg *": "deny",
           "*/python *": "deny",
           "*/python3 *": "deny",
+          "head *": "deny",
+          "head": "deny",
+          "tail *": "deny",
+          "tail": "deny",
+          "*/head *": "deny",
+          "*/tail *": "deny",
+          "copilot *": "deny",
+          "copilot": "deny",
+          "*/copilot *": "deny",
+          "copilot_ask*": "deny",
+          "copilot_review*": "deny",
+          "*/copilot_ask*": "deny",
+          "*/copilot_review*": "deny",
+          "gh copilot*": "deny",
+          "npx *copilot*": "deny",
           "git reset*": "deny",
           "git checkout*": "deny",
           "git clean*": "deny",
@@ -168,8 +183,6 @@
     "websearch": "deny",
     "bash": {
       "*": "allow",
-      "head *": "allow",
-      "tail *": "allow",
       "wc *": "allow",
       "sort *": "allow",
       "uniq *": "allow",
@@ -190,6 +203,21 @@
       "*/rg *": "deny",
       "*/python *": "deny",
       "*/python3 *": "deny",
+      "head *": "deny",
+      "head": "deny",
+      "tail *": "deny",
+      "tail": "deny",
+      "*/head *": "deny",
+      "*/tail *": "deny",
+      "copilot *": "deny",
+      "copilot": "deny",
+      "*/copilot *": "deny",
+      "copilot_ask*": "deny",
+      "copilot_review*": "deny",
+      "*/copilot_ask*": "deny",
+      "*/copilot_review*": "deny",
+      "gh copilot*": "deny",
+      "npx *copilot*": "deny",
       "cargo *": "deny",
       "cargo check*": "allow",
       "cargo fmt --*": "allow",
