@@ -3,7 +3,7 @@
   session: Mountain-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: 92eeece2cae6ca83fa488b5f07e2b5a9c790290976d5c3345ca9d17a17633371
+  sha256: 6ee5e632c2952bda834c53b589c6a88655643c9d60b3f6ec14e3bf59825e46ad
   status: live
 -->
 # Handover — Mountain-Folge 195 (2026-09-28)
@@ -30,9 +30,9 @@ Hier ausführen, keine Rangfolge, flash-first delegieren — session-weiter Cons
 ### CI-check — grüne Runde auf HEAD
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der `ci-check`-Lauf auf HEAD endet.
-- **Lage:** (gemessen 2026-09-28 via `git log -1`, `ci_manage list`) HEAD ist `c47a22464` (dieser Atom-Commit, gepusht); der Push dispatchte `ci-check 36423401450` (pending), `register-coverage 36423401492` (queued), `tools-build 36423401424` (pending), `register-dropped 36423401422` (queued) — alle auf `c47a22464`. Vorlauf-Läufe `cancelled`/`failure`.
+- **Lage:** (gemessen 2026-09-28 via `git log -1`, `ci_manage list`) der Push des Atom-Commits `c47a22464` dispatchte `ci-check 36423401450`, `register-coverage 36423401492` (cancel-in-progress: false), `tools-build 36423401424`, `register-dropped 36423401422`; der nachfolgende Registrier-Commit rückte HEAD auf `0ae4a5c14` und dispatchte einen frischen Satz. Vorlauf-Läufe `cancelled`/`failure`.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36423401450` bzw. `ci_manage log 36423401492` einmal nach Lauf-Ende lesen; grün → Punkt löschen. `register-coverage` prüft den `UNVERIFIABLE_PRIVATE`-Arm (`tools/register/src/bin/register_lookup.rs`); bleibt der Job `orphans` rot, ist `ci_manage log 36423401492` der nächste Schritt.
+- **Braucht:** `ci_manage list` → den jüngsten `ci-check`/`register-coverage`-Lauf auf HEAD wählen, dann `ci_manage log <id>` einmal lesen; grün → Punkt löschen. `register-coverage` prüft den `UNVERIFIABLE_PRIVATE`-Arm (`tools/register/src/bin/register_lookup.rs`); bleibt der Job `orphans` rot, ist dessen Log der nächste Schritt.
 
 ### NED ByParams — Token-Kanal
 - **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
