@@ -2,7 +2,7 @@
   title: Survey — Sonden-Flotte (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: c24490e8c951edf9c14dadb033b512a82181a2b1b676036995cc260aecea8ad5
+  sha256: 9d17f362bce9456d98b1aa4f20983d675a9d410afb290baf5872067122981b39
   status: live
   see-also: phi/sources.φ phi/blocked_sources.φ docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 -->
@@ -107,3 +107,72 @@ spätere Session die Tabelle anders nach.
 - **JUICE fliegt** — Erd-Vorbeiflug 28./29.09.2026; die Ephemeride liegt schon auf
   dem CDN. Alle anderen Zeilen sind Archäologie; hier könnte das Haus einem
   Vorbeiflug zum ersten Mal **live** zusehen.
+
+## Nachtrag 2026-09-28 — Asien, Russland/UdSSR, Welt-Zensus (gemessen)
+
+Zwei Taucher (`research-max`, harte Bandagen: `--verdict`/`--sniff`/`--tavily`/`--exa`/
+`--playwright` + curl-Fallback) haben die Flotte außerhalb NASA/ESA gemessen.
+Register-Vorprüfung: keine dieser Missionen stand in `phi/sources.φ`/`blocked_sources.φ`/
+`declined_sources.φ` — **alles Grünland**. Jede Zeile mit Beleg; Ungemessenes heißt so.
+
+### Asien — anonym offen (200 gemessen, registrierbar)
+
+| Mission | Agentur | Produkt | Route | Zustand |
+|---|---|---|---|---|
+| Akatsuki | JAXA/ISAS | **Radio-Science PDS4** `vco_rs` | `data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/` | 200 anonym |
+| Hayabusa | JAXA/ISAS | AMICA/LIDAR/NIRS PDS4 | `sbnarchive.psi.edu/pds4/hayabusa/` | 200 anonym |
+| Hayabusa2 | JAXA/ISAS | SPICE | `naif.jpl.nasa.gov/pub/naif/pds/pds4/hyb2/hyb2_spice/` | 200 anonym |
+| Kaguya/SELENE | JAXA/ISAS | LRS-Roh (PDS ODE) + SLN-Rstar | `ode.rsl.wustl.edu/moon/.../KAGUYA (SELENE)/LRS/Raw_Data.htm` | 200 anonym |
+| SLIM | JAXA | DOI-Datensätze | `darts.isas.jaxa.jp/doi/slim/slim-rd-0002.html` | 200 anonym |
+| Hisaki | JAXA/ISAS | EXCEED/EUV L2 | `darts.isas.jaxa.jp/en/datasets/darts:hisaki-exceed-euv-level2` | 200 anonym |
+| Chandrayaan-1 | ISRO | M3/Mini-SAR/HySI PDS3 + SPICE | `pds-geosciences.wustl.edu/missions/chandrayaan1/`; `spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/` | 200 anonym |
+| Danuri/KPLO | KARI/KASI | ShadowCam + KASI PDA | `shadowcam.im-ldi.com/`; `pda.kasi.re.kr/` | 200 anonym |
+| BepiColombo-Mio | ESA/JAXA | PSA | `archives.esac.esa.int/psa/ftp/BepiColombo/` | 200 anonym |
+
+### Asien — account-gated (Daten existieren, Konto nötig → `blocked account`, Future)
+
+| Mission | Agentur | Portal | Zustand |
+|---|---|---|---|
+| Chang'e 1–6 | CNSA | `moon.bao.ac.cn` (GRAS) | Portal 200; Login-Gate (nicht end-to-end gemessen) |
+| Tianwen-1/Zhurong | CNSA | `nssdc.ac.cn` | Portal 200; Antrag/Konto |
+| Chandrayaan-2/3, MOM, Aditya-L1 | ISRO | `pradan.issdc.gov.in`, `mrbrowse.issdc.gov.in` | account nötig |
+| Hope/Al-Amal | MBRSC (VAE) | `sdc.emiratesmarsmission.ae` | account (kostenlos) |
+| Danuri KGRS/KMAG/LUTI | KARI | — | kein Portal gefunden |
+
+### Russland/UdSSR — gemessen
+
+| Mission/Korpus | Produkt | Route | Zustand |
+|---|---|---|---|
+| Venera 15/16 | Altimetrie (10,4 MB)/Radiometrie (5,9 MB) ASCII + Lander-Panoramen | `pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat`, `…/mpi-radiometry.dat` | 200 anonym |
+| Vega 1/2 (Halley) | 7 Instrument-Sets (TVS/DUCMA/SP-1/SP-2/PUMA/PM1/MISCHA) | `pds-smallbodies.astro.umd.edu/holdings/vega2-c-*` | 200 anonym |
+| Vega 1/2 (Venus-Ballons) | Druck/Temp-Profile (PDS3 certified) | `atmos.nmsu.edu/PDS/data/vega_5001/` | 200 anonym |
+| Phobos 2 | KRFM-Termoskan/VSK-FREGAT | `pds-smallbodies.astro.umd.edu/holdings/phb2-m-*` | 200 anonym (PWS via CDPP account) |
+| ExoMars TGO | ACS/FREND/NOMAD/CaSSIS (russ. Instrumente) | `archives.esac.esa.int/psa/ftp/ExoMars2016/` | 200 anonym |
+| Spektr-R/RadioAstron | VLBI-Roh | `asc.rssi.ru/radioastron/` | Portal 200; `opendata.*` tot |
+| Venera-Doppler/Tracking | — | — | **kein öffentlicher Bestand** (request-only, IKI/NSSDC) |
+| Luna 1–24, Mars 2–7, Zond 3/5–8 | — | — | kein öffentlicher Roh-Korpus gemessen; request-only |
+| Mars-96 | — | — | **null-echt** (keine Daten existierten; Startfehler 1996) |
+
+### Welt-Zensus (Portal | gemessen | im Haus?)
+
+ESA/ESAC 200 anonym (23 Linien) · NASA PDS 200 anonym (ja) · NASA SPDF 200 (14) ·
+NASA NSSDC 200 (**0 Linien — fehlt**) · CDAWeb 200 (11) · JAXA/ISAS 200 (**fehlt**) ·
+CNSA/NAOC 200-Portal/Konto (**fehlt**) · ISRO 200-Portal/Registrierung (**fehlt**) ·
+Roscosmos/IKI 403 geo-suspect (**Sonden-Roh fehlt**) · UKSA/UKSSDC 200 (**fehlt**) ·
+CSA 200 n/a · ASI/SSDC 200 (**Sonden-Roh fehlt**) · CNES/CDPP 200-Portal/account (**fehlt**) ·
+DLR `pds.dlr.de` **tot gemessen** · INPE pending · CONAE pending · ISA n/a ·
+NSPO pending · KARI/KSDC pending · MBRSC 200 (**fehlt**) · KASI-PDA 200 (**fehlt**).
+
+### Offene `unmeasured`-Punkte (nicht descoped)
+
+CDSN/NAOC-VLBI/Changchun (kein Archiv gesucht) · Tianwen-2 · Tianwen-1-SPICE-Kernels
+(NAIF 404) · DLR-PDS-Nachfolger-URL · `opendata.radioastron.*` (Wayback 429) ·
+`rgcps.asu.edu/venera-15-16` (Mosaik-ZIP 356,7 MB, Host kein Response) ·
+NSSDC-Einzel-Datasets Luna/Mars/Zond · ISRO-Subpfade (CH1-ISSDC, Aditya).
+
+### Werkzeug-Befund
+
+`archive_search --verdict` **hängt** an GitHub-Release-URLs (302-Redirect) — die
+Reachability der CDN-Assets (`voyager_odr_s0.bin`, `juno_ocru_odf.bin`,
+`mariner_occlt.bin`) wurde daher per `curl -sI` gemessen: alle **302** (signiert,
+Asset vorhanden).
