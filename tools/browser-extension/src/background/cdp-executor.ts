@@ -199,6 +199,24 @@ export class CdpExecutor implements Executor {
     return this.cdp.getNetwork(tabId);
   }
 
+  async evaluate(tabId: number, code: string): Promise<{ result: unknown }> {
+    await this.cdp.attach(tabId);
+    const res = await this.cdp.send<{
+      result?: { value?: unknown };
+      exceptionDetails?: { text?: string; exception?: { description?: string } };
+    }>(tabId, "Runtime.evaluate", {
+      expression: code,
+      returnByValue: true,
+      awaitPromise: true
+    });
+    if (res.exceptionDetails) {
+      throw new Error(
+        res.exceptionDetails.exception?.description ?? res.exceptionDetails.text ?? "eval failed"
+      );
+    }
+    return { result: res.result?.value ?? null };
+  }
+
   async handleDialog(tabId: number, accept: boolean, promptText?: string): Promise<void> {
     await this.cdp.attach(tabId);
     await this.cdp.send(tabId, "Page.handleJavaScriptDialog", { accept, promptText });

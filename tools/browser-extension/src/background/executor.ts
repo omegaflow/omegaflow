@@ -52,6 +52,8 @@ export interface Executor {
   getConsole(tabId: number): Promise<ConsoleEntry[]>;
   /** Recent network requests. CDP-only — the content executor throws. */
   getNetwork(tabId: number): Promise<NetworkEntry[]>;
+  /** Evaluate JavaScript in the page; CDP `Runtime.evaluate`, content-script fallback. */
+  evaluate(tabId: number, code: string): Promise<{ result: unknown }>;
   /** Accept/dismiss a pending JS dialog. CDP-only — the content executor throws. */
   handleDialog(tabId: number, accept: boolean, promptText?: string): Promise<void>;
   /** Release any per-tab resources (e.g. detach the debugger). Best-effort. */

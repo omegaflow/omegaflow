@@ -111,6 +111,11 @@ export class ContentExecutor implements Executor {
     throw CDP_ONLY("browser_network");
   }
 
+  async evaluate(tabId: number, code: string): Promise<{ result: unknown }> {
+    const data = await runPageAction<{ result: unknown }>(tabId, "eval", { code });
+    return data ?? { result: null };
+  }
+
   async handleDialog(): Promise<void> {
     throw CDP_ONLY("browser_handle_dialog");
   }
