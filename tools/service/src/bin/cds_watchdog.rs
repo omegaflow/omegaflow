@@ -8,12 +8,12 @@ const ASSETS: [(&str, &str); 10] = [
     ("spectra.bin", "ssd.jpl.nasa.gov"),
     ("nvss.json", "ssd.jpl.nasa.gov"),
     ("first14.json", "ssd.jpl.nasa.gov"),
-    ("chandra_csc.json", "ssd.jpl.nasa.gov"),
+    ("chandra_csc.json", "tapvizier.cds.unistra.fr"),
     ("ztf_lightcurves.bin", "irsa.ipac.caltech.edu"),
     ("ztf_lightcurves_fresh.bin", "irsa.ipac.caltech.edu"),
     ("dr3_stars.bin", "ssd.jpl.nasa.gov"),
     ("twomass_psc.bin", "irsa.ipac.caltech.edu"),
-    ("ephemeris_sun.bin", "ssd.jpl.nasa.gov"),
+    ("ephemeris_sun.bin", "ssd.jpl.nasa.gov-ephemeris"),
 ];
 
 fn main() {
