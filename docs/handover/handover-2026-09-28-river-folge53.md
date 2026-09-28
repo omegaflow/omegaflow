@@ -3,7 +3,7 @@
   session: River-Folge 53
   class: handover
   date: 2026-09-28
-  sha256: 97ce2452ed5abc1ed0a131d1d6272685f6d28cb2ddc3979c7de5a6701ca0890d
+  sha256: 1a832505c743b834080b68f280ce4e3c07ac18c8f413a1d378d6f53a872f5f1a
   status: live
 -->
 # Handover — River-Folge 53 (2026-09-28)
@@ -58,14 +58,14 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Trigger:** ein ci-check-Lauf auf einem HEAD ≥ Readback-Fix, der **abschließt**.
 - **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) der ci-check-Lauf auf `302063d36` schloss **rot** ab (2 fehlende Tests, s. eigener Punkt unten); der Readback-Test selbst steht nicht unter den Fehlern. Der Push `b45550527` startete `36398092149` ci-check (pending) — der grüne Readback-Nachweis steht noch aus. Den vollen CI-Stand trägt der Stehende Pass (`state/zustand/standing-pass.md`, zitiert). Die Lade-Membran ist lokal headless grün (folge50).
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36398092149` **einmal** nach Laufende (kein Polling) — Readback-Test grün = Punkt geschlossen.
+- **Braucht:** `ci_manage log 36400127856` **einmal** nach Laufende (kein Polling) — Readback-Test grün = Punkt geschlossen.
 
 ### Zwei rote River-Gates — Membran-Parität + No-TE-Tick
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein ci-check-Lauf auf dem Fix-HEAD, der **abschließt**.
-- **Lage:** (gemessen 2026-09-28 via `cargo check`) Fix gebaut: die Paritäts-Fixture ist von der unter Phasen-Randomisierung degenerierten Sinus-Fixture auf das breitbandige AR(1)+Rausch-Paar umgestellt (`causal_pair_ar`, dieselbe Fixture wie `gate_fn_bias`/`split_recording`), die Schwelle über 100 Surrogate stabilisiert; der No-TE-Tick-Test liest das Delta-Integral **vor** `tick()` (nach `tick()` ist `prev_probe_omega == probe_omega`, das Integral war 0, erwartet 0,0649 = `target·alpha`). `cargo check` 0 Fehler / 0 Warnungen.
+- **Lage:** (gemessen 2026-09-28 via `cargo check`) Fix gebaut: die Paritäts-Fixture ist von der unter Phasen-Randomisierung degenerierten Sinus-Fixture auf das breitbandige AR(1)+Rausch-Paar umgestellt (`causal_pair_ar`, dieselbe Fixture wie `gate_fn_bias`/`split_recording`), die Schwelle über 100 Surrogate stabilisiert; der No-TE-Tick-Test liest das Delta-Integral **vor** `tick()` (nach `tick()` ist `prev_probe_omega == probe_omega`, das Integral war 0, erwartet 0,0649 = `target·alpha`). `cargo check` 0 Fehler / 0 Warnungen. Der Fix ist als `4e18d6bd9` Vorfahr von `origin/main` (`a7cb8e8ee`). Der erste Fix-Lauf `36398794229` wurde vom Mountain-Push (08:54Z) als *pending* überholt (cancelled); die Verifikation läuft in `36400127856` (queued, head `a7cb8e8ee`).
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log <id>` **einmal** auf dem Fix-Lauf — grün = beide Gates geschlossen; rot = Log auswerten.
+- **Braucht:** `ci_manage log 36400127856` **einmal** nach Laufende — grün = beide Gates geschlossen; rot = Log auswerten.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
