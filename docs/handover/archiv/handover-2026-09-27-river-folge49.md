@@ -3,7 +3,7 @@
   session: River-Folge 49
   class: handover
   date: 2026-09-27
-  sha256: 3c4f5729179d5d0406e2a33c2de230e441929226a1a62dd429a8c2b286fde8aa
+  sha256: 45364c12ab1d09156c792e70c629fafed3b2af0efe9e2c9f9d39f21a0ed3dbfc
   status: live
 -->
 # Handover — River-Folge 49 (2026-09-27)
@@ -49,18 +49,23 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 
 ## Offen (aufgeschlüsselt)
 
-### GPU-Readback map/unmap — Fix committet, CI-Verifikation offen
+### GPU-Readback map/unmap + Lade-Membran — CI-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `ci-check`-Lauf `36346224407` (head `8e3a520e2`, `pending`).
-- **Lage:** (gemessen 2026-09-27 via `ci_manage view`/`status`) der Fix ist mit
-  `ddfe3e1bd` **committet und gepusht** — die Lage „uncommittet" aus folge48 ist
-  überholt. `omega.rs:955`, `omega.rs:1180`, `scalar_te_gpu.rs:172`,
-  `machines/matrix.rs:910`. Der ursprüngliche Verifikations-Lauf `36345976911`
-  wurde um 19:57:24 **cancelled** (Push-Überholung) — die Verifikation reitet auf
-  `36346224407`.
+- **Trigger:** `ci-check 36377277112` (head `97474363b`, `pending`).
+- **Lage:** (gemessen 2026-09-28 via `ci_manage` + lokalem `cargo run`) der GPU-Readback-Fix
+  ist mit `ddfe3e1bd` committet+gepusht. Der alte, vollendete `ci-check 36347555576`
+  @`a457ed8c` war **failure**: 1890 passed, **2 failed** — River
+  `mathematikerin::tests::volume_probe_parity_masked_corner_and_plain` („volume parity:
+  gpu 0 cpu 2.5") und Mountain
+  `archivar::tests::test_cache_fresh_cdn_stamp_equality_and_release_branch`
+  (`src/archivar/tests.rs:6673`). Der River-Red ist **geheilt und gelandet**:
+  `491c6e61c mountain 190 … heal the mathematikerin pole fixture and the geodetic NaN …
+  (fix, do not carry)`, HEAD `97474363b` == `origin/main`; der Arbeitsbaum ist frei von
+  `src/`-Hunks (`cargo check` 0/0). Die Lade-Membran ist lokal headless grün (`cargo run -p
+  omegaflow-measure --bin membrane_hull_probe`, 2× stabil, 0/4 divergieren). Der redundante
+  Dispatch `36375195304` (alter HEAD `a457ed8c`) wurde zurückgenommen.
 - **Blockade:** keine.
-- **Braucht:** sobald der Lauf endet, `ci_manage view 36346224407` /
-  `ci_manage log 36346224407` **einmal** lesen (kein Polling).
+- **Braucht:** `ci_manage log 36377277112` **einmal** nach Laufende (kein Polling).
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
@@ -82,6 +87,34 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Lage:** (gemessen 2026-09-27 via `cargo build` + Bin-Lauf) `flyby_ephemeris_gate` gebaut; beide Zeugen lesen `placed`; **δ = 0,1684732 km** (168 m, DE441 vs DE442; `phi/sources.φ:3448`/`:3469`). Δ/σ_recon `pending` — die Post-Flyby-Daten fehlen.
 - **Blockade:** keine.
 - **Braucht:** nach dem Flyby `--recon` (Post-Flyby-Arc) + `--sigma-recon` (veröffentlichte 1-σ) → `cargo run -p omegaflow-measure --bin flyby_ephemeris_gate -- --recon <arc> --sigma-recon <km>`; Riß gegen **beide** Hashes („aeb3c82f…" sealed, „eee376ef…" CDN) tragen.
+
+### orphan-certainty — Certainty quantum/decay (Legacy-Konzept)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** eigen (kein externer Trigger).
+- **Lage:** (gemessen 2026-09-25, legacy-konzepte) L:53 lautet `certainty = exp(-vC/(g+ε))·quantum·decay`; heute lebt `perm_target(g, v_c) = tanh(v_c/(g+ε))` (`omega.rs:15`) als Permeability-Atem, `quantum`/`decay` fehlen im Baum. `exp(-x)` fällt monoton, `tanh(x)` steigt — ein wörtlicher Port invertiert den Atem.
+- **Blockade:** keine.
+- **Braucht:** den quantum/decay-Faktor als Permeability-Atem in `omega.rs` bauen (Richtung gemessen) oder als `descoped` mit Befund schließen. (aus `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md`)
+
+### orphan-coherence — Total-Coherence per-Oszillator + Complexity
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** eigen.
+- **Lage:** (gemessen River-Folge 47) `total_coherence_probe.rs` gebaut: `Σ_i perm_target(|ω_i|,|Δω_i|) = 0.924` gegen leeres Feld 0.0; die gebaute Permeability (ein TE-Skalar über die Summe) kollabiert auf 0.0 — per-Oszillator-Integral und Complexity-Term bleiben offen.
+- **Blockade:** keine.
+- **Braucht:** per-Oszillator-Integral + Complexity-Term in den Live-Pfad (`omega.rs`) tragen oder als Befund schließen. (aus `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md`)
+
+### orphan-blatt-membran — Blatt-Papier-Beweis: Membran-Bindung
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** eigen.
+- **Lage:** Probe-Muster steht (`nobel_probe_corona.rs`), kanonische Referenz `te.rs` (`transfer_entropy_lag`, `topological_te_phase`); „Die Membran-Bindung bleibt pending" (`blatt-papier-beweis.md:42`). Die drei Blätter (ENSO/Bz/LAIC) warten auf ihren Zuschnitt.
+- **Blockade:** keine.
+- **Braucht:** Blatt-Probe + Membran-Bindung bauen; Blatt-Zuschnitt → `wartend.φ`. (aus `docs/concepts/blatt-papier-beweis.md`)
+
+### orphan-fortschritt — survey-fortschritt: offene Membran-Verbesserungen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** eigen.
+- **Lage:** (Stand 2026-08-16, wgpu-mono-Ära) §C nennt offen: Deep-Lieferung richtungsbasiert, Zell-Achse, Relay-Trailer (gen u64 + 9×Ω), Deep-Upload-Stille, Rgba8Unorm-Nachmessung, Fovea als Budget-Kappe; `deep_dirty` existiert im heutigen Baum nicht mehr (`grep src` 0 Treffer) — teils überholt, ungemessen.
+- **Blockade:** keine.
+- **Braucht:** je Punkt gegen den heutigen Baum messen → schließen oder `descoped` mit Befund. (aus `docs/surveys/survey-fortschritt.md`)
 
 ## An Mountain (gemessen, fremde Feder)
 
@@ -110,6 +143,10 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - `docs/paper/flyby-path-2-preregistration-revised.md` — revidierte Präregistrierung (Träger dieses Punkts).
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` — presence-only Ladearchitektur.
 - `docs/surveys/survey-messpunkt-verteilung.md` — Messpunkt-Verteilung (D5-Marker gemessen, offene Kandidaten-Fragen §9).
+- `docs/auftrag/auftrag-flyby2-kette.md` — getragen durch die bestehenden Flyby-Path-2-Punkte (Füll-Lauf, DSN-Status, revised); die Kette selbst steht, keine Duplikat-Zeile.
+- `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` — Silence-Map (`silence_map_probe.rs`), Betti-0 (`betti0_silverman_probe.rs`), Delay (`delay_spectrum_probe.rs`) und Minkowski (`minkowski_ds2_delta_probe.rs`) sind gebaut; offen nur Certainty + Total-Coherence (Blöcke oben).
+- `docs/concepts/kybernetische-astrophysik.md` — lebendes Konzept (12 Nadeln); die Marker sind konzeptionelle `pending`-Prosa, kein neuer Handlungsschritt.
+- `docs/concepts/pfeiler-der-architektur.md` — die genannten Codepfade existieren im Baum (`sense_membrane`, `gate_weigh`, `field_spatial`, `topological_te_phase`, `phase_randomized_surrogate`, `kepler.rs`, `hdf5.rs`, `spatial.rs`); kein offener Punkt.
 
 ## Abschluss
 
