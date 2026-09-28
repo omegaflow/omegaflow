@@ -959,6 +959,9 @@ impl Gate {
         if let Some(v) = check_handover_dupe(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_addressed_origin(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -1392,6 +1395,55 @@ pub fn word_register_origin_violations(handover: &str) -> Vec<(usize, String, St
     out
 }
 
+fn addressed_heading_line(line: &str) -> bool {
+    let rest = match line.trim_start().strip_prefix("## ") {
+        Some(r) => r,
+        None => return false,
+    };
+    let rest = match rest.trim_start().strip_prefix("An ") {
+        Some(r) => r,
+        None => return false,
+    };
+    let token: String = rest
+        .trim_start()
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+        .collect();
+    ["mountain", "river", "mycelium", "sensory", "future"]
+        .iter()
+        .any(|l| token.eq_ignore_ascii_case(l))
+}
+
+pub fn addressed_origin_violations(handover: &str) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    let lines: Vec<&str> = handover.lines().collect();
+    let mut i = 0;
+    while i < lines.len() {
+        if !addressed_heading_line(lines[i]) {
+            i += 1;
+            continue;
+        }
+        let heading = i;
+        let mut has_origin = false;
+        let mut j = i + 1;
+        while j < lines.len() && !is_h2_heading(lines[j]) {
+            if lines[j].trim().to_lowercase().starts_with("origin:") {
+                has_origin = true;
+            }
+            j += 1;
+        }
+        if !has_origin {
+            out.push((
+                heading + 1,
+                "addressed-origin".to_string(),
+                feedback("addressed-origin").to_string(),
+            ));
+        }
+        i = j;
+    }
+    out
+}
+
 pub fn handover_dupe_violations(handover: &str) -> Vec<(usize, String, String)> {
     let mut out = Vec::new();
     let mut in_section = false;
@@ -1460,6 +1512,25 @@ fn check_handover_dupe(path: &str, content: &str) -> Option<Verdict> {
     }
     handover_line_owner(path)?;
     let (line, rule, feedback_text) = handover_dupe_violations(content).into_iter().next()?;
+    let quote = match content.lines().nth(line.saturating_sub(1)) {
+        Some(s) => clip(s, 90),
+        None => String::new(),
+    };
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule,
+        line,
+        feedback: feedback_text,
+        quote,
+    })
+}
+
+fn check_addressed_origin(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    let (line, rule, feedback_text) = addressed_origin_violations(content).into_iter().next()?;
     let quote = match content.lines().nth(line.saturating_sub(1)) {
         Some(s) => clip(s, 90),
         None => String::new(),
@@ -3130,6 +3201,28 @@ mod tests {
                 "clean fixture: {ok}"
             );
         }
+    }
+
+    #[test]
+    fn fp_tool_addressed_origin_missing_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-sensory-folge197.md",
+            &fx("addressed_origin_missing"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "addressed-origin");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_addressed_origin_clean_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-sensory-folge197.md",
+            &fx("addressed_origin_clean"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
     }
 
     #[test]

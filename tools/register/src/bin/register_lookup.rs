@@ -2980,9 +2980,107 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     std::process::exit(2);
+}
+
+const ADDRESSED_LINES: &[&str] = &["mountain", "river", "mycelium", "sensory", "future"];
+
+fn addressed_target(heading: &str) -> Option<&'static str> {
+    let rest = heading.trim_start().strip_prefix("## ")?;
+    let rest = rest.trim_start().strip_prefix("An ")?;
+    let token: String = rest
+        .trim_start()
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+        .collect();
+    ADDRESSED_LINES
+        .iter()
+        .find(|l| token.eq_ignore_ascii_case(l))
+        .copied()
+}
+
+fn addressed_blocks(text: &str, target: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut iter = text.lines().peekable();
+    while let Some(line) = iter.next() {
+        if addressed_target(line) != Some(target) {
+            continue;
+        }
+        let mut block = String::new();
+        block.push_str(line);
+        block.push('\n');
+        while let Some(next) = iter.peek() {
+            if next.trim_start().starts_with("## ") {
+                break;
+            }
+            block.push_str(next);
+            block.push('\n');
+            iter.next();
+        }
+        out.push(block.trim_end().to_string());
+    }
+    out
+}
+
+fn addressed_report(root: &Path, target: &str) -> Vec<String> {
+    let target = canonical_line(target);
+    let handovers = collect_live_handovers_in(root);
+    let mut out = Vec::new();
+    let mut count = 0usize;
+    for (sender, list) in &handovers {
+        for h in list {
+            for block in addressed_blocks(&h.text, target) {
+                count += 1;
+                let folge = match h.folge {
+                    Some(n) => format!("folge{}", n),
+                    None => "session".to_string(),
+                };
+                out.push(format!(
+                    "ADDRESSED\t{}\t<- {}-{} ({})",
+                    target, sender, folge, h.path
+                ));
+                for line in block.lines() {
+                    out.push(line.to_string());
+                }
+                out.push(String::new());
+            }
+        }
+    }
+    if count == 0 {
+        out.push(format!(
+            "register_lookup --addressed {}: 0 addressed blocks",
+            target
+        ));
+    } else {
+        out.push(format!(
+            "register_lookup --addressed {}: {} addressed block(s)",
+            target, count
+        ));
+    }
+    out
+}
+
+fn run_addressed(args: &[String]) {
+    let target = match mode_line_filter(args, "--addressed") {
+        Some(t) => t.to_string(),
+        None => {
+            eprintln!(
+                "register_lookup --addressed <line>: missing line (mountain|river|mycelium|sensory|future)"
+            );
+            std::process::exit(2);
+        }
+    };
+    let fail = args.iter().any(|a| a == "--fail");
+    let lines = addressed_report(Path::new("."), &target);
+    let count = lines.iter().filter(|l| l.starts_with("ADDRESSED")).count();
+    for line in &lines {
+        println!("{}", line);
+    }
+    if fail && count > 0 {
+        std::process::exit(2);
+    }
 }
 
 fn main() {
@@ -3001,6 +3099,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--orphan-docs") {
         run_orphan_docs(Path::new("."));
+        return;
+    }
+    if args.iter().any(|a| a == "--addressed") {
+        run_addressed(&args);
         return;
     }
     if args.iter().any(|a| a == "--stale") {
@@ -4054,6 +4156,42 @@ mod tests {
             out
         );
         assert_eq!(out.len(), 1, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn addressed_report_extracts_only_the_addressed_block() {
+        let base = env::temp_dir().join(format!("rl-addressed-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover/archiv")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-09-28-sensory-folge9.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An River\n- the HUD line\n- Origin: sensory-folge9\n\n## An Mountain\n- the ports\n- Origin: sensory-folge9\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/handover/archiv/handover-2026-09-27-sensory-folge8.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An River\n- the old line\n- Origin: sensory-folge8\n",
+        )
+        .unwrap();
+        let river = addressed_report(&base, "river");
+        assert!(
+            river
+                .iter()
+                .any(|l| l.starts_with("ADDRESSED\triver\t<- sensory-folge9")),
+            "{:?}",
+            river
+        );
+        assert!(river.iter().any(|l| l.contains("the HUD line")));
+        assert!(!river.iter().any(|l| l.contains("the ports")));
+        assert!(!river.iter().any(|l| l.contains("the old line")));
+        let mountain = addressed_report(&base, "mountain");
+        assert!(
+            mountain.iter().any(|l| l.contains("the ports")),
+            "{:?}",
+            mountain
+        );
+        assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
         let _ = fs::remove_dir_all(&base);
     }
 }
