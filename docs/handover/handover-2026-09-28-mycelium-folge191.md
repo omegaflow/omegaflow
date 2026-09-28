@@ -3,7 +3,7 @@
   session: Mycelium-Folge 191
   class: handover
   date: 2026-09-28
-  sha256: 115de5a28702d3872c7a59d4d05cdaa4e201ee86809b9b01c6e6f11202d6df92
+  sha256: 38ff559a9ffead280b84011cedb875a75b968e12c46843af7cc72e9d0df9cf65
   status: live
 -->
 # Handover — Mycelium-Folge 191 (2026-09-28)
@@ -28,14 +28,14 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ### ci-check — clippy geheilt; Bestätigungslauf steht
 - **Status:** wartend | **Bindung:** eigen (CI-Aufsicht)
-- **Trigger:** Ende des Folgelaufs `36380327273` (ci-check, HEAD `e2bb5f3a8`).
+- **Trigger:** Ende des ci-check-Laufs `36385522146` (Push `87b200c02`).
 - **Lage:** (gemessen 2026-09-28 via `ci_manage view 36379199936`) der Lauf `36379199936` = `cancelled`, 0 Jobs → clippy/dropped `unread`; `docs/zustand/dropped-baseline.md:16` = Baseline 1054, `:17` misst delta 2 an `36377277112` @`97474363b` (alt). Der clippy-Rot `src/archivar/odf.rs:209` ist im Atom `9f8debcc3` geheilt; Baseline 1052→1054 gebumpt.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 36380327273` — clippy grün + delta 0 gegen Baseline 1054.
 
 ### gosat-cdn — Leer-Monate als benannter Skip gebaut
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Ende des nach dem Push dispatchten `gosat-cdn`-Laufs.
+- **Trigger:** Ende des dispatchten `gosat-cdn`-Laufs `36385528038`.
 - **Lage:** (gemessen 2026-09-28) `tools/harvest/src/bin/gosat_tanso3_compiler.rs:1180` — 0 Granules endet jetzt mit `exit(0)` + benannter Skip-Meldung statt `exit(1)`; `cargo check -p omegaflow-harvest --bin gosat_tanso3_compiler` 0/0. Die zwei Leer-Zustände (`SearchParse::Empty` vs. `Granules(vec![])`) kollabieren in `search_granules` auf `Some(Vec::new())`, am Aufrufort ununterscheidbar; `recs.is_empty()` (:1273) bleibt `exit(1)` (Download/Parse void — anderer Zustand). `--ci-mode`-Upload ist bei fehlender Ausgabe-Datei unerreichbar (Kontrollfluss).
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log <neu>` — alle Monate grün. Will man die zwei Leer-Zustände unterscheiden, braucht `search_granules` einen reicheren Rückgabetyp (Mountain-Feder; heute nicht nötig).
@@ -77,7 +77,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ### browser-anbindung — MCP-Pin + Fork; Store-Review descoped
 - **Status:** wartend | **Bindung:** eigen (Träger)
-- **Trigger:** Ende des dispatchten `browser-extension`-Laufs; Operator lädt `.output/chrome-mv3/` unpacked.
+- **Trigger:** Ende des dispatchten `browser-extension`-Laufs `36385530990`; Operator lädt `.output/chrome-mv3/` unpacked.
 - **Lage:** (gemessen 2026-09-28) MCP-Pin `opencode.json:158-163` (`chrome-devtools-mcp@1.9.0`, `--no-usage-statistics --no-performance-crux --autoConnect`, `enabled: true`); Fork `tools/browser-extension/` (chrome.alarms-Keepalive) + `.github/workflows/browser-extension.yml` committet; `ci_manage list` (100 Fenster) trägt **keinen** Lauf des Workflows. Survey-Marker auf Stand 2026-09-28 gezogen (`docs/surveys/survey-2026-09-20-browser-anbindung.md`, Messnachtrag, sha `5ce1dc1e513c4043961e9831d69b99c8e8f11eb2fbebc78cf5f993f209048555`).
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view <neu>` für Fork-Build/Test; Operator lädt unpacked (Operator-Akt).
