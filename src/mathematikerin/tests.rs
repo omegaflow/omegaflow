@@ -767,13 +767,15 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
     app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     app.tick();
     let sum1: f32 = app.probe_omega.iter().sum();
-    let delta1 = sum1 - 0.0f32;
-    let g1 = sum1.abs();
-    let v_c1 = delta1.abs();
+    let mut integral1 = 0.0f32;
+    for i in 0..9 {
+        integral1 += perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
+    }
     let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
-    let expected1 = 0.0f32 + (perm_target(g1, v_c1) - 0.0f32) * alpha1;
+    let expected1 = 0.0f32 + (integral1 / 9.0 - 0.0f32) * alpha1;
     assert_eq!(app.field_permeability, expected1);
     assert_eq!(app.prev_omega_sum, sum1);
+    assert_eq!(app.prev_probe_omega, app.probe_omega);
     assert_eq!(app.natural_latency_ticks, 1);
 
     app.last_hud = None;
@@ -786,6 +788,7 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
 
     app.prev_omega_sum = 0.0;
     app.prev_delta = 0.0;
+    app.prev_probe_omega = [0.0; 9];
     app.natural_latency_ticks = 1;
     app.probe_omega = [0.0; 9];
     for _ in 0..20 {
@@ -793,6 +796,55 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
         app.tick();
     }
     assert_eq!(app.field_permeability, PERM_GROUND);
+}
+
+#[test]
+fn the_no_te_tick_hears_each_oscillator_not_the_sum() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.matrix.state_path = "/tmp/omegaflow_perm_tick_state.bin".to_string();
+    app.natural_latency_ticks = 1;
+    app.probe_omega = [0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0];
+    app.prev_probe_omega = [0.0, 0.0, 0.25, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0];
+    app.tick();
+    let mut integral = 0.0f32;
+    for i in 0..9 {
+        let d_i = app.probe_omega[i] - app.prev_probe_omega[i];
+        integral += perm_target(app.probe_omega[i].abs(), d_i.abs());
+    }
+    let alpha = 1.0f32 - (-1.0f32 / 1.0f32).exp();
+    let expected = (integral / 9.0) * alpha;
+    assert_eq!(app.field_permeability, expected);
+    assert!(
+        app.field_permeability > 0.0,
+        "two media moving against each other are not silence"
+    );
+    assert_eq!(app.prev_probe_omega, app.probe_omega);
 }
 
 #[test]
@@ -845,6 +897,10 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     let delta1 = sum1 - 0.0f32;
     let g1 = sum1.abs();
     let v_c1 = delta1.abs();
+    let mut integral1 = 0.0f32;
+    for i in 0..9 {
+        integral1 += perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
+    }
     let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
 
     app.perm_log = None;
@@ -860,7 +916,7 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     assert_eq!(fields[1], sum1);
     assert_eq!(fields[2], g1);
     assert_eq!(fields[3], v_c1);
-    assert_eq!(fields[4], perm_target(g1, v_c1));
+    assert_eq!(fields[4], integral1 / 9.0);
     assert_eq!(fields[5], alpha1);
     assert_eq!(fields[6], crate::archivar::hrv::TONE_ABSENT as f32);
     assert_eq!(fields[7], app.tone_scale);

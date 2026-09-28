@@ -187,6 +187,7 @@ pub struct OmegaLoop {
     pub force_ref: [f32; 9],
     pub em_color: [f32; 4],
     pub probe_omega: [f32; 9],
+    pub prev_probe_omega: [f32; 9],
     pub probe_flow: [f32; 3],
     pub probe_ring: [[f32; 12]; 256],
     pub ring_head: usize,
@@ -303,6 +304,7 @@ impl OmegaLoop {
             force_ref: [0.0; 9],
             em_color: [0.0; 4],
             probe_omega: [0.0; 9],
+            prev_probe_omega: [0.0; 9],
             probe_flow: [0.0; 3],
             probe_ring: [[0.0; 12]; 256],
             ring_head: 0,
@@ -1675,7 +1677,13 @@ impl OmegaLoop {
                 self.prev_omega_sum = omega_sum;
                 let g = omega_sum.abs();
                 let v_c = delta.abs();
-                let target = perm_target(g, v_c);
+                let mut integral = 0.0f32;
+                for i in 0..9 {
+                    let d_i = self.probe_omega[i] - self.prev_probe_omega[i];
+                    integral += perm_target(self.probe_omega[i].abs(), d_i.abs());
+                }
+                self.prev_probe_omega = self.probe_omega;
+                let target = integral / 9.0;
                 let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);

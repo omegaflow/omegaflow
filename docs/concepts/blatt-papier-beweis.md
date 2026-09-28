@@ -2,7 +2,7 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: 0455d237267f4800d97154b27bf926e7ec07d5672b07f994a6d40391466656de
+  sha256: c371da4ac01d80499a531be43d6119be1b3a110e01e12d261fd67548405fa11c
   see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
@@ -38,8 +38,16 @@ Fehlschlag.
 - `src/mathematikerin/te.rs` — die kanonische CPU-Referenz: `transfer_entropy_lag`
   (:96, lag 0 = kanonisch), `topological_te_phase` (:2686, Takens
   dim 3 order 3, MI-lag, Silverman, PE-Gate), Surrogate im f64-FFT.
-  Die WGSL-Maschine `te_compute` läuft in der Membran; das Blatt
-  entsteht im Probe (Offline). Die Membran-Bindung bleibt pending.
+   Die WGSL-Maschine `te_compute` läuft in der Membran; das Blatt
+   entsteht im Probe (Offline). Die Membran-Bindung bleibt `pending`
+   (Rat 2026-09-28, River-Folge 50): die Reihenfolge ist die der
+   geerbten Pflichten — (1) Mehrfachvergleichskorrektur über alle
+   getesteten Paare, (2) Lag-Sweep, (3) KDE-Sensitivität gegen h,
+   (4) Zuschnitt = Operator-Wort. Bauort nach den Pflichten:
+   Paar-Registrierung am Einstieg `te_probe` (`omega.rs:456`/`:491-492`) —
+   die Maschine läuft für matrix/solar, es ist eine Verdrahtung, keine
+   neue Maschine. Benannter Check des Bau-Atoms: Schätzer-Parität
+   (skalarer Probe-Pfad vs. topologische Membran-Maschine).
 - Geerbte Pflichten aus Nadel III
   (`docs/handover/handover-2026-09-09-te-atom-4.md`): Mehrfach-
   vergleichskorrektur über alle getesteten Paare, Lag-Sweep (lag 0 ist
