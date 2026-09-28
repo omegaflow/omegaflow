@@ -29,8 +29,8 @@ const TFLAG_DELIMITER_SHIFT: u32 = 8;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Pds4Column {
     pub name: String,
-    pub unit: String,
-    pub data_type: String,
+    pub unit: Option<String>,
+    pub data_type: Option<String>,
     pub missing_constant: Option<f64>,
     pub sampling_name: String,
     pub sampling_unit: String,
@@ -52,6 +52,9 @@ pub struct Pds4Table {
     pub delimited: bool,
     pub delimiter: Option<u8>,
 }
+
+type RowValues = Vec<Option<f64>>;
+type DecodeOutput = (Vec<RowValues>, usize, usize);
 
 #[derive(Clone, Debug)]
 pub struct Pds4Meta {
@@ -227,9 +230,7 @@ fn parse_element(bytes: &[u8], pos: &mut usize, depth: usize) -> Option<XElem> {
     };
     loop {
         let rest = &bytes[*pos..];
-        let Some(lt) = find_sub(rest, b"<") else {
-            return None;
-        };
+        let lt = find_sub(rest, b"<")?;
         let lt = *pos + lt;
         if lt > *pos {
             elem.text
@@ -242,30 +243,22 @@ fn parse_element(bytes: &[u8], pos: &mut usize, depth: usize) -> Option<XElem> {
         }
         match bytes.get(*pos + 1) {
             Some(b'/') => return None,
-            Some(b'?') => match find_sub(&bytes[*pos..], b"?>") {
-                Some(rel) => *pos += rel + 2,
-                None => return None,
-            },
+            Some(b'?') => {
+                let rel = find_sub(&bytes[*pos..], b"?>")?;
+                *pos += rel + 2;
+            }
             Some(b'!') => {
                 if bytes.get(*pos + 2) == Some(&b'-') {
-                    match find_sub(&bytes[*pos..], b"-->") {
-                        Some(rel) => *pos += rel + 3,
-                        None => return None,
-                    }
+                    let rel = find_sub(&bytes[*pos..], b"-->")?;
+                    *pos += rel + 3;
                 } else if bytes[*pos..].starts_with(b"<![CDATA[") {
-                    match find_sub(&bytes[*pos..], b"]]>") {
-                        Some(rel) => {
-                            elem.text
-                                .push_str(&String::from_utf8_lossy(&bytes[*pos + 9..*pos + rel]));
-                            *pos += rel + 3;
-                        }
-                        None => return None,
-                    }
+                    let rel = find_sub(&bytes[*pos..], b"]]>")?;
+                    elem.text
+                        .push_str(&String::from_utf8_lossy(&bytes[*pos + 9..*pos + rel]));
+                    *pos += rel + 3;
                 } else {
-                    match find_sub(&bytes[*pos..], b">") {
-                        Some(rel) => *pos += rel + 1,
-                        None => return None,
-                    }
+                    let rel = find_sub(&bytes[*pos..], b">")?;
+                    *pos += rel + 1;
                 }
             }
             _ => {
@@ -377,10 +370,10 @@ pub fn parse_label(text: &str) -> Option<Pds4Meta> {
     }
     let (table, class, delimited) = match fao.child("Table_Character") {
         Some(t) => (t, "Table_Character", false),
-        None => match fao.child("Table_Delimited") {
-            Some(t) => (t, "Table_Delimited", true),
-            None => return None,
-        },
+        None => {
+            let t = fao.child("Table_Delimited")?;
+            (t, "Table_Delimited", true)
+        }
     };
     meta.table_class = class.to_string();
     meta.delimited = delimited;
@@ -421,14 +414,8 @@ pub fn parse_label(text: &str) -> Option<Pds4Meta> {
         let Some(name) = f.text_of("name") else {
             continue;
         };
-        let data_type = match f.text_of("data_type") {
-            Some(t) => t,
-            None => String::new(),
-        };
-        let unit = match f.text_of("unit") {
-            Some(t) => t,
-            None => String::new(),
-        };
+        let data_type = f.text_of("data_type");
+        let unit = f.text_of("unit");
         let start_byte = if delimited {
             f.text_of("field_number")
                 .and_then(|s| s.trim().parse::<usize>().ok())
@@ -501,7 +488,7 @@ pub fn record_stride(meta: &Pds4Meta, file_len: usize) -> Option<usize> {
     let divisors: Vec<usize> = candidates
         .iter()
         .copied()
-        .filter(|s| *s > 0 && file_len % *s == 0)
+        .filter(|s| *s > 0 && file_len.is_multiple_of(*s))
         .collect();
     if divisors.is_empty() {
         return None;
@@ -532,10 +519,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
                 Ok(v) => Some(v as f64),
                 Err(_) => None,
             },
-            "ASCII_REAL" => match text.parse::<f64>() {
-                Ok(v) => Some(v),
-                Err(_) => None,
-            },
+            "ASCII_REAL" => text.parse::<f64>().ok(),
             _ => None,
         }
     };
@@ -549,7 +533,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
     }
 }
 
-fn decode_fixed(bytes: &[u8], meta: &Pds4Meta) -> Option<(Vec<Vec<Option<f64>>>, usize, usize)> {
+fn decode_fixed(bytes: &[u8], meta: &Pds4Meta) -> Option<DecodeOutput> {
     let stride = record_stride(meta, bytes.len())?;
     let span = data_span(meta)?;
     let mut complete = bytes.len() / stride;
@@ -571,9 +555,9 @@ fn decode_fixed(bytes: &[u8], meta: &Pds4Meta) -> Option<(Vec<Vec<Option<f64>>>,
         for c in &meta.columns {
             let from = c.start_byte? - 1;
             let nbytes = c.bytes?;
-            let v = match rec.get(from..from + nbytes) {
-                Some(field) => parse_cell(field, &c.data_type, c.missing_constant),
-                None => None,
+            let v = match (rec.get(from..from + nbytes), c.data_type.as_deref()) {
+                (Some(field), Some(data_type)) => parse_cell(field, data_type, c.missing_constant),
+                _ => None,
             };
             vals.push(v);
         }
@@ -594,13 +578,10 @@ fn strip_quotes(s: &str) -> &str {
     }
 }
 
-fn decode_delimited(
-    bytes: &[u8],
-    meta: &Pds4Meta,
-) -> Option<(Vec<Vec<Option<f64>>>, usize, usize)> {
+fn decode_delimited(bytes: &[u8], meta: &Pds4Meta) -> Option<DecodeOutput> {
     let rec_sep = record_delimiter_bytes(meta.record_delimiter.as_deref())?;
     let field_sep = meta.delimiter?;
-    let mut rows: Vec<Vec<Option<f64>>> = Vec::new();
+    let mut rows: Vec<RowValues> = Vec::new();
     let mut skipped = 0usize;
     let mut trailing = 0usize;
     let mut rest: &[u8] = bytes;
@@ -632,11 +613,10 @@ fn decode_delimited(
                 Ok(t) => strip_quotes(t),
                 Err(_) => "",
             };
-            vals.push(parse_cell(
-                text.as_bytes(),
-                &c.data_type,
-                c.missing_constant,
-            ));
+            vals.push(match c.data_type.as_deref() {
+                Some(data_type) => parse_cell(text.as_bytes(), data_type, c.missing_constant),
+                None => None,
+            });
         }
         if vals.iter().all(|v| v.is_none()) {
             skipped += 1;
@@ -649,7 +629,7 @@ fn decode_delimited(
     Some((rows, skipped, trailing))
 }
 
-pub fn decode_rows(bytes: &[u8], meta: &Pds4Meta) -> Option<(Vec<Vec<Option<f64>>>, usize, usize)> {
+pub fn decode_rows(bytes: &[u8], meta: &Pds4Meta) -> Option<DecodeOutput> {
     if meta.delimited {
         decode_delimited(bytes, meta)
     } else {
@@ -659,7 +639,7 @@ pub fn decode_rows(bytes: &[u8], meta: &Pds4Meta) -> Option<(Vec<Vec<Option<f64>
 
 pub fn pack(table: &Pds4Table) -> Vec<u8> {
     let cols = table.columns.len();
-    let words = (cols + 63) / 64;
+    let words = cols.div_ceil(64);
     let mut bin = vec![
         0u8;
         16 + cols * COLUMN_META_BYTES
@@ -672,9 +652,8 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
     let mut tflags = 0u32;
     if table.delimited {
         tflags |= TFLAG_DELIMITED;
-        match table.delimiter {
-            Some(d) => tflags |= (d as u32) << TFLAG_DELIMITER_SHIFT,
-            None => {}
+        if let Some(d) = table.delimiter {
+            tflags |= (d as u32) << TFLAG_DELIMITER_SHIFT;
         }
     }
     bin[12..16].copy_from_slice(&tflags.to_le_bytes());
@@ -683,33 +662,31 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
         let name = c.name.as_bytes();
         let n = name.len().min(COLUMN_NAME_BYTES);
         bin[base..base + n].copy_from_slice(&name[..n]);
-        let unit = c.unit.as_bytes();
-        let u = unit.len().min(COLUMN_UNIT_BYTES);
-        bin[base + 64..base + 64 + u].copy_from_slice(&unit[..u]);
-        let dt = c.data_type.as_bytes();
-        let d = dt.len().min(COLUMN_TYPE_BYTES);
-        bin[base + 80..base + 80 + d].copy_from_slice(&dt[..d]);
+        if let Some(unit) = &c.unit {
+            let unit = unit.as_bytes();
+            let u = unit.len().min(COLUMN_UNIT_BYTES);
+            bin[base + 64..base + 64 + u].copy_from_slice(&unit[..u]);
+        }
+        if let Some(data_type) = &c.data_type {
+            let dt = data_type.as_bytes();
+            let d = dt.len().min(COLUMN_TYPE_BYTES);
+            bin[base + 80..base + 80 + d].copy_from_slice(&dt[..d]);
+        }
         let sn = c.sampling_name.as_bytes();
         let snl = sn.len().min(COLUMN_SP_NAME_BYTES);
         bin[base + 96..base + 96 + snl].copy_from_slice(&sn[..snl]);
         let su = c.sampling_unit.as_bytes();
         let sul = su.len().min(COLUMN_SP_UNIT_BYTES);
         bin[base + 112..base + 112 + sul].copy_from_slice(&su[..sul]);
-        let missing = match c.missing_constant {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 128..base + 136].copy_from_slice(&missing.to_le_bytes());
-        let sp_min = match c.sampling_min {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 136..base + 144].copy_from_slice(&sp_min.to_le_bytes());
-        let sp_max = match c.sampling_max {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 144..base + 152].copy_from_slice(&sp_max.to_le_bytes());
+        if let Some(v) = c.missing_constant {
+            bin[base + 128..base + 136].copy_from_slice(&v.to_le_bytes());
+        }
+        if let Some(v) = c.sampling_min {
+            bin[base + 136..base + 144].copy_from_slice(&v.to_le_bytes());
+        }
+        if let Some(v) = c.sampling_max {
+            bin[base + 144..base + 152].copy_from_slice(&v.to_le_bytes());
+        }
         let start_byte = match c.start_byte {
             Some(v) => v as u32,
             None => 0,
@@ -737,17 +714,14 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
         let at = data_base + r * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
         let mut pw = vec![0u64; words];
         for (j, v) in row.values.iter().enumerate() {
-            match v {
-                Some(x) => {
-                    bin[at + j * 8..at + j * 8 + 8].copy_from_slice(&x.to_le_bytes());
-                    pw[j / 64] |= 1u64 << (j % 64);
-                }
-                None => {}
+            if let Some(x) = v {
+                bin[at + j * 8..at + j * 8 + 8].copy_from_slice(&x.to_le_bytes());
+                pw[j / 64] |= 1u64 << (j % 64);
             }
         }
-        for w in 0..words {
+        for (w, word) in pw.iter().enumerate() {
             let wb = at + cols * ROW_VALUE_BYTES + w * 8;
-            bin[wb..wb + 8].copy_from_slice(&pw[w].to_le_bytes());
+            bin[wb..wb + 8].copy_from_slice(&word.to_le_bytes());
         }
     }
     bin
@@ -778,7 +752,7 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds4Table> {
     if cols == 0 {
         return None;
     }
-    let words = (cols + 63) / 64;
+    let words = cols.div_ceil(64);
     let expected = 16
         + cols * COLUMN_META_BYTES
         + row_count * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
@@ -789,8 +763,10 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds4Table> {
     for i in 0..cols {
         let base = 16 + i * COLUMN_META_BYTES;
         let name = str_field(bytes, base, base + COLUMN_NAME_BYTES)?;
-        let unit = str_field(bytes, base + 64, base + 64 + COLUMN_UNIT_BYTES)?;
-        let data_type = str_field(bytes, base + 80, base + 80 + COLUMN_TYPE_BYTES)?;
+        let unit =
+            str_field(bytes, base + 64, base + 64 + COLUMN_UNIT_BYTES).filter(|s| !s.is_empty());
+        let data_type =
+            str_field(bytes, base + 80, base + 80 + COLUMN_TYPE_BYTES).filter(|s| !s.is_empty());
         let sampling_name = str_field(bytes, base + 96, base + 96 + COLUMN_SP_NAME_BYTES)?;
         let sampling_unit = str_field(bytes, base + 112, base + 112 + COLUMN_SP_UNIT_BYTES)?;
         let missing = f64::from_le_bytes(bytes[base + 128..base + 136].try_into().ok()?);
@@ -893,20 +869,23 @@ mod tests {
         assert_eq!(meta.stop_time.as_deref(), Some("2005-11-18T21:56:22.216Z"));
         assert_eq!(meta.columns.len(), 31);
         assert_eq!(meta.columns[0].name, "MET");
-        assert_eq!(meta.columns[0].data_type, "ASCII_Integer");
+        assert_eq!(meta.columns[0].data_type.as_deref(), Some("ASCII_Integer"));
         assert_eq!(meta.columns[0].start_byte, Some(1));
         assert_eq!(meta.columns[0].bytes, Some(10));
         assert_eq!(meta.columns[1].name, "UTC");
-        assert_eq!(meta.columns[1].data_type, "ASCII_Date_Time_YMD");
+        assert_eq!(
+            meta.columns[1].data_type.as_deref(),
+            Some("ASCII_Date_Time_YMD")
+        );
         assert_eq!(meta.columns[1].start_byte, Some(12));
         assert_eq!(meta.columns[1].bytes, Some(23));
         assert_eq!(meta.columns[2].name, "RANGE");
-        assert_eq!(meta.columns[2].data_type, "ASCII_Real");
+        assert_eq!(meta.columns[2].data_type.as_deref(), Some("ASCII_Real"));
         assert_eq!(meta.columns[2].start_byte, Some(36));
         assert_eq!(meta.columns[2].bytes, Some(8));
-        assert_eq!(meta.columns[2].unit, "Kilometer");
+        assert_eq!(meta.columns[2].unit.as_deref(), Some("Kilometer"));
         assert_eq!(meta.columns[30].name, "N");
-        assert_eq!(meta.columns[30].data_type, "ASCII_Integer");
+        assert_eq!(meta.columns[30].data_type.as_deref(), Some("ASCII_Integer"));
         assert_eq!(meta.columns[30].start_byte, Some(289));
         assert_eq!(meta.columns[30].bytes, Some(1));
         assert!(meta.columns.iter().all(|c| c.missing_constant.is_none()));

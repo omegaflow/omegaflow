@@ -65,7 +65,10 @@ enum Axis {
 
 fn axis_of(meta: &TableMeta) -> Option<(Axis, String)> {
     for (i, c) in meta.columns.iter().enumerate() {
-        if c.data_type.eq_ignore_ascii_case("TIME") {
+        if c.data_type
+            .as_deref()
+            .is_some_and(|d| d.eq_ignore_ascii_case("TIME"))
+        {
             return Some((Axis::IsoTime(i), format!("{} (DATA_TYPE TIME)", c.name)));
         }
     }
@@ -91,8 +94,8 @@ fn axis_column(meta: &TableMeta, idx: usize) -> TableColumn {
     let c = &meta.columns[idx];
     TableColumn {
         name: c.name.clone(),
-        unit: AXIS_UNIT.to_string(),
-        data_type: "TIME".to_string(),
+        unit: Some(AXIS_UNIT.to_string()),
+        data_type: Some("TIME".to_string()),
         missing_constant: c.missing_constant,
         sampling_name: c.sampling_name.clone(),
         sampling_unit: c.sampling_unit.clone(),
@@ -118,7 +121,7 @@ fn assemble(
         Some((Axis::IsoTime(i), _)) | Some((Axis::Offset(i, _), _)) => {
             columns.push(axis_column(meta, *i));
             for (j, c) in meta.columns.iter().enumerate() {
-                if j != *i && is_numeric_type(&c.data_type) {
+                if j != *i && c.data_type.as_deref().is_some_and(is_numeric_type) {
                     columns.push(c.clone());
                     kept.push(j);
                 }
@@ -126,7 +129,7 @@ fn assemble(
         }
         None => {
             for (j, c) in meta.columns.iter().enumerate() {
-                if is_numeric_type(&c.data_type) {
+                if c.data_type.as_deref().is_some_and(is_numeric_type) {
                     columns.push(c.clone());
                     kept.push(j);
                 }
@@ -208,9 +211,14 @@ fn print_inventory(
 ) {
     let mut cols = Vec::new();
     for c in &table.columns {
-        let mut s = format!("{} ({})", c.name, c.data_type);
-        if !c.unit.is_empty() {
-            s.push_str(&format!(", {}", c.unit));
+        let mut s = match &c.data_type {
+            Some(dt) => format!("{} ({})", c.name, dt),
+            None => format!("{} (data_type absent)", c.name),
+        };
+        if let Some(unit) = &c.unit {
+            if !unit.is_empty() {
+                s.push_str(&format!(", {unit}"));
+            }
         }
         match c.missing_constant {
             Some(m) => s.push_str(&format!(", missing {m}")),
@@ -222,7 +230,7 @@ fn print_inventory(
             (None, Some(hi)) => s.push_str(&format!(", sampling_max {hi}")),
             (None, None) => {}
         }
-        if !c.sampling_unit.is_empty() && c.sampling_unit != c.unit {
+        if !c.sampling_unit.is_empty() && c.unit.as_deref() != Some(c.sampling_unit.as_str()) {
             s.push_str(&format!(" {}", c.sampling_unit));
         }
         cols.push(s);

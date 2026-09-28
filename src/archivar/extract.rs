@@ -74,6 +74,10 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "voyager_odr" => voyager_odr::parse_series(bytes),
         "voyager_occlt" => voyager_occlt::parse_series(bytes),
         "pds3_ring_occ" => pds3_ring_occ::parse_series(bytes),
+        "pds3_fixed_width" => pds3_table::parse_table(bytes)
+            .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
+        "pds4_fixed_width" => pds4::parse_table(bytes)
+            .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
@@ -87,6 +91,25 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "eve" => eve::parse_bin(bytes),
         _ => None,
     }
+}
+
+fn fixed_width_rows_to_series<'a, I>(rows: I) -> Option<Vec<(f64, f64, u32)>>
+where
+    I: IntoIterator<Item = &'a [Option<f64>]>,
+{
+    let mut out = Vec::new();
+    for row in rows {
+        let t = match row.first() {
+            Some(Some(t)) => *t,
+            _ => continue,
+        };
+        for (j, v) in row.iter().enumerate().skip(1) {
+            if let Some(x) = v {
+                out.push((t, *x, j as u32));
+            }
+        }
+    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
@@ -214,6 +237,44 @@ pub fn series_rows(format: &str, bytes: &[u8]) -> Option<Vec<SeriesRow>> {
                 bin_width,
             })
             .collect()
+    })
+}
+
+#[derive(Clone, Debug)]
+pub struct NamedSeries {
+    pub rows: Vec<SeriesRow>,
+    pub names: Vec<String>,
+}
+
+pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
+    let (names, raw_rows) = match format {
+        "pds3_fixed_width" => {
+            let table = pds3_table::parse_table(bytes)?;
+            let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
+            let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        "pds4_fixed_width" => {
+            let table = pds4::parse_table(bytes)?;
+            let names: Vec<String> = table.columns.into_iter().map(|c| c.name).collect();
+            let rows = fixed_width_rows_to_series(table.rows.iter().map(|r| r.values.as_slice()))?;
+            (names, rows)
+        }
+        _ => return None,
+    };
+    let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
+    Some(NamedSeries {
+        rows: raw_rows
+            .into_iter()
+            .map(|(t, value, comp)| SeriesRow {
+                t,
+                value,
+                comp,
+                freq,
+                bin_width,
+            })
+            .collect(),
+        names,
     })
 }
 
@@ -5975,5 +6036,144 @@ mod html_tests {
         };
         assert_eq!(rows.len(), 1);
         assert_eq!(jnum(&rows[0], "mag"), Some(3.5));
+    }
+}
+
+#[cfg(test)]
+mod fixed_width_series_tests {
+    use super::*;
+
+    fn pds3_column(name: &str) -> pds3_table::TableColumn {
+        pds3_table::TableColumn {
+            name: name.to_string(),
+            unit: None,
+            data_type: Some("ASCII_REAL".to_string()),
+            missing_constant: None,
+            sampling_name: String::new(),
+            sampling_unit: String::new(),
+            sampling_min: None,
+            sampling_max: None,
+            start_byte: 0,
+            bytes: 0,
+        }
+    }
+
+    fn pds4_column(name: &str) -> pds4::Pds4Column {
+        pds4::Pds4Column {
+            name: name.to_string(),
+            unit: None,
+            data_type: Some("ASCII_REAL".to_string()),
+            missing_constant: None,
+            sampling_name: String::new(),
+            sampling_unit: String::new(),
+            sampling_min: None,
+            sampling_max: None,
+            start_byte: None,
+            bytes: None,
+        }
+    }
+
+    #[test]
+    fn pds3_fixed_width_series_reads_axis_and_columns() {
+        let table = pds3_table::Pds3Table {
+            columns: vec![
+                pds3_column("TIME_OFFSET"),
+                pds3_column("RADIOMETER1"),
+                pds3_column("PHOTOMETER1"),
+            ],
+            rows: vec![
+                pds3_table::TableRow {
+                    values: vec![Some(10.0), Some(1.5), None],
+                },
+                pds3_table::TableRow {
+                    values: vec![Some(20.0), Some(2.5), Some(3.5)],
+                },
+            ],
+        };
+        let bin = pds3_table::pack(&table);
+        let series = series_parse_bin("pds3_fixed_width", &bin).expect("series parses");
+        assert_eq!(series, vec![(10.0, 1.5, 1), (20.0, 2.5, 1), (20.0, 3.5, 2)]);
+    }
+
+    #[test]
+    fn pds4_fixed_width_series_reads_axis_and_columns() {
+        let table = pds4::Pds4Table {
+            columns: vec![pds4_column("TIME"), pds4_column("RADIANCE")],
+            rows: vec![
+                pds4::Pds4Row {
+                    values: vec![Some(1.0), Some(9.0)],
+                },
+                pds4::Pds4Row {
+                    values: vec![Some(2.0), Some(8.0)],
+                },
+            ],
+            delimited: false,
+            delimiter: None,
+        };
+        let bin = pds4::pack(&table);
+        let series = series_parse_bin("pds4_fixed_width", &bin).expect("series parses");
+        assert_eq!(series, vec![(1.0, 9.0, 1), (2.0, 8.0, 1)]);
+    }
+
+    #[test]
+    fn fixed_width_series_rejects_foreign_bytes() {
+        assert!(series_parse_bin("pds3_fixed_width", b"XXXX").is_none());
+        assert!(series_parse_bin("pds4_fixed_width", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn pds3_named_series_carries_column_names_verbatim() {
+        let table = pds3_table::Pds3Table {
+            columns: vec![
+                pds3_column("TIME_OFFSET"),
+                pds3_column("RADIOMETER1"),
+                pds3_column("PHOTOMETER1"),
+            ],
+            rows: vec![pds3_table::TableRow {
+                values: vec![Some(10.0), Some(1.5), None],
+            }],
+        };
+        let bin = pds3_table::pack(&table);
+        let named = series_named("pds3_fixed_width", &bin).expect("named series parses");
+        assert_eq!(
+            named.names,
+            vec!["TIME_OFFSET", "RADIOMETER1", "PHOTOMETER1"]
+        );
+        assert_eq!(named.rows.len(), 1);
+        let row = named.rows[0];
+        assert_eq!(row.comp, 1);
+        assert_eq!(
+            named.names.get(row.comp as usize),
+            Some(&"RADIOMETER1".to_string())
+        );
+    }
+
+    #[test]
+    fn pds4_named_series_excludes_axis_and_maps_comp_to_name() {
+        let table = pds4::Pds4Table {
+            columns: vec![pds4_column("TIME"), pds4_column("RADIANCE")],
+            rows: vec![pds4::Pds4Row {
+                values: vec![Some(2.0), Some(8.0)],
+            }],
+            delimited: false,
+            delimiter: None,
+        };
+        let bin = pds4::pack(&table);
+        let named = series_named("pds4_fixed_width", &bin).expect("named series parses");
+        assert_eq!(named.names, vec!["TIME", "RADIANCE"]);
+        assert_eq!(named.rows.len(), 1);
+        let row = named.rows[0];
+        assert_eq!(row.t, 2.0);
+        assert_eq!(row.comp, 1);
+        assert_eq!(
+            named.names.get(row.comp as usize),
+            Some(&"RADIANCE".to_string())
+        );
+    }
+
+    #[test]
+    fn named_series_is_none_for_foreign_formats() {
+        assert!(series_named("drs_fits", b"XXXX").is_none());
+        assert!(series_named("pds3_fixed_width", b"XXXX").is_none());
     }
 }

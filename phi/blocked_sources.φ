@@ -85,7 +85,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18387: CDPP-Auth OK; PUT /orders/18387/retry 200 (autonom, wirkungslos), Status unverändert DONE_WITH_WARNING, 0 verfügbar / 96978 Fehler, alle Dateien online:false, Download 500/0 B. restart (Neuanlage) = operator-gebunden.
+note DEMETER Order 18387: CDPP-Auth OK; retry 200 wirkungslos, DONE_WITH_WARNING, 0/96978 Fehler, Download 500. Gegenprobe 2026-09-28: anonym 403 (F5), UA ohne Wirkung, kein ip-Block (Wurzel 200); Gate = CDPP-Konto/orderToken.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
@@ -377,7 +377,7 @@ note Tianwen-1/Zhurong (CNSA) — 2026-09-28 Portal 200, Antrag/Konto. sensory-f
 
 blocked account
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM (mrbrowse.issdc.gov.in), Aditya-L1 (ISRO/ISSDC) — 2026-09-28 account nötig. sensory-folge195.
+note Chandrayaan-2/3, MOM (chmapbrowse.issdc.gov.in 200, mrbrowse 404 gemessen 2026-09-28, Login/Register), Aditya-L1 (ISRO/ISSDC) — 2026-09-28 account nötig. sensory-folge195, future-folge148.
 
 blocked account
 url https://sdc.emiratesmarsmission.ae/
@@ -402,28 +402,24 @@ gap pds3-binary
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
 note Kaguya/SELENE LRS-Roh (JAXA, PDS ODE) — 2026-09-28 HTTP 206; Lunar Radar Sounder binäre .dat-Rohdaten hinter ODE-Portal, kein Einzeldatei-Endpoint gefunden. DARTS darts:sln-l-rise-5-traj-rstar-v1.0.
 
-parser-def html
-gap html-parser-arm
+blocked account
 url https://pda.kasi.re.kr/
-note Danuri/KPLO (KARI/KASI) PDA + ShadowCam shadowcam.im-ldi.com — 2026-09-28 beide HTTP 200 HTML-Portal (16331/8742 B); kein maschinenlesbarer Daten-Endpoint gefunden, Zugang über JS-Portal.
+note Danuri/KPLO (KARI/KASI) + ShadowCam — 2026-09-28 HTTP 200; Login-Gate (permission:normal, isLoggedIn=false, nur letzte 6 Monate). html-Extraktor steht, Block = Konto, nicht Arm. sensory-folge198/199, future-folge148.
 
 parser-def img
 gap pds3-img
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
 note Chandrayaan-1 (ISRO) Mini-RF .img (PDS3-Raster) + M3 ENVI-Cube — 2026-09-28 HTTP 206; binäre Raster, kein ASCII-Sample. SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/.
 
-parser-def pds3
-gap pds3-fixed-width
+pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Spalten ohne In-File-Einheiten (im .lbl), 2026-09-28 HTTP 206. Termoskan/VSK-FREGAT ebenso PDS3; unit-auto-detect gilt zusätzlich. Arm steht (pds3_table.rs, 2026-09-28); offen: CI-Manifest (Mycelium).
+note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Einheiten im .lbl, 2026-09-28 HTTP 206. Arm + Konsument stehen (pds3_table.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:224. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
 
-parser-def pds3
-gap pds3-fixed-width
+pending
 url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. Ballons atmos.nmsu.edu/PDS/data/vega_5001/. Arm steht (pds3_table.rs, 2026-09-28); offen: CI-Manifest (Mycelium).
+note Vega 1/2 Halley 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width, Einheiten im .lbl. Arm + Konsument stehen (pds3_table.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:224. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
 
-parser-def tab
-gap pds4-fixed-width
+pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
-note Hayabusa LIDAR (JAXA/ISAS) cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label, 43–177 MB je .tab. Range = em. Arm steht (pds4.rs; cdr_f 154708 Z./31 Spalten); offen: CI-Manifest (Mycelium).
+note Hayabusa LIDAR cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label. Arm + Konsument stehen (pds4.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:234. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
 

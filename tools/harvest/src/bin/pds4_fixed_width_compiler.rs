@@ -57,14 +57,10 @@ enum Axis {
 
 fn axis_of(meta: &Pds4Meta) -> Option<(Axis, String)> {
     for (i, c) in meta.columns.iter().enumerate() {
-        if c.data_type
-            .to_ascii_uppercase()
-            .starts_with("ASCII_DATE_TIME")
-        {
-            return Some((
-                Axis::IsoTime(i),
-                format!("{} ({} date-time)", c.name, c.data_type),
-            ));
+        if let Some(dt) = &c.data_type {
+            if dt.to_ascii_uppercase().starts_with("ASCII_DATE_TIME") {
+                return Some((Axis::IsoTime(i), format!("{} ({dt} date-time)", c.name)));
+            }
         }
     }
     for (i, c) in meta.columns.iter().enumerate() {
@@ -92,8 +88,8 @@ fn axis_column(meta: &Pds4Meta, idx: usize) -> Pds4Column {
     let c = &meta.columns[idx];
     Pds4Column {
         name: c.name.clone(),
-        unit: AXIS_UNIT.to_string(),
-        data_type: "TIME".to_string(),
+        unit: Some(AXIS_UNIT.to_string()),
+        data_type: Some("TIME".to_string()),
         missing_constant: c.missing_constant,
         sampling_name: c.sampling_name.clone(),
         sampling_unit: c.sampling_unit.clone(),
@@ -119,7 +115,7 @@ fn assemble(
         Some((Axis::IsoTime(i), _)) | Some((Axis::Offset(i, _, _), _)) => {
             columns.push(axis_column(meta, *i));
             for (j, c) in meta.columns.iter().enumerate() {
-                if j != *i && is_numeric_type(&c.data_type) {
+                if j != *i && c.data_type.as_deref().is_some_and(is_numeric_type) {
                     columns.push(c.clone());
                     kept.push(j);
                 }
@@ -127,7 +123,7 @@ fn assemble(
         }
         None => {
             for (j, c) in meta.columns.iter().enumerate() {
-                if is_numeric_type(&c.data_type) {
+                if c.data_type.as_deref().is_some_and(is_numeric_type) {
                     columns.push(c.clone());
                     kept.push(j);
                 }
@@ -218,9 +214,14 @@ fn print_inventory(
 ) {
     let mut cols = Vec::new();
     for c in &table.columns {
-        let mut s = format!("{} ({})", c.name, c.data_type);
-        if !c.unit.is_empty() {
-            s.push_str(&format!(", {}", c.unit));
+        let mut s = match &c.data_type {
+            Some(dt) => format!("{} ({})", c.name, dt),
+            None => format!("{} (data_type absent)", c.name),
+        };
+        if let Some(unit) = &c.unit {
+            if !unit.is_empty() {
+                s.push_str(&format!(", {unit}"));
+            }
         }
         match c.missing_constant {
             Some(m) => s.push_str(&format!(", missing {m}")),

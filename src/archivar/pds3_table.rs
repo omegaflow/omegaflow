@@ -27,8 +27,8 @@ const FLAG_SP_MAX: u32 = 4;
 #[derive(Clone, Debug, PartialEq)]
 pub struct TableColumn {
     pub name: String,
-    pub unit: String,
-    pub data_type: String,
+    pub unit: Option<String>,
+    pub data_type: Option<String>,
     pub missing_constant: Option<f64>,
     pub sampling_name: String,
     pub sampling_unit: String,
@@ -64,6 +64,9 @@ pub struct TableMeta {
     pub product_id: Option<String>,
     pub columns: Vec<TableColumn>,
 }
+
+type RowValues = Vec<Option<f64>>;
+type DecodeOutput = (Vec<RowValues>, usize, usize);
 
 pub fn odl_kv(text: &str) -> Vec<(String, String)> {
     let mut cleaned = String::with_capacity(text.len());
@@ -141,8 +144,8 @@ pub fn parse_label(text: &str) -> Option<TableMeta> {
                 } else if value == "COLUMN" && in_table {
                     column = Some(TableColumn {
                         name: String::new(),
-                        unit: String::new(),
-                        data_type: String::new(),
+                        unit: None,
+                        data_type: None,
                         missing_constant: None,
                         sampling_name: String::new(),
                         sampling_unit: String::new(),
@@ -160,26 +163,26 @@ pub fn parse_label(text: &str) -> Option<TableMeta> {
             }
             "UNIT" => {
                 if let Some(c) = column.as_mut() {
-                    c.unit = value;
+                    c.unit = Some(value);
                 }
             }
             "DATA_TYPE" => {
                 if let Some(c) = column.as_mut() {
-                    c.data_type = value;
+                    c.data_type = Some(value);
                 }
             }
             "START_BYTE" => {
-                if let Some(c) = column.as_mut() {
-                    if let Ok(v) = value.parse() {
-                        c.start_byte = v;
-                    }
+                if let Some(c) = column.as_mut()
+                    && let Ok(v) = value.parse()
+                {
+                    c.start_byte = v;
                 }
             }
             "BYTES" => {
-                if let Some(c) = column.as_mut() {
-                    if let Ok(v) = value.parse() {
-                        c.bytes = v;
-                    }
+                if let Some(c) = column.as_mut()
+                    && let Ok(v) = value.parse()
+                {
+                    c.bytes = v;
                 }
             }
             "MISSING_CONSTANT" => {
@@ -209,10 +212,11 @@ pub fn parse_label(text: &str) -> Option<TableMeta> {
             }
             "END_OBJECT" => {
                 if value == "COLUMN" {
-                    if let Some(c) = column.take() {
-                        if c.start_byte > 0 && c.bytes > 0 {
-                            meta.columns.push(c);
-                        }
+                    if let Some(c) = column.take()
+                        && c.start_byte > 0
+                        && c.bytes > 0
+                    {
+                        meta.columns.push(c);
                     }
                 } else if value == "TABLE" {
                     in_table = false;
@@ -261,7 +265,7 @@ pub fn record_stride(meta: &TableMeta, file_len: usize) -> Option<usize> {
     let divisors: Vec<usize> = candidates
         .iter()
         .copied()
-        .filter(|s| *s > 0 && file_len % *s == 0)
+        .filter(|s| *s > 0 && file_len.is_multiple_of(*s))
         .collect();
     if divisors.is_empty() {
         return None;
@@ -317,10 +321,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
                 Err(_) => None,
             }
         }
-        _ => match text.parse::<f64>() {
-            Ok(v) => Some(v),
-            Err(_) => None,
-        },
+        _ => text.parse::<f64>().ok(),
     };
     match parsed {
         Some(v) if !v.is_finite() => None,
@@ -332,10 +333,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
     }
 }
 
-pub fn decode_rows(
-    bytes: &[u8],
-    meta: &TableMeta,
-) -> Option<(Vec<Vec<Option<f64>>>, usize, usize)> {
+pub fn decode_rows(bytes: &[u8], meta: &TableMeta) -> Option<DecodeOutput> {
     let stride = record_stride(meta, bytes.len())?;
     let span = data_span(meta)?;
     let mut complete = bytes.len() / stride;
@@ -356,9 +354,9 @@ pub fn decode_rows(
         let mut vals = Vec::with_capacity(meta.columns.len());
         for c in &meta.columns {
             let from = c.start_byte - 1;
-            let v = match rec.get(from..from + c.bytes) {
-                Some(field) => parse_cell(field, &c.data_type, c.missing_constant),
-                None => None,
+            let v = match (rec.get(from..from + c.bytes), c.data_type.as_deref()) {
+                (Some(field), Some(data_type)) => parse_cell(field, data_type, c.missing_constant),
+                _ => None,
             };
             vals.push(v);
         }
@@ -372,7 +370,7 @@ pub fn decode_rows(
 
 pub fn pack(table: &Pds3Table) -> Vec<u8> {
     let cols = table.columns.len();
-    let words = (cols + 63) / 64;
+    let words = cols.div_ceil(64);
     let mut bin = vec![
         0u8;
         12 + cols * COLUMN_META_BYTES
@@ -387,33 +385,31 @@ pub fn pack(table: &Pds3Table) -> Vec<u8> {
         let name = c.name.as_bytes();
         let n = name.len().min(COLUMN_NAME_BYTES);
         bin[base..base + n].copy_from_slice(&name[..n]);
-        let unit = c.unit.as_bytes();
-        let u = unit.len().min(COLUMN_UNIT_BYTES);
-        bin[base + 64..base + 64 + u].copy_from_slice(&unit[..u]);
-        let dt = c.data_type.as_bytes();
-        let d = dt.len().min(COLUMN_TYPE_BYTES);
-        bin[base + 80..base + 80 + d].copy_from_slice(&dt[..d]);
+        if let Some(unit) = &c.unit {
+            let unit = unit.as_bytes();
+            let u = unit.len().min(COLUMN_UNIT_BYTES);
+            bin[base + 64..base + 64 + u].copy_from_slice(&unit[..u]);
+        }
+        if let Some(data_type) = &c.data_type {
+            let dt = data_type.as_bytes();
+            let d = dt.len().min(COLUMN_TYPE_BYTES);
+            bin[base + 80..base + 80 + d].copy_from_slice(&dt[..d]);
+        }
         let sn = c.sampling_name.as_bytes();
         let snl = sn.len().min(COLUMN_SP_NAME_BYTES);
         bin[base + 96..base + 96 + snl].copy_from_slice(&sn[..snl]);
         let su = c.sampling_unit.as_bytes();
         let sul = su.len().min(COLUMN_SP_UNIT_BYTES);
         bin[base + 112..base + 112 + sul].copy_from_slice(&su[..sul]);
-        let missing = match c.missing_constant {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 128..base + 136].copy_from_slice(&missing.to_le_bytes());
-        let sp_min = match c.sampling_min {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 136..base + 144].copy_from_slice(&sp_min.to_le_bytes());
-        let sp_max = match c.sampling_max {
-            Some(v) => v,
-            None => 0.0,
-        };
-        bin[base + 144..base + 152].copy_from_slice(&sp_max.to_le_bytes());
+        if let Some(v) = c.missing_constant {
+            bin[base + 128..base + 136].copy_from_slice(&v.to_le_bytes());
+        }
+        if let Some(v) = c.sampling_min {
+            bin[base + 136..base + 144].copy_from_slice(&v.to_le_bytes());
+        }
+        if let Some(v) = c.sampling_max {
+            bin[base + 144..base + 152].copy_from_slice(&v.to_le_bytes());
+        }
         bin[base + 152..base + 156].copy_from_slice(&(c.start_byte as u32).to_le_bytes());
         bin[base + 156..base + 160].copy_from_slice(&(c.bytes as u32).to_le_bytes());
         let mut flags = 0u32;
@@ -433,17 +429,14 @@ pub fn pack(table: &Pds3Table) -> Vec<u8> {
         let at = data_base + r * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
         let mut pw = vec![0u64; words];
         for (j, v) in row.values.iter().enumerate() {
-            match v {
-                Some(x) => {
-                    bin[at + j * 8..at + j * 8 + 8].copy_from_slice(&x.to_le_bytes());
-                    pw[j / 64] |= 1u64 << (j % 64);
-                }
-                None => {}
+            if let Some(x) = v {
+                bin[at + j * 8..at + j * 8 + 8].copy_from_slice(&x.to_le_bytes());
+                pw[j / 64] |= 1u64 << (j % 64);
             }
         }
-        for w in 0..words {
+        for (w, word) in pw.iter().enumerate() {
             let wb = at + cols * ROW_VALUE_BYTES + w * 8;
-            bin[wb..wb + 8].copy_from_slice(&pw[w].to_le_bytes());
+            bin[wb..wb + 8].copy_from_slice(&word.to_le_bytes());
         }
     }
     bin
@@ -464,7 +457,7 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds3Table> {
     if cols == 0 {
         return None;
     }
-    let words = (cols + 63) / 64;
+    let words = cols.div_ceil(64);
     let expected = 12
         + cols * COLUMN_META_BYTES
         + row_count * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
@@ -475,8 +468,10 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds3Table> {
     for i in 0..cols {
         let base = 12 + i * COLUMN_META_BYTES;
         let name = str_field(bytes, base, base + COLUMN_NAME_BYTES)?;
-        let unit = str_field(bytes, base + 64, base + 64 + COLUMN_UNIT_BYTES)?;
-        let data_type = str_field(bytes, base + 80, base + 80 + COLUMN_TYPE_BYTES)?;
+        let unit =
+            str_field(bytes, base + 64, base + 64 + COLUMN_UNIT_BYTES).filter(|s| !s.is_empty());
+        let data_type =
+            str_field(bytes, base + 80, base + 80 + COLUMN_TYPE_BYTES).filter(|s| !s.is_empty());
         let sampling_name = str_field(bytes, base + 96, base + 96 + COLUMN_SP_NAME_BYTES)?;
         let sampling_unit = str_field(bytes, base + 112, base + 112 + COLUMN_SP_UNIT_BYTES)?;
         let missing = f64::from_le_bytes(bytes[base + 128..base + 136].try_into().ok()?);
