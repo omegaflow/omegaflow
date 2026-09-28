@@ -80,6 +80,27 @@ fn contract_violations(root: &Path) -> Vec<String> {
             ci.display()
         )),
     }
+    let gate = root.join(".github/workflows/ci-gate.yml");
+    match fs::read_to_string(&gate) {
+        Ok(text) => {
+            let header = workflow_header(&text);
+            match workflow_concurrency_block(&header) {
+                Some(block) if block.join("\n").contains("cancel-in-progress: true") => {}
+                Some(_) => out.push(format!(
+                    "{}: the fast per-push gate must carry cancel-in-progress: true — a superseded run has to be cut so the newest HEAD is gated (the ci-gate lesson)",
+                    gate.display()
+                )),
+                None => out.push(format!(
+                    "{}: no workflow-level concurrency block — the fast HEAD-gate contract is not declared",
+                    gate.display()
+                )),
+            }
+        }
+        Err(_) => out.push(format!(
+            "{}: unreadable — the fast HEAD-gate contract is unmeasured (0 honored)",
+            gate.display()
+        )),
+    }
     for name in MATRIX_WORKFLOWS {
         let path = root.join(".github/workflows").join(name);
         match fs::read_to_string(&path) {
@@ -112,7 +133,7 @@ fn main() {
     println!("=== concurrency-contract — the measured lesson, held per workflow ===");
     if violations.is_empty() {
         println!(
-            "all concurrency contracts hold (ci-check: false; the six matrix workflows: job-level)"
+            "all concurrency contracts hold (ci-check: false; ci-gate: true; the six matrix workflows: job-level)"
         );
         return;
     }
