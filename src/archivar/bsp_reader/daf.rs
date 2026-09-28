@@ -165,7 +165,7 @@ impl DafFile {
     fn parse_header(bytes: &[u8]) -> Result<([u8; 8], u32, u32, u32), DafError> {
         let mut idword = [0u8; 8];
         idword.copy_from_slice(&bytes[0..8]);
-        if !idword.starts_with(b"DAF/") {
+        if !idword.starts_with(b"DAF/") && idword != *b"NAIF/DAF" {
             return Err(DafError::BadIdword(idword));
         }
 
@@ -372,9 +372,13 @@ mod tests {
     use super::*;
 
     fn synthetic_daf() -> Vec<u8> {
+        synthetic_daf_with_idword(b"DAF/SPK ")
+    }
+
+    fn synthetic_daf_with_idword(idword: &[u8; 8]) -> Vec<u8> {
         let records = 4usize;
         let mut buf = vec![0u8; records * RECORD_BYTES];
-        buf[0..8].copy_from_slice(b"DAF/SPK ");
+        buf[0..8].copy_from_slice(idword);
         let nd: u32 = 2;
         let ni: u32 = 2;
         buf[8..12].copy_from_slice(&nd.to_le_bytes());
@@ -419,6 +423,13 @@ mod tests {
             daf.doubles_native(addr, addr + 1).unwrap(),
             vec![3.25, -7.5]
         );
+    }
+
+    #[test]
+    fn naif_daf_idword_is_accepted() {
+        let data = synthetic_daf_with_idword(b"NAIF/DAF");
+        let daf = DafFile::from_data(data).unwrap();
+        check(&daf);
     }
 
     #[test]

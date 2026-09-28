@@ -1,0 +1,65 @@
+name: spectral-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  spectral:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view ncei.noaa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx spectra.bin; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset spectra.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset spectra.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the ncei.noaa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ncei.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ncei.noaa.gov --repo omegaflow/sources \
+              --title "ncei.noaa.gov" \
+              --notes "NCEI solar spectral irradiance monthly netCDF (SSI) compiled to spectra.bin (CDN tag = netloc)"
+          fi
+      - name: Fetch the NCEI SSI monthly netCDF, compile spectra.bin and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: spectral NAIF LSK returned void" \
+                 "spectral LSK fetch returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          curl -sSfL --retry 3 --max-time 600 -o kernels/ssi.nc \
+            "https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: spectral NCEI SSI returned void" \
+                 "spectral SSI netCDF fetch returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin spectral_compiler -- \
+            --input-nc kernels/ssi.nc \
+            --month 2026-04 \
+            --lsk kernels/naif0012.tls \
+            --out spectra.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: spectral returned void" \
+                 "spectral compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
