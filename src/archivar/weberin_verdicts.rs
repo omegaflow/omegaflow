@@ -185,6 +185,30 @@ pub fn live_verdicts(lines: &[VerdictLine], now_tdb: Option<f64>) -> Vec<Verdict
         .collect()
 }
 
+static VERDICTS_SHARED: OnceLock<Arc<std::sync::RwLock<Vec<VerdictLine>>>> = OnceLock::new();
+
+pub fn register_verdicts_shared(shared: Arc<std::sync::RwLock<Vec<VerdictLine>>>) {
+    let _ = VERDICTS_SHARED.set(shared);
+}
+
+pub fn riss_names(lines: &[VerdictLine], now_tdb: Option<f64>) -> HashSet<String> {
+    riss_bodies(&live_verdicts(lines, now_tdb))
+        .into_iter()
+        .map(|line| line.name.clone())
+        .collect()
+}
+
+pub fn current_riss_names(now_tdb: Option<f64>) -> HashSet<String> {
+    let Some(shared) = VERDICTS_SHARED.get() else {
+        return HashSet::new();
+    };
+    let lines = match shared.read() {
+        Ok(lines) => lines,
+        Err(poisoned) => poisoned.into_inner(),
+    };
+    riss_names(&lines, now_tdb)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
