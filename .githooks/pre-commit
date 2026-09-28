@@ -1,16 +1,27 @@
 #!/bin/sh
-# The commit gate runs from a prebuilt binary — bin/.tools_ensure fetches the
+# The commit gates run from prebuilt binaries — bin/.tools_ensure fetches the
 # release (content-addressed, never a build). A red working tree therefore never
 # blocks a commit; a missing gate binary is named, never silent.
+#
+# Two gates, both measured against the tree before they block:
+#   commit_check         — text semantics of the staged texts (incl. the `||` swallow)
+#   concurrency_contract — the workflow concurrency contracts (ci-check: false;
+#                          the six matrix workflows at job-level)
 set -u
 root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
-if [ ! -x "$root/target/release/commit_check" ]; then
-    "$root/bin/.tools_ensure" commit_check >/dev/null 2>&1 || true
-fi
-for b in "$root/target/release/commit_check" "$root/target/debug/commit_check"; do
-    if [ -x "$b" ]; then
-        exec "$b"
-    fi
-done
-echo "commit_check: no gate binary (target/{release,debug}/commit_check) — the gate is skipped; the build is a CI job" >&2
+ensure() { [ -x "$root/target/release/$1" ] || "$root/bin/.tools_ensure" "$1" >/dev/null 2>&1 || true; }
+run() {
+    for b in "$root/target/release/$1" "$root/target/debug/$1"; do
+        if [ -x "$b" ]; then
+            "$b"
+            return $?
+        fi
+    done
+    echo "$1: no gate binary (target/{release,debug}/$1) — the gate is skipped; the build is a CI job" >&2
+    return 0
+}
+ensure commit_check
+run commit_check || exit $?
+ensure concurrency_contract
+run concurrency_contract || exit $?
 exit 0
