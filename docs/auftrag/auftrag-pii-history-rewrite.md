@@ -1,8 +1,8 @@
 <!--
   title: Auftrag — PII-History-Rewrite (private Operator-Adresse)
   class: auftrag
-  date: 2026-09-20
-  sha256: 297d9888a398f1a8177f8983525e5e93723ea958b0ca6599e1ed00b2f3ec8d5b
+  date: 2026-09-28
+  sha256: c86f251f20a6ce94ac25cefa328a737f69552238c528a1dbdaa91e15f4985990
   status: live
   see-also: docs/zustand/external-state.md .gitignore
 -->
@@ -15,7 +15,7 @@ Die private Operator-Adresse steht in **1.472 Commits** (Autor/Committer,
 redigierte sie in HEAD (fünf Dateien → `<operator-adresse>`, Header-`sha256`
 neu); die **Historie trägt sie weiter**. Das GitHub-GC-Ticket #4761801 hängt
 daran. Kein anderes PII gefunden: kein IBAN-Muster, keine Adresse
-(Corneliweg/Dachsberg/79875) im Baum, keine Bank-/Gesundheitsdaten.
+(<operator-adresse>) im Baum, keine Bank-/Gesundheitsdaten.
 
 ## Blocker (gemessen)
 

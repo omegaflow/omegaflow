@@ -15,6 +15,8 @@ const TOKEN_TEACH: { tokens: string[]; msg: string }[] = [
   { tokens: ["grep"], msg: "bash-`grep` ist verboten → nutze `sgrep [-i] <muster> [dir]` oder `archive_search <kw> --root <dir>`." },
   { tokens: ["rg"], msg: "`rg` ist verboten → nutze `sgrep`." },
   { tokens: ["cat"], msg: "bash-`cat` ist verboten → nutze `sread <datei> [--offset N --limit M]` oder das `read`-Tool." },
+  { tokens: ["head", "tail"], msg: "`head`/`tail` kastrieren das Ergebnis (`tail -f` ist zusätzlich Polling) → nutze `sread <datei> --offset N --limit M` oder das `read`-Tool (offset/limit); einen gekappten Tool-Output vollständig aus der Spill-Datei (`full: <pfad>`) lesen, nie anschneiden." },
+  { tokens: ["copilot", "copilot_ask", "copilot_review"], msg: "`copilot` ist ein Cloud-Dienst und erhält keine omegaflow-Daten (Operator-Wort 2026-09-28) → lokal und deterministisch: `bin/session_check --in|--out`." },
   { tokens: ["python", "python3"], msg: "Python ist verboten → nutze Rust (`cargo`) oder die kanonischen Tools." },
   { tokens: ["cd"], msg: "`cd` ist verboten → nutze den `workdir`-Parameter des bash-Tools." },
   { tokens: ["rustc"], msg: "`rustc` ist verboten → baue über `cargo`." },

@@ -1,0 +1,111 @@
+#!/bin/sh
+# session_check — Eingangs- und Ausgangs-Check der Session in EINEM Aufruf.
+#
+# Der Zweck ist die Kostenseite: die Prüfungen sind deterministisch (git + die
+# kanonischen Werkzeuge). Ein Skript fährt sie identisch (A = A) und in einem
+# Turn — statt N Tool-Turns, deren jeder den Kontext via cache_read neu liest.
+# Es kastriert nichts: die Tafel trägt die vollen Ausgaben der Werkzeuge.
+#
+#   session_check --in <handover>   Planungs-Pass (read-only)
+#   session_check --out             Ausgangs-/Commit-Check (read-only)
+#   session_check --help
+#
+# Kein Gate: die blockierende Schicht bleibt commit_check. Kein Send, kein Push.
+set -u
+
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+cd "$root" || exit 2
+
+run() {
+    _tool="$1"
+    shift
+    "$root/bin/$_tool" "$@" 2>&1
+}
+
+usage() {
+    echo "usage: session_check --in <handover> | --out | --help" >&2
+    exit 2
+}
+
+head_sha="$(git rev-parse HEAD 2>/dev/null)"
+orig_sha="$(git rev-parse origin/main 2>/dev/null)"
+relation="unknown"
+if [ -n "$orig_sha" ]; then
+    if [ "$head_sha" = "$orig_sha" ]; then
+        relation="equal"
+    elif git merge-base --is-ancestor origin/main HEAD 2>/dev/null; then
+        relation="ahead (origin/main is ancestor)"
+    elif git merge-base --is-ancestor HEAD origin/main 2>/dev/null; then
+        relation="behind"
+    else
+        relation="diverged"
+    fi
+fi
+
+dirty="$(git status --porcelain)"
+if [ -z "$dirty" ]; then
+    wt="clean"
+    n="0"
+else
+    n="$(printf '%s\n' "$dirty" | wc -l | tr -d ' ')"
+    wt="dirty ($n path(s))"
+fi
+
+print_head() {
+    echo "HEAD            $head_sha"
+    echo "origin/main     ${orig_sha:-<none>}"
+    echo "relation        $relation"
+    echo "working tree    $wt"
+    if [ -n "$dirty" ]; then
+        printf '%s\n' "$dirty"
+    fi
+}
+
+case "${1:---help}" in
+--in)
+    [ "$#" -ge 2 ] || usage
+    handover="$2"
+    echo "== session_check --in $handover =="
+    print_head
+    echo
+    echo "--- open_points_check $handover ---"
+    run open_points_check "$handover"
+    echo
+    echo "--- register_lookup --orphan-docs (Prosa ohne Träger) ---"
+    run register_lookup --orphan-docs
+    echo
+    echo "--- register_lookup --orphans (Dispositions-Einträge ohne Aufenthalt) ---"
+    run register_lookup --orphans
+    echo
+    echo "--- ci_manage status (laufend/rot) ---"
+    run ci_manage status
+    ;;
+--out)
+    echo "== session_check --out =="
+    print_head
+    echo
+    echo "--- git show --stat HEAD (eigene Dateien) ---"
+    git show --stat HEAD 2>&1
+    echo
+    echo "--- git log origin/main..HEAD --name-only (Fremdpfad-Check) ---"
+    git log origin/main..HEAD --name-only 2>&1
+    echo
+    echo "--- register_lookup --history (archivierte/gelöschte Dokumente) ---"
+    run register_lookup --history
+    echo
+    echo "--- git_safety --snapshot (Arbeitsbaum-Netz) ---"
+    run git_safety --snapshot
+    ;;
+--help | -h)
+    usage
+    ;;
+*)
+    usage
+    ;;
+esac

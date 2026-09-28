@@ -1,0 +1,79 @@
+#!/bin/sh
+# house_audit [--staged] — prüft den public Baum gegen die MECHANISCHEN Hausregeln.
+#
+# Deterministisch, 0 LLM-Token, keine Cloud. Beantwortet die Frage: trägt der
+# getrackte (also öffentliche) Baum Code/Assets/Docs nach den Regeln?
+#
+# Klassen:
+#   pii     — private Adresse/Telefon/Mail, Operator-Identifikator; PII ist nie
+#             getrackt (AGENTS.md) — jeder Treffer ist ein Befund.
+#   ident   — verbotene Identitäts-Vokabeln (Archiver/Mathematician statt -ar/-erin).
+#   spec    — Spekulationswörter in einem getrackten Text (Kandidat; die Session misst).
+#
+# Die Regeldateien selbst zitieren die verbotenen Tokens — sie sind ausgenommen.
+# Kein Gate, kein Ersatz für commit_check: eine billige Nachmessung.
+#
+#   house_audit            (ganzer getrackter Baum)
+#   house_audit --staged   (nur der Index)
+set -u
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null)" || exit 2
+
+STAGED=0
+DO_SPEC=0
+for a in "$@"; do
+    case "$a" in
+    --staged) STAGED=1 ;;
+    --spec) DO_SPEC=1 ;;
+    esac
+done
+
+# Die Regeldateien zitieren die verbotenen Tokens selbst — ausgenommen.
+EXCL1=":(exclude)AGENTS.md"
+EXCL2=":(exclude)src/gate/commit_gate_vocab.json"
+EXCL3=":(exclude)bin/house_audit"
+EXCL4=":(exclude)docs/concepts/tool-forms.md"
+
+PII='Corneliweg|0162 8665608|johannes\.tyroller@proton\.me|nouseforaname0815|79875 Dachsberg'
+IDENT='Archiver|Mathematician'
+SPEC='vermutlich|probably|likely|scheinbar|anscheinend|ich denke|ich nehme an'
+
+hits=0
+
+STAGED_FILES=""
+if [ "$STAGED" = 1 ]; then
+    STAGED_FILES="$(git diff --cached --name-only --diff-filter=ACM)"
+fi
+
+emit() {
+    _class="$1"
+    _pat="$2"
+    if [ "$STAGED" = 1 ]; then
+        [ -z "$STAGED_FILES" ] && return 0
+        git grep -nIE "$_pat" -- $STAGED_FILES 2>/dev/null
+    else
+        git grep -nIE "$_pat" -- . "$EXCL1" "$EXCL2" "$EXCL3" "$EXCL4" 2>/dev/null
+    fi | while IFS= read -r line; do
+        printf '%s | %s\n' "$_class" "$line"
+    done
+}
+
+p="$(emit pii "$PII")"
+i="$(emit ident "$IDENT")"
+
+[ -n "$p" ] && { echo "== pii (nie getrackt) =="; printf '%s\n' "$p"; hits=1; }
+[ -n "$i" ] && { echo "== ident (verbotene Vokabeln) =="; printf '%s\n' "$i"; hits=1; }
+
+# spec ist laut (scheinbare Größe = Fachbegriff, Referenzen, Archive, die
+# Vokabel-Listen selbst) und darum opt-in: die Gate-Schicht dafuer sind
+# commit_check/text_probe am Eingang, nicht ein Baum-Scan.
+if [ "$DO_SPEC" = 1 ]; then
+    s="$(emit spec "$SPEC")"
+    [ -n "$s" ] && { echo "== spec (Kandidat; Gate: commit_check/text_probe) =="; printf '%s\n' "$s"; }
+fi
+
+if [ "$hits" -eq 0 ]; then
+    echo "house_audit: clean — keine mechanischen Hausregel-Verstöße im public Baum"
+    exit 0
+fi
+exit 2

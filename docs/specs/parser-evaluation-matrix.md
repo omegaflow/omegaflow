@@ -1,7 +1,7 @@
 <!--
   title: parser-evaluation-matrix
   class: concept
-  sha256: 4d624ea0b70099e5aee689004e30d77e7bc1e20219b493fff099f653b03717e0
+  sha256: cc04ec302c72fb01b5842d93d8f0b7920f60b334359c03ee383149cea321b847
 -->
 > SUPERSEDED as controlling source by `docs/concepts/sources-v2-spec.md`
 > (§1 Directive Table) and the living parser `src/main.rs`. The
@@ -83,7 +83,7 @@ fn convert_to_si(val: f64, unit: &str) -> Option<f64> {
 ```
 
 #### 3. Universal Anomaly Reporter (GitHub Issues)
-The system tolerates no faulty configurations and no dead APIs. It generates automated reports that can be worked through via GitHub Copilot.
+The system tolerates no faulty configurations and no dead APIs. It generates automated reports that can be worked through — **Copilot gestrichen (Operator-Wort 2026-09-28): kein Cloud-Dienst erhält omegaflow-Daten.**
 Implement `report_anomaly(category, url, details)`. It collects all anomalies during a `--ci-mode` run.
 Categories:
 *   `Physics Mismatch`: force and unit do not match.
