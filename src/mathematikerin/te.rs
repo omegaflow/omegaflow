@@ -1479,6 +1479,90 @@ pub fn benjamini_hochberg(p_values: &[f64], level: f64) -> Option<f64> {
     Some(cutoff)
 }
 
+pub fn benjamini_hochberg_pass(p_values: &[f64], level: f64) -> Vec<bool> {
+    match benjamini_hochberg(p_values, level) {
+        Some(cutoff) => p_values.iter().map(|&p| p <= cutoff).collect(),
+        None => vec![false; p_values.len()],
+    }
+}
+
+pub fn surrogate_rank_p_value(te: f64, surrogates: &[f64]) -> Option<f64> {
+    if surrogates.is_empty() {
+        return None;
+    }
+    let b = surrogates.len();
+    let ge = surrogates.iter().filter(|&&s| s >= te).count();
+    Some((ge as f64 + 1.0) / (b as f64 + 1.0))
+}
+
+pub fn surrogate_p_value(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<f64> {
+    let te = transfer_entropy_lag(x, y, lag)?;
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
+    for _ in 0..n_surr {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(t) = transfer_entropy_lag(x, &ys, lag) {
+            vals.push(t);
+        }
+    }
+    surrogate_rank_p_value(te, &vals)
+}
+
+pub struct FamilyMember {
+    pub te: f64,
+    pub p_value: f64,
+    pub pass: bool,
+}
+
+pub struct TeFamily {
+    pub name: &'static str,
+    pub members: Vec<FamilyMember>,
+}
+
+impl TeFamily {
+    pub fn new(name: &'static str) -> Self {
+        TeFamily {
+            name,
+            members: Vec::new(),
+        }
+    }
+
+    pub fn push(&mut self, te: f64, p_value: f64) -> usize {
+        self.members.push(FamilyMember {
+            te,
+            p_value,
+            pass: false,
+        });
+        self.members.len() - 1
+    }
+
+    pub fn pass(&self, index: usize) -> bool {
+        self.members.get(index).is_some_and(|m| m.pass)
+    }
+
+    pub fn correct(&mut self, level: f64) {
+        let p_values: Vec<f64> = self.members.iter().map(|m| m.p_value).collect();
+        let passes = benjamini_hochberg_pass(&p_values, level);
+        for (member, pass) in self.members.iter_mut().zip(passes.iter()) {
+            member.pass = *pass;
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.members.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.members.is_empty()
+    }
+}
+
 pub fn surrogate_threshold_lag(x: &[f32], y: &[f32], lag: usize, seed: u64) -> Option<f64> {
     surrogate_stats(x, y, lag, seed).map(|(_, _, threshold)| threshold)
 }
@@ -2181,6 +2265,20 @@ pub fn transfer_entropy_embedded_kde(
     tau_x: usize,
     tau_y: usize,
 ) -> Option<f64> {
+    transfer_entropy_embedded_kde_scaled(x, emb_x, emb_y, tau_x, tau_y, 1.0)
+}
+
+pub fn transfer_entropy_embedded_kde_scaled(
+    x: &[f64],
+    emb_x: &[Vec<f64>],
+    emb_y: &[Vec<f64>],
+    tau_x: usize,
+    tau_y: usize,
+    factor: f64,
+) -> Option<f64> {
+    if !(factor > 0.0) || !factor.is_finite() {
+        return None;
+    }
     let n = x.len();
     if n < 8 || tau_x == 0 || tau_y == 0 || x.iter().any(|v| !v.is_finite()) {
         return None;
@@ -2214,9 +2312,9 @@ pub fn transfer_entropy_embedded_kde(
     if m < 8 {
         return None;
     }
-    let h_f = silverman_f64(&x[t_low + tau_x..])?;
-    let h_x = embedded_silverman(emb_x)?;
-    let h_y = embedded_silverman(emb_y)?;
+    let h_f = silverman_f64(&x[t_low + tau_x..])? * factor;
+    let h_x = embedded_silverman(emb_x)? * factor;
+    let h_y = embedded_silverman(emb_y)? * factor;
     let n_x = emb_x.len();
     let n_xy = n - t_low;
     let state_x = |t: usize| &emb_x[t - back_x];
@@ -2253,6 +2351,63 @@ pub fn transfer_entropy_embedded_kde(
         te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
     }
     Some(te / m as f64)
+}
+
+pub struct KdeSensitivityPoint {
+    pub factor: f64,
+    pub te: Option<f64>,
+}
+
+pub struct KdeSensitivity {
+    pub tau_x: usize,
+    pub tau_y: usize,
+    pub h_x: f64,
+    pub h_y: f64,
+    pub h_f: f64,
+    pub curve: Vec<KdeSensitivityPoint>,
+}
+
+pub fn topological_te_kde_sensitivity(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    factors: &[f64],
+) -> Option<KdeSensitivity> {
+    let n = x.len();
+    if n < 8 || y.len() != n || dim < 2 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let tau_x = find_mi_lag(&xf)?;
+    let tau_y = find_mi_lag(&yf)?;
+    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_y = embed_series(&yf, tau_y, dim);
+    if emb_x.is_empty() || emb_y.is_empty() {
+        return None;
+    }
+    let h_x = embedded_silverman(&emb_x)?;
+    let h_y = embedded_silverman(&emb_y)?;
+    let back_x = (dim - 1) * tau_x;
+    let back_y = (dim - 1) * tau_y;
+    let t_low = back_x.max(back_y);
+    let h_f = silverman_f64(&xf[t_low + tau_x..])?;
+    let mut curve = Vec::with_capacity(factors.len());
+    for &factor in factors {
+        let te = transfer_entropy_embedded_kde_scaled(&xf, &emb_x, &emb_y, tau_x, tau_y, factor);
+        curve.push(KdeSensitivityPoint { factor, te });
+    }
+    Some(KdeSensitivity {
+        tau_x,
+        tau_y,
+        h_x,
+        h_y,
+        h_f,
+        curve,
+    })
 }
 
 pub fn transfer_entropy_embedded_ksg(
@@ -2692,6 +2847,64 @@ pub fn topological_te_phase(
 ) -> Option<TopologicalVerdict> {
     topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
         phase_randomized_surrogate(v, rng)
+    })
+}
+
+pub struct MembraneSweepPoint {
+    pub lag: usize,
+    pub te: Option<f64>,
+}
+
+pub struct MembraneSweep {
+    pub tau_x: usize,
+    pub tau_y: usize,
+    pub span: usize,
+    pub curve: Vec<MembraneSweepPoint>,
+    pub best: Option<(usize, f64)>,
+}
+
+pub fn topological_te_lag_sweep(x: &[f32], y: &[f32], dim: usize) -> Option<MembraneSweep> {
+    let n = x.len();
+    if n < 8 || y.len() != n || dim < 2 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let tau_x = find_mi_lag(&xf)?;
+    let tau_y = find_mi_lag(&yf)?;
+    let span = (n as f64 / Φ) as usize;
+    if span < 1 {
+        return None;
+    }
+    let emb_y = embed_series(&yf, tau_y, dim);
+    if emb_y.is_empty() {
+        return None;
+    }
+    let mut curve = Vec::with_capacity(span);
+    let mut best: Option<(usize, f64)> = None;
+    for lag in 1..=span {
+        let emb_x = embed_series(&xf, lag, dim);
+        let te = if emb_x.is_empty() {
+            None
+        } else {
+            transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, lag, tau_y, TE_KSG_K)
+        };
+        if let Some(t) = te {
+            if best.is_none_or(|(_, b)| t > b) {
+                best = Some((lag, t));
+            }
+        }
+        curve.push(MembraneSweepPoint { lag, te });
+    }
+    Some(MembraneSweep {
+        tau_x,
+        tau_y,
+        span,
+        curve,
+        best,
     })
 }
 
@@ -3237,6 +3450,161 @@ mod tests {
             "topological membrane sees no arrow: te {} <= threshold {}",
             membrane_forward.te,
             membrane_forward.threshold
+        );
+    }
+
+    #[test]
+    fn gate_family_correction_over_tested_pair_set() {
+        let cutoff = benjamini_hochberg(&[0.001, 0.01, 0.3, 0.4], 0.05);
+        assert_eq!(cutoff, Some(0.01));
+        let passes = benjamini_hochberg_pass(&[0.001, 0.01, 0.3, 0.4], 0.05);
+        assert_eq!(passes, vec![true, true, false, false]);
+
+        let mut family = TeFamily::new("Bz->dB/dt tested pair set (sweep round)");
+        let i0 = family.push(0.42, 0.001);
+        let i1 = family.push(0.31, 0.01);
+        let i2 = family.push(0.02, 0.3);
+        let i3 = family.push(0.01, 0.4);
+        assert_eq!((i0, i1, i2, i3), (0, 1, 2, 3));
+        family.correct(0.05);
+        assert_eq!(family.name, "Bz->dB/dt tested pair set (sweep round)");
+        assert_eq!(family.len(), 4);
+        assert!(!family.is_empty());
+        assert!(family.pass(i0));
+        assert!(family.pass(i1));
+        assert!(!family.pass(i2));
+        assert!(!family.pass(i3));
+        assert!(!family.pass(4));
+
+        let mut twins = TeFamily::new("twin-te family");
+        let a = twins.push(0.5, 0.001);
+        let b = twins.push(0.5, 0.9);
+        let c = twins.push(0.5, 0.002);
+        let d = twins.push(0.5, 0.9);
+        twins.correct(0.05);
+        assert_eq!(twins.members[a].te, twins.members[b].te);
+        assert_eq!(twins.members[a].te, 0.5);
+        assert!(twins.pass(a));
+        assert!(!twins.pass(b));
+        assert!(twins.pass(c));
+        assert!(!twins.pass(d));
+    }
+
+    #[test]
+    fn gate_surrogate_p_value_ranks_the_causal_direction() {
+        let seed = 42u64;
+        let n = 200usize;
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        let mut x = vec![0f32; n];
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let forward = surrogate_p_value(&x, &y, 0, seed, 100)
+            .expect("the causal pair carries a surrogate-rank p-value");
+        let reverse = surrogate_p_value(&y, &x, 0, seed, 100)
+            .expect("the reverse pair carries a surrogate-rank p-value");
+        assert!(
+            forward < reverse,
+            "the causal p-value {} must rank below the reverse {}",
+            forward,
+            reverse
+        );
+        assert!(
+            forward < 0.2,
+            "the causal p-value {} must clear the family test level",
+            forward
+        );
+    }
+
+    #[test]
+    fn gate_membrane_lag_sweep_over_mi_lag_span() {
+        let n = 200usize;
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        let mut x = vec![0f32; n];
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let sweep = topological_te_lag_sweep(&x, &y, 3)
+            .expect("the membrane sweep carries a curve on the causal pair");
+        assert_eq!(
+            sweep.curve.len(),
+            sweep.span,
+            "the sweep must cover the whole MI-lag span"
+        );
+        assert_eq!(
+            sweep.curve.len(),
+            (n as f64 / Φ) as usize,
+            "the MI-lag span is the MI-search ceiling n/Φ"
+        );
+        let (best_lag, best_te) = sweep
+            .best
+            .expect("the membrane sweep carries a sweep-max over the span");
+        assert!(
+            best_te > 0.0,
+            "the membrane sweep-max TE {} must be positive on the causal pair",
+            best_te
+        );
+        assert!(best_lag >= 1 && best_lag <= sweep.span);
+        let at_tau = sweep
+            .curve
+            .iter()
+            .find(|p| p.lag == sweep.tau_x)
+            .map(|p| p.te);
+        assert!(
+            at_tau.flatten().is_some(),
+            "the membrane's canonical MI lag {} must carry a finite TE within the swept span",
+            sweep.tau_x
+        );
+    }
+
+    #[test]
+    fn gate_kde_h_sensitivity_against_embedded_silverman() {
+        let n = 200usize;
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        let mut x = vec![0f32; n];
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let factors = [1.0, 2.0, 3.0];
+        let sens = topological_te_kde_sensitivity(&x, &y, 3, &factors)
+            .expect("the KDE sensitivity run carries a curve");
+        assert!(
+            sens.h_x > 0.0 && sens.h_y > 0.0 && sens.h_f > 0.0,
+            "embedded_silverman bandwidths must be positive"
+        );
+        assert_eq!(sens.curve.len(), factors.len());
+        let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+        let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&xf, sens.tau_x, 3);
+        let emb_y = embed_series(&yf, sens.tau_y, 3);
+        let reference = transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, sens.tau_x, sens.tau_y);
+        for p in &sens.curve {
+            let te =
+                p.te.expect("every h factor carries a finite embedded-KDE TE");
+            assert!(
+                te > 0.0,
+                "the causal TE {} at factor {} must stay positive across the h scale",
+                te,
+                p.factor
+            );
+        }
+        let at_one = sens
+            .curve
+            .iter()
+            .find(|p| p.factor == 1.0)
+            .and_then(|p| p.te);
+        assert_eq!(
+            at_one, reference,
+            "factor 1.0 must reproduce the embedded-KDE reference"
         );
     }
 

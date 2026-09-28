@@ -4,7 +4,8 @@ use omegaflow::archivar::{
 };
 use omegaflow::force::force_name_of;
 use omegaflow::te::{
-    phase_randomized_surrogate, surrogate_stats, surrogate_stats_phase, transfer_entropy_lag,
+    TeFamily, phase_randomized_surrogate, surrogate_rank_p_value, surrogate_stats,
+    surrogate_stats_phase, transfer_entropy_lag,
 };
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -349,6 +350,7 @@ struct PairCell {
     te: Option<f64>,
     threshold: Option<f64>,
     surr_vals: Vec<f64>,
+    family_index: Option<usize>,
 }
 
 fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) -> Vec<PairCell> {
@@ -392,12 +394,13 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
             te,
             threshold,
             surr_vals,
+            family_index: None,
         });
     }
     cells
 }
 
-fn print_cells(title: Option<&str>, cells: &[PairCell], fam: Option<f64>) {
+fn print_cells(title: Option<&str>, cells: &[PairCell], family: Option<&TeFamily>) {
     if let Some(t) = title {
         println!();
         println!("{t}");
@@ -405,7 +408,7 @@ fn print_cells(title: Option<&str>, cells: &[PairCell], fam: Option<f64>) {
     for c in cells {
         match (c.te, c.threshold) {
             (Some(t), Some(h)) => {
-                let over_fam = fam.map_or(false, |f| t > f);
+                let over_fam = family.is_some_and(|f| c.family_index.is_some_and(|i| f.pass(i)));
                 let arrow = match (t > h, over_fam) {
                     (true, true) => "arrow*",
                     (true, false) => "arrow",
@@ -675,7 +678,6 @@ fn main() {
         ("Bz-RTSW", bz_rtsw.as_slice()),
         ("Density-RTSW", dens_rtsw.as_slice()),
     ];
-    let mut fam_pool: Vec<f64> = Vec::new();
     let mut m1_cells: Vec<PairCell> = Vec::new();
     let mut m2_cells: Vec<PairCell> = Vec::new();
     match common_window(&seconds_channels) {
@@ -697,9 +699,6 @@ fn main() {
                         &ys,
                         &[0, 1, 2],
                     );
-                    for c in &cells {
-                        fam_pool.extend(c.surr_vals.iter().copied());
-                    }
                     m1_cells.extend(cells);
                 }
             }
@@ -726,9 +725,6 @@ fn main() {
                         }
                         let (xs, ys) = pair_cells(&binned[j], &binned[i]);
                         let cells = te_row(channels[i].0, channels[j].0, &xs, &ys, &[0, 1, 2]);
-                        for c in &cells {
-                            fam_pool.extend(c.surr_vals.iter().copied());
-                        }
                         m2_cells.extend(cells);
                     }
                 }
@@ -736,30 +732,38 @@ fn main() {
             None => println!("common window empty — matrix absent"),
         }
     }
-    let fam_min: Option<f64> = if fam_pool.is_empty() {
-        None
-    } else {
-        Some(fam_pool.iter().cloned().fold(f64::NEG_INFINITY, f64::max))
-    };
+    let mut family =
+        TeFamily::new("the tested pair set of the minutes round (Matrix 1 + Matrix 2)");
+    for c in m1_cells.iter_mut().chain(m2_cells.iter_mut()) {
+        if let Some(te) = c.te {
+            if let Some(p) = surrogate_rank_p_value(te, &c.surr_vals) {
+                c.family_index = Some(family.push(te, p));
+            }
+        }
+    }
+    family.correct(0.05);
     print_cells(
         Some("=== Matrix 1 — seconds (lag ∈ {0, 1, 2} @ 1 min, common window) ==="),
         &m1_cells,
-        fam_min,
+        Some(&family),
     );
     print_cells(
         Some("=== Matrix 2 — 7-day (lag ∈ {0, 1, 2} @ 1 min, n = 10 078) ==="),
         &m2_cells,
-        fam_min,
+        Some(&family),
     );
     println!();
-    println!("=== Minutes-fam — the family bound over the 1-min-grid round ===");
-    match fam_min {
-        Some(f) => println!(
-            "fam = {:.4e} — the strongest surrogate TE of the minutes round ({} draws, Matrix 1 + Matrix 2); * = over fam.",
-            f,
-            fam_pool.len()
-        ),
-        None => println!("fam absent — the minutes round carries no surrogates (0 honored)."),
+    println!("=== Minutes-fam — Benjamini-Hochberg over the tested pair set ===");
+    if family.is_empty() {
+        println!("family absent — the minutes round carries no tested pairs (0 honored).");
+    } else {
+        let passing = family.members.iter().filter(|m| m.pass).count();
+        println!(
+            "family '{}': {} tested pairs, {} pass BH-FDR level 0.05; * = fdr-pass.",
+            family.name,
+            family.len(),
+            passing
+        );
     }
 
     println!();
@@ -856,7 +860,7 @@ fn main() {
         cross_n += 1;
         if let (Some(te), Some(thr)) = (c.te, c.threshold) {
             let arrow = te > thr;
-            let over_fam = fam_min.map_or(false, |f| te > f);
+            let over_fam = c.family_index.is_some_and(|i| family.pass(i));
             if arrow {
                 cross_arrows.push(format!("{}→{}", c.from, c.to));
             }
