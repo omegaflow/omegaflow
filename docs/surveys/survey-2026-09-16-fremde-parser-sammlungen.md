@@ -2,7 +2,7 @@
   title: Survey — fremde Parser-/Compiler-Sammlungen (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 3a4908972c3f6f7696488c92ed8fa1a103c0d4e0da6e8f663369dd7253aed944
+  sha256: 6917d5b981bfebffcc0320553ff75398d4e3a007c75f1f1183cfdedf4d82ccb2
   status: live
   see-also: phi/sources.φ phi/declined_sources.φ phi/blocked_sources.φ phi/dead_sources.φ
 -->
@@ -139,3 +139,12 @@ Quelle = die gemessene Lizenz-/Repo-Seite):
 - **Meltano / Singer** (`meltano/meltano`) — MIT (https://raw.githubusercontent.com/meltano/meltano/HEAD/LICENSE, 2026-09-28)
 - **Frictionless Data** (`frictionlessdata/frictionless-py`) — MIT (https://raw.githubusercontent.com/frictionlessdata/frictionless-py/HEAD/LICENSE.md, 2026-09-28)
 - **pySPEDAS** (`spedas/pyspedas`, im Text als ungemessene Ergänzung genannt) — MIT (https://raw.githubusercontent.com/spedas/pyspedas/HEAD/LICENSE.txt, 2026-09-28)
+
+## Gegenprobe (2026-09-28)
+
+Spalten/Quellen gegen die Live-Repos geprüft (`sfetch` auf die GitHub-API/Roh-Lizenzen, `archive_search --verdict/--playwright`). Ergebnis: **kein Widerspruch**.
+
+- Die Umfangszahlen (astroquery 69, SunPy 19, pyvo 11, GDAL 196, Airbyte 700+, Meltano 550+, HAPI-Serverliste, Frictionless) reproduzieren unter der Zählkonvention „Einträge = Dateien+Verzeichnisse".
+- Die 8 Lizenzen reproduzieren. HAPI bleibt `unverified` — gemessen **404**, nicht 403 (die Übergabe nannte 403; die Ursache divergiert, das Verdikt nicht).
+- Meltano-Zahl steht auf `hub.meltano.com` (heute 600+), die Quellenangabe nennt `meltano.com` — untere Schranke, Drift nach oben.
+- Airbyte exakter Totalzähler `pending` (Lazy-Load/Pagination); die 700+-Untergrenze deckt.

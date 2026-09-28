@@ -1222,9 +1222,13 @@ decline method
 url https://cds.climate.copernicus.eu/api/
 note HTTP 202 — Endpoint verlangt anderen Interaktionsmodus.
 
-decline superseded-by-integrated
+decline registry/katalog
 url https://cds.climate.copernicus.eu/api/catalogue/v1/collections
-note CDS collections (STAC-Registry) — dieselbe Messung via cds.climate.copernicus.eu/api integriert (sources.φ:7903).
+note CDS collections (STAC-Registry) — Metadaten-Registry, kein Messwert-Feld; die frühere Behauptung „integriert (sources.φ:7903)" ist nicht tragfähig (kein era5/reanalysis/ecmwf/copernicus in sources.φ; 7903 = ndbc WVHT).
+
+decline model-forecast
+url https://cds.climate.copernicus.eu/api/retrieve/v1/processes/reanalysis-era5-single-levels
+note ERA5 Reanalyse (ECMWF/CDS) — 2026-09-28 retrieve 200 / GET 405, catalogue 200, data_format grib|netcdf; Reanalyse = Modellprodukt, SOURCE_PORT.md:220 schließt Modell-Forecasts/Reanalysen aus.
 
 decline registry/katalog
 url https://cdsarc.cds.unistra.fr/saadavizier.tap/tap
