@@ -9,10 +9,10 @@ note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.r
 note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
 note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
 note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; kein Extraktor-Arm gebaut.
-note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Reader-Arm fehlt.
+note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Arm steht (src/archivar/pds3_table.rs; tools/harvest/src/bin/pds3_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Reader-Arm fehlt.
 note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm fehlt.
-note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Reader-Arm fehlt.
+note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm fehlt.
 
 descoped
@@ -415,15 +415,15 @@ note Chandrayaan-1 (ISRO) Mini-RF .img (PDS3-Raster) + M3 ENVI-Cube — 2026-09-
 parser-def pds3
 gap pds3-fixed-width
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Spalten ohne In-File-Einheiten (im .lbl), 2026-09-28 HTTP 206. Termoskan/VSK-FREGAT ebenso PDS3; unit-auto-detect gilt zusätzlich.
+note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Spalten ohne In-File-Einheiten (im .lbl), 2026-09-28 HTTP 206. Termoskan/VSK-FREGAT ebenso PDS3; unit-auto-detect gilt zusätzlich. Arm steht (pds3_table.rs, 2026-09-28); offen: CI-Manifest (Mycelium).
 
 parser-def pds3
 gap pds3-fixed-width
 url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. Ballons atmos.nmsu.edu/PDS/data/vega_5001/.
+note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. Ballons atmos.nmsu.edu/PDS/data/vega_5001/. Arm steht (pds3_table.rs, 2026-09-28); offen: CI-Manifest (Mycelium).
 
 parser-def tab
 gap pds4-fixed-width
 url https://sbnarchive.psi.edu/pds4/hayabusa/
-note Hayabusa LIDAR (JAXA/ISAS) cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten (MET/UTC/Range/…), kein In-File-Header, Einheiten im XML-Label, 43–177 MB je .tab. Range = em.
+note Hayabusa LIDAR (JAXA/ISAS) cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label, 43–177 MB je .tab. Range = em. Arm steht (pds4.rs; cdr_f 154708 Z./31 Spalten); offen: CI-Manifest (Mycelium).
 
