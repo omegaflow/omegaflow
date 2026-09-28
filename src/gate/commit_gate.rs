@@ -1774,6 +1774,57 @@ fn check_status_proof(
     }
 }
 
+pub fn ereignis_folge_violations(
+    ereignisse: &str,
+    wartend: Option<&str>,
+    blocked: Option<&str>,
+) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    for (idx, line) in ereignisse.lines().enumerate() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let fields: Vec<&str> = t.split('|').map(str::trim).collect();
+        let Some(klasse) = fields.get(3) else {
+            continue;
+        };
+        if *klasse != "account" && *klasse != "send" {
+            continue;
+        }
+        let gegenstand = match fields.get(4) {
+            Some(g) if !g.is_empty() => *g,
+            _ => {
+                out.push((
+                    idx + 1,
+                    "ereignis-ohne-gegenstand".to_string(),
+                    feedback("ereignis-ohne-gegenstand").to_string(),
+                ));
+                continue;
+            }
+        };
+        if !register_carries(wartend, gegenstand) && !register_carries(blocked, gegenstand) {
+            out.push((
+                idx + 1,
+                "ereignis-ohne-folge".to_string(),
+                feedback("ereignis-ohne-folge").to_string(),
+            ));
+        }
+    }
+    out
+}
+
+fn register_carries(text: Option<&str>, token: &str) -> bool {
+    let Some(text) = text else {
+        return false;
+    };
+    let needle = token.to_lowercase();
+    text.lines().any(|line| {
+        let t = line.trim();
+        !t.is_empty() && !t.starts_with('#') && t.to_lowercase().contains(&needle)
+    })
+}
+
 pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<String>) {
     let tracked_set: HashSet<&str> = tracked.iter().map(String::as_str).collect();
     let declared_set: HashSet<&str> = declared.iter().map(String::as_str).collect();
@@ -1824,6 +1875,37 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
         return Some("phi-sources-note");
     }
     prose_violation(line)
+}
+
+pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < added.len() {
+        if !added[i].starts_with("url ")
+            || !added[i].contains("github.com/omegaflow/sources/releases/download/")
+        {
+            i += 1;
+            continue;
+        }
+        let mut has_basis = false;
+        let mut j = i + 1;
+        while j < added.len() {
+            let line = added[j];
+            if line.is_empty() || line.starts_with("url ") {
+                break;
+            }
+            if line.starts_with("origin ") || line.starts_with("terms ") {
+                has_basis = true;
+                break;
+            }
+            j += 1;
+        }
+        if !has_basis {
+            out.push((i + 1, feedback("unbacked_mirror").to_string()));
+        }
+        i += 1;
+    }
+    out
 }
 
 fn entry_carries_move_note(content: &str, url_idx: usize) -> bool {
@@ -4221,6 +4303,22 @@ mod tests {
     }
 
     #[test]
+    fn fp_unbacked_mirror_requires_basis() {
+        let bare = ["url https://github.com/omegaflow/sources/releases/download/tag/a.bin"];
+        assert_eq!(unbacked_mirror_violations(&bare).len(), 1);
+        let origin = [
+            "url https://github.com/omegaflow/sources/releases/download/tag/a.bin",
+            "origin https://example.org/x",
+        ];
+        assert!(unbacked_mirror_violations(&origin).is_empty());
+        let terms = [
+            "url https://github.com/omegaflow/sources/releases/download/tag/b.bin",
+            "terms CC BY-NC-SA",
+        ];
+        assert!(unbacked_mirror_violations(&terms).is_empty());
+    }
+
+    #[test]
     fn fp_doc_open_marker_gate_contract() {
         assert!(doc_open_marker_line("offener Punkt: noch zu bauen"));
         assert!(doc_open_marker_line("Naechster Schritt: bauen"));
@@ -4386,5 +4484,49 @@ mod tests {
             v.iter()
                 .any(|(l, r, _)| *l == 3 && r == "wartend-ohne-trigger-beleg")
         );
+    }
+
+    #[test]
+    fn fp_ereignis_account_ohne_folge() {
+        let v = ereignis_folge_violations(&fx("ereignis_account"), None, None);
+        assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-folge"));
+    }
+
+    #[test]
+    fn fn_ereignis_account_mit_blocked_folge() {
+        let v = ereignis_folge_violations(
+            &fx("ereignis_account"),
+            None,
+            Some(&fx("ereignis_blocked_folge")),
+        );
+        assert!(v.is_empty());
+    }
+
+    #[test]
+    fn fp_ereignis_send_ohne_folge() {
+        let v = ereignis_folge_violations(&fx("ereignis_send"), None, None);
+        assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-folge"));
+    }
+
+    #[test]
+    fn fn_ereignis_send_mit_wartend_folge() {
+        let v = ereignis_folge_violations(
+            &fx("ereignis_send"),
+            Some(&fx("ereignis_wartend_folge")),
+            None,
+        );
+        assert!(v.is_empty());
+    }
+
+    #[test]
+    fn fn_ereignis_wort_klasse_ohne_folge() {
+        let v = ereignis_folge_violations(&fx("ereignis_wort"), None, None);
+        assert!(v.is_empty());
+    }
+
+    #[test]
+    fn fp_ereignis_ohne_gegenstand() {
+        let v = ereignis_folge_violations(&fx("ereignis_ohne_gegenstand"), None, None);
+        assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-gegenstand"));
     }
 }

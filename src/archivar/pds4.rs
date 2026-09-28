@@ -83,10 +83,10 @@ pub struct Pds4Meta {
 }
 
 #[derive(Clone, Debug)]
-struct XElem {
-    name: String,
-    text: String,
-    children: Vec<XElem>,
+pub struct XElem {
+    pub name: String,
+    pub text: String,
+    pub children: Vec<XElem>,
 }
 
 impl XElem {
@@ -271,7 +271,7 @@ fn parse_element(bytes: &[u8], pos: &mut usize, depth: usize) -> Option<XElem> {
     Some(elem)
 }
 
-fn parse_xml(doc: &str) -> Option<XElem> {
+pub fn parse_xml(doc: &str) -> Option<XElem> {
     let bytes = doc.as_bytes();
     let mut pos = 0usize;
     skip_prolog(bytes, &mut pos);
