@@ -46,7 +46,7 @@ jobs:
         run: |
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 7200 -o kernels/near_cruise_nav_v1.bsp \
-            https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp \
+            https://naif.jpl.nasa.gov/pub/naif/pds/data/near-a-spice-6-v1.0/nearsp_1000/data/spk/near_cruise_nav_v1.bsp \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "near-ephemeris-cdn: near_cruise_nav_v1.bsp returned void" \
                  "curl on naif.jpl.nasa.gov did not reach the NEAR cruise SPK. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
