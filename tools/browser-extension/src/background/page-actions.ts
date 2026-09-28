@@ -369,13 +369,13 @@ export async function pageDispatch(
     case "eval": {
       // Runs in the content-script (isolated) world — full DOM access, but not
       // the page's own JS globals. Result is JSON-roundtripped for transport.
-      // biome-ignore lint/security/noGlobalEval: deliberate, behind the opt-in debug group.
-      const raw = globalThis.eval(p.code ?? "");
       let result: unknown;
       try {
-        result = JSON.parse(JSON.stringify(raw ?? null));
-      } catch {
-        result = String(raw);
+        // biome-ignore lint/security/noGlobalEval: deliberate, behind the opt-in debug group.
+        const raw = globalThis.eval(String(p.code ?? ""));
+        result = raw === undefined ? null : JSON.parse(JSON.stringify(raw));
+      } catch (err) {
+        result = { error: err instanceof Error ? err.message : String(err) };
       }
       return { result };
     }
