@@ -88,7 +88,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18387: CDPP-Auth OK; retry 200 wirkungslos, DONE_WITH_WARNING, 0/96978 Fehler, Download 500. Gegenprobe 2026-09-28: anonym 403 (F5), UA ohne Wirkung, kein ip-Block (Wurzel 200); Gate = CDPP-Konto/orderToken.
+note DEMETER Order 18400 server-seitig defekt: availableFilesCount 0, filesInErrorCount 1000; 18387 DONE_WITH_WARNING 96978/97078; kein ip-Block. UA-Riss: mountain 403/403 vs sensory 403/202 (orderToken). Wartend (wartend.φ:4), Order exp 2026-10-05.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
