@@ -3,7 +3,7 @@
   session: Sensory-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: 6a38ad8e1e86035943aee2035cdbfa20a118959403161e663505d508a1aa94f9
+  sha256: 78adb98f4cdf8ed789f6cc77ac7fb61539f39186e91c120252966f37b79fd812
   status: live
 -->
 # Handover — Sensory-Folge 195 (2026-09-28)
@@ -179,10 +179,15 @@ werden getragen, nie geglättet (0 honored).
 **Sonden-Flotten-Erweiterung — Asien/Russland, anonym offen** (gemessen 2026-09-28,
 `research-max`, harte Bandagen; Details + Belege in
 `docs/surveys/survey-2026-09-16-sonden-flotte.md` `## Nachtrag 2026-09-28`).
-Alle Routen 200 anonym; Vorprüfung: keine dieser Missionen steht bisher in
-`phi/sources.φ`, `phi/blocked_sources.φ`, `phi/declined_sources.φ` (Grünland). Mountains Feder:
-die `url`/`origin`/`compiler`-Zeilen (Mycelium: Quellen-Aufnahme/Compiler) — je Route
-ein Port-Schritt nach `docs/SOURCE_PORT.md`.
+Alle Routen 200 anonym. Korrigierte Vorprüfung (`archive_search` über `phi/` + `docs/`,
+2026-09-28): **teils schon im Haus** — `phi/sources_index.φ` trägt NAIF-Kernel-Dirs für
+BepiColombo, ExoMars2016, Hayabusa, Hayabusa2 (`hyb2`), Vega, LunarOrbiter, SELENE;
+BepiColombo ist registriert (`phi/sources.φ bc_mpo_mag`, `phi/blocked_sources.φ:53`).
+**Neu** (`archive_search`-Zähler 0): Akatsuki-RS, Chandrayaan, Venera 15/16, Phobos-2,
+Danuri/KASI, CNSA. Mountains Feder: die `url`/`origin`/`compiler`-Zeilen (Mycelium:
+Aufnahme/Compiler) — je Route ein Port-Schritt nach `docs/SOURCE_PORT.md`. **Eingetragen
+2026-09-28 als `ausstehend kandidat` in `phi/pipeline/ledger.φ`** (owner mycelium; der
+Pass liest sie per `register_lookup --open`).
 
 - **Akatsuki Radio Science (JAXA/ISAS)** — `https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/` — PDS4-Bundle `urn:jaxa:darts:vco_rs`, SIS `…/vco_rs/document/vco_rs_sis_v13.pdf`. Einziges asiatisches Radio-Science-Roh mit offener Tür.
 - **Hayabusa PDS4 (JAXA/ISAS)** — `https://sbnarchive.psi.edu/pds4/hayabusa/` (AMICA/LIDAR/NIRS/Mission/SPICE).
@@ -206,6 +211,9 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **CNSA Tianwen-1** — `nssdc.ac.cn`: Portal 200, Antrag/Konto.
 - **ISRO Chandrayaan-2/3, MOM, Aditya-L1** — `pradan.issdc.gov.in` / `mrbrowse.issdc.gov.in`: account nötig.
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
+
+**Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
+`state/zustand/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
