@@ -2,7 +2,7 @@
   title: Der Blatt-Papier-Beweis — die Richtung der Information, auf einer Seite
   class: concept
   date: 2026-08-21
-  sha256: c371da4ac01d80499a531be43d6119be1b3a110e01e12d261fd67548405fa11c
+  sha256: 92ee30d55658d6b45d22510e875661e5bcb969c1d2a3cd1109257b27e90d54b1
   see-also: docs/paper/laic-arrow-direction.md docs/specs/broken-null-control.md
 -->
 # DER BLATT-PAPIER-BEWEIS
@@ -74,9 +74,9 @@ Ein ungemessener Wert ist `pending`, nie eine Zahl (0 honored).
 
 | Blatt | Rätsel | Paar | Kanäle (Stand 2026-08-21) |
 |---|---|---|---|
-| I | ENSO — treibt der Wind das Meer? | Wind ↔ SST | SST thermal (Argovis `argovis-api` registriert; imos_argo_sst / ESA-CCI pending), Wind advective (FROST met.no lebt; TAO/ERA5 pending), SOI acoustic (pending) |
+| I | ENSO — treibt der Wind das Meer? | Wind ↔ SST | SST thermal (Argovis `argovis-api` registriert; ESA-CCI gebaut, `sources.φ:1428`; imos_argo_sst declined (`decline superseded-by-integrated` — regionaler Argo-Spiegel, Argovis integriert)), Wind advective (FROST met.no lebt; TAO/ERA5 pending), SOI declined (`decline aggregate-index`, CPC `data/indices/soi` — aggregierter skalarer Index, positionslos) |
 | II | Geomagnetischer Sturm — welcher Parameter treibt? | Bz / Speed / Dichte → Kp / INTERMAGNET | alle leben: rtsw_mag_1m (sources.φ:103), rtsw_wind_1m (:109), Kp (:124), OMNI BZ_GSM1800 (:513), BGS-INTERMAGNET-HAPI (:1067) |
-| III | LAIC (Nadel IV) — warnt die Erde den Himmel? | Lithosphäre → Ionosphäre | USGS-Katalog lebt (`usgs_mt_mww`, :106), Swarm-VirES lebt (:1100), CSES pending Recherche, INTERMAGNET lebt (:1067) |
+| III | LAIC (Nadel IV) — warnt die Erde den Himmel? | Lithosphäre → Ionosphäre | USGS-Katalog lebt (`usgs_mt_mww`, :106), Swarm-VirES lebt (:1100), CSES Zugang blockiert (SSDC account/PI authorization; Trigger 2026-10-02), INTERMAGNET lebt (:1067) |
 
 Die Aufträge: `handover-2026-08-21-blatt-enso-kausalpfeil.md`,
 `handover-2026-08-21-blatt-bz-geomagnetisch.md`,

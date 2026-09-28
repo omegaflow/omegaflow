@@ -4122,6 +4122,10 @@ decline commercial
 url https://thingspeak.com/
 note ThingSpeak (MathWorks) — kommerziell; Registrierung account/create antwortet 404. Descope 2026-09-12. Party-Messung 2026-09-14: öffentliche Channels anonym lesbar — api.thingspeak.com/channels/<id>/feeds.json + /channels/public.json, kein Key.
 
+decline superseded-by-integrated
+url https://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/catalog.html
+note IMOS-Argo-SST = regionaler Spiegel der globalen Argo-Floats; Argo temperature via Argovis argovis-api integriert (field argo_temperature_c). ERDDAP erddap.aodn.org.au dns-tot, Nachfolger thredds netCDF. Gemessen 2026-09-28.
+
 decline registry/katalog
 url https://thredds.met.no/
 note MET Norway THREDDS (direct 301, Proton 200) — Daten-Katalog, kein Messwert am Punkt.
@@ -4416,7 +4420,7 @@ note ONI (Oceanic Niño Index) — skalar, positionslos.
 
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/soi
-note SOI (Southern Oscillation Index) — skalar, positionslos.
+note SOI (Southern Oscillation Index) — (Tahiti−Darwin) standardisierte SLP-Differenz, skalar positionslos; HTTP 200 12968 B, 2026-09-28.
 
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
