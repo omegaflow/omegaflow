@@ -831,12 +831,12 @@ fn the_no_te_tick_hears_each_oscillator_not_the_sum() {
     app.natural_latency_ticks = 1;
     app.probe_omega = [0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0];
     app.prev_probe_omega = [0.0, 0.0, 0.25, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0];
-    app.tick();
     let mut integral = 0.0f32;
     for i in 0..9 {
         let d_i = app.probe_omega[i] - app.prev_probe_omega[i];
         integral += perm_target(app.probe_omega[i].abs(), d_i.abs());
     }
+    app.tick();
     let alpha = 1.0f32 - (-1.0f32 / 1.0f32).exp();
     let expected = (integral / 9.0) * alpha;
     assert_eq!(app.field_permeability, expected);

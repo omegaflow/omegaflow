@@ -3402,24 +3402,31 @@ mod tests {
         assert!((te0 - tel).abs() < 1e-9 * te0.abs());
     }
 
+    fn causal_pair_ar(n: usize, seed: u64) -> (Vec<f32>, Vec<f32>) {
+        let mut rng = seed;
+        let cause = gate_ar1(n, 0.5, &mut rng);
+        let effect: Vec<f32> = (0..n)
+            .map(|i| {
+                if i == 0 {
+                    gate_rng(&mut rng) as f32
+                } else {
+                    (0.9 * cause[i - 1] as f64 + (gate_rng(&mut rng) * 0.2 - 0.1)) as f32
+                }
+            })
+            .collect();
+        (effect, cause)
+    }
+
     #[test]
     fn gate_scalar_probe_path_parity_with_topological_membrane() {
-        let seed = 42u64;
-        let n = 200usize;
-        let mut y = vec![0f32; n];
-        for (t, slot) in y.iter_mut().enumerate() {
-            *slot = (t as f32 * 0.5).sin();
-        }
-        let mut x = vec![0f32; n];
-        for t in 0..n - 1 {
-            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
-        }
+        let seed = 0x9E37_79B9_7F4A_7C15u64;
+        let (x, y) = causal_pair_ar(300, seed);
 
         let scalar_forward =
-            transfer_entropy_lag(&x, &y, 0).expect("the scalar probe path carries TE(x, y)");
+            transfer_entropy_lag(&x, &y, 0).expect("the scalar probe path carries TE(y -> x)");
         let scalar_reverse =
-            transfer_entropy_lag(&y, &x, 0).expect("the scalar probe path carries TE(y, x)");
-        let (_, _, scalar_threshold) = surrogate_stats_phase(&x, &y, 0, seed)
+            transfer_entropy_lag(&y, &x, 0).expect("the scalar probe path carries TE(x -> y)");
+        let (_, _, scalar_threshold) = surrogate_stats_phase_n(&x, &y, 0, seed, 100)
             .expect("the scalar probe path carries a phase-surrogate threshold");
         assert!(
             scalar_forward > scalar_reverse,
@@ -3493,15 +3500,7 @@ mod tests {
     #[test]
     fn gate_surrogate_p_value_ranks_the_causal_direction() {
         let seed = 42u64;
-        let n = 200usize;
-        let mut y = vec![0f32; n];
-        for (t, slot) in y.iter_mut().enumerate() {
-            *slot = (t as f32 * 0.5).sin();
-        }
-        let mut x = vec![0f32; n];
-        for t in 0..n - 1 {
-            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
-        }
+        let (x, y) = causal_pair_ar(300, seed);
         let forward = surrogate_p_value(&x, &y, 0, seed, 100)
             .expect("the causal pair carries a surrogate-rank p-value");
         let reverse = surrogate_p_value(&y, &x, 0, seed, 100)
@@ -3521,15 +3520,8 @@ mod tests {
 
     #[test]
     fn gate_membrane_lag_sweep_over_mi_lag_span() {
-        let n = 200usize;
-        let mut y = vec![0f32; n];
-        for (t, slot) in y.iter_mut().enumerate() {
-            *slot = (t as f32 * 0.5).sin();
-        }
-        let mut x = vec![0f32; n];
-        for t in 0..n - 1 {
-            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
-        }
+        let (x, y) = causal_pair_ar(300, 0x9E37_79B9_7F4A_7C15u64);
+        let n = x.len();
         let sweep = topological_te_lag_sweep(&x, &y, 3)
             .expect("the membrane sweep carries a curve on the causal pair");
         assert_eq!(
@@ -3565,15 +3557,7 @@ mod tests {
 
     #[test]
     fn gate_kde_h_sensitivity_against_embedded_silverman() {
-        let n = 200usize;
-        let mut y = vec![0f32; n];
-        for (t, slot) in y.iter_mut().enumerate() {
-            *slot = (t as f32 * 0.5).sin();
-        }
-        let mut x = vec![0f32; n];
-        for t in 0..n - 1 {
-            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
-        }
+        let (x, y) = causal_pair_ar(300, 0x9E37_79B9_7F4A_7C15u64);
         let factors = [1.0, 2.0, 3.0];
         let sens = topological_te_kde_sensitivity(&x, &y, 3, &factors)
             .expect("the KDE sensitivity run carries a curve");
