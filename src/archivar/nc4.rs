@@ -35,10 +35,7 @@ pub fn dimensions(file: &Hdf5File) -> Result<Vec<(String, u64)>, Hdf5Note> {
     Ok(variables(file)?
         .into_iter()
         .filter(|v| v.is_dimension_scale)
-        .map(|v| {
-            let len = v.dims.first().copied().unwrap_or(0);
-            (v.name, len)
-        })
+        .filter_map(|v| v.dims.first().copied().map(|len| (v.name, len)))
         .collect())
 }
 
