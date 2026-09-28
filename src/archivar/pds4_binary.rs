@@ -324,10 +324,7 @@ pub fn decode_rows(bytes: &[u8], meta: &Pds4BinaryMeta) -> Option<DecodeOutput> 
     if meta.groups != Some(0) {
         return None;
     }
-    let offset = match meta.table_offset {
-        Some(o) => o,
-        None => 0,
-    };
+    let offset = meta.table_offset.unwrap_or(0usize);
     let data = bytes.get(offset..)?;
     let stride = record_stride(meta, data.len())?;
     let span = data_span(meta)?;
