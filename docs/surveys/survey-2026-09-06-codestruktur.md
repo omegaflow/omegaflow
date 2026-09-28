@@ -2,7 +2,7 @@
   title: Survey — Codestruktur: Archivar, Mathematikerin, Tools
   class: survey
   date: 2026-09-06
-  sha256: 6076126ceb762773f24eafe8fefc7aeb85656a8d2b6d7df95b0b3c37016591f5
+  sha256: 65ea20b73f41f4bece856d9bc77430084b038f6b964d42ba4eca122e2304551f
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
 -->
@@ -126,6 +126,9 @@ Die Struktur-Karte und die ersten zwei Dimensionen sind gemessen. Offen:
   `sread`):** River-Folge 57 (`8748a39cd`, „release the window HUD under hidden")
   hat die Zeile auf `if self.silent || std::io::stderr().is_terminal()` erweitert;
   `self.silent` = `OMEGAFLOW_HIDDEN` (`omega.rs:234`), das `matrix-rotor.yml:122`
-  setzt. Der Weg ist damit **gebaut**; die Messung folgt dem nächsten
-  `matrix-rotor`-Lauf auf einem HEAD mit `8748a39` (`sgrep "window:"` im
-  `matrix-rotor.txt`-Asset erwartet ≥ 1). `pending` (Verifikation).
+  setzt. Der Weg ist damit **gebaut**. **Verifiziert (gemessen 2026-09-28 via
+  `sgrep -c "window:"`):** das `matrix-state`-Release-Asset `matrix-rotor.txt`
+  (aktualisiert 14:31:21Z durch `matrix-rotor`-Lauf `36436173707`, head `4fc1221e`;
+  `8748a39cd` ist Vorfahr) trägt **66** `φ window:`-Zeilen, gerendert mit
+  `rec silent` (= unter `OMEGAFLOW_HIDDEN`); der Lauf `36430550956` (head
+  `cd50474c5`) trug den Fix ebenso. Die HUD-Zeile geht durch das Gate. `erledigt`.
