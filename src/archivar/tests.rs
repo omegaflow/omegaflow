@@ -10310,8 +10310,8 @@ fn uscrn_parsers_convert_and_skip_missing() {
         Some(crate::geo::COMP_USCRN_MAX)
     );
     assert_eq!(
-        super::zeuge::magic_identity(magic),
-        Some(super::zeuge::FeldIdentitaet::Oszillator)
+        super::witness::magic_identity(magic),
+        Some(super::witness::FieldIdentity::Oscillator)
     );
 }
 

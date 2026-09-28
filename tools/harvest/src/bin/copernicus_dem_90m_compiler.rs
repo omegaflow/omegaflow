@@ -1,5 +1,5 @@
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::process::Command;
@@ -77,7 +77,7 @@ fn is_main_dem(key: &str) -> bool {
 
 fn witness_gestalt_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)) => {
+        Some(FieldIdentity::Witness(WitnessKind::Gestalt)) => {
             eprintln!(
                 "{} reads as a gestalt witness record",
                 String::from_utf8_lossy(&magic)

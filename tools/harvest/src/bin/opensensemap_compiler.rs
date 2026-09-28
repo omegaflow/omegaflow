@@ -5,7 +5,7 @@ use omegaflow::archivar::geo::{COMP_OSM_TEMP, GeoRec, MAGIC_OSM, parse_bin, writ
 use omegaflow::archivar::json::{JsonVal, jpath_val, jstr, parse_json, scalar_of};
 use omegaflow::archivar::parse_iso_tdb;
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
+use omegaflow::witness::{FieldIdentity, magic_identity};
 
 const NETLOC: &str = "api.opensensemap.org";
 const BOXES_URL: &str =
@@ -22,7 +22,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 
 fn witness_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Oszillator) => Ok(()),
+        Some(FieldIdentity::Oscillator) => Ok(()),
         Some(other) => Err(format!(
             "{} reads {:?}, not an oscillator — the asset stays unwritten",
             String::from_utf8_lossy(&magic),
@@ -231,7 +231,7 @@ mod tests {
 
     #[test]
     fn osm_magic_is_an_oscillator() {
-        assert_eq!(magic_identity(MAGIC_OSM), Some(FeldIdentitaet::Oszillator));
+        assert_eq!(magic_identity(MAGIC_OSM), Some(FieldIdentity::Oscillator));
         assert!(witness_identity(MAGIC_OSM).is_ok());
     }
 
