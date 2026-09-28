@@ -2413,7 +2413,7 @@ ttl 86400
 on earth 0 0 0
 field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
 format spectral
 origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
@@ -9204,7 +9204,7 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
@@ -10472,7 +10472,7 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/first14.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -10602,7 +10602,7 @@ rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -15353,6 +15353,13 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at callisto
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_cassini.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/spk/990807A_SCEPH_EM52_EP13.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at cassini
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15435,6 +15442,13 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at galatea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galileo.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/spk/s970311a.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at galileo
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
@@ -15592,6 +15606,13 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mercury
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_messenger.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/messsp_1000/data/spk/msgr_040803_120516_140823_od268sc_0.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at messenger
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15625,6 +15646,13 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at naiad
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_near.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at near
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
@@ -15746,6 +15774,13 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at rhea
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rosetta.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/ROSETTA/kernels/spk/ORER_______________00031.BSP
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at rosetta
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15863,6 +15898,48 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager2
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1999-08-18)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at cassini
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1990-12-08)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at galileo
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1992-12-08)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at galileo
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-08-02)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at messenger
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1998-01-23)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at near
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-03-04)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at rosetta
 no-cadence
 
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
