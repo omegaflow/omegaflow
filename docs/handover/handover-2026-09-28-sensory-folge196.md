@@ -3,7 +3,7 @@
   session: Sensory-Folge 196
   class: handover
   date: 2026-09-28
-  sha256: 067449e9dec8875403cd721ba939cf6bd255dabd18a8c8c6f74d4e71ae1a3bd3
+  sha256: e05d5336603dcd80e3e0f26ede43212c7c6b4a4a5c0ee7b29ba880575572f0ef
   status: live
 -->
 # Handover — Sensory-Folge 196 (2026-09-28)
@@ -75,15 +75,16 @@ als Nachtrag gesetzt. Der Träger bleibt für die echten `request-only`-Marker.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom. Dispatch flash-first — den billigsten Vertreter, dessen Profil den Job trägt; ein `max`-Agent nur für die harten Atome, nie für Routine. Benenne die lokalen Tools (`archive_search`, `sgrep`, `sfetch`) in der Delegation. Benchmarks nur mit Operator-Wort oder gemessen falschem/unvollständigem flash-Ergebnis." | 2026-09-28 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 196.
 - **Wort:** „warum bis 12:46:18 UTC. ich habe doch einen neuen job angestoßen siehe mail im eingang" | 2026-09-28 | Operator (Session) — Korrektur: der gültige Datenweg ist die neue Order 18400 (abrufbar bis 5 Okt 2026 05:04:06 UTC), nicht der Token-Ablauf der alten 18387; Sensory-Folge 196.
 - **Wort:** „ich bin eingelockt" | 2026-09-28 | Operator (Session) — Freigabe, den 18400-Metalink über die angemeldete CDPP-SPA (Browser-Identität) zu holen; ausgeführt: Metalink gesichert (68 900 022 B); Sensory-Folge 196.
+- **Wort:** „und hast du das auch im browser untersucht?" | 2026-09-28 | Operator (Session) — Auftrag, den Datei-Endpoint im angemeldeten Browser zu messen; ausgeführt: UA-gated (curl mit Browser-UA 202, Browser 202; 18387 500), kein IP-/WAF-Block; Sensory-Folge 196.
 
 ## Offen (aufgeschlüsselt)
 
-### DEMETER (Order 18400) — Route blockiert (F5-ASM-WAF)
+### DEMETER (Order 18400) — Order noch `Running`, Datei-Endpoint UA-gated
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Order 18400 wechselt von `Running` auf `Done`/`available files` **und** der Datei-Endpoint antwortet 200 statt WAF — oder ein unabhängiger Spiegel öffnet sich.
-- **Lage:** (gemessen 2026-09-28) Die alte Order 18387 („Done with warning", 97 078 Dateien / 34,71 GB) ist per **2026-09-28 12:46:18 UTC** abgelaufen; ihr Metalink-Token ist damit tot. **Der gültige Datenweg ist Order 18400** (Mail `state/mail/mail_ledger.φ:175`, CNES 07:04 UTC; Portal-Tab `cdpp-archive.cnes.fr`, eingeloggt): **abrufbar bis 10/05/2026 05:04:06 UTC**, Stand **Running 0 %**, 97 078 Dateien / 34,71 GB (Portal-Snapshot 10:46 UTC). Das **Metalink ist gesichert**: `data/regards.cnes.fr/order_18400.metalink` — **68 900 022 B, 97 078 Datei-URLs, `</metalink>` vollständig** (`curl -L`, 10:47 UTC, 59,6 s). Der **Datei-Endpoint bleibt WAF-gesperrt**: die erste Datei-URL aus dem frischen Metalink (Token-`exp` ≈ 5 Okt) antwortet `403` (684 B); `archive_search --verdict` auf `rs-order`/`orders/18400` = direct 403 / Proton 403 / Wayback 0. Die **90 693 lokalen `*.DAT`** sind durchweg ≤1 kB und tragen die 246-B-WAF-Seite — kein Datenbyte. Lesen/Metalink autonom; der Send/Order-Akt bleibt Operator-Hand.
-- **Blockade:** F5-ASM-WAF am Datei-Endpoint **und** Order 18400 noch `Running 0 %` (0 verfügbare Dateien; der Portal-Zip-Button ist deaktiviert).
-- **Braucht:** Order 18400 abschließen lassen **und** Route öffnen — Trigger: der Portal-Status wechselt auf `Done`/available files **und** `curl -s -o /dev/null -w '%{http_code}' '<datei-url-aus-dem-metalink>'` antwortet 200 statt 403 → Dateien aus `data/regards.cnes.fr/order_18400.metalink` ziehen, **vor 10/05/2026 05:04:06 UTC**. Metalink-Nachschub: Portal-Link „Download order metalink file" (Browser-Login Operator). Register-Duty `blocked ip-blocked` (CDPP-WAF-Route) als `## An Mycelium`-Träger gesetzt (Myceliums Feder).
+- **Trigger:** Order 18400 wechselt von `Running` auf `Done`/`available files` — dann liefert der Datei-Endpoint die Daten (HTTP 200) — oder ein unabhängiger Spiegel öffnet sich.
+- **Lage:** (gemessen 2026-09-28) Die alte Order 18387 („Done with warning", 97 078 Dateien / 34,71 GB) ist per **2026-09-28 12:46:18 UTC** abgelaufen; ihr Metalink-Token ist damit tot. **Der gültige Datenweg ist Order 18400** (Mail `state/mail/mail_ledger.φ:175`, CNES 07:04 UTC; Portal-Tab `cdpp-archive.cnes.fr`, eingeloggt): **abrufbar bis 10/05/2026 05:04:06 UTC**, Stand **Running 0 %**, 97 078 Dateien / 34,71 GB (Portal-Snapshot 11:00 UTC). Das **Metalink ist gesichert**: `data/regards.cnes.fr/order_18400.metalink` — **68 900 022 B, 97 078 Datei-URLs, `</metalink>` vollständig** (`curl -L`, 10:47 UTC). **Korrektur (gemessen 11:00 UTC): der Datei-Endpoint ist NICHT WAF/IP-gesperrt, sondern UA-gated** — `curl` ohne Browser-UA → `403`; **mit Browser-UA** → `202` (content-length 0, Order noch nicht fertig). Im angemeldeten Browser (DevTools, CDP) dasselbe: 18400-Datei `202`, 18387-Datei `500` (Alt-Order finalisiert/leer). Die Blockade ist der **Order-Zustand**, nicht die Route; der `orderToken` steht in der URL, kein Login nötig. Die **90 693 lokalen `*.DAT`** sind durchweg ≤1 kB und tragen die 246-B-Seite — kein Datenbyte. Lesen/Metalink autonom; der Send/Order-Akt bleibt Operator-Hand.
+- **Blockade:** Order 18400 noch `Running 0 %` — der Datei-Endpoint antwortet `202` (leer); 18387-Dateien `500`. Kein verfügbares Datenbyte, kein Spiegel.
+- **Braucht:** Order 18400 abschließen lassen — Trigger: Portal-Status `Done`/available files **und** `curl -A '<Browser-UA>' -s -o /dev/null -w '%{http_code}' '<datei-url>'` = `200` mit Daten → Dateien aus `data/regards.cnes.fr/order_18400.metalink` ziehen, **vor 10/05/2026 05:04:06 UTC**. Der Datei-Endpoint braucht nur einen Browser-UA. Metalink-Nachschub: Portal-Link „Download order metalink file" (Browser-Login Operator). Register-Duty `blocked ip-blocked` (CDPP-Route) als `## An Mycelium`-Träger — die Klasse ist zu prüfen (UA-Gate, kein IP-Block).
 
 ### survey-2026-09-06-codestruktur — confirm-rendering headless verifizierbar
 - **Status:** wartend | **Bindung:** eigen
@@ -172,12 +173,16 @@ werden getragen, nie geglättet (0 honored).
   `archive_search --verdict`/`--sniff`) die Route
   `regards.cnes.fr/api/v1/rs-order` liefert am Token-Datei-Endpoint die 247-B-F5-WAF-Seite
   „Request Rejected" (`magic unrecognized`); die anonymen Arme sind WAF-403 (direct und
-  Proton 403, Wayback 503 — gemessen 06:22 UTC); `rs-order`/`rs-catalog` backend-403 auch
-  im Browser; kein Spiegel (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404).
-  Der Dispositions-Eintrag der Sache steht als `pending` in `phi/blocked_sources.φ:81-83`;
-  die WAF-Route-Klasse `blocked ip-blocked` (CDPP) fehlt. Myceliums Feder: den
-  `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/zustand/wartend.φ:4`
-  (Aufnehmer sensory). Origin: sensory-folge194/195.
+  Proton 403, Wayback 503 — gemessen 06:22 UTC); kein Spiegel (SPDF/CDAWeb/NCEI
+  `pub/data/demeter/` → 404).
+  **Korrektur (gemessen 2026-09-28 11:00 UTC):** der Datei-Endpoint ist **UA-gated, kein
+  IP-Block** — `curl` ohne Browser-UA → `403`, mit Browser-UA → `202` (nur ein
+  `orderToken`, kein Login); im angemeldeten DevTools-Browser dieselbe Antwort (18400
+  `202`, 18387 `500`). Die Dispositions-Klasse `blocked ip-blocked` (CDPP) ist damit zu
+  prüfen (eher `parser-def`/Route-Gate). Der Dispositions-Eintrag der Sache steht als
+  `pending` in `phi/blocked_sources.φ:81-83`; Myceliums Feder: die Klasse korrigieren.
+  Der Wait steht `state/zustand/wartend.φ:4` (Aufnehmer sensory). Origin:
+  sensory-folge194/195/196.
 
 ## An River (gemessen, fremde Feder)
 
