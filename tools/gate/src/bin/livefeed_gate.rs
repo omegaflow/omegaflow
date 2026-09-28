@@ -84,8 +84,8 @@ fn sha256_hex(data: &[u8]) -> String {
 struct Event {
     titel: String,
     meldung: String,
-    quelle: String,
-    quelle_url: String,
+    source: String,
+    source_url: String,
     zeit: Option<String>,
     jd_tdb: Option<f64>,
     ort: Option<String>,
@@ -104,8 +104,8 @@ impl Event {
         Event {
             titel: String::new(),
             meldung: String::new(),
-            quelle: String::new(),
-            quelle_url: String::new(),
+            source: String::new(),
+            source_url: String::new(),
             zeit: None,
             jd_tdb: None,
             ort: None,
@@ -679,8 +679,8 @@ fn parse_event(args: &[String]) -> Option<Event> {
         match a.as_str() {
             "--titel" => e.titel = args.get(i + 1)?.clone(),
             "--meldung" => e.meldung = args.get(i + 1)?.clone(),
-            "--quelle" => e.quelle = args.get(i + 1)?.clone(),
-            "--quelle-url" => e.quelle_url = args.get(i + 1)?.clone(),
+            "--source" => e.source = args.get(i + 1)?.clone(),
+            "--source-url" => e.source_url = args.get(i + 1)?.clone(),
             "--zeit" => e.zeit = Some(args.get(i + 1)?.clone()),
             "--ort" => e.ort = Some(args.get(i + 1)?.clone()),
             "--ort-lat" => {
@@ -717,7 +717,7 @@ fn parse_event(args: &[String]) -> Option<Event> {
                 }
             }
             "--titel-filter" | "--url" | "--rss" | "--gate" | "--verify" | "--top" | "--out"
-            | "--wikidata" | "--quellen" | "--eonet" | "--news" | "--fixity" | "--dahiti"
+            | "--wikidata" | "--sources" | "--eonet" | "--news" | "--fixity" | "--dahiti"
             | "--api-key" | "--dahiti-format" | "--dhm" | "--dhm-list" | "--dhm-page"
             | "--sentinel" | "--cog-ndwi" => {
                 let _ = args.get(i + 1);
@@ -763,18 +763,18 @@ fn run_event(e: &Event, root: &str, out: &str) {
     println!("report        : {}", e.meldung);
     println!(
         "source         : {}",
-        if e.quelle.is_empty() {
+        if e.source.is_empty() {
             "pending"
         } else {
-            &e.quelle
+            &e.source
         }
     );
     println!(
         "source-url     : {}",
-        if e.quelle_url.is_empty() {
+        if e.source_url.is_empty() {
             "pending"
         } else {
-            &e.quelle_url
+            &e.source_url
         }
     );
     let zeit = e.zeit.as_deref().unwrap_or("pending");
@@ -868,10 +868,10 @@ fn run_event(e: &Event, root: &str, out: &str) {
     }
     println!();
     println!("=== GAPS (0 honored) ===");
-    if e.quelle.is_empty() {
+    if e.source.is_empty() {
         println!("  source: pending");
     }
-    if e.quelle_url.is_empty() {
+    if e.source_url.is_empty() {
         println!("  source-url: pending");
     }
     if e.zeit.is_none() {
@@ -1558,15 +1558,15 @@ fn auftrag_md(e: &Event, kraft: Option<String>, jd: Option<f64>, name: &str) -> 
         e.titel,
         e.titel,
         e.meldung,
-        if e.quelle.is_empty() {
+        if e.source.is_empty() {
             "pending"
         } else {
-            &e.quelle
+            &e.source
         },
-        if e.quelle_url.is_empty() {
+        if e.source_url.is_empty() {
             "pending"
         } else {
-            &e.quelle_url
+            &e.source_url
         }
     ));
     s.push_str(&format!(
@@ -1674,8 +1674,8 @@ fn top_checklist(e: &Event) {
         "every number carries a source (source-of-number, A = A)",
         meldungs_nums == 0 || zahlen_covered >= meldungs_nums,
     );
-    check("source named", !e.quelle.is_empty());
-    check("source-url measured", !e.quelle_url.is_empty());
+    check("source named", !e.source.is_empty());
+    check("source-url measured", !e.source_url.is_empty());
     check("time measured (JD TDB)", e.jd_tdb.is_some());
     check(
         "location placed (geo or ICRS/J2000)",
@@ -1980,14 +1980,14 @@ fn main() {
         return;
     }
 
-    if let Some(i) = args.iter().position(|a| a == "--quellen") {
+    if let Some(i) = args.iter().position(|a| a == "--sources") {
         let urls: Vec<String> = args[i + 1..]
             .iter()
             .take_while(|a| !a.starts_with("--"))
             .cloned()
             .collect();
         if urls.is_empty() {
-            eprintln!("--quellen needs at least one URL");
+            eprintln!("--sources needs at least one URL");
             return;
         }
         println!("=== SOURCE-AVAILABILITY ({} endpoints) ===", urls.len());
@@ -2096,13 +2096,13 @@ fn main() {
 
     if let Some(term) = &wikidata {
         if let Some((t, url, extract, lat, lon, qid, structured)) = wikidata_facts(term) {
-            if e.quelle.is_empty() {
-                e.quelle = "Wikipedia + Wikidata (fact-check)".to_string();
+            if e.source.is_empty() {
+                e.source = "Wikipedia + Wikidata (fact-check)".to_string();
             } else {
-                e.quelle = format!("{}; Wikipedia + Wikidata (fact-check)", e.quelle);
+                e.source = format!("{}; Wikipedia + Wikidata (fact-check)", e.source);
             }
-            if e.quelle_url.is_empty() {
-                e.quelle_url = url.clone();
+            if e.source_url.is_empty() {
+                e.source_url = url.clone();
             }
             if e.titel.is_empty() {
                 e.titel = t.clone();
@@ -2155,13 +2155,13 @@ fn main() {
     if let Some(cat) = &eonet_cat {
         let events = eonet_events(cat, 1);
         if let Some(ev) = events.first() {
-            if e.quelle.is_empty() {
-                e.quelle = format!("NASA EONET ({})", ev.cat);
+            if e.source.is_empty() {
+                e.source = format!("NASA EONET ({})", ev.cat);
             } else {
-                e.quelle = format!("{}; NASA EONET ({})", e.quelle, ev.cat);
+                e.source = format!("{}; NASA EONET ({})", e.source, ev.cat);
             }
-            if e.quelle_url.is_empty() {
-                e.quelle_url = "https://eonet.gsfc.nasa.gov/api/v3/events".to_string();
+            if e.source_url.is_empty() {
+                e.source_url = "https://eonet.gsfc.nasa.gov/api/v3/events".to_string();
             }
             if e.titel.is_empty() {
                 e.titel = ev.title.clone();
@@ -2222,8 +2222,8 @@ fn main() {
     if let Some(z) = e.zeit.clone() {
         e.jd_tdb = iso_to_jd(&z).map(|jd_utc| jd_utc + (TAI_UTC_LEAP + TT_TAI_OFFSET) / 86400.0);
     }
-    if fixity && !e.quelle_url.is_empty() && e.quelle_url != "pending" {
-        if let Some(bytes) = curl_bytes(&e.quelle_url) {
+    if fixity && !e.source_url.is_empty() && e.source_url != "pending" {
+        if let Some(bytes) = curl_bytes(&e.source_url) {
             e.fixity = Some(format!("sha256:{}", sha256_hex(&bytes)));
         } else {
             e.fixity = Some("pending (source unreachable)".to_string());

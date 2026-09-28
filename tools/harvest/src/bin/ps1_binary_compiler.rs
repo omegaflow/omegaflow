@@ -5,7 +5,7 @@ use omegaflow::archivar::footprint::{
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::healpix::pix2ang_nest;
-use omegaflow::zeuge::{FeldIdentitaet, magic_identity};
+use omegaflow::witness::{FieldIdentity, magic_identity};
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -56,7 +56,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn footprint_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Footprint) => {
+        Some(FieldIdentity::Footprint) => {
             eprintln!(
                 "{} reads as a survey-footprint asset (sibling of the witnesses, not a witness)",
                 String::from_utf8_lossy(&magic)

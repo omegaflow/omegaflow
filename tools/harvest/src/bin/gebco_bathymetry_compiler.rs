@@ -1,6 +1,6 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::json::{jpath, parse_json};
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::process::Command;
 
@@ -51,7 +51,7 @@ fn parse_locations(spec: &str) -> Vec<(f64, f64)> {
 
 fn witness_gestalt_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)) => {
+        Some(FieldIdentity::Witness(WitnessKind::Gestalt)) => {
             eprintln!(
                 "{} reads as a gestalt witness record",
                 String::from_utf8_lossy(&magic)
