@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 5fcd7d48bba0d4487c2f31fca25a7feff776b696bfc6d2793779b37b635a8415
+  sha256: 3d7bf0eaab934c8da7fd37cd5ef09d68a2ccb82ca441f06ee8b05e3b4fe2d3db
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -205,7 +205,7 @@ der am Insert als endliches `extent` gesetzt wird. Der Legacy-Baum widerlegt bei
   `docs/concepts/archivar-mathematikerin.md` + Pointer in AGENTS.md; `presence_gate`/
   `jump_epoch`/`record_in_enclosure`/Dispersion haben keine Live-Prosa.
 - **Bootstrap/fetch-Loop/Katalog-Branches** auf denselben Ausschnitt.
-- **Sprung-Radius:** Legacy `Φ·JUMP_GRID·2ⁿ` vs. gebaut `Φ·grid_step` — versöhnen.
+- **Sprung-Radius: versöhnt (2026-09-28).** `grid_step = GRID_INIT·2ⁿ = JUMP_GRID·2^(n+3)`, also `Φ·grid_step = Φ·JUMP_GRID·2^(n+3)` — beide Formen sind **eine** Formel; der Legacy-`·2ⁿ` ist als Browser-Zoom-Faktor (`state.scale`) absorbiert. `JUMP_GRID=2²⁸` lebt als Detektions-Schwelle (`main_flow.rs:332`), `Φ·grid_step` als Enclosure-Radius (`fetch.rs:423`).
 - **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht (der Reader-Pfad
   `vlies.rs` steht; die `format vlde`-Quelle fehlt).
 

@@ -123,6 +123,8 @@ pub mod ossos;
 pub mod parquet;
 pub mod pck;
 pub mod pds3_ring_occ;
+pub mod pds3_table;
+pub mod pds4;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
 pub mod quakeml;
