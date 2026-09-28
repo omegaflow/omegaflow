@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 21a43332aa4d69bc6cc45d11f78e20d3749355c12531442315d9e5a2e0e5c59f
+  sha256: 914e28cd2ca1d6e634a79b8677b3d705c9d1febad89f374efd3c5eb91d4c375c
   status: live
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -88,6 +88,16 @@ Der Vision-Leser konnte die zwei lokalen PDF-Specs
 Text-Sidecar `dsn_trk-2-18.1988-01-15.txt` und extrahierte die ODF-Record-Struktur.
 Für künftige Scan-/PDF-Atome: PDF ist kein Vision-Input; OCR braucht eine
 Bild-Konversion.
+
+### Nachtrag 2026-09-28 — die Bild-Konversion ist gebaut
+
+Gegenprobe (gemessen 2026-09-28): `archive_search --pdf-image <file|url>`
+(`docs/concepts/tool-forms.md`) liftet eingebettete JPEG/PNG/JP2 aus einem PDF
+und schreibt sie als Dateien — an `docs/reference/gosat_l1b_format.pdf`
+lieferte es 19 PNG. Der Weg für Scan-/PDF-Atome ist damit `--pdf-image` → `vision`
+(das Bild-Input hat); `--pdf-text` bleibt für den Text-Layer. Die am 2026-09-17
+gemessene Lücke „OCR braucht eine Bild-Konversion" ist gebaut
+(Commits `ab604b962`, `c1a273ffc`).
 
 ## Benchmark
 
