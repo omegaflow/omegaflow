@@ -2892,10 +2892,10 @@ pub fn topological_te_lag_sweep(x: &[f32], y: &[f32], dim: usize) -> Option<Memb
         } else {
             transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, lag, tau_y, TE_KSG_K)
         };
-        if let Some(t) = te {
-            if best.is_none_or(|(_, b)| t > b) {
-                best = Some((lag, t));
-            }
+        if let Some(t) = te
+            && best.is_none_or(|(_, b)| t > b)
+        {
+            best = Some((lag, t));
         }
         curve.push(MembraneSweepPoint { lag, te });
     }
