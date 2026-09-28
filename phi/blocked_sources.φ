@@ -362,3 +362,19 @@ pending
 url http://occultations.ct.utfpr.edu.br/
 note Occultation-DB UTFPR (SOSB/Lucky Star): 200; occultation_compiler.rs gebaut (RA/Dec sexagesimal→Grad, delta_au dist_scale 1.495978707e11, leere ra_position skip; cargo build ok 2026-09-27); Stations-lat/lon absent. Sources-Zeile = Mycelium.
 
+blocked account
+url https://moon.bao.ac.cn/
+note Chang'e 1–6 GRAS (CNSA) — 2026-09-28 Portal 200, Download Konto-gated (Gate nicht end-to-end gemessen). sensory-folge195.
+
+blocked account
+url https://www.nssdc.ac.cn/
+note Tianwen-1/Zhurong (CNSA) — 2026-09-28 Portal 200, Antrag/Konto. sensory-folge195.
+
+blocked account
+url https://pradan.issdc.gov.in/ch2
+note Chandrayaan-2/3, MOM (mrbrowse.issdc.gov.in), Aditya-L1 (ISRO/ISSDC) — 2026-09-28 account nötig. sensory-folge195.
+
+blocked account
+url https://sdc.emiratesmarsmission.ae/
+note Hope/Al-Amal EMM (MBRSC VAE) — 2026-09-28 200, kostenloses Konto. sensory-folge195.
+
