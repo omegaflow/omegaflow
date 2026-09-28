@@ -170,10 +170,9 @@ pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
     Some(out)
 }
 
-pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
-    let rows = parse_podf_bin(bytes)?;
+fn observable_series_of(rows: &[[f64; 9]]) -> Vec<(f64, f64, u32)> {
     let mut out = Vec::with_capacity(rows.len());
-    for r in &rows {
+    for r in rows {
         let t = r[PODF_COL_TDB];
         let v = r[PODF_COL_OBSERVABLE];
         if !t.is_finite() || !v.is_finite() {
@@ -181,7 +180,56 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         }
         out.push((t, v, COMP_OBSERVABLE));
     }
+    out
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_podf_bin(bytes)?;
+    Some(observable_series_of(&rows))
+}
+
+pub const MAGIC_ODF_SERIES: [u8; 4] = *b"ODFS";
+
+pub fn write_odf_series(shards: &[&[[f64; 9]]]) -> Vec<u8> {
+    let count: usize = shards.iter().map(|s| s.len()).sum();
+    let mut out = Vec::with_capacity(8 + count * 72);
+    out.extend_from_slice(&MAGIC_ODF_SERIES);
+    out.extend_from_slice(&(count as u32).to_le_bytes());
+    for shard in shards {
+        for r in *shard {
+            for v in r {
+                out.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+    }
+    out
+}
+
+pub fn parse_odf_series(data: &[u8]) -> Option<Vec<[f64; 9]>> {
+    if data.len() < 8 || &data[0..4] != &MAGIC_ODF_SERIES {
+        return None;
+    }
+    let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
+    if data.len() != 8 + count * 72 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = 8 + i * 72;
+        let mut r = [0.0f64; 9];
+        for k in 0..9 {
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[base + k * 8..base + k * 8 + 8]);
+            r[k] = f64::from_le_bytes(buf);
+        }
+        out.push(r);
+    }
     Some(out)
+}
+
+pub fn odf_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let rows = parse_odf_series(bytes)?;
+    Some(observable_series_of(&rows))
 }
 
 pub fn write_p11r_bin(records: &[[f64; 9]]) -> Vec<u8> {
@@ -2103,6 +2151,129 @@ mod tests {
         let parsed = parse_podf_bin(&bytes).unwrap();
         assert_eq!(parsed, recs);
         assert!(parse_podf_bin(b"X").is_none());
+    }
+
+    #[test]
+    fn odf_series_roundtrip_packs_shard_rows_into_one_series_bin() {
+        let shard_a = [
+            [
+                753_440_003.0,
+                -382_738.66,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_004.0,
+                -382_738.68,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+        ];
+        let shard_b = [[
+            753_440_005.0,
+            -382_738.70,
+            2.3e9,
+            43.0,
+            43.0,
+            11.0,
+            2.0,
+            77.0,
+            60.0,
+        ]];
+        let bin = write_odf_series(&[&shard_a, &shard_b]);
+        assert_eq!(&bin[0..4], &MAGIC_ODF_SERIES);
+        assert_eq!(u32::from_le_bytes(bin[4..8].try_into().unwrap()), 3);
+        assert_eq!(bin.len(), 8 + 3 * 72);
+        let mut expected = shard_a.to_vec();
+        expected.extend_from_slice(&shard_b);
+        assert_eq!(parse_odf_series(&bin), Some(expected));
+    }
+
+    #[test]
+    fn odf_series_reader_rejects_shard_magic_and_malformed_bins() {
+        let recs = [[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]];
+        let shard_bin = write_podf_bin(&recs);
+        assert!(parse_odf_series(&shard_bin).is_none());
+        assert!(parse_odf_series(b"X").is_none());
+        let mut truncated = write_odf_series(&[&recs]);
+        truncated.pop();
+        assert!(parse_odf_series(&truncated).is_none());
+    }
+
+    #[test]
+    fn odf_series_empty_shard_set_is_an_empty_series() {
+        let bin = write_odf_series(&[]);
+        assert_eq!(bin.len(), 8);
+        assert_eq!(parse_odf_series(&bin), Some(Vec::new()));
+    }
+
+    #[test]
+    fn odf_series_emits_only_finite_observables_with_the_shared_component() {
+        let rows = [
+            [
+                753_440_003.0,
+                -382_738.66,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                f64::NAN,
+                -382_738.68,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_005.0,
+                f64::INFINITY,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+            [
+                753_440_006.0,
+                -382_738.72,
+                2.3e9,
+                43.0,
+                43.0,
+                11.0,
+                2.0,
+                77.0,
+                60.0,
+            ],
+        ];
+        let bin = write_odf_series(&[&rows]);
+        let series = odf_series(&bin).expect("series parses");
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0].0, 753_440_003.0);
+        assert_eq!(series[0].1, -382_738.66);
+        assert_eq!(series[0].2, COMP_OBSERVABLE);
+        assert_eq!(series[1].0, 753_440_006.0);
+        assert_eq!(series[1].1, -382_738.72);
+        assert_eq!(series[1].2, COMP_OBSERVABLE);
     }
 
     #[test]

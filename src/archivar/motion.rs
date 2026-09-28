@@ -423,7 +423,12 @@ pub fn icrs_to_body_geodetic(
         lat = zb.atan2(p * (1.0 - e2 * n / (n + h)));
     }
     let depth_km = -h / 1000.0;
-    Some((lat.to_degrees(), lon.to_degrees(), depth_km))
+    let lat_deg = lat.to_degrees();
+    let lon_deg = lon.to_degrees();
+    if !lat_deg.is_finite() || !lon_deg.is_finite() || !depth_km.is_finite() {
+        return None;
+    }
+    Some((lat_deg, lon_deg, depth_km))
 }
 
 pub fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {
