@@ -252,7 +252,7 @@ mod matrix_record_tests {
         });
         m.results.insert(pair_key("ndbc_a_wspd", "ndbc_b_wtmp"), r);
         m.line.arrows = 2;
-        m.save_state_to(&path);
+        m.save_state_to(&path).expect("matrix state written");
         let loaded = MatrixMachine::load_state_from(&path).expect("state loads");
         assert_eq!(loaded.rings.len(), 2);
         assert_eq!(
@@ -268,6 +268,39 @@ mod matrix_record_tests {
         assert_eq!(lr.accum.cells1.len(), 1);
         assert_eq!(loaded.line.arrows, 2);
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn state_write_replaces_atomically_and_names_a_blocked_temp() {
+        let path = format!("/tmp/omegaflow_matrix_atomic_{}.bin", std::process::id());
+        let tmp = state_temp_path(&path);
+        let _ = std::fs::remove_dir_all(&tmp);
+        let _ = std::fs::remove_file(&path);
+        let (_tx, rx) = mpsc::channel();
+        let mut m = MatrixMachine::new(rx);
+        m.state_path = path.clone();
+        m.record(
+            &frame_earth(),
+            vec![mk_channel("ndbc_a_wspd", 21600.0, 3.0)],
+        );
+
+        std::fs::write(&path, b"OMX2").expect("previous checkpoint written");
+        m.save_state_to(&path).expect("matrix state written");
+        assert!(
+            !std::path::Path::new(&tmp).exists(),
+            "temp file {tmp} left behind"
+        );
+        let saved = std::fs::read(&path).expect("state readable");
+        assert!(saved.starts_with(b"OMX2"));
+        assert!(MatrixMachine::load_state_from(&path).is_some());
+
+        std::fs::create_dir_all(&tmp).expect("blocked temp path stands");
+        let blocked = m.save_state_to(&path);
+        assert!(blocked.is_err(), "a blocked temp path names its state");
+        assert_eq!(std::fs::read(&path).expect("state readable"), saved);
+
+        let _ = std::fs::remove_dir_all(&tmp);
+        let _ = std::fs::remove_file(&path);
     }
 }
 

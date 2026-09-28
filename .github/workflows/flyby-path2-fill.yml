@@ -1,0 +1,41 @@
+name: flyby-path2-fill
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Capture the SWPC RTSW 1-minute mirror
+        run: |
+          d=data/services.swpc.noaa.gov
+          mkdir -p "$d"
+          ts=$(date -u +%Y%m%dT%H%M%SZ)
+          curl -fsS "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json" -o "$d/rtsw_mag_1m-$ts.json"
+          curl -fsS "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json" -o "$d/rtsw_wind_1m-$ts.json"
+      - name: Run the JUICE flyby path-2 fill (perigee ±12 h)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "PERIGEE 2026-09-28T11:45:12Z"
+            cargo run --release -p omegaflow-measure --bin flyby_path2_fill -- --flyby juice --snapshots data/services.swpc.noaa.gov
+          } > "flyby-path2-fill.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flyby-path2-fill
+          path: |
+            flyby-path2-fill.txt
+            data/flyby2/tube-juice-2026-09-28.json
+            data/services.swpc.noaa.gov/*.json
