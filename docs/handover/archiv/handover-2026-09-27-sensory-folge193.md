@@ -3,7 +3,7 @@
   session: Sensory-Folge 193
   class: handover
   date: 2026-09-27
-  sha256: 2a079359f0daa7dc2e497dc68740b10f5b8f104f9f020380e7baa30f68f71592
+  sha256: f412779713dbc8555433f4074ecd5e6301c56ad2b6c059ce4f1c328c700ded55
   status: live
 -->
 # Handover — Sensory-Folge 193 (2026-09-27)
@@ -123,6 +123,7 @@ werden getragen, nie geglättet (0 honored).
 - **FR945/BLE + O6-descoped:** `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` (7).
 - **Postfach:** `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (1).
 - **Terminologie (Sensory):** `docs/concepts/glossar.md` (1).
+- **Sonden/Vision (neu gefaltet 2026-09-27):** `docs/surveys/survey-2026-09-17-sonden-request-only.md` — der Vision-Leser kann PDF nicht lesen (kein PDF-Input); für Scan-/PDF-Atome fehlt die PDF→Bild-Konversion (`dsn_trk-2-18.1988-10-15.pdf`). Nächster Schritt: Konversionsstufe bauen.
 - **JUICE:** `docs/concepts/der-paradigmenwechsel.md` (9),
   `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4),
   `docs/paper/flyby-path-2-preregistration.md` (1).
