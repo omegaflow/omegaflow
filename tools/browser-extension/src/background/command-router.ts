@@ -250,8 +250,11 @@ export class CommandRouter {
         return { data, summary: `${data.count} match(es)` };
       }
       case "eval": {
-        const data = await runPageAction(this.tab(group, params), "eval", { code: params.code });
-        return { data, summary: "evaluated" };
+        const data = await this.executor.evaluate(
+          this.tab(group, params),
+          String(params.code ?? "")
+        );
+        return { data: data ?? { result: null }, summary: "evaluated" };
       }
       case "console": {
         const entries = await this.executor.getConsole(this.tab(group, params));
