@@ -10791,7 +10791,7 @@ field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.
 
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 format gosat_tanso3
-origin procedure: fetch https://product.gosat-gw.nies.go.jp then gosat_tanso3_compiler (per-year shards gosat_tanso3_<year>.bin; the manifest lists the shards)
+origin procedure: fetch https://product.gosat-gw.nies.go.jp then gosat_tanso3_compiler (per-month shards gosat_tanso3_<year>-<month>.bin; the manifest lists the shards)
 compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
 on earth 0 0 0
 ttl 604800
