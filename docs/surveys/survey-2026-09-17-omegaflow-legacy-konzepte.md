@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 4142e9c93bd8c6da93f6bd97090523f6fcaad3c7cf1cd9e1e87deab4eef1b23c
+  sha256: 5df4fe7885510421d341ac5467679505ebd2e8f2ddd84c3156b771a578e57c67
   status: live
   see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
@@ -118,14 +118,14 @@ Verarbeitung fehlt:
   `tools/measure/src/bin/total_coherence_probe.rs` gebaut (0 Warnungen):
    Σ_i perm_target(|ω_i|,|Δω_i|) = 0.924 auf dem 9-Medien-Fixture gegen leeres Feld 0.0; die
    gebaute Permeability (ein Skalar über die Summe) kollabiert auf 0.0 — der per-Oszillator-Integral-
-   und der Complexity-Term bleiben offen (Live-Pfad ist ein TE-Skalar).
-   **Geschlossen (2026-09-28, River-Folge 50, Rat): Integral `gebaut`, Complexity `pending`.**
+   und der Complexity-Term sind geschlossen (Live-Pfad ist ein TE-Skalar).
+   **Geschlossen (2026-09-28, River-Folge 50, Rat): Integral `gebaut`. Complexity `descoped` (2026-09-28, River-Folge 56): `sgrep complexity src/` = 0, keine Definition/Datenquelle; der Breath-Zweig mittelt uniform `integral/9.0`.**
    Der per-Oszillator-Integral lebt jetzt im Live-Pfad — `src/mathematikerin/omega.rs`
    Breath-Zweig: `target = (Σ_i perm_target(|probe_omega[i]|, |probe_omega[i] −
    prev_probe_omega[i]|)) / 9.0`, neues Feld `prev_probe_omega` (Tick-Spiegel von `prev_omega_sum`),
    Turn-/Latenz-Buchhaltung unverändert skalar. Gate-Test
    `the_no_te_tick_hears_each_oscillator_not_the_sum` (fixture now/prev → 0.924/9). Der
-   Complexity-Term bleibt `pending` — die Alt-Form `1/(1+Σ(complexity·weight)/Σ(weight))` hat
+   Complexity-Term ist `descoped` — die Alt-Form `1/(1+Σ(complexity·weight)/Σ(weight))` hat
    keine Definition und keine Datenquelle; ein gebauter Term wäre Fabrikation (Registerzeile,
    nie gebaut).
 

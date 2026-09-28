@@ -332,10 +332,10 @@ impl MatrixMachine {
             buf.extend_from_slice(&(v as u64).to_le_bytes());
         }
         buf.extend_from_slice(&l.expected.to_le_bytes());
-        if let Some(parent) = std::path::Path::new(path).parent() {
-            if !parent.as_os_str().is_empty() {
-                std::fs::create_dir_all(parent)?;
-            }
+        if let Some(parent) = std::path::Path::new(path).parent()
+            && !parent.as_os_str().is_empty()
+        {
+            std::fs::create_dir_all(parent)?;
         }
         let tmp = state_temp_path(path);
         std::fs::write(&tmp, &buf)?;

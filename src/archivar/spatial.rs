@@ -485,8 +485,12 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
         forward,
         eph,
     } = ctx;
+    let riss: HashSet<String> = current_riss_names(Some(t2));
     let mut emit_star = |samples: &Vec<Arc<Sample>>| {
         for sample in samples {
+            if riss.contains(&sample.name) {
+                continue;
+            }
             let age = (t2 - sample.epoch).abs();
             if age > sample.ttl * 64.0 {
                 continue;
@@ -682,6 +686,9 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
     };
     let mut emit = |samples: &Vec<Arc<Sample>>| {
         for sample in samples {
+            if riss.contains(&sample.name) {
+                continue;
+            }
             let age = (t2 - sample.epoch).abs();
             if age > sample.ttl * 64.0 {
                 continue;
