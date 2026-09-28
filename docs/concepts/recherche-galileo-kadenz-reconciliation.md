@@ -1,3 +1,10 @@
+<!--
+  title: Recherche — Galileo-resid Kadenz: 1-s gegen 60-s (Reconciliation)
+  class: concept
+  date: 2026-09-05
+  sha256: d8d485444a02740a7eee9c3e1616864e6a43a1f3998da9cb33f1104c385bb168
+  status: live
+-->
 # Recherche — Galileo-resid Kadenz: 1-s gegen 60-s (Reconciliation)
 
 Datum: 2026-09-05. Subagent grind-pro. Quellen: `data/galileo_resid.bin` (gemessen),
@@ -75,8 +82,8 @@ im Dez-1990-Zweiweg-Fenster der 70-m-Stationen 14/43/63 (≈ 8 100 der 9 900 Mod
 Paare). Das "60-s-Raster" des Kamm-Befunds ist diese native Sub-Struktur — keine Proben-
 Segmentierungs-Artefakt; eine 1-s-Serie kann den 50-mHz-Kamm nicht erzeugen (Nyquist
 0.5 Hz, Degeneranz nur bei 60-s-Stützstellen). Die beiden Befunde messen verschiedene
-Epochen desselben Bins; kein Widerspruch. Offen bleibt (wie im Kamm-Befund), welcher
-Reduktions-/Tracking-Schritt die 60-s-Zählintervalle der Dez-1990-Zweiweg-Pässe setzte.*
+Epochen desselben Bins; kein Widerspruch. Der Zählzeit-Schritt ist im Verdikt unten
+geschlossen (Doppler-Zählzeit, 2026-09-25/27).*
 
 ## Verdikt (2026-09-25, research-max)
 
