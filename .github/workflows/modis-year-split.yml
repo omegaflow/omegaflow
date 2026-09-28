@@ -23,7 +23,7 @@ env:
 jobs:
   split:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 720
     steps:
       - name: Lift every family shard into its year tag, then delete the verified-moved slot
         run: |
@@ -35,6 +35,39 @@ jobs:
           mkdir -p "$tmp/dl"
           gh release view "$SRC" --repo "$REPO" --json assets \
             --jq '.assets[] | select(.name|startswith("modis_lst_cmg")) | "\(.name)\t\(.digest)"' > "$tmp/src"
+          # The year-tag check is a function of (product, year), not of the asset:
+          # derive the distinct tags once and create them up front — one view/create
+          # per tag instead of one view per asset.
+          : > "$tmp/tags"
+          while IFS=$'\t' read -r name digest; do
+            [ -n "$name" ] || continue
+            rest="${name#modis_lst_cmg_}"
+            product="${rest%%_*}"
+            tail="${rest#*_}"
+            [ -n "$product" ] && [ "$product" != "$rest" ] || continue
+            case "$tail" in
+              *.manifest) year="${tail%.manifest}" ;;
+              *.bin)
+                granule="${tail%.bin}"
+                a="${granule#*.A}"
+                [ "$a" != "$granule" ] || continue
+                year="${a:0:4}"
+                ;;
+              *) continue ;;
+            esac
+            case "$year" in
+              [0-9][0-9][0-9][0-9]) ;;
+              *) continue ;;
+            esac
+            printf '%s\t%s\n' "$product" "$year" >> "$tmp/tags"
+          done < "$tmp/src"
+          while IFS=$'\t' read -r product year; do
+            [ -n "$product" ] || continue
+            tag="${FAMILY}-${product}-${year}"
+            gh release view "$tag" --repo "$REPO" >/dev/null 2>&1 \
+              || gh release create "$tag" --repo "$REPO" --title "$tag" \
+                   --notes "modis_lst_cmg ${product} ${year} year release (the family release is capped at 1000 assets)"
+          done < <(sort -u "$tmp/tags")
           moved=0; kept=0; failed=0
           while IFS=$'\t' read -r name digest; do
             [ -n "$name" ] || continue
@@ -69,9 +102,6 @@ jobs:
                 ;;
             esac
             tag="${FAMILY}-${product}-${year}"
-            gh release view "$tag" --repo "$REPO" >/dev/null 2>&1 \
-              || gh release create "$tag" --repo "$REPO" --title "$tag" \
-                   --notes "modis_lst_cmg ${product} ${year} year release (the family release is capped at 1000 assets)"
             if ! gh release download "$SRC" --repo "$REPO" --pattern "$name" --dir "$tmp/dl" --clobber; then
               echo "$name: download returned void — not moved"
               failed=$((failed+1)); continue

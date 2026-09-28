@@ -3,7 +3,7 @@
   session: Mycelium-Folge 188
   class: handover
   date: 2026-09-27
-  sha256: 6ca0574bcab9f422a3437fe83f1e2a622ceb5b188b80337d8edb9d373e7f423b
+  sha256: 76b24d7fe89f4b8b7ad043b7a4afb8240169a1d3b34984377a160274817a57b3
   status: live
 -->
 # Handover — Mycelium-Folge 188 (2026-09-27)
@@ -106,6 +106,14 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-27 via `register_lookup --orphan-docs`) 7 trägerlose Prosadokumente mit offenen Markern: `docs/concepts/arxiv-api.md` (2), `blatt-papier-beweis.md` (3), `exzellenz-konzept.md` (3), `kybernetische-astrophysik.md` (10), `pfeiler-der-architektur.md` (2), `positive-maske.md` (2), `docs/surveys/survey-2026-09-17-sonden-request-only.md` (11). Kein lebendes Handover nennt sie.
 - **Blockade:** keine.
 - **Braucht:** je Dokument die genuin-offenen Punkte lesen und in die Übergabe der besitzenden Linie tragen (Operator-Wort „falte alle").
+- **Gefaltet 2026-09-27 (dieser Atom):** arxiv-api → Mycelium (kein offener Punkt); blatt-papier-beweis → River (Membran-Bindung) + wartend.φ (Blatt-Zuschnitt); exzellenz-konzept → Mycelium (kein offener Punkt); kybernetische-astrophysik → River (kein neuer Schritt); pfeiler-der-architektur → River (kein offener Punkt); positive-maske → Mountain (Driver-Quellen; M9.1 verdrahtet/gemessen); sonden-request-only → Mountain (Serien-Arm) + Sensory (PDF→Bild) + wartend.φ (vier request-only-Waits bestehen bereits); auftrag-flyby2-kette → River (getragen) + Mountain (DSCOVR-Query); browser-anbindung → Mycelium (Block) + wartend.φ (MV3/DevTools-MCP); survey-fortschritt → River (Block); recherche-galileo → Mountain (aufgelöst).
+
+### orphan-browser-bridge — Chrome DevTools MCP + MV3-Kaltstart
+- **Status:** wartend | **Bindung:** eigen (Operator-Wort / Dritter)
+- **Trigger:** Operator-Wort (Debugger) bzw. Extension-Änderung (Store, Dritter).
+- **Lage:** (gemessen 2026-09-20/23, browser-anbindung) die Pfad-1-Versionslücke 0.16.1→0.17.0 ist geschlossen (`tools-map.md:315`, kein Zustand); offen bleibt: Chrome DevTools MCP pinnen (npm 1.9.0 + `--no-usage-statistics`/`--no-performance-crux`) für Ziel (i) Membran-Debug — **Operator-Wort**; der MV3-Kaltstart (bimodal <10 s warm → Minuten kalt, nicht aus `bridge.json`/`opencode.jsonc` behebbar) braucht eine Extension-Änderung (`alarms` ≥30 s / Offscreen-Keepalive) — **Dritter**.
+- **Blockade:** Operator-Wort / Store-Extension-Änderung.
+- **Braucht:** Operator-Wort für den Debugger; die Extension-Änderung als `wartend.φ` (`browser-mv3-kaltstart`). (aus `docs/surveys/survey-2026-09-20-browser-anbindung.md`)
 
 ## Träger (Prosadokumente, eigene)
 - `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` | wartend Mail-Eingang (kein Nachfassen) | nächster Schritt: Trigger Mail.
@@ -115,6 +123,8 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | Wiedervorlage 2026-12-02 | nächster Schritt: 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending tot | nächster Schritt: `--verdict` je Host beim Trigger.
 - `docs/concepts/tools-map.md` | offene Marker unverändert | nächster Schritt: `register_lookup --orphan-docs` beim nächsten Pass.
+- `docs/concepts/arxiv-api.md` | Zugriffswege dokumentiert; der 406-Befund ist geklemmt (`ARXIV_QUERY_WINDOW = 2`, Bau `766f2ed28`), OAI-PMH trägt den Bulk-Weg | nächster Schritt: keiner — „Kein offener Punkt".
+- `docs/concepts/exzellenz-konzept.md` | Paper-Maßstab (10+5 Stufen); die Export-Stufe ist gebaut (`export_latex`, River 49 grün über alle Papiere) | nächster Schritt: keiner — Standard final.
 
 ## An Mountain (gemessen, fremde Feder)
 
