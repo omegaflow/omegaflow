@@ -2120,7 +2120,7 @@ note obscore catalog (dachs.fai.kz/tap) — observation metadata, no measurement
 
 decline no-physical-force
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
-note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; aus sources.φ gestrichen (keine ehrliche Kraft), mx/my/mz advective bleiben im Block.
+note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; der Ratewert gestrichen, advektive Felder bleiben integriert in phi/sources.φ (bidsleep_mehrnacht.bin).
 
 decline catalog-register
 url https://github.com/rfordatascience/tidytuesday
@@ -2401,10 +2401,6 @@ note Kp/Ap-geomagnetischer-Aktivitäts-Index (1932–2026, dimensionslos, abgele
 decline no-physical-force
 url https://kp.gfz.de/
 note grind: grind_terrapulse_a.φ
-
-decline aggregate-index
-url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
-note GFZ Kp-Index (3h, geomagnetisch, skalar) — decline aggregate-index.
 
 decline aggregated-index
 url https://kp.gfz.de/fileadmin/files_for_gfz_cms/Kp_ap_since_1932.txt
@@ -3314,10 +3310,6 @@ decline aggregate-index
 url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
 note SWPC observed-solar-cycle-indices (HTTP 200 512287 B) — aggregierter positionsloser Sonnenflecken-Index; SILSO selbe Klasse declined.
 
-decline model-forecast
-url https://services.swpc.noaa.gov/json/solar_regions.json
-note SWPC-Solarregions — Flare-Wahrscheinlichkeiten (Modell), kein Feldwert; Probe klassifizierte kein Feld.
-
 decline aggregate-index
 url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
 note NOAA planetary-K-Index (geomagnetisch, skalar) — decline aggregate-index.
@@ -3613,10 +3605,6 @@ note grind: grind_arcgis_deep.φ
 decline registry
 url https://services5.arcgis.com/0Q6HuHqqcg7Zo8zH/arcgis/rest/services/buoy_update/FeatureServer/0
 note grind: grind_arcgis_index.φ
-
-decline variant
-url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note ArcGIS-Proxy seismischer Daten (live: USGS/INGV/seismicportal direkt).
 
 decline static
 url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Tsunami_10m/FeatureServer/0

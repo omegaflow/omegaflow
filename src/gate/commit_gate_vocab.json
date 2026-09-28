@@ -134,7 +134,7 @@
     "akt-ohne-wort-trigger": "ein operator-gebunden-Punkt trägt weder ein Operator-Wort im Trigger noch ein Wort:-Feld — der Akt hängt am Wort",
     "termin-ohne-datum": "ein termin-Punkt trägt kein ISO-Datum in Trigger oder Bindung — ein Termin ohne Datum ist keiner",
     "descoped-ohne-befund": "ein descoped-Punkt trägt keinen Befund — nenne (gemessen ..., einen → pfad:zeile, ein register#key, ein 40-Hex-SHA oder descoped mit Befund",
-    "blocked-integrated-twin": "eine gap-Klassen-Disposition (parser-def mit gap-Direktive), deren url integriert in phi/sources.φ steht — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ:<zeile> oder entferne den Eintrag",
+    "integrated-twin": "eine Dispositions-Zeile (descoped in phi/blocked_sources.φ, decline in phi/declined_sources.φ), deren url noch in phi/sources.φ registriert ist und deren note keinen Integrations-Vermerk trägt (integriert / phi/sources.φ) — der Stale-Zwilling einer integrierten Disposition (eine Disposition pro URL); descope mit Befund → phi/sources.φ oder entferne den Eintrag",
     "pass-copy": "a living handover line copies the standing pass — the Stehender Pass lives in state/zustand/standing-pass.md and is cited (sread state/zustand/standing-pass.md), never copied; a copied HEAD value is a stale copy the moment main moves",
     "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/zustand/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)"
   },
