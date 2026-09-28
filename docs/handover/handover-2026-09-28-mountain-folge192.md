@@ -3,7 +3,7 @@
   session: Mountain-Folge 192
   class: handover
   date: 2026-09-28
-  sha256: eb5d7826cf81231f1c6fbd91c9423a35a35302c094de20766a8da00c760cf586
+  sha256: 677fcc0ffcc92920106bbc18c6ddf75d9fbe4c1961619cb4c4d459a316eea1ce
   status: live
 -->
 # Handover — Mountain-Folge 192 (2026-09-28)
@@ -30,10 +30,10 @@ Wort | Datum | Quelle
 
 ### CI-check — grüne Runde auf HEAD
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `ci-check`-Lauf `36381494347` auf HEAD endet.
-- **Lage:** (gemessen 2026-09-28 via `ci_manage status`, HEAD `72db8ef`) `36381494347` ist `pending`; die vorigen ci-check-Läufe (`36380327273`, `36380220789`, `36380125552`, …) wurden durch HEAD-Vorlauf `cancelled`; kein grüner ci-check im Fenster.
+- **Trigger:** der `ci-check`-Lauf auf HEAD endet.
+- **Lage:** (gemessen 2026-09-28 via `ci_manage status`, HEAD `2dbde10a5`) der `ci-check`-Lauf auf HEAD ist `pending` (vom eigenen Push angestoßen); die vorigen Läufe wurden durch HEAD-Vorlauf `cancelled` (`36381494347`, `36380327273`, …); kein grüner ci-check im Fenster.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36381494347` einmal nach Lauf-Ende lesen; grün → schließen; bleibt `dropped-gate` rot, ist mycelium der Träger.
+- **Braucht:** `ci_manage log <id>` des Laufs auf HEAD einmal nach Lauf-Ende lesen; grün → schließen; bleibt `dropped-gate` rot, ist mycelium der Träger.
 
 ### NED ByParams — Token-Kanal
 - **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
