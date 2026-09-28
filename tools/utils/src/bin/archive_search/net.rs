@@ -123,7 +123,11 @@ fn get_once(url: &str, extra: &[&str], timeout: &str, exit: &Exit) -> Option<Fet
 const VERDICT_ATTEMPTS: usize = 3;
 
 fn is_transient(f: &Fetch) -> bool {
-    !f.complete || f.status == Some(0)
+    matches!(f.status, None | Some(0))
+}
+
+fn is_found(f: &Fetch) -> bool {
+    matches!(f.status, Some(200..=299))
 }
 
 fn retry_transient<F: FnMut() -> Option<Fetch>>(mut attempt: F) -> Option<Fetch> {
@@ -159,8 +163,10 @@ fn get_retrying(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     last
 }
 
+const VERDICT_RANGE: &[&str] = &["--range", "0-0"];
+
 fn verdict_probe(url: &str, timeout: &str, exit: &Exit) -> Option<Fetch> {
-    retry_transient(|| get_once(url, &[], timeout, exit))
+    retry_transient(|| get_once(url, VERDICT_RANGE, timeout, exit))
 }
 
 fn proton_interfaces() -> Vec<String> {
@@ -416,11 +422,12 @@ fn stage(lines: &mut Vec<String>, n: u8, name: &str, url: &str, r: Option<Fetch>
 }
 
 fn stage_result(lines: &mut Vec<String>, n: u8, name: &str, url: &str, f: Fetch) {
-    if f.status == Some(200) && !f.raw.is_empty() {
+    if is_found(&f) {
         lines.push(format!(
-            "  stage {} {}: HTTP 200 ({} bytes) — found",
+            "  stage {} {}: HTTP {} ({} bytes) — found",
             n,
             name,
+            f.status_text(),
             f.raw.len()
         ));
         lines.push(format!("url {}", url));
@@ -521,7 +528,7 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
             let label = exit.label();
             match verdict_probe(url, "30", exit) {
                 Some(f) => {
-                    if f.status == Some(200) && !f.raw.is_empty() {
+                    if is_found(&f) {
                         proton_found = true;
                     }
                     stage_result(&mut lines, 2, &label, url, f);
@@ -535,6 +542,9 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
         urlencode(url)
     );
     match get(&cdx, &[], "40") {
+        Some(f) if is_transient(&f) => {
+            lines.push("  stage 3 wayback: pending — no response".to_string())
+        }
         Some(f) => match first_snapshot(&f.body) {
             Some(snapshot) => {
                 lines.push(format!(
@@ -2442,13 +2452,106 @@ mod tests {
     }
 
     #[test]
-    fn retry_transient_reports_pending_when_every_attempt_is_incomplete() {
+    fn retry_transient_reports_pending_when_no_status_is_measured() {
         let calls = std::cell::Cell::new(0usize);
         let result = retry_transient(|| {
             calls.set(calls.get() + 1);
-            Some(partial_fetch())
+            answer(None)
         });
         assert!(result.is_none());
         assert_eq!(calls.get(), VERDICT_ATTEMPTS);
+    }
+
+    #[test]
+    fn verdict_probe_reads_only_the_first_byte() {
+        let args = curl_args("https://example.com/asset.bin", VERDICT_RANGE, "30", &[]);
+        assert!(
+            args.iter().any(|a| a == "-sL"),
+            "the verdict probe is a follow-redirect GET"
+        );
+        assert!(
+            !args.iter().any(|a| a == "-I" || a == "--head"),
+            "the probe is no HEAD request"
+        );
+        let at = args
+            .iter()
+            .position(|a| a == "--range")
+            .expect("the verdict probe carries --range");
+        assert_eq!(
+            args.get(at + 1).map(String::as_str),
+            Some("0-0"),
+            "one byte, never the asset body"
+        );
+    }
+
+    #[test]
+    fn resolved_status_is_not_transient() {
+        assert!(!is_transient(&Fetch {
+            complete: false,
+            status: Some(200),
+            ..partial_fetch()
+        }));
+        assert!(is_transient(&Fetch {
+            status: Some(0),
+            ..partial_fetch()
+        }));
+        assert!(is_transient(&Fetch {
+            status: None,
+            ..partial_fetch()
+        }));
+    }
+
+    #[test]
+    fn is_found_reads_2xx_including_range_partials() {
+        for status in [200, 204, 206] {
+            assert!(
+                is_found(&Fetch {
+                    status: Some(status),
+                    ..lossy_fetch()
+                }),
+                "{status} is a reachable answer"
+            );
+        }
+        assert!(!is_found(&Fetch {
+            status: Some(404),
+            ..lossy_fetch()
+        }));
+        assert!(!is_found(&Fetch {
+            status: Some(302),
+            ..lossy_fetch()
+        }));
+        assert!(!is_found(&Fetch {
+            status: None,
+            ..lossy_fetch()
+        }));
+    }
+
+    #[test]
+    fn stage_result_reads_a_range_partial_as_found() {
+        let mut lines = Vec::new();
+        stage_result(
+            &mut lines,
+            1,
+            "direct",
+            "https://example.com/asset.bin",
+            Fetch {
+                status: Some(206),
+                ..lossy_fetch()
+            },
+        );
+        assert_eq!(lines[0], "  stage 1 direct: HTTP 206 (4 bytes) — found");
+
+        let mut absent = Vec::new();
+        stage_result(
+            &mut absent,
+            1,
+            "direct",
+            "https://example.com/asset.bin",
+            Fetch {
+                status: Some(404),
+                ..lossy_fetch()
+            },
+        );
+        assert!(absent[0].ends_with("— absent"), "{}", absent[0]);
     }
 }

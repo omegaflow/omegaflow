@@ -194,6 +194,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     );
                 }
             }
+            "no-cadence" => {
+                cur_ttl = NO_CADENCE;
+            }
             "live" => {
                 cur_live_only = true;
             }
@@ -1731,6 +1734,21 @@ mod tests {
             shard(URL_C, "odyssey_odf"),
         ]);
         assert_eq!(kept.len(), 2);
+    }
+
+    #[test]
+    fn no_cadence_keeps_a_static_source_active() {
+        let content =
+            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-cadence\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].ttl, NO_CADENCE);
+    }
+
+    #[test]
+    fn a_source_without_ttl_or_no_cadence_is_inactive() {
+        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\n";
+        assert!(parse_sources(content).is_empty());
     }
 
     #[test]
