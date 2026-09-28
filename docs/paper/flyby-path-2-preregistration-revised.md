@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-27
   version: 2
-  sha256: f084a151699bfc564c862765bd527e1cb7cd6ef20991d11a19654f8922bf7bc3
+  sha256: e25d8faf41f56b7e7aa270ac93e1ce71a06f4e5e8906f2c1e246f7bb3b772908
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -82,10 +82,12 @@ a full finding. δ does not depend on the flyby; the rule and δ are fixed befor
 
 ## Estimator validation
 
-- **DE441 vs. DE442 rift (δ)** — `pending`: needs the two NAIF kernels registered
-  (a `phi/sources.φ` duty, Mycelium) and a gate bin (`flyby_ephemeris_gate`,
-  `tools/measure`) that evaluates both editions at the perigee window. No number
-  is carried until measured.
+- **DE441 vs. DE442 rift (δ)** — **measured** (first carried 2026-09-27,
+  reproduced 2026-09-28): **δ = 0,16847323696971178 km** (max |x_DE441(t) −
+  x_DE442(t)| over the sealed-arc-clamped perigee window, 997 hourly samples),
+  evaluated live by `flyby_ephemeris_gate` (`tools/measure`; built `d310d5888`);
+  both NAIF kernels registered (`phi/sources.φ:3448`/`:3469`). The value is
+  evaluated live by the gate, never carried as a hardcoded constant.
 - **σ_recon** — `pending`: arrives with the published post-flyby solution and its
   covariance; absent σ_recon → the verdict stays `pending`, never declared.
 - **Named limits:** the field-state σ/fam tautology is not repaired by this rule —
