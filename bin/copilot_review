@@ -1,16 +1,11 @@
 #!/bin/sh
-# copilot_review — read-only Zweit-Leser über die genannten Pfade.
-# Copilot läuft im Plan-Modus ohne MCP-Server (kein Schreib-/Aktionskanal); die
-# Schranke ist der Plan-Modus, nicht das Promppwort — die genannten Pfade sind
-# der Fokus, keine Sandbox. Gemeldet werden nach fester Rubrik nur Kandidaten:
-# ungemessene Zustandsbehauptungen, Fabrikationsmuster, Widersprüche. Die
-# Befunde sind KEINE Verdikte — die Session misst jeden am Baum (A = A), bevor
-# er als Zeile zählt. Kein Gate: die blockierende Schicht bleiben
-# commit_check/concurrency_contract/….
+# copilot_review — GESTRICHEN (Operator-Wort 2026-09-28).
+#
+# Copilot ist ein Cloud-Dienst: die genannten Pfade gehen an GitHub. Der Operator
+# hat die Grenze gezogen — omegaflow-Daten verlassen die Maschine nicht an Copilot.
+# Kein Datenabfluss, kein Send.
+#
+# Lokal und deterministisch, ohne Cloud: `bin/session_check --in|--out`.
 set -u
-if [ "$#" -lt 1 ]; then
-    echo "usage: copilot_review <pfad...>" >&2
-    exit 2
-fi
-rubric="Read-only second reader. Focus your reading on these paths in the current repository: $*. Report ONLY, one line per finding: (1) a state claim without a measured source, (2) a fabrication pattern (silent default, unwrap_or, 0-sentinel for absent, speculative wording), (3) a contradiction between two places. Format each as: file:line | quoted text | one sentence. No summary, no rating, no fix suggestion."
-exec copilot -p "$rubric" --mode plan --disable-builtin-mcps --max-ai-credits 30
+echo "copilot_review: gestrichen — Copilot ist Cloud und erhält keine omegaflow-Daten (Operator-Wort 2026-09-28). Lokal: bin/session_check --in|--out." >&2
+exit 2

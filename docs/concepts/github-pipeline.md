@@ -1,8 +1,8 @@
 <!--
   title: GitHub-Pipeline — der Kreislauf: Ernte, Disposition, Manifestation auf GitHub
   class: concept
-  date: 2026-09-10
-  sha256: ad5773f07f36fd21cbe5dbda356ce7e32975b3626f26e9921a11624ed002f659
+  date: 2026-09-28
+  sha256: 28bbefd2e01c49cc91c7bafde99f89f22a981b94fc918922e8c5251af9e08a8a
   status: live
   see-also: docs/SOURCE_PORT.md docs/handover/archiv/handover-2026-09-10-autonom.md docs/handover/archiv/handover-2026-09-10-nicht-autonom.md
 -->
@@ -76,6 +76,12 @@ auf Standard-Runnern: ~30 min Wanduhr, $0 auf public.
 
 ## Copilot (Code-Atome)
 
+> **GESTRICHEN (Operator-Wort 2026-09-28):** Copilot ist ein Cloud-Dienst und
+> erhält **keine** omegaflow-Daten — Repo, Handover, Mail, Zustand verlassen die
+> Maschine nicht an ihn. Der folgende Abschnitt beschreibt einen verworfenen Plan;
+> die deterministischen Eingangs-/Ausgangs-Checks laufen lokal über
+> `bin/session_check --in|--out` (0 Cloud-Token).
+
 Der **cloud agent** liest ein Issue → plant → schreibt auf `copilot/`-Branch →
 führt `cargo check`/Tests in eigener Actions-Umgebung aus → Draft-PR. Grenze:
 kein Approve/Merge, Workflows laufen erst nach „Approve and run". Eignung: hoch
@@ -106,7 +112,7 @@ Provider-Keys Pflicht.
    `harvest` mit `required reviewers`.
 4. **Test-Sharding**: `cargo-nextest` + Matrix in `ci-check.yml` (3,5 h → <1 h).
 5. **Required Checks**: `cargo check` 0/0 + Scan als Pflicht-Status.
-6. **Copilot cloud agent** aktivieren; erste Atome als Issues.
+6. ~~**Copilot cloud agent** aktivieren; erste Atome als Issues.~~ **gestrichen (Operator-Wort 2026-09-28): kein Cloud-Dienst erhält omegaflow-Daten.**
 7. **Security**: Secret Scanning + Push Protection + CodeQL aktivieren.
 8. **Codespaces-`devcontainer.json`** (Rust + WebGPU-CPU-Fallback).
 

@@ -3,7 +3,7 @@
   session: Sensory-Folge 180
   class: handover
   date: 2026-09-27
-  sha256: 46247d493f79226cadbb8cf13ba2b764c0bafe10f60e3153ab0f6cb53272a8f2
+  sha256: 13f6a297e398864941218cab1478839cd132dc3573a32953a4d6c52c3e86d36a
   status: live
 -->
 # Handover — Sensory-Folge 180 (2026-09-27)
@@ -58,7 +58,7 @@ getrackt, nie am CDN.
 
 ### 3. O1 DEMETER/CDPP — Order nutzbar, Ernte offen
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** sofort, **Frist 2026-09-28**
-- **Lage:** (gemessen 2026-09-27, Browser-Session `johannes.tyroller@proton.me`) Order
+- **Lage:** (gemessen 2026-09-27, Browser-Session `<operator-mail>`) Order
   **18387** ist **DONE_WITH_WARNING**, `filesInErrorCount 96978`, `availableFilesCount 0`
   — **aber** das metalink `…/orders/18387/metalink/download` ist **befüllt**: echte
   `DMT_N1_1144_*.DAT`-Dateien mit Download-URLs (`…/orders/public/files/<id>?orderToken=…`)

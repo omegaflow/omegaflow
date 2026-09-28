@@ -1,0 +1,43 @@
+#!/bin/sh
+# ci_triage <run-id> [--all] — Copilot liest den ÖFFENTLICHEN CI-Log und nennt die
+# gemessene Ursache. Der CI-Log eines public Repos ist public; der private Baum
+# (state/: Handover, Mail, Pass, wartend) wird NICHT berührt.
+#
+# Sandkasten: der Copilot-Lauf startet in einem leeren Temp-Verzeichnis, das nur
+# die Log-Datei trägt — kein Repo, kein state/, keine Secrets. Kein MCP-Kanal,
+# Plan-Modus, Credit-Deckel. Damit ist Copilot auf den public-Log begrenzt, nicht
+# auf omegaflows private Daten.
+#
+#   ci_triage <run-id>       (ein Lauf)
+#   ci_triage <run-id> --all (voller Job-Log)
+#
+# Kein Gate, kein Send. Die Ausgabe ist eine zweite Stimme über public-Daten; die
+# Session misst sie am Log (A = A), bevor sie als Ursache zählt.
+set -u
+
+if [ "$#" -lt 1 ]; then
+    echo "usage: ci_triage <run-id> [--all]" >&2
+    exit 2
+fi
+run_id="$1"
+shift
+
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+"$root/bin/ci_manage" log "$run_id" "$@" >"$tmp/ci.log" 2>&1
+
+if [ ! -s "$tmp/ci.log" ]; then
+    echo "ci_triage: kein Log für $run_id (ci_manage log lieferte nichts)" >&2
+    exit 2
+fi
+
+cd "$tmp" || exit 2
+exec copilot -p "Read ./ci.log — it is the full log of one GitHub Actions run of a public repository. Report EXACTLY ONE line: the measured failure cause as job | step | error-line. Quote the decisive line verbatim. If the log shows no failure, answer 'green'. If the cause is not determinable from the log, answer 'unread'. No summary, no rating, no fix suggestion." --mode plan --disable-builtin-mcps --max-ai-credits 30
