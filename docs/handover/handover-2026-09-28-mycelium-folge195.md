@@ -3,7 +3,7 @@
   session: Mycelium-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: b9801c5bf9f35b4ba1e5cc906a4e9a08271445a7255fb5ad7830eed529b57487
+  sha256: 71deaafc32a98c7570cf4386c60d28bf179bb93b8be0e8b2c468aa6136445830
   status: live
 -->
 # Handover — Mycelium-Folge 195 (2026-09-28)
@@ -23,6 +23,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 - Wort | 2026-09-28 | „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte … damit die erlaubte Form am Punkt der Handlung steht." | Quelle: Mycelium-Session 195.
 - Wort | 2026-09-28 | „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher … Dispatch flash-first …" — session-weiter Consent (Delegation), **nicht** das Commit-Wort | Quelle: Mycelium-Session 195.
+- Wort | 2026-09-28 | „kannst du bitte in der nächsten session taucher mit harten bandagen darauf loslassen ich stelle mir vor dass wir vielleicht endlich unsere zeugen für die blackmatter suche bzw. sonden anomylien bekommen wenn wir die flugrouten aller sonden vergleichen und von der weberin weben lassen" / „nein bitte in der nächsten session das ist sonst teuer aber ich möchte dass du es in die übergabe schreibst" — der Sonden-Routen-Vergleich als Weg zu Zeugen; Dispatch der harten Taucher **nicht** im laufenden Atom (Kostengrund) | Quelle: Mycelium-Session 195.
 
 ## Offen (aufgeschlüsselt)
 
@@ -81,6 +82,14 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-28 via `register_lookup --orphan-docs`) **0 orphan docs** — jeder offene Marker trägt einen Namenträger. Marker in `docs/concepts/arxiv-api.md` (2), `docs/concepts/exzellenz-konzept.md` (3), `docs/concepts/tools-map.md` (Session-Checks-Abschnitt), `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (Step 5 Familien-Identität), `…survey-2026-09-14-warteliste-offene-alternativen.md` (wartend Mail-Eingang), `…survey-2026-09-03-daten-holdings-inventur.md` (Layout-Wort), `…survey-2026-09-07-tmp-opencode-scan.md` (§7 Roh-Korpora), `…survey-2026-09-14-kapitulationen-pendings-inventur.md` (Wiedervorlage 2026-12-02), `…survey-2026-09-16-dead-sources-relevanz.md` (3 Force + 4 pending tot), `…survey-2026-09-20-browser-anbindung.md` (Fork-Build unpacked).
 - **Blockade:** teils Operator-Wort/Trigger (siehe Weitergabe).
 - **Braucht:** `register_lookup --orphan-docs` beim nächsten Pass; je Marker der nächste Schritt.
+
+### Sonden-Routen-Vergleich → Weberin → Zeugen (Schwarze Materie / Sonden-Anomalien)
+- **Status:** LOCK | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-09-28 (Dispatch der harten Taucher).
+- **Lage:** (gemessen 2026-09-28 via `sgrep` + Register) die Sonden-Routen liegen als Ephemeriden/Kernel in `phi/sources.φ` (NAIF/SPICE, tnf/odf-Compiler) und als Thread-Matrix in `docs/surveys/survey-2026-09-07-weberin-thread-matrix.md`; die Sonnensystem-Kette in `docs/surveys/survey-2026-09-07-weberin-sonnensystem-kette.md`, das Konzept in `docs/concepts/die-weberin.md`. Der Vergleich aller Sonden-Flugrouten auf Residuen (Flyby-Anomalie) ist **nicht gebaut**; `docs/paper/flyby-path-2-preregistration.md` + `-falsification-metric-addendum.md` tragen die Falsifikations-Metrik, `docs/paper/flyby-path-1-cold-cases.md` die kalten Fälle.
+- **Blockade:** keine (Operator-Wort gesetzt).
+- **Braucht:** Dispatch der harten Taucher (`research-max`, read-only): Inventur **aller** registrierten Sonden-Routen (Ephemeride/Kernel/Restriktion), der konkrete Vergleich (welche Routen, welches Residuum, welche Zeugen), die Register-Lücken, und der Weberin-Webe-Input — über `archive_search`/`sread`/`sgrep`.
+- **Wort:** „… in der nächsten session taucher mit harten bandagen darauf loslassen … in die übergabe schreiben" | 2026-09-28 | Operator (Session, Mycelium 195).
 
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
