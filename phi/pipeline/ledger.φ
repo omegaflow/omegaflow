@@ -26,3 +26,39 @@ note 2026-09-23 HTTP 200 JSON, flaches Array von Objekten alle Werte String; Pfl
 disponiert
 nachlauf docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
 note survey 2026-09-14 gemessen 2026-09-26: 26/26 Pendings im Register (sources.φ:869,811,819,843,3494,7821,8122,8207,8763,9343; declined_sources.φ:2270,1391,1407,1011), nur ERI compiler-pending (noaa_nodd_disposition.φ:50)
+
+ausstehend
+kandidat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
+note Akatsuki Radio Science (JAXA/ISAS) PDS4 urn:jaxa:darts:vco_rs — 2026-09-28 200 anonym; SIS vco_rs_sis_v13.pdf; einziges offenes asiatisches Radio-Science-Roh. sensory-folge195.
+
+ausstehend
+kandidat https://sbnarchive.psi.edu/pds4/hayabusa/
+note Hayabusa (JAXA/ISAS) AMICA/LIDAR/NIRS/Mission PDS4 — 2026-09-28 200 anonym; NAIF HAYABUSA/-SPICE schon im Index. sensory-folge195.
+
+ausstehend
+kandidat https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
+note Kaguya/SELENE LRS-Roh (JAXA/ISAS, PDS ODE) + DARTS darts:sln-l-rise-5-traj-rstar-v1.0 — 2026-09-28 200 anonym; NAIF SELENE/ im Index. sensory-folge195.
+
+ausstehend
+kandidat https://pds-geosciences.wustl.edu/missions/chandrayaan1/
+note Chandrayaan-1 (ISRO) M3/Mini-SAR/HySI PDS3 — 2026-09-28 200 anonym; SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/. sensory-folge195.
+
+ausstehend
+kandidat https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+note Venera 15/16 (UdSSR, PDS-Spiegel) Altimetrie 10398160 B + Radiometrie mpi-radiometry.dat 5949650 B — 2026-09-28 200 anonym; abgeleitete Tabellen, kein Raw. sensory-folge195.
+
+ausstehend
+kandidat https://pds-smallbodies.astro.umd.edu/holdings/vega2-c-mischa-3-rdr-original-v1.0/
+note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets TVS/DUCMA/SP-1/SP-2/PUMA/PM1/MISCHA + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ — 2026-09-28 200 anonym. sensory-folge195.
+
+ausstehend
+kandidat https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
+note Phobos 2 (UdSSR) KRFM-Photometrie/Termoskan/VSK-FREGAT — 2026-09-28 200 anonym (SBN); PWS via CDPP regards account. sensory-folge195.
+
+ausstehend
+kandidat https://archives.esac.esa.int/psa/ftp/ExoMars2016/
+note ExoMars TGO (ESA, russ. Instrumente ACS/FREND) — 2026-09-28 200 anonym; NAIF EXOMARS2016/ im Index. sensory-folge195.
+
+ausstehend
+kandidat https://pda.kasi.re.kr/
+note Danuri/KPLO (KARI/KASI) Planetary Data Archive + ShadowCam shadowcam.im-ldi.com — 2026-09-28 200 anonym. sensory-folge195.
