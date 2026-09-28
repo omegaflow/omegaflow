@@ -1,7 +1,7 @@
 <!--
   title: Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
   class: concept
-  sha256: 74f22ee7d012524b47f8565f79b7e95ff7018c0bd25c1f26a76b6e7b05af7163
+  sha256: a2af1606ca60c01f42d716c0a2dd25e2a4c001968b8f085cc366151e389022aa
 -->
 # Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
 
@@ -205,7 +205,7 @@ genommen haben kann. Es verlangt keine neue Physik und kein
 Phasen-Bit — der Signalkegel (c·age) und die ICRS-Distanz d reichen,
 um den Verrat an c zu entlarven.
 
-**Die Kreuzung:** die Retardierung des Archivers (Operation Ⅳ, die
+**Die Kreuzung:** die Retardierung des Archivars (Operation Ⅳ, die
 Lichtkegel-Differenz — max(0, |Δt| − d/c), der-paradigmenwechsel.md)
 × die TE-Lag-Messung × die Sonden-Bahnen (der Gravitationstrichter).
 
@@ -239,7 +239,7 @@ CMB-Temperaturfluktuationen (thermal) im selben Block.
 
 **Die Geometrie:** die tiefsten Rotverschiebungen (z ≳ 10) und das CMB
 liegen als thermal/em-Samples im Block; das Hubble-Gesetz (z·c/H0 —
-der z_key des Archivers) übersetzt sie in absolute ICRS-Koordinaten,
+der z_key des Archivars) übersetzt sie in absolute ICRS-Koordinaten,
 die 1/r²-Kernels rechnen das Feld bis an den Horizont. Der Detektiv
 fragt: fließt Information aus einer scheinbar leeren Koordinate am
 Rand des Blocks in die Bewegung der Haufen? TE aus dem Leeren —

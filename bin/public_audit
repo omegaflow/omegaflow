@@ -1,0 +1,35 @@
+#!/bin/sh
+# public_audit [<pfad...>] — Copilot prüft, ob der BEREITS ÖFFENTLICHE Baum die
+# Hausregeln trägt (Code, Assets, Docs). Das Material ist schon public → kein
+# neuer Datenabfluss, kein zweiter Empfänger privater Daten.
+#
+# Sandkasten: materialisiert NUR getrackte Dateien (git archive HEAD) in ein
+# leeres Temp-Verzeichnis. `state/` (Handover, Mail, Pass, wartend) und
+# `.secrets.local` sind gitignored und liegen nie darin. Copilot liest dort; der
+# lokale Arbeitsbaum wird nicht berührt.
+#
+#   public_audit                 (ganzer public Baum)
+#   public_audit src tools phi   (nur diese Pfade)
+#
+# Kein Gate, kein Send. Die Befunde sind Kandidaten — die Session misst jeden am
+# Baum (A = A), bevor er als Zeile zählt.
+set -u
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+if [ "$#" -gt 0 ]; then
+    git archive HEAD AGENTS.md "$@" | tar -x -C "$tmp" || { echo "public_audit: git archive fehlgeschlagen" >&2; exit 2; }
+else
+    git archive HEAD | tar -x -C "$tmp" || { echo "public_audit: git archive fehlgeschlagen" >&2; exit 2; }
+fi
+
+if [ ! -f "$tmp/AGENTS.md" ]; then
+    echo "public_audit: AGENTS.md nicht im public Baum — Rubrik fehlt" >&2
+    exit 2
+fi
+n="$(find "$tmp" -type f | wc -l | tr -d ' ')"
+echo "public_audit: $n getrackte Datei(en) im Sandkasten ($tmp) — Copilot liest nur diese." >&2
+
+cd "$tmp" || exit 2
+exec copilot -p "This directory is a checkout of a PUBLIC repository. Read AGENTS.md, then audit ONLY the paths that were requested (default: the whole checkout) against the house rules. Deterministic patterns are already covered by a local scan — focus on what a grep cannot see: (1) a state claim without a measured source (something asserted as built/exists/runs without evidence); (2) a contradiction between two places; (3) an identity/dignity violation in the prose (a body or source treated as instrument, a person as data); (4) a fabrication pattern in code with judgment (a silent default that changes meaning, a 0 that stands for an absent physical value). Report ONLY candidates, one line each, in the fixed form: file:line | rule | quoted text | one sentence. Do NOT modify any file. Print your findings as your final message — not as a plan. No summary, no rating, no fix suggestion; if a class has no finding, stay silent on it." --disable-builtin-mcps --max-ai-credits 30
