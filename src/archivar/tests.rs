@@ -279,6 +279,71 @@ fn test_parse_where_refused_on_field() {
     assert!(sources[0].extracts.is_empty());
 }
 
+fn rtsw_wind_json() -> &'static str {
+    r#"[
+        {"time_tag": "2026-09-28T03:51:00Z", "source": "ACE", "proton_speed": 400.0},
+        {"time_tag": "2026-09-28T03:50:00Z", "source": "IMAP", "proton_speed": 349.0},
+        {"time_tag": "2026-09-28T03:49:00Z", "source": "IMAP", "proton_speed": 351.0}
+    ]"#
+}
+
+fn source_where_content(name: &str) -> String {
+    format!(
+        "url https://example.com/rtsw_wind.json\nttl 60\nat sun\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source {name}\n"
+    )
+}
+
+#[test]
+fn test_parse_where_source_clause() {
+    let sources = parse_sources(&source_where_content("DSCOVR"));
+    assert_eq!(sources.len(), 1);
+    match &sources[0].extracts[0] {
+        Extract::First(fc, Some((fk, fv))) => {
+            assert_eq!(fc.name, "solar_wind_speed_km_s");
+            assert_eq!(fk, "source");
+            assert_eq!(fv, "DSCOVR");
+        }
+        _ => panic!("parsed extract is not a source-isolated first extract"),
+    }
+}
+
+#[test]
+fn test_where_source_isolates_row() {
+    let sources = parse_sources(&source_where_content("IMAP"));
+    assert_eq!(sources.len(), 1);
+    match extract(&sources[0], rtsw_wind_json(), 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert_eq!(channels[0].0.value, 349.0);
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+}
+
+#[test]
+fn test_where_source_case_insensitive() {
+    let sources = parse_sources(&source_where_content("imap"));
+    assert_eq!(sources.len(), 1);
+    match extract(&sources[0], rtsw_wind_json(), 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            assert_eq!(channels[0].0.value, 349.0);
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+}
+
+#[test]
+fn test_parse_where_source_malformed_refused() {
+    let content = "url https://example.com/rtsw_wind.json\nttl 60\nat sun\nfirst proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0 where source\n";
+    let sources = parse_sources(content);
+    assert_eq!(sources.len(), 1);
+    assert!(
+        sources[0].extracts.is_empty(),
+        "malformed where source must refuse the line loudly"
+    );
+}
+
 #[test]
 fn test_convert_to_si() {
     let close = |a: Option<f64>, b: f64| {
@@ -6653,6 +6718,16 @@ fn test_fetch_one_with_age_carries_the_cdn_age_on_fallback() {
     );
 }
 
+fn set_cache_mtime(path: &str, unix_secs: u64) {
+    let t = UNIX_EPOCH + std::time::Duration::from_secs(unix_secs);
+    std::fs::File::options()
+        .write(true)
+        .open(path)
+        .unwrap()
+        .set_modified(t)
+        .unwrap();
+}
+
 #[test]
 fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
     let dir = std::env::temp_dir().join(format!("omegaflow_cdn_stamp_{}", std::process::id()));
@@ -6667,24 +6742,28 @@ fn test_cache_fresh_cdn_stamp_equality_and_release_branch() {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_secs();
+    let stale = now - 100_000;
     let lm = rfc1123_from_unix(now - 500);
+    set_cache_mtime(&path, stale);
     let (server, handle) = local_http_head(lm.clone(), 1);
     let release_url = format!("{}/releases/download/v1/asset.json", server);
     assert!(
         !super::cache_fresh_cdn(&path, 3600, &release_url),
-        "a release-URL cache without a cdn stamp is not fresh"
+        "a stale release-URL cache without a cdn stamp is not fresh"
     );
     handle.join().unwrap();
     let (server2, handle2) = local_http_head(lm, 2);
     let release_url2 = format!("{}/releases/download/v1/asset.json", server2);
     super::write_cdn_stamp(&path, &release_url2);
+    set_cache_mtime(&path, stale);
     assert!(
         super::cache_fresh_cdn(&path, 3600, &release_url2),
-        "a release-URL cache whose cdn stamp equals the current last-modified is fresh"
+        "a stale release-URL cache whose cdn stamp equals the current last-modified is fresh"
     );
     handle2.join().unwrap();
     let (server3, handle3) = local_http_head(rfc1123_from_unix(now - 400), 1);
     let release_url3 = format!("{}/releases/download/v1/asset.json", server3);
+    set_cache_mtime(&path, stale);
     assert!(
         !super::cache_fresh_cdn(&path, 3600, &release_url3),
         "a release-URL cache whose cdn stamp differs from the current last-modified is stale"
@@ -10822,6 +10901,48 @@ fn odf_series_dispatch_and_component_names() {
         None
     );
     assert!(super::extract::series_parse_bin("mars_express_odf", b"X").is_none());
+}
+
+#[test]
+fn odf_serie_series_dispatch_and_component_name() {
+    let shard_a = [[
+        753_440_003.0,
+        -382_738.66,
+        2.3e9,
+        43.0,
+        43.0,
+        11.0,
+        2.0,
+        77.0,
+        60.0,
+    ]];
+    let shard_b = [[
+        753_440_004.0,
+        -382_738.68,
+        2.3e9,
+        43.0,
+        43.0,
+        11.0,
+        2.0,
+        77.0,
+        60.0,
+    ]];
+    let bytes = super::odf::write_odf_series(&[&shard_a, &shard_b]);
+    let parsed =
+        super::extract::series_parse_bin("odf_serie", &bytes).expect("odf_serie series parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].0, 753_440_003.0);
+    assert_eq!(parsed[0].1, -382_738.66);
+    assert_eq!(parsed[0].2, super::odf::COMP_OBSERVABLE);
+    assert_eq!(parsed[1].0, 753_440_004.0);
+    assert_eq!(parsed[1].1, -382_738.68);
+    assert_eq!(parsed[1].2, super::odf::COMP_OBSERVABLE);
+    assert_eq!(
+        super::extract::series_component_name("odf_serie", super::odf::COMP_OBSERVABLE),
+        Some("odf_serie_observable_hz")
+    );
+    assert_eq!(super::extract::series_component_name("odf_serie", 99), None);
+    assert!(super::extract::series_parse_bin("odf_serie", b"X").is_none());
 }
 
 #[test]
