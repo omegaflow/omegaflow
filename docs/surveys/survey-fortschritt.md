@@ -1,7 +1,7 @@
 <!--
   title: Fortschritts-Verzeichnis — 2026-08-16
   class: survey
-  sha256: a7c01ee454a00ebd05be34946023f214b6e20144c8c6232079713858e6c75808
+  sha256: 5e478f59c64ead684672d8ab684937a4413d33220ddad03ab0bb80e036ac4258
 -->
 # Fortschritts-Verzeichnis — 2026-08-16
 
@@ -64,18 +64,30 @@ Harte Befunde aus dem Live-Betrieb (HD 520, ANV):
 
 ## C. Offene Verbesserungen (leben zusätzlich im TODO)
 
-- **Deep-Lieferung richtungsbasiert**: Sterne über den Sichtkegel statt
-  radius-begrenzt — das Browser-Verhalten (1,84 Mio Sterne, flüssiger
-  Deep-Sky-Zoom bei 0 near).
-- **Zell-Achse**: Messpunkt-Vergröberung, gemessen gegen die
-  8-Bit-Display-Quantisierung (Struktur-Radius 14–39 px bei 8 Bit);
-  survey-auswertung.md §1-2.
-- **Relay-Trailer**: gen u64 + 9×Ω f64 für browser_relay (~80 B).
-- **Deep-Upload-Stille**: deep_dirty feuert bei jedem Sense — die
-  29-MB-Sterne werden auch unverändert hochgeladen.
-- **Rgba8Unorm-Nachmessung** mit intel_gpu_top gegen die ~200-ms-Baseline.
-- Fovea nur als Budget-Kappe; Subpixel-Trommelfell als Konzept erhalten
-  (eb96d1f bleibt im Git).
+- **Deep-Lieferung richtungsbasiert**: `descoped` (gemessen 2026-09-28, River-Folge 50, Rat) —
+  der Browser ist der richtungslose Sensor; `forward: [0.0,0.0,0.0]` (`relay.rs:812`) ist die
+  isotrope Anfrage eines Sensors ohne Blick. Der Sichtkegel lebt nativ mit dem Operator-Blick
+  (`spatial.rs:540`). Wiedereröffnung: ein Operator-Wort, das den Browser zum zweiten Blick macht
+  (`relay.rs:812` + JS-Kamera-Forward — Fenster-Edit).
+- **Zell-Achse**: die Achse ist gebaut und konsumiert (`grid_step` im v9-Protokoll → `softening`
+  `omega.rs:553-564`, `relay.rs:555-588`); die quantisierungsbewusste Vergröberung/8-Bit-Messung
+  `descoped` (gemessen 2026-09-28, River-Folge 50, Rat): kein Produktions-8-Bit-Pfad — der Canvas
+  nutzt das bevorzugte Format (Spiegel des Rgba8Unorm-Befunds); eine Messung gegen einen
+  Nicht-Produktionspfad misst nichts.
+- **Relay-Trailer**: `descoped` (gemessen 2026-09-28, River-Folge 50, Rat) — der Antwort-Header
+  trägt bereits `epoch` u64 (`relay.rs:825-830`); der Browser konsumiert Ω als f32-Anzeige im
+  kinetic-Frame (`relay.rs:1047-1072`); kein Browser-Konsument von gen/f64-Ω ist gemessen; eine
+  Draht-Änderung (`constants.js` + DataView) ohne Konsumenten ist spekulativ.
+- **Deep-Upload-Stille**: `ueberholt` (gemessen 2026-09-28, River-Folge 50) — `deep_dirty` ist
+  ersetzt (Byte-Vergleich + Generation, `omega.rs:1870-1936`/`:874-885`; Upload nur bei Änderung).
+- **Rgba8Unorm-Nachmessung**: `ueberholt` (gemessen 2026-09-28, River-Folge 50) — kein
+  Produktions-`RenderPipeline` (Canvas = bevorzugtes Format über `navigator.gpu.getPreferredCanvasFormat()`);
+  die intel_gpu_top-Baseline hat kein Produktions-Ziel.
+- **Fovea als Budget-Kappe**: `descoped` (gemessen 2026-09-28, River-Folge 50, Rat) — der
+  Budget-Fallback ist bereits gebaut (Hintergrund-Skalierung, `survey-messpunkt-verteilung.md:104`);
+  Fovea-primär ist prinzipiell verworfen (`:84`); kein Frame-Zeit-Symptom ist gemessen (0 Treffer
+  `fovea`/`budget` in `static`). Die Survey-Zeile „`eb96d1f` bleibt im Git" ist durch den Klon
+  falsifiziert (Commit absent) — der Riss steht im Befund.
 
 ## D. Die Survey-Erkenntnisse (Kern)
 
