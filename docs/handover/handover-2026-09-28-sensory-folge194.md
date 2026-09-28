@@ -3,7 +3,7 @@
   session: Sensory-Folge 194
   class: handover
   date: 2026-09-28
-  sha256: db6c7910ac46a340a9e302fa19ea660f3b92158012b4486e90bb3fd6dbd23289
+  sha256: 919d5c81fc7d16f19a205db70090559e68075ab2d80c4eab0d6f90c24ad7ac15
   status: live
 -->
 # Handover — Sensory-Folge 194 (2026-09-28)
@@ -64,6 +64,7 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 - **Wort:** „ka restart order und defekte löschen" | 2026-09-28 | Operator (Session) — Sensory-Folge 194.
 - **Wort:** „aber du kannst doch die kaputten orders löschen" | 2026-09-28 | Operator (Session) — Sensory-Folge 194; ausgeführt: Failed-Orders gecancelt (Zähler 47→39), Restart-Weg (Dialog „RETRY ORDER ERRORS"/„RELAUNCH FULL ORDER") gemessen.
 - **Wort:** „relaunch full orders" | 2026-09-28 | Operator (Session) — Sensory-Folge 194; ausgeführt: 18387 relauncht → neue Order (Pending, 05:02:38, 0 Dateien).
+- **Wort:** „/Sensory /consent bitte fixen" (privaten Baumstand korrekt zuordnen) | 2026-09-28 | Operator (Session) — Sensory-Folge 194; Ergebnis: fremde Orphans nicht in einer Future-Registerzeile gebündelt, kein Commit auf `/consent` (Commit trägt `/commit`); demeter-/matrix-rotor-Trigger nachgeprüft, nicht gefeuert.
 
 ## Offen (aufgeschlüsselt)
 
