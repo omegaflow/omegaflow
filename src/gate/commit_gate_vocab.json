@@ -227,7 +227,8 @@
     "nächste Session",
     "nächsten Session",
     "nächster dispatch",
-    "nächste session"
+    "nächste session",
+    "dispatchbarer eigener Schritt"
   ],
   "consent_acts": [
     ["smail --send", "mail send"],
@@ -474,6 +475,7 @@
     "counter_slope_clean_wort": "the operator's Wort is registered before the act runs",
     "deferral_next_dispatch": "Trigger: nächster Dispatch",
     "deferral_sofort_clean": "Trigger: sofort",
+    "deferral_dispatchbar_not_built": "Trigger: keiner — dispatchbarer eigener Schritt.",
     "votable_null_empty_array": "if null {\n    map.insert(f.name.clone(), JsonVal::Arr(Vec::new()));\n}",
     "status_proof_wartend-ohne-trigger-beleg": "## Offen\n\n### P\n- **Status:** wartend | **Bindung:** eigen\n- **Trigger:** nächster Dispatch\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
     "status_proof_blockade-keine": "## Offen\n\n### P\n- **Status:** blockiert | **Bindung:** eigen\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",

@@ -68,6 +68,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "cassini_odf" => odf::parse_series(bytes),
         "pioneer10_odf" => odf::parse_series(bytes),
         "pathfinder_odf" => odf::parse_series(bytes),
+        "odf_serie" => odf::odf_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" | "messenger_tnf" => odf::tnf_parse_series(bytes),
         "ams02_spec" => tdat::ams02_series(bytes),
         "voyager_odr" => voyager_odr::parse_series(bytes),
@@ -476,6 +477,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "pathfinder_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("pathfinder_odf_observable_hz"),
+            _ => None,
+        },
+        "odf_serie" => match comp {
+            odf::COMP_OBSERVABLE => Some("odf_serie_observable_hz"),
             _ => None,
         },
         "cassini_tnf" => match comp {
@@ -996,7 +1001,13 @@ pub fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
         return false;
     };
     match map.get(fk) {
-        Some(JsonVal::Str(s)) => s == fv,
+        Some(JsonVal::Str(s)) => {
+            if fk == "source" {
+                s.eq_ignore_ascii_case(fv)
+            } else {
+                s == fv
+            }
+        }
         Some(JsonVal::Num(n)) => fv.parse::<f64>() == Ok(*n),
         _ => false,
     }
