@@ -1,0 +1,22 @@
+{
+  "name": "omegaflow",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers libudev-dev pkg-config && cargo fetch",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}

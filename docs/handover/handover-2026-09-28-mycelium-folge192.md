@@ -3,7 +3,7 @@
   session: Mycelium-Folge 192
   class: handover
   date: 2026-09-28
-  sha256: 90ce6056cbb7d563a632ce19c59c2153ae99d225423d422114d3f4dc0991084b
+  sha256: a858cb430ae1c99f5bf18204ba3567c08f27eccfa348a595dd0a16155f2d35b3
   status: live
 -->
 # Handover — Mycelium-Folge 192 (2026-09-28)
@@ -25,6 +25,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - Wort | 2026-09-28 | „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort — Commit und Push trägt `/commit`." | Quelle: Mycelium-Session 191.
 - Wort | 2026-09-28 | „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom." — session-weiter Consent (Delegation), nicht das Commit-Wort | Quelle: Mycelium-Session 192.
 - Wort | 2026-09-28 | „fixen statt verschleppen, mein wort" — ein arbeitbarer gemessener Befund wird im Atom gebaut, nicht als Handover-Punkt getragen | Quelle: Mycelium-Session 192.
+- Wort | 2026-09-28 | „beides, mein wort" — den `cdn-health`-Workflow (Ersatz für `cds_watchdog`) und die Copilot-CLI als read-only Recherche-Stimme bauen | Quelle: Mycelium-Session 192.
 
 ## Offen (aufgeschlüsselt)
 
@@ -62,6 +63,13 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - **Lage:** (gemessen 2026-09-28 via `ci_watchdog.log` + `ci_manage log`) der Watchdog stufte die `matrix-rotor`-Shutdowns als „assertion-red" ein, weil der Matcher auf den Build-Text `Compiling static_assertions` ansprang → der gewollte Rerun unterblieb. `bin/ci_watchdog.sh` prüft jetzt transient **zuerst**; die Assertion-Klasse ist auf echte Rot-Marker begrenzt (`panicked at|assertion failed|assertion .* failed|test result: FAILED|error\[E[0-9]`); `bash -n` 0.
 - **Blockade:** keine.
 - **Braucht:** der nächste rote Lauf mit „runner has received a shutdown signal" trägt „rerun … measured transient cause" im `ci_watchdog.log`.
+
+### Freie GitHub-Hebel — Codespace · cdn-health · copilot_ask
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** erster `cdn-health`-Lauf (`cdn-health.yml`) ODER Operator öffnet den Codespace.
+- **Lage:** (gemessen 2026-09-28 via Browser/`gh`) das `omegaflow`-Konto (GitHub Free, public Repo) bietet acht Produkte; genutzt ist nur Actions, **Copilot Free 0 %**, **Codespaces 0**. Gebaut: `.devcontainer/devcontainer.json` (freier Codespace: Rust-Image + lavapipe + github-cli/node, 2 cpus/8 GB), `.github/workflows/cdn-health.yml` (Ersatz für den lokalen `cds_watchdog`: zehn CDN-Assets, aktuell alle `200`), `bin/copilot_ask` (Copilot-CLI read-only: `--mode plan --disable-builtin-mcps`, getestet `Changes +0 -0`; `gh copilot`/`copilot` installiert, Konto-authentifiziert). Copilot-Free-Modelle: der CLI-Katalog zählt 27 (`claude-*`, `gpt-6-astra`, `gpt-5.6-*`, `gemini-3.*-flash`, `grok-4.5`, `kimi-*`, `mai-code-1.1-flash`), aber das **Free-Konto erlaubt nur `auto`** — alle 10 getesteten expliziten Namen → „not available"; `auto` löst auf **`gpt-6-luna`** auf (einziger Kandidat). Der eingebaute **GitHub-MCP-Server** war verbunden (Schreibkanal) und ist im Wrapper abgeschaltet.
+- **Blockade:** keine.
+- **Braucht:** `gh workflow run cdn-health.yml`, dann `ci_manage log <id>`; den Codespace öffnet der Operator; `copilot_ask "<frage>"` für die read-only Recherche-Stimme; `copilot_review <pfade>` für den read-only Zweit-Scan (feste Rubrik, MCP aus; Demo an `bin/ci_watchdog.sh` lieferte vier Kandidaten — keiner davon gemessen, keiner ein Verdikt).
 
 ### Workflow-Klassen-Zensus Step 5 — modis entschieden; generische Fassung offen
 - **Status:** wartend | **Bindung:** eigen
