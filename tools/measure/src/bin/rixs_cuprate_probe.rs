@@ -4,11 +4,7 @@ use omegaflow::rixs::{SpinBin, parse_spin_bin};
 const RIXS_SPIN_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rixs_spin.bin";
 const MIN_N: usize = 30;
-const CHANNELS: [(&str, &str); 3] = [
-    ("Spin", "em"),
-    ("Lattice", "acoustic"),
-    ("Supercurrent", "electric"),
-];
+const CHANNELS: [&str; 3] = ["Spin", "Lattice", "Supercurrent"];
 
 fn doping_name(d: u8) -> &'static str {
     match d {
@@ -105,12 +101,11 @@ fn main() {
         }
     );
     println!("  channels:");
-    for (name, force) in CHANNELS {
+    for name in CHANNELS {
         let present = name == "Spin" && spin_spectra > 0;
         println!(
-            "    {} ({}) — {}",
+            "    {} — {}",
             name,
-            force,
             if present {
                 "harvested"
             } else {
@@ -125,7 +120,7 @@ fn main() {
     );
 
     println!("  TE matrix (driver → follower):");
-    for (i, (dn, _)) in CHANNELS.iter().enumerate() {
+    for (i, dn) in CHANNELS.iter().enumerate() {
         let mut row = String::new();
         for j in 0..CHANNELS.len() {
             let cell = if i == j { "itself" } else { "no statement" };

@@ -154,7 +154,8 @@ fn harvest_rixs(dir: &str) -> Vec<SpinSpectrumBin> {
     out
 }
 
-const CHARGE_VERSION: u8 = 0x03;
+const CHARGE_MAGIC: [u8; 4] = *b"RIXC";
+const CHARGE_VERSION: u8 = 1;
 
 fn harvest_plasmon(dir: &str) -> Vec<(f64, u8, Vec<omegaflow::rixs::SpinOscillator>)> {
     let mut out = Vec::new();
@@ -193,7 +194,7 @@ fn encode_charge_bin(
     lab: Option<(f64, f64, f64)>,
 ) -> Vec<u8> {
     let mut out = Vec::new();
-    out.extend_from_slice(&MAGIC);
+    out.extend_from_slice(&CHARGE_MAGIC);
     out.push(CHARGE_VERSION);
     out.extend_from_slice(&(spectra.len() as u32).to_le_bytes());
     push_lab(&mut out, lab);
@@ -211,7 +212,8 @@ fn encode_charge_bin(
     out
 }
 
-const EELS_VERSION: u8 = 0x04;
+const EELS_MAGIC: [u8; 4] = *b"EELS";
+const EELS_VERSION: u8 = 1;
 
 fn median_gap(v: &[f64]) -> Option<f64> {
     let mut gaps: Vec<f64> = v
@@ -295,7 +297,7 @@ fn encode_eels_bin(
     lab: Option<(f64, f64, f64)>,
 ) -> Vec<u8> {
     let mut out = Vec::new();
-    out.extend_from_slice(&MAGIC);
+    out.extend_from_slice(&EELS_MAGIC);
     out.push(EELS_VERSION);
     out.extend_from_slice(&(spectra.len() as u32).to_le_bytes());
     push_lab(&mut out, lab);

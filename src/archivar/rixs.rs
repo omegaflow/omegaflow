@@ -1,8 +1,8 @@
 pub const EV_TO_HZ: f64 = 2.417989242e14;
 pub const MEV_TO_HZ: f64 = EV_TO_HZ * 1.0e-3;
 
-pub const SPIN_MAGIC: [u8; 2] = [0xCF, 0x86];
-pub const SPIN_VERSION: u8 = 0x02;
+pub const SPIN_MAGIC: [u8; 4] = *b"RIXS";
+pub const SPIN_VERSION: u8 = 1;
 
 #[derive(Clone, Debug)]
 pub struct SpinSpectrum {
@@ -34,15 +34,11 @@ pub struct SpinBin {
 }
 
 pub fn parse_spin_bin(bytes: &[u8]) -> Option<SpinBin> {
-    if bytes.len() < 13
-        || bytes[0] != SPIN_MAGIC[0]
-        || bytes[1] != SPIN_MAGIC[1]
-        || bytes[2] != SPIN_VERSION
-    {
+    if bytes.len() < 9 || bytes[0..4] != SPIN_MAGIC || bytes[4] != SPIN_VERSION {
         return None;
     }
-    let n_spectra = u32::from_le_bytes(bytes[3..7].try_into().ok()?) as usize;
-    let mut pos = 7usize;
+    let n_spectra = u32::from_le_bytes(bytes[5..9].try_into().ok()?) as usize;
+    let mut pos = 9usize;
     let lat = f64::from_le_bytes(bytes[pos..pos + 8].try_into().ok()?);
     pos += 8;
     let lon = f64::from_le_bytes(bytes[pos..pos + 8].try_into().ok()?);

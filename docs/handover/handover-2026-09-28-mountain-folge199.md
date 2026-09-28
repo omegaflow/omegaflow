@@ -1,9 +1,9 @@
 <!--
-  title: Handover — Mountain-Folge 198 (Stand 2026-09-28)
-  session: Mountain-Folge 198
+  title: Handover — Mountain-Folge 199 (Stand 2026-09-28)
+  session: Mountain-Folge 199
   class: handover
   date: 2026-09-28
-  sha256: cecb4dc4baecff4482be968a8716e28b004be5a80a86491f0d9bf9e4b65869d7
+  sha256: e7c6465531939e288f3e5a84acd756782113606e8bcb72ad190eb7e6e3370012
   status: live
 -->
 # Handover — Mountain-Folge 198 (2026-09-28)
@@ -57,6 +57,20 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 - **Blockade:** Wire-Lücke — die NSE-Polarisation trägt keine ICRS-Position/keinen Kraftkanal (passt nicht in den 26×f64-Record); Compiler schreibt eine flache Serie (`LABR`-Magic).
 - **Braucht:** (a) Feld-/Wire-Entscheidung (welcher NSE-Skalar, welche Karte) — Rat/Operator; (b) **kein CDN** — privates Holding, Manifestation nur mit ausdrücklichem Operator-Einverständnis (SAMPLE_CONTACT teilt für Forschung, Zitatpaper+Instrument+Provenienz); (c) Antwort-Dank an SAMPLE_CONTACT (Operator-Hand, Future).
 
+### Kuprat-Kanäle — Zeugen-Art `Substance` (gebaut)
+- **Status:** wartend | **Bindung:** eigen + mycelium
+- **Trigger:** Mycelium re-kompiliert/re-manifestiert die vier Bins unter den neuen Magics und heilt die Tag-Drift.
+- **Lage:** (gemessen 2026-09-28) Die vier Kanäle sind **Zeugen**, kein Feld-Source (zwei Außenstimmen Claude/GLM + Rat bestätigen; `src/archivar/tests.rs:8088-8091`). **Gebaut:** `WitnessKind::Substance` in `src/archivar/witness.rs` (`magic_identity`: `RIXS`/`RIXC`/`EELS`/`SRD6` → `Witness(Substance)`, Gate-Tests); die Bins auf die Hausform `[4-Byte-Magic][Version]` gebracht (`rixs.rs`, `suprastrom.rs`, `crystal_compiler.rs` charge/EELS); `cargo check` 0/0. Die **laufenden CDN-Bins** tragen noch den alten `0xCF86`-Kopf.
+- **Blockade:** das Re-Manifest fehlt — die alten Bins würde der neue Reader ablehnen.
+- **Braucht:** Mycelium: vier Bins re-kompilieren + unter Produzenten-Tags re-manifestieren; dann die vier `witness substance`-Zeilen in `phi/witnesses.φ` (`record rixs`/`rixc`/`eels`/`srd62`, `force` **absent**).
+
+### `decline spectral-series` — Archäologie (2) [Operator-Frage]
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-/Rat-Wort zur Reklassifikation.
+- **Lage:** (gemessen 2026-09-28, `sgrep`) nur **2** Einträge: `declined_sources.φ:1409` ONC-Hydrophon (1921-Bin-Schalldruck-Serie), `:4009` NOAA-NODD NRS (1195-Bin-Spektrum). Beide declined den **Feld-Anspruch** (Serie ≠ Skalar-Feldwert, Council C1 `c3f33f6`), der CDN-Record bleibt (`witnesses.φ:1`). **Kein** `rixs`/`eels`/`srd62` in declined (0 Treffer).
+- **Blockade:** keine.
+- **Braucht:** Operator-/Rat-Wort, ob die zwei als Zeugen reklassifiziert werden (`Substance` benennt Materie — sie sind Umwelt/Akustik, evtl. eine andere Art).
+
 ### Membran-Riss — fixe-Tabellen-Serien erreichen das Feld nicht
 - **Status:** wartend | **Bindung:** eigen (Riss) + river
 - **Trigger:** River ergänzt `main_flow.rs` (Gate-Token + Namens-Join).
@@ -84,6 +98,13 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 - **Lage:** (gemessen 2026-09-28) `ci-gate 36445552559`/dropped-gate auf `799488738`: `baseline 1060 | current 1064 | delta 4`; `docs/zustand/dropped-baseline.md:16` trägt `1060` (zuletzt gebumpt River 57).
 - **Blockade:** die 4 Punkte sind lokal nicht messbar (`register_lookup --dropped --count` ist CI-only).
 - **Braucht:** CI `register_lookup --dropped` nennt die 4; dann tragen oder Bump mit gemessenem Wort im annehmenden Commit (nie stillschweigend).
+
+### Adressierte Reste (future-folge150, sensory-folge195)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** je Route ein Port-Schritt nach `docs/SOURCE_PORT.md`.
+- **Lage:** (gemessen 2026-09-28) future-folge150: **CDS/Aladin** Tianwen-1 MoRIC (`alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/`, 76-m-Mosaik) und **Shandong-Univ.** `pds.wh.sdu.edu.cn` fehlen im Register (200/206). sensory-folge195/200: Sonden-Flotte Asien/RU anonym offen — Akatsuki-RS, Hayabusa PDS4, Venera 15/16, Vega-Ballons, Phobos-2, Danuri/ShadowCam (Details `docs/surveys/survey-2026-09-16-sonden-flotte.md ## Nachtrag 2026-09-28`).
+- **Blockade:** keine.
+- **Braucht:** Registrierung/Port je Route; die in `phi/pipeline/ledger.φ` als `ausstehend kandidat` eingetragenen lesen.
 
 ### NED ByParams — Token-Kanal
 - **Status:** wartend | **Bindung:** eigen (Warte in `state/zustand/wartend.φ:3`)
@@ -133,6 +154,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` | §7: Enclosure-Vereinheitlichung gebaut (`membrane.rs:353`, `f9ea3284c`); ω-Loop-Verdict-Term → **river**; Prosa-Heimat „Presence-only loading and the jump" geschrieben (`docs/concepts/archivar-mathematikerin.md:31`).
 - `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/zustand/wartend.φ:11`, Aufnehmer sensory).
 - `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | Gegenprobe erledigt (`## Gegenprobe`); kein offener Schritt.
+- `docs/specs/livefeed-gate.md` | Livefeed-Korrelations-Gate (Spec); Sprache-Angleichung 2026-09-28 (`--quelle`→`--source`, `quelle`→`source`); offene Marker = die `pending`-Felder der Ereignis-Tabelle (Spec-Inhalt); Träger Mountain.
 
 ## An mycelium (fremde Feder — Aufenthalt beim Eigentümer)
 Origin: mountain folge198.
@@ -144,6 +166,7 @@ Origin: mountain folge198.
 - **Orphan-Doc-Träger:** `docs/paper/gic-causal-driver.md` (`:531`/`:538` DOIs `pending`, DOI-Minting). Register-`url`-Drift (`twomass_psc`, `jwst_spectra`); `LLNL_G3D_JPS/S40RTS volume.bin` falsche `origin`-Direktive.
 - **Warte `[redacted]` — Trigger gefeuert** (gemessen 2026-09-28): `state/zustand/wartend.φ:8` (Aufnehmer mycelium) wartete auf „Mail-Eingang"; die Mail ist da (`state/mail/mail_ledger.φ:181`, SAMPLE_CONTACT/LAB_A), die NSE-Daten sind angekommen und von Mountain privat gesichert (`data/lab_a.data/SAMPLE_NSE_[redacted]/`). Der Aufnehmer kann die Warte-Zeile schließen.
 - **4 `pending`-Konten-Träger** (gemessen 2026-09-28, Rat): `phi/blocked_sources.φ:373/377/381/385` (CNSA/GRAS, NSSDC, ISRO/ISSDC, MBRSC/EMM) von `blocked account` → `pending` — Konto per Operator-Hand registriert, Ernte ausstehend; die Duty wandert zu mycelium (Netz). Träger: `phi/blocked_sources.φ::pending ×4`.
+- **Kuprat-Kanäle — Zeugen, nicht `sources.φ`** (Operator-Hinweis 2026-09-28): die vier Kanäle (RIXS spin/charge, EELS, srd62-Suprastrom) gehören als `witness`-Zeilen nach `phi/witnesses.φ` — kein `ttl`/`field`, kein Feld-Source (`src/archivar/tests.rs:8088`). Eine Kuprat-Zeugen-Art fehlt noch (Operator-Wort ausstehend); bis dahin keine Registrierung. Unabhängig davon: **die Tag-Drift heilen** — die Probes/Workflows hardkodieren `…/releases/download/ssd.jpl.nasa.gov/{rixs_spin,srd62_suprastrom}.bin`, der Produzent ist Zenodo/NIST. Kein `tag kuprat`.
 
 ## An river (fremde Feder)
 Origin: mountain folge198.

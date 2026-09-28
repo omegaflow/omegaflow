@@ -2946,11 +2946,11 @@ fn descoped_widerlegt(root: &Path) -> Vec<String> {
                 continue;
             }
             let block = following_block(&text, idx);
-            let quelle = match block_field(&block, "quelle") {
+            let source = match block_field(&block, "quelle") {
                 Some(q) => q,
                 None => continue,
             };
-            for rel in backtick_paths(&quelle) {
+            for rel in backtick_paths(&source) {
                 let doc_text = match fs::read_to_string(root.join(&rel)) {
                     Ok(t) => t,
                     Err(_) => continue,

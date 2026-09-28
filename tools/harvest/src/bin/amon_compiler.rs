@@ -4,7 +4,7 @@ use omegaflow::amon::{
     parse_header, write_header,
 };
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 use std::collections::BTreeSet;
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 
@@ -92,7 +92,7 @@ fn parse_notice(text: &str) -> Result<Parsed, Skip> {
 
 fn witness_s2_direction_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)) => {
+        Some(FieldIdentity::Witness(WitnessKind::S2Direction)) => {
             eprintln!(
                 "{} reads as an s2-direction witness record",
                 String::from_utf8_lossy(&magic)
