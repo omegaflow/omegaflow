@@ -329,7 +329,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::extract_arxiv_ids;
+    use super::{extract_arxiv_ids, extract_dois};
 
     #[test]
     fn new_style_id() {
