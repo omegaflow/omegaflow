@@ -1,0 +1,59 @@
+name: cdn-health
+
+# Ersetzt den lokalen cds_watchdog (systemd-Timer): prüft die zehn
+# registrierten CDN-Assets des omegaflow/sources-Release auf Erreichbarkeit
+# (HTTP-Code). Reine Netz-Lesung — der einzige rein netzgebundene lokale
+# Wächter; auf dem public Repo kostenlos, ohne die Operator-Maschine.
+# Der lokale Timer bleibt die zweite Betriebsart; dieser Lauf meldet nur
+# (rot = ein registriertes Asset ist nicht erreichbar).
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Die zehn CDN-Assets prüfen (Erreichbarkeit)
+        run: |
+          set +e
+          base="https://github.com/omegaflow/sources/releases/download"
+          fail=0
+          check() {
+            local asset="$1" release="$2" code
+            code="$(curl -sIL -o /dev/null -w '%{http_code}' --max-time 20 "$base/$release/$asset" 2>/dev/null || echo void)"
+            printf '%-26s %-26s %s\n' "$release" "$asset" "$code" | tee -a cdn-health.txt
+            case "$code" in 200|302) ;; *) fail=1 ;; esac
+          }
+          check jwst_spectra.bin ssd.jpl.nasa.gov
+          check spectra.bin ssd.jpl.nasa.gov
+          check nvss.json ssd.jpl.nasa.gov
+          check first14.json ssd.jpl.nasa.gov
+          check chandra_csc.json ssd.jpl.nasa.gov
+          check ztf_lightcurves.bin irsa.ipac.caltech.edu
+          check ztf_lightcurves_fresh.bin irsa.ipac.caltech.edu
+          check dr3_stars.bin ssd.jpl.nasa.gov
+          check twomass_psc.bin irsa.ipac.caltech.edu
+          check ephemeris_sun.bin ssd.jpl.nasa.gov
+          {
+            printf '## cdn-health — %s\n' "$(date -u +%FT%TZ)"
+            printf '```\n'
+            cat cdn-health.txt
+            printf '```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $fail
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cdn-health
+          path: cdn-health.txt
