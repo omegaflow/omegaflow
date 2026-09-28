@@ -48,8 +48,8 @@ kandidat https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
 note Venera 15/16 (UdSSR, PDS-Spiegel) Altimetrie 10398160 B + Radiometrie mpi-radiometry.dat 5949650 B — 2026-09-28 200 anonym; abgeleitete Tabellen, kein Raw. sensory-folge195.
 
 ausstehend
-kandidat https://pds-smallbodies.astro.umd.edu/holdings/vega2-c-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets TVS/DUCMA/SP-1/SP-2/PUMA/PM1/MISCHA + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ — 2026-09-28 200 anonym. sensory-folge195.
+kandidat https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
+note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ — 2026-09-28 200 anonym. Pfad korrigiert 2026-09-28 (--verdict): alte Form `vega2-c-mischa-…` 404, real `vega2-c_sw-mischa-…` 206. sensory-folge195.
 
 ausstehend
 kandidat https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
