@@ -550,15 +550,6 @@ last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hP
 last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
 
-url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
-ttl 3600
-on earth 0 0 0
-header X-API-Key {PURPLEAIR_KEY}
-map data
-lat 0
-lon 1
-field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
-
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
 ttl 3600
 on earth 0 0 0
@@ -7815,36 +7806,6 @@ ttl 86400
 at earth
 hapi F=swarm_magnetic_field_intensity_nt
 field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
-
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-format asu-tsv
-at sun
-ttl 86400
 
 url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
 ttl 86400

@@ -2568,6 +2568,35 @@ fn shard_bounds(len: usize, idx: usize, n: usize) -> (usize, usize) {
     (start, end)
 }
 
+pub(crate) enum CiBodyVerdict {
+    JsonLive,
+    NonJsonPresent(String),
+    FormatGap(String),
+    Malformed,
+    Void(String),
+}
+
+fn format_declares_json(format: &str) -> bool {
+    format.is_empty() || format == "json"
+}
+
+pub(crate) fn ci_body_verdict(src: &SourceConfig, raw: &str) -> CiBodyVerdict {
+    if parse_json(raw).is_some() {
+        return CiBodyVerdict::JsonLive;
+    }
+    if format_declares_json(&src.format) {
+        return CiBodyVerdict::Malformed;
+    }
+    let detail = diagnose_no_samples(src, raw);
+    if detail.starts_with("format-gap") {
+        CiBodyVerdict::FormatGap(detail)
+    } else if detail.starts_with("data-present") {
+        CiBodyVerdict::NonJsonPresent(detail)
+    } else {
+        CiBodyVerdict::Void(detail)
+    }
+}
+
 pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     let env = load_env();
     let sources = if dir == "phi" {
@@ -2612,6 +2641,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     let mut reachable = 0usize;
     let mut dead = 0usize;
     let mut pending = 0usize;
+    let mut gapped = 0usize;
     let mut mirrored = 0u32;
     let mut fresh = 0u32;
     let mut host_void: HashSet<String> = HashSet::new();
@@ -2778,45 +2808,63 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
                 continue;
             }
         };
-        if parse_json(&raw).is_some() {
-            reachable += 1;
-            if cache_path.is_some() {
-                clock_record(&mut clock, &src.url, true);
-            }
-            if let (Some(l), Some(now)) = (&lsk, now_tdb) {
-                check_empty_data(src, &raw, now, l);
-            }
-            eprintln!("ci-mode: {} JSON ok", src.url);
-            if let Some(cp) = &cache_path {
-                if let Some(parent) = std::path::Path::new(cp).parent() {
-                    let _ = std::fs::create_dir_all(parent);
+        match ci_body_verdict(src, &raw) {
+            CiBodyVerdict::JsonLive => {
+                reachable += 1;
+                if cache_path.is_some() {
+                    clock_record(&mut clock, &src.url, true);
                 }
-                let _ = std::fs::write(cp, &raw);
-            }
-            if mirror_enabled && let Some(netloc) = extract_netloc(&src.url) {
-                let name = match manifest.get(&src.url).cloned() {
-                    Some(n) => n,
-                    None => source_name_from_url(&src.url),
-                };
-                let tmp_path = cache_path_for(netloc, &name);
-                if std::fs::write(&tmp_path, &raw).is_ok()
-                    && crate::cdn::upload_release(netloc, &tmp_path)
-                {
-                    mirrored += 1;
+                if let (Some(l), Some(now)) = (&lsk, now_tdb) {
+                    check_empty_data(src, &raw, now, l);
+                }
+                eprintln!("ci-mode: {} JSON ok", src.url);
+                if let Some(cp) = &cache_path {
+                    if let Some(parent) = std::path::Path::new(cp).parent() {
+                        let _ = std::fs::create_dir_all(parent);
+                    }
+                    let _ = std::fs::write(cp, &raw);
+                }
+                if mirror_enabled && let Some(netloc) = extract_netloc(&src.url) {
+                    let name = match manifest.get(&src.url).cloned() {
+                        Some(n) => n,
+                        None => source_name_from_url(&src.url),
+                    };
+                    let tmp_path = cache_path_for(netloc, &name);
+                    if std::fs::write(&tmp_path, &raw).is_ok()
+                        && crate::cdn::upload_release(netloc, &tmp_path)
+                    {
+                        mirrored += 1;
+                    }
                 }
             }
-        } else {
-            eprintln!("ci-mode: {} JSON parse void", src.url);
-            report_anomaly("Malformed Data", &src.url, "JSON parse void");
-            dead += 1;
-            if cache_path.is_some() {
-                clock_record(&mut clock, &src.url, false);
+            CiBodyVerdict::NonJsonPresent(detail) => {
+                reachable += 1;
+                eprintln!("ci-mode: {} data present — {}", src.url, detail);
+            }
+            CiBodyVerdict::FormatGap(detail) => {
+                gapped += 1;
+                eprintln!("ci-mode: {} format-gap — {}", src.url, detail);
+            }
+            CiBodyVerdict::Malformed => {
+                eprintln!("ci-mode: {} JSON parse void", src.url);
+                report_anomaly("Malformed Data", &src.url, "JSON parse void");
+                dead += 1;
+                if cache_path.is_some() {
+                    clock_record(&mut clock, &src.url, false);
+                }
+            }
+            CiBodyVerdict::Void(detail) => {
+                eprintln!("ci-mode: {} void — {}", src.url, detail);
+                dead += 1;
+                if cache_path.is_some() {
+                    clock_record(&mut clock, &src.url, false);
+                }
             }
         }
     }
     eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} mirrored to CDN, {} fresh (ttl/Φ gate), mirror={}",
-        reachable, total, dead, pending, mirrored, fresh, mirror_enabled
+        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} gapped (format-gap), {} mirrored to CDN, {} fresh (ttl/Φ gate), mirror={}",
+        reachable, total, dead, pending, gapped, mirrored, fresh, mirror_enabled
     );
     let anomalies = take_anomalies();
     if !anomalies.is_empty() {
