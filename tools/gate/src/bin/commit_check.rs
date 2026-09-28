@@ -1,7 +1,7 @@
 use omegaflow::commit_gate::{
-    Gate, canon_diff, declared_canon, doc_open_marker_line, handover_dupe_violations,
-    integrated_twin, json_write, prose_violation_for, register_classes, status_proof_violations,
-    word_register_origin_violations,
+    Gate, addressed_origin_violations, canon_diff, declared_canon, doc_open_marker_line,
+    handover_dupe_violations, integrated_twin, json_write, prose_violation_for, register_classes,
+    status_proof_violations, word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -252,6 +252,10 @@ fn main() {
             fail = true;
         }
         for (line, rule, feedback) in handover_dupe_violations(&content) {
+            eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
+            fail = true;
+        }
+        for (line, rule, feedback) in addressed_origin_violations(&content) {
             eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
             fail = true;
         }
