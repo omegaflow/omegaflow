@@ -29,7 +29,7 @@ impl std::fmt::Display for DafError {
             DafError::UnsupportedFormat(fmt) => {
                 write!(
                     f,
-                    "unsupported binary format: {fmt:?} (only LTL-IEEE is supported)"
+                    "unsupported binary format: {fmt:?} (supported: LTL-IEEE, BIG-IEEE)"
                 )
             }
             DafError::BadSummary { record, reason } => {
@@ -96,6 +96,43 @@ fn read_exact_at(file: &std::fs::File, buf: &mut [u8], offset: u64) -> std::io::
 pub const RECORD_BYTES: usize = 1024;
 pub const DOUBLE_BYTES: usize = 8;
 
+#[derive(Clone, Copy)]
+enum DafEndian {
+    Little,
+    Big,
+}
+
+impl DafEndian {
+    fn from_locfmt(locfmt: &[u8; 8]) -> Option<Self> {
+        match locfmt {
+            b"LTL-IEEE" => Some(Self::Little),
+            b"BIG-IEEE" => Some(Self::Big),
+            _ => None,
+        }
+    }
+
+    fn u32(&self, buf: [u8; 4]) -> u32 {
+        match self {
+            Self::Little => u32::from_le_bytes(buf),
+            Self::Big => u32::from_be_bytes(buf),
+        }
+    }
+
+    fn i32(&self, buf: [u8; 4]) -> i32 {
+        match self {
+            Self::Little => i32::from_le_bytes(buf),
+            Self::Big => i32::from_be_bytes(buf),
+        }
+    }
+
+    fn f64(&self, buf: [u8; 8]) -> f64 {
+        match self {
+            Self::Little => f64::from_le_bytes(buf),
+            Self::Big => f64::from_be_bytes(buf),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct DafFile {
     inner: Arc<DafInner>,
@@ -113,6 +150,7 @@ struct DafInner {
     pub nd: u32,
     pub ni: u32,
     pub fward: u32,
+    endian: DafEndian,
 }
 
 #[derive(Debug, Clone)]
@@ -131,7 +169,7 @@ impl DafFile {
         }
         let mut header = vec![0u8; RECORD_BYTES];
         read_exact_at(&file, &mut header, 0)?;
-        let (idword, nd, ni, fward) = Self::parse_header(&header)?;
+        let (idword, nd, ni, fward, endian) = Self::parse_header(&header)?;
         Ok(DafFile {
             inner: Arc::new(DafInner {
                 source: DafSource::File(file),
@@ -140,6 +178,7 @@ impl DafFile {
                 nd,
                 ni,
                 fward,
+                endian,
             }),
         })
     }
@@ -149,7 +188,7 @@ impl DafFile {
             return Err(DafError::TooSmall(data.len()));
         }
         let len = data.len() as u64;
-        let (idword, nd, ni, fward) = Self::parse_header(&data)?;
+        let (idword, nd, ni, fward, endian) = Self::parse_header(&data)?;
         Ok(DafFile {
             inner: Arc::new(DafInner {
                 source: DafSource::Owned(data),
@@ -158,11 +197,12 @@ impl DafFile {
                 nd,
                 ni,
                 fward,
+                endian,
             }),
         })
     }
 
-    fn parse_header(bytes: &[u8]) -> Result<([u8; 8], u32, u32, u32), DafError> {
+    fn parse_header(bytes: &[u8]) -> Result<([u8; 8], u32, u32, u32, DafEndian), DafError> {
         let mut idword = [0u8; 8];
         idword.copy_from_slice(&bytes[0..8]);
         if !idword.starts_with(b"DAF/") && idword != *b"NAIF/DAF" {
@@ -171,27 +211,28 @@ impl DafFile {
 
         let mut locfmt = [0u8; 8];
         locfmt.copy_from_slice(&bytes[88..96]);
-        if &locfmt != b"LTL-IEEE" {
-            return Err(DafError::UnsupportedFormat(locfmt));
-        }
+        let endian = match DafEndian::from_locfmt(&locfmt) {
+            Some(e) => e,
+            None => return Err(DafError::UnsupportedFormat(locfmt)),
+        };
 
         let nd = {
             let mut buf = [0u8; 4];
             buf.copy_from_slice(&bytes[8..12]);
-            u32::from_le_bytes(buf)
+            endian.u32(buf)
         };
         let ni = {
             let mut buf = [0u8; 4];
             buf.copy_from_slice(&bytes[12..16]);
-            u32::from_le_bytes(buf)
+            endian.u32(buf)
         };
         let fward = {
             let mut buf = [0u8; 4];
             buf.copy_from_slice(&bytes[76..80]);
-            u32::from_le_bytes(buf)
+            endian.u32(buf)
         };
 
-        Ok((idword, nd, ni, fward))
+        Ok((idword, nd, ni, fward, endian))
     }
 
     fn read_range(&self, byte_start: usize, byte_len: usize) -> Result<Vec<u8>, DafError> {
@@ -236,7 +277,7 @@ impl DafFile {
         let bytes = self.record_bytes(rec)?;
         let mut buf = [0u8; 8];
         buf.copy_from_slice(&bytes[0..8]);
-        let next = f64::from_le_bytes(buf);
+        let next = self.inner.endian.f64(buf);
         Ok(next as u32)
     }
 
@@ -260,7 +301,7 @@ impl DafFile {
         let nsum_f = {
             let mut buf = [0u8; 8];
             buf.copy_from_slice(&sbytes[16..24]);
-            f64::from_le_bytes(buf)
+            self.inner.endian.f64(buf)
         };
         let nsum = nsum_f as usize;
         let ss = self.summary_size_doubles();
@@ -282,7 +323,7 @@ impl DafFile {
                 let off = k * DOUBLE_BYTES;
                 let mut buf = [0u8; 8];
                 buf.copy_from_slice(&sslice[off..off + 8]);
-                doubles.push(f64::from_le_bytes(buf));
+                doubles.push(self.inner.endian.f64(buf));
             }
             let mut integers = Vec::with_capacity(ni);
             let int_start = nd * DOUBLE_BYTES;
@@ -290,7 +331,7 @@ impl DafFile {
                 let off = int_start + k * 4;
                 let mut buf = [0u8; 4];
                 buf.copy_from_slice(&sslice[off..off + 4]);
-                integers.push(i32::from_le_bytes(buf));
+                integers.push(self.inner.endian.i32(buf));
             }
             let noff = i * name_chars;
             let name_slice = &nbytes[noff..noff + name_chars];
@@ -340,7 +381,7 @@ impl DafFile {
         for i in 0..n {
             let mut buf = [0u8; 8];
             buf.copy_from_slice(&bytes[i * 8..(i + 1) * 8]);
-            out.push(f64::from_le_bytes(buf));
+            out.push(self.inner.endian.f64(buf));
         }
         Ok(out)
     }
@@ -353,7 +394,7 @@ impl DafFile {
         for i in 0..n {
             let mut buf = [0u8; 8];
             buf.copy_from_slice(&bytes[i * 8..(i + 1) * 8]);
-            out.push(f64::from_le_bytes(buf));
+            out.push(self.inner.endian.f64(buf));
         }
         Ok(out)
     }
@@ -371,33 +412,65 @@ impl DafFile {
 mod tests {
     use super::*;
 
+    fn put_u32(buf: &mut [u8], at: usize, v: u32, big: bool) {
+        let bytes = if big {
+            v.to_be_bytes()
+        } else {
+            v.to_le_bytes()
+        };
+        buf[at..at + 4].copy_from_slice(&bytes);
+    }
+
+    fn put_i32(buf: &mut [u8], at: usize, v: i32, big: bool) {
+        let bytes = if big {
+            v.to_be_bytes()
+        } else {
+            v.to_le_bytes()
+        };
+        buf[at..at + 4].copy_from_slice(&bytes);
+    }
+
+    fn put_f64(buf: &mut [u8], at: usize, v: f64, big: bool) {
+        let bytes = if big {
+            v.to_be_bytes()
+        } else {
+            v.to_le_bytes()
+        };
+        buf[at..at + 8].copy_from_slice(&bytes);
+    }
+
     fn synthetic_daf() -> Vec<u8> {
-        synthetic_daf_with_idword(b"DAF/SPK ")
+        synthetic_daf_with_idword_and_locfmt(b"DAF/SPK ", b"LTL-IEEE")
     }
 
     fn synthetic_daf_with_idword(idword: &[u8; 8]) -> Vec<u8> {
+        synthetic_daf_with_idword_and_locfmt(idword, b"LTL-IEEE")
+    }
+
+    fn synthetic_daf_with_idword_and_locfmt(idword: &[u8; 8], locfmt: &[u8; 8]) -> Vec<u8> {
+        let big = locfmt == b"BIG-IEEE";
         let records = 4usize;
         let mut buf = vec![0u8; records * RECORD_BYTES];
         buf[0..8].copy_from_slice(idword);
         let nd: u32 = 2;
         let ni: u32 = 2;
-        buf[8..12].copy_from_slice(&nd.to_le_bytes());
-        buf[12..16].copy_from_slice(&ni.to_le_bytes());
+        put_u32(&mut buf, 8, nd, big);
+        put_u32(&mut buf, 12, ni, big);
         let fward: u32 = 2;
-        buf[76..80].copy_from_slice(&fward.to_le_bytes());
-        buf[88..96].copy_from_slice(b"LTL-IEEE");
+        put_u32(&mut buf, 76, fward, big);
+        buf[88..96].copy_from_slice(locfmt);
 
         let sum_rec = RECORD_BYTES;
         let nsum: f64 = 1.0;
-        buf[sum_rec + 16..sum_rec + 24].copy_from_slice(&nsum.to_le_bytes());
+        put_f64(&mut buf, sum_rec + 16, nsum, big);
         let d0: f64 = 1.5;
         let d1: f64 = -2.25;
-        buf[sum_rec + 24..sum_rec + 32].copy_from_slice(&d0.to_le_bytes());
-        buf[sum_rec + 32..sum_rec + 40].copy_from_slice(&d1.to_le_bytes());
+        put_f64(&mut buf, sum_rec + 24, d0, big);
+        put_f64(&mut buf, sum_rec + 32, d1, big);
         let i0: i32 = 10;
         let i1: i32 = -20;
-        buf[sum_rec + 40..sum_rec + 44].copy_from_slice(&i0.to_le_bytes());
-        buf[sum_rec + 44..sum_rec + 48].copy_from_slice(&i1.to_le_bytes());
+        put_i32(&mut buf, sum_rec + 40, i0, big);
+        put_i32(&mut buf, sum_rec + 44, i1, big);
 
         let name_rec = 2 * RECORD_BYTES;
         buf[name_rec..name_rec + 4].copy_from_slice(b"TEST");
@@ -405,8 +478,8 @@ mod tests {
         let data_rec = 3 * RECORD_BYTES;
         let v0: f64 = 3.25;
         let v1: f64 = -7.5;
-        buf[data_rec..data_rec + 8].copy_from_slice(&v0.to_le_bytes());
-        buf[data_rec + 8..data_rec + 16].copy_from_slice(&v1.to_le_bytes());
+        put_f64(&mut buf, data_rec, v0, big);
+        put_f64(&mut buf, data_rec + 8, v1, big);
         buf
     }
 
@@ -430,6 +503,34 @@ mod tests {
         let data = synthetic_daf_with_idword(b"NAIF/DAF");
         let daf = DafFile::from_data(data).unwrap();
         check(&daf);
+    }
+
+    #[test]
+    fn big_ieee_daf_parses_like_little() {
+        let le = DafFile::from_data(synthetic_daf_with_idword_and_locfmt(
+            b"DAF/SPK ",
+            b"LTL-IEEE",
+        ))
+        .unwrap();
+        let be = DafFile::from_data(synthetic_daf_with_idword_and_locfmt(
+            b"DAF/SPK ",
+            b"BIG-IEEE",
+        ))
+        .unwrap();
+        let le_summaries = le.summaries().unwrap();
+        let be_summaries = be.summaries().unwrap();
+        assert_eq!(le_summaries.len(), be_summaries.len());
+        for (l, b) in le_summaries.iter().zip(&be_summaries) {
+            assert_eq!(l.doubles, b.doubles);
+            assert_eq!(l.integers, b.integers);
+            assert_eq!(l.name, b.name);
+        }
+        let addr = (3 * RECORD_BYTES / DOUBLE_BYTES + 1) as u32;
+        assert_eq!(
+            le.read_doubles(addr, addr + 1).unwrap(),
+            be.read_doubles(addr, addr + 1).unwrap()
+        );
+        check(&be);
     }
 
     #[test]
