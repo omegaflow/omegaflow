@@ -3,7 +3,7 @@
   session: River-Folge 58
   class: handover
   date: 2026-09-28
-  sha256: 35671477170054e3f4f451e2a5bb6686cc79e9a3038f4701bd0e676a4e5915cc
+  sha256: 7aef2e13368647675b730bbc123bdd2671606e28e9fda77e7ee7d26e73df1ff7
   status: live
 -->
 # Handover — River-Folge 58 (2026-09-28)
@@ -39,16 +39,17 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 „hast du alles bis zur kante geplant?" | 2026-09-28 | Operator (Session, River 58)
 „hast du gemessen?" | 2026-09-28 | Operator (Session, River 58)
 „warum misst du nicht?" | 2026-09-28 | Operator (Session, River 58)
+„warum ist das alles noch offen?" | 2026-09-28 | Operator (Session, River 58)
 „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort." | 2026-09-28 | Operator (Session, River 58) — session-weiter Delegations-Consent
 
 ## Offen (aufgeschlüsselt)
 
-### matrix-rotor `36436173707` — Rerun-Ergebnis offen
+### matrix-rotor `36436173707` — Runner-Preemption wiederholt sich
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der Rerun (attempt 2) des Runs `36436173707` schließt ab.
-- **Lage:** (gemessen 2026-09-28 via `ci_manage view`/`jobs`, GH-API, `.github/workflows/matrix-rotor.yml`) Der rote Lauf `36436173707` lief auf `4fc1221ef` (River-eigen). **Gemessener Grund: Runner-Shutdown** — Step 7 „Den verborgenen Rotor fahren" `cancelled` (14:29:36→14:31:21Z), Log `##[error]The runner has received a shutdown signal`, Prozess-Kill `rc=137`; **kein** Timeout (350 min / 18000 s unerreicht), **kein** Code-Marker in 1108 Log-Zeilen. Transient (Runner-Abbruch), nicht River-Code. Rerun angefordert 2026-09-28.
+- **Trigger:** ein `matrix-rotor`-Lauf schließt grün ab — oder Mycelium routet die Runner-Preemption.
+- **Lage:** (gemessen 2026-09-28 via `ci_manage view`/`jobs`, GH-API attempts/2, `/tmp/opencode/ci_watchdog.log`) **Attempt 1 UND 2** scheitern identisch: Step 7 „Den verborgenen Rotor fahren" `cancelled` (a1 14:29:36→14:31:21Z; a2 15:21:52→15:22:56Z), Runner-Shutdown-Signal, Log bricht mitten im φ-Fenster ab, **kein** Code-Marker, **kein** Timeout (350 min / 18000 s unerreicht). Der CI-Watchdog hat **nicht** gecancelt (`ci_watchdog.log:23` „no median basis — no action"). Also **wiederkehrende Runner-Preemption**, kein River-Code — CI-Infra (Mycelium-Domäne). Meine frühere „transient, ein Rerun"-Zeile war unter-messen.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36436173707` nach dem Rerun; grün = Gate zu. Kein Run-ID-Pin.
+- **Braucht:** Mycelium — `.github/workflows/matrix-rotor.yml` (job-level concurrency) prüfen; bis dahin `ci_manage view 36436173707`.
 
 ### ksg-k-Fix — te-gate-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
@@ -78,12 +79,12 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Blockade:** 29.09.-Snapshot fehlt.
 - **Braucht:** nach 29.09. 00:00 UTC `gh workflow run flyby-path2-fill.yml`; Artefakt `flyby-path2-fill`.
 
-### bedingte TE (Umwelt-Kanäle) — Entwurf offen
+### bedingte TE (Umwelt-Kanäle) — Bau offen (Rat entschieden)
 - **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner — der erste Schritt (Rat/Entwurf) ist dispatchbar.
-- **Lage:** (gemessen 2026-09-28 via `sread docs/concepts/kybernetische-astrophysik.md:418-427`) „die bedingte TE (TE(A→B | Umwelt-Kanäle)) ist ein pending-Instrument, kein vorhandenes" — ohne gemessenen Kanal kein Ausschluss (0 honored).
+- **Trigger:** keiner — der Bau ist dispatchbar.
+- **Lage:** (gemessen 2026-09-28) Rat entschieden. `src/mathematikerin/te.rs` trägt bereits den **skalaren** konditionalen Pfad `transfer_entropy_ksg_conditional_n:416` und `pcmci_links:1274` — die Zeile „pending-Instrument, kein vorhandenes" (`docs/concepts/kybernetische-astrophysik.md:423`) ist insoweit **teil-stale**. Fehlt: die **eingebettete** Generalisierung von `transfer_entropy_embedded_ksg` (Z-Phase-Surrogate, Kanal = `field`-Zeile in `phi/sources.φ`, Dimensions-Starvation-Refusal als schärfster Riss).
 - **Blockade:** keine.
-- **Braucht:** Rat/Architektur — Entwurf der bedingten TE im Estimator (`src/mathematikerin/te.rs`), danach Bau.
+- **Braucht:** die eingebettete konditionale Erweiterung in `src/mathematikerin/te.rs` gemäß Rat-Befund bauen; `#[cfg(test)]`-Gate (FP/FN/Symmetrie/Degeneracy/n-Floor).
 
 ### Prosa-Träger (aus `register_lookup --orphan-docs`)
 - **Status:** autonom | **Bindung:** eigen
@@ -103,6 +104,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 | `devcontainer`-CLI in einem Actions-Job (Umgebungs-Parität) | `docs/handover/handover-2026-09-28-mycelium-folge196.md` (Mycelium) | River-Session 54 (Operator-Wort) | `.devcontainer/devcontainer.json` von keinem Workflow konsumiert; Job mit `devcontainer up`/`exec`. |
 | 81-Block-Fix — `format ephemeris_binary`, `ttl 86400` | `docs/handover/handover-2026-09-28-mountain-folge197.md` (Mountain) | river folge51/52/53 | Prüfintervall aus Live-Release-Abständen oder 2²⁵ s ≈ 388 d. |
 | flyby-odf-cdn `36414284741` rot — `odf-persist` ohne `--file` → 0-Byte census → `gh release upload` HTTP 400 | `docs/handover/handover-2026-09-28-mycelium-folge196.md` (Mycelium) | River-Session 57 | Fix: `--file src/archivar/kernels/odf07155.dat`; dann `gh workflow run flyby-odf-cdn.yml`. Mycelium-Feder (Workflow). |
+| matrix-rotor `36436173707` scheitert wiederholt an Runner-Preemption (Step 7 `cancelled`, kein Code-Marker, kein Watchdog-Cancel; `ci_watchdog.log:23` „no median basis") | `docs/handover/handover-2026-09-28-mycelium-folge196.md` (Mycelium) | River 58 (gemessen) | `.github/workflows/matrix-rotor.yml` (job-level concurrency) prüfen. |
 
 ## Abschluss
 
