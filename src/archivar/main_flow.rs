@@ -320,16 +320,33 @@ pub fn jump_residual_breached(
     if !dt.is_finite() || dt <= 0.0 {
         return false;
     }
-    let dv = ((v_new[0] - v_old[0]) * (v_new[0] - v_old[0])
-        + (v_new[1] - v_old[1]) * (v_new[1] - v_old[1])
-        + (v_new[2] - v_old[2]) * (v_new[2] - v_old[2]))
-        .sqrt();
-    let amax = dv / dt;
-    let rx = p_new[0] - (p_old[0] + v_old[0] * dt);
-    let ry = p_new[1] - (p_old[1] + v_old[1] * dt);
-    let rz = p_new[2] - (p_old[2] + v_old[2] * dt);
-    (rx * rx + ry * ry + rz * rz).sqrt()
-        >= Φ * crate::mathematikerin::JUMP_GRID + 0.5 * amax * dt * dt
+    let a = [
+        p_old[0] + v_old[0] * dt,
+        p_old[1] + v_old[1] * dt,
+        p_old[2] + v_old[2] * dt,
+    ];
+    let b = [
+        p_old[0] + v_new[0] * dt,
+        p_old[1] + v_new[1] * dt,
+        p_old[2] + v_new[2] * dt,
+    ];
+    let d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+    let dd = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+    let residual = if dd > 0.0 {
+        let t = (((p_new[0] - a[0]) * d[0] + (p_new[1] - a[1]) * d[1] + (p_new[2] - a[2]) * d[2])
+            / dd)
+            .clamp(0.0, 1.0);
+        let q = [
+            p_new[0] - (a[0] + t * d[0]),
+            p_new[1] - (a[1] + t * d[1]),
+            p_new[2] - (a[2] + t * d[2]),
+        ];
+        (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]).sqrt()
+    } else {
+        let q = [p_new[0] - a[0], p_new[1] - a[1], p_new[2] - a[2]];
+        (q[0] * q[0] + q[1] * q[1] + q[2] * q[2]).sqrt()
+    };
+    residual >= Φ * crate::mathematikerin::JUMP_GRID
 }
 
 pub struct Archive {

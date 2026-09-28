@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: f8cc800b352d24c7d0c0e6bd386b5357ae5849a78786281fbb8d8ac5e5066818
+  sha256: 0fdf5639b785b8a6b0a018f27fe8c06e713f9bf17916c827f2643830bca2308c
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -211,7 +211,20 @@ Sprung-Detektion (`Φ·JUMP_GRID + ½·amax·Δt²`), keine Enclosure-Kopie — 
 river-Punkt. **Damit ist der Punkt „Bootstrap/fetch-Loop/Katalog-Branches auf denselben
 Ausschnitt" für die Enclosure-Formel erledigt; was bleibt, ist die Jump-Detektion.**
 
-- **ω-Loop-Verdict-Term:** `weberin_verdicts` im Loop lesen und als Query-Term ableiten. (river)
+**Nachtrag 2026-09-28 (River 59, Rat + Operator-Wort):** Die Jump-Detektion ist geschlossen.
+`jump_residual_breached` (`main_flow.rs`) ist jetzt das **zweiseitige Segment-Residuum** — die
+Distanz von `p_new` zur Strecke [`p_old + v_old·Δt`, `p_old + v_new·Δt`] (die Ein-Knick-Hülle:
+Halt und Umkehr sind legale Knicks) — gegen das **reine Gitter** `Φ·JUMP_GRID`; `½·amax·Δt²`
+lebt nur in `enclosure_rho` (Dilatation). Damit gewinnt Verdikt 3 (§6) über die alte einseitige
+Formel; die drei Prosa-Zeilen (`AGENTS.md`, `archivar-mathematikerin.md:29/31`) sind im selben
+Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
+
+- **ω-Loop-Verdict-Term — geschlossen (2026-09-28, gemessen River 59).** Gebaut in `8748a39cd`
+  (river folge57): `current_riss_names` (`weberin_verdicts.rs:201`) → `spatial.rs:488/491` (der
+  Live-Riss wird aus dem Query-Funnel geworfen) → `omega.rs:1907` (`sense_membrane`) — der
+  Verdict-Term ist ein **abgeleiteter Riss-Query-Term** im ω()-Loop. Der Marker `§2:100-101`/`:214`
+  war der Vor-Commit-Stand. Der rohe `VerdictLine`-Wire-Payload erreicht weiterhin nur den Relay
+  (`main_flow.rs:1051-1068` → `relay.rs:907`) — Referenten-Riss, beide Zeilen bleiben benannt.
 - **Prosa-Heimat — geschrieben (2026-09-28).** Abschnitt „Presence-only loading and the
   jump (contract)" `docs/concepts/archivar-mathematikerin.md:31` (`presence_gate`,
   `record_in_enclosure`, Dispersion-Gesetz `signal_reach`, Jump-Radius, 0-Kanon); `:29`

@@ -163,9 +163,12 @@ before touching the wire, GPU, or force layers. Core constants that bind every c
   reach is derived in the query by the transverse gate, never a radial star radius,
   never a finite star extent (Atom 6/8).
   The diode order: val-gate before `motion.at`, transverse gate after. The jump is
-  the vector residual (`|p_new − p_old − v·Δt| ≥ Φ·JUMP_GRID + ½·amax·Δt²`,
-  independent of `v²`); `½·|a|·Δt²` belongs to
-  the dilation. One `enclosure_rho`; reader predicate `value >= 0.0`, never `is_finite()`.
+  the two-sided segment residual — the distance of `p_new` from the segment
+  [`p_old + v_old·Δt`, `p_old + v_new·Δt`] (the one-kink worldline hull: halt and
+  reversal are legal kinks) — against the pure grid `Φ·JUMP_GRID`, independent of
+  `v²` and of any acceleration term; `½·|a|·Δt²` lives only in `enclosure_rho`
+  (the dilation) with `anchor_amax`. One `enclosure_rho`; reader predicate
+  `value >= 0.0`, never `is_finite()`.
   The woven (Vlies density, TE, verdicts) is a derived query term in the ω() loop, never
   a Sample slot — a riss is not an oscillator. Full contract:
   `docs/concepts/archivar-mathematikerin.md`.
