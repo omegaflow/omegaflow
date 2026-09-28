@@ -1,7 +1,8 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, declared_canon, doc_open_marker_line,
-    handover_dupe_violations, integrated_twin, json_write, prose_violation_for, register_classes,
-    status_proof_violations, word_register_origin_violations,
+    ereignis_folge_violations, handover_dupe_violations, integrated_twin, json_write,
+    prose_violation_for, register_classes, status_proof_violations, unbacked_mirror_violations,
+    word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -167,6 +168,16 @@ fn main() {
             fail = true;
         }
     }
+    if let Ok(ereignisse) = std::fs::read_to_string("state/zustand/ereignisse.φ") {
+        let wartend = std::fs::read_to_string("state/zustand/wartend.φ").ok();
+        let blocked = std::fs::read_to_string("phi/blocked_sources.φ").ok();
+        for (line, rule, feedback) in
+            ereignis_folge_violations(&ereignisse, wartend.as_deref(), blocked.as_deref())
+        {
+            eprintln!("commit_check: state/zustand/ereignisse.φ:{line}: {rule} - {feedback}");
+            fail = true;
+        }
+    }
     for path in register_classes()
         .iter()
         .filter(|p| staged.contains(&p.as_str()))
@@ -176,13 +187,21 @@ fn main() {
             .output()
             .expect("git");
         let diff = String::from_utf8_lossy(&out.stdout).to_string();
+        let mut added: Vec<&str> = Vec::new();
         for line in diff.lines() {
             let t = line.trim_end_matches('\r');
             if !t.starts_with('+') || t.starts_with("+++") {
                 continue;
             }
+            added.push(&t[1..]);
             if let Some(kind) = prose_violation_for(path, &t[1..]) {
                 eprintln!("commit_check: phi-register-prose: {kind}: {path}");
+                fail = true;
+            }
+        }
+        if path == "phi/sources.φ" {
+            for (line, message) in unbacked_mirror_violations(&added) {
+                eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
                 fail = true;
             }
         }
