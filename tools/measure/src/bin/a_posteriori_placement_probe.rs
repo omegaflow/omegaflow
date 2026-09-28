@@ -162,7 +162,11 @@ fn r_struct_2d(x: f64, y: f64) -> Option<f64> {
 fn analytic_spacing_h_2d(r: f64, tol: f64) -> Option<f64> {
     let rs = r_struct_2d(r, 0.0)?;
     let h = (rs * tol / F32_EPS).max(D2_GRID_STEP);
-    if h.is_finite() && h > 0.0 { Some(h) } else { None }
+    if h.is_finite() && h > 0.0 {
+        Some(h)
+    } else {
+        None
+    }
 }
 
 fn analytic_points_2d(tol: f64) -> Option<Vec<(f64, f64)>> {
@@ -244,7 +248,11 @@ fn quadtree_points_2d(tol: f64) -> Option<Vec<(f64, f64)>> {
             leaves.push((0.5 * (x0 + x1), 0.5 * (y0 + y1)));
         }
     }
-    if leaves.is_empty() { None } else { Some(leaves) }
+    if leaves.is_empty() {
+        None
+    } else {
+        Some(leaves)
+    }
 }
 
 #[derive(Clone, Copy)]

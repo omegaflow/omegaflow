@@ -2864,6 +2864,31 @@ fn test_jump_residual_vector_form() {
     ));
 }
 
+#[test]
+fn test_jump_residual_halts_and_reversals_stay_inside_the_segment() {
+    let jump = super::jump_residual_breached;
+    assert!(
+        !jump(
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0e9, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            1.0
+        ),
+        "a halt in place is a legal kink, not a jump — the two-sided segment holds it"
+    );
+    assert!(
+        !jump(
+            [-1.0e9, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0e9, 0.0, 0.0],
+            [-1.0e9, 0.0, 0.0],
+            1.0
+        ),
+        "a reversal is a legal kink, not a jump — the two-sided segment holds it"
+    );
+}
+
 fn kepler_rec_fixture() -> AsteroidRec {
     AsteroidRec {
         number: 1,

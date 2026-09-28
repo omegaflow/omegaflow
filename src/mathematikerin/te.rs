@@ -2505,6 +2505,300 @@ pub fn transfer_entropy_embedded_ksg(
     Some(digamma(k_eff as f64) + sum / m as f64)
 }
 
+pub const CONDITIONAL_KSG_VARIANCE_FLOOR: usize = 4;
+
+fn conditional_ksg_k_fit(m: usize, jd: usize) -> usize {
+    (m as f64).powf(4.0 / (4 + jd) as f64).round() as usize
+}
+
+pub fn transfer_entropy_embedded_ksg_conditional(
+    x: &[f64],
+    emb_x: &[Vec<f64>],
+    emb_y: &[Vec<f64>],
+    tau_x: usize,
+    tau_y: usize,
+    emb_z: &[Vec<f64>],
+    tau_z: usize,
+    k: usize,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || tau_x == 0 || tau_y == 0 || k == 0 || x.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let dim = {
+        let s = emb_x.first()?;
+        s.len()
+    };
+    if dim < 2 {
+        return None;
+    }
+    if emb_y.first().is_none_or(|s| s.len() != dim) {
+        return None;
+    }
+    if !emb_z.is_empty() && emb_z.first().is_some_and(|s| s.is_empty()) {
+        return None;
+    }
+    let dim_z = match emb_z.first() {
+        Some(s) => s.len(),
+        None => 0,
+    };
+    if dim_z > 0 {
+        if tau_z == 0 {
+            return None;
+        }
+        if emb_z.iter().any(|s| s.len() != dim_z) {
+            return None;
+        }
+    }
+    if emb_x.iter().flatten().any(|v| !v.is_finite())
+        || emb_y.iter().flatten().any(|v| !v.is_finite())
+        || emb_z.iter().flatten().any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let back_x = (dim - 1) * tau_x;
+    let back_y = (dim - 1) * tau_y;
+    let back_z = if dim_z == 0 { 0 } else { (dim_z - 1) * tau_z };
+    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+        return None;
+    }
+    if dim_z > 0 && emb_z.len() != n - back_z {
+        return None;
+    }
+    let t_low = back_x.max(back_y).max(back_z);
+    let t_high = n.checked_sub(tau_x + 1)?;
+    if t_low > t_high {
+        return None;
+    }
+    let m = t_high - t_low + 1;
+    if m < 8 {
+        return None;
+    }
+    let jd = 1 + 2 * dim + dim_z;
+    if dim_z > 0 && conditional_ksg_k_fit(m, jd) < CONDITIONAL_KSG_VARIANCE_FLOOR {
+        return None;
+    }
+    let mut pts: Vec<f64> = Vec::with_capacity(m * jd);
+    for t in t_low..=t_high {
+        pts.push(x[t + tau_x]);
+        pts.extend_from_slice(&emb_x[t - back_x]);
+        pts.extend_from_slice(&emb_y[t - back_y]);
+        if dim_z > 0 {
+            pts.extend_from_slice(&emb_z[t - back_z]);
+        }
+    }
+    let k_eff = k.min(m - 1);
+    let mut dists: Vec<f64> = Vec::with_capacity(m - 1);
+    let mut sum = 0.0f64;
+    for i in 0..m {
+        dists.clear();
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let mut d = 0.0f64;
+            for di in 0..jd {
+                let dd = (pts[j * jd + di] - pts[i * jd + di]).abs();
+                if dd > d {
+                    d = dd;
+                }
+            }
+            dists.push(d);
+        }
+        let eps = *dists
+            .select_nth_unstable_by(k_eff - 1, |a, b| a.total_cmp(b))
+            .1;
+        let mut n_cond = 0usize;
+        let mut n_fut = 0usize;
+        let mut n_drv = 0usize;
+        for j in 0..m {
+            if j == i {
+                continue;
+            }
+            let sx = (0..dim).all(|di| (pts[j * jd + 1 + di] - pts[i * jd + 1 + di]).abs() < eps);
+            let sz = (0..dim_z).all(|di| {
+                (pts[j * jd + 1 + 2 * dim + di] - pts[i * jd + 1 + 2 * dim + di]).abs() < eps
+            });
+            if !(sx && sz) {
+                continue;
+            }
+            n_cond += 1;
+            if (pts[j * jd] - pts[i * jd]).abs() < eps {
+                n_fut += 1;
+            }
+            let sy = (0..dim)
+                .all(|di| (pts[j * jd + 1 + dim + di] - pts[i * jd + 1 + dim + di]).abs() < eps);
+            if sy {
+                n_drv += 1;
+            }
+        }
+        sum += digamma((n_cond + 1) as f64)
+            - digamma((n_fut + 1) as f64)
+            - digamma((n_drv + 1) as f64);
+    }
+    Some(digamma(k_eff as f64) + sum / m as f64)
+}
+
+pub struct ConditionalEmbeddedEstimate {
+    pub te: f64,
+    pub tau_x: usize,
+    pub tau_y: usize,
+    pub tau_z: usize,
+}
+
+pub fn conditional_embedded_te_estimate(
+    x: &[f32],
+    y: &[f32],
+    z: &[f32],
+    dim: usize,
+) -> Option<ConditionalEmbeddedEstimate> {
+    let n = x.len();
+    if n < 8 || y.len() != n || z.len() != n || dim < 2 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let zf: Vec<f64> = z.iter().map(|&v| v as f64).collect();
+    if xf
+        .iter()
+        .chain(yf.iter())
+        .chain(zf.iter())
+        .any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let tau_x = find_mi_lag(&xf)?;
+    let tau_y = find_mi_lag(&yf)?;
+    let tau_z = find_mi_lag(&zf)?;
+    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_y = embed_series(&yf, tau_y, dim);
+    let emb_z = embed_series(&zf, tau_z, dim);
+    if emb_x.is_empty() || emb_y.is_empty() || emb_z.is_empty() {
+        return None;
+    }
+    let te = transfer_entropy_embedded_ksg_conditional(
+        &xf, &emb_x, &emb_y, tau_x, tau_y, &emb_z, tau_z, TE_KSG_K,
+    )?;
+    Some(ConditionalEmbeddedEstimate {
+        te,
+        tau_x,
+        tau_y,
+        tau_z,
+    })
+}
+
+pub struct ConditionalEmbeddedVerdict {
+    pub te: f64,
+    pub tau_x: usize,
+    pub tau_y: usize,
+    pub tau_z: usize,
+    pub threshold: f64,
+    pub surrogate_mean: f64,
+    pub surrogate_sd: f64,
+    pub surrogates_used: usize,
+}
+
+pub fn z_phase_surrogate(y: &[f32], z: &[f32], rng: &mut u64) -> Option<Vec<f32>> {
+    let n = y.len();
+    if n < 2 || z.len() != n {
+        return None;
+    }
+    if y.iter().chain(z.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let (beta1, beta0) = ols_fit(y, z)?;
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let zf: Vec<f64> = z.iter().map(|&v| v as f64).collect();
+    let resid: Vec<f32> = (0..n)
+        .map(|i| (yf[i] - (beta0 + beta1 * zf[i])) as f32)
+        .collect();
+    if resid.iter().all(|&v| v == resid[0]) {
+        return None;
+    }
+    let rotated = phase_randomized_surrogate(&resid, rng);
+    Some(
+        (0..n)
+            .map(|i| (beta0 + beta1 * zf[i] + rotated[i] as f64) as f32)
+            .collect(),
+    )
+}
+
+pub fn conditional_embedded_te_phase(
+    x: &[f32],
+    y: &[f32],
+    z: &[f32],
+    dim: usize,
+    seed: u64,
+) -> Option<ConditionalEmbeddedVerdict> {
+    let n = x.len();
+    if n < 8 || y.len() != n || z.len() != n || dim < 2 {
+        return None;
+    }
+    let estimate = conditional_embedded_te_estimate(x, y, z, dim)?;
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let zf: Vec<f64> = z.iter().map(|&v| v as f64).collect();
+    let emb_x = embed_series(&xf, estimate.tau_x, dim);
+    let emb_z = embed_series(&zf, estimate.tau_z, dim);
+    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..10 {
+        let ys = match z_phase_surrogate(y, z, &mut rng) {
+            Some(v) => v,
+            None => continue,
+        };
+        if ys.len() != n {
+            continue;
+        }
+        let ysf: Vec<f64> = ys.iter().map(|&v| v as f64).collect();
+        if ysf.iter().any(|v| !v.is_finite()) {
+            continue;
+        }
+        let tau_s = match find_mi_lag(&ysf) {
+            Some(v) => v,
+            None => continue,
+        };
+        let emb_s = embed_series(&ysf, tau_s, dim);
+        if emb_s.is_empty() {
+            continue;
+        }
+        if let Some(te_s) = transfer_entropy_embedded_ksg_conditional(
+            &xf,
+            &emb_x,
+            &emb_s,
+            estimate.tau_x,
+            tau_s,
+            &emb_z,
+            estimate.tau_z,
+            TE_KSG_K,
+        ) {
+            vals.push(te_s);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let mean = vals.iter().sum::<f64>() / vals.len() as f64;
+    let var = vals
+        .iter()
+        .map(|&v| {
+            let d = v - mean;
+            d * d
+        })
+        .sum::<f64>()
+        / vals.len() as f64;
+    let sd = var.sqrt();
+    Some(ConditionalEmbeddedVerdict {
+        te: estimate.te,
+        tau_x: estimate.tau_x,
+        tau_y: estimate.tau_y,
+        tau_z: estimate.tau_z,
+        threshold: mean + 2.0 * sd,
+        surrogate_mean: mean,
+        surrogate_sd: sd,
+        surrogates_used: vals.len(),
+    })
+}
+
 fn lgamma_lanczos(x: f64) -> f64 {
     if x < 0.5 {
         std::f64::consts::PI.ln() - (std::f64::consts::PI * x).sin().ln() - lgamma_lanczos(1.0 - x)
@@ -7755,5 +8049,380 @@ mod tests {
         assert_eq!(pair.seed, seed);
         assert_eq!(pair.commit_sha, sha);
         assert_eq!(pair.n_surr, 10);
+    }
+
+    #[test]
+    fn gate_conditional_embedded_degenerates_byte_equal_without_z() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = gate_ar1(300, 0.7, &mut rng);
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&af, 3, 3);
+        let emb_y = embed_series(&bf, 3, 3);
+        let uncond = transfer_entropy_embedded_ksg(&af, &emb_x, &emb_y, 3, 3, TE_KSG_K)
+            .expect("the unconditional reference resolves");
+        let cond =
+            transfer_entropy_embedded_ksg_conditional(&af, &emb_x, &emb_y, 3, 3, &[], 0, TE_KSG_K)
+                .expect("the empty-z conditional resolves");
+        assert_eq!(
+            cond, uncond,
+            "empty z must byte-equal the unconditional estimator: {cond} vs {uncond}"
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_starvation_refuses_where_unconditional_stands() {
+        let mut rng = 0x9E37_79B9_7F4A_7C15u64;
+        let a = gate_ar1(64, 0.7, &mut rng);
+        let b = gate_ar1(64, 0.7, &mut rng);
+        let c = gate_ar1(64, 0.7, &mut rng);
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let cf: Vec<f64> = c.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&af, 2, 3);
+        let emb_y = embed_series(&bf, 2, 3);
+        let emb_z = embed_series(&cf, 2, 3);
+        assert!(
+            transfer_entropy_embedded_ksg(&af, &emb_x, &emb_y, 2, 2, TE_KSG_K).is_some(),
+            "the unconditional estimator stands at n=64"
+        );
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 2, 2, &emb_z, 2, TE_KSG_K
+            )
+            .is_none(),
+            "the conditional embedding starves at n=64 — refusal, never a fabricated value"
+        );
+        let a2 = gate_ar1(300, 0.7, &mut rng);
+        let b2 = gate_ar1(300, 0.7, &mut rng);
+        let c2 = gate_ar1(300, 0.7, &mut rng);
+        let af2: Vec<f64> = a2.iter().map(|&v| v as f64).collect();
+        let bf2: Vec<f64> = b2.iter().map(|&v| v as f64).collect();
+        let cf2: Vec<f64> = c2.iter().map(|&v| v as f64).collect();
+        let emb_x2 = embed_series(&af2, 3, 3);
+        let emb_y2 = embed_series(&bf2, 3, 3);
+        let emb_z2 = embed_series(&cf2, 3, 3);
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af2, &emb_x2, &emb_y2, 3, 3, &emb_z2, 3, TE_KSG_K
+            )
+            .is_some(),
+            "the conditional embedding stands at n=300"
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_refuses_invalid_geometry() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let a = gate_ar1(300, 0.7, &mut rng);
+        let b = gate_ar1(300, 0.7, &mut rng);
+        let c = gate_ar1(300, 0.7, &mut rng);
+        let af: Vec<f64> = a.iter().map(|&v| v as f64).collect();
+        let bf: Vec<f64> = b.iter().map(|&v| v as f64).collect();
+        let cf: Vec<f64> = c.iter().map(|&v| v as f64).collect();
+        let emb_x = embed_series(&af, 3, 3);
+        let emb_y = embed_series(&bf, 3, 3);
+        let emb_z = embed_series(&cf, 3, 3);
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(&af, &emb_x, &emb_y, 3, 3, &emb_z, 3, 0)
+                .is_none(),
+            "k=0 is refused"
+        );
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 0, 3, &emb_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "tau_x=0 is refused"
+        );
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 3, 0, &emb_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "tau_y=0 is refused"
+        );
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 3, 3, &emb_z, 0, TE_KSG_K
+            )
+            .is_none(),
+            "tau_z=0 with a present z-embedding is refused"
+        );
+        let dim1 = embed_series(&af, 3, 1);
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &dim1, &emb_y, 3, 3, &emb_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "dim<2 is refused"
+        );
+        let short_z = emb_z[..emb_z.len() - 1].to_vec();
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 3, 3, &short_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "a short z-embedding is refused"
+        );
+        let short_x = emb_x[..emb_x.len() - 1].to_vec();
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &short_x, &emb_y, 3, 3, &emb_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "a short x-embedding is refused"
+        );
+        let mut nan_z = emb_z.clone();
+        nan_z[0][0] = f64::NAN;
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &af, &emb_x, &emb_y, 3, 3, &nan_z, 3, TE_KSG_K
+            )
+            .is_none(),
+            "non-finite z-states are refused"
+        );
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(&[1.0; 4], &[], &[], 1, 1, &[], 0, 4)
+                .is_none(),
+            "n<8 is refused"
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_suppresses_common_driver() {
+        let n = 600;
+        let mut rng = 0x1234_5678_9ABC_DEF0u64;
+        let z: Vec<f32> = (0..n).map(|t| (t as f32 * 0.26).sin()).collect();
+        let x: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        let y: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        let v = conditional_embedded_te_phase(&x, &y, &z, 3, 0x9E37_79B9_7F4A_7C15u64)
+            .expect("the conditional embedded verdict resolves");
+        assert!(
+            v.te <= v.threshold,
+            "the common-driver pair fires: te {} > threshold {}",
+            v.te,
+            v.threshold
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_keeps_direct_coupling() {
+        let n = 600;
+        let mut rng = 0xFEDC_BA98_7654_3210u64;
+        let z: Vec<f32> = (0..n).map(|t| (t as f32 * 0.26).sin()).collect();
+        let y: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.3 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+        let tau = find_mi_lag(&yf).expect("the driver carries an MI lag");
+        let mut x: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        for t in tau..n {
+            x[t] += 0.9 * y[t - tau];
+        }
+        let v = conditional_embedded_te_phase(&x, &y, &z, 3, 0x9E37_79B9_7F4A_7C15u64)
+            .expect("the conditional embedded verdict resolves");
+        assert!(
+            v.te > v.threshold,
+            "the direct coupling beyond z is missed: te {} <= threshold {}",
+            v.te,
+            v.threshold
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_symmetric_under_common_driver() {
+        let n = 600;
+        let mut rng = 0x0F0E_0D0C_0B0A_0908u64;
+        let z: Vec<f32> = (0..n).map(|t| (t as f32 * 0.26).sin()).collect();
+        let x: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        let y: Vec<f32> = z
+            .iter()
+            .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+            .collect();
+        let v_xy = conditional_embedded_te_phase(&x, &y, &z, 3, 0x9E37_79B9_7F4A_7C15u64)
+            .expect("the forward conditional verdict resolves");
+        let v_yx = conditional_embedded_te_phase(&y, &x, &z, 3, 0x9E37_79B9_7F4A_7C15u64)
+            .expect("the reverse conditional verdict resolves");
+        assert!(
+            v_xy.te <= v_xy.threshold && v_yx.te <= v_yx.threshold,
+            "a symmetric common-driver pair shows no arrow: {} vs {} (thresholds {} vs {})",
+            v_xy.te,
+            v_yx.te,
+            v_xy.threshold,
+            v_yx.threshold
+        );
+        assert!(
+            (v_xy.te - v_yx.te).abs() < 0.1,
+            "the estimator stays symmetric under a common driver: {} vs {}",
+            v_xy.te,
+            v_yx.te
+        );
+    }
+
+    #[test]
+    fn gate_z_phase_surrogate_rotates_residual_and_keeps_z_component() {
+        fn residual_spectrum_deviation(n: usize) -> f64 {
+            let z: Vec<f32> = (0..n).map(|t| (t as f32 * 0.26).sin()).collect();
+            let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+            let y: Vec<f32> = z
+                .iter()
+                .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+                .collect();
+            let (beta1, beta0) = ols_fit(&y, &z).expect("the series fits on z");
+            let zf: Vec<f64> = z.iter().map(|&v| v as f64).collect();
+            let resid: Vec<f32> = (0..n)
+                .map(|i| {
+                    let yf = y[i] as f64;
+                    (yf - (beta0 + beta1 * zf[i])) as f32
+                })
+                .collect();
+            let mut rng = 42u64;
+            let ys = z_phase_surrogate(&y, &z, &mut rng).expect("the z-phase surrogate resolves");
+            assert!(ys != y, "the surrogate must not reproduce the series");
+            assert!(
+                ys.iter().all(|v| v.is_finite()),
+                "the surrogate stays finite"
+            );
+            let ys_mean = ys.iter().map(|&v| v as f64).sum::<f64>() / n as f64;
+            let y_mean = y.iter().map(|&v| v as f64).sum::<f64>() / n as f64;
+            assert!(
+                (ys_mean - y_mean).abs() < 1e-3,
+                "the rotation keeps the mean: {ys_mean} vs {y_mean}"
+            );
+            let resid_s: Vec<f32> = (0..n)
+                .map(|i| {
+                    let yf = ys[i] as f64;
+                    (yf - (beta0 + beta1 * zf[i])) as f32
+                })
+                .collect();
+            let mut r: Vec<f64> = resid.iter().map(|&v| v as f64).collect();
+            let mut im: Vec<f64> = vec![0.0; n];
+            exact_fft(&mut r, &mut im, false);
+            let mut rs: Vec<f64> = resid_s.iter().map(|&v| v as f64).collect();
+            let mut ims: Vec<f64> = vec![0.0; n];
+            exact_fft(&mut rs, &mut ims, false);
+            let total = (0..n).map(|k| r[k] * r[k] + im[k] * im[k]).sum::<f64>();
+            (0..n)
+                .map(|k| {
+                    let po = r[k] * r[k] + im[k] * im[k];
+                    let ps = rs[k] * rs[k] + ims[k] * ims[k];
+                    (po - ps).abs() / total
+                })
+                .fold(0.0f64, f64::max)
+        }
+        let dev_512 = residual_spectrum_deviation(512);
+        assert!(
+            dev_512 < 1e-3,
+            "n=512 residual spectrum deviation {dev_512} — the z-aligned residual rotates, not reshapes"
+        );
+        let dev_513 = residual_spectrum_deviation(513);
+        assert!(
+            dev_513 < 1e-3,
+            "n=513 residual spectrum deviation {dev_513} — no padding fingerprint"
+        );
+    }
+
+    #[test]
+    fn gate_z_phase_surrogate_refuses_constant_residual_or_constant_z() {
+        let z: Vec<f32> = (0..200).map(|t| (t as f32 * 0.26).sin()).collect();
+        let flat: Vec<f32> = vec![1.5; 200];
+        let mut rng = 7u64;
+        assert!(
+            z_phase_surrogate(&flat, &z, &mut rng).is_none(),
+            "a series constant on z leaves no residual to rotate — refusal"
+        );
+        let flat_z: Vec<f32> = vec![0.0; 200];
+        let wavy: Vec<f32> = (0..200).map(|t| (t as f32 * 0.3).cos()).collect();
+        assert!(
+            z_phase_surrogate(&wavy, &flat_z, &mut rng).is_none(),
+            "a constant z carries no fit — refusal"
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_fp_common_driver_stays_near_chance() {
+        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..30 {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let z: Vec<f32> = (0..400).map(|i| (i as f32 * 0.26).sin()).collect();
+            let x: Vec<f32> = z
+                .iter()
+                .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+                .collect();
+            let y: Vec<f32> = z
+                .iter()
+                .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+                .collect();
+            if let Some(v) = conditional_embedded_te_phase(&x, &y, &z, 3, seed) {
+                meas += 1;
+                if v.te > v.threshold {
+                    fp += 1;
+                }
+            }
+        }
+        assert!(
+            meas >= 20,
+            "conditional embedded FP cell: {meas} of 30 measurable — the machine stays silent too often"
+        );
+        assert!(
+            fp <= 8,
+            "conditional embedded FP: {fp} of {meas} above the threshold — the conditional null does not hold"
+        );
+    }
+
+    #[test]
+    fn gate_conditional_embedded_fn_true_coupling_is_found() {
+        let mut rng = 0x517C_C1B7_2722_0A95u64;
+        let mut found = 0usize;
+        let mut meas = 0usize;
+        for t in 0..20 {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let z: Vec<f32> = (0..400).map(|i| (i as f32 * 0.26).sin()).collect();
+            let y: Vec<f32> = z
+                .iter()
+                .map(|&c| c + 0.3 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+                .collect();
+            let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+            let Some(tau) = find_mi_lag(&yf) else {
+                continue;
+            };
+            let mut x: Vec<f32> = z
+                .iter()
+                .map(|&c| c + 0.4 * (gate_rng(&mut rng) as f32 * 2.0 - 1.0))
+                .collect();
+            for i in tau..x.len() {
+                x[i] += 0.9 * y[i - tau];
+            }
+            if let Some(v) = conditional_embedded_te_phase(&x, &y, &z, 3, seed) {
+                meas += 1;
+                if v.te > v.threshold {
+                    found += 1;
+                }
+            }
+        }
+        if meas == 0 {
+            panic!("conditional embedded FN: no coupling measurement succeeded in 20 trials");
+        }
+        assert!(
+            found as f64 / meas as f64 > 0.5,
+            "conditional embedded FN: {found} of {meas} true couplings found — the machine overlooks the coupling"
+        );
     }
 }

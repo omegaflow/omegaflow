@@ -266,6 +266,22 @@ pub fn parse_doppler_bin(bytes: &[u8]) -> Option<Vec<DopplerResidual>> {
     Some(out)
 }
 
+pub const ANDERSON_TOWARD_EARTH: &str = "+ toward Earth";
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FlybyResidual {
+    pub t_utc: f64,
+    pub dz_meas_mm_s: Option<f64>,
+    pub dz_pred_mm_s: Option<f64>,
+}
+
+pub fn flyby_anomaly_mm_s(line: &FlybyResidual) -> Option<f64> {
+    let meas = line.dz_meas_mm_s?;
+    let pred = line.dz_pred_mm_s?;
+    let dz = meas - pred;
+    if dz.is_finite() { Some(dz) } else { None }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -469,5 +485,51 @@ mod tests {
         let mut wrong = bin.clone();
         wrong[0] = b'X';
         assert!(parse_doppler_bin(&wrong).is_none());
+    }
+
+    #[test]
+    fn flyby_anomaly_reads_meas_minus_pred() {
+        let line = FlybyResidual {
+            t_utc: 661000000.0,
+            dz_meas_mm_s: Some(3.92),
+            dz_pred_mm_s: Some(0.0),
+        };
+        assert_eq!(flyby_anomaly_mm_s(&line), Some(3.92));
+        assert_eq!(
+            flyby_anomaly_mm_s(&FlybyResidual {
+                dz_pred_mm_s: Some(4.6),
+                ..line
+            }),
+            Some(3.92 - 4.6)
+        );
+        assert!(
+            flyby_anomaly_mm_s(&FlybyResidual {
+                dz_meas_mm_s: None,
+                ..line
+            })
+            .is_none()
+        );
+        assert!(
+            flyby_anomaly_mm_s(&FlybyResidual {
+                dz_pred_mm_s: None,
+                ..line
+            })
+            .is_none()
+        );
+        assert!(
+            flyby_anomaly_mm_s(&FlybyResidual {
+                dz_meas_mm_s: Some(f64::INFINITY),
+                ..line
+            })
+            .is_none()
+        );
+        assert!(
+            flyby_anomaly_mm_s(&FlybyResidual {
+                t_utc: 1.0,
+                dz_meas_mm_s: None,
+                dz_pred_mm_s: None,
+            })
+            .is_none()
+        );
     }
 }
