@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: 5e894a12754f870af63c65aa0894d258089dc6ddabba17c717234140fc047afe
+  sha256: bbf5512f5998599cd12b8f577000f385c5f6be53b498cbb5b47f153e27976318
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -99,3 +99,53 @@ Abschnitt „Schritt 4 — CI-Dedupe (konkretisiert 2026-09-26)" in
 gegenüber der Baseline (health-check 4 → 3, kernel-flatten 18 → 5 Jobs)
 verschlankt; offen ist der Klassen-Zensus über die 315 Workflows. Step 5
 (CDN-kanonisch) bleibt offen.
+
+## Step 5 — Konsolidierungs-Plan (gemessen 2026-09-28)
+
+Der Workflow-Klassen-Zensus (325 `.github/workflows/*.yml`: manifest 246, probe
+58, build 12, register 6, manifest-watch 3) nennt 13 Netlocs, deren Release aus
+≥2 Workflow-Klassen geschrieben wird. Am 2026-09-28 erneut am Baum gemessen:
+`glob` über `.github/workflows/*-cdn.yml` und `*-watch.yml`, `sgrep 'gh release'
+.github/workflows` (wörtlich) sowie je Netloc `sgrep -l "release create <netloc>"`
+und `"release upload <netloc>"`; die Klasse folgt aus dem Dateinamen (`*-cdn.yml`
+= manifest, `*-watch.yml` = manifest-watch, `harvest*.yml` = register,
+`kernel-flatten.yml` = build, übrige = probe).
+
+Kernbefund (bestätigt): kein `*-cdn.yml` liest seine Release-Menge aus
+`phi/sources.φ` — jedes führt einen eigenen Tag-Satz; die einzige gemessene
+Ausnahme ist `planetary-odf-cdn.yml:37`
+(`expected=$(grep -oE "releases/download/${{ matrix.netloc }}/..." phi/sources.φ)`).
+`sgrep 'phi/sources.φ' .github/workflows` findet außerdem nur Leser dieses
+Registers (`register_sort` in `ci-check.yml`, `harvest-dispatch.yml`,
+`membrane-hull-probe.yml`, `port-count.yml`), keine weitere
+Release-Mengen-Bindung. Ziel für jedes `*-cdn.yml`: seine erwartete Release-Menge
+an `phi/sources.φ` binden statt selbst zu führen. Die ≥2 Klassen entstehen aus
+`probe`/`register`/`build`-Workflows, die in denselben Release schreiben
+(`galileo-trk-noise.yml`, `harvest.yml`/`harvest-long.yml`/`harvest-dispatch.yml`
+über `phi/harvest.φ`, Compiler-Konstante `tapvizier.cds.unistra.fr` in
+`tools/harvest/src/bin/*.rs`).
+
+| Netloc | Klassen | kanonisch | betroffene Workflows/Releases | Schritt |
+|---|---|---|---|---|
+| vizier.cds.unistra.fr | manifest + probe | manifest | create/upload `denis-cdn.yml`, `extinction-curves-cdn.yml`, `mktypes-cdn.yml`, `pastel-cdn.yml`, `wds-cdn.yml`; probe `bigbang-echo.yml`; Release `vizier.cds.unistra.fr` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
+| pds-ppi.igpp.ucla.edu | manifest + probe + register | manifest | create/upload `galileo-odr-cdn.yml`, `galileo-receiver-cdn.yml`, `maven-tnf-cdn.yml`, `messenger-tnf-cdn.yml`, `voyager-odr-cdn.yml`; probe `galileo-trk-noise.yml`, `galileo-nsurr-20.yml`, `tnf-format-probe.yml`; register `phi/harvest.φ:138,255,264` | Release an `sources.φ` binden; register-Tags prüfen |
+| zenodo.org | manifest (+ Klasse lt. Zensus) | manifest | create/upload `cuprate-cdn.yml`, `kyoto-pressure-cdn.yml`, `quaoar-occlt-cdn.yml`, `superdarn-cdn.yml`, `superdarn-fitacf-cdn.yml`, `tnbfits-cdn.yml`; Release `zenodo.org` | Release an `sources.φ` binden |
+| spdf.gsfc.nasa.gov | manifest + probe | manifest | create/upload `flyby-odf-cdn.yml`, `mariner-occlt-cdn.yml`, `voyager-occlt-cdn.yml`; probe `pioneer-band-amplitude.yml`, `pioneer-cell-census.yml`, `pioneer-link-correction.yml`; Release `spdf.gsfc.nasa.gov` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
+| pds-rings.seti.org | manifest (+ Klasse lt. Zensus) | manifest | create/upload `galileo-ionocal-cdn.yml`, `gll-rss-odr-cdn.yml`, `gll-rss-tnf-cdn.yml`; weitere `gll-rss-atdf-cdn.yml`, `gll-rss-rsr-cdn.yml`; Release `pds-rings.seti.org` | Release an `sources.φ` binden |
+| naif.jpl.nasa.gov | manifest + build + probe | manifest | create/upload `camargo-uranus-cdn.yml`, `gll-ck-cdn.yml`, `naif-ura117-cdn.yml` u. v. a.; build `kernel-flatten.yml`; probe `neptune-center-rift.yml`; Release `naif.jpl.nasa.gov` | Release an `sources.φ` binden; build-Writer auf das manifest-Release umstellen |
+| tapvizier.cds.unistra.fr | manifest (+ Compiler-Konstante) | manifest | create/upload `cluster-tap-cdn.yml`, `twomrs-cdn.yml`; `upload_release("tapvizier.cds.unistra.fr", …)` in `tools/harvest/src/bin/*.rs` | Default-Konstante an `sources.φ` binden; Release `tapvizier.cds.unistra.fr` prüfen |
+| ssd.jpl.nasa.gov | manifest + build + probe | manifest | create/upload `de44-cdn.yml`, `korpora-cdn.yml`, `laic-verdict-cdn.yml`, `mariner10-ephemeris-cdn.yml`, `neptune-c-spk-cdn.yml`, `neptune-de440s-cdn.yml`, `ps1-cdn.yml`, `signal-cone-audit-cdn.yml`, `sky-crossmatch-cdn.yml`, `uranus-c-spk-cdn.yml`; build `kernel-flatten.yml`; probe `bigbang-echo.yml`, `dark-flow-probe.yml`, `ephemeris-horizons-check.yml`, `membrane-hull-probe.yml`, `solar-probes.yml`, `star-dmax-probe.yml` | Releases `ssd.jpl.nasa.gov` und `ssd.jpl.nasa.gov-de` an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
+| minorplanetcenter.net | manifest + build | manifest | create/upload `mpcobs-cdn.yml`, `mpcobs-shard-cdn.yml`; build `kernel-flatten.yml`; Release `minorplanetcenter.net` | Release an `sources.φ` binden |
+| irsa.ipac.caltech.edu | manifest + probe | manifest | create/upload `allwise-cdn.yml`, `dust-cdn.yml`; probe `bigbang-echo.yml`, `dark-flow-probe.yml`; Release `irsa.ipac.caltech.edu` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
+| ftp.imcce.fr | manifest + probe | manifest | create/upload `inpop-epm-cdn.yml`, `noe4-cdn.yml`; probe `inpop-testpo.yml`, `neptune-center-rift.yml`; Release `ftp.imcce.fr` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
+| data.pmel.noaa.gov | manifest + register | manifest | create/upload `d20-cdn.yml`, `tao-wnd-cdn.yml`; register `phi/harvest.φ:245`; Release `data.pmel.noaa.gov` | Release an `sources.φ` binden; register-Tag prüfen |
+| modis_lst_cmg | manifest + probe | manifest | manifest `modis-cdn.yml`; probe `modis-asset-bridge.yml`, `modis-year-split.yml`; Tag-Funktion `modis_lst_cmg_tag_of` (`src/archivar/cdn.rs`) | Jahr-Tags auf `sources.φ` binden; Familien-Tag `data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg` prüfen |
+
+**Destruktiv-Warnung.** Die Release-Vereinheitlichung ist destruktiv: pro Netloc
+wird erst nach Prüfung aller genannten Tags/Releases etwas entfernt — nie die
+letzte Kopie. Kanonisch ist für alle 13 Netlocs `manifest`; die abweichenden
+Writer (`probe`/`register`/`build`) werden auf das manifest-Release umgestellt,
+bevor ein Tag verschwindet. Zu prüfen sind je Netloc der Release-Tag selbst
+(`<netloc>`, bei `ssd.jpl.nasa.gov` zusätzlich `<netloc>-de`, bei `modis_lst_cmg`
+zusätzlich die `-<product>-<year>`-Tags) und die in der Tabelle genannten
+Writer-Releases. Ohne gemessene Tag-Menge aus `phi/sources.φ` (Ziel) kein Löschen.
