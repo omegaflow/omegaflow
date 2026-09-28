@@ -378,3 +378,7 @@ blocked account
 url https://sdc.emiratesmarsmission.ae/
 note Hope/Al-Amal EMM (MBRSC VAE) — 2026-09-28 200, kostenloses Konto. sensory-folge195.
 
+blocked account
+url https://superdarn.ca/data-download
+note MAP-Grid RST DataMap halten (2026-09-28): fit.order=6, pot_drop, HMB, IMF, combine_grid. Globus-only 8e844226-2eea-479c-b5e4-bac908b725bc /local_data/map/ 55690F 281,72GB. Operator: Globus-Transfer→externe 3,2-TB-Platte. Pending: RST-Byte-Offsets.
+
