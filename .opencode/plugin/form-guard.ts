@@ -39,11 +39,45 @@ const PHRASE_TEACH: { phrases: string[]; msg: string }[] = [
 
 const CARGO_ALLOWED = ["cargo check", "cargo fmt --", "cargo build -p ", "cargo run -p "]
 
+// Zerteilt an Separatoren, aber quote-bewusst: ein quoted Muster (`sgrep 'a|b'`)
+// bleibt unangetastet — nur echte Pipes/Separatoren trennen Segmente.
 function segments(command: string): string[] {
-  return command
-    .split(/(?:&&|\|\||;|\n|\|)/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0)
+  const out: string[] = []
+  let cur = ""
+  let quote: string | null = null
+  for (let i = 0; i < command.length; i++) {
+    const ch = command[i]
+    if (quote) {
+      cur += ch
+      if (ch === quote) quote = null
+      continue
+    }
+    if (ch === "'" || ch === '"') {
+      quote = ch
+      cur += ch
+      continue
+    }
+    if (ch === "\n" || ch === ";") {
+      out.push(cur)
+      cur = ""
+      continue
+    }
+    if (ch === "|") {
+      out.push(cur)
+      cur = ""
+      if (command[i + 1] === "|") i++
+      continue
+    }
+    if (ch === "&" && command[i + 1] === "&") {
+      out.push(cur)
+      cur = ""
+      i++
+      continue
+    }
+    cur += ch
+  }
+  out.push(cur)
+  return out.map((s) => s.trim()).filter((s) => s.length > 0)
 }
 
 function bareToken(seg: string): string {
@@ -76,6 +110,13 @@ export default async () => {
       for (const seg of segments(cmd)) {
         const msg = teaching(seg)
         if (msg) throw new Error(msg)
+      }
+      // `\|` ist in sgrep KEINE Alternation — sgrep matcht literal. Ein solches
+      // Muster findet nur das Zeichen selbst und erzeugt Falsch-Negative.
+      if (/(^|\s|\/)sgrep\b[^\n]*\\\|/.test(cmd)) {
+        throw new Error(
+          "`sgrep` matcht literal — Alternation (`\\|`) existiert nicht → ein Muster je Aufruf (`sgrep -i 'a' <pfad> && sgrep -i 'b' <pfad>`) oder `archive_search <kw> --root <dir>` je Begriff.",
+        )
       }
     },
   }
