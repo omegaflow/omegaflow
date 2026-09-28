@@ -206,7 +206,7 @@ pub fn write_odf_series(shards: &[&[[f64; 9]]]) -> Vec<u8> {
 }
 
 pub fn parse_odf_series(data: &[u8]) -> Option<Vec<[f64; 9]>> {
-    if data.len() < 8 || &data[0..4] != &MAGIC_ODF_SERIES {
+    if data.len() < 8 || data[0..4] != MAGIC_ODF_SERIES {
         return None;
     }
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
