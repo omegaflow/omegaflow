@@ -3,7 +3,7 @@
   session: River-Folge 53
   class: handover
   date: 2026-09-28
-  sha256: 5c97832d49c730e0e2aef970cb6abe3f40f4c78a023ccc9c22012bbb4a3846e0
+  sha256: 760303034e22e1481cbe362520d1f5ea2bc4bd80577cfcd57a3d90ca491fee45
   status: live
 -->
 # Handover — River-Folge 53 (2026-09-28)
@@ -55,9 +55,16 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ### GPU-Readback map/unmap + Lade-Membran — CI-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein ci-check-Lauf auf einem HEAD ≥ Readback-Fix, der **abschließt**.
-- **Lage:** (gemessen 2026-09-28 ~06:20Z via `ci_manage status`) `36385116484` ist `cancelled` (HEAD-Vorlauf, kein Code-Rot); der jüngste ci-check `36385567226` ist `pending`. Kein abgeschlossener grüner Nachweis im Fenster; den vollen CI-Stand trägt der Stehende Pass (`state/zustand/standing-pass.md`, zitiert). Die Lade-Membran ist lokal headless grün (folge50).
+- **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) der ci-check-Lauf auf `302063d36` schloss **rot** ab (2 fehlende Tests, s. eigener Punkt unten); der Readback-Test selbst steht nicht unter den Fehlern. Der Push `b45550527` startete `36398092149` ci-check (pending) — der grüne Readback-Nachweis steht noch aus. Den vollen CI-Stand trägt der Stehende Pass (`state/zustand/standing-pass.md`, zitiert). Die Lade-Membran ist lokal headless grün (folge50).
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log <id>` **einmal** nach Laufende (kein Polling) — grün = Punkt geschlossen; rot = `ci_manage log <id>` auswerten.
+- **Braucht:** `ci_manage log 36398092149` **einmal** nach Laufende (kein Polling) — Readback-Test grün = Punkt geschlossen.
+
+### Zwei rote River-Gates — Membran-Parität + No-TE-Tick
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** eigen (die roten Gates sind die Arbeit).
+- **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) ci-check auf `302063d36` rot, `1902 passed; 2 failed`: `mathematikerin::te::tests::gate_scalar_probe_path_parity_with_topological_membrane` (`src/mathematikerin/te.rs:3217`, „scalar probe path sees no arrow: te 0.5505495074495909 <= threshold 0.6649315122537214") und `mathematikerin::tests::the_no_te_tick_hears_each_oscillator_not_the_sum` (`src/mathematikerin/tests.rs:842`, `left 0.06491416 != right 0.0`). Der Lauf liegt auf dem Vor-HEAD; die Pflichten (1)–(3) (`b45550527`) berühren `transfer_entropy_lag`/`topological_te_phase` nicht — die zwei Gates bleiben rot. Der benannte Bau-Atom-Check der Blatt-Membran-Bindung (`gate_scalar_probe_path_parity_...`) ist damit **nicht belegt**.
+- **Blockade:** keine.
+- **Braucht:** (a) Parität: prüfe, ob `transfer_entropy_lag` auf der Fixture die Surrogat-Schwelle (10 Surrogate, mean+2σ) verfehlt — Fixture/Surrogatzahl härten **oder** die Nicht-Parität als Riß tragen (zwei unabhängige Linien, die nicht konvergieren, werden nie gemittelt); (b) No-TE-Tick: kein Oszillator darf ohne TE einen Beitrag tragen (`0.0649 → 0`) — den Breath-Zweig in `src/mathematikerin/omega.rs`/`tests.rs:842` gegen den per-Oszillator-Integral messen. Je Fix ein Gate-Test, in CI verifizieren.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
@@ -113,7 +120,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - `docs/surveys/survey-messpunkt-verteilung.md` — Messpunkt-Verteilung (D5-Marker gemessen, offene Kandidaten-Fragen §9).
 - `docs/auftrag/auftrag-flyby2-kette.md` — getragen durch die bestehenden Flyby-Path-2-Punkte (Füll-Lauf, DSN-Status, revised); die Kette selbst steht, keine Duplikat-Zeile.
 - `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` — Silence-Map, Betti-0, Delay und Minkowski sind gebaut; Certainty `descoped`, Total-Coherence-Integral gebaut (Complexity `pending`) — Blöcke oben.
-- `docs/concepts/blatt-papier-beweis.md` — die Rat-Reihenfolge der geerbten Pflichten (1)–(3) ist gebaut; Membran-Bindung `pending` auf den Zuschnitt (4), Operator-Wort.
+- `docs/concepts/blatt-papier-beweis.md` — die Rat-Reihenfolge der geerbten Pflichten (1)–(3) ist gebaut (`b45550527`); der benannte Paritäts-Check ist in CI **rot** (s. eigener Punkt) — die Membran-Parität ist nicht belegt; Membran-Bindung `pending` auf den Zuschnitt (4), Operator-Wort.
 - `docs/surveys/survey-fortschritt.md` — §C je Punkt gemessen: Deep-Lieferung/Zell-Achse-Quantisierung/Relay-Trailer/Fovea `descoped`, Deep-Upload-Stille/Rgba8Unorm `ueberholt`.
 - `docs/concepts/kybernetische-astrophysik.md` — lebendes Konzept (12 Nadeln); die Marker sind konzeptionelle `pending`-Prosa, kein neuer Handlungsschritt.
 - `docs/concepts/pfeiler-der-architektur.md` — kein offener Punkt.
