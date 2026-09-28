@@ -7478,6 +7478,72 @@ fn test_diagnose_no_samples() {
 }
 
 #[test]
+fn test_ci_body_verdict() {
+    let make = |format: &str| super::SourceConfig {
+        ttl: 60,
+        url: "https://example.com/q".into(),
+        origin: None,
+        frame: super::Frame::Surface {
+            body_name: "earth".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        },
+        format: format.into(),
+        extracts: vec![],
+        headers: vec![],
+        post_body: None,
+        target: None,
+        catalog: None,
+        max_freq: None,
+        min_freq: None,
+        body: None,
+        stations_url: None,
+        stations_path: String::new(),
+        stations_lat: String::new(),
+        stations_lon: String::new(),
+        stations_id: String::new(),
+        flux_from_mag: None,
+        abs_mag_from: None,
+        catalog_epoch: None,
+        repeat_ra_bins: 0,
+        fanout_cap: 0,
+        stations_flatten: String::new(),
+        stations_filter: None,
+        fanout_delay: 0,
+        sha256: None,
+        hapi_fill: HashMap::new(),
+        window: None,
+        live_only: false,
+    };
+    let json_src = make("json");
+    assert!(matches!(
+        super::port::ci_body_verdict(&json_src, "<html>GraceDB down</html>"),
+        super::port::CiBodyVerdict::Malformed
+    ));
+    assert!(matches!(
+        super::port::ci_body_verdict(&json_src, r#"{"a":1}"#),
+        super::port::CiBodyVerdict::JsonLive
+    ));
+    let ndk_src = make("ndk");
+    let ndk = " MLI  1976/01/01 01:29:39.6 -28.61 -177.64  59.0 6.2 0.0 KERMADEC ISLANDS REGION\n";
+    assert!(matches!(
+        super::port::ci_body_verdict(&ndk_src, ndk),
+        super::port::CiBodyVerdict::FormatGap(_)
+    ));
+    let tsv_src = make("asu-tsv");
+    assert!(matches!(
+        super::port::ci_body_verdict(&tsv_src, "ra\tdec\tmag\n10.0\t20.0\t3.2\n"),
+        super::port::CiBodyVerdict::FormatGap(_)
+    ));
+    let universal_src = make("universal");
+    assert!(matches!(
+        super::port::ci_body_verdict(&universal_src, "<html><body>data</body></html>"),
+        super::port::CiBodyVerdict::NonJsonPresent(_)
+    ));
+}
+
+#[test]
 fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
     assert!(matches!(
         super::void_class("empty-response (JSON parsed but all containers empty)"),
