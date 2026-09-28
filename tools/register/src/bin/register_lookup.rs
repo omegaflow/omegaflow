@@ -684,6 +684,7 @@ fn orphan_report_with(
     head: &dyn Fn(&str) -> Option<String>,
 ) -> (Vec<String>, BTreeMap<String, (usize, usize)>) {
     let carriers = owner_handover_texts(root);
+    let private_carrier_present = root.join(PRIVATE_HANDOVER_DIR).exists();
     let mut candidates: Vec<OrphanCandidate> = Vec::new();
     let mut registers_head: BTreeMap<String, String> = BTreeMap::new();
     for register in DISPOSITION_REGISTER_PATHS {
@@ -740,6 +741,18 @@ fn orphan_report_with(
     let mut lines: Vec<String> = Vec::new();
     let mut summary: BTreeMap<String, (usize, usize)> = BTreeMap::new();
     for c in &candidates {
+        if !private_carrier_present && c.owner == "future" {
+            let key = if c.url.is_empty() {
+                c.name.clone()
+            } else {
+                c.url.clone()
+            };
+            lines.push(format!(
+                "UNVERIFIABLE_PRIVATE\t{}:{}\t[{}]\t{}",
+                c.register, c.lineno, c.owner, key
+            ));
+            continue;
+        }
         let carrier = carriers.get(&c.owner).cloned().unwrap_or(String::new());
         let held = (!c.class_key.is_empty() && class_held.contains(&c.class_key))
             || orphan_held(&carrier, &c.url, &c.name);
@@ -827,11 +840,15 @@ fn run_orphans(args: &[String]) {
             .collect(),
         None => summary.clone(),
     };
+    let mut unverifiable: usize = 0;
     for line in &lines {
         if let Some(o) = &owner {
             if !orphan_line_for_owner(line, o) {
                 continue;
             }
+        }
+        if line.starts_with("UNVERIFIABLE_PRIVATE\t") {
+            unverifiable += 1;
         }
         println!("{}", line);
     }
@@ -840,10 +857,16 @@ fn run_orphans(args: &[String]) {
         .map(|(o, (c, u))| format!("{} {} committed {} uncommitted", o, c, u))
         .collect();
     let total = orphan_total(&filtered);
+    let unverifiable_note = if unverifiable > 0 {
+        format!(" ({} unverifiable — private carrier absent)", unverifiable)
+    } else {
+        String::new()
+    };
     println!(
-        "register_lookup --orphans: {} orphan entries [{}]",
+        "register_lookup --orphans: {} orphan entries [{}]{}",
         total,
-        owners.join(", ")
+        owners.join(", "),
+        unverifiable_note
     );
     if fail && total > 0 {
         std::process::exit(2);
@@ -3859,6 +3882,31 @@ mod tests {
                 .iter()
                 .all(|l| !l.contains("https://example.org/held"))
         );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_report_marks_absent_private_carrier_as_unverifiable() {
+        let base = env::temp_dir().join(format!("rl-orphan-private-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("phi")).unwrap();
+        fs::write(
+            base.join("phi/blocked_sources.\u{3c6}"),
+            "blocked account\nurl https://moon.bao.ac.cn/\nnote Chang'e GRAS: Konto-gated\n",
+        )
+        .unwrap();
+        assert!(!base.join(PRIVATE_HANDOVER_DIR).exists());
+        let (lines, summary) = orphan_report_with(&base, &|_| None);
+        assert!(
+            lines.iter().any(|l| l.starts_with(
+                "UNVERIFIABLE_PRIVATE\tphi/blocked_sources.\u{3c6}:1\t[future]\thttps://moon.bao.ac.cn/"
+            )),
+            "{:?}",
+            lines
+        );
+        assert_eq!(orphan_total(&summary), 0, "{:?}", lines);
+        assert_eq!(summary.get("future"), None);
         let _ = fs::remove_dir_all(&base);
     }
 

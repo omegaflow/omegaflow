@@ -383,10 +383,6 @@ dead 404
 url https://epncb.eu/json/stationlist.json
 note HTTP 404 — Endpoint weg.
 
-dead dns-unresolved
-url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv
-note curl: curl: (6) Could not resolve host: erddap.aodn.org.au Browser 2026-09-10: Host tot, Dienst-Nachfolger https://portal.aodn.org.au/.
-
 dead 404
 url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D
 note HTTP 404 — Endpoint weg.
