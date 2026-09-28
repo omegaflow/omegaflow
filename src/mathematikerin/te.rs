@@ -2589,6 +2589,13 @@ pub fn transfer_entropy_embedded_ksg(
 
 pub const CONDITIONAL_KSG_VARIANCE_FLOOR: usize = 4;
 
+#[derive(Clone, Copy)]
+pub struct EmbeddingLags {
+    pub x: usize,
+    pub y: usize,
+    pub z: usize,
+}
+
 fn conditional_ksg_k_fit(m: usize, jd: usize) -> usize {
     (m as f64).powf(4.0 / (4 + jd) as f64).round() as usize
 }
@@ -2597,14 +2604,12 @@ pub fn transfer_entropy_embedded_ksg_conditional(
     x: &[f64],
     emb_x: &[Vec<f64>],
     emb_y: &[Vec<f64>],
-    tau_x: usize,
-    tau_y: usize,
     emb_z: &[Vec<f64>],
-    tau_z: usize,
+    lags: EmbeddingLags,
     k: usize,
 ) -> Option<f64> {
     let n = x.len();
-    if n < 8 || tau_x == 0 || tau_y == 0 || k == 0 || x.iter().any(|v| !v.is_finite()) {
+    if n < 8 || lags.x == 0 || lags.y == 0 || k == 0 || x.iter().any(|v| !v.is_finite()) {
         return None;
     }
     let dim = {
@@ -2625,7 +2630,7 @@ pub fn transfer_entropy_embedded_ksg_conditional(
         None => 0,
     };
     if dim_z > 0 {
-        if tau_z == 0 {
+        if lags.z == 0 {
             return None;
         }
         if emb_z.iter().any(|s| s.len() != dim_z) {
@@ -2638,9 +2643,9 @@ pub fn transfer_entropy_embedded_ksg_conditional(
     {
         return None;
     }
-    let back_x = (dim - 1) * tau_x;
-    let back_y = (dim - 1) * tau_y;
-    let back_z = if dim_z == 0 { 0 } else { (dim_z - 1) * tau_z };
+    let back_x = (dim - 1) * lags.x;
+    let back_y = (dim - 1) * lags.y;
+    let back_z = if dim_z == 0 { 0 } else { (dim_z - 1) * lags.z };
     if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
         return None;
     }
@@ -2648,7 +2653,7 @@ pub fn transfer_entropy_embedded_ksg_conditional(
         return None;
     }
     let t_low = back_x.max(back_y).max(back_z);
-    let t_high = n.checked_sub(tau_x + 1)?;
+    let t_high = n.checked_sub(lags.x + 1)?;
     if t_low > t_high {
         return None;
     }
@@ -2662,7 +2667,7 @@ pub fn transfer_entropy_embedded_ksg_conditional(
     }
     let mut pts: Vec<f64> = Vec::with_capacity(m * jd);
     for t in t_low..=t_high {
-        pts.push(x[t + tau_x]);
+        pts.push(x[t + lags.x]);
         pts.extend_from_slice(&emb_x[t - back_x]);
         pts.extend_from_slice(&emb_y[t - back_y]);
         if dim_z > 0 {
@@ -2763,7 +2768,16 @@ pub fn conditional_embedded_te_estimate(
         return None;
     }
     let te = transfer_entropy_embedded_ksg_conditional(
-        &xf, &emb_x, &emb_y, tau_x, tau_y, &emb_z, tau_z, TE_KSG_K,
+        &xf,
+        &emb_x,
+        &emb_y,
+        &emb_z,
+        EmbeddingLags {
+            x: tau_x,
+            y: tau_y,
+            z: tau_z,
+        },
+        TE_KSG_K,
     )?;
     Some(ConditionalEmbeddedEstimate {
         te,
@@ -2851,10 +2865,12 @@ pub fn conditional_embedded_te_phase(
             &xf,
             &emb_x,
             &emb_s,
-            estimate.tau_x,
-            tau_s,
             &emb_z,
-            estimate.tau_z,
+            EmbeddingLags {
+                x: estimate.tau_x,
+                y: tau_s,
+                z: estimate.tau_z,
+            },
             TE_KSG_K,
         ) {
             vals.push(te_s);
@@ -8228,9 +8244,15 @@ mod tests {
         let emb_y = embed_series(&bf, 3, 3);
         let uncond = transfer_entropy_embedded_ksg(&af, &emb_x, &emb_y, 3, 3, TE_KSG_K)
             .expect("the unconditional reference resolves");
-        let cond =
-            transfer_entropy_embedded_ksg_conditional(&af, &emb_x, &emb_y, 3, 3, &[], 0, TE_KSG_K)
-                .expect("the empty-z conditional resolves");
+        let cond = transfer_entropy_embedded_ksg_conditional(
+            &af,
+            &emb_x,
+            &emb_y,
+            &[],
+            EmbeddingLags { x: 3, y: 3, z: 0 },
+            TE_KSG_K,
+        )
+        .expect("the empty-z conditional resolves");
         assert_eq!(
             cond, uncond,
             "empty z must byte-equal the unconditional estimator: {cond} vs {uncond}"
@@ -8255,7 +8277,12 @@ mod tests {
         );
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 2, 2, &emb_z, 2, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 2, y: 2, z: 2 },
+                TE_KSG_K,
             )
             .is_none(),
             "the conditional embedding starves at n=64 — refusal, never a fabricated value"
@@ -8271,7 +8298,12 @@ mod tests {
         let emb_z2 = embed_series(&cf2, 3, 3);
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af2, &emb_x2, &emb_y2, 3, 3, &emb_z2, 3, TE_KSG_K
+                &af2,
+                &emb_x2,
+                &emb_y2,
+                &emb_z2,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_some(),
             "the conditional embedding stands at n=300"
@@ -8291,27 +8323,49 @@ mod tests {
         let emb_y = embed_series(&bf, 3, 3);
         let emb_z = embed_series(&cf, 3, 3);
         assert!(
-            transfer_entropy_embedded_ksg_conditional(&af, &emb_x, &emb_y, 3, 3, &emb_z, 3, 0)
-                .is_none(),
+            transfer_entropy_embedded_ksg_conditional(
+                &af,
+                &emb_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                0,
+            )
+            .is_none(),
             "k=0 is refused"
         );
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 0, 3, &emb_z, 3, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 0, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "tau_x=0 is refused"
         );
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 3, 0, &emb_z, 3, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 3, y: 0, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "tau_y=0 is refused"
         );
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 3, 3, &emb_z, 0, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 3, y: 3, z: 0 },
+                TE_KSG_K,
             )
             .is_none(),
             "tau_z=0 with a present z-embedding is refused"
@@ -8319,7 +8373,12 @@ mod tests {
         let dim1 = embed_series(&af, 3, 1);
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &dim1, &emb_y, 3, 3, &emb_z, 3, TE_KSG_K
+                &af,
+                &dim1,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "dim<2 is refused"
@@ -8327,7 +8386,12 @@ mod tests {
         let short_z = emb_z[..emb_z.len() - 1].to_vec();
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 3, 3, &short_z, 3, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &short_z,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "a short z-embedding is refused"
@@ -8335,7 +8399,12 @@ mod tests {
         let short_x = emb_x[..emb_x.len() - 1].to_vec();
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &short_x, &emb_y, 3, 3, &emb_z, 3, TE_KSG_K
+                &af,
+                &short_x,
+                &emb_y,
+                &emb_z,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "a short x-embedding is refused"
@@ -8344,14 +8413,26 @@ mod tests {
         nan_z[0][0] = f64::NAN;
         assert!(
             transfer_entropy_embedded_ksg_conditional(
-                &af, &emb_x, &emb_y, 3, 3, &nan_z, 3, TE_KSG_K
+                &af,
+                &emb_x,
+                &emb_y,
+                &nan_z,
+                EmbeddingLags { x: 3, y: 3, z: 3 },
+                TE_KSG_K,
             )
             .is_none(),
             "non-finite z-states are refused"
         );
         assert!(
-            transfer_entropy_embedded_ksg_conditional(&[1.0; 4], &[], &[], 1, 1, &[], 0, 4)
-                .is_none(),
+            transfer_entropy_embedded_ksg_conditional(
+                &[1.0; 4],
+                &[],
+                &[],
+                &[],
+                EmbeddingLags { x: 1, y: 1, z: 0 },
+                4,
+            )
+            .is_none(),
             "n<8 is refused"
         );
     }
