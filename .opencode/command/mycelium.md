@@ -19,7 +19,7 @@ sie kopiert keine Pass-Zahl in ihre Übergabe (eine kopierte Pass-Zahl ist ein G
 der Ring, der **als erste schließt**: sie arbeitet ihre eigenen Punkte, committet und pusht
 (`/commit`), und **erst danach — mit stehendem Push — schreibt sie den frischen Pass am neuen
 HEAD** (CI-Tafel: rote Läufe `run-id | workflow | gemessener Grund | Träger-Linie | Braucht`,
-Grund aus Log/API lesen, nie raten, unread benennen; Postfach-Stand; Orphan-Zensus;
+Grund aus Log/API lesen, nie raten, unread benennen; Postfach-Stand; Ereignis-Stand; Orphan-Zensus;
 Mehrfach-Träger; `git_safety --snapshot`; `.tools_ensure`-Sweep). Die Pass-Schreibung ist ihr
 **Schlussakt, nicht ihr erster** — so zitiert jede Linie einen Pass, der beim Öffnen den eben
 gemessenen Stand trägt (kein Henne-Ei: der Pass wird nie vor der eigenen Änderung geschrieben).
