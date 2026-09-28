@@ -24,7 +24,7 @@ explains nothing.
 
 ## The machine and the run
 
-`signalkegel_audit_probe` — 10 channels (Nadel-Ⅲ-DAG: F10.7, XRSA, XRSB,
+`signal_cone_audit_probe` — 10 channels (Nadel-Ⅲ-DAG: F10.7, XRSA, XRSB,
 Lya1216, Bz, density, Vwind at the solar anchor; Wind/WAVES RAD1/RAD2/TNR at
 the L1 anchor), 90 pairs, n ≈ 3824 daily cells, fam round (10
 phase-randomized surrogates per cell, multiple comparison across all pairs

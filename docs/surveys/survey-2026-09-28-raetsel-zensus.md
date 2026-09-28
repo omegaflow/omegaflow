@@ -3,8 +3,8 @@
   class: survey
   date: 2026-09-28
   sha256: 3314cb58423e34fce39225d0ced7e803c026a935adfacdb5a28555de09d04826
-  status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md
+  status: consumed
+  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/surveys/survey-raetsel-bestand.md
 -->
 # Rätsel-Zensus — die Nadeln, die Blätter, der Kuprat (Stand 2026-09-28)
 

@@ -42,7 +42,7 @@ the common driver carries no arrow on this grid.
 - Litho series: count rate of the catalogue events (M ≥ 2.0) per cell in
   the 2000-km radius around the epicentre (the FDSN catalogue is a
   point process — the count series is the named construction, no
-  invented continuity; MiniSEED envelopes: decoder pending).
+  invented continuity; MiniSEED envelopes: decoder built (`tools/measure/src/miniseed.rs`)).
 - Iono series: INTERMAGNET total field F of the nearest BGS observatory
   (≤ 3000 km), 1-min mean per cell.
 - TE: scalar path `transfer_entropy_lag` (the probe); threshold per lag =
