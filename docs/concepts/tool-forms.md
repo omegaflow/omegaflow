@@ -2,7 +2,7 @@
   title: Tool-Forms — verbotene Leading-Form → kanonischer Ersatz
   class: concept
   date: 2026-09-28
-  sha256: 168d10ac3df89656c097cfa2ce46fb12833907c1ca2aeee2b0f435bb9e838eff
+  sha256: 3729154f23037db71407e0b92b0815af486894bd9befe820efcbf852d0a76c80
   status: live
   see-also: docs/concepts/tools-map.md AGENTS.md
 -->
@@ -28,6 +28,12 @@ ersetzt die Erinnerung durch die kopierbare Form.
 | `head *`, `tail *`, `*/head *`, `*/tail *` | `sread <datei> --offset N --limit M` oder `read` (offset/limit) — **Fenster ja, Kastration nein**; einen vom Harness gekappten Tool-Output vollständig aus der Spill-Datei (`full: <pfad>`) lesen |
 | `cd *` | bash-`workdir`-Parameter |
 | `python *` / `python3 *` / `*/python*` | Rust (kein Python im oder für das Repo) |
+
+`sgrep` matcht **literal** — es kennt keine Alternation: `\|` findet nur das Zeichen
+selbst und erzeugt Falsch-Negative. Mehrere Muster: ein Aufruf je Muster
+(`sgrep -i 'a' <pfad> && sgrep -i 'b' <pfad>`) oder `archive_search <kw> --root <dir>`
+je Begriff. `form-guard` bricht ein `sgrep`-Muster mit `\|` ab und lehrt die Form
+(Lehre 2026-09-28: eine `\|`-Suche lieferte Falsch-Negative).
 
 ## Bauen · CI
 
