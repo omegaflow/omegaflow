@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: bbf5512f5998599cd12b8f577000f385c5f6be53b498cbb5b47f153e27976318
+  sha256: 39da4f174038477aa3e51895d0b18a9e41de750238feb5ab27dfba8f72535dbd
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -119,7 +119,7 @@ Ausnahme ist `planetary-odf-cdn.yml:37`
 Registers (`register_sort` in `ci-check.yml`, `harvest-dispatch.yml`,
 `membrane-hull-probe.yml`, `port-count.yml`), keine weitere
 Release-Mengen-Bindung. Ziel für jedes `*-cdn.yml`: seine erwartete Release-Menge
-an `phi/sources.φ` binden statt selbst zu führen. Die ≥2 Klassen entstehen aus
+an `phi/sources.φ` binden statt selbst zu führen. **Wo die Tag-Menge Register-Eigentum ist** — dynamisch abgeleitete Jahr-/Slab-Mengen wie `modis_lst_cmg-<product>-<year>` oder `ps1-dr2-*` —, trägt das Register die **Familien-Identität**; die Jahr-/Slab-Menge bleibt **gemessene Laufzeit-Ableitung** (CMR + `gh api`) — die Laufzeit-Ableitung ist die Sache selbst (Council 2026-09-28). Die ≥2 Klassen entstehen aus
 `probe`/`register`/`build`-Workflows, die in denselben Release schreiben
 (`galileo-trk-noise.yml`, `harvest.yml`/`harvest-long.yml`/`harvest-dispatch.yml`
 über `phi/harvest.φ`, Compiler-Konstante `tapvizier.cds.unistra.fr` in
@@ -139,7 +139,7 @@ an `phi/sources.φ` binden statt selbst zu führen. Die ≥2 Klassen entstehen a
 | irsa.ipac.caltech.edu | manifest + probe | manifest | create/upload `allwise-cdn.yml`, `dust-cdn.yml`; probe `bigbang-echo.yml`, `dark-flow-probe.yml`; Release `irsa.ipac.caltech.edu` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
 | ftp.imcce.fr | manifest + probe | manifest | create/upload `inpop-epm-cdn.yml`, `noe4-cdn.yml`; probe `inpop-testpo.yml`, `neptune-center-rift.yml`; Release `ftp.imcce.fr` | Release an `sources.φ` binden; probe-Writer auf das manifest-Release umstellen |
 | data.pmel.noaa.gov | manifest + register | manifest | create/upload `d20-cdn.yml`, `tao-wnd-cdn.yml`; register `phi/harvest.φ:245`; Release `data.pmel.noaa.gov` | Release an `sources.φ` binden; register-Tag prüfen |
-| modis_lst_cmg | manifest + probe | manifest | manifest `modis-cdn.yml`; probe `modis-asset-bridge.yml`, `modis-year-split.yml`; Tag-Funktion `modis_lst_cmg_tag_of` (`src/archivar/cdn.rs`) | Jahr-Tags auf `sources.φ` binden; Familien-Tag `data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg` prüfen |
+| modis_lst_cmg | manifest + probe | manifest | manifest `modis-cdn.yml`; probe `modis-asset-bridge.yml`, `modis-year-split.yml`; Tag-Funktion `modis_lst_cmg_tag_of` (`src/archivar/cdn.rs`) | Familien-Identität als Register-Anker; die Jahr-Menge bleibt gemessene Laufzeit-Ableitung (CMR + `gh api`) — die Laufzeit-Ableitung ist die Sache selbst; Familien-Tag `data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg` prüfen |
 
 **Destruktiv-Warnung.** Die Release-Vereinheitlichung ist destruktiv: pro Netloc
 wird erst nach Prüfung aller genannten Tags/Releases etwas entfernt — nie die

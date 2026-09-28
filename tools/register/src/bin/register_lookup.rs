@@ -2682,9 +2682,30 @@ fn head_reference(text: &str) -> Option<String> {
 }
 
 fn source_token_present(text: &str) -> bool {
-    normalize_words(text)
+    let mut words: Vec<String> = Vec::new();
+    for word in normalize_words(text) {
+        for part in word.split('-') {
+            if !part.is_empty() {
+                words.push(part.to_string());
+            }
+        }
+    }
+    let has = |t: &str| words.iter().any(|w| w == t);
+    let has_id = words
         .iter()
-        .any(|w| matches!(w.as_str(), "ci" | "mail" | "run" | "lauf"))
+        .any(|w| w.len() >= 5 && w.bytes().all(|b| b.is_ascii_digit()));
+
+    if has("mail_ledger") || has("mail") {
+        return has_id
+            || has("antwort")
+            || words
+                .windows(2)
+                .any(|w| w[0] == "eingang" && w[1] == "eingetroffen");
+    }
+    if has("run") || has("lauf") {
+        return has_id;
+    }
+    false
 }
 
 fn fired_points(
@@ -3982,6 +4003,26 @@ mod tests {
         );
         assert!(out.iter().all(|l| !l.contains("zukunft")), "{:?}", out);
         assert_eq!(fired, 2, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn fired_points_ignore_waiting_mail_trigger_but_flag_measured_ids() {
+        let base = env::temp_dir().join(format!("rl-fired-mail-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n### warte-mail\n- **Status:** wartend\n- **Trigger:** wartend Mail-Eingang\n\n### mail-antwort\n- **Status:** wartend\n- **Trigger:** `mail_ledger:1790533094` Antwort\n\n### ci-lauf\n- **Status:** wartend\n- **Trigger:** ci-check-Lauf 36385567226\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-28-mountain-folge9.md"),
+            body,
+        )
+        .unwrap();
+        let handovers = collect_live_handovers_in(&base);
+        let head = "a".repeat(40);
+        let (out, _fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        assert!(!out.iter().any(|l| l.contains("warte-mail")), "{:?}", out);
+        assert!(out.iter().any(|l| l.contains("mail-antwort")), "{:?}", out);
+        assert!(out.iter().any(|l| l.contains("ci-lauf")), "{:?}", out);
         let _ = fs::remove_dir_all(&base);
     }
 
