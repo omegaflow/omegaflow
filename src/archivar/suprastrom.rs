@@ -1,5 +1,5 @@
-pub const SRD62_MAGIC: [u8; 2] = [0xCF, 0x86];
-pub const SRD62_VERSION: u8 = 0x07;
+pub const SRD62_MAGIC: [u8; 4] = *b"SRD6";
+pub const SRD62_VERSION: u8 = 1;
 
 pub const MU0: f64 = 1.25663706212e-6;
 
@@ -47,14 +47,10 @@ fn read_f64(bytes: &[u8], pos: &mut usize) -> Option<f64> {
 }
 
 pub fn parse_suprastrom_bin(bytes: &[u8]) -> Option<SuprastromBin> {
-    if bytes.len() < 8
-        || bytes[0] != SRD62_MAGIC[0]
-        || bytes[1] != SRD62_MAGIC[1]
-        || bytes[2] != SRD62_VERSION
-    {
+    if bytes.len() < 9 || bytes[0..4] != SRD62_MAGIC || bytes[4] != SRD62_VERSION {
         return None;
     }
-    let mut pos = 3usize;
+    let mut pos = 5usize;
     let n_series = read_u32(bytes, &mut pos)? as usize;
     let mut series: Vec<SuprastromSeries> = Vec::with_capacity(n_series);
     for _ in 0..n_series {
@@ -138,9 +134,8 @@ mod tests {
             ],
         };
         let bytes = encode_suprastrom_bin(&bin);
-        assert_eq!(bytes[0], SRD62_MAGIC[0]);
-        assert_eq!(bytes[1], SRD62_MAGIC[1]);
-        assert_eq!(bytes[2], SRD62_VERSION);
+        assert_eq!(bytes[0..4], SRD62_MAGIC);
+        assert_eq!(bytes[4], SRD62_VERSION);
         let back = parse_suprastrom_bin(&bytes).unwrap();
         assert_eq!(back.series.len(), 2);
         assert_eq!(back.series[0].id, "A00316");
@@ -153,7 +148,7 @@ mod tests {
 
     #[test]
     fn suprastrom_parse_rejects_bad_magic() {
-        assert!(parse_suprastrom_bin(&[0, 0, SRD62_VERSION, 0, 0, 0, 0]).is_none());
+        assert!(parse_suprastrom_bin(&[0, 0, 0, 0, SRD62_VERSION, 0, 0, 0, 0]).is_none());
     }
 
     #[test]

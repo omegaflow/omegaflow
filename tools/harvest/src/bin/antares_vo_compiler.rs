@@ -9,7 +9,7 @@ use omegaflow::skymap::{
     KIND_NEUTRINO, REC_BYTES as SKY_REC, SkymapRecord, decode_rec as sky_decode,
     encode_rec as sky_encode, parse_header as sky_parse_header, write_header as sky_write_header,
 };
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 use std::collections::BTreeMap;
 use std::io::{Read, Seek, SeekFrom};
 use std::process::Command;
@@ -267,7 +267,7 @@ fn verify_asset(
 
 fn witness_s2_direction_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::S2Richtung)) => {
+        Some(FieldIdentity::Witness(WitnessKind::S2Direction)) => {
             eprintln!(
                 "{} reads as an s2-direction witness record",
                 String::from_utf8_lossy(&magic)

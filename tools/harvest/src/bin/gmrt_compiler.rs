@@ -2,7 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{GbcoRec, MAGIC_GMR, parse_gmr, write_gmr};
 use omegaflow::archivar::tiff::parse_tiff;
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 
 const NETLOC: &str = "gmrt.org";
 const GRIDSERVER: &str = "https://www.gmrt.org/services/GridServer";
@@ -16,7 +16,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn witness_gestalt_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)) => {
+        Some(FieldIdentity::Witness(WitnessKind::Gestalt)) => {
             eprintln!(
                 "{} reads as a gestalt witness record",
                 String::from_utf8_lossy(&magic)
@@ -264,7 +264,7 @@ mod tests {
         assert_eq!(parse_gmr(&bytes).unwrap().len(), 1);
         assert_eq!(
             magic_identity(MAGIC_GMR),
-            Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+            Some(FieldIdentity::Witness(WitnessKind::Gestalt))
         );
     }
 }

@@ -110,7 +110,7 @@ fn main() {
         eprintln!("{}", reason);
         std::process::exit(2);
     }
-    let sent_text = strip_quellen(&text);
+    let sent_text = strip_sources(&text);
     let payload = build_payload(&to, &from, &subject, &sent_text, html_body.as_deref(), &cc);
     if !will_send {
         println!("dry-run — nothing sent (add --send to send)");
@@ -292,7 +292,7 @@ enum Source {
     CommandArtifact { artifact: String },
 }
 
-enum Quellen {
+enum Sources {
     NoClaims,
     Claims(Vec<String>),
 }
@@ -303,7 +303,7 @@ struct Verdict {
 }
 
 fn gate(body: &str) -> Verdict {
-    match find_quellen(body) {
+    match find_sources(body) {
         None => Verdict {
             rows: vec![Claim {
                 claim: "(no QUELLEN block)".to_string(),
@@ -316,7 +316,7 @@ fn gate(body: &str) -> Verdict {
                  a mail with no state claims carries QUELLEN: none",
             )),
         },
-        Some(Quellen::NoClaims) => Verdict {
+        Some(Sources::NoClaims) => Verdict {
             rows: vec![Claim {
                 claim: "(no state claims)".to_string(),
                 source: "QUELLEN: none".to_string(),
@@ -324,7 +324,7 @@ fn gate(body: &str) -> Verdict {
             }],
             refuse: None,
         },
-        Some(Quellen::Claims(lines)) => {
+        Some(Sources::Claims(lines)) => {
             let rows: Vec<Claim> = lines.iter().map(|l| resolve_claim(l)).collect();
             let unresolved: Vec<&str> = rows
                 .iter()
@@ -345,7 +345,7 @@ fn gate(body: &str) -> Verdict {
     }
 }
 
-fn strip_quellen(body: &str) -> String {
+fn strip_sources(body: &str) -> String {
     let mut out = String::new();
     for line in body.lines() {
         if line.trim_start().starts_with("QUELLEN:") {
@@ -357,7 +357,7 @@ fn strip_quellen(body: &str) -> String {
     out.trim_end().to_string()
 }
 
-fn find_quellen(body: &str) -> Option<Quellen> {
+fn find_sources(body: &str) -> Option<Sources> {
     let mut lines = body.lines();
     let mut rest: Option<&str> = None;
     for line in lines.by_ref() {
@@ -368,7 +368,7 @@ fn find_quellen(body: &str) -> Option<Quellen> {
     }
     let rest = rest?;
     if rest == "none" {
-        return Some(Quellen::NoClaims);
+        return Some(Sources::NoClaims);
     }
     let mut claims: Vec<String> = Vec::new();
     if !rest.is_empty() {
@@ -381,7 +381,7 @@ fn find_quellen(body: &str) -> Option<Quellen> {
         }
         claims.push(t.to_string());
     }
-    Some(Quellen::Claims(claims))
+    Some(Sources::Claims(claims))
 }
 
 fn resolve_claim(line: &str) -> Claim {
@@ -561,7 +561,7 @@ mod tests {
     }
 
     #[test]
-    fn gate_refuses_a_draft_without_a_quellen_block() {
+    fn gate_refuses_a_draft_without_a_sources_block() {
         let v = gate("subject line\nbody text\n");
         assert!(v.refuse.is_some());
         assert_eq!(v.rows.len(), 1);
@@ -569,7 +569,7 @@ mod tests {
     }
 
     #[test]
-    fn gate_passes_quellen_none() {
+    fn gate_passes_sources_none() {
         let v = gate("draft\nQUELLEN: none\n");
         assert!(v.refuse.is_none());
         assert!(v.rows.iter().all(|r| r.resolves));
@@ -585,15 +585,15 @@ mod tests {
     }
 
     #[test]
-    fn strip_removes_the_quellen_block_from_the_sent_text() {
+    fn strip_removes_the_sources_block_from_the_sent_text() {
         let body = "Dear team,\n\nbody text.\n\nQUELLEN:\nclaim → src/bin/smail.rs:1\n";
-        assert_eq!(strip_quellen(body), "Dear team,\n\nbody text.");
+        assert_eq!(strip_sources(body), "Dear team,\n\nbody text.");
     }
 
     #[test]
-    fn strip_removes_a_quellen_none_marker() {
+    fn strip_removes_a_sources_none_marker() {
         let body = "hello\nQUELLEN: none\n";
-        assert_eq!(strip_quellen(body), "hello");
+        assert_eq!(strip_sources(body), "hello");
     }
 
     #[test]

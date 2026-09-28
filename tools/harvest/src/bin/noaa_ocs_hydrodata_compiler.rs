@@ -5,7 +5,7 @@ use omegaflow::archivar::gpkg::{SqliteDb, SqliteValue};
 use omegaflow::archivar::json::{JsonVal, jpath_val, jstr, parse_json};
 use omegaflow::archivar::tiff::parse_tiff;
 use omegaflow::cdn::upload_release;
-use omegaflow::zeuge::{FeldIdentitaet, ZeugeArt, magic_identity};
+use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 
 const NETLOC: &str = "noaa-ocs-hydrodata-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-ocs-hydrodata-pds.s3.amazonaws.com";
@@ -25,7 +25,7 @@ fn arg_value(args: &[String], key: &str) -> Option<String> {
 
 fn witness_gestalt_identity(magic: [u8; 4]) -> Result<(), String> {
     match magic_identity(magic) {
-        Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt)) => {
+        Some(FieldIdentity::Witness(WitnessKind::Gestalt)) => {
             eprintln!(
                 "{} reads as a gestalt witness record",
                 String::from_utf8_lossy(&magic)
@@ -579,7 +579,7 @@ mod tests {
         assert_eq!(parse_ocs(&bytes).unwrap().len(), 1);
         assert_eq!(
             magic_identity(MAGIC_OCS),
-            Some(FeldIdentitaet::Zeuge(ZeugeArt::Gestalt))
+            Some(FieldIdentity::Witness(WitnessKind::Gestalt))
         );
     }
 

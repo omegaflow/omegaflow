@@ -32,8 +32,8 @@ eine Messung. Wie jede Messung trägt ein Ereignis die fünf Axiome aus
 
 | Feld | Bedeutung | fehlt |
 |------|-----------|-------|
-| quelle | Name der gemessenen Quelle | pending |
-| quelle-url | Adresse der Quelle | pending |
+| source | Name der gemessenen Quelle | pending |
+| source-url | Adresse der Quelle | pending |
 | zeit | bürgerliche Zeit der Meldung | pending |
 | zeit (JD TDB) | Julianisches Datum (TDB≈UTC, Delta pending) | pending |
 | ort | Ort als Text (ICRS/J2000 oder geo) | pending |
@@ -55,7 +55,7 @@ livefeed_gate --url <url>                              # Seitentitel als Meldung
 livefeed_gate --news <suchbegriff>                     # Google-News-Weltsuche (RSS)
 livefeed_gate --wikidata <ereignis>                    # Faktenabgleich Wikipedia + Wikidata
 livefeed_gate --eonet <kategorie>                      # NASA-EONET-Naturereignis (geo+zeit+zahl)
-livefeed_gate --quellen <url>...                       # Quellen-Availability (mehrere)
+livefeed_gate --sources <url>...                       # Quellen-Availability (mehrere)
 livefeed_gate --gate <gate-url>                        # Verdikt des omegaflow-Gate
 livefeed_gate --verify <url>                           # Quellen-Availability (eine)
 livefeed_gate --top                                    # Verifizierbarkeits-Checkliste
@@ -88,7 +88,7 @@ Zusätzlich zu Wikipedia/Wikidata und der Deutschen Welle:
 ## Fixität der Quelle (--fixity)
 
 `--fixity` berechnet den SHA-256-Hash des geholten Quellenobjekts
-(quelle-url) und führt ihn als `quelle-fixity: sha256:…`. Damit ist A = A
+(source-url) und führt ihn als `quelle-fixity: sha256:…`. Damit ist A = A
 operationalisiert (FORCE11 P7): die Zahl ist die Zahl *dieses exakten
 Schnappschusses*; spätere Änderung oder Link-Rot sind erkennbar. SHA-256 ist
 im Werkzeug in reinem std implementiert — keine Zusatz-Abhängigkeit.

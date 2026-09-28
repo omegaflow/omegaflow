@@ -161,9 +161,9 @@ pub mod weberin_verdicts;
 pub mod win32;
 pub mod wind;
 pub mod wind_orbit;
+pub mod witness;
 pub mod wso_polar;
 pub mod zarr;
-pub mod zeuge;
 pub mod ztf;
 
 pub mod channels;
