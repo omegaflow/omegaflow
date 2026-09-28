@@ -35,6 +35,10 @@ pub fn matrix_state_path() -> String {
     base.join(MATRIX_STATE_FILE).to_string_lossy().into_owned()
 }
 
+pub fn state_temp_path(path: &str) -> String {
+    format!("{path}.{}.tmp", std::process::id())
+}
+
 fn rd_u16(b: &[u8], p: &mut usize) -> Option<u16> {
     let v = u16::from_le_bytes(b.get(*p..*p + 2)?.try_into().ok()?);
     *p += 2;
@@ -243,8 +247,8 @@ impl MatrixMachine {
         }
     }
 
-    pub fn save_state(&self) {
-        self.save_state_to(&self.state_path);
+    pub fn save_state(&self) -> std::io::Result<()> {
+        self.save_state_to(&self.state_path)
     }
 
     pub fn load_state(&mut self) {
@@ -259,7 +263,7 @@ impl MatrixMachine {
         self.due = s.due;
     }
 
-    pub fn save_state_to(&self, path: &str) {
+    pub fn save_state_to(&self, path: &str) -> std::io::Result<()> {
         let mut buf: Vec<u8> = Vec::new();
         buf.extend_from_slice(b"OMX2");
         buf.extend_from_slice(&(self.rings.len() as u32).to_le_bytes());
@@ -329,9 +333,13 @@ impl MatrixMachine {
         }
         buf.extend_from_slice(&l.expected.to_le_bytes());
         if let Some(parent) = std::path::Path::new(path).parent() {
-            let _ = std::fs::create_dir_all(parent);
+            if !parent.as_os_str().is_empty() {
+                std::fs::create_dir_all(parent)?;
+            }
         }
-        let _ = std::fs::write(path, &buf);
+        let tmp = state_temp_path(path);
+        std::fs::write(&tmp, &buf)?;
+        std::fs::rename(&tmp, path)
     }
 
     pub fn load_state_from(path: &str) -> Option<MatrixMachine> {
@@ -1117,7 +1125,9 @@ impl MatrixMachine {
             .is_none_or(|i| i.elapsed().as_secs_f64() > 120.0)
         {
             self.last_state_save = Some(std::time::Instant::now());
-            self.save_state();
+            if let Err(e) = self.save_state() {
+                eprintln!("matrix state not written: {e}");
+            }
         }
         if self.te_map.is_some() {
             self.collect();

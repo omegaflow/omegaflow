@@ -2276,7 +2276,7 @@ pub fn transfer_entropy_embedded_kde_scaled(
     tau_y: usize,
     factor: f64,
 ) -> Option<f64> {
-    if !(factor > 0.0) || !factor.is_finite() {
+    if !factor.is_finite() || factor <= 0.0 {
         return None;
     }
     let n = x.len();
