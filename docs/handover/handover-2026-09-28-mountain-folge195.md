@@ -3,7 +3,7 @@
   session: Mountain-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: e4ebf3c4082ecf080e95eabe7de5faf34b7e8164ee46adbd4d5c864320221a4b
+  sha256: 92eeece2cae6ca83fa488b5f07e2b5a9c790290976d5c3345ca9d17a17633371
   status: live
 -->
 # Handover — Mountain-Folge 195 (2026-09-28)
@@ -30,9 +30,9 @@ Hier ausführen, keine Rangfolge, flash-first delegieren — session-weiter Cons
 ### CI-check — grüne Runde auf HEAD
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der `ci-check`-Lauf auf HEAD endet.
-- **Lage:** (gemessen 2026-09-28 via `git log -1`, `ci_manage status`) HEAD ist `0da70c65d`; `ci-check 36422750525` pending, `36420817056` in_progress (Schritt `test`); die Vorlauf-Läufe `cancelled` — kein grüner `ci-check` auf dem aktuellen HEAD im Fenster.
+- **Lage:** (gemessen 2026-09-28 via `git log -1`, `ci_manage list`) HEAD ist `c47a22464` (dieser Atom-Commit, gepusht); der Push dispatchte `ci-check 36423401450` (pending), `register-coverage 36423401492` (queued), `tools-build 36423401424` (pending), `register-dropped 36423401422` (queued) — alle auf `c47a22464`. Vorlauf-Läufe `cancelled`/`failure`.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log <id>` des Laufs auf HEAD einmal nach Lauf-Ende lesen; grün → Punkt löschen; bleibt `dropped-gate` rot, ist mycelium der Träger.
+- **Braucht:** `ci_manage log 36423401450` bzw. `ci_manage log 36423401492` einmal nach Lauf-Ende lesen; grün → Punkt löschen. `register-coverage` prüft den `UNVERIFIABLE_PRIVATE`-Arm (`tools/register/src/bin/register_lookup.rs`); bleibt der Job `orphans` rot, ist `ci_manage log 36423401492` der nächste Schritt.
 
 ### NED ByParams — Token-Kanal
 - **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
