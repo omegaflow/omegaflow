@@ -1015,6 +1015,7 @@ pub fn main_flow() {
     let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> = std::sync::Arc::new(
         std::sync::RwLock::new(load_weberin_verdicts(&verdicts_path)),
     );
+    register_verdicts_shared(verdicts_shared.clone());
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {

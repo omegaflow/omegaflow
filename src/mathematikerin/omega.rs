@@ -1785,7 +1785,7 @@ impl OmegaLoop {
                     "-".to_string()
                 }
             };
-            if std::io::IsTerminal::is_terminal(&std::io::stderr()) {
+            if self.silent || std::io::IsTerminal::is_terminal(&std::io::stderr()) {
                 eprintln!(
                     "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
                     self.t_presence,

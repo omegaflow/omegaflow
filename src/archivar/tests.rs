@@ -2515,6 +2515,141 @@ fn test_star_grid_hull_refuses_distant_star() {
     assert!((reached[0].0 - d).abs() / d < 1e-6);
 }
 
+static VERDICT_QUERY_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn verdict_query_handle() -> Arc<std::sync::RwLock<Vec<VerdictLine>>> {
+    static HANDLE: std::sync::OnceLock<Arc<std::sync::RwLock<Vec<VerdictLine>>>> =
+        std::sync::OnceLock::new();
+    let handle = HANDLE.get_or_init(|| Arc::new(std::sync::RwLock::new(Vec::new())));
+    register_verdicts_shared(handle.clone());
+    handle.clone()
+}
+
+fn verdict_line_fixture(name: &str, word: VerdictWord, weave_epoch: f64) -> VerdictLine {
+    VerdictLine {
+        name: name.to_string(),
+        word,
+        knot: [None, None],
+        sep_m: None,
+        weave_epoch,
+    }
+}
+
+fn riss_query_fixture(name: &str, t2: f64) -> Vec<SampleRecord> {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    let mut samples = build_star_samples(&bin, Some(2000.0));
+    assert_eq!(samples.len(), 1);
+    samples[0].name = name.to_string();
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let buf = build_buffer(
+        samples.into_iter().map(Arc::new).collect(),
+        1.0,
+        Arc::new(eph.clone()),
+        None,
+        Vec::new(),
+        Vec::new(),
+        None,
+    );
+    let mut out: Vec<SampleRecord> = Vec::new();
+    query_hash(
+        &buf.cache,
+        MembraneCtx {
+            center: [0.0, 0.0, 0.0],
+            t2,
+            pad: 10.0 * PARSEC_M + 1.0,
+            delta_t_cache: 0.0,
+            floor: &[0.5; 9],
+            softening: 1.0,
+            forward: [1.0, 0.0, 0.0],
+            eph: &eph,
+        },
+        &mut out,
+    );
+    out
+}
+
+#[test]
+fn a_live_riss_skips_the_sample_at_the_query_funnel() {
+    let _gate = VERDICT_QUERY_GATE.lock().unwrap();
+    let handle = verdict_query_handle();
+    let weave = 8.0e8;
+    {
+        let mut lines = handle.write().unwrap();
+        *lines = vec![verdict_line_fixture("apophis", VerdictWord::Riss, weave)];
+    }
+    let records = riss_query_fixture("apophis", weave + 100.0);
+    assert_eq!(
+        records.len(),
+        0,
+        "a live riss must skip the named sample — the query emits no record, never a 0.0 pad"
+    );
+}
+
+#[test]
+fn a_stale_riss_releases_the_sample() {
+    let _gate = VERDICT_QUERY_GATE.lock().unwrap();
+    let handle = verdict_query_handle();
+    let weave = 8.0e8;
+    {
+        let mut lines = handle.write().unwrap();
+        *lines = vec![verdict_line_fixture("apophis", VerdictWord::Riss, weave)];
+    }
+    let records = riss_query_fixture("apophis", weave + VERDICT_STALE_S as f64);
+    assert_eq!(
+        records.len(),
+        1,
+        "a riss aged past VERDICT_STALE_S is stale — the sample flows again"
+    );
+}
+
+#[test]
+fn a_non_riss_word_does_not_skip_the_sample() {
+    let _gate = VERDICT_QUERY_GATE.lock().unwrap();
+    let handle = verdict_query_handle();
+    let weave = 8.0e8;
+    {
+        let mut lines = handle.write().unwrap();
+        *lines = vec![
+            verdict_line_fixture("ceres", VerdictWord::Placed, weave),
+            verdict_line_fixture("ceres", VerdictWord::Absent, weave),
+            verdict_line_fixture("ceres", VerdictWord::DirectionOnly, weave),
+        ];
+    }
+    let records = riss_query_fixture("ceres", weave + 100.0);
+    assert_eq!(
+        records.len(),
+        1,
+        "only VerdictWord::Riss acts — placed/absent/direction-only carry no skip"
+    );
+}
+
+#[test]
+fn an_absent_or_empty_verdict_reads_no_riss_set() {
+    let _gate = VERDICT_QUERY_GATE.lock().unwrap();
+    let handle = verdict_query_handle();
+    {
+        let mut lines = handle.write().unwrap();
+        lines.clear();
+    }
+    assert!(riss_names(&[], Some(8.0e8)).is_empty());
+    assert!(current_riss_names(Some(8.0e8)).is_empty());
+    let records = riss_query_fixture("apophis", 8.0e8);
+    assert_eq!(
+        records.len(),
+        1,
+        "no verdict bin, no riss set, no term — the sample flows (0 honored)"
+    );
+}
+
 #[test]
 fn test_hidden_run_rest_presence_carries_stars() {
     let mut bin = Vec::new();

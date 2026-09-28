@@ -64,18 +64,18 @@ fn formula_k(n: usize, d: usize, tau_x: usize, tau_y: usize) -> Option<(usize, u
 }
 
 fn ksg_te_phase_null(
-    driver: &[f32],
     target: &[f32],
+    driver: &[f32],
     dim: usize,
     k: usize,
     seed: u64,
 ) -> Option<(f64, f64)> {
-    let n = driver.len();
-    if n < 8 || target.len() != n || dim < 2 {
+    let n = target.len();
+    if n < 8 || driver.len() != n || dim < 2 {
         return None;
     }
-    let xf: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
-    let yf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+    let xf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
     if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
         return None;
     }
@@ -87,7 +87,7 @@ fn ksg_te_phase_null(
     let mut vals: Vec<f64> = Vec::with_capacity(10);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..10 {
-        let ys = phase_randomized_surrogate(target, &mut rng);
+        let ys = phase_randomized_surrogate(driver, &mut rng);
         if ys.len() != n {
             continue;
         }
@@ -163,7 +163,7 @@ fn run_ksg_k_sweep(n: usize, dim: usize, fp_trials: usize, fn_trials: usize) -> 
         for t in 0..fn_trials {
             let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
             let (a, b) = k_gate_coupled_ar1(n, &mut rng);
-            if let Some((te, thr)) = ksg_te_phase_null(&a, &b, dim, k, seed) {
+            if let Some((te, thr)) = ksg_te_phase_null(&b, &a, dim, k, seed) {
                 fn_meas += 1;
                 if te > thr {
                     found += 1;
