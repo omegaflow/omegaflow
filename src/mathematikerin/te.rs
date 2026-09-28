@@ -3190,6 +3190,57 @@ mod tests {
     }
 
     #[test]
+    fn gate_scalar_probe_path_parity_with_topological_membrane() {
+        let seed = 42u64;
+        let n = 200usize;
+        let mut y = vec![0f32; n];
+        for (t, slot) in y.iter_mut().enumerate() {
+            *slot = (t as f32 * 0.5).sin();
+        }
+        let mut x = vec![0f32; n];
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+
+        let scalar_forward =
+            transfer_entropy_lag(&x, &y, 0).expect("the scalar probe path carries TE(x, y)");
+        let scalar_reverse =
+            transfer_entropy_lag(&y, &x, 0).expect("the scalar probe path carries TE(y, x)");
+        let (_, _, scalar_threshold) = surrogate_stats_phase(&x, &y, 0, seed)
+            .expect("the scalar probe path carries a phase-surrogate threshold");
+        assert!(
+            scalar_forward > scalar_reverse,
+            "scalar probe path reverses the arrow: forward {} <= reverse {}",
+            scalar_forward,
+            scalar_reverse
+        );
+        assert!(
+            scalar_forward > scalar_threshold,
+            "scalar probe path sees no arrow: te {} <= threshold {}",
+            scalar_forward,
+            scalar_threshold
+        );
+
+        let membrane_forward = topological_te_phase(&x, &y, 3, 3, seed)
+            .expect("the topological membrane carries a verdict on the causal pair");
+        let membrane_reverse = topological_te_phase(&y, &x, 3, 3, seed);
+        if let Some(reverse) = membrane_reverse {
+            assert!(
+                membrane_forward.te > reverse.te,
+                "topological membrane reverses the arrow: forward {} <= reverse {}",
+                membrane_forward.te,
+                reverse.te
+            );
+        }
+        assert!(
+            membrane_forward.te > membrane_forward.threshold,
+            "topological membrane sees no arrow: te {} <= threshold {}",
+            membrane_forward.te,
+            membrane_forward.threshold
+        );
+    }
+
+    #[test]
     fn surrogate_stats_carry_the_threshold() {
         let n = 200;
         let mut x = vec![0f32; n];
