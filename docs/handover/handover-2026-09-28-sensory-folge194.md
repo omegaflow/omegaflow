@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Sensory-Folge 193 (2026-09-27)
-  session: Sensory-Folge 193
+  title: Handover — Sensory-Folge 194 (2026-09-28)
+  session: Sensory-Folge 194
   class: handover
-  date: 2026-09-27
-  sha256: 2a079359f0daa7dc2e497dc68740b10f5b8f104f9f020380e7baa30f68f71592
+  date: 2026-09-28
+  sha256: 8dcdda56d3473f3a8f5013aa0b6cf3580c3e233a42c020526d1f25ff38f8f1c3
   status: live
 -->
-# Handover — Sensory-Folge 193 (2026-09-27)
+# Handover — Sensory-Folge 194 (2026-09-28)
 
 Dieses Register trägt nur Offenes — Erledigtes ist gelöscht, nicht erklärt; git trägt,
 was gemacht wurde. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks —
@@ -18,10 +18,10 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der Akteur
 steht pro Punkt in `Bindung`.
 
-Diese Session konsumierte `handover-2026-09-27-sensory-folge192.md` (nach `archiv/`).
+Diese Session konsumierte `handover-2026-09-27-sensory-folge193.md` (nach `archiv/`).
 Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 
-## Operator-Wort-Register (Stand 2026-09-27)
+## Operator-Wort-Register (Stand 2026-09-28)
 
 - **Wort:** „nein dann passt es nicht" (vDEC descoped) | 2026-09-26 | Operator (Session).
 - **Wort:** „kein onboard ciq" | 2026-09-26 | Operator (Session).
@@ -58,22 +58,24 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt)." (`/consent`, Sensory-Folge 192) | 2026-09-27 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-09-27 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 193.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom." | 2026-09-27 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 193.
+- **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-09-28 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 194.
+- **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom." | 2026-09-28 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 194.
 
 ## Offen (aufgeschlüsselt)
 
 ### DEMETER-18387 — Route blockiert (F5-ASM-WAF)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** eine Route öffnet sich — gültiges Order-Status-/Token-API, ein unabhängiger Spiegel, oder Operator-Wort für die Browser-Identität (CDPP-SPA).
-- **Lage:** (gemessen 2026-09-27 via `archive_search --verdict`/`--sniff` + zwei Diver-Läufe) die Order-Mail 18387 wurde 2026-09-27 gesendet (`state/mail/mail_ledger.φ:169`); der Datei-Endpoint `regards.cnes.fr/api/v1/rs-order/orders/public/files/<id>` liefert bei gültiger Token-Anfrage die 247-B-F5-WAF-Seite „Request Rejected" (`magic unrecognized`); unbekannte `fileId` → Backend-404-JSON, ohne Token → 400-JSON (Backend `…/orders/public/18387/status` lebt); Order-/Status-Endpunkte 403 (WAF, direct+proton identisch); der Browser-Bridge passiert die WAF für die public-Endpunkte, `rs-order`/`rs-catalog` bleiben backend-403; Status-Endpoint `GET /user/orders/{orderId}` (REGARDS-OSS `OrderController`) braucht User-Auth; **kein Spiegel** (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404). Das Lesen des Metalinks/Order-Status ist autonom — nur der Send war Operator-Hand.
-- **Blockade:** F5-ASM-WAF + Backend-Autorisierung (route-seitig, **nicht** provider-seitig); `availableFilesCount 0` nicht unabhängig nachmessbar (kein erreichbarer Status-Endpoint).
+- **Lage:** (gemessen 2026-09-28 via `archive_search --verdict`/`--sniff`/`--playwright`) die Order-Mail 18387 wurde 2026-09-27 gesendet (`state/mail/mail_ledger.φ:169`), **Order-Ablauf 2026-09-28 12:46 UTC**; der Token-Datei-Endpoint bleibt die 247-B-F5-WAF-Seite „Request Rejected" (direct/proton 200, `magic unrecognized`); **neu gegenüber 2026-09-27**: die anonymen Arme (`files/18387` ohne Token, unbekannte `fileId`) sind von Backend-400/404-JSON auf **F5-WAF-403** (383/388 B) getight — das „Backend lebt"-Signal ist weg; Status-Endpoint `…/public/18387/status` 403 WAF (direct+proton identisch), `regards.cnes.fr/user/orders/18387` → REGARDS-OSS-SPA „Page Not Found"; **kein Spiegel** (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404). Das Lesen des Metalinks/Order-Status ist autonom — nur der Send war Operator-Hand.
+- **Blockade:** F5-ASM-WAF + Backend-Autorisierung (route-seitig, **nicht** provider-seitig).
 - **Braucht:** Route-Entscheidung — Token-API mit gültigem Order-Status, ein Mirror, oder Operator-Wort (Browser-Identität). Register-Duty `blocked ip-blocked` (CDPP-WAF-Route) als `## An Mycelium`-Träger gesetzt (Myceliums Feder).
 
 ### survey-2026-09-06-codestruktur — confirm-rendering headless verifizierbar
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster completed matrix-rotor-Lauf mit Artefakt `matrix-rotor`.
-- **Lage:** (gemessen 2026-09-27 via `ci_manage status`/`ci_manage list`) **kein** matrix-rotor-Lauf in der laufenden Liste; letzter bekannter `36336353671` completed failure ohne Artefakt, Slice preempted. Der Weg ist gemessen: `OMEGAFLOW_HIDDEN=1` fährt den vollen ω-Loop, die `φ window:`-stderr-Zeile (`src/mathematikerin/omega.rs:1779`) ist der maschinenlesbare HUD-Zwilling. Marker `archivar-mathematikerin.md:78`.
+- **Lage:** (gemessen 2026-09-28 via `ci_manage list`/`ci_manage view`/`ci_manage jobs`) im 80-Lauf-Fenster genau **ein** matrix-rotor-Lauf: `36352357801` created 2026-09-27T21:36Z, completed **failure**, Job `rotor` failure, **Artefakt-Zahl 0** (der `if: always()`-Upload in `.github/workflows/matrix-rotor.yml:78-82` lieferte nichts) — **Trigger nicht gefeuert**. Der Weg ist gemessen: `OMEGAFLOW_HIDDEN=1` fährt den vollen ω-Loop, die `φ window:`-stderr-Zeile (`src/mathematikerin/omega.rs:1779`) ist der maschinenlesbare HUD-Zwilling. Marker `archivar-mathematikerin.md:78`.
 - **Blockade:** matrix-rotor wird runner-seitig preempted (kanonisch Mycelium).
-- **Braucht:** beim Artefakt eines completed matrix-rotor-Laufs `gh run download <id> -n matrix-rotor -D /tmp/opencode/mr-art` → `sgrep "window:" /tmp/opencode/mr-art/matrix-rotor.txt`.
+- **Braucht:** beim Artefakt eines completed matrix-rotor-Laufs `gh run download <id> -n matrix-rotor -D /tmp/opencode/mr-art` (erlaubt: `gh` nur `workflow run`/`run download`) → `sgrep "window:" /tmp/opencode/mr-art/matrix-rotor.txt`.
 
 ## Termin
 
@@ -123,6 +125,7 @@ werden getragen, nie geglättet (0 honored).
 - **[redacted]/BLE + O6-descoped:** `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` (7).
 - **Postfach:** `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (1).
 - **Terminologie (Sensory):** `docs/concepts/glossar.md` (1).
+- **Sonden/Vision (neu gefaltet 2026-09-27):** `docs/surveys/survey-2026-09-17-sonden-request-only.md` — der Vision-Leser kann PDF nicht lesen (kein PDF-Input); für Scan-/PDF-Atome fehlt die PDF→Bild-Konversion (`dsn_trk-2-18.1988-10-15.pdf`). Nächster Schritt: Konversionsstufe bauen.
 - **JUICE:** `docs/concepts/der-paradigmenwechsel.md` (9),
   `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4),
   `docs/paper/flyby-path-2-preregistration.md` (1).
@@ -145,15 +148,16 @@ werden getragen, nie geglättet (0 honored).
 
 ## An Mycelium (gemessen, fremde Feder)
 
-- **DEMETER Order 18387 — CDPP-WAF-Route:** (gemessen 2026-09-27 via
-  `archive_search --verdict`/`--sniff` + zwei Diver-Läufe) die Route
-  `regards.cnes.fr/api/v1/rs-order` liefert am Datei-Endpoint die 247-B-F5-WAF-Seite
-  „Request Rejected" (`magic unrecognized`); Backend-400/404-JSON lebt, `rs-order`
-  backend-403 auch im Browser; kein Spiegel (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404).
+- **DEMETER Order 18387 — CDPP-WAF-Route:** (gemessen 2026-09-28 via
+  `archive_search --verdict`/`--sniff`) die Route
+  `regards.cnes.fr/api/v1/rs-order` liefert am Token-Datei-Endpoint die 247-B-F5-WAF-Seite
+  „Request Rejected" (`magic unrecognized`); die anonymen Arme sind jetzt WAF-403 (vorher
+  Backend-400/404-JSON); `rs-order`/`rs-catalog` backend-403 auch im Browser; kein Spiegel
+  (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404).
   Der Dispositions-Eintrag der Sache steht als `pending` in `phi/blocked_sources.φ:81-83`;
   die WAF-Route-Klasse `blocked ip-blocked` (CDPP) fehlt. Myceliums Feder: den
   `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/zustand/wartend.φ:4`
-  (Aufnehmer sensory). Origin: sensory-folge193.
+  (Aufnehmer sensory). Origin: sensory-folge194.
 
 ## Wer nicht senden darf
 
@@ -168,8 +172,8 @@ Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort.
 
 Eigene Pfade dieses Atoms (pfad-begrenzt committen):
-- `docs/handover/handover-2026-09-27-sensory-folge193.md`,
-- `docs/handover/archiv/handover-2026-09-27-sensory-folge192.md` (Move).
+- `docs/handover/handover-2026-09-28-sensory-folge194.md`,
+- `docs/handover/archiv/handover-2026-09-27-sensory-folge193.md` (Move).
 
-`state/operator-gespraeche/2026-09-27-sensory.md` und `state/zustand/wartend.φ` sind
+`state/operator-gespraeche/2026-09-28-sensory.md` und `state/zustand/wartend.φ` sind
 gitignored (`/state/`) — lokal, nicht committet.
