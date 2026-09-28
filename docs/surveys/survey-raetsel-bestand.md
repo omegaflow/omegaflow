@@ -17,9 +17,12 @@ geglättet.
 
 Register der Rätsel: zwölf Nadeln (`kybernetische-astrophysik.md:353-366`), drei
 Blätter (`ein-blatt-papier.md:29-35`), der Kuprat (`kybernetische-astrophysik.md:396-398`).
-**Kopf-Befund:** das Verdikt von **10 der 15 Rätsel** steht nur als Paper-/Archiv-Prosa,
-**nicht als Register-Zeile** — die Kanäle sind registriert, das Verdikt nicht
-(`sgrep -ci dark_matter|dark_flow|corona_conditional|signal_cone|frb_blatt|kuprat|rixs|srd62|kugelblitz phi/` → je 0).
+**Kopf-Befund:** das Verdikt der 10 Rätsel lebt in seinem **Blatt/Sheet** (gemessene
+Zahlen) und als Zeile dieser Survey (Index, Zeiger `paper:line`/`sheet:line`) — das
+ist seine Register-Zeile. Ein `phi/*.φ`-Register trägt es nicht: jeder sources-/
+Dispositions-Block verlangt `url`/`ttl` (`register_sort.rs:149-183/:211`), ein
+Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registriert;
+`sgrep -ci dark_matter|dark_flow|corona_conditional|signal_cone|frb_blatt|kuprat|rixs|srd62|kugelblitz phi/` → je 0 ist der korrekte Zustand.
 
 ## Die zwölf Nadeln
 
@@ -34,7 +37,7 @@ Blätter (`ein-blatt-papier.md:29-35`), der Kuprat (`kybernetische-astrophysik.m
 | Ⅶ Wurmloch | `signal_cone_audit_probe.rs`; Doc nennt `signalkegel_audit_probe` (Name-Riss) | `te.rs:96` · `membrane.rs:336` · `spatial.rs:549-554` · Probe `:34-44` | `max(0,\|Δt\|−d/c)`-Fold nicht in `src/`; Sonden-Bahnen-Kanal unverifiziert | `data/kegel_audit_voll.log` pending | **keins** — Paper `signal-cone-audit-sheet.md:14/:63` (0 honored) | Fold lokalisieren; Name-Riss klären |
 | Ⅷ Dunkler Fluss | `dark_flow_probe.rs` | CMB `:9374/9383` · Abell `:10351` · MCXC `:10561` · PSZ2 `:10673` · CF4 `:10432/10442` | z≳10-Sample | kein `cosmicflows_cf4.json` im Baum | **keins** — Paper `dark-flow-sheet-8.md:14/:33` Stille | Release-Namespace-Riss (Register `tapvizier` vs Probe `ssd.jpl`) |
 | Ⅸ FRB | `frb_blatt_probe.rs` · `frb_compiler.rs`; `write_blatt_pair` steht (`:295`) | `:9086-9088` · Streuung `:10497` · peak-flux `:10509` (Zensus: 10508 off-by-one) · Magnetar `:9174/9185` | kein Paar-Artefakt (glob 0); Herkunftsadresse | keins | kein frb-Verdikt; FRBCAT `dead:879`; CHIME `declined:1254` | `archive_search --verdict <frb_chime_cat1.json>`; Probe `--write` Blatt |
-| Ⅹ Kugelblitz | keiner (glob 0) | keine | alle vier co-lokalisierten (em×electric×thermal×acoustic) | keins | **descoped registerlos** — `sgrep kugelblitz phi/` → 0; nur Prosa `kybernetische-astrophysik.md:294-300` ohne Befund-Token | Descope-Fundament klären (Register-Zeile mit Befund oder `pending`) |
+| Ⅹ Kugelblitz | keiner (glob 0) | keine | alle vier co-lokalisierten (em×electric×thermal×acoustic) | keins | **descoped (gemessen: → `kybernetische-astrophysik.md:294-300`; kein Probe-Artefakt, glob 0)** | — (Befund steht) |
 | Ⅺ Placebo | `placebo_pair_eeg_probe.rs` · `openneuro_eeg.rs` | `harvest.φ:192` (2 Assets); `sources.φ:2447/2454` sham/verum | Gabe×HRV×Blutmarker | CDN `openneuro.org` Assets | **keins** — Verdikt nur Archiv-Handover `folge10:24-25`; kein lebendes Blatt | `gh workflow run placebo-ave-cdn.yml`; Verdikt ins Register/Blatt |
 | Ⅻ Urknall | `bigbang_echo_probe.rs`; CI `bigbang-echo.yml` | CMB `:9374/9383` · CF4 `:10432/10442` · z-Code `:16-17` | PTA `declined:1402-1403`; B-Moden (0) | keins | **keins** — Sheet `big-bang-echo-sheet-12.md:14/:35/:59-60` | `gh workflow run bigbang-echo.yml` |
 
@@ -51,9 +54,11 @@ Blätter (`ein-blatt-papier.md:29-35`), der Kuprat (`kybernetische-astrophysik.m
 
 ## Querschnitt
 
-1. **Register-Lücke.** Für 10 der 15 Rätsel (Ⅰ Ⅲ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ Ⅺ Ⅻ + Kuprat) lebt das
-   Verdikt nur als Paper-/Archiv-Satz. Die Kanal-Zeilen sind registriert, der
-   Zustand des Rätsels nicht — eine Behauptung, kein Register.
+1. **Verdikt-Träger (Rats-Konsens 2026-09-29).** Für 10 der 15 Rätsel lebt das
+   Verdikt im Blatt/Sheet + als Survey-Zeile (Index) — nicht in einem `phi/*.φ`-
+   Register (`register_sort.rs` verlangt `url`/`ttl`; ein Verdikt hat keine Adresse).
+   Der Kuprat braucht `witness kuprat` + `format`/`field` (Mountain) + `url`/
+   `origin`/`compiler` (Mycelium).
 2. **Release-Namespace-Risse (systemisch).** Gemessen 2026-09-28: die Compiler laden
    bereits unter den **Produzenten-Tag** (`cosmicflows_compiler.rs:204` →
    `tapvizier.cds.unistra.fr`; `goes_xrs_compiler.rs:430` → `ncei.noaa.gov`), die

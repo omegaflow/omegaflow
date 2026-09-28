@@ -2110,6 +2110,19 @@ fn leading_region(body: &str) -> &str {
     }
 }
 
+fn trigger_fallback(text: &str) -> String {
+    match text.find("Trigger").or_else(|| text.find("trigger")) {
+        Some(at) => text[at..].to_string(),
+        None => {
+            let head = match text.find('|') {
+                Some(at) => &text[..at],
+                None => text,
+            };
+            leading_region(head).to_string()
+        }
+    }
+}
+
 fn extract_open_points(text: &str) -> Vec<OpenPoint> {
     let mut points: Vec<OpenPoint> = Vec::new();
     let mut section_open = false;
@@ -2822,7 +2835,7 @@ fn fired_points(
                 combined.push_str(&b);
             }
             if combined.trim().is_empty() {
-                combined = point.text.clone();
+                combined = trigger_fallback(&point.text);
             }
             let reason = snippet(&combined, 120);
             if combined.contains("Wort:") || combined.contains("wort:") {
@@ -4246,6 +4259,40 @@ mod tests {
         assert!(!out.iter().any(|l| l.contains("warte-mail")), "{:?}", out);
         assert!(out.iter().any(|l| l.contains("mail-antwort")), "{:?}", out);
         assert!(out.iter().any(|l| l.contains("ci-lauf")), "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn fired_points_read_inline_trigger_not_measurement_stamp() {
+        let base = env::temp_dir().join(format!("rl-fired-stamp-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (sensory) \u{2014} *Notes:* the route is unmeasurable; ETA 2026-10-02; measured 2026-09-28.\n- **ENSO-cut** | (measured 2026-09-28) state/zustand/wartend.\u{3c6}:23. Needs: operator word.\n- **point-a** \u{2014} *Notes:* x. *Trigger:* 2024-01-01. *Question:* y?\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
+            body,
+        )
+        .unwrap();
+        let handovers = collect_live_handovers_in(&base);
+        let head = "a".repeat(40);
+        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        assert!(
+            !out.iter().any(|l| l.contains("ox64-m2c")),
+            "a Lage measurement stamp must not fire: {:?}",
+            out
+        );
+        assert!(
+            !out.iter().any(|l| l.contains("ENSO-cut")),
+            "a pipe-field measurement stamp must not fire: {:?}",
+            out
+        );
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("FIRED\t") && l.contains("punkt-a")),
+            "an inline Trigger date must fire: {:?}",
+            out
+        );
+        assert_eq!(fired, 1, "{:?}", out);
         let _ = fs::remove_dir_all(&base);
     }
 

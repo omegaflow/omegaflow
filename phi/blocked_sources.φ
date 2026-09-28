@@ -14,9 +14,10 @@ note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-E
 note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm steht (src/archivar/pds3_binary.rs, 2026-09-28); Compiler-Bin fehlt.
 note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin fehlt.
-note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Kern fits.rs steht, PDS4-FITS-Arm + format-Token fehlen.
-note gap-Token gras-2c — GRAS-HX1-RoPeR-Rohdaten (.2C binär + .2CL Label); Reader-Arm fehlt (Format ungemessen).
-note gap-Token mat-v5 — MATLAB-v5 .mat; kein MAT-Reader im Stack (Python verboten).
+note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin + Sample fehlen.
+note gap-Token gras-2c — GRAS-HX1-RoPeR-Rohdaten (.2C binär + .2CL Label); Reader-Arm steht (src/archivar/gras_2c.rs, strukturell, 2026-09-29); Format .2C ungemessen, Compiler-Bin + Sample fehlen.
+note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (src/archivar/mat5.rs parse_mat5, matfile.rs parse_mat); kein parser-def-Block trägt diesen Token (extract()-Arm-Wiring nicht angefordert).
+note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset, Reader-Arm fehlt.
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -406,15 +407,13 @@ pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
 note Chandrayaan-1 (ISRO) Mini-RF .img + M3 ENVI-Cube — 2026-09-28 HTTP 206; PDS3-Raster/ENVI-Arm steht (src/archivar/pds3_img.rs, strukturell); Compiler-Bin + Sample + Asset fehlen. SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/.
 
-parser-def binary
-gap pds4-fits
+pending
 url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS, kein Konto) — 2026-09-28 bundle.xml 206/7406 B sha256 92f8cfc5…; data/ce{1,2}_mrm.fits 206; 24 Maps 32ppd, ce2_t*_temp 2654904960 B > 2-GiB-Cap. Kern fits.rs steht, PDS4-FITS-Arm fehlt. future-folge149.
+note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm steht (src/archivar/pds4_fits.rs); Compiler-Bin + Sample + Asset fehlen. bundle.xml 206/7406 B sha256 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd, ce2_t*_temp 2,6 GB > Cap).
 
-parser-def binary
-gap gras-2c
+pending
 url https://zenodo.org/api/records/15812343
-note Tianwen-1 RoPeR CH-2 (Jilin Univ., Zenodo cc-by-4.0) — 2026-09-28: 15812343/15812357 je 84 Files (~150 MB), 7502747 237626152 B, 8035493 393996707 B; .2C/.2CL binär. Gras-2c-Arm fehlt. future-folge149.
+note Tianwen-1 RoPeR CH-2 (Jilin Univ., Zenodo cc-by-4.0) — Arm steht (src/archivar/gras_2c.rs); Format .2C ungemessen, Compiler-Bin + Sample fehlen. 15812343/15812357 je 84 Files, 7502747 237626152 B, 8035493 393996707 B.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
@@ -427,4 +426,13 @@ note Vega 1/2 Halley 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width
 pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
 note Hayabusa LIDAR cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label. Arm + Konsument stehen (pds4.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:234. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
+
+parser-def binary
+gap hips-png
+url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
+note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-28 dir 206, properties 206 (hips_tile_format png, order 7, frame mars); MOC.fits/Norder3 404. Tiled PNG-Tree, kein Einzeldatei-Asset; HiPS-Reader fehlt. future-folge150.
+
+pending
+url http://pds.wh.sdu.edu.cn
+note Shandong Univ. Planetary Science Research Center Weihai (Portal) — 2026-09-28 root 206, /data/ 404; Link-Inventar nur .htm + Fremd-Archive, keine Einzeldatei. Kein Datenpfad gemessen. future-folge150.
 
