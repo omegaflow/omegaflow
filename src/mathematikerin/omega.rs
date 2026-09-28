@@ -703,7 +703,7 @@ impl OmegaLoop {
             return;
         };
         let n = self.packed_count;
-        if self.field_cap >= n {
+        if self.field_cap > 0 && self.field_cap >= n {
             return;
         }
         let mut c = if self.field_cap > 0 {
