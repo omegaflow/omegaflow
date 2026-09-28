@@ -3,7 +3,7 @@
   session: Mycelium-Folge 192
   class: handover
   date: 2026-09-28
-  sha256: 3ff45df9065a48d28ccb52a2e26a75f501bea5ea41f528d2bf8c9914d8e58073
+  sha256: 90ce6056cbb7d563a632ce19c59c2153ae99d225423d422114d3f4dc0991084b
   status: live
 -->
 # Handover — Mycelium-Folge 192 (2026-09-28)
@@ -126,6 +126,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` | Wiedervorlage 2026-12-02.
 - `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` | 3 Force + 4 pending tot | `--verdict` je Host beim Trigger.
 - `docs/concepts/tools-map.md` | offene Marker | `register_lookup --orphan-docs` beim nächsten Pass.
+- `docs/surveys/survey-2026-09-20-browser-anbindung.md` | offene Marker (3) | nächster Schritt: Operator lädt den Fork-Build unpacked (Future-Queue, Operator-Akt); danach die Marker schließen.
 
 ## Abschluss
 
