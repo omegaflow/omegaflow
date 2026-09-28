@@ -3,7 +3,7 @@
   session: Sensory-Folge 194
   class: handover
   date: 2026-09-28
-  sha256: 8dcdda56d3473f3a8f5013aa0b6cf3580c3e233a42c020526d1f25ff38f8f1c3
+  sha256: db6c7910ac46a340a9e302fa19ea660f3b92158012b4486e90bb3fd6dbd23289
   status: live
 -->
 # Handover — Sensory-Folge 194 (2026-09-28)
@@ -60,15 +60,19 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom." | 2026-09-27 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 193.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-09-28 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 194.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom." | 2026-09-28 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 194.
+- **Wort:** „c" (Metalink holen — Weg C aus der D2-Vorlage) | 2026-09-28 | Operator (Session) — Sensory-Folge 194; ausgeführt: Metalink geholt, Datei-Endpoint gemessen WAF-gesperrt.
+- **Wort:** „ka restart order und defekte löschen" | 2026-09-28 | Operator (Session) — Sensory-Folge 194.
+- **Wort:** „aber du kannst doch die kaputten orders löschen" | 2026-09-28 | Operator (Session) — Sensory-Folge 194; ausgeführt: Failed-Orders gecancelt (Zähler 47→39), Restart-Weg (Dialog „RETRY ORDER ERRORS"/„RELAUNCH FULL ORDER") gemessen.
+- **Wort:** „relaunch full orders" | 2026-09-28 | Operator (Session) — Sensory-Folge 194; ausgeführt: 18387 relauncht → neue Order (Pending, 05:02:38, 0 Dateien).
 
 ## Offen (aufgeschlüsselt)
 
 ### DEMETER-18387 — Route blockiert (F5-ASM-WAF)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** eine Route öffnet sich — gültiges Order-Status-/Token-API, ein unabhängiger Spiegel, oder Operator-Wort für die Browser-Identität (CDPP-SPA).
-- **Lage:** (gemessen 2026-09-28 via `archive_search --verdict`/`--sniff`/`--playwright`) die Order-Mail 18387 wurde 2026-09-27 gesendet (`state/mail/mail_ledger.φ:169`), **Order-Ablauf 2026-09-28 12:46 UTC**; der Token-Datei-Endpoint bleibt die 247-B-F5-WAF-Seite „Request Rejected" (direct/proton 200, `magic unrecognized`); **neu gegenüber 2026-09-27**: die anonymen Arme (`files/18387` ohne Token, unbekannte `fileId`) sind von Backend-400/404-JSON auf **F5-WAF-403** (383/388 B) getight — das „Backend lebt"-Signal ist weg; Status-Endpoint `…/public/18387/status` 403 WAF (direct+proton identisch), `regards.cnes.fr/user/orders/18387` → REGARDS-OSS-SPA „Page Not Found"; **kein Spiegel** (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404). Das Lesen des Metalinks/Order-Status ist autonom — nur der Send war Operator-Hand.
-- **Blockade:** F5-ASM-WAF + Backend-Autorisierung (route-seitig, **nicht** provider-seitig).
-- **Braucht:** Route-Entscheidung — Token-API mit gültigem Order-Status, ein Mirror, oder Operator-Wort (Browser-Identität). Register-Duty `blocked ip-blocked` (CDPP-WAF-Route) als `## An Mycelium`-Träger gesetzt (Myceliums Feder).
+- **Lage:** (gemessen 2026-09-28 via `archive_search --verdict`/`--sniff` **+ Browser-Bridge**) Order 18387 „Done with warning", 97078 Dateien / 34,71 GB, **Ablauf 2026-09-28 12:46:18 UTC**; der **Browser-Weg ist offen** — Login `johannes.tyroller@proton.me` im CDPP-REGARDS-Portal, Command/Cart erreichbar, 47 Orders; das **Metalink ist geholt** (68,9 MB, 97078 Datei-URLs mit Größen: 39 318 DMT_N1_1143 Burst + 57 760 DMT_N1_1144 Survey) und liegt lokal `data/regards.cnes.fr/order_18387.metalink`; der **Datei-Endpoint bleibt gesperrt** — `…/orders/public/files/<id>?orderToken=…&scope=cdpp` bricht im Browser ab (`chrome-error`), der Tool-Weg liefert die 247-B-F5-WAF; das Portal zeigt auf jeder Seite das **Wartungsbanner** „Due to a technical problem, data access is not possible", der SPA-Button „Download available order files as zip" ist deaktiviert (0 verfügbare Dateien), und die anonymen Endpoint-Arme sind von Backend-400/404-JSON auf WAF-403 getight. Der automatisierte „Restart order"-Klick (Operator-Wort 2026-09-28) löst **keinen Request** aus (das REGARDS-Grid reagiert nicht auf den Automations-Klick; die `rs-order`-API ist aus dem Seitenkontext WAF-gesperrt) — der Restart ist so nicht ausführbar. Lesen/Metalink autonom; der Send/Order-Akt bleibt Operator-Hand. **Order-Liste-Aktion 2026-09-28** (Operator-Wort): die defekten (Failed) Orders `demeter_0012`, `demeter_repro_3`, `demeter_probe`, `demeter_0003`, `demeter_0002`, `demeter_0001` gecancelt (Zähler 47→39); `demeter_0013` versehentlich per Restart neu angestoßen (jetzt **Running**, Ablauf 10/05/2026 04:55:45); 18387 „RETRY ORDER ERRORS" ohne Wirkung; **„RELAUNCH FULL ORDER" (Operator-Wort) ausgeführt → neue Order angelegt** (2026-09-28 05:02:38, Status **Pending**, 0 Dateien, Zähler 39→40). Das Command-Grid rendert nur 12 Zeilen ohne erreichbaren Pager — ob unterhalb weitere defekte Orders liegen, ist ungemessen; die Zähler-Differenz (6 benannte vs. 8 gesunken) ist unaufgeklärt (Doppel-Bestätigungen möglich).
+- **Blockade:** F5-ASM-WAF + CDPP-Wartung + Backend-Autorisierung (route-seitig, **nicht** provider-seitig).
+- **Braucht:** Wartung abwarten — Trigger: `archive_search --verdict '<datei-url>'` antwortet 200 statt WAF/`chrome-error` → Dateien aus dem gesicherten Metalink ziehen; fällt die Wartung über den 12:46-Ablauf, frische Order (Produkt DMT_N1_1144 neu wählen, **nicht** der Cart: der hält nur 100 Objekte/53 MB). Register-Duty `blocked ip-blocked` (CDPP-WAF-Route) als `## An Mycelium`-Träger gesetzt (Myceliums Feder).
 
 ### survey-2026-09-06-codestruktur — confirm-rendering headless verifizierbar
 - **Status:** wartend | **Bindung:** eigen
