@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fs;
 use std::io::Write;
 use std::sync::OnceLock;
@@ -953,6 +953,12 @@ impl Gate {
         if let Some(v) = check_bindung_foreign(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_word_register_origin(&path, &content) {
+            return Some(v);
+        }
+        if let Some(v) = check_handover_dupe(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -1323,6 +1329,148 @@ fn check_bindung_foreign(path: &str, content: &str) -> Option<Verdict> {
         }
     }
     None
+}
+
+fn pipe_cells(line: &str) -> Vec<String> {
+    line.trim()
+        .trim_matches('|')
+        .split('|')
+        .map(|c| c.trim().to_string())
+        .collect()
+}
+
+fn is_table_separator(line: &str) -> bool {
+    let cells = pipe_cells(line);
+    !cells.is_empty()
+        && cells
+            .iter()
+            .all(|c| c.is_empty() || c.chars().all(|ch| ch == '-' || ch == ':'))
+}
+
+fn is_table_header(line: &str) -> bool {
+    pipe_cells(line).iter().any(|c| {
+        let l = c.to_lowercase();
+        l == "wort" || l == "word" || l == "datum" || l == "date" || l == "quelle" || l == "source"
+    })
+}
+
+fn is_word_line(line: &str) -> bool {
+    let t = line.trim();
+    if t.is_empty() {
+        return false;
+    }
+    if t.starts_with("- ") {
+        return true;
+    }
+    t.contains('|') && !is_table_separator(t) && !is_table_header(t)
+}
+
+fn word_line_origin_ok(line: &str) -> bool {
+    let cells = pipe_cells(line);
+    cells.len() >= 3 && cells.last().map(|c| !c.trim().is_empty()).unwrap_or(false)
+}
+
+pub fn word_register_origin_violations(handover: &str) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    let mut in_register = false;
+    for (idx, line) in handover.lines().enumerate() {
+        if is_h2_heading(line) {
+            in_register = line.to_lowercase().contains("operator-wort-register");
+            continue;
+        }
+        if !in_register || !is_word_line(line) {
+            continue;
+        }
+        if !word_line_origin_ok(line) {
+            out.push((
+                idx + 1,
+                "word-register-origin".to_string(),
+                feedback("word-register-origin").to_string(),
+            ));
+        }
+    }
+    out
+}
+
+pub fn handover_dupe_violations(handover: &str) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    let mut in_section = false;
+    let mut seen: BTreeMap<String, usize> = BTreeMap::new();
+    for (idx, line) in handover.lines().enumerate() {
+        if is_h2_heading(line) {
+            let low = line.to_lowercase();
+            in_section = low.contains("operator-wort-register") || low.contains("operator-queue");
+            seen.clear();
+            continue;
+        }
+        if !in_section {
+            continue;
+        }
+        let t = line.trim();
+        let is_entry = if t.starts_with("- ") {
+            true
+        } else {
+            t.contains('|') && !is_table_separator(t) && !is_table_header(t)
+        };
+        if !is_entry {
+            continue;
+        }
+        let key = t.split_whitespace().collect::<Vec<_>>().join(" ");
+        if let Some(first) = seen.get(&key) {
+            out.push((
+                idx + 1,
+                "handover-dupe-entry".to_string(),
+                format!(
+                    "{} (first at line {})",
+                    feedback("handover-dupe-entry"),
+                    first
+                ),
+            ));
+        } else {
+            seen.insert(key, idx + 1);
+        }
+    }
+    out
+}
+
+fn check_word_register_origin(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    let (line, rule, feedback_text) = word_register_origin_violations(content)
+        .into_iter()
+        .next()?;
+    let quote = match content.lines().nth(line.saturating_sub(1)) {
+        Some(s) => clip(s, 90),
+        None => String::new(),
+    };
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule,
+        line,
+        feedback: feedback_text,
+        quote,
+    })
+}
+
+fn check_handover_dupe(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    let (line, rule, feedback_text) = handover_dupe_violations(content).into_iter().next()?;
+    let quote = match content.lines().nth(line.saturating_sub(1)) {
+        Some(s) => clip(s, 90),
+        None => String::new(),
+    };
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule,
+        line,
+        feedback: feedback_text,
+        quote,
+    })
 }
 
 fn is_offen_heading(line: &str) -> bool {
@@ -2950,6 +3098,68 @@ mod tests {
         let args = tool_args(
             "docs/handover/handover-2026-09-20-operator-entscheidungen.md",
             &fx("foreign_binding_operator"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_word_register_origin_missing_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-mountain-folge193.md",
+            &fx("word_register_origin_missing"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "word-register-origin");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_word_register_origin_clean_passes() {
+        let mut g = test_gate();
+        for ok in [
+            fx("word_register_origin_clean"),
+            fx("word_register_origin_bullet_clean"),
+        ] {
+            let args = tool_args(
+                "docs/handover/handover-2026-09-28-mountain-folge193.md",
+                &ok,
+            );
+            assert!(
+                g.check_tool_call("write", &args).is_none(),
+                "clean fixture: {ok}"
+            );
+        }
+    }
+
+    #[test]
+    fn fn_tool_word_register_origin_archived_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/archiv/handover-2026-09-27-sensory-folge182.md",
+            &fx("word_register_origin_missing"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_handover_dupe_entry_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-mountain-folge193.md",
+            &fx("handover_dupe_register"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "handover-dupe-entry");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_handover_dupe_clean_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-mountain-folge193.md",
+            &fx("handover_dupe_clean"),
         );
         assert!(g.check_tool_call("write", &args).is_none());
     }
