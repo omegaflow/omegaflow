@@ -2413,7 +2413,7 @@ ttl 86400
 on earth 0 0 0
 field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
 format spectral
 origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
@@ -9204,7 +9204,7 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
@@ -10472,7 +10472,7 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/first14.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -10602,7 +10602,7 @@ rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/nvss.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
