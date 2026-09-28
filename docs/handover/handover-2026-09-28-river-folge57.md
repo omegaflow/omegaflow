@@ -3,7 +3,7 @@
   session: River-Folge 57
   class: handover
   date: 2026-09-28
-  sha256: e318ca0ad9b083668d0b954b536483996d8bd2ebaf92dbabadc8999b70f6bc14
+  sha256: 6d2f0e500649035ebc829cb4a88e5e6387a509a73c63e7b8e892950e818a7bc1
   status: live
 -->
 # Handover — River-Folge 57 (2026-09-28)
@@ -44,14 +44,14 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Trigger:** der `test`-Job eines `ci-check`-Laufs auf dem Fix-HEAD schließt ab.
 - **Lage:** (gemessen 2026-09-28 via `ci_manage status`/`jobs`/`log 36423924944` + `bin/ci_triage`) Der Fix `618871109` (te.rs `causal_pair_at_mi_lag` + Test-Rewiring) steht. Die **cancelled**-Läufe `36423691576`/`36423611573`/`36423483765` sind **Pending-Duplikate** (GitHub-Concurrency `cancel-in-progress: false` cancelt wartende Doppel, nicht den laufenden; der Watchdog hat `ci-check` nie gecancelt — `/tmp/opencode/ci_watchdog.log: no median basis`). Der lebende Lauf `36423924944` (HEAD `4ce2f1823`): `build`/`format` success, `test` in_progress, `dropped-gate` **failure** (operator-gebundene Baseline, `delta 6`), `clippy` **failure** — zwei `collapsible_if` in **River-Dateien** (`matrix.rs:335`, `te.rs:2895`), in diesem Atom geheilt.
 - **Blockade:** keine.
-- **Braucht:** nach dem Push `gh workflow run ci-check.yml`; `ci_manage jobs <id>` — der `test`-Job trägt `membrane_forward`; grün = Gate zu. `dropped-gate` ist mit `dropped-baseline 1060` geschlossen (Operator-Wort 2026-09-28, dieser Atom); der Gate-Umbau auf selbst-messend/träger-bewusst steht als Absender-Zeile an Mycelium. Dispatcht: `ci-check 36433921696`.
+- **Braucht:** `gh workflow run ci-check.yml` (der Push triggert ihn ohnehin); `ci_manage jobs <id>` — der `test`-Job trägt `membrane_forward`; grün = Gate zu. `dropped-gate` ist mit `dropped-baseline 1060` geschlossen (Operator-Wort 2026-09-28, dieser Atom); der Gate-Umbau auf selbst-messend/träger-bewusst steht als Absender-Zeile an Mycelium. Kein Run-ID-Pin (jeder Push überholt ihn).
 
 ### ksg-k-Fix — te-gate-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein `te-gate`-Lauf auf dem Fix-HEAD schließt ab (Job `ksg-k-gate`).
 - **Lage:** (gemessen 2026-09-28 via Code-Lesen) `ksg_k.rs:166` misst jetzt `ksg_te_phase_null(&b,&a)` — die wahre Kopplung a→b; zuvor maß der FN-Loop die Nullrichtung (`target→driver`), daher `sweep=void`/FNR 100 %. `cargo check` 0/0.
 - **Blockade:** keine.
-- **Braucht:** nach dem Push `gh workflow run te-gate.yml`; `ci_manage log <id>` — Job `ksg-k-gate`. Dispatcht: `te-gate 36433927549`.
+- **Braucht:** `gh workflow run te-gate.yml`; `ci_manage log <id>` — Job `ksg-k-gate`. Kein Run-ID-Pin.
 
 ### 2D-Voronoi-Probe (Träger `survey-messpunkt-verteilung.md`)
 - **Status:** wartend | **Bindung:** eigen
