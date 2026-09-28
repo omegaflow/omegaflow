@@ -1179,9 +1179,9 @@ fn run(args: &[String]) {
         };
         if found.is_empty() {
             eprintln!(
-                "gosat_tanso3_compiler: no granules for {product} {start}..{end} — nothing fabricated"
+                "gosat_tanso3_compiler: no granules for {product} {start}..{end} — named skip, the bin stays unwritten (0 honored); SearchParse::Empty (search void) and SearchParse::Granules(vec![]) (search ok, no granules) both collapse in search_granules to Some(Vec::new()), so the two empty states are not distinguishable at this site"
             );
-            std::process::exit(1);
+            std::process::exit(0);
         }
         if found.len() > MAX_SEARCH_RESULTS {
             eprintln!(
