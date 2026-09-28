@@ -3,7 +3,7 @@
   session: River-Folge 53
   class: handover
   date: 2026-09-28
-  sha256: 760303034e22e1481cbe362520d1f5ea2bc4bd80577cfcd57a3d90ca491fee45
+  sha256: 97ce2452ed5abc1ed0a131d1d6272685f6d28cb2ddc3979c7de5a6701ca0890d
   status: live
 -->
 # Handover — River-Folge 53 (2026-09-28)
@@ -49,6 +49,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt) … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort." | 2026-09-28 | Operator (Session, River 52) — session-weiter Delegations-Consent
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt) … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort." | 2026-09-28 | Operator (Session, River 53) — session-weiter Delegations-Consent
 „Committe und pushe jetzt — nur deine eigene Arbeit, gemessen nicht beteuert. Dieser Befehl ist das Commit-Wort des Operators (das Doppel-Ask) …" | 2026-09-28 | Operator (Session, River 53) — Commit-Wort (Doppel-Ask)
+„fixxen vor verschleppen, mein wort!!!!" | 2026-09-28 | Operator (Session, River 53) — Fix-Wort (die zwei roten Gates jetzt bauen, nicht registrieren)
 
 ## Offen (aufgeschlüsselt)
 
@@ -60,11 +61,11 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Braucht:** `ci_manage log 36398092149` **einmal** nach Laufende (kein Polling) — Readback-Test grün = Punkt geschlossen.
 
 ### Zwei rote River-Gates — Membran-Parität + No-TE-Tick
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** eigen (die roten Gates sind die Arbeit).
-- **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) ci-check auf `302063d36` rot, `1902 passed; 2 failed`: `mathematikerin::te::tests::gate_scalar_probe_path_parity_with_topological_membrane` (`src/mathematikerin/te.rs:3217`, „scalar probe path sees no arrow: te 0.5505495074495909 <= threshold 0.6649315122537214") und `mathematikerin::tests::the_no_te_tick_hears_each_oscillator_not_the_sum` (`src/mathematikerin/tests.rs:842`, `left 0.06491416 != right 0.0`). Der Lauf liegt auf dem Vor-HEAD; die Pflichten (1)–(3) (`b45550527`) berühren `transfer_entropy_lag`/`topological_te_phase` nicht — die zwei Gates bleiben rot. Der benannte Bau-Atom-Check der Blatt-Membran-Bindung (`gate_scalar_probe_path_parity_...`) ist damit **nicht belegt**.
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ein ci-check-Lauf auf dem Fix-HEAD, der **abschließt**.
+- **Lage:** (gemessen 2026-09-28 via `cargo check`) Fix gebaut: die Paritäts-Fixture ist von der unter Phasen-Randomisierung degenerierten Sinus-Fixture auf das breitbandige AR(1)+Rausch-Paar umgestellt (`causal_pair_ar`, dieselbe Fixture wie `gate_fn_bias`/`split_recording`), die Schwelle über 100 Surrogate stabilisiert; der No-TE-Tick-Test liest das Delta-Integral **vor** `tick()` (nach `tick()` ist `prev_probe_omega == probe_omega`, das Integral war 0, erwartet 0,0649 = `target·alpha`). `cargo check` 0 Fehler / 0 Warnungen.
 - **Blockade:** keine.
-- **Braucht:** (a) Parität: prüfe, ob `transfer_entropy_lag` auf der Fixture die Surrogat-Schwelle (10 Surrogate, mean+2σ) verfehlt — Fixture/Surrogatzahl härten **oder** die Nicht-Parität als Riß tragen (zwei unabhängige Linien, die nicht konvergieren, werden nie gemittelt); (b) No-TE-Tick: kein Oszillator darf ohne TE einen Beitrag tragen (`0.0649 → 0`) — den Breath-Zweig in `src/mathematikerin/omega.rs`/`tests.rs:842` gegen den per-Oszillator-Integral messen. Je Fix ein Gate-Test, in CI verifizieren.
+- **Braucht:** `ci_manage log <id>` **einmal** auf dem Fix-Lauf — grün = beide Gates geschlossen; rot = Log auswerten.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin | **Bindung:** termin:2026-09-28
