@@ -2868,6 +2868,10 @@ pub fn main_flow() {
                     | "voyager_odr"
                     | "voyager_occlt"
                     | "pds3_ring_occ"
+                    | "pds3_fixed_width"
+                    | "pds4_fixed_width"
+                    | "pds3_binary"
+                    | "pds4_binary"
                     | "galileo_odr"
                     | "flac"
                     | "bidsleep"
@@ -2932,19 +2936,22 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let records = match series_rows(&fmt, &bytes) {
-                        Some(r) => r,
-                        None => {
-                            eprintln!(
-                                "{} {}: bin reads void — {} B carry no {} contract",
-                                fmt,
-                                url,
-                                bytes.len(),
-                                fmt
-                            );
-                            let _ = ftx.send(empty(true));
-                            return;
-                        }
+                    let (records, names) = match series_named(&fmt, &bytes) {
+                        Some(ns) => (ns.rows, ns.names),
+                        None => match series_rows(&fmt, &bytes) {
+                            Some(r) => (r, Vec::new()),
+                            None => {
+                                eprintln!(
+                                    "{} {}: bin reads void — {} B carry no {} contract",
+                                    fmt,
+                                    url,
+                                    bytes.len(),
+                                    fmt
+                                );
+                                let _ = ftx.send(empty(true));
+                                return;
+                            }
+                        },
                     };
                     let fields: Vec<FieldConfig> = src
                         .extracts
@@ -2963,14 +2970,33 @@ pub fn main_flow() {
                         return;
                     }
                     let mut channels = Vec::with_capacity(records.len());
+                    let mut unjoined: std::collections::BTreeSet<u32> =
+                        std::collections::BTreeSet::new();
                     for row in records {
                         if !row.value.is_finite() {
                             continue;
                         }
-                        let Some(name) = series_component_name(&fmt, row.comp) else {
+                        let Some(name) = series_field_name(&fmt, row.comp, &names) else {
+                            if unjoined.insert(row.comp) {
+                                eprintln!(
+                                    "{} {}: column {} carries no field line",
+                                    fmt,
+                                    source_name(&url),
+                                    row.comp
+                                );
+                            }
                             continue;
                         };
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                            if unjoined.insert(row.comp) {
+                                eprintln!(
+                                    "{} {}: column {} ({}) carries no field line",
+                                    fmt,
+                                    source_name(&url),
+                                    row.comp,
+                                    name
+                                );
+                            }
                             continue;
                         };
                         channels.push((
@@ -5367,6 +5393,30 @@ pub fn main_flow() {
         if elapsed < cadence {
             thread::sleep(std::time::Duration::from_secs_f64(cadence - elapsed));
         }
+    }
+}
+
+fn series_field_name<'a>(format: &str, comp: u32, names: &'a [String]) -> Option<&'a str> {
+    series_component_name(format, comp).or_else(|| names.get(comp as usize).map(String::as_str))
+}
+
+#[cfg(test)]
+mod series_field_name_tests {
+    use super::series_field_name;
+
+    #[test]
+    fn joins_static_table_or_data_driven_names() {
+        let names = vec!["TIME_OFFSET".to_string(), "RADIOMETER1".to_string()];
+        assert_eq!(
+            series_field_name("pds3_fixed_width", 1, &names),
+            Some("RADIOMETER1")
+        );
+        assert_eq!(series_field_name("pds3_fixed_width", 5, &names), None);
+        assert_eq!(
+            series_field_name("rpw_efield", crate::rpw::COMP_EY, &[]),
+            Some("rpw_e_y")
+        );
+        assert_eq!(series_field_name("rpw_efield", 99, &[]), None);
     }
 }
 
