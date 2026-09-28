@@ -3,7 +3,7 @@
   session: Mycelium-Folge 193
   class: handover
   date: 2026-09-28
-  sha256: ea265814e726e331eebf96753ceb174f902e380d07e923e58d00c68c8d236e76
+  sha256: 6ef20e99c99e1d7e6d8fdb226140569d2c05bdb26a9c67b298e76d60f2e6d117
   status: live
 -->
 # Handover — Mycelium-Folge 193 (2026-09-28)
@@ -32,24 +32,10 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ### ci-check — clippy geheilt; Bestätigungslauf pending
 - **Status:** wartend | **Bindung:** eigen (CI-Aufsicht)
-- **Trigger:** Ende des `ci-check`-Laufs `36405850300` (head `31a51f2c0`).
-- **Lage:** (gemessen 2026-09-28T09:50Z via `ci_manage status`) der vorige Lauf `36404600557` wurde `cancelled` (superseded durch den Push `31a51f2c0`, kein Code-Rot); der neue Lauf `36405850300` ist `pending`, head_sha `31a51f2c0`. Der clippy-Rot `src/archivar/odf.rs:209` ist in `9f8debcc3` geheilt; Baseline 1054.
+- **Trigger:** Ende des `ci-check`-Laufs `36409454787` (head `ab27137b0`).
+- **Lage:** (gemessen 2026-09-28T10:23Z via `ci_manage status`/`view`) die Läufe `36405850300` und `36409142858` wurden `cancelled` (superseded durch die dichte Push-Folge der Linien, kein Code-Rot); der lebende Lauf ist `36409454787` (`pending`, head `ab27137b0`). Der clippy-Rot `src/archivar/odf.rs:209` ist in `9f8debcc3` geheilt; Baseline 1054.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log 36405850300` — clippy grün + delta 0 gegen Baseline 1054.
-
-### gosat-cdn — Leer-Monat-Skip gebaut; Lauf neu dispatcht (alter Lauf verwaist)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Ende des `gosat-cdn`-Laufs `36405638510`.
-- **Lage:** (gemessen 2026-09-28T09:46Z via `ci_manage view`/`ci_manage jobs`) der alte Lauf `36385537670` (head `87b200c02`) stand seit 06:15Z `pending` **ohne Jobs** — verwaist; neu dispatcht über `gh workflow run gosat-cdn.yml` → `36405638510` (`pending`). 0 Granules endet mit `exit(0)` + benannter Skip-Meldung an `tools/harvest/src/bin/gosat_tanso3_compiler.rs:1180`; `cargo check` 0/0.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log 36405638510` — alle Monate grün.
-
-### matrix-rotor — Checkpoint-Resilienz gebaut; Lauf neu dispatcht (Erstversuch präemptiert)
-- **Status:** wartend | **Bindung:** eigen (CI)
-- **Trigger:** Ende des `matrix-rotor`-Laufs `36405634302` (head `fb7f9c9a1`).
-- **Lage:** (gemessen 2026-09-28T09:46Z via `ci_manage log 36400894925`) der Verifikationslauf `36400894925` (head `ccfd1021c`) wurde erneut präemptiert — „The runner has received a shutdown signal" (SIGTERM 09:04:16Z, rc=137, ~30 s nach Rotor-Start); die Ursache bleibt exogen (GitHub-hosted). Im <120 s kurzen Lauf feuert kein In-Loop-Checkpoint, doch der Warm-State auf dem Release `matrix-state` bleibt unversehrt (der nächste Lauf lädt ihn sha256-verifiziert) — kein Verlust. Neu dispatcht `36405634302`.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log 36405634302` — der SIGTERM-Ursprung im Job-Log, die Checkpoint-Assets auf `matrix-state`.
+- **Braucht:** `ci_manage log 36409454787` — clippy grün + delta 0 gegen Baseline 1054.
 
 ### ci_watchdog — Matcher heilt echte Runner-Shutdowns
 - **Status:** wartend | **Bindung:** eigen (Werkzeug)
@@ -96,6 +82,7 @@ Aufenthalt beim Eigentümer **mycelium**, nächster Schritt je: Port über `docs
 
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
+- **register-coverage-`orphans`-Rot** (gemessen 2026-09-28T10:21Z via `ci_manage log 36409142754`): der Job führt `target/release/register_lookup --orphans --fail` aus und exitet 2 — **4** `ORPHAN_COMMITTED` `[future]` in `phi/blocked_sources.φ:377` (Emirates-Mars-Orbit-SDC + 3 weitere) ohne Träger in Futures Handover. Ziel: **Future** — die vier blocked-account-Einträge als Träger in seine Übergabe falten; der Lauf `36409454635` ist bereits `queued` und rot bis dahin. Quelle: Mycelium-Session 193.
 - **Register↔CDN-Riss** (gemessen 2026-09-28 via `curl`/`sgrep`): vier register-`url`-Zeilen sind auf dem CDN **404** — `ncei.noaa.gov/spectra.bin`, `tapvizier.cds.unistra.fr/nvss.json`, `…/first14.json`, `exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin` —, während der `cds_watchdog` 200-**Legacy**-Pfade unter `ssd.jpl.nasa.gov` prüft; `irsa.ipac.caltech.edu/twomass_psc.bin` und `ssd.jpl.nasa.gov/jwst_spectra.bin` sind gar nicht registriert. Ziel: **Mountain** — Quelle-Identität/`url`-Disposition (registrieren vs. Legacy-CDN-Asset löschen); die Manifestations-Direktive selbst bleibt Myceliums Hand. Quelle: Mycelium-Session 192.
 - **Atomic state write** (Mathematikerin): `save_state` schreibt in-place und schluckt Fehler (`src/mathematikerin/machines/matrix.rs:334` `let _ = std::fs::write(path, &buf)`, Cadence `:1117`); der neue Checkpoint liest dieselbe Datei. Ziel: **River** — temp+rename in `matrix.rs` mit Test im selben Atom. Quelle: Council 2026-09-28.
 - **Zwei `format`-Findings** (gemessen 2026-09-28 via `ci_manage log 36359297755`): `vizier.cfa.harvard.edu` `/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j…` (TSV als JSON geparst) und `www.ldeo.columbia.edu` `/~gcmt/projects/CMT/catalog/jan76_dec25.ndk` (.ndk als JSON geparst) → `JSON parse void`; Disposition/`format` in den Registern. Ziel: **Mountain**. Quelle: Mycelium-Session 192.
