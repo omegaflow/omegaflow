@@ -3529,6 +3529,14 @@ mod tests {
     }
 
     #[test]
+    fn fp_deferral_dispatchbar_not_built_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("deferral_dispatchbar_not_built")).unwrap();
+        assert_eq!(v.rule, "deferral");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fn_deferral_sofort_clean() {
         let mut g = test_gate();
         assert!(g.check_text(&fx("deferral_sofort_clean")).is_none());

@@ -1490,7 +1490,11 @@ fn volume_probe_parity_masked_corner_and_plain() {
         )
     };
     app.t_presence = t;
-    app.p = [earth_pos[0], earth_pos[1], earth_pos[2] + 100_000.0];
+    app.p = [
+        earth_pos[0] + 100_000.0,
+        earth_pos[1],
+        earth_pos[2] + 100_000.0,
+    ];
     app.init_gpu();
     if app.device.is_none() {
         eprintln!("volume parity skipped: no adapter");
