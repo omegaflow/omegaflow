@@ -95,16 +95,19 @@ poll_once() {
     seen "$id" && continue
     local txt
     txt=$($CI log "$id" 2>/dev/null)
-    if printf '%s' "$txt" | grep -qiE 'assertion|panicked at|test failed|test result: FAILED'; then
-      log "no rerun $id ($wf): assertion-red"
-      mark "$id"
-      continue
-    fi
+    # The loudest measurement wins: a runner shutdown is transient and stays a
+    # rerun even if a compile line carries the substring "assertion". The
+    # assertion class is limited to real red markers (never `static_assertions`).
     if printf '%s' "$txt" | grep -qiE 'runner has received a shutdown signal|timed out|could not resolve host|connection reset|curl: \('; then
       log "rerun $id ($wf): measured transient cause"
       $CI rerun "$id" >>"$LOG" 2>&1
       mark "$id"
       sleep 1
+      continue
+    fi
+    if printf '%s' "$txt" | grep -qiE 'panicked at|assertion failed|assertion .* failed|test result: FAILED|error\[E[0-9]'; then
+      log "no rerun $id ($wf): assertion-red"
+      mark "$id"
     else
       log "no rerun $id ($wf): cause not measured transient"
       mark "$id"
