@@ -2,7 +2,7 @@
   title: Survey — omegaflow-legacy: verlorene, entblockbare Konzepte (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: f4d92d7bc50f14d445140c501e47e4f78525575d75e412ba2b3cf3d077b94a67
+  sha256: 4142e9c93bd8c6da93f6bd97090523f6fcaad3c7cf1cd9e1e87deab4eef1b23c
   status: live
   see-also: docs/specs/master.md docs/handover/archiv/handover-2026-09-17-forschung-folge56.md
 -->
@@ -84,8 +84,13 @@ Verarbeitung fehlt:
   `archive_search "decay" --root src` findet nur `exponential_decay` (Kraftfeld, Fremdbegriff);
   die Legacy-Identifier `takens`/`complexity` erscheinen nicht im Baum (`archive_search` je 0;
   das Takens-Embedding lebt heute als `topological_te_phase`). Der Konfud ist bestätigt:
-  `exp(-x)` fällt monoton, `tanh(x)` steigt monoton — ein wörtlicher Port der Certainty-Formel
-  als Permeability-Ziel invertiert den Atem.
+   `exp(-x)` fällt monoton, `tanh(x)` steigt monoton — ein wörtlicher Port der Certainty-Formel
+   als Permeability-Ziel invertiert den Atem.
+   **Geschlossen (2026-09-28, River-Folge 50, Rat): `descoped`.** Der Legacy-Spec selbst trägt
+   die Ersatzform (`docs/specs/minkowski-field-permeability.md:179-181`: „open when field changes,
+   close when stable … `target = Math.tanh(vC/(g+ε))`"); `quantum`/`decay` tragen keinen
+   Live-Träger und keine gemessene Zusatzwirkung (`archive_search` je 0), die Richtung ist
+   steigend bestätigt (`omega.rs:15-16`). Kein Bau — kein `pending`.
 - **TDA/Betti-0**: ~100 Zeilen single-linkage über die Takens-Embeddings von `te.rs`
   (Schwelle = Silverman-Bandbreite der Embedding-Streuung).
 - **Synthetic Flight**: die Weltlinien-Infrastruktur + freies `t_presence` stehen; zu
@@ -111,9 +116,18 @@ Verarbeitung fehlt:
   einen gepflanzten Delay 5 exakt — TE(5)=1.29 gegen Schwelle 5.85e-2, die Gegenrichtung bleibt still.
 - **Total Coherence Integration**: **Gemessen (2026-09-27, River-Folge 47):**
   `tools/measure/src/bin/total_coherence_probe.rs` gebaut (0 Warnungen):
-  Σ_i perm_target(|ω_i|,|Δω_i|) = 0.924 auf dem 9-Medien-Fixture gegen leeres Feld 0.0; die
-  gebaute Permeability (ein Skalar über die Summe) kollabiert auf 0.0 — der per-Oszillator-Integral-
-  und der Complexity-Term bleiben offen (Live-Pfad ist ein TE-Skalar).
+   Σ_i perm_target(|ω_i|,|Δω_i|) = 0.924 auf dem 9-Medien-Fixture gegen leeres Feld 0.0; die
+   gebaute Permeability (ein Skalar über die Summe) kollabiert auf 0.0 — der per-Oszillator-Integral-
+   und der Complexity-Term bleiben offen (Live-Pfad ist ein TE-Skalar).
+   **Geschlossen (2026-09-28, River-Folge 50, Rat): Integral `gebaut`, Complexity `pending`.**
+   Der per-Oszillator-Integral lebt jetzt im Live-Pfad — `src/mathematikerin/omega.rs`
+   Breath-Zweig: `target = (Σ_i perm_target(|probe_omega[i]|, |probe_omega[i] −
+   prev_probe_omega[i]|)) / 9.0`, neues Feld `prev_probe_omega` (Tick-Spiegel von `prev_omega_sum`),
+   Turn-/Latenz-Buchhaltung unverändert skalar. Gate-Test
+   `the_no_te_tick_hears_each_oscillator_not_the_sum` (fixture now/prev → 0.924/9). Der
+   Complexity-Term bleibt `pending` — die Alt-Form `1/(1+Σ(complexity·weight)/Σ(weight))` hat
+   keine Definition und keine Datenquelle; ein gebauter Term wäre Fabrikation (Registerzeile,
+   nie gebaut).
 
 ## Klein, entblockt
 
