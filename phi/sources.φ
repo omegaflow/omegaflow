@@ -15864,3 +15864,22 @@ origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ +
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager2
 no-cadence
+
+url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
+no-cadence
+format text
+at venus
+rows .
+lat 6
+lon 5
+field 7 venera15_16_brightness_temp_v_k exponential-decay thermal K 33554432.0 0.0 0.0
+field 8 venera15_16_brightness_temp_h_k exponential-decay thermal K 33554432.0 0.0 0.0
+
+url https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+no-cadence
+format text
+at venus
+rows .
+lat 0
+lon 1
+field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0

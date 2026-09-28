@@ -3,7 +3,7 @@
   session: Mycelium-Folge 195
   class: handover
   date: 2026-09-28
-  sha256: 0fb59420a2dc87e90e6a839a51257caaa5cf279b1de4daf0ab512af7f664bc4c
+  sha256: 1711ed5d8cb18e1d90db815359024906f371be7481ace6ee15a6b9574baaa52c
   status: live
 -->
 # Handover — Mycelium-Folge 195 (2026-09-28)
@@ -26,12 +26,19 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ## Offen (aufgeschlüsselt)
 
-### Register-Träger — Ledger-Ports (11) + index.φ-Kandidaten (10)
+### Register-Träger — index.φ-Kandidaten (8)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster Port-Pass — `phi/pipeline/ledger.φ` trägt 11 `ausstehend`, `phi/pipeline/index.φ` 10 `verifiziert` (owner mycelium).
-- **Lage:** (gemessen 2026-09-28 via `sread` + `archive_search --verdict`) Ledger-`ausstehend`: die neun aus sensory-folge195 (Akatsuki RS, Hayabusa, Kaguya/SELENE LRS, Chandrayaan-1, Venera 15/16, Vega 1/2, Phobos 2 KRFM, ExoMars TGO ACS, Danuri/KPLO) **+ `pithia.cbk.waw.pl` (Z.10)** + **SSDC/limadou (Z.14, note 2026-09-26: SSDC-CAS-Umbau, „wait a few weeks")**. Vega 1/2 Halley (UDSSR) 7 Instrument-Sets + Ballons atmos.nmsu.edu/PDS/data/vega_5001/ (Z.51): Pfad korrigiert — alte Form 404, real `https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/` (206). Parser-def-Fälle (→ `phi/blocked_sources.φ` gap-Arm): Akatsuki (PDS4-Binary), Chandrayaan (pds3-image/envi-cube), Phobos (unit-auto-detect/pds3-fixed-width). `index.φ` trägt 10 `verifiziert` (Z.37/39 richest/params; Z.75–97 oai_arxiv, b2find_intermagnet, grind_vires, grind_arcgis, terrapulse, esa_geomagnetic, archeology, copernicus) — teils Ports gemergt (grind_vires/arcgis), teils Live-Kandidaten offen (terrapulse 33, archeology 35).
+- **Trigger:** nächster Port-Pass — `phi/pipeline/index.φ` trägt 8 `verifiziert` (owner mycelium).
+- **Lage:** (gemessen 2026-09-28 via `register_sort` + `sread`) der Ledger-Port ist **gebaut**: Venera 15/16 als zwei Akzepte in `phi/sources.φ` (Altimetrie `gravity` km / Radiometrie `thermal` K, je `no-cadence`; Register kanonisch über 1531 Blöcke); die 8 Sonden + pithia als `parser-def` in `phi/blocked_sources.φ` mit 5 neuen gap-Klassen (`pds3-fixed-width`, `pds3-img`, `pds3-binary`, `pds4-fixed-width`, `pds4-binary`); `phi/pipeline/ledger.φ` → `disponiert` (10 von 11; `limadou/SSDC` bleibt `ausstehend`, CAS-Login). `index.φ`: grind_vires + grind_arcgis → `erledigt` (Merges 2026-09-22), **8 offen**: `pipeline/queue/sources_potential_pre-cdn_9k_richest.φ`, `…_params.φ`, `pipeline/catalog/oai_arxiv.φ`, `pipeline/catalog/b2find_intermagnet_catalog.φ`, `pipeline/catalog/terrapulse_catalog.φ`, `pipeline/catalog/esa_geomagnetic_catalog.φ`, `pipeline/catalog/archeology_gaps_index.φ`, `pipeline/catalog/copernicus_catalog.φ`.
 - **Blockade:** keine.
-- **Braucht:** Port über `docs/SOURCE_PORT.md` + Disposition (Register); Parser-Fälle als `gap` melden.
+- **Braucht:** die 8 index-Inventare über `docs/SOURCE_PORT.md` portieren.
+
+### Register-Riss — `parser-def`-Pen in `blocked_sources.φ`
+- **Status:** wartend | **Bindung:** eigen ← mountain
+- **Trigger:** Mountains Ratifikation der neuen `parser-def`-Blöcke.
+- **Lage:** (gemessen 2026-09-28) die Verfassung (2026-09-27) gibt die Verdikt-/Dispositions-Zeilen Mountain; der Port setzte 8 `parser-def`-Blöcke + 5 gap-Klassen-Deklarationen in `phi/blocked_sources.φ` (Mycelium), statt die Route zu verschleppen. Beide Enden genannt, kein stiller Schreibakt. Die 5 Reader-Arme fehlen.
+- **Blockade:** Pen-Grenze Mountain/Mycelium (Riss).
+- **Braucht:** Mountains Ratifikation; die 5 Reader-Arme (PDS3/PDS4/HTML) als `gap`-Arme.
 
 ### register-coverage — mycelium Feder (Workflow-Verifikation)
 - **Status:** wartend | **Bindung:** eigen
@@ -84,6 +91,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 
 ## Weitergabe (fremde Feder — Aufenthalt beim Eigentümer)
 
+- **5 parser-def-Reader-Arme** (gemessen 2026-09-28): `phi/blocked_sources.φ` trägt die neuen Klassen `pds3-fixed-width`/`pds3-img`/`pds3-binary`/`pds4-fixed-width`/`pds4-binary` für ExoMars, Akatsuki, Kaguya, Chandrayaan, Phobos, Vega, Hayabusa, Danuri — die Reader-Arme fehlen. Ziel: **Mountain** (`tools/harvest`/`src/archivar`). Quelle: Mycelium 195.
 - **register-coverage-Arm** (gemessen 2026-09-28 via `git diff --stat`): der `UNVERIFIABLE_PRIVATE`-Arm steht uncommittet in `tools/register/src/bin/register_lookup.rs` (+52 Zeilen). Ziel: **Mountain** — committen, dann ist CI `register-coverage` grün. Quelle: Mycelium 195.
 - **public_audit (Ganz-Baum, Credit/Egress)** (gemessen 2026-09-28): der scoped Lauf `docs/concepts/*` steht (1,38 Cr), der Ganz-Baum-Lauf ist ungemessen; er braucht das Operator-Wort (Credit-Deckel). Ziel: **Future** (Operator-Queue, eine Zeile in einfacher Sprache). Quelle: Mycelium 195.
 - **dropped-gate-Baseline** (gemessen 2026-09-28 via `ci_triage 36409581203`): `dropped-gate: delta 6 > 0`; `--dropped --count` läuft in die >120-s-Last. Braucht das Operator-Wort zum `--dropped --count`-Baseline-Bump. Ziel: **Future** (Operator-Queue). Quelle: Stehender Pass 2026-09-28.
