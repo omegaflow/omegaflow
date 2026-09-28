@@ -1,6 +1,9 @@
 name: ci-check
+
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
   push:
     paths:
       - 'src/**'
@@ -11,39 +14,23 @@ on:
       - 'tools/utils/**'
       - 'docs/**'
       - 'Cargo.toml'
+
 permissions:
   issues: write
+
+# The heavy measurement. cancel-in-progress: false — a started run is never cut
+# mid-flight, so a per-SHA verdict forms. The fast per-push gates live in
+# `ci-gate.yml` (workflow-level concurrency, cancel-in-progress on) so the HEAD
+# is gated in minutes even while this long run is queued; the nightly schedule
+# guarantees one complete run per day regardless of push cadence.
 concurrency:
   group: ci-check-${{ github.ref }}
   cancel-in-progress: false
+
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    env:
-      RUSTFLAGS: -D warnings
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo check
-    - run: cargo check --features browser_relay
-    - if: failure()
-      run: |
-        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-          "health: cargo check returned void" \
-          "Build job failed on ${{ github.sha }}" \
-          health
-
-  format:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo fmt --check
-
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -68,47 +55,4 @@ jobs:
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
           "health: cargo test returned void" \
           "Test job failed on ${{ github.sha }}" \
-          health
-
-  dropped-gate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      RUSTFLAGS: -D warnings
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo build --release -p omegaflow-register --bin register_lookup
-    - name: Delta-Gate — dropped baseline
-      run: |
-        baseline=$(awk '/^dropped-baseline /{print $2}' docs/zustand/dropped-baseline.md)
-        if [ -z "$baseline" ]; then
-          echo "dropped-gate: baseline pending — docs/zustand/dropped-baseline.md carries no dropped-baseline line; register the measured baseline" >&2
-          exit 1
-        fi
-        current=$(target/release/register_lookup --dropped --count)
-        echo "dropped-gate: baseline ${baseline} | current ${current} | delta $((current - baseline))"
-        if [ "$current" -gt "$baseline" ]; then
-          echo "dropped-gate: delta $((current - baseline)) > 0 — open points dropped without a resolving commit; carry them forward or bump the baseline in the accepting commit" >&2
-          exit 1
-        fi
-    - if: failure()
-      run: |
-        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-          "health: dropped-gate returned void" \
-          "dropped-gate failed on ${{ github.sha }}" \
-          health
-
-  clippy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo clippy --all-targets -- -D clippy::unreachable -D clippy::todo -D clippy::unimplemented
-    - if: failure()
-      run: |
-        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-          "health: cargo clippy returned void" \
-          "Clippy job failed on ${{ github.sha }}" \
           health
