@@ -47,6 +47,7 @@ const OPEN_MARKERS: &[&str] = &[
 const RELEASED_MARKERS: &[&str] = &["descoped"];
 
 const ZUSTAND_PATH: &str = "state/zustand/external-state.md";
+const EREIGNISSE_PATH: &str = "state/zustand/ereignisse.\u{3c6}";
 
 const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
 const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
@@ -1165,6 +1166,46 @@ fn scan_probe(path: &Path, open_out: &mut Vec<String>, released_out: &mut Vec<St
     scan_probe_text(&text, &path.to_string_lossy(), open_out, released_out)
 }
 
+fn ereignisse_owner(klasse: &str) -> Option<&'static str> {
+    match klasse {
+        "account" | "send" => Some("future"),
+        _ => None,
+    }
+}
+
+fn scan_ereignisse(path: &Path, open_out: &mut Vec<String>) -> usize {
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return 0,
+    };
+    let mut n = 0;
+    for (idx, line) in text.lines().enumerate() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let fields: Vec<&str> = t.split('|').map(str::trim).collect();
+        let klasse = match fields.get(3) {
+            Some(k) => *k,
+            None => continue,
+        };
+        let Some(owner) = ereignisse_owner(klasse) else {
+            continue;
+        };
+        let gegenstand = fields.get(4).copied().unwrap_or("");
+        open_out.push(format!(
+            "EREIGNIS\t{}:{}\t[{}]\t{} | {}",
+            path.display(),
+            idx + 1,
+            owner,
+            klasse,
+            snippet(gegenstand, 120)
+        ));
+        n += 1;
+    }
+    n
+}
+
 fn collect_disposed_urls(paths: &[&str]) -> BTreeSet<String> {
     let mut urls = BTreeSet::new();
     for path in paths {
@@ -1508,6 +1549,10 @@ fn run_open() {
     }
     print_section("PROBES", probe, &probe_open, &probe_released);
 
+    let mut ereignisse_open: Vec<String> = Vec::new();
+    let ereignisse = scan_ereignisse(Path::new(EREIGNISSE_PATH), &mut ereignisse_open);
+    print_section("EREIGNISSE", ereignisse, &ereignisse_open, &[]);
+
     let mut candidates_out: Vec<String> = Vec::new();
     let disposed_urls = collect_disposed_urls(DISPOSITION_REGISTER_PATHS);
     let (candidates, candidates_disposed) =
@@ -1521,7 +1566,7 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, ereignisse {} open, {} candidates ({} disposed)",
         docs.len(),
         future_lines.len(),
         opens.len(),
@@ -1540,6 +1585,7 @@ fn run_open() {
         harvest,
         nrs,
         probe,
+        ereignisse,
         candidates,
         candidates_disposed,
     );
@@ -3209,6 +3255,33 @@ mod tests {
         assert_eq!(n, 1);
         assert!(out[0].starts_with("test\t"));
         assert!(out[0].contains("Hilbert"));
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn ereignisse_owner_tags_account_and_send_to_future() {
+        assert_eq!(ereignisse_owner("account"), Some("future"));
+        assert_eq!(ereignisse_owner("send"), Some("future"));
+        assert_eq!(ereignisse_owner("wort"), None);
+        assert_eq!(ereignisse_owner("tool:bash"), None);
+    }
+
+    #[test]
+    fn scan_ereignisse_surfaces_account_and_send_as_future() {
+        let dir = env::temp_dir();
+        let path = dir.join(format!("register_lookup_ereignisse_{}", std::process::id()));
+        fs::write(
+            &path,
+            "# header\n2026-09-28T17:05:00Z | s1 | future | account | moon.bao.ac.cn\n2026-09-28T17:06:00Z | s1 | future | send | superdarn-af68c4f1\n2026-09-28T17:07:00Z | s1 | plan | wort | ein Wort\n2026-09-28T17:08:00Z | s1 | tool:bash | sread\n",
+        )
+        .unwrap();
+        let mut out = Vec::new();
+        let n = scan_ereignisse(&path, &mut out);
+        assert_eq!(n, 2);
+        assert!(out[0].starts_with("EREIGNIS\t"));
+        assert!(out[0].contains("[future]"));
+        assert!(out[0].contains("account"));
+        assert!(out[1].contains("send"));
         let _ = fs::remove_file(&path);
     }
 
