@@ -443,7 +443,7 @@ impl SolarMachine {
                 };
                 format!(
                     "solar te(kde) {} n {} te(kde) {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
-                    label, n, v.te, v.threshold, v.tau_x, v.tau_y, pe_x, pe_y, state
+                    label, n, v.te, v.threshold, v.tau_c, v.tau_y, pe_x, pe_y, state
                 )
             }
             None => format!("solar te(kde) {} n {} state {}", label, n, state),

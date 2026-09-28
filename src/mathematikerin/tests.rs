@@ -281,7 +281,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     eprintln!(
         "gpu: {:?}",
         gpu.as_ref().map(|v| (
-            v.tau_x,
+            v.tau_c,
             v.tau_y,
             v.te,
             v.threshold,
@@ -293,7 +293,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     eprintln!(
         "cpu: {:?}",
         cpu.as_ref().map(|v| (
-            v.tau_x,
+            v.tau_c,
             v.tau_y,
             v.te,
             v.threshold,
@@ -313,7 +313,13 @@ fn te_gpu_crosscheck_against_cpu_reference() {
             );
         }
     };
-    assert_eq!(gpu_v.tau_x, cpu_v.tau_x, "tau_x diverges");
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    let cpu_tau_x = crate::te::find_mi_lag(&xf).expect("the target carries an MI lag on the cpu");
+    assert_eq!(
+        gpu_v.tau_c, cpu_tau_x,
+        "the gpu horizon diverges from the cpu target MI-lag"
+    );
     assert_eq!(gpu_v.tau_y, cpu_v.tau_y, "tau_y diverges");
     assert!(
         gpu_v.surrogates_used >= 2 && cpu_v.surrogates_used >= 2,
@@ -321,12 +327,10 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         gpu_v.surrogates_used,
         cpu_v.surrogates_used
     );
-    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
-    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
-    let emb_x = crate::te::embed_series(&xf, gpu_v.tau_x, 3);
+    let emb_x = crate::te::embed_series(&xf, gpu_v.tau_c, 3);
     let emb_y = crate::te::embed_series(&yf, gpu_v.tau_y, 3);
     let kde_cpu =
-        crate::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_x, gpu_v.tau_y)
+        crate::te::transfer_entropy_embedded_kde(&xf, &emb_x, &emb_y, gpu_v.tau_c, gpu_v.tau_y)
             .expect("the KDE reference carries a TE at the GPU lags");
     let te_rel = ((gpu_v.te - kde_cpu) / kde_cpu.abs()).abs();
     assert!(

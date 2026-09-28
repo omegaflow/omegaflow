@@ -468,7 +468,7 @@ impl OmegaLoop {
             3,
             self.ring_gen.wrapping_add(0x9E37_79B9_7F4A_7C15),
         )
-        .map(|v| (v.tau_x, v.tau_y, Some(v.te), Some(v.threshold)));
+        .map(|v| (v.tau_c, v.tau_y, Some(v.te), Some(v.threshold)));
         let device = self.device.clone()?;
         let mut carry: Option<crate::te::TopologicalVerdict> = None;
         if let Some(prev) = self.te_map.take() {
@@ -1619,7 +1619,7 @@ impl OmegaLoop {
                     ys[i] = (v[9] * v[9] + v[10] * v[10] + v[11] * v[11]).sqrt();
                 }
                 if let Some(v) = self.te_probe(&xs, &ys, m) {
-                    self.te_topology = Some((v.tau_x, v.tau_y, v.pe_x, v.pe_y));
+                    self.te_topology = Some((v.tau_c, v.tau_y, v.pe_x, v.pe_y));
                     if self.pe_gate(v.pe_y) {
                         te_opt = Some((v.te, v.threshold));
                     }
