@@ -3,7 +3,7 @@
   session: Sensory-Folge 197
   class: handover
   date: 2026-09-28
-  sha256: ea138c4a012c33859503ad0307e1e9909b49dc7ee052ea5790b7254f1ecea197
+  sha256: 065e7b3353649b42b3e8734e18afe42c83540593abda06a8ac78f767c6efab92
   status: live
 -->
 # Handover — Sensory-Folge 197 (2026-09-28)
@@ -25,6 +25,12 @@ Dieses Atom maß beide `eigen`-Punkte an ihre Lesekante: DEMETER (Order 18400 we
 `Running`, Datei-Endpoint 202) und survey-codestruktur (`omega.rs:1788` unverändert).
 Kein Trigger gefeuert, kein Zustandswechsel. Der DEMETER-Tag wurde von `blockiert` auf
 `wartend` korrigiert (externer Ereignis-Trigger + Schritt vorhanden).
+
+Im selben Atom gebaut (Operator-Wort „go", 2026-09-28): der linienübergreifende
+Transport `register_lookup --addressed <line>` (Tool-Arm, `--fail` exit 2), die
+AGENTS.md-Regel-Zeile im Planning-Pass, die Gate-Fixture `addressed-origin`
+(ein `## An <line>`-Block ohne `Origin:`-Zeile blockt) samt Tests. Der adressierte
+Punkt wird damit zugestellt, nicht in einem Survey begraben.
 
 ## Operator-Wort-Register (Stand 2026-09-28)
 
@@ -80,6 +86,7 @@ Kein Trigger gefeuert, kein Zustandswechsel. Der DEMETER-Tag wurde von `blockier
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-09-28 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 197.
 - **Wort:** „hast du wirklich alles bis zur kante geplant und nur eigene punkte in deiner liste?" | 2026-09-28 | Operator (Session) — Ownership-/Kanten-Prüfung; Ergebnis: nur zwei Zeilen tragen `Bindung: eigen` (DEMETER, survey); Europa-Clipper ist ein `## Termin`-Dritt-Wait (kein `eigen`); DEMETER-Tag `blockiert` → `wartend`; beide Lesekanten in folge197 gemessen; Sensory-Folge 197.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom. Dispatch flash-first — den billigsten Vertreter, dessen Profil den Job trägt; ein `max`-Agent nur für die harten Atome, nie für Routine. Benenne die lokalen Tools (`archive_search`, `sgrep`, `sfetch`) in der Delegation — nicht curl oder webfetch. Benchmarks nur mit Operator-Wort oder gemessen falschem/unvollständigem flash-Ergebnis — Klassen mit gemessenem Sieger werden zitiert, nie verdoppelt (Modell-Politik, AGENTS.md)." | 2026-09-28 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 197.
+- **Wort:** „go" (Bau des Adressierungs-Arms `register_lookup --addressed` + AGENTS.md-Regel-Zeile + Gate-Fixture `addressed-origin` samt Tests) | 2026-09-28 | Operator (Session) — Sensory-Folge 197.
 
 ## Offen (aufgeschlüsselt)
 
@@ -199,6 +206,7 @@ werden getragen, nie geglättet (0 honored).
   2026-09-28, `sgrep -c "window:"` = 0; erneut bestätigt 2026-09-28 via
   `sread omega.rs:1788` — unverändert). Rivers Feder: die Zeile unter
   `OMEGAFLOW_HIDDEN` freigeben, damit der Datenkontrakt im CI-Artefakt lesbar wird.
+  Zustellung: `register_lookup --addressed river`.
   Origin: sensory-folge196/197.
 
 ## An Mountain (gemessen, fremde Feder)
@@ -256,9 +264,13 @@ Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort.
 
-Eigene Pfade dieses Atoms (pfad-begrenzt committen):
-- `docs/handover/handover-2026-09-28-sensory-folge197.md`,
-- `docs/handover/archiv/handover-2026-09-28-sensory-folge196.md` (Move).
+Eigene Pfade dieses Atoms:
+- Commit `b6dead1df` (Handover): `docs/handover/handover-2026-09-28-sensory-folge197.md`
+  (neu), `docs/handover/archiv/handover-2026-09-28-sensory-folge196.md` (Move).
+- Adressierungs-Arm (ausstehend `/commit`): `tools/register/src/bin/register_lookup.rs`,
+  `src/gate/commit_gate.rs`, `src/gate/commit_gate_vocab.json`,
+  `tools/gate/src/bin/commit_check.rs`, `AGENTS.md`,
+  `docs/handover/handover-2026-09-28-sensory-folge197.md` (Fortschreibung).
 
 `state/operator-gespraeche/2026-09-28-sensory.md` und `state/zustand/wartend.φ` sind
 gitignored (`/state/`) — lokal, nicht committet.

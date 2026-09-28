@@ -138,7 +138,8 @@
     "pass-copy": "a living handover line copies the standing pass — the Stehender Pass lives in state/zustand/standing-pass.md and is cited (sread state/zustand/standing-pass.md), never copied; a copied HEAD value is a stale copy the moment main moves",
     "foreign-binding": "a living handover point carries Bindung operator/dritter — operator acts live in Future's Operator-Queue, third-party waits in state/zustand/wartend.φ; a living handover point carries Bindung eigen only (Rat 2026-09-27)",
     "word-register-origin": "a word line in the Operator-Wort-Register carries no origin tag — the origin is the source segment after the word and the date (Wort | Datum | Quelle); a word is registered with its origin, never bare (Rat 2026-09-27: the pen is the owner's)",
-    "handover-dupe-entry": "a duplicate entry stands in a handover's Operator-Queue or Operator-Wort-Register — the same line twice (a foreign word or point folded twice); one entry per word/point (Rat 2026-09-27: one writer per handover)"
+    "handover-dupe-entry": "a duplicate entry stands in a handover's Operator-Queue or Operator-Wort-Register — the same line twice (a foreign word or point folded twice); one entry per word/point (Rat 2026-09-27: one writer per handover)",
+    "addressed-origin": "a `## An <line>` block carries no `Origin:` line — the traveling point names its sender (Origin: <sender-folge>); a block without an origin is a gate fixture (Rat 2026-09-27: the pen is the owner's, the transport names its origin)"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
@@ -484,6 +485,8 @@
     "status_proof_akt-ohne-wort-trigger": "## Offen\n\n### P\n- **Status:** operator-gebunden | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** das Operator-Wort\n- **Braucht:** Operator-Wort\n",
     "status_proof_termin-ohne-datum": "## Offen\n\n### P\n- **Status:** termin | **Bindung:** operator\n- **Trigger:** sofort\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n",
     "status_proof_descoped-ohne-befund": "## Offen\n\n### P\n- **Status:** descoped | **Bindung:** eigen\n- **Trigger:** —\n- **Blockade:** keine\n- **Braucht:** —\n",
+    "addressed_origin_missing": "## An River\n- **HUD-Zeile** ist TTY-gated\n",
+    "addressed_origin_clean": "## An River\n- **HUD-Zeile** ist TTY-gated\n- Origin: sensory-folge197\n",
     "blocked_twin_blocked_open": "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote unit absent\n\ndescoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n\npending\nurl https://example.org/c\nnote port duty\n",
     "blocked_twin_sources": "url https://example.org/a\nurl https://example.org/b\n",
     "transfer_bound_from_ttl_regression": "pub fn ttl_transfer_bound(ttl: u64) -> u64 { ((ttl as f64) / (Φ * Φ)).ceil() as u64 }",
