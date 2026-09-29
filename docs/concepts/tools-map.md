@@ -1,8 +1,8 @@
 <!--
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
-  date: 2026-09-28
-  sha256: fd4806bcd849a2cc189c3a9bb04eaaaff74538724dd123ffff92c564297d82bd
+  date: 2026-09-29
+  sha256: 0a362364f530f1d1a4d891669489b040a1ac9279c3b10f81f6aa1e4098993506
   status: live
   see-also: AGENTS.md
 -->
@@ -308,9 +308,9 @@ Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
 | `opencode-chromium` (npm 1.7.2; Extension `hdljmmpfnhojebplbbgdgejoobmjcbml` + Native-Messaging-Host `com.opencode.browser.plugin`; Operator-Profil) | UI-Automator am echten Profil, Batch | (ii) mehrschrittige Ketten (≤20 Steps/Call), opencode-v2-fähig | `browser_run`/`observe`/`session`/`finalize`; `settle` default `dom-quiet` (langsam) → `waitUntil:load` + `settle:{exists,selector}` |
 
 - **(i) Membran-Debug** → **Chrome DevTools MCP** (Konsole/Netz/Performance via CDP auf
-  dem Pfad-1-Chrome) — **noch nicht angebunden**; braucht das Operator-Wort
-  (Debugger-Rechte am live Chrome), Telemetrie-Flags `--no-usage-statistics`
-  `--no-performance-crux` sind Bedingung.
+  dem Pfad-1-Chrome) — **gebunden** (`opencode.json:172-178`: `chrome-devtools-mcp@1.9.0`
+  mit `--no-usage-statistics --no-performance-crux --autoConnect`, Commit `7e79c194d`,
+  2026-09-20); offen bleibt allein das Operator-Wort (Debugger-Rechte am live Chrome).
 - **(iii) Captcha** — Option (a) gesetzt: die Operatorin löst selbst im sichtbaren
   Browser. Option (b) Buster (dessant/buster, GPL-3.0, reCAPTCHA-Audio, lokal per
   Whisper möglich) ist **descoped mit Befund**, solange das Operator-Wort ausbleibt.

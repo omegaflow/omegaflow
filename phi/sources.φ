@@ -15523,6 +15523,13 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iss
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_itokawa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at itokawa
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15781,13 +15788,6 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at rhea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rosetta.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/ROSETTA/kernels/spk/ORER_______________00031.BSP
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at rosetta
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin

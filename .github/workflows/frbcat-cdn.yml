@@ -24,6 +24,7 @@ jobs:
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/other/PASA/33.45/frbcat \
             --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:zHost;dm:DM;speak:Speak' \
+            --async 3600 \
             --out frbcat_flat.json \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
