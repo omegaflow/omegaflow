@@ -116,10 +116,12 @@ jedes Muster. Wo die Macken einer Quelle das Muster übersteigen, wird das Muste
 zur **privaten** Abhängigkeit, die nur dieses Haus wartet — der Unterhaltspreis
 der Unabhängigkeit: klein heute, wachsend mit jeder Sonderquelle.
 
-**Lizenz (die stillgestellte Rechnung).** Die Sammlung steht unter **PolyForm /
+**Lizenz (entschieden 2026-09-29).** Die Sammlung steht unter **PolyForm /
 CC BY-NC-SA — non-commercial**. Sie kann so nicht verkauft werden; jede
-Monetarisierung beginnt mit einer Lizenz-Entscheidung. Keine Kritik, eine offene
-Zeile.
+Monetarisierung beginnt mit einer Lizenz-Entscheidung. **Entschieden (Operator-Wort
+2026-09-29): NC bleibt** — Code und Paper bleiben frei, der Verkaufsweg entfällt;
+ein Lizenzwechsel wäre ein eigener Rechtsweg und ist nicht gewählt. Die Zeile ist
+damit geschlossen.
 
 **Standards statt Sammlung:** Wo eine Quelle einen Standard anbietet
 (HAPI/VO/STAC/OAI-PMH/OPeNDAP/ERDDAP), nutzen wir ihn — das ersetzt die
