@@ -7775,7 +7775,7 @@ fn test_void_class_reads_empty_as_quiet_and_extract_miss_as_drift() {
         super::VoidClass::Format
     ));
     assert!(matches!(
-        super::void_class("format-gap (declared format ndk has no sweep reader)"),
+        super::void_class("format-gap (declared format grib2 has no sweep reader)"),
         super::VoidClass::Format
     ));
 }

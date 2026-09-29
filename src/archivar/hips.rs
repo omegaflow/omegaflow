@@ -296,7 +296,7 @@ pub fn parse_png(bytes: &[u8]) -> Option<HipsRaster> {
                     return None;
                 }
                 let mut entries = Vec::with_capacity(len / 3);
-                for e in data.chunks_exact(3) {
+                for e in data.as_chunks::<3>().0 {
                     entries.push([e[0], e[1], e[2]]);
                 }
                 plte = Some(entries);
@@ -335,7 +335,7 @@ pub fn parse_png(bytes: &[u8]) -> Option<HipsRaster> {
     let expected = height.checked_mul(stride.checked_add(1)?)?;
     let cmf = *idat.first()?;
     let flg = *idat.get(1)?;
-    if cmf & 0x0f != 8 || flg & 0x20 != 0 || ((cmf as u32) * 256 + flg as u32) % 31 != 0 {
+    if cmf & 0x0f != 8 || flg & 0x20 != 0 || !((cmf as u32) * 256 + flg as u32).is_multiple_of(31) {
         return None;
     }
     let raw = inflate::inflate(&idat[2..])?;
@@ -405,7 +405,7 @@ pub fn band_means(raster: &HipsRaster) -> Option<Vec<(f64, f64, u32)>> {
 pub fn band_sums(raster: &HipsRaster) -> Vec<u64> {
     let per_band = raster.lines * raster.samples;
     let mut sums = vec![0u64; raster.bands];
-    for b in 0..raster.bands {
+    for (b, slot) in sums.iter_mut().enumerate() {
         let start = b * per_band;
         let mut sum = 0u64;
         for i in start..start + per_band {
@@ -413,7 +413,7 @@ pub fn band_sums(raster: &HipsRaster) -> Vec<u64> {
                 sum += v as u64;
             }
         }
-        sums[b] = sum;
+        *slot = sum;
     }
     sums
 }
