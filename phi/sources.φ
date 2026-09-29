@@ -9205,7 +9205,7 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
@@ -10473,7 +10473,7 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/first14.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -10603,7 +10603,7 @@ rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/nvss.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -13821,7 +13821,7 @@ field fugin_moment0 fugin_moment0 inverse-square em K.m/s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
 format volume
-origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc then volume_builder
+origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 59dedd86e22721f9c5e2845560acbc16e6ccbc77f9d3159be836ef5591990092
@@ -13829,7 +13829,7 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/S40RTS.volume.bin
 format volume
-origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc then volume_builder
+origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
