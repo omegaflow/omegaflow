@@ -16,14 +16,17 @@ Neueste offene Übergabe:
 (eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
 was der eigene Trigger für fällig erklärt.
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
-Baum-Abgleich: jeder genannte Pfad gegen den Arbeitsbaum; absent = stale Punkt). Nenne alle
-offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel
-abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit,
-keine Messung, keine Exploration über das Genannte hinaus — der Plan-Agent kann nicht
-schreiben, das ist die Grenze. **Halte dann an.**
+**Phase 1 — Plan (nur lesend).** Der Plan-Agent misst, schreibt nicht — das ist die Grenze.
+Lies die Übergabe **als Spur, nicht als Gesetz**, und miss jede offen/geschlossen-Aussage am
+Baum und Register, **bevor** du die Tafel legst: `open_points_check <übergabe>` (Pfad- **und**
+Register-Zitat-Abgleich; `STALE-CITATION` = gefeuerter Trigger), `register_lookup --addressed
+<line>` (die an die eigene Linie gerichteten Nachrichten zuerst falten), `register_lookup --open`,
+Secrets/Ledger/`state/zustand/*` gegen die genannten Zeilen; `session_burn` (der Burn der Runde —
+flash-first, pro/max nur mit gemessener flash-Fehllage). Nenne dann alle offenen Punkte der
+eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel abarbeitbaren zu dispatchen —
+keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit. **Halte dann an.**
 
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass — und liest die Form-Karte (`sread docs/concepts/tool-forms.md`). Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
+**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass — und liest die Form-Karte (`sread docs/concepts/tool-forms.md`). Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Delegiere flash-first (`grind-flash`/`general`/`vision`); ein pro/max-Dispatch trägt die gemessene falsche/unvollständige flash-Antwort als Handover-Zeile — sonst nicht. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
 
 **Sofort-Prinzip.** Dispatcht wird **sofort** im nennenden Atom — kein besprechbarer Punkt wandert als „nächster Dispatch"/„nächste Session" weiter; besprochene Entscheidungen (ein Wort, eine Architektur, ein Verdikt) gehen im Moment ihrer Entstehung als Zeile ins Handover, nie am Sessionende gesammelt. Der Commit-Gate `commit_check` (status-proof) blockt den unbelegten Status-Tag, `register_lookup --fired`/`--stale` messen Feuer und Stehen.
 

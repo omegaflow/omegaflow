@@ -11,7 +11,21 @@
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
-      "permission": { "edit": "allow" }
+      "permission": {
+        "edit": "allow",
+        "task": {
+          "*": "deny",
+          "general": "allow",
+          "grind-flash": "allow",
+          "vision": "allow",
+          "explore": "allow",
+          "plan": "allow",
+          "council": "allow",
+          "grind-pro": "ask",
+          "grind-max": "ask",
+          "research-max": "ask"
+        }
+      }
     },
     "plan": {
       "mode": "primary",
@@ -91,6 +105,18 @@
         "edit": "allow",
         "webfetch": "deny",
         "websearch": "deny",
+        "task": {
+          "*": "deny",
+          "general": "allow",
+          "grind-flash": "allow",
+          "vision": "allow",
+          "explore": "allow",
+          "plan": "allow",
+          "council": "allow",
+          "grind-pro": "ask",
+          "grind-max": "ask",
+          "research-max": "ask"
+        },
         "bash": {
           "*": "allow",
           "grep *": "deny",
