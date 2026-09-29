@@ -27,6 +27,12 @@ eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Wai
 pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
 Future ist die Operator-Adresse: jede Entscheidung wird in DIESER Linie gesammelt — dem Operator-Queue-Abschnitt der Übergabe (eine Liste, ein Eintrag je Frage, einfache Sprache: Lage · Frage · bei Ja/bei Nein). Der Send bleibt die Operator-Hand (nie `smail --send`).
 
+**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
+**privat** (nur diese Linie) und liegt in `state/future/archive-search-preset.txt` — hier
+eingelesen:
+
+!`cat state/future/archive-search-preset.txt`
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
