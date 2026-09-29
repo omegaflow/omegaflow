@@ -27,7 +27,7 @@ jobs:
             --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' \
             --skip-null fint \
             --skip-null z \
-            --async 3600 --limit 1100000 \
+            --async 9000 --limit 1100000 \
             --out first14.json \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
