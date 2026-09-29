@@ -3,7 +3,7 @@
   session: Sensory-Folge 208
   class: handover
   date: 2026-09-29
-  sha256: 9b00b32b2d7670810529bd02e6f50714187e68355168c3ffda986930b1193b34
+  sha256: bfcf492fbb50482f8cdfe99901d6ebe81b76c6e55dfc77aa900ffdd0ea68831a
   status: live
 -->
 # Handover — Sensory-Folge 208 (2026-09-29)
@@ -67,6 +67,8 @@ breiter messen.
   `state/operator-gespraeche/2026-09-29-sensory.md` · `state/sensory/archive-search-preset.txt`.
 - **Linien-Preset (`archive_search`):** privat unter `state/sensory/archive-search-preset.txt`,
   eingelesen in `.opencode/command/sensory.md` (nur der Verweis steht öffentlich, nie die Wurzeln).
+- **Konsens-Pflicht:** die Maschine fragt vor dem Aufzeichnen; Hardware nur nach Operator-Wort
+  (AGENTS.md, „Consent of the sensors"). Die Haus-Regel selbst steht in AGENTS.md (Session protocol).
 - **Die vier Orte** (omegaflow-relevant): `omegaflow` = `~/projects/omegaflow`
   (+ privates `state/`, Remote `omegaflow/personal`) · `omegaflow-legacy` =
   `~/archive/archive-root/omegaflow-legacy` · `temp` = `/tmp/opencode` · `archive` =
@@ -160,22 +162,16 @@ breiter messen.
 - **Wort:** „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort." | 2026-09-29 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 207.
 - **Wort:** „hast du denn die nachrichten an dich gefaltet" | 2026-09-29 | Operator (Session) — Kontrolle der adressierten `## An sensory`-Blöcke; Ergebnis: mycelium-folge206 gefaltet (`## An Mycelium` gestrichen), future-155 war vom Vorgänger gefaltet; Sensory-Folge 208.
 - **Wort:** „ja bitte /consent" — Faltung ausführen (adressierte Nachrichten, Haus-Pfad-Korrektur, Transport-Rücknahme) | 2026-09-29 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 208.
+- **Wort:** „warum sind das zwei punkte?" (DEMETER / regards-cnes) | 2026-09-29 | Operator (Session) — Ein Punkt = eine Sache: gleiches Gegenüber (CNES/CDPP) + Konsequenz (Zugang) + Trigger → zusammengeführt, Sensory-Folge 208.
 
 ## Offen (aufgeschlüsselt)
 
-### DEMETER (Order 18400) — CDPP-REGARDS-Generierung server-seitig defekt (0 verfügbare Dateien)
+### DEMETER/regards-cnes — Order 18400 (CNES/CDPP REGARDS)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CDPP/REGARDS stellt die Generierung wieder her — Order 18400 liefert verfügbare Dateien (`availableFilesCount > 0` bzw. Datei-Endpoint HTTP 200). Kein order-freier Alternativkanal existiert (gemessen).
+- **Trigger:** CDPP/REGARDS stellt die Generierung wieder her — Order 18400 liefert verfügbare Dateien (`availableFilesCount > 0` bzw. Datei-Endpoint HTTP 200); Begleitmaß: Bare-Endpoint `/api/v1/rs-order` öffnet (≠ 403). Kein order-freier Alternativkanal existiert (gemessen).
 - **Lage:** (gemessen 2026-09-29 F204 via `curl` direct-only, Browser-UA, orderToken aus dem Metalink) Datei-Endpoint 9162386 **HTTP 403 / 684 B** „Access Denied" (Jetty, correlation-id `7fef856d…`) — **verschlechtert seit F202 (202 / 0 B)**; die Token-URL selbst wird abgewiesen. Bare-Endpoint `/api/v1/rs-order` direct 403 / Proton 403 (358 B F5-ASM-WAF) / Wayback 200 ohne CDX-Snapshot. Order-API angemeldet F200: 18400 `RUNNING`, `filesInErrorCount 1000`, `availableFilesCount 0`; 18387 `DONE_WITH_WARNING` 96 978/97 078 Fehler; Grenze `creationDate ≤ 2026-09-12` DONE / `≥ 2026-09-18` fehlerhaft — CDPP-Generierung server-seitig gekippt. CDPP: „Due to a technical problem, data access is not possible". orderToken exp 2026-10-05 05:04:06 UTC.
-- **Blockade:** server-seitig — CDPP-REGARDS generiert keine Dateien; technisch nichts zu umgehen.
+- **Blockade:** server-seitig — CDPP-REGARDS generiert keine Dateien; dazu F5-WAF am Bare-Endpoint + Order-Token; technisch nichts zu umgehen.
 - **Braucht:** CDPP-Wiederherstellung abwarten — Trigger **einmal** messen (kein Polling), direct-only: `curl -s -o /dev/null -w "%{http_code} %{size_download}\n" --max-time 30 -A "Mozilla/5.0 … Chrome/128.0 Safari/537.36" "<erste Datei-URL aus data/regards.cnes.fr/order_18400.metalink>"` (202 = Running, 200 = Daten; die Token-URL bewusst **nicht** über `archive_search --verdict`). Bei 200: Dateien ziehen **vor 2026-10-05 05:04:06 UTC**. Keine Support-Mail.
-
-### regards-cnes — Order-Route / Bare-Endpoint
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Order 18400 abrufbar / Bare-Endpoint `/api/v1/rs-order` öffnet (≠ 403) — Beleg `state/zustand/wartend.φ:5`.
-- **Lage:** (gemessen 2026-09-29 F204) Bare-Endpoint `/api/v1/rs-order` direct 403 / Proton 403 (358 B F5-ASM-WAF), Wayback 200 ohne CDX-Snapshot; Datei-Endpoint direct **403 / 684 B** (F202 noch 202 / 0 B) — Trigger nicht gefeuert; Order-Status nur mit Token über die angemeldete SPA (`external-state.md:49`).
-- **Blockade:** F5-WAF am Bare-Endpoint + Order-Token; server-seitige CDPP-Generierung.
-- **Braucht:** dito DEMETER (Trigger einmal messen).
 
 ### laic-cses — ASI/SSDC CSES-L2
 - **Status:** termin | **Bindung:** eigen
