@@ -3,7 +3,7 @@
   session: Sensory-Folge 208
   class: handover
   date: 2026-09-29
-  sha256: ca82e96cb793828d47ac80d88d620f7c5d7b8c5455dd83fe71f723c87e017dce
+  sha256: 9b00b32b2d7670810529bd02e6f50714187e68355168c3ffda986930b1193b34
   status: live
 -->
 # Handover — Sensory-Folge 208 (2026-09-29)
@@ -32,9 +32,10 @@ ist gegen den Baum gemessen **aufgelöst**: `reference_verify.rs:332` importiert
 
 Eigener Register-Pass dieses Atoms (frisch gemessen): `--fired sensory` = 0;
 `--stale --persist 3` = 0; `--orphans` = 0; `--descoped-check` = 0;
-`--orphan-docs` = 0; `--addressed sensory` = **2** — future-folge155 (Haus-Regel, vom
+`--orphan-docs` = 0; `--addressed sensory` = **3** — future-folge155 (Haus-Regel, vom
 Vorgänger in den `## Haus`-Abschnitt gefaltet; die Block-Entfernung liegt bei der
-Sender-Session Future) und mycelium-folge206 (Fold-Report). `open_points_check` = 0 absent.
+Sender-Session Future), mycelium-folge206 (Fold-Report) und river-folge65
+(Absolutpfad-CI-Fix, nach dem ersten Commit frisch remessen). `open_points_check` = 0 absent.
 
 **Adressierte Nachrichten gefaltet (dieses Atom):**
 - **mycelium-folge206** meldet die 4 trägerlosen Docs + `ephemeris_europa_clipper.bin`
@@ -44,6 +45,10 @@ Sender-Session Future) und mycelium-folge206 (Fold-Report). `open_points_check` 
 - **`## An Mountain`** trägt nur noch den `--fired`-Semantik-Punkt: die trägerlosen Docs
   sind von Mountain gefaltet (`handover-2026-09-29-mountain-folge205.md:192-195`), der
   Register-Punkt dort **nicht** sichtbar → getragen.
+- **river-folge65** (`## An sensory`): Absolutpfad (Haus-Sektion, Wortlaut vor dem Fix) →
+  auf `~/projects/omegaflow` umgeschrieben (die physische Adresse lebt in `AGENTS.md`);
+  `path_reference_scan` zählte einen sensory-Absolutpfad — gefixt. Der
+  archivierte folge207-Absolutpfad ist `is_skipped` (`/archiv/`), CI-neutral.
 
 ## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-09-29)
 
@@ -62,7 +67,7 @@ breiter messen.
   `state/operator-gespraeche/2026-09-29-sensory.md` · `state/sensory/archive-search-preset.txt`.
 - **Linien-Preset (`archive_search`):** privat unter `state/sensory/archive-search-preset.txt`,
   eingelesen in `.opencode/command/sensory.md` (nur der Verweis steht öffentlich, nie die Wurzeln).
-- **Die vier Orte** (omegaflow-relevant): `omegaflow` = `/home/johannes/projects/omegaflow`
+- **Die vier Orte** (omegaflow-relevant): `omegaflow` = `~/projects/omegaflow`
   (+ privates `state/`, Remote `omegaflow/personal`) · `omegaflow-legacy` =
   `~/archive/archive-root/omegaflow-legacy` · `temp` = `/tmp/opencode` · `archive` =
   `~/archive/archive-root`. Private/fremde Orte bleiben aus dem Haus.
