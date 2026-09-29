@@ -116,6 +116,9 @@ mod tests {
         b.extend_from_slice(&0.0f32.to_le_bytes());
         b.extend_from_slice(&0.8f32.to_le_bytes());
         b.extend_from_slice(&0.0f32.to_le_bytes());
+        b.extend_from_slice(&0.0f32.to_le_bytes());
+        b.extend_from_slice(&0.0f32.to_le_bytes());
+        b.extend_from_slice(&0.0f32.to_le_bytes());
         b
     }
 
