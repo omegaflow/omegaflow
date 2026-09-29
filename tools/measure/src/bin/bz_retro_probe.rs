@@ -621,6 +621,8 @@ fn run_hourly(
     hour_end: &str,
     harvest_only: bool,
     force_harvest: bool,
+    yearly_round: bool,
+    threads: usize,
 ) {
     let sy: i64 = hour_start
         .get(..4)
@@ -753,17 +755,117 @@ fn run_hourly(
         density_dbdt.len()
     );
 
-    let lags: Vec<usize> = (0..=LAG_MAX_H).collect();
-    let pairs: [(&str, &str, &[f32], &[f32]); 8] = [
-        ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
-        ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
-        ("Bz_med", "dB/dt", &dbdt_bz_med, &bz_med_dbdt),
-        ("Newell", "dB/dt", &dbdt_newell, &newell_dbdt),
-        ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
-        ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
-        ("Density", "dB/dt", &dbdt_density, &density_dbdt),
-        ("dB/dt", "Density", &density_dbdt, &dbdt_density),
-    ];
+    let lags: Vec<usize> = if yearly_round {
+        vec![0, 1]
+    } else {
+        (0..=LAG_MAX_H).collect()
+    };
+    let pairs: Vec<(&str, &str, &[f32], &[f32])> = if yearly_round {
+        vec![
+            ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
+            ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+            ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
+            ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
+            ("Density", "dB/dt", &dbdt_density, &density_dbdt),
+            ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+        ]
+    } else {
+        vec![
+            ("Bz", "dB/dt", &dbdt_bz, &bz_dbdt),
+            ("dB/dt", "Bz", &bz_dbdt, &dbdt_bz),
+            ("Bz_med", "dB/dt", &dbdt_bz_med, &bz_med_dbdt),
+            ("Newell", "dB/dt", &dbdt_newell, &newell_dbdt),
+            ("Speed", "dB/dt", &dbdt_speed, &speed_dbdt),
+            ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
+            ("Density", "dB/dt", &dbdt_density, &density_dbdt),
+            ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+        ]
+    };
+
+    if yearly_round {
+        println!();
+        println!(
+            "=== Yearly round — six pairs, lag 0/1 h (TE | own threshold | fam, n_surr = {N_SURR}) ==="
+        );
+        let jobs: Vec<(&str, &str, usize, &[f32], &[f32])> = pairs
+            .iter()
+            .flat_map(|(from, to, to_s, from_s)| {
+                lags.iter()
+                    .map(move |&lag| (*from, *to, lag, *to_s, *from_s))
+            })
+            .collect();
+        let mut results: Vec<Option<(f64, f64, f64)>> = vec![None; jobs.len()];
+        if threads > 1 && jobs.len() > 1 {
+            use std::sync::atomic::{AtomicUsize, Ordering};
+            let next = std::sync::Arc::new(AtomicUsize::new(0));
+            let partials = std::thread::scope(|s| {
+                let mut handles = Vec::new();
+                for _ in 0..threads.min(jobs.len()) {
+                    let next = std::sync::Arc::clone(&next);
+                    let jobs = &jobs;
+                    handles.push(s.spawn(move || {
+                        let mut out = Vec::new();
+                        loop {
+                            let i = next.fetch_add(1, Ordering::Relaxed);
+                            if i >= jobs.len() {
+                                break;
+                            }
+                            let (_, _, lag, to_s, from_s) = jobs[i];
+                            let Some(te) = transfer_entropy_lag(to_s, from_s, lag) else {
+                                continue;
+                            };
+                            let vals = surrogate_te_values(to_s, from_s, lag, SURROGATE_SEED);
+                            let fam_partial =
+                                vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+                            let thr = mean_plus_2sigma(&vals).unwrap_or(f64::NAN);
+                            out.push((i, Some((te, thr, fam_partial))));
+                        }
+                        out
+                    }));
+                }
+                handles
+                    .into_iter()
+                    .map(|h| h.join().expect("worker thread joins"))
+                    .collect::<Vec<_>>()
+            });
+            for p in partials {
+                for (i, v) in p {
+                    results[i] = v;
+                }
+            }
+        } else {
+            for (i, (_, _, lag, to_s, from_s)) in jobs.iter().enumerate() {
+                let Some(te) = transfer_entropy_lag(to_s, from_s, *lag) else {
+                    continue;
+                };
+                let vals = surrogate_te_values(to_s, from_s, *lag, SURROGATE_SEED);
+                let fam_partial = vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+                let thr = mean_plus_2sigma(&vals).unwrap_or(f64::NAN);
+                results[i] = Some((te, thr, fam_partial));
+            }
+        }
+        let fam = results.iter().flatten().fold(
+            f64::NEG_INFINITY,
+            |m, &(_, _, fp)| if fp > m { fp } else { m },
+        );
+        println!("fam = {fam:.4e}");
+        for (i, (from, to, lag, _, _)) in jobs.iter().enumerate() {
+            let Some((te, thr, _)) = results[i] else {
+                continue;
+            };
+            let v = if te > fam {
+                "arrow"
+            } else if te > thr {
+                "family bound"
+            } else {
+                "silent"
+            };
+            println!(
+                "{from:>12} → {to:<12} | lag {lag} h | TE {te:.4e} | thr {thr:.4e} | fam {fam:.4e} | {v}"
+            );
+        }
+        return;
+    }
 
     println!();
     println!(
@@ -887,6 +989,7 @@ fn main() {
     let harvest_only = args.iter().any(|a| a == "--harvest-only");
     let force_harvest = args.iter().any(|a| a == "--force-harvest");
     let hourly = args.iter().any(|a| a == "--hourly");
+    let yearly_round = args.iter().any(|a| a == "--yearly-round");
     let station = match arg_after(&args, "--station") {
         Some(v) => v.to_string(),
         None => DEFAULT_STATION.to_string(),
@@ -903,6 +1006,10 @@ fn main() {
         Some(s) if s > 0 => s,
         _ => 1,
     };
+    let threads = arg_after(&args, "--threads")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&t| t > 0)
+        .unwrap_or(1usize);
     let Some(now) = now_unix() else {
         return;
     };
@@ -919,6 +1026,8 @@ fn main() {
             &hour_end,
             harvest_only,
             force_harvest,
+            yearly_round,
+            threads,
         );
         return;
     }

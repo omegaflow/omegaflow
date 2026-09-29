@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-29
-  sha256: a5d015955ab28ef270deca390ae600bb1d185b488ffc1423f23129302eebe2b4
+  sha256: 720bd0f9f9a08309876577fed41dacf66a500e9e5c6c8450894e19c84b3ed606
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -118,7 +118,15 @@ bandwidths (Schreiber, 2000; Kaiser & Schreiber, 2002). X is the target
 artefact candidate, not a finding (the minute probe names it so,
 `bz_blatt_probe.rs`). At the hourly grain the travel time straddles the
 lag-0/lag-1 bin boundary: both bins are edge bins, and an arrow in either is
-reported as measured but flagged edge-bin, never read as a clean lag.
+reported as measured but flagged edge-bin, never read as a clean lag. The
+estimator's lag-0 arm is not an instantaneous condition: `transfer_entropy_lag(x, y, 0)`
+dispatches to `transfer_entropy` (`src/mathematikerin/te.rs:96-99`), whose
+conditional advances the target by one step (`x[t+1]`, `:33`) — the identical
+computation to `transfer_entropy_lag(x, y, 1)`. Measured on an AR(1) pair
+(`tools/measure/src/bin/fam_calibration.rs`, `--lag-check`): TE(lag 0) =
+TE(lag 1) = 0.21722066662653602, TE(lag 2) = 0.23052033970922944. The `lag 0`
+label is the one-step-ahead (τ = 1) condition; the yearly round's `lags = [0, 1]`
+tests each pair twice, not two lags.
 
 ### 3.2 Null model and thresholds
 
@@ -126,12 +134,21 @@ For every measured pair and lag, ten phase-randomized surrogates of the
 driver (f64 FFT, deterministic seed) yield the per-lag threshold μ + 2σ. In
 addition, the **family bound** fam = the maximum surrogate TE over *all*
 pairs × lags of the measurement round — the multiple-comparison control:
-with 12 tested pair-lag combinations per grain, a per-lag excess is expected
+with the yearly round's twelve pair-lag calls carrying six distinct statistics
+(the lag-0 and lag-1 arms are algebraically identical, §3.1), a per-lag excess is expected
 by chance; an arrow requires TE > fam (and therefore exceeds every null TE
 of the round). fam is an empirical plug-in maximum — the largest surrogate
 TE actually drawn in this round — not a quantile of a calibrated maximum
 distribution; it names no fixed α, and its own sampling variability is not
-quantified here (n_surr = 10 in the yearly round; §6 carries this limit).
+quantified here (n_surr = 10 in the yearly round; §6 carries this limit). A
+scalar round-max calibration battery is built
+(`tools/measure/src/bin/fam_calibration.rs:87`); a bounded local run at the
+operating n = 1260, n_surr = 10, 8 trials measured FWER 0/8 (a = 0.0) and 1/8
+(a = 0.9) against the nominal 1/(n_surr+1) = 9.09% (FPR 0/96 and 2/96). The
+operating-n run is prepared as the `fam-scalar-calibration.yml` CI job — six
+sharded points on four workers each: n_surr = 10 with 600 trials per a and
+n_surr = 100 with 60 trials per a (a = 0.0/0.5/0.9), each artifact carrying the
+per-cell FWER with a 95% Wilson CI; the dispatch is pending.
 The PCMCI leg of the hardened probe runs α = 0.05 (`bz_retro_probe.rs`); the
 fam leg names none. Verdicts: **arrow** (TE > fam), **family bound** (TE > own
 threshold, < fam — directed, not round-significant), **silent** (TE < own
@@ -261,9 +278,14 @@ below its own threshold (1.0649e-1) and below the bound (silent); the density
 control stays below the bound. Lag 0 h is an edge bin: the 30–60 min L1
 travel time straddles the lag-0/lag-1 boundary (part of the signal lands in
 the same hour, part in the next; the hardened probe's boundary note names
-lag 1 h as the straddling bin, `bz_retro_probe.rs`). The lag-1 row is not
-tabulated here; the arrow is reported as measured at the edge bin, not as a
-clean-lag finding.
+lag 1 h as the straddling bin, `bz_retro_probe.rs`). The lag-1 row is not a
+distinct measurement: the lag-0 and lag-1 arms are algebraically identical
+(§3.1, measured TE(lag 0) = TE(lag 1) = 0.21722066662653602), so the tabulated
+`0 h` rows are the lag-1 rows and the round's family is six distinct pairs, not
+twelve. The arrow is the one-step-ahead condition, reported as measured, not as
+a clean-lag finding. The per-lag print (`--yearly-round` in
+`bz_retro_probe.rs:789`) emits the six pairs at both lag labels for the n_surr = 100
+re-measure (`.github/workflows/bz-yearly-nsurr100.yml`), pending dispatch.
 
 ### 4.3 Hourly grain — 2025 (n paired 8688) — yearly-round witness (post-fix, lag 0/1 h, n_surr = 10)
 
@@ -468,7 +490,11 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   by construction. Both probes now run n_surr = 100 (`bz_blatt_probe.rs:10`,
   `bz_retro_probe.rs:10`, since `43096531d`, 2026-09-25); a comparable
   yearly-round re-measure at n_surr = 100 is the named resolution step and is
-  pending (not yet run).
+  pending (not yet run). The comparable family is rebuilt in
+  `bz_retro_probe.rs:789` (`--yearly-round`: the six directed pairs at lag 0/1 h — the pre-hardening
+  six-pair family — with per-lag TE/own-threshold/fam rows, four worker threads),
+  and `.github/workflows/bz-yearly-nsurr100.yml` carries the three windows
+  (ABK 2024, ABK 2025, SOD 2024); the dispatch is pending.
 - **dB/dt is the induction driver, not the network current.** The FMI
   Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
   `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
@@ -510,13 +536,26 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   autocorrelation and the same seed family). No confidence interval is
   reported on fam or on the TE values themselves. A calibrated fam — a
   measured FWER/α for the round-maximum rule on the scalar estimator at the
-  operating n — is pending. The nearest built battery is the membrane-FPR
-  battery (`gate_membrane_fpr_phase_vs_arx_n_1000`,
-  `src/mathematikerin/te.rs:6197`, `#[ignore]` locally, wired as the
-  `fpr-membrane` job of `.github/workflows/te-gate.yml:58`); it measures the
-  topological membrane's FPR, not the scalar round-max fam, and its numbers
-  are not yet measured. Until such a calibration exists, this manuscript
-  claims no α.
+  operating n — is pending. A scalar round-max battery is built
+  (`tools/measure/src/bin/fam_calibration.rs:87`; the `fam-scalar-calibration.yml`
+  CI job, six sharded points on four workers each: n = 1260, n_surr = 10, 600
+  trials per a and n_surr = 100, 60 trials per a, a = 0.0/0.5/0.9; each artifact
+  carries the per-cell FWER with a 95% Wilson CI). A bounded local run at
+  n = 1260, n_surr = 10, 8 trials measured FWER 0/8 at a = 0.0 and 1/8 at
+  a = 0.9 (FPR 0/96 and 2/96; nominal 1/(n_surr+1) = 9.09%); a four-worker
+  re-run reproduces trials 0–7 exactly (deterministic seed stream, 184.5 s for
+  10 trials). The 60-trial n_surr = 100 points are a sanity bound, not a
+  calibration: at nominal 1/(101) = 0.99% the per-round union bound holds
+  FWER ≤ 12/(101) = 11.88% (fam includes each combination's own surrogates, so
+  no single call's false-arrow probability exceeds 1/(n_surr+1)), and at full
+  exchangeability (a = 0) the FWER is exactly 1/(n_surr+1); pinning the
+  operating value between those ends needs a trial count this battery does not
+  carry. The full run is pending dispatch. The membrane-FPR battery
+  (`gate_membrane_fpr_phase_vs_arx_n_1000`,
+  `src/mathematikerin/te.rs:6199`, `#[ignore]` locally, wired as the
+  `fpr-membrane` job of `.github/workflows/te-gate.yml:58`) measures the
+  topological membrane's FPR, not the scalar round-max fam. Until such a
+  calibration exists, this manuscript claims no α.
 - **Estimator bias at the operating n.** The KDE/Silverman estimator carries a
   bias in the three-dimensional conditional density (x_{t+τ}, x_t, y_t) at the
   operating sample sizes (n ≈ 1260–2200 per round); no explicit small-sample
