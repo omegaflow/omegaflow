@@ -1,7 +1,7 @@
 <!--
   title: Fortschritts-Verzeichnis — 2026-08-16
   class: survey
-  sha256: 5e478f59c64ead684672d8ab684937a4413d33220ddad03ab0bb80e036ac4258
+  sha256: 1fb789f4a5c27851ed4d15a57e49bbbbc4d87f5fecf77be411a8d85ffa6fabbe
 -->
 # Fortschritts-Verzeichnis — 2026-08-16
 
@@ -62,7 +62,7 @@ Harte Befunde aus dem Live-Betrieb (HD 520, ANV):
   Per-Pixel-Messung auf der HD 520 (der Messpunkt-Hebel ist die
   Zell-Achse).
 
-## C. Offene Verbesserungen (leben zusätzlich im TODO)
+## C. Geschlossene Verbesserungen (alle 2026-09-28 disponiert; der TODO ist abgeschafft)
 
 - **Deep-Lieferung richtungsbasiert**: `descoped` (gemessen 2026-09-28, River-Folge 50, Rat) —
   der Browser ist der richtungslose Sensor; `forward: [0.0,0.0,0.0]` (`relay.rs:812`) ist die

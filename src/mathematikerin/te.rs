@@ -4410,9 +4410,7 @@ mod tests {
         let n = 512usize;
         let yf: Vec<f64> = (0..n).map(|t| (t as f64 * 0.9).sin()).collect();
         let mut xf = vec![0.0f64; n];
-        for t in 3..n {
-            xf[t] = yf[t - 3];
-        }
+        xf[3..].copy_from_slice(&yf[..n - 3]);
         assert_eq!(
             find_cross_mi_lag(&xf, &yf, 6),
             Some(3),
