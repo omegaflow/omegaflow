@@ -1,0 +1,67 @@
+name: hips-png-cdn
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 * * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  hips-png-shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    concurrency:
+      group: hips-png-cdn-${{ matrix.order }}-${{ matrix.dir }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - { order: 0, dir: 0 }
+          - { order: 1, dir: 0 }
+          - { order: 2, dir: 0 }
+          - { order: 3, dir: 0 }
+          - { order: 4, dir: 0 }
+          - { order: 5, dir: 0 }
+          - { order: 5, dir: 10000 }
+          - { order: 6, dir: 0 }
+          - { order: 6, dir: 10000 }
+          - { order: 6, dir: 20000 }
+          - { order: 6, dir: 30000 }
+          - { order: 6, dir: 40000 }
+          - { order: 7, dir: 0 }
+          - { order: 7, dir: 10000 }
+          - { order: 7, dir: 20000 }
+          - { order: 7, dir: 30000 }
+          - { order: 7, dir: 40000 }
+          - { order: 7, dir: 50000 }
+          - { order: 7, dir: 60000 }
+          - { order: 7, dir: 70000 }
+          - { order: 7, dir: 80000 }
+          - { order: 7, dir: 90000 }
+          - { order: 7, dir: 100000 }
+          - { order: 7, dir: 110000 }
+          - { order: 7, dir: 120000 }
+          - { order: 7, dir: 130000 }
+          - { order: 7, dir: 140000 }
+          - { order: 7, dir: 150000 }
+          - { order: 7, dir: 160000 }
+          - { order: 7, dir: 170000 }
+          - { order: 7, dir: 180000 }
+          - { order: 7, dir: 190000 }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Harvest one HiPS Dir shard into its manifest (resume per line)
+        run: |
+          cargo build -p omegaflow-harvest --release --bin hips_png_compiler
+          ./target/release/hips_png_compiler --tree \
+            --properties https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties \
+            --order ${{ matrix.order }} \
+            --dir ${{ matrix.dir }} \
+            --limit 10000 \
+            --out data/alasky.cds.unistra.fr/hips_png_CDS_P_Mars_Tianwen1-MoRIC_Norder${{ matrix.order }}_Dir${{ matrix.dir }}.manifest \
+            --ci-mode

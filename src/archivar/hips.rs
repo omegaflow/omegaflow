@@ -452,6 +452,193 @@ pub fn tile_from_url(url: &str) -> Option<(u32, u32)> {
     Some((order, npix))
 }
 
+pub const DIR_STRIDE: u64 = 10_000;
+
+pub fn dir_of(npix: u64) -> u64 {
+    (npix / DIR_STRIDE) * DIR_STRIDE
+}
+
+pub fn dir_count(order: u32) -> Option<u64> {
+    Some(tile_npix_bound(order)?.div_ceil(DIR_STRIDE))
+}
+
+pub struct DirWalk {
+    bound: u64,
+    next: u64,
+}
+
+impl DirWalk {
+    pub fn new(order: u32) -> Option<Self> {
+        let bound = tile_npix_bound(order)?;
+        if bound > u32::MAX as u64 {
+            return None;
+        }
+        Some(DirWalk { bound, next: 0 })
+    }
+}
+
+impl Iterator for DirWalk {
+    type Item = u64;
+
+    fn next(&mut self) -> Option<u64> {
+        if self.next >= self.bound {
+            return None;
+        }
+        let dir = self.next;
+        self.next += DIR_STRIDE;
+        Some(dir)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let rem = (self.bound - self.next).div_ceil(DIR_STRIDE) as usize;
+        (rem, Some(rem))
+    }
+}
+
+impl ExactSizeIterator for DirWalk {}
+
+pub struct TileWalk {
+    end: u64,
+    next: u64,
+}
+
+impl TileWalk {
+    pub fn full(order: u32) -> Option<Self> {
+        let bound = tile_npix_bound(order)?;
+        if bound > u32::MAX as u64 {
+            return None;
+        }
+        Some(TileWalk {
+            end: bound,
+            next: 0,
+        })
+    }
+
+    pub fn dir(order: u32, dir: u64) -> Option<Self> {
+        if dir % DIR_STRIDE != 0 {
+            return None;
+        }
+        let bound = tile_npix_bound(order)?;
+        if dir >= bound || bound > u32::MAX as u64 {
+            return None;
+        }
+        Some(TileWalk {
+            end: (dir + DIR_STRIDE).min(bound),
+            next: dir,
+        })
+    }
+}
+
+impl Iterator for TileWalk {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<u32> {
+        if self.next >= self.end {
+            return None;
+        }
+        let npix = self.next;
+        self.next += 1;
+        Some(npix as u32)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let rem = (self.end - self.next) as usize;
+        (rem, Some(rem))
+    }
+}
+
+impl ExactSizeIterator for TileWalk {}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum HipsTileEntry {
+    Present {
+        sha256: String,
+        bytes: u64,
+        color_type: u8,
+        band_sums: Vec<u64>,
+    },
+    Absent,
+}
+
+pub fn format_manifest_entry(npix: u32, entry: &HipsTileEntry) -> String {
+    match entry {
+        HipsTileEntry::Absent => format!("Npix{npix} absent"),
+        HipsTileEntry::Present {
+            sha256,
+            bytes,
+            color_type,
+            band_sums,
+        } => {
+            let mut line = format!("Npix{npix} ok {sha256} {bytes} {color_type}");
+            for sum in band_sums {
+                line.push(' ');
+                line.push_str(&sum.to_string());
+            }
+            line
+        }
+    }
+}
+
+pub fn manifest_base(line: &str) -> Option<&str> {
+    line.strip_prefix("base ")
+}
+
+pub fn manifest_npix(line: &str) -> Option<u32> {
+    let rest = line.strip_prefix("Npix")?;
+    let end = rest.find(' ')?;
+    rest[..end].parse().ok()
+}
+
+pub fn parse_manifest_entry(line: &str) -> Option<(u32, HipsTileEntry)> {
+    let rest = line.strip_prefix("Npix")?;
+    let (npix_text, rest) = rest.split_once(' ')?;
+    let npix: u32 = npix_text.parse().ok()?;
+    let (state, payload) = rest.split_once(' ').map_or((rest, ""), |(s, p)| (s, p));
+    match state {
+        "absent" => {
+            if payload.is_empty() {
+                Some((npix, HipsTileEntry::Absent))
+            } else {
+                None
+            }
+        }
+        "ok" => {
+            let mut parts = payload.split(' ');
+            let sha256 = parts.next()?.to_string();
+            if sha256.len() != 64
+                || !sha256
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || matches!(b, b'a'..=b'f'))
+            {
+                return None;
+            }
+            let bytes: u64 = parts.next()?.parse().ok()?;
+            if bytes == 0 {
+                return None;
+            }
+            let color_type: u8 = parts.next()?.parse().ok()?;
+            let expected = bands_of(color_type)?;
+            let mut band_sums = Vec::with_capacity(expected);
+            for _ in 0..expected {
+                band_sums.push(parts.next()?.parse().ok()?);
+            }
+            if parts.next().is_some() {
+                return None;
+            }
+            Some((
+                npix,
+                HipsTileEntry::Present {
+                    sha256,
+                    bytes,
+                    color_type,
+                    band_sums,
+                },
+            ))
+        }
+        _ => None,
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct HipsBand {
     pub mean: f32,
@@ -875,6 +1062,102 @@ obs_title            = Tianwen-1 MoRIC true-color map of Mars\n";
             ),
             None
         );
+    }
+
+    #[test]
+    fn tree_walk_counts_the_full_tiling() {
+        assert_eq!(TileWalk::full(0).map(|w| w.len()), Some(12));
+        assert_eq!(TileWalk::full(1).map(|w| w.len()), Some(48));
+        assert_eq!(TileWalk::full(2).map(|w| w.len()), Some(192));
+        assert_eq!(TileWalk::full(3).map(|w| w.len()), Some(768));
+        assert_eq!(TileWalk::full(4).map(|w| w.len()), Some(3_072));
+        assert_eq!(TileWalk::full(5).map(|w| w.len()), Some(12_288));
+        assert_eq!(TileWalk::full(6).map(|w| w.len()), Some(49_152));
+        assert_eq!(TileWalk::full(7).map(|w| w.len()), Some(196_608));
+        assert!(TileWalk::full(40).is_none());
+    }
+
+    #[test]
+    fn dir_walk_lists_the_dir_shards() {
+        let dirs: Vec<u64> = DirWalk::new(5).unwrap().collect();
+        assert_eq!(dirs, vec![0, 10_000]);
+        let dirs: Vec<u64> = DirWalk::new(6).unwrap().collect();
+        assert_eq!(dirs, vec![0, 10_000, 20_000, 30_000, 40_000]);
+        assert_eq!(DirWalk::new(7).map(|w| w.len()), Some(20));
+        assert_eq!(DirWalk::new(0).map(|w| w.len()), Some(1));
+        assert_eq!(dir_count(4), Some(1));
+        assert_eq!(dir_count(0), Some(1));
+        assert_eq!(dir_of(0), 0);
+        assert_eq!(dir_of(9_999), 0);
+        assert_eq!(dir_of(10_000), 10_000);
+    }
+
+    #[test]
+    fn dir_shards_partition_the_tree() {
+        for order in 0..=7u32 {
+            let full = TileWalk::full(order).unwrap().len();
+            let mut shards = 0usize;
+            for dir in DirWalk::new(order).unwrap() {
+                shards += TileWalk::dir(order, dir).unwrap().len();
+            }
+            assert_eq!(shards, full);
+        }
+    }
+
+    #[test]
+    fn dir_shard_walks_only_its_slice() {
+        let shard: Vec<u32> = TileWalk::dir(5, 10_000).unwrap().collect();
+        assert_eq!(shard.len(), 2_288);
+        assert_eq!(shard[0], 10_000);
+        assert_eq!(shard[shard.len() - 1], 12_287);
+        assert!(TileWalk::dir(5, 1).is_none());
+        assert!(TileWalk::dir(5, 20_000).is_none());
+    }
+
+    #[test]
+    fn manifest_entry_roundtrips() {
+        let ok = HipsTileEntry::Present {
+            sha256: "a".repeat(64),
+            bytes: 273_394,
+            color_type: 6,
+            band_sums: vec![40_546_943, 30_793_202, 24_197_126, 66_846_720],
+        };
+        let line = format_manifest_entry(0, &ok);
+        assert_eq!(line.split(' ').count(), 9);
+        assert_eq!(parse_manifest_entry(&line), Some((0, ok)));
+        let gray = HipsTileEntry::Present {
+            sha256: "b".repeat(64),
+            bytes: 1,
+            color_type: 0,
+            band_sums: vec![0],
+        };
+        let line = format_manifest_entry(11, &gray);
+        assert_eq!(parse_manifest_entry(&line), Some((11, gray)));
+        let absent = format_manifest_entry(123, &HipsTileEntry::Absent);
+        assert_eq!(absent, "Npix123 absent");
+        assert_eq!(
+            parse_manifest_entry(&absent),
+            Some((123, HipsTileEntry::Absent))
+        );
+        assert_eq!(manifest_npix(&absent), Some(123));
+        assert_eq!(manifest_base("base https://x/y"), Some("https://x/y"));
+        assert_eq!(manifest_npix("base https://x/y"), None);
+    }
+
+    #[test]
+    fn manifest_entry_refuses_unreadable_lines() {
+        let sha = "a".repeat(64);
+        assert!(parse_manifest_entry(&format!("Npix0 ok {sha} 1 0 0")).is_some());
+        assert!(parse_manifest_entry("Npix0 ok zzz 1 0 0").is_none());
+        assert!(parse_manifest_entry(&format!("Npix0 ok {sha} 1 5 0")).is_none());
+        assert!(parse_manifest_entry(&format!("Npix0 ok {sha} 0 0 0")).is_none());
+        assert!(parse_manifest_entry(&format!("Npix0 ok {sha} 1 6 0")).is_none());
+        assert!(parse_manifest_entry(&format!("Npix0 ok {sha} 1 6 0 0 0 0 extra")).is_none());
+        assert!(parse_manifest_entry("Npix0 absent extra").is_none());
+        assert!(parse_manifest_entry("Npix0 dangling").is_none());
+        assert!(parse_manifest_entry("Npix7").is_none());
+        assert!(parse_manifest_entry("").is_none());
+        assert!(parse_manifest_entry("base https://x/y").is_none());
     }
 
     fn tile() -> HipsTile {
