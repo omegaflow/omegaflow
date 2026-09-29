@@ -1013,4 +1013,17 @@ obs_title            = Tianwen-1 MoRIC true-color map of Mars\n";
         let sums = band_sums(&raster);
         assert_eq!(sums, vec![40_546_943, 30_793_202, 24_197_126, 66_846_720]);
     }
+
+    #[test]
+    fn tracked_moric_tile_decodes() {
+        let bytes = include_bytes!("hips_fixtures/tianwen1_moric_Norder7_Dir0_Npix0.png");
+        let raster = parse_png(bytes).expect("the tracked MoRIC tile decodes");
+        assert_eq!((raster.lines, raster.samples), (512, 512));
+        assert_eq!(raster.color_type, 6);
+        assert_eq!(raster.bands, 4);
+        assert_eq!(
+            band_sums(&raster),
+            vec![40_546_943, 30_793_202, 24_197_126, 66_846_720]
+        );
+    }
 }

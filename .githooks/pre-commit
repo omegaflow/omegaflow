@@ -20,6 +20,13 @@ run() {
     echo "$1: no gate binary (target/{release,debug}/$1) — the gate is skipped; the build is a CI job" >&2
     return 0
 }
+# commit_check's ereignis-ohne-folge gate is session-bound: it checks only the
+# account/send events whose field 1 (the opencode sessionID) matches the current
+# session. The source is the session environment (OMEGAFLOW_SESSION); the commit
+# message carries "line folge: …", not the sessionID, so nothing is fabricated
+# from it (measured 2026-09-29). Without a session name commit_check skips by
+# name, never silent.
+export OMEGAFLOW_SESSION="${OMEGAFLOW_SESSION:-}"
 ensure commit_check
 run commit_check || exit $?
 ensure concurrency_contract

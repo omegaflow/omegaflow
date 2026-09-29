@@ -89,7 +89,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER — Klasse: CDPP-Generierung defekt, wartend. Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000); 18387 DONE_WITH_WARNING 96978/97078. UA-Riss 403/403 vs 403/202 (orderToken). Wartend wartend.φ:4, Order exp 2026-10-05.
+note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/202 (orderToken); Träger wartend.φ:4.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
@@ -373,19 +373,19 @@ note Occultation-DB UTFPR (SOSB/Lucky Star): 200; occultation_compiler.rs gebaut
 
 pending
 url https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — Portal 200; Registrierung Operator-Hand 2026-09-28 (future-folge149), Abschluss ungemessen; Download nicht end-to-end gemessen. sensory-folge195.
+note Chang'e 1–6 GRAS (CNSA) — --verdict 206 (1 B) 2026-09-29; Konto Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. Braucht: Download-Messung.
 
 pending
 url https://www.nssdc.ac.cn/
-note Tianwen-1/Zhurong (CNSA) — Portal 200; Konto registriert/eingeloggt Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. sensory-folge195.
+note Tianwen-1/Zhurong (CNSA) — --verdict 206 (1 B) 2026-09-29; Konto Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. Braucht: Download-Messung.
 
 pending
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — 2026-09-29: ch2 200 (31050 B), chmapbrowse 404, mrbrowse 404. Konto registriert/eingeloggt Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen.
+note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — --verdict ch2 200 (31050 B) 2026-09-29, chmapbrowse 404, mrbrowse 404; Konto Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. Braucht: Download-Messung.
 
 pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM (MBRSC VAE) — Portal 200; Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. sensory-folge195.
+note Hope/Al-Amal EMM (MBRSC VAE) — --verdict 200 (2789 B) 2026-09-29; Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. Braucht: Download-Messung.
 
 pending
 url https://superdarn.ca/data-download
