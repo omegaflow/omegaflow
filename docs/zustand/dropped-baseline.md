@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: fdc11053ff6a7ad67aede4f2f0a84a94bd3e2f759192c0e3b6905915df46c09f
+  sha256: 1e57c647ff26dee562a9b7113a32332e7f75db48251fbc93f3c8f8a179c2b34f
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1113
+dropped-baseline 1127
+measured 2026-09-29 (Mycelium-Folge 205, ci-gate 36506672052 @5d6c9c685: baseline 1113 | current 1127 | delta 14. Die 14 sind `entscheid`-Punkte aus archivierten Übergaben folge2–22 (10× `git: resolved`, 4× `git: none`: `entscheid-folge3.md:76` Account-Verifikationen, `entscheid-folge7.md:28` Sicherheitsnetz, `:30` Guard-Atom, `:59` DRS-FITS-Anlass), lokal mit `register_lookup --dropped` extrahiert. Absorbiert durch diesen Bump im annehmenden Commit.)
 measured 2026-09-29 (Mountain-Folge 203, ci-gate 36503272430 dropped-gate @69eef305a: baseline 1082 | current 1113 | delta 31. Der aufgelaufene Netto der Planungs-Pässe seit dem Bump @1082; lokal nicht nachgemessen (`register_lookup --dropped` bricht >30 min ab) — die Gate-Zahl ist CI-only, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)
 measured 2026-09-28 (Mountain-Folge 199, ci-gate 36482049012 dropped-gate @11c90ff9a: baseline 1060 | current 1082 | delta 22. Der lokale `register_lookup --dropped`-Scan brach nach 900 s ab — die Baseline-Datei nennt bereits >30 min; die 22 sind der aufgelaufene Netto der Planungs-Pässe nach dem River-57-Bump, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)
 measured 2026-09-28 (Operator-Wort, River-Folge 57: baseline 1054 | current 1060 | delta 6 @4ce2f1823. Die 6 sind der aufgelaufene Netto der Planungs-Pässe seit Bump @9f8debcc3; die `git: none`-Klasse zählt nachweislich **getragene** Punkte (z. B. `Europa-Clipper` → `state/zustand/wartend.φ:15`), also keine 6 verlorenen Obligationen. Absorbiert durch diesen Bump; der Gate-Umbau auf selbst-messend/träger-bewusst läuft als Absender-Zeile an Mycelium.)
