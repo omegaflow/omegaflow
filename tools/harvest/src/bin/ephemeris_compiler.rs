@@ -1295,6 +1295,10 @@ fn flatten_juice_cog(
         final_max,
         final_p99
     ));
+    if granules.is_empty() {
+        emit("juice_cog: no granules fit — the asset stays unwritten");
+        return false;
+    }
     let absent = PckBody::absent();
     let written = write_binary(
         "ephemeris_juice_cog.bin",
@@ -1407,14 +1411,20 @@ fn run_juice_cog(
     for p in ck_paths {
         match CkFile::open(p) {
             Ok(c) => ck_files.push(c),
-            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
         }
     }
     let mut sclk_files = Vec::new();
     for p in sclk_paths {
         match SclkFile::open(p) {
             Ok(s) => sclk_files.push(s),
-            Err(e) => emit(&format!("juice_cog: open {} returned void: {}", p, e)),
+            Err(e) => {
+                emit(&format!("juice_cog: open {} returned void: {}", p, e));
+                return false;
+            }
         }
     }
     if spk_files.is_empty() || ck_files.is_empty() || sclk_files.is_empty() {
@@ -1823,7 +1833,9 @@ fn main() {
             emit("phase download");
             let paths = download_missing(&selected, &dest);
             let (kernels, _bpcs, _gm, _pck, fks, cks, sclks) = classify(&paths);
-            run_juice_cog(&kernels, &fks, &cks, &sclks, ci_mode);
+            if !run_juice_cog(&kernels, &fks, &cks, &sclks, ci_mode) {
+                std::process::exit(1);
+            }
             return;
         }
         let mut selected = Vec::new();
@@ -1880,7 +1892,9 @@ fn main() {
         std::process::exit(1);
     }
     if juice_cog {
-        run_juice_cog(&kernel_paths, &fk_paths, &ck_paths, &sclk_paths, ci_mode);
+        if !run_juice_cog(&kernel_paths, &fk_paths, &ck_paths, &sclk_paths, ci_mode) {
+            std::process::exit(1);
+        }
         return;
     }
     let gm_text = gm_path.and_then(|p| std::fs::read_to_string(p).ok());

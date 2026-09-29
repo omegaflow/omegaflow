@@ -29,7 +29,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mgal" => Some(value * 1e-5),
         "km/h" | "kmh" => Some(value / 3.6),
         "knot" | "kt" => Some(value * 0.514444),
-        "c" | "°c" => Some(value + 273.15),
+        "c" | "°c" | "degc" | "degree_c" => Some(value + 273.15),
         "f" | "°f" => Some((value - 32.0) * 5.0 / 9.0 + 273.15),
         "ppm" => Some(value * 1e-6),
         "ppb" => Some(value * 1e-9),
@@ -50,6 +50,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "ft" => Some(value * 0.3048),
         "inch" => Some(value * 0.0254),
         "mile" | "miles" => Some(value * 1609.344),
+        "nmi" => Some(value * 1852.0),
         "deg" => Some(value * std::f64::consts::PI / 180.0),
         "arcsec" => Some(value * 4.84813681109536e-6),
         "arcmin" => Some(value * 2.9088820866572e-4),
@@ -367,6 +368,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "arcsec",
             "arcmin",
             "mile",
+            "nmi",
             "mhz",
             "ppt",
             "nm",
@@ -378,7 +380,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         ],
         1 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "mpc", "t", "nt",
-            "m", "r_earth", "logg", "deg", "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1",
+            "m", "ft", "r_earth", "logg", "deg", "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1",
         ],
         2 => &[
             "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
@@ -389,7 +391,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         ],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
         5 => &[
-            "k", "c", "f", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s", "e22j",
+            "k", "c", "f", "degc", "degree_c", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s", "e22j",
         ],
         6 => &[
             "ppm",
@@ -459,6 +461,7 @@ pub fn is_unit_name(name: &str) -> bool {
         || kl == "sec"
         || kl == "hpa"
         || kl == "degc"
+        || kl == "degree_c"
         || kl == "nmi"
         || kl == "ft"
         || kl == "m"

@@ -1024,3 +1024,7 @@ dead 404
 url https://github.com/omegaflow/catalogs/releases/download/catalogs/twomass_psc.json
 note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-29.
 
+dead 404
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rosetta.bin
+note superseded → ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin sources.φ:15947; rosetta-ephemeris-cdn.yml deleted; kernel-flatten.yml:121 horizons_compiler --flyby; --verdict 404/404 no-CDX 2026-09-29; ORER 0 Granule, Typ 18/19 ohne Reader-Arm.
+

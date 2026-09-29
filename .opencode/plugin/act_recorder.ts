@@ -1,4 +1,4 @@
-import { appendFileSync, mkdirSync } from "node:fs"
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 
 // act_recorder — Aufzeichnung als Nebenwirkung (Rat + Operator-Wort 2026-09-28).
@@ -10,6 +10,11 @@ import { join } from "node:path"
 // Journal: state/zustand/ereignisse.φ (append-only, privat/getrackt im state-Repo).
 // Eine Zeile je Vorgang: ISO-UTC | sessionID | quelle | klasse | gegenstand.
 // Gegenstand statt Inhalt: host/pfad/agent — Passwoerter und Feldwerte nie.
+//
+// Aktive Session: state/reports/active_session.φ (eine Zeile, gitignored). Die
+// sessionID aus der Plugin-API (input.sessionID, gemessen) wird bei jedem Akt
+// geschrieben — der pre-commit-Hook liest sie als OMEGAFLOW_SESSION, wenn die Env
+// leer ist (Konvention notes_notify.rs). Kein Default, kein Fake-Token.
 
 const PROBE = "/tmp/opencode/act-probe.log"
 const TEXT_CAP = 600
@@ -57,6 +62,8 @@ function text(parts: unknown): string {
 export default async ({ worktree }: { worktree: string }) => {
   const dir = join(worktree, "state", "zustand")
   const journal = join(dir, "ereignisse.φ")
+  const reportsDir = join(worktree, "state", "reports")
+  const activeSession = join(reportsDir, "active_session.φ")
 
   const append = (line: string) => {
     try {
@@ -67,16 +74,28 @@ export default async ({ worktree }: { worktree: string }) => {
     }
   }
 
+  const recordSession = (sid: string) => {
+    if (!sid) return
+    try {
+      mkdirSync(reportsDir, { recursive: true })
+      writeFileSync(activeSession, `${sid}\n`)
+    } catch {
+      // silent: the record never blocks the act
+    }
+  }
+
   return {
     "chat.message": async (
       input: { sessionID: string; agent?: string },
       output: { parts?: unknown },
     ) => {
+      recordSession(input.sessionID)
       const w = text(output.parts)
       if (!w) return
       append(`${stamp()} | ${input.sessionID} | ${input.agent ?? "?"} | wort | ${w}\n`)
     },
     "tool.execute.before": async (input: { tool: string; sessionID: string }, output: { args: unknown }) => {
+      recordSession(input.sessionID)
       try {
         appendFileSync(PROBE, `${input.tool}\n`)
       } catch {

@@ -29,7 +29,7 @@ jobs:
             --root https://gaia.ari.uni-heidelberg.de/tap/sync \
             --table gaiadr3.gaia_source_lite \
             --join gaiaedr3_complements.distances source_id \
-            --columns 'ra:t.ra;dec:t.dec;pmra:t.pmra;pmdec:t.pmdec;mag:t.phot_g_mean_mag;dist_pc:j.r_med_geo;bpmag:t.phot_bp_mean_mag;rpmag:t.phot_rp_mean_mag;rv:t.radial_velocity' \
+            --columns 'ra:t.ra;dec:t.dec;pmra:t.pmra;pmdec:t.pmdec;mag:t.phot_g_mean_mag;dist_pc:j.r_med_geo;bpmag:t.phot_bp_mean_mag;rpmag:t.phot_rp_mean_mag;rv:t.radial_velocity;pmra_err:t.pmra_error;pmdec_err:t.pmdec_error;rlo:j.r_lo_geo;rhi:j.r_hi_geo' \
             --mag-bands 1.94 11.5 0.1 \
             --epoch 2016 --limit 90000 --star-bin \
             --union-bright kernels/bright_stars.json \

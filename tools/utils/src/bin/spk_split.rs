@@ -1011,8 +1011,8 @@ fn main() {
                     splitter.note_summary(seg);
                 }
             }
-            splitter.maybe_set_front(rec_no * 128 + 1);
             if summary.next == 0 {
+                splitter.maybe_set_front(rec_no * 128 + 1);
                 next_summary = 0;
                 continue;
             }
