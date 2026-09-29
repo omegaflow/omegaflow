@@ -20,7 +20,8 @@ der Ring, der **als erste schließt**: sie arbeitet ihre eigenen Punkte, committ
 (`/commit`), und **erst danach — mit stehendem Push — schreibt sie den frischen Pass am neuen
 HEAD** (CI-Tafel: rote Läufe `run-id | workflow | gemessener Grund | Träger-Linie | Braucht`,
 Grund aus Log/API lesen, nie raten, unread benennen; Postfach-Stand; Ereignis-Stand; Orphan-Zensus;
-Mehrfach-Träger; `git_safety --snapshot`; `.tools_ensure`-Sweep). Die Pass-Schreibung ist ihr
+Mehrfach-Träger; `git_safety --snapshot`; `.tools_ensure`-Sweep; **`session_burn`** (der Burn der
+Runde, flash/pro-Aufteilung — die Zahl steht im Pass, nicht auf Zuruf). Die Pass-Schreibung ist ihr
 **Schlussakt, nicht ihr erster** — so zitiert jede Linie einen Pass, der beim Öffnen den eben
 gemessenen Stand trägt (kein Henne-Ei: der Pass wird nie vor der eigenen Änderung geschrieben).
 Danach meldet sie die Runde frei — die Standard-Meldung:
@@ -31,19 +32,23 @@ Danach meldet sie die Runde frei — die Standard-Meldung:
 
 **Erst nach dieser Meldung öffnen die anderen Linien.**
 
-**Phase 1 — Plan (nur das).** Lies die Übergabe + `open_points_check <übergabe>` (billiger
-Baum-Abgleich). Nenne alle offenen Punkte der eigenen Linie als Tafel (nur `eigen`) und schlage
-vor, jeden parallel abarbeitbaren zu dispatchen — keine Rangfolge, kein „härtester Punkt".
-Kein edit/write/commit, **keine Messung, keine Exploration über das Genannte hinaus** — der
-Plan-Agent kann nicht schreiben, das ist die Grenze. **Halte dann an.**
+**Phase 1 — Plan (nur lesend).** Der Plan-Agent misst, schreibt nicht — das ist die Grenze.
+Lies die Übergabe **als Spur, nicht als Gesetz**, und miss jede offen/geschlossen-Aussage am
+Baum und Register, **bevor** du die Tafel legst: `open_points_check <übergabe>` (Pfad- **und**
+Register-Zitat-Abgleich; `STALE-CITATION` = gefeuerter Trigger), `register_lookup --addressed
+<line>` (die an die eigene Linie gerichteten Nachrichten zuerst falten), `register_lookup --open`,
+Secrets/Ledger/`state/zustand/*` gegen die genannten Zeilen; `session_burn` (der Burn der Runde —
+flash-first, pro/max nur mit gemessener flash-Fehllage). Nenne dann alle offenen Punkte der
+eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel abarbeitbaren zu dispatchen —
+keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit. **Halte dann an.**
 
 **Phase 2 — Ausführung.** Nach `/consent` (oder `/mycelium_go`) → `line`-Agent. Zu Beginn
 zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener
 Standard-Pass. Arbeite die eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue,
 Dritt-Waits → `state/zustand/wartend.φ` (Trigger + Aufnehmer). Werkzeuge statt Rohbefehle
 (`docs/concepts/tools-map.md`); Header-sha256 via `omega_sh sha <datei>`; vor dem Commit
-`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision);
-pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
+`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision); ein pro/max-Dispatch trägt die gemessene
+falsche/unvollständige flash-Antwort als Handover-Zeile — sonst nicht. `/commit` schließt.
 Mycelium trägt Quellen: Arbeit über `docs/SOURCE_PORT.md`; eine neue/geänderte Ernte erst schließen, wenn sie in `phi/sources.φ` für die CDN-Manifestation registriert ist.
 Der Stehende Pass wird am Sessionende geschrieben — **nach** dem Push (Schlussakt der Meta-Linie), dann die Runde-Meldung (siehe oben). Nie mitten in der Arbeit: ein Pass vor der eigenen Änderung wäre beim Öffnen der anderen Linien schon stale.
 

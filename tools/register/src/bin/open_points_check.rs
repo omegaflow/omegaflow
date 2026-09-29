@@ -73,6 +73,10 @@ fn main() {
             }
         }
     }
+    let stale = stale_citations(&root, &rel, &content);
+    for s in &stale {
+        println!("{}", s);
+    }
     let guardians = mail_home_guardians(&root);
     for g in &guardians {
         println!("OFFEN  {}", g);
@@ -99,10 +103,11 @@ fn main() {
         println!("post-md-resurrected");
     }
     println!(
-        "open_points_check: {}  | {} path refs | {} absent | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
+        "open_points_check: {}  | {} path refs | {} absent | {} stale-citations | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
         rel,
         points,
         missing,
+        stale.len(),
         guardians.len(),
         format_gap_count,
         drifts.len(),
@@ -318,6 +323,95 @@ fn is_repo_path(token: &str) -> bool {
     PREFIXES.iter().any(|p| token.starts_with(p)) && token.contains('/')
 }
 
+const CITATION_REGISTERS: [(&str, &str, bool); 6] = [
+    (".secrets.local", ".secrets.local", true),
+    (
+        "mail_ledger.\u{3c6}",
+        "state/mail/mail_ledger.\u{3c6}",
+        false,
+    ),
+    (
+        "sent_ledger.\u{3c6}",
+        "state/mail/sent_ledger.\u{3c6}",
+        false,
+    ),
+    (
+        "external-state.md",
+        "state/zustand/external-state.md",
+        false,
+    ),
+    ("wartend.\u{3c6}", "state/zustand/wartend.\u{3c6}", false),
+    ("standing-pass.md", "state/zustand/standing-pass.md", false),
+];
+
+fn trim_citation(token: &str) -> &str {
+    let t = token.trim();
+    let t = t.trim_start_matches(|c: char| "`'\"([{<".contains(c));
+    t.trim_end_matches(|c: char| "`'\"»>)]},;.|*".contains(c))
+}
+
+fn resolve_citation(token: &str) -> Option<(String, usize, bool)> {
+    let t = trim_citation(token);
+    let colon = t.rfind(':')?;
+    let n = t[colon + 1..].parse::<usize>().ok()?;
+    if n == 0 {
+        return None;
+    }
+    let path = trim_citation(&t[..colon]);
+    for (suffix, canonical, secrets) in CITATION_REGISTERS {
+        if path == suffix || path == canonical || path.ends_with(&format!("/{}", suffix)) {
+            return Some((canonical.to_string(), n, secrets));
+        }
+    }
+    None
+}
+
+fn citation_line_ok(line: &str, secrets: bool) -> bool {
+    if !secrets {
+        return true;
+    }
+    match line.split_once('=') {
+        Some((key, _)) => {
+            !key.is_empty()
+                && key.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+                && key.chars().any(|c| c.is_ascii_uppercase())
+        }
+        None => false,
+    }
+}
+
+fn stale_citations(root: &Path, rel: &str, content: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    if !root.join("state").exists() {
+        return out;
+    }
+    for (idx, line) in content.lines().enumerate() {
+        for word in line.split_whitespace() {
+            let Some((canonical, n, secrets)) = resolve_citation(word) else {
+                continue;
+            };
+            let ok = match fs::read_to_string(root.join(&canonical)) {
+                Ok(text) => text
+                    .lines()
+                    .nth(n - 1)
+                    .map(|l| citation_line_ok(l, secrets))
+                    .unwrap_or(false),
+                Err(_) => false,
+            };
+            if !ok {
+                out.push(format!(
+                    "STALE-CITATION {}:{} {}:{}",
+                    rel,
+                    idx + 1,
+                    canonical,
+                    n
+                ));
+            }
+        }
+    }
+    out
+}
+
 const POINT_FIELDS: [&str; 5] = [
     "- **Status:**",
     "- **Trigger:**",
@@ -523,6 +617,68 @@ mod tests {
         assert!(!post_md_resurrected(&base));
         fs::write(base.join("docs/handover/post.md"), "a point travels here").unwrap();
         assert!(post_md_resurrected(&base));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn resolves_register_citations() {
+        assert_eq!(
+            resolve_citation("state/.secrets.local:23").map(|c| c.0),
+            Some(".secrets.local".to_string())
+        );
+        assert_eq!(
+            resolve_citation("`.secrets.local:83`").map(|c| c.0),
+            Some(".secrets.local".to_string())
+        );
+        assert_eq!(
+            resolve_citation("`state/mail/mail_ledger.\u{3c6}:191`").map(|c| c.0),
+            Some("state/mail/mail_ledger.\u{3c6}".to_string())
+        );
+        assert_eq!(
+            resolve_citation("wartend.\u{3c6}:4.").map(|c| c.0),
+            Some("state/zustand/wartend.\u{3c6}".to_string())
+        );
+        assert!(resolve_citation("docs/paper/gic-causal-driver.md:531").is_none());
+        assert!(resolve_citation("src/gate/commit_gate.rs:1804").is_none());
+    }
+
+    #[test]
+    fn flags_stale_citation_and_accepts_live_one() {
+        let base = std::env::temp_dir().join(format!("opc-cite-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("state/mail")).unwrap();
+        fs::write(base.join("state/mail/mail_ledger.\u{3c6}"), "a\nb\nc\n").unwrap();
+        assert!(
+            stale_citations(&base, "h.md", "siehe `state/mail/mail_ledger.\u{3c6}:2`").is_empty()
+        );
+        let miss = stale_citations(&base, "h.md", "siehe `state/mail/mail_ledger.\u{3c6}:9`");
+        assert_eq!(miss.len(), 1, "{:?}", miss);
+        assert!(miss[0].contains("STALE-CITATION"), "{:?}", miss);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn citation_check_is_skipped_without_state() {
+        let base = std::env::temp_dir().join(format!("opc-nostate-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(&base).unwrap();
+        assert!(stale_citations(&base, "h.md", "`state/.secrets.local:1`").is_empty());
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn secrets_citation_needs_a_key_name() {
+        let base = std::env::temp_dir().join(format!("opc-secret-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("state")).unwrap();
+        fs::write(
+            base.join(".secrets.local"),
+            "CORE_API_KEY=abcdef\n# a comment line\n",
+        )
+        .unwrap();
+        assert!(stale_citations(&base, "h.md", "`.secrets.local:1`").is_empty());
+        let bad = stale_citations(&base, "h.md", "`.secrets.local:2`");
+        assert_eq!(bad.len(), 1, "{:?}", bad);
         let _ = fs::remove_dir_all(&base);
     }
 }
