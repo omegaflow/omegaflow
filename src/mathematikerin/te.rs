@@ -3118,7 +3118,7 @@ fn topological_te_with(
     order: usize,
     seed: u64,
     n_surr: usize,
-    surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Vec<f32>,
+    surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Option<Vec<f32>>,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
     if n < 8 || y.len() != n || dim < 2 {
@@ -3131,7 +3131,9 @@ fn topological_te_with(
     let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
     for _ in 0..n_surr {
-        let ys = surrogate(y, &mut rng);
+        let Some(ys) = surrogate(y, &mut rng) else {
+            continue;
+        };
         if ys.len() != n {
             continue;
         }
@@ -3255,7 +3257,7 @@ pub fn topological_te_phase(
     seed: u64,
 ) -> Option<TopologicalVerdict> {
     topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
-        phase_randomized_surrogate(v, rng)
+        Some(phase_randomized_surrogate(v, rng))
     })
 }
 
@@ -3274,10 +3276,7 @@ pub fn topological_te_arx(
         order,
         seed,
         10,
-        &mut |v, rng| match arx_restricted_surrogate(v, max_lag, rng) {
-            Some(s) => s,
-            None => Vec::new(),
-        },
+        &mut |v, rng| arx_restricted_surrogate(v, max_lag, rng),
     )
 }
 
@@ -4670,8 +4669,8 @@ mod tests {
         }
         let res = topological_te_with(&x, &y, 3, 3, 42, 10, &mut |v: &[f32],
                                                                   _rng: &mut u64|
-         -> Vec<f32> {
-            vec![1.0; v.len()]
+         -> Option<Vec<f32>> {
+            Some(vec![1.0; v.len()])
         });
         assert!(res.is_none());
     }
@@ -6162,10 +6161,13 @@ mod tests {
         gate_fpr_autocorr_assert(&cells);
     }
 
+    type MembraneVerdictFn<'a> =
+        dyn FnMut(&[f32], &[f32], u64) -> Option<TopologicalVerdict> + 'a;
+
     fn membrane_fpr_cells(
         n: usize,
         cells: &[(f32, usize)],
-        verdict: &mut dyn FnMut(&[f32], &[f32], u64) -> Option<TopologicalVerdict>,
+        verdict: &mut MembraneVerdictFn<'_>,
         driver_rng: &mut u64,
     ) -> Vec<GateCell> {
         let mut out = Vec::with_capacity(cells.len());
@@ -6238,7 +6240,7 @@ mod tests {
             &cells,
             &mut |x, y, seed| {
                 topological_te_with(x, y, 3, 3, seed, 10, &mut |v, rng| {
-                    block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng)
+                    Some(block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng))
                 })
             },
             &mut rng,
