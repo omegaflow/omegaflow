@@ -42,6 +42,22 @@ pub fn pixel_direction(nside: i64, pix: i64) -> Option<[f64; 3]> {
     Some([st * cp, st * sp, ct])
 }
 
+pub fn load_asset(path: &std::path::Path) -> Option<DensityField> {
+    let bytes = std::fs::read(path).ok()?;
+    parse_asset(&bytes)
+}
+
+pub fn vlies_asset_path() -> std::path::PathBuf {
+    if let Ok(p) = std::env::var("OMEGAFLOW_VLIES_ASSET") {
+        return std::path::PathBuf::from(p);
+    }
+    let state = crate::archivar::state_dir().join("vlies_density.vlde");
+    if state.exists() {
+        return state;
+    }
+    std::path::PathBuf::from("data/vlies_density.vlde")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

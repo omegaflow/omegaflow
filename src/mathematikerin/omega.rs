@@ -161,6 +161,7 @@ pub struct OmegaLoop {
     pub sky: SkyState,
     pub sky_named: String,
     pub sky_fingerprint: Option<(u64, u64)>,
+    pub vlies_fingerprint: Option<(u64, u64)>,
     pub sky_perm_t: Option<f64>,
     pub field_cap: u32,
     pub buf_sel: usize,
@@ -280,6 +281,7 @@ impl OmegaLoop {
             sky: SkyState::new(),
             sky_named: String::new(),
             sky_fingerprint: None,
+            vlies_fingerprint: None,
             sky_perm_t: None,
             field_cap: 0,
             buf_sel: 0,
@@ -1006,8 +1008,45 @@ impl OmegaLoop {
         }
     }
 
+    pub fn vlies_reload(&mut self) {
+        let path = crate::archivar::vlies::vlies_asset_path();
+        let meta = match std::fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => {
+                if self.vlies_fingerprint.is_some() {
+                    self.vlies_fingerprint = None;
+                    self.sky.vlies = None;
+                    self.sky_say("vlies asset absent — the census stays held on disk, the S² layer rests (0 honored)");
+                }
+                return;
+            }
+        };
+        let modified = match meta.modified() {
+            Ok(t) => match t.duration_since(std::time::UNIX_EPOCH) {
+                Ok(d) => d.as_secs(),
+                Err(_) => 0,
+            },
+            Err(_) => 0,
+        };
+        let fp = (meta.len(), modified);
+        if self.vlies_fingerprint == Some(fp) {
+            return;
+        }
+        self.vlies_fingerprint = Some(fp);
+        match crate::archivar::vlies::load_asset(&path) {
+            Some(field) => {
+                self.sky.vlies = Some(field);
+                self.sky_say("vlies census held — the density rests in the S² layer state");
+            }
+            None => {
+                self.sky_say("vlies asset refused — the census rests (0 honored)");
+            }
+        }
+    }
+
     pub fn sky_tick(&mut self) {
         self.sky_reload();
+        self.vlies_reload();
         let t = self.t_presence;
         let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
         oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
@@ -1776,7 +1815,12 @@ impl OmegaLoop {
                 }
                 None => ("-".to_string(), "-".to_string()),
             };
-            let skyrep = self.sky.report();
+            let (_, _, forward) = self.frame();
+            let skyrep = self.sky.report(forward);
+            let vlies_s = match skyrep.vlies_count {
+                Some(c) => c.to_string(),
+                None => "-".to_string(),
+            };
             let em_word = {
                 let [r, g, b, w] = self.em_color;
                 if w > 0.0 && w.is_finite() {
@@ -1787,7 +1831,7 @@ impl OmegaLoop {
             };
             if self.silent || std::io::IsTerminal::is_terminal(&std::io::stderr()) {
                 eprintln!(
-                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} perm {:.2} pts {}",
+                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} perm {:.2} pts {}",
                     self.t_presence,
                     rec,
                     self.ring_gen,
@@ -1817,6 +1861,7 @@ impl OmegaLoop {
                     skyrep.live_count,
                     skyrep.shell,
                     skyrep.forward_field,
+                    vlies_s,
                     skyrep.permeability,
                     self.sky.points.len(),
                 );

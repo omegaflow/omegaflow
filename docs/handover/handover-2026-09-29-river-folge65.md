@@ -3,7 +3,7 @@
   session: River-Folge 65
   class: handover
   date: 2026-09-29
-  sha256: 7336bfada30cbfcef395ab6016b483b1570413cacbe9579fe5963587f14361b7
+  sha256: f6eaa223455ba10a0b3fce02421e920d87fc4703ef37c4bd1c9c8986425ead54
   status: live
 -->
 # Handover — River-Folge 65 (2026-09-29)
@@ -34,6 +34,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent …" | 2026-09-29 | Operator (Session, River 65) — session-weiter Delegations-Consent
 „Jede Linie kennt ihr Haus wie ihre Westentasche … state/ ist das Haus … keine privaten Projekte in Übergaben" | 2026-09-29 | Operator (via future-folge155, an River adressiert)
 „wichtig ist nur dass die linien die nachrichten bevorzugt behandeln" | 2026-09-29 | Operator (Session, River 65)
+„der Empfehlung folgen; Compiler-Standard NINO3.4 (−5…5 lat, 190…240 lon, 1854–2026), §3-Block zuerst" | 2026-09-29 | Operator (via future-folge155, an River adressiert — ENSO-Zuschnitt)
 
 ## Haus — River (Stand 2026-09-29)
 
@@ -42,12 +43,12 @@ Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier f
 **verlorener Punkt** (Operator-Wort 2026-09-29, via future-folge155).
 
 - **Die vier Orte** (gemessen 2026-09-29):
-  - `omegaflow` = `/home/johannes/projects/omegaflow` (öffentl. Repo) + privates Schwester-Repo
+  - `omegaflow` = `~/projects/omegaflow` (öffentl. Repo) + privates Schwester-Repo
     `state/` (Remote `omegaflow/personal`, eigenes git).
-  - `omegaflow-legacy` = `/home/johannes/backup/archive-root/omegaflow-legacy` +
+  - `omegaflow-legacy` = `archive-root/omegaflow-legacy` +
     `omegaflow-legacy-backup-2026-09-02`.
   - `temp` = `/tmp/opencode`.
-  - `archive` = `/home/johannes/backup/archive-root`; daneben `~/backup/archive/omegaflow`
+  - `archive` = `archive-root`; daneben `~/backup/archive/omegaflow`
     (Nicht-git-Kopie) und `~/backup/provenance/omegaflow-provenienz` (`opencode.db`).
 - **Rivers Teil (Membran):** Code `src/mathematikerin/` (Feld, TE, WGSL `shaders.rs`),
   `src/archivar/` (Query/Vlies), die Membran-Pfade `main_flow`/`omega.rs` (Fenster/Blick),
@@ -73,56 +74,73 @@ Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier f
   `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` und
   `docs/surveys/survey-fortschritt.md` keine echten Open-Marker mehr → `descoped`, keine
   Träger-Zeile nötig. `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` reist an
-  Mountain/Future (siehe `## An mountain` / `## An future`). **Riss gemessen (2026-09-29):**
+  Mountain/Future (siehe `## An future`). **Riss gemessen (2026-09-29):**
   folge65 maß `--orphan-docs` = 2, heute 0 — Ursache ist der Träger (river-folge65/sensory-folge206
   nennen die Docs), nicht der Marker-Fix `502242e7e`: beide Docs tragen heute noch echte Marker
   (messpunkt `:94`, daten-holdings `:56`/`:74`/`:139`); ohne Träger wären sie weiter `ORPHAN_DOC`.
 
 ## Offen (aufgeschlüsselt)
 
-### TE-Merge — CI-Verifikation (clippy)
+### CI-Verifikation — `ci-check` am HEAD
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `ci-check`/`ci-gate`-Lauf auf dem HEAD nach diesem Commit schließt ab.
-- **Lage:** (gemessen 2026-09-29 River 65 via `ci_manage status`/`log`/`jobs`) auf `e2db28cea`:
-  `ci-check 36555530111` = **in flight** (Schritt `test`; Trigger noch nicht gefeuert);
-  `ci-gate 36555530169` = **failure**, Job `dropped-gate`: `baseline 1127 | current 1131 |
-  delta 4` (die sichtbaren Einträge liegen in `entscheid`-Altübergaben folge2–22). Die 11
-  archivar-lib-Tests sind laut Stehendem Pass durch `502242e7e` (mountain 204) geheilt, der
-  `clippy`-Job ist grün (`ci_manage jobs 36555530169`); der `te.rs`-clippy (river64 `691b424f0`)
-  bleibt geheilt.
-- **Blockade:** `ci-gate` rot (dropped-delta 4); `ci-check` noch nicht abgeschlossen.
-- **Braucht:** `ci-check 36555530111` abwarten (`ci_manage log 36555530111`); für den
-  dropped-delta 4 Baseline-Bump im annehmenden Commit oder Träger der `entscheid`-Linie.
+- **Trigger:** der `ci-check`-Lauf auf dem HEAD nach diesem Commit schließt ab.
+- **Lage:** (gemessen 2026-09-29 River 65 via `ci_manage status`/`log 36601852758`) am HEAD
+  `3152acad` ist `ci-check 36601852758` = **failure**: `path_reference_scan` **7 absolute
+  Pfade** — river-folge65 (`:45/:47/:50`, in diesem Atom geheilt, aber **noch uncommittet**),
+  mountain-folge205 (`:40/:42/:45`, Archiv-Move ebenfalls uncommittet), sensory-folge208
+  (`:65`, neu). `ci-gate 36602146598` = success.
+- **Blockade:** fremde absolute Pfade in mountain-folge205 / sensory-folge208; mein Anteil ist
+  geheilt, wirkt aber erst mit dem Commit.
+- **Braucht:** der eigene Commit heilt die 3; Mountain (Archiv-Move) und Sensory (`:65`)
+  müssen committen/heilen, sonst bleibt der Scan rot.
 
 ### WGSL-Naht — `te_compute` Horizont
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ci-check` auf dem neuen HEAD grün (dann ohne äußeren Anlass dispatchbar).
-- **Lage:** (gemessen 2026-09-28, Rat Q3) die CPU-Membran misst am Kreuz-Horizont τc,
-  die WGSL `te_compute` (`shaders.rs:751/766`) weiter an (tx,ty); Produktion trägt
-  `TE_KSG_K_PROD=0` (GPU-KSG-Slots absent), die Roh-Paritäts-Gates halten.
-  (gemessen 2026-09-29 River 65: `ci-check` rot — Trigger nicht gefeuert.)
-- **Blockade:** keine (nur der Trigger).
-- **Braucht:** `find_cross_mi_lag` in `te_compute` spiegeln + Horizont-Parity-Gate.
+- **Trigger:** der `te-gate`-Lauf auf dem HEAD nach diesem Commit schließt ab.
+- **Lage:** (gemessen 2026-09-29 River 65 via `cargo check` + `git diff`) `find_cross_mi_lag` ist in WGSL gespiegelt
+  (`shaders.rs:502-565`); `te_compute` schreibt jetzt den Kreuz-Horizont τc
+  (`shaders.rs:814-868`), Parity-Gate `gate_wgsl_horizon_and_ksg_parity_against_cpu_reference`
+  (`te.rs:7088`, Horizon-Asserts `:7286-7406`), Crosscheck `src/mathematikerin/tests.rs:316-323`.
+  `cargo check`/`cargo check --tests` 0/0. Die GPU-Parität selbst läuft nur in CI
+  (compute-only-Adapter; Named-Skip ohne Adapter) — die lokale Verifikation ist `cargo check`.
+- **Blockade:** keine (nur CI-Verifikation).
+- **Braucht:** den `te-gate`-Lauf lesen (`ci_manage view <id>`); bei rot den Horizont-Assert prüfen.
 
-### ENSO TE-Probe
+### ENSO TE-Probe — Blatt I
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mycelium manifestiert das `ersstv5_nino34`-CDN-Asset.
-- **Lage:** (gemessen 2026-09-29 River 63 via `register_lookup ersstv5`) die Quellenzeile
-  steht (`phi/sources.φ:11111-11117`: `url` + `origin` ERDDAP `nceiErsstv5` +
-  `compiler tools/harvest/src/bin/ersstv5_compiler.rs` + `field ersstv5_nino34_ssta`);
-  der Compiler existiert; der Blatt-/Paar-Zuschnitt ist operator-gebunden
-  (`state/zustand/wartend.φ:23` `blatt-zuschnitt`, Aufnehmer river). (2026-09-29 mycelium205,
-  gefaltet: der `ersstv5-cdn.yml`-Arm ist gebaut, der Lauf dispatcht.) (2026-09-29 River 65 via
-  `ci_manage log 36555543691`: der Lauf `ersstv5-cdn` ist **failure** — `ersstv5_compiler
-  --ci-mode` fetch `.../erddap/griddap/nceiErsstv5.csv?...` curl 22, **HTTP 403**, exit 2; der
-  Trigger ist nicht gefeuert. `archive_search --verdict` auf dieselbe URL liefert **lokal**
-  direct+proton HTTP 200, 14 999 659 B — der 403 ist umgebungsspezifisch (Runner);
-  `fetch_raw_bytes` (`src/archivar/fetch.rs:149`) setzt keinen User-Agent.)
-- **Blockade:** CDN-Manifestation (Mycelium) + Operator-Zuschnitt des Paares.
-- **Braucht:** Mycelium fährt `ersstv5_compiler --ci-mode` + Release-Asset; der
-  Operator-Zuschnitt reist als Punkt an Future (siehe `## An future`); dann die Probe
-  (OMNI `omni_hro_imf_bz_gsm_nt` × `ersstv5_nino34_ssta`) nach `nobel_probe_corona.rs`
-  binden.
+- **Trigger:** der §3-Beschluss über die Blatt-Reihenfolge nach dem ersten gemessenen Lauf.
+- **Lage:** (gemessen 2026-09-29 River 65 via `enso_blatt_probe`-Lauf + `archive_search --verdict`) **Riss:** das Handover nannte
+  `nobel_probe_corona.rs` als Bindungsziel; gemessen ist corona das **Muster**
+  (`blatt-papier-beweis.md:34-37`), die ENSO-Probe fehlte. Neu gebaut:
+  `tools/measure/src/bin/enso_blatt_probe.rs` (Muster corona/`bz_blatt_probe`);
+  Lauf `OMEGAFLOW_HIDDEN=1` → Bz n=308 059, SST n=656, gemeinsame Monate n=542;
+  TE(Bz→SST) best lag 8 = 2.07e-1 < Schwelle 2.27e-1 → **still**; TE(SST→Bz) lag 9
+  = 2.27e-1 < 2.39e-1 → **still**. Asset manifestiert (success attempt 2, HTTP 206);
+  Zuschnitt NINO3.4 im Compiler (`ersstv5_compiler.rs:14-17`).
+- **Blockade:** keine — Feld gemessen: `COMP_IMF_BZ_GSM` ist das registrierte
+  `omni_hro_imf_bz_gsm_nt` (beide gehören zu `omni_hro_1min.bin`, `sources.φ:736/746`);
+  der frühere Riss war ein ungemessener Fehlalarm.
+- **Braucht:** entscheiden, ob die Blatt-I-Frage (Wind ↔ SST) oder das gemessene,
+  registrierte Paar (Bz × SST) gilt; dann §3-I mit der gemessenen **Stille** schließen.
+
+### TE-Null-Riss — FPR unter Autokorrelation (#13 / #43)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der `te-gate`-Lauf `fpr-membrane` auf dem HEAD schließt ab.
+- **Lage:** (gemessen 2026-09-29 River 65) Ursache: der **Block-Null** (`te.rs:1704-1719`,
+  auf y allein, `:1200`) leckt unter Autokorrelation → FPR 12.14 % @a=0.9; der **Phase-Null**
+  (`te.rs:1664-1702`) marginal 8.57 %; der **Arx** (`arx_conditional_surrogate`, `te.rs:1036-1080`)
+  kontrolliert FP, ist modellbasiert. Die vier Kalibrier-Gates pinnen **Phase**
+  (`te.rs:4733/4762/4802/5017`). **Die Membran-FPR bei a=0.9 mit Produktionsparametern
+  (KSG/dim-3/n_surr=10) ist ungemessen.** **Rat-Verdikt (2026-09-29):** measure-first; die
+  Batterie vergleicht Phase vs Arx an Membran-Parametern (a=0.0/0.5/0.9, n=1000,
+  8 %-Ceiling); Block nur Print-Zeile, nie re-assertet; **Option 2 (Membran→Arx)** ist die
+  Richtung, conditional on the battery. Batterie gebaut: `gate_membrane_fpr_phase_vs_arx_n_1000`
+  (`te.rs:6199-6254`, `#[ignore]`) + `topological_te_arx` (`te.rs:3262-3284`); CI-Job
+  `fpr-membrane` (`te-gate.yml:58-66`). `cargo check`/`--tests` 0/0.
+- **Blockade:** keine (nur der CI-Lauf und danach das Rat-Wort über den Switch).
+- **Braucht:** den `fpr-membrane`-Lauf in `te-gate` lesen (`ci_manage view`); bei Grün hält
+  die Phase, bei Rot ist der Arx-Switch (Option 2) freigegeben — dann die vier Gates auf
+  den neuen Null umschreiben.
 
 ### Rätsel Ⅰ — Jeans-Engine, Zensus gesetzt
 - **Status:** wartend | **Bindung:** eigen
@@ -157,85 +175,86 @@ Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier f
 
 ### Weberin-Lücke — Prosa-Träger `membran-ladearchitektur`
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountain liefert die `format vlde`-Quelle (dann derived-field-Wiring).
-- **Lage:** (gemessen 2026-09-29 River 64) übernommen von mountain-folge202;
-  `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` trägt den real offenen
-  Marker `:234-235` (Vlies-Dichte/TE/Verdict als Derived-Field-Schicht; Reader
-  `src/archivar/vlies.rs` steht, `format vlde` fehlt in `phi/sources.φ`); die
-  Enclosure-/Jump-/ω-Loop-Punkte der Survey sind gebaut (Nachtrag `:203-233`). River
-  ist Prosa-Träger.
-- **Blockade:** die `format vlde`-Quelle (Mountain) fehlt.
-- **Braucht:** Mountain `format vlde`; dann das derived-field-Wiring im ω()-Loop.
+- **Trigger:** der `ci-check`/`te-gate`-Lauf auf dem HEAD nach diesem Commit schließt ab.
+- **Lage:** (gemessen 2026-09-29 River 65 via `cargo check`/`--tests` 0/0) `vlies_asset_path()`/
+  `load_asset` (`vlies.rs`: env `OMEGAFLOW_VLIES_ASSET` → `state/` → `data/`);
+  `SkyState.vlies: Option<DensityField>`, `SkyReport.vlies_count: Option<u64>` (`s2.rs`);
+  `vlies_fingerprint`/`vlies_reload()` nach `sky_reload`-Muster (`omega.rs`, kein Fetch im
+  ω()-Loop); HUD-Token `vlies {}` (absent → `-`, `Some(0)` → `0`, null-echt). Die dormanten
+  `format vlde`-Blöcke (`extract.rs`, `main_flow.rs`) sind **gestrichen**, Gate-Fixture in
+  `commit_gate_vocab.json`; `vlies.rs`-Reader bleibt. `cargo check`/`--tests` 0/0.
+- **Blockade:** keine.
+- **Braucht:** den Lauf lesen; der Survey-Marker `:234-235` ist nachgezogen.
 
-## An mountain
+### GIC-Paper — Review-Auflagen (Overclaim)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort zur Einreichung (LOCK).
+- **Lage:** (gemessen/revidiert 2026-09-29 River 65) alle sechs Befunde **halten**
+  (file:line); das Paper ist revidiert (`docs/paper/gic-causal-driver.md`, neuer Header-sha
+  `a5d01595…`, Abstract 196 Wörter): `n_surr`-Runden als **nicht-vergleichbar** benannt,
+  Lag-0 grain-scoped + Edge-Bin-Flag, „is real" entfernt / Asymmetrie 1.09 unter der einzigen
+  kalibrierten Skala (Hénon 2.1–8.4), PCMCI als „13-of-16-Mehrheit gegen den Jahres-Pfeil",
+  post-hoc-Minutenschwelle zurückgenommen, Tabellen-Mislabel → `silent`. **Riss:** das
+  claude-Artefakt ist nur UI-Chrome (kein Review-Inhalt); die Reviews zielten auf den
+  pre-river-48-Paste.
+- **Blockade:** die `fam`-FWER-Kalibrierung braucht eine eigene Messung (die
+  `fpr-membrane`-Batterie misst topologisch, nicht die Skalar-`fam`).
+- **Braucht:** `fam`-FWER-Kalibrierung (Skalar-Batterie), Jahres-Runde @`n_surr`=100
+  nachfahren, Jahres-lag-1-Zeilen tabellieren; dann Operator-Wort zur Einreichung.
+
+## An sensory
 Origin: river folge65.
 
-**Operator-Wort 2026-09-29:** diesen Block bevorzugt beim nächsten Pass falten/abarbeiten —
-River wartet auf die Aufnahme. Die zwei Lieferungen lösen je einen wartenden River-Punkt —
-der erweiterte `dr3_stars`-Record (σ_ϖ/σ_pm) öffnet
-Rätsel Ⅰ, die `format vlde`-Quelle öffnet die Weberin-Lücke, die `daten-holdings`-Träger-Zeile
-schließt den Orphan-Zensus. Der archivar-Regressions-Arm und der Scanner-Lint sind geheilt
-(nur noch Kenntnis).
-
-- **archivar-Regression — geheilt (`502242e7e`, mountain 204):** die 11 lib-Tests
-  (`archivar::pds3_img`/`pds3_table`/`pds3_binary`/`pds4`/`pds4_binary`/`gras_2c`/`hips`/`extract`)
-  sind laut Stehendem Pass grün; `ci-check 36555530111` am HEAD in flight.
-- **`daten-holdings-inventur`** (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`):
-  Mountain-Natur (Datenbestand) mit offenem Marker `:56` (976-B-Placeholder, `pending`).
-  Braucht eine Mountain-Träger-Zeile; das Layout-Wort `:74/:139` reist an Future.
-- **`dr3_stars` Compiler-Fehler-Atom:** der Record (44 B) trägt keine σ_ϖ/σ_pm; Rätsel Ⅰ
-  hängt daran. Braucht: erweiterter Record + neue Asset-Version (CDN).
-- **Scanner-Fehlalarm `wartet ⊂ erwartet` — geheilt (`502242e7e`, mountain 204):** die
-  Wortgrenzenlogik (`register_lookup.rs:112`) entfernt die Substring-Falsch-Orphans;
-  verifiziert 2026-09-29 River 65, `--orphan-docs` = 0.
-- **`ersstv5`-Fetch 403 (blockiert die ENSO-Manifestation):** der CI-Fetch `ersstv5_compiler
-  --ci-mode` auf `https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv?ssta[...]`
-  liefert **403** (curl exit 22); dieselbe URL liefert lokal `archive_search --verdict`
-  direct+proton HTTP 200 (14 999 659 B) — umgebungsspezifisch, kein URL-Defekt. `fetch_raw_bytes`
-  (`src/archivar/fetch.rs:149`) setzt keinen User-Agent. Braucht: UA-/Routen-Frage des
-  ERDDAP-Fetches prüfen (die Ursache ist ungemessen, nicht auf UA festgelegt).
-
-## An future
-Origin: river folge65.
-
-**Gemessene Fälligkeit:** zwei Operator-Worte offen — der ENSO-Blatt-/Paar-Zuschnitt und
-das Migrations-Ziel-Layout `daten-holdings-inventur`. Beide sind vorbereitet bis zur Kante
-(Quellenzeile bzw. Marker gemessen); nur das Wort fehlt.
-
-- **ENSO-Blatt-/Paar-Zuschnitt:** Lage — die `ersstv5_nino34`-Quellenzeile steht
-  (`phi/sources.φ:11111-11117`), die Manifestation liegt bei Mycelium (derzeit 403-blockiert,
-  siehe `## An mycelium`); offen ist allein,
-  welches Paar (OMNI `omni_hro_imf_bz_gsm_nt` × `ersstv5_nino34_ssta`) in Blatt/Probe
-  zugeschnitten wird. Frage — welchen Zuschnitt nimmt die ENSO-TE-Probe? Bei Ja: Probe wird
-  nach `nobel_probe_corona.rs` gebunden. Bei Nein: Zuschnitt bleibt offen.
-- **Migrations-Ziel-Layout `daten-holdings-inventur`:** Lage —
-  `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:74/:139` wartet auf das
-  Operator-Wort zum Ziel-Layout. Frage — welches Layout? Bei Ja: Umsetzung startet.
-  Bei Nein: bleibt `pending`.
+- **Absoluter Pfad in sensory-folge208 — `ci-check` rot (gemessen 2026-09-29):** der Scan
+  `path_reference_scan` meldet in `docs/handover/handover-2026-09-29-sensory-folge208.md:65`
+  einen absoluten Pfad (Präfix `home`). Braucht: auf die marker-freie Form umstellen (die
+  physische Adresse trägt allein `archive-root`); dann ist der Scan-Anteil geheilt.
 
 ## An mycelium
 Origin: river folge65.
 
-**Operator-Wort 2026-09-29:** diesen Block bevorzugt beim nächsten Pass falten/abarbeiten —
-River wartet auf die Aufnahme. `ersstv5-cdn` rot; `ci-gate` bereits geheilt.
+- **`te-gate #13` / `measure-gates #43` — Entscheid (2026-09-29):** der Rat hat **measure-first**
+  entschieden (weder Option 1 noch 3): die entscheidende Zahl — die Membran-FPR bei a=0.9 mit
+  Produktionsparametern (KSG/dim-3/n_surr=10) — existiert nicht. Die Batterie
+  `gate_membrane_fpr_phase_vs_arx_n_1000` (Phase **vs** Arx) ist gebaut (`src/mathematikerin/te.rs`,
+  `#[ignore]`) samt CI-Job `fpr-membrane` (`te-gate.yml`), **noch nicht gelaufen** (Commit +
+  Dispatch ausstehend). Richtung: Option 2 (Membran→Arx), **conditional on the battery**;
+  kein Null-/Estimator-Wechsel vor dem Lauf. Block wird nicht re-assertet (nur Print-Zeile).
+- **ENSO:** Riss bestätigt gelöst (`ersstv5-cdn 36555543691` attempt 2 success, Asset HTTP 206);
+  der Blatt-Zuschnitt liegt bei Future (Operator-Wort NINO3.4 ist eingetroffen).
 
-- **ENSO-Manifestation (bevorzugt):** `ersstv5-cdn 36555543691` = **failure** — `ersstv5_compiler
-  --ci-mode` fetch `https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv?...` →
-  `curl: (22) ... error: 403`, exit 2. Dieselbe URL liefert lokal `archive_search --verdict`
-  direct+proton 200 (14 999 659 B) — der 403 ist runner-spezifisch. Braucht: den Lauf erneut
-  dispatchen bzw. die CI-Route prüfen (der UA-Fix liegt bei Mountain, `## An mountain`); dann
-  das Release-Asset `coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin` manifestieren.
-- **`ci-gate` `dropped-gate` — erledigt (folge206):** `dropped-baseline 1131` im annehmenden
-  Commit (gemessen 2026-09-29, `docs/zustand/dropped-baseline.md:16`); `36555530169` wird damit
-  grün. Nur noch Kenntnis.
+## An future
+Origin: river folge65.
+
+**Gemessene Fälligkeit:** ein Operator-Wort offen — das Migrations-Ziel-Layout
+`daten-holdings-inventur`. Vorbereitet bis zur Kante (Marker gemessen); nur das Wort fehlt.
+Der ENSO-Zuschnitt ist **beantwortet** (Operator-Wort via future-folge155: NINO3.4; in der
+eigenen Übergabe gefaltet) — kein offener Punkt mehr.
+
+- **Migrations-Ziel-Layout `daten-holdings-inventur`:** Lage —
+  `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:74/:139` wartet auf das
+  Operator-Wort zum Ziel-Layout. Frage — welches Layout? Bei Ja: Umsetzung startet.
+  Bei Nein: bleibt `pending`.
 
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Pfad-begrenzte
 Commit-Pfade dieser Session:
 
-`docs/handover/handover-2026-09-29-river-folge65.md` ·
-`.opencode/command/river.md`.
+`docs/handover/handover-2026-09-29-river-folge65.md` (Faltung future-155/156, mycelium-206/207, mountain-206, sensory-207/208 + absolute-Pfad-Heilung) ·
+`tools/measure/src/bin/enso_blatt_probe.rs` (neu, Blatt I) ·
+`src/mathematikerin/shaders.rs` · `src/mathematikerin/te.rs` · `src/mathematikerin/tests.rs` (WGSL-Horizont + FPR-Batterie) ·
+`.github/workflows/te-gate.yml` (Job `fpr-membrane`) ·
+`src/archivar/vlies.rs` · `src/mathematikerin/s2.rs` · `src/mathematikerin/omega.rs` (Weberin derived-field) ·
+`src/archivar/extract.rs` · `src/archivar/main_flow.rs` (vlde-Dispatch gestrichen) ·
+`src/gate/commit_gate_vocab.json` (vlde-Fixture) ·
+`docs/paper/gic-causal-driver.md` (GIC-Review-Auflagen) ·
+`docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (Weberin-Marker nachgezogen).
 
-Privat/gitignored (nicht committet): `state/river/archive-search-preset.txt` (neu) ·
-`state/operator-gespraeche/2026-09-29-river.md` (fortgeschrieben).
+Nicht committet (fremde Hunks im geteilten Baum, unangetastet): `AGENTS.md`,
+die Register in `phi/` (`sources.φ` u. a.), `src/archivar/units.rs` und `tests.rs`,
+`tools/harvest/*`, `tools/register/src/bin/register_lookup.rs`, `tools/utils/src/bin/spk_split.rs`
+(Mountain/Sensory, eigene Commits).
+
+Privat/gitignored (nicht committet): `state/operator-gespraeche/2026-09-29-river.md`
+(fortgeschrieben) · `state/zustand/wartend.φ` (Aufnehmer river).
