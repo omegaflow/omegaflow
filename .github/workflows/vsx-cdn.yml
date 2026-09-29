@@ -25,6 +25,7 @@ jobs:
             --table "B/vsx/vsx" \
             --columns 'ra:RAJ2000;dec:DEJ2000;max:max;min:min;period:Period' \
             --skip-null max \
+            --async 3600 \
             --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
             --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
             --out vsx.json \

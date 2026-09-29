@@ -4,7 +4,7 @@
   date: 2026-09-16
   sha256: a5ca7c8ff9013348a348eef929714a70b100b6a59ade72c7d33df2cc084466d4
   status: draft
-  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md docs/blatt/blatt-h0-linien-register.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
 -->
 # DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
 

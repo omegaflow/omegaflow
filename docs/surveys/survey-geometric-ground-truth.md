@@ -2,7 +2,7 @@
   title: Geometric ground truth — the spatial chain against JPL Horizons
   class: survey
   date: 2026-08-23
-  sha256: 3a46b3a38ce8f4719f3ce5af96f537e995b9a162f1afe71a7bbbaee92186cfb8
+  sha256: c3a149a76e0d95d3dfad04141a91aee49a36a2b6fe6bcbd605eca277690783b2
   status: live
   see-also: docs/paper/solar-cycle-dynamo.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -100,9 +100,11 @@ decisive same-ephemeris proof.
 
 ## The register duty
 
-- `open` — the CDN planetary bins carry a ~116 km SSB offset because the CI
-  compiled them from a lighter DE selection; recompiling the planets from the
-  full `de441.bsp` and re-uploading collapses the inner planets to sub-meter.
+- Settled — the CDN planetary bins now carry the full-`de441.bsp` generation
+  (uploaded 2026-09-28): `ephemeris_sun.bin` 193 729 280 B and
+  `ephemeris_earth.bin` 193 729 224 B, both above the 183 MB boundary
+  (measured 2026-09-29 via `curl -sIL`). The earlier ~116 km SSB offset from
+  the lighter-DE CI compile is gone; the inner planets collapse to sub-meter.
   The check exists and reports the number.
 - Named, not a duty — the outer planets (Jupiter/Saturn/Uranus/Neptune) differ
   from Horizons by ~0.01–0.04″ because Horizons serves them from merged

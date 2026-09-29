@@ -2878,14 +2878,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
     let anomalies = take_anomalies();
     if !anomalies.is_empty() {
         if std::env::var("GH_TOKEN").is_ok() {
-            let date = match SystemTime::now().duration_since(UNIX_EPOCH) {
-                Ok(d) => {
-                    let (y, m, d) = days_to_ymd(d.as_secs() / 86400);
-                    format!("{}-{:02}-{:02}", y, m, d)
-                }
-                Err(_) => "clock-unavailable".to_string(),
-            };
-            let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
+            let title = "[Automated CI Report] Omegaflow Anomalies".to_string();
             let body = anomaly_issue_body(&anomalies);
             let already_open = match Command::new("gh")
                 .arg("issue")
