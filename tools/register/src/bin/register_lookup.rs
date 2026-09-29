@@ -2110,17 +2110,55 @@ fn leading_region(body: &str) -> &str {
     }
 }
 
-fn trigger_fallback(text: &str) -> String {
-    match text.find("Trigger").or_else(|| text.find("trigger")) {
-        Some(at) => text[at..].to_string(),
-        None => {
-            let head = match text.find('|') {
-                Some(at) => &text[..at],
-                None => text,
-            };
-            leading_region(head).to_string()
+fn field_value_after_label(text: &str, label: &str) -> Option<String> {
+    let needle = label.to_ascii_lowercase();
+    let lower = text.to_ascii_lowercase();
+    let mut from = 0;
+    while let Some(rel) = lower[from..].find(&needle) {
+        let abs = from + rel;
+        if abs > 0
+            && text[..abs]
+                .chars()
+                .last()
+                .map(|c| c.is_alphanumeric())
+                .unwrap_or(false)
+        {
+            from = abs + needle.len();
+            continue;
         }
+        let after = &text[abs + needle.len()..];
+        let mut colon: Option<usize> = None;
+        for (i, c) in after.char_indices() {
+            if c == '*' || c.is_whitespace() {
+                continue;
+            }
+            if c == ':' {
+                colon = Some(i);
+            }
+            break;
+        }
+        if let Some(i) = colon {
+            let value = after[i + 1..]
+                .trim()
+                .trim_matches(|c: char| c == '*' || c.is_whitespace());
+            if !value.is_empty() {
+                return Some(value.to_string());
+            }
+        }
+        from = abs + needle.len();
     }
+    None
+}
+
+fn trigger_fallback(text: &str) -> String {
+    if let Some(value) = field_value_after_label(text, "trigger") {
+        return value;
+    }
+    let head = match text.find('|') {
+        Some(at) => &text[..at],
+        None => text,
+    };
+    leading_region(head).to_string()
 }
 
 fn extract_open_points(text: &str) -> Vec<OpenPoint> {
@@ -2616,21 +2654,8 @@ fn following_block(text: &str, point_idx0: usize) -> Vec<String> {
 
 fn block_field(block: &[String], label: &str) -> Option<String> {
     for line in block {
-        let lower = line.to_ascii_lowercase();
-        let pos = match lower.find(label) {
-            Some(p) => p,
-            None => continue,
-        };
-        let rest = &line[pos..];
-        let colon = match rest.find(':') {
-            Some(c) => c,
-            None => continue,
-        };
-        let value = rest[colon + 1..]
-            .trim()
-            .trim_matches(|c: char| c == '*' || c.is_whitespace());
-        if !value.is_empty() {
-            return Some(value.to_string());
+        if let Some(value) = field_value_after_label(line, label) {
+            return Some(value);
         }
     }
     None
@@ -4267,7 +4292,7 @@ mod tests {
         let base = env::temp_dir().join(format!("rl-fired-stamp-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (sensory) \u{2014} *Notes:* the route is unmeasurable; ETA 2026-10-02; measured 2026-09-28.\n- **ENSO-cut** | (measured 2026-09-28) state/zustand/wartend.\u{3c6}:23. Needs: operator word.\n- **point-a** \u{2014} *Notes:* x. *Trigger:* 2024-01-01. *Question:* y?\n";
+        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/zustand/wartend.\u{3c6}:23.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -4282,14 +4307,48 @@ mod tests {
             out
         );
         assert!(
-            !out.iter().any(|l| l.contains("ENSO-cut")),
+            !out.iter().any(|l| l.contains("enso-cut")),
             "a pipe-field measurement stamp must not fire: {:?}",
             out
         );
         assert!(
             out.iter()
-                .any(|l| l.starts_with("FIRED\t") && l.contains("punkt-a")),
+                .any(|l| l.starts_with("FIRED\t") && l.contains("inline-trigger")),
             "an inline Trigger date must fire: {:?}",
+            out
+        );
+        assert_eq!(fired, 1, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn fired_points_lage_block_stamp_not_trigger() {
+        let base = env::temp_dir().join(format!("rl-fired-block-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n### kein-trigger-feld\n- **Status:** wartend\n- **Lage:** (gemessen 2024-09-28) Trigger weder best\u{e4}tigt noch ausgeschlossen.\n\n### trigger-ohne-datum\n- **Status:** wartend\n- **Trigger:** Zustellung LZ473049629CN.\n- **Lage:** (gemessen 2024-09-28) kein Render.\n\n### vergangen\n- **Status:** termin\n- **Trigger:** 2024-09-01.\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
+            body,
+        )
+        .unwrap();
+        let handovers = collect_live_handovers_in(&base);
+        let head = "a".repeat(40);
+        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        assert!(
+            !out.iter().any(|l| l.contains("kein-trigger-feld")),
+            "a Lage line carrying the word Trigger but no Trigger field must not fire: {:?}",
+            out
+        );
+        assert!(
+            !out.iter().any(|l| l.contains("trigger-ohne-datum")),
+            "a Trigger field without a date must not read the Lage stamp: {:?}",
+            out
+        );
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("FIRED\t") && l.contains("vergangen")),
+            "a Trigger field with a past date must fire: {:?}",
             out
         );
         assert_eq!(fired, 1, "{:?}", out);

@@ -84,6 +84,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_binary" => pds4_binary::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
         "pds4_fits" => pds4_fits::parse_series(bytes),
+        "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
         "lab_reader" => lab_reader::parse_bin(bytes).and_then(|t| t.series()),
         "galileo_odr" => galileo_odr::parse_series(bytes),
@@ -196,6 +197,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
             }
             Some(n)
         }
+        "hips_png" => hips::parse_bin(bytes).map(|_| 1),
         _ => None,
     }
 }
@@ -436,6 +438,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             _ => None,
         },
         "gk2a_ami" => gk2a_ami::component_name(comp),
+        "hips_png" => hips::component_name(comp),
         "goes_abi" => goes_abi::component_name(comp),
         "atdf" => atdf::component_name(comp),
         "ulysses_atdf" => atdf::uly_component_name(comp),
@@ -835,6 +838,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "esacci_sst_l4_cdr3" => match comp {
             crate::geo::COMP_ESACCI_SST => Some("esacci_sst_l4_cdr3"),
+            _ => None,
+        },
+        "ersstv5_nino34" => match comp {
+            crate::geo::COMP_ERSSTV5 => Some("ersstv5_nino34_ssta"),
             _ => None,
         },
         _ => None,
@@ -3451,6 +3458,71 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 },
                 fc.clone(),
             ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "ndk" {
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let m0_fc = fc.clone();
+        let mw_fc = FieldConfig {
+            key: "mw".to_string(),
+            name: "gcmt_mw".to_string(),
+            kernel: 3,
+            force: 4,
+            tau: m0_fc.tau,
+            absorption: m0_fc.absorption,
+            advection: m0_fc.advection,
+            unit: "Mw".to_string(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for ev in crate::archivar::ndk::parse_ndk(body) {
+            let m0_nm = ev.scalar_moment_dyne_cm() * 1e-7;
+            if !m0_nm.is_finite() || m0_nm <= 0.0 {
+                continue;
+            }
+            let position = Position::Surface {
+                body_name: frame_body_name(&src.frame),
+                lat: ev.centroid_lat,
+                lon: ev.centroid_lon,
+                alt: 0.0,
+            };
+            let Some(epoch) = ymd_to_days(ev.year as i64, ev.month, ev.day)
+                .map(|d| d as f64 * 86400.0)
+                .and_then(|unix| lsk.unix_to_tdb(unix))
+            else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: ev.centroid_depth_km,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    position: position.clone(),
+                    name: m0_fc.name.clone(),
+                    value: m0_nm,
+                },
+                m0_fc.clone(),
+            ));
+            if let Some(mw) = ev.mw() {
+                channels.push((
+                    Channel {
+                        z: ev.centroid_depth_km,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        position: position.clone(),
+                        name: mw_fc.name.clone(),
+                        value: mw,
+                    },
+                    mw_fc.clone(),
+                ));
+            }
         }
         return ExtractResult::Measurements(channels);
     }
