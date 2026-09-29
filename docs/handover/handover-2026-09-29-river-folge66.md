@@ -3,7 +3,7 @@
   session: River-Folge 66
   class: handover
   date: 2026-09-29
-  sha256: 0968d0ee171c7247c1c47ad16705d2345461ac659eb06c8d7133278d9be1caf9
+  sha256: fc43bd612be1d796dfc35eee70d72c4c087a40301d8266b439f4a66a0b393ef4
   status: live
 -->
 # Handover — River-Folge 66 (2026-09-29)
@@ -59,7 +59,7 @@ Konzepte `docs/concepts/*`. Linien-Preset privat `state/river/archive-search-pre
 - **Trigger:** Operator-Wort zur Einreichung (LOCK).
 - **Lage:** (gemessen 2026-09-29 River 66 via `grind-flash`/`grind-max` + `cargo check`) die sechs Befunde sind im Paper revidiert (Header-sha `720bd0f9…`). Von den drei verbliebenen Auflagen: **(a) fam-FWER-Kalibrierung** — Skalar-Runden-Max-Batterie gebaut (`tools/measure/src/bin/fam_calibration.rs`), Design verifiziert (Nominal `C/(C+C·n_surr)=1/(n_surr+1)`; `phase_randomized_surrogate` kanonisch); lokale bound Runs 8–10 Trials (FWER 0/10 a=0, 1/10 a=0.9; FPR 0/120 bzw. 2/120), **Betriebs-n-Zahl pending Dispatch**; CI-Job `fam-scalar-calibration.yml` (6 Shards, nsurr10 600 Trials / nsurr100 60 Trials, je <300 min) — ungemessen. **(b) Jahres-Runde @ n_surr=100** — `bz_retro_probe.rs --yearly-round` (6 Paare lag 0/1, per-Lag TE/threshold/fam) + `bz-yearly-nsurr100.yml` (ABK 2024/2025, SOD 2024), deterministisch-parallel; Datenpfad `--verdict` HTTP 206; **Lauf pending Dispatch**. **(c) Jahres-lag-1-Zeilen** — resolved: `transfer_entropy_lag(x,y,0)` (`te.rs:96-99`) dispatcht auf `transfer_entropy` (`x[t+1]`, `te.rs:33`) ≡ `transfer_entropy_lag(x,y,1)`; lag-0≡lag-1 exakt gemessen (`0.21722066662653602`), die Jahres-Familie ist **6 distinkte** Paare, die tabellierten `0 h`-Zeilen **sind** die lag-1-Zeilen. n=2200 (oberes Betriebs-n) bleibt eigener, noch nicht gebauter Job.
 - **Blockade:** die Betriebs-n-Zahlen brauchen den CI-Dispatch (Workflows uncommittet → `workflow_dispatch` 404).
-- **Braucht:** die zwei Workflows dispatchen (`gh workflow run fam-scalar-calibration.yml` · `gh workflow run bz-yearly-nsurr100.yml`), dann die Ergebnisse in §4.2–4.4/§6 lesen und eintragen; dann Operator-Wort zur Einreichung.
+- **Braucht:** die zwei Läufe lesen (`ci_manage view 36621199997` fam-scalar-calibration · `ci_manage view 36621205592` bz-yearly-nsurr100; dispatched 2026-09-29 19:42 UTC), Ergebnisse in §4.2–4.4/§6 eintragen; dann Operator-Wort zur Einreichung.
 
 ### CI-Verifikation — `ci-check` am HEAD
 - **Status:** wartend | **Bindung:** eigen
