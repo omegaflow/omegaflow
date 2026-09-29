@@ -2154,6 +2154,30 @@ fn field_value_after_label(text: &str, label: &str) -> Option<String> {
     None
 }
 
+fn strip_measurement_stamps(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut i = 0usize;
+    while i < text.len() {
+        let ch = match text[i..].chars().next() {
+            Some(c) => c,
+            None => break,
+        };
+        if ch == '(' {
+            if let Some(rel) = text[i..].find(')') {
+                let close = i + rel;
+                let inner = text[i + 1..close].to_ascii_lowercase();
+                if inner.contains("gemessen") || inner.contains("measured") {
+                    i = close + 1;
+                    continue;
+                }
+            }
+        }
+        out.push(ch);
+        i += ch.len_utf8();
+    }
+    out
+}
+
 fn trigger_fallback(text: &str) -> String {
     if let Some(value) = field_value_after_label(text, "trigger") {
         return value;
@@ -2162,7 +2186,7 @@ fn trigger_fallback(text: &str) -> String {
         Some(at) => &text[..at],
         None => text,
     };
-    leading_region(head).to_string()
+    strip_measurement_stamps(leading_region(head))
 }
 
 fn extract_open_points(text: &str) -> Vec<OpenPoint> {
@@ -4311,7 +4335,7 @@ mod tests {
         let base = env::temp_dir().join(format!("rl-fired-stamp-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/zustand/wartend.\u{3c6}:23.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
+        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/zustand/wartend.\u{3c6}:23.\n\n- **enso-zuschnitt** (wartend) (gemessen 2024-09-28) \u{2014} no render carries a status line.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -4328,6 +4352,11 @@ mod tests {
         assert!(
             !out.iter().any(|l| l.contains("enso-cut")),
             "a pipe-field measurement stamp must not fire: {:?}",
+            out
+        );
+        assert!(
+            !out.iter().any(|l| l.contains("enso-zuschnitt")),
+            "a leading-region measurement stamp before the delimiter must not fire: {:?}",
             out
         );
         assert!(
