@@ -232,6 +232,108 @@ pub fn charge_oscillators(spec: &ChargeSpectrum) -> Vec<SpinOscillator> {
         .collect()
 }
 
+pub const CHARGE_MAGIC: [u8; 4] = *b"RIXC";
+pub const CHARGE_VERSION: u8 = 1;
+
+#[derive(Clone, Debug)]
+pub struct ChargeSpectrumBin {
+    pub momentum: f64,
+    pub axis: u8,
+    pub oscillators: Vec<SpinOscillator>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ChargeBin {
+    pub lab: Option<(f64, f64, f64)>,
+    pub spectra: Vec<ChargeSpectrumBin>,
+}
+
+pub fn parse_rixc_bin(bytes: &[u8]) -> Option<ChargeBin> {
+    if bytes.len() < 9 || bytes[0..4] != CHARGE_MAGIC || bytes[4] != CHARGE_VERSION {
+        return None;
+    }
+    let n_spectra = u32::from_le_bytes(bytes[5..9].try_into().ok()?) as usize;
+    let mut pos = 9usize;
+    let lat = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+    pos += 8;
+    let lon = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+    pos += 8;
+    let alt = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+    pos += 8;
+    let present = *bytes.get(pos)? != 0;
+    pos += 1;
+    let lab = if present && lat.is_finite() && lon.is_finite() && alt.is_finite() {
+        Some((lat, lon, alt))
+    } else {
+        None
+    };
+    let mut spectra = Vec::with_capacity(n_spectra);
+    for _ in 0..n_spectra {
+        let momentum = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+        pos += 8;
+        let axis = *bytes.get(pos)?;
+        pos += 1;
+        let n_osc = u32::from_le_bytes(bytes.get(pos..pos + 4)?.try_into().ok()?) as usize;
+        pos += 4;
+        let mut oscillators = Vec::with_capacity(n_osc);
+        for _ in 0..n_osc {
+            let freq_hz = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+            pos += 8;
+            let bin_width_hz = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+            pos += 8;
+            let val = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+            pos += 8;
+            let err = f64::from_le_bytes(bytes.get(pos..pos + 8)?.try_into().ok()?);
+            pos += 8;
+            oscillators.push(SpinOscillator {
+                freq_hz,
+                bin_width_hz,
+                val,
+                err,
+            });
+        }
+        spectra.push(ChargeSpectrumBin {
+            momentum,
+            axis,
+            oscillators,
+        });
+    }
+    Some(ChargeBin { lab, spectra })
+}
+
+pub fn encode_rixc_bin(bin: &ChargeBin) -> Vec<u8> {
+    let mut out = Vec::new();
+    out.extend_from_slice(&CHARGE_MAGIC);
+    out.push(CHARGE_VERSION);
+    out.extend_from_slice(&(bin.spectra.len() as u32).to_le_bytes());
+    match bin.lab {
+        Some((lat, lon, alt)) => {
+            out.extend_from_slice(&lat.to_le_bytes());
+            out.extend_from_slice(&lon.to_le_bytes());
+            out.extend_from_slice(&alt.to_le_bytes());
+            out.push(1u8);
+        }
+        None => {
+            out.extend_from_slice(&0.0f64.to_le_bytes());
+            out.extend_from_slice(&0.0f64.to_le_bytes());
+            out.extend_from_slice(&0.0f64.to_le_bytes());
+            out.push(0u8);
+        }
+    }
+    for s in &bin.spectra {
+        out.extend_from_slice(&s.momentum.to_le_bytes());
+        out.push(s.axis);
+        out.extend_from_slice(&(s.oscillators.len() as u32).to_le_bytes());
+        for o in &s.oscillators {
+            out.extend_from_slice(&o.freq_hz.to_le_bytes());
+            out.extend_from_slice(&o.bin_width_hz.to_le_bytes());
+            out.extend_from_slice(&o.val.to_le_bytes());
+            out.extend_from_slice(&o.err.to_le_bytes());
+        }
+    }
+    out
+}
+
 pub fn parse_sw_spin(text: &str) -> Option<SpinSpectrum> {
     let mut eloss = Vec::new();
     let mut weight = Vec::new();
@@ -440,5 +542,52 @@ mod tests {
         assert_eq!(back.spectra[0].oscillators.len(), 2);
         assert!((back.spectra[0].oscillators[0].val - 33.6050).abs() < 1e-12);
         assert_eq!(back.spectra[1].doping, 0);
+    }
+
+    #[test]
+    fn rixc_bin_roundtrip() {
+        let bin = ChargeBin {
+            lab: Some((45.206, 5.688, 200.0)),
+            spectra: vec![ChargeSpectrumBin {
+                momentum: -0.17,
+                axis: 0,
+                oscillators: vec![SpinOscillator {
+                    freq_hz: 2.886587e3 * MEV_TO_HZ,
+                    bin_width_hz: 2.0 * MEV_TO_HZ,
+                    val: 66.29702,
+                    err: 0.0,
+                }],
+            }],
+        };
+        let bytes = encode_rixc_bin(&bin);
+        assert_eq!(bytes[0..4], CHARGE_MAGIC);
+        assert_eq!(bytes[4], CHARGE_VERSION);
+        let back = parse_rixc_bin(&bytes).unwrap();
+        assert_eq!(back.lab, bin.lab);
+        assert_eq!(back.spectra.len(), 1);
+        assert_eq!(back.spectra[0].axis, 0);
+        assert!((back.spectra[0].momentum + 0.17).abs() < 1e-12);
+        assert_eq!(back.spectra[0].oscillators.len(), 1);
+        assert!((back.spectra[0].oscillators[0].val - 66.29702).abs() < 1e-9);
+    }
+
+    #[test]
+    fn rixc_bin_rejects_bad_magic() {
+        assert!(parse_rixc_bin(&[0, 0, 0, 0, CHARGE_VERSION, 0, 0, 0, 0]).is_none());
+    }
+
+    #[test]
+    fn rixc_bin_absent_anchor_is_none() {
+        let bin = ChargeBin {
+            lab: None,
+            spectra: vec![ChargeSpectrumBin {
+                momentum: 0.0,
+                axis: 0,
+                oscillators: Vec::new(),
+            }],
+        };
+        let back = parse_rixc_bin(&encode_rixc_bin(&bin)).unwrap();
+        assert_eq!(back.lab, None);
+        assert!(back.spectra[0].oscillators.is_empty());
     }
 }

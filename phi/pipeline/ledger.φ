@@ -61,4 +61,4 @@ note ExoMars TGO (ESA/Roskosmos, ACS/FREND) — 2026-09-28 HTTP 200 (2124 B FTP-
 
 disponiert
 kandidat https://pda.kasi.re.kr/
-note Danuri/KPLO (KARI/KASI) PDA + ShadowCam shadowcam.im-ldi.com — 2026-09-28 beide HTTP 200 HTML-Portal; kein maschinenlesbarer Daten-Endpoint. → phi/blocked_sources.φ parser-def gap html-parser-arm.
+note Danuri/KPLO (KARI/KASI): KASI-DALO pda.kasi.re.kr (Login-Wall) → phi/blocked_sources.φ blocked account; KARI KPDS kari.re.kr/kpds (HTML-Portal) → phi/blocked_sources.φ parser-def gap html-parser-arm; ShadowCam pds.shadowcam.im-ldi.com/derived (PDS4 verifizierbar) → phi/blocked_sources.φ pending. 2026-09-29.

@@ -8,6 +8,7 @@ use omegaflow::archivar::motion::{
 
 const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov";
 const HORIZONS_API: &str = "https://ssd.jpl.nasa.gov/api/horizons.api";
+const HALLEY_SOLUTION_EPOCH_JD: f64 = 2439875.5;
 
 const BODIES: [(&str, &str); 8] = [
     ("mercury", "199"),
@@ -81,6 +82,42 @@ fn horizons_vectors(
     if out.is_empty() { None } else { Some(out) }
 }
 
+fn extract_solution_epoch(text: &str) -> Option<f64> {
+    for line in text.lines() {
+        let line = line.trim();
+        if let Some(pos) = line.find("EPOCH=") {
+            let rest = &line[pos + 6..];
+            let first = rest.split_whitespace().next()?;
+            return first.parse().ok();
+        }
+    }
+    None
+}
+
+fn check_halley_calibration() {
+    let url = format!(
+        "{}?format=text&COMMAND='{}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'\
+         &START_TIME='JD2439875.5'&STOP_TIME='JD2439875.5'&STEP_SIZE='1d'",
+        HORIZONS_API, "90000030"
+    );
+    let Some(bytes) = fetch_raw_bytes(&url) else {
+        eprintln!("halley: Horizons elements request void — calibration not measured");
+        return;
+    };
+    let text = String::from_utf8_lossy(&bytes);
+    match extract_solution_epoch(&text) {
+        Some(epoch) => {
+            let delta_days = epoch - HALLEY_SOLUTION_EPOCH_JD;
+            eprintln!(
+                "halley: solution epoch {epoch:.4} JD — JPL#75 EPOCH 1968-01-20 ({HALLEY_SOLUTION_EPOCH_JD:.4} JD), delta {delta_days:+.4} d"
+            );
+        }
+        None => eprintln!(
+            "halley: solution epoch absent from the Horizons header — calibration not measured"
+        ),
+    }
+}
+
 fn check(name: &str, command: &str, args: &[String]) {
     let Some(eph) = load_ephemeris(name, args) else {
         eprintln!("{name}: ephemeris_{name}.bin absent or carries no CF-86 contract");
@@ -150,6 +187,10 @@ fn check(name: &str, command: &str, args: &[String]) {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.iter().any(|a| a == "--halley-calibration") {
+        check_halley_calibration();
+        return;
+    }
     let bodies: Vec<(&str, &str)> = match arg_value(&args, "--body") {
         Some(name) => BODIES.iter().filter(|(n, _)| *n == name).copied().collect(),
         None => BODIES.to_vec(),
@@ -167,5 +208,27 @@ fn main() {
     }
     for (name, command) in bodies {
         check(name, command, &args);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn halley_solution_epoch_parses_jpl75() {
+        let header = "\
+JPL/HORIZONS                      1P/Halley                2026-Sep-29 09:59:53
+Rec #:90000030        Soln.date: 2025-Nov-21_15:57:34   # obs: 8518 (1835-1994)
+
+IAU76/J2000 helio. ecliptic osc. elements (au, days, deg., period=Julian yrs):
+
+  EPOCH=  2439875.5 ! 1968-Jan-20.0000000 (TDB)    RMSW= n.a.
+   EC= .9679359956953212   QR= .5748638313743413   TP= 2446469.9736161465
+COMET comments
+1: soln ref.= JPL#75, data arc: 1835-08-21 to 1994-01-11
+";
+        let epoch = extract_solution_epoch(header).expect("epoch must parse");
+        assert_eq!(epoch, HALLEY_SOLUTION_EPOCH_JD);
     }
 }

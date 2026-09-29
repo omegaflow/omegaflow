@@ -2,7 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::suprastrom::{lambda_inv2_m2, parse_suprastrom_bin};
 
 const SRD62_SUPRASTROM_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/srd62_suprastrom.bin";
+    "https://github.com/omegaflow/sources/releases/download/srdata.nist.gov/srd62_suprastrom.bin";
 
 fn main() {
     let bytes = match fetch_raw_bytes(SRD62_SUPRASTROM_CDN) {
