@@ -29,6 +29,12 @@ eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Wai
 pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
 River besitzt die Membran-Pfade (`main_flow`, `omega.rs`-Feld, Window/Gaze); Architektur-/Ethik-Entscheidungen gehen an den Rat, nie in Pro-Solo; kein Fenster-Edit ohne Operator.
 
+**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
+**privat** (nur diese Linie) und liegt in `state/river/archive-search-preset.txt` — hier
+eingelesen:
+
+!`cat state/river/archive-search-preset.txt`
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
