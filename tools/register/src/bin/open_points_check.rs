@@ -77,6 +77,14 @@ fn main() {
     for s in &stale {
         println!("{}", s);
     }
+    let done = done_carried(&rel, &content);
+    for d in &done {
+        println!("{}", d);
+    }
+    let words = word_carried(&root, &rel, &content);
+    for w in &words {
+        println!("{}", w);
+    }
     let guardians = mail_home_guardians(&root);
     for g in &guardians {
         println!("OFFEN  {}", g);
@@ -103,16 +111,21 @@ fn main() {
         println!("post-md-resurrected");
     }
     println!(
-        "open_points_check: {}  | {} path refs | {} absent | {} stale-citations | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
+        "open_points_check: {}  | {} path refs | {} absent | {} stale-citations | {} done-carried | {} word-carried | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
         rel,
         points,
         missing,
         stale.len(),
+        done.len(),
+        words.len(),
         guardians.len(),
         format_gap_count,
         drifts.len(),
         post_md as usize
     );
+    if !done.is_empty() || !stale.is_empty() || !words.is_empty() {
+        std::process::exit(1);
+    }
 }
 
 fn mail_home_guardians(root: &Path) -> Vec<String> {
@@ -481,9 +494,177 @@ fn is_h2_heading(line: &str) -> bool {
     line.trim_start().starts_with("## ")
 }
 
+const DONE_MARKERS: [&str; 4] = ["GESENDET", "GESCHLOSSEN", "Erledigt", "Entschieden"];
+
+fn is_open_area_heading(line: &str) -> bool {
+    let Some(rest) = line.trim_start().strip_prefix("## ") else {
+        return false;
+    };
+    let low = rest.trim_start().to_ascii_lowercase();
+    low.starts_with("offen") || low.starts_with("operator-queue") || low.starts_with("queue")
+}
+
+const WORD_STOP: [&str; 34] = [
+    "status",
+    "trigger",
+    "lage",
+    "blockade",
+    "braucht",
+    "bindung",
+    "wort",
+    "eigen",
+    "operator",
+    "gesendet",
+    "geschlossen",
+    "erledigt",
+    "entschieden",
+    "offen",
+    "lock",
+    "termin",
+    "dass",
+    "eine",
+    "dieser",
+    "http",
+    "korrektur",
+    "korrigiert",
+    "abgrenzung",
+    "empfehlung",
+    "frage",
+    "antwort",
+    "nicht",
+    "keine",
+    "kein",
+    "nichts",
+    "oder",
+    "warten",
+    "wartend",
+    "regel",
+];
+
+fn first_bold_words(line: &str) -> Vec<String> {
+    let Some(start) = line.find("**") else {
+        return Vec::new();
+    };
+    let rest = &line[start + 2..];
+    let Some(end) = rest.find("**") else {
+        return Vec::new();
+    };
+    rest[..end]
+        .split(|c: char| !c.is_alphanumeric() && c != '-' && c != '_')
+        .filter(|w| w.len() >= 4)
+        .filter(|w| w.chars().any(|c| c.is_alphabetic()))
+        .map(|w| w.to_string())
+        .collect()
+}
+
+fn word_carried(root: &Path, rel: &str, content: &str) -> Vec<String> {
+    let dir = root.join("state/operator-gespraeche");
+    let mut corpus: Vec<(String, usize, String)> = Vec::new();
+    if let Ok(entries) = fs::read_dir(&dir) {
+        for e in entries.flatten() {
+            let p = e.path();
+            if p.extension().and_then(|s| s.to_str()) != Some("md") {
+                continue;
+            }
+            let name = p
+                .file_name()
+                .and_then(|s| s.to_str())
+                .unwrap_or("")
+                .to_string();
+            if let Ok(text) = fs::read_to_string(&p) {
+                for (i, l) in text.lines().enumerate() {
+                    corpus.push((name.clone(), i + 1, l.to_lowercase()));
+                }
+            }
+        }
+    }
+    if corpus.is_empty() {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    let mut in_area = false;
+    for (idx, line) in content.lines().enumerate() {
+        if is_h2_heading(line) {
+            in_area = is_open_area_heading(line);
+            continue;
+        }
+        if !in_area
+            || line.contains("operator-gespraeche")
+            || !line.trim_start().starts_with("- **")
+        {
+            continue;
+        }
+        let Some(name) = first_bold_words(line)
+            .into_iter()
+            .find(|w| w.len() >= 5 && !WORD_STOP.contains(&w.to_lowercase().as_str()))
+        else {
+            continue;
+        };
+        let low = name.to_lowercase();
+        if let Some((file, n, _)) = corpus.iter().find(|(_, _, l)| l.contains(&low)) {
+            out.push(format!(
+                "WORD-CARRIED {}:{} {} -> {}:{}",
+                rel,
+                idx + 1,
+                name,
+                file,
+                n
+            ));
+        }
+    }
+    out
+}
+
+fn done_carried(rel: &str, content: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut in_area = false;
+    for (idx, line) in content.lines().enumerate() {
+        if is_h2_heading(line) {
+            in_area = is_open_area_heading(line);
+            continue;
+        }
+        if !in_area {
+            continue;
+        }
+        for marker in DONE_MARKERS {
+            if line.contains(marker) {
+                out.push(format!("DONE-CARRIED {}:{} {}", rel, idx + 1, marker));
+                break;
+            }
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn flags_done_work_carried_in_open_area() {
+        let doc = "## Offen (eigen)\n- **CSES** — GESCHLOSSEN (2026-09-29).\n- **Offen** — braucht Wort.\n## Haus\n- Gesendet: x\n";
+        let hits = done_carried("h.md", doc);
+        assert_eq!(hits.len(), 1, "{:?}", hits);
+        assert!(hits[0].contains("GESCHLOSSEN"), "{:?}", hits);
+    }
+
+    #[test]
+    fn done_carried_scans_the_operator_queue() {
+        let doc = "## Operator-Queue\n- **NSE** — **GESENDET (Operator 2026-09-29)**.\n";
+        assert_eq!(done_carried("h.md", doc).len(), 1);
+    }
+
+    #[test]
+    fn extracts_bold_keywords() {
+        assert!(first_bold_words("- **NCIS-Research-Grant** — x").contains(&"NCIS".to_string()));
+    }
+
+    #[test]
+    fn done_carried_ignores_non_open_sections_and_lowercase() {
+        let doc =
+            "## Postlage\n- Gesendet (belegt): Voyager.\n## An river\n- **X** — geschlossen.\n";
+        assert!(done_carried("h.md", doc).is_empty());
+    }
 
     #[test]
     fn extracts_backticked_and_bare_paths() {
