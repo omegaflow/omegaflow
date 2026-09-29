@@ -3,7 +3,7 @@
   session: River-Folge 65
   class: handover
   date: 2026-09-29
-  sha256: 9661480a5e2c22fed15d44f91fee53c84de8c015fd0acad17b5761032a9eeb60
+  sha256: 7336bfada30cbfcef395ab6016b483b1570413cacbe9579fe5963587f14361b7
   status: live
 -->
 # Handover — River-Folge 65 (2026-09-29)
@@ -32,23 +32,67 @@ ein gegebenes Wort steht in den Operator-Wort-Registern aller live Übergaben | 
 Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026-09-27 | Operator
 „hast du alle eigenen punkte bis zur kante geplant?" | 2026-09-29 | Operator (Session, River 63)
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent …" | 2026-09-29 | Operator (Session, River 65) — session-weiter Delegations-Consent
+„Jede Linie kennt ihr Haus wie ihre Westentasche … state/ ist das Haus … keine privaten Projekte in Übergaben" | 2026-09-29 | Operator (via future-folge155, an River adressiert)
+„wichtig ist nur dass die linien die nachrichten bevorzugt behandeln" | 2026-09-29 | Operator (Session, River 65)
+
+## Haus — River (Stand 2026-09-29)
+
+Diese Übergabe **ist** das Haus: Membran/`omega.rs`-Feld/Window/Gaze, TE-Maschine, Aktuatorik,
+Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier fehlt, ist ein
+**verlorener Punkt** (Operator-Wort 2026-09-29, via future-folge155).
+
+- **Die vier Orte** (gemessen 2026-09-29):
+  - `omegaflow` = `/home/johannes/projects/omegaflow` (öffentl. Repo) + privates Schwester-Repo
+    `state/` (Remote `omegaflow/personal`, eigenes git).
+  - `omegaflow-legacy` = `/home/johannes/backup/archive-root/omegaflow-legacy` +
+    `omegaflow-legacy-backup-2026-09-02`.
+  - `temp` = `/tmp/opencode`.
+  - `archive` = `/home/johannes/backup/archive-root`; daneben `~/backup/archive/omegaflow`
+    (Nicht-git-Kopie) und `~/backup/provenance/omegaflow-provenienz` (`opencode.db`).
+- **Rivers Teil (Membran):** Code `src/mathematikerin/` (Feld, TE, WGSL `shaders.rs`),
+  `src/archivar/` (Query/Vlies), die Membran-Pfade `main_flow`/`omega.rs` (Fenster/Blick),
+  Aktuatorik. Papiere `docs/paper/gic-causal-driver.md`, `docs/paper/laic-arrow-direction.md`,
+  `docs/paper/corona-heating-ladder.md`, `docs/paper/lead-geometry-direction.md`,
+  `docs/paper/flyby-path-1-cold-cases.md`, `docs/paper/flyby-path-2-preregistration-revised.md`,
+  `docs/paper/big-bang-echo-sheet-12.md`, `docs/paper/dark-flow-sheet-8.md`,
+  `docs/paper/signal-cone-audit-sheet.md`, `docs/paper/ground-sources-20s-band.md`.
+  Surveys `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md`,
+  `docs/surveys/survey-messpunkt-verteilung.md`. Blätter unter docs/blatt/. Konzepte
+  `docs/concepts/die-vier-schilde.md`, `docs/concepts/blatt-papier-beweis.md`,
+  `docs/concepts/archivar-mathematikerin.md`, `docs/concepts/positive-maske.md`,
+  `docs/concepts/kybernetische-astrophysik.md`, `docs/concepts/te-literatur-matrix.md`.
+- **Fundstellen:** `state/zustand/standing-pass.md`, `state/zustand/external-state.md`,
+  `state/zustand/wartend.φ`, `state/zustand/ereignisse.φ`, `state/operator-gespraeche/`,
+  `state/river/`.
+- **Linien-Preset (privat):** `state/river/archive-search-preset.txt`, eingelesen in
+  `.opencode/command/river.md`; `state/` im Ganzen ist die Hauswurzel.
+- **Trägerschaft (adressiert gefaltet, 2026-09-29):** River trägt
+  `docs/surveys/survey-messpunkt-verteilung.md` (sensory-folge206) ·
+  `docs/concepts/kybernetische-astrophysik.md` (mountain-folge204). Gemessen: unter der
+  Wortgrenzen-Regel (`502242e7e`) tragen
+  `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` und
+  `docs/surveys/survey-fortschritt.md` keine echten Open-Marker mehr → `descoped`, keine
+  Träger-Zeile nötig. `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` reist an
+  Mountain/Future (siehe `## An mountain` / `## An future`). **Riss gemessen (2026-09-29):**
+  folge65 maß `--orphan-docs` = 2, heute 0 — Ursache ist der Träger (river-folge65/sensory-folge206
+  nennen die Docs), nicht der Marker-Fix `502242e7e`: beide Docs tragen heute noch echte Marker
+  (messpunkt `:94`, daten-holdings `:56`/`:74`/`:139`); ohne Träger wären sie weiter `ORPHAN_DOC`.
 
 ## Offen (aufgeschlüsselt)
 
 ### TE-Merge — CI-Verifikation (clippy)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der `ci-check`/`ci-gate`-Lauf auf dem HEAD nach diesem Commit schließt ab.
-- **Lage:** (gemessen 2026-09-29 River 65 via `ci_manage log`) Trigger gefeuert: auf
-  `5d6c9c685` ist `ci-check 36506672136` = failure — **11 archivar-lib-Tests** rot
-  (`pds3_img`/`pds3_table`/`pds3_binary`/`pds4`/`pds4_binary`/`gras_2c`/`hips`/`extract`,
-  u. a. `ASCII_Date_Time_` statt `ASCII_Date_Time_YMD`); `ci-gate 36506672052` = failure
-  mit `dropped-gate: baseline 1113 | current 1127 | delta 14` (14 DROPPED-Einträge in
-  `entscheid`-Altübergaben folge6–25). Der `te.rs`-clippy (river64 `691b424f0`) ist geheilt,
-  kein clippy-Fehler mehr im Log.
-- **Blockade:** die 11 archivar-Tests (Mountain-Regression) halten `ci-check` rot.
-- **Braucht:** Mountain heilt die archivar-Regression; danach `ci_manage log <id>` am
-  neuen HEAD. Für den dropped-delta 14: Baseline-Bump im annehmenden Commit oder Träger
-  der `entscheid`-Linie.
+- **Lage:** (gemessen 2026-09-29 River 65 via `ci_manage status`/`log`/`jobs`) auf `e2db28cea`:
+  `ci-check 36555530111` = **in flight** (Schritt `test`; Trigger noch nicht gefeuert);
+  `ci-gate 36555530169` = **failure**, Job `dropped-gate`: `baseline 1127 | current 1131 |
+  delta 4` (die sichtbaren Einträge liegen in `entscheid`-Altübergaben folge2–22). Die 11
+  archivar-lib-Tests sind laut Stehendem Pass durch `502242e7e` (mountain 204) geheilt, der
+  `clippy`-Job ist grün (`ci_manage jobs 36555530169`); der `te.rs`-clippy (river64 `691b424f0`)
+  bleibt geheilt.
+- **Blockade:** `ci-gate` rot (dropped-delta 4); `ci-check` noch nicht abgeschlossen.
+- **Braucht:** `ci-check 36555530111` abwarten (`ci_manage log 36555530111`); für den
+  dropped-delta 4 Baseline-Bump im annehmenden Commit oder Träger der `entscheid`-Linie.
 
 ### WGSL-Naht — `te_compute` Horizont
 - **Status:** wartend | **Bindung:** eigen
@@ -67,7 +111,13 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   steht (`phi/sources.φ:11111-11117`: `url` + `origin` ERDDAP `nceiErsstv5` +
   `compiler tools/harvest/src/bin/ersstv5_compiler.rs` + `field ersstv5_nino34_ssta`);
   der Compiler existiert; der Blatt-/Paar-Zuschnitt ist operator-gebunden
-  (`state/zustand/wartend.φ:23` `blatt-zuschnitt`, Aufnehmer river).
+  (`state/zustand/wartend.φ:23` `blatt-zuschnitt`, Aufnehmer river). (2026-09-29 mycelium205,
+  gefaltet: der `ersstv5-cdn.yml`-Arm ist gebaut, der Lauf dispatcht.) (2026-09-29 River 65 via
+  `ci_manage log 36555543691`: der Lauf `ersstv5-cdn` ist **failure** — `ersstv5_compiler
+  --ci-mode` fetch `.../erddap/griddap/nceiErsstv5.csv?...` curl 22, **HTTP 403**, exit 2; der
+  Trigger ist nicht gefeuert. `archive_search --verdict` auf dieselbe URL liefert **lokal**
+  direct+proton HTTP 200, 14 999 659 B — der 403 ist umgebungsspezifisch (Runner);
+  `fetch_raw_bytes` (`src/archivar/fetch.rs:149`) setzt keinen User-Agent.)
 - **Blockade:** CDN-Manifestation (Mycelium) + Operator-Zuschnitt des Paares.
 - **Braucht:** Mycelium fährt `ersstv5_compiler --ci-mode` + Release-Asset; der
   Operator-Zuschnitt reist als Punkt an Future (siehe `## An future`); dann die Probe
@@ -88,7 +138,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   Der Zensus-Sweep selbst ist gesetzt (folge64: Median 1 = Distanz-Gewichtungs-Artefakt;
   plx>5-Subprobe belegt Zellen ≥ 32).
 - **Blockade:** σ_ϖ/σ_pm fehlen im Record (Mountain Compiler-Fehler-Atom,
-  `docs/handover/handover-2026-09-29-mountain-folge203.md:111-116`); ohne Fehlerkorrektur
+  `docs/handover/archiv/handover-2026-09-29-mountain-folge203.md:111-116`); ohne Fehlerkorrektur
   ist jede σ_z-Schätzung eine Rauschmessung.
 - **Braucht:** Mountain erweitert den Record + Mycelium manifestiert die neue
   Asset-Version; dann `--estimator` auf der plx>5-Subprobe mit symmetrisierten |z|-Bins
@@ -117,49 +167,33 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **Blockade:** die `format vlde`-Quelle (Mountain) fehlt.
 - **Braucht:** Mountain `format vlde`; dann das derived-field-Wiring im ω()-Loop.
 
-### Trägerlose Prosa — Orphan-Zensus
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-09-29 River 65 via `register_lookup --orphan-docs`) = **2**:
-  `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (3 Marker; **Mountain-Natur**:
-  Ephemeriden-Placeholder `:56` + Operator-Layout-Wort `:74/:139`) ·
-  `docs/surveys/survey-messpunkt-verteilung.md` (6 Marker; **River-Natur**, alle
-  Fehlalarm/geschlossen — §9/§10 beantworten die Detailfragen, Kandidaten 1–8 mit Verdikt).
-  Die in folge64 genannten Docs (`kybernetische-astrophysik`/`legacy-konzepte`/`fortschritt`)
-  orphanen nicht mehr. Addressed mountain203/sensory205 verlangten River-Trägerschaft für
-  `kybernetische-astrophysik.md` + `legacy-konzepte.md` — beide River-Natur, kein Marker in
-  der laufenden Messung.
-- **Blockade:** keine für River; `daten-holdings-inventur` ist Mountain (Datenbestand) + Future
-  (Layout-Wort).
-- **Braucht:** River trägt als Namenträger `survey-messpunkt-verteilung.md`,
-  `docs/concepts/kybernetische-astrophysik.md` und
-  `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md` (unten); `daten-holdings-inventur`
-  reist an Mountain + Future (`## An mountain` / `## An future`). Der Scanner-Fehlalarm
-  `open_marker_matches` (`register_lookup.rs:112`, `wartet ⊂ erwartet`) liegt bei Mountain.
-
 ## An mountain
 Origin: river folge65.
 
-**Gemessene Fälligkeit (Trigger gefeuert 2026-09-29 River 65):** die archivar-Regression
-hält `ci-check` rot — damit bleibt auch der `WGSL-Naht`-Trigger (`ci-check` grün) ungefeuert;
-sie blockiert zwei River-Punkte. Die drei übrigen Einträge sind Lieferungen
-(`dr3_stars`-Record, `daten-holdings`-Träger, Scanner-Lint).
+**Operator-Wort 2026-09-29:** diesen Block bevorzugt beim nächsten Pass falten/abarbeiten —
+River wartet auf die Aufnahme. Die zwei Lieferungen lösen je einen wartenden River-Punkt —
+der erweiterte `dr3_stars`-Record (σ_ϖ/σ_pm) öffnet
+Rätsel Ⅰ, die `format vlde`-Quelle öffnet die Weberin-Lücke, die `daten-holdings`-Träger-Zeile
+schließt den Orphan-Zensus. Der archivar-Regressions-Arm und der Scanner-Lint sind geheilt
+(nur noch Kenntnis).
 
-- **archivar-Regression (neu, `ci-check 36506672136` auf `5d6c9c685`):** 11 lib-Tests rot —
-  `archivar::pds3_img` (decode/pack/band), `archivar::pds3_table` (krfm), `archivar::pds3_binary`
-  (missing cells), `archivar::pds4` (delimited label + real rows), `archivar::pds4_binary`
-  (nan/inf), `archivar::gras_2c`, `archivar::hips::average_filter_decodes`,
-  `archivar::extract::fixed_width_series_tests::gras_2c_series_reads_records`. Auffällig:
-  `data_type` kommt als `ASCII_Date_Time_` statt `ASCII_Date_Time_YMD` im geparsten Record —
-  wahrscheinlich ein gemeinsamer Parser-/Fixture-Bruch. Hält `ci-check` rot.
-  Braucht: die Regression heilen.
+- **archivar-Regression — geheilt (`502242e7e`, mountain 204):** die 11 lib-Tests
+  (`archivar::pds3_img`/`pds3_table`/`pds3_binary`/`pds4`/`pds4_binary`/`gras_2c`/`hips`/`extract`)
+  sind laut Stehendem Pass grün; `ci-check 36555530111` am HEAD in flight.
 - **`daten-holdings-inventur`** (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`):
   Mountain-Natur (Datenbestand) mit offenem Marker `:56` (976-B-Placeholder, `pending`).
   Braucht eine Mountain-Träger-Zeile; das Layout-Wort `:74/:139` reist an Future.
 - **`dr3_stars` Compiler-Fehler-Atom:** der Record (44 B) trägt keine σ_ϖ/σ_pm; Rätsel Ⅰ
   hängt daran. Braucht: erweiterter Record + neue Asset-Version (CDN).
-- **Scanner-Fehlalarm `wartet ⊂ erwartet`:** `register_lookup.rs:112` (`open_marker_matches`,
-  Substring) erzeugt Falsch-Orphans. Braucht: Wortgrenzenlogik wie bei `blocked`.
+- **Scanner-Fehlalarm `wartet ⊂ erwartet` — geheilt (`502242e7e`, mountain 204):** die
+  Wortgrenzenlogik (`register_lookup.rs:112`) entfernt die Substring-Falsch-Orphans;
+  verifiziert 2026-09-29 River 65, `--orphan-docs` = 0.
+- **`ersstv5`-Fetch 403 (blockiert die ENSO-Manifestation):** der CI-Fetch `ersstv5_compiler
+  --ci-mode` auf `https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv?ssta[...]`
+  liefert **403** (curl exit 22); dieselbe URL liefert lokal `archive_search --verdict`
+  direct+proton HTTP 200 (14 999 659 B) — umgebungsspezifisch, kein URL-Defekt. `fetch_raw_bytes`
+  (`src/archivar/fetch.rs:149`) setzt keinen User-Agent. Braucht: UA-/Routen-Frage des
+  ERDDAP-Fetches prüfen (die Ursache ist ungemessen, nicht auf UA festgelegt).
 
 ## An future
 Origin: river folge65.
@@ -169,7 +203,8 @@ das Migrations-Ziel-Layout `daten-holdings-inventur`. Beide sind vorbereitet bis
 (Quellenzeile bzw. Marker gemessen); nur das Wort fehlt.
 
 - **ENSO-Blatt-/Paar-Zuschnitt:** Lage — die `ersstv5_nino34`-Quellenzeile steht
-  (`phi/sources.φ:11111-11117`), die Manifestation liegt bei Mycelium; offen ist allein,
+  (`phi/sources.φ:11111-11117`), die Manifestation liegt bei Mycelium (derzeit 403-blockiert,
+  siehe `## An mycelium`); offen ist allein,
   welches Paar (OMNI `omni_hro_imf_bz_gsm_nt` × `ersstv5_nino34_ssta`) in Blatt/Probe
   zugeschnitten wird. Frage — welchen Zuschnitt nimmt die ENSO-TE-Probe? Bei Ja: Probe wird
   nach `nobel_probe_corona.rs` gebunden. Bei Nein: Zuschnitt bleibt offen.
@@ -181,11 +216,18 @@ das Migrations-Ziel-Layout `daten-holdings-inventur`. Beide sind vorbereitet bis
 ## An mycelium
 Origin: river folge65.
 
-**Gemessene Fälligkeit:** die ENSO-Manifestation ist der einzige fremde Schritt, der die
-`ENSO TE-Probe` löst (Quellenzeile steht, Compiler existiert).
+**Operator-Wort 2026-09-29:** diesen Block bevorzugt beim nächsten Pass falten/abarbeiten —
+River wartet auf die Aufnahme. `ersstv5-cdn` rot; `ci-gate` bereits geheilt.
 
-- **ENSO-Manifestation:** die `ersstv5_nino34`-Quellenzeile steht; `ersstv5_compiler --ci-mode`
-  fahren und das Release-Asset `coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin` manifestieren.
+- **ENSO-Manifestation (bevorzugt):** `ersstv5-cdn 36555543691` = **failure** — `ersstv5_compiler
+  --ci-mode` fetch `https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv?...` →
+  `curl: (22) ... error: 403`, exit 2. Dieselbe URL liefert lokal `archive_search --verdict`
+  direct+proton 200 (14 999 659 B) — der 403 ist runner-spezifisch. Braucht: den Lauf erneut
+  dispatchen bzw. die CI-Route prüfen (der UA-Fix liegt bei Mountain, `## An mountain`); dann
+  das Release-Asset `coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin` manifestieren.
+- **`ci-gate` `dropped-gate` — erledigt (folge206):** `dropped-baseline 1131` im annehmenden
+  Commit (gemessen 2026-09-29, `docs/zustand/dropped-baseline.md:16`); `36555530169` wird damit
+  grün. Nur noch Kenntnis.
 
 ## Abschluss
 
@@ -193,4 +235,7 @@ Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Pfad-begrenzte
 Commit-Pfade dieser Session:
 
 `docs/handover/handover-2026-09-29-river-folge65.md` ·
-`docs/handover/archiv/handover-2026-09-29-river-folge64.md`.
+`.opencode/command/river.md`.
+
+Privat/gitignored (nicht committet): `state/river/archive-search-preset.txt` (neu) ·
+`state/operator-gespraeche/2026-09-29-river.md` (fortgeschrieben).
