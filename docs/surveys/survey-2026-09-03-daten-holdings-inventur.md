@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: ca96e898135ec07ee9ffff47e0901ce436b558c3b425146c508cafc66196d6c9
+  sha256: e23937d54ae4434da76885e69757ebffc71e3f204a8b35addf4ead2f3182eb25
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -48,7 +48,7 @@ Holding.
 | dark_flow (`cmb_planck_smica_n64.json`, `cosmicflows_cf4.json`) | `backups/omegaflow/data/` |
 | Ephemeriden (`ephemeris_{body}.bin`) | `knowledge/data/` (12 aktive) + `backups/omegaflow/data/` |
 | Pioneer (`pioneer10_*.bin` u. a.) | `backups/omegaflow/data/` |
-| `abk_dbdt_1h_*`, kegel-, GIC-/Corona-Serien | **descoped** (gemessen 2026-09-26: keine eigenen Quellen — lokale Probe-Logs `signalkegel_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`; `abk_dbdt_1h` → phi/sources.φ:1567, GIC → phi/sources.φ:8642/8762) |
+| `abk_dbdt_1h_*`, kegel-, GIC-/Corona-Serien | **descoped** (gemessen 2026-09-26: keine eigenen Quellen — lokale Probe-Logs `signal_cone_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`; `abk_dbdt_1h` → phi/sources.φ:1567, GIC → phi/sources.φ:8642/8762) |
 
 ## Aktive Ephemeriden (gehören als `omegaflow_eph_{body}.bin` in den Cache-Root)
 
@@ -74,7 +74,7 @@ messenger, near, rosetta.
 ## Offen / Befunde (Schritt-für-Schritt, je Freigabe)
 
 1. `omegaflow-legacy` (ohne `target/`) nach `projects/archive/omegaflow-legacy` verschoben (Code in Git-Historie). `knowledge/` und `backups/` bleiben als **Sicherungs-Archive in situ** — nichts im Repo referenziert sie; eine Umlagerung dieser ~50 G irreplacebarer Sicherungsdaten bedarf einer eigenen, definierten Ziel-Layout-Entscheidung, kein Blindwurf. Vorlage: „Ziel-Layout — Migrationsplan" unten.
-2. **Lokalisierung der Serien `abk_dbdt_1h_*`, kegel-Log, GIC/corona: `descoped`** — als Datei nirgends unter allen Holdings vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`). Gemessen 2026-09-26: keine eigenen Quellen, sondern lokale Probe-Logs (`signalkegel_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`); `abk_dbdt_1h` ist registriert → phi/sources.φ:1567, GIC ebenso → phi/sources.φ:8642/8762.
+2. **Lokalisierung der Serien `abk_dbdt_1h_*`, kegel-Log, GIC/corona: `descoped`** — als Datei nirgends unter allen Holdings vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`). Gemessen 2026-09-26: keine eigenen Quellen, sondern lokale Probe-Logs (`signal_cone_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`); `abk_dbdt_1h` ist registriert → phi/sources.φ:1567, GIC ebenso → phi/sources.φ:8642/8762.
 
 ## Ziel-Layout — Migrationsplan (Vorlage, 2026-09-26)
 

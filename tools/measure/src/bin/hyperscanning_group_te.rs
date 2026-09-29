@@ -2,8 +2,8 @@ use std::env;
 use std::process::exit;
 
 use omegaflow::te::{
-    coherent_phase_surrogates, find_mi_lag, phase_randomized_surrogate, topological_te_estimate,
-    topological_te_estimate_frozen,
+    coherent_phase_surrogates, find_cross_mi_lag, find_mi_lag, phase_randomized_surrogate,
+    topological_te_estimate, topological_te_estimate_frozen,
 };
 use omegaflow_measure::eeglab::{
     channel_series, labels_from_channels_tsv, open_set, open_set_bin, open_set_mat, resolve_channel,
@@ -305,7 +305,12 @@ fn frozen_estimate(
     tau_y: Option<usize>,
 ) -> Option<f64> {
     match (tau_x, tau_y) {
-        (Some(tx), Some(ty)) => topological_te_estimate_frozen(x, y, dim, tx, ty).map(|e| e.te),
+        (Some(tx), Some(ty)) => {
+            let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+            let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+            let tc = find_cross_mi_lag(&xf, &yf, ty)?;
+            topological_te_estimate_frozen(x, y, dim, tx, tc, ty).map(|e| e.te)
+        }
         _ => None,
     }
 }
@@ -1102,7 +1107,10 @@ mod tests {
     }
 
     fn ksg_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
-        topological_te_estimate_frozen(target, driver, DIM, tau_t, tau_d).map(|e| e.te)
+        let tf: Vec<f64> = target.iter().map(|&v| v as f64).collect();
+        let df: Vec<f64> = driver.iter().map(|&v| v as f64).collect();
+        let tc = find_cross_mi_lag(&tf, &df, tau_d)?;
+        topological_te_estimate_frozen(target, driver, DIM, tau_t, tc, tau_d).map(|e| e.te)
     }
 
     fn kde_te_frozen(target: &[f32], driver: &[f32], tau_t: usize, tau_d: usize) -> Option<f64> {
@@ -1736,9 +1744,11 @@ mod tests {
         );
         let members = vec![("A".to_string(), a), ("B".to_string(), b)];
         for tau in 1..=12usize {
-            let observed =
-                topological_te_estimate_frozen(&members[1].1, &members[0].1, DIM, tau, tau)
-                    .map(|e| e.te);
+            let observed = find_cross_mi_lag(&bf, &af, tau)
+                .and_then(|tc| {
+                    topological_te_estimate_frozen(&members[1].1, &members[0].1, DIM, tau, tc, tau)
+                })
+                .map(|e| e.te);
             let mut dists: Vec<f64> = Vec::new();
             for s in 0..200usize {
                 let randomized = randomized_triad(&members, CONFIRM_SEED, s, 0, false);
