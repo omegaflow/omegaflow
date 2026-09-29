@@ -499,6 +499,71 @@ fn find_mi_lag(s: u32, n: u32, max_lag: u32) -> i32 {
     return -1;
 }
 
+fn find_cross_mi_lag(st: u32, sd: u32, n: u32, max_lag: u32) -> i32 {
+    if (n < 8u || max_lag < 1u || max_lag >= n) { return -1; }
+    var best_mi: f32 = -1.0;
+    var best_lag: i32 = -1;
+    for (var lag = 1u; lag <= max_lag; lag = lag + 1u) {
+        let w = n - lag;
+        var mn_t: f32 = ser_at(st, lag);
+        var mx_t: f32 = mn_t;
+        var mn_d: f32 = ser_at(sd, 0u);
+        var mx_d: f32 = mn_d;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let vd = ser_at(sd, i);
+            let vt = ser_at(st, i + lag);
+            mn_d = min(mn_d, vd);
+            mx_d = max(mx_d, vd);
+            mn_t = min(mn_t, vt);
+            mx_t = max(mx_t, vt);
+        }
+        let range_t = mx_t - mn_t;
+        let range_d = mx_d - mn_d;
+        if (range_t <= 0.0 || range_d <= 0.0) { continue; }
+        let mid_t = mn_t + range_t * 0.5;
+        let mid_d = mn_d + range_d * 0.5;
+        var h00: u32 = 0u;
+        var h01: u32 = 0u;
+        var h10: u32 = 0u;
+        var h11: u32 = 0u;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let bd = ser_at(sd, i) > mid_d;
+            let bt = ser_at(st, i + lag) > mid_t;
+            if (!bd && !bt) { h00 = h00 + 1u; }
+            else if (!bd && bt) { h01 = h01 + 1u; }
+            else if (bd && !bt) { h10 = h10 + 1u; }
+            else { h11 = h11 + 1u; }
+        }
+        let total = f32(w);
+        let p0 = (f32(h00) + f32(h01)) / total;
+        let p1 = (f32(h10) + f32(h11)) / total;
+        let q0 = (f32(h00) + f32(h10)) / total;
+        let q1 = (f32(h01) + f32(h11)) / total;
+        var mi: f32 = 0.0;
+        if (h00 > 0u) {
+            let p = f32(h00) / total;
+            mi = mi + p * log2(p / (p0 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h01 > 0u) {
+            let p = f32(h01) / total;
+            mi = mi + p * log2(p / (p0 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (h10 > 0u) {
+            let p = f32(h10) / total;
+            mi = mi + p * log2(p / (p1 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h11 > 0u) {
+            let p = f32(h11) / total;
+            mi = mi + p * log2(p / (p1 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (best_lag < 0 || mi > best_mi) {
+            best_mi = mi;
+            best_lag = i32(lag);
+        }
+    }
+    return best_lag;
+}
+
 fn permutation_entropy(s: u32, n: u32) -> vec2f {
     let span = ORDER - 1u;
     if (n <= span) { return vec2f(0.0, 0.0); }
@@ -747,11 +812,14 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
         }
     }
     if (tid == 0u) {
-        if (finite_ok) {
-            let tx = find_mi_lag(0u, n, max_lag);
-            if (tx >= 0) {
-                tau = f32(tx);
-                valid = 1.0;
+        if (finite_ok && n >= 8u) {
+            let ty_real = find_mi_lag(1u, n, max_lag);
+            if (ty_real >= 0) {
+                let tc_real = find_cross_mi_lag(0u, 1u, u32(ty_real));
+                if (tc_real >= 0) {
+                    tau = f32(tc_real);
+                    valid = 1.0;
+                }
             }
         }
         let pev = permutation_entropy(0u, n);
@@ -762,36 +830,38 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
         }
     } else {
         if (finite_ok && n >= 8u) {
-            let tx = find_mi_lag(0u, n, max_lag);
             let ty = find_mi_lag(tid, n, max_lag);
-            if (tx >= 0 && ty >= 0) {
-                let u_tx = u32(tx);
+            if (ty >= 0) {
                 let u_ty = u32(ty);
-                let back_x = (DIM - 1u) * u_tx;
-                let back_y = (DIM - 1u) * u_ty;
-                let t_low = max(back_x, back_y);
-                let t_high_ok = u_tx + 1u < n;
-                var t_high: u32 = 0u;
-                if (t_high_ok) {
-                    t_high = n - u_tx - 1u;
-                }
-                if (back_x < n && back_y < n && t_high_ok && t_low <= t_high) {
-                    let m = t_high - t_low + 1u;
-                    if (m >= 8u) {
-                        let h_scale = bitcast<f32>(params.z);
-                        let h_f = future_silverman(t_low, u_tx, n) * h_scale;
-                        let h_x = embedded_silverman(0u, u_tx, n) * h_scale;
-                        let h_y = embedded_silverman(tid, u_ty, n) * h_scale;
-                        if (h_f > 0.0 && h_x > 0.0 && h_y > 0.0) {
-                            tau = f32(u_ty);
-                            te = te_embedded_kde(u_tx, u_ty, tid, h_f, h_x, h_y, n);
-                            valid = 1.0;
-                        }
+                let tc = find_cross_mi_lag(0u, tid, u_ty);
+                if (tc >= 0) {
+                    let u_tc = u32(tc);
+                    let back_x = (DIM - 1u) * u_tc;
+                    let back_y = (DIM - 1u) * u_ty;
+                    let t_low = max(back_x, back_y);
+                    let t_high_ok = u_tc + 1u < n;
+                    var t_high: u32 = 0u;
+                    if (t_high_ok) {
+                        t_high = n - u_tc - 1u;
                     }
-                    if (m >= 8u && k > 0u) {
-                        tau = f32(u_ty);
-                        ksg_te = te_embedded_ksg(u_tx, u_ty, tid, n, k);
-                        ksg_valid = 1.0;
+                    if (back_x < n && back_y < n && t_high_ok && t_low <= t_high) {
+                        let m = t_high - t_low + 1u;
+                        if (m >= 8u) {
+                            let h_scale = bitcast<f32>(params.z);
+                            let h_f = future_silverman(t_low, u_tc, n) * h_scale;
+                            let h_x = embedded_silverman(0u, u_tc, n) * h_scale;
+                            let h_y = embedded_silverman(tid, u_ty, n) * h_scale;
+                            if (h_f > 0.0 && h_x > 0.0 && h_y > 0.0) {
+                                tau = f32(u_ty);
+                                te = te_embedded_kde(u_tc, u_ty, tid, h_f, h_x, h_y, n);
+                                valid = 1.0;
+                            }
+                        }
+                        if (m >= 8u && k > 0u) {
+                            tau = f32(u_ty);
+                            ksg_te = te_embedded_ksg(u_tc, u_ty, tid, n, k);
+                            ksg_valid = 1.0;
+                        }
                     }
                 }
             }

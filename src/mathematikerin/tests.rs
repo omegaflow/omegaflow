@@ -315,12 +315,11 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     };
     let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
     let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
-    let cpu_tau_x = crate::te::find_mi_lag(&xf).expect("the target carries an MI lag on the cpu");
-    assert_eq!(
-        gpu_v.tau_c, cpu_tau_x,
-        "the gpu horizon diverges from the cpu target MI-lag"
-    );
     assert_eq!(gpu_v.tau_y, cpu_v.tau_y, "tau_y diverges");
+    assert_eq!(
+        gpu_v.tau_c, cpu_v.tau_c,
+        "the gpu cross horizon diverges from the cpu reference"
+    );
     assert!(
         gpu_v.surrogates_used >= 2 && cpu_v.surrogates_used >= 2,
         "surrogates_used below two: gpu {} cpu {}",
@@ -1335,8 +1334,8 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
     }
     let epochless = &app.sky.oscs[1];
     assert_eq!(epochless.weight, 0.0);
-    assert_eq!(app.sky.report().live_count, 1);
-    assert_eq!(app.sky.report().osc_count, 2);
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).live_count, 1);
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).osc_count, 2);
 }
 
 #[test]
