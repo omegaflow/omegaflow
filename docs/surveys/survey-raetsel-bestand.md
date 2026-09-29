@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-09-28
-  sha256: f278343589c4aaa0002b36f508df318f4bbcaab2d558afc27ca36b4e1c0f9bab
+  sha256: 318f4bf4de810a4eb6924ff4fa6cda01fc1c547de759153876615c82ba962452
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -34,7 +34,7 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 | Ⅳ LAIC | `laic_probe.rs` · `nobel_probe_laic.rs` · Paper `laic-arrow-direction.md` v4 | USGS `:86/96/103` · INTERMAGNET `:1787/5386-5390` · Swarm `:7240` · CHAMP-TEC `:31` · Safecast `:228/235` · Kp `:1160` | Swarm-TEC (nur CHAMP); CSES (`ledger.φ:14-16` ausstehend; `wartend.φ:12` termin 2026-10-02) | `laic.bin`/`laic_champ.bin` CDN 206; `phi/pipeline/laic_harvest/` 4.1 GB | **keins** — Paper `:14/:25` Stille | 2026-10-02 CSES; Swarm-TEC messen |
 | Ⅴ Technosignaturen | `lsst_anomaly_probe.rs` · `ztf_anomaly_probe.rs` · `negativ_fuzzy_probe.rs` (kein dip/FAP → Zweck-Riss) | ZTF `:9409/9416` · IRAS `:13896` · AKARI `:11148` · VSX `:10750` · GCVS `:10511` · witnesses Lasair `:70`/Fink `:10` | Gaia `bp_rp` descoped (`blocked_sources.φ:203`) | keins | **keins** — Paper `docs/paper/nadel-v-fresh-area-dip-scan.md:39/:47` (0 unexcluded, <3σ) | Zweck `negativ_fuzzy_probe` prüfen; Paper-Verdikt registrieren |
 | Ⅵ Planet 9 | `kbo_compiler.rs` · `kbo_residue_probe.rs` | KBO `:10274` · MPC-Distant `:2401` · Sonden-Arcs `:15889/15896/15679/15735` · Planeten-Eph `:3419-3484` | keine | keins | **keins** — Paper `planet-nine-kbo-residue.md:18` (kein fam-Pfeil); descoped in `sensory-folge201:193-194` | descope-Träger/Register |
-| Ⅶ Wurmloch | `signal_cone_audit_probe.rs`; Doc nennt `signalkegel_audit_probe` (Name-Riss) | `te.rs:96` · `membrane.rs:336` · `spatial.rs:549-554` · Probe `:34-44` | `max(0,\|Δt\|−d/c)`-Fold nicht in `src/`; Sonden-Bahnen-Kanal unverifiziert | `data/kegel_audit_voll.log` pending | **keins** — Paper `signal-cone-audit-sheet.md:14/:63` (0 honored) | Fold lokalisieren; Name-Riss klären |
+| Ⅶ Wurmloch | `signal_cone_audit_probe.rs` (Bin) | `te.rs:96` · `membrane.rs:336` · `spatial.rs:549-554` · Probe `:34-44` | Sonden-Bahnen-Kanal unverifiziert; Retardierungs-Fold `max(0,\|Δt\|−d/c)` lebt (`spatial.rs:549-554`) | `data/kegel_audit_voll.log` pending | **keins** — Paper `signal-cone-audit-sheet.md:14/:63` (0 honored) | Name-Riss geschlossen (Bin = `signal_cone_audit_probe`) |
 | Ⅷ Dunkler Fluss | `dark_flow_probe.rs` | CMB `:9374/9383` · Abell `:10351` · MCXC `:10561` · PSZ2 `:10673` · CF4 `:10432/10442` | z≳10-Sample | kein `cosmicflows_cf4.json` im Baum | **keins** — Paper `dark-flow-sheet-8.md:14/:33` Stille | Release-Namespace-Riss (Register `tapvizier` vs Probe `ssd.jpl`) |
 | Ⅸ FRB | `frb_blatt_probe.rs` · `frb_compiler.rs`; `write_blatt_pair` steht (`:295`) | `:9086-9088` · Streuung `:10497` · peak-flux `:10509` (Zensus: 10508 off-by-one) · Magnetar `:9174/9185` | kein Paar-Artefakt (glob 0); Herkunftsadresse | keins | kein frb-Verdikt; FRBCAT `dead:879`; CHIME `declined:1254` | `archive_search --verdict <frb_chime_cat1.json>`; Probe `--write` Blatt |
 | Ⅹ Kugelblitz | keiner (glob 0) | keine | alle vier co-lokalisierten (em×electric×thermal×acoustic) | keins | **descoped (gemessen: → `kybernetische-astrophysik.md:294-300`; kein Probe-Artefakt, glob 0)** | — (Befund steht) |

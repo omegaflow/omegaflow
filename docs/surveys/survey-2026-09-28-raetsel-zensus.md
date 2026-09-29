@@ -2,7 +2,7 @@
   title: Rätsel-Zensus — die Nadeln, die Blätter, der Kuprat (Stand 2026-09-28)
   class: survey
   date: 2026-09-28
-  sha256: 3314cb58423e34fce39225d0ced7e803c026a935adfacdb5a28555de09d04826
+  sha256: d9731b9c4e095305533451f00acf508b80ef3feaaed2369427008f59bf8670a1
   status: consumed
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/surveys/survey-raetsel-bestand.md
 -->
@@ -29,9 +29,9 @@ Drei Register, nicht eines: **die zwölf Nadeln** (`docs/concepts/kybernetische-
 | Ⅳ | Erdbeben-Vorläufer (LAIC) | `laic_probe.rs` · `nobel_probe_laic.rs` | USGS `:86,96,103` · INTERMAGNET `:1787,5386-5390` · Swarm `:7240` · CHAMP-TEC `:31` · Safecast `:228,235` · Kp `:1160` | Swarm-TEC (nur CHAMP) · MiniSEED-Envelope (`laic-arrow-direction.md:45`) · **CSES** (Portal-Umbau) | **Stille in beiden Richtungen** (`:14,25`) |
 | Ⅴ | Technosignaturen | `lsst_anomaly_probe.rs` · `ztf_anomaly_probe.rs` · `negativ_fuzzy_probe.rs` | ZTF `:9409,9416` · Lasair `witnesses.φ:70` · IRAS `:13896` · AKARI `:11148` · VSX `:10750` · GCVS `:10511` | Gaia-Farbe `bp_rp` (descoped, `blocked_sources.φ:203`) | **0 unausgeschlossene Kandidaten**, quantitatives Limit (`nadel-v-fresh-area-dip-scan.md:13,39,43`) |
 | Ⅵ | Planet 9 | `kbo_compiler.rs` · `kbo_residue_probe.rs` | KBO `:10274` · MPC-Distant `:2401` · Sonden-Arcs `:15889,15896,15679,15735` · Planeten-Eph `:3419-3484` | keine | **kein fam-tragender Pfeil**; P9 verträglich (`planet-nine-kbo-residue.md:18`) |
-| Ⅶ | Wurmloch | `signal_cone_audit_probe.rs` | TE-Lag `te.rs` · Signalkegel `membrane.rs:336` · Retardierung `spatial.rs:549-554` · Sonden-Bahnen | kein Kandidat · `max(0,|Δt|−d/c)`-Fold nicht im Baum | **keine Verletzung, 0 honored** (`signal-cone-audit-sheet.md:14,63`) |
+| Ⅶ | Wurmloch | `signal_cone_audit_probe.rs` | TE-Lag `te.rs` · Signalkegel `membrane.rs:336` · Retardierung `spatial.rs:549-554` · Sonden-Bahnen | kein Kandidat · Retardierungs-Fold `max(0,\|Δt\|−d/c)` lebt (`spatial.rs:549-554`) | **keine Verletzung, 0 honored** (`signal-cone-audit-sheet.md:14,63`) |
 | Ⅷ | Dunkler Fluss | `dark_flow_probe.rs` | CMB Planck `:9374,9383` · Haufen `:10351,10561,10673` · `data/tapvizier…/cosmicflows_cf4.json` | tiefste z≳10-Samples (keine Zeile) | **Stille in beiden Richtungen** (`dark-flow-sheet-8.md:14,33`) |
-| Ⅸ | FRB | `frb_blatt_probe.rs` · `frb_compiler.rs` | dm/freq/bin_width `:9086-9088` · Streuung `:10496-10497` · peak-flux `:10508` · Magnetar `:9174-9185` | kein Paar-Verdikt (`docs/paper/*frb*` fehlt) · „burst-em at origin" ohne Feldquelle | **Probe steht, ungemessen** (`handover-2026-09-12-forschung-folge5.md:60`) |
+| Ⅸ | FRB | `frb_blatt_probe.rs` · `frb_compiler.rs` | dm/freq/bin_width `:9086-9088` · Streuung `:10496-10497` · peak-flux `:10508` · Magnetar `:9174-9185` | kein Paar-Verdikt (`docs/paper/*frb*` fehlt) · „burst-em at origin" ohne Feldquelle | **0 honored** (kein Pfeil → kein Paar; `frb_blatt_probe.rs:295`) |
 | Ⅹ | Kugelblitz | keiner | keine | alle vier co-lokalisierten Kanäle | **descoped 2026-09-12** (`kybernetische-astrophysik.md:299-300`) |
 | Ⅺ | Placebo | `placebo_pair_eeg_probe.rs` · `openneuro_eeg.rs` | EEG (2 OpenNeuro-Assets, `harvest.φ:192`) | Gabe-Ereignis × HRV × Blutmarker | **Placebo hält (0 Pfeile)** (`handover-2026-09-13-forschung-folge10.md:24-25`); kein lebendes Blatt |
 | Ⅻ | Urknall | `bigbang_echo_probe.rs` | CMB `:9374,9383` · Haufen `:10351,10561,10673` · z-Achse entschieden | PTA (declined `declined_sources.φ:1402-1403`) · B-Moden (keine Quelle) | **Stille; t=0 verweigert** (`big-bang-echo-sheet-12.md:14,35,59-60`) |

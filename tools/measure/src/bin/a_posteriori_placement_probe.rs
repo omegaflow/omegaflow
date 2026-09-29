@@ -134,6 +134,7 @@ const D2_X1: f64 = 1.0;
 const D2_GRID_STEP: f64 = 1e-3;
 const D2_REF_N: usize = 200;
 const D2_POINT_CAP: usize = 5_000_000;
+const SMOLYAK_MAX_LEVEL: usize = 18;
 
 fn omega_2d(x: f64, y: f64) -> f64 {
     1.0 / (x * x + y * y + EXTENT * EXTENT)
@@ -387,6 +388,71 @@ fn max_rel_error_2d(tree: &KdTree) -> Option<f64> {
     worst
 }
 
+fn cc_nodes_1d(level: usize) -> Vec<f64> {
+    let m = if level <= 1 {
+        1
+    } else {
+        (1usize << (level - 1)) + 1
+    };
+    if m == 1 {
+        return vec![0.0];
+    }
+    let mut nodes: Vec<f64> = Vec::with_capacity(m);
+    for j in 0..m {
+        let arg = std::f64::consts::PI * (j as f64) / ((m - 1) as f64);
+        nodes.push(-arg.cos());
+    }
+    nodes
+}
+
+fn smolyak_grid_points(level: usize) -> Option<Vec<(f64, f64)>> {
+    let lo = D2_X0;
+    let hi = D2_X1;
+    let map = |u: f64| 0.5 * (lo + hi) + 0.5 * (hi - lo) * u;
+    let mut seen: std::collections::BTreeSet<(i64, i64)> = std::collections::BTreeSet::new();
+    let mut pts: Vec<(f64, f64)> = Vec::new();
+    for i1 in 1..=level + 1 {
+        let xn = cc_nodes_1d(i1);
+        for i2 in 1..=level + 1 {
+            if i1 + i2 > level + 1 {
+                continue;
+            }
+            let yn = cc_nodes_1d(i2);
+            for &ux in &xn {
+                for &uy in &yn {
+                    let px = map(ux);
+                    let py = map(uy);
+                    let kx = (px * 1e12).round() as i64;
+                    let ky = (py * 1e12).round() as i64;
+                    if seen.insert((kx, ky)) {
+                        pts.push((px, py));
+                        if pts.len() > D2_POINT_CAP {
+                            return None;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if pts.is_empty() { None } else { Some(pts) }
+}
+
+fn smolyak_points_2d(achieved_error: f64) -> Option<Vec<(f64, f64)>> {
+    if !achieved_error.is_finite() || !(achieved_error > 0.0) {
+        return None;
+    }
+    for level in 1..=SMOLYAK_MAX_LEVEL {
+        let pts = smolyak_grid_points(level)?;
+        let tree = KdTree::new(pts);
+        if let Some(e) = max_rel_error_2d(&tree) {
+            if e <= achieved_error {
+                return Some(tree.points.into_iter().map(|p| (p.x, p.y)).collect());
+            }
+        }
+    }
+    None
+}
+
 fn probe_2d() {
     println!();
     println!("--- 2D Voronoi/quadtree placement path ---");
@@ -474,6 +540,92 @@ fn probe_2d() {
     }
 }
 
+fn probe_smolyak() {
+    println!();
+    println!("--- 2D Smolyak sparse-grid placement path ---");
+    println!(
+        "sparse grid | Clenshaw-Curtis nested 1D rules, isotropic level cap {SMOLYAK_MAX_LEVEL}, domain [{D2_X0}, {D2_X1}]^2"
+    );
+    println!(
+        "rule: build the lowest sparse-grid level whose achieved max relative error is <= the analytic e_ana — equal error, not equal tol"
+    );
+    println!(
+        "metric: piecewise-constant 2D nearest-sample relative error, {D2_REF_N}x{D2_REF_N} reference grid, floor Omega <= {OMEGA_FLOOR}"
+    );
+    println!();
+    println!(
+        "{:>9} {:>10} {:>10} {:>10} {:>10} {:>10}",
+        "tol", "N_analytic", "N_smolyak", "ratio", "e_ana", "e_smo"
+    );
+
+    let tols = [1e-1_f64, 1e-2];
+    let mut min_ratio = f64::INFINITY;
+    let mut max_ratio = f64::NEG_INFINITY;
+    let mut measured_rows = 0usize;
+
+    for &tol in &tols {
+        let Some(pa) = analytic_points_2d(tol) else {
+            println!("{tol:>9.1e}  analytic point cap reached, tol pending");
+            continue;
+        };
+        let tree_a = KdTree::new(pa);
+        let Some(ea) = max_rel_error_2d(&tree_a) else {
+            println!("{tol:>9.1e}  analytic error undefined, tol pending");
+            continue;
+        };
+        let Some(ps) = smolyak_points_2d(ea) else {
+            println!(
+                "{tol:>9.1e}  sparse-grid level cap {SMOLYAK_MAX_LEVEL} exhausted, tol pending"
+            );
+            continue;
+        };
+        if tree_a.points.is_empty() {
+            println!("{tol:>9.1e}  empty point set, tol pending");
+            continue;
+        }
+        let tree_s = KdTree::new(ps);
+        let es = max_rel_error_2d(&tree_s);
+        let ratio = tree_s.points.len() as f64 / tree_a.points.len() as f64;
+        measured_rows += 1;
+        if ratio < min_ratio {
+            min_ratio = ratio;
+        }
+        if ratio > max_ratio {
+            max_ratio = ratio;
+        }
+        println!(
+            "{tol:>9.1e} {:>10} {:>10} {:>10.3} {:>10} {:>10}",
+            tree_a.points.len(),
+            tree_s.points.len(),
+            ratio,
+            fmt_opt(Some(ea)),
+            fmt_opt(es)
+        );
+    }
+
+    println!();
+    if measured_rows > 0 {
+        println!(
+            "smolyak verdict: ratio N_smolyak/N_analytic at equal achieved error, min {min_ratio:.3}, max {max_ratio:.3}"
+        );
+        if min_ratio < 0.1 {
+            println!(
+                "smolyak: the sparse grid undercuts the analytic O(Quellen) placement by an order of magnitude at every measured error level"
+            );
+        } else if min_ratio < 1.0 {
+            println!(
+                "smolyak: the sparse grid sinks below the analytic placement by a bounded constant factor — no order gain"
+            );
+        } else {
+            println!(
+                "smolyak: no order gain — the structure-agnostic sparse grid uses at least as many points as the analytic O(Quellen) placement at equal achieved error"
+            );
+        }
+    } else {
+        println!("smolyak verdict: no tractable tolerance row, metric pending");
+    }
+}
+
 fn main() {
     println!(
         "a-posteriori placement probe | 1D radial, kernel 0 (1/(d^2+e^2)), extent {EXTENT}, domain [{X0}, {X1}], gridStep {GRID_STEP}"
@@ -558,6 +710,7 @@ fn main() {
     }
 
     probe_2d();
+    probe_smolyak();
 }
 
 fn fmt_opt(e: Option<f64>) -> String {

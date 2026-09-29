@@ -2,7 +2,7 @@
   title: The signal cone audit — the light cone carries no violation (Nadel Ⅶ)
   class: paper
   date: 2026-08-23
-  sha256: aa757cd70b19b9311643a2602b24b8af0f1b692e13ec43712c40015987508a53
+  sha256: 1db738ab5840b204edeb1d0626457bb4f83e87ebd210bc8f073f1b35f9e7a6fd
   fam-round-machine: pre-fix (verdict fam-governed, value unprinted)
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-kausalpfeil.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md

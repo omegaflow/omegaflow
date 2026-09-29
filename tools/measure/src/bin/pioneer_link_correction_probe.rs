@@ -2320,7 +2320,7 @@ fn main() {
                     "{name}: TE {:.4} vs threshold {:.4} (τ {}/{}, {} surrogates, PE {:.2}/{:.2}) — {}",
                     v.te,
                     v.threshold,
-                    v.tau_x,
+                    v.tau_c,
                     v.tau_y,
                     v.surrogates_used,
                     v.pe_x.unwrap_or(f64::NAN),
@@ -2342,7 +2342,7 @@ fn main() {
                 "Sun: TE {:.4} vs threshold {:.4} (τ {}/{}, {} surrogates) — {}",
                 v.te,
                 v.threshold,
-                v.tau_x,
+                v.tau_c,
                 v.tau_y,
                 v.surrogates_used,
                 if v.te > v.threshold {
