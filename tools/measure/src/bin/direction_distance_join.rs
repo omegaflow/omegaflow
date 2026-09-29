@@ -61,7 +61,10 @@ fn raw_plx(chunk: &[u8]) -> Option<f64> {
 
 fn build_present_standins(bytes: &[u8], refused: &mut usize) -> Vec<u8> {
     let mut out = Vec::new();
-    for chunk in bytes.chunks_exact(STAR_RECORD_BYTES) {
+    let Some(stride) = star_stride(bytes) else {
+        return out;
+    };
+    for chunk in bytes.chunks_exact(stride) {
         if parse_star_record(chunk).is_some() {
             continue;
         }
