@@ -3,7 +3,7 @@
   session: Mycelium-Folge 206
   class: handover
   date: 2026-09-29
-  sha256: 070ff7d2001d94c45fc6af56ca58e5cf071dd5519816dc865832a65bc4d65caa
+  sha256: 89744fd90e0f31dda1831d9425b4657f208a5b52b64124cdd24bc8b09bd5fb64
   status: live
 -->
 # Handover — Mycelium-Folge 206 (2026-09-29)
@@ -142,6 +142,13 @@ zitiert, nie kopiert). Diese Session konsumierte `handover-2026-09-29-mycelium-f
 - **Lage:** (gemessen 2026-09-29 folge206 via `ci_manage status`) `gosat-cdn 36555559399` success → schließbar; `hinet-cdn 36555564933` in-flight; NSSDCA/JPL-Antworten (`mariner10`/`viking`/`cassini-trk`/`juno-jplnav`) offen (`mail_ledger`).
 - **Blockade:** Quellen-Readiness / Antwort.
 - **Braucht:** `hinet-cdn`-Ergebnis abwarten; Antworten aus dem Postfach.
+
+### `ephemeris_europa_clipper.bin` — Manifestations-Zeile fehlt
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster `phi/sources.φ`-Manifest-Pass; sensory-206-Adressierung.
+- **Lage:** (gemessen 2026-09-29 folge206 via `sgrep -i europa_clipper phi/sources.φ` = 0 Treffer) Compiler-Arm steht (`tools/harvest/src/bin/horizons_compiler.rs:22` `("-159","europa_clipper",2026,12,3,20.0)`); Asset gemessen (200, 103 120 B, Siegel `dae553fb…`); Geschwister-Form `phi/sources.φ:15912-15917` (`no-cadence`, keine `ttl`/Verdikt — reine Manifestation).
+- **Blockade:** Namens-Riss — die Adressierung nennt `at europa`, doch `at europa` = **Mond** Europa (`phi/sources.φ:15442-15446`, NAIF 502); der Flyby-Body der `FLYBYS`-Tabelle heißt `europa_clipper`.
+- **Braucht:** die 6 Zeilen (`url …/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin` / `format ephemeris_binary` / `origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2026-12-03)` / `compiler horizons_compiler.rs` / `at europa_clipper` / `no-cadence`) in `at`-Reihenfolge einfügen; den Body-Namen gegen `frame_registry.φ`/`naif_body_ids.tsv` messen (Mountain) — `at europa` nicht erfinden.
 
 ## An mountain
 
