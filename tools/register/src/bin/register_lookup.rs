@@ -2467,19 +2467,31 @@ fn commit_touches(lower: Option<&str>, upper: Option<&str>, token: &str) -> Opti
     Some(!output.stdout.is_empty())
 }
 
-fn commit_resolves_all_lines(token: &str) -> Option<bool> {
-    let by_message = Command::new("git")
+fn load_commit_message_corpus() -> Option<String> {
+    let output = Command::new("git")
         .arg("log")
         .arg("--exclude=refs/safety/*")
         .arg("--all")
-        .arg("--oneline")
-        .arg(format!("--grep={}", token))
+        .arg("--format=%B%x00")
         .output()
         .ok()?;
-    if !by_message.status.success() {
+    if !output.status.success() {
         return None;
     }
-    if !by_message.stdout.is_empty() {
+    Some(String::from_utf8_lossy(&output.stdout).into_owned())
+}
+
+static MESSAGE_CORPUS: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
+
+fn commit_message_corpus() -> Option<&'static str> {
+    MESSAGE_CORPUS
+        .get_or_init(load_commit_message_corpus)
+        .as_deref()
+}
+
+fn commit_resolves_all_lines(token: &str) -> Option<bool> {
+    let corpus = commit_message_corpus()?;
+    if corpus.contains(token) {
         return Some(true);
     }
     let by_content = Command::new("git")
