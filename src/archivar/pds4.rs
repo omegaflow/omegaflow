@@ -3,20 +3,20 @@ use crate::archivar::pds3_table::unix_of_iso;
 pub const MAGIC: [u8; 4] = *b"P4FW";
 pub const COLUMN_NAME_BYTES: usize = 64;
 pub const COLUMN_UNIT_BYTES: usize = 16;
-pub const COLUMN_TYPE_BYTES: usize = 16;
+pub const COLUMN_TYPE_BYTES: usize = 32;
 pub const COLUMN_SP_NAME_BYTES: usize = 16;
 pub const COLUMN_SP_UNIT_BYTES: usize = 16;
-pub const COLUMN_META_BYTES: usize = COLUMN_NAME_BYTES
-    + COLUMN_UNIT_BYTES
-    + COLUMN_TYPE_BYTES
-    + COLUMN_SP_NAME_BYTES
-    + COLUMN_SP_UNIT_BYTES
-    + 8
-    + 8
-    + 8
-    + 4
-    + 4
-    + 4;
+const UNIT_OFFSET: usize = COLUMN_NAME_BYTES;
+const TYPE_OFFSET: usize = UNIT_OFFSET + COLUMN_UNIT_BYTES;
+const SP_NAME_OFFSET: usize = TYPE_OFFSET + COLUMN_TYPE_BYTES;
+const SP_UNIT_OFFSET: usize = SP_NAME_OFFSET + COLUMN_SP_NAME_BYTES;
+const MISSING_OFFSET: usize = SP_UNIT_OFFSET + COLUMN_SP_UNIT_BYTES;
+const SP_MIN_OFFSET: usize = MISSING_OFFSET + 8;
+const SP_MAX_OFFSET: usize = SP_MIN_OFFSET + 8;
+const START_OFFSET: usize = SP_MAX_OFFSET + 8;
+const NBYTES_OFFSET: usize = START_OFFSET + 4;
+const FLAGS_OFFSET: usize = NBYTES_OFFSET + 4;
+pub const COLUMN_META_BYTES: usize = FLAGS_OFFSET + 4;
 pub const ROW_VALUE_BYTES: usize = 8;
 pub const ROW_PRESENCE_BYTES: usize = 8;
 
@@ -665,38 +665,39 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
         if let Some(unit) = &c.unit {
             let unit = unit.as_bytes();
             let u = unit.len().min(COLUMN_UNIT_BYTES);
-            bin[base + 64..base + 64 + u].copy_from_slice(&unit[..u]);
+            bin[base + UNIT_OFFSET..base + UNIT_OFFSET + u].copy_from_slice(&unit[..u]);
         }
         if let Some(data_type) = &c.data_type {
             let dt = data_type.as_bytes();
             let d = dt.len().min(COLUMN_TYPE_BYTES);
-            bin[base + 80..base + 80 + d].copy_from_slice(&dt[..d]);
+            bin[base + TYPE_OFFSET..base + TYPE_OFFSET + d].copy_from_slice(&dt[..d]);
         }
         let sn = c.sampling_name.as_bytes();
         let snl = sn.len().min(COLUMN_SP_NAME_BYTES);
-        bin[base + 96..base + 96 + snl].copy_from_slice(&sn[..snl]);
+        bin[base + SP_NAME_OFFSET..base + SP_NAME_OFFSET + snl].copy_from_slice(&sn[..snl]);
         let su = c.sampling_unit.as_bytes();
         let sul = su.len().min(COLUMN_SP_UNIT_BYTES);
-        bin[base + 112..base + 112 + sul].copy_from_slice(&su[..sul]);
+        bin[base + SP_UNIT_OFFSET..base + SP_UNIT_OFFSET + sul].copy_from_slice(&su[..sul]);
         if let Some(v) = c.missing_constant {
-            bin[base + 128..base + 136].copy_from_slice(&v.to_le_bytes());
+            bin[base + MISSING_OFFSET..base + MISSING_OFFSET + 8].copy_from_slice(&v.to_le_bytes());
         }
         if let Some(v) = c.sampling_min {
-            bin[base + 136..base + 144].copy_from_slice(&v.to_le_bytes());
+            bin[base + SP_MIN_OFFSET..base + SP_MIN_OFFSET + 8].copy_from_slice(&v.to_le_bytes());
         }
         if let Some(v) = c.sampling_max {
-            bin[base + 144..base + 152].copy_from_slice(&v.to_le_bytes());
+            bin[base + SP_MAX_OFFSET..base + SP_MAX_OFFSET + 8].copy_from_slice(&v.to_le_bytes());
         }
         let start_byte = match c.start_byte {
             Some(v) => v as u32,
             None => 0,
         };
-        bin[base + 152..base + 156].copy_from_slice(&start_byte.to_le_bytes());
+        bin[base + START_OFFSET..base + START_OFFSET + 4]
+            .copy_from_slice(&start_byte.to_le_bytes());
         let nbytes = match c.bytes {
             Some(v) => v as u32,
             None => 0,
         };
-        bin[base + 156..base + 160].copy_from_slice(&nbytes.to_le_bytes());
+        bin[base + NBYTES_OFFSET..base + NBYTES_OFFSET + 4].copy_from_slice(&nbytes.to_le_bytes());
         let mut flags = 0u32;
         if c.missing_constant.is_some() {
             flags |= FLAG_MISSING;
@@ -707,7 +708,7 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
         if c.sampling_max.is_some() {
             flags |= FLAG_SP_MAX;
         }
-        bin[base + 160..base + 164].copy_from_slice(&flags.to_le_bytes());
+        bin[base + FLAGS_OFFSET..base + FLAGS_OFFSET + 4].copy_from_slice(&flags.to_le_bytes());
     }
     let data_base = 16 + cols * COLUMN_META_BYTES;
     for (r, row) in table.rows.iter().enumerate() {
@@ -763,24 +764,64 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds4Table> {
     for i in 0..cols {
         let base = 16 + i * COLUMN_META_BYTES;
         let name = str_field(bytes, base, base + COLUMN_NAME_BYTES)?;
-        let unit =
-            str_field(bytes, base + 64, base + 64 + COLUMN_UNIT_BYTES).filter(|s| !s.is_empty());
-        let data_type =
-            str_field(bytes, base + 80, base + 80 + COLUMN_TYPE_BYTES).filter(|s| !s.is_empty());
-        let sampling_name = str_field(bytes, base + 96, base + 96 + COLUMN_SP_NAME_BYTES)?;
-        let sampling_unit = str_field(bytes, base + 112, base + 112 + COLUMN_SP_UNIT_BYTES)?;
-        let missing = f64::from_le_bytes(bytes[base + 128..base + 136].try_into().ok()?);
-        let sp_min = f64::from_le_bytes(bytes[base + 136..base + 144].try_into().ok()?);
-        let sp_max = f64::from_le_bytes(bytes[base + 144..base + 152].try_into().ok()?);
-        let start_byte = match u32::from_le_bytes(bytes[base + 152..base + 156].try_into().ok()?) {
+        let unit = str_field(
+            bytes,
+            base + UNIT_OFFSET,
+            base + UNIT_OFFSET + COLUMN_UNIT_BYTES,
+        )
+        .filter(|s| !s.is_empty());
+        let data_type = str_field(
+            bytes,
+            base + TYPE_OFFSET,
+            base + TYPE_OFFSET + COLUMN_TYPE_BYTES,
+        )
+        .filter(|s| !s.is_empty());
+        let sampling_name = str_field(
+            bytes,
+            base + SP_NAME_OFFSET,
+            base + SP_NAME_OFFSET + COLUMN_SP_NAME_BYTES,
+        )?;
+        let sampling_unit = str_field(
+            bytes,
+            base + SP_UNIT_OFFSET,
+            base + SP_UNIT_OFFSET + COLUMN_SP_UNIT_BYTES,
+        )?;
+        let missing = f64::from_le_bytes(
+            bytes[base + MISSING_OFFSET..base + MISSING_OFFSET + 8]
+                .try_into()
+                .ok()?,
+        );
+        let sp_min = f64::from_le_bytes(
+            bytes[base + SP_MIN_OFFSET..base + SP_MIN_OFFSET + 8]
+                .try_into()
+                .ok()?,
+        );
+        let sp_max = f64::from_le_bytes(
+            bytes[base + SP_MAX_OFFSET..base + SP_MAX_OFFSET + 8]
+                .try_into()
+                .ok()?,
+        );
+        let start_byte = match u32::from_le_bytes(
+            bytes[base + START_OFFSET..base + START_OFFSET + 4]
+                .try_into()
+                .ok()?,
+        ) {
             0 => None,
             v => Some(v as usize),
         };
-        let nbytes = match u32::from_le_bytes(bytes[base + 156..base + 160].try_into().ok()?) {
+        let nbytes = match u32::from_le_bytes(
+            bytes[base + NBYTES_OFFSET..base + NBYTES_OFFSET + 4]
+                .try_into()
+                .ok()?,
+        ) {
             0 => None,
             v => Some(v as usize),
         };
-        let flags = u32::from_le_bytes(bytes[base + 160..base + 164].try_into().ok()?);
+        let flags = u32::from_le_bytes(
+            bytes[base + FLAGS_OFFSET..base + FLAGS_OFFSET + 4]
+                .try_into()
+                .ok()?,
+        );
         columns.push(Pds4Column {
             name,
             unit,
