@@ -110,22 +110,26 @@ fn strip_inline_code(line: &str) -> String {
 }
 
 fn marker_in_status_context(lower: &str, marker: &str) -> bool {
-    if marker != "blocked" {
-        return lower.contains(marker);
-    }
+    let status_token = marker == "blocked";
     lower.match_indices(marker).any(|(idx, _)| {
         let before = lower[..idx].trim_end();
         let after = &lower[idx + marker.len()..];
         let starts_clean = before.is_empty()
-            || matches!(
-                before.chars().last(),
-                Some(':') | Some('|') | Some('-') | Some('(') | Some('[')
-            );
+            || before.chars().last().map_or(false, |c| {
+                if status_token {
+                    matches!(c, ':' | '|' | '-' | '(' | '[')
+                } else {
+                    !c.is_alphanumeric()
+                }
+            });
         let ends_clean = after.is_empty()
-            || matches!(
-                after.chars().next(),
-                Some(' ') | Some(':') | Some('|') | Some(',') | Some(')') | Some(']')
-            );
+            || after.chars().next().map_or(false, |c| {
+                if status_token {
+                    matches!(c, ' ' | ':' | '|' | ',' | ')' | ']')
+                } else {
+                    !c.is_alphanumeric()
+                }
+            });
         starts_clean && ends_clean
     })
 }
@@ -3353,6 +3357,21 @@ mod tests {
         ));
         assert!(open_marker_matches("blocked account: needs a key"));
         assert!(open_marker_matches("**Status:** blocked"));
+    }
+
+    #[test]
+    fn wartet_marks_a_word_not_a_substring_and_blocked_stays_a_status_token() {
+        assert!(!open_marker_matches(
+            "ein measure-probe z\u{e4}hlt erwartete vs. leere Zellen"
+        ));
+        assert!(!open_marker_matches(
+            "OA = (Variabilit\u{e4}t_beobachtet \u{2212} Variabilit\u{e4}t_erwartet)"
+        ));
+        assert!(open_marker_matches("wartet"));
+        assert!(!open_marker_matches(
+            "the work is *done or genuinely blocked*, not as a substitute"
+        ));
+        assert!(open_marker_matches("blocked account: needs a key"));
     }
 
     #[test]

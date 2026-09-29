@@ -729,10 +729,11 @@ mod tests {
         let row1 = [3u8, 10, 10, 10, 10];
         let buf = png_fixture(1, 2, 6, None, &[row0.as_slice(), row1.as_slice()].concat());
         let raster = parse_png(&buf).expect("the tile decodes");
-        assert_eq!(
-            &raster.values[4..8],
-            &[Some(30.0), Some(30.0), Some(30.0), Some(30.0)]
-        );
+        let per_band = raster.lines * raster.samples;
+        let row1: Vec<Option<f64>> = (0..raster.bands)
+            .map(|b| raster.values[b * per_band + 1])
+            .collect();
+        assert_eq!(row1, vec![Some(30.0), Some(30.0), Some(30.0), Some(30.0)]);
     }
 
     #[test]

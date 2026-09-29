@@ -285,14 +285,11 @@ pub fn decode_raster(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgRejec
         Some(v) => v,
         None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
     };
-    let record_bytes = match meta.record_bytes {
-        Some(rb) => rb,
-        None => match data_bytes_per_line.checked_add(prefix) {
-            Some(v) => v,
-            None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
-        },
+    let line_stride = match data_bytes_per_line.checked_add(prefix) {
+        Some(v) => v,
+        None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
     };
-    if record_bytes < data_bytes_per_line + prefix {
+    if meta.record_bytes.is_some_and(|rb| rb < line_stride) {
         return Err(ImgReject::MissingField("RECORD_BYTES"));
     }
     let per_band = match lines.checked_mul(samples) {
@@ -306,7 +303,7 @@ pub fn decode_raster(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgRejec
     let mut values = Vec::with_capacity(total);
     for band in 0..bands {
         for line in 0..lines {
-            let record_at = offset + (band * lines + line) * record_bytes + prefix;
+            let record_at = offset + (band * lines + line) * line_stride + prefix;
             for s in 0..samples {
                 let at = record_at + s * width;
                 let v = match bytes.get(at..at + width) {

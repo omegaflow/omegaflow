@@ -111,6 +111,12 @@ record sky1
 force em
 note FUGIN-12CO-Moment-0 (FUGIN Region 01100+0000): NAXIS=3-VRAD-Cube zu moment-0 (K·m/s je nativem Pixel), kind generic. Negative Rauschpixel sind echte Messungen (signed), nie positiv gegated. Compiler fugin_skymap_compiler.rs.
 
+witness s2-direction
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde
+record vlde
+force em
+note Vlies-Dichte (Council 2026-09-29): Stern-zahl-Zensus je HEALPix-Pixel aus dr3_stars.bin; distanzlos, bandlos — kein Kraftfeld. S²-Richtung, Träger em. vlies_density_compiler.rs. Schließt die Weberin-Lücke.
+
 witness substance
 url https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
 record rixs
