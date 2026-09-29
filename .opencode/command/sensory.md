@@ -29,6 +29,12 @@ eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Wai
 pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
 Sensory liest die Hardware nur nach Operator-Wort; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`.
 
+**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
+**privat** (nur diese Linie) und liegt in `state/sensory/archive-search-preset.txt` — hier
+eingelesen:
+
+!`cat state/sensory/archive-search-preset.txt`
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
