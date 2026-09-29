@@ -2,8 +2,8 @@ use omegaflow::archivar::double::{ConeCatalog, CrossmatchArgs, crossmatch};
 use omegaflow::archivar::exclude::parse_bin as parse_excl;
 use omegaflow::archivar::ir::parse_bin as parse_ir;
 use omegaflow::archivar::radio::parse_bin as parse_radio;
-use omegaflow::archivar::spatial::STAR_RECORD_BYTES;
 use omegaflow::archivar::spatial::parse_star_record;
+use omegaflow::archivar::spatial::star_stride;
 use omegaflow::archivar::tns::parse_bin as parse_tns;
 use std::path::Path;
 
@@ -31,7 +31,10 @@ fn run(
     let mut gaia_dec = Vec::new();
     let mut gaia_color = Vec::new();
     let sb = std::fs::read(stars_path).map_err(|e| format!("stars {stars_path}: {e}"))?;
-    for chunk in sb.chunks_exact(STAR_RECORD_BYTES) {
+    let Some(stride) = star_stride(&sb) else {
+        return Err(format!("stars {stars_path}: no star-stride records"));
+    };
+    for chunk in sb.chunks_exact(stride) {
         if let Some(rec) = parse_star_record(chunk) {
             gaia_ra.push(rec.ra_deg);
             gaia_dec.push(rec.dec_deg);
