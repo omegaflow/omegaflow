@@ -3469,8 +3469,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let mw_fc = FieldConfig {
             key: "mw".to_string(),
             name: "gcmt_mw".to_string(),
-            kernel: 3,
-            force: 4,
+            kernel: 1,
+            force: 3,
             tau: m0_fc.tau,
             absorption: m0_fc.absorption,
             advection: m0_fc.advection,
