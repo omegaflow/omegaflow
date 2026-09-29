@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: 56446271225d80b51edeb015c30b422ce43422889ffd0968729b10cd2c5c8584
+  sha256: a755eac5c152379239abadf420631781ad75f343086172c59b7938376c9eb8f4
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1134
+dropped-baseline 1148
+measured 2026-09-29 (Mycelium-Folge 207, ci-gate 36626370907 @4ef3a7e43: baseline 1134 | current 1148 | delta 14. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1134 — die Archive-Moves mountain-206/207, river-66/67, sensory-208/209, mycelium-206/207. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-09-29 (Mycelium-Folge 206, ci-gate 36562466796 @04256b3ba: baseline 1127 | current 1134 | delta 7. Die 7 sind der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1127 — die Archive-Moves mountain-204/205, river-65, sensory-206; der folge206-Bump @1131 war beim Lauf @04256b3ba noch uncommittet. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-09-29 (Mycelium-Folge 205, ci-gate 36506672052 @5d6c9c685: baseline 1113 | current 1127 | delta 14. Die 14 sind `entscheid`-Punkte aus archivierten Übergaben folge2–22 (10× `git: resolved`, 4× `git: none`: `entscheid-folge3.md:76` Account-Verifikationen, `entscheid-folge7.md:28` Sicherheitsnetz, `:30` Guard-Atom, `:59` DRS-FITS-Anlass), lokal mit `register_lookup --dropped` extrahiert. Absorbiert durch diesen Bump im annehmenden Commit.)
 measured 2026-09-29 (Mountain-Folge 203, ci-gate 36503272430 dropped-gate @69eef305a: baseline 1082 | current 1113 | delta 31. Der aufgelaufene Netto der Planungs-Pässe seit dem Bump @1082; lokal nicht nachgemessen (`register_lookup --dropped` bricht >30 min ab) — die Gate-Zahl ist CI-only, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)
