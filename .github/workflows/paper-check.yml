@@ -42,6 +42,20 @@ jobs:
         fi
     - name: Export the papers to LaTeX (write step)
       run: cargo run -q -p omegaflow-science --bin export_latex
+    - name: Provision Tectonic (static musl, sha-pinned)
+      run: |
+        curl -fsSL -o /tmp/tectonic.tar.gz \
+          "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz"
+        echo "8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7  /tmp/tectonic.tar.gz" | sha256sum -c -
+        mkdir -p "$HOME/.local/bin"
+        tar xzf /tmp/tectonic.tar.gz -C "$HOME/.local/bin"
+        "$HOME/.local/bin/tectonic" --version
+    - name: Render the exported papers to PDF
+      run: |
+        shopt -s nullglob
+        for tex in docs/paper/export/*.tex; do
+          "$HOME/.local/bin/tectonic" --outdir docs/paper/export "$tex"
+        done
     - name: Reference gate (arXiv, DOI)
       run: cargo run -q -p omegaflow-register --bin reference_verify
     - if: failure()
