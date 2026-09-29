@@ -1,5 +1,5 @@
 pub const MAGIC: [u8; 4] = *b"G2CB";
-pub const HEADER_BYTES: usize = 12;
+pub const HEADER_BYTES: usize = 8;
 pub const REC_BYTES: usize = 24;
 
 fn le_f64(data: &[u8], offset: usize) -> Option<f64> {
