@@ -1,7 +1,7 @@
 # OpenCode Browser — extension
 
-Companion Chromium/Firefox extension for [`@vymalo/opencode-browser`](../../packages/opencode-browser)
-and [`@vymalo/opencode-browser-mcp`](../../packages/opencode-browser-mcp). Its background worker
+Companion Chromium/Firefox extension for `@vymalo/opencode-browser`
+and `@vymalo/opencode-browser-mcp`. Its background worker
 dials the localhost **bridge** and drives real browser tabs (open, click, type, scroll,
 screenshot) on behalf of an agent, organized into **named tab groups**.
 
@@ -107,14 +107,14 @@ src/
 The two executors share all DOM-bound work via `chrome.scripting.executeScript`. The CDP
 executor (`chrome.debugger`) adds trusted input + full-page capture on Chromium; the
 content-script executor is the Firefox-safe fallback. Full architecture, wire protocol, and tool
-reference: [`docs/browser.md`](../../docs/browser.md).
+reference: `docs/browser.md`.
 
 ## Publishing
 
 `wxt zip` produces the store artifacts; the release pipeline attaches them to the GitHub Release
 and runs `wxt submit` to the Chrome Web Store + Firefox AMO (each gated on its own repo secrets).
 The Firefox add-on id is pinned to `opencode-browser@vymalo.com`. Full store-setup + secret list:
-[`docs/browser.md` → Publishing the extension to the web stores](../../docs/browser.md#publishing-the-extension-to-the-web-stores).
+`docs/browser.md` → Publishing the extension to the web stores.
 
 ## Troubleshooting
 

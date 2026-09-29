@@ -28,7 +28,7 @@ jobs:
             --xmatch-radius 10 \
             --skip-null flux \
             --skip-null z \
-            --async 600 --limit 2000000 \
+            --async 3600 --limit 2000000 \
             --out nvss.json \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

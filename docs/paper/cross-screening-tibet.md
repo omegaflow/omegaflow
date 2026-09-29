@@ -4,7 +4,7 @@
   date: 2026-09-12
   sha256: 23c4c3543892ae21263ef5f6d148fe4318c7cb43ee56325110522786033e832c
   status: live
-  see-also: docs/blatt/blatt-kreuz-screening-kollab.md docs/blatt/blatt-kreuz-screening-gyirong.md docs/paper/sturzflut-tibet-pfeil.md
+  see-also: docs/blatt/blatt-kreuz-screening-gyirong.md docs/paper/sturzflut-tibet-pfeil.md
 -->
 
 # Cross-screening the Kollab window and the Gyirong series

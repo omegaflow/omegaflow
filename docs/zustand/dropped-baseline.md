@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: 1e57c647ff26dee562a9b7113a32332e7f75db48251fbc93f3c8f8a179c2b34f
+  sha256: 56446271225d80b51edeb015c30b422ce43422889ffd0968729b10cd2c5c8584
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1127
+dropped-baseline 1134
+measured 2026-09-29 (Mycelium-Folge 206, ci-gate 36562466796 @04256b3ba: baseline 1127 | current 1134 | delta 7. Die 7 sind der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1127 — die Archive-Moves mountain-204/205, river-65, sensory-206; der folge206-Bump @1131 war beim Lauf @04256b3ba noch uncommittet. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-09-29 (Mycelium-Folge 205, ci-gate 36506672052 @5d6c9c685: baseline 1113 | current 1127 | delta 14. Die 14 sind `entscheid`-Punkte aus archivierten Übergaben folge2–22 (10× `git: resolved`, 4× `git: none`: `entscheid-folge3.md:76` Account-Verifikationen, `entscheid-folge7.md:28` Sicherheitsnetz, `:30` Guard-Atom, `:59` DRS-FITS-Anlass), lokal mit `register_lookup --dropped` extrahiert. Absorbiert durch diesen Bump im annehmenden Commit.)
 measured 2026-09-29 (Mountain-Folge 203, ci-gate 36503272430 dropped-gate @69eef305a: baseline 1082 | current 1113 | delta 31. Der aufgelaufene Netto der Planungs-Pässe seit dem Bump @1082; lokal nicht nachgemessen (`register_lookup --dropped` bricht >30 min ab) — die Gate-Zahl ist CI-only, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)
 measured 2026-09-28 (Mountain-Folge 199, ci-gate 36482049012 dropped-gate @11c90ff9a: baseline 1060 | current 1082 | delta 22. Der lokale `register_lookup --dropped`-Scan brach nach 900 s ab — die Baseline-Datei nennt bereits >30 min; die 22 sind der aufgelaufene Netto der Planungs-Pässe nach dem River-57-Bump, absorbiert durch diesen Bump. Namen lokal nicht extrahiert.)

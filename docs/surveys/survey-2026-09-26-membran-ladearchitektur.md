@@ -2,9 +2,9 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 0fdf5639b785b8a6b0a018f27fe8c06e713f9bf17916c827f2643830bca2308c
+  sha256: f67e9e63f42ecf8c1ef3f7d3680c5e6a9718fd75f766dc20b06cc6c60ea43354
   status: live
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
 # Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
 
@@ -236,7 +236,7 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
 
 ## 8. Werkzeug- und Quellenlage (gemessen)
 
-- `phase_null`/`explore`/`research-max` über Repo, `/home/johannes/backup/archive-root`
+- `phase_null`/`explore`/`research-max` über Repo, `archive-root`
   (Legacy-TODO, vanilla-dateidocs, concept-history) und `archive_search` (--crossref,
   --openalex, --github, --wiki, --tavily, --exa, --linkup, --marginalia, --mwmbl,
   --all, --playwright).
