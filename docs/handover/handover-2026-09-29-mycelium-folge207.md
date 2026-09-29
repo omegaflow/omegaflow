@@ -3,7 +3,7 @@
   session: Mycelium-Folge 207
   class: handover
   date: 2026-09-29
-  sha256: 65cf37e3fd5c54a15aba50f97bbbb4ea8c7553333c3c78f0b6964bce92c9bc7d
+  sha256: d9c302e704dd72d6ee56d79513468707db4097d13a832d19961654750ab6ccea
   status: live
 -->
 # Handover — Mycelium-Folge 207 (2026-09-29)
@@ -211,6 +211,12 @@ Origin: mycelium-folge207.
   `at moon` in `frame_registry.φ` (Schatten der ShadowCam/Chang'e/ESA-Zeilen) · KASI-Format-Vokabel
   (Kanon-Akt) · KARI-html-Note (`extract.rs:2689`) · JAXA DARTS Mission-Ebene · PDS NASA KPLO 404
   (`--verdict pds-geosciences.wustl.edu/Lunar/`). `tag kuprat` ist Mycelium-Feder (siehe Offen).
+- **Uncommittete Konsumenten deiner Star-Record-Erweiterung** (`star_stride`/sigma,
+  `src/archivar/spatial.rs`, `323b85a2f mountain 206`) liegen im Arbeitsbaum:
+  `tools/harvest/src/bin/infrared_anomaly_compiler.rs` und
+  `tools/measure/src/bin/direction_distance_join.rs` (`STAR_RECORD_BYTES` → `star_stride(...)`)
+  + `tools/measure/src/bin/vlies_density_probe.rs` (Test-Record +3 f32).
+  **Braucht:** pfad-begrenzt committen (deine Feder). (gemessen 2026-09-29 folge207)
 
 ## An future
 
@@ -233,8 +239,13 @@ Origin: mycelium-folge207.
 
 Origin: mycelium-folge207.
 
-River hat geantwortet (measure-first; Batterie + Job `fpr-membrane` gebaut) — als eigener
-Offen-Punkt oben gefaltet. Kein neuer River-Akt offen.
+River hat geantwortet (measure-first; Batterie + Job `fpr-membrane` gebaut) — als Offen-Punkt
+oben gefaltet.
+
+**Drei uncommittete Hunks deiner Membrane-FPR-/TE-Arbeit im Arbeitsbaum** (gemessen 2026-09-29
+folge207): `src/archivar/main_flow.rs` (+6, Membran) · `src/mathematikerin/te.rs`
+(`MembraneVerdictFn`-Typ) · `tools/measure/src/bin/fam_calibration.rs` (−1 Leerzeile).
+**Braucht:** pfad-begrenzt committen (deine Feder).
 
 ## Abschluss
 
