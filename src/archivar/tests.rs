@@ -7685,11 +7685,24 @@ fn test_ci_body_verdict() {
         super::port::ci_body_verdict(&json_src, r#"{"a":1}"#),
         super::port::CiBodyVerdict::JsonLive
     ));
-    let ndk_src = make("ndk");
+    let mut ndk_src = make("ndk");
+    ndk_src.extracts = vec![super::Extract::Field(super::FieldConfig {
+        key: "m0".into(),
+        name: "gcmt_scalar_moment_nm".into(),
+        kernel: 1,
+        force: 3,
+        tau: 6.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: "N·m".into(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    })];
     let ndk = " MLI  1976/01/01 01:29:39.6 -28.61 -177.64  59.0 6.2 0.0 KERMADEC ISLANDS REGION\n";
     assert!(matches!(
         super::port::ci_body_verdict(&ndk_src, ndk),
-        super::port::CiBodyVerdict::FormatGap(_)
+        super::port::CiBodyVerdict::NonJsonPresent(_)
     ));
     let tsv_src = make("asu-tsv");
     assert!(matches!(
@@ -9831,6 +9844,50 @@ fn esacci_sst_geo_series_roundtrip_and_component_name() {
     assert_eq!(
         crate::geo::comp_max("esacci_sst_l4_cdr3"),
         Some(crate::geo::COMP_ESACCI_SST)
+    );
+}
+
+#[test]
+fn ersstv5_nino34_geo_series_roundtrip_and_component_name() {
+    let recs = vec![
+        crate::geo::GeoRec {
+            t: -4_607_323_167.816,
+            lat: -4.0,
+            lon: 190.0,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: -1.0162277,
+            comp: crate::geo::COMP_ERSSTV5,
+            station: 0,
+        },
+        crate::geo::GeoRec {
+            t: 946_728_000.0,
+            lat: 4.0,
+            lon: 240.0,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 0.75,
+            comp: crate::geo::COMP_ERSSTV5,
+            station: 0,
+        },
+    ];
+    let magic =
+        crate::geo::magic_of("ersstv5_nino34").expect("the ersstv5_nino34 format carries a magic");
+    let bytes = crate::geo::write_bin(magic, &recs);
+    let parsed = super::extract::geo_series_parse_bin("ersstv5_nino34", &bytes)
+        .expect("ersstv5_nino34 bin parses");
+    assert_eq!(parsed.len(), 2);
+    assert_eq!(parsed[0].val, -1.0162277);
+    assert_eq!(parsed[1].lat, 4.0);
+    assert_eq!(
+        super::extract::geo_series_component_name("ersstv5_nino34", crate::geo::COMP_ERSSTV5),
+        Some("ersstv5_nino34_ssta")
+    );
+    assert_eq!(
+        crate::geo::comp_max("ersstv5_nino34"),
+        Some(crate::geo::COMP_ERSSTV5)
     );
 }
 

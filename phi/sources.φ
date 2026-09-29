@@ -7148,9 +7148,9 @@ field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
 field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
 field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
 
-url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_cog_000112_230416_260919_v01.bsp
+url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_cog_000114_230416_261003_v01.bsp
 format reference
-sha256 254c612ee36d21edbc17e1769dd45f9a746d255f17ed4df162123fafb74fb56c
+sha256 0a8479226fd0f4474068c2aa68afebfb2c4f517cb412c2724180ba2aa2fe7393
 ttl 86400
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
@@ -7257,6 +7257,7 @@ url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
 format ndk
 at earth
 ttl 86400
+field m0 gcmt_scalar_moment_nm gaussian-inverse-square seismic-body N·m 6.0 0.0 0.0
 
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 format igra_zip
@@ -11107,6 +11108,14 @@ ttl 2592000
 at earth
 last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 86400 0.0 0.0
 last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin
+format ersstv5_nino34
+origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
+compiler tools/harvest/src/bin/ersstv5_compiler.rs
+on earth 0 0 0
+ttl 2592000
+field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
 format modis_lst_cmg

@@ -604,6 +604,7 @@ fn format_readable(fmt: &str) -> bool {
             | "fits"
             | "tar_gz_yaml"
             | "asu-tsv"
+            | "ndk"
     )
 }
 

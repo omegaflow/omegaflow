@@ -16,8 +16,8 @@ note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheit
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin fehlt.
 note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin + Sample fehlen.
 note gap-Token gras-2c — GRAS-HX1-RoPeR-Rohdaten (.2C binär + .2CL Label); Reader-Arm steht (src/archivar/gras_2c.rs, strukturell, 2026-09-29); Format .2C ungemessen, Compiler-Bin + Sample fehlen.
-note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (src/archivar/mat5.rs parse_mat5, matfile.rs parse_mat); kein parser-def-Block trägt diesen Token (extract()-Arm-Wiring nicht angefordert).
-note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset, Reader-Arm fehlt.
+note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
+note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -89,7 +89,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER Order 18400 server-seitig defekt: availableFilesCount 0, filesInErrorCount 1000; 18387 DONE_WITH_WARNING 96978/97078; kein ip-Block. UA-Riss: mountain 403/403 vs sensory 403/202 (orderToken). Wartend (wartend.φ:4), Order exp 2026-10-05.
+note DEMETER — Klasse: CDPP-Generierung defekt, wartend. Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000); 18387 DONE_WITH_WARNING 96978/97078. UA-Riss 403/403 vs 403/202 (orderToken). Wartend wartend.φ:4, Order exp 2026-10-05.
 
 descoped
 url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
@@ -381,7 +381,7 @@ note Tianwen-1/Zhurong (CNSA) — Portal 200; Konto registriert/eingeloggt Opera
 
 pending
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — chmapbrowse 200 (mrbrowse 404); Konto registriert/eingeloggt Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen. sensory-folge195, future-folge148.
+note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — 2026-09-29: ch2 200 (31050 B), chmapbrowse 404, mrbrowse 404. Konto registriert/eingeloggt Operator-Hand 2026-09-28 (future-folge149); Download nicht end-to-end gemessen.
 
 pending
 url https://sdc.emiratesmarsmission.ae/
@@ -427,10 +427,9 @@ pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
 note Hayabusa LIDAR cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label. Arm + Konsument stehen (pds4.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:234. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
 
-parser-def binary
-gap hips-png
+pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
-note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-28 dir 206, properties 206 (hips_tile_format png, order 7, frame mars); MOC.fits/Norder3 404. Tiled PNG-Tree, kein Einzeldatei-Asset; HiPS-Reader fehlt. future-folge150.
+note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
 pending
 url http://pds.wh.sdu.edu.cn
