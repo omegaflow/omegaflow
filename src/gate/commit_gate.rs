@@ -1778,7 +1778,11 @@ pub fn ereignis_folge_violations(
     ereignisse: &str,
     wartend: Option<&str>,
     blocked: Option<&str>,
+    session: Option<&str>,
 ) -> Vec<(usize, String, String)> {
+    let Some(session) = session else {
+        return Vec::new();
+    };
     let mut out = Vec::new();
     for (idx, line) in ereignisse.lines().enumerate() {
         let t = line.trim();
@@ -1790,6 +1794,10 @@ pub fn ereignis_folge_violations(
             continue;
         };
         if *klasse != "account" && *klasse != "send" {
+            continue;
+        }
+        let ereignis_session = fields.get(1).copied().unwrap_or("");
+        if ereignis_session != session {
             continue;
         }
         let gegenstand = match fields.get(4) {
@@ -4488,7 +4496,8 @@ mod tests {
 
     #[test]
     fn fp_ereignis_account_ohne_folge() {
-        let v = ereignis_folge_violations(&fx("ereignis_account"), None, None);
+        let v =
+            ereignis_folge_violations(&fx("ereignis_account"), None, None, Some("ses_folge_test"));
         assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-folge"));
     }
 
@@ -4498,13 +4507,14 @@ mod tests {
             &fx("ereignis_account"),
             None,
             Some(&fx("ereignis_blocked_folge")),
+            Some("ses_folge_test"),
         );
         assert!(v.is_empty());
     }
 
     #[test]
     fn fp_ereignis_send_ohne_folge() {
-        let v = ereignis_folge_violations(&fx("ereignis_send"), None, None);
+        let v = ereignis_folge_violations(&fx("ereignis_send"), None, None, Some("ses_folge_test"));
         assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-folge"));
     }
 
@@ -4514,19 +4524,38 @@ mod tests {
             &fx("ereignis_send"),
             Some(&fx("ereignis_wartend_folge")),
             None,
+            Some("ses_folge_test"),
         );
         assert!(v.is_empty());
     }
 
     #[test]
     fn fn_ereignis_wort_klasse_ohne_folge() {
-        let v = ereignis_folge_violations(&fx("ereignis_wort"), None, None);
+        let v = ereignis_folge_violations(&fx("ereignis_wort"), None, None, Some("ses_folge_test"));
         assert!(v.is_empty());
     }
 
     #[test]
     fn fp_ereignis_ohne_gegenstand() {
-        let v = ereignis_folge_violations(&fx("ereignis_ohne_gegenstand"), None, None);
+        let v = ereignis_folge_violations(
+            &fx("ereignis_ohne_gegenstand"),
+            None,
+            None,
+            Some("ses_folge_test"),
+        );
         assert!(v.iter().any(|(_, r, _)| r == "ereignis-ohne-gegenstand"));
+    }
+
+    #[test]
+    fn fn_ereignis_fremde_session_wird_uebersprungen() {
+        let e = "2026-09-28T17:05:00Z | ses_andere | future | account | moon.bao.ac.cn\n";
+        let v = ereignis_folge_violations(e, None, None, Some("ses_folge_test"));
+        assert!(v.is_empty());
+    }
+
+    #[test]
+    fn fn_ereignis_ohne_session_name_wird_uebersprungen() {
+        let v = ereignis_folge_violations(&fx("ereignis_account"), None, None, None);
+        assert!(v.is_empty());
     }
 }

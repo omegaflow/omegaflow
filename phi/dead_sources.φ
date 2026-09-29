@@ -1016,3 +1016,11 @@ dead 404
 url https://xeno-canto.org/api/2/recordings?query=corvus+corax
 note API v2 HTTP 404 direct+Proton; v3-Nachfolger nicht im Register; 2026-09-20.
 
+dead 404
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/astro_twomass_psc.json
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-29.
+
+dead 404
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/twomass_psc.json
+note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-29.
+
