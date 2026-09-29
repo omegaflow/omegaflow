@@ -2114,6 +2114,33 @@ fn leading_region(body: &str) -> &str {
     }
 }
 
+fn inline_field_end(value: &str) -> usize {
+    let bytes = value.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'|' {
+            return i;
+        }
+        if bytes[i] == b'*'
+            && (i == 0 || bytes[i - 1].is_ascii_whitespace() || bytes[i - 1] == b'|')
+        {
+            let mut j = i;
+            while j < bytes.len() && bytes[j] == b'*' {
+                j += 1;
+            }
+            let label_start = j;
+            while j < bytes.len() && (bytes[j].is_ascii_alphabetic() || bytes[j] == b'/') {
+                j += 1;
+            }
+            if j > label_start && j < bytes.len() && bytes[j] == b':' {
+                return i;
+            }
+        }
+        i += 1;
+    }
+    value.len()
+}
+
 fn field_value_after_label(text: &str, label: &str) -> Option<String> {
     let needle = label.to_ascii_lowercase();
     let lower = text.to_ascii_lowercase();
@@ -2142,7 +2169,8 @@ fn field_value_after_label(text: &str, label: &str) -> Option<String> {
             break;
         }
         if let Some(i) = colon {
-            let value = after[i + 1..]
+            let value = after[i + 1..].trim();
+            let value = value[..inline_field_end(value)]
                 .trim()
                 .trim_matches(|c: char| c == '*' || c.is_whitespace());
             if !value.is_empty() {
@@ -2442,6 +2470,7 @@ fn commit_touches(lower: Option<&str>, upper: Option<&str>, token: &str) -> Opti
 fn commit_resolves_all_lines(token: &str) -> Option<bool> {
     let by_message = Command::new("git")
         .arg("log")
+        .arg("--exclude=refs/safety/*")
         .arg("--all")
         .arg("--oneline")
         .arg(format!("--grep={}", token))
@@ -2455,6 +2484,7 @@ fn commit_resolves_all_lines(token: &str) -> Option<bool> {
     }
     let by_content = Command::new("git")
         .arg("log")
+        .arg("--exclude=refs/safety/*")
         .arg("--all")
         .arg("--oneline")
         .arg(format!("-S{}", token))
@@ -2772,6 +2802,26 @@ fn current_head_full() -> Option<String> {
     if sha.is_empty() { None } else { Some(sha) }
 }
 
+fn standalone_iso_date(bytes: &[u8], i: usize) -> bool {
+    let before = if i == 0 {
+        true
+    } else {
+        !(bytes[i - 1].is_ascii_alphanumeric() || bytes[i - 1] == b'-')
+    };
+    let end = i + 10;
+    let after = if end >= bytes.len() {
+        true
+    } else {
+        let c = bytes[end];
+        if c.is_ascii_alphanumeric() || c == b'-' {
+            (c == b'T' || c == b't') && end + 1 < bytes.len() && bytes[end + 1].is_ascii_digit()
+        } else {
+            true
+        }
+    };
+    before && after
+}
+
 fn find_iso_date(text: &str) -> Option<i64> {
     let bytes = text.as_bytes();
     let mut i = 0;
@@ -2783,6 +2833,7 @@ fn find_iso_date(text: &str) -> Option<i64> {
                 && seg[..4].iter().all(u8::is_ascii_digit)
                 && seg[5..7].iter().all(u8::is_ascii_digit)
                 && seg[8..].iter().all(u8::is_ascii_digit)
+                && standalone_iso_date(bytes, i)
             {
                 let date = std::str::from_utf8(seg).ok()?;
                 let y: i64 = date[..4].parse().ok()?;
@@ -2863,7 +2914,11 @@ fn fired_points(
             None => continue,
         };
         for point in extract_open_points(&h.text) {
-            let block = following_block(&h.text, point.lineno.saturating_sub(1));
+            let block = if point.from_heading {
+                following_block(&h.text, point.lineno.saturating_sub(1))
+            } else {
+                Vec::new()
+            };
             let status_text = match block_field(&block, "status") {
                 Some(s) => format!("{} {}", point.text, s),
                 None => point.text.to_string(),
@@ -4397,6 +4452,45 @@ mod tests {
             out.iter()
                 .any(|l| l.starts_with("FIRED\t") && l.contains("vergangen")),
             "a Trigger field with a past date must fire: {:?}",
+            out
+        );
+        assert_eq!(fired, 1, "{:?}", out);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn fired_points_inline_field_stops_before_lage_and_filenames() {
+        let base = env::temp_dir().join(format!("rl-fired-inline-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let body = "# h\n\n## Offen\n\n- **paused-doctrine** \u{2014} carrier is the pause itself. *Braucht:* operator word.\n- **dated-b** \u{2014} *Status:* termin | *Trigger:* 2024-01-01.\n- **inline-lage** \u{2014} *Status:* wartend | *Bindung:* eigen | *Trigger:* hardware. *Lage:* unmeasured, absent (gemessen 2024-09-28); Wort: kein Mess-Akt jetzt.\n- **filename-trigger** \u{2014} *Status:* wartend | *Trigger:* published in `docs/paper/x-2024-09-03.md`.\n";
+        fs::write(
+            base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
+            body,
+        )
+        .unwrap();
+        let handovers = collect_live_handovers_in(&base);
+        let head = "a".repeat(40);
+        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        assert!(
+            !out.iter().any(|l| l.contains("paused-doctrine")),
+            "a sibling bullet must not inherit the next point's status/trigger: {:?}",
+            out
+        );
+        assert!(
+            !out.iter().any(|l| l.contains("inline-lage")),
+            "an inline Trigger must stop before the Lage stamp: {:?}",
+            out
+        );
+        assert!(
+            !out.iter().any(|l| l.contains("filename-trigger")),
+            "an ISO date inside a filename must not fire: {:?}",
+            out
+        );
+        assert!(
+            out.iter()
+                .any(|l| l.starts_with("FIRED\t") && l.contains("dated-b")),
+            "a standalone inline Trigger date must fire: {:?}",
             out
         );
         assert_eq!(fired, 1, "{:?}", out);

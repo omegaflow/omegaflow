@@ -394,6 +394,10 @@ fn test_convert_to_si() {
     close(convert_to_si(30.0, "dBHz"), 1.0e3);
     close(convert_to_si(1.0, "Bq/L"), 1.0e3);
     close(convert_to_si(2.0, "BQ/M³"), 2.0);
+    close(convert_to_si(1.0, "nmi"), 1852.0);
+    close(convert_to_si(1.0, "ft"), 0.3048);
+    close(convert_to_si(1.0, "degree_c"), 274.15);
+    close(convert_to_si(1.0, "degc"), 274.15);
     assert!(convert_to_si(9.0, "weird").is_none());
     assert!(convert_to_si(7.2, "M").is_none());
     assert!(convert_to_si(5.0, "mag").is_none());
@@ -482,7 +486,19 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(6).contains(&"mm"));
     assert!(allowed_units_for_force(7).contains(&"cm/s"));
     assert!(allowed_units_for_force(7).contains(&"deg"));
+    assert!(allowed_units_for_force(0).contains(&"nmi"));
+    assert!(allowed_units_for_force(1).contains(&"ft"));
+    assert!(allowed_units_for_force(5).contains(&"degree_c"));
+    assert!(allowed_units_for_force(5).contains(&"degc"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
+}
+
+#[test]
+fn test_is_unit_name_degree_c() {
+    assert!(is_unit_name("degree_c"));
+    assert!(is_unit_name("DEGC"));
+    assert!(is_unit_name("nmi"));
+    assert!(is_unit_name("ft"));
 }
 
 #[test]
@@ -2398,6 +2414,104 @@ fn test_star_record_rejects_non_finite_color() {
 }
 
 #[test]
+fn test_star_record_legacy_44_bytes_carries_absent_sigma() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&10f64.to_le_bytes());
+    bin.extend_from_slice(&20f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    assert_eq!(bin.len(), 44);
+    let rec = parse_star_record(&bin).unwrap();
+    assert_eq!(rec.sigma_plx_mas, None);
+    assert_eq!(rec.sigma_pm_ra_masyr, None);
+    assert_eq!(rec.sigma_pm_de_masyr, None);
+    assert!((rec.rv_m_s - 12000.0).abs() < 1e-3);
+}
+
+#[test]
+fn test_star_record_v2_carries_sigma_slots() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&10f64.to_le_bytes());
+    bin.extend_from_slice(&20f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    bin.extend_from_slice(&0.8f32.to_le_bytes());
+    bin.extend_from_slice(&0.06f32.to_le_bytes());
+    bin.extend_from_slice(&0.07f32.to_le_bytes());
+    assert_eq!(bin.len(), 56);
+    let rec = parse_star_record(&bin).unwrap();
+    assert!((rec.sigma_plx_mas.unwrap() - 0.8).abs() < 1e-6);
+    assert!((rec.sigma_pm_ra_masyr.unwrap() - 0.06).abs() < 1e-6);
+    assert!((rec.sigma_pm_de_masyr.unwrap() - 0.07).abs() < 1e-6);
+    assert!((rec.color_index - 1.2).abs() < 1e-6);
+    assert!((rec.rv_m_s - 12000.0).abs() < 1e-3);
+}
+
+#[test]
+fn test_star_record_v2_sigma_pad_reads_as_absent() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&10f64.to_le_bytes());
+    bin.extend_from_slice(&20f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    let rec = parse_star_record(&bin).unwrap();
+    assert_eq!(rec.sigma_plx_mas, None);
+    assert_eq!(rec.sigma_pm_ra_masyr, None);
+    assert_eq!(rec.sigma_pm_de_masyr, None);
+}
+
+#[test]
+fn test_star_record_v2_rejects_corrupt_sigma() {
+    let mut bin = Vec::new();
+    bin.extend_from_slice(&10f64.to_le_bytes());
+    bin.extend_from_slice(&20f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&100f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+    bin.extend_from_slice(&f32::NAN.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    assert!(parse_star_record(&bin).is_none());
+    bin[44..48].copy_from_slice(&(-0.5f32).to_le_bytes());
+    assert!(parse_star_record(&bin).is_none());
+}
+
+#[test]
+fn test_star_stride_ambiguity_is_refused() {
+    assert_eq!(star_stride(&[0u8; 44]), Some(44));
+    assert_eq!(star_stride(&[0u8; 56]), Some(56));
+    assert_eq!(star_stride(&[0u8; 40]), None);
+    assert_eq!(star_stride(&[0u8; 100]), None);
+    assert_eq!(
+        star_stride(&[0u8; 616]),
+        None,
+        "lcm(44,56)=616: the size divides both strides — refused, never misparsed"
+    );
+}
+
+#[test]
 fn test_star_samples_diode() {
     let mut bin = Vec::new();
     bin.extend_from_slice(&0f64.to_le_bytes());
@@ -3038,6 +3152,9 @@ fn test_motion_spherical_at_anchor_body_and_law_bounds() {
         tau: 0.0,
         color_index: 0.0,
         rv_m_s: 0.0,
+        sigma_plx_mas: None,
+        sigma_pm_ra_masyr: None,
+        sigma_pm_de_masyr: None,
     };
     let motion = Motion::Spherical {
         rec: Arc::new(rec.clone()),

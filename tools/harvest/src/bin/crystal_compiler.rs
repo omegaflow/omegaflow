@@ -1,9 +1,11 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::cif::{Crystal, parse_cif};
+use omegaflow::eels::{EelsBin, EelsProfile, encode_eels_bin};
 use omegaflow::matfile::{MatData, parse_mat};
 use omegaflow::rixs::{
-    MEV_TO_HZ, SpinBin, SpinOscillator, SpinSpectrumBin, charge_oscillators, encode_spin_bin,
-    parse_rixs_mev, parse_sw_spin, spin_oscillators,
+    ChargeBin, ChargeSpectrumBin, MEV_TO_HZ, SpinBin, SpinOscillator, SpinSpectrumBin,
+    charge_oscillators, encode_rixc_bin, encode_spin_bin, parse_rixs_mev, parse_sw_spin,
+    spin_oscillators,
 };
 use std::process::Command;
 
@@ -154,9 +156,6 @@ fn harvest_rixs(dir: &str) -> Vec<SpinSpectrumBin> {
     out
 }
 
-const CHARGE_MAGIC: [u8; 4] = *b"RIXC";
-const CHARGE_VERSION: u8 = 1;
-
 fn harvest_plasmon(dir: &str) -> Vec<(f64, u8, Vec<omegaflow::rixs::SpinOscillator>)> {
     let mut out = Vec::new();
     let mut stack = vec![std::path::PathBuf::from(dir)];
@@ -188,32 +187,6 @@ fn harvest_plasmon(dir: &str) -> Vec<(f64, u8, Vec<omegaflow::rixs::SpinOscillat
     out.sort_by(|a, b| (a.1, a.0.to_bits()).cmp(&(b.1, b.0.to_bits())));
     out
 }
-
-fn encode_charge_bin(
-    spectra: &[(f64, u8, Vec<omegaflow::rixs::SpinOscillator>)],
-    lab: Option<(f64, f64, f64)>,
-) -> Vec<u8> {
-    let mut out = Vec::new();
-    out.extend_from_slice(&CHARGE_MAGIC);
-    out.push(CHARGE_VERSION);
-    out.extend_from_slice(&(spectra.len() as u32).to_le_bytes());
-    push_lab(&mut out, lab);
-    for (momentum, axis, osc) in spectra {
-        out.extend_from_slice(&momentum.to_le_bytes());
-        out.push(*axis);
-        out.extend_from_slice(&(osc.len() as u32).to_le_bytes());
-        for o in osc {
-            out.extend_from_slice(&o.freq_hz.to_le_bytes());
-            out.extend_from_slice(&o.bin_width_hz.to_le_bytes());
-            out.extend_from_slice(&o.val.to_le_bytes());
-            out.extend_from_slice(&o.err.to_le_bytes());
-        }
-    }
-    out
-}
-
-const EELS_MAGIC: [u8; 4] = *b"EELS";
-const EELS_VERSION: u8 = 1;
 
 fn median_gap(v: &[f64]) -> Option<f64> {
     let mut gaps: Vec<f64> = v
@@ -287,28 +260,6 @@ fn harvest_eels(path: &str) -> Vec<(u32, Vec<SpinOscillator>)> {
         }
         if !osc.is_empty() {
             out.push((i as u32, osc));
-        }
-    }
-    out
-}
-
-fn encode_eels_bin(
-    spectra: &[(u32, Vec<SpinOscillator>)],
-    lab: Option<(f64, f64, f64)>,
-) -> Vec<u8> {
-    let mut out = Vec::new();
-    out.extend_from_slice(&EELS_MAGIC);
-    out.push(EELS_VERSION);
-    out.extend_from_slice(&(spectra.len() as u32).to_le_bytes());
-    push_lab(&mut out, lab);
-    for (idx, osc) in spectra {
-        out.extend_from_slice(&idx.to_le_bytes());
-        out.extend_from_slice(&(osc.len() as u32).to_le_bytes());
-        for o in osc {
-            out.extend_from_slice(&o.freq_hz.to_le_bytes());
-            out.extend_from_slice(&o.bin_width_hz.to_le_bytes());
-            out.extend_from_slice(&o.val.to_le_bytes());
-            out.extend_from_slice(&o.err.to_le_bytes());
         }
     }
     out
@@ -496,7 +447,18 @@ fn main() {
         let osc_total: usize = spectra.iter().map(|(_, _, o)| o.len()).sum();
         let n_spectra = spectra.len();
         let path = format!("{}/rixs_charge.bin", out_dir);
-        let bytes = encode_charge_bin(&spectra, lab);
+        let bin = ChargeBin {
+            lab,
+            spectra: spectra
+                .iter()
+                .map(|(momentum, axis, oscillators)| ChargeSpectrumBin {
+                    momentum: *momentum,
+                    axis: *axis,
+                    oscillators: oscillators.clone(),
+                })
+                .collect(),
+        };
+        let bytes = encode_rixc_bin(&bin);
         if let Err(e) = std::fs::write(&path, &bytes) {
             eprintln!("crystal_compiler: write {} returned {}", path, e);
             continue;
@@ -526,7 +488,17 @@ fn main() {
         }
         let osc_total: usize = spectra.iter().map(|(_, o)| o.len()).sum();
         let path = format!("{}/eels_acoustic.bin", out_dir);
-        let bytes = encode_eels_bin(&spectra, lab);
+        let bin = EelsBin {
+            lab,
+            profiles: spectra
+                .iter()
+                .map(|(profile_index, oscillators)| EelsProfile {
+                    profile_index: *profile_index,
+                    oscillators: oscillators.clone(),
+                })
+                .collect(),
+        };
+        let bytes = encode_eels_bin(&bin);
         if let Err(e) = std::fs::write(&path, &bytes) {
             eprintln!("crystal_compiler: write {} returned {}", path, e);
             continue;
