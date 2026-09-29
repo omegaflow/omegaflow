@@ -515,7 +515,7 @@ impl TileWalk {
     }
 
     pub fn dir(order: u32, dir: u64) -> Option<Self> {
-        if dir % DIR_STRIDE != 0 {
+        if !dir.is_multiple_of(DIR_STRIDE) {
             return None;
         }
         let bound = tile_npix_bound(order)?;
