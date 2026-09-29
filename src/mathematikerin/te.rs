@@ -4419,7 +4419,7 @@ mod tests {
             "the cross-lag is the coupling lag 3"
         );
 
-        let per: Vec<f64> = (0..64).map(|t| (t % 4) as f64 + 1.0).collect();
+        let per: Vec<f64> = (0..64).map(|t| (t % 2) as f64 + 1.0).collect();
         assert_eq!(
             find_cross_mi_lag(&per, &per, 4),
             Some(2),

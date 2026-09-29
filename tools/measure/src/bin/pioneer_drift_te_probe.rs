@@ -219,8 +219,8 @@ fn main() {
                                 "still"
                             };
                             println!(
-                                "  {label}: te {:.4e} vs thr {:.4e} ({} Surrogate, τ_x {} τ_y {}) — {}",
-                                t.te, t.threshold, t.surrogates_used, t.tau_x, t.tau_y, word
+                                "  {label}: te {:.4e} vs thr {:.4e} ({} Surrogate, τ_c {} τ_y {}) — {}",
+                                t.te, t.threshold, t.surrogates_used, t.tau_c, t.tau_y, word
                             );
                         }
                         None => println!(
