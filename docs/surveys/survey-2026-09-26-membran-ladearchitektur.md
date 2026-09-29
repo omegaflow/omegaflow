@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: f67e9e63f42ecf8c1ef3f7d3680c5e6a9718fd75f766dc20b06cc6c60ea43354
+  sha256: ca14b87041c08f94cc96fe344d1a2046e1693cc4f187073ca93390bb4c38d444
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -231,8 +231,13 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
   trug Star-Grid + Jump bereits. Ein AGENTS-Pointer war nicht nötig — `AGENTS.md`
   beschreibt presence-only loading schon im Architektur-Block.
 - **Sprung-Radius: versöhnt (2026-09-28).** `grid_step = GRID_INIT·2ⁿ = JUMP_GRID·2^(n+3)`, also `Φ·grid_step = Φ·JUMP_GRID·2^(n+3)` — beide Formen sind **eine** Formel; der Legacy-`·2ⁿ` ist als Browser-Zoom-Faktor (`state.scale`) absorbiert. `JUMP_GRID=2²⁸` lebt als Detektions-Schwelle (`main_flow.rs:332`), `Φ·grid_step` als Enclosure-Radius (`fetch.rs:423`).
-- **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht (der Reader-Pfad
-  `vlies.rs` steht; die `format vlde`-Quelle fehlt).
+- **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht — TE (`omega.rs:458-546`)
+  und Verdict (`weberin_verdicts.rs:201`) sind gebaut; die **Vlies-Dichte** fehlt als
+  ω()-Term (kraft-/distanz-/bandloses S²-Zensus aus `dr3_stars.bin`, Quelle
+  `phi/witnesses.φ:114-118`; Reader `vlies.rs` steht). **Rat-Verdikt (2026-09-29):** Option (a) —
+  home = S²-Layer-State, target = presence-forward Pixel-Count in `SkyReport`+HUD; der
+  Sample-Dispatch wird gestrichen. Offen ist der Bau-Atom (River).
+  (gemessen 2026-09-29, River-Folge 65)
 
 ## 8. Werkzeug- und Quellenlage (gemessen)
 

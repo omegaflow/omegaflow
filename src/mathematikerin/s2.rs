@@ -1,4 +1,5 @@
 use crate::archivar::skydirection::{SkyDirection, parse_bin};
+use crate::archivar::vlies::{DensityField, pixel_direction};
 use crate::archivar::{BodyEphemeris, Motion, body_barycenter_position};
 use std::collections::HashMap;
 
@@ -223,10 +224,12 @@ pub struct SkyReport {
     pub forward_field: f32,
     pub permeability: f32,
     pub tau_s: f64,
+    pub vlies_count: Option<u64>,
 }
 
 pub struct SkyState {
     pub directions: Vec<SkyDirection>,
+    pub vlies: Option<DensityField>,
     pub events: Vec<S2EventRecord>,
     pub oscs: Vec<S2Osc>,
     pub points: Vec<SkyPoint>,
@@ -247,6 +250,7 @@ impl SkyState {
     pub fn new() -> Self {
         SkyState {
             directions: Vec::new(),
+            vlies: None,
             events: Vec::new(),
             oscs: Vec::new(),
             points: Vec::new(),
@@ -258,7 +262,7 @@ impl SkyState {
         }
     }
 
-    pub fn report(&self) -> SkyReport {
+    pub fn report(&self, forward: [f64; 3]) -> SkyReport {
         let live_count = self
             .oscs
             .iter()
@@ -272,8 +276,26 @@ impl SkyState {
             forward_field: self.forward_field,
             permeability: self.permeability,
             tau_s: S2_TAU_DEFAULT_S,
+            vlies_count: self
+                .vlies
+                .as_ref()
+                .and_then(|f| forward_pixel_count(f, forward)),
         }
     }
+}
+
+pub fn forward_pixel_count(field: &DensityField, forward: [f64; 3]) -> Option<u64> {
+    let mut best: Option<(f64, u64)> = None;
+    for (pix, &count) in field.counts.iter().enumerate() {
+        let Some(d) = pixel_direction(field.nside, pix as i64) else {
+            continue;
+        };
+        let dot = d[0] * forward[0] + d[1] * forward[1] + d[2] * forward[2];
+        if best.is_none_or(|(bd, _)| dot > bd) {
+            best = Some((dot, count));
+        }
+    }
+    best.map(|(_, c)| c)
 }
 
 pub fn load_asset(path: &std::path::Path) -> Option<Vec<SkyDirection>> {
