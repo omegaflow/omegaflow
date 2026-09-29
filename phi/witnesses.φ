@@ -130,6 +130,7 @@ force em
 note NIST SRD 62 Eindringtiefe (Kuprat; 2026-09-29 verdict 200, 32452 B, sha256 c11b5fd4…): ρ_s(T)-Penetration-Depth-Serien. Substance (Materialprobe), Träger em. srd62_suprastrom.bin via srd62_compiler.
 
 witness substance
+url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
 record eels
 force em
-note EELS-Phononen (Gitter-Kanal; pending — Quell-URL nicht im Baum): crystal_compiler --eels liest eine lokale .mat (ene/eels_lineprofile); keine url registriert, URL nie erfunden. Substance (Materialprobe), Träger em. eels_acoustic.bin auf CDN.
+note EELS-Phononen (Zhang; Zenodo 21859473, 2026-09-29 verdict 206, 125099 B, sha256 f8d20197…): eels_lineprofile 25×1205 + ene 1×1205 (meV), Bi-2212. Substance (Materialprobe), Träger em. eels_acoustic.bin via crystal_compiler --eels.

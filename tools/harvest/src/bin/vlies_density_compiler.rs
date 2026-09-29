@@ -345,7 +345,7 @@ fn run(args: &[String]) -> Result<(), String> {
         asset.len(),
         field.counts.len()
     );
-    if ci_mode && !upload_release("ssd.jpl.nasa.gov-vlies", &out_path) {
+    if ci_mode && !upload_release("ssd.jpl.nasa.gov", &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
     Ok(())
