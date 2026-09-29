@@ -1477,7 +1477,7 @@ pub fn main_flow() {
             if archive.sources[i].format == "kernel_text" {
                 continue;
             }
-            if archive.sources[i].format == "reference" || archive.sources[i].format == "ndk" {
+            if archive.sources[i].format == "reference" {
                 continue;
             }
             if archive.origins.values().filter(|o| o.in_flight).count() >= FETCH_BUDGET {
@@ -4665,6 +4665,61 @@ pub fn main_flow() {
                         });
                     } else {
                         eprintln!("vlde {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(empty(true));
+                    }
+                });
+                continue;
+            }
+            if archive.sources[i].format == "ndk" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let tmp_path = content_cache(&format!("omegaflow_ndk_{src_idx}.ndk"));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("ndk {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("ndk {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    } else {
+                        eprintln!("ndk {}: extract void — retry in ttl/Φ", src_idx);
                         let _ = ftx.send(empty(true));
                     }
                 });
