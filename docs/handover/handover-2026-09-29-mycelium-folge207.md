@@ -3,7 +3,7 @@
   session: Mycelium-Folge 207
   class: handover
   date: 2026-09-29
-  sha256: 4cd2f80672288f6d6cf076c300bea1382d20f6ef9a4a78a2fa4a6c88f14d97e5
+  sha256: 48d030e36de6a9188c37dc561eca8de0a92864762fbf3ccb3f742fb9c39fecb9
   status: live
 -->
 # Handover — Mycelium-Folge 207 (2026-09-29)
@@ -42,7 +42,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Trigger:** nächster `ci_manage status`/Watchdog-Snapshot
 - **Lage:** (gemessen 2026-09-29 20:44 via `ci_manage status`/`ci_manage log --all`) Der
   **Massen-Rot hatte eine Ursache:** E0063 — `spatial::StarRec` σ-Felder fehlten in
-  `src/archivar/main_flow.rs:2429/2565`; **geheilt** (`a95921575 river 67`). Verbleibende
+  `src/archivar/main_flow.rs:2429/2565`; **geheilt** (`a95921575 river 67`). Über
+  `gh_issue_once` erzeugte er ~29 Issues — in diesem Atom triagiert/geschlossen. Verbleibende
   rote Ursachen am `ci-gate 36626370907 @4ef3a7e43`: clippy `src/archivar/hips.rs:518`
   (geheilt in diesem Atom), `src/archivar/spatial.rs:359` (Mountain, `type_complexity`),
   `src/mathematikerin/te.rs:3121` (River); format `te.rs:3269/:6161` +
@@ -82,45 +83,49 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `register_lookup --dropped`-Lauf
 - **Lage:** (gemessen 2026-09-29 20:28 via `ci-gate 36626370907 @4ef3a7e43`) baseline
-  1134 | current 1148 | delta 14 — die Gate-Zahl ist **CI-only**, der lokale Lauf bricht
-  >300 s ab. Die Baseline ist in diesem Atom auf 1148 gebumpt
-  (`docs/zustand/dropped-baseline.md`, gemessenes CI-Zitat). Der exclude-Hunk
-  (`register_lookup.rs:2470-2497`) bleibt isoliert.
+  1134 | current 1148 | delta 14 — CI-only. Baseline in diesem Atom auf 1148 gebumpt
+  (`docs/zustand/dropped-baseline.md`). **Bündelung gebaut** (`register_lookup.rs`):
+  `commit_message_corpus()` lädt die Message-Korpora **einmal** (`git log --all
+  --format=%B%x00`), `commit_resolves_all_lines` sucht im Speicher; der `-S`-Pickaxe bleibt
+  Fallback. Substring ≡ `--grep`: `distinctive_token` (`normalize_words`) liefert nur
+  Alphanumerika/`-`, kein ERE-Metazeichen (gemessen); `%B` ohne `%H`, damit ein Hex-Token
+  nicht gegen einen Hash matcht. `cargo check` 0/0. Der erste `register-coverage`/`ci-gate`-Lauf
+  misst die Laufzeit.
 - **Blockade:** keine
-- **Braucht:** die Laufzeit bündeln (ein `git log`-Lauf mit Index statt Subprozess je Punkt)
-  als eigenes Atom; Gate-Umbau selbst-messend/träger-bewusst als Absender-Zeile offen.
+- **Braucht:** CI-Lauf messen (Laufzeit + Korrektheit); Gate-Umbau selbst-messend/träger-bewusst offen.
 
 ### GitHub-Issues — Zensus/Träger
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `gh issue list`-Zensus; Rest `#13/#17/#30/#43/#60/#71/#80`
-- **Lage:** (gemessen 2026-09-29 folge206) 60 → **18 offen**. Rest-Träger:
-  `#30/#71`+`#17/#60` Mountain; `#13/#43` River/Rat; `#80` Anomaly offen.
-- **Blockade:** keine (eigene Domäne; Rest geroutet)
-- **Braucht:** `#47–53`/`#15`/`#58`/`#45` schließen, sobald die `*-cdn`/`ci-check`-Läufe
-  grün sind (nvss offen).
+- **Lage:** (gemessen 2026-09-29 20:52) **49 → 20 offen** (29 E0063-Massen-Rot-Spawn
+  geschlossen via GH-API, Beleg je Issue: Run-HEAD ≤ `4ef3a7e43`). Offen u. a.: `#98`
+  paper-content-Gate, `#81` clippy (Vor-E0063), `#80` Anomaly-Report, `#71`/`#67`/`#60`,
+  `#52/#53` nvss/first14.
+- **Blockade:** keine
+- **Braucht:** `#98`/`#81`/`#49/#50/#48` inhaltlich bzw. per Re-Run prüfen; Rest nach grün schließen.
 
 ### Trägerlose Docs
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `register_lookup --orphan-docs`-Pass
-- **Lage:** (gemessen 2026-09-29 20:44 `register_lookup --orphan-docs`) **2**:
-  `docs/concepts/kybernetische-astrophysik.md` (1 Marker),
-  `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (4). **Riss:** sensory-208
-  meldet `survey-2026-09-07-tmp-opencode-scan.md` trägerlos — die Messung führt ihn **nicht**
-  (Scanner-Fehltreffer), der Baum widerlegt den Block.
-- **Blockade:** die 2 tragen offene Marker ohne Live-Träger
-- **Braucht:** je Dokument einen Träger setzen oder per Befund descopen.
+- **Lage:** (gemessen 2026-09-29 20:52 `register_lookup --orphan-docs`) **4**:
+  `docs/auftrag/auftrag-gic-einreichung.md` (1, GIC-Einreichung → Future),
+  `docs/concepts/tools-map.md` (2, Werkzeug-Landkarte → Mycelium),
+  `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1, Step 5 → Mycelium),
+  `docs/surveys/survey-messpunkt-verteilung.md` (3, → Sensory). Die zwei vorigen
+  (`kybernetische-astrophysik`, `membran-ladearchitektur`) trägt diese Übergabe.
+- **Blockade:** die 4 Marker ohne Live-Träger
+- **Braucht:** je Dokument Träger setzen oder per Befund descopen.
 
 ### PDF-Rendering-Stufe (`exzellenz-konzept`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `paper-check.yml`-Lauf
-- **Lage:** (gemessen 2026-09-29 folge207) `export_latex`-Schreibstep (ohne `--check`)
-  in `paper-check.yml` ergänzt — schreibt `.tex` nach `docs/paper/export/`. Die
-  Engine-Provisionierung fehlt weiter: `drop-sh.fullyjustified.net` = 206 (Install-Skript-Host),
-  `packages.ubuntu.com/noble/tectonic` = 200/1808 B (kein Paket) — **keine verifizierte
-  Engine-Route** gemessen.
-- **Blockade:** keine Engine provisioniert
-- **Braucht:** verifizierte Engine-Route (erste Messung: `archive_search --github
-  "tectonic-typesetting/tectonic"` auf ein Release-Asset), dann Render-Step + PDF-Nummern-Gate.
+- **Lage:** (gemessen 2026-09-29 20:50) **verifizierte Engine-Route**: `tectonic@0.17.0`,
+  `https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz`
+  — 10 151 914 B, sha256 `8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7`
+  (GitHub-digest ≡ `--sniff`). Install + Render-Step in `paper-check.yml` ergänzt
+  (sha-gepinnt, statisches musl-Binary). Der erste CI-Lauf misst die Route.
+- **Blockade:** keine
+- **Braucht:** `paper-check`-Lauf lesen (erster Render); PDF-Nummern-Gate als nächster Schritt.
 
 ### HiPS-Tree-Arm — Dispatch + erster Lauf
 - **Status:** wartend | **Bindung:** eigen
