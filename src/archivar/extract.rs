@@ -3430,19 +3430,6 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             return ExtractResult::Measurements(vec![]);
         };
         let m0_fc = fc.clone();
-        let mw_fc = FieldConfig {
-            key: "mw".to_string(),
-            name: "gcmt_mw".to_string(),
-            kernel: 1,
-            force: 3,
-            tau: m0_fc.tau,
-            absorption: m0_fc.absorption,
-            advection: m0_fc.advection,
-            unit: "Mw".to_string(),
-            freq: 0.0,
-            bin_width: 0.0,
-            fold: None,
-        };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for ev in crate::archivar::ndk::parse_ndk(body) {
             let m0_nm = ev.scalar_moment_dyne_cm() * 1e-7;
@@ -3473,20 +3460,6 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 },
                 m0_fc.clone(),
             ));
-            if let Some(mw) = ev.mw() {
-                channels.push((
-                    Channel {
-                        z: ev.centroid_depth_km,
-                        freq: 0.0,
-                        bin_width: 0.0,
-                        epoch,
-                        position: position.clone(),
-                        name: mw_fc.name.clone(),
-                        value: mw,
-                    },
-                    mw_fc.clone(),
-                ));
-            }
         }
         return ExtractResult::Measurements(channels);
     }

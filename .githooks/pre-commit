@@ -22,10 +22,13 @@ run() {
 }
 # commit_check's ereignis-ohne-folge gate is session-bound: it checks only the
 # account/send events whose field 1 (the opencode sessionID) matches the current
-# session. The source is the session environment (OMEGAFLOW_SESSION); the commit
-# message carries "line folge: …", not the sessionID, so nothing is fabricated
-# from it (measured 2026-09-29). Without a session name commit_check skips by
-# name, never silent.
+# session. The sessionID source: OMEGAFLOW_SESSION (env) or, when empty, the
+# plugin-written state/reports/active_session.φ (act_recorder, Konvention
+# notes_notify.rs; measured: opencode sets no ses_ env). Without a session name
+# commit_check skips by name, never silent.
+if [ -z "${OMEGAFLOW_SESSION:-}" ] && [ -f "$root/state/reports/active_session.φ" ]; then
+    IFS= read -r OMEGAFLOW_SESSION < "$root/state/reports/active_session.φ" || OMEGAFLOW_SESSION=""
+fi
 export OMEGAFLOW_SESSION="${OMEGAFLOW_SESSION:-}"
 ensure commit_check
 run commit_check || exit $?

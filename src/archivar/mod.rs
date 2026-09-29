@@ -48,6 +48,7 @@ pub mod dl3;
 pub mod double;
 pub mod drs_fits;
 pub mod eea;
+pub mod eels;
 pub mod emc;
 pub mod emodnet_hfr;
 pub mod ephemeris;

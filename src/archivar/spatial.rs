@@ -61,6 +61,9 @@ pub struct StarRec {
     pub tau: f64,
     pub color_index: f64,
     pub rv_m_s: f64,
+    pub sigma_plx_mas: Option<f64>,
+    pub sigma_pm_ra_masyr: Option<f64>,
+    pub sigma_pm_de_masyr: Option<f64>,
 }
 
 pub struct CurveStar {
@@ -328,20 +331,32 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     samples
 }
 
-pub const STAR_RECORD_BYTES: usize = 44;
+pub const STAR_RECORD_BYTES: usize = 56;
+pub const LEGACY_STAR_RECORD_BYTES: usize = 44;
 
 pub fn star_stride(bytes: &[u8]) -> Option<usize> {
-    if !bytes.is_empty() && bytes.len().is_multiple_of(STAR_RECORD_BYTES) {
-        Some(STAR_RECORD_BYTES)
-    } else {
-        None
+    if bytes.is_empty() {
+        return None;
+    }
+    let new = bytes.len().is_multiple_of(STAR_RECORD_BYTES);
+    let legacy = bytes.len().is_multiple_of(LEGACY_STAR_RECORD_BYTES);
+    match (new, legacy) {
+        (true, true) => {
+            eprintln!(
+                "star bin {} bytes: the size divides both the {} B and the legacy {} B stride — the record width is ambiguous, refused (a legacy asset stays pending recompilation; the compilers withhold the trailing record when the count is a multiple of 11)",
+                bytes.len(),
+                STAR_RECORD_BYTES,
+                LEGACY_STAR_RECORD_BYTES
+            );
+            None
+        }
+        (true, false) => Some(STAR_RECORD_BYTES),
+        (false, true) => Some(LEGACY_STAR_RECORD_BYTES),
+        (false, false) => None,
     }
 }
 
-pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
-    if b.len() != STAR_RECORD_BYTES {
-        return None;
-    }
+fn star_fields(b: &[u8]) -> Option<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> {
     let ra = f64::from_le_bytes(b[0..8].try_into().ok()?);
     let dec = f64::from_le_bytes(b[8..16].try_into().ok()?);
     let pm_ra = f32::from_le_bytes(b[16..20].try_into().ok()?) as f64;
@@ -361,18 +376,60 @@ pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
     {
         return None;
     }
-    Some(StarRec {
-        ra_deg: ra,
-        dec_deg: dec,
-        pm_ra_masyr: pm_ra,
-        pm_de_masyr: pm_de,
-        plx_mas: plx,
-        flux,
-        mag,
-        tau: 0.0,
-        color_index: color,
-        rv_m_s: rv,
-    })
+    Some((ra, dec, pm_ra, pm_de, plx, mag, flux, color, rv))
+}
+
+fn sigma_slot(b: &[u8]) -> Option<Option<f64>> {
+    let v = f32::from_le_bytes(b.try_into().ok()?);
+    if v == 0.0 {
+        Some(None)
+    } else if v.is_finite() && v > 0.0 {
+        Some(Some(v as f64))
+    } else {
+        None
+    }
+}
+
+pub fn parse_star_record(b: &[u8]) -> Option<StarRec> {
+    match b.len() {
+        LEGACY_STAR_RECORD_BYTES => star_fields(b).map(|f| StarRec {
+            ra_deg: f.0,
+            dec_deg: f.1,
+            pm_ra_masyr: f.2,
+            pm_de_masyr: f.3,
+            plx_mas: f.4,
+            mag: f.5,
+            flux: f.6,
+            color_index: f.7,
+            rv_m_s: f.8,
+            tau: 0.0,
+            sigma_plx_mas: None,
+            sigma_pm_ra_masyr: None,
+            sigma_pm_de_masyr: None,
+        }),
+        STAR_RECORD_BYTES => {
+            let f = star_fields(b)?;
+            let sigma_plx = sigma_slot(b.get(44..48)?)?;
+            let sigma_pm_ra = sigma_slot(b.get(48..52)?)?;
+            let sigma_pm_de = sigma_slot(b.get(52..56)?)?;
+            Some(StarRec {
+                ra_deg: f.0,
+                dec_deg: f.1,
+                pm_ra_masyr: f.2,
+                pm_de_masyr: f.3,
+                plx_mas: f.4,
+                mag: f.5,
+                flux: f.6,
+                color_index: f.7,
+                rv_m_s: f.8,
+                tau: 0.0,
+                sigma_plx_mas: sigma_plx,
+                sigma_pm_ra_masyr: sigma_pm_ra,
+                sigma_pm_de_masyr: sigma_pm_de,
+            })
+        }
+        _ => None,
+    }
 }
 
 pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {

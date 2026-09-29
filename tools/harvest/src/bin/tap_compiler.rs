@@ -400,7 +400,30 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
     json_metadata_rows(&body)
 }
 
-const STAR_BIN_STRIDE: usize = 44;
+const STAR_BIN_STRIDE: usize = 56;
+
+const ABSENT_SIGMA_PAD: f32 = 0.0;
+
+fn sigma_slot(v: Option<f64>) -> f32 {
+    match v {
+        Some(x) if x.is_finite() && x > 0.0 => x as f32,
+        _ => ABSENT_SIGMA_PAD,
+    }
+}
+
+fn sigma_plx_from_bj(r_lo: Option<f64>, r_hi: Option<f64>) -> Option<f64> {
+    match (r_lo, r_hi) {
+        (Some(lo), Some(hi)) if lo.is_finite() && hi.is_finite() && lo > 0.0 && hi > 0.0 => {
+            let v = 0.5 * (1000.0 / lo - 1000.0 / hi);
+            if v.is_finite() && v > 0.0 {
+                Some(v)
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
 
 fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Vec<u8>> {
     let get = |k: &str| -> Option<f64> {
@@ -438,6 +461,7 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     };
     let rv = rv_km_s * 1000.0;
     let flux = 10f64.powf(-0.4 * mag) as f32;
+    let sigma_plx = sigma_plx_from_bj(get("rlo"), get("rhi"));
     let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
     out.extend_from_slice(&ra.to_le_bytes());
     out.extend_from_slice(&dec.to_le_bytes());
@@ -448,6 +472,9 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     out.extend_from_slice(&flux.to_le_bytes());
     out.extend_from_slice(&(ci as f32).to_le_bytes());
     out.extend_from_slice(&(rv as f32).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(sigma_plx).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(get("pmra_err")).to_le_bytes());
+    out.extend_from_slice(&sigma_slot(get("pmdec_err")).to_le_bytes());
     Some(out)
 }
 
@@ -1593,6 +1620,15 @@ fn main() {
                                             rec.extend_from_slice(&flux.to_le_bytes());
                                             rec.extend_from_slice(&(ci as f32).to_le_bytes());
                                             rec.extend_from_slice(&(rv as f32).to_le_bytes());
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_plx")).to_le_bytes(),
+                                            );
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_pmra")).to_le_bytes(),
+                                            );
+                                            rec.extend_from_slice(
+                                                &sigma_slot(get("sig_pmdec")).to_le_bytes(),
+                                            );
                                             if let Err(err) = f.write_all(&rec) {
                                                 eprintln!("write {}: {}", out_path_band, err);
                                                 std::process::exit(1);
@@ -1604,6 +1640,23 @@ fn main() {
                             }
                             total += added;
                             eprintln!("union-bright: +{} records (total {})", added, total);
+                        }
+                    }
+                }
+                if total > 0 && total % 11 == 0 {
+                    match f.set_len(((total - 1) * STAR_BIN_STRIDE) as u64) {
+                        Ok(_) => {
+                            total -= 1;
+                            eprintln!(
+                                "star bin: the record count collides with the legacy 44 B stride — the length would read as both 56 B and 44 B records; the trailing record is withheld: {} records kept",
+                                total
+                            );
+                        }
+                        Err(err) => {
+                            eprintln!(
+                                "star bin: the record count {} collides with the legacy 44 B stride and set_len returned void: {}",
+                                total, err
+                            );
                         }
                     }
                 }
@@ -1883,7 +1936,53 @@ mod tests {
     }
 
     #[test]
-    fn star_record_carries_rv_in_44_bytes() {
+    fn star_record_carries_sigma_in_56_bytes() {
+        let cols = star_cols(&[
+            "ra",
+            "dec",
+            "dist_pc",
+            "mag",
+            "pmra",
+            "pmdec",
+            "bpmag",
+            "rpmag",
+            "rv",
+            "rlo",
+            "rhi",
+            "pmra_err",
+            "pmdec_err",
+        ]);
+        let cells: Vec<String> = vec![
+            "10.0".into(),
+            "20.0".into(),
+            "100.0".into(),
+            "5.0".into(),
+            "1.5".into(),
+            "-2.5".into(),
+            "6.0".into(),
+            "5.0".into(),
+            "30.0".into(),
+            "90.0".into(),
+            "110.0".into(),
+            "0.04".into(),
+            "0.03".into(),
+        ];
+        let rec = star_record_bytes(&cells, &cols).expect("56-byte star record");
+        assert_eq!(rec.len(), STAR_BIN_STRIDE);
+        assert_eq!(rec.len(), 56);
+        let rv = f32::from_le_bytes(rec[40..44].try_into().expect("rv slot"));
+        assert!((rv - 30000.0).abs() < 1e-3);
+        let sigma_plx = f32::from_le_bytes(rec[44..48].try_into().expect("sigma_plx slot"));
+        let expect_plx = 0.5 * (1000.0 / 90.0 - 1000.0 / 110.0);
+        assert!((sigma_plx - expect_plx as f32).abs() < 1e-2);
+        let sigma_pmra = f32::from_le_bytes(rec[48..52].try_into().expect("sigma_pmra slot"));
+        assert!((sigma_pmra - 0.04).abs() < 1e-6);
+        let sigma_pmdec = f32::from_le_bytes(rec[52..56].try_into().expect("sigma_pmdec slot"));
+        assert!((sigma_pmdec - 0.03).abs() < 1e-6);
+    }
+
+    #[test]
+    fn star_record_absent_sigma_is_pad_not_fabricated() {
         let cols = star_cols(&[
             "ra", "dec", "dist_pc", "mag", "pmra", "pmdec", "bpmag", "rpmag", "rv",
         ]);
@@ -1898,11 +1997,14 @@ mod tests {
             "5.0".into(),
             "30.0".into(),
         ];
-        let rec = star_record_bytes(&cells, &cols).expect("44-byte star record");
+        let rec = star_record_bytes(&cells, &cols).expect("56-byte star record");
         assert_eq!(rec.len(), STAR_BIN_STRIDE);
-        assert_eq!(rec.len(), 44);
-        let rv = f32::from_le_bytes(rec[40..44].try_into().expect("rv slot"));
-        assert!((rv - 30000.0).abs() < 1e-3);
+        let sigma_plx = f32::from_le_bytes(rec[44..48].try_into().expect("sigma_plx slot"));
+        assert_eq!(sigma_plx, 0.0);
+        let sigma_pmra = f32::from_le_bytes(rec[48..52].try_into().expect("sigma_pmra slot"));
+        assert_eq!(sigma_pmra, 0.0);
+        let sigma_pmdec = f32::from_le_bytes(rec[52..56].try_into().expect("sigma_pmdec slot"));
+        assert_eq!(sigma_pmdec, 0.0);
     }
 
     #[test]

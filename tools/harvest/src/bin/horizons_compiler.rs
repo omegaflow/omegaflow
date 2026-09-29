@@ -652,19 +652,22 @@ fn main() {
         ("-170", "jwst", 1.0),
         ("-61", "juno", 1.0),
         ("2020-047A", "atlas_3i", 1.0),
+        ("90000030;", "halley", 1.0),
     ];
     let bodies_retry: &[(&str, &str)] = &[];
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");
     if std::env::args().any(|a| a == "--long") {
         let end_jd = 2451545.0 + 31.0 * 365.25;
-        let bodies_long: &[(&str, &str, f64, f64)] = &[
-            ("-31", "voyager1_long", 2444606.5, end_jd),
-            ("-32", "voyager2_long", 2447801.5, end_jd),
-            ("-98", "new_horizons_long", 2457236.5, end_jd),
+        let bodies_long: &[(&str, &str, f64, f64, &str, f64)] = &[
+            ("-31", "voyager1_long", 2444606.5, end_jd, "32d", 32.0),
+            ("-32", "voyager2_long", 2447801.5, end_jd, "32d", 32.0),
+            ("-98", "new_horizons_long", 2457236.5, end_jd, "32d", 32.0),
+            ("90000030;", "halley_long", 2446460.5, 2446510.5, "1d", 1.0),
         ];
-        for (cmd, name, start_jd, stop_jd) in bodies_long {
-            eprintln!("  {name} (Horizons long window, 32-d raster)");
-            let (granules, gm_m3_s2) = generate_long(cmd, name, *start_jd, *stop_jd, "32d", 32.0);
+        for (cmd, name, start_jd, stop_jd, step_spec, step_days) in bodies_long {
+            eprintln!("  {name} (Horizons long window, {step_spec} raster)");
+            let (granules, gm_m3_s2) =
+                generate_long(cmd, name, *start_jd, *stop_jd, step_spec, *step_days);
             if granules.is_empty() {
                 continue;
             }

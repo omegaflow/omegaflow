@@ -2,7 +2,7 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::rixs::{SpinBin, parse_spin_bin};
 
 const RIXS_SPIN_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rixs_spin.bin";
+    "https://github.com/omegaflow/sources/releases/download/crystallography.net/rixs_spin.bin";
 const MIN_N: usize = 30;
 const CHANNELS: [&str; 3] = ["Spin", "Lattice", "Supercurrent"];
 
