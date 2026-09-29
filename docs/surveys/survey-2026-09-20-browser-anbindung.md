@@ -2,7 +2,7 @@
   title: Survey — Browser-Anbindung: Extensions, Captcha, Verdikte (Stand 2026-09-20)
   class: survey
   date: 2026-09-20
-  sha256: 5ce1dc1e513c4043961e9831d69b99c8e8f11eb2fbebc78cf5f993f209048555
+  sha256: 1b34e8694e5901f994426d7e00dc97a33f2e5912cfefe3a4963d0980c50585e3
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -87,7 +87,7 @@ ist Library, keine Extension. DevTools Recorder eingebaut → als Extension-Such
 - **Lokal vs. Dritter:** README nennt nur „speech recognition"; sichtbare
   Commit-Messages nennen **„feat: solve challenges with a local Whisper model"** →
   lokale Spracherkennung existiert als Weg. Der Web-Speech-API-Weg (Chrome = Google-
-  Server-STT) bleibt als Alternative ungemessen → `pending`.
+  Server-STT) war als Alternative ungemessen — **geschlossen 2026-09-29** (Messnachtrag unten).
 - **Gemessen 2026-09-20 (Folge 110):** `manifest_version: 3`,
   `minimum_chrome_version: 123.0` (`src/assets/manifest/chrome.json`); **hCaptcha nicht
   unterstützt** (README nennt nur reCAPTCHA; offenes Issue #319); STT = **lokales
@@ -215,3 +215,30 @@ Die offenen Marker des Bau-Schnitts sind auf den Stand 2026-09-28 gezogen (gemes
 - **Kaltstart-Verdikt (zuletzt operator-gebunden, Store-Extension
   `cabnfapnafjlijmbpmgjkgobhdkbmpci`):** vom Fork abgelöst — die Entschärfung liegt
   jetzt im eigenen Baum (Keepalive), nicht in einer Fremd-Store-Änderung.
+
+## Messnachtrag 2026-09-29 — STT-Route geschlossen (Sensory-Folge 209)
+
+Der letzte offene Marker aus Befund B (`:89-90`, Web-Speech-API als Alternative) ist
+gemessen (2026-09-29, `archive_search --verdict`/`sfetch`, Quellen abgerufen):
+
+- **Route (Chrome):** die Web Speech API rechnet per Default server-seitig (Google) —
+  MDN: „using Speech Recognition on a web page involves a server-based recognition
+  engine. Your audio is sent to a web service … so it won't work offline"
+  (`https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition`, 2026-09-29
+  reachable). WebKit-Positions-Papier: „most implementers of the API perform speech
+  recognition using a cloud service" (`https://github.com/WebKit/standards-positions/issues/443`).
+  Firefox `SpeechRecognition` = `preview`; Edge lokal nur Canary/Dev ≥150 hinter
+  `edge://flags` (`https://github.com/MicrosoftDocs/edge-developer/.../speech-recognition-api.md`).
+- **MV3:** die `window`-Schnittstelle läuft nicht im Service-Worker; Chrome verweist auf
+  ein Offscreen-Dokument (`https://developer.chrome.com/docs/extensions/develop/migrate/to-service-workers`,
+  `https://developer.chrome.com/docs/extensions/reference/api/offscreen` — Permission
+  `"offscreen"`, Reason `USER_MEDIA`). Ein eigenes `microphone`-Recht existiert nicht
+  (Permissions-Liste); der Consent-Gate ist der Mic-Prompt. Die genaue
+  Gesten-Semantik in MV3-Offscreen: `pending` (keine amtliche Quelle).
+- **Lokales Whisper** (`@huggingface/transformers`, `Xenova/whisper-tiny` q8) läuft nach
+  einmaligem Download **offline, ohne Dienst** — Audio bleibt auf dem Gerät; Gewichte
+  ~10,1 MB + ~29,2 MB, gemessen (`https://huggingface.co/Xenova/whisper-tiny/tree/main/onnx`,
+  HTTP 200).
+- **Verdikt:** Web Speech = realer Online-Fallback, **kein** gleichwertiger Ersatz; die
+  gebaute lokale Whisper-Route bleibt der offline-/datenschutz-korrekte Weg. Der
+  „lokale Web-Speech"-Weg (`processLocally`) rollt erst an, ist nicht vorhanden.
