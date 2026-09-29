@@ -168,14 +168,32 @@ fn main() {
             fail = true;
         }
     }
+    let session = std::env::var("OMEGAFLOW_SESSION")
+        .ok()
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
     if let Ok(ereignisse) = std::fs::read_to_string("state/zustand/ereignisse.φ") {
         let wartend = std::fs::read_to_string("state/zustand/wartend.φ").ok();
         let blocked = std::fs::read_to_string("phi/blocked_sources.φ").ok();
-        for (line, rule, feedback) in
-            ereignis_folge_violations(&ereignisse, wartend.as_deref(), blocked.as_deref())
-        {
-            eprintln!("commit_check: state/zustand/ereignisse.φ:{line}: {rule} - {feedback}");
-            fail = true;
+        match session.as_deref() {
+            Some(name) => {
+                for (line, rule, feedback) in ereignis_folge_violations(
+                    &ereignisse,
+                    wartend.as_deref(),
+                    blocked.as_deref(),
+                    Some(name),
+                ) {
+                    eprintln!(
+                        "commit_check: state/zustand/ereignisse.φ:{line}: {rule} - {feedback}"
+                    );
+                    fail = true;
+                }
+            }
+            None => {
+                eprintln!(
+                    "commit_check: state/zustand/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
+                );
+            }
         }
     }
     for path in register_classes()

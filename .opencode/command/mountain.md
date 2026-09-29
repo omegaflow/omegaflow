@@ -29,6 +29,12 @@ eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Wai
 pro nur bei gemessen falschem flash-Ergebnis oder benanntem Hart-Atom. `/commit` schließt.
 Mountain trägt die Register-Verdikte: alleiniger Schreiber der Verdikt-Zeilen (`phi/sources.φ`/`declined`/`dead`); Register-Ordnung (`register_sort`); Datenkontrakt 26 × f64; kein Verdikt ohne Messung.
 
+**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
+**privat** (nur diese Linie) und liegt in `state/mountain/archive-search-preset.txt` — hier
+eingelesen:
+
+!`cat state/mountain/archive-search-preset.txt`
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
