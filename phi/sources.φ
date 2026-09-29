@@ -15916,6 +15916,13 @@ compiler tools/harvest/src/bin/horizons_compiler.rs
 at cassini
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2026-12-03)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at europa_clipper
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
 format ephemeris_binary
 origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1990-12-08)
@@ -15951,6 +15958,13 @@ compiler tools/harvest/src/bin/horizons_compiler.rs
 at rosetta
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at halley
+no-cadence
+
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
 no-cadence
 format text
@@ -15969,3 +15983,10 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
+origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
+compiler tools/harvest/src/bin/s1_sar_compiler.rs
+format s1_sar
+at earth
+no-cadence

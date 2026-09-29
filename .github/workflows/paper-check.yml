@@ -40,6 +40,8 @@ jobs:
         if ls docs/blatt/*.md >/dev/null 2>&1; then
           cargo run -q -p omegaflow-science --bin export_latex -- --check docs/blatt/*.md
         fi
+    - name: Export the papers to LaTeX (write step)
+      run: cargo run -q -p omegaflow-science --bin export_latex
     - name: Reference gate (arXiv, DOI)
       run: cargo run -q -p omegaflow-register --bin reference_verify
     - if: failure()
