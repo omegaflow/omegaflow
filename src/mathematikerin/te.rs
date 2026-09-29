@@ -3259,6 +3259,28 @@ pub fn topological_te_phase(
     })
 }
 
+pub fn topological_te_arx(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    order: usize,
+    max_lag: usize,
+    seed: u64,
+) -> Option<TopologicalVerdict> {
+    topological_te_with(
+        x,
+        y,
+        dim,
+        order,
+        seed,
+        10,
+        &mut |v, rng| match arx_restricted_surrogate(v, max_lag, rng) {
+            Some(s) => s,
+            None => Vec::new(),
+        },
+    )
+}
+
 pub struct MembraneSweepPoint {
     pub lag: usize,
     pub te: Option<f64>,
@@ -6140,6 +6162,96 @@ mod tests {
         gate_fpr_autocorr_assert(&cells);
     }
 
+    fn membrane_fpr_cells(
+        n: usize,
+        cells: &[(f32, usize)],
+        verdict: &mut dyn FnMut(&[f32], &[f32], u64) -> Option<TopologicalVerdict>,
+        driver_rng: &mut u64,
+    ) -> Vec<GateCell> {
+        let mut out = Vec::with_capacity(cells.len());
+        for &(a, trials) in cells {
+            let mut fp = 0usize;
+            let mut neg = 0usize;
+            for t in 0..trials {
+                let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+                let series = gate_common_driver(n, a, 0.0, 0, driver_rng);
+                let Some(v) = verdict(&series[0], &series[1], seed) else {
+                    continue;
+                };
+                neg += 1;
+                if v.te > v.threshold {
+                    fp += 1;
+                }
+            }
+            out.push(GateCell {
+                a,
+                d_z: 0,
+                fp,
+                neg,
+                tp: 0,
+            });
+        }
+        out
+    }
+
+    #[test]
+    #[ignore = "membrane FPR battery n=1000 — heavy, runs in te-gate.yml"]
+    fn gate_membrane_fpr_phase_vs_arx_n_1000() {
+        const N: usize = 1000;
+        const TRIALS: usize = 21;
+        const ARX_NULL_LAG: usize = 12;
+        let cells = [(0.0f32, TRIALS), (0.5f32, TRIALS), (0.9f32, TRIALS)];
+        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+
+        let phase_cells = membrane_fpr_cells(
+            N,
+            &cells,
+            &mut |x, y, seed| topological_te_phase(x, y, 3, 3, seed),
+            &mut rng,
+        );
+        for c in &phase_cells {
+            println!(
+                "membrane phase a={} fpr={:.2}%",
+                c.a,
+                100.0 * c.fp as f64 / c.neg as f64
+            );
+        }
+        gate_fpr_autocorr_assert(&phase_cells);
+
+        let arx_cells = membrane_fpr_cells(
+            N,
+            &cells,
+            &mut |x, y, seed| topological_te_arx(x, y, 3, 3, ARX_NULL_LAG, seed),
+            &mut rng,
+        );
+        for c in &arx_cells {
+            println!(
+                "membrane arx a={} fpr={:.2}%",
+                c.a,
+                100.0 * c.fp as f64 / c.neg as f64
+            );
+        }
+        gate_fpr_autocorr_assert(&arx_cells);
+
+        let block_cells = membrane_fpr_cells(
+            N,
+            &cells,
+            &mut |x, y, seed| {
+                topological_te_with(x, y, 3, 3, seed, 10, &mut |v, rng| {
+                    block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng)
+                })
+            },
+            &mut rng,
+        );
+        for c in &block_cells {
+            println!(
+                "membrane block a={} fpr={:.2}%",
+                c.a,
+                100.0 * c.fp as f64 / c.neg as f64
+            );
+        }
+    }
+
     #[test]
     #[ignore = "block sweep for the n=1000 gate fix — runs in te-gate.yml"]
     fn block_sweep_n1000() {
@@ -7085,7 +7197,7 @@ mod tests {
     }
 
     #[test]
-    fn gate_wgsl_ksg_parity_real_and_surrogate_against_cpu_reference() {
+    fn gate_wgsl_horizon_and_ksg_parity_against_cpu_reference() {
         use std::sync::Arc;
         use std::sync::atomic::{AtomicBool, Ordering};
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
@@ -7283,14 +7395,25 @@ mod tests {
             "the wgsl ksg real-pair slot is absent at k={}",
             TE_KSG_K
         );
-        let tau_x = verdict[0] as usize;
+        let tau_c = verdict[0] as usize;
         let tau_y = verdict[6] as usize;
         let gpu_te = verdict[74];
         let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
         let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
-        let emb_x = embed_series(&xf, tau_x, 3);
+        let cpu_tau_y = find_mi_lag(&yf).expect("the cpu driver carries an MI lag");
+        assert_eq!(
+            tau_y, cpu_tau_y,
+            "the gpu driver lag diverges from the cpu reference"
+        );
+        let cpu_tau_c =
+            find_cross_mi_lag(&xf, &yf, cpu_tau_y).expect("the cpu carries a cross horizon");
+        assert_eq!(
+            tau_c, cpu_tau_c,
+            "the gpu cross horizon diverges from the cpu reference"
+        );
+        let emb_x = embed_series(&xf, tau_c, 3);
         let emb_y = embed_series(&yf, tau_y, 3);
-        let cpu_opt = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_x, tau_y, TE_KSG_K);
+        let cpu_opt = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, TE_KSG_K);
         let cpu_te = cpu_opt.expect("the KSG reference carries a TE at the GPU lags");
         let gap = (gpu_te as f64 - cpu_te).abs();
         assert!(
@@ -7308,9 +7431,12 @@ mod tests {
             let tau_s = verdict[s * 6] as usize;
             let gpu_s = verdict[72 + 2 * s];
             let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
+            let tau_c_s = find_cross_mi_lag(&xf, &ysf, tau_s)
+                .expect("the cpu carries a surrogate cross horizon");
+            let emb_x_s = embed_series(&xf, tau_c_s, 3);
             let emb_s = embed_series(&ysf, tau_s, 3);
             let cpu_s_opt =
-                transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_s, tau_x, tau_s, TE_KSG_K);
+                transfer_entropy_embedded_ksg(&xf, &emb_x_s, &emb_s, tau_c_s, tau_s, TE_KSG_K);
             let cpu_s = cpu_s_opt.expect("the KSG reference carries a surrogate TE at GPU lags");
             let gap_s = (gpu_s as f64 - cpu_s).abs();
             assert!(
@@ -7325,6 +7451,66 @@ mod tests {
         assert!(
             ksg_surrogates >= 2,
             "wgsl ksg surrogate parity holds on {ksg_surrogates} series — the null mirror needs at least two"
+        );
+
+        let mut flat_data = vec![0f32; 12 * crate::mathematikerin::TE_SERIES_STRIDE];
+        flat_data[0..n].copy_from_slice(&x);
+        queue.write_buffer(
+            &series_buf,
+            0,
+            &crate::mathematikerin::le_bytes_f32(&flat_data),
+        );
+        let mut enc2 = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc2.copy_buffer_to_buffer(
+            &out_buf,
+            0,
+            &read_buf,
+            0,
+            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32),
+        );
+        queue.submit(std::iter::once(enc2.finish()));
+        let mapped2 = Arc::new(AtomicBool::new(false));
+        let m3 = mapped2.clone();
+        let slice2 = read_buf.slice(..);
+        slice2.map_async(wgpu::MapMode::Read, move |r| {
+            m3.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline2 = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped2.load(Ordering::SeqCst) && std::time::Instant::now() < deadline2 {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(
+            mapped2.load(Ordering::SeqCst),
+            "wgsl horizon no-tau readback returned void"
+        );
+        let flat_mapped = slice2.get_mapped_range();
+        let mut flat_verdict =
+            [0f32; crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32) as usize / 4];
+        for k in 0..flat_verdict.len() {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&flat_mapped[k * 4..k * 4 + 4]);
+            flat_verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(flat_mapped);
+        read_buf.unmap();
+        assert_eq!(
+            flat_verdict[0], 0.0,
+            "no tau: the horizon slot stays absent for a flat driver"
+        );
+        assert_eq!(flat_verdict[10], 0.0, "no tau: the real pair carries no TE");
+        assert_eq!(
+            flat_verdict[7], 0.0,
+            "no tau: the real-pair TE slot stays absent"
+        );
+        assert_eq!(
+            flat_verdict[75], 0.0,
+            "no tau: the ksg mirror stays absent too"
         );
     }
 
