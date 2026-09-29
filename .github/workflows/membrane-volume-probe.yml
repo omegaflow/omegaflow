@@ -1,0 +1,38 @@
+name: membrane-volume-probe
+
+concurrency:
+  group: membrane-volume-probe
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  RUSTFLAGS: -D warnings
+
+jobs:
+  membrane-volume-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the probe (release)
+        run: cargo build --release -p omegaflow-measure --bin membrane_hull_probe
+      - name: Fetch the star catalog asset from the CDN
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov
+          curl -fsSL -o data/ssd.jpl.nasa.gov/dr3_stars.bin \
+            https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
+      - name: Run the membrane volume probe
+        run: ./target/release/membrane_hull_probe | tee membrane-volume-probe.txt
+      - name: Upload the probe output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: membrane-volume-probe
+          path: membrane-volume-probe.txt
+          retention-days: 7

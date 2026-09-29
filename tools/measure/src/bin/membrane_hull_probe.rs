@@ -3,9 +3,10 @@ use std::sync::Arc;
 use std::sync::RwLock;
 
 use omegaflow::archivar::{
-    C_LIGHT, anchor_uses, body_barycenter_position, body_in_enclosure, body_record_epoch,
-    build_asteroid_samples, build_star_samples, cache_fresh_cdn, catalog_sample_in_enclosure,
-    content_cache, embedded_lsk, enclosure_presences, parse_ephemeris_binary, parse_sources,
+    C_LIGHT, MembraneCtx, SampleRecord, anchor_uses, body_barycenter_position, body_in_enclosure,
+    body_record_epoch, build_asteroid_samples, build_spatial_hash, build_star_samples,
+    cache_fresh_cdn, catalog_sample_in_enclosure, content_cache, embedded_lsk, enclosure_presences,
+    parse_ephemeris_binary, parse_sources, query_hash,
 };
 use omegaflow::mathematikerin::PresenceState;
 
@@ -259,6 +260,35 @@ fn main() {
         .map(|s| s.epoch)
         .fold(f64::MAX, f64::min);
     let rho_star = C_LIGHT * (now - star_epoch_min).abs() + pad;
+
+    let floor = [1e-40f64; 9];
+    let build_start = std::time::Instant::now();
+    let hash = build_spatial_hash(star_samples.iter().cloned().map(Arc::new).collect(), 1.0);
+    let build_ms = build_start.elapsed().as_secs_f64() * 1e3;
+    let mut records: Vec<SampleRecord> = Vec::new();
+    let query_start = std::time::Instant::now();
+    query_hash(
+        &hash,
+        MembraneCtx {
+            center,
+            t2: now,
+            pad: 1.0,
+            delta_t_cache: 0.0,
+            floor: &floor,
+            softening: 1.0,
+            forward: [1.0, 0.0, 0.0],
+            eph: &eph_map,
+        },
+        &mut records,
+    );
+    let query_ms = query_start.elapsed().as_secs_f64() * 1e3;
+    println!(
+        "QUERY | star_cells {} | bounded_cells {} | records {} | frame_bytes {} | build_ms {build_ms:.3} | query_ms {query_ms:.3}",
+        hash.star_cells.values().map(Vec::len).sum::<usize>(),
+        hash.cells.values().map(Vec::len).sum::<usize>(),
+        records.len(),
+        records.len() * 26 * 8
+    );
 
     let dastcom_ttl = match sources.iter().find(|s| s.format == "catalog_dastcom") {
         Some(s) => s.ttl,
