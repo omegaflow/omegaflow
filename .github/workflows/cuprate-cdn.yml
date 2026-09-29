@@ -40,3 +40,12 @@ jobs:
             --plasmon kernels/charge151/data \
             --out kernels \
             --ci-mode
+      - name: Harvest cuprate EELS phonons (Zenodo 21859473) and upload to CDN
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/Fig4_eels_and_peakfitting.mat \
+            "https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content"
+          cargo run -p omegaflow-harvest --release --bin crystal_compiler -- \
+            --eels kernels/Fig4_eels_and_peakfitting.mat \
+            --out kernels \
+            --ci-mode
