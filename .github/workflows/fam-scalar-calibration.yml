@@ -1,0 +1,47 @@
+name: fam-scalar-calibration
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: nsurr10-a0
+            args: --n 1260 --trials 600 --n-surr 10 --a 0.0 --threads 4
+          - point: nsurr10-a05
+            args: --n 1260 --trials 600 --n-surr 10 --a 0.5 --threads 4
+          - point: nsurr10-a09
+            args: --n 1260 --trials 600 --n-surr 10 --a 0.9 --threads 4
+          - point: nsurr100-a0
+            args: --n 1260 --trials 60 --n-surr 100 --a 0.0 --threads 4
+          - point: nsurr100-a05
+            args: --n 1260 --trials 60 --n-surr 100 --a 0.5 --threads 4
+          - point: nsurr100-a09
+            args: --n 1260 --trials 60 --n-surr 100 --a 0.9 --threads 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the scalar round-max family-bound calibration
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin fam_calibration -- ${{ matrix.args }}
+          } > "report-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-${{ matrix.point }}
+          path: report-${{ matrix.point }}.txt
