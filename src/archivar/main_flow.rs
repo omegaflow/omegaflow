@@ -2437,6 +2437,9 @@ pub fn main_flow() {
                             tau: 0.0,
                             color_index: 0.0,
                             rv_m_s: 0.0,
+                            sigma_plx_mas: None,
+                            sigma_pm_ra_masyr: None,
+                            sigma_pm_de_masyr: None,
                         });
                         let hash = SpectralHash {
                             name: format!("gaia_xp.{}", star.source_id),
@@ -2573,6 +2576,9 @@ pub fn main_flow() {
                             tau: 0.0,
                             color_index: 0.0,
                             rv_m_s: 0.0,
+                            sigma_plx_mas: None,
+                            sigma_pm_ra_masyr: None,
+                            sigma_pm_de_masyr: None,
                         });
                         let hash_name = format!("jwst_spectra.flux.{}.{}", spec.host, spec.obs_id);
                         let hash = SpectralHash {

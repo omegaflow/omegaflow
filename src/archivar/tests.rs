@@ -2629,6 +2629,64 @@ fn test_star_grid_hull_refuses_distant_star() {
     assert!((reached[0].0 - d).abs() / d < 1e-6);
 }
 
+fn push_legacy_star_record(bin: &mut Vec<u8>, plx_mas: f32) {
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f64.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&plx_mas.to_le_bytes());
+    bin.extend_from_slice(&0f32.to_le_bytes());
+    bin.extend_from_slice(&1f32.to_le_bytes());
+    bin.extend_from_slice(&1.2f32.to_le_bytes());
+    bin.extend_from_slice(&12000f32.to_le_bytes());
+}
+
+#[test]
+fn test_star_grid_hull_bounds_synthetic_catalog() {
+    let near_plx = 1000f32;
+    let far_plx = (1000.0 / 97224.6) as f32;
+    for n in [100usize, 1000, 10000] {
+        let mut bin = Vec::new();
+        push_legacy_star_record(&mut bin, near_plx);
+        for _ in 0..n {
+            push_legacy_star_record(&mut bin, far_plx);
+        }
+        let samples = build_star_samples(&bin, Some(2000.0));
+        assert_eq!(samples.len(), n + 1);
+        let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+        let buf = build_buffer(
+            samples.into_iter().map(Arc::new).collect(),
+            1.0,
+            Arc::new(eph.clone()),
+            None,
+            Vec::new(),
+            Vec::new(),
+            None,
+        );
+        let mut records: Vec<SampleRecord> = Vec::new();
+        query_hash(
+            &buf.cache,
+            MembraneCtx {
+                center: [0.0, 0.0, 0.0],
+                t2: 0.0,
+                pad: 1e18,
+                delta_t_cache: 0.0,
+                floor: &[1e-40; 9],
+                softening: 1.0,
+                forward: [1.0, 0.0, 0.0],
+                eph: &eph,
+            },
+            &mut records,
+        );
+        eprintln!("synthetic hull: total {} records {}", n + 1, records.len());
+        assert_eq!(
+            records.len(),
+            1,
+            "the hull loads only the near star; the {n} distant stars stay unloaded"
+        );
+    }
+}
+
 static VERDICT_QUERY_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 fn verdict_query_handle() -> Arc<std::sync::RwLock<Vec<VerdictLine>>> {
