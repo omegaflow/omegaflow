@@ -40,6 +40,7 @@ pub const MAGIC_NOHR: [u8; 4] = *b"NOH1";
 pub const MAGIC_DECAPS: [u8; 4] = crate::decaps::MAGIC;
 pub const MAGIC_GOSAT: [u8; 4] = *b"G3L1";
 pub const MAGIC_ESACCI_SST: [u8; 4] = *b"ESS1";
+pub const MAGIC_ERSSTV5: [u8; 4] = *b"ERS1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -203,6 +204,8 @@ pub const COMP_GOSAT_MAX: u32 = 6;
 
 pub const COMP_ESACCI_SST: u32 = 1;
 
+pub const COMP_ERSSTV5: u32 = 1;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -262,6 +265,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "decaps_dr2_stars" => Some(MAGIC_DECAPS),
         "gosat_tanso3" => Some(MAGIC_GOSAT),
         "esacci_sst_l4_cdr3" => Some(MAGIC_ESACCI_SST),
+        "ersstv5_nino34" => Some(MAGIC_ERSSTV5),
         _ => None,
     }
 }
@@ -307,6 +311,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "decaps_dr2_stars" => Some(crate::decaps::COMP_MAX),
         "gosat_tanso3" => Some(COMP_GOSAT_MAX),
         "esacci_sst_l4_cdr3" => Some(COMP_ESACCI_SST),
+        "ersstv5_nino34" => Some(COMP_ERSSTV5),
         _ => None,
     }
 }

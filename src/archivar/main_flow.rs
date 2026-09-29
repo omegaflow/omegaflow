@@ -2873,6 +2873,7 @@ pub fn main_flow() {
                     | "pds3_binary"
                     | "pds4_binary"
                     | "pds4_fits"
+                    | "hips_png"
                     | "gras_2c"
                     | "galileo_odr"
                     | "flac"
@@ -3829,6 +3830,7 @@ pub fn main_flow() {
                     | "nohrsc_snowfall"
                     | "gosat_tanso3"
                     | "esacci_sst_l4_cdr3"
+                    | "ersstv5_nino34"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
