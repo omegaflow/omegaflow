@@ -1,0 +1,44 @@
+name: pds3-img-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pds3-img:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if both family assets already exist on the CDN
+        id: idempotence
+        run: |
+          rf=0
+          m3=0
+          if gh release view pds-geosciences.wustl.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pds3_img_"; then
+            rf=1
+          fi
+          if gh release view pds-imaging.jpl.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pds3_img_"; then
+            m3=1
+          fi
+          if [ "$rf" = "1" ] && [ "$m3" = "1" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "assets pds3_img_* already present in both releases — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "Mini-RF ($rf) / M3 ($m3) asset(s) missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the PDS3 raster / ENVI cubes to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin pds3_img_compiler -- --ci-mode

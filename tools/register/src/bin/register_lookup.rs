@@ -1,8 +1,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;
 use std::fs;
+use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 const REGISTER: &[(&str, &str)] = &[
     ("phi/sources.\u{3c6}", "live"),
@@ -2418,55 +2419,6 @@ fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
     by_line
 }
 
-fn commit_for_path(path: &str) -> Option<String> {
-    let output = Command::new("git")
-        .args(["log", "--diff-filter=A", "--format=%H", "-1", "--", path])
-        .output()
-        .ok()?;
-    if !output.status.success() {
-        return None;
-    }
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let first = stdout.lines().next()?.trim().to_string();
-    if first.is_empty() { None } else { Some(first) }
-}
-
-fn commit_for_path_cached(
-    path: &str,
-    cache: &mut BTreeMap<String, Option<String>>,
-) -> Option<String> {
-    if let Some(value) = cache.get(path) {
-        return value.clone();
-    }
-    let value = commit_for_path(path);
-    cache.insert(path.to_string(), value.clone());
-    value
-}
-
-fn commit_touches(lower: Option<&str>, upper: Option<&str>, token: &str) -> Option<bool> {
-    let mut cmd = Command::new("git");
-    cmd.arg("log")
-        .arg("--oneline")
-        .arg(format!("--grep={}", token));
-    match (lower, upper) {
-        (Some(a), Some(b)) => {
-            cmd.arg(format!("{}..{}", a, b));
-        }
-        (Some(a), None) => {
-            cmd.arg(format!("{}..HEAD", a));
-        }
-        (None, Some(b)) => {
-            cmd.arg(b);
-        }
-        (None, None) => {}
-    }
-    let output = cmd.output().ok()?;
-    if !output.status.success() {
-        return None;
-    }
-    Some(!output.stdout.is_empty())
-}
-
 fn load_commit_message_corpus() -> Option<String> {
     let output = Command::new("git")
         .arg("log")
@@ -2481,43 +2433,101 @@ fn load_commit_message_corpus() -> Option<String> {
     Some(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
-static MESSAGE_CORPUS: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
+static MESSAGE_CORPUS_LOWER: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
 
-fn commit_message_corpus() -> Option<&'static str> {
-    MESSAGE_CORPUS
-        .get_or_init(load_commit_message_corpus)
+fn commit_message_corpus_lower() -> Option<&'static str> {
+    MESSAGE_CORPUS_LOWER
+        .get_or_init(|| load_commit_message_corpus().map(|c| c.to_lowercase()))
         .as_deref()
 }
 
-fn commit_resolves_all_lines(token: &str) -> Option<bool> {
-    let corpus = commit_message_corpus()?;
-    if corpus.contains(token) {
-        return Some(true);
-    }
-    let by_content = Command::new("git")
-        .arg("log")
-        .arg("--exclude=refs/safety/*")
-        .arg("--all")
-        .arg("--oneline")
-        .arg(format!("-S{}", token))
-        .output()
-        .ok()?;
-    if !by_content.status.success() {
-        return None;
-    }
-    Some(!by_content.stdout.is_empty())
+fn commit_token_resolved(token: &str) -> Option<bool> {
+    commit_message_corpus_lower().map(|corpus| corpus.contains(token))
 }
 
-fn commit_resolves_all_lines_cached(
-    token: &str,
-    cache: &mut BTreeMap<String, Option<bool>>,
-) -> Option<bool> {
-    if let Some(value) = cache.get(token) {
-        return *value;
+fn is_word_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'-' || b >= 0x80
+}
+
+fn offer_word(word: &str, pending: &mut BTreeSet<String>, found: &mut BTreeSet<String>) {
+    if pending.remove(word) {
+        found.insert(word.to_string());
+        return;
     }
-    let value = commit_resolves_all_lines(token);
-    cache.insert(token.to_string(), value);
-    value
+    if word.contains('-') {
+        for part in word.split('-') {
+            if !part.is_empty() && pending.remove(part) {
+                found.insert(part.to_string());
+            }
+        }
+    }
+}
+
+fn scan_words_case(content: &str, pending: &mut BTreeSet<String>, found: &mut BTreeSet<String>) {
+    let bytes = content.as_bytes();
+    let mut i = 0usize;
+    while i < bytes.len() {
+        while i < bytes.len() && !is_word_byte(bytes[i]) {
+            i += 1;
+        }
+        let start = i;
+        while i < bytes.len() && is_word_byte(bytes[i]) {
+            i += 1;
+        }
+        if start < i {
+            offer_word(&content[start..i], pending, found);
+        }
+    }
+}
+
+fn load_commit_content_index(tokens: &BTreeSet<String>) -> BTreeSet<String> {
+    if tokens.is_empty() {
+        return BTreeSet::new();
+    }
+    let mut pending: BTreeSet<String> = tokens.clone();
+    let mut found: BTreeSet<String> = BTreeSet::new();
+    let mut child = match Command::new("git")
+        .args([
+            "log",
+            "--exclude=refs/safety/*",
+            "--all",
+            "--format=%x00",
+            "-p",
+            "--unified=0",
+        ])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => return found,
+    };
+    let stdout = match child.stdout.take() {
+        Some(s) => s,
+        None => {
+            let _ = child.wait();
+            return found;
+        }
+    };
+    let reader = BufReader::new(stdout);
+    for line in reader.lines() {
+        let Ok(line) = line else { break };
+        let bytes = line.as_bytes();
+        if bytes.is_empty() {
+            continue;
+        }
+        match bytes[0] {
+            b'+' | b'-' if !(bytes.len() > 1 && (bytes[1] == b'+' || bytes[1] == b'-')) => {
+                scan_words_case(&line[1..], &mut pending, &mut found);
+            }
+            _ => continue,
+        }
+        if pending.is_empty() {
+            break;
+        }
+    }
+    let _ = child.wait();
+    found
 }
 
 fn resolution_status(own_range: Option<bool>, all_lines: Option<bool>) -> &'static str {
@@ -2561,17 +2571,96 @@ fn persist_threshold(args: &[String]) -> usize {
     1
 }
 
+fn dropped_live_carriers() -> (BTreeMap<String, String>, String) {
+    let mut by_line: BTreeMap<String, String> = BTreeMap::new();
+    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
+        let entries = match fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !is_doc_name(&name) {
+                continue;
+            }
+            let Some((line, _, _)) = parse_handover_name(&name) else {
+                continue;
+            };
+            let Ok(text) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let slot = by_line
+                .entry(canonical_line(&line).to_string())
+                .or_default();
+            slot.push(' ');
+            slot.push_str(&normalize_text(&text));
+            slot.push(' ');
+        }
+    }
+    let mut docs = String::new();
+    for (dir, _) in REGISTER_DIRS {
+        if *dir == "docs/handover" {
+            continue;
+        }
+        let entries = match fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let name = file_name_string(&path);
+            if !is_doc_name(&name) {
+                continue;
+            }
+            let Ok(text) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let (_, _, status) = parse_header(&text);
+            if is_closed_status(&status) {
+                continue;
+            }
+            let mut opens: Vec<String> = Vec::new();
+            let mut released: Vec<String> = Vec::new();
+            scan_markers(&text, "", "OPEN", &mut opens, &mut released);
+            if opens.is_empty() {
+                continue;
+            }
+            docs.push(' ');
+            docs.push_str(&normalize_text(&text));
+            docs.push(' ');
+        }
+    }
+    (by_line, docs)
+}
+
+struct DroppedPoint {
+    line: String,
+    n_path: String,
+    lineno: usize,
+    next_path: String,
+    text: String,
+    persist: usize,
+    token: Option<String>,
+}
+
 fn run_dropped(args: &[String]) {
     let filter = dropped_line_filter(args).map(canonical_line);
     let threshold = persist_threshold(args);
     let count_only = count_flag(args);
     let handovers = collect_handovers();
-    let mut commit_cache: BTreeMap<String, Option<String>> = BTreeMap::new();
-    let mut all_lines_cache: BTreeMap<String, Option<bool>> = BTreeMap::new();
+    let (live_by_line, live_docs) = dropped_live_carriers();
     let mut pairs = 0usize;
     let mut candidates = 0usize;
     let mut dropped = 0usize;
-    let mut resolved = 0usize;
+    let mut points: Vec<DroppedPoint> = Vec::new();
+    let mut token_set: BTreeSet<String> = BTreeSet::new();
     for (line, list) in &handovers {
         if let Some(wanted) = filter {
             if wanted != line.as_str() {
@@ -2616,37 +2705,29 @@ fn run_dropped(args: &[String]) {
                 if persist < threshold {
                     continue;
                 }
-                dropped += 1;
-                let git_status = match distinctive_token(&tokens) {
-                    Some(token) => {
-                        let lower = commit_for_path_cached(&n.path, &mut commit_cache);
-                        let upper = commit_for_path_cached(&next.path, &mut commit_cache);
-                        let own_range = commit_touches(lower.as_deref(), upper.as_deref(), &token);
-                        let all_lines = if own_range == Some(true) {
-                            None
-                        } else {
-                            commit_resolves_all_lines_cached(&token, &mut all_lines_cache)
-                        };
-                        let status = resolution_status(own_range, all_lines);
-                        if status == "resolved" {
-                            resolved += 1;
-                        }
-                        status
-                    }
-                    None => "none",
-                };
-                if !count_only {
-                    println!(
-                        "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
-                        line,
-                        n.path,
-                        point.lineno,
-                        next.path,
-                        snippet(&point.text, 160),
-                        persist,
-                        git_status
-                    );
+                let carried_forward = padded[index + 2..]
+                    .iter()
+                    .any(|later| later.contains(&needle));
+                let carried_foreign = live_by_line
+                    .iter()
+                    .any(|(other, text)| other != line && text.contains(&needle));
+                if carried_forward || carried_foreign || live_docs.contains(&needle) {
+                    continue;
                 }
+                dropped += 1;
+                let token = distinctive_token(&tokens);
+                if let Some(t) = &token {
+                    token_set.insert(t.clone());
+                }
+                points.push(DroppedPoint {
+                    line: line.clone(),
+                    n_path: n.path.clone(),
+                    lineno: point.lineno,
+                    next_path: next.path.clone(),
+                    text: point.text.clone(),
+                    persist,
+                    token,
+                });
             }
         }
         if !count_only {
@@ -2660,6 +2741,34 @@ fn run_dropped(args: &[String]) {
                     }
                 }
             }
+        }
+    }
+    let content_index = load_commit_content_index(&token_set);
+    let mut resolved = 0usize;
+    for p in &points {
+        let git_status = match &p.token {
+            Some(token) => {
+                let by_message = commit_token_resolved(token);
+                let touched = by_message == Some(true) || content_index.contains(token);
+                let status = resolution_status(None, Some(touched));
+                if status == "resolved" {
+                    resolved += 1;
+                }
+                status
+            }
+            None => "none",
+        };
+        if !count_only {
+            println!(
+                "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
+                p.line,
+                p.n_path,
+                p.lineno,
+                p.next_path,
+                snippet(&p.text, 160),
+                p.persist,
+                git_status
+            );
         }
     }
     if count_only {
