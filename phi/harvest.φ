@@ -5,7 +5,6 @@ arm bc_mpo_mag_compiler
 pattern ^bc_mpo_mag\.bin$
 idempotent true
 timeout 60
-note BepiColombo MPO-MAG derived calibrated B (ECLIPJ2000, IB) + S/C-Position km; arm src/archivar/bc_mpo_mag.rs; ZIP via PSA-TAP data?PRODUCT 853331 B; .tab 4828824 B sha256 8d7e6007…; CDN-Asset 1733432 B sha256 8f83ec79…, 2026-09-18.
 
 asset present
 format bpa_gic
@@ -15,7 +14,6 @@ workflow bpa-gic-cdn.yml
 pattern ^bpa_gic\.csv$
 idempotent true
 timeout 120
-note BPA transformer GIC 5-min Ampere, 11 cities (names only, no lat/lon — absent), rolling 4 days; Pacific Time wall clock carried as-is.
 
 asset present
 format cassini_odf
@@ -25,7 +23,6 @@ workflow cassini-odf-cdn.yml
 pattern ^cassini_odf\.bin$
 idempotent true
 timeout 350
-note Cassini RSS closed-loop ODF TRK-2-18 (36 B/Record) aus co-ss-rss-1-scc*/sce*/odf/; Arm odf::parse_odf; Compiler cassini_odf_compiler.rs; Asset present 1496960792 B sha256 12d9357f… run 35466653128; Crawl, ci_watchdog-Cancel 2× Median.
 
 asset present
 format cassini_rsr
@@ -36,7 +33,6 @@ workflow cassini-rsr-cdn.yml
 pattern ^cassini_rsr\.bin$
 idempotent true
 timeout 350
-note Cassini RSS open-loop RSR I/Q: SFDU C997, 4260 B/Record, 1000 words (Q high16/I low16), SAMPLE RATE u16 BE [70..72) ksps, SFDU-SECOND f64 [80..88); Arm cassini_rsr.rs; cassini_rsr_compiler.rs; Asset 1308000008 B sha256 f9088327… run 35455838104.
 
 asset present
 format catalog_gaia_sso
@@ -44,7 +40,6 @@ tag gea.esac.esa.int
 arm gaia_sso_compiler
 pattern ^gaia_sso_tno\.bin$
 idempotent true
-note gaia_sso_tno.bin 99160 B sha256 7278389b… measured 2026-09-17 via gh release view gea.esac.esa.int; arm src/archivar/gaia_sso.rs; gaia-sso-cdn.yml built 2026-09-17 (gaia_sso_compiler --ci-mode, timeout 120); asset predates the workflow.
 
 asset present
 format ephemeris_epm
@@ -52,7 +47,6 @@ tag ftp.iaaras.ru
 arm epm_compiler
 pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
-note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
 asset present
 format ersstv5_nino34
@@ -61,7 +55,6 @@ arm ersstv5_compiler
 workflow ersstv5-cdn.yml
 pattern ^ersstv5_nino34\.bin$
 idempotent true
-note NINO3.4 SST anomaly (coastwatch ERDDAP nceiErsstv5), 1854-01→2026-08, 5S-5N/190-240E; arm src/archivar/geo.rs COMP_ERSSTV5; asset 206 measured 2026-09-30; run 36714635786 success.
 
 asset present
 format exofop_toi
@@ -71,7 +64,6 @@ workflow exofop-cdn.yml
 pattern ^exofop_toi\.bin$
 idempotent true
 timeout 120
-note exofop_toi.bin 358525 B sha256 440a7fdc…0321 CDN 200 measured 2026-09-19 (run 35426107470 success); Quelle download_toi.php?sort=toi&output=pipe 1770 Zeilen/63 Spalten; Format EXF1 44 B/Record, 6 Felder (TIC,TOI,RA,Dec,BJD,Tiefe ppm).
 
 asset present
 format gedi_l2a
@@ -81,7 +73,6 @@ args --cmr --day 2025.07.09 --version 002
 pattern ^gedi_l2a\.bin$
 idempotent true
 timeout 180
-note GEDI02_A v002 RH98 day 2025.07.09. Range-Guard MAX_TRAVERSAL_BYTES=1<<26 (Hdf5Note::TraversalBudget) behob den Hang; CDN --sniff 2026-09-19: 600520 B sha256 11c04ada… (run 35471362190).
 
 asset present
 format gmrt_bathymetry
@@ -91,7 +82,6 @@ workflow gmrt-cdn.yml
 pattern ^gmrt_bathymetry\.bin$
 idempotent true
 timeout 120
-note gmrt_bathymetry.bin 6569840 B sha256 0acd52f33ab9ff7d998e85b37a230d8fbf527ab0948c7ce5c69d3b139c83b52e CDN 200 measured 2026-09-23 (run 35906178815 success); arm gmrt_compiler → GMR1
 
 asset present
 format goes16_abi
@@ -99,7 +89,6 @@ tag noaa-goes16.s3.amazonaws.com
 arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
-note goes16_abi.bin 348 B sha256 f4448230… measured 2026-09-18 via archive_search --sniff (CDN 200); magic GAB1, 6 granules bands 1-6, calib GSICS; arm src/archivar/goes_abi.rs parse_bin.
 
 asset present
 format hamqsl_solar
@@ -109,7 +98,6 @@ workflow hamqsl-cdn.yml
 pattern ^hamqsl_solar\.bin$
 idempotent true
 timeout 120
-note HAMQSL solarxml.php (solarflux sfu, solarwind km/s, magneticfield nT); Arm src/archivar/hamqsl.rs; Compiler hamqsl_compiler.rs; CDN-Asset 68 B sha256 872bcbd8… measured 2026-09-26 via --sniff (magic HSL1).
 
 asset fehlt
 format hapi_csv
@@ -126,7 +114,6 @@ args --cmr --day 2026.06.30 --version 007 --limit 1 --skip 10
 pattern ^icesat2_atl03\.bin$
 idempotent true
 timeout 360
-note ATL03 v007; day 2026.06.30 (215 Granules). Run 35524334872 success (skip 9, granule ATL03_20260630005728_02443212_007_01.h5, 1325400064 B): 8192 records, 458760 B, CDN --sniff sha256 79d3ba21…; args --limit 1 --skip 10 (10/215, skip fortschreiben).
 
 asset present
 format lro_trk
@@ -137,7 +124,6 @@ pattern ^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 timeout 240
 idempotent true
-note LRO RSS raw tracking — utF, 75-byte records; arm src/archivar/lro_utf.rs reduce_lro_trk/parse_series. Run 35425365015 success 2026-09-19: lro_trk_2009.bin 114787240 B sha256 c29af4b4… CDN present; in sources.φ registriert.
 
 asset present
 format mars_dust
@@ -147,7 +133,6 @@ workflow mars-dust-cdn.yml
 pattern ^mars_dust_MY[0-9]+_[0-9]+FpSol\.bin$
 idempotent true
 timeout 240
-note LMD gridded CDOD 9.3 µm (dimensionslos, em) 60x60x669 f64 pro Cube, Montabone et al. 2015; Wire 26xf64 magic MDST, presence=1 finite CDOD; CDN asset 500947208 B sha256 95cb8509… present (run 35461031672 success 2026-09-19).
 
 asset present
 format maven_tnf
@@ -156,7 +141,6 @@ arm maven_tnf_compiler
 pattern ^maven_tnf_t[0-9]+_[0-9]+(_[0-9]+)?\.bin$
 shard 3
 idempotent true
-note run 35205267703 measured 2026-09-17; 3 shard assets present (1073741768 B / 1073741768 B / 194661152 B per the phi/sources.φ maven_tnf notes); sha256 cbdf3ea4… / 0806df61… / 17a69d1c…
 
 asset present
 format nohrsc_snowfall
@@ -166,7 +150,6 @@ workflow nohrsc_snowfall-cdn.yml
 pattern ^nohrsc_snowfall\.bin$
 idempotent true
 timeout 120
-note NOAA NOHRSC snowfall CONUS 24h sfav2 NetCDF (SWE mm, stride 32); Arm src/archivar/geo.rs MAGIC_NOHR; Compiler nohrsc_snowfall_compiler.rs; CDN-Asset 30368 B sha256 457dd7a1… (--sniff 2026-09-26); Run 36270933358 success.
 
 asset present
 format odyssey_odf
@@ -175,7 +158,6 @@ arm odyssey_odf_compiler
 pattern ^odyssey_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 4
 idempotent true
-note Quelle vollständig gemessen 2026-09-18: odrs_0001–0238 tragen odf/ (odrs_0239–0299 HTTP 404, kein odf/); neuestes ODF odrs_0238/7163164b.lbl STOP 2017-06-13T13:15:09 == Register-End-Shard t550631778; kein Re-Harvest.
 
 asset present
 format ogimet_synop
@@ -186,7 +168,6 @@ workflow ogimet-cdn.yml
 pattern ^ogimet_synop\.bin$
 idempotent true
 timeout 120
-note OGIMET gsynres SYNOP Station 72594 (Temperatur C, Taupunkt C, Wind m/s, SLP hPa); Arm src/archivar/geo.rs MAGIC_OGM; Compiler ogimet_compiler.rs; CDN-Asset 1688 B sha256 c66e905e… (--sniff 2026-09-26); Run 36246913114 success.
 
 asset present
 format openneuro_brainvision
@@ -197,7 +178,6 @@ pattern ^sub-[0-9]+_task-jointaction_eeg\.bin$
 shard 32
 idempotent true
 timeout 350
-note ds007471 OpenNeuro joint-agency-EEG BrainVision (32 subj., CC0): harvest run 35476235446 success — 32 .bin present (452943428–701670196 B), sha256 in sources.φ; probe run 35474638076 sub-01 593625434 B roundtrip.
 
 asset present
 format openneuro_eeg
@@ -205,7 +185,6 @@ tag openneuro.org
 arm openneuro_compiler
 pattern ^sub-[0-9]+_ses-[a-z]+_task-[a-z]+_eeg\.bin$
 idempotent true
-note 2 EEG assets present measured 2026-09-17 via gh release view openneuro.org; arm src/archivar/openneuro_eeg.rs; run 34765685872 (placebo-ave-cdn 2026-09-13); sham 88629831 B sha256 b2566cbf…, verum 92981937 B sha256 e1d8de64…
 
 asset present
 format openneuro_pd_eeg
@@ -215,7 +194,6 @@ args --dataset ds007822
 pattern ^sub-G[0-9]+S[0-9]+_task-pd(decision|feedback|rest)_eeg\.bin$
 idempotent true
 timeout 240
-note ds007822 OpenNeuro Parkinson-EEG (99 .set): 99 assets uploaded run 35471360435 (snapshot 1.0.0 bba8cdf8…, openneuro-cdn.yml --ci-mode); measured via ci_manage log 35471360435.
 
 asset present
 format openneuro_snirf
@@ -225,7 +203,6 @@ args --dataset ds008192 --subject sub-101 --session 02
 pattern ^sub-101_ses-02_.*_nirs\.bin$
 idempotent true
 timeout 240
-note ds008192 InterGenSynchrony (SNIRF, 122 subj.): asset sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin 3599598 B roundtrip parses (nchan 52 pnts 8484 samples 441168), harvest run 35474615876 success; sources.φ url-Zeile steht.
 
 asset present
 format opensensemap_temperatur
@@ -235,7 +212,6 @@ workflow opensensemap-cdn.yml
 pattern ^opensensemap_temperatur\.bin$
 idempotent true
 timeout 120
-note opensensemap_temperatur.bin 2888 B sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe CDN 200 measured 2026-09-23 (run 35906130561 success); arm opensensemap_compiler → OSM1
 
 asset present
 format pds3_binary
@@ -254,7 +230,6 @@ workflow pds3-fixed-width-cdn.yml
 pattern ^pds3_fixed_width_.+\.bin$
 idempotent true
 timeout 240
-note Arm pds3_table.rs + extract.rs series_named; PDS3 fixed-width (KRFM=Phobos2/Mars, Vega2/HALLEY); run 36447656801 success 2026-09-28: pds3_fixed_width_<stem>.bin 14608–16192 B sha256 6c7d602c…, roundtrip holds, asset present.
 
 asset fehlt
 format pds3_fixed_width_darts
@@ -300,7 +275,6 @@ workflow pds4-fixed-width-cdn.yml
 pattern ^pds4_fixed_width_.+\.bin$
 idempotent true
 timeout 240
-note Arm src/archivar/pds4.rs; Hayabusa LIDAR cdr_{f,opt,uf}; run 36447660819 success 2026-09-28: 9 shards 39'610'348–163'682'284 B, cdr_f 154708 Z./31 Spalten, roundtrip holds, sha256 c426b30d…, asset present.
 
 asset present
 format rosetta_odf
@@ -309,7 +283,6 @@ arm rosetta_odf_compiler
 pattern ^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 idempotent true
 timeout 350
-note Rosetta RSI IFMS AGC; compiler rosetta_odf_compiler.rs; 3 Shards im release archives.esac.esa.int, URLs in sources.φ:8948/8958/8968 (de-dup 7e2cefd9f), gemessen 2026-09-30; run 35351411938 success 2026-09-18.
 
 asset present
 format swot_l2_lr_ssh
@@ -319,7 +292,6 @@ args --cmr --day 2026.09.14 --short-name SWOT_L2_LR_SSH_UNSMOOTHED_D
 pattern ^swot_l2_lr_ssh\.bin$
 idempotent true
 timeout 120
-note SWOT_L2_LR_SSH Unsmoothed ssh_karin_2; arm swot_l2_lr_ssh_compiler; run 35323857410 (2026-09-18) 7679 records, 307168 B sha256 2e646017…875422; asset present, roundtrip parses.
 
 asset present
 format tao_wnd_zonal
@@ -329,7 +301,6 @@ workflow tao-wnd-cdn.yml
 pattern ^tao_wnd_zonal\.csv$
 idempotent true
 timeout 120
-note TAO/TRITON pmelTaoDyW zonal wind WU_422 m s-1, QWS_5401<=2.5, daily 12:00Z, 1977-11-06→2026-09-02, direct+CoastWatch mirror.
 
 asset present
 format ulysses_atdf
@@ -338,7 +309,6 @@ arm ulysses_atdf_compiler
 pattern ^ulysses_atdf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE TRK-2-25 ATDF S-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series; asset present 2026-09-18 run 35296127974: ulysses_atdf.bin 35187160 B sha256 5aeca72ed24fdbf4d48a6e70448df3fe8cfbf8ae2732ea6619ac0b0b4869be9a
 
 asset present
 format ulysses_atdf_x
@@ -347,7 +317,6 @@ arm ulysses_atdf_compiler
 pattern ^ulysses_atdf_x(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 1
 idempotent true
-note Ulysses SCE TRK-2-25 ATDF X-band sky-frequency; arm src/archivar/atdf.rs reduce_uly_skyfreq/parse_uly_series_x; asset present 2026-09-18: ulysses_atdf_x.bin 40028696 B sha256 163897d2b9d17a1ec5a9dc861ea605f5da2c4c2649b69c420a815db8c407ed52
 
 asset present
 format usgs_comcat_m45
@@ -366,4 +335,3 @@ workflow wwlln-cdn.yml
 pattern ^wwlln_th\.csv$
 idempotent true
 timeout 1800
-note WWLLN thunder-hours climatology 2025, 0.05° grid, annual sum of monthly thunder_hours (int16, Hours), sparse >0 cells; lat/lon from the netCDF coordinate arrays.
