@@ -373,7 +373,7 @@ note html released 2026-09-27: Radar-Positionen maschinenlesbar via github.com/v
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa (HAPI 1.1, CSV): 200; CSV-Reader-Arm gebaut (src/archivar/port.rs hapi_draft_fields_csv, cargo check 0/0, 2026-09-27); native das2.2 (551 Datasets, das2stream) offen. Sources-Zeile = Mycelium.
+note DAS2 Iowa HAPI 1.1 CSV: 200; Reader-Arm steht (extract.rs series_parse_bin hapi_csv + hapi_csv.rs parse_bin; das2_iowa_compiler.rs; check 0/0 2026-09-30). Asset+Sources-Zeile Mycelium; native das2.2 (551 Datasets) offen.
 
 pending
 url http://occultations.ct.utfpr.edu.br/
@@ -405,19 +405,19 @@ note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777 + Label-Fetc
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); Arm pds4_binary.rs steht (strukturell); Compiler-Bin + Sample + Asset fehlen. SIS vco_rs_sis_v13.pdf.
+note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); Arm+Compiler stehen (pds4_binary.rs + pds4_binary_compiler.rs, 49b18dd6f); Sample+Asset fehlen. SIS vco_rs_sis_v13.pdf.
 
 pending
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
-note Kaguya/SELENE LRS-Roh (JAXA, PDS ODE) — 2026-09-28 HTTP 206; PDS3-Binär-Arm steht (src/archivar/pds3_binary.rs, strukturell); Compiler-Bin + Sample + Asset fehlen. DARTS darts:sln-l-rise-5-traj-rstar-v1.0.
+note Kaguya/SELENE LRS (JAXA, DARTS/PDS3) — Arm+Compiler stehen (49b18dd6f); Einzeldatei-Endpunkt 2026-09-30 auf data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/ (200); Rohdateien .tbl, nicht .dat. Sample+Asset Mycelium.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
-note Chandrayaan-1 (ISRO) Mini-RF .img + M3 ENVI-Cube — 2026-09-28 HTTP 206; PDS3-Raster/ENVI-Arm steht (src/archivar/pds3_img.rs, strukturell); Compiler-Bin + Sample + Asset fehlen. SPICE spiftp.esac.esa.int/data/SPICE/CHANDRAYAAN-1/.
+note Chandrayaan-1 Mini-RF (ISRO, PDS Geosciences) — Arm+Compiler stehen (49b18dd6f); Endpunkt 2026-09-30: pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/.../level1/*.img + raw/*.dat (206). Sample+Asset Mycelium.
 
 pending
 url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm steht (pds4_fits.rs); Verdikt 207: format pds4-fits, no-cadence; Compiler + Sample + Asset fehlen. bundle.xml 206/7406 B sha256 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd).
+note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm+Compiler stehen (pds4_fits.rs + pds4_fits_compiler.rs, 49b18dd6f); Verdikt 207 pds4-fits no-cadence; Sample+Asset fehlen. bundle.xml 206/7406 B sha 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd).
 
 pending
 url https://zenodo.org/api/records/15812343
