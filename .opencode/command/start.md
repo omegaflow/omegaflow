@@ -1,9 +1,13 @@
 ---
-description: Startet die neueste offene Übergabe im Planungsmodus — oder die benannte; Ausführung via line-Agent.
-agent: plan
+description: Startet die neueste offene Übergabe im Ein-Pass-Modus — oder die benannte. Linien-Rechte der gelesenen Übergabe gelten.
+agent: line
 ---
 
-Starte die Übergabe im **Planungsmodus** (Agent `plan`, read-only). Ist ein Name genannt, nimm diesen; sonst die neueste offene.
+Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
+damit die erlaubte Form am Punkt der Handlung steht.
+
+Starte die neueste offene Übergabe **in einem Pass** — kein Planungstheater, keine Tafel, kein
+Consent-Stopp für Bekanntes. Ist ein Name genannt, nimm diesen.
 
 Name (leer = neueste): $ARGUMENTS
 
@@ -11,23 +15,44 @@ Neueste offene Übergabe:
 
 !`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in handover-*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
-**Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
-`sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
-(eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
-was der eigene Trigger für fällig erklärt.
+**Linie erkennen.** Aus der Übergabe und ihrem Owner ergibt sich die Linie
+(mountain/river/sensory/future/mycelium); ihre Rechte und Ausschließlichkeiten gelten
+(AGENTS.md, „Die fünf Stimmen"). Ihre Wahrheit liegt in der Stehenden-Pass-Zeile
+(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; `pass-copy` ist ein Gate-Fixture).
 
-**Phase 1 — Plan (nur lesend).** Der Plan-Agent misst, schreibt nicht — das ist die Grenze.
-Lies die Übergabe **als Spur, nicht als Gesetz**, und miss jede offen/geschlossen-Aussage am
-Baum und Register, **bevor** du die Tafel legst: `open_points_check <übergabe>` (Pfad- **und**
-Register-Zitat-Abgleich; `STALE-CITATION` = gefeuerter Trigger), `register_lookup --addressed
-<line>` (die an die eigene Linie gerichteten Nachrichten zuerst falten), `register_lookup --open`,
-Secrets/Ledger/`state/zustand/*` gegen die genannten Zeilen; `session_burn` (der Burn der Runde —
-flash-first, pro/max nur mit gemessener flash-Fehllage). Nenne dann alle offenen Punkte der
-eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel abarbeitbaren zu dispatchen —
-keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit. **Halte dann an.**
+**Die Übergabe IST der Stand.** Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
-**Phase 2 — Ausführung.** Nach der Auswahl `/consent` (oder `/start_go`) — wechselt auf den auto-bestätigten `line`-Agenten. Zu Beginn zitiert er den Stehenden Pass (`sread state/zustand/standing-pass.md`) — kein eigener Standard-Pass — und liest die Form-Karte (`sread docs/concepts/tool-forms.md`). Werkzeuge statt Rohbefehle (Karte `docs/concepts/tools-map.md`). Den Übergabe-Header-sha256 setzt `omega_sh sha <datei>`; vor dem Commit prüft `git_safety --close [<eigene Pfade>]` den Abschluss in einem Aufruf. Delegiere flash-first (`grind-flash`/`general`/`vision`); ein pro/max-Dispatch trägt die gemessene falsche/unvollständige flash-Antwort als Handover-Zeile — sonst nicht. Der `line`-Agent führt den bestätigten Plan aus; `/commit` schließt.
+**1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
+`register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
+(`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
+<line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
+nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
 
-**Sofort-Prinzip.** Dispatcht wird **sofort** im nennenden Atom — kein besprechbarer Punkt wandert als „nächster Dispatch"/„nächste Session" weiter; besprochene Entscheidungen (ein Wort, eine Architektur, ein Verdikt) gehen im Moment ihrer Entstehung als Zeile ins Handover, nie am Sessionende gesammelt. Der Commit-Gate `commit_check` (status-proof) blockt den unbelegten Status-Tag, `register_lookup --fired`/`--stale` messen Feuer und Stehen.
+**2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
+**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`), gebaut,
+gemessen. Kein „nächster Dispatch", kein „nächste Session", keine Rangfolge, keine Liste.
+Werkzeuge statt Rohbefehle (`docs/concepts/tools-map.md`); `archive_search`/`sgrep`/`sfetch`/`sread`.
+Kein Polling.
 
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; committet wird pfad-begrenzt (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`), nur der eigene Teil; fremde uncommittete Arbeit wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum darf schmutzig sein.
+**3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
+einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
+**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Jede Entscheidung
+geht sofort als Zeile ins Handover (Sofort-Prinzip).
+
+**4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame
+Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist
+das Commit-Wort — beide getrennt.
+
+**5 · Übergabe zuletzt.** Erst nach der Arbeit: die Übergabe fortschreiben — Erledigtes **löschen**
+(nie als „erledigt" markieren), Messungen/Ergebnisse eintragen, nur Offenes mit **Lage · Blockade ·
+Braucht**; **LOCK nur im `LOCK`-Abschnitt** des Owners; Header-sha256 via `omega_sh sha <datei>`; die
+konsumierte Übergabe nach `archiv/`.
+
+**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
+privat je Linie — nutze `state/<line>/archive-search-preset.txt` der erkannten Linie, wenn es
+existiert; sonst nur `archive_search <kw> --root <dir>` mit den Wurzelverzeichnissen der Linie.
+
+Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
+(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
+Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
+sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
