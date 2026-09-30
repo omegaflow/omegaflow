@@ -164,14 +164,18 @@ pub fn parse_envi_hdr(text: &str) -> Option<ImgMeta> {
 
 fn byte_order_of(sample_type: &str) -> Result<ByteOrder, ImgReject> {
     match sample_type.to_ascii_uppercase().as_str() {
-        "MSB_INTEGER" | "MSB_UNSIGNED_INTEGER" | "SUN_INTEGER" | "SUN_UNSIGNED_INTEGER" => {
-            Ok(ByteOrder::Big)
-        }
-        "LSB_INTEGER" | "LSB_UNSIGNED_INTEGER" | "INTEL_INTEGER" | "INTEL_UNSIGNED_INTEGER" => {
-            Ok(ByteOrder::Little)
-        }
+        "MSB_INTEGER"
+        | "MSB_UNSIGNED_INTEGER"
+        | "SUN_INTEGER"
+        | "SUN_UNSIGNED_INTEGER"
+        | "MSB_REAL" => Ok(ByteOrder::Big),
+        "LSB_INTEGER"
+        | "LSB_UNSIGNED_INTEGER"
+        | "INTEL_INTEGER"
+        | "INTEL_UNSIGNED_INTEGER"
+        | "LSB_REAL"
+        | "PC_REAL" => Ok(ByteOrder::Little),
         "IEEE_REAL"
-        | "PC_REAL"
         | "PC_INTEGER"
         | "PC_UNSIGNED_INTEGER"
         | "VAX_REAL"
@@ -249,9 +253,25 @@ fn decode_sample(
     if raw.len() != width {
         return Ok(None);
     }
-    let signed = !sample_type.to_ascii_uppercase().contains("UNSIGNED");
-    let Some(v) = int_of(raw, order, signed) else {
-        return Ok(None);
+    let up = sample_type.to_ascii_uppercase();
+    let v = if up.ends_with("REAL") {
+        match (width, order) {
+            (4, ByteOrder::Big) => f32::from_be_bytes([raw[0], raw[1], raw[2], raw[3]]) as f64,
+            (4, ByteOrder::Little) => f32::from_le_bytes([raw[0], raw[1], raw[2], raw[3]]) as f64,
+            (8, ByteOrder::Big) => f64::from_be_bytes([
+                raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+            ]),
+            (8, ByteOrder::Little) => f64::from_le_bytes([
+                raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+            ]),
+            _ => return Ok(None),
+        }
+    } else {
+        let signed = !up.contains("UNSIGNED");
+        let Some(i) = int_of(raw, order, signed) else {
+            return Ok(None);
+        };
+        i
     };
     if !v.is_finite() {
         return Ok(None);
@@ -697,6 +717,23 @@ END
         meta.missing_constant = Some(3.0);
         let raster = decode_raster(&minirf_raster(), &meta).expect("raster decodes");
         assert_eq!(raster.values, vec![Some(1.0), Some(2.0), None, Some(4.0)]);
+    }
+
+    #[test]
+    fn decode_sample_reads_pc_real_and_rejects_non_finite() {
+        assert_eq!(
+            decode_sample("PC_REAL", 32, &1.0f32.to_le_bytes(), None),
+            Ok(Some(1.0))
+        );
+        assert_eq!(
+            decode_sample("MSB_REAL", 32, &1.0f32.to_be_bytes(), None),
+            Ok(Some(1.0))
+        );
+        assert_eq!(
+            decode_sample("PC_REAL", 32, &f32::INFINITY.to_le_bytes(), None),
+            Ok(None)
+        );
+        assert_eq!(decode_sample("PC_REAL", 16, &[0, 0], None), Ok(None));
     }
 
     const M3_HDR: &str = "ENVI

@@ -1,4 +1,4 @@
-use crate::archivar::fits::{FitsHeader, FitsImage, FitsTable};
+use crate::archivar::fits::{FitsColumn, FitsHeader, FitsImage, FitsTable};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FitsRaster {
@@ -103,9 +103,111 @@ pub fn band_means(raster: &FitsRaster) -> Option<Vec<(f64, f64, u32)>> {
     if out.is_empty() { None } else { Some(out) }
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct FitsTableSeries {
+    pub names: Vec<String>,
+    pub units: Vec<Option<String>>,
+    pub rows: Vec<(f64, f64, u32)>,
+}
+
+fn channel_ordinal(name: &str) -> Option<usize> {
+    let trimmed = name.trim();
+    let rest = trimmed
+        .strip_prefix('t')
+        .or_else(|| trimmed.strip_prefix('T'))?;
+    if rest.is_empty() || !rest.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    rest.parse::<usize>().ok()
+}
+
+fn bintable_series_of(
+    buf: &[u8],
+    table: &FitsTable,
+    header: &FitsHeader,
+) -> Option<FitsTableSeries> {
+    let axis = table
+        .columns
+        .iter()
+        .find(|c| c.name.trim().eq_ignore_ascii_case("et"))?;
+    let mut channels: Vec<&FitsColumn> = table
+        .columns
+        .iter()
+        .filter(|c| channel_ordinal(&c.name).is_some())
+        .collect();
+    channels.sort_by_key(|c| channel_ordinal(&c.name));
+    if channels.is_empty() {
+        return None;
+    }
+    let bunit = header
+        .str_unescaped("BUNIT")
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
+    let names: Vec<String> = channels.iter().map(|c| c.name.trim().to_string()).collect();
+    let units: Vec<Option<String>> = channels
+        .iter()
+        .map(|c| c.unit.clone().or_else(|| bunit.clone()))
+        .collect();
+    let mut rows = Vec::new();
+    for r in 0..table.n_rows {
+        let epoch = match table.cell_f64(buf, r, axis) {
+            Some(t) if t.is_finite() => t,
+            _ => continue,
+        };
+        for (comp, c) in channels.iter().enumerate() {
+            let v = match table.cell_f64(buf, r, *c) {
+                Some(x) if x.is_finite() => x,
+                _ => continue,
+            };
+            rows.push((epoch, v, comp as u32));
+        }
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    Some(FitsTableSeries { names, units, rows })
+}
+
+pub fn parse_bintable_series(bytes: &[u8]) -> Option<FitsTableSeries> {
+    let mut off = 0usize;
+    for _ in 0..8 {
+        let (header, _) = FitsHeader::parse(bytes, off)?;
+        match header.value("XTENSION") {
+            Some("'BINTABLE'") => {
+                let (table, next) = FitsTable::parse(bytes, off)?;
+                if let Some(series) = bintable_series_of(bytes, &table, &header) {
+                    return Some(series);
+                }
+                if next <= off || next >= bytes.len() {
+                    return None;
+                }
+                off = next;
+            }
+            None | Some("'IMAGE'") => {
+                let (_, next) = FitsImage::parse(bytes, off)?;
+                if next <= off || next >= bytes.len() {
+                    return None;
+                }
+                off = next;
+            }
+            _ => return None,
+        }
+    }
+    None
+}
+
+pub fn parse_named_series(bytes: &[u8]) -> Option<(Vec<String>, Vec<(f64, f64, u32)>)> {
+    if let Some(raster) = parse_image(bytes) {
+        let names = raster.band_names.clone();
+        let rows = band_means(&raster)?;
+        return Some((names, rows));
+    }
+    let series = parse_bintable_series(bytes)?;
+    Some((series.names, series.rows))
+}
+
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
-    let raster = parse_image(bytes)?;
-    band_means(&raster)
+    parse_named_series(bytes).map(|(_, rows)| rows)
 }
 
 #[cfg(test)]
@@ -147,6 +249,73 @@ mod tests {
             raw.extend_from_slice(&v.to_be_bytes());
         }
         raw
+    }
+
+    fn bintable(cards: &[(&str, &str)], raw: &[u8]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut primary: Vec<u8> = Vec::new();
+        primary.extend_from_slice(&pad_card("SIMPLE", "T"));
+        primary.extend_from_slice(&pad_card("BITPIX", "8"));
+        primary.extend_from_slice(&pad_card("NAXIS", "0"));
+        primary.extend_from_slice(&pad_card("EXTEND", "T"));
+        primary.extend_from_slice(&pad_card("END", ""));
+        while !primary.len().is_multiple_of(2880) {
+            primary.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&primary);
+
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        for (k, v) in cards {
+            header.extend_from_slice(&pad_card(k, v));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(raw);
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn mrm_table() -> Vec<u8> {
+        let cards = [
+            ("BITPIX", "8"),
+            ("NAXIS", "2"),
+            ("NAXIS1", "20"),
+            ("NAXIS2", "2"),
+            ("PCOUNT", "0"),
+            ("GCOUNT", "1"),
+            ("TFIELDS", "5"),
+            ("TTYPE1", "'orbit'"),
+            ("TFORM1", "I"),
+            ("TZERO1", "32768"),
+            ("TTYPE2", "'utc'"),
+            ("TFORM2", "2A"),
+            ("TTYPE3", "'et'"),
+            ("TFORM3", "D"),
+            ("TUNIT3", "'s'"),
+            ("TTYPE4", "'t1'"),
+            ("TFORM4", "E"),
+            ("TUNIT4", "'K'"),
+            ("TTYPE5", "'t2'"),
+            ("TFORM5", "E"),
+        ];
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&1i16.to_be_bytes());
+        raw.extend_from_slice(b"ab");
+        raw.extend_from_slice(&1.5f64.to_be_bytes());
+        raw.extend_from_slice(&10.0f32.to_be_bytes());
+        raw.extend_from_slice(&20.0f32.to_be_bytes());
+        raw.extend_from_slice(&2i16.to_be_bytes());
+        raw.extend_from_slice(b"cd");
+        raw.extend_from_slice(&2.5f64.to_be_bytes());
+        raw.extend_from_slice(&30.0f32.to_be_bytes());
+        raw.extend_from_slice(&40.0f32.to_be_bytes());
+        bintable(&cards, &raw)
     }
 
     #[test]
@@ -264,6 +433,53 @@ mod tests {
         let raster = parse_image(&buf).expect("raster parses");
         let series = band_means(&raster).expect("band means");
         assert_eq!(series, vec![(0.0, 6.0, 0)]);
+    }
+
+    #[test]
+    fn bintable_reads_et_axis_and_t_channels() {
+        let buf = mrm_table();
+        let series = parse_series(&buf).expect("bintable series parses");
+        assert_eq!(
+            series,
+            vec![
+                (1.5, 10.0, 0),
+                (1.5, 20.0, 1),
+                (2.5, 30.0, 0),
+                (2.5, 40.0, 1),
+            ]
+        );
+    }
+
+    #[test]
+    fn bintable_named_series_carries_field_names_and_units() {
+        let buf = mrm_table();
+        let named = parse_bintable_series(&buf).expect("bintable series parses");
+        assert_eq!(named.names, vec!["t1", "t2"]);
+        assert_eq!(named.units, vec![Some("K".to_string()), None]);
+        assert_eq!(named.rows.len(), 4);
+    }
+
+    #[test]
+    fn bintable_without_et_axis_is_absent() {
+        let cards = [
+            ("BITPIX", "8"),
+            ("NAXIS", "2"),
+            ("NAXIS1", "12"),
+            ("NAXIS2", "1"),
+            ("PCOUNT", "0"),
+            ("GCOUNT", "1"),
+            ("TFIELDS", "2"),
+            ("TTYPE1", "'time'"),
+            ("TFORM1", "D"),
+            ("TTYPE2", "'t1'"),
+            ("TFORM2", "E"),
+        ];
+        let mut raw = Vec::new();
+        raw.extend_from_slice(&1.0f64.to_be_bytes());
+        raw.extend_from_slice(&2.0f32.to_be_bytes());
+        let buf = bintable(&cards, &raw);
+        assert!(parse_bintable_series(&buf).is_none());
+        assert!(parse_series(&buf).is_none());
     }
 
     #[test]

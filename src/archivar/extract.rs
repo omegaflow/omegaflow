@@ -289,9 +289,7 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             (names, rows)
         }
         "pds4_fits" => {
-            let raster = pds4_fits::parse_image(bytes)?;
-            let names: Vec<String> = raster.band_names.clone();
-            let rows = pds4_fits::band_means(&raster)?;
+            let (names, rows) = pds4_fits::parse_named_series(bytes)?;
             (names, rows)
         }
         "lab_reader" => {
