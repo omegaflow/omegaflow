@@ -3120,6 +3120,7 @@ fn topological_te_with(
     order: usize,
     seed: u64,
     n_surr: usize,
+    frozen_tau: bool,
     surrogate: &mut SurrogateFn<'_>,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
@@ -3143,9 +3144,13 @@ fn topological_te_with(
         if ysf.iter().any(|v| !v.is_finite()) {
             continue;
         }
-        let tau_s = match find_mi_lag(&ysf) {
-            Some(v) => v,
-            None => continue,
+        let tau_s = if frozen_tau {
+            estimate.tau_y
+        } else {
+            match find_mi_lag(&ysf) {
+                Some(v) => v,
+                None => continue,
+            }
         };
         let emb_s = embed_series(&ysf, tau_s, dim);
         if emb_s.is_empty() {
@@ -3258,7 +3263,7 @@ pub fn topological_te_phase(
     order: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
+    topological_te_with(x, y, dim, order, seed, 10, false, &mut |v, rng| {
         Some(phase_randomized_surrogate(v, rng))
     })
 }
@@ -3271,7 +3276,7 @@ pub fn topological_te_arx(
     max_lag: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
+    topological_te_with(x, y, dim, order, seed, 10, false, &mut |v, rng| {
         arx_restricted_surrogate(v, max_lag, rng)
     })
 }
@@ -4663,11 +4668,16 @@ mod tests {
         for t in 0..n - 1 {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
         }
-        let res = topological_te_with(&x, &y, 3, 3, 42, 10, &mut |v: &[f32],
-                                                                  _rng: &mut u64|
-         -> Option<Vec<f32>> {
-            Some(vec![1.0; v.len()])
-        });
+        let res = topological_te_with(
+            &x,
+            &y,
+            3,
+            3,
+            42,
+            10,
+            false,
+            &mut |v: &[f32], _rng: &mut u64| -> Option<Vec<f32>> { Some(vec![1.0; v.len()]) },
+        );
         assert!(res.is_none());
     }
 
@@ -6191,6 +6201,90 @@ mod tests {
         out
     }
 
+    struct MembraneDiag {
+        fp: usize,
+        neg: usize,
+        none: usize,
+    }
+
+    fn membrane_fpr_diag(
+        n: usize,
+        a: f32,
+        trials: usize,
+        n_surr: usize,
+        frozen_tau: bool,
+        driver_rng: &mut u64,
+    ) -> MembraneDiag {
+        let mut fp = 0usize;
+        let mut neg = 0usize;
+        let mut none = 0usize;
+        for t in 0..trials {
+            let seed = 0x9E37_79B9_7F4A_7C15 ^ (t as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+            let series = gate_common_driver(n, a, 0.0, 0, driver_rng);
+            let verdict = topological_te_with(
+                &series[0],
+                &series[1],
+                3,
+                3,
+                seed,
+                n_surr,
+                frozen_tau,
+                &mut |v, rng| Some(phase_randomized_surrogate(v, rng)),
+            );
+            match verdict {
+                None => none += 1,
+                Some(v) => {
+                    neg += 1;
+                    if v.te > v.threshold {
+                        fp += 1;
+                    }
+                }
+            }
+        }
+        MembraneDiag { fp, neg, none }
+    }
+
+    fn membrane_diag_line(
+        tag: &str,
+        a: f32,
+        trials: usize,
+        n_surr: usize,
+        frozen: bool,
+        d: &MembraneDiag,
+    ) {
+        let fpr = if d.neg > 0 {
+            format!("{:.2}%", 100.0 * d.fp as f64 / d.neg as f64)
+        } else {
+            "unmeasured".to_string()
+        };
+        println!(
+            "membrane-diag {tag} a={a} trials={trials} n_surr={n_surr} frozen_tau={frozen} | fp={} neg={} none={} | fpr={fpr}",
+            d.fp, d.neg, d.none
+        );
+    }
+
+    #[test]
+    #[ignore = "membrane FPR diagnostic battery — the four Rat measurements, runs in te-gate.yml"]
+    fn gate_membrane_fpr_diagnostic() {
+        const N: usize = 1000;
+        let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
+
+        for a in [0.0f32, 0.5, 0.9] {
+            let d = membrane_fpr_diag(N, a, 21, 10, false, &mut rng);
+            membrane_diag_line("baseline", a, 21, 10, false, &d);
+        }
+        for trials in [64usize, 128] {
+            let d = membrane_fpr_diag(N, 0.0, trials, 10, false, &mut rng);
+            membrane_diag_line("trials", 0.0, trials, 10, false, &d);
+        }
+        for n_surr in [10usize, 100] {
+            let d = membrane_fpr_diag(N, 0.0, 64, n_surr, false, &mut rng);
+            membrane_diag_line("n_surr", 0.0, 64, n_surr, false, &d);
+        }
+        let d = membrane_fpr_diag(N, 0.0, 64, 10, true, &mut rng);
+        membrane_diag_line("frozen_tau", 0.0, 64, 10, true, &d);
+    }
+
     #[test]
     #[ignore = "membrane FPR battery n=1000 — heavy, runs in te-gate.yml"]
     fn gate_membrane_fpr_phase_vs_arx_n_1000() {
@@ -6234,7 +6328,7 @@ mod tests {
             N,
             &cells,
             &mut |x, y, seed| {
-                topological_te_with(x, y, 3, 3, seed, 10, &mut |v, rng| {
+                topological_te_with(x, y, 3, 3, seed, 10, false, &mut |v, rng| {
                     Some(block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng))
                 })
             },
