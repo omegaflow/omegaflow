@@ -417,7 +417,7 @@ note Chandrayaan-1 (ISRO) Mini-RF .img + M3 ENVI-Cube — 2026-09-28 HTTP 206; P
 
 pending
 url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm steht (src/archivar/pds4_fits.rs); Compiler-Bin + Sample + Asset fehlen. bundle.xml 206/7406 B sha256 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd, ce2_t*_temp 2,6 GB > Cap).
+note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm steht (pds4_fits.rs); Verdikt 207: format pds4-fits, no-cadence; Compiler + Sample + Asset fehlen. bundle.xml 206/7406 B sha256 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd).
 
 pending
 url https://zenodo.org/api/records/15812343
@@ -447,12 +447,15 @@ blocked account
 url https://pda.kasi.re.kr/
 note KASI-DALO (Danuri/KPLO, KASI) — 2026-09-29 HTTP 200 (16331 B) Login-Wall; kein Daten-Endpoint gemessen (blocked account).
 
-parser-def html
-gap html-parser-arm
+descoped
+url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
+note KASI KMTNet Coverage-MOC (2026-09-29, 1848960 B sha256 f34ff61f…): FITS BINTABLE TFIELDS=1 TTYPE1='RANGE' MOCVERS=2.0 ORDERING=RANGE; bandlose RANGE-MOC, kein fp01-Band (footprint.rs); moc-reader verworfen.
+
+pending
 url https://www.kari.re.kr/kpds/
-note Danuri/KPLO KPDS (KARI) HTML-Portal — 2026-09-29 HTTP 200 (3969525 B); kein maschinenlesbarer Daten-Endpoint gemessen; html_to_json-Arm steht (extract.rs:2689).
+note Danuri/KPLO KPDS (KARI) HTML-Portal — 2026-09-29 HTTP 200 (3969525 B); kein maschinenlesbarer Daten-Endpoint gemessen; html_to_json-Arm steht (extract.rs:2689) — kein parser-def, kein gap.
 
 pending
 url https://pds.shadowcam.im-ldi.com/derived/
-note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Harvest → sources.φ offen.
+note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
 
