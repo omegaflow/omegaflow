@@ -82,6 +82,14 @@ pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
+pending
+url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
+note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 (survey-2026-09-14-weberin-quellen-rerun.md:210; sfetch --links 2026-09-30); messenger_odf.bin = Venus/Merkur. Quelle bleibt; nur Erd-Ketten-Rolle absent.
+
+pending
+url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+note Rosetta IFMS origin 404 (direct+Proton+Wayback ohne Snapshot, --verdict 2026-09-30); Asset+sha256 auf CDN leben (sources.φ:8948). PSA-Baum umgebaut; re-measure der aktuellen PSA-Route offen (Mycelium-Direktive).
+
 descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
