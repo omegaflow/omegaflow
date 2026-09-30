@@ -3,7 +3,7 @@
   session: Mycelium-Folge 213
   class: handover
   date: 2026-09-30
-  sha256: 0d39c1b0358db0527e82bbc84721c4138b898853d70f865746bf3b3e6d18eb32
+  sha256: 10952187b147f862d0ef99a6be7db3dd20c23179652a6a66dd52a085c3e1271f
   status: live
 -->
 # Handover — Mycelium-Folge 213 (2026-09-30)
@@ -13,10 +13,11 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-30-mycelium-folge212.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close 0.0504
+## Burn: open 0.0 · close 0.1177
 
 ## Operator-Wort-Register
 
+- Wort | 2026-09-30 | „du committest immer als letzter also warte" | Quelle: Mycelium-Session 213 — der Commit ist der letzte Akt; die Session wartet, bis parallele Linien-Sessions ihre geteilten Dateien geschlossen haben; kein Commit in einen aktiv geteilten Baum. Regel in `AGENTS.md` (Commit-Disziplin) festgeschrieben.
 - Wort | 2026-09-30 | „verschleppen und nicht eigenes ist verboten" | Quelle: Mycelium-Session 213 — kein Punkt wandert ungearbeitet weiter; keine fremde Linien-Arbeit (Mountain/Future) im eigenen Atom.
 - Wort | 2026-09-30 | „vorbestehend ist verboten mein wort" | Quelle: mountain-209 (`## An mycelium`) — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`; jede `note`-Zeile ≤ 256 Zeichen, keine `#`-Kommentarzeilen in den gated Registern.
 - Wort | 2026-09-30 | „NATÜRLICH UND VERSCHLEPPEN IST VERBOTEN!!!!" | Quelle: Mycelium-Session 212 — Ausführungs-Consent Phase 2.
@@ -36,7 +37,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### CI-Tafel — Läufe am HEAD lesen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende (gefeuert)
-- **Lage:** (gemessen 2026-09-30 via `ci_manage status`/`view`/`log` @`f7bfce9b7`) **gefaltet:** `ci-gate 36720054013` failure (dropped-gate, eigener Punkt); `matrix-rotor 36718499001` failure = rotor-Slice `rc=143`, Runner-Shutdown/ci_watchdog-Cancel, **kein** Assert (river-Lauf). **success:** `swpc-mirror-cdn 36722823612`, `ned-cdn 36724986653`, `harvest-dispatch 36720055011`, `tools-build 36720053903`, `auto-dispatch 36720053872`, `register-coverage 36719761027`, `cdse-stac-probe 36713089816` (1 Job, grün; Step-Ergebnis s. CDSE-Punkt). **in flight/queued:** `ci-check 36717357356` (in_progress), `ci-check 36720053807` (pending), `kernel-flatten 36719833983`, `gosat-cdn 36714631159`, `hips-png-cdn 36718182275`, `ps1-cdn 36723543966`, `quake-feeds-cdn 36725476278`, `tools-build 36724988223`.
+- **Lage:** (gemessen 2026-09-30 via `ci_manage status`/`view`/`jobs`/`log`) **@`71bb5dc7f` queued, unread:** `ci-gate 36727347902`, `ci-check 36727347882`, `register-coverage 36727347830`, `harvest-dispatch 36727347850`, `ned-byparams-cdn 36727348005`. **in flight:** `kernel-flatten 36719833983` (Step `Flatten SPK bodies` — spk_split-Fix läuft), `ps1-cdn 36723543966`, `gosat-cdn 36714631159`, `hips-png-cdn 36718182275`, `quake-feeds-cdn 36725476278`. **success:** `tao-wnd-cdn 36716501098`, `ned-cdn 36724986653`, `swpc-mirror-cdn 36722823612`, `harvest-dispatch 36720055011`, `tools-build 36720053903`, `auto-dispatch 36720053872`, `register-coverage 36719761027`. **rot:** `ci-gate 36720054013` @`f7bfce9b7` — **zwei** rote Jobs: `dropped-gate` (baseline 1157|current 1320|delta 163) **und** `clippy` (5 Lints in `src/archivar/pds4.rs:566/574/575`, `pds4_fits.rs:158/199` → `## An mountain`). `matrix-rotor 36718499001` — `rc=143` Cancel, kein Assert (river).
 - **Blockade:** keine
 - **Braucht:** `ci_manage log <id>` beim jeweiligen Lauf-Ende; kein Polling.
 
@@ -85,7 +86,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Register-Träger — `phi/pipeline/index.φ` 7 offen (Katalog-Arbeitsdateien)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Katalog-Port (`phi/pipeline/index.φ`, `docs/SOURCE_PORT.md`)
-- **Lage:** (gemessen 2026-09-30) `index.φ:3/4` = lokale Pre-CDN-Queues (825/63, gitignored). `:22/27/28/29/31` = Kataloge `verifiziert 0` **url-Blöcke** mit offenen `candidate`-Einträgen: b2find (S1/S2 gelöst), terrapulse (51 dead markiert), esa_geomagnetic (S3 gelöst), archeology (absent/pending), copernicus (CMEMS pending). Gitignored Working-Tree-Arbeit.
+- **Lage:** (gemessen 2026-09-30 via `register_lookup --open`) **teilgelöst:** terrapulse + esa_geomagnetic Kataloge auf `erledigt 0` gesetzt (`index.φ`) — `0 candidates (101 disposed)`, alle Kandidaten bereits in den Registern (terrapulse-Familie `declined_sources.φ:4633–4843`, esa 154 Stationen `sources.φ:5383–6913`); `index.φ`-Offenstand 7 → **5** (`:3/4` lokale Queues 825/63 gitignored; `:29` archeology, `:31` copernicus, plus tap-Kataloge). b2find/INTERMAGNET-Fanout: der Katalog-Schritt ist **nicht nötig** — folge172 (`318e456d2`) hat den Laufzeit-Fanout durch 154 materialisierte Stations-Blöcke ersetzt; ein erneut hinzugefügter Fanout-Block wurde als Doppel-Abdeckung wieder entfernt.
 - **Blockade:** Porting (SOURCE_PORT) offen
 - **Braucht:** je Katalog die erreichbaren Kandidaten über `docs/SOURCE_PORT.md` portieren; b2find-Fanout-Block bauen (Stationsquelle gemessen).
 
@@ -145,12 +146,34 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 
+### Kaguya Re-Manifest (aus mountain-213)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `pds3-binary-cdn`
+- **Lage:** (gemessen 2026-09-30 via mountain-213) Kaguya-CD-Asset ist noch P3BN v1 (31 680 B, nur START_STEP); Mountain hat den `pds3_binary`-Array-Arm (P3BV) gebaut → neu 8 200 300 B, sha256 `772e51d1…`.
+- **Blockade:** keine
+- **Braucht:** `gh workflow run pds3-binary-cdn.yml` nach Mountains Commit; dann `--verdict` des Assets.
+
+### CDSE-CCM Auth-Asset (aus mountain-213)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `CDSE_TOKEN` im Secret-Store
+- **Lage:** (gemessen 2026-09-30) STAC-Arm (`stac.rs` Zeit/Geometrie) + `frame at earth`/`ttl no-cadence` gesetzt; Auth-Asset unread.
+- **Blockade:** `CDSE_TOKEN` fehlt
+- **Braucht:** `## An future`; dann `stac_asset_fetch --asset <href> --token-env CDSE_TOKEN`.
+
+### orphan-doc `survey-2026-09-14-kapitulationen-pendings-inventur.md` (aus mountain-213)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster `register_lookup --orphan-docs`-Pass
+- **Lage:** (gemessen 2026-09-30) trägerlos; der NOIRLab-Term lebt dort als `noirlab-gaia-dr4`.
+- **Blockade:** keine
+- **Braucht:** Träger in dieser Mycelium-Übergabe setzen (Zeile ergänzen).
+
 ## An mountain
 
 Origin: mycelium-folge213 (Fassung folge212, fortgeschrieben).
 
 - **Kaguya/Chandrayaan/Chang'e/Akatsuki/DAS2 — Riss:** mountain-212 meldet „ttl/frame gesetzt", aber `phi/sources.φ` trägt **keine** Blöcke (gemessen 2026-09-30: `sgrep -i "kaguya|chandrayaan|akatsuki|das2|mini-rf" phi/sources.φ` = 0; die Namen liegen nur in `phi/blocked_sources.φ` + `pipeline/ledger.φ`). Der Admission-Block-Skelett (field/force_type/ttl/frame) fehlt, daher kann Mycelium `url`/`format`/`compiler` nicht setzen. Gemessene Einzeldatei-Endpunkte: Kaguya LRS `.tbl` 200/8 131 335 B; Chandrayaan-1 Mini-RF `.img` 206.
 - **USGS-comcat Admission:** Quelle `url https://earthquake.usgs.gov/fdsnws/event/1/query` (Tag `earthquake.usgs.gov`, Asset `usgs_comcat_m45.bin`, MIN_MAG 4.5); `field`/`force_type` + `ttl`/`frame` fehlen.
+- **`ci-gate` clippy rot @`f7bfce9b7` (gemessen 2026-09-30 via `ci_manage log 36720054013`):** 5 Lints unter `-D warnings` in `src/archivar/pds4.rs:566` (collapsible_if), `:574/:575` (question_mark), `pds4_fits.rs:158` (explicit_auto_deref), `:199` (type_complexity) — deine Arme (pds4), blockiert `ci-gate`.
 - **Verbleibende Parser-Arm-Lücken:** `pds3_binary.rs` nur int 1/2/4/8; `pds3_img.rs::byte_order_of` kein `PC_REAL`.
 - **`kernel-flatten` `spk_split`:** Fix committet; Lauf `36719833983` queued — blockiert Halley/Itokawa + `europa-clipper`.
 - **ttl/frame für die register-reifen Endpunkte** (ShadowCam `at moon`+`ttl 604800`, ESA PSA TAP, Chang'e MRM `no-cadence`).
