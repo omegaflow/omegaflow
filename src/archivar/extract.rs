@@ -3483,7 +3483,11 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             csv_zip_text.as_deref().and_then(csv_to_json)
         }
     } else if src.format == "csv" {
-        csv_to_json(body)
+        if src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_))) {
+            hapi_csv_body(src, body).or_else(|| csv_to_json(body))
+        } else {
+            csv_to_json(body)
+        }
     } else if src.format == "free text" {
         text_to_json(body)
     } else if src.format == "tap" {
@@ -3521,6 +3525,15 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         tar_gz_yaml_to_json(body, &wanted)
     } else {
         None
+    };
+    let parsed_json = match parsed_json {
+        Some(j) => Some(j),
+        None if src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_)))
+            && matches!(src.format.as_str(), "" | "json" | "universal") =>
+        {
+            hapi_csv_body(src, body)
+        }
+        other => other,
     };
     let auto_extracts: Option<Vec<Extract>>;
     let effective_extracts: &[Extract] = if src.format == "universal" && src.extracts.is_empty() {
@@ -5410,12 +5423,39 @@ pub fn is_time_key(k: &str) -> bool {
         || kl.contains("date")
 }
 
+fn hapi_csv_body(src: &SourceConfig, body: &str) -> Option<JsonVal> {
+    if parse_json(body).is_some() {
+        return None;
+    }
+    let names = hapi_csv::csv_header_fields(body).or_else(|| {
+        let mut names = vec!["time".to_string()];
+        for ext in &src.extracts {
+            if let Extract::Hapi(pairs) = ext {
+                for (param, _) in pairs {
+                    names.push(param.split('.').next().unwrap_or(param).to_string());
+                }
+            }
+        }
+        (names.len() > 1).then_some(names)
+    })?;
+    hapi_csv::csv_envelope(body, &names, None)
+}
+
 pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<(f64, f64)> {
     let parsed = match src.format.as_str() {
         "votable" => votable_to_json(body),
         "html" => html_to_json(body),
         "tap" => tap_body_to_json(&src.url, body),
         _ => parse_json(body),
+    };
+    let parsed = match parsed {
+        Some(j) => Some(j),
+        None if src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_)))
+            && matches!(src.format.as_str(), "csv" | "" | "json" | "universal") =>
+        {
+            hapi_csv_body(src, body)
+        }
+        other => other,
     };
     let Some(ref j) = parsed else {
         return Vec::new();

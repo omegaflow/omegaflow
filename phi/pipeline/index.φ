@@ -24,8 +24,8 @@ index 0 pipeline/catalog/grind_eogateway_index.φ
 erledigt 8 pipeline/catalog/grind_vires_catalog.φ
 erledigt 17 pipeline/catalog/grind_arcgis_index.φ
 descoped 0 pipeline/catalog/heliocloud_catalog.φ
-verifiziert 0 pipeline/catalog/terrapulse_catalog.φ
-verifiziert 0 pipeline/catalog/esa_geomagnetic_catalog.φ
+erledigt 0 pipeline/catalog/terrapulse_catalog.φ
+erledigt 0 pipeline/catalog/esa_geomagnetic_catalog.φ
 verifiziert 0 pipeline/catalog/archeology_gaps_index.φ
 descoped 0 pipeline/catalog/arcgis_catalog.φ
 verifiziert 0 pipeline/catalog/copernicus_catalog.φ

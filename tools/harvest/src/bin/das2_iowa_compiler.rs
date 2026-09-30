@@ -121,12 +121,14 @@ fn window_records(
     out: &Mutex<Vec<(f64, f64, u32)>>,
     rows_out: &Mutex<usize>,
 ) {
+    let wanted: Vec<&str> = params.iter().skip(1).map(|p| p.name.as_str()).collect();
     let url = format!(
-        "{}/data?id={}&time.min={}T00:00:00Z&time.max={}T23:59:59Z&format=csv",
+        "{}/data?id={}&time.min={}T00:00:00Z&time.max={}T23:59:59Z&parameters={}&format=csv",
         BASE,
         id,
         date_of(start_day),
-        date_of(end_day)
+        date_of(end_day),
+        wanted.join(",")
     );
     let Some(text) = fetch(&url) else {
         eprintln!(
@@ -225,13 +227,40 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let params = match parse_info(&info_text) {
+    let info_params = match parse_info(&info_text) {
         Some(p) => p,
         None => {
             eprintln!("info {id} carries no parameter table — the channels stay unread");
             std::process::exit(1);
         }
     };
+    let channels: Vec<HapiParam> = info_params
+        .iter()
+        .filter(|p| !p.name.eq_ignore_ascii_case("time"))
+        .map(|p| HapiParam {
+            name: p.name.clone(),
+            units: p.units.clone(),
+            fill: p.fill,
+            positive: p.name == "magnitude",
+        })
+        .collect();
+    if channels.is_empty() {
+        eprintln!("info {id} carries no data channel — the bin stays unwritten");
+        std::process::exit(1);
+    }
+    let time_param = info_params
+        .iter()
+        .find(|p| p.name.eq_ignore_ascii_case("time"))
+        .cloned()
+        .unwrap_or(HapiParam {
+            name: "time".to_string(),
+            units: "UTC".to_string(),
+            fill: None,
+            positive: false,
+        });
+    let mut params = Vec::with_capacity(channels.len() + 1);
+    params.push(time_param);
+    params.extend(channels);
     let info = parse_json(&info_text);
     let start_day = arg_value(&args, "--window-start")
         .as_deref()
