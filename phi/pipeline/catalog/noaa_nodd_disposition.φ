@@ -62,7 +62,7 @@ descoped s3://noaa-gfs-bdp-pds
 note Frage 1 nein — GFS ist Forecast-System (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, kein Messwert).
 
 compiler-lease s3://noaa-ghcn-pds
-note Frage 1 ja — Stationsmessung, GHCN-D Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_ghcn_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_ghcn_compiler, Pilot-Korn ein Station-Fenster (ghcn_d_USW00094728_2025-03.bin), Manifestation noaa-ghcn-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
+note F1 ja — Stationsmessung, GHCN-D Tageswerte; F2 Bulk; F3 Compiler-Lease, noaa_ghcn_compiler pending (Register-Duty); F4 entfällt. 2026-09-10: Pilot ein Station-Fenster (ghcn_d_USW00094728_2025-03.bin), noaa-ghcn-cdn.yml; All-Stationen offen.
 
 descoped s3://noaa-enterprise-rainrate-pds
 note Frage 1 nein — GHE/Rain-Rate ist ein Schätzer (abgeleitet aus Satellit-IR); Frage 4 kein benannter Konsument — descoped (Befund: abgeleiteter Schätzer, kein Messwert).
@@ -77,7 +77,7 @@ compiler-lease s3://noaa-goes16
 note Frage 1 ja — GOES-ABI-Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_goes_compiler pending (Register-Duty); Frage 4 entfällt.
 
 compiler-lease s3://noaa-gsod-pds
-note Frage 1 ja — Stationsmessung, GSOD Tageswerte; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_gsod_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_gsod_compiler, Pilot-Korn ein Station-Fenster (gsod_01001099999_2025-03.bin), Manifestation noaa-gsod-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
+note F1 ja — Stationsmessung, GSOD Tageswerte; F2 Bulk; F3 Compiler-Lease, noaa_gsod_compiler pending (Register-Duty); F4 entfällt. 2026-09-10: Pilot ein Station-Fenster (gsod_01001099999_2025-03.bin), noaa-gsod-cdn.yml; All-Stationen offen.
 
 compiler-lease s3://noaa-himawari8
 note Frage 1 ja — geostationäre Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_himawari_compiler pending (Register-Duty); Frage 4 entfällt.
@@ -89,10 +89,10 @@ descoped s3://hrrrzarr
 note Frage 1 nein — HRRR ist ein Modell (Zarr-Archiv); Frage 4 kein benannter Konsument — descoped (Befund: Modell-Output, kein Messwert).
 
 compiler-lease s3://noaa-global-hourly-pds
-note Frage 1 ja — Stationsmessung, ISD stündlich; Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_isd_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-10: noaa_isd_compiler, Pilot-Korn ein Station-Fenster (isd_01001099999_2025-03.bin), Manifestation noaa-isd-cdn.yml (workflow_dispatch); All-Stationen-Schleife offen.
+note F1 ja — Stationsmessung, ISD stündlich; F2 Bulk; F3 Compiler-Lease, noaa_isd_compiler pending (Register-Duty); F4 entfällt. 2026-09-10: Pilot ein Station-Fenster (isd_01001099999_2025-03.bin), noaa-isd-cdn.yml; All-Stationen offen.
 
 compiler-lease s3://noaa-jpss
-note Frage 1 ja — polar-umlaufende Satellitenmessung (em); Frage 2 Bulk-Archiv; Frage 3 Compiler-Lease, Compiler noaa_jpss_compiler pending (Register-Duty); Frage 4 entfällt. Gebaut 2026-09-11: noaa_jpss_compiler, Pilot-Korn ein Granule (OMPS-SDR, MAGIC OMP1); Manifestation noaa-jpss-cdn.yml pending (workflow_dispatch); Granule-Schleife offen.
+note F1 ja — polar-umlaufende Satellitenmessung (em); F2 Bulk; F3 Compiler-Lease, noaa_jpss_compiler pending (Register-Duty); F4 entfällt. 2026-09-11: Pilot ein Granule (OMPS-SDR, MAGIC OMP1); noaa-jpss-cdn.yml pending; Granule-Schleife offen.
 
 descoped s3://noaa-j-scope-pds
 note Frage 1 nein — J-SCOPE ist eine Prediction (Modell-Output); Frage 4 kein benannter Konsument — descoped (Befund: Prediction, kein Messwert).
@@ -203,10 +203,10 @@ descoped s3://noaa-s111-pds
 note Frage 1 nein — Model-Forecast-Guidance (S-111); Frage 4 kein benannter Konsument — descoped (Befund: Model-Forecast, keine Messung).
 
 descoped s3://noaa-swpc-pds
-note Befund (gemessen 2026-09-10): der Bucket trägt kein Bulk-Archiv über die Live-Rolling-Windows hinaus — json/goes nur primary/ (1m/7-day/latest), json/rtsw nur rtsw_mag_1m/rtsw_wind_1m, dieselben Fenster bereits live in sources.φ; products/ (Forecast) und text/ (Bulletins) F1 nein; ein Compiler duplizierte die Live-Blöcke.
+note Befund (2026-09-10): kein Bulk-Archiv über die Live-Rolling-Windows hinaus — json/goes nur primary/ (1m/7-day/latest), json/rtsw nur rtsw_mag_1m/rtsw_wind_1m; products/ (Forecast) + text/ (Bulletins) F1 nein; ein Compiler dupliziert sie.
 
 descoped s3://noaa-swdi-pds
-note Befund (gemessen 2026-09-10): der Bucket trägt keine Boden-Ereignisberichte (kein tornado-*, kein wind-*, keine EF-Magnitude), nur Radar-Ableitungen — hail MAXSIZE (Retrieval aus Reflektivität, Zoll), tvs (TVS-Delta-v-Signatur), mda (Mesozyklon-Rotation), structure (VIL/Max-Reflekt), meso/plsr/warn; Retrieval/Signatur → F1 nein (Präzedenz AOT-CDR/GridSat-B1/BlueTopo); die Rohmessung lebt im NEXRAD-Level-II (eigene Lease), die Boden-Wahrheit in NCEI stormevents (eigene Linie).
+note Befund (2026-09-10): keine Boden-Ereignisberichte (kein tornado-*/wind-*, keine EF-Magnitude), nur Radar-Ableitungen — hail MAXSIZE, tvs, mda, structure; Retrieval/Signatur F1 nein; Rohmessung im NEXRAD-Level-II, Boden-Wahrheit in NCEI stormevents.
 
 descoped s3://noaa-ufs-coastal-pds
 note Frage 1 nein — Forecast-Modell (UFS Coastal); Frage 4 kein benannter Konsument — descoped (Befund: Forecast, keine Messung).
@@ -215,7 +215,7 @@ descoped s3://noaa-ufs-gdas-pds
 note Frage 1 nein — DA-Testdaten; Frage 4 kein benannter Konsument — descoped (Befund: Testdaten, keine Messung).
 
 descoped s3://noaa-ufs-gefsv13replay-pds
-note Frage 1 nein — UFS GEFS v13 Replay ist Modell-Output (Replay einer Ensemble-Vorhersage; der Bucket trägt Forcing/Restart-Felder als netCDF: runoff, salt_restore, interpolate_zgrid), kein Messwert; Frage 4 kein benannter Konsument — descoped (Befund: Modell-Replay, kein Messwert). Bucket-Name verifiziert 2026-09-10: der Registry-Name mit führendem Bindestrich ist ein Tippfehler — -noaa-… löst DNS 000, noaa-… antwortet 200.
+note F1 nein — UFS GEFS v13 Replay ist Modell-Output (netCDF: runoff, salt_restore, interpolate_zgrid), kein Messwert; F4 kein Konsument — descoped; Registry-Name mit führendem Bindestrich = Tippfehler: -noaa-… DNS 000, noaa-… 200 (2026-09-10).
 
 descoped s3://noaa-ufs-htf-pds
 note Frage 1 nein — Test-Framework (HTF); Frage 4 kein benannter Konsument — descoped (Befund: Test-Framework, kein Dataset).
