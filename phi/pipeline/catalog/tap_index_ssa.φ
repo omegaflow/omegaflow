@@ -1,4 +1,4 @@
-# tap inventory http://tap.roe.ac.uk/ssa/sync
+inventar http://tap.roe.ac.uk/ssa/sync
 catalog BestDR1."Diagnostics" BestDR1 table
 catalog BestDR1."First" BestDR1 table
 catalog BestDR1."Match" BestDR1 table

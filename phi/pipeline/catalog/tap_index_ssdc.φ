@@ -1,4 +1,4 @@
-# tap-inventar https://tools.ssdc.asi.it/TAPSSDC/tap
+inventar https://tools.ssdc.asi.it/TAPSSDC/tap
 
 catalog TAP_SCHEMA.schemas TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table

@@ -1,4 +1,4 @@
-# tap-inventar http://gavo.aip.de/tap
+inventar http://gavo.aip.de/tap
 catalog ravedr4.rave_dr4 ravedr4 table
 catalog rr.registries rr table
 catalog rr.authorities rr table

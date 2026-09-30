@@ -1,4 +1,4 @@
-# tap-inventar https://nxsa.esac.esa.int/tap-server/tap
+inventar https://nxsa.esac.esa.int/tap-server/tap
 
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table

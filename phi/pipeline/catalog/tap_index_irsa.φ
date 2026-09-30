@@ -1,4 +1,4 @@
-# tap-inventar https://irsa.ipac.caltech.edu/TAP/sync
+inventar https://irsa.ipac.caltech.edu/TAP/sync
 catalog cosmos_zphot_mag25 cosmos table
 catalog cosmos_morph_cassata_1_1 cosmos table
 catalog cosmos_morph_tasca_1_1 cosmos table

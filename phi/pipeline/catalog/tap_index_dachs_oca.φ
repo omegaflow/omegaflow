@@ -1,4 +1,4 @@
-# tap-inventar https://dachs.oca.eu/tap
+inventar https://dachs.oca.eu/tap
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table
 catalog tap_schema.columns tap_schema table

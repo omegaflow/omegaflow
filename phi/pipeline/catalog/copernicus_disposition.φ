@@ -1,16 +1,3 @@
-# Copernicus-Disposition — Register (2026-09-10)
-#
-# Regel: Bucket-Litmus (Rats-Verdikt ledger.φ:937 — 4-Fragen-Kette in fester
-# Reihenfolge: Oszillator-Gate → Form → Manifestation → Überlauf).
-# Quelle: phi/pipeline/catalog/copernicus_catalogues.φ (Re-Harvest 2026-09-10,
-# catalogue API v1, saubere id+title-Paare; 16 CAMS + 143 C3S).
-# Kopfwörter: compiler-lease / konsument / pending / descoped. Kein url-line
-# (CDS/ADS-Datasets sind Bulk-Archive; url-line = eine Messung, nie ein Datensatz).
-# 159 Collections: 8 compiler-lease (In-situ-Messarchive, Compiler pending), 151
-# descoped (Frage 1 nein — Modell/abgeleitet/Satelliten-Retrieval/Katalog/Service).
-# Lizenzen angenommen 2026-09-11 (Browser, ECMWF-Konto code@omegaflow.space): die 5
-# In-situ-Datasets (GNSS, GRUAN, IGRA, surface-land, WOUDC) sind zugangsbereit —
-# Compiler bauen. US-CRN: Formular provider-seitig geschlossen (bleibt pending).
 
 descoped derived-era5-single-levels-daily-statistics
 note Frage 1 nein — abgeleitet; Frage 4 kein Konsument — descoped

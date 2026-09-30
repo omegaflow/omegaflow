@@ -3,7 +3,7 @@
   session: Mountain-Folge 209
   class: handover
   date: 2026-09-30
-  sha256: e7e9d201d38bfc57e308a339716916f8007ceb97660e61b4555a1fc9a85d3c81
+  sha256: ff67cd513f7543eb5f9c006290507792e7f449ddd417009219e4356e2523685f
   status: live
 -->
 # Handover — Mountain-Folge 209 (2026-09-30)
@@ -54,7 +54,7 @@ mit Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29).
   die zwei Dispositionen committet `db5b575db` in `blocked_sources.φ:87` MESSENGER-2005-absent und
   `:90-91` Rosetta-IFMS-origin-404) der Shard-Riss ist ein **de-dup-Artefakt**: River `7e2cefd9f`
   (2026-09-26) hielt 3 kontiguierliche rosetta_odf-Refs (`sources.φ:8948/8958/8968`), entfernte 3
-  überlappende Alternativ-Intervalle — kein Datenverlust. `frame_registry.φ:71-76` stale
+  überlappende Alternativ-Intervalle — kein Datenverlust. `frame_registry.φ:70-75` stale
   (`frame-registry.yml` = `workflow_dispatch`); `harvest.φ:251` = physische Release-Shards, pre-de-dup.
   Die sieben Erd-Encounter-Epochen (CA, UTC): Galileo 1990-12-08 20:34:34, 1992-12-08 15:09:25;
   Cassini 1999-08-18 03:28; MESSENGER 2005-08-02 19:13:08; Rosetta 2005-03-04 22:09, 2007-11-13 20:57,
@@ -92,13 +92,6 @@ mit Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29).
 - **Wort:** „der ned folowup ist nicht lange her" | 2026-09-30 | Operator (Mountain 207) — keine
   erneute Vorlage, Follow-up ist frisch; Wiedervorlage über den Trigger.
 
-### Register-`#`-Riss — `canon.φ` funktional vs. Operator-Wort „auch für die"
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Wort zur Ersatz-Darstellung für Kanon-Marker/Katalog-Header.
-- **Lage:** (gemessen 2026-09-30) die gated 6 Register-Sektionen (14 Dateien) tragen **0** `#`; die `#`-Zeilen liegen in `canon.φ` (19, **funktional** — `register_classes()`/`declared_canon()` parsen `# --- Sektion ---`; Entfernen bräche das Kanon-Gate) und in Katalog-/Pipeline-Dateien (nicht gated; Doku-Rollen/Spalten).
-- **Blockade:** kein `#`-freies Ersatz-Schema für die Kanon-Marker bzw. Katalog-Header.
-- **Braucht:** Operator-Wort zum Ersatz-Schema (neue Direktive) — bis dahin bleibt `canon.φ` unangetastet (A = A: der Marker ist die Syntax des Gates).
-
 ## Prosa-Träger (eigene)
 
 - `docs/specs/livefeed-gate.md` | offene Marker = die `pending`-Felder der Ereignis-Tabelle.
@@ -121,8 +114,8 @@ Origin: mountain folge209.
 - **Rosetta IFMS-origin (404):** Disposition committet `db5b575db` (`blocked_sources.φ:90-91`,
   Asset+sha256 auf CDN leben). Der PSA-Baum ist umgebaut — bitte die aktuelle PSA-Route re-messen
   und die `origin`-Zeile `sources.φ:8950` erneuern.
-- **`frame-registry.yml` Re-Dispatch (bevorzugt).** `phi/pipeline/frame_registry.φ:71-76` trägt
-  6 rosetta_odf-Zeilen, `phi/sources.φ` nach dem de-dup `7e2cefd9f` 3. Der Workflow ist
+- **`frame-registry.yml` Re-Dispatch (bevorzugt).** `phi/pipeline/frame_registry.φ:70-72` trägt
+  3 rosetta_odf-Zeilen, `phi/sources.φ` nach dem de-dup `7e2cefd9f` 3. Der Workflow ist
   `workflow_dispatch` → `gh workflow run frame-registry.yml` regeneriert und committet die Registry.
 - **`harvest.φ:251` note — pre-de-dup.** Die Zeile nennt „6 Shards … URLs+sha256 in sources.φ"
   (Stand 2026-09-19); `sources.φ` führt seither 3 kontiguierliche Refs. Bitte auf den de-dup-Stand korrigieren.
