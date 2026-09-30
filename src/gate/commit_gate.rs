@@ -959,6 +959,9 @@ impl Gate {
         if let Some(v) = check_handover_dupe(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_handover_burn(&path, &content) {
+            return Some(v);
+        }
         if let Some(v) = check_addressed_origin(&path, &content) {
             return Some(v);
         }
@@ -1184,11 +1187,10 @@ fn check_post_md(path: &str) -> Option<Verdict> {
     })
 }
 
-fn handover_line_owner(path: &str) -> Option<String> {
-    let trimmed = path.trim_start_matches("./");
-    if !trimmed.starts_with("docs/handover/") {
-        return None;
-    }
+pub fn handover_line_owner(path: &str) -> Option<String> {
+    let raw = path.trim_start_matches("./");
+    let idx = raw.rfind("handover/")?;
+    let trimmed = &raw[idx + "handover/".len()..];
     let name = trimmed.rsplit('/').next()?;
     let stem = name.strip_suffix(".md")?;
     let rest = stem.strip_prefix("handover-")?;
@@ -1522,6 +1524,60 @@ fn check_handover_dupe(path: &str, content: &str) -> Option<Verdict> {
         line,
         feedback: feedback_text,
         quote,
+    })
+}
+
+const FUTURE_BURN_CAP_USD: f64 = 0.125;
+
+pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
+    if handover_line_owner(path) != Some("future".to_string()) {
+        return None;
+    }
+    for (idx, line) in content.lines().enumerate() {
+        let trimmed = line.trim_start();
+        if !trimmed.starts_with("## Burn") {
+            continue;
+        }
+        let body = trimmed
+            .trim_start_matches("## Burn")
+            .trim_start_matches(':')
+            .trim();
+        let mut open: Option<f64> = None;
+        let mut close: Option<f64> = None;
+        for part in body.split('·') {
+            let mut tokens = part.split_whitespace();
+            match (tokens.next(), tokens.next()) {
+                (Some("open"), Some(v)) => open = v.parse::<f64>().ok(),
+                (Some("close"), Some(v)) => close = v.parse::<f64>().ok(),
+                _ => {}
+            }
+        }
+        let (Some(_open), Some(close_value)) = (open, close) else {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "burn-line-absent".to_string(),
+                line: idx + 1,
+                feedback: feedback("burn-line-absent").to_string(),
+                quote: clip(line, 90),
+            });
+        };
+        if close_value > FUTURE_BURN_CAP_USD {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "burn-over-cap".to_string(),
+                line: idx + 1,
+                feedback: feedback("burn-over-cap").to_string(),
+                quote: format!("close {close_value} > {FUTURE_BURN_CAP_USD}"),
+            });
+        }
+        return None;
+    }
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule: "burn-line-absent".to_string(),
+        line: 0,
+        feedback: feedback("burn-line-absent").to_string(),
+        quote: clip(path, 90),
     })
 }
 
@@ -1870,7 +1926,8 @@ pub fn canon_format_violations(text: &str) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     for (i, line) in text.lines().enumerate() {
         let t = line.trim();
-        if t.is_empty() || t.starts_with("section ") || (t.starts_with("phi/") && t.ends_with(".φ")) {
+        if t.is_empty() || t.starts_with("section ") || (t.starts_with("phi/") && t.ends_with(".φ"))
+        {
             continue;
         }
         out.push((i + 1, t.to_string()));
@@ -4577,5 +4634,47 @@ mod tests {
     fn fn_ereignis_ohne_session_name_wird_uebersprungen() {
         let v = ereignis_folge_violations(&fx("ereignis_account"), None, None, None);
         assert!(v.is_empty());
+    }
+
+    #[test]
+    fn handover_line_owner_accepts_private_prefix() {
+        assert_eq!(
+            handover_line_owner("handover/handover-2026-09-30-future-folge158.md"),
+            Some("future".to_string())
+        );
+        assert_eq!(
+            handover_line_owner("docs/handover/handover-2026-09-30-future-folge158.md"),
+            Some("future".to_string())
+        );
+    }
+
+    #[test]
+    fn fn_gate_burn_line_absent_blocked() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Trigger\n\nsome text without a burn line\n";
+        let v = check_handover_burn(path, content).expect("absent burn line must be blocked");
+        assert_eq!(v.rule, "burn-line-absent");
+    }
+
+    #[test]
+    fn fn_gate_burn_over_cap_blocked() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Burn: open 0.20 · close 0.30\n";
+        let v = check_handover_burn(path, content).expect("close over cap must be blocked");
+        assert_eq!(v.rule, "burn-over-cap");
+    }
+
+    #[test]
+    fn fn_gate_burn_clean_passes() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Burn: open 0.10 · close 0.11\n";
+        assert!(check_handover_burn(path, content).is_none());
+    }
+
+    #[test]
+    fn fn_gate_burn_non_future_ignored() {
+        let path = "docs/handover/handover-2026-09-30-mountain-folge209.md";
+        let content = "## Trigger\n\nsome text without a burn line\n";
+        assert!(check_handover_burn(path, content).is_none());
     }
 }
