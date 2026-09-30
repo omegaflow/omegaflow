@@ -86,9 +86,9 @@ pending
 url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
 note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 (survey-2026-09-14-weberin-quellen-rerun.md:210; sfetch --links 2026-09-30); messenger_odf.bin = Venus/Merkur. Quelle bleibt; nur Erd-Ketten-Rolle absent.
 
-pending
-url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
-note Rosetta IFMS origin 404 (direct+Proton+Wayback ohne Snapshot, --verdict 2026-09-30); Asset+sha256 auf CDN leben (sources.φ:8948). PSA-Baum umgebaut; re-measure der aktuellen PSA-Route offen (Mycelium-Direktive).
+descoped
+url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
+note Rosetta IFMS origin 404 (direct+Proton+Wayback ohne Snapshot, --verdict 2026-09-30); PSA-Baum umgebaut, RSI-Root live (200, --verdict 2026-09-30) — origin auf RSI-Root erneuert (sources.φ:8950/8960/8970); Asset+sha256 auf CDN leben (sources.φ:8948).
 
 descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
