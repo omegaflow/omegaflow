@@ -1,9 +1,13 @@
 ---
-description: Mountain-Linie — baut Code und Toolchain (Archivar/Mathematikerin), cargo check sauber, Gate-Fixtures. Planungsmodus (read-only): Auswahl vorschlagen, dann Ausführung via line-Agent.
-agent: plan
+description: Mountain-Linie — baut Code und Toolchain (Archivar/Mathematikerin), cargo check 0/0, Gate-Fixtures, Quellen-Verdikte. Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
+agent: line
 ---
 
-Starte die Mountain-Linie im **Planungsmodus** (Agent `plan`, read-only). Ist ein Name genannt, nimm diesen; sonst die neueste offene Mountain-Übergabe.
+Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
+damit die erlaubte Form am Punkt der Handlung steht.
+
+Starte die Mountain-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp
+für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Mountain-Übergabe.
 
 Name (leer = neueste): $ARGUMENTS
 
@@ -11,28 +15,40 @@ Neueste offene Mountain-Übergabe:
 
 !`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mountain*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
-**Kein Standard-Pass.** Der gemessene Rundenzustand liegt im Stehenden Pass:
-`sread state/zustand/standing-pass.md` — einmal lesen, zitieren, nie kopieren
-(eine kopierte Pass-Zahl ist ein Gate-Fixture `pass-copy`). Gemessen wird nur,
-was der eigene Trigger für fällig erklärt.
+**Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass
+(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
+Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
-**Phase 1 — Plan (nur lesend).** Der Plan-Agent misst, schreibt nicht — das ist die Grenze.
-Lies die Übergabe **als Spur, nicht als Gesetz**, und miss jede offen/geschlossen-Aussage am
-Baum und Register, **bevor** du die Tafel legst: `open_points_check <übergabe>` (Pfad- **und**
-Register-Zitat-Abgleich; `STALE-CITATION` = gefeuerter Trigger), `register_lookup --addressed
-<line>` (die an die eigene Linie gerichteten Nachrichten zuerst falten), `register_lookup --open`,
-Secrets/Ledger/`state/zustand/*` gegen die genannten Zeilen; `session_burn` (der Burn der Runde —
-flash-first, pro/max nur mit gemessener flash-Fehllage). Nenne dann alle offenen Punkte der
-eigenen Linie als Tafel (nur `eigen`) und schlage vor, jeden parallel abarbeitbaren zu dispatchen —
-keine Rangfolge, kein „härtester Punkt". Kein edit/write/commit. **Halte dann an.**
+**1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
+`register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
+(`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
+<line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
+nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
 
-**Phase 2 — Ausführung.** Nach `/consent` (oder `/mountain_go`) → `line`-Agent. Arbeite die
-eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Waits →
-`state/zustand/wartend.φ` (Trigger + Aufnehmer). Werkzeuge statt Rohbefehle
-(`docs/concepts/tools-map.md`); Header-sha256 via `omega_sh sha <datei>`; vor dem Commit
-`git_safety --close [<eigene Pfade>]`; Delegiere flash-first (grind-flash/general/vision); ein pro/max-Dispatch trägt die gemessene
-falsche/unvollständige flash-Antwort als Handover-Zeile — sonst nicht. `/commit` schließt.
-Mountain trägt die Register-Verdikte: alleiniger Schreiber der Verdikt-Zeilen (`phi/sources.φ`/`declined`/`dead`); Register-Ordnung (`register_sort`); Datenkontrakt 26 × f64; kein Verdikt ohne Messung.
+**2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
+**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`grind-pro`/`general`/`vision`),
+gebaut, gemessen. Kein „nächster Dispatch", kein „nächste Session", kein Vorlegen eines bereits
+geworteten Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle
+(`docs/concepts/tools-map.md`); `archive_search`/`sgrep`/`sfetch`/`sread`. Kein Polling.
+
+**3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
+einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
+**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Jede Entscheidung
+geht sofort als Zeile ins Handover (Sofort-Prinzip).
+
+**4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame
+Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist
+das Commit-Wort — beide getrennt.
+
+**5 · Übergabe zuletzt.** Erst nach der Arbeit: die Übergabe fortschreiben — Erledigtes **löschen**
+(nie als „erledigt" markieren), Messungen/Ergebnisse eintragen, nur Offenes mit **Lage · Blockade ·
+Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <datei>`; die konsumierte
+Übergabe nach `archiv/`.
+
+**Mountain trägt die Register.** Alleiniger Schreiber der Verdikt-Zeilen
+(`phi/sources.φ`/`declined_sources.φ`/`dead_sources.φ`), `register_sort`, Datenkontrakt 26 × f64;
+`cargo check` 0/0 (zero warnings); kein Verdikt ohne Messung; jede neu gefundene Fabrikation wird im
+selben Atom Gate-Fixture (`src/gate/commit_gate_vocab.json`) und Gate-Test.
 
 **Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
 **privat** (nur diese Linie) und liegt in `state/mountain/archive-search-preset.txt` — hier
@@ -42,5 +58,5 @@ eingelesen:
 
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
-Arbeit nie überschreiben; gepusht wird, sobald der eigene Commit steht und `origin/main`
-Vorfahr von HEAD ist.
+Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
+sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
