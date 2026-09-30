@@ -2,6 +2,7 @@
   title: Das Livefeed-Korrelations-Gate
   class: concept
   date: 2026-08-27
+  sha256: e3a15cd9bb41a6a1af46b05f87f29438a08b4e1a2f22d58f4edbc17ec9b4e162
   status: live
   see-also: docs/granit.md tools/gate/src/bin/livefeed_gate.rs
 -->
@@ -46,7 +47,7 @@ Fehlende Felder werden als `pending` geführt, nie erfunden (0 honored).
 
 ## Bedienung
 
-Das Werkzeug `tools/work/src/bin/livefeed_gate.rs`:
+Das Werkzeug `tools/gate/src/bin/livefeed_gate.rs`:
 
 ```
 livefeed_gate --titel "<t>" --meldung "<s>" [Felder...]

@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-09-28
-  sha256: 318f4bf4de810a4eb6924ff4fa6cda01fc1c547de759153876615c82ba962452
+  sha256: d4a575644f9b95bb61751192f3b9adc500608964ea0b6882ec2a232d158269b6
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -73,9 +73,13 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
    (`laic-arrow-direction.md:45` → „decoder built"); Ⅶ Bin-Name
    (`signal-cone-audit-sheet.md:27` → `signal_cone_audit_probe`); Ⅸ peak-flux off-by-one
    (im Vorläufer-Zensus, `consumed`; hier `:10509` korrekt). **Offen:** Ⅳ
-   `laic_champ.bin` Paper-Größe weicht von der Messung ab; Ⅹ descope ohne Befund;
-   Ⅴ `negativ_fuzzy_probe` trägt keinen Dip/FAP; ENSO Doku-Zeilen
-   (`ein-blatt-papier.md:76`) divergieren von `sources.φ`.
+   `laic_champ.bin` Paper-Größe weicht von der Messung ab; Ⅴ `negativ_fuzzy_probe`
+   trägt keinen Dip/FAP; ENSO Doku-Zeilen (`ein-blatt-papier.md:76`) divergieren
+   von `sources.φ`. Ⅹ (Kugelblitz) ist **descoped mit Befund**
+   (`kybernetische-astrophysik.md:299-300`, 2026-09-12) — der frühere Querschnitt-
+   Vermerk „ohne Befund" war der Riss, nicht der Zustand.
 4. **Operator-gebunden.** ENSO-Zuschnitt (`wartend.φ:23`), Kuprat-Zeugenart (Operator-Wort),
    NSE-Redistribution (`state/mail/`).
-5. **Fremde Feder (Mountain).** `format`/`field`/`ttl` für Kuprat; `witness kuprat`.
+5. **Fremde Feder (Mountain).** Kuprat-Zeugenklasse: `witness kuprat` existiert nicht
+   (0 Treffer in `phi/`); die vier Kanäle sind als `witness substance` admitiert
+   (`witnesses.φ:120-142`) — kein `format`/`field`/`ttl` nötig (Verdikt 2026-09-30).
