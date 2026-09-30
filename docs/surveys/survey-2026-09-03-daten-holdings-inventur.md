@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 4aca93dd493808c658a76c7f26c258782529f21472ae80a7c831c7dc7ffe9444
+  sha256: af62c5dab6818f27930c88dcc5853734566972f89b134fe2feae3aeda2e8d338
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -72,7 +72,7 @@ ist gemessen, die Zuordnung `archivar_cache` → `repo/cache` ist **Kandidat** (
 ## Aktive Ephemeriden (gehören als `omegaflow_eph_{body}.bin` in den Cache-Root)
 
 earth, juno, jupiter, mars, mercury, neptune, new_horizons, saturn, uranus,
-venus, voyager1, voyager2. (`new_horizons`/`voyager1`/`voyager2` sind 976-B-Placeholder, pending — gemessen 2026-09-30 in den CDN-Releases `ssd.jpl.nasa.gov-horizons`/`ssd.jpl.nasa.gov`; die Register-URLs `phi/sources.φ:15695/15898/15905` tragen den Tag `ssd.jpl.nasa.gov-ephemeris`, der die drei Assets nicht führt — `--verdict` 404.)
+venus, voyager1, voyager2. (`new_horizons`/`voyager1`/`voyager2` sind 976-B-Placeholder, pending — gemessen 2026-09-30; die Register-URLs `phi/sources.φ:15747/15950/15957` tragen den Tag `ssd.jpl.nasa.gov-ephemeris`, der die drei Assets nicht führt — `--verdict` 404, gemessen 2026-09-30; die 976-B-Dateien liegen im Release `ssd.jpl.nasa.gov-horizons` samt echten Varianten `_long.bin`/`_daily.bin`. Der url-Fix ist Myceliums Feder.)
 Nicht aktive (nur Archiv): cassini, europa_clipper, galileo_e1/e2, juice,
 messenger, near, rosetta.
 
@@ -159,5 +159,22 @@ Vorlage.
 
 **Kante:** Der Plan legt nichts an und verschiebt nichts. Das Operator-Wort zum
 Ziel-Layout steht (2026-09-30, CDN-/`data/<netloc>/`); jeder der obigen Schritte ist
-ein eigener, gemessener Move. Nächster Schritt: die Byte-Messung je Holding
-(Schritt 2).
+ein eigener, gemessener Move.
+
+**Schritt 2 gemessen (2026-09-30, `du -sb`/`dust`/`fdupes`):** Reale Größen:
+`archive/knowledge` 29 Gi (`data` 12 Gi, `omegaflow` 16 Gi, Rest ~129 Mi),
+`archive-state` 9,7 Gi (`sessions` 7,4 Gi, `provenance` 2,3 Gi), Repo-`data` 77 Gi,
+Repo-`cache` 10 Gi. `knowledge/archive/` existiert auf diesem Host nicht — die
+Mapping-Zeilen `knowledge/archive/data` sind gegenstandslos. Byte-identische
+Duplikate (`fdupes`): `knowledge/data`+`cache` 1,04 GiB in Gruppen — fast alle intern
+im 12-Gi-`opencode-tmp-2026-09-01`-Scratch (`nvss.json`=`nvss_dl.json`,
+`radio_check.bin`=`radio.bin`, doppelte cargo-`target`-rlibs); `knowledge/omegaflow`+
+`archive-state`+`cache` 2,01 GiB (archive-state 1,25 = opencode `undo-snapshot`-LFS-
+Duplikate, omegaflow 0,61 = Repo-Snapshot-Duplikate); `knowledge`+`archive-state`+
+Repo-`data` 4,34 GiB in Gruppen (knowledge 2,24 / archive-state 1,25 / Repo-`data`
+0,85). Die reclaimbaren Duplikate liegen in internen Scratch-/Snapshot-Strukturen
+und in Repo-`data`-Zwillingen zwischen zwei Netloc-Ordnern
+(`spdf.gsfc.nasa.gov/wind_orbit.bin` = `…/omegaflow_series_wind_orbit.bin` 93,5 MB;
+`ssd.jpl.nasa.gov/dr3_stars.bin` = `gea.esac.esa.int/dr3_stars_stable.bin` 75 MB),
+nicht in CDN-Assets; die Dedup-Entscheidung (Move/Löschung) bleibt beim Operator-Wort
+(`0 honored`: nichts löschen ohne Nachbau-Quelle).

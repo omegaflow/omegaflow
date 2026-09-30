@@ -593,7 +593,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://leda.univ-lyon1.fr/
-note direkter curl 000 — Server antwortet nicht; Wayback 429 (Rate-Limit). Alternativen: VizieR VII/237 (LEDA-2003-Snapshot), HyperLEDA fließt in GLADE+/NED. Messung wäre em (cz-Doppler, B-Mag), Gate bestanden — Disposition pending.
+note direkter curl 000/timeout 2026-09-30; VizieR VII/237 200 (2003-Snapshot). HyperLEDA TAP trägt vr/mag bereits (sources.φ:8750) → decline superseded-by-integrated.
 
 dead dns-unresolved
 url https://lightningwa.info/api/
