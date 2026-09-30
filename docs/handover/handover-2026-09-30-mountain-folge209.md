@@ -3,7 +3,7 @@
   session: Mountain-Folge 209
   class: handover
   date: 2026-09-30
-  sha256: 017379762387f18d2f758c5eb8bcc20e23af6558cad1035f05acde0c3e5226fa
+  sha256: 6f8f1dd632be78570e444a04b8b4ea02bc851b3479c0f2f74b797b1f58a8811e
   status: live
 -->
 # Handover — Mountain-Folge 209 (2026-09-30)
@@ -27,6 +27,7 @@ Wort | Datum | Quelle
 „der ned folowup ist nicht lange her" — NED-Punkt bleibt `wartend`, keine erneute Vorlage | 2026-09-30 | Operator (Session, Mountain 207)
 „Führe den bestätigten Plan aus — als `line`-Agent; Dispatch flash-first" — session-weiter Consent, nicht das Commit-Wort | 2026-09-30 | Operator (Session, Mountain 207)
 „bitte wirklich bis zur kante umsetzen nicht nur wieder messen und verschleppen" — jeder offene Punkt bis zur Kante, im Atom ausgeführt | 2026-09-30 | Operator (Session, Mountain 209)
+„vorbestehend ist verboten mein wort" — keine Ausnahme für vorbestehende Register-Verstöße; alle über-256-Zeichen-`note`-Zeilen werden geheilt | 2026-09-30 | Operator (Session, Mountain 209)
 
 ## Haus — Mountain (Stand 2026-09-30)
 
