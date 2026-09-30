@@ -176,7 +176,7 @@ pub fn series_from_csv(csv: &str, params: &[HapiParam], lsk: &LeapSeconds) -> Ve
             {
                 continue;
             }
-            if param.positive && !(v > 0.0) {
+            if param.positive && v <= 0.0 {
                 continue;
             }
             out.push((t, v, comp));
@@ -402,7 +402,7 @@ mod tests {
             panic!("data is not an array");
         };
         assert_eq!(data.len(), 1);
-        assert!(root.get("parameters").is_none());
+        assert!(!root.contains_key("parameters"));
     }
 
     #[test]
