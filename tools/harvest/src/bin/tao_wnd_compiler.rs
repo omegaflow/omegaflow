@@ -2,6 +2,7 @@ use omegaflow::cdn::upload_release;
 
 const ERDDAP_URL: &str = "https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv?time,longitude,latitude,station,WU_422,QWS_5401&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>={d_start}&time<={d_end}";
 const COASTWATCH_URL: &str = "https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv?time%2Clongitude%2Clatitude%2Cstation%2CWU_422%2CQWS_5401&latitude%3E=-2&latitude%3C=2&longitude%3E=200&longitude%3C=280&time%3E={d_start}&time%3C={d_end}";
+const SOURCE_START: &str = "1977-11-06T00:00:00Z";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -24,14 +25,15 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let d_end = now - 7 * 86400;
-    let d_start = d_end - 120 * 86400;
+    let d_end = now;
     let fmt = |u: i64| {
         let days = u / 86400;
         let (y, m, d) = civil_from_days(days);
         format!("{:04}-{:02}-{:02}T00:00:00Z", y, m, d)
     };
-    let body = match arg_value(&args, "--input") {
+    let input_path = arg_value(&args, "--input");
+    let fetched = input_path.is_none();
+    let body = match input_path {
         Some(path) => match std::fs::read_to_string(&path) {
             Ok(b) => b,
             Err(e) => {
@@ -41,10 +43,10 @@ fn main() {
         },
         None => {
             let url = ERDDAP_URL
-                .replace("{d_start}", &fmt(d_start))
+                .replace("{d_start}", SOURCE_START)
                 .replace("{d_end}", &fmt(d_end));
             let cw = COASTWATCH_URL
-                .replace("{d_start}", &fmt(d_start))
+                .replace("{d_start}", SOURCE_START)
                 .replace("{d_end}", &fmt(d_end));
             match omegaflow::archivar::fetch_raw(&url, None, &[]) {
                 Some(b) => b,
@@ -62,6 +64,8 @@ fn main() {
         }
     };
     let mut rows: Vec<(String, String, f64, f64, f64)> = Vec::new();
+    let mut raw_min: Option<&str> = None;
+    let mut raw_max: Option<&str> = None;
     let mut line_n = 0;
     for line in body.lines() {
         line_n += 1;
@@ -71,6 +75,15 @@ fn main() {
         let cols: Vec<&str> = line.split(',').collect();
         if cols.len() < 6 {
             continue;
+        }
+        let t = cols[0].trim();
+        if !t.is_empty() {
+            if raw_min.map_or(true, |m| t < m) {
+                raw_min = Some(t);
+            }
+            if raw_max.map_or(true, |m| t > m) {
+                raw_max = Some(t);
+            }
         }
         let wu: f64 = match cols[4].trim().parse() {
             Ok(v) => v,
@@ -111,6 +124,19 @@ fn main() {
             rows.len()
         );
         std::process::exit(1);
+    }
+    if fetched {
+        let reaches_start = raw_min.is_some_and(|m| m <= "1978-01-01T00:00:00Z");
+        let reaches_now = raw_max.is_some_and(|m| m >= fmt(now - 180 * 86400).as_str());
+        if !reaches_start || !reaches_now {
+            eprintln!(
+                "tao wind record spans {} .. {} — the full record from {} does not stand, no file written",
+                raw_min.unwrap_or("void"),
+                raw_max.unwrap_or("void"),
+                SOURCE_START
+            );
+            std::process::exit(1);
+        }
     }
     rows.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
     let mut csv = String::from("time,station,lon,lat,wu_422\n");

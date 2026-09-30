@@ -214,7 +214,32 @@ fn int_of(raw: &[u8], big_endian: bool, signed: bool) -> Option<f64> {
     Some(v)
 }
 
-pub fn decode_binary_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option<f64> {
+pub fn real_of(raw: &[u8], big_endian: bool) -> Option<f64> {
+    let v = match raw.len() {
+        4 => {
+            let b = [raw[0], raw[1], raw[2], raw[3]];
+            if big_endian {
+                f32::from_be_bytes(b) as f64
+            } else {
+                f32::from_le_bytes(b) as f64
+            }
+        }
+        8 => {
+            let b = [
+                raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], raw[6], raw[7],
+            ];
+            if big_endian {
+                f64::from_be_bytes(b)
+            } else {
+                f64::from_le_bytes(b)
+            }
+        }
+        _ => return None,
+    };
+    if v.is_finite() { Some(v) } else { None }
+}
+
+fn decode_binary_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option<f64> {
     let up = data_type.to_ascii_uppercase();
     if up == "TIME" || up.starts_with("ASCII") {
         return crate::archivar::pds3_table::parse_cell(field, &up, missing);
@@ -224,18 +249,16 @@ pub fn decode_binary_cell(field: &[u8], data_type: &str, missing: Option<f64>) -
         "LSB_INTEGER" | "INTEL_INTEGER" => int_of(field, false, true),
         "MSB_UNSIGNED_INTEGER" | "SUN_UNSIGNED_INTEGER" => int_of(field, true, false),
         "LSB_UNSIGNED_INTEGER" | "INTEL_UNSIGNED_INTEGER" => int_of(field, false, false),
+        "IEEE_REAL" | "MSB_REAL" => real_of(field, true),
+        "LSB_REAL" | "PC_REAL" => real_of(field, false),
         "INTEGER"
         | "UNSIGNED_INTEGER"
-        | "IEEE_REAL"
-        | "MSB_REAL"
-        | "LSB_REAL"
         | "REAL"
         | "FLOAT"
         | "PC_INTEGER"
         | "PC_UNSIGNED_INTEGER"
         | "VAX_INTEGER"
-        | "VAX_REAL"
-        | "PC_REAL" => return None,
+        | "VAX_REAL" => return None,
         _ => return None,
     };
     match raw {
@@ -554,6 +577,18 @@ END
         );
         assert_eq!(decode_binary_cell(&[0x00, 0x00], "IEEE_REAL", None), None);
         assert_eq!(decode_binary_cell(&[0x00, 0x00], "VAX_REAL", None), None);
+        assert_eq!(
+            decode_binary_cell(&[0x3F, 0x80, 0x00, 0x00], "IEEE_REAL", None),
+            Some(1.0)
+        );
+        assert_eq!(
+            decode_binary_cell(&[0x00, 0x00, 0x80, 0x3F], "PC_REAL", None),
+            Some(1.0)
+        );
+        assert_eq!(
+            decode_binary_cell(&[0x00, 0x00, 0x80, 0x7F], "IEEE_REAL", None),
+            None
+        );
         assert_eq!(
             decode_binary_cell(&[0x00, 0x00], "UNKNOWN_TYPE", None),
             None
