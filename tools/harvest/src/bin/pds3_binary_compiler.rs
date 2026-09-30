@@ -1,6 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::pds3_binary::{
-    BinColumn, BinMeta, BinRow, Pds3BinaryTable, decode_rows, pack, parse_label, parse_table,
+    BinColumn, BinMeta, BinRow, Pds3BinaryTable, decode_rows, is_array_column, pack, parse_label,
+    parse_table,
 };
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
@@ -56,6 +57,13 @@ fn int_type(data_type: &str) -> bool {
     )
 }
 
+fn real_type(data_type: &str) -> bool {
+    matches!(
+        data_type.to_ascii_uppercase().as_str(),
+        "IEEE_REAL" | "MSB_REAL" | "LSB_REAL" | "PC_REAL"
+    )
+}
+
 fn decodable(c: &BinColumn) -> bool {
     let Some(dt) = c.data_type.as_deref() else {
         return false;
@@ -64,17 +72,24 @@ fn decodable(c: &BinColumn) -> bool {
     if up == "TIME" || up.starts_with("ASCII") {
         return c.bytes > 0;
     }
-    int_type(&up) && matches!(c.bytes, 1 | 2 | 4 | 8)
+    if c.bytes == 0 {
+        return false;
+    }
+    if int_type(&up) {
+        return matches!(c.bytes, 1 | 2 | 4 | 8) || c.bytes > 8;
+    }
+    real_type(&up) && matches!(c.bytes, 4 | 8)
 }
 
 fn assemble(
     meta: &BinMeta,
     raw_rows: Vec<Vec<Option<f64>>>,
+    dat_bytes: &[u8],
 ) -> Option<(Pds3BinaryTable, usize, usize)> {
     let mut columns: Vec<BinColumn> = Vec::new();
     let mut kept: Vec<usize> = Vec::new();
     for (j, c) in meta.columns.iter().enumerate() {
-        if decodable(c) {
+        if decodable(c) || is_array_column(c) {
             columns.push(c.clone());
             kept.push(j);
         }
@@ -82,10 +97,14 @@ fn assemble(
     if columns.is_empty() {
         return None;
     }
+    let stride = meta.record_bytes?;
+    if stride == 0 {
+        return None;
+    }
     let dropped = meta.columns.len() - columns.len();
     let mut rows: Vec<BinRow> = Vec::new();
     let mut skipped = 0usize;
-    for raw in raw_rows {
+    for (r, raw) in raw_rows.into_iter().enumerate() {
         let values: Vec<Option<f64>> = kept
             .iter()
             .map(|j| raw.get(*j).copied().flatten())
@@ -94,7 +113,17 @@ fn assemble(
             skipped += 1;
             continue;
         }
-        rows.push(BinRow { values });
+        let rec = dat_bytes.get(r * stride..r * stride + stride)?;
+        let mut arrays: Vec<Vec<u8>> = Vec::with_capacity(columns.len());
+        for c in &columns {
+            if !is_array_column(c) {
+                arrays.push(Vec::new());
+                continue;
+            }
+            let from = c.start_byte.checked_sub(1)?;
+            arrays.push(rec.get(from..from + c.bytes)?.to_vec());
+        }
+        rows.push(BinRow { values, arrays });
     }
     if rows.is_empty() {
         return None;
@@ -194,7 +223,7 @@ fn compile_entry(
         );
         return None;
     };
-    let Some((table, dropped, assemble_skipped)) = assemble(&meta, raw_rows) else {
+    let Some((table, dropped, assemble_skipped)) = assemble(&meta, raw_rows, &dat_bytes) else {
         eprintln!("no decodable numeric row survived — the table stays unwritten (0 honored)");
         return None;
     };

@@ -563,21 +563,15 @@ fn axis_column(meta: &Pds4Meta, idx: usize) -> Pds4Column {
 
 pub fn axis_of(meta: &Pds4Meta) -> Option<(Axis, String)> {
     for (i, c) in meta.columns.iter().enumerate() {
-        if let Some(dt) = &c.data_type {
-            if dt.to_ascii_uppercase().starts_with("ASCII_DATE_TIME") {
-                return Some((Axis::IsoTime(i), format!("{} ({dt} date-time)", c.name)));
-            }
+        if let Some(dt) = &c.data_type
+            && dt.to_ascii_uppercase().starts_with("ASCII_DATE_TIME")
+        {
+            return Some((Axis::IsoTime(i), format!("{} ({dt} date-time)", c.name)));
         }
     }
     for (i, c) in meta.columns.iter().enumerate() {
         if c.name.eq_ignore_ascii_case("MET") {
-            let base = match meta.start_time.as_deref() {
-                Some(st) => match unix_of_iso(st) {
-                    Some(b) => b,
-                    None => return None,
-                },
-                None => return None,
-            };
+            let base = unix_of_iso(meta.start_time.as_deref()?)?;
             return Some((
                 Axis::Offset(i, base, 1.0 / 32.0),
                 format!("{} (MET s ticks + START_TIME {base:.3})", c.name),
