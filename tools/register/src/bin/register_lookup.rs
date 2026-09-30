@@ -2530,6 +2530,49 @@ fn load_commit_content_index(tokens: &BTreeSet<String>) -> BTreeSet<String> {
     found
 }
 
+fn register_carrier_files() -> Vec<PathBuf> {
+    let mut files: Vec<PathBuf> = Vec::new();
+    for dir in ["phi", "phi/pipeline"] {
+        let entries = match fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            if file_name_string(&path).ends_with(".φ") {
+                files.push(path);
+            }
+        }
+    }
+    let wartend = PathBuf::from("state/zustand/wartend.φ");
+    if wartend.is_file() {
+        files.push(wartend);
+    }
+    files.sort();
+    files
+}
+
+fn load_register_content_index(tokens: &BTreeSet<String>) -> BTreeSet<String> {
+    if tokens.is_empty() {
+        return BTreeSet::new();
+    }
+    let mut found: BTreeSet<String> = BTreeSet::new();
+    for path in register_carrier_files() {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        for word in normalize_words(&text) {
+            if tokens.contains(&word) {
+                found.insert(word);
+            }
+        }
+    }
+    found
+}
+
 fn resolution_status(own_range: Option<bool>, all_lines: Option<bool>) -> &'static str {
     if own_range == Some(true) || all_lines == Some(true) {
         "resolved"
@@ -2744,12 +2787,15 @@ fn run_dropped(args: &[String]) {
         }
     }
     let content_index = load_commit_content_index(&token_set);
+    let register_index = load_register_content_index(&token_set);
     let mut resolved = 0usize;
     for p in &points {
         let git_status = match &p.token {
             Some(token) => {
                 let by_message = commit_token_resolved(token);
-                let touched = by_message == Some(true) || content_index.contains(token);
+                let touched = by_message == Some(true)
+                    || content_index.contains(token)
+                    || register_index.contains(token);
                 let status = resolution_status(None, Some(touched));
                 if status == "resolved" {
                     resolved += 1;

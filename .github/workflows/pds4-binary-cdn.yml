@@ -22,14 +22,14 @@ jobs:
         id: idempotence
         run: |
           if gh release view archives.esac.esa.int --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pds4_binary_"; then
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "^pds4_(binary|fixed_width)_"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset pds4_binary_* already present — manifest skipped"
+            echo "asset pds4_binary_*/pds4_fixed_width_* already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset pds4_binary_* missing — compiling and manifesting"
+            echo "asset pds4_binary_*/pds4_fixed_width_* missing — compiling and manifesting"
           fi
-      - name: Compile and manifest the PDS4 Table_Binary products to the CDN
+      - name: Compile and manifest the PDS4 table products (Table_Binary / Table_Character) to the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin pds4_binary_compiler -- --ci-mode
