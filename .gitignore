@@ -156,3 +156,6 @@ firmware/*/Cargo.lock
 
 # Playwright-MCP artefacts (snapshots/logs) — local only
 .playwright-mcp/
+
+# Exportierte paper-LaTeX (export_latex write step, paper-check.yml) — regenerierbar, kein Repo-Gegenstand
+docs/paper/export/
