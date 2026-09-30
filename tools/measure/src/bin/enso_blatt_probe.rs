@@ -3,6 +3,7 @@ use omegaflow::archivar::extract::geo_series_parse_bin;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{COMP_ERSSTV5, GeoRec};
 use omegaflow::archivar::omni_hro::{COMP_IMF_BZ_GSM, parse_bin};
+use omegaflow::archivar::usgs_comcat::{COMP_RATE, parse_bin as parse_comcat_bin};
 use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use omegaflow::te::{
     BLATT_N_FLOOR, BlattPairSpec, conditional_embedded_te_phase, current_commit_sha,
@@ -15,6 +16,7 @@ const OMNI_HRO_CDN: &str =
 const ERSSTV5_CDN: &str = "https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin";
 const TAO_WND_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv";
+const USGS_COMCAT_CDN: &str = "https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin";
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 100;
 const MAX_LAG_MONTHS: usize = 12;
@@ -85,6 +87,24 @@ fn load_wind() -> Option<Vec<(f64, f64)>> {
             continue;
         };
         out.push((t, w));
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    if out.is_empty() { None } else { Some(out) }
+}
+
+fn load_quake() -> Option<Vec<(f64, f64)>> {
+    let bytes = load_local_or_fetch("usgs_comcat_m45.bin", USGS_COMCAT_CDN)?;
+    let recs = parse_comcat_bin(&bytes)?;
+    let lsk = embedded_lsk()?;
+    let mut out: Vec<(f64, f64)> = Vec::new();
+    for (t_unix, v, comp) in recs {
+        if comp != COMP_RATE || !v.is_finite() {
+            continue;
+        }
+        let Some(t) = lsk.unix_to_tdb(t_unix) else {
+            continue;
+        };
+        out.push((t, v));
     }
     out.sort_by(|a, b| a.0.total_cmp(&b.0));
     if out.is_empty() { None } else { Some(out) }
@@ -300,7 +320,7 @@ fn main() {
         return;
     };
     let wind = load_wind();
-    let quake: Option<Vec<(f64, f64)>> = None;
+    let quake = load_quake();
 
     println!();
     println!("=== channel board ===");
@@ -417,11 +437,11 @@ fn main() {
                 continue;
             }
             let (from_name, to_name) = (CH_NAMES[from], CH_NAMES[to]);
-            let pair_pending = |label: &str| {
+            let pair_pending = || {
                 let reason = if !channel_active(&channels[from]) {
-                    channel_pending_reason(&channels[from], label)
+                    channel_pending_reason(&channels[from], from_name)
                 } else if !channel_active(&channels[to]) {
-                    channel_pending_reason(&channels[to], label)
+                    channel_pending_reason(&channels[to], to_name)
                 } else {
                     format!("paired n < floor {MIN_PAIRED}")
                 };
@@ -429,7 +449,7 @@ fn main() {
             };
             if channel_active(&channels[from]) && channel_active(&channels[to]) {
                 let (Some(a), Some(b)) = (channels[from].as_ref(), channels[to].as_ref()) else {
-                    pair_pending(from_name);
+                    pair_pending();
                     continue;
                 };
                 let (from_s, to_s) = paired_series(a, b);
@@ -439,7 +459,7 @@ fn main() {
                     continue;
                 }
             }
-            pair_pending(from_name);
+            pair_pending();
         }
     }
 
@@ -525,7 +545,7 @@ fn main() {
         println!("Wnd channel measured.");
     } else {
         println!(
-            "Wnd channel pending: {}. `tao_wnd_zonal.csv` is a 120-day live window (compiler fetches d_end-120d…d_end-7d); the 1977+ record needs a compiler extension (Mountain).",
+            "Wnd channel pending: {}. `tao_wnd_zonal.csv` carries the 1977-11-06+ zonal wind record (`tao_wnd_compiler.rs` SOURCE_START); the channel stays unmeasured when the asset is absent or the aligned monthly n is below the floor.",
             channel_pending_reason(&channels[CH_WND], "Wnd")
         );
     }
@@ -533,7 +553,7 @@ fn main() {
         println!("Quake channel measured.");
     } else {
         println!(
-            "Quake channel pending: {}. The `usgs_comcat_m45.bin` parser/asset registration is Mountain's in-flight commit (the channel is read generically and named here until it lands).",
+            "Quake channel pending: {}. `usgs_comcat_m45.bin` carries the USGS comcat M4.5 monthly count (`usgs_comcat.rs`, `usgs_comcat_m45_rate`, epoch at month midpoint in UTC unix s → TDB); the channel stays unmeasured when the asset is absent or the aligned monthly n is below the floor.",
             channel_pending_reason(&channels[CH_QUAKE], "Quake")
         );
     }
