@@ -1,4 +1,4 @@
-# tap-inventar https://vo.lam.fr/tap
+inventar https://vo.lam.fr/tap
 
 catalog vipers_dr2.spectra vipers_dr2 view
 catalog tap_schema.schemas tap_schema table

@@ -1,4 +1,4 @@
-# tap-inventar http://39.105.187.183:8080/tap/tap
+inventar http://39.105.187.183:8080/tap/tap
 catalog TAP_SCHEMA.schemas TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table
 catalog TAP_SCHEMA.coosys TAP_SCHEMA table

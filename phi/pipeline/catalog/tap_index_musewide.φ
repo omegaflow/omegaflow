@@ -1,4 +1,4 @@
-# tap inventory https://musewide.aip.de/tap/sync
+inventar https://musewide.aip.de/tap/sync
 catalog musewide_dr1.fields musewide_dr1 table
 catalog musewide_dr1.quality_control musewide_dr1 table
 catalog musewide_dr1.exposures musewide_dr1 table

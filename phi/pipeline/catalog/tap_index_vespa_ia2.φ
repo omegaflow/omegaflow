@@ -1,4 +1,4 @@
-# tap-inventar http://vespa.ia2.inaf.it/tap
+inventar http://vespa.ia2.inaf.it/tap
 catalog sw.epn_core sw table
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table

@@ -1,4 +1,4 @@
-# tap-inventar http://dachs.sdc.leibniz-kis.de/tap
+inventar http://dachs.sdc.leibniz-kis.de/tap
 catalog lars.epn_core lars table
 catalog gris.epn_core gris table
 catalog chrotel.epn_core chrotel table

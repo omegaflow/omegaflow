@@ -1,6 +1,3 @@
-# PANGAEA — Katalog (OAI-PMH ws.pangaea.de, Stichprobe 60 Seiten, live 2026-08-16)
-# format: PANGAEA.<id> | <titel>
-# Voll-Harvest (~430k Datasets) als CI-Aufgabe; Daten-Zugriff: Collection-Seite → Member → .tab (textfile-Format nicht für Collections)
 PANGAEA.472208 | Record of pollen, silt and greyscale stack from the Eifel Laminated Sediment Archive (ELSA)
 PANGAEA.472241 | Grain size composition of sediment cores from the Weddell Sea, Antarctica
 PANGAEA.472281 | Oligocene to Miocene palaeoclimate reconstructions from 14 sites in Serbia

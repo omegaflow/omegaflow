@@ -1,4 +1,4 @@
-# tap-inventar https://hst.esac.esa.int/tap-server/tap
+inventar https://hst.esac.esa.int/tap-server/tap
 catalog caom2.checksums caom2 table
 catalog caom2.observation caom2 table
 catalog caom2.plane caom2 table

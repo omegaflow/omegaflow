@@ -1,44 +1,33 @@
-# phi/canon.φ — der verbindliche Register-Kanon (Council 2026-09-18)
-#
-# Zweck: jede getrackte phi/*.φ-Datei steht hier mit genau einer Zeile.
-# Der getrackte Satz IST der Kanon. Eine neue getrackte phi/*.φ-Datei ist
-# ein Architektur-Akt: sie braucht das Wort von Operator/Council und ihre
-# Deklaration in dieser Datei im selben Commit. Das Kanon-Gate blockt die
-# stille Anlage.
-#
-# Quelle der Wahrheit: git -c core.quotePath=false ls-files "phi/*.φ" "phi/**/*.φ"
-# Stand: 2026-09-26 — 106 getrackte φ-Dateien (gemessen; einschließlich dieser Deklaration).
-
-# --- Kanon ---
+section Kanon
 phi/canon.φ
 
-# --- Maschinen-Register ---
+section Maschinen-Register
 phi/sources.φ
 phi/witnesses.φ
 phi/footprints.φ
 
-# --- Dispositions-Register ---
+section Dispositions-Register
 phi/dead_sources.φ
 phi/declined_sources.φ
 phi/blocked_sources.φ
 
-# --- Harvest-Master ---
+section Harvest-Master
 phi/harvest.φ
 
-# --- Bindings ---
+section Bindings
 phi/bindings/dust-maske.φ
 phi/bindings/bathymetrie-gebco.φ
 phi/bindings/bayestar19.φ
 
-# --- Stationstabellen ---
+section Stationstabellen
 phi/nrs_stations.φ
 phi/supermag_stations.φ
 
-# --- Reports ---
+section Reports
 phi/reports/scan_coverage.φ
 phi/reports/probe_sweep_survivors.φ
 
-# --- Pipeline-Register ---
+section Pipeline-Register
 phi/pipeline/ledger.φ
 phi/pipeline/decline_lens.φ
 phi/pipeline/library.φ
@@ -47,7 +36,7 @@ phi/pipeline/probe_wave.φ
 phi/pipeline/probe_batch_skymap.φ
 phi/pipeline/frame_registry.φ
 
-# --- Katalog ---
+section Katalog
 phi/pipeline/catalog/MANIFEST.φ
 phi/pipeline/catalog/asteroid_gm_inpop25c.φ
 phi/pipeline/catalog/asteroid_gm_sb441.φ

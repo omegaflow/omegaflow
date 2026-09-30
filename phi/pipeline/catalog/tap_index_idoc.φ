@@ -1,4 +1,4 @@
-# tap-inventar https://idoc-dachs.ias.u-psud.fr/tap
+inventar https://idoc-dachs.ias.u-psud.fr/tap
 
 catalog tap_schema.schemas tap_schema table
 catalog eit_syn.epn_core eit_syn table

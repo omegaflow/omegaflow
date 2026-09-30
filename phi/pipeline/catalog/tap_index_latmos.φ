@@ -1,4 +1,4 @@
-# tap-inventar http://vo.projet.latmos.ipsl.fr/tap
+inventar http://vo.projet.latmos.ipsl.fr/tap
 
 catalog spicam.epn_core spicam table
 catalog tap_schema.schemas tap_schema table

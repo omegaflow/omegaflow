@@ -1,4 +1,4 @@
-# tap-inventar http://evn-vo.jive.eu/tap
+inventar http://evn-vo.jive.eu/tap
 
 catalog ivoa.obscore_radio ivoa view
 catalog ivoa.obscore ivoa view

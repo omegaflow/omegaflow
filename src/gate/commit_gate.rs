@@ -1860,10 +1860,22 @@ pub fn declared_canon() -> Vec<String> {
     };
     text.lines()
         .map(str::trim)
-        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .filter(|l| !l.is_empty() && !l.starts_with("section "))
         .filter(|l| l.starts_with("phi/") && l.ends_with(".φ"))
         .map(str::to_string)
         .collect()
+}
+
+pub fn canon_format_violations(text: &str) -> Vec<(usize, String)> {
+    let mut out = Vec::new();
+    for (i, line) in text.lines().enumerate() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with("section ") || (t.starts_with("phi/") && t.ends_with(".φ")) {
+            continue;
+        }
+        out.push((i + 1, t.to_string()));
+    }
+    out
 }
 
 pub const PHI_NOTE_MAX: usize = 256;
@@ -2058,11 +2070,8 @@ pub fn register_classes() -> Vec<String> {
     let mut active = false;
     for line in text.lines() {
         let t = line.trim();
-        if let Some(name) = t
-            .strip_prefix("# --- ")
-            .and_then(|rest| rest.strip_suffix(" ---"))
-        {
-            active = REGISTER_SECTIONS.contains(&name);
+        if let Some(name) = t.strip_prefix("section ") {
+            active = REGISTER_SECTIONS.contains(&name.trim());
             continue;
         }
         if active && t.starts_with("phi/") && t.ends_with(".φ") {
@@ -4286,6 +4295,17 @@ mod tests {
         assert!(prose_violation("note prosa bleibt kurz").is_none());
         assert!(prose_violation("url https://example.org").is_none());
         assert!(prose_violation("").is_none());
+    }
+
+    #[test]
+    fn fn_canon_format_sections_and_paths_pass() {
+        let ok = "section Kanon\nphi/canon.φ\n\nsection Maschinen-Register\nphi/sources.φ\n";
+        assert!(canon_format_violations(ok).is_empty());
+        let bad = "section Kanon\n# a comment\nphi/canon.φ\n";
+        assert_eq!(
+            canon_format_violations(bad),
+            vec![(2usize, "# a comment".to_string())]
+        );
     }
 
     #[test]

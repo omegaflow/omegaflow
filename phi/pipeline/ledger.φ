@@ -1,11 +1,3 @@
-# phi/pipeline/ledger.φ — the state register (SOURCE_PORT.md §4). One entry = three lines:
-#   <zustand>       ausstehend | verifiziert | kompiliert | void | parser-gap | disponiert
-#   <art> <wert>    queue | kandidat | bestand | nachlauf | parser-gap
-#   note <was IST>
-# The open-post content is a runtime artifact of `regtap_census import --regtap`
-# (tools/harvest). The 2026-09-10 content is documented in SOURCE_PORT.md §16.4 as a
-# summary only (48 tap + 1 mast-Austrag + 1 cadc + 67 http candidates); the per-entry
-# blocks are not recoverable from the working tree — re-harvest is the measured way back.
 
 disponiert
 kandidat http://pithia.cbk.waw.pl/tap

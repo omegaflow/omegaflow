@@ -1,4 +1,4 @@
-# tap inventory https://www.lamost.org/dr11/v2.0/voservice/tap/sync
+inventar https://www.lamost.org/dr11/v2.0/voservice/tap/sync
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table
 catalog tap_schema.columns tap_schema table
