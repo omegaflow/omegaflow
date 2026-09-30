@@ -670,6 +670,40 @@ fn test_hapi_without_parameters_array_vector_and_declared_fill() {
         _ => panic!("extract is not Measurements"),
     }
 }
+
+#[test]
+fn test_hapi_csv_body_reads_without_format_line() {
+    let body = "2008-09-10T00:00:00.500, 162.546,-31.005\n\
+                2008-09-10T00:00:01.500, 162.537,-31.034\n\
+                2008-09-10T00:00:02.500, ,-31.024\n";
+    let src = source_fixture(
+        "",
+        vec![
+            Extract::Field(field_fixture("hapi_csv_magnitude_nt", 3600.0)),
+            Extract::Field(field_fixture("hapi_csv_x_nt", 3600.0)),
+            Extract::Hapi(vec![
+                ("magnitude".into(), "hapi_csv_magnitude_nt".into()),
+                ("X".into(), "hapi_csv_x_nt".into()),
+            ]),
+        ],
+    );
+    match extract(&src, body, 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            let vals: Vec<(&str, f64)> = channels
+                .iter()
+                .map(|(c, fc)| (fc.name.as_str(), c.value))
+                .collect();
+            assert!(vals.contains(&("hapi_csv_x_nt", -31.024)));
+            assert!(!vals.iter().any(|(n, _)| *n == "hapi_csv_magnitude_nt"));
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+    let series = extract_series(&src, body, &fixture_lsk());
+    assert_eq!(series.len(), 5);
+    assert!(series.iter().any(|(_, v)| (*v - 162.546).abs() < 1e-9));
+    assert!(series.iter().any(|(_, v)| (*v - (-31.034)).abs() < 1e-9));
+    assert_eq!(series.iter().filter(|(_, v)| *v > 0.0).count(), 2);
+}
 use std::collections::HashMap;
 
 fn full_fixture_lsk() -> super::LeapSeconds {
