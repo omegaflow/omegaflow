@@ -32,8 +32,8 @@ jobs:
       - name: Harvest the tao wind source from the runner (curl, pmel with a CoastWatch mirror)
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          d_end=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00Z)
-          d_start=$(date -u -d '127 days ago' +%Y-%m-%dT00:00:00Z)
+          d_end=$(date -u +%Y-%m-%dT00:00:00Z)
+          d_start=1977-11-06T00:00:00Z
           direct="https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv?time,longitude,latitude,station,WU_422,QWS_5401&latitude>=-2&latitude<=2&longitude>=200&longitude<=280&time>=${d_start}&time<=${d_end}"
           mirror="https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv?time%2Clongitude%2Clatitude%2Cstation%2CWU_422%2CQWS_5401&latitude%3E=-2&latitude%3C=2&longitude%3E=200&longitude%3C=280&time%3E=${d_start}&time%3C=${d_end}"
           if ! curl -sSL -m 120 -o tao_wnd_zonal_raw.csv "$direct"; then

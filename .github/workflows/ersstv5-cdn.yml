@@ -20,6 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Diagnose the coastwatch ERDDAP fetch (headers + body)
+        # Mirrors grid_url in tools/harvest/src/bin/ersstv5_compiler.rs:12-17.
+        # The 403 is runner-specific (local 200); this step records the response
+        # headers and body size so the cause is read, never conjectured.
+        continue-on-error: true
+        run: |
+          URL='https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5.csv?ssta[(1854-01-01T00:00:00Z):1:(2026-08-01T00:00:00Z)][(0.0):1:(0.0)][(-5):1:(5)][(190):1:(240)]'
+          echo "GET $URL"
+          curl -g -sS -D - -o /tmp/body -w '\nhttp_code=%{http_code} bytes=%{size_download}\n' "$URL" || true
+          echo "--- body head ---"
+          head -c 300 /tmp/body || true
       - name: Harvest NINO3.4 SST (coastwatch ERDDAP nceiErsstv5) and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin ersstv5_compiler -- --ci-mode

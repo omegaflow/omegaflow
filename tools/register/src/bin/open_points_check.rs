@@ -550,7 +550,7 @@ fn first_bold_words(line: &str) -> Vec<String> {
         return Vec::new();
     };
     rest[..end]
-        .split(|c: char| !c.is_alphanumeric() && c != '-' && c != '_')
+        .split(|c: char| !c.is_alphanumeric())
         .filter(|w| w.len() >= 4)
         .filter(|w| w.chars().any(|c| c.is_alphabetic()))
         .map(|w| w.to_string())
