@@ -67,6 +67,57 @@ fn normalized_band_names(meta: &ImgMeta, bands: usize) -> Vec<String> {
     names
 }
 
+fn paren_balance(s: &str) -> i32 {
+    s.chars().fold(0, |d, c| match c {
+        '(' => d + 1,
+        ')' => d - 1,
+        _ => d,
+    })
+}
+
+fn band_names_of(text: &str) -> Vec<String> {
+    let mut captured = String::new();
+    let mut in_value = false;
+    let mut depth = 0i32;
+    for line in text.lines() {
+        if !in_value {
+            let Some((key, value)) = line.split_once('=') else {
+                continue;
+            };
+            if key.trim() != "BAND_NAME" {
+                continue;
+            }
+            captured.push_str(value);
+            in_value = true;
+            depth = paren_balance(value);
+        } else {
+            captured.push(' ');
+            captured.push_str(line);
+            depth += paren_balance(line);
+        }
+        if depth <= 0 {
+            break;
+        }
+    }
+    let mut out = Vec::new();
+    let mut rest = captured.as_str();
+    while let Some(open) = rest.find('"') {
+        let after = &rest[open + 1..];
+        let Some(close) = after.find('"') else {
+            break;
+        };
+        let name = after[..close]
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        if !name.is_empty() {
+            out.push(name);
+        }
+        rest = &after[close + 1..];
+    }
+    out
+}
+
 #[derive(Clone, Copy, Debug)]
 enum ByteOrder {
     Big,
@@ -112,6 +163,7 @@ pub fn parse_label(text: &str) -> Option<ImgMeta> {
             _ => {}
         }
     }
+    meta.band_names = band_names_of(text);
     Some(meta)
 }
 
@@ -659,6 +711,41 @@ END
         assert_eq!(meta.sample_bits, Some(16));
         assert_eq!(meta.offset, Some(0));
         assert_eq!(meta.line_prefix_bytes, Some(0));
+    }
+
+    const MINIRF_BAND_LABEL: &str = "PDS_VERSION_ID = PDS3
+RECORD_TYPE = FIXED_LENGTH
+RECORD_BYTES = 16
+LINES = 1
+LINE_SAMPLES = 1
+BANDS = 4
+SAMPLE_TYPE = PC_REAL
+SAMPLE_BITS = 32
+BAND_NAME = (\"H RECEIVE INTENSITY\", \"V RECEIVE
+  INTENSITY\", \"CROSS POWER INTENSITY (REAL)\", \"CROSS POWER INTENSITY
+  (IMAGINARY)\")
+END
+";
+
+    #[test]
+    fn parse_label_reads_multiline_band_names() {
+        let meta = parse_label(MINIRF_BAND_LABEL).expect("label parses");
+        assert_eq!(
+            meta.band_names,
+            vec![
+                "H RECEIVE INTENSITY",
+                "V RECEIVE INTENSITY",
+                "CROSS POWER INTENSITY (REAL)",
+                "CROSS POWER INTENSITY (IMAGINARY)",
+            ]
+        );
+    }
+
+    #[test]
+    fn parse_label_reads_a_single_band_name() {
+        let text = MINIRF_LABEL.replace("END\n", "BAND_NAME = \"PAN\"\nEND\n");
+        let meta = parse_label(&text).expect("label parses");
+        assert_eq!(meta.band_names, vec!["PAN"]);
     }
 
     #[test]

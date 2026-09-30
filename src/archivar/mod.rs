@@ -157,6 +157,7 @@ pub mod tns;
 pub mod lab_reader;
 pub mod twomass;
 pub mod twomrs;
+pub mod usgs_comcat;
 pub mod vlies;
 pub mod volume;
 pub mod voyager_occlt;

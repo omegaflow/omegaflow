@@ -6,7 +6,7 @@ use omegaflow::archivar::pds3_table::{
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
-const NETLOC: &str = "pds-smallbodies.astro.umd.edu";
+const DEFAULT_NETLOC: &str = "pds-smallbodies.astro.umd.edu";
 const KRFM_ROUTE: &str =
     "https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/";
 const VEGA_ROUTE: &str = "https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/";
@@ -194,8 +194,8 @@ fn asset_name(dat_spec: &str) -> String {
     format!("pds3_fixed_width_{}.bin", stem.to_ascii_lowercase())
 }
 
-fn print_register_lines(asset: &str) {
-    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
+fn print_register_lines(asset: &str, netloc: &str) {
+    println!("url https://github.com/omegaflow/sources/releases/download/{netloc}/{asset}");
     println!("format pds3_fixed_width");
     println!("ttl 604800");
     println!();
@@ -252,6 +252,7 @@ fn compile_entry(
     label_spec: &str,
     pair_mode: bool,
     out_dir: Option<&str>,
+    netloc: &str,
     ci_mode: bool,
 ) -> Option<String> {
     let Some(label_bytes) = fetch_or_read(label_spec) else {
@@ -292,9 +293,9 @@ fn compile_entry(
     let asset = asset_name(dat_spec);
     let out_path = match (pair_mode, out_dir) {
         (true, Some(f)) => f.to_string(),
-        (true, None) => format!("data/{NETLOC}/pds3_fixed_width/{asset}"),
+        (true, None) => format!("data/{netloc}/pds3_fixed_width/{asset}"),
         (false, Some(d)) => format!("{}/{asset}", d.trim_end_matches('/')),
-        (false, None) => format!("data/{NETLOC}/pds3_fixed_width/{asset}"),
+        (false, None) => format!("data/{netloc}/pds3_fixed_width/{asset}"),
     };
     let bin = pack(&table);
     let Some(parsed) = parse_table(&bin) else {
@@ -326,8 +327,8 @@ fn compile_entry(
         decode_skipped + assemble_skipped,
         trailing,
     );
-    print_register_lines(&asset);
-    if ci_mode && !upload_release(NETLOC, &out_path) {
+    print_register_lines(&asset, netloc);
+    if ci_mode && !upload_release(netloc, &out_path) {
         eprintln!("{asset}: CDN upload returned void");
         return None;
     }
@@ -409,6 +410,10 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_arg = arg_value(&args, "--out");
+    let netloc = match arg_value(&args, "--netloc") {
+        Some(n) if !n.is_empty() => n,
+        _ => DEFAULT_NETLOC.to_string(),
+    };
     let mut pairs: Vec<(String, String)> = Vec::new();
     let pair_mode = match (arg_value(&args, "--dat"), arg_value(&args, "--label")) {
         (Some(dat), Some(label)) => {
@@ -431,7 +436,16 @@ fn main() {
     }
     let mut written = 0usize;
     for (label_spec, dat_spec) in &pairs {
-        if compile_entry(dat_spec, label_spec, pair_mode, out_arg.as_deref(), ci_mode).is_some() {
+        if compile_entry(
+            dat_spec,
+            label_spec,
+            pair_mode,
+            out_arg.as_deref(),
+            &netloc,
+            ci_mode,
+        )
+        .is_some()
+        {
             written += 1;
         }
     }

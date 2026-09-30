@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-09-28
-  sha256: d4a575644f9b95bb61751192f3b9adc500608964ea0b6882ec2a232d158269b6
+  sha256: 609b7be243ce6822653ee9ba6fb1434c5f9a13a1792c5fec3e9053542c364e28
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -31,8 +31,8 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 | Ⅰ Dunkle Materie | `dark_matter_probe.rs` ja; Bin unread | Gaia `sources.φ:10309/10311` · HI `:8870/8879` · pastel `:10616/10617` · rave `:10683/10684` · Binaries `:8902` | per-Voxel-Jeans-Engine (`sgrep jeans tools` → 0); Gaia DR4 (termin 2026-12-02) | kein `data/`-Treffer (gitignored) | **keins** — Paper `probe-front-dark-matter.md` (0/5040 Flags) | Register-Zeile für das Paper-Verdikt; `archive_search --verdict <HI-url>` |
 | Ⅱ Flyby | `flyby_probe.rs` · `flyby_ephemeris_gate.rs` (gebaut `d310d5888`) | Sonden-ICRS `:15524` · DE440-442 `:3419-3484` · Solarwind `:750/:164` · IMF-Bz `:746` · Kp `:1160` · Swarm `:7240` | DSN-Live-Tracking (`eyes`/`dsn` absent; `dead_sources.φ:355`) | `data/ssd.jpl.nasa.gov/ephemeris_juice.bin`; `data/flyby2/gate-juice-2026-09-28.json` | **pending** — Gate-JSON `delta_km`/`threshold_km`/`verdict` pending; `edition_rift_km=0.16847` | nach Perigäum `cargo run -p omegaflow-measure --bin flyby_ephemeris_gate` (CI) |
 | Ⅲ Koronale Heizung | `corona_conditional_probe.rs` · `solar_causal_graph_probe.rs` | GOES X `:152/:812` · EUV `:417` · F10.7 `:412` · IMF `:743-745` · OMNI `:736-750` · AIA `:2320/2334/2348` · EVE `:2362-2378` | keiner der Kanäle; Riss: Probe lädt `ssd.jpl.nasa.gov`-Assets, Register führt dieselben unter `ncei`/`cdaweb` | keins gemessen | **keins** — Verdikt nur Paper `corona-heating-ladder.md:18` (family-bound) | Netloc-Riss klären; Register-Zeile |
-| Ⅳ LAIC | `laic_probe.rs` · `nobel_probe_laic.rs` · Paper `laic-arrow-direction.md` v4 | USGS `:86/96/103` · INTERMAGNET `:1787/5386-5390` · Swarm `:7240` · CHAMP-TEC `:31` · Safecast `:228/235` · Kp `:1160` | Swarm-TEC (nur CHAMP); CSES (`ledger.φ:14-16` ausstehend; `wartend.φ:12` termin 2026-10-02) | `laic.bin`/`laic_champ.bin` CDN 206; `phi/pipeline/laic_harvest/` 4.1 GB | **keins** — Paper `:14/:25` Stille | 2026-10-02 CSES; Swarm-TEC messen |
-| Ⅴ Technosignaturen | `lsst_anomaly_probe.rs` · `ztf_anomaly_probe.rs` · `negativ_fuzzy_probe.rs` (kein dip/FAP → Zweck-Riss) | ZTF `:9409/9416` · IRAS `:13896` · AKARI `:11148` · VSX `:10750` · GCVS `:10511` · witnesses Lasair `:70`/Fink `:10` | Gaia `bp_rp` descoped (`blocked_sources.φ:203`) | keins | **keins** — Paper `docs/paper/nadel-v-fresh-area-dip-scan.md:39/:47` (0 unexcluded, <3σ) | Zweck `negativ_fuzzy_probe` prüfen; Paper-Verdikt registrieren |
+| Ⅳ LAIC | `laic_probe.rs` · `nobel_probe_laic.rs` · Paper `laic-arrow-direction.md` v4 | USGS `:86/96/103` · INTERMAGNET `:1787/5386-5390` · Swarm `:7240` · CHAMP-TEC `:31` · Safecast `:228/235` · Kp `:1160` | Swarm-TEC (nur CHAMP); CSES (`ledger.φ:14-16` ausstehend; `wartend.φ:12` termin 2026-10-02) | `laic.bin` 107 302 391 B / `laic_champ.bin` 676 408 222 B (CDN 206); `phi/pipeline/laic_harvest/` 4.1 GB | **keins** — Paper `:14/:25` Stille | 2026-10-02 CSES; Swarm-TEC messen |
+| Ⅴ Technosignaturen | `lsst_anomaly_probe.rs` · `ztf_anomaly_probe.rs` · `negativ_fuzzy_probe.rs` (TE-Negativ-Fuzzy; Dip/FAP in `lsst`/`ztf_anomaly_probe`) | ZTF `:9409/9416` · IRAS `:13896` · AKARI `:11148` · VSX `:10750` · GCVS `:10511` · witnesses Lasair `:70`/Fink `:10` | Gaia `bp_rp` descoped (`blocked_sources.φ:203`) | keins | **keins** — Paper `docs/paper/nadel-v-fresh-area-dip-scan.md:39/:47` (0 unexcluded, <3σ) | Paper-Verdikt registrieren |
 | Ⅵ Planet 9 | `kbo_compiler.rs` · `kbo_residue_probe.rs` | KBO `:10274` · MPC-Distant `:2401` · Sonden-Arcs `:15889/15896/15679/15735` · Planeten-Eph `:3419-3484` | keine | keins | **keins** — Paper `planet-nine-kbo-residue.md:18` (kein fam-Pfeil); descoped in `sensory-folge201:193-194` | descope-Träger/Register |
 | Ⅶ Wurmloch | `signal_cone_audit_probe.rs` (Bin) | `te.rs:96` · `membrane.rs:336` · `spatial.rs:549-554` · Probe `:34-44` | Sonden-Bahnen-Kanal unverifiziert; Retardierungs-Fold `max(0,\|Δt\|−d/c)` lebt (`spatial.rs:549-554`) | `data/kegel_audit_voll.log` pending | **keins** — Paper `signal-cone-audit-sheet.md:14/:63` (0 honored) | Name-Riss geschlossen (Bin = `signal_cone_audit_probe`) |
 | Ⅷ Dunkler Fluss | `dark_flow_probe.rs` | CMB `:9374/9383` · Abell `:10351` · MCXC `:10561` · PSZ2 `:10673` · CF4 `:10432/10442` | z≳10-Sample | kein `cosmicflows_cf4.json` im Baum | **keins** — Paper `dark-flow-sheet-8.md:14/:33` Stille | Release-Namespace-Riss (Register `tapvizier` vs Probe `ssd.jpl`) |
@@ -50,15 +50,15 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 
 | Kuprat | Artefakt | Kanäle (4, alle CDN 206) | Fehlend | Register | Nächster Schritt |
 |---|---|---|---|---|---|
-| Hoch-Tc | `rixs_cuprate_probe.rs` · `suprastrom_cuprate_probe.rs` · `suprastrom_form_probe.rs` · `crystal_compiler.rs` · `srd62_compiler.rs` · `cuprate-cdn.yml` · `srd62-cdn.yml` | RIXS spin (Zenodo 7286412) · RIXS charge (15179114) · EELS · SRD62 | 5. Ader NSE (privat `data/lab_a.data/SAMPLE_NSE_YBCO_6p35/`, 13 Läufe); Kuprat-Zeugenklasse | **0 Register-Zeilen** (`sgrep kuprat\|rixs\|srd62 phi/` → 0) | Mycelium: `url`/`origin`/`compiler` + Tag-Drift `ssd.jpl.nasa.gov`; Mountain: `witness kuprat` + `format`/`field`; Operator-Wort ausstehend |
+| Hoch-Tc | `rixs_cuprate_probe.rs` · `suprastrom_cuprate_probe.rs` · `suprastrom_form_probe.rs` · `crystal_compiler.rs` · `srd62_compiler.rs` · `cuprate-cdn.yml` · `srd62-cdn.yml` | RIXS spin (Zenodo 7286412) · RIXS charge (15179114) · EELS · SRD62 | 5. Ader NSE (privat `data/lab_a.data/SAMPLE_NSE_YBCO_6p35/`, 13 Läufe); Kuprat-Zeugenklasse | 4 `witness substance`-Zeilen (`witnesses.φ:120-142`); kein `sources.φ`-Block (Verdikt ohne Adresse) | Mycelium: `url`/`origin`/`compiler` + Tag-Drift `ssd.jpl.nasa.gov`; kein `witness kuprat` (Vertrag: 4 Klassen, `witnesses.φ:1`); Operator-Wort für 5. Ader (NSE) ausstehend |
 
 ## Querschnitt
 
 1. **Verdikt-Träger (Rats-Konsens 2026-09-29).** Für 10 der 15 Rätsel lebt das
    Verdikt im Blatt/Sheet + als Survey-Zeile (Index) — nicht in einem `phi/*.φ`-
    Register (`register_sort.rs` verlangt `url`/`ttl`; ein Verdikt hat keine Adresse).
-   Der Kuprat braucht `witness kuprat` + `format`/`field` (Mountain) + `url`/
-   `origin`/`compiler` (Mycelium).
+   Die Kuprat-Kanäle sind als `witness substance` admitiert (`witnesses.φ:120-142`);
+   eine `witness kuprat`-Klasse gibt es nicht (Vertrag: 4 Zeugenklassen, `witnesses.φ:1`).
 2. **Release-Namespace-Risse (systemisch).** Gemessen 2026-09-28: die Compiler laden
    bereits unter den **Produzenten-Tag** (`cosmicflows_compiler.rs:204` →
    `tapvizier.cds.unistra.fr`; `goes_xrs_compiler.rs:430` → `ncei.noaa.gov`), die
@@ -72,13 +72,20 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 3. **Doc-vs-Baum-Risse.** **In diesem Atom geheilt:** Ⅳ MiniSEED-Decoder-Zeile
    (`laic-arrow-direction.md:45` → „decoder built"); Ⅶ Bin-Name
    (`signal-cone-audit-sheet.md:27` → `signal_cone_audit_probe`); Ⅸ peak-flux off-by-one
-   (im Vorläufer-Zensus, `consumed`; hier `:10509` korrekt). **Offen:** Ⅳ
-   `laic_champ.bin` Paper-Größe weicht von der Messung ab; Ⅴ `negativ_fuzzy_probe`
-   trägt keinen Dip/FAP; ENSO Doku-Zeilen (`ein-blatt-papier.md:76`) divergieren
-   von `sources.φ`. Ⅹ (Kugelblitz) ist **descoped mit Befund**
+   (im Vorläufer-Zensus, `consumed`; hier `:10509` korrekt). **Ebenfalls geheilt
+   (gemessen 2026-09-30):** Ⅳ `laic_champ.bin` — die CDN-Release-Metadaten des Tags
+   `ssd.jpl.nasa.gov-laic` messen 676 408 222 B (676,4 MB / 645,1 MiB); die
+   Paper-Angabe „676 MB" (`laic-arrow-direction.md:214`) stimmt dezimal — der „Riss"
+   war die ungemessene Behauptung. Ⅴ `negativ_fuzzy_probe` ist der
+   TE-Negativ-Fuzzy-Ausschluss (`VERDICT: not carried`/`carried by …`, `:401/:411`),
+   kein Dip/FAP-Träger; der Dip/FAP lebt im FAP-Gate von
+   `lsst_anomaly_probe`/`ztf_anomaly_probe` (`nadel-v-fresh-area-dip-scan.md`,
+   0 unausgeschlossene Kandidaten) — der „Zweck-Riss" war die falsche Erwartung,
+   `descoped` ohne Defekt. ENSO (`ein-blatt-papier.md:76`) ist auf die gemessenen
+   `sources.φ`-Zeilen renummeriert. Ⅹ (Kugelblitz) ist **descoped mit Befund**
    (`kybernetische-astrophysik.md:299-300`, 2026-09-12) — der frühere Querschnitt-
    Vermerk „ohne Befund" war der Riss, nicht der Zustand.
-4. **Operator-gebunden.** ENSO-Zuschnitt (`wartend.φ:23`), Kuprat-Zeugenart (Operator-Wort),
+4. **Operator-gebunden.** ENSO-Zuschnitt (`wartend.φ:23`), Kuprat 5. Ader (privat, NSE),
    NSE-Redistribution (`state/mail/`).
 5. **Fremde Feder (Mountain).** Kuprat-Zeugenklasse: `witness kuprat` existiert nicht
    (0 Treffer in `phi/`); die vier Kanäle sind als `witness substance` admitiert

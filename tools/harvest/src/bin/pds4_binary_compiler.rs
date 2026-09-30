@@ -9,7 +9,7 @@ use omegaflow::archivar::pds4_binary::{
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
-const NETLOC: &str = "archives.esac.esa.int";
+const DEFAULT_NETLOC: &str = "archives.esac.esa.int";
 const DEFAULT_ROUTE: &str = "https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_6200_6299/Orbit_6200/";
 const ASSET_PREFIX: &str = "pds4_binary_";
 
@@ -52,8 +52,8 @@ fn asset_name(label_spec: &str) -> String {
     format!("{ASSET_PREFIX}{}.bin", stem.to_ascii_lowercase())
 }
 
-fn print_register_lines(asset: &str) {
-    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
+fn print_register_lines(asset: &str, netloc: &str) {
+    println!("url https://github.com/omegaflow/sources/releases/download/{netloc}/{asset}");
     println!("format pds4_binary");
     println!("ttl 604800");
     println!();
@@ -91,8 +91,8 @@ fn text_asset_name(spec: &str) -> String {
     format!("pds4_fixed_width_{}.bin", stem.to_ascii_lowercase())
 }
 
-fn print_text_register_lines(asset: &str) {
-    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
+fn print_text_register_lines(asset: &str, netloc: &str) {
+    println!("url https://github.com/omegaflow/sources/releases/download/{netloc}/{asset}");
     println!("format pds4_fixed_width");
     println!("ttl 604800");
     println!();
@@ -102,6 +102,7 @@ fn compile_text_pair(
     label_spec: &str,
     dat_spec: Option<&str>,
     out_dir: Option<&str>,
+    netloc: &str,
     ci_mode: bool,
 ) -> Option<String> {
     let Some(label_bytes) = fetch_or_read(label_spec) else {
@@ -157,7 +158,7 @@ fn compile_text_pair(
     let asset = text_asset_name(&dat);
     let out_path = match out_dir {
         Some(dir) => format!("{}/{asset}", dir.trim_end_matches('/')),
-        None => format!("data/{NETLOC}/pds4_fixed_width/{asset}"),
+        None => format!("data/{netloc}/pds4_fixed_width/{asset}"),
     };
     let bin = pack_text(&table);
     let Some(parsed) = parse_text_table(&bin) else {
@@ -182,8 +183,8 @@ fn compile_text_pair(
         sha256_hex(&bin),
         decode_skipped + assemble_skipped,
     );
-    print_text_register_lines(&asset);
-    if ci_mode && !upload_release(NETLOC, &out_path) {
+    print_text_register_lines(&asset, netloc);
+    if ci_mode && !upload_release(netloc, &out_path) {
         eprintln!("{asset}: CDN upload returned void");
         return None;
     }
@@ -194,6 +195,7 @@ fn compile_pair(
     label_spec: &str,
     dat_spec: Option<&str>,
     out_dir: Option<&str>,
+    netloc: &str,
     ci_mode: bool,
 ) -> Option<String> {
     let Some(label_bytes) = fetch_or_read(label_spec) else {
@@ -206,7 +208,7 @@ fn compile_pair(
     };
     let Some(meta) = parse_label(label_text) else {
         if parse_text_label(label_text).is_some_and(|m| m.table_class == "Table_Character") {
-            return compile_text_pair(label_spec, dat_spec, out_dir, ci_mode);
+            return compile_text_pair(label_spec, dat_spec, out_dir, netloc, ci_mode);
         }
         eprintln!(
             "{label_spec}: no Table_Binary File_Area — the label stays untouched (0 honored)"
@@ -251,7 +253,7 @@ fn compile_pair(
     let asset = asset_name(label_spec);
     let out_path = match out_dir {
         Some(dir) => format!("{}/{asset}", dir.trim_end_matches('/')),
-        None => format!("data/{NETLOC}/pds4_binary/{asset}"),
+        None => format!("data/{netloc}/pds4_binary/{asset}"),
     };
     let bin = pack(&table);
     let Some(parsed) = parse_table(&bin) else {
@@ -285,8 +287,8 @@ fn compile_pair(
         None => "unknown",
     };
     eprintln!("{asset}: target {target}, instrument {instrument}");
-    print_register_lines(&asset);
-    if ci_mode && !upload_release(NETLOC, &out_path) {
+    print_register_lines(&asset, netloc);
+    if ci_mode && !upload_release(netloc, &out_path) {
         eprintln!("{asset}: CDN upload returned void");
         return None;
     }
@@ -327,6 +329,10 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_arg = arg_value(&args, "--out");
     let dat_arg = arg_value(&args, "--dat");
+    let netloc = match arg_value(&args, "--netloc") {
+        Some(n) if !n.is_empty() => n,
+        _ => DEFAULT_NETLOC.to_string(),
+    };
     let mut labels: Vec<String> = Vec::new();
     match arg_value(&args, "--label") {
         Some(label) => labels.push(label),
@@ -344,7 +350,15 @@ fn main() {
     }
     let mut written = 0usize;
     for label in &labels {
-        if compile_pair(label, dat_arg.as_deref(), out_arg.as_deref(), ci_mode).is_some() {
+        if compile_pair(
+            label,
+            dat_arg.as_deref(),
+            out_arg.as_deref(),
+            &netloc,
+            ci_mode,
+        )
+        .is_some()
+        {
             written += 1;
         }
     }
