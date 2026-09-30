@@ -55,6 +55,15 @@ idempotent true
 note 10 body assets present measured 2026-09-17 via gh release view ftp.iaaras.ru; arm src/archivar/motion.rs (parse_ephemeris_binary); run 34363458584 (inpop-epm-cdn 2026-09-09); sizes 2574216–4056232 B, per-body sha256 in the release.
 
 asset present
+format ersstv5_nino34
+tag coastwatch.pfeg.noaa.gov
+arm ersstv5_compiler
+workflow ersstv5-cdn.yml
+pattern ^ersstv5_nino34\.bin$
+idempotent true
+note NINO3.4 SST anomaly (coastwatch ERDDAP nceiErsstv5), 1854-01→2026-08, 5S-5N/190-240E; arm src/archivar/geo.rs COMP_ERSSTV5; asset 206 measured 2026-09-30; run 36714635786 success.
+
+asset present
 format exofop_toi
 tag exofop.ipac.caltech.edu
 arm exofop_compiler
