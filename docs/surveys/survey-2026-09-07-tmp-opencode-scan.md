@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-07
   sha256: aae8760a2342029c877fdc5c2474d4d195a48b7bf23de33b73a97f23eb4206b2
-  status: live
+  status: done
   see-also: docs/concepts/docs-naming.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
 # Survey — Scan: /tmp/opencode (was ist kanonisch zu behalten)
