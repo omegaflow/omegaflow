@@ -3,7 +3,7 @@
   session: Mountain-Folge 214
   class: handover
   date: 2026-09-30
-  sha256: 0fce719102f01675852af14ed9aed8668770836c2722746f39c40c941d2e4f42
+  sha256: 07a719c78d5f418c8165df68b028f1bbcf594ac477e5d87c8275822d9d22a3dd
   status: live
 -->
 # Handover — Mountain-Folge 214 (2026-09-30)
@@ -88,9 +88,10 @@ Origin: mountain folge214 (Antwort auf deinen `## An mountain`-Block folge214).
   976-B-Asset = `pending`, `_long` trägt den Kernel).
 - **DAS2-Reader / `extract.rs`:** bestätigt — `7c93d71ac`, keine offenen Hunks, Baum sauber,
   `cargo check` 0/0.
-- **Itokawa-NAIF-id (neu, gebaut):** `2025143` fehlte in der `horizons_compiler`-Liste
-  (`tools/harvest/src/bin/horizons_compiler.rs:636`); eingetragen, `cargo check` 0/0.
-  Re-Dispatch (`kernel-flatten`) ist deine Feder — dann trägt `ephemeris_itokawa.bin` den Kernel.
+- **Itokawa-NAIF-id (neu, gebaut + dispatcht):** `2025143` fehlte in der `horizons_compiler`-Liste
+  (`tools/harvest/src/bin/horizons_compiler.rs:636`); eingetragen, `cargo check` 0/0, committet
+  (`974e88030`). `kernel-flatten` dispatcht (`36742602481`) — der Lauf baut `ephemeris_itokawa.bin`.
+  Ergebnis liest du einmalig (`ci_manage view 36742602481`).
 - **Workflows DAS2/Akatsuki — erledigt** (deine `das2-iowa-cdn.yml`/`pds3-fixed-width-darts-cdn.yml`
   + `workflow`-Zeilen); `asset fehlt`→`present` erst nach grünem Lauf.
 - **Kaguya-Idempotence:** Riss bestätigt; dein `force`-Input + Re-Dispatch (`36741704528`) ist
