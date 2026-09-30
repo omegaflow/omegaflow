@@ -3,8 +3,8 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{COMP_ERSSTV5, GeoRec};
 use omegaflow::archivar::omni_hro::{COMP_IMF_BZ_GSM, parse_bin};
 use omegaflow::te::{
-    BLATT_N_FLOOR, BlattPairSpec, current_commit_sha, surrogate_stats_phase_n,
-    transfer_entropy_lag, write_blatt_pair,
+    BLATT_N_FLOOR, BlattPairSpec, current_commit_sha, surrogate_max_phase_n,
+    surrogate_stats_phase_n, transfer_entropy_lag, write_blatt_pair,
 };
 use std::collections::HashMap;
 
@@ -130,7 +130,14 @@ fn fmt_opt(v: Option<f64>) -> String {
     }
 }
 
-fn direction_verdict(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &[usize]) -> String {
+fn direction_verdict(
+    from: &str,
+    to: &str,
+    to_s: &[f32],
+    from_s: &[f32],
+    lags: &[usize],
+    fam: Option<f64>,
+) -> String {
     let mut best: Option<(usize, f64)> = None;
     for &lag in lags {
         if let Some(te) = transfer_entropy_lag(to_s, from_s, lag) {
@@ -143,9 +150,17 @@ fn direction_verdict(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &
         Some((lag, te)) => {
             match surrogate_stats_phase_n(to_s, from_s, lag, SURROGATE_SEED, N_SURR) {
                 Some((mean, sd, thr)) => {
-                    let verdict = if te > thr { "arrow" } else { "still" };
+                    let verdict = match fam {
+                        Some(f) if te > f => "arrow",
+                        _ if te > thr => "family bound",
+                        _ => "silent",
+                    };
+                    let fam_s = match fam {
+                        Some(f) => format!("{f:.4e}"),
+                        None => "absent".to_string(),
+                    };
                     format!(
-                        "{from:>3} → {to:<3} | best lag {lag:>2} months | TE {te:.4e} | threshold {thr:.4e} (surrogate mean {mean:.3e}, σ {sd:.3e}) | excess {:+.4e} | {verdict}",
+                        "{from:>3} → {to:<3} | best lag {lag:>2} months | TE {te:.4e} | threshold {thr:.4e} (surrogate mean {mean:.3e}, σ {sd:.3e}) | fam {fam_s} | excess {:+.4e} | {verdict}",
                         te - thr
                     )
                 }
@@ -227,12 +242,25 @@ fn main() {
         println!("{lag:>4} | {} | {}", fmt_opt(b2s), fmt_opt(s2b));
     }
 
+    let mut fam: Option<f64> = None;
+    for &lag in &lags {
+        for (x, y) in [(&sst_paired, &bz_paired), (&bz_paired, &sst_paired)] {
+            if let Some(m) = surrogate_max_phase_n(x, y, lag, SURROGATE_SEED, N_SURR) {
+                fam = Some(fam.map_or(m, |f| f.max(m)));
+            }
+        }
+    }
+
     println!();
-    println!(
-        "=== Verdict (threshold = mean + 2σ of phase-randomized surrogates, {N_SURR} draws) ==="
-    );
-    let b2s_line = direction_verdict("Bz", "SST", &sst_paired, &bz_paired, &lags);
-    let s2b_line = direction_verdict("SST", "Bz", &bz_paired, &sst_paired, &lags);
+    match fam {
+        Some(f) => println!(
+            "=== Family bound (round max over Bz↔SST pair × lags, {N_SURR} surrogates) === fam = {f:.4e}"
+        ),
+        None => println!("=== Family bound absent (surrogates < 2) ==="),
+    }
+    println!("=== Verdict (per-lag threshold = mean + 2σ; arrow iff TE > fam) ===");
+    let b2s_line = direction_verdict("Bz", "SST", &sst_paired, &bz_paired, &lags, fam);
+    let s2b_line = direction_verdict("SST", "Bz", &bz_paired, &sst_paired, &lags, fam);
     println!("{b2s_line}");
     println!("{s2b_line}");
 
@@ -243,7 +271,9 @@ fn main() {
         "Pair: TE(Bz → SST) vs TE(SST → Bz), monthly grid, lag sweep 0–{MAX_LAG_MONTHS} months."
     );
     println!("Urteil: {b2s_line} / {s2b_line}");
-    println!("Schwelle: mean + 2σ over phase-randomized surrogates (f64 FFT, {N_SURR}).");
+    println!(
+        "Schwelle: per-lag mean + 2σ over phase-randomized surrogates (f64 FFT, {N_SURR}) plus the round-max family bound fam (§3.2 rule)."
+    );
     println!(
         "Fenster: n = {} months | SST 1854-01-01…2026-08-01 (ERSSTv5, cut NINO3.4) | Bz OMNI_HRO_1MIN hourly → monthly | φ/sources.φ omni_hro_imf_bz_gsm_nt × ersstv5_nino34_ssta.",
         sst_paired.len()
@@ -251,7 +281,15 @@ fn main() {
 
     println!();
     println!("=== Missing register (named, not concealed) ===");
-    println!("Multiple-comparison correction over the lag sweep (BH-FDR): pending.");
+    println!(
+        "Multiple-comparison correction: fam = round max over the Bz↔SST pair × lags (built, §3.2 rule)."
+    );
+    println!(
+        "Wind channel pending: `tao_wnd_zonal.csv` is a 120-day live window (compiler fetches d_end-120d…d_end-7d); the 1977+ record needs a compiler extension (Mountain)."
+    );
+    println!(
+        "LAIC channel pending: the comcat catalog asset is absent (compiler duty, Mountain/Mycelium)."
+    );
     println!("KDE bandwidth h sensitivity (Silverman factor sweep): pending.");
     println!(
         "The area mean over the ±5° box is equal-weight (cos-lat variation < 0.4% over the box)."

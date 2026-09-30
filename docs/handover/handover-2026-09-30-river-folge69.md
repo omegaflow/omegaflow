@@ -3,7 +3,7 @@
   session: River-Folge 69
   class: handover
   date: 2026-09-30
-  sha256: c84d2a4a6a7e3c0befd113866e558a5cbbf4271690844605ca61a1b51f4a9b96
+  sha256: 754b720534a5860fd8ca580e998c5f12ce4bf0583ccf09386c4c1bf1306bd9ce
   status: live
 -->
 # Handover — River-Folge 69 (2026-09-30)
@@ -113,19 +113,22 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
 ### ENSO TE-Probe — §3-Block (Blatt I)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der Bau des §3-Blocks (der Rat hat am 2026-09-30 entschieden).
-- **Lage:** (gemessen 2026-09-30 via Rat) **Rat-Beschluss:** LAIC = Lithosphäre→Atmosphäre→Ionosphäre
-  (kein „Longwave"); der Dreikanal = **Wind** (`tao_wnd_zonal.csv`, `phi/sources.φ:774-786`) /
-  **Lithosphäre** (USGS-comcat-Monatsrate, Asset fehlt → `pending`) / **Bz** (vorhanden) auf
-  **NINO3.4** (`ersstv5_nino34`, gebunden), Monats-Grid, Lag 0…12, Null μ+2σ über 100 Surrogate
-  **plus fam** (das 78-Zellen-Runden-Maximum, sonst FDR-Wette im fam-Paper); Verdikte
-  arrow/family bound/silent; NINO→Bz still (Strukturkontrolle). Das Katalog-Asset fehlt — die
-  Litho-Zelle ist `pending`, nie 0.0.
-- **Blockade:** keine.
-- **Braucht:** Bau-Atom `tools/measure/src/bin/enso_blatt_probe.rs` (`TAO_CSV_CDN` bei `:13`,
-  `load_wind()` bei `:67-76`, Runde `:193-228`, LAIC-`pending`-Zelle `:253-260`) +
-  `src/mathematikerin/te.rs:1583` (`surrogate_max`-Variante, durch die vier Kalibrier-Gates) +
-  §3.6 in `docs/paper/gic-causal-driver.md:234`; die comcat-Compiler-Pflicht (M ≥ 4.5,
-  1973-01-01…2026-08-01, `usgs_comcat_m45.bin`) an Mountain (`## An mountain`).
+- **Lage:** (gemessen 2026-09-30 via Rat + `sread`/`sgrep`) **Rat-Beschluss:** LAIC =
+  Lithosphäre→Atmosphäre→Ionosphäre (kein „Longwave"); Dreikanal = **Wind** / **Lithosphäre**
+  (comcat) / **Bz** auf **NINO3.4**, Monats-Grid, Lag 0…12, Null μ+2σ **plus fam**; Verdikte
+  arrow/family bound/silent. **Gebaut:** `surrogate_max_phase_n` in `src/mathematikerin/te.rs`
+  (additiv, berührt die Kalibrier-Gates nicht) + fam über die Bz↔SST-Runde in
+  `tools/measure/src/bin/enso_blatt_probe.rs` (Verdikt dreistufig) + §3.6 in
+  `docs/paper/gic-causal-driver.md` (gebaut: Bz↔SST; Wind/LAIC `pending`). **Riss (gemessen):**
+  das Wind-Asset `tao_wnd_zonal.csv` ist ein **120-Tage-Live-Fenster** (`tao_wnd_compiler.rs`
+  holt `d_end−120 d … d_end−7 d`), obwohl die Quelle bis 1977-11-06 reicht (`phi/harvest.φ:271`) —
+  der Rat nahm eine historische Reihe an; die Source-Seite korrigiert das.
+- **Blockade:** keine (eigen); Wind/LAIC hängen an Mountain-Ports.
+- **Braucht:** Wind-Kanal = Compiler-Erweiterung auf das volle 1977+-Record
+  (`tools/harvest/src/bin/tao_wnd_compiler.rs`) + Re-Manifestation → Mountain/Mycelium
+  (`## An mountain`); LAIC = comcat-Asset (M ≥ 4.5, 1973-01-01…2026-08-01,
+  `usgs_comcat_m45.bin`) → Mountain. Danach `cargo run -p omegaflow-measure --bin enso_blatt_probe`
+  im CI-Bündel.
 
 ### Weberin-Lücke — Vlies-Dichte ω()-Term
 - **Status:** wartend | **Bindung:** eigen
@@ -187,18 +190,25 @@ als Lithosphären-Kanal; USGS-FDSN lebt als Live-Quelle (`phi/sources.φ:96/:103
 historische Katalog-Asset ist ein Register-Gap. Port = Mountain, Manifestation = Mycelium.
 Braucht: comcat-Compiler bauen (Parser + Pagination), Asset in `phi/sources.φ` registrieren.
 
+**`tao_wnd_zonal.csv` ist ein 120-Tage-Live-Fenster** (gemessen 2026-09-30 via
+`tools/harvest/src/bin/tao_wnd_compiler.rs:27-28` — `d_end = now−7 d`,
+`d_start = d_end−120 d`), obwohl die Quelle bis 1977-11-06 reicht
+(`phi/harvest.φ:271`). Der ENSO-§3-Block braucht die historische Reihe. Port =
+Mountain: den Compiler auf das volle Record erweitern (paginiert, `time`-Fenster
+groß genug), danach Re-Manifestation (Mycelium).
+Braucht: `tao_wnd_compiler.rs` Zeitfenster öffnen + Asset re-manifestieren.
+
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Pfad-begrenzte
 Commit-Pfade dieses Atoms:
 
-`src/mathematikerin/te.rs` (Diagnose-Batterie + `frozen_tau`-Flag) ·
-`.github/workflows/te-gate.yml` (`fpr-diagnostic`-Job) ·
-`docs/paper/gic-causal-driver.md` (Review-Auflagen: Null kalibriert, rundenvergleichbar,
-Lag-0-Randbin, entschärfte Sätze) ·
-`docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (M1+M2-QUERY-Nachtrag) ·
-`docs/handover/handover-2026-09-30-river-folge69.md` (neu) ·
-der folge68-Move nach `docs/handover/archiv/`.
+Zweiter Atom (`31eed91de` = erster bereits gepusht): `src/mathematikerin/te.rs`
+(`surrogate_max_phase_n`) ·
+`tools/measure/src/bin/enso_blatt_probe.rs` (fam über die Bz↔SST-Runde, dreistufiges
+Verdikt, `pending`-Zeilen) ·
+`docs/paper/gic-causal-driver.md` (§3.6 ENSO-Dreikanal) ·
+`docs/handover/handover-2026-09-30-river-folge69.md`.
 
 Privat/gitignored (nicht committet): `state/operator-gespraeche/2026-09-30-river.md` · `state/river/`.
 Fremde uncommittete Arbeit unangetastet: `phi/blocked_sources.φ` (nicht Rivers).

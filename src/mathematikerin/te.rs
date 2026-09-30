@@ -1592,6 +1592,29 @@ pub fn surrogate_stats_phase_n(
     })
 }
 
+pub fn surrogate_max_phase_n(
+    x: &[f32],
+    y: &[f32],
+    lag: usize,
+    seed: u64,
+    n_surr: usize,
+) -> Option<f64> {
+    let mut max: Option<f64> = None;
+    let mut used = 0usize;
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..n_surr {
+        let ys = phase_randomized_surrogate(y, &mut rng);
+        if let Some(te) = transfer_entropy_lag(x, &ys, lag) {
+            used += 1;
+            max = Some(match max {
+                Some(m) => m.max(te),
+                None => te,
+            });
+        }
+    }
+    if used < 2 { None } else { max }
+}
+
 pub fn surrogate_stats_block(
     x: &[f32],
     y: &[f32],
