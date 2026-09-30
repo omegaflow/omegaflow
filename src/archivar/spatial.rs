@@ -8,6 +8,8 @@ pub const STAR_SPAN_M: f64 = 1.798012e21;
 pub const STAR_CATALOG_COUNT: usize = 1_704_587;
 const STAR_OCCUPANCY_TARGET: f64 = 5.0;
 
+type StarFields = (f64, f64, f64, f64, f64, f64, f64, f64, f64);
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StarCellKey(pub (i64, i64, i64));
 
@@ -356,7 +358,7 @@ pub fn star_stride(bytes: &[u8]) -> Option<usize> {
     }
 }
 
-fn star_fields(b: &[u8]) -> Option<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> {
+fn star_fields(b: &[u8]) -> Option<StarFields> {
     let ra = f64::from_le_bytes(b[0..8].try_into().ok()?);
     let dec = f64::from_le_bytes(b[8..16].try_into().ok()?);
     let pm_ra = f32::from_le_bytes(b[16..20].try_into().ok()?) as f64;
