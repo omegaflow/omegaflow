@@ -10,6 +10,10 @@
     "zweig-modell"
   ],
   "fabrication": [
+    ["sgrep -i TOKEN .secrets.local", "reading .secrets.local values dumps secret values into the transcript — only key names, never values"],
+    ["cat .secrets.local", "cat dumps every secret value into the transcript — only key names, never values"],
+    ["head .secrets.local", "head dumps secret values into the transcript — only key names, never values"],
+    ["tail .secrets.local", "tail dumps secret values into the transcript — only key names, never values"],
     ["unwrap_or_default(", "unwrap_or_default fabricates a default — the value is absent, not defaulted"],
     ["unwrap_or_else(", "unwrap_or_else fabricates a fallback — the value is absent, not derived"],
     ["derive(Default)", "#[derive(Default)] is a fabricated default state — the truth is the query"],
