@@ -1068,7 +1068,7 @@ fn main() {
 
     let swarm_cells = match (
         lsk.tdb_to_unix(t0),
-        lsk.tdb_to_unix(t0 + (n_hours - 1) as f64 * HOUR),
+        lsk.tdb_to_unix(t0 + n_hours as f64 * HOUR),
     ) {
         (Some(u_lo), Some(u_hi)) => {
             let rows = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
