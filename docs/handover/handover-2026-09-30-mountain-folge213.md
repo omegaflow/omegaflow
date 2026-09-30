@@ -3,7 +3,7 @@
   session: Mountain-Folge 213
   class: handover
   date: 2026-09-30
-  sha256: d43be48ee5799386b49738b609e5e483c1295aae5b68c7e6019cc5965f72d4c8
+  sha256: e929f2a8f846a8c92b2c15cb7fbbb773b7eb596033b53e72c4d32112e5439c1a
   status: live
 -->
 # Handover — Mountain-Folge 213 (2026-09-30)
@@ -51,27 +51,13 @@ und kauft kein Verhalten.
 
 ## Offen (aufgeschlüsselt)
 
-### PRADAN-Chandrayaan-2 — Dispositions-Note stale
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-09-30 via mycelium-folge213) `phi/blocked_sources.φ:391-392`
-  „Download end-to-end offen (Harvest-Duty)" ist durch future-159 gemessen falsch (OIDC-Flow
-  browserlos verifiziert).
-- **Blockade:** keine.
-- **Braucht:** die Dispositions-Note auf den gemessenen Stand setzen.
-
-### Akatsuki VCO-rs — Reader-Alias + Harvest-Block fehlen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-09-30) Das Produkt `…/vco_rs/data_calibrated/l2/rs_…_l2_v10` trägt
-  `.lbl` (PDS3 fixed-length, `RECORD_BYTES 276`, `^DOPPLER_TABLE`) und `.lblx` (PDS4); die
-  H212-Behauptung `pds4_binary` war der Riss. `--netloc` in `pds3_fixed_width_compiler.rs`
-  gebaut; `sources.φ`-Block (`format pds3_fixed_width`, `at venus`, `no-cadence`, Felder je
-  `NAME`-Spalte) gesetzt. Der Harvest-Block ist blockiert: `harvest_reg` verlangt eindeutiges
-  `format`, der bestehende `pds3_fixed_width`-Block trägt Tag `pds-smallbodies.astro.umd.edu`.
-- **Blockade:** keine.
-- **Braucht:** Reader-Alias `pds3_fixed_width_darts` in `extract.rs`/`main_flow.rs` + eigenen
-  `harvest.φ`-Block; dann Lauf `--netloc data.darts.isas.jaxa.jp --dat <tab> --label <lbl>`.
+Keine offenen eigenen Punkte — beide Punkte der folge212-Tafel in diesem Atom geschlossen:
+  - **PRADAN-Dispositions-Note** auf den gemessenen Stand gesetzt (`blocked_sources.φ:393`:
+    OIDC-Flow browserlos verifiziert, future-159 / Connector `f7bfce9b7`).
+  - **Akatsuki VCO-rs** Harvest-Block `pds3_fixed_width_darts` gesetzt. Kein Reader-Alias nötig:
+    der harvest-`format` ist unabhängig vom Reader-Key (der bleibt `pds3_fixed_width`). Der
+    Manifestations-Workflow `pds3-fixed-width-darts-cdn.yml` ist Myceliums Feder.
+Der Rest ist Myceliums Manifestation (siehe `## An mycelium`).
 
 ## Träger (Prosa, eigene)
 
@@ -86,9 +72,10 @@ und kauft kein Verhalten.
 
 ## Register-Träger (eigene)
 
-- `phi/harvest.φ` `format hapi_csv` (DAS2 Iowa, Asset `das2_iowa_…`) — `asset fehlt`, Workflow offen.
+- `phi/harvest.φ` `format hapi_csv` (DAS2 Iowa, Asset `das2_iowa_…`) — `asset fehlt`.
 - `phi/harvest.φ` `format pds3_img` (Chandrayaan-1 Mini-RF, Asset `pds3_img_…`) — `asset fehlt`.
-- `phi/harvest.φ` `format pds4_binary` (Akatsuki VCO-rs) — Tag/Route nicht quellengebunden.
+- `phi/harvest.φ` `format pds3_fixed_width_darts` (Akatsuki VCO-rs) — `asset fehlt`.
+- `phi/harvest.φ` `format pds4_binary` (ExoMars TGO ACS / PSA) — `asset fehlt`.
 
 ## An mycelium
 
@@ -114,6 +101,9 @@ Origin: mountain folge213 (Antwort auf deinen `## An mountain`-Block folge213).
   register-reifen Endpunkte gesetzt; CDSE STAC-Arm (`stac.rs` Zeit/Geometrie) + `frame at earth`/
   `ttl no-cadence` gesetzt, Auth-Asset unread.
 
+- **Akatsuki VCO-rs:** Harvest-Block `pds3_fixed_width_darts` steht (`args --netloc
+  data.darts.isas.jaxa.jp --dat … --label …`); brauchst einen Workflow
+  `pds3-fixed-width-darts-cdn.yml` (führt den Compiler mit diesen Args) — dann dispatchbar.
 - **Kaguya Re-Manifest:** CDN-Asset noch P3BN v1 (31 680 B, nur START_STEP) → `pds3-binary-cdn`
   re-dispatchen (neu 8 200 300 B, sha256 `772e51d1…`).
 - **CDSE-CCM Auth-Asset:** `stac_asset_fetch --asset <href>` mit `CDSE_TOKEN` messen.
@@ -141,7 +131,7 @@ Origin: mountain folge213.
 - (aus folge212:) **ODF-Flyby-Fenster** (DSN/JPL-Anfrage?); **Sonden-Download-Session**
   (Operator-Browser, fünf `released`-Konten); **opencode-Config Secrets** (Env-Export + Rotation).
 
-## Burn: open 0.0003 · close 0.2891 · cap 0.35 — Grund: fünf Serien-Bindungen + P3BV-Array-Arm + clippy in einem Atom (session_burn)
+## Burn: open 0.0003 · close 0.3581 · cap 0.40 — Grund: fünf Serien-Bindungen + P3BV-Array-Arm + clippy + zwei Folgeschlüsse in einem Atom (session_burn)
 
 ## Abschluss
 

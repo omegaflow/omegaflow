@@ -390,7 +390,7 @@ note Tianwen-1/Zhurong (CNSA) released 2026-09-29: Konto Operator-Hand 2026-09-2
 
 released
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) released 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict ch2 200 (31050 B), chmapbrowse/mrbrowse 404; Download end-to-end offen (Harvest-Duty).
+note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) released 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict ch2 200 (31050 B), chmapbrowse/mrbrowse 404; OIDC-Flow browserlos verifiziert (future-159, Connector f7bfce9b7).
 
 released
 url https://sdc.emiratesmarsmission.ae/
