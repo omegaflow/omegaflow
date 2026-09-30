@@ -3,7 +3,7 @@
   session: River-Folge 74
   class: handover
   date: 2026-09-30
-  sha256: 4f0580341c29055dfbf7e7c0efcc39b20de4ef8b64842f8939140552c74edb04
+  sha256: 16082b5e85e0b8e3569b2e7e4b90acd1611c65924a0884d7ac1153e153e1d1eb
   status: live
 -->
 # Handover — River-Folge 74 (2026-09-30)
@@ -78,7 +78,7 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 
 ### ENSO-Vierkanal-Messung (Wnd / Quake / Bz / SST)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `/commit`+Push, dann `gh workflow run enso-probe.yml` am neuen HEAD
+- **Trigger:** Lauf-Ende `enso-probe 36740119542` @`0a25323e9` (queued 2026-09-30T15:53Z)
 - **Lage:** (gemessen 2026-09-30, `cargo build -p omegaflow-measure --bin enso_blatt_probe` 0 Warnungen)
   Der Quake-Kanal ist verdrahtet: `load_quake()` in `tools/measure/src/bin/enso_blatt_probe.rs`
   liest `usgs_comcat_m45.bin` über `usgs_comcat::parse_bin` (`COMP_RATE`, Monatsmitte-UTC-unix
@@ -94,9 +94,11 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 - **Blockade:** die 100-Surrogat-Messung über 12 Paare × 13 Lags ist ein schwerer Lauf →
   **CI**, nie lokal (gemessen 2026-09-30: lokaler `cargo run` >300 s, abgebrochen — der
   verbotene Vordergrund-Eingriff).
-- **Braucht:** nach `/commit`+Push `gh workflow run enso-probe.yml`; Ergebnis einmalig
-  `ci_manage view <id>` / `ci_manage log <id> --all`. Pflicht-Konfundierungen (Jahresgang,
-  Zählreihen-Natur des Beben-Kanals) sind im Probe-Abschnitt „Named confounds" geführt.
+- **Braucht:** der Vierkanal-Lauf ist dispatcht (`gh workflow run enso-probe.yml` nach
+  `/commit`+Push); Ergebnis einmalig am Lauf-Ende — `ci_manage log 36740119542 --all` bzw.
+  Artefakt `enso-blatt.txt` via `gh run download 36740119542 -n enso-blatt`. Kein Polling.
+  Pflicht-Konfundierungen (Jahresgang, Zählreihen-Natur des Beben-Kanals) sind im
+  Probe-Abschnitt „Named confounds" geführt.
 
 ### Flyby-path-2-Kette (Addendum + Auftrag)
 - **Status:** wartend | **Bindung:** eigen
