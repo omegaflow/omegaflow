@@ -1007,7 +1007,7 @@ fn main() {
             None => "tap_index.φ".to_string(),
         };
         let mut buf = String::new();
-        buf.push_str(&format!("# tap inventory {}\n", root));
+        buf.push_str(&format!("inventar {}\n", root));
         for (name, schema, typ) in &triples {
             buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
         }

@@ -1,4 +1,3 @@
-# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ
 aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3 | on earth
 air-quality-api.open-meteo.com/v1/air-quality | on earth
 api.alerce.online/alerts/v1/objects | at sun

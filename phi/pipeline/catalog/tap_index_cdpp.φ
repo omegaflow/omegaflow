@@ -1,4 +1,4 @@
-# tap-inventar https://cdpp-epntap.irap.omp.eu/tap
+inventar https://cdpp-epntap.irap.omp.eu/tap
 
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table

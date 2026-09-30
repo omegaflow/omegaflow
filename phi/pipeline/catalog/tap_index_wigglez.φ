@@ -1,4 +1,4 @@
-# tap inventory http://wiggleztap.asvo.nci.org.au/ncitap//tap/sync
+inventar http://wiggleztap.asvo.nci.org.au/ncitap//tap/sync
 catalog TAP_SCHEMA.columns TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table
 catalog TAP_SCHEMA.keys TAP_SCHEMA table

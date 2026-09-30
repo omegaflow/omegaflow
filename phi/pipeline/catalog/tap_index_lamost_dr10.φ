@@ -1,4 +1,4 @@
-# tap inventory https://www.lamost.org/dr10/v2.0/voservice/tap/sync
+inventar https://www.lamost.org/dr10/v2.0/voservice/tap/sync
 catalog public.combined public table
 catalog public.med_catalogue public table
 catalog public.cv public table

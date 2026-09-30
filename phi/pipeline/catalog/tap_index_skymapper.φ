@@ -1,4 +1,4 @@
-# tap inventory https://api.skymapper.nci.org.au/public/tap/sync
+inventar https://api.skymapper.nci.org.au/public/tap/sync
 catalog dr3.master dr3 table
 catalog dr3.photometry dr3 table
 catalog dr3.images dr3 table

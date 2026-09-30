@@ -1,4 +1,4 @@
-# tap-inventar http://oirsa.cfa.harvard.edu:8080/tap
+inventar http://oirsa.cfa.harvard.edu:8080/tap
 
 catalog hectospec.data_public hectospec view
 catalog tap_schema.schemas tap_schema table

@@ -1,4 +1,4 @@
-# tap-inventar https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
+inventar https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table
 catalog tap_schema.columns tap_schema table

@@ -1,7 +1,7 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, declared_canon, doc_open_marker_line,
     ereignis_folge_violations, handover_dupe_violations, integrated_twin, json_write,
-    prose_violation_for, register_classes, status_proof_violations, unbacked_mirror_violations,
+    canon_format_violations, prose_violation_for, status_proof_violations, unbacked_mirror_violations,
     word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
@@ -196,10 +196,11 @@ fn main() {
             }
         }
     }
-    for path in register_classes()
-        .iter()
-        .filter(|p| staged.contains(&p.as_str()))
-    {
+    let gated: Vec<String> = declared_canon()
+        .into_iter()
+        .filter(|p| p != "phi/canon.φ")
+        .collect();
+    for path in gated.iter().filter(|p| staged.contains(&p.as_str())) {
         let out = Command::new("git")
             .args(["diff", "--cached", "-U0", "--", path.as_str()])
             .output()
@@ -249,6 +250,12 @@ fn main() {
     for path in declared_not_tracked {
         eprintln!("commit_check: declared-not-tracked: {path}");
         fail = true;
+    }
+    if let Ok(canon_text) = std::fs::read_to_string("phi/canon.φ") {
+        for (line, content) in canon_format_violations(&canon_text) {
+            eprintln!("commit_check: phi/canon.φ:{line}: canon-format - {content}");
+            fail = true;
+        }
     }
     let carrier = live_handover_carrier();
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {

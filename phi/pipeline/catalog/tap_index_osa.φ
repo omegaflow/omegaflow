@@ -1,4 +1,4 @@
-# tap inventory http://tap.roe.ac.uk/osa/sync
+inventar http://tap.roe.ac.uk/osa/sync
 catalog "FIRST".first08Jul16Source FIRST table
 catalog "FIRST".firstSource FIRST table
 catalog "FIRST".firstSource12Feb16 FIRST table
