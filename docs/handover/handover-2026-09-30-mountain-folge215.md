@@ -3,7 +3,7 @@
   session: Mountain-Folge 215
   class: handover
   date: 2026-09-30
-  sha256: 37dd4ef1462bf016e1a56a627b72c3a4e0b2e5b402581603ac143fd76897531b
+  sha256: 58c9ca9729254a71328fc75cacf46297a59c420b9bc28ad0b43cef2e9daebbb8
   status: live
 -->
 # Handover — Mountain-Folge 215 (2026-09-30)
@@ -12,8 +12,9 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; Stand der Runde am
 `d8c0d8340`, vor dem Mountain-Commit `8fdb361b3`). Dieses Atom: die „Ganz einfach"-Ausführung
 des Operators aufgenommen und gegen den Baum gemessen — die drei Ephemeriden-Häuser
-(DE/INPOP/EPM) als `ephemeris_house_gate` gebaut und lokal gemessen; das Doppler-Zeugen-Delta
-der Ausführung geprüft und als `## An mycelium`-Zeile weitergereicht.
+(DE/INPOP/EPM) als `ephemeris_house_gate` gebaut und lokal gemessen, den 16-km-Riß als
+Frame-Translation aufgeklärt; das Doppler-Zeugen-Delta der Ausführung geprüft und als
+`## An mycelium`-Zeile weitergereicht; die Anderson-Nachrechnung als Auftrag registriert.
 
 ## Operator-Wort-Register
 
@@ -29,6 +30,7 @@ Wort | Datum | Quelle
 „braucht es pro?" — Routine-Source-Port trägt flash; pro nur mit benanntem Hart-Atom/gemessener flash-Fehllage | 2026-09-30 | Operator (Session, Mountain 213)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-09-30 | Operator (Session, Mountain 215)
 „nimm das bitte auf — A = A" (die „Ganz einfach"-Ausführung; wortgetreu in `state/operator-gespraeche/2026-09-30-mountain.md`) | 2026-09-30 | Operator (Session, Mountain 215)
+„Er soll das Commit-Wort bekommen — und dann den Riß aufklären." | 2026-09-30 | Operator (Session, Mountain 215)
 
 ## Haus — Mountain (Stand 2026-09-30)
 
@@ -56,12 +58,19 @@ mit Zustand, auch um 3 Uhr nachts.
 - **Blockade:** der generische `ephemeris_compiler` liefert für NH/V1/V2 nur einen 976-B-Placeholder (das SPK fehlt im Standardsatz); den Kernel trägt der `horizons_compiler --long`-Lauf. Der Placeholder ist **nicht gemessen** (`pending`, 0 honored) — das Verdikt ist Mountain-Feder.
 - **Braucht:** Mycelium setzt für die drei die zugelassene Quelle auf den `_long`-Lauf (`url`/`compiler`) oder verwirft die generische Zeile zugunsten von `ephemeris_*_long`; danach die generischen Placeholder-Zeilen `descoped` mit diesem Befund.
 
-### Drei-Häuser-Ephemeriden — EPM-Riß am JUICE-Perigäum
-- **Status:** eigen | **Bindung:** eigen
+### Drei-Häuser-Ephemeriden — der 16-km-Riß ist eine Frame-Translation (aufgeklärt)
+- **Status:** descoped | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** `tools/measure/src/bin/ephemeris_house_gate.rs` gebaut (Erde-Baryzentrum über DE/INPOP/EPM, Perigäum ±2 d, 1 h-Schritt; `cargo build -p omegaflow-measure --bin ephemeris_house_gate` 0 Warnungen) + Workflow `ephemeris-house-gate.yml` (gemessen 2026-09-30 via `cargo build -p omegaflow-measure --bin ephemeris_house_gate`). Δ DE441↔INPOP19a (Erde) **0.0277 km**, Δ DE441↔EPM2021 **15.9403 km**, Δ INPOP↔EPM **15.9552 km** — die zwei westlichen Häuser stimmen auf ~28 m, EPM weicht ~16 km ab. Bins lokal: `data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin` sha `45651bee…` (183 151 272 B), `data/ftp.imcce.fr/ephemeris_inpop_earth.bin` sha `1dfa6bad…` (361 368 B), `data/ftp.iaaras.ru/ephemeris_epm_earth.bin` sha `33b9b108…` (2 574 216 B).
-- **Blockade:** die Ursache des ~16-km-EPM-Offsets ist ungemessen — physikalische Ephemeriden-Differenz oder Herkunfts-/Frame-Differenz des `epm_compiler` (baryzentrisch vs. anders) oder ein Bewertungsfehler der EPM-Granule. Der Offset ist als Messung getragen, nicht geglättet.
-- **Braucht:** den CI-Lauf dispatchen (`gh workflow run ephemeris-house-gate.yml` nach dem Push; Ergebnis im Artefakt) und die Ursache messen — EPM-Earth gegen eine zweite EPM-Version oder die SPK-Kernel-ID/den Center des `epm_compiler`-BSP gegen DE441 prüfen (`sgrep` in `tools/harvest/src/bin/epm_compiler.rs`, SPK-Header lesen).
+- **Lage:** `tools/measure/src/bin/ephemeris_house_gate.rs` (mit `--body` und Differenzvektoren) gebaut (`cargo build -p omegaflow-measure --bin ephemeris_house_gate` 0 Warnungen) + Workflow `ephemeris-house-gate.yml` (dispatcht `36748072166`). Am JUICE-Perigäum (±2 d, 1 h) (gemessen 2026-09-30 via `./target/debug/ephemeris_house_gate`): Δ DE441↔INPOP19a (Erde) 0.0277 km; Δ INPOP↔EPM Erde 15.96 / Sonne 16.10 / Mond 15.94 / Neptun 8123 km. Die Differenzvektoren INPOP−EPM sind für **Sonne** (1.0, 16.0, 1.4), **Erde** (1.0, 15.8, 1.3) und **Mond** (1.0, 15.9, 1.3) km **gleich** → eine konstante ~16-km-Translation (Frame-/Origin-Differenz), kein Erdfehler; nach Abzug der Sonnen-Translation bleibt für die Erde ~0.19 km. Frühere Fassung dieses Punkts (Riß-Ursache ungemessen) ist damit geschlossen.
+- **Blockade:** keine.
+- **Braucht:** — descoped mit diesem Befund (gemessen 2026-09-30 via `ephemeris_house_gate`): DE und INPOP teilen den SSB-Ursprung auf 28 m, EPM trägt einen ~16-km-Origin-Offset; die EPM-SSB-Definition bleibt eine Register-`pending`-Notiz, kein eigener Bau.
+
+### Anderson-Nachrechnung — hält die Flyby-Anomalie gegen Familien-Schwelle + Drei-Haus-Tor? (Auftrag)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** Rats-Entscheid (Operator-Wort: „den Rat entscheiden lassen, dann laufen")
+- **Lage:** Anderson-Ephemeriden (`dfd2a4a19`), Format-Familie (`e1828a90f`) und das Drei-Haus-Tor (`ephemeris_house_gate`) liegen in einem Baum; `flyby_anderson_probe` (`tools/measure/src/bin/flyby_anderson_probe.rs`) trägt die Residuen gegen `data/flyby2/anderson_residuals.tsv` (gemessen 2026-09-30 via `open_points_check`: lokal nicht vorhanden). Die Frage: stirbt die Anomalie unter der Familien-Schwelle (wie die Alfvén-Kaskade unter der Phasen-Null), oder hält sie gegen Werkzeuge, die es 2008 nicht gab? Beides ist ein Ergebnis.
+- **Blockade:** das Residuen-Input fehlt lokal; der Rat hat die Frage noch nicht entschieden.
+- **Braucht:** den Rat die Frage entscheiden lassen (Auftrag registriert), dann `flyby_anderson_probe` gegen die Anderson-Residuen (`anderson_residuals.tsv`) laufen lassen und die Haus-Robustheit (DE/INPOP/EPM, `ephemeris_house_gate`) daneben legen.
 
 ## Träger (Prosa, eigene)
 
@@ -141,7 +150,7 @@ Origin: mountain folge214.
   - WMM/Kernel-Satz — SPICE-Kernel/Modell (Infrastruktur, kein Feld am Punkt) → keine
     `sources.φ`-Zeile, archive-root.
 
-## Burn: open 0.0000 · close 0.0663 · Grund: „Ganz einfach"-Ausführung aufgenommen + `ephemeris_house_gate` gebaut/gemessen + Register/Übergabe (session_burn; Runde 6 Sessions 0.5292)
+## Burn: open 0.0000 · close 0.1069 · Grund: „Ganz einfach"-Ausführung aufgenommen, `ephemeris_house_gate` gebaut + 16-km-Riß als Frame-Translation aufgeklärt, Doppler-Zeugen-Delta, Anderson-Auftrag registriert (session_burn; Runde 6 Sessions 0.5924)
 
 ## Abschluss
 
