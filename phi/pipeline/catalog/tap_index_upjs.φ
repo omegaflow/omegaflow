@@ -1,4 +1,4 @@
-# tap-inventar https://skvo.science.upjs.sk/tap
+inventar https://skvo.science.upjs.sk/tap
 catalog gaiadr3_eb.raw_data gaiadr3_eb view
 catalog ogle.lightcurves ogle table
 catalog ogle.acepheids ogle view

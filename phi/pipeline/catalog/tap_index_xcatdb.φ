@@ -1,4 +1,4 @@
-# tap-inventar https://xcatdb.unistra.fr/xtapdb
+inventar https://xcatdb.unistra.fr/xtapdb
 
 catalog TAP_SCHEMA.schemas TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table

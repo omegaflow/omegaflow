@@ -1,4 +1,4 @@
-# tap inventory https://cda.cfa.harvard.edu/csc1tap/sync
+inventar https://cda.cfa.harvard.edu/csc1tap/sync
 catalog TAP_SCHEMA.schemas TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table
 catalog TAP_SCHEMA.columns TAP_SCHEMA table

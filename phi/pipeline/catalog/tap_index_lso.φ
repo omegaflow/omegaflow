@@ -1,4 +1,4 @@
-# tap-inventar http://193.87.1.40:8080/tap
+inventar http://193.87.1.40:8080/tap
 
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table

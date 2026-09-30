@@ -1,6 +1,3 @@
-# library — gewichtete Tags (Ratssitzung 2026-08-16, achte Fassung; neunte Fassung 2026-08-20: NOAA-NODD-Befund — sea ice=CORRECT em (war diffusion), cors/gnss=em, crowdsourced bathymetry=acoustic, Stationsklima ghcn/gsod/isd=thermal)
-# Schichten: b2find + Klassenwörter + CMR + GBIF + GCMD + SWPC/Gaia/CDAWeb/SIMBAD/ArcGIS + Harvester-Kataloge (BCO-DMO/ICOS/SEANOE/IGETS/Dryad/INRAE/LTER/CMR)
-# format: <gewicht> <force|-> <tag...>
 -8 - Arts and Humanities
 -8 - Arkeologisk minne
 4 - DEPTH

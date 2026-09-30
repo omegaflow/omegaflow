@@ -1,4 +1,4 @@
-# tap-inventar https://archive.eso.org/tap_obs/sync
+inventar https://archive.eso.org/tap_obs/sync
 catalog asm.ambient_lasilla asm view
 catalog asm.dimm_paranal asm view
 catalog asm.historical_ambient_paranal asm view

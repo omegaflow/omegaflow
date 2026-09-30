@@ -1,4 +1,4 @@
-# tap-inventar https://datacentral.org.au:443/vo/tap
+inventar https://datacentral.org.au:443/vo/tap
 catalog TAP_SCHEMA.schemas TAP_SCHEMA table
 catalog TAP_SCHEMA.tables TAP_SCHEMA table
 catalog TAP_SCHEMA.columns TAP_SCHEMA table
@@ -399,4 +399,3 @@ catalog gama_dr4.SersicCatSDSSv09 gama_dr4 table
 catalog gama_dr4.SpecObjv27 gama_dr4 table
 catalog gama_dr4.SpecAllv27 gama_dr4 table
 catalog gama_dr4.LTSpecAllv03 gama_dr4 table
-# truncated: 486 tables, 400 written

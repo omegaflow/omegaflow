@@ -1,4 +1,4 @@
-# tap-inventar http://padc-tap-rcsed.obspm.fr/tap
+inventar http://padc-tap-rcsed.obspm.fr/tap
 
 catalog tap_schema.schemas tap_schema table
 catalog tap_schema.tables tap_schema table

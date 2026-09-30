@@ -1,4 +1,4 @@
-# tap-inventar https://vo.astron.nl/tap
+inventar https://vo.astron.nl/tap
 catalog arts_dr1.frb_obs arts_dr1 table
 catalog apertif_dr2.continuum_images apertif_dr2 table
 catalog svc.main svc table

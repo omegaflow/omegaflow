@@ -1,11 +1,3 @@
-# Asteroiden-GM — SB441-IOM392R-21-005 Perturber-Tabelle 1 (JPL SSD)
-# Quelle: https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/SB441_IOM392R-21-005_perturbers.pdf
-# Geerntet 2026-08-21 per pdftotext -layout. Gate: exakt 373 Zeilen (343 Hauptguertel + 30 KBO laut IOM-Text),
-# alle IDs siebenstellig, keine Duplikate. Kreuzcheck: Ceres 6.2628888644e10 m3/s2 (= 1.3964518123081070e-13 au3/d2),
-# Vesta 1.7288232879e10 (= 3.8548000225257904e-14 au3/d2). Die GM-Werte sind die SB441-Fit-Massen, nicht die physischen.
-# Umrechnung au3/d2 -> m3/s2: AU = 149597870700 m (IAU), d = 86400 s (Faktor 4.484858560274601e23).
-# Apophis 2099942 / Bennu 2101955 / Encke (ohne Nummer) traegt Tabelle 1 nicht — Horizons-only.
-# Format: <spice_id> | <gm_m3s2>
 2000001 | 6.2628888644e+10
 2000002 | 1.3665878146e+10
 2000003 | 1.9205707002e+09

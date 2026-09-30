@@ -1,4 +1,4 @@
-# tap inventory https://gaia.aip.de/tap/sync
+inventar https://gaia.aip.de/tap/sync
 catalog gaiadr3.sso_orbits gaiadr3 table
 catalog gaiadr3.synthetic_photometry_gspc gaiadr3 table
 catalog gaiadr3.qso_candidates gaiadr3 table

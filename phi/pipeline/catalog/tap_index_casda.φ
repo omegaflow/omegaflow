@@ -1,4 +1,4 @@
-# tap inventory https://casda.csiro.au/casda_vo_tools/tap/sync
+inventar https://casda.csiro.au/casda_vo_tools/tap/sync
 catalog casda.catalogue casda table
 catalog TAP_SCHEMA.key_columns TAP_SCHEMA table
 catalog TAP_SCHEMA.keys TAP_SCHEMA table

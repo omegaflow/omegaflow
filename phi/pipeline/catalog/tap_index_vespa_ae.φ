@@ -1,4 +1,4 @@
-# tap-inventar http://vespa-ae.oma.be/tap
+inventar http://vespa-ae.oma.be/tap
 
 catalog soir.epn_core soir table
 catalog nomad.epn_core nomad table

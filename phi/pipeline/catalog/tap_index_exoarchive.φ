@@ -1,4 +1,4 @@
-# tap-inventar https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+inventar https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 catalog spectra exo_tap table
 catalog TD exo_tap table
 catalog superwasptimeseries exo_tap table

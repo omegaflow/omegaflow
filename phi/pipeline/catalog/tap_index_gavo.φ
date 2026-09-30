@@ -1,4 +1,4 @@
-# tap-inventar https://dc.g-vo.org/tap/sync
+inventar https://dc.g-vo.org/tap/sync
 catalog gcns.main gcns table
 catalog gcns.rejected gcns table
 catalog gcns.resolvedss gcns table
