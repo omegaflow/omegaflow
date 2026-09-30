@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-30
-  sha256: 454592524da6677ebf811ec52a2332d15a83af651e9c598c30c2510f2f26382a
+  sha256: 56c6242aa80dfe8379a05e4544720b087620f1ecece1aa3ff90dd08df3de8a1b
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound whose round-maximum family-wise error rate is calibrated to its nominal 1/(n_surr+1) across autocorrelation (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571); the yearly arrows sit at the lag-0/1 edge bin, where the 30–60 min L1 travel time straddles the bin boundary, so the lag is an edge-bin reading, not a resolved delay (§3.1, §5). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI and the full-lag bound ran (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound calibrated to its nominal 1/(n_surr+1) across autocorrelation (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in one 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13 of 16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
 
 ## Key Points
 

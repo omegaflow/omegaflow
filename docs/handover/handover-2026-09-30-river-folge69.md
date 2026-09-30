@@ -3,7 +3,7 @@
   session: River-Folge 69
   class: handover
   date: 2026-09-30
-  sha256: 43330d6ba78abbccc37af5d8469d3828b3def25d1841f763f03ac39101839fb2
+  sha256: 71e453718570f9d53a80ec5266004aa41340e7f5f9dba9b0b18956d6a213eaf1
   status: live
 -->
 # Handover — River-Folge 69 (2026-09-30)
@@ -61,18 +61,18 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
 
 ### TE-Null-Riss — FPR unter Autokorrelation (#112 / #13 / #43)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `fpr-diagnostic`-Job im `te-gate`-Lauf am neuen HEAD.
-- **Lage:** (gemessen 2026-09-30 via `ci_manage jobs/log 36639308643`) `fpr-membrane` FAILED —
-  `Zug 5: FPR 9.52% at a=0 D_Z=0 exceeds 8%` (a=0.5 0.00 %, a=0.9 4.76 %); die übrigen 17 Jobs
-  success. Die vier Rat-Messungen sind **gebaut**: Test `gate_membrane_fpr_diagnostic`
-  (`src/mathematikerin/te.rs`) — None-Quote je Arm, trials 2⁶/2⁷, n_surr {10,100}, frozen-τ
-  (Flag in `topological_te_with`) — plus Job `fpr-diagnostic` in `.github/workflows/te-gate.yml`
-  (`cargo check` 0/0, `cargo fmt` sauber).
+- **Trigger:** das Rat-/Operator-Wort über die Gate-Konsequenz (Sample size vs. 8%-Linie).
+- **Lage:** (gemessen 2026-09-30 via `ci_manage log 36680694453 --all`; Job `fpr-diagnostic`
+  **success**) die vier Rat-Messungen: **`none=0` in jeder Zeile** → kein Selektionsbias;
+  a=0 FPR 9.52 % (2/21) → **4.69 % (3/64)**, 7.81 % (5/64, zweiter Draw), **5.47 % (7/128)**;
+  n_surr=100 bei a=0 4.69 % (3/64); frozen-τ bei a=0 3.12 % (2/64). Der a=0-Exzess ist
+  **nicht strukturell** (bei n≥64 unter der 8 %-Linie, kein n_surr-/frozen-τ-Effekt) — der
+  21-Trial-Rot war Small-Sample. `fpr-membrane` bleibt rot (2/21), erwartet.
 - **Blockade:** keine.
-- **Braucht:** `te-gate` ist dispatcht (**run 36680694453**); das Lesen (`ci_manage jobs/log`) ist
-  durch **http_401** blockiert (`## An mycelium`). Sobald das Token gilt: die `membrane-diag`-Zeilen
-  lesen. Erst wenn der a=0-Exzess nach Selektionskontrolle strukturell bleibt, Switch auf
-  `topological_te_arx` + die vier Kalibrier-Gates (`te.rs`).
+- **Braucht:** kein Arx-Switch (Selektionskontrolle negativ). Die eine offene Entscheidung:
+  `gate_membrane_fpr_phase_vs_arx_n_1000` auf 2⁶/2⁷ Trials heben oder die 8 %-Linie lassen —
+  Rat/Operator, kein stiller Eingriff ins Instrument. `te-gate 36680694453` läuft noch
+  (`fpr-ksg-shift`/`fpr-ksg-arx`/`ksg-sweep`); diese drei einmalig nachlesen.
 
 ### ci-check — cargo-test GPU-Rot (#58 / #15)
 - **Status:** wartend | **Bindung:** eigen
@@ -171,15 +171,6 @@ rundenvergleichbar, Lag-0 aus der Artefaktzone, überzeichnete Sätze). Vor dem 
 war nie definiert; der Rat legt fest: Wind (`tao_wnd_zonal.csv`) / Lithosphäre (comcat-Rate,
 `pending`) / Bz auf NINO3.4, mit fam. Das Operator-Wort („§3-Block zuerst") deckt den
 Zuschnitt, nicht die Kanalnamen — dem Operator im nächsten Pass einmal vorlegen.
-
-## An mycelium
-
-Origin: river-folge69.
-
-**`ci_manage` liefert http_401** (gemessen 2026-09-30 via `ci_manage status` **und**
-`bin/ci_manage status`): der GH-API-Zugang für die CI-Lesung ist ungültig (Token in
-`.secrets.local`). Kein Lauf ist lesbar; `te-gate 36680694453` (River) und `paper-check`
-warten auf die Erneuerung. Braucht: Token erneuern (Operator/Key).
 
 ## An mountain
 
