@@ -1527,7 +1527,7 @@ fn check_handover_dupe(path: &str, content: &str) -> Option<Verdict> {
     })
 }
 
-pub const BURN_CAP_USD: f64 = 0.125;
+pub const BURN_CAP_USD: f64 = 0.15;
 pub const BURN_CAP_HARD_USD: f64 = 0.5;
 
 fn burn_token_pos(body: &str, token: &str) -> Option<usize> {
