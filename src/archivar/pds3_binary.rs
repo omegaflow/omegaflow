@@ -1,6 +1,10 @@
 use crate::archivar::pds3_table::odl_kv;
 
 pub const MAGIC: [u8; 4] = *b"P3BN";
+pub const MAGIC_V2: [u8; 4] = *b"P3BV";
+pub const FORMAT_VERSION: u32 = 2;
+const HEADER_V1_BYTES: usize = 12;
+const HEADER_V2_BYTES: usize = 16;
 pub const COLUMN_NAME_BYTES: usize = 64;
 pub const COLUMN_UNIT_BYTES: usize = 16;
 pub const COLUMN_TYPE_BYTES: usize = 32;
@@ -29,6 +33,33 @@ pub struct BinColumn {
 #[derive(Clone, Debug, PartialEq)]
 pub struct BinRow {
     pub values: Vec<Option<f64>>,
+    pub arrays: Vec<Vec<u8>>,
+}
+
+fn numeric_type(up: &str) -> bool {
+    matches!(
+        up,
+        "MSB_INTEGER"
+            | "SUN_INTEGER"
+            | "SIGNED_INTEGER"
+            | "LSB_INTEGER"
+            | "INTEL_INTEGER"
+            | "MSB_UNSIGNED_INTEGER"
+            | "SUN_UNSIGNED_INTEGER"
+            | "LSB_UNSIGNED_INTEGER"
+            | "INTEL_UNSIGNED_INTEGER"
+            | "IEEE_REAL"
+            | "MSB_REAL"
+            | "LSB_REAL"
+            | "PC_REAL"
+    )
+}
+
+pub fn is_array_column(c: &BinColumn) -> bool {
+    let Some(data_type) = c.data_type.as_deref() else {
+        return false;
+    };
+    numeric_type(&data_type.to_ascii_uppercase()) && !matches!(c.bytes, 1 | 2 | 4 | 8)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -315,17 +346,22 @@ pub fn decode_rows(bytes: &[u8], meta: &BinMeta) -> Option<DecodeOutput> {
 pub fn pack(table: &Pds3BinaryTable) -> Vec<u8> {
     let cols = table.columns.len();
     let words = cols.div_ceil(64);
-    let mut bin = vec![
-        0u8;
-        12 + cols * COLUMN_META_BYTES
-            + table.rows.len()
-                * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES)
-    ];
-    bin[0..4].copy_from_slice(&MAGIC);
-    bin[4..8].copy_from_slice(&(cols as u32).to_le_bytes());
-    bin[8..12].copy_from_slice(&(table.rows.len() as u32).to_le_bytes());
+    let scalar_row = cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES;
+    let array_bytes: usize = table
+        .columns
+        .iter()
+        .filter(|c| is_array_column(c))
+        .map(|c| c.bytes)
+        .sum();
+    let row_stride = scalar_row + array_bytes;
+    let mut bin =
+        vec![0u8; HEADER_V2_BYTES + cols * COLUMN_META_BYTES + table.rows.len() * row_stride];
+    bin[0..4].copy_from_slice(&MAGIC_V2);
+    bin[4..8].copy_from_slice(&FORMAT_VERSION.to_le_bytes());
+    bin[8..12].copy_from_slice(&(cols as u32).to_le_bytes());
+    bin[12..16].copy_from_slice(&(table.rows.len() as u32).to_le_bytes());
     for (i, c) in table.columns.iter().enumerate() {
-        let base = 12 + i * COLUMN_META_BYTES;
+        let base = HEADER_V2_BYTES + i * COLUMN_META_BYTES;
         let name = c.name.as_bytes();
         let n = name.len().min(COLUMN_NAME_BYTES);
         bin[base..base + n].copy_from_slice(&name[..n]);
@@ -350,9 +386,9 @@ pub fn pack(table: &Pds3BinaryTable) -> Vec<u8> {
             .copy_from_slice(&(c.bytes as u32).to_le_bytes());
         bin[base + FLAGS_OFFSET..base + FLAGS_OFFSET + 4].copy_from_slice(&flags.to_le_bytes());
     }
-    let data_base = 12 + cols * COLUMN_META_BYTES;
+    let data_base = HEADER_V2_BYTES + cols * COLUMN_META_BYTES;
     for (r, row) in table.rows.iter().enumerate() {
-        let at = data_base + r * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
+        let at = data_base + r * row_stride;
         let mut pw = vec![0u64; words];
         for (j, v) in row.values.iter().enumerate() {
             if let Some(x) = v {
@@ -363,6 +399,17 @@ pub fn pack(table: &Pds3BinaryTable) -> Vec<u8> {
         for (w, word) in pw.iter().enumerate() {
             let wb = at + cols * ROW_VALUE_BYTES + w * 8;
             bin[wb..wb + 8].copy_from_slice(&word.to_le_bytes());
+        }
+        let mut off = at + scalar_row;
+        for (j, c) in table.columns.iter().enumerate() {
+            if !is_array_column(c) {
+                continue;
+            }
+            if let Some(raw) = row.arrays.get(j) {
+                let n = raw.len().min(c.bytes);
+                bin[off..off + n].copy_from_slice(&raw[..n]);
+            }
+            off += c.bytes;
         }
     }
     bin
@@ -375,24 +422,38 @@ fn str_field(bytes: &[u8], from: usize, to: usize) -> Option<String> {
 }
 
 pub fn parse_table(bytes: &[u8]) -> Option<Pds3BinaryTable> {
-    if bytes.len() < 12 || bytes[0..4] != MAGIC {
+    if bytes.len() < 4 {
         return None;
     }
-    let cols = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
-    let row_count = u32::from_le_bytes(bytes[8..12].try_into().ok()?) as usize;
+    let (header_bytes, versioned) = if bytes[0..4] == MAGIC_V2 {
+        if bytes.len() < HEADER_V2_BYTES {
+            return None;
+        }
+        let version = u32::from_le_bytes(bytes[4..8].try_into().ok()?);
+        if version != FORMAT_VERSION {
+            return None;
+        }
+        (HEADER_V2_BYTES, true)
+    } else if bytes[0..4] == MAGIC {
+        if bytes.len() < HEADER_V1_BYTES {
+            return None;
+        }
+        (HEADER_V1_BYTES, false)
+    } else {
+        return None;
+    };
+    let cols =
+        u32::from_le_bytes(bytes[header_bytes - 8..header_bytes - 4].try_into().ok()?) as usize;
+    let row_count =
+        u32::from_le_bytes(bytes[header_bytes - 4..header_bytes].try_into().ok()?) as usize;
     if cols == 0 {
         return None;
     }
     let words = cols.div_ceil(64);
-    let expected = 12
-        + cols * COLUMN_META_BYTES
-        + row_count * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
-    if bytes.len() != expected {
-        return None;
-    }
+    let scalar_row = cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES;
     let mut columns = Vec::with_capacity(cols);
     for i in 0..cols {
-        let base = 12 + i * COLUMN_META_BYTES;
+        let base = header_bytes + i * COLUMN_META_BYTES;
         let name = str_field(bytes, base, base + COLUMN_NAME_BYTES)?;
         let unit = str_field(
             bytes,
@@ -439,10 +500,24 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds3BinaryTable> {
             bytes: nbytes,
         });
     }
-    let data_base = 12 + cols * COLUMN_META_BYTES;
+    let array_bytes: usize = columns
+        .iter()
+        .filter(|c| is_array_column(c))
+        .map(|c| c.bytes)
+        .sum();
+    let row_stride = if versioned {
+        scalar_row + array_bytes
+    } else {
+        scalar_row
+    };
+    let expected = header_bytes + cols * COLUMN_META_BYTES + row_count * row_stride;
+    if bytes.len() != expected {
+        return None;
+    }
+    let data_base = header_bytes + cols * COLUMN_META_BYTES;
     let mut rows = Vec::with_capacity(row_count);
     for r in 0..row_count {
-        let at = data_base + r * (cols * ROW_VALUE_BYTES + words * ROW_PRESENCE_BYTES);
+        let at = data_base + r * row_stride;
         let mut values = Vec::with_capacity(cols);
         for j in 0..cols {
             let wb = at + cols * ROW_VALUE_BYTES + (j / 64) * 8;
@@ -455,7 +530,21 @@ pub fn parse_table(bytes: &[u8]) -> Option<Pds3BinaryTable> {
             };
             values.push(value);
         }
-        rows.push(BinRow { values });
+        let mut arrays = Vec::with_capacity(cols);
+        if versioned {
+            let mut off = at + scalar_row;
+            for c in &columns {
+                if is_array_column(c) {
+                    arrays.push(bytes.get(off..off + c.bytes)?.to_vec());
+                    off += c.bytes;
+                } else {
+                    arrays.push(Vec::new());
+                }
+            }
+        } else {
+            arrays.resize(cols, Vec::new());
+        }
+        rows.push(BinRow { values, arrays });
     }
     Some(Pds3BinaryTable { columns, rows })
 }
@@ -605,13 +694,94 @@ END
         let meta = parse_label(LRS_LABEL).expect("label parses");
         let (rows, _, _) = decode_rows(&lrs_records(), &meta).expect("rows");
         let columns = meta.columns.clone();
+        let n = columns.len();
         let table = Pds3BinaryTable {
             columns,
-            rows: rows.into_iter().map(|values| BinRow { values }).collect(),
+            rows: rows
+                .into_iter()
+                .map(|values| BinRow {
+                    values,
+                    arrays: vec![Vec::new(); n],
+                })
+                .collect(),
         };
         let bin = pack(&table);
         let parsed = parse_table(&bin).expect("packed table parses");
         assert_eq!(parsed, table);
+    }
+
+    fn v1_fixture() -> Vec<u8> {
+        let cols = 1usize;
+        let rows = 1usize;
+        let mut b = vec![0u8; HEADER_V1_BYTES + cols * COLUMN_META_BYTES + rows * (cols * 8 + 8)];
+        b[0..4].copy_from_slice(&MAGIC);
+        b[4..8].copy_from_slice(&(cols as u32).to_le_bytes());
+        b[8..12].copy_from_slice(&(rows as u32).to_le_bytes());
+        let base = HEADER_V1_BYTES;
+        b[base] = b'X';
+        let dt = b"MSB_INTEGER";
+        b[base + TYPE_OFFSET..base + TYPE_OFFSET + dt.len()].copy_from_slice(dt);
+        b[base + START_OFFSET..base + START_OFFSET + 4].copy_from_slice(&1u32.to_le_bytes());
+        b[base + NBYTES_OFFSET..base + NBYTES_OFFSET + 4].copy_from_slice(&4u32.to_le_bytes());
+        let at = HEADER_V1_BYTES + COLUMN_META_BYTES;
+        b[at..at + 8].copy_from_slice(&5.0f64.to_le_bytes());
+        b[at + 8..at + 16].copy_from_slice(&1u64.to_le_bytes());
+        b
+    }
+
+    #[test]
+    fn parse_table_reads_a_version_1_asset_unchanged() {
+        let bin = v1_fixture();
+        let table = parse_table(&bin).expect("v1 parses");
+        assert_eq!(table.columns.len(), 1);
+        assert_eq!(table.columns[0].name, "X");
+        assert_eq!(table.rows.len(), 1);
+        assert_eq!(table.rows[0].values, vec![Some(5.0)]);
+        assert_eq!(table.rows[0].arrays, vec![Vec::<u8>::new()]);
+    }
+
+    #[test]
+    fn parse_table_rejects_an_unseen_version_word() {
+        let mut bin = v1_fixture();
+        bin[0..4].copy_from_slice(&MAGIC_V2);
+        bin[4..8].copy_from_slice(&3u32.to_le_bytes());
+        assert!(parse_table(&bin).is_none());
+    }
+
+    #[test]
+    fn pack_and_parse_roundtrip_a_version_2_array_column_byte_true() {
+        let columns = vec![
+            BinColumn {
+                name: "S".to_string(),
+                unit: None,
+                data_type: Some("MSB_INTEGER".to_string()),
+                missing_constant: None,
+                start_byte: 1,
+                bytes: 4,
+            },
+            BinColumn {
+                name: "WAVEFORM".to_string(),
+                unit: Some("digit".to_string()),
+                data_type: Some("MSB_UNSIGNED_INTEGER".to_string()),
+                missing_constant: None,
+                start_byte: 5,
+                bytes: 4096,
+            },
+        ];
+        let raw: Vec<u8> = (0..4096).map(|i| (i % 251) as u8).collect();
+        let table = Pds3BinaryTable {
+            columns,
+            rows: vec![BinRow {
+                values: vec![Some(7.0), None],
+                arrays: vec![Vec::new(), raw.clone()],
+            }],
+        };
+        let bin = pack(&table);
+        assert_eq!(&bin[0..4], &MAGIC_V2);
+        assert_eq!(u32::from_le_bytes(bin[4..8].try_into().expect("word")), 2);
+        let parsed = parse_table(&bin).expect("v2 parses");
+        assert_eq!(parsed, table);
+        assert_eq!(parsed.rows[0].arrays[1], raw);
     }
 
     #[test]

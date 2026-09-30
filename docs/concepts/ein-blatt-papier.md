@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: 06cdf8886e7a2dfa42822b3ccaa2c0d8f531f7e0635ef2979403de4d42560008
+  sha256: 6a51a57ca4dd389b50209c69db4e9b2b9df27131a75f3abf89f20984622025fd
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
@@ -69,11 +69,11 @@ Alfvén-Kanal trägt keinen Pfeil; der DAG schrumpfte auf EUV-304→X-Ray
 „kein Pfeil" antworten, und diese Antwort ist eine Messung. Ein Blatt,
 das „kein Pfeil" trägt, ist ein voll gültiges Blatt (0 honored).
 
-## Die Kanal-Lage (gemessen 2026-08-21)
+## Die Kanal-Lage (gemessen 2026-08-21, Zeilen nachgemessen 2026-09-30)
 
 | Blatt | lebt in sources.φ | declined | pending |
 |---|---|---|---|
-| ENSO | Drifter-SST (AOML :353), OOI-SST (:676), Argo (:1140, :1151), NDBC-Wind/Wassertemperatur (:204), FROST-Wind (:407) | MEI-Index (dead :2250), ERA5/Reanalyse (Modell, ledger) | Becken-Windfeld (TAO/TRITON, Scatterometer) |
+| ENSO | ESA-CCI-SST (:1428/:1434), Drifter-SST (AOML :637/:645), OOI-SST (:1347/:1352), Argo (:8788/:8803/:8818), NDBC-Wind/Wassertemperatur (:14175+), TAO-Wind/T25 (:774/:786, :1337/:1340), FROST-Wind (:697/:707) | MEI-Index (dead :2250), ERA5/Reanalyse (Modell, ledger) | Becken-Windfeld-Matrix (Scatterometer — 0 Zeilen in `sources.φ`) |
 | Bz | RTSW Bz/Bt 1 m (:103), speed/density (:109), ACE 1 h (:448), GOES-Mag (:85), Kp 3 h (:124) | — | INTERMAGNET-Bodenminutenwerte (stations.json dead-404, dead :1722) |
 | LAIC | USGS (:35), seismicportal (:116), INGV (:471), Swarm-HAPI (:1103), Kp (:124) | — | CSES, TEC/IONEX, seismisches Kontinuum |
 

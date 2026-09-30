@@ -96,6 +96,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             .map(|rs| rs.into_iter().map(|(t, v)| (t, v, 0)).collect()),
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
+        "usgs_comcat_m45" => usgs_comcat::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         "hapi_csv" => hapi_csv::parse_bin(bytes),
@@ -372,6 +373,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             hamqsl::COMP_MAGFIELD => Some("hamqsl_magneticfield_nt"),
             _ => None,
         },
+        "usgs_comcat_m45" => usgs_comcat::component_name(comp),
         "mitdb" => match comp {
             mitdb::COMP_MLII => Some("mitdb_mlii"),
             mitdb::COMP_V1 => Some("mitdb_v1"),
@@ -428,6 +430,13 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             eve::COMP_584 => Some("eve_584_line_irradiance"),
             eve::COMP_977 => Some("eve_977_line_irradiance"),
             eve::COMP_1032 => Some("eve_1032_line_irradiance"),
+            _ => None,
+        },
+        "hapi_csv" => match comp {
+            1 => Some("hapi_csv_magnitude_nt"),
+            2 => Some("hapi_csv_x_nt"),
+            3 => Some("hapi_csv_y_nt"),
+            4 => Some("hapi_csv_z_nt"),
             _ => None,
         },
         "celestrak_eop" => match comp {
