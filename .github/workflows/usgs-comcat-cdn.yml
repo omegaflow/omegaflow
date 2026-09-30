@@ -1,4 +1,4 @@
-name: pds4-binary-cdn
+name: usgs-comcat-cdn
 
 concurrency:
   group: ${{ github.workflow }}
@@ -12,7 +12,7 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
 jobs:
-  pds4-binary:
+  usgs-comcat:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
@@ -21,15 +21,15 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view archives.esac.esa.int --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "^pds4_(binary|fixed_width)_"; then
+          if gh release view earthquake.usgs.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "usgs_comcat_m45.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset pds4_binary_*/pds4_fixed_width_* already present — manifest skipped"
+            echo "asset usgs_comcat_m45.bin already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset pds4_binary_*/pds4_fixed_width_* missing — compiling and manifesting"
+            echo "asset usgs_comcat_m45.bin missing — compiling and manifesting"
           fi
-      - name: Compile and manifest the PDS4 table products (Table_Binary / Table_Character) to the CDN
+      - name: Compile and manifest the USGS ComCat month rates to the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          cargo run --release -p omegaflow-harvest --bin pds4_binary_compiler -- --ci-mode
+          cargo run --release -p omegaflow-harvest --bin usgs_comcat_compiler -- --ci-mode
