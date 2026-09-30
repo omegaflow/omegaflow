@@ -3,7 +3,7 @@
   session: River-Folge 72
   class: handover
   date: 2026-09-30
-  sha256: e4f1609354cfbae028c48b89cc1f4077ca93c52dbee6eaba34dc2447efb29f1d
+  sha256: f62acf89f7c33383488d054e4c74a3e4798a462141a9e0f6858c0ffa23597759
   status: live
 -->
 # Handover — River-Folge 72 (2026-09-30)
@@ -45,6 +45,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 „hast du alles bis zur kante geplant" | 2026-09-30 | Operator (Session, River 70 — Kanten-Prüfung)
 „musste rebalancen" | 2026-09-30 | Operator (Session, River 70 — Balance)
 „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher … Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort." | 2026-09-30 | Operator (Session, River 72 — Consent/Delegation)
+„verschleppen ist verboten" | 2026-09-30 | Operator (Session, River 72 — die drei offenen Punkte an die Kante gearbeitet: #112/#13 geschlossen, σ-Asset an Mountain geroutet, flyby re-gemessen)
 
 ## Adressierte Blöcke — gefaltet 2026-09-30
 
@@ -53,13 +54,13 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 - **mycelium-folge210** (`te-gate` #112 + ci-check): #112 rot bestätigt; der
   River-Entscheid Phase-vs-Arx-Switch ist im Rat-Verdikt (Phasen-Null, 128 Trials)
   gefallen und umgesetzt — kein neuer Bau.
-- **mycelium-folge211** (`te-gate` #112/#13/#43 + ci-check GPU-Test): #112 rot
-  bestätigt; **#43 geschlossen** (gemessen via `gh issue view 43` = CLOSED, 2026-09-30);
-  #112/#13 offen bis zum Lauf `36696336996`; die vier GPU-Test-Reds sind river70
-  geheilt (`shaders.rs`/`te.rs`), Bestätigung am neuen `ci-check`; der
-  `open_points_check`-Test `extracts_bold_keywords` ist am HEAD `f4f271277` geheilt
-  (river-folge71). Der eigene `## An mycelium`-Block (Test-Red) ist damit beantwortet
-  und entfällt.
+- **mycelium-folge211** (`te-gate` #112/#13/#43 + ci-check GPU-Test): **#112, #13 und
+  #43 sind geschlossen** (gemessen 2026-09-30 via `gh issue view`) — #43 grün in
+  `measure-gates`; #112: in `36610589166` fiel einzig `fpr-membrane` (16/18 grün), bei
+  128 Trials (Rat) in `36696336996` grün; #13: n=1000-FPR-Boden in `35893882101`
+  geschlossen (`external-state.md:29`). Die vier GPU-Test-Reds sind river70 geheilt
+  (`shaders.rs`/`te.rs`); der `open_points_check`-Test `extracts_bold_keywords` ist am
+  HEAD `f4f271277` geheilt.
 
 ## Haus — River
 
@@ -73,32 +74,15 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 
 ## Offen (aufgeschlüsselt)
 
-### TE-Null-Riss — 128er-Lauf läuft, bindende Messung ausstehend (#112 / #13)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `te-gate`-Lauf `36696336996` @`8ab227d6e` (128 Trials) am Abschluss
-- **Lage:** (gemessen 2026-09-30 via `ci_manage jobs 36696336996` / `gh issue view`) der
-  128er-Phasen-Null hält (`fpr-membrane`/`fpr-diagnostic`/`probe`/`flare`/`mi-lag`/
-  `ksg-k-gate`/`lag-sweep`/`fpr-binned` success); `conditional-arx`/`arx-sweep`
-  in_progress, der Rest queued. `#43` = CLOSED; `#112`/`#13` = OPEN.
-- **Blockade:** keine
-- **Braucht:** bei Abschluss `ci_manage log 36696336996`; grün schließt #112/#13
-  (`gh issue close 112`, `gh issue close 13`), rot öffnet den Arx-Switch (vier Gates
-  umschreiben).
-
-### Rätsel Ⅰ — Jeans-Engine, σ-Asset
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Mountain re-manifestiert das 56-Byte-`dr3_stars.bin`
-- **Lage:** (gemessen 2026-09-29) der Parser liest σ nur bei 56-B-Stride
-  (`spatial.rs:410-429`); CDN `dr3_stars.bin` 44-B → σ = `None`.
-- **Blockade:** Asset-Version (Mountain)
-- **Braucht:** Mountain re-manifestiert; danach `archive_search --sniff <url>` + σ-Zensus.
-
 ### flyby-path2-recon
 - **Status:** wartend | **Bindung:** eigen (Aufenthalt `state/zustand/wartend.φ:28`)
-- **Trigger:** ESOC publiziert einen SKD `v474+`
-- **Lage:** (gemessen 2026-09-29, River 62) ABSENT; Enumeration endet `juice_cog_000114_…`
+- **Trigger:** ESOC publiziert einen dedizierten `*recon*`-SPK (SKD `v474+`)
+- **Lage:** (gemessen 2026-09-30 via `sfetch --links
+  spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/`) 204 SPK im Verzeichnis, **0 mit
+  `*recon*`**; jüngster CoG `juice_cog_000114_230416_261003_v01.bsp` bleibt eine
+  Vorhersage, keine Rekonstruktion.
 - **Blockade:** Publikation fehlt
-- **Braucht:** nach Publikation `flyby_ephemeris_gate --recon …`
+- **Braucht:** nach Publikation `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`
 
 ## An future
 
@@ -128,6 +112,13 @@ Registrierung; Mycelium dispatcht `usgs-comcat-cdn`.
 `d_start = d_end−120 d`) obwohl die Quelle bis 1977-11-06 reicht (`phi/harvest.φ:271`).
 Braucht: den Compiler auf das volle Record öffnen + re-manifestieren (`tao-wnd-cdn`).
 
+**Rätsel Ⅰ — σ-Asset `dr3_stars.bin` (56-B-Stride).** Der Parser liest σ nur bei
+56-B-Stride (`src/archivar/spatial.rs:410-429`); `gaia-cdn.yml` ruft `tap_compiler
+--star-bin` mit 13 Spalten **ohne σ** → 44-B-Asset, σ = `None`. Port = Mountain
+(`tap_compiler` `--star-bin`: σ-Spalte + 56-B-Stride), Manifestation = Mycelium
+(`gaia-cdn`). Braucht: den Compiler um die σ-Spalte erweitern, dann re-manifestieren;
+danach `archive_search --sniff <url>` + σ-Zensus (River).
+
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Pfad-begrenzte Commit-Pfade
@@ -140,4 +131,4 @@ dieses Atoms:
 
 Fremde uncommittete Arbeit unangetastet (gemessen 2026-09-30 via `git status`).
 
-## Burn: open 0.00 · close 0.09
+## Burn: open 0.00 · close 0.13
