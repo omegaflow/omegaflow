@@ -634,6 +634,7 @@ fn main() {
     let bodies_stable: &[(&str, &str)] = &[
         ("Apophis", "apophis"),
         ("Bennu", "bennu"),
+        ("2025143", "itokawa"),
         ("90000031", "encke"),
         ("506", "himalia"),
         ("610", "janus"),

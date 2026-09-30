@@ -406,7 +406,7 @@ note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777 + Label-Fetc
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki VCO-rs (JAXA/ISAS) — 2026-09-30: `.lbl` = PDS3 fixed-length (RECORD_BYTES 276, ^DOPPLER_TABLE), `.lblx` = PDS4; sources.φ-Block `pds3_fixed_width` steht; offen: Reader-Alias + Harvest-Block. H212 pds4_binary war der Riss.
+note Akatsuki VCO-rs (JAXA/ISAS) 2026-09-30: sources.φ `pds3_fixed_width` + harvest `pds3_fixed_width_darts` stehen (RECORD_BYTES 276, ^DOPPLER_TABLE); Reader-Key bleibt; offen: Workflow pds3-fixed-width-darts-cdn.yml (Mycelium).
 
 pending
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
