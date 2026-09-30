@@ -3,7 +3,7 @@
   session: Mycelium-Folge 213
   class: handover
   date: 2026-09-30
-  sha256: 10952187b147f862d0ef99a6be7db3dd20c23179652a6a66dd52a085c3e1271f
+  sha256: b0c3ef6ab85b5fae088bb1d5b47a9471918c2b95d4448f131129782dede9bc00
   status: live
 -->
 # Handover — Mycelium-Folge 213 (2026-09-30)
@@ -148,10 +148,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### Kaguya Re-Manifest (aus mountain-213)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `pds3-binary-cdn`
-- **Lage:** (gemessen 2026-09-30 via mountain-213) Kaguya-CD-Asset ist noch P3BN v1 (31 680 B, nur START_STEP); Mountain hat den `pds3_binary`-Array-Arm (P3BV) gebaut → neu 8 200 300 B, sha256 `772e51d1…`.
+- **Trigger:** Lauf-Ende `pds3-binary-cdn 36738143122`
+- **Lage:** (gemessen 2026-09-30 via mountain-213) Kaguya-CDN-Asset ist noch P3BN v1 (31 680 B, nur START_STEP); Mountain hat den `pds3_binary`-Array-Arm (P3BV) gebaut → neu 8 200 300 B, sha256 `772e51d1…`. Re-Dispatch gefeuert (2026-09-30).
 - **Blockade:** keine
-- **Braucht:** `gh workflow run pds3-binary-cdn.yml` nach Mountains Commit; dann `--verdict` des Assets.
+- **Braucht:** `--verdict` des Assets nach Lauf-Ende.
+
+### Akatsuki vco-rs-cdn
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `vco-rs-cdn 36738137783`
+- **Lage:** (gemessen 2026-09-30) `vco-rs-cdn.yml` (Mycelium-213) dispatcht; der L2-`.lblx`-Pfad ist die gemessene Route; `ttl`/`field` gesetzt (Mountain-213).
+- **Blockade:** keine
+- **Braucht:** Lauf-Ende lesen; bei success Asset-`sha256` in den `sources.φ`-Block.
 
 ### CDSE-CCM Auth-Asset (aus mountain-213)
 - **Status:** wartend | **Bindung:** eigen
