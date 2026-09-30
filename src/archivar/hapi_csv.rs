@@ -1,5 +1,6 @@
 use crate::archivar::json::{JsonVal, parse_json};
 use crate::lsk::{LeapSeconds, days_from_civil};
+use std::collections::HashMap;
 
 pub const MAGIC: [u8; 4] = *b"HCV1";
 pub const HEADER_BYTES: usize = 12;
@@ -10,6 +11,7 @@ pub struct HapiParam {
     pub name: String,
     pub units: String,
     pub fill: Option<f64>,
+    pub positive: bool,
 }
 
 pub fn write_bin(nchan: u32, records: &[(f64, f64, u32)]) -> Vec<u8> {
@@ -82,6 +84,7 @@ pub fn parse_info(text: &str) -> Option<Vec<HapiParam>> {
             name: name.clone(),
             units,
             fill,
+            positive: false,
         });
     }
     if out.is_empty() { None } else { Some(out) }
@@ -173,10 +176,61 @@ pub fn series_from_csv(csv: &str, params: &[HapiParam], lsk: &LeapSeconds) -> Ve
             {
                 continue;
             }
+            if param.positive && !(v > 0.0) {
+                continue;
+            }
             out.push((t, v, comp));
         }
     }
     out
+}
+
+pub fn csv_envelope(body: &str, names: &[String], max_rows: Option<usize>) -> Option<JsonVal> {
+    let mut rows: Vec<JsonVal> = Vec::new();
+    let mut width = 0usize;
+    for line in body.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let cells: Vec<&str> = t.split(',').map(str::trim).collect();
+        if width == 0 {
+            if cells.len() < 2 {
+                return None;
+            }
+            width = cells.len();
+        } else if cells.len() != width {
+            break;
+        }
+        let row: Vec<JsonVal> = cells
+            .iter()
+            .map(|c| match c.parse::<f64>() {
+                Ok(v) if v.is_finite() => JsonVal::Num(v),
+                _ => JsonVal::Str(c.to_string()),
+            })
+            .collect();
+        rows.push(JsonVal::Arr(row));
+        if max_rows.is_some_and(|m| rows.len() >= m) {
+            break;
+        }
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    let mut root = HashMap::new();
+    if !names.is_empty() {
+        let params: Vec<JsonVal> = names
+            .iter()
+            .map(|n| {
+                let mut entry = HashMap::new();
+                entry.insert("name".to_string(), JsonVal::Str(n.clone()));
+                JsonVal::Obj(entry)
+            })
+            .collect();
+        root.insert("parameters".to_string(), JsonVal::Arr(params));
+    }
+    root.insert("data".to_string(), JsonVal::Arr(rows));
+    Some(JsonVal::Obj(root))
 }
 
 #[cfg(test)]
@@ -240,11 +294,13 @@ mod tests {
                 name: "time".into(),
                 units: "UTC".into(),
                 fill: None,
+                positive: false,
             },
             HapiParam {
                 name: "B_mag".into(),
                 units: "nT".into(),
                 fill: None,
+                positive: false,
             },
         ];
         let rows = series_from_csv(csv, &params, &lsk());
@@ -262,21 +318,91 @@ mod tests {
                 name: "time".into(),
                 units: "UTC".into(),
                 fill: None,
+                positive: false,
             },
             HapiParam {
                 name: "a".into(),
                 units: "nT".into(),
                 fill: None,
+                positive: false,
             },
             HapiParam {
                 name: "b".into(),
                 units: "nT".into(),
                 fill: Some(99999.0),
+                positive: false,
             },
         ];
         let rows = series_from_csv(csv, &params, &lsk());
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].2, 1);
+    }
+
+    #[test]
+    fn positive_channel_drops_non_positive_values_keeps_signed_channels() {
+        let csv = "2016-12-11T13:00:30.000, -5.0, -31.0\n2016-12-11T13:01:30.000, 162.5, -30.5\n";
+        let params = vec![
+            HapiParam {
+                name: "time".into(),
+                units: "UTC".into(),
+                fill: None,
+                positive: false,
+            },
+            HapiParam {
+                name: "magnitude".into(),
+                units: "nT".into(),
+                fill: None,
+                positive: true,
+            },
+            HapiParam {
+                name: "X".into(),
+                units: "nT".into(),
+                fill: None,
+                positive: false,
+            },
+        ];
+        let rows = series_from_csv(csv, &params, &lsk());
+        let vals: Vec<(f64, u32)> = rows.iter().map(|(_, v, c)| (*v, *c)).collect();
+        assert!(vals.contains(&(162.5, 1)));
+        assert!(vals.contains(&(-31.0, 2)));
+        assert!(vals.contains(&(-30.5, 2)));
+        assert_eq!(vals.iter().filter(|(_, c)| *c == 1).count(), 1);
+    }
+
+    #[test]
+    fn envelope_builds_columnar_shape_with_names_and_absent_cells() {
+        let body = "2008-09-10T00:00:00.500, 1.62546e+02,\n2008-09-10T00:00:01.500, 1.62537e+02,-3.10e+01\n";
+        let names = vec!["time".into(), "magnitude".into(), "X".into()];
+        let JsonVal::Obj(root) = csv_envelope(body, &names, None).expect("envelope parses") else {
+            panic!("envelope is not an object");
+        };
+        let JsonVal::Arr(data) = root.get("data").expect("data present") else {
+            panic!("data is not an array");
+        };
+        assert_eq!(data.len(), 2);
+        let JsonVal::Arr(row) = &data[0] else {
+            panic!("row is not an array");
+        };
+        assert!(matches!(row[0], JsonVal::Str(_)));
+        assert!(matches!(row[1], JsonVal::Num(v) if v > 0.0));
+        assert!(matches!(row[2], JsonVal::Str(ref s) if s.is_empty()));
+        let JsonVal::Arr(params) = root.get("parameters").expect("parameters present") else {
+            panic!("parameters is not an array");
+        };
+        assert_eq!(params.len(), 3);
+    }
+
+    #[test]
+    fn envelope_stops_at_ragged_row_and_reads_headers_when_present() {
+        let body = "# parameters: time, B_mag\n2016-12-11T13:00:30.000, 452.15\n2016-12-11T13:01:30.000, 454.82, 1.0\n";
+        let JsonVal::Obj(root) = csv_envelope(body, &[], None).expect("envelope parses") else {
+            panic!("envelope is not an object");
+        };
+        let JsonVal::Arr(data) = root.get("data").expect("data present") else {
+            panic!("data is not an array");
+        };
+        assert_eq!(data.len(), 1);
+        assert!(root.get("parameters").is_none());
     }
 
     #[test]

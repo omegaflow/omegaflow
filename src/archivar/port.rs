@@ -1375,53 +1375,21 @@ pub fn hapi_draft_fields_csv(
     if !url.contains("/hapi/") {
         return false;
     }
-    let mut width = 0usize;
-    let mut finite: Vec<bool> = Vec::new();
-    let mut rows: Vec<JsonVal> = Vec::new();
-    for line in raw.lines() {
-        let t = line.trim();
-        if t.is_empty() || t.starts_with('#') {
-            continue;
-        }
-        let cells: Vec<&str> = t.split(',').map(str::trim).collect();
-        if cells.iter().any(|c| c.is_empty()) {
-            break;
-        }
-        if width == 0 {
-            if cells.len() < 2 || !hapi_csv_time_like(cells[0]) {
-                return false;
-            }
-            width = cells.len();
-            finite = vec![false; width];
-        }
-        if cells.len() != width {
-            break;
-        }
-        let row: Vec<JsonVal> = cells
-            .iter()
-            .map(|c| match c.parse::<f64>() {
-                Ok(v) => JsonVal::Num(v),
-                Err(_) => JsonVal::Str(c.to_string()),
-            })
-            .collect();
-        for (i, cell) in row.iter().enumerate().skip(1) {
-            if let JsonVal::Num(v) = cell
-                && v.is_finite()
-            {
-                finite[i] = true;
-            }
-        }
-        rows.push(JsonVal::Arr(row));
-        if finite.iter().skip(1).all(|f| *f) || rows.len() >= 4096 {
-            break;
-        }
-    }
-    if rows.is_empty() {
+    let first = raw
+        .lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty() && !l.starts_with('#'));
+    let Some(first) = first else {
+        return false;
+    };
+    let cells: Vec<&str> = first.split(',').map(str::trim).collect();
+    if cells.len() < 2 || !hapi_csv_time_like(cells[0]) {
         return false;
     }
-    let mut root = HashMap::new();
-    root.insert("data".to_string(), JsonVal::Arr(rows));
-    hapi_draft_fields(url, &JsonVal::Obj(root), env, fields)
+    let Some(parsed) = hapi_csv::csv_envelope(raw, &[], Some(4096)) else {
+        return false;
+    };
+    hapi_draft_fields(url, &parsed, env, fields)
 }
 
 pub fn hapi_draft_fields(
