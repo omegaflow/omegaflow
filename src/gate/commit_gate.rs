@@ -1527,12 +1527,40 @@ fn check_handover_dupe(path: &str, content: &str) -> Option<Verdict> {
     })
 }
 
-const FUTURE_BURN_CAP_USD: f64 = 0.125;
+pub const BURN_CAP_USD: f64 = 0.125;
+pub const BURN_CAP_HARD_USD: f64 = 0.5;
+
+fn burn_token_pos(body: &str, token: &str) -> Option<usize> {
+    let bytes = body.as_bytes();
+    let mut i = 0;
+    while i + token.len() <= bytes.len() {
+        if body.get(i..i + token.len()) == Some(token) {
+            let before_ok = i == 0 || !(bytes[i - 1] as char).is_ascii_alphanumeric();
+            let after = i + token.len();
+            let after_ok = after >= bytes.len() || !(bytes[after] as char).is_ascii_alphanumeric();
+            if before_ok && after_ok {
+                return Some(i);
+            }
+        }
+        i += 1;
+    }
+    None
+}
+
+fn burn_reason_after(body: &str, cap_pos: usize) -> bool {
+    let rest = &body[cap_pos + "cap".len()..];
+    for marker in ["Grund:", "reason:"] {
+        if let Some(p) = rest.find(marker) {
+            if !rest[p + marker.len()..].trim().is_empty() {
+                return true;
+            }
+        }
+    }
+    false
+}
 
 pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
-    if handover_line_owner(path) != Some("future".to_string()) {
-        return None;
-    }
+    handover_line_owner(path)?;
     for (idx, line) in content.lines().enumerate() {
         let trimmed = line.trim_start();
         if !trimmed.starts_with("## Burn") {
@@ -1544,11 +1572,13 @@ pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
             .trim();
         let mut open: Option<f64> = None;
         let mut close: Option<f64> = None;
+        let mut cap: Option<f64> = None;
         for part in body.split('·') {
             let mut tokens = part.split_whitespace();
             match (tokens.next(), tokens.next()) {
                 (Some("open"), Some(v)) => open = v.parse::<f64>().ok(),
                 (Some("close"), Some(v)) => close = v.parse::<f64>().ok(),
+                (Some("cap"), Some(v)) => cap = v.parse::<f64>().ok(),
                 _ => {}
             }
         }
@@ -1561,13 +1591,65 @@ pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
                 quote: clip(line, 90),
             });
         };
-        if close_value > FUTURE_BURN_CAP_USD {
+        if let Some(cap_value) = cap {
+            let cap_pos = match burn_token_pos(body, "cap") {
+                Some(p) => p,
+                None => {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "burn-line-absent".to_string(),
+                        line: idx + 1,
+                        feedback: feedback("burn-line-absent").to_string(),
+                        quote: clip(line, 90),
+                    });
+                }
+            };
+            if !burn_reason_after(body, cap_pos) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "burn-cap-unreasoned".to_string(),
+                    line: idx + 1,
+                    feedback: feedback("burn-cap-unreasoned").to_string(),
+                    quote: clip(line, 90),
+                });
+            }
+            if cap_value > BURN_CAP_HARD_USD {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "burn-cap-above-hard".to_string(),
+                    line: idx + 1,
+                    feedback: feedback("burn-cap-above-hard").to_string(),
+                    quote: clip(line, 90),
+                });
+            }
+            let effective_cap = cap_value;
+            if close_value > effective_cap {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "burn-over-cap".to_string(),
+                    line: idx + 1,
+                    feedback: feedback("burn-over-cap").to_string(),
+                    quote: format!("close {close_value} > {effective_cap}"),
+                });
+            }
+            return None;
+        }
+        if burn_token_pos(body, "cap").is_some() {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "burn-line-absent".to_string(),
+                line: idx + 1,
+                feedback: feedback("burn-line-absent").to_string(),
+                quote: clip(line, 90),
+            });
+        }
+        if close_value > BURN_CAP_USD {
             return Some(Verdict {
                 severity: Severity::Hard,
                 rule: "burn-over-cap".to_string(),
                 line: idx + 1,
                 feedback: feedback("burn-over-cap").to_string(),
-                quote: format!("close {close_value} > {FUTURE_BURN_CAP_USD}"),
+                quote: format!("close {close_value} > {BURN_CAP_USD}"),
             });
         }
         return None;
@@ -4650,31 +4732,47 @@ mod tests {
 
     #[test]
     fn fn_gate_burn_line_absent_blocked() {
-        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let path = "docs/handover/handover-2026-09-30-mountain-folge209.md";
         let content = "## Trigger\n\nsome text without a burn line\n";
         let v = check_handover_burn(path, content).expect("absent burn line must be blocked");
         assert_eq!(v.rule, "burn-line-absent");
     }
 
     #[test]
-    fn fn_gate_burn_over_cap_blocked() {
+    fn fn_gate_burn_over_default_blocked() {
         let path = "docs/handover/handover-2026-09-30-future-folge158.md";
-        let content = "## Burn: open 0.20 · close 0.30\n";
-        let v = check_handover_burn(path, content).expect("close over cap must be blocked");
+        let content = "## Burn: open 0.0 · close 0.2\n";
+        let v = check_handover_burn(path, content).expect("close over default cap must be blocked");
         assert_eq!(v.rule, "burn-over-cap");
+    }
+
+    #[test]
+    fn fn_gate_burn_declared_cap_with_reason_passes() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Burn: open 0.0 · close 0.4 · cap 0.45 — Grund: novel parser\n";
+        assert!(check_handover_burn(path, content).is_none());
+    }
+
+    #[test]
+    fn fn_gate_burn_declared_cap_without_reason_blocked() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Burn: open 0.0 · close 0.4 · cap 0.45\n";
+        let v = check_handover_burn(path, content).expect("cap without reason must be blocked");
+        assert_eq!(v.rule, "burn-cap-unreasoned");
+    }
+
+    #[test]
+    fn fn_gate_burn_declared_cap_above_hard_blocked() {
+        let path = "docs/handover/handover-2026-09-30-future-folge158.md";
+        let content = "## Burn: open 0.0 · close 0.4 · cap 0.9 — Grund: x\n";
+        let v = check_handover_burn(path, content).expect("cap above hard ceiling must be blocked");
+        assert_eq!(v.rule, "burn-cap-above-hard");
     }
 
     #[test]
     fn fn_gate_burn_clean_passes() {
         let path = "docs/handover/handover-2026-09-30-future-folge158.md";
         let content = "## Burn: open 0.10 · close 0.11\n";
-        assert!(check_handover_burn(path, content).is_none());
-    }
-
-    #[test]
-    fn fn_gate_burn_non_future_ignored() {
-        let path = "docs/handover/handover-2026-09-30-mountain-folge209.md";
-        let content = "## Trigger\n\nsome text without a burn line\n";
         assert!(check_handover_burn(path, content).is_none());
     }
 }
