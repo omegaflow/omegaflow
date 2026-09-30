@@ -3,7 +3,7 @@
   session: River-Folge 73
   class: handover
   date: 2026-09-30
-  sha256: e56c7623957ea35a317602e45ce9054de8c2aed0a379c54f2849914845ec6fae
+  sha256: dfc1cbab5cc1a9d76bec0ae37400272a2e00e204e7ef48dabd792b6c65563de3
   status: live
 -->
 # Handover — River-Folge 73 (2026-09-30)
@@ -77,7 +77,8 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
   `tools/measure/src/bin/enso_blatt_probe.rs` trägt das 4-Kanal-Modell
   (Wnd/Quake/Bz/SST), die gerichtete Paar-fam und den Konditionierungs-Arm
   `cTE(Bz→SST|Wnd)` über die vorhandene `conditional_embedded_te_phase`; Wnd
-  (17391 d), Bz (16646 d), SST (19950 d) aktiv, Quake `pending`.
+  (17391 d), Bz (16646 d), SST (19950 d) aktiv, Quake `pending`. Dispatch
+  2026-09-30: `enso-probe 36735901997` @`e02574a20`.
 - **Blockade:** die 100-Surrogat-Messung ist ein schwerer Lauf → **CI**, nie lokal
   (gemessen 2026-09-30: ein lokaler `cargo run` lief >300 s und musste abgebrochen
   werden — der verbotene Vordergrund-Eingriff).
