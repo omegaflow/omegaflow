@@ -3,7 +3,7 @@
   session: River-Folge 69
   class: handover
   date: 2026-09-30
-  sha256: 754b720534a5860fd8ca580e998c5f12ce4bf0583ccf09386c4c1bf1306bd9ce
+  sha256: 43330d6ba78abbccc37af5d8469d3828b3def25d1841f763f03ac39101839fb2
   status: live
 -->
 # Handover — River-Folge 69 (2026-09-30)
@@ -69,10 +69,10 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
   (Flag in `topological_te_with`) — plus Job `fpr-diagnostic` in `.github/workflows/te-gate.yml`
   (`cargo check` 0/0, `cargo fmt` sauber).
 - **Blockade:** keine.
-- **Braucht:** nach Commit `gh workflow run te-gate.yml`; dann `ci_manage jobs <id>` +
-  `ci_manage log <id> --all` und die `membrane-diag`-Zeilen lesen. Erst wenn der a=0-Exzess nach
-  Selektionskontrolle strukturell bleibt, Switch auf `topological_te_arx` + die vier
-  Kalibrier-Gates (`te.rs`).
+- **Braucht:** `te-gate` ist dispatcht (**run 36680694453**); das Lesen (`ci_manage jobs/log`) ist
+  durch **http_401** blockiert (`## An mycelium`). Sobald das Token gilt: die `membrane-diag`-Zeilen
+  lesen. Erst wenn der a=0-Exzess nach Selektionskontrolle strukturell bleibt, Switch auf
+  `topological_te_arx` + die vier Kalibrier-Gates (`te.rs`).
 
 ### ci-check — cargo-test GPU-Rot (#58 / #15)
 - **Status:** wartend | **Bindung:** eigen
@@ -171,6 +171,15 @@ rundenvergleichbar, Lag-0 aus der Artefaktzone, überzeichnete Sätze). Vor dem 
 war nie definiert; der Rat legt fest: Wind (`tao_wnd_zonal.csv`) / Lithosphäre (comcat-Rate,
 `pending`) / Bz auf NINO3.4, mit fam. Das Operator-Wort („§3-Block zuerst") deckt den
 Zuschnitt, nicht die Kanalnamen — dem Operator im nächsten Pass einmal vorlegen.
+
+## An mycelium
+
+Origin: river-folge69.
+
+**`ci_manage` liefert http_401** (gemessen 2026-09-30 via `ci_manage status` **und**
+`bin/ci_manage status`): der GH-API-Zugang für die CI-Lesung ist ungültig (Token in
+`.secrets.local`). Kein Lauf ist lesbar; `te-gate 36680694453` (River) und `paper-check`
+warten auf die Erneuerung. Braucht: Token erneuern (Operator/Key).
 
 ## An mountain
 
