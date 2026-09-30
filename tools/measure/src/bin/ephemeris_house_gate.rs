@@ -28,7 +28,7 @@ fn arg_or(args: &[String], flag: &str, default: &str) -> String {
     }
 }
 
-fn load_earth(word: &str, path: &str) -> Option<HashMap<String, BodyEphemeris>> {
+fn load_house(word: &str, path: &str, body: &str) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
         Err(_) => {
@@ -44,7 +44,7 @@ fn load_earth(word: &str, path: &str) -> Option<HashMap<String, BodyEphemeris>> 
         }
     };
     let mut map = HashMap::new();
-    map.insert("earth".to_string(), e);
+    map.insert(body.to_string(), e);
     Some(map)
 }
 
@@ -86,6 +86,7 @@ fn compute_window(
 fn max_dev_km(
     a: &HashMap<String, BodyEphemeris>,
     b: &HashMap<String, BodyEphemeris>,
+    body: &str,
     t_lo: f64,
     t_hi: f64,
     step: f64,
@@ -95,14 +96,14 @@ fn max_dev_km(
     let mut void = 0usize;
     for i in 0..n {
         let t = t_lo + i as f64 * step;
-        let pa = match body_barycenter_position("earth", t, a) {
+        let pa = match body_barycenter_position(body, t, a) {
             Some(p) => p,
             None => {
                 void += 1;
                 continue;
             }
         };
-        let pb = match body_barycenter_position("earth", t, b) {
+        let pb = match body_barycenter_position(body, t, b) {
             Some(p) => p,
             None => {
                 void += 1;
@@ -128,13 +129,29 @@ fn max_dev_km(
 fn pair_dev(
     a: &Option<HashMap<String, BodyEphemeris>>,
     b: &Option<HashMap<String, BodyEphemeris>>,
+    body: &str,
     window: Option<(f64, f64)>,
     step: f64,
 ) -> (Option<f64>, usize) {
     match (a, b, window) {
-        (Some(ma), Some(mb), Some((lo, hi))) => max_dev_km(ma, mb, lo, hi, step),
+        (Some(ma), Some(mb), Some((lo, hi))) => max_dev_km(ma, mb, body, lo, hi, step),
         _ => (None, 0),
     }
+}
+
+fn diff_vec_km(
+    a: &HashMap<String, BodyEphemeris>,
+    b: &HashMap<String, BodyEphemeris>,
+    body: &str,
+    t: f64,
+) -> Option<[f64; 3]> {
+    let pa = body_barycenter_position(body, t, a)?;
+    let pb = body_barycenter_position(body, t, b)?;
+    Some([
+        (pa[0] - pb[0]) / 1000.0,
+        (pa[1] - pb[1]) / 1000.0,
+        (pa[2] - pb[2]) / 1000.0,
+    ])
 }
 
 fn num_label(v: Option<f64>) -> String {
@@ -152,6 +169,7 @@ fn num_json(v: Option<f64>) -> String {
 }
 
 fn register_json(
+    body: &str,
     window_days: f64,
     step_hours: f64,
     perigee_tdb: Option<f64>,
@@ -167,6 +185,7 @@ fn register_json(
     s.push_str("{\n");
     s.push_str("  \"gate\": \"ephemeris_house_gate\",\n");
     s.push_str("  \"flyby\": \"juice\",\n");
+    s.push_str(&format!("  \"body\": \"{body}\",\n"));
     s.push_str(&format!("  \"perigee_utc\": \"{PERIGEE_UTC}\",\n"));
     s.push_str(&format!("  \"perigee_tdb\": {},\n", num_json(perigee_tdb)));
     s.push_str(&format!("  \"window_days\": {},\n", window_days));
@@ -189,6 +208,7 @@ fn main() {
     let inpop_path = arg_or(&args, "--inpop", DEFAULT_INPOP);
     let epm_path = arg_or(&args, "--epm", DEFAULT_EPM);
     let register_path = arg_or(&args, "--register", DEFAULT_REGISTER);
+    let body = arg_or(&args, "--body", "earth");
 
     let window_days: f64 = match arg_str(&args, "--window-days") {
         Some(s) => match s.parse::<f64>() {
@@ -226,20 +246,20 @@ fn main() {
         _ => None,
     };
 
-    let de = load_earth("de", &de_path);
-    let inpop = load_earth("inpop", &inpop_path);
-    let epm = load_earth("epm", &epm_path);
+    let de = load_house("de", &de_path, &body);
+    let inpop = load_house("inpop", &inpop_path, &body);
+    let epm = load_house("epm", &epm_path, &body);
 
     let step = step_hours * HOUR;
     let nominal = perigee_tdb.map(|tp| (tp - window_days * DAY, tp + window_days * DAY));
     let window = compute_window(&[&de, &inpop, &epm], nominal);
 
-    let (de_inpop, void_de_inpop) = pair_dev(&de, &inpop, window, step);
-    let (de_epm, void_de_epm) = pair_dev(&de, &epm, window, step);
-    let (inpop_epm, void_inpop_epm) = pair_dev(&inpop, &epm, window, step);
+    let (de_inpop, void_de_inpop) = pair_dev(&de, &inpop, &body, window, step);
+    let (de_epm, void_de_epm) = pair_dev(&de, &epm, &body, window, step);
+    let (inpop_epm, void_inpop_epm) = pair_dev(&inpop, &epm, &body, window, step);
 
     println!(
-        "ephemeris_house_gate — Earth barycenter across DE / INPOP / EPM, flyby {PERIGEE_UTC}"
+        "ephemeris_house_gate — {body} barycenter across DE / INPOP / EPM, flyby {PERIGEE_UTC}"
     );
     match perigee_tdb {
         Some(t) => println!("perigee tdb: {t}"),
@@ -251,9 +271,9 @@ fn main() {
         ),
         None => println!("window: pending — the three lines carry no common arc"),
     }
-    println!("Δ DE vs INPOP (Earth): {} km", num_label(de_inpop));
-    println!("Δ DE vs EPM (Earth): {} km", num_label(de_epm));
-    println!("Δ INPOP vs EPM (Earth): {} km", num_label(inpop_epm));
+    println!("Δ DE vs INPOP ({body}): {} km", num_label(de_inpop));
+    println!("Δ DE vs EPM ({body}): {} km", num_label(de_epm));
+    println!("Δ INPOP vs EPM ({body}): {} km", num_label(inpop_epm));
     for (word, void) in [
         ("Δ DE vs INPOP", void_de_inpop),
         ("Δ DE vs EPM", void_de_epm),
@@ -264,7 +284,25 @@ fn main() {
         }
     }
 
+    if let Some(t) = perigee_tdb {
+        for (w, a, b) in [
+            ("INPOP-EPM", &inpop, &epm),
+            ("DE-EPM", &de, &epm),
+            ("DE-INPOP", &de, &inpop),
+        ] {
+            if let (Some(ma), Some(mb)) = (a, b) {
+                if let Some(v) = diff_vec_km(ma, mb, &body, t) {
+                    println!(
+                        "vec {w} ({body}) at perigee: {:.4} {:.4} {:.4} km",
+                        v[0], v[1], v[2]
+                    );
+                }
+            }
+        }
+    }
+
     let json = register_json(
+        &body,
         window_days,
         step_hours,
         perigee_tdb,
