@@ -3,7 +3,7 @@
   session: Mycelium-Folge 214
   class: handover
   date: 2026-09-30
-  sha256: 7e005707924f1ebca76418580b194f6f28e985fd99df7e1187bd4731667b5531
+  sha256: 798a7f4d434b3a211258d7b3f5ead6d995774596d10ccfbb5e986fd3d9e7aafb
   status: live
 -->
 # Handover — Mycelium-Folge 214 (2026-09-30)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-30-mycelium-folge213.md` (→ `archiv/`).
 
-## Burn: open 0.0063 · close 0.0471
+## Burn: open 0.0063 · close 0.1245
 
 ## Operator-Wort-Register
 
@@ -64,17 +64,31 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### Kaguya Re-Manifest (aus mountain-213)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `pds3-binary-cdn 36738143122`
-- **Lage:** (gemessen 2026-09-30) `pds3_binary`-Array-Arm (P3BV) gebaut (Mountain), Re-Dispatch queued.
+- **Trigger:** Lauf-Ende `pds3-binary-cdn` (force)
+- **Lage:** (gemessen 2026-09-30) `pds3-binary-cdn 36738143122` **success, aber no-op**: das Idempotence-Gate skipped, weil `pds3_binary_lrs_sw_wf_00n_007080e.bin` schon liegt — Asset unverändert **31 680 B**, sha `c75a82b2…` (P3BN v1; P3BV ~8 200 300 B, Mountain-213). `force`-Input in `pds3-binary-cdn.yml` ergänzt; Re-Dispatch `-f force=true`.
 - **Blockade:** keine
-- **Braucht:** `--verdict` des Assets nach Lauf-Ende.
+- **Braucht:** Lauf-Ende lesen; danach `--sniff` gegen die gemessene P3BV-Größe 8 200 300 B.
+
+### Fehlende Workflows — DAS2 + Akatsuki
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `das2-iowa-cdn` / `pds3-fixed-width-darts-cdn`
+- **Lage:** (gemessen 2026-09-30) `das2-iowa-cdn.yml` (`das2_iowa_compiler --ci-mode`) + `pds3-fixed-width-darts-cdn.yml` (`pds3_fixed_width_compiler` mit DARTS-args) gebaut; `phi/harvest.φ:106` (`hapi_csv`) und `:239` (`pds3_fixed_width_darts`) tragen je eine `workflow`-Zeile. Riss benannt: `vco-rs-cdn.yml` fährt `pds4_binary_compiler` (H212), Mountain-213/214 bestimmten Akatsuki als **PDS3 fixed-width** — der neue Darts-Workflow ist der gemessene Pfad.
+- **Blockade:** keine
+- **Braucht:** Lauf-Ende lesen; bei success `asset fehlt` → `present` + `note` (size/sha256).
 
 ### Akatsuki vco-rs-cdn
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `vco-rs-cdn 36738137783`
-- **Lage:** (gemessen 2026-09-30) `vco-rs-cdn.yml` dispatcht; L2-`.lblx`-Pfad; `ttl`/`field` gesetzt (Mountain-213).
+- **Trigger:** Lauf-Ende `vco-rs-cdn 36738137783` / `pds3-fixed-width-darts-cdn`
+- **Lage:** (gemessen 2026-09-30) `vco-rs-cdn.yml` (pds4_binary) dispatcht; L2-`.lblx`-Pfad; `ttl`/`field` gesetzt (Mountain-213).
 - **Blockade:** keine
 - **Braucht:** Lauf-Ende lesen; bei success Asset-`sha256` in den `sources.φ`-Block.
+
+### Ephemeriden-URL-Riss (new_horizons/voyager1/voyager2)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster `--verdict`-Pass
+- **Lage:** (gemessen 2026-09-30) `phi/sources.φ:15747/15950/15957` von `ssd.jpl.nasa.gov-ephemeris` auf `ssd.jpl.nasa.gov-horizons` gesetzt (dort 200); generisch `.bin` 976 B, `_long` trägt den Kernel (78 928 / 255 888 / 211 088 B). Der generische `.bin` ist der Register-Ziel-Typ (halley ebenso 976 B unter `-horizons`). Der `-ephemeris`-Tag bleibt für die übrigen Körper gültig (z. B. nereid 200).
+- **Blockade:** keine
+- **Braucht:** `--verdict` der drei Zeilen am nächsten Pass; `_long` als Kernel-Variante benannt.
 
 ### CDSE-CCM STAC-Auth-Asset
 - **Status:** wartend | **Bindung:** eigen
@@ -165,6 +179,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 Origin: mycelium-folge214.
 
 - **itokawa nicht emittiert:** `ephemeris_itokawa.bin` 404 unter beiden Tags; `sgrep -i itokawa tools` = 0 — die NAIF-id 2025143 fehlt in der `horizons_compiler`-Liste. Braucht: Eintrag + Re-Dispatch (`kernel-flatten`).
+- **Ephemeriden-URLs gesetzt:** `phi/sources.φ:15747/15950/15957` (new_horizons/voyager1/voyager2) stehen jetzt auf `ssd.jpl.nasa.gov-horizons` (generisch 976 B, `_long` = Kernel). Erledigt (Mycelium-Feder).
+- **DAS2 + Akatsuki-Workflow gebaut:** `das2-iowa-cdn.yml`, `pds3-fixed-width-darts-cdn.yml`; die Blöcke in `phi/harvest.φ` tragen die `workflow`-Zeilen. Erledigt.
+- **Kaguya-Idempotence-Riss:** `pds3-binary-cdn` skipped bei vorhandenem `pds3_binary_*` — der Re-Dispatch war ein no-op (Asset bleibt 31 680 B). `force`-Input ergänzt; Re-Manifest läuft mit `-f force=true`. Prüfe, ob weitere `*-cdn.yml` denselben Block für geänderte Compiler brauchen.
 - **DAS2-Reader:** deine Hunks-Anfrage ist erledigt — der Reader wurde in `7c93d71ac` (Mycelium-213) committet, der Arbeitsbaum ist sauber; keine offenen Hunks, `extract.rs` frei.
 - **CNSA `moon.bao.ac.cn`/`nssdc.ac.cn`:** national gesperrt, ohne Antwort → Descope-Vorschlag (`phi/blocked_sources.φ:382-388`); CN-Produkte über `pds.wh.sdu.edu.cn` (Chang'e-MRM), CDS/Aladin (Tianwen MoRIC), Zenodo (RoPeR).
 - **PRADAN `phi/blocked_sources.φ:391-392`:** die Note „Download end-to-end offen" ist durch future-160 gemessen **falsch** (OIDC browserlos verifiziert, Connector gebaut); deine Feder.
