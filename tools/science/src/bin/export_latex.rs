@@ -544,7 +544,7 @@ struct PaperReport {
     abstract_words: usize,
     abstract_ok: bool,
     body_sha: String,
-    header_sha: String,
+    header_sha: Option<String>,
     sha_match: bool,
     numbers_match: bool,
     number_count: usize,
@@ -556,18 +556,17 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
 
     let (body, hdr) = strip_and_parse_header(&src);
 
-    let title = hdr
-        .title
-        .clone()
-        .unwrap_or_else(|| "Pending title — the header carries no title".to_string());
+    let title = match &hdr.title {
+        Some(t) => t.clone(),
+        None => "Pending title — the header carries no title".to_string(),
+    };
     let (title_arxiv, _) = normalize_arxiv(&title);
     let title_raw_chars = title.chars().count();
     let title_arxiv_chars = title_arxiv.chars().count();
     let title_ok = title_arxiv_chars <= MAX_TITLE;
 
     let body_sha = sha256_hex(body.as_bytes());
-    let header_sha = hdr.sha256.clone().unwrap_or_default();
-    let sha_match = !header_sha.is_empty() && header_sha == body_sha;
+    let sha_match = hdr.sha256.as_deref() == Some(body_sha.as_str());
 
     let (commit_sha, commit_date) = git_head();
 
@@ -756,10 +755,14 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
     } else {
         assets.join(", ")
     };
-    let code_sha = commit_sha
-        .clone()
-        .unwrap_or_else(|| "pending — no git commit read".to_string());
-    let code_date = commit_date.unwrap_or_else(|| "pending".to_string());
+    let code_sha = match &commit_sha {
+        Some(s) => s.clone(),
+        None => "pending — no git commit read".to_string(),
+    };
+    let code_date = match commit_date {
+        Some(d) => d,
+        None => "pending".to_string(),
+    };
 
     let data_avail = format!(
         "Data availability. The raw artefacts are flat CDN assets ({}), \
@@ -781,16 +784,16 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
 
     let mut statements = String::new();
     statements.push_str("\\section*{Data Availability}\n");
-    statements.push_str(&data_avail);
+    statements.push_str(&escape_text(&data_avail));
     statements.push_str("\n\n");
     statements.push_str("\\section*{Code Availability}\n");
-    statements.push_str(&code_avail);
+    statements.push_str(&escape_text(&code_avail));
     statements.push_str("\n\n");
     statements.push_str("\\section*{Competing Interests}\n");
-    statements.push_str(competing);
+    statements.push_str(&escape_text(competing));
     statements.push_str("\n\n");
     statements.push_str("\\section*{Author Contributions}\n");
-    statements.push_str(authors);
+    statements.push_str(&escape_text(authors));
     statements.push_str("\n\n");
 
     let mut doc = String::new();
@@ -813,10 +816,10 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
     doc.push_str(&escape_text(&title_arxiv));
     doc.push_str("}\n");
     doc.push_str("\\author{omegaflow field}\n");
-    doc.push_str(&format!(
-        "\\date{{{}}}\n",
-        escape_text(&hdr.date.clone().unwrap_or_default())
-    ));
+    match &hdr.date {
+        Some(d) => doc.push_str(&format!("\\date{{{}}}\n", escape_text(d))),
+        None => doc.push_str("\\date{}\n"),
+    }
     doc.push_str("\\maketitle\n\n");
     if !abstract_text.is_empty() {
         doc.push_str("\\begin{abstract}\n");
@@ -893,7 +896,7 @@ fn build_document(md_path: &Path, out_dir: &Path, check_only: bool) -> PaperRepo
         abstract_words,
         abstract_ok,
         body_sha,
-        header_sha,
+        header_sha: hdr.sha256.clone(),
         sha_match,
         numbers_match,
         number_count,
@@ -989,6 +992,10 @@ fn main() {
             continue;
         }
         let r = build_document(p, &out_dir, check_only);
+        let header_sha_text = match &r.header_sha {
+            Some(s) => s.clone(),
+            None => String::from("absent"),
+        };
         println!(
             "{:42} {:>5}/{:>5}/{:>4} {:>4}/{:>4} {:>7} {:>5} {:>8}",
             r.slug,
@@ -999,7 +1006,7 @@ fn main() {
             if r.abstract_ok { "ok" } else { "long" },
             r.number_count,
             if r.numbers_match { "ok" } else { "DIFF" },
-            r.header_sha,
+            header_sha_text,
         );
         if !r.title_ok || !r.abstract_ok || !r.numbers_match || !r.sha_match {
             any_diff = true;
@@ -1011,11 +1018,7 @@ fn main() {
                 r.abstract_words,
                 if r.numbers_match { "ok" } else { "DIFF" },
                 r.body_sha,
-                if r.header_sha.is_empty() {
-                    "absent"
-                } else {
-                    r.header_sha.as_str()
-                },
+                header_sha_text,
             );
         }
     }
