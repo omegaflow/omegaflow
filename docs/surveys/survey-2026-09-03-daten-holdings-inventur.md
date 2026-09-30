@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: f9c1787cdb717d37a9b86d6ce14689b4cb3e294254ea89a2276634d0b4432471
+  sha256: 1e6bea435e5e0337c1b3b4045eecdcf888b9eb80628a1576cad759653c091257
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -21,6 +21,25 @@ Holding.
 - Cache-Root (`cache_root()`): `~/.local/state/omegaflow/archivar_cache`.
 - Mess-/Probe-Datensätze gehören als **flache Dateien** direkt in diesen Cache-Root (siehe AGENTS „The Cache Ablage"). Füllung ist lazy: erst ein Lauf/Compiler oder manuelles Staging legt sie an.
 - Dauerhafte Heimat jedes Datensatzes ist das CDN (`omegaflow/sources`, netloc-Releases). Abwesenheit lokal = `pending` (0 honored), nie „verloren".
+
+## Korrektur 2026-09-30 — Pfad-Riss (gemessen)
+
+Die folgenden Pfade der Erstmessung (2026-09-03) lösen auf diesem Run-Host **nicht** auf;
+der reale Ist-Baum wurde am 2026-09-30 gemessen. Die alten Zeilen sind **nicht** gelöscht,
+sondern als überholt benannt — Riss, nicht stille Korrektur.
+
+| Survey-Pfad (2026-09-03) | existiert | realer Ort (gemessen 2026-09-30) | Größe |
+|---|---|---|---|
+| `~/knowledge` | nein | `/home/johannes/archive/knowledge` | 36 G |
+| `~/backups` | nein | `/home/johannes/archive-state` (sessions/provenance) **+** `/home/johannes/archive/knowledge/omegaflow` | 9,8 G + 21 G |
+| `~/.local/state/omegaflow/archivar_cache` | nein | `/home/johannes/projects/omegaflow/cache` (Kandidat, nicht bewiesen) | 11 G |
+
+Realer Ist-Baum: `/home/johannes/archive/` = 36 G (davon `knowledge/` 36 G, `archive-root/` 840 M,
+`cdn-sources/` 26 M, `funding/` 16 K, `media/` 9,6 M). Repo-`data/` = **79 G** (Top-netloc:
+`ssd.jpl.nasa.gov` 3,4 G, `pds-ppi.igpp.ucla.edu` 3,3 G, `naif.jpl.nasa.gov` 2,3 G,
+`jsoc.stanford.edu` 2,0 G, `pradan.issdc.gov.in` 1,1 G). Die Byte-Zahlen im Gesamtland-Abschnitt
+unten sind damit stale; die Mapping-Zuordnung `~/backups` → `archive-state` + `archive/knowledge/omegaflow`
+ist gemessen, die Zuordnung `archivar_cache` → `repo/cache` ist **Kandidat** (`pending`, nicht bewiesen).
 
 ## Gesamtland (gemessen, vor Aufräum)
 
