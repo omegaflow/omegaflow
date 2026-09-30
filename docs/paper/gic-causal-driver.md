@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-30
-  sha256: 564ab52d09e6cb4bac6f067bce3ebdc53a765a906a8f9d89cd078d32d8a250f6
+  sha256: 454592524da6677ebf811ec52a2332d15a83af651e9c598c30c2510f2f26382a
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -232,6 +232,26 @@ consistent with a weak reverse coupling, not a null failure. The asymmetry
 ratios the estimator exhibits on this benchmark (2.1–8.4, n = 10 000) are the
 instrument's only calibrated direction scale; a data ratio below 2.1 lies
 below that calibration floor and carries no direction weight on its own.
+
+### 3.6 The ENSO three-channel block (Blatt I)
+
+A second directional block applies the same estimator and family rule to the
+NINO3.4 SST anomaly (`ersstv5_nino34_ssta`, `ersstv5_nino34.bin`, cut −5…5 lat,
+190…240 lon, 1854-01-01…2026-08-01; `tools/harvest/src/bin/ersstv5_compiler.rs:12-17`).
+The block is designed as a three-channel round against the SST — the advective
+zonal wind (TAO/TRITON `WU_422`, `tao_wnd_zonal.csv`), a lithosphere channel
+(the monthly USGS comcat rate, the L stage of the LAIC chain), and Bz
+(`omni_hro_imf_bz_gsm_nt`) — on a monthly grid, lag sweep 0–12 months, with the
+per-lag μ + 2σ threshold and the round-max family bound fam (§3.2); the NINO→Bz
+direction is the structural control (§3.3(ii) analogue), and a lithosphere arrow
+without a wind arrow would indict the instrument. The Bz↔SST pair is built
+(`tools/measure/src/bin/enso_blatt_probe.rs`); the wind and LAIC channels stay
+`pending`, each with a measured reason — the wind asset `tao_wnd_zonal.csv` is a
+120-day live window (`tao_wnd_compiler.rs` fetches `d_end−120 d … d_end−7 d`,
+while the source reaches 1977-11-06, `phi/harvest.φ:271`), so the historical
+record needs a compiler extension; the comcat catalog asset is absent. The
+block's common window is therefore bounded by its shortest channel, named at the
+first measured run, never assumed.
 
 ## 4. Results
 
