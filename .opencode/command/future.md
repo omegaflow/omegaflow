@@ -32,6 +32,8 @@ eigenen Punkte bis zur Kante; Operator-Akte → Future-Operator-Queue, Dritt-Wai
 falsche/unvollständige flash-Antwort als Handover-Zeile — sonst nicht. `/commit` schließt.
 Future ist die Operator-Adresse: jede Entscheidung wird in DIESER Linie gesammelt — dem Operator-Queue-Abschnitt der Übergabe (eine Liste, ein Eintrag je Frage, einfache Sprache: Lage · Frage · bei Ja/bei Nein). Der Send bleibt die Operator-Hand (nie `smail --send`).
 
+**Die Übergabe ist der letzte Schritt (strukturell).** Die neue/fortgeschriebene Übergabe wird **erst nach der Arbeit** geschrieben — nie vorher, nie als Plan. Sie trägt **nur Offenes**, aufgeschlüsselt (Lage · Blockade · Braucht); Erledigtes wird **gelöscht**, nie als „erledigt" markiert; die Messungen/Ergebnisse der Runde werden eingetragen. **LOCK-Punkte stehen ausschließlich im `LOCK`-Abschnitt** — sie erscheinen nie in Offen oder Operator-Queue; ein LOCK wird nur auf Operator-Wort entlockt. Dritt-Waits in `state/zustand/wartend.φ`. Der schließende Commit trägt die aktualisierte Übergabe. Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
+
 **Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
 **privat** (nur diese Linie) und liegt in `state/future/archive-search-preset.txt` — hier
 eingelesen:
