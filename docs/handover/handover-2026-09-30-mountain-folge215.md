@@ -3,7 +3,7 @@
   session: Mountain-Folge 215
   class: handover
   date: 2026-09-30
-  sha256: 58c9ca9729254a71328fc75cacf46297a59c420b9bc28ad0b43cef2e9daebbb8
+  sha256: f80bd3c2bdb727925f13478ebf40c0c3b03e804270ed36ad9f00db381482576f
   status: live
 -->
 # Handover — Mountain-Folge 215 (2026-09-30)
@@ -63,12 +63,12 @@ mit Zustand, auch um 3 Uhr nachts.
 - **Trigger:** —
 - **Lage:** `tools/measure/src/bin/ephemeris_house_gate.rs` (mit `--body` und Differenzvektoren) gebaut (`cargo build -p omegaflow-measure --bin ephemeris_house_gate` 0 Warnungen) + Workflow `ephemeris-house-gate.yml` (dispatcht `36748072166`). Am JUICE-Perigäum (±2 d, 1 h) (gemessen 2026-09-30 via `./target/debug/ephemeris_house_gate`): Δ DE441↔INPOP19a (Erde) 0.0277 km; Δ INPOP↔EPM Erde 15.96 / Sonne 16.10 / Mond 15.94 / Neptun 8123 km. Die Differenzvektoren INPOP−EPM sind für **Sonne** (1.0, 16.0, 1.4), **Erde** (1.0, 15.8, 1.3) und **Mond** (1.0, 15.9, 1.3) km **gleich** → eine konstante ~16-km-Translation (Frame-/Origin-Differenz), kein Erdfehler; nach Abzug der Sonnen-Translation bleibt für die Erde ~0.19 km. Frühere Fassung dieses Punkts (Riß-Ursache ungemessen) ist damit geschlossen.
 - **Blockade:** keine.
-- **Braucht:** — descoped mit diesem Befund (gemessen 2026-09-30 via `ephemeris_house_gate`): DE und INPOP teilen den SSB-Ursprung auf 28 m, EPM trägt einen ~16-km-Origin-Offset; die EPM-SSB-Definition bleibt eine Register-`pending`-Notiz, kein eigener Bau.
+- **Braucht:** — descoped mit diesem Befund (gemessen 2026-09-30 via `ephemeris_house_gate`): DE und INPOP teilen den SSB-Ursprung auf 28 m, EPM trägt einen ~16-km-Origin-Offset; die EPM-SSB-Definition bleibt eine Register-`pending`-Notiz, kein eigener Bau. Das Werkzeug ist generisch (`--body`, `--epoch-ymd`) — es trägt jeden Körper und jeden Zeitpunkt, nicht nur das JUICE-Perigäum.
 
 ### Anderson-Nachrechnung — hält die Flyby-Anomalie gegen Familien-Schwelle + Drei-Haus-Tor? (Auftrag)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Rats-Entscheid (Operator-Wort: „den Rat entscheiden lassen, dann laufen")
-- **Lage:** Anderson-Ephemeriden (`dfd2a4a19`), Format-Familie (`e1828a90f`) und das Drei-Haus-Tor (`ephemeris_house_gate`) liegen in einem Baum; `flyby_anderson_probe` (`tools/measure/src/bin/flyby_anderson_probe.rs`) trägt die Residuen gegen `data/flyby2/anderson_residuals.tsv` (gemessen 2026-09-30 via `open_points_check`: lokal nicht vorhanden). Die Frage: stirbt die Anomalie unter der Familien-Schwelle (wie die Alfvén-Kaskade unter der Phasen-Null), oder hält sie gegen Werkzeuge, die es 2008 nicht gab? Beides ist ein Ergebnis.
+- **Lage:** Anderson-Ephemeriden (`dfd2a4a19`), Format-Familie (`e1828a90f`) und das Drei-Haus-Tor (`ephemeris_house_gate`) liegen in einem Baum; `flyby_anderson_probe` (`tools/measure/src/bin/flyby_anderson_probe.rs`) trägt die Residuen gegen `data/flyby2/anderson_residuals.tsv` (gemessen 2026-09-30 via `open_points_check`: lokal nicht vorhanden). Die Frage: stirbt die Anomalie unter der Familien-Schwelle (wie die Alfvén-Kaskade unter der Phasen-Null), oder hält sie gegen Werkzeuge, die es 2008 nicht gab? Beides ist ein Ergebnis. Haus-Scan an allen sechs Erdvorbeiflug-Epochen (gemessen 2026-09-30 via `ephemeris_house_gate --epoch-ymd`): Δ DE↔INPOP ≤ 0.162 km (Galileo I/II 1990/1992 je 0.031, NEAR 1998 0.060, Cassini 1999 0.042, Rosetta I 2005 0.101, MESSENGER 2005 0.162 km); Δ INPOP↔EPM driftet 20.09 → 15.96 km (1990 → 2026), Vektor translationsartig — der EPM-Origin ist zeitabhängig, kein flyby-spezifischer Fehler.
 - **Blockade:** das Residuen-Input fehlt lokal; der Rat hat die Frage noch nicht entschieden.
 - **Braucht:** den Rat die Frage entscheiden lassen (Auftrag registriert), dann `flyby_anderson_probe` gegen die Anderson-Residuen (`anderson_residuals.tsv`) laufen lassen und die Haus-Robustheit (DE/INPOP/EPM, `ephemeris_house_gate`) daneben legen.
 
@@ -150,7 +150,7 @@ Origin: mountain folge214.
   - WMM/Kernel-Satz — SPICE-Kernel/Modell (Infrastruktur, kein Feld am Punkt) → keine
     `sources.φ`-Zeile, archive-root.
 
-## Burn: open 0.0000 · close 0.1069 · Grund: „Ganz einfach"-Ausführung aufgenommen, `ephemeris_house_gate` gebaut + 16-km-Riß als Frame-Translation aufgeklärt, Doppler-Zeugen-Delta, Anderson-Auftrag registriert (session_burn; Runde 6 Sessions 0.5924)
+## Burn: open 0.0000 · close 0.1444 · Grund: „Ganz einfach"-Ausführung + Drei-Haus-Tor generisch (`--body`/`--epoch-ymd`) + 16-km-Riß als zeitabhängige Frame-Translation aufgeklärt + Flyby-Scan + Anderson-Auftrag (session_burn; Runde 6 Sessions 0.6497)
 
 ## Abschluss
 
