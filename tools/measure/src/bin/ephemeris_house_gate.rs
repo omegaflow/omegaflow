@@ -4,7 +4,6 @@ use omegaflow::archivar::{
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use std::collections::HashMap;
 
-const PERIGEE_UTC: &str = "2026-09-28T11:45:12Z";
 const DAY: f64 = 86400.0;
 const HOUR: f64 = 3600.0;
 const PERIGEE_UNIX_HMS_S: f64 = 11.0 * HOUR + 45.0 * 60.0 + 12.0;
@@ -26,6 +25,14 @@ fn arg_or(args: &[String], flag: &str, default: &str) -> String {
         Some(v) => v,
         None => default.to_string(),
     }
+}
+
+fn parse_ymd(s: &str) -> Option<(i64, i64, i64)> {
+    let p: Vec<&str> = s.split('-').collect();
+    if p.len() != 3 {
+        return None;
+    }
+    Some((p[0].parse().ok()?, p[1].parse().ok()?, p[2].parse().ok()?))
 }
 
 fn load_house(word: &str, path: &str, body: &str) -> Option<HashMap<String, BodyEphemeris>> {
@@ -170,6 +177,7 @@ fn num_json(v: Option<f64>) -> String {
 
 fn register_json(
     body: &str,
+    epoch: &str,
     window_days: f64,
     step_hours: f64,
     perigee_tdb: Option<f64>,
@@ -184,9 +192,10 @@ fn register_json(
     let mut s = String::new();
     s.push_str("{\n");
     s.push_str("  \"gate\": \"ephemeris_house_gate\",\n");
-    s.push_str("  \"flyby\": \"juice\",\n");
-    s.push_str(&format!("  \"body\": \"{body}\",\n"));
-    s.push_str(&format!("  \"perigee_utc\": \"{PERIGEE_UTC}\",\n"));
+    s.push_str("  \"body\": \""); // body line below keeps the field order stable
+    s.push_str(body);
+    s.push_str("\",\n");
+    s.push_str(&format!("  \"epoch\": \"{epoch}\",\n"));
     s.push_str(&format!("  \"perigee_tdb\": {},\n", num_json(perigee_tdb)));
     s.push_str(&format!("  \"window_days\": {},\n", window_days));
     s.push_str(&format!("  \"step_hours\": {},\n", step_hours));
@@ -239,8 +248,20 @@ fn main() {
         None => 1.0,
     };
 
+    let (epoch_y, epoch_m, epoch_d) = match arg_str(&args, "--epoch-ymd") {
+        Some(s) => match parse_ymd(&s) {
+            Some(v) => v,
+            None => {
+                eprintln!("ephemeris_house_gate: --epoch-ymd {s} carries no YYYY-MM-DD");
+                std::process::exit(2);
+            }
+        },
+        None => (2026, 9, 28),
+    };
+    let epoch_label = format!("{epoch_y:04}-{epoch_m:02}-{epoch_d:02}");
     let lsk = parse_lsk(NAIF_LSK_EMBEDDED);
-    let perigee_unix = days_from_civil(2026, 9, 28).map(|d| d as f64 * DAY + PERIGEE_UNIX_HMS_S);
+    let perigee_unix =
+        days_from_civil(epoch_y, epoch_m, epoch_d).map(|d| d as f64 * DAY + PERIGEE_UNIX_HMS_S);
     let perigee_tdb = match (&lsk, perigee_unix) {
         (Some(l), Some(u)) => l.unix_to_tdb(u),
         _ => None,
@@ -259,7 +280,7 @@ fn main() {
     let (inpop_epm, void_inpop_epm) = pair_dev(&inpop, &epm, &body, window, step);
 
     println!(
-        "ephemeris_house_gate — {body} barycenter across DE / INPOP / EPM, flyby {PERIGEE_UTC}"
+        "ephemeris_house_gate — {body} barycenter across DE / INPOP / EPM, epoch {epoch_label}"
     );
     match perigee_tdb {
         Some(t) => println!("perigee tdb: {t}"),
@@ -303,6 +324,7 @@ fn main() {
 
     let json = register_json(
         &body,
+        &epoch_label,
         window_days,
         step_hours,
         perigee_tdb,
