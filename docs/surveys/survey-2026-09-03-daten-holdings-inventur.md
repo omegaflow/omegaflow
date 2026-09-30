@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: e23937d54ae4434da76885e69757ebffc71e3f204a8b35addf4ead2f3182eb25
+  sha256: f9c1787cdb717d37a9b86d6ce14689b4cb3e294254ea89a2276634d0b4432471
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -76,12 +76,14 @@ messenger, near, rosetta.
 1. `omegaflow-legacy` (ohne `target/`) nach `projects/archive/omegaflow-legacy` verschoben (Code in Git-Historie). `knowledge/` und `backups/` bleiben als **Sicherungs-Archive in situ** — nichts im Repo referenziert sie; eine Umlagerung dieser ~50 G irreplacebarer Sicherungsdaten bedarf einer eigenen, definierten Ziel-Layout-Entscheidung, kein Blindwurf. Vorlage: „Ziel-Layout — Migrationsplan" unten.
 2. **Lokalisierung der Serien `abk_dbdt_1h_*`, kegel-Log, GIC/corona: `descoped`** — als Datei nirgends unter allen Holdings vorhanden (nur ein Verdict-Report `knowledge/archive/reports/report-09-signalkegel…`). Gemessen 2026-09-26: keine eigenen Quellen, sondern lokale Probe-Logs (`signal_cone_audit_probe`, `corona_{lag,event,ladder,conditional,confound_matrix}_probe`); `abk_dbdt_1h` ist registriert → phi/sources.φ:1567, GIC ebenso → phi/sources.φ:8642/8762.
 
-## Ziel-Layout — Migrationsplan (Vorlage, 2026-09-26)
+## Ziel-Layout — Migrationsplan (Wort steht, 2026-09-30)
 
-Status: **Vorlage** — der Plan stoppt am Operator-Wort. Es wird kein
-Verzeichnis angelegt und keine Datei bewegt, bis das Wort steht. Die Holdings
-liegen außerhalb des Repos (`~/knowledge`, `~/backups`) und bleiben ungetrackt;
-getrackt ist nur diese Vorlage.
+Operator-Wort 2026-09-30 (Future-Folge 158, `state/operator-gespraeche/`):
+**der Empfehlung folgen** — Ziel-Layout = **CDN-/`data/<netloc>/`-Schema** (der
+Compiler-Standard). Es wird noch nichts angelegt oder bewegt; der nächste gemessene
+Schritt ist die Byte-Messung je Holding (Schritt 2). Die Holdings liegen außerhalb
+des Repos (`~/knowledge`, `~/backups`) und bleiben ungetrackt; getrackt ist nur diese
+Vorlage.
 
 ### Drei Ziele, ein Satz je Datensatz
 
@@ -124,7 +126,7 @@ getrackt ist nur diese Vorlage.
 
 ### Schrittfolge (jeder Schritt endet an der Kante)
 
-1. **Operator-Wort** zum Ziel-Layout (dieser Plan) — der einzige Trigger.
+1. ~~**Operator-Wort** zum Ziel-Layout~~ — **erledigt 2026-09-30** (Future: „der Empfehlung folgen", CDN-/`data/<netloc>/`).
 2. **Byte-Messung** je Holding gegen Live-Cache / `phi/sources.φ`+CDN / Repo
    (vor jedem Move): was ist ein byte-identisches Duplikat, was unique.
 3. **Registry-first** für jeden Mess-Datensatz: `url`-Zeile in
@@ -136,6 +138,7 @@ getrackt ist nur diese Vorlage.
 5. Sitzungs-/Nachweis-Daten (kein CDN-Heim) folgen dem Operator-Wort ins
    Zielgewölbe; kein Blindwurf über ~50 G.
 
-**Kante:** Der Plan legt nichts an und verschiebt nichts. Er wartet auf das
-Operator-Wort zum Ziel-Layout; danach ist jeder der obigen Schritte ein
-eigener, gemessener Move.
+**Kante:** Der Plan legt nichts an und verschiebt nichts. Das Operator-Wort zum
+Ziel-Layout steht (2026-09-30, CDN-/`data/<netloc>/`); jeder der obigen Schritte ist
+ein eigener, gemessener Move. Nächster Schritt: die Byte-Messung je Holding
+(Schritt 2).
