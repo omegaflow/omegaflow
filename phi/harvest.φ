@@ -103,6 +103,7 @@ asset fehlt
 format hapi_csv
 tag planet.physics.uiowa.edu
 arm das2_iowa_compiler
+workflow das2-iowa-cdn.yml
 pattern ^das2_iowa_.+\.bin$
 idempotent true
 
@@ -235,6 +236,7 @@ asset fehlt
 format pds3_fixed_width_darts
 tag data.darts.isas.jaxa.jp
 arm pds3_fixed_width_compiler
+workflow pds3-fixed-width-darts-cdn.yml
 args --netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.tab --label https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
 pattern ^pds3_fixed_width_.+\.bin$
 idempotent true
