@@ -555,6 +555,25 @@ private Baum wird nicht berührt. Der CI-Blindfleck des Stehenden Passes (`unrea
 schließt sich damit, ohne Datenabfluss. Die Ursache ist eine zweite Stimme über
 public-Daten — die Session misst sie am Log, bevor sie als Ursache zählt.
 
+**Secret-Hygiene — Schlüsselnamen, nie Werte (Operator-Wort 2026-09-30).** Ein
+Secret-Wert, der einmal in den Modell-Transcript gelaufen ist, ist veröffentlicht;
+Rotieren ist die einzige Gegenmaßnahme. Darum gilt für **jede** Session und jeden
+Sub-Agenten: aus `.secrets.local` (und jeder Secret-tragenden Datei) werden **nur die
+Schlüsselnamen** gelesen, **nie die Werte** — `awk -F=` auf die Zeichen vor dem `=` ist
+die einzige erlaubte Form. Strukturell verboten und per `opencode.json`-Deny blockiert
+sind alle Kommandos, die `.secrets.local` als Argument tragen (`cat`/`sgrep`/`grep`/
+`head`/`tail`/`cp`/`archive_search` …) — sie drucken Werte. Ein ausgelesener Wert wird
+**nie** als Argument zitiert, in eine Datei geschrieben oder in den Chat gegeben; für
+eine nötige Extraktion (Cookie/Header) wird auf Datei gespeichert und dort geparst,
+nie inline. Werkzeuge, die Auth-Header/Cookies **inline** zurückgeben
+(`chrome-devtools_get_network_request`, `browser_cookies`), werden für Secret-Werte
+nicht benutzt. Es gibt **kein Backup** einer Secret-Datei in `/tmp` oder sonst
+außerhalb — in-place editieren, Temps sofort löschen. Ein geleakter Wert ist ein
+gemessener Incident, der in dieselbe Session gehört: rotieren, Scratch löschen, die
+Lücke als Gate-Fixture schließen. Der Original-Fall (2026-09-30): ein `grind-flash`-
+Taucher führte `sgrep -i TOKEN .secrets.local` aus und schrieb die Werte in den
+Transcript; die Sperre (Deny + Fixture + diese Regel) ist der Befund dazu.
+
 ## Verification: What `cargo check` Cannot Catch
 
 `cargo check` is a syntax gate, not verification. The three-layer data contract, what
