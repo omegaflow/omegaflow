@@ -1,8 +1,8 @@
 use omegaflow::commit_gate::{
-    Gate, addressed_origin_violations, canon_diff, declared_canon, doc_open_marker_line,
-    ereignis_folge_violations, handover_dupe_violations, integrated_twin, json_write,
-    canon_format_violations, prose_violation_for, status_proof_violations, unbacked_mirror_violations,
-    word_register_origin_violations,
+    Gate, addressed_origin_violations, canon_diff, canon_format_violations, check_handover_burn,
+    declared_canon, doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
+    integrated_twin, json_write, prose_violation_for, status_proof_violations,
+    unbacked_mirror_violations, word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -277,10 +277,7 @@ fn main() {
         }
     }
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
-        if !path.starts_with("docs/handover/")
-            || !path.ends_with(".md")
-            || path.contains("/archiv/")
-        {
+        if !path.contains("handover/") || !path.ends_with(".md") || path.contains("/archiv/") {
             continue;
         }
         let content = match std::fs::read_to_string(path) {
@@ -301,6 +298,13 @@ fn main() {
         }
         for (line, rule, feedback) in addressed_origin_violations(&content) {
             eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
+            fail = true;
+        }
+        if let Some(v) = check_handover_burn(path, &content) {
+            eprintln!(
+                "commit_check: {path}:{}: {} - {}",
+                v.line, v.rule, v.feedback
+            );
             fail = true;
         }
     }
