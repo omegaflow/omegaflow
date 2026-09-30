@@ -1,8 +1,8 @@
 <!--
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
-  date: 2026-09-26
-  sha256: ca14b87041c08f94cc96fe344d1a2046e1693cc4f187073ca93390bb4c38d444
+  date: 2026-09-30
+  sha256: 1add9febea2b854ffef8a3795642df4a5cdeeb4f954a76cc5d3a2df9b8522e71
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -238,6 +238,16 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
   home = S²-Layer-State, target = presence-forward Pixel-Count in `SkyReport`+HUD; der
   Sample-Dispatch wird gestrichen. Offen ist der Bau-Atom (River).
   (gemessen 2026-09-29, River-Folge 65)
+- **Membran-Volumen M1+M2 — gemessen (2026-09-30, River 69).** Der Probe
+  `membrane_hull_probe` (`membrane-volume-probe.yml`, CI 36639392112, success)
+  meldet: `QUERY | star_cells 1704587 | bounded_cells 0 | records 32361 |
+  frame_bytes 6731088 | build_ms 481.129 | query_ms 237.873`;
+  `membrane-hull tally: 0 of 4 path(s) diverge from the resting cone`;
+  `dastcom_asteroids.bin read void`. Der synthetische Test
+  `test_star_grid_hull_bounds_synthetic_catalog` (N∈{100,1000,10000},
+  `records==1`) ist grün; `bounded_cells 0` gegen die Hull-Erwartung bleibt zu
+  deuten (der Presence-Hüll-Scan iteriert die Stern-Zellen, nicht die
+  Sonnensystem-Zellen).
 
 ## 8. Werkzeug- und Quellenlage (gemessen)
 

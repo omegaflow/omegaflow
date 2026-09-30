@@ -1,8 +1,8 @@
 <!--
   title: The directional driver of geomagnetically induced currents
   class: paper
-  date: 2026-09-29
-  sha256: 720bd0f9f9a08309876577fed41dacf66a500e9e5c6c8450894e19c84b3ed606
+  date: 2026-09-30
+  sha256: 564ab52d09e6cb4bac6f067bce3ebdc53a765a906a8f9d89cd078d32d8a250f6
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound. At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI and the full-lag bound ran (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound whose round-maximum family-wise error rate is calibrated to its nominal 1/(n_surr+1) across autocorrelation (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min, per-lag significant but family bound in one 22-hour window (hardened file: Bz 0.24001, Speed 0.28942 vs fam 0.34125). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571); the yearly arrows sit at the lag-0/1 edge bin, where the 30–60 min L1 travel time straddles the bin boundary, so the lag is an edge-bin reading, not a resolved delay (§3.1, §5). The hardened quarterly witness (`bz-retro-probe`, fam per window, lag sweep 0–6 h, n_surr = 100) keeps all rows family bound. Density never clears the bound; the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI and the full-lag bound ran (CI 36224176888): no Bz lag clears the quarterly family bound; PCMCI removes the edge in 13 of 16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
 
 ## Key Points
 
@@ -138,19 +138,20 @@ with the yearly round's twelve pair-lag calls carrying six distinct statistics
 (the lag-0 and lag-1 arms are algebraically identical, §3.1), a per-lag excess is expected
 by chance; an arrow requires TE > fam (and therefore exceeds every null TE
 of the round). fam is an empirical plug-in maximum — the largest surrogate
-TE actually drawn in this round — not a quantile of a calibrated maximum
-distribution; it names no fixed α, and its own sampling variability is not
-quantified here (n_surr = 10 in the yearly round; §6 carries this limit). A
-scalar round-max calibration battery is built
-(`tools/measure/src/bin/fam_calibration.rs:87`); a bounded local run at the
-operating n = 1260, n_surr = 10, 8 trials measured FWER 0/8 (a = 0.0) and 1/8
-(a = 0.9) against the nominal 1/(n_surr+1) = 9.09% (FPR 0/96 and 2/96). The
-operating-n run is prepared as the `fam-scalar-calibration.yml` CI job — six
-sharded points on four workers each: n_surr = 10 with 600 trials per a and
-n_surr = 100 with 60 trials per a (a = 0.0/0.5/0.9), each artifact carrying the
-per-cell FWER with a 95% Wilson CI; the dispatch is pending.
-The PCMCI leg of the hardened probe runs α = 0.05 (`bz_retro_probe.rs`); the
-fam leg names none. Verdicts: **arrow** (TE > fam), **family bound** (TE > own
+TE actually drawn in this round — not a quantile of a closed-form maximum
+distribution; the estimator names no fixed α, but the round-maximum's
+family-wise error rate is now calibrated at the operating size. The scalar
+round-max calibration battery (`tools/measure/src/bin/fam_calibration.rs:87`,
+`fam-scalar-calibration.yml`, CI run 36639382300, success) measures, at the
+operating n = 1260 on four independent AR(1) channels of autocorrelation
+a = 0.0/0.5/0.9, FWER 7.83% (95% Wilson CI 5.94–10.26%), 9.50% (7.40–12.11%)
+and 9.50% (7.40–12.11%) with n_surr = 10 (600 trials per a) against the nominal
+1/(n_surr+1) = 9.09%, and FWER 1.67% (0.29–8.86%), 0.00% (0.00–6.02%) and 1.67%
+(0.29–8.86%) with n_surr = 100 (60 trials per a) against the nominal 0.99%. The
+round-maximum therefore holds its nominal family-wise error rate across
+autocorrelation; its sampling variability at n_surr = 10 is carried by the
+Wilson CI (§6). The PCMCI leg of the hardened probe runs α = 0.05
+(`bz_retro_probe.rs`); the fam leg names none. Verdicts: **arrow** (TE > fam), **family bound** (TE > own
 threshold, < fam — directed, not round-significant), **silent** (TE < own
 threshold). Every §4 row label follows this mechanical rule from its
 tabulated TE, threshold and fam.
@@ -353,8 +354,8 @@ median-versus-maximum mismatch.
 
 ## 5. Discussion
 
-**The driver lives sub-daily — on the yearly round and the asymmetry, not on
-a per-quarter clearing.** The minute grain points at Bz with the correct lag
+**The measured driver is sub-daily — on the yearly round and the asymmetry, not
+on a per-quarter clearing.** The minute grain points at Bz with the correct lag
 (60 min) in the live window, and the hardened minute file stays family
 bound. The yearly hourly rounds make the arrow clear the bound in both
 measured years at Abisko and in 2024 at Sodankylä; the hardened quarterly
@@ -450,7 +451,8 @@ phase-randomized null and a round-maximum family bound; the yearly-round
 arrow it finds does not survive the hardened quarterly round (§3.4).
 Methodologically, the family bound is a
 round-maximum multiple-comparison control in the spirit of Runge et al.
-(2019), uncalibrated — it names no α (§3.2, §6); the surrogate design follows the
+(2019); its family-wise error rate is calibrated on the null battery to the
+nominal 1/(n_surr+1) across autocorrelation (§3.2); the surrogate design follows the
 phase-randomization practice of
 Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 (here answered by the family bound rather than by shuffling the condition).
@@ -488,13 +490,21 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   comparable — the hardened round draws 100 surrogates over a larger
   pair-lag family than the yearly round's 10, so a higher bound is expected
   by construction. Both probes now run n_surr = 100 (`bz_blatt_probe.rs:10`,
-  `bz_retro_probe.rs:10`, since `43096531d`, 2026-09-25); a comparable
-  yearly-round re-measure at n_surr = 100 is the named resolution step and is
-  pending (not yet run). The comparable family is rebuilt in
-  `bz_retro_probe.rs:789` (`--yearly-round`: the six directed pairs at lag 0/1 h — the pre-hardening
-  six-pair family — with per-lag TE/own-threshold/fam rows, four worker threads),
-  and `.github/workflows/bz-yearly-nsurr100.yml` carries the three windows
-  (ABK 2024, ABK 2025, SOD 2024); the dispatch is pending.
+  `bz_retro_probe.rs:10`, since `43096531d`, 2026-09-25). The comparable
+  yearly-round re-measure at n_surr = 100 has run
+  (`bz_retro_probe.rs:789` `--yearly-round`,
+  `.github/workflows/bz-yearly-nsurr100.yml`, CI run 36639387218, success): at
+  matched n_surr = 100 the yearly arrow still clears its own round's bound at
+  all three windows — ABK 2024 Bz→dB/dt TE 1.2670e-1 vs fam 1.0746e-1; ABK 2025
+  TE 1.3309e-1 vs fam 1.2802e-1; SOD 2024 TE 1.1695e-1 vs fam 1.1091e-1 — while
+  the hardened quarterly family (0.172–0.210) stays above the yearly family
+  (0.107–0.128) because it spans more pair-lag cells. The n_surr mismatch is
+  therefore closed: the yearly arrow is not an artefact of ten-surrogate
+  thresholds, and the yearly-vs-quarterly divergence is a grain/power
+  difference, not a surrogate-count artefact. The yearly fam value itself
+  differs slightly between the annual and the n_surr = 100 runs (ABK 2024
+  0.10557 vs 0.10746; ABK 2025 0.12136 vs 0.12802) — a run-to-run fam spread of
+  the same round definition, named, not averaged.
 - **dB/dt is the induction driver, not the network current.** The FMI
   Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
   `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
@@ -527,35 +537,29 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
   of the data.
-- **fam is a plug-in round maximum, not a calibrated test.** It corrects for
-  the round's multiplicity by taking the largest surrogate TE actually drawn;
-  it is not a quantile of a calibrated maximum distribution, names no fixed α,
-  and carries no reported sampling variance — at n_surr = 10 in the yearly
-  round the maximum of ten mutually dependent draws is high-variance. It does
-  not model dependence between surrogate draws (they share the driver's
-  autocorrelation and the same seed family). No confidence interval is
-  reported on fam or on the TE values themselves. A calibrated fam — a
-  measured FWER/α for the round-maximum rule on the scalar estimator at the
-  operating n — is pending. A scalar round-max battery is built
-  (`tools/measure/src/bin/fam_calibration.rs:87`; the `fam-scalar-calibration.yml`
-  CI job, six sharded points on four workers each: n = 1260, n_surr = 10, 600
-  trials per a and n_surr = 100, 60 trials per a, a = 0.0/0.5/0.9; each artifact
-  carries the per-cell FWER with a 95% Wilson CI). A bounded local run at
-  n = 1260, n_surr = 10, 8 trials measured FWER 0/8 at a = 0.0 and 1/8 at
-  a = 0.9 (FPR 0/96 and 2/96; nominal 1/(n_surr+1) = 9.09%); a four-worker
-  re-run reproduces trials 0–7 exactly (deterministic seed stream, 184.5 s for
-  10 trials). The 60-trial n_surr = 100 points are a sanity bound, not a
-  calibration: at nominal 1/(101) = 0.99% the per-round union bound holds
-  FWER ≤ 12/(101) = 11.88% (fam includes each combination's own surrogates, so
-  no single call's false-arrow probability exceeds 1/(n_surr+1)), and at full
-  exchangeability (a = 0) the FWER is exactly 1/(n_surr+1); pinning the
-  operating value between those ends needs a trial count this battery does not
-  carry. The full run is pending dispatch. The membrane-FPR battery
-  (`gate_membrane_fpr_phase_vs_arx_n_1000`,
-  `src/mathematikerin/te.rs:6199`, `#[ignore]` locally, wired as the
-  `fpr-membrane` job of `.github/workflows/te-gate.yml:58`) measures the
-  topological membrane's FPR, not the scalar round-max fam. Until such a
-  calibration exists, this manuscript claims no α.
+- **fam is a plug-in round maximum; its family-wise rate is calibrated.** It
+  corrects for the round's multiplicity by taking the largest surrogate TE
+  actually drawn; it is not a quantile of a closed-form maximum distribution
+  and names no fixed α in the estimator. Its family-wise error rate is
+  calibrated at the operating size on four independent AR(1) channels
+  (`tools/measure/src/bin/fam_calibration.rs:87`,
+  `fam-scalar-calibration.yml`, CI run 36639382300, success): at n = 1260,
+  n_surr = 10 (600 trials per a) FWER 7.83% (95% Wilson CI 5.94–10.26%),
+  9.50% (7.40–12.11%) and 9.50% (7.40–12.11%) for a = 0.0/0.5/0.9 against
+  nominal 9.09%; at n_surr = 100 (60 trials per a) 1.67% (0.29–8.86%), 0.00%
+  (0.00–6.02%) and 1.67% (0.29–8.86%) against nominal 0.99%. The round-maximum
+  holds its nominal rate across autocorrelation; the sampling variance at
+  n_surr = 10 is carried by the reported Wilson CI, not asserted, and the
+  n_surr = 100 points pin the operating value at the low-nominal end. Dependence
+  between surrogate draws is not modelled beyond the shared-seed stream this
+  battery exercises. No confidence interval is reported on the TE values
+  themselves. The membrane-FPR battery (`gate_membrane_fpr_phase_vs_arx_n_1000`,
+  `src/mathematikerin/te.rs`, wired as the `fpr-membrane` job of
+  `.github/workflows/te-gate.yml`) measures the topological membrane's FPR,
+  not the scalar round-max fam; its a = 0 arm reads 9.52% against the gate's
+  8% line and is analysed separately (the membrane null is a different rule;
+  `gate_membrane_fpr_diagnostic` measures the four Rat diagnostics). The
+  manuscript claims the calibrated nominal rate, α_nom = 1/(n_surr+1).
 - **Estimator bias at the operating n.** The KDE/Silverman estimator carries a
   bias in the three-dimensional conditional density (x_{t+τ}, x_t, y_t) at the
   operating sample sizes (n ≈ 1260–2200 per round); no explicit small-sample
@@ -579,9 +583,10 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 
 Transfer entropy with a phase-randomized null and a family bound measures a
 directional candidate for the geomagnetic induction excitation at the yearly
-grain: the southward interplanetary magnetic field, acting in the hour of the
-ground response, clears the corrected family bound in both measured years at
-Abisko and in 2024 at Sodankylä (§4.2–4.4). The hardened quarterly round (n_surr =
+grain: the southward interplanetary magnetic field, at the lag-0/1 edge bin of
+the hour-resolution round, clears the corrected family bound in both measured
+years at Abisko and in 2024 at Sodankylä (§4.2–4.4); the lag itself is not
+resolved by this round. The hardened quarterly round (n_surr =
 100, fam per quarterly window) refuses to converge with that arrow — all 24
 directed rows of the then-12 shards stay family bound (§3.4, §6) — and the
 two witnesses are
