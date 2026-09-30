@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-09-30
-  sha256: 56c6242aa80dfe8379a05e4544720b087620f1ecece1aa3ff90dd08df3de8a1b
+  sha256: 03f408a141cc96cbc750af5d9d4a0d652b08caf23bffb2a6ada8f500218111d2
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -304,9 +304,13 @@ distinct measurement: the lag-0 and lag-1 arms are algebraically identical
 (§3.1, measured TE(lag 0) = TE(lag 1) = 0.21722066662653602), so the tabulated
 `0 h` rows are the lag-1 rows and the round's family is six distinct pairs, not
 twelve. The arrow is the one-step-ahead condition, reported as measured, not as
-a clean-lag finding. The per-lag print (`--yearly-round` in
-`bz_retro_probe.rs:789`) emits the six pairs at both lag labels for the n_surr = 100
-re-measure (`.github/workflows/bz-yearly-nsurr100.yml`), pending dispatch.
+a clean-lag finding. The per-lag print (`--yearly-round` in `bz_retro_probe.rs:789`) emits the six pairs
+at both lag labels. The n_surr = 100 re-measure ran
+(`.github/workflows/bz-yearly-nsurr100.yml`, runs 36625872915 / 36639387218,
+2026-09-29, success): family bound 1.0746e-1 at ABK 2024 (Bz → dB/dt 1.2670e-1,
+arrow), 1.2802e-1 at ABK 2025 (Bz → dB/dt 1.3309e-1, arrow), 1.1091e-1 at SOD 2024
+(Bz → dB/dt 1.1695e-1, arrow) — the Bz arrow holds at all three under the corrected
+null, and the bound shifts up ~2–5 % from the n_surr = 10 values (§4.2–4.4).
 
 ### 4.3 Hourly grain — 2025 (n paired 8688) — yearly-round witness (post-fix, lag 0/1 h, n_surr = 10)
 

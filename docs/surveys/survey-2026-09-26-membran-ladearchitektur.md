@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: 0385e8b98ac59d84a1a3a77c67162baf5e1694c2a21e8c36007566567ffa7f26
+  sha256: 6b9896eb05e62814be3128ae7d3ec52b16a0cf4978e02225f897cc6915cf8830
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -201,7 +201,7 @@ der am Insert als endliches `extent` gesetzt wird. Der Legacy-Baum widerlegt bei
    fehlende Leitung (`weberin_verdicts` nur zum Relay) wird gebaut; das
    TE→permeability→radiation-Muster ist die Vorlage.
 
-## 7. Offene Punkte (pending, jeder mit Schritt)
+## 7. Offene Punkte — historisch, alle geschlossen (Nachträge 2026-09-28/29/30)
 
 **Nachtrag 2026-09-28 (Mountain 196, gemessen):** Die Enclosure-Vereinheitlichung
 (Verdikt 2, §6) ist gebaut — `src/archivar/membrane.rs:353` `enclosure_rho(vmax, amax,
@@ -210,8 +210,8 @@ drei Kopien `spatial.rs:511/:554`/`fetch.rs:492` existieren nicht mehr (Commit
 `f9ea3284c`, river folge37, 2026-09-26); Gate-Fixture `enclosure_rho_fourth_copy`
 (`commit_gate_vocab.json:495`). Die im Verdikt genannten „drei Kopien" waren der
 Vor-Commit-Stand. `main_flow.rs:332` (`jump_residual_breached`) ist die
-Sprung-Detektion (`Φ·JUMP_GRID + ½·amax·Δt²`), keine Enclosure-Kopie — offen als
-river-Punkt. **Damit ist der Punkt „Bootstrap/fetch-Loop/Katalog-Branches auf denselben
+Sprung-Detektion (`Φ·JUMP_GRID + ½·amax·Δt²`), keine Enclosure-Kopie — damals offen als
+river-Punkt, im Nachtrag 2026-09-28 (River 59) unten geschlossen. **Damit ist der Punkt „Bootstrap/fetch-Loop/Katalog-Branches auf denselben
 Ausschnitt" für die Enclosure-Formel erledigt; was bleibt, ist die Jump-Detektion.**
 
 **Nachtrag 2026-09-28 (River 59, Rat + Operator-Wort):** Die Jump-Detektion ist geschlossen.
