@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 0a3cc4ef150e38b7787bb0a5b8891dcdfdfd542baa5cdf7b588486c756698f5b
+  sha256: adabfe749a5b88b460ab0f47ed72b3ff23a845c0e0c6223d5c1c925e445f0a1b
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -102,21 +102,27 @@ cell | t_utc | bt nT | bz nT | v km/s | n 1/cm³ | T K | p nPa | kp (pre) | swar
 13 | 09-28T11:58:50Z (perigee marker) | 4.09 | −0.05 | 344.7 | 5.43 | 40693 | 1.08 | 0.67 | pending | pending | 3.86 | 340 | 0.665
 14 | 09-28T12:58:50Z | 4.29 | 0.57 | 341.2 | 5.19 | 40998 | 1.01 | 0.67 | pending | pending | 4.46 | pending | pending
 15 | 09-28T13:58:50Z | 3.29 | −0.64 | 342.4 | 6.67 | 30396 | 1.32 | 0.67 | pending | pending | 4.71 | 332 | 1.911
-16 | 09-28T14:58:50Z | 4.14 | −1.10 | 335.3 | 5.87 | 36721 | 1.11 | 0.67 | pending | pending | pending | pending | pending
-17 | 09-28T15:58:50Z | 4.42 | −0.90 | 329.6 | 5.42 | 39043 | 0.99 | 0.67 | pending | pending | 4.26 | 342 | 1.249
-18 | 09-28T16:58:50Z | 4.23 | −1.29 | 330.5 | 5.55 | 36622 | 1.01 | 0.67 | pending | pending | 4.19 | 335 | 1.460
-19 | 09-28T17:58:50Z | 3.78 | −1.30 | 330.5 | 5.74 | 36122 | 1.05 | 0.67 | pending | pending | 4.01 | 346 | 0.938
-20 | 09-28T18:58:50Z | 3.49 | −1.17 | 330.2 | 6.38 | 32550 | 1.18 | 1.33 | pending | pending | 3.66 | 343 | 1.094
-21 | 09-28T19:58:50Z | 3.75 | −1.48 | 330.0 | 2.07 | 53613 | 0.37 | 1.33 | pending | pending | 3.41 | 334 | 0.944
-22 | 09-28T20:58:50Z | 3.81 | −1.43 | 326.5 | 2.29 | 47586 | 0.40 | 1.33 | pending | pending | 3.37 | 335 | 1.099
-23 | 09-28T21:58:50Z | 3.58 | −0.68 | 325.4 | 2.40 | 43107 | 0.42 | 0.00 | pending | pending | pending | pending | pending
-24 | 09-28T22:58:50Z | 3.35 | −0.68 | 329.4 | 2.44 | 46740 | 0.44 | 0.00 | pending | pending | pending | pending | pending
-25 | 09-28T23:58:50Z | 3.28 | −1.02 | 330.9 | 2.71 | 49780 | 0.50 | 0.00 | pending | pending | pending | pending | pending
+16 | 09-28T14:58:50Z | 4.14 | −1.10 | 335.3 | 5.87 | 36721 | 1.11 | 0.67 | 34705 | pending | pending | pending | pending
+17 | 09-28T15:58:50Z | 4.42 | −0.90 | 329.6 | 5.42 | 39043 | 0.99 | 0.67 | 35531 | pending | 4.26 | 342 | 1.249
+18 | 09-28T16:58:50Z | 4.23 | −1.29 | 330.5 | 5.55 | 36622 | 1.01 | 0.67 | 44203 | pending | 4.19 | 335 | 1.460
+19 | 09-28T17:58:50Z | 3.78 | −1.30 | 330.5 | 5.74 | 36122 | 1.05 | 0.67 | 36096 | pending | 4.01 | 346 | 0.938
+20 | 09-28T18:58:50Z | 3.49 | −1.17 | 330.2 | 6.38 | 32550 | 1.18 | 1.33 | 38713 | pending | 3.66 | 343 | 1.094
+21 | 09-28T19:58:50Z | 3.75 | −1.48 | 330.0 | 2.07 | 53613 | 0.37 | 1.33 | 39081 | pending | 3.41 | 334 | 0.944
+22 | 09-28T20:58:50Z | 3.81 | −1.43 | 326.5 | 2.29 | 47586 | 0.40 | 1.33 | 36263 | pending | 3.37 | 335 | 1.099
+23 | 09-28T21:58:50Z | 3.58 | −0.68 | 325.4 | 2.40 | 43107 | 0.42 | 0.67 | 36159 | pending | 2.64 | 338 | 1.577
+24 | 09-28T22:58:50Z | 3.35 | −0.68 | 329.4 | 2.44 | 46740 | 0.44 | 0.67 | 34294 | pending | 3.44 | 337 | 1.321
+25 | 09-28T23:58:50Z | 3.28 | −1.02 | 330.9 | 2.71 | 49780 | 0.50 | 0.67 | 39627 | pending | 3.94 | 337 | 1.665
 
 \* cell 0 swarm: the fill crossed the Swarm-latency gate mid-run (the bin's
 gate slice [t0, now − 86400 s], a few tens of seconds at run time). The HAPI
 serves that window — measured 22:59Z: 190 samples in [22:58:50Z, 23:02:00Z],
 mean 32 893 nT; the register's 32 248 nT is the first slice of it.
+
+Cells 16–25 in the chain above are the re-measured Swarm supplement of
+2026-09-30 (the HAPI stopDate advanced; see the Swarm section); the value is the
+direct HAPI-window mean, not the bin register (the register's cell 25 stays
+`pending` — its fetch stop is the start of cell 25 — and its cells 16–24 agree
+within 6 nT, named, never smoothed).
 
 Measured features (fact level): bz southward through the tube except cell 14;
 density peak 6.67 cm⁻³ at cell 15 (13:58:50Z); pressure peak 1.32 nPa there;
@@ -135,27 +141,40 @@ interval **start**; each cell carries the 3-h interval containing its start
 (the bin's fill_kp). The perigee instant 11:45:12Z lies in the interval
 [09:00, 12:00Z] → **Kp 0.667** (the bin's perigee-marker cell 13 carries the
 same interval). The Kp cells are `pre` — a later addendum carries the `def`
-values when GFZ releases them.
+values when GFZ releases them. Re-measured 2026-09-30 (`kp.gfz.de`): the
+`status=def` query returns empty arrays; the preliminary series now reaches the
+[21:00, 24:00Z) interval at 0.667 — the chain's cells 23–25 carry that value
+(revised from the earlier run's 0.00); `def` stays `pending`.
 
 ## Swarm (SW_FAST_MAGA_LR_1B, at the site — no transit)
 
 - HAPI info (measured 2026-09-28T22:52Z): startDate 2026-03-28T08:09:2x,
   stopDate **2026-09-28T14:50:1x** — the latency is ~8 h, not the 24 h the
   fill bin assumes (`SWARM_LATENCY_S = 86400`).
-- The bin's register therefore leaves cells 1–25 `pending` (its fixed gate
-  opens progressively over the next 24 h; cell 0 filled partially).
+- The bin's register therefore left cells 1–25 `pending` at that run (its fixed
+  gate opens progressively over the next 24 h; cell 0 filled partially).
 - The addendum fills the served window from the raw mirror (54 300 1-s
-  samples, 09-27T23:45:00 → 09-28T14:50:1x), mean F per cell:
+  samples, 09-27T23:45:00 → 09-28T14:50:1x), mean F per cell.
+- Re-measured 2026-09-30 (`vires.services/hapi/info?id=SW_FAST_MAGA_LR_1B`):
+  stopDate advanced to **2026-09-30T10:16:18Z** — the trigger fired; cells 16–25
+  are served. The supplement fills them from the direct HAPI window
+  (`start=2026-09-28T14:58:50Z&stop=2026-09-29T00:58:50Z&parameters=F&format=csv`;
+  HTTP 200, 1 416 623 B, sha256 `d5185547…`;
+  `data/vires.services/swarm-magalr-20260928T145850-20260929T005850.csv`). A
+  re-run of `flyby_path2_fill` fills the register cells 16–24; cell 25 stays
+  `pending` there (its fetch stop is the start of cell 25), so cell 25 comes
+  from the direct window. Mean F per cell (0–15 from the mirror, 16–25 from the
+  HAPI window):
 
-cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15
----|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
-F mean nT | 41470 | 35496 | 34519 | 38774 | 35799 | 40454 | 38635 | 38146 | 42603 | 37540 | 35734 | 37580 | 38685 | 33601 | 34271 | 42781
-samples | 831 | 3561 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3069
+cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
+---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
+F mean nT | 41470 | 35496 | 34519 | 38774 | 35799 | 40454 | 38635 | 38146 | 42603 | 37540 | 35734 | 37580 | 38685 | 33601 | 34271 | 42781 | 34705 | 35531 | 44203 | 36096 | 38713 | 39081 | 36263 | 36159 | 34294 | 39627
+samples | 831 | 3561 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3069 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3574 | 3600
 
-F spans 18.9–53.6 kT over the window (the orbit mixes latitudes); the per-cell
-min/max live in the raw mirror. Cells 16–25 stay `pending` until the HAPI
-advances. The divergence between the register (bin gate) and this supplement
-(measured availability) is named, never smoothed.
+F spans 18.8–53.7 kT over the 26-cell window (the orbit mixes latitudes); the
+per-cell min/max live in the raw mirror. The register (bin) means for cells
+16–24 agree within 6 nT (measured). The bin's stop boundary at cell 25 is
+named, never smoothed.
 
 ## OMNI2 (verification channel)
 
@@ -166,8 +185,9 @@ leaves every tube cell `pending`. Verification cells fill ~4–6 d later.
 ## ACE (1-h, verification)
 
 Cells 0–22 carry the 1-h mag/swepam means at their own times (no transit —
-bin convention); cells 3, 14, 16, 23–25 are `pending` (measured gaps/lag in
-the 1-h files at fetch time).
+bin convention). Re-measured 2026-09-30: cells 23–25 now fill from the 1-h
+files; cells 3 (bt/speed/density), 14 (speed/density) and 16 stay `pending`
+(gaps/lag in the 1-h files).
 
 ## The σ-metric — superseded as the scoring instance, `pending`
 
@@ -186,19 +206,27 @@ reconstruction), never a number. Agreement remains silence.
 
 ## Cells left pending — the complete list with reasons
 
-- swarm_f cells 1–25 in the tube register — the bin's fixed 24-h Swarm
-  latency gate (register state); cells 16–25 additionally have no HAPI data
-  yet (stopDate 09-28T14:50:1x). Cells 0–15 fill from the raw mirror above.
-- omni2_pressure / omni2_bz, all 26 cells — HAPI 1201 (no data, ~6 d lag).
-- ace channels, cells 3 (bt), 14 (speed/density), 16, 23–25 — 1-h file gaps/lag.
-- kp `def` values — the `pre` values stand until the final GFZ release.
+- swarm_f cell 25 in the tube register — the bin's HAPI fetch stop is the start
+  of cell 25, so the register leaves it `pending`; the supplement above carries
+  the direct-window value (39627 nT, n = 3600). Cells 0–24 now carry measured
+  means (HAPI stopDate 2026-09-30T10:16:18Z, measured 2026-09-30); the register's
+  0–15 stand beside the raw-mirror table above.
+- omni2_pressure / omni2_bz, all 26 cells — HAPI 1201 (no data, ~6 d lag;
+  re-measured 2026-09-30).
+- ace channels, cells 3 (bt/speed/density), 14 (speed/density), 16 — 1-h file
+  gaps/lag (re-measured 2026-09-30); cells 23–25 now fill from the 1-h files.
+- kp `def` values — the preliminary values stand until the final GFZ release
+  (the 2026-09-30 re-run carries 0.667 for cells 23–25, revised from 0.00).
 - JUICE in-situ field — after the flyby (the seal's comparison target).
 - Δ, σ_recon — post-flyby reconstruction not published.
 
 ## Next steps
 
-- The CI fill (`flyby-path2-fill.yml`, river's named step) dispatches after
-  2026-09-29T00:00Z and extends the tail cells.
-- Swarm cells 16–25 fill as the HAPI stopDate advances (re-measure, not a
-  loop — the trigger is the stopDate change).
+- The CI fill (`flyby-path2-fill.yml`, river's named step) dispatched after the
+  seal; the 2026-09-30 re-run filled the register's swarm cells 16–24.
+- Swarm cell 25: the bin's fetch stop is the start of cell 25; it fills once the
+  stop carries the extra hour (a bin fix, named) — the direct-window value above
+  stands meanwhile.
+- kp `def` fills on the final GFZ release; OMNI2 fills ~4–6 d after the perigee
+  (HAPI 1201).
 - The recon gate scores Δ when ESA/ESOC publishes the SPK + covariance.
