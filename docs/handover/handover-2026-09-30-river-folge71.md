@@ -3,7 +3,7 @@
   session: River-Folge 71
   class: handover
   date: 2026-09-30
-  sha256: b39d814b10824723a478041f5679b326c7c70178f2235d1efa44b8482cf9dc6b
+  sha256: 7670cc5bb15d6978305ce01df31de1e0958e7965ea991388cea214f21ae0c802
   status: live
 -->
 # Handover — River-Folge 71 (2026-09-30)
@@ -74,7 +74,9 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
   `gate_membrane_fpr_phase_vs_arx_n_1000` FAILED — `Zug 5: FPR 9.52% at a=0 D_Z=0
   exceeds 8%` (a=0.5 0.00 %, a=0.9 4.76 %) — fällt am a=0-Arm, nicht am a=0.9-Arm.
   Der Fix ist river70 (128 Trials, arx-Assert entfernt; Rat-Verdikt). Der 128er-Lauf
-  läuft (`fpr-membrane`/`fpr-diagnostic`/`fpr-binned` in_progress).
+  `36696336996` läuft: `fpr-membrane`/`fpr-diagnostic`/`probe` **success** — der
+  128er-Phasen-Null hält (die vordem rote Membran-Batterie ist grün); `fpr-binned`/
+  `flare` in_progress, Rest queued.
 - **Blockade:** keine
 - **Braucht:** bei Abschluss `ci_manage log 36696336996`; grün schließt #112/#13,
   rot öffnet den Arx-Switch (vier Gates umschreiben).
@@ -87,15 +89,6 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
   führt den n=1000-FPR-Boden als geschlossen (`35893882101`, 24.09.).
 - **Blockade:** keine
 - **Braucht:** nach grünem 128er-Lauf `gh issue close 13` (Registerakt).
-
-### measure-gates #43 — Kalibrier-Gate, Lauf dispatcht
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `measure-gates`-Lauf `36708293463` @`07d9410db`
-- **Lage:** (gemessen 2026-09-30 via `ci_manage view`) Run `35351695849` @`52d0486d8`
-  failure (18.09.); `mycelium-folge207:160` misst „#43 grün"; der Workflow trägt nur
-  `workflow_dispatch` → seither kein Lauf; heute dispatcht.
-- **Blockade:** keine
-- **Braucht:** `ci_manage log 36708293463`; grün → `gh issue close 43`.
 
 ### Rätsel Ⅰ — Jeans-Engine, σ-Asset
 - **Status:** blockiert | **Bindung:** eigen
