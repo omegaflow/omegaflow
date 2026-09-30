@@ -2879,6 +2879,8 @@ pub fn main_flow() {
                     | "pds3_binary"
                     | "pds4_binary"
                     | "pds4_fits"
+                    | "pds3_img"
+                    | "hapi_csv"
                     | "hips_png"
                     | "gras_2c"
                     | "galileo_odr"
@@ -2898,6 +2900,7 @@ pub fn main_flow() {
                     | "ams02_spec"
                     | "lro_trk"
                     | "hamqsl_solar"
+                    | "usgs_comcat_m45"
                     | "aia"
                     | "eve"
             ) {

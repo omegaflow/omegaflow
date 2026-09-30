@@ -18,6 +18,7 @@ note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (s
 note gap-Token gras-2c — GRAS-HX1-RoPeR-Rohdaten (.2C binär + .2CL Label); Reader-Arm steht (src/archivar/gras_2c.rs, strukturell, 2026-09-29); Format .2C ungemessen, Compiler-Bin + Sample fehlen.
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
+note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
@@ -373,7 +374,7 @@ note html released 2026-09-27: Radar-Positionen maschinenlesbar via github.com/v
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV: 200; Reader-Arm steht (extract.rs series_parse_bin hapi_csv + hapi_csv.rs parse_bin; das2_iowa_compiler.rs; check 0/0 2026-09-30). Asset+Sources-Zeile Mycelium; native das2.2 (551 Datasets) offen.
+note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Record) + das2_iowa_compiler.rs; series_component_name ohne hapi_csv-Arm → kein Feld; kein Workflow/Release. Braucht: component_name + Workflow.
 
 pending
 url http://occultations.ct.utfpr.edu.br/
@@ -405,11 +406,11 @@ note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777 + Label-Fetc
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); Arm+Compiler stehen (pds4_binary.rs + pds4_binary_compiler.rs, 49b18dd6f); Sample+Asset fehlen. SIS vco_rs_sis_v13.pdf.
+note Akatsuki VCO-rs (JAXA/ISAS) — 2026-09-30: `.lbl` = PDS3 fixed-length (RECORD_BYTES 276, ^DOPPLER_TABLE), `.lblx` = PDS4; sources.φ-Block `pds3_fixed_width` steht; offen: Reader-Alias + Harvest-Block. H212 pds4_binary war der Riss.
 
 pending
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
-note Kaguya/SELENE LRS (JAXA, DARTS/PDS3) — Arm+Compiler stehen (49b18dd6f); Einzeldatei-Endpunkt 2026-09-30 auf data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/ (200); Rohdateien .tbl, nicht .dat. Sample+Asset Mycelium.
+note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm gebaut 2026-09-30 (P3BV v2, 1971 Z./7 Spalten, Array-Bytes per Row); CDN-Asset noch v1 (P3BN, nur START_STEP) → Re-Manifest Mycelium; sources.φ-Block steht.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
@@ -417,7 +418,7 @@ note Chandrayaan-1 Mini-RF (ISRO, PDS Geosciences) — Arm+Compiler stehen (49b1
 
 pending
 url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS) — Arm+Compiler stehen (pds4_fits.rs + pds4_fits_compiler.rs, 49b18dd6f); Verdikt 207 pds4-fits no-cadence; Sample+Asset fehlen. bundle.xml 206/7406 B sha 92f8cfc5…; data/ce{1,2}_mrm.fits 206 (24 Maps 32ppd).
+note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): Assets pds4_fits_ce1_mrm.fits + pds4_fits_ce2_mrm.fits present 2026-09-30; BINTABLE-Spalten t1..t4 (NAXIS1 151); cadence unread (no-cadence).
 
 pending
 url https://zenodo.org/api/records/15812343
@@ -461,5 +462,5 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 
 pending
 url https://catalogue.dataspace.copernicus.eu/stac/collections
-note CDSE-CCM STAC — 2026-09-30: /stac/collections 200; CCM-Kollektionen ccm-optical/ccm-sar/ccm-thermal-lst-{hr,mr}/ccm-hyperspectral-ref-hr. Arm: src/archivar/stac.rs + bin stac_asset_fetch.rs. Auth-Asset-Download misst Mycelium; ttl/frame offen.
+note CDSE-CCM STAC 2026-09-30: /stac/collections 200 (423), ccm-* public; extents offen. Verdikt: frame at earth, ttl no-cadence. Riss: stac.rs liest nur id/assets, kein datetime/geometry; Auth-Asset Mycelium unread.
 

@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: 1e6bea435e5e0337c1b3b4045eecdcf888b9eb80628a1576cad759653c091257
+  sha256: 4aca93dd493808c658a76c7f26c258782529f21472ae80a7c831c7dc7ffe9444
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->
@@ -72,7 +72,7 @@ ist gemessen, die Zuordnung `archivar_cache` → `repo/cache` ist **Kandidat** (
 ## Aktive Ephemeriden (gehören als `omegaflow_eph_{body}.bin` in den Cache-Root)
 
 earth, juno, jupiter, mars, mercury, neptune, new_horizons, saturn, uranus,
-venus, voyager1, voyager2. (`new_horizons`/`voyager1`/`voyager2` sind 976-B-Placeholder, pending.)
+venus, voyager1, voyager2. (`new_horizons`/`voyager1`/`voyager2` sind 976-B-Placeholder, pending — gemessen 2026-09-30 in den CDN-Releases `ssd.jpl.nasa.gov-horizons`/`ssd.jpl.nasa.gov`; die Register-URLs `phi/sources.φ:15695/15898/15905` tragen den Tag `ssd.jpl.nasa.gov-ephemeris`, der die drei Assets nicht führt — `--verdict` 404.)
 Nicht aktive (nur Archiv): cassini, europa_clipper, galileo_e1/e2, juice,
 messenger, near, rosetta.
 

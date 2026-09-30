@@ -9122,6 +9122,14 @@ field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-squa
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square thermal K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_binary_lrs_sw_wf_00n_007080e.bin
+format pds3_binary
+origin https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/LRS_SW_WF_00N_007080E.lbl
+compiler tools/harvest/src/bin/pds3_binary_compiler.rs
+at moon
+ttl 604800
+field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 format gedi_l2a
 origin https://s3.us-west-2.amazonaws.com/lp-prod-protected
@@ -9762,6 +9770,35 @@ at earth
 ttl 604800
 field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_img_fsb_00720_1cd_xhu_84n209_v1.bin
+format pds3_img
+origin https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.lbl
+compiler tools/harvest/src/bin/pds3_img_compiler.rs
+at moon
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce1_mrm.fits
+format pds4_fits
+origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce1_mrm.fits
+compiler tools/harvest/src/bin/pds4_fits_compiler.rs
+at moon
+ttl 604800
+field ce1_mrm_t1 t1 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce1_mrm_t2 t2 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce1_mrm_t3 t3 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce1_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce2_mrm.fits
+format pds4_fits
+origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce2_mrm.fits
+compiler tools/harvest/src/bin/pds4_fits_compiler.rs
+at moon
+ttl 604800
+field ce2_mrm_t1 t1 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce2_mrm_t2 t2 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
 format galileo_odf
 origin https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/ODF/
@@ -10182,6 +10219,13 @@ sha256 b38e476a7a938efd574163b4d8671566a0b3f8ce6c1ea11e3ed59d52ad0749fb
 at earth
 ttl 604800
 field ul_phase_cycles dart_tnf_ul_phase_cycles inverse-square em cycle 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/planet.physics.uiowa.edu/das2_iowa_Cassini_MAG_VectorKSO.bin
+format hapi_csv
+origin https://planet.physics.uiowa.edu/das/das2Server/hapi
+compiler tools/harvest/src/bin/das2_iowa_compiler.rs
+at saturn
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 format gosat_tanso3
@@ -11125,6 +11169,14 @@ at earth
 ttl 2592000
 field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
 field mean_nighttime_lst_k mean_nighttime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin
+format usgs_comcat_m45
+origin https://earthquake.usgs.gov/fdsnws/event/1/query
+compiler tools/harvest/src/bin/usgs_comcat_compiler.rs
+at earth
+ttl 2592000
+field usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square seismic-body count 2592000.0 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 format tap
@@ -15990,3 +16042,19 @@ compiler tools/harvest/src/bin/s1_sar_compiler.rs
 format s1_sar
 at earth
 no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_fixed_width_rs_20160303_223100_udsc64_l2_v10.bin
+format pds3_fixed_width
+origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+at venus
+no-cadence
+field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
+field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0

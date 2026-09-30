@@ -155,7 +155,7 @@ fn bintable_series_of(
             _ => continue,
         };
         for (comp, c) in channels.iter().enumerate() {
-            let v = match table.cell_f64(buf, r, *c) {
+            let v = match table.cell_f64(buf, r, c) {
                 Some(x) if x.is_finite() => x,
                 _ => continue,
             };
@@ -196,7 +196,9 @@ pub fn parse_bintable_series(bytes: &[u8]) -> Option<FitsTableSeries> {
     None
 }
 
-pub fn parse_named_series(bytes: &[u8]) -> Option<(Vec<String>, Vec<(f64, f64, u32)>)> {
+type NamedSeries = (Vec<String>, Vec<(f64, f64, u32)>);
+
+pub fn parse_named_series(bytes: &[u8]) -> Option<NamedSeries> {
     if let Some(raster) = parse_image(bytes) {
         let names = raster.band_names.clone();
         let rows = band_means(&raster)?;
