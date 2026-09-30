@@ -8,6 +8,8 @@ permissions:
 
 env:
   CDSE_TOKEN: ${{ secrets.CDSE_TOKEN }}
+  CDSE_USER: ${{ secrets.CDSE_USER }}
+  CDSE_PASS: ${{ secrets.CDSE_PASS }}
   RUSTFLAGS: -D warnings
 
 jobs:
