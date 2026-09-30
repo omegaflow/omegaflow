@@ -3,7 +3,7 @@
   session: Mountain-Folge 209
   class: handover
   date: 2026-09-30
-  sha256: 6f8f1dd632be78570e444a04b8b4ea02bc851b3479c0f2f74b797b1f58a8811e
+  sha256: e7e9d201d38bfc57e308a339716916f8007ceb97660e61b4555a1fc9a85d3c81
   status: live
 -->
 # Handover — Mountain-Folge 209 (2026-09-30)
@@ -92,6 +92,13 @@ mit Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29).
 - **Wort:** „der ned folowup ist nicht lange her" | 2026-09-30 | Operator (Mountain 207) — keine
   erneute Vorlage, Follow-up ist frisch; Wiedervorlage über den Trigger.
 
+### Register-`#`-Riss — `canon.φ` funktional vs. Operator-Wort „auch für die"
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort zur Ersatz-Darstellung für Kanon-Marker/Katalog-Header.
+- **Lage:** (gemessen 2026-09-30) die gated 6 Register-Sektionen (14 Dateien) tragen **0** `#`; die `#`-Zeilen liegen in `canon.φ` (19, **funktional** — `register_classes()`/`declared_canon()` parsen `# --- Sektion ---`; Entfernen bräche das Kanon-Gate) und in Katalog-/Pipeline-Dateien (nicht gated; Doku-Rollen/Spalten).
+- **Blockade:** kein `#`-freies Ersatz-Schema für die Kanon-Marker bzw. Katalog-Header.
+- **Braucht:** Operator-Wort zum Ersatz-Schema (neue Direktive) — bis dahin bleibt `canon.φ` unangetastet (A = A: der Marker ist die Syntax des Gates).
+
 ## Prosa-Träger (eigene)
 
 - `docs/specs/livefeed-gate.md` | offene Marker = die `pending`-Felder der Ereignis-Tabelle.
@@ -128,6 +135,19 @@ Origin: mountain folge209.
   HiPS-MoRIC (`hips_png_compiler --ci-mode`), ENSO-SST (`ersstv5_nino34.bin`), `kuprat` (die vier
   Kanäle sind als Substance-Witnesses admitiert `witnesses.φ:120-142`; `tag kuprat` ist Phantom —
   die Compiler-Tags sind `crystallography.net`/`srdata.nist.gov`).
+- **Operator-Wort (2026-09-30, Mountain 209) — Register-Hygiene, in dein `## Operator-Wort-Register` falten:** „vorbestehend ist verboten mein wort" — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`: jede `note`-Zeile ≤ 256 Zeichen; keine `#`-Kommentarzeilen in den gated Registern (Maschinen/Disposition/Harvest/Bindings/Stationstabellen/Reports). Mountain hat 14 überlange `note`-Zeilen geheilt (`footprints/harvest/pipeline ledger/noaa_nodd_disposition/witnesses`).
+
+## An river (Operator-Wort — Register-Hygiene)
+
+Origin: mountain folge209.
+
+- **Operator-Wort (2026-09-30, Mountain 209), in dein `## Operator-Wort-Register` falten:** „vorbestehend ist verboten mein wort" — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`: jede `note`-Zeile ≤ 256 Zeichen; keine `#`-Kommentarzeilen in den gated Registern.
+
+## An sensory (Operator-Wort — Register-Hygiene)
+
+Origin: mountain folge209.
+
+- **Operator-Wort (2026-09-30, Mountain 209), in dein `## Operator-Wort-Register` falten:** „vorbestehend ist verboten mein wort" — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`: jede `note`-Zeile ≤ 256 Zeichen; keine `#`-Kommentarzeilen in den gated Registern.
 
 ## An future (Operator-Queue, private)
 
@@ -143,6 +163,7 @@ Origin: mountain folge209.
   *Frage:* welches Layout für die Migrations-Vorlage?
 - **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [redacted]-Läufe als Substance-Witness
   `LABR`; CDN-manifestiert oder privates Holding?
+- **Operator-Wort (2026-09-30, Mountain 209) — Register-Hygiene, in dein `## Operator-Wort-Register` falten:** „vorbestehend ist verboten mein wort" — jede `note`-Zeile ≤ 256 Zeichen; keine `#`-Kommentarzeilen in den gated Registern.
 
 ## Abschluss
 
