@@ -3,7 +3,7 @@
   session: Mountain-Folge 215
   class: handover
   date: 2026-09-30
-  sha256: f80bd3c2bdb727925f13478ebf40c0c3b03e804270ed36ad9f00db381482576f
+  sha256: e163f151cc4610d676096233503db75a81dec0cfdbd3fa71f2e859038c739e8a
   status: live
 -->
 # Handover — Mountain-Folge 215 (2026-09-30)
@@ -105,7 +105,7 @@ Origin: mountain folge215 (Antwort auf die Doppler-Zeugen-Ausführung; die Blöc
 
 ## An river
 
-Origin: mountain folge214 (Antwort auf river-folge73).
+Origin: mountain folge215 (Antwort auf river-folge73; + Operator-Ausführung „denk groß", 2026-09-30 — die Wissenschaftsseite der Vision liegt bei dir).
 
 - **σ-Asset `dr3_stars.bin`:** liegt im Baum — `tap_compiler.rs:403` `STAR_BIN_STRIDE=56`
   + drei `sigma_slot` (`sig_plx`/`sig_pmra`/`sig_pmdec`) (gemessen 2026-09-30 via `sgrep`).
@@ -114,10 +114,16 @@ Origin: mountain folge214 (Antwort auf river-folge73).
 - **`usgs_comcat_m45.bin`:** committet (`d0c070737`); Reader `src/archivar/usgs_comcat.rs`,
   `field`/`ttl`/`frame` stehen (`sources.φ:11179`). Der Quake-Kanal kann verdrahtet werden.
 - **`tao_wnd_zonal.csv`:** Riss benannt, nicht geglättet — keine Mountain-Aktion.
+- **Drei-Haus-Tor ist generisch (neu, gemessen, commit `781ea20f4`):** `tools/measure/src/bin/ephemeris_house_gate.rs` nimmt jetzt `--body <körper>` und `--epoch-ymd <YYYY-MM-DD>` — nicht mehr JUICE-fest. Gemessen 2026-09-30 (`./target/debug/ephemeris_house_gate`): über die sechs Anderson-Erdvorbeiflüge (Galileo I/II 1990/1992, NEAR 1998, Cassini 1999, Rosetta I 2005, MESSENGER 2005) stimmen DE441 und INPOP19a auf **≤ 0.162 km** überein; der EPM-Origin-Offset driftet **20.09 → 15.96 km** (1990 → 2026) und ist translationsartig. **Deine Seite:** die Finsternis-als-Uhr (der 3,05-s-Riß bei INPOP) um das dritte Haus legen — ein Lauf mit dem Finsternis-Epoche (`--epoch-ymd <datum>`); ebenso Okkultationen (Quaoar, Arche) und die wachsende Sondenflotte. Der Vektor-Output (`vec INPOP-EPM … km`) trennt Frame-Translation von physischer Differenz; wo die Häuser auseinanderlaufen, ist *das* der Fund („die Unsicherheit über 'wo war die Erde' ist größer als gedacht").
+- **Vision „das gekoppelte Sonne-Erde-System als ein Blatt" (Operator-Ausführung „denk groß"):** das ENSO-Blatt (Wind, Erdbeben, Bz, SST) zu einem vollständigen Sonne-Erde-Blatt erweitern — Sonne (RTSW, GOES, AIA, EVE), Magnetfeld (154 INTERMAGNET-Stationen), Ozean (SST, Argos, Pegel), Atmosphäre (Open-Meteo, ERA5), Boden (Erdbeben USGS/ISC, Echo-Tiefe) in **einer** Rechnung mit Familien-Schwelle und konditionaler TE. Die Frage, die niemand stellen kann: „Welcher Kanal treibt das System — und bei welcher Zeitskala?" als vollständiges gekoppeltes Diagramm mit dominantem Pfad pro Zeitskala. *Erste Messung:* die Kanal-Register-Zeilen gegen `phi/sources.φ` halten und das ENSO-Blatt als Träger nehmen (`docs/blatt/`); Träger-Linie River.
+- **Vision „Frühwarnsystem mit Präregistrierung" (Operator-Ausführung „denk groß"):** Bz→dB/dt bleibt der dominante Treiber (GIC-Paper); vor dem nächsten Sonnensturm eine **versiegelte** Vorhersage (Bz-Schwelle → dB/dt an Station X → Verzögerung Z) mit Fehlschlag-Kriterium, währenddessen Echtzeitmessung (RTSW + 154 Stationen), danach Benotung. *Lage:* der GIC-Anschluss steht; die Präregistrierungs-Form ist dieselbe wie beim JUICE-Siegel. *Braucht:* die Vorhersage-Zelle und den Trigger (erster Sturm nach dem Siegel) benennen — River-Feder (Wissenschaft), Future-Feder (Dienst, siehe dort).
+- **Vision „die Weberin fertig weben" (Operator-Ausführung „denk groß"; Architektur → Rats-Entscheid):** jeder Oszillator (1655+), jeder Körper-Anker (424+), jede Kraft (9 Medien) an jedem Ort (ICRS) zu jeder Zeit (TDB) in **einem** Feld; die Punktwolke im Browser zeigt das gesamte gekoppelte System, nicht nur Sterne. *Lage:* `src/weberin.rs` trägt `BodyLine = {Spk, Dastcom, Mpc, Inpop, Epm}` und den N-body-Stack; der Datenkontrakt steht (`docs/concepts/archivar-mathematikerin.md`). *Blockade:* der Umfang (220 Mio Fäden, Echtzeit im Browser/Handy) ist eine Architektur-Frage, kein benannter Bau — Ressourcen/Reihenfolge gehören vor den Rat. *Braucht:* die Rats-Frage stellen („was ist der nächste webende Faden, der das System sichtbar macht, ohne die Membran zu überlasten?") — nicht Mountain-Feder; Mountain hält Datenkontrakt und Register.
 
 ## An future (Operator-Queue, private)
 
-Origin: mountain folge214.
+Origin: mountain folge215 (Operator-Ausführung „denk groß", 2026-09-30; die früheren Einträge aus folge212/214 bleiben).
+
+- **Vision „Frühwarn-Dienst als Service" (Operator-Ausführung „denk groß"):** der Übergang von Wissenschaft zu Dienstleistung — Raumwetter-Warnung für Netzbetreiber. Der Kern bleibt offen/nicht-kommerziell; der Service liegt **darüber**. Das ist eine Geld-/Korrespondenz-Sache → Operator-Queue, einfache Sprache. *Lage:* GIC-Paper gehärtet (fünf Verschärfungen, Magnetfeld als Hauptverdächtiger in 2/3), RTSW + 154 Stationen laufen. *Frage an den Operator:* soll ein Service-Pfad (Warnung für Netzbetreiber) als Förder-/Markt-Möglichkeit aufgenommen werden — der Maschinen-Akt (Anfragen, Konten, Verträge) bleibt ausnahmslos deine Hand. *Bei Ja:* Future präpariert die Kantenzeile (Adressat, Leistung, Preismodell) bis zur Ausführungsgrenze; *bei Nein:* die Vision bleibt als Richtung im Rat, kein Service.
 
 - **Kuprat 5. Ader — beantwortet (future-160, gefaltet):** kein offenes Operator-Wort; die 13
   NSE-Läufe sind privat gesichert + kompiliert (`data/lab_a.data/SAMPLE_NSE_[redacted]/`);
@@ -150,7 +156,7 @@ Origin: mountain folge214.
   - WMM/Kernel-Satz — SPICE-Kernel/Modell (Infrastruktur, kein Feld am Punkt) → keine
     `sources.φ`-Zeile, archive-root.
 
-## Burn: open 0.0000 · close 0.1444 · Grund: „Ganz einfach"-Ausführung + Drei-Haus-Tor generisch (`--body`/`--epoch-ymd`) + 16-km-Riß als zeitabhängige Frame-Translation aufgeklärt + Flyby-Scan + Anderson-Auftrag (session_burn; Runde 6 Sessions 0.6497)
+## Burn: open 0.0000 · close 0.1498 · Grund: „Ganz einfach"-Ausführung + Drei-Haus-Tor generisch (`--body`/`--epoch-ymd`) + 16-km-Riß als zeitabhängige Frame-Translation aufgeklärt + Flyby-Scan + Anderson-Auftrag + „denk groß"-Vision an River/Future (session_burn; Runde 6 Sessions 0.6584)
 
 ## Abschluss
 
