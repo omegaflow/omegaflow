@@ -1,15 +1,12 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::pds3_table::unix_of_iso;
 use omegaflow::archivar::pds4::{
-    Pds4Column, Pds4Meta, Pds4Row, Pds4Table, decode_rows, pack, parse_label, parse_table,
+    Pds4Meta, Pds4Table, assemble, axis_of, decode_rows, pack, parse_label, parse_table,
 };
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "sbnarchive.psi.edu";
 const CDR_ROUTE: &str = "https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/";
-const AXIS_UNIT: &str = "SECOND";
-const MET_TICK_SCALE: f64 = 1.0 / 32.0;
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -41,153 +38,6 @@ fn fetch_or_read(spec: &str) -> Option<Vec<u8>> {
     } else {
         std::fs::read(spec).ok()
     }
-}
-
-fn is_numeric_type(data_type: &str) -> bool {
-    matches!(
-        data_type.to_ascii_uppercase().as_str(),
-        "ASCII_INTEGER" | "ASCII_NONNEGATIVE_INTEGER" | "ASCII_REAL"
-    )
-}
-
-enum Axis {
-    IsoTime(usize),
-    Offset(usize, f64, f64),
-}
-
-fn axis_of(meta: &Pds4Meta) -> Option<(Axis, String)> {
-    for (i, c) in meta.columns.iter().enumerate() {
-        if let Some(dt) = &c.data_type {
-            if dt.to_ascii_uppercase().starts_with("ASCII_DATE_TIME") {
-                return Some((Axis::IsoTime(i), format!("{} ({dt} date-time)", c.name)));
-            }
-        }
-    }
-    for (i, c) in meta.columns.iter().enumerate() {
-        if c.name.eq_ignore_ascii_case("MET") {
-            let base = match meta.start_time.as_deref() {
-                Some(st) => match unix_of_iso(st) {
-                    Some(b) => b,
-                    None => return None,
-                },
-                None => return None,
-            };
-            return Some((
-                Axis::Offset(i, base, MET_TICK_SCALE),
-                format!(
-                    "{} (MET {} s ticks + START_TIME {base:.3})",
-                    c.name, MET_TICK_SCALE
-                ),
-            ));
-        }
-    }
-    None
-}
-
-fn axis_column(meta: &Pds4Meta, idx: usize) -> Pds4Column {
-    let c = &meta.columns[idx];
-    Pds4Column {
-        name: c.name.clone(),
-        unit: Some(AXIS_UNIT.to_string()),
-        data_type: Some("TIME".to_string()),
-        missing_constant: c.missing_constant,
-        sampling_name: c.sampling_name.clone(),
-        sampling_unit: c.sampling_unit.clone(),
-        sampling_min: c.sampling_min,
-        sampling_max: c.sampling_max,
-        start_byte: c.start_byte,
-        bytes: c.bytes,
-    }
-}
-
-fn assemble(
-    meta: &Pds4Meta,
-    raw_rows: Vec<Vec<Option<f64>>>,
-    axis: Option<(Axis, String)>,
-) -> Option<(Pds4Table, usize, String)> {
-    let mut columns: Vec<Pds4Column> = Vec::new();
-    let mut kept: Vec<usize> = Vec::new();
-    let axis_note = match &axis {
-        Some((_, note)) => note.clone(),
-        None => String::from("none"),
-    };
-    match &axis {
-        Some((Axis::IsoTime(i), _)) | Some((Axis::Offset(i, _, _), _)) => {
-            columns.push(axis_column(meta, *i));
-            for (j, c) in meta.columns.iter().enumerate() {
-                if j != *i && c.data_type.as_deref().is_some_and(is_numeric_type) {
-                    columns.push(c.clone());
-                    kept.push(j);
-                }
-            }
-        }
-        None => {
-            for (j, c) in meta.columns.iter().enumerate() {
-                if c.data_type.as_deref().is_some_and(is_numeric_type) {
-                    columns.push(c.clone());
-                    kept.push(j);
-                }
-            }
-        }
-    }
-    let mut rows: Vec<Pds4Row> = Vec::new();
-    let mut skipped = 0usize;
-    for raw in raw_rows {
-        let mut values: Vec<Option<f64>> = Vec::new();
-        match &axis {
-            Some((Axis::IsoTime(i), _)) => {
-                let v = match raw.get(*i) {
-                    Some(Some(v)) => Some(*v),
-                    _ => None,
-                };
-                match v {
-                    Some(v) => values.push(Some(v)),
-                    None => {
-                        skipped += 1;
-                        continue;
-                    }
-                }
-            }
-            Some((Axis::Offset(i, base, scale), _)) => {
-                let v = match raw.get(*i) {
-                    Some(Some(v)) => Some(v * scale + base),
-                    _ => None,
-                };
-                match v {
-                    Some(v) => values.push(Some(v)),
-                    None => {
-                        skipped += 1;
-                        continue;
-                    }
-                }
-            }
-            None => {}
-        }
-        for j in &kept {
-            values.push(match raw.get(*j) {
-                Some(Some(v)) => Some(*v),
-                _ => None,
-            });
-        }
-        if axis.is_none() && values.iter().all(|v| v.is_none()) {
-            skipped += 1;
-            continue;
-        }
-        rows.push(Pds4Row { values });
-    }
-    if rows.is_empty() {
-        return None;
-    }
-    Some((
-        Pds4Table {
-            columns,
-            rows,
-            delimited: false,
-            delimiter: None,
-        },
-        skipped,
-        axis_note,
-    ))
 }
 
 fn asset_name(dat_spec: &str) -> String {

@@ -401,7 +401,7 @@ note MAP-Grid RST DataMap released 2026-09-29 (Globus-Auth Operator-Hand 2026-09
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO (ESA/Roskosmos) ACS-NIR-Okkultations-Spektrum — 2026-09-28 HTTP 200 (FTP-Listing); PDS4-Table_Binary-Arm steht (src/archivar/pds4_binary.rs, strukturell); Compiler-Bin + Sample + Asset fehlen. NAIF EXOMARS2016/ im Index.
+note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777 + Label-Fetch): raw HK .xml tragen Table_Character; pds4_binary_compiler routet die File_Area-Klasse jetzt auf den pds4_fixed_width-Arm (pds4.rs, assemble/axis_of). Occ-Spektrum ungemessen; Sample/Asset offen.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
@@ -451,11 +451,15 @@ descoped
 url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
 note KASI KMTNet Coverage-MOC (2026-09-29, 1848960 B sha256 f34ff61f…): FITS BINTABLE TFIELDS=1 TTYPE1='RANGE' MOCVERS=2.0 ORDERING=RANGE; bandlose RANGE-MOC, kein fp01-Band (footprint.rs); moc-reader verworfen.
 
-pending
+descoped
 url https://www.kari.re.kr/kpds/
-note Danuri/KPLO KPDS (KARI) HTML-Portal — 2026-09-29 HTTP 200 (3969525 B); kein maschinenlesbarer Daten-Endpoint gemessen; html_to_json-Arm steht (extract.rs:2689) — kein parser-def, kein gap.
+note Danuri/KPLO KPDS (KARI) — 2026-09-29 HTML-Portal 200 (3969525 B), kein maschinenlesbarer Daten-Endpoint gemessen (0 honored); html_to_json-Arm steht, trägt aber keine Daten; descoped (gemessen: kein Datenpfad).
 
 pending
 url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
+
+pending
+url https://catalogue.dataspace.copernicus.eu/stac/collections
+note CDSE-CCM STAC — 2026-09-30: /stac/collections 200; CCM-Kollektionen ccm-optical/ccm-sar/ccm-thermal-lst-{hr,mr}/ccm-hyperspectral-ref-hr. Arm: src/archivar/stac.rs + bin stac_asset_fetch.rs. Auth-Asset-Download misst Mycelium; ttl/frame offen.
 

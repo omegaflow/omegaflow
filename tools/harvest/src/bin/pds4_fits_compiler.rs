@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::pds4_fits::{band_means, parse_image};
+use omegaflow::archivar::pds4_fits::{band_means, parse_bintable_series, parse_image};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
@@ -59,13 +59,40 @@ fn compile_entry(spec: &str, out_dir: Option<&str>, ci_mode: bool) -> Option<Str
         eprintln!("fits fetch/read void ({spec})");
         return None;
     };
-    let Some(raster) = parse_image(&bytes) else {
-        eprintln!("{spec}: no IMAGE HDU — the FITS stays untouched (0 honored)");
-        return None;
-    };
-    let Some(means) = band_means(&raster) else {
-        eprintln!("{spec}: no band with a finite pixel — the FITS stays unwritten (0 honored)");
-        return None;
+    let (names, row_count, shape) = match parse_image(&bytes) {
+        Some(raster) => {
+            let Some(means) = band_means(&raster) else {
+                eprintln!(
+                    "{spec}: no band with a finite pixel — the FITS stays unwritten (0 honored)"
+                );
+                return None;
+            };
+            (
+                raster.band_names.clone(),
+                means.len(),
+                format!(
+                    "{} band(s), {} line(s), {} sample(s)",
+                    raster.bands, raster.lines, raster.samples
+                ),
+            )
+        }
+        None => match parse_bintable_series(&bytes) {
+            Some(series) => {
+                let rows = series.rows.len();
+                let channels = series.names.len();
+                (
+                    series.names,
+                    rows,
+                    format!("{channels} BINTABLE channel(s)"),
+                )
+            }
+            None => {
+                eprintln!(
+                    "{spec}: no IMAGE HDU and no BINTABLE et/t-series — the FITS stays untouched (0 honored)"
+                );
+                return None;
+            }
+        },
     };
     let asset = asset_name(spec);
     let out_path = match out_dir {
@@ -92,15 +119,11 @@ fn compile_entry(spec: &str, out_dir: Option<&str>, ci_mode: bool) -> Option<Str
         return None;
     }
     eprintln!(
-        "{out_path}: {} band(s), {} line(s), {} sample(s), {} B, sha256 {}, {} band mean(s), sha256 read-back holds",
-        raster.bands,
-        raster.lines,
-        raster.samples,
+        "{out_path}: {shape}, {} B, sha256 {}, {row_count} series row(s), sha256 read-back holds",
         bytes.len(),
         digest,
-        means.len(),
     );
-    eprintln!("{asset}: band names [{}]", raster.band_names.join(", "));
+    eprintln!("{asset}: series names [{}]", names.join(", "));
     print_register_lines(&asset);
     if ci_mode && !upload_release(NETLOC, &out_path) {
         eprintln!("{asset}: CDN upload returned void");
