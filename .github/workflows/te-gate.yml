@@ -63,6 +63,14 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run gate_membrane_fpr_phase_vs_arx_n_1000
         run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_membrane_fpr_phase_vs_arx_n_1000
+  fpr-diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_membrane_fpr_diagnostic
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_membrane_fpr_diagnostic
   block-sweep:
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -174,6 +182,7 @@ jobs:
       - fpr-ksg-arx
       - fpr-ksg-shift
       - fpr-membrane
+      - fpr-diagnostic
       - block-sweep
       - ksg-sweep
       - ksg-k-gate
@@ -193,5 +202,5 @@ jobs:
         run: |
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "te-gate: a gate job carries a finding" \
-               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg-arx, fpr-ksg-shift, fpr-membrane, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg-arx, fpr-ksg-shift, fpr-membrane, fpr-diagnostic, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                health
