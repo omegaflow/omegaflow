@@ -49,23 +49,16 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
 
 ## Offen (aufgeschlüsselt)
 
-### CI-Verifikation — ci-check/ci-gate am HEAD
+### ci-check/ci-gate — Rot am HEAD gemessen, River-Anteil geheilt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `ci-check`/`ci-gate`-Lauf auf dem HEAD nach diesem Commit.
-- **Lage:** (gemessen 2026-09-29 via `ci_manage`) HEAD `720a766b7` rot: `error[E0063]` in
-  `spatial::StarRec`-Initializern `main_flow.rs:2429/2568` (`sigma_plx_mas`/`sigma_pm_ra_masyr`/
-  `sigma_pm_de_masyr`); der 6-Zeilen-Fix ist in diesem Atom committet — Build-Heilung, ~20 Jobs blockiert.
+- **Trigger:** der `ci-check`/`ci-gate`-Lauf am HEAD nach diesem Commit.
+- **Lage:** (gemessen 2026-09-30 via `ci_manage jobs 36630771763` + `log 36630771763`) `ci-gate @869416dbb`
+  **failure**: Job `clippy` rot an `src/archivar/spatial.rs:359:29` (**Mountain**, type_complexity)
+  + `src/mathematikerin/te.rs:3121:16` (**River**, jetzt auf `SurrogateFn` aliast — `cargo check` 0/0);
+  Job `format` rot an `te.rs:3269/:6161` + `fam_calibration.rs:1` (in diesem Atom rustfmt-rein);
+  `build`/`dropped-gate` **success**. `ci-check 36630771757` in_progress.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage status` + `ci_manage view <ci-check-id>` am neuen HEAD.
-
-### ci-gate — clippy + dropped-gate
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `ci-gate`-Lauf am neuen HEAD.
-- **Lage:** (gemessen 2026-09-29 via `ci_manage log 36623904304`) clippy/build/dropped-gate fielen am
-  E0063, nicht an eigenem Code; die `dropped-gate`-Zeile `baseline/current/delta` ist **absent**
-  (Compile-Abbruch vor der Stufe), nicht null.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log <ci-gate-id>` am neuen HEAD; bei `dropped-gate`-Delta die Baseline-Diff.
+- **Braucht:** `ci_manage view <ci-check-id>` am neuen HEAD. Mountain-Anteil `spatial.rs:359` trägt Mountain.
 
 ### te-gate — WebGL-Naht / fpr-membrane
 - **Status:** wartend | **Bindung:** eigen
@@ -78,11 +71,18 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
 
 ### TE-Null-Riss — FPR unter Autokorrelation (#13 / #43)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das Rat-Wort über den Null-Switch.
-- **Lage:** (gemessen 2026-09-29 via `ci_manage log 36610589166`) der a=0-Arm fällt (9.52 % > 8 %;
-  a=0.5 0.00 %, a=0.9 4.76 %) — der Ausfall sitzt an der Wurzel, nicht an a=0.9.
-- **Blockade:** Rat-Wort (kein Null-Wechsel vor dem Wort).
-- **Braucht:** Rat hören mit dem a=0-Ausfall; bei Switch die vier Kalibrier-Gates auf den neuen Null umschreiben.
+- **Trigger:** die vier Messungen (unten) am `fpr-membrane`-Arm.
+- **Lage:** (gemessen 2026-09-30 via `ci_manage log 36610589166`) der a=0-Arm fällt (9.52 % > 8 %;
+  a=0.5 0.00 %, a=0.9 4.76 %). **Rat-Verdikt (Rat-Session 2026-09-30):** kein Null-Switch, kein
+  a-differenzierter Test (beides passt das Instrument an die Messung an, A ≠ A). Der a=0-Exzess
+  ist bei 21 Trials = 2/21 (95 %-KI [1,2 %, 30,4 %], die 8 %-Linie liegt im KI) unterbestimmt;
+  ARX/Shift/Block sind bei a=0 asymptotisch derselbe Null wie Phase. Selektionsbias-Kandidat:
+  `neg` zählt bedingt auf messbare Zellen (None-Quote bei a=0 = unmessbar mitgezählt).
+- **Blockade:** keine (Rat-Wort liegt vor: erst messen).
+- **Braucht:** in derselben Batterie: (1) None-Quote je Arm, (2) Trials 21 → 2⁶/2⁷, (3) n_surr-Sweep
+  {10,100} bei a=0, (4) Gegenprobe `topological_te_estimate_frozen` (τ eingefroren). Erst wenn der
+  Exzess nach Selektionskontrolle strukturell bleibt, Switch auf `topological_te_arx` + die vier
+  Kalibrier-Gates (`te.rs`) umschreiben.
 
 ### Membran-Volumen-Messung M1+M2 (P11)
 - **Status:** wartend | **Bindung:** eigen
@@ -92,8 +92,8 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
   `query_ms`); neuer Test `test_star_grid_hull_bounds_synthetic_catalog` (N∈{100,1000,10000}, `records==1`);
   Workflow `membrane-volume-probe.yml` neu. Der Lauf selbst ist **ungemessen**.
 - **Blockade:** keine.
-- **Braucht:** nach Push `gh workflow run membrane-volume-probe.yml`; Output lesen (`records` vs. `frame_bytes`);
-  `ci-check` liest den Synthetic-Test.
+- **Braucht:** Lauf `membrane-volume-probe 36639392112` (dispatcht 2026-09-30) lesen (`records` vs.
+  `frame_bytes`); `ci-check` liest den Synthetic-Test.
 
 ### Rätsel Ⅰ — Jeans-Engine, σ-Asset
 - **Status:** blockiert | **Bindung:** eigen
@@ -111,8 +111,9 @@ Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` 
 - **Lage:** (gemessen 2026-09-29 via `ci_manage`) `fam-scalar-calibration 36621199997` und
   `bz-yearly-nsurr100 36621205592` fielen am E0063 → **void**; nach der Build-Heilung neu zu dispatchen.
 - **Blockade:** Build-Heilung (dieses Atom) + Einreichungs-LOCK.
-- **Braucht:** nach Push `gh workflow run fam-scalar-calibration.yml` + `gh workflow run bz-yearly-nsurr100.yml`;
-  dann `ci_manage view`.
+- **Braucht:** Re-Dispatch 2026-09-30: `fam-scalar-calibration 36639382300` + `bz-yearly-nsurr100 36639387218`;
+  dann `ci_manage view`. Future-156-Auflagen (Null kalibrieren, rundenvergleichbar, Lag-0, überzeichnete
+  Sätze zurücknehmen) bleiben vor dem LOCK-GEMS-Send.
 
 ### ENSO TE-Probe — §3-Block (Blatt I)
 - **Status:** wartend | **Bindung:** eigen
