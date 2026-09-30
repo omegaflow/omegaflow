@@ -3111,6 +3111,8 @@ pub struct TopologicalEstimate {
     pub tau_c: usize,
 }
 
+type SurrogateFn<'a> = dyn FnMut(&[f32], &mut u64) -> Option<Vec<f32>> + 'a;
+
 fn topological_te_with(
     x: &[f32],
     y: &[f32],
@@ -3118,7 +3120,7 @@ fn topological_te_with(
     order: usize,
     seed: u64,
     n_surr: usize,
-    surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Option<Vec<f32>>,
+    surrogate: &mut SurrogateFn<'_>,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
     if n < 8 || y.len() != n || dim < 2 {
@@ -3269,15 +3271,9 @@ pub fn topological_te_arx(
     max_lag: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(
-        x,
-        y,
-        dim,
-        order,
-        seed,
-        10,
-        &mut |v, rng| arx_restricted_surrogate(v, max_lag, rng),
-    )
+    topological_te_with(x, y, dim, order, seed, 10, &mut |v, rng| {
+        arx_restricted_surrogate(v, max_lag, rng)
+    })
 }
 
 pub struct MembraneSweepPoint {
@@ -6161,8 +6157,7 @@ mod tests {
         gate_fpr_autocorr_assert(&cells);
     }
 
-    type MembraneVerdictFn<'a> =
-        dyn FnMut(&[f32], &[f32], u64) -> Option<TopologicalVerdict> + 'a;
+    type MembraneVerdictFn<'a> = dyn FnMut(&[f32], &[f32], u64) -> Option<TopologicalVerdict> + 'a;
 
     fn membrane_fpr_cells(
         n: usize,
