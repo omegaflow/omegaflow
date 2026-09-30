@@ -117,7 +117,6 @@ tag planet.physics.uiowa.edu
 arm das2_iowa_compiler
 pattern ^das2_iowa_.+\.bin$
 idempotent true
-note DAS2 Iowa: HAPI 1.1 CSV (Cassini/MAG/VectorKSO); Arm hapi_csv.rs (HCV1); series_component_name führt hapi_csv (comps 1..4 → hapi_csv_{magnitude,x,y,z}_nt), in der main_flow-Liste; kein Workflow/Release.
 
 asset present
 format icesat2_atl03
@@ -246,7 +245,6 @@ workflow pds3-binary-cdn.yml
 pattern ^pds3_binary_.+\.bin$
 idempotent true
 timeout 240
-note Kaguya/SELENE LRS PDS3 FIXED_LENGTH (1971 Z./7 Spalten, RECORD_BYTES 4155); Compiler hält IEEE_REAL/PC_REAL + Array-Bytes (P3BV v2, WAVEFORM raw); CDN-Asset noch v1 (P3BN, 31 680 B) → Re-Manifest Mycelium.
 
 asset present
 format pds3_fixed_width
@@ -259,6 +257,15 @@ timeout 240
 note Arm pds3_table.rs + extract.rs series_named; PDS3 fixed-width (KRFM=Phobos2/Mars, Vega2/HALLEY); run 36447656801 success 2026-09-28: pds3_fixed_width_<stem>.bin 14608–16192 B sha256 6c7d602c…, roundtrip holds, asset present.
 
 asset fehlt
+format pds3_fixed_width_darts
+tag data.darts.isas.jaxa.jp
+arm pds3_fixed_width_compiler
+args --netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.tab --label https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
+pattern ^pds3_fixed_width_.+\.bin$
+idempotent true
+timeout 240
+
+asset fehlt
 format pds3_img
 tag pds-geosciences.wustl.edu
 arm pds3_img_compiler
@@ -266,7 +273,6 @@ workflow pds3-img-cdn.yml
 pattern ^pds3_img_.+\.bin$
 idempotent true
 timeout 240
-note Chandrayaan-1 Mini-RF: PDS3 SAR Raster (BANDS 4, PC_REAL, 3239×284); .img/.lbl 206; Asset fehlt (kein pds3_img_ in pds-geosciences; pds-imaging-Release fehlt); parse_label liest BAND_NAME.
 
 asset fehlt
 format pds4_binary
@@ -276,7 +282,6 @@ workflow pds4-binary-cdn.yml
 pattern ^pds4_binary_.+\.bin$
 idempotent true
 timeout 240
-note Akatsuki VCO-rs: (JAXA/ISAS PDS4, vco_rs/) dir 206; Compiler NETLOC archives.esac.esa.int (Defaultroute ExoMars TGO ACS), Tag nicht quellengebunden; kein pds4_binary_ im Release; Sample fehlt.
 
 asset present
 format pds4_fits
@@ -286,7 +291,6 @@ workflow pds4-fits-cdn.yml
 pattern ^pds4_fits_.+\.fits$
 idempotent true
 timeout 240
-note Chang'e-1/-2 MRM BINTABLE (24 Felder, Spalten t1..t4, NAXIS1 151); Assets pds4_fits_ce1_mrm.fits + pds4_fits_ce2_mrm.fits present 2026-09-30; Arm pds4_fits.rs parse_bintable_series; cadence unread.
 
 asset present
 format pds4_fixed_width
@@ -353,7 +357,6 @@ workflow usgs-comcat-cdn.yml
 pattern ^usgs_comcat_m45\.bin$
 idempotent true
 timeout 240
-note USGS ComCat M>=4.5 Monatszählung je Monatsmitte 1973-01→2026-08; 643 Records, 12868 B sha256 945b3cd82659ce498bc7f8e0d8b40bc3873074b67737141ed81bb814853f9478; reader src/archivar/usgs_comcat.rs; asset present (CDN 206).
 
 asset present
 format wwlln_th
