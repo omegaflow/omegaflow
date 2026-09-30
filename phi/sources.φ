@@ -8947,7 +8947,7 @@ field observable_hz mars_express_odf_observable_hz inverse-square em Hz 604800 0
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1080341864_1431499728.bin
 format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
 sha256 f6847088f5272f22a3111b372a59f19aeacabf2db93b4e1936cf198c3f1b2351
 at earth
@@ -8957,7 +8957,7 @@ field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431499728_1464565518.bin
 format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
 sha256 ae339c146a41bf07f5086172be8ef6ae4bdf7041248ffd5cc0789fb06f6f8fa9
 at earth
@@ -8967,7 +8967,7 @@ field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464565518_1475187437.bin
 format rosetta_odf
-origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/DATA/LEVEL1A/CLOSED_LOOP/IFMS/
+origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
 sha256 a95ca2002beb9c198c884b80ed31e29edf1da2bc95c72c9dbcebe1bcad28f32e
 at earth
