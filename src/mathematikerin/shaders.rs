@@ -815,7 +815,7 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
         if (finite_ok && n >= 8u) {
             let ty_real = find_mi_lag(1u, n, max_lag);
             if (ty_real >= 0) {
-                let tc_real = find_cross_mi_lag(0u, 1u, u32(ty_real));
+                let tc_real = find_cross_mi_lag(0u, 1u, n, u32(ty_real));
                 if (tc_real >= 0) {
                     tau = f32(tc_real);
                     valid = 1.0;
@@ -833,7 +833,7 @@ fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
             let ty = find_mi_lag(tid, n, max_lag);
             if (ty >= 0) {
                 let u_ty = u32(ty);
-                let tc = find_cross_mi_lag(0u, tid, u_ty);
+                let tc = find_cross_mi_lag(0u, tid, n, u_ty);
                 if (tc >= 0) {
                     let u_tc = u32(tc);
                     let back_x = (DIM - 1u) * u_tc;
