@@ -1,0 +1,31 @@
+name: enso-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  blatt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the ENSO Bz-to-SST Blatt I measurement
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT enso-bz-sst"
+            cargo run --release -p omegaflow-measure --bin enso_blatt_probe
+          } > "enso-blatt.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: enso-blatt
+          path: enso-blatt.txt

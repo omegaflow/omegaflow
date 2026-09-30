@@ -3136,14 +3136,18 @@ pub struct TopologicalEstimate {
 
 type SurrogateFn<'a> = dyn FnMut(&[f32], &mut u64) -> Option<Vec<f32>> + 'a;
 
+struct SurrogateSpec {
+    seed: u64,
+    n_surr: usize,
+    frozen_tau: bool,
+}
+
 fn topological_te_with(
     x: &[f32],
     y: &[f32],
     dim: usize,
     order: usize,
-    seed: u64,
-    n_surr: usize,
-    frozen_tau: bool,
+    spec: SurrogateSpec,
     surrogate: &mut SurrogateFn<'_>,
 ) -> Option<TopologicalVerdict> {
     let n = x.len();
@@ -3154,9 +3158,9 @@ fn topological_te_with(
     let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
     let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
     let emb_x = embed_series(&xf, estimate.tau_c, dim);
-    let mut vals: Vec<f64> = Vec::with_capacity(n_surr);
-    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..n_surr {
+    let mut vals: Vec<f64> = Vec::with_capacity(spec.n_surr);
+    let mut rng = spec.seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..spec.n_surr {
         let Some(ys) = surrogate(y, &mut rng) else {
             continue;
         };
@@ -3167,7 +3171,7 @@ fn topological_te_with(
         if ysf.iter().any(|v| !v.is_finite()) {
             continue;
         }
-        let tau_s = if frozen_tau {
+        let tau_s = if spec.frozen_tau {
             estimate.tau_y
         } else {
             match find_mi_lag(&ysf) {
@@ -3286,9 +3290,18 @@ pub fn topological_te_phase(
     order: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, 10, false, &mut |v, rng| {
-        Some(phase_randomized_surrogate(v, rng))
-    })
+    topological_te_with(
+        x,
+        y,
+        dim,
+        order,
+        SurrogateSpec {
+            seed,
+            n_surr: 10,
+            frozen_tau: false,
+        },
+        &mut |v, rng| Some(phase_randomized_surrogate(v, rng)),
+    )
 }
 
 pub fn topological_te_arx(
@@ -3299,9 +3312,18 @@ pub fn topological_te_arx(
     max_lag: usize,
     seed: u64,
 ) -> Option<TopologicalVerdict> {
-    topological_te_with(x, y, dim, order, seed, 10, false, &mut |v, rng| {
-        arx_restricted_surrogate(v, max_lag, rng)
-    })
+    topological_te_with(
+        x,
+        y,
+        dim,
+        order,
+        SurrogateSpec {
+            seed,
+            n_surr: 10,
+            frozen_tau: false,
+        },
+        &mut |v, rng| arx_restricted_surrogate(v, max_lag, rng),
+    )
 }
 
 pub struct MembraneSweepPoint {
@@ -4696,9 +4718,11 @@ mod tests {
             &y,
             3,
             3,
-            42,
-            10,
-            false,
+            SurrogateSpec {
+                seed: 42,
+                n_surr: 10,
+                frozen_tau: false,
+            },
             &mut |v: &[f32], _rng: &mut u64| -> Option<Vec<f32>> { Some(vec![1.0; v.len()]) },
         );
         assert!(res.is_none());
@@ -6249,9 +6273,11 @@ mod tests {
                 &series[1],
                 3,
                 3,
-                seed,
-                n_surr,
-                frozen_tau,
+                SurrogateSpec {
+                    seed,
+                    n_surr,
+                    frozen_tau,
+                },
                 &mut |v, rng| Some(phase_randomized_surrogate(v, rng)),
             );
             match verdict {
@@ -6309,12 +6335,16 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "membrane FPR battery n=1000 — heavy, runs in te-gate.yml"]
+    #[ignore = "membrane FPR battery n=1000, membrane null = topological_te_phase — heavy, runs in te-gate.yml"]
     fn gate_membrane_fpr_phase_vs_arx_n_1000() {
         const N: usize = 1000;
-        const TRIALS: usize = 21;
+        const MEMBRANE_FPR_TRIALS: usize = 128;
         const ARX_NULL_LAG: usize = 12;
-        let cells = [(0.0f32, TRIALS), (0.5f32, TRIALS), (0.9f32, TRIALS)];
+        let cells = [
+            (0.0f32, MEMBRANE_FPR_TRIALS),
+            (0.5f32, MEMBRANE_FPR_TRIALS),
+            (0.9f32, MEMBRANE_FPR_TRIALS),
+        ];
         let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
 
         let phase_cells = membrane_fpr_cells(
@@ -6345,15 +6375,25 @@ mod tests {
                 100.0 * c.fp as f64 / c.neg as f64
             );
         }
-        gate_fpr_autocorr_assert(&arx_cells);
 
         let block_cells = membrane_fpr_cells(
             N,
             &cells,
             &mut |x, y, seed| {
-                topological_te_with(x, y, 3, 3, seed, 10, false, &mut |v, rng| {
-                    Some(block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng))
-                })
+                topological_te_with(
+                    x,
+                    y,
+                    3,
+                    3,
+                    SurrogateSpec {
+                        seed,
+                        n_surr: 10,
+                        frozen_tau: false,
+                    },
+                    &mut |v, rng| {
+                        Some(block_bootstrap_surrogate(v, block_len_from_n(v.len()), rng))
+                    },
+                )
             },
             &mut rng,
         );

@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: 1add9febea2b854ffef8a3795642df4a5cdeeb4f954a76cc5d3a2df9b8522e71
+  sha256: 0385e8b98ac59d84a1a3a77c67162baf5e1694c2a21e8c36007566567ffa7f26
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -91,16 +91,19 @@ Kanon: alle Behauptungen mit `file:line` oder Quelle; nichts spekuliert.
 ## 2. Die Weberin-Lücke — die Membran sieht kein Gewebtes
 
 Die Weberin webt emergente Eigenschaften (Vlies-Dichte, TE-Relationen, Verdict,
-Zwirn/Riss, Abstammung). **Keine erreicht die Membran:**
+Zwirn/Riss, Abstammung). **Kein Gewebtes wird ein `Sample`-Slot; die Membran
+leitet abgeleitete ω()-Terme ab:**
 - Der einzige Eingang ins Feld ist `Vec<Arc<Sample>>` (`spatial.rs:155-172`); der
   26×f64-`Sample`-Contract hat **keinen Slot** für Dichte/TE/Verdict (`types.rs:41-62`).
 - S²-Richtungsfeld: eigener Vektor `sky.oscs`/`sky.points`, nur HUD
   (`omega.rs:1744-1785`), kein Relay. TE (Matrix): endet in `eprintln`
   (`matrix.rs:570-574`). TE (Presence-Probe): nur Radiation-Apertur
   (`omega.rs:349`). Verdict: geladen (`main_flow.rs:725-779`), nur an Relay
-  (`relay.rs:907`) + `eprintln`. Vlies-Dichte: Reader/Fetch/Dispatch gebaut
-  (`extract.rs:2821`, `main_flow.rs:3561`), aber **keine `format vlde`-Quelle in
-  `phi/sources.φ`** → ruhend. Abstammung/Footprint: nur Prosa/Tests.
+  (`relay.rs:907`) + `eprintln`. Vlies-Dichte: als abgeleiteter ω()-Term gebaut
+  (home = S²-Layer-State `SkyState.vlies` `s2.rs:232`, target = presence-forward
+  Pixel-Count in `SkyReport.vlies_count` `s2.rs:227` + HUD `omega.rs:1820`); der
+  Sample-Dispatch wurde gestrichen (Rat 2026-09-29, Option (a)). Abstammung/Footprint:
+  nur Prosa/Tests.
 - **Verdikt:** keine neue `Sample`-Klasse. Das Gewebte bleibt Ledger-Eintrag; die
   Membran leitet im ω()-Loop einen **abgeleiteten Query-Term** ab, on demand, nie
   gespeichert (das Apertur-Muster TE→permeability→radiation ist die Vorlage;
@@ -231,13 +234,14 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
   trug Star-Grid + Jump bereits. Ein AGENTS-Pointer war nicht nötig — `AGENTS.md`
   beschreibt presence-only loading schon im Architektur-Block.
 - **Sprung-Radius: versöhnt (2026-09-28).** `grid_step = GRID_INIT·2ⁿ = JUMP_GRID·2^(n+3)`, also `Φ·grid_step = Φ·JUMP_GRID·2^(n+3)` — beide Formen sind **eine** Formel; der Legacy-`·2ⁿ` ist als Browser-Zoom-Faktor (`state.scale`) absorbiert. `JUMP_GRID=2²⁸` lebt als Detektions-Schwelle (`main_flow.rs:332`), `Φ·grid_step` als Enclosure-Radius (`fetch.rs:423`).
-- **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht — TE (`omega.rs:458-546`)
-  und Verdict (`weberin_verdicts.rs:201`) sind gebaut; die **Vlies-Dichte** fehlt als
-  ω()-Term (kraft-/distanz-/bandloses S²-Zensus aus `dr3_stars.bin`, Quelle
-  `phi/witnesses.φ:114-118`; Reader `vlies.rs` steht). **Rat-Verdikt (2026-09-29):** Option (a) —
-  home = S²-Layer-State, target = presence-forward Pixel-Count in `SkyReport`+HUD; der
-  Sample-Dispatch wird gestrichen. Offen ist der Bau-Atom (River).
-  (gemessen 2026-09-29, River-Folge 65)
+- **Weberin-Lücke:** Dichte/TE/Verdict als Derived-Field-Schicht — TE (`omega.rs:458-546`),
+  Verdict (`weberin_verdicts.rs:201`) und die **Vlies-Dichte** sind gebaut.
+  **Rat-Verdikt (2026-09-29), Option (a), gebaut:** home = S²-Layer-State (`SkyState.vlies`,
+  `s2.rs:232`), target = presence-forward Pixel-Count in `SkyReport` (`vlies_count`, `s2.rs:227`;
+  `forward_pixel_count`, `s2.rs:287`) + HUD (`omega.rs:1820`); der Sample-Dispatch ist
+  gestrichen (`extract.rs`/`main_flow.rs` entfernt, Gate-Fixture `format vlde`).
+  Kraft-/distanz-/bandloses S²-Zensus aus `dr3_stars.bin`, Quelle `phi/witnesses.φ:114-118`.
+  (gebaut 2026-09-29, River-Folge 65; am Baum gemessen 2026-09-30)
 - **Membran-Volumen M1+M2 — gemessen (2026-09-30, River 69).** Der Probe
   `membrane_hull_probe` (`membrane-volume-probe.yml`, CI 36639392112, success)
   meldet: `QUERY | star_cells 1704587 | bounded_cells 0 | records 32361 |
@@ -245,9 +249,14 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
   `membrane-hull tally: 0 of 4 path(s) diverge from the resting cone`;
   `dastcom_asteroids.bin read void`. Der synthetische Test
   `test_star_grid_hull_bounds_synthetic_catalog` (N∈{100,1000,10000},
-  `records==1`) ist grün; `bounded_cells 0` gegen die Hull-Erwartung bleibt zu
-  deuten (der Presence-Hüll-Scan iteriert die Stern-Zellen, nicht die
-  Sonnensystem-Zellen).
+  `records==1`) ist grün. **`bounded_cells 0` — entschieden (2026-09-30): kein Riss,
+  sondern Konstruktionsartefakt des Aufrufs.** Der Probe speist nur `build_star_samples`
+  in `build_spatial_hash` (`membrane_hull_probe.rs:250`/`:266`); `spatial.rs:159-168`
+  partitioniert nach `extent.is_finite()`, und jeder Stern trägt `extent = f64::INFINITY`
+  (`spatial.rs:502`) → der `bounded`-Zweig bleibt leer, `star_cells` füllt sich. `bounded_cells`
+  ist ein Zähler über eine leere Map, keine Hull-Widerlegung; die `records 32361` stammen aus
+  den Stern-Zellen. Der Feldname lädt eine Hull-Erwartung ein, die dieser stern-only-Aufruf
+  nicht ausübt.
 
 ## 8. Werkzeug- und Quellenlage (gemessen)
 
