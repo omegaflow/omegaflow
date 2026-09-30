@@ -98,6 +98,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
+        "hapi_csv" => hapi_csv::parse_bin(bytes),
         _ => None,
     }
 }
@@ -6185,6 +6186,14 @@ mod fixed_width_series_tests {
         assert!(series_parse_bin("pds3_fixed_width", b"XXXX").is_none());
         assert!(series_parse_bin("pds4_fixed_width", b"XXXX").is_none());
         assert!(series_parse_bin("pds4_binary", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn hapi_csv_series_parses_written_bin_and_rejects_foreign_bytes() {
+        let bin = hapi_csv::write_bin(2, &[(1.0, 5.0, 1), (2.0, 6.0, 2)]);
+        let series = series_parse_bin("hapi_csv", &bin).expect("series parses");
+        assert_eq!(series, vec![(1.0, 5.0, 1), (2.0, 6.0, 2)]);
+        assert!(series_parse_bin("hapi_csv", b"XXXX").is_none());
     }
 
     #[test]
