@@ -68,7 +68,9 @@
     ["sensordatavalues.0.value sensorcommunity", "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"],
     ["releases/download/www.", "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"],
     ["(lon_sum_normalized / n, lat_sum / n)", "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"],
-    ["format == \"vlde\"", "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"]
+    ["format == \"vlde\"", "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"],
+    ["Deckel **hart**", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
+    ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -148,7 +150,10 @@
     "addressed-origin": "a `## An <line>` block carries no `Origin:` line — the traveling point names its sender (Origin: <sender-folge>); a block without an origin is a gate fixture (Rat 2026-09-27: the pen is the owner's, the transport names its origin)",
     "ereignis-ohne-folge": "eine account/send-Zeile in state/zustand/ereignisse.φ trägt keinen Folge-Eintrag — eine wartend.φ-Zeile mit gleichem host/Tag oder ein Verdikt in phi/blocked_sources.φ fehlt (Rat 2026-09-28)",
     "ereignis-ohne-gegenstand": "eine account/send-Zeile in state/zustand/ereignisse.φ nennt keinen Gegenstand (host/Tag) — die Folge ist nicht prüfbar (Rat 2026-09-28)",
-    "unbacked_mirror": "ein gespiegeltes CDN-Asset in phi/sources.φ muss seine Basis benennen — eine origin-Zeile (die öffentliche Quelle) oder eine terms-Zeile (Einwilligung/Lizenz); die Basis ist nie implizit"
+    "unbacked_mirror": "ein gespiegeltes CDN-Asset in phi/sources.φ muss seine Basis benennen — eine origin-Zeile (die öffentliche Quelle) oder eine terms-Zeile (Einwilligung/Lizenz); die Basis ist nie implizit",
+    "burn-line-absent": "a living Future handover carries no `## Burn: open <usd> · close <usd>` — the session cost is a mandatory field; add the measured line (session_burn at open and close)",
+    "burn-over-cap": "the Future handover's close burn exceeds the hard cap 0.125 USD — the session ran over budget; the cap is 2^-3 USD, anchored to the heaviest sibling planning session (0.1141)",
+    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
   },
   "german_chars": ["ä", "ö", "ü", "ß"],
   "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
