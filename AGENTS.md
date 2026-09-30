@@ -442,6 +442,11 @@ tool):
 - **P5 write-port** (`grind-flash`/`grind-pro`/`grind-max`) — edit + full bash (global).
 - **P6 vision** (`vision`) — no edit, no bash.
 
+The global Rust-tool table (`fd`/`bat`/`eza`/`sd`/`ouch`/`jaq`/`dust`/`difft`/
+`btm`/`procs`) does not reach the read-only profiles — read-only bash is exactly
+the named list above; a needed tool is added to the one map that needs it, at the
+measurement.
+
 Structurally denied in every profile (leading form): `grep`, `ls`, `cat`, `rg`,
 `cd`, `python`, `python3`. Content search = `archive_search <kws> --root <dir>`
 or `sgrep`; discovery = `glob`; reading = `sread` or the `read` tool. `cd` is

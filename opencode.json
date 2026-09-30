@@ -193,7 +193,9 @@
           "./target/release/ci_manage *": "allow",
           "*.secrets.local*": "deny",
           ".secrets.local": "deny",
-          "*secrets_keys.txt*": "deny"
+          "*secrets_keys.txt*": "deny",
+          "env *": "deny",
+          "env": "deny"
         }
       }
     }
@@ -313,7 +315,9 @@
       "entr *": "deny",
       "*.secrets.local*": "deny",
       ".secrets.local": "deny",
-      "*secrets_keys.txt*": "deny"
+      "*secrets_keys.txt*": "deny",
+      "env *": "deny",
+      "env": "deny"
     }
   },
   "lsp": true,
