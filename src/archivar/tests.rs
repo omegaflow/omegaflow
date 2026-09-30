@@ -673,9 +673,9 @@ fn test_hapi_without_parameters_array_vector_and_declared_fill() {
 
 #[test]
 fn test_hapi_csv_body_reads_without_format_line() {
-    let body = "2008-09-10T00:00:00.500, 162.546,-31.005\n\
-                2008-09-10T00:00:01.500, 162.537,-31.034\n\
-                2008-09-10T00:00:02.500, ,-31.024\n";
+    let body = "2018-09-10T00:00:00.500, 162.546,-31.005\n\
+                2018-09-10T00:00:01.500, 162.537,-31.034\n\
+                2018-09-10T00:00:02.500, ,-31.024\n";
     let src = source_fixture(
         "",
         vec![
