@@ -1,4 +1,8 @@
 use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::pds4::{
+    assemble, axis_of, decode_rows as decode_text_rows, pack as pack_text,
+    parse_label as parse_text_label, parse_table as parse_text_table,
+};
 use omegaflow::archivar::pds4_binary::{
     Pds4BinaryRow, Pds4BinaryTable, decode_rows, pack, parse_label, parse_table,
 };
@@ -80,6 +84,112 @@ fn print_inventory(asset: &str, table: &Pds4BinaryTable, meta_file: &str, skippe
     );
 }
 
+fn text_asset_name(spec: &str) -> String {
+    let base = spec.rsplit('/').next().unwrap_or(spec);
+    let last = base.split_once('?').map(|(h, _)| h).unwrap_or(base);
+    let stem = last.split('.').next().unwrap_or(last);
+    format!("pds4_fixed_width_{}.bin", stem.to_ascii_lowercase())
+}
+
+fn print_text_register_lines(asset: &str) {
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
+    println!("format pds4_fixed_width");
+    println!("ttl 604800");
+    println!();
+}
+
+fn compile_text_pair(
+    label_spec: &str,
+    dat_spec: Option<&str>,
+    out_dir: Option<&str>,
+    ci_mode: bool,
+) -> Option<String> {
+    let Some(label_bytes) = fetch_or_read(label_spec) else {
+        eprintln!("label fetch/read void ({label_spec})");
+        return None;
+    };
+    let Ok(label_text) = std::str::from_utf8(&label_bytes) else {
+        eprintln!("label not utf8 ({label_spec})");
+        return None;
+    };
+    let Some(meta) = parse_text_label(label_text) else {
+        eprintln!(
+            "{label_spec}: no Table_Character File_Area — the label stays untouched (0 honored)"
+        );
+        return None;
+    };
+    if meta.table_class != "Table_Character" {
+        eprintln!(
+            "{} — the fixed-width arm leaves the table untouched",
+            meta.table_class
+        );
+        return None;
+    }
+    let dat = match dat_spec {
+        Some(d) => d.to_string(),
+        None => {
+            let Some(name) = meta.file_name.as_deref() else {
+                eprintln!("{label_spec}: label carries no file_name — the data file stays unnamed");
+                return None;
+            };
+            match label_spec.rsplit_once('/') {
+                Some((dir, _)) => format!("{dir}/{name}"),
+                None => name.to_string(),
+            }
+        }
+    };
+    let Some(dat_bytes) = fetch_or_read(&dat) else {
+        eprintln!("data fetch void ({dat})");
+        return None;
+    };
+    let Some((raw_rows, decode_skipped, trailing)) = decode_text_rows(&dat_bytes, &meta) else {
+        eprintln!(
+            "{dat}: {} byte(s) carry no fixed-width rows — the table stays unwritten (0 honored)",
+            dat_bytes.len()
+        );
+        return None;
+    };
+    let axis = axis_of(&meta);
+    let Some((table, assemble_skipped, axis_note)) = assemble(&meta, raw_rows, axis) else {
+        eprintln!("{dat}: no numeric row survived — the table stays unwritten (0 honored)");
+        return None;
+    };
+    let asset = text_asset_name(&dat);
+    let out_path = match out_dir {
+        Some(dir) => format!("{}/{asset}", dir.trim_end_matches('/')),
+        None => format!("data/{NETLOC}/pds4_fixed_width/{asset}"),
+    };
+    let bin = pack_text(&table);
+    let Some(parsed) = parse_text_table(&bin) else {
+        eprintln!("{asset}: packed read void — the table stays unverified (0 honored)");
+        return None;
+    };
+    if parsed != table {
+        eprintln!("{asset}: roundtrip void — the table stays unverified (0 honored)");
+        return None;
+    }
+    if let Some(parent) = std::path::Path::new(&out_path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if std::fs::write(&out_path, &bin).is_err() {
+        eprintln!("write {out_path} returned void");
+        return None;
+    }
+    eprintln!(
+        "{out_path}: {} row(s) packed, {} byte(s), sha256 {}, roundtrip holds; axis {axis_note}; skipped {} row(s), {trailing} trailing byte(s)",
+        table.rows.len(),
+        bin.len(),
+        sha256_hex(&bin),
+        decode_skipped + assemble_skipped,
+    );
+    print_text_register_lines(&asset);
+    if ci_mode && !upload_release(NETLOC, &out_path) {
+        eprintln!("{asset}: CDN upload returned void");
+        return None;
+    }
+    Some(asset)
+}
+
 fn compile_pair(
     label_spec: &str,
     dat_spec: Option<&str>,
@@ -95,6 +205,9 @@ fn compile_pair(
         return None;
     };
     let Some(meta) = parse_label(label_text) else {
+        if parse_text_label(label_text).is_some_and(|m| m.table_class == "Table_Character") {
+            return compile_text_pair(label_spec, dat_spec, out_dir, ci_mode);
+        }
         eprintln!(
             "{label_spec}: no Table_Binary File_Area — the label stays untouched (0 honored)"
         );

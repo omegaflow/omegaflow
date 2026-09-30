@@ -533,6 +533,138 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
     }
 }
 
+pub fn is_numeric_type(data_type: &str) -> bool {
+    matches!(
+        data_type.to_ascii_uppercase().as_str(),
+        "ASCII_INTEGER" | "ASCII_NONNEGATIVE_INTEGER" | "ASCII_REAL"
+    )
+}
+
+pub enum Axis {
+    IsoTime(usize),
+    Offset(usize, f64, f64),
+}
+
+fn axis_column(meta: &Pds4Meta, idx: usize) -> Pds4Column {
+    let c = &meta.columns[idx];
+    Pds4Column {
+        name: c.name.clone(),
+        unit: Some("SECOND".to_string()),
+        data_type: Some("TIME".to_string()),
+        missing_constant: c.missing_constant,
+        sampling_name: c.sampling_name.clone(),
+        sampling_unit: c.sampling_unit.clone(),
+        sampling_min: c.sampling_min,
+        sampling_max: c.sampling_max,
+        start_byte: c.start_byte,
+        bytes: c.bytes,
+    }
+}
+
+pub fn axis_of(meta: &Pds4Meta) -> Option<(Axis, String)> {
+    for (i, c) in meta.columns.iter().enumerate() {
+        if let Some(dt) = &c.data_type {
+            if dt.to_ascii_uppercase().starts_with("ASCII_DATE_TIME") {
+                return Some((Axis::IsoTime(i), format!("{} ({dt} date-time)", c.name)));
+            }
+        }
+    }
+    for (i, c) in meta.columns.iter().enumerate() {
+        if c.name.eq_ignore_ascii_case("MET") {
+            let base = match meta.start_time.as_deref() {
+                Some(st) => match unix_of_iso(st) {
+                    Some(b) => b,
+                    None => return None,
+                },
+                None => return None,
+            };
+            return Some((
+                Axis::Offset(i, base, 1.0 / 32.0),
+                format!("{} (MET s ticks + START_TIME {base:.3})", c.name),
+            ));
+        }
+    }
+    None
+}
+
+pub fn assemble(
+    meta: &Pds4Meta,
+    raw_rows: Vec<Vec<Option<f64>>>,
+    axis: Option<(Axis, String)>,
+) -> Option<(Pds4Table, usize, String)> {
+    let mut columns: Vec<Pds4Column> = Vec::new();
+    let mut kept: Vec<usize> = Vec::new();
+    let axis_note = match &axis {
+        Some((_, note)) => note.clone(),
+        None => String::from("none"),
+    };
+    match &axis {
+        Some((Axis::IsoTime(i), _)) | Some((Axis::Offset(i, _, _), _)) => {
+            columns.push(axis_column(meta, *i));
+            for (j, c) in meta.columns.iter().enumerate() {
+                if j != *i && c.data_type.as_deref().is_some_and(is_numeric_type) {
+                    columns.push(c.clone());
+                    kept.push(j);
+                }
+            }
+        }
+        None => {
+            for (j, c) in meta.columns.iter().enumerate() {
+                if c.data_type.as_deref().is_some_and(is_numeric_type) {
+                    columns.push(c.clone());
+                    kept.push(j);
+                }
+            }
+        }
+    }
+    let mut rows: Vec<Pds4Row> = Vec::new();
+    let mut skipped = 0usize;
+    for raw in raw_rows {
+        let mut values: Vec<Option<f64>> = Vec::new();
+        match &axis {
+            Some((Axis::IsoTime(i), _)) => match raw.get(*i) {
+                Some(Some(v)) => values.push(Some(*v)),
+                _ => {
+                    skipped += 1;
+                    continue;
+                }
+            },
+            Some((Axis::Offset(i, base, scale), _)) => match raw.get(*i) {
+                Some(Some(v)) => values.push(Some(v * scale + base)),
+                _ => {
+                    skipped += 1;
+                    continue;
+                }
+            },
+            None => {}
+        }
+        for j in &kept {
+            values.push(match raw.get(*j) {
+                Some(Some(v)) => Some(*v),
+                _ => None,
+            });
+        }
+        if axis.is_none() && values.iter().all(|v| v.is_none()) {
+            skipped += 1;
+            continue;
+        }
+        rows.push(Pds4Row { values });
+    }
+    if rows.is_empty() {
+        return None;
+    }
+    Some((
+        Pds4Table {
+            columns,
+            rows,
+            delimited: false,
+            delimiter: None,
+        },
+        skipped,
+        axis_note,
+    ))
+}
+
 fn decode_fixed(bytes: &[u8], meta: &Pds4Meta) -> Option<DecodeOutput> {
     let stride = record_stride(meta, bytes.len())?;
     let span = data_span(meta)?;

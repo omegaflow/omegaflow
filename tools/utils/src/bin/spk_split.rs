@@ -188,6 +188,33 @@ fn seg_from_summary(summary: &(Vec<f64>, Vec<i32>), name: String) -> Option<SegI
     })
 }
 
+fn records_cover(records: &BTreeMap<u32, Vec<u8>>, seg: &SegInfo) -> bool {
+    let mut addr = seg.start_addr;
+    while addr <= seg.end_addr {
+        let rec_start = (addr - 1) / 128 * 128 + 1;
+        if !records.contains_key(&rec_start) {
+            return false;
+        }
+        addr = rec_start + 128;
+    }
+    true
+}
+
+fn read_words(records: &BTreeMap<u32, Vec<u8>>, start: u32, end: u32) -> Option<Vec<u8>> {
+    let mut out = Vec::with_capacity((end - start + 1) as usize * 8);
+    let mut addr = start;
+    while addr <= end {
+        let rec_start = (addr - 1) / 128 * 128 + 1;
+        let rec = records.get(&rec_start)?;
+        let off = (addr - rec_start) as usize * 8;
+        let take_end = end.min(rec_start + 127);
+        let n = (take_end - addr + 1) as usize * 8;
+        out.extend_from_slice(&rec[off..off + n]);
+        addr = take_end + 1;
+    }
+    Some(out)
+}
+
 fn build_body_daf(
     file_record: &[u8; RECORD_BYTES],
     ss: usize,
@@ -325,13 +352,9 @@ fn load_gm_catalog(path: &str) -> HashMap<i32, f64> {
 struct Splitter {
     targets: HashSet<i32>,
     pending: HashMap<i32, Vec<SegInfo>>,
-    front_target: Option<i32>,
-    front_segs: Vec<SegInfo>,
-    span_start: u32,
-    span_end: u32,
-    buf: Vec<u8>,
-    buf_base_addr: u32,
-    buf_last_record: u32,
+    records: BTreeMap<u32, Vec<u8>>,
+    floor: u32,
+    last_addr: u32,
     file_record: [u8; RECORD_BYTES],
     ss: usize,
     carrier: SpkFile,
@@ -369,83 +392,102 @@ impl Splitter {
                 seg.target, seg.center
             ));
         }
-        let list = self.pending.entry(seg.target).or_default();
-        if list.len() >= SEGMENTS_PER_BODY {
-            die(format!("target {} carries a fifth segment", seg.target));
+        let target = seg.target;
+        {
+            let list = self.pending.entry(target).or_default();
+            if list.len() >= SEGMENTS_PER_BODY {
+                die(format!("target {} carries a fifth segment", target));
+            }
+            list.push(seg);
         }
-        list.push(seg);
+        self.recompute_floor();
+        self.trim_records();
+        self.check_lost(target);
     }
 
-    fn maybe_set_front(&mut self, avail_addr: u32) {
-        if self.front_target.is_some() {
+    fn recompute_floor(&mut self) {
+        let mut floor = u32::MAX;
+        for segs in self.pending.values() {
+            for s in segs {
+                floor = floor.min(s.start_addr);
+            }
+        }
+        self.floor = if floor == u32::MAX { 0 } else { floor };
+    }
+
+    fn trim_records(&mut self) {
+        if self.floor == 0 {
+            self.records.clear();
             return;
         }
-        let complete: Vec<(i32, Vec<SegInfo>)> = self
-            .pending
-            .iter()
-            .filter(|(_, v)| v.len() == SEGMENTS_PER_BODY)
-            .map(|(k, v)| (*k, v.clone()))
-            .collect();
-        let mut best: Option<(u32, i32, Vec<SegInfo>)> = None;
-        for (target, mut segs) in complete {
-            segs.sort_by_key(|s| s.start_addr);
-            let start = segs[0].start_addr;
-            if start < avail_addr {
-                die(format!(
-                    "target {}: segment data begins before address {} — the segment's summary arrived after its data",
-                    target, avail_addr
-                ));
-            }
-            let candidate = (start, target, segs);
-            match &best {
-                None => best = Some(candidate),
-                Some((b_start, _, _)) if *b_start > start => best = Some(candidate),
-                _ => {}
+        loop {
+            let first = self.records.keys().next().copied();
+            match first {
+                Some(addr) if addr + 128 <= self.floor => {
+                    self.records.remove(&addr);
+                }
+                _ => break,
             }
         }
-        if let Some((start, target, segs)) = best {
-            let rec_start = (start - 1) / 128 + 1;
-            if !self.buf.is_empty() && self.buf_last_record != rec_start {
-                self.buf.clear();
-                self.buf_base_addr = (rec_start - 1) * 128 + 1;
+    }
+
+    fn check_lost(&self, target: i32) {
+        let Some(list) = self.pending.get(&target) else {
+            return;
+        };
+        if list.len() != SEGMENTS_PER_BODY {
+            return;
+        }
+        for s in list {
+            if s.end_addr <= self.last_addr && !records_cover(&self.records, s) {
+                die(format!(
+                    "target {}: segment data begins before address {} — the segment's summary arrived after its data",
+                    target, s.start_addr
+                ));
             }
-            if self.buf.is_empty() {
-                self.buf_base_addr = (rec_start - 1) * 128 + 1;
-            }
-            self.front_target = Some(target);
-            self.front_segs = segs;
-            self.span_start = start;
-            self.span_end = self.front_segs[SEGMENTS_PER_BODY - 1].end_addr;
-            eprintln!(
-                "front: target {} span [{},{}] records [{},{}] avail {}",
-                target,
-                self.span_start,
-                self.span_end,
-                rec_start,
-                (self.span_end - 1) / 128 + 1,
-                avail_addr
-            );
-            self.pending.remove(&target);
         }
     }
 
     fn on_data(&mut self, rec_no: u32, bytes: &[u8; RECORD_BYTES]) {
-        if let Some(target) = self.front_target {
-            let rec_start = (self.span_start - 1) / 128 + 1;
-            let rec_end = (self.span_end - 1) / 128 + 1;
-            if rec_no >= rec_start && rec_no <= rec_end {
-                self.buf.extend_from_slice(bytes);
-                self.buf_last_record = rec_no;
-            }
-            if rec_no == rec_end {
-                let segs = std::mem::take(&mut self.front_segs);
-                self.extract(target, segs);
-                self.front_target = None;
-                self.maybe_set_front(self.buf_base_addr);
-            }
-            return;
+        let addr = (rec_no - 1) * 128 + 1;
+        self.last_addr = addr + 128;
+        if self.floor != 0 && addr + 128 > self.floor {
+            self.records.insert(addr, bytes.to_vec());
         }
-        self.maybe_set_front(rec_no * 128 + 1);
+        self.try_extract();
+    }
+
+    fn try_extract(&mut self) {
+        loop {
+            let mut best: Option<(u32, i32)> = None;
+            for (target, segs) in &self.pending {
+                if segs.len() != SEGMENTS_PER_BODY {
+                    continue;
+                }
+                let start = segs.iter().map(|s| s.start_addr).fold(u32::MAX, u32::min);
+                if let Some((b_start, _)) = best {
+                    if start >= b_start {
+                        continue;
+                    }
+                }
+                if segs.iter().all(|s| records_cover(&self.records, s)) {
+                    best = Some((start, *target));
+                }
+            }
+            match best {
+                Some((_, target)) => {
+                    let mut segs = match self.pending.remove(&target) {
+                        Some(s) => s,
+                        None => break,
+                    };
+                    segs.sort_by_key(|s| s.start_addr);
+                    self.extract(target, segs);
+                    self.recompute_floor();
+                    self.trim_records();
+                }
+                None => break,
+            }
+        }
     }
 
     fn extract(&mut self, target: i32, mut segs: Vec<SegInfo>) {
@@ -458,29 +500,28 @@ impl Splitter {
                 SEGMENTS_PER_BODY
             ));
         }
-        let (start, end) = (segs[0].start_addr, segs[3].end_addr);
-        for w in segs.windows(2) {
-            if w[1].start_addr != w[0].end_addr + 1 {
-                die(format!(
-                    "target {}: segments [{}..{}] and [{}..{}] do not touch",
-                    target, w[0].start_addr, w[0].end_addr, w[1].start_addr, w[1].end_addr
-                ));
-            }
+        let mut span = Vec::new();
+        let mut out_segs: Vec<SegInfo> = Vec::with_capacity(segs.len());
+        let mut next_addr = DATA_START_ADDR;
+        for seg in &segs {
+            let bytes = match read_words(&self.records, seg.start_addr, seg.end_addr) {
+                Some(b) => b,
+                None => die(format!(
+                    "target {}: segment [{},{}] is not in the buffer",
+                    target, seg.start_addr, seg.end_addr
+                )),
+            };
+            let words = seg.end_addr - seg.start_addr + 1;
+            let mut out = seg.clone();
+            out.start_addr = next_addr;
+            out.end_addr = next_addr + words - 1;
+            next_addr = out.end_addr + 1;
+            span.extend_from_slice(&bytes);
+            out_segs.push(out);
         }
-        let byte_off = (start - self.buf_base_addr) as usize * 8;
-        let span_len = (end - start + 1) as usize * 8;
-        if byte_off + span_len > self.buf.len() {
-            die(format!(
-                "target {}: {} bytes buffered, the segment span needs {}",
-                target,
-                self.buf.len(),
-                byte_off + span_len
-            ));
-        }
-        let span = self.buf[byte_off..byte_off + span_len].to_vec();
-        let tail = self.buf.split_off(byte_off + span_len);
-        self.buf = tail;
-        self.buf_base_addr = end + 1;
+        let start = out_segs[0].start_addr;
+        let end = out_segs[out_segs.len() - 1].end_addr;
+        let span_len = span.len();
         let (min_et, max_et) = (
             segs.iter().map(|s| s.start_et).fold(f64::MAX, f64::min),
             segs.iter().map(|s| s.end_et).fold(f64::MIN, f64::max),
@@ -512,7 +553,7 @@ impl Splitter {
             span_len,
             segs.len()
         );
-        let daf_bytes = build_body_daf(&self.file_record, self.ss, &segs, &span);
+        let daf_bytes = build_body_daf(&self.file_record, self.ss, &out_segs, &span);
         let daf = match DafFile::from_data(daf_bytes) {
             Ok(d) => d,
             Err(e) => die(format!("target {}: DAF-in-RAM refused: {}", target, e)),
@@ -949,13 +990,9 @@ fn main() {
     let mut splitter = Splitter {
         targets: target_ids,
         pending: HashMap::new(),
-        front_target: None,
-        front_segs: Vec::new(),
-        span_start: 0,
-        span_end: 0,
-        buf: Vec::new(),
-        buf_base_addr: 0,
-        buf_last_record: 0,
+        records: BTreeMap::new(),
+        floor: 0,
+        last_addr: 0,
         file_record: [0u8; RECORD_BYTES],
         ss: 0,
         carrier,
@@ -1001,6 +1038,7 @@ fn main() {
             let mut rec2 = [0u8; RECORD_BYTES];
             read_record(&mut *source, &mut rec2, rec_no + 1);
             rec_no += 1;
+            splitter.last_addr = rec_no * 128 + 1;
             let names = parse_name_record(&rec2, name_chars, summary.summaries.len());
             for (i, sum) in summary.summaries.iter().enumerate() {
                 let name = match names.get(i).cloned() {
@@ -1011,8 +1049,8 @@ fn main() {
                     splitter.note_summary(seg);
                 }
             }
+            splitter.try_extract();
             if summary.next == 0 {
-                splitter.maybe_set_front(rec_no * 128 + 1);
                 next_summary = 0;
                 continue;
             }
@@ -1034,7 +1072,7 @@ fn main() {
             }
         }
     }
-    if splitter.front_target.is_some() {
+    if !splitter.pending.is_empty() {
         eprintln!(
             "pending at stream end: {:?}",
             splitter.pending.keys().collect::<Vec<_>>()
@@ -1119,5 +1157,43 @@ mod tests {
         assert_eq!(state[2], 3.0);
         let state0 = spk.state(2136199, 10, -1.0e9).unwrap();
         assert_eq!(state0, [1.0, 2.0, 3.0, 0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn records_cover_a_gap_between_summary_records() {
+        let mut records: BTreeMap<u32, Vec<u8>> = BTreeMap::new();
+        let mut r1 = vec![0u8; RECORD_BYTES];
+        for i in 0..128usize {
+            r1[i * 8..i * 8 + 8].copy_from_slice(&((i as f64) + 1.0).to_le_bytes());
+        }
+        records.insert(1, r1);
+        let mut r3 = vec![0u8; RECORD_BYTES];
+        for i in 0..128usize {
+            r3[i * 8..i * 8 + 8].copy_from_slice(&((i as f64) + 1000.0).to_le_bytes());
+        }
+        records.insert(257, r3);
+
+        let seg = |start: u32, end: u32| SegInfo {
+            target: 2174567,
+            center: 10,
+            frame: 1,
+            data_type: 2,
+            start_et: ET_MIN,
+            end_et: ET_MAX,
+            start_addr: start,
+            end_addr: end,
+            name: String::new(),
+        };
+
+        assert!(records_cover(&records, &seg(1, 128)));
+        assert!(!records_cover(&records, &seg(100, 300)));
+        assert!(records_cover(&records, &seg(257, 384)));
+
+        let low = read_words(&records, 1, 2).unwrap();
+        assert_eq!(f64::from_le_bytes(low[0..8].try_into().unwrap()), 1.0);
+        assert_eq!(f64::from_le_bytes(low[8..16].try_into().unwrap()), 2.0);
+        let high = read_words(&records, 257, 258).unwrap();
+        assert_eq!(f64::from_le_bytes(high[0..8].try_into().unwrap()), 1000.0);
+        assert!(read_words(&records, 128, 257).is_none());
     }
 }
