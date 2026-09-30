@@ -15744,9 +15744,9 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nereid
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_new_horizons.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at new_horizons
 no-cadence
@@ -15947,16 +15947,16 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager1
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at voyager2
 no-cadence
