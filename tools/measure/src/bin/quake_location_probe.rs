@@ -1,6 +1,6 @@
 use omegaflow::ak135::p_travel_depth;
 use omegaflow::archivar::{
-    BodyEphemeris, body_fixed_to_icrs, cache_root, embedded_lsk, fetch_raw_bytes,
+    BodyEphemeris, body_fixed_to_icrs, content_cache, embedded_lsk, fetch_raw_bytes,
     parse_ephemeris_binary,
 };
 use omegaflow_measure::miniseed::decode_body;
@@ -78,18 +78,18 @@ fn curl_bytes(url: &str) -> (Option<u16>, Vec<u8>) {
 }
 
 fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
-    let path = cache_root().join(format!("quake_location_{name}.bin"));
+    let path = content_cache(&format!("omegaflow_eph_{name}.bin"));
     if let Ok(b) = std::fs::read(&path) {
         return Some(b);
     }
     let b = fetch_raw_bytes(url)?;
-    if let Some(parent) = path.parent() {
+    if let Some(parent) = std::path::Path::new(&path).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
     if std::fs::write(&path, &b).is_err() {
         println!(
             "quake location probe: the ephemeris cache was not written ({})",
-            path.display()
+            path
         );
     }
     Some(b)
