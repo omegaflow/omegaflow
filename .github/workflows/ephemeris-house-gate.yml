@@ -1,0 +1,42 @@
+name: ephemeris-house-gate
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the three Earth ephemeris lines from the CDN
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov-de data/ftp.imcce.fr data/ftp.iaaras.ru
+          gh release download ssd.jpl.nasa.gov-de --repo omegaflow/sources \
+            --pattern ephemeris_de441_earth.bin --clobber -D data/ssd.jpl.nasa.gov-de
+          gh release download ftp.imcce.fr --repo omegaflow/sources \
+            --pattern ephemeris_inpop_earth.bin --clobber -D data/ftp.imcce.fr
+          gh release download ftp.iaaras.ru --repo omegaflow/sources \
+            --pattern ephemeris_epm_earth.bin --clobber -D data/ftp.iaaras.ru
+      - name: Run the three-house Earth ephemeris gate (JUICE flyby ±2 d)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin ephemeris_house_gate
+          } > ephemeris-house-gate.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ephemeris-house-gate
+          path: |
+            ephemeris-house-gate.txt
+            data/flyby2/house-gate-2026-09-28.json
