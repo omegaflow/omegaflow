@@ -30,11 +30,11 @@ sondern als überholt benannt — Riss, nicht stille Korrektur.
 
 | Survey-Pfad (2026-09-03) | existiert | realer Ort (gemessen 2026-09-30) | Größe |
 |---|---|---|---|
-| `~/knowledge` | nein | `/home/johannes/archive/knowledge` | 36 G |
-| `~/backups` | nein | `/home/johannes/archive-state` (sessions/provenance) **+** `/home/johannes/archive/knowledge/omegaflow` | 9,8 G + 21 G |
-| `~/.local/state/omegaflow/archivar_cache` | nein | `/home/johannes/projects/omegaflow/cache` (Kandidat, nicht bewiesen) | 11 G |
+| `~/knowledge` | nein | `~/archive/knowledge` | 36 G |
+| `~/backups` | nein | `~/archive-state` (sessions/provenance) **+** `~/archive/knowledge/omegaflow` | 9,8 G + 21 G |
+| `~/.local/state/omegaflow/archivar_cache` | nein | `~/projects/omegaflow/cache` (Kandidat, nicht bewiesen) | 11 G |
 
-Realer Ist-Baum: `/home/johannes/archive/` = 36 G (davon `knowledge/` 36 G, `archive-root/` 840 M,
+Realer Ist-Baum: `~/archive/` = 36 G (davon `knowledge/` 36 G, `archive-root/` 840 M,
 `cdn-sources/` 26 M, `funding/` 16 K, `media/` 9,6 M). Repo-`data/` = **79 G** (Top-netloc:
 `ssd.jpl.nasa.gov` 3,4 G, `pds-ppi.igpp.ucla.edu` 3,3 G, `naif.jpl.nasa.gov` 2,3 G,
 `jsoc.stanford.edu` 2,0 G, `pradan.issdc.gov.in` 1,1 G). Die Byte-Zahlen im Gesamtland-Abschnitt
