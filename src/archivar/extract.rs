@@ -87,7 +87,6 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_fits" => pds4_fits::parse_series(bytes),
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
-        "lab_reader" => lab_reader::parse_bin(bytes).and_then(|t| t.series()),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
@@ -295,12 +294,6 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let (names, rows) = pds4_fits::parse_named_series(bytes)?;
             (names, rows)
         }
-        "lab_reader" => {
-            let table = lab_reader::parse_bin(bytes)?;
-            let names = vec!["Pol".to_string(), "PolC".to_string()];
-            let rows = table.series()?;
-            (names, rows)
-        }
         _ => return None,
     };
     let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
@@ -402,11 +395,6 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "noaa_ccor" => match comp {
             ccor::COMP_INTENSITY => Some("noaa_ccor_intensity_dn"),
-            _ => None,
-        },
-        "lab_reader" => match comp {
-            lab_reader::COMP_POL => Some("lab_reader_pol"),
-            lab_reader::COMP_POLC => Some("lab_reader_polc"),
             _ => None,
         },
         "aia" => match comp {

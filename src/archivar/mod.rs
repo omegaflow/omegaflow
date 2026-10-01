@@ -154,7 +154,6 @@ pub mod tdat;
 pub mod thermochem;
 pub mod tiff;
 pub mod tns;
-pub mod lab_reader;
 pub mod twomass;
 pub mod twomrs;
 pub mod usgs_comcat;
