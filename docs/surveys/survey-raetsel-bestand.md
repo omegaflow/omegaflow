@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-09-28
-  sha256: 609b7be243ce6822653ee9ba6fb1434c5f9a13a1792c5fec3e9053542c364e28
+  sha256: 223025af6968fe19ac497e089a5a88961a17e160c857bbecfdf0a920b7ccba44
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
