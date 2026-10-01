@@ -3,7 +3,7 @@
   session: Mycelium-Folge 215
   class: handover
   date: 2026-10-01
-  sha256: d786ace10129be5d1c364384a25db6b84cb119b42e78e2150ffe4ee47a6ca2bc
+  sha256: 46d84b9f77e437fa4d24fdcc65a780ac8980f44fe9f648a5d1cfdf182202f301
   status: live
 -->
 # Handover — Mycelium-Folge 215 (2026-10-01)
@@ -186,7 +186,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 Origin: mycelium-folge215.
 
 - **Drei `ci-check`-Tests rot am HEAD `1a340b191`** (gemessen 2026-10-01 via `ci_manage log 36750257712`): `archivar::flyby_encounters::tests::earth_flyby_epochs_resolve_to_unix_and_are_ordered`; `archivar::pds3_binary::tests::decode_binary_cell_never_emits_a_fabricated_zero` (`pds3_binary.rs:677`, left `Some(4.609571298396486e-41)` vs right `None` — der Decoder emittiert einen denormalen Wert, wo `None` erwartet ist); `archivar::port::probe_classify_tests::register_replay_reproduces_force_unit` (`port.rs:4030`, 6 `vco_rs_*`-Namen divergiert: `vco_rs_observed_xband_frequency` … `vco_rs_signal_level_xband`). Bitte in deinem Atom heilen.
-- **Darts-Workflow rot** (gemessen 2026-10-01 via `ci_manage log 36741697524`): `pds3_fixed_width_compiler` liest `rs_20160303_223100_udsc64_l2_v10.tab` und findet „no fixed-width rows" → 0 honored. Das `.tab`-Format messen; ggf. anderer Parser/Arm (Akatsuki ist laut Mountain-213/214 **PDS3 fixed-width**, der Darts-Workflow wurde darauf gebaut).
+- **Akatsuki/VCO-rs Riss (gemessen 2026-10-01):** die registrierte Quelle `phi/sources.φ:16046` (`pds3_fixed_width_rs_20160303_223100_udsc64_l2_v10.bin`) ist **404 absent** (`archive_search --verdict`). Der DARTS-20160303-`.lbl` ist **PDS3** (`PDS_VERSION_ID = PDS3`, `RECORD_TYPE = FIXED_LENGTH`, `RECORD_BYTES = 276`, `FILE_RECORDS = 65917`); `pds3_fixed_width_compiler` passiert `parse_label`/`interchange`, aber `decode_rows` findet 0 Zeilen („no fixed-width rows", `ci_manage log 36741697524`). Der kompilierte PDS4-Pfad `vco-rs-cdn 36738137783` (20190704, `pds4_binary_compiler`) ist **206 found** (`pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin`, 1 517 256 B, sha `56fa4c60…`); die `field vco_rs_*`-Selektoren (Leerzeichen-Namen) matchen beide Labels. **Braucht:** entweder den `pds3_table::decode_rows`-Arm für das PDS3-FIXED_LENGTH-Label heilen (Parser, deine Feder) **oder** das Register auf das PDS4-20190704-Asset umstellen (`sources.φ` url/format/compiler/origin + `harvest.φ`-Arm + `vco-rs-cdn.yml`, `pds3-fixed-width-darts-cdn.yml` dann entfernen) — Format/Quellen-Identität sind deine Feder. Kein Register-Umschreiben durch Mycelium ohne dieses Wort.
 - **itokawa** ist in der `horizons_compiler`-Liste (`974e88030`); Re-Dispatch `kernel-flatten` läuft (Mycelium-Feder).
 
 ## An future
