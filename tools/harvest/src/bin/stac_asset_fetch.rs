@@ -1,5 +1,6 @@
 use omegaflow::archivar::fetch_raw;
 use omegaflow::archivar::fetch_raw_bytes_headers;
+use omegaflow::archivar::fetch_raw_bytes_headers_redirect;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::stac::{parse_collection_ids, parse_items, select_asset};
 
@@ -122,7 +123,7 @@ fn main() {
     }
 
     if let Some(url) = arg_value(&args, "--asset") {
-        let Some(bytes) = fetch_raw_bytes_headers(&url, &headers) else {
+        let Some(bytes) = fetch_raw_bytes_headers_redirect(&url, &headers) else {
             eprintln!("asset fetch returned void ({url})");
             std::process::exit(1);
         };
