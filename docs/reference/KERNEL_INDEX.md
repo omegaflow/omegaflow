@@ -10,22 +10,22 @@ Canonical is `sources_index.φ` (machine-readable); this document is the reading
 HTTPS only. Fully recursive. CK/IK/SCLK/EK/DBK are indexed but not loaded
 by the flattener (no cameras, no onboard time — NAIF PDF assessment).
 
-## Family inventory (333195 files, 7158347012655 B)
+## Family inventory (333196 files, 7158385809967 B)
 | Family | Files | Bytes | Newest mtime (unix) |
 |---|---|---|---|
 | bpc | 6556 | 779673811 | 1790788020
-| ck | 107538 | 3598580521371 | 1790788020
-| dastcom | 7 | 258993 | 1790802840
+| ck | 107539 | 3598619318683 | 1790817840
+| dastcom | 7 | 258993 | 1790828100
 | dsk | 1057 | 259142925193 | 1784859060
 | fk | 1376 | 775957851 | 1790248740
 | gm | 14 | 438272 | 1783549920
 | ik | 1338 | 31188460 | 1790248860
 | lsk | 265 | 2622222 | 1784249340
-| misc | 182986 | 2914986146983 | 1790802840
+| misc | 182986 | 2914986146983 | 1790828100
 | mk | 13616 | 489317039 | 1790766360
 | pck-text | 1045 | 220823831 | 1790250360
 | sclk | 4067 | 129534639 | 1790765100
-| spk | 12898 | 347490576703 | 1790775060
+| spk | 12898 | 347490576703 | 1790813460
 | spk-planets | 83 | 2241091584 | 1784078700
 | spk-satellites | 349 | 33475935703 | 1783940280
 
