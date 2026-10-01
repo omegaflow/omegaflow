@@ -3,7 +3,7 @@
   session: Mycelium-Folge 216
   class: handover
   date: 2026-10-01
-  sha256: 82548da51a0445f5b9da6e510e661a35acecc3d6ce3db6502b1fbd40506b6989
+  sha256: 0b150dfa927566bba1d35814aad847d773657bf84d21465da9df678c67c72746
   status: live
 -->
 # Handover — Mycelium-Folge 216 (2026-10-01)
@@ -44,6 +44,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Roter Baum am `1a340b191`** (3 fremde `ci-check`-Tests) von Mountain-216 geheilt (`946c7b232`); der Punkt ist geschlossen.
 - **vco-rs PDS4** bereits an `0c32b4a87` umgestellt (mountain-folge216 bestätigt PDS4 kanonisch).
 - **Gebaut 2026-10-01 (Operator-Wort „bearbeiten"):** `pioneer11_odf_compiler.rs` trägt `--ci-mode` + `upload_release("spdf.gsfc.nasa.gov")`; `pioneer-odf-cdn.yml` trägt den Pioneer-11-Arm; `pioneer-telemetry-cdn.yml`-Tag-Riss (`ssd.jpl.nasa.gov` → `spdf.gsfc.nasa.gov`) geheilt; `sources.φ` trägt `pioneer11_odf` + `pioneer10_telemetry` (url/format/origin/compiler; `ttl` bei Mountain); die drei generischen Ephemeriden-`url` auf `_long` umgestellt (`new_horizons_long` 78928 B/`cca3d4cd…`, `voyager1_long` 255888 B/`185f2c18…`, `voyager2_long` 211088 B/`dfaa08fc…`). `cargo check` grün.
+- **`cosmicflows-cdn.yml` geheilt (2026-10-01):** der Workflow lief ohne `actions/checkout` → `could not find Cargo.toml` (`36836706826` rot, gemessen via `ci_manage log`); `actions/checkout@v7` + `setup-rust-toolchain@v1` ergänzt. Re-Dispatch: `gh workflow run cosmicflows-cdn.yml`.
+- **Zeugen-Sweep + Mapping v2 (2026-10-01):** 1303 declined + 70 descoped per Träger klassifiziert (nicht per Klasse); 173 Kandidaten (a57/b76/c28/d12), ~1128 `kein Zeuge` per Klassen-Regel. Artefakte `state/mycelium/zeugen-sweep/*.md` + `zeugen-sweep-mapping.md`; Riss (fünfte Zeugenart) an Rat + externe Stimmen (`state/mycelium/zeugen-risse-stimmen.md`).
 
 ## Offen (aufgeschlüsselt)
 
