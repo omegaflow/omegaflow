@@ -10293,6 +10293,7 @@ format pioneer11_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
 compiler tools/harvest/src/bin/pioneer11_odf_compiler.rs
 at earth
+ttl 604800
 field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin
@@ -10300,6 +10301,7 @@ format pioneer10_telemetry
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/TELEMETRY
 compiler tools/harvest/src/bin/pioneer_telemetry_compiler.rs
 at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
 format atdf

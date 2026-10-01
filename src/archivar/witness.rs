@@ -27,7 +27,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
             Some(FieldIdentity::Witness(WitnessKind::Substance))
         }
         b"FP01" => Some(FieldIdentity::Footprint),
-        b"NRS1" => Some(FieldIdentity::Pending),
+        b"NRS1" | b"PTLM" => Some(FieldIdentity::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" | b"MAX1"
         | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" | b"OSM1" => Some(FieldIdentity::Oscillator),
         _ => None,
@@ -239,6 +239,15 @@ mod tests {
     #[test]
     fn nrs1_stays_pending() {
         assert_eq!(magic_identity(*b"NRS1"), Some(FieldIdentity::Pending));
+    }
+
+    #[test]
+    fn ptlm_stays_pending() {
+        assert_eq!(magic_identity(*b"PTLM"), Some(FieldIdentity::Pending));
+        assert_eq!(
+            witness_gate(Some(*b"PTLM"), Some(WitnessKind::Presence), true),
+            WitnessVerdict::Pending
+        );
     }
 
     #[test]

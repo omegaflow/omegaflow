@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-09-28
-  sha256: 609b7be243ce6822653ee9ba6fb1434c5f9a13a1792c5fec3e9053542c364e28
+  sha256: 223025af6968fe19ac497e089a5a88961a17e160c857bbecfdf0a920b7ccba44
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -50,7 +50,7 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 
 | Kuprat | Artefakt | Kanäle (4, alle CDN 206) | Fehlend | Register | Nächster Schritt |
 |---|---|---|---|---|---|
-| Hoch-Tc | `rixs_cuprate_probe.rs` · `suprastrom_cuprate_probe.rs` · `suprastrom_form_probe.rs` · `crystal_compiler.rs` · `srd62_compiler.rs` · `cuprate-cdn.yml` · `srd62-cdn.yml` | RIXS spin (Zenodo 7286412) · RIXS charge (15179114) · EELS · SRD62 | 5. Ader NSE (privat `data/lab_a.data/SAMPLE_NSE_[redacted]/`, 13 Läufe); Kuprat-Zeugenklasse | 4 `witness substance`-Zeilen (`witnesses.φ:120-142`); kein `sources.φ`-Block (Verdikt ohne Adresse) | Mycelium: `url`/`origin`/`compiler` + Tag-Drift `ssd.jpl.nasa.gov`; kein `witness kuprat` (Vertrag: 4 Klassen, `witnesses.φ:1`); Operator-Wort für 5. Ader (NSE) ausstehend |
+| Hoch-Tc | `rixs_cuprate_probe.rs` · `suprastrom_cuprate_probe.rs` · `suprastrom_form_probe.rs` · `crystal_compiler.rs` · `srd62_compiler.rs` · `cuprate-cdn.yml` · `srd62-cdn.yml` | RIXS spin (Zenodo 7286412) · RIXS charge (15179114) · EELS · SRD62 | 5. Ader (privates Labor-Holding, 13 Läufe); Kuprat-Zeugenklasse | 4 `witness substance`-Zeilen (`witnesses.φ:120-142`); kein `sources.φ`-Block (Verdikt ohne Adresse) | Mycelium: `url`/`origin`/`compiler` + Tag-Drift `ssd.jpl.nasa.gov`; kein `witness kuprat` (Vertrag: 4 Klassen, `witnesses.φ:1`); 5. Ader: **LOCK `privat`** (Operator 2026-10-01 — nichts verlässt das Haus; Rat 2026-09-29: Substance, kein Wire-Arm, `archiv/handover-2026-09-29-mountain-folge204.md:80-86`); **Treiber-Lauf** über die öffentlichen Kanäle **nicht wohlgestellt** (gemessen 2026-10-01, grind-flash: Spin/Charge/Lattice/Supercurrent tragen keine gemeinsame geordnete Achse; TE braucht eine gepaarte Reihe; die RIXS/EELS-Bins sind PSD ohne Phase) — der einzige wohlgestellte Pfad wäre das private Holding (LOCK) |
 
 ## Querschnitt
 
