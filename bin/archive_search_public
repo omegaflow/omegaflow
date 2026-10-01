@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# archive_search_public — public-network-only front for archive_search.
+#
+# A `voice` agent may measure PUBLIC network sources and nothing else. Every
+# local-read switch is refused here, before the real tool sees it: no --root,
+# no --index, no --mft, no --git history, no --leads, no local PDF/pdf-image,
+# no --arxiv-src, no --out, no --serve, no file:// URL. The browser is refused
+# outright: --playwright never runs (it can ride the operator's logged-in
+# profile/session), and --headed is rejected. Only the network query modes
+# (keyword search engines, --verdict, --sniff) reach through, public hosts only.
+set -u
+DIR="$(cd "$(dirname "$0")" && pwd)"
+REAL="$DIR/archive_search"
+
+DENY=("--root" "--index" "--mft" "--git" "--leads" "--pdf-text" "--pdf-image" \
+      "--arxiv-src" "--out" "--serve" "--content" "--kind" "--sort" "--path" \
+      "--headed")
+for a in "$@"; do
+  case "$a" in
+    file:*|file://*)
+      printf 'archive_search_public: file URL is refused (public network only)\n' >&2
+      exit 2
+      ;;
+  esac
+  # No SSRF into the local machine or the LAN: public hosts only.
+  case "$a" in
+    http://*|https://*)
+      host="${a#*://}"; host="${host%%/*}"; host="${host%%:*}"
+      case "$host" in
+        localhost|127.*|0.0.0.0|::1|10.*|192.168.*|169.254.*|*.local|\
+        172.1[6-9].*|172.2[0-9].*|172.3[0-1].*)
+          printf 'archive_search_public: non-public host %s is refused\n' "$host" >&2
+          exit 2
+          ;;
+      esac
+      ;;
+  esac
+  for d in "${DENY[@]}"; do
+    if [ "$a" = "$d" ] || [[ "$a" == "$d="* ]]; then
+      printf 'archive_search_public: local-read switch %s is refused (public network only)\n' "$d" >&2
+      exit 2
+    fi
+  done
+done
+
+# Require an explicit public network mode as the first argument, so a bare
+# local default never runs and no other arm of the tool is reachable.
+case "${1:-}" in
+  --help|-h|--list) : ;;
+  --all|--arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|\
+  --wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|\
+  --marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|\
+  --pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|\
+  --materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|\
+  --uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|\
+  --reactome|--interpro|--alphafold|--supermag|--heasarc|--verdict|--sniff) : ;;
+  *)
+    printf 'archive_search_public: first argument must be a public network mode (see --help); got: %s\n' "${1:-<none>}" >&2
+    exit 2
+    ;;
+esac
+
+exec "$REAL" "$@"
