@@ -1,8 +1,8 @@
 <!--
   title: The directional driver of geomagnetically induced currents
   class: paper
-  date: 2026-09-30
-  sha256: 03f408a141cc96cbc750af5d9d4a0d652b08caf23bffb2a6ada8f500218111d2
+  date: 2026-10-01
+  sha256: 20f15fee71a13887592464fc692d447d3d30cac7b661430f038aace3071056ff
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a family bound calibrated to its nominal 1/(n_surr+1) across autocorrelation (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in one 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13 of 16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a round-maximum family bound whose AR(1) calibration showed a near-nominal rate but does not establish family-wise error control for this dependent, non-stationary design (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in a 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
 
 ## Key Points
 
@@ -139,8 +139,7 @@ with the yearly round's twelve pair-lag calls carrying six distinct statistics
 by chance; an arrow requires TE > fam (and therefore exceeds every null TE
 of the round). fam is an empirical plug-in maximum — the largest surrogate
 TE actually drawn in this round — not a quantile of a closed-form maximum
-distribution; the estimator names no fixed α, but the round-maximum's
-family-wise error rate is now calibrated at the operating size. The scalar
+distribution, and the estimator names no fixed α. The scalar
 round-max calibration battery (`tools/measure/src/bin/fam_calibration.rs:87`,
 `fam-scalar-calibration.yml`, CI run 36639382300, success) measures, at the
 operating n = 1260 on four independent AR(1) channels of autocorrelation
@@ -148,9 +147,28 @@ a = 0.0/0.5/0.9, FWER 7.83% (95% Wilson CI 5.94–10.26%), 9.50% (7.40–12.11%)
 and 9.50% (7.40–12.11%) with n_surr = 10 (600 trials per a) against the nominal
 1/(n_surr+1) = 9.09%, and FWER 1.67% (0.29–8.86%), 0.00% (0.00–6.02%) and 1.67%
 (0.29–8.86%) with n_surr = 100 (60 trials per a) against the nominal 0.99%. The
-round-maximum therefore holds its nominal family-wise error rate across
-autocorrelation; its sampling variability at n_surr = 10 is carried by the
-Wilson CI (§6). The PCMCI leg of the hardened probe runs α = 0.05
+battery shows that in this battery of independent AR(1) channels the empirical
+rate fell near the nominal value; it does not establish family-wise error
+control for the real design. A plug-in maximum is a valid level only under
+i.i.d. draws from the true null distribution of the maximum; here the surrogate
+streams are dependent (the shared deterministic seed across pairs and lags), the
+twelve pair-lag calls carry only six distinct statistics (the lag-0/1 identity,
+§3.1), and the true null of the maximum is misspecified for non-stationary,
+heavy-tailed hourly maxima. A calibrated null distribution of the round
+maximum is the open construction. The concrete form (reviewer consultation,
+2026-10-01): a studentized Westfall–Young max-T over the distinct statistics —
+one seasonal block-bootstrap resample of the driver per draw, shared across all
+pairs and lags so the joint dependence is preserved, with a per-round/per-station
+seed (never the same draws for the per-lag mean/σ and the family bound); the
+duplicated lag-0/1 cells are hashed and deduplicated to the six distinct
+statistics before the maximum; the 1−α level is the empirical α-quantile of the
+studentized maxima, B ≈ 10⁴ for α = 0.01 (a GPD tail fit above the top 10 % if
+the resample budget is capped), with the claim count K declared in advance.
+Point-estimate uncertainty is separate: a joint stationary bootstrap (BCa) on
+(X, Y), not the surrogate draws. The estimator's α stays unnamed until that
+construction stands; the current plug-in fam controls at order 10⁻¹, not 10⁻²
+(§6). The round-maximum's sampling variability at
+n_surr = 10 is carried by the Wilson CI (§6). The PCMCI leg of the hardened probe runs α = 0.05
 (`bz_retro_probe.rs`); the fam leg names none. Verdicts: **arrow** (TE > fam), **family bound** (TE > own
 threshold, < fam — directed, not round-significant), **silent** (TE < own
 threshold). Every §4 row label follows this mechanical rule from its
@@ -228,30 +246,38 @@ under strong bidirectional coupling and finite samples, and the direction is
 carried by the asymmetry (dominance of the known direction), not by an
 absolute reverse silence. This is the reading the paper takes for the
 real data (§4.4, §6): a marginal reverse arrow at the second station is
-consistent with a weak reverse coupling, not a null failure. The asymmetry
+inconclusive on its own — it neither establishes a reverse coupling nor fails
+the null — because its forward/reverse ratio lies below the instrument's only
+calibrated direction floor (2.1). The asymmetry
 ratios the estimator exhibits on this benchmark (2.1–8.4, n = 10 000) are the
 instrument's only calibrated direction scale; a data ratio below 2.1 lies
 below that calibration floor and carries no direction weight on its own.
 
-### 3.6 The ENSO three-channel block (Blatt I)
+### 3.6 The ENSO four-channel block (Blatt I)
 
 A second directional block applies the same estimator and family rule to the
 NINO3.4 SST anomaly (`ersstv5_nino34_ssta`, `ersstv5_nino34.bin`, cut −5…5 lat,
 190…240 lon, 1854-01-01…2026-08-01; `tools/harvest/src/bin/ersstv5_compiler.rs:12-17`).
-The block is designed as a three-channel round against the SST — the advective
+The block is a four-channel round against the SST — the advective
 zonal wind (TAO/TRITON `WU_422`, `tao_wnd_zonal.csv`), a lithosphere channel
-(the monthly USGS comcat rate, the L stage of the LAIC chain), and Bz
-(`omni_hro_imf_bz_gsm_nt`) — on a monthly grid, lag sweep 0–12 months, with the
-per-lag μ + 2σ threshold and the round-max family bound fam (§3.2); the NINO→Bz
-direction is the structural control (§3.3(ii) analogue), and a lithosphere arrow
-without a wind arrow would indict the instrument. The Bz↔SST pair is built
-(`tools/measure/src/bin/enso_blatt_probe.rs`); the wind and LAIC channels stay
-`pending`, each with a measured reason — the wind asset `tao_wnd_zonal.csv` is a
-120-day live window (`tao_wnd_compiler.rs` fetches `d_end−120 d … d_end−7 d`,
-while the source reaches 1977-11-06, `phi/harvest.φ:271`), so the historical
-record needs a compiler extension; the comcat catalog asset is absent. The
-block's common window is therefore bounded by its shortest channel, named at the
-first measured run, never assumed.
+(the monthly USGS comcat rate, the L stage of the LAIC chain), Bz
+(`omni_hro_imf_bz_gsm_nt`), and the SST itself — on a monthly grid, lag sweep
+0–12 months, with the per-lag μ + 2σ threshold and the round-max family bound
+fam (§3.2); the NINO→Bz direction is the structural control (§3.3(ii)
+analogue). The four channels are now wired and measured
+(`tools/measure/src/bin/enso_blatt_probe.rs`; the lithosphere channel reads
+`usgs_comcat_m45.bin` through `usgs_comcat::parse_bin`; CI run 36740119542,
+success): Wnd 566, Quake 643, Bz 542 and SST 656 active months, 542 common
+Bz–SST months. No arrow clears the family bound (fam = 2.9610e-1): every
+directed pair is silent or at family bound, and the conditional arm
+cTE(Bz → SST | Wnd) = 8.359e-3 stays below its threshold 2.612e-2 (conditioned
+silent). The named confounds are the annual cycle (the 0–12-month sweep
+includes the 12-month band) and the counting nature of the Quake channel. The
+wind and lithosphere channels were previously carried `pending`; both
+conditions are closed at the measured run — the wind channel is measured over
+566 active months and the comcat asset `usgs_comcat_m45.bin` is committed
+(`d0c070737`). The block's common window is bounded by its shortest channel
+(Bz, 542 months).
 
 ## 4. Results
 
@@ -405,8 +431,10 @@ rounds — but the only calibrated asymmetry scale of the instrument is the
 Hénon benchmark range (2.1–8.4, §3.5); the SOD ratio 1.09 lies below that
 floor and carries no direction weight on its own. Per §3.5, a weak reverse
 response under strong coupling is the
-estimator's expected behavior, not a null failure; it tempers a strictly
-one-way reading of the Sodankylä round. The yearly arrows sit at the lag-0
+estimator's expected behavior, not a null failure; the Sodankylä reverse arrow
+is therefore inconclusive on its own — it neither establishes a reverse
+coupling nor fails the null — and it tempers a strictly one-way reading of
+that round. The yearly arrows sit at the lag-0
 edge bin: the 30–60 min travel time straddles the lag-0/lag-1 boundary (the
 hardened probe's own boundary note names lag 1 h as the straddling bin,
 `bz_retro_probe.rs`), and the edge-bin character is carried, not resolved.
@@ -455,7 +483,9 @@ the 16 quarterly shards, but confirms a direct Bz edge in three (ABK
 2025-q2 5/6 lags, SOD 2025-q2 6/6, SOD 2025-q3 1/6). The cross-check
 therefore removes the direct Bz edge in a 13-of-16 majority of shards while
 three shards confirm it — a majority against the yearly arrow, not a neutral
-split; it sharpens the round-dependence the riss already names.
+split. A 13-of-16 majority is stronger than round-dependence: it is consistent
+with the yearly arrow carrying a confounding component that the conditional
+test removes, and the riss is carried with this reading named, not smoothed.
 
 **Relation to the literature.** Johnson & Wing (2005) established that the
 solar-wind–magnetosphere transfer is nonlinear and solar-cycle dependent;
@@ -475,8 +505,10 @@ phase-randomized null and a round-maximum family bound; the yearly-round
 arrow it finds does not survive the hardened quarterly round (§3.4).
 Methodologically, the family bound is a
 round-maximum multiple-comparison control in the spirit of Runge et al.
-(2019); its family-wise error rate is calibrated on the null battery to the
-nominal 1/(n_surr+1) across autocorrelation (§3.2); the surrogate design follows the
+(2019); its family-wise error rate was calibrated on the null battery, where
+the empirical rate fell near the nominal 1/(n_surr+1) — a calibration that
+does not transfer to this dependent, heavy-tailed, non-stationary design (the
+calibrated round-maximum null is the open construction, §3.2); the surrogate design follows the
 phase-randomization practice of
 Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 (here answered by the family bound rather than by shuffling the condition).
@@ -561,22 +593,27 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   in the minute grain; the yearly grains do not apply it). Non-stationarity
   is instead controlled by the year separation and the named status stack
   of the data.
-- **fam is a plug-in round maximum; its family-wise rate is calibrated.** It
+- **fam is a plug-in round maximum; its rate is not calibrated for the real design.** It
   corrects for the round's multiplicity by taking the largest surrogate TE
   actually drawn; it is not a quantile of a closed-form maximum distribution
-  and names no fixed α in the estimator. Its family-wise error rate is
-  calibrated at the operating size on four independent AR(1) channels
+  and names no fixed α in the estimator. Its family-wise error rate was
+  exercised at the operating size on four independent AR(1) channels
   (`tools/measure/src/bin/fam_calibration.rs:87`,
   `fam-scalar-calibration.yml`, CI run 36639382300, success): at n = 1260,
   n_surr = 10 (600 trials per a) FWER 7.83% (95% Wilson CI 5.94–10.26%),
   9.50% (7.40–12.11%) and 9.50% (7.40–12.11%) for a = 0.0/0.5/0.9 against
   nominal 9.09%; at n_surr = 100 (60 trials per a) 1.67% (0.29–8.86%), 0.00%
-  (0.00–6.02%) and 1.67% (0.29–8.86%) against nominal 0.99%. The round-maximum
-  holds its nominal rate across autocorrelation; the sampling variance at
+  (0.00–6.02%) and 1.67% (0.29–8.86%) against nominal 0.99%. The round-maximum's
+  empirical rate fell near the nominal value in that battery; the battery does
+  not establish family-wise error control for the real design, whose surrogate
+  draws are dependent (the shared deterministic seed), whose twelve pair-lag
+  calls carry six distinct statistics (the lag-0/1 identity, §3.1), and whose
+  null maximum is misspecified for non-stationary, heavy-tailed hourly maxima.
+  A calibrated null distribution of the round-maximum is the open construction;
+  its concrete studentized Westfall–Young max-T form is given in §3.2. The
+  current plug-in fam controls at order 10⁻¹, not 10⁻². The sampling variance at
   n_surr = 10 is carried by the reported Wilson CI, not asserted, and the
-  n_surr = 100 points pin the operating value at the low-nominal end. Dependence
-  between surrogate draws is not modelled beyond the shared-seed stream this
-  battery exercises. No confidence interval is reported on the TE values
+  n_surr = 100 points pin the operating value at the low-nominal end. No confidence interval is reported on the TE values
   themselves. The membrane-FPR battery (`gate_membrane_fpr_phase_vs_arx_n_1000`,
   `src/mathematikerin/te.rs`, wired as the `fpr-membrane` job of
   `.github/workflows/te-gate.yml`) measures the topological membrane's FPR,
