@@ -3,7 +3,7 @@
   session: Mycelium-Folge 215
   class: handover
   date: 2026-10-01
-  sha256: d786ace10129be5d1c364384a25db6b84cb119b42e78e2150ffe4ee47a6ca2bc
+  sha256: 7742d9c0b4d82cdac9d165943a2fd5a006a03146d15c6100b49fb8428715e44d
   status: live
 -->
 # Handover — Mycelium-Folge 215 (2026-10-01)
@@ -22,6 +22,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-09-30 | „vorbestehend ist verboten mein wort" | Quelle: mountain-209 (`## An mycelium`) — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`; jede `note`-Zeile ≤ 256 Zeichen, keine `#`-Kommentarzeilen in den gated Registern.
 - Wort | 2026-09-30 | „NATÜRLICH UND VERSCHLEPPEN IST VERBOTEN!!!!" | Quelle: Mycelium-Session 212 — Ausführungs-Consent Phase 2.
 - Wort | 2026-09-30 | „bitte wirklich bis zur kante umsetzen nicht nur wieder messen und verschleppen" | Quelle: Mycelium-Session 209.
+- Wort | 2026-10-01 | „ja möchte ich" | Quelle: Mycelium-Session 215 — Freigabe, das VCO-rs-Register auf das arbeitende PDS4-20190704-Asset umzustellen (`sources.φ` url/format/compiler/origin + `harvest.φ`-Arm + `vco-rs-cdn.yml`; `pds3-fixed-width-darts-cdn.yml` entfernt).
 
 ## Haus (die vier Orte) — gemessen 2026-10-01
 
@@ -44,23 +45,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### CDSE-CCM STAC-Auth-Asset — Asset-sha registrieren
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `cdse-stac-probe`-Lauf-Ende
-- **Lage:** (gemessen 2026-10-01 via `ci_manage view`) `cdse-stac-probe 36739783480` **success** @`d8c0d8340`; Token-Mint (`stac_asset_fetch`, `CDSE_USER`/`CDSE_PASS`, Passwort-Grant) greift.
-- **Blockade:** keine
-- **Braucht:** Asset-`sha256`/Größe aus dem Job (via `ci_manage log 36739783480 --all`) in den Block in `phi/sources.φ`.
-
-### Akatsuki `vco-rs-cdn` — Asset-sha registrieren
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `vco-rs-cdn`
-- **Lage:** (gemessen 2026-10-01 via `ci_manage view`) `vco-rs-cdn 36738137783` **success** @`d937e087a`; `vco-rs-cdn.yml` fährt `pds4_binary_compiler`; Riss: Mountain-213/214 bestimmen Akatsuki als **PDS3 fixed-width** (siehe Darts-Workflow).
-- **Blockade:** keine
-- **Braucht:** Asset-`sha256` aus dem Job-Log in den Block in `phi/sources.φ`.
-
-### `pds3-fixed-width-darts-cdn` — Lauf rot (gemessener Grund)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `pds3-fixed-width-darts-cdn` nach Fix
-- **Lage:** (gemessen 2026-10-01 via `ci_manage log 36741697524` @`7e0cad67d`) **failure** mit `pds3_fixed_width_compiler --ci-mode --netloc data.darts.isas.jaxa.jp --dat …/rs_20160303_223100_udsc64_l2_v10.tab --label …lbl`: „18193092 byte(s) carry no fixed-width rows — the table stays unwritten (0 honored)" → exit 1. Der `.tab` trägt keine Fixed-Width-Zeilen nach dem Parser.
-- **Blockade:** Parser/Args passen nicht zum DARTS-`.tab`
-- **Braucht:** `## An mountain` — das `.tab`-Format messen (fixed-width vs. anderer Arm); ggf. den Darts-Workflow auf den richtigen Compiler/Parser setzen.
+- **Lage:** (gemessen 2026-10-01) `cdse-stac-probe 36739783480` @`d8c0d8340` endet grün, aber der `--asset`-Schritt scheiterte (`curl: (22) … 403` auf `…/Products(e4aa8996…)/$value`) — der `Authorization`-Header wurde auf dem Redirect mitgesendet. Fix `fetch_raw_bytes_headers_redirect` (`src/archivar/fetch.rs` + `stac_asset_fetch.rs`) gepusht `fd50580fa`, `cdse-stac-probe 36822683882` dispatched (queued).
+- **Blockade:** Lauf noch nicht durch
+- **Braucht:** `ci_manage log 36822683882` — echte Asset-Zeile (`bytes sha url`) statt `returned void`; dann `sha256`/Größe in den Block in `phi/sources.φ`.
 
 ### Kaguya Re-Manifest (force) — Größe sniffern
 - **Status:** wartend | **Bindung:** eigen
@@ -186,7 +173,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 Origin: mycelium-folge215.
 
 - **Drei `ci-check`-Tests rot am HEAD `1a340b191`** (gemessen 2026-10-01 via `ci_manage log 36750257712`): `archivar::flyby_encounters::tests::earth_flyby_epochs_resolve_to_unix_and_are_ordered`; `archivar::pds3_binary::tests::decode_binary_cell_never_emits_a_fabricated_zero` (`pds3_binary.rs:677`, left `Some(4.609571298396486e-41)` vs right `None` — der Decoder emittiert einen denormalen Wert, wo `None` erwartet ist); `archivar::port::probe_classify_tests::register_replay_reproduces_force_unit` (`port.rs:4030`, 6 `vco_rs_*`-Namen divergiert: `vco_rs_observed_xband_frequency` … `vco_rs_signal_level_xband`). Bitte in deinem Atom heilen.
-- **Darts-Workflow rot** (gemessen 2026-10-01 via `ci_manage log 36741697524`): `pds3_fixed_width_compiler` liest `rs_20160303_223100_udsc64_l2_v10.tab` und findet „no fixed-width rows" → 0 honored. Das `.tab`-Format messen; ggf. anderer Parser/Arm (Akatsuki ist laut Mountain-213/214 **PDS3 fixed-width**, der Darts-Workflow wurde darauf gebaut).
+- **Akatsuki/VCO-rs — Register umgestellt (Operator-Wort 2026-10-01):** die registrierte `pds3_fixed_width_rs_20160303…bin` war **404 absent**; das Register zeigt jetzt auf das reale PDS4-20190704-Asset (`pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin`, **206 found**, 1 517 256 B, sha `56fa4c60…`): `sources.φ` url/format/compiler/origin umgestellt, `harvest.φ`-Block `pds4_fixed_width_akatsuki` (Arm `pds4_binary_compiler`, Workflow `vco-rs-cdn.yml`), `pds3-fixed-width-darts-cdn.yml` entfernt. Die `field vco_rs_*`-Selektoren bleiben unverändert (Leerzeichen-Namen matchen beide Label; die Underscore-Form des verworfenen Taucher-Versuchs war falsch). **Offen (deine Feder):** der PDS3-20160303-Produktpfad ist nicht mehr registriert — `pds3_fixed_width_compiler` passiert `parse_label`/`interchange`, aber `pds3_table::decode_rows` findet im PDS3-FIXED_LENGTH-Label (`RECORD_BYTES 276`, `^DOPPLER_TABLE`) 0 Zeilen. Wird der 20160303-Zeitpunkt gebraucht, den `decode_rows`-Arm heilen und als eigene Quellenzeile registrieren. `phi/blocked_sources.φ:409` (note) nennt noch den alten Stand.
 - **itokawa** ist in der `horizons_compiler`-Liste (`974e88030`); Re-Dispatch `kernel-flatten` läuft (Mycelium-Feder).
 
 ## An future
