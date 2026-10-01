@@ -20,12 +20,12 @@ pub const EARTH_FLYBYS: [EarthFlyby; 7] = [
         epoch_utc: "1999-08-18T03:28:00Z",
     },
     EarthFlyby {
-        spacecraft: "MESSENGER",
-        epoch_utc: "2005-08-02T19:13:08Z",
-    },
-    EarthFlyby {
         spacecraft: "Rosetta",
         epoch_utc: "2005-03-04T22:09:00Z",
+    },
+    EarthFlyby {
+        spacecraft: "MESSENGER",
+        epoch_utc: "2005-08-02T19:13:08Z",
     },
     EarthFlyby {
         spacecraft: "Rosetta",
