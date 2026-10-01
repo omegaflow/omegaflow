@@ -33,3 +33,6 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin pioneer10_odf_compiler -- --ci-mode
+      - name: Compile the Pioneer-11 Turyshev-ODF series and upload to the CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin pioneer11_odf_compiler -- --ci-mode

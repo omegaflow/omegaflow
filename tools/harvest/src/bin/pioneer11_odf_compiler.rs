@@ -1,4 +1,5 @@
 use omegaflow::archivar::{embedded_lsk, fetch_raw_bytes};
+use omegaflow::cdn::upload_release;
 use omegaflow::odf;
 
 const BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER";
@@ -110,6 +111,8 @@ fn band_scan(label: &str, ts: &[f64], vs: &[f64]) {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         return;
@@ -167,7 +170,7 @@ fn main() {
         eprintln!("write {out} void");
         return;
     }
-    match odf::parse_podf_bin(&bin) {
+    let verified = match odf::parse_podf_bin(&bin) {
         Some(parsed) => {
             let d0 = parsed[0];
             let d1 = parsed[parsed.len() - 1];
@@ -178,8 +181,20 @@ fn main() {
                 d1[0],
                 bin.len()
             );
+            true
         }
-        None => eprintln!("{out}: roundtrip parse void — the series stays unverified"),
+        None => {
+            eprintln!("{out}: roundtrip parse void — the series stays unverified");
+            false
+        }
+    };
+    if ci_mode {
+        if !verified {
+            std::process::exit(1);
+        }
+        if !upload_release("spdf.gsfc.nasa.gov", out) {
+            std::process::exit(1);
+        }
     }
 
     let mut per: std::collections::BTreeMap<(i64, i64), (Vec<f64>, Vec<f64>)> =
