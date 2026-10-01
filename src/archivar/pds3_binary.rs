@@ -675,7 +675,7 @@ END
             Some(1.0)
         );
         assert_eq!(
-            decode_binary_cell(&[0x00, 0x00, 0x80, 0x7F], "IEEE_REAL", None),
+            decode_binary_cell(&[0x7F, 0x80, 0x00, 0x00], "IEEE_REAL", None),
             None
         );
         assert_eq!(

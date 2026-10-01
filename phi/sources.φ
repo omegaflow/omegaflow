@@ -16043,18 +16043,18 @@ format s1_sar
 at earth
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
-format pds4_fixed_width
-origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
-compiler tools/harvest/src/bin/pds4_binary_compiler.rs
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_fixed_width_rs_20160303_223100_udsc64_l2_v10.bin
+format pds3_fixed_width
+origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 at venus
 no-cadence
 field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
-field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
-field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+field vco_rs_observed_xband_frequency OBSERVED_X_BAND_ANTENNA_FREQUENCY inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_predicted_xband_frequency PREDICTED_X_BAND_ANTENNA_FREQUENCY inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_residual_calibrated_xband_shift RESIDUAL_CALIBRATED_X_BAND_FREQUENCY_SHIFT inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_differential_doppler DIFFERENTIAL_DOPPLER inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_earth_atmosphere_correction CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_sigma_observed_xband_frequency SIGMA_OBSERVED_X_BAND_ANTENNA_FREQUENCY inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_signal_level_xband SIGNAL_LEVEL_X_BAND inverse-square em 1 33554432.0 0.0 0.0
+field vco_rs_sigma_signal_level_xband SIGMA_SIGNAL_LEVEL_X_BAND inverse-square em 1 33554432.0 0.0 0.0
