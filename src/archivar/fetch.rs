@@ -183,6 +183,68 @@ pub fn fetch_raw_bytes_headers(url: &str, headers: &[(String, String)]) -> Optio
     fetch_raw_bytes_headers_with(url, headers, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
+fn redirect_target(
+    url: &str,
+    headers: &[(String, String)],
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
+) -> Option<String> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s").arg("-S").arg("-f").arg("-g");
+    append_retry(&mut cmd, retry, 3);
+    cmd.arg("-m")
+        .arg(transfer_bound_s.to_string())
+        .arg("--connect-timeout")
+        .arg(CONNECT_BOUND_S.to_string())
+        .arg("--speed-limit")
+        .arg("1")
+        .arg("--speed-time")
+        .arg("128")
+        .arg("-o")
+        .arg("/dev/null")
+        .arg("-w")
+        .arg("%{redirect_url}");
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    append_ca(&mut cmd);
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    let target = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if target.is_empty() {
+        None
+    } else {
+        Some(target)
+    }
+}
+
+/// Fetches bytes with headers, following the first redirect without the
+/// headers: an authenticated OData asset redirects to a presigned URL that
+/// rejects a resent Authorization header with 403 (curl resends custom headers
+/// on a same-host redirect). The target is fetched bare; no redirect target
+/// carries the headers.
+pub fn fetch_raw_bytes_headers_redirect_with(
+    url: &str,
+    headers: &[(String, String)],
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
+) -> Option<Vec<u8>> {
+    if url.starts_with("s3://") {
+        return super::range::fetch_s3_whole(url);
+    }
+    match redirect_target(url, headers, retry, transfer_bound_s) {
+        Some(target) => fetch_raw_bytes_with(&target, retry, transfer_bound_s),
+        None => fetch_raw_bytes_headers_with(url, headers, retry, transfer_bound_s),
+    }
+}
+
+pub fn fetch_raw_bytes_headers_redirect(
+    url: &str,
+    headers: &[(String, String)],
+) -> Option<Vec<u8>> {
+    fetch_raw_bytes_headers_redirect_with(url, headers, RetryPolicy::Transient, TRANSFER_BOUND_S)
+}
+
 pub fn fetch_raw_probe(
     url: &str,
     body: Option<&str>,

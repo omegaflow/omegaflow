@@ -16043,10 +16043,10 @@ format s1_sar
 at earth
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_fixed_width_rs_20160303_223100_udsc64_l2_v10.bin
-format pds3_fixed_width
-origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
-compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
+format pds4_fixed_width
+origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
+compiler tools/harvest/src/bin/pds4_binary_compiler.rs
 at venus
 no-cadence
 field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
