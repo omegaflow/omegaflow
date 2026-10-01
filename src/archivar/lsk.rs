@@ -1,6 +1,12 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const J2000_UNIX_OFFSET: f64 = 946728000.0;
+const SECONDS_PER_JULIAN_YEAR: f64 = 86400.0 * 365.25;
+
+fn delta_t_at_unix(unix: f64) -> f64 {
+    let year = 2000.0 + (unix - J2000_UNIX_OFFSET) / SECONDS_PER_JULIAN_YEAR;
+    super::astrometry::delta_t_espenak_meeus(year)
+}
 
 #[derive(Clone, Debug)]
 pub struct LeapSeconds {
@@ -18,7 +24,17 @@ impl LeapSeconds {
     }
 
     pub fn unix_to_tdb(&self, unix: f64) -> Option<f64> {
-        Some(unix + self.delta_t_a + self.leap_at(unix)? - J2000_UNIX_OFFSET)
+        let to_tt = match self.leap_at(unix) {
+            Some(leap) => self.delta_t_a + leap,
+            None => {
+                let &(_, first_unix) = self.deltas.first()?;
+                if !(unix < first_unix) {
+                    return None;
+                }
+                delta_t_at_unix(unix)
+            }
+        };
+        Some(unix + to_tt - J2000_UNIX_OFFSET)
     }
 
     pub fn tdb_to_unix(&self, tdb: f64) -> Option<f64> {
@@ -28,7 +44,16 @@ impl LeapSeconds {
                 return Some(unix);
             }
         }
-        None
+        let &(_, first_unix) = self.deltas.first()?;
+        let first_tdb = first_unix + self.delta_t_a + self.leap_at(first_unix)? - J2000_UNIX_OFFSET;
+        if !(tdb < first_tdb) {
+            return None;
+        }
+        let mut unix = tdb + J2000_UNIX_OFFSET;
+        for _ in 0..2 {
+            unix = tdb + J2000_UNIX_OFFSET - delta_t_at_unix(unix);
+        }
+        Some(unix)
     }
 
     pub fn system_now_tdb(&self) -> Option<f64> {
@@ -181,9 +206,25 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
             (tdb - 838_272_069.184).abs() < 1.0,
             "a 2026 unix epoch maps near J2000-relative tdb, was {tdb}"
         );
+        let unix_1968 = -40_000_000.0;
+        let tdb_1968 = lsk
+            .unix_to_tdb(unix_1968)
+            .expect("a 1968 UT1 epoch resolves through the Delta T polynomial");
+        let expect_1968 = unix_1968 + delta_t_at_unix(unix_1968) - J2000_UNIX_OFFSET;
         assert!(
-            lsk.unix_to_tdb(-40_000_000.0).is_none(),
-            "pre-1972 the leap table reads void — no fabricated epoch"
+            (tdb_1968 - expect_1968).abs() < 1e-9,
+            "pre-1972 carries TT = UT1 + Delta T, was {tdb_1968}"
+        );
+        let back = lsk
+            .tdb_to_unix(tdb_1968)
+            .expect("the pre-1972 tdb inverts to its ut1 epoch");
+        assert!(
+            (back - unix_1968).abs() < 1e-6,
+            "the pre-1972 round trips through the Delta T fixed point, was {back}"
+        );
+        assert!(
+            lsk.unix_to_tdb(f64::NAN).is_none(),
+            "an epoch with no anchor stays void — no fabricated value"
         );
     }
 }
