@@ -528,7 +528,7 @@ note GNSS site registry: station id/name/network/deployment date, no measurement
 
 decline variant
 url https://api.geonet.org.nz/quake?MMI=3
-note MMI-Schwelle 3 ist Variante der live-Quelle MMI=4 (Probe-Befund 2026-08-15).
+note MMI-Schwelle 3 ist Variante der live-Quelle MMI=4 (Probe-Befund 2026-08-15). Zeuge fünfte Art point-event (Mapping v3 2026-10-01) — als Zeuge und als Duplikat getrennt geführt.
 
 decline registry/katalog
 url https://api.geonet.org.nz/sensor/type/cgps
@@ -1568,11 +1568,11 @@ note AWS-STAC-Suchkatalog (v1 = Version der declined v0/search). Metadata-Suche,
 
 decline catalog-duplicate
 url https://earthquake.tmd.go.th/earthquake_json.php
-note TMD-Thailand-Erdbeben-Bulletin: earthquake_json.json/200.json vom HTTP-404-Pfad (2026-09-07); der lebende RSS feed/rss_inside.xml traegt lat/lon/magnitude nur im <title>-Freitext (Parser-Gap) und dupliziert den registrierten USGS-Epizentrum-Typ.
+note TMD-Thailand-Bulletin (2026-09-07, earthquake_json-HTTP-404; RSS-<title>-Freitext = Parser-Gap), dupliziert den registrierten USGS-Epizentrum-Typ. Zeuge fünfte Art point-event (Mapping v3 2026-10-01) — als Zeuge und als Duplikat getrennt geführt.
 
 decline superseded
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026nmpbnu.geojson
-note USGS-FDSN ist bereits live in phi/sources.φ.
+note USGS-FDSN ist bereits live in phi/sources.φ; Zeuge fünfte Art point-event (Mapping v3 2026-10-01): Ereignis-Detail an Ort+Zeit.
 
 decline variant
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
@@ -4176,7 +4176,7 @@ note Fahrplan.
 
 decline superseded-by-integrated
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note tsunamigenes Erdbeben-Ereigniskatalog (13 Ereignisse/90 Tage, MAGNITUDE/LAT/LON/DEPTH je Event, gemessen 2026-09-11), keine Tide-Gauge-Messreihe — superseded by USGS fdsnws (live in sources.φ).
+note tsunamigene Erdbeben (13/90 Tage, MAGNITUDE/LAT/LON/DEPTH je Event, gemessen 2026-09-11), superseded by USGS fdsnws (live in sources.φ); Zeuge fünfte Art point-event (Mapping v3 2026-10-01): Wellenhöhe an Ort+Zeit.
 
 decline no-physical-force
 url https://unhcr.org/
@@ -5012,11 +5012,11 @@ note grind: grind_b2find.φ
 
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
-note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
+note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15). Zeuge fünfte Art point-event (Mapping v3 2026-10-01) — als Zeuge und als Duplikat getrennt geführt.
 
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
-note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befund 2026-08-15).
+note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befund 2026-08-15). Zeuge fünfte Art point-event (Mapping v3 2026-10-01) — als Zeuge und als Duplikat getrennt geführt.
 
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500

@@ -141,3 +141,21 @@ url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/
 record eels
 force em
 note EELS-Phononen (Zhang; Zenodo 21859473, 2026-09-29 verdict 206, 125099 B, sha256 f8d20197…): eels_lineprofile 25×1205 + ene 1×1205 (meV), Bi-2212. Substance (Materialprobe), Träger em. eels_acoustic.bin via crystal_compiler --eels.
+
+witness point-event
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+record erbq
+force seismic-body
+note Chile-Erdbeben (2026-10-01 gemessen, GeoJSON): properties.mag (Mw), properties.depth km, properties.latitude/longitude, properties.time_ (epoch ms). Ort+Skalar+Zeit, τ=0; absent → present-Bit aus, nie 0.0. quake_ptevent_compiler.
+
+witness point-event
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+record erbq
+force seismic-body
+note Tohoku-Seismizität (2026-10-01 gemessen, GeoJSON): properties.mag (Mw), properties.depth km, properties.latitude/longitude, properties.time (ISO 8601 UTC). Ort+Skalar+Zeit, τ=0; absent → present-Bit aus, nie 0.0. quake_ptevent_compiler.
+
+witness point-event
+url https://www.jma.go.jp/bosai/quake/data/list.json
+record erbq
+force seismic-body
+note JMA-Erdbebenliste (2026-10-01 gemessen, JSON): cod "+lat+lon-depth/", mag, at (ISO 8601 JST); depth in m, fehlendes cod → lat/lon/depth absent, mag "Ｍ不明" → absent; nie 0.0. quake_ptevent_compiler.
