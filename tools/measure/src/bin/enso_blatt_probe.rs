@@ -17,6 +17,10 @@ const ERSSTV5_CDN: &str = "https://github.com/omegaflow/sources/releases/downloa
 const TAO_WND_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv";
 const USGS_COMCAT_CDN: &str = "https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin";
+const QBO_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv";
+const D20_CDN: &str =
+    "https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv";
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 100;
 const MAX_LAG_MONTHS: usize = 12;
@@ -29,8 +33,10 @@ const CH_WND: usize = 0;
 const CH_QUAKE: usize = 1;
 const CH_BZ: usize = 2;
 const CH_SST: usize = 3;
-const CH_NAMES: [&str; 4] = ["Wnd", "Quake", "Bz", "SST"];
-const CH_MEDIA: [&str; 4] = ["atmos", "litho", "helios", "ocean"];
+const CH_QBO: usize = 4;
+const CH_D20: usize = 5;
+const CH_NAMES: [&str; 6] = ["Wnd", "Quake", "Bz", "SST", "QBO", "D20"];
+const CH_MEDIA: [&str; 6] = ["atmos", "litho", "helios", "ocean", "atmos", "ocean"];
 
 fn load_local_or_fetch(name: &str, url: &str) -> Option<Vec<u8>> {
     let cache = omegaflow::archivar::cache_root()
@@ -141,6 +147,59 @@ fn load_sst() -> Option<Vec<(f64, f64)>> {
     } else {
         Some(months)
     }
+}
+
+fn load_qbo() -> Option<Vec<(f64, f64)>> {
+    let bytes = load_local_or_fetch("qbo_30hpa.csv", QBO_CDN)?;
+    let text = String::from_utf8_lossy(&bytes);
+    let lsk = embedded_lsk()?;
+    let mut out: Vec<(f64, f64)> = Vec::new();
+    for line in text.lines() {
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 4 {
+            continue;
+        }
+        let year: i64 = match cols[0].trim().parse() {
+            Ok(y) => y,
+            Err(_) => continue,
+        };
+        let month: i64 = match cols[1].trim().parse() {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        let date = format!("{year:04}-{month:02}-01");
+        let Some(t) = iso_to_tdb(&lsk, &date) else {
+            continue;
+        };
+        let Some(v) = cols[3].trim().parse::<f64>().ok().filter(|v| v.is_finite()) else {
+            continue;
+        };
+        out.push((t, v));
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    if out.is_empty() { None } else { Some(out) }
+}
+
+fn load_d20() -> Option<Vec<(f64, f64)>> {
+    let bytes = load_local_or_fetch("d20_thermocline.csv", D20_CDN)?;
+    let text = String::from_utf8_lossy(&bytes);
+    let lsk = embedded_lsk()?;
+    let mut out: Vec<(f64, f64)> = Vec::new();
+    for line in text.lines() {
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 5 {
+            continue;
+        }
+        let Some(t) = iso_to_tdb(&lsk, cols[0].trim()) else {
+            continue;
+        };
+        let Some(v) = cols[4].trim().parse::<f64>().ok().filter(|v| v.is_finite()) else {
+            continue;
+        };
+        out.push((t, v));
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    if out.is_empty() { None } else { Some(out) }
 }
 
 fn bin_monthly(series: &[(f64, f64)], months: &[f64]) -> Vec<Option<f64>> {
@@ -295,7 +354,7 @@ fn main() {
 
     println!("=== ENSO Blatt probe — the directional driver of the NINO3.4 SST anomaly ===");
     println!(
-        "Channels (Council 2026-09-30 cut): 1·Wnd (tao_wnd_zonal, atmos) · 2·Quake (usgs_comcat_m45, litho) · 3·Bz (omni_hro_imf_bz_gsm_nt, helios) — target SST (ersstv5_nino34_ssta, ocean)."
+        "Channels (Council 2026-09-30 cut): 1·Wnd (tao_wnd_zonal, atmos) · 2·Quake (usgs_comcat_m45, litho) · 3·Bz (omni_hro_imf_bz_gsm_nt, helios) · 4·QBO (qbo_30hpa, atmos) · 5·D20 (d20_thermocline, ocean) — target SST (ersstv5_nino34_ssta, ocean)."
     );
     println!(
         "Cut (operator word 2026-09-29): NINO3.4 box lat −5…5, lon 190…240, 1854-01-01…2026-08-01."
@@ -307,7 +366,7 @@ fn main() {
         "Threshold: phase-randomized surrogates (f64 FFT, {N_SURR} realizations), mean + 2σ — the null-control record."
     );
     println!(
-        "fam = round max over the measured directed pairs × lags (up to 12 = 4 × 3 ordered pairs over {{Wnd, Quake, Bz, SST}}; the target is counted; a pending channel's pairs stay unmeasured)."
+        "fam = round max over the measured directed pairs × lags (up to 30 = 6 × 5 ordered pairs over {{Wnd, Quake, Bz, SST, QBO, D20}}; the target is counted; a pending channel's pairs stay unmeasured)."
     );
     println!("Time base: TDB seconds since J2000; TE is shift-invariant.");
 
@@ -321,6 +380,8 @@ fn main() {
     };
     let wind = load_wind();
     let quake = load_quake();
+    let qbo = load_qbo();
+    let d20 = load_d20();
 
     println!();
     println!("=== channel board ===");
@@ -334,6 +395,16 @@ fn main() {
     } else {
         println!("Quake          | no samples — the channel harvests null (asset absent)");
     }
+    if let Some(q) = &qbo {
+        window_report("QBO", q);
+    } else {
+        println!("QBO            | no samples — the channel harvests null (asset absent)");
+    }
+    if let Some(d) = &d20 {
+        window_report("D20", d);
+    } else {
+        println!("D20            | no samples — the channel harvests null (asset absent)");
+    }
     window_report("Bz", &bz);
     window_report("SST", &sst);
 
@@ -342,15 +413,23 @@ fn main() {
     let bz_month = bin_monthly(&bz, &months);
     let wind_month = wind.as_ref().map(|s| bin_monthly(s, &months));
     let quake_month = quake.as_ref().map(|s| bin_monthly(s, &months));
+    let qbo_month = qbo.as_ref().map(|s| bin_monthly(s, &months));
+    let d20_month = d20.as_ref().map(|s| bin_monthly(s, &months));
     let sst_month: Vec<Option<f64>> = sst_vals.iter().map(|v| Some(*v)).collect();
 
-    let channels: [Option<Vec<Option<f64>>>; 4] =
-        [wind_month, quake_month, Some(bz_month), Some(sst_month)];
+    let channels: [Option<Vec<Option<f64>>>; 6] = [
+        wind_month,
+        quake_month,
+        Some(bz_month),
+        Some(sst_month),
+        qbo_month,
+        d20_month,
+    ];
 
     println!();
     println!("=== monthly channel board (aligned to the SST grid) ===");
     println!("{:<6} | {:<7} | {:>7} | state", "chan", "medium", "n_mon");
-    for i in 0..4 {
+    for i in 0..6 {
         let n = channels[i]
             .as_ref()
             .map_or(0, |m| m.iter().filter(|v| v.is_some()).count());
@@ -393,8 +472,8 @@ fn main() {
     }
 
     let mut active_series: Vec<(usize, usize, Vec<f32>, Vec<f32>)> = Vec::new();
-    for from in 0..4 {
-        for to in 0..4 {
+    for from in 0..6 {
+        for to in 0..6 {
             if from == to {
                 continue;
             }
@@ -429,10 +508,10 @@ fn main() {
         None => println!("=== Family bound absent (surrogates < 2) ==="),
     }
     println!(
-        "=== Directed-path census and verdict (up to 12 ordered pairs = 4 × 3 over Wnd, Quake, Bz, SST; target counted; per-channel pending named; per-lag threshold = mean + 2σ; arrow iff TE > fam) ==="
+        "=== Directed-path census and verdict (up to 30 ordered pairs = 6 × 5 over Wnd, Quake, Bz, SST, QBO, D20; target counted; per-channel pending named; per-lag threshold = mean + 2σ; arrow iff TE > fam) ==="
     );
-    for from in 0..4 {
-        for to in 0..4 {
+    for from in 0..6 {
+        for to in 0..6 {
             if from == to {
                 continue;
             }
@@ -555,6 +634,22 @@ fn main() {
         println!(
             "Quake channel pending: {}. `usgs_comcat_m45.bin` carries the USGS comcat M4.5 monthly count (`usgs_comcat.rs`, `usgs_comcat_m45_rate`, epoch at month midpoint in UTC unix s → TDB); the channel stays unmeasured when the asset is absent or the aligned monthly n is below the floor.",
             channel_pending_reason(&channels[CH_QUAKE], "Quake")
+        );
+    }
+    if channel_active(&channels[CH_QBO]) {
+        println!("QBO channel measured.");
+    } else {
+        println!(
+            "QBO channel pending: {}. `qbo_30hpa.csv` carries the CPC 30 mb zonal wind record (`qbo_compiler.rs`, `qbo_30hpa_ms`, year-month-day rows → TDB); the channel stays unmeasured when the asset is absent or the aligned monthly n is below the floor.",
+            channel_pending_reason(&channels[CH_QBO], "QBO")
+        );
+    }
+    if channel_active(&channels[CH_D20]) {
+        println!("D20 channel measured.");
+    } else {
+        println!(
+            "D20 channel pending: {}. `d20_thermocline.csv` carries the PMEL TAO 20°C isotherm depth station-days (`d20_compiler.rs`, `d20_thermocline_depth_m`, iso_6 column → TDB); the channel stays unmeasured when the asset is absent or the aligned monthly n is below the floor.",
+            channel_pending_reason(&channels[CH_D20], "D20")
         );
     }
     println!("KDE bandwidth h sensitivity (Silverman factor sweep): pending.");
