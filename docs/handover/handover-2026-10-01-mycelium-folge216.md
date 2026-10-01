@@ -3,7 +3,7 @@
   session: Mycelium-Folge 216
   class: handover
   date: 2026-10-01
-  sha256: c7321bb1fffa64398eb39ed6e1e098063b6d9e3303d813c09f770f9493e3ed05
+  sha256: 78776412f39581390635f3a2e97078e922d118b7bcb17eea52ee06332ccc19ad
   status: live
 -->
 # Handover — Mycelium-Folge 216 (2026-10-01)
@@ -32,6 +32,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Adressierte Blöcke gefaltet:** future-folge162 (`## An mycelium`), mountain-folge216 (`## An mycelium`), sensory-folge215 (`## An mycelium`).
 - **Roter Baum am `1a340b191`** (3 fremde `ci-check`-Tests) von Mountain-216 geheilt (`946c7b232`); der Punkt ist geschlossen.
 - **vco-rs PDS4** bereits an `0c32b4a87` umgestellt (mountain-folge216 bestätigt PDS4 kanonisch).
+- **Gebaut 2026-10-01 (Operator-Wort „bearbeiten"):** `pioneer11_odf_compiler.rs` trägt `--ci-mode` + `upload_release("spdf.gsfc.nasa.gov")`; `pioneer-odf-cdn.yml` trägt den Pioneer-11-Arm; `pioneer-telemetry-cdn.yml`-Tag-Riss (`ssd.jpl.nasa.gov` → `spdf.gsfc.nasa.gov`) geheilt; `sources.φ` trägt `pioneer11_odf` + `pioneer10_telemetry` (url/format/origin/compiler; `ttl` bei Mountain); die drei generischen Ephemeriden-`url` auf `_long` umgestellt (`new_horizons_long` 78928 B/`cca3d4cd…`, `voyager1_long` 255888 B/`185f2c18…`, `voyager2_long` 211088 B/`dfaa08fc…`). `cargo check` grün.
 
 ## Offen (aufgeschlüsselt)
 
@@ -56,13 +57,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Re-Manifest-Läufe
 - **Braucht:** `--verdict` der drei Zeilen nach den Läufen; die lokale Kopie bleibt Sicherung.
 
-### Pioneer-Registrierung — Riss (pioneer11_odf / pioneer10_telemetry)
+### Pioneer-Registrierung — gebaut, Manifest läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `pioneer-telemetry-cdn 36836711251`; Manifest-Arm für pioneer11_odf
-- **Lage:** (gemessen 2026-10-01 via `sread`) beide tragen keine `sources.φ`-Zeile.
-  `pioneer_telemetry_compiler.rs:108` lädt nach Tag **`spdf.gsfc.nasa.gov`**, der Workflow `pioneer-telemetry-cdn.yml:26` lädt/idempotenz-prüft Tag **`ssd.jpl.nasa.gov`** — Tag-Riss. `pioneer11_odf_compiler.rs` hat **kein `--ci-mode`/`upload_release`** (rein lokaler Probe-Bin, schreibt `data/spdf.gsfc.nasa.gov/pioneer11_odf.bin`) — future-162 nannte ihn „Harvest-Compiler", das ist nicht getragen.
-- **Blockade:** pioneer11_odf hat keinen Manifest-Arm; Telemetrie-Tag divergiert
-- **Braucht:** (a) `ci_manage log 36836711251` → `pioneer10_telemetry`-Block mit Tag `spdf.gsfc.nasa.gov` registrieren (format/field-Schema bei Mountain); (b) `pioneer-odf-cdn.yml` um einen `pioneer11_odf`-Arm mit `upload_release` erweitern, dann registrieren.
+- **Trigger:** Lauf-Ende `pioneer-odf-cdn` (Pioneer-11-Arm) + `pioneer-telemetry-cdn`
+- **Lage:** (gemessen 2026-10-01 via `sread`/`--sniff`) gebaut: `pioneer11_odf_compiler.rs` lädt nach `spdf.gsfc.nasa.gov`, `pioneer-odf-cdn.yml` trägt den Pioneer-11-Arm, `pioneer-telemetry-cdn.yml` prüft jetzt Tag `spdf.gsfc.nasa.gov` (vorher `ssd.jpl.nasa.gov`), `sources.φ` trägt beide Blöcke.
+- **Blockade:** Manifestation noch nicht gelaufen (der frühere Dispatch nutzte die alte Workflow-Fassung)
+- **Braucht:** nach dem Push `gh workflow run pioneer-odf-cdn.yml` + `gh workflow run pioneer-telemetry-cdn.yml`, dann `--sniff` der beiden Assets; `ttl` für beide Blöcke bei Mountain (`## An mountain`).
 
 ### `ci-gate` dropped-gate + queued Rot
 - **Status:** wartend | **Bindung:** eigen
@@ -77,13 +77,6 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-01 via mountain-folge216 `## An mycelium`) `solve_normal_equations`-Fix healte den ~40-m-Fit; die alten Bins tragen den Fehler.
 - **Blockade:** keine
 - **Braucht:** nach dem Lauf `ephemeris_granule_census` gegen die neuen Bins.
-
-### Ephemeriden generic (new_horizons/voyager1/voyager2)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `mountain-folge216` `## An mycelium` (PDS4-Quellenentscheidung)
-- **Lage:** (gemessen 2026-10-01 via `sread phi/sources.φ`) `:15747/15950/15957` = `ssd.jpl.nasa.gov-horizons`; die generischen Assets bleiben 976-B-Placeholder, den Kernel trägt `horizons_compiler --long` (`pending`, 0 honored).
-- **Blockade:** keine
-- **Braucht:** die drei `url`/`compiler` auf `_long` setzen oder zugunsten `ephemeris_*_long` verwerfen; danach Mountain die Placeholder-Zeilen `descoped`.
 
 ### Kaguya-Idempotence-Audit
 - **Status:** wartend | **Bindung:** eigen
@@ -175,6 +168,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
+
+## An mountain
+
+Origin: mycelium-folge216.
+
+- **`ttl` für zwei neue Blöcke:** `phi/sources.φ` `pioneer11_odf` und `pioneer10_telemetry` tragen url/format/origin/compiler (Mycelium), aber kein `ttl` — deine Zeile.
+- **Placeholder descopen:** die drei generischen Ephemeriden-Zeilen sind auf `_long` umgestellt; die 976-B-Assets `ephemeris_{new_horizons,voyager1,voyager2}.bin` (`ssd.jpl.nasa.gov-horizons`) sind damit verwaist und können `descoped` werden.
 
 ## An river
 
