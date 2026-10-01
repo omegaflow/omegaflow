@@ -1,0 +1,43 @@
+name: wy-max-t
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  wy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 420
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: selftest
+            args: --selftest --n-perm 300 --block 1 --threads 4
+          - point: abk-2024
+            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --n-perm 2000 --block 24 --threads 4
+          - point: abk-2025
+            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --n-perm 2000 --block 24 --threads 4
+          - point: sod-2024
+            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --n-perm 2000 --block 24 --threads 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the Westfall-Young max-T permutation
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin wy_max_t_probe -- ${{ matrix.args }}
+          } > "wy-max-t-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wy-max-t-${{ matrix.point }}
+          path: wy-max-t-${{ matrix.point }}.txt
