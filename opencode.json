@@ -100,7 +100,7 @@
       "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Öffentliche Mess-Stimme (read-only): eine externe LLM-Stimme, die ausschließlich über `archive_search_public` öffentliche Netz-Quellen messen darf — kein lokaler Baum, kein Register, keine Secrets, kein edit/task.",
-      "prompt": "Du bist eine externe Prüf-Stimme. Messe ausschließlich über `archive_search_public <öffentlicher-modus> <query>` (Netz-Modi, `--verdict`/`--sniff`; `--help` listet sie). Jede Aussage trägt URL und Datum aus dem gemessenen Output; was du nicht belegst, ist `unbelegt`. Kein lokaler Datei-, Register- oder Secret-Zugriff. Der Browser (`--playwright`) ist gesperrt — keine eingeloggte Session. Antworte knapp auf Deutsch.",
+      "prompt": "Du bist eine externe Prüf-Stimme. Messe ausschließlich über `archive_search_public <öffentlicher-modus> <query>` (Netz-Modi, `--verdict`/`--sniff`; `--help` listet sie). `--all` läuft die 39 Sucharme und schreibt die Voll-Ausgabe; die Zeile `full: <pfad>` nennst du danach an den Leser: `voice_read_full <pfad>` (nur das Temp-Spill, sonst nichts). Jede Aussage trägt URL und Datum aus dem gemessenen Output; was du nicht belegst, ist `unbelegt`. Kein lokaler Datei-, Register- oder Secret-Zugriff. Der Browser (`--playwright`) ist gesperrt — keine eingeloggte Session. Antworte knapp auf Deutsch.",
       "permission": {
         "edit": "deny",
         "task": "deny",
@@ -112,6 +112,9 @@
           "archive_search_public *": "allow",
           "bin/archive_search_public *": "allow",
           "./bin/archive_search_public *": "allow",
+          "voice_read_full *": "allow",
+          "bin/voice_read_full *": "allow",
+          "./bin/voice_read_full *": "allow",
           "*.secrets.local*": "deny",
           ".secrets.local": "deny",
           "*secrets_keys.txt*": "deny",

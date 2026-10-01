@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# voice_read_full — let a public-only voice read an archive_search --all spill.
+#
+# The spill is public search output the tool itself wrote into the temp dir;
+# no private tree is reachable through this door. The path is canonicalised
+# (realpath) so no `..` traversal and no symlink can leave the temp dir, and
+# the basename must be an `omegaflow_all_*.txt` spill.
+set -u
+p="${1:-}"
+if [ -z "$p" ]; then
+  printf 'voice_read_full: usage: voice_read_full <omegaflow_all_*.txt>\n' >&2
+  exit 2
+fi
+real="$(realpath -m -- "$p" 2>/dev/null)" || { printf 'voice_read_full: bad path\n' >&2; exit 2; }
+tmp="$(realpath -m -- "${TMPDIR:-/tmp}")"
+case "$real" in
+  "$tmp"/omegaflow_all_*.txt) : ;;
+  *)
+    printf 'voice_read_full: only an archive_search --all spill under %s is readable\n' "$tmp" >&2
+    exit 2
+    ;;
+esac
+[ -f "$real" ] || { printf 'voice_read_full: spill absent\n' >&2; exit 2; }
+exec cat -- "$real"
