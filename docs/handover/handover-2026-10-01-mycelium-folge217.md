@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: 9210f476df2b52e8ddce56703e0d31779b5425c7fa582ebfc88495e6c9fd321d
+  sha256: cd92acee58ce4efec9e985e44b908ddfc3b43b9ce58c8f80d392444f89a57ea5
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -57,7 +57,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Ephemeriden-Re-Manifest (Solver-Fix) — dispatcht, messen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `kernel-flatten 36868572893` (Fix-HEAD) / `36867996196` / `de44-cdn 36868002454` / `inpop-epm-cdn 36868008026` (dispatched 2026-10-01, mountain-218 bat ausdrücklich darum)
-- **Lage:** (gemessen 2026-10-01 via API/`--sniff`) `ephemeris_itokawa.bin` + `ephemeris_pioneer1{0,1}_daily.bin` fehlen im `-ephemeris`-Release; die daily-Bins liegen 200 unter `-horizons` (Register-Tag geheilt), `itokawa` fehlt unter beiden (Horizons-Command-Fix). **Operator-Hinweis:** Mycelium ist aktiv (`de441-cdn-watch`/`radio-cdn-watch` queued) und Eigentümer der CI-Föderation — ein paralleler Dispatch kann kollidieren; der Re-Manifest-Lauf ist der eigentliche Trigger (nicht der Dispatch). Die vier Läufe sind queued/laufend (concurrency-safe, `cancel-in-progress: false`); bei Bedarf abbrechbar.
+- **Lage:** (gemessen 2026-10-01 via API/`--sniff`) `ephemeris_itokawa.bin` + `ephemeris_pioneer1{0,1}_daily.bin` fehlen im `-ephemeris`-Release; die daily-Bins liegen 200 unter `-horizons` (Register-Tag geheilt), `itokawa` fehlt weiter (gemessen 2026-10-01 via API: `ssd.jpl.nasa.gov-horizons` trägt 45 Assets, kein `ephemeris_itokawa.bin`) — der Re-Manifest-Lauf hat noch nicht geschrieben (Horizons-Command-Fix steht). **Operator-Hinweis:** Mycelium ist aktiv (`de441-cdn-watch`/`radio-cdn-watch` queued) und Eigentümer der CI-Föderation — ein paralleler Dispatch kann kollidieren; der Re-Manifest-Lauf ist der eigentliche Trigger (nicht der Dispatch). Die vier Läufe sind queued/laufend (concurrency-safe, `cancel-in-progress: false`); bei Bedarf abbrechbar.
 - **Blockade:** Lauf-Ende
 - **Braucht:** `ci_manage status`/`log` der Läufe; danach `--sniff`/API-Liste der drei Bins, sha in `sources.φ`.
 
@@ -68,12 +68,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Lauf-Ende
 - **Braucht:** `ci_manage log 36887145554`; `phi/harvest.φ` gegen `asset present` messen.
 
+### Quake-ptevent (ERBQ) + pds4-Binary — Manifest messen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `quake-ptevent-cdn 36886640978` / `pds4-binary-cdn 36886648051` (queued @`958d946ba`)
+- **Lage:** (gemessen 2026-10-01 via API) das `quake-ptevent`-Release existiert noch nicht (HTTP 404) → `quake_ptevent_*.bin` fehlt; `pds4_fixed_width_acs_*` liegt unter `archives.esac.esa.int` (7 Assets, Mountain-Fold `asset present` bestätigt).
+- **Blockade:** Läufe queued
+- **Braucht:** `ci_manage log` der beiden Läufe; danach `--sniff`/API von `quake_ptevent_*.bin`.
+
 ### CDSE-CCM STAC-Auth-Asset — dispatched, messen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `cdse-stac-probe 36868013540` (dispatched 2026-10-01 @`2e7b227e4`)
-- **Lage:** (gemessen 2026-10-01 via `ci_manage log`) `cdse-stac-probe 36868013540` endete success, aber die Asset-Stufe lief weiter `fetch_bytes_headers` → **HTTP 403** (`download.dataspace.copernicus.eu/.../$value`); **kein** Asset produziert. Der Redirect-Fix greift für diesen Pfad noch nicht.
-- **Blockade:** CDSE-Asset bleibt 403 trotz Redirect-Fix
-- **Braucht:** `ci_manage log` der nächsten Probe + `stac_asset_fetch --asset <href>` gegen die 403-Stelle messen; sonst Blockade pinnen.
+- **Lage:** (gemessen 2026-10-01 via `ci_manage log` + `sread src/archivar/fetch.rs`) `cdse-stac-probe 36868013540` success, Asset-Stufe **HTTP 403**; kein Asset. Der Bin nutzt `fetch_raw_bytes_headers_redirect` (`fetch.rs:241`); `redirect_target` (`:186`, curl `-f` + `%{redirect_url}`) liefert für `…/Products(…)/$value` **keinen** Ziel-URL → Fallback `fetch_raw_bytes_headers_with` sendet den Auth-Header → 403. Ursache damit die OData-`$value`-Anfrage selbst (Token/Auth), nicht der Header-auf-Redirect.
+- **Blockade:** CDSE-Auth/Token (source-seitig; Zugangs-Zustand)
+- **Braucht:** `stac_asset_fetch --asset <href> --token-env CDSE_TOKEN` lokal gegen den 403 messen (Header/Status); sonst `blocked` pinnen (`phi/blocked_sources.φ` CDSE-CCM).
 
 ### Registrierte Assets mit CDN-404 — Rest (nur itokawa)
 - **Status:** wartend | **Bindung:** eigen
