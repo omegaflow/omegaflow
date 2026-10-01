@@ -10,7 +10,7 @@ note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap
 note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
 note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; Arm steht (extract.rs html_to_json + html_table_rows, Dispatch extract.rs:3496/:5417; fetch.rs:603 format_readable "html").
 note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Arm steht (src/archivar/pds3_table.rs; tools/harvest/src/bin/pds3_fixed_width_compiler.rs, 2026-09-28).
-note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Reader-Arm steht (src/archivar/pds3_img.rs, 2026-09-28); Compiler-Bin fehlt.
+note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Arm steht (src/archivar/pds3_img.rs; tools/harvest/src/bin/pds3_img_compiler.rs); WUSTL/Mini-RF-Asset present 2026-10-01 (sha256 6aa0eb1f…), M3 CI-403.
 note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm steht (src/archivar/pds3_binary.rs, 2026-09-28); Compiler-Bin fehlt.
 note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin fehlt.
@@ -463,4 +463,8 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 pending
 url https://catalogue.dataspace.copernicus.eu/stac/collections
 note CDSE-CCM STAC 2026-09-30: /stac/collections 200 (423), ccm-* public; extents offen. Verdikt: frame at earth, ttl no-cadence. Riss: stac.rs liest nur id/assets, kein datetime/geometry; Auth-Asset Mycelium unread.
+
+blocked ip-blocked
+url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/
+note M3-ENVI-Cube (Chandrayaan-1 M3) — CI-Lauf 36737530030: .HDR HTTP 403 (Datacenter-IP-Block, `ci_manage log`); lokal 206 gemessen; kein Mirror. WUSTL/Mini-RF-Schwester present; M3-Manifestation braucht andere Route/Feder.
 
