@@ -1,6 +1,7 @@
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum WitnessKind {
     S2Direction,
+    PointEvent,
     Gestalt,
     Presence,
     Substance,
@@ -16,9 +17,8 @@ pub enum FieldIdentity {
 
 pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
     match &magic {
-        b"AMN1" | b"PAO1" | b"SKY1" | b"S2E1" | b"SKD1" | b"VLDE" => {
-            Some(FieldIdentity::Witness(WitnessKind::S2Direction))
-        }
+        b"AMN1" | b"PAO1" | b"S2E1" => Some(FieldIdentity::Witness(WitnessKind::PointEvent)),
+        b"SKY1" | b"SKD1" | b"VLDE" => Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
         b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" | b"G3D1" => {
             Some(FieldIdentity::Witness(WitnessKind::Gestalt))
         }
@@ -101,11 +101,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn witness_magics_hold_s2_direction() {
-        for m in [*b"AMN1", *b"PAO1", *b"SKY1", *b"S2E1", *b"SKD1", *b"VLDE"] {
+    fn catalogs_hold_s2_direction() {
+        for m in [*b"SKY1", *b"SKD1", *b"VLDE"] {
             assert_eq!(
                 magic_identity(m),
                 Some(FieldIdentity::Witness(WitnessKind::S2Direction))
+            );
+        }
+    }
+
+    #[test]
+    fn transient_event_records_are_point_events() {
+        for m in [*b"AMN1", *b"PAO1", *b"S2E1"] {
+            assert_eq!(
+                magic_identity(m),
+                Some(FieldIdentity::Witness(WitnessKind::PointEvent))
             );
         }
     }
@@ -286,8 +296,8 @@ mod tests {
     #[test]
     fn gate_holds_a_scalar_witness() {
         assert_eq!(
-            witness_gate(Some(*b"AMN1"), Some(WitnessKind::S2Direction), true),
-            WitnessVerdict::Holds(WitnessKind::S2Direction)
+            witness_gate(Some(*b"AMN1"), Some(WitnessKind::PointEvent), true),
+            WitnessVerdict::Holds(WitnessKind::PointEvent)
         );
     }
 
@@ -302,7 +312,7 @@ mod tests {
     #[test]
     fn gate_refuses_a_bare_coordinate() {
         assert_eq!(
-            witness_gate(Some(*b"AMN1"), Some(WitnessKind::S2Direction), false),
+            witness_gate(Some(*b"AMN1"), Some(WitnessKind::PointEvent), false),
             WitnessVerdict::BareCoordinate
         );
     }
