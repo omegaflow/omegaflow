@@ -173,6 +173,7 @@ pub struct NameMeta {
     pub force: u8,
     pub kernel: u8,
     pub tau: f64,
+    pub station_code: Option<String>,
 }
 
 type FrameBundle = (
@@ -265,7 +266,7 @@ impl MatrixMachine {
 
     pub fn save_state_to(&self, path: &str) -> std::io::Result<()> {
         let mut buf: Vec<u8> = Vec::new();
-        buf.extend_from_slice(b"OMX2");
+        buf.extend_from_slice(b"OMX3");
         buf.extend_from_slice(&(self.rings.len() as u32).to_le_bytes());
         for (name, ring) in &self.rings {
             wr_name(&mut buf, name);
@@ -281,6 +282,10 @@ impl MatrixMachine {
             buf.push(meta.force);
             buf.push(meta.kernel);
             buf.extend_from_slice(&meta.tau.to_le_bytes());
+            buf.push(if meta.station_code.is_some() { 1 } else { 0 });
+            if let Some(code) = &meta.station_code {
+                wr_name(&mut buf, code);
+            }
             match &meta.anchor {
                 MetaAnchor::Surface {
                     body_name,
@@ -346,9 +351,10 @@ impl MatrixMachine {
         let bytes = std::fs::read(path).ok()?;
         let mut p = 0usize;
         let magic = bytes.get(p..p + 4)?;
-        if magic != b"OMX1" && magic != b"OMX2" {
+        if magic != b"OMX1" && magic != b"OMX2" && magic != b"OMX3" {
             return None;
         }
+        let carries_station_code = magic == b"OMX3";
         p += 4;
         let mut rings: HashMap<String, Vec<(f64, f32)>> = HashMap::new();
         let n = rd_u32(&bytes, &mut p)? as usize;
@@ -372,6 +378,15 @@ impl MatrixMachine {
             let kernel = *bytes.get(p)?;
             p += 1;
             let tau = rd_f64(&bytes, &mut p)?;
+            let station_code = if carries_station_code && *bytes.get(p)? == 1 {
+                p += 1;
+                Some(rd_name(&bytes, &mut p)?)
+            } else {
+                if carries_station_code {
+                    p += 1;
+                }
+                None
+            };
             let anchor = match *bytes.get(p)? {
                 0 => {
                     p += 1;
@@ -404,6 +419,7 @@ impl MatrixMachine {
                     force,
                     kernel,
                     tau,
+                    station_code,
                 },
             );
         }
@@ -658,6 +674,7 @@ impl MatrixMachine {
                 force: sensor.force,
                 kernel: sensor.kernel,
                 tau: sensor.tau,
+                station_code: channel.station_code.clone(),
             };
             self.metas.insert(channel.name.clone(), meta);
             let ring = self.rings.entry(channel.name.clone()).or_default();

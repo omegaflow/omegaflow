@@ -2929,7 +2929,7 @@ fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
     }
 }
 
-pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
+fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary"
         || matches!(
             src.format.as_str(),
@@ -3004,6 +3004,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch: now,
+                    station_code: None,
                     position: Position::StateVector {
                         p,
                         v: [0.0, 0.0, 0.0],
@@ -3069,6 +3070,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         freq: 0.0,
                         bin_width: 0.0,
                         epoch,
+                        station_code: None,
                         position: Position::StateVector {
                             p,
                             v: [0.0, 0.0, 0.0],
@@ -3123,6 +3125,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         freq: 0.0,
                         bin_width: 0.0,
                         epoch,
+                        station_code: None,
                         position: Position::StateVector {
                             p,
                             v: [0.0, 0.0, 0.0],
@@ -3178,6 +3181,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         freq: 0.0,
                         bin_width: 0.0,
                         epoch: now,
+                        station_code: None,
                         position: Position::StateVector {
                             p,
                             v: [0.0, 0.0, 0.0],
@@ -3254,6 +3258,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch: now,
+                    station_code: None,
                     position: Position::StateVector {
                         p,
                         v: [0.0, 0.0, 0.0],
@@ -3296,6 +3301,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch: now,
+                    station_code: None,
                     position: Position::Surface {
                         body_name: frame_name.clone(),
                         lat,
@@ -3365,6 +3371,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 freq: 0.0,
                                 bin_width: 0.0,
                                 epoch: now,
+                                station_code: None,
                                 position: position.clone(),
                                 name: fc.name.clone(),
                                 value: v,
@@ -3413,6 +3420,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch: now,
+                    station_code: None,
                     position: Position::StateVector {
                         p: [cd * ca, cd * sa, sd],
                         v: [0.0, 0.0, 0.0],
@@ -3455,6 +3463,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     freq: 0.0,
                     bin_width: 0.0,
                     epoch,
+                    station_code: None,
                     position: position.clone(),
                     name: m0_fc.name.clone(),
                     value: m0_nm,
@@ -3861,6 +3870,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch,
+                                        station_code: None,
                                         position: position.clone(),
                                         name: fc.name.clone(),
                                         value: val,
@@ -3975,6 +3985,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                             bin_width: fc.bin_width,
                                             epoch,
                                             position,
+                                            station_code: src.station_code.clone(),
                                             name: fc.name.clone(),
                                             value: val,
                                         },
@@ -4072,6 +4083,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch,
+                                    station_code: None,
                                     position: Position::Surface {
                                         body_name: body_name.clone(),
                                         lat,
@@ -4168,6 +4180,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch: row_epoch,
+                                        station_code: None,
                                         position: position.clone(),
                                         name: fc.name.clone(),
                                         value: val,
@@ -4272,6 +4285,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch,
+                                        station_code: None,
                                         position: Position::Surface {
                                             body_name: frame_body_name(&src.frame),
                                             lat: *lat,
@@ -4354,6 +4368,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch: row_epoch,
+                                        station_code: None,
                                         position: Position::StateVector {
                                             p,
                                             v: [0.0, 0.0, 0.0],
@@ -4664,6 +4679,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch: *bin_i as f64 * dt,
+                                    station_code: None,
                                     position: position.clone(),
                                     name: series_name(fc),
                                     value: s / *c as f64,
@@ -4702,6 +4718,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch,
+                                    station_code: None,
                                     position: row_pos.clone(),
                                     name: series_name(fc),
                                     value: val,
@@ -4813,6 +4830,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch: now,
+                                    station_code: None,
                                     position: Position::StateVector {
                                         p,
                                         v: vel,
@@ -5027,6 +5045,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch: sample_epoch,
+                                    station_code: None,
                                     position: Position::StateVector {
                                         p,
                                         v: vel,
@@ -5099,6 +5118,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch: now,
+                                        station_code: None,
                                         position: Position::Surface {
                                             body_name: frame_body_name(&src.frame),
                                             lat: ela,
@@ -5128,6 +5148,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         epoch: now,
+                                        station_code: None,
                                         position: Position::Surface {
                                             body_name: frame_body_name(&src.frame),
                                             lat: ela,
@@ -5180,6 +5201,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     epoch,
+                                    station_code: None,
                                     position: position.clone(),
                                     name: outputs[0].clone(),
                                     value: m0,
@@ -5211,6 +5233,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     bin_width: 0.0,
                                     epoch,
                                     position,
+                                    station_code: src.station_code.clone(),
                                     name: outputs[1].clone(),
                                     value: mww,
                                 },
@@ -5358,6 +5381,7 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         freq: 0.0,
                         bin_width: 0.0,
                         epoch: now,
+                        station_code: None,
                         position: Position::Source,
                         name: fc.name.clone(),
                         value: val,
@@ -5376,6 +5400,18 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         });
     }
     ExtractResult::Measurements(channels)
+}
+
+pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
+    let mut result = extract_raw(src, body, now, lsk);
+    match &mut result {
+        ExtractResult::Measurements(channels) | ExtractResult::WithEphemeris(channels, _) => {
+            for (channel, _) in channels.iter_mut() {
+                channel.station_code = src.station_code.clone();
+            }
+        }
+    }
+    result
 }
 
 pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {

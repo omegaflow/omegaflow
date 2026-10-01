@@ -29,6 +29,13 @@ const MIN_PAIRED: usize = 30;
 const J2000_UNIX_OFFSET: f64 = 946_728_000.0;
 const SECS_PER_DAY: f64 = 86_400.0;
 
+const PC_N: usize = 256;
+const PC_PLANTED_LAG: usize = 3;
+const PC_COUPLING: f64 = 1.5;
+const PC_AR: f64 = 0.5;
+const PC_DRIVER_NOISE: f64 = 0.3;
+const PC_TARGET_NOISE: f64 = 0.1;
+
 const CH_WND: usize = 0;
 const CH_QUAKE: usize = 1;
 const CH_BZ: usize = 2;
@@ -349,6 +356,100 @@ fn direction_verdict(
     }
 }
 
+struct PositiveControl {
+    planted_lag: usize,
+    best_lag: usize,
+    te: f64,
+    threshold: f64,
+    fam: f64,
+    detected: bool,
+}
+
+fn lcg_uniform(state: &mut u64) -> f64 {
+    *state = state
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*state >> 33) as f64) / ((u32::MAX >> 1) as f64)
+}
+
+fn gaussian_noise(state: &mut u64) -> f64 {
+    let u1 = lcg_uniform(state).max(f64::MIN_POSITIVE);
+    let u2 = lcg_uniform(state);
+    (-2.0 * u1.ln()).sqrt() * (std::f64::consts::TAU * u2).cos()
+}
+
+fn synthetic_coupled_pair(
+    n: usize,
+    planted_lag: usize,
+    coupling: f64,
+    ar: f64,
+    driver_noise: f64,
+    target_noise: f64,
+    seed: u64,
+) -> (Vec<f32>, Vec<f32>) {
+    let mut state = seed | 1;
+    let mut driver = vec![0.0f64; n];
+    let mut target = vec![0.0f64; n];
+    let mut d = 0.0f64;
+    let mut x = 0.0f64;
+    for t in 0..n {
+        d = ar * d + driver_noise * gaussian_noise(&mut state);
+        let lagged = if t >= planted_lag {
+            driver[t - planted_lag]
+        } else {
+            0.0
+        };
+        x = ar * x + coupling * lagged + target_noise * gaussian_noise(&mut state);
+        driver[t] = d;
+        target[t] = x;
+    }
+    (
+        driver.iter().map(|&v| v as f32).collect(),
+        target.iter().map(|&v| v as f32).collect(),
+    )
+}
+
+fn positive_control() -> Option<PositiveControl> {
+    let (driver, target) = synthetic_coupled_pair(
+        PC_N,
+        PC_PLANTED_LAG,
+        PC_COUPLING,
+        PC_AR,
+        PC_DRIVER_NOISE,
+        PC_TARGET_NOISE,
+        SURROGATE_SEED,
+    );
+    let lags: Vec<usize> = (0..=MAX_LAG_MONTHS).collect();
+    let mut best: Option<(usize, f64)> = None;
+    for &lag in &lags {
+        if let Some(te) = transfer_entropy_lag(&target, &driver, lag) {
+            if best.is_none_or(|(_, b)| te > b) {
+                best = Some((lag, te));
+            }
+        }
+    }
+    let (best_lag, te) = best?;
+    let (_, _, threshold) =
+        surrogate_stats_phase_n(&target, &driver, best_lag, SURROGATE_SEED, N_SURR)?;
+    let mut fam: Option<f64> = None;
+    for &lag in &lags {
+        for (x, y) in [(&target, &driver), (&driver, &target)] {
+            if let Some(m) = surrogate_max_phase_n(x, y, lag, SURROGATE_SEED, N_SURR) {
+                fam = Some(fam.map_or(m, |f| f.max(m)));
+            }
+        }
+    }
+    let fam = fam?;
+    Some(PositiveControl {
+        planted_lag: PC_PLANTED_LAG,
+        best_lag,
+        te,
+        threshold,
+        fam,
+        detected: te > fam,
+    })
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
 
@@ -506,6 +607,24 @@ fn main() {
             "=== Family bound (round max over the measured directed pairs × lags, {N_SURR} surrogates) === fam = {f:.4e}"
         ),
         None => println!("=== Family bound absent (surrogates < 2) ==="),
+    }
+
+    println!();
+    match positive_control() {
+        Some(pc) => {
+            let verdict = if pc.detected {
+                format!("detected at lag {}", pc.best_lag)
+            } else {
+                "not detected".to_string()
+            };
+            println!(
+                "positive control (planted coupling): {verdict} | planted lag {} | best lag {} | TE {:.4e} | per-lag threshold {:.4e} | fam {:.4e}",
+                pc.planted_lag, pc.best_lag, pc.te, pc.threshold, pc.fam
+            );
+        }
+        None => println!(
+            "positive control (planted coupling): absent — the estimator returned null on the synthetic pair"
+        ),
     }
     println!(
         "=== Directed-path census and verdict (up to 30 ordered pairs = 6 × 5 over Wnd, Quake, Bz, SST, QBO, D20; target counted; per-channel pending named; per-lag threshold = mean + 2σ; arrow iff TE > fam) ==="
@@ -702,5 +821,29 @@ fn main() {
                 ),
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn positive_control_recovers_planted_coupling() {
+        let pc = positive_control().expect("the synthetic pair carries a positive control");
+        assert!(
+            pc.detected,
+            "the planted coupling is not detected: TE {} <= fam {}",
+            pc.te, pc.fam
+        );
+        let span = pc.planted_lag.abs_diff(pc.best_lag);
+        assert!(
+            span <= 1,
+            "the positive control recovers planted lag {} at best lag {} (TE {}, fam {})",
+            pc.planted_lag,
+            pc.best_lag,
+            pc.te,
+            pc.fam
+        );
     }
 }

@@ -50,6 +50,36 @@ impl BodyLine {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StationLine {
+    IntermagnetGround,
+    SwarmOverflight,
+}
+
+impl StationLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            StationLine::IntermagnetGround => "intermagnet-ground",
+            StationLine::SwarmOverflight => "swarm-overflight",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WitnessLine {
+    Body(BodyLine),
+    Station(StationLine),
+}
+
+impl WitnessLine {
+    pub fn word(&self) -> &'static str {
+        match self {
+            WitnessLine::Body(line) => line.word(),
+            WitnessLine::Station(line) => line.word(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TriadFold {
     United,
     Shared { line: BodyLine },
@@ -111,23 +141,30 @@ pub fn three_way_fold(
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Agreement {
-    Placed { sep_m: f64 },
-    Riss { sep_m: f64 },
+    Placed { sep: f64 },
+    Riss { sep: f64 },
 }
 
-pub fn classify(sep_m: f64, tol_m: f64) -> Agreement {
-    if sep_m <= tol_m {
-        Agreement::Placed { sep_m }
+pub fn classify(sep: f64, tol_m: f64) -> Agreement {
+    if sep <= tol_m {
+        Agreement::Placed { sep }
     } else {
-        Agreement::Riss { sep_m }
+        Agreement::Riss { sep }
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum BodyOutcome {
-    Placed { sep_m: f64 },
-    Absent { line: BodyLine },
-    Riss { sep_m: f64, knot: [BodyLine; 2] },
+    Placed {
+        sep: f64,
+    },
+    Absent {
+        line: BodyLine,
+    },
+    Riss {
+        sep: f64,
+        knot: [Option<WitnessLine>; 2],
+    },
 }
 
 impl BodyOutcome {
@@ -170,8 +207,8 @@ impl CometelsLine {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum CometelsOutcome {
-    Placed { sep_m: f64 },
-    Riss { sep_m: f64, knot: [CometelsLine; 2] },
+    Placed { sep: f64 },
+    Riss { sep: f64, knot: [CometelsLine; 2] },
     Absent { line: CometelsLine },
 }
 
@@ -440,12 +477,15 @@ impl Weberin {
             let outcome = if inpop_woven {
                 match (spk, inpop) {
                     (Some(spk_p), Some(inp_p)) => {
-                        let sep_m = separation_m(spk_p, inp_p);
-                        match classify(sep_m, PLANET_WEBERIN_TOL_M) {
-                            Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
-                            Agreement::Riss { sep_m } => BodyOutcome::Riss {
-                                sep_m,
-                                knot: [BodyLine::Spk, BodyLine::Inpop],
+                        let sep = separation_m(spk_p, inp_p);
+                        match classify(sep, PLANET_WEBERIN_TOL_M) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Inpop)),
+                                ],
                             },
                         }
                     }
@@ -459,12 +499,15 @@ impl Weberin {
             } else {
                 match (spk, kepler) {
                     (Some(spk_p), Some((helio, _))) => {
-                        let sep_m = separation_m(spk_p, add_sun(helio, sun));
-                        match classify(sep_m, tol_kepler_m) {
-                            Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
-                            Agreement::Riss { sep_m } => BodyOutcome::Riss {
-                                sep_m,
-                                knot: [BodyLine::Spk, BodyLine::Dastcom],
+                        let sep = separation_m(spk_p, add_sun(helio, sun));
+                        match classify(sep, tol_kepler_m) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Dastcom)),
+                                ],
                             },
                         }
                     }
@@ -496,12 +539,15 @@ impl Weberin {
             if small_body_number(&t.name).is_some() {
                 let mpc_outcome = match (spk, mpc) {
                     (Some(spk_p), Some((helio, _))) => {
-                        let sep_m = separation_m(spk_p, add_sun(helio, sun));
-                        match classify(sep_m, tol_kepler_m) {
-                            Agreement::Placed { sep_m } => BodyOutcome::Placed { sep_m },
-                            Agreement::Riss { sep_m } => BodyOutcome::Riss {
-                                sep_m,
-                                knot: [BodyLine::Spk, BodyLine::Mpc],
+                        let sep = separation_m(spk_p, add_sun(helio, sun));
+                        match classify(sep, tol_kepler_m) {
+                            Agreement::Placed { sep } => BodyOutcome::Placed { sep },
+                            Agreement::Riss { sep } => BodyOutcome::Riss {
+                                sep,
+                                knot: [
+                                    Some(WitnessLine::Body(BodyLine::Spk)),
+                                    Some(WitnessLine::Body(BodyLine::Mpc)),
+                                ],
                             },
                         }
                     }
@@ -543,11 +589,11 @@ impl Weberin {
                 .and_then(|c| c.state_at(jd));
             let outcome = match (spk, kepler) {
                 (Some(spk_p), Some((helio, _))) => {
-                    let sep_m = separation_m(spk_p, add_sun(helio, sun));
-                    match classify(sep_m, tol_kepler_m) {
-                        Agreement::Placed { sep_m } => CometelsOutcome::Placed { sep_m },
-                        Agreement::Riss { sep_m } => CometelsOutcome::Riss {
-                            sep_m,
+                    let sep = separation_m(spk_p, add_sun(helio, sun));
+                    match classify(sep, tol_kepler_m) {
+                        Agreement::Placed { sep } => CometelsOutcome::Placed { sep },
+                        Agreement::Riss { sep } => CometelsOutcome::Riss {
+                            sep,
                             knot: [CometelsLine::Spk, CometelsLine::Cometels],
                         },
                     }
@@ -910,9 +956,9 @@ mod tests {
         let w = cometels_weaver(&[("encke", [0.0; 3])], sun);
         let v = w.weave_cometels(&[cometels], 0.0, WEBERIN_TOL_M);
         match cometels_fold(&v, "encke") {
-            Some(CometelsOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite(), "a measured separation stays finite");
-                assert!(*sep_m <= WEBERIN_TOL_M, "sep {sep_m:e}");
+            Some(CometelsOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M, "sep {sep:e}");
             }
             other => panic!("the cometels line reads {other:?}"),
         }
@@ -923,11 +969,11 @@ mod tests {
         let w = cometels_weaver(&[("encke", [0.0; 3])], [0.0; 3]);
         let v = w.weave_cometels(&[cometels_encke()], 0.0, WEBERIN_TOL_M);
         match cometels_fold(&v, "encke") {
-            Some(CometelsOutcome::Riss { sep_m, knot }) => {
-                assert!(sep_m.is_finite());
+            Some(CometelsOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
                 assert!(
-                    *sep_m > WEBERIN_TOL_M,
-                    "the refusing lines sit far apart: {sep_m}"
+                    *sep > WEBERIN_TOL_M,
+                    "the refusing lines sit far apart: {sep}"
                 );
                 match knot {
                     [CometelsLine::Spk, CometelsLine::Cometels] => {}
@@ -1003,9 +1049,9 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "ceres") {
-            Some(BodyOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite(), "a measured separation stays finite");
-                assert!(*sep_m <= WEBERIN_TOL_M);
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M);
                 assert!(matches!(
                     outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
                     Some(Verdict::Placed)
@@ -1029,9 +1075,9 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "encke") {
-            Some(BodyOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite(), "a measured separation stays finite");
-                assert!(*sep_m <= WEBERIN_TOL_M, "sep {sep_m:e}");
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M, "sep {sep:e}");
             }
             other => panic!("the comet line reads {other:?}"),
         }
@@ -1078,11 +1124,14 @@ mod tests {
             1.0e6,
         );
         match outcome(&w, "ceres") {
-            Some(BodyOutcome::Riss { sep_m, knot }) => {
-                assert!(sep_m.is_finite());
-                assert!(*sep_m > 1.0e6, "the refusing lines sit far apart: {sep_m}");
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > 1.0e6, "the refusing lines sit far apart: {sep}");
                 match knot {
-                    [BodyLine::Spk, BodyLine::Dastcom] => {}
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Dastcom)),
+                    ] => {}
                     other => panic!("the riss knot reads {other:?}"),
                 }
                 assert_eq!(
@@ -1152,9 +1201,9 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "mars") {
-            Some(BodyOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite());
-                assert!(*sep_m <= WEBERIN_TOL_M);
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite());
+                assert!(*sep <= WEBERIN_TOL_M);
                 assert!(matches!(
                     outcome(&w, "mars").and_then(|o| o.fadenpruefung()),
                     Some(Verdict::Placed)
@@ -1175,11 +1224,14 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "mars") {
-            Some(BodyOutcome::Riss { sep_m, knot }) => {
-                assert!(sep_m.is_finite());
-                assert!(*sep_m > WEBERIN_TOL_M);
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > WEBERIN_TOL_M);
                 match knot {
-                    [BodyLine::Spk, BodyLine::Inpop] => {}
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
                     other => panic!("the inpop riss knot reads {other:?}"),
                 }
             }
@@ -1247,9 +1299,9 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "mars") {
-            Some(BodyOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite());
-                assert!(*sep_m <= PLANET_WEBERIN_TOL_M);
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite());
+                assert!(*sep <= PLANET_WEBERIN_TOL_M);
             }
             other => panic!("the three converging planet lines read {other:?}"),
         }
@@ -1276,10 +1328,13 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "uranus") {
-            Some(BodyOutcome::Riss { sep_m, knot }) => {
-                assert!(*sep_m > PLANET_WEBERIN_TOL_M);
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(*sep > PLANET_WEBERIN_TOL_M);
                 match knot {
-                    [BodyLine::Spk, BodyLine::Inpop] => {}
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
                     other => panic!("the single de-vs-inpop line keeps its knot {other:?}"),
                 }
             }
@@ -1478,17 +1533,20 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "mars") {
-            Some(BodyOutcome::Riss { sep_m, knot }) => {
+            Some(BodyOutcome::Riss { sep, knot }) => {
                 assert!(
-                    *sep_m > PLANET_WEBERIN_TOL_M,
-                    "sep {sep_m:e} exceeds the planet law {PLANET_WEBERIN_TOL_M:e}"
+                    *sep > PLANET_WEBERIN_TOL_M,
+                    "sep {sep:e} exceeds the planet law {PLANET_WEBERIN_TOL_M:e}"
                 );
                 assert!(
-                    *sep_m < WEBERIN_TOL_M,
-                    "sep {sep_m:e} would read placed under the kepler law"
+                    *sep < WEBERIN_TOL_M,
+                    "sep {sep:e} would read placed under the kepler law"
                 );
                 match knot {
-                    [BodyLine::Spk, BodyLine::Inpop] => {}
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Inpop)),
+                    ] => {}
                     other => panic!("the inpop riss knot reads {other:?}"),
                 }
             }
@@ -1510,9 +1568,9 @@ mod tests {
             WEBERIN_TOL_M,
         );
         match outcome(&w, "ceres") {
-            Some(BodyOutcome::Placed { sep_m }) => {
+            Some(BodyOutcome::Placed { sep }) => {
                 assert!(
-                    *sep_m <= WEBERIN_TOL_M,
+                    *sep <= WEBERIN_TOL_M,
                     "the kepler line judges at its own measured law"
                 );
             }
@@ -1550,9 +1608,9 @@ mod tests {
         let sun = [-helio[0], -helio[1], -helio[2]];
         let w = woven_mpc(&[("ceres", [0.0; 3])], sun, vec![ceres], WEBERIN_TOL_M);
         match mpc_outcome(&w, "ceres") {
-            Some(BodyOutcome::Placed { sep_m }) => {
-                assert!(sep_m.is_finite(), "a measured separation stays finite");
-                assert!(*sep_m <= WEBERIN_TOL_M);
+            Some(BodyOutcome::Placed { sep }) => {
+                assert!(sep.is_finite(), "a measured separation stays finite");
+                assert!(*sep <= WEBERIN_TOL_M);
                 assert!(matches!(
                     mpc_outcome(&w, "ceres").and_then(|o| o.fadenpruefung()),
                     Some(Verdict::Placed)
@@ -1567,11 +1625,14 @@ mod tests {
         let ceres = mpc_rec(1, 2.7);
         let w = woven_mpc(&[("ceres", [0.0; 3])], [0.0; 3], vec![ceres], 1.0e6);
         match mpc_outcome(&w, "ceres") {
-            Some(BodyOutcome::Riss { sep_m, knot }) => {
-                assert!(sep_m.is_finite());
-                assert!(*sep_m > 1.0e6, "the refusing lines sit far apart: {sep_m}");
+            Some(BodyOutcome::Riss { sep, knot }) => {
+                assert!(sep.is_finite());
+                assert!(*sep > 1.0e6, "the refusing lines sit far apart: {sep}");
                 match knot {
-                    [BodyLine::Spk, BodyLine::Mpc] => {}
+                    [
+                        Some(WitnessLine::Body(BodyLine::Spk)),
+                        Some(WitnessLine::Body(BodyLine::Mpc)),
+                    ] => {}
                     other => panic!("the mpc riss knot reads {other:?}"),
                 }
                 assert_eq!(

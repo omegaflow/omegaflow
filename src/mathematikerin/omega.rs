@@ -1048,29 +1048,47 @@ impl OmegaLoop {
         self.sky_reload();
         self.vlies_reload();
         let t = self.t_presence;
+        let riss = match self.verdicts.read() {
+            Ok(v) => crate::archivar::riss_names(&v, Some(t)),
+            Err(poisoned) => crate::archivar::riss_names(&poisoned.into_inner(), Some(t)),
+        };
         let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
         oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
+        let mut riss_hull: Vec<String> = Vec::new();
         let mut silent_worldlines = 0usize;
         if let Some(field) = self.latest_field.clone() {
             let mut body_names: Vec<&String> = field.eph.keys().collect();
             body_names.sort();
             for name in body_names {
+                if riss.contains(name.as_str()) {
+                    riss_hull.push(name.clone());
+                    continue;
+                }
                 match S2Osc::from_body(name, t, &field.eph) {
                     Some(o) => oscs.push(o),
                     None => silent_worldlines += 1,
                 }
             }
-            let mut stations: Vec<(&String, &crate::machines::MetaAnchor)> = self
+            let mut stations: Vec<(&String, &crate::machines::MetaAnchor, &Option<String>)> = self
                 .matrix
                 .metas
                 .iter()
                 .filter_map(|(name, meta)| match &meta.anchor {
-                    anchor @ crate::machines::MetaAnchor::Surface { .. } => Some((name, anchor)),
+                    anchor @ crate::machines::MetaAnchor::Surface { .. } => {
+                        Some((name, anchor, &meta.station_code))
+                    }
                     crate::machines::MetaAnchor::Barycenter { .. } => None,
                 })
                 .collect();
             stations.sort_by(|a, b| a.0.cmp(b.0));
-            for (_, anchor) in stations {
+            for (_, anchor, station_code) in stations {
+                if let Some(code) = station_code {
+                    let faden = format!("station-{code}");
+                    if riss.contains(&faden) {
+                        riss_hull.push(faden);
+                        continue;
+                    }
+                }
                 let crate::machines::MetaAnchor::Surface {
                     body_name,
                     lat,
@@ -1086,6 +1104,7 @@ impl OmegaLoop {
                 }
             }
         }
+        self.sky.riss = riss_hull;
         if silent_worldlines > 0 {
             self.sky_say(&format!(
                 "{silent_worldlines} worldline(s) without coverage rest (0 honored)"
@@ -1831,7 +1850,7 @@ impl OmegaLoop {
             };
             if self.silent || std::io::IsTerminal::is_terminal(&std::io::stderr()) {
                 eprintln!(
-                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} perm {:.2} pts {}",
+                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} riss {} perm {:.2} pts {}",
                     self.t_presence,
                     rec,
                     self.ring_gen,
@@ -1862,6 +1881,7 @@ impl OmegaLoop {
                     skyrep.shell,
                     skyrep.forward_field,
                     vlies_s,
+                    skyrep.riss_count,
                     skyrep.permeability,
                     self.sky.points.len(),
                 );

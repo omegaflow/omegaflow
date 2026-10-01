@@ -156,6 +156,7 @@ mod matrix_record_tests {
                 freq: 0.0,
                 bin_width: 0.0,
                 epoch,
+                station_code: None,
                 position: Position::Surface {
                     body_name: "earth".to_string(),
                     lat: 34.7,
@@ -367,6 +368,7 @@ mod matrix_rebuild_tests {
                 freq: 0.0,
                 bin_width: 0.0,
                 epoch,
+                station_code: None,
                 position: crate::archivar::Position::Surface {
                     body_name: "earth".to_string(),
                     lat: 0.0,

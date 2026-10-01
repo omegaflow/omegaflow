@@ -239,6 +239,7 @@ pub fn build_channels(
                 freq: 0.0,
                 bin_width: 0.0,
                 epoch,
+                station_code: None,
                 position: Position::Surface {
                     body_name: body.clone(),
                     lat,
