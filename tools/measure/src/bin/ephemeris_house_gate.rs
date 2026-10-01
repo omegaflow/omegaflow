@@ -35,6 +35,20 @@ fn parse_ymd(s: &str) -> Option<(i64, i64, i64)> {
     Some((p[0].parse().ok()?, p[1].parse().ok()?, p[2].parse().ok()?))
 }
 
+fn parse_hms(s: &str) -> Option<f64> {
+    let p: Vec<&str> = s.split(':').collect();
+    if p.len() != 3 {
+        return None;
+    }
+    let h: f64 = p[0].parse().ok()?;
+    let m: f64 = p[1].parse().ok()?;
+    let sec: f64 = p[2].parse().ok()?;
+    if !(0.0..24.0).contains(&h) || !(0.0..60.0).contains(&m) || !(0.0..61.0).contains(&sec) {
+        return None;
+    }
+    Some(h * HOUR + m * 60.0 + sec)
+}
+
 fn load_house(word: &str, path: &str, body: &str) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
@@ -259,9 +273,22 @@ fn main() {
         None => (2026, 9, 28),
     };
     let epoch_label = format!("{epoch_y:04}-{epoch_m:02}-{epoch_d:02}");
+    let (epoch_hms_s, epoch_hms_note) = match arg_str(&args, "--epoch-hms") {
+        Some(s) => match parse_hms(&s) {
+            Some(v) => (v, String::new()),
+            None => {
+                eprintln!("ephemeris_house_gate: --epoch-hms {s} carries no HH:MM:SS");
+                std::process::exit(2);
+            }
+        },
+        None => (
+            PERIGEE_UNIX_HMS_S,
+            " (default JUICE perigee; pass --epoch-hms for another epoch)".to_string(),
+        ),
+    };
     let lsk = parse_lsk(NAIF_LSK_EMBEDDED);
     let perigee_unix =
-        days_from_civil(epoch_y, epoch_m, epoch_d).map(|d| d as f64 * DAY + PERIGEE_UNIX_HMS_S);
+        days_from_civil(epoch_y, epoch_m, epoch_d).map(|d| d as f64 * DAY + epoch_hms_s);
     let perigee_tdb = match (&lsk, perigee_unix) {
         (Some(l), Some(u)) => l.unix_to_tdb(u),
         _ => None,
@@ -282,6 +309,7 @@ fn main() {
     println!(
         "ephemeris_house_gate — {body} barycenter across DE / INPOP / EPM, epoch {epoch_label}"
     );
+    println!("epoch time: {epoch_hms_s} s after 00:00 UTC{epoch_hms_note}");
     match perigee_tdb {
         Some(t) => println!("perigee tdb: {t}"),
         None => println!("perigee tdb: pending — the leap table carries no value"),

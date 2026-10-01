@@ -118,17 +118,32 @@ pub fn chebyshev_fit(
             }
         }
     }
+    let inv_m = 1.0 / m as f64;
+    let mut mx = 0.0;
+    let mut my = 0.0;
+    let mut mz = 0.0;
+    for s in samples {
+        mx += s.0;
+        my += s.1;
+        mz += s.2;
+    }
+    mx *= inv_m;
+    my *= inv_m;
+    mz *= inv_m;
     let mut atx = vec![0.0; degree + 1];
     let mut aty = vec![0.0; degree + 1];
     let mut atz = vec![0.0; degree + 1];
     for i in 0..m {
         for j in 0..=degree {
-            atx[j] += a[i][j] * samples[i].0;
-            aty[j] += a[i][j] * samples[i].1;
-            atz[j] += a[i][j] * samples[i].2;
+            atx[j] += a[i][j] * (samples[i].0 - mx);
+            aty[j] += a[i][j] * (samples[i].1 - my);
+            atz[j] += a[i][j] * (samples[i].2 - mz);
         }
     }
-    let (cx, cy, cz) = solve_normal_equations(&ata, &atx, &aty, &atz)?;
+    let (mut cx, mut cy, mut cz) = solve_normal_equations(&ata, &atx, &aty, &atz)?;
+    cx[0] += mx;
+    cy[0] += my;
+    cz[0] += mz;
     Some((cx, cy, cz))
 }
 
@@ -705,5 +720,59 @@ mod tests {
         let kernels = [a, b];
         let s = state_ssb_multi(&kernels, -28, 100.0).expect("resolves");
         assert_eq!(s, [11.0, 0.0, 0.0, 0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn granule_fits_meet_at_the_shared_boundary() {
+        fn curve(et: f64) -> (f64, f64, f64) {
+            let base = 1.5e11;
+            (
+                base + 3.0e4 * et + 0.5 * 6.0e-3 * et * et,
+                1.0e10 + 2.9e4 * et - 0.5 * 5.0e-3 * et * et,
+                -4.0e9 + 1.0e4 * et + 0.5 * 2.0e-3 * et * et,
+            )
+        }
+        let half = GRANULE_DAYS * 86400.0 / 2.0;
+        let fit = |mid: f64| -> ([f64; CHEBYSHEV_N], [f64; CHEBYSHEV_N], [f64; CHEBYSHEV_N]) {
+            let samples: Vec<(f64, f64, f64)> = chebyshev_nodes(N_SAMPLES)
+                .iter()
+                .map(|tau| curve(mid + tau * half))
+                .collect();
+            let (cx, cy, cz) = chebyshev_fit(&samples, CHEBYSHEV_DEGREE).expect("fits");
+            let arr = |v: &Vec<f64>| {
+                let mut a = [0.0f64; CHEBYSHEV_N];
+                for (i, x) in v.iter().enumerate().take(CHEBYSHEV_N) {
+                    a[i] = *x;
+                }
+                a
+            };
+            (arr(&cx), arr(&cy), arr(&cz))
+        };
+        let (ax, ay, az) = fit(0.0);
+        let (bx, by, bz) = fit(GRANULE_DAYS * 86400.0);
+        let (ex, ey, ez) = curve(half);
+        let expected = [ex, ey, ez];
+        let pa = [
+            chebyshev_evaluate(&ax, 1.0),
+            chebyshev_evaluate(&ay, 1.0),
+            chebyshev_evaluate(&az, 1.0),
+        ];
+        let pb = [
+            chebyshev_evaluate(&bx, -1.0),
+            chebyshev_evaluate(&by, -1.0),
+            chebyshev_evaluate(&bz, -1.0),
+        ];
+        for k in 0..3 {
+            assert!(
+                (pa[k] - expected[k]).abs() < 0.01,
+                "granule fit misses the boundary by {} m",
+                (pa[k] - expected[k]).abs()
+            );
+            assert!(
+                (pa[k] - pb[k]).abs() < 0.01,
+                "adjacent granules disagree at the boundary by {} m",
+                (pa[k] - pb[k]).abs()
+            );
+        }
     }
 }
