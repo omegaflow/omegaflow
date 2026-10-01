@@ -3,7 +3,7 @@
   session: Mountain-Folge 216
   class: handover
   date: 2026-09-30
-  sha256: e560153a7f5cfce87bdffb0c9613352e079bfb322e07819756cab524d5fee103
+  sha256: 794861024b39a8c307b7f1535440198fb5188b42a0db42e482a1d66db173cba3
   status: live
 -->
 # Handover — Mountain-Folge 216 (2026-09-30)
@@ -24,8 +24,12 @@ jetzt `--epoch-hms HH:MM:SS`; ohne Argument bleibt die JUICE-Perigäum-Zeit (11:
 explizit benannter Default (`cargo build -p omegaflow-measure --bin ephemeris_house_gate`
 0 Warnungen, Lauf 1990-12-08 reproduziert folge215: Δ DE↔INPOP 0.1929 km). Dazu die drei roten
 `ci-check`-Tests geheilt: `flyby_encounters` chronologisch geordnet, `pds3_binary` +Inf-Byteorder
-(big-endian `0x7F800000`), `port`-Replay — die sechs vco_rs-`field`-Zeilen trugen mehrwortige
-Beschreibungen, die den Whitespace-Parser verschoben (auf Einzel-Token geheilt).
+(big-endian `0x7F800000`), `port`-Replay. Der Replay-Fix ist der **Parser**, nicht eine Umbenennung:
+`register_tokens` in `src/archivar/port.rs` trägt quoted Mehrwort-`field`-Keys (so stehen die sechs
+vco_rs-Namen im PDS3-Label). Mein erster Underscore-Umbau in `946c7b232` war der falsche Fix und hat
+zugleich Upstreams PDS4-Retarget revertiert (stale Arbeitsbaum-Basis beim pfad-begrenzten Commit) —
+**Riss, geheilt durch `register_tokens`**; Mycelium hält den Revert-des-Reverts, PDS4-20190704 ist
+kanonisch (206 found vs PDS3 404 + 0 Zeilen).
 
 ## Operator-Wort-Register
 
@@ -63,6 +67,20 @@ Wort | Datum | Quelle
 - **Blockade:** der Re-Manifest — `de44-cdn` und `inpop-epm-cdn` bauen per `workflow_dispatch` + Monats-`schedule` (cron 2. des Monats) aus `main`; der Fix ist noch nicht auf `main` (kein Commit), also fährt der nächste Lauf sonst weiter den Bug.
 - **Braucht:** Fix committen → `gh workflow run de44-cdn` + `gh workflow run inpop-epm-cdn` (+ die Missions-Ephemeriden-Workflows) → dann `eclipse_shadow_probe` (2017 + 2024), `ephemeris_house_gate` (6 Anderson-Epochen), `flyby_anderson_probe`, `ephemeris_granule_census` neu laufen und die Verdikte fortschreiben (Verschiebung > genannte Unsicherheit = betroffen).
 
+### Register-Verdikt-Zeilen aus future-162 (gefaltet)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-01 via `register_lookup --addressed mountain`) future-162 meldet: das „zulässig" für `pioneer11_odf` + `pioneer10_telemetry` steht; der **`ttl`** (gemessenes Prüfintervall) ist Mountains exklusives Recht, `url` setzt Mycelium. Die declined/wiederaufgefundenen Dateien `who_flunet` (119,5 MB), `nbp_Lmon` (19,7 MB), WMM/Kernel-Satz liegen in `/home/johannes/archive/knowledge` bzw. Legacy-`data/`; Move ins archive-root = Datenbestand (Mountain).
+- **Blockade:** keine.
+- **Braucht:** `ttl` für `pioneer11_odf`/`pioneer10_telemetry` in `phi/sources.φ` setzen; die drei Dateien ins archive-root verschieben und die Register-Zeilen fortschreiben.
+
+### Anderson — ITRF/EOP-Kontrolle je Haus (future-162)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-01 via `register_lookup --addressed mountain`) die fokussierte future-Stimme (`state/stimmen/2026-09-30_anderson-frage_nemotron.txt`) fordert vor jedem survives/dies-Verdikt die ITRF/EOP-Realisation je Haus; die konstante Frame-Translation kürzt sich in Differential-Doppler, nur die Drift leckt (~3,65 µm/s bei −115 m/yr, ~300× unter den ~1 mm/s der FA).
+- **Blockade:** keine.
+- **Braucht:** je Haus (DE/INPOP/EPM) die EOP/ITRF-Realisation benennen und das Anderson-Verdikt damit gegenzeichnen (der Rat-Lauf + die Haus-Schranken stehen).
+
 ## Träger (Prosa, eigene)
 
 - `docs/auftrag/auftrag-flyby2-kette.md` — σ-Metrik-Kette (3 Marker); Trigger JUICE In-Situ /
@@ -89,8 +107,9 @@ Wort | Datum | Quelle
 
 ## An mycelium
 
-Origin: mountain folge216 (Faltung der adressierten Blöcke mycelium-folge214 + Antwort auf die Ephemeriden-generic-Blockade).
+Origin: mountain folge216 (Faltung der adressierten Blöcke mycelium-folge214 + mycelium-folge215 + future-162 + Antwort auf die Ephemeriden-generic-Blockade).
 
+- **vco-rs — PDS4-20190704 ist kanonisch (Verdikt):** der PDS4-Pfad kompiliert (`vco-rs-cdn 36738137783`, 206 found, `pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin`); der PDS3-Pfad ist doppelt tot (Asset 404 + `decode_rows` 0 Zeilen). **Wende deinen Revert-des-Reverts an** (`sources.φ` url/format/origin/compiler → PDS4, `harvest.φ`-Arm → pds4, `vco-rs-cdn.yml` bleibt, `pds3-fixed-width-darts-cdn.yml` weg). Mein Replay-Fix ist der quote-bewusste Parser `register_tokens` (`port.rs`) — er trägt die quoted vco_rs-Keys; **Parser-Fix und dein Revert-des-Reverts müssen zusammen landen.**
 - **Ephemeriden-Re-Manifest nach dem Solver-Fix:** `solve_normal_equations` (`src/mathematikerin/least_squares.rs`) reduzierte den RHS nicht mit der Matrix → jeder mit `chebyshev_fit` kompilierte Ephemeriden-Bin trägt einen ~40-m-Fit-Fehler und springt an den 32-d-Granulat-Grenzen (gemessen via `ephemeris_granule_census`; nach dem Fix `--selftest` 0.00003 m = f64-Boden). **Braucht:** die Ephemeriden-Assets neu kompilieren/manifesten (`kernel-flatten` / `ephemeris_compiler`), dann `ephemeris_granule_census` gegen die neuen Bins.
 - **Ephemeriden generic (new_horizons/voyager1/voyager2) — deine Feder (travelnder Punkt):** die drei `url`-Zeilen `phi/sources.φ:15747/15950/15957` stehen auf `ssd.jpl.nasa.gov-horizons`; die generischen Assets bleiben 976-B-Placeholder, den Kernel trägt der `horizons_compiler --long`-Lauf. Der Placeholder ist nicht gemessen (`pending`, 0 honored). **Braucht:** die zugelassene Quelle der drei auf den `_long`-Lauf setzen (`url`/`compiler`) oder die generische Zeile zugunsten `ephemeris_*_long` verwerfen; danach Mountain die generischen Placeholder-Zeilen `descoped`.
 - **itokawa:** die NAIF-id `2025143` **steht** in `tools/harvest/src/bin/horizons_compiler.rs:637` (Eintrag in `974e88030`, Mountain-214) — die Block-Zeile „fehlt in der Liste" ist gemessen stale; der Re-Dispatch (`kernel-flatten`) bleibt deine Feder.
@@ -111,7 +130,7 @@ Origin: mountain folge216 (Solver-Fix + Re-Manifest; das Sonne-Erde-Blatt/Eclips
 
 Origin: mountain folge216 (Registry-first aus future-folge161 ist in folge215 bereits je Asset gemessen und beantwortet — `## An future` folge215). Die Operator-Queue-Einträge aus folge215 (Frühwarn-Dienst, Holdings-Dedup) bleiben bei dir.
 
-## Burn: open 0.0000 · close 0.3365 · cap 0.40 · Grund: operator-getriebenes Mehr-Nachrichten-Atom (drei CI-Test-Heilungen, Solver-Fix + Re-Manifest-Analyse, Anderson-Verdikt), Commit-Wort gegeben
+## Burn: open 0.0000 · close 0.4166 · cap 0.50 · Grund: operator-getriebenes Mehr-Nachrichten-Atom (drei CI-Test-Heilungen, Solver-Fix + Re-Manifest-Analyse, Anderson-Verdikt, vco-rs-Riss + Parser-Heilung), Commit-Wort gegeben
 
 ## Abschluss
 
