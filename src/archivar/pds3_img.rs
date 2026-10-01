@@ -1,7 +1,7 @@
 use crate::archivar::pds3_table::odl_kv;
 
 pub const MAGIC: [u8; 4] = *b"P3IM";
-pub const BAND_NAME_BYTES: usize = 32;
+pub const BAND_NAME_BYTES: usize = 64;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ImgReject {
@@ -891,6 +891,23 @@ data ignore value = -99.0
         assert_eq!(means, vec![(0.0, 2.5, 0)]);
         let series = parse_series(&bin).expect("series");
         assert_eq!(series, vec![(0.0, 2.5, 0)]);
+    }
+
+    #[test]
+    fn pack_roundtrip_holds_for_band_names_longer_than_the_legacy_width() {
+        let meta = parse_label(MINIRF_BAND_LABEL).expect("label parses");
+        assert!(
+            meta.band_names.iter().any(|n| n.len() > 32),
+            "the fixture must carry a band name longer than the legacy 32-byte field"
+        );
+        let mut raw = Vec::new();
+        for v in [1.0f32, 2.0, 3.0, 4.0] {
+            raw.extend_from_slice(&v.to_le_bytes());
+        }
+        let raster = decode_raster(&raw, &meta).expect("raster decodes");
+        let bin = pack(&raster);
+        let parsed = parse_image(&bin).expect("packed image parses");
+        assert_eq!(parsed, raster);
     }
 
     #[test]

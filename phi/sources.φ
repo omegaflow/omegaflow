@@ -995,7 +995,7 @@ lat geometry.coordinates.1
 lon geometry.coordinates.0
 field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
 
-url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
 at earth
 map features
@@ -1073,7 +1073,7 @@ lat properties.Lat
 lon properties.Long
 field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
 
-url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
 at earth
 map features
