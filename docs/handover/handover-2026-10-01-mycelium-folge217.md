@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: cd92acee58ce4efec9e985e44b908ddfc3b43b9ce58c8f80d392444f89a57ea5
+  sha256: 2432e11d706d405bab18da16dcbbd005a7382418e0821f038a4a9405f5f339b5
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -44,7 +44,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **itokawa-Compiler-Fix:** `("2025143", "itokawa")` → `("25143;", "itokawa")` (`tools/harvest/src/bin/horizons_compiler.rs:637`). Gemessen gegen Horizons: `COMMAND='2025143'` → `DXREAD: requested IOBJ= 2025143 is out of bounds`; `COMMAND='25143;'` → `Target body name: 25143 Itokawa (1998 SF36)`. `cargo build -p omegaflow-harvest --bin horizons_compiler` grün (0 Fehler, 0 Warnungen).
 - **Fünfte Zeugenart gebaut (die Stimmen jetzt bearbeitet, nicht nur benannt):** `WitnessKind::PointEvent` in `src/archivar/witness.rs` ergänzt; die transienten Event-Records `AMN1` (AMON-Alerts), `PAO1` (Auger), `S2E1` (IceCat-Events) von `S2Direction` auf `PointEvent` getrennt, die Kataloge `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`; Tests umgestellt + `transient_event_records_are_point_events`; `phi/witnesses.φ` Note trägt die fünfte Art + Adjudikations-Quelle. `cargo check` 0/0.
 - **Mountain-218 verifiziert (Operator-Auftrag):** `958d946ba` heilt pds3_img (`BAND_NAME_BYTES = 64`), faltet den Sweep (`declined_sources.φ`-Notes → point-event), admitted den Quake-Zeugen **`ERBQ`** (neu `src/archivar/quake_event.rs`, `tools/harvest/src/bin/quake_ptevent_compiler.rs`, `.github/workflows/quake-ptevent-cdn.yml`, 3 `witness point-event` in `witnesses.φ`, `ERBQ` im `magic_identity`), entwirrt den pds4-Binary-Register; `cargo check` 0/0. **Riss (mein Fehler):** mein Kaguya-Audit war unvollständig — `pds4-binary-cdn.yml` trug sehr wohl einen Idempotenz-Gate; mein `sgrep -l 'idempotence'`-Ergebnis war gekappt (nur 3 sichtbar). Mountain hat den `force`-Input ergänzt.
-- **Dispatched:** `pds3-img-cdn 36887145554` (Mountain-Fix steht).
+- **Dispatch + Messung 2026-10-01:** `pds3-img-cdn 36887145554` **success** → WUSTL-Asset `pds3_img_fsb_00720_…bin` 29896248 B `6aa0eb1f…`; `quake-ptevent-cdn 36887778291` **success** → 3 Assets (`jma` 7181 B echt, `chile`/`tohoku` je **45 B = leer, Riss**); `pds4-binary-cdn 36886648051` **success**. Neu dispatcht: `kernel-flatten 36894645771`, `quake-ptevent-cdn 36894598573`, `pds3-img-cdn 36894603247`.
 - **Sweep-Umtragung (Mapping v3):** `state/mycelium/zeugen-sweep-mapping.md` auf v3 (fünfte Art `(e) point-event` mit Kimi-/Sonnet-Test); 9 klare Event-Kandidaten im Sweep von `kein-zeuge`/`b` auf `e` umgetragen (`descoped-blocked`: Chile-Erdbeben, tohoku_seismicity, tsunami.incois, jma-quake; `declined-0871-1740`: tmd.go.th, usgs-detail; `declined-0001-0870`: geonet-quake; `declined-4336-5203`: seismicportal×2). GIS-Gefahrenpolygone/Ableitungen/Aggregate/Registry bleiben `kein-zeuge`.
 - **Test-Build-Rot geheilt:** `src/archivar/ephemeris.rs`-Testmodul (`:736`/`:743`/`:744`/`:756`–`:763`) nutzte `CHEBYSHEV_N`/`chebyshev_evaluate` (aus `motion.rs`) ohne Import → CI `ci-check 36868565495` rot mit `lib test` E0425 (11 Fehler); `cargo check` übersieht das (Test-cfg). Import im Testmodul ergänzt (`use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate}`); `cargo check` weiter 0/0.
 - **`legacy-cdn-ssd` (Wartend) gemessen:** `nvss.json` (`sources.φ:10670`), `first14.json` (`:10540`), `curated48_spectra.bin` (`:9217`) zeigen jetzt auf das Legacy-Tag `ssd.jpl.nasa.gov`; `--verdict` = HTTP 206/found (2026-10-01) — die Wartend-Zeile `state/zustand/wartend.φ:27` ist stale (gemessen 2026-09-28).
@@ -61,19 +61,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Lauf-Ende
 - **Braucht:** `ci_manage status`/`log` der Läufe; danach `--sniff`/API-Liste der drei Bins, sha in `sources.φ`.
 
-### pds3-img-cdn — dispatched, messen
+### pds3-img — WUSTL-Asset manifestiert
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `pds3-img-cdn 36887145554` (dispatched 2026-10-01, Mountain-Fix `958d946ba` auf main)
-- **Lage:** (gemessen 2026-10-01) Mountain heilte den Compiler-Roundtrip (`BAND_NAME_BYTES = 64`, `src/archivar/pds3_img.rs`) und committete ihn; der Lauf schreibt mit dem Fix mindestens das `pds-geosciences.wustl.edu`-Asset (`written ≥ 1` → exit 0 auch bei M3-403).
-- **Blockade:** Lauf-Ende
-- **Braucht:** `ci_manage log 36887145554`; `phi/harvest.φ` gegen `asset present` messen.
+- **Trigger:** `phi/harvest.φ`-Eintrag `pds3_img` auf `asset present` setzen (Mountain)
+- **Lage:** (gemessen 2026-10-01 via API) `pds3-img-cdn 36887145554` success; `pds-geosciences.wustl.edu` trägt `pds3_img_fsb_00720_1cd_xhu_84n209_v1.bin` 29896248 B sha256 `6aa0eb1f…`. Der M3-Rest bleibt CI-IP-403.
+- **Blockade:** M3-Mirror fehlt
+- **Braucht:** Mountain setzt den `pds3_img`-`harvest.φ`-Eintrag auf `asset present` (sha); M3-Descope-Befund, falls kein Mirror.
 
-### Quake-ptevent (ERBQ) + pds4-Binary — Manifest messen
+### Quake-ptevent (ERBQ) — Chile/Tohoku leer (Riss)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `quake-ptevent-cdn 36886640978` / `pds4-binary-cdn 36886648051` (queued @`958d946ba`)
-- **Lage:** (gemessen 2026-10-01 via API) das `quake-ptevent`-Release existiert noch nicht (HTTP 404) → `quake_ptevent_*.bin` fehlt; `pds4_fixed_width_acs_*` liegt unter `archives.esac.esa.int` (7 Assets, Mountain-Fold `asset present` bestätigt).
-- **Blockade:** Läufe queued
-- **Braucht:** `ci_manage log` der beiden Läufe; danach `--sniff`/API von `quake_ptevent_*.bin`.
+- **Trigger:** nächster `quake-ptevent-cdn`-Lauf (`36894598573`) + Compiler-Prüfung
+- **Lage:** (gemessen 2026-10-01 via API) `quake-ptevent-cdn 36887778291` success; Release `quake-ptevent` trägt 3 Assets: `quake_ptevent_jma.bin` 7181 B `28e08148…` (echt), **`quake_ptevent_chile.bin` 45 B `ff7e2f67…`** und **`quake_ptevent_tohoku.bin` 45 B `cde2a662…`** — 45 B ist nur der Magic-Header, **keine Granule** (leeres Feld). Die zwei ArcGIS-`FeatureServer/0/query`-Feeds liefern keine geparsten Ereignisse (Riss: admitted witness, aber void).
+- **Blockade:** Compiler/Parse der ArcGIS-GeoJSON-Feeds (Chile/Tohoku)
+- **Braucht:** `quake_ptevent_compiler` gegen die zwei rohen GeoJSON-Antworten lokal messen (`--ci-mode` ohne Upload / Rohantwort `--sniff`); `pds4_fixed_width_acs_*` bleibt unter `archives.esac.esa.int` (7 Assets, Mountain-Fold bestätigt, `pds4-binary-cdn 36886648051` success).
 
 ### CDSE-CCM STAC-Auth-Asset — dispatched, messen
 - **Status:** wartend | **Bindung:** eigen
