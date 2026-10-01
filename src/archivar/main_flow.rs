@@ -2870,6 +2870,7 @@ pub fn main_flow() {
                     | "galileo_odf"
                     | "dawn_odf"
                     | "pioneer10_odf"
+                    | "pioneer11_odf"
                     | "odf_serie"
                     | "voyager_odr"
                     | "voyager_occlt"
