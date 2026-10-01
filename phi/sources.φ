@@ -9214,14 +9214,6 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
-format jwst_spectra
-origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
-compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
-at sun
-ttl 604800
-field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdarn_rawacf.bin
 format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
@@ -10288,14 +10280,13 @@ at earth
 ttl 604800
 field observable_hz pioneer10_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer11_odf.bin
-format pioneer11_odf
-origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
-compiler tools/harvest/src/bin/pioneer11_odf_compiler.rs
-sha256 3ecfa9a1804e3297841533c4c29671c807c27d3403d5a0e2b93a428460aa191e
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
+format atdf
+origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
+compiler tools/harvest/src/bin/pioneer_atdf_compiler.rs
 at earth
 ttl 604800
-field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin
 format pioneer10_telemetry
@@ -10305,13 +10296,14 @@ sha256 8745cd971e0808cba9b97dedb08d73b0a991bdbc00385207f182d1570939fb05
 at earth
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
-format atdf
-origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
-compiler tools/harvest/src/bin/pioneer_atdf_compiler.rs
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer11_odf.bin
+format pioneer11_odf
+origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
+compiler tools/harvest/src/bin/pioneer11_odf_compiler.rs
+sha256 3ecfa9a1804e3297841533c4c29671c807c27d3403d5a0e2b93a428460aa191e
 at earth
 ttl 604800
-field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
+field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_occlt.bin
 format voyager_occlt
@@ -10370,6 +10362,14 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
 at sun
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
+format jwst_spectra
+origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat + https://gea.esac.esa.int/tap-server/tap/sync
@@ -10377,6 +10377,29 @@ compiler tools/harvest/src/bin/tycho2_compiler.rs
 catalog_epoch 2000.0
 at sun
 ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
 format flac
@@ -10537,18 +10560,6 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frb_a279.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/693/A279/frbs
 compiler tools/harvest/src/bin/tap_compiler.rs
@@ -10666,17 +10677,6 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/pastel.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/pastel/pastel
@@ -15378,6 +15378,29 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
+format pds4_fixed_width
+origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
+compiler tools/harvest/src/bin/pds4_binary_compiler.rs
+at venus
+no-cadence
+field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
+field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
+origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
+compiler tools/harvest/src/bin/s1_sar_compiler.rs
+format s1_sar
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15595,13 +15618,6 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iss
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
-format ephemeris_binary
-origin procedure: JPL Horizons stable-arc vectors via horizons_compiler (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at itokawa
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15764,14 +15780,6 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nereid
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 cca3d4cd47b9b1b94b18c2a01682ff71764aa99dcc35939420f05002a6d41312
-at new_horizons
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
@@ -15819,22 +15827,6 @@ format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at phoebe
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
-format ephemeris_binary
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
-at pioneer10_daily
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
-format ephemeris_binary
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
-at pioneer11_daily
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
@@ -15970,22 +15962,6 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 185f2c188115598aef5e56000b392e14d40935025a809bfda9ffd7e86dd1afd9
-at voyager1
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 dfaa08fc76b1fba7aed4c8a26a659c9f0187bd3f4d46bf2843be7996763c6b10
-at voyager2
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
 format ephemeris_binary
 origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1999-08-18)
@@ -16014,6 +15990,20 @@ compiler tools/harvest/src/bin/horizons_compiler.rs
 at galileo
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at halley
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
+format ephemeris_binary
+origin procedure: JPL Horizons stable-arc vectors via horizons_compiler (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at itokawa
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
 format ephemeris_binary
 origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-08-02)
@@ -16028,6 +16018,30 @@ compiler tools/harvest/src/bin/horizons_compiler.rs
 at near
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
+format ephemeris_binary
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 cca3d4cd47b9b1b94b18c2a01682ff71764aa99dcc35939420f05002a6d41312
+at new_horizons
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
+format ephemeris_binary
+origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
+at pioneer10_daily
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
+format ephemeris_binary
+origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
+at pioneer11_daily
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
 format ephemeris_binary
 origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-03-04)
@@ -16035,11 +16049,20 @@ compiler tools/harvest/src/bin/horizons_compiler.rs
 at rosetta
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
 format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/horizons_compiler.rs
-at halley
+sha256 185f2c188115598aef5e56000b392e14d40935025a809bfda9ffd7e86dd1afd9
+at voyager1
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
+format ephemeris_binary
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 dfaa08fc76b1fba7aed4c8a26a659c9f0187bd3f4d46bf2843be7996763c6b10
+at voyager2
 no-cadence
 
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
@@ -16060,26 +16083,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
-origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
-compiler tools/harvest/src/bin/s1_sar_compiler.rs
-format s1_sar
-at earth
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
-format pds4_fixed_width
-origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
-compiler tools/harvest/src/bin/pds4_binary_compiler.rs
-at venus
-no-cadence
-field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
-field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
-field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0

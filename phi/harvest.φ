@@ -232,7 +232,7 @@ pattern ^pds3_fixed_width_.+\.bin$
 idempotent true
 timeout 240
 
-asset fehlt
+asset present
 format pds3_img
 tag pds-geosciences.wustl.edu
 arm pds3_img_compiler
@@ -278,7 +278,7 @@ pattern ^pds4_fixed_width_.+\.bin$
 idempotent true
 timeout 240
 
-asset fehlt
+asset present
 format quake_ptevent
 tag quake-ptevent
 arm quake_ptevent_compiler
