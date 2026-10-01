@@ -1,4 +1,5 @@
 note Zeugen: s2-direction (distanzlos, τ=0), gestalt (Körperfläche, τ=geologische Stabilität), substance (Materialprobe), presence. Record: magic_identity. NRS1/noaa_nrs_psd declined spectral-series (c3f33f6, Council C1); CDN-Asset bleibt Spektral-Record.
+note PTLM/pioneer10_telemetry declined witness (Council 2026-10-01): die Maschine misst sich selbst — Haushalts-Skalare (AGC dB, W, °F, PSIA), kein Welt-Zeugnis; Modell-Input für pioneer_link_correction_probe; CDN-Asset bleibt Telemetrie-Record.
 
 witness s2-direction
 url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0

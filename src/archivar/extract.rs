@@ -67,6 +67,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "dawn_odf" => odf::parse_series(bytes),
         "cassini_odf" => odf::parse_series(bytes),
         "pioneer10_odf" => odf::parse_series(bytes),
+        "pioneer11_odf" => odf::parse_series(bytes),
         "pathfinder_odf" => odf::parse_series(bytes),
         "odf_serie" => odf::odf_series(bytes),
         "cassini_tnf" | "maven_tnf" | "dart_tnf" | "messenger_tnf" => odf::tnf_parse_series(bytes),
@@ -588,6 +589,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "pioneer10_odf" => match comp {
             odf::COMP_OBSERVABLE => Some("pioneer10_odf_observable_hz"),
+            _ => None,
+        },
+        "pioneer11_odf" => match comp {
+            odf::COMP_OBSERVABLE => Some("pioneer11_odf_observable_hz"),
             _ => None,
         },
         "pathfinder_odf" => match comp {
