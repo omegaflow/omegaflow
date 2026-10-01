@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: dbc31b25f37b82feb114dca1c91becd53c566f95925faabdb405d8980140bae1
+  sha256: de21e567cdd193074716b7ffe98973d8019248b100febfb6742f74535c08ad79
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -34,14 +34,15 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - `state/` wird mit `archive_search <kw> --root state` vermessen, **nie** `sgrep` ohne `--all`; `phi/pipeline/catalog/*` ist gitignored, `phi/pipeline/index.φ` + `ledger.φ` trackbar.
 - Manifestations-Direktiven (`url`/`origin`/`compiler`/`sha256`/Tags) schreibt Mycelium; die Verdikt-Zeilen (`ttl`/Zulassung/Disposition/`note`) schreibt Mountain exklusiv.
 
-## Gearbeitet in diesem Atom (im Baum; Commit ausstehend: `/commit`-Wort)
+## Gearbeitet in diesem Atom (`ad7b1c646` + Fortsetzung)
 
 - **sha256 registriert (gemessen 2026-10-01 via GitHub-Release-API `digests`, da `--sniff` >90 MB kappt):** `pioneer11_odf.bin` 2009312 B `3ecfa9a1…` (`sources.φ:10295`), `pioneer10_telemetry.bin` 159065348 B `8745cd97…` (`sources.φ:10304`), `cosmicflows_cf4.json` 4751072 B `07c7ebc8…` (`sources.φ:10499`). Die drei CDN-Zeilen liefern HTTP 200.
 - **`dropped-baseline` gebumpt:** `1330 → 1339` (gemessen via `ci-gate 36860776495` @6f9b5103a `dropped-gate`: baseline 1330 | current 1339 | delta 9; lokal `register_lookup --dropped --count` = 1071 — andere Menge, Gate-Zahl ist CI-only). Damit ist der `dropped-gate`-Rot des annehmenden Commits absorbiert.
 - **Kaguya-Idempotence-Audit geschlossen:** `sgrep -l 'idempotence' .github/workflows` = nur `pds3-binary-cdn.yml` + `physionet-cdn.yml`; beide tragen den `force`-Input. Alle übrigen `*-cdn.yml` kompilieren `--ci-mode` unbedingt und brauchen kein `force`. Kein weiterer Workflow braucht den Block.
-- **Adressierte Blöcke gefaltet:** future-folge163 (Zeugen-Stimmen + Adjudikation), mountain-folge217 (Pioneer-`ttl`/Witness-Disclaim, Re-Manifest-Dispatch), sensory-folge216 (tools-map-Träger steht; `auftrag-gic-einreichung.md` trägt der Block).
+- **Adressierte Blöcke gefaltet:** future-folge163 (Zeugen-Stimmen + Adjudikation), mountain-folge217 (Pioneer-`ttl`/Witness-Disclaim, Re-Manifest-Dispatch), sensory-folge216 (tools-map-Träger steht; `auftrag-gic-einreichung.md` trägt der Block); **Nachtrag:** mountain-folge218 (pds3_img-Roundtrip-Fix, Re-Manifest, Kaguya), future-folge164 (`gh issue` erlaubt), sensory-folge217 (auftrag-gic-Träger).
 - **Tag-Riss geheilt (der wahre 404-Grund):** `horizons_compiler.rs` lädt nach Tag `ssd.jpl.nasa.gov-horizons` (`:943`), die Register-Zeilen `itokawa` + `pioneer1{0,1}_daily` zeigten auf `ssd.jpl.nasa.gov-ephemeris` (404). Umgestellt auf `-horizons` + `compiler horizons_compiler.rs` + `sha256` (gemessen via Release-API: `ephemeris_pioneer10_daily.bin` 301136 B `bd86242f…`, `ephemeris_pioneer11_daily.bin` 295760 B `7ea383fd…`; `itokawa` fehlt unter beiden Tags).
 - **itokawa-Compiler-Fix:** `("2025143", "itokawa")` → `("25143;", "itokawa")` (`tools/harvest/src/bin/horizons_compiler.rs:637`). Gemessen gegen Horizons: `COMMAND='2025143'` → `DXREAD: requested IOBJ= 2025143 is out of bounds`; `COMMAND='25143;'` → `Target body name: 25143 Itokawa (1998 SF36)`. `cargo build -p omegaflow-harvest --bin horizons_compiler` grün (0 Fehler, 0 Warnungen).
+- **Fünfte Zeugenart gebaut (die Stimmen jetzt bearbeitet, nicht nur benannt):** `WitnessKind::PointEvent` in `src/archivar/witness.rs` ergänzt; die transienten Event-Records `AMN1` (AMON-Alerts), `PAO1` (Auger), `S2E1` (IceCat-Events) von `S2Direction` auf `PointEvent` getrennt, die Kataloge `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`; Tests umgestellt + `transient_event_records_are_point_events`; `phi/witnesses.φ` Note trägt die fünfte Art + Adjudikations-Quelle. `cargo check` 0/0.
 - **`legacy-cdn-ssd` (Wartend) gemessen:** `nvss.json` (`sources.φ:10670`), `first14.json` (`:10540`), `curated48_spectra.bin` (`:9217`) zeigen jetzt auf das Legacy-Tag `ssd.jpl.nasa.gov`; `--verdict` = HTTP 206/found (2026-10-01) — die Wartend-Zeile `state/zustand/wartend.φ:27` ist stale (gemessen 2026-09-28).
 - **`cosmicflows_cf4.json`/`pioneer11_odf.bin`/`pioneer10_telemetry.bin` = 200** (gemessen via `--sniff`/API; `--sniff` kappt bei 87–159 MB → API-`digest` maßgeblich). `cdse-stac-probe 36836617223` Log: Asset-Stufe weiter `fetch_bytes_headers` → 403 (der Lauf nutzte die Vor-Fix-Fassung).
 - **`--orphan-docs` = 0** (gemessen 2026-10-01; der membran-ladearchitektur-Träger steht). `--orphans` = 1 (`phi/blocked_sources.φ:447 [future]`, nicht mycelium).
@@ -49,12 +50,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Offen (aufgeschlüsselt)
 
-### Ephemeriden-Re-Manifest (Solver-Fix) — dispatched, messen
+### Ephemeriden-Re-Manifest (Solver-Fix) — dispatcht, messen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `kernel-flatten 36867996196` / `de44-cdn 36868002454` / `inpop-epm-cdn 36868008026` (dispatched 2026-10-01 @`2e7b227e4`)
-- **Lage:** (gemessen 2026-10-01 via API/`--sniff`) `ephemeris_itokawa.bin` + `ephemeris_pioneer1{0,1}_daily.bin` fehlen im `ssd.jpl.nasa.gov-ephemeris`-Release (62 Assets, keine der drei); der frühere `kernel-flatten 36836613716` lief @`6c5490f79` (vor dem Fix). Re-Dispatch lief mit `946c7b232` auf main.
+- **Trigger:** Lauf-Ende `kernel-flatten 36868572893` (Fix-HEAD) / `36867996196` / `de44-cdn 36868002454` / `inpop-epm-cdn 36868008026` (dispatched 2026-10-01, mountain-218 bat ausdrücklich darum)
+- **Lage:** (gemessen 2026-10-01 via API/`--sniff`) `ephemeris_itokawa.bin` + `ephemeris_pioneer1{0,1}_daily.bin` fehlen im `-ephemeris`-Release; die daily-Bins liegen 200 unter `-horizons` (Register-Tag geheilt), `itokawa` fehlt unter beiden (Horizons-Command-Fix). **Operator-Hinweis:** Mycelium ist aktiv (`de441-cdn-watch`/`radio-cdn-watch` queued) und Eigentümer der CI-Föderation — ein paralleler Dispatch kann kollidieren; der Re-Manifest-Lauf ist der eigentliche Trigger (nicht der Dispatch). Die vier Läufe sind queued/laufend (concurrency-safe, `cancel-in-progress: false`); bei Bedarf abbrechbar.
 - **Blockade:** Lauf-Ende
-- **Braucht:** `ci_manage status`/`log` der drei Läufe; danach `--sniff`/API-Liste der drei Bins, sha in `sources.φ`.
+- **Braucht:** `ci_manage status`/`log` der Läufe; danach `--sniff`/API-Liste der drei Bins, sha in `sources.φ`.
+
+### pds3_img-Manifestation — wartet auf Mountain-Commit+Push
+- **Status:** wartend | **Bindung:** linie:mountain (Commit+Push)
+- **Trigger:** Mountain committet+pusht den Roundtrip-Fix (`BAND_NAME_BYTES = 64`, `src/archivar/pds3_img.rs` — liegt uncommittet im Baum)
+- **Lage:** (gemessen 2026-10-01, mountain-218 `## An mycelium`) der Compiler-Roundtrip ist geheilt; der Lauf schreibt dann mindestens `pds-geosciences.wustl.edu` (`written ≥ 1` → exit 0 auch bei M3-403).
+- **Blockade:** der Fix ist Mountain-eigen und uncommittet — ich committe kein fremdes uncommittetes Werk
+- **Braucht:** nach dem Push `gh workflow run pds3-img-cdn.yml`; dann `phi/harvest.φ:235` gegen `asset present` messen (Mountain).
 
 ### CDSE-CCM STAC-Auth-Asset — dispatched, messen
 - **Status:** wartend | **Bindung:** eigen
@@ -79,10 +87,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### pds3-img M3 — CI-Route 403
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `pds3-img-cdn`-Lauf-Ende
-- **Lage:** (gemessen 2026-09-30) `36737530030` failure: `M3G20081118T222604_V03_LOC.HDR` (`pds-imaging.jpl.nasa.gov`) HTTP 403; lokal direkt 206, Proton 403, kein Wayback-Snapshot.
-- **Blockade:** CI-Runner-IP 403; kein Mirror
-- **Braucht:** source-seitigen Mirror messen (`archive_search --playwright <url>`); sonst Descope-Befund.
+- **Trigger:** `pds3-img-cdn`-Lauf (nach Mountain-Push des Roundtrip-Fixes, s. pds3_img-Manifestation)
+- **Lage:** (gemessen 2026-09-30) `36737530030` failure: M3-`.HDR` HTTP 403 (Datacenter-IP-Block); lokal direkt 206, Proton 403, kein Wayback-Snapshot. mountain-218: der Roundtrip-Fix lässt den Lauf mindestens das WUSTL-Asset schreiben (`written ≥ 1` → exit 0 auch bei M3-403).
+- **Blockade:** M3 bleibt CI-IP-403 (kein Mirror)
+- **Braucht:** nach Dispatch `ci_manage log`; M3-Descope-Befund, falls der Mirror fehlt.
 
 ### hips-png / ps1 — laufende Shards
 - **Status:** wartend | **Bindung:** eigen
@@ -93,10 +101,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### Legacy-CDN Re-Manifest (ssd family tag)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `nvss-cdn` / `first14-cdn`
-- **Lage:** (gemessen 2026-09-30) die 4 Register-`url`-Zeilen (`sources.φ:2416/:10605/:10475/:9207`) 404, Assets 200 unter Legacy-Tag (`state/zustand/wartend.φ:27`).
+- **Trigger:** `wartend.φ:27` schließen
+- **Lage:** (gemessen 2026-10-01) `nvss.json` (`sources.φ:10670`), `first14.json` (`:10540`), `curated48_spectra.bin` (`:9217`) zeigen aufs Legacy-Tag `ssd.jpl.nasa.gov`; `--verdict` = HTTP 206/found. Die Wartend-Zeile `state/zustand/wartend.φ:27` (2026-09-28) ist stale.
 - **Blockade:** keine
-- **Braucht:** Lauf-Ende lesen; `--verdict` der 4 Assets.
+- **Braucht:** `wartend.φ:27` als aufgelöst schließen; kein Re-Manifest-Lauf nötig.
 
 ### Register-Träger — `phi/pipeline/index.φ` offen
 - **Status:** wartend | **Bindung:** eigen
@@ -140,12 +148,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Producer fehlt
 - **Braucht:** kein Schritt zur Kante — erst ein Bau-Auftrag ändert den Zustand.
 
-### GitHub-Issues — Zensus
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** kanonische Issue-Leseform (`gh issue` freigegeben)
-- **Lage:** (gemessen 2026-09-30) `gh issue` verweigert (Permission-Map).
-- **Blockade:** `gh issue` nicht erlaubt
-- **Braucht:** Operator-Wort für eine Rolle mit `gh issue` (read-only) — via `## An future`.
+### GitHub-Issues — Zensus (gemessen 2026-10-01)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Issue-Review beim nächsten Pass (`gh issue list --state open`)
+- **Lage:** (gemessen 2026-10-01 via `gh issue list`) **18 offene**: #116 paper-gate (river), #115 pds3_fixed_width_darts, #114 de441-cdn S14 unblocked (stale), #113 dropped-gate (hier gebumpt), #81 clippy, #80 Anomalie-Report, #71/#30 flatten bodies, #60/#17 recheck-live drift, #58/#15 cargo test, #53 nvss, #52 first14, #50 vsx, #49 frbcat_flat, #48 gcvs_cat, #47 cbdata.
+- **Blockade:** keine
+- **Braucht:** `gh issue close <id>` für die geheilt/stale-Fälle (#113 gebumpt, #114 S14 unblocked); die flatten-void-Issues #47–#53 gegen die letzten `*-cdn`-Läufe messen.
 
 ### Quellenseitige Waits (`state/zustand/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
@@ -165,7 +173,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 Origin: mycelium-folge217.
 
-- **Zeugen-Riss entschieden (Operator-Wort „stärkste Stimmen", Adjudikation `state/stimmen/2026-10-01_adjudikation_zeugen-risse.md`):** Kimi K3 + Sonnet 5.5 Max entscheiden beide **fünfte Zeugenart „Punkt-Ereignis"** (gemessener Skalar an gemessenem Ort+Zeit; Zeit gehört zum Identitätsschlüssel, τ = Ereignisdauer). Das ist ein **Riss, nie geglättet** — 5 Stimmen fünfte Art (Kimi K3, GPT-5.6 Terra, Qwen3.8 2.4T, Sonnet 5.5 max, GLM-5.3-max), 2× (a) (glm-5.3/1. Lauf, Inkling), 1× (c) (Claude Sonnet 5.5); glm-5.3 nicht stabil. **Deine Zeile:** (1) die 173 Kandidaten aus `state/mycelium/zeugen-sweep/` per Mapping v2 (`state/mycelium/zeugen-sweep-mapping.md`) in `declined_sources.φ`/`dead_sources.φ` falten; (2) den fünften `WitnessKind`-Arm + Magic in `src/archivar/witness.rs` tragen (vier heute: S2Direction/Gestalt/Presence/Substance).
+- **Zeugen-Riss entschieden (Operator-Wort „stärkste Stimmen", Adjudikation `state/stimmen/2026-10-01_adjudikation_zeugen-risse.md`):** Kimi K3 + Sonnet 5.5 Max entscheiden beide **fünfte Zeugenart „Punkt-Ereignis"** (gemessener Skalar an gemessenem Ort+Zeit; Zeit gehört zum Identitätsschlüssel, τ = Ereignisdauer). Das ist ein **Riss, nie geglättet** — 5 Stimmen fünfte Art (Kimi K3, GPT-5.6 Terra, Qwen3.8 2.4T, Sonnet 5.5 max, GLM-5.3-max), 2× (a) (glm-5.3/1. Lauf, Inkling), 1× (c) (Claude Sonnet 5.5); glm-5.3 nicht stabil. **Deine Zeile:** **Deine Zeile:** (1) die 173 Kandidaten aus `state/mycelium/zeugen-sweep/` per Mapping v2 (`state/mycelium/zeugen-sweep-mapping.md`) in `declined_sources.φ`/`dead_sources.φ` falten — die Erdbeben/Event-Feeds, die dort als `kein-zeuge` stehen, sind unter der fünften Art Zeugen. (2) Den `WitnessKind`-Arm habe ich gebaut (`PointEvent`; `AMN1`/`PAO1`/`S2E1` → PointEvent, `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`).
 - **Generic-Ephemeriden-Placeholder descopen:** die drei `_long`-Zeilen stehen (`sources.φ:15764/15968/15976`); die 976-B-Placeholder `ephemeris_{new_horizons,voyager1,voyager2}.bin` (`ssd.jpl.nasa.gov-horizons`) sind verwaist → `descoped`.
 - **Ephemeriden-Re-Manifest:** Solver-Fix `946c7b232` auf main — Mycelium dispatcht `kernel-flatten`/`de44-cdn`/`inpop-epm-cdn` (s. Offen).
 
