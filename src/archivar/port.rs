@@ -1701,12 +1701,44 @@ fn intentional_core(key: &str) -> Option<(&'static str, &'static str, f64)> {
     None
 }
 
+fn register_tokens(line: &str) -> Vec<&str> {
+    let b = line.as_bytes();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < b.len() {
+        while i < b.len() && b[i].is_ascii_whitespace() {
+            i += 1;
+        }
+        if i >= b.len() {
+            break;
+        }
+        if b[i] == b'"' {
+            let start = i + 1;
+            i += 1;
+            while i < b.len() && b[i] != b'"' {
+                i += 1;
+            }
+            out.push(&line[start..i]);
+            if i < b.len() {
+                i += 1;
+            }
+        } else {
+            let start = i;
+            while i < b.len() && !b[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            out.push(&line[start..i]);
+        }
+    }
+    out
+}
+
 fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str, f64)> {
     static MAP: OnceLock<HashMap<String, (&'static str, &'static str, f64)>> = OnceLock::new();
     MAP.get_or_init(|| {
         let mut map: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         for line in include_str!("../../phi/sources.φ").lines() {
-            let p: Vec<&str> = line.split_whitespace().collect();
+            let p: Vec<&str> = register_tokens(line);
             match p.first().copied() {
                 Some("field" | "first" | "last" | "lastrow") if p.len() >= 7 => {
                     if let Ok(tau) = p[6].parse::<f64>()
@@ -3936,7 +3968,7 @@ mod probe_classify_tests {
             std::collections::BTreeSet<(String, String)>,
         > = std::collections::BTreeMap::new();
         for line in register.lines() {
-            let p: Vec<&str> = line.split_whitespace().collect();
+            let p: Vec<&str> = super::register_tokens(line);
             match p.first().copied() {
                 Some("field" | "first" | "last" | "lastrow") if p.len() >= 6 => {
                     pairs
