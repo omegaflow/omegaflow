@@ -99,7 +99,7 @@ pattern ^hamqsl_solar\.bin$
 idempotent true
 timeout 120
 
-asset fehlt
+asset present
 format hapi_csv
 tag planet.physics.uiowa.edu
 arm das2_iowa_compiler
