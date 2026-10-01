@@ -68,6 +68,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_fanout_cap: u32 = 0;
     let mut cur_stations_flatten = String::new();
     let mut cur_stations_filter: Option<(String, String)> = None;
+    let mut cur_station_code: Option<String> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
@@ -118,6 +119,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             repeat_ra_bins: cur_repeat_ra_bins,
                             fanout_cap: cur_fanout_cap,
                             stations_flatten: std::mem::take(&mut cur_stations_flatten),
+                            station_code: cur_station_code.clone(),
                             stations_filter: cur_stations_filter.take(),
                             fanout_delay: cur_fanout_delay,
                             sha256: cur_sha256.clone(),
@@ -168,6 +170,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_fanout_cap = 0;
                 cur_stations_flatten = String::new();
                 cur_stations_filter = None;
+                cur_station_code = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
                 cur_sha256 = None;
@@ -1457,6 +1460,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "stations" if parts.len() >= 2 => cur_stations_url = Some(parts[1].to_string()),
+            "station" if parts.len() >= 2 => cur_station_code = Some(parts[1].to_string()),
             "stations_path" if parts.len() >= 2 => cur_stations_path = parts[1].to_string(),
             "stations_lat" if parts.len() >= 2 => cur_stations_lat = parts[1].to_string(),
             "stations_lon" if parts.len() >= 2 => cur_stations_lon = parts[1].to_string(),
@@ -1702,6 +1706,7 @@ mod tests {
             repeat_ra_bins: 0,
             fanout_cap: 0,
             stations_flatten: String::new(),
+            station_code: None,
             stations_filter: None,
             fanout_delay: 0,
             sha256: None,

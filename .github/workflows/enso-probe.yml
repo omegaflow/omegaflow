@@ -17,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Positive-control gate (planted coupling recovery)
+        run: cargo test -p omegaflow-measure --bin enso_blatt_probe
       - name: Run the ENSO Bz-to-SST Blatt I measurement
         run: |
           {

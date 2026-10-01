@@ -59,25 +59,25 @@ fn cdn_parts(url: &str) -> Option<(String, String)> {
 
 fn verdict_line(name: &str, outcome: &BodyOutcome) -> String {
     match outcome {
-        BodyOutcome::Placed { sep_m } => format!("weberin {name} state placed sep {sep_m:e}"),
+        BodyOutcome::Placed { sep } => format!("weberin {name} state placed sep {sep:e}"),
         BodyOutcome::Absent { line } => {
             format!(
                 "weberin {name} state absent sep absent missing {}",
                 line.word()
             )
         }
-        BodyOutcome::Riss { sep_m, knot } => format!(
-            "weberin {name} state riss sep {sep_m:e} knot {}+{}",
-            knot[0].word(),
-            knot[1].word()
+        BodyOutcome::Riss { sep, knot } => format!(
+            "weberin {name} state riss sep {sep:e} knot {}+{}",
+            knot[0].map(|w| w.word()).unwrap_or("absent"),
+            knot[1].map(|w| w.word()).unwrap_or("absent")
         ),
     }
 }
 
 fn cometels_line(name: &str, outcome: &CometelsOutcome) -> String {
     match outcome {
-        CometelsOutcome::Placed { sep_m } => {
-            format!("weberin-cometels {name} state placed sep {sep_m:e}")
+        CometelsOutcome::Placed { sep } => {
+            format!("weberin-cometels {name} state placed sep {sep:e}")
         }
         CometelsOutcome::Absent { line } => format!(
             "weberin-cometels {name} state absent sep absent missing {}",
@@ -86,8 +86,8 @@ fn cometels_line(name: &str, outcome: &CometelsOutcome) -> String {
                 CometelsLine::Cometels => "cometels-keplerian",
             }
         ),
-        CometelsOutcome::Riss { sep_m, knot } => format!(
-            "weberin-cometels {name} state riss sep {sep_m:e} knot {}+{}",
+        CometelsOutcome::Riss { sep, knot } => format!(
+            "weberin-cometels {name} state riss sep {sep:e} knot {}+{}",
             match knot[0] {
                 CometelsLine::Spk => "spk-ephemeris",
                 CometelsLine::Cometels => "cometels-keplerian",
@@ -109,8 +109,8 @@ fn agreement_word(a: &Agreement) -> &'static str {
 
 fn agreement_sep(a: &Agreement) -> f64 {
     match a {
-        Agreement::Placed { sep_m } => *sep_m,
-        Agreement::Riss { sep_m } => *sep_m,
+        Agreement::Placed { sep } => *sep,
+        Agreement::Riss { sep } => *sep,
     }
 }
 
@@ -478,11 +478,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::weberin::BodyLine;
+    use omegaflow::weberin::{BodyLine, WitnessLine};
 
     #[test]
     fn placed_line_carries_the_measured_separation() {
-        let o = BodyOutcome::Placed { sep_m: 1.5e4 };
+        let o = BodyOutcome::Placed { sep: 1.5e4 };
         assert_eq!(
             verdict_line("ceres", &o),
             "weberin ceres state placed sep 1.5e4"
@@ -510,8 +510,11 @@ mod tests {
     #[test]
     fn riss_line_names_both_refusing_threads() {
         let o = BodyOutcome::Riss {
-            sep_m: 2.3e9,
-            knot: [BodyLine::Spk, BodyLine::Dastcom],
+            sep: 2.3e9,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Dastcom)),
+            ],
         };
         assert_eq!(
             verdict_line("apophis", &o),
@@ -533,8 +536,11 @@ mod tests {
     #[test]
     fn riss_line_names_the_inpop_knot() {
         let o = BodyOutcome::Riss {
-            sep_m: 1.6e6,
-            knot: [BodyLine::Spk, BodyLine::Inpop],
+            sep: 1.6e6,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Inpop)),
+            ],
         };
         assert_eq!(
             verdict_line("neptune", &o),
@@ -546,9 +552,9 @@ mod tests {
     fn triad_line_names_all_three_pair_classifications_and_the_fold() {
         let t = ThreeWayVerdict {
             name: "uranus".to_string(),
-            spk_inpop: Agreement::Riss { sep_m: 1.6e6 },
-            spk_epm: Agreement::Riss { sep_m: 1.3e6 },
-            inpop_epm: Agreement::Placed { sep_m: 2.0e4 },
+            spk_inpop: Agreement::Riss { sep: 1.6e6 },
+            spk_epm: Agreement::Riss { sep: 1.3e6 },
+            inpop_epm: Agreement::Placed { sep: 2.0e4 },
             fold: TriadFold::Outlier {
                 line: BodyLine::Spk,
                 knot: [BodyLine::Inpop, BodyLine::Epm],
@@ -565,9 +571,9 @@ mod tests {
     fn triad_line_reads_united_when_all_three_converge() {
         let t = ThreeWayVerdict {
             name: "mars".to_string(),
-            spk_inpop: Agreement::Placed { sep_m: 2.0e4 },
-            spk_epm: Agreement::Placed { sep_m: 2.1e4 },
-            inpop_epm: Agreement::Placed { sep_m: 3.0e3 },
+            spk_inpop: Agreement::Placed { sep: 2.0e4 },
+            spk_epm: Agreement::Placed { sep: 2.1e4 },
+            inpop_epm: Agreement::Placed { sep: 3.0e3 },
             fold: TriadFold::United,
         };
         assert!(triad_line(&t).ends_with("| fold united all-three"));
@@ -575,7 +581,7 @@ mod tests {
 
     #[test]
     fn cometels_line_names_each_cometels_outcome() {
-        let placed = CometelsOutcome::Placed { sep_m: 2.5e4 };
+        let placed = CometelsOutcome::Placed { sep: 2.5e4 };
         assert_eq!(
             cometels_line("encke", &placed),
             "weberin-cometels encke state placed sep 2.5e4"
@@ -588,7 +594,7 @@ mod tests {
             "weberin-cometels encke state absent sep absent missing cometels-keplerian"
         );
         let riss = CometelsOutcome::Riss {
-            sep_m: 3.1e6,
+            sep: 3.1e6,
             knot: [CometelsLine::Spk, CometelsLine::Cometels],
         };
         assert_eq!(

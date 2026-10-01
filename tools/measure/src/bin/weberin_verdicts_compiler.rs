@@ -12,7 +12,7 @@ use omegaflow::dastcom::{
 };
 use omegaflow::weberin::{
     BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES, ThreeWayVerdict, TriadFold, Weberin,
-    WeberinFeed,
+    WeberinFeed, WitnessLine,
 };
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
@@ -57,25 +57,25 @@ fn cdn_parts(url: &str) -> Option<(String, String)> {
 
 fn body_verdict_line(name: &str, outcome: &BodyOutcome, weave_epoch: f64) -> VerdictLine {
     match outcome {
-        BodyOutcome::Placed { sep_m } => VerdictLine {
+        BodyOutcome::Placed { sep } => VerdictLine {
             name: name.to_string(),
             word: VerdictWord::Placed,
             knot: [None, None],
-            sep_m: Some(*sep_m),
+            sep: Some(*sep),
             weave_epoch,
         },
         BodyOutcome::Absent { line } => VerdictLine {
             name: name.to_string(),
             word: VerdictWord::Absent,
-            knot: [Some(*line), None],
-            sep_m: None,
+            knot: [Some(WitnessLine::Body(*line)), None],
+            sep: None,
             weave_epoch,
         },
-        BodyOutcome::Riss { sep_m, knot } => VerdictLine {
+        BodyOutcome::Riss { sep, knot } => VerdictLine {
             name: name.to_string(),
             word: VerdictWord::Riss,
-            knot: [Some(knot[0]), Some(knot[1])],
-            sep_m: Some(*sep_m),
+            knot: [knot[0], knot[1]],
+            sep: Some(*sep),
             weave_epoch,
         },
     }
@@ -87,28 +87,31 @@ fn triad_verdict_line(t: &ThreeWayVerdict, weave_epoch: f64) -> VerdictLine {
             name: t.name.clone(),
             word: VerdictWord::Placed,
             knot: [None, None],
-            sep_m: None,
+            sep: None,
             weave_epoch,
         },
         TriadFold::Shared { line } => VerdictLine {
             name: t.name.clone(),
             word: VerdictWord::Placed,
-            knot: [Some(line), None],
-            sep_m: None,
+            knot: [Some(WitnessLine::Body(line)), None],
+            sep: None,
             weave_epoch,
         },
         TriadFold::Outlier { knot, .. } => VerdictLine {
             name: t.name.clone(),
             word: VerdictWord::Riss,
-            knot: [Some(knot[0]), Some(knot[1])],
-            sep_m: None,
+            knot: [
+                Some(WitnessLine::Body(knot[0])),
+                Some(WitnessLine::Body(knot[1])),
+            ],
+            sep: None,
             weave_epoch,
         },
         TriadFold::Severed => VerdictLine {
             name: t.name.clone(),
             word: VerdictWord::Absent,
             knot: [None, None],
-            sep_m: None,
+            sep: None,
             weave_epoch,
         },
     }

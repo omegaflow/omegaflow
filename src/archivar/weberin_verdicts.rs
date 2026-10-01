@@ -1,5 +1,5 @@
 use super::*;
-use crate::weberin::BodyLine;
+use crate::weberin::{BodyLine, StationLine, WitnessLine};
 
 pub const VERDICT_TAG: u8 = 11;
 pub const VERDICT_STALE_S: u64 = 604800;
@@ -65,12 +65,31 @@ pub fn line_from_code(code: u8) -> Option<BodyLine> {
     }
 }
 
+pub const INTERMAGNET_GROUND_CODE: u8 = 6;
+pub const SWARM_OVERFLIGHT_CODE: u8 = 7;
+
+pub fn witness_code(line: WitnessLine) -> u8 {
+    match line {
+        WitnessLine::Body(body) => line_code(body),
+        WitnessLine::Station(StationLine::IntermagnetGround) => INTERMAGNET_GROUND_CODE,
+        WitnessLine::Station(StationLine::SwarmOverflight) => SWARM_OVERFLIGHT_CODE,
+    }
+}
+
+pub fn witness_from_code(code: u8) -> Option<WitnessLine> {
+    match code {
+        INTERMAGNET_GROUND_CODE => Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+        SWARM_OVERFLIGHT_CODE => Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+        _ => line_from_code(code).map(WitnessLine::Body),
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct VerdictLine {
     pub name: String,
     pub word: VerdictWord,
-    pub knot: [Option<BodyLine>; 2],
-    pub sep_m: Option<f64>,
+    pub knot: [Option<WitnessLine>; 2],
+    pub sep: Option<f64>,
     pub weave_epoch: f64,
 }
 
@@ -105,12 +124,12 @@ pub fn parse_weberin_verdicts(bytes: &[u8]) -> Vec<VerdictLine> {
             break;
         };
         off += 2;
-        let knot = [line_from_code(ka), line_from_code(kb)];
+        let knot = [witness_from_code(ka), witness_from_code(kb)];
         let Some(&sep_flag) = bytes.get(off) else {
             break;
         };
         off += 1;
-        let sep_m = if sep_flag == 1 {
+        let sep = if sep_flag == 1 {
             match take_f64(bytes, &mut off) {
                 Some(v) => Some(v),
                 None => break,
@@ -125,7 +144,7 @@ pub fn parse_weberin_verdicts(bytes: &[u8]) -> Vec<VerdictLine> {
             name,
             word,
             knot,
-            sep_m,
+            sep,
             weave_epoch,
         });
     }
@@ -142,9 +161,9 @@ pub fn encode_weberin_verdicts(lines: &[VerdictLine]) -> Vec<u8> {
         out.push(name.len().min(255) as u8);
         out.extend_from_slice(&name[..name.len().min(255)]);
         out.push(line.word.code());
-        out.push(line.knot[0].map(line_code).unwrap_or(NO_LINE));
-        out.push(line.knot[1].map(line_code).unwrap_or(NO_LINE));
-        match line.sep_m {
+        out.push(line.knot[0].map(witness_code).unwrap_or(NO_LINE));
+        out.push(line.knot[1].map(witness_code).unwrap_or(NO_LINE));
+        match line.sep {
             Some(sep) if sep.is_finite() => {
                 out.push(1);
                 out.extend_from_slice(&sep.to_le_bytes());
@@ -219,21 +238,24 @@ mod tests {
                 name: "ceres".into(),
                 word: VerdictWord::Placed,
                 knot: [None, None],
-                sep_m: Some(2.5e4),
+                sep: Some(2.5e4),
                 weave_epoch: 8.0e8,
             },
             VerdictLine {
                 name: "apophis".into(),
                 word: VerdictWord::Riss,
-                knot: [Some(BodyLine::Spk), Some(BodyLine::Inpop)],
-                sep_m: Some(2.3e9),
+                knot: [
+                    Some(WitnessLine::Body(BodyLine::Spk)),
+                    Some(WitnessLine::Body(BodyLine::Inpop)),
+                ],
+                sep: Some(2.3e9),
                 weave_epoch: 8.0e8,
             },
             VerdictLine {
                 name: "vesta".into(),
                 word: VerdictWord::Absent,
-                knot: [Some(BodyLine::Mpc), None],
-                sep_m: None,
+                knot: [Some(WitnessLine::Body(BodyLine::Mpc)), None],
+                sep: None,
                 weave_epoch: 8.0e8,
             },
         ]
@@ -255,8 +277,49 @@ mod tests {
         let back = parse_weberin_verdicts(&bytes);
         let apophis = back.iter().find(|l| l.name == "apophis").expect("apophis");
         assert_eq!(apophis.word, VerdictWord::Riss);
-        assert_eq!(apophis.knot, [Some(BodyLine::Spk), Some(BodyLine::Inpop)]);
-        assert_eq!(apophis.sep_m, Some(2.3e9));
+        assert_eq!(
+            apophis.knot,
+            [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Inpop))
+            ]
+        );
+        assert_eq!(apophis.sep, Some(2.3e9));
+    }
+
+    #[test]
+    fn a_station_riss_round_trips_both_witness_codes() {
+        let line = VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: 8.0e8,
+        };
+        let bytes = encode_weberin_verdicts(std::slice::from_ref(&line));
+        let knot_off = 3 + 4 + 1 + line.name.len() + 1;
+        assert_eq!(bytes[knot_off], INTERMAGNET_GROUND_CODE);
+        assert_eq!(bytes[knot_off + 1], SWARM_OVERFLIGHT_CODE);
+        assert_eq!(parse_weberin_verdicts(&bytes), vec![line]);
+    }
+
+    #[test]
+    fn an_unknown_witness_code_reads_absent_without_a_version_machine() {
+        let mut bytes = encode_weberin_verdicts(&[VerdictLine {
+            name: "station-X".into(),
+            word: VerdictWord::Absent,
+            knot: [None, None],
+            sep: None,
+            weave_epoch: 0.0,
+        }]);
+        let knot_off = 3 + 4 + 1 + "station-X".len() + 1;
+        bytes[knot_off] = 5;
+        let back = parse_weberin_verdicts(&bytes);
+        assert_eq!(back.len(), 1);
+        assert_eq!(back[0].knot[0], None);
     }
 
     #[test]
@@ -264,7 +327,7 @@ mod tests {
         let lines = sample();
         let back = parse_weberin_verdicts(&encode_weberin_verdicts(&lines));
         let vesta = back.iter().find(|l| l.name == "vesta").expect("vesta");
-        assert_eq!(vesta.sep_m, None);
+        assert_eq!(vesta.sep, None);
         assert_eq!(vesta.word, VerdictWord::Absent);
     }
 

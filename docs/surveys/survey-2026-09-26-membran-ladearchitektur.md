@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: 6b9896eb05e62814be3128ae7d3ec52b16a0cf4978e02225f897cc6915cf8830
+  sha256: 6d1de9e57aa29be987bd5e26c81be7cc5f246886861ebd661eb071311a07ccbb
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -124,6 +124,12 @@ leitet abgeleitete ω()-Terme ab:**
   Hash … Die Membran braucht nur die Hülle um die Presence (dilatierter
   Suchradius)."* HEALPix-Tiling als Drift verworfen („No meshes. No grids. Every raw
   point makes us truer"). Deckt auch `tess_lightcurves.bin` ~500 MB.
+  **Nachtrag 2026-10-01 (River, gemessen): `descoped`.** Die presence-only
+  Ladearchitektur ist gebaut (`docs/concepts/archivar-mathematikerin.md:31`,
+  Contract „Presence-only loading and the jump"; Stern-Grid `StarCellKey` +
+  `rho_star = c·age + pad`, Stern-Klasse `extent = f64::INFINITY`, `spatial.rs:502`).
+  Der flache Katalog-Cache wurde nie gebraucht; §7 führt die Punkte bereits als
+  geschlossen. Der Marker `:122` ist damit als gemessenes `descoped` annotiert.
 - **`TODO.md:2786-2789` (Atom 6/8):** Sterne (~1e19 m) hoben `cell_size` auf ~1e16 m
   → aus dem bounded-Teil genommen (`extent ∞`), damit `cell_size` auf
   Sonnensystem-Maß schrumpft. **Ein endliches Stern-`extent` bläht `cell_size` wieder auf.**
