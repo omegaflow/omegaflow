@@ -233,16 +233,6 @@ idempotent true
 timeout 240
 
 asset fehlt
-format pds3_fixed_width_darts
-tag data.darts.isas.jaxa.jp
-arm pds3_fixed_width_compiler
-workflow pds3-fixed-width-darts-cdn.yml
-args --netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.tab --label https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20160303_223100_udsc64_l2_v10.lbl
-pattern ^pds3_fixed_width_.+\.bin$
-idempotent true
-timeout 240
-
-asset fehlt
 format pds3_img
 tag pds-geosciences.wustl.edu
 arm pds3_img_compiler
@@ -274,6 +264,16 @@ format pds4_fixed_width
 tag sbnarchive.psi.edu
 arm pds4_fixed_width_compiler
 workflow pds4-fixed-width-cdn.yml
+pattern ^pds4_fixed_width_.+\.bin$
+idempotent true
+timeout 240
+
+asset present
+format pds4_fixed_width_akatsuki
+tag data.darts.isas.jaxa.jp
+arm pds4_binary_compiler
+workflow vco-rs-cdn.yml
+args --netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.tab --label https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
 pattern ^pds4_fixed_width_.+\.bin$
 idempotent true
 timeout 240
