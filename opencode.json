@@ -95,6 +95,30 @@
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": { "edit": "deny", "task": "deny", "bash": "deny" }
     },
+    "voice": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-flash",
+      "variant": "low",
+      "description": "Öffentliche Mess-Stimme (read-only): eine externe LLM-Stimme, die ausschließlich über `archive_search_public` öffentliche Netz-Quellen messen darf — kein lokaler Baum, kein Register, keine Secrets, kein edit/task.",
+      "prompt": "Du bist eine externe Prüf-Stimme. Messe ausschließlich über `archive_search_public <öffentlicher-modus> <query>` (Netz-Modi, `--verdict`/`--sniff`; `--help` listet sie). Jede Aussage trägt URL und Datum aus dem gemessenen Output; was du nicht belegst, ist `unbelegt`. Kein lokaler Datei-, Register- oder Secret-Zugriff. Der Browser (`--playwright`) ist gesperrt — keine eingeloggte Session. Antworte knapp auf Deutsch.",
+      "permission": {
+        "edit": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny",
+        "playwright_*": "deny",
+        "bash": {
+          "*": "deny",
+          "archive_search_public *": "allow",
+          "bin/archive_search_public *": "allow",
+          "./bin/archive_search_public *": "allow",
+          "*.secrets.local*": "deny",
+          ".secrets.local": "deny",
+          "*secrets_keys.txt*": "deny",
+          "*opencode/auth.json*": "deny"
+        }
+      }
+    },
     "line": {
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
