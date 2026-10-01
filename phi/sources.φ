@@ -9126,6 +9126,7 @@ url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.
 format pds3_binary
 origin https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/LRS_SW_WF_00N_007080E.lbl
 compiler tools/harvest/src/bin/pds3_binary_compiler.rs
+sha256 772e51d16c4a68537255144f66faba5c7aade396cfc5f17d9572e7e7afb2a776
 at moon
 ttl 604800
 field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
@@ -10224,6 +10225,7 @@ url https://github.com/omegaflow/sources/releases/download/planet.physics.uiowa.
 format hapi_csv
 origin https://planet.physics.uiowa.edu/das/das2Server/hapi
 compiler tools/harvest/src/bin/das2_iowa_compiler.rs
+sha256 cd2e9d2bd3f822b610c8ec9432cc413cde495b9d8a64f4582a63191018102f62
 at saturn
 ttl 604800
 
