@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: 1945b4fb8d668eb526a64505e6980fc0e4a82700926684e9dda24e72dd9862c5
+  sha256: 9210f476df2b52e8ddce56703e0d31779b5425c7fa582ebfc88495e6c9fd321d
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -43,6 +43,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Tag-Riss geheilt (der wahre 404-Grund):** `horizons_compiler.rs` lädt nach Tag `ssd.jpl.nasa.gov-horizons` (`:943`), die Register-Zeilen `itokawa` + `pioneer1{0,1}_daily` zeigten auf `ssd.jpl.nasa.gov-ephemeris` (404). Umgestellt auf `-horizons` + `compiler horizons_compiler.rs` + `sha256` (gemessen via Release-API: `ephemeris_pioneer10_daily.bin` 301136 B `bd86242f…`, `ephemeris_pioneer11_daily.bin` 295760 B `7ea383fd…`; `itokawa` fehlt unter beiden Tags).
 - **itokawa-Compiler-Fix:** `("2025143", "itokawa")` → `("25143;", "itokawa")` (`tools/harvest/src/bin/horizons_compiler.rs:637`). Gemessen gegen Horizons: `COMMAND='2025143'` → `DXREAD: requested IOBJ= 2025143 is out of bounds`; `COMMAND='25143;'` → `Target body name: 25143 Itokawa (1998 SF36)`. `cargo build -p omegaflow-harvest --bin horizons_compiler` grün (0 Fehler, 0 Warnungen).
 - **Fünfte Zeugenart gebaut (die Stimmen jetzt bearbeitet, nicht nur benannt):** `WitnessKind::PointEvent` in `src/archivar/witness.rs` ergänzt; die transienten Event-Records `AMN1` (AMON-Alerts), `PAO1` (Auger), `S2E1` (IceCat-Events) von `S2Direction` auf `PointEvent` getrennt, die Kataloge `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`; Tests umgestellt + `transient_event_records_are_point_events`; `phi/witnesses.φ` Note trägt die fünfte Art + Adjudikations-Quelle. `cargo check` 0/0.
+- **Mountain-218 verifiziert (Operator-Auftrag):** `958d946ba` heilt pds3_img (`BAND_NAME_BYTES = 64`), faltet den Sweep (`declined_sources.φ`-Notes → point-event), admitted den Quake-Zeugen **`ERBQ`** (neu `src/archivar/quake_event.rs`, `tools/harvest/src/bin/quake_ptevent_compiler.rs`, `.github/workflows/quake-ptevent-cdn.yml`, 3 `witness point-event` in `witnesses.φ`, `ERBQ` im `magic_identity`), entwirrt den pds4-Binary-Register; `cargo check` 0/0. **Riss (mein Fehler):** mein Kaguya-Audit war unvollständig — `pds4-binary-cdn.yml` trug sehr wohl einen Idempotenz-Gate; mein `sgrep -l 'idempotence'`-Ergebnis war gekappt (nur 3 sichtbar). Mountain hat den `force`-Input ergänzt.
+- **Dispatched:** `pds3-img-cdn 36887145554` (Mountain-Fix steht).
 - **Sweep-Umtragung (Mapping v3):** `state/mycelium/zeugen-sweep-mapping.md` auf v3 (fünfte Art `(e) point-event` mit Kimi-/Sonnet-Test); 9 klare Event-Kandidaten im Sweep von `kein-zeuge`/`b` auf `e` umgetragen (`descoped-blocked`: Chile-Erdbeben, tohoku_seismicity, tsunami.incois, jma-quake; `declined-0871-1740`: tmd.go.th, usgs-detail; `declined-0001-0870`: geonet-quake; `declined-4336-5203`: seismicportal×2). GIS-Gefahrenpolygone/Ableitungen/Aggregate/Registry bleiben `kein-zeuge`.
 - **Test-Build-Rot geheilt:** `src/archivar/ephemeris.rs`-Testmodul (`:736`/`:743`/`:744`/`:756`–`:763`) nutzte `CHEBYSHEV_N`/`chebyshev_evaluate` (aus `motion.rs`) ohne Import → CI `ci-check 36868565495` rot mit `lib test` E0425 (11 Fehler); `cargo check` übersieht das (Test-cfg). Import im Testmodul ergänzt (`use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate}`); `cargo check` weiter 0/0.
 - **`legacy-cdn-ssd` (Wartend) gemessen:** `nvss.json` (`sources.φ:10670`), `first14.json` (`:10540`), `curated48_spectra.bin` (`:9217`) zeigen jetzt auf das Legacy-Tag `ssd.jpl.nasa.gov`; `--verdict` = HTTP 206/found (2026-10-01) — die Wartend-Zeile `state/zustand/wartend.φ:27` ist stale (gemessen 2026-09-28).
@@ -59,19 +61,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Lauf-Ende
 - **Braucht:** `ci_manage status`/`log` der Läufe; danach `--sniff`/API-Liste der drei Bins, sha in `sources.φ`.
 
-### pds3_img-Manifestation — wartet auf Mountain-Commit+Push
-- **Status:** wartend | **Bindung:** linie:mountain (Commit+Push)
-- **Trigger:** Mountain committet+pusht den Roundtrip-Fix (`BAND_NAME_BYTES = 64`, `src/archivar/pds3_img.rs` — liegt uncommittet im Baum)
-- **Lage:** (gemessen 2026-10-01, mountain-218 `## An mycelium`) der Compiler-Roundtrip ist geheilt; der Lauf schreibt dann mindestens `pds-geosciences.wustl.edu` (`written ≥ 1` → exit 0 auch bei M3-403).
-- **Blockade:** der Fix ist Mountain-eigen und uncommittet — ich committe kein fremdes uncommittetes Werk
-- **Braucht:** nach dem Push `gh workflow run pds3-img-cdn.yml`; dann `phi/harvest.φ:235` gegen `asset present` messen (Mountain).
+### pds3-img-cdn — dispatched, messen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `pds3-img-cdn 36887145554` (dispatched 2026-10-01, Mountain-Fix `958d946ba` auf main)
+- **Lage:** (gemessen 2026-10-01) Mountain heilte den Compiler-Roundtrip (`BAND_NAME_BYTES = 64`, `src/archivar/pds3_img.rs`) und committete ihn; der Lauf schreibt mit dem Fix mindestens das `pds-geosciences.wustl.edu`-Asset (`written ≥ 1` → exit 0 auch bei M3-403).
+- **Blockade:** Lauf-Ende
+- **Braucht:** `ci_manage log 36887145554`; `phi/harvest.φ` gegen `asset present` messen.
 
 ### CDSE-CCM STAC-Auth-Asset — dispatched, messen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `cdse-stac-probe 36868013540` (dispatched 2026-10-01 @`2e7b227e4`)
-- **Lage:** (gemessen 2026-10-01 via `ci_manage log`) `cdse-stac-probe 36836617223` grün, Asset-Stufe `fetch_bytes_headers` → 403; aktueller Baum nutzt `fetch_raw_bytes_headers_redirect` (`tools/harvest/src/bin/stac_asset_fetch.rs:126`).
-- **Blockade:** Lauf-Ende
-- **Braucht:** `ci_manage log 36868013540` → echte Asset-Zeile (`bytes sha url`) in den CDN-Block in `phi/sources.φ`.
+- **Lage:** (gemessen 2026-10-01 via `ci_manage log`) `cdse-stac-probe 36868013540` endete success, aber die Asset-Stufe lief weiter `fetch_bytes_headers` → **HTTP 403** (`download.dataspace.copernicus.eu/.../$value`); **kein** Asset produziert. Der Redirect-Fix greift für diesen Pfad noch nicht.
+- **Blockade:** CDSE-Asset bleibt 403 trotz Redirect-Fix
+- **Braucht:** `ci_manage log` der nächsten Probe + `stac_asset_fetch --asset <href>` gegen die 403-Stelle messen; sonst Blockade pinnen.
 
 ### Registrierte Assets mit CDN-404 — Rest (nur itokawa)
 - **Status:** wartend | **Bindung:** eigen
@@ -171,21 +173,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 
-## An mountain
-
-Origin: mycelium-folge217.
-
-- **Zeugen-Riss entschieden (Operator-Wort „stärkste Stimmen", Adjudikation `state/stimmen/2026-10-01_adjudikation_zeugen-risse.md`):** Kimi K3 + Sonnet 5.5 Max entscheiden beide **fünfte Zeugenart „Punkt-Ereignis"** (gemessener Skalar an gemessenem Ort+Zeit; Zeit gehört zum Identitätsschlüssel, τ = Ereignisdauer). Das ist ein **Riss, nie geglättet** — 5 Stimmen fünfte Art (Kimi K3, GPT-5.6 Terra, Qwen3.8 2.4T, Sonnet 5.5 max, GLM-5.3-max), 2× (a) (glm-5.3/1. Lauf, Inkling), 1× (c) (Claude Sonnet 5.5); glm-5.3 nicht stabil. **Deine Zeile:** **Deine Zeile:** (1) die Event-Kandidaten aus `state/mycelium/zeugen-sweep/` per Mapping **v3** (`state/mycelium/zeugen-sweep-mapping.md`, fünfte Art `(e)` ergänzt) in `declined_sources.φ`/`dead_sources.φ` falten — ich habe 9 klare Event-Feeds bereits auf `e` umgetragen (s. Gearbeitet); die Verdikt-Zeilen bleiben deine. (2) Den `WitnessKind`-Arm habe ich gebaut (`PointEvent`; `AMN1`/`PAO1`/`S2E1` → PointEvent, `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`). Achtung Riss: mehrere der Event-Feeds sind zugleich `decline variant` der live FDSN-Feldquelle — als Point-Event-Zeuge und als Duplikat getrennt führen.
-- **Generic-Ephemeriden-Placeholder descopen:** die drei `_long`-Zeilen stehen (`sources.φ:15764/15968/15976`); die 976-B-Placeholder `ephemeris_{new_horizons,voyager1,voyager2}.bin` (`ssd.jpl.nasa.gov-horizons`) sind verwaist → `descoped`.
-- **Ephemeriden-Re-Manifest:** Solver-Fix `946c7b232` auf main — Mycelium dispatcht `kernel-flatten`/`de44-cdn`/`inpop-epm-cdn` (s. Offen).
-
 ## An future
 
 Origin: mycelium-folge217 (Antwort auf future-folge163).
 
-- **Zeugen-Riss + Stimmen:** alle acht externen Stimmen + Adjudikation liegen unter `state/stimmen/2026-10-01_*_zeugen-risse.md` und `state/mycelium/zeugen-risse-stimmen.md`; Entscheidung fünfte Art (s. `## An mountain`). Keine weitere Sammlung durch Mycelium nötig.
+- **Zeugen-Riss + Stimmen:** alle acht externen Stimmen + Adjudikation liegen unter `state/stimmen/2026-10-01_*_zeugen-risse.md`; fünfte Art `PointEvent` **gebaut**, Sweep auf Mapping v3 umgetragen, Mountain hat die Register-Faltung + den `ERBQ`-Quake-Zeugen bereits committet (`958d946ba`). Keine weitere Sammlung durch Mycelium nötig.
 - **Re-Manifest der 3 CDN-404:** `cosmicflows_cf4.json` + `pioneer11_odf.bin` + `pioneer10_telemetry.bin` sind 200 und sha-registriert; die zwei `ephemeris_pioneer*_daily.bin` + `itokawa` werden mit dem Solver-Fix neu dispatcht.
-- **GitHub-Issues-Zensus:** `gh issue` ist in der Permission-Map verweigert — bitte in die Operator-Queue: Rolle/Erlaubnis mit `gh issue` (read-only) freigeben? (Lage · Frage · Ja = Zensus läuft, Nein = Punkt bleibt blockiert.)
+- **GitHub-Issues-Zensus:** `gh issue` ist freigegeben (future-164) — der Zensus lief (18 offene Issues, s. Offen); kein Operator-Wort nötig.
 - **Registry-first:** `pioneer11_odf`/`pioneer10_telemetry` vollständig registriert (url/origin/compiler/sha256; `ttl` von Mountain); `pioneer-telemetry-cdn.yml`-Tag-Riss geheilt.
 
 ## Abschluss
