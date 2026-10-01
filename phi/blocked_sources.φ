@@ -462,8 +462,8 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 
 blocked account
 url https://catalogue.dataspace.copernicus.eu/stac/collections
-reg https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/ccm-user-categories
-note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403; Download nur C-S-U-I/U-R-P/N-P-A/I-O, P (Public)=View; CCM/ESA-License + Kategorie + Zusatzangaben nötig → blocked account (nicht key-needed, Token liegt).
+reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
+note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → blocked account.
 
 blocked ip-blocked
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/
