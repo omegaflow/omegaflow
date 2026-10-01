@@ -806,6 +806,10 @@ decline redistribution
 url https://api.protectedplanet.net/v3/protected_areas?with_geometry=true&latitude=
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
+decline commercial
+url https://api.purpleair.com/v1/sensors
+note paid plan (HTTP 402 mit PURPLEAIR_KEY, 403 ohne), kommerzielle Quelle — declined 2026-09-26 (Operator-Wort: commercial).
+
 decline derived-radar-product
 url https://api.rainviewer.com/public/weather-maps.json
 note Radar-Komposit-Tile-Manifest (weather-maps.json, HTTP 200, 818 B): Liste vergangener/Nowcast-Radar-Tile-Pfade, keine Punkt-Messung; derived image product.
@@ -1349,6 +1353,10 @@ note DARTS/JAXA XRISM-Observations-Katalog (registry): api/v1/observations?forma
 decline archive-only
 url https://dasch.rc.fas.harvard.edu/
 note DASCH Platten-Digitalisierung 2024 abgeschlossen, abgeschlossenes Archiv ohne Live-Feed; tls-expired.
+
+decline derived-satellite-product
+url https://data-api.globalforestwatch.org
+note Global Forest Watch (WRI): abgeleitete Waldprodukte (tree-cover-loss, GLAD/RADD-Entwaldungs-Alerts, Kohlenstoff) aus Landsat/Sentinel — derived satellite products, kein Punkt-Feldwert. Gemessen 2026-09-26: data-api HTTP 200 (82015 B).
 
 decline derived-product
 url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year
@@ -2125,6 +2133,10 @@ note obscore catalog (dachs.fai.kz/tap) — observation metadata, no measurement
 decline no-physical-force
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 note bidsleep_ihr_bpm (Herzfrequenz, IBI, bpm) — skalarer Ratewert (1/Zeit), keine Feldstärke; der Ratewert gestrichen, advektive Felder bleiben integriert in phi/sources.φ (bidsleep_mehrnacht.bin).
+
+decline operator-withdrawn
+url https://github.com/omegaflow/sources/releases/download/sony-camera-remote/rx100_luminance.bin
+note Operator-Wort 2026-09-27: RX100 war nur ein Gedanke — Quelle zurückgezogen, kein Capture im CDN; Kalibrierer descoped.
 
 decline catalog-register
 url https://github.com/rfordatascience/tidytuesday
@@ -5189,15 +5201,3 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
-
-decline derived-satellite-product
-url https://data-api.globalforestwatch.org
-note Global Forest Watch (WRI): abgeleitete Waldprodukte (tree-cover-loss, GLAD/RADD-Entwaldungs-Alerts, Kohlenstoff) aus Landsat/Sentinel — derived satellite products, kein Punkt-Feldwert. Gemessen 2026-09-26: data-api HTTP 200 (82015 B).
-
-decline commercial
-url https://api.purpleair.com/v1/sensors
-note paid plan (HTTP 402 mit PURPLEAIR_KEY, 403 ohne), kommerzielle Quelle — declined 2026-09-26 (Operator-Wort: commercial).
-
-decline operator-withdrawn
-url https://github.com/omegaflow/sources/releases/download/sony-camera-remote/rx100_luminance.bin
-note Operator-Wort 2026-09-27: RX100 war nur ein Gedanke — Quelle zurückgezogen, kein Capture im CDN; Kalibrierer descoped.
