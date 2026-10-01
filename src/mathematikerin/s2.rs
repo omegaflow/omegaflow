@@ -225,6 +225,7 @@ pub struct SkyReport {
     pub permeability: f32,
     pub tau_s: f64,
     pub vlies_count: Option<u64>,
+    pub riss_count: usize,
 }
 
 pub struct SkyState {
@@ -232,6 +233,7 @@ pub struct SkyState {
     pub vlies: Option<DensityField>,
     pub events: Vec<S2EventRecord>,
     pub oscs: Vec<S2Osc>,
+    pub riss: Vec<String>,
     pub points: Vec<SkyPoint>,
     pub shell: f64,
     pub shell_prev: f64,
@@ -253,6 +255,7 @@ impl SkyState {
             vlies: None,
             events: Vec::new(),
             oscs: Vec::new(),
+            riss: Vec::new(),
             points: Vec::new(),
             shell: 0.0,
             shell_prev: 0.0,
@@ -280,6 +283,7 @@ impl SkyState {
                 .vlies
                 .as_ref()
                 .and_then(|f| forward_pixel_count(f, forward)),
+            riss_count: self.riss.len(),
         }
     }
 }

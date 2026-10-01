@@ -1438,6 +1438,7 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
                 force: 0,
                 kernel: 0,
                 tau: 0.0,
+                station_code: None,
             },
         );
     }
@@ -1470,6 +1471,120 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
         app.sky.oscs[3].p_hat, app.sky.oscs[4].p_hat,
         "the two station keys fold in key order to distinct points"
     );
+}
+
+#[test]
+fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
+    use crate::archivar::{BodyEphemeris, Buffer, VerdictLine, VerdictWord};
+    use crate::machines::{MetaAnchor, NameMeta};
+    use crate::weberin::{BodyLine, StationLine, WitnessLine};
+    let t = 8.4e8;
+    let orbit_body = |pos: [f64; 3]| -> BodyEphemeris {
+        let rec = crate::wind_orbit::orbit_rec(&[
+            (t - 100.0, pos, [0.0, 0.0, 0.0]),
+            (t + 100.0, pos, [0.0, 0.0, 0.0]),
+        ]);
+        BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props: None,
+            orbit: Some(std::sync::Arc::new(rec)),
+            granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
+        }
+    };
+    let mut eph: std::collections::HashMap<String, BodyEphemeris> =
+        std::collections::HashMap::new();
+    eph.insert("alpha".to_string(), orbit_body([1.0e9, 0.0, 0.0]));
+    eph.insert("earth".to_string(), orbit_body([0.0, 0.0, 1.0e9]));
+    let buf = Buffer {
+        cache: crate::archivar::build_spatial_hash(vec![], 1.0),
+        eph: std::sync::Arc::new(eph),
+        curves: None,
+        spectral: Vec::new(),
+        volumes: Vec::new(),
+        bayestar: None,
+    };
+    let verdicts = Arc::new(RwLock::new(vec![
+        VerdictLine {
+            name: "alpha".to_string(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Mpc)),
+            ],
+            sep: Some(2.3e9),
+            weave_epoch: t,
+        },
+        VerdictLine {
+            name: "station-ABK".to_string(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: t,
+        },
+    ]));
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: verdicts.clone(),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.latest_field = Some(Arc::new(buf));
+    app.matrix.metas.insert(
+        "intermagnet_dbdt".to_string(),
+        NameMeta {
+            anchor: MetaAnchor::Surface {
+                body_name: "earth".to_string(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            force: 0,
+            kernel: 0,
+            tau: 0.0,
+            station_code: Some("ABK".to_string()),
+        },
+    );
+    app.sky_reload();
+    app.sky.directions.clear();
+    app.sky.events.clear();
+    app.sky_tick();
+    assert_eq!(
+        app.sky.oscs.len(),
+        1,
+        "only the placed earth worldline is an oscillator; the two riss threads are not"
+    );
+    assert_eq!(
+        app.sky.riss,
+        vec!["alpha".to_string(), "station-ABK".to_string()],
+        "the body riss and the station faden stay named in the S² layer state"
+    );
+    assert_eq!(app.sky.report([0.0, 0.0, 1.0]).riss_count, 2);
 }
 
 #[test]

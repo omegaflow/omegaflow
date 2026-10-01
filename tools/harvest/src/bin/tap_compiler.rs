@@ -1060,7 +1060,20 @@ fn main() {
     } else {
         table.clone()
     };
-    let xq = |c: &str| -> String { format!("\"{}\"", c) };
+    let xq = |c: &str| -> String {
+        if c.contains('.') {
+            c.to_string()
+        } else {
+            format!("\"{}\"", c)
+        }
+    };
+    let alias_col = |alias: &str, c: &str| -> String {
+        if c.contains('.') {
+            c.to_string()
+        } else {
+            format!("{}.{}", alias, xq(c))
+        }
+    };
     let (cols_sel, from_clause) = match (&crossmatch_spec, &crossmatch_z_spec) {
         (Some(spec), _) => {
             let parts: Vec<&str> = spec.split(':').collect();
@@ -1086,10 +1099,10 @@ fn main() {
                 "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', t.{}, t.{}), CIRCLE('ICRS', j.{}, j.{}, {}))",
                 table_ref,
                 xtable,
-                xq(&cra),
-                xq(&cdec),
-                xq(xra),
-                xq(xdec),
+                alias_col("t", &cra),
+                alias_col("t", &cdec),
+                alias_col("j", xra),
+                alias_col("j", xdec),
                 radius_deg
             );
             let mut cs = if any_positional {
@@ -1098,7 +1111,7 @@ fn main() {
             } else {
                 let mut s = mapping
                     .iter()
-                    .map(|(_, c)| format!("t.{}", xq(c)))
+                    .map(|(_, c)| alias_col("t", c))
                     .collect::<Vec<_>>()
                     .join(",");
                 s.push_str(&format!(", j.{} AS \"dist_pc\"", xq(xdist)));
@@ -1149,10 +1162,10 @@ fn main() {
                 "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', t.{}, t.{}), CIRCLE('ICRS', j.{}, j.{}, {}))",
                 table_ref,
                 xtable,
-                xq(&cra),
-                xq(&cdec),
-                xq(xra),
-                xq(xdec),
+                alias_col("t", &cra),
+                alias_col("t", &cdec),
+                alias_col("j", xra),
+                alias_col("j", xdec),
                 radius_deg
             );
             let cs = if any_positional {
@@ -1161,7 +1174,7 @@ fn main() {
             } else {
                 let mut s = mapping
                     .iter()
-                    .map(|(_, c)| format!("t.{}", xq(c)))
+                    .map(|(_, c)| alias_col("t", c))
                     .collect::<Vec<_>>()
                     .join(",");
                 s.push_str(&format!(", j.{} AS \"z\"", xq(xz)));
@@ -1277,12 +1290,8 @@ fn main() {
             .map(|(_, lo, hi, step)| (*lo, *hi, *step))
             .or(mag_bands);
         let is_xm = crossmatch_spec.is_some() || crossmatch_z_spec.is_some();
-        let band_qual = |c: &str| -> String { if is_xm { format!("t.{}", xq(c)) } else { xq(c) } };
-        let left_from = if is_xm {
-            format!("{} AS t", table_ref)
-        } else {
-            table_ref.clone()
-        };
+        let aliases_t = is_xm || join_spec.is_some();
+        let band_qual = |c: &str| -> String { if aliases_t { alias_col("t", c) } else { xq(c) } };
         let mut ranges: Vec<(f64, f64)> = match (&band_spec, band_bounds) {
             (Some(_), Some((lo, hi, step))) => {
                 let mut out = Vec::new();
@@ -1312,7 +1321,7 @@ fn main() {
                         ),
                         None => String::new(),
                     };
-                    let count_adql = format!("SELECT COUNT(*) FROM {} {}", left_from, w);
+                    let count_adql = format!("SELECT COUNT(*) FROM {} {}", from_clause, w);
                     let n = tap_query(&root, &count_adql)
                         .and_then(|body| parse_json(&body))
                         .and_then(|j| {
