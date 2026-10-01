@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: fa60f71c096c74ca680e51e21aadd4981988dba51b11819a39583566e55cc66d
+  sha256: bdc83c1291d5ed1bb3d615fffef18bed873e87d6d0475100862a1b79617e9984
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -179,6 +179,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
+
+## An mountain
+
+Origin: mycelium-folge217.
+
+- **CDSE-CCM (`phi/blocked_sources.φ:465`) — Verdikt um das Entitlement schärfen:** (gemessen 2026-10-01 via `archive_search --verdict` + `sfetch` + brave) STAC-Katalog 200 (öffentlich), OData-Produkt-`$value` mit dem vorhandenen Token **403**; recherchiert: der CCM-Download verlangt im CDSE-Konto die **Akzeptanz der CCM User License** + berechtigte User-Kategorie (EU/Copernicus-Participating) + Zusatzangaben. Quellen: `dataspace.copernicus.eu/news/2024-6-27-…`, `…/ccm-user-categories`. **Deine Zeile:** die aktuelle `pending`-Zeile auf **`blocked account`** (Konto-Entitlement; die Lizenz-Akzeptanz ist ein Operator-Akt) schärfen — **nicht `key-needed`**, `CDSE_USER`/`CDSE_PASS` liegen. Der Operator-Akt läuft via `## An future`.
 
 ## An future
 
