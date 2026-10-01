@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: fd9a7acfb499b7bc4041f6850cf943370bbb7442e6e0f086709b5aaf42fda634
+  sha256: fa60f71c096c74ca680e51e21aadd4981988dba51b11819a39583566e55cc66d
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -71,16 +71,16 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Quake-ptevent (ERBQ) — verifiziert, Chile/Tohoku je 1 Event
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `quake-ptevent-cdn`-Lauf (`36894598573`)
-- **Lage:** (gemessen 2026-10-01, nachbearbeitet) der lokale `quake_ptevent_compiler`-Lauf (ohne `--ci-mode`, `--out /tmp/opencode/qtest`) liefert `chile` 1 Event/45 B `ff7e2f67…`, `tohoku` 1 Event/45 B `cde2a662…`, `jma` 225 Events/7213 B. **Kein Riss** — 45 B = `HEADER_LEN 13 + REC_BYTES 32` (1 Event); die beiden ArcGIS-Layer haben per `returnCountOnly` je genau `count: 1`. Mein früherer „leer"-Befund war eine Fehlmessung (Byte-Größe ohne Konstanten-Prüfung) und ist korrigiert.
+- **Lage:** (gemessen 2026-10-01 via `cargo run` lokal + `returnCountOnly`) der lokale `quake_ptevent_compiler`-Lauf (ohne `--ci-mode`, `--out /tmp/opencode/qtest`) liefert `chile` 1 Event/45 B `ff7e2f67…`, `tohoku` 1 Event/45 B `cde2a662…`, `jma` 225 Events/7213 B. **Kein Riss** — 45 B = `HEADER_LEN 13 + REC_BYTES 32` (1 Event); die beiden ArcGIS-Layer haben per `returnCountOnly` je genau `count: 1`. Mein früherer „leer"-Befund war eine Fehlmessung (Byte-Größe ohne Konstanten-Prüfung) und ist korrigiert.
 - **Blockade:** keine
 - **Braucht:** Lauf-Ende `36894598573` → `--sniff`/API; danach Punkt schließen.
 
-### CDSE-CCM STAC-Auth-Asset — dispatched, messen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `cdse-stac-probe 36868013540` (dispatched 2026-10-01 @`2e7b227e4`)
-- **Lage:** (gemessen 2026-10-01 via `ci_manage log` + `sread src/archivar/fetch.rs`) `cdse-stac-probe 36868013540` success, Asset-Stufe **HTTP 403**; kein Asset. Der Bin nutzt `fetch_raw_bytes_headers_redirect` (`fetch.rs:241`); `redirect_target` (`:186`, curl `-f` + `%{redirect_url}`) liefert für `…/Products(…)/$value` **keinen** Ziel-URL → Fallback `fetch_raw_bytes_headers_with` sendet den Auth-Header → 403. Ursache damit die OData-`$value`-Anfrage selbst (Token/Auth), nicht der Header-auf-Redirect.
-- **Blockade:** CDSE-Auth/Token (source-seitig; Zugangs-Zustand)
-- **Braucht:** `stac_asset_fetch --asset <href> --token-env CDSE_TOKEN` lokal gegen den 403 messen (Header/Status); sonst `blocked` pinnen (`phi/blocked_sources.φ` CDSE-CCM).
+### CDSE-CCM STAC-Auth-Asset — 403 = fehlendes CCM-Download-Entitlement (recherchiert)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** CCM-Lizenz-Akzeptanz im CDSE-Konto (Operator-Akt, via Future-Queue)
+- **Lage:** (gemessen 2026-10-01 via `archive_search --verdict` + `sfetch` + brave) STAC-Katalog `catalogue.dataspace.copernicus.eu/stac/collections` = HTTP 200 (öffentlich); OData `download.dataspace.copernicus.eu/odata/v1/Products(<id>)/$value` **ohne Token = 401**, mit Token im CI **403**. Der Bin nutzt `fetch_raw_bytes_headers_redirect` (`fetch.rs:241`); `redirect_target` (`:186`) liefert keinen Ziel-URL → Fallback sendet den Header → 403. **Recherche-Ursache:** CCM (Contributing Missions) verlangt im CDSE-Konto (a) die **Akzeptanz der CCM User License**, (b) eine **berechtigte User-Kategorie** (EU / Copernicus-Participating: C-S-U-I/U-R-P/N-P-A/I-O/P/C-O), (c) Zusatzangaben (Kategorie/Institution/Copernicus-Projekt) — Quellen `dataspace.copernicus.eu/news/2024-6-27-…`, `…/explore-data/…/ccm-user-categories`. Daneben sind CDSE-seitig intermittierende OData-503/S3-403 bekannt (Forum), aber unser 403 ist konsistent = **Entitlement**, nicht Token.
+- **Blockade:** die CCM-Lizenz/Download-Berechtigung im CDSE-Konto fehlt (Zugangs-Zustand)
+- **Braucht:** Operator-Akt im CDSE-Konto (CCM-Lizenz akzeptieren + Kategorie/Institution angeben) — via `## An future`; danach `cdse-stac-probe` neu messen.
 
 ### Registrierte Assets mit CDN-404 — Rest (nur itokawa)
 - **Status:** wartend | **Bindung:** eigen
@@ -96,12 +96,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** CI-Zahl/Lauf-Ende
 - **Braucht:** `ci_manage log 36866394140` nach Lauf-Ende — hält `dropped-gate` (Baseline 1339) und clippy grün.
 
-### pds3-img M3 — CI-Route 403
+### pds3-img M3 — CI-Route 403 (Register `phi/blocked_sources.φ:467` blocked ip-blocked)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `pds3-img-cdn`-Lauf (nach Mountain-Push des Roundtrip-Fixes, s. pds3_img-Manifestation)
-- **Lage:** (gemessen 2026-09-30) `36737530030` failure: M3-`.HDR` HTTP 403 (Datacenter-IP-Block); lokal direkt 206, Proton 403, kein Wayback-Snapshot. mountain-218: der Roundtrip-Fix lässt den Lauf mindestens das WUSTL-Asset schreiben (`written ≥ 1` → exit 0 auch bei M3-403).
+- **Trigger:** `pds3-img-cdn`-Lauf (Roundtrip-Fix steht)
+- **Lage:** (gemessen 2026-09-30 via `ci_manage log`) `36737530030` failure: M3-`.HDR` (`https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/`) HTTP 403 (Datacenter-IP-Block); lokal direkt 206, Proton 403, kein Wayback-Snapshot. Der Roundtrip-Fix lässt den Lauf mindestens das WUSTL-Asset schreiben.
 - **Blockade:** M3 bleibt CI-IP-403 (kein Mirror)
-- **Braucht:** nach Dispatch `ci_manage log`; M3-Descope-Befund, falls der Mirror fehlt.
+- **Braucht:** andere Route/Feder messen (`archive_search --playwright`); M3-Descope-Befund, falls kein Mirror.
 
 ### hips-png / ps1 — laufende Shards
 - **Status:** wartend | **Bindung:** eigen
@@ -188,6 +188,7 @@ Origin: mycelium-folge217 (Antwort auf future-folge163).
 - **Re-Manifest der 3 CDN-404:** `cosmicflows_cf4.json` + `pioneer11_odf.bin` + `pioneer10_telemetry.bin` sind 200 und sha-registriert; die zwei `ephemeris_pioneer*_daily.bin` + `itokawa` werden mit dem Solver-Fix neu dispatcht.
 - **GitHub-Issues-Zensus:** `gh issue` ist freigegeben (future-164) — der Zensus lief (18 offene Issues, s. Offen); kein Operator-Wort nötig.
 - **Registry-first:** `pioneer11_odf`/`pioneer10_telemetry` vollständig registriert (url/origin/compiler/sha256; `ttl` von Mountain); `pioneer-telemetry-cdn.yml`-Tag-Riss geheilt.
+- **CDSE-CCM 403 — Operator-Queue:** *Lage:* STAC-Katalog 200, OData-Produkt-`$value` mit dem vorhandenen `CDSE_USER`-Token **403**. Recherchiert: der CCM-Download verlangt im CDSE-Konto die Akzeptanz der **CCM User License** + berechtigte User-Kategorie + Zusatzangaben (Quellen s. Offen). *Frage:* Soll die CCM-Lizenz im CDSE-Konto (`CDSE_USER`) akzeptiert und Kategorie/Institution eingetragen werden? *Bei Ja:* `cdse-stac-probe` neu messen (Akt = Operator-Hand im Konto). *Bei Nein:* `phi/blocked_sources.φ:465` als `blocked entitlement` pinnen.
 
 ## Abschluss
 
