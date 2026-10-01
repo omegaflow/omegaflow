@@ -3,7 +3,7 @@
   session: River-Folge 75
   class: handover
   date: 2026-10-01
-  sha256: 3004021fcd54c04590177b201344e3e0fd13fbc3fbec18a6264c2532dcafc9d8
+  sha256: 8c4f66e49c635aeb9415e9fb05b795d357846ce743c30a62994b547da8095d7c
   status: live
 -->
 # Handover — River-Folge 75 (2026-10-01)
@@ -198,6 +198,21 @@ Konzepte; Mess-Workflows `.github/workflows/`. Linien-Preset privat
   mit Bz **und** Newell als Runde; zusätzlich P99-Exceedance-Target und die zwei weiteren
   Stationen als offener Bau.
 
+### Blinder Stimmen-Benchmark (Pre-Review-Nützlichkeit)
+- **Bindung:** eigen
+- **Trigger:** `state/stimmen/reviewer-roster-2026-10-01.md` (Auftrag, verankert)
+- **Lage:** (gemessen 2026-10-01, `state/stimmen/reviewer-roster-2026-10-01.md`)
+  Der offene Test wurde gefahren: zur aktuellen `fam`/Null-Frage sind bei **genanntem**
+  Defekt claude und kimi am vollständigsten (5/5, WY max-T + Dedup + Seed + B=10⁴ + CI),
+  `glm-5.3` die billigste vollständige (4.5), `glm-4.5-flash` die schwächste (2.5 —
+  falscher Dedup-Rat „6 distinct", Niveau unterschätzt). Der Test misst aber nur
+  **Konstruktion bei bekanntem Defekt**, nicht Entdeckung.
+- **Blockade:** keine — der blinde Lauf braucht nur den Prompt **ohne** den
+  „Named open defect"-Absatz.
+- **Braucht:** dieselbe Frage (fam/Null) erneut an die 6 opencode-Familien + 2 UI stellen,
+  aber **ohne** den Defekt zu nennen; Ground-Truth geheim halten; Score = wer den Riss
+  selbst findet (+ Burn). Ergebnis ins Roster fortschreiben.
+
 ### Flyby-path-2-Kette (Addendum + Auftrag)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** OMNI2 HAPI-Lag (~4–6 d, fällig ~2026-10-04); kp-`def`-Freigabe;
@@ -286,4 +301,4 @@ Fremde uncommittete Arbeit unangetastet (gemessen 2026-10-01 via `git status`:
 Mountain-Hunks `tools/measure/src/bin/ephemeris_house_gate.rs`,
 `flyby_anderson_probe.rs`, `mountain-folge215`-Move, `mountain-folge216`).
 
-## Burn: open 0.0000 · close 0.1757 · cap 0.50 · Grund: operator-getriebenes Mehr-Nachrichten-Atom (Gutachten-Einarbeitung, ENSO-Vierkanal-Lauf, 7-Stimmen-Konsultation inkl. UI + opencode, Finsternis-Haus-Quercheck inkl. Pfad-Korrektur), Commit-Wort gegeben (`session_burn`)
+## Burn: open 0.0000 · close 0.5302 · cap 0.50 · Grund: operator-getriebenes Mehr-Nachrichten-Atom (Gutachten-Einarbeitung, ENSO-Vierkanal-Lauf, Stimmen-Konsultation + Reviewer-Roster über API/opencode/UI, Finsternis-Haus-Quercheck, Dropdown-/Provider-Bench, Stimmen-Benchmark) — **close über dem harten Cap 0.50** (`session_burn`), Commit braucht Operator-Entscheid
