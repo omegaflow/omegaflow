@@ -155,7 +155,6 @@ fn bin_cells(series: &[(f64, f64)], t0: f64, dt: f64, n: usize) -> Vec<Option<f3
         .collect()
 }
 
-
 fn align_channels(channels: &[&[Option<f32>]], times: &[f64]) -> (Vec<Vec<f32>>, Vec<f64>) {
     let n = match channels.iter().map(|c| c.len()).min() {
         Some(n) => n,
@@ -231,7 +230,6 @@ fn rng_for(seed: u64, replicate: usize) -> u64 {
     splitmix64(&mut s)
 }
 
-
 fn round_seed(round: u64, station: &str, year: i64) -> u64 {
     let mut s = 0xCBF2_9CE4_8422_2325u64 ^ round;
     for b in station.bytes() {
@@ -259,7 +257,6 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
 fn year_of_unix(t: f64) -> i64 {
     civil_from_days((t / DAY).floor() as i64).0
 }
-
 
 fn month_hour_bucket(t: f64) -> Option<usize> {
     let (_, m, _) = civil_from_days((t / DAY).floor() as i64);
@@ -318,7 +315,6 @@ fn block_permutation(n: usize, block: usize, state: &mut u64) -> Vec<usize> {
     out
 }
 
-
 fn bootstrap_indices_seasonal(
     n: usize,
     block: usize,
@@ -353,7 +349,6 @@ fn bootstrap_indices_seasonal(
     }
     out
 }
-
 
 fn inv_norm(p: f64) -> f64 {
     const A: [f64; 6] = [
@@ -402,7 +397,6 @@ fn inv_norm(p: f64) -> f64 {
             / ((((D[0] * q + D[1]) * q + D[2]) * q + D[3]) * q + 1.0)
     }
 }
-
 
 fn rank_gauss(v: &[f32]) -> Vec<f32> {
     let n = v.len();
@@ -483,7 +477,6 @@ fn pair_lag_index_hash(pair_id: usize, lag: usize) -> u64 {
         .wrapping_add(shift as u64);
     splitmix64(&mut s)
 }
-
 
 fn dedup_family(candidates: Vec<Member>) -> Vec<Member> {
     let mut seen: Vec<u64> = Vec::with_capacity(candidates.len());
