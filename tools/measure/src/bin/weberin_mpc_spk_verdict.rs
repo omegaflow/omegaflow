@@ -40,17 +40,17 @@ fn read_eph(dir: &str, name: &str) -> Option<BodyEphemeris> {
 fn mpc_line(name: &str, number: Option<u32>, outcome: &BodyOutcome) -> String {
     let num = number.map_or_else(|| "pending".to_string(), |n| n.to_string());
     match outcome {
-        BodyOutcome::Placed { sep_m } => {
-            format!("weberin-mpc {name} ({num}) state placed sep {sep_m:e}")
+        BodyOutcome::Placed { sep } => {
+            format!("weberin-mpc {name} ({num}) state placed sep {sep:e}")
         }
         BodyOutcome::Absent { line } => format!(
             "weberin-mpc {name} ({num}) state absent sep absent missing {}",
             line.word()
         ),
-        BodyOutcome::Riss { sep_m, knot } => format!(
-            "weberin-mpc {name} ({num}) state riss sep {sep_m:e} knot {}+{}",
-            knot[0].word(),
-            knot[1].word()
+        BodyOutcome::Riss { sep, knot } => format!(
+            "weberin-mpc {name} ({num}) state riss sep {sep:e} knot {}+{}",
+            knot[0].map(|w| w.word()).unwrap_or("absent"),
+            knot[1].map(|w| w.word()).unwrap_or("absent")
         ),
     }
 }
@@ -191,11 +191,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use omegaflow::weberin::BodyLine;
+    use omegaflow::weberin::{BodyLine, WitnessLine};
 
     #[test]
     fn placed_line_carries_the_measured_separation_and_number() {
-        let o = BodyOutcome::Placed { sep_m: 2.5e4 };
+        let o = BodyOutcome::Placed { sep: 2.5e4 };
         assert_eq!(
             mpc_line("ceres", Some(1), &o),
             "weberin-mpc ceres (1) state placed sep 2.5e4"
@@ -223,8 +223,11 @@ mod tests {
     #[test]
     fn riss_line_names_both_refusing_threads() {
         let o = BodyOutcome::Riss {
-            sep_m: 3.1e6,
-            knot: [BodyLine::Spk, BodyLine::Mpc],
+            sep: 3.1e6,
+            knot: [
+                Some(WitnessLine::Body(BodyLine::Spk)),
+                Some(WitnessLine::Body(BodyLine::Mpc)),
+            ],
         };
         assert_eq!(
             mpc_line("pluto", Some(134340), &o),

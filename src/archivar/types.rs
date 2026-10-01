@@ -130,6 +130,7 @@ pub struct Channel {
     pub z: f64,
     pub freq: f64,
     pub bin_width: f64,
+    pub station_code: Option<String>,
 }
 
 #[derive(Clone)]
@@ -349,6 +350,7 @@ pub struct SourceConfig {
     pub sha256: Option<String>,
     pub window: Option<(f64, f64)>,
     pub live_only: bool,
+    pub station_code: Option<String>,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;

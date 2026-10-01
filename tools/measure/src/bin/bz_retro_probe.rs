@@ -1,4 +1,4 @@
-use omegaflow::archivar::omni2::{COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
+use omegaflow::archivar::omni2::{COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::te::{
     PcmciParams, TeEstimator, TeNull, pcmci_links, phase_randomized_surrogate,
@@ -400,6 +400,86 @@ fn newell_from_cells(
         .collect()
 }
 
+fn bs_from_cells(bz: &[Option<f32>]) -> Vec<Option<f32>> {
+    bz.iter()
+        .map(|z| match z {
+            Some(v) => Some((-(*v as f64)).max(0.0) as f32),
+            None => None,
+        })
+        .collect()
+}
+
+fn clock_angle_from_cells(by: &[Option<f32>], bz: &[Option<f32>]) -> Vec<Option<f32>> {
+    by.iter()
+        .zip(bz.iter())
+        .map(|(b, z)| match (b, z) {
+            (Some(by), Some(bz)) => {
+                let deg = (*by as f64).atan2(*bz as f64).to_degrees();
+                let deg = if deg < 0.0 { deg + 360.0 } else { deg };
+                if deg.is_finite() {
+                    Some(deg as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn pdyn_from_cells(density: &[Option<f32>], speed: &[Option<f32>]) -> Vec<Option<f32>> {
+    density
+        .iter()
+        .zip(speed.iter())
+        .map(|(n, v)| match (n, v) {
+            (Some(n), Some(v)) => {
+                let val = 1.67e-6 * (*n as f64) * (*v as f64) * (*v as f64);
+                if val.is_finite() {
+                    Some(val as f32)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+fn mach_from_cells(
+    bx: &[Option<f32>],
+    by: &[Option<f32>],
+    bz: &[Option<f32>],
+    speed: &[Option<f32>],
+    density: &[Option<f32>],
+) -> Vec<Option<f32>> {
+    bx.iter()
+        .zip(by.iter())
+        .zip(bz.iter())
+        .zip(speed.iter())
+        .zip(density.iter())
+        .map(|((((x, b), z), v), n)| match (x, b, z, v, n) {
+            (Some(bx), Some(by), Some(bz), Some(v), Some(n)) => {
+                let bt = ((*bx as f64) * (*bx as f64)
+                    + (*by as f64) * (*by as f64)
+                    + (*bz as f64) * (*bz as f64))
+                    .sqrt();
+                let nn = *n as f64;
+                if bt > 0.0 && nn > 0.0 {
+                    let val = (*v as f64) * nn.sqrt() / (21.8 * bt);
+                    if val.is_finite() {
+                        Some(val as f32)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
+}
+
 fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
     let mut xs = Vec::new();
     let mut ys = Vec::new();
@@ -648,6 +728,11 @@ fn run_hourly(
         .filter(|(_, _, c)| *c == COMP_BY)
         .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
+    let omni_bx: Vec<(f64, f64)> = omni
+        .iter()
+        .filter(|(_, _, c)| *c == COMP_BX)
+        .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
+        .collect();
     let omni_speed: Vec<(f64, f64)> = omni
         .iter()
         .filter(|(_, _, c)| *c == COMP_V1800)
@@ -659,10 +744,14 @@ fn run_hourly(
         .map(|&(t, v, _)| (t + J2000_UNIX_OFFSET, v))
         .collect();
     println!(
-        "omni2_serie_1h.bin: Bz {:<6} | Speed {:<6} | Density {:<6} (60-min-Buckets, 1994→2026, TDB→unix)",
+        "omni2_serie_1h.bin: Bx {:<6} | Bz {:<6} | Speed {:<6} | Density {:<6} (60-min-Buckets, 1994→2026, TDB→unix)",
+        omni_bx.len(),
         omni_bz.len(),
         omni_speed.len(),
         omni_density.len()
+    );
+    println!(
+        "derived: Bs = max(-Bz,0) | Clock = atan2(By,Bz) deg 0-360 | P_dyn = 1.67e-6·n·v² [nPa] | M_A = v·√n/(21.8·B), B = sqrt(Bx²+By²+Bz²)"
     );
 
     let mut dbdt_1h: Vec<(f64, f64)> = Vec::new();
@@ -735,10 +824,15 @@ fn run_hourly(
 
     let bz = bin_cells(&omni_bz, t0, HOUR, n_cells);
     let bz_med = bin_cells_median(&omni_bz, t0, HOUR, n_cells);
+    let bx = bin_cells(&omni_bx, t0, HOUR, n_cells);
     let by = bin_cells(&omni_by, t0, HOUR, n_cells);
     let speed = bin_cells(&omni_speed, t0, HOUR, n_cells);
     let density = bin_cells(&omni_density, t0, HOUR, n_cells);
     let newell = newell_from_cells(&by, &bz, &speed);
+    let bs = bs_from_cells(&bz);
+    let clock = clock_angle_from_cells(&by, &bz);
+    let pdyn = pdyn_from_cells(&density, &speed);
+    let ma = mach_from_cells(&bx, &by, &bz, &speed, &density);
     let dbdt = bin_cells(&dbdt_1h, t0, HOUR, n_cells);
 
     let (dbdt_bz, bz_dbdt) = pair_cells(&dbdt, &bz);
@@ -746,13 +840,21 @@ fn run_hourly(
     let (dbdt_newell, newell_dbdt) = pair_cells(&dbdt, &newell);
     let (dbdt_speed, speed_dbdt) = pair_cells(&dbdt, &speed);
     let (dbdt_density, density_dbdt) = pair_cells(&dbdt, &density);
+    let (dbdt_bs, bs_dbdt) = pair_cells(&dbdt, &bs);
+    let (dbdt_clock, clock_dbdt) = pair_cells(&dbdt, &clock);
+    let (dbdt_pdyn, pdyn_dbdt) = pair_cells(&dbdt, &pdyn);
+    let (dbdt_ma, ma_dbdt) = pair_cells(&dbdt, &ma);
     println!(
-        "paired hours: Bz {:<6} | Bz_med {:<6} | Newell {:<6} | Speed {:<6} | Density {:<6}",
+        "paired hours: Bz {:<6} | Bz_med {:<6} | Newell {:<6} | Speed {:<6} | Density {:<6} | Bs {:<6} | Clock {:<6} | P_dyn {:<6} | M_A {:<6}",
         bz_dbdt.len(),
         bz_med_dbdt.len(),
         newell_dbdt.len(),
         speed_dbdt.len(),
-        density_dbdt.len()
+        density_dbdt.len(),
+        bs_dbdt.len(),
+        clock_dbdt.len(),
+        pdyn_dbdt.len(),
+        ma_dbdt.len()
     );
 
     let lags: Vec<usize> = if yearly_round {
@@ -779,6 +881,10 @@ fn run_hourly(
             ("dB/dt", "Speed", &speed_dbdt, &dbdt_speed),
             ("Density", "dB/dt", &dbdt_density, &density_dbdt),
             ("dB/dt", "Density", &density_dbdt, &dbdt_density),
+            ("Bs", "dB/dt", &dbdt_bs, &bs_dbdt),
+            ("Clock", "dB/dt", &dbdt_clock, &clock_dbdt),
+            ("P_dyn", "dB/dt", &dbdt_pdyn, &pdyn_dbdt),
+            ("M_A", "dB/dt", &dbdt_ma, &ma_dbdt),
         ]
     };
 

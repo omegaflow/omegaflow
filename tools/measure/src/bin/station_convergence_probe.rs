@@ -1,8 +1,10 @@
 use omegaflow::archivar::{
-    Extract, JsonVal, SourceConfig, angular_distance_deg, cache_root, fetch_raw, load_sources,
-    parse_json, source_name_from_url,
+    Extract, JsonVal, SourceConfig, VerdictLine, VerdictWord, angular_distance_deg, cache_root,
+    embedded_lsk, encode_weberin_verdicts, fetch_raw, load_sources, parse_json,
+    parse_weberin_verdicts, source_name_from_url,
 };
 use omegaflow::intermagnet;
+use omegaflow::weberin::{StationLine, WitnessLine};
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -125,10 +127,13 @@ fn arg_f64(args: &[String], name: &str) -> Option<f64> {
 
 fn usage() {
     println!(
-        "usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--grammar]"
+        "usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--out <path>] [--grammar]"
     );
     println!(
         "default: offline over the flowing fanout-ring caches under the archivar cache dir; --live fetches the two HAPI lines (INTERMAGNET ground xyzf, SWARM scalar F with Latitude/Longitude)."
+    );
+    println!(
+        "the measured station VerdictLine is written into the live ledger (default --out data/weberin_verdicts.bin); only a measured encounter is written, the prior line of the same station is replaced, every other ledger line is kept."
     );
 }
 
@@ -615,6 +620,51 @@ fn grammar() {
     println!("{riss}");
 }
 
+fn station_blob_line(
+    station: &str,
+    word: VerdictWord,
+    dev_nt: f64,
+    weave_epoch: f64,
+) -> VerdictLine {
+    VerdictLine {
+        name: format!("station-{station}"),
+        word,
+        knot: [
+            Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+            Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+        ],
+        sep: Some(dev_nt),
+        weave_epoch,
+    }
+}
+
+fn write_station_verdict(out: &str, line: &VerdictLine) {
+    let mut lines = match std::fs::read(out) {
+        Ok(bytes) => parse_weberin_verdicts(&bytes),
+        Err(_) => Vec::new(),
+    };
+    lines.retain(|l| l.name != line.name);
+    lines.push(line.clone());
+    let bytes = encode_weberin_verdicts(&lines);
+    let sep = match line.sep {
+        Some(s) => format!("{s:.1} nT"),
+        None => "absent".to_string(),
+    };
+    match std::fs::write(out, &bytes) {
+        Ok(()) => println!(
+            "station verdict written: {} {} sep {sep} weave_epoch {:.3} ({} line(s) -> {out})",
+            line.name,
+            line.word.word(),
+            line.weave_epoch,
+            lines.len()
+        ),
+        Err(_) => eprintln!(
+            "station verdict: {out} did not take the {} byte(s) — the live ledger keeps its stand",
+            bytes.len()
+        ),
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if flag(&args, "--help") || flag(&args, "-h") {
@@ -650,6 +700,10 @@ fn main() {
     let data_dir = match arg_after(&args, "--data-dir") {
         Some(d) => PathBuf::from(d),
         None => PathBuf::from("data"),
+    };
+    let out = match arg_after(&args, "--out") {
+        Some(p) => p.to_string(),
+        None => "data/weberin_verdicts.bin".to_string(),
     };
 
     let (start, stop) = if live {
@@ -765,6 +819,20 @@ fn main() {
                 "{}",
                 verdict_line(&station, &v, &ground_note, &swarm_note, Some(e), tol)
             );
+            let word = match v {
+                Verdict::Placed => VerdictWord::Placed,
+                Verdict::Absent => VerdictWord::Absent,
+                Verdict::Riss => VerdictWord::Riss,
+            };
+            match embedded_lsk().and_then(|l| l.system_now_tdb()) {
+                Some(weave_epoch) => {
+                    let line = station_blob_line(&station, word, dev, weave_epoch);
+                    write_station_verdict(&out, &line);
+                }
+                None => eprintln!(
+                    "station verdict: the system TDB epoch reads void (naif0012 leap table) — {out} keeps its stand"
+                ),
+            }
         }
         None => {
             let v = classify(ground_present, swarm_present && swarm_geometry, 0.0, None);
@@ -908,5 +976,22 @@ mod tests {
         );
         assert!(riss.contains("state riss"));
         assert!(riss.contains("riss stays visible"));
+    }
+
+    #[test]
+    fn the_station_blob_line_carries_both_witnesses_and_the_measured_sep() {
+        let line = station_blob_line("ABK", VerdictWord::Riss, 9189.2, 8.0e8);
+        assert_eq!(line.name, "station-ABK");
+        assert_eq!(line.word, VerdictWord::Riss);
+        assert_eq!(line.sep, Some(9189.2));
+        assert_eq!(
+            line.knot,
+            [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight))
+            ]
+        );
+        let back = parse_weberin_verdicts(&encode_weberin_verdicts(std::slice::from_ref(&line)));
+        assert_eq!(back, vec![line]);
     }
 }
