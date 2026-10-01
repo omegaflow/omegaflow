@@ -460,9 +460,10 @@ pending
 url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
 
-pending
+blocked account
 url https://catalogue.dataspace.copernicus.eu/stac/collections
-note CDSE-CCM STAC 2026-09-30: /stac/collections 200 (423), ccm-* public; extents offen. Verdikt: frame at earth, ttl no-cadence. Riss: stac.rs liest nur id/assets, kein datetime/geometry; Auth-Asset Mycelium unread.
+reg https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/ccm-user-categories
+note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403; Download: CCM/ESA-License + User-Kategorie (EU/Copernicus-participating) + Zusatzangaben, CDSE-User-Services-Freigabe → blocked account (nicht key-needed).
 
 blocked ip-blocked
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/
