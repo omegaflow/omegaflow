@@ -3,7 +3,7 @@
   session: Mountain-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: f27d4831493e21cf48a99ccebab98238147608c4f2213f9d6080ebf87e202025
+  sha256: 3d454c56e4212c2592f6ce5f863b55c3d5efb381301a3d724f6130438695d5ab
   status: live
 -->
 # Handover — Mountain-Folge 217 (2026-10-01)
@@ -37,6 +37,7 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-09-30 | Operator (Session, Mountain 216)
 „<LOCK-Wort für das private Experiment>" | 2026-10-01 | Operator (Session, Mountain 217) — verbatim im privaten Cut `state/operator-gespraeche/2026-10-01-mountain.md`; LOCK privat, kein CDN/`sources.φ`/`witnesses.φ`, kein getrackter Baum; zur Faltung nach `state/future/handover/handover-2026-10-01-future-folge163.md` (Origin: mountain folge217)
 „alles was das experiment betrifft bleibt privat" | 2026-10-01 | Operator (Session, Mountain 217) — stehend: das ganze private Experiment (Daten, Ableitungen, experiment-spezifischer Code) bleibt privat; private Heimat `state/mountain/kuprat-complex-te/`; zur Faltung nach `state/future/handover/handover-2026-10-01-future-folge163.md` (Origin: mountain folge217)
+„ich will dass ihr inhalt bearbeitet falls notwendig wird und die datei entfernt" | 2026-10-01 | Operator (Session, Mountain 217) — Verwahrung Mountain-185 („C") aufgehoben: der verwahrte Orphan-Doc-Nachzug-Patch (Mountain-185) ist entfernt; `git apply --check` scheitert (Docs weitergelaufen → stale), Ziel-Docs nicht mehr in `--orphan-docs` → Inhalt überholt, kein Nachzug nötig
 
 ## Offen (aufgeschlüsselt)
 
