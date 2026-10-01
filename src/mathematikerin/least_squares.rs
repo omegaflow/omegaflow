@@ -6,6 +6,9 @@ pub fn solve_normal_equations(
 ) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
     let n = ata.len();
     let mut a = ata.to_vec();
+    let mut bx = atx.to_vec();
+    let mut by = aty.to_vec();
+    let mut bz = atz.to_vec();
     for i in 0..n {
         let mut pivot = i;
         for j in i + 1..n {
@@ -17,19 +20,23 @@ pub fn solve_normal_equations(
             return None;
         }
         a.swap(i, pivot);
+        bx.swap(i, pivot);
+        by.swap(i, pivot);
+        bz.swap(i, pivot);
         for j in i + 1..n {
             let factor = a[j][i] / a[i][i];
-            let (head, tail) = a.split_at_mut(j);
-            let ai = &head[i];
-            let aj = &mut tail[0];
-            for (ajk, aik) in aj[i..].iter_mut().zip(&ai[i..]) {
-                *ajk -= factor * aik;
+            for k in i..n {
+                let aik = a[i][k];
+                a[j][k] -= factor * aik;
             }
+            bx[j] -= factor * bx[i];
+            by[j] -= factor * by[i];
+            bz[j] -= factor * bz[i];
         }
     }
-    let x = back_substitute(&a, atx);
-    let y = back_substitute(&a, aty);
-    let z = back_substitute(&a, atz);
+    let x = back_substitute(&a, &bx);
+    let y = back_substitute(&a, &by);
+    let z = back_substitute(&a, &bz);
     Some((x, y, z))
 }
 
@@ -43,4 +50,30 @@ pub fn back_substitute(a: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
         x[i] /= a[i][i];
     }
     x
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normal_equations_reduce_the_rhs_with_the_matrix() {
+        let ata = vec![vec![2.0, 1.0], vec![1.0, 3.0]];
+        let (x, y, z) =
+            solve_normal_equations(&ata, &[3.0, 5.0], &[1.0, 1.0], &[0.0, 0.0]).expect("solves");
+        assert!((x[0] - 0.8).abs() < 1e-12);
+        assert!((x[1] - 1.4).abs() < 1e-12);
+        assert!((y[0] - 0.4).abs() < 1e-12);
+        assert!((y[1] - 0.2).abs() < 1e-12);
+        assert_eq!(z, vec![0.0, 0.0]);
+        assert!(
+            solve_normal_equations(
+                &vec![vec![0.0, 0.0], vec![0.0, 1.0]],
+                &[1.0, 1.0],
+                &[0.0, 0.0],
+                &[0.0, 0.0]
+            )
+            .is_none()
+        );
+    }
 }
