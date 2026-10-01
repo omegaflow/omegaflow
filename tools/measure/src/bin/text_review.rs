@@ -499,6 +499,7 @@ fn main() {
     let mut limit: Option<usize> = None;
     let mut dry_run = false;
     let mut list_models = false;
+    let mut raw_prompt = false;
 
     let mut i = 1;
     while i < args.len() {
@@ -547,6 +548,7 @@ fn main() {
             }
             "--dry-run" => dry_run = true,
             "--list-models" => list_models = true,
+            "--raw" => raw_prompt = true,
             s if !s.starts_with("--") && draft_path.is_none() => {
                 draft_path = Some(s.to_string());
             }
@@ -599,7 +601,11 @@ fn main() {
         Some(o) => o,
         None => format!("{}.review.md", path),
     };
-    let prompt = build_prompt(&draft);
+    let prompt = if raw_prompt {
+        draft.clone()
+    } else {
+        build_prompt(&draft)
+    };
     let mut rows: Vec<Review> = Vec::new();
 
     for m in &selected {
