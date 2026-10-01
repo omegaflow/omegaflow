@@ -23,7 +23,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
             Some(FieldIdentity::Witness(WitnessKind::Gestalt))
         }
         b"ISCB" | b"EHB1" => Some(FieldIdentity::Witness(WitnessKind::Presence)),
-        b"RIXS" | b"RIXC" | b"EELS" | b"SRD6" | b"LABR" => {
+        b"RIXS" | b"RIXC" | b"EELS" | b"SRD6" => {
             Some(FieldIdentity::Witness(WitnessKind::Substance))
         }
         b"FP01" => Some(FieldIdentity::Footprint),
