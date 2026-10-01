@@ -3,7 +3,7 @@
   session: Mycelium-Folge 217
   class: handover
   date: 2026-10-01
-  sha256: de21e567cdd193074716b7ffe98973d8019248b100febfb6742f74535c08ad79
+  sha256: 4e0c78b415ea70538ed4532a0ff2d0329e851090206535e223f3f56d397fdec9
   status: live
 -->
 # Handover — Mycelium-Folge 217 (2026-10-01)
@@ -43,6 +43,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Tag-Riss geheilt (der wahre 404-Grund):** `horizons_compiler.rs` lädt nach Tag `ssd.jpl.nasa.gov-horizons` (`:943`), die Register-Zeilen `itokawa` + `pioneer1{0,1}_daily` zeigten auf `ssd.jpl.nasa.gov-ephemeris` (404). Umgestellt auf `-horizons` + `compiler horizons_compiler.rs` + `sha256` (gemessen via Release-API: `ephemeris_pioneer10_daily.bin` 301136 B `bd86242f…`, `ephemeris_pioneer11_daily.bin` 295760 B `7ea383fd…`; `itokawa` fehlt unter beiden Tags).
 - **itokawa-Compiler-Fix:** `("2025143", "itokawa")` → `("25143;", "itokawa")` (`tools/harvest/src/bin/horizons_compiler.rs:637`). Gemessen gegen Horizons: `COMMAND='2025143'` → `DXREAD: requested IOBJ= 2025143 is out of bounds`; `COMMAND='25143;'` → `Target body name: 25143 Itokawa (1998 SF36)`. `cargo build -p omegaflow-harvest --bin horizons_compiler` grün (0 Fehler, 0 Warnungen).
 - **Fünfte Zeugenart gebaut (die Stimmen jetzt bearbeitet, nicht nur benannt):** `WitnessKind::PointEvent` in `src/archivar/witness.rs` ergänzt; die transienten Event-Records `AMN1` (AMON-Alerts), `PAO1` (Auger), `S2E1` (IceCat-Events) von `S2Direction` auf `PointEvent` getrennt, die Kataloge `SKY1`/`SKD1`/`VLDE` bleiben `S2Direction`; Tests umgestellt + `transient_event_records_are_point_events`; `phi/witnesses.φ` Note trägt die fünfte Art + Adjudikations-Quelle. `cargo check` 0/0.
+- **Test-Build-Rot geheilt:** `src/archivar/ephemeris.rs`-Testmodul (`:736`/`:743`/`:744`/`:756`–`:763`) nutzte `CHEBYSHEV_N`/`chebyshev_evaluate` (aus `motion.rs`) ohne Import → CI `ci-check 36868565495` rot mit `lib test` E0425 (11 Fehler); `cargo check` übersieht das (Test-cfg). Import im Testmodul ergänzt (`use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate}`); `cargo check` weiter 0/0.
 - **`legacy-cdn-ssd` (Wartend) gemessen:** `nvss.json` (`sources.φ:10670`), `first14.json` (`:10540`), `curated48_spectra.bin` (`:9217`) zeigen jetzt auf das Legacy-Tag `ssd.jpl.nasa.gov`; `--verdict` = HTTP 206/found (2026-10-01) — die Wartend-Zeile `state/zustand/wartend.φ:27` ist stale (gemessen 2026-09-28).
 - **`cosmicflows_cf4.json`/`pioneer11_odf.bin`/`pioneer10_telemetry.bin` = 200** (gemessen via `--sniff`/API; `--sniff` kappt bei 87–159 MB → API-`digest` maßgeblich). `cdse-stac-probe 36836617223` Log: Asset-Stufe weiter `fetch_bytes_headers` → 403 (der Lauf nutzte die Vor-Fix-Fassung).
 - **`--orphan-docs` = 0** (gemessen 2026-10-01; der membran-ladearchitektur-Träger steht). `--orphans` = 1 (`phi/blocked_sources.φ:447 [future]`, nicht mycelium).
