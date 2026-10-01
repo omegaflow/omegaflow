@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: 2edf30a9a7185cade97cd3524efed4465f4b391d9384b291a1fa64212f339f2b
+  sha256: 29373e0dbd77e9b83ca6eb9b6d7743b61f67349db0451689373e3af03fb4f7b7
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1339
+dropped-baseline 1351
+measured 2026-10-01 (Mycelium-Folge 218, ci-gate 36936698719 @3965e3814 dropped-gate: baseline 1339 | current 1351 | delta 12. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1339 — die Atom-Abschlüsse mountain-219/220/221, sensory-217/218, river-77 u. a. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-01 (Mycelium-Folge 217, ci-gate 36860776495 @6f9b5103a dropped-gate: baseline 1330 | current 1339 | delta 9. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1330 — die Atom-Abschlüsse mycelium-216, mountain-216/217, river-76. Der Lauf `36860776495` trägt die letzte gemessene dropped-gate-Zahl vor dem annehmenden Commit; lokal misst `register_lookup --dropped --count` = 1071 (unter der Baseline, andere Menge — die Gate-Zahl ist CI-only). Absorbiert durch diesen Bump im annehmenden Commit.)
 measured 2026-10-01 (Mycelium-Folge 215 Nachtrag, ci-gate 36790366303 @cd0694b93: baseline 1328 | current 1330 | delta 2. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1328 — die Folgearbeit mycelium-215, sensory-215. Absorbiert durch diesen Bump. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-01 (Mycelium-Folge 215, ci-gate 36750257839 @1a340b191: baseline 1320 | current 1328 | delta 8. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1320 — die Archive-Moves mountain-214/215, river-72/73/74, sensory-214, mycelium-213/214. Absorbiert durch diesen Bump im annehmenden Commit. Der Job `dropped-gate` war am selben HEAD rot, clippy rot (hapi_csv.rs), build/format grün (gemessen via `ci_manage jobs`). Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
