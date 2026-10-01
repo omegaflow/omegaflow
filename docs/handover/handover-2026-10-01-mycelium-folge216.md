@@ -3,7 +3,7 @@
   session: Mycelium-Folge 216
   class: handover
   date: 2026-10-01
-  sha256: 78776412f39581390635f3a2e97078e922d118b7bcb17eea52ee06332ccc19ad
+  sha256: 7664f44a5ed0f5170ea470ffaadb8dd0189efd93bd92427bb3eb338c664c7085
   status: live
 -->
 # Handover — Mycelium-Folge 216 (2026-10-01)
@@ -14,6 +14,15 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 `handover-2026-10-01-mycelium-folge215.md` (→ `archiv/`).
 
 ## Burn: open 0.0362 · close 0.0000
+
+## Operator-Wort-Register
+
+- Wort | 2026-10-01 | „bitte nicht nur messen und verschleppen sondern bearbeiten messen und bearbeiten ist die prämisse mein dauerhaftes wort" | Quelle: Mycelium-Session 216 — gebaut statt verschoben: Pioneer-11-Manifest-Arm, Telemetrie-Tag-Fix, generische Ephemeriden-`_long`, Quellen-Registrierung.
+- Wort | 2026-09-30 | „bitte wirklich bis zur kante umsetzen nicht nur wieder messen und verschleppen" | Quelle: Mycelium-Session 209.
+- Wort | 2026-09-30 | „verschleppen und nicht eigenes ist verboten" | Quelle: Mycelium-Session 213 — kein Punkt wandert ungearbeitet weiter; keine fremde Linien-Arbeit im eigenen Atom.
+- Wort | 2026-09-30 | „du committest immer als letzter also warte" | Quelle: Mycelium-Session 213 — der Commit ist der letzte Akt; kein Commit in einen aktiv geteilten Baum.
+- Wort | 2026-09-30 | „vorbestehend ist verboten mein wort" | Quelle: mountain-209 — keine Ausnahme für vorbestehende Register-Verstöße in `phi/`.
+- Wort | 2026-10-01 | „ja möchte ich" | Quelle: Mycelium-Session 215 — VCO-rs-Register auf das PDS4-20190704-Asset umstellen.
 
 ## Haus (die vier Orte) — gemessen 2026-10-01
 
