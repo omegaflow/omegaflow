@@ -574,9 +574,9 @@ pub fn write_binary(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate};
     use crate::archivar::bsp_reader::daf::{DOUBLE_BYTES, DafFile, RECORD_BYTES};
     use crate::archivar::bsp_reader::spk::SpkFile;
+    use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate};
 
     const DATA_START_ADDR: u32 = 3 * (RECORD_BYTES as u32) / (DOUBLE_BYTES as u32) + 1;
     const SUMMARY_SIZE: usize = 2 * DOUBLE_BYTES + 6 * 4;
